@@ -361,13 +361,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		if(gasto != null && gasto.getGastoDetalleEconomico() != null) {
 			
 			Double importeGarantiaBase = gastoProveedorApi.recalcularImporteRetencionGarantia(gasto.getGastoDetalleEconomico());
-			if(gasto.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() != null) {
-				Double importeCuota = (gasto.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() * importeGarantiaBase) / 100;
-				BigDecimal importeCuotaBig = new BigDecimal(importeCuota);
-				importeCuotaBig = importeCuotaBig.round(new MathContext(2));
-				gasto.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuotaBig.doubleValue());
-			}
 			gasto.getGastoDetalleEconomico().setRetencionGarantiaBase(importeGarantiaBase);
+			Double importeCuota = gastoProveedorApi.recalcularCuotaRetencionGarantia(gasto.getGastoDetalleEconomico(), importeGarantiaBase);
+			gasto.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuota);
 			
 			Double importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gasto.getGastoDetalleEconomico());
 			gasto.getGastoDetalleEconomico().setImporteTotal(importeTotal);
@@ -425,14 +421,10 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		GastoProveedor gasto = gastoLineaDetalle.getGastoProveedor();
 		if( gasto != null && gasto.getGastoDetalleEconomico() != null) {
 			Double importeGarantiaBase = gastoProveedorApi.recalcularImporteRetencionGarantia(gasto.getGastoDetalleEconomico());
-			if(gasto.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() != null) {
-				Double importeCuota = (gasto.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() * importeGarantiaBase) / 100;
-				BigDecimal importeCuotaBig = new BigDecimal(importeCuota);
-				importeCuotaBig = importeCuotaBig.round(new MathContext(2));
-				gasto.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuotaBig.doubleValue());
-			}
-			
 			gasto.getGastoDetalleEconomico().setRetencionGarantiaBase(importeGarantiaBase);
+			
+			Double importeCuota = gastoProveedorApi.recalcularCuotaRetencionGarantia(gasto.getGastoDetalleEconomico(), importeGarantiaBase);
+			gasto.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuota);
 			
 			Double importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gasto.getGastoDetalleEconomico());
 			gasto.getGastoDetalleEconomico().setImporteTotal(importeTotal);
@@ -543,7 +535,11 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			
 			if(idLineaDetalleGasto != null) {
 				List<Activo> activos = this.devolverActivosDeLineasDeGasto(idLineaDetalleGasto);
+				List<Activo> activosDePromociones = this.devolverActivoDePromocionesDeLineasDeGasto(idLineaDetalleGasto);
 
+				if(activosDePromociones != null && !activosDePromociones.isEmpty()) {
+					activos.addAll(activosDePromociones);
+				}
 				todosActivoAlquilados = activoApi.estanTodosActivosAlquilados(activos); 
 				if(todosActivoAlquilados) {
 					filtroCuentaArrendamiento= genericDao.createFilter(FilterType.EQUALS, "arrendamiento", 1);
@@ -803,14 +799,10 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 		
 		Double importeGarantiaBase = gastoProveedorApi.recalcularImporteRetencionGarantia(gastoProveedor.getGastoDetalleEconomico());
-		if(gastoProveedor.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() != null) {
-			Double importeCuota = (gastoProveedor.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() * importeGarantiaBase) / 100;
-			BigDecimal importeCuotaBig = new BigDecimal(importeCuota);
-			importeCuotaBig = importeCuotaBig.round(new MathContext(2));
-			gastoProveedor.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuotaBig.doubleValue());
-		}
-		
 		gastoProveedor.getGastoDetalleEconomico().setRetencionGarantiaBase(importeGarantiaBase);
+		Double importeCuota = gastoProveedorApi.recalcularCuotaRetencionGarantia(gastoProveedor.getGastoDetalleEconomico(), importeGarantiaBase);
+		gastoProveedor.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuota);
+		
 		Double importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gastoProveedor.getGastoDetalleEconomico());	
 		gastoProveedor.getGastoDetalleEconomico().setImporteTotal(importeTotal);
 		
@@ -1313,7 +1305,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 
 			}
 		
-			if(DDEntidadGasto.CODIGO_AGRUPACION.equals(dto.getTipoElemento()) || DDEntidadGasto.CODIGO_ACTIVO.equals(dto.getTipoElemento())) {
+			if(!DDEntidadGasto.CODIGO_ACTIVO_GENERICO.equals(dto.getTipoElemento()) && !DDEntidadGasto.CODIGO_SIN_ACTIVOS.equals(dto.getTipoElemento())) {
 				DtoLineaDetalleGasto dtoLineaDetalleGasto = 
 					this.calcularCuentasYPartidas(gastoLineaDetalle.getGastoProveedor(),dto.getIdLinea(), gastoLineaDetalle.getSubtipoGasto().getCodigo());
 					gastoLineaDetalle = this.updatearCuentasYPartidasVacias(dtoLineaDetalleGasto, gastoLineaDetalle);
@@ -1850,18 +1842,15 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			}
 		}
 
-		Double importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gasto.getGastoDetalleEconomico());
-		Double importeGarantiaBase = gastoProveedorApi.recalcularImporteRetencionGarantia(gasto.getGastoDetalleEconomico());
-		if(gasto.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() != null) {
-			Double importeCuota = (gasto.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() * importeGarantiaBase) / 100;
-			BigDecimal importeCuotaBig = new BigDecimal(importeCuota);
-			importeCuotaBig = importeCuotaBig.round(new MathContext(2));
-			gasto.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuotaBig.doubleValue());
-		}
-		
-		
 		if(gasto.getGastoDetalleEconomico() != null) {
+			
+			
+			Double importeGarantiaBase = gastoProveedorApi.recalcularImporteRetencionGarantia(gasto.getGastoDetalleEconomico());
 			gasto.getGastoDetalleEconomico().setRetencionGarantiaBase(importeGarantiaBase);	
+			Double importeCuota = gastoProveedorApi.recalcularCuotaRetencionGarantia(gasto.getGastoDetalleEconomico(), importeGarantiaBase);
+			gasto.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuota);
+			
+			Double importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gasto.getGastoDetalleEconomico());
 			gasto.getGastoDetalleEconomico().setImporteTotal(importeTotal);
 			genericDao.save(GastoDetalleEconomico.class, gasto.getGastoDetalleEconomico());
 		}
@@ -2057,15 +2046,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 		if(gasto.getGastoDetalleEconomico() != null) {
 			Double importeGarantiaBase = gastoProveedorApi.recalcularImporteRetencionGarantia(gasto.getGastoDetalleEconomico());
-			
-			if(gasto.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() != null) {
-				Double importeCuota = (gasto.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() * importeGarantiaBase) / 100;
-				BigDecimal importeCuotaBig = new BigDecimal(importeCuota);
-				importeCuotaBig = importeCuotaBig.round(new MathContext(2));
-				gasto.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuotaBig.doubleValue());
-			}
-			
 			gasto.getGastoDetalleEconomico().setRetencionGarantiaBase(importeGarantiaBase);
+			Double importeCuota = gastoProveedorApi.recalcularCuotaRetencionGarantia(gasto.getGastoDetalleEconomico(), importeGarantiaBase);
+			gasto.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuota);
 			
 			Double importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gasto.getGastoDetalleEconomico());
 			gasto.getGastoDetalleEconomico().setImporteTotal(importeTotal);
@@ -2343,6 +2326,38 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 		return vElementoLineaDetalle;
 		
+	}
+	
+	@Override
+	public List<Activo> devolverActivoDePromocionesDeLineasDeGasto (Long idLineaDetalleGasto){
+		List<Activo> activos = new ArrayList<Activo>();
+	
+		DDEntidadGasto tipoEntidad = (DDEntidadGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDEntidadGasto.class, DDEntidadGasto.CODIGO_PROMOCION);
+		GastoLineaDetalle gastoLineaDetalle =  this.getLineaDetalleByIdLinea(idLineaDetalleGasto);
+		if(tipoEntidad == null || gastoLineaDetalle == null ) {
+			return activos;
+		}
+		List<GastoLineaDetalleEntidad> gastoLineaDetalleActivoList;  
+		Filter filtroEntidadActivo = genericDao.createFilter(FilterType.EQUALS, "entidadGasto.id", tipoEntidad.getId());	
+		Filter filtroGastoDetalleLinea = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.id", gastoLineaDetalle.getId());
+		gastoLineaDetalleActivoList = genericDao.getList(GastoLineaDetalleEntidad.class, filtroGastoDetalleLinea, filtroEntidadActivo);
+		
+		if(gastoLineaDetalleActivoList != null && !gastoLineaDetalleActivoList.isEmpty()) {
+			for (GastoLineaDetalleEntidad gastoLineaDetalleActivo : gastoLineaDetalleActivoList) {
+				String codPromocion = Long.toString(gastoLineaDetalleActivo.getEntidad());
+				List<ActivoInfoLiberbank> activoPromocionList = genericDao.getList(ActivoInfoLiberbank.class, genericDao.createFilter(FilterType.EQUALS, "codPromocion", codPromocion));
+				if(activoPromocionList != null && !activoPromocionList.isEmpty() && activoPromocionList.get(0).getActivo() != null) {
+					activos.add(activoPromocionList.get(0).getActivo());
+				}else {
+					List<Activo> activoList = genericDao.getList(Activo.class, genericDao.createFilter(FilterType.EQUALS, "codigoPromocionPrinex", codPromocion));
+					if(activoList != null && !activoList.isEmpty()) {
+						activos.add(activoList.get(0));
+					}
+				}
+			}
+		}
+	
+		return activos;
 	}
 	
 }

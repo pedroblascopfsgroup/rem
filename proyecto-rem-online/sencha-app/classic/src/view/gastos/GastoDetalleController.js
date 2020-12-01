@@ -1939,12 +1939,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    comboActivable.setHidden(false);
 		    gicPlanVisitas.setHidden(false);
 		    tipoComisionadoHre.setHidden(false);
-		}
-		
-		if(cartera == CONST.CARTERA['BBVA']){
+		}else if(cartera == CONST.CARTERA['BBVA']){
 		    comboActivable.setHidden(false);
-		    gicPlanVisitas.setHidden(false);
-		    tipoComisionadoHre.setHidden(false);
 		}
 	},
 	
@@ -2222,7 +2218,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     		despues = true;
     	}
 
-    	base = me.getImporteRetencionLineasDetalle(me, despues);
+    	if(!me.lookupReference('lineaDetalleGastoGrid').getStore().loading){
+    		base = me.getImporteRetencionLineasDetalle(me, despues);
+    	}else{
+    		base = me.getViewModel().get('detalleeconomico.baseRetG');
+    	}
     
     	if(tipoImpositivo != null && base != null){
     		cuota = (tipoImpositivo * base)/100;
@@ -2246,15 +2246,19 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     		cuota = (tipoImpositivo * base)/100;
     	}
     	
+    	var importeTotal = 0;
     	me.lookupReference('cuotaIRPFImpD').setValue(cuota);
+
+    	if(!me.lookupReference('lineaDetalleGastoGrid').getStore().loading){
+    		importeTotal = me.getImporteTotalLineasDetalle(me);
+    		importeTotal = importeTotal - cuota;
+    		if(cuotaRetG != null && cuotaRetG != undefined && value){
+    			importeTotal = importeTotal - cuotaRetG;
+    		}
+    	}else{
+    		importeTotal = me.getViewModel().get('detalleeconomico.importeTotal'); 
+    	}
     	
-    	var importeTotal = me.getImporteTotalLineasDetalle(me);
-    	
-		importeTotal = importeTotal - cuota;
-		 
-		if(cuotaRetG != null && cuotaRetG != undefined && value){
-			importeTotal = importeTotal - cuotaRetG;
-		}
 		me.lookupReference('importeTotalGastoDetalle').setValue(importeTotal);
 		if(!Ext.isEmpty(valFechaPago)){
 			me.lookupReference('detalleEconomicoImportePagado').setValue(importeTotal);

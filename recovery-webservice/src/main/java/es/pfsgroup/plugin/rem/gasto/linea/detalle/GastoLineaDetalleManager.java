@@ -543,7 +543,11 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			
 			if(idLineaDetalleGasto != null) {
 				List<Activo> activos = this.devolverActivosDeLineasDeGasto(idLineaDetalleGasto);
+				List<Activo> activosDePromociones = this.devolverActivoDePromocionesDeLineasDeGasto(idLineaDetalleGasto);
 
+				if(activosDePromociones != null && !activosDePromociones.isEmpty()) {
+					activos.addAll(activosDePromociones);
+				}
 				todosActivoAlquilados = activoApi.estanTodosActivosAlquilados(activos); 
 				if(todosActivoAlquilados) {
 					filtroCuentaArrendamiento= genericDao.createFilter(FilterType.EQUALS, "arrendamiento", 1);
@@ -1313,7 +1317,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 
 			}
 		
-			if(DDEntidadGasto.CODIGO_AGRUPACION.equals(dto.getTipoElemento()) || DDEntidadGasto.CODIGO_ACTIVO.equals(dto.getTipoElemento())) {
+			if(!DDEntidadGasto.CODIGO_ACTIVO_GENERICO.equals(dto.getTipoElemento()) && !DDEntidadGasto.CODIGO_SIN_ACTIVOS.equals(dto.getTipoElemento())) {
 				DtoLineaDetalleGasto dtoLineaDetalleGasto = 
 					this.calcularCuentasYPartidas(gastoLineaDetalle.getGastoProveedor(),dto.getIdLinea(), gastoLineaDetalle.getSubtipoGasto().getCodigo());
 					gastoLineaDetalle = this.updatearCuentasYPartidasVacias(dtoLineaDetalleGasto, gastoLineaDetalle);
@@ -2343,6 +2347,38 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 		return vElementoLineaDetalle;
 		
+	}
+	
+	@Override
+	public List<Activo> devolverActivoDePromocionesDeLineasDeGasto (Long idLineaDetalleGasto){
+		List<Activo> activos = new ArrayList<Activo>();
+	
+		DDEntidadGasto tipoEntidad = (DDEntidadGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDEntidadGasto.class, DDEntidadGasto.CODIGO_PROMOCION);
+		GastoLineaDetalle gastoLineaDetalle =  this.getLineaDetalleByIdLinea(idLineaDetalleGasto);
+		if(tipoEntidad == null || gastoLineaDetalle == null ) {
+			return activos;
+		}
+		List<GastoLineaDetalleEntidad> gastoLineaDetalleActivoList;  
+		Filter filtroEntidadActivo = genericDao.createFilter(FilterType.EQUALS, "entidadGasto.id", tipoEntidad.getId());	
+		Filter filtroGastoDetalleLinea = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.id", gastoLineaDetalle.getId());
+		gastoLineaDetalleActivoList = genericDao.getList(GastoLineaDetalleEntidad.class, filtroGastoDetalleLinea, filtroEntidadActivo);
+		
+		if(gastoLineaDetalleActivoList != null && !gastoLineaDetalleActivoList.isEmpty()) {
+			for (GastoLineaDetalleEntidad gastoLineaDetalleActivo : gastoLineaDetalleActivoList) {
+				String codPromocion = Long.toString(gastoLineaDetalleActivo.getEntidad());
+				List<ActivoInfoLiberbank> activoPromocionList = genericDao.getList(ActivoInfoLiberbank.class, genericDao.createFilter(FilterType.EQUALS, "codPromocion", codPromocion));
+				if(activoPromocionList != null && !activoPromocionList.isEmpty() && activoPromocionList.get(0).getActivo() != null) {
+					activos.add(activoPromocionList.get(0).getActivo());
+				}else {
+					List<Activo> activoList = genericDao.getList(Activo.class, genericDao.createFilter(FilterType.EQUALS, "codigoPromocionPrinex", codPromocion));
+					if(activoList != null && !activoList.isEmpty()) {
+						activos.add(activoList.get(0));
+					}
+				}
+			}
+		}
+	
+		return activos;
 	}
 	
 }

@@ -1939,12 +1939,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    comboActivable.setHidden(false);
 		    gicPlanVisitas.setHidden(false);
 		    tipoComisionadoHre.setHidden(false);
-		}
-		
-		if(cartera == CONST.CARTERA['BBVA']){
+		}else if(cartera == CONST.CARTERA['BBVA']){
 		    comboActivable.setHidden(false);
-		    gicPlanVisitas.setHidden(false);
-		    tipoComisionadoHre.setHidden(false);
 		}
 	},
 	

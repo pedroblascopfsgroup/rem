@@ -984,17 +984,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	
 	onExportClickActivos: function(btn){
     	var me = this;
-    	var idLinea = me.lookupReference('comboLineasDetalleReference').getValue();
+    	var idGasto = me.getViewModel().get("gasto.id");
 
-    	if(Ext.isEmpty(idLinea)){
-    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-    		return;
-    	}
 		var url =  $AC.getRemoteUrl('gastosproveedor/generateExcelElementosGasto');
 		
 		var config = {};
 
-		var initialData = {idLinea: idLinea};
+		var initialData = {idGasto: idGasto};
 		var params = Ext.apply(initialData);
 
 		Ext.Object.each(params, function(key, val) {
@@ -1292,7 +1288,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	onChangeRetencionGarantiaAplica: function(field, checked){
 		var me= this;
 		// Habilitamos/deshabilitamos campos
-		
+
 		me.lookupReference('baseIRPFRetG').setDisabled(!checked);
 		me.lookupReference('irpfTipoImpositivoRetG').setDisabled(!checked);
 		me.lookupReference('cuotaIRPFRetG').setDisabled(!checked);
@@ -1943,12 +1939,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    comboActivable.setHidden(false);
 		    gicPlanVisitas.setHidden(false);
 		    tipoComisionadoHre.setHidden(false);
-		}
-		
-		if(cartera == CONST.CARTERA['BBVA']){
+		}else if(cartera == CONST.CARTERA['BBVA']){
 		    comboActivable.setHidden(false);
-		    gicPlanVisitas.setHidden(false);
-		    tipoComisionadoHre.setHidden(false);
 		}
 	},
 	
@@ -2216,15 +2208,29 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     onChangeCuotaRetencionGarantia: function(checked){
     	var me = this;
     	var tipoImpositivo = me.lookupReference('irpfTipoImpositivoRetG').getValue();
-    	var base = me.lookupReference('baseIRPFRetG').getValue();
+    	var base = 0;
     	var cuotaImpDirecto = me.lookupReference('cuotaIRPFImpD').getValue();
     	var cuota = 0;
+    	var tipoRetencion = me.lookupReference('comboTipoRetencionRef').getValue();
+    	var despues = false;
+    	
+    	if(CONST.TIPO_RETENCION['DESPUES'] == tipoRetencion ){
+    		despues = true;
+    	}
+
+    	if(!me.lookupReference('lineaDetalleGastoGrid').getStore().loading){
+    		base = me.getImporteRetencionLineasDetalle(me, despues);
+    	}else{
+    		base = me.getViewModel().get('detalleeconomico.baseRetG');
+    	}
     
     	if(tipoImpositivo != null && base != null){
     		cuota = (tipoImpositivo * base)/100;
     	}
-    	
+
+    	me.lookupReference('baseIRPFRetG').setValue(base);
     	me.lookupReference('cuotaIRPFRetG').setValue(cuota);
+
     	me.onChangeCuotaImpuestoDirecto(me,checked);
     },
     
@@ -2240,15 +2246,19 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     		cuota = (tipoImpositivo * base)/100;
     	}
     	
+    	var importeTotal = 0;
     	me.lookupReference('cuotaIRPFImpD').setValue(cuota);
+
+    	if(!me.lookupReference('lineaDetalleGastoGrid').getStore().loading){
+    		importeTotal = me.getImporteTotalLineasDetalle(me);
+    		importeTotal = importeTotal - cuota;
+    		if(cuotaRetG != null && cuotaRetG != undefined && value){
+    			importeTotal = importeTotal - cuotaRetG;
+    		}
+    	}else{
+    		importeTotal = me.getViewModel().get('detalleeconomico.importeTotal'); 
+    	}
     	
-    	var importeTotal = me.getImporteTotalLineasDetalle(me);
-    	
-		importeTotal = importeTotal - cuota;
-		 
-		if(cuotaRetG != null && cuotaRetG != undefined && value){
-			importeTotal = importeTotal - cuotaRetG;
-		}
 		me.lookupReference('importeTotalGastoDetalle').setValue(importeTotal);
 		if(!Ext.isEmpty(valFechaPago)){
 			me.lookupReference('detalleEconomicoImportePagado').setValue(importeTotal);
@@ -2750,5 +2760,21 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
             	window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
             }
         });
+    },
+    
+    getImporteRetencionLineasDetalle: function(me, despues){
+    	var importeTotal = 0;
+
+    	if(me.lookupReference('lineaDetalleGastoGrid').getStore() != null && me.lookupReference('lineaDetalleGastoGrid').getStore() != undefined){
+    		for(var i = 0; i < me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items.length; i++){
+    			importeTotal+= parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('baseSujeta'));
+    			importeTotal+= parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('baseNoSujeta'));
+    			if(despues){
+    				importeTotal+= parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('cuota'));
+    			}
+    		}
+    	}
+    	
+    	return importeTotal;
     }
 });

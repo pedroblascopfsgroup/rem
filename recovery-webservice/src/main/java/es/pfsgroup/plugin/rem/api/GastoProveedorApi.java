@@ -428,5 +428,10 @@ public interface GastoProveedorApi {
 
 		String getCodigoCarteraGastoByIdGasto(Long idGasto);
 
+		Double recalcularImporteRetencionGarantia(GastoDetalleEconomico gasto);
+
+		Double recalcularCuotaRetencionGarantia(GastoDetalleEconomico detalleGasto, Double importeGarantiaBase);
+
+
 }
 

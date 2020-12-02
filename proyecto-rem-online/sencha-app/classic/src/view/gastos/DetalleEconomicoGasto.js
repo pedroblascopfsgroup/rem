@@ -162,8 +162,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.retencion.garantia.aplica'),
 														    bind: {
 													        	value: '{detalleeconomico.retencionGarantiaAplica}'
-													        	},
-												       		
+													        },
 												       		listeners: {
 												       			change: 'onChangeRetencionGarantiaAplica'
 												       		}
@@ -179,36 +178,31 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										            			disabled:'{!detalleeconomico.retencionGarantiaAplica}'
 
 															}, 
-															allowBlank: true
+															allowBlank: true,
+															listeners:{
+																select: 'onChangeCuotaRetencionGarantia'	
+															}
 										           		},
 														{ 
 															xtype: 'currencyfieldbase',
 															symbol: HreRem.i18n("symbol.euro"),
 															reference:'baseIRPFRetG',
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.retencion.base'),
-											                bind: {value: '{detalleeconomico.baseRetG}',
-											                	   disabled: '{!detalleeconomico.retencionGarantiaAplica}'},
-										                	listeners: {
-										                		edit: function(){
-										        					if(this.getValue()==0)
-										        						this.setValue('');
-										        				},
-																update: function(){
-																	if(Ext.isEmpty(this.getValue()))
-																		this.setValue(0);
-																},
-																change: 'onChangeCuotaRetencionGarantia'	
-														    													    		
-														    	
-														    }
+											                bind: {
+											                	   value: '{detalleeconomico.baseRetG}',
+											                	   disabled: '{!detalleeconomico.retencionGarantiaAplica}'
+											                },
+											                readOnly:true
 														},
 														{ 
 															xtype: 'numberfieldbase',
 															symbol: HreRem.i18n("symbol.porcentaje"),
 											        		reference: 'irpfTipoImpositivoRetG',     	
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.tipo.impositivo'),
-											                bind: {value :'{detalleeconomico.irpfTipoImpositivoRetG}',
-											                	disabled: '{!detalleeconomico.retencionGarantiaAplica}'},
+											                bind: {
+											                	value :'{detalleeconomico.irpfTipoImpositivoRetG}',
+											                	disabled: '{!detalleeconomico.retencionGarantiaAplica}'
+											                },
 										                	listeners: {
 										                		edit: function(){
 										        					if(this.getValue()==0)

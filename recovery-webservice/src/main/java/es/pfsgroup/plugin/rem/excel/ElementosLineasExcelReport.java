@@ -49,6 +49,8 @@ public class ElementosLineasExcelReport extends AbstractExcelReport implements E
 			
 			if(elemento.getIdLinea() != null) {
 				fila.add(elemento.getIdLinea().toString());
+			}else {
+				fila.add("-");
 			}
 			fila.add(elemento.getDescripcionLinea());
 			fila.add(elemento.getTipoElemento());

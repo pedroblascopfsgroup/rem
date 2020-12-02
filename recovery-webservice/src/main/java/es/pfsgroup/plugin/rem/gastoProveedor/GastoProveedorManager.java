@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.gastoProveedor;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -1468,16 +1470,22 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if(dto.getIrpfTipoImpositivoRetG() != null) {
 					detalleGasto.setRetencionGarantiaTipoImpositivo(dto.getIrpfTipoImpositivoRetG());
 				}
-				if( dto.getBaseRetG() != null) {
-					detalleGasto.setRetencionGarantiaBase(dto.getBaseRetG());
-				}
 
-				if(dto.getIrpfCuotaRetG() != null) {
-					detalleGasto.setRetencionGarantiaCuota(dto.getIrpfCuotaRetG());
-				}
+				Double importeGarantiaBase = recalcularImporteRetencionGarantia(detalleGasto);
+				detalleGasto.setRetencionGarantiaBase(importeGarantiaBase);
+				Double importeCuota = this.recalcularCuotaRetencionGarantia(gasto.getGastoDetalleEconomico(), importeGarantiaBase);
+				gasto.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuota);
+				
 				
 				Double importeTotal = recalcularImporteTotalGasto(detalleGasto);
 				detalleGasto.setImporteTotal(importeTotal);
+				
+				if((dto.getRetencionGarantiaAplica() != null || dto.getTipoRetencionCodigo() != null || dto.getIrpfTipoImpositivoRetG() != null) 
+				&& (gasto != null && gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null &&
+					DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo()))) {
+						gastoLineaDetalleApi.actualizarDiariosLbk(gasto.getId());
+				}
+						
 				
 				genericDao.update(GastoDetalleEconomico.class, detalleGasto);
 			}
@@ -4082,4 +4090,51 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		
 	}
+	
+	@Override
+	public Double recalcularImporteRetencionGarantia(GastoDetalleEconomico gasto) {
+		
+		BigDecimal importeRetencionGarantia = new BigDecimal(0);
+		boolean esDespues = false;
+				
+		if(gasto.getTipoRetencion() != null && DDTipoRetencion.CODIGO_TRE_DESPUES.equals(gasto.getTipoRetencion().getCodigo())) {
+			esDespues = true;
+		}
+		
+		if(gasto.getGastoProveedor() != null) {
+
+			Filter filter = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getGastoProveedor().getId());
+			List<GastoLineaDetalle> gastoLineaDetalleList = genericDao.getList(GastoLineaDetalle.class, filter);
+	
+			if(gastoLineaDetalleList != null && !gastoLineaDetalleList.isEmpty()){
+				for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
+					if(gastoLineaDetalle.getPrincipalSujeto() != null) {
+						importeRetencionGarantia = importeRetencionGarantia.add(new BigDecimal(gastoLineaDetalle.getPrincipalSujeto()));
+					}
+					if(gastoLineaDetalle.getPrincipalNoSujeto() != null) {
+						importeRetencionGarantia = importeRetencionGarantia.add(new BigDecimal(gastoLineaDetalle.getPrincipalNoSujeto()));
+					}
+
+					if(esDespues && gastoLineaDetalle.getImporteIndirectoCuota() != null) {
+						importeRetencionGarantia = importeRetencionGarantia.add(new BigDecimal(gastoLineaDetalle.getImporteIndirectoCuota()));
+					}
+				}
+			}
+		}	
+		
+		return importeRetencionGarantia.doubleValue();
+	}
+	
+	@Override 
+	public Double recalcularCuotaRetencionGarantia(GastoDetalleEconomico detalleGasto, Double importeGarantiaBase) {
+		BigDecimal importeCuotaBig  = new BigDecimal(0);
+		if(detalleGasto.getRetencionGarantiaTipoImpositivo() != null) {
+			Double importeCuota = (detalleGasto.getRetencionGarantiaTipoImpositivo() * importeGarantiaBase) / 100;
+			importeCuotaBig = new BigDecimal(importeCuota);
+			importeCuotaBig = importeCuotaBig.round(new MathContext(16, RoundingMode.HALF_UP)); 
+		}
+		
+		return importeCuotaBig.doubleValue();
+	}
+	
 }

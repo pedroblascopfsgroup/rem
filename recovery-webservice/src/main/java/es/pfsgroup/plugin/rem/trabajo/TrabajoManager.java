@@ -3262,13 +3262,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setEsProveedorEditable(true);
 			dtoTrabajo.setEsListadoTarifasEditable(true);
 			dtoTrabajo.setEsListadoPresupuestosEditable(true);
+			dtoTrabajo.setEsGridSuplidosEditable(true);
 		} else if (CASO1_2.equals(casoActual)) {
 			dtoTrabajo.setEsListadoTarifasEditable(true);
 			dtoTrabajo.setEsProveedorEditable(false);
+			dtoTrabajo.setEsGridSuplidosEditable(true);
 		} else if (CASO2.equals(casoActual)) {
 			dtoTrabajo.setEsListadoTarifasEditable(true);
 			dtoTrabajo.setEsListadoPresupuestosEditable(true);
 			dtoTrabajo.setEsProveedorEditable(false);
+			dtoTrabajo.setEsGridSuplidosEditable(true);
 		}
 		
 		if(usuarioCartera != null) {

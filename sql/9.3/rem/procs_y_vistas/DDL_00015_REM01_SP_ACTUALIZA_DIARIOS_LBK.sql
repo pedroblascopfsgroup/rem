@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR= Lara Pablo 
---## FECHA_CREACION=20201116
+--## AUTOR=DAP
+--## FECHA_CREACION=20201202
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12154
+--## INCIDENCIA_LINK=HREOS-12358
 --## PRODUCTO=NO
 --## 
 --## Finalidad:  Creación del SP
@@ -12,7 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1-Versión inicial DAP
---##		0.2-Cambio de count(1) en V_NUM_GASTO por GPV_NUM_GASTO_HAYA
+--##        0.2-Cambio de count(1) en V_NUM_GASTO por GPV_NUM_GASTO_HAYA
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE       SP_ACTUALIZA_DIARIOS (
 
 V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar.
 V_COUNT NUMBER(25); -- Variable para validaciones
+V_COUNT_PRO NUMBER(25);
 V_COUNT_DIARIOS NUMBER(1); -- Variable para informar de diarios actualizados.
 V_COUNT_IMPORTES NUMBER(16); -- Variable para informar de importes actualizados.
 V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema.
@@ -68,7 +69,21 @@ BEGIN
                 AND GLD.GPV_ID = '||GPV_ID;
         EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
 
-        IF V_COUNT = 0 THEN
+        V_SQL := 'SELECT COUNT(1)
+            FROM '||V_ESQUEMA||'.GLD_ENT GEN
+            JOIN '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GLD_ID = GEN.GLD_ID
+                AND GLD.BORRADO = 0
+            JOIN '||V_ESQUEMA||'.DD_ENT_ENTIDAD_GASTO ENT ON ENT.DD_ENT_ID = GEN.DD_ENT_ID
+                AND ENT.BORRADO = 0
+            JOIN '||V_ESQUEMA||'.ACT_ILB_NFO_LIBERBANK ILB ON ILB.ILB_COD_PROMOCION = TO_CHAR(GEN.ENT_ID)
+            LEFT JOIN '||V_ESQUEMA||'.ACT_ETD_ENT_TDI ETD ON ETD.ENT_ID = ILB.ACT_ID
+                AND ETD.BORRADO = 0
+            WHERE GEN.BORRADO = 0
+                AND ENT.DD_ENT_CODIGO IN (''PRO'')
+                AND GLD.GPV_ID = '||GPV_ID;
+        EXECUTE IMMEDIATE V_SQL INTO V_COUNT_PRO;
+
+        IF V_COUNT = 0 AND V_COUNT_PRO = 0 THEN
 
             V_SQL := 'MERGE INTO '||V_ESQUEMA||'.GIL_GASTOS_IMPORTES_LIBERBANK T1
                 USING (
@@ -88,7 +103,7 @@ BEGIN
             EXECUTE IMMEDIATE V_SQL;
 
             RESULTADO := 'KO';
-            COD_RETORNO := 'El gasto '||V_NUM_GASTO||' no tiene distribución por activos/genéricos o han sido eliminados. (Información actualizada el '||V_FECHA||')';
+            COD_RETORNO := 'El gasto '||V_NUM_GASTO||' no tiene distribución por activos, activos genéricos o promociones; o estos han sido eliminados. (Información actualizada el '||V_FECHA||')';
 
         ELSE
 
@@ -105,10 +120,24 @@ BEGIN
                     AND GLD.GPV_ID = '||GPV_ID;
             EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
 
-            IF V_COUNT = 0 THEN
+            V_SQL := 'SELECT COUNT(1)
+                FROM '||V_ESQUEMA||'.GLD_ENT GEN
+                JOIN '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GLD_ID = GEN.GLD_ID
+                    AND GLD.BORRADO = 0
+                JOIN '||V_ESQUEMA||'.DD_ENT_ENTIDAD_GASTO ENT ON ENT.DD_ENT_ID = GEN.DD_ENT_ID
+                    AND ENT.BORRADO = 0
+                JOIN '||V_ESQUEMA||'.ACT_ILB_NFO_LIBERBANK ILB ON ILB.ILB_COD_PROMOCION = TO_CHAR(GEN.ENT_ID)
+                JOIN '||V_ESQUEMA||'.ACT_ETD_ENT_TDI ETD ON ETD.ENT_ID = ILB.ACT_ID
+                    AND ETD.BORRADO = 0
+                WHERE GEN.BORRADO = 0
+                    AND ENT.DD_ENT_CODIGO IN (''PRO'')
+                    AND GLD.GPV_ID = '||GPV_ID;
+            EXECUTE IMMEDIATE V_SQL INTO V_COUNT_PRO;
+
+            IF V_COUNT = 0 AND V_COUNT_PRO = 0 THEN
 
                 RESULTADO := 'KO';
-                COD_RETORNO := 'Sin información de tipos de diario para los activos/genéricos del gasto '||V_NUM_GASTO||'. (Información actualizada el '||V_FECHA||')';
+                COD_RETORNO := 'Sin información de tipos de diario para los activos, activos genéricos o promociones del gasto '||V_NUM_GASTO||'. (Información actualizada el '||V_FECHA||')';
 
             ELSE
 
@@ -277,20 +306,20 @@ BEGIN
     END IF;
 
     V_SQL := 'MERGE INTO '||V_ESQUEMA||'.MSG_CALC_DIARIOS T1
-            USING (SELECT '||GPV_ID||' GPV_ID
-                    , '''||RESULTADO||''' RESULTADO
-                    , '''||COD_RETORNO||''' COD_RETORNO
-                FROM DUAL) T2
-            ON (T1.GPV_ID = T2.GPV_ID)
-            WHEN MATCHED THEN UPDATE SET
-                T1.RESULTADO = T2.RESULTADO
-                , T1.ERR_MSG = T2.COD_RETORNO
-            WHEN NOT MATCHED THEN INSERT (T1.GPV_ID, T1.RESULTADO, T1.ERR_MSG)
-            VALUES (
-                T2.GPV_ID
-                , T2.RESULTADO
-                , T2.COD_RETORNO
-            )';
+        USING (SELECT '||GPV_ID||' GPV_ID
+                , '''||RESULTADO||''' RESULTADO
+                , '''||COD_RETORNO||''' COD_RETORNO
+            FROM DUAL) T2
+        ON (T1.GPV_ID = T2.GPV_ID)
+        WHEN MATCHED THEN UPDATE SET
+            T1.RESULTADO = T2.RESULTADO
+            , T1.ERR_MSG = T2.COD_RETORNO
+        WHEN NOT MATCHED THEN INSERT (T1.GPV_ID, T1.RESULTADO, T1.ERR_MSG)
+        VALUES (
+            T2.GPV_ID
+            , T2.RESULTADO
+            , T2.COD_RETORNO
+        )';
     EXECUTE IMMEDIATE V_SQL;
     COMMIT;
 

@@ -36,6 +36,7 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ComunicacionGencatAdjuntoDao;
@@ -64,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdecuacionGencat;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
@@ -1329,9 +1331,10 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			adecuacionGencat.setNecesitaReforma(false);
 		}else {
 			adecuacionGencat.setNecesitaReforma(true);
+			Filter filtroBien = genericDao.createFilter(FilterType.EQUALS, "bien.numeroActivo", comunicacionGencat.getActivo().getNumActivo());
+			NMBInformacionRegistralBien informacionRegistralBien = genericDao.get(NMBInformacionRegistralBien.class, filtro);
 			
-			BigDecimal bd = new BigDecimal(Float.toString(comunicacionGencat.getActivo().getTotalSuperficieConstruida() * PRECIO_REFORMA_ADECUACION)).setScale(2);
-			adecuacionGencat.setImporteReforma(bd.doubleValue());
+			adecuacionGencat.setImporteReforma(informacionRegistralBien.getSuperficieConstruida().multiply(new BigDecimal(PRECIO_REFORMA_ADECUACION)).setScale(2).doubleValue());
 		}
 		
 		// Creamos la nueva adecuación, habiendo creado previamente la comunicación

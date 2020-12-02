@@ -32,6 +32,7 @@ public class VGridBusquedaActivos implements Serializable {
 	
 	@Column(name = "BBVA_NUM_ACTIVO")
     private String numActivoBbva;
+
 	
 	@Column(name = "NUM_ACTIVO_SAREB")
 	private String numActivoSareb;
@@ -752,5 +753,6 @@ public class VGridBusquedaActivos implements Serializable {
 	public void setCodPromocionBbva(String codPromocionBbva) {
 		this.codPromocionBbva = codPromocionBbva;
 	}
+
     
 }

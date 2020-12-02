@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
 import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
@@ -373,4 +374,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	Long getNextBbvaNumActivo();
 
 	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras);
+
+	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos);
+
+	public List<ActivosAlquilados> getListActivosAlquiladosByIdActivos(List<Long> idActivos);
 }

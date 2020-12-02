@@ -1,8 +1,10 @@
 package es.pfsgroup.plugin.rem.activo.valoracion.dao;
 
 import java.util.Date;
+import java.util.List;
 
 import es.capgemini.pfs.dao.AbstractDao;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
@@ -40,4 +42,6 @@ public interface ActivoValoracionDao extends AbstractDao<ActivoValoraciones, Lon
 	 * @return Devuelve el importe de la valoración.
 	 */
 	Double getImporteValoracionRentaWebPorIdAgrupacion(Long idAgrupacion);
+
+	List<ActivoValoraciones> getListActivoValoracionesByIdActivos(List<Long> idActivos);
 }

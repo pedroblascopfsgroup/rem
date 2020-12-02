@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.activo.valoracion.dao.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,12 +13,17 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.rem.activo.valoracion.dao.ActivoValoracionDao;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 
 @Repository("ActivoValoracionDao")
 public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoraciones, Long> implements ActivoValoracionDao {
@@ -461,6 +467,16 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 		}
 
 		return resultadoPrecioWeb;
+	}
+	
+	@Override
+	public List<ActivoValoraciones> getListActivoValoracionesByIdActivos(List<Long> idActivos) {
+		
+		HQLBuilder hql = new HQLBuilder("from ActivoValoraciones ");
+		HQLBuilder.addFiltroWhereInSiNotNull(hql, "activo", idActivos);
+		hql.orderBy("fechaInicio", HQLBuilder.ORDER_ASC);
+
+		return HibernateQueryUtils.list(this, hql);
 	}
 	
 }

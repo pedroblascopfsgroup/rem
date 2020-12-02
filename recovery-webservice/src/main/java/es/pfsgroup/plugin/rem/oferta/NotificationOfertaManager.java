@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.Properties;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoRestringida;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -626,7 +626,16 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		Activo activo = oferta.getActivoPrincipal();
 		DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
 		List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();
-		Usuario usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		Usuario usuarioBackOffice = null;
+		ActivoLoteComercial agrupacionLoteCom = null;
+		if(oferta.getAgrupacion() != null && oferta.getAgrupacion().getTipoAgrupacion() != null && DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+			agrupacionLoteCom = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
+			if(agrupacionLoteCom != null) {
+				usuarioBackOffice = agrupacionLoteCom.getUsuarioGestorComercialBackOffice();
+			}
+		} else {
+			usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		}
 		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
 		if(!Checks.esNulo(usuarioBackOffice)){	
 			mailsPara.add(usuarioBackOffice.getEmail());
@@ -650,8 +659,21 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			cuerpo = cuerpo + "<p>La ficha estará disponible para su descarga durante 7 días</p>";
 
 			dtoSendNotificator.setTitulo(asunto);
-			dtoSendNotificator.setNumActivo(activo.getNumActivo());
-			dtoSendNotificator.setDireccion(activo.getDireccionCompleta());
+			if(oferta.getAgrupacion() != null) {
+				if(agrupacionLoteCom != null) {
+					dtoSendNotificator.setNumAgrupacion(agrupacionLoteCom.getNumAgrupRem());
+					dtoSendNotificator.setDireccion(agrupacionLoteCom.getDireccion());
+				} else if(oferta.getAgrupacion().getTipoAgrupacion() != null && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+					ActivoRestringida agrupacionRest = genericDao.get(ActivoRestringida.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
+					if (agrupacionRest != null) {
+						dtoSendNotificator.setNumAgrupacion(agrupacionRest.getNumAgrupRem());
+						dtoSendNotificator.setDireccion(agrupacionRest.getDireccion());
+					}
+				}
+			} else {
+				dtoSendNotificator.setNumActivo(activo.getNumActivo());
+				dtoSendNotificator.setDireccion(activo.getDireccionCompleta());
+			}
 			
 			String cuerpoMail = generateBodyMailFichaComercial(dtoSendNotificator,cuerpo,base);
 			

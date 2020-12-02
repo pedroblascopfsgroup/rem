@@ -216,13 +216,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		ventana.show();
 	},
 
-	onTasacionListClick : function(grid, record) {
-
-		var me = this, form = grid.up("form"), model = Ext
-				.create('HreRem.model.ActivoTasacion'), idTasacion = record
-				.get("id");
-
-		var fieldset = me.lookupReference('detalleTasacion');
+	
+	onTasacionListClick: function (grid, record) {
+		var me = this,
+		form = grid.up("form"),
+		model = Ext.create('HreRem.model.ActivoTasacion'),
+		idTasacion = record.get("id");
+		
+		var fieldset =  me.lookupReference('detalleTasacion');
 		fieldset.mask(HreRem.i18n("msg.mask.loading"));
 
 		model.setId(idTasacion);

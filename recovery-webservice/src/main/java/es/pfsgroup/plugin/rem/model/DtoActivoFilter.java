@@ -796,5 +796,5 @@ public class DtoActivoFilter extends WebDto {
 	public void setNumActivoBbva(Long numActivoBbva) {
 		this.numActivoBbva = numActivoBbva;
 	}
-	
+
 }

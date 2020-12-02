@@ -62,7 +62,7 @@ public class DtoExcelFichaComercial extends WebDto {
 	private Date fechaPublicado;
 	private Integer mesesEnVenta;
 	private Integer diasPublicado;
-	private Double diasPVP;
+	private Long diasPVP;
 	private String nombreYApellidosOfertante;
 	private String dniOfertante;
 	private String nombreYApellidosComercial;
@@ -73,40 +73,36 @@ public class DtoExcelFichaComercial extends WebDto {
 	private String correoPrescriptor;
 	private List <DtoActivosFichaComercial> listaActivosFichaComercial;
 	private List <DtoHcoComercialFichaComercial> listaHistoricoOfertas;
-	private List <DtoListFichaAutorizacion> listaFichaAutorizacion;
-	
-	private Long pisosTotales;
-	private Long otros;
-	private Long garajesTotales;
-	private Long viviendasTotalGeneral;
-	private Long ofertaViviendas;
-	private Long ofertaPisos;
-	private Long ofertaOtros;
-	private Long ofertaGaraje;
-	private Long ofertaTotalGeneral;
-	private Long viviendasComite;
-	private Long pisosComite;
-	private Long otrosComite;
-	private Long garajeComite;
-	private Long comiteTotalGeneral;
-	
-	/*public int viviendasTotales() {
-		
-		 int viviendas = 0;
-		
-		if(!Checks.esNulo(this.getListaActivosFichaComercial())) {
-			for (DtoActivosFichaComercial dtoActivosFichaComercial : listaActivosFichaComercial) {
-				if(DDTipoActivo.COD_VIVIENDA.equals(dtoActivosFichaComercial.getTipologia())) {
-					viviendas = viviendas + 1; 
-				}
-				
-			}
-		}
-		
-
-		return viviendas;
-	}*/
-		
+	private List <DtoListFichaAutorizacion> listaFichaAutorizacion;	
+	private Integer nroViviendas;
+	private Integer nroPisos;
+	private Integer nroOtros;
+	private Integer nroGaraje;
+	private Double ofertaViviendas;
+	private Double ofertaPisos;
+	private Double ofertaOtros;
+	private Double ofertaGaraje;
+	private Double pvpComiteViviendas;
+	private Double pvpComitePisos;
+	private Double pvpComiteOtros;
+	private Double pvpComiteGaraje;
+	private Integer nroTotal;
+	private Double ofertaTotal;
+	private Double pvpComiteTotal;
+	private Double m2EdificableTotal;
+	private Double precioComiteTotal;
+	private Double precioPublicacionTotal;
+	private Double precioSueloEpaTotal;
+	private Double tasacionTotal;
+	private Double vncTotal;
+	private Double importeAdjTotal;
+	private Double rentaTotal;
+	private Double ofertaTotalDesglose;
+	private Double eurosM2Total;
+	private Double comisionHayaTotal;
+	private Double gastosPendientesTotal;
+	private Double costesLegalesTotal;
+	private Double ofertaNetaTotal;
 	
 	public Long getNumOferta() {
 		return numOferta;
@@ -325,10 +321,10 @@ public class DtoExcelFichaComercial extends WebDto {
 	public void setDiasPublicado(Integer diasPublicado) {
 		this.diasPublicado = diasPublicado;
 	}
-	public Double getDiasPVP() {
+	public Long getDiasPVP() {
 		return diasPVP;
 	}
-	public void setDiasPVP(Double diasPVP) {
+	public void setDiasPVP(Long diasPVP) {
 		this.diasPVP = diasPVP;
 	}
 	public String getNombreYApellidosOfertante() {
@@ -453,5 +449,178 @@ public class DtoExcelFichaComercial extends WebDto {
 	public void setListaFichaAutorizacion(List <DtoListFichaAutorizacion> listaFichaAutorizacion) {
 		this.listaFichaAutorizacion = listaFichaAutorizacion;
 	}
-	
+	public Integer getNroViviendas() {
+		return nroViviendas;
+	}
+	public void setNroViviendas(Integer nroViviendas) {
+		this.nroViviendas = nroViviendas;
+	}
+	public Integer getNroPisos() {
+		return nroPisos;
+	}
+	public void setNroPisos(Integer nroPisos) {
+		this.nroPisos = nroPisos;
+	}
+	public Integer getNroOtros() {
+		return nroOtros;
+	}
+	public void setNroOtros(Integer nroOtros) {
+		this.nroOtros = nroOtros;
+	}
+	public Integer getNroGaraje() {
+		return nroGaraje;
+	}
+	public void setNroGaraje(Integer nroGaraje) {
+		this.nroGaraje = nroGaraje;
+	}
+	public Double getOfertaViviendas() {
+		return ofertaViviendas;
+	}
+	public void setOfertaViviendas(Double ofertaViviendas) {
+		this.ofertaViviendas = ofertaViviendas;
+	}
+	public Double getOfertaPisos() {
+		return ofertaPisos;
+	}
+	public void setOfertaPisos(Double ofertaPisos) {
+		this.ofertaPisos = ofertaPisos;
+	}
+	public Double getOfertaOtros() {
+		return ofertaOtros;
+	}
+	public void setOfertaOtros(Double ofertaOtros) {
+		this.ofertaOtros = ofertaOtros;
+	}
+	public Double getOfertaGaraje() {
+		return ofertaGaraje;
+	}
+	public void setOfertaGaraje(Double ofertaGaraje) {
+		this.ofertaGaraje = ofertaGaraje;
+	}
+	public Double getPvpComiteViviendas() {
+		return pvpComiteViviendas;
+	}
+	public void setPvpComiteViviendas(Double pvpComiteViviendas) {
+		this.pvpComiteViviendas = pvpComiteViviendas;
+	}
+	public Double getPvpComitePisos() {
+		return pvpComitePisos;
+	}
+	public void setPvpComitePisos(Double pvpComitePisos) {
+		this.pvpComitePisos = pvpComitePisos;
+	}
+	public Double getPvpComiteOtros() {
+		return pvpComiteOtros;
+	}
+	public void setPvpComiteOtros(Double pvpComiteOtros) {
+		this.pvpComiteOtros = pvpComiteOtros;
+	}
+	public Double getPvpComiteGaraje() {
+		return pvpComiteGaraje;
+	}
+	public void setPvpComiteGaraje(Double pvpComiteGaraje) {
+		this.pvpComiteGaraje = pvpComiteGaraje;
+	}
+	public Integer getNroTotal() {
+		return nroTotal;
+	}
+	public void setNroTotal(Integer nroTotal) {
+		this.nroTotal = nroTotal;
+	}
+	public Double getOfertaTotal() {
+		return ofertaTotal;
+	}
+	public void setOfertaTotal(Double ofertaTotal) {
+		this.ofertaTotal = ofertaTotal;
+	}
+	public Double getPvpComiteTotal() {
+		return pvpComiteTotal;
+	}
+	public void setPvpComiteTotal(Double pvpComiteTotal) {
+		this.pvpComiteTotal = pvpComiteTotal;
+	}
+	public Double getM2EdificableTotal() {
+		return m2EdificableTotal;
+	}
+	public void setM2EdificableTotal(Double m2EdificableTotal) {
+		this.m2EdificableTotal = m2EdificableTotal;
+	}
+	public Double getPrecioComiteTotal() {
+		return precioComiteTotal;
+	}
+	public void setPrecioComiteTotal(Double precioComiteTotal) {
+		this.precioComiteTotal = precioComiteTotal;
+	}
+	public Double getPrecioPublicacionTotal() {
+		return precioPublicacionTotal;
+	}
+	public void setPrecioPublicacionTotal(Double precioPublicacionTotal) {
+		this.precioPublicacionTotal = precioPublicacionTotal;
+	}
+	public Double getPrecioSueloEpaTotal() {
+		return precioSueloEpaTotal;
+	}
+	public void setPrecioSueloEpaTotal(Double precioSueloEpaTotal) {
+		this.precioSueloEpaTotal = precioSueloEpaTotal;
+	}
+	public Double getTasacionTotal() {
+		return tasacionTotal;
+	}
+	public void setTasacionTotal(Double tasacionTotal) {
+		this.tasacionTotal = tasacionTotal;
+	}
+	public Double getVncTotal() {
+		return vncTotal;
+	}
+	public void setVncTotal(Double vncTotal) {
+		this.vncTotal = vncTotal;
+	}
+	public Double getImporteAdjTotal() {
+		return importeAdjTotal;
+	}
+	public void setImporteAdjTotal(Double importeAdjTotal) {
+		this.importeAdjTotal = importeAdjTotal;
+	}
+	public Double getRentaTotal() {
+		return rentaTotal;
+	}
+	public void setRentaTotal(Double rentaTotal) {
+		this.rentaTotal = rentaTotal;
+	}
+	public Double getOfertaTotalDesglose() {
+		return ofertaTotalDesglose;
+	}
+	public void setOfertaTotalDesglose(Double ofertaTotalDesglose) {
+		this.ofertaTotalDesglose = ofertaTotalDesglose;
+	}
+	public Double getEurosM2Total() {
+		return eurosM2Total;
+	}
+	public void setEurosM2Total(Double eurosM2Total) {
+		this.eurosM2Total = eurosM2Total;
+	}
+	public Double getComisionHayaTotal() {
+		return comisionHayaTotal;
+	}
+	public void setComisionHayaTotal(Double comisionHayaTotal) {
+		this.comisionHayaTotal = comisionHayaTotal;
+	}
+	public Double getGastosPendientesTotal() {
+		return gastosPendientesTotal;
+	}
+	public void setGastosPendientesTotal(Double gastosPendientesTotal) {
+		this.gastosPendientesTotal = gastosPendientesTotal;
+	}
+	public Double getCostesLegalesTotal() {
+		return costesLegalesTotal;
+	}
+	public void setCostesLegalesTotal(Double costesLegalesTotal) {
+		this.costesLegalesTotal = costesLegalesTotal;
+	}
+	public Double getOfertaNetaTotal() {
+		return ofertaNetaTotal;
+	}
+	public void setOfertaNetaTotal(Double ofertaNetaTotal) {
+		this.ofertaNetaTotal = ofertaNetaTotal;
+	}
 }

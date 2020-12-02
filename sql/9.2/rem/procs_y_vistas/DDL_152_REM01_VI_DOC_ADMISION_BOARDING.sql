@@ -1,7 +1,7 @@
   --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20201009
+--## AUTOR=Vicente Martinez
+--## FECHA_CREACION=20201202
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-11448
@@ -9,6 +9,7 @@
 --## Finalidad: DDL
 --##
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## version 1.1 - Se corrige un join que excluía activos
 --##########################################
 --*/
 
@@ -99,7 +100,7 @@ BEGIN
             FROM REM01.ACT_ADO_ADMISION_DOCUMENTO ADO
             JOIN REM01.ACT_CFD_CONFIG_DOCUMENTO CFD ON ADO.CFD_ID = CFD.CFD_ID
             JOIN REM01.DD_TPD_TIPO_DOCUMENTO TPD ON CFD.DD_TPD_ID = TPD.DD_TPD_ID
-            JOIN REM01.DD_EDC_ESTADO_DOCUMENTO EDC ON ADO.DD_EDC_ID = EDC.DD_EDC_ID))
+            LEFT JOIN REM01.DD_EDC_ESTADO_DOCUMENTO EDC ON ADO.DD_EDC_ID = EDC.DD_EDC_ID))
       GROUP BY ACT_ID';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_DOC_ADMISION_BOARDING...Creada OK');

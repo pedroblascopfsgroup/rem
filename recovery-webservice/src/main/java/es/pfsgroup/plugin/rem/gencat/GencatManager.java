@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.gencat;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -99,6 +100,8 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VExpPreBloqueoGencat;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.VisitaGencat;
+import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDCedulaHabitabilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
@@ -129,6 +132,8 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	private static final String ERROR_FALTA_EMAIL = "Email es un campo obligatorio.";
 	private static final String ERROR_FALTA_COMUNICACION = "El activo no tiene ninguna comunicación asociada.";
 	private static final String ERROR_YA_HAY_VISITA = "Ya se ha solicitado una visita previamente.";
+
+	private static final Float PRECIO_REFORMA_ADECUACION = 52.3f;
 	
 	@Autowired
 	private NotificacionesGencatManager notificacionesGencat;
@@ -1316,6 +1321,18 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		ofertaGencat.setTiposPersona(oferta.getCliente().getTipoPersona());
 		ofertaGencat.setAuditoria(auditoria);
 		ofertaGencat.setVersion(0L);
+		
+
+		ActivoAdmisionRevisionTitulo revisionTitulo = comunicacionGencat.getActivo().getAdmisionRevisionTitulo();
+		DDCedulaHabitabilidad cedula = (revisionTitulo != null) ? revisionTitulo.getCedulaHabitabilidad() : null;
+		if(revisionTitulo != null || cedula != null && cedula.getCodigo().equals(DDCedulaHabitabilidad.CODIGO_OBTENIDO)) {
+			adecuacionGencat.setNecesitaReforma(false);
+		}else {
+			adecuacionGencat.setNecesitaReforma(true);
+			
+			BigDecimal bd = new BigDecimal(Float.toString(comunicacionGencat.getActivo().getTotalSuperficieConstruida() * PRECIO_REFORMA_ADECUACION)).setScale(2);
+			adecuacionGencat.setImporteReforma(bd.doubleValue());
+		}
 		
 		// Creamos la nueva adecuación, habiendo creado previamente la comunicación
 		adecuacionGencat.setComunicacion(comunicacionGencat);

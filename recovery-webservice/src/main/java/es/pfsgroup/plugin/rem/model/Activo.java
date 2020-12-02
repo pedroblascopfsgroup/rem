@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizaciones
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBDDOrigenBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
+import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClasificacionApple;
@@ -564,6 +565,9 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "ACT_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<GastoAsociadoAdquisicion> gastosAsociados;
+    
+    @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private ActivoAdmisionRevisionTitulo admisionRevisionTitulo;
     
     // Getters del activo --------------------------------------------
     
@@ -2154,4 +2158,15 @@ public class Activo implements Serializable, Auditable {
 	public void setTipoTransmision(DDTipoTransmision tipoTransmision) {
 		this.tipoTransmision = tipoTransmision;
 	}
+
+	public ActivoAdmisionRevisionTitulo getAdmisionRevisionTitulo() {
+		return admisionRevisionTitulo;
+	}
+
+	public void setAdmisionRevisionTitulo(ActivoAdmisionRevisionTitulo admisionRevisionTitulo) {
+		this.admisionRevisionTitulo = admisionRevisionTitulo;
+	}
+	
+	
+	
 }

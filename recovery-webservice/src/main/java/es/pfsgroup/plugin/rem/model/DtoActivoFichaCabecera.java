@@ -276,7 +276,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private Boolean pazSocial;
 	private String numActivoDivarian;
-	
 	private Boolean activoEpa;
     private Long empresa;
     private Long oficina;
@@ -285,7 +284,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
     private Long cdpen;
     
 	private String numActivoBbva;
-    private Long idDivarianBbva;
     private Long lineaFactura;
     private Long idOrigenHre;
     private String uicBbva;
@@ -295,6 +293,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
     private String tipoTransmisionDescripcion;
     private String tipoAltaDescripcion;
     private Boolean isGrupoOficinaKAM;
+
 
 	//Estado Admision
 	private Boolean incluidoEnPerimetroAdmision;

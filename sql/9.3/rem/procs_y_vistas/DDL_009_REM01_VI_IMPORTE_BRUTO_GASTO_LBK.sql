@@ -52,31 +52,47 @@ BEGIN
   EXECUTE IMMEDIATE 'CREATE VIEW '|| V_ESQUEMA ||'.V_IMPORTE_BRUTO_GASTO_LBK 
   AS
     SELECT GPV.GPV_ID
-        , CAST(
-            SUM(
-                NVL(GLD.GLD_PRINCIPAL_SUJETO, 0)
-                + NVL(GLD.GLD_PRINCIPAL_NO_SUJETO, 0)
-                + NVL(GLD.GLD_RECARGO, 0)
-                + NVL(GLD.GLD_INTERES_DEMORA, 0)
-                + NVL(GLD.GLD_COSTAS, 0)
-                + NVL(GLD.GLD_OTROS_INCREMENTOS, 0)
-                + NVL(GLD.GLD_PROV_SUPLIDOS, 0)
-            ) AS NUMBER(16,2)
-        ) IMPORTE_BRUTO
-    FROM '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV
-    JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
+        , CASE
+            WHEN TRE.DD_TRE_CODIGO = ''ANT''
+                THEN 
+                    CAST(
+                        SUM(
+                            NVL(GLD.GLD_PRINCIPAL_SUJETO, 0)
+                            + NVL(GLD.GLD_PRINCIPAL_NO_SUJETO, 0)
+                            + NVL(GLD.GLD_RECARGO, 0)
+                            + NVL(GLD.GLD_INTERES_DEMORA, 0)
+                            + NVL(GLD.GLD_COSTAS, 0)
+                            + NVL(GLD.GLD_OTROS_INCREMENTOS, 0)
+                            + NVL(GLD.GLD_PROV_SUPLIDOS, 0)
+                        ) AS NUMBER(16,2)
+                    ) * (1 - GDE.GDE_RET_GAR_TIPO_IMPOSITIVO / 100)
+                ELSE 
+                    CAST(
+                        SUM(
+                            NVL(GLD.GLD_PRINCIPAL_SUJETO, 0)
+                            + NVL(GLD.GLD_PRINCIPAL_NO_SUJETO, 0)
+                            + NVL(GLD.GLD_RECARGO, 0)
+                            + NVL(GLD.GLD_INTERES_DEMORA, 0)
+                            + NVL(GLD.GLD_COSTAS, 0)
+                            + NVL(GLD.GLD_OTROS_INCREMENTOS, 0)
+                            + NVL(GLD.GLD_PROV_SUPLIDOS, 0)
+                        ) AS NUMBER(16,2)
+                    )
+            END AS IMPORTE_BRUTO
+    FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
+    JOIN '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
         AND GLD.BORRADO = 0
-    JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID 
+    JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID 
         AND PRO.BORRADO = 0
-    JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID 
+    JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID 
         AND CRA.BORRADO = 0
-    JOIN '|| V_ESQUEMA ||'.GDE_GASTOS_DETALLE_ECONOMICO GDE ON GDE.GPV_ID = GPV.GPV_ID 
+    JOIN '||V_ESQUEMA||'.GDE_GASTOS_DETALLE_ECONOMICO GDE ON GDE.GPV_ID = GPV.GPV_ID 
         AND GDE.BORRADO = 0
-    LEFT JOIN '|| V_ESQUEMA ||'.DD_TRE_TIPO_RETENCION TRE ON TRE.DD_TRE_ID = GDE.DD_TRE_ID
+    LEFT JOIN '||V_ESQUEMA||'.DD_TRE_TIPO_RETENCION TRE ON TRE.DD_TRE_ID = GDE.DD_TRE_ID
         AND TRE.BORRADO = 0
     WHERE GPV.BORRADO = 0
         AND CRA.DD_CRA_CODIGO = ''08''
-    GROUP BY GPV.GPV_ID';
+    GROUP BY GPV.GPV_ID, GDE.GDE_RET_GAR_TIPO_IMPOSITIVO, TRE.DD_TRE_CODIGO';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_IMPORTE_BRUTO_GASTO_LBK...Creada OK');
   

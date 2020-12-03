@@ -19,7 +19,7 @@ public class DtoHcoComercialFichaComercial extends WebDto {
 	String estado;
 	String desestimado;
 	String motivoDesestimiento;
-	String ffrr;
+	Integer ffrr;
 	Double oferta;
 	Double pvpComite;
 	Double tasacion;
@@ -72,10 +72,10 @@ public class DtoHcoComercialFichaComercial extends WebDto {
 	public void setMotivoDesestimiento(String motivoDesestimiento) {
 		this.motivoDesestimiento = motivoDesestimiento;
 	}
-	public String getFfrr() {
+	public Integer getFfrr() {
 		return ffrr;
 	}
-	public void setFfrr(String ffrr) {
+	public void setFfrr(Integer ffrr) {
 		this.ffrr = ffrr;
 	}
 	public Double getOferta() {

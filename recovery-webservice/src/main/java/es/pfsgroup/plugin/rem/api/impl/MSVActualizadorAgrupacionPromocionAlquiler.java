@@ -866,6 +866,8 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 				actSitPosUA.setSitaucionJuridica(actSitPosAM.getSitaucionJuridica());
 			}
 			//campos obligatorios
+			actSitPosUA.setAuditoria(auditoria);
+			actSitPosUA.setActivo(unidadAlquilable);
 			actSitPosUA.setOcupado(0);
 			actSitPosUA.setAccesoAntiocupa(0);
 			actSitPosUA.setAccesoTapiado(0);

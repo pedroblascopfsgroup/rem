@@ -67,6 +67,7 @@ BEGIN
 	                
 	            -- Añadimos el campo
 	            EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD '||TRIM(V_TMP_TIPO_DATA(1))||' '||TRIM(V_TMP_TIPO_DATA(2))||'';  
+				
 	            V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.'||TRIM(V_TMP_TIPO_DATA(1))||' IS '''||TRIM(V_TMP_TIPO_DATA(3))||'''';
 				EXECUTE IMMEDIATE V_MSQL;
 

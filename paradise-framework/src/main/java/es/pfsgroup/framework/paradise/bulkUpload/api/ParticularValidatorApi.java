@@ -1313,4 +1313,18 @@ public interface ParticularValidatorApi {
 
 	boolean tieneGastoFechaPagado(String idGasto);
 
+	Boolean estadoPrevioTrabajo(String celdaTrabajo);
+
+	Boolean fechaEjecucionCumplimentada(String celdaTrabajo);
+
+	Boolean resolucionComite(String celdaTrabajo);
+
+	Boolean checkComite(String celdaTrabajo);
+
+	Boolean tieneLlaves(String celdaTrabajo);
+
+	Boolean checkLlaves(String celdaTrabajo);
+
+	Boolean checkProveedoresLlaves(String celdaTrabajo);
+
 }

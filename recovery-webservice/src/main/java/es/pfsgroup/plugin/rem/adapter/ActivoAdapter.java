@@ -2048,6 +2048,9 @@ public class ActivoAdapter {
 					}else if (!activo.getTasacion().get(i).isIlocalizable()) {
 						BeanUtils.copyProperty(tasacionDto, "ilocalizable", activo.getTasacion().get(i).isIlocalizable());
 					}
+					if (activo.getTasacion().get(i).getIdExternoBbva() != null) {
+						BeanUtils.copyProperty(tasacionDto, "externoBbva", activo.getTasacion().get(i).getIdExternoBbva());
+					}
 					
 
 				} catch (IllegalAccessException e) {

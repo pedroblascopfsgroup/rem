@@ -87,9 +87,6 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var estadoTrabajo = this.lookupReference('estadoTrabajoSearch').value;
 		var anyoTrabajo = this.lookupReference('anyoTrabajoSearch').value;
 		var codAreaPeticionaria = this.lookupReference('areaPeticionariaSearch').value;
-		
-		debugger;
-		//---------------aqui
 		listaTrabajos.data = [];
 		me.data.acumulador = 0;
 		var boton = me.lookupReference('botonValidarAlbaran');

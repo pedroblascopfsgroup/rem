@@ -2042,14 +2042,15 @@ public class ActivoAdapter {
 								activo.getTasacion().get(i).getCodigoFirmaBbva());
 					}
 
-					
-					if (activo.getTasacion().get(i).isIlocalizable()) {
-						BeanUtils.copyProperty(tasacionDto, "ilocalizable", activo.getTasacion().get(i).isIlocalizable());
-					}else if (!activo.getTasacion().get(i).isIlocalizable()) {
-						BeanUtils.copyProperty(tasacionDto, "ilocalizable", activo.getTasacion().get(i).isIlocalizable());
-					}
-					if (activo.getTasacion().get(i).getIdExternoBbva() != null) {
-						BeanUtils.copyProperty(tasacionDto, "externoBbva", activo.getTasacion().get(i).getIdExternoBbva());
+					if(activo.getTasacion().get(i).isIlocalizable() != null) {
+						if (activo.getTasacion().get(i).isIlocalizable()) {
+							BeanUtils.copyProperty(tasacionDto, "ilocalizable", activo.getTasacion().get(i).isIlocalizable());
+						}else if (!activo.getTasacion().get(i).isIlocalizable()) {
+							BeanUtils.copyProperty(tasacionDto, "ilocalizable", activo.getTasacion().get(i).isIlocalizable());
+						}
+						if (activo.getTasacion().get(i).getIdExternoBbva() != null) {
+							BeanUtils.copyProperty(tasacionDto, "externoBbva", activo.getTasacion().get(i).getIdExternoBbva());
+						}
 					}
 					
 

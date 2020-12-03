@@ -97,7 +97,7 @@ public class MSVMasivaDatosSobreGasto extends AbstractMSVActualizador {
 						gasto.getGastoDetalleEconomico().setFechaPago(null);
 						
 					}else {
-						gasto.getGastoDetalleEconomico().setFechaPago(format.parse(fechaConta));
+						gasto.getGastoDetalleEconomico().setFechaPago(format.parse(fechaPago));
 					}
 				}
 				

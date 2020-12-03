@@ -1214,18 +1214,14 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
 			if(dtoExcelFichaComercial.getVisitas() != null) {
-			c.setCellValue(dtoExcelFichaComercial.getVisitas());
-			}else {
-				c.setCellValue("");		
+				c.setCellValue(dtoExcelFichaComercial.getVisitas());
 			}
 			
 			cellReference = new CellReference("F49");
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
-			if(dtoExcelFichaComercial.getLeads() != null) {
-			c.setCellValue(dtoExcelFichaComercial.getLeads());
-			}else {
-				c.setCellValue("");	
+			if(dtoExcelFichaComercial.getVisitas() != null) {
+				c.setCellValue(dtoExcelFichaComercial.getVisitas());
 			}
 			
 			cellReference = new CellReference("G49");
@@ -1836,11 +1832,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				cellReference = new CellReference("AH" + Integer.toString(currentRowDesglose));
 				r = mySheetDesglose.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(activoFichaComercial.getActivoBbva())) {
-					c.setCellValue(activoFichaComercial.getActivoBbva());
-				} else {
-					c.setCellValue("");
-				}
+				c.setCellValue(activoFichaComercial.getActivoBbva());
 				
 				currentRowDesglose++;
 			}

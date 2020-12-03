@@ -63,7 +63,20 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesSearch', {
 							},
 							displayField : 'descripcion',
 							valueField : 'codigo'
-						}
+						},
+			            { 
+				        	xtype: 'combo',
+				        	fieldLabel:  HreRem.i18n('fieldlabel.trabajo.area.peticionaria'),
+				        	labelWidth:	150,
+				        	reference : 'areaPeticionariaSearch',
+				        	width: 		230,
+				        	name: 'areaPeticionaria',
+				        	bind: {
+			            		store: '{comboIdentificadorReam}'
+			            	},
+			            	displayField: 'descripcion',
+							valueField: 'codigo'
+				        }
 					]
 				},
 				{

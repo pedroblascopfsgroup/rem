@@ -50,6 +50,12 @@ public class VbusquedaPrefacturas implements Serializable{
 	
 	@Column(name = "PFA_FECHA_PREFACTURA")
 	private Date fechaPrefactura;
+	
+	@Column(name = "DD_IRE_DESCRIPCION")
+	private String areaPeticionaria;
+	
+	@Column(name = "DD_IRE_CODIGO")
+	private String codAreaPeticionaria;
 
 	public Long getId() {
 		return id;

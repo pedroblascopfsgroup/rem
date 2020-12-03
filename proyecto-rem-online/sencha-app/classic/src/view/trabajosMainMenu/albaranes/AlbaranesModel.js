@@ -103,6 +103,15 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
 			},
 		    displayField: 'descripcion',
 			valueField: 'id'				
+		},
+		
+		comboIdentificadorReam: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'identificadorReam'}
+			}
 		}
   	
  	}

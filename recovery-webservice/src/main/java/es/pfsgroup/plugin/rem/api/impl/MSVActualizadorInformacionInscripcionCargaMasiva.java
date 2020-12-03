@@ -8,6 +8,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,9 +51,11 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 	@Autowired
 	private GenericAdapter adapter;
 
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
-
 
 	protected static final Log logger = LogFactory.getLog(MSVActualizadorInformacionInscripcionCargaMasiva.class);
 	
@@ -80,6 +83,7 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)throws Exception {
 
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		final String numActivo = exc.dameCelda(fila, COL_NUM.ACT_NUM_ACTIVO);
 		final String situacionTitulo = exc.dameCelda(fila, COL_NUM.SITUACION_TITULO);
@@ -90,7 +94,6 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 		final String fechaNota = exc.dameCelda(fila, COL_NUM.FECHA_NOTA_SIMPLE);
 		final String codAccion = exc.dameCelda(fila, COL_NUM.ACCION);
 
-		TransactionStatus transaction = null;
 		transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 
@@ -179,6 +182,13 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 				llamadaAsincrona.start();
 			}
 		}
+
+		transactionManager.commit(transaction);
+
+		if(activo != null){
+			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+		}
+
 		return new ResultadoProcesarFila();
 	}
 

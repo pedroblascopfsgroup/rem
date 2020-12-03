@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,12 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistr
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
 
 @Component
 public class MSVActualizacionSuperficiesProcesar extends AbstractMSVActualizador implements MSVLiberator {
@@ -46,6 +53,12 @@ public class MSVActualizacionSuperficiesProcesar extends AbstractMSVActualizador
 	
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 	
 	@Override
 	public String getValidOperation() {
@@ -54,6 +67,8 @@ public class MSVActualizacionSuperficiesProcesar extends AbstractMSVActualizador
 	
 	@Override
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		Activo activo = null;
 		NMBInformacionRegistralBien infoRegBien = null;
@@ -108,7 +123,13 @@ public class MSVActualizacionSuperficiesProcesar extends AbstractMSVActualizador
 			genericDao.update(NMBInformacionRegistralBien.class, infoRegBien);
 			genericDao.update(ActivoInfoRegistral.class, infoRegistral);
 			genericDao.update(Activo.class, activo);
-			
+
+			transactionManager.commit(transaction);
+
+			if(activo != null){
+				alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+			}
+
 			return new ResultadoProcesarFila();
 			
 		} else{

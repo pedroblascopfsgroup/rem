@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
+import es.pfsgroup.plugin.rem.model.Activo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +26,12 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
 
 
 @Component
@@ -35,6 +43,11 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 	
 	private static final String FECHA = "fecha";
 	private static final String COMBO_OCUPADO = "comboOcupado";
@@ -45,8 +58,11 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		// TODO Código que guarda las tareas.
-		
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
 		ActivoSituacionPosesoria sitpos = tramite.getActivo().getSituacionPosesoria();
+
 		Filter tituloActivo;
 		DDTipoTituloActivoTPA tipoTitulo;
 		Activo activo = tramite.getActivo();
@@ -88,9 +104,16 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 		}
 		
 		genericDao.save(ActivoSituacionPosesoria.class, sitpos);
+
 		if(activo!=null && sitpos!=null && usu!=null) {			
 			HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,sitpos,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
 			genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+		}
+		
+		transactionManager.commit(transaction);
+
+		if(activo != null){
+			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
 		}
 	}
 

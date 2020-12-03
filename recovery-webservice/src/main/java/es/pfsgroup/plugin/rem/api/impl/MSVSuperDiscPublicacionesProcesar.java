@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -31,6 +34,10 @@ import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDivHorizontal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
 
 /***
  * 
@@ -76,7 +83,12 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
-	
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
+
 	@Override
 	public String getValidOperation() {
 		return VALID_OPERATION;
@@ -86,6 +98,8 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		final String FILTRO_CODIGO = "codigo";
 		final String ARROBA = "@";
@@ -215,6 +229,12 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 			}
 		
 		}
+		transactionManager.commit(transaction);
+
+		if(activo != null){
+			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+		}
+
 		return new ResultadoProcesarFila();
 	}
 

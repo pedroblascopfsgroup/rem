@@ -4,9 +4,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -89,6 +92,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.service.AltaActivoService;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
 
 @Component
 public class AltaActivoFinanciero implements AltaActivoService {
@@ -111,13 +118,18 @@ public class AltaActivoFinanciero implements AltaActivoService {
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
-	
-	
+
 	@Autowired
 	private GestorActivoApi gestorActivoManager;
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 
 	@Override
 	public String[] getKeys() {
@@ -132,6 +144,8 @@ public class AltaActivoFinanciero implements AltaActivoService {
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean procesarAlta(DtoAltaActivoFinanciero dtoAAF) throws Exception {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		// Asignar los datos del DTO al nuevo activo y almacenarlo en la DB.
 		Activo activo = this.dtoToEntityActivo(dtoAAF);
@@ -173,6 +187,12 @@ public class AltaActivoFinanciero implements AltaActivoService {
 			
 		} else {
 			return false;
+		}
+
+		transactionManager.commit(transaction);
+
+		if(activo != null){
+			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
 		}
 
 		return true;
@@ -217,6 +237,8 @@ public class AltaActivoFinanciero implements AltaActivoService {
 	}
 
 	private void dtoToEntitiesOtras(DtoAltaActivoFinanciero dtoAAF, Activo activo) throws Exception {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		// NMBien.
 		NMBBien bien = new NMBBien();
@@ -562,6 +584,12 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
 		BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
 		genericDao.save(ActivoPublicacionHistorico.class, activoPublicacionHistorico);
+
+		transactionManager.commit(transaction);
+
+		if(activo != null){
+			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+		}
 	}
 	
 	private ActivoProveedor obtenerMediador(String nifMediador,Long idActivo){

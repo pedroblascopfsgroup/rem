@@ -11,11 +11,16 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -172,6 +177,12 @@ public class AgendaAdapter {
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 
 	public Page getListTareas(DtoTareaFilter dtoTareaFiltro){
 		DtoTarea dto = new DtoTarea();
@@ -809,12 +820,15 @@ public class AgendaAdapter {
 
 	@Transactional(readOnly = false)
 	public Boolean anularTramiteAlquiler(Long idTramite, String motivo) {
-		
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
+		Activo activo = null;
 		if (idTramite != null) {
 			ActivoTramite tramite = activoTramiteApi.get(idTramite);
 			List<ActivoOferta> activoOfertas = tramite.getActivo().getOfertas();
 			finalizarTramiteYTareas(tramite);
-			Activo activo = tramite.getActivo();
+			activo = tramite.getActivo();
 			
 			
 			DDEstadoOferta ddEstadoOferta;
@@ -904,6 +918,13 @@ public class AgendaAdapter {
 				
 			}
 		}
+
+		transactionManager.commit(transaction);
+
+		if(activo != null){
+			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+		}
+
 		return true;
 	}
 

@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,6 +41,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterService {
@@ -71,6 +78,12 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
+
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresFirma.class);
     
 	private static final String FECHA_FIRMA = "fechaFirma";
@@ -80,6 +93,8 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		DDEstadosExpedienteComercial estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_CIERRE));
@@ -171,7 +186,12 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			}
 		}
 		/////////////////////////////////////////////////////////////////////////////
-		
+
+		transactionManager.commit(transaction);
+
+		if(activo != null){
+			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+		}
 		
 	}
 

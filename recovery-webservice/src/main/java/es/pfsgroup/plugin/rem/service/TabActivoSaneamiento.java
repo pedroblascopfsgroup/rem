@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,6 +47,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloAdicional;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 @Component
 public class TabActivoSaneamiento implements TabActivoService{
@@ -78,6 +83,12 @@ public class TabActivoSaneamiento implements TabActivoService{
 	
 	@Autowired
 	private GestorActivoHistoricoDao gestorActivoDao;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 
 	@Resource
 	private MessageService messageServices;
@@ -400,6 +411,8 @@ public class TabActivoSaneamiento implements TabActivoService{
 	
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto) {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		DtoActivoSaneamiento activoDto = (DtoActivoSaneamiento) webDto;
 		
@@ -546,6 +559,12 @@ public class TabActivoSaneamiento implements TabActivoService{
 			}
 			
 			activo.setInfoAdministrativa(genericDao.save(ActivoInfAdministrativa.class, activo.getInfoAdministrativa()));
+
+			transactionManager.commit(transaction);
+
+			if(activo != null){
+				alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+			}
 			
 		} catch (IllegalAccessException e) {
 			logger.error(e.getMessage());

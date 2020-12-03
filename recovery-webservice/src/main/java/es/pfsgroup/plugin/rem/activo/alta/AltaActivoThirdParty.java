@@ -3,9 +3,12 @@ package es.pfsgroup.plugin.rem.activo.alta;
 import java.util.Calendar;
 import java.util.Date;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -91,7 +94,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.service.AltaActivoService;
 import es.pfsgroup.plugin.rem.service.AltaActivoThirdPartyService;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
+import javax.annotation.Resource;
 
 @Component
 public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
@@ -118,8 +124,12 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
-	
-	
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 	
 	@Override
 	public String[] getKeys() {
@@ -134,6 +144,8 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 	@Override
 	@Transactional()
 	public Boolean procesarAlta(DtoAltaActivoThirdParty dtoAATP) throws Exception {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		// Asignar los datos del DTO al nuevo activo y almacenarlo en la DB.
 		Activo activo = this.dtoToEntityActivo(dtoAATP);
@@ -181,11 +193,20 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 			return false;
 		}
 
+		transactionManager.commit(transaction);
+
+		if(activo != null){
+			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+		}
+
 		return true;
 	}
 
 	//crea un activo a partir del DtoAltaActivoThirdParty que recibe
 	private Activo dtoToEntityActivo(DtoAltaActivoThirdParty dtoAATP) throws Exception{
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
 		DDSubtipoTituloActivo subTipoTitulo = (DDSubtipoTituloActivo) diccionarioApi.dameValorDiccionarioByCod(DDSubtipoTituloActivo.class, dtoAATP.getSubtipoTituloCodigo());
 		DDTipoTituloActivo tipoTitulo = subTipoTitulo.getTipoTituloActivo();
 		DDSubcartera subcartera = (DDSubcartera) diccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, dtoAATP.getCodSubCartera());
@@ -212,11 +233,20 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 		activo.setTieneObraNuevaAEfectosComercializacion(siNoObraNueva);
 		
 		activo = genericDao.save(Activo.class, activo);
+
+		transactionManager.commit(transaction);
+
+		if(activo != null){
+			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+		}
 		return activo;
 	}
 	
 	
-private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) throws Exception {
+	private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) throws Exception {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
 		NMBBien bien = new NMBBien();
 		genericDao.save(NMBBien.class, bien);
 		
@@ -674,6 +704,11 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
 		BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
 		genericDao.save(ActivoPublicacionHistorico.class, activoPublicacionHistorico);
+
+		transactionManager.commit(transaction);
+		if(activo != null){
+			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+		}
 	}
 
 

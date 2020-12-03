@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -78,6 +79,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 @Component
 public class TabActivoDatosRegistrales implements TabActivoService {
@@ -112,6 +117,12 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
@@ -1134,6 +1145,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	}
 	
 	public void comprobacionSuperficiePA(DtoActivoDatosRegistrales activoDto, Long id) {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
 		Activo activoActual = activoApi.get(id);
 		ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivoConFechaBaja(id);
 		boolean isUA = activoDao.isUnidadAlquilable(id);
@@ -1231,6 +1245,12 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			}else if(superficie_parcela > superficieParcelaActivoMatriz) {
 				throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_PARCELA));
 			}
+		}
+
+		transactionManager.commit(transaction);
+
+		if(activoMatriz != null){
+			alaskaComunicacionManager.datosCliente(activoMatriz, new ModelMap());
 		}
 	}
 }

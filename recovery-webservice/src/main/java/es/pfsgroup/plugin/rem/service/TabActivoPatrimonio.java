@@ -7,9 +7,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.dto.WebDto;
@@ -54,6 +57,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 @Component
 public class TabActivoPatrimonio implements TabActivoService {
@@ -89,13 +94,17 @@ public class TabActivoPatrimonio implements TabActivoService {
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
-	
 	@Autowired
 	private ParticularValidatorApi particularValidator;
 
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
+
 	@Override
 	public String[] getKeys() {
 		return this.getCodigoTab();
@@ -185,6 +194,8 @@ public class TabActivoPatrimonio implements TabActivoService {
 	@Transactional()
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto dto) {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		List<ActivoHistoricoPatrimonio> listHistPatrimonio = activoHistoricoPatrimonioDao.getHistoricoAdecuacionesAlquilerByActivo(activo.getId());
 		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
@@ -445,6 +456,12 @@ public class TabActivoPatrimonio implements TabActivoService {
 		//updaterState.updaterStateDisponibilidadComercialAndSave(activo, false);
 		if (activoDao.isUnidadAlquilable(activo.getId())) {
 			activoApi.cambiarSituacionComercialActivoMatriz(activo.getId());
+		}
+
+		transactionManager.commit(transaction);
+
+		if(activo != null){
+			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
 		}
 
 		return activo;

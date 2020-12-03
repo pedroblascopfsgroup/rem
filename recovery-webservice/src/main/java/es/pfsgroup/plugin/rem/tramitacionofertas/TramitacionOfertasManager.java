@@ -9,6 +9,7 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -121,6 +122,7 @@ import es.pfsgroup.plugin.rem.oferta.dao.OfertasAgrupadasLbkDao;
 import es.pfsgroup.plugin.rem.thread.ContenedorExpComercial;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.thread.TramitacionOfertasAsync;
+import org.springframework.ui.ModelMap;
 
 @Service("tramitacionOfertasManager")
 public class TramitacionOfertasManager implements TramitacionOfertasApi {
@@ -219,6 +221,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
 
 	@Override
 	@Transactional(readOnly = false)
@@ -566,6 +571,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	private ExpedienteComercial crearExpedienteGuardado(Oferta oferta, Trabajo trabajo,
 			Oferta ofertaOriginalGencatEjerce, Activo activo) throws Exception {
 
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
 		ExpedienteComercial nuevoExpediente = new ExpedienteComercial();
 
 		if (!Checks.esNulo(oferta.getVisita())) {
@@ -600,6 +607,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		nuevoExpediente.setTipoAlquiler(oferta.getActivoPrincipal().getTipoAlquiler());
 
 		nuevoExpediente = genericDao.save(ExpedienteComercial.class, nuevoExpediente);
+
+		transactionManager.commit(transaction);
+
+		if(activo != null){
+			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+		}
 
 		return nuevoExpediente;
 	}

@@ -5,10 +5,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -69,6 +72,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.service.AltaActivoService;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
 
 @Component @Transactional(readOnly = false)
 public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActualizador implements MSVLiberator {
@@ -105,8 +112,13 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
-	
-	
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
+
 	@Autowired
 	private GestorDocumentalAdapterManager gdAdapterManager;
 	
@@ -123,6 +135,8 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 	@Override
 	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws Exception {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		//-----Usuariocrear, Fechacrear
 		Auditoria auditoria = new Auditoria();
@@ -907,6 +921,13 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		unidadAlquilable.setAdmision(activoMatriz.getAdmision());
 		genericDao.save(Activo.class, unidadAlquilable);
 		listaActivos.add(unidadAlquilable);
+
+		transactionManager.commit(transaction);
+
+		if(unidadAlquilable != null){
+			alaskaComunicacionManager.datosCliente(unidadAlquilable, new ModelMap());
+		}
+
 		return new ResultadoProcesarFila();
 	}
 	

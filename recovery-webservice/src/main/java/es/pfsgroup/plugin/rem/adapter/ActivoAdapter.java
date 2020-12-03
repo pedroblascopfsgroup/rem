@@ -15,6 +15,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -22,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 
@@ -157,6 +159,8 @@ import es.pfsgroup.plugin.rem.thread.EjecutarSPPublicacionAsincrono;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 @Service
 public class ActivoAdapter {
@@ -281,6 +285,9 @@ public class ActivoAdapter {
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -4432,6 +4439,9 @@ public class ActivoAdapter {
 	
 	@Transactional(readOnly = false)
 	public boolean createTasacion(String importeTasacionFin, String tipoTasacionCodigo, String nomTasador, Date fechaValorTasacion, Long idActivo) {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
 		Activo activo = activoApi.get(idActivo);
 		NMBBien bienActivo = activo.getBien();
 		NMBValoracionesBien valoracionBienActivo = new NMBValoracionesBien();
@@ -4470,13 +4480,23 @@ public class ActivoAdapter {
 		activo.getTasacion().add(activoTasacionNuevo);
 		activoApi.saveOrUpdate(activo);
 
+		transactionManager.commit(transaction);
+
+		if(activo != null){
+			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+		}
+
 		return true;
 	}
 	
 	@Transactional(readOnly = false)
 	public boolean saveTasacion(DtoTasacion dtoTasacion) {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTasacion.getId());
 		ActivoTasacion activoTasacion = genericDao.get(ActivoTasacion.class, filtro);
+		Activo activo = activoTasacion.getActivo();
 		
 		if(dtoTasacion.getTipoTasacionCodigo() != null){
 			Filter filtroTipoTasacion = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTasacion.getTipoTasacionCodigo());
@@ -4504,6 +4524,12 @@ public class ActivoAdapter {
 
 		genericDao.save(NMBValoracionesBien.class, valoracionActivoTasacion);
 		genericDao.save(ActivoTasacion.class, activoTasacion);
+
+		transactionManager.commit(transaction);
+
+		if(activo != null){
+			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+		}
 
 		return true;
 	}

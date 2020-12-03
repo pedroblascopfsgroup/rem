@@ -12,6 +12,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -127,6 +128,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 @Component
 public class TabActivoDatosBasicos implements TabActivoService {
@@ -196,7 +201,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	@Autowired
 	private AnotacionApi anotacionApi;
 	
-
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
 	
 	@Autowired
 	private ActivoPatrimonioDao activoPatrimonioDao;
@@ -224,6 +230,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
+
 	
 	@Autowired
 	private ActivoPublicacionDao activoPublicacionDao;
@@ -1208,6 +1218,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto)  throws JsonViewerException {
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
 		DtoActivoFichaCabecera dto = (DtoActivoFichaCabecera) webDto;
 		boolean borrarMotivoExcluirValidaciones = false;
 		
@@ -2080,6 +2092,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					|| dto.getExcluirValidacionesBool()!=null || dto.getMotivoGestionComercialCodigo()!=null)){
 				modificarCheckVisibleGestionComercialRestringida(activo,dto);
 			}
+
+			transactionManager.commit(transaction);
+
+			if(activo != null){
+				alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+			}
+
 		} catch(JsonViewerException jve) {
 			throw jve;
 		} catch (IllegalAccessException e) {

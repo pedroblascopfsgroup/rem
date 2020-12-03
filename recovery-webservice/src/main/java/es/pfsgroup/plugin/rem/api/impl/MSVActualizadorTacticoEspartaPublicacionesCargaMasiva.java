@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +39,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
 
 
 @Component
@@ -74,6 +81,12 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 		
 	@Autowired
 	private TareaActivoDao tareaActivoDao;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
@@ -182,6 +195,8 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 	}
 	
 	private void actualizaDependientesActivo(MSVHojaExcel exc, int fila, Activo activo) throws IOException, ParseException {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		Filter filtroActivoSitPosesoria  = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		ActivoSituacionPosesoria sitPosesoria = genericDao.get(ActivoSituacionPosesoria.class, filtroActivoSitPosesoria);
@@ -246,11 +261,19 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 			
 
 		}
+
+		transactionManager.commit(transaction);
+
+		if(activo != null){
+			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+		}
 	}
 	
 	public void actualizaSituacionPosesoria (MSVHojaExcel exc, int fila, ActivoSituacionPosesoria sitPosesoria,Activo activo) throws IOException, ParseException {
-		
-		
+
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
 		if(sitPosesoria != null ) {
 			Usuario usu = usuarioApi.getUsuarioLogado();
 			String usuarioModificar = usu == null ? MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_TACTICO_ESPARTA_PUBLICACIONES : MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_TACTICO_ESPARTA_PUBLICACIONES + usu.getUsername();
@@ -303,6 +326,12 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 				}
 			
 			}
+		}
+
+		transactionManager.commit(transaction);
+
+		if(activo != null){
+			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
 		}
 	}
 	

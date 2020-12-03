@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUbicaAparcamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
 
 @Component
 public class TabActivoInformacionComercial implements TabActivoService {
@@ -35,9 +42,12 @@ public class TabActivoInformacionComercial implements TabActivoService {
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
-	
-	
-	
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 
 	@Override
 	public String[] getKeys() {
@@ -190,6 +200,9 @@ public class TabActivoInformacionComercial implements TabActivoService {
 
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto) {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
 		DtoActivoInformacionComercial dto = (DtoActivoInformacionComercial) webDto;
 		
 		try {
@@ -287,7 +300,13 @@ public class TabActivoInformacionComercial implements TabActivoService {
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
-		
+
+		transactionManager.commit(transaction);
+
+		if(activo != null){
+			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+		}
+
 		return activo;
 		
 	}

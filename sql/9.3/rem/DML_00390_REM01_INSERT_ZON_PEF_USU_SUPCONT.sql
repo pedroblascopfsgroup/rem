@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20201203
+--## FECHA_CREACION=20201204
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-12356
@@ -43,6 +43,7 @@ DECLARE
       T_FUNCION( 'biglesias', 	'HAYA_SUPER_CONTABILIDAD'  ),
       T_FUNCION( 'cberenguel', 	'HAYA_SUPER_CONTABILIDAD'  ),
       T_FUNCION( 'mcastillol', 	'HAYA_SUPER_CONTABILIDAD'  ),
+      T_FUNCION( 'mcanton', 	'HAYA_SUPER_CONTABILIDAD'  ),
       T_FUNCION( 'atorrecillas', 	'HAYA_SUPER_CONTABILIDAD'  )
     );
     V_TMP_FUNCION T_FUNCION;

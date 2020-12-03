@@ -3315,6 +3315,102 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 
 	}
+	
+	@Override
+	public Boolean estadoPrevioTrabajo(String celdaTrabajo) {
+		if(Checks.esNulo(celdaTrabajo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)  "
+				+"		FROM ACT_TBJ_TRABAJO"
+				+"		WHERE TBJ_NUM_TRABAJO = "+celdaTrabajo+""
+				+"	AND dd_est_id in ('62','65') AND BORRADO= 0");
+
+		return "1".equals(resultado);
+
+	}
+	
+	@Override
+	public Boolean fechaEjecucionCumplimentada(String celdaTrabajo) {
+		if(Checks.esNulo(celdaTrabajo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)  "
+				+"		FROM ACT_TBJ_TRABAJO"
+				+"		WHERE TBJ_NUM_TRABAJO = "+celdaTrabajo+""
+				+"	AND tbj_fecha_ejecutado IS NOT NULL AND BORRADO= 0");
+
+		return "1".equals(resultado);
+
+	}
+	
+	@Override
+	public Boolean resolucionComite(String celdaTrabajo) {
+		if(Checks.esNulo(celdaTrabajo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)  "
+				+"		FROM ACT_TBJ_TRABAJO"
+				+"		WHERE TBJ_NUM_TRABAJO = "+celdaTrabajo+""
+				+"	AND tbj_aplica_comite = '1' AND dd_aco_id = '6' AND BORRADO= 0");
+
+		return "1".equals(resultado);
+
+	}
+	
+	@Override
+	public Boolean checkComite(String celdaTrabajo) {
+		if(Checks.esNulo(celdaTrabajo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)  "
+				+"		FROM ACT_TBJ_TRABAJO"
+				+"		WHERE TBJ_NUM_TRABAJO = "+celdaTrabajo+""
+				+"	AND tbj_aplica_comite = '1' AND BORRADO= 0");
+
+		return "1".equals(resultado);
+
+	}
+	
+	@Override
+	public Boolean tieneLlaves(String celdaTrabajo) {
+		if(Checks.esNulo(celdaTrabajo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("Select count(1) from act_tbj_trabajo tbj  "
+				+"		join cfg_visualizar_llaves cvl on tbj.dd_ttr_id = cvl.dd_ttr_id and tbj.dd_str_id = cvl.dd_str_id and cvl.visualizacion_llaves = 1 and cvl.BORRADO=0 "
+				+"		where tbj.TBJ_NUM_TRABAJO ="+celdaTrabajo+""
+				+"		AND tbj.BORRADO= 0");
+
+		return "1".equals(resultado);
+
+	}
+	
+	@Override
+	public Boolean checkLlaves(String celdaTrabajo) {
+		if(Checks.esNulo(celdaTrabajo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("Select count(1) from act_tbj_trabajo tbj  "
+				+"		where tbj.TBJ_NUM_TRABAJO ="+celdaTrabajo+""
+				+"		and tbj.TBJ_NO_APLICA_LLAVES=1	AND tbj.BORRADO= 0");
+
+		return "1".equals(resultado);
+
+	}
+	
+	@Override
+	public Boolean checkProveedoresLlaves(String celdaTrabajo) {
+		if(Checks.esNulo(celdaTrabajo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("Select count(1) from act_tbj_trabajo tbj  "
+				+"		where tbj.TBJ_NUM_TRABAJO ="+celdaTrabajo+""
+				+"		AND TBJ_FECHA_ENTREGA_LLAVES is not null and PVC_ID_LLAVES is not null	AND tbj.BORRADO= 0");
+
+		return "1".equals(resultado);
+
+	}
 
 	@Override
 	public Boolean existeSubtrabajo(String codSubtrabajo) {

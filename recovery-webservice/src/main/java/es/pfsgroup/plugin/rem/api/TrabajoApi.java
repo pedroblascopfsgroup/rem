@@ -916,4 +916,6 @@ public interface TrabajoApi {
 
 	public Object getExisteTareaWebServiceHaya(String idTareaHaya);
 
+	void EnviarCorreoTrabajos(Trabajo trabajo, String origen);
+
 }

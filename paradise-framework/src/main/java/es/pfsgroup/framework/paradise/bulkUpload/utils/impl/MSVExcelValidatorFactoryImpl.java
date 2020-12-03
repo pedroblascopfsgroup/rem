@@ -227,6 +227,9 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired
 	private MSVValidatorConfiguracionPeriodosVoluntarios cargaMasivaConfiguracionPeriodosVoluntarios;
+	
+	@Autowired
+	private MSVActualizarEstadosTrabajos cargaMasivaEstadoTrabajos;
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -376,6 +379,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return validatorTarifasPresupuesto;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CONFIGURACION_PERIODOS_VOLUNTARIOS.equals(codTipoOperacion)) {
 			return cargaMasivaConfiguracionPeriodosVoluntarios;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_ESTADO_TRABAJOS.equals(codTipoOperacion)) {
+			return cargaMasivaEstadoTrabajos;
 		}
 		
 		return null;

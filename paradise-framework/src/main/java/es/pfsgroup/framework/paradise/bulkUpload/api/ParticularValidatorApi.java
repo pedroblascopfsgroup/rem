@@ -1239,4 +1239,18 @@ public interface ParticularValidatorApi {
 	Boolean existePais(String pais);
 
 	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
+
+	Boolean estadoPrevioTrabajo(String celdaTrabajo);
+
+	Boolean fechaEjecucionCumplimentada(String celdaTrabajo);
+
+	Boolean resolucionComite(String celdaTrabajo);
+
+	Boolean checkComite(String celdaTrabajo);
+
+	Boolean tieneLlaves(String celdaTrabajo);
+
+	Boolean checkLlaves(String celdaTrabajo);
+
+	Boolean checkProveedoresLlaves(String celdaTrabajo);
 }

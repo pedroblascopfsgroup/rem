@@ -75,12 +75,12 @@ public class MSVActualizadorEstadoTrabajos extends AbstractMSVActualizador imple
 			trabajo.setEstado(estadoTrabajo);
 			genericDao.update(Trabajo.class, trabajo);
 
-//			if (DDEstadoTrabajo.ESTADO_VALIDADO.equals(estadoTrabajo.getCodigo())) {
-//				trabajoApi.EnviarCorreoTrabajos(trabajo, EMAIL_VALIDADO);
-//
-//			} else if (DDEstadoTrabajo.CODIGO_ESTADO_RECHAZADO.equals(estadoTrabajo.getCodigo())) {
-//				trabajoApi.EnviarCorreoTrabajos(trabajo, EMAIL_RECHAZADO);
-//			}
+			if (DDEstadoTrabajo.ESTADO_VALIDADO.equals(estadoTrabajo.getCodigo())) {
+				trabajoApi.EnviarCorreoTrabajos(trabajo, EMAIL_VALIDADO);
+
+			} else if (DDEstadoTrabajo.CODIGO_ESTADO_RECHAZADO.equals(estadoTrabajo.getCodigo())) {
+				trabajoApi.EnviarCorreoTrabajos(trabajo, EMAIL_RECHAZADO);
+			}
 
 			if (tmpComentario != null) {
 				agenda = new AgendaTrabajo();

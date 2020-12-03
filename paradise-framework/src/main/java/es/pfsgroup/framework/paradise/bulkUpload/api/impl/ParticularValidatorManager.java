@@ -5810,6 +5810,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	@Override
 	public Boolean gastoRepetido(String factura, String fechaEmision, String nifEmisor, String nifPropietario) {
 		String resultado = "0";
 	
@@ -5846,7 +5847,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 	DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID AND CRA.DD_CRA_CODIGO IN ("+carteras+") "
 				+ "			WHERE PRO.PRO_DOCIDENTIF = '"+docIdent+"' "
 				+ "		 	AND CRA.BORRADO = 0 AND PRO.BORRADO = 0");
+		return !"0".equals(resultado);
+		
+	}
 
+	@Override
+	public boolean conEstadoGasto(String idGasto,String codigoEstado) {
+		if(Checks.esNulo(idGasto) || Checks.esNulo(codigoEstado) || !StringUtils.isNumeric(idGasto) ) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM GPV_GASTOS_PROVEEDOR GASTOS "
+				+ "JOIN DD_EGA_ESTADOS_GASTO DD on GASTOS.DD_EGA_ID = DD.DD_EGA_ID "
+				+ "WHERE GASTOS.GPV_NUM_GASTO_HAYA = '"+idGasto+"' "
+				+ "AND DD.DD_EGA_CODIGO = "+codigoEstado+" "
+				+ "AND GASTOS.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
 	
@@ -5862,7 +5877,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 	GPV_GASTOS_PROVEEDOR GPV ON GPV.PRO_ID = PRO.PRO_ID AND GPV.GPV_NUM_GASTO_HAYA = '"+numGasto+"'"
 				+ "		 	AND GPV.BORRADO = 0 AND PRO.BORRADO = 0");
 
+		return resultado;
+	}
+		
 	
+	@Override
+	public String devolverEstadoGasto(String idGasto) {
+		if(Checks.esNulo(idGasto)) {
+			return null;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT DD.DD_EGA_CODIGO "
+				+ "FROM GPV_GASTOS_PROVEEDOR GASTOS "
+				+ "JOIN DD_EGA_ESTADOS_GASTO DD on GASTOS.DD_EGA_ID = DD.DD_EGA_ID "
+				+ "WHERE GASTOS.GPV_NUM_GASTO_HAYA = '"+idGasto+"' "
+				+ "AND GASTOS.BORRADO = 0 AND DD.BORRADO = 0");
+		
 		return resultado;
 	}
 	
@@ -5887,5 +5916,34 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				);
 
 		return !res.equals("0");
+	}
+
+	@Override
+	public boolean tieneGastoFechaContabilizado(String idGasto) {
+		if(Checks.esNulo(idGasto)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "FROM GPV_GASTOS_PROVEEDOR GPV "
+				+ "JOIN GIC_GASTOS_INFO_CONTABILIDAD GIC on GPV.GPV_ID = GIC.GPV_ID AND GIC.GIC_FECHA_CONTABILIZACION IS NOT NULL "
+				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = '"+idGasto+"' "
+				+ "AND GPV.BORRADO = 0 AND GIC.BORRADO = 0");
+		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public boolean tieneGastoFechaPagado(String idGasto) {
+		if(Checks.esNulo(idGasto)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "FROM GPV_GASTOS_PROVEEDOR GPV "
+				+ "JOIN GDE_GASTOS_DETALLE_ECONOMICO GDE on GPV.GPV_ID = GDE.GPV_ID AND GDE.GDE_FECHA_PAGO IS NOT NULL "
+				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = '"+idGasto+"' "
+				+ "AND GPV.BORRADO = 0 AND GDE.BORRADO = 0");
+		
+		
+		return !"0".equals(resultado);
 	}
 }

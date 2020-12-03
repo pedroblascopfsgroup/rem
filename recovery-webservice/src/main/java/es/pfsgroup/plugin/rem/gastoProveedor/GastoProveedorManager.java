@@ -2056,14 +2056,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto, Long idGasto) throws Exception {
+	public boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto, Long idGasto) {
 		
 		try {
 			DDSinSiNo codSiNo = new DDSinSiNo();
 
 			GastoProveedor gasto = findOne(idGasto);
 			GastoInfoContabilidad contabilidadGasto = gasto.getGastoInfoContabilidad();
+
 			DtoInfoContabilidadGasto dtoIni = infoContabilidadToDtoInfoContabilidad(gasto);			
+
 			if (!Checks.esNulo(contabilidadGasto)) {
 				
 				beanUtilNotNull.copyProperties(contabilidadGasto, dtoContabilidadGasto);
@@ -2074,6 +2076,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 					contabilidadGasto.setEjercicio(ejercicio);
 				}
+
 
 				if(!Checks.esNulo(dtoContabilidadGasto.getComboActivable())) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoContabilidadGasto.getComboActivable());
@@ -2132,7 +2135,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			return true;
 
 		} catch (Exception e) {
-			throw e;
+			logger.error(e.getMessage());
+			return false;
 		}
 	}
 

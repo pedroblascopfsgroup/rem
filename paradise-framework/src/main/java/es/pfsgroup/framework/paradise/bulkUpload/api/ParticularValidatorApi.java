@@ -1304,4 +1304,13 @@ public interface ParticularValidatorApi {
 	boolean existeTipoRetencion(String tipoRetencion);
 
 	boolean existeLineaEnGasto(String idLinea, String numGasto);
+
+	boolean conEstadoGasto(String idGasto,String codigoEstado);
+
+	String devolverEstadoGasto(String idGasto);
+
+	boolean tieneGastoFechaContabilizado(String idGasto);
+
+	boolean tieneGastoFechaPagado(String idGasto);
+
 }

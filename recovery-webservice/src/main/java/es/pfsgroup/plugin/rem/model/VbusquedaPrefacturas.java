@@ -50,6 +50,12 @@ public class VbusquedaPrefacturas implements Serializable{
 	
 	@Column(name = "PFA_FECHA_PREFACTURA")
 	private Date fechaPrefactura;
+	
+	@Column(name = "DD_IRE_DESCRIPCION")
+	private String areaPeticionaria;
+	
+	@Column(name = "DD_IRE_CODIGO")
+	private String codAreaPeticionaria;
 
 	public Long getId() {
 		return id;
@@ -137,6 +143,30 @@ public class VbusquedaPrefacturas implements Serializable{
 
 	public void setFechaPrefactura(Date fechaPrefactura) {
 		this.fechaPrefactura = fechaPrefactura;
+	}
+
+	public Long getAlbaranId() {
+		return albaranId;
+	}
+
+	public void setAlbaranId(Long albaranId) {
+		this.albaranId = albaranId;
+	}
+
+	public String getAreaPeticionaria() {
+		return areaPeticionaria;
+	}
+
+	public void setAreaPeticionaria(String areaPeticionaria) {
+		this.areaPeticionaria = areaPeticionaria;
+	}
+
+	public String getCodAreaPeticionaria() {
+		return codAreaPeticionaria;
+	}
+
+	public void setCodAreaPeticionaria(String codAreaPeticionaria) {
+		this.codAreaPeticionaria = codAreaPeticionaria;
 	}
 	
 }

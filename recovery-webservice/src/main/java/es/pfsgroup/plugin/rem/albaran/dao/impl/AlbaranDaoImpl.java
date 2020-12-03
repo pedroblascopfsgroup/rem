@@ -25,6 +25,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.albaran.dao.AlbaranDao;
 import es.pfsgroup.plugin.rem.albaran.dto.DtoAlbaranFiltro;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.Albaran;
 import es.pfsgroup.plugin.rem.model.DtoAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetalleAlbaran;
@@ -42,16 +43,19 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 	@Autowired
 	private GenericABMDao genericDao;
 	
+	@Autowired
+	private TrabajoApi trabajoApi;
+	
 	public Page getAlbaranes(DtoAlbaranFiltro dtoAlbaranes) {
 		
-		HQLBuilder hb = new HQLBuilder("Select id, numAlbaran" + 
-				" , fechaAlbaran" + 
-				" , estadoAlbaran" + 
-				" , numPrefacturas" + 
-				" , numTrabajos" + 
-				" , importeTotal" + 
-				" , importeTotalCliente" +
-				" , validarAlbaran from VbusquedaAlbaranes vba");
+		HQLBuilder hb = new HQLBuilder("Select vba.id, vba.numAlbaran" + 
+				" , vba.fechaAlbaran" + 
+				" , vba.estadoAlbaran" + 
+				" , vba.numPrefacturas" + 
+				" , vba.numTrabajos" + 
+				" , vba.importeTotal" + 
+				" , vba.importeTotalCliente" +
+				" , vba.validarAlbaran from VbusquedaAlbaranes vba");
 		
 		this.rellenaFiltros(hb, dtoAlbaranes);
 		
@@ -111,8 +115,9 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 	}
 	
 	
-	private void rellenaFiltros(HQLBuilder hb, DtoAlbaranFiltro dto) {
+	private void rellenaFiltros(HQLBuilder hb, DtoAlbaranFiltro dto) {	
 		if(dto!= null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vba.ddIreCodigo", dto.getAreaPeticionaria());
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vba.numAlbaran", dto.getNumAlbaran());
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vba.codigoEstadoAlbaran", dto.getEstadoAlbaran());
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vba.numPrefactura", dto.getNumPrefactura());
@@ -148,6 +153,8 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vba.fechaPrefactura",  calendar.getTime(), sumado.getTime());
 				}
 				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vba.anyoTrabajo", dto.getAnyoTrabajo());
+				
+				
 				
 				HQLBuilder.appendGroupBy(hb,
 										"ALB_ID",
@@ -220,8 +227,7 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 			HQLBuilder.parametrizaQuery(query, hq);
 			numPrefacturaList = query.list();
 		}
-		
-		HQLBuilder hb = new HQLBuilder(" from VbusquedaPrefacturas vbp");
+		HQLBuilder hb = new HQLBuilder("from VbusquedaPrefacturas vbp");
 		Albaran alb = genericDao.get(Albaran.class,
 				genericDao.createFilter(FilterType.EQUALS, "numAlbaran", dto.getNumAlbaran()));
 		if(alb == null) {
@@ -256,6 +262,10 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 		}
 		else {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vbp.numPrefactura", dto.getNumPrefactura());
+		}
+		
+		if(dto.getCodAreaPeticionaria() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vbp.codAreaPeticionaria", dto.getCodAreaPeticionaria());
 		}
 		
 		return HibernateQueryUtils.page(this, hb, dto);

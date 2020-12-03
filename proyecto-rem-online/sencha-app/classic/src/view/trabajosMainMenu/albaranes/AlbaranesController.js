@@ -86,6 +86,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var numTrabajo = this.lookupReference('numTrabajoSearch').value;
 		var estadoTrabajo = this.lookupReference('estadoTrabajoSearch').value;
 		var anyoTrabajo = this.lookupReference('anyoTrabajoSearch').value;
+		var codAreaPeticionaria = this.lookupReference('areaPeticionariaSearch').value;
 		listaTrabajos.data = [];
 		me.data.acumulador = 0;
 		var boton = me.lookupReference('botonValidarAlbaran');
@@ -93,7 +94,6 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		if (exportarTrabajosPrefacturas) {
 			this.lookupReference('btnExportarPrefactura').setDisabled(false);
 		}
-		
 		if(!Ext.isEmpty(grid.selection)){
 			listaDetalleAlbaran.getStore().getProxy().setExtraParams({
                 numAlbaran: record.data.numAlbaran,
@@ -102,7 +102,8 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
                 estadoAlbaran: estadoPrefactura,
                 numTrabajo: numTrabajo,
                 estadoTrabajo: estadoTrabajo,
-                anyoTrabajo: anyoTrabajo
+                anyoTrabajo: anyoTrabajo,
+                codAreaPeticionaria: codAreaPeticionaria
             });
 			listaDetalleAlbaran.getStore().loadPage(1);
 			listaTrabajos.getStore().removeAll();

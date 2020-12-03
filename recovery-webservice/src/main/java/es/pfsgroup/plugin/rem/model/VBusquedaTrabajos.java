@@ -122,6 +122,18 @@ public class VBusquedaTrabajos implements Serializable {
 	
 	@Column(name="EN_OTRO_GASTO")
 	private Boolean enOtroGasto;
+	
+	@Column(name="DD_IRE_DESCRIPCION")
+	private String areaPeticionaria;
+
+	
+	public String getAreaPeticionaria() {
+		return areaPeticionaria;
+	}
+
+	public void setAreaPeticionaria(String areaPeticionaria) {
+		this.areaPeticionaria = areaPeticionaria;
+	}
 
 	public Integer getCubreSeguro() {
 		return cubreSeguro;

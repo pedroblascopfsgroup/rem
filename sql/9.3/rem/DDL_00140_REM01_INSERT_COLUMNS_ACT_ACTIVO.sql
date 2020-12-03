@@ -1,7 +1,7 @@
 --/* 
 --##########################################
---## AUTOR=Carlos Augusto
---## FECHA_CREACION=20201118
+--## AUTOR=Javier Urbán
+--## FECHA_CREACION=20201205
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-12187
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
+--##		v1:Carlos Augusto
 --##########################################
 --*/
 
@@ -65,7 +66,7 @@ BEGIN
 	                
 	            -- Añadimos el campo
 	            EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD '||TRIM(V_TMP_TIPO_DATA(1))||' '||TRIM(V_TMP_TIPO_DATA(2))||'';  
-				V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT FK_ACT_OVN_COMERC FOREIGN KEY (ACT_OVN_COMERC) REFERENCES '||V_ESQUEMA_M||'.DD_SIN_SINO (DD_SIN_ID))';
+				V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT FK_SIN_OVN_COMERCIAL FOREIGN KEY (ACT_OVN_COMERC) REFERENCES '||V_ESQUEMA_M||'.DD_SIN_SINO (DD_SIN_ID))';
 				EXECUTE IMMEDIATE V_MSQL;
 	            V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.'||TRIM(V_TMP_TIPO_DATA(1))||' IS '''||TRIM(V_TMP_TIPO_DATA(3))||'''';
 				EXECUTE IMMEDIATE V_MSQL;

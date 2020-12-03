@@ -1,7 +1,10 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
@@ -39,30 +43,25 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract {
 	
 	private final String ID_NO_EXISTE = "msg.error.masivo.gastos.id.no.existe";
-	private final String FECHAS_MULTIPLES = "msg.error.masivo.gastos.fechas.multiples";
 	private final String ESTADO_GASTO_INCORRECTO = "msg.error.masivo.gastos.estado.incorrecto";;
 	private final String VALIDAR_FILA_EXCEPTION = "msg.error.masivo.gastos.exception";
+	private final String FECHA_INCORRECTA = "msg.error.masivo.gastos.exception.fecha";
+	private final String FECHAS_VACIAS = "msg.error.masivo.gastos.fechas.vacias";
+	private final String SIN_FECHA_CONTABILIZADO = "msg.error.masivo.gastos.exception.gasto.sin.fecha.contabilizado";
+	private final String SIN_FECHA_PAGADO = "msg.error.masivo.gastos.exception.gasto.sin.fecha.pagado";
 	
 	
-	private final String PAGADO_SIN_JUSTIFICANTE= "13";
-	private final String INCOMPLETO= "12";
-	private final String SUBSANADO_GESTOR= "11";
-	private final String SUBSANADO= "10";
-	private final String AUTORIZADO_PROPIETARIO= "09";
-	private final String RECHAZADO_PROPIETARIO= "08";
-	private final String RETENIDO= "07";
-	private final String ANULADO= "06";
+
 	private final String PAGADO= "05";
 	private final String CONTABILIZADO= "04";
-	private final String AUTORIZADO= "03";
-	private final String RECHAZADO= "02";
-	private final String PENDIENTE= "01";
+	private final String AUTORIZADO_ADMIN= "03";
+
+	private final String BORRAR = "X";
 
 	
 	private final int FILA_CABECERA = 0;
 	private final int FILA_DATOS = 1;
 
-	private final int NUM_COLS = 3;	
 	private final int COL_ID_GASTO = 0;
 	private final int COL_FECHA_CONTA = 1;
 	private final int COL_FECHA_PAGO = 2;
@@ -71,9 +70,7 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 	private Integer numFilasHoja;	
 	private Map<String, List<Integer>> mapaErrores;	
 	private final Log logger = LogFactory.getLog(getClass());
-	private boolean existeGasto = false;
-	
-	
+		
 	
 
 	@Autowired
@@ -91,30 +88,23 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
 
-	@Autowired
-	private ApiProxyFactory proxyFactory;
-
 	@Resource
 	MessageService messageServices;
 
-	@Autowired
-	private GenericABMDao genericDao;
-	
 	
 	private void generarMapaErrores() {
 		mapaErrores = new HashMap<String, List<Integer>>();
 		mapaErrores.put(messageServices.getMessage(ID_NO_EXISTE), new ArrayList<Integer>());
-		//mapaErrores.put(messageServices.getMessage(FORMATO_FECHA_INCORRECTO), new ArrayList<Integer>());
-		mapaErrores.put(messageServices.getMessage(FECHAS_MULTIPLES), new ArrayList<Integer>());
-		//mapaErrores.put(messageServices.getMessage(GASTO_REPETIDO), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(FECHA_INCORRECTA), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(FECHAS_VACIAS), new ArrayList<Integer>());
 		mapaErrores.put(messageServices.getMessage(ESTADO_GASTO_INCORRECTO), new ArrayList<Integer>());
 		mapaErrores.put(messageServices.getMessage(VALIDAR_FILA_EXCEPTION), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(SIN_FECHA_CONTABILIZADO), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(SIN_FECHA_PAGADO), new ArrayList<Integer>());
 	}
 	
 	
 	private boolean validarFichero(MSVHojaExcel exc) {
-		final String CODIGO_MEDIADOR = "MED";
-		final String PONER_NULL_A_APIS = "0";
 		boolean esCorrecto = true;
 
 		for (int fila = FILA_DATOS; fila < this.numFilasHoja; fila++) {
@@ -124,22 +114,39 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 				String fechaConta = exc.dameCelda(fila, COL_FECHA_CONTA);
 				String fechaPago = exc.dameCelda(fila, COL_FECHA_PAGO);
 
-	
-
+				
 				if (!Checks.esNulo(idGasto) && (!particularValidator.existeGasto(idGasto))) {
 					
 					mapaErrores.get(messageServices.getMessage(ID_NO_EXISTE)).add(fila);
 					esCorrecto = false;
+				}else {
+				
+					if(Checks.esNulo(fechaConta) && Checks.esNulo(fechaPago)) {
+						mapaErrores.get(messageServices.getMessage(FECHAS_VACIAS)).add(fila);
+						esCorrecto = false;
+					}else {
+						if (!this.comprobarFechas(fechaConta) || !this.comprobarFechas(fechaPago)) {
+							mapaErrores.get(messageServices.getMessage(FECHA_INCORRECTA)).add(fila);
+							esCorrecto = false;
+						}
+						
+						if(BORRAR.equalsIgnoreCase(fechaConta) && !particularValidator.tieneGastoFechaContabilizado(idGasto)) {
+							mapaErrores.get(messageServices.getMessage(SIN_FECHA_CONTABILIZADO)).add(fila);
+							esCorrecto = false;
+						}
+						if(BORRAR.equalsIgnoreCase(fechaPago) && !particularValidator.tieneGastoFechaPagado(idGasto)) {
+							mapaErrores.get(messageServices.getMessage(SIN_FECHA_PAGADO)).add(fila);
+							esCorrecto = false;
+						}
+						
+					}
+					
+					if (!this.esCorrectoEstadoGasto(idGasto)) {
+						mapaErrores.get(messageServices.getMessage(ESTADO_GASTO_INCORRECTO)).add(fila);
+						esCorrecto = false;
+					}
 				}
-				if (!Checks.esNulo(fechaConta) && !Checks.esNulo(fechaPago)) {
-					mapaErrores.get(messageServices.getMessage(FECHAS_MULTIPLES)).add(fila);
-					esCorrecto = false;
-				}
-				if (!Checks.esNulo(idGasto) && (particularValidator.conEstadoGasto(idGasto, INCOMPLETO) || particularValidator.conEstadoGasto(idGasto, ANULADO))) {
-					mapaErrores.get(messageServices.getMessage(ESTADO_GASTO_INCORRECTO)).add(fila);
-					esCorrecto = false;
-				}
-	
+		
 
 			} catch (Exception e) {
 				mapaErrores.get(messageServices.getMessage(VALIDAR_FILA_EXCEPTION)).add(fila);
@@ -222,6 +229,35 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 		}
 		return resultado;
 	}
+	
+	private boolean esCorrectoEstadoGasto(String idGasto) {
+		String estadoGasto = particularValidator.devolverEstadoGasto(idGasto);
+		List<String> listaEstadosValidos = Arrays.asList(new String[] { AUTORIZADO_ADMIN, PAGADO , CONTABILIZADO });
+		if(!listaEstadosValidos.contains(estadoGasto)) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	
+	private boolean comprobarFechas(String fecha) {
+		
+		if(BORRAR.equalsIgnoreCase(fecha) || Checks.esNulo(fecha)) {
+			return true;
+		}
+		
+		try {
+			SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+            formatoFecha.setLenient(false);
+            formatoFecha.parse(fecha);
+		} catch (ParseException e) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 	
 
 }

@@ -1235,4 +1235,10 @@ public interface ParticularValidatorApi {
 	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
 	
 	boolean conEstadoGasto(String idGasto,String codigoEstado);
+
+	String devolverEstadoGasto(String idGasto);
+
+	boolean tieneGastoFechaContabilizado(String idGasto);
+
+	boolean tieneGastoFechaPagado(String idGasto);
 }

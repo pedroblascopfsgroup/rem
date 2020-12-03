@@ -33,7 +33,7 @@ Ext.define('HreRem.model.DetalleAlbaranGridModel', {
     			name:'numeroTrabajos'
     		},
     		{
-    			name:'areaPeticionaria'
+    			name:'areaPeticionaria' 
     		}
     		
     ]

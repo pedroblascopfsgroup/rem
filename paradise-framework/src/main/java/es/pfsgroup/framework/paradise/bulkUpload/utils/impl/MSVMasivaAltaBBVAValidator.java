@@ -107,6 +107,8 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 	public static final String TIPO_DE_COMERCIALIZACION_INCORRECTO = "El tipo de comercialización es incorrecto";
 	public static final String TIPO_DE_TITULO_BBVA_IS_NULL = "El campo Tipo de Titulo (BBVA) no puede estar vacío";
 	public static final String INDICADOR_ACTIVO_EPA_BBVA_IS_NULL ="El campo Indicador Activo EPA (BBVA) no puede estar vacío";
+	public static final String NUM_ACTIVO_BBVA_IS_NAN = "El Número de Activo BBVA (BBVA) no tiene un formato numérico válido";
+	//public static final String ID_APP_DIVARIAN_IS_NAN = "El ID App Divarian no tiene un formato numérico válido";
 	public static final String ID_HAYA_ORIGEN_IS_NAN = "El ID HAYA Origen no tiene un formato numérico válido";
 	public static final String EMPRESA_CM_IS_NAN = "El campo Empresa (Cuenta de mora) no tiene un formato numérico válido";
 	public static final String OFICINA_CM_IS_NAN = "El campo Oficina (Cuenta de mora) no tiene un formato numérico válido";
@@ -246,68 +248,71 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 		static final int NIF_CIF_PROPIETARIO = 76;
 		
 		//BBVA
-		static final int ACTIVO_BBVA = 77;
-		static final int TIPO_TITULO_BBVA = 78;
-		static final int SEGMENTO_BBVA = 79;
-		static final int ID_HAYA_ORIGEN_BBVA = 80;
-		static final int TIPO_TRANSMISION_BBVA = 81;
-		static final int TIPO_DE_ALTA_BBVA = 82;
-		static final int IUC_BBVA = 83;
-		static final int CEXPER_BBVA = 84;
-		static final int INDICADOR_ACTIVO_EPA_BBVA = 85;
-		
+
+		static final int ACTIVO_BBVA = 76;
+		//static final int ID_APP_DIVARIAN_BBVA = 77;
+		static final int TIPO_TITULO_BBVA = 77;
+		static final int SEGMENTO_BBVA = 78;
+		static final int ID_HAYA_ORIGEN_BBVA = 79;
+		static final int TIPO_TRANSMISION_BBVA = 80;
+		static final int TIPO_DE_ALTA_BBVA = 81;
+		static final int IUC_BBVA = 82;
+		static final int CEXPER_BBVA = 83;
+		static final int INDICADOR_ACTIVO_EPA_BBVA = 84;
+
 		//CUENTA DE MORA
-		static final int EMPRESA_CM = 86;
-		static final int OFICINA_CM = 87;
-		static final int CONTRAPARTIDA_CM = 88;
-		static final int FOLIO_CM = 89;
-		static final int CDPEN_CM = 90;
+		static final int EMPRESA_CM = 85;
+		static final int OFICINA_CM = 86;
+		static final int CONTRAPARTIDA_CM = 87;
+		static final int FOLIO_CM = 88;
+		static final int CDPEN_CM = 89;
 		
 		//VPO
-		static final int REGIMEN_DE_PROTECCION_VPO = 91;
-		static final int DESCALIFICADO_VPO = 92;
-		static final int FECHA_CALIFICACION_VPO = 93;
-		static final int N_EXPEDIENTE_CALIFICACION_VPO = 94;
-		static final int F_FIN_VIGENCIA_VPO=95;
-		static final int PRECISA_COMUNICAR_VPO = 96;
-		static final int NECESARIO_INSCRIBIR_EN_REGISTRO_VPO = 97;
+		static final int REGIMEN_DE_PROTECCION_VPO = 90;
+		static final int DESCALIFICADO_VPO = 91;
+		static final int FECHA_CALIFICACION_VPO = 92;
+		static final int N_EXPEDIENTE_CALIFICACION_VPO = 93;
+		static final int F_FIN_VIGENCIA_VPO=94;
+		static final int PRECISA_COMUNICAR_VPO = 95;
+		static final int NECESARIO_INSCRIBIR_EN_REGISTRO_VPO = 96;
 
 		
 		//DEUDOR ACREDITADO 1
-		static final int TIPO_DOCUMENTO_DEUDOR1= 98;
-		static final int N_DOCUMENTO_DEUDOR1= 99;
-		static final int RAZON_SOCIAL_DEUDOR1 = 100;
-		static final int APELLIDO_DEUDOR1 = 101;
-		static final int APELLIDO2_DEUDOR1 = 102;
+		static final int TIPO_DOCUMENTO_DEUDOR1= 97;
+		static final int N_DOCUMENTO_DEUDOR1= 98;
+		static final int RAZON_SOCIAL_DEUDOR1 = 99;
+		static final int APELLIDO_DEUDOR1 = 100;
+		static final int APELLIDO2_DEUDOR1 = 101;
 		
 		//DEUDOR ACREDITADO 2
-		static final int TIPO_DOCUMENTO_DEUDOR2= 103;
-		static final int N_DOCUMENTO_DEUDOR2= 104;
-		static final int RAZON_SOCIAL_DEUDOR2 = 105;
-		static final int APELLIDO_DEUDOR2 = 106;
-		static final int APELLIDO2_DEUDOR2 = 107;
+		static final int TIPO_DOCUMENTO_DEUDOR2= 102;
+		static final int N_DOCUMENTO_DEUDOR2= 103;
+		static final int RAZON_SOCIAL_DEUDOR2 = 104;
+		static final int APELLIDO_DEUDOR2 = 105;
+		static final int APELLIDO2_DEUDOR2 = 106;
 		
 		//DEUDOR ACREDITADO 3
-		static final int TIPO_DOCUMENTO_DEUDOR3= 108;
-		static final int N_DOCUMENTO_DEUDOR3= 109;
-		static final int RAZON_SOCIAL_DEUDOR3 = 110;
-		static final int APELLIDO_DEUDOR3 = 111;
-		static final int APELLIDO2_DEUDOR3 = 112;
+		static final int TIPO_DOCUMENTO_DEUDOR3= 107;
+		static final int N_DOCUMENTO_DEUDOR3= 108;
+		static final int RAZON_SOCIAL_DEUDOR3 = 109;
+		static final int APELLIDO_DEUDOR3 = 110;
+		static final int APELLIDO2_DEUDOR3 = 111;
 		
 		//DEUDOR ACREDITADO 4
-		static final int TIPO_DOCUMENTO_DEUDOR4= 113;
-		static final int N_DOCUMENTO_DEUDOR4= 114;
-		static final int RAZON_SOCIAL_DEUDOR4 = 115;
-		static final int APELLIDO_DEUDOR4 = 116;
-		static final int APELLIDO2_DEUDOR4 = 117;
+		static final int TIPO_DOCUMENTO_DEUDOR4= 112;
+		static final int N_DOCUMENTO_DEUDOR4= 113;
+		static final int RAZON_SOCIAL_DEUDOR4 = 114;
+		static final int APELLIDO_DEUDOR4 = 115;
+		static final int APELLIDO2_DEUDOR4 = 116;
 		
 		//DEUDOR ACREDITADO 5
-		static final int TIPO_DOCUMENTO_DEUDOR5= 118;
-		static final int N_DOCUMENTO_DEUDOR5= 119;
-		static final int RAZON_SOCIAL_DEUDOR5 = 120;
-		static final int APELLIDO_DEUDOR5 = 121;
-		static final int APELLIDO2_DEUDOR5 = 122;
-				
+
+		static final int TIPO_DOCUMENTO_DEUDOR5= 117;
+		static final int N_DOCUMENTO_DEUDOR5= 118;
+		static final int RAZON_SOCIAL_DEUDOR5 = 119;
+		static final int APELLIDO_DEUDOR5 = 120;
+		static final int APELLIDO2_DEUDOR5 = 121;
+
 	};
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -402,6 +407,8 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS, isCodigoUnidadInferiorMunicipioValido(exc, COL_NUM.COD_UNIDAD_MUNICIPIO));
 			mapaErrores.put(TIPO_DE_TITULO_BBVA_IS_NULL, isColumnNullByRows(exc, COL_NUM.TIPO_TITULO_BBVA));
 			mapaErrores.put(INDICADOR_ACTIVO_EPA_BBVA_IS_NULL, isColumnNullByRows(exc, COL_NUM.INDICADOR_ACTIVO_EPA_BBVA));
+			mapaErrores.put(NUM_ACTIVO_BBVA_IS_NAN, isColumnNANByRows(exc, COL_NUM.ACTIVO_BBVA));
+			//mapaErrores.put(ID_APP_DIVARIAN_IS_NAN, isColumnNANByRowsParaCampoSinObligacion(exc, COL_NUM.ID_APP_DIVARIAN_BBVA));
 			mapaErrores.put(ID_HAYA_ORIGEN_IS_NAN, isColumnNANByRowsParaCampoSinObligacion(exc, COL_NUM.ID_HAYA_ORIGEN_BBVA));
 			mapaErrores.put(EMPRESA_CM_IS_NAN, isColumnNANByRowsParaCampoSinObligacion(exc, COL_NUM.EMPRESA_CM));
 			mapaErrores.put(OFICINA_CM_IS_NAN, isColumnNANByRowsParaCampoSinObligacion(exc, COL_NUM.OFICINA_CM));
@@ -471,7 +478,8 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 					|| !mapaErrores.get(TOMO_REGISTRO_IS_NAN).isEmpty()
 					|| !mapaErrores.get(LIBRO_REGISTRO_IS_NAN).isEmpty()
 					|| !mapaErrores.get(FOLIO_REGISTRO_IS_NAN).isEmpty()
-					
+					|| !mapaErrores.get(NUM_ACTIVO_BBVA_IS_NAN).isEmpty()
+					//|| !mapaErrores.get(ID_APP_DIVARIAN_IS_NAN).isEmpty()
 					|| !mapaErrores.get(ID_HAYA_ORIGEN_IS_NAN).isEmpty()
 					|| !mapaErrores.get(EMPRESA_CM_IS_NAN).isEmpty()
 					|| !mapaErrores.get(OFICINA_CM_IS_NAN).isEmpty()

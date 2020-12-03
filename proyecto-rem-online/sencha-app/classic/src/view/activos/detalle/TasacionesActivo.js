@@ -178,6 +178,36 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 			   		    					allowBlank: false			   				        		
 			   				        	},
 			   				        	flex:3
+			   				        },
+			   				        {   
+			   				        	text: HreRem.i18n('header.listado.tasacion.ilocalizable'),
+			   				        	dataIndex:	'ilocalizable',//
+			   				        	renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+				          				  	var foundedRecord = this.up('activosdetallemain').getViewModel().getStore('comboSiNoBoolean').findRecord('codigo', value)
+				            				var descripcion;
+				        					if(!Ext.isEmpty(foundedRecord)) {
+				        						descripcion = foundedRecord.getData().descripcion;
+				        					}
+				            			return descripcion;
+				        				},
+			   				        	editor: {
+			        						xtype:'combobox',
+							        		bind: {
+							            		store: '{comboSiNoBoolean}',
+							            		value:'{tasacion.ilocalizable}'
+							            	},
+							            	displayField: 'descripcion',
+											valueField: 'codigo'	
+			   				        	},
+			   				        	flex:3
+			   				        },
+			   				        {   
+			   				        	text: HreRem.i18n('header.listado.tasacion.externo.bbva'),
+			   				        	dataIndex:	'externoBbva',
+			   				        	editor: {
+			   				        		xtype:'textfield'			   				        		
+			   				        	},
+			   				        	flex:3
 			   				        }
 							    	        
 			   				    ],

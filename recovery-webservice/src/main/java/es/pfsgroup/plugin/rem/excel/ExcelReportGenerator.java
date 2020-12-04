@@ -711,6 +711,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 			XSSFHyperlink link = myWorkBook.getCreationHelper().createHyperlink(Hyperlink.LINK_URL);
 			XSSFDataFormat dataFormat = myWorkBook.createDataFormat();
+			final DecimalFormat decimalFormat = new DecimalFormat("0.00");
 			
 			// Estilos celdas
 			XSSFFont  font = myWorkBook.createFont();
@@ -1357,6 +1358,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			}else {
 				c.setCellValue("0");	
 			}*/
+			// TODO: Mini graficos - (Sparklines)
 			
 			
 			int currentRowDesglose = 8;
@@ -1841,7 +1843,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			r = mySheetDesglose.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
 			if (!Checks.esNulo(dtoExcelFichaComercial.getEurosM2Total())) {
-				c.setCellValue(dtoExcelFichaComercial.getEurosM2Total().toString());
+				String eurosM2Total = decimalFormat.format(dtoExcelFichaComercial.getEurosM2Total());
+				c.setCellValue(eurosM2Total);
 			} else {
 				c.setCellValue("");
 			}
@@ -1850,7 +1853,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			r = mySheetDesglose.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
 			if (!Checks.esNulo(dtoExcelFichaComercial.getPrecioComiteTotal())) {
-				c.setCellValue(dtoExcelFichaComercial.getPrecioComiteTotal());
+				String precioTotalComite = decimalFormat.format(dtoExcelFichaComercial.getPrecioComiteTotal());
+				c.setCellValue(precioTotalComite);
 			} else {
 				c.setCellValue("");
 			}
@@ -1939,10 +1943,10 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			cellReference = new CellReference("AD5");
 			r = mySheetDesglose.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
-			if (!Checks.esNulo(dtoExcelFichaComercial.getGastosPendientesTotal())) {
+			if (!Checks.esNulo(dtoExcelFichaComercial.getGastosPendientesTotal()) && dtoExcelFichaComercial.getGastosPendientesTotal() > 0) {
 				c.setCellValue(dtoExcelFichaComercial.getGastosPendientesTotal());
 			} else {
-				c.setCellValue("");
+				c.setCellValue(" ");
 			}
 			
 			cellReference = new CellReference("AE5");

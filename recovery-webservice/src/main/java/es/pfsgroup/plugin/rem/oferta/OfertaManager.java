@@ -4910,6 +4910,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					dtoFichaComercial.setMesesEnVenta(this.obtenerTotalDeMesesEnEstadoPublicadoVenta(oferta.getActivoPrincipal().getId()));
 					
 					setInformacionGestorComercial(dtoFichaComercial, oferta.getActivoPrincipal().getId());
+					setInformacionPrescriptorOferta(dtoFichaComercial, oferta);
 					
 				}else {
 					List<ActivoAgrupacionActivo> agrupacionOrdenada = genericDao.getListOrdered(ActivoAgrupacionActivo.class, orderAsc,filtroAgrupacion);
@@ -4955,6 +4956,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (oferta != null && oferta.getOrigenComprador() != null) {
 					dtoFichaComercial.setLeads(oferta.getOrigenComprador().getDescripcion());	
 				}
+				setInformacionPrescriptorOferta(dtoFichaComercial, oferta);
 				dtoFichaComercial.setDireccionComercial(direccion);
 			}else {
 				
@@ -5144,21 +5146,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dtoFichaComercial.setPvpComiteTotal(pvpComiteTotal);
 			}
 			
-			List<ActivoTasacion> tasacionesList = activoDao.getListActivoTasacionByIdActivos(listIdActivos);
 			
-			if(!tasacionesList.isEmpty()) {
-				for(ActivoTasacion actTas : tasacionesList) {
-					if(actTas.getFechaInicioTasacion() != null && actTas.getFechaInicioTasacion().before(dieciochoMesesAtras) && actTas.getImporteTasacionFin() != null) {
-						dtoFichaComercial.setTasacionFromDieciochoMesesOfertaToActual(actTas.getImporteTasacionFin());
-					} else if(actTas.getFechaInicioTasacion() != null && actTas.getFechaInicioTasacion().before(doceMesesAtras) && actTas.getImporteTasacionFin() != null) {
-						dtoFichaComercial.setTasacionFromDoceMesesOfertaToActual(actTas.getImporteTasacionFin());
-					} else if(actTas.getFechaInicioTasacion() != null && actTas.getFechaInicioTasacion().before(seisMesesAtras) && actTas.getImporteTasacionFin() != null) {
-						dtoFichaComercial.setTasacionFromSeisMesesOfertaToActual(actTas.getImporteTasacionFin());
-					} else if(actTas.getImporteTasacionFin() != null) {
-						dtoFichaComercial.setTasacionActual(actTas.getImporteTasacionFin());
-					}
-				}
-			}
+			setTasacionesToDto(dtoFichaComercial, listIdActivos);
 			
 			if(oferta.getImporteOferta() != null) {
 				Double importeOferta = oferta.getImporteOferta();
@@ -5689,6 +5678,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				if(oferta != null && oferta.getActivoPrincipal() != null) {
 					setInformacionGestorComercial(dtoFichaComercial, oferta.getActivoPrincipal().getId());
+					setInformacionPrescriptorOferta(dtoFichaComercial, oferta);
 				}
 				
 				if ( oferta.getOrigenComprador() != null) {
@@ -6017,6 +6007,97 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	}
 	
+	private void setTasacionesToDto(DtoExcelFichaComercial dtoFichaComercial, List<Long> listIdActivos) {
+		Map<Long, DtoExcelFichaComercial> data = new HashMap<Long, DtoExcelFichaComercial>();
+		for (Long idActivo : listIdActivos) {
+			List<ActivoTasacion> tasacionList = activoDao.getListActivoTasacionByIdActivo(idActivo);
+			DtoExcelFichaComercial tmpDto = calculateImporteTasacionesByTasacionList(tasacionList);
+			if ( tmpDto != null) {
+				data.put(idActivo, tmpDto);
+			}		
+		}
+		
+		if ( data.size() == 1 ) {
+			DtoExcelFichaComercial calculatedDto = data.get(listIdActivos.get(0));
+			dtoFichaComercial.setTasacionActual(calculatedDto.getTasacionActual());
+			dtoFichaComercial.setTasacionDieciochoMesesOferta(calculatedDto.getTasacionDieciochoMesesOferta());
+			dtoFichaComercial.setTasacionDoceMesesOferta(calculatedDto.getTasacionDoceMesesOferta());
+			dtoFichaComercial.setTasacionSeisMesesOferta(calculatedDto.getTasacionSeisMesesOferta());
+		} else if ( data.size() > 1) {
+			accumulateTasaciones(dtoFichaComercial, data);
+		}
+		
+	}
+	
+	
+	private DtoExcelFichaComercial calculateImporteTasacionesByTasacionList(List<ActivoTasacion> tasacionList) {
+		if (tasacionList == null || tasacionList.isEmpty()) {
+			return null;
+		}
+		
+		DtoExcelFichaComercial tmpDto = new DtoExcelFichaComercial();
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MONTH, -6);
+		Date seisMesesAtras = calendar.getTime();
+		calendar.add(Calendar.MONTH, -6);
+		Date doceMesesAtras = calendar.getTime();
+		calendar.add(Calendar.MONTH, -6);
+		Date dieciochoMesesAtras = calendar.getTime();
+		
+		for( ActivoTasacion tasacion : tasacionList ) {
+			if ( tasacion.getFechaInicioTasacion() == null || tasacion.getImporteTasacionFin() == null) {
+				continue;
+			}
+			
+			Date fechaInicioTasacion = tasacion.getFechaInicioTasacion();
+			Double importe = tasacion.getImporteTasacionFin();
+			
+			if(fechaInicioTasacion.before(dieciochoMesesAtras)) {
+				tmpDto.setTasacionFromDieciochoMesesOfertaToActual(importe);
+			} else if(fechaInicioTasacion.before(doceMesesAtras)) {
+				tmpDto.setTasacionFromDoceMesesOfertaToActual(importe);
+			} else if(fechaInicioTasacion.before(seisMesesAtras)) {
+				tmpDto.setTasacionFromSeisMesesOfertaToActual(importe);
+			} else {
+				tmpDto.setTasacionActual(importe);
+			}
+		}
+		
+		return tmpDto;
+	}
+	
+
+	private void accumulateTasaciones(DtoExcelFichaComercial dtoFichaComercial, Map<Long, DtoExcelFichaComercial> data) {
+		
+		Double importeFinalTasacionActual = 0.0;
+		Double importeFinalTasacion18Meses = 0.0;
+		Double importeFinalTasacion12Meses = 0.0;
+		Double importeFinalTasacion6Meses = 0.0;
+		
+		for (Map.Entry<Long, DtoExcelFichaComercial> entry : data.entrySet()) {
+			DtoExcelFichaComercial entryData = entry.getValue();
+			importeFinalTasacionActual  += importeFinalTasacionActual  + (entryData.getTasacionActual() 			  == null ? 0 : entryData.getTasacionActual());
+			importeFinalTasacion18Meses += importeFinalTasacion18Meses + (entryData.getTasacionDieciochoMesesOferta() == null ? 0 : entryData.getTasacionDieciochoMesesOferta());
+			importeFinalTasacion12Meses += importeFinalTasacion12Meses + (entryData.getTasacionDoceMesesOferta()      == null ? 0 : entryData.getTasacionDoceMesesOferta());
+			importeFinalTasacion6Meses  += importeFinalTasacion6Meses  + (entryData.getTasacionSeisMesesOferta()      == null ? 0 : entryData.getTasacionSeisMesesOferta());
+		}
+		dtoFichaComercial.setTasacionActual(importeFinalTasacionActual);
+		dtoFichaComercial.setTasacionDieciochoMesesOferta(importeFinalTasacion18Meses);
+		dtoFichaComercial.setTasacionDoceMesesOferta(importeFinalTasacion12Meses);
+		dtoFichaComercial.setTasacionSeisMesesOferta(importeFinalTasacion6Meses);
+		
+	}
+
+	private void setInformacionPrescriptorOferta(DtoExcelFichaComercial dtoFichaComercial, Oferta oferta) {
+		ActivoProveedor prescriptor = this.getPreescriptor(oferta);
+		if ( prescriptor != null ) {
+			dtoFichaComercial.setNombreYApellidosPrescriptor(prescriptor.getNombre());
+			dtoFichaComercial.setTelefonoPrescriptor(prescriptor.getTelefono1());
+			dtoFichaComercial.setCorreoPrescriptor(prescriptor.getEmail());
+		}
+		
+	}
+
 	private void setInformacionGestorComercial(DtoExcelFichaComercial dtoFichaComercial, Long idActivo) {
 		List<DtoListadoGestores> gestoresList = activoAdapterApi.getGestores(idActivo);
 		for (DtoListadoGestores gestor : gestoresList) {

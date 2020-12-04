@@ -5917,9 +5917,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 					+ "		 FROM GPV_GASTOS_PROVEEDOR WHERE "
 					+ "		 GPV_REF_EMISOR = '" +factura+ "'"
-					+ " 	 AND TRUNC(GPV_FECHA_EMISION) = TO_DATE( '"+fechaEmision+"', 'DD/MM/YY') AND "
+					+ " 	 AND "
 					+ "		 PVE_ID_EMISOR IN "
-					+ "		 (SELECT PVE_ID FROM ACT_PVE_PROVEEDOR WHERE PVE_DOCIDENTIF = '"+nifEmisor+"' AND BORRADO = 0 AND PVE_FECHA_BAJA IS NOT NULL) AND "
+					+ "		 (SELECT PVE_ID FROM ACT_PVE_PROVEEDOR WHERE PVE_DOCIDENTIF = '"+nifEmisor+"' AND BORRADO = 0 AND PVE_FECHA_BAJA IS NULL) AND "
 					+ " 	 PRO_ID IN (SELECT PRO_ID FROM ACT_PRO_PROPIETARIO WHERE PRO_DOCIDENTIF = '"+nifPropietario+"' AND BORRADO = 0) "
 					+ "		 AND BORRADO = 0");
 		

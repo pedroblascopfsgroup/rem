@@ -408,7 +408,7 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 				activoBBVA.setFolio(Long.parseLong(colFolio));
 			}
 			if(colCDPEN!=null && !colCDPEN.isEmpty()) {
-				activoBBVA.setCdpen(Long.parseLong(colCDPEN));
+				activoBBVA.setCdpen(colCDPEN);
 			}
 			
 			if(colPromocion != null && !colPromocion.isEmpty()) {

@@ -2990,7 +2990,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String[] asignacionLetraNIF = { "T", "R", "W", "A", "G", "M", "Y", "F", "P", "D", "X", "B", "N", "J", "Z", "S",
 				"Q", "V", "H", "L", "C", "K", "E" };
-		String[] asignacionLetraCIF = { "A", "B", "C", "D", "E", "F", "G", "H", "K", "L", "M", "N", "P", "Q", "S" };
+		String[] asignacionLetraCIF = { "A", "B", "C", "D", "E", "F", "G", "H", "K", "L", "M", "N", "P", "Q", "S" , "U", "V", "W"};
 		int resto;
 		int numDoc;
 		String letraDoc;

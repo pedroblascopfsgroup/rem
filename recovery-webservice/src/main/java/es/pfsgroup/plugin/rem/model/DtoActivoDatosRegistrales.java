@@ -95,7 +95,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String resolucionMoratoriaCodigo;
 	private Date fechaResolucionMoratoria;
 	private String defectosTestimonio;
-	private Long idProcesoOrigen;
+	private String idProcesoOrigen;
 	private String sociedadPagoAnterior;
 	
 	// Mapeados a mano
@@ -771,18 +771,13 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	public void setFechaTituloAnterior(Date fechaTituloAnterior) {
 		this.fechaTituloAnterior = fechaTituloAnterior;
 	}
-	public Long getIdProcesoOrigen() {
-		return idProcesoOrigen;
-	}
-	public void setIdProcesoOrigen(Long idProcesoOrigen) {
-		this.idProcesoOrigen = idProcesoOrigen;
-	}
 	public String getSociedadPagoAnterior() {
 		return sociedadPagoAnterior;
 	}
 	public void setSociedadPagoAnterior(String sociedadPagoAnterior) {
 		this.sociedadPagoAnterior = sociedadPagoAnterior;
 	}
+
 	public String getOrigenAnteriorActivoBbvaCodigo() {
 		return origenAnteriorActivoBbvaCodigo;
 	}
@@ -795,4 +790,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	public void setIdAsuntoRecAlaska(Long idAsuntoRecAlaska) {
 		this.idAsuntoRecAlaska = idAsuntoRecAlaska;
 	}
+
+	public String getIdProcesoOrigen() {
+		return idProcesoOrigen;
+	}
+	public void setIdProcesoOrigen(String idProcesoOrigen) {
+		this.idProcesoOrigen = idProcesoOrigen;
+	}
+
 }

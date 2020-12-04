@@ -25,7 +25,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -6841,6 +6840,48 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return false;
+	}
+	
+	@Override
+	@Transactional
+	public void devolucionFasePublicacionAnterior(Activo activo) {
+		if (activo != null) {
+			String maxId = activoDao.getUltimaFasePublicacion(activo.getId());
+			Filter filtroHist = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(maxId));
+			HistoricoFasePublicacionActivo histo = genericDao.get(HistoricoFasePublicacionActivo.class, filtroHist);
+			Filter filtroFecha = genericDao.createFilter(FilterType.NULL, "fechaFin");
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			HistoricoFasePublicacionActivo histoActual = genericDao.get(HistoricoFasePublicacionActivo.class, filtroFecha,filtroActivo);
+			
+			if(histoActual != null) {
+				histoActual.setFechaFin(new Date());
+				genericDao.update(HistoricoFasePublicacionActivo.class, histoActual);
+			}
+			HistoricoFasePublicacionActivo histoNuevo = new HistoricoFasePublicacionActivo();
+			if(histo.getFasePublicacion() != null) {
+				histoNuevo.setFasePublicacion(histo.getFasePublicacion());
+			}
+			if(histo.getComentario() != null) {
+				histoNuevo.setComentario(histo.getComentario());
+			}
+			if(histo.getSubFasePublicacion() != null) {
+				histoNuevo.setSubFasePublicacion(histo.getSubFasePublicacion());
+			}
+			if(histo.getVersion() != null) {
+				histoNuevo.setVersion(histo.getVersion());
+			}
+			if(histo.getActivo() != null) {
+				histoNuevo.setActivo(histo.getActivo());
+			}
+			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			histoNuevo.setUsuario(usu);
+			histoNuevo.setFechaInicio(new Date());
+			Auditoria aut = new Auditoria();
+			aut.setFechaCrear(new Date());
+			aut.setUsuarioCrear(usu.getUsername());
+			histoNuevo.setAuditoria(aut);
+			genericDao.save(HistoricoFasePublicacionActivo.class, histoNuevo);
+		}
 	}
 
 }

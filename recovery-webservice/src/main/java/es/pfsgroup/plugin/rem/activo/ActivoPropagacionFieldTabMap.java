@@ -569,6 +569,7 @@ public class ActivoPropagacionFieldTabMap {
     			Arrays.asList(
     				"fasePublicacionCodigo",
     				"subfasePublicacion",
+    				"subfasePublicacionCodigo",
     				"comentario"
     			));
 

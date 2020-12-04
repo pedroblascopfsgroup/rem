@@ -22,14 +22,10 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.GastoApi;
-import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
-import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
 
 @Component
 public class MSVMasivaDatosSobreGasto extends AbstractMSVActualizador {
@@ -40,13 +36,12 @@ public class MSVMasivaDatosSobreGasto extends AbstractMSVActualizador {
 	private String fechaConta;
 	private String fechaPago;
 
+
 	private final String BORRAR = "X";
 	
-	@Autowired
-	ProcessAdapter processAdapter;
 
 	@Autowired
-	private GastoApi gastoApi;
+	ProcessAdapter processAdapter;
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -56,6 +51,8 @@ public class MSVMasivaDatosSobreGasto extends AbstractMSVActualizador {
 	
 	@Autowired
  	private GenericAdapter genericAdapter;
+
+
 
 	protected static final Log logger = LogFactory.getLog(MSVMasivaDatosSobreGasto.class);
 

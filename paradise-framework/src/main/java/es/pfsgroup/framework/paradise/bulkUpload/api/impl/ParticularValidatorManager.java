@@ -3049,7 +3049,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String[] asignacionLetraNIF = { "T", "R", "W", "A", "G", "M", "Y", "F", "P", "D", "X", "B", "N", "J", "Z", "S",
 				"Q", "V", "H", "L", "C", "K", "E" };
-		String[] asignacionLetraCIF = { "A", "B", "C", "D", "E", "F", "G", "H", "K", "L", "M", "N", "P", "Q", "S" };
+		String[] asignacionLetraCIF = { "A", "B", "C", "D", "E", "F", "G", "H", "K", "L", "M", "N", "P", "Q", "S" , "U", "V", "W"};
 		int resto;
 		int numDoc;
 		String letraDoc;
@@ -6319,5 +6319,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		
 		return !"0".equals(resultado);
+	}
+
+
+	@Override
+	public String sacarCodigoSubtipoActivo(String descripcion) {
+
+		if (descripcion == null) {
+			return null;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT SAC.DD_SAC_CODIGO " 
+				+ "		FROM REM01.DD_SAC_SUBTIPO_ACTIVO SAC" 
+				+ "		WHERE SAC.DD_SAC_DESCRIPCION = '"+ descripcion + "'"
+				+ "		AND SAC.BORRADO = 0");
+		
+		return resultado;
 	}
 }

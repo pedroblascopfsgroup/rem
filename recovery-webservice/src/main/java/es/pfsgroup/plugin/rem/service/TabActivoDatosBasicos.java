@@ -1652,7 +1652,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 
 					if (dto.getCdpen() != null) {
-						if(dto.getCdpen() == -1)
+						if(dto.getCdpen() == "-1")
 							activoBbva.setCdpen(null);
 						else
 							activoBbva.setCdpen(dto.getCdpen());

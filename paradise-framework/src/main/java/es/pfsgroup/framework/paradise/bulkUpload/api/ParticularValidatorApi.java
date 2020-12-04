@@ -1345,7 +1345,7 @@ public interface ParticularValidatorApi {
 	String getDocIdentfPropietarioByNumGasto(String numGasto);
 
 	boolean existeTipoRetencion(String tipoRetencion);
-
+	
 	boolean existeLineaEnGasto(String idLinea, String numGasto);
 
 	boolean conEstadoGasto(String idGasto,String codigoEstado);
@@ -1369,5 +1369,8 @@ public interface ParticularValidatorApi {
 	Boolean checkLlaves(String celdaTrabajo);
 
 	Boolean checkProveedoresLlaves(String celdaTrabajo);
+
+	public String sacarCodigoSubtipoActivo(String descripcion);
+
 
 }

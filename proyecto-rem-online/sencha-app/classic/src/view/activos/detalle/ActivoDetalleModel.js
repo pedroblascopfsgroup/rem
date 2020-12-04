@@ -1175,6 +1175,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		editarCheckValidado: function(get){
 			//Desactivamos la columna de validado en función del usuario:			
 			return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMINISTRACION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION']);
+		},
+		
+		estadoAdmisionVisible : function(get){
+			
+			var retorno = !($AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) 
+							|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) 
+							|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']));				
+			if (!retorno){
+				retorno = !(get('activo.incluidoEnPerimetroAdmision') == "true");
+			}
+			return retorno;
+		},
+		
+		esUsuarioBBVA: function(get) {
+			return $AU.getUser().codigoCartera == CONST.CARTERA['BBVA'];
+		},
+		
+		btnNuevaPeticionTrabajoOculto: function(get) {
+			var isIncluidoEnPerimetro = get('activo.incluidoEnPerimetro');
+			return (isIncluidoEnPerimetro == false || $AU.getUser().codigoCartera == CONST.CARTERA['BBVA']);
 		}
 	 
     },
@@ -1757,16 +1777,27 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboSubtipoActivo',
-					extraParams: {codigoTipoActivo: '{activo.tipoActivoCodigo}'}
+					extraParams: {codigoTipoActivo: '{activo.tipoActivoCodigo}',idActivo: '{activo.id}'}
 				}
     		},
+    		
+    		//
+    		comboFiltroSubtipoActivo: {
+				model: 'HreRem.model.ComboBase',
+	    		proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboSubtipoActivoFiltered',
+					extraParams: {codTipoActivo: '{activo.tipoActivoCodigo}'}
+				}
+    		},
+    		//
 	    	    		
     		comboSubtipoActivoAdmision: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboSubtipoActivo',
-					extraParams: {codigoTipoActivo: '{activoAdmision.tipoActivoCodigo}'}
+					extraParams: {codigoTipoActivo: '{activoAdmision.tipoActivoCodigo}',idActivo: '{activoAdmision.id}'}
 				}
     		},
 
@@ -1775,7 +1806,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboSubtipoActivo',
-					extraParams: {codigoTipoActivo: '{activoInforme.tipoActivoCodigo}'}
+					extraParams: {codigoTipoActivo: '{activoInforme.tipoActivoCodigo}',idActivo: '{activoInforme.id}'}
 				}
     		},
 
@@ -1784,7 +1815,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboSubtipoActivo',
-					extraParams: {codigoTipoActivo: '{infoComercial.tipoActivoCodigo}'}
+					extraParams: {codigoTipoActivo: '{infoComercial.tipoActivoCodigo}',idActivo: '{infoComercial.id}'}
 				}
     		},    		
     		    		
@@ -2315,7 +2346,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboSubtipoActivo',
-				extraParams: {codigoTipoActivo: '{activo.tipoActivoCodigo}'}
+				extraParams: {codigoTipoActivo: '{activo.tipoActivoCodigo}',idActivo: '{activo.id}'}
 			}
 		},
 

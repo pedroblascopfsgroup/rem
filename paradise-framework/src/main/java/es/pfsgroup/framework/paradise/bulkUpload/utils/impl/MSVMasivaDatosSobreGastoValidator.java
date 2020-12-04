@@ -11,7 +11,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,6 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.DateFormat;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
@@ -43,6 +39,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract {
 	
 	private final String ID_NO_EXISTE = "msg.error.masivo.gastos.id.no.existe";
+
 	private final String ESTADO_GASTO_INCORRECTO = "msg.error.masivo.gastos.estado.incorrecto";;
 	private final String VALIDAR_FILA_EXCEPTION = "msg.error.masivo.gastos.exception";
 	private final String FECHA_INCORRECTA = "msg.error.masivo.gastos.exception.fecha";
@@ -58,6 +55,8 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 
 	private final String BORRAR = "X";
 
+	private final String FECHAS_MULTIPLES = "msg.error.masivo.gastos.fechas.multiples";
+
 	
 	private final int FILA_CABECERA = 0;
 	private final int FILA_DATOS = 1;
@@ -70,7 +69,7 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 	private Integer numFilasHoja;	
 	private Map<String, List<Integer>> mapaErrores;	
 	private final Log logger = LogFactory.getLog(getClass());
-		
+
 	
 
 	@Autowired
@@ -88,6 +87,7 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
 
+
 	@Resource
 	MessageService messageServices;
 
@@ -101,10 +101,15 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 		mapaErrores.put(messageServices.getMessage(VALIDAR_FILA_EXCEPTION), new ArrayList<Integer>());
 		mapaErrores.put(messageServices.getMessage(SIN_FECHA_CONTABILIZADO), new ArrayList<Integer>());
 		mapaErrores.put(messageServices.getMessage(SIN_FECHA_PAGADO), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(FECHAS_MULTIPLES), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(ESTADO_GASTO_INCORRECTO), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(VALIDAR_FILA_EXCEPTION), new ArrayList<Integer>());
+
 	}
 	
 	
 	private boolean validarFichero(MSVHojaExcel exc) {
+
 		boolean esCorrecto = true;
 
 		for (int fila = FILA_DATOS; fila < this.numFilasHoja; fila++) {
@@ -114,7 +119,7 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 				String fechaConta = exc.dameCelda(fila, COL_FECHA_CONTA);
 				String fechaPago = exc.dameCelda(fila, COL_FECHA_PAGO);
 
-				
+
 				if (!Checks.esNulo(idGasto) && (!particularValidator.existeGasto(idGasto))) {
 					
 					mapaErrores.get(messageServices.getMessage(ID_NO_EXISTE)).add(fila);
@@ -147,6 +152,10 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 					}
 				}
 		
+
+
+
+	
 
 			} catch (Exception e) {
 				mapaErrores.get(messageServices.getMessage(VALIDAR_FILA_EXCEPTION)).add(fila);
@@ -230,6 +239,7 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 		return resultado;
 	}
 	
+
 	private boolean esCorrectoEstadoGasto(String idGasto) {
 		String estadoGasto = particularValidator.devolverEstadoGasto(idGasto);
 		List<String> listaEstadosValidos = Arrays.asList(new String[] { AUTORIZADO_ADMIN, PAGADO , CONTABILIZADO });
@@ -257,7 +267,6 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 		
 		return true;
 	}
-	
-	
+
 
 }

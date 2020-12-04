@@ -129,7 +129,7 @@ public class ImpuestosAdapter {
 	
 
 	@Transactional(readOnly = false)
-	public void updateImpuesto(Long idActivo,String catastro,String fechaSolicitud901, String resultado,String observaciones) throws JsonViewerException {
+	public void updateImpuesto(Long idActivo,String catastro,String fechaSolicitud901,String valorContruccion, String valorSuelo, String resultado,String observaciones) throws JsonViewerException {
 
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", idActivo);
 		Activo activo = genericDao.get(Activo.class, filter);
@@ -145,9 +145,15 @@ public class ImpuestosAdapter {
 			
 			if (!Checks.estaVacio(lista)) {
 			    Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(fechaSolicitud901);  
-			    
+			    Double valConstruccion = !Checks.esNulo(valorContruccion)
+							? Double.parseDouble(valorContruccion) : null;
+				Double valSuelo = !Checks.esNulo(valorSuelo)
+							? Double.parseDouble(valorSuelo) : null;
+							
 			    for (ActivoCatastro actCat : lista) {
-					actCat.setFechaSolicitud901(date1);
+					actCat.setFechaSolicitud901(date1);	
+					actCat.setValorCatastralConst(valConstruccion);
+					actCat.setValorCatastralSuelo(valSuelo);
 					actCat.setObservaciones(observaciones);
 					if (resultado.contains("S") ||resultado.contains("s")  )
 						actCat.setResultado(valorSi);

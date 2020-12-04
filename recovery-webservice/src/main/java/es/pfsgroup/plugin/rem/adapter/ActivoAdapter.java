@@ -2079,10 +2079,12 @@ public class ActivoAdapter {
 								activo.getTasacion().get(i).getImporteTasacionFin());
 					}
 					
-					if (activo.getTasacion().get(i).isIlocalizable()) {
-						BeanUtils.copyProperty(tasacionDto, "ilocalizable", activo.getTasacion().get(i).isIlocalizable());
-					}else if (!activo.getTasacion().get(i).isIlocalizable()) {
-						BeanUtils.copyProperty(tasacionDto, "ilocalizable", activo.getTasacion().get(i).isIlocalizable());
+					if(activo.getTasacion().get(i).isIlocalizable() != null) {
+						if (activo.getTasacion().get(i).isIlocalizable()) {
+							BeanUtils.copyProperty(tasacionDto, "ilocalizable", activo.getTasacion().get(i).isIlocalizable());
+						}else if (!activo.getTasacion().get(i).isIlocalizable()) {
+							BeanUtils.copyProperty(tasacionDto, "ilocalizable", activo.getTasacion().get(i).isIlocalizable());
+						}
 					}
 					
 				} catch (IllegalAccessException e) {

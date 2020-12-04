@@ -74,14 +74,7 @@ public class MSVActualizadorEstadoTrabajos extends AbstractMSVActualizador imple
 					genericDao.createFilter(FilterType.EQUALS, "codigo", tmpAccion));
 			trabajo.setEstado(estadoTrabajo);
 			genericDao.update(Trabajo.class, trabajo);
-
-			if (DDEstadoTrabajo.ESTADO_VALIDADO.equals(estadoTrabajo.getCodigo())) {
-				trabajoApi.EnviarCorreoTrabajos(trabajo, EMAIL_VALIDADO);
-
-			} else if (DDEstadoTrabajo.CODIGO_ESTADO_RECHAZADO.equals(estadoTrabajo.getCodigo())) {
-				trabajoApi.EnviarCorreoTrabajos(trabajo, EMAIL_RECHAZADO);
-			}
-
+			
 			if (tmpComentario != null) {
 				agenda = new AgendaTrabajo();
 				agenda.setTrabajo(trabajo);
@@ -93,6 +86,14 @@ public class MSVActualizadorEstadoTrabajos extends AbstractMSVActualizador imple
 				agenda.setTipoGestion(tipoApunte);
 				genericDao.save(AgendaTrabajo.class, agenda);
 			}
+
+			if (DDEstadoTrabajo.ESTADO_VALIDADO.equals(estadoTrabajo.getCodigo())) {
+				trabajoApi.EnviarCorreoTrabajos(trabajo, EMAIL_VALIDADO);
+
+			} else if (DDEstadoTrabajo.CODIGO_ESTADO_RECHAZADO.equals(estadoTrabajo.getCodigo())) {
+				trabajoApi.EnviarCorreoTrabajos(trabajo, EMAIL_RECHAZADO);
+			}
+
 			resultado.setCorrecto(true);
 		} catch (Exception e) {
 			resultado.setCorrecto(false);

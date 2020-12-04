@@ -797,5 +797,4 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	public void setIdProcesoOrigen(String idProcesoOrigen) {
 		this.idProcesoOrigen = idProcesoOrigen;
 	}
-
 }

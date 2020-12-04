@@ -69,7 +69,7 @@ public class DtoExcelFichaComercial extends WebDto {
 	private String telefonoComercial;
 	private String correoComercial;
 	private String nombreYApellidosPrescriptor;
-	private Long telefonoPrescriptor;
+	private String  telefonoPrescriptor;
 	private String correoPrescriptor;
 	private List <DtoActivosFichaComercial> listaActivosFichaComercial;
 	private List <DtoHcoComercialFichaComercial> listaHistoricoOfertas;
@@ -219,6 +219,24 @@ public class DtoExcelFichaComercial extends WebDto {
 	public void setTasacionActual(Double tasacionActual) {
 		this.tasacionActual = tasacionActual;
 	}
+	public void setTasacionFromSeisMesesOfertaToActual(Double importe) {
+		this.setTasacionSeisMesesOferta(importe);
+		this.setTasacionActual(importe);
+	}
+	
+	public void setTasacionFromDoceMesesOfertaToActual(Double importe) {
+		this.setTasacionDoceMesesOferta(importe);
+		this.setTasacionSeisMesesOferta(importe);
+		this.setTasacionActual(importe);
+	}
+	
+	public void setTasacionFromDieciochoMesesOfertaToActual(Double importe) {
+		this.setTasacionDieciochoMesesOferta(importe);
+		this.setTasacionDoceMesesOferta(importe);
+		this.setTasacionSeisMesesOferta(importe);
+		this.setTasacionActual(importe);
+	}
+	
 	public BigDecimal getImporteAdjuducacion() {
 		return importeAdjuducacion;
 	}
@@ -363,10 +381,10 @@ public class DtoExcelFichaComercial extends WebDto {
 	public void setNombreYApellidosPrescriptor(String nombreYApellidosPrescriptor) {
 		this.nombreYApellidosPrescriptor = nombreYApellidosPrescriptor;
 	}
-	public Long getTelefonoPrescriptor() {
+	public String getTelefonoPrescriptor() {
 		return telefonoPrescriptor;
 	}
-	public void setTelefonoPrescriptor(Long telefonoPrescriptor) {
+	public void setTelefonoPrescriptor(String telefonoPrescriptor) {
 		this.telefonoPrescriptor = telefonoPrescriptor;
 	}
 	public String getCorreoPrescriptor() {
@@ -430,7 +448,7 @@ public class DtoExcelFichaComercial extends WebDto {
 	public void setTasacionDieciochoMesesOferta(Double tasacionDieciochoMesesOferta) {
 		this.tasacionDieciochoMesesOferta = tasacionDieciochoMesesOferta;
 	}
-
+	
 	public List <DtoActivosFichaComercial> getListaActivosFichaComercial() {
 		return listaActivosFichaComercial;
 	}

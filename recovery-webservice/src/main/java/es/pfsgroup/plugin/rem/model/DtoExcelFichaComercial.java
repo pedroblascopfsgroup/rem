@@ -69,7 +69,7 @@ public class DtoExcelFichaComercial extends WebDto {
 	private String telefonoComercial;
 	private String correoComercial;
 	private String nombreYApellidosPrescriptor;
-	private Long telefonoPrescriptor;
+	private String  telefonoPrescriptor;
 	private String correoPrescriptor;
 	private List <DtoActivosFichaComercial> listaActivosFichaComercial;
 	private List <DtoHcoComercialFichaComercial> listaHistoricoOfertas;
@@ -381,10 +381,10 @@ public class DtoExcelFichaComercial extends WebDto {
 	public void setNombreYApellidosPrescriptor(String nombreYApellidosPrescriptor) {
 		this.nombreYApellidosPrescriptor = nombreYApellidosPrescriptor;
 	}
-	public Long getTelefonoPrescriptor() {
+	public String getTelefonoPrescriptor() {
 		return telefonoPrescriptor;
 	}
-	public void setTelefonoPrescriptor(Long telefonoPrescriptor) {
+	public void setTelefonoPrescriptor(String telefonoPrescriptor) {
 		this.telefonoPrescriptor = telefonoPrescriptor;
 	}
 	public String getCorreoPrescriptor() {

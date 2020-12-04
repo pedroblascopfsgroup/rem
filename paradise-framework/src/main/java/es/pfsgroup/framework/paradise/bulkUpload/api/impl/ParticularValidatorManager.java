@@ -3374,6 +3374,102 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 
 	}
+	
+	@Override
+	public Boolean estadoPrevioTrabajo(String celdaTrabajo) {
+		if(Checks.esNulo(celdaTrabajo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)  "
+				+"		FROM ACT_TBJ_TRABAJO"
+				+"		WHERE TBJ_NUM_TRABAJO = "+celdaTrabajo+""
+				+"	AND dd_est_id in ('62','65') AND BORRADO= 0");
+
+		return "1".equals(resultado);
+
+	}
+	
+	@Override
+	public Boolean fechaEjecucionCumplimentada(String celdaTrabajo) {
+		if(Checks.esNulo(celdaTrabajo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)  "
+				+"		FROM ACT_TBJ_TRABAJO"
+				+"		WHERE TBJ_NUM_TRABAJO = "+celdaTrabajo+""
+				+"	AND tbj_fecha_ejecutado IS NOT NULL AND BORRADO= 0");
+
+		return "1".equals(resultado);
+
+	}
+	
+	@Override
+	public Boolean resolucionComite(String celdaTrabajo) {
+		if(Checks.esNulo(celdaTrabajo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)  "
+				+"		FROM ACT_TBJ_TRABAJO"
+				+"		WHERE TBJ_NUM_TRABAJO = "+celdaTrabajo+""
+				+"	AND tbj_aplica_comite = '1' AND dd_aco_id = '6' AND BORRADO= 0");
+
+		return "1".equals(resultado);
+
+	}
+	
+	@Override
+	public Boolean checkComite(String celdaTrabajo) {
+		if(Checks.esNulo(celdaTrabajo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)  "
+				+"		FROM ACT_TBJ_TRABAJO"
+				+"		WHERE TBJ_NUM_TRABAJO = "+celdaTrabajo+""
+				+"	AND tbj_aplica_comite = '1' AND BORRADO= 0");
+
+		return "1".equals(resultado);
+
+	}
+	
+	@Override
+	public Boolean tieneLlaves(String celdaTrabajo) {
+		if(Checks.esNulo(celdaTrabajo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("Select count(1) from act_tbj_trabajo tbj  "
+				+"		join cfg_visualizar_llaves cvl on tbj.dd_ttr_id = cvl.dd_ttr_id and tbj.dd_str_id = cvl.dd_str_id and cvl.visualizacion_llaves = 1 and cvl.BORRADO=0 "
+				+"		where tbj.TBJ_NUM_TRABAJO ="+celdaTrabajo+""
+				+"		AND tbj.BORRADO= 0");
+
+		return "1".equals(resultado);
+
+	}
+	
+	@Override
+	public Boolean checkLlaves(String celdaTrabajo) {
+		if(Checks.esNulo(celdaTrabajo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("Select count(1) from act_tbj_trabajo tbj  "
+				+"		where tbj.TBJ_NUM_TRABAJO ="+celdaTrabajo+""
+				+"		and tbj.TBJ_NO_APLICA_LLAVES=1	AND tbj.BORRADO= 0");
+
+		return "1".equals(resultado);
+
+	}
+	
+	@Override
+	public Boolean checkProveedoresLlaves(String celdaTrabajo) {
+		if(Checks.esNulo(celdaTrabajo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("Select count(1) from act_tbj_trabajo tbj  "
+				+"		where tbj.TBJ_NUM_TRABAJO ="+celdaTrabajo+""
+				+"		AND TBJ_FECHA_ENTREGA_LLAVES is not null and PVC_ID_LLAVES is not null	AND tbj.BORRADO= 0");
+
+		return "1".equals(resultado);
+
+	}
 
 	@Override
 	public Boolean existeSubtrabajo(String codSubtrabajo) {
@@ -6098,9 +6194,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 					+ "		 FROM GPV_GASTOS_PROVEEDOR WHERE "
 					+ "		 GPV_REF_EMISOR = '" +factura+ "'"
-					+ " 	 AND TRUNC(GPV_FECHA_EMISION) = TO_DATE( '"+fechaEmision+"', 'DD/MM/YY') AND "
+					+ " 	 AND "
 					+ "		 PVE_ID_EMISOR IN "
-					+ "		 (SELECT PVE_ID FROM ACT_PVE_PROVEEDOR WHERE PVE_DOCIDENTIF = '"+nifEmisor+"' AND BORRADO = 0 AND PVE_FECHA_BAJA IS NOT NULL) AND "
+					+ "		 (SELECT PVE_ID FROM ACT_PVE_PROVEEDOR WHERE PVE_DOCIDENTIF = '"+nifEmisor+"' AND BORRADO = 0 AND PVE_FECHA_BAJA IS NULL) AND "
 					+ " 	 PRO_ID IN (SELECT PRO_ID FROM ACT_PRO_PROPIETARIO WHERE PRO_DOCIDENTIF = '"+nifPropietario+"' AND BORRADO = 0) "
 					+ "		 AND BORRADO = 0");
 
@@ -6125,7 +6221,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 	DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID AND CRA.DD_CRA_CODIGO IN ("+carteras+") "
 				+ "			WHERE PRO.PRO_DOCIDENTIF = '"+docIdent+"' "
 				+ "		 	AND CRA.BORRADO = 0 AND PRO.BORRADO = 0");
+		return !"0".equals(resultado);
+		
+	}
 
+	@Override
+	public boolean conEstadoGasto(String idGasto,String codigoEstado) {
+		if(Checks.esNulo(idGasto) || Checks.esNulo(codigoEstado) || !StringUtils.isNumeric(idGasto) ) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM GPV_GASTOS_PROVEEDOR GASTOS "
+				+ "JOIN DD_EGA_ESTADOS_GASTO DD on GASTOS.DD_EGA_ID = DD.DD_EGA_ID "
+				+ "WHERE GASTOS.GPV_NUM_GASTO_HAYA = '"+idGasto+"' "
+				+ "AND DD.DD_EGA_CODIGO = "+codigoEstado+" "
+				+ "AND GASTOS.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
 	
@@ -6141,7 +6251,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 	GPV_GASTOS_PROVEEDOR GPV ON GPV.PRO_ID = PRO.PRO_ID AND GPV.GPV_NUM_GASTO_HAYA = '"+numGasto+"'"
 				+ "		 	AND GPV.BORRADO = 0 AND PRO.BORRADO = 0");
 
+		return resultado;
+	}
+		
 	
+	@Override
+	public String devolverEstadoGasto(String idGasto) {
+		if(Checks.esNulo(idGasto)) {
+			return null;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT DD.DD_EGA_CODIGO "
+				+ "FROM GPV_GASTOS_PROVEEDOR GASTOS "
+				+ "JOIN DD_EGA_ESTADOS_GASTO DD on GASTOS.DD_EGA_ID = DD.DD_EGA_ID "
+				+ "WHERE GASTOS.GPV_NUM_GASTO_HAYA = '"+idGasto+"' "
+				+ "AND GASTOS.BORRADO = 0 AND DD.BORRADO = 0");
+		
 		return resultado;
 	}
 	
@@ -6166,5 +6290,34 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				);
 
 		return !res.equals("0");
+	}
+
+	@Override
+	public boolean tieneGastoFechaContabilizado(String idGasto) {
+		if(Checks.esNulo(idGasto)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "FROM GPV_GASTOS_PROVEEDOR GPV "
+				+ "JOIN GIC_GASTOS_INFO_CONTABILIDAD GIC on GPV.GPV_ID = GIC.GPV_ID AND GIC.GIC_FECHA_CONTABILIZACION IS NOT NULL "
+				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = '"+idGasto+"' "
+				+ "AND GPV.BORRADO = 0 AND GIC.BORRADO = 0");
+		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public boolean tieneGastoFechaPagado(String idGasto) {
+		if(Checks.esNulo(idGasto)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "FROM GPV_GASTOS_PROVEEDOR GPV "
+				+ "JOIN GDE_GASTOS_DETALLE_ECONOMICO GDE on GPV.GPV_ID = GDE.GPV_ID AND GDE.GDE_FECHA_PAGO IS NOT NULL "
+				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = '"+idGasto+"' "
+				+ "AND GPV.BORRADO = 0 AND GDE.BORRADO = 0");
+		
+		
+		return !"0".equals(resultado);
 	}
 }

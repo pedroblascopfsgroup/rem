@@ -931,4 +931,6 @@ public interface TrabajoApi {
 	
 	public List<DDIdentificadorReam>getComboAreaPeticionaria();
 
+	void EnviarCorreoTrabajos(Trabajo trabajo, String origen);
+
 }

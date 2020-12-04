@@ -6212,7 +6212,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return mapaDocumentosFin;
 	}
 	
-	private void EnviarCorreoTrabajos(Trabajo trabajo, String origen) {
+	@Override
+	public void EnviarCorreoTrabajos(Trabajo trabajo, String origen) {
 		
 		if(trabajo == null || trabajo.getTipoTrabajo() == null || !DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {
 			return;

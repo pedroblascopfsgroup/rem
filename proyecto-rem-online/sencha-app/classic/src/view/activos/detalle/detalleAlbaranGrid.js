@@ -82,6 +82,12 @@ Ext.define('HreRem.view.activos.detalle.detalleAlbaranGrid', {
 		            renderer: Utils.rendererCurrency,
 		            flex: 1,
 		            text: HreRem.i18n('fieldlabel.albaran.importeTotalClienteDetalle')
+		        },
+		        {
+		            dataIndex: 'areaPeticionaria',
+		            reference: 'areaPeticionaria',
+		            flex: 1,
+		            text: HreRem.i18n('fieldlabel.trabajo.area.peticionaria')
 		        }
 		    ];
 		me.dockedItems = [

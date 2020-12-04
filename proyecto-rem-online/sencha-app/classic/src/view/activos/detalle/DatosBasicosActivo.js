@@ -1091,7 +1091,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										}
 									},
 									{
-										xtype:'textfieldbase',
+										xtype:'textfield',
 										disabled: true,
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.cdpen'),
 										reference: 'activobbvaCdpen',

@@ -75,7 +75,7 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
   	private String cexperBbva;
     
 	@Column(name = "BBVA_ID_PROCESO_ORIGEN")
-  	private Long idProcesoOrigen;
+  	private String idProcesoOrigen;
     
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BBVA_ACTIVO_EPA")
@@ -94,7 +94,7 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
   	private Long folio;
     
 	@Column(name = "BBVA_CDPEN")
-  	private Long cdpen;
+  	private String cdpen;
     
 	@Version   
 	private Long version;
@@ -183,14 +183,6 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 		this.cexperBbva = cexperBbva;
 	}
 
-	public Long getIdProcesoOrigen() {
-		return idProcesoOrigen;
-	}
-
-	public void setIdProcesoOrigen(Long idProcesoOrigen) {
-		this.idProcesoOrigen = idProcesoOrigen;
-	}
-
 	public DDSinSiNo getActivoEpa() {
 		return activoEpa;
 	}
@@ -231,14 +223,6 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 		this.folio = folio;
 	}
 
-	public Long getCdpen() {
-		return cdpen;
-	}
-
-	public void setCdpen(Long cdpen) {
-		this.cdpen = cdpen;
-	}
-
 	public Long getVersion() {
 		return version;
 	}
@@ -246,5 +230,23 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 	public void setVersion(Long version) {
 		this.version = version;
 	}
+
+	public String getIdProcesoOrigen() {
+		return idProcesoOrigen;
+	}
+
+	public void setIdProcesoOrigen(String idProcesoOrigen) {
+		this.idProcesoOrigen = idProcesoOrigen;
+	}
+
+	public String getCdpen() {
+		return cdpen;
+	}
+
+	public void setCdpen(String cdpen) {
+		this.cdpen = cdpen;
+	}
+	
+	
 	
 }

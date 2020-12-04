@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20201204
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12268
+--## INCIDENCIA_LINK=HREOS-12338
 --## PRODUCTO=NO
 --## 
 --## Finalidad: 
@@ -28,7 +28,7 @@ DECLARE
   V_COUNT_UPDATE NUMBER(16):= 0; -- Vble. para contar updates
   ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
   ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-  V_USUARIO VARCHAR2(32 CHAR):= 'HREOS-12268';
+  V_USUARIO VARCHAR2(32 CHAR):= 'HREOS-12338';
   ACT_NUM_ACTIVO_UVEM NUMBER(32);
   DD_SCR_DESCRIPCION VARCHAR2(72 CHAR);
   ACT_NUM_ACTIVO_OLD NUMBER(32);

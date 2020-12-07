@@ -157,7 +157,11 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 								tooltip: HreRem.i18n('btn.nueva.peticion.trabajo'),
 								handler: 'onClickCrearTrabajo',
 								secFunPermToShow: 'BOTON_CREAR_TRABAJO',
-								hidden: visibilityBtnCrearTrabajo
+								hidden: visibilityBtnCrearTrabajo,
+								//hidden: (me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false")
+								bind: {
+									hidden: '{btnNuevaPeticionTrabajoOculto}'
+								}
 							},
 							{
 								xtype: 'button',

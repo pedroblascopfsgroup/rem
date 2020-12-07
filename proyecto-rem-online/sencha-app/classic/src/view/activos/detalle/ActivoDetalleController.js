@@ -3795,6 +3795,89 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			}
 		});
 	},
+	
+	onVisitasListDobleClick: function(grid,record,tr,rowIndex) {        	       
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex);
+    	
+    	Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record}).show();
+    	
+        	
+    },
+    
+   	onClickBotonCerrarDetalleVisita: function(btn) {
+		var me = this,
+		window = btn.up('window');
+    	window.close();
+	},
+	
+	onProveedoresListClick: function(gridView, record){
+		var me=this;
+		
+		if($AU.getUser().codigoCartera === CONST.CARTERA['BBVA']){
+			return;
+		}
+		idProveedor= record.get('idFalso').id;
+		idActivo= record.get('idFalso').idActivo;
+		
+		
+		gridView.up('form').down('[reference=listadogastosref]').getStore().getProxy().setExtraParams({'idActivo': idActivo,'idProveedor': idProveedor});
+		gridView.up('form').down('[reference=listadogastosref]').getStore().load();
+		
+		
+	},
+	
+	// Función que abre la pestaña de proveedor.
+   abrirPestanyaProveedor: function(tableView, indiceFila, indiceColumna){
+   		var me = this;
+		var grid = tableView.up('grid');
+	    var record = grid.store.getAt(indiceFila);
+	    grid.setSelection(record);
+	    var idFalso = record.get('idFalso');
+	    var idFalsoProv;
+	    if(idFalso != null){
+	    	idFalsoProv = record.get('idFalso').id;
+	    }
+	    
+	    if(!Ext.isEmpty(record.get('idProveedor'))){
+	    	var idProveedor = record.get("idProveedor");
+	    	record.data.id= idProveedor;
+	    	var codigoProveedor = record.get('codigoProveedorRem');
+	    	record.data.codigo = codigoProveedor;
+	    	me.getView().fireEvent('abrirDetalleProveedor', record);
+	    }else if(!Ext.isEmpty(idFalsoProv)){
+	    	record.data.id= idFalsoProv;
+	    	var codigoProveedor = record.get('codigoProveedorRem');
+	    	record.data.codigo = codigoProveedor;
+	    	me.getView().fireEvent('abrirDetalleProveedor', record);
+	    }
+	    else if(!Ext.isEmpty(record.get('id'))){
+	    	var codigoProveedor = record.get('codigoProveedorRem');
+	    	record.data.codigo = codigoProveedor;
+	    	me.getView().fireEvent('abrirDetalleProveedor', record);
+	    }
+   },
+   
+   	onClickAbrirGastoProveedor: function(grid, record){
+		var me = this;
+		record.setId(record.data.idGasto);
+		
+    	me.getView().fireEvent('abrirDetalleGasto', record);
+		
+	},
+	
+	onClickAbrirGastoProveedorIcono: function(tableView, indiceFila, indiceColumna){
+		var me = this;
+		
+		var grid = tableView.up('grid');
+	    var record = grid.store.getAt(indiceFila);
+	    grid.setSelection(record);
+	    if(!Ext.isEmpty(record.get('id'))){
+// me.redirectTo('activos', true);
+	    	record.setId(record.data.idGasto);
+	    	me.getView().fireEvent('abrirDetalleGasto', record);
+	    }
+	},
 
 	onClickBotonCancelarCarga : function(btn) {
 		var me = this;

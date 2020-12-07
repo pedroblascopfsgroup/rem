@@ -6034,6 +6034,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (tasacionList == null || tasacionList.isEmpty()) {
 			return null;
 		}
+
 		
 		DtoExcelFichaComercial tmpDto = new DtoExcelFichaComercial();
 		Calendar calendar = Calendar.getInstance();
@@ -6044,6 +6045,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		calendar.add(Calendar.MONTH, -6);
 		Date dieciochoMesesAtras = calendar.getTime();
 		
+
 		for( ActivoTasacion tasacion : tasacionList ) {
 			if ( tasacion.getFechaInicioTasacion() == null || tasacion.getImporteTasacionFin() == null) {
 				continue;

@@ -1345,6 +1345,32 @@ public interface ParticularValidatorApi {
 	String getDocIdentfPropietarioByNumGasto(String numGasto);
 
 	boolean existeTipoRetencion(String tipoRetencion);
-
+	
 	boolean existeLineaEnGasto(String idLinea, String numGasto);
+
+	boolean conEstadoGasto(String idGasto,String codigoEstado);
+
+	String devolverEstadoGasto(String idGasto);
+
+	boolean tieneGastoFechaContabilizado(String idGasto);
+
+	boolean tieneGastoFechaPagado(String idGasto);
+
+	Boolean estadoPrevioTrabajo(String celdaTrabajo);
+
+	Boolean fechaEjecucionCumplimentada(String celdaTrabajo);
+
+	Boolean resolucionComite(String celdaTrabajo);
+
+	Boolean checkComite(String celdaTrabajo);
+
+	Boolean tieneLlaves(String celdaTrabajo);
+
+	Boolean checkLlaves(String celdaTrabajo);
+
+	Boolean checkProveedoresLlaves(String celdaTrabajo);
+
+	public String sacarCodigoSubtipoActivo(String descripcion);
+
+
 }

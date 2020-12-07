@@ -129,14 +129,14 @@ public class VBusquedaTrabajos implements Serializable {
 	@Column(name="TBJ_RESPONSABLE_TRABAJO")
 	private String gestorActual;
 	
-	@Column(name = "DD_IRE_DESCRIPCION")
-	private String descripcionAreaPeticionaria;
-	
 	@Column(name = "DESCRIPCIONCARTERA")
 	private String descripcionCartera;
 	
 	@Column(name = "DESCRIPCIONSUBCARTERA")
 	private String descripcionSubcartera;
+
+	@Column(name="DD_IRE_DESCRIPCION")
+	private String areaPeticionaria;
 
 	@Column(name = "GESTORRESPONSABLE")
 	private String responsableTrabajo;
@@ -395,14 +395,6 @@ public class VBusquedaTrabajos implements Serializable {
 		this.gestorActual = gestorActual;
 	}
 
-	public String getDescripcionAreaPeticionaria() {
-		return descripcionAreaPeticionaria;
-	}
-
-	public void setDescripcionAreaPeticionaria(String descripcionAreaPeticionaria) {
-		this.descripcionAreaPeticionaria = descripcionAreaPeticionaria;
-	}
-
 	public String getDescripcionCartera() {
 		return descripcionCartera;
 	}
@@ -425,6 +417,54 @@ public class VBusquedaTrabajos implements Serializable {
 
 	public void setResponsableTrabajo(String responsableTrabajo) {
 		this.responsableTrabajo = responsableTrabajo;
+	}
+
+	public Long getNumActivo() {
+		return numActivo;
+	}
+
+	public void setNumActivo(Long numActivo) {
+		this.numActivo = numActivo;
+	}
+
+	public Long getIdActivo() {
+		return idActivo;
+	}
+
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
+	}
+
+	public Long getNumAgrupacionRem() {
+		return numAgrupacionRem;
+	}
+
+	public void setNumAgrupacionRem(Long numAgrupacionRem) {
+		this.numAgrupacionRem = numAgrupacionRem;
+	}
+
+	public String getSubcartera() {
+		return subcartera;
+	}
+
+	public void setSubcartera(String subcartera) {
+		this.subcartera = subcartera;
+	}
+
+	public Integer getFacturado() {
+		return facturado;
+	}
+
+	public void setFacturado(Integer facturado) {
+		this.facturado = facturado;
+	}
+
+	public String getAreaPeticionaria() {
+		return areaPeticionaria;
+	}
+
+	public void setAreaPeticionaria(String areaPeticionaria) {
+		this.areaPeticionaria = areaPeticionaria;
 	}
 	
 }

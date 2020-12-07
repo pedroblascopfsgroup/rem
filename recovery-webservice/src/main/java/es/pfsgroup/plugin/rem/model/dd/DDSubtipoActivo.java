@@ -57,6 +57,9 @@ public class DDSubtipoActivo implements Auditable, Dictionary {
 	public static final String COD_GARAJE ="24";
 	public static final String COD_TRASTERO ="25";
 	public static final String CODIGO_SUBTIPO_LOCAL_COMERCIAL = "13";
+	public static final String CODIGO_SUBTIPO_APARTAMENTO_TURISTICO = "38";
+	public static final String CODIGO_SUBTIPO_HOSTELERO = "39";
+	public static final String CODIGO_SUBTIPO_SUELO_URBANO_NO_CONSOLIDADO = "40";
 
 
 
@@ -83,6 +86,9 @@ public class DDSubtipoActivo implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_SAC_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
+	
+	@Column(name = "DD_SAC_EN_BBVA")   
+	private boolean enBbva;
 	    
 	@Transient
 	private String codigoTipoActivo;
@@ -158,5 +164,15 @@ public class DDSubtipoActivo implements Auditable, Dictionary {
 	public void setCodigoTipoActivo(String codigoTipoActivo) {
 		this.codigoTipoActivo = tipoActivo.getCodigo();
 	}
+
+	public boolean isEnBbva() {
+		return enBbva;
+	}
+
+	public void setEnBbva(boolean enBbva) {
+		this.enBbva = enBbva;
+	}
+
+
 
 }

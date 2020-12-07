@@ -34,6 +34,7 @@ import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
@@ -94,6 +95,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
@@ -133,6 +135,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	protected static final Log logger = LogFactory.getLog(GenericManager.class);
 
+	private static final String MENU_TRABAJOS= "MENU_TRABAJOS";
+	private static final String MENU_ADMINISTRACION = "MENU_ADMINISTRACION";
+	
 	@Autowired
 	private GenericABMDao genericDao;
 
@@ -331,7 +336,14 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		Scanner scan = null;
 		Object obj = null;
-
+		Usuario usuarioLogado = adapter.getUsuarioLogado();
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		boolean esUsuCarteraBBVA = false;
+		if(usuarioCartera != null && usuarioCartera.getCartera() != null) {
+			esUsuCarteraBBVA = DDCartera.CODIGO_CARTERA_BBVA.equals(usuarioCartera.getCartera().getCodigo()); 
+		}
+			
 		// Leemos el fichero completo
 		try {
 			scan = new Scanner(menuItemsJsonFile);
@@ -352,13 +364,19 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		for (Object item : menuItems) {
 			String secFunPermToRender = null;
+			String nombreEntidad = null;
 			JSONObject itemObject = JSONObject.fromObject(item);
-
+			
+			if (itemObject.containsKey("text")) {
+				nombreEntidad = itemObject.getString("text");
+			}
 			if (itemObject.containsKey("secFunPermToRender")) {
 				secFunPermToRender = itemObject.getString("secFunPermToRender");
 			}
-
-			if (secFunPermToRender == null || authData.getAuthorities().contains(secFunPermToRender)) {
+						
+			if((secFunPermToRender == null || authData.getAuthorities().contains(secFunPermToRender)) && 
+					((esUsuCarteraBBVA && !MENU_ADMINISTRACION.equalsIgnoreCase(secFunPermToRender) && !MENU_TRABAJOS.equalsIgnoreCase(secFunPermToRender)) ||
+					!esUsuCarteraBBVA)) {
 				DtoMenuItem menuItem = new DtoMenuItem();
 				try {
 					beanUtilNotNull.copyProperties(menuItem, itemObject);
@@ -367,7 +385,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 					logger.error(e.getCause());
 				}
 				menuItemsPerm.add(menuItem);
-			}
+			} 
+				
 		}
 
 		return menuItemsPerm;
@@ -453,11 +472,25 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboSubtipoActivo")
-	public List<DDSubtipoActivo> getComboSubtipoActivo(String codigoTipo) {
-
+	public List<DDSubtipoActivo> getComboSubtipoActivo(String codigoTipo, String idActivo) {
+		Activo act = null;
+		if (idActivo != null) {
+			act = activoApi.get(Long.parseLong(idActivo));
+		}
+		
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.codigo", codigoTipo);
-		return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter);
+		Filter filtroNoEsEnBbva = genericDao.createFilter(FilterType.EQUALS, "enBbva",false);
+		
+		if (act != null && DDCartera.CODIGO_CARTERA_BBVA.equals(act.getCartera().getCodigo())) {
+			return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter);
+		}else {
+			if (act != null) {
+				return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter, filtroNoEsEnBbva);
+			}else {
+				return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter);
+			}		
+		}
 
 	}
 

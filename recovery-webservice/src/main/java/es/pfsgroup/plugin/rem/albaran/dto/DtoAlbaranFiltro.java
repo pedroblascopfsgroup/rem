@@ -42,6 +42,9 @@ public class DtoAlbaranFiltro extends WebDto{
 	private Double importeTotalCliente;
 	
 	private boolean validarAlbaran;
+	
+	private String areaPeticionaria;
+
 
 	public Long getNumAlbaran() {
 		return numAlbaran;
@@ -177,6 +180,14 @@ public class DtoAlbaranFiltro extends WebDto{
 
 	public void setValidarAlbaran(boolean validarAlbaran) {
 		this.validarAlbaran = validarAlbaran;
+	}
+
+	public String getAreaPeticionaria() {
+		return areaPeticionaria;
+	}
+
+	public void setAreaPeticionaria(String areaPeticionaria) {
+		this.areaPeticionaria = areaPeticionaria;
 	}
 	
 	

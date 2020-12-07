@@ -287,7 +287,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                	bind:{
 				                		value: '{activo.descripcion}'
 				                	}
-				                },
+				                },   
 				                {
 									xtype:'comboboxfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.activobbva.tipoTransmision'),
@@ -311,6 +311,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									}*/
 									
 								},
+				                {
+				                	xtype: 'comboboxfieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.estado.registral'),
+				                	name: 'comboEstadoRegistral',
+				                	eference: 'comboEstadoRegistralRef',
+				                	bind: {
+					                	store: '{comboEstadoRegistral}',
+					                	value: '{activo.estadoRegistralCodigo}',
+					                	readOnly: '{!activo.esEditableActivoEstadoRegistral}'
+				                	}
+				                },
 				                {
 				                	//Campo para dejar un espacio entre los campos por estetica.
 				                	readOnly: true

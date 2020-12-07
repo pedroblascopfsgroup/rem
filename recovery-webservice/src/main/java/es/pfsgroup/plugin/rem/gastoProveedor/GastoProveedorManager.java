@@ -3788,7 +3788,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					Filter filterId = genericDao.createFilter(FilterType.EQUALS, "id", gastoImportesGastoLBK.getIdEntidad());
 					ActivoGenerico activoGenerico =  genericDao.get(ActivoGenerico.class, filterId);
 					if(activoGenerico != null) {
-						dto.setIdElemento(activoGenerico.getNumActivoGenerico());
+						dto.setIdElemento(Long.parseLong(activoGenerico.getNumActivoGenerico()));
 					}
 				}else {
 					dto.setIdElemento(gastoImportesGastoLBK.getIdEntidad());

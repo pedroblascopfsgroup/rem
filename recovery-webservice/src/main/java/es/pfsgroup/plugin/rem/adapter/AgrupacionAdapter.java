@@ -104,6 +104,7 @@ import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoComercialAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
+import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
@@ -129,6 +130,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -318,7 +320,6 @@ public class AgrupacionAdapter {
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
 		
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-
 		DtoAgrupacionFilter dtoAgrupacionFilter = new DtoAgrupacionFilter();
 		dtoAgrupacionFilter.setAgrupacionId(agrupacion.getId().toString());
 		dtoAgrupacionFilter.setLimit(1);
@@ -534,7 +535,25 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "idNumActivoPrincipal",
 								agrupacion.getActivoPrincipal().getNumActivo());
 					}
-
+					Activo act = agrupacion.getActivoPrincipal();
+					if(act!=null){
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", act.getId());
+						PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtro);
+						if (perimetroActivo != null) {
+							if (perimetroActivo.getCheckGestorComercial() != null) {
+								BeanUtils.copyProperty(dtoAgrupacion, "visibleGestionComercial",
+										Boolean.TRUE.equals(perimetroActivo.getCheckGestorComercial()));
+							}
+							if (perimetroActivo.getExcluirValidaciones() != null) {
+								BeanUtils.copyProperty(dtoAgrupacion, "marcaDeExcluido", perimetroActivo.getExcluirValidaciones().getCodigo());
+							}
+							if (perimetroActivo.getMotivoGestionComercial() != null) {
+								BeanUtils.copyProperty(dtoAgrupacion, "motivoDeExcluidoCodigo",
+										perimetroActivo.getMotivoGestionComercial().getCodigo());
+							}
+						}
+					}
+									
 					Activo activoPrincipal = agrupacion.getActivoPrincipal();
 					if(!Checks.esNulo(activoPrincipal)) {
 						dtoAgrupacion.setTipoComercializacionCodigo(activoPrincipal.getActivoPublicacion().getTipoComercializacion().getCodigo());
@@ -793,7 +812,6 @@ public class AgrupacionAdapter {
 					beanUtilNotNull.copyProperty(dtoAgrupacion, "observacionesAutoTram", agrupacion.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
 				}
 				dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
-
 			}
 
 		} catch (IllegalAccessException e) {
@@ -1215,9 +1233,70 @@ public class AgrupacionAdapter {
 				activoAgrupacionApi.saveOrUpdate(agrupacion);
 			}
 		}
-
+		
+		//HREOS-12346() TODO: falta por añadir el campo Marca Excluido en los Activos. 
+					Activo activoP = agrupacion.getActivoPrincipal();
+					Filter filtroactivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+					Filter filtroprincipal = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoP.getId());
+					PerimetroActivo perimetroActivoActual = genericDao.get(PerimetroActivo.class, filtroactivo);
+					PerimetroActivo perimetroActivoPrincipal = genericDao.get(PerimetroActivo.class, filtroprincipal);
+					boolean errorFlag = calculateEqualsPerimetros(perimetroActivoPrincipal, perimetroActivoActual);
+				
+					
+					if(errorFlag) {
+						throw new JsonViewerException("Los activos no tienen la misma situación para la visibilidad de gestión comercial");
+					}
+				
+						
+					
+					
 	}
 	
+	private boolean calculateEqualsPerimetros(PerimetroActivo perimetroActivoPrincipal,
+			PerimetroActivo perimetroActivoActual) {
+		boolean errorFlag = false;
+		
+		
+		if((perimetroActivoPrincipal.getCheckGestorComercial() != null && perimetroActivoActual.getCheckGestorComercial() == null) 
+				||(perimetroActivoPrincipal.getCheckGestorComercial() == null && perimetroActivoActual.getCheckGestorComercial() != null) ) {
+			errorFlag = true;
+		}else if(perimetroActivoPrincipal.getCheckGestorComercial() != null && perimetroActivoActual.getCheckGestorComercial() != null) {
+			errorFlag = perimetroActivoPrincipal.getCheckGestorComercial() == perimetroActivoActual.getCheckGestorComercial();
+		}
+		DDSinSiNo excluirValidacionesPrincipal = perimetroActivoPrincipal.getExcluirValidaciones();
+		DDSinSiNo excluirValidacionesActual = perimetroActivoActual.getExcluirValidaciones();
+		if((excluirValidacionesPrincipal!= null && excluirValidacionesActual == null) 
+				||(excluirValidacionesPrincipal == null && excluirValidacionesActual != null) ) {
+			errorFlag = true;
+		}else if((excluirValidacionesPrincipal != null && excluirValidacionesActual != null)
+				&& (excluirValidacionesPrincipal.getCodigo() != null && excluirValidacionesActual.getCodigo() == null) 
+				||(excluirValidacionesPrincipal.getCodigo() == null && excluirValidacionesActual.getCodigo() != null)) {
+			errorFlag = true;
+		}else if(excluirValidacionesPrincipal != null && excluirValidacionesActual != null && 
+				excluirValidacionesPrincipal.getCodigo() != null && excluirValidacionesActual.getCodigo() != null) {
+			errorFlag = excluirValidacionesPrincipal.getCodigo().equals(excluirValidacionesActual.getCodigo());
+		}
+		
+		DDMotivoGestionComercial motivoGestionPrincipal = perimetroActivoPrincipal.getMotivoGestionComercial();
+		DDMotivoGestionComercial motivoGestionActual = perimetroActivoActual.getMotivoGestionComercial();
+		if((motivoGestionPrincipal!= null && motivoGestionActual == null) 
+				||(motivoGestionPrincipal == null && motivoGestionActual != null) ) {
+			errorFlag = true;
+		}else if((motivoGestionPrincipal != null && motivoGestionActual != null)
+				&& (motivoGestionPrincipal.getCodigo() != null && motivoGestionActual.getCodigo() == null) 
+				||(motivoGestionPrincipal.getCodigo() == null && motivoGestionActual.getCodigo() != null)) {
+			errorFlag = true;
+		}else if(motivoGestionPrincipal != null && motivoGestionActual != null && 
+				motivoGestionPrincipal.getCodigo() != null && motivoGestionActual.getCodigo() != null) {
+			errorFlag = motivoGestionPrincipal.getCodigo().equals(motivoGestionActual.getCodigo());
+		}
+	
+		
+		return errorFlag;
+	}
+
+
+
 	@Transactional(readOnly = false)
 	public void createActivoAgrupacionMasivo(Long numActivo, Long idAgrupacion, Integer activoPrincipal, boolean ventaCartera)
 			throws JsonViewerException {
@@ -3400,7 +3479,13 @@ public class AgrupacionAdapter {
 							}
 						}
 					}
+					//HREOS-12346
+					saveActivosVisiblesGestionComercial(dto,id);
 
+//					if (dto.getVisibleGestionComercial()==true && dto.getMarcaDeExcluido()==true) {
+//						checkActivosVisiblesGestionComercial(dto,id);
+//					}
+					
 					if(!ofertaViva) {
 						List<ActivoAgrupacionActivo> listaActivos = restringida.getActivos();
 
@@ -4212,5 +4297,34 @@ public class AgrupacionAdapter {
 	@Transactional(readOnly = false)
 	public Oferta clonateOfertaAgrupacion(String idOferta) {
 		return genericAdapter.clonateOferta(idOferta, true);
+	}
+	
+	@Transactional(readOnly = false)
+	public void saveActivosVisiblesGestionComercial(DtoAgrupaciones dto, Long id) {
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
+		Filter filtroDict = null;
+		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+		if (activos != null && !activos.isEmpty()) {
+			for (ActivoAgrupacionActivo ativoAgrupacionActivo : activos) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id",
+						ativoAgrupacionActivo.getActivo().getId());
+				PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtro);
+				if (perimetroActivo != null) {
+					perimetroActivo.setCheckGestorComercial(dto.getVisibleGestionComercial());
+					if (dto.getMarcaDeExcluido() != null) {
+						filtroDict = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMarcaDeExcluido());
+						DDSinSiNo ddSinSiNo = genericDao.get(DDSinSiNo.class, filtroDict);
+						perimetroActivo.setExcluirValidaciones(ddSinSiNo);
+						if(DDSinSiNo.CODIGO_SI.equals(dto.getMarcaDeExcluido())&& dto.getMotivoDeExcluidoCodigo() != null) {
+							Filter filtroMotivoExcluido = genericDao.createFilter(FilterType.EQUALS, "codigo",
+									dto.getMotivoDeExcluidoCodigo());
+							DDMotivoGestionComercial ddtr1 = genericDao.get(DDMotivoGestionComercial.class, filtroMotivoExcluido);
+							perimetroActivo.setMotivoGestionComercial(ddtr1);
+						}
+					} 
+					genericDao.save(PerimetroActivo.class, perimetroActivo);
+				}
+			}
+		}
 	}
 }

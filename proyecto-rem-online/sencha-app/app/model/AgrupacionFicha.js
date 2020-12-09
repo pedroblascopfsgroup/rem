@@ -315,6 +315,23 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	            },
                 {
                 	name: 'codigoOnSareb'
+                },
+                {
+                	name: 'motivoDeExcluidoCodigo'
+                },
+                {
+    	 			name: 'visibleGestionComercial',
+    	 			type: 'boolean'
+
+    			},
+    			{
+    	 			name: 'marcaDeExcluido'
+    			},
+    			{
+                	name: 'motivoDeExcluidoDescripcion'
+                },
+    			{
+                	name: 'sumatorio'
                 }
     ],
     

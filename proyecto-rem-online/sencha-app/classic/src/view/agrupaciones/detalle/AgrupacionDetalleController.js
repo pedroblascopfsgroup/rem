@@ -1337,5 +1337,19 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		} else {
 			me.getView().lookupReference('autorizacionTramOfertasAgrupacion').setHidden(true);
 		}
-	}
+	},
+
+    excluidoMarcado: function(get) {
+    	var me = this;
+    	var marcaExcluidoMarcado = me.getView().lookupReference('chkMarcaDeExcluido').value;
+    	var cbMotivoDeExcluido = me.getView().lookupReference('cbMotivoDeExcluido');
+     	if((marcaExcluidoMarcado == "01")) {
+     		cbMotivoDeExcluido.setHidden(false);
+     		return false;
+     	} else if(marcaExcluidoMarcado == "02") {
+     		cbMotivoDeExcluido.setHidden(true);
+     		return true;
+     	}
+ }
+	
 });

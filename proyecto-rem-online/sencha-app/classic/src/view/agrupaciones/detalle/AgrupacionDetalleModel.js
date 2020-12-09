@@ -746,6 +746,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		usuarioEditarAgrupaciones: function(get){
 			return $AU.userHasFunction("EDITAR_LIST_AGRUPACIONES");
 		}
+		
     },
 				
     stores: {
@@ -1134,6 +1135,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
          	 groupField: 'descripcionTipo',
 		     remoteSort: true,
          	 autoLoad: true
+		},
+		comboMotivoDeExcluido: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoGestionComercial'}
+			},
+			autoLoad: true
+
 		}
+		
     }
 });

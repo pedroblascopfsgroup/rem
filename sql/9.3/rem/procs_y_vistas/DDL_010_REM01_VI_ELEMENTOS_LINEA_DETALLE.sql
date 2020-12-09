@@ -58,11 +58,11 @@ BEGIN
             ENT.DD_ENT_DESCRIPCION AS TIPOENTIDAD_DESC,
             CASE
               WHEN ( ACT.ACT_NUM_ACTIVO IS NOT NULL ) THEN
-                  ACT.ACT_NUM_ACTIVO
+                  TO_CHAR(ACT.ACT_NUM_ACTIVO)
               WHEN ( AGS.AGS_ID IS NOT NULL ) THEN
                   AGS.AGS_ACTIVO_GENERICO
               ELSE
-                  GLDENT.ENT_ID
+                  TO_CHAR(GLDENT.ENT_ID)
           	END  ENTIDAD,
             GLDENT.GLD_PARTICIPACION_GASTO,          
             GLDENT.GLD_REFERENCIA_CATASTRAL,

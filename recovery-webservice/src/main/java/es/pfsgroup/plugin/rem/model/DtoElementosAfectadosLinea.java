@@ -24,7 +24,7 @@ public class DtoElementosAfectadosLinea extends WebDto {
 	
 	 private Long idGasto;
 	 
-	 private Long idElemento;  
+	 private String idElemento;  
 	 
 	 private String tipoElemento;
 	 
@@ -85,11 +85,11 @@ public class DtoElementosAfectadosLinea extends WebDto {
 		this.idGasto = idGasto;
 	}
 
-	public Long getIdElemento() {
+	public String getIdElemento() {
 		return idElemento;
 	}
 
-	public void setIdElemento(Long idElemento) {
+	public void setIdElemento(String idElemento) {
 		this.idElemento = idElemento;
 	}
 

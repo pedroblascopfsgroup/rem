@@ -679,6 +679,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var tipoElemento = me.lookupReference('comboElementoAAnyadir').getValue();
     	var idElemento = me.lookupReference('elementoAnyadir').getValue();
     	var campoNumActivo = -1, campoNumAgrupacion = -1, campoNumActivoGenerico = -1, campoNumPromocion = -1;
+    	if(CONST.TIPO_ELEMENTOS_GASTO['CODIGO_ACTIVO_GENERICO'] != tipoElemento && isNaN(idElemento)){	
+    		me.fireEvent("errorToast", "El ID para este tipo de activo solo puede contener números");
+    		return;
+    	}
     	
     	var url =  $AC.getRemoteUrl('gastosproveedor/fechaDevengoPosteriorFechaTraspaso');
     	window.mask(HreRem.i18n("msg.mask.loading"));

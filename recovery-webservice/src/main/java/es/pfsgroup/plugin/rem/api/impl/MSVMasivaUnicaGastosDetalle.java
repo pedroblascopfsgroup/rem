@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoGenerico;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoCargaMasivaUnicaGastos;
@@ -421,6 +422,35 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 						gastoLineaDetalleEntidad.setParticipacionGasto(Double.parseDouble(exc.dameCelda(fila, COL_PARTICIPACION_LINEA_DETALLE)));
 						genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);
 						
+					}else if(DDEntidadGasto.CODIGO_ACTIVO_GENERICO.equals(entidadGasto.getCodigo())) {
+					
+						Filter filtroNumActivoGen = genericDao.createFilter(FilterType.EQUALS, "numActivoGenerico", exc.dameCelda(fila, COL_ID_ELEMENTO));
+						Filter filtroSubtipoGasto = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.codigo", newGastoLineaDetalle.getSubtipoGasto().getCodigo());
+						Filter filtroPropietario= genericDao.createFilter(FilterType.EQUALS, "propietario.id", newGastoLineaDetalle.getGastoProveedor().getPropietario().getId());
+						Filter filtroAnyo;
+						    if(newGastoLineaDetalle.getGastoProveedor().getFechaEmision() != null) {
+								SimpleDateFormat fyear = new SimpleDateFormat("yyyy");
+								String year = fyear.format(newGastoLineaDetalle.getGastoProveedor().getFechaEmision());
+								filtroAnyo = genericDao.createFilter(FilterType.EQUALS, "anyoActivoGenerico", Integer.parseInt(year));
+							}else {
+								filtroAnyo = genericDao.createFilter(FilterType.NULL, "anyoActivoGenerico");
+							}
+						ActivoGenerico activoGenerico =  genericDao.get(ActivoGenerico.class, filtroNumActivoGen, filtroSubtipoGasto,filtroPropietario, filtroAnyo);
+							if(activoGenerico == null) {
+								filtroAnyo = genericDao.createFilter(FilterType.NULL, "anyoActivoGenerico");
+								activoGenerico =  genericDao.get(ActivoGenerico.class, filtroNumActivoGen, filtroSubtipoGasto,filtroPropietario,filtroAnyo);
+						        }
+
+						if(activoGenerico != null) {
+							GastoLineaDetalleEntidad gastoLineaDetalleEntidad = new GastoLineaDetalleEntidad();
+							gastoLineaDetalleEntidad.setGastoLineaDetalle(newGastoLineaDetalle);
+							gastoLineaDetalleEntidad.setEntidad(activoGenerico.getId());
+							gastoLineaDetalleEntidad.setEntidadGasto(entidadGasto);
+							gastoLineaDetalleEntidad.setParticipacionGasto(Double.parseDouble(exc.dameCelda(fila, COL_PARTICIPACION_LINEA_DETALLE)));
+							genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);
+						}
+						
+					
 					}else if(DDEntidadGasto.CODIGO_SIN_ACTIVOS.equals(entidadGasto.getCodigo())) {		
 						
 					}else {

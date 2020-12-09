@@ -1027,7 +1027,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 			return retorno;
 		}
-	 }, 
+	 },
+	 
+	 esEditablePorcentajeConstruccion: function(get){
+		 var isGestorActivos = $AU.userIsRol('HAYAGESACT');
+		 var isUnidadAlquilable = false;
+		 if(get('activo.unidadAlquilable')){
+    		 isUnidadAlquilable = true;
+    	 }
+		 if(isGestorActivos && isUnidadAlquilable) return true;
+		 else return false;
+	 },
 	 
 	 stores: {
     		

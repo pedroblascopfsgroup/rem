@@ -29,6 +29,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
+import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
@@ -117,6 +118,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String ERROR_PORCENTAJE_PARTICIPACION="msg.error.porcentaje.participacion";
 	private static final String CESION_USO_ERROR= "msg.error.activo.patrimonio.en.cesion.uso";
 	private static final String NO_GESTIONADO_POR_ADMISION = "msg.no.gestionado.admision";
+	private static final String PORCENTAJE_CONTRUCCION_FUERA_LIMITES = "msg.porcentaje.construccion.fuera.limites";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -886,6 +888,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}else if(activo.getEstadoRegistral() != null){
 			activoDto.setEstadoRegistralCodigo(activo.getEstadoRegistral().getCodigo());
 		}
+		activoDto.setPorcentajeConstruccion(activo.getPorcentajeConstruccion());
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));		
 			
@@ -999,8 +1002,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			beanUtilNotNull.copyProperties(activo.getLocalizacion(), dto);
 			beanUtilNotNull.copyProperties(activo.getLocalizacion().getLocalizacionBien(), dto);
 			
+			
 			activo.setLocalizacion(genericDao.save(ActivoLocalizacion.class, activo.getLocalizacion()));
-
+			
 			if (!Checks.esNulo(dto.getPaisCodigo())) {
 				DDCicCodigoIsoCirbeBKP pais = (DDCicCodigoIsoCirbeBKP) diccionarioApi.dameValorDiccionarioByCod(DDCicCodigoIsoCirbeBKP.class,  dto.getPaisCodigo());
 				activo.getLocalizacion().getLocalizacionBien().setPais(pais);
@@ -1066,6 +1070,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				activo.setNombreCarteraPerimetro(dto.getNombreCarteraPerimetro());
 			}
 			
+			if(!Checks.esNulo(dto.getPorcentajeConstruccion())) {
+				if(dto.getPorcentajeConstruccion()>=0 && dto.getPorcentajeConstruccion()<=100) {
+					activo.setPorcentajeConstruccion(dto.getPorcentajeConstruccion());
+				}else {
+					throw new JsonViewerException(messageServices.getMessage(PORCENTAJE_CONTRUCCION_FUERA_LIMITES));
+				}
+			}
 			activo.getLocalizacion().setLocalizacionBien(genericDao.save(NMBLocalizacionesBien.class, activo.getLocalizacion().getLocalizacionBien()));
 			
 			if (!Checks.esNulo(dto.getSociedadPagoAnterior())) {

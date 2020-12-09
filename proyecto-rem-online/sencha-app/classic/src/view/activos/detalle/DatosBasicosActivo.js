@@ -276,6 +276,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                	}
 			                },
 			                {
+			                	xtype: 'textfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.porcentaje.construccion'),
+			                	name: 'porcentajeConstruccion',
+			                	reference: 'porcentajeConstruccion',
+	    						allowBlank: true,
+			                	bind: {
+			                		value: '{activo.porcentajeConstruccion}',
+			                		readOnly: '{activo.esEditablePorcentajeConstruccion}'
+			                	}
+			                },
+			                {
 			                	xtype: 'comboboxfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.segmento'),
 			                	name: 'combotipoSegmento',

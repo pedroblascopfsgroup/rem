@@ -39,6 +39,7 @@ public class ActivoPropagacionUAsFieldTabMap {
     	    		"usoDominanteCodigo",
     	    		"tipoActivoCodigo",
     	    		"subtipoActivoCodigo",
+    	    		"porcentajeConstruccion",
     	    		
     	    			// direccion
     	    		"comunidadAutonomaCodigo", 

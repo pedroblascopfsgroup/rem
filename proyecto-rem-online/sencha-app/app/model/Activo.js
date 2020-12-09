@@ -994,6 +994,29 @@ Ext.define('HreRem.model.Activo', {
 			{
 	 			name: 'esEditableActivoEstadoRegistral',
     			type: 'boolean'	 			
+			},
+			{
+	 			name: 'porcentajeConstruccion'
+			},
+			{
+				name: 'isEditablePorcentajeConstruccion',
+				calculate: function(data){
+					var isGestorActivos = $AU.userIsRol('HAYAGESACT','HAYASUPER');
+					var isUnidadAlquilable = data.unidadAlquilable;
+					var perimetroHaya = data.incluidoEnPerimetro;
+					if(isGestorActivos){
+						if(!isUnidadAlquilable && perimetroHaya == "true"){
+							return false;
+						}else{
+							return true;
+						}
+					}else{
+						return true;
+					}
+    				
+					
+    			},
+    			depends: ['isUA','incluidoEnPerimetro']
 			}
     		
     ],

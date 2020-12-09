@@ -535,6 +535,9 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "DD_ERA_ID")
     private DDEstadoRegistralActivo estadoRegistral; 
     
+    @Column(name = "ACT_PORCENTAJE_CONSTRUCCION")
+   	private Double porcentajeConstruccion;
+    
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -2068,5 +2071,14 @@ public class Activo implements Serializable, Auditable {
 	public void setEstadoRegistral(DDEstadoRegistralActivo estadoRegistral) {
 		this.estadoRegistral = estadoRegistral;
 	}
+
+	public Double getPorcentajeConstruccion() {
+		return porcentajeConstruccion;
+	}
+
+	public void setPorcentajeConstruccion(Double porcentajeConstruccion) {
+		this.porcentajeConstruccion = porcentajeConstruccion;
+	}
+	
 
 }

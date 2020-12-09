@@ -294,6 +294,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String estadoAdmisionDescCabecera;
 	private String subestadoAdmisionDescCabecera;
 	private Boolean esEditableActivoEstadoRegistral;
+	private Double porcentajeConstruccion;
 
 	
 	public Boolean getTieneOfertaAlquilerViva() {
@@ -2247,6 +2248,15 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setEsEditableActivoEstadoRegistral(Boolean esEditableActivoEstadoRegistral) {
 		this.esEditableActivoEstadoRegistral = esEditableActivoEstadoRegistral;
-	}	
+	}
+
+	public Double getPorcentajeConstruccion() {
+		return porcentajeConstruccion;
+	}
+
+	public void setPorcentajeConstruccion(Double porcentajeConstruccion) {
+		this.porcentajeConstruccion = porcentajeConstruccion;
+	}
+	
 	
 }

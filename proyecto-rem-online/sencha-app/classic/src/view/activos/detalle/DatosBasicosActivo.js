@@ -282,7 +282,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                	reference: 'porcentajeConstruccion',
 	    						allowBlank: true,
 			                	bind: {
-			                		value: '{activo.porcentajeConstruccion}',
+			                		value: '{activo.porcentajeConstruccion}'+'%',
 			                		readOnly: '{activo.esEditablePorcentajeConstruccion}'
 			                	}
 			                },

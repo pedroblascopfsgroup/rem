@@ -140,6 +140,10 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 	public static final String COD_COMERCIALIZACION_INCORRECTO="El campo Destino comercial es incorrecto.";
 	public static final String NIF_CIF_PROPIETARIO_INCORRECTO ="El formato del NIF/CIF es incorrecto.";
 	public static final String NIF_CIF_PROPIETARIO_IS_NULL ="El Campo NIF/CIF propietario no puede estar vacio .";
+	public static final String PROVINCIA_IS_NULL="El Campo Provincia no puede estar vacio";
+	public static final String TOMO_IS_NULL="El Campo Tomo no puede estar vacio";
+	public static final String LIBRO_IS_NULL="El Campo Libro no puede estar vacio";
+	public static final String FOLIO_IS_NULL="El Campo Folio no puede estar vacio";
 	
 	// Posicion fija de Columnas excel, para cualquier referencia por posicion
 	public static final class COL_NUM {
@@ -438,6 +442,10 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(COD_COMERCIALIZACION_INCORRECTO, codigoComercializacionIncorrecto(exc, COL_NUM.COD_DESTINO_COMER));
 			mapaErrores.put(NIF_CIF_PROPIETARIO_INCORRECTO, isCifNifValido(exc, COL_NUM.NIF_CIF_PROPIETARIO));
 			mapaErrores.put(NIF_CIF_PROPIETARIO_IS_NULL, isColumnNullByRows(exc, COL_NUM.NIF_CIF_PROPIETARIO));
+			mapaErrores.put(PROVINCIA_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_PROVINCIA));
+			mapaErrores.put(TOMO_IS_NULL, isColumnNullByRows(exc, COL_NUM.TOMO));
+			mapaErrores.put(LIBRO_IS_NULL, isColumnNullByRows(exc, COL_NUM.LIBRO));
+			mapaErrores.put(FOLIO_IS_NULL, isColumnNullByRows(exc, COL_NUM.FOLIO));
 			
 			if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(SUBCARTERA_IS_NULL).isEmpty() //ok
 					|| !mapaErrores.get(SUBCARTERA_NOT_EXISTS).isEmpty()
@@ -501,7 +509,10 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 					|| !mapaErrores.get(FECHA_DE_CALIFICACION_DATE_FORMAT).isEmpty()
 					|| !mapaErrores.get(FECHA_FIN_VIGENCIA).isEmpty()
 					|| !mapaErrores.get(INDICADOR_ACTIVO_EPA_SI).isEmpty()
-					
+					|| !mapaErrores.get(PROVINCIA_IS_NULL).isEmpty()
+					|| !mapaErrores.get(TOMO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(LIBRO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(FOLIO_IS_NULL).isEmpty()
 					|| !mapaErrores.get(PORCENTAJE_IS_NAN).isEmpty() 
 					|| !mapaErrores.get(CODIGO_POSTAL_IS_NAN).isEmpty()
 					|| !mapaErrores.get(MUNICIPIO_NOT_EXISTS).isEmpty()

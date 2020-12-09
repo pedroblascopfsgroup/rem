@@ -4930,7 +4930,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					List<ActivoAgrupacionActivo> agrupacionOrdenada = genericDao.getListOrdered(ActivoAgrupacionActivo.class, orderAsc,filtroAgrupacion);
 					if(agrupacionOrdenada.get(0) != null && agrupacionOrdenada.get(0).getActivo() != null 
 							&& agrupacionOrdenada.get(0).getActivo().getTerritorio() != null) {
-						direccion = agrupacionOrdenada.get(0).getActivo().getTerritorio().getCodigo();
+						direccion = agrupacionOrdenada.get(0).getActivo().getTerritorio().getDescripcion();
 						if(agrupacionOrdenada.get(0).getActivo().getLocalidad() != null)
 							dtoFichaComercial.setLocalidad(agrupacionOrdenada.get(0).getActivo().getLocalidad().getDescripcion());
 						if(agrupacionOrdenada.get(0).getActivo().getProvincia() != null)
@@ -4989,7 +4989,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if(oferta.getActivoPrincipal().getVisitas() != null)
 					dtoFichaComercial.setVisitas(oferta.getActivoPrincipal().getVisitas().size());
 					if(oferta.getActivoPrincipal().getTerritorio() != null)
-					dtoFichaComercial.setDireccionComercial(oferta.getActivoPrincipal().getTerritorio().getCodigo());
+					dtoFichaComercial.setDireccionComercial(oferta.getActivoPrincipal().getTerritorio().getDescripcion());
 					if(oferta.getActivoPrincipal().getOfertas()!=null)
 					dtoFichaComercial.setTotalOfertas(oferta.getActivoPrincipal().getOfertas().size());
 					if(oferta.getActivoPrincipal().getLocalidad() != null && oferta.getActivoPrincipal().getLocalidad().getProvincia() != null)
@@ -5323,17 +5323,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							activosFichaComercial.setProvincia(act.getLocalidad().getProvincia().getDescripcion());
 						}
 					}
-					activoValoraciones = genericDao.getList(ActivoValoraciones.class, filtroAct_id);
 					
-					if(activoValoraciones != null ) {
-						for (ActivoValoraciones activoValoracion : activoValoraciones) {
+					if(!valoracionesList.isEmpty()) {
+						for (ActivoValoraciones activoValoracion : valoracionesList) {
 							if (activoValoracion.getTipoPrecio() == null ) {
 								continue;
 							}
 							
-							if (activoValoracion.getImporte() != null
+							if (DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(activoValoracion.getTipoPrecio().getCodigo()) && activoValoracion.getImporte() != null
 									&& activoValoracion.getFechaInicio() != null && activoValoracion.getFechaFin() == null) {
 								activosFichaComercial.setPrecioComite(activoValoracion.getImporte());
+								precioComiteTotal += activoValoracion.getImporte();
 							}
 							
 							boolean esVigente = activoValoracion.getFechaFin() == null;
@@ -5344,9 +5344,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								activosFichaComercial.setPrecioPublicacion(importe);
 								precioPublicacionTotal += importe;
 								
-							} else if (esVigente && DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT.equals(tipoPrecioCodigo)) {
-								activosFichaComercial.setVnc(importe);
-								vncTotal += importe;
 							}
 						}
 					}
@@ -5596,14 +5593,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 				
-				activoValoraciones = genericDao.getList(ActivoValoraciones.class, filtroAct_id);
-				if(activoValoraciones != null ) {
-					for (ActivoValoraciones activoValoracion : activoValoraciones) {
+				if(!valoracionesList.isEmpty()) {
+					for (ActivoValoraciones activoValoracion : valoracionesList) {
 						if (activoValoracion.getTipoPrecio() == null ) {
 							continue;
 						}
 						
-						if (activoValoracion.getImporte() != null
+						if (DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(activoValoracion.getTipoPrecio().getCodigo()) && activoValoracion.getImporte() != null
 								&& activoValoracion.getFechaInicio() != null && activoValoracion.getFechaFin() == null) {
 							activosFichaComercial.setPrecioComite(activoValoracion.getImporte());
 							precioComiteTotal += activoValoracion.getImporte();
@@ -5617,9 +5613,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							activosFichaComercial.setPrecioPublicacion(importe);
 							precioPublicacionTotal += importe;
 							
-						} else if (esVigente && DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT.equals(tipoPrecioCodigo)) {
-							activosFichaComercial.setVnc(importe);
-							vncTotal += importe;
 						}
 					}
 				}
@@ -6134,7 +6127,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private void setInformacionGestorComercial(DtoExcelFichaComercial dtoFichaComercial, Long idActivo) {
 		List<DtoListadoGestores> gestoresList = activoAdapterApi.getGestores(idActivo);
 		for (DtoListadoGestores gestor : gestoresList) {
-			if ("HAYAGBOINM".equals(gestor.getCodigo())) {
+			if ("HAYAGBOINM".equals(gestor.getCodigo()) && gestor.getFechaHasta() == null) {
 				dtoFichaComercial.setNombreYApellidosComercial(gestor.getApellidoNombre());
 				dtoFichaComercial.setTelefonoComercial(gestor.getTelefono());
 				dtoFichaComercial.setCorreoComercial(gestor.getEmail());

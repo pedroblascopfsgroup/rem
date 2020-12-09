@@ -211,6 +211,20 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				return getGestorOrSupervisorExpedienteByCodigo(tareaExterna, tipoGestor.getCodigo());
 			}	
 		}
+		
+		if((CODIGO_T017_POSICIONAMIENTO_FIRMA.equals(codigoTarea)
+				|| CODIGO_T017_DOCUMENTOS_POSTVENTA.equals(codigoTarea)) && DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)) {
+			
+			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+			
+			tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+			
+			if(tipoGestor != null) {
+				return getGestorOrSupervisorExpedienteByCodigo(tareaExterna, tipoGestor.getCodigo());
+			}	
+		}
+		
+		
 		if((DDCartera.CODIGO_CARTERA_CERBERUS.equals(codigoCartera) && (CODIGO_T017_PBC_VENTA.equals(codigoTarea) || CODIGO_T017_PBC_RESERVA.equals(codigoTarea)))
 				|| (DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera) && (CODIGO_T017_PBC_VENTA.equals(codigoTarea) || CODIGO_T017_PBC_RESERVA.equals(codigoTarea)))
 				|| ((DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)
@@ -218,12 +232,23 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 						|| DDCartera.CODIGO_CARTERA_SAREB.equals(codigoCartera)
 						|| DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera))
 						&& CODIGO_T013_RESULTADO_PBC.equals(codigoTarea))) {		
-			Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "username", USUARIO_GESTOR_FORMALIZACION);
+			
+			
+			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+			
+			tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+			
+			if(tipoGestor != null) {
+				return getGestorOrSupervisorExpedienteByCodigo(tareaExterna, tipoGestor.getCodigo());
+			}			
+			
+			
+			/*Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "username", USUARIO_GESTOR_FORMALIZACION);
 			usuarioDevolver = genericDao.get(Usuario.class, filtroUsuario);
 			
 			if(usuarioDevolver != null) {
 				return usuarioDevolver;
-			}	
+			}	*/
 		}
 		
 		

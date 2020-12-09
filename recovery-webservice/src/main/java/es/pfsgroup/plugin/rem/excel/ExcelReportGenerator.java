@@ -1730,7 +1730,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r = mySheetDesglose.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(activoFichaComercial.getTasacion())) {
-					c.setCellValue(activoFichaComercial.getTasacion());
+					c.setCellValue(decimalFormat.format(activoFichaComercial.getTasacion()));
 				} else {
 					c.setCellValue("");
 				}
@@ -1776,7 +1776,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r = mySheetDesglose.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(activoFichaComercial.getEurosM2())) {
-					c.setCellValue(activoFichaComercial.getEurosM2().toString());
+					c.setCellValue(decimalFormat.format(activoFichaComercial.getEurosM2()));
 				} else {
 					c.setCellValue("");
 				}
@@ -1794,7 +1794,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r = mySheetDesglose.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				c.setCellStyle(styleFondoAmarillo);
-				if (!Checks.esNulo(activoFichaComercial.getGastosPendientes())) {
+				if (!Checks.esNulo(activoFichaComercial.getGastosPendientes()) && activoFichaComercial.getGastosPendientes() > 0) {
 					c.setCellValue(activoFichaComercial.getGastosPendientes().toString());
 				} else {
 					c.setCellValue("");
@@ -1842,9 +1842,9 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			cellReference = new CellReference("L5");
 			r = mySheetDesglose.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
-			if (!Checks.esNulo(dtoExcelFichaComercial.getEurosM2Total())) {
-				String eurosM2Total = decimalFormat.format(dtoExcelFichaComercial.getEurosM2Total());
-				c.setCellValue(eurosM2Total);
+			if (!Checks.esNulo(dtoExcelFichaComercial.getM2EdificableTotal())) {
+				String edificable = decimalFormat.format(dtoExcelFichaComercial.getM2EdificableTotal());
+				c.setCellValue(edificable);
 			} else {
 				c.setCellValue("");
 			}
@@ -1881,7 +1881,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			r = mySheetDesglose.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
 			if (!Checks.esNulo(dtoExcelFichaComercial.getTasacionTotal())) {
-				c.setCellValue(dtoExcelFichaComercial.getTasacionTotal());
+				
+				c.setCellValue(decimalFormat.format(dtoExcelFichaComercial.getTasacionTotal()));
 			} else {
 				c.setCellValue("");
 			}
@@ -1926,7 +1927,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			r = mySheetDesglose.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
 			if (!Checks.esNulo(dtoExcelFichaComercial.getEurosM2Total())) {
-				c.setCellValue(dtoExcelFichaComercial.getEurosM2Total().toString());
+				c.setCellValue(decimalFormat.format(dtoExcelFichaComercial.getEurosM2Total()));
 			} else {
 				c.setCellValue("");
 			}

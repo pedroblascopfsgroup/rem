@@ -1217,7 +1217,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			GastoProveedor gasto = gastoLineaDetalle.getGastoProveedor();
 			List<GastoLineaDetalleEntidad>  gastoLineaDetalleEntidadList = gastoLineaDetalle.getGastoLineaEntidadList();
 			if(DDEntidadGasto.CODIGO_AGRUPACION.equals(dto.getTipoElemento())){
-				Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", dto.getIdElemento());
+				Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", Long.parseLong(dto.getIdElemento()));
 				ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtroAgrupacion);
 				if(agrupacion == null) {
 					error = ERROR_NO_EXISTE_AGRUPACION;
@@ -1262,7 +1262,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				gastoLineaDetalleEntidad.setGastoLineaDetalle(gastoLineaDetalle);
 				gastoLineaDetalleEntidad.setEntidadGasto(tipoElemento);
 				if(DDEntidadGasto.CODIGO_ACTIVO.equals(dto.getTipoElemento())) {
-					Activo activo = activoDao.getActivoByNumActivo(dto.getIdElemento());
+					Activo activo = activoDao.getActivoByNumActivo(Long.parseLong(dto.getIdElemento()));
 					if(activo == null) {
 						error = ERROR_NO_EXISTE_ACTIVO;
 						return error;
@@ -1286,8 +1286,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					}
 					ActivoGenerico activoGenerico =  genericDao.get(ActivoGenerico.class, filtroNumActivoGen, filtroSubtipoGasto,filtroPropietario, filtroAnyo);
 					if(activoGenerico == null) {
-						filtroAnyo = genericDao.createFilter(FilterType.NULL, "anyoActivoGenerico");
-						activoGenerico =  genericDao.get(ActivoGenerico.class, filtroNumActivoGen, filtroSubtipoGasto,filtroPropietario,filtroAnyo);
+						//filtroAnyo = genericDao.createFilter(FilterType.NULL, "anyoActivoGenerico");
+						activoGenerico =  genericDao.get(ActivoGenerico.class, filtroNumActivoGen, filtroSubtipoGasto,filtroPropietario);
 						if(activoGenerico == null) {
 							error = ERROR_NO_EXISTE_ACTIVO_GENERICO;
 							return error;
@@ -1295,7 +1295,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					}
 					gastoLineaDetalleEntidad.setEntidad(activoGenerico.getId());
 				}else {
-					gastoLineaDetalleEntidad.setEntidad(dto.getIdElemento());
+					gastoLineaDetalleEntidad.setEntidad(Long.parseLong(dto.getIdElemento()));
 				}
 				BigDecimal participacion = recalcularParticipacionElementos(dto.getIdLinea(), gastoLineaDetalleEntidadList, 1);
 				gastoLineaDetalleEntidad.setAuditoria(Auditoria.getNewInstance());

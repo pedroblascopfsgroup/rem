@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo
---## FECHA_CREACION=20201121
+--## AUTOR= Jesus Jativa
+--## FECHA_CREACION=20201205
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-11091
+--## INCIDENCIA_LINK=HREOS-12377
 --## PRODUCTO=NO
---## Finalidad: Vista para sacar las entidades de una línea de detalle
+--## Finalidad: Modificacion acorde al cambio de tipado de AGS_ACTIVO_GENERICO
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -58,7 +58,7 @@ BEGIN
             ENT.DD_ENT_DESCRIPCION AS TIPOENTIDAD_DESC,
             CASE
               WHEN ( ACT.ACT_NUM_ACTIVO IS NOT NULL ) THEN
-                  TO_CHAR(ACT.ACT_NUM_ACTIVO)
+                 TO_CHAR(ACT.ACT_NUM_ACTIVO) 
               WHEN ( AGS.AGS_ID IS NOT NULL ) THEN
                   AGS.AGS_ACTIVO_GENERICO
               ELSE

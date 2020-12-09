@@ -3693,10 +3693,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Override
 	public Double recalcularImporteTotalGasto(GastoDetalleEconomico gasto) {
 		
-		Double importeTotal = 0.0;
+		Double importeTotal = 0.0, cuotaIvaRetenida = 0.0;
+		boolean retencionAntes = false;
+		
+		
 		
 		if(gasto.getGastoProveedor() != null) {
-
+			
+			retencionAntes = gasto.getTipoRetencion() != null && DDTipoRetencion.CODIGO_TRE_ANTES.equals(gasto.getTipoRetencion().getCodigo());
+			
 			Filter filter = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getGastoProveedor().getId());
 			List<GastoLineaDetalle> gastoLineaDetalleList = genericDao.getList(GastoLineaDetalle.class, filter);
 	
@@ -3704,6 +3709,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
 					if(gastoLineaDetalle.getImporteTotal() != null) {
 						importeTotal+= gastoLineaDetalle.getImporteTotal();
+					}
+					if (gastoLineaDetalle.getImporteIndirectoCuota() != null ) {
+						cuotaIvaRetenida += gastoLineaDetalle.getImporteIndirectoCuota();
 					}
 				}
 			}
@@ -3713,6 +3721,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 			if(gasto.getRetencionGarantiaCuota() != null && gasto.getRetencionGarantiaAplica() != null && gasto.getRetencionGarantiaAplica()) {
 				importeTotal = importeTotal - gasto.getRetencionGarantiaCuota();
+			}
+			if (retencionAntes && gasto.getRetencionGarantiaTipoImpositivo() != null ) {
+				try {
+					importeTotal = importeTotal - (cuotaIvaRetenida / 100 * gasto.getRetencionGarantiaTipoImpositivo());
+					
+				} catch (ArithmeticException e) {
+					e.printStackTrace();
+				}
+				
 			}
 
 		}		

@@ -285,7 +285,19 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                		value: '{activo.tipoSegmentoCodigo}',
 			                		hidden: '{!activo.isSubcarteraDivarian}'
 			                	}
+			                },
+			                {
+			                	xtype: 'comboboxfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo.DND'),
+			                	name: 'comboEstadoFisicoActivoDND',
+			                	reference: 'comboEstadoFisicoActivoDNDRef',
+			                	bind: {			                		
+			                		value: '{activo.estadoFisicoActivoDND}',
+			                		store: '{comboEstadoActivoDND}',
+			                		readOnly:true
+			                	}
 			                }
+			                
 						]
 					}]
             },

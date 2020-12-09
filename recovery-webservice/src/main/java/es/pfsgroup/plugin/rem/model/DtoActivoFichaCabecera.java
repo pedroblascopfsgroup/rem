@@ -294,6 +294,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String estadoAdmisionDescCabecera;
 	private String subestadoAdmisionDescCabecera;
 	private Boolean esEditableActivoEstadoRegistral;
+	private String estadoFisicoActivoDND;
 
 	
 	public Boolean getTieneOfertaAlquilerViva() {
@@ -2248,6 +2249,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setEsEditableActivoEstadoRegistral(Boolean esEditableActivoEstadoRegistral) {
 		this.esEditableActivoEstadoRegistral = esEditableActivoEstadoRegistral;
+	}
+
+	public String getEstadoFisicoActivoDND() {
+		return estadoFisicoActivoDND;
+	}
+
+	public void setEstadoFisicoActivoDND(String estadoFisicoActivoDND) {
+		this.estadoFisicoActivoDND = estadoFisicoActivoDND;
 	}	
 	
 }

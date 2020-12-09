@@ -957,6 +957,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setEsEditableActivoEstadoRegistral(!perimetroAdmision);
 		}
 		
+		if(activo.getEstadoValidacionActivoDND()!=null) {
+			activoDto.setEstadoFisicoActivoDND(activo.getEstadoValidacionActivoDND().getCodigo());
+		}
+		
+		
 		return activoDto;
 	}
 	

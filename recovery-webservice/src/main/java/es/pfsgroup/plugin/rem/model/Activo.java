@@ -66,6 +66,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
+import es.pfsgroup.plugin.rem.model.dd.DDValidaEstadoActivo;
 
 /**
  * Modelo que gestiona los activos.
@@ -534,6 +535,11 @@ public class Activo implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_ERA_ID")
     private DDEstadoRegistralActivo estadoRegistral; 
+    
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_VEA_ID")
+    private DDValidaEstadoActivo estadoValidacionActivoDND; 
     
     // Getters del activo --------------------------------------------
     
@@ -2067,6 +2073,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setEstadoRegistral(DDEstadoRegistralActivo estadoRegistral) {
 		this.estadoRegistral = estadoRegistral;
+	}
+
+	public DDValidaEstadoActivo getEstadoValidacionActivoDND() {
+		return estadoValidacionActivoDND;
+	}
+
+	public void setEstadoValidacionActivoDND(DDValidaEstadoActivo estadoValidacionActivoDND) {
+		this.estadoValidacionActivoDND = estadoValidacionActivoDND;
 	}
 
 }

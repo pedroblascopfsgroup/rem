@@ -997,6 +997,9 @@ Ext.define('HreRem.model.Activo', {
 			{
 	 			name: 'esEditableActivoEstadoRegistral',
     			type: 'boolean'	 			
+			},
+			{
+				name:'estadoFisicoActivoDND'
 			}
     		
     ],

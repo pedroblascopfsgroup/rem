@@ -996,7 +996,8 @@ Ext.define('HreRem.model.Activo', {
     			type: 'boolean'	 			
 			},
 			{
-	 			name: 'porcentajeConstruccion'
+	 			name: 'porcentajeConstruccion',
+	 			type: 'float'
 			},
 			{
 				name: 'isEditablePorcentajeConstruccion',

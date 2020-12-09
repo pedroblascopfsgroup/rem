@@ -24,7 +24,6 @@ DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de un registro.
-	V_SQL_2 VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de un registro 2.
     V_NUM_REG NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
@@ -78,13 +77,12 @@ BEGIN
 	        END IF;
 		END LOOP;
 		
-		V_SQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME = ''FK_OVN_COMERC''';
-		V_SQL_2 := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA||''' AND COLUMN_NAME = ''ACT_OVN_COMERC''';
+		V_SQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME = ''FK_ACT_OVN_COMERC'' AND TABLE_NAME = '''||V_TABLA||'''';
 		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-		DBMS_OUTPUT.PUT_LINE(V_NUM_TABLAS); 
-		IF V_NUM_TABLAS = 0 AND V_SQL_2 > 0 THEN
+		IF V_NUM_TABLAS = 0 THEN
 
-			V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT FK_OVN_COMERC FOREIGN KEY (ACT_OVN_COMERC) REFERENCES '||V_ESQUEMA_M||'.DD_SIN_SINO (DD_SIN_ID))'; 
+			V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD CONSTRAINT FK_ACT_OVN_COMERC FOREIGN KEY (ACT_OVN_COMERC) REFERENCES '||V_ESQUEMA_M||'.DD_SIN_SINO(DD_SIN_ID)'; 
+			DBMS_OUTPUT.PUT_LINE(V_MSQL);
 			EXECUTE IMMEDIATE V_MSQL;	
 			
 		ELSE

@@ -422,6 +422,8 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private BooleanDataType existeZonaInfantil;
 	private BooleanDataType existeConserjeVigilancia;
 	private StringDataType otrosZonasComunes;
+	@MappedColumn("COD_TIPO_ADMITE_MASCOTA")
+	private StringDataType codTipoAdmiteMascota;
 	
 	//Solicitud HREOS-1398
 	private BooleanDataType aceptado;
@@ -2232,6 +2234,12 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	}
 	public void setMotivoRechazo(StringDataType motivoRechazo) {
 		this.motivoRechazo = motivoRechazo;
+	}
+	public StringDataType getCodTipoAdmiteMascota() {
+		return codTipoAdmiteMascota;
+	}
+	public void setCodTipoAdmiteMascota(StringDataType codTipoAdmiteMascota) {
+		this.codTipoAdmiteMascota = codTipoAdmiteMascota;
 	}
 	
 }

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Jonathan Ovalle
---## FECHA_CREACION=20201204
+--## FECHA_CREACION=20201209
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-12302
@@ -31,7 +31,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-       T_TIPO_DATA('ACT_PORCENTAJE_CONSTRUCCION', 'DECIMAL(16,2)', 'Porcentaje de construcción')
+       T_TIPO_DATA('ACT_PORCENTAJE_CONSTRUCCION', 'DECIMAL(5,2)', 'Porcentaje de construcción')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

@@ -3351,9 +3351,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)  "
-				+"		FROM ACT_TBJ_TRABAJO"
-				+"		WHERE TBJ_NUM_TRABAJO = "+celdaTrabajo+""
-				+"	AND tbj_aplica_comite = '1' AND dd_aco_id = '6' AND BORRADO= 0");
+				+"		FROM ACT_TBJ_TRABAJO tbj join DD_ACO_APROBACION_COMITE aco on tbj.dd_aco_id = aco.dd_aco_id and aco.borrado = 0"
+				+"		WHERE tbj.TBJ_NUM_TRABAJO = "+celdaTrabajo+""
+				+"	AND tbj.tbj_aplica_comite = '1' AND aco.dd_aco_codigo = 'APR' AND tbj.BORRADO= 0");
 
 		return "1".equals(resultado);
 

@@ -256,5 +256,4 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 	public void setCdpen(String cdpen) {
 		this.cdpen = cdpen;
 	}
-
 }

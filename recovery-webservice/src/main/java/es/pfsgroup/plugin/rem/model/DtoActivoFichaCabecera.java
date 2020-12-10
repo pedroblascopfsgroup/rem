@@ -2404,5 +2404,4 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.cdpen = cdpen;
 	}	
 	
-
 }

@@ -84,7 +84,7 @@ public class DtoAgrupaciones extends WebDto {
 	private String codigoOnSareb;
 	
 	private Boolean visibleGestionComercial;
-	private String marcaDeExcluido;
+	private Boolean marcaDeExcluido;
 	private String motivoDeExcluidoCodigo;
 	private Integer sumatorio;
 
@@ -536,10 +536,10 @@ public class DtoAgrupaciones extends WebDto {
 	public void setSumatorio(Integer sumatorio) {
 		this.sumatorio = sumatorio;
 	}
-	public String getMarcaDeExcluido() {
+	public Boolean getMarcaDeExcluido() {
 		return marcaDeExcluido;
 	}
-	public void setMarcaDeExcluido(String marcaDeExcluido) {
+	public void setMarcaDeExcluido(Boolean marcaDeExcluido) {
 		this.marcaDeExcluido = marcaDeExcluido;
 	}
 	

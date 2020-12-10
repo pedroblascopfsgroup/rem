@@ -325,7 +325,8 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 
     			},
     			{
-    	 			name: 'marcaDeExcluido'
+    	 			name: 'marcaDeExcluido',
+    	 			type: 'boolean'
     			},
     			{
                 	name: 'motivoDeExcluidoDescripcion'

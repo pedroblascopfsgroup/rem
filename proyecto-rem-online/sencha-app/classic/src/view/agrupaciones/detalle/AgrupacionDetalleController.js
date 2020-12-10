@@ -1343,10 +1343,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     	var me = this;
     	var marcaExcluidoMarcado = me.getView().lookupReference('chkMarcaDeExcluido').value;
     	var cbMotivoDeExcluido = me.getView().lookupReference('cbMotivoDeExcluido');
-     	if((marcaExcluidoMarcado == "01")) {
+     	if(marcaExcluidoMarcado == "true") {
      		cbMotivoDeExcluido.setHidden(false);
      		return false;
-     	} else if(marcaExcluidoMarcado == "02") {
+     	} else {
      		cbMotivoDeExcluido.setHidden(true);
      		return true;
      	}

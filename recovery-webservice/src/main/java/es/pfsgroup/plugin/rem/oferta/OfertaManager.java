@@ -5649,11 +5649,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 	
 				
-				List<ActivoCargas> cargas  = genericDao.getList(ActivoCargas.class,filtroActivo);
-				if(!Checks.esNulo(cargas)) {
+				if(activoCargasApi.tieneCargasOcultasCargaMasivaEsparta(oferta.getActivoPrincipal().getId())) {
+					if(activoCargasApi.esCargasOcultasCargaMasivaEsparta(oferta.getActivoPrincipal().getId())) {
+						activosFichaComercial.setCargas("Si");
+					} else {
+						activosFichaComercial.setCargas("No");
+					}
+				} else if(activoCargasApi.esActivoConCargasNoCanceladas(oferta.getActivoPrincipal().getId())) {
 					activosFichaComercial.setCargas("Si");
-				}
-				else {
+				} else {
 					activosFichaComercial.setCargas("No");
 				}
 				

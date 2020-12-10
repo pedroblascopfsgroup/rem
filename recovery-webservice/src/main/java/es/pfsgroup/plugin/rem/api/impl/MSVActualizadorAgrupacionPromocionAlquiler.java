@@ -189,7 +189,12 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			if (!Checks.esNulo(activoMatriz.getTipoAlquiler()))
 				unidadAlquilable.setTipoAlquiler(activoMatriz.getTipoAlquiler());
 			if (!Checks.esNulo(activoMatriz.getBloqueoTipoComercializacionAutomatico()))
-				unidadAlquilable.setBloqueoTipoComercializacionAutomatico(activoMatriz.getBloqueoTipoComercializacionAutomatico());			
+				unidadAlquilable.setBloqueoTipoComercializacionAutomatico(activoMatriz.getBloqueoTipoComercializacionAutomatico());	
+			
+			//Seteo %Construccion
+			if (activoMatriz.getPorcentajeConstruccion()!= null) {
+				unidadAlquilable.setPorcentajeConstruccion(activoMatriz.getPorcentajeConstruccion());
+			}
 		}
 		
 		
@@ -869,7 +874,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			actSitPosUA.setOcupado(0);
 			actSitPosUA.setAccesoAntiocupa(0);
 			actSitPosUA.setAccesoTapiado(0);
-			
+			actSitPosUA.setActivo(unidadAlquilable);
 			genericDao.save(ActivoSituacionPosesoria.class, actSitPosUA);
 			
 		}

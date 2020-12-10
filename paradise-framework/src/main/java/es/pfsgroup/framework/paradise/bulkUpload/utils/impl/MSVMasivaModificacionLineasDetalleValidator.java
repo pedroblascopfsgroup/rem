@@ -638,8 +638,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	            for(int i=1; i<this.numFilasHoja;i++){
 	                try {
 	                	String tipoElemento = exc.dameCelda(i, COL_TIPO_ELEMENTO);
-	                    if(Checks.esNulo(exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO)) &&
-	                    	!Checks.esNulo(tipoElemento) && TIPO_ELEMENTO_SIN_ELEMENTO.equalsIgnoreCase(tipoElemento))
+	                    if(Checks.esNulo(exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO)))
 	                        listaFilas.add(i);
 	                } catch (ParseException e) {
 	                    listaFilas.add(i);

@@ -119,7 +119,27 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 															value: '{contabilidad.inversionSujetoPasivoBoolean}'
 														},
                                                         hidden: !isCarteraLiberbank					
+													},
+													{ 
+														xtype: 'comboboxfieldbase',
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.inversion.sujeto.pasivo'),
+														reference: 'inversionSujetoPasivo',
+														bind: {
+															store: '{comboSiNoBoolean}',
+															value: '{contabilidad.inversionSujetoPasivoBoolean}'
+														},
+                                                        hidden: !isCarteraLiberbank					
+													},
+													{ 
+														
+														xtype: 'checkboxfieldbase',
+											        	boxLabel: HreRem.i18n('fieldlabel.gasto.excluir.envio.lbk'),
+											        	//name: 'agrupacionesVinculadas',
+											        	//reference: 'excluirEnvioLbk1', 	
+											        	bind: '{contabilidad.excluirEnvioLbk}'
+										                					
 													}
+													
 										]
 					           },
 					           {   
@@ -163,15 +183,8 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 																	reference : 'diario1Tipo',
 													                bind: '{contabilidad.diario1Tipo}',
 													                readOnly: true						
-																},
-																{ 
-																	xtype: 'currencyfieldbase',
-																	symbol: HreRem.i18n("symbol.euro"),
-																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.cuota'),
-																	reference : 'cuotaDiario1',
-																	bind: '{contabilidad.diario1Cuota}',
-													                readOnly: true						
 																}
+																
 																
 															]
 											        },

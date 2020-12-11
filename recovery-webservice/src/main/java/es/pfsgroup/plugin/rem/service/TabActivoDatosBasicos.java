@@ -888,7 +888,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}else if(activo.getEstadoRegistral() != null){
 			activoDto.setEstadoRegistralCodigo(activo.getEstadoRegistral().getCodigo());
 		}
-		activoDto.setPorcentajeConstruccion(activo.getPorcentajeConstruccion());
+		Double porcentajeContruccion = activo.getPorcentajeConstruccion();
+		activoDto.setPorcentajeConstruccion(porcentajeContruccion);
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));		
 			
@@ -1071,11 +1072,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			
 			if(!Checks.esNulo(dto.getPorcentajeConstruccion())) {
-				if(dto.getPorcentajeConstruccion()>=0 && dto.getPorcentajeConstruccion()<=100) {
+				 String str = String.format("%.02f", dto.getPorcentajeConstruccion());
+				 if(dto.getPorcentajeConstruccion() == Double.parseDouble(str)){
 					activo.setPorcentajeConstruccion(dto.getPorcentajeConstruccion());
-				}else {
-					throw new JsonViewerException(messageServices.getMessage(PORCENTAJE_CONTRUCCION_FUERA_LIMITES));
 				}
+				 
 			}
 			activo.getLocalizacion().setLocalizacionBien(genericDao.save(NMBLocalizacionesBien.class, activo.getLocalizacion().getLocalizacionBien()));
 			

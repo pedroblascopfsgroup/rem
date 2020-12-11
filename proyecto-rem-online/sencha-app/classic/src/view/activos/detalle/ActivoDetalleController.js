@@ -811,6 +811,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     },
     
+    onChangePorcentajeConstruccion: function(combo, value, oldValue, eOpts){
+    	var me = this;
+    	if(value>=0.00 && value <=100.00){
+    		console.log('lo es');
+    	}
+    	
+    },
+    
     cargaGestores : function(grid){
     	var me = this;
     	var idActivo = me.getViewModel().get("activo.id");

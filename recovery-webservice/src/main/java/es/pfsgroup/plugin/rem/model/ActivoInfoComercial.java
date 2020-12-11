@@ -356,7 +356,7 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	private ActivoProveedor mediadorEspejo;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="DD_SINI_ID")
+	@JoinColumn(name="ICO_ADMITE_MASCOTAS")
 	private DDSiniSiNoIndiferente admiteMascotaOtrasCaracteristicas;
 	
 

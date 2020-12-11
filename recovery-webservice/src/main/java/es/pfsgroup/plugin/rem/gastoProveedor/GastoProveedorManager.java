@@ -2017,6 +2017,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				
 				dto.setFechaContabilizacion(contabilidadGasto.getFechaContabilizacion());
 				dto.setFechaDevengoEspecial(contabilidadGasto.getFechaDevengoEspecial());
+				dto.setExcluirEnvioLbk(contabilidadGasto.getExcluirEnvioLbk());
 				if (!Checks.esNulo(contabilidadGasto.getContabilizadoPor())) {
 					dto.setContabilizadoPorDescripcion(contabilidadGasto.getContabilizadoPor().getDescripcion());
 				}
@@ -2113,6 +2114,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					DDTipoComisionado tipoComision = genericDao.get(DDTipoComisionado.class, filtro);
 					contabilidadGasto.setTipoComisionadoHre(tipoComision);
 				}
+				
+
 
 				gasto.setGastoInfoContabilidad(contabilidadGasto);
 			}			

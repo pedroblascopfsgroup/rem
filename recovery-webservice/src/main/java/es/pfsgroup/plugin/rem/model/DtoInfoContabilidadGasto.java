@@ -44,7 +44,7 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	private String errorDiarios;
 	private boolean resultadoDiarios;
 	private Boolean inversionSujetoPasivoBoolean;
-	
+	private Boolean excluirEnvioLbk;
 
 	public Long getEjercicioImputaGasto() {
 		return ejercicioImputaGasto;
@@ -190,6 +190,11 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setInversionSujetoPasivoBoolean(Boolean inversionSujetoPasivoBoolean) {
 		this.inversionSujetoPasivoBoolean = inversionSujetoPasivoBoolean;
 	}
-	
+	public void setExcluirEnvioLbk(Boolean excluirEnvioLbk) {
+		this.excluirEnvioLbk = excluirEnvioLbk;
+	}
+	public Boolean getExcluirEnvioLbk() {
+		return excluirEnvioLbk;
+	}
 	
 }

@@ -1047,6 +1047,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getEsOfertaSingular())) {
 				oferta.setOfertaSingular(ofertaDto.getEsOfertaSingular());
 			}
+			
+			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())) {
+				oferta.setOfrRecomendacionRc(ofertaDto.getRecomendacionRc());
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionRc())) {
+				oferta.setOfrFechaRecomendacionRc(ofertaDto.getFechaRecomendacionRc());
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())) {
+				oferta.setOfrRecomendacionDc(ofertaDto.getRecomendacionDc());
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDc())) {
+				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDc());
+			}
 
 		}
 
@@ -1283,8 +1299,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 			if (!Checks.esNulo(ofertaDto.getEsOfertaSingular())
-					&& ofertaDto.getEsOfertaSingular().equals(oferta.getOfertaSingular())) {
+					&& !ofertaDto.getEsOfertaSingular().equals(oferta.getOfertaSingular())) {
 				oferta.setOfertaSingular(ofertaDto.getEsOfertaSingular());
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())
+					&& !ofertaDto.getRecomendacionRc().equals(oferta.getOfrRecomendacionRc())) {
+				oferta.setOfrRecomendacionRc(ofertaDto.getRecomendacionRc());
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionRc())
+					&& !ofertaDto.getFechaRecomendacionRc().equals(oferta.getOfrFechaRecomendacionRc())) {
+				oferta.setOfrFechaRecomendacionRc(ofertaDto.getFechaRecomendacionRc());
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())
+					&& !ofertaDto.getRecomendacionDc().equals(oferta.getOfrRecomendacionDc())) {
+				oferta.setOfrRecomendacionDc(ofertaDto.getRecomendacionDc());
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDc())
+					&& !ofertaDto.getFechaRecomendacionDc().equals(oferta.getOfrFechaRecomendacionDc())) {
+				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDc());
 			}
 
 		}

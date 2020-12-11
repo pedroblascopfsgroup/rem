@@ -1217,6 +1217,12 @@ public interface ActivoApi {
 	public boolean isAlquiladoParcialmente(Long idActivoMatriz);
 
 	/**
+	 * Comprueba si todas las unidades alquilables  están alquiladas
+	 * @param idActivoMatriz
+	 */
+	public boolean isAlquiladoTotalmente(Long idActivoMatriz);
+	
+	/**
 	 * Comprueba un activo está ocupado con título o alquilar en el estado alquiler de la pestaña patrimonio
 	 * @param activo
 	 */

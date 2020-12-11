@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSiniSiNoIndiferente;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TRANSFORM_TYPE;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
@@ -914,7 +915,10 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(procesar = false)
 	private Float superficiePlazasGaraje;
 	
-	
+	@Diccionary(clase = DDSiniSiNoIndiferente.class, message = "El codTipoAdmiteMascota no existe", groups = { Insert.class,
+			Update.class })
+	@EntityDefinition(propertyName = "admiteMascotaOtrasCaracteristicas", classObj = DDSiniSiNoIndiferente.class)
+	private String codTipoAdmiteMascota;
 	
 	public Long getIdInformeMediadorWebcom() {
 		return idInformeMediadorWebcom;
@@ -3055,6 +3059,14 @@ public class InformeMediadorDto implements Serializable {
 
 	public void setOtrosCarpinteriaExterior(String otrosCarpinteriaExterior) {
 		this.otrosCarpinteriaExterior = otrosCarpinteriaExterior;
+	}
+	
+	public String getCodTipoAdmiteMascota() {
+		return codTipoAdmiteMascota;
+	}
+
+	public void setCodTipoAdmiteMascota(String codTipoAdmiteMascota) {
+		this.codTipoAdmiteMascota = codTipoAdmiteMascota;
 	}
 
 }

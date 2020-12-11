@@ -590,7 +590,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 	    	 autoLoad: true
     		},
     		comboTipoTransmision: {
-				model: 'HreRem.model.ComboBase',
+    			model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
@@ -604,6 +604,17 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tipoAlta'}
 				}/*,autoLoad: true*/
+    		},
+    		//Admite mascota
+    		comboAdmiteMascota: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposAdmiteMascota'}
+				},
+    		autoLoad: true
     		}
+    		
      }    
 });

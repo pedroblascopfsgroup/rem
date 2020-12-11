@@ -256,7 +256,6 @@ public class ResolucionComiteController {
 									updaterTransitionService.updateT013_CierreEconomico(salto);									
 									
 									tareaActivoApi.saltoDesdeTareaExterna(tarea.getId(),ActivoGenerarSaltoImpl.CODIGO_SALTO_CIERRE);
-									expedienteComercialApi.bloquearExpediente(eco.getId());
 									
 									break;
 								}

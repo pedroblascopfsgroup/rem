@@ -2235,7 +2235,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	me.lookupReference('baseIRPFRetG').setValue(base);
     	me.lookupReference('cuotaIRPFRetG').setValue(cuota);
 
-    	me.onChangeCuotaImpuestoDirecto(me,checked);
+    	me.onChangeCuotaImpuestoDirecto(me,despues);
     },
     
     onChangeCuotaImpuestoDirecto: function(field, value){
@@ -2245,9 +2245,25 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var cuotaRetG = me.lookupReference('cuotaIRPFRetG').getValue();
     	var valFechaPago = me.lookupReference('fechaPago').getValue();
     	var cuota = 0;
+    	var valorCuota = 0;
+    	var tipoImpositivoRetg = me.lookupReference('irpfTipoImpositivoRetG').getValue();
+    	var despues;
     
+    	if (Number.isNaN(value)){
+    		despues = value;
+    	}else{
+    		despues = (CONST.TIPO_RETENCION['DESPUES'] == me.lookupReference('comboTipoRetencionRef').getValue());
+    	}
+    	
+    	
     	if(tipoImpositivo != null && base != null){
     		cuota = (tipoImpositivo * base)/100;
+    	}
+    	
+    	valorCuota = me.getImporteRetencionCuota(me);
+    	
+    	if(tipoImpositivoRetg != null ){
+    		valorCuota = (tipoImpositivoRetg * valorCuota)/100;	
     	}
     	
     	var importeTotal = 0;
@@ -2256,8 +2272,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	if(!me.lookupReference('lineaDetalleGastoGrid').getStore().loading){
     		importeTotal = me.getImporteTotalLineasDetalle(me);
     		importeTotal = importeTotal - cuota;
-    		if(cuotaRetG != null && cuotaRetG != undefined && value){
-    			importeTotal = importeTotal - cuotaRetG;
+    		if(cuotaRetG != null && cuotaRetG != undefined ){
+    			if(despues == false ){
+    				importeTotal = importeTotal - cuotaRetG - valorCuota ;
+    	    	}else{
+    	    		importeTotal = importeTotal - cuotaRetG;
+    	    	}
+    			
     		}
     	}else{
     		importeTotal = me.getViewModel().get('detalleeconomico.importeTotal'); 
@@ -2780,5 +2801,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	}
     	
     	return importeTotal;
+    },
+    
+    getImporteRetencionCuota: function(me){
+    	var cuotaTotal = 0;
+
+    	if(me.lookupReference('lineaDetalleGastoGrid').getStore() != null && me.lookupReference('lineaDetalleGastoGrid').getStore() != undefined){
+    		for(var i = 0; i < me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items.length; i++){	
+    				cuotaTotal+= parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('cuota'));	
+    		}
+    	}
+    	
+    	return cuotaTotal;
     }
 });

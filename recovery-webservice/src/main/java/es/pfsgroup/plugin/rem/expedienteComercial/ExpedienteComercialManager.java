@@ -3160,6 +3160,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				Reserva reserva = expedienteComercial.getReserva();
 				if (!Checks.esNulo(reserva)) {
 					reserva.getAuditoria().setBorrado(false);
+					if (!Checks.esNulo(dto.getPlazoFirmaReserva()) && !Checks.esNulo(reserva.getFechaFirma())) {
+						Calendar calendar = Calendar.getInstance();
+						calendar.setTime(reserva.getFechaFirma());
+						if(!Checks.esNulo(dto.getPlazoFirmaReserva())){
+							calendar.add(Calendar.DAY_OF_YEAR, dto.getPlazoFirmaReserva());
+						}
+						reserva.setFechaVencimiento(calendar.getTime());
+					}
 					genericDao.update(Reserva.class, reserva);
 				}
 

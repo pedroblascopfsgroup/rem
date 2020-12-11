@@ -3960,6 +3960,8 @@ public class ActivoAdapter {
 			oferta.setOrigenComprador(origenComprador);
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
 			
+			oferta.setIdOfertaOrigen(dto.getIdOfertaOrigen());
+			
 			ofertaCreada = genericDao.save(Oferta.class, oferta);
 			
 			if(activo != null && activo.getSubcartera() != null &&

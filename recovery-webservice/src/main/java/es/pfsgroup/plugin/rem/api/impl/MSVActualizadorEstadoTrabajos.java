@@ -64,7 +64,7 @@ public class MSVActualizadorEstadoTrabajos extends AbstractMSVActualizador imple
 		try {
 			// Variables temporales para asignar valores de filas excel
 			Long tmpNumTrabajo = Long.parseLong(exc.dameCelda(fila, 0));
-			String tmpAccion = exc.dameCelda(fila, 1);
+			String tmpAccion = exc.dameCelda(fila, 1).toUpperCase();
 			String tmpComentario = exc.dameCelda(fila, 2);
 			Trabajo trabajo = trabajoApi.getTrabajoByNumeroTrabajo(tmpNumTrabajo);
 			AgendaTrabajo agenda = null;
@@ -75,7 +75,7 @@ public class MSVActualizadorEstadoTrabajos extends AbstractMSVActualizador imple
 			trabajo.setEstado(estadoTrabajo);
 			genericDao.update(Trabajo.class, trabajo);
 			
-			if (tmpComentario != null) {
+			if (tmpAccion.equals("REJ")) {
 				agenda = new AgendaTrabajo();
 				agenda.setTrabajo(trabajo);
 				agenda.setFecha(new Date());

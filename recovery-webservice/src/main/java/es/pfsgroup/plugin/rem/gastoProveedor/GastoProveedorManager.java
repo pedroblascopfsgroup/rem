@@ -1890,7 +1890,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto, Long idGasto) throws Exception {
+	public boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto, Long idGasto) {
 		
 		try {
 			DDSinSiNo codSiNo = new DDSinSiNo();
@@ -1898,10 +1898,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			GastoProveedor gasto = findOne(idGasto);
 			GastoInfoContabilidad contabilidadGasto = gasto.getGastoInfoContabilidad();
 			DtoInfoContabilidadGasto dtoIni = infoContabilidadToDtoInfoContabilidad(gasto);
-			
-			String cpp = dtoContabilidadGasto.getPartidaPresupuestaria();
-			String ccc = dtoContabilidadGasto.getCuentaContable();
-			
 			if (!Checks.esNulo(contabilidadGasto)) {
 
 				beanUtilNotNull.copyProperties(contabilidadGasto, dtoContabilidadGasto);
@@ -1912,42 +1908,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 					contabilidadGasto.setEjercicio(ejercicio);
 				}
-				
-				if (!Checks.esNulo(ccc) && !Checks.esNulo(cpp)) {
-					Filter cuentaContableFilter = genericDao.createFilter(FilterType.EQUALS, "cuentaContable", ccc);
-					Filter partidaPresupuestariaFilter = genericDao.createFilter(FilterType.EQUALS, "partidaPresupuestaria", cpp);
-					ConfiguracionSubpartidasPresupuestarias csp = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class,partidaPresupuestariaFilter, cuentaContableFilter);
-					if (csp != null) {	
-						contabilidadGasto.setConfiguracionSubpartidasPresupuestarias(csp);
-						contabilidadGasto.setPartidaPresupuestaria(cpp);
-						contabilidadGasto.setCuentaContable(ccc);
-					} else {
-						throw new JsonViewerException("La combinación de cuenta y partida no es correcta");
-					}
-				} else if (!Checks.esNulo(ccc)) {
-					cpp = dtoIni.getPartidaPresupuestaria();
-					Filter cuentaContableFilter = genericDao.createFilter(FilterType.EQUALS, "cuentaContable", ccc);
-					Filter partidaPresupuestariaFilter = genericDao.createFilter(FilterType.EQUALS, "partidaPresupuestaria", cpp);
-					ConfiguracionSubpartidasPresupuestarias csp = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class,partidaPresupuestariaFilter, cuentaContableFilter);
-					if (csp != null) {	
-						contabilidadGasto.setConfiguracionSubpartidasPresupuestarias(csp);
-						contabilidadGasto.setPartidaPresupuestaria(dtoIni.getPartidaPresupuestaria());
-						contabilidadGasto.setCuentaContable(ccc);
-					} else {
-						throw new JsonViewerException("La cuenta contable no es correcta");
-					}
-				} else if (!Checks.esNulo(cpp)) {
-					ccc = dtoIni.getCuentaContable();
-					Filter cuentaContableFilter = genericDao.createFilter(FilterType.EQUALS, "cuentaContable", ccc);
-					Filter partidaPresupuestariaFilter = genericDao.createFilter(FilterType.EQUALS, "partidaPresupuestaria", cpp);
-					ConfiguracionSubpartidasPresupuestarias csp = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class,partidaPresupuestariaFilter, cuentaContableFilter);
-					if (csp != null) {	
-						contabilidadGasto.setConfiguracionSubpartidasPresupuestarias(csp);
-						contabilidadGasto.setPartidaPresupuestaria(cpp);
-						contabilidadGasto.setCuentaContable(dtoIni.getCuentaContable());
-					} else {
-						throw new JsonViewerException("La partida presupuestaria no es correcta");
-					}
+
+				if(dtoContabilidadGasto.getIdSubpartidaPresupuestaria() != null) {
+					Filter filtroSubpartidaPresupuestaria = genericDao.createFilter(FilterType.EQUALS, "id", dtoContabilidadGasto.getIdSubpartidaPresupuestaria());
+					ConfiguracionSubpartidasPresupuestarias cps = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, filtroSubpartidaPresupuestaria);
+					
+					contabilidadGasto.setConfiguracionSubpartidasPresupuestarias(cps);
 				}
 
 				if(!Checks.esNulo(dtoContabilidadGasto.getComboActivable())) {
@@ -1977,7 +1943,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			return true;
 
 		} catch (Exception e) {
-			throw e;
+			logger.error(e.getMessage());
+			return false;
 		}
 	}
 

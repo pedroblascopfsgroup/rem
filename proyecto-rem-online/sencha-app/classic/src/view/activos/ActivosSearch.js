@@ -538,6 +538,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        	fieldLabel: HreRem.i18n('header.gestor')+"\\"+HreRem.i18n('header.gestoria'),
 							        	reference: 'usuarioGestor',
 							        	name: 'usuarioGestor',
+										queryMode: 'local',
 							        	bind: {
 						            		store: '{comboUsuarios}',
 						            		disabled: '{!tipoGestor.selection}'

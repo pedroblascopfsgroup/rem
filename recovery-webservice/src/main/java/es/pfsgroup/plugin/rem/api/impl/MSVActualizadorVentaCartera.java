@@ -35,6 +35,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.ProcesoMasivoContext;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVVentaDeCarteraExcelValidator;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVVentaDeCarteraExcelValidator.COL_NUM;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
@@ -248,13 +249,30 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 						nombreRazonSocial = exc.dameCelda(fila,
 								MSVVentaDeCarteraExcelValidator.COL_NUM.RAZON_SOCIAL_TITULAR);
 					}
-
+					String pais = exc.dameCelda(fila, COL_NUM.PAIS_TITULAR);
+					String provincia = exc.dameCelda(fila, COL_NUM.PROVINCIA_TITULAR);
+					String municipio = exc.dameCelda(fila, COL_NUM.MUNICIPIO_TITULAR);
+					String direccion = exc.dameCelda(fila, COL_NUM.DIRECCION_TITULAR);
+					
+					String nombreRazonSocialRte = exc.dameCelda(fila, COL_NUM.NOMBRE_RTE_TITULAR);
+					if (nombreRazonSocialRte == null || nombreRazonSocialRte.isEmpty()) {
+						nombreRazonSocialRte = exc.dameCelda(fila,
+								MSVVentaDeCarteraExcelValidator.COL_NUM.RAZON_SOCIAL_RTE_TITULAR);
+					}
+					
+					String codTipoDocRte = exc.dameCelda(fila, COL_NUM.TIPO_DOCUMENTO_RTE_TITULAR);
+					String numDocRte = exc.dameCelda(fila, COL_NUM.DOC_IDENTIFICACION_RTE_TITULAR);
+					String paisRte = exc.dameCelda(fila, COL_NUM.PAIS_RTE_TITULAR);
+					String provinciaRte = exc.dameCelda(fila, COL_NUM.PROVINCIA_RTE_TITULAR);
+					String municipioRte = exc.dameCelda(fila, COL_NUM.MUNICIPIO_RTE_TITULAR);
+					
 					modificarCompradorPrincipal(agrupacion.getId(),
 							Double.parseDouble(exc.dameCelda(fila,
 									MSVVentaDeCarteraExcelValidator.COL_NUM.PORCENTAJE_COMPRA_TITULAR)),
 							Long.parseLong(
 									exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR)),
-							null, regimenMatrimonial, estadoCivil, nombreRazonSocial);
+							null, regimenMatrimonial, estadoCivil, nombreRazonSocial, codTipoDocRte, numDocRte,
+							pais, provincia, municipio, direccion, nombreRazonSocialRte, paisRte, provinciaRte, municipioRte);
 
 					// Añadimos el resto de TITULARES (Comprador) 2, 3 y 4.
 					anyadirRestoCompradores(exc, fila, agrupacion.getId());
@@ -287,10 +305,13 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					
 					// bloqueamos el expediente comercial
 					bloquearExpediente(agrupacion.getId());
-
+					
+					//indica la fecha de venta
+					indicarFechaVentaExpediente(exc, agrupacion.getId(), fila, context, resultado);
+					
 					// saltamos a cierre economico
 					saltoCierreEconomico(agrupacion.getId());
-
+					
 					// Esperamos 15 segundos por Bankia
 					logger.debug(
 							"--------------------- OFERTA_CARTERA: fin -------------------------------------------");
@@ -491,13 +512,6 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 				fechaContabilizacionPropietario = format.parse(stringDate);
 			}
 
-			String stringDateVenta = exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.FECHA_VENTA);
-			Date fechaVenta = null;
-
-			if (stringDateVenta != null && !stringDateVenta.isEmpty()) {
-				fechaVenta = format.parse(stringDateVenta);
-			}
-
 			DtoCondiciones condicionantes = new DtoCondiciones();
 			condicionantes
 					.setTipoImpuestoCodigo(exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.TIPO_IMPUESTO));
@@ -533,7 +547,6 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 			DtoFichaExpediente dtoExp = new DtoFichaExpediente();
 			dtoExp.setFechaContabilizacionPropietario(fechaContabilizacionPropietario);
-			dtoExp.setFechaVenta(fechaVenta);
 			dtoExp.setEstadoPbc(1);
 			dtoExp.setConflictoIntereses(0);
 			dtoExp.setRiesgoReputacional(0);
@@ -551,7 +564,45 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			throw e;
 		}
 	}
+	
+	/**
+	 * Indica la fecha venta en el
+	 * expediente
+	 * 
+	 * @param exc
+	 * @param idAgrupacion
+	 * @param fila
+	 * @throws Exception
+	 */
+	private void indicarFechaVentaExpediente(MSVHojaExcel exc, Long idAgrupacion, int fila,
+			ProcesoMasivoContext context, ResultadoProcesarFila resultado)throws Exception {
+		logger.debug("OFERTA_CARTERA: Guardamos la fecha venta en el expediente comercial");
+		TransactionStatus transaction = null;
+		try {
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
+			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
+					listaOfertas.get(0).getIdOferta()));
+			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
 
+			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+			String stringDateVenta = exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.FECHA_VENTA);
+			Date fechaVenta = null;
+
+			if (stringDateVenta != null && !stringDateVenta.isEmpty()) {
+				fechaVenta = format.parse(stringDateVenta);
+			}
+			DtoFichaExpediente dtoExp = new DtoFichaExpediente();
+			dtoExp.setFechaVenta(fechaVenta);
+
+			expedienteComercialApi.saveFichaExpediente(dtoExp, expedienteComercial.getId());
+			transactionManager.commit(transaction);
+		} catch (Exception e) {
+			transactionManager.rollback(transaction);
+			throw e;
+		}
+	}
+	
 	/**
 	 * Llama a los servicios web de uvem necesarios
 	 * 
@@ -773,6 +824,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 						vDatosComprador.setCodTipoPersona(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA);
 					}
 					vDatosComprador.setNombreRazonSocial(nombreRazonSocial);
+					vDatosComprador.setApellidos("-");
 					vDatosComprador.setCodTipoDocumento(exc.dameCelda(fila,
 							MSVVentaDeCarteraExcelValidator.COL_NUM.TIPO_DOCUMENTO_TITULAR_2 + contadorColumnas));
 					vDatosComprador.setNumDocumento(exc.dameCelda(fila,
@@ -801,13 +853,46 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 					vDatosComprador.setCodigoRegimenMatrimonial(regimenMatrimonial);
 
+					vDatosComprador.setCodigoPais(exc.dameCelda(fila,
+							MSVVentaDeCarteraExcelValidator.COL_NUM.PAIS_TITULAR_2 + contadorColumnas));
+					String codProvincia = exc.dameCelda(fila,
+							MSVVentaDeCarteraExcelValidator.COL_NUM.PROVINCIA_TITULAR_2 + contadorColumnas);
+					if(codProvincia != null && !codProvincia.isEmpty())
+						vDatosComprador.setProvinciaCodigo(codProvincia);
+					String codMunicipio = exc.dameCelda(fila,
+							MSVVentaDeCarteraExcelValidator.COL_NUM.MUNICIPIO_TITULAR_2 + contadorColumnas);
+					if(codMunicipio != null && !codMunicipio.isEmpty())
+						vDatosComprador.setMunicipioCodigo(codMunicipio);
+					vDatosComprador.setDireccion(exc.dameCelda(fila,
+							MSVVentaDeCarteraExcelValidator.COL_NUM.DIRECCION_TITULAR_2 + contadorColumnas));
+					String nombreRazonSocialRte = exc.dameCelda(fila,
+							MSVVentaDeCarteraExcelValidator.COL_NUM.NOMBRE_RTE_TITULAR_2 + contadorColumnas);
+					if(nombreRazonSocialRte != null && !nombreRazonSocialRte.isEmpty()) {
+						vDatosComprador.setNombreRazonSocialRte(nombreRazonSocialRte);						
+					}
+					vDatosComprador.setApellidosRte("-");
+					vDatosComprador.setCodTipoDocumentoRte(exc.dameCelda(fila,
+							MSVVentaDeCarteraExcelValidator.COL_NUM.TIPO_DOCUMENTO_RTE_TITULAR_2 + contadorColumnas));
+					vDatosComprador.setNumDocumentoRte(exc.dameCelda(fila,
+							MSVVentaDeCarteraExcelValidator.COL_NUM.DOC_IDENTIFICACION_RTE_TITULAR_2 + contadorColumnas));
+					vDatosComprador.setCodigoPaisRte(exc.dameCelda(fila,
+							MSVVentaDeCarteraExcelValidator.COL_NUM.PAIS_RTE_TITULAR_2 + contadorColumnas));
+					String codProvinciaRte = exc.dameCelda(fila,
+							MSVVentaDeCarteraExcelValidator.COL_NUM.PROVINCIA_RTE_TITULAR_2 + contadorColumnas);
+					if(codProvinciaRte != null && !codProvinciaRte.isEmpty())
+						vDatosComprador.setProvinciaRteCodigo(codProvinciaRte);
+					String codMunicipioRte = exc.dameCelda(fila,
+							MSVVentaDeCarteraExcelValidator.COL_NUM.MUNICIPIO_RTE_TITULAR_2 + contadorColumnas);
+					if(codMunicipioRte != null && !codMunicipioRte.isEmpty())
+						vDatosComprador.setMunicipioRteCodigo(codMunicipioRte);
+
 					expedienteComercialApi.createComprador(vDatosComprador, expedienteComercial.getId());
 					transactionManager.commit(transaction);
 				} catch (Exception e) {
 					transactionManager.rollback(transaction);
 					throw e;
 				}
-				contadorColumnas = contadorColumnas + 8;
+				contadorColumnas = contadorColumnas + MSVVentaDeCarteraExcelValidator.COL_NUM.NUM_CAMPOS_COMPRADOR;
 			}
 		}
 	}
@@ -820,7 +905,9 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	 * @throws Exception
 	 */
 	private void modificarCompradorPrincipal(Long idAgrupacion, double nuevoPorcentaje, Long numeroUrsus,
-			Long numeroUrsusConyuge, String codigoRegimenMatrimonial, String codEstadoCivil, String nombreRazonSocial)
+			Long numeroUrsusConyuge, String codigoRegimenMatrimonial, String codEstadoCivil, String nombreRazonSocial,
+			String codTipoDocumentoRte, String numDocumentoRte, String codPais, String codProvincia, String codMunicipio, 
+			String direccion, String nombreRazonSocialRte, String codPaisRte, String codProvinciaRte, String codMunicipioRte)
 			throws Exception {
 		TransactionStatus transaction = null;
 		try {
@@ -852,6 +939,23 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			vDatosComprador.setNombreRazonSocial(nombreRazonSocial);
 			// falta ursus conyuge
 
+			vDatosComprador.setApellidos("-");
+			vDatosComprador.setCodigoPais(codPais);
+			if(codProvincia != null && !codProvincia.isEmpty())
+				vDatosComprador.setProvinciaCodigo(codProvincia);
+			if(codMunicipio != null && !codMunicipio.isEmpty())
+				vDatosComprador.setMunicipioCodigo(codMunicipio);
+			vDatosComprador.setDireccion(direccion);
+			vDatosComprador.setCodTipoDocumentoRte(codTipoDocumentoRte);
+			vDatosComprador.setNumDocumentoRte(numDocumentoRte);
+			vDatosComprador.setNombreRazonSocialRte(nombreRazonSocialRte);
+			vDatosComprador.setApellidosRte("-");
+			vDatosComprador.setCodigoPaisRte(codPaisRte);
+			if(codProvinciaRte != null && !codProvinciaRte.isEmpty())
+				vDatosComprador.setProvinciaRteCodigo(codProvinciaRte);
+			if(codMunicipioRte != null && !codMunicipioRte.isEmpty())
+				vDatosComprador.setMunicipioRteCodigo(codMunicipioRte);
+			
 			expedienteComercialApi.saveFichaComprador(vDatosComprador);
 			transactionManager.commit(transaction);
 		} catch (Exception e) {

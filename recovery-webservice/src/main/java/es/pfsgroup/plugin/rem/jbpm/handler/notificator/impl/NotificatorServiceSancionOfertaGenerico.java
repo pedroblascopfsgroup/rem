@@ -973,6 +973,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					+ "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 
 			Usuario gestorComercial = null;
+			Usuario gestorBackOffice = null;
 			Usuario gestorFormalizacion = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GFORM");
 
 			if (!Checks.esNulo(oferta.getAgrupacion())
@@ -982,18 +983,26 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 						&& oferta.getAgrupacion() instanceof ActivoLoteComercial) {
 					ActivoLoteComercial activoLoteComercial = (ActivoLoteComercial) oferta.getAgrupacion();
 					gestorComercial = activoLoteComercial.getUsuarioGestorComercial();
+					gestorBackOffice = activoLoteComercial.getUsuarioGestorComercialBackOffice();
 				} else {
 					// Lote Restringido
 					gestorComercial = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "GCOM");
+					gestorBackOffice = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "HAYAGBOINM");
 				}
 			} else {
 				gestorComercial = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "GCOM");
+				gestorBackOffice = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "HAYAGBOINM");
 			}
 			
 			cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>",
 					(gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE);
 			cuerpo = cuerpo + String.format("<p>%s</p>",
 					(gestorComercial != null) ? gestorComercial.getEmail() : STR_MISSING_VALUE);
+			
+			cuerpo = cuerpo + String.format("<p>Gestor Comercial Backoffice Inmobiliario: %s </p>",
+					(gestorBackOffice != null) ? gestorBackOffice.getApellidoNombre() : STR_MISSING_VALUE);
+			cuerpo = cuerpo + String.format("<p>%s</p>",
+					(gestorBackOffice != null) ? gestorBackOffice.getEmail() : STR_MISSING_VALUE);
 			
 			if(!Checks.esNulo(gestorFormalizacion)){
 				

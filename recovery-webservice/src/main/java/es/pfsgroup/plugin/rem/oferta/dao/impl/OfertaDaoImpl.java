@@ -384,8 +384,6 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	public Boolean tieneTareaActivaOrFinalizada(String tarea, String numOferta) {
 		String sql = "SELECT COUNT(DISTINCT ECO.ECO_ID)" + 
 				"		FROM ECO_EXPEDIENTE_COMERCIAL ECO" + 
-				"		INNER JOIN ACT_OFR ACTOFR ON ACTOFR.OFR_ID = ECO.OFR_ID" + 
-				"		INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = ACTOFR.ACT_ID" + 
 				"		INNER JOIN ACT_TRA_TRAMITE ATR ON ECO.TBJ_ID = ATR.TBJ_ID" + 
 				"		INNER JOIN TAC_TAREAS_ACTIVOS TAC ON ATR.TRA_ID = TAC.TRA_ID" + 
 				"		INNER JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID = TAC.TAR_ID" + 
@@ -395,7 +393,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 				"		WHERE TAP.TAP_CODIGO = '" + tarea + "'" + 
 				"		AND OFR.OFR_NUM_OFERTA = " + numOferta;
 		
-		return "1".equals(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult().toString());
+		return !"0".equals(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult().toString());
 	}
 	
 	@Override
@@ -413,7 +411,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 				"		AND TAP.TAP_CODIGO = '" + tarea + "'" + 
 				"		AND OFR.OFR_NUM_OFERTA = " + numOferta;
 		
-		return "1".equals(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult().toString());
+		return !"0".equals(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult().toString());
 	}
 	
 	@Override
@@ -421,8 +419,6 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	public Boolean tieneTareaFinalizada(String tarea, String numOferta) {
 		String sql = "SELECT COUNT(1)" + 
 				"		FROM ECO_EXPEDIENTE_COMERCIAL ECO" + 
-				"		INNER JOIN ACT_OFR ACTOFR ON ACTOFR.OFR_ID = ECO.OFR_ID" + 
-				"		INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = ACTOFR.ACT_ID" + 
 				"		INNER JOIN ACT_TRA_TRAMITE ATR ON ECO.TBJ_ID = ATR.TBJ_ID" + 
 				"		INNER JOIN TAC_TAREAS_ACTIVOS TAC ON ATR.TRA_ID = TAC.TRA_ID" + 
 				"		INNER JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID = TAC.TAR_ID" + 
@@ -433,7 +429,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 				"		AND TAP.TAP_CODIGO = '" + tarea + "'" + 
 				"		AND OFR.OFR_NUM_OFERTA = " + numOferta;
 		
-		return "1".equals(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult().toString());
+		return !"0".equals(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult().toString());
 	}
 	
 	@Override
@@ -442,8 +438,6 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		List<Object> resultados = rawDao.getExecuteSQLList(
 				"		SELECT TAP.TAP_CODIGO" + 
 				"		FROM ECO_EXPEDIENTE_COMERCIAL ECO" + 
-				"		INNER JOIN ACT_OFR ACTOFR ON ACTOFR.OFR_ID = ECO.OFR_ID" + 
-				"		INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = ACTOFR.ACT_ID" + 
 				"		INNER JOIN ACT_TRA_TRAMITE ATR ON ECO.TBJ_ID = ATR.TBJ_ID" + 
 				"		INNER JOIN TAC_TAREAS_ACTIVOS TAC ON ATR.TRA_ID = TAC.TRA_ID" + 
 				"		INNER JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID = TAC.TAR_ID" + 

@@ -27,7 +27,10 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoExento;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoSolicitud;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSolicitudTributo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTributo;
 
 
 /**
@@ -95,6 +98,40 @@ public class ActivoTributos implements Serializable, Auditable {
     @JoinColumn(name = "ACT_TRI_ID")
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     private List<ActivoAdjuntoTributo> adjuntos;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPT_ID")
+    private DDTipoTributo tipoTributo;
+	
+	@Column(name = "ACT_TRI_FECHA_RECEPCION_TRIBUTO")
+	private Date fechaRecepcionTributo;
+	
+	@Column(name = "ACT_TRI_FECHA_PAGO_TRIBUTO")
+	private Date fechaPagoTributo;
+	
+	@Column(name = "ACT_TRI_IMPORTE_PAGADO")
+	private Double importePagado;
+	
+	
+    @Column(name = "NUM_EXPEDIENTE")
+    private Long expediente;
+	
+	@Column(name = "ACT_TRI_FECHA_COM_DEV_INGRESO")
+	private Date fechaComunicacionDevolucionIngreso;
+	
+	@Column(name = "ACT_TRI_IMPORTE_REC_RECURSO")
+	private Double importeRecuperadoRecurso;
+	
+	@Column(name = "ACT_TRI_EXENTO")
+	private Boolean tributoExento;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MOE_ID")
+    private DDMotivoExento motivoExento;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_RES_ID")
+    private DDResultadoSolicitud resultadoSolicitud;
 	
 	@Version   
 	private Long version;
@@ -242,6 +279,85 @@ public class ActivoTributos implements Serializable, Auditable {
         }
         return null;
     }
-	
+
+	public DDTipoTributo getTipoTributo() {
+		return tipoTributo;
+	}
+
+	public void setTipoTributo(DDTipoTributo tipoTributo) {
+		this.tipoTributo = tipoTributo;
+	}
+
+	public Date getFechaRecepcionTributo() {
+		return fechaRecepcionTributo;
+	}
+
+	public void setFechaRecepcionTributo(Date fechaRecepcionTributo) {
+		this.fechaRecepcionTributo = fechaRecepcionTributo;
+	}
+
+	public Date getFechaPagoTributo() {
+		return fechaPagoTributo;
+	}
+
+	public void setFechaPagoTributo(Date fechaPagoTributo) {
+		this.fechaPagoTributo = fechaPagoTributo;
+	}
+
+	public Double getImportePagado() {
+		return importePagado;
+	}
+
+	public void setImportePagado(Double importePagado) {
+		this.importePagado = importePagado;
+	}
+
+	public Long getExpediente() {
+		return expediente;
+	}
+
+	public void setExpediente(Long expediente) {
+		this.expediente = expediente;
+	}
+
+	public Date getFechaComunicacionDevolucionIngreso() {
+		return fechaComunicacionDevolucionIngreso;
+	}
+
+	public void setFechaComunicacionDevolucionIngreso(Date fechaComunicacionDevolucionIngreso) {
+		this.fechaComunicacionDevolucionIngreso = fechaComunicacionDevolucionIngreso;
+	}
+
+	public Double getImporteRecuperadoRecurso() {
+		return importeRecuperadoRecurso;
+	}
+
+	public void setImporteRecuperadoRecurso(Double importeRecuperadoRecurso) {
+		this.importeRecuperadoRecurso = importeRecuperadoRecurso;
+	}
+
+	public Boolean getTributoExento() {
+		return tributoExento;
+	}
+
+	public void setTributoExento(Boolean tributoExento) {
+		this.tributoExento = tributoExento;
+	}
+
+	public DDMotivoExento getMotivoExento() {
+		return motivoExento;
+	}
+
+	public void setMotivoExento(DDMotivoExento motivoExento) {
+		this.motivoExento = motivoExento;
+	}
+
+	public DDResultadoSolicitud getResultadoSolicitud() {
+		return resultadoSolicitud;
+	}
+
+	public void setResultadoSolicitud(DDResultadoSolicitud resultadoSolicitud) {
+		this.resultadoSolicitud = resultadoSolicitud;
+	}
 
 }

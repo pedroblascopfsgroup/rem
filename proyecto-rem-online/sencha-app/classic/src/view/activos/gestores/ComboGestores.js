@@ -45,6 +45,7 @@ Ext.define('HreRem.view.activos.gestores.ComboGestores', {
 	        	fieldLabel: HreRem.i18n('gestores.comboGestores.fieldlabel.combo.usuario'),
 	        	reference: 'usuarioGestor',
 	        	name: 'usuarioGestor',
+				queryMode: 'local',
 	        	bind: {
             		store: '{comboUsuarios}',
             		disabled: '{!tipoGestor.selection}'

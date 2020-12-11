@@ -28,13 +28,11 @@ public class TransaccionExclusionBulk implements Runnable {
 	private final Log logger = LogFactory.getLog(getClass());
 	private String userName = null;
 	private Long idExclusion = null;
-	private Long idUsuario = null;
 
-	public TransaccionExclusionBulk(Long idExclusion, String userName, Long idUsuario) {
+	public TransaccionExclusionBulk(Long idExclusion, String userName) {
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		this.userName = userName;
 		this.idExclusion = idExclusion;
-		this.idUsuario = idUsuario;
 	}
 
 	@Override
@@ -43,7 +41,7 @@ public class TransaccionExclusionBulk implements Runnable {
 		try {
 			restApi.doSessionConfig(this.userName);
 			
-			expedienteComercialManager.guardaExclusionBulk(idExclusion, idUsuario);
+			expedienteComercialManager.guardaExclusionBulk(idExclusion);
 		} catch (Exception e) {
 			logger.error("error creando expediente comercial", e);
 		}

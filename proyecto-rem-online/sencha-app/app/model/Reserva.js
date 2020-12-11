@@ -40,8 +40,19 @@ Ext.define('HreRem.model.Reserva', {
     	'codigoSucursal',
     	'cartera',
     	'sucursal',
-    	'estadoReservaCodigo'
-    	
+    	'estadoReservaCodigo',
+    	'motivoAmpliacionArrasCodigo',
+    	'solicitudAmpliacionArras',
+    	{
+    		name: 'fechaVigenciaArras',
+    		type : 'date',
+			dateFormat: 'c'
+    	},
+    	{
+    		name: 'fechaAmpliacionArras',
+    		type : 'date',
+			dateFormat: 'c'
+    	}    	
     ],
 
     proxy: {

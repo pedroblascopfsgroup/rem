@@ -91,7 +91,7 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVVentaDeCarteraExcelValidator ventaDeCartera;
 
 	@Autowired
-	private MSVOkTecnicoExcelValidator okTecnicoValidator;
+	private MSVOkTecnicoSelloCalidadExcelValidator okTecnicoValidator;
 
 	@Autowired
 	private MSVActivosGastoPorcentajeValidator activosGastoPorcentajeValidator;
@@ -214,8 +214,16 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVTacticoEspartaPublicacionesValidator tacticoEspartaPublicaciones;
 	
 	@Autowired
+	private MSVMasivaSuministrosValidator cargaMasivaSuministros;
+	
+	@Autowired
+	private MSVValidatorEstadosAdmision estadosAdmision;
+
+	@Autowired
 	private MSVActualizarCalidadDatosExcelValidator calidadDatos;
 	
+	@Autowired
+	private MSVValidatorConfiguracionPeriodosVoluntarios cargaMasivaConfiguracionPeriodosVoluntarios;
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -263,7 +271,7 @@ public class MSVExcelValidatorFactoryImpl {
 			return ocultacionVenta;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ALTA_ACTIVOS_THIRD_PARTY.equals(codTipoOperacion)) {
 			return altaActivosTP;
-		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CENTRAL_TECNICA_OK_TECNICO.equals(codTipoOperacion)) {
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CENTRAL_TECNICA_OK_TECNICO_SELLO_CALIDAD.equals(codTipoOperacion)) {
 			return okTecnicoValidator;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_OCULTACION_ALQUILER.equals(codTipoOperacion)) {
 			return ocultacionAlquiler;
@@ -355,8 +363,14 @@ public class MSVExcelValidatorFactoryImpl {
 			return gestionPeticionesDePrecios;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_TACTICO_ESPARTA_PUBLICACIONES.equals(codTipoOperacion)) {
 			return tacticoEspartaPublicaciones;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SUMINISTROS.equals(codTipoOperacion)) {
+			return cargaMasivaSuministros;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ESTADOS_ADMISION.equals(codTipoOperacion)) {
+			return estadosAdmision;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_MASIVO_CALIDAD_DATOS.equals(codTipoOperacion)) {
 			return calidadDatos;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CONFIGURACION_PERIODOS_VOLUNTARIOS.equals(codTipoOperacion)) {
+			return cargaMasivaConfiguracionPeriodosVoluntarios;
 		}
 		
 		return null;

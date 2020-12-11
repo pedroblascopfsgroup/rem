@@ -33,14 +33,6 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
 		        	},
 					hidden: true
 				},
-//				{
-//					dataIndex: 'idActivo',
-//					text: 'idActivo',
-//					editor: {
-//		        		xtype: 'textareafield'
-//		        	},
-//					hidden: false
-//				},
 		        {
 		            dataIndex: 'fechaPresentacionRegistro',
 		            text: HreRem.i18n('fieldlabel.historico.tramitacion.titulo.fechapresentacion'),
@@ -162,7 +154,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
 	        
 	        me.saveSuccessFn = function() {
 		    	var me = this;
-		    	me.up('tituloinformacionregistralactivo').funcionRecargar();
+		    	me.up('saneamientoactivo').funcionRecargar();
 		    	return true;
 		    };
    },
@@ -202,7 +194,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
                   	} else {
                   		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
                   	}     
-                  		me.up('tituloinformacionregistralactivo').funcionRecargar();
+                  		me.up('saneamientoactivo').funcionRecargar();
 						me.unmask();
                   }
                });                            
@@ -231,7 +223,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
 			                  },
 			            	success: function (a, operation, c) {
                                me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-                               me.up('tituloinformacionregistralactivo').funcionRecargar();
+                               me.up('saneamientoactivo').funcionRecargar();
 							   me.unmask();
 							   me.deleteSuccessFn();
                            },

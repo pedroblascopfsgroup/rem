@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSiniSiNoIndiferente;
 
 /**
  * Modelo que gestiona la informacion comercial de los activos
@@ -353,6 +354,10 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "ICO_MEDIADOR_ESPEJO_ID")
 	private ActivoProveedor mediadorEspejo;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="ICO_ADMITE_MASCOTAS")
+	private DDSiniSiNoIndiferente admiteMascotaOtrasCaracteristicas;
 	
 
 	public Float getCuotaOrientativaComunidad() {
@@ -1026,6 +1031,14 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setMediadorEspejo(ActivoProveedor mediadorEspejo) {
 		this.mediadorEspejo = mediadorEspejo;
+	}
+	
+	public DDSiniSiNoIndiferente getAdmiteMascotaOtrasCaracteristicas() {
+		return admiteMascotaOtrasCaracteristicas;
+	}
+
+	public void setAdmiteMascotaOtrasCaracteristicas(DDSiniSiNoIndiferente admiteMascotaOtrasCaracteristicas) {
+		this.admiteMascotaOtrasCaracteristicas = admiteMascotaOtrasCaracteristicas;
 	}
 	
 

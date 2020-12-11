@@ -378,7 +378,31 @@ public interface ParticularValidatorApi {
 	boolean comprobarDistintoPropietarioListaActivos(String[] activos);
 
 	boolean activoConOfertasTramitadas(String numActivo);
+	
+	Boolean existeCalifEnergeticaByDesc(String califEnergeticaDesc);
+	
+	Boolean existeGradoPropiedadByCod(String gradPropiedadCod);
+	
+	Boolean existeDestComercialByCod(String destComercialCod);
+	
+	Boolean destComercialContieneAlquiler(String destComercialCod);
+	
+	Boolean existeTipoAlquilerByCod(String tipoAlquilerCod);
+	
+	Boolean existeTipoViaByCod(String tipoViaCod);
+	
+	Boolean existeSubtipoTituloByCod(String subtipoTituloCod);
 
+	Boolean existeUsoDominanteByCod(String usoDominanteCod);
+	
+	Boolean existeEstadoExpRiesgoByCod(String estadoExpRiesgoCod);
+	
+	Boolean existeProvinciaByCod(String provCod);
+	
+	Boolean existeEstadoFisicoByCod(String estFisicoCod);
+	
+	Boolean existeClaseActivoByDesc(String claseActivoDesc);
+	
 	Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF);
 
 	boolean isMismoTipoComercializacionActivoPrincipalAgrupacion(String numActivo, String numAgrupacion);
@@ -899,6 +923,10 @@ public interface ParticularValidatorApi {
 	public Boolean esAccionValido(String codAccion);
 
 	public Boolean esResultadoValido(String codResultado);
+	
+	public Boolean esTipoTributoValido(String codTipoTributo);
+	
+	public Boolean esMotivoExento(String codResultado);
 
 	public Boolean esSolicitudValido(String codSolicitud);
 
@@ -907,6 +935,8 @@ public interface ParticularValidatorApi {
 	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud, String idTributo);
 
 	public Boolean esNumHayaVinculado(Long numGasto, String numActivo);
+	
+	public Boolean esnNumExpedienteValido(Long expComercial);
 	
 	Boolean existeJunta(String numActivo,  String fechaJunta);
 	
@@ -1164,7 +1194,43 @@ public interface ParticularValidatorApi {
 	Boolean perteneceADiccionarioConTitulo(String conTitulo);
 	
 	Boolean perteneceADiccionarioEquipoGestion(String codEquipoGestion);
+	
+	public Boolean esActivoIncluidoPerimetroAdmision(String numActivo);
 
+	public Boolean estadoAdmisionValido(String codEstadoAdmision);
+
+	public Boolean subestadoAdmisionValido(String codSubestadoAdmision);
+	
+	public Boolean estadoConSubestadosAdmisionValido(String codEstadoAdmision);
+
+	public Boolean relacionEstadoSubestadoAdmisionValido(String codEstadoAdmision, String codSubestadoAdmision);
+
+	Boolean existeTipoSuministroByCod(String codigo);
+
+	Boolean existeSubtipoSuministroByCod(String codigo);
+
+	Boolean existePeriodicidadByCod(String codigo);
+
+	Boolean existeMotivoAltaSuministroByCod(String codigo);
+
+	Boolean existeMotivoBajaSuministroByCod(String codigo);
+
+	Boolean esMismoTipoGestorActivo(String codigo, String numActivo);
+
+	Boolean esActivoBBVA(String numActivo);
+	
 	String getValidacionCampoCDC(String codCampo);
 
+	Boolean relacionPoblacionLocalidad(String columnaPoblacion, String columnaMunicipio);
+
+
+	Boolean existeMunicipioByDescripcion(String columnaMunicipio);
+
+	Boolean existePoblacionByDescripcion(String columnaPoblacion);
+
+	boolean isProveedorSuministroVigente(String codRem);
+
+	Boolean existePais(String pais);
+
+	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
 }

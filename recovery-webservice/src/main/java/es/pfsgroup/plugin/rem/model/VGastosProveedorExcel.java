@@ -181,7 +181,7 @@ public class VGastosProveedorExcel implements Serializable {
 	private String motivoRechazoProp;
 	
 	@Column(name="ACT_NUM_ACTIVO")
-	private String numActivo;
+	private Long numActivo;
 	
 	@Column(name="PTDA_PRESUPUESTARIA")
 	private String ptdaPresupuestaria;
@@ -627,11 +627,11 @@ public class VGastosProveedorExcel implements Serializable {
 		this.idVista = idVista;
 	}
 
-	public String getNumActivo() {
+	public Long getNumActivo() {
 		return numActivo;
 	}
 
-	public void setNumActivo(String numActivo) {
+	public void setNumActivo(Long numActivo) {
 		this.numActivo = numActivo;
 	}
 

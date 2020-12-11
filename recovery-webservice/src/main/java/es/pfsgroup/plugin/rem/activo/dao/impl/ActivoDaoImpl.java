@@ -46,10 +46,12 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativaAdicional;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -64,7 +66,9 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
+import es.pfsgroup.plugin.rem.model.HistoricoRequisitosFaseVenta;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
@@ -1148,6 +1152,22 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		//return  HibernateUtils.castList(ActivoCalificacionNegativa.class, this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list());
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoCalificacionNegativaAdicional> getListActivoCalificacionNegativaAdicionalByIdActivo(Long idActivo) {
+		String hql = "select acn from ActivoCalificacionNegativaAdicional acn ";
+		HQLBuilder hb = new HQLBuilder(hql);
+		hb.appendWhere(" acn.activo.id =  "+idActivo+" ");
+		hb.appendWhere(" acn.auditoria.borrado = 0 ");
+
+		List<ActivoCalificacionNegativaAdicional> lista = (List<ActivoCalificacionNegativaAdicional>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		if(!Checks.estaVacio(lista)) {
+			return HibernateUtils.castList(ActivoCalificacionNegativaAdicional.class, lista);
+		}
+		return lista;
+
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -1767,10 +1787,30 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Override
 	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, Usuario usuLogado, boolean devolverPage) {
+		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class,genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuLogado.getId()));
+		List<String> subcarteras = new ArrayList<String>();
+		
 		HQLBuilder hb = new HQLBuilder(" select vgrid from VGridBusquedaActivos vgrid ");
 		
+		if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
+			dto.setCarteraCodigo(usuarioCartera.get(0).getCartera().getCodigo());
+			
+			if (dto.getSubcarteraCodigo() == null) {
+				for (UsuarioCartera uca : usuarioCartera) {
+					if (uca.getSubCartera() != null)
+						subcarteras.add(uca.getSubCartera().getCodigo());
+				}
+			}
+		}
+		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraAvanzadaCodigo() != null ?  dto.getCarteraAvanzadaCodigo() : dto.getCarteraCodigo());		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraAvanzadaCodigo() != null ?  dto.getSubcarteraAvanzadaCodigo() : dto.getSubcarteraCodigo());		
+		
+		if (subcarteras != null && !subcarteras.isEmpty()) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.subcarteraCodigo", subcarteras);
+		} else {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraAvanzadaCodigo() != null ?  dto.getSubcarteraAvanzadaCodigo() : dto.getSubcarteraCodigo());
+		}
+		
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.localidadDescripcion", dto.getLocalidadAvanzadaDescripcion() != null ?  dto.getLocalidadAvanzadaDescripcion() : dto.getLocalidadDescripcion(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.provinciaCodigo", dto.getProvinciaAvanzadaCodigo() != null ?  dto.getProvinciaAvanzadaCodigo() : dto.getProvinciaCodigo());	
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numFinca", dto.getNumFincaAvanzada() != null ?  dto.getNumFincaAvanzada() : dto.getNumFinca());		
@@ -1857,6 +1897,18 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
+	public List<HistoricoRequisitosFaseVenta> getReqFaseVenta(Long idActivo) {
+		Order order = new Order(OrderType.DESC,"auditoria.fechaCrear");
+		return genericDao.getListOrdered(HistoricoRequisitosFaseVenta.class, order, genericDao.createFilter(FilterType.EQUALS, "activoInfAdministrativa.activo.id", idActivo));
+	}
+
+	@Override
+	public List<ActivoSuministros> getSuministrosByIdActivo(Long idActivo) {
+		Order order = new Order(OrderType.DESC,"auditoria.fechaCrear");
+		return genericDao.getListOrdered(ActivoSuministros.class, order, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
+	}
+	
+	@Override
 	public void actualizaDatoCDC(CalidadDatosConfig cdc, String valor, String identificador, String username) {
 		getHibernateTemplate().flush();		
 		Session session = this.getSessionFactory().getCurrentSession();
@@ -1873,5 +1925,21 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			);
 		session.createSQLQuery(sb.toString()).executeUpdate();
 	}
+	
+	@Override
+	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras) {
+		
+		HQLBuilder hql = new HQLBuilder("from Activo");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "numActivo", numActivo);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "cartera.id", idCartera);
+		HQLBuilder.addFiltroWhereInSiNotNull(hql, "subcartera.id", idSubcarteras);
 
+		List<Activo> activos = HibernateQueryUtils.list(this, hql);
+		
+		if (activos != null && !activos.isEmpty()) {
+			return activos.get(0);
+		} else {
+			return null;
+		}
+	}
 }

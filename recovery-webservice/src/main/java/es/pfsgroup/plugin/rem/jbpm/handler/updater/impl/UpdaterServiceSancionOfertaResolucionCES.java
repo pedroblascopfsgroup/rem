@@ -168,7 +168,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 									&& !ofertaExclusionBulk.getExclusionBulk().getCodigo().equals(codigoBulk)) {
 								
 								Thread thread = new Thread(new TransaccionExclusionBulk(ofertaExclusionBulk.getId(),
-										usuarioModificador.getUsername(), usuarioModificador.getId()));
+										usuarioModificador.getUsername()));
 								thread.start();
 								try {
 									thread.join();

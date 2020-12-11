@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -237,6 +238,10 @@ public class ActivoProveedor implements Serializable, Auditable {
 	
     @Column(name = "PVE_ID_PERSONA_HAYA")
     private String idPersonaHaya;
+    
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID_MEDIADOR_REL")
+    private ActivoProveedor mediadorRelacionado;
 
 	@Version   
 	private Long version;
@@ -696,6 +701,14 @@ public class ActivoProveedor implements Serializable, Auditable {
 
 	public void setIdPersonaHaya(String idPersonaHaya) {
 		this.idPersonaHaya = idPersonaHaya;
+	}
+
+	public ActivoProveedor getMediadorRelacionado() {
+		return mediadorRelacionado;
+	}
+
+	public void setMediadorRelacionado(ActivoProveedor mediadorRelacionado) {
+		this.mediadorRelacionado = mediadorRelacionado;
 	}	
 	
 }

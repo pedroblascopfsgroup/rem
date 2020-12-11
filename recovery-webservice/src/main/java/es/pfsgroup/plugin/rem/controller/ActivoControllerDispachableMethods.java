@@ -414,6 +414,27 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
+		
+		/*
+		 * TAB_SANEAMIENTO
+		 */
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_SANEAMIENTO, new DispachableMethod<DtoActivoSaneamiento>() {
+			@Override
+			public Class<DtoActivoSaneamiento> getArgumentType() {
+				return DtoActivoSaneamiento.class;
+			}
+			
+			@Override
+			public void execute(Long id, DtoActivoSaneamiento dto, HttpServletRequest request) {
+				if (dto != null) {
+					ModelAndView mm = this.controller.saveActivoSaneamiento(dto, id, new ModelMap());
+					if ("false".equals(mm.getModel().get("success").toString())
+							&& !Checks.esNulo(mm.getModel().get("msgError"))) {
+							throw new JsonViewerException(mm.getModel().get("msgError").toString());
+					}
+				}
+			}
+		});
 	}
 
 	private ActivoController controller;

@@ -71,7 +71,9 @@ public class DtoActivoProveedor extends WebDto {
 	
 	private String codProveedorUvem;
 	
+	private String codigoApiProveedor;
 	
+	private Long idMediadorRelacionado;
 	
 	
 	
@@ -338,6 +340,18 @@ public class DtoActivoProveedor extends WebDto {
 	}
 	public void setCodProveedorUvem(String codProveedorUvem) {
 		this.codProveedorUvem = codProveedorUvem;
+	}
+	public String getCodigoApiProveedor() {
+		return codigoApiProveedor;
+	}
+	public void setCodigoApiProveedor(String codigoApiProveedor) {
+		this.codigoApiProveedor = codigoApiProveedor;
+	}
+	public Long getIdMediadorRelacionado() {
+		return idMediadorRelacionado;
+	}
+	public void setIdMediadorRelacionado(Long idMediadorRelacionado) {
+		this.idMediadorRelacionado = idMediadorRelacionado;
 	}
 	
 	

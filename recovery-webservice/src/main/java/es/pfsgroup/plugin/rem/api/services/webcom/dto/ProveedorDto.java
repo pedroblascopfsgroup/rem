@@ -49,6 +49,8 @@ public class ProveedorDto implements WebcomRESTDto {
 	private StringDataType telefonoContactoVisitas;
 	private LongDataType numeroDelegaciones;
 	private StringDataType nombreComercial;
+	
+	private LongDataType idProveedorRemAsociado;
 
 	@WebcomRequired
 	@NestedDto(groupBy="idProveedorRem", type=CodigoCarterasDto.class)
@@ -305,6 +307,14 @@ public class ProveedorDto implements WebcomRESTDto {
 
 	public void setArrCodCarteraAmbito( List<CodigoCarterasDto> arrCodCarteraAmbito) {
 		this.arrCodCarteraAmbito = arrCodCarteraAmbito;
+	}
+
+	public LongDataType getIdProveedorRemAsociado() {
+		return idProveedorRemAsociado;
+	}
+
+	public void setIdProveedorRemAsociado(LongDataType idProveedorRemAsociado) {
+		this.idProveedorRemAsociado = idProveedorRemAsociado;
 	}
 	
 	

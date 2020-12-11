@@ -18,12 +18,12 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
 
     recordClass : 'HreRem.model.PlusvaliaActivoModel',
 
-    requires : [ 'HreRem.model.PlusvaliaActivoModel' ],
+    requires : [ 'HreRem.model.PlusvaliaActivoModel' , 'HreRem.model.ActivoTributos', 'HreRem.model.ActivoAdministracion'],
 
     initComponent : function() {
 	    var me = this;
 
-	    me.setTitle(HreRem.i18n('title.plusvalia.activo'));
+	    me.setTitle(HreRem.i18n('title.tributos.activo'));
 
 	    var items = [
 
@@ -96,6 +96,9 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
 	                store : '{comboSiNoPlusvalia}',
 	                value : '{plusvalia.exento}'
 	            },
+	            listeners: {
+	            	change: 'onChangeExento'
+	            },
 	            allowBlank: false
 	        }, {
 	        	xtype : 'comboboxfieldbase',
@@ -135,20 +138,61 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
             		value: '{plusvalia.observaciones}'
             	},
             	allowBlank: false
-	        } ]
+	        } ,{
+	            xtype : 'numberfieldbase',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.numExpediente'),
+	            bind : {
+	                value : '{plusvalia.numExpediente}'
+	            }
+	        },{
+	        	xtype : 'comboboxfieldbase',
+	        	reference:'motExento',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.motivoExento'),
+	            bind : {
+	                store : '{comboMotivoExento}',
+					value : '{plusvalia.motivoExento}'
+				},
+	            blankText: 'Obligatorio si campo Exento es SI'
+	        },{
+	        	xtype : 'comboboxfieldbase',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.resSolicitud'),
+	            bind : {
+	                store : '{comboResultadoSolicitud}',
+	                value : '{plusvalia.resultadoSolicitud}'
+	            }
+	        }]
 	    },{
 	    	
 	    xtype : 'fieldsettable',
         defaultType : 'textfieldbase',
-        title : HreRem.i18n('title.documentos'),
+        title : HreRem.i18n('title.documentacion.plusvalia.activo'),
         collapsible : true,
         items : [ 
         		{
+        			title: 'Documentación de plusvalía',
 	        		xtype:'adjuntosplusvalias',
 	        		reference: 'listadoadjuntosplusvalias',
 					colspan: 3
         		}
         	]
+    	},
+    	{
+	    	xtype : 'fieldsettable',
+	        defaultType : 'textfieldbase',
+	        title : HreRem.i18n('title.administracion.activo.tributos'),
+	        collapsible : true,
+	        items : [ 
+        		{
+        			title: 'Tributos',
+					xtype:'tributosgrid',
+					colspan: 3
+        		},
+        		{
+        			title: 'Documentos de tributos',
+					xtype:'documentostributosgrid',
+					colspan: 3
+        		}
+	        ]
     	}
 	    ];
 

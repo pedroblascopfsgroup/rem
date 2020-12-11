@@ -747,11 +747,24 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		List<Activo> activosList = activoApi.getListActivosPorID(activosID);
 
 		Trabajo trabajo = null;
+		Double participacion = null;
+		Integer participacionTotalPorCien = 10000;
+		Integer participacionPorCien = 0;
 		for (Activo activo : activosList) {
-			Double participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activosList, null);
-			dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
+			participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activosList, null);
+			participacionPorCien = (int)(participacion*100);				
+			participacionTotalPorCien -= participacionPorCien;
+			dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : String.valueOf(participacionPorCien/100f));
 			trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
 			trabajos.add(trabajo);
+		}
+		if(participacionTotalPorCien != 0) {
+			while(participacionTotalPorCien != 0) {
+				participacionTotalPorCien--;
+				trabajo.getActivosTrabajo().get(participacionTotalPorCien).setParticipacion(
+						trabajo.getActivosTrabajo().get(participacionTotalPorCien).getParticipacion()+(1/100f));
+			}
+			trabajoDao.saveOrUpdate(trabajo);
 		}
 
 		return trabajos;
@@ -830,12 +843,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			List<Activo> activosList = activoApi.getListActivosPorID(activosID);
 
 			Boolean isFirstLoop = true;
+			Double participacion = null;
+			Integer participacionTotalPorCien = 10000;
+			Integer participacionPorCien = 0;
 			for (VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
 				Activo activo = activoDao.get(Long.valueOf(activoAgrupacion.getIdActivo()));
 
-				Double participacion = updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), activosList, activo);
+				participacion = updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), activosList, activo);
 
-				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
+				participacionPorCien = (int)(participacion*100);				
+				participacionTotalPorCien -= participacionPorCien;
+				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : String.valueOf(participacionPorCien/100f));
 
 				// FIXME: Datos del trabajo que se definen por un activo, en
 				// agrupación de activos están tomándose del primer activo del
@@ -924,25 +942,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			//Cuando haya tiempo se debe cambiar el siguiente codigo repetido en varios sitios para meterlo en un mismo metodo.
 
-			participacionTotal = activotrabajoDao.getImporteParticipacionTotal(trabajo.getNumTrabajo());
+			if(participacionTotalPorCien != 0){
 
-			if(participacionTotal != 100f) {
+				Filter filter = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
 
-				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
-
-				ActivoTrabajo activoTrabajoParaActualizar = genericDao.get(ActivoTrabajo.class, f1, f2);
-
-				Float participacionOriginal = activoTrabajoParaActualizar.getParticipacion();
-
-				Float participacionFinal = 100f - participacionTotal + participacionOriginal;
-
-				activoTrabajoParaActualizar.setParticipacion(participacionFinal);
-
-				genericDao.update(ActivoTrabajo.class, activoTrabajoParaActualizar);
-
+				List<ActivoTrabajo> listaActTbj = genericDao.getList(ActivoTrabajo.class, filter);
+				
+				for(ActivoTrabajo actTbj : listaActTbj) {
+					actTbj.setParticipacion(actTbj.getParticipacion()+(1/100f));
+					genericDao.update(ActivoTrabajo.class, actTbj);
+					participacionTotalPorCien--;
+					if(participacionTotalPorCien == 0) break;
+				}				
 			}
-
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -976,16 +988,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 				mapaValores.put(activo.getId(), valor);
 			}
+			Double participacion = null;
+			Integer participacionTotalPorCien = 10000;
+			Integer participacionPorCien = 0;
 			for (Activo activo : listaActivos) {
-				Double participacion = null;
+				participacion = null;
 				
 				if (algunoSinPrecio) {
 					participacion = (100d / listaActivos.size());
 				} else {
 					participacion = (mapaValores.get(activo.getId()) / total) * 100;
 				}
-
-				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
+				
+				participacionPorCien = (int)(participacion*100);				
+				participacionTotalPorCien -= participacionPorCien;
+				
+				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : String.valueOf(participacionPorCien/100f));
 
 				Usuario usuarioGestor = null;
 
@@ -1078,22 +1096,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				transactionManager.commit(transaction);
 			}
 
-			participacionTotal = activotrabajoDao.getImporteParticipacionTotal(trabajo.getNumTrabajo());
+			
 
-			if(participacionTotal != 100f){
+			if(participacionTotalPorCien != 0){
 
-				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+				Filter filter = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
 
-				ActivoTrabajo activoTrabajoParaActualizar = genericDao.get(ActivoTrabajo.class, f1, f2);
-
-				Float participacionOriginal = activoTrabajoParaActualizar.getParticipacion();
-
-				Float participacionFinal = 100f - participacionTotal + participacionOriginal;
-
-				activoTrabajoParaActualizar.setParticipacion(participacionFinal);
-
-				genericDao.update(ActivoTrabajo.class, activoTrabajoParaActualizar);
+				List<ActivoTrabajo> listaActTbj = genericDao.getList(ActivoTrabajo.class, filter);
+				
+				for(ActivoTrabajo actTbj : listaActTbj) {
+					actTbj.setParticipacion(actTbj.getParticipacion()+(1/100f));
+					genericDao.update(ActivoTrabajo.class, actTbj);
+					participacionTotalPorCien--;
+					if(participacionTotalPorCien == 0) break;
+				}				
 			}
 
 		} catch (Exception e) {
@@ -1162,124 +1178,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 	}
 
-	private List<Trabajo> crearTrabajoPorSubidaActivos(DtoFichaTrabajo dtoTrabajo) {
-		List<Activo> listaActivos = this.getListaActivosProceso(dtoTrabajo.getIdProceso());
-		Trabajo trabajo = new Trabajo();
-		List<Trabajo> listaTrabajos = new ArrayList<Trabajo>();
-
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		try {
-
-			Boolean isFirstLoop = true;
-			Double total= 0d;
-			Boolean algunoSinPrecio= false;
-			Map<Long,Double> mapaValores= new HashMap<Long,Double>();
-			for(Activo activo:listaActivos){
-				Double valor= updaterStateApi.calcularParticipacionValorPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activo);
-				total= total+valor;
-				if(valor.equals(0d)){
-					algunoSinPrecio= true;
-					break;
-				}
-				mapaValores.put(activo.getId(), valor);
-			}
-			for (Activo activo : listaActivos) {
-				Double participacion = null;
-
-				if (algunoSinPrecio) {
-					participacion = (100d / listaActivos.size());
-				} else {
-					participacion = (mapaValores.get(activo.getId()) / total) * 100;
-				}
-
-				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
-
-				Usuario usuarioGestor = null;
-
-				if(!Checks.esNulo(dtoTrabajo.getIdGestorActivoResponsable())){
-					usuarioGestor = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS,"id", dtoTrabajo.getIdGestorActivoResponsable()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-					if(!Checks.esNulo(usuarioGestor)){
-						trabajo.setUsuarioGestorActivoResponsable(usuarioGestor);
-					}
-				}
-
-				if (isFirstLoop || !dtoTrabajo.getEsSolicitudConjunta()) {
-					trabajo = new Trabajo();
-					dtoToTrabajo(dtoTrabajo, trabajo);
-					trabajo.setFechaSolicitud(new Date());
-					trabajo.setNumTrabajo(trabajoDao.getNextNumTrabajo());
-					trabajo.setSolicitante(usuarioLogado);
-					if (!Checks.esNulo(usuarioGestor)) {
-						trabajo.setUsuarioResponsableTrabajo(usuarioGestor);
-					} else {
-						trabajo.setUsuarioResponsableTrabajo(usuarioLogado);
-					}
-
-					trabajo.setEstado(getEstadoNuevoTrabajo(dtoTrabajo, activo));
-
-					// El gestor de activo se salta tareas de estos trámites y
-					// por tanto es necesario settear algunos datos
-					// al crear el trabajo.
-					if (gestorActivoManager.isGestorActivo(activo, usuarioLogado)) {
-						if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())
-								|| DDTipoTrabajo.CODIGO_TASACION.equals(trabajo.getTipoTrabajo().getCodigo())
-								|| DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
-
-							trabajo.setFechaAprobacion(new Date());
-						}
-					}
-
-					// El trámite de cédula queda aprobado al crearlo, sea o no
-					// sea gestor activo quien lo crea
-					if (DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
-						trabajo.setFechaAprobacion(new Date());
-					}
-
-					if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo()) 
-							|| DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
-						trabajo.setEsTarificado(true);
-					}
-				}
-
-				ActivoTrabajo activoTrabajo = createActivoTrabajo(activo, trabajo, dtoTrabajo.getParticipacion());
-				trabajo.getActivosTrabajo().add(activoTrabajo);
-				isFirstLoop = false;
-
-				if (!Checks.esNulo(dtoTrabajo.getIdSupervisorActivo())) {
-					Usuario usuarioSupervisor = genericDao.get(Usuario.class,
-							genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdSupervisorActivo()),
-							genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-					if (!Checks.esNulo(usuarioSupervisor)) {
-						trabajo.setSupervisorActivoResponsable(usuarioSupervisor);
-					}
-				}
-
-				if (!dtoTrabajo.getEsSolicitudConjunta()) {
-					if (dtoTrabajo.getRequerimiento() != null) {
-						trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
-					}
-					trabajoDao.saveOrUpdate(trabajo);
-					listaTrabajos.add(trabajo);
-				}
-			}
-
-			if (dtoTrabajo.getEsSolicitudConjunta()) {
-				if (dtoTrabajo.getRequerimiento() != null) {
-					trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
-				}
-				trabajoDao.saveOrUpdate(trabajo);
-				listaTrabajos.add(trabajo);
-				ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);
-			}
-
-		} catch (IllegalAccessException e) {
-			logger.error(e.getMessage());
-		} catch (InvocationTargetException e) {
-			logger.error(e.getMessage());
-		}
-
-		return listaTrabajos;
-	}
 
 	private Trabajo crearTrabajoPorActivo(Activo activo, DtoFichaTrabajo dtoTrabajo) {
 
@@ -1482,7 +1380,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		activoTrabajo.setActivo(activo);
 		activoTrabajo.setTrabajo(trabajo);
 		activoTrabajo.setPrimaryKey(new ActivoTrabajoPk(activo.getId(),trabajo.getId()));
-		activoTrabajo.setParticipacion(new Float(participacion));
+		activoTrabajo.setParticipacion(Float.valueOf(participacion));
 		return activoTrabajo;
 	}
 
@@ -2591,22 +2489,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
    		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.estadoContable", dto.getEstadoContable());
    		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.codigoEstado", dto.getEstadoCodigo());
    		
-   		ArrayList<Filter> filtros = new ArrayList<Filter>();
-   		if(!Checks.esNulo(dto.getIdTrabajo())){
-   			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idTrabajo", dto.getIdTrabajo());
-   			filtros.add(filtro);
-   		}
-   		if(!Checks.esNulo(dto.getIdActivo())){
-   			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", dto.getIdActivo());
-   			filtros.add(filtro);
-   		}
-   		
-   		Filter[] filtrosArray = new Filter[filtros.size()];
-   		int i = 0;
-   		for(Filter f : filtros){
-   			filtrosArray[i] = f;
-   			i++;
-   		}
+//   		ArrayList<Filter> filtros = new ArrayList<Filter>();
+//   		if(!Checks.esNulo(dto.getIdTrabajo())){
+//   			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idTrabajo", dto.getIdTrabajo());
+//   			filtros.add(filtro);
+//   		}
+//   		if(!Checks.esNulo(dto.getIdActivo())){
+//   			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", dto.getIdActivo());
+//   			filtros.add(filtro);
+//   		}
+//   		
+//   		Filter[] filtrosArray = new Filter[filtros.size()];
+//   		int i = 0;
+//   		for(Filter f : filtros){
+//   			filtrosArray[i] = f;
+//   			i++;
+//   		}
    		
 		//flashDao.getList(VBusquedaActivosTrabajoParticipa.class,filtrosArray);
 		return trabajoDao.getListActivosTrabajo(dto);

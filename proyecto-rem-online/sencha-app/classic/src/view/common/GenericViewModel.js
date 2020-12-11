@@ -588,6 +588,18 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 		        extraParams: {} // Dynamic.
 	    	 },
 	    	 autoLoad: true
+    		},
+    		//Admite mascota
+    		comboAdmiteMascota: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposAdmiteMascota'}
+				}
+    		,
+    		autoLoad: true
     		}
+    		
      }    
 });

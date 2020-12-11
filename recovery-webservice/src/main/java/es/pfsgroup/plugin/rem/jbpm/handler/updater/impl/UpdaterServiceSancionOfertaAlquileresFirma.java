@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
@@ -25,11 +26,15 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterService {
@@ -68,6 +73,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		DDEstadosExpedienteComercial estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_CIERRE));
 		Activo activo =tramite.getActivo();
+		Oferta oferta = expedienteComercial.getOferta();
 		List<ActivoAgrupacionActivo> agrupacionesActivo = activo.getAgrupaciones();
 		for(ActivoAgrupacionActivo activoAgrupacionActivo : agrupacionesActivo){
 			if(!Checks.esNulo(activoAgrupacionActivo.getAgrupacion()) && !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())){
@@ -107,6 +113,31 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 					logger.error("Error insertando Fecha anulación.", e);
 				}
 			}
+
+			if(!Checks.esNulo(expedienteComercial.getFechaInicioAlquiler())) {
+				List<ActivoOferta> activosOferta = oferta.getActivosOferta();
+				
+				Filter filtroTipoEstadoAlquiler = genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO);
+				DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, filtroTipoEstadoAlquiler);
+				
+				for(ActivoOferta activoOferta : activosOferta){
+					activo = activoOferta.getPrimaryKey().getActivo();
+					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+					ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivo);
+					if(!Checks.esNulo(activoPatrimonio)){
+						activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
+					} else{
+						activoPatrimonio = new ActivoPatrimonio();
+						activoPatrimonio.setActivo(activo);
+						if (!Checks.esNulo(tipoEstadoAlquiler)){
+							activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
+						}
+					}
+					activoDao.validateAgrupacion(expedienteComercial.getId());
+					genericDao.save(ActivoPatrimonio.class, activoPatrimonio);
+				}
+			}
+
 		}
 		activoDao.saveOrUpdate(activo);
 		expedienteComercialApi.update(expedienteComercial,false);

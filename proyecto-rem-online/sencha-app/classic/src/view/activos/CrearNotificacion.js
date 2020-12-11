@@ -9,7 +9,6 @@ Ext.define('HreRem.view.activos.CrearNotificacion', {
     title : "Crear comunicación",    
 
     initComponent: function() {
-    	//debugger;
     	var me = this;
     
     	me.items = [
@@ -147,6 +146,7 @@ Ext.define('HreRem.view.activos.CrearNotificacion', {
 							            	displayField: 'apellidoNombre',
 				    						valueField: 'id',
 				    						mode: 'local',
+											queryMode: 'local',
 				    						emptyText: 'Introduzca un usuario',
 				    						enableKeyEvents:true,
 			    						    listeners: {
@@ -230,7 +230,6 @@ Ext.define('HreRem.view.activos.CrearNotificacion', {
     
     evaluar: function() {
     	var me = this;
-    	//debugger;
     	var parametros = me.down("form").getValues();
     	parametros.idActivo = me.idActivo;
         	var url =  $AC.getRemoteUrl('notificacion/saveNotificacion');

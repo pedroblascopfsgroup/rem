@@ -15,12 +15,12 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
     listeners: {
 		containermouseover: function () {
     		var me = this;
-    		me.up('tituloinformacionregistralactivo').down('historicotramitaciontitulogrid').evaluarBotonAdd();
+    		me.up('saneamientoactivo').down('historicotramitaciontitulogrid').evaluarBotonAdd();
 		   
     	},
     	itemmouseenter: function () {
     		var me = this;
-    		me.up('tituloinformacionregistralactivo').down('historicotramitaciontitulogrid').evaluarBotonAdd();
+    		me.up('saneamientoactivo').down('historicotramitaciontitulogrid').evaluarBotonAdd();
     	}
     },
     
@@ -146,7 +146,7 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 
 		    me.saveSuccessFn = function() {
 		    	var me = this;
-		    	me.up('tituloinformacionregistralactivo').funcionRecargar();
+		    	me.up('saneamientoactivo').funcionRecargar();
 		    	return true;
 		    };
 
@@ -157,7 +157,6 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
    editFuncion: function(editor, context){
  		var me= this;
 		me.mask(HreRem.i18n("msg.mask.espere"));
-		
 
 			if (me.isValidRecord(context.record)) {		
 				

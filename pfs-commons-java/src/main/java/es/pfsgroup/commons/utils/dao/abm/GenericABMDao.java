@@ -26,10 +26,11 @@ public interface GenericABMDao {
 	 * @author bruno
 	 * 
 	 */
-	public static enum FilterType {
+	public enum FilterType {
 		EQUALS,
 		NULL,
-		NOTNULL
+		NOTNULL,
+		SIMILARY
 	}
 
 	/**
@@ -121,6 +122,8 @@ public interface GenericABMDao {
 	 * @return
 	 */
 	<T extends Serializable> List<T> getList(Class<T> clazz);
+	
+	
 
 	/**
 	 * Devuelve una lista de entidades ordenadas
@@ -165,6 +168,8 @@ public interface GenericABMDao {
 	 * @return
 	 */
 	<T extends Serializable> List<T> getList(Class<T> clazz, Filter... filters);
+	
+	<T extends Serializable> List<T> getList(Class<T> clazz, List<Filter> filters);
 
 	/**
 	 * Devuelve una lista de entidades conforme a una serie de filtros
@@ -186,6 +191,9 @@ public interface GenericABMDao {
 	 */
 	<T extends Serializable> List<T> getListOrdered(Class<T> clazz,
 			Order order, Filter... filters);
+	
+	<T extends Serializable> List<T> getListOrdered(Class<T> clazz,
+			Order order, List<Filter> filters);
 
 	/**
 	 * Devuelve una página de entidades conforme a una serie de filtros
@@ -258,4 +266,7 @@ public interface GenericABMDao {
 	<T extends Serializable> void deleteById(Class<T> clazz, Long id);
 
 	<T extends Serializable> RWOperations<T> readWrite(Class<T> clazz);
+
+
+	
 }

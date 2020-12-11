@@ -893,10 +893,9 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 	
 	@Override
 	public Boolean checkInformeJuridicoYResolucionManzanaCompletadas(Long idTramite) {
-		Boolean informeCompletado = tareaActivoApi.getSiTareaHaSidoCompletada(idTramite, ComercialUserAssigantionService.CODIGO_T017_INFORME_JURIDICO);
 		Boolean resManzanaCompletado = tareaActivoApi.getSiTareaHaSidoCompletada(idTramite, ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_PRO_MANZANA);
 		
-		return informeCompletado && resManzanaCompletado;
+		return resManzanaCompletado;
 	}
 
 	@Override

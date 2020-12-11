@@ -1,0 +1,141 @@
+--/*
+--#########################################
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20201111
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-8193
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Carga masiva de aprobación del informe comercial
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF; 
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_NUM_FILAS NUMBER(16); -- Vble. para validar la existencia de un registro.
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USR VARCHAR2(30 CHAR) := 'REMVIP-8193'; -- USUARIOCREAR/USUARIOMODIFICAR.
+    V_TABLA_AUX VARCHAR( 100 CHAR ) := 'AUX_REMVIP_8193';
+    V_COUNT NUMBER(16);	
+    V_ID NUMBER(16);	
+
+
+    
+BEGIN		
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ACTUALIZAR REFERENCIAS CATASTRALES QUE TIENEN SOLO UN REGISTRO');	
+	
+
+	V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.ACT_CAT_CATASTRO T1
+		    USING( 
+			SELECT  CAT_ID, AUX.REF_CATASTRAL
+			FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+			INNER JOIN '|| V_ESQUEMA ||'.ACT_CAT_CATASTRO CAT ON ACT.ACT_ID = CAT.ACT_ID 
+			INNER JOIN '|| V_ESQUEMA ||'.AUX_REMVIP_8193 AUX ON AUX.ACT_NUM_ACTIVO_UVEM = ACT.ACT_NUM_ACTIVO_UVEM 
+			WHERE CAT.BORRADO = 0 
+			AND AUX.ACT_NUM_ACTIVO_UVEM IN (1987938,
+			18586009,
+			19248577,
+			26755727,
+			27456940,
+			31403759,
+			28277419,
+			29200648,
+			32089829,
+			18667602,
+			20289338,
+			29105068,
+			19848148,
+			19943845,
+			22639547,
+			29105185,
+			29106466,
+			29325563,
+			32276019,
+			17991922,
+			20303083,
+			24198645,
+			28597100,
+			29277069,
+			29325194,
+			33935883,
+			34624521,
+			23757476,
+			24125152,
+			29106601,
+			29324048,
+			29325212,
+			33081328,
+			34852368,
+			12434055,
+			15544787,
+			22647385,
+			29105437,
+			34592324,
+			6894351,
+			18645563,
+			19121001,
+			29254622,
+			29106097,
+			33372998)
+			) T2
+		    ON ( T1.CAT_ID = T2.CAT_ID )
+		    WHEN MATCHED THEN UPDATE SET
+		    T1.CAT_IND_INTERFAZ_BANKIA = 1,
+		    T1.CAT_REF_CATASTRAL = T2.REF_CATASTRAL,
+		    T1.FECHAMODIFICAR = SYSDATE,
+		    T1.USUARIOMODIFICAR = ''' || V_USR || '''' ;	
+	
+	EXECUTE IMMEDIATE V_MSQL;
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se ACTUALIZAN '||SQL%ROWCOUNT||' registros de ACT_CAT_CATASTRO'); 	
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] BORRADO LOGICO REFERENCIAS CATASTRALES CON CATASTRO A NULO ');	
+	
+
+	V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.ACT_CAT_CATASTRO T1
+		    USING( 
+			SELECT  CAT_ID,ACT.ACT_ID,cat.cat_ref_catastral, AUX.REF_CATASTRAL, CAT_IND_INTERFAZ_BANKIA
+			FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+			INNER JOIN '|| V_ESQUEMA ||'.ACT_CAT_CATASTRO CAT ON ACT.ACT_ID = CAT.ACT_ID 
+			INNER JOIN '|| V_ESQUEMA ||'.AUX_REMVIP_8193 AUX ON AUX.ACT_NUM_ACTIVO_UVEM = ACT.ACT_NUM_ACTIVO_UVEM And Cat.Cat_Ref_Catastral IS NULL
+			WHERE CAT.BORRADO = 0
+			) T2
+		    ON ( T1.CAT_ID = T2.CAT_ID )
+		    WHEN MATCHED THEN UPDATE SET
+		    T1.BORRADO = 1,
+		    T1.FECHABORRAR = SYSDATE,
+		    T1.USUARIOBORRAR = ''' || V_USR || '''' ;	
+	
+	EXECUTE IMMEDIATE V_MSQL;
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se BORRAN '||SQL%ROWCOUNT||' registros de ACT_CAT_CATASTRO'); 	
+
+	COMMIT;
+	
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+ 
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

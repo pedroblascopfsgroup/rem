@@ -29,7 +29,7 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_CALIFICACION_NEGATIVA = "calificacionNegativa";
     public static final String TAB_PLUSVALIA = "plusvalia";
     public static final String TAB_FASE_PUBLICACION = "fasepublicacionactivo";
-
+    public static final String TAB_SANEAMIENTO = "saneamiento";
 
     static {
     	Map<String, List<String>> pmap = new HashMap<String, List<String>>();
@@ -418,8 +418,8 @@ public class ActivoPropagacionFieldTabMap {
 					"poblacionRegistro",
 					"provinciaRegistro",
 					"localidadAnteriorCodigo",
-					//"tipoTituloCodigo", <-Eliminar según conversacion mantenida con Bruno 14-SEP-2017
-					//"subtipoTituloCodigo", <-Eliminar según conversacion mantenida con Bruno 14-SEP-2017
+					"tipoTituloCodigo", //<-Eliminar según conversacion mantenida con Bruno 14-SEP-2017
+					"subtipoTituloCodigo", //<-Eliminar según conversacion mantenida con Bruno 14-SEP-2017
 					"propiedadActivoDescripcion",
 					"propiedadActivoCodigo",
 					"propiedadActivoNif",
@@ -456,12 +456,6 @@ public class ActivoPropagacionFieldTabMap {
     			Arrays.asList(
     				"sujetoAExpediente",
     				"promocionVpo"
-    			));
-
-    	pmap.put(TAB_CARGAS_ACTIVO,
-    			Arrays.asList(
-    				"fechaRevisionCarga",
-    				"conCargas"
     			));
 
     	pmap.put(TAB_DATOS_PUBLICACION,
@@ -570,6 +564,14 @@ public class ActivoPropagacionFieldTabMap {
     				"fasePublicacionCodigo",
     				"subfasePublicacionCodigo",
     				"comentario"
+    					
+    			));
+
+    	pmap.put(TAB_SANEAMIENTO,
+    			Arrays.asList(
+    				"fechaRevisionCarga",
+    				"conCargas"
+
     			));
 
         map = Collections.unmodifiableMap(pmap);

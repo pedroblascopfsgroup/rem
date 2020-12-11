@@ -94,6 +94,10 @@ public class GenericAdapter {
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
+	private static final String DD_SUBTIPO_GASTO_IBI_RUSTICA = "01";
+	private static final String DD_SUBTIPO_GASTO_IBI_URBANA = "02";
+	private static final String DD_SUBTIPO_GASTO_OTRAS_TASAS_AYUNTAMIENTO = "17";
+	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Dictionary> getDiccionario(String diccionario) {
@@ -137,43 +141,63 @@ public class GenericAdapter {
 				}
 			} else if (clase.equals(DDCartera.class)) {
 				Usuario usuarioLogado = getUsuarioLogado();
-				UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+				List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class,
 						genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-				if (!Checks.esNulo(usuarioCartera)) { 	
-					listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, usuarioCartera.getCartera().getCodigo()));
+				if (usuarioCartera != null && !usuarioCartera.isEmpty()) { 	
+					listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, usuarioCartera.get(0).getCartera().getCodigo()));
 					lista = listaPeriodicidad;	
 				}
-			}else if (clase.equals(DDSubcartera.class)) {
+			} else if (clase.equals(DDSubcartera.class)) {
 				Usuario usuarioLogado = getUsuarioLogado();
-				UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+				List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class,
 						genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-				if (!Checks.esNulo(usuarioCartera) && !Checks.esNulo(usuarioCartera.getSubCartera()) && !Checks.esNulo(usuarioCartera.getSubCartera().getCodigo())) {
-					listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, usuarioCartera.getSubCartera().getCodigo()));
-					lista = listaPeriodicidad;
+				for (UsuarioCartera uca : usuarioCartera) {
+					if(uca.getSubCartera() != null) {
+						listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, uca.getSubCartera().getCodigo()));
+						lista = listaPeriodicidad;
+					}
 				}
 			}
 		}
 		return lista;
 	}
 	
-	
-
 	public List<Dictionary> getDiccionarioDeGastos(String diccionario) {
 		
 		Class<?> clase = null;
-		String ibiRustica ="01";
-		String ibiUrbana ="02";
-		String otrasTasas ="17";
+
 		List<Dictionary> listaImpuestos = new ArrayList<Dictionary>();
 			
 			clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
-			DDSubtipoGasto impuestoRustico = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, ibiRustica);
-			DDSubtipoGasto impuestoUrbano = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, ibiUrbana);
-			DDSubtipoGasto impuestoOtrosAyuntamiento = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, otrasTasas);
+			DDSubtipoGasto impuestoRustico = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DD_SUBTIPO_GASTO_IBI_RUSTICA);
+			DDSubtipoGasto impuestoUrbano = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DD_SUBTIPO_GASTO_IBI_URBANA);
+			DDSubtipoGasto impuestoOtrosAyuntamiento = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DD_SUBTIPO_GASTO_OTRAS_TASAS_AYUNTAMIENTO);
+			DDSubtipoGasto impuestoAgua = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_AGUA);
+			DDSubtipoGasto impuestoAlcantarillado = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_ALCANTARILLADO);
+			DDSubtipoGasto impuestoBasura = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_BASURA);
+			DDSubtipoGasto impuestoExaccionesMunicipales = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_EXACCIONES_MUNICIPALES);
+			DDSubtipoGasto impuestoOtrasTasasMunicipales = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_OTRAS_TASAS_MUNICIPALES);
+			DDSubtipoGasto impuestoTasaCanalones = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_TASA_CANALONES);
+			DDSubtipoGasto impuestoTasaIncendios = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_TASA_INCENDIOS);
+			DDSubtipoGasto impuestoRegulacionCatastral = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_REGULACION_CATASTRAL);
+			DDSubtipoGasto impuestoTasasAdministrativas = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_TASAS_ADMINISTRATIVAS);
+			DDSubtipoGasto impuestoTributoMetroMov = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_TRIBUTO_METROPOLITANO_MOVILIDAD);
+			DDSubtipoGasto impuestoVado = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_VADO);
+			
 			listaImpuestos.add(impuestoUrbano);
 			listaImpuestos.add(impuestoOtrosAyuntamiento);
 			listaImpuestos.add(impuestoRustico);
-				
+			listaImpuestos.add(impuestoAgua);
+			listaImpuestos.add(impuestoAlcantarillado);
+			listaImpuestos.add(impuestoBasura);
+			listaImpuestos.add(impuestoExaccionesMunicipales);
+			listaImpuestos.add(impuestoOtrasTasasMunicipales);
+			listaImpuestos.add(impuestoTasaCanalones);
+			listaImpuestos.add(impuestoTasaIncendios);
+			listaImpuestos.add(impuestoRegulacionCatastral);
+			listaImpuestos.add(impuestoTasasAdministrativas);
+			listaImpuestos.add(impuestoTributoMetroMov);
+			listaImpuestos.add(impuestoVado);
 				
 		return listaImpuestos;
 	}
@@ -394,12 +418,21 @@ public class GenericAdapter {
 				dtoOfertaNueva.setTipoOferta(ofertaOrigen.getTipoOferta().getCodigo());
 				
 				ClienteComercial clienteOfertaOrigen = ofertaOrigen.getCliente();
-				dtoOfertaNueva.setTipoDocumento(clienteOfertaOrigen.getTipoDocumento().getCodigo());
+				
+				if(clienteOfertaOrigen.getTipoDocumento() != null) {
+					dtoOfertaNueva.setTipoDocumento(clienteOfertaOrigen.getTipoDocumento().getCodigo());
+				}
+
 				dtoOfertaNueva.setNombreCliente(clienteOfertaOrigen.getNombre());
 				dtoOfertaNueva.setApellidosCliente(clienteOfertaOrigen.getApellidos());
 				dtoOfertaNueva.setNumDocumentoCliente(clienteOfertaOrigen.getDocumento());
 				dtoOfertaNueva.setRazonSocialCliente(clienteOfertaOrigen.getRazonSocial());
-				dtoOfertaNueva.setTipoPersona(clienteOfertaOrigen.getTipoPersona().getCodigo());
+				
+				if(clienteOfertaOrigen.getTipoPersona() != null) {
+					dtoOfertaNueva.setTipoPersona(clienteOfertaOrigen.getTipoPersona().getCodigo());
+				}
+				
+				dtoOfertaNueva.setIdOfertaOrigen(numIdOferta);
 				
 				if(!Checks.esNulo(clienteOfertaOrigen.getEstadoCivil())) {
 					dtoOfertaNueva.setEstadoCivil(clienteOfertaOrigen.getEstadoCivil().getCodigo());
@@ -440,15 +473,10 @@ public class GenericAdapter {
 				Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaOrigen.getId());
 				ExpedienteComercial expedienteOrigen = genericDao.get(ExpedienteComercial.class, filtroExpediente);	
 				
-				Filter filtroIdExpediente = null;
-				Long idExpediente = null;
 				Comprador compradorPrincipalOfertaOrigen = null;
 				if(!Checks.esNulo(expedienteOrigen)) {
 					
-					Filter compradorDocumento = genericDao.createFilter(FilterType.EQUALS, "documento", ofertaOrigen.getCliente().getDocumento());
-					compradorPrincipalOfertaOrigen = genericDao.get(Comprador.class, compradorDocumento);
-					idExpediente = expedienteOrigen.getId();
-					filtroIdExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente", idExpediente);
+					compradorPrincipalOfertaOrigen =expedienteOrigen.getCompradorPrincipal();
 					if(!Checks.esNulo(compradorPrincipalOfertaOrigen)) {
 						if(!Checks.esNulo(compradorPrincipalOfertaOrigen.getAdjunto())) {
 							dtoOfertaNueva.setIdDocAdjunto(compradorPrincipalOfertaOrigen.getAdjunto().getId());
@@ -476,6 +504,17 @@ public class GenericAdapter {
 				}
 				
 				logger.error("Oferta " + ofertaOrigen.getNumOferta() + " clonada correctamente.");
+				
+				ClienteComercial clienteOrigen = ofertaOrigen.getCliente();
+				ClienteComercial clienteNuevo = ofertaCreada.getCliente();
+				Long idCliente =clienteNuevo.getId();
+				Long idClienteWebcom= clienteNuevo.getIdClienteWebcom();
+				BeanUtils.copyProperties(clienteNuevo, clienteOrigen);
+				
+				clienteNuevo.setId(idCliente);
+				clienteNuevo.setIdClienteWebcom(idClienteWebcom);
+				
+				genericDao.update(ClienteComercial.class, clienteNuevo);
 				
 				// TRAMITANDO OFERTA NUEVA
 				
@@ -506,6 +545,12 @@ public class GenericAdapter {
 				List<CompradorExpediente> compradoresOfertaOrigen = expedienteOrigen.getCompradores();
 				List<CompradorExpediente> compradoresOfertaNueva = expedienteOfertaNueva.getCompradores();
 				
+
+				CompradorExpediente compradorNuevo = genericDao.getList(CompradorExpediente.class, 
+						genericDao.createFilter(FilterType.EQUALS,"expediente",expedienteOfertaNueva.getId()),
+						genericDao.createFilter(FilterType.EQUALS, "comprador",expedienteOfertaNueva.getCompradorPrincipal().getId())).get(0);
+				
+				
 				for (CompradorExpediente cexOfertaOrigen : compradoresOfertaOrigen) {
 					if(!cexOfertaOrigen.getComprador().equals(compradorPrincipalOfertaOrigen.getId())) {
 						CompradorExpediente cexOfertaNueva = new CompradorExpediente();
@@ -519,6 +564,48 @@ public class GenericAdapter {
 						cexOfertaNueva.setPrimaryKey(pk);
 						
 						compradoresOfertaNueva.add(cexOfertaNueva);		
+					}else{			
+
+						compradorNuevo.setAntiguoDeudor(cexOfertaOrigen.getAntiguoDeudor());
+						compradorNuevo.setApellidosRepresentante(cexOfertaOrigen.getApellidosRepresentante());						
+						compradorNuevo.setClienteUrsusConyuge(cexOfertaOrigen.getClienteUrsusConyuge());
+						compradorNuevo.setCodigoPostalRepresentante(cexOfertaOrigen.getCodigoPostalRepresentante());
+						compradorNuevo.setDireccionRepresentante(cexOfertaOrigen.getDireccionRepresentante());
+						compradorNuevo.setDocumentoAdjunto(cexOfertaOrigen.getDocumentoAdjunto());
+						compradorNuevo.setDocumentoConyuge(cexOfertaOrigen.getDocumentoConyuge());
+						compradorNuevo.setDocumentoRepresentante(cexOfertaOrigen.getDocumentoRepresentante());
+						compradorNuevo.setEmailRepresentante(cexOfertaOrigen.getEmailRepresentante());
+						compradorNuevo.setEstadoCivil(cexOfertaOrigen.getEstadoCivil());
+						compradorNuevo.setEstadosPbc(cexOfertaOrigen.getEstadosPbc());
+						compradorNuevo.setFechaBaja(cexOfertaOrigen.getFechaBaja());
+						compradorNuevo.setFechaFactura(cexOfertaOrigen.getFechaFactura());
+						compradorNuevo.setFechaPeticion(cexOfertaOrigen.getFechaPeticion());
+						compradorNuevo.setFechaResolucion(cexOfertaOrigen.getFechaResolucion());
+						compradorNuevo.setGradoPropiedad(cexOfertaOrigen.getGradoPropiedad());
+						compradorNuevo.setIdPersonaHaya(cexOfertaOrigen.getIdPersonaHaya());
+						compradorNuevo.setImporteFinanciado(cexOfertaOrigen.getImporteFinanciado());
+						compradorNuevo.setImporteProporcionalOferta(cexOfertaOrigen.getImporteProporcionalOferta());
+						compradorNuevo.setLocalidadRepresentante(cexOfertaOrigen.getLocalidadRepresentante());
+						compradorNuevo.setNombreRepresentante(cexOfertaOrigen.getNombreRepresentante());
+						compradorNuevo.setNumFactura(cexOfertaOrigen.getNumFactura());
+						compradorNuevo.setNumUrsusConyuge(cexOfertaOrigen.getNumUrsusConyuge());
+						compradorNuevo.setNumUrsusConyugeBh(cexOfertaOrigen.getNumUrsusConyugeBh());
+						compradorNuevo.setPais(cexOfertaOrigen.getPais());
+						compradorNuevo.setPorcionCompra(cexOfertaOrigen.getPorcionCompra());
+						compradorNuevo.setProvinciaRepresentante(cexOfertaOrigen.getProvinciaRepresentante());
+						compradorNuevo.setRegimenMatrimonial(cexOfertaOrigen.getRegimenMatrimonial());
+						compradorNuevo.setRelacionAntDeudor(cexOfertaOrigen.getRelacionAntDeudor());
+						compradorNuevo.setRelacionHre(cexOfertaOrigen.getRelacionHre());
+						compradorNuevo.setResponsableTramitacion(cexOfertaOrigen.getResponsableTramitacion());
+						compradorNuevo.setTelefono1Representante(cexOfertaOrigen.getTelefono1Representante());
+						compradorNuevo.setTelefono2Representante(cexOfertaOrigen.getTelefono2Representante());
+						compradorNuevo.setTipoDocumentoConyuge(cexOfertaOrigen.getTipoDocumentoConyuge());
+						compradorNuevo.setTipoInquilino(cexOfertaOrigen.getTipoInquilino());
+						compradorNuevo.setTitularContratacion(cexOfertaOrigen.getTitularContratacion());
+						compradorNuevo.setTitularReserva(cexOfertaOrigen.getTitularReserva());
+						compradorNuevo.setUsoActivo(cexOfertaOrigen.getUsoActivo());
+						
+						genericDao.update(CompradorExpediente.class, compradorNuevo);
 					}
 				}
 				

@@ -4,7 +4,6 @@
 Ext.define('HreRem.model.Observaciones', {
     extend: 'HreRem.model.Base',
     idProperty: 'id',
-
     fields: [    
   
     		{
@@ -28,15 +27,14 @@ Ext.define('HreRem.model.Observaciones', {
     			name: 'tipoObservacionCodigo'
     		}
     ],
-    
 	proxy: {
 		type: 'uxproxy',
 		localUrl: 'activos.json',
 		remoteUrl: 'activo/getActivoById',
 		api: {
-            create: 'activo/createObservacionesActivo',
-            update: 'activo/saveObservacionesActivo',
-            destroy: 'activo/deleteObservacionesActivo'
+            create: 'activo/createObservacion',
+            update: 'activo/saveObservacion',
+            destroy: 'activo/deleteObservacionById'
         }
     }
 

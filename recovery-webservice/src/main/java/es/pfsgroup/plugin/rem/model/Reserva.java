@@ -31,6 +31,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAmpliacionArras;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 
 
@@ -116,6 +117,18 @@ public class Reserva implements Serializable, Auditable {
     @JoinColumn(name = "DD_DER_ID")
 	private DDDevolucionReserva devolucionReserva;
     
+    @Column(name="RES_FECHA_VIGENCIA_ARRAS")
+    private Date fechaVigenciaArras;
+    
+    @Column(name="RES_FECHA_AMPLIACION_ARRAS")
+    private Date fechaAmpliacionArras;
+    
+    @Column(name="RES_SOLICITUD_AMPLIACION_ARRAS")
+    private String solicitudAmpliacionArras;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MAA_ID")
+	private DDMotivoAmpliacionArras motivoAmpliacionArras;    
     
     @Version   
 	private Long version;
@@ -283,6 +296,38 @@ public class Reserva implements Serializable, Auditable {
 
 	public void setFechaContabilizacionReserva(Date fechaContabilizacionReserva) {
 		this.fechaContabilizacionReserva = fechaContabilizacionReserva;
+	}
+
+	public Date getFechaVigenciaArras() {
+		return fechaVigenciaArras;
+	}
+
+	public void setFechaVigenciaArras(Date fechaVigenciaArras) {
+		this.fechaVigenciaArras = fechaVigenciaArras;
+	}
+
+	public Date getFechaAmpliacionArras() {
+		return fechaAmpliacionArras;
+	}
+
+	public void setFechaAmpliacionArras(Date fechaAmpliacionArras) {
+		this.fechaAmpliacionArras = fechaAmpliacionArras;
+	}
+
+	public String getSolicitudAmpliacionArras() {
+		return solicitudAmpliacionArras;
+	}
+
+	public void setSolicitudAmpliacionArras(String solicitudAmpliacionArras) {
+		this.solicitudAmpliacionArras = solicitudAmpliacionArras;
+	}
+
+	public DDMotivoAmpliacionArras getMotivoAmpliacionArras() {
+		return motivoAmpliacionArras;
+	}
+
+	public void setMotivoAmpliacionArras(DDMotivoAmpliacionArras motivoAmpliacionArras) {
+		this.motivoAmpliacionArras = motivoAmpliacionArras;
 	} 
    
 }

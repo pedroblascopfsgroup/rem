@@ -35,10 +35,10 @@ public class GastoAvisoParticipacion implements GastoAvisadorApi {
 		DtoAviso dtoAviso = new DtoAviso();	
 		BigDecimal participacionTotal = BigDecimal.ZERO;
 		BigDecimal participacionCien = BigDecimal.TEN.multiply(BigDecimal.TEN);
-		NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("en", "in"));
+		NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("es", "ES"));
         format.setMinimumFractionDigits(2);
-        format.setMaximumFractionDigits(5);
-        format.setRoundingMode(RoundingMode.HALF_EVEN);
+        format.setMaximumFractionDigits(2);
+        format.setRoundingMode(RoundingMode.HALF_DOWN);
         
 		if(!Checks.esNulo(gasto)){
 			

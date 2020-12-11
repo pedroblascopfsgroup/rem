@@ -298,6 +298,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("motivoAmpliacionArras", DDMotivoAmpliacionArras.class);
 		mapa.put("identificadorReam", DDIdentificadorReam.class);
 		mapa.put("tipoRetencion", DDTipoRetencion.class);
+		mapa.put("tiposAdmiteMascota", DDSiniSiNoIndiferente.class); 
 		
 		return Collections.unmodifiableMap(mapa);
 	}

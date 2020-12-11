@@ -5993,6 +5993,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return uAsAlquiladas;
 	}
+	
+	@Override
+	public boolean isAlquiladoTotalmente(Long idActivoMatriz) {
+		boolean uAsAlquiladas = true;
+		ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(idActivoMatriz);
+		
+		List<ActivoAgrupacionActivo> activos = agr.getActivos();
+		
+		if (!Checks.estaVacio(activos)) {
+			for (ActivoAgrupacionActivo activo : activos) {
+				if (!isActivoMatriz(activo.getActivo().getId()) && (!isActivoAlquilado(activo.getActivo()) && !isOcupadoConTituloOrEstadoAlquilado(activo.getActivo()))) {
+					uAsAlquiladas = false;
+					break;
+				}
+			}
+		}
+		
+		return uAsAlquiladas;
+	}
 
 	@Override
 	public List<DDCesionSaneamiento> getPerimetroAppleCesion(String codigoServicer) {

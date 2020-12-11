@@ -66,6 +66,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSiniSiNoIndiferente;
 
 @Component
 public class TabActivoInformeComercial implements TabActivoService {
@@ -305,6 +306,10 @@ public class TabActivoInformeComercial implements TabActivoService {
 					}
 					beanUtilNotNull.copyProperty(informeComercial, "descOtras", activo.getInfoComercial().getOtrosOtrasDependencias());
 					
+					// Otras características
+					if (!Checks.esNulo(activo.getInfoComercial().getAdmiteMascotaOtrasCaracteristicas())) {
+						beanUtilNotNull.copyProperty(informeComercial, "admiteMascotaCodigo", activo.getInfoComercial().getAdmiteMascotaOtrasCaracteristicas().getCodigo());
+					}
 				}
 			}
 
@@ -554,7 +559,12 @@ public class TabActivoInformeComercial implements TabActivoService {
 					}
 					beanUtilNotNull.copyProperty(actInfoComercial, "otrosOtrasDependencias", activoInformeDto.getDescOtras());
 					
-					
+				//Otras características
+				if(activoInformeDto.getAdmiteMascotaCodigo() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getAdmiteMascotaCodigo());
+					DDSiniSiNoIndiferente tipoAdmiteMascota = (DDSiniSiNoIndiferente) genericDao.get(DDSiniSiNoIndiferente.class, filtro);
+					beanUtilNotNull.copyProperty(actInfoComercial, "admiteMascotaOtrasCaracteristicas", tipoAdmiteMascota);
+				}
 				
 
 				// Datos de Infraestructura

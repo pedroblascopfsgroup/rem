@@ -60,7 +60,7 @@ public class VisitaDto implements Serializable {
 	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorPrescriptorOportunidadREM no existe", groups = { Insert.class,
 			Update.class },foreingField="codigoProveedorRem")
 		private Long idProveedorPrescriptorOportunidadREM;
-	@Size(max=250,groups = { Insert.class, Update.class })
+	@Size(max=1024,groups = { Insert.class, Update.class })
 	private String observaciones;
 	@NotNull(groups = { Insert.class, Update.class })
 	private Date fechaAccion;

@@ -97,32 +97,6 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 				}
 			}
 			
-			
-			if (!Checks.esNulo(expedienteComercial.getFechaValidacion()) && !Checks.esNulo(expedienteComercial.getDocumentacionOk()) && expedienteComercial.getDocumentacionOk().equals(true)){
-				
-				List<ActivoOferta> activosOferta = oferta.getActivosOferta();
-				
-				Filter filtroTipoEstadoAlquiler = genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO);
-				DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, filtroTipoEstadoAlquiler);
-				
-				for(ActivoOferta activoOferta : activosOferta){
-					Activo activo = activoOferta.getPrimaryKey().getActivo();
-					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-					ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivo);
-					if(!Checks.esNulo(activoPatrimonio)){
-						activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
-					} else{
-						activoPatrimonio = new ActivoPatrimonio();
-						activoPatrimonio.setActivo(activo);
-						if (!Checks.esNulo(tipoEstadoAlquiler)){
-							activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
-						}
-					}
-					activoDao.validateAgrupacion(expedienteComercial.getId());
-					genericDao.save(ActivoPatrimonio.class, activoPatrimonio);
-				}
-			}
-			
 			if(N_CONTRATO_PRINEX.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				oferta.setNumContratoPrinex(valor.getValor());
 				expedienteComercial.setNumContratoAlquiler(valor.getValor());

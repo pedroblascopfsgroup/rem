@@ -8,8 +8,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
     		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
     		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo',
-    		'HreRem.model.ComercialActivoModel', 'HreRem.view.activos.detalle.CrearEvolucionObservaciones', 
-    		'HreRem.view.activos.detalle.SuministrosActivo', 'HreRem.view.activos.detalle.SaneamientoActivoDetalle', 'HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq'],
+    		'HreRem.model.ComercialActivoModel', 'HreRem.view.activos.detalle.CrearEvolucionObservaciones', 'HreRem.view.activos.detalle.SuministrosActivo', 
+    		'HreRem.view.activos.detalle.SaneamientoActivoDetalle', 'HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq'],
 
     control: {
          'documentosactivosimple gridBase': {

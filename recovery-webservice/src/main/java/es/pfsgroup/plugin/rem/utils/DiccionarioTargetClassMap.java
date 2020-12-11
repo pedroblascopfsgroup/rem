@@ -295,6 +295,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadoRegistral", DDEstadoRegistralActivo.class);
 		mapa.put("motivoAmpliacionArras", DDMotivoAmpliacionArras.class);
 		mapa.put("estadoFisicoActivoDND", DDValidaEstadoActivo.class);
+		mapa.put("tiposAdmiteMascota", DDSiniSiNoIndiferente.class); 
 		
 		return Collections.unmodifiableMap(mapa);
 	}

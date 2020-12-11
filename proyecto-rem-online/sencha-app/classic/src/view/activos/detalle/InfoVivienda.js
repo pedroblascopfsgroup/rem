@@ -252,6 +252,24 @@ Ext.define('HreRem.view.activos.detalle.InfoVivienda', {
 														}
 										            
 										        ]
+											},
+											{
+									            xtype:'fieldsettable',				        	 
+											    defaultType: 'textfieldbase',
+											    title: HreRem.i18n('header.otras.caracteristicas'),
+												items :
+												[
+													{
+														xtype: 'comboboxfieldbase',
+														fieldLabel: HreRem.i18n('fieldlabel.mascota'),
+														bind:{ 
+														   	store: '{comboAdmiteMascota}',
+															value: '{infoComercial.admiteMascotaCodigo}'	
+														   	}
+														//allowBlank: false
+			    		    						}
+										            
+										        ]
 											}
 											
 			        

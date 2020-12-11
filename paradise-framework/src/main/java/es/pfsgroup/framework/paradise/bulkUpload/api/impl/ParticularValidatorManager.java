@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.zip.Checksum;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -3409,9 +3410,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)  "
-				+"		FROM ACT_TBJ_TRABAJO"
-				+"		WHERE TBJ_NUM_TRABAJO = "+celdaTrabajo+""
-				+"	AND tbj_aplica_comite = '1' AND dd_aco_id = '6' AND BORRADO= 0");
+				+"		FROM ACT_TBJ_TRABAJO tbj join DD_ACO_APROBACION_COMITE aco on tbj.dd_aco_id = aco.dd_aco_id and aco.borrado = 0"
+				+"		WHERE tbj.TBJ_NUM_TRABAJO = "+celdaTrabajo+""
+				+"	AND tbj.tbj_aplica_comite = '1' AND aco.dd_aco_codigo = 'APR' AND tbj.BORRADO= 0");
 
 		return "1".equals(resultado);
 
@@ -6200,6 +6201,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+ " 	 PRO_ID IN (SELECT PRO_ID FROM ACT_PRO_PROPIETARIO WHERE PRO_DOCIDENTIF = '"+nifPropietario+"' AND BORRADO = 0) "
 					+ "		 AND BORRADO = 0");
 
+			return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeTrabajoByCodigo(String codTrabajo) {
+		if (Checks.esNulo(codTrabajo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " 
+				+ "		FROM DD_TTR_TIPO_TRABAJO TTR " 
+				+ "		WHERE ttr.dd_ttr_codigo = '"+codTrabajo+"'"
+				+ "		AND TTR.BORRADO = 0");
 		
 		return !"0".equals(resultado);
 	}
@@ -6321,7 +6334,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 
-
 	@Override
 	public String sacarCodigoSubtipoActivo(String descripcion) {
 
@@ -6334,5 +6346,100 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		AND SAC.BORRADO = 0");
 		
 		return resultado;
+	}
+
+	@Override	
+	public Boolean existeSubtrabajoByCodigo(String codSubtrabajo) {
+		if (Checks.esNulo(codSubtrabajo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " 
+				+ "		FROM DD_STR_SUBTIPO_TRABAJO STR " 
+				+ "		WHERE STR.DD_STR_CODIGO = '"+codSubtrabajo+"'"
+				+ "		AND STR.BORRADO = 0");
+
+		return !"0".equals(resultado);
+		
+	}
+	
+	@Override
+	public Boolean esSubtrabajoByCodTrabajoByCodSubtrabajo(String codTrabajo, String codSubtrabajo) {
+		
+		if (Checks.esNulo(codSubtrabajo) || Checks.esNulo(codTrabajo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " 
+				+ " FROM DD_STR_SUBTIPO_TRABAJO STR " 
+				+ " INNER JOIN DD_TTR_TIPO_TRABAJO TTR ON TTR.DD_TTR_ID = STR.DD_TTR_ID " 
+				+ " WHERE TTR.DD_TTR_CODIGO = '"+codTrabajo+"'"
+				+ " AND STR.DD_STR_CODIGO = '"+codSubtrabajo+"'"
+				+ " AND STR.BORRADO= 0 AND TTR.BORRADO= 0");
+
+		return !"0".equals(resultado);
+		
+	}
+	
+	@Override
+	public Boolean existeProveedorAndProveedorContacto(String codProveedor, String proveedorContacto) {
+		if (Checks.esNulo(codProveedor) || Checks.esNulo(proveedorContacto)) {
+			return false;
+		}
+		
+		try {
+			Long codProveedorParse = Long.parseLong(codProveedor);
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " 
+				+ "FROM ACT_PVC_PROVEEDOR_CONTACTO PVC " 
+				+ "JOIN ACT_PVE_PROVEEDOR PVE ON pve.pve_id = pvc.pve_id AND pve.pve_cod_rem = "+codProveedorParse+" " 
+				+ "JOIN ${master.schema}.USU_USUARIOS USU ON pvc.usu_id = USU.USU_ID AND usu.usu_username = '"+proveedorContacto+"'");
+
+			return !"0".equals(resultado);
+		} catch (NumberFormatException e) {
+			return false;
+
+		}
+
+	}
+	@Override
+	public Boolean esSubtipoTrabajoTomaPosesionPaquete(String subtrabajo) {
+		if (subtrabajo == null) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " 
+				+ "		FROM DD_STR_SUBTIPO_TRABAJO STR " 
+				+ "		WHERE STR.DD_STR_CODIGO = '"+subtrabajo+"'"
+				+ "		AND STR.DD_STR_CODIGO IN ('PAQ','57')"
+				+ "		AND STR.BORRADO = 0");
+
+		return "0".equals(resultado);
+	}
+	@Override
+	public Boolean esTarifaEnCarteradelActivo(String codTarifa, String idActivo) {
+		if (codTarifa == null || idActivo == null) {
+			return false;
+		}
+		Long numActivo = Long.parseLong(idActivo);
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " 
+				+ " FROM ACT_CFT_CONFIG_TARIFA CFT " 
+				+ " JOIN DD_TTF_TIPO_TARIFA TTF ON CFT.DD_TTF_ID = TTF.DD_TTF_ID AND ttf.dd_ttf_codigo ='"+codTarifa+"'" 
+				+ " JOIN ACT_ACTIVO ACT ON ACT.DD_CRA_ID = CFT.DD_CRA_ID AND act.act_num_activo = "+numActivo+" ");
+
+		return !"0".equals(resultado);
+	}
+	@Override
+	public Boolean existeProveedorEnCarteraActivo(String proveedor, String idActivo) {
+		if (proveedor == null || idActivo != null) {
+			return false;
+		}
+		Long numProveedor = Long.parseLong(proveedor);
+		Long numActivo= Long.parseLong(idActivo);
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " 
+				+ " FROM ACT_ETP_ENTIDAD_PROVEEDOR ETP " 
+				+ " JOIN ACT_ACTIVO ACT ON act.dd_cra_id = etp.dd_cra_id " 
+				+ " JOIN ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = ETP.PVE_ID AND act.act_num_activo = "+numActivo+" " 
+				+ " WHERE pve.pve_cod_rem = "+numProveedor+"");
+
+		return "0".equals(resultado);
 	}
 }

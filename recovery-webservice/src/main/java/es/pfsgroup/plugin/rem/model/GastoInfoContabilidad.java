@@ -76,7 +76,14 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
     
     @Column(name="GIC_FECHA_DEVENGO_ESPECIAL")
     private Date fechaDevengoEspecial;
-
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CPS_ID")
+    private ConfiguracionSubpartidasPresupuestarias configuracionSubpartidasPresupuestarias;
+    
+    @Column(name="GIC_EXCLUIR_ENVIO_LBK")
+    private Boolean excluirEnvioLbk;
+    
 	@JoinColumn(name = "GIC_ACTIVABLE")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private DDSinSiNo activable;
@@ -209,5 +216,21 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
 		this.inversionSujetoPasivo = inversionSujetoPasivo;
 	}
 	
+	public void setExcluirEnvioLbk (Boolean excluirEnvioLbk) {
+		this.excluirEnvioLbk = excluirEnvioLbk;
+	}
+	
+	public Boolean getExcluirEnvioLbk () {
+		return excluirEnvioLbk;
+	}
+
+	public ConfiguracionSubpartidasPresupuestarias getConfiguracionSubpartidasPresupuestarias() {
+		return configuracionSubpartidasPresupuestarias;
+	}
+
+	public void setConfiguracionSubpartidasPresupuestarias(
+			ConfiguracionSubpartidasPresupuestarias configuracionSubpartidasPresupuestarias) {
+		this.configuracionSubpartidasPresupuestarias = configuracionSubpartidasPresupuestarias;
+	}
 
 }

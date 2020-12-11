@@ -144,6 +144,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.provisiongastos.dao.ProvisionGastosDao;
 import es.pfsgroup.plugin.rem.thread.ActualizaSuplidosAsync;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
+import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
 
 @Service("gastoProveedorManager")
 public class GastoProveedorManager implements GastoProveedorApi {
@@ -2018,6 +2019,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				
 				dto.setFechaContabilizacion(contabilidadGasto.getFechaContabilizacion());
 				dto.setFechaDevengoEspecial(contabilidadGasto.getFechaDevengoEspecial());
+				dto.setExcluirEnvioLbk(contabilidadGasto.getExcluirEnvioLbk());
 				if (!Checks.esNulo(contabilidadGasto.getContabilizadoPor())) {
 					dto.setContabilizadoPorDescripcion(contabilidadGasto.getContabilizadoPor().getDescripcion());
 				}
@@ -2078,7 +2080,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					contabilidadGasto.setEjercicio(ejercicio);
 				}
 
-
 				if(!Checks.esNulo(dtoContabilidadGasto.getComboActivable())) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoContabilidadGasto.getComboActivable());
 					codSiNo = (DDSinSiNo) genericDao.get(DDSinSiNo.class, filtro);
@@ -2108,12 +2109,20 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						contabilidadGasto.setInversionSujetoPasivo(codSiNo);
 					}
 				}
+				if(dtoContabilidadGasto.getIdSubpartidaPresupuestaria() != null) {
+					Filter filtroSubpartidaPresupuestaria = genericDao.createFilter(FilterType.EQUALS, "id", dtoContabilidadGasto.getIdSubpartidaPresupuestaria());
+					ConfiguracionSubpartidasPresupuestarias cps = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, filtroSubpartidaPresupuestaria);
+					
+					contabilidadGasto.setConfiguracionSubpartidasPresupuestarias(cps);
+				}
 				
 				if(dtoContabilidadGasto.getTipoComisionadoHreCodigo() != null) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoContabilidadGasto.getTipoComisionadoHreCodigo());
 					DDTipoComisionado tipoComision = genericDao.get(DDTipoComisionado.class, filtro);
 					contabilidadGasto.setTipoComisionadoHre(tipoComision);
 				}
+				
+
 
 				gasto.setGastoInfoContabilidad(contabilidadGasto);
 			}			

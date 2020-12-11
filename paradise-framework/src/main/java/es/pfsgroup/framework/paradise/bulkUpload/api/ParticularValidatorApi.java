@@ -1372,5 +1372,18 @@ public interface ParticularValidatorApi {
 
 	public String sacarCodigoSubtipoActivo(String descripcion);
 
-
+	Boolean existeTrabajoByCodigo(String codTrabajo);
+	
+	Boolean existeSubtrabajoByCodigo(String codSubtrabajo);
+	
+	Boolean esSubtrabajoByCodTrabajoByCodSubtrabajo(String codTrabajo, String codSubtrabajo);
+	
+	Boolean existeProveedorAndProveedorContacto(String codProveedor, String proveedorContacto);
+	
+	Boolean esSubtipoTrabajoTomaPosesionPaquete(String subtrabajo);
+	
+	Boolean esTarifaEnCarteradelActivo(String codTarifa, String idActivo);
+	
+	Boolean existeProveedorEnCarteraActivo(String proveedor,String idActivo);
+	
 }

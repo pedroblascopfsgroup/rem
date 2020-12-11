@@ -611,7 +611,8 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 					if(ejercicio != null) {
 						gastoInfoContabilidad.setEjercicio(ejercicio);
 					}else {
-						Date hoy = new Date();
+						String fecha = exc.dameCelda(fila, COL_F_EMISION_DEVENGO);
+						Date hoy=new SimpleDateFormat("dd/MM/yyyy").parse(fecha);  
 						Calendar calendar = new GregorianCalendar();
 						calendar.setTime(hoy);
 						String year =  Integer.toString(calendar.get(Calendar.YEAR));
@@ -619,8 +620,7 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 						ejercicio = genericDao.get(Ejercicio.class, filtroEjercicio);
 						gastoInfoContabilidad.setEjercicio(ejercicio);
 					}
-					
-					gastoInfoContabilidad.setEjercicio(ejercicio);
+										
 					
 					genericDao.save(GastoInfoContabilidad.class, gastoInfoContabilidad);
 				

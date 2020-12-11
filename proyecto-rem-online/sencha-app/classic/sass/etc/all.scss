@@ -631,7 +631,7 @@ x-panel x-tabpanel-child x-panel-default {
 .x-tabpanel-child .x-tabpanel-child .x-tab.x-tab-active.x-tab-default {
 
   color: #054664 !important;
-  border-top: 3px solid #606060 !important!;
+  border-top: 3px solid #606060 !important;
   top: 0px !important;
   padding-bottom:6px;
   height: 30px !important;
@@ -652,7 +652,6 @@ x-panel x-tabpanel-child x-panel-default {
   padding: 0;
   min-height: 100px;  
   margin: 0;
-  overflow: visible;
 }
 
 // ++ ------------------------------------------------------------------------- ++
@@ -666,25 +665,21 @@ x-panel x-tabpanel-child x-panel-default {
 // Negrita para las cabeceras de los fieldset
 .x-fieldset-header-text {
 	font-weight: bold !important;
-	position:static;
 }
 
 .fieldsetBase .x-fieldset-header {
   padding: 0px 0px 0px 10px;  
-  position:static;
 }
 
 .fieldsetBase .x-fieldset-header-text{
   font: normal 13px/17px $font-family;
   color: #404040;  
   padding: 0;
-  position:static;
 }
 
 .fieldsetCabecera.x-fieldset {
   background-color: #fff; 
   margin: 10px;
-  overflow:visible;
 }
 
 
@@ -692,12 +687,10 @@ x-panel x-tabpanel-child x-panel-default {
 // Cambio en el background para que los formularios se vean "gris" en los monitores externos
 .x-fieldset {
 	background-color: #f5f5f5;
-	overflow:visible;
 }
 
 .x-fieldset-collapsed {
 	background-color: #fff;
-	overflow:visible;
 }
 
 // Cambio en el background para que las filas impares de los grid se vean en "gris" en monitores externos
@@ -738,7 +731,7 @@ x-panel x-tabpanel-child x-panel-default {
 
 /* Modificaciones para reducir espacios entre tabs */
 .x-tab-bar-default-top > .x-tab-bar-body-default {
-	padding-bottom: 0px !important!;
+	padding-bottom: 0px !important;
 	min-height: 0px !important; 
 }
 
@@ -1362,13 +1355,14 @@ position:fixed !important;
 	  background: url(images/clonar_expdtes.svg) center center no-repeat;
 }
 
-
 .force-max-width {
 	max-width: 100%!important;
 	width: 100%!important;
 }
 
-
+fieldset.x-fieldset {
+	overflow: visible;
+}
 
 .margen-derecha {
 	margin-right: 5px;
@@ -1385,3 +1379,6 @@ position:fixed !important;
 	position:static;
 }
 
+div.x-fieldset-header-text {
+	position: static;
+}

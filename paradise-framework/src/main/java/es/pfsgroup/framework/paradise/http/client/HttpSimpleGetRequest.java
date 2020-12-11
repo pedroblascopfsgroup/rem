@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.rem.restclient.httpclient;
+package es.pfsgroup.framework.paradise.http.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,9 +7,11 @@ import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.groovy.tools.shell.commands.ShowCommand;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -24,7 +26,7 @@ public class HttpSimpleGetRequest {
 	private URL url;
 	private HttpURLConnection con;
 	private int status = -1;
-	
+	private boolean debug = true; //propiedad para imprimir los datos 
 	
 	public HttpSimpleGetRequest(String url) {
 		try {
@@ -35,7 +37,7 @@ public class HttpSimpleGetRequest {
 	}
 	
 	public Object get() {
-		Object response = null;
+		JSONObject response = null;
 		try {
 			this.con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
@@ -67,8 +69,8 @@ public class HttpSimpleGetRequest {
 		}
 		return reader;
 	}
-
-	private Object parsedResponse(int status, BufferedReader reader) throws IOException {
+	
+	private JSONObject parsedResponse(int status, BufferedReader reader) throws IOException {
 		String inputLine;
 		StringBuilder content = new StringBuilder();
 		while((inputLine = reader.readLine()) != null) {
@@ -76,9 +78,26 @@ public class HttpSimpleGetRequest {
 		}
 		JSONObject jsonObject = JSONObject.fromObject(content.toString());
 		jsonObject.accumulate("status", this.status); 
+		
+		if (debug) {
+			showInfo(jsonObject);
+		}
 		return jsonObject; 
 	}
 	
+	@SuppressWarnings("unchecked")
+	private void showInfo(JSONObject jsonObject) {
+		if (jsonObject == null) {
+			logger.error("[ERROR] No se ha recibido datos de la peticion GET " + HttpSimpleGetRequest.class.getName());
+		}
+		
+		Iterator<String> keys = jsonObject.keys(); 
+		while(keys.hasNext()) { 
+			String key = keys.next(); 
+			logger.error("[INFO] Propiedad:" +key+ " \n Value " + jsonObject.getString(key));
+		}		
+	}
+
 	public int getStatus() { return this.status; };
 
 }

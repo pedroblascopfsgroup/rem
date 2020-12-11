@@ -631,7 +631,7 @@ x-panel x-tabpanel-child x-panel-default {
 .x-tabpanel-child .x-tabpanel-child .x-tab.x-tab-active.x-tab-default {
 
   color: #054664 !important;
-  border-top: 3px solid #606060 !important!;
+  border-top: 3px solid #606060 !important;
   top: 0px !important;
   padding-bottom:6px;
   height: 30px !important;
@@ -731,7 +731,7 @@ x-panel x-tabpanel-child x-panel-default {
 
 /* Modificaciones para reducir espacios entre tabs */
 .x-tab-bar-default-top > .x-tab-bar-body-default {
-	padding-bottom: 0px !important!;
+	padding-bottom: 0px !important;
 	min-height: 0px !important; 
 }
 

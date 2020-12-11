@@ -123,7 +123,6 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 		if (!Checks.esNulo(expedienteComercial.getSeguroRentasAlquiler())) {
 			expedienteComercialApi.enviarCorreoAsegurador(expedienteComercial.getId());
 		}
-		expedienteComercialApi.bloquearExpediente(expedienteComercial.getId());
 		
 		Activo activo = tramite.getActivo();
 		if(!Checks.esNulo(activo)) {

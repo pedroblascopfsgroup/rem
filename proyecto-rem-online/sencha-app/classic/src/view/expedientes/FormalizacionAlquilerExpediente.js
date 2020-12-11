@@ -6,20 +6,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
     disableValidation: true,
     reference: 'formalizacionalquilerexpediente',
     scrollable: 'y',
-    /*saveMultiple: true,
-    records: ['resolucion', 'financiacion'],
-    recordsClass: ['HreRem.model.ExpedienteFormalizacionResolucion',
-        'HreRem.model.ExpedienteFinanciacion'
-    ],
-    requires: ['HreRem.model.ExpedienteFormalizacionResolucion',
-        'HreRem.model.ExpedienteFinanciacion',
-        'HreRem.view.expedientes.BloqueosFormalizacionList',
-        'HreRem.model.BloqueosFormalizacionModel',
-        'HreRem.view.expedientes.Desbloquear', 'HreRem.view.common.TareaController'
-    ],
-    listeners: {
-        boxready: 'cargarTabData'
-    },*/
 
     initComponent: function () {
         var me = this;
@@ -158,7 +144,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
                             {
 								dataIndex : 'fechaHoraFirma',
 								formatter : 'date("d/m/Y H:i")',
-								hidden : true,
 								hideable: false,
 								resizble : false,
 								width : 0,

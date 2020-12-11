@@ -303,9 +303,6 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					simularResolucion(agrupacion.getId(),
 							exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR));
 					
-					// bloqueamos el expediente comercial
-					bloquearExpediente(agrupacion.getId());
-					
 					//indica la fecha de venta
 					indicarFechaVentaExpediente(exc, agrupacion.getId(), fila, context, resultado);
 					
@@ -986,31 +983,6 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			transactionManager.commit(transaction);
 		} catch (Error err) {
 			throw err;
-		} catch (Exception e) {
-			transactionManager.rollback(transaction);
-			throw e;
-		}
-	}
-
-	/**
-	 * Bloquear expediente comercial
-	 * 
-	 * @param idAgrupacion
-	 * @throws JsonViewerException
-	 * @throws Exception
-	 */
-	private void bloquearExpediente(Long idAgrupacion) throws JsonViewerException, Exception {
-		TransactionStatus transaction = null;
-		logger.debug("OFERTA_CARTERA: Bloqueando el expediente");
-		try {
-			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-			List<VGridOfertasActivosAgrupacionIncAnuladas> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
-			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
-					listaOfertas.get(0).getIdOferta()));
-			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
-			expedienteComercialApi.bloquearExpediente(expedienteComercial.getId());
-
-			transactionManager.commit(transaction);
 		} catch (Exception e) {
 			transactionManager.rollback(transaction);
 			throw e;

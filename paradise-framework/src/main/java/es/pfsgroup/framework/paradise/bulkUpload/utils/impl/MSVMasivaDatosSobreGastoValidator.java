@@ -39,8 +39,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract {
 	
 	private final String ID_NO_EXISTE = "msg.error.masivo.gastos.id.no.existe";
-
-	private final String ESTADO_GASTO_INCORRECTO = "msg.error.masivo.gastos.estado.incorrecto";;
+	private final String ESTADO_GASTO_INCORRECTO = "msg.error.masivo.gastos.estado.incorrecto";
 	private final String VALIDAR_FILA_EXCEPTION = "msg.error.masivo.gastos.exception";
 	private final String FECHA_INCORRECTA = "msg.error.masivo.gastos.exception.fecha";
 	private final String FECHAS_VACIAS = "msg.error.masivo.gastos.fechas.vacias";

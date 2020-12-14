@@ -280,8 +280,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                	fieldLabel:  HreRem.i18n('fieldlabel.porcentaje.construccion'),
 			                	name: 'porcentajeConstruccion',
 			                	reference: 'porcentajeConstruccion',
-	    						//readOnly: '{activo.isEditablePorcentajeConstruccion}',
 			                	bind: {
+			                		readOnly: '{!activo.isEditablePorcentajeConstruccion}',
 			                		value: '{activo.porcentajeConstruccion}'
 			                	}
 			                },

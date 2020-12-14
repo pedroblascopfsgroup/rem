@@ -10,6 +10,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,6 +120,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String CESION_USO_ERROR= "msg.error.activo.patrimonio.en.cesion.uso";
 	private static final String NO_GESTIONADO_POR_ADMISION = "msg.no.gestionado.admision";
 	private static final String PORCENTAJE_CONTRUCCION_FUERA_LIMITES = "msg.porcentaje.construccion.fuera.limites";
+	
+	private static String CODIGO_SUPER = "HAYASUPER";
+	private static String CODIGO_GESTOR_ACTIVO = "HAYAGESACT";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -891,7 +895,28 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		Double porcentajeContruccion = activo.getPorcentajeConstruccion();
 		activoDto.setPorcentajeConstruccion(porcentajeContruccion);
 		
-		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));		
+		
+		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
+		
+		List<Perfil> perfilesUser = usuarioLogado.getPerfiles();
+		
+		boolean puedeEditarPorcentaje = false;
+		
+		for(Perfil pef : perfilesUser){
+			if(CODIGO_SUPER.equals(pef.getCodigo()) || CODIGO_GESTOR_ACTIVO.equals(pef.getCodigo())) {
+				puedeEditarPorcentaje = true;
+				break;
+			}				
+		}
+
+		if(activoDto.getIsUA() != null && !activoDto.getIsUA() && perimetroActivo.getIncluidoEnPerimetro() == 1 && puedeEditarPorcentaje) {
+			activoDto.setIsEditablePorcentajeConstruccion(true);
+		}else {
+			activoDto.setIsEditablePorcentajeConstruccion(false);
+		}
+		
+		
+	
 			
 		if(perimetroActivo.getFechaAplicaAdmision() != null) {
 			activoDto.setFechaPerimetroAdmision(perimetroActivo.getFechaAplicaAdmision().toString());

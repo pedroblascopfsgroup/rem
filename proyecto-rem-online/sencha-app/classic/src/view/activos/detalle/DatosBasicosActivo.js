@@ -251,7 +251,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						        	bind: { 
 						        		value:'{activo.sociedadPagoAnterior}',
 						        		store: '{comboSituacionPagoAnterior}',
-						        		readOnly: '{!activo.isSubcarteraDivarian}'
+						        		readOnly: '{!activo.isSubcarteraDivarian}',
+						        		hidden:'{!activo.isSubcarteraDivarian}'
 						        	},
 						        	
 						        	style:'margin-left:10px'

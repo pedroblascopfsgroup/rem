@@ -35,6 +35,8 @@ import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoDeudoresAcreditados;
 import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
 import es.pfsgroup.plugin.rem.model.DtoAltaActivoThirdParty;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
@@ -335,6 +337,7 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 			//ACT_ACTIVO Segmento y titulo
 			DDTipoTituloActivo tipoTitulo = null;
 			DDTipoSegmento tipoSegmento = null;
+			DDEstadoAdmision filtroEstadoAdmision=null;
 			Filter filtroTitulo = genericDao.createFilter(FilterType.EQUALS, codigo, colTipoDeTitulo);
 			tipoTitulo = genericDao.get(DDTipoTituloActivo.class, filtroTitulo);
 			Filter filtroSegmento = genericDao.createFilter(FilterType.EQUALS, codigo, colSegmento);
@@ -347,7 +350,17 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 				activo.setTipoTitulo(tipoTitulo);
 			}
 			
+			
+			Filter filtroAdmision = genericDao.createFilter(FilterType.EQUALS, "codigo",  DDEstadoAdmision.CODIGO_PENDIENTE_TITULO);				
+			DDEstadoAdmision estadoAdmision = genericDao.get(DDEstadoAdmision.class, filtroAdmision);
+			activo.setEstadoAdmision(estadoAdmision);
+			
+			
 			genericDao.save(Activo.class,activo);
+			//Perimetro Activo
+			PerimetroActivo pac = activoApi.getPerimetroByIdActivo(activo.getId());		
+			pac.setAplicaAdmision(true);
+			genericDao.save(PerimetroActivo.class,pac);
 			
 			//ACT_BBVA_ACTIVOS
 			ActivoBbvaActivos activoBBVA = new ActivoBbvaActivos();

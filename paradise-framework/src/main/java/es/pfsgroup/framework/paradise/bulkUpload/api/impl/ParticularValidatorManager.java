@@ -5239,4 +5239,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean existePorcentajeConstruccion(String porcentajeConstruccion){
+		if(Checks.esNulo(porcentajeConstruccion))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "		 FROM ACT_ACTIVO WHERE"
+				+ "		 ACT_PORCENTAJE_CONSTRUCCION ="+porcentajeConstruccion+" "
+				+ "		 AND BORRADO = 0");
+		return "0".equals(resultado);
+	}
 }

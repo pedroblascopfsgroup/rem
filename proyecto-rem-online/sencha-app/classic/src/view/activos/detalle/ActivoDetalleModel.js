@@ -1026,7 +1026,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				retorno = !(get('activo.incluidoEnPerimetroAdmision') == "true");
 			}
 			return retorno;
-		}
+		},
+		
+	    esActivoMacc: function (get) {
+	    	
+	    	 var esMacc = get('activo.perimetroMacc');
+	    	 
+	    	 if (esMacc == 1)
+	    		 return false;
+	    	 else
+	    		 return true;
+	    }
 	 }, 
 	 
 	 stores: {
@@ -2764,6 +2774,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {id: '{activo.id}'}
 			},
 			autoLoad: true
+		},
+		
+		comboAdmiteMascota: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposAdmiteMascota'}
+			}
 		}
 	 }
 });

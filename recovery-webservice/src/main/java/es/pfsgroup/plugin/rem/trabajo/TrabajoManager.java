@@ -645,6 +645,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			for (String idActivoSeleccionado : activosIDArray) {
 				idsActivosSeleccionados.add(Long.parseLong(idActivoSeleccionado));
 			}
+			
+			Activo activo = activoDao.get(idsActivosSeleccionados.get(0));
+			dtoTrabajo.setCodCartera(activo.getCartera().getCodigo());
+			dtoTrabajo.setCodSubcartera(activo.getSubcartera().getCodigo());
 		}
 
 		if (!Checks.esNulo(dtoTrabajo.getIdProceso())) {
@@ -702,19 +706,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						createTramiteTrabajo(trabajoActivoAgrupacion);
 					}
 				}
-			}
-		}
-		
-		if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(dtoTrabajo.getTipoTrabajoCodigo())){
-			if((DDCartera.CODIGO_CARTERA_CERBERUS.equals(dtoTrabajo.getCodCartera()) 
-					&& (DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO.equals(dtoTrabajo.getCodSubcartera()) 
-							|| DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(dtoTrabajo.getCodSubcartera())
-							|| DDSubcartera.CODIGO_EGEO.equals(dtoTrabajo.getCodSubcartera())
-							|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(dtoTrabajo.getCodSubcartera())))
-			   || (DDCartera.CODIGO_CARTERA_EGEO.equals(dtoTrabajo.getCodCartera())
-					   && (DDSubcartera.CODIGO_ZEUS.equals(dtoTrabajo.getCodSubcartera())
-							   || DDSubcartera.CODIGO_PROMONTORIA.equals(dtoTrabajo.getCodSubcartera())))){
-				trabajo.setEsTarificado(false);
 			}
 		}
 		
@@ -1081,6 +1072,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 				}
 			}
+			
+			if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(dtoTrabajo.getTipoTrabajoCodigo())){
+				if((DDCartera.CODIGO_CARTERA_CERBERUS.equals(dtoTrabajo.getCodCartera()) 
+						&& (DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO.equals(dtoTrabajo.getCodSubcartera()) 
+								|| DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(dtoTrabajo.getCodSubcartera())
+								|| DDSubcartera.CODIGO_EGEO.equals(dtoTrabajo.getCodSubcartera())
+								|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(dtoTrabajo.getCodSubcartera())))
+				   || (DDCartera.CODIGO_CARTERA_EGEO.equals(dtoTrabajo.getCodCartera())
+						   && (DDSubcartera.CODIGO_ZEUS.equals(dtoTrabajo.getCodSubcartera())
+								   || DDSubcartera.CODIGO_PROMONTORIA.equals(dtoTrabajo.getCodSubcartera())))){
+					trabajo.setEsTarificado(false);
+				}
+			}
 
 			if (dtoTrabajo.getEsSolicitudConjunta()) {
 				if (dtoTrabajo.getRequerimiento() != null) {
@@ -1257,7 +1261,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())
 					|| DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS.equals(trabajo.getSubtipoTrabajo().getCodigo()))
-				trabajo.setEsTarificado(true);
+				trabajo.setEsTarificado(true);			
 
 			// El gestor de activo se salta tareas de estos trámites y por tanto
 			// es necesario settear algunos datos

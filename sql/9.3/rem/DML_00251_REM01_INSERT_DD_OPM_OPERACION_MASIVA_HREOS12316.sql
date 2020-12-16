@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Gomez
---## FECHA_CREACION=20201204
+--## FECHA_CREACION=20201215
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12155
+--## INCIDENCIA_LINK=HREOS-12460
 --## PRODUCTO=NO
 --##
 --## FINALIDAD: Script que añade en DD_OPM_OPERACION_MASIVA los datos añadidos en T_ARRAY_DATA.
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Se cambia el T_ARRAY_DATA por tipos de datos incorrectos
 --##########################################
 --*/
 
@@ -41,7 +42,7 @@ DECLARE
                 'Carga masiva alta de trabajos',
                 'Carga masiva alta de trabajos',
                 'CARGA_MASIVA_ALTA_TRABAJOS',
-                'n*,s*,s*,s*,s*,n,s*,b*,s,d,s,s,d,d,s,i,n,b,b,b,b,s')); 
+                'n*,s*,s*,s*,s*,n,s*,b*,s,d,s,s,d,s,d*,i,s,b,b,b,b,s')); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.
     V_MSQL_1 VARCHAR2(4000 CHAR);
@@ -50,7 +51,7 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
   V_TABLA := 'DD_OPM_OPERACION_MASIVA';
-	V_USUARIOCREAR := 'HREOS-12155'; 
+	V_USUARIOCREAR := 'HREOS-12460'; 
     -- LOOP para insertar los valores en DD_OPM_OPERACION_MASIVA -----------------------------------------------------------------
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_OPM_OPERACION_MASIVA] ');
      FOR I IN V_FUNCION.FIRST .. V_FUNCION.LAST

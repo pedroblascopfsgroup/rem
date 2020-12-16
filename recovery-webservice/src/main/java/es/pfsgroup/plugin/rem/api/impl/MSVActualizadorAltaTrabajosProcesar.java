@@ -297,6 +297,7 @@ public class MSVActualizadorAltaTrabajosProcesar extends AbstractMSVActualizador
 			DDEstadoTrabajo estadoTrabajo= genericDao.get(DDEstadoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.CODIGO_ESTADO_EN_CURSO));
 			trabajo.setEstado(estadoTrabajo);
 			trabajo.setSolicitante(adapter.getUsuarioLogado());
+			trabajo.setGestorAlta(adapter.getUsuarioLogado());
 			trabajoDao.saveOrUpdate(trabajo);
 			
 			if (codTarifa != null){

@@ -2219,18 +2219,21 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var despues = false;
     	
     	if(CONST.TIPO_RETENCION['DESPUES'] == tipoRetencion ){
-    		despues = true;
-    	}
-
-    	if(!me.lookupReference('lineaDetalleGastoGrid').getStore().loading){
-    		base = me.getImporteRetencionLineasDetalle(me, despues);
-    	}else{
-    		base = me.getViewModel().get('detalleeconomico.baseRetG');
+	    	despues = true;
+	    }
+	    	
+    	if(checked){ 
+	    	if(!me.lookupReference('lineaDetalleGastoGrid').getStore().loading){
+	    		base = me.getImporteRetencionLineasDetalle(me, despues);
+	    	}else{
+	    		base = me.getViewModel().get('detalleeconomico.baseRetG');
+	    	}
+	    
+	    	if(tipoImpositivo != null && base != null){
+	    		cuota = (tipoImpositivo * base)/100;
+	    	}
     	}
     
-    	if(tipoImpositivo != null && base != null){
-    		cuota = (tipoImpositivo * base)/100;
-    	}
 
     	me.lookupReference('baseIRPFRetG').setValue(base);
     	me.lookupReference('cuotaIRPFRetG').setValue(cuota);

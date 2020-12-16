@@ -911,7 +911,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
         		waitMsg: HreRem.i18n('msg.mask.loading'),
         		params: params,
     	   		success: function(fp, o){
-    	   			idProceso = Ext.JSON.decode(o.response.responseText).idProceso;
+    	   			var idProceso = Ext.JSON.decode(o.response.responseText).idProceso;
+					var parameters = {};
     	   			parameters.idProcess = idProceso;
 			        parameters.idOperation = "141";
 			    	var url =  $AC.getRemoteUrl('masivo/validar');

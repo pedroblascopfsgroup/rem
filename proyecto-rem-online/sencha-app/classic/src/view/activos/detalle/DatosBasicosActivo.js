@@ -249,23 +249,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						        	bind: { 
 						        		value:'{activo.sociedadPagoAnterior}',
 						        		store: '{comboSituacionPagoAnterior}',
-						        		//store: '{comboSociedadAnteriorBBVA}',
 						        		readOnly: '{!activo.isSubcarteraDivarian}',
-						        		hidden: '{activo.isCarteraBbva}'
-						        	},
-						        	displayField: 'descripcion',
-						        	style:'margin-left:10px'
-						        },
-						        //PARA BBVA
-						        {
-						        	xtype: 'comboboxfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
-						        	bind: { 
-						        		value:'{activo.sociedadPagoAnterior}',
-						        		//store: '{comboSituacionPagoAnterior}',
-						        		store: '{comboSociedadAnteriorBBVA}',
-						        		readOnly: '{!activo.isSubcarteraDivarian}',
-						        		hidden: '{!activo.isCarteraBbva}'
+						        		hidden:'{!activo.isSubcarteraDivarian}'
 						        	},
 						        	displayField: 'descripcion',
 						        	style:'margin-left:10px'

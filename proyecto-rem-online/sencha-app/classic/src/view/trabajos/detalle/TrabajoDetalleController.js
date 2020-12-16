@@ -914,8 +914,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	   			var idProceso = Ext.JSON.decode(o.response.responseText).idProceso;
 					var parameters = {};
     	   			parameters.idProcess = idProceso;
-			        parameters.idOperation = "141";
-			    	var url =  $AC.getRemoteUrl('masivo/validar');
+			    	var url =  $AC.getRemoteUrl('process/validar');
 			    	
 					Ext.Ajax.request({
 						 method: 'GET',

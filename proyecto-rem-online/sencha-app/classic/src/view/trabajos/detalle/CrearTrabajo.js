@@ -184,7 +184,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 						        	             {
 						        	              	xtype: 'formBase',
 						        	              	cls:'',
-						        	   				url: $AC.getRemoteUrl('process/subeListaActivos'),		
+						        	   				url: $AC.getRemoteUrl('process/upload'),
 						        	   				buttons: [{	
 						        	   				 	       itemId: 'btnSubirFichero', 
 						        	   						   text: 'Subir fichero',

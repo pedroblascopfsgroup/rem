@@ -912,18 +912,29 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
         		params: params,
     	   		success: function(fp, o){
     	   			idProceso = Ext.JSON.decode(o.response.responseText).idProceso;
-    	   			
-    	   			//btn.up('creartrabajowindow').getViewModel().getData().trabajo.getData().idProceso = idProceso;
-    	   			//btn.up('creartrabajowindow').lookupReference('')form.getBindRecord().set("idActivo", idActivo);
-    	   			var window = btn.up('creartrabajowindow');
-    	   			window.idProceso = idProceso;
-    	   			window.lookupReference('listaActivosSubidaRef').getStore().getProxy().setExtraParams({'idProceso':idProceso});
-    	   			window.lookupReference('listaActivosSubidaRef').getStore().load(1);    
-    	   			//Si carga correctametne desde listado, ya no sera obligatorio insertar archivo
-    	   			window.lookupReference('filefieldActivosRef').allowBlank=true;
-    		    }
-    				
-    	    })
+    	   			parameters.idProcess = idProceso;
+			        parameters.idOperation = "141";
+			    	var url =  $AC.getRemoteUrl('masivo/validar');
+			    	
+					Ext.Ajax.request({
+						 method: 'GET',
+					     url: url,
+					     params: parameters,
+					     timeout: 120000,  // 2 min
+					     success: function(response, opts) {
+		    	   			var window = btn.up('creartrabajowindow');
+		    	   			window.idProceso = idProceso;
+		    	   			window.lookupReference('listaActivosSubidaRef').getStore().getProxy().setExtraParams({'idProceso':idProceso});
+		    	   			window.lookupReference('listaActivosSubidaRef').getStore().load(1);    
+		    	   			//Si carga correctametne desde listado, ya no sera obligatorio insertar archivo
+		    	   			window.lookupReference('filefieldActivosRef').allowBlank=true;
+					     },
+					     failure: function(response, opts) {						     	
+						    me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					     }
+					 });
+    		    }		
+    	    });
        	}
      },
      

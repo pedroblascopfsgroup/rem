@@ -1,0 +1,270 @@
+--/*
+--##########################################
+--## AUTOR=DAP
+--## FECHA_CREACION=20201216
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-12481
+--## PRODUCTO=NO
+--##
+--## Finalidad: Informar propietarios BBVA
+--## INSTRUCCIONES: 
+--## VERSIONES:
+--##        0.1 Version inicial
+--##########################################
+--*/
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_PRO_PROPIETARIO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_ITEM VARCHAR2(30 CHAR) := 'HREOS-12481';
+
+    V_DURACION INTERVAL DAY(0) TO SECOND;
+    V_INICIO TIMESTAMP := SYSTIMESTAMP;
+    V_FIN TIMESTAMP;
+
+    V_CODIGO_CARTERA VARCHAR2(2 CHAR) := '16';
+    
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+		T_TIPO_DATA('08019','8','6087','2','HIPOCAT 19 FTA','15','V65161754','','','8010','8501','9129'),
+		T_TIPO_DATA('08019','8','6088','2','HIPOCAT 10 FTA','15','V64241474','','','8010','8502','9113'),
+		T_TIPO_DATA('08019','8','6089','2','HIPOCAT 11 FTA','15','V64478373','','','8010','8503','9115'),
+		T_TIPO_DATA('08019','8','6090','2','HIPOCAT 9 FTA','15','V64006075','','','8010','8504','9111'),
+		T_TIPO_DATA('08019','8','6091','2','HIPOCAT 7 FTA','15','V63511554','','','8010','8505','9109'),
+		T_TIPO_DATA('08019','8','6093','2','HIPOCAT 8 FTA','15','V63803969','','','8010','8507','9110'),
+		T_TIPO_DATA('08019','8','6094','2','HIPOCAT 20 FTA','15','V65332686','','','8010','8509','9132'),
+		T_TIPO_DATA('08019','8','6096','2','HIPOCAT 17 FTA','15','V64998925','','','8010','8511','9126'),
+		T_TIPO_DATA('08019','8','6097','2','HIPOCAT 6 FTA','15','V63275259','','','8010','8513','9108'),
+		T_TIPO_DATA('08279','8','6129','2','FUNDACIÓ HABITATGE LLOGUER','15','G65142929','RB dEgara 350','937346275','8221','9737',''),
+		T_TIPO_DATA('08279','8','6131','2','ECOARENYS S.L.','15','B63442974','RB EGARA 350','934342164','8221','9749',''),
+		T_TIPO_DATA('08298','8','6133','2','AXIACOM CR-1 SL','15','B63407282','Ronda Camprodon, 13, Ent. 2n','937397700','8500','9760',''),
+		T_TIPO_DATA('08169','8','6081','2','PROVIURE CZF PARC DHABITATGES,S.L.','15','B65853210','CL ROURE 6','','8820','8023',''),
+		T_TIPO_DATA('08180','8','6134','2','PROMOCIONS CAN CATA SL','15','B63349955','RAMBLA SANT JORDI, 15 LOCAL 2','','8291','9762',''),
+		T_TIPO_DATA('08187','8','6069','2','CATALUNYACAIXA IMMOBILIARIA SAU','15','A60118098','SANT QUIRZE 4-18','934961680','8820','8002',''),
+		T_TIPO_DATA('08187','8','6070','2','PORTICO PROCAM SL','15','B81260911','Sant Quirze, 4-18','','8820','8003',''),
+		T_TIPO_DATA('08187','8','6071','2','GESCAT LLEVANT, S.L.','15','B62563721','Sant Quirze, 4-18','914905209','8820','8006',''),
+		T_TIPO_DATA('08187','8','6073','2','ACTIVOS MACORP, S.L.','15','B64921083','SANT QUIRZE 4-18','934841680','8820','8010',''),
+		T_TIPO_DATA('08187','8','6074','2','GESCAT GESTIÓ DE SÒL, S.L.','15','B64921109','Sant Quirze, 4-18','934841680','8820','8011',''),
+		T_TIPO_DATA('08187','8','6075','2','GESCAT VIVENDES EN COMERCIALITZACIÓ, S.L','15','B64921091','CL ST.QUIRZE  4 -18','934961680','8820','8012',''),
+		T_TIPO_DATA('08187','8','6076','2','GESCAT LLOGUERS, S.L.','15','B65072803','Sant Quirze, 4-18','934841680','8820','8013',''),
+		T_TIPO_DATA('08187','8','6077','2','NOIDIRI, S.L.','15','B43965037','Sant Quirze, 4-18','','8820','8015',''),
+		T_TIPO_DATA('08187','8','6078','2','SATICEM HOLDING S.L.','15','B63821383','SANT QUIRZE 4-18','938782700','8820','8019',''),
+		T_TIPO_DATA('08187','8','6079','2','CAIXA MANRESA ONCASA INMOBILIARIA S.L.','15','B64504731','Sant Quirze, 4-18','938782700','8240','8020',''),
+		T_TIPO_DATA('08187','8','6080','2','SATICEM IMMOBLES EN ARRENDAMENT S.L.','15','B64929334','SANT QUIRZE 4-18','','8820','8021',''),
+		T_TIPO_DATA('08187','8','6082','2','ALCALÁ 120 PROMOS. Y G.IM. SL','15','B81247983','Ctra C/ Sant Quirze, 4-18','','8201','8030',''),
+		T_TIPO_DATA('08187','8','6084','2','PROMOCIONES MIES DEL VALLE, SL','15','B39488549','Calle Sant Quirze, 4-18','','8201','8048',''),
+		T_TIPO_DATA('08187','8','6126','2','ARRAHONA NEXUS SLU','15','B63933758','Sant Quirze, 4-18','','8201','9710',''),
+		T_TIPO_DATA('08187','8','6127','2','PARCSUD PLANNER SLU','15','B63268601','Sant Quirze, 4-18','','8201','9713',''),
+		T_TIPO_DATA('08187','8','6128','2','PROMOU GLOBAL SLU','15','B63625107','Sant Quirze, 4-18','937397700','8201','9729',''),
+		T_TIPO_DATA('08187','8','6130','2','PROMOU CT GEBIRA S.L.U.','15','B63377212','Sant Quirze, 4-18','937397700','8201','9738',''),
+		T_TIPO_DATA('08187','8','6132','2','GARRAF MEDITERRANEA','15','A62445622','CL SANT QUIRZE 4','','8201','9755',''),
+		T_TIPO_DATA('08187','8','6135','2','HABITATGES FINVER SL','15','B63527667','CL SANT QUIRZE 4-18','','8560','9764',''),
+		T_TIPO_DATA('08187','8','6141','2','PROMOU CT OPEN SEGRE SLU','15','B63684955','Sant Quirze, 4-18','937397715','8820','9730',''),
+		T_TIPO_DATA('08187','8','6120','2','ARRELS CT FINSOL SAU','15','A61650867','Sant Quirze, 4-18','937397779','8201','9701',''),
+		T_TIPO_DATA('08187','8','6121','2','ARRELS CT PATRIMONI I PROJECTES SAU','15','A63128284','Sant Quirze, 4-18','937397763','8201','9702',''),
+		T_TIPO_DATA('08187','8','6122','2','CATALONIA PROMODIS 4 SAU','15','A62812953','Sant Quirze, 4-18','937397700','8201','9704',''),
+		T_TIPO_DATA('08187','8','6123','2','UNNIM SDAD PARA LA GESTION DE ACTIVOS SA','15','A65934101','CL SANT QUIRZE 4','','8201','9707',''),
+		T_TIPO_DATA('08187','8','6124','2','PROMOTORA DEL VALLES SLU','15','B08253197','CL SANT QUIRZE 4','','8201','9708',''),
+		T_TIPO_DATA('08187','8','6125','2','ARRAHONA IMMO SLU','15','B64986938','Sant Quirze, 4-18','','8201','9709',''),
+		T_TIPO_DATA('11027','11','6083','2','JALE PROCAM SL','15','B11819935','CALLE LARGA Nº48','','11500','8036',''),
+		T_TIPO_DATA('28079','28','6066','2','ANIDA GRUPO INMOBILIARIO, S.L.','15','B78689841','PASEO DE LA CASTELLANA, 81','','28046','116',''),
+		T_TIPO_DATA('28079','28','6067','2','CAMARATE GOLF, S.A.','15','A83827907','PASEO CASTELLANA 81','','28046','206',''),
+		T_TIPO_DATA('28079','28','6068','2','ANIDA OPERACIONES SINGULARES, SAU','15','A28515088','CALLE JULIAN CAMARILLO, 4C','','28037','220',''),
+		T_TIPO_DATA('28079','28','6092','2','GAT FTGENCAT 2008 FTA','15','V64915424','','','28006','8506','9123'),
+		T_TIPO_DATA('28079','28','6095','2','GAT FTGENCAT 2007','15','V64705924','','','28006','8510','9116'),
+		T_TIPO_DATA('28079','28','6136','2','GAT FTGENCAT 2008 FTA','15','V64915424','','','28006','9904','9123'),
+		T_TIPO_DATA('28079','28','6137','2','GAT ICO FTVPO, FTH','15','V65102576','','','28006','9906','9125'),
+		T_TIPO_DATA('28079','28','6138','2','BBVA ADJUDICADOS','15','A48265169','PASEO CASTELLANA 81','','28046','997',''),
+		T_TIPO_DATA('28079','28','6098','2','GAT FTGENCAT 2006 FTA','15','V64302862','','','28006','8514','9114'),
+		T_TIPO_DATA('28079','28','6099','2','GAT FTGENCAT 2009 FTA','15','V65203275','','','28006','8516','9130'),
+		T_TIPO_DATA('28079','28','6100','2','BBVA RMBS 3 Fondo de Tit. de Activos','15','V85172252','','','28006','8888','HIP3'),
+		T_TIPO_DATA('28079','28','6101','2','BBVA HIPOTECARIO 3 Fondo de Tit. de Act.','15','V84373000','','','28006','8893','BBV6'),
+		T_TIPO_DATA('28079','28','6102','2','BBVA-4 PYME Fondo de Tit. de Activos','15','V84455740','','','28006','8894','BBV7'),
+		T_TIPO_DATA('28079','28','6103','2','BBVA-5 FTPYME Fondo de Tit. de Activos','15','V84859644','','','28006','8897','BBV9'),
+		T_TIPO_DATA('28079','28','6104','2','BBVA RMBS 1 Fondo de Tit. de Activos','15','V84994144','','','28006','8899','HIP1'),
+		T_TIPO_DATA('28079','28','6105','2','BBVA RMBS 2 Fondo de Tit. de Activos','15','V85044451','','','28006','8900','HIP2'),
+		T_TIPO_DATA('28079','28','6106','2','BBVA-6 FTPYME Fondo de Tit. de Activos','15','V85129138','','','28006','8902','PYM5'),
+		T_TIPO_DATA('28079','28','6107','2','BBVA LEASING 1 Fondo de Tit. de Activos','15','V85143931','','','28006','8903','LE01'),
+		T_TIPO_DATA('28079','28','6108','2','BBVA RMBS 4 Fondo de Tit. de Activos','15','V85271229','','','28006','8905','HIP4'),
+		T_TIPO_DATA('28079','28','6109','2','BBVA CONSUMO 3 Fondo de Tit. de Activos','15','V85413359','','','28006','8907','CON3'),
+		T_TIPO_DATA('28079','28','6110','2','BBVA RMBS 5 Fondo de Tit. de Activos','15','V85447654','','','28006','8908','HIP5'),
+		T_TIPO_DATA('28079','28','6111','2','BBVA RMBS 7 Fondo de Tit. de Activos','15','V85576239','','','28006','8911','HIP7'),
+		T_TIPO_DATA('28079','28','6112','2','BBVA RMBS 9 Fondo de Tit. de Activos','15','V85936391','','','28006','8920','HIP9'),
+		T_TIPO_DATA('28079','28','6113','2','BBVA EMPRESAS 3 FTA','15','V85848422','','','28006','8921','EMP3'),
+		T_TIPO_DATA('28079','28','6114','2','BBVA EMPRESAS 4 FTA','15','V86005485','','','28006','8922','EMP4'),
+		T_TIPO_DATA('28079','28','6115','2','BBVA RMBS 10 Fondo de Tit. de Activos','15','V86245453','','','28006','8923','HP10'),
+		T_TIPO_DATA('28079','28','6116','2','BBVA EMPRESAS 5 Fondo de Tit. de Activos','15','V86170537','','','28006','8926','EMP5'),
+		T_TIPO_DATA('28079','28','6117','2','BBVA EMPRESAS 6 Fondo de Tit. de Activos','15','V86359734','','','28006','8927','EMP6'),
+		T_TIPO_DATA('28079','28','6118','2','BBVA RMBS 11FTA','15','V86488368','','','28006','8930','HP11'),
+		T_TIPO_DATA('28079','28','6119','2','BBVA RMBS 12 FONDO DE TITULIZACION DE ACTIVOS','15','V86887791','','','28006','8934',''),
+		T_TIPO_DATA('','','6085','2','MBSCAT 2 FTA','15','V65146995','','','28042','8101','9128'),
+		T_TIPO_DATA('','','6086','2','MBSCAT 1 FTA','15','V64980824','','','28042','8102','9122'),
+		T_TIPO_DATA('','','6139','2','TITULIZADOS','15','B99999999','','','28042','998',''),
+		T_TIPO_DATA('','','6140','2','BBVA-9 PYME Fondo de Titulización de Activos','15','V86623634','','','28042','PMY9','PYM9'),
+		T_TIPO_DATA('','','6143','2','CETACTIUS, S.L.','15','B43965045','Sant Quirze, 4-18','','8820','8016',''),
+		T_TIPO_DATA('','','6144','2','CLUB DE GOLF HACIENDA DEL ALAMO, S.L.','15','B30778922','AV Edificio Multiusos. Hacienda del Alamo, s/nº','','28042','8025',''),
+		T_TIPO_DATA('','','6146','2','HABITAT ZENTRUM, S.L.','15','B63580799','CL GRAN VIA DE CARLOS III 98','','28042','8017',''),
+		T_TIPO_DATA('','','6147','2','IRIDION SOLUCIONS IMMOBILIÀRIES, S.L.','15','B43218155','Sant Quirze, 4-18','','8820','8014',''),
+		T_TIPO_DATA('','','6148','2','NOVA EGARA PROCAM, S.L.','15','B64081466','CL MAJOR 17  PL 2','937336470','28042','8026',''),
+		T_TIPO_DATA('','','6149','2','NOVA TERRASSA - 30, S.L.','15','B61725669','CL MAJOR 17  PL 2','937336470','28042','8029',''),
+		T_TIPO_DATA('','','6150','2','NOVA TERRASSA - 3, S.L.','15','B61421319','CL MAJOR 17  PL 2','937336460','28042','8027',''),
+		T_TIPO_DATA('','','6151','2','PRONORTE UNO PROCAM SA','15','A82676693','Sant Quirze, 4-18','914905209','28042','8005',''),
+		T_TIPO_DATA('','','6152','2','PROVIURE CZF, S.L.','15','B64296510','CL ROURE 6','934841680','28042','8008',''),
+		T_TIPO_DATA('','','6153','2','PUERTO CIUDAD LAS PALMAS, S.A.','15','A35555507','CL MUELLE DE SANTA CATALINA 0','928327527','28042','8007',''),
+		T_TIPO_DATA('','','6154','2','SATICEM GESTIO S.L.U.','15','B64929342','SANT QUIRZE 4-18','938782700','8240','8022',''),
+		T_TIPO_DATA('','','6157','2','PROMOU CT EIX MACIÀ SLU','15','B64020639','Sant Quirze, 4-18','937397700','8201','9739',''),
+		T_TIPO_DATA('','','6158','2','BBVA RMBS 6 Fondo de Tit. de Activos','15','V85565612','','','28006','8910',''),
+		T_TIPO_DATA('','','6159','2','BBVA-3 FTPYME Fondo de Tit. de Act.','15','V84170901','','','28006','8892',''),
+		T_TIPO_DATA('','','6164','2','PYMECAT 3 FTPYME FTA','15','V65435752','','','28042','8551',''),
+		T_TIPO_DATA('','','6172','2','BBVA RMBS 13 FONDO DE TITULIZACION DE ACTIVOS','15','V87061917','','','28006','BVR13',''),
+		T_TIPO_DATA('','','6175','2','COMPAÑIA INMOBILIARIA AUREA, S.A.','15','YINTP11982','CALLE LAMPARILLA 2','','28042','105',''),
+		T_TIPO_DATA('','','6177','2','EL ENCINAR METROPOLITANO, S.A.','15','A82044108','PASEO CASTELLANA 81','','28042','52',''),
+		T_TIPO_DATA('','','6178','2','EL MILANILLO, S.A.','15','A28163178','CALLE JULIAN CAMARILLO 4C','','28042','224',''),
+		T_TIPO_DATA('','','6183','2','LA ESMERALDA DESARROLLOS, S.L.','15','B84931955','PASEO RECOLETOS, 10','','28042','214',''),
+		T_TIPO_DATA('','','6185','2','PR ALBIRSA, S.L.','15','B85140085','PASEO RECOLETOS, 10','','28042','215',''),
+		T_TIPO_DATA('','','6187','2','URBANIZADORA BARRIO DEL RETUERTO U.T.E','15','U48955025','CALLE GRAN VIA DON DIEGO LOPEZ DE HARO 1','','28042','50',''),
+		T_TIPO_DATA('','','6197','2','BBVA EMPRESAS 2 Fondo de Tit. de Activos','15','V85653186','','','28006','8912',''),
+		T_TIPO_DATA('','','6210','2','BBVA EMPRESAS 3 Fondo de Titulización de Activos','15','V85848422','','','28042','BVE3',''),
+		T_TIPO_DATA('','','6211','2','CIMIPRO SL','15','B63934608','Calle Sant Quirze, 4','','28042','9761',''),
+		T_TIPO_DATA('','','6212','2','RE. DEAL II','15','A84451103','Pª DE RECOLETOS, 10','','28042','69',''),
+		T_TIPO_DATA('','','6213','2','SOLARVOLAR SL','15','B63865158','Cl Sant Quirze, núm. 4-18','','28042','9763',''),
+		T_TIPO_DATA('','','6217','2','ARRAHONA AMBIT SLU','15','B63547319','Sant Quirze, 4-18','','8201','9714',''),
+		T_TIPO_DATA('','','6219','2','ARRAHONA RENT SLU','15','B65078800','Sant Quirze, 4-18','','8201','9711',''),
+		T_TIPO_DATA('','','6220','2','ARRELS CT LLOGUER SA','15','A64751241','Sant Quirze, 4-18','937397700','8201','9736',''),
+		T_TIPO_DATA('','','6221','2','ARRELS CT PROMOU SAU','15','A63361802','CL sant quirze 4','937397715','28042','9703',''),
+		T_TIPO_DATA('','','6222','2','AUMERAVILLA SLU','15','B25531617','Sant Quirze, 4-18','','28042','9712',''),
+		T_TIPO_DATA('','','6223','2','BALMA HABITAT S.L.','15','B63802631','CL VALENCIA 245  EN 5','938142960','8007','9753',''),
+		T_TIPO_DATA('','','6224','2','CATALONIA GEBIRA SL','15','B63597454','CL Sant Quirze 4','937003241','8201','9726',''),
+		T_TIPO_DATA('','','6225','2','ESPAIS SABADELL PROMOC.IMMOBILIARIES SAU','15','A61922779','Sant Quirze, 4-18','932920000','8201','9748',''),
+		T_TIPO_DATA('','','6226','2','HABITATGES INVERCAP S.L.U.','15','B63663322','Sant Quirze, 4-18','938521333','28042','9718',''),
+		T_TIPO_DATA('','','6229','2','HABITATGES JUVIPRO, S.L.','15','B64280886','CL MANLLEU 54','','8500','9719',''),
+		T_TIPO_DATA('','','6230','2','INVERPRO DESENVOLUPAMENT SLU','15','B63248579','CL SANT QUIRZE 4','938521333','8201','9717',''),
+		T_TIPO_DATA('','','6231','2','LEIX IMMOBLES S.L.','15','B61905659','Sant Quirze, 4-18','','8201','9716',''),
+		T_TIPO_DATA('','','6232','2','NUCLI S.A.','15','A58938754','RB ÈGARA 350','','8221','9745',''),
+		T_TIPO_DATA('','','6233','2','PROBIS AIGUAVIVA S.L.','15','B63819460','CL SANT QUIRZE 4','934525555','8201','9754',''),
+		T_TIPO_DATA('','','6234','2','PROMOU CT 3 AG DELTA SLU','15','B64169683','Sant Quirze, 4-18','937397715','8201','9732',''),
+		T_TIPO_DATA('','','6235','2','PROMOU CT VALLES SLU','15','B64434632','Sant Quirze, 4-18','937397715','8201','9733',''),
+		T_TIPO_DATA('','','6236','2','PROV-INFI-ARRAHONA SLU','15','B63651145','Sant Quirze, 4-18','','8201','9715',''),
+		T_TIPO_DATA('','','6237','2','CAIXA MANRESA IMMOBILIARIA SOCIAL S.L.','15','B63680292','Sant Quirze, 4-18','938782700','8240','8018',''),
+		T_TIPO_DATA('','','6238','2','CATALUNYA BANC, SA','15','A65587198','PZ ANTONI MAURA 6','','28042','8001','')
+    ); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+
+BEGIN
+
+    DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_INICIO);
+
+	-- LOOP para insertar los valores --
+	DBMS_OUTPUT.PUT_LINE('	[INFO]: Inserción de propietarios en '||V_TEXT_TABLA);
+
+	V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' AND OWNER = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+	IF V_NUM_TABLAS = 0 THEN
+			DBMS_OUTPUT.PUT_LINE('	[INFO]: No existe la tabla');
+	ELSE
+		FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+		LOOP
+			V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+            DBMS_OUTPUT.put_line('	[INFO]: Insertando fila '||I||', propietario (PRO_CODIGO_ENTIDAD): '||V_TMP_TIPO_DATA(11)||'.'); 
+                --T_TIPO_DATA('DD_LOC_CODIGO'1,'DD_PRV_CODIGO'2,'PRO_CODIGO_UVEM'3,'DD_TPE_CODIGO'4,'PRO_NOMBRE'5,'DD_TDI_CODIGO'6,'PRO_DOCIDENTIF'7,'PRO_DIR'8,'PRO_TELF'9,'PRO_CP'10,'PRO_CODIGO_ENTIDAD'11,'PRO_TITULIZADO'12)
+				V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO ('||CHR(10)
+					||'	PRO_ID'||CHR(10)
+					||'	, DD_CRA_ID'||CHR(10)
+					||'	, DD_LOC_ID'||CHR(10)
+					||'	, DD_PRV_ID'||CHR(10)
+					||'	, PRO_CODIGO_UVEM'||CHR(10)
+					||'	, DD_TPE_ID'||CHR(10)
+					||'	, PRO_NOMBRE'||CHR(10)
+					||'	, DD_TDI_ID'||CHR(10)
+					||'	, PRO_DOCIDENTIF'||CHR(10)
+					||'	, PRO_DIR'||CHR(10)
+					||'	, PRO_TELF'||CHR(10)
+					||'	, PRO_CP'||CHR(10)
+					||'	, PRO_CODIGO_ENTIDAD'||CHR(10)
+					||'	, PRO_TITULIZADO'||CHR(10)
+					||'	, USUARIOCREAR'||CHR(10)
+					||'	, FECHACREAR'||CHR(10)
+					||'	)'||CHR(10)
+					||'SELECT '||V_ESQUEMA||'.S_ACT_PRO_PROPIETARIO.NEXTVAL PRO_ID'||CHR(10)
+					||'	, CRA.DD_CRA_ID'||CHR(10)
+					||'	, LOC.DD_LOC_ID'||CHR(10)
+					||'	, PRV.DD_PRV_ID'||CHR(10)
+					||'	, '''||V_TMP_TIPO_DATA(3)||''''||CHR(10)
+					||'	, TPE.DD_TPE_ID'||CHR(10)
+					||'	, '''||V_TMP_TIPO_DATA(5)||''''||CHR(10)
+					||'	, TDI.DD_TDI_ID'||CHR(10)
+					||'	, '''||V_TMP_TIPO_DATA(7)||''''||CHR(10)
+					||'	, '''||V_TMP_TIPO_DATA(8)||''''||CHR(10)
+					||'	, '''||V_TMP_TIPO_DATA(9)||''''||CHR(10)
+					||'	, '''||V_TMP_TIPO_DATA(10)||''''||CHR(10)
+					||'	, '''||V_TMP_TIPO_DATA(11)||''''||CHR(10)
+					||'	, '''||V_TMP_TIPO_DATA(12)||''''||CHR(10)
+					||'	, '''||V_ITEM||''''||CHR(10)
+					||'	, SYSDATE'||CHR(10)
+					||'FROM '||V_ESQUEMA||'.DD_CRA_CARTERA CRA'||CHR(10)
+					||'LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = '''||V_TMP_TIPO_DATA(1)||''''||CHR(10)
+					||'	AND LOC.BORRADO = 0'||CHR(10)
+					||'LEFT JOIN '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_CODIGO = '''||V_TMP_TIPO_DATA(2)||''''||CHR(10)
+					||'	AND PRV.BORRADO = 0'||CHR(10)
+					||'LEFT JOIN '||V_ESQUEMA_M||'.DD_TPE_TIPO_PERSONA TPE ON TPE.DD_TPE_CODIGO = '''||V_TMP_TIPO_DATA(4)||''''||CHR(10)
+					||'	AND TPE.BORRADO = 0'||CHR(10)
+					||'LEFT JOIN '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID TDI ON TDI.DD_TDI_CODIGO = '''||V_TMP_TIPO_DATA(6)||''''||CHR(10)
+					||'	AND TDI.BORRADO = 0'||CHR(10)
+					||'WHERE CRA.BORRADO = 0'||CHR(10)
+					||'	AND CRA.DD_CRA_CODIGO = '''||V_CODIGO_CARTERA||''''||CHR(10)
+					||'	AND NOT EXISTS ('||CHR(10)
+					||'		SELECT 1'||CHR(10)
+					||'		FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' PRO'||CHR(10)
+					||'		WHERE PRO.BORRADO = 0'||CHR(10)
+					||'			AND PRO.DD_CRA_ID = CRA.DD_CRA_ID'||CHR(10)
+					||'			AND PRO.PRO_CODIGO_ENTIDAD = '''||V_TMP_TIPO_DATA(11)||''''||CHR(10)
+					||'	)';                       
+				EXECUTE IMMEDIATE V_MSQL;
+                
+                IF SQL%ROWCOUNT = 1 THEN 
+                    DBMS_OUTPUT.PUT_LINE('	[INFO]: Se ha insertado 1 propietario para la entidad '||V_TMP_TIPO_DATA(11)||'.');
+                ELSIF SQL%ROWCOUNT > 1 THEN
+                    DBMS_OUTPUT.PUT_LINE('	[INFO]: Se han insertado '||SQL%ROWCOUNT||' propietarios para la entidad '||V_TMP_TIPO_DATA(11)||'.');
+                ELSE
+                    DBMS_OUTPUT.PUT_LINE('	[INFO]: No se insertó ningún propietario para la entidad '||V_TMP_TIPO_DATA(11)||'.');
+                    DBMS_OUTPUT.PUT_LINE('	[INFO]: Query para revisión:');
+                    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+                END IF;
+                
+		END LOOP;
+	END IF;
+
+	DBMS_OUTPUT.PUT_LINE('	[INFO]: Tabla '||V_TEXT_TABLA||' informada correctamente.');
+
+	V_FIN := SYSTIMESTAMP;
+    V_DURACION := V_FIN - V_INICIO;
+    DBMS_OUTPUT.PUT_LINE('[FIN] '||V_DURACION);
+
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(V_MSQL); 
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;
+

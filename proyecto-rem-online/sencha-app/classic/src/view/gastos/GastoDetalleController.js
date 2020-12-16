@@ -2789,13 +2789,22 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     
     getImporteRetencionLineasDetalle: function(me, despues){
     	var importeTotal = 0;
+    	
 
     	if(me.lookupReference('lineaDetalleGastoGrid').getStore() != null && me.lookupReference('lineaDetalleGastoGrid').getStore() != undefined){
     		for(var i = 0; i < me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items.length; i++){
-    			importeTotal+= parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('baseSujeta'));
-    			importeTotal+= parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('baseNoSujeta'));
-    			if(despues){
-    				importeTotal+= parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('cuota'));
+    			var baseSujeta = me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('baseSujeta');
+    			var baseNoSujeta = me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('baseNoSujeta');
+    			var cuota = me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('cuota');
+    			
+    			if(!Ext.isEmpty(baseSujeta)){				
+    				importeTotal+= parseFloat(baseSujeta);
+    			}
+    			if(!Ext.isEmpty(baseNoSujeta)){
+    				importeTotal+= parseFloat(baseNoSujeta);
+    			}
+    			if(despues && !Ext.isEmpty(cuota)){  		
+    				importeTotal+= parseFloat(cuota);
     			}
     		}
     	}

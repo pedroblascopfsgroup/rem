@@ -607,8 +607,8 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
      	var me = this;
  		
  		Ext.Msg.show({
- 		    title:'Solicitar anulación de la solicitud de devolución de la reserva',
- 		    message: 'Si confirma esta acción, se anulará la petición de anulación de la devolución de la reserva y el tramite volverá a la tarea anterior a Resolución Expediente. ¿Desea continuar?',
+ 		    title:'Anular solicitud de la anulación de la devolución de la reserva',
+ 		    message: 'Si confirma esta acción, se anulará la petición de anulación de la devolución de la reserva y el tramite volverá a la tarea Pendiente Devolución. ¿Desea continuar?',
  		    buttons: Ext.Msg.YESNO,
  		    fn: function(btn) {
  		        if (btn == 'yes') {

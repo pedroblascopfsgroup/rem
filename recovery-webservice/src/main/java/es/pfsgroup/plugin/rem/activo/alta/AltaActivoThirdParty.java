@@ -275,7 +275,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		beanUtilNotNull.copyProperty(activoInforRegistral, "idufir", dtoAATP.getIdufirCruRegistro());
 		beanUtilNotNull.copyProperty(activoInforRegistral, "superficieElementosComunes", dtoAATP.getSuperficieRepercusionEECCRegistro());
 		beanUtilNotNull.copyProperty(activoInforRegistral, "superficieParcela", dtoAATP.getParcelaRegistro());
-		beanUtilNotNull.copyProperty(activoInforRegistral, "superficieutil", dtoAATP.getSuperficieUtilRegistro());
+		beanUtilNotNull.copyProperty(activoInforRegistral, "superficieUtil", dtoAATP.getSuperficieUtilRegistro());
 		if (!Checks.esNulo(dtoAATP.getEsIntegradoDivHorizontalRegistro())){
 			beanUtilNotNull.copyProperty(activoInforRegistral, "divHorInscrito", dtoAATP.getEsIntegradoDivHorizontalRegistro().equalsIgnoreCase("si") ? 1 : 0);
 		}

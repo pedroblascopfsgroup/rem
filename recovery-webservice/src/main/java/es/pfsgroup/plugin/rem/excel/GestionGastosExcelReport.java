@@ -44,11 +44,11 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 	private static final String CAB_APDO_RECARGO = "Apartado Recargo";
 	private static final String CAB_CAP_RECARGO = "Capítulo Recargo";
 	private static final String CAB_SC_TASA = "Subcuenta Contable Tasa";
-	private static final String CAB_APDO_TASA = "Apartado Recargo Tasa";
-	private static final String CAB_CAP_TASA = "Capítulo Recargo Tasa";
+	private static final String CAB_APDO_TASA = "Apartado Tasa";
+	private static final String CAB_CAP_TASA = "Capítulo Tasa";
 	private static final String CAB_SC_INTERESES = "Subcuenta Contable Intereses";
-	private static final String CAB_APDO_INTERESES = "Apartado Recargo Intereses";
-	private static final String CAB_CAP_INTERESES = "Capítulo Recargo Intereses";
+	private static final String CAB_APDO_INTERESES = "Apartado Intereses";
+	private static final String CAB_CAP_INTERESES = "Capítulo Intereses";
 	
 	
 	private List<VGastosProveedorExcel> listaGastosProveedor;
@@ -80,28 +80,29 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 		listaCabeceras.add(CAB_CARTERA);
 		listaCabeceras.add(CAB_SUBCARTERA);
 		listaCabeceras.add(CAB_MOTIVO_RECHAZO_PROP);
-		listaCabeceras.add(CAB_PTDA_PRESUPUESTARIA);
-		listaCabeceras.add(CAB_CONCEPTO_CONTABLE);
 		listaCabeceras.add(CAB_PROVISION_FONDOS);
 		listaCabeceras.add(CAB_ID_LINEA);
-		listaCabeceras.add(CAB_CC_TASAS);
-		listaCabeceras.add(CAB_PP_TASAS);
-		listaCabeceras.add(CAB_CC_RECARGO);
-		listaCabeceras.add(CAB_PP_RECARGO);
-		listaCabeceras.add(CAB_CC_INTERESES);
-		listaCabeceras.add(CAB_PP_INTERESES);
-		listaCabeceras.add(CAB_SC_BASE);
 		listaCabeceras.add(CAB_APDO_BASE);
 		listaCabeceras.add(CAB_CAP_BASE);
-		listaCabeceras.add(CAB_SC_RECARGO);
+		listaCabeceras.add(CAB_PTDA_PRESUPUESTARIA);
+		listaCabeceras.add(CAB_CONCEPTO_CONTABLE);
+		listaCabeceras.add(CAB_SC_BASE);
 		listaCabeceras.add(CAB_APDO_RECARGO);
 		listaCabeceras.add(CAB_CAP_RECARGO);
-		listaCabeceras.add(CAB_SC_TASA);
-		listaCabeceras.add(CAB_APDO_TASA);
-		listaCabeceras.add(CAB_CAP_TASA);
-		listaCabeceras.add(CAB_SC_INTERESES);
+		listaCabeceras.add(CAB_PP_RECARGO);
+		listaCabeceras.add(CAB_CC_RECARGO);
+		listaCabeceras.add(CAB_SC_RECARGO);
 		listaCabeceras.add(CAB_APDO_INTERESES);
 		listaCabeceras.add(CAB_CAP_INTERESES);
+		listaCabeceras.add(CAB_PP_INTERESES);
+		listaCabeceras.add(CAB_CC_INTERESES);
+		listaCabeceras.add(CAB_SC_INTERESES);
+		listaCabeceras.add(CAB_APDO_TASA);
+		listaCabeceras.add(CAB_CAP_TASA);
+		listaCabeceras.add(CAB_PP_TASAS);
+		listaCabeceras.add(CAB_CC_TASAS);
+		listaCabeceras.add(CAB_SC_TASA);
+
 		
 		return listaCabeceras;
 	}
@@ -132,28 +133,29 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 			fila.add(gastoProveedor.getEntidadPropietariaDescripcion());
 			fila.add(gastoProveedor.getSubentidadPropietariaDescripcion());
 			fila.add(gastoProveedor.getMotivoRechazoProp());
-			fila.add(gastoProveedor.getPtdaPresupuestaria());
-			fila.add(gastoProveedor.getConceptoContable());
 			fila.add(gastoProveedor.getProvisionFondos());
 			fila.add(String.valueOf(gastoProveedor.getIdLinea()));
-			fila.add(gastoProveedor.getCuentaContableTasas());
-			fila.add(gastoProveedor.getPtdaPresupuestariaTasas());
-			fila.add(gastoProveedor.getCuentaContableRecargo());
-			fila.add(gastoProveedor.getPtdaPresupuestariaRecargo());
-			fila.add(gastoProveedor.getCuentaContableIntereses());
-			fila.add(gastoProveedor.getPtdaPresupuestariaIntereses());
-			fila.add(gastoProveedor.getSubcuentaContableBase());
 			fila.add(gastoProveedor.getApartadoBase());
 			fila.add(gastoProveedor.getCapituloBase());
-			fila.add(gastoProveedor.getSubcuentaContableRecargo());
+			fila.add(gastoProveedor.getPtdaPresupuestaria());
+			fila.add(gastoProveedor.getConceptoContable());
+			fila.add(gastoProveedor.getSubcuentaContableBase());
 			fila.add(gastoProveedor.getApartadoRecargo());
 			fila.add(gastoProveedor.getCapituloRecargo());
-			fila.add(gastoProveedor.getSubcuentaContableTasa());
-			fila.add(gastoProveedor.getApartadoTasa());
-			fila.add(gastoProveedor.getCapituloTasa());
-			fila.add(gastoProveedor.getSubcuentaContableIntereses());
+			fila.add(gastoProveedor.getPtdaPresupuestariaRecargo());
+			fila.add(gastoProveedor.getCuentaContableRecargo());
+			fila.add(gastoProveedor.getSubcuentaContableRecargo());
 			fila.add(gastoProveedor.getApartadoIntereses());
 			fila.add(gastoProveedor.getCapituloIntereses());
+			fila.add(gastoProveedor.getPtdaPresupuestariaIntereses());
+			fila.add(gastoProveedor.getCuentaContableIntereses());
+			fila.add(gastoProveedor.getSubcuentaContableIntereses());
+			fila.add(gastoProveedor.getApartadoTasa());
+			fila.add(gastoProveedor.getCapituloTasa());
+			fila.add(gastoProveedor.getPtdaPresupuestariaTasas());
+			fila.add(gastoProveedor.getCuentaContableTasas());
+			fila.add(gastoProveedor.getSubcuentaContableTasa());
+
 
 			valores.add(fila);
 		}

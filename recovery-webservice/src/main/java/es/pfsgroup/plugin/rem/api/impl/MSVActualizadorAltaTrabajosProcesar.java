@@ -144,6 +144,7 @@ public class MSVActualizadorAltaTrabajosProcesar extends AbstractMSVActualizador
 		SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat formatoFechaString = new SimpleDateFormat("dd/MM/yyyy");
 		Date fechaHoraConcreta = null;
+		Long referenciaPresupuesto = null;
 		
 		Trabajo trabajo = new Trabajo();
 		Activo activo = new Activo();
@@ -154,6 +155,8 @@ public class MSVActualizadorAltaTrabajosProcesar extends AbstractMSVActualizador
 		Usuario usuario;
 		DDIdentificadorReam areaPeticionaria;
 		DDAcoAprobacionComite aprobacionComite;
+		Date fechaResComite = null;
+		Date fechaTope = null;
 		
 		Long numActivo = Long.parseLong(exc.dameCelda(fila, COL_NUM.COL_ID_ACTIVO)); //0
 		String codTipoTrabajo = exc.dameCelda(fila,COL_NUM.COL_TIPO_TRABAJO);//1
@@ -163,15 +166,21 @@ public class MSVActualizadorAltaTrabajosProcesar extends AbstractMSVActualizador
 		String idTarea = exc.dameCelda(fila, COL_NUM.COL_ID_TAREA);//5
 		String codAreaPeticionaria = exc.dameCelda(fila, COL_NUM.COL_AREA_PETICIONARIA);//6
 		String aplicaComite = exc.dameCelda(fila, COL_NUM.COL_APLICA_COMITE);//7
-		String resolucionComite = exc.dameCelda(fila, COL_NUM.COL_RES_COMITE);//8		
-		Date fechaResComite = formatoFechaString.parse(exc.dameCelda(fila, COL_NUM.COL_FECHA_RES_COMITE));//9
+		String resolucionComite = exc.dameCelda(fila, COL_NUM.COL_RES_COMITE);//8
+		if(!Checks.esNulo(exc.dameCelda(fila, COL_NUM.COL_FECHA_RES_COMITE))) {
+			fechaResComite = formatoFechaString.parse(exc.dameCelda(fila, COL_NUM.COL_FECHA_RES_COMITE));//9
+		}
 		String idResComite = exc.dameCelda(fila, COL_NUM.COL_ID_RES_COMITE);//10
 		String codTarifa = exc.dameCelda(fila, COL_NUM.COL_ID_TARIFA);//11
 		String fechaConcreta =exc.dameCelda(fila, COL_NUM.COL_FECHA_CONCRETA);//12
 		String horaConcreta= exc.dameCelda(fila, COL_NUM.COL_HORA_CONCRETA);//13
-		Date fechaTope= formatoFechaString.parse(exc.dameCelda(fila, COL_NUM.COL_FECHA_TOPE));//14
+		if(!Checks.esNulo(exc.dameCelda(fila, COL_NUM.COL_FECHA_TOPE))) {
+			fechaTope= formatoFechaString.parse(exc.dameCelda(fila, COL_NUM.COL_FECHA_TOPE));//14
+		}
 		Double importePresupuesto= Double.parseDouble(exc.dameCelda(fila, COL_NUM.COL_IMPORTE_PRESUPUESTO));//15
-		Long referenciaPresupuesto=Long.parseLong(exc.dameCelda(fila, COL_NUM.COL_REFERENCIA_PRESUPUESTO));//16
+		if(!Checks.esNulo(exc.dameCelda(fila, COL_NUM.COL_REFERENCIA_PRESUPUESTO))) {
+			referenciaPresupuesto=Long.parseLong(exc.dameCelda(fila, COL_NUM.COL_REFERENCIA_PRESUPUESTO));//16
+		}
 		String tarifaPlana= exc.dameCelda(fila, COL_NUM.COL_TARIFA_PLANA);//17
 		String urgente= exc.dameCelda(fila, COL_NUM.COL_URGENTE);//18
 		String riesgoTerceros= exc.dameCelda(fila, COL_NUM.COL_RIESGO_TERCEROS);//19

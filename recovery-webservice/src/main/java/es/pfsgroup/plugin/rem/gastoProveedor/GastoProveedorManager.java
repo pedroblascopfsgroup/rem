@@ -1424,8 +1424,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							detalleGasto.setTipoRetencion(tipoRetencion);
 						}
 					}else {
-						detalleGasto.setTipoRetencion(null);
+						detalleGasto.setTipoRetencion(null);			
 					}
+					detalleGasto.setRetencionGarantiaAplica(dto.getRetencionGarantiaAplica());
 				}else if(detalleGasto.getRetencionGarantiaAplica() != null) {
 					if(detalleGasto.getRetencionGarantiaAplica()) {
 						DDTipoRetencion tipoRetencion = (DDTipoRetencion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoRetencion.class, dto.getTipoRetencionCodigo());
@@ -4112,7 +4113,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		BigDecimal importeRetencionGarantia = new BigDecimal(0);
 		boolean esDespues = false;
-				
+		if(gasto.getRetencionGarantiaAplica()==null || !gasto.getRetencionGarantiaAplica()) {
+			return importeRetencionGarantia.doubleValue();
+		}
 		if(gasto.getTipoRetencion() != null && DDTipoRetencion.CODIGO_TRE_DESPUES.equals(gasto.getTipoRetencion().getCodigo())) {
 			esDespues = true;
 		}

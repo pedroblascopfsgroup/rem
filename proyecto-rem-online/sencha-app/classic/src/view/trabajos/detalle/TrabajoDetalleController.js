@@ -915,7 +915,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 					var parameters = {};
     	   			parameters.idProcess = idProceso;
 			    	var url =  $AC.getRemoteUrl('process/validar');
-			    	
+			    	me.getView().mask('Validando...');
 					Ext.Ajax.request({
 						 method: 'GET',
 					     url: url,
@@ -924,6 +924,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 					     success: function(response, opts) {
 		    	   			var window = btn.up('creartrabajowindow');
 		    	   			window.idProceso = idProceso;
+							me.getView().unmask();
 		    	   			window.lookupReference('listaActivosSubidaRef').getStore().getProxy().setExtraParams({'idProceso':idProceso});
 		    	   			window.lookupReference('listaActivosSubidaRef').getStore().load(1);    
 		    	   			//Si carga correctametne desde listado, ya no sera obligatorio insertar archivo
@@ -931,6 +932,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 					     },
 					     failure: function(response, opts) {						     	
 						    me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+							me.getView().unmask();
 					     }
 					 });
     		    }		

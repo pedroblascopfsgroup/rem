@@ -1,6 +1,8 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.logging.Log;

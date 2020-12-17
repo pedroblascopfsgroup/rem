@@ -118,10 +118,14 @@ public class ExcelManager implements ExcelManagerApi {
 			process = validateFormat(document);
 			if (MSVDDEstadoProceso.CODIGO_ERROR.equals(process.getEstadoProceso().getCodigo())) return false;
 			process = validateContent(document);
+			if(process.getEstadoProceso() != null && process.getEstadoProceso().getCodigo().equals(MSVDDEstadoProceso.CODIGO_ERROR)){
+				return false;
+			}else{
+				return true;
+			}
 		} catch (Exception e) {
 			return false;
 		}
-		return true;
 	}
 	
 	@Override

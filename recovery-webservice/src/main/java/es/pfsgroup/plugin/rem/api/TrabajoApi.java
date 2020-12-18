@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -877,4 +878,6 @@ public interface TrabajoApi {
 	 */
 	@BusinessOperationDefinition("trabajoManager.findBuscadorGastos")
 	public DtoPage findBuscadorGastos(DtoTrabajoFilter dto);
+	
+	public BigDecimal getImporteTotalSuplidosByTrabajo(Trabajo trabajo);
 }

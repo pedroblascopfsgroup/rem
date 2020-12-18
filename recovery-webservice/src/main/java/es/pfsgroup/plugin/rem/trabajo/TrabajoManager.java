@@ -4471,4 +4471,21 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		return trabajoDao.findBuscadorGasto(dto);
 	}
+	
+	@Override
+	public BigDecimal getImporteTotalSuplidosByTrabajo(Trabajo trabajo) {
+		BigDecimal importeSuplidos = new BigDecimal(0);
+		if(trabajo != null) {
+			List<TrabajoProvisionSuplido> suplidos = trabajo.getProvisionSuplido();
+			if(suplidos != null && !suplidos.isEmpty()) {
+				for (TrabajoProvisionSuplido trabajoProvisionSuplido : suplidos) {
+					importeSuplidos = importeSuplidos.add(new BigDecimal(trabajoProvisionSuplido.getImporte()));
+				}
+			}
+			
+		}
+		return importeSuplidos;
+	}
+	
+	
 }

@@ -276,7 +276,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                	}
 			                },
 			                {
-			                	xtype: 'textfieldbase',
+			                	xtype: 'numberfieldbase',
+								symbol: HreRem.i18n("symbol.porcentaje"),
 			                	fieldLabel:  HreRem.i18n('fieldlabel.porcentaje.construccion'),
 			                	name: 'porcentajeConstruccion',
 			                	reference: 'porcentajeConstruccion',

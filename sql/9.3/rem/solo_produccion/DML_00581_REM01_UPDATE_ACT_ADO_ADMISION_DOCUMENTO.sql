@@ -66,7 +66,7 @@ BEGIN
                         FROM '|| V_ESQUEMA ||'.ACT_CFD_CONFIG_DOCUMENTO CFD
                         WHERE CFD.DD_TPA_ID = T2.DD_TPA_ID 
                         AND CFD.DD_SAC_ID = T2.DD_SAC_ID 
-                        AND CFD.DD_TPD_ID = '||V_ID_DOCUMENTO_CEDULA||'), 64248),
+                        AND CFD.DD_TPD_ID = '||V_ID_DOCUMENTO_CEDULA||'), (SELECT CFD_ID FROM '|| V_ESQUEMA ||'.ACT_CFD_CONFIG_DOCUMENTO WHERE DD_TPA_ID = 1 AND DD_TPD_ID = '||V_ID_DOCUMENTO_CEDULA||' AND DD_SAC_ID = 1)),
 			T1.USUARIOMODIFICAR = '''||V_USUARIO||''',
 			T1.FECHAMODIFICAR = SYSDATE ';
 
@@ -89,7 +89,7 @@ BEGIN
                         FROM '|| V_ESQUEMA ||'.ACT_CFD_CONFIG_DOCUMENTO CFD
                         WHERE CFD.DD_TPA_ID = T2.DD_TPA_ID 
                         AND CFD.DD_SAC_ID = T2.DD_SAC_ID 
-                        AND CFD.DD_TPD_ID = '||V_ID_DOCUMENTO_CEE||'), 64246),
+                        AND CFD.DD_TPD_ID = '||V_ID_DOCUMENTO_CEE||'), (SELECT CFD_ID FROM '|| V_ESQUEMA ||'.ACT_CFD_CONFIG_DOCUMENTO WHERE DD_TPA_ID = 1 AND DD_TPD_ID = '||V_ID_DOCUMENTO_CEE||' AND DD_SAC_ID = 1)),
 			T1.USUARIOMODIFICAR = '''||V_USUARIO||''',
 			T1.FECHAMODIFICAR = SYSDATE ';
 
@@ -112,7 +112,7 @@ BEGIN
                         FROM '|| V_ESQUEMA ||'.ACT_CFD_CONFIG_DOCUMENTO CFD
                         WHERE CFD.DD_TPA_ID = T2.DD_TPA_ID 
                         AND CFD.DD_SAC_ID = T2.DD_SAC_ID 
-                        AND CFD.DD_TPD_ID = '||V_ID_DOCUMENTO_ETIQUETA||'), 64247),
+                        AND CFD.DD_TPD_ID = '||V_ID_DOCUMENTO_ETIQUETA||'), (SELECT CFD_ID FROM '|| V_ESQUEMA ||'.ACT_CFD_CONFIG_DOCUMENTO WHERE DD_TPA_ID = 1 AND DD_TPD_ID = '||V_ID_DOCUMENTO_ETIQUETA||' AND DD_SAC_ID = 1)),
 			T1.USUARIOMODIFICAR = '''||V_USUARIO||''',
 			T1.FECHAMODIFICAR = SYSDATE ';
 

@@ -254,16 +254,16 @@ BEGIN
                                 SELECT GIL.GIL_ID
                                     , CASE
                                         WHEN DCL.DIARIO1 = ''20'' THEN 
-                                            (NVL(P20.P20_GASTO, 100) / 100 * DCL.DIARIO1_CUOTA + DCL.DIARIO1_BASE + NVL(DCL.DIARIO2_BASE, 0)) 
+                                            (NVL(P20.P20_GASTO, 100) / 100 * DCL.DIARIO1_CUOTA + BRU.IMPORTE_BRUTO + NVL(DCL.DIARIO2_BASE, 0)) 
                                                 - SUM(GIL.IMPORTE_ACTIVO) OVER(ORDER BY GIL.GPV_ID)
                                         WHEN DCL.DIARIO1 = ''1'' THEN
-                                            (DCL.DIARIO1_BASE + NVL(DCL.DIARIO2_BASE, 0)) 
+                                            (BRU.IMPORTE_BRUTO + NVL(DCL.DIARIO2_BASE, 0)) 
                                                 - SUM(GIL.IMPORTE_ACTIVO) OVER(ORDER BY GIL.GPV_ID)
                                         WHEN DCL.DIARIO1 = ''2'' THEN 
-                                            (DCL.DIARIO1_CUOTA + DCL.DIARIO1_BASE + NVL(DCL.DIARIO2_BASE, 0)) 
+                                            (DCL.DIARIO1_CUOTA + BRU.IMPORTE_BRUTO + NVL(DCL.DIARIO2_BASE, 0)) 
                                                 - SUM(GIL.IMPORTE_ACTIVO) OVER(ORDER BY GIL.GPV_ID)
                                         WHEN DCL.DIARIO1 = ''60'' THEN
-                                            (DCL.DIARIO1_BASE) 
+                                            (BRU.IMPORTE_BRUTO) 
                                                 - SUM(GIL.IMPORTE_ACTIVO) OVER(ORDER BY GIL.GPV_ID)
                                         END RESTO
                                     , ROW_NUMBER() OVER(PARTITION BY GIL.GPV_ID ORDER BY GIL.IMPORTE_ACTIVO DESC) RN
@@ -272,6 +272,7 @@ BEGIN
                                     AND GPV.BORRADO = 0
                                 JOIN '||V_ESQUEMA||'.GDL_GASTOS_DIARIOS_LIBERBANK DCL ON DCL.GPV_ID = GPV.GPV_ID
                                     AND DCL.BORRADO = 0
+                                JOIN '||V_ESQUEMA||'.V_IMPORTE_BRUTO_GASTO_LBK BRU ON BRU.GPV_ID = GPV.GPV_ID
                                 LEFT JOIN '||V_ESQUEMA||'.ACT_P20_PRORRATA_DIARIO20 P20 ON P20.PRO_ID = GPV.PRO_ID
                                     AND P20.BORRADO = 0
                                 WHERE GIL.GPV_ID = '||GPV_ID||'

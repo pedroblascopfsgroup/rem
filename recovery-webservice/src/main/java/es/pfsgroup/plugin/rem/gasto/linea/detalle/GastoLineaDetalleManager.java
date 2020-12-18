@@ -54,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.GastoLineaDetalleTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.TrabajoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
 import es.pfsgroup.plugin.rem.model.VParticipacionElementosLinea;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -1869,6 +1870,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		BigDecimal importeTotal = new BigDecimal(0.0);
 		BigDecimal cuota = new BigDecimal(0.0);
 		BigDecimal baseSujetaFinal = new BigDecimal(0.0);
+		BigDecimal provSuplidos = trabajoApi.getImporteTotalSuplidosByTrabajo(trabajo);
+		
+		
 		if(gasto.getDestinatarioGasto() !=  null && DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())
 			&& trabajo.getImportePresupuesto() != null) {
 			baseSujeta = new BigDecimal(trabajo.getImportePresupuesto());
@@ -1888,6 +1892,13 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			}
 		}
 		
+		if( lineaAnyadirTrabajo.getProvSuplidos() != null) {
+			provSuplidos = provSuplidos.add(new BigDecimal(lineaAnyadirTrabajo.getProvSuplidos()));
+		}
+		
+		lineaAnyadirTrabajo.setProvSuplidos(provSuplidos.doubleValue());
+		
+		importeTotal = importeTotal.add(provSuplidos);
 		importeTotal = importeTotal.add(cuota);
 		importeTotal = importeTotal.add(baseSujeta);
 		lineaAnyadirTrabajo.setImporteTotal(importeTotal.doubleValue());
@@ -1929,7 +1940,12 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				}
 			}
 		}
+		BigDecimal provSuplidos = trabajoApi.getImporteTotalSuplidosByTrabajo(trabajo);
+		gastoLineaDetalleNueva.setProvSuplidos(provSuplidos.doubleValue());
+		
+		
 		BigDecimal importeTotal = (new BigDecimal (gastoLineaDetalleNueva.getPrincipalSujeto())).add(cuota);
+		importeTotal = importeTotal.add(provSuplidos);
 		gastoLineaDetalleNueva.setImporteTotal(importeTotal.doubleValue());
 		DtoLineaDetalleGasto dto = calcularCuentasYPartidas(gasto, null,lineaParte.get(0));
 

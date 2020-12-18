@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.util.Date;
+
 import es.capgemini.devon.dto.WebDto;
 
 
@@ -22,6 +24,7 @@ public class DtoOfertaActivo extends WebDto {
 	private String motivoRechazoCodigo;
 	private Boolean esAnulacion;
 	private Boolean gencat;
+	private Date fechaEntradaCRMSF;
 	
 	
 	public Long getIdOferta() {
@@ -78,5 +81,11 @@ public class DtoOfertaActivo extends WebDto {
 	}
 	public void setGencat(Boolean gencat) {
 		this.gencat = gencat;
+	}
+	public Date getFechaEntradaCRMSF() {
+		return fechaEntradaCRMSF;
+	}
+	public void setFechaEntradaCRMSF(Date fechaEntradaCRMSF) {
+		this.fechaEntradaCRMSF = fechaEntradaCRMSF;
 	}
 }

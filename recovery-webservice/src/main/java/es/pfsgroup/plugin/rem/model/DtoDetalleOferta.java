@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.util.Date;
 
 public class DtoDetalleOferta {
 
@@ -16,7 +17,7 @@ public class DtoDetalleOferta {
 	private String ofertaExpress;
 	private String necesitaFinanciacion;
 	private String observaciones;
-	
+	private Date fechaEntradaCRMSF;
 
 
 	public String getId() {
@@ -90,6 +91,12 @@ public class DtoDetalleOferta {
 	}
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
+	}
+	public Date getFechaEntradaCRMSF() {
+		return fechaEntradaCRMSF;
+	}
+	public void setFechaEntradaCRMSF(Date fechaEntradaCRMSF) {
+		this.fechaEntradaCRMSF = fechaEntradaCRMSF;
 	}
 	
 }

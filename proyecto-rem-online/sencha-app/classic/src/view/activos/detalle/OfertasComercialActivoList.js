@@ -111,7 +111,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            text: HreRem.i18n('header.oferta.estadoOferta'),
 		            reference: 'estadoOferta',
 					editor: {
-						xtype: 'combobox',								        		
+						xtype: 'combobox',
+						reference:'estadoOfertaCombo',
 						store: new Ext.data.Store({
 							model: 'HreRem.model.ComboBase',
 							proxy: {
@@ -131,11 +132,9 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			        		var me = this,
 			        		comboEditor = me.columns  && me.columns[colIndex].getEditor ? me.columns[colIndex].getEditor() : me.getEditor ? me.getEditor() : null,
 			        		store, record;
-			        		
 			        		if(!Ext.isEmpty(comboEditor)) {
 				        		store = comboEditor.getStore(),							        		
 				        		record = store.findRecord("codigo", value);
-			        		
 				        		if(!Ext.isEmpty(record)) {								        			
 				        			return record.get("descripcion");								        		
 				        		} else {
@@ -192,14 +191,20 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 					    }
 	                }
 						
-				}
+				},
+		        {
+		            dataIndex: 'fechaEntradaCRMSF',
+		            text: HreRem.i18n('header.oferta.fechaEntradaCRMSF'),
+		            formatter: 'date("d/m/Y")',
+		            flex: 1
+		        }
 		        
         ];
         
         me.addListener ('beforeedit', function(editor, context) {
             var estado = context.record.get("codigoEstadoOferta");
             var numAgrupacion = context.record.get("numAgrupacionRem");  
-            var allowEdit = estado != '01' && estado != '02' && Ext.isEmpty(numAgrupacion);
+            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && Ext.isEmpty(numAgrupacion);
 
             this.editOnSelect = allowEdit;
             return allowEdit;
@@ -367,6 +372,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			// HREOS-2814 El cambio a anulada/denegada (rechazada) abre el formulario de motivos de rechazo
 			if (CONST.ESTADOS_OFERTA['RECHAZADA'] == estado){
 				me.onCambioARechazoOfertaList(me, context.record);
+			} else if (CONST.ESTADOS_OFERTA['CADUCADA'] == estado){
+				me.onCambioARechazoOfertaList(me, context.record);
 			} else {
 				me.saveFn(editor, me, context);
 			}
@@ -438,7 +445,10 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		else if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));
 			return false;
-		} else if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo){
+		} else if(hayOfertaAceptada && (CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo)){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
+			return false;
+		} else if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
 			return false;
 		} else if(!hayOfertaAceptada && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['ACEPTADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['CONGELADA'] != codigoEstadoNuevo){
@@ -448,6 +458,12 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		
 		//HREOS-2814 Validacion si estado oferta = rechazada, tipo y motivo obligatorios.
 		if(CONST.ESTADOS_OFERTA['RECHAZADA'] == codigoEstadoNuevo){
+			if (record.data.tipoRechazoCodigo == null || record.data.motivoRechazoCodigo == null){
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.rechazar.motivos"));
+				return false;
+			}
+		}
+		if (CONST.ESTADOS_OFERTA['CADUCADA'] == codigoEstadoNuevo) {
 			if (record.data.tipoRechazoCodigo == null || record.data.motivoRechazoCodigo == null){
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.rechazar.motivos"));
 				return false;
@@ -528,7 +544,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var ofertasData = me.getNavigationModel().store.data.items;
 		var ofertaSeleccionadaData = selectionModel.getSelection()[0].data;
 
-		var sePuedeClonarExpediente = ofertaSeleccionadaData.codigoEstadoOferta == CONST.ESTADOS_OFERTA['RECHAZADA'];
+		var sePuedeClonarExpediente = ofertaSeleccionadaData.codigoEstadoOferta == CONST.ESTADOS_OFERTA['RECHAZADA'] && ofertaSeleccionadaData.codigoEstadoOferta == CONST.ESTADOS_OFERTA['CADUCADA'];
 		
 		if (!sePuedeClonarExpediente) {
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.clonar.oferta.no.anulada"));

@@ -153,6 +153,9 @@ public class VOfertasTramitadasPendientesActivosAgrupacion implements Serializab
     
     @Column(name="GENCAT")
 	private Boolean gencat;	
+    
+    @Column(name = "FECHA_ENT_CRM_SF")
+    private Date fechaEntradaCRMSF;
 	
 
 	public Date getFechaModificar() {
@@ -513,6 +516,14 @@ public class VOfertasTramitadasPendientesActivosAgrupacion implements Serializab
 
 	public void setGencat(Boolean gencat) {
 		this.gencat = gencat;
+	}
+
+	public Date getFechaEntradaCRMSF() {
+		return fechaEntradaCRMSF;
+	}
+
+	public void setFechaEntradaCRMSF(Date fechaEntradaCRMSF) {
+		this.fechaEntradaCRMSF = fechaEntradaCRMSF;
 	}
 	
 }

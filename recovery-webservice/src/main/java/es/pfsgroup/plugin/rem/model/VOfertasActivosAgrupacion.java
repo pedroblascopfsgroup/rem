@@ -155,7 +155,10 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	private String observaciones;	
 	
     @Column(name="GENCAT")
-	private Boolean gencat;	
+	private Boolean gencat;
+    
+    @Column(name = "FECHA_ENT_CRM_SF")
+    private Date fechaEntradaCRMSF;
 
 	public Date getFechaModificar() {
 		return fechaModificar;
@@ -532,6 +535,14 @@ public class VOfertasActivosAgrupacion implements Serializable {
 
 	public void setClaseActivoBancario(Long claseActivoBancario) {
 		this.claseActivoBancario = claseActivoBancario;
+	}
+
+	public Date getFechaEntradaCRMSF() {
+		return fechaEntradaCRMSF;
+	}
+
+	public void setFechaEntradaCRMSF(Date fechaEntradaCRMSF) {
+		this.fechaEntradaCRMSF = fechaEntradaCRMSF;
 	}
 
 }

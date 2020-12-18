@@ -1,19 +1,16 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +33,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
-import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVValidatorConfiguracionPeriodosVoluntarios.COL_NUM;
 
 
 @Component
@@ -49,7 +45,8 @@ public class MSVActualizarPorcentajeConstruccion extends MSVExcelValidatorAbstra
 	public static final String NUM_ACTIVE_NOT_EXISTS ="Activo inexistente.";
 	public static final String ACTIVO_FUERA_PERIMETRO_HAYA = "Activo no está en perímetro HAYA.";
 	public static final String ACTIVO_UNIDAD_ALQUILABLE = "El activo es una unidad alquilable.";
-	public static final String PORCENTAJE_CONSTRUCCION_INCORRECTO = "% Construcción incorrecto.";
+	public static final String PORCENTAJE_CONSTRUCCION_INCORRECTO = "% Construcción incorrecto.";	
+	public static final String PORCENTAJE_CONSTRUCCION_NO_DECIMAL = "% Construcción no es un número decimal.";	
 
 	//Posicion fija de Columnas excel, para validaciones especiales de diccionario
 	public static final int COL_NUM_ACTIVO = 0;
@@ -108,6 +105,7 @@ public class MSVActualizarPorcentajeConstruccion extends MSVExcelValidatorAbstra
 				mapaErrores.put(ACTIVO_FUERA_PERIMETRO_HAYA, activosFueraPerimetroRows(exc));
 				mapaErrores.put(ACTIVO_UNIDAD_ALQUILABLE, activosUnidadAlquilableRows(exc));
 				mapaErrores.put(PORCENTAJE_CONSTRUCCION_INCORRECTO, porcentajeConstruccionIncorrectoRows(exc));
+				mapaErrores.put(PORCENTAJE_CONSTRUCCION_NO_DECIMAL, porcentajeNumrico(exc));
 
 				for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
 					if (!registro.getValue().isEmpty()) {
@@ -157,6 +155,26 @@ public class MSVActualizarPorcentajeConstruccion extends MSVExcelValidatorAbstra
 			}
 		}
 		return resultado;
+	}
+	
+	private List<Integer> porcentajeNumrico(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if (!StringUtils.isNumeric(exc.dameCelda(i, COL_PORCENTAJE_CONSTRUCCION)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return listaFilas;
 	}
 	
 	private List<Integer> isColumnNullByRows(MSVHojaExcel exc) {

@@ -3,32 +3,24 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgendaEvolucion;
-import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
-import es.pfsgroup.plugin.rem.model.dd.DDClasificacionApple;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
-import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 
 /***
  * Clase que procesa el fichero de carga masiva valores perímetro Apple
@@ -46,7 +38,7 @@ public class MSVActualizadorPorcentajeConstruccion extends AbstractMSVActualizad
 	private GenericABMDao genericDao;
 	
 	@Autowired
-	private GenericAdapter adapter;
+	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
 	public static final class COL_NUM {
 		static final int FILA_CABECERA = 0;
@@ -78,6 +70,17 @@ public class MSVActualizadorPorcentajeConstruccion extends AbstractMSVActualizad
 				activo.setPorcentajeConstruccion(numPorcentajeConstruccion);
 			}
 			genericDao.update(Activo.class, activo);
+			
+			if (activoApi.isActivoMatriz(activo.getId())) {
+				ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+				if(!Checks.esNulo(agr)) {
+					List<Activo> listaUAs = activoAgrupacionActivoDao.getListUAsByIdAgrupacion(agr.getId());
+					for (Activo ua : listaUAs) {
+						ua.setPorcentajeConstruccion(numPorcentajeConstruccion);
+						genericDao.update(Activo.class, activo);
+					}
+				}
+			}
 			
 			return new ResultadoProcesarFila();
 		}catch (Exception e) {

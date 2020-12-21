@@ -3188,7 +3188,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 
   onClickPropagation : function(btn) {
-	  
 	  var me = this,
 	    idActivo = me.getViewModel().get('activo').id,
 	    url = $AC.getRemoteUrl('activo/getActivosPropagables'),

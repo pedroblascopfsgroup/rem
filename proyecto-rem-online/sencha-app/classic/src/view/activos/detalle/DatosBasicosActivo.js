@@ -3,7 +3,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
     xtype: 'datosbasicosactivo',    
     cls	: 'panel-base shadow-panel',
     collapsed: false,
-    disableValidation: true,
+    disableValidation: false,
     reference: 'datosbasicosactivo',
     scrollable	: 'y',
     refreshAfterSave : true,
@@ -281,10 +281,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                	fieldLabel:  HreRem.i18n('fieldlabel.porcentaje.construccion'),
 			                	name: 'porcentajeConstruccion',
 			                	reference: 'porcentajeConstruccion',
+			                	maskRe: /[0-9.]/,
 			                	bind: {
 			                		readOnly: '{!activo.isEditablePorcentajeConstruccion}',
 			                		value: '{activo.porcentajeConstruccion}'
-			                	}
+			                	},
+			                	validator: function(v) {
+	                            	if(!Ext.isEmpty(this.getValue()) && (this.getValue() < 0 || this.getValue() >  100 )){
+		                            	return false;
+	                            	}
+		                            return true;
+		                        }
 			                },
 			                {
 			                	xtype: 'comboboxfieldbase',

@@ -136,8 +136,8 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 											        	boxLabel: HreRem.i18n('fieldlabel.gasto.excluir.envio.lbk'),
 											        	//name: 'agrupacionesVinculadas',
 											        	//reference: 'excluirEnvioLbk1', 	
-											        	bind: '{contabilidad.excluirEnvioLbk}'
-										                					
+											        	bind: '{contabilidad.excluirEnvioLbk}',
+											        	hidden: !isCarteraLiberbank				
 													}
 													
 										]

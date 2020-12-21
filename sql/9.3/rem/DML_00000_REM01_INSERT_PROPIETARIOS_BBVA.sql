@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20201216
+--## FECHA_CREACION=20201218
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-12481
@@ -35,6 +35,7 @@ DECLARE
     V_FIN TIMESTAMP;
 
     V_CODIGO_CARTERA VARCHAR2(2 CHAR) := '16';
+    V_ID_CARTERA NUMBER(16);
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
@@ -167,71 +168,74 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_INICIO);
 
+    V_MSQL := 'SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE BORRADO = 0 AND DD_CRA_CODIGO = '''||V_CODIGO_CARTERA||'''';
+    EXECUTE IMMEDIATE V_MSQL INTO V_ID_CARTERA;
+
+    DBMS_OUTPUT.PUT_LINE('	[INFO]: Cartera seleccionada con ID: '||V_ID_CARTERA);
+
 	-- LOOP para insertar los valores --
 	DBMS_OUTPUT.PUT_LINE('	[INFO]: Inserción de propietarios en '||V_TEXT_TABLA);
 
 	V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' AND OWNER = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 	IF V_NUM_TABLAS = 0 THEN
-			DBMS_OUTPUT.PUT_LINE('	[INFO]: No existe la tabla');
+			DBMS_OUTPUT.PUT_LINE('	[INFO]: No existe la tabla.');
 	ELSE
 		FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
 		LOOP
 			V_TMP_TIPO_DATA := V_TIPO_DATA(I);
             DBMS_OUTPUT.put_line('	[INFO]: Insertando fila '||I||', propietario (PRO_CODIGO_ENTIDAD): '||V_TMP_TIPO_DATA(11)||'.'); 
                 --T_TIPO_DATA('DD_LOC_CODIGO'1,'DD_PRV_CODIGO'2,'PRO_CODIGO_UVEM'3,'DD_TPE_CODIGO'4,'PRO_NOMBRE'5,'DD_TDI_CODIGO'6,'PRO_DOCIDENTIF'7,'PRO_DIR'8,'PRO_TELF'9,'PRO_CP'10,'PRO_CODIGO_ENTIDAD'11,'PRO_TITULIZADO'12)
-				V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO ('||CHR(10)
-					||'	PRO_ID'||CHR(10)
-					||'	, DD_CRA_ID'||CHR(10)
-					||'	, DD_LOC_ID'||CHR(10)
-					||'	, DD_PRV_ID'||CHR(10)
-					||'	, PRO_CODIGO_UVEM'||CHR(10)
-					||'	, DD_TPE_ID'||CHR(10)
-					||'	, PRO_NOMBRE'||CHR(10)
-					||'	, DD_TDI_ID'||CHR(10)
-					||'	, PRO_DOCIDENTIF'||CHR(10)
-					||'	, PRO_DIR'||CHR(10)
-					||'	, PRO_TELF'||CHR(10)
-					||'	, PRO_CP'||CHR(10)
-					||'	, PRO_CODIGO_ENTIDAD'||CHR(10)
-					||'	, PRO_TITULIZADO'||CHR(10)
-					||'	, USUARIOCREAR'||CHR(10)
-					||'	, FECHACREAR'||CHR(10)
-					||'	)'||CHR(10)
-					||'SELECT '||V_ESQUEMA||'.S_ACT_PRO_PROPIETARIO.NEXTVAL PRO_ID'||CHR(10)
-					||'	, CRA.DD_CRA_ID'||CHR(10)
-					||'	, LOC.DD_LOC_ID'||CHR(10)
-					||'	, PRV.DD_PRV_ID'||CHR(10)
-					||'	, '''||V_TMP_TIPO_DATA(3)||''''||CHR(10)
-					||'	, TPE.DD_TPE_ID'||CHR(10)
-					||'	, '''||V_TMP_TIPO_DATA(5)||''''||CHR(10)
-					||'	, TDI.DD_TDI_ID'||CHR(10)
-					||'	, '''||V_TMP_TIPO_DATA(7)||''''||CHR(10)
-					||'	, '''||V_TMP_TIPO_DATA(8)||''''||CHR(10)
-					||'	, '''||V_TMP_TIPO_DATA(9)||''''||CHR(10)
-					||'	, '''||V_TMP_TIPO_DATA(10)||''''||CHR(10)
-					||'	, '''||V_TMP_TIPO_DATA(11)||''''||CHR(10)
-					||'	, '''||V_TMP_TIPO_DATA(12)||''''||CHR(10)
-					||'	, '''||V_ITEM||''''||CHR(10)
-					||'	, SYSDATE'||CHR(10)
-					||'FROM '||V_ESQUEMA||'.DD_CRA_CARTERA CRA'||CHR(10)
-					||'LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = '''||V_TMP_TIPO_DATA(1)||''''||CHR(10)
-					||'	AND LOC.BORRADO = 0'||CHR(10)
-					||'LEFT JOIN '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_CODIGO = '''||V_TMP_TIPO_DATA(2)||''''||CHR(10)
-					||'	AND PRV.BORRADO = 0'||CHR(10)
-					||'LEFT JOIN '||V_ESQUEMA_M||'.DD_TPE_TIPO_PERSONA TPE ON TPE.DD_TPE_CODIGO = '''||V_TMP_TIPO_DATA(4)||''''||CHR(10)
-					||'	AND TPE.BORRADO = 0'||CHR(10)
-					||'LEFT JOIN '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID TDI ON TDI.DD_TDI_CODIGO = '''||V_TMP_TIPO_DATA(6)||''''||CHR(10)
-					||'	AND TDI.BORRADO = 0'||CHR(10)
-					||'WHERE CRA.BORRADO = 0'||CHR(10)
-					||'	AND CRA.DD_CRA_CODIGO = '''||V_CODIGO_CARTERA||''''||CHR(10)
-					||'	AND NOT EXISTS ('||CHR(10)
-					||'		SELECT 1'||CHR(10)
-					||'		FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' PRO'||CHR(10)
-					||'		WHERE PRO.BORRADO = 0'||CHR(10)
-					||'			AND PRO.DD_CRA_ID = CRA.DD_CRA_ID'||CHR(10)
-					||'			AND PRO.PRO_CODIGO_ENTIDAD = '''||V_TMP_TIPO_DATA(11)||''''||CHR(10)
-					||'	)';                       
+				V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
+						PRO_ID
+						, DD_CRA_ID
+						, DD_LOC_ID
+						, DD_PRV_ID
+						, PRO_CODIGO_UVEM
+						, DD_TPE_ID
+						, PRO_NOMBRE
+						, DD_TDI_ID
+						, PRO_DOCIDENTIF
+						, PRO_DIR
+						, PRO_TELF
+						, PRO_CP
+						, PRO_CODIGO_ENTIDAD
+						, PRO_TITULIZADO
+						, USUARIOCREAR
+						, FECHACREAR
+					)
+					SELECT '||V_ESQUEMA||'.S_ACT_PRO_PROPIETARIO.NEXTVAL PRO_ID
+						, '||V_ID_CARTERA||'
+						, LOC.DD_LOC_ID
+						, PRV.DD_PRV_ID
+						, '''||V_TMP_TIPO_DATA(3)||'''
+						, TPE.DD_TPE_ID
+						, '''||V_TMP_TIPO_DATA(5)||'''
+						, TDI.DD_TDI_ID
+						, '''||V_TMP_TIPO_DATA(7)||'''
+						, '''||V_TMP_TIPO_DATA(8)||'''
+						, '''||V_TMP_TIPO_DATA(9)||'''
+						, '''||V_TMP_TIPO_DATA(10)||'''
+						, '''||V_TMP_TIPO_DATA(11)||'''
+						, '''||V_TMP_TIPO_DATA(12)||'''
+						, '''||V_ITEM||'''
+						, SYSDATE
+					FROM DUAL
+					LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = '''||V_TMP_TIPO_DATA(1)||'''
+						AND LOC.BORRADO = 0
+					LEFT JOIN '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''
+						AND PRV.BORRADO = 0
+					LEFT JOIN '||V_ESQUEMA_M||'.DD_TPE_TIPO_PERSONA TPE ON TPE.DD_TPE_CODIGO = '''||V_TMP_TIPO_DATA(4)||'''
+						AND TPE.BORRADO = 0
+					LEFT JOIN '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID TDI ON TDI.DD_TDI_CODIGO = '''||V_TMP_TIPO_DATA(6)||'''
+						AND TDI.BORRADO = 0
+					WHERE NOT EXISTS (
+							SELECT 1
+							FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' PRO
+							WHERE PRO.BORRADO = 0
+								AND PRO.DD_CRA_ID = '||V_ID_CARTERA||'
+								AND NVL(PRO.PRO_DOCIDENTIF, '' '') = '''||V_TMP_TIPO_DATA(7)||'''
+						)';             
 				EXECUTE IMMEDIATE V_MSQL;
                 
                 IF SQL%ROWCOUNT = 1 THEN 
@@ -242,6 +246,65 @@ BEGIN
                     DBMS_OUTPUT.PUT_LINE('	[INFO]: No se insertó ningún propietario para la entidad '||V_TMP_TIPO_DATA(11)||'.');
                     DBMS_OUTPUT.PUT_LINE('	[INFO]: Query para revisión:');
                     DBMS_OUTPUT.PUT_LINE(V_MSQL);
+                    DBMS_OUTPUT.PUT_LINE('	[INFO]: Actualizando fila '||I||', propietario (PRO_CODIGO_ENTIDAD): '||V_TMP_TIPO_DATA(11)||'.'); 
+	                --T_TIPO_DATA('DD_LOC_CODIGO'1,'DD_PRV_CODIGO'2,'PRO_CODIGO_UVEM'3,'DD_TPE_CODIGO'4,'PRO_NOMBRE'5,'DD_TDI_CODIGO'6,'PRO_DOCIDENTIF'7,'PRO_DIR'8,'PRO_TELF'9,'PRO_CP'10,'PRO_CODIGO_ENTIDAD'11,'PRO_TITULIZADO'12)
+					V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
+						SET DD_LOC_ID = (SELECT DD_LOC_ID FROM '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD WHERE DD_LOC_CODIGO = '''||V_TMP_TIPO_DATA(1)||''' AND BORRADO = 0)
+							, DD_PRV_ID = (SELECT DD_PRV_ID FROM '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA WHERE DD_PRV_CODIGO = '''||V_TMP_TIPO_DATA(2)||''' AND BORRADO = 0)
+							, PRO_CODIGO_UVEM = '''||V_TMP_TIPO_DATA(3)||'''
+							, DD_TPE_ID = (SELECT DD_TPE_ID FROM '||V_ESQUEMA_M||'.DD_TPE_TIPO_PERSONA WHERE DD_TPE_CODIGO = '''||V_TMP_TIPO_DATA(4)||''' AND BORRADO = 0)
+							, PRO_NOMBRE = '''||V_TMP_TIPO_DATA(5)||'''
+							, DD_TDI_ID = (SELECT DD_TDI_ID FROM '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID WHERE DD_TDI_CODIGO = '''||V_TMP_TIPO_DATA(6)||''' AND BORRADO = 0)
+							, PRO_DIR = '''||V_TMP_TIPO_DATA(8)||'''
+							, PRO_TELF = '''||V_TMP_TIPO_DATA(9)||'''
+							, PRO_CP = '''||V_TMP_TIPO_DATA(10)||'''
+							, PRO_CODIGO_ENTIDAD = '''||V_TMP_TIPO_DATA(11)||'''
+							, PRO_TITULIZADO = '''||V_TMP_TIPO_DATA(12)||'''
+							, USUARIOMODIFICAR = '''||V_ITEM||'''
+							, FECHAMODIFICAR = SYSDATE
+						WHERE EXISTS (
+								SELECT 1
+								FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' PRO
+								WHERE PRO.BORRADO = 0
+									AND PRO.DD_CRA_ID = '||V_ID_CARTERA||'
+									AND PRO.PRO_DOCIDENTIF = '''||V_TMP_TIPO_DATA(7)||'''
+									AND PRO.PRO_ID = T1.PRO_ID
+							)
+							AND EXISTS (
+								SELECT 1
+								FROM '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD 
+								WHERE DD_LOC_CODIGO = '''||V_TMP_TIPO_DATA(1)||''' 
+									AND BORRADO = 0
+							)
+							AND EXISTS (
+								SELECT 1
+								FROM '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA 
+								WHERE DD_PRV_CODIGO = '''||V_TMP_TIPO_DATA(2)||''' 
+									AND BORRADO = 0
+							)
+							AND EXISTS (
+								SELECT 1
+								FROM '||V_ESQUEMA_M||'.DD_TPE_TIPO_PERSONA 
+								WHERE DD_TPE_CODIGO = '''||V_TMP_TIPO_DATA(4)||''' 
+									AND BORRADO = 0
+							)
+							AND EXISTS (
+								SELECT 1
+								FROM '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID 
+								WHERE DD_TDI_CODIGO = '''||V_TMP_TIPO_DATA(6)||''' 
+									AND BORRADO = 0
+							)';             
+					EXECUTE IMMEDIATE V_MSQL;
+	                
+	                IF SQL%ROWCOUNT = 1 THEN 
+	                    DBMS_OUTPUT.PUT_LINE('	[INFO]: Se ha actualizado 1 propietario para la entidad '||V_TMP_TIPO_DATA(11)||'.');
+	                ELSIF SQL%ROWCOUNT > 1 THEN
+	                    DBMS_OUTPUT.PUT_LINE('	[INFO]: Se han actualizado '||SQL%ROWCOUNT||' propietarios para la entidad '||V_TMP_TIPO_DATA(11)||'.');
+	                ELSE
+	                    DBMS_OUTPUT.PUT_LINE('	[INFO]: No se actualizó ningún propietario para la entidad '||V_TMP_TIPO_DATA(11)||'.');
+	                    DBMS_OUTPUT.PUT_LINE('	[INFO]: Query para revisión:');
+	                    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+	                END IF;
                 END IF;
                 
 		END LOOP;

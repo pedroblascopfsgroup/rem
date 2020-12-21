@@ -6042,6 +6042,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return true;
 	}
 	
+	@Override
 	public List<DDEstadoTrabajo> getComboEstadoTrabajo(){
 		List<DDEstadoTrabajo> list = new ArrayList<DDEstadoTrabajo>();
 		boolean identificadorFlag = true;
@@ -6053,7 +6054,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return list;
 	}
-
+	
 	public List<DDEstadoGasto> getComboEstadoGasto(){
 		List<DDEstadoGasto> list = new ArrayList<DDEstadoGasto>();
 		
@@ -6076,7 +6077,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return list;
 	}
-
+	@Override
 	public Date getFechaConcretaParametrizada(String tipoTrabajo, String subtipoTrabajo,String cartera, String subcartera) {
 		Date fechaMod = new Date();
 		if(tipoTrabajo != null && subtipoTrabajo != null && cartera != null && subcartera != null) {
@@ -6095,6 +6096,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return fechaMod;
 	}
 	
+	@Override
 	public Boolean getAplicaComiteParametrizado(String tipoTrabajo, String subtipoTrabajo,String cartera, String subcartera) {
 		Boolean resultado = false;
 		if(tipoTrabajo != null && subtipoTrabajo != null && cartera != null && subcartera != null) {
@@ -6154,6 +6156,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return new ArrayList<VProveedores>();
 	}
 	
+	@Override
 	public DtoProveedorMediador getProveedorParametrizado(Long idActivo, String tipoTrabajo, String subtipoTrabajo,String cartera, String subcartera) {
 		CFGProveedorPredeterminado pvePredeterminado = new CFGProveedorPredeterminado();
 		CFGProveedorPredeterminado segundo = new CFGProveedorPredeterminado();
@@ -6468,6 +6471,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 	}
 	
+	@Override
 	public List<DDIdentificadorReam> getComboAreaPeticionaria(){
 		List<DDIdentificadorReam> list = new ArrayList<DDIdentificadorReam>();
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "borrado", 0);
@@ -6478,4 +6482,21 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return list;
 	}
+	
+	@Override
+	public BigDecimal getImporteTotalSuplidosByTrabajo(Trabajo trabajo) {
+		BigDecimal importeSuplidos = new BigDecimal(0);
+		if(trabajo != null) {
+			List<TrabajoProvisionSuplido> suplidos = trabajo.getProvisionSuplido();
+			if(suplidos != null && !suplidos.isEmpty()) {
+				for (TrabajoProvisionSuplido trabajoProvisionSuplido : suplidos) {
+					importeSuplidos = importeSuplidos.add(new BigDecimal(trabajoProvisionSuplido.getImporte()));
+				}
+			}
+			
+		}
+		return importeSuplidos;
+	}
+	
+	
 }

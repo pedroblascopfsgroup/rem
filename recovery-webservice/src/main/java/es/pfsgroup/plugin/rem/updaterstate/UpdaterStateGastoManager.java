@@ -172,14 +172,14 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)) {
 					if(gasto.getGestoria() == null) {
 						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-							if(gastodetalleLinea.getCppBase() == null && gastodetalleLinea.getCccBase() == null) {
+							if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCccBase().isEmpty()) {
 								error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_Y_PARTIDAS);
 								return error;
 							}
 						}
 					}else {
 						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-							if(gastodetalleLinea.getCppBase() == null) {
+							if(gastodetalleLinea.getCppBase() == null  || gastodetalleLinea.getCppBase().isEmpty()) {
 								error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA);
 								return error;
 							}
@@ -187,21 +187,22 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 					}
 				}else if(DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)){
 						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-							if(gastodetalleLinea.getCccBase() == null) {
+							if(gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCccBase().isEmpty()) {
 								error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
 								return error;
 							}
 						}
 				}else if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera)) {
 					for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-						if(gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCapituloBase() == null || gastodetalleLinea.getApartadoBase() == null) {
+						if(gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCapituloBase() == null || gastodetalleLinea.getApartadoBase() == null
+						|| gastodetalleLinea.getCccBase().isEmpty() || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCapituloBase().isEmpty() || gastodetalleLinea.getApartadoBase().isEmpty()) {
 							error = messageServices.getMessage(VALIDACION_CUENTA_PARTIDAS_APARTADO_CAPITULO);
 							return error;
 						}
 					}
 				}else{
 					for(GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-						if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCccBase() == null) {
+						if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase().isEmpty()) {
 							error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_Y_PARTIDAS); 
 							return error;
 						}

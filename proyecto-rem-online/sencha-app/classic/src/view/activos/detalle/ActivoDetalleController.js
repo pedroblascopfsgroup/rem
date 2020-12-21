@@ -2990,7 +2990,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		// Cargar grid 'ofertantes'.
 		var storeOfertantes = me.getViewModel().getData().storeOfertantesOfertaDetalle;
 		storeOfertantes.getProxy().getExtraParams().ofertaID = idOferta;
-		debugger;
 		storeOfertantes.load({
 			success: function(record) {	
 				me.lookupReference('ofertanteslistdetalleofertaref').refresh();

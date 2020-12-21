@@ -80,7 +80,10 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
@@ -156,6 +159,9 @@ import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import net.sf.json.JSONObject;
 
 @Controller
@@ -3763,5 +3769,69 @@ public class ActivoController extends ParadiseJsonController {
 		}
 		
 		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void bajarAdjuntoOfertante (HttpServletRequest request, HttpServletResponse response) {
+        
+		Long idClienteComercial = null;
+		Long idClienteGCD = null;
+		Long idAdjuntoComprador = null;
+		AdjuntoComprador adjuntoComprador = null;
+		DtoAdjunto dtoAdjunto = new DtoAdjunto();
+		
+		Filter filterOfertaID = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(request.getParameter("id")));
+		Oferta oferta = genericDao.get(Oferta.class, filterOfertaID);	
+		if(oferta != null) {
+			ClienteComercial clienteComercial = oferta.getCliente();
+			idClienteComercial = clienteComercial.getId();
+		}
+		
+		Filter filterClienteCGD = genericDao.createFilter(FilterType.EQUALS, "cliente.id", idClienteComercial);
+		ClienteGDPR clienteGCD = genericDao.get(ClienteGDPR.class, filterClienteCGD);
+		
+		
+		Filter filterClienteComercialGDPR = genericDao.createFilter(FilterType.EQUALS, "cliente.id", idClienteComercial);
+		if(clienteGCD != null) {
+			//adjuntoComprador = clienteGCD.getAdjuntoComprador();
+			Filter filterAdjuntoComprador = genericDao.createFilter(FilterType.EQUALS, "id", 21L);
+			adjuntoComprador = genericDao.get(AdjuntoComprador.class, filterAdjuntoComprador);
+		}		
+		//ADC_ID_DOCUMENTO_REST
+		if(adjuntoComprador != null) {
+			dtoAdjunto.setId(adjuntoComprador.getIdDocRestClient());
+		}
+		
+		//Id de la entidad
+		dtoAdjunto.setIdEntidad(Long.parseLong(request.getParameter("idEntidad")));
+		//Nombre del documento
+		String nombreDocumento = request.getParameter("nombreDocumento");
+		dtoAdjunto.setNombre(nombreDocumento);
+		 
+       	FileItem fileItem = activoApi.getFileItemPlusvalia(dtoAdjunto);
+		
+       	try { 
+
+       		if(!Checks.esNulo(fileItem)) {
+	       		ServletOutputStream salida = response.getOutputStream();
+
+	       		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+	       		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+	       		response.setHeader("Cache-Control", "max-age=0");
+	       		response.setHeader("Expires", "0");
+	       		response.setHeader("Pragma", "public");
+	       		response.setDateHeader("Expires", 0); //prevents caching at the proxy
+	       		response.setContentType(fileItem.getContentType());
+
+	       		// Write
+	       		FileUtils.copy(fileItem.getInputStream(), salida);
+	       		salida.flush();
+	       		salida.close();
+       		}
+       		
+       	} catch (Exception e) { 
+       		logger.error(e.getMessage(),e);
+       	}
+
 	}
 }

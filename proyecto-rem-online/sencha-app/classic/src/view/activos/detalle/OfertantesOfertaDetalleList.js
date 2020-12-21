@@ -4,6 +4,7 @@ Ext.define('HreRem.view.activos.detalle.OfertantesOfertaDetalleList', {
     reference	: 'ofertanteslistdetalleofertaref',
 	topBar		: false,
 	idPrincipal : 'oferta.id',
+	controller : 'activodetalle',
     bind		: {
         store: '{storeOfertantesOfertaDetalle}'
     },
@@ -73,7 +74,37 @@ Ext.define('HreRem.view.activos.detalle.OfertantesOfertaDetalleList', {
 		        	dataIndex: 'regimenMatrimonial',
 		        	text: HreRem.i18n('header.regimen.matrimonial'),
 		        	flex:2
-		        }
+		        },{
+					   xtype: 'actioncolumn',
+					      flex: 1,
+					      hideable: false,
+					      text: HreRem.i18n('column.ofertantes.documento.identificativo'),
+					        items: [{
+					           	iconCls: 'ico-download',
+					           	tooltip: "Documento Identificativo",
+					            handler: function(grid, rowIndex) {
+					            	var record = grid.getRecord(rowIndex);
+						            var grid = me;						               
+						           // me.fireEvent("download", grid, record);			
+						            grid.getController().downloadDocumentoAdjuntoOfertasController(grid, record);
+			            		}
+					        }]
+				   },{
+					   xtype: 'actioncolumn',
+					      flex: 1,
+					      hideable: false,
+					      text: HreRem.i18n('column.ofertantes.documento.gdpr'),
+					        items: [{
+					           	iconCls: 'ico-download',
+					           	tooltip: "Documento GDPR",
+					            handler: function(grid, rowIndex) {
+					            	var record = grid.getRecord(rowIndex);
+						            var grid = me;						               
+						           // me.fireEvent("download", grid, record);			
+						            grid.getController().downloadDocumentoAdjuntoOfertasController(grid, record);
+			            		}
+					        }]
+				   }
 	    ];
 
 	    me.dockedItems = [

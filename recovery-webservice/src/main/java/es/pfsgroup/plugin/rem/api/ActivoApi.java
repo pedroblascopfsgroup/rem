@@ -1373,6 +1373,10 @@ public interface ActivoApi {
 	
 	boolean destroyCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
 	
+	//Método que obtiene un archivo de ofertantes
+
+	FileItem getFileItemOfertante(DtoAdjunto dtoAdjunto);
+	
 	
 	
 }

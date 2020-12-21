@@ -105,6 +105,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                	grid.getStore().load();
                }
            }
+          
     },
     
 	cargarTabData: function (form) {
@@ -1452,7 +1453,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 		config.url=$AC.getWebPath()+"activo/bajarAdjuntoActivo."+$AC.getUrlPattern();
 		config.params = {};
-		config.params.id=record.get('id');
+		config.params.id=record.get('ofertaID');
 		config.params.idActivo=record.get("idActivo");
 		config.params.nombreDocumento=record.get("nombre").replace(/,/g, "");
 		me.fireEvent("downloadFile", config);
@@ -1462,7 +1463,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		var me = this,
 		config = {};
-
+		
 		config.url=$AC.getWebPath()+"promocion/bajarAdjuntoActivoPromocion."+$AC.getUrlPattern();
 		config.params = {};
 		config.params.id=record.get('id');
@@ -2989,6 +2990,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		// Cargar grid 'ofertantes'.
 		var storeOfertantes = me.getViewModel().getData().storeOfertantesOfertaDetalle;
 		storeOfertantes.getProxy().getExtraParams().ofertaID = idOferta;
+		debugger;
 		storeOfertantes.load({
 			success: function(record) {	
 				me.lookupReference('ofertanteslistdetalleofertaref').refresh();
@@ -6274,5 +6276,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onClickCerrarObservacionesEvolucion: function(btn) {
     	var me = this;
     	btn.up('window').hide();
+    },
+       
+	downloadDocumentoAdjuntoOfertasController: function(grid, record) {
+		var me = this,
+		config = {};
+		
+		config.url=$AC.getWebPath()+"activo/baj" +
+				"arAdjuntoOfertante."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('ofertaID');
+		config.params.idActivo=me.getViewModel().get("activo.id");
+		config.params.nombreDocumento=record.get("nombre").replace(/,/g, "");
+		me.fireEvent("downloadFile", config);
     }
 });

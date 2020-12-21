@@ -2636,6 +2636,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (!Checks.esNulo(oferta.getCliente().getEstadoCivil())) {
 					dto.setEstadoCivil(oferta.getCliente().getEstadoCivil().getDescripcion());
 				}
+				
+				
 				listaOfertantes.add(dto);
 			}
 
@@ -2661,6 +2663,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if (!Checks.esNulo(titularAdicional.getEstadoCivil())) {
 						dto.setEstadoCivil(titularAdicional.getEstadoCivil().getDescripcion());
 					}
+					titularAdicional.getDocumento();
 					listaOfertantes.add(dto);
 				}
 			}

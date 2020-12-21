@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -59,7 +60,7 @@ public class ClienteGDPR implements Serializable, Auditable{
     @Column(name = "NUM_DOCUMENTO")
     private String numDocumento;
     
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "ADCOM_ID")
     private AdjuntoComprador adjuntoComprador;
     

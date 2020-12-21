@@ -153,14 +153,6 @@ public class AdjuntoComprador implements Serializable, Auditable {
 	public void setAdjunto(Long adjunto) {
 		this.adjunto = adjunto;
 	}
-
-	public ClienteGDPR getClienteGDPR() {
-		return clienteGDPR;
-	}
-
-	public void setClienteGDPR(ClienteGDPR clienteGDPR) {
-		this.clienteGDPR = clienteGDPR;
-	}
 	
 	
 	

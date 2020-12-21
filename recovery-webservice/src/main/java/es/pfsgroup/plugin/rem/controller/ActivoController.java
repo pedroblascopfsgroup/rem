@@ -3790,20 +3790,21 @@ public class ActivoController extends ParadiseJsonController {
 		Filter filterClienteCGD = genericDao.createFilter(FilterType.EQUALS, "cliente.id", idClienteComercial);
 		ClienteGDPR clienteGCD = genericDao.get(ClienteGDPR.class, filterClienteCGD);
 		
-		
-		Filter filterClienteComercialGDPR = genericDao.createFilter(FilterType.EQUALS, "cliente.id", idClienteComercial);
 		if(clienteGCD != null) {
-			//adjuntoComprador = clienteGCD.getAdjuntoComprador();
-			Filter filterAdjuntoComprador = genericDao.createFilter(FilterType.EQUALS, "id", 21L);
-			adjuntoComprador = genericDao.get(AdjuntoComprador.class, filterAdjuntoComprador);
+			adjuntoComprador = clienteGCD.getAdjuntoComprador();
 		}		
 		//ADC_ID_DOCUMENTO_REST
 		if(adjuntoComprador != null) {
-			dtoAdjunto.setId(adjuntoComprador.getIdDocRestClient());
+			if (adjuntoComprador.getIdDocRestClient() != null) {
+				dtoAdjunto.setId(adjuntoComprador.getIdDocRestClient());
+			} else {
+				dtoAdjunto.setId(adjuntoComprador.getAdjunto());
+			}
+			
 		}
 		
 		//Id de la entidad
-		dtoAdjunto.setIdEntidad(Long.parseLong(request.getParameter("idEntidad")));
+		dtoAdjunto.setIdEntidad(Long.parseLong(request.getParameter("id")));
 		//Nombre del documento
 		String nombreDocumento = request.getParameter("nombreDocumento");
 		dtoAdjunto.setNombre(nombreDocumento);

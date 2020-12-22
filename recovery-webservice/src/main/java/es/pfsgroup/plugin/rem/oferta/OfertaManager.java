@@ -148,6 +148,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -518,8 +519,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// Mirar si hace falta validar que no se pueda modificar la
 			// oferta si ha pasado al comité
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())
-					&& (!oferta.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_PENDIENTE)
-					||	!oferta.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO))
+					&& !(DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equalsIgnoreCase(oferta.getEstadoOferta().getCodigo()) && DDEstadoOferta.CODIGO_RECHAZADA.equalsIgnoreCase(ofertaDto.getCodEstadoOferta())
+							|| DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equalsIgnoreCase(oferta.getEstadoOferta().getCodigo()) && DDEstadoOferta.CODIGO_CADUCADA.equalsIgnoreCase(ofertaDto.getCodEstadoOferta())
+							|| DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equalsIgnoreCase(oferta.getEstadoOferta().getCodigo()) && DDEstadoOferta.CODIGO_PENDIENTE.equalsIgnoreCase(ofertaDto.getCodEstadoOferta()))
 					&& Checks.esNulo(ofertaDto.getCodTarea())) {
 				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
@@ -1136,14 +1138,34 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				genericDao.save(TitularesAdicionalesOferta.class, titAdi);
 			}
 		}
-//		
-//		AdjuntoComprador adjCompr = new AdjuntoComprador();
-//		adjCompr.setIdDocRestClient(Long.parseLong(ofertaDto.getDocumentoIdentificativo()));	
-//		adjCompr.setNombreAdjunto(ofertaDto.getNombreDocumentoIdentificativo());
-//		adjCompr.setTipoDocumento(ofertaDto.getDocumentoGDPR());
-//		genericDao.save(AdjuntoComprador.class, adjCompr);
-//		//
 		
+		if (ofertaDto.getDocumentoIdentificativo() != null) {
+			AdjuntoComprador adjComprDocIdentificativo = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", ofertaDto.getDocumentoIdentificativo()));
+			if (adjComprDocIdentificativo == null) {
+				adjComprDocIdentificativo = new AdjuntoComprador();
+				adjComprDocIdentificativo.setIdDocRestClient(Long.parseLong(ofertaDto.getDocumentoIdentificativo()));	
+				adjComprDocIdentificativo.setNombreAdjunto(ofertaDto.getNombreDocumentoIdentificativo());
+				//DDTipoDocumentoActivo docIdentificativo = genericDao.get(DDTipoDocumentoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO));
+				//adjComprDocIdentificativo.setTipoDocumento(docIdentificativo.getDescripcion());
+				//adjComprDocIdentificativo.setMatricula(docIdentificativo.getMatricula());
+				adjComprDocIdentificativo.setTipoDocumento("Documento Identificativo");
+				adjComprDocIdentificativo.setMatricula("EN-01-CNCV-82");
+				genericDao.save(AdjuntoComprador.class, adjComprDocIdentificativo);
+			}
+		}
+		
+		if (ofertaDto.getDocumentoGDPR() != null) {
+			AdjuntoComprador adjComprConsGDPR = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", ofertaDto.getDocumentoGDPR()));
+			if (adjComprConsGDPR == null) {
+				adjComprConsGDPR = new AdjuntoComprador();
+				adjComprConsGDPR.setIdDocRestClient(Long.parseLong(ofertaDto.getDocumentoGDPR()));	
+				adjComprConsGDPR.setNombreAdjunto(ofertaDto.getNombreDocumentoGDPR());
+				DDTipoDocumentoActivo consGDPR = genericDao.get(DDTipoDocumentoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoDocumentoActivo.CODIGO_CONSENTIMIENTO_PROTECCION_DATOS));
+				adjComprConsGDPR.setTipoDocumento(consGDPR.getDescripcion());
+				adjComprConsGDPR.setMatricula(consGDPR.getMatricula());
+				genericDao.save(AdjuntoComprador.class, adjComprConsGDPR);
+			}
+		}		
 		
 		oferta.setTitularesAdicionales(listaTit);
 	}

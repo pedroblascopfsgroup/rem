@@ -957,6 +957,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setTitularesAdicionales(null);
 				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta, false);
 			}
+			
+			if (ofertaDto.getDocumentoIdentificativo() != null || ofertaDto.getDocumentoGDPR() != null) {
+				saveOrUpdateDocumentosGDPR(ofertaDto);
+			}
 
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoOferta());
 			
@@ -1139,8 +1143,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		
+		oferta.setTitularesAdicionales(listaTit);
+	}
+	
+	@Transactional(readOnly = false)
+	private void saveOrUpdateDocumentosGDPR(OfertaDto ofertaDto){
+		AdjuntoComprador adjComprDocIdentificativo = null;
+		AdjuntoComprador adjComprConsGDPR = null;
+		
 		if (ofertaDto.getDocumentoIdentificativo() != null) {
-			AdjuntoComprador adjComprDocIdentificativo = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", ofertaDto.getDocumentoIdentificativo()));
+			adjComprDocIdentificativo = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", ofertaDto.getDocumentoIdentificativo()));
 			if (adjComprDocIdentificativo == null) {
 				adjComprDocIdentificativo = new AdjuntoComprador();
 				adjComprDocIdentificativo.setIdDocRestClient(Long.parseLong(ofertaDto.getDocumentoIdentificativo()));	
@@ -1155,7 +1167,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		if (ofertaDto.getDocumentoGDPR() != null) {
-			AdjuntoComprador adjComprConsGDPR = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", ofertaDto.getDocumentoGDPR()));
+			adjComprConsGDPR = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", ofertaDto.getDocumentoGDPR()));
 			if (adjComprConsGDPR == null) {
 				adjComprConsGDPR = new AdjuntoComprador();
 				adjComprConsGDPR.setIdDocRestClient(Long.parseLong(ofertaDto.getDocumentoGDPR()));	
@@ -1165,9 +1177,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				adjComprConsGDPR.setMatricula(consGDPR.getMatricula());
 				genericDao.save(AdjuntoComprador.class, adjComprConsGDPR);
 			}
-		}		
-		
-		oferta.setTitularesAdicionales(listaTit);
+		}
 	}
 
 	@Override

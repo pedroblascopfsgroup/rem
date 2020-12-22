@@ -6829,8 +6829,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	checkDateInterval : function(obj) {
 		if (!obj.readOnly && !obj.disabled) {
 			var me = this;
-			var dateStamp = me.lookupReference("fechaPresentacionRegistro")
-					.getValue().getTime();
+			var dateStamp = obj.previousSibling('[reference=fechaPresentacionRegistro]').getValue().getTime();
 			obj.setMinValue(new Date(dateStamp));
 			if (obj.isExpanded) {
 				obj.collapse();

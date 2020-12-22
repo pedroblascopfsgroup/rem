@@ -98,6 +98,7 @@ public class MSVMasivaAltaTrabajosValidator extends MSVExcelValidatorAbstract {
 	private final String PROVEEDOR_EN_CARTERA_ACTIVO="msg.error.masiva.alta.trabajos.error.proveedor.cartera.activo";
 	private final String ERROR_IDTAREA_NO_EXISTE="msg.error.masivo.alta.trabajos.error.id.tarea.no.existe.webservice";
 	
+	
 	//
 	private final int FILA_CABECERA = 0;
 	private final int FILA_DATOS = 1;
@@ -130,6 +131,9 @@ public class MSVMasivaAltaTrabajosValidator extends MSVExcelValidatorAbstract {
 	private Integer numFilasHoja;	
 	private Map<String, List<Integer>> mapaErrores;	
 	private final Log logger = LogFactory.getLog(getClass());
+	
+	private final String tipTrabajoActTecnica ="03";
+	private final String tipoTrabajoObtDocu ="02";
 
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -295,7 +299,8 @@ public class MSVMasivaAltaTrabajosValidator extends MSVExcelValidatorAbstract {
 					mapaErrores.get(messageServices.getMessage(ACTIVO_FUERA_PERIMETRO)).add(fila);
 					esCorrecto = false;
 				}
-				if (!Checks.esNulo(tipoTrabajo) && !particularValidator.existeTrabajoByCodigo(tipoTrabajo)) {
+				if (!Checks.esNulo(tipoTrabajo) && !(tipTrabajoActTecnica.equals(tipoTrabajo) || tipoTrabajoObtDocu.equals(tipoTrabajo))) {
+					
 					mapaErrores.get(messageServices.getMessage(TRABAJO_NO_EXISTE)).add(fila);
 					esCorrecto = false;
 				}
@@ -328,6 +333,7 @@ public class MSVMasivaAltaTrabajosValidator extends MSVExcelValidatorAbstract {
 						esCorrecto = false;
 					}
 				}
+			
 				
 				//VALIDACION WEBSERVICE
 				if (!Checks.esNulo(idTarea)){

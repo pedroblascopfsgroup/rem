@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20201113
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-11745
+--## INCIDENCIA_LINK=HREOS-12526
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en ACT_CONFIG_PTDAS_PREP los datos añadidos en T_ARRAY_DATA
@@ -32,12 +32,10 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-11745';
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-12526';
 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_CONFIG_PTDAS_PREP'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_DD_LBK VARCHAR(50 CHAR); -- Vble. que almacena el id de la cartera LBK.
-    V_DD_BNK VARCHAR(50 CHAR); -- Vble. que almacena el id de la cartera BNK.
-	  V_EJE_ID VARCHAR(50 CHAR); -- Vble. que almacena el id del año.
+    V_BNK VARCHAR(50 CHAR); -- Vble. que almacena el id de la cartera BNK.
 
     V_CONSTRAINT_NAME VARCHAR2(30 CHAR);
 
@@ -88,12 +86,7 @@ BEGIN
     V_SQL := 'TRUNCATE TABLE '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA;
     EXECUTE IMMEDIATE V_SQL;
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] Recogemos el valor id de la cartera, porque es el mismo para todos.');
-    
-    V_SQL := 'SELECT DD_CRA_ID 
-      FROM '||V_ESQUEMA||'.DD_CRA_CARTERA 
-      WHERE DD_CRA_CODIGO = ''08''';
-    EXECUTE IMMEDIATE V_SQL INTO V_LBK;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Recogemos el valor id de la cartera a utilizar.');
 
     V_SQL := 'SELECT DD_CRA_ID 
       FROM '||V_ESQUEMA||'.DD_CRA_CARTERA 
@@ -104,9 +97,9 @@ BEGIN
     V_MSQL := '
       INSERT INTO '|| V_ESQUEMA ||'.TMP_'||V_TEXT_TABLA||' (' ||
         ' CPP_PTDAS_ID, CPP_PARTIDA_PRESUPUESTARIA, DD_TGA_ID, DD_STG_ID, DD_TIM_ID, DD_CRA_ID, DD_SCR_ID'||
-        '  , PRO_ID, EJE_ID, CPP_ARRENDAMIENTO, CPP_REFACTURABLE, FECHACREAR, BORRADO)'||
+        '  , CPP_ARRENDAMIENTO, CPP_REFACTURABLE, FECHACREAR, BORRADO)'||
         ' SELECT ROWNUM, CPP.CPP_PARTIDA_PRESUPUESTARIA, STG.DD_TGA_ID, STG.DD_STG_ID, TIM.DD_TIM_ID, CPP.DD_CRA_ID, CPP.DD_SCR_ID'||
-        '  , CPP.PRO_ID, CPP.EJE_ID, CPP.CPP_ARRENDAMIENTO, CPP.CPP_REFACTURABLE, SYSDATE, 0'||
+        '  , CPP.CPP_ARRENDAMIENTO, CPP.CPP_REFACTURABLE, SYSDATE, 0'||
         ' FROM '||V_ESQUEMA||'.CPP_CONFIG_PTDAS_PREP CPP'||
         ' JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON STG.DD_STG_ID = CPP.DD_STG_ID'||
         '  AND STG.BORRADO = 0'||
@@ -115,7 +108,7 @@ BEGIN
         ' WHERE CPP.BORRADO = 0 '||
         '  AND CPP.CPP_PARTIDA_PRESUPUESTARIA IS NOT NULL'||
         '  AND CPP.DD_CRA_ID IS NOT NULL'||
-        '  AND CPP.DD_CRA_ID NOT IN ('||V_LBK||', '||V_BNK||')
+        '  AND CPP.DD_CRA_ID = '||V_BNK||'
       ';
     EXECUTE IMMEDIATE V_MSQL;
 
@@ -131,7 +124,7 @@ BEGIN
           SELECT CPP_PTDAS_ID
               , ROW_NUMBER() OVER(
                   PARTITION BY DD_TGA_ID, DD_STG_ID, DD_TIM_ID, DD_CRA_ID, DD_SCR_ID
-                      , PRO_ID, EJE_ID, CPP_ARRENDAMIENTO, CPP_REFACTURABLE, DD_TBE_ID
+                      , PRO_ID, CPP_ARRENDAMIENTO, CPP_REFACTURABLE, DD_TBE_ID
                       , CPP_ACTIVABLE, CPP_PLAN_VISITAS, DD_TCH_ID, DD_TRT_ID
                       , CPP_VENDIDO
                   ORDER BY CPP_PTDAS_ID
@@ -153,7 +146,7 @@ BEGIN
           SELECT CPP_PTDAS_ID
               , ROW_NUMBER() OVER(
                   PARTITION BY DD_TGA_ID, DD_STG_ID, DD_TIM_ID, DD_CRA_ID, DD_SCR_ID
-                      , PRO_ID, EJE_ID, CPP_ARRENDAMIENTO, CPP_REFACTURABLE, DD_TBE_ID
+                      , PRO_ID, CPP_ARRENDAMIENTO, CPP_REFACTURABLE, DD_TBE_ID
                       , CPP_ACTIVABLE, CPP_PLAN_VISITAS, DD_TCH_ID, DD_TRT_ID
                       , CPP_VENDIDO
                   ORDER BY CPP_PTDAS_ID
@@ -232,7 +225,7 @@ BEGIN
               , TMP.DD_SCR_ID
               , PRO.PRO_ID
               , TMP.PRO_ID TMP_PRO
-              , TMP.EJE_ID
+              , EJE.EJE_ID
               , TMP.CPP_ARRENDAMIENTO
               , TMP.CPP_REFACTURABLE
               , NULL DD_TBE_ID
@@ -245,7 +238,7 @@ BEGIN
               , NULL DD_TRT_ID
               , VEN.NUMERO CPP_VENDIDO
               , RANK() OVER(
-                  PARTITION BY TMP.DD_TGA_ID, TMP.DD_STG_ID, TMP.DD_TIM_ID, TMP.DD_CRA_ID, TMP.DD_SCR_ID, TMP.EJE_ID, PRO.PRO_ID, TMP.CPP_ARRENDAMIENTO, TMP.CPP_REFACTURABLE
+                  PARTITION BY TMP.DD_TGA_ID, TMP.DD_STG_ID, TMP.DD_TIM_ID, TMP.DD_CRA_ID, TMP.DD_SCR_ID, EJE.EJE_ID, PRO.PRO_ID, TMP.CPP_ARRENDAMIENTO, TMP.CPP_REFACTURABLE
                       , TMP.CPP_PRINCIPAL
                   ORDER BY 
                       CASE 
@@ -259,6 +252,8 @@ BEGIN
               AND CRA.BORRADO = 0
           JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.DD_CRA_ID = CRA.DD_CRA_ID
               AND PRO.BORRADO = 0
+          JOIN '||V_ESQUEMA||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ANYO IN (2019, 2020, 2021)
+              AND EJE.BORRADO = 0
           JOIN '||V_ESQUEMA||'.AUX_CERO_UNO VEN ON 1 = 1
           WHERE TMP.DD_SCR_ID IS NOT NULL
               AND TMP.BORRADO = 0
@@ -348,7 +343,7 @@ BEGIN
               , SCR.DD_SCR_ID
               , PRO.PRO_ID
               , TMP.PRO_ID TMP_PRO
-              , TMP.EJE_ID
+              , EJE.EJE_ID
               , TMP.CPP_ARRENDAMIENTO
               , TMP.CPP_REFACTURABLE
               , NULL DD_TBE_ID
@@ -361,7 +356,7 @@ BEGIN
               , NULL DD_TRT_ID
               , VEN.NUMERO CPP_VENDIDO
               , RANK() OVER(
-                  PARTITION BY TMP.DD_TGA_ID, TMP.DD_STG_ID, TMP.DD_TIM_ID, TMP.DD_CRA_ID, SCR.DD_SCR_ID, TMP.EJE_ID, PRO.PRO_ID, TMP.CPP_ARRENDAMIENTO, TMP.CPP_REFACTURABLE
+                  PARTITION BY TMP.DD_TGA_ID, TMP.DD_STG_ID, TMP.DD_TIM_ID, TMP.DD_CRA_ID, SCR.DD_SCR_ID, EJE.EJE_ID, PRO.PRO_ID, TMP.CPP_ARRENDAMIENTO, TMP.CPP_REFACTURABLE
                       , TMP.CPP_PRINCIPAL
                   ORDER BY 
                       CASE 
@@ -377,6 +372,8 @@ BEGIN
               AND SCR.BORRADO = 0
           JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.DD_CRA_ID = CRA.DD_CRA_ID
               AND PRO.BORRADO = 0
+          JOIN '||V_ESQUEMA||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ANYO IN (2019, 2020, 2021)
+              AND EJE.BORRADO = 0
           JOIN '||V_ESQUEMA||'.AUX_CERO_UNO VEN ON 1 = 1
           WHERE TMP.DD_SCR_ID IS NULL
               AND TMP.BORRADO = 0
@@ -409,6 +406,123 @@ BEGIN
     V_PASO_FIN := SYSTIMESTAMP;
     V_DURACION := V_PASO_FIN - V_PASO_INI;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||SQL%ROWCOUNT||' partidas sin subcartera inicial insertadas. '||V_DURACION);
+    V_PASO_INI := SYSTIMESTAMP;
+
+    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
+          CPP_PTDAS_ID
+          , CPP_PARTIDA_PRESUPUESTARIA
+          , DD_TGA_ID
+          , DD_STG_ID
+          , DD_TIM_ID
+          , DD_CRA_ID
+          , DD_SCR_ID
+          , PRO_ID
+          , EJE_ID
+          , CPP_ARRENDAMIENTO
+          , CPP_REFACTURABLE
+          , USUARIOCREAR
+          , FECHACREAR
+          , DD_TBE_ID
+          , CPP_APARTADO
+          , CPP_CAPITULO
+          , CPP_ACTIVABLE
+          , CPP_PLAN_VISITAS
+          , DD_TCH_ID
+          , CPP_PRINCIPAL
+          , DD_TRT_ID
+          , CPP_VENDIDO
+      )
+      SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL
+          , CPP.CPP_PARTIDA_PRESUPUESTARIA
+          , CPP.DD_TGA_ID
+          , CPP.DD_STG_ID
+          , CPP.DD_TIM_ID
+          , CPP.DD_CRA_ID
+          , CPP.DD_SCR_ID
+          , CPP.PRO_ID
+          , CPP.EJE_ID
+          , CPP.CPP_ARRENDAMIENTO
+          , CPP.CPP_REFACTURABLE
+          , '''||V_ITEM||'''
+          , SYSDATE
+          , CPP.DD_TBE_ID
+          , CPP.CPP_APARTADO
+          , CPP.CPP_CAPITULO
+          , CPP.CPP_ACTIVABLE
+          , CPP.CPP_PLAN_VISITAS
+          , CPP.DD_TCH_ID
+          , CPP.CPP_PRINCIPAL
+          , CPP.DD_TRT_ID
+          , CPP.CPP_VENDIDO
+      FROM (
+          SELECT TMP.CPP_PARTIDA_PRESUPUESTARIA
+              , TMP.DD_TGA_ID
+              , TMP.DD_STG_ID
+              , TMP.DD_TIM_ID
+              , TMP.DD_CRA_ID
+              , NULL DD_SCR_ID
+              , PRO.PRO_ID
+              , TMP.PRO_ID TMP_PRO
+              , EJE.EJE_ID
+              , 0 CPP_ARRENDAMIENTO
+              , TMP.CPP_REFACTURABLE
+              , NULL DD_TBE_ID
+              , TMP.CPP_APARTADO
+              , TMP.CPP_CAPITULO
+              , 0 CPP_ACTIVABLE
+              , 0 CPP_PLAN_VISITAS
+              , NULL DD_TCH_ID
+              , TMP.CPP_PRINCIPAL
+              , NULL DD_TRT_ID
+              , 0 CPP_VENDIDO
+              , RANK() OVER(
+                  PARTITION BY TMP.DD_TGA_ID, TMP.DD_STG_ID, TMP.DD_TIM_ID, TMP.DD_CRA_ID, EJE.EJE_ID, PRO.PRO_ID, TMP.CPP_ARRENDAMIENTO, TMP.CPP_REFACTURABLE
+                      , TMP.CPP_PRINCIPAL
+                  ORDER BY 
+                      CASE 
+                          WHEN TMP.PRO_ID IS NOT NULL AND NVL(PRO.PRO_ID, 0) = NVL(TMP.PRO_ID, 0) THEN 0
+                          WHEN TMP.PRO_ID IS NULL AND NVL(PRO.PRO_ID, 0) <> NVL(TMP.PRO_ID, 0) THEN 1
+                          ELSE 2
+                      END
+                  ) RN 
+          FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||' TMP
+          JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = TMP.DD_CRA_ID
+              AND CRA.BORRADO = 0
+          JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.DD_CRA_ID = CRA.DD_CRA_ID
+              AND PRO.BORRADO = 0
+          JOIN '||V_ESQUEMA||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ANYO IN (2019, 2020, 2021)
+              AND EJE.BORRADO = 0
+          WHERE TMP.DD_SCR_ID IS NULL
+              AND TMP.BORRADO = 0
+      ) CPP
+      WHERE CPP.RN = 1
+          AND (CPP.TMP_PRO = CPP.PRO_ID OR CPP.TMP_PRO IS NULL)
+          AND NOT EXISTS (
+              SELECT 1
+              FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' AUX
+              WHERE AUX.DD_TGA_ID = CPP.DD_TGA_ID
+                  AND AUX.DD_STG_ID = CPP.DD_STG_ID
+                  AND AUX.DD_TIM_ID = CPP.DD_TIM_ID
+                  AND AUX.DD_CRA_ID = CPP.DD_CRA_ID
+                  AND AUX.DD_SCR_ID IS NULL
+                  AND AUX.PRO_ID = CPP.PRO_ID
+                  AND AUX.EJE_ID = CPP.EJE_ID
+                  AND AUX.CPP_ARRENDAMIENTO = 0
+                  AND AUX.CPP_REFACTURABLE = CPP.CPP_REFACTURABLE
+                  AND AUX.DD_TBE_ID IS NULL
+                  AND AUX.CPP_ACTIVABLE = CPP.CPP_ACTIVABLE
+                  AND AUX.CPP_PLAN_VISITAS = CPP.CPP_PLAN_VISITAS
+                  AND NVL(AUX.DD_TCH_ID, 0) = NVL(CPP.DD_TCH_ID, 0)
+                  AND AUX.CPP_PRINCIPAL = CPP.CPP_PRINCIPAL
+                  AND NVL(AUX.DD_TRT_ID, 0) = NVL(CPP.DD_TRT_ID, 0)
+                  AND AUX.CPP_VENDIDO = 0
+                  AND AUX.BORRADO = 0
+    )';
+    EXECUTE IMMEDIATE V_MSQL;
+
+    V_PASO_FIN := SYSTIMESTAMP;
+    V_DURACION := V_PASO_FIN - V_PASO_INI;
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||SQL%ROWCOUNT||' partidas sin subcartera final insertadas. '||V_DURACION);
 
     COMMIT;  
 

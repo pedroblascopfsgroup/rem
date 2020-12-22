@@ -6217,6 +6217,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return uAsAlquiladas;
 	}
+	
+	@Override
+	public boolean isAlquiladoTotalmente(Long idActivoMatriz) {
+		boolean uAsAlquiladas = true;
+		ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(idActivoMatriz);
+		
+		List<ActivoAgrupacionActivo> activos = agr.getActivos();
+		
+		if (!Checks.estaVacio(activos)) {
+			for (ActivoAgrupacionActivo activo : activos) {
+				if (!isActivoMatriz(activo.getActivo().getId()) && (!isActivoAlquilado(activo.getActivo()) && !isOcupadoConTituloOrEstadoAlquilado(activo.getActivo()))) {
+					uAsAlquiladas = false;
+					break;
+				}
+			}
+		}
+		
+		return uAsAlquiladas;
+	}
 
 	@Override
 	public List<DDCesionSaneamiento> getPerimetroAppleCesion(String codigoServicer) {
@@ -6303,14 +6322,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			} else {
 				tributo.setNumTributo(dto.getNumTributo());
 			}
-
-			if (!Checks.esNulo(tributo.getId())) {
-				genericDao.update(ActivoTributos.class, tributo);
-			} else {
-				tributo.setAuditoria(Auditoria.getNewInstance());
-				genericDao.save(ActivoTributos.class, tributo);
-			}
-				
+	
 			if(!Checks.esNulo(dto.getTipoTributo())) {
 				DDTipoTributo tipoTributo = genericDao.get(DDTipoTributo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoTributo()));
 				tributo.setTipoTributo(tipoTributo);
@@ -6354,7 +6366,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					tributo.setMotivoExento(motivoexento);
 				}
 			}
-									
+					
+			if (!Checks.esNulo(tributo.getId())) {
+				genericDao.update(ActivoTributos.class, tributo);
+			} else {
+				tributo.setAuditoria(Auditoria.getNewInstance());
+				genericDao.save(ActivoTributos.class, tributo);
+			}
+			
 			return true;
 
 		} else {

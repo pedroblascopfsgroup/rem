@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20201026
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20201221
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-8285
+--## INCIDENCIA_LINK=REMVIP-8566
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##	    0.2 Juan Bautista Alfonso - REMVIP-8566 - Añadido campo TAS_ILOCALIZABLE
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -64,6 +65,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_ACTUALIZA_TASACION_BBVA (
        ,  CODIGO_FIRMA 					IN  #ESQUEMA#.ACT_TAS_TASACION.TAS_CODIGO_FIRMA_BBVA%TYPE
        ,  FECHA_RECEPCION_TASACION 		IN  VARCHAR2
        ,  ID_EXTERNO 					IN  #ESQUEMA#.ACT_TAS_TASACION.TAS_ID_EXTERNO_BBVA%TYPE
+       ,  ILOCALIZABLE					IN  #ESQUEMA#.ACT_TAS_TASACION.TAS_ILOCALIZABLE%TYPE
        ,  COD_RETORNO    	   OUT NUMBER
 ) AS
 
@@ -135,7 +137,9 @@ V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 	T_TIPO_DATA(''''||COSTE_REPO_NETO_FINALIZADO||'''','TAS_COSTE_REPO_NETO_FINALIZADO'),
 	T_TIPO_DATA(''''||COSTE_REPO_NETO_ACTUAL||'''','TAS_COSTE_REPO_NETO_ACTUAL'),
 	T_TIPO_DATA(''''||CODIGO_FIRMA||'''','TAS_CODIGO_FIRMA_BBVA'),
-	T_TIPO_DATA(''''||FECHA_RECEPCION_TASACION||'''','TAS_FECHA_RECEPCION_TASACION')
+	T_TIPO_DATA(''''||FECHA_RECEPCION_TASACION||'''','TAS_FECHA_RECEPCION_TASACION'),
+	T_TIPO_DATA(''''||ILOCALIZABLE||'''','TAS_ILOCALIZABLE')
+	
 
 );
 V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -429,6 +433,7 @@ BEGIN
 	                              ,  TAS_CODIGO_FIRMA_BBVA
 	                              ,  TAS_FECHA_RECEPCION_TASACION
 				       ,  TAS_ID_EXTERNO_BBVA
+				       ,  TAS_ILOCALIZABLE
 	                            )
 	                            SELECT '||ACT_ID||',
 	                                   '||TAS_ID||',
@@ -478,7 +483,8 @@ BEGIN
 	                                   '''||COSTE_REPO_NETO_ACTUAL||''',     
 	                                   '''||CODIGO_FIRMA||''',          
 	                                   TO_DATE('''||FECHA_RECEPCION_TASACION||''' ,''yyyymmdd''),
-					    '''||ID_EXTERNO||'''  
+					    '''||ID_EXTERNO||''',
+					    '''||ILOCALIZABLE||'''  
 	                            FROM DUAL
 	                ';
 	                EXECUTE IMMEDIATE V_MSQL;

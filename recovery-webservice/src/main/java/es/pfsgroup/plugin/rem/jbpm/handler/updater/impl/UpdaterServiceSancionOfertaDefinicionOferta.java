@@ -136,7 +136,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 				expediente.setEstado(estado);
 				
-				if(expediente.getCondicionante().getSolicitaReserva()!=null 
+				/*if(expediente.getCondicionante().getSolicitaReserva()!=null 
 						&& RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {
 					EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
 					
@@ -149,7 +149,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 						ge.setIdTipoGestor(tipoGestorComercial.getId());
 						gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);
 					}
-				}
+				}*/
 				// Una vez aprobado el expediente, se congelan el resto de
 				// ofertas que no estén rechazadas (aceptadas y pendientes)
 				List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());

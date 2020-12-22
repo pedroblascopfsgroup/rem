@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Beltrán
---## FECHA_CREACION=20200820
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20201221
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-7944
+--## INCIDENCIA_LINK=REMVIP-8455
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM - UVEM. Nuevas columnas. Anula DDL_99900087
 --##           
@@ -24,6 +24,7 @@
 --##    	0.12 Oscar Diestre - REMVIP-6203 - Modificados merges asociados a ACT_ACTIVO para minimizar cambios y comentados merges duplicados ( parte 4 )
 --##    	0.13 Oscar Diestre - REMVIP-6374 - En el insert de ACT_MLV_MOVIMIENTO_LLAVE informar también MLV_COD_TENEDOR_PED_NO_PVE
 --##    	0.14 Juan Beltrán  - REMVIP-7944 - Prevalece el valor del campo ACT_VPO si viene informado desde REM
+--##      0.15 Juan Alfonso  - REMVIP-8455 - Modificado titulo activo, si codigo entrada es 14 o 12 subtipo titulo activo: propio de origen funcional 13
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -1150,7 +1151,8 @@ BEGIN
                 FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
                 INNER JOIN '||V_ESQUEMA||'.DD_STA_SUBTIPO_TITULO_ACTIVO STA 
                     ON CASE WHEN APR.COD_ENTRADA_ACTIVO = ''02'' THEN ''04''
-                                                                 ELSE APR.COD_ENTRADA_ACTIVO END = STA.DD_STA_CODIGO   
+                            WHEN APR.COD_ENTRADA_ACTIVO = ''12'' OR APR.COD_ENTRADA_ACTIVO = ''14'' THEN ''13''
+                            ELSE APR.COD_ENTRADA_ACTIVO END = STA.DD_STA_CODIGO   
                 INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO                   ACT
                     ON ACT.ACT_NUM_ACTIVO_UVEM = APR.ACT_NUMERO_UVEM                                               
                 AND ( ( ACT.DD_STA_ID <> STA.DD_STA_ID ) OR ( ACT.DD_TTA_ID <> STA.DD_TTA_ID ) )

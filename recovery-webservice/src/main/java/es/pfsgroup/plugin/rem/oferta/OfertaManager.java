@@ -30,6 +30,7 @@ import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -44,6 +45,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
+import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -1423,7 +1425,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.APROBADO);
 				expedienteComercial.setEstado(estadoExpCom);
 				expedienteComercial.setFechaSancion(new Date());
+				if(expedienteComercial.getCondicionante().getSolicitaReserva()!=null && 1 == expedienteComercial.getCondicionante().getSolicitaReserva()) {															
+					EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+							.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
 
+					if(gestorExpedienteComercialManager.getGestorByExpedienteComercialYTipo(expedienteComercial, "GBOAR") == null) {
+						GestorEntidadDto ge = new GestorEntidadDto();
+						ge.setIdEntidad(expedienteComercial.getId());
+						ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+						ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());								
+						ge.setIdTipoGestor(tipoGestorComercial.getId());
+						gestorExpedienteComercialManager.insertarGestorAdicionalExpedienteComercial(ge);																	
+					}
+				}
+				
 				genericDao.update(ExpedienteComercial.class, expedienteComercial);
 
 			}else{

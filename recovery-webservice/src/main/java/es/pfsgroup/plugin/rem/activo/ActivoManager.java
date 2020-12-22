@@ -6323,14 +6323,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			} else {
 				tributo.setNumTributo(dto.getNumTributo());
 			}
-
-			if (!Checks.esNulo(tributo.getId())) {
-				genericDao.update(ActivoTributos.class, tributo);
-			} else {
-				tributo.setAuditoria(Auditoria.getNewInstance());
-				genericDao.save(ActivoTributos.class, tributo);
-			}
-				
+	
 			if(!Checks.esNulo(dto.getTipoTributo())) {
 				DDTipoTributo tipoTributo = genericDao.get(DDTipoTributo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoTributo()));
 				tributo.setTipoTributo(tipoTributo);
@@ -6374,7 +6367,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					tributo.setMotivoExento(motivoexento);
 				}
 			}
-									
+					
+			if (!Checks.esNulo(tributo.getId())) {
+				genericDao.update(ActivoTributos.class, tributo);
+			} else {
+				tributo.setAuditoria(Auditoria.getNewInstance());
+				genericDao.save(ActivoTributos.class, tributo);
+			}
+			
 			return true;
 		} else {
 			return false;

@@ -81,6 +81,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public static final String CODIGO_T017_CIERRE_ECONOMICO ="T017_CierreEconomico";
 	public static final String CODIGO_T017_RESOLUCION_DIVARIAN = "T017_ResolucionDivarian";
 	public static final String CODIGO_T017_RESOLUCION_ARROW = "T017_ResolucionArrow";
+	
 	private static final Integer CODIGO_SI = 1;
 	
 	public static final String USUARIO_GESTOR_FORMALIZACION = "gestform";
@@ -162,6 +163,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		boolean tieneReserva = this.expedienteTieneReserva(expediente, tareaActivo);	
 //		Boolean usaGestorController = usaGestorController(tareaActivo);
 		Boolean usaGestorCierreVenta = usaGestorCierreVenta(tareaActivo);
+		boolean isCerberus = this.isCerberus(tareaActivo);
 
 		if(this.isTrabajoDeActivoOrLoteRestEntidad01(tareaActivo)) {
 			if(null == loteComercial) {
@@ -181,7 +183,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			String codigoCalculo = (!Checks.esNulo(comiteSancion) ? comiteSancion.getCodigo() : null);
 
 			isHayaLbk = DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(codigoCalculo);					
-			codigoGestor = this.getMapCodigoTipoGestor(isFdv, isConFormalizacion, isGiants, isLiberbank, isHayaLbk, isActivoBankia, isActivoSareb, isRetail, isActivoApple, isActivoTango, isActivoGaleon, isActivoThirdPartiesING, isActivoHYT, isActivoEgeoZeus, isActivoYubai, isActivoArrow, isActivoOmega, esActivoRemaining,isActivoBBVA,tieneReserva).get(codigoTarea);
+			
+			codigoGestor = this.getMapCodigoTipoGestor(isFdv, isConFormalizacion, isGiants, isLiberbank, isHayaLbk, isActivoBankia, isActivoSareb, isRetail, isActivoApple, isActivoTango, isActivoGaleon, isActivoThirdPartiesING, isActivoHYT, isActivoEgeoZeus, isActivoYubai, isActivoArrow, isActivoOmega, esActivoRemaining,isActivoBBVA,tieneReserva,isCerberus).get(codigoTarea);
 		}
 		
 		if(GestorActivoApi.CODIGO_GESTOR_BOARDING.equals(codigoGestor)) {
@@ -224,7 +227,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			}	
 		}
 		
-		
 		if((DDCartera.CODIGO_CARTERA_CERBERUS.equals(codigoCartera) && (CODIGO_T017_PBC_VENTA.equals(codigoTarea) || CODIGO_T017_PBC_RESERVA.equals(codigoTarea)))
 				|| (DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera) && (CODIGO_T017_PBC_VENTA.equals(codigoTarea) || CODIGO_T017_PBC_RESERVA.equals(codigoTarea)))
 				|| ((DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)
@@ -232,23 +234,12 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 						|| DDCartera.CODIGO_CARTERA_SAREB.equals(codigoCartera)
 						|| DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera))
 						&& CODIGO_T013_RESULTADO_PBC.equals(codigoTarea))) {		
-			
-			
-			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
-			
-			tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
-			
-			if(tipoGestor != null) {
-				return getGestorOrSupervisorExpedienteByCodigo(tareaExterna, tipoGestor.getCodigo());
-			}			
-			
-			
-			/*Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "username", USUARIO_GESTOR_FORMALIZACION);
+			Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "username", USUARIO_GESTOR_FORMALIZACION);
 			usuarioDevolver = genericDao.get(Usuario.class, filtroUsuario);
 			
 			if(usuarioDevolver != null) {
 				return usuarioDevolver;
-			}	*/
+			}
 		}
 		
 		
@@ -552,12 +543,18 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		return DDCartera.CODIGO_CARTERA_CERBERUS.equals(codCarteraActivo) && DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(codSubcarteraActivo); 
 	}
 	
+	private boolean isCerberus(TareaActivo tareaActivo) {
+		
+		Activo activo = tareaActivo.getActivo();
+		String codCarteraActivo = !Checks.esNulo(activo) ? (!Checks.esNulo(activo.getCartera()) ? activo.getCartera().getCodigo() : null) : null;
+		
+		return DDCartera.CODIGO_CARTERA_CERBERUS.equals(codCarteraActivo);
+	}
+	
 	//  --- Mapas con la relación Tarea - Tipo Gestor/supervisor  -------------------------------------------------
 	private HashMap<String,String> getMapCodigoTipoGestor(boolean isFdv, boolean isConFormalizacion, boolean isGiants, boolean isLiberbank, boolean isHayaLbk, 
 			/*boolean isLiberbankInmobiliaria, boolean isLiberbankTerciaria,*/ boolean isActivoBankia, boolean isActivoSareb, boolean isRetail, boolean isActivoApple, boolean isActivoTango,
-			boolean isActivoGaleon, boolean isActivoThirdPartiesING, boolean isActivoHYT, boolean isActivoEgeoZeus, boolean isActivoYubai, boolean isActivoArrow, boolean isActivoOmega,boolean isActivoRemaining, boolean isActivoBBVA,boolean tieneReserva) {
-
-
+			boolean isActivoGaleon, boolean isActivoThirdPartiesING, boolean isActivoHYT, boolean isActivoEgeoZeus, boolean isActivoYubai, boolean isActivoArrow, boolean isActivoOmega,boolean isActivoRemaining, boolean isActivoBBVA,boolean tieneReserva, boolean isCerberus) {
 		
 		HashMap<String,String> mapa = new HashMap<String,String>();
 		//GESTORES POR DEFECTO - TODAS LAS CARTERAS IGUAL (OJO!! SOLO MODIFICAR CUANDO APLIQUE A TODAS LAS CARTERAS, ESPECIFICAS ABAJO)
@@ -585,6 +582,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		mapa.put(ComercialUserAssigantionService.CODIGO_T017_ADVISORY_NOTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_RESERVA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_VENTA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T017_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T017_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T017_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T017_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T017_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTOR_CONTROLLER);
@@ -693,7 +692,10 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		}
 		
 		if(isActivoApple || isActivoRemaining) {		
-			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_VENTA, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION); 
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_VENTA, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
+			
+			if (isActivoApple)
+				mapa.put(ComercialUserAssigantionService.CODIGO_T017_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		}
 		
 		if (isActivoBBVA) {
@@ -706,16 +708,15 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		}
 		
 		//OJO!! MACHACA TODA CONFIGURACION ANTERIOR
-		//GESTOR BOARDING 
+		//GESTOR BOARDING
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_GESTOR_BOARDING);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTOR_BOARDING);
+		//mapa.put(ComercialUserAssigantionService.CODIGO_T017_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_GESTOR_BOARDING);
+		//mapa.put(ComercialUserAssigantionService.CODIGO_T017_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTOR_BOARDING);
 		
-		mapa.put(ComercialUserAssigantionService.CODIGO_T017_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_GESTOR_BOARDING);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T017_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTOR_BOARDING);
 		if(tieneReserva) {
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_GESTOR_BOARDING);
-			
-			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_GESTOR_BOARDING);
+			//mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_GESTOR_BOARDING);
 		}
 
 		

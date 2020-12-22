@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20201221
+--## FECHA_CREACION=20201222
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8566
@@ -35,34 +35,45 @@ DECLARE
     
 BEGIN	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ACTUALIZACION '||V_TABLA||'');
-	FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
-      LOOP
-        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
-	
-		V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME = '''||V_TMP_TIPO_DATA(1)||''' 
-														 and TABLE_NAME = '''||V_TABLA||'''
-														 and OWNER = '''||V_ESQUEMA||'''';
-		
-		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-		
-		IF V_NUM_TABLAS = 0 THEN
-		
-			V_MSQL := 'ALTER TABLE ' || V_ESQUEMA || '.'||V_TABLA||'
-					   ADD ('||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||')';
-					   
-			EXECUTE IMMEDIATE V_MSQL;
 
-			DBMS_OUTPUT.PUT_LINE('[INFO] AÑADIDA '||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2));
-		
-		ELSE 
-		
-			DBMS_OUTPUT.PUT_LINE('[INFO] LA COLUMNA '||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||' YA EXISTE');
-		
-		END IF;
-		
-	END LOOP;
-	
-	DBMS_OUTPUT.PUT_LINE('[FIN] ACTUALIZADA '||V_TABLA||'');
+    -- Comprobamos si existe la tabla   
+    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+    -- Si existe la tabla realizamos modificacion
+    IF V_NUM_TABLAS = 1 THEN             
+
+        FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+        LOOP
+            V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+
+            --Comprobamos si existe la columna        
+            V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME = '''||V_TMP_TIPO_DATA(1)||''' 
+                                                            and TABLE_NAME = '''||V_TABLA||'''
+                                                            and OWNER = '''||V_ESQUEMA||'''';
+            
+            EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+            
+            IF V_NUM_TABLAS = 0 THEN
+            
+                V_MSQL := 'ALTER TABLE ' || V_ESQUEMA || '.'||V_TABLA||'
+                        ADD ('||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||')';
+                        
+                EXECUTE IMMEDIATE V_MSQL;
+
+                DBMS_OUTPUT.PUT_LINE('[INFO] AÑADIDA '||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2));
+            
+            ELSE 
+            
+                DBMS_OUTPUT.PUT_LINE('[INFO] LA COLUMNA '||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||' YA EXISTE');
+            
+            END IF;
+        
+        END LOOP;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('[INFO] NO EXISTE LA TABLA: '||V_ESQUEMA||'.'||V_TABLA||' NO SE AÑADE LA COLUMNA');        
+
+    END IF;
 	
 EXCEPTION
      WHEN OTHERS THEN

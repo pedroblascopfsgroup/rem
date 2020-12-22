@@ -83,10 +83,10 @@ public class DDMotivoAnulacionExpediente implements Auditable, Dictionary {
 	public final static String CODIGO_FINANCIACION_RECHAZADA = "909";
 	public final static String CODIGO_SIN_DOC_PBC = "910";
 	public final static String CODIGO_PBC_RECHAZADO = "911";
-	public final static String CODIGO_EJERCE_GENCAT = "912";
+	public final static String CODIGO_EJERCE_TANTEO = "912";
 	public final static String CODIGO_VPO_DENEGADA = "913";
 	public final static String CODIGO_INCIDENCIA_JURIDICA_TECNICA = "914";
-	public final static String CODIGON_ALTA_OFERTA_ESPEJO = "915";
+	public final static String CODIGO_ALTA_OFERTA_ESPEJO = "915";
 
 	@Id
 	@Column(name = "DD_MAN_ID")
@@ -108,7 +108,10 @@ public class DDMotivoAnulacionExpediente implements Auditable, Dictionary {
 	
 	@Column(name = "DD_MAN_ALQUILER")   
 	private Boolean alquiler;
-
+	
+	@Column(name = "DD_MAN_VISIBLE_WEB")   
+	private Boolean visibleWeb;
+	
 	@Version   
 	private Long version;
 
@@ -161,6 +164,14 @@ public class DDMotivoAnulacionExpediente implements Auditable, Dictionary {
 	
 	public void setAlquiler(Boolean alquiler) {
 		this.alquiler = alquiler;
+	}
+
+	public Boolean getVisibleWeb() {
+		return visibleWeb;
+	}
+
+	public void setVisibleWeb(Boolean visibleWeb) {
+		this.visibleWeb = visibleWeb;
 	}
 
 	public Long getVersion() {

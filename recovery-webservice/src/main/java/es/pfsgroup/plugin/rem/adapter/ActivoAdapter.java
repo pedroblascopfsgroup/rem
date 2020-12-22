@@ -2126,9 +2126,10 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperty(dtoTramite, "tramiteAlquilerAnulado", false);
 			if (!Checks.esNulo(tramite.getTramitePadre()))
 				beanUtilNotNull.copyProperty(dtoTramite, "idTramitePadre", tramite.getTramitePadre().getId());
+			
 			beanUtilNotNull.copyProperty(dtoTramite, "idActivo", tramite.getActivo().getId());
-			if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo()) && 
-					DDSubcartera.CODIGO_BBVA.equals(tramite.getActivo().getSubcartera().getCodigo())) {
+			
+			if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo())) {
 				beanUtilNotNull.copyProperty(dtoTramite, "nombre", T017_TRAMITE_BBVA_DESCRIPCION);
 				beanUtilNotNull.copyProperty(dtoTramite, "tipoTramite", T017_TRAMITE_BBVA_DESCRIPCION);
 			}else {
@@ -2253,13 +2254,13 @@ public class ActivoAdapter {
 					if(expedienteComercial.getEstado() != null) {
 						beanUtilNotNull.copyProperty(dtoTramite, "descripcionEstadoEC",
 								expedienteComercial.getEstado().getDescripcion());
-						beanUtilNotNull.copyProperty(dtoTramite, "codigoEstadoExpedienteComercial",
-								expedienteComercial.getEstado().getCodigo());
-							boolean isGestorBoarding = perteneceGrupoBoarding(genericAdapter.getUsuarioLogado());
-							boolean expedienteComercialNoAprobado = expedienteComercialNoAprobado(dtoTramite.getCodigoEstadoExpedienteComercial());
-							if ( isGestorBoarding && expedienteComercialNoAprobado) {
-								dtoTramite.setOcultarBotonResolucion(true);
-							}
+						boolean isGestorBoarding = perteneceGrupoBoarding(genericAdapter.getUsuarioLogado());
+						boolean expedienteComercialNoAprobado = expedienteComercialNoAprobado(expedienteComercial.getEstado().getCodigo());
+						if ( isGestorBoarding && expedienteComercialNoAprobado ) {
+							dtoTramite.setOcultarBotonResolucion(true);
+						}else if( isGestorBoarding && !ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA.equals(tramite.getTipoTramite().getCodigo()) ) {
+							dtoTramite.setOcultarBotonResolucion(true);
+						}
 					}
 					beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());
 				}

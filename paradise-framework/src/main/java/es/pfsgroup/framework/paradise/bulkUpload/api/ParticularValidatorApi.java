@@ -1386,4 +1386,10 @@ public interface ParticularValidatorApi {
 	
 	Boolean existeProveedorEnCarteraActivo(String proveedor,String idActivo);
 	
+	Boolean existePromocionBBVA(String promocion);
+
+	Boolean datosRegistralesRepetidos(String refCatastral, String finca, String folio, String libro, String tomo, String numRegistro, String codigoLocalidad);
+
+	Boolean subtipoPerteneceTipoActivo(String subtipo, String tipo);
+
 }

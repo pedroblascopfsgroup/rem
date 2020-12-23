@@ -2579,13 +2579,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado;
 
 		if(!Checks.esNulo(tipoTitulo) && !Checks.esNulo(subtipo)){
-			if(!StringUtils.isNumeric(tipoTitulo) || !StringUtils.isNumeric(subtipo)) {
-				return false;
-			} else {
-				resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM DD_STA_SUBTIPO_TITULO_ACTIVO STA "
-					+ "JOIN DD_TTA_TIPO_TITULO_ACTIVO TTA ON STA.DD_TTA_ID = TTA.DD_TTA_ID AND TTA.DD_TTA_CODIGO = '"+tipoTitulo+"' "
-					+ "WHERE STA.DD_STA_CODIGO = '"+subtipo+"'");
-			}
+			
+			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM DD_STA_SUBTIPO_TITULO_ACTIVO STA "
+				+ "JOIN DD_TTA_TIPO_TITULO_ACTIVO TTA ON STA.DD_TTA_ID = TTA.DD_TTA_ID AND TTA.DD_TTA_CODIGO = '"+tipoTitulo+"' "
+				+ "WHERE STA.DD_STA_CODIGO = '"+subtipo+"'");
 
 			return (Integer.valueOf(resultado) > 0);
 		}
@@ -6238,6 +6235,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 	}
 
+
 	@Override
 	public boolean conEstadoGasto(String idGasto,String codigoEstado) {
 		if(Checks.esNulo(idGasto) || Checks.esNulo(codigoEstado) || !StringUtils.isNumeric(idGasto) ) {
@@ -6441,5 +6439,49 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ " WHERE pve.pve_cod_rem = "+numProveedor+"");
 
 		return "0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existePromocionBBVA(String promocion){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_BBVA_ACTIVOS "
+				+ "WHERE bbva_cod_promocion = '"+promocion+"'");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean datosRegistralesRepetidos(String refCatastral,String finca, String folio, String libro, String tomo,  String numRegistro, String codigoLocalidad){
+		String resultado;
+		if(Checks.esNulo(refCatastral)) {
+			resultado = rawDao.getExecuteSQL("SELECT count(1) FROM act_activo act "  
+					+ "join BIE_DATOS_REGISTRALES bie on act.bie_id = bie.bie_id and bie.BIE_DREG_TOMO = '"+ tomo +"' "
+					+ "and bie.BIE_DREG_LIBRO = '"+ libro +"' and bie.BIE_DREG_FOLIO = '"+ folio +"' and bie.BIE_DREG_NUM_FINCA = '"+ finca +"' and bie.bie_dreg_num_registro = '" +numRegistro +"'"  
+					+ "join ${master.schema}.dd_loc_localidad loc on loc.dd_loc_id = bie.dd_loc_id and loc.dd_loc_codigo = '"+ codigoLocalidad +"'");
+		}else {
+			resultado = rawDao.getExecuteSQL("SELECT count(1) FROM act_activo act "  
+				+ "join BIE_DATOS_REGISTRALES bie on act.bie_id = bie.bie_id and bie.BIE_DREG_TOMO = '"+ tomo +"' "
+				+ "and bie.BIE_DREG_LIBRO = '"+ libro +"' and bie.BIE_DREG_FOLIO = '"+ folio +"' and bie.BIE_DREG_NUM_FINCA = '"+ finca +"' and bie.bie_dreg_num_registro = '" +numRegistro +"'"  
+				+ "join ACT_CAT_CATASTRO cat on act.act_id = cat.act_id and cat.cat_ref_catastral = '"+ refCatastral + "'"  
+				+ "join ${master.schema}.dd_loc_localidad loc on loc.dd_loc_id = bie.dd_loc_id and loc.dd_loc_codigo = '"+ codigoLocalidad +"'");
+		
+		}
+		return !"0".equals(resultado);
+	}
+
+	
+	@Override
+	public Boolean subtipoPerteneceTipoActivo(String subtipo, String tipo){
+
+		String resultado;
+
+		if(!Checks.esNulo(tipo) && !Checks.esNulo(subtipo)){
+			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM DD_SAC_SUBTIPO_ACTIVO sac "
+			+ "JOIN dd_tpa_tipo_activo tpa ON sac.DD_TPA_ID = tpa.DD_TPA_ID AND TPA.DD_TPA_CODIGO = '"+tipo+"' "
+			+ "WHERE sac.DD_SAC_CODIGO = '"+subtipo+"'");
+	
+			return (Integer.valueOf(resultado) > 0);
+		}
+		
+		return false;
+
 	}
 }

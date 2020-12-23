@@ -36,19 +36,53 @@ BEGIN
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_REPARTO_IMP_TBJ...');
   EXECUTE IMMEDIATE 'CREATE OR REPLACE VIEW ' || V_ESQUEMA || '.V_REPARTO_IMP_TBJ AS
-  	WITH PART_TBJ_LIN AS (
-	    SELECT GLD.GPV_ID, GLD.GLD_ID, TBJ.TBJ_ID
-	        , TBJ.TBJ_IMPORTE_PRESUPUESTO/SUM(TBJ.TBJ_IMPORTE_PRESUPUESTO) OVER(PARTITION BY GLD.GLD_ID) PART_TBJ_LIN_PVE
-	        , TBJ.TBJ_IMPORTE_TOTAL/SUM(TBJ.TBJ_IMPORTE_TOTAL) OVER(PARTITION BY GLD.GLD_ID) PART_TBJ_LIN_CLI
-	    FROM '|| V_ESQUEMA ||'.GLD_TBJ GTB
-	    JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GLD_ID = GTB.GLD_ID
-	        AND GLD.BORRADO = 0
-	    JOIN '|| V_ESQUEMA ||'.ACT_TBJ_TRABAJO TBJ ON TBJ.TBJ_ID = GTB.TBJ_ID
+  	WITH SUPLIDOS AS (
+	    SELECT PSU.TBJ_ID
+	            , NVL(
+	            SUM(
+	                CASE
+	                    WHEN TAD.DD_TAD_CODIGO = ''01''
+	                        THEN -NVL(PSU.PSU_IMPORTE, 0)
+	                    WHEN TAD.DD_TAD_CODIGO = ''02''
+	                        THEN NVL(PSU.PSU_IMPORTE, 0)
+	                    ELSE NVL(PSU.PSU_IMPORTE, 0)
+	                END
+	            )
+	        , 0) IMPORTE_PROV_SUPL
+	    FROM '|| V_ESQUEMA ||'..ACT_PSU_PROVISION_SUPLIDO PSU 
+	    JOIN '|| V_ESQUEMA ||'..ACT_TBJ_TRABAJO TBJ ON TBJ.TBJ_ID = PSU.TBJ_ID
 	        AND TBJ.BORRADO = 0
-	    WHERE NVL(TBJ.TBJ_IMPORTE_PRESUPUESTO, 0) > 0
-	        AND NVL(TBJ.TBJ_IMPORTE_TOTAL, 0) > 0
-	        AND NVL(TBJ.TBJ_IMPORTE_TOTAL, 0) >= NVL(TBJ.TBJ_IMPORTE_PRESUPUESTO, 0)
-	        AND GTB.BORRADO = 0
+	    LEFT JOIN '|| V_ESQUEMA ||'..DD_TAD_TIPO_ADELANTO TAD ON TAD.DD_TAD_ID = PSU.DD_TAD_ID
+	        AND TAD.BORRADO = 0
+	    WHERE PSU.BORRADO = 0
+	    GROUP BY PSU.TBJ_ID
+	)
+	, PART_TBJ_LIN AS ( SELECT
+	                           GLD.GPV_ID
+	                         , GLD.GLD_ID
+	                         , TBJ.TBJ_ID
+	                         , (TBJ.TBJ_IMPORTE_PRESUPUESTO + NVL(SUP.IMPORTE_PROV_SUPL, 0)) / SUM(TBJ.TBJ_IMPORTE_PRESUPUESTO + NVL(SUP.IMPORTE_PROV_SUPL, 0))
+	                                                           OVER(PARTITION BY GLD.GLD_ID)       PART_TBJ_LIN_PVE
+	                         , (TBJ.TBJ_IMPORTE_TOTAL + NVL(SUP.IMPORTE_PROV_SUPL, 0)) / SUM(TBJ.TBJ_IMPORTE_TOTAL + NVL(SUP.IMPORTE_PROV_SUPL, 0))
+	                                                     OVER(PARTITION BY GLD.GLD_ID)       PART_TBJ_LIN_CLI
+	                         FROM
+	                                '|| V_ESQUEMA ||'..GLD_TBJ GTB
+	                             JOIN '|| V_ESQUEMA ||'..GLD_GASTOS_LINEA_DETALLE    GLD ON GLD.GLD_ID = GTB.GLD_ID
+	                              AND GLD.BORRADO = 0
+	                             JOIN '|| V_ESQUEMA ||'..ACT_TBJ_TRABAJO             TBJ ON TBJ.TBJ_ID = GTB.TBJ_ID
+	                              AND TBJ.BORRADO = 0
+	                            LEFT JOIN SUPLIDOS SUP ON SUP.TBJ_ID = TBJ.TBJ_ID
+	                        WHERE
+	                              (
+	                                (
+	                                    NVL(TBJ.TBJ_IMPORTE_PRESUPUESTO, 0) <> 0
+	                                    AND NVL(TBJ.TBJ_IMPORTE_TOTAL, 0) <> 0
+	                                )
+	                                OR (
+	                                    NVL(SUP.IMPORTE_PROV_SUPL, 0) <> 0
+	                                )
+	                             )
+	                              AND GTB.BORRADO = 0
 	)
 	, PRINCIPAL AS (
 	    SELECT PTL.GPV_ID, PTL.GLD_ID, GEN.GLD_ENT_ID

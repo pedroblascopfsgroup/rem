@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.oferta;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -17,8 +16,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -166,9 +163,6 @@ import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
-import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
-import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
-import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
@@ -959,7 +953,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 			if (ofertaDto.getDocumentoIdentificativo() != null || ofertaDto.getDocumentoGDPR() != null) {
-				saveOrUpdateDocumentosGDPR(ofertaDto);
+				saveOrUpdateDocumentosGDPRClienteComercial(ofertaDto, oferta.getCliente());
 			}
 
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoOferta());
@@ -1030,6 +1024,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Transactional(readOnly = false)
 	private void saveOrUpdateListaTitualesAdicionalesOferta(OfertaDto ofertaDto, Oferta oferta, Boolean update){
 		List<TitularesAdicionalesOferta> listaTit = new ArrayList<TitularesAdicionalesOferta>();
+		AdjuntoComprador adjComprDocIdentificativo = null;
+		AdjuntoComprador adjComprConsGDPR = null;
 
 		if (!Checks.esNulo(oferta) && update) {
 			ofertaDao.deleteTitularesAdicionales(oferta);
@@ -1137,6 +1133,36 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (!Checks.esNulo(titDto.getCodigoPostalRepresentante())) {
 					titAdi.setCodPostalRepresentante(titDto.getCodigoPostalRepresentante());
 				}
+				
+				if (titDto.getDocumentoIdentificativo() != null) {
+					adjComprDocIdentificativo = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", ofertaDto.getDocumentoIdentificativo()));
+					if (adjComprDocIdentificativo == null) {
+						adjComprDocIdentificativo = new AdjuntoComprador();
+						adjComprDocIdentificativo.setIdDocRestClient(Long.parseLong(ofertaDto.getDocumentoIdentificativo()));	
+						adjComprDocIdentificativo.setNombreAdjunto(ofertaDto.getNombreDocumentoIdentificativo());
+						//DDTipoDocumentoActivo docIdentificativo = genericDao.get(DDTipoDocumentoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO));
+						//adjComprDocIdentificativo.setTipoDocumento(docIdentificativo.getDescripcion());
+						//adjComprDocIdentificativo.setMatricula(docIdentificativo.getMatricula());
+						adjComprDocIdentificativo.setTipoDocumento("Documento Identificativo");
+						adjComprDocIdentificativo.setMatricula("EN-01-CNCV-82");
+						genericDao.save(AdjuntoComprador.class, adjComprDocIdentificativo);
+						titAdi.setAdcomIdDocumentoIdentificativo(adjComprDocIdentificativo);
+					}
+				}
+				
+				if (titDto.getDocumentoGDPR() != null) {
+					adjComprConsGDPR = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", ofertaDto.getDocumentoGDPR()));
+					if (adjComprConsGDPR == null) {
+						adjComprConsGDPR = new AdjuntoComprador();
+						adjComprConsGDPR.setIdDocRestClient(Long.parseLong(ofertaDto.getDocumentoGDPR()));	
+						adjComprConsGDPR.setNombreAdjunto(ofertaDto.getNombreDocumentoGDPR());
+						DDTipoDocumentoActivo consGDPR = genericDao.get(DDTipoDocumentoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoDocumentoActivo.CODIGO_CONSENTIMIENTO_PROTECCION_DATOS));
+						adjComprConsGDPR.setTipoDocumento(consGDPR.getDescripcion());
+						adjComprConsGDPR.setMatricula(consGDPR.getMatricula());
+						genericDao.save(AdjuntoComprador.class, adjComprConsGDPR);
+						titAdi.setAdcomIdDocumentoGDPR(adjComprConsGDPR);
+					}
+				}
 
 				listaTit.add(titAdi);
 				genericDao.save(TitularesAdicionalesOferta.class, titAdi);
@@ -1147,36 +1173,43 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Transactional(readOnly = false)
-	private void saveOrUpdateDocumentosGDPR(OfertaDto ofertaDto){
+	private void saveOrUpdateDocumentosGDPRClienteComercial(OfertaDto ofertaDto, ClienteComercial cliente){
 		AdjuntoComprador adjComprDocIdentificativo = null;
 		AdjuntoComprador adjComprConsGDPR = null;
+		ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "cliente.id", cliente.getId()));
 		
-		if (ofertaDto.getDocumentoIdentificativo() != null) {
-			adjComprDocIdentificativo = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", ofertaDto.getDocumentoIdentificativo()));
-			if (adjComprDocIdentificativo == null) {
-				adjComprDocIdentificativo = new AdjuntoComprador();
-				adjComprDocIdentificativo.setIdDocRestClient(Long.parseLong(ofertaDto.getDocumentoIdentificativo()));	
-				adjComprDocIdentificativo.setNombreAdjunto(ofertaDto.getNombreDocumentoIdentificativo());
-				//DDTipoDocumentoActivo docIdentificativo = genericDao.get(DDTipoDocumentoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO));
-				//adjComprDocIdentificativo.setTipoDocumento(docIdentificativo.getDescripcion());
-				//adjComprDocIdentificativo.setMatricula(docIdentificativo.getMatricula());
-				adjComprDocIdentificativo.setTipoDocumento("Documento Identificativo");
-				adjComprDocIdentificativo.setMatricula("EN-01-CNCV-82");
-				genericDao.save(AdjuntoComprador.class, adjComprDocIdentificativo);
+		if (clienteGDPR != null) {
+			if (ofertaDto.getDocumentoIdentificativo() != null) {
+				adjComprDocIdentificativo = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", ofertaDto.getDocumentoIdentificativo()));
+				if (adjComprDocIdentificativo == null) {
+					adjComprDocIdentificativo = new AdjuntoComprador();
+					adjComprDocIdentificativo.setIdDocRestClient(Long.parseLong(ofertaDto.getDocumentoIdentificativo()));	
+					adjComprDocIdentificativo.setNombreAdjunto(ofertaDto.getNombreDocumentoIdentificativo());
+					//DDTipoDocumentoActivo docIdentificativo = genericDao.get(DDTipoDocumentoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO));
+					//adjComprDocIdentificativo.setTipoDocumento(docIdentificativo.getDescripcion());
+					//adjComprDocIdentificativo.setMatricula(docIdentificativo.getMatricula());
+					adjComprDocIdentificativo.setTipoDocumento("Documento Identificativo");
+					adjComprDocIdentificativo.setMatricula("EN-01-CNCV-82");
+					genericDao.save(AdjuntoComprador.class, adjComprDocIdentificativo);
+					clienteGDPR.setAdcomIdDocumentoIdentificativo(adjComprDocIdentificativo);
+				}
 			}
-		}
-		
-		if (ofertaDto.getDocumentoGDPR() != null) {
-			adjComprConsGDPR = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", ofertaDto.getDocumentoGDPR()));
-			if (adjComprConsGDPR == null) {
-				adjComprConsGDPR = new AdjuntoComprador();
-				adjComprConsGDPR.setIdDocRestClient(Long.parseLong(ofertaDto.getDocumentoGDPR()));	
-				adjComprConsGDPR.setNombreAdjunto(ofertaDto.getNombreDocumentoGDPR());
-				DDTipoDocumentoActivo consGDPR = genericDao.get(DDTipoDocumentoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoDocumentoActivo.CODIGO_CONSENTIMIENTO_PROTECCION_DATOS));
-				adjComprConsGDPR.setTipoDocumento(consGDPR.getDescripcion());
-				adjComprConsGDPR.setMatricula(consGDPR.getMatricula());
-				genericDao.save(AdjuntoComprador.class, adjComprConsGDPR);
+			
+			if (ofertaDto.getDocumentoGDPR() != null) {
+				adjComprConsGDPR = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", ofertaDto.getDocumentoGDPR()));
+				if (adjComprConsGDPR == null) {
+					adjComprConsGDPR = new AdjuntoComprador();
+					adjComprConsGDPR.setIdDocRestClient(Long.parseLong(ofertaDto.getDocumentoGDPR()));	
+					adjComprConsGDPR.setNombreAdjunto(ofertaDto.getNombreDocumentoGDPR());
+					DDTipoDocumentoActivo consGDPR = genericDao.get(DDTipoDocumentoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoDocumentoActivo.CODIGO_CONSENTIMIENTO_PROTECCION_DATOS));
+					adjComprConsGDPR.setTipoDocumento(consGDPR.getDescripcion());
+					adjComprConsGDPR.setMatricula(consGDPR.getMatricula());
+					genericDao.save(AdjuntoComprador.class, adjComprConsGDPR);
+					clienteGDPR.setAdjuntoComprador(adjComprConsGDPR);
+				}
 			}
+			
+			genericDao.save(ClienteGDPR.class, clienteGDPR);
 		}
 	}
 

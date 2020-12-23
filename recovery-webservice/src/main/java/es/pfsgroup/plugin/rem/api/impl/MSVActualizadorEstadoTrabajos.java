@@ -75,7 +75,7 @@ public class MSVActualizadorEstadoTrabajos extends AbstractMSVActualizador imple
 			trabajo.setEstado(estadoTrabajo);
 			genericDao.update(Trabajo.class, trabajo);
 			
-			if (tmpAccion.equals("REJ")) {
+			if (tmpComentario != null) {
 				agenda = new AgendaTrabajo();
 				agenda.setTrabajo(trabajo);
 				agenda.setFecha(new Date());

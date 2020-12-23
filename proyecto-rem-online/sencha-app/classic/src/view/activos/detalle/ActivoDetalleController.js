@@ -6768,8 +6768,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		for (item in items) {
 			fechas[items[item].dataIndex] = items[item];
 		}
-		var storeGridCalificacionNegativa = combo.up().up().up().up().up()
-				.down('[reference=calificacionnegativagrid]').getStore();
+		
+		var storeGridCalificacionNegativa;
+		var gridCalifcacion;
+		
+		if('historicotramitaciontituloadref' === combo.up('grid').getReference()){
+			gridCalifcacion = me.lookupReference('calificacionnegativagridad');
+			storeGridCalificacionNegativa = gridCalifcacion.getStore();
+			
+		}else{
+			gridCalifcacion = me.lookupReference('calificacionnegativagrid');
+			storeGridCalificacionNegativa = gridCalifcacion.getStore();
+			
+		}
 		if (storeGridCalificacionNegativa.data.length > 0) {
 			var noSubsanado = false;
 			for (var iterador in storeGridCalificacionNegativa.data.items) {
@@ -6778,22 +6789,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				}
 			}
 
-			if (noSubsanado
-					&& newValue != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']) {
-				me
-						.fireEvent(
-								"errorToast",
-								HreRem
-										.i18n("msg.operacion.ko.calificado.negativamente"));
-				combo
-						.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']);
+			if (noSubsanado&& newValue != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']) {
+				me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko.calificado.negativamente"));
+				combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']); 
 				return;
 			};
 		}
-		me.lookupReference('calificacionnegativagrid').disableAddButton(true);
+		
+		gridCalifcacion.disableAddButton(true);
 		if (combo.getValue() == CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE'])
-			me.lookupReference('calificacionnegativagrid')
-					.disableAddButton(false);
+			gridCalifcacion.disableAddButton(false);
 		switch (newValue) {
 
 			case CONST.DD_ESP_ESTADO_PRESENTACION['PRESENTACION_EN_REGISTRO'] :

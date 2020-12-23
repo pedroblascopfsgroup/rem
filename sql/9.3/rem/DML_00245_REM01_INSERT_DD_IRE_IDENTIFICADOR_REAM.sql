@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Julián Dolz
---## FECHA_CREACION=20201027
+--## AUTOR= Lara Pablo Flores
+--## FECHA_CREACION=20201223
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11887

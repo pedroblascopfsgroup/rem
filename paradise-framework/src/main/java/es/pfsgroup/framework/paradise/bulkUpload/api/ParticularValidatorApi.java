@@ -1280,4 +1280,10 @@ public interface ParticularValidatorApi {
 	public String sacarCodigoSubtipoActivo(String descripcion);
 
 
+	Boolean existePromocionBBVA(String promocion);
+
+	Boolean datosRegistralesRepetidos(String refCatastral, String finca, String folio, String libro, String tomo, String numRegistro, String codigoLocalidad);
+
+	Boolean subtipoPerteneceTipoActivo(String subtipo, String tipo);
+
 }

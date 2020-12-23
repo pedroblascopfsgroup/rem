@@ -267,7 +267,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				return gestorActivoApi.usuarioGrupoTareaT017(codigoTarea, isActivoApple, this.isActivoArrow(tareaActivo), this.isActivoRemaining(tareaActivo), tareaExterna);
 			}
 		} else {
-			if(codigoGestor == null || codigoGestor.isEmpty()) {
+			if(codigoGestor != null && !codigoGestor.isEmpty()) {
 				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);			
 				tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
 			}

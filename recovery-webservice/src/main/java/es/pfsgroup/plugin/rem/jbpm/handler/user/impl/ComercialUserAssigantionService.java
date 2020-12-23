@@ -187,9 +187,9 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			codigoGestor = this.getMapCodigoTipoGestor(isFdv, isConFormalizacion, isGiants, isLiberbank, isHayaLbk, isActivoBankia, isActivoSareb, isRetail, isActivoApple, isActivoTango, isActivoGaleon, isActivoThirdPartiesING, isActivoHYT, isActivoEgeoZeus, isActivoYubai, isActivoArrow, isActivoOmega, esActivoRemaining,isActivoBBVA,tieneReserva,isCerberus).get(codigoTarea);
 		}
 		
-		if(GestorActivoApi.CODIGO_GESTOR_BOARDING.equals(codigoGestor)) {
+		/*if(GestorActivoApi.CODIGO_GESTOR_BOARDING.equals(codigoGestor)) {
 			return getGestorOrSupervisorExpedienteByCodigo(tareaExterna, codigoGestor);
-		}
+		}*/
 		
 		if((CODIGO_T013_CIERRE_ECONOMICO.equals(codigoTarea)
 				|| CODIGO_T017_CIERRE_ECONOMICO.equals(codigoTarea)) /*&& usaGestorController*/) {

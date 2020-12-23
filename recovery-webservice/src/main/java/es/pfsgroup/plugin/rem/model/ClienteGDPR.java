@@ -64,6 +64,10 @@ public class ClienteGDPR implements Serializable, Auditable{
     @JoinColumn(name = "ADCOM_ID")
     private AdjuntoComprador adjuntoComprador;
     
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "ADCOM_DOC_IDENT")
+    private AdjuntoComprador adcomIdDocumentoIdentificativo;
+    
 
 	  //Se añaden nuevos atributos. HREOS-4851<o
     @Column(name = "CLC_CESION_DATOS")
@@ -163,6 +167,14 @@ public class ClienteGDPR implements Serializable, Auditable{
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public AdjuntoComprador getAdcomIdDocumentoIdentificativo() {
+		return adcomIdDocumentoIdentificativo;
+	}
+
+	public void setAdcomIdDocumentoIdentificativo(AdjuntoComprador adcomIdDocumentoIdentificativo) {
+		this.adcomIdDocumentoIdentificativo = adcomIdDocumentoIdentificativo;
 	}
 	
 	

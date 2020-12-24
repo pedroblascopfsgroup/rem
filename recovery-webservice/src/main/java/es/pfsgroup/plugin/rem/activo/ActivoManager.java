@@ -2116,12 +2116,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		try {
 			if (dto != null) {				
 				Activo activo = null;
+				ActivoTituloAdicional tituloAdicional = null;
 				ActivoCalificacionNegativaAdicional activoCalificacionNegativaAd = new ActivoCalificacionNegativaAdicional();
 				if (dto.getIdActivo() != null) {
 					activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdActivo()));
-					if ((activo.getTitulo() != null && activo.getTitulo().getEstado() !=null) && DDEstadoTitulo.ESTADO_INSCRITO.equals(activo.getTitulo().getEstado().getCodigo())) {
+					tituloAdicional= genericDao.get(ActivoTituloAdicional.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", dto.getIdActivo()));
+					if(activo == null || tituloAdicional == null) {
 						return false;
-
+					}
+					
+					if((tituloAdicional == null|| tituloAdicional.getEstadoTitulo() == null)
+							|| (tituloAdicional != null && tituloAdicional.getEstadoTitulo() !=null && DDEstadoTitulo.ESTADO_INSCRITO.equals(tituloAdicional.getEstadoTitulo().getCodigo()))) {
+						return false;
 					}
 					activoCalificacionNegativaAd.setActivo(activo);
 				} else {
@@ -2170,7 +2176,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				
 
-				Filter filter = genericDao.createFilter(FilterType.EQUALS, "tituloAdicional.id", activo.getTitulo().getId());
+				Filter filter = genericDao.createFilter(FilterType.EQUALS, "tituloAdicional.id", tituloAdicional.getId());
 			
 				Order order = new Order(OrderType.DESC, "id");
 				List<ActivoHistoricoTituloAdicional> historicoTramitacionTituloList = genericDao.getListOrdered(ActivoHistoricoTituloAdicional.class, order, filter);

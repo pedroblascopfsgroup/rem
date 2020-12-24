@@ -216,7 +216,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						        	fieldLabel: HreRem.i18n('fieldlabel.trabajo.dnd.id'),
 						        	bind: {
 						        		value: '{trabajo.trabajoDnd}',
-						        		hidden: '{!trabajo.esEdificacion}'
+						        		hidden: '{!trabajo.esTrabajoDND}'
 						        	}
 						        	
 						        }

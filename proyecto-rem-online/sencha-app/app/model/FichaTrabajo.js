@@ -275,9 +275,9 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			name: 'trabajoDnd'
     		},
     		{
-    			name: 'esEdificacion',
+    			name: 'esTrabajoDND',
     			calculate: function(data) {
-    				 return data.tipoTrabajoCodigo == CONST.TIPOS_TRABAJO['EDIFICACION'];
+    				 return data.tipoTrabajoCodigo == CONST.TIPOS_TRABAJO['EDIFICACION'] || data.tipoTrabajoCodigo == CONST.TIPOS_TRABAJO['SUELO'];
     			},
     			depends: 'tipoTrabajoCodigo'
     			

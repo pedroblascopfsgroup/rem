@@ -255,6 +255,8 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVMasivaAltaTrabajosValidator altaTrabajos;
 
+	@Autowired
+	private MSVValidatorCargaCamposAccesibilidad cargaCamposAccesibilidad;
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -422,6 +424,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return cargaMasivaEstadoTrabajos;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ALTA_TRABAJOS.equals(codTipoOperacion)) {
 			return altaTrabajos;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CAMPOS_ACCESIBILIDAD.equals(codTipoOperacion)) {
+			return cargaCamposAccesibilidad;
 		}
 
 		return null;

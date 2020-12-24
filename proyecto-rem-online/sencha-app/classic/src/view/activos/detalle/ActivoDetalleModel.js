@@ -1195,6 +1195,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		btnNuevaPeticionTrabajoOculto: function(get) {
 			var isIncluidoEnPerimetro = get('activo.incluidoEnPerimetro');
 			return (isIncluidoEnPerimetro == false || $AU.getUser().codigoCartera == CONST.CARTERA['BBVA']);
+		},
+
+		isGestorSeguridad:function(get){
+			return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['PERFIL_SEGURIDAD']);
 		}
 	 
     },

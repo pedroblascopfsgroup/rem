@@ -324,29 +324,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		if(!Checks.esNulo(dto.getOptaCriterio()) && !Checks.esNulo(gastoLineaDetalle.getGastoProveedor().getProveedor())) {
 			gastoLineaDetalle.getGastoProveedor().getProveedor().setCriterioCajaIVA(Boolean.valueOf(dto.getOptaCriterio()).compareTo( false ));
 		}
-		gastoLineaDetalle.setCccBase(dto.getCcBase());
-		gastoLineaDetalle.setCppBase(dto.getPpBase());
-		gastoLineaDetalle.setCccEsp(dto.getCcEsp());
-		gastoLineaDetalle.setCppEsp(dto.getPpEsp());
-		gastoLineaDetalle.setCccTasas(dto.getCcTasas());
-		gastoLineaDetalle.setCppTasas(dto.getPpTasas());
-		gastoLineaDetalle.setCccRecargo(dto.getCcRecargo());
-		gastoLineaDetalle.setCppRecargo(dto.getPpRecargo());	
-		gastoLineaDetalle.setCccIntereses(dto.getCcInteres());
-		gastoLineaDetalle.setCppIntereses(dto.getPpInteres());
 		
-		gastoLineaDetalle.setSubcuentaBase(dto.getSubcuentaBase());
-		gastoLineaDetalle.setApartadoBase(dto.getApartadoBase());
-		gastoLineaDetalle.setCapituloBase(dto.getCapituloBase());
-		gastoLineaDetalle.setSubcuentaRecargo(dto.getSubcuentaRecargo());
-		gastoLineaDetalle.setApartadoRecargo(dto.getApartadoRecargo());
-		gastoLineaDetalle.setCapituloRecargo(dto.getCapituloRecargo());
-		gastoLineaDetalle.setSubcuentaTasa(dto.getSubcuentaTasa());
-		gastoLineaDetalle.setApartadoTasa(dto.getApartadoTasa());
-		gastoLineaDetalle.setCapituloTasa(dto.getCapituloTasa());
-		gastoLineaDetalle.setSubcuentaIntereses(dto.getSubcuentaIntereses());
-		gastoLineaDetalle.setApartadoIntereses(dto.getApartadoIntereses());
-		gastoLineaDetalle.setCapituloIntereses(dto.getCapituloIntereses());
+		gastoLineaDetalle = this.setCuentasPartidasDtoToObject(gastoLineaDetalle, dto);
 		
 		if(!Checks.esNulo(dto.getImporteTotal())) {
 			gastoLineaDetalle.setImporteTotal(Double.parseDouble(dto.getImporteTotal().replace(",", ".")));
@@ -1088,47 +1067,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			}
 		}
 	}
-	
-	GastoLineaDetalle copiarGastoLineaDetalle(GastoProveedor gastoPadre, GastoLineaDetalle gastoLineaDetallePadre, GastoLineaDetalle gastoLineaDetalleHija) {
 		
-		DtoLineaDetalleGasto dto= calcularCuentasYPartidas(gastoPadre, null, gastoLineaDetalleHija.getSubtipoGasto().getCodigo());
-		
-		gastoLineaDetallePadre.setSubtipoGasto(gastoLineaDetalleHija.getSubtipoGasto());
-		gastoLineaDetallePadre.setPrincipalSujeto(gastoLineaDetalleHija.getPrincipalSujeto());
-		gastoLineaDetallePadre.setPrincipalNoSujeto(gastoLineaDetalleHija.getPrincipalNoSujeto());
-		gastoLineaDetallePadre.setTipoRecargoGasto(gastoLineaDetalleHija.getTipoRecargoGasto());
-		gastoLineaDetallePadre.setRecargo(gastoLineaDetalleHija.getRecargo());
-		gastoLineaDetallePadre.setInteresDemora(gastoLineaDetalleHija.getInteresDemora());
-		gastoLineaDetallePadre.setCostas(gastoLineaDetalleHija.getCostas());
-		gastoLineaDetallePadre.setProvSuplidos(gastoLineaDetalleHija.getProvSuplidos());
-		gastoLineaDetallePadre.setImporteIndirectoCuota(gastoLineaDetalleHija.getImporteIndirectoCuota());
-		gastoLineaDetallePadre.setImporteTotal(gastoLineaDetalleHija.getImporteTotal());
-		
-		gastoLineaDetallePadre.setCccBase(dto.getCcBase());
-		gastoLineaDetallePadre.setCppBase(dto.getPpBase());
-		gastoLineaDetallePadre.setCccEsp(dto.getCcEsp());
-		gastoLineaDetallePadre.setCppEsp(dto.getPpEsp());
-		gastoLineaDetallePadre.setCccTasas(dto.getCcTasas());
-		gastoLineaDetallePadre.setCppTasas(dto.getPpTasas());
-		gastoLineaDetallePadre.setCccRecargo(dto.getCcRecargo());
-		gastoLineaDetallePadre.setCppRecargo(dto.getPpRecargo());
-		gastoLineaDetallePadre.setCccIntereses(dto.getCcInteres());
-		gastoLineaDetallePadre.setCppIntereses(dto.getPpInteres());
-		
-		return gastoLineaDetallePadre;
-	}
-	
-	GastoLineaDetalleEntidad copiarGastoLineaDetalleEntidad(GastoLineaDetalleEntidad gastoLineaDetalleEntidadPadre, GastoLineaDetalleEntidad gastoLineaDetalleEntidadHija) {
-		
-		gastoLineaDetalleEntidadPadre.setEntidadGasto(gastoLineaDetalleEntidadHija.getEntidadGasto());
-		gastoLineaDetalleEntidadPadre.setEntidad(gastoLineaDetalleEntidadHija.getEntidad());
-		gastoLineaDetalleEntidadPadre.setParticipacionGasto(gastoLineaDetalleEntidadHija.getParticipacionGasto());
-		gastoLineaDetalleEntidadPadre.setReferenciaCatastral(gastoLineaDetalleEntidadHija.getReferenciaCatastral());
-		
-		return gastoLineaDetalleEntidadPadre;
-	}
-	
-	
 	@Override
 	public List<VElementosLineaDetalle> getElementosAfectados (Long idLinea){
 		
@@ -1948,17 +1887,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		importeTotal = importeTotal.add(provSuplidos);
 		gastoLineaDetalleNueva.setImporteTotal(importeTotal.doubleValue());
 		DtoLineaDetalleGasto dto = calcularCuentasYPartidas(gasto, null,lineaParte.get(0));
-
-		gastoLineaDetalleNueva.setCccBase(dto.getCcBase());
-		gastoLineaDetalleNueva.setCppBase(dto.getPpBase());
-		gastoLineaDetalleNueva.setCccEsp(dto.getCcEsp());
-		gastoLineaDetalleNueva.setCppEsp(dto.getPpEsp());
-		gastoLineaDetalleNueva.setCccTasas(dto.getCcTasas());
-		gastoLineaDetalleNueva.setCppTasas(dto.getPpTasas());
-		gastoLineaDetalleNueva.setCccRecargo(dto.getCcRecargo());
-		gastoLineaDetalleNueva.setCppRecargo(dto.getPpRecargo());
-		gastoLineaDetalleNueva.setCccIntereses(dto.getCcInteres());
-		gastoLineaDetalleNueva.setCppIntereses(dto.getPpInteres());
+				
+		gastoLineaDetalleNueva = setCuentasPartidasDtoToObject(gastoLineaDetalleNueva, dto);
 		
 		return gastoLineaDetalleNueva;
 		

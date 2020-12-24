@@ -107,6 +107,7 @@ func-rem-gestionActivos|R-Entrefina
 func-rem-facturacionModeloNuevo|R-Entrefina
 R-Cadenera|R-Entrefina
 func-rem-gestionActivos-HREOS-11149|func-rem-gestionActivos
+rem_mirror|func-rem-espartaConvivencia
 rem_mirror|func-rem-BBVA-F1
 func-rem-BBVA-F1|func-rem-BBVA-F2
 func-rem-BBVA-F2|func-rem-BBVA-F3
@@ -153,3 +154,4 @@ func-rem-BBVA-F3|func-rem-BBVA-F4
 func-rem-BBVA-F4|R-Okitsu
 rem_mirror|func-rem-gestorBoarding
 func-rem-marcadoresSeguridad|R-Castellana
+func-rem-espartaConvivencia|R-Castellana

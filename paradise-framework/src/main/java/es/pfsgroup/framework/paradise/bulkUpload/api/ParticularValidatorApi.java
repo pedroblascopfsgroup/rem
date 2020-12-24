@@ -1292,6 +1292,11 @@ public interface ParticularValidatorApi {
 
 	Boolean existeEmisor(String emisorNIF);
 
+	Boolean existeCampo(String numCampo);
+
+	Boolean perteneceADiccionarioSubtipoRegistro(String subtipo);
+
+	Boolean existeIdentificadorSubregistro(String subtipo, String identificador);
 
 	Boolean relacionPoblacionLocalidad(String columnaPoblacion, String columnaMunicipio);
 

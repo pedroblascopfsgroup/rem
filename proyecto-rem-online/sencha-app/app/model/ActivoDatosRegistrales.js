@@ -526,6 +526,9 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     		},
     		{
     			name: 'sociedadPagoAnterior'
+    		},
+			{
+    			name: 'tieneAnejosRegistralesInt'
     		}
     ],
     

@@ -36,6 +36,26 @@ Ext.define('HreRem.view.common.GenericViewModel', {
     			autoLoad: true
     		},
     		
+    		comboTipoActivoOE: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposActivo'}
+				},
+				autoLoad: true
+    		},
+    		
+    		comboSubtipoActivoOE: {
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'generic/getDiccionario',
+    				extraParams: {diccionario: 'subtiposActivo'}
+    			},
+    			autoLoad: true
+    		},
+    		
     		comboTipoActivoBde: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -531,7 +551,16 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					extraParams: {diccionario: 'estadoGasto'}
 		    	},
 		    	autoLoad: true
-	    	},	    
+	    	},
+	    	
+    		comboEstadoAdecuacionSareb: {
+	    		model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadoAdecuacionSareb'}
+				}
+    		},
     		
     		storeComboImpideVenta: {
     			model: 'HreRem.model.ComboBase',

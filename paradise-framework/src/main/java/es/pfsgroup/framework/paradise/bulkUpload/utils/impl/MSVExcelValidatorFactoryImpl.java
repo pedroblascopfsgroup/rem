@@ -229,6 +229,9 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVMasivaUnicaGastosValidator cargaMasivaUnicaGastos;
 
 	@Autowired
+	private MSVActualizacionCamposConvivenciaSarebValidator convivenciaSareb;
+	
+	@Autowired
 	private MSVValidatorConfiguracionPeriodosVoluntarios cargaMasivaConfiguracionPeriodosVoluntarios;
 
 	@Autowired
@@ -406,6 +409,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return modificacionLineasDetalle;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_UNICA_GASTOS.equals(codTipoOperacion)) {
 			return cargaMasivaUnicaGastos;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZACION_CAMPOS_ESPARTAR_CONVIVENCIA_SAREB.equals(codTipoOperacion)) {
+			return convivenciaSareb;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CONFIGURACION_PERIODOS_VOLUNTARIOS.equals(codTipoOperacion)) {
 			return cargaMasivaConfiguracionPeriodosVoluntarios;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_COMPLEMENTO_TITULO.equals(codTipoOperacion)) {

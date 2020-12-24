@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -26,6 +27,7 @@ import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDivHorizontal;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 
 
@@ -108,7 +110,9 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 	@Column(name = "REG_FECHA_CFO")
 	private Date fechaCfo;
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TIENE_ANEJOS_REGISTRALES")
+    private DDSinSiNo tieneAnejosRegistrales;
 
 
 	@Version   
@@ -281,8 +285,13 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-	
-	
-	
+
+	public DDSinSiNo getTieneAnejosRegistrales() {
+		return tieneAnejosRegistrales;
+	}
+
+	public void setTieneAnejosRegistrales(DDSinSiNo tieneAnejosRegistrales) {
+		this.tieneAnejosRegistrales = tieneAnejosRegistrales;
+	}	
 	
 }

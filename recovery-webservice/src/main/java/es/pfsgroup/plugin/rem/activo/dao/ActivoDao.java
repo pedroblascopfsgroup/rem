@@ -382,4 +382,9 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos);
 
 	public List<ActivosAlquilados> getListActivosAlquiladosByIdActivos(List<Long> idActivos);
+
+	public Long getCarga(String idBieCarRecovery);
+
+	public void actualizaBieCarIdRecovery(Long idBieCar, Long bieCarIdRecovery);
+
 }

@@ -49,10 +49,10 @@ BEGIN
 	                END
 	            )
 	        , 0) IMPORTE_PROV_SUPL
-	    FROM '|| V_ESQUEMA ||'..ACT_PSU_PROVISION_SUPLIDO PSU 
-	    JOIN '|| V_ESQUEMA ||'..ACT_TBJ_TRABAJO TBJ ON TBJ.TBJ_ID = PSU.TBJ_ID
+	    FROM '|| V_ESQUEMA ||'.ACT_PSU_PROVISION_SUPLIDO PSU 
+	    JOIN '|| V_ESQUEMA ||'.ACT_TBJ_TRABAJO TBJ ON TBJ.TBJ_ID = PSU.TBJ_ID
 	        AND TBJ.BORRADO = 0
-	    LEFT JOIN '|| V_ESQUEMA ||'..DD_TAD_TIPO_ADELANTO TAD ON TAD.DD_TAD_ID = PSU.DD_TAD_ID
+	    LEFT JOIN '|| V_ESQUEMA ||'.DD_TAD_TIPO_ADELANTO TAD ON TAD.DD_TAD_ID = PSU.DD_TAD_ID
 	        AND TAD.BORRADO = 0
 	    WHERE PSU.BORRADO = 0
 	    GROUP BY PSU.TBJ_ID
@@ -66,10 +66,10 @@ BEGIN
 	                         , (TBJ.TBJ_IMPORTE_TOTAL + NVL(SUP.IMPORTE_PROV_SUPL, 0)) / SUM(TBJ.TBJ_IMPORTE_TOTAL + NVL(SUP.IMPORTE_PROV_SUPL, 0))
 	                                                     OVER(PARTITION BY GLD.GLD_ID)       PART_TBJ_LIN_CLI
 	                         FROM
-	                                '|| V_ESQUEMA ||'..GLD_TBJ GTB
-	                             JOIN '|| V_ESQUEMA ||'..GLD_GASTOS_LINEA_DETALLE    GLD ON GLD.GLD_ID = GTB.GLD_ID
+	                                '|| V_ESQUEMA ||'.GLD_TBJ GTB
+	                             JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE    GLD ON GLD.GLD_ID = GTB.GLD_ID
 	                              AND GLD.BORRADO = 0
-	                             JOIN '|| V_ESQUEMA ||'..ACT_TBJ_TRABAJO             TBJ ON TBJ.TBJ_ID = GTB.TBJ_ID
+	                             JOIN '|| V_ESQUEMA ||'.ACT_TBJ_TRABAJO             TBJ ON TBJ.TBJ_ID = GTB.TBJ_ID
 	                              AND TBJ.BORRADO = 0
 	                            LEFT JOIN SUPLIDOS SUP ON SUP.TBJ_ID = TBJ.TBJ_ID
 	                        WHERE

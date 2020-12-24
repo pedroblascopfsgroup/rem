@@ -577,11 +577,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	 	},
 
 	 	readOnlyGestBoarding: function(get){
-	 		var me = this;	 		
-	 		var perfBoarding = $AU.userIsRol(CONST.PERFILES['GESTBOARDING']);
-	 		return perfBoarding;
+	 		var me = this;
+			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+			var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+	 		var isBoarding = $AU.userIsRol(CONST.PERFILES['GESTBOARDING']);
+			/*if(CONST.CARTERA['CERBERUS'] == carteraCodigo || CONST.CARTERA['BBVA'] == carteraCodigo){
+				return !isSuper;//CARTERAS NO BANCO
+			}
+	 		return !isSuper && !isBoarding;//CARTERAS BANCO*/
+	 		return !isSuper;
 	 	},
-
 	 	
 	 	habilitarBotonGenerarFicha: function(get){;
 			 var me = this;

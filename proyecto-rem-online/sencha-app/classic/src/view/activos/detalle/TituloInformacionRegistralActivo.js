@@ -330,7 +330,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			    collapsed: false,
 				layout: {
 			        type: 'table',
-			        columns: 3,
+			        columns: 4,
 			        tdAttrs: {width: '25%'}
 				},
 				listeners: {
@@ -447,7 +447,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						listeners: {
 							rowdblclick: 'onListadoPropietariosDobleClick'
 						},		
-						colspan: 3,
+						colspan: 4,
 						selModel : {
 			                type : 'checkboxmodel'
 			              },

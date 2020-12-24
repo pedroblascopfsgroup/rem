@@ -1672,6 +1672,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var tipoArras = me.down('[name=tipoArras]');
         var estadoReserva = me.down('[name=estadoReserva]');
         var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+		var storeMotivoAnulacion = me.down('[name=motivoAnulacion]').getStore();
 
         me.deshabilitarCampo(me.down('[name=comboProcede]'));
         if(CONST.CARTERA['BANKIA'] == codigoCartera) {
@@ -1697,6 +1698,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	//me.down('[name=comboMotivoAnulacionReserva]').reset();
             }
         });
+
+		storeMotivoAnulacion.addListener('load', function(store, records, successful, operation, eOpts){
+			store.filter('visibleWeb', true);
+		});
     },
     
     T013_RespuestaBankiaDevolucionValidacion: function() {
@@ -2630,12 +2635,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     		me.campoObligatorio(me.down('[name=fechaFirma]'));
     	}
     },
-        T017_ResolucionExpedienteValidacion: function() {
+    T017_ResolucionExpedienteValidacion: function() {
         var me = this;
         var tipoArras = me.down('[name=tipoArras]');
         var estadoReserva = me.down('[name=estadoReserva]');
         var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-
+		var storeMotivoAnulacion = me.down('[name=motivoAnulacion]').getStore();
+		
         me.deshabilitarCampo(me.down('[name=comboProcede]'));
         if(CONST.CARTERA['BANKIA'] == codigoCartera) {
         	me.deshabilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
@@ -2660,6 +2666,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	//me.down('[name=comboMotivoAnulacionReserva]').reset();
             }
         });
+
+		storeMotivoAnulacion.addListener('load', function(store, records, successful, operation, eOpts){
+			store.filter('visibleWeb', true);
+		});
     },
     T017_PosicionamientoYFirmaValidacion: function() {
         var me = this;

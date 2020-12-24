@@ -411,4 +411,9 @@ public class MSVGastosRefacturablesExcelValidator extends MSVExcelValidatorAbstr
 		return listaFilas;
 	}
 
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }

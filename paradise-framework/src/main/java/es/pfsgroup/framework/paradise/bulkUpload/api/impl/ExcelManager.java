@@ -301,7 +301,9 @@ public class ExcelManager implements ExcelManagerApi {
 				archivo.setContenidoFichero(dtoResultado.getExcelErroresFormato());
 				archivo.setErroresFicheroProcesar(dtoResultado.getExcelErroresFormato());
 				archivo.setResultadoFich(dtoResultado.getExcelErroresFormato());
+				
 			}
+			proceso.setTotalFilas(Long.valueOf(validador.getNumFilasHoja()-1));
 		} else {
 			resultadoValidacion = false;
 		}

@@ -62,7 +62,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 	   			 		scrollable	: 'y',
 	    				cls:'',	    				
 					    recordName: "trabajo",
-						
+						reference: 'formBaseCrearTrabajo',
 						recordClass: "HreRem.model.FichaTrabajo",
 					    
     					items: [

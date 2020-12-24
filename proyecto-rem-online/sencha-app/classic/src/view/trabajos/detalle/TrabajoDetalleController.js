@@ -428,9 +428,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		form.getBindRecord().set("codigoPromocionPrinex", codigoPromocionPrinex);
 		form.getBindRecord().set("codCartera", codCartera);
 		form.getBindRecord().set("codSubcartera", codSubcartera);
-				
+		window.getViewModel().getView().mask(HreRem.i18n("msg.mask.espere"));		
 		var success = function(record, operation) {
 			me.getView().unmask();
+			window.getViewModel().getView().unmask();
 			var response = Ext.decode(operation.getResponse().responseText);
 			if(response.success === "true" && Ext.isDefined(response.warn)) {
 				me.fireEvent("warnToast", response.warn);
@@ -902,11 +903,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
      onClickUploadListaActivos: function(btn) {
        	var me = this,
        	form = me.getView().lookupReference("formSubirListaActivos");
-       	
+       	formBase = me.getView().lookupReference("formBaseCrearTrabajo");
        	var params = form.getValues(false,false,false,true);
        	params.idTipoOperacion = "141";
        	
-       	if(form.isValid()){
+       	if(form.isValid() && formBase.isValid()){
         	form.submit({
         		waitMsg: HreRem.i18n('msg.mask.loading'),
         		params: params,
@@ -923,12 +924,18 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 					     timeout: 120000,  // 2 min
 					     success: function(response, opts) {
 		    	   			var window = btn.up('creartrabajowindow');
+							var data = Ext.JSON.decode(response.responseText).data;
 		    	   			window.idProceso = idProceso;
 							me.getView().unmask();
-		    	   			window.lookupReference('listaActivosSubidaRef').getStore().getProxy().setExtraParams({'idProceso':idProceso});
-		    	   			window.lookupReference('listaActivosSubidaRef').getStore().load(1);    
-		    	   			//Si carga correctametne desde listado, ya no sera obligatorio insertar archivo
-		    	   			window.lookupReference('filefieldActivosRef').allowBlank=true;
+							if(data == "true"){
+								window.lookupReference('listaActivosSubidaRef').getStore().getProxy().setExtraParams({'idProceso':idProceso});
+			    	   			window.lookupReference('listaActivosSubidaRef').getStore().load(1);    
+			    	   			//Si carga correctametne desde listado, ya no sera obligatorio insertar archivo
+			    	   			window.lookupReference('filefieldActivosRef').allowBlank=true;
+							}else{
+								me.fireEvent("errorToast", "Ha fallado la validación del fichero. Vaya al apartado de \"Carga Masiva\" para descargar el fichero de errores.");
+							}
+		    	   			
 					     },
 					     failure: function(response, opts) {						     	
 						    me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

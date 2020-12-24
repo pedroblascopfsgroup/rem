@@ -519,5 +519,10 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 		}
 		return listaFilas;
 	}
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
 	
 }

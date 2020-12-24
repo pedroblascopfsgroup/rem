@@ -2199,35 +2199,35 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
 --[13] TABLA ACT_PAC_PROPIETARIO_ACTIVO 
 ---------------------------------------
 --[13.1]--GOGRAP (GRADO_PROPIEDAD) HREOS-3364
-          V_SQL := '
-           MERGE INTO '||V_ESQUEMA||'.ACT_PAC_PROPIETARIO_ACTIVO PAC_OLD
-          USING
-          (
-              SELECT    ACT.ACT_ID,  TGP.DD_TGP_ID
-              FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
-              INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT                  ON ACT.ACT_NUM_ACTIVO_UVEM = APR.ACT_NUMERO_UVEM      
-              JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
-               LEFT JOIN '||V_ESQUEMA||'.DD_TGP_TIPO_GRADO_PROPIEDAD TGP ON TGP.DD_TGP_CODIGO       =  CASE WHEN APR.GRADO_PROPIEDAD = ''01'' THEN ''01'' 
-                                                                                                            WHEN APR.GRADO_PROPIEDAD IS NULL THEN ''01''
-                                                                                                            WHEN APR.GRADO_PROPIEDAD = ''02'' THEN ''03''
-                                                                                                            WHEN APR.GRADO_PROPIEDAD = ''03'' THEN ''02''
-                                                                                                            WHEN APR.GRADO_PROPIEDAD IN (''04'',''05'',''06'') THEN ''05''
-                                                                                                            WHEN APR.GRADO_PROPIEDAD = ''07'' THEN ''04''
-                                                                                                       END 
-              where APR.REM=1
-              AND CRA.DD_CRA_CODIGO = ''03''
-              and ACT.borrado = 0
-            ) PAC_NEW  ON (PAC_OLD.ACT_ID = PAC_NEW.ACT_ID)
-          WHEN MATCHED THEN UPDATE SET
-             PAC_OLD.DD_TGP_ID = PAC_NEW.DD_TGP_ID,
-             PAC_OLD.USUARIOMODIFICAR = '''||V_USUARIO||''',
-             PAC_OLD.FECHAMODIFICAR = SYSDATE
-          WHERE PAC_OLD.DD_TGP_ID <> PAC_NEW.DD_TGP_ID OR PAC_OLD.DD_TGP_ID IS NULL
-          '
-       
-          ;
-          EXECUTE IMMEDIATE V_SQL;
-          V_NUM_TABLAS := SQL%ROWCOUNT;
+--          V_SQL := '
+--           MERGE INTO '||V_ESQUEMA||'.ACT_PAC_PROPIETARIO_ACTIVO PAC_OLD
+--          USING
+--          (
+--              SELECT    ACT.ACT_ID,  TGP.DD_TGP_ID
+--              FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
+--              INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT                  ON ACT.ACT_NUM_ACTIVO_UVEM = APR.ACT_NUMERO_UVEM      
+--              JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
+--               LEFT JOIN '||V_ESQUEMA||'.DD_TGP_TIPO_GRADO_PROPIEDAD TGP ON TGP.DD_TGP_CODIGO       =  CASE WHEN APR.GRADO_PROPIEDAD = ''01'' THEN ''01'' 
+--                                                                                                            WHEN APR.GRADO_PROPIEDAD IS NULL THEN ''01''
+--                                                                                                            WHEN APR.GRADO_PROPIEDAD = ''02'' THEN ''03''
+--                                                                                                            WHEN APR.GRADO_PROPIEDAD = ''03'' THEN ''02''
+--                                                                                                            WHEN APR.GRADO_PROPIEDAD IN (''04'',''05'',''06'') THEN ''05''
+--                                                                                                            WHEN APR.GRADO_PROPIEDAD = ''07'' THEN ''04''
+--                                                                                                       END 
+--              where APR.REM=1
+--              AND CRA.DD_CRA_CODIGO = ''03''
+--              and ACT.borrado = 0
+--            ) PAC_NEW  ON (PAC_OLD.ACT_ID = PAC_NEW.ACT_ID)
+--          WHEN MATCHED THEN UPDATE SET
+--             PAC_OLD.DD_TGP_ID = PAC_NEW.DD_TGP_ID,
+--             PAC_OLD.USUARIOMODIFICAR = '''||V_USUARIO||''',
+--             PAC_OLD.FECHAMODIFICAR = SYSDATE
+--          WHERE PAC_OLD.DD_TGP_ID <> PAC_NEW.DD_TGP_ID OR PAC_OLD.DD_TGP_ID IS NULL
+--          '
+--       
+--          ;
+--          EXECUTE IMMEDIATE V_SQL;
+--          V_NUM_TABLAS := SQL%ROWCOUNT;
 
 
 --[13.2]--POPROP -> PORCENTAJE_PROPIEDAD

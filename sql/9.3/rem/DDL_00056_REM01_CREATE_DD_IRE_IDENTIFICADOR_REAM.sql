@@ -13,13 +13,10 @@
 --##        0.1 Versión inicial
 --##########################################
 --*/
-
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
-
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
-
 
 DECLARE
 
@@ -32,25 +29,21 @@ DECLARE
     V_NUM_SEQ NUMBER(16); -- Vble. para validar la existencia de una secuencia.  
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_IRE_IDENTIFICADOR_REAM'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Diccionario de identificadores RAM/REAM.'; -- Vble. para los comentarios de las tablas
 
-    
-    
-    
 BEGIN
 	
-
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas');
 	
-	
 	-- Verificar si la tabla ya existe
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
-	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+
 	IF V_NUM_TABLAS = 1 THEN
+	
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Ya existe.');
 		
 	ELSE
@@ -84,23 +77,27 @@ BEGIN
 		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_IRE_ID) TABLESPACE '||V_TABLESPACE_IDX;		
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');	
-		
+
 		-- Creamos primary key
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_IRE_ID) USING INDEX)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');	
+		
+		-- Creamos sequence
 		V_SQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TEXT_TABLA||''' and SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
 		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS; 
 		
 		IF V_NUM_TABLAS = 1 THEN
+
 			DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'... Ya existe.');  
-		ELSE
-			V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_IRE_ID) USING INDEX)';
-			EXECUTE IMMEDIATE V_MSQL;
-			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');	
-		END IF;
 		
-		-- Creamos sequence
-		V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
-		EXECUTE IMMEDIATE V_MSQL;		
-		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
+		ELSE
+			
+			V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
+			EXECUTE IMMEDIATE V_MSQL;		
+			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
+
+		END IF;
 		
 		-- Creamos comentario	
 		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
@@ -124,16 +121,8 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
 			
 	END IF;
-	
-
-
-
-
-	
-	
 
 	COMMIT;
-
 
 EXCEPTION
      WHEN OTHERS THEN 

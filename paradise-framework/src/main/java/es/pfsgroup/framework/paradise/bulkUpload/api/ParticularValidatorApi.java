@@ -1341,4 +1341,13 @@ public interface ParticularValidatorApi {
 	
 	Boolean existeProveedorEnCarteraActivo(String proveedor,String idActivo);
 	
+	Boolean existeAlbaran(String idAlbaran);
+	
+	Boolean existePrefactura(String idPrefactura);
+	
+	public String devolverEstadoGastoApartirDePrefactura(String idPrefactura);
+	
+	public String devolverEstadoGastoApartirDeAlbaran(String idAlbaran);
+	
+	public List<String> getIdPrefacturasByNumAlbaran(String numAlbaran);
 }

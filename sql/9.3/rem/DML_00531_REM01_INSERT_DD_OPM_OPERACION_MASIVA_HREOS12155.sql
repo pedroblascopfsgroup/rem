@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo 
---## FECHA_CREACION=20201202
+--## FECHA_CREACION=20201228
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12155
+--## INCIDENCIA_LINK=HREOS-12503
 --## PRODUCTO=NO
 --##
 --## FINALIDAD: Script que añade en DD_OPM_OPERACION_MASIVA los datos añadidos en T_ARRAY_DATA.
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial 
+--##		0.2 Se cambia el Array de insercion para su update. 
 --##########################################
 --*/
 
@@ -37,7 +38,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-    T_FUNCION('CMDSG', 'Carga masiva de datos sobre gasto', 'Carga masiva de datos sobre gasto','CARGA_MASIVA_DATOS_SOBRE_GASTO','nD*,s,s')    ); 
+    T_FUNCION('CMDSG', 'Carga masiva de datos sobre gasto', 'Carga masiva de datos sobre gasto','CARGA_MASIVA_DATOS_SOBRE_GASTO','n*,s*,s,s')    ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.
     V_MSQL_1 VARCHAR2(4000 CHAR);

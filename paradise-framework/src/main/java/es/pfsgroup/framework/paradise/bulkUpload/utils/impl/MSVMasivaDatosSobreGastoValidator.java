@@ -43,18 +43,31 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract {
 	
 	private final String ID_NO_EXISTE = "msg.error.masivo.gastos.id.no.existe";
+	private final String ID_ENTIDAD_NULO = "msg.error.masivo.gastos.id.entidad.no.existe";
+	private final String ID_ALB_NO_EXISTE ="msg.error.masivo.gastos.id.albaran.no.existe";
+	private final String ID_PRE_NO_EXISTE = "msg.error.masivo.gastos.id.prefactura.no.existe";
 	private final String ESTADO_GASTO_INCORRECTO = "msg.error.masivo.gastos.estado.incorrecto";
 	private final String VALIDAR_FILA_EXCEPTION = "msg.error.masivo.gastos.exception";
 	private final String FECHA_INCORRECTA = "msg.error.masivo.gastos.exception.fecha";
 	private final String FECHAS_VACIAS = "msg.error.masivo.gastos.fechas.vacias";
 	private final String SIN_FECHA_CONTABILIZADO = "msg.error.masivo.gastos.exception.gasto.sin.fecha.contabilizado";
 	private final String SIN_FECHA_PAGADO = "msg.error.masivo.gastos.exception.gasto.sin.fecha.pagado";
+	private final String ENTIDAD_INCORRECTA = "msg.error.masivo.gastos.exception.entidad.incorrecta";
+	private final String GASTO_REPETIDO = "msg.error.masivo.gastos.exception.gasto.repetido";
+	private final String MENSAJE_CUSTOM = "Estado invalido para el gasto perteneciente a la prefactura: ";
 	
 	
 
 	private final String PAGADO= "05";
 	private final String CONTABILIZADO= "04";
 	private final String AUTORIZADO_ADMIN= "03";
+	private final String NOMENGLATURA_GASTO_UNO = "G";
+	private final String NOMENGLATURA_GASTO_DOS = "Gasto";
+	private final String NOMENGLATURA_PREFACTURA_DOS = "Prefactura";
+	private final String NOMENGLATURA_PREFACTURA_UNO = "P";
+	private final String NOMENGLATURA_ALBARAN_UNO = "Albarán";
+	private final String NOMENGLATURA_ALBARAN_DOS = "Albaran";
+	private final String NOMENGLATURA_ALBARAN_TRES = "A";
 
 	private final String BORRAR = "X";
 
@@ -62,9 +75,10 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 	private final int FILA_CABECERA = 0;
 	private final int FILA_DATOS = 1;
 
-	private final int COL_ID_GASTO = 0;
-	private final int COL_FECHA_CONTA = 1;
-	private final int COL_FECHA_PAGO = 2;
+	private final int COL_ID_ENTIDAD = 0;
+	private final int COL_ENTIDAD = 1;
+	private final int COL_FECHA_CONTA = 2;
+	private final int COL_FECHA_PAGO = 3;
 	
 	
 	private Integer numFilasHoja;	
@@ -101,52 +115,111 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 		mapaErrores.put(messageServices.getMessage(VALIDAR_FILA_EXCEPTION), new ArrayList<Integer>());
 		mapaErrores.put(messageServices.getMessage(SIN_FECHA_CONTABILIZADO), new ArrayList<Integer>());
 		mapaErrores.put(messageServices.getMessage(SIN_FECHA_PAGADO), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(ENTIDAD_INCORRECTA), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(GASTO_REPETIDO), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(ID_ALB_NO_EXISTE), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(ID_PRE_NO_EXISTE), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(ID_ENTIDAD_NULO), new ArrayList<Integer>());
+	}
+	
+	private void modificarMapaErrores(int fila, String pfa) {
+		List<Integer> aux = new ArrayList<Integer>();
+		aux.add(fila);
+		mapaErrores.put(MENSAJE_CUSTOM+ pfa,aux);
 	}
 	
 	
 	private boolean validarFichero(MSVHojaExcel exc) {
 		boolean esCorrecto = true;
+		List<String> listaGastos = new ArrayList<String>();
 
 		for (int fila = FILA_DATOS; fila < this.numFilasHoja; fila++) {
 			try {
-				
-				String idGasto = exc.dameCelda(fila, COL_ID_GASTO);
+				List<String> listaEstadosValidos = Arrays.asList(new String[] { AUTORIZADO_ADMIN, PAGADO , CONTABILIZADO });
+				String idEntidad = exc.dameCelda(fila, COL_ID_ENTIDAD);
+				String entidad = exc.dameCelda(fila, COL_ENTIDAD);
 				String fechaConta = exc.dameCelda(fila, COL_FECHA_CONTA);
 				String fechaPago = exc.dameCelda(fila, COL_FECHA_PAGO);
-
 				
-				if (!Checks.esNulo(idGasto) && (!particularValidator.existeGasto(idGasto))) {
-					
-					mapaErrores.get(messageServices.getMessage(ID_NO_EXISTE)).add(fila);
+				List<String> listaEntidades = 
+						Arrays.asList(new String[] { NOMENGLATURA_GASTO_UNO.toLowerCase(), NOMENGLATURA_GASTO_DOS.toLowerCase(), 
+						NOMENGLATURA_PREFACTURA_DOS.toLowerCase(), NOMENGLATURA_PREFACTURA_UNO.toLowerCase(), NOMENGLATURA_ALBARAN_UNO.toLowerCase(), 
+						NOMENGLATURA_ALBARAN_DOS.toLowerCase(), NOMENGLATURA_ALBARAN_TRES.toLowerCase()});
+				
+				if(!listaEntidades.contains(entidad.toLowerCase())) {
+					mapaErrores.get(messageServices.getMessage(ENTIDAD_INCORRECTA)).add(fila);
 					esCorrecto = false;
 				}else {
-				
-					if(Checks.esNulo(fechaConta) && Checks.esNulo(fechaPago)) {
-						mapaErrores.get(messageServices.getMessage(FECHAS_VACIAS)).add(fila);
+					if((NOMENGLATURA_GASTO_UNO.equalsIgnoreCase(entidad) || NOMENGLATURA_GASTO_DOS.equalsIgnoreCase(entidad)) && listaGastos.contains(idEntidad)) {
+						mapaErrores.get(messageServices.getMessage(GASTO_REPETIDO)).add(fila);
 						esCorrecto = false;
 					}else {
-						if (!this.comprobarFechas(fechaConta) || !this.comprobarFechas(fechaPago)) {
-							mapaErrores.get(messageServices.getMessage(FECHA_INCORRECTA)).add(fila);
+						if(Checks.esNulo(idEntidad)) {
+							mapaErrores.get(messageServices.getMessage(ID_ENTIDAD_NULO)).add(fila);
 							esCorrecto = false;
+						}else {
+							listaGastos.add(idEntidad);
+							if(NOMENGLATURA_PREFACTURA_DOS.equalsIgnoreCase(entidad) || NOMENGLATURA_PREFACTURA_UNO.equalsIgnoreCase(entidad)){
+								if(!particularValidator.existePrefactura(idEntidad)) {
+									mapaErrores.get(messageServices.getMessage(ID_PRE_NO_EXISTE)).add(fila);
+									esCorrecto = false;
+								}else {
+									String estadoGasto = particularValidator.devolverEstadoGastoApartirDePrefactura(idEntidad);
+									if(!listaEstadosValidos.contains(estadoGasto)) {
+										modificarMapaErrores(fila,idEntidad);
+										esCorrecto = false;
+									}
+								}
+							}else if(NOMENGLATURA_ALBARAN_DOS.equalsIgnoreCase(entidad) || NOMENGLATURA_ALBARAN_UNO.equalsIgnoreCase(entidad) || NOMENGLATURA_ALBARAN_TRES.equalsIgnoreCase(entidad)) {
+								if(!particularValidator.existeAlbaran(idEntidad)) {
+									mapaErrores.get(messageServices.getMessage(ID_ALB_NO_EXISTE)).add(fila);
+									esCorrecto = false;
+								}else {
+									List<String> listaPFA = particularValidator.getIdPrefacturasByNumAlbaran(idEntidad);
+									for (String pfa : listaPFA) {
+										String estadoGasto = particularValidator.devolverEstadoGastoApartirDePrefactura(pfa);
+										if(!listaEstadosValidos.contains(estadoGasto)) {
+											modificarMapaErrores(fila,pfa);
+											esCorrecto = false;
+										}
+									}
+								}
+								
+							}else if (NOMENGLATURA_GASTO_DOS.equalsIgnoreCase(entidad) || NOMENGLATURA_GASTO_UNO.equalsIgnoreCase(entidad)) {
+								if(!particularValidator.existeGasto(idEntidad)) {
+									mapaErrores.get(messageServices.getMessage(ID_NO_EXISTE)).add(fila);
+									esCorrecto = false;
+								}else {
+									if (!this.esCorrectoEstadoGasto(idEntidad)) {
+										mapaErrores.get(messageServices.getMessage(ESTADO_GASTO_INCORRECTO)).add(fila);
+										esCorrecto = false;
+									}
+								}
+							}
+							
+							if(Checks.esNulo(fechaConta) && Checks.esNulo(fechaPago)) {
+								mapaErrores.get(messageServices.getMessage(FECHAS_VACIAS)).add(fila);
+								esCorrecto = false;
+							}/*else {
+								if (!this.comprobarFechas(fechaConta) || !this.comprobarFechas(fechaPago)) {
+									mapaErrores.get(messageServices.getMessage(FECHA_INCORRECTA)).add(fila);
+									esCorrecto = false;
+								}
+								//PREGUNTAR QUE PASA SI SON ALBARANES O PREFACTURAS
+								if(BORRAR.equalsIgnoreCase(fechaConta) && !particularValidator.tieneGastoFechaContabilizado(idEntidad)) {
+									mapaErrores.get(messageServices.getMessage(SIN_FECHA_CONTABILIZADO)).add(fila);
+									esCorrecto = false;
+								}
+								if(BORRAR.equalsIgnoreCase(fechaPago) && !particularValidator.tieneGastoFechaPagado(idEntidad)) {
+									mapaErrores.get(messageServices.getMessage(SIN_FECHA_PAGADO)).add(fila);
+									esCorrecto = false;
+								}
+									
+							}*/
 						}
 						
-						if(BORRAR.equalsIgnoreCase(fechaConta) && !particularValidator.tieneGastoFechaContabilizado(idGasto)) {
-							mapaErrores.get(messageServices.getMessage(SIN_FECHA_CONTABILIZADO)).add(fila);
-							esCorrecto = false;
-						}
-						if(BORRAR.equalsIgnoreCase(fechaPago) && !particularValidator.tieneGastoFechaPagado(idGasto)) {
-							mapaErrores.get(messageServices.getMessage(SIN_FECHA_PAGADO)).add(fila);
-							esCorrecto = false;
-						}
-						
-					}
-					
-					if (!this.esCorrectoEstadoGasto(idGasto)) {
-						mapaErrores.get(messageServices.getMessage(ESTADO_GASTO_INCORRECTO)).add(fila);
-						esCorrecto = false;
 					}
 				}
-		
 
 			} catch (Exception e) {
 				mapaErrores.get(messageServices.getMessage(VALIDAR_FILA_EXCEPTION)).add(fila);
@@ -257,7 +330,5 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 		
 		return true;
 	}
-	
-	
 
 }

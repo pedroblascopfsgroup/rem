@@ -4697,6 +4697,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					if (!Checks.esNulo(activoOferta.getImporteActivoOferta())) {
 						if (activoOferta.getPrimaryKey().getActivo().getId().equals(idActivo)) {
 							Double honorario = (activoOferta.getImporteActivoOferta() * calculoImporteC / 100);
+							// Si el honorario es menor de 100 € el valor final será, salvo si el importe es
+							// fijo, de 100 €. HREOS-5149
+							if (honorario < 100.00) {
+								gastoExpediente.setImporteFinal(100.00);
+							} else {
+								gastoExpediente.setImporteFinal(honorario);
+							}
 							gastoExpediente.setImporteFinal(honorario);
 						}
 					}
@@ -4764,7 +4771,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		// Si el honorario es menor de 100 € el valor final será, salvo si el importe es
 		// fijo, de 100 €. HREOS-5149
 		if (dtoGastoExpediente.getHonorarios() < 100.00
-				&& (DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dtoGastoExpediente.getCodigoTipoCalculo()))) {
+				&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dtoGastoExpediente.getCodigoTipoCalculo())
+				&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO.equals(dtoGastoExpediente.getCodigoTipoCalculo())) {
 			gastoExpediente.setImporteFinal(100.00);
 		} else {
 			gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
@@ -6183,7 +6191,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		// Si el honorario es menor de 100 € el valor final será, salvo si el importe es
 		// fijo, de 100 €. HREOS-5149
 		if (dto.getHonorarios() < 100.00
-				&& !(DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dto.getCodigoTipoCalculo()))) {
+				&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dto.getCodigoTipoCalculo())
+				&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO.equals(dto.getCodigoTipoCalculo())) {
 			gastoExpediente.setImporteFinal(100.00);
 		} else {
 			gastoExpediente.setImporteFinal(dto.getHonorarios());
@@ -7130,7 +7139,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			gastoExpediente.setImporteCalculo(dtoGastoExpediente.getImporteCalculo());
-			gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
+			// Si el honorario es menor de 100 € el valor final será, salvo si el importe es
+			// fijo, de 100 €. HREOS-5149
+			if (dtoGastoExpediente.getHonorarios() < 100.00
+					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dtoGastoExpediente.getCodigoTipoCalculo())
+					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO.equals(dtoGastoExpediente.getCodigoTipoCalculo())) {
+				gastoExpediente.setImporteFinal(100.00);
+			} else {
+				gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
+			}
 			gastoExpediente.setImporteOriginal(dtoGastoExpediente.getImporteOriginal());
 			gastoExpediente.setExpediente(expediente);
 			gastoExpediente.setActivo(activo);
@@ -11027,7 +11044,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			gastoExpediente.setImporteCalculo(dtoGastoExpediente.getImporteCalculo());
-			gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
+			// Si el honorario es menor de 100 € el valor final será, salvo si el importe es
+			// fijo, de 100 €. HREOS-5149
+			if (dtoGastoExpediente.getHonorarios() < 100.00
+					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dtoGastoExpediente.getCodigoTipoCalculo())
+					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO.equals(dtoGastoExpediente.getCodigoTipoCalculo())) {
+				gastoExpediente.setImporteFinal(100.00);
+			} else {
+				gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
+			}
 			gastoExpediente.setImporteOriginal(dtoGastoExpediente.getImporteOriginal());
 			gastoExpediente.setExpediente(expedienteComercial);
 			gastoExpediente.setActivo(activo);

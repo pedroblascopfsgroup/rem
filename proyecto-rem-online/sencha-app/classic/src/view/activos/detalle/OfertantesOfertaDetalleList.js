@@ -82,11 +82,11 @@ Ext.define('HreRem.view.activos.detalle.OfertantesOfertaDetalleList', {
 					        items: [{
 					           	iconCls: 'ico-download',
 					           	tooltip: "Documento Identificativo",
-					            handler: function(grid, rowIndex) {
+					            handler: function(grid, rowIndex, colIndex) {
 					            	var record = grid.getRecord(rowIndex);
-						            var grid = me;						               
-						           // me.fireEvent("download", grid, record);			
-						            grid.getController().downloadDocumentoAdjuntoOfertasController(grid, record);
+						            var grid = me;
+						            var idDocumento = record.get('aDCOMIdDocumentoIdentificativo');			
+						            grid.getController().downloadDocumentoAdjuntoOfertasController(grid, record, idDocumento);
 			            		}
 					        }]
 				   },{
@@ -99,12 +99,22 @@ Ext.define('HreRem.view.activos.detalle.OfertantesOfertaDetalleList', {
 					           	tooltip: "Documento GDPR",
 					            handler: function(grid, rowIndex) {
 					            	var record = grid.getRecord(rowIndex);
-						            var grid = me;						               
-						           // me.fireEvent("download", grid, record);			
-						            grid.getController().downloadDocumentoAdjuntoOfertasController(grid, record);
+						            var grid = me;			
+						            var idDocumento = record.get('aDCOMIdDocumentoGDPR');			
+						            grid.getController().downloadDocumentoAdjuntoOfertasController(grid, record, idDocumento);
 			            		}
 					        }]
-				   }
+				   },{
+			        	dataIndex: 'ADCOMIdDocumentoIdentificativo',
+			        	text: HreRem.i18n('fieldlabel.proveedores.id'),
+			        	flex:0.4,
+			        	hidden:true
+			        },{
+			        	dataIndex: 'ADCOMIdDocumentoGDPR',
+			        	text: HreRem.i18n('fieldlabel.proveedores.id'),
+			        	flex:0.4,
+			        	hidden:true
+			        }
 	    ];
 
 	    me.dockedItems = [

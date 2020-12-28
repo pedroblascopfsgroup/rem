@@ -3772,44 +3772,37 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public void bajarAdjuntoOfertante (HttpServletRequest request, HttpServletResponse response) {
+	public void bajarAdjuntoOfertante (HttpServletRequest request, HttpServletResponse response) throws UserException,Exception{
         
 		Long idClienteComercial = null;
 		Long idClienteGCD = null;
-		Long idAdjuntoComprador = null;
+		Long idAdjuntoComprador = Long.parseLong(request.getParameter("idDocumento"));
 		AdjuntoComprador adjuntoComprador = null;
 		DtoAdjunto dtoAdjunto = new DtoAdjunto();
 		
-		Filter filterOfertaID = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(request.getParameter("id")));
-		Oferta oferta = genericDao.get(Oferta.class, filterOfertaID);	
-		if(oferta != null) {
-			ClienteComercial clienteComercial = oferta.getCliente();
-			idClienteComercial = clienteComercial.getId();
+		if(idAdjuntoComprador != null) {
+			Filter filterAdjuntoComprador = genericDao.createFilter(FilterType.EQUALS, "id", idAdjuntoComprador);
+			adjuntoComprador = genericDao.get(AdjuntoComprador.class, filterAdjuntoComprador);
 		}
-		
-		Filter filterClienteCGD = genericDao.createFilter(FilterType.EQUALS, "cliente.id", idClienteComercial);
-		ClienteGDPR clienteGCD = genericDao.get(ClienteGDPR.class, filterClienteCGD);
-		
-		if(clienteGCD != null) {
-			adjuntoComprador = clienteGCD.getAdjuntoComprador();
-		}		
 		//ADC_ID_DOCUMENTO_REST
 		if(adjuntoComprador != null) {
 			if (adjuntoComprador.getIdDocRestClient() != null) {
-				dtoAdjunto.setId(adjuntoComprador.getIdDocRestClient());
+				dtoAdjunto.setId(idAdjuntoComprador);
 			} else {
-				dtoAdjunto.setId(adjuntoComprador.getAdjunto());
+				dtoAdjunto.setId(idAdjuntoComprador);
+			}
+			
+			if(adjuntoComprador.getNombreAdjunto() != null) {
+				dtoAdjunto.setNombre(adjuntoComprador.getNombreAdjunto());
 			}
 			
 		}
 		
 		//Id de la entidad
 		dtoAdjunto.setIdEntidad(Long.parseLong(request.getParameter("id")));
-		//Nombre del documento
-		String nombreDocumento = request.getParameter("nombreDocumento");
-		dtoAdjunto.setNombre(nombreDocumento);
-		 
-       	FileItem fileItem = activoApi.getFileItemPlusvalia(dtoAdjunto);
+		FileItem fileItem = adapter.download(adjuntoComprador.getIdDocRestClient(), adjuntoComprador.getNombreAdjunto());
+       //	FileItem fileItem = activoApi.getFileItemOfertante(dtoAdjunto, adjuntoComprador);
+       	
 		
        	try { 
 

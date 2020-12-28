@@ -2683,8 +2683,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			Filter filterOfertaID = genericDao.createFilter(FilterType.EQUALS, "id", idOferta);
 			Oferta oferta = genericDao.get(Oferta.class, filterOfertaID);
+
+			
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getCliente())) {
 				DtoOfertantesOferta dto = new DtoOfertantesOferta();
+				Long idClienteComercial = oferta.getCliente().getId();
+				Filter filterClienteCGD = genericDao.createFilter(FilterType.EQUALS, "cliente.id", idClienteComercial);
+				ClienteGDPR clienteGCD = genericDao.get(ClienteGDPR.class, filterClienteCGD);
+				
+				
 				if (!Checks.esNulo(oferta.getCliente().getTipoDocumento())) {
 					dto.setTipoDocumento(oferta.getCliente().getTipoDocumento().getCodigo());
 				}
@@ -2701,7 +2708,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (!Checks.esNulo(oferta.getCliente().getEstadoCivil())) {
 					dto.setEstadoCivil(oferta.getCliente().getEstadoCivil().getDescripcion());
 				}
-				
+				if(clienteGCD != null) {
+					if(clienteGCD.getAdjuntoComprador() != null) {
+						dto.setADCOMIdDocumentoGDPR(clienteGCD.getAdjuntoComprador().getId());
+					}
+					
+					if(clienteGCD.getAdcomIdDocumentoIdentificativo() != null) {
+						dto.setADCOMIdDocumentoIdentificativo(clienteGCD.getAdcomIdDocumentoIdentificativo().getId());
+					}
+					
+				}	
 				
 				listaOfertantes.add(dto);
 			}
@@ -2727,6 +2743,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 					if (!Checks.esNulo(titularAdicional.getEstadoCivil())) {
 						dto.setEstadoCivil(titularAdicional.getEstadoCivil().getDescripcion());
+					}
+					if(titularAdicional.getAdcomIdDocumentoIdentificativo() != null) {
+						dto.setADCOMIdDocumentoIdentificativo(titularAdicional.getAdcomIdDocumentoIdentificativo().getId());
+					}
+					if(titularAdicional.getAdcomIdDocumentoGDPR() != null ) {
+						dto.setADCOMIdDocumentoGDPR(titularAdicional.getAdcomIdDocumentoGDPR().getId());
 					}
 					titularAdicional.getDocumento();
 					listaOfertantes.add(dto);

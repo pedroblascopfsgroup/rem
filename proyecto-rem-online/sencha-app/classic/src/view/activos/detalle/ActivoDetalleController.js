@@ -6277,7 +6277,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	btn.up('window').hide();
     },
        
-	downloadDocumentoAdjuntoOfertasController: function(grid, record) {
+	downloadDocumentoAdjuntoOfertasController: function(grid, record, idDocumento) {
 		var me = this,
 		config = {};
 		
@@ -6285,8 +6285,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				"arAdjuntoOfertante."+$AC.getUrlPattern();
 		config.params = {};
 		config.params.id=record.get('ofertaID');
-		config.params.idActivo=me.getViewModel().get("activo.id");
-		config.params.nombreDocumento=record.get("nombre").replace(/,/g, "");
-		me.fireEvent("downloadFile", config);
+		config.params.idDocumento=idDocumento;
+		if(idDocumento != null) {
+			me.fireEvent("downloadFile", config);
+		}
     }
 });

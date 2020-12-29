@@ -79,6 +79,7 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	private Date fechaEnvioComunicacionOrganismo;
 	private Date fechaRecepcionRespuestaOrganismo;
 	private String estadoVentaCodigo;
+	private Boolean puedeEditarCalificacionNegativaAdicional;
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -482,4 +483,11 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	public void setEstadoVentaCodigo(String estadoVentaCodigo) {
 		this.estadoVentaCodigo = estadoVentaCodigo;
 	}
+	public Boolean getPuedeEditarCalificacionNegativaAdicional() {
+		return puedeEditarCalificacionNegativaAdicional;
+	}
+	public void setPuedeEditarCalificacionNegativaAdicional(Boolean puedeEditarCalificacionNegativaAdicional) {
+		this.puedeEditarCalificacionNegativaAdicional = puedeEditarCalificacionNegativaAdicional;
+	}
+	
 }

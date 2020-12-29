@@ -11,13 +11,13 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
+import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoUsuarios;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -342,6 +343,10 @@ public interface GenericApi {
 	 * @return Devuelve una lista de los subtipologias de agenda de saneamiento relacionado con la tipologia de agenda de saneamiento seleccionada
 	 */
 	List<DDSubtipoAgendaSaneamiento> getSubtipologiaAgendaSaneamiento(String codTipo);
+
+	public List<DDTipoAlta> getComboBBVATipoAlta(Long idRecovery);
+
+	public List<DtoPropietario> getcomboSociedadAnteriorBBVA();
 	
 	List<DDEstadoAdmision> getComboEstadoAdmisionFiltrado(Set<String> tipoEstadoAdmisionCodigo);
 }

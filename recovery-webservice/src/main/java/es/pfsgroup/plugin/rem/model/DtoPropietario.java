@@ -51,6 +51,7 @@ public class DtoPropietario extends WebDto {
 	private String tipoDocIdentificativoCodigo;
 	private String provinciaContactoCodigo;
 	private String localidadContactoCodigo;
+	private String descripcion;
 	
 	
 	public long getId() {
@@ -269,6 +270,12 @@ public class DtoPropietario extends WebDto {
 	}
 	public void setLocalidadContactoCodigo(String localidadContactoCodigo) {
 		this.localidadContactoCodigo = localidadContactoCodigo;
+	}
+	public String getDescripcion() {
+		return descripcion;
+	}
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
 	}
 	
 	

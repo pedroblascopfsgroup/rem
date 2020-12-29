@@ -191,6 +191,8 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			// Buscamos los campos que pueden ser propagados para esta pestaña
 			activoDto.setCamposPropagables(TabActivoService.TAB_SIT_POSESORIA_LLAVES);
 		}
+		
+		activoDto.setPosesionNegociada(activo.getSituacionPosesoria().getSpsPosesionNeg() ? "1" : "0");
 	
 		return activoDto;
 		
@@ -292,6 +294,9 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				}
 			}
 			
+			if(dto.getPosesionNegociada() != null) {
+				activoSituacionPosesoria.setSpsPosesionNeg("1".equals(dto.getPosesionNegociada()));
+			}
 		}
 		
 		activo.setSituacionPosesoria(genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria));

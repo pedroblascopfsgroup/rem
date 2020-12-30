@@ -64,6 +64,7 @@ Ext.define('HreRem.model.Activo', {
     			},
     			depends: 'entidadPropietariaCodigo'
     		},
+    		
     		{
     			name: 'subcarteraCodigo'
     		},
@@ -941,6 +942,73 @@ Ext.define('HreRem.model.Activo', {
     			name: 'numActivoDivarian'
     		},
     		{
+    			name: 'empresa'
+    		},
+    		{
+    			name: 'oficina'
+    		},
+    		{
+    			name: 'contrapartida'
+    		},
+    		{
+    			name: 'folio'
+    		},
+    		{
+    			name: 'cdpen'
+    		},
+    		{
+    			name: 'numActivoBbva'
+    		},
+    		{
+    			name: 'lineaFactura'
+    		},
+    		{
+    			name: 'idOrigenHre'
+    		},
+    		{
+    			name: 'uicBbva'
+    		},
+    		{
+    			name: 'cexperBbva'
+    		},
+    		{
+    			name: 'subestadoAdmisionDescCabecera'
+			},
+			{
+	 			name: 'estadoRegistralCodigo'
+			},
+			{
+	 			name: 'esEditableActivoEstadoRegistral',
+    			type: 'boolean'	 			
+			},
+			{
+    			name: 'activoEpa',
+				type: 'boolean'
+			},
+			{
+    			name: 'tipoTransmisionCodigo'
+    		},
+    		{
+    			name: 'tipoTransmisionDescripcion'
+    		},
+    		{
+    			name: 'tipoAltaCodigo'
+    		},
+    		{
+    			name: 'tipoAltaDescripcion'
+    		},
+    		{
+    			name: 'isCarteraBbva',
+    			calculate: function(data) {
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['BBVA'];
+    			},
+    			depends: 'entidadPropietariaCodigo'
+    		},
+    		{
+    			name: 'isGrupoOficinaKAM',
+    			type: 'boolean'
+			},
+			{
     			name: 'perimetroAdmision',
     			type: 'boolean'
     		},
@@ -1002,8 +1070,10 @@ Ext.define('HreRem.model.Activo', {
 			{
 				name: 'isEditablePorcentajeConstruccion',
 				type: 'boolean'
-			}
-    		
+			},
+    		{
+    			name: 'codPromocionBbva'
+    		}
     ],
     
 	proxy: {

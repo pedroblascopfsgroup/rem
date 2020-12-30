@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
 /**
@@ -124,6 +125,10 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name="ACT_CON_CARGAS")
     private Integer conCargas;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TTR_ID")
+  	private DDTipoTransmision tipoTransmision;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPA_ID")
@@ -537,6 +542,15 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "ACT_PORCENTAJE_CONSTRUCCION")
    	private Double porcentajeConstruccion;
+	   
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TTA_ID_BBVA")
+    private DDTipoTituloActivo tipoTituloBbva;
+    
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<GastoAsociadoAdquisicion> gastosAsociados;
     
     // Getters del activo --------------------------------------------
     
@@ -2016,6 +2030,14 @@ public class Activo implements Serializable, Auditable {
 		this.tipoSegmento = tipoSegmento;
 	}
 
+	public List<GastoAsociadoAdquisicion> getGastosAsociados() {
+		return gastosAsociados;
+	}
+
+	public void setGastosAsociados(List<GastoAsociadoAdquisicion> gastosAsociados) {
+		this.gastosAsociados = gastosAsociados;
+	}
+
 	public boolean getIsDnd() {
 		return isDnd;
 	}
@@ -2071,6 +2093,10 @@ public class Activo implements Serializable, Auditable {
 	public void setEstadoRegistral(DDEstadoRegistralActivo estadoRegistral) {
 		this.estadoRegistral = estadoRegistral;
 	}
+	
+	public DDTipoTituloActivo getTipoTituloBbva() {
+		return tipoTituloBbva;
+	}
 
 	public Double getPorcentajeConstruccion() {
 		return porcentajeConstruccion;
@@ -2081,4 +2107,15 @@ public class Activo implements Serializable, Auditable {
 	}
 	
 
+	public void setTipoTituloBbva(DDTipoTituloActivo tipoTituloBbva) {
+		this.tipoTituloBbva = tipoTituloBbva;
+	}
+
+	public DDTipoTransmision getTipoTransmision() {
+		return tipoTransmision;
+	}
+
+	public void setTipoTransmision(DDTipoTransmision tipoTransmision) {
+		this.tipoTransmision = tipoTransmision;
+	}
 }

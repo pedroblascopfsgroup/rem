@@ -244,7 +244,6 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
     onChangeChainedCombo: function(combo) {
     	var me = this,
     	chainedCombo = me.lookupReference(combo.chainedReference);   
-    	
     	me.getViewModel().notify();
     	
     	if(!Ext.isEmpty(chainedCombo.getValue())) {
@@ -281,7 +280,6 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
     },
     
     onClickAbrirVisita: function(grid, rowIndex, colIndex) {
-    	
     	var me = this,
 	    record = grid.getStore().getAt(rowIndex),
 	    numVisita = record.get('numVisita');

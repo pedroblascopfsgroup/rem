@@ -1573,7 +1573,7 @@ public class UvemManager implements UvemManagerApi {
 		} else if (DDMotivoAnulacionReserva.CODIGO_DECISION_HAYA.equals(codigoMotivoAnulacionReserva)) {
 			return MOTIVO_ANULACION.DECISION_HAYA;
 		} else {
-			return null;
+			return MOTIVO_ANULACION.NO_APLICA;
 		}
 	}
 
@@ -1817,7 +1817,31 @@ public class UvemManager implements UvemManagerApi {
 			return MOTIVO_ANULACION_OFERTA.FINANCIACION_DENEGADA;
 		} else if (DDMotivoAnulacionExpediente.CODIGO_PBC_DENEGADO.equals(codigoMotivoAnulacion)) {
 			return MOTIVO_ANULACION_OFERTA.PBC_DENEGADO;
-		} else {
+		} else if (DDMotivoAnulacionExpediente.CODIGO_INCUMPLIMIENTO_PLAZO.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.EXCESIVO_TIEMPO_FIRMA_RESERVA;
+		}else if (DDMotivoAnulacionExpediente.CODIGO_ORDEN_PROPIEDAD.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.SOLICITADA_AREA;
+		}else if (DDMotivoAnulacionExpediente.CODIGO_DESESTIMIENTO_COMPRADOR.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.COMPRADOR_NO_INTERESADO_OPERACION;
+		}else if (DDMotivoAnulacionExpediente.CODIGO_3_MESES_SIN_FORMALIZAR.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.EXCESIVO_TIEMPO_FIRMA_RESERVA;
+		}else if (DDMotivoAnulacionExpediente.CODIGO_SIN_NOTICIAS_COMPRADOR.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.NO_LOCALIZADO_CLIENTE;
+		}else if (DDMotivoAnulacionExpediente.CODIGO_FINANCIACION_RECHAZADA.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.FALTA_FINANCIACION;
+		}else if (DDMotivoAnulacionExpediente.CODIGO_SIN_DOC_PBC.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.LOCALIZADO_SIN_INTERES_FIRMAR;
+		}else if (DDMotivoAnulacionExpediente.CODIGO_PBC_RECHAZADO.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.PBC_DENEGADO;
+		}else if (DDMotivoAnulacionExpediente.CODIGO_EJERCE_TANTEO.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.NO_CUMPLE_CONDICION;
+		}else if (DDMotivoAnulacionExpediente.CODIGO_VPO_DENEGADA.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.NO_CUMPLE_CONDICION;
+		}else if (DDMotivoAnulacionExpediente.CODIGO_INCIDENCIA_JURIDICA_TECNICA.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.CIRCURNSTANCIA_DISTINTAS_PACTADAS_DPT_COMERCIAL;
+		}else if (DDMotivoAnulacionExpediente.CODIGO_ALTA_OFERTA_ESPEJO.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.ERROR_USUARIO_1;
+		}else {
 			return null;
 		}
 	}

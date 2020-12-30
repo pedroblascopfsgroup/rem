@@ -95,6 +95,8 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String resolucionMoratoriaCodigo;
 	private Date fechaResolucionMoratoria;
 	private String defectosTestimonio;
+	private String idProcesoOrigen;
+	private String sociedadPagoAnterior;
 	
 	// Mapeados a mano
 	private String tipoJuzgadoCodigo;
@@ -135,6 +137,9 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	
 	private Boolean unidadAlquilable;
 	private String tipoTituloActivoMatriz;
+	
+	private String origenAnteriorActivoBbvaCodigo;
+	private Long idAsuntoRecAlaska;
 	/*
 
     private NMBAdjudicacionBien adjudicacionBien;
@@ -766,5 +771,30 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	public void setFechaTituloAnterior(Date fechaTituloAnterior) {
 		this.fechaTituloAnterior = fechaTituloAnterior;
 	}
+	public String getSociedadPagoAnterior() {
+		return sociedadPagoAnterior;
+	}
+	public void setSociedadPagoAnterior(String sociedadPagoAnterior) {
+		this.sociedadPagoAnterior = sociedadPagoAnterior;
+	}
 
+	public String getOrigenAnteriorActivoBbvaCodigo() {
+		return origenAnteriorActivoBbvaCodigo;
+	}
+	public void setOrigenAnteriorActivoBbvaCodigo(String origenAnteriorActivoBbvaCodigo) {
+		this.origenAnteriorActivoBbvaCodigo = origenAnteriorActivoBbvaCodigo;
+	}
+	public Long getIdAsuntoRecAlaska() {
+		return idAsuntoRecAlaska;
+	}
+	public void setIdAsuntoRecAlaska(Long idAsuntoRecAlaska) {
+		this.idAsuntoRecAlaska = idAsuntoRecAlaska;
+	}
+
+	public String getIdProcesoOrigen() {
+		return idProcesoOrigen;
+	}
+	public void setIdProcesoOrigen(String idProcesoOrigen) {
+		this.idProcesoOrigen = idProcesoOrigen;
+	}
 }

@@ -21,8 +21,10 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
@@ -31,6 +33,7 @@ import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoHistoricoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoTituloAdicional;
 import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoTituloAdicional;
@@ -364,6 +367,23 @@ public class TabActivoSaneamiento implements TabActivoService{
 			if (actTituloAdicional.getFechaNotaSimple() != null) {
 				activoDto.setFechaNotaSimpleAdicional(actTituloAdicional.getFechaNotaSimple());
 			}
+			
+			puedeEditar = false;
+			
+			Order order = new Order(OrderType.DESC, "id");
+			filtro = genericDao.createFilter(FilterType.EQUALS, "tituloAdicional.activo.id", activo.getId());
+			List<ActivoHistoricoTituloAdicional> listasTramitacion = genericDao.getListOrdered(ActivoHistoricoTituloAdicional.class, order, filtro);
+			
+			if(!Checks.estaVacio(listasTramitacion) && !Checks.esNulo(listasTramitacion.get(0).getEstadoPresentacion())
+				&& DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(listasTramitacion.get(0).getEstadoPresentacion().getCodigo())
+				&& !Checks.esNulo(actTituloAdicional.getEstadoTitulo()) && DDEstadoTitulo.ESTADO_SUBSANAR.equals(actTituloAdicional.getEstadoTitulo().getCodigo())
+			) {
+				puedeEditar = true;
+
+			}
+		
+			activoDto.setPuedeEditarCalificacionNegativaAdicional(puedeEditar);
+			
 			
 		}else {
 			activoDto.setTieneTituloAdicional(0);

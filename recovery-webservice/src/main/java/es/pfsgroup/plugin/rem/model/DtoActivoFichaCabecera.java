@@ -276,7 +276,25 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private Boolean pazSocial;
 	private String numActivoDivarian;
-	
+	private Boolean activoEpa;
+    private Long empresa;
+    private Long oficina;
+    private Long contrapartida;
+    private Long folio;
+    private String cdpen;
+    
+	private String numActivoBbva;
+    private Long lineaFactura;
+    private Long idOrigenHre;
+    private String uicBbva;
+    private String cexperBbva;
+    private String tipoTransmisionCodigo;
+    private String tipoAltaCodigo;
+    private String tipoTransmisionDescripcion;
+    private String tipoAltaDescripcion;
+    private Boolean isGrupoOficinaKAM;
+
+
 	//Estado Admision
 	private Boolean incluidoEnPerimetroAdmision;
 	private String estadoAdmisionCodigo;
@@ -293,7 +311,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String subestadoAdmisionCodCabecera;
 	private String estadoAdmisionDescCabecera;
 	private String subestadoAdmisionDescCabecera;
-	private Boolean esEditableActivoEstadoRegistral;
 	
 	//Visible Gestion comercial
 	private Boolean excluirValidaciones;
@@ -302,6 +319,16 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String motivoGestionComercialCodigo;
 	private String motivoGestionComercialDescripcion;
 	private Boolean restringido;
+	private Boolean esEditableActivoEstadoRegistral;  
+
+	private Boolean activoChkPerimetroAlquiler;
+	private List<?> activosAgrupacionRestringida;
+
+	private Boolean tieneOkTecnico;
+
+	private Long activoPrincipalRestringida;
+	
+	private String codPromocionBbva;
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -350,13 +377,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setOcupado(int ocupado) {
 		this.ocupado = ocupado;
 	}
-
-	private Boolean activoChkPerimetroAlquiler;
-	private List<?> activosAgrupacionRestringida;
-
-	private Boolean tieneOkTecnico;
-
-	private Long activoPrincipalRestringida;
 
 	public Boolean getTieneOkTecnico() {
 		return tieneOkTecnico;
@@ -2119,6 +2139,126 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.numActivoDivarian = numActivoDivarian;
 	}
 
+	public Boolean getActivoEpa() {
+		return activoEpa;
+	}
+
+	public void setActivoEpa(Boolean activoEpa) {
+		this.activoEpa = activoEpa;
+	}
+
+	public Long getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(Long empresa) {
+		this.empresa = empresa;
+	}
+
+	public Long getOficina() {
+		return oficina;
+	}
+
+	public void setOficina(Long oficina) {
+		this.oficina = oficina;
+	}
+
+	public Long getContrapartida() {
+		return contrapartida;
+	}
+
+	public void setContrapartida(Long contrapartida) {
+		this.contrapartida = contrapartida;
+	}
+
+	public Long getFolio() {
+		return folio;
+	}
+
+	public void setFolio(Long folio) {
+		this.folio = folio;
+	}
+
+	public String getNumActivoBbva() {
+		return numActivoBbva;
+	}
+
+	public void setNumActivoBbva(String numActivoBbva) {
+		this.numActivoBbva = numActivoBbva;
+	}
+
+	public Long getLineaFactura() {
+		return lineaFactura;
+	}
+
+	public void setLineaFactura(Long lineaFactura) {
+		this.lineaFactura = lineaFactura;
+	}
+
+	public Long getIdOrigenHre() {
+		return idOrigenHre;
+	}
+
+	public void setIdOrigenHre(Long idOrigenHre) {
+		this.idOrigenHre = idOrigenHre;
+	}
+
+	public String getUicBbva() {
+		return uicBbva;
+	}
+
+	public void setUicBbva(String uicBbva) {
+		this.uicBbva = uicBbva;
+	}
+
+	public String getCexperBbva() {
+		return cexperBbva;
+	}
+
+	public void setCexperBbva(String cexperBbva) {
+		this.cexperBbva = cexperBbva;
+	}
+
+	public String getTipoTransmisionCodigo() {
+		return tipoTransmisionCodigo;
+	}
+
+	public void setTipoTransmisionCodigo(String tipoTransmisionCodigo) {
+		this.tipoTransmisionCodigo = tipoTransmisionCodigo;
+	}
+
+	public String getTipoAltaCodigo() {
+		return tipoAltaCodigo;
+	}
+
+	public void setTipoAltaCodigo(String tipoAltaCodigo) {
+		this.tipoAltaCodigo = tipoAltaCodigo;
+	}
+
+	public String getTipoTransmisionDescripcion() {
+		return tipoTransmisionDescripcion;
+	}
+
+	public void setTipoTransmisionDescripcion(String tipoTransmisionDescripcion) {
+		this.tipoTransmisionDescripcion = tipoTransmisionDescripcion;
+	}
+
+	public String getTipoAltaDescripcion() {
+		return tipoAltaDescripcion;
+	}
+
+	public void setTipoAltaDescripcion(String tipoAltaDescripcion) {
+		this.tipoAltaDescripcion = tipoAltaDescripcion;
+	}
+
+	public Boolean getIsGrupoOficinaKAM() {
+		return isGrupoOficinaKAM;
+	}
+
+	public void setIsGrupoOficinaKAM(Boolean isGrupoOficinaKAM) {
+		this.isGrupoOficinaKAM = isGrupoOficinaKAM;
+	}
+	
 	public Boolean getPerimetroAdmision() {
 		return perimetroAdmision;
 	}
@@ -2307,5 +2447,20 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	
 	
+	public String getCodPromocionBbva() {
+		return codPromocionBbva;
+	}
+
+	public void setCodPromocionBbva(String codPromocionBbva) {
+		this.codPromocionBbva = codPromocionBbva;
+	}
+
+	public String getCdpen() {
+		return cdpen;
+	}
+
+	public void setCdpen(String cdpen) {
+		this.cdpen = cdpen;
+	}	
 	
 }

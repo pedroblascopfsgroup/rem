@@ -109,7 +109,9 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							readOnly : 'true',
 							hidden : '{esTipoAlquiler}'
 						}
-					},{
+					},
+					{bind : {hidden : '{!esTipoAlquiler}'}},
+					{
 						xtype : 'fieldsettable',
 						defaultType : 'displayfieldbase',
 						title : 'Bulk Advisory Note',
@@ -496,7 +498,17 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							text : HreRem.i18n('btn.propuesta.oferta'),
 							handler : 'onClickGeneraOfertarHojaExcel',
 							margin : '10 10 10 10'
-						}, {
+						},
+						//Pruebas del excel
+						/*{
+							xtype : 'button',
+							reference : 'btnGenerarFichaComercial',
+							rowspan : 2,
+							text : HreRem.i18n('btn.propuesta.generar.ficha.comercial'),
+							handler : 'onClickGeneraFichaComercialHojaExcel',
+							margin : '10 10 10 10'
+						},*/
+						{
 							xtype : 'button',
 							reference : 'btnSendAprobacion',
 							bind : {
@@ -515,6 +527,17 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							text : HreRem
 									.i18n('title.activo.administracion.exportar.listado.activos'),
 							handler : 'onClickGenerarListadoDeActivos',
+							margin : '10 10 10 10'
+
+						}, {
+							xtype : 'button',
+							reference : 'btngenerarfichacomercial',
+							bind : {
+								hidden : '{!esBbva}',
+								disabled : '{!habilitarBotonGenerarFicha}'
+							},
+							text : HreRem.i18n('btn.generar.ficha.comercial'),
+							handler : 'onClickGenerarFichaComercial',
 							margin : '10 10 10 10'
 						}]
 

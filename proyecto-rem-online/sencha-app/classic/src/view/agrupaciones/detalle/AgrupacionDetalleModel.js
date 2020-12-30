@@ -349,6 +349,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	         var tipoAgrup= get('agrupacionficha.tipoAgrupacionCodigo');
 	         if((codigoCartera == CONST.CARTERA['LIBERBANK'] || 
 	        	codigoCartera == CONST.CARTERA['BANKIA'] ||
+	        	codigoCartera == CONST.CARTERA['BBVA'] ||
 	        	(codigoCartera == CONST.CARTERA['CERBERUS'] && 
 	        		(codigoSubCartera == CONST.SUBCARTERA['APPLEINMOBILIARIO'] || 
 	        		codigoSubCartera == CONST.SUBCARTERA['JAIPURFINANCIERO'] ||

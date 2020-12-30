@@ -26,6 +26,8 @@ import org.hibernate.LazyInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.utils.MessageUtils;
@@ -63,10 +65,10 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.CarteraCondicionesPrecios;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
-import es.pfsgroup.plugin.rem.model.DtoActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
+import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoUsuarios;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -100,6 +102,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -110,6 +113,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
+import es.pfsgroup.plugin.rem.propietario.dao.ActivoPropietarioDao;
 import es.pfsgroup.plugin.rem.trabajo.dao.DDSubtipoTrabajoDao;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -162,6 +166,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired 
+	private ActivoPropietarioDao activoPropietarioDao;
 
 	@Override
 	public String managerName() {
@@ -225,7 +232,10 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				authData.setCodigoCartera(uca.get(0).getCartera().getCodigo());
 			}
 
-			authData.setJwt(createJwtForTheSession(usuario.getUsername(), roles));
+			String jwtToken = createJwtForTheSession(usuario.getUsername(), roles);
+			// El token se traslada a la interfaz, a través del auhtData, y se establece en la sesión de usuario para su uso en el servidor
+			authData.setJwt(jwtToken);
+			RequestContextHolder.getRequestAttributes().setAttribute("token_jwt", jwtToken, RequestAttributes.SCOPE_SESSION);
 
 		}catch(LazyInitializationException e){
 			logger.info(e.getMessage());
@@ -245,7 +255,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		// Time for the token to be valid
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
-		calendar.add(Calendar.HOUR_OF_DAY, 8);
+		calendar.add(Calendar.HOUR_OF_DAY, Integer.parseInt(appProperties.getProperty("jwt.valid.signed.time", "12")));
 		Date validJwtSignedTime = calendar.getTime();
 
 		//The JWT signature algorithm we will be using to sign the token
@@ -256,7 +266,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		//We will sign our JWT with our ApiKey secret
 		byte[] apiKeySecretBytes = DatatypeConverter
-				.parseBase64Binary(appProperties.getProperty("jwt.secret.key", "default_rest_api_key"));
+				.parseBase64Binary(appProperties.getProperty("jwt.secret.key", "1234567890"));
 		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
 		//Let's set the JWT Claims
@@ -959,9 +969,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filtro;
 		Filter filtroCartera;
 		if(!Checks.esNulo(subcarteraCodigo)){
-			filtro = genericDao.createFilter(FilterType.EQUALS,"Subcartera.codigo", subcarteraCodigo);
+			
 			filtroCartera = genericDao.createFilter(FilterType.EQUALS,"cartera.codigo", carteraCodigo);
-			listaComites = genericDao.getList(DDComiteSancion.class,filtro,filtroCartera);
+			listaComites = genericDao.getList(DDComiteSancion.class,filtroCartera);
 
 		}
 		if(Checks.esNulo(subcarteraCodigo) || Checks.estaVacio(listaComites)){
@@ -1388,25 +1398,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		ConfiguracionSubpartidasPresupuestarias cps = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, filtroId);
 		return (cps != null) ? cps.getPartidaPresupuestaria() : null;
 	}
-	
-	@Override
-	public List<ActivoProveedorReducido> getComboActivoProveedorSuministro() {
-		List<ActivoProveedorReducido> listaActivoProveedor = new ArrayList<ActivoProveedorReducido>();
-		
-		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_SUMINISTRO);
-		Filter filtroEstado = genericDao.createFilter(FilterType.EQUALS, "estadoProveedor.codigo", DDEstadoProveedor.ESTADO_BIGENTE);
-		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		List<ActivoProveedor> listProveedorSuministroVigente = genericDao.getList(ActivoProveedor.class, filtroSubtipo, filtroEstado, filtroBorrado);
-		
-		for (ActivoProveedor psv : listProveedorSuministroVigente) {
-			ActivoProveedorReducido p = new ActivoProveedorReducido();
-			p.setId(psv.getId());
-			p.setNombre(psv.getNombre());
-			listaActivoProveedor.add(p);
-		}
-		return listaActivoProveedor;
-
-	}
 
 	@Override
 	public List<DDSubestadoAdmision> getcomboSubestadoAdmisionNuevoFiltrado(String codEstadoAdmisionNuevo) {
@@ -1428,13 +1419,65 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "tipoAgendaSaneamiento.codigo", codTipo);
 		return genericDao.getList(DDSubtipoAgendaSaneamiento.class, filtroId);
 	}
+	
+	@Override
+	public List<DDTipoAlta> getComboBBVATipoAlta(Long idRecovery) {
+		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		List<DDTipoAlta> listaDD = genericDao.getListOrdered(DDTipoAlta.class, order);
+		List<DDTipoAlta> listaTiposFiltered = new ArrayList<DDTipoAlta>();
+	
+		
+		for (DDTipoAlta tipo : listaDD) {
+			if (!DDTipoAlta.CODIGO_AUT.equals(tipo.getCodigo()) && idRecovery==null){
+				listaTiposFiltered.add(tipo);
+			} else if(idRecovery!=null && DDTipoAlta.CODIGO_AUT.equals(tipo.getCodigo())){	
+					listaTiposFiltered.add(tipo);
+			}
+								
+			
+		}
+
+		return listaTiposFiltered;
+	}
+
+	public List<DtoPropietario> getcomboSociedadAnteriorBBVA() {
+	
+		List<ActivoPropietario> listaDD= activoPropietarioDao.getPropietarioIdDescripcionCodigo();
+		List<DtoPropietario> listaDto = new ArrayList<DtoPropietario>();
+		
+		for (ActivoPropietario activoPropietario : listaDD) {
+			DtoPropietario dtop = new DtoPropietario();	
+			dtop.setId(activoPropietario.getId());
+			dtop.setDescripcion(activoPropietario.getNombre());
+			dtop.setCodigo(activoPropietario.getDocIdentificativo());		
+			listaDto.add(dtop);
+		}
+		return listaDto;
+	}
+
+	public List<ActivoProveedorReducido> getComboActivoProveedorSuministro() {
+		List<ActivoProveedorReducido> listaActivoProveedor = new ArrayList<ActivoProveedorReducido>();
+		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_SUMINISTRO);
+		Filter filtroEstado = genericDao.createFilter(FilterType.EQUALS, "estadoProveedor.codigo", DDEstadoProveedor.ESTADO_BIGENTE);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		List<ActivoProveedor> listProveedorSuministroVigente = genericDao.getList(ActivoProveedor.class, filtroSubtipo, filtroEstado, filtroBorrado);
+		
+		for (ActivoProveedor psv : listProveedorSuministroVigente) {
+			ActivoProveedorReducido p = new ActivoProveedorReducido();
+			p.setId(psv.getId());
+			p.setNombre(psv.getNombre());
+			listaActivoProveedor.add(p);
+		}
+		return listaActivoProveedor;
+
+	}
 
 	@Override
 	public List<DDEstadoAdmision> getComboEstadoAdmisionFiltrado(Set<String> tipoEstadoAdmisionCodigo) {		
 		Order order = new Order(GenericABMDao.OrderType.ASC, "codigo");
 		List<DDEstadoAdmision> lista = genericDao.getListOrdered(DDEstadoAdmision.class,order, genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 		List<DDEstadoAdmision> listaResultado = new ArrayList<DDEstadoAdmision>();
-
 		for (DDEstadoAdmision tipoEstadoAdmision : lista) {
 			if (tipoEstadoAdmisionCodigo.contains(tipoEstadoAdmision.getCodigo())) {
 				listaResultado.add(tipoEstadoAdmision);
@@ -1442,4 +1485,5 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 		return listaResultado;
 	}
+
 }

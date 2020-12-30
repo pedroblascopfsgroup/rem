@@ -216,8 +216,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	onSaveFormularioCompleto: function(btn, form) {
 		var me = this;
+		var tipoBulkAdvisoryNote = me.getViewModel().data.datosbasicosoferta.data.tipoBulkAdvisoryNote;
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
+		
 		if(form.isFormValid() || form.disableValidation) {
+			
 
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
@@ -230,9 +233,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			
 			if (!form.saveMultiple) {
 				if(Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update)) {
+					
 					// Si la API tiene metodo de escritura (create or update).
 					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 					form.getBindRecord().save({
+						params : {tipoBulkAdvisoryNote: tipoBulkAdvisoryNote},
 						success: function (a, operation, c) {
 							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 							me.getView().unmask();
@@ -279,6 +284,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	onSaveFormularioCompletoActivoExpediente: function(btn, form) {
 		var me = this;
+		
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
 		if(form.isFormValid() && form.disableValidation) {
 
@@ -443,12 +449,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			var cloForm = me.getViewModel().data.datosbasicosoferta.data.claseOfertaCodigo;
 			var numOferta = ((numOfertaPrin != null) ? numOfertaPrin : nuevoNumOferta);
 			
+			
 			Ext.Ajax.request({
 			
 			     url: url,
 			     params: { numOferta: numOferta }
 			    ,success: function (response, opts) {
 			         data = Ext.decode(response.responseText);
+			         
 			         if(cloForm == "02"){
 			         if(data.success == "true" && data.error == "false"){
 				    		Ext.Msg.show({
@@ -456,6 +464,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 								   msg: HreRem.i18n('msg.confirmar.oferta.principal'),
 								   buttons: Ext.MessageBox.YESNO,
 								   fn: function(buttonId) {
+								   
 								        if (buttonId == 'yes') {	
 								        	me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
 										}else{
@@ -1829,7 +1838,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		     }
 		});		
 	},
-
+	
 	onClickBotonCerrarClienteUrsus: function(btn){
 		var window = btn.up("window");
 		window.destroy();
@@ -2924,7 +2933,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	onClickAdvisoryNoteExpediente : function(btn) {
 		var me = this;
-
+		
 		var url =  $AC.getRemoteUrl('expedientecomercial/getAdvisoryNoteExpediente');
 
 		var config = {};
@@ -4876,6 +4885,7 @@ comprobarFormatoModificar: function() {
 		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		 	}
 		});
+		
 	},
 	
 	onComiteChange: function(field, newValue, oldValue) {		
@@ -4961,6 +4971,97 @@ comprobarFormatoModificar: function() {
 	 		    
 			});		
 		}		
+	},
+	
+	onClickGeneraFichaComercialHojaExcel: function(btn) {
+				var me = this, config = {};
+		
+				config.params = {};
+				config.params.idExpediente = me.getViewModel().get("expediente.id");
+				config.url= $AC.getRemoteUrl("ofertas/generateExcelBBVA");
+				
+				me.fireEvent("downloadFile", config);
+			},
+	
+	onClickGenerarFichaComercial: function(btn) {
+		
+		var me = this;
+		var correo = me.getViewModel().get("datosbasicosoferta.correoGestorBackoffice");
+		
+    	Ext.Msg.show({
+		    title: HreRem.i18n("title.generar.ficha.activo"),
+		    message: HreRem.i18n("msg.generar.ficha.comercial.envio") + " " + correo + " " + HreRem.i18n("msg.generar.ficha.comercial.lista"), 
+		    buttons: Ext.Msg.OK,
+		    icon: Ext.Msg.INFO,
+		    fn: function(btn) {
+		        if (btn === 'ok') {
+					var url = $AC.getRemoteUrl("ofertas/generarFichaComercial");
+					var parametros = {
+							idOferta: me.getViewModel().get("datosbasicosoferta.idOferta"),
+							idExpediente : me.getViewModel().data.expediente.id
+					};
+					
+					me.getView().mask();
+					Ext.Ajax.request({
+			    	     url: url,
+			    	     params: parametros,
+			    	     success: function(response, opts) {
+			    	    	 if(Ext.decode(response.responseText).success == "false") {
+			    	    		me.fireEvent("errorToast", Ext.decode(response.responseText).errorCode);
+			    	    		me.getView().unmask();
+			    	         }
+			    	    	 else if (Ext.decode(response.responseText).success == "true"){
+			    	        	me.getView().unmask();
+			    	        	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+							 }
+			    	     }
+			    	 });
+		        }
+		    }
+		});  
+	},
+	
+	sacarBulk: function(btn){
+		var me = this,
+		form = btn.up('formBase'),
+		bulk = me.getViewModel().get('datosbasicosoferta.idAdvisoryNote');
+		url = $AC.getRemoteUrl('expedientecomercial/sacarBulk');
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		Ext.Msg.show({
+		   title: 'Excluir del Bulk',
+		   msg: 'Está apunto de excluir la oferta del Bulk "'+bulk+'"</br>¿Está de acuerdo?',
+		   buttons: Ext.MessageBox.YESNO,
+		   fn: function(buttonId) {
+		   
+		        if (buttonId == 'yes') {			        	
+
+					Ext.Ajax.request({
+			  		    url: url,
+			  		    params: {
+			  		     	idExpediente : me.getViewModel().data.expediente.id
+			  		     	},	  		
+			  		    success: function(response, opts) {	  		    	
+			  		     	var data = Ext.decode(response.responseText);
+			  		     	if(data.success){
+								me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+								form.funcionRecargar();
+			  		     	}else{
+			  		     		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			  		     	}	  		     	
+				 			me.getView().unmask();		 			
+				    	},
+			 		    failure: function (a, operation) {
+			 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			 				me.getView().unmask();
+			 		    }
+				 		    
+					});
+				}else{
+					 me.getView().unmask();
+				}
+			}
+		});
+		
 	}
 	
 });

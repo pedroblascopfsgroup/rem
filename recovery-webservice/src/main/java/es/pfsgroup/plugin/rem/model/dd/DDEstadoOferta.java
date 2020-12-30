@@ -35,6 +35,8 @@ public class DDEstadoOferta implements Auditable, Dictionary {
 	public static final String CODIGO_CONGELADA= "03";
 	public static final String CODIGO_PENDIENTE= "04";
 	
+	public static final String CODIGO_ANULADA_RC= "999";
+	
 	private static final long serialVersionUID = 1L;
 
 	@Id

@@ -14,7 +14,9 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.BulkOferta;
 import es.pfsgroup.plugin.rem.model.CondicionesActivo;
+import es.pfsgroup.plugin.rem.model.DtoActivosAlquiladosGrid;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
@@ -52,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
+import es.pfsgroup.plugin.rem.model.DtoActivosAlquiladosGrid;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
@@ -66,6 +69,7 @@ import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
@@ -735,7 +739,7 @@ public interface ExpedienteComercialApi {
 	 * @param idTipoGestor
 	 * @return
 	 */
-	List<DtoUsuario> getComboUsuarios(long idTipoGestor);
+	List<DtoUsuario> getComboUsuarios(Long idTipoGestor);
 
 	/**
 	 * Inserta un gestor en el expediente comercial
@@ -1311,5 +1315,23 @@ public interface ExpedienteComercialApi {
 	 * @return boolean
 	 */
 	boolean activarCompradorExpediente(Long idCompradorExpediente, Long idExpediente);
+	
+	public Boolean getActivoExpedienteEpa(ExpedienteComercial expediente);
+	public Boolean getActivoExpedienteAlquilado(ExpedienteComercial expediente);
+	public Long uploadDocumentoGestorDocumental(ExpedienteComercial expedienteComercial, WebFileItem webFileItem,
+			DDSubtipoDocumentoExpediente subtipoDocumento, String username) throws Exception;
+
+	public void uploadDocumentosBulkGD(List<Long> listaIdsExpedientesCom, WebFileItem webFileItem, String codSubtipoDocumento,
+			String username) throws Exception;
+
+	boolean ofertasEnLaMismaTarea(BulkOferta blkOfr);
+	
+	List<DtoActivosAlquiladosGrid> getActivosAlquilados(Long idExpediente);
+
+	boolean esBBVA(TareaExterna tareaExterna);
+
+	boolean updateActivosAlquilados(DtoActivosAlquiladosGrid dto);
+
+	boolean sacarBulk(Long idExpediente);
 
 }

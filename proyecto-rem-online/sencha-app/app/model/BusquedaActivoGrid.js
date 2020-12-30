@@ -127,6 +127,9 @@ Ext.define('HreRem.model.BusquedaActivoGrid', {
           		name:'subclaseActivoBancarioCodigo'
         	},
 			{
+          		name:'numActivoBbva'
+        	},
+			{
           		name:'tipoViaCodigo'
         	},
 			{
@@ -230,7 +233,10 @@ Ext.define('HreRem.model.BusquedaActivoGrid', {
         	},
             {
                 name:'equipoGestion'
-            }
+            },
+			{
+				name: 'codPromocionBbva'
+			}
 	    		
     ],
     

@@ -31,6 +31,7 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter);
 	
+	
 	/**
 	 * Devuelve un listado de ofertas por usuario gestoría, filtrando por número de activo.
 	 * 
@@ -103,4 +104,10 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	
 	public void guardaRegistroWebcom(final Oferta obj);
 
+	Boolean tieneTareaActivaOrFinalizada(String tarea, String numOferta);
+
+	List<String> getTareasActivas(String numOferta);
+
+	public Boolean tieneTareaFinalizada(String tarea, String numOferta);
+	
 }

@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSiniSiNoIndiferente;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
@@ -1027,6 +1028,13 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		HashMap<String, Boolean> buenEstadoMolduraEscayola = new HashMap<String, Boolean>();
 		buenEstadoMolduraEscayola.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("buenestadomolduraescayola", buenEstadoMolduraEscayola);
+		
+		// codAdmiteMascota
+		HashMap<String, Boolean> codTipoAdmiteMascota = new HashMap<String, Boolean>();
+		codOrientacion.put(DDSiniSiNoIndiferente.CODIGO_INDIFERENTE, true);
+		codOrientacion.put(DDSiniSiNoIndiferente.CODIGO_NO, true);
+		codOrientacion.put(DDSiniSiNoIndiferente.CODIGO_SI, true);
+		obligatorios.put("codtipoadmitemascota", codTipoAdmiteMascota);
 
 		// otrosParamentosVerticales
 		addObligatorioVivienda("otrosParamentosVerticales");
@@ -1458,7 +1466,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 							}
 							ActivoPropietarioActivo propActivo = (ActivoPropietarioActivo) dtoToEntity
 									.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoPropietarioActivo.class,
-											"activo.numActivo");						
+											"activo.numActivo");		
 							
 							informeEntityVivienda.setInformeComercial(informeEntity);
 							entitys.add(informeEntity);

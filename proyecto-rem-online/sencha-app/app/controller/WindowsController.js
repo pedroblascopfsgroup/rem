@@ -7,7 +7,8 @@ Ext.define('HreRem.controller.WindowsController', {
     requires: [
 		'HreRem.view.trabajos.detalle.CrearTrabajo', 'HreRem.view.common.adjuntos.AdjuntarDocumento', 'HreRem.view.common.adjuntos.AdjuntarFoto',
 		'HreRem.view.common.adjuntos.AdjuntarFotoSubdivision', 'HreRem.ux.window.geolocalizacion.ValidarGeoLocalizacion',
-		'Ext.form.action.StandardSubmit', 'HreRem.view.activos.detalle.EditarPropietario', 'HreRem.ux.window.MessageBox'
+		'Ext.form.action.StandardSubmit', 'HreRem.view.activos.detalle.EditarPropietario', 'HreRem.ux.window.MessageBox',
+		'HreRem.view.common.adjuntos.AdjuntarFactura'
 	],
 
     modalWindows: [],

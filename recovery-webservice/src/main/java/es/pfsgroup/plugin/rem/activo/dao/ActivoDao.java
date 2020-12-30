@@ -13,10 +13,13 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativaAdicional;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
 import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
@@ -29,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
+import es.pfsgroup.plugin.rem.model.HistoricoRequisitosFaseVenta;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
@@ -345,5 +349,33 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	List<HistoricoPeticionesPrecios> getHistoricoSolicitudesPrecios(Long idActivo);
 
+	List<HistoricoRequisitosFaseVenta> getReqFaseVenta(Long idActivo);
+	
+	/*
+	 * Devuelve los objetos que se muestran en el grid de la pestaña Suministros del Activo
+	 */
+	public List<ActivoSuministros> getSuministrosByIdActivo(Long idActivo);
+
 	void actualizaDatoCDC(CalidadDatosConfig cdc, String valor, String identificador, String username);
+
+
+	boolean isActivoBBVADivarian(Long idActivo);
+
+	boolean existeactivoIdHAYA(Long idActivo); 
+
+	boolean activoPerteneceABBVAAndCERBERUS(Long idActivo); 
+
+	boolean activoEstadoVendido(Long idActivo); 
+
+	boolean activoFueraPerimetroHAYA(Long idActivo); 
+
+	List<ActivoCalificacionNegativaAdicional> getListActivoCalificacionNegativaAdicionalByIdActivo(Long idActivo);
+
+	Long getNextBbvaNumActivo();
+
+	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras);
+
+	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos);
+
+	public List<ActivosAlquilados> getListActivosAlquiladosByIdActivos(List<Long> idActivos);
 }

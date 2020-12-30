@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
@@ -168,7 +169,10 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.idActivo", dto.getIdActivo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.estadoContable", dto.getEstadoContable());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.codigoEstado", dto.getEstadoCodigo());
-		
+		if(dto.getSort() == null) {
+			dto.setSort("numActivo");
+			dto.setDir("ASC");
+		}
    		return HibernateQueryUtils.page(this, hb, dto);
 	}
 
@@ -215,7 +219,14 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		
 			page = getSeleccionTarifasTrabajoConSubcartera(filtro, usuarioLogado);
 			
-			if (page.getTotalCount() == 0) {
+			if (page.getTotalCount() == 0 
+					&& !DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO.equals(filtro.getSubcarteraCodigo()) 
+					&& !DDSubcartera.CODIGO_JAIPUR_FINANCIERO.equals(filtro.getSubcarteraCodigo())
+					&& !DDSubcartera.CODIGO_ZEUS_INMOBILIARIO.equals(filtro.getSubcarteraCodigo())
+					&& !DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(filtro.getSubcarteraCodigo())
+					&& !DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(filtro.getSubcarteraCodigo())
+					&& !DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(filtro.getSubcarteraCodigo())) {
+				
 				page = getSeleccionTarifasTrabajoSinSubcartera(filtro, usuarioLogado);
 			}			
 		}

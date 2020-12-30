@@ -391,7 +391,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 			if (!Checks.esNulo(gasto.getGastoDetalleEconomico())) {
 				if(!Checks.esNulo(gasto.getGastoDetalleEconomico().getImporteTotal())){
-					dto.setImporteTotal(gasto.getGastoDetalleEconomico().getImporteTotal()+gastoTotal);
+					dto.setImporteTotal(gasto.getGastoDetalleEconomico().getImporteTotal());
 				}else{
 					dto.setImporteTotal(gastoTotal);
 				}
@@ -956,7 +956,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setImporteProvisionesSuplidos(detalleGasto.getImporteProvisionesSuplidos());
 			
 			if(!Checks.esNulo(detalleGasto.getGastoProveedor())) {
-				GastoPrinex gastoPrinex = new GastoPrinex();
+				GastoPrinex gastoPrinex = null;
 				List<GastoPrinex> listGastoPrinex = new ArrayList<GastoPrinex>();
 				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "idGasto",gasto.getId());
 				Order order = new Order(OrderType.ASC, "id");
@@ -1662,7 +1662,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idGasto",gastosActivosList.get(0).getGastoProveedor().getId());
 		gastoPrinexList = genericDao.getList(GastoPrinex.class, filtro);
 		if(!Checks.estaVacio(gastoPrinexList)) {
-		GastoPrinex gastoPrinex = new GastoPrinex();
+		GastoPrinex gastoPrinex = null;
 		int contador = 0;
 		Float porcentajePrinex = 0f;
 		for (GastoProveedorActivo gastoProveedorItem : gastosActivosList) {
@@ -2621,7 +2621,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return gasto;
 	}
 
-	private GastoProveedor calcularParticipacionActivosGasto(GastoProveedor gasto) {
+	public GastoProveedor calcularParticipacionActivosGasto(GastoProveedor gasto) {
 
 		Double importeTotal = gasto.getGastoDetalleEconomico().getImportePrincipalSujeto();
 		importeTotal = Checks.esNulo(importeTotal) ? new Double("0L") : importeTotal;
@@ -3099,7 +3099,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			cartera = (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CARTERA_SAREB);
 		}
 		
-		if (!Checks.esNulo(gastoInfoContabilidad) && !Checks.esNulo(cartera)) {
+		if (!Checks.esNulo(gastoInfoContabilidad) && !Checks.esNulo(cartera)
+				&& (gasto.getGastoProveedorActivos()!=null && !gasto.getGastoProveedorActivos().isEmpty() )) {
 
 			Ejercicio ejercicio = gastoInfoContabilidad.getEjercicio();
 			

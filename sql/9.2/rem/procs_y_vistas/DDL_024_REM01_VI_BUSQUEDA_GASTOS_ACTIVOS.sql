@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20200724
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20201022
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-7781
+--## INCIDENCIA_LINK=REMVIP-8058
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##
@@ -15,6 +15,8 @@
 --##        0.3 Nuevo calculo porcentaje participacion activos de trabajos en gastos
 --##		0.4 Sumar participación y porcentaje mismo activo en gasto
 --##		0.5 Añadir filtros de borrado
+--##		0.6 REMVIP-8070 Error división entre 0
+--##		0.7 REMVIP-8058 Corregido suma con la tabla Prinex debido a gastos con precio duplicado
 --##########################################
 --*/
 
@@ -115,7 +117,9 @@ SELECT
 	    GPV_ACT_ID,
 	    GPV_ID,
 	    ACT_ID,
-      COALESCE((((ACT_TBJ_PARTICIPACION / 100) * TBJ_IMPORTE_TOTAL) / GDE_IMPORTE_TOTAL * 100), GPV_PARTICIPACION_GASTO) GPV_PARTICIPACION_GASTO,
+      	CASE WHEN GDE_IMPORTE_TOTAL = 0 THEN 0
+             ELSE COALESCE((((ACT_TBJ_PARTICIPACION / 100) * TBJ_IMPORTE_TOTAL) / GDE_IMPORTE_TOTAL * 100), GPV_PARTICIPACION_GASTO) 
+           END GPV_PARTICIPACION_GASTO,
 	    ACT_NUM_ACTIVO,
 	    DIRECCION,
 	    REFERENCIAS,
@@ -163,13 +167,13 @@ SELECT
 				GGE.GGE_OBSERVACIONES,
 				GPV.GPV_NUM_GASTO_HAYA,
 				GDE.GDE_FECHA_PAGO,
-                		NVL(NVL(GDE.GDE_PRINCIPAL_SUJETO,GDE.GDE_PRINCIPAL_NO_SUJETO),0)+NVL((SELECT SUM(GPL.GPL_IMPORTE_GASTO)
+                		NVL(NVL(GDE.GDE_PRINCIPAL_SUJETO,GDE.GDE_PRINCIPAL_NO_SUJETO),NVL((SELECT SUM(GPL.GPL_IMPORTE_GASTO)
                                     FROM '||V_ESQUEMA||'.GPL_GASTOS_PRINEX_LBK GPL
                                      WHERE GPL.GPV_ID = GPVACT.GPV_ID
                                      AND GPL.ACT_ID IS NOT NULL
                                      AND GPL.GPL_IMPORTE_GASTO IS NOT NULL
                                      GROUP BY GPL.GPV_ID
-                                ),0) GDE_IMPORTE_TOTAL,
+                                ),0)) GDE_IMPORTE_TOTAL,
 				EGA.DD_EGA_CODIGO,
 				EGA.DD_EGA_DESCRIPCION,
         ATBJ.ACT_TBJ_PARTICIPACION,
@@ -189,7 +193,7 @@ SELECT
 	    LEFT JOIN '||V_ESQUEMA||'.GPV_TBJ GTBJ ON GTBJ.GPV_ID = GPV.GPV_ID AND GTBJ.BORRADO = 0
 	    LEFT JOIN '||V_ESQUEMA||'.ACT_TBJ ATBJ ON ATBJ.TBJ_ID = GTBJ.TBJ_ID
 	    LEFT JOIN '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ ON TBJ.TBJ_ID = GTBJ.TBJ_ID AND TBJ.BORRADO = 0
-		LEFT JOIN (SELECT ACT_ID, LISTAGG(CAT_REF_CATASTRAL,'','') WITHIN GROUP (ORDER BY CAT_ID) AS REFERENCIAS FROM  ACT_CAT_CATASTRO GROUP BY ACT_ID) REF ON REF.ACT_ID=ACT.ACT_ID
+		LEFT JOIN (SELECT ACT_ID, LISTAGG(CAT_REF_CATASTRAL,'','') WITHIN GROUP (ORDER BY CAT_ID) AS REFERENCIAS FROM '||V_ESQUEMA||'.ACT_CAT_CATASTRO GROUP BY ACT_ID) REF ON REF.ACT_ID=ACT.ACT_ID
     WHERE ATBJ.ACT_ID = ACT.ACT_ID OR GTBJ.GPV_ID IS NULL
 		))) 
 	GROUP BY GPV_ACT_ID,

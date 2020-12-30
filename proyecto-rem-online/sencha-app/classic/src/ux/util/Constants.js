@@ -103,14 +103,18 @@ Ext.define('HreRem.ux.util.Constants', {
 
 	SUBTIPOS_PROVEEDOR: {
 		SOCIEDAD_TASADORA: '02',
-		MEDIADOR: '04'
+		MEDIADOR: '04',
+		OFICINA_BBVA:'39',
+		OFICINA_LIBERBANK:'38',
+		OFICINA_BANKIA: '28',
+		OFICINA_CAJAMAR: '29'
+		
 	},
 
 	MAP_TAB_ACTIVO_XTYPE: {
 		FICHA:			'datosgeneralesactivo',
 		INFOREG:		'datosgeneralesactivo.tituloinformacionregistralactivo',
 		INFOADM:		'datosgeneralesactivo.informacionadministrativaactivo',
-		CARGAS:			'datosgeneralesactivo.cargasactivo',
 		POSESORIA:		'datosgeneralesactivo.situacionposesoriaactivo',
 		VALORACION:		'datosgeneralesactivo.valoracionesactivo',
 		INFOCOM:		'datosgeneralesactivo.informacioncomercialactivo',
@@ -124,7 +128,6 @@ Ext.define('HreRem.ux.util.Constants', {
 		DOCU:			'documentosactivo',
 		AGRUPACIONES:	'agrupacionesactivo',
 		ADMISION:		'admisionactivo',
-		CHECKINFO:		'admisionactivo.admisioncheckinfoactivo',
 		CHECKDOC:		'admisionactivo.admisioncheckdocactivo',
 		GESTION:		'gestionactivo',
 		HISTORICO:		'gestionactivo.historicopeticionesactivo',
@@ -184,7 +187,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	GIANTS: '12',
     	EGEO: '13',
     	GALEON:'15',
-    	ZEUS: '14'
+    	ZEUS: '14',
+    	BBVA: '16'
     },
 
     NOMBRE_CARTERA:	{
@@ -199,7 +203,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	'11': 'THIRDPARTIES',
     	'12': 'GIANTS',
     	'15': 'GALEON',
-    	'14': 'ZEUS'
+    	'14': 'ZEUS',
+    	'16': 'BBVA'
     },
 
     NOMBRE_CARTERA2: {
@@ -212,7 +217,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	GIANTS: 'GIANTS',
     	LIBERBANK:'LIBERBANK',
     	GALEON:'GALEON',
-    	ZEUS :'ZEUS'
+    	ZEUS :'ZEUS',
+    	BBVA :'BBVA'
     },
 
     SUBCARTERA: {
@@ -249,7 +255,13 @@ Ext.define('HreRem.ux.util.Constants', {
 		DIVARIAN: '150',
 		OMEGA: '65',
 		DIVARIANARROW:'151',
-		DIVARIANREMAINING:'152'
+		DIVARIANREMAINING:'152',
+		BBVA:'153',
+		ANIDA:'154',
+		CX:'155',
+		GAT:'156',
+		EDT:'157',
+		USGAI:'158'
     },
 
     NOMBRE_SUBCARTERA: {
@@ -288,6 +300,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		SUPERVISOR_FORM: 'HAYASUPFORM',
 		GESTOR_COMERCIAL_BO_INM: 'HAYAGBOINM',
 		SUPERVISOR_COMERCIAL_BO_INM: 'HAYASBOINM',
+		GESTOR_COMERCIAL_SINGULAR: 'GCOMSIN',
 		SUPERVISOR_ADMINISTRACION: 'HAYASADM',
 		GESTOR_ADMINISTRACION: 'HAYAADM',
 		GESTORIAS_ADMINISTRACION: 'HAYAGESTADMT',
@@ -298,7 +311,9 @@ Ext.define('HreRem.ux.util.Constants', {
 		DIRECCION_TERRITORIAL:'DIRTERRITORIAL',
 		GESTOR_PRECIOS:'HAYAGESTPREC',
 		GESTOR_PUBLICACION:'HAYAGESTPUBL',
-		SUPER_EDITA_COMPRADOR: 'SUPEREDITACOMPRADOR'
+		SUPERVISOR_ADMISION:'HAYASUPADM',
+		SUPER_EDITA_COMPRADOR: 'SUPEREDITACOMPRADOR',
+		GESTBOARDING: 'PERFGBOARDING'
     },
 
     TIPOS_OFERTA: {
@@ -337,7 +352,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	AP_CES_PTE_MAN: '36',
     	CONT_CES: '38',
     	RES_PTE_MAN: '39',
-    	AP_PTE_MAN : '40'
+    	AP_PTE_MAN : '40',
+    	PEN_RES_OFER_COM : '43'
     },
 
     ESTADOS_GASTO: {
@@ -440,7 +456,8 @@ Ext.define('HreRem.ux.util.Constants', {
 	SUBTIPOS_TRABAJO: {
 		TRAMITAR_PROPUESTA_PRECIOS: '44',
 		TRAMITAR_PROPUESTA_DESCUENTO: '45',
-		TOMA_POSESION: '57'
+		TOMA_POSESION: '57',
+		OBRA_MENOR_NO_TARIFICADA:'38'
 	},
 
 	TIPO_IMPUESTO: {
@@ -481,6 +498,11 @@ Ext.define('HreRem.ux.util.Constants', {
 	COMBO_SI_NO: {
 		SI: 1,
 		NO: 0
+	},
+	
+	COMBO_SIN_SINO: {
+		SI: '01',
+		NO: '02'
 	},
 	
 	COMBO_TRUE_FALSE: {
@@ -685,6 +707,22 @@ Ext.define('HreRem.ux.util.Constants', {
 	INDIVIDUAL:'03'
 	},
 	
+	DD_TAL_TIPO_ALTA:{
+	ALTA_AUTOMATICA:'AUT',
+	MANUAL_ACTIVO_APARECIDO:'MAA',
+	MANUAL_INCIDENCIA_PROCESO_AUTOMATICO:'MIA',
+	MANUAL_DIVISION_HORIZONTAL:'MDH',
+	MANUAL_AGRUPACIONES:'MAG'
+	},
+	
+	DD_STA_SUBTIPO_TITULO_ACTIVO:{
+	LEASING:'LEA',
+	NOTARIAL_COMPRA:'NCC',
+	EJECUCION_HIPOTECARIA:'EHC',
+	NOTARIAL_LEASING:'NLE',
+	NOTARIAL_RECOMPRA:'NRE'
+	},
+	
 	DD_TIPO_RECARGO:{
 	NO_EVITABLE:'NO_EVI'
 	},
@@ -732,6 +770,34 @@ Ext.define('HreRem.ux.util.Constants', {
 	COMITE_SANCIONADOR: {
 		CODIGO_HAYA_REMAINING: '41',
 		CODIGO_HAYA_APPLE: '42'
-	}
+	},
 	
+	ESTADO_ADMISION: {
+		CODIGO_PENDIENTE_TITULO: 'PET',
+		CODIGO_PENDIENTE_REVISION: 'PRT',
+		CODIGO_PENDIENTE_SANEAMIENTO: 'PSR',
+		CODIGO_SANEADO_REGISTRALMENTE: 'SAR'
+	},
+	
+	SUBESTADO_ADMISION: {
+		CODIGO_PENDIENTE_INSCRIPCION: 'PIN',
+		CODIGO_INCIDENCIA_INSC: 'IIN',
+		CODIGO_PENDIENTE_CARGAS: 'PCA',
+		CODIGO_CONCURSO_ACREEDORES: 'CAC'
+
+	},
+	DD_TOB_TIPO_OBSERVACION: {
+		STOCK: '01',
+		POSESION: '02',
+		INSCRIPCION: '03',
+		CARGAS: '04',
+		LLAVES: '05',
+		SANEAMIENTO: '06',
+		REVISION_TITULO: '07'
+	},
+	OBSERVACIONES_TAB_LAUNCH: {
+		ACTIVO : 'activo',
+		SANEAMIENTO: 'saneamiento',
+		REVISION_TITULO: 'revisionTitulo'
+	}
 });

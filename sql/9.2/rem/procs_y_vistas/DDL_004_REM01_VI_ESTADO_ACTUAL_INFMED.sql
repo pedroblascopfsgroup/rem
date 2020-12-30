@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20170222
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20200907
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1787
+--## INCIDENCIA_LINK=REMVIP-8023
 --## PRODUCTO=NO
 --## Finalidad: Vista Materializada exclusiva para el informeMediador que contiene el estado del informe del mediador.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 20161006 Versión inicial 
+--##        0.2 20200907 Juan Bautista Alfonso Filtro borrado ico
 --##########################################
 --*/
 
@@ -60,7 +61,7 @@ BEGIN
 			  FROM '||V_ESQUEMA||'.ACT_activo act
         inner join '||V_ESQUEMA||'.ACT_HIC_EST_INF_COMER_HIST HIC
         on hic.act_id = act.act_id
-			  INNER JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = HIC.ACT_ID
+			  INNER JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = HIC.ACT_ID AND ICO.BORRADO=0
 			  INNER JOIN '||V_ESQUEMA||'.DD_AIC_ACCION_INF_COMERCIAL DDAIC ON DDAIC.DD_AIC_ID = HIC.DD_AIC_ID
 			  WHERE (DDAIC.DD_AIC_CODIGO = ''02'' OR DDAIC.DD_AIC_CODIGO = ''04'')
         and act.borrado = 0

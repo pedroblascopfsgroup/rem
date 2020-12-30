@@ -865,11 +865,12 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			if (!Checks.esNulo(actSitPosAM.getSitaucionJuridica())) {
 				actSitPosUA.setSitaucionJuridica(actSitPosAM.getSitaucionJuridica());
 			}
-			if (!Checks.esNulo(actSitPosAM.getOcupado())) {
-				actSitPosUA.setOcupado(0);
-			}
+			//campos obligatorios
 			actSitPosUA.setAuditoria(auditoria);
 			actSitPosUA.setActivo(unidadAlquilable);
+			actSitPosUA.setOcupado(0);
+			actSitPosUA.setAccesoAntiocupa(0);
+			actSitPosUA.setAccesoTapiado(0);
 			
 			genericDao.save(ActivoSituacionPosesoria.class, actSitPosUA);
 			

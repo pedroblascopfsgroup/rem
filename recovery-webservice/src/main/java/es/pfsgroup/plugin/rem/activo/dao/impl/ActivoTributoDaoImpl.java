@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.activo.dao.impl;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 
 import org.springframework.stereotype.Repository;
 
@@ -15,8 +16,14 @@ public class ActivoTributoDaoImpl extends AbstractEntityDao<ActivoTributos, Long
 
 	@Override
 	public Long getNumMaxTributo() {
-		String sql = "SELECT MAX(ACT_NUM_TRIBUTO) FROM ACT_TRI_TRIBUTOS";
-		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
+		try {
+			String sql = "SELECT MAX(ACT_NUM_TRIBUTO) FROM ACT_TRI_TRIBUTOS";
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
+		}catch (Exception e){
+			e.printStackTrace();
+			return (long) 0;
+		}
+		
 	}
 
 }

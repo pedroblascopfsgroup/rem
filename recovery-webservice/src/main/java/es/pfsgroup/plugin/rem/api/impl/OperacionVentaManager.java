@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.ParamReportsApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
+import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
@@ -36,6 +37,7 @@ import es.pfsgroup.plugin.rem.model.CondicionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoComprador;
 import es.pfsgroup.plugin.rem.model.DtoDataSource;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Formalizacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -111,6 +113,13 @@ public class OperacionVentaManager implements ParamReportsApi{
 				mapaValores.put("Gestor", gestorActivoApi.getGestorByActivoYTipo(activo, tipo).getApellidoNombre());
 			} else {
 				mapaValores.put("Gestor", FileUtilsREM.stringify(null));
+			}
+			
+			Filter filtroActivoBbva = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtroActivoBbva);
+			
+			if (activoBbva != null) {
+				mapaValores.put("lineaFactura", FileUtilsREM.stringify(activoBbva.getLineaFactura()));
 			}
 			
 			mapaValores.put("FAprobacion",FileUtilsREM.stringify(expediente.getFechaSancion()));
@@ -329,6 +338,14 @@ public class OperacionVentaManager implements ParamReportsApi{
 			}else{
 				mapaValores.put("financiacion", FileUtilsREM.stringify(null));
 			}
+			
+			Filter filtroNumExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId());
+			Formalizacion formalizacion = genericDao.get(Formalizacion.class, filtroNumExpediente);
+			
+			if(formalizacion != null) {
+				mapaValores.put("numPrestamo",FileUtilsREM.stringify(formalizacion.getNumExpediente()));
+				
+			}
 
 			if (condExp.getTipoImpuesto()!=null) {
 				mapaValores.put("tipoImpuesto",FileUtilsREM.stringify(condExp.getTipoImpuesto().getDescripcionLarga()));
@@ -476,6 +493,13 @@ public class OperacionVentaManager implements ParamReportsApi{
 				mapaValores.put("NomCartera", FileUtilsREM.stringify(null));
 			}
 			
+			Filter filtroActivoBbva = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtroActivoBbva);
+			
+			if (activoBbva != null) {
+				mapaValores.put("lineaFactura", FileUtilsREM.stringify(activoBbva.getLineaFactura()));
+			}
+			
 			if(!Checks.esNulo(oferta.getAgrupacion())){
 				mapaValores.put("nLote", FileUtilsREM.stringify(oferta.getAgrupacion().getNumAgrupRem()));
 			}
@@ -578,6 +602,13 @@ public class OperacionVentaManager implements ParamReportsApi{
 				mapaValores.put("financiacion",FileUtilsREM.stringify(condExp.getSolicitaFinanciacion() == 1 ? "Si" : "No"));
 			}else{
 				mapaValores.put("financiacion",FileUtilsREM.stringify(null));
+			}
+			
+			Filter filtroNumExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId());
+			Formalizacion formalizacion = genericDao.get(Formalizacion.class, filtroNumExpediente);
+
+			if(formalizacion != null) {
+				mapaValores.put("numPrestamo",FileUtilsREM.stringify(formalizacion.getNumExpediente()));
 			}
 
 			if (condExp.getTipoImpuesto()!=null) {

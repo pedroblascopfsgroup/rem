@@ -203,7 +203,10 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					extraParams: {
 						idTipoGestor: '{tipoGestor.selection.id}'
 					}
-				}
+				},
+				autoLoad: false,
+				remoteFilter: false,
+				remoteSort: false
 			},
 
 			comboAdecuaciones: {
@@ -327,15 +330,6 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					extraParams: {diccionario: 'tipoPublicacion'}
 				}
 			},
-	     	
-     		comboTipoSegmento: {
-    			model: 'HreRem.model.ComboBase',
-    			proxy: {
-    				type: 'uxproxy',
-    				remoteUrl: 'generic/getDiccionario',
-    				extraParams: {diccionario: 'tipoSegmento'}
-    			}
-     		},
      		
      		comboSiNoRemActivo: {
 				data : [
@@ -351,7 +345,16 @@ Ext.define('HreRem.view.activos.ActivosModel', {
                     remoteUrl: 'generic/getDiccionario',
                     extraParams: {diccionario: 'tiposEquipoGestion'}
                 }
-            }
+            },
+            
+            comboSociedadAnteriorBBVA: {
+				model : 'HreRem.model.ComboBase',
+				proxy : {
+					type : 'uxproxy',
+					remoteUrl : 'generic/getcomboSociedadAnteriorBBVA'
+				}
+			}
+            
      }
 
 });

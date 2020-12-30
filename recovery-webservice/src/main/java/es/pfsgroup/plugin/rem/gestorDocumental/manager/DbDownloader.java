@@ -11,6 +11,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoAgrupacion;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
+import es.pfsgroup.plugin.rem.model.AdjuntoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.AdjuntosPromocion;
 
 @Component
@@ -76,4 +77,16 @@ public class DbDownloader implements Downloader {
 
 		return adjunto.getAdjunto().getFileItem();
 	}
+
+	@Override
+	public FileItem getFileItemFactura(Long id, String nombreDocumento) {
+		AdjuntoGastoAsociado adjuntoGasto = genericDao.get(AdjuntoGastoAsociado.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+
+		FileItem fileItem = adjuntoGasto.getAdjunto().getFileItem();
+		fileItem.setContentType(adjuntoGasto.getTipoContenidoDocumento());
+		fileItem.setFileName(adjuntoGasto.getNombreAdjuntoGastoAsociado());
+
+		return adjuntoGasto.getAdjunto().getFileItem();
+	}
+	
 }

@@ -87,6 +87,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	
 	//Variables de buzones	
 	private static final String BUZON_REM = "buzonrem";
+	private static final String BUZON_RESERVA_HAYA = "reservashaya";
 	private static final String BUZON_PFS = "buzonpfs";
 	private static final String BUZON_FDV = "buzonfdv";
 	private static final String BUZON_OFR_APPLE = "buzonofrapple";
@@ -268,20 +269,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				}
 
 				if(oferta.getActivoPrincipal() != null){
-					if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
-							|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-							|| DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-							|| DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-							|| DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-							|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-							|| DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-							|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
-						usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-						if(!Checks.esNulo(usuarioBackOffice)){
-							destinatarios.add(usuarioBackOffice.getEmail());
-						}	
-					}
-
+					usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+					if(!Checks.esNulo(usuarioBackOffice)){
+						destinatarios.add(usuarioBackOffice.getEmail());
+					}	
 					if(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())
 							|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
 						preescriptor= ofertaApi.getPreescriptor(oferta);
@@ -440,6 +431,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		
 		Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
 		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
+		Usuario buzonReservaHaya = usuarioManager.getByUsername(BUZON_RESERVA_HAYA);
 		Usuario buzonOfertaApple = null;
 		ActivoProveedor preescriptor= null;
 		Usuario gestorBackoffice = null;
@@ -462,9 +454,15 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
 		
-		if (!Checks.esNulo(buzonRem)) {
+		if (!Checks.esNulo(buzonRem) && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) { 
+			//|| DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()))) {
 			destinatarios.add(buzonRem.getEmail());
 		}
+		/*if (buzonReservaHaya != null && !DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo()) 
+				&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())) {
+			destinatarios.add(buzonReservaHaya.getEmail());
+		}*/
+		
 		if (!Checks.esNulo(buzonPfs)) {
 			destinatarios.add(buzonPfs.getEmail());
 		}
@@ -973,6 +971,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					+ "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 
 			Usuario gestorComercial = null;
+			Usuario gestorBackOffice = null;
 			Usuario gestorFormalizacion = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GFORM");
 
 			if (!Checks.esNulo(oferta.getAgrupacion())
@@ -982,18 +981,26 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 						&& oferta.getAgrupacion() instanceof ActivoLoteComercial) {
 					ActivoLoteComercial activoLoteComercial = (ActivoLoteComercial) oferta.getAgrupacion();
 					gestorComercial = activoLoteComercial.getUsuarioGestorComercial();
+					gestorBackOffice = activoLoteComercial.getUsuarioGestorComercialBackOffice();
 				} else {
 					// Lote Restringido
 					gestorComercial = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "GCOM");
+					gestorBackOffice = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "HAYAGBOINM");
 				}
 			} else {
 				gestorComercial = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "GCOM");
+				gestorBackOffice = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "HAYAGBOINM");
 			}
 			
 			cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>",
 					(gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE);
 			cuerpo = cuerpo + String.format("<p>%s</p>",
 					(gestorComercial != null) ? gestorComercial.getEmail() : STR_MISSING_VALUE);
+			
+			cuerpo = cuerpo + String.format("<p>Gestor Comercial Backoffice Inmobiliario: %s </p>",
+					(gestorBackOffice != null) ? gestorBackOffice.getApellidoNombre() : STR_MISSING_VALUE);
+			cuerpo = cuerpo + String.format("<p>%s</p>",
+					(gestorBackOffice != null) ? gestorBackOffice.getEmail() : STR_MISSING_VALUE);
 			
 			if(!Checks.esNulo(gestorFormalizacion)){
 				
@@ -1251,7 +1258,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			}
 			// ADJUNTOS SI ES SAREB
 			else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) {
-				f1 = FileItemUtils.fromResource("docs/instrucciones_de_reserva.docx");
+				f1 = FileItemUtils.fromResource("docs/Instrucciones_de_reserva_v2.docx");
 				if (f1 != null) {
 					adjuntos.add(createAdjunto(f1, "Instrucciones_de_reserva.docx"));
 				}
@@ -1259,7 +1266,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			}
 			// ADJUNTOS SI ES BANKIA
 			else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)) {
-				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia_v8.docx");
+				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia_v10.docx");
 				if (f1 != null) {
 					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_Bankia.docx"));
 				}
@@ -1284,14 +1291,14 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			 */
 			// ADJUNTOS SI ES LIBERBANK
 			else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
-				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_Liberbank.docx");
+				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_Liberbank_v2.docx");
 				if (f1 != null) {
 					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_y_formalizacion_Liberbank.docx"));
 				}
 				// ADJUNTOS SI ES CERBERUS APPLE
 			} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS)
 					&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
-				f2 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_APPLE.docx");
+				f2 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_APPLE_v2.docx");
 				if ( f2 != null ) {
 					adjuntos.add(createAdjunto(f2, "instrucciones_reserva_y_formalizacion_APPLE.docx"));
 				}

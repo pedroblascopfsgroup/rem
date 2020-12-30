@@ -304,9 +304,9 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 				}
 				if (situacion != null) {
 					if (situacion.equals(SITUACION.INTERIOR)) {
-						metadata.put("interiorexterior", "1");
+						metadata.put("interior_exterior", "1");
 					} else {
-						metadata.put("interiorexterior", "0");
+						metadata.put("interior_exterior", "0");
 					}
 				}
 				if (orden != null) {

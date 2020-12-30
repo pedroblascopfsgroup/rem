@@ -26,9 +26,12 @@ import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
 import es.pfsgroup.plugin.rem.model.VGastosProvision;
@@ -153,14 +156,17 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		boolean hasWhere = false;
 		HQLBuilder hb = null;
 
-		// Por si es necesario filtrar por datos de los activos del gasto
-		String fromGastoActivos = GastoActivosHqlHelper.getFrom(dtoGastosFilter);
-		if (!Checks.esNulo(fromGastoActivos)) {
-			select = "select distinct vgasto ";
-			from = from + fromGastoActivos;
-			where = where + GastoActivosHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere);
-			hasWhere = true;
+		
+		if(!isGenerateExcel) {
+			// Por si es necesario filtrar por datos de los activos del gasto
+			String fromGastoActivos = GastoActivosHqlHelper.getFrom(dtoGastosFilter);
+			if (!Checks.esNulo(fromGastoActivos)) {
+				select = "select distinct vgasto ";
+				from = from + fromGastoActivos;
+				where = where + GastoActivosHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere);
+				hasWhere = true;
 
+			}
 		}
 
 		// Por si es necesario filtrar por datos de la provision de gastos
@@ -183,11 +189,19 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		if (hasWhere) {
 			hb.setHasWhere(true);
 		}
-
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.activo.numActivo", dtoGastosFilter.getNumActivo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.activo.subcartera.codigo",
-				dtoGastosFilter.getSubentidadPropietariaCodigo());
-
+		
+		if(isGenerateExcel) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.numActivo", dtoGastosFilter.getNumActivo());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.subentidadPropietariaCodigo",
+					dtoGastosFilter.getSubentidadPropietariaCodigo());
+		}else {
+		
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.activo.numActivo", dtoGastosFilter.getNumActivo());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.activo.subcartera.codigo",
+					dtoGastosFilter.getSubentidadPropietariaCodigo());
+		
+		}
+		
 		if (!Checks.esNulo(dtoGastosFilter.getNumProvision())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "provision.numProvision",
 					Long.parseLong(dtoGastosFilter.getNumProvision()));
@@ -445,5 +459,18 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		}
 		
 		return existeGasto;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VBusquedaGastoActivo> getListGastosByIdActivos(List<Long> idActivos) {
+		
+		HQLBuilder hql = new HQLBuilder("from VBusquedaGastoActivo ");
+		HQLBuilder.addFiltroWhereInSiNotNull(hql, "idActivo", idActivos);
+		
+		List<VBusquedaGastoActivo> actAlquiladosList = (List<VBusquedaGastoActivo>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hql.toString()).list();
+		
+		return actAlquiladosList;
 	}
 }

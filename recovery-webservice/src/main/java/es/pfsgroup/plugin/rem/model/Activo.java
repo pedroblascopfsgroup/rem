@@ -44,7 +44,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCargaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
@@ -52,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
@@ -62,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
 /**
@@ -121,6 +125,10 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name="ACT_CON_CARGAS")
     private Integer conCargas;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TTR_ID")
+  	private DDTipoTransmision tipoTransmision;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPA_ID")
@@ -519,6 +527,27 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "ACT_DND", columnDefinition = "tinyint default false")
    	private boolean isDnd;
+    
+    @ManyToOne
+	@JoinColumn(name = "DD_EAA_ID")
+	private DDEstadoAdmision estadoAdmision;
+    
+    @ManyToOne
+	@JoinColumn(name = "DD_SAA_ID")
+	private DDSubestadoAdmision subestadoAdmision;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ERA_ID")
+    private DDEstadoRegistralActivo estadoRegistral; 
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TTA_ID_BBVA")
+    private DDTipoTituloActivo tipoTituloBbva;
+    
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<GastoAsociadoAdquisicion> gastosAsociados;
     
     // Getters del activo --------------------------------------------
     
@@ -1998,6 +2027,14 @@ public class Activo implements Serializable, Auditable {
 		this.tipoSegmento = tipoSegmento;
 	}
 
+	public List<GastoAsociadoAdquisicion> getGastosAsociados() {
+		return gastosAsociados;
+	}
+
+	public void setGastosAsociados(List<GastoAsociadoAdquisicion> gastosAsociados) {
+		this.gastosAsociados = gastosAsociados;
+	}
+
 	public boolean getIsDnd() {
 		return isDnd;
 	}
@@ -2028,5 +2065,45 @@ public class Activo implements Serializable, Auditable {
 
 	public void setFechaTituloAnterior(Date fechaTituloAnterior) {
 		this.fechaTituloAnterior = fechaTituloAnterior;
+	}
+	
+	public DDEstadoAdmision getEstadoAdmision() {
+		return estadoAdmision;
+	}
+
+	public void setEstadoAdmision(DDEstadoAdmision estadoAdmision) {
+		this.estadoAdmision = estadoAdmision;
+	}
+
+	public DDSubestadoAdmision getSubestadoAdmision() {
+		return subestadoAdmision;
+	}
+
+	public void setSubestadoAdmision(DDSubestadoAdmision subestadoAdmision) {
+		this.subestadoAdmision = subestadoAdmision;
+	}
+
+	public DDEstadoRegistralActivo getEstadoRegistral() {
+		return estadoRegistral;
+	}
+
+	public void setEstadoRegistral(DDEstadoRegistralActivo estadoRegistral) {
+		this.estadoRegistral = estadoRegistral;
+	}
+	
+	public DDTipoTituloActivo getTipoTituloBbva() {
+		return tipoTituloBbva;
+	}
+
+	public void setTipoTituloBbva(DDTipoTituloActivo tipoTituloBbva) {
+		this.tipoTituloBbva = tipoTituloBbva;
+	}
+
+	public DDTipoTransmision getTipoTransmision() {
+		return tipoTransmision;
+	}
+
+	public void setTipoTransmision(DDTipoTransmision tipoTransmision) {
+		this.tipoTransmision = tipoTransmision;
 	}
 }

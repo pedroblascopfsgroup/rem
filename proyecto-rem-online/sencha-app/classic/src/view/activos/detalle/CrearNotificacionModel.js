@@ -26,7 +26,11 @@ Ext.define('HreRem.view.activos.detalleCrearNotificacionModel', {
 				type: 'uxproxy',
 				remoteUrl: 'activo/getComboUsuarios',
 				extraParams: {idTipoGestor: '{tipoGestor.selection.id}'}
-				}
+				},
+				session: true,
+				autoLoad: false,
+				remoteFilter: false,
+				remoteSort: false
     		}
 	
      }    

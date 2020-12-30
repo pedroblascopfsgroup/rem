@@ -127,10 +127,27 @@ public class GenericABMDaoImpl implements GenericABMDao {
 		return this.getListOrdered(clazz, noOrder(), filters);
 
 	}
-
+	
 	@Override
 	public <T extends Serializable> List<T> getListOrdered(Class<T> clazz,
 			Order order, Filter ...filters ) {
+		ExtendedDao<T> dao = createExtendedDao(clazz);
+		HQLBuilder b = new HQLBuilder("from " + clazz.getSimpleName());
+		setupFilters(b, filters);
+		setupOrder(b,order);
+		return dao.getList(b);
+	}
+	
+	@Override
+	public <T extends Serializable> List<T> getList(Class<T> clazz,
+			List<Filter> filters) {
+		return this.getListOrdered(clazz, noOrder(), filters);
+
+	}
+	
+	@Override
+	public <T extends Serializable> List<T> getListOrdered(Class<T> clazz,
+			Order order, List<Filter> filters ) {
 		ExtendedDao<T> dao = createExtendedDao(clazz);
 		HQLBuilder b = new HQLBuilder("from " + clazz.getSimpleName());
 		setupFilters(b, filters);
@@ -211,7 +228,17 @@ public class GenericABMDaoImpl implements GenericABMDao {
 			}
 		}
 	}
-
+	
+	private void setupFilters(HQLBuilder b, List<Filter> filters) {
+		if (filters != null) {
+			for (Filter f : filters) {
+				if ( FilterType.EQUALS.equals(f.getType())) {
+					HQLBuilder.addFiltroIgualQue(b, f.getPropertyName(), f
+							.getPropertyValue());
+				}
+			}
+		}
+	}
 	private void setupOrder(HQLBuilder b, Order order) {
 		if (order != null) {
 			String sentido = (OrderType.ASC.equals(order.getType()) ? HQLBuilder.ORDER_ASC

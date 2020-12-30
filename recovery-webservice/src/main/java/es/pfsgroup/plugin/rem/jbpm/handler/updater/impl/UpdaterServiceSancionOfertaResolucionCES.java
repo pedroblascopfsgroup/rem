@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -10,23 +11,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
+import es.pfsgroup.plugin.rem.thread.TramitacionOfertasAsync;
+import es.pfsgroup.plugin.rem.thread.TransaccionExclusionBulk;
 
 @Component
 public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService {
@@ -42,6 +58,18 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private OfertaDao ofertaDao;
+	
+	@Autowired
+	private  GestorExpedienteComercialApi gestorExpedienteComercialApi;
+	
+	@Autowired
+	private UsuarioApi usuarioApi;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionCES.class);
 	 
@@ -50,11 +78,17 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 	private static final String IMPORTE_CONTRAOFERTA = "numImporteContra";
 	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	private static final String CODIGO_T017_RESOLUCION_CES = "T017_ResolucionCES";
+	private static final Integer RESERVA_SI = 1;
+
+	
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		Activo activo = ofertaAceptada.getActivoPrincipal();
+		GestorEntidadDto ge = new GestorEntidadDto();	
+		OfertaExclusionBulk ofertaExclusionBulkNew = null;
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
@@ -65,13 +99,19 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 					if (FECHA_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						try {
 							ofertaAceptada.setFechaResolucionCES(ft.parse(valor.getValor()));
+							expediente.setFechaSancion(ft.parse(valor.getValor()));
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}
 	
 					}
 					if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA);
+						Filter filtro = null;
+						if(DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())) {
+							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
+						}else {
+							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA);
+						}
 						if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
 	
 							// Una vez aprobado el expediente, se congelan el resto de ofertas que no
@@ -82,6 +122,19 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 									ofertaApi.congelarOferta(oferta);
 								}
 							}
+							
+							//REMVIP-8388
+//							if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {															
+//								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+//										.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
+//								
+//								ge.setIdEntidad(expediente.getId());
+//								ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+//								ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());	
+//								ge.setIdTipoGestor(tipoGestorComercial.getId());
+//								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
+//								
+//							}	
 														
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
@@ -132,6 +185,43 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 						ofertaAceptada.setImporteContraofertaCES(nuevoImporte);
 						
 						ofertaAceptada.setImporteContraOferta(nuevoImporte);
+						
+						if(activo != null && activo.getSubcartera() != null &&
+								(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
+								|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+							String codigoBulk = nuevoImporte > 750000d ? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO;
+							
+							OfertaExclusionBulk ofertaExclusionBulk = genericDao.get(OfertaExclusionBulk.class, 
+									genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaAceptada),
+									genericDao.createFilter(FilterType.NULL, "fechaFin"));
+							
+							Usuario usuarioModificador = genericAdapter.getUsuarioLogado();
+							
+							if(ofertaExclusionBulk != null && ofertaExclusionBulk.getExclusionBulk() != null
+									&& !ofertaExclusionBulk.getExclusionBulk().getCodigo().equals(codigoBulk)) {
+								
+								Thread thread = new Thread(new TransaccionExclusionBulk(ofertaExclusionBulk.getId(),
+										usuarioModificador.getUsername()));
+								thread.start();
+								try {
+									thread.join();
+								} catch (InterruptedException e) {
+									logger.error("Error generando registro exclsion bulk", e);
+								}
+								
+							}
+							
+							if(ofertaExclusionBulk == null || !ofertaExclusionBulk.getExclusionBulk().getCodigo().equals(codigoBulk)) {
+								ofertaExclusionBulkNew = new OfertaExclusionBulk();
+								DDSinSiNo sino = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoBulk));
+								
+								ofertaExclusionBulkNew.setOferta(ofertaAceptada);
+								ofertaExclusionBulkNew.setExclusionBulk(sino);
+								ofertaExclusionBulkNew.setFechaInicio(new Date());
+								ofertaExclusionBulkNew.setUsuarioAccion(usuarioModificador);
+							}
+								
+						}
 	
 						// Actualizar honorarios para el nuevo importe de contraoferta.
 						expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
@@ -141,6 +231,9 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
 						
 					}
+				}
+				if(ofertaExclusionBulkNew != null) {
+					genericDao.save(OfertaExclusionBulk.class, ofertaExclusionBulkNew);
 				}
 				genericDao.save(Oferta.class, ofertaAceptada);
 				genericDao.save(ExpedienteComercial.class, expediente);

@@ -1,0 +1,195 @@
+--/*
+--######################################### 
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20200917
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-8096
+--## PRODUCTO=NO
+--##            
+--## INSTRUCCIONES:  Actualizar check bulk a si
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    V_NUM_TABLAS_2 NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USUARIO VARCHAR2(100 CHAR):='REMVIP-8096'; --Vble. auxiliar para almacenar el usuario
+    V_TABLA VARCHAR2(100 CHAR) :='OFR_OFERTAS'; --Vble. auxiliar para almacenar la tabla a insertar
+    V_TABLA_2 VARCHAR2(100 CHAR):='H_OEB_OFR_EXCLUSION_BULK'; --Vble. auxiliar para almacenar la tabla de los proveedores
+	
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_ENTIDAD_ID NUMBER(16);
+    V_ID NUMBER(16);
+
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA
+    (
+    	-- OFR_NUM_OFERTA	          CODIGO_REM PROVEEDOR
+       T_TIPO_DATA('90261069'),
+T_TIPO_DATA('90262100'),
+T_TIPO_DATA('90255105'),
+T_TIPO_DATA('90260116'),
+T_TIPO_DATA('90263545'),
+T_TIPO_DATA('90263251'),
+T_TIPO_DATA('90263843'),
+T_TIPO_DATA('90264490'),
+T_TIPO_DATA('90264748'),
+T_TIPO_DATA('90263292'),
+T_TIPO_DATA('90264214'),
+T_TIPO_DATA('90264487'),
+T_TIPO_DATA('90264718'),
+T_TIPO_DATA('90264925'),
+T_TIPO_DATA('90264951'),
+T_TIPO_DATA('90265063'),
+T_TIPO_DATA('90265167'),
+T_TIPO_DATA('90265320'),
+T_TIPO_DATA('90266081'),
+T_TIPO_DATA('90265318'),
+T_TIPO_DATA('90266245'),
+T_TIPO_DATA('90265746'),
+T_TIPO_DATA('90259242'),
+T_TIPO_DATA('90267065'),
+T_TIPO_DATA('90263749'),
+T_TIPO_DATA('90266438'),
+T_TIPO_DATA('90266456'),
+T_TIPO_DATA('90266960'),
+T_TIPO_DATA('90267320'),
+T_TIPO_DATA('90267733'),
+T_TIPO_DATA('90267821'),
+T_TIPO_DATA('90268084'),
+T_TIPO_DATA('90268129'),
+T_TIPO_DATA('90268212'),
+T_TIPO_DATA('90264082'),
+T_TIPO_DATA('90266804'),
+T_TIPO_DATA('90266934'),
+T_TIPO_DATA('90267234'),
+T_TIPO_DATA('90267291'),
+T_TIPO_DATA('90267335'),
+T_TIPO_DATA('90268077'),
+T_TIPO_DATA('90268210'),
+T_TIPO_DATA('90268556'),
+T_TIPO_DATA('90268750'),
+T_TIPO_DATA('90268760'),
+T_TIPO_DATA('90268800'),
+T_TIPO_DATA('90269075'),
+T_TIPO_DATA('90269076'),
+T_TIPO_DATA('90269120'),
+T_TIPO_DATA('90269351'),
+T_TIPO_DATA('90263630'),
+T_TIPO_DATA('90265196'),
+T_TIPO_DATA('90265603'),
+T_TIPO_DATA('90265695'),
+T_TIPO_DATA('90265727'),
+T_TIPO_DATA('90266869'),
+T_TIPO_DATA('90267107'),
+T_TIPO_DATA('90267121'),
+T_TIPO_DATA('90267243'),
+T_TIPO_DATA('90267968'),
+T_TIPO_DATA('90268184'),
+T_TIPO_DATA('90268232'),
+T_TIPO_DATA('90268243'),
+T_TIPO_DATA('90268334'),
+T_TIPO_DATA('90268344'),
+T_TIPO_DATA('90268361'),
+T_TIPO_DATA('90268376'),
+T_TIPO_DATA('90268437'),
+T_TIPO_DATA('90268439'),
+T_TIPO_DATA('90268502'),
+T_TIPO_DATA('90268608'),
+T_TIPO_DATA('90268652'),
+T_TIPO_DATA('90268685'),
+T_TIPO_DATA('90268757'),
+T_TIPO_DATA('90268779'),
+T_TIPO_DATA('90268825'),
+T_TIPO_DATA('90268857'),
+T_TIPO_DATA('90268936'),
+T_TIPO_DATA('90268971'),
+T_TIPO_DATA('90269022'),
+T_TIPO_DATA('90269112'),
+T_TIPO_DATA('90269182'),
+T_TIPO_DATA('90269210'),
+T_TIPO_DATA('90269354'),
+T_TIPO_DATA('90269400'),
+T_TIPO_DATA('90269406'),
+T_TIPO_DATA('90269551'),
+T_TIPO_DATA('90269557'),
+T_TIPO_DATA('90269607')
+       
+    ); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+    
+BEGIN	
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+ 
+    -- LOOP para insertar los valores en OFR_OFERTAS
+    DBMS_OUTPUT.PUT_LINE('[INFO]: ACTUALIZACION EN OFR_OFERTAS ');
+        
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+      
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+    
+        --Comprobamos el dato a insertar
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_2||' WHERE OFR_ID = (SELECT OFR_ID FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE OFR_NUM_OFERTA = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        
+        --Si existe lo actualizamos
+          IF V_NUM_TABLAS > 0 THEN
+            DBMS_OUTPUT.PUT_LINE('[INFO]: ACTUALIZAMOS LA OFERTA '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
+            
+            V_SQL := 'SELECT OEB_ID FROM '||V_ESQUEMA||'.'||V_TABLA_2||' WHERE OFR_ID = (SELECT OFR_ID FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE OFR_NUM_OFERTA = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
+            EXECUTE IMMEDIATE V_SQL INTO V_ID;
+            
+            V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA_2||' SET
+                      OEB_EXCLUSION_BULK= 1,
+                      USUARIOMODIFICAR = '''||V_USUARIO||''', 
+                      FECHAMODIFICAR = SYSDATE
+                      WHERE OEB_ID = '||V_ID||'';
+
+            EXECUTE IMMEDIATE V_SQL;
+            DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO ACTUALIZADO CORRECTAMENTE');
+
+            --Si no existe no se hace nada
+          ELSE
+            DBMS_OUTPUT.PUT_LINE('[INFO]: NO EXISTE REGISTRO DE LA OFERTA '''||TRIM(V_TMP_TIPO_DATA(1))||'''');
+          END IF;
+ 
+      END LOOP;
+    
+    COMMIT;
+    
+    DBMS_OUTPUT.PUT_LINE('[FIN]');
+    
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+/
+EXIT

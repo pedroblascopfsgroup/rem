@@ -26,7 +26,6 @@
 	
 	<fork name="forkYubai">
 		<transition to="T013_DefinicionOferta" name="oferta"></transition>
-		<transition to="T013_InformeJuridico" name="informe"></transition>
 	</fork>
 	
 	<state name="T013_DefinicionOferta">
@@ -239,11 +238,9 @@
 	
 	<fork name="forkReserva">
 		<transition to="T013_InstruccionesReserva" name="reserva"></transition>
-		<transition to="T013_InformeJuridico" name="informe"></transition>
 	</fork>
 	
 	<fork name="forkSinReservaSinTanteo">
-		<transition to="T013_InformeJuridico" name="informe"></transition>
 		<transition to="T013_ResultadoPBC" name="resultado"></transition>
 	</fork>
 
@@ -280,28 +277,6 @@
 		<transition to="T013_ObtencionContratoReserva" name="obtencion"></transition>
 		<transition to="T013_ResultadoPBC" name="resultado"></transition>
 	</fork>
-	
-	<state name="T013_InformeJuridico">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<transition to="Fin" name="avanzaBPM"></transition>
-	</state>
 	
 	<state name="T013_ResultadoPBC">
 		<event type="node-enter">

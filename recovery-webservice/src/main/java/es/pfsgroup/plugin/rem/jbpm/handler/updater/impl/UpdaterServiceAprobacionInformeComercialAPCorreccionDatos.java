@@ -75,12 +75,16 @@ public class UpdaterServiceAprobacionInformeComercialAPCorreccionDatos implement
 					estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_RECHAZO);
 					activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
 					activoEstadosInformeComercialHistorico.setFecha(new Date());
+					activo.getInfoComercial().setFechaRechazo(new Date());
+					activo.getInfoComercial().setFechaAceptacion(null);
 
 				} else {
 					// 0.) En caso de que se acepte se prepara un historico estado aceptado con fecha aceptado
 					estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
 					activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
 					activoEstadosInformeComercialHistorico.setFecha(new Date());
+					activo.getInfoComercial().setFechaAceptacion(new Date());
+					activo.getInfoComercial().setFechaRechazo(null);
 
 					// 1.) Se realiza una comprobación que verifique si el activo YA esta publicado.
 					//     Si está publicado, NO se vuelven a realizar las operaciones de publicación.
@@ -122,9 +126,18 @@ public class UpdaterServiceAprobacionInformeComercialAPCorreccionDatos implement
 		}
 
 		//Si han habido cambios en el activo, lo persistimos
-		if(!Checks.esNulo(activo)) {
+		if(!Checks.esNulo(activo)){
+			//actualizamos el informemediador para que se envie el cambio de estado
+			if(!Checks.esNulo(activo.getInfoComercial())){
+				activo.getInfoComercial().getAuditoria().setFechaModificar(new Date());
+				if(!Checks.esNulo(genericAdapter.getUsuarioLogado())){
+					activo.getInfoComercial().getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+				}
+			}
+			
 			activoApi.saveOrUpdate(activo);
 		}
+		
 		activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
 		
 		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())

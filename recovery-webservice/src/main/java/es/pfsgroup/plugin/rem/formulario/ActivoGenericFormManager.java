@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 
@@ -603,8 +604,19 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			trabajo.getActivo().getCartera();
             			Filter filtroSubtipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo", trabajo.getSubtipoTrabajo());
             			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera", trabajo.getActivo().getCartera());
+            			
+            			if(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(trabajo.getActivo().getSubcartera().getCodigo())
+    						|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(trabajo.getActivo().getSubcartera().getCodigo())
+    						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(trabajo.getActivo().getSubcartera().getCodigo())) {
+            				filtroCartera = genericDao.createFilter(FilterType.EQUALS, "subcartera", trabajo.getActivo().getSubcartera());
+            			}
+            			
             			if(!genericDao.getList(ConfiguracionTarifa.class, filtroSubtipoTrabajo, filtroCartera).isEmpty() || (trabajo.getEsTarifaPlana() 
-            					&& !DDCartera.CODIGO_CARTERA_SAREB.equals(trabajo.getActivo().getCartera().getCodigo()))){
+        					&& (!DDCartera.CODIGO_CARTERA_SAREB.equals(trabajo.getActivo().getCartera().getCodigo())
+        						|| !DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(trabajo.getActivo().getSubcartera().getCodigo())
+        						|| !DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(trabajo.getActivo().getSubcartera().getCodigo())
+        						|| !DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(trabajo.getActivo().getSubcartera().getCodigo())
+            			))){
             				item.setValue(DDSiNo.SI);
             			} else {
             				item.setValue(DDSiNo.NO);
@@ -743,6 +755,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             	}
 
             	if(item.getType().equals(TIPO_CAMPO_COMBO)) {
+            		
             		
             		if(item.getNombre().equals("comiteInternoSancionador") || item.getNombre().equals("comiteSancionador")) {
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);

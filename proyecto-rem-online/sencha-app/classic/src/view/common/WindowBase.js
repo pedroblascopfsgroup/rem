@@ -39,16 +39,16 @@ Ext.define('HreRem.view.common.WindowBase', {
     		    		
     		     		if(Ext.isDefined(me.down('gridBase')) && me.down('gridBase') != null){
     		     			var comboSubtipoDocumento = form.down("[name=subtipo]"); 
-    		     			 if(subtipoDocumento!=null){
-    		    		 	    		    		 
-    		         			var subtipoDocumento = comboSubtipoDocumento.findRecordByValue(comboSubtipoDocumento.getValue());
-    		     			 }else{
-    		     			 	var subtipoDocumento="";
+    		     			var subtipoDocumento="";
+    		     			if(comboSubtipoDocumento != null){    		     				
+    		         			subtipoDocumento = comboSubtipoDocumento.findRecordByValue(comboSubtipoDocumento.getValue());
     		     			 }
-    		         		var activosSeleccionados = [];
-    		 	    		Ext.Array.each(me.down('gridBase').getSelection(), function(selected, index) {
-    		 	    		 	activosSeleccionados.push(selected.get("numActivo"));
-    		 	    		});
+    		         		var activosSeleccionados = [];    		         		
+    		         		if(!form.reference == "adjuntarDocumentoExpedienteFormRef"){
+    		 	    			Ext.Array.each(me.down('gridBase').getSelection(), function(selected, index) {
+    		 	    		 		activosSeleccionados.push(selected.get("numActivo"));
+    		 	    			});    		 	    				
+    		         		}    		 	    		
     		 	    		params = {idEntidad: me.idEntidad, activos: activosSeleccionados.toString()};
     		     		}
     		             form.submit({

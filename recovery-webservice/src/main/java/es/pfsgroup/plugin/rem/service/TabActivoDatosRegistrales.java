@@ -48,10 +48,13 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlanDinVentas;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -59,7 +62,9 @@ import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoTramitacionTitulo;
+import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdjudicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDivHorizontal;
@@ -70,6 +75,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
+import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 
@@ -177,6 +184,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 			if (activo.getAdjNoJudicial() != null) {
 				BeanUtils.copyProperties(activoDto, activo.getAdjNoJudicial());
+				if(Checks.esNulo(activo.getAdjNoJudicial().getIdAsuntoRecAlaska())) {
+					activoDto.setIdAsuntoRecAlaska(null);
+				}
 			}
 		}
 
@@ -235,6 +245,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				}
 				if (!Checks.esNulo(activo.getFechaTituloAnterior())) {
 					BeanUtils.copyProperty(activoDto, "fechaTituloAnterior", activo.getFechaTituloAnterior());
+				}
+				if (activo.getTipoTituloBbva() != null) {
+					BeanUtils.copyProperty(activoDto, "origenAnteriorActivoBbvaCodigo", activo.getTipoTituloBbva().getCodigo());
 				}
 			}
 		
@@ -443,7 +456,33 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "estadoAdjudicacionCodigo", activoMatriz.getAdjJudicial().getEstadoAdjudicacion().getCodigo());
 			
 			}
-		}	
+		}
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+		
+		if(activoBbva != null) {
+			activoDto.setIdProcesoOrigen(activoBbva.getIdProcesoOrigen());
+			
+		}
+		
+		
+		
+		if (!Checks.esNulo(activo.getPropietarioPrincipal()) && activoBbva != null) {
+			if (activoBbva != null && activoBbva.getIdOrigenHre() != null) {
+				Activo activoPadre = activoApi.getByNumActivo(activoBbva.getIdOrigenHre());
+				if (activoPadre != null 
+						&& !(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activoPadre.getCartera().getCodigo()) 
+								&& (DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activoPadre.getSubcartera().getCodigo()) 
+										|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activoPadre.getSubcartera().getCodigo())))) {
+					activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());
+				}
+			}else if(activoBbva != null && activo.getPropietarioPrincipal() != null && activo.getPropietarioPrincipal().getDocIdentificativo() != null) {
+				activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());
+			}
+			
+		}
+		
 		return activoDto;
 	}
 
@@ -591,6 +630,11 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			}
 			if (dto.getFechaTituloAnterior() != null) {
 				activo.setFechaTituloAnterior(dto.getFechaTituloAnterior());
+			}
+			if (dto.getOrigenAnteriorActivoBbvaCodigo() != null) {
+				DDTipoTituloActivo origenAnteriorBbva = (DDTipoTituloActivo) 
+				diccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivo.class, dto.getOrigenAnteriorActivoBbvaCodigo());
+				activo.setTipoTituloBbva(origenAnteriorBbva);
 			}
                      
 			if (activo.getTipoTitulo() != null) {
@@ -916,6 +960,42 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 						}
 					}
 				}
+			//Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			
+			ActivoAdmisionRevisionTitulo actAdmRevTit = genericDao.get(ActivoAdmisionRevisionTitulo.class, filterActivo);
+			if (actAdmRevTit != null && actAdmRevTit.getTipoTitActRef() == null) {
+				DDTipoTituloActivo tipoTitulo = (DDTipoTituloActivo) 
+						diccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivo.class, dto.getTipoTituloCodigo());
+				actAdmRevTit.setTipoTitActRef(tipoTitulo);
+				
+				if (actAdmRevTit.getSubtipoTitActRef() == null) {
+					DDSubtipoTituloActivo subtipoTitulo = (DDSubtipoTituloActivo) 
+							diccionarioApi.dameValorDiccionarioByCod(DDSubtipoTituloActivo.class, dto.getSubtipoTituloCodigo());
+					actAdmRevTit.setSubtipoTitActRef(subtipoTitulo);
+				}
+			}
+			
+			if(activo != null) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+				
+				if(activoBbva != null) {
+					if(dto.getIdProcesoOrigen() != null) {
+						activoBbva.setIdProcesoOrigen(dto.getIdProcesoOrigen());
+					}
+				}
+				//Sociedad Pago Anterior de BBVA que tiene diferente logica al resto.
+				if (!Checks.esNulo(dto.getSociedadPagoAnterior())) {
+				
+				
+				Filter filtroPropietarioAct = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				Filter filtroPropietario = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo",dto.getSociedadPagoAnterior());
+				ActivoPropietarioActivo activoPropietario = genericDao.get(ActivoPropietarioActivo.class, filtroPropietarioAct);
+				ActivoPropietario propietario = genericDao.get(ActivoPropietario.class, filtroPropietario);
+				activoPropietario.setPropietario(propietario);
+				
+				}
+			}
 			
 		} catch (JsonViewerException jvex) {
 			throw jvex;

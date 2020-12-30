@@ -21,6 +21,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -52,11 +53,13 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
+import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
@@ -68,6 +71,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaActivo;
+import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
@@ -80,10 +84,13 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
@@ -91,12 +98,14 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProductoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -113,7 +122,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_ALQUILER = "msg.error.tipo.comercializacion.ofertas.vivas";
 	private static final String ERROR_PORCENTAJE_PARTICIPACION="msg.error.porcentaje.participacion";
 	private static final String CESION_USO_ERROR= "msg.error.activo.patrimonio.en.cesion.uso";
-
+	private static final String NO_GESTIONADO_POR_ADMISION = "msg.no.gestionado.admision";
+	private static final String ID_HAYA_NO_EXISTE= "msg.error.activo.hre.no.existe";
+	private static final String ACTIVO_NO_BBVA = "msg.error.activo.hre.bbva.no.existe";
+	private static final String ACTIVO_VENDIDO_FUERA_DE_PERIMETRO_HAYA= "msg.error.activo.vendido.perimetro";
+	private static final String ACTIVO_NO_DIVARIAN_BBVA= "msg.error.activo.no.bbva.divarian";
+	//
+	private static final String ACTIVO_NO_EXISTE= "msg.error.activo.hre.bbva.no.existe.en.rem";
+	private static final String ACTIVO_VENDIDO= "msg.error.activo.vendido";
+	private static final String ACTIVO_FUERA_DE_PERIMETRO_HAYA= "msg.error.activo.fuera.perimetro";
+	private static final String ACTIVO_NO_COINCIDE_CON_CERBERUS_BBVA= "msg.error.activo.no.bbva.divarian";
 	@Autowired
 	private GenericABMDao genericDao;
 	
@@ -228,7 +246,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 			}
 			
-		}
+		}	 
 		
 		if(!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
 			BeanUtils.copyProperty(activoDto, "nombreMediador", activo.getInfoComercial().getMediadorInforme().getNombre());
@@ -860,7 +878,161 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setTipoSegmentoCodigo(activo.getTipoSegmento().getCodigo());
 		}
 		
+		ActivoAdmisionRevisionTitulo actRevTitulo = genericDao.get(ActivoAdmisionRevisionTitulo.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		DDEstadoRegistralActivo ddEstadoReg = new DDEstadoRegistralActivo();
+		boolean perimetroAdmision = false;
+		if(perimetroActivo.getAplicaAdmision() != null) {
+			perimetroAdmision = perimetroActivo.getAplicaAdmision();
+			activoDto.setPerimetroAdmision(perimetroAdmision);
+		}
+		if(perimetroAdmision && actRevTitulo != null) {
+			if(actRevTitulo.getTipoIncidenciaRegistral() != null) {
+				ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getTipoIncidenciaRegistral().getDescripcion()));
+			}else if(actRevTitulo.getSituacionConstructivaRegistral() != null) {
+				ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getSituacionConstructivaRegistral().getDescripcion()));
+			}
+			
+			if(ddEstadoReg != null) {
+				activoDto.setEstadoRegistralCodigo(ddEstadoReg.getCodigo());	
+			}
+			
+		}else if(activo.getEstadoRegistral() != null){
+			activoDto.setEstadoRegistralCodigo(activo.getEstadoRegistral().getCodigo());
+		}
+		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
+		
+		if(perimetroActivo.getAplicaAdmision() != null) {
+			activoDto.setPerimetroAdmision(perimetroActivo.getAplicaAdmision());
+		}
+			
+		if(perimetroActivo.getFechaAplicaAdmision() != null) {
+			activoDto.setFechaPerimetroAdmision(perimetroActivo.getFechaAplicaAdmision().toString());
+		}
+		if(perimetroActivo.getMotivoAplicaAdmision() != null) {
+			activoDto.setMotivoPerimetroAdmision(perimetroActivo.getMotivoAplicaAdmision());
+		}
+		
+		activoDto.setIncluidoEnPerimetroAdmision(perimetroActivo.getAplicaAdmision());
+		
+		if(activo.getEstadoAdmision() != null) {
+			activoDto.setEstadoAdmisionCodigo(activo.getEstadoAdmision().getCodigo());
+			activoDto.setEstadoAdmisionDesc(activo.getEstadoAdmision().getDescripcion());
+		}
+		if (activo.getSubestadoAdmision() != null) {
+			activoDto.setSubestadoAdmisionCodigo(activo.getSubestadoAdmision().getCodigo());
+			activoDto.setSubestadoAdmisionDesc(activo.getSubestadoAdmision().getDescripcion());
+		}
+		
+		if(perimetroActivo.getAplicaAdmision() == null || (perimetroActivo.getAplicaAdmision() != null && !perimetroActivo.getAplicaAdmision())) {
+			
+			BeanUtils.copyProperty(activoDto, "estadoAdmisionDescCabecera", messageServices.getMessage(NO_GESTIONADO_POR_ADMISION));
+			
+		}else if (perimetroActivo.getAplicaAdmision() != null && perimetroActivo.getAplicaAdmision()){
+			
+			if(activo.getEstadoAdmision() != null) {
+				BeanUtils.copyProperty(activoDto, "estadoAdmisionCodCabecera", activo.getEstadoAdmision().getCodigo());
+				BeanUtils.copyProperty(activoDto, "estadoAdmisionDescCabecera", activo.getEstadoAdmision().getDescripcion());
+			}
+			
+			if(activo.getSubestadoAdmision() != null) {
+				BeanUtils.copyProperty(activoDto, "subestadoAdmisionCodCabecera", activo.getSubestadoAdmision().getCodigo());
+				BeanUtils.copyProperty(activoDto, "subestadoAdmisionDescCabecera", activo.getSubestadoAdmision().getDescripcion());
+			}
+		}
+
+		ActivoAdmisionRevisionTitulo activoAdmisionRevisionTitulo = genericDao.get(ActivoAdmisionRevisionTitulo.class, genericDao.createFilter(FilterType.EQUALS,  "activo.id", activo.getId()));
+		
+		if(activoAdmisionRevisionTitulo != null) {
+						
+
+			String codigoHayaSuper = "HAYASUPER";
+			String codigoGestorEdificacion = "GESTEDI";
+			
+			List<Perfil> perfilesUsuarioLogado = usuarioLogado.getPerfiles();
+			
+			boolean esUsuarioConPermisos = false;
+			boolean revision = false;
+			
+			if(activoAdmisionRevisionTitulo.getRevisado() != null) {
+				revision = DDSinSiNo.CODIGO_SI.equals(activoAdmisionRevisionTitulo.getRevisado().getCodigo());	
+			}
+			
+			for(Perfil pef : perfilesUsuarioLogado){
+				if(codigoHayaSuper.equals(pef.getCodigo()) || codigoGestorEdificacion.equals(pef.getCodigo())) {
+					esUsuarioConPermisos = true;
+					break;
+				}				
+			}
+			
+			
+			boolean puedeEditar = (esUsuarioConPermisos == true && (perimetroAdmision == false || (perimetroAdmision == true && revision == true)));
+	     
+			
+			activoDto.setEsEditableActivoEstadoRegistral(puedeEditar);
+		}else {
+			activoDto.setEsEditableActivoEstadoRegistral(!perimetroAdmision);
+		}
+		
+		activoDto.setIsGrupoOficinaKAM(activoApi.isGrupoOficinaKAM());
+
+		if(activo.getTipoTransmision() != null) {
+			activoDto.setTipoTransmisionCodigo(activo.getTipoTransmision().getCodigo());
+			activoDto.setTipoTransmisionDescripcion(activo.getTipoTransmision().getDescripcion());
+		}
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+		
+		if(activoBbva != null) {
+			if(activoBbva.getActivoEpa() != null) {
+				if(DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())){
+					activoDto.setActivoEpa(true);
+				}else {
+					activoDto.setActivoEpa(false);
+				}
+			}
+			activoDto.setEmpresa(activoBbva.getEmpresa());
+			activoDto.setOficina(activoBbva.getOficina());
+			activoDto.setContrapartida(activoBbva.getContrapartida());
+			activoDto.setFolio(activoBbva.getFolio());
+			activoDto.setCdpen(activoBbva.getCdpen());
+			
+			
+			if(activoBbva.getTipoTransmision() != null) {
+				activoDto.setTipoTransmisionCodigo(activoBbva.getTipoTransmision().getCodigo());
+				activoDto.setTipoTransmisionDescripcion(activoBbva.getTipoTransmision().getDescripcion());
+			}
+			
+			if(activoBbva.getTipoAlta() != null) {
+				activoDto.setTipoAltaCodigo(activoBbva.getTipoAlta().getCodigo());
+				activoDto.setTipoAltaDescripcion(activoBbva.getTipoAlta().getDescripcion());
+			}
+			
+			activoDto.setNumActivoBbva(activoBbva.getNumActivoBbva());
+			activoDto.setLineaFactura(activoBbva.getLineaFactura());
+			activoDto.setIdOrigenHre(activoBbva.getIdOrigenHre());
+			activoDto.setUicBbva(activoBbva.getUicBbva());
+			activoDto.setCexperBbva(activoBbva.getCexperBbva());
+
+			if(activoBbva.getCodPromocion() != null)
+				activoDto.setCodPromocionBbva(activoBbva.getCodPromocion());
+
+			
+			if (activoBbva != null && activoBbva.getIdOrigenHre() != null) {
+				Activo activoOrigenHRE = activoApi.getByNumActivo(activoBbva.getIdOrigenHre());
+				if (activoOrigenHRE != null) {
+					if (activo.getSociedadDePagoAnterior() != null 
+							&& activoBbva.getIdOrigenHre() != null
+							&& (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activoOrigenHRE.getCartera().getCodigo())) 
+								&& (DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activoOrigenHRE.getSubcartera().getCodigo()) 
+										|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activoOrigenHRE.getSubcartera().getCodigo()))) {
+						
+						activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());				
+					}
+				}
+			}			
+		}
 		
 		return activoDto;
 	}
@@ -988,6 +1160,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				DDSubtipoActivo subtipoActivo = (DDSubtipoActivo) diccionarioApi.dameValorDiccionarioByCod(DDSubtipoActivo.class,  dto.getSubtipoActivoCodigo());
 				activo.setSubtipoActivo(subtipoActivo);
 				reiniciarPBC = true;
+			}
+			
+			if (dto.getTipoTransmisionCodigo() != null) {
+				Filter filtroTr1 = genericDao.createFilter(FilterType.EQUALS, "codigo",
+						dto.getTipoTransmisionCodigo());
+				DDTipoTransmision ddtr1 = genericDao.get(DDTipoTransmision.class, filtroTr1);
+				activo.setTipoTransmision(ddtr1);
 			}
 			
 			Filter filterLbk = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
@@ -1250,6 +1429,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				activo.setSelloCalidad(false);
 			}
 			
+			
 			// Activo bancario -------------
 			// Solo se guardan los datos si el usuario ha cambiado algun campo del activo bancario.
 			// El control de cambios se realiza revisando los datos que transporta el dto
@@ -1331,7 +1511,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}else {
 					activo.setPerimetroMacc(0);
 				}
-			}		
+			}
+			
 
 			if (!Checks.esNulo(activo)) {
 				boolean isUnidadAlquilable = activoDao.isUnidadAlquilable(activo.getId());
@@ -1372,9 +1553,197 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 			}
-		
-		
+			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+			
+			if(dto.getPerimetroAdmision() != null) {
+				perimetroActivo.setAplicaAdmision(dto.getPerimetroAdmision());
+				perimetroActivo.setFechaAplicaAdmision(new Date());
+				perimetroActivo.setMotivoAplicaAdmision(dto.getMotivoPerimetroAdmision());
+				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
+			}
+			DDEstadoRegistralActivo ddEstadoReg = (DDEstadoRegistralActivo) diccionarioApi.dameValorDiccionarioByCod(DDEstadoRegistralActivo.class, dto.getEstadoRegistralCodigo());
+			if(ddEstadoReg != null) {
+				activo.setEstadoRegistral(ddEstadoReg);
+				activoDao.save(activo);
+			}
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+			if(activoBbva != null) {
+				if(dto.getCodPromocionBbva() != null) {
+					List<ActivoBbvaActivos> activosPromocion = genericDao.getList(ActivoBbvaActivos.class, 
+							genericDao.createFilter(FilterType.EQUALS, "codPromocion", dto.getCodPromocionBbva()));
+					DDPromocionBBVA pbb = genericDao.get(DDPromocionBBVA.class, genericDao.createFilter(FilterType.EQUALS, "descripcion", dto.getCodPromocionBbva()));
+					if(activosPromocion != null && !activosPromocion.isEmpty() || pbb != null) {
+						activoBbva.setCodPromocion(dto.getCodPromocionBbva());
+					}else {
+						throw new JsonViewerException("La Promoción con código \""+dto.getCodPromocionBbva()+"\" no existe.");
+					}
+				}else {
+					activoBbva.setCodPromocion(null);
+				}
+				//No comprobar los nulos, porque siempre se van a setear,
+				//controlado por sencha (onSaveFormularioCompleto de ActivoDetalleController.js)
+				activoBbva.setUicBbva(dto.getUicBbva());
+				activoBbva.setCexperBbva(dto.getCexperBbva());
+			}
+			if (dto.getTipoTransmisionCodigo() != null || dto.getTipoAltaCodigo() != null || dto.getActivoEpa() != null ||
+				dto.getEmpresa() != null || dto.getOficina() !=  null || dto.getContrapartida() != null ||
+				dto.getFolio() != null || dto.getCdpen() != null || dto.getNumActivoBbva() != null ||
+				dto.getLineaFactura() != null || dto.getIdOrigenHre() != null ||
+				dto.getUicBbva() != null || dto.getCexperBbva() !=  null
 
+			) {
+				
+				if (activoBbva != null) {
+					if (dto.getTipoTransmisionCodigo() != null) {
+						Filter filtroTr1 = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								dto.getTipoTransmisionCodigo());
+						DDTipoTransmision ddtr1 = genericDao.get(DDTipoTransmision.class, filtroTr1);
+						activoBbva.setTipoTransmision(ddtr1);
+					}
+
+					if (dto.getTipoAltaCodigo() != null) {
+						Filter filtroAut = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								dto.getTipoAltaCodigo());
+						DDTipoAlta ddAut = genericDao.get(DDTipoAlta.class, filtroAut);
+						activoBbva.setTipoAlta(ddAut);
+					}
+
+					if (dto.getActivoEpa() != null) {
+						if (dto.getActivoEpa()) {
+							Filter filtroSi = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
+							DDSinSiNo ddSi = genericDao.get(DDSinSiNo.class, filtroSi);
+							activoBbva.setActivoEpa(ddSi);
+						} else {
+							Filter filtroNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
+							DDSinSiNo ddNo = genericDao.get(DDSinSiNo.class, filtroNo);
+							activoBbva.setActivoEpa(ddNo);
+						}
+					}
+
+					if (dto.getEmpresa() != null) {
+						if(dto.getEmpresa() == -1)
+							activoBbva.setEmpresa(null);
+						else
+							activoBbva.setEmpresa(dto.getEmpresa());
+					}
+
+					if (dto.getOficina() != null) {
+						if(dto.getOficina() == -1)
+							activoBbva.setOficina(null);
+						else	
+							activoBbva.setOficina(dto.getOficina());
+					}
+
+					if (dto.getContrapartida() != null) {
+						if(dto.getContrapartida() == -1)
+							activoBbva.setContrapartida(null);
+						else
+							activoBbva.setContrapartida(dto.getContrapartida());
+					}
+
+					if (dto.getFolio() != null) {
+						if(dto.getFolio() == -1)
+							activoBbva.setFolio(null);
+						else
+							activoBbva.setFolio(dto.getFolio());
+					}
+
+					if (dto.getCdpen() != null) {
+						if(dto.getCdpen() == "-1")
+							activoBbva.setCdpen(null);
+						else
+							activoBbva.setCdpen(dto.getCdpen());
+					}
+
+					if (dto.getNumActivoBbva() != null) {
+						activoBbva.setNumActivoBbva(dto.getNumActivoBbva());
+					}
+
+					if (dto.getLineaFactura() != null) {
+						activoBbva.setLineaFactura(dto.getLineaFactura());
+					}
+
+					if (dto.getIdOrigenHre() != null && !"".equals(String.valueOf(dto.getIdOrigenHre()))) {
+						
+						Activo activoOrigenHRE = activoApi.getByNumActivo(dto.getIdOrigenHre());
+						
+						boolean isVendido =  false;
+						boolean isCarteraBBVADivarian =  false;
+						boolean isFueraPerimetro =  false;
+
+						if (activoOrigenHRE != null) {
+							
+							if (activoOrigenHRE.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA) 
+									|| (activoOrigenHRE.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS) 
+									&& (activoOrigenHRE.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)) 
+									|| activoOrigenHRE.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB))) {
+								isCarteraBBVADivarian=true;
+							}else {
+								isCarteraBBVADivarian=false;
+							}
+							//isCarteraBBVADivarian = activoDao.isActivoBBVADivarian(activoOrigenHRE.getId());
+							isVendido = activoApi.isVendido(activoOrigenHRE.getId());
+							isFueraPerimetro = !activoApi.isActivoIncluidoEnPerimetro(activoOrigenHRE.getId());
+							
+						
+							boolean isOrigenHRE = !activoDao.existeactivoIdHAYA(dto.getIdOrigenHre()); 
+							isVendido = activoDao.activoEstadoVendido(dto.getIdOrigenHre()); 
+							boolean isCarteraBBVACERBERUS = !activoDao.activoPerteneceABBVAAndCERBERUS(dto.getIdOrigenHre()); 
+							isFueraPerimetro = activoDao.activoFueraPerimetroHAYA(dto.getIdOrigenHre()); 
+													
+							if(isOrigenHRE) {
+								throw new JsonViewerException(messageServices.getMessage(ID_HAYA_NO_EXISTE));
+							}
+							
+							if (!isCarteraBBVADivarian) {
+								throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_DIVARIAN_BBVA));
+							}
+							if (!isVendido && !isFueraPerimetro) {
+								throw new JsonViewerException(messageServices.getMessage(ACTIVO_VENDIDO_FUERA_DE_PERIMETRO_HAYA));
+							}
+							
+						
+							activoBbva.setIdOrigenHre(dto.getIdOrigenHre());
+							
+							if (activoOrigenHRE.getPropietarioPrincipal() != null) {
+								List<ActivoPropietarioActivo> actOriginal= activo.getPropietariosActivo();
+								if (!actOriginal.isEmpty()) {
+									ActivoPropietarioActivo actPropAct = actOriginal.get(0);
+									actPropAct.setPropietario(activoOrigenHRE.getPropietarioPrincipal());
+								}
+							}
+							
+							if(activoOrigenHRE.getTipoTitulo()!= null) {
+								activo.setTipoTitulo(activoOrigenHRE.getTipoTitulo());
+								activo.setTipoTituloBbva(activoOrigenHRE.getTipoTitulo());
+							}
+							
+							if (DDTipoTituloActivo.tipoTituloNoJudicial.equals(activoOrigenHRE.getTipoTitulo().getCodigo())
+									&& activoOrigenHRE.getAdjNoJudicial() != null) {
+								activo.setFechaTituloAnterior(activoOrigenHRE.getAdjNoJudicial().getFechaTitulo());
+							}
+							if (DDTipoTituloActivo.tipoTituloJudicial.equals(activoOrigenHRE.getTipoTitulo().getCodigo())
+									&& activoOrigenHRE.getAdjJudicial() != null) {
+								activo.setFechaTituloAnterior(activoOrigenHRE.getAdjJudicial().getFechaAdjudicacion());
+							}
+
+							if(activoOrigenHRE.getSociedadDePagoAnterior() != null) {
+								activo.setSociedadDePagoAnterior(activoOrigenHRE.getSociedadDePagoAnterior());
+							}
+						} else {
+							throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_EXISTE));
+						}
+					}
+
+					
+					
+					
+				}else {
+					//throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_BBVA));
+				}
+			}
 		} catch(JsonViewerException jve) {
 			throw jve;
 		} catch (IllegalAccessException e) {

@@ -22,6 +22,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -41,8 +42,10 @@ import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberatorsFactory;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDEstadoProceso;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -75,7 +78,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoAsistida;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
-import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
@@ -108,6 +110,7 @@ import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
@@ -177,9 +180,6 @@ public class AgrupacionAdapter {
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
 	@Autowired
-	private ActivoManager activoManager;
-
-	@Autowired
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 
 	@Autowired
@@ -215,9 +215,6 @@ public class AgrupacionAdapter {
 	private AgrupacionValidatorFactoryApi agrupacionValidatorFactory;
 
 	@Autowired
-	private TrabajoApi trabajoApi;
-
-	@Autowired
 	private UpdaterStateApi updaterState;
 
 	@Autowired
@@ -234,9 +231,6 @@ public class AgrupacionAdapter {
 
 	@Resource
 	private MessageService messageServices;
-
-	@Autowired
-	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
 
 	@Autowired
 	private ProcessAdapter processAdapter;
@@ -272,9 +266,6 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
-	
-	@Autowired
-	private GestorExpedienteComercialDao gestorExpedienteComercialDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -286,8 +277,6 @@ public class AgrupacionAdapter {
 	public static final String PUBLICACION_AGRUPACION_BAJA_ERROR_MSG = "No ha sido posible publicar. La agrupación está dada de baja";
 	public static final String AGRUPACION_BAJA_ERROR_OFERTAS_VIVAS = "No ha sido posible dar de baja la agrupación. Existen ofertas vivas";
 	public static final String AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS = "No se puede cambiar el destino comercial de la agrupación porque tiene ofertas vivas";
-	private static final String AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO = "activo.motivo.oferta.tipo.numero.documento";
-	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
 	private static final Integer NO_ES_FORMALIZABLE = new Integer(0);
 	private static final Integer ES_FORMALIZABLE = new Integer(1);
 	private static final String TIPO_AGRUPACION_RESTRINGIDA = "02";
@@ -1141,7 +1130,7 @@ public class AgrupacionAdapter {
 		if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())
 				|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER
 						.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-			saveAgrupacionLoteComercial(activo, agrupacion);
+			saveAgrupacionLoteComercial(activo, agrupacion);			
 		} else {
 			ActivoAgrupacionActivo activoAgrupacionActivo = new ActivoAgrupacionActivo();
 			activoAgrupacionActivo.setActivo(activo);
@@ -1349,6 +1338,13 @@ public class AgrupacionAdapter {
 		// Obtener agrupaciones del activo.
 		boolean incluidoAgrupacionRestringida = false;
 		List<Activo> activosList = new ArrayList<Activo>();
+		List<Activo> activosListActual = new ArrayList<Activo>();
+		List<ActivoAgrupacionActivo> activosAgrupacionActual = activoAgrupacionActivoDao.getListActivoAgrupacionActivoByAgrupacionIDAndActivos(agrupacion.getId(), null);
+		if(!Checks.estaVacio(activosAgrupacionActual)) {
+			for(ActivoAgrupacionActivo aga : activosAgrupacionActual) {
+				activosListActual.add(aga.getActivo());
+			}
+		}
 		List<ActivoAgrupacionActivo> agrupacionesActivo = activo.getAgrupaciones();
 		if (!Checks.estaVacio(agrupacionesActivo)) {
 
@@ -1364,28 +1360,30 @@ public class AgrupacionAdapter {
 						if(Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getFechaBaja()) && 
 								!Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getActivos())){
 							List<ActivoAgrupacionActivo> activosAgrupacion = activoAgrupacionActivo.getAgrupacion().getActivos();
+							
 							incluidoAgrupacionRestringida = true;
-						if (!Checks.estaVacio(activosAgrupacion)) {
-							// Obtener todos los activos de la agrupación
-							// restringida en la que se encuentra el activo a
-							// incluir en la agrupación lote comercial
-							// y almacenar una nueva relación de la agrupación
-							// lote comercial con cada activo.
-							for (ActivoAgrupacionActivo activoAgrupacion : activosAgrupacion) {
-								if (!activosList.contains(activoAgrupacion.getActivo())) {
-									// Este bucle se realiza para evitar
-									// posibles duplicados dado que un activo
-									// puede estar en más de una agrupación de
-									// tipo restringida.
-									activosList.add(activoAgrupacion.getActivo());
+							if (!Checks.estaVacio(activosAgrupacion)) {
+								// Obtener todos los activos de la agrupación
+								// restringida en la que se encuentra el activo a
+								// incluir en la agrupación lote comercial
+								// y almacenar una nueva relación de la agrupación
+								// lote comercial con cada activo.
+								for (ActivoAgrupacionActivo activoAgrupacion : activosAgrupacion) {
+									if (!activosList.contains(activoAgrupacion.getActivo()) 
+											&& !activosListActual.contains(activoAgrupacion.getActivo())) {
+										// Este bucle se realiza para evitar
+										// posibles duplicados dado que un activo
+										// puede estar en más de una agrupación de
+										// tipo restringida.
+										activosList.add(activoAgrupacion.getActivo());
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-		}
-
+			
 			if (!Checks.estaVacio(activosList)) {
 				for (Activo act : activosList) {
 					ActivoAgrupacionActivo nuevaRelacionAgrupacionActivo = new ActivoAgrupacionActivo();
@@ -2262,7 +2260,7 @@ public class AgrupacionAdapter {
 	public Oferta createOfertaAgrupacion(DtoOfertasFilter dto) throws Exception {
 
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(dto.getIdAgrupacion());
-		
+		Activo activo = null;
 		Oferta ofertaNueva = null;
 
 		// Comprobar tipo oferta compatible con tipo agrupacion
@@ -2292,6 +2290,10 @@ public class AgrupacionAdapter {
 			// activo y contrastar con la oferta.
 			if (!Checks.esNulo(activos.getActivo().getActivoPublicacion()) && !Checks.esNulo(activos.getActivo().getActivoPublicacion().getTipoComercializacion())) {
 				String comercializacion = activos.getActivo().getActivoPublicacion().getTipoComercializacion().getCodigo();
+				
+				if(activo == null) {
+					activo = activos.getActivo();
+				}
 
 				if (DDTipoOferta.CODIGO_VENTA.equals(dto.getTipoOferta())
 						&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(comercializacion)) {
@@ -2442,8 +2444,25 @@ public class AgrupacionAdapter {
 			
 
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
-
+			
 			ofertaNueva = genericDao.save(Oferta.class, oferta);
+			
+			if(activo != null && activo.getSubcartera() != null &&
+					(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+				String codigoBulk = Double.parseDouble(dto.getImporteOferta()) > 750000d 
+						? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO;
+				
+				DDSinSiNo sino = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoBulk));
+				OfertaExclusionBulk ofertaExclusionBulk = new OfertaExclusionBulk();
+				
+				ofertaExclusionBulk.setOferta(ofertaNueva);
+				ofertaExclusionBulk.setExclusionBulk(sino);
+				ofertaExclusionBulk.setFechaInicio(new Date());
+				ofertaExclusionBulk.setUsuarioAccion(genericAdapter.getUsuarioLogado());
+				
+				genericDao.save(OfertaExclusionBulk.class, ofertaExclusionBulk);
+			}			
 
 			// Actualizamos la situacion comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
@@ -2573,17 +2592,26 @@ public class AgrupacionAdapter {
 	public Boolean procesarMasivo(Long idProcess, Long idOperation) throws Exception {
 
 		MSVDocumentoMasivo document = ficheroDao.findByIdProceso(idProcess);
-		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(document);
-		MSVDDOperacionMasiva tipoOperacion = msvProcesoApi.getOperacionMasiva(idOperation);
-		MSVLiberator lib = factoriaLiberators.dameLiberator(tipoOperacion);
-		Integer numFilas = exc.getNumeroFilasByHoja(0,document.getProcesoMasivo().getTipoOperacion())-lib.getFilaInicial();
-		processAdapter.setStateProcessing(document.getProcesoMasivo().getId(),new Long(numFilas));
-		Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		
-		Thread liberarFicheroThread = new Thread(new LiberarFichero(idProcess, idOperation, usu.getUsername(), msvREMUtils.getExtraArgs()));
-		liberarFicheroThread.start();
+		MSVProcesoMasivo proceso = document.getProcesoMasivo();
+		if (proceso == null) {
+			return false;
+		} 			
+		if (proceso.getEstadoProceso() != null && MSVDDEstadoProceso.CODIGO_VALIDADO.equals(proceso.getEstadoProceso().getCodigo())) {
+			MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(document);
+			MSVDDOperacionMasiva tipoOperacion = msvProcesoApi.getOperacionMasiva(idOperation);
+			MSVLiberator lib = factoriaLiberators.dameLiberator(tipoOperacion);
+			Integer numFilas = exc.getNumeroFilasByHoja(0,document.getProcesoMasivo().getTipoOperacion())-lib.getFilaInicial();			
+			processAdapter.setStateProcessing(document.getProcesoMasivo().getId(),new Long(numFilas));
+			Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			
+			Thread liberarFicheroThread = new Thread(new LiberarFichero(idProcess, idOperation, usu.getUsername(), msvREMUtils.getExtraArgs()));
+			liberarFicheroThread.start();
 
-		return true;
+			Thread.sleep(1000);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Transactional(readOnly = false)

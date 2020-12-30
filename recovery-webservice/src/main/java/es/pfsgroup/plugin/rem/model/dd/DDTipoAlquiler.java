@@ -40,6 +40,12 @@ public class DDTipoAlquiler implements Auditable, Dictionary {
     public static final String CODIGO_ALQUILER_SOCIAL = "09";
     public static final String CODIGO_CESION_GENERALITAT_CX = "10";
     public static final String CODIGO_OTRAS_CORPORACIONES ="11";
+    public static final String CODIGO_RD_LEY_17_2019 ="12";
+    public static final String CODIGO_ACEPTADAS_CESION_GENERALITAT ="13";
+    public static final String CODIGO_ALQUILER_SOCIAL_BBVA ="14";
+    public static final String CODIGO_ALQUILER_SOCIAL_CX ="15";
+    public static final String CODIGO_BUENAS_PRACTICAS ="16";
+    public static final String CODIGO_EN_TRAMITE_CESION_GENERALITAT ="17";
 
 	/**
 	 * 

@@ -142,6 +142,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 								form.getBindRecord().save({
 									success: success,				            
 						            failure: function (a, operation) {
+						            	
 						            	var data = {};
 			                            try {
 			                            	data = Ext.decode(operation._response.responseText);
@@ -152,11 +153,14 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			                            } else {
 			                            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 			                            }
-										var comboEmisor = me.getView().lookupReference("comboProveedores");
-										var nifEmisor = me.getViewModel().data.gasto.data.nifEmisor;
-										comboEmisor.getStore().getProxy().extraParams.nifProveedor = nifEmisor;	
-										comboEmisor.getStore().load();
-										me.refrescarGasto(form.refreshAfterSave);
+			                            if(me.getView().getXType() != "anyadirnuevogasto"){
+			                            	var comboEmisor = me.getView().lookupReference("comboProveedores");
+											var nifEmisor = me.getViewModel().data.gasto.data.nifEmisor;
+											comboEmisor.getStore().getProxy().extraParams.nifProveedor = nifEmisor;	
+											comboEmisor.getStore().load();
+											me.refrescarGasto(form.refreshAfterSave);
+			                            }
+
 										me.getView().unmask();
 						            }
 								});
@@ -276,12 +280,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	onClickBotonRefrescar : function(btn) {
 		var me = this;
 
-		tabPanel = me.getView().down("tabpanel");
-		var activeTab = tabPanel.getActiveTab();
-		if (activeTab.xtype == "activosafectadosgasto"
-		&& CONST.CARTERA["LIBERBANK"] === me.getViewModel().get("gasto.cartera")) {
-			me.updateGastoByPrinexLBK();
-		}
 		me.refrescarGasto(true);
 	},
 	
@@ -732,39 +730,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	
     	
     },
-    updateGastoByPrinexLBK: function(){
-    	me = this;
-    	var url =  $AC.getRemoteUrl('gastosproveedor/updateGastoByPrinexLBK');
-    	var idGasto = me.getViewModel().get("gasto.id"); 
 
-
-		Ext.Ajax.request({		    			
-	 		url: url,
-	   		params: {
-	   			idGasto: idGasto
-   			},	    		
-	    	success: function(response, opts) {
-	    		
-	    		var data = {};
-	            try {
-	            	data = Ext.decode(response.responseText);
-	            	if(data.success == "true"){
-	            		me.refrescarGasto(true);
-	            	}
-	            	
-	            }
-	            catch (e){ };
-    			
-    		
-	    		
-	    	},
-   			failure: function(response) {
-				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-		    }
-		});
-
-    	
-    },
     asociarGastoConActivos: function(idGasto, numeroActivo, numeroAgrupacion, detalle, form, window) {
     	
     	var me = this;

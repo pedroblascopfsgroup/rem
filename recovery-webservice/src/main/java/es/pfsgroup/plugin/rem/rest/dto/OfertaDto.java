@@ -74,6 +74,11 @@ public class OfertaDto implements Serializable {
 	private String codTipoProveedorOrigenCliente;
 	@IsNumber(message = "Debe ser un número")
 	private String idProveedorRealizadorRemOrigenLead;
+	private String numeroBulkAdvisoryNote;
+	private String recomendacionRc;
+	private Date fechaRecomendacionRc;
+	private String recomendacionDc;
+	private Date fechaRecomendacionDc;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -291,5 +296,36 @@ public class OfertaDto implements Serializable {
 	}
 	public void setIdProveedorRealizadorRemOrigenLead(String idProveedorRealizadorRemOrigenLead) {
 		this.idProveedorRealizadorRemOrigenLead = idProveedorRealizadorRemOrigenLead;
+	}
+
+	public String getNumeroBulkAdvisoryNote() {
+		return numeroBulkAdvisoryNote;
+	}
+	public void setNumeroBulkAdvisoryNote(String numeroBulkAdvisoryNote) {
+		this.numeroBulkAdvisoryNote = numeroBulkAdvisoryNote;
+	}
+	public String getRecomendacionRc() {
+		return recomendacionRc;
+	}
+	public void setRecomendacionRc(String recomendacionRc) {
+		this.recomendacionRc = recomendacionRc;
+	}
+	public Date getFechaRecomendacionRc() {
+		return fechaRecomendacionRc;
+	}
+	public void setFechaRecomendacionRc(Date fechaRecomendacionRc) {
+		this.fechaRecomendacionRc = fechaRecomendacionRc;
+	}
+	public String getRecomendacionDc() {
+		return recomendacionDc;
+	}
+	public void setRecomendacionDc(String recomendacionDc) {
+		this.recomendacionDc = recomendacionDc;
+	}
+	public Date getFechaRecomendacionDc() {
+		return fechaRecomendacionDc;
+	}
+	public void setFechaRecomendacionDc(Date fechaRecomendacionDc) {
+		this.fechaRecomendacionDc = fechaRecomendacionDc;
 	}
 }

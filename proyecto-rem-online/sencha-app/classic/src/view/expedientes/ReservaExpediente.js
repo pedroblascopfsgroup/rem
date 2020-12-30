@@ -41,9 +41,12 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 				        },		                
 		                {
 		                	xtype:'datefieldbase',
+		                	reference:'fechaEnvioRef',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.envio'),
-		                	bind:		'{reserva.fechaEnvio}',
-		                	readOnly: true
+		                	bind:{
+		                		value: '{reserva.fechaEnvio}',
+		                		readOnly:'{readOnlyGestBoarding}'
+	                		}
 		                },
 		                {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe'),
@@ -91,6 +94,46 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                		readOnly: '{fechaIngresoChequeReadOnly}'
 	                		}
 		                },
+		                		                
+		                //BLOQUE ARRAS
+		                {
+		                	xtype:'datefieldbase',
+					        fieldLabel: HreRem.i18n('fieldlabel.fecha.vigencia.arras'),
+					        bind: {
+		                		value: '{reserva.fechaVigenciaArras}',
+		                		hidden:'{!esCarteraBankia}'
+					        }
+						},						
+						{
+							xtype:'datefieldbase',
+					        fieldLabel: HreRem.i18n('fieldlabel.fecha.ampliacion.arras'),
+					        bind: {
+		                		value: '{reserva.fechaAmpliacionArras}',
+		                		hidden:'{!esCarteraBankia}'
+					        }
+						},
+						{
+					        xtype: 'comboboxfieldbase',
+					        fieldLabel:  HreRem.i18n('fieldlabel.motivo.ampliacion.arras'),					        
+					        bind: {
+					        	store: '{comboMotivoAmpliacionArras}',
+								value: '{reserva.motivoAmpliacionArrasCodigo}',
+								hidden:'{!esCarteraBankia}'
+								}											                	
+					    },
+					    { 
+							xtype: 'textareafieldbase',
+							fieldLabel:  HreRem.i18n('fieldlabel.motivo.solicitud.ampliacion.arras'),						        	
+							bind: {
+								value: '{reserva.solicitudAmpliacionArras}',
+								hidden:'{!esCarteraBankia}'
+							},
+							maxLength: 200,
+							rowspan: 2,
+							height: 80
+						},
+						//FIN ARRAS		                
+		                
 		                {		                
 		                	xtype: 'checkboxfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.reserva.con.impuesto'),

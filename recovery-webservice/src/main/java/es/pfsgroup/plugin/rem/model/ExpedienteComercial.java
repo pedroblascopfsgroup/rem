@@ -282,6 +282,9 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
  	@Column(name="ECO_FECHA_CONT_VENTA")
    	private Date fechaContabilizacionVenta;
+ 	
+ 	@Column(name="ECO_FECHA_GRAB_VENTA")
+ 	private Date fechaGrabacionVenta;
 
     @Version   
 	private Long version;
@@ -862,5 +865,13 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setFechaContabilizacionVenta(Date fechaContabilizacionVenta) {
 		this.fechaContabilizacionVenta = fechaContabilizacionVenta;
+	}
+
+	public Date getFechaGrabacionVenta() {
+		return fechaGrabacionVenta;
+	}
+
+	public void setFechaGrabacionVenta(Date fechaGrabacionVenta) {
+		this.fechaGrabacionVenta = fechaGrabacionVenta;
 	}
 }

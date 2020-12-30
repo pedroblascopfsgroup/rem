@@ -22,7 +22,20 @@ merge_valido() {
 
 }
 
+merge_bloqueadas() {
+
+	r_actual=`echo $1 | sed 's/@/.+/'`
+	r_bloqueada=`echo $2 | sed 's/@/.+/'`
+
+	if [[ $r_actual =~ $r_bloqueada ]] ; then
+		mostrar_error "La rama $r_actual se encuentra bloqueada porque se encuentra en PRODUCCIÓN"
+	fi
+
+}
+
 ficherorutas=${dir_merges}/rutas-permitidas
+ficheroramasbloqueadas=${dir_merges}/ramas-subidas-pro.txt
+
 if [ ! -f $ficherorutas ] ; then
 	mostrar_error "No existe el fichero '$ficherorutas'"
 fi
@@ -66,6 +79,11 @@ for ruta in `cat $ficherorutas` ; do
 	origen=`echo "$ruta" | cut -d '|' -f1`
 	destino=`echo "$ruta" | cut -d '|' -f2`
 	merge_valido $rama_actual $rama_merge $origen $destino
+done
+
+for ruta in `cat $ficheroramasbloqueadas` ; do  
+	rama=`echo "$ruta"`
+	merge_bloqueadas $rama_actual $rama
 done
 
 mostrar_error "Merge irregular. No permitido desde la rama $rama_merge a la rama $rama_actual. Ponte en contacto con tu coordinador."

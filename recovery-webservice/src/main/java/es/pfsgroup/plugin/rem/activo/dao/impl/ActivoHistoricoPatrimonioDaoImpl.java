@@ -17,7 +17,7 @@ public class ActivoHistoricoPatrimonioDaoImpl extends AbstractEntityDao<ActivoHi
 	public List<ActivoHistoricoPatrimonio> getHistoricoAdecuacionesAlquilerByActivo(Long idActivo) {
 		HQLBuilder hb = new HQLBuilder(" from ActivoHistoricoPatrimonio ahp");
 		
-   	  	HQLBuilder.addFiltroLikeSiNotNull(hb, "ahp.activo.id", idActivo, true);
+   	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ahp.activo.id", idActivo);
    	  	hb.orderBy("id", "desc");
 		return HibernateQueryUtils.list(this, hb);
 

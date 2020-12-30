@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
@@ -51,6 +52,29 @@ public class MSVActualizadorPreciosActivoImporte extends AbstractMSVActualizador
 
 	SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy");
 	
+	//Indicar las posiciones de las columnas en el excel CARGA_DIRECTA_PRECIOS_ACTIVOS.xls
+	public static final Integer COLUMNA_ACTIVO 						= 0;
+	public static final Integer COLUMNA_P_APROBADO_VENTA 			= 1;
+	public static final Integer COLUMNA_F_APROB_P_APROBADO_VENTA 	= 2;
+	public static final Integer COLUMNA_F_INI_PRECIO_APROB_VENTA 	= 3;
+	public static final Integer COLUMNA_F_FIN_PRECIO_APROB_VENTA 	= 4;
+	public static final Integer COLUMNA_P_MIN_AUTORIZADO 			= 5;
+	public static final Integer COLUMNA_F_APROB_P_MIN_AUTORIZADO 	= 6;
+	public static final Integer COLUMNA_F_INI_P_MIN_AUTORIZADO 		= 7;
+	public static final Integer COLUMNA_F_FIN_P_MIN_AUTORIZADO 		= 8;
+	public static final Integer COLUMNA_P_APROB_RENTA 				= 9;
+	public static final Integer COLUMNA_F_APROB_P_APROBADO_RENTA 	= 10;
+	public static final Integer COLUMNA_F_INI_P_APROBADO_RENTA 		= 11;
+	public static final Integer COLUMNA_F_FIN_P_APROBADO_RENTA 		= 12;
+	public static final Integer COLUMNA_P_DESCUENTO_APROBADO 		= 13;
+	public static final Integer COLUMNA_F_APROB_P_DESCUENTO_APROB 	= 14;
+	public static final Integer COLUMNA_F_INI_P_DESCUENTO_APROB 	= 15;
+	public static final Integer COLUMNA_F_FIN_P_DESCUENTO_APROB 	= 16;
+	public static final Integer COLUMNA_P_DESCUENTO_PUBLICADO 		= 17;
+	public static final Integer COLUMNA_F_APROB_P_DESCUENTO_PUB 	= 18;
+	public static final Integer COLUMNA_F_INI_P_DESCUENTO_PUB 		= 19;
+	public static final Integer COLUMNA_F_FIN_P_DESCUENTO_PUB 		= 20;
+	
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_ACTIVO_IMPORTE;
@@ -58,73 +82,88 @@ public class MSVActualizadorPreciosActivoImporte extends AbstractMSVActualizador
 	
 	@Override
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {
-		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
+		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, COLUMNA_ACTIVO)));
 		
 		// Si alguno de los precios está vacío, comprobar si existe anterior y pasarlo al histórico sin crear o actualizar ningún otro.
 		
 		//Si hay Valoracion = Precio Aprobado venta para actualizar o crear
-		if(!Checks.esNulo(exc.dameCelda(fila, 1))){
-			double valor = Double.parseDouble(exc.dameCelda(fila, 1));
+		if(!Checks.esNulo(exc.dameCelda(fila, COLUMNA_P_APROBADO_VENTA))){
+			double valor = Double.parseDouble(exc.dameCelda(fila, COLUMNA_P_APROBADO_VENTA));
 
-			actualizarCrearValoresPrecios(activo,
+			actualizarCrearValoresPrecios(
+					activo,
 					DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA, 
 					valor,
-					exc.dameCelda(fila, 2),
-					exc.dameCelda(fila, 3));
+					exc.dameCelda(fila, COLUMNA_F_APROB_P_APROBADO_VENTA),
+					exc.dameCelda(fila, COLUMNA_F_INI_PRECIO_APROB_VENTA),
+					exc.dameCelda(fila, COLUMNA_F_FIN_PRECIO_APROB_VENTA)
+			);
 			//Actualizar el tipoComercialización del activo
 			updaterState.updaterStateTipoComercializacion(activo);
 		}
 		
 		//Si hay Valoracion = Precio Minimo para actualizar o crear
-		if(!Checks.esNulo(exc.dameCelda(fila, 4))){
-			double valor = Double.parseDouble(exc.dameCelda(fila, 4));
+		if(!Checks.esNulo(exc.dameCelda(fila, COLUMNA_P_MIN_AUTORIZADO))){
+			double valor = Double.parseDouble(exc.dameCelda(fila, COLUMNA_P_MIN_AUTORIZADO));
 
-			actualizarCrearValoresPrecios(activo,
+			actualizarCrearValoresPrecios(
+					activo,
 					DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO, 
 					valor,
-					exc.dameCelda(fila, 5),
-					exc.dameCelda(fila, 6));
+					exc.dameCelda(fila, COLUMNA_F_APROB_P_MIN_AUTORIZADO),
+					exc.dameCelda(fila, COLUMNA_F_INI_P_MIN_AUTORIZADO),
+					exc.dameCelda(fila, COLUMNA_F_FIN_P_MIN_AUTORIZADO)
+			);
 		}
 		
 		//Si hay Valoracion = Precio Aprobado renta para actualizar o crear
-		if(!Checks.esNulo(exc.dameCelda(fila, 7))){
-			double valor = Double.parseDouble(exc.dameCelda(fila, 7));
+		if(!Checks.esNulo(exc.dameCelda(fila, COLUMNA_P_APROB_RENTA))){
+			double valor = Double.parseDouble(exc.dameCelda(fila, COLUMNA_P_APROB_RENTA));
 
 			
-			actualizarCrearValoresPrecios(activo,
+			actualizarCrearValoresPrecios(
+					activo,
 					DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA, 
 					valor,
-					exc.dameCelda(fila, 8),
-					exc.dameCelda(fila, 9));
+					exc.dameCelda(fila, COLUMNA_F_APROB_P_APROBADO_RENTA),
+					exc.dameCelda(fila, COLUMNA_F_INI_P_APROBADO_RENTA),
+					exc.dameCelda(fila, COLUMNA_F_FIN_P_APROBADO_RENTA)
+			);
 		}
 		
 		//Si hay Valoracion = Precio de Descuento Aprobado para actualizar o crear
-		if(!Checks.esNulo(exc.dameCelda(fila, 10))){
-			double valor = Double.parseDouble(exc.dameCelda(fila, 10));
+		if(!Checks.esNulo(exc.dameCelda(fila, COLUMNA_P_DESCUENTO_APROBADO))){
+			double valor = Double.parseDouble(exc.dameCelda(fila, COLUMNA_P_DESCUENTO_APROBADO));
 
-			actualizarCrearValoresPrecios(activo,
+			actualizarCrearValoresPrecios(
+					activo,
 					DDTipoPrecio.CODIGO_TPC_DESC_APROBADO, 
 					valor,
-					exc.dameCelda(fila, 11),
-					exc.dameCelda(fila, 12));
+					exc.dameCelda(fila, COLUMNA_F_APROB_P_DESCUENTO_APROB),
+					exc.dameCelda(fila, COLUMNA_F_INI_P_DESCUENTO_APROB),
+					exc.dameCelda(fila, COLUMNA_F_FIN_P_DESCUENTO_APROB)
+			);
 		}
 		
 		//Si hay Valoracion = Precio de Descuento Publicado para actualizar o crear
-		if(!Checks.esNulo(exc.dameCelda(fila, 13))){
-			double valor = Double.parseDouble(exc.dameCelda(fila, 13));
-		    
-			actualizarCrearValoresPrecios(activo,
+		if(!Checks.esNulo(exc.dameCelda(fila, COLUMNA_P_DESCUENTO_PUBLICADO))){
+			double valor = Double.parseDouble(exc.dameCelda(fila, COLUMNA_P_DESCUENTO_PUBLICADO));
+			
+			actualizarCrearValoresPrecios(
+					activo, 
 					DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO, 
 					valor,
-					exc.dameCelda(fila, 14),
-					exc.dameCelda(fila, 15));
+					exc.dameCelda(fila, COLUMNA_F_APROB_P_DESCUENTO_PUB),
+					exc.dameCelda(fila, COLUMNA_F_INI_P_DESCUENTO_PUB),
+					exc.dameCelda(fila, COLUMNA_F_FIN_P_DESCUENTO_PUB)
+			);
 		}
 		return new ResultadoProcesarFila();
 		
 	}
 	
 	private void actualizarCrearValoresPrecios(Activo activo, String codigoTipoPrecio,
-			Double importe, String fechaInicioExcel, String fechaFinExcel) throws ParseException{
+			Double importe, String fechaAprobacionExcel, String fechaInicioExcel, String fechaFinExcel) throws ParseException{
 		
 		//Intenta ver si el activo tiene ya un precio del tipo indicado para actualizar
 		//Se prevee la posibilidad de que exista mas de 1 tipo precio por activo, en ese caso solo se toma el ultimo insertado para evitar error
@@ -151,8 +190,13 @@ public class MSVActualizadorPreciosActivoImporte extends AbstractMSVActualizador
 		if(!Checks.esNulo(fechaInicioExcel)){
 			Date fechaInicio = simpleDate.parse(fechaInicioExcel);
 			dtoActivoValoracion.setFechaInicio(fechaInicio);
-		} else {
+		} 
+		else {
 			dtoActivoValoracion.setFechaInicio(new Date());
+		}
+		if(!Checks.esNulo(fechaAprobacionExcel)){
+			Date fechaAprobacion = simpleDate.parse(fechaAprobacionExcel);
+			dtoActivoValoracion.setFechaAprobacion(fechaAprobacion);
 		}
 		
 		//El metodo saveActivoValoracion actualizara el importe y las fechas del precio existente (encontrado en activoValoracion

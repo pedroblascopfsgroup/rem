@@ -1,0 +1,315 @@
+#!/usr/bin/env bash
+#================================================================
+# HEADER
+#================================================================
+#% SYNOPSIS
+#+    $. SDK-INIT
+#%
+#% DESCRIPTION
+#%    This script establishes configurations in the terminal
+#%    session where it is launched for the use of the necessary
+#%    tools or libraries for the development of the App in which
+#%    it is located.
+#================================================================
+#- IMPLEMENTATION
+#-    version         SDK-INIT (REM) 1.0.0
+#-    author          Kevin Fernández
+#-    copyright       Copyright (c) https://www.pfsgroup.es/
+#-    license         GNU General Public License
+#-
+#================================================================
+#  HISTORY
+#     21/09/2020 : kevinfernandez : Script creation
+#
+#================================================================
+# END_OF_HEADER
+#================================================================
+
+# Check if the script has been loaded previously.
+if [[ ! -z ${SDK_PREVIOUS_PS1+x} ]]; then
+	return
+fi
+
+#================================================================
+# SDK_ENVIRONMENT_VARIABLES
+#================================================================
+export SDK_MAVEN_DOCKER_IMAGE=docker-repo.pfsgroup.es:5000/maven/mvn3.2.5-jdk6:1.1
+export SDK_APPSERVER_DOCKER_IMAGE=docker-repo.pfsgroup.es:5000/rem/app-server-tomcat7:1.1
+export SDK_DOCKER_CONTAINER_NAME=rem-appserver
+export SDK_PREVIOUS_PS1=""
+export SDK_APP_NAME=REM
+
+
+#================================================================
+# SDK_ENVIRONMENT_FUNCTIONS
+#================================================================
+:<<'DOC'
+This method cleans up the SDK environment getting rid of variables, functions and docker images.
+DOC
+function sdk_clean () {
+	printf "\e[92m\e[1m[INFO]\e[0m Limpiando entorno SDK para la App \e[93m${SDK_APP_NAME}\e[39m..."
+
+	# Delete SDK docker container and images
+	if [[ "$(docker ps -qaf name=${SDK_DOCKER_CONTAINER_NAME})" ]]; then
+		docker rm -f ${SDK_DOCKER_CONTAINER_NAME} 2>&1 >/dev/null
+	fi
+
+	if [[ "$(docker images -q ${SDK_APPSERVER_DOCKER_IMAGE} 2> /dev/null)" ]]; then
+		docker rmi ${SDK_APPSERVER_DOCKER_IMAGE} 2>&1 >/dev/null
+	fi
+
+	if [[ "$(docker images -q ${SDK_MAVEN_DOCKER_IMAGE} 2> /dev/null)" ]]; then
+		docker rmi ${SDK_MAVEN_DOCKER_IMAGE} 2>&1 >/dev/null
+	fi
+
+	# Delete SDK environment variables
+	PS1=${SDK_PREVIOUS_PS1}
+	unset SDK_MAVEN_DOCKER_IMAGE
+	unset SDK_APPSERVER_DOCKER_IMAGE
+	unset SDK_DOCKER_CONTAINER_NAME
+	unset SDK_PREVIOUS_PS1
+	unset SDK_APP_NAME
+
+	# Delete SDK environment functions
+	unset -f sdk_appserver
+	unset -f mvn
+	unset -f java
+	unset -f sdk_war
+	unset -f sdk_appserver_log
+	unset -f sdk_appserver_update
+	unset -f sdk_info
+	unset -f sdk_appserver_stop
+	unset -f sdk_setup_environment
+	unset -f sdk_options
+	unset -f konami_code
+	unset -f sdk_clean
+	unset -f sdk_build_webapp
+	unset -f sdk_war_java_only
+
+	echo -e "\e[1mDONE\e[0m"
+}
+
+:<<'DOC'
+This method runs a new docker container with Tomcat running on it.
+It uses the Tomcat version from the docker image in the 'SDK_APPSERVER_DOCKER_IMAGE' variable.
+DOC
+function sdk_appserver () {
+	if [[ -z "$1" || "$1" == " " ]]; then
+		echo -e "\e[93m\e[1m[WARNING]\e[0m Se debe indicar el entorno de base de datos como primer parámetro junto al comando. Ej: sdk_appserver 192.168.31.34:1522/desarem"
+
+	elif [[ "$(docker ps -qaf name=${SDK_DOCKER_CONTAINER_NAME})" ]] && [[ "$(docker ps -qaf status=running -f name=${SDK_DOCKER_CONTAINER_NAME})" ]]; then
+		echo -e "\e[92m\e[1m[INFO]\e[0m Ya existe un contenedor docker appserver de Tomcat con estado: '$(docker inspect --format='{{.State.Status}}' ${SDK_DOCKER_CONTAINER_NAME})'"
+
+	elif [[ "$(docker ps -qaf name=${SDK_DOCKER_CONTAINER_NAME})" ]] && [[ "$(docker ps -qaf status=exited -f name=${SDK_DOCKER_CONTAINER_NAME})" ]]; then
+		docker start ${SDK_DOCKER_CONTAINER_NAME}
+
+		# Setup the docker container
+		docker exec ${SDK_DOCKER_CONTAINER_NAME} /recovery/app-server/setup.sh $*
+
+	elif [[ ! "$(docker ps -qaf name=${SDK_DOCKER_CONTAINER_NAME})" ]]; then
+		# Initialize docker container
+		docker run \
+		-d \
+		-t \
+		-p=8080:8080 \
+		-p=8081:8081 \
+		-p=1045:1045 \
+		--name=${SDK_DOCKER_CONTAINER_NAME} \
+		${SDK_APPSERVER_DOCKER_IMAGE}
+
+		# Setup the docker container
+		docker exec ${SDK_DOCKER_CONTAINER_NAME} /recovery/app-server/setup.sh $*
+	fi
+}
+
+:<<'DOC'
+This method gives the ability to use any maven command on the terminal.
+It uses the Maven version from the docker image in the 'SDK_MAVEN_DOCKER_IMAGE' variable.
+DOC
+function mvn () {
+	docker run \
+		-u $(id -u):$(id -g) \
+		-t \
+		--rm \
+		--name sdk-maven-builder \
+		-v "$(pwd)":/usr/src/project \
+		-v $HOME/.m2/repository:/usr/share/maven/external-repo \
+		${SDK_MAVEN_DOCKER_IMAGE} \
+		mvn $*
+}
+
+:<<'DOC'
+This method gives the ability to use any java command on the terminal.
+It uses the Java version from the docker image in the 'SDK_MAVEN_DOCKER_IMAGE' variable.
+DOC
+function java () {
+	docker run \
+		-u $(id -u):$(id -g) \
+		-v $(pwd):$(pwd) \
+		--name sdk-maven-builder \
+		--rm \
+		${SDK_MAVEN_DOCKER_IMAGE} \
+		java $*
+}
+
+:<<'DOC'
+This method builds the webapp and Java and then deploys it on the running Tomcat app server (if any available).
+After that, shows the logs. First erases the target folder manually.
+DOC
+function sdk_war () {
+	if [[ ! "$(docker ps -qaf name=${SDK_DOCKER_CONTAINER_NAME})" ]]; then
+		echo -e "\e[93m\e[1m[WARNING]\e[0m No se encuentra el contenedor docker"
+		return
+	fi
+
+	sdk_webapp
+
+	sdk_war_java_only
+}
+
+:<<'DOC'
+This method builds the App and then deploys it on the running Tomcat app server (if any available).
+After that, shows the logs. First erases the target folder manually.
+DOC
+function sdk_war_java_only () {
+	if [[ ! "$(docker ps -qaf name=${SDK_DOCKER_CONTAINER_NAME})" ]]; then
+		echo -e "\e[93m\e[1m[WARNING]\e[0m No se encuentra el contenedor docker"
+		return
+	fi
+
+	find . -maxdepth 2 -type d -exec echo {} \; | grep target | awk '{ print "rm -rf "$0" && "}' | xargs | sed -e 's/.$//' | sed -e 's/.$//' | source /dev/stdin
+
+	mvn clean package -P rem,java7,ora12 -Dmaven.test.skip=true -pl pfs-commons-java,plugins,proyecto-rem-online,recovery-webservice,paradise-framework,recovery-gestordocumentalREM-plugin,rem-logs,rem-web && \
+	docker cp ./rem-web/target/pfs-3.0.0-REM.war ${SDK_DOCKER_CONTAINER_NAME}:/recovery/app-server && \
+	docker exec -d ${SDK_DOCKER_CONTAINER_NAME} /recovery/app-server/stopAndUpdateWar.sh && \
+	sdk_appserver_log
+}
+
+:<<'DOC'
+This method deploys the App war on the running Tomcat app server (if any available).
+DOC
+function sdk_appserver_update () {
+	if [[ ! "$(docker ps -qaf name=${SDK_DOCKER_CONTAINER_NAME})" ]]; then
+		echo -e "\e[93m\e[1m[WARNING]\e[0m No se encuentra el contenedor docker"
+		return
+	fi
+
+	docker cp ./rem-web/target/pfs-3.0.0-REM.war ${SDK_DOCKER_CONTAINER_NAME}:/recovery/app-server && \
+	docker exec -d ${SDK_DOCKER_CONTAINER_NAME} /recovery/app-server/stopAndUpdateWar.sh && \
+	sdk_appserver_log
+}
+
+:<<'DOC'
+This method shows the logs from the Tomcat app server on the running docker container (if any available).
+DOC
+function sdk_appserver_log () {
+	if [[ "$(docker ps -qaf name=${SDK_DOCKER_CONTAINER_NAME})" ]] && [[ "$(docker ps -qaf status=running -f name=${SDK_DOCKER_CONTAINER_NAME})" ]]; then
+		docker exec ${SDK_DOCKER_CONTAINER_NAME} tail -F /recovery/app-server/tomcat/logs/catalina.out
+	else
+		echo -e "\e[93m\e[1m[WARNING]\e[0m No se encuentra el contenedor docker o está parado"
+	fi
+}
+
+:<<'DOC'
+This method shows information to the user about the libraries available in this SDK.
+DOC
+function sdk_info () {
+	echo ""
+	echo -e "  Este entorno SDK contiene los siguientes módulos:"
+	echo -e "	\e[34m-\e[39m Oracle Java 1.6.0_45-b06"
+	echo -e "	\e[34m-\e[39m Apache Maven 3.2.5"
+	echo -e "	\e[34m-\e[39m Apache Tomcat 7.0.86"
+	echo ""
+	echo -e "  Los módulos son utilizados a través de contenedores docker. No alteran el sistema principal."
+	echo ""
+	echo -e "  El comando sdk_appserver soporta entre uno y cuatro parámetros de entrada, siendo estos:"
+	echo -e "	\e[34m-\e[39m 1) datos de conexión con url y puerto"
+	echo -e "	\e[34m-\e[39m 2) username de las conexiones"
+	echo -e "	\e[34m-\e[39m 3) password de las conexiones"
+	echo -e "	\e[34m-\e[39m 4) username de la conexión a master"
+	echo ""
+	echo -e "  Ejemplos de uso del comando sdk_appserver:"
+	echo -e "	\e[34m-\e[39m sdk_appserver 192.168.31.34:1522/desarem"
+	echo -e "	\e[34m-\e[39m sdk_appserver 192.168.31.34:1522/desarem REM01 admin"
+	echo -e "	\e[34m-\e[39m sdk_appserver 192.168.31.34:1522/desarem REMCOOL01 pass1234 REMCOOLMASTER"
+	echo -e "	\e[34m-\e[39m ..."
+}
+
+:<<'DOC'
+This method stops the running docker container with Tomcat on it (if any available).
+DOC
+function sdk_appserver_stop () {
+	if [[ "$(docker ps -qaf name=${SDK_DOCKER_CONTAINER_NAME})" ]] && [[ "$(docker ps -qaf status=running -f name=${SDK_DOCKER_CONTAINER_NAME})" ]]; then
+		docker stop ${SDK_DOCKER_CONTAINER_NAME}
+	else
+		echo -e "\e[92m\e[1m[INFO]\e[0m No se encuentra el contenedor docker o ya está parado"
+	fi
+}
+
+:<<'DOC'
+This method gets the running docker container IP address, mounts the url over it and opens the default web browser with that url.
+DOC
+function sdk_appserver_browser () {
+	url="http://$(docker inspect --format='{{.NetworkSettings.IPAddress}}' ${SDK_DOCKER_CONTAINER_NAME}):8080/pfs/login.jsp"
+	if [[ "$(docker ps -qaf name=${SDK_DOCKER_CONTAINER_NAME})" ]] && [[ "$(docker ps -qaf status=running -f name=${SDK_DOCKER_CONTAINER_NAME})" ]]; then
+		nohup sensible-browser http://$(docker inspect --format='{{.NetworkSettings.IPAddress}}' ${SDK_DOCKER_CONTAINER_NAME}):8080/pfs/login.jsp >/dev/null 2>&1 &
+	else
+		echo -e "\e[92m\e[1m[INFO]\e[0m No se encuentra el contenedor docker o está parado"
+	fi
+}
+
+:<<'DOC'
+This method setup the terminal session so, the user is aware that what and which SDK is active at the moment.
+DOC
+function sdk_setup_environment () {
+	if [[ ${SDK_PREVIOUS_PS1} != "" ]]; then
+		return
+	fi
+
+	SDK_PREVIOUS_PS1=$PS1;
+	PS1="${SDK_PREVIOUS_PS1//\\$ /}\[[\e[91m\]\[\e[1m\]SDK\[\e[39m\]\[\e[0m\] \[\e[93m\]${SDK_APP_NAME}\[\e[39m]\]\$ "
+}
+
+:<<'DOC'
+This method builds the web application (ExtJS Sencha 6.0) in development mode.
+DOC
+function sdk_webapp () {
+	cd proyecto-rem-online
+	. build-extjs-601-app.sh development
+	cd ..
+}
+
+function konami_code () {
+	echo -e "\e[91m\e[1m[ERROR]\e[39m\e[0m \e[2m'It's dangerous to code alone! Take this.' -Unnamed oldman\e[0m"
+}
+
+:<<'DOC'
+This method is the main entry for the SDK. Shows the user the available functions.
+DOC
+function sdk_options () {
+	echo ""
+	echo -e "  Entorno \e[93m${SDK_APP_NAME}\e[39m - \e[91mSDK\e[39m iniciado"
+	echo -e "  Comandos disponibles para este terminal:"
+	echo -e "  \e[90m____________________________________________________________________________________________________________\e[39m"
+	echo -e "  \e[92m> \e[34m$\e[39m mvn [parámetros]			(usa maven con la versión indicada para ${SDK_APP_NAME})"
+	echo -e "  \e[92m> \e[34m$\e[39m java [parámetros]			(usa java con la versión indicada para ${SDK_APP_NAME})"
+	echo -e "  \e[92m> \e[34m$\e[39m sdk_appserver [entorno]		(inicia tomcat en segundo plano) - puerto depuración 1045"
+	echo -e "  \e[92m> \e[34m$\e[39m sdk_appserver_log			(muestra los logs de tomcat del contenedor docker iniciado)"
+	echo -e "  \e[92m> \e[34m$\e[39m sdk_appserver_stop		(detiene el contenedor docker con tomcat sin eliminarlo)"
+	echo -e "  \e[92m> \e[34m$\e[39m sdk_appserver_update		(vuelve a desplegar el WAR de la aplicación en tomcat)"
+	echo -e "  \e[92m> \e[34m$\e[39m sdk_appserver_browser		(abre el navegador predeterminado con la url de la aplicación)"
+	echo -e "  \e[92m> \e[34m$\e[39m sdk_build_webapp			(compila el webapp ExtJS Sencha)"
+	echo -e "  \e[92m> \e[34m$\e[39m sdk_war				(compila Java y el webapp en un war y lo despliega en tomcat)"
+	echo -e "  \e[92m> \e[34m$\e[39m sdk_war_java_only			(compila Java en un war y lo despliega en tomcat)"
+	echo -e "  \e[92m> \e[34m$\e[39m sdk_clean				(limpia el entorno SDK, contenedor/imágenes docker y funciones SDK)"
+	echo -e "  \e[92m> \e[34m$\e[39m sdk_info				(muestra información acerca de los módulos utilizados por el SDK)"
+	echo -e "  \e[92m> \e[34m$\e[39m sdk_options			(muestra esta pantalla explicativa de bienvenida del SDK)"
+	echo ""
+}
+
+
+#================================================================
+# SDK_START_UP
+#================================================================
+sdk_setup_environment;
+sdk_options;

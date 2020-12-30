@@ -33,7 +33,10 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 			type: 'uxproxy',
 			remoteUrl: 'activo/getComboUsuarios',
 			extraParams: {idTipoGestor: '{tipoGestor.selection.id}'}
-			}
+			},
+			autoLoad: false,
+			remoteFilter: false,
+			remoteSort: false
 		}, 
 		comboUsuariosGestoria: {
 			model: 'HreRem.model.ComboBase',

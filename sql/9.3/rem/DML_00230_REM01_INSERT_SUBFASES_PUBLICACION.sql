@@ -1,0 +1,115 @@
+--/*
+--#########################################
+--## AUTOR=IVAN REPISO
+--## FECHA_CREACION=20200922
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-8113
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Añadir subfases nuevas
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF; 
+DECLARE
+    V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_TABLA VARCHAR2(35 CHAR):= 'DD_SFP_SUBFASE_PUBLICACION'; -- Nombre de la tabla
+    V_NUM_TABLA NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_SFP_ID NUMBER(16); -- Vble. para id subfase (nextval).
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USUARIO VARCHAR2(30 CHAR) := 'REMVIP-8113'; -- USUARIOCREAR/USUARIOMODIFICAR.
+    V_SUBFASE_EXISTE NUMBER(16);		
+
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(256);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+		T_TIPO_DATA('Fase V', 'Errores datos registrales', '33'),
+		T_TIPO_DATA('Fase V', 'Errores datos posesorios', '34')
+		); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+
+
+BEGIN		
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO]');
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] BUSCAR TABLA '||V_TABLA||'');	
+
+        V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA||''''; 
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLA;
+
+		IF V_NUM_TABLA = 1 THEN
+
+			DBMS_OUTPUT.PUT_LINE('[INFO] INSERT SUBFASES');
+
+			FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+			LOOP      
+				V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+
+				DBMS_OUTPUT.PUT_LINE('[INFO] SUBFASE '''||V_TMP_TIPO_DATA(2)||'''');
+					
+				V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_SFP_DESCRIPCION = '''||V_TMP_TIPO_DATA(2)||'''';
+				EXECUTE IMMEDIATE V_SQL INTO V_SUBFASE_EXISTE;
+					
+				IF V_SUBFASE_EXISTE = 0 THEN
+
+					V_SQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_SFP_SUBFASE_PUBLICACION.NEXTVAL FROM DUAL';
+					EXECUTE IMMEDIATE V_SQL INTO V_SFP_ID;
+
+					V_SQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||'(DD_SFP_ID, DD_FSP_ID, DD_SFP_CODIGO, DD_SFP_DESCRIPCION, DD_SFP_DESCRIPCION_LARGA, USUARIOCREAR, FECHACREAR) VALUES
+						('''||V_SFP_ID||''', (SELECT DD_FSP_ID FROM '||V_ESQUEMA||'.DD_FSP_FASE_PUBLICACION WHERE DD_FSP_DESCRIPCION LIKE '''||V_TMP_TIPO_DATA(1)||' %''),
+						'''||V_TMP_TIPO_DATA(3)||''', '''||V_TMP_TIPO_DATA(2)||''', '''||V_TMP_TIPO_DATA(2)||''', '''||V_USUARIO||''', SYSDATE)';
+					EXECUTE IMMEDIATE V_SQL;
+
+					DBMS_OUTPUT.PUT_LINE('[INFO] SE HA AÑADIDO '||SQL%ROWCOUNT||' REGISTRO'); 
+
+				ELSE 
+
+					DBMS_OUTPUT.PUT_LINE('[INFO] EXISTE SUBFASE, ACTUALIZAMOS');
+
+					V_SQL := 'SELECT DD_SFP_ID FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_SFP_DESCRIPCION = '''||V_TMP_TIPO_DATA(2)||'''';
+					EXECUTE IMMEDIATE V_SQL INTO V_SFP_ID;
+
+					V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' 
+						SET DD_FSP_ID = (SELECT DD_FSP_ID FROM '||V_ESQUEMA||'.DD_FSP_FASE_PUBLICACION WHERE DD_FSP_DESCRIPCION LIKE '''||V_TMP_TIPO_DATA(1)||' %''),
+						USUARIOMODIFICAR = '''||V_USUARIO||''',FECHAMODIFICAR = SYSDATE
+						WHERE DD_SFP_ID = '''||V_SFP_ID||'''';
+					EXECUTE IMMEDIATE V_SQL;
+
+					DBMS_OUTPUT.PUT_LINE('[INFO] SE HA ACTUALIZADO '||SQL%ROWCOUNT||' REGISTRO'); 
+
+				END IF;
+
+			END LOOP;
+
+		ELSE 
+		
+			DBMS_OUTPUT.PUT_LINE('[INFO] LA TABLA '||V_TABLA||' NO EXISTE');
+
+		END IF;
+
+	COMMIT;
+	
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+ 
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

@@ -90,12 +90,14 @@ import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
+import es.pfsgroup.plugin.rem.model.DtoActivosAlquiladosGrid;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 
 @Controller
@@ -694,7 +696,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		try {
 			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
 
-			String errores = expedienteComercialAdapter.uploadDocumento(fileItem, null, null);
+			String errores = expedienteComercialAdapter.uploadDocumento(fileItem);
 			model.put("errores", errores);
 			model.put(RESPONSE_SUCCESS_KEY, errores == null);
 
@@ -2299,6 +2301,53 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController::activarCompradorExpediente", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getActivosAlquilados(Long idExpediente) {
+		
+		ModelMap model = new ModelMap();
+		
+		try {
+			List<DtoActivosAlquiladosGrid> list = expedienteComercialApi.getActivosAlquilados(idExpediente);
+			model.put(RESPONSE_DATA_KEY, list);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (getGestorPrescriptor)", e);
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateActivosAlquilados(DtoActivosAlquiladosGrid dto) {
+		
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.updateActivosAlquilados(dto));
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView sacarBulk(ModelMap model, @RequestParam Long idExpediente) {
+		try {
+			boolean success = expedienteComercialApi.sacarBulk(idExpediente);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController::sacarBulk", e);
 		}
 
 		return createModelAndViewJson(model);

@@ -16,6 +16,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.prorroga.model.Prorroga;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -42,9 +43,16 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
     @Autowired
     private UpdaterStateApi updaterState;
     
+	@Autowired
+	private AgendaAdapter agendaAdapter;
+	
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
     
+    public static final String COD_TAP_TAREA_AUTORIZACION_PROPIEDAD = "T017_ResolucionPROManzana";
+	public static final String COD_TAP_TAREA_ADVISORY_NOTE = "T017_AdvisoryNote";
+	public static final String COD_TAP_TAREA_RECOM_ADVISORY= "T017_RecomendCES";
+
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
 		printInfoNode("Sale nodo", executionContext);
@@ -127,18 +135,8 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		boolean transicionSalto = transicion.startsWith("salto") || ActivoBaseActionHandler.SALTO_CIERRE_ECONOMICO.equals(transicion) || ActivoBaseActionHandler.SALTO_RESOLUCION_EXPEDIENTE.equals(transicion);
 		if (!BPMContants.TRANSICION_VUELTA_ATRAS.equals(transicion) && !StringUtils.isBlank(scriptValidacion) && !transicionSalto && !transicion.toLowerCase().equals("fin") && !transicion.toLowerCase().equals("saltofin")) {
 			try {
-				Long activoTramite = getActivoTramite(executionContext).getId();
-				Object result = jbpmMActivoScriptExecutorApi.evaluaScript(activoTramite, tareaExterna.getId(), tareaExterna.getTareaProcedimiento().getId(),
-						null, scriptValidacion);
 
-				if (result instanceof Boolean && !(Boolean) result) {
-					throw new UserException("bpm.error.script");
-				}
-
-				if (result instanceof String && ((String) result).length() > 0 && !"null".equalsIgnoreCase((String) result)) {
-					throw new UserException((String) result);
-				}
-
+				avanzaTramiteNormal(executionContext, tareaExterna, scriptValidacion);
 			} catch (UserException e) {
 				logger.info("No se ha podido validar el formulario correctamente. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]. Mensaje ["
 						+ e.getMessage() + "]", e);
@@ -156,6 +154,28 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		proxyFactory.proxy(TareaExternaApi.class).borrar(tareaExterna);
 
 		logger.debug("\tCaducamos la tarea: " + getNombreNodo(executionContext));
+	}
+
+	private void avanzaTramiteNormal(ExecutionContext executionContext, TareaExterna tareaExterna,
+			String scriptValidacion) throws Exception {
+		
+		String validacionPrevia = agendaAdapter.getValidacionPrevia(tareaExterna.getTareaPadre().getId());
+
+		if (!Checks.esNulo(validacionPrevia)){
+			throw new UserException((String) validacionPrevia);
+		}
+		
+		Long activoTramite = getActivoTramite(executionContext).getId();
+		Object result = jbpmMActivoScriptExecutorApi.evaluaScript(activoTramite, tareaExterna.getId(), tareaExterna.getTareaProcedimiento().getId(),
+				null, scriptValidacion);
+
+		if (result instanceof Boolean && !(Boolean) result) {
+			throw new UserException("bpm.error.script");
+		}
+
+		if (result instanceof String && ((String) result).length() > 0 && !"null".equalsIgnoreCase((String) result)) {
+			throw new UserException((String) result);
+		}
 	}
 
 	/**

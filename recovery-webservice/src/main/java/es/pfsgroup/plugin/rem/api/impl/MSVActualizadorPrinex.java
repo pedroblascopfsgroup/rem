@@ -111,7 +111,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 			genericDao.update(GastoPrinex.class, gasto);
 		}
 		if ("fin".equals(exc.dameCelda(fila, 63))) {
-			gastoProveedorApi.updateGastoByPrinexLBK(gasto.getId());
+			gastoProveedorApi.updateGastoByPrinexLBK(gasto.getIdGasto());
 
 		}
 		return resultado;

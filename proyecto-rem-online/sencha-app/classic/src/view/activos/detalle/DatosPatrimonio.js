@@ -33,13 +33,27 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							xtype: 'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('title.patrimonio.perimetroAlquiler'),
 							reference: 'chkPerimetroAlquilerRef',
+							//disabled: true,
 							bind: {
-								value: '{patrimonio.chkPerimetroAlquiler}'
+								value: '{patrimonio.chkPerimetroAlquiler}',
+								//disabled: '{disableCheckHpm}',
+								readOnly: '{enableEdicionCheckHpm}'								
 							},
 							listeners: {
-								change:'onChangeCheckPerimetroAlquiler',
-								render: 'onRenderCheckPerimetroAlquiler'
-							}
+								change:'onChangeCheckPerimetroAlquiler'
+							},
+							onBoxClick: function() {
+						    	var me = this;
+						    	if(me.lookupController().getViewModel().get("editing")  != true && me.lookupController().getViewModel().get("editingFirstLevel") != true){
+						    		me.fireEvent('viewonly');
+									me.lookupController().getViewModel().set("editingFirstLevel", false);
+									me.lookupController().getViewModel().set("editing", false);
+						    	} else {
+							    	if (!me.disabled && !me.readOnly) {
+	            						me.setValue(!me.checked);
+	        						}
+        						}
+						    } 
 						},
 						{
 							xtype: 'comboboxfieldbase',
@@ -71,10 +85,25 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							xtype: 'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('checkboxfieldbase.patrimonio.subrogado'),
 							reference: 'subrogadoCheckbox',
+							//disabled: true,
+							//readOnly: true,
 							bind: {
-								value: '{patrimonio.chkSubrogado}',// Es posible que se vea discordancia con Base de datos. Esto se debe a que este valor cambia en java. En TabActivoPatrimonio.getTabData()
-								readOnly: '{patrimonio.pazSocial}'
-							}
+								//disabled: '{enableSubrogado}',
+								readOnly: '{enableSubrogado}',
+								value: '{patrimonio.chkSubrogado}'// Es posible que se vea discordancia con Base de datos. Esto se debe a que este valor cambia en java. En TabActivoPatrimonio.getTabData()
+							},
+							onBoxClick: function() {
+						    	var me = this;
+						    	if(me.lookupController().getViewModel().get("editing")  != true && me.lookupController().getViewModel().get("editingFirstLevel") != true){
+						    		me.fireEvent('viewonly');
+									me.lookupController().getViewModel().set("editingFirstLevel", false);
+									me.lookupController().getViewModel().set("editing", false);
+						    	} else {
+							    	if (!me.disabled && !me.readOnly) {
+	            						me.setValue(!me.checked);
+	        						}
+        						}
+						    } 
 						},
 						{
 							xtype: 'comboboxfieldbase',
@@ -141,7 +170,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 								readOnly: '{!isCesionUsoEditable}',
 								store: '{comboCesionUso}',
 								value: '{patrimonio.cesionUso}',
-								hidden: '{!patrimonio.isCarteraCerberusDivarian}'
+								hidden: '{!patrimonio.isCarteraCerberusDivarianOBBVA}'
 							},
 							listeners: {
 								change: 'comboCesionUsoOnChage'

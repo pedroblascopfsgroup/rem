@@ -157,9 +157,9 @@ public class Oferta implements Serializable, Auditable {
 
     @OneToOne(mappedBy = "ofertaDependiente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private OfertasAgrupadasLbk ofertaDependiente;
-    
-   	@Column(name="OFR_FECHA_RESPUESTA_OFERTANTE_CES")
+    private OfertasAgrupadasLbk ofertaDependiente;   
+
+	@Column(name="OFR_FECHA_RESPUESTA_OFERTANTE_CES")
    	private Date fechaRespuestaCES;
 
     @Column(name = "OFR_ORIGEN")
@@ -303,6 +303,22 @@ public class Oferta implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="OFR_ID_REALIZA_ORI_LEAD")
 	private ActivoProveedor proveedorRealizadorRemOrigenLead;
+	
+	@Column(name = "ID_OFERTA_ORIGEN")
+    private Long idOfertaOrigen;
+	
+	@Column(name = "OFR_RECOMENDACION_RC")
+    private String ofrRecomendacionRc;
+	
+	@Column(name = "OFR_FECHA_RECOMENDACION_RC")
+    private Date ofrFechaRecomendacionRc;
+	
+	@Column(name = "OFR_RECOMENDACION_DC")
+    private String ofrRecomendacionDc;
+	
+	@Column(name = "OFR_FECHA_RECOMENDACION_DC")
+    private Date ofrFechaRecomendacionDc;
+
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -317,7 +333,6 @@ public class Oferta implements Serializable, Auditable {
 
 	@Embedded
 	private Auditoria auditoria;
-
 
 	public Long getId() {
 		return id;
@@ -912,5 +927,45 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setProveedorRealizadorRemOrigenLead(ActivoProveedor proveedorRealizadorRemOrigenLead) {
 		this.proveedorRealizadorRemOrigenLead = proveedorRealizadorRemOrigenLead;
+	}
+	
+	public Long getIdOfertaOrigen() {
+		return this.idOfertaOrigen;
+	}
+	
+	public void setIdOfertaOrigen(Long idOfertaOrigen) {
+		this.idOfertaOrigen = idOfertaOrigen;
+	}
+	
+	public String getOfrRecomendacionRc() {
+		return this.ofrRecomendacionRc;
+	}
+	
+	public void setOfrRecomendacionRc(String ofrRecomendacionRc) {
+		this.ofrRecomendacionRc = ofrRecomendacionRc;
+	}
+	
+	public Date getOfrFechaRecomendacionRc() {
+		return this.ofrFechaRecomendacionRc;
+	}
+	
+	public void setOfrFechaRecomendacionRc(Date ofrFechaRecomendacionRc) {
+		this.ofrFechaRecomendacionRc = ofrFechaRecomendacionRc;
+	}
+	
+	public String getOfrRecomendacionDc() {
+		return this.ofrRecomendacionDc;
+	}
+	
+	public void setOfrRecomendacionDc(String ofrRecomendacionDc) {
+		this.ofrRecomendacionDc = ofrRecomendacionDc;
+	}
+	
+	public Date getOfrFechaRecomendacionDc() {
+		return this.ofrFechaRecomendacionDc;
+	}
+	
+	public void setOfrFechaRecomendacionDc(Date ofrFechaRecomendacionDc) {
+		this.ofrFechaRecomendacionDc = ofrFechaRecomendacionDc;
 	}
 }

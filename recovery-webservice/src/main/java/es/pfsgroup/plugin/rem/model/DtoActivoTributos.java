@@ -50,7 +50,7 @@ public class DtoActivoTributos implements Serializable{
 	
 	private Double importePagado;
 	
-	private Long numExpediente;
+	private String numExpediente;
 	
 	private String fechaComunicacionDevolucionIngreso;
 	
@@ -220,11 +220,11 @@ public class DtoActivoTributos implements Serializable{
 		this.importePagado = importePagado;
 	}
 
-	public Long getNumExpediente() {
+	public String getNumExpediente() {
 		return numExpediente;
 	}
 
-	public void setNumExpediente(Long numExpediente) {
+	public void setNumExpediente(String numExpediente) {
 		this.numExpediente = numExpediente;
 	}
 

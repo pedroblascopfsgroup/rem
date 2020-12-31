@@ -59,6 +59,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        	xtype: 'comboboxfieldbase',
 				        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
 				        	name: 'subcarteraCodigo',
+				        	reference: 'comboSubcarteraRef',
 				        	bind: {
 			            		store: '{comboSubcartera}',
 			            		disabled: '{!comboCarteraSearch.selection}',
@@ -242,7 +243,14 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        	bind: {
 						            		store: '{comboSubtipoClaseActivoBancario}'
 						            	}
+							        },
+							        {
+							        	fieldLabel:  HreRem.i18n('fieldlabel.bancario.numactivoBBVA'),
+							        	labelWidth:	150,
+							        	name: 'numActivoBbva'
 							        }
+							        
+							        
 
 								]
 			                
@@ -643,10 +651,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		fieldLabel: HreRem.i18n('fieldlabel.tipo.segmento'),
 							    		name: 'tipoSegmentoCodigo',
 							    		reference: 'tipoSegmentoRef',
-							    		hidden: true,
-							    		bind: {
-							    			store: '{comboTipoSegmento}'
-							    		}
+							    		hidden: true
 							    	},
 							    	{ 
 							    		xtype: 'comboboxfieldbase',
@@ -658,15 +663,19 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    			store: '{comboSiNoRem}'
 							    		}
 							    	},
-                                        {
-                                            xtype: 'comboboxfieldbase',
-                                            fieldLabel: HreRem.i18n('fieldlabel.tipo.equipo.gestion'),
-                                            name: 'equipoGestion',
-                                            reference: 'equipoGestionRef',
-                                            bind: {
-                                                store: '{comboEquipoGestion}'
-                                            }
+                                    {
+                                        xtype: 'comboboxfieldbase',
+                                        fieldLabel: HreRem.i18n('fieldlabel.tipo.equipo.gestion'),
+                                        name: 'equipoGestion',
+                                        reference: 'equipoGestionRef',
+                                        bind: {
+                                            store: '{comboEquipoGestion}'
                                         }
+                                    },
+							        {
+							        	fieldLabel: HreRem.i18n('fieldlabel.activobbva.codPromocionBbva'),
+							        	name: 'codPromocionBbva'
+							        }
 								]
 			            }
 		            ]}

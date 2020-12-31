@@ -24,6 +24,7 @@ public class DtoActivosExpediente extends WebDto {
 	private Long idCondicion;
 	private String puerta;
 	private Float superficieConstruida;
+	private String activoEPA;
 	
 
 	public Long getIdActivo() {
@@ -176,6 +177,14 @@ public class DtoActivosExpediente extends WebDto {
 
 	public void setSubdivision(String subdivision) {
 		this.subdivision = subdivision;
+	}
+
+	public String getActivoEPA() {
+		return activoEPA;
+	}
+
+	public void setActivoEPA(String activoEPA) {
+		this.activoEPA = activoEPA;
 	}
 	
 }

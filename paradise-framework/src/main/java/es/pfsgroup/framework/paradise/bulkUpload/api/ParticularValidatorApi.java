@@ -1220,6 +1220,46 @@ public interface ParticularValidatorApi {
 	Boolean esActivoBBVA(String numActivo);
 	
 	String getValidacionCampoCDC(String codCampo);
+	
+	public boolean incluidoActivoIdOrigenBBVA (String numActivo);
+
+	Boolean estaPerimetroHaya(String activoId);
+	
+	Boolean estaPerimetroAdmision(String activoId);
+	
+	Boolean existeActivoPorId(String activoId);
+	
+	Boolean comprobarCodigoTipoTitulo(String codTipoTitulo);
+	
+	public boolean existeTipoDeGastoAsociadoCMGA(String codTipoGasto);
+
+	public Boolean esTipoAltaBBVAMenosAltaAutamatica(String codCampo);
+
+	public Boolean esTipoRegimenProteccion(String codCampo);
+
+	public Boolean esTipoDeTransmisionBBVA(String dameCelda);
+	
+	public Boolean esTipoDeTituloBBVA(String dameCelda);
+	
+	public Boolean existeActivoParaCMBBVA(String dameCelda);
+	
+	public Boolean activoesDeCarteraCerberusBbvaCMBBVA(String dameCelda);
+	
+	public Boolean esActivoVendidoParaCMBBVA(String numActivo);
+
+	public Boolean esActivoIncluidoPerimetroParaCMBBVA(String numActivo);
+
+	public Boolean esActivoRepetidoNumActivoBBVA(String numActivo);
+
+	public Boolean codigoComercializacionIncorrecto(String codCampo);
+	
+	Boolean esOfertaBBVA(String numOferta);
+
+	Boolean esOfertaAnulada(String numOferta);
+
+	Boolean esOfertaVendida(String numOferta);
+
+	Boolean esOfertaErronea(String numOferta);
 
 	Boolean relacionPoblacionLocalidad(String columnaPoblacion, String columnaMunicipio);
 
@@ -1233,4 +1273,11 @@ public interface ParticularValidatorApi {
 	Boolean existePais(String pais);
 
 	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
+
+	Boolean existePromocionBBVA(String promocion);
+
+	Boolean datosRegistralesRepetidos(String refCatastral, String finca, String folio, String libro, String tomo, String numRegistro, String codigoLocalidad);
+
+	Boolean subtipoPerteneceTipoActivo(String subtipo, String tipo);
+
 }

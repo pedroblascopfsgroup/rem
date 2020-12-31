@@ -122,6 +122,9 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
         },
         {
         	name:  'diasTapiado'
+        },
+        	{
+        	name: 'posesionNegociada'
         }
         
     ],

@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -81,6 +83,7 @@ public abstract  class AbstractMSVActualizador implements MSVLiberator {
 
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
 		ArrayList<ResultadoProcesarFila> resultados = new ArrayList<ResultadoProcesarFila>();
+		//Map<Long,String> promociones = null;
 		try {
 			ProcesoMasivoContext context = new ProcesoMasivoContext();
 			this.preProcesado(exc, context);
@@ -90,7 +93,13 @@ public abstract  class AbstractMSVActualizador implements MSVLiberator {
 			if (!Checks.esNulo(file) && !Checks.esNulo(file.getProcesoMasivo())) {
 				token = file.getProcesoMasivo().getToken();
 			}
-
+//			if (file.getProcesoMasivo().getTipoOperacion().getCodigo().equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ALTA_ACTIVOS_BBVA)) {
+//				promociones = new HashMap<Long,String>();
+//				for(int fila = this.getFilaInicial(); fila < numFilas; fila++) {
+//					if(exc.dameCelda(fila, 1) != null && !exc.dameCelda(fila, 1).isEmpty()) 
+//						promociones.put(Long.valueOf(exc.dameCelda(fila, 0)), exc.dameCelda(fila, 1));
+//				}
+//			}
 			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
 				ResultadoProcesarFila resultProcesaFila = null;
 				try {

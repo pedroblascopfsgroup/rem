@@ -327,7 +327,7 @@ Ext.define('HreRem.view.activos.detalle.TributosGrid', {
 	            dataIndex: 'numExpediente',
 	            flex: 1,
 	            editor: {
-   					xtype:'numberfield', 
+   					xtype : 'textfieldbase', 
         			hideTrigger: true,
         			keyNavEnable: false,
         			mouseWheelEnable: false,

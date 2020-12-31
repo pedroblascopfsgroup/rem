@@ -80,15 +80,12 @@ Ext.define('HreRem.controller.AuthenticationController', {
      * @param {} session que lanzará el evento 'usuarioIdentificado'
      */
     cargarUsuarioIdentificado: function(session) {
-    	
     	var me = this;  
     	me.session = session;
+
     	if(Ext.isEmpty(session.user)) {
     		me.warn("No se ha cargado el usuario.");
-    	} else {
-    		me.log(session.user.getData());
     	}
-    	
     },
     
     /**

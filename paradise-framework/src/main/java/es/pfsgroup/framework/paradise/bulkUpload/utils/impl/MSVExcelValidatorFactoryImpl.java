@@ -223,6 +223,18 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVActualizarCalidadDatosExcelValidator calidadDatos;
 	
 	@Autowired
+	private MSVActualizacionComplementoTituloValidator complementoTitulo;
+	
+	@Autowired
+	private MSVValidatorCargaGastosAsociadosAdquisicion cargaGastosAsociadosAdquisicion;
+
+	@Autowired
+	private MSVMasivaAltaBBVAValidator altaActivosBBVA;
+
+	@Autowired
+	private MSVSancionesBBVAExcelValidator sancionesBBVA;
+	
+	@Autowired
 	private MSVValidatorConfiguracionPeriodosVoluntarios cargaMasivaConfiguracionPeriodosVoluntarios;
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
@@ -369,10 +381,17 @@ public class MSVExcelValidatorFactoryImpl {
 			return estadosAdmision;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_MASIVO_CALIDAD_DATOS.equals(codTipoOperacion)) {
 			return calidadDatos;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_COMPLEMENTO_TITULO.equals(codTipoOperacion)) {
+			return complementoTitulo;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_GASTOS_ASOCIADOS_ADQUISICION.equals(codTipoOperacion)) {
+			return cargaGastosAsociadosAdquisicion;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ALTA_ACTIVOS_BBVA.equals(codTipoOperacion)) {
+			return altaActivosBBVA;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SANCIONES_BBVA.equals(codTipoOperacion)) {
+			return sancionesBBVA;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CONFIGURACION_PERIODOS_VOLUNTARIOS.equals(codTipoOperacion)) {
 			return cargaMasivaConfiguracionPeriodosVoluntarios;
 		}
-		
 		return null;
 	}
 }

@@ -41,6 +41,12 @@ public class ActivoPropagacionFieldTabMap {
 	    			"tipoActivoCodigo",
 	    			"subtipoActivoCodigo",
 	    			"estadoActivoCodigo",
+	    			"tipoTransmision",
+	    			
+	    			// identificación BBVA
+	    			"lineaFactura",
+	    			"idOrigenHre",
+	    			
 	    			// direccion
 	    			"tipoUsoDestinoCodigo",
 	    			"longitud",
@@ -78,7 +84,19 @@ public class ActivoPropagacionFieldTabMap {
     				"numExpRiesgo",
     				"estadoExpRiesgoCodigo",
     				"productoDescripcion",
-    				"estadoExpIncorrienteCodigo"
+    				"estadoExpIncorrienteCodigo",
+    				"uicBbva",
+    				"cexperBbva",
+    				
+    				//Activo EPA
+    				"activoEpa",
+    				
+    				//Cuenta de mora
+    				"empresa",
+    				"oficina",
+    				"contrapartida",
+    				"folio",
+    				"cdpen"
     			));
 
     	pmap.put(TAB_SIT_POSESORIA,
@@ -450,7 +468,9 @@ public class ActivoPropagacionFieldTabMap {
 					"responsableSubsanar",
 					"fechaSubsanacion",
 					"codigoMotivoCalificacionNegativa",
-					"codigoEstadoMotivoCalificacionNegativa"
+					"codigoEstadoMotivoCalificacionNegativa",
+					"idProcesoOrigen",
+					"sociedadDePagoAnterior"
     			));
 
     	pmap.put(TAB_INFO_ADMINISTRATIVA,

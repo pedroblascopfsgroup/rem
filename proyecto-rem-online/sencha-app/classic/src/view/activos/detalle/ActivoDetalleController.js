@@ -745,8 +745,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		});
   	    	
     },
-    
- 
+
 
 	destroyWindowCrearActivoAdmision : function(btn) {
 		var me = this;
@@ -7376,7 +7375,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
        
     },
 	
-
 
 	validarEdicionHistoricoSolicitudesPrecios : function(editor, grid) {
 		var me = this;

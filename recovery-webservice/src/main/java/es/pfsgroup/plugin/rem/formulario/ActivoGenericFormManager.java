@@ -24,6 +24,7 @@ import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.web.genericForm.DtoGenericForm;
 import es.capgemini.pfs.web.genericForm.GenericForm;
@@ -205,7 +206,19 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
     public void saveValues(DtoGenericForm dto) {
         String[] valores = dto.getValues();
         TareaExterna tarea = dto.getForm().getTareaExterna();
-
+        
+        if(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES.equals(tarea.getTareaProcedimiento().getCodigo())) {
+        	Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+        	tarea.getAuditoria().setBorrado(true);
+        	tarea.getAuditoria().setFechaBorrar(new Date());
+        	tarea.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+        	tarea.getTareaPadre().getAuditoria().setBorrado(true);
+        	tarea.getTareaPadre().getAuditoria().setFechaBorrar(new Date());
+        	tarea.getTareaPadre().getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+        	tarea.getTareaPadre().setFechaFin(new Date());
+        	genericDao.update(TareaNotificacion.class, tarea.getTareaPadre());
+        }
+        
         for (int i = 0; i < valores.length; i++) {
             GenericFormItem item = dto.getForm().getItems().get(i);
             TareaExternaValor valor = new TareaExternaValor();
@@ -248,16 +261,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
         //Le insertamos los valores del formulario al BPM en una variable de Thread para que pueda recuperarlos
         jbpmManager.signalToken(tarea.getTokenIdBpm(), BPMContants.TRANSICION_AVANZA_BPM);
-        if(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES.equals(tarea.getTareaProcedimiento().getCodigo())) {
-        	Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-        	tarea.getAuditoria().setBorrado(true);
-        	tarea.getAuditoria().setFechaBorrar(new Date());
-        	tarea.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
-        	tarea.getTareaPadre().getAuditoria().setBorrado(true);
-        	tarea.getTareaPadre().getAuditoria().setFechaBorrar(new Date());
-        	tarea.getTareaPadre().getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
-        	tarea.getTareaPadre().setFechaFin(new Date());
-        }
+        
     }    
     
     /**

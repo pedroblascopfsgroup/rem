@@ -938,7 +938,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	cfg.title = titulo;
      	
     	var tab = me.createTab (me.getActivosMain(), 'tramite', "tramitesdetalle",  id, cfg);    	
-
+		tab.mask(HreRem.i18n('msg.mask.loading'));
     	me.setLogTime(); 
     	HreRem.model.Tramite.load(id, {
     		scope: this,
@@ -947,6 +947,7 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	me.setLogTime(); 
 		    	tab.getViewModel().set("tramite", tramite);
 		    	me.logTime("Fin Set values");
+				tab.unmask();
 		    },
 		    failure: function (a, operation) {
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
@@ -962,7 +963,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	cfg.title = titulo;
      	
     	var tab = me.createTab (me.getActivosMain(), 'tramite', "tramitesdetalle",  id, cfg);    	
-
+		tab.mask(HreRem.i18n('msg.mask.loading'));
     	me.setLogTime(); 
     	HreRem.model.Tramite.load(id, {
     		scope: this,
@@ -973,6 +974,7 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	//tab.configCmp(tramite);
 		    	me.logTime("Fin Set values");
 		    	me.idActivo = tramite.get("idActivo");
+				tab.unmask();
 		    },
 		    failure: function (a, operation) {
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

@@ -2345,7 +2345,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				for (ActivoOferta activosOferta : listaActivosOferta) {
 					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activosOferta.getPrimaryKey().getActivo().getId());
 					ActivoBbvaActivos activoBbva  = genericDao.get(ActivoBbvaActivos.class, filtroActivo);
-					if(activoBbva != null && DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {
+					if(activoBbva != null && activoBbva.getActivoEpa() != null && DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {
 						return true;
 					}
 				}

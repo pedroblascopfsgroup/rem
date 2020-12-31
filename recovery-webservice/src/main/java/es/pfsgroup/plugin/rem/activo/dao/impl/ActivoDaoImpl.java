@@ -53,6 +53,8 @@ import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
 import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
@@ -202,6 +204,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tud.codigo", dto.getTipoUsoDestinoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ca.codigo", dto.getClaseActivoBancarioCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "subca.codigo", dto.getSubClaseActivoBancarioCodigo());
+		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoBbva", dto.getNumActivoBbva());
+		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idDivarian", dto.getIdDivarianBbva());
+		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "subtipotitulo.codigo", dto.getSubtipoTituloActivoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.divHorizontal", dto.getDivisionHorizontal());
 
@@ -287,7 +292,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				sb.append(" join ab.subtipoClaseActivo subca ");
 			}
 		}
-
+		
 		if (!Checks.esNulo(dto.getSubtipoTituloActivoCodigo())) {
 			sb.append(" join act.subtipoTitulo subtipotitulo ");
 		}
@@ -1440,6 +1445,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 		return null;
     }
+    
+    
 
 	@Override
 	public boolean isUnidadAlquilable(Long idActivo) {
@@ -1494,6 +1501,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return false;
 
 	}
+	
+	
 
 	@Override
 	public boolean existenUAsconTrabajos(Long idAgrupacion) {
@@ -1525,6 +1534,90 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
 			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue() > 0;
+		}
+		return false;
+
+	}
+	
+	@Override
+
+	public boolean isActivoBBVADivarian(Long idActivo) {
+		String sql = "          SELECT count(1)  " +
+				"				FROM REM01.ACT_ACTIVO ACT  "+ 
+				"				INNER JOIN DD_CRA_CARTERA CRA ON ACT.dd_cra_id = CRA.dd_cra_id "+
+				"				INNER JOIN DD_SCR_SUBCARTERA SUBC ON act.dd_scr_id = SUBC.dd_scr_id" +
+				"				WHERE ACT.ACT_ID= "+ idActivo +
+				"				AND cra.dd_cra_codigo = '16' OR (cra.dd_cra_codigo = '07' AND SUBC.dd_scr_codigo IN ('151','152'))" +
+				"				AND ACT.BORRADO = 0";		
+
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+
+	}
+
+
+	@Override
+	public boolean existeactivoIdHAYA(Long idActivo) {
+		String sql = "          SELECT count(1)  " +
+		" FROM REM01.ACT_ACTIVO  " +
+		" WHERE ACT_NUM_ACTIVO = "+ idActivo +
+		" AND BORRADO = 0";
+	
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+
+	}
+	
+	@Override
+	public boolean activoPerteneceABBVAAndCERBERUS(Long idActivo) { 
+		String sql = "          SELECT count(1)  " +
+				"				FROM REM01.ACT_ACTIVO ACT " +
+				" 				inner join REM01.dd_cra_cartera car on act.dd_cra_id=car.dd_cra_id "+		
+				"				WHERE ACT.ACT_NUM_ACTIVO = "+ idActivo +
+				"				AND car.dd_cra_codigo	in('07','16') 		 "+
+				"				AND act.BORRADO = 0";
+
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+
+	}
+	
+	@Override
+	public boolean activoEstadoVendido(Long idActivo) { 
+		String sql = "          SELECT count(1)  " + 
+				"				FROM REM01.ACT_ACTIVO act " +
+				"				inner join rem01.dd_scm_situacion_comercial sit on act.dd_scm_id = sit.dd_scm_id "+
+				"				WHERE act.ACT_NUM_ACTIVO = "+ idActivo +
+				"				AND sit.dd_scm_codigo	in ('05')		 "+
+				"				AND act.BORRADO = 0 ";
+		
+	  
+
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+
+	}
+	
+	@Override
+	public boolean activoFueraPerimetroHAYA(Long idActivo) { 
+		String sql = "          SELECT count(1)  " +
+				"				FROM REM01.ACT_ACTIVO ACT  " +
+				"				INNER JOIN ACT_PAC_PERIMETRO_ACTIVO PAC  on PAC.ACT_ID=ACT.ACT_ID"+
+				"				WHERE ACT.ACT_NUM_ACTIVO = "+ idActivo +
+				"				AND PAC.PAC_INCLUIDO = 0 "+
+				"				AND PAC.BORRADO = 0"  +
+				"				AND ACT.BORRADO = 0"	;
+
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
 		}
 		return false;
 
@@ -1835,7 +1928,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoUsoDestinoCodigo", dto.getTipoUsoDestinoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.claseActivoBancarioCodigo", dto.getClaseActivoBancarioCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subclaseActivoBancarioCodigo", dto.getSubclaseActivoBancarioCodigo());
-		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoBbva", dto.getNumActivoBbva());
+
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoActivoCodigo", dto.getTipoActivoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subtipoActivoCodigo", dto.getSubtipoActivoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.selloCalidad",	dto.getSelloCalidad());		
@@ -1883,9 +1977,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.estadoComunicacionGencatCodigo", dto.getEstadoComunicacionGencatCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.direccionComercialCodigo", dto.getDireccionComercialCodigo());
 		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoSegmentoCodigo", dto.getTipoSegmentoCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.perimetroMacc", dto.getPerimetroMacc());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoSegmentoCodigo", dto.getTipoSegmentoCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.perimetroMacc", dto.getPerimetroMacc());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.equipoGestion", dto.getEquipoGestion());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.codPromocionBbva", dto.getCodPromocionBbva());
 
 		return devolverPage ? HibernateQueryUtils.page(this, hb, dto) : HibernateQueryUtils.list(this, hb);	
 	}
@@ -1939,6 +2034,14 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 		return null;
 	}
+	
+	@Override
+	public Long getNextBbvaNumActivo() {
+		String sql = "SELECT S_BBVA_NUM_ACTIVO.NEXTVAL FROM DUAL ";
+		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())
+				.longValue();
+
+	}
 
 	@Override
 	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras) {
@@ -1954,5 +2057,32 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		} else {
 			return null;
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos) {
+
+		HQLBuilder hql = new HQLBuilder("from ActivoTasacion ");
+		HQLBuilder.addFiltroWhereInSiNotNull(hql, "activo", idActivos);
+		hql.orderBy("fechaInicioTasacion", HQLBuilder.ORDER_ASC);
+		
+		List<ActivoTasacion> tasacionesList = (List<ActivoTasacion>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hql.toString()).list();
+		
+		return tasacionesList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivosAlquilados> getListActivosAlquiladosByIdActivos(List<Long> idActivos) {
+
+		HQLBuilder hql = new HQLBuilder("from ActivosAlquilados ");
+		HQLBuilder.addFiltroWhereInSiNotNull(hql, "activoAlq", idActivos);
+		
+		List<ActivosAlquilados> actAlquiladosList = (List<ActivosAlquilados>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hql.toString()).list();
+		
+		return actAlquiladosList;
 	}
 }

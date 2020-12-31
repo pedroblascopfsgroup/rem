@@ -144,6 +144,13 @@ Ext.define('HreRem.model.ActivoTasacion', {
     		},
     		{
     			name:'observaciones'
+    		},
+    		{
+    			name:'ilocalizable',
+    			type: 'boolean'
+    		},
+			{
+    			name:'externoBbva'
     		}
     ],
     

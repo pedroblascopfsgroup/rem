@@ -254,6 +254,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoPeticionPrecio", DDTipoPeticionPrecio.class);
 		mapa.put("tipoComision", DDTipoComisionado.class);
 		mapa.put("tipoElemento", DDEntidadGasto.class);
+		mapa.put("tipoTransmision", DDTipoTransmision.class);
+		mapa.put("tipoAlta", DDTipoAlta.class);
 		mapa.put("tributacionAdquisicion", DDTributacionAdquisicion.class);
 		mapa.put("tipoTributo", DDTipoTributo.class);
 		mapa.put("tipoSuministro", DDTipoSuministro.class);
@@ -293,6 +295,9 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoIncidencia", DDTipoIncidencia.class);
 		mapa.put("tipoTituloInfoRegistal", DDTipoTituloAdicional.class);
 		mapa.put("estadoRegistral", DDEstadoRegistralActivo.class);
+		mapa.put("tipoTituloComplemento", DDTipoTituloComplemento.class);
+		mapa.put("tipoGastoAsociado", DDTipoGastoAsociado.class);
+		mapa.put("tipoDocGastoAsociado", DDTipoDocumentoGastoAsociado.class);
 		mapa.put("motivoAmpliacionArras", DDMotivoAmpliacionArras.class);
 		mapa.put("tipoRetencion", DDTipoRetencion.class);
 		mapa.put("tiposAdmiteMascota", DDSiniSiNoIndiferente.class); 

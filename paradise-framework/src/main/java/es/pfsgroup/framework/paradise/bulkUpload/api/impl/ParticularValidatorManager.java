@@ -6177,9 +6177,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" FROM gld_gastos_linea_detalle linea " + 
 				" JOIN gpv_gastos_proveedor gasto ON gasto.gpv_id = linea.gpv_id AND GASTO.GPV_NUM_GASTO_HAYA = " + idGasto + 
 				" where GLD_ID = "+ idLinea +" AND gasto.borrado = 0 AND linea.borrado = 0");
-		
+
 		return !"0".equals(resultado);
-	}
+	}		
+
+
 
 	@Override
 	public Boolean gastoRepetido(String factura, String fechaEmision, String nifEmisor, String nifPropietario) {
@@ -6200,6 +6202,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 			return !"0".equals(resultado);
 	}
+
 	
 	@Override
 	public Boolean existeTrabajoByCodigo(String codTrabajo) {
@@ -6210,7 +6213,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		FROM DD_TTR_TIPO_TRABAJO TTR " 
 				+ "		WHERE ttr.dd_ttr_codigo = '"+codTrabajo+"'"
 				+ "		AND TTR.BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+
 		
+
+	@Override
+	public Boolean existePromocionBBVA(String promocion){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_BBVA_ACTIVOS "
+				+ "WHERE bbva_cod_promocion = '"+promocion+"'");
+
 		return !"0".equals(resultado);
 	}
 	
@@ -6333,6 +6346,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !res.equals("0");
 	}
+
 
 	@Override
 	public boolean tieneGastoFechaContabilizado(String idGasto) {
@@ -6471,13 +6485,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return "0".equals(resultado);
 	}
-	
-	@Override
-	public Boolean existePromocionBBVA(String promocion){
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_BBVA_ACTIVOS "
-				+ "WHERE bbva_cod_promocion = '"+promocion+"'");
-		return !"0".equals(resultado);
-	}
+
 	
 	@Override
 	public Boolean datosRegistralesRepetidos(String refCatastral,String finca, String folio, String libro, String tomo,  String numRegistro, String codigoLocalidad){
@@ -6515,6 +6523,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return false;
 	}
 
+	@Override
 	public Boolean existeAlbaran(String idAlbaran) {
 		if(Checks.esNulo(idAlbaran) || !StringUtils.isNumeric(idAlbaran))
 			return false;
@@ -6525,6 +6534,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	@Override
 	public Boolean existePrefactura(String idPrefactura) {
 		if(Checks.esNulo(idPrefactura) || !StringUtils.isNumeric(idPrefactura))
 			return false;
@@ -6535,6 +6545,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	@Override
 	public List<String> getIdPrefacturasByNumAlbaran(String numAlbaran) {
 		List<Object> resultados = rawDao.getExecuteSQLList("SELECT PFA.PFA_NUM_PREFACTURA FROM ALB_ALBARAN ALB "
 				+ "JOIN PFA_PREFACTURA PFA ON PFA.ALB_ID = ALB.ALB_ID "
@@ -6549,4 +6560,5 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return listaString;
 	}
+
 }

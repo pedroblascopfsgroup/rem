@@ -478,6 +478,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		return existeGasto;
 	}
 
+
 	@Override
 	public void saveGasto(GastoProveedor gasto) {
 		Session session = getSessionFactory().openSession();
@@ -538,6 +539,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
     	StringBuilder sb = new StringBuilder("delete from GastoSuplido gss where gss.id='"+id+"'");
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 	}
+	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -548,7 +550,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		
 		List<VBusquedaGastoActivo> actAlquiladosList = (List<VBusquedaGastoActivo>) this.getSessionFactory().getCurrentSession()
 				.createQuery(hql.toString()).list();
-		
+
 		return actAlquiladosList;
 	}
 }

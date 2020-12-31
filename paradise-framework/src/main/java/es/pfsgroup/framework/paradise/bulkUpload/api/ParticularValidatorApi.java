@@ -1356,6 +1356,7 @@ public interface ParticularValidatorApi {
 
 	boolean tieneGastoFechaPagado(String idGasto);
 
+
 	Boolean estadoPrevioTrabajo(String celdaTrabajo);
 
 	Boolean fechaEjecucionCumplimentada(String celdaTrabajo);
@@ -1399,6 +1400,8 @@ public interface ParticularValidatorApi {
 	public String devolverEstadoGastoApartirDePrefactura(String idPrefactura);
 	
 	public String devolverEstadoGastoApartirDeAlbaran(String idAlbaran);
-	
-	public List<String> getIdPrefacturasByNumAlbaran(String numAlbaran);
+
+	List<String> getIdPrefacturasByNumAlbaran(String numAlbaran);
+
+
 }

@@ -362,7 +362,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	Long getComunidadAutonomaId(Activo activo);
 	
-
 	boolean existeactivoIdHAYA(Long idActivo);
 
 	boolean activoPerteneceABBVAAndCERBERUS(Long idActivo);

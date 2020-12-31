@@ -59,4 +59,5 @@ public interface GastoDao extends AbstractDao<GastoProveedor, Long> {
 	void deleteGastoSuplido(Long id);
 
 	List<VBusquedaGastoActivo> getListGastosByIdActivos(List<Long> idActivos);
+
 }

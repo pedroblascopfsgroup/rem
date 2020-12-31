@@ -176,7 +176,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 	
-
 	@Autowired
 	private GastoProveedorApi gastoProveedorApi;
 	
@@ -1448,6 +1447,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		ConfiguracionSubpartidasPresupuestarias cps = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, filtroId);
 		return (cps != null) ? cps.getPartidaPresupuestaria() : null;
 	}
+
 	
 	@Override
 	public List<DDEntidadGasto> getComboTipoElementoGasto(Long idGasto, Long idLinea) {
@@ -1465,6 +1465,25 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			}
 		}
 		return entidades;
+	}
+	
+	@Override
+	public List<ActivoProveedorReducido> getComboActivoProveedorSuministro() {
+		List<ActivoProveedorReducido> listaActivoProveedor = new ArrayList<ActivoProveedorReducido>();
+		
+		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_SUMINISTRO);
+		Filter filtroEstado = genericDao.createFilter(FilterType.EQUALS, "estadoProveedor.codigo", DDEstadoProveedor.ESTADO_BIGENTE);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		List<ActivoProveedor> listProveedorSuministroVigente = genericDao.getList(ActivoProveedor.class, filtroSubtipo, filtroEstado, filtroBorrado);
+		
+		for (ActivoProveedor psv : listProveedorSuministroVigente) {
+			ActivoProveedorReducido p = new ActivoProveedorReducido();
+			p.setId(psv.getId());
+			p.setNombre(psv.getNombre());
+			listaActivoProveedor.add(p);
+		}
+		return listaActivoProveedor;
+
 	}
 
 	@Override
@@ -1524,23 +1543,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		return listaDto;
 	}
 
-
-	public List<ActivoProveedorReducido> getComboActivoProveedorSuministro() {
-		List<ActivoProveedorReducido> listaActivoProveedor = new ArrayList<ActivoProveedorReducido>();
-		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_SUMINISTRO);
-		Filter filtroEstado = genericDao.createFilter(FilterType.EQUALS, "estadoProveedor.codigo", DDEstadoProveedor.ESTADO_BIGENTE);
-		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		List<ActivoProveedor> listProveedorSuministroVigente = genericDao.getList(ActivoProveedor.class, filtroSubtipo, filtroEstado, filtroBorrado);
-		
-		for (ActivoProveedor psv : listProveedorSuministroVigente) {
-			ActivoProveedorReducido p = new ActivoProveedorReducido();
-			p.setId(psv.getId());
-			p.setNombre(psv.getNombre());
-			listaActivoProveedor.add(p);
-		}
-		return listaActivoProveedor;
-
-	}
 
 	@Override
 	public List<DDEstadoAdmision> getComboEstadoAdmisionFiltrado(Set<String> tipoEstadoAdmisionCodigo) {		

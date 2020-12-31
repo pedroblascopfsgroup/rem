@@ -7841,6 +7841,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	public List<DDTipoSegmento> getComboTipoSegmento(String codSubcartera) {
+		List<DDTipoSegmento> tiposSegmento = new ArrayList<DDTipoSegmento>();
+		Filter filtroSubcartera;
+		List<DDSegmentoCarteraSubcartera> segmentosSubcartera = null;
+		if (codSubcartera != null) {
+			filtroSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", codSubcartera);
+			segmentosSubcartera = genericDao.getList(DDSegmentoCarteraSubcartera.class, filtroSubcartera);
+			if (segmentosSubcartera != null) {
+				for (DDSegmentoCarteraSubcartera tipoSegmento : segmentosSubcartera) {
+					if (tipoSegmento.getTipoSegmento() != null) {
+						tiposSegmento.add(tipoSegmento.getTipoSegmento());
+					}
+					
+				}
+			}
+		}		
+		return tiposSegmento;
+	}
+	
+	@Override
 	public boolean estanTodosActivosVendidos(List<Activo> activos) {
 		boolean estanTodosVendidos = false;
 		boolean auxiliarSalir = true;
@@ -7892,6 +7912,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return todosActivoAlquilados;
 	}
+
+	
+	@Override
+	public Boolean isGrupoOficinaKAM() {
+		Boolean isGrupoOficinaKAM = false;
+		GrupoUsuario grupoOfiKAM = null;
+		Usuario logedUser = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		if (logedUser != null) {
+			grupoOfiKAM = genericDao.get(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "grupo.username", GRUPO_OFICIONA_KAM), genericDao.createFilter(FilterType.EQUALS, "usuario.username", logedUser.getUsername()));
+			if (grupoOfiKAM != null) {
+				isGrupoOficinaKAM = true;
+			}
+		}
+		return isGrupoOficinaKAM;
+	}
+
 
 	@Override
 	public List<ReqFaseVentaDto> getReqFaseVenta(Long idActivo) {
@@ -8817,26 +8853,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			return false;
 		}
 	}
-
-	@Override
-	public List<DDTipoSegmento> getComboTipoSegmento(String codSubcartera) {
-		List<DDTipoSegmento> tiposSegmento = new ArrayList<DDTipoSegmento>();
-		Filter filtroSubcartera;
-		List<DDSegmentoCarteraSubcartera> segmentosSubcartera = null;
-		if (codSubcartera != null) {
-			filtroSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", codSubcartera);
-			segmentosSubcartera = genericDao.getList(DDSegmentoCarteraSubcartera.class, filtroSubcartera);
-			if (segmentosSubcartera != null) {
-				for (DDSegmentoCarteraSubcartera tipoSegmento : segmentosSubcartera) {
-					if (tipoSegmento.getTipoSegmento() != null) {
-						tiposSegmento.add(tipoSegmento.getTipoSegmento());
-					}
-					
-				}
-			}
-		}		
-		return tiposSegmento;
-	}
 	
 	@Override
 	public boolean isActivoExisteEnRem(Long idActivo) {
@@ -8866,19 +8882,5 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return false;
-	}
-	
-	@Override
-	public Boolean isGrupoOficinaKAM() {
-		Boolean isGrupoOficinaKAM = false;
-		GrupoUsuario grupoOfiKAM = null;
-		Usuario logedUser = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		if (logedUser != null) {
-			grupoOfiKAM = genericDao.get(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "grupo.username", GRUPO_OFICIONA_KAM), genericDao.createFilter(FilterType.EQUALS, "usuario.username", logedUser.getUsername()));
-			if (grupoOfiKAM != null) {
-				isGrupoOficinaKAM = true;
-			}
-		}
-		return isGrupoOficinaKAM;
 	}
 }

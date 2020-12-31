@@ -106,7 +106,7 @@ public class ActivoPlusvalia implements Serializable, Auditable {
    	private DDEstadoGestionPlusv estadoGestion;
 	
 	@Column(name = "NUM_EXPEDIENTE")
-	private Long numExpediente;
+	private String numExpediente;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_MOE_ID")
@@ -283,13 +283,8 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 		this.estadoGestion = estadoGestion;
 	}	 
 	
-	public Long getNumExpediente() {
-		return numExpediente;
-	}
 
-	public void setNumExpediente(Long numExpediente) {
-		this.numExpediente = numExpediente;
-	}
+
 
 	public DDMotivoExento getMotivoExento() {
 		return motivoExento;
@@ -305,6 +300,14 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 
 	public void setResultadoSolicitud(DDResultadoSolicitud resultadoSolicitud) {
 		this.resultadoSolicitud = resultadoSolicitud;
+	}
+
+	public String getNumExpediente() {
+		return numExpediente;
+	}
+
+	public void setNumExpediente(String numExpediente) {
+		this.numExpediente = numExpediente;
 	}
 }
 	

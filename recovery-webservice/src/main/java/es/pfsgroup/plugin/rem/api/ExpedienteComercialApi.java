@@ -16,6 +16,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.BulkOferta;
 import es.pfsgroup.plugin.rem.model.CondicionesActivo;
+import es.pfsgroup.plugin.rem.model.DtoActivosAlquiladosGrid;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
@@ -54,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
+import es.pfsgroup.plugin.rem.model.DtoActivosAlquiladosGrid;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
@@ -1329,7 +1331,9 @@ public interface ExpedienteComercialApi {
 	 * @return boolean
 	 */
 	boolean activarCompradorExpediente(Long idCompradorExpediente, Long idExpediente);
-
+	
+	public Boolean getActivoExpedienteEpa(ExpedienteComercial expediente);
+	public Boolean getActivoExpedienteAlquilado(ExpedienteComercial expediente);
 	public Long uploadDocumentoGestorDocumental(ExpedienteComercial expedienteComercial, WebFileItem webFileItem,
 			DDSubtipoDocumentoExpediente subtipoDocumento, String username) throws Exception;
 
@@ -1337,6 +1341,12 @@ public interface ExpedienteComercialApi {
 			String username) throws Exception;
 
 	boolean ofertasEnLaMismaTarea(BulkOferta blkOfr);
+	
+	List<DtoActivosAlquiladosGrid> getActivosAlquilados(Long idExpediente);
+
+	boolean esBBVA(TareaExterna tareaExterna);
+
+	boolean updateActivosAlquilados(DtoActivosAlquiladosGrid dto);
 
 	boolean sacarBulk(Long idExpediente);
 

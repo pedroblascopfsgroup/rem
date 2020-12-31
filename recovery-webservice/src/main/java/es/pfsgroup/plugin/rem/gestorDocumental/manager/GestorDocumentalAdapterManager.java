@@ -76,6 +76,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProyecto;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
+import es.pfsgroup.plugin.rem.model.AdjuntoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoAgrupacion;
@@ -143,6 +144,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
     @Autowired
     private ActivoTributoApi activoTributoApi;
+
 
     public static final String CODIGO_CLASE_PROYECTO = "09", CODIGO_TIPO_EXPEDIENTE_REO = "AI", CODIGO_CLASE_AGRUPACIONES = "08";
     
@@ -287,7 +289,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		return new Long(respuestaCrearDocumento.getIdDocumento());
 	}
-
+	
 	@Override
 	public List<DtoAdjunto> getAdjuntosGasto(String numGasto) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler =  new RecoveryToGestorDocAssembler(appProperties);
@@ -1640,6 +1642,22 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		
 		return null;
 	
+	}
+
+	@Override
+	public FileItem getFileItemFactura(Long id, String nombreDocumento) {
+		if(id == null) return null;
+		FileItem fileItem = null;
+		AdjuntoGastoAsociado adjunto = genericDao.get(AdjuntoGastoAsociado.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+		if(adjunto == null) return null;
+		if(adjunto.getIdentificadorGestorDocumental() == null) {
+			fileItem = adjunto.getAdjunto().getFileItem();
+			fileItem.setContentType(adjunto.getTipoContenidoDocumento());
+			fileItem.setFileName(adjunto.getNombreAdjuntoGastoAsociado());
+		}else {
+			fileItem = this.getFileItem(adjunto.getIdentificadorGestorDocumental(), nombreDocumento);
+		}
+		return fileItem;
 	}
 	
 }

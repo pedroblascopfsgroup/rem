@@ -853,6 +853,8 @@ public interface TrabajoApi {
 	boolean checkLiberbank(TareaExterna tareaExterna);
 
 	boolean checkLiberbank(Trabajo trabajo);
+	
+	boolean checkBBVA(TareaExterna tareaExterna);
 
 	public boolean superaLimiteLiberbank(Long idTrabajo);
 

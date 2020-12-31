@@ -319,6 +319,9 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     			name:'idAsunto'
     		},
     		{
+                name:'idAsuntoRecAlaska'
+            },
+    		{
     			name:'numExpRiesgoAdj'
     		},
     		{
@@ -503,6 +506,9 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     		{
     			name: 'origenAnteriorActivoCodigo'
     		},
+    		    		{
+    			name: 'origenAnteriorActivoBbvaCodigo'
+    		},
     		{
     			name:'fechaTituloAnterior',
     			convert: function(value) {
@@ -514,6 +520,12 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
 	    				}
     				}
     			}
+    		},
+    		{
+    			name: 'idProcesoOrigen'
+    		},
+    		{
+    			name: 'sociedadPagoAnterior'
     		}
     ],
     

@@ -799,5 +799,12 @@ Ext.define('HreRem.ux.util.Constants', {
 		ACTIVO : 'activo',
 		SANEAMIENTO: 'saneamiento',
 		REVISION_TITULO: 'revisionTitulo'
+	},
+	
+	GRID_CALIDAD_DATO: {
+		DATOSREGISTRALES: '01',
+		DATOSREGISTRO: '02',
+		DATFASE03: '03',
+		DATFASE03DIRECCION: '04'
 	}
 });

@@ -201,6 +201,106 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	},
 	
+	cargarTabDataCalidadDatoGrid: function (){
+		var me = this;		
+
+		var idActivo = me.getViewModel().get("activo.id");
+		var faseDatosRegistrales = me.getView().down('[reference="calidaddatopublicacionactivoref"]').down('[reference="fasedatosregistrales"]');
+		var faseDatosRegistro = me.getView().down('[reference="calidaddatopublicacionactivoref"]').down('[reference="fasedatosregistro"]');
+		var faseCalidadDatDireccion = me.getView().down('[reference="calidaddatopublicacionactivoref"]').down('[reference="fasecalidaddatodireccion"]');
+		var faseTresCalidadDato = me.getView().down('[reference="calidaddatopublicacionactivoref"]').down('[reference="fasetrescalidaddato"]');
+		
+		var cod01 = faseDatosRegistrales.codigoGrid;
+		var cod02 = faseDatosRegistro.codigoGrid;
+		var cod03 = faseTresCalidadDato.codigoGrid;
+		var cod04 = faseCalidadDatDireccion.codigoGrid;
+		
+		var storefaseDatosRegistrales;
+		var storefaseDatosRegistro;
+		var storefaseTresCalidadDato;
+		var storefaseCalidadDatDireccion;
+		
+		//DATOS REGISTRALES
+		storefaseDatosRegistrales = Ext.create('Ext.data.Store',{
+			model: 'HreRem.model.CalidadDatoFasesGridModel', 
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getCalidadDelDatoFiltered', 
+				extraParams: {id: idActivo} 
+			},
+			autoLoad: false,
+			session: false		
+			}			
+		).load();
+		
+		storefaseDatosRegistrales.filterBy( 
+			function (record, id) {
+				return record.get('codigoGrid') == cod01;
+			}
+		);				
+		faseDatosRegistrales.setStore(storefaseDatosRegistrales);
+		faseDatosRegistrales.getStore().load();		
+		//DATOS REGISTRO
+		storefaseDatosRegistro = Ext.create('Ext.data.Store',{
+			model: 'HreRem.model.CalidadDatoFasesGridModel', 
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getCalidadDelDatoFiltered', 
+				extraParams: {id: idActivo} 
+			},
+			autoLoad: false,
+			session: false		
+			}			
+		).load();
+		
+		storefaseDatosRegistro.filterBy( 
+			function (record, id) {
+				return record.get('codigoGrid') == cod02;
+			}
+		);
+		faseDatosRegistro.setStore(storefaseDatosRegistro);
+		faseDatosRegistro.getStore().load();
+		//DATOS FASE 3
+		storefaseTresCalidadDato = Ext.create('Ext.data.Store',{
+			model: 'HreRem.model.CalidadDatoFasesGridModel', 
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getCalidadDelDatoFiltered', 
+				extraParams: {id: idActivo} 
+			},
+			autoLoad: false,
+			session: false		
+			}			
+		).load();
+		storefaseTresCalidadDato.filterBy( 
+			function (record, id) {
+				return record.get('codigoGrid') == cod03;
+			}
+		);
+		faseTresCalidadDato.setStore(storefaseTresCalidadDato);
+		faseTresCalidadDato.getStore().load();
+		//DATOS FASE 3 DIRECCION
+		storefaseCalidadDatDireccion = Ext.create('Ext.data.Store',{
+			model: 'HreRem.model.CalidadDatoFasesGridModel', 
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getCalidadDelDatoFiltered', 
+				extraParams: {id: idActivo} 
+			},
+			autoLoad: false,
+			session: false		
+			}			
+		).load();
+		storefaseCalidadDatDireccion.filterBy( 
+			function (record, id) {
+				return record.get('codigoGrid') == cod04;
+			}
+		);
+		faseCalidadDatDireccion.setStore(storefaseCalidadDatDireccion);
+		faseCalidadDatDireccion.getStore().load();		
+	},
+	
+	
 	cargarTabDataCalidadDato: function (form) {
 		var me = this,
 		model = null,
@@ -8075,6 +8175,32 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	onChangeDebeComprobarNIF: function(combo,newValue,oldValue,eOpts){
 			this.comprobarNIF(combo);
-	}
+	},
 	
+    
+    mostrarObservacionesGrid: function(event, target, options) {   	
+    	var me = this;
+    	var observacionesAdmision = target.data.observacionesEvolucion;
+  	
+    	me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.CrearEvolucionObservaciones", {
+            observacionesAdmision: observacionesAdmision
+        });
+        
+    },
+    
+    onClickCerrarObservacionesEvolucion: function(btn) {
+    	var me = this;
+    	btn.up('window').hide();
+    },
+    cargarStoreCalidadDatoFasesGrid: function(grid){
+    	var me = this;    	
+		
+		var storeCalidadDelDatoGrid = me.getViewModel().data.storeCalidadDelDatoGrid;
+		storeCalidadDelDatoGrid.getProxy().setExtraParams(
+		{'id':grid.idActivo,'codigoGrid':grid.codigoGrid});
+		if (grid.getStore() != null) {
+			grid.getStore().load();
+		}
+		
+    }
 });

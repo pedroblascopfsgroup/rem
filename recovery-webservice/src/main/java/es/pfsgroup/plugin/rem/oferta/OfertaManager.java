@@ -96,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -111,6 +112,7 @@ import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.ConfiguracionComisionCostesActivo;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivosFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
@@ -143,6 +145,7 @@ import es.pfsgroup.plugin.rem.model.ProveedorGestorCajamar;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.TrabajoConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VDatosCalculoLBK;
@@ -179,6 +182,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComision;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCostes;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -5220,7 +5225,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 				dtoFichaComercial.setTotalOferta(importeOferta);
-				dtoFichaComercial.setTotalOfertaNeta(importeOferta - honorarios);
+				//dtoFichaComercial.setTotalOfertaNeta(importeOferta - honorarios);
 			}
 			
 			List<ActivosAlquilados> actAlquiladosList = activoDao.getListActivosAlquiladosByIdActivos(listIdActivos);
@@ -5235,8 +5240,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			dtoFichaComercial.setRentaMensual(rentaMensual);
 			
+			/*
 			List<VBusquedaGastoActivo> gastoActivoList = gastoDao.getListGastosByIdActivos(listIdActivos);
 			Double gastosPendientes = 0.0;
+			
 			
 			if (!gastoActivoList.isEmpty()) {
 				for(VBusquedaGastoActivo gastoAct : gastoActivoList ) {
@@ -5247,8 +5254,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 			dtoFichaComercial.setGastosPendientes(gastosPendientes);
-			dtoFichaComercial.setCostesLegales(0.0);
-			
+			//dtoFichaComercial.setCostesLegales(0.0);
+			*/
 			
 			
 			//Datos pestaña desglose y depuración
@@ -5271,8 +5278,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Double eurosM2Total = 0.0;
 			Double comisionHayaTotal = 0.0;
 			Double gastosPendientesTotal = 0.0;
+			Double gastosPendientes = 0.0;
 			Double costesLegalesTotal = 0.0; //Por definir
 			Double ofertaNetaTotal = 0.0;
+			Double comisionHaya = 0.0;
+			Double costesLegales = 0.0;
 			
 			if(oferta.getAgrupacion() != null) {
 				for(ActivoAgrupacionActivo activos : oferta.getAgrupacion().getActivos()) {
@@ -5485,7 +5495,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					
 					if(!Checks.esNulo(actOfrAgr) && !Checks.esNulo(actOfrAgr.getPorcentajeParticipacion())) {
 						Double importeOfertaParticipacion = actOfrAgr.getImporteActivoOferta();
-						Double honorarios  = Double.valueOf(0);
+					/*	Double honorarios  = Double.valueOf(0);
 						if ( expediente != null && expediente.getHonorarios() != null && !expediente.getHonorarios().isEmpty()) {
 							for (GastosExpediente gastoExpediente : expediente.getHonorarios()) {
 								if ( gastoExpediente.getImporteFinal() != null) {
@@ -5493,14 +5503,27 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								}
 							}
 							honorarios = honorarios*(actOfrAgr.getPorcentajeParticipacion()/100.0);
-						}
-						activosFichaComercial.setComisionHaya(honorarios);
-						comisionHayaTotal += honorarios;
-						activosFichaComercial.setOfertaNeta(importeOfertaParticipacion - honorarios);
-						ofertaNetaTotal += importeOfertaParticipacion - honorarios;
+						} */
+						
+						
+						gastosPendientes = getGastosPendientes(act);
+						activosFichaComercial.setGastosPendientes(gastosPendientes);
+						gastosPendientesTotal += gastosPendientes;
+						costesLegales = getGastosLegalesByTipo(importeOfertaParticipacion, act);
+						activosFichaComercial.setCostesLegales(costesLegales);
+						costesLegalesTotal += costesLegales;
+						comisionHaya = getComisionHayaByTipo(importeOfertaParticipacion, act);
+						activosFichaComercial.setComisionHaya(comisionHaya);
+						comisionHayaTotal += comisionHaya;
+						activosFichaComercial.setOfertaNeta(importeOfertaParticipacion - comisionHaya - costesLegales - gastosPendientes );
+						ofertaNetaTotal += importeOfertaParticipacion - comisionHaya - costesLegales - gastosPendientes;
 					}
-					Integer numGastosPendientes = new Integer(0);
+					
 					Long idActivo = act.getId();
+					
+					/*
+					Integer numGastosPendientes = new Integer(0);
+					
 					Filter filtroGastoActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
 					List<VBusquedaGastoActivo> gastosActivos = genericDao.getList(VBusquedaGastoActivo.class, filtroGastoActivo);
 					if ( gastosActivos != null && !gastosActivos.isEmpty() ) {
@@ -5508,6 +5531,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							String estadoGasto = gasto.getEstadoGastoCodigo();
 							if ( DDEstadoGasto.PENDIENTE.equals(estadoGasto)) {
 								numGastosPendientes += 1;
+								
 							}
 						}
 					}
@@ -5515,7 +5539,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					activosFichaComercial.setGastosPendientes(Double.valueOf(numGastosPendientes));
 					gastosPendientesTotal += numGastosPendientes;
 					dtoFichaComercial.setGastosPendientes(Double.valueOf(numGastosPendientes));
+					
+					*/
+					
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+
 					ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
 					if (activoBbva != null && activoBbva.getTipoAlta() != null) {
 						activosFichaComercial.setTipoEntrada(activoBbva.getTipoAlta().getDescripcion());
@@ -5524,7 +5552,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if (act.getPropietarioPrincipal() != null) {
 						activosFichaComercial.setSociedadTitular(act.getPropietarioPrincipal().getNombre());
 					}
-					if ( act.getTipoAlquiler() != null ) {
+				/*	if ( act.getTipoAlquiler() != null ) {
 						if (!DDTipoAlquiler.CODIGO_ORDINARIO.equals(act.getTipoAlquiler().getCodigo()) 
 						&& !DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA.equals(act.getTipoAlquiler().getCodigo())
 						&& !DDTipoAlquiler.CODIGO_ESPECIAL.equals(act.getTipoAlquiler().getCodigo())
@@ -5533,8 +5561,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}else {
 							activosFichaComercial.setColectivo("No");
 						}
+					}*/
+					
+					if (esColectivoSocial(activosFichaComercial, act)) {
+						activosFichaComercial.setColectivo("Si");
+					} else {
+						activosFichaComercial.setColectivo("No");
 					}
-
+					
+					if (esDepuracionJuridica(activosFichaComercial)) {
+						activosFichaComercial.setDepuracionJuridica("Si");
+					}else {
+						activosFichaComercial.setDepuracionJuridica("No");
+					}
+					
+					
+					
 					// Pestaña Desglose 
 					//pvp suelo epa -> por definir
 					//costes legales -> por definir
@@ -5544,13 +5586,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					//colectivo social -> por definir
 					dtoFichaComercial.getListaActivosFichaComercial().add(activosFichaComercial);
 					
-				}
+				} // fin for activos
 				
-				Filter filtroGastosExpediente= genericDao.createFilter(FilterType.EQUALS ,"expediente.id", expediente.getId());
+			/*	Filter filtroGastosExpediente= genericDao.createFilter(FilterType.EQUALS ,"expediente.id", expediente.getId());
 				gastosExpediente = genericDao.get(GastosExpediente.class, filtroGastosExpediente);
 				if(gastosExpediente != null) {
 					dtoFichaComercial.setComisionHayaDivarian(gastosExpediente.getImporteFinal());
-				}
+				} */
+				
+				
 				
 			}
 			else {
@@ -5712,6 +5756,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					activosFichaComercial.setCargas("No");
 				}
 				
+				
 				ActivoSituacionPosesoria actSitPos  = genericDao.get(ActivoSituacionPosesoria.class,filtroActivo);
 				activosFichaComercial.setTituloPropiedad(getPosesionActivo(oferta.getActivoPrincipal()));
 				if(!Checks.esNulo(actSitPos)) {
@@ -5770,22 +5815,31 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				if(!Checks.esNulo(oferta.getImporteOferta())) {
 					Double importeOfertaNeta = oferta.getImporteOferta();
-					Double honorarios  = Double.valueOf(0);
+					/*	Double honorarios  = Double.valueOf(0);
 					if ( expediente != null && expediente.getHonorarios() != null && !expediente.getHonorarios().isEmpty()) {
-						for (GastosExpediente gastoExpediente : expediente.getHonorarios()) {
+						for (GastosExpediente gastoExpediente : expediente.getHonorarios()) {	
 							if ( gastoExpediente.getImporteFinal() != null) {
 								honorarios += gastoExpediente.getImporteFinal();
 							}
+						
 						}
-					}
-					activosFichaComercial.setComisionHaya(honorarios);
-					comisionHayaTotal += honorarios;
-					activosFichaComercial.setOfertaNeta(importeOfertaNeta - honorarios);
-					ofertaNetaTotal += importeOfertaNeta - honorarios;
+					}  */				
+					
+					gastosPendientes = getGastosPendientes(oferta.getActivoPrincipal());
+					activosFichaComercial.setGastosPendientes(gastosPendientes);
+					gastosPendientesTotal += gastosPendientes;
+					costesLegales = getGastosLegalesByTipo(importeOfertaNeta, oferta.getActivoPrincipal());
+					activosFichaComercial.setCostesLegales(costesLegales);
+					costesLegalesTotal += costesLegales;
+					activosFichaComercial.setComisionHaya(getComisionHayaByTipo(importeOfertaNeta, oferta.getActivoPrincipal()));
+					comisionHayaTotal += getComisionHayaByTipo(importeOfertaNeta, oferta.getActivoPrincipal());
+					activosFichaComercial.setOfertaNeta(importeOfertaNeta - comisionHaya - costesLegales - gastosPendientes);
+					ofertaNetaTotal += importeOfertaNeta - comisionHaya - costesLegales - gastosPendientes ;
 				}
 				Activo act = oferta.getActivoPrincipal();
-				Integer numGastosPendientes = new Integer(0);
 				Long idActivo = act.getId();
+				/*
+				Integer numGastosPendientes = new Integer(0);
 				Filter filtroGastoActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
 				List<VBusquedaGastoActivo> gastosActivos = genericDao.getList(VBusquedaGastoActivo.class, filtroGastoActivo);
 				if ( gastosActivos != null && !gastosActivos.isEmpty() ) {
@@ -5798,7 +5852,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				activosFichaComercial.setGastosPendientes(Double.valueOf(numGastosPendientes));
 				gastosPendientesTotal += numGastosPendientes;
-				
+				*/
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 				ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
 				if (activoBbva != null && activoBbva.getTipoAlta() != null) {
@@ -5826,7 +5880,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dtoFichaComercial.setDiasPublicado(this.obtenerTotalDeDiasEnEstadoPublicadoVenta(oferta.getActivoPrincipal().getId()));
 				dtoFichaComercial.setMesesEnVenta(this.obtenerTotalDeMesesEnEstadoPublicadoVenta(oferta.getActivoPrincipal().getId()));
 
-				if ( oferta.getActivoPrincipal().getTipoAlquiler() != null ) {
+			/*	if ( oferta.getActivoPrincipal().getTipoAlquiler() != null ) {
 					if (!DDTipoAlquiler.CODIGO_ORDINARIO.equals(oferta.getActivoPrincipal().getTipoAlquiler().getCodigo()) 
 					&& !DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA.equals(oferta.getActivoPrincipal().getTipoAlquiler().getCodigo())
 					&& !DDTipoAlquiler.CODIGO_ESPECIAL.equals(oferta.getActivoPrincipal().getTipoAlquiler().getCodigo())
@@ -5835,7 +5889,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}else {
 						activosFichaComercial.setColectivo("No");
 					}
+				} */
+				
+				if (esColectivoSocial(activosFichaComercial, oferta.getActivoPrincipal())) {
+					activosFichaComercial.setColectivo("Si");
+				} else {
+					activosFichaComercial.setColectivo("No");
 				}
+				
+				if (esDepuracionJuridica(activosFichaComercial)) {
+					activosFichaComercial.setDepuracionJuridica("Si");
+				}else {
+					activosFichaComercial.setDepuracionJuridica("No");
+				}
+				
 				dtoFichaComercial.getListaActivosFichaComercial().add(activosFichaComercial);
 			}
 			
@@ -5853,7 +5920,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			dtoFichaComercial.setGastosPendientesTotal(gastosPendientesTotal);
 			dtoFichaComercial.setCostesLegalesTotal(costesLegalesTotal);
 			dtoFichaComercial.setOfertaNetaTotal(ofertaNetaTotal);
-			
+			dtoFichaComercial.setTotalOfertaNeta(ofertaNetaTotal - gastosPendientesTotal);
+			dtoFichaComercial.setComisionHayaDivarian(comisionHayaTotal);
+			dtoFichaComercial.setCostesLegales(costesLegalesTotal);
+			dtoFichaComercial.setGastosPendientes(gastosPendientesTotal);
 			
 			//Datos pestaña Historico de ofertas
 			
@@ -6276,6 +6346,88 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return meses;
 	}
 
-
+	private Double getGastosLegalesByTipo (Double importe, Activo act) {
+		
+		DDTipoCostes tipoCostes;
+		Double gastosLegales = 0.0;
+		Filter filterSubActivoTipo = genericDao.createFilter(FilterType.EQUALS, "subtipoActivo.id", act.getSubtipoActivo().getId());
+		
+		ConfiguracionComisionCostesActivo cfgComisionCostes = genericDao.get(ConfiguracionComisionCostesActivo.class, filterSubActivoTipo);
+		
+		if (cfgComisionCostes != null  &&  importe > 0.0) {
+			
+			tipoCostes = cfgComisionCostes.getTipoCostes();
+			
+			if (tipoCostes != null ) {
+				gastosLegales = (importe * tipoCostes.getPorcentaje()) / 100;
+			}
+			
+		}
+		
+		return gastosLegales;
+	}
+	private Double getComisionHayaByTipo(Double importe, Activo act) {
+		
+		DDTipoComision tipoComision;
+		Double gastoComision = 0.0;
+		Filter filterSubActivoTipo = genericDao.createFilter(FilterType.EQUALS, "subtipoActivo.id", act.getSubtipoActivo().getId());
+		
+		ConfiguracionComisionCostesActivo cfgComisionCostes = genericDao.get(ConfiguracionComisionCostesActivo.class, filterSubActivoTipo);
+		
+		if (cfgComisionCostes != null  &&  importe > 0.0) {
+			
+			tipoComision = cfgComisionCostes.getTipoComision();
+			
+			if (tipoComision != null ) {
+				gastoComision = (importe * tipoComision.getPorcentaje()) / 100;
+			}
+			
+		}
+		
+		return gastoComision;
+	}
+	
+	private boolean esDepuracionJuridica(DtoActivosFichaComercial dtoActivosFichaComercial) {
+		
+		return (dtoActivosFichaComercial.getInscritoRegistro().equals("Si") && dtoActivosFichaComercial.getTituloPropiedad().equals("Si") 
+				&& dtoActivosFichaComercial.getCargas().equals("Si") && dtoActivosFichaComercial.getPosesion().equals("Si") );
+		
+	}
+	
+	private boolean esColectivoSocial(DtoActivosFichaComercial dtoActivosFichaComercial, Activo act) {
+		
+		DDTipoAlquiler tipoAlquiler;
+		tipoAlquiler = act.getTipoAlquiler();
+		String codAlquiler;
+		
+		if (tipoAlquiler != null) {
+			
+			codAlquiler = tipoAlquiler.getCodigo();
+			
+			if (codAlquiler.equals(DDTipoAlquiler.CODIGO_ALQUILER_SOCIAL) || codAlquiler.equals(DDTipoAlquiler.CODIGO_CESION_GENERALITAT_CX) || codAlquiler.equals(DDTipoAlquiler.CODIGO_OTRAS_CORPORACIONES)
+					|| codAlquiler.equals(DDTipoAlquiler.CODIGO_FONDO_SOCIAL) || codAlquiler.equals(DDTipoAlquiler.CODIGO_LEY_CATALANA) || codAlquiler.equals(DDTipoAlquiler.CODIGO_RD_LEY_17_2019)) {
+				return true;
+			}
+			
+		}
+		return false;
+	}
+	
+	private Double getGastosPendientes(Activo act) {
+		
+		Double gastoPendiente = 0.0;
+		VBusquedaGastoActivo gastoActivo;
+		Filter filterSubActivoTipo = genericDao.createFilter(FilterType.EQUALS, "idActivo", act.getId());
+		gastoActivo = genericDao.get(VBusquedaGastoActivo.class, filterSubActivoTipo);
+		if (gastoActivo != null) {
+			String estadoGasto = gastoActivo.getEstadoGastoCodigo();
+			if (DDEstadoGasto.PENDIENTE.equals(estadoGasto)) {
+				gastoPendiente = gastoActivo.getImporteTotalGasto();
+			}
+		}
+	return gastoPendiente;
+	
+	}
+	
 	
 }

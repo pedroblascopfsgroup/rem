@@ -662,7 +662,9 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			File file = this.generateExcelBbvaReport(dtoExcelFichaComercial, request);
 			if ( file == null ) {
 				return null;
+				
 			}
+			
 			return file.getName();
 		
 	}
@@ -1764,7 +1766,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				cellReference = new CellReference("AD" + Integer.toString(currentRowDesglose));
 				r = mySheetDesglose.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
-				c.setCellStyle(styleFondoAmarillo);
+				//c.setCellStyle(styleFondoAmarillo);
 				if (!Checks.esNulo(activoFichaComercial.getGastosPendientes()) && activoFichaComercial.getGastosPendientes() > 0) {
 					String gastosPendientes = numberFormat.format(activoFichaComercial.getGastosPendientes());
 					c.setCellValue(gastosPendientes);
@@ -1775,7 +1777,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				cellReference = new CellReference("AE" + Integer.toString(currentRowDesglose));
 				r = mySheetDesglose.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
-				c.setCellStyle(styleFondoAmarillo);
+				//c.setCellStyle(styleFondoAmarillo);
 				if (!Checks.esNulo(activoFichaComercial.getCostesLegales())) {
 					String costesLegales = numberFormat.format(activoFichaComercial.getCostesLegales());
 					c.setCellValue(costesLegales);

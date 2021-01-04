@@ -5781,23 +5781,30 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
          }
     },
 
+   
+    //si el activo está ocupado, activa el campo titulo y fuerza validación, si no, lo deshabilita y deshabilita validacion
+    
     onChangeComboOcupado: function(combo, newValue, oldValue, eOpts) {
-    	var me = this;
-        var conTitulo = combo.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]');
 
-        if (newValue == 0 && oldValue == null) {
-            conTitulo.setDisabled(true);
-            conTitulo.setValue(null);
-        }else if (newValue == 1 && oldValue == null){
-            conTitulo.setValue(me.getViewModel().get('situacionPosesoria.conTitulo'));
-            conTitulo.setDisabled(false);
-        }else if (newValue == 0){
-            conTitulo.setDisabled(true);
-            conTitulo.reset();
-        }else {
-            conTitulo.setDisabled(false);
-            conTitulo.setValue(0);
+        var conTitulo = combo.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]');
+        
+        if (newValue == 0 || newValue == null) {
+        	
+        	conTitulo.setDisabled(true);
+        	conTitulo.setValue('');
+        	//conTitulo.allowBlank = true;
+        	conTitulo.setAllowBlank(true);
+        	
+        }else if (newValue == 1){
+        	 
+        	 conTitulo.setDisabled(false);
+        	// conTitulo.allowBlank = false;
+        	 //conTitulo.setValue(me.getViewModel().get('situacionPosesoria.conTitulo'));
+        	 conTitulo.setAllowBlank(false);
+        	conTitulo.validateValue(conTitulo.getValue());
+            
         }
+        
 
 	},
 

@@ -335,30 +335,26 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					]
 			},
 			{
-				xtype:'fieldset',
-				defaultType: 'textfieldbase',
+				xtype:'fieldsettable',
 				title: HreRem.i18n('title.titulo'),
 			    collapsible: true,
 			    collapsed: false,
-				layout: {
-			        type: 'table',
-			        columns: 4,
-			        tdAttrs: {width: '25%'}
-				},
+
 				listeners: {
 					afterrender: 'ocultarCamposIdOrigen'
 				},
 				items :
-					[
-					{
+					[{ xtype: 'fieldsettable',
+					colspan: 3,
+					collapsible: false,
+					border: false,
+					items: [{
 						xtype: 'comboboxfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.origen.activo'),
 						reference: 'comboTipoTituloRef',
 						forceSelection: true,
 						allowBlank: false,
-						labelWidth: 200,
 		            	bind: {
-		            		//store: '{comboTipoTitulo}',
 		            		store: '{storeTituloOrigenActivo}',
 		            		value: '{datosRegistrales.tipoTituloCodigo}',
 		            		readOnly: '{datosRegistrales.unidadAlquilable}'
@@ -394,12 +390,10 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			        {
 			        	xtype: 'comboboxfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.origen.anterior.activo'),
-						reference: 'comboOrigenAnteriorActivoRef',
-						labelWidth: 200,					
+						reference: 'comboOrigenAnteriorActivoRef',				
 		            	bind: {
 		            		
 		            		store: '{storeOrigenAnteriorActivo}',
-		            		//hidden: '{!mostrarCamposDivarianandBbva}',
 		            		hidden: '{!mostrarCamposDivarian}',
 		            		value: '{datosRegistrales.origenAnteriorActivoCodigo}'
 		            	}
@@ -408,12 +402,9 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			        {
 			        	xtype: 'comboboxfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.origen.anterior.activo'),
-						reference: 'comboOrigenAnteriorActivoBBVARef',
-						
-						labelWidth: 200,					
+						reference: 'comboOrigenAnteriorActivoBBVARef',				
 		            	bind: {
 		            		store: '{storeTituloOrigenActivo}',
-		            		//hidden: '{!mostrarCamposDivarianandBbva}',
 		            		hidden: '{!isCarteraBbva}',
 		            		value: '{datosRegistrales.origenAnteriorActivoBbvaCodigo}'
 		            	}
@@ -440,12 +431,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			        		 readOnly:'{!isCarteraBbva}',
 			        		 value:'{datosRegistrales.sociedadPagoAnterior}'
 			        	}
-			        },
-			        {
-			        	bind: {	
-			        		hidden: '{!esSubcarteraDivarian}'
-			        	}
-			        },
+			        }
+				]},
 			        {
 						title: 'Listado de Propietarios',
 						itemId: 'listadoPropietarios',
@@ -459,7 +446,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						listeners: {
 							rowdblclick: 'onListadoPropietariosDobleClick'
 						},		
-						colspan: 4,
+						colspan: 3,
 						selModel : {
 			                type : 'checkboxmodel'
 			              },
@@ -687,7 +674,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					{
 						xtype:'fieldsettable',
 						defaultType: 'textfieldbase',
-						colspan: 4,
+						colspan: 3,
 						reference:'judicial',
 						bind:{
 							hidden: '{!datosRegistrales.isJudicial}',
@@ -904,7 +891,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
             		{
 						xtype:'fieldsettable',
 						reference:'noJudicial',
-						colspan: 4,
+						colspan: 3,
 						bind:{
 							hidden: '{!datosRegistrales.isNotJudicial}',
 							disabled: '{!datosRegistrales.isNotJudicial}'
@@ -995,7 +982,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
         			{
 						xtype:'fieldsettable',
 						reference:'pdv',
-						colspan: 4,
+						colspan: 3,
 						hidden: false,
 						defaultType: 'textfieldbase',
 						title: 'PDV',

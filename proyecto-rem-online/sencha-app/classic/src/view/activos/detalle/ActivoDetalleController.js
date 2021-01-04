@@ -636,6 +636,43 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	
     },
+
+
+    destroyWindowCrearActivoAdmision: function (btn){
+    	var me = this;
+    	btn.up('window').destroy();
+    },
+    
+    hideWindowCrearActivoAdmision: function(btn) {
+    	var me = this;
+    	btn.up('window').hide();   	
+    },
+    
+    onClickCrearTrabajo: function (btn) {
+    	var me = this;
+    	
+    	me.getView().mask(HreRem.i18n("msg.mask.loading"));	
+    	
+    	var idActivo = me.getViewModel().get("activo.id");
+    	var codSubcartera = me.getViewModel().get("activo.subcarteraCodigo");
+    	var codCartera = me.getViewModel().get("activo.entidadPropietariaCodigo");
+    	var gestorActivo = $AU.getUser().userName;
+    	
+    	var ventana = Ext.create("HreRem.view.trabajos.detalle.CrearPeticionTrabajo", {
+			idActivo: idActivo, 
+			codCartera: codCartera, 
+			codSubcartera: codSubcartera, 
+			logadoGestorMantenimiento: true,
+			idAgrupacion: null,
+			idGestor: null, 
+			gestorActivo: gestorActivo,
+			trabajoDesdeActivo: true});
+		btn.lookupViewModel().getView().add(ventana);
+		ventana.show();
+		me.getView().unmask();
+
+    },
+
     
     onAnyadirPropietarioClick: function (btn) {    	
     	var me = this;
@@ -664,12 +701,70 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		});
   	    	
     },
-    
-    onChangeChainedCombo: function(combo) {
-    	var me = this,
-    	chainedCombo = me.lookupReference(combo.chainedReference);    	
-    	me.getViewModel().notify();
-    	if(!Ext.isEmpty(chainedCombo.store) && !Ext.isEmpty(chainedCombo.getValue())) {
+
+
+	destroyWindowCrearActivoAdmision : function(btn) {
+		var me = this;
+		btn.up('window').destroy();
+	},
+
+	hideWindowCrearActivoAdmision : function(btn) {
+		var me = this;
+		btn.up('window').hide();
+	},
+
+	onClickCrearTrabajo : function(btn) {
+		var me = this;
+		var idActivo = me.getViewModel().get("activo.id");
+		var codSubcartera = me.getViewModel().get("activo.subcarteraCodigo");
+		var codCartera = me.getViewModel()
+				.get("activo.entidadPropietariaCodigo");
+		me.getView().fireEvent('openModalWindow',
+				"HreRem.view.trabajos.detalle.CrearTrabajo", {
+					idActivo : idActivo,
+					idAgrupacion : null,
+					codCartera : codCartera,
+					codSubcartera : codSubcartera,
+					logadoGestorMantenimiento : true
+				});
+	},
+
+	onAnyadirPropietarioClick : function(btn) {
+		var me = this;
+		var idActivo = me.getViewModel().get("activo.id");
+		me.getView().fireEvent('openModalWindow',
+				"HreRem.view.activos.detalle.AnyadirPropietario");
+	},
+
+	onEliminarPropietarioClick : function(btn) {
+
+		var me = this;
+		var grid = btn.up('fieldsettable').down('#listadoPropietarios');
+
+		Ext.Msg.show({
+					title : HreRem.i18n('title.confirmar.eliminacion'),
+					msg : HreRem.i18n('msg.desea.eliminar'),
+					buttons : Ext.MessageBox.YESNO,
+					fn : function(buttonId) {
+						if (buttonId == 'yes') {
+							var sm = grid.getSelectionModel();
+							sm.getSelection()[0].erase();
+							if (grid.getStore().getCount() > 0) {
+								sm.select(0);
+							}
+						}
+					}
+				});
+
+	},
+
+	onChangeChainedCombo : function(combo) {
+		var me = this, chainedCombo = me
+				.lookupReference(combo.chainedReference);
+		me.getViewModel().notify();
+		if (!Ext.isEmpty(chainedCombo.store)
+				&& !Ext.isEmpty(chainedCombo.getValue())) {
+
 			chainedCombo.clearValue();
 		}
 
@@ -7423,6 +7518,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		return this.getViewModel().get('activo.unidadAlquilable');
 	},
 
+
 	checkVisibilityOfBtnCrearTrabajo: function () {
 		var me = this;
 		var enPerimetro = me.getViewModel().get('activo.incluidoEnPerimetro') == 'true';
@@ -7435,6 +7531,32 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 							  
 		
 	 },
+
+	
+	validarEdicionHistoricoSolicitudesPrecios: function(editor, grid) {
+    	var me = this;
+    	
+    	if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PRECIOS']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PUBLICACION'])) {
+    		return grid.record.data.esEditable;
+    	}
+    	
+    	return false;
+    	
+    },
+    checkVisibilityOfBtnCrearTrabajo: function () {
+       var me = this;
+       var enPerimetro = me.getViewModel().get('activo.incluidoEnPerimetro') == 'true';
+       var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+       var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+	   var isGestorAlquiler = $AU.userGroupHasRole(CONST.PERFILES['GESTOR_ALQUILER_HPM']);
+	   var isUserGestedi = $AU.userIsRol(CONST.PERFILES['GESTEDI']);
+	   
+       return !enPerimetro || (!isSuper && !isGestorActivos && !isGestorAlquiler && !isUserGestedi);
+        					 
+       
+    },
+	
+
 
 	validarEdicionHistoricoSolicitudesPrecios : function(editor, grid) {
 		var me = this;
@@ -7728,6 +7850,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		btn.up('window').hide();
 	},
+
+    
+    mostrarObservacionesGrid: function(event, target, options) {   	
+    	var me = this;
+    	var observacionesAdmision = target.data.observacionesEvolucion;
+  	
+    	me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.CrearEvolucionObservaciones", {
+            observacionesAdmision: observacionesAdmision
+        });
+        
+    },
+    
+    onClickCerrarObservacionesEvolucion: function(btn) {
+    	var me = this;
+    	btn.up('window').hide();
+    },
+
+
 
 	onClickBotonAnyadirGastoAsociadoAdquisicion : function(btn) {
 

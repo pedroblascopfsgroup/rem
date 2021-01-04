@@ -1347,6 +1347,7 @@ public interface ActivoApi {
 
 	boolean estanTodosActivosAlquilados(List<Activo> activos);
 
+
 	List<ReqFaseVentaDto> getReqFaseVenta(Long idActivo);
 
 	Boolean createReqFaseVenta(ReqFaseVentaDto reqFaseVentaDto) throws ParseException;

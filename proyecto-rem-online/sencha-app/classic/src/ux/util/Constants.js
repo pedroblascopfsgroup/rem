@@ -205,7 +205,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	'12': 'GIANTS',
     	'15': 'GALEON',
     	'14': 'ZEUS',
-    	'15': 'BBVA'
+    	'16': 'BBVA'
     },
 
     NOMBRE_CARTERA2: {

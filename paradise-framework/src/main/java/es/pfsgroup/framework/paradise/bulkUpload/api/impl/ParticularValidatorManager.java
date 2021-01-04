@@ -6225,9 +6225,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" FROM gld_gastos_linea_detalle linea " + 
 				" JOIN gpv_gastos_proveedor gasto ON gasto.gpv_id = linea.gpv_id AND GASTO.GPV_NUM_GASTO_HAYA = " + idGasto + 
 				" where GLD_ID = "+ idLinea +" AND gasto.borrado = 0 AND linea.borrado = 0");
-		
+
 		return !"0".equals(resultado);
-	}
+	}		
+
+
 
 	@Override
 	public Boolean gastoRepetido(String factura, String fechaEmision, String nifEmisor, String nifPropietario) {
@@ -6248,6 +6250,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 			return !"0".equals(resultado);
 	}
+
 	
 	@Override
 	public Boolean existeTrabajoByCodigo(String codTrabajo) {
@@ -6258,7 +6261,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		FROM DD_TTR_TIPO_TRABAJO TTR " 
 				+ "		WHERE ttr.dd_ttr_codigo = '"+codTrabajo+"'"
 				+ "		AND TTR.BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+
 		
+
+	@Override
+	public Boolean existePromocionBBVA(String promocion){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_BBVA_ACTIVOS "
+				+ "WHERE bbva_cod_promocion = '"+promocion+"'");
+
 		return !"0".equals(resultado);
 	}
 	
@@ -6328,6 +6341,37 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return resultado;
 	}
 	
+	public String devolverEstadoGastoApartirDePrefactura(String idPrefactura) {
+		if(Checks.esNulo(idPrefactura)) {
+			return null;
+		}
+		String res = rawDao.getExecuteSQL("SELECT DD.DD_EGA_CODIGO "
+				+ "FROM GPV_GASTOS_PROVEEDOR GASTO "
+				+ "JOIN PFA_PREFACTURA PFA ON PFA.PFA_ID = GASTO.PFA_ID "
+				+ "JOIN DD_EGA_ESTADOS_GASTO DD ON GASTO.DD_EGA_ID = DD.DD_EGA_ID "
+				+ "WHERE PFA.PFA_NUM_PREFACTURA = '"+idPrefactura+"' "
+				+ "AND PFA.BORRADO =0 AND DD.BORRADO = 0 AND GASTO.BORRADO = 0"
+		);
+		
+		return res;
+	}
+	
+	public String devolverEstadoGastoApartirDeAlbaran(String idAlbaran) {
+		if(Checks.esNulo(idAlbaran)) {
+			return null;
+		}
+		String res = rawDao.getExecuteSQL("SELECT DD.DD_EGA_CODIGO "
+				+ "FROM GPV_GASTOS_PROVEEDOR GASTO "
+				+ "JOIN PFA_PREFACTURA PFA ON PFA.PFA_ID = GASTO.PFA_ID "
+				+ "JOIN ALB_ALBARAN ALB ON PFA.ALB_ID = ALB.ALB_ID "
+				+ "JOIN DD_EGA_ESTADOS_GASTO DD ON GASTO.DD_EGA_ID = DD.DD_EGA_ID "
+				+ "WHERE ALB.ALB_NUM_ALBARAN = '"+idAlbaran+"' "
+				+ "AND ALB.BORRADO = 0 AND PFA.BORRADO =0 AND DD.BORRADO = 0 AND GASTO.BORRADO = 0"
+		);
+		
+		return res;
+	}
+	
 	@Override
 	public boolean existeTipoRetencion(String tipoRetencion){
 		String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
@@ -6350,6 +6394,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !res.equals("0");
 	}
+
 
 	@Override
 	public boolean tieneGastoFechaContabilizado(String idGasto) {
@@ -6488,13 +6533,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return "0".equals(resultado);
 	}
-	
-	@Override
-	public Boolean existePromocionBBVA(String promocion){
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_BBVA_ACTIVOS "
-				+ "WHERE bbva_cod_promocion = '"+promocion+"'");
-		return !"0".equals(resultado);
-	}
+
 	
 	@Override
 	public Boolean datosRegistralesRepetidos(String refCatastral,String finca, String folio, String libro, String tomo,  String numRegistro, String codigoLocalidad){
@@ -6530,6 +6569,44 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		
 		return false;
-
 	}
+
+	@Override
+	public Boolean existeAlbaran(String idAlbaran) {
+		if(Checks.esNulo(idAlbaran) || !StringUtils.isNumeric(idAlbaran))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ALB_ALBARAN WHERE"
+				+ "		 	ALB_NUM_ALBARAN = '"+idAlbaran+"' "
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existePrefactura(String idPrefactura) {
+		if(Checks.esNulo(idPrefactura) || !StringUtils.isNumeric(idPrefactura))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM PFA_PREFACTURA WHERE"
+				+ "		 	PFA_NUM_PREFACTURA = '"+idPrefactura+"' "
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public List<String> getIdPrefacturasByNumAlbaran(String numAlbaran) {
+		List<Object> resultados = rawDao.getExecuteSQLList("SELECT PFA.PFA_NUM_PREFACTURA FROM ALB_ALBARAN ALB "
+				+ "JOIN PFA_PREFACTURA PFA ON PFA.ALB_ID = ALB.ALB_ID "
+				+ "WHERE ALB.ALB_NUM_ALBARAN = '"+numAlbaran+"' "
+				+ "AND ALB.BORRADO =0 AND PFA.BORRADO =0");
+		
+		List<String> listaString = new ArrayList<String>();
+		
+		for (Object valor : resultados) {
+			listaString.add(valor.toString());
+		}
+
+		return listaString;
+	}
+
 }

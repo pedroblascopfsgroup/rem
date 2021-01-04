@@ -2334,6 +2334,19 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView insertarRegistroAuditoriaDesbloqueo(ModelMap model, Long expedienteId, String comentario, Long usuId, HttpServletRequest request) {
+		try {
+			expedienteComercialApi.insertarRegistroAuditoriaDesbloqueo(expedienteId, comentario, usuId);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		}catch(Exception e){
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (getAuditoriaDesbloqueo)", e);
+		}
+		return createModelAndViewJson(model);
+	}
+		
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getActivosAlquilados(Long idExpediente) {
 		
@@ -2350,14 +2363,18 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView insertarRegistroAuditoriaDesbloqueo(ModelMap model, Long expedienteId, String comentario, Long usuId, HttpServletRequest request) {
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCierreEconomicoFinalizado(ModelMap model, Long expedienteId ,HttpServletRequest request) {
 		try {
-			expedienteComercialApi.insertarRegistroAuditoriaDesbloqueo(expedienteId, comentario, usuId);
+			Boolean isCierreEconomicoFinalizado = expedienteComercialApi.finalizadoCierreEconomico(expedienteId);
 			model.put(RESPONSE_SUCCESS_KEY, true);
+			model.put(RESPONSE_DATA_KEY, isCierreEconomicoFinalizado);
 		}catch(Exception e){
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			logger.error("Error en ExpedienteComercialController (getAuditoriaDesbloqueo)", e);
+			logger.error("Error en ExpedienteComercialController (getCierreEconomicoFinalizado)", e);
+
 		}
 		return createModelAndViewJson(model);
 	}
@@ -2378,19 +2395,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getCierreEconomicoFinalizado(ModelMap model, Long expedienteId ,HttpServletRequest request) {
-		try {
-			Boolean isCierreEconomicoFinalizado = expedienteComercialApi.finalizadoCierreEconomico(expedienteId);
-			model.put(RESPONSE_SUCCESS_KEY, true);
-			model.put(RESPONSE_DATA_KEY, isCierreEconomicoFinalizado);
-		}catch(Exception e){
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			logger.error("Error en ExpedienteComercialController (getCierreEconomicoFinalizado)", e);
-		}
-		return createModelAndViewJson(model);
-	}
-	
+
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView sacarBulk(ModelMap model, @RequestParam Long idExpediente) {

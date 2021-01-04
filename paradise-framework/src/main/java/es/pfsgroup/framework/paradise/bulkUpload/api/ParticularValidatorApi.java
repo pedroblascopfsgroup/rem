@@ -1361,6 +1361,7 @@ public interface ParticularValidatorApi {
 
 	boolean tieneGastoFechaPagado(String idGasto);
 
+
 	Boolean estadoPrevioTrabajo(String celdaTrabajo);
 
 	Boolean fechaEjecucionCumplimentada(String celdaTrabajo);
@@ -1396,5 +1397,16 @@ public interface ParticularValidatorApi {
 	Boolean datosRegistralesRepetidos(String refCatastral, String finca, String folio, String libro, String tomo, String numRegistro, String codigoLocalidad);
 
 	Boolean subtipoPerteneceTipoActivo(String subtipo, String tipo);
+
+	Boolean existeAlbaran(String idAlbaran);
+	
+	Boolean existePrefactura(String idPrefactura);
+	
+	public String devolverEstadoGastoApartirDePrefactura(String idPrefactura);
+	
+	public String devolverEstadoGastoApartirDeAlbaran(String idAlbaran);
+
+	List<String> getIdPrefacturasByNumAlbaran(String numAlbaran);
+
 
 }

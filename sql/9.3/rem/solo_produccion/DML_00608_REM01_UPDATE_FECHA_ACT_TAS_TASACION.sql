@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20210104
+--## FECHA_CREACION=20210105
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8547
@@ -28,6 +28,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_USUARIO VARCHAR2(100 CHAR):='REMVIP-8547'; --Vble. auxiliar para almacenar el usuario
     V_TABLA VARCHAR2(100 CHAR) :='ACT_TAS_TASACION'; --Vble. auxiliar para almacenar la tabla a insertar
+    V_TABLA_BIE VARCHAR2(100 CHAR):='BIE_VALORACIONES'; --Vble para almacenar tabla valoraciones
     V_TABLA_ACTIVO VARCHAR2(100 CHAR) :='ACT_ACTIVO'; --Vble. auxiliar para almacenar la tabla de los activos a buscar
     V_ID VARCHAR2(100 CHAR); --Vble para almacenar el id de la tasacion
     V_COUNT NUMBER(16):=0; --Vble. para contar registros correctos
@@ -109,21 +110,30 @@ BEGIN
                 IF V_NUM_TABLAS <= 1 THEN        
             
                 --Obtenemos el id de la tasacion a modificar
-                V_MSQL := 'SELECT TAS.TAS_ID FROM '||V_ESQUEMA||'.'||V_TABLA_ACTIVO||' ACT
+                V_MSQL := 'SELECT TAS.BIE_VAL_ID FROM '||V_ESQUEMA||'.'||V_TABLA_ACTIVO||' ACT
                         JOIN '||V_ESQUEMA||'.'||V_TABLA||' TAS ON TAS.ACT_ID=ACT.ACT_ID
                         WHERE ACT.ACT_NUM_ACTIVO='||V_TMP_TIPO_DATA(1)||'';
                 EXECUTE IMMEDIATE V_MSQL INTO V_ID;
 
-                --Actualizamos FECHA TASACION A NULL
-                V_MSQL :='UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET 
-                            TAS_FECHA_INI_TASACION=NULL,
-                            USUARIOMODIFICAR = '''||V_USUARIO||''',
-                            FECHAMODIFICAR = SYSDATE                            
-                            WHERE TAS_ID='||V_ID||'';
-                EXECUTE IMMEDIATE V_MSQL;
-                V_COUNT:=V_COUNT+1;    
+                V_MSQL :='SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_BIE||' WHERE BIE_VAL_ID='||V_ID||'';
+                EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 
-                DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha modificado la tasacion del activo: '''||V_TMP_TIPO_DATA(1)||''' ');
+                IF V_NUM_TABLAS =1 THEN
+
+                    --Actualizamos FECHA TASACION A NULL
+                    V_MSQL :='UPDATE '||V_ESQUEMA||'.'||V_TABLA_BIE||' SET 
+                                BIE_FECHA_VALOR_TASACION=NULL,
+                                USUARIOMODIFICAR = '''||V_USUARIO||''',
+                                FECHAMODIFICAR = SYSDATE                            
+                                WHERE BIE_VAL_ID='||V_ID||'';
+                    EXECUTE IMMEDIATE V_MSQL;
+                    V_COUNT:=V_COUNT+1;    
+
+                    DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha modificado la tasacion del activo: '''||V_TMP_TIPO_DATA(1)||''' ');
+
+                ELSE
+                    DBMS_OUTPUT.PUT_LINE('[INFO]: NO EXISTE REGISTRO EN BIE_VALORACIONES PARA EL ACTIVO: '''||V_TMP_TIPO_DATA(1)||''' ');
+                END IF;
 
                 ELSE
                     --Si hay mas de 1 tasacion

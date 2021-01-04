@@ -8,7 +8,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 	disableValidation : false,
 	recordName : "calidaddatopublicacionactivo",
 	recordClass : "HreRem.model.CalidadDatoPublicacionActivo",
-	requires	:['HreRem.view.common.FieldSetTable', 'HreRem.model.CalidadDatoPublicacionActivo'],
+	requires	:['HreRem.view.common.FieldSetTable', 'HreRem.model.CalidadDatoPublicacionActivo','HreRem.view.activos.detalle.CalidadDatoFasesGrid'],
 	listeners : {
 		boxready : 'cargarTabDataCalidadDato'
 	},
@@ -43,6 +43,106 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 		
 		},
 		{
+			xtype:'toolfieldset',
+			title : HreRem.i18n('publicacion.calidad.datos.fase0'),
+			collapsible : true,
+			reference: 'toolFieldFase0',
+			collapsed : '{colapsarDesplegable}',
+			tools: [
+				{
+					xtype: 'button',
+								cls: 'no-pointer',
+								style: 'background: transparent; border: none;',
+								reference : 'correctoIdufirFase1',
+								bind: {
+										iconCls:'{getCorrectoDatosRegistralesFase0a2}'	
+							}
+					}
+			],
+			items:
+				[
+					{
+						xtype : 'fieldsettable',
+						title : HreRem.i18n('publicacion.calidad.datos.datos.registrales'),
+						items : 
+							[
+								{
+									xtype:'calidaddatofases',
+									reference: 'fasedatosregistrales',
+									idActivo:this.lookupController().getViewModel().get('activo').get('id'),
+									codigoGrid: CONST.GRID_CALIDAD_DATO['DATOSREGISTRALES']
+								}
+							]
+					},
+					{
+						xtype : 'fieldsettable',
+						title :HreRem.i18n('publicacion.calidad.datos.datos.del.registro'),
+						items : 
+							[
+								{
+									xtype:'calidaddatofases',
+									reference: 'fasedatosregistro',
+									idActivo:this.lookupController().getViewModel().get('activo').get('id'),
+									codigoGrid: CONST.GRID_CALIDAD_DATO['DATOSREGISTRO']
+								}
+							]
+					}
+				]
+		},
+		{
+			xtype:'toolfieldset',
+			title : HreRem.i18n('publicacion.calidad.datos.fase3'),
+			reference: 'toolFieldFase1',
+			collapsible : true,
+			collapsed : '{colapsarDesplegable}',
+			layout: {
+		        type: 'table',
+		        columns: 2,
+		        tdAttrs: {width: '33%'},
+		        tableAttrs: {
+		            style: {
+		                width: '100%'
+					}
+		        }
+			},
+			tools: [
+				{
+					xtype: 'button',
+					cls: 'no-pointer',
+					style: 'background: transparent; border: none;',
+					bind: {
+						iconCls:'{getIconClsDQBloqueFase3}'
+					}
+				}
+			],
+			items : 
+				[
+					{
+						xtype:'calidaddatofases',
+						colspan: 3,
+						reference: 'fasetrescalidaddato',
+						idActivo:this.lookupController().getViewModel().get('activo').get('id'),
+						codigoGrid: CONST.GRID_CALIDAD_DATO['DATFASE03']
+					},
+					{
+						xtype:'fieldsettable',
+						title: HreRem.i18n('header.direccion'),
+						//collapsible: false,
+						//collapsed : false,						
+						items: [
+							{
+								xtype:'calidaddatofases',
+								reference: 'fasecalidaddatodireccion',
+								idActivo:this.lookupController().getViewModel().get('activo').get('id'),
+								codigoGrid: CONST.GRID_CALIDAD_DATO['DATFASE03DIRECCION']
+							}
+								]
+					}
+				]
+		},
+		
+		//
+		/*{
 			xtype:'toolfieldset',
 			title : HreRem.i18n('publicacion.calidad.datos.fase0'),
 			collapsible : true,
@@ -871,7 +971,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					}]
 				}]
 			}]
-		}, 	
+		}, */	
 		{
 			xtype:'toolfieldset',
 			reference: 'toolFieldFase2',
@@ -894,7 +994,17 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					xtype:'fieldsettable',
 					title:HreRem.i18n('publicacion.calidad.datos.fase4.fotos'),
 					defaultType:'textfieldbase',
-					items : [{
+					items : [
+						{
+						xtype: 'button',
+						colspan:3,
+						cls: 'no-pointer',
+						style: 'background: transparent; border: none;',
+						bind: {
+							iconCls:'{getIconClsDQFotos}'
+							}
+						},
+						{
 						xtype:'textfieldbase',
 						fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes'),
 						reference: 'numFotosRef',
@@ -952,13 +1062,6 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 							value: '{calidaddatopublicacionactivo.numFotosMinimaResolucionX}'
 						}
 					},{
-						xtype: 'button',
-						cls: 'no-pointer',
-						style: 'background: transparent; border: none;',
-						bind: {
-							iconCls:'{getIconClsDQFotos}'
-						}
-					},{
 						xtype:'textfieldbase',
 						fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.mensaje.dq'),
 						reference: 'fotosMensajeDQRef',
@@ -972,10 +1075,37 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 				xtype:'fieldsettable',
 				title:HreRem.i18n('publicacion.calidad.datos.fase4.descripcion'),
 				defaultType:'textfieldbase',
-				items : [{
+				items : [
+					
+					{
+						fieldLabel: HreRem.i18n('publicacion.calidad.datos.indicador.correcto'),
+						colspan:3,						
+						xtype: 'button',						
+						cls: 'no-pointer',
+						style: 'background: transparent; border: none;',
+						bind: {
+							iconCls:'{getIconClsDQescripcion}'
+						}
+					},
+					{
+					xtype:'button',
+					text: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.boton.aplicar'),
+					reference: 'btnAplicaDescripcionRef',
+					readOnly: true,
+					handler: 'aplicarDescripcion',	
+					colspan:3,
+					rowspan:2,
+					bind:{
+						disabled: '{disableBtnDescF1}'
+						}
+					},
+					{
 					xtype:'textfieldbase',
 					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.dato.rem'),
 					reference: 'datoRemRef',
+	                //maxLength: 100,
+          		  	maxWidth: 500,
+					//colspan:3,
 					readOnly: true,
 					bind: {
 						value: '{calidaddatopublicacionactivo.drFase4Descripcion}'
@@ -984,25 +1114,12 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					xtype:'textfieldbase',
 					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.dato.rq'),
 					reference: 'datoDQRef',
+					//colspan:3,
+					//maxLength: '100%',
+          		  	maxWidth: 500,
 					readOnly: true,
 					bind: {
 						value: '{calidaddatopublicacionactivo.dqFase4Descripcion}'
-					}
-				},{
-					xtype: 'button',
-					cls: 'no-pointer',
-					style: 'background: transparent; border: none;',
-					bind: {
-						iconCls:'{getIconClsDQescripcion}'
-					}
-				},{
-					xtype:'button',
-					text: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.boton.aplicar'),
-					reference: 'btnAplicaDescripcionRef',
-					readOnly: true,
-					handler: 'aplicarDescripcion',					
-					bind:{
-						disabled: '{disableBtnDescF1}'
 					}
 				}]
 			},{
@@ -1010,7 +1127,16 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 				xtype:'fieldsettable',
 				title:HreRem.i18n('publicacion.calidad.datos.fase4.localizacion'),
 				defaultType:'textfieldbase',
-				items : [{
+				items : [
+				{
+					xtype: 'button',
+					cls: 'no-pointer',
+					colspan:3,
+					style: 'background: transparent; border: none;',
+					bind: {
+						iconCls:'{getIconClsDQLocalizacion}'
+					}
+				},{
 					xtype:'textfieldbase',
 					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.localizacion.latitud.rem'),
 					reference: 'latitudRemRef',
@@ -1020,21 +1146,24 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					}
 				},{
 					xtype:'textfieldbase',
+					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.localizacion.longitud.rem'),
+					reference: 'longitudRemRef',
+					colspan:2,
+					readOnly: true,
+					bind: {
+						value: '{calidaddatopublicacionactivo.drf4LocalizacionLongitud}'
+					}
+				},
+				{
+					xtype:'textfieldbase',
 					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.localizacion.latitud.dq'),
 					reference: 'latitudDQRef',
 					readOnly: true,
 					bind: {
 						value: '{calidaddatopublicacionactivo.dqF4Localizacionlatitud}'
 					}					
-				},{
-					xtype:'textfieldbase',
-					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.localizacion.longitud.rem'),
-					reference: 'longitudRemRef',
-					readOnly: true,
-					bind: {
-						value: '{calidaddatopublicacionactivo.drf4LocalizacionLongitud}'
-					}
-				},{
+				},	
+				{
 					xtype:'textfieldbase',
 					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.localizacion.longitud.dq'),
 					reference: 'longitudDQRef',
@@ -1050,13 +1179,6 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					bind: {
 						value: '{calidaddatopublicacionactivo.geodistanciaDQ}'
 					}
-				},{
-					xtype: 'button',
-					cls: 'no-pointer',
-					style: 'background: transparent; border: none;',
-					bind: {
-						iconCls:'{getIconClsDQLocalizacion}'
-					}
 				}]
 			}, {
 				// Apartado CEE
@@ -1064,6 +1186,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 				title:HreRem.i18n('publicacion.calidad.datos.fase4.CEE'),
 				defaultType:'textfieldbase',
 				items : [
+					{
+						xtype: 'button',
+						cls: 'no-pointer',
+						colspan:3,
+						style: 'background: transparent; border: none;',
+						bind: {
+							iconCls:'{getIconClsDQCEE}'
+							}
+					},
 					{
 						xtype:'textfieldbase',
 						fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.CEE.etiqueta'),
@@ -1138,13 +1269,6 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					bind: {
 						value: '{calidaddatopublicacionactivo.mensajeDQCEE}'
 					}
-				},{
-					xtype: 'button',
-					cls: 'no-pointer',
-					style: 'background: transparent; border: none;',
-					bind: {
-						iconCls:'{getIconClsDQCEE}'
-					}
 				}]
 			}]
 		} 
@@ -1155,12 +1279,13 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 
 	 funcionRecargar : function() {
 		var me = this;
-		me.recargar = false;
-		
+		me.recargar = false;		 
 		if(me.xtype == "button") {
 			me.lookupController().cargarTabDataCalidadDato(me.up().up());
+			me.lookupController().cargarTabDataCalidadDatoGrid();
 		} else {
 			me.lookupController().cargarTabDataCalidadDato(me);
+			me.lookupController().cargarTabDataCalidadDatoGrid();
 		}
 	}
 });

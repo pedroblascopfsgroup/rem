@@ -62,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTransicionesFasesPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.DtoCalidadDatoPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoCalidadDatoPublicacionGrid;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
@@ -114,6 +115,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private static final String PROB_MEDIA = "Media";
 	private static final String PROB_ALTA = "Alta";
 	private static final String PROB_MUY_ALTA = "Muy alta";
+	
+	
+	private static final String CALIDADDATO_REGISRALES = "01";
+	private static final String CALIDADDATO_REGISTRO = "02";
+	private static final String CALIDADDATO_FASE03 = "03";
+	private static final String CALIDADDATO_DIRECCION = "04";
 	
 	
 	@Resource
@@ -1609,7 +1616,28 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		DtoCalidadDatoPublicacionActivo dto = new DtoCalidadDatoPublicacionActivo();
 		Activo activo = activoDao.get(idActivo);
 		ActivoDatosDq actDatosDq = activoPublicacionDao.getActivoDatosDqPorIdActivo(idActivo);
+		dto.setDesplegable0Collapsed(true);
+		dto.setDesplegable1Collapsed(true);
+		dto.setDesplegable2Collapsed(true);
 
+		HistoricoFasePublicacionActivo fasePublicacion =  activoPublicacionDao.getFasePublicacionVigentePorIdActivo(idActivo);
+		if(fasePublicacion.getFasePublicacion() != null) {
+			if(DDFasePublicacion.CODIGO_FASE_0_CALIDAD_PENDIENTE.equals(fasePublicacion.getFasePublicacion().getCodigo())
+				|| DDFasePublicacion.CODIGO_FASE_I_PENDIENTE_ACTUACIONES_PREVIAS.equals(fasePublicacion.getFasePublicacion().getCodigo())
+				|| DDFasePublicacion.CODIGO_FASE_II_PENDIENTE_LLAVES.equals(fasePublicacion.getFasePublicacion().getCodigo())){
+				dto.setDesplegable0Collapsed(false);
+
+								
+			}else if(DDFasePublicacion.CODIGO_FASE_III_PENDIENTE_INFORMACION.equals(fasePublicacion.getFasePublicacion().getCodigo())) {
+				dto.setDesplegable1Collapsed(false);
+													
+			}else if(DDFasePublicacion.CODIGO_FASE_IV_PENDIENTE_PRECIO.equals(fasePublicacion.getFasePublicacion().getCodigo())
+					|| DDFasePublicacion.CODIGO_FASE_V_INCIDENCIAS_PUBLICACION.equals(fasePublicacion.getFasePublicacion().getCodigo())
+					|| DDFasePublicacion.CODIGO_FASE_VI_CALIDAD_COMPROBADA.equals(fasePublicacion.getFasePublicacion().getCodigo())) {
+				dto.setDesplegable2Collapsed(false);
+
+			}
+		}
 		if(actDatosDq != null) {
 			 setDataFase0a2(actDatosDq, activo, dto);
 			 setDataFase3(dto, activo, actDatosDq);
@@ -2464,5 +2492,482 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		return true;
 	}
 	
+	@Override
+	public List <DtoCalidadDatoPublicacionGrid> getCalidadDatoPublicacionActivoGrid(Long idActivo) {
+		
+		List <DtoCalidadDatoPublicacionGrid> listCalidadDatoPub = new ArrayList<DtoCalidadDatoPublicacionGrid>();
+		DtoCalidadDatoPublicacionActivo dto = new DtoCalidadDatoPublicacionActivo();
+		Activo activo = activoDao.get(idActivo);
+		ActivoDatosDq actDatosDq = activoPublicacionDao.getActivoDatosDqPorIdActivo(idActivo);
+		
+		
+		if(actDatosDq != null) {
+			listCalidadDatoPub = getDtoCalidadDatoPublicacionFases(activo, actDatosDq);
+		}else {
+			listCalidadDatoPub = getDtoCalidadDatoPublicFasesAct(activo);
+		}
+		
+		return listCalidadDatoPub;
+	}
+	
+	public List <DtoCalidadDatoPublicacionGrid> getDtoCalidadDatoPublicacionFases(Activo activo, ActivoDatosDq actDatosDq){
+		List <DtoCalidadDatoPublicacionGrid> listCalidadDatoPub = new ArrayList<DtoCalidadDatoPublicacionGrid>();
+		String valorBooleanActivoVpo = "";
+		String valorBooleanActivoDqVpo = "";
+		String valorBooleanActivoInfoCargas = "";
+		String valorBooleanActivoDqInfoCargas = "";
+		String valorIncripcionCorrectaActivo = "";
+		String valorIncripcionCorrectaActivoDq = "";
+		
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoPropietarioActivo activoPropietario  = genericDao.get(ActivoPropietarioActivo.class, filter);
+		
+		
+		//FASE 2
+		if (activo.getInfoRegistral() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Idufir", activo.getInfoRegistral().getIdufir(), actDatosDq.getIdufirDdq(), CALIDADDATO_REGISRALES));
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Finca Registral", activo.getInfoRegistral().getInfoRegistralBien().getNumFinca(), actDatosDq.getNumFincaDdq(), CALIDADDATO_REGISRALES));
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Tomo", activo.getInfoRegistral().getInfoRegistralBien().getTomo(), actDatosDq.getTomoDdq(), CALIDADDATO_REGISRALES));
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Libro", activo.getInfoRegistral().getInfoRegistralBien().getLibro(), actDatosDq.getLibroDdq(), CALIDADDATO_REGISRALES));
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Folio", activo.getInfoRegistral().getInfoRegistralBien().getFolio(), actDatosDq.getFolioDdq(), CALIDADDATO_REGISRALES));
+
+			if (activo.getInfoRegistral().getInfoRegistralBien().getProvincia() != null && actDatosDq.getProvinciaReg() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Provincia del registro", activo.getInfoRegistral().getInfoRegistralBien().getProvincia().getDescripcion(), actDatosDq.getProvinciaReg().getDescripcion(), CALIDADDATO_REGISTRO)); 
+			}else {
+				if (activo.getInfoRegistral().getInfoRegistralBien().getProvincia() != null) {
+					listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Provincia del registro", activo.getInfoRegistral().getInfoRegistralBien().getProvincia().getDescripcion(), "", CALIDADDATO_REGISTRO));
+				}else if(actDatosDq.getProvinciaReg() != null) {
+					listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Provincia del registro", "", actDatosDq.getProvinciaReg().getDescripcion(), CALIDADDATO_REGISTRO));
+				}else {
+					listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Provincia del registro", "", "", CALIDADDATO_REGISTRO));
+				}
+			}
+			
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Número del registro", activo.getInfoRegistral().getInfoRegistralBien().getNumRegistro(), actDatosDq.getNumRegistroDdq(), CALIDADDATO_REGISTRO));
+			
+			if(activo.getInfoRegistral().getInfoRegistralBien().getFechaInscripcion()!=null) {
+				valorIncripcionCorrectaActivo=INSCRITO;				
+			}else {
+				valorIncripcionCorrectaActivo=NO_INSCRITO;				
+			}			
+			if(actDatosDq.getInscripcion()!=null) {
+				if(actDatosDq.getInscripcion().booleanValue()==true) {
+					valorIncripcionCorrectaActivoDq=INSCRITO;
+				}else {
+					valorIncripcionCorrectaActivoDq=NO_INSCRITO;					
+				}
+			}
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Inscripción correcta", valorIncripcionCorrectaActivo, valorIncripcionCorrectaActivoDq, CALIDADDATO_REGISRALES));
+			
+		}
+		if(activo.getTipoUsoDestino() !=null && actDatosDq.getTipoUsoDestino() != null) {			
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Uso dominante", activo.getTipoUsoDestino().getDescripcion(), actDatosDq.getTipoUsoDestino().getDescripcion(), CALIDADDATO_REGISRALES));
+		}else {
+			if (activo.getTipoUsoDestino() !=null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Uso dominante", activo.getTipoUsoDestino().getDescripcion(), "", CALIDADDATO_REGISRALES));
+			}else if(actDatosDq.getTipoUsoDestino() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Uso dominante", "", actDatosDq.getTipoUsoDestino().getDescripcion(), CALIDADDATO_REGISRALES));
+			} else {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Uso dominante", "", "", CALIDADDATO_REGISRALES));
+			}
+		}
+		if (activo.getLocalidad() != null && actDatosDq.getLocalidadReg() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio del registro", activo.getLocalidad().getDescripcion(), actDatosDq.getLocalidadReg().getDescripcion(), CALIDADDATO_REGISTRO));
+		}else {
+			if (activo.getLocalidad() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio del registro", activo.getLocalidad().getDescripcion(), "", CALIDADDATO_REGISTRO));
+			}else if (actDatosDq.getLocalidadReg() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio del registro", "", actDatosDq.getLocalidadReg().getDescripcion(), CALIDADDATO_REGISTRO));
+			}else {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio del registro", "", "", CALIDADDATO_REGISTRO));
+			}
+		}
+				
+		if(activo.getVpo()!=null) {
+			if(activo.getVpo().equals(1)) {
+				valorBooleanActivoVpo = SI;
+			}else if(activo.getVpo().equals(0)) {
+				valorBooleanActivoVpo = NO;
+			}
+		}
+		
+		if(actDatosDq.getVpo()!=null) {
+			if(actDatosDq.getVpo().booleanValue()) {
+				valorBooleanActivoDqVpo = SI;
+				
+			}else {
+				valorBooleanActivoDqVpo = NO;
+			}
+		}
+		
+		listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("VPO", valorBooleanActivoVpo, valorBooleanActivoDqVpo, CALIDADDATO_REGISRALES));
+		
+		if (activo.getInfoComercial() != null && actDatosDq.getAnyoConstruccion() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Año construcción", activo.getInfoComercial().getAnyoConstruccion().toString(), actDatosDq.getAnyoConstruccion().toString(), CALIDADDATO_REGISRALES));
+		}else {
+			if (activo.getInfoComercial().getAnyoConstruccion() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Año construcción", activo.getInfoComercial().getAnyoConstruccion().toString(), "", CALIDADDATO_REGISRALES));
+			}else if(actDatosDq.getAnyoConstruccion() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Año construcción", "", actDatosDq.getAnyoConstruccion().toString(), CALIDADDATO_REGISRALES));
+			} else {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Año construcción", "", "", CALIDADDATO_REGISRALES));
+			}
+		}
+		if (activo.getTipoActivo() != null && actDatosDq.getTipoActivo() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Tipologia", activo.getTipoActivo().getDescripcion(), actDatosDq.getTipoActivo().getDescripcion(), CALIDADDATO_REGISRALES));				
+		}else {
+			if (activo.getTipoActivo() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Tipologia", activo.getTipoActivo().getDescripcion(), "", CALIDADDATO_REGISRALES));
+			}else if(actDatosDq.getTipoActivo() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Tipologia", "", actDatosDq.getTipoActivo().getDescripcion(), CALIDADDATO_REGISRALES));
+			} else {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Tipologia", "", "", CALIDADDATO_REGISRALES));
+			}
+		}
+		
+		if(activo.getSubtipoTitulo() !=null && actDatosDq.getSubtipoTitulo() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Subtipologia", activo.getSubtipoTitulo().getDescripcion(), actDatosDq.getSubtipoTitulo().getDescripcion(), CALIDADDATO_REGISRALES));
+		}else {
+			if (activo.getSubtipoTitulo() !=null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Subtipologia", activo.getSubtipoTitulo().getDescripcion(), "", CALIDADDATO_REGISRALES));
+			}else if(actDatosDq.getSubtipoTitulo() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Subtipologia", "", actDatosDq.getSubtipoTitulo().getDescripcion(), CALIDADDATO_REGISRALES));
+			}else {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Subtipologia", "", "", CALIDADDATO_REGISRALES));
+			}
+		}
+		
+		if(activo.getConCargas()!=null) {
+			if(activo.getConCargas().equals(1)) {
+				valorBooleanActivoInfoCargas = SI;
+			}else if(activo.getConCargas().equals(0)) {
+				valorBooleanActivoInfoCargas = NO;
+			}	
+		}		
+		if(actDatosDq.getCargas()!=null) {
+			if(actDatosDq.getCargas().booleanValue()==true) {
+				valorBooleanActivoDqInfoCargas = SI;								
+			}else {
+				valorBooleanActivoDqInfoCargas = NO;
+			}
+		}
+		
+		listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Información Cargas", valorBooleanActivoInfoCargas, valorBooleanActivoDqInfoCargas, CALIDADDATO_REGISRALES));
+		
+		if (activoPropietario.getPorcPropiedad() != null && actDatosDq.getPropiedadDdq() != null) {			
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("% propiedad", activoPropietario.getPorcPropiedad().toString(), actDatosDq.getPropiedadDdq().toString(), CALIDADDATO_REGISRALES));
+		}else {
+			if (activoPropietario.getPorcPropiedad() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("% propiedad", activoPropietario.getPorcPropiedad().toString(), "", CALIDADDATO_REGISRALES));
+			}else if(actDatosDq.getPropiedadDdq() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("% propiedad", "", actDatosDq.getPropiedadDdq().toString(), CALIDADDATO_REGISRALES));
+			}else {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("% propiedad", "", "", CALIDADDATO_REGISRALES));
+			}
+		}
+				
+		//FASE 3
+		if (activo.getInfoRegistral().getInfoRegistralBien()!= null && activo.getInfoRegistral().getInfoRegistralBien().getReferenciaCatastralBien() != null && actDatosDq.getReferenciaCatastralDdq() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Referencia Catastral", activo.getInfoRegistral().getInfoRegistralBien().getReferenciaCatastralBien(), actDatosDq.getReferenciaCatastralDdq(), CALIDADDATO_FASE03));
+		}else {
+			if (activo.getInfoRegistral().getInfoRegistralBien()!= null && activo.getInfoRegistral().getInfoRegistralBien().getReferenciaCatastralBien() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Referencia Catastral", activo.getInfoRegistral().getInfoRegistralBien().getReferenciaCatastralBien(),"", CALIDADDATO_FASE03));
+			} else if (actDatosDq.getReferenciaCatastralDdq() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Referencia Catastral", "",actDatosDq.getReferenciaCatastralDdq(), CALIDADDATO_FASE03));
+
+			}else {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Referencia Catastral", "","", CALIDADDATO_FASE03));
+			}
+		}
+		if (activo.getInfoRegistral().getInfoRegistralBien() != null && activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida() != null && actDatosDq.getSuperficieConstruidaDdq() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Superficie Construida", 
+					String.valueOf(activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().doubleValue()), 
+					String.valueOf(actDatosDq.getSuperficieConstruidaDdq().doubleValue()), 
+					CALIDADDATO_FASE03));
+		}else {
+			if (activo.getInfoRegistral().getInfoRegistralBien() != null && activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Superficie Construida", 
+						String.valueOf(activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().doubleValue()), 
+						"",
+						CALIDADDATO_FASE03));
+			}else if(actDatosDq.getSuperficieConstruidaDdq() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Superficie Construida", "", 
+						String.valueOf(actDatosDq.getSuperficieConstruidaDdq().doubleValue()),
+						CALIDADDATO_FASE03));
+			} else {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Superficie Construida", "", "", CALIDADDATO_FASE03));
+			}
+		}
+		if (activo.getInfoRegistral()!= null && activo.getInfoRegistral().getSuperficieUtil() != null && actDatosDq.getSuperficieUtilDdq() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Superficie útil",
+					String.valueOf(activo.getInfoRegistral().getSuperficieUtil()),
+					String.valueOf(actDatosDq.getSuperficieUtilDdq().doubleValue()),
+					CALIDADDATO_FASE03));
+		}else {
+			if (activo.getInfoRegistral()!= null && activo.getInfoRegistral().getSuperficieUtil() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Superficie útil",
+						String.valueOf(activo.getInfoRegistral().getSuperficieUtil()),
+						"",
+						CALIDADDATO_FASE03));
+			}else if(actDatosDq.getSuperficieUtilDdq() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Superficie útil", 
+						"", 
+						String.valueOf(actDatosDq.getSuperficieUtilDdq().doubleValue()),
+						CALIDADDATO_FASE03));
+			} else {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Superficie útil", "", "", CALIDADDATO_FASE03));
+			}
+		}
+		if (activo.getInfoComercial() != null && activo.getInfoComercial().getAnyoConstruccion() != null && actDatosDq.getAnyoConstruccion() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Año construcción", String.valueOf(activo.getInfoComercial().getAnyoConstruccion()), String.valueOf(actDatosDq.getAnyoConstruccion()),CALIDADDATO_FASE03));
+		}else {
+			if (activo.getInfoComercial() != null && activo.getInfoComercial().getAnyoConstruccion() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Año construcción", String.valueOf(activo.getInfoComercial().getAnyoConstruccion()),"", CALIDADDATO_FASE03));
+			}else if(actDatosDq.getAnyoConstruccion() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Año construcción", "", String.valueOf(actDatosDq.getAnyoConstruccion()), CALIDADDATO_FASE03));
+			} else {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Año construcción", "", "", CALIDADDATO_FASE03));
+			}
+		}		
+			//Bloque dirección
+		if ((activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien().getTipoVia() != null && activo.getLocalizacion().getLocalizacionBien().getTipoVia().getDescripcion() != null) 
+				&& actDatosDq.getSuperficieConstruidaDdq() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Tipo vía", activo.getLocalizacion().getLocalizacionBien().getTipoVia().getDescripcion(), actDatosDq.getTipoVia().getDescripcion(), CALIDADDATO_DIRECCION));
+		}else {
+			if (activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien().getTipoVia() != null && activo.getLocalizacion().getLocalizacionBien().getTipoVia().getDescripcion() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Tipo vía", activo.getLocalizacion().getLocalizacionBien().getTipoVia().getDescripcion(), "", CALIDADDATO_DIRECCION));
+			}else if(actDatosDq.getTipoVia() != null && actDatosDq.getTipoVia().getDescripcion() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Tipo vía", "", actDatosDq.getTipoVia().getDescripcion(), CALIDADDATO_DIRECCION));
+			} else {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Tipo vía", "", "", CALIDADDATO_DIRECCION));
+			}
+		}
+		if ((activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null && activo.getLocalizacion().getLocalizacionBien().getNombreVia() != null) && actDatosDq.getNombreViaDdq() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Nombre calle", activo.getLocalizacion().getLocalizacionBien().getNombreVia(), actDatosDq.getNombreViaDdq(), CALIDADDATO_DIRECCION));			
+		}else {
+			if (activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null && activo.getLocalizacion().getLocalizacionBien().getNombreVia() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Nombre calle", activo.getLocalizacion().getLocalizacionBien().getNombreVia(), "", CALIDADDATO_DIRECCION));
+			}else if(actDatosDq.getNombreViaDdq() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Nombre calle", "", actDatosDq.getNombreViaDdq(), CALIDADDATO_DIRECCION));
+			} else {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Nombre calle", "", "", CALIDADDATO_DIRECCION));
+			}
+		}
+				
+		if(actDatosDq.getCalleCorrectaProb() == null) {	
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", "", CALIDADDATO_DIRECCION));
+		}else if(actDatosDq.getCalleCorrectaProb() >= 0 && actDatosDq.getCalleCorrectaProb() <= 0.2){
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", PROB_MUY_BAJA, CALIDADDATO_DIRECCION));
+		}else if(actDatosDq.getCalleCorrectaProb() > 0.2 && actDatosDq.getCalleCorrectaProb() <= 0.4) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", PROB_BAJA, CALIDADDATO_DIRECCION));
+		}else if(actDatosDq.getCalleCorrectaProb() > 0.4 && actDatosDq.getCalleCorrectaProb() <= 0.6) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", PROB_MEDIA, CALIDADDATO_DIRECCION));
+		}else if(actDatosDq.getCalleCorrectaProb() > 0.6 && actDatosDq.getCalleCorrectaProb() <= 0.8) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", PROB_ALTA, CALIDADDATO_DIRECCION));
+		}else if(actDatosDq.getCalleCorrectaProb() > 0.8 && actDatosDq.getCalleCorrectaProb() <= 1) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", PROB_MUY_ALTA, CALIDADDATO_DIRECCION));
+		}
+		
+		if ((activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null && activo.getLocalizacion().getLocalizacionBien().getCodPostal() != null) && actDatosDq.getCodigoPostalDdq() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("CP", activo.getLocalizacion().getLocalizacionBien().getCodPostal(), actDatosDq.getCodigoPostalDdq(), CALIDADDATO_DIRECCION));
+		}else {
+			if (activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null && activo.getLocalizacion().getLocalizacionBien().getCodPostal() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("CP", activo.getLocalizacion().getLocalizacionBien().getCodPostal(), "", CALIDADDATO_DIRECCION));
+			}else if(actDatosDq.getCodigoPostalDdq() != null) {
+				
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("CP", "", actDatosDq.getCodigoPostalDdq(), CALIDADDATO_DIRECCION));
+			} else {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("CP", "", "", CALIDADDATO_DIRECCION));
+			}
+		}
+		if ((activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() !=null 
+				&& activo.getLocalizacion().getLocalizacionBien().getLocalidad() != null 
+				&& activo.getLocalizacion().getLocalizacionBien().getLocalidad().getDescripcion() != null)
+				&& (actDatosDq.getLocalidad() != null && actDatosDq.getLocalidad().getDescripcion() != null)) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio", activo.getLocalizacion().getLocalizacionBien().getLocalidad().getDescripcion(), actDatosDq.getLocalidad().getDescripcion(), CALIDADDATO_DIRECCION));
+		}else {
+			if (activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() !=null 
+					&& activo.getLocalizacion().getLocalizacionBien().getLocalidad() != null 
+					&& activo.getLocalizacion().getLocalizacionBien().getLocalidad().getDescripcion() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio", activo.getLocalizacion().getLocalizacionBien().getLocalidad().getDescripcion(), "", CALIDADDATO_DIRECCION));
+			}else if(actDatosDq.getLocalidad() != null && actDatosDq.getLocalidad().getDescripcion() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio", "", actDatosDq.getLocalidad().getDescripcion(), CALIDADDATO_DIRECCION));
+			} else {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio", "", "", CALIDADDATO_DIRECCION));
+			}
+		}
+		if ((activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null 
+				&& activo.getLocalizacion().getLocalizacionBien().getProvincia() != null 
+				&& activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion() != null)
+				&& (actDatosDq.getProvincia() != null && actDatosDq.getProvincia().getDescripcion() != null)) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Provincia", activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion(), actDatosDq.getProvincia().getDescripcion(), CALIDADDATO_DIRECCION));
+		}else {
+			if (activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null 
+					&& activo.getLocalizacion().getLocalizacionBien().getProvincia() != null 
+					&& activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Provincia", activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion(), "", CALIDADDATO_DIRECCION));
+			}else if(actDatosDq.getProvincia() != null && actDatosDq.getProvincia().getDescripcion() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Provincia", "", actDatosDq.getProvincia().getDescripcion(), CALIDADDATO_DIRECCION));
+			} else {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Provincia", "", "", CALIDADDATO_DIRECCION));
+			}
+		}
+		
+
+		return listCalidadDatoPub;
+	}
+	
+	public List <DtoCalidadDatoPublicacionGrid> getDtoCalidadDatoPublicFasesAct(Activo activo){
+		List <DtoCalidadDatoPublicacionGrid> listCalidadDatoPub = new ArrayList<DtoCalidadDatoPublicacionGrid>();
+		
+		String valorBooleanActivoVpo = "";
+		String valorBooleanActivoDqVpo = "";
+		String valorBooleanActivoInfoCargas = "";
+		String valorBooleanActivoDqInfoCargas = "";
+		String valorIncripcionCorrectaActivo = "";
+		String valorIncripcionCorrectaActivoDq = "";
+		
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoPropietarioActivo activoPropietario  = genericDao.get(ActivoPropietarioActivo.class, filter);
+		
+		
+		//FASE 2
+		if (activo.getInfoRegistral() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Idufir", activo.getInfoRegistral().getIdufir(), CALIDADDATO_REGISRALES));
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Finca Registral", activo.getInfoRegistral().getInfoRegistralBien().getNumFinca(), CALIDADDATO_REGISRALES));
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Tomo", activo.getInfoRegistral().getInfoRegistralBien().getTomo(), CALIDADDATO_REGISRALES));
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Libro", activo.getInfoRegistral().getInfoRegistralBien().getLibro(), CALIDADDATO_REGISRALES));
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Folio", activo.getInfoRegistral().getInfoRegistralBien().getFolio(), CALIDADDATO_REGISRALES));
+
+			if (activo.getInfoRegistral().getInfoRegistralBien().getProvincia() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Provincia del registro", activo.getInfoRegistral().getInfoRegistralBien().getProvincia().getDescripcion(), CALIDADDATO_REGISTRO)); 
+			}else {				
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Provincia del registro", "",CALIDADDATO_REGISTRO));				
+			}
+			
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Número del registro", activo.getInfoRegistral().getInfoRegistralBien().getNumRegistro(), CALIDADDATO_REGISTRO));
+			
+			if(activo.getInfoRegistral().getInfoRegistralBien().getFechaInscripcion()!=null) {
+				valorIncripcionCorrectaActivo=INSCRITO;				
+			}else {
+				valorIncripcionCorrectaActivo=NO_INSCRITO;				
+			}			
+			
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Inscripción correcta", valorIncripcionCorrectaActivo, CALIDADDATO_REGISRALES));
+			
+		}
+		
+		if(activo.getTipoUsoDestino() !=null) {			
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Uso dominante", activo.getTipoUsoDestino().getDescripcion(), CALIDADDATO_REGISRALES));
+		}else {			
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Uso dominante", "", CALIDADDATO_REGISRALES));			
+		}
+		if (activo.getLocalidad() != null ) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio del registro", activo.getLocalidad().getDescripcion(), CALIDADDATO_REGISTRO));
+		}else {			
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio del registro", "", CALIDADDATO_REGISTRO));			
+		}
+				
+		if(activo.getVpo()!=null) {
+			if(activo.getVpo().equals(1)) {
+				valorBooleanActivoVpo = SI;
+			}else if(activo.getVpo().equals(0)) {
+				valorBooleanActivoVpo = NO;
+			}
+		}
+		
+		listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("VPO", valorBooleanActivoVpo, CALIDADDATO_REGISRALES));
+		
+		if (activo.getInfoComercial() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Año construcción", activo.getInfoComercial().getAnyoConstruccion().toString(), CALIDADDATO_REGISRALES));
+		}else {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Año construcción", "", CALIDADDATO_REGISRALES));			
+		}
+		if (activo.getTipoActivo() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Tipologia", activo.getTipoActivo().getDescripcion(), CALIDADDATO_REGISRALES));				
+		}else {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Tipologia", "", CALIDADDATO_REGISRALES));
+		}
+		
+		if(activo.getSubtipoTitulo() !=null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Subtipologia", activo.getSubtipoTitulo().getDescripcion(), CALIDADDATO_REGISRALES));
+		}else {			
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Subtipologia", "",CALIDADDATO_REGISRALES));		
+		}
+		
+		if(activo.getConCargas()!=null) {
+			if(activo.getConCargas().equals(1)) {
+				valorBooleanActivoInfoCargas = SI;
+			}else if(activo.getConCargas().equals(0)) {
+				valorBooleanActivoInfoCargas = NO;
+			}	
+		}						
+		listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Información Cargas", valorBooleanActivoInfoCargas,CALIDADDATO_REGISRALES));
+		
+		if (activoPropietario.getPorcPropiedad() != null) {			
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("% propiedad", activoPropietario.getPorcPropiedad().toString(),CALIDADDATO_REGISRALES));
+		}else {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("% propiedad", "",CALIDADDATO_REGISRALES));			
+		}				
+		//FASE 3
+		if (activo.getInfoRegistral().getInfoRegistralBien()!= null && activo.getInfoRegistral().getInfoRegistralBien().getReferenciaCatastralBien() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Referencia Catastral", activo.getInfoRegistral().getInfoRegistralBien().getReferenciaCatastralBien(), CALIDADDATO_FASE03));
+		}else {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Referencia Catastral", "",CALIDADDATO_FASE03));
+		}
+		if (activo.getInfoRegistral().getInfoRegistralBien() != null && activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Superficie Construida", 
+					String.valueOf(activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().doubleValue()), 
+					CALIDADDATO_FASE03));
+		}else {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Superficie Construida", "", CALIDADDATO_FASE03));
+		}
+		if (activo.getInfoRegistral()!= null && activo.getInfoRegistral().getSuperficieUtil() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Superficie útil",
+					String.valueOf(activo.getInfoRegistral().getSuperficieUtil()),
+					CALIDADDATO_FASE03));
+		}else {			
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Superficie útil", "", CALIDADDATO_FASE03));			
+		}
+		if (activo.getInfoComercial() != null && activo.getInfoComercial().getAnyoConstruccion() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Año construcción", String.valueOf(activo.getInfoComercial().getAnyoConstruccion()),CALIDADDATO_FASE03));
+		}else {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Año construcción", "",CALIDADDATO_FASE03));
+		}		
+			//Bloque dirección
+		if ((activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien().getTipoVia() != null && activo.getLocalizacion().getLocalizacionBien().getTipoVia().getDescripcion() != null)) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Tipo vía", activo.getLocalizacion().getLocalizacionBien().getTipoVia().getDescripcion(), CALIDADDATO_DIRECCION));
+		}else {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Tipo vía", "", CALIDADDATO_DIRECCION));
+			
+		}
+		if ((activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null && activo.getLocalizacion().getLocalizacionBien().getNombreVia() != null)) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Nombre calle", activo.getLocalizacion().getLocalizacionBien().getNombreVia(), CALIDADDATO_DIRECCION));			
+		}else {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Nombre calle", "",CALIDADDATO_DIRECCION));			
+		}
+		if ((activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null && activo.getLocalizacion().getLocalizacionBien().getCodPostal() != null)) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("CP", activo.getLocalizacion().getLocalizacionBien().getCodPostal(), CALIDADDATO_DIRECCION));
+		}else {			
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("CP", "", CALIDADDATO_DIRECCION));
+			
+		}
+		if ((activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() !=null 
+				&& activo.getLocalizacion().getLocalizacionBien().getLocalidad() != null 
+				&& activo.getLocalizacion().getLocalizacionBien().getLocalidad().getDescripcion() != null)) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio", activo.getLocalizacion().getLocalizacionBien().getLocalidad().getDescripcion(), CALIDADDATO_DIRECCION));
+		}else {			
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio", "", CALIDADDATO_DIRECCION));			
+		}
+		if ((activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null 
+				&& activo.getLocalizacion().getLocalizacionBien().getProvincia() != null 
+				&& activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion() != null)) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Provincia", activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion(),CALIDADDATO_DIRECCION));
+		}else {			
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Provincia", "", CALIDADDATO_DIRECCION));			
+		}
+		
+		return listCalidadDatoPub;
+	}
 	
 }

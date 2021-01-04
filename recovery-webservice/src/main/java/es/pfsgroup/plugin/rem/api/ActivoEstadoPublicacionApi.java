@@ -219,4 +219,6 @@ public interface ActivoEstadoPublicacionApi {
 	DtoCalidadDatoPublicacionActivo getCalidadDatoPublicacionActivo(Long idActivo);
 	
 	Boolean saveDatoRemCalidadDatoPublicacion(List<Long> idList, String datoDq, boolean quieroActualizar);
+	
+	List <DtoCalidadDatoPublicacionGrid> getCalidadDatoPublicacionActivoGrid(Long idActivo);
 }

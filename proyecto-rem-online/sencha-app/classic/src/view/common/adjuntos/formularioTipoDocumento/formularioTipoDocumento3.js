@@ -1,4 +1,4 @@
-Ext.define('HreRem.view.activos.comercial.ofertas.condiciones.economicas.CondicionesEconomicasDetalle', {	
+Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDcomento3', {	
     extend		: 'HreRem.view.common.FormBase',
     xtype		: 'xtypeFormularioTipoDocumento3',
     cls	: 'panel-base shadow-panel',

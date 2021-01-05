@@ -46,6 +46,14 @@ BEGIN
             PL_OUTPUT);
       DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
 
+      -- Insertamos fecha de venta
+      V_MSQL :='UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL SET 
+                  ECO_FECHA_VENTA = TO_DATE(''18/12/20'', ''dd/MM/yyyy''),
+                  USUARIOMODIFICAR = '''||V_USUARIO||''',
+                  FECHAMODIFICAR = SYSDATE                            
+                  WHERE ECO_NUM_EXPEDIENTE = ''224877''';
+      EXECUTE IMMEDIATE V_SQL;
+
       DBMS_OUTPUT.PUT_LINE('[INFO]: REPOSICIONAMIENTO REALIZADO CON ÉXITO' );
    
    ELSE

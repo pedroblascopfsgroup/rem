@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Carlos Santos Vílchez
---## FECHA_CREACION=20201231
+--## FECHA_CREACION=20210105
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-8624
+--## INCIDENCIA_LINK=REMVIP-8631
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Reposicionar tarea
@@ -24,7 +24,7 @@ DECLARE
    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquemas.
    PL_OUTPUT VARCHAR2(20000 CHAR);
    V_SQL VARCHAR(20000 CHAR);
-   V_USUARIO VARCHAR(25 CHAR) := 'REMVIP-8624';
+   V_USUARIO VARCHAR(25 CHAR) := 'REMVIP-8631';
    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
  
 BEGIN
@@ -40,7 +40,7 @@ BEGIN
       REM01.AVANCE_TRAMITE (
             V_USUARIO,
             '224877',
-            'T013_PosicionamientoYFirma',
+            'T017_DocsPosVenta',
             NULL, NULL, PL_OUTPUT);
       DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
 

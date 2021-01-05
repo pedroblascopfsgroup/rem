@@ -47,7 +47,7 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
 
       -- Insertamos fecha de venta
-      V_MSQL :='UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL SET 
+      V_SQL :='UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL SET 
                   ECO_FECHA_VENTA = TO_DATE(''18/12/20'', ''dd/MM/yyyy''),
                   USUARIOMODIFICAR = '''||V_USUARIO||''',
                   FECHAMODIFICAR = SYSDATE                            

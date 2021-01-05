@@ -41,7 +41,7 @@ BEGIN
             V_USUARIO,
             '224877',
             'T017_DocsPosVenta',
-            NULL,
+            '224877',
             '03', 
             PL_OUTPUT);
       DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);

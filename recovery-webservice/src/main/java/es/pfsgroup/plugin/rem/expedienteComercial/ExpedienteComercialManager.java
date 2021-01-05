@@ -1876,6 +1876,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setRefCircuitoCliente(null);
 		}				
 		
+		
 		boolean isCerberusAppleOrArrowOrRemaining = 
 				oferta != null && oferta.getActivoPrincipal() != null 						
 				&& oferta.getActivoPrincipal().getCartera() != null 
@@ -2008,6 +2009,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(usuarioBackOffice != null && usuarioBackOffice.getEmail() != null) {
 				dto.setCorreoGestorBackoffice(usuarioBackOffice.getEmail());
 			}
+		}
+		if(oferta.getFechaCreacionOpSf() != null) {
+			dto.setFechaCreacionOpSf(oferta.getFechaCreacionOpSf());
 		}
 		
 		return dto;

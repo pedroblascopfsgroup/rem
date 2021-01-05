@@ -79,6 +79,7 @@ public class OfertaDto implements Serializable {
 	private Date fechaRecomendacionRc;
 	private String recomendacionDc;
 	private Date fechaRecomendacionDc;
+	private Date fechaCreacionOpSf;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -328,4 +329,11 @@ public class OfertaDto implements Serializable {
 	public void setFechaRecomendacionDc(Date fechaRecomendacionDc) {
 		this.fechaRecomendacionDc = fechaRecomendacionDc;
 	}
+	public Date getFechaCreacionOpSf() {
+		return fechaCreacionOpSf;
+	}
+	public void setFechaCreacionOpSf(Date fechaCreacionOpSf) {
+		this.fechaCreacionOpSf = fechaCreacionOpSf;
+	}
+	
 }

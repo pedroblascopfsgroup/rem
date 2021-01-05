@@ -128,6 +128,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String correoGestorBackoffice;
 
 	private Boolean tareaAutorizacionPropiedadFinalizada;
+	
+	private Date fechaCreacionOpSf;
 
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
@@ -576,6 +578,14 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	public Boolean getTareaAutorizacionPropiedadFinalizada() {
 		return this.tareaAutorizacionPropiedadFinalizada;
+	}
+
+	public Date getFechaCreacionOpSf() {
+		return fechaCreacionOpSf;
+	}
+
+	public void setFechaCreacionOpSf(Date fechaCreacionOpSf) {
+		this.fechaCreacionOpSf = fechaCreacionOpSf;
 	}
 
 }

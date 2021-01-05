@@ -109,6 +109,15 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							readOnly : 'true',
 							hidden : '{esTipoAlquiler}'
 						}
+					},{
+						xtype : 'datefieldbase',
+						formatter : 'date("d/m/Y")',
+						fieldLabel : HreRem.i18n('fieldlabel.fecha.incorporacion.rem'),
+						colspan: 3,
+						bind : {
+							value: '{datosbasicosoferta.fechaCreacionOpSf}'
+						},
+						readOnly: true
 					},
 					{bind : {hidden : '{!esTipoAlquiler}'}},
 					{

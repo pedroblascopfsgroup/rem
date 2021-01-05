@@ -318,6 +318,9 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name = "OFR_FECHA_RECOMENDACION_DC")
     private Date ofrFechaRecomendacionDc;
+	
+	@Column(name="OFR_FECHA_CREACION_OP_SF")
+	private Date fechaCreacionOpSf;
 
 
 	public Date getFechaAlta() {
@@ -968,4 +971,13 @@ public class Oferta implements Serializable, Auditable {
 	public void setOfrFechaRecomendacionDc(Date ofrFechaRecomendacionDc) {
 		this.ofrFechaRecomendacionDc = ofrFechaRecomendacionDc;
 	}
+
+	public Date getFechaCreacionOpSf() {
+		return fechaCreacionOpSf;
+	}
+
+	public void setFechaCreacionOpSf(Date fechaCreacionOpSf) {
+		this.fechaCreacionOpSf = fechaCreacionOpSf;
+	}
+	
 }

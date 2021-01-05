@@ -1060,6 +1060,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDc())) {
 				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDc());
 			}
+			if (!Checks.esNulo(ofertaDto.getFechaCreacionOpSf())) {
+				oferta.setFechaCreacionOpSf(ofertaDto.getFechaCreacionOpSf());
+			}
+			
 
 		}
 
@@ -1318,6 +1322,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDc())
 					&& !ofertaDto.getFechaRecomendacionDc().equals(oferta.getOfrFechaRecomendacionDc())) {
 				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDc());
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getFechaCreacionOpSf())
+					&& !ofertaDto.getFechaCreacionOpSf().equals(oferta.getFechaCreacionOpSf())) {
+				oferta.setFechaCreacionOpSf(oferta.getFechaCreacionOpSf());
 			}
 
 		}

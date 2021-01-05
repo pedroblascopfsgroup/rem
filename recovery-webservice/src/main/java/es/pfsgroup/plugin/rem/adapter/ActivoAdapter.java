@@ -2758,7 +2758,8 @@ public class ActivoAdapter {
 			BeanUtils.copyProperties(dto, activoEntrada.getSituacionPosesoria());
 			if (activoEntrada.getSituacionPosesoria().getConTitulo() != null)
 				dto.setConTitulo(activoEntrada.getSituacionPosesoria().getConTitulo().getCodigo());
-			activoApi.compruebaParaEnviarEmailAvisoOcupacion(dto, activoEntrada.getId());
+			if(tipoDocumento.getCodigo().equals(DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION))
+				activoApi.compruebaParaEnviarEmailAvisoOcupacion(dto, activoEntrada.getId());
 		}
 		return null;
 	}

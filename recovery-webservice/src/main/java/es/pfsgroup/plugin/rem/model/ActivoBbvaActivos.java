@@ -81,16 +81,16 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
   	private DDSinSiNo activoEpa;
     
 	@Column(name = "BBVA_EMPRESA")
-  	private Long empresa;
+  	private String empresa;
     
 	@Column(name = "BBVA_OFICINA")
-  	private Long oficina;
+  	private String oficina;
     
 	@Column(name = "BBVA_CONTRAPARTIDA")
-  	private Long contrapartida;
+  	private String contrapartida;
     
 	@Column(name = "BBVA_FOLIO")
-  	private Long folio;
+  	private String folio;
     
 	@Column(name = "BBVA_CDPEN")
   	private String cdpen;
@@ -193,35 +193,35 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 		this.activoEpa = activoEpa;
 	}
 
-	public Long getEmpresa() {
+	public String getEmpresa() {
 		return empresa;
 	}
 
-	public void setEmpresa(Long empresa) {
+	public void setEmpresa(String empresa) {
 		this.empresa = empresa;
 	}
 
-	public Long getOficina() {
+	public String getOficina() {
 		return oficina;
 	}
 
-	public void setOficina(Long oficina) {
+	public void setOficina(String oficina) {
 		this.oficina = oficina;
 	}
 
-	public Long getContrapartida() {
+	public String getContrapartida() {
 		return contrapartida;
 	}
 
-	public void setContrapartida(Long contrapartida) {
+	public void setContrapartida(String contrapartida) {
 		this.contrapartida = contrapartida;
 	}
 
-	public Long getFolio() {
+	public String getFolio() {
 		return folio;
 	}
 
-	public void setFolio(Long folio) {
+	public void setFolio(String folio) {
 		this.folio = folio;
 	}
 

@@ -5569,9 +5569,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							&& (!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
 									|| !Checks.esNulo(posesoria.getFechaTomaPosesion()))))) {
 				if (!Checks.esNulo(ocupado) && (1 == ocupado && DDTipoTituloActivoTPA.tipoTituloNo.equals(conTitulo))) {
-					boolean val = compruebaSiExisteActivoBienPorMatricula(id,
-							DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION);
-					if (val) {
+					if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 
 						List<DtoAdjunto> listAdjuntos;
 						DtoAdjunto adjuntoAux = null;

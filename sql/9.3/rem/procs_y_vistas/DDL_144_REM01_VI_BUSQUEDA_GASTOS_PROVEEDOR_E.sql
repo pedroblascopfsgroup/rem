@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=20201102
+--## AUTOR=Jesus Jativa
+--## FECHA_CREACION=20210107
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-11812
+--## INCIDENCIA_LINK=HREOS-12661
 --## PRODUCTO=NO
 --## Finalidad: DDL creación vista VI_BUSQUEDA_GASTOS_PROVEEDOR_E.
 --##
@@ -16,7 +16,9 @@
 --##		    0.4 Juan Beltrán		- Campo partida presupuestaria
 --##		    0.5 Juan Beltrán		- Campos concepto contable y provision fondos 
 --##		    0.6 Daniel Algaba		- Adaptación de consulta al nuevo modelo de facturación
---##        0.7 DAP             - Añadir campos
+--##            0.7 DAP             - Añadir campos
+--##		    0.8 Jesus Jativa		- Añadidos campos GLD_PRINCIPAL_SUJETO||GLD_PRINCIPAL_NO_SUJETO||GLD_RECARGO||GLD_INTERES_DEMORA||GLD_COSTAS
+--##                                      para HREOS-12661
 --##########################################
 --*/
 
@@ -129,6 +131,11 @@ BEGIN
         GLD.GLD_SUBCUENTA_INTERESES SC_INTERESES,
         GLD.GLD_APARTADO_INTERESES APDO_INTERESES,
         GLD.GLD_CAPITULO_INTERESES CAP_INTERESES,
+        GLD.GLD_PRINCIPAL_SUJETO IMP_PRINCIPAL_SUJETO,
+        GLD.GLD_PRINCIPAL_NO_SUJETO IMP_PRINCIPAL_NO_SUJETO,
+        GLD.GLD_RECARGO IMP_RECARGO,
+        GLD.GLD_INTERES_DEMORA IMP_INTERES_DEMORA,
+        GLD.GLD_COSTAS IMP_COSTES_TASAS,
         CASE ENT.DD_ENT_CODIGO
             WHEN ''ACT'' THEN TO_CHAR(ACT.ACT_NUM_ACTIVO)
             WHEN ''GEN'' THEN AGS.AGS_ACTIVO_GENERICO
@@ -264,6 +271,11 @@ BEGIN
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.SC_INTERESES IS ''Subcuenta contable de intereses.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.APDO_INTERESES IS ''Apartado de intereses.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.CAP_INTERESES IS ''Capítulo de intereses.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.IMP_PRINCIPAL_SUJETO IS ''Importe principal sujeto a impuestos.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.IMP_PRINCIPAL_NO_SUJETO IS ''Importe principal no sujeto a impuestos.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.IMP_RECARGO IS ''Importe de recargo.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.IMP_INTERES_DEMORA IS ''Importe de intereses por demora.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.IMP_COSTES_TASAS IS ''Importe de tasas y costas.''';
 
 
   DBMS_OUTPUT.PUT_LINE('Creados los comentarios en CREATE VIEW '|| V_ESQUEMA ||'.VI_BUSQUEDA_GASTOS_PROVEEDOR_E...Creada OK');

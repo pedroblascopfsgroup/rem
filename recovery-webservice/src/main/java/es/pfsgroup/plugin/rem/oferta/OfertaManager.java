@@ -5831,7 +5831,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					costesLegales = getGastosLegalesByTipo(importeOfertaNeta, oferta.getActivoPrincipal());
 					activosFichaComercial.setCostesLegales(costesLegales);
 					costesLegalesTotal += costesLegales;
-					activosFichaComercial.setComisionHaya(getComisionHayaByTipo(importeOfertaNeta, oferta.getActivoPrincipal()));
+					comisionHaya = getComisionHayaByTipo(importeOfertaNeta, oferta.getActivoPrincipal());
+					activosFichaComercial.setComisionHaya(comisionHaya);
 					comisionHayaTotal += getComisionHayaByTipo(importeOfertaNeta, oferta.getActivoPrincipal());
 					activosFichaComercial.setOfertaNeta(importeOfertaNeta - comisionHaya - costesLegales - gastosPendientes);
 					ofertaNetaTotal += importeOfertaNeta - comisionHaya - costesLegales - gastosPendientes ;

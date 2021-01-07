@@ -1639,8 +1639,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			}
 		}
 		if(actDatosDq != null) {
-			 //setDataFase0a2(actDatosDq, activo, dto);
-			 //setDataFase3(dto, activo, actDatosDq);
+			 setDataFase0a2(actDatosDq, activo, dto);
+			 setDataFase3(dto, activo, actDatosDq);
 			 setDataFase4(actDatosDq, activo, dto);
 		}else {
 			getDatosActivoSinDQ(dto,activo);
@@ -1809,6 +1809,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		boolean ko = false;
 		//IDUFIR
 		if(dto.getDqIdufirFase1()==null) {
+			dto.setCorrectoIdufirFase1(ICONO_TICK_INTERROGANTE);
+			interrogante=true;
+		}else if(dto.getDqIdufirFase1() != null && dto.getDrIdufirFase1() != null 
+				&& dto.getDqIdufirFase1().equals(dto.getDrIdufirFase1())){
 			dto.setCorrectoIdufirFase1(ICONO_TICK_OK);
 		}else {
 			dto.setCorrectoIdufirFase1(ICONO_TICK_KO);
@@ -2246,7 +2250,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		dto.setDqF3ReferenciaCatastral(actDatosDq.getReferenciaCatastralDdq());
 		
 		if(actDatosDq.getSuperficieConstruidaDdq() != null) {
-			dto.setDqF3SuperficieConstruida(actDatosDq.getSuperficieConstruidaDdq());	
+			dto.setDqF3SuperficieConstruida(actDatosDq.getSuperficieConstruidaDdq().setScale(2,RoundingMode.HALF_UP));	
 		}
 		
 		if(actDatosDq.getSuperficieUtilDdq() != null) {

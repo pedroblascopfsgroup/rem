@@ -9,13 +9,20 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ConfirmarOperacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ReintegroApi;
 import es.pfsgroup.plugin.rem.api.ReservaApi;
@@ -68,6 +75,15 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 	
 	@Autowired
 	private TareaActivoApi tareaActivoApi;
+	
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private GestorExpedienteComercialApi gestorExpedienteComercialApi;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 
 	@Override
 	public String managerName() {
@@ -502,6 +518,21 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 			throw new Exception("Error al actualizar el estado del expediente comercial.");
 		}
 		expedienteComercial.setEstado(estadoExpCom);
+		if(DDEstadosExpedienteComercial.APROBADO.equals(estadoExpCom.getCodigo())) {
+			if(expedienteComercial.getCondicionante().getSolicitaReserva()!=null && 1 == expedienteComercial.getCondicionante().getSolicitaReserva()) {															
+				EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+						.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
+
+				if(gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expedienteComercial, "GBOAR") == null) {
+					GestorEntidadDto ge = new GestorEntidadDto();
+					ge.setIdEntidad(expedienteComercial.getId());
+					ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+					ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());								
+					ge.setIdTipoGestor(tipoGestorComercial.getId());
+					gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
+				}
+			}
+		}
 		if (!expedienteComercialApi.update(expedienteComercial,false)) {
 			throw new Exception("Error al actualizar el expediente comercial.");
 		}

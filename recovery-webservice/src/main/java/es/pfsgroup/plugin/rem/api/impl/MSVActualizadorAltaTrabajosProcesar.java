@@ -46,7 +46,8 @@ public class MSVActualizadorAltaTrabajosProcesar extends AbstractMSVActualizador
 
 	protected static final Log logger = LogFactory.getLog(MSVActualizadorAltaTrabajosProcesar.class);
 	
-	private static final String EMAIL_VALIDADO = "VALIDADO";
+	private static final String EMAIL_CREACION = "CREACION";
+	
 
 	@Autowired
 	ProcessAdapter processAdapter;
@@ -332,7 +333,7 @@ public class MSVActualizadorAltaTrabajosProcesar extends AbstractMSVActualizador
 			
 			trabajoDao.saveOrUpdate(trabajo);
 			
-			trabajoApi.EnviarCorreoTrabajos(trabajo, EMAIL_VALIDADO);
+			trabajoApi.EnviarCorreoTrabajos(trabajo, EMAIL_CREACION);
 			
 		}
 		

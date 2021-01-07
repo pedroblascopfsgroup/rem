@@ -188,7 +188,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	GIANTS: '12',
     	EGEO: '13',
     	GALEON:'15',
-    	ZEUS: '14'
+    	ZEUS: '14',
+    	BBVA: '16'
     },
 
     NOMBRE_CARTERA:	{
@@ -203,7 +204,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	'11': 'THIRDPARTIES',
     	'12': 'GIANTS',
     	'15': 'GALEON',
-    	'14': 'ZEUS'
+    	'14': 'ZEUS',
+    	'16': 'BBVA'
     },
 
     NOMBRE_CARTERA2: {
@@ -216,7 +218,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	GIANTS: 'GIANTS',
     	LIBERBANK:'LIBERBANK',
     	GALEON:'GALEON',
-    	ZEUS :'ZEUS'
+    	ZEUS :'ZEUS',
+    	BBVA :'BBVA'
     },
 
     SUBCARTERA: {
@@ -253,7 +256,13 @@ Ext.define('HreRem.ux.util.Constants', {
 		DIVARIAN: '150',
 		OMEGA: '65',
 		DIVARIANARROW:'151',
-		DIVARIANREMAINING:'152'
+		DIVARIANREMAINING:'152',
+		BBVA:'153',
+		ANIDA:'154',
+		CX:'155',
+		GAT:'156',
+		EDT:'157',
+		USGAI:'158'
     },
 
     NOMBRE_SUBCARTERA: {
@@ -306,6 +315,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		SUPER_EDITA_COMPRADOR: 'SUPEREDITACOMPRADOR',
 		GESTOR_ALQUILER_HPM: 'GESTALQ',
 		SUPERVISOR_ADMISION:'HAYASUPADM'
+
+
     },
 
     TIPOS_OFERTA: {
@@ -344,7 +355,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	AP_CES_PTE_MAN: '36',
     	CONT_CES: '38',
     	RES_PTE_MAN: '39',
-    	AP_PTE_MAN : '40'
+    	AP_PTE_MAN : '40',
+    	PEN_RES_OFER_COM : '43'
     },
 
     ESTADOS_GASTO: {
@@ -696,6 +708,22 @@ Ext.define('HreRem.ux.util.Constants', {
 	PRINCIPAL:'01',
 	DEPENDIENTE:'02',
 	INDIVIDUAL:'03'
+	},
+	
+	DD_TAL_TIPO_ALTA:{
+	ALTA_AUTOMATICA:'AUT',
+	MANUAL_ACTIVO_APARECIDO:'MAA',
+	MANUAL_INCIDENCIA_PROCESO_AUTOMATICO:'MIA',
+	MANUAL_DIVISION_HORIZONTAL:'MDH',
+	MANUAL_AGRUPACIONES:'MAG'
+	},
+	
+	DD_STA_SUBTIPO_TITULO_ACTIVO:{
+	LEASING:'LEA',
+	NOTARIAL_COMPRA:'NCC',
+	EJECUCION_HIPOTECARIA:'EHC',
+	NOTARIAL_LEASING:'NLE',
+	NOTARIAL_RECOMPRA:'NRE'
 	},
 	
 	DD_TIPO_RECARGO:{

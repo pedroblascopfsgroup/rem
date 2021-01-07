@@ -105,7 +105,7 @@ public class HttpClientFacade {
 	private JSONObject execute(HttpClient httpclient, HttpMethod method) throws IOException, HttpClientException {
 		restApi.trace("Lanzando peticion : httpClient.executeMethod()");
 		Boolean webcomSimulado = Boolean.valueOf(WebcomRESTDevonProperties.extractDevonProperty(appProperties,
-				WebcomRESTDevonProperties.WEBCOM_SIMULADO, "true"));
+				WebcomRESTDevonProperties.WEBCOM_SIMULADO, "false"));
 		Integer responseCode = 0;
 		if (!webcomSimulado) {
 			responseCode = httpclient.executeMethod(method);
@@ -164,7 +164,7 @@ public class HttpClientFacade {
 	private String getResponseBody(HttpMethod method) {
 		String resultado = "";
 		Boolean webcomSimulado = Boolean.valueOf(WebcomRESTDevonProperties.extractDevonProperty(appProperties,
-				WebcomRESTDevonProperties.WEBCOM_SIMULADO, "true"));
+				WebcomRESTDevonProperties.WEBCOM_SIMULADO, "false"));
 
 		if (method != null && method.hasBeenUsed() && !webcomSimulado) {
 			BufferedReader in = null;

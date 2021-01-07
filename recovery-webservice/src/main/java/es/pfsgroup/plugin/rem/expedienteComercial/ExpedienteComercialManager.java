@@ -98,6 +98,7 @@ import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.bulkAdvisoryNote.dao.BulkOfertaDao;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
@@ -352,6 +353,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private BulkOfertaDao bulkOfertaDao;
+	
+	@Autowired
+	private TramitacionOfertasApi tramitacionOfertasManager;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoManager;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -1048,7 +1055,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(listaOfertasLBK) && !listaOfertasLBK.isEmpty()) {
 			ofertaApi.calculoComiteLBK(oferta.getId(), null);
 		}
-				
 		
 		if (!Checks.esNulo(dto.getTipoOfertaCodigo())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoOfertaCodigo());
@@ -1289,6 +1295,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if ((!Checks.esNulo(dto.getNumVisita()) && ((!Checks.esNulo(visitaOferta) && Long.parseLong(dto.getNumVisita()) != visitaOferta.getNumVisitaRem()) || Checks.esNulo(visitaOferta)))
 				|| !Checks.esNulo(dto.getImporteOferta())) {
 			this.actualizarGastosExpediente(expedienteComercial, oferta);
+		}
+		
+		if (dto.getImporteOferta() != null && DDCartera.CODIGO_CARTERA_BBVA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", tramitacionOfertasManager.calcularComiteBBVA(oferta));
+			DDComiteSancion comite = genericDao.get(DDComiteSancion.class, filtro);
+			expedienteComercial.setComitePropuesto(comite);
+			expedienteComercial.setComiteSancion(comite);
+			genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		}
 
 		return true;
@@ -1970,6 +1984,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		
+		if(oferta.getAgrupacion() != null && oferta.getAgrupacion().getTipoAgrupacion() != null && 
+				DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+			ActivoLoteComercial agrupacionLoteCom = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
+			if(agrupacionLoteCom != null && agrupacionLoteCom.getUsuarioGestorComercialBackOffice() != null) {
+				dto.setCorreoGestorBackoffice(agrupacionLoteCom.getUsuarioGestorComercialBackOffice().getEmail());
+			}
+		} else if(oferta.getActivoPrincipal() != null) {
+			Usuario usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			if(usuarioBackOffice != null && usuarioBackOffice.getEmail() != null) {
+				dto.setCorreoGestorBackoffice(usuarioBackOffice.getEmail());
+			}
+		}
 		
 		return dto;
 	}
@@ -2291,12 +2317,69 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public DtoPage getActivosExpedienteVista(Long idExpediente) {
-		List<VListadoActivosExpediente> listadoActivos = genericDao.getList(VListadoActivosExpediente.class,
+		List<VListadoActivosExpediente> listadoActivos;
+		List<VListadoActivosExpedienteBBVA> listadoActivosBbva;
+		
+		if (DDCartera.CODIGO_CARTERA_BBVA.equals(getCodigoCarteraExpediente(idExpediente))) {
+			listadoActivosBbva = genericDao.getList(VListadoActivosExpedienteBBVA.class,
+					genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
+			
+			return new DtoPage(listadoActivosBbva, listadoActivosBbva.size());
+		} else {
+			listadoActivos = genericDao.getList(VListadoActivosExpediente.class,
 				genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
-
+		}
+			
 		return new DtoPage(listadoActivos, listadoActivos.size());
 	}
-
+	
+	@Override
+	public Boolean getActivoExpedienteEpa(ExpedienteComercial expediente) {
+		
+		List<ActivoOferta> listaActivosOferta = null;
+		
+		if(expediente != null && expediente.getOferta() != null && expediente.getOferta().getActivosOferta() != null) {
+			listaActivosOferta = expediente.getOferta().getActivosOferta();
+			if(listaActivosOferta.get(0) != null && listaActivosOferta.get(0).getPrimaryKey().getActivo() != null
+					&& DDCartera.CODIGO_CARTERA_BBVA.equals(listaActivosOferta.get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
+				for (ActivoOferta activosOferta : listaActivosOferta) {
+					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activosOferta.getPrimaryKey().getActivo().getId());
+					ActivoBbvaActivos activoBbva  = genericDao.get(ActivoBbvaActivos.class, filtroActivo);
+					if(activoBbva != null && DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {
+						return true;
+					}
+				}
+			} else {
+				return false;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public Boolean getActivoExpedienteAlquilado(ExpedienteComercial expediente) {
+		
+		List<ActivoOferta> listaActivosOferta = null;
+		
+		if(expediente != null && expediente.getOferta() != null && expediente.getOferta().getActivosOferta() != null) {
+			listaActivosOferta = expediente.getOferta().getActivosOferta();
+			if(listaActivosOferta.get(0) != null && listaActivosOferta.get(0).getPrimaryKey().getActivo() != null
+					&& DDCartera.CODIGO_CARTERA_BBVA.equals(listaActivosOferta.get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
+				for (ActivoOferta activosOferta : listaActivosOferta) {
+					Activo activo = activosOferta.getPrimaryKey().getActivo();
+					if (activo != null && activo.getSituacionPosesoria().getOcupado() == 1
+							&& DDTipoTituloActivoTPA.tipoTituloSi
+									.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo())){
+						return true;
+					}
+				}
+			} else {
+				return false;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Convierte una entidad Activo a objeto dto.
 	 *
@@ -9123,7 +9206,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public boolean checkDepositoDespublicacionSubido(TareaExterna tareaExterna) {
 
-		if (esApple(tareaExterna) || esDivarian(tareaExterna)) {
+		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna)) {
 			return true;
 		}
 
@@ -9189,7 +9272,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public boolean checkDepositoRelleno(TareaExterna tareaExterna) {
 
-		if (esApple(tareaExterna) || esDivarian(tareaExterna)) {
+		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna)) {
 			return true;
 		}
 
@@ -11282,6 +11365,138 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				return true;
 			}
 		}
+		return false;
+	}
+	
+	@Override
+	public boolean esBBVA(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		boolean esBBVA = false;
+		if (!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta())) {
+			Activo activo = expedienteComercial.getOferta().getActivoPrincipal();
+			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera())
+					&& !Checks.esNulo(activo.getSubcartera())) {
+				esBBVA = (DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())
+						&& DDSubcartera.CODIGO_BBVA.equals(activo.getSubcartera().getCodigo()));
+			}
+		}
+		return esBBVA;
+	}
+	
+	@Override
+	public List<DtoActivosAlquiladosGrid> getActivosAlquilados(Long idExpediente) {
+		
+		ExpedienteComercial expediente = findOne(idExpediente);
+		List<DtoActivosAlquiladosGrid> dtoActivosAlquilados = new ArrayList <DtoActivosAlquiladosGrid>();
+		List<ActivoOferta> activosExpediente = expediente.getOferta().getActivosOferta();
+		
+		Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "codigo", expediente.getEstado().getCodigo());
+		DDEstadosExpedienteComercial estadoExpediente = genericDao.get(DDEstadosExpedienteComercial.class, filtroExpediente);
+
+		if (activosExpediente != null && !activosExpediente.isEmpty()) {
+			for (ActivoOferta activoOferta: activosExpediente) {
+				
+				DtoActivosAlquiladosGrid dto = new DtoActivosAlquiladosGrid();
+				
+				dto.setId(activoOferta.getPrimaryKey().getActivo().getId());
+				dto.setNumActivo(activoOferta.getPrimaryKey().getActivo().getNumActivo());
+				dto.setSubTipoActivo(activoOferta.getPrimaryKey().getActivo().getSituacionComercial().getDescripcion());
+				dto.setMunicipio(activoOferta.getPrimaryKey().getActivo().getMunicipio());
+				dto.setDireccion(activoOferta.getPrimaryKey().getActivo().getDireccion());
+				
+				Long a = activoOferta.getPrimaryKey().getActivo().getId();
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activoAlq.id", a);
+				ActivosAlquilados activoAlquilado = genericDao.get(ActivosAlquilados.class, filtroActivo);
+				
+				if (activoAlquilado != null && activoAlquilado.getActivoAlq() != null && activoAlquilado.getActivoAlq().getSituacionPosesoria() != null 
+						&& activoAlquilado.getActivoAlq().getSituacionPosesoria().getOcupado() == 1 
+						&& activoAlquilado.getActivoAlq().getSituacionPosesoria().getConTitulo() != null 
+						&& DDTipoTituloActivoTPA.tipoTituloSi.contentEquals(activoAlquilado.getActivoAlq().getSituacionPosesoria().getConTitulo().getCodigo())){
+
+					dto.setRentaMensual(activoAlquilado.getAlqRentaMensual());
+					dto.setDeudaActual(activoAlquilado.getAlqDeudaActual());
+					
+					if (activoAlquilado.getAlqDeudas() == 1) {
+						dto.setConDeudas("Si");
+					} else {
+						dto.setConDeudas("No");
+					}
+					if (activoAlquilado.getAlqInquilino() == 1) {
+						dto.setInquilino("Si");
+					} else {
+						dto.setInquilino("No");
+					}
+					if (activoAlquilado.getAlqOfertante() == 1) {
+						dto.setOfertante("Si");
+					} else {
+						dto.setOfertante("No");
+					}
+					
+					dto.setFechaFinContrato(activoAlquilado.getAlqFechaFin());
+					
+					if (estadoExpediente != null && estadoExpediente.getCodigo() != null) {
+						dto.setEstadoExpediente(estadoExpediente.getCodigo());
+					}
+					
+				}
+				dtoActivosAlquilados.add(dto);
+			}
+		}
+		return dtoActivosAlquilados;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateActivosAlquilados(DtoActivosAlquiladosGrid dto) {
+		
+		Integer si = 1;
+		Integer no = 0;
+		
+		if (dto != null) {
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activoAlq.id", dto.getId());
+			ActivosAlquilados activoAlquilado = genericDao.get(ActivosAlquilados.class, filtro);
+			
+			if (activoAlquilado != null) {
+				if (dto.getRentaMensual() != null) {
+					activoAlquilado.setAlqRentaMensual(dto.getRentaMensual());
+				}
+				if (dto.getDeudaActual() != null) {
+					activoAlquilado.setAlqDeudaActual(dto.getDeudaActual());
+				}
+				if (dto.getConDeudas() != null) {
+					if (Integer.parseInt(dto.getConDeudas()) == 1) {
+						activoAlquilado.setAlqDeudas(si);
+					} else {
+						activoAlquilado.setAlqDeudas(no);
+					} 
+				}
+				if (dto.getInquilino() != null) {
+					if (Integer.parseInt(dto.getConDeudas()) == 1) {
+						activoAlquilado.setAlqInquilino(si);
+					} else {
+						activoAlquilado.setAlqInquilino(no);
+					} 
+				}
+				if (dto.getOfertante() != null) {
+					if (Integer.parseInt(dto.getConDeudas()) == 1) {
+						activoAlquilado.setAlqOfertante(si);
+					} else {
+						activoAlquilado.setAlqOfertante(no);
+					} 
+				}
+				if (dto.getFechaFinContrato() != null) {
+					activoAlquilado.setAlqFechaFin(dto.getFechaFinContrato());
+				}
+				
+				genericDao.save(ActivosAlquilados.class, activoAlquilado);
+
+				return true;
+				
+			}
+			
+		}
+		
 		return false;
 	}
 	

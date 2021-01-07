@@ -1135,13 +1135,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	}
 	     	
 	     },getIconClsIdufirCorrecto:function(get){
-	     	//Logica completamente diferente
+	     	
 	     	var correctoIdufirFase1 = get('calidaddatopublicacionactivo.correctoIdufirFase1');
 	     	
 	     	if("0"==correctoIdufirFase1)  {
 	     		return 'app-tbfiedset-ico icono-tickok';
-	     	}else {
+	     	}else if("1"==correctoIdufirFase1){
 	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else {
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
 	     	}
 	     },getIconClsFincaRegistralCorrecto:function(get){
 	     	var correcto = get('calidaddatopublicacionactivo.correctoFincaRegistralFase1');

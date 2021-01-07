@@ -49,6 +49,11 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 	private static final String CAB_SC_INTERESES = "Subcuenta Contable Intereses";
 	private static final String CAB_APDO_INTERESES = "Apartado Intereses";
 	private static final String CAB_CAP_INTERESES = "Capítulo Intereses";
+	private static final String CAB_IMP_PRINCIPAL_SUJETO = "Importe Principal Sujeto";
+	private static final String CAB_IMP_PRINCIPAL_NO_SUJETO = "Importe Principal No Sujeto";
+	private static final String CAB_IMP_RECARGO = "Importe de Recargo";
+	private static final String CAB_IMP_INTERES_DEMORA = "Importe Interes Demora";
+	private static final String CAB_IMP_COSTES_TASAS = "Importe Costes/Tasas";
 	
 	
 	private List<VGastosProveedorExcel> listaGastosProveedor;
@@ -82,21 +87,34 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 		listaCabeceras.add(CAB_MOTIVO_RECHAZO_PROP);
 		listaCabeceras.add(CAB_PROVISION_FONDOS);
 		listaCabeceras.add(CAB_ID_LINEA);
+		
+		listaCabeceras.add(CAB_IMP_PRINCIPAL_SUJETO);
+		listaCabeceras.add(CAB_IMP_PRINCIPAL_NO_SUJETO);
+		
 		listaCabeceras.add(CAB_APDO_BASE);
 		listaCabeceras.add(CAB_CAP_BASE);
 		listaCabeceras.add(CAB_PTDA_PRESUPUESTARIA);
 		listaCabeceras.add(CAB_CONCEPTO_CONTABLE);
 		listaCabeceras.add(CAB_SC_BASE);
+		
+		listaCabeceras.add(CAB_IMP_RECARGO);
+		
 		listaCabeceras.add(CAB_APDO_RECARGO);
 		listaCabeceras.add(CAB_CAP_RECARGO);
 		listaCabeceras.add(CAB_PP_RECARGO);
 		listaCabeceras.add(CAB_CC_RECARGO);
 		listaCabeceras.add(CAB_SC_RECARGO);
+		
+		listaCabeceras.add(CAB_IMP_INTERES_DEMORA);
+		
 		listaCabeceras.add(CAB_APDO_INTERESES);
 		listaCabeceras.add(CAB_CAP_INTERESES);
 		listaCabeceras.add(CAB_PP_INTERESES);
 		listaCabeceras.add(CAB_CC_INTERESES);
 		listaCabeceras.add(CAB_SC_INTERESES);
+		
+		listaCabeceras.add(CAB_IMP_COSTES_TASAS);
+		
 		listaCabeceras.add(CAB_APDO_TASA);
 		listaCabeceras.add(CAB_CAP_TASA);
 		listaCabeceras.add(CAB_PP_TASAS);
@@ -135,21 +153,34 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 			fila.add(gastoProveedor.getMotivoRechazoProp());
 			fila.add(gastoProveedor.getProvisionFondos());
 			fila.add(String.valueOf(gastoProveedor.getIdLinea()));
+			
+			fila.add(String.valueOf(gastoProveedor.getImpPrincipalSujeto()));
+			fila.add(String.valueOf(gastoProveedor.getImpPrincipalNoSujeto()));
+			
 			fila.add(gastoProveedor.getApartadoBase());
 			fila.add(gastoProveedor.getCapituloBase());
 			fila.add(gastoProveedor.getPtdaPresupuestaria());
 			fila.add(gastoProveedor.getConceptoContable());
 			fila.add(gastoProveedor.getSubcuentaContableBase());
+			
+			fila.add(String.valueOf(gastoProveedor.getImpRecargo()));
+			
 			fila.add(gastoProveedor.getApartadoRecargo());
 			fila.add(gastoProveedor.getCapituloRecargo());
 			fila.add(gastoProveedor.getPtdaPresupuestariaRecargo());
 			fila.add(gastoProveedor.getCuentaContableRecargo());
 			fila.add(gastoProveedor.getSubcuentaContableRecargo());
+			
+			fila.add(String.valueOf(gastoProveedor.getImpDemora()));
+			
 			fila.add(gastoProveedor.getApartadoIntereses());
 			fila.add(gastoProveedor.getCapituloIntereses());
 			fila.add(gastoProveedor.getPtdaPresupuestariaIntereses());
 			fila.add(gastoProveedor.getCuentaContableIntereses());
 			fila.add(gastoProveedor.getSubcuentaContableIntereses());
+			
+			fila.add(String.valueOf(gastoProveedor.getImpTasas()));
+			
 			fila.add(gastoProveedor.getApartadoTasa());
 			fila.add(gastoProveedor.getCapituloTasa());
 			fila.add(gastoProveedor.getPtdaPresupuestariaTasas());

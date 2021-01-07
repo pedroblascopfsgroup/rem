@@ -1214,7 +1214,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		if (!Checks.esNulo(mensaje)) {
-			mensaje = messageServices.getMessage("tramite.admision.CheckingInformacion.validacionPre.debeInformar")
+			mensaje = messageServices.getMessage("tramite.CheckingInformacion.validacionPre.debeInformar")
 					.concat(mensaje);
 		}
 

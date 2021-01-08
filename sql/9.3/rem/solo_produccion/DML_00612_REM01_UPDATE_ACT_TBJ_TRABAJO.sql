@@ -65,14 +65,14 @@ BEGIN
 	
             V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA_TRABAJO||' SET 
                         TBJ_FECHA_EMISION_FACTURA = NULL,  
-                        PVC_ID = 57,
+                        PVC_ID = 2945,
                         FECHAMODIFICAR = SYSDATE,
                         USUARIOMODIFICAR = '''||V_USUARIO||'''
                         WHERE TBJ_NUM_TRABAJO = '''||V_TMP_TIPO_DATA(1)||'''';
             EXECUTE IMMEDIATE V_SQL;
 
             V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA_PROPIETARIO||' SET 
-                        PRO_ID = 598,  
+                        PRO_ID = 585,  
                         FECHAMODIFICAR = SYSDATE, 
                         USUARIOMODIFICAR = '''||V_USUARIO||'''
                         WHERE ACT_ID = (SELECT ACT_ID FROM '||V_ESQUEMA||'.'||V_TABLA_TRABAJO||' WHERE TBJ_NUM_TRABAJO = '||V_TMP_TIPO_DATA(1)||')';

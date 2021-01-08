@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos Santos Vílchez
---## FECHA_CREACION=20210108
+--## FECHA_CREACION=20210107
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8638

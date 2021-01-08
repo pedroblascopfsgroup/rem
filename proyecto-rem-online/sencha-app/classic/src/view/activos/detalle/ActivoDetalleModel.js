@@ -1140,10 +1140,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	
 	     	if("0"==correctoIdufirFase1)  {
 	     		return 'app-tbfiedset-ico icono-tickok';
-	     	}else if("1"==correctoIdufirFase1){
+	     	}else{
 	     		return 'app-tbfiedset-ico icono-tickko';
-	     	}else {
-	     		return 'app-tbfiedset-ico icono-tickinterrogante';
 	     	}
 	     },getIconClsFincaRegistralCorrecto:function(get){
 	     	var correcto = get('calidaddatopublicacionactivo.correctoFincaRegistralFase1');

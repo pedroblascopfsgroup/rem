@@ -89,6 +89,8 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoFasesGrid', {
 	     						return 'app-tbfiedset-ico icono-tickok no-pointer';
      						}else if(correctoFase == 0){
 	     						return 'app-tbfiedset-ico icono-tickko no-pointer';
+     						}else if(correctoFase == 2){
+     							return ''; 
 	     					}else {
 	     						return 'app-tbfiedset-ico icono-tickinterrogante no-pointer';
 	     					}			            	

@@ -1794,11 +1794,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		boolean ko = false;
 		//IDUFIR
 		if(dto.getDqIdufirFase1()==null) {
-			dto.setCorrectoIdufirFase1(ICONO_TICK_INTERROGANTE);
-			interrogante=true;
-		}else if(dto.getDqIdufirFase1() != null && dto.getDrIdufirFase1() != null 
-				&& dto.getDqIdufirFase1().equals(dto.getDrIdufirFase1())){
-			dto.setCorrectoIdufirFase1(ICONO_TICK_OK);
+			dto.setCorrectoIdufirFase1(ICONO_TICK_OK);			
 		}else {
 			dto.setCorrectoIdufirFase1(ICONO_TICK_KO);
 			ko=true;
@@ -2006,14 +2002,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setDrTomoFase1(activo.getInfoRegistral().getInfoRegistralBien().getTomo());
 			dto.setDrFolioFase1(activo.getInfoRegistral().getInfoRegistralBien().getFolio());
 			dto.setDrF3ReferenciaCatastral(activo.getInfoRegistral().getInfoRegistralBien().getReferenciaCatastralBien());
-			dto.setDrF3SuperficieConstruida(activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida());
+			dto.setDrF3SuperficieConstruida(String.valueOf(activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().doubleValue()));
 			if(activo.getInfoRegistral().getInfoRegistralBien().getFechaInscripcion()!=null) {
 				dto.setDrInscripcionCorrectaFase1(INSCRITO);
 			}else {
 				dto.setDrInscripcionCorrectaFase1(NO_INSCRITO);
 			}
 			if(activo.getInfoRegistral().getSuperficieUtil() != null) {
-				dto.setDrF3SuperficieUtil(new BigDecimal(activo.getInfoRegistral().getSuperficieUtil()).setScale(2, RoundingMode.HALF_UP));
+				dto.setDrF3SuperficieUtil(String.valueOf(activo.getInfoRegistral().getSuperficieUtil().doubleValue()));
 			}
 		}
 		if(activo.getInfoRegistral() != null 
@@ -2221,9 +2217,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		
 		if(activo.getInfoRegistral() != null && activo.getInfoRegistral().getInfoRegistralBien() != null) {
 			dto.setDrF3ReferenciaCatastral(activo.getInfoRegistral().getInfoRegistralBien().getReferenciaCatastralBien());
-			dto.setDrF3SuperficieConstruida(activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida());
+			dto.setDrF3SuperficieConstruida(String.valueOf(activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().doubleValue()));
 			if(activo.getInfoRegistral().getSuperficieUtil() != null) {
-				dto.setDrF3SuperficieUtil(new BigDecimal(activo.getInfoRegistral().getSuperficieUtil()).setScale(2, RoundingMode.HALF_UP));
+				dto.setDrF3SuperficieUtil(String.valueOf((activo.getInfoRegistral().getSuperficieUtil()).doubleValue()));
 			}
 			
 		}
@@ -2235,11 +2231,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		dto.setDqF3ReferenciaCatastral(actDatosDq.getReferenciaCatastralDdq());
 		
 		if(actDatosDq.getSuperficieConstruidaDdq() != null) {
-			dto.setDqF3SuperficieConstruida(actDatosDq.getSuperficieConstruidaDdq().setScale(2,RoundingMode.HALF_UP));	
+			dto.setDqF3SuperficieConstruida(String.valueOf(actDatosDq.getSuperficieConstruidaDdq().doubleValue()));	
 		}
 		
 		if(actDatosDq.getSuperficieUtilDdq() != null) {
-			dto.setDqF3SuperficieUtil(actDatosDq.getSuperficieUtilDdq().setScale(2, RoundingMode.HALF_UP));	
+			dto.setDqF3SuperficieUtil(String.valueOf(actDatosDq.getSuperficieUtilDdq().doubleValue()));	
 		}
 		
 		dto.setDqF3AnyoConstruccion(actDatosDq.getAnyoConstruccion());
@@ -2315,8 +2311,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_INTERROGANTE);
 			interrogante = true;
 		}else{
-			if(dto.getDqF3SuperficieConstruida().doubleValue() > 0) {
-				BigDecimal calcSupConstruida = dto.getDrF3SuperficieConstruida().divide(dto.getDqF3SuperficieConstruida(), 2, RoundingMode.HALF_UP); 
+			BigDecimal dqF3SuperficieConstruida = new BigDecimal(dto.getDqF3SuperficieConstruida());
+			if(dqF3SuperficieConstruida.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal calcSupConstruida = dqF3SuperficieConstruida.divide(dqF3SuperficieConstruida,2,RoundingMode.HALF_UP);				 
 				DecimalFormat df = new DecimalFormat("#.##");
 				Double supConstruida = new Double(df.format(calcSupConstruida));
 				
@@ -2339,7 +2336,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoF3SuperficieUtil(ICONO_TICK_INTERROGANTE);
 			interrogante = true;
 		}else{
-			BigDecimal calcSupUtil = dto.getDrF3SuperficieUtil().divide(dto.getDqF3SuperficieUtil(), 2, RoundingMode.HALF_UP); 
+			BigDecimal dqF3SuperficieUtil = new BigDecimal(dto.getDqF3SuperficieUtil());
+			BigDecimal calcSupUtil = dqF3SuperficieUtil.divide(dqF3SuperficieUtil, 2, RoundingMode.HALF_UP); 
 			DecimalFormat df = new DecimalFormat("#.##");
 			Double supUtil = new Double(df.format(calcSupUtil));
 			
@@ -2742,17 +2740,17 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 				
 		if(actDatosDq.getCalleCorrectaProb() == null) {	
-			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", "", CALIDADDATO_DIRECCION));
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", "", CALIDADDATO_DIRECCION,2));
 		}else if(actDatosDq.getCalleCorrectaProb() >= 0 && actDatosDq.getCalleCorrectaProb() <= 0.2){
-			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", PROB_MUY_BAJA, CALIDADDATO_DIRECCION));
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", PROB_MUY_BAJA, CALIDADDATO_DIRECCION,2));
 		}else if(actDatosDq.getCalleCorrectaProb() > 0.2 && actDatosDq.getCalleCorrectaProb() <= 0.4) {
-			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", PROB_BAJA, CALIDADDATO_DIRECCION));
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", PROB_BAJA, CALIDADDATO_DIRECCION,2));
 		}else if(actDatosDq.getCalleCorrectaProb() > 0.4 && actDatosDq.getCalleCorrectaProb() <= 0.6) {
-			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", PROB_MEDIA, CALIDADDATO_DIRECCION));
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", PROB_MEDIA, CALIDADDATO_DIRECCION,2));
 		}else if(actDatosDq.getCalleCorrectaProb() > 0.6 && actDatosDq.getCalleCorrectaProb() <= 0.8) {
-			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", PROB_ALTA, CALIDADDATO_DIRECCION));
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", PROB_ALTA, CALIDADDATO_DIRECCION,2));
 		}else if(actDatosDq.getCalleCorrectaProb() > 0.8 && actDatosDq.getCalleCorrectaProb() <= 1) {
-			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", PROB_MUY_ALTA, CALIDADDATO_DIRECCION));
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Probabilidad calle correcta", "", PROB_MUY_ALTA, CALIDADDATO_DIRECCION,2));
 		}
 		
 		if ((activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null && activo.getLocalizacion().getLocalizacionBien().getCodPostal() != null) && actDatosDq.getCodigoPostalDdq() != null) {

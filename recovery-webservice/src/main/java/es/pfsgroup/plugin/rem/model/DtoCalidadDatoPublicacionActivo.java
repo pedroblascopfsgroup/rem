@@ -491,15 +491,15 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 	
 		private String correctoF3ReferenciaCatastral;
 	
-		private BigDecimal drF3SuperficieConstruida;
+		private String drF3SuperficieConstruida;
 	
-		private BigDecimal dqF3SuperficieConstruida;
+		private String dqF3SuperficieConstruida;
 	
 		private String correctoF3SuperficieConstruida;
 	
-		private BigDecimal drF3SuperficieUtil;
+		private String drF3SuperficieUtil;
 	
-		private BigDecimal dqF3SuperficieUtil;
+		private String dqF3SuperficieUtil;
 		
 		private String correctoF3SuperficieUtil;
 	
@@ -832,21 +832,7 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 		this.correctoF3ReferenciaCatastral = correctoF3ReferenciaCatastral;
 	}
 
-	public BigDecimal getDrF3SuperficieConstruida() {
-		return drF3SuperficieConstruida;
-	}
 
-	public void setDrF3SuperficieConstruida(BigDecimal drF3SuperficieConstruida) {
-		this.drF3SuperficieConstruida = drF3SuperficieConstruida;
-	}
-
-	public BigDecimal getDqF3SuperficieConstruida() {
-		return dqF3SuperficieConstruida;
-	}
-
-	public void setDqF3SuperficieConstruida(BigDecimal dqF3SuperficieConstruida) {
-		this.dqF3SuperficieConstruida = dqF3SuperficieConstruida;
-	}
 
 	public String getCorrectoF3SuperficieConstruida() {
 		return correctoF3SuperficieConstruida;
@@ -855,22 +841,8 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 	public void setCorrectoF3SuperficieConstruida(String correctoF3SuperficieConstruida) {
 		this.correctoF3SuperficieConstruida = correctoF3SuperficieConstruida;
 	}
-
-	public BigDecimal getDrF3SuperficieUtil() {
-		return drF3SuperficieUtil;
-	}
-
-	public void setDrF3SuperficieUtil(BigDecimal drF3SuperficieUtil) {
-		this.drF3SuperficieUtil = drF3SuperficieUtil;
-	}
-
-	public BigDecimal getDqF3SuperficieUtil() {
-		return dqF3SuperficieUtil;
-	}
-
-	public void setDqF3SuperficieUtil(BigDecimal dqF3SuperficieUtil) {
-		this.dqF3SuperficieUtil = dqF3SuperficieUtil;
-	}
+	
+	
 
 	public Long getDrF3AnyoConstruccion() {
 		return drF3AnyoConstruccion;
@@ -1094,6 +1066,38 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 
 	public void setCorrectoF4BloqueFase4(String correctoF4BloqueFase4) {
 		this.correctoF4BloqueFase4 = correctoF4BloqueFase4;
+	}
+
+	public String getDrF3SuperficieUtil() {
+		return drF3SuperficieUtil;
+	}
+
+	public void setDrF3SuperficieUtil(String drF3SuperficieUtil) {
+		this.drF3SuperficieUtil = drF3SuperficieUtil;
+	}
+
+	public String getDqF3SuperficieUtil() {
+		return dqF3SuperficieUtil;
+	}
+
+	public void setDqF3SuperficieUtil(String dqF3SuperficieUtil) {
+		this.dqF3SuperficieUtil = dqF3SuperficieUtil;
+	}
+
+	public String getDrF3SuperficieConstruida() {
+		return drF3SuperficieConstruida;
+	}
+
+	public void setDrF3SuperficieConstruida(String drF3SuperficieConstruida) {
+		this.drF3SuperficieConstruida = drF3SuperficieConstruida;
+	}
+
+	public String getDqF3SuperficieConstruida() {
+		return dqF3SuperficieConstruida;
+	}
+
+	public void setDqF3SuperficieConstruida(String dqF3SuperficieConstruida) {
+		this.dqF3SuperficieConstruida = dqF3SuperficieConstruida;
 	}
 	
 }

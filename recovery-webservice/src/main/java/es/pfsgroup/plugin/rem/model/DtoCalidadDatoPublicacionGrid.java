@@ -37,6 +37,25 @@ public class DtoCalidadDatoPublicacionGrid extends WebDto{
 					this.indicadorCorrecto = 1;
 				}
 			}
+			if ("Idufir".equals(nombre) && dq == null) {
+				this.indicadorCorrecto = 1;
+			}
+			this.codigoGrid = codGrid;
+			
+			
+		}
+		
+		public DtoCalidadDatoPublicacionGrid(String nombre, String rem, String dq, String codGrid, int separador) {
+			this.nombreCampoWeb = nombre;
+			
+			if (rem != null) {
+				this.valorRem = rem;
+			}
+			
+			if (dq != null) {
+				this.valorDq = dq;
+			}
+			this.indicadorCorrecto = 2;
 			this.codigoGrid = codGrid;
 			
 			

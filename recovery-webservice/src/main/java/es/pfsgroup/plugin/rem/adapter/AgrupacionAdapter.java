@@ -1174,45 +1174,51 @@ public class AgrupacionAdapter {
 		}
 
 		if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-
-			if (particularValidator.isMismoEpuActivoPrincipalAgrupacion(String.valueOf(numActivo),
+			
+			if (particularValidator.isMismoTcoActivoPrincipalAgrupacion(String.valueOf(numActivo),
 					String.valueOf(agrupacion.getNumAgrupRem()))) {
-				DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion();
-				dto.setIdActivo(activo.getId());
 
-				ActivoAgrupacionActivo aga = activoApi
-						.getActivoAgrupacionActivoAgrRestringidaPorActivoID(agrupacion.getActivoPrincipal().getId());
-				if (!Checks.esNulo(aga)) {
-					activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(aga.getAgrupacion().getId(), dto);
+				if (particularValidator.isMismoEpuActivoPrincipalAgrupacion(String.valueOf(numActivo),
+						String.valueOf(agrupacion.getNumAgrupRem()))) {
+					DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion();
+					dto.setIdActivo(activo.getId());
+	
+					ActivoAgrupacionActivo aga = activoApi
+							.getActivoAgrupacionActivoAgrRestringidaPorActivoID(agrupacion.getActivoPrincipal().getId());
+					if (!Checks.esNulo(aga)) {
+						activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(aga.getAgrupacion().getId(), dto);
+					}
+	
+					ActivoPublicacion activoPublicacionPrincipal = activoPublicacionDao
+							.getActivoPublicacionPorIdActivo(agrupacion.getActivoPrincipal().getId());
+					ActivoPublicacion activoPublicacion = activoPublicacionDao
+							.getActivoPublicacionPorIdActivo(activo.getId());
+					BeanUtils.copyProperty(activoPublicacion, "estadoPublicacionVenta",
+							activoPublicacionPrincipal.getEstadoPublicacionVenta());
+					BeanUtils.copyProperty(activoPublicacion, "estadoPublicacionAlquiler",
+							activoPublicacionPrincipal.getEstadoPublicacionAlquiler());
+					BeanUtils.copyProperty(activoPublicacion, "checkPublicarVenta",
+							activoPublicacionPrincipal.getCheckPublicarVenta());
+					BeanUtils.copyProperty(activoPublicacion, "checkPublicarAlquiler",
+							activoPublicacionPrincipal.getCheckPublicarAlquiler());
+					BeanUtils.copyProperty(activoPublicacion, "checkOcultarVenta",
+							activoPublicacionPrincipal.getCheckOcultarVenta());
+					BeanUtils.copyProperty(activoPublicacion, "checkOcultarAlquiler",
+							activoPublicacionPrincipal.getCheckOcultarAlquiler());
+					BeanUtils.copyProperty(activoPublicacion, "checkSinPrecioVenta",
+							activoPublicacionPrincipal.getCheckSinPrecioVenta());
+					BeanUtils.copyProperty(activoPublicacion, "checkSinPrecioAlquiler",
+							activoPublicacionPrincipal.getCheckSinPrecioAlquiler());
+					BeanUtils.copyProperty(activoPublicacion, "checkOcultarPrecioVenta",
+							activoPublicacionPrincipal.getCheckOcultarPrecioVenta());
+					BeanUtils.copyProperty(activoPublicacion, "checkOcultarPrecioAlquiler",
+							activoPublicacionPrincipal.getCheckOcultarPrecioAlquiler());
+					activoPublicacionDao.saveOrUpdate(activoPublicacion);
+				} else {
+					throw new JsonViewerException(BusinessValidators.ERROR_ESTADO_PUBLICACION_NOT_EQUAL);
 				}
-
-				ActivoPublicacion activoPublicacionPrincipal = activoPublicacionDao
-						.getActivoPublicacionPorIdActivo(agrupacion.getActivoPrincipal().getId());
-				ActivoPublicacion activoPublicacion = activoPublicacionDao
-						.getActivoPublicacionPorIdActivo(activo.getId());
-				BeanUtils.copyProperty(activoPublicacion, "estadoPublicacionVenta",
-						activoPublicacionPrincipal.getEstadoPublicacionVenta());
-				BeanUtils.copyProperty(activoPublicacion, "estadoPublicacionAlquiler",
-						activoPublicacionPrincipal.getEstadoPublicacionAlquiler());
-				BeanUtils.copyProperty(activoPublicacion, "checkPublicarVenta",
-						activoPublicacionPrincipal.getCheckPublicarVenta());
-				BeanUtils.copyProperty(activoPublicacion, "checkPublicarAlquiler",
-						activoPublicacionPrincipal.getCheckPublicarAlquiler());
-				BeanUtils.copyProperty(activoPublicacion, "checkOcultarVenta",
-						activoPublicacionPrincipal.getCheckOcultarVenta());
-				BeanUtils.copyProperty(activoPublicacion, "checkOcultarAlquiler",
-						activoPublicacionPrincipal.getCheckOcultarAlquiler());
-				BeanUtils.copyProperty(activoPublicacion, "checkSinPrecioVenta",
-						activoPublicacionPrincipal.getCheckSinPrecioVenta());
-				BeanUtils.copyProperty(activoPublicacion, "checkSinPrecioAlquiler",
-						activoPublicacionPrincipal.getCheckSinPrecioAlquiler());
-				BeanUtils.copyProperty(activoPublicacion, "checkOcultarPrecioVenta",
-						activoPublicacionPrincipal.getCheckOcultarPrecioVenta());
-				BeanUtils.copyProperty(activoPublicacion, "checkOcultarPrecioAlquiler",
-						activoPublicacionPrincipal.getCheckOcultarPrecioAlquiler());
-				activoPublicacionDao.saveOrUpdate(activoPublicacion);
 			} else {
-				throw new JsonViewerException(BusinessValidators.ERROR_ESTADO_PUBLICACION_NOT_EQUAL);
+				throw new JsonViewerException(BusinessValidators.ERROR_DESTINO_COMERCIAL_NOT_EQUAL);
 			}
 		}
 

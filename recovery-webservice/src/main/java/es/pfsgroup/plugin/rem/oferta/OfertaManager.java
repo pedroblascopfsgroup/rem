@@ -1180,7 +1180,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		if (clienteGDPR != null) {
 			if (ofertaDto.getDocumentoIdentificativo() != null) {
-				adjComprDocIdentificativo = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", ofertaDto.getDocumentoIdentificativo()));
+				adjComprDocIdentificativo = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", Long.valueOf(ofertaDto.getDocumentoIdentificativo())));
 				if (adjComprDocIdentificativo == null) {
 					adjComprDocIdentificativo = new AdjuntoComprador();
 					adjComprDocIdentificativo.setIdDocRestClient(Long.parseLong(ofertaDto.getDocumentoIdentificativo()));	
@@ -1196,7 +1196,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 			if (ofertaDto.getDocumentoGDPR() != null) {
-				adjComprConsGDPR = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", ofertaDto.getDocumentoGDPR()));
+				adjComprConsGDPR = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", Long.valueOf(ofertaDto.getDocumentoGDPR())));
 				if (adjComprConsGDPR == null) {
 					adjComprConsGDPR = new AdjuntoComprador();
 					adjComprConsGDPR.setIdDocRestClient(Long.parseLong(ofertaDto.getDocumentoGDPR()));	

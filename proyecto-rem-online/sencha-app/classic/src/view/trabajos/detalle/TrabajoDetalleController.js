@@ -1857,9 +1857,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	} else {
     		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(true);
     		me.lookupReference('proveedorContactoCombo').setReadOnly(true);
-			me.lookupReference('gridtarifastrabajo').setTopBar(false)
 		    me.lookupReference('gridpresupuestostrabajo').setTopBar(false)
-		    me.lookupReference('gridtarifastrabajo').setDisabled(true);
 		    me.lookupReference('gridSuplidos').setTopBar(false);
 			me.lookupReference('gridSuplidos').setDisabled(true);
 		    me.lookupReference('gridpresupuestostrabajo').setDisabled(true);

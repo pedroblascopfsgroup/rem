@@ -1800,28 +1800,28 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 
 					if (dto.getEmpresa() != null) {
-						if(dto.getEmpresa() == -1)
+						if("-1".equals(dto.getEmpresa()))
 							activoBbva.setEmpresa(null);
 						else
 							activoBbva.setEmpresa(dto.getEmpresa());
 					}
 
 					if (dto.getOficina() != null) {
-						if(dto.getOficina() == -1)
+						if("-1".equals(dto.getOficina()))
 							activoBbva.setOficina(null);
 						else	
 							activoBbva.setOficina(dto.getOficina());
 					}
 
 					if (dto.getContrapartida() != null) {
-						if(dto.getContrapartida() == -1)
+						if("-1".equals(dto.getContrapartida()))
 							activoBbva.setContrapartida(null);
 						else
 							activoBbva.setContrapartida(dto.getContrapartida());
 					}
 
 					if (dto.getFolio() != null) {
-						if(dto.getFolio() == -1)
+						if("-1".equals(dto.getFolio()))
 							activoBbva.setFolio(null);
 						else
 							activoBbva.setFolio(dto.getFolio());

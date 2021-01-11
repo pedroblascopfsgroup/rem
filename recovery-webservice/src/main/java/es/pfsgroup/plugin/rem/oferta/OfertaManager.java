@@ -5831,7 +5831,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					costesLegales = getGastosLegalesByTipo(importeOfertaNeta, oferta.getActivoPrincipal());
 					activosFichaComercial.setCostesLegales(costesLegales);
 					costesLegalesTotal += costesLegales;
-					activosFichaComercial.setComisionHaya(getComisionHayaByTipo(importeOfertaNeta, oferta.getActivoPrincipal()));
+					comisionHaya = getComisionHayaByTipo(importeOfertaNeta, oferta.getActivoPrincipal());
+					activosFichaComercial.setComisionHaya(comisionHaya);
 					comisionHayaTotal += getComisionHayaByTipo(importeOfertaNeta, oferta.getActivoPrincipal());
 					activosFichaComercial.setOfertaNeta(importeOfertaNeta - comisionHaya - costesLegales - gastosPendientes);
 					ofertaNetaTotal += importeOfertaNeta - comisionHaya - costesLegales - gastosPendientes ;
@@ -6390,7 +6391,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private boolean esDepuracionJuridica(DtoActivosFichaComercial dtoActivosFichaComercial) {
 		
 		return (dtoActivosFichaComercial.getInscritoRegistro().equals("Si") && dtoActivosFichaComercial.getTituloPropiedad().equals("Si") 
-				&& dtoActivosFichaComercial.getCargas().equals("Si") && dtoActivosFichaComercial.getPosesion().equals("Si") );
+				&& dtoActivosFichaComercial.getCargas().equals("No") && dtoActivosFichaComercial.getPosesion().equals("Si") );
 		
 	}
 	
@@ -6414,20 +6415,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	private Double getGastosPendientes(Activo act) {
-		
-		Double gastoPendiente = 0.0;
-		VBusquedaGastoActivo gastoActivo;
-		Filter filterSubActivoTipo = genericDao.createFilter(FilterType.EQUALS, "idActivo", act.getId());
-		gastoActivo = genericDao.get(VBusquedaGastoActivo.class, filterSubActivoTipo);
-		if (gastoActivo != null) {
-			String estadoGasto = gastoActivo.getEstadoGastoCodigo();
-			if (DDEstadoGasto.PENDIENTE.equals(estadoGasto)) {
-				gastoPendiente = gastoActivo.getImporteTotalGasto();
+			
+			Double gastoPendiente = 0.0;
+			
+			Filter filtroGastoActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", act.getId());
+			List<VBusquedaGastoActivo> gastosActivos = genericDao.getList(VBusquedaGastoActivo.class, filtroGastoActivo);
+			if ( gastosActivos != null && !gastosActivos.isEmpty() ) {
+				for( VBusquedaGastoActivo gasto : gastosActivos ) {
+					String estadoGasto = gasto.getEstadoGastoCodigo();
+					if ( DDEstadoGasto.PENDIENTE.equals(estadoGasto)) {
+						gastoPendiente += gasto.getImporteTotalGasto();	
+					}
+				}
 			}
-		}
-	return gastoPendiente;
-	
-	}
+			return gastoPendiente;
+	}	
 	
 	
 }

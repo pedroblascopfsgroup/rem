@@ -263,16 +263,16 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                	bind:{
 			                		value: '{activo.descripcion}'
 			                	}
-			                },
+			                }, 
 			                {
 			                	xtype: 'comboboxfieldbase',
-			                	fieldLabel:  HreRem.i18n('fieldlabel.estado.registral'),
-			                	name: 'comboEstadoRegistral',
-			                	reference: 'comboEstadoRegistralRef',
-			                	bind: {
-			                		store: '{comboEstadoRegistral}',
-			                		value: '{activo.estadoRegistralCodigo}',
-			                		readOnly: '{!activo.esEditableActivoEstadoRegistral}'
+			                	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo.DND'),
+			                	name: 'comboEstadoFisicoActivoDND',
+			                	reference: 'comboEstadoFisicoActivoDNDRef',
+			                	bind: {			                		
+			                		value: '{activo.estadoFisicoActivoDND}',
+			                		store: '{comboEstadoActivoDND}',
+			                		readOnly:true
 			                	}
 			                },
 			                {
@@ -288,16 +288,16 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                },
 			                {
 			                	xtype: 'comboboxfieldbase',
-			                	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo.DND'),
-			                	name: 'comboEstadoFisicoActivoDND',
-			                	reference: 'comboEstadoFisicoActivoDNDRef',
-			                	bind: {			                		
-			                		value: '{activo.estadoFisicoActivoDND}',
-			                		store: '{comboEstadoActivoDND}',
-			                		readOnly:true
+			                	fieldLabel:  HreRem.i18n('fieldlabel.estado.registral'),
+			                	name: 'comboEstadoRegistral',
+			                	reference: 'comboEstadoRegistralRef',
+			                	bind: {
+			                		store: '{comboEstadoRegistral}',
+			                		value: '{activo.estadoRegistralCodigo}',
+			                		readOnly: '{!activo.esEditableActivoEstadoRegistral}'
 			                	}
 			                }
-			                
+			 			                
 						]
 					}]
             },

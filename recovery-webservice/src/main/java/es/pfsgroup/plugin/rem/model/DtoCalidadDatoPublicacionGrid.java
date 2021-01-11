@@ -25,20 +25,25 @@ public class DtoCalidadDatoPublicacionGrid extends WebDto{
 			if (rem != null) {
 				this.valorRem = rem;
 			}
-			
 			if (dq != null) {
 				this.valorDq = dq;
 			}
-			
-			if (rem != null && dq != null) {
+			if ((rem != null && !rem.isEmpty()) && (dq != null && !dq.isEmpty())) {
 				if (!rem.equals(dq)) {
 					this.indicadorCorrecto = 0;
 				}else {
 					this.indicadorCorrecto = 1;
 				}
+			}else if((rem != null && rem.isEmpty()) && (dq != null && dq.isEmpty())) {
+				this.indicadorCorrecto = 1;
+			}else if(rem == null && dq == null) {
+				this.indicadorCorrecto = 1;
 			}
+			
 			if ("Idufir".equals(nombre) && dq == null) {
 				this.indicadorCorrecto = 1;
+			}else if("Idufir".equals(nombre) && dq != null){
+				this.indicadorCorrecto = 0;
 			}
 			this.codigoGrid = codGrid;
 			

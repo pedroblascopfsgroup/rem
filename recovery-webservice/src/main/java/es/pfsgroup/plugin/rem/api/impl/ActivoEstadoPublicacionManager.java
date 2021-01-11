@@ -1825,6 +1825,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoFincaRegistralFase1(ICONO_TICK_KO);
 			ko=true;
 		}
+		
+		if (dto.getDqFincaRegistralFase1() == null && dto.getDrFincaRegistralFase1() == null) {
+			ko=false;
+			interrogante=false;
+		}
 		//TOMO
 		if(dto.getDqTomoFase1()==null) {
 			dto.setCorrectoTomoFase1(ICONO_TICK_INTERROGANTE);
@@ -1835,6 +1840,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}else {
 			dto.setCorrectoTomoFase1(ICONO_TICK_KO);
 			ko=true;
+		}
+		if (dto.getDqTomoFase1() == null && dto.getDrTomoFase1() == null) {
+			ko=false;
+			interrogante=false;
 		}
 		//LIBRO
 		if(dto.getDqLibroFase1()==null) {
@@ -1848,6 +1857,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			ko=true;
 		}
 		
+		if (dto.getDqLibroFase1() == null && dto.getDrLibroFase1() == null) {
+			ko=false;
+			interrogante=false;
+		}
 		//FOLIO
 		if(dto.getDqFolioFase1()==null) {
 			dto.setCorrectoFolioFase1(ICONO_TICK_INTERROGANTE);
@@ -1860,7 +1873,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			ko=true;
 		}
 		
-		
+		if (dto.getDqFolioFase1() == null && dto.getDrFolioFase1() == null) {
+			ko=false;
+			interrogante=false;
+		}
 		//USO DOMINANTE
 		if(dto.getDqUsoDominanteFase1()==null) {
 			dto.setCorrectoUsoDominanteFase1(ICONO_TICK_INTERROGANTE);
@@ -1873,6 +1889,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			ko=true;
 		}
 		
+		if (dto.getDqUsoDominanteFase1() == null && dto.getDrUsoDominanteFase1() == null) {
+			ko=false;
+			interrogante=false;
+		}
 		//MUNICIPIO DEL REGISTRO
 		if(dto.getDqMunicipioDelRegistroFase1()==null) {
 			dto.setCorrectoUsoDominanteFase1(ICONO_TICK_INTERROGANTE);
@@ -1885,6 +1905,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			ko=true;
 		}
 		
+		if (dto.getDqMunicipioDelRegistroFase1() == null && dto.getDrMunicipioDelRegistroFase1() == null) {
+			ko=false;
+			interrogante=false;
+		}
 		//PROVINCIA DEL REGISTRO
 		if(dto.getDqProvinciaDelRegistroFase1()==null) {
 			dto.setCorrectoProvinciaDelRegistroFase1(ICONO_TICK_INTERROGANTE);
@@ -1897,6 +1921,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			ko = true;
 		}
 		
+		if (dto.getDqProvinciaDelRegistroFase1() == null && dto.getDrProvinciaDelRegistroFase1() == null) {
+			ko=false;
+			interrogante=false;
+		}
 		//NUMERO DE REGISTRO
 		if(dto.getDqNumeroDelRegistroFase1()==null) {
 			dto.setCorrectoNumeroDelRegistroFase1(ICONO_TICK_INTERROGANTE);
@@ -1909,7 +1937,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			ko=true;
 		}
 		
-		
+		if (dto.getDqNumeroDelRegistroFase1() == null && dto.getDrNumeroDelRegistroFase1() == null) {
+			ko=false;
+			interrogante=false;
+		}
 		//VPO
 		if(dto.getDqVpoFase1()==null) {
 			interrogante= true;
@@ -1921,7 +1952,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoVpoFase1(ICONO_TICK_KO);
 			ko=true;
 		}
-					
+		
+		if (dto.getDqVpoFase1() == null && dto.getDrVpoFase1() == null) {
+			ko=false;
+			interrogante=false;
+		}
 		//ANYO CONSTRUCCION
 		
 		if(dto.getDqAnyoConstruccionFase1()==null) {
@@ -1934,7 +1969,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoAnyoConstruccionFase1(ICONO_TICK_KO);
 			ko=true;
 		}
-				
+		if (dto.getDqAnyoConstruccionFase1() == null && dto.getDrAnyoConstruccionFase1() == null) {
+			ko=false;
+			interrogante=false;
+		}		
 		//TIPOLOGIA
 		
 		if(dto.getDqTipologiaFase1()==null) {
@@ -1946,6 +1984,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}else {
 			dto.setCorrectoTipologiaFase1(ICONO_TICK_KO);
 			ko=true;
+		}
+		if (dto.getDqTipologiaFase1() == null && dto.getDrTipologianFase1() == null) {
+			ko=false;
+			interrogante=false;
 		}
 				
 		//SUBTIPOLOGIA
@@ -1959,7 +2001,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoSubtipologiaFase1(ICONO_TICK_KO);
 			ko=true;
 		}
-				
+		if (dto.getDqSubtipologiaFase1() == null && dto.getDrSubtipologianFase1() == null) {
+			ko=false;
+			interrogante=false;
+		}		
 		//INFORMACION CARGAS
 		if(dto.getDqInformacionCargasFase1()==null) {
 			dto.setCorrectoInformacionCargasFase1(ICONO_TICK_INTERROGANTE);
@@ -1970,7 +2015,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoInformacionCargasFase1(ICONO_TICK_KO);
 			ko=true;
 		}
-				
+		if (dto.getDqInformacionCargasFase1() == null && dto.getDrInformacionCargasFase1() == null) {
+			ko=false;
+			interrogante=false;
+		}		
 		//INSCRIPCION CORRECTA
 		if(dto.getDqInscripcionCorrectaFase1()==null) {
 			dto.setCorrectoInscripcionCorrectaFase1(ICONO_TICK_INTERROGANTE);
@@ -1982,7 +2030,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoInscripcionCorrectaFase1(ICONO_TICK_KO);
 			ko=true;
 		}
-		
+		if (dto.getDqInscripcionCorrectaFase1() == null && dto.getDrInscripcionCorrectaFase1() == null) {
+			ko=false;
+			interrogante=false;
+		}
 		//% PROPIEDAD
 		
 		if(dto.getDqPor100PropiedadFase1()==null) {
@@ -1996,6 +2047,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			ko =true;
 		}
 		
+		if (dto.getDqPor100PropiedadFase1() == null && dto.getDrPor100PropiedadFase1() == null) {
+			ko=false;
+			interrogante=false;
+		}
 		if(ko) {
 			dto.setCorrectoDatosRegistralesFase1(ICONO_TICK_KO);
 		}else if(interrogante) {
@@ -2320,6 +2375,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoF3ReferenciaCatastral(ICONO_TICK_KO);
 			cruzroja = true;
 		}
+		if (dto.getDqF3ReferenciaCatastral() == null && dto.getDrF3ReferenciaCatastral() == null) {
+			interrogante = false;
+			cruzroja= false;
+		}
 		
 		//superficie construida ESPECIAL
 		if(dto.getDqF3SuperficieConstruida() == null) {
@@ -2344,6 +2403,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			}
 			
 		}
+		if (dto.getDqF3SuperficieConstruida() == null && dto.getDrF3SuperficieConstruida() == null) {
+			interrogante = false;
+			cruzroja= false;
+		}
+		
 		
 		//superficie util ESPECIAL
 		
@@ -2363,7 +2427,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				cruzroja = true;	
 			}
 		}
-		
+		if (dto.getDqF3SuperficieUtil() == null && dto.getDrF3SuperficieUtil() == null) {
+			interrogante = false;
+			cruzroja= false;
+		}
 		//ANYO CONSTRUCCION
 		if(dto.getDqF3AnyoConstruccion() == null) {
 			dto.setCorrectoF3AnyoConstruccion(ICONO_TICK_INTERROGANTE);
@@ -2379,7 +2446,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoF3AnyoConstruccion(ICONO_TICK_KO);
 			cruzroja = true;
 		}
-		
+		if (dto.getDqF3AnyoConstruccion() == null && dto.getDrF3AnyoConstruccion() == null) {
+			interrogante = false;
+			cruzroja= false;
+		}
 		//TIPO VIA
 		if(dto.getDqF3TipoVia() == null) {
 			dto.setCorrectoF3TipoVia(ICONO_TICK_INTERROGANTE);
@@ -2391,7 +2461,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoF3TipoVia(ICONO_TICK_KO);
 			cruzroja = true;
 		}
-		
+		if (dto.getDqF3TipoVia() == null && dto.getDrF3TipoVia() == null) {
+			interrogante = false;
+			cruzroja= false;
+		}
 		//NOMBRE CALLE ESPECIAL
 		
 		
@@ -2416,7 +2489,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoF3CP(ICONO_TICK_KO);
 			cruzroja = true;
 		}
-		
+		if (dto.getDqF3CP() == null && dto.getDrF3CP() == null) {
+			interrogante = false;
+			cruzroja= false;
+		}
 		//MUNICIPIO
 		if(dto.getDqF3Municipio() == null) {
 			dto.setCorrectoF3Municipio(ICONO_TICK_INTERROGANTE);
@@ -2428,7 +2504,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoF3Municipio(ICONO_TICK_KO);
 			cruzroja = true;
 		}
-		
+		if (dto.getDqF3Municipio() == null && dto.getDrF3Municipio() == null) {
+			interrogante = false;
+			cruzroja= false;
+		}
 		//PROVINCIA
 		if(dto.getDqF3Provincia() == null) {
 			dto.setCorrectoF3Provincia(ICONO_TICK_INTERROGANTE);
@@ -2439,6 +2518,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}else {
 			dto.setCorrectoF3Provincia(ICONO_TICK_KO);
 			cruzroja = true;
+		}
+		
+		if (dto.getDqF3Provincia() == null && dto.getDrF3Provincia() == null) {
+			interrogante = false;
+			cruzroja= false;
 		}
 		
 		if(cruzroja) {
@@ -2547,20 +2631,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			
 			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Número del registro", activo.getInfoRegistral().getInfoRegistralBien().getNumRegistro(), actDatosDq.getNumRegistroDdq(), CALIDADDATO_REGISTRO));
 			
-			if(activo.getInfoRegistral().getInfoRegistralBien().getFechaInscripcion()!=null) {
-				valorIncripcionCorrectaActivo=INSCRITO;				
-			}else {
-				valorIncripcionCorrectaActivo=NO_INSCRITO;				
-			}			
-			if(actDatosDq.getInscripcion()!=null) {
-				if(actDatosDq.getInscripcion().booleanValue()==true) {
-					valorIncripcionCorrectaActivoDq=INSCRITO;
-				}else {
-					valorIncripcionCorrectaActivoDq=NO_INSCRITO;					
-				}
-			}
-			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Inscripción correcta", valorIncripcionCorrectaActivo, valorIncripcionCorrectaActivoDq, CALIDADDATO_REGISRALES));
-			
 		}
 		if(activo.getTipoUsoDestino() !=null && actDatosDq.getTipoUsoDestino() != null) {			
 			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Uso dominante", activo.getTipoUsoDestino().getDescripcion(), actDatosDq.getTipoUsoDestino().getDescripcion(), CALIDADDATO_REGISRALES));
@@ -2573,11 +2643,20 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Uso dominante", "", "", CALIDADDATO_REGISRALES));
 			}
 		}
-		if (activo.getLocalidad() != null && actDatosDq.getLocalidadReg() != null) {
-			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio del registro", activo.getLocalidad().getDescripcion(), actDatosDq.getLocalidadReg().getDescripcion(), CALIDADDATO_REGISTRO));
+		if (activo.getInfoRegistral() != null 
+				&& activo.getInfoRegistral().getInfoRegistralBien() != null 
+				&& activo.getInfoRegistral().getInfoRegistralBien().getLocalidad() !=null
+				&& actDatosDq.getLocalidadReg() != null) {
+			//if (activo.getLocalidad() != null && actDatosDq.getLocalidadReg() != null) {				
+			//listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio del registro", activo.getLocalidad().getDescripcion(), actDatosDq.getLocalidadReg().getDescripcion(), CALIDADDATO_REGISTRO));
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio del registro", activo.getInfoRegistral().getInfoRegistralBien().getLocalidad().getDescripcion(), actDatosDq.getLocalidadReg().getDescripcion(), CALIDADDATO_REGISTRO));			
 		}else {
-			if (activo.getLocalidad() != null) {
-				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio del registro", activo.getLocalidad().getDescripcion(), "", CALIDADDATO_REGISTRO));
+			if (activo.getInfoRegistral() != null 
+					&& activo.getInfoRegistral().getInfoRegistralBien() != null 
+					&& activo.getInfoRegistral().getInfoRegistralBien().getLocalidad() !=null) {
+			//if (activo.getLocalidad() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio del registro", activo.getInfoRegistral().getInfoRegistralBien().getLocalidad().getDescripcion(), "", CALIDADDATO_REGISTRO));
+				//listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio del registro", activo.getLocalidad().getDescripcion(), "", CALIDADDATO_REGISTRO));
 			}else if (actDatosDq.getLocalidadReg() != null) {
 				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Municipio del registro", "", actDatosDq.getLocalidadReg().getDescripcion(), CALIDADDATO_REGISTRO));
 			}else {
@@ -2655,6 +2734,20 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		
 		listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Información Cargas", valorBooleanActivoInfoCargas, valorBooleanActivoDqInfoCargas, CALIDADDATO_REGISTRO));
 		
+		if(activo.getInfoRegistral().getInfoRegistralBien().getFechaInscripcion()!=null) {
+			valorIncripcionCorrectaActivo=INSCRITO;				
+		}else {
+			valorIncripcionCorrectaActivo=NO_INSCRITO;				
+		}			
+		if(actDatosDq.getInscripcion()!=null) {
+			if(actDatosDq.getInscripcion().booleanValue()==true) {
+				valorIncripcionCorrectaActivoDq=INSCRITO;
+			}else {
+				valorIncripcionCorrectaActivoDq=NO_INSCRITO;					
+			}
+		}
+		listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Inscripción correcta", valorIncripcionCorrectaActivo, valorIncripcionCorrectaActivoDq, CALIDADDATO_REGISTRO));
+		
 		if (activoPropietario.getPorcPropiedad() != null && actDatosDq.getPropiedadDdq() != null) {			
 			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("% propiedad", activoPropietario.getPorcPropiedad().toString(), actDatosDq.getPropiedadDdq().toString(), CALIDADDATO_REGISTRO));
 		}else {
@@ -2731,7 +2824,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}		
 			//Bloque dirección
 		if ((activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien().getTipoVia() != null && activo.getLocalizacion().getLocalizacionBien().getTipoVia().getDescripcion() != null) 
-				&& actDatosDq.getSuperficieConstruidaDdq() != null) {
+				&& actDatosDq.getTipoVia() != null && actDatosDq.getTipoVia().getDescripcion() != null) {
 			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Tipo vía", activo.getLocalizacion().getLocalizacionBien().getTipoVia().getDescripcion(), actDatosDq.getTipoVia().getDescripcion(), CALIDADDATO_DIRECCION));
 		}else {
 			if (activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien().getTipoVia() != null && activo.getLocalizacion().getLocalizacionBien().getTipoVia().getDescripcion() != null) {
@@ -2847,13 +2940,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			
 			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Número del registro", activo.getInfoRegistral().getInfoRegistralBien().getNumRegistro(), CALIDADDATO_REGISTRO));
 			
-			if(activo.getInfoRegistral().getInfoRegistralBien().getFechaInscripcion()!=null) {
-				valorIncripcionCorrectaActivo=INSCRITO;				
-			}else {
-				valorIncripcionCorrectaActivo=NO_INSCRITO;				
-			}			
 			
-			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Inscripción correcta", valorIncripcionCorrectaActivo, CALIDADDATO_REGISRALES));
 			
 		}
 		
@@ -2904,6 +2991,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}						
 		listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Información Cargas", valorBooleanActivoInfoCargas,CALIDADDATO_REGISTRO));
 		
+		if(activo.getInfoRegistral().getInfoRegistralBien().getFechaInscripcion()!=null) {
+			valorIncripcionCorrectaActivo=INSCRITO;				
+		}else {
+			valorIncripcionCorrectaActivo=NO_INSCRITO;				
+		}			
+		
+		listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Inscripción correcta", valorIncripcionCorrectaActivo, CALIDADDATO_REGISTRO));
 		if (activoPropietario.getPorcPropiedad() != null) {			
 			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("% propiedad", activoPropietario.getPorcPropiedad().toString(),CALIDADDATO_REGISTRO));
 		}else {

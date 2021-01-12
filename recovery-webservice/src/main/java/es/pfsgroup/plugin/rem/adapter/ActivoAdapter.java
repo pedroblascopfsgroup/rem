@@ -3941,6 +3941,12 @@ public class ActivoAdapter {
 			
 			oferta.setIdOfertaOrigen(dto.getIdOfertaOrigen());
 			
+			if(Checks.esNulo(dto.getOfrDocRespPrescriptor())) {
+				oferta.setOfrDocRespPrescriptor(true);
+			} else {
+				oferta.setOfrDocRespPrescriptor(dto.getOfrDocRespPrescriptor());
+			}
+			
 			ofertaCreada = genericDao.save(Oferta.class, oferta);
 			
 			if(activo != null && activo.getSubcartera() != null &&
@@ -4153,7 +4159,9 @@ public class ActivoAdapter {
 
 		if (Checks.esNulo(llave)) {
 			return false;
-		}
+		}		/*if(!Checks.esNulo(dto.getOfrDocRespPrescriptor())) {
+		oferta.setOfrDocRespPrescriptor(true);
+	}*/
 
 		DDTipoTenedor tipoTenedor = (DDTipoTenedor) proxyFactory.proxy(UtilDiccionarioApi.class)
 				.dameValorDiccionarioByCod(DDTipoTenedor.class, dto.getCodigoTipoTenedor());
@@ -4537,7 +4545,9 @@ public class ActivoAdapter {
 			}
 		} catch(JsonViewerException e) {
 			throw e;
-		}
+		}		/*if(!Checks.esNulo(dto.getOfrDocRespPrescriptor())) {
+		oferta.setOfrDocRespPrescriptor(true);
+	}*/
 
 		return aprobado;
 	}

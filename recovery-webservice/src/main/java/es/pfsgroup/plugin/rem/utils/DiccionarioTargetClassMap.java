@@ -298,6 +298,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoDocGastoAsociado", DDTipoDocumentoGastoAsociado.class);
 		mapa.put("motivoAmpliacionArras", DDMotivoAmpliacionArras.class);
 		mapa.put("tiposAdmiteMascota", DDSiniSiNoIndiferente.class); 
+		mapa.put("tipoResponsable", DDResponsableDocumentacionCliente.class); 
 		
 		return Collections.unmodifiableMap(mapa);
 	}

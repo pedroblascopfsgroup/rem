@@ -1390,6 +1390,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'motivoAmpliacionArras'}
 			}
+	    },
+	    
+		comboTipoResponsable: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoResponsable'}
+			}
 	    }
 		
     }

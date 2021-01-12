@@ -139,6 +139,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -1960,6 +1961,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if(oferta.getOfertaSingular() != null) {
 			dto.setOfertaSingular(oferta.getOfertaSingular() ? "Si" : "No");
+		}
+		
+		if(!oferta.getOfrDocRespPrescriptor()) {
+			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_COMPRADORES);
+		}
+		
+		else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
+			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL);
+		}
+		
+		else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
+			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR);
 		}
 		
 		OfertaExclusionBulk ofertaExclusionBulk = genericDao.get(OfertaExclusionBulk.class, 

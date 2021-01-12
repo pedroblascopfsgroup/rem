@@ -2334,8 +2334,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private void setDataFase3(DtoCalidadDatoPublicacionActivo dto, Activo activo, ActivoDatosDq actDatosDq) {
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());		
 		ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class,filter);
-		if(activo.getInfoRegistral() != null && activo.getInfoRegistral().getInfoRegistralBien() != null) {			
-			dto.setDrF3SuperficieConstruida(String.valueOf(activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().doubleValue()));
+		
+		if(activo.getInfoRegistral() != null && activo.getInfoRegistral().getInfoRegistralBien() != null) {	
+			if (activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida() != null) {
+				dto.setDrF3SuperficieConstruida(String.valueOf(activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().doubleValue()));
+			}			
 			if(activo.getInfoRegistral().getSuperficieUtil() != null) {
 				dto.setDrF3SuperficieUtil(String.valueOf((activo.getInfoRegistral().getSuperficieUtil()).doubleValue()));
 			}
@@ -2448,22 +2451,29 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_INTERROGANTE);
 			interrogante = true;
 		}else{
-			BigDecimal dqF3SuperficieConstruida = new BigDecimal(dto.getDqF3SuperficieConstruida());
-			if(dqF3SuperficieConstruida.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal calcSupConstruida = dqF3SuperficieConstruida.divide(dqF3SuperficieConstruida,2,RoundingMode.HALF_UP);				 
-				DecimalFormat df = new DecimalFormat("#.##");
-				Double supConstruida = new Double(df.format(calcSupConstruida));
-				
-				if(supConstruida >= 0.8 && supConstruida <= 1.2 ) {
-					dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_OK);
+			if (dto.getDqF3SuperficieConstruida() != null && dto.getDrF3SuperficieConstruida() != null) {
+				BigDecimal dqF3SuperficieConstruida = new BigDecimal(dto.getDqF3SuperficieConstruida());
+				BigDecimal drF3SuperficieConstruida = new BigDecimal(dto.getDrF3SuperficieConstruida());
+				if(dqF3SuperficieConstruida.compareTo(BigDecimal.ZERO) > 0) {
+					BigDecimal calcSupConstruida = drF3SuperficieConstruida.divide(dqF3SuperficieConstruida,2,RoundingMode.HALF_UP);				 
+					DecimalFormat df = new DecimalFormat("#.##");
+					Double supConstruida = new Double(df.format(calcSupConstruida));
+					
+					if(supConstruida >= 0.8 && supConstruida <= 1.2 ) {
+						dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_OK);
+					}else {
+						dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_KO);
+						cruzroja = true;	
+					}
 				}else {
 					dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_KO);
 					cruzroja = true;	
 				}
 			}else {
-				dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_KO);
-				cruzroja = true;	
+				dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_INTERROGANTE);
+				interrogante = true;
 			}
+			
 			
 		}
 		if (dto.getDqF3SuperficieConstruida() == null && dto.getDrF3SuperficieConstruida() == null) {
@@ -2478,17 +2488,29 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoF3SuperficieUtil(ICONO_TICK_INTERROGANTE);
 			interrogante = true;
 		}else{
-			BigDecimal dqF3SuperficieUtil = new BigDecimal(dto.getDqF3SuperficieUtil());
-			BigDecimal calcSupUtil = dqF3SuperficieUtil.divide(dqF3SuperficieUtil, 2, RoundingMode.HALF_UP); 
-			DecimalFormat df = new DecimalFormat("#.##");
-			Double supUtil = new Double(df.format(calcSupUtil));
-			
-			if(supUtil >= 0.8 && supUtil <= 1.2 ) {
-				dto.setCorrectoF3SuperficieUtil(ICONO_TICK_OK);
+			if (dto.getDqF3SuperficieUtil() != null && dto.getDrF3SuperficieUtil() != null) {
+				BigDecimal dqF3SuperficieUtil = new BigDecimal(dto.getDqF3SuperficieUtil());
+				BigDecimal drF3SuperficieUtil = new BigDecimal(dto.getDrF3SuperficieUtil());
+				if (dqF3SuperficieUtil.compareTo(BigDecimal.ZERO) > 0) {
+					BigDecimal calcSupUtil = drF3SuperficieUtil.divide(dqF3SuperficieUtil, 2, RoundingMode.HALF_UP); 
+					DecimalFormat df = new DecimalFormat("#.##");
+					Double supUtil = new Double(df.format(calcSupUtil));
+					
+					if(supUtil >= 0.8 && supUtil <= 1.2 ) {
+						dto.setCorrectoF3SuperficieUtil(ICONO_TICK_OK);
+					}else {
+						dto.setCorrectoF3SuperficieUtil(ICONO_TICK_KO);
+						cruzroja = true;	
+					}
+				}else {
+					dto.setCorrectoF3SuperficieUtil(ICONO_TICK_KO);
+					cruzroja = true;	
+				}
+				
 			}else {
-				dto.setCorrectoF3SuperficieUtil(ICONO_TICK_KO);
-				cruzroja = true;	
-			}
+				dto.setCorrectoF3SuperficieUtil(ICONO_TICK_INTERROGANTE);
+				interrogante = true;
+			}			
 		}
 		if (dto.getDqF3SuperficieUtil() == null && dto.getDrF3SuperficieUtil() == null) {
 			interrogante = false;

@@ -4858,4 +4858,14 @@ public class ActivoAdapter {
 		genericDao.deleteById(AdjuntoGastoAsociado.class, aga.getId());
 		return true;
 	}
+	
+	public List<VPreciosVigentes> getPreciosVigentesByIdAndNotFecha(Long idActivo) {
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo.toString());
+		Filter filtroFecha = genericDao.createFilter(FilterType.NULL, "fechaFin");
+		Order order = new Order(OrderType.ASC, "orden");
+
+		return genericDao.getListOrdered(VPreciosVigentes.class, order, filtro, filtroFecha);
+
+	}
 }

@@ -1477,7 +1477,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (Checks.esNulo(oferta.getAgrupacion())) {
 				if (!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo())) {
 					List<VPreciosVigentes> vPreciosVigentes = activoAdapter
-							.getPreciosVigentesById(activoBancario.getActivo().getId());
+							.getPreciosVigentesByIdAndNotFecha(activoBancario.getActivo().getId());
 					if (!Checks.estaVacio(vPreciosVigentes)) {
 						for (VPreciosVigentes precio : vPreciosVigentes) {
 							if (DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(precio.getCodigoTipoPrecio())
@@ -1493,7 +1493,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				if (!Checks.estaVacio(activos)) {
 					for (ActivoAgrupacionActivo activoOferta : activos) {
 						List<VPreciosVigentes> vPreciosVigentes = activoAdapter
-								.getPreciosVigentesById(activoOferta.getId());
+								.getPreciosVigentesByIdAndNotFecha(activoOferta.getId());
 						if (!Checks.estaVacio(vPreciosVigentes)) {
 							for (VPreciosVigentes precio : vPreciosVigentes) {
 								if (DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(precio.getCodigoTipoPrecio())

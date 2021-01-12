@@ -6391,7 +6391,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private boolean esDepuracionJuridica(DtoActivosFichaComercial dtoActivosFichaComercial) {
 		
 		return (dtoActivosFichaComercial.getInscritoRegistro().equals("Si") && dtoActivosFichaComercial.getTituloPropiedad().equals("Si") 
-				&& dtoActivosFichaComercial.getCargas().equals("Si") && dtoActivosFichaComercial.getPosesion().equals("Si") );
+				&& dtoActivosFichaComercial.getCargas().equals("No") && dtoActivosFichaComercial.getPosesion().equals("Si") );
 		
 	}
 	

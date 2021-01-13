@@ -1987,7 +1987,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(oferta.getAgrupacion() != null && oferta.getAgrupacion().getTipoAgrupacion() != null && 
 				DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())) {
 			ActivoLoteComercial agrupacionLoteCom = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
-			if(agrupacionLoteCom != null) {
+			if(agrupacionLoteCom != null && agrupacionLoteCom.getUsuarioGestorComercialBackOffice() != null) {
 				dto.setCorreoGestorBackoffice(agrupacionLoteCom.getUsuarioGestorComercialBackOffice().getEmail());
 			}
 		} else if(oferta.getActivoPrincipal() != null) {

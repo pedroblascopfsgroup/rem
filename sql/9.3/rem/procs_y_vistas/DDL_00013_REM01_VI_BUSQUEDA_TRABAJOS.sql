@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Julián Dolz
---## FECHA_CREACION=20201109
+--## AUTOR=Dean Ibañez Viño
+--## FECHA_CREACION=20210113
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12030
+--## INCIDENCIA_LINK=HREOS-12764
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -21,6 +21,7 @@
 --##		0.8 HREOS-10618 Adaptación de consulta al nuevo modelo de facturación
 --##		1.0 HREOS-12002 Agregar campos solicitados
 --##		1.1 HREOS-12030 Ajustar campos solicitados
+--##		1.2 HREOS-12764 Adaptar consulta para evitar duplicar trabajos
 --##########################################
 --*/
 
@@ -62,79 +63,129 @@ BEGIN
   EXECUTE IMMEDIATE 'CREATE OR REPLACE VIEW ' || V_ESQUEMA || '.V_BUSQUEDA_TRABAJOS 
 
 	AS
-		SELECT /*+ leading(rn act agr) use_hash(act) use_hash(agr) */
+	WITH busqueda_trabajos AS (
+    		SELECT /*+ leading(rn act agr) use_hash(act) use_hash(agr) */
 			DISTINCT
-			tbj.tbj_id, 
-			act.act_id AS idactivo,
-			1 as rango,
-			tbj.tbj_num_trabajo, 
-			tbj.tbj_webcom_id, 
-			tbj.tbj_cubre_seguro, 
-			tbj.tbj_importe_total, 
-			tbj.tbj_fecha_ejecutado,
-          	NVL2 (agr.agr_num_agrup_rem, agr.agr_num_agrup_rem, act.act_num_activo) AS num_activo_agrupacion,
-          	NVL2 (agr.agr_num_agrup_rem, ''agrupaciones'', NVL2 (tbj.act_id, ''activo'', ''listado'')) AS tipo_entidad,
-			ttr.dd_ttr_codigo, 
-			ttr.dd_ttr_descripcion, 
-			str.dd_str_codigo, 
-			str.dd_str_descripcion,
-          	tbj.tbj_fecha_solicitud, 
-			est.dd_est_codigo, 
-			est.dd_est_descripcion, 
-			pve.pve_nombre AS proveedor, 
-			actpro.pro_id AS propietario,
-			pve.pve_id,
-          	--solic.usu_username AS solicitante,
-			NVL2 (solic.usu_nombre, INITCAP (solic.usu_nombre) || NVL2 (solic.usu_apellido1, '' '' || INITCAP (solic.usu_apellido1), '''') || 
-			NVL2 (solic.usu_apellido2, '' '' || INITCAP (solic.usu_apellido2), ''''), INITCAP (pve2.pve_nombre)) AS solicitante,
-          	ddloc.dd_loc_descripcion AS poblacion, 
-			ddprv.dd_prv_codigo, 
-			ddprv.dd_prv_descripcion AS provincia, 
-			bieloc.bie_loc_cod_post AS codpostal, 
-			act.act_num_activo AS numactivo,
-			agr.agr_num_agrup_rem AS numagrupacion, 
-			cra.dd_cra_codigo AS cartera,
-			cra.dd_cra_descripcion AS descripcionCartera,
-			scr.dd_scr_codigo AS subcartera,
-			scr.dd_scr_descripcion AS descripcionSubcartera,
-			usu.usu_username AS gestor_activo, 
-			DECODE (tbj.tbj_fecha_cierre_economico, NULL, 0, 1) AS con_cierre_economico,
-          	tbj.tbj_fecha_cierre_economico, 
-			DECODE (tbj.TBJ_FECHA_EMISION_FACTURA , NULL, DECODE(tbj.TBJ_IMPORTE_TOTAL, NULL, 1, 0, 1, 0), 1) AS facturado, 
-			ttr.dd_ttr_filtrar,
+			tbj.tbj_id AS TBJ_ID,
+			act.act_id AS IDACTIVO,
+			1 AS RANGO,
+            		row_number() OVER(
+                		PARTITION BY tbj.tbj_num_trabajo
+                		ORDER BY act.act_id DESC
+            		) ROW_NUM, 
+			tbj.tbj_num_trabajo AS TBJ_NUM_TRABAJO,
+			tbj.tbj_webcom_id AS TBJ_WEBCOM_ID,
+			tbj.tbj_cubre_seguro AS TBJ_CUBRE_SEGURO,
+			tbj.tbj_importe_total AS TBJ_IMPORTE_TOTAL, 
+			tbj.tbj_fecha_ejecutado AS TBJ_FECHA_EJECUTADO,
+          		NVL2 (agr.agr_num_agrup_rem, agr.agr_num_agrup_rem, act.act_num_activo) AS NUM_ACTIVO_AGRUPACION,
+          		NVL2 (agr.agr_num_agrup_rem, ''agrupaciones'', NVL2 (tbj.act_id, ''activo'', ''listado'')) AS TIPO_ENTIDAD,
+			ttr.dd_ttr_codigo AS DD_TTR_CODIGO,
+			ttr.dd_ttr_descripcion AS DD_TTR_DESCRIPCION,
+			str.dd_str_codigo AS DD_STR_CODIGO,
+			str.dd_str_descripcion AS DD_STR_DESCRIPCION,
+          		tbj.tbj_fecha_solicitud AS TBJ_FECHA_SOLICITUD,
+			est.dd_est_codigo AS DD_EST_CODIGO,
+			est.dd_est_descripcion AS DD_EST_DESCRIPCION,
+			pve.pve_nombre AS PROVEEDOR,
+			actpro.pro_id AS PROPIETARIO,
+			pve.pve_id AS PVE_ID,
+          		--solic.usu_username AS SOLICITANTE,
+			NVL2 (solic.usu_nombre, INITCAP (solic.usu_nombre) || NVL2 (solic.usu_apellido1, '' '' || INITCAP (solic.usu_apellido1), '''') ||
+			NVL2 (solic.usu_apellido2, '' '' || INITCAP (solic.usu_apellido2), ''''), INITCAP (pve2.pve_nombre)) AS SOLICITANTE,
+          		ddloc.dd_loc_descripcion AS POBLACION,
+			ddprv.dd_prv_codigo AS DD_PRV_CODIGO,
+			ddprv.dd_prv_descripcion AS PROVINCIA,
+			bieloc.bie_loc_cod_post AS CODPOSTAL,
+			act.act_num_activo AS NUMACTIVO,
+			agr.agr_num_agrup_rem AS NUMAGRUPACION,
+			cra.dd_cra_codigo AS CARTERA,
+			cra.dd_cra_descripcion AS DESCRIPCIONCARTERA,
+			scr.dd_scr_codigo AS SUBCARTERA,
+			scr.dd_scr_descripcion AS DESCRIPCIONSUBCARTERA,
+			usu.usu_username AS GESTOR_ACTIVO,
+			DECODE (tbj.tbj_fecha_cierre_economico, NULL, 0, 1) AS CON_CIERRE_ECONOMICO,
+          		tbj.tbj_fecha_cierre_economico AS TBJ_FECHA_CIERRE_ECONOMICO,
+			DECODE (tbj.TBJ_FECHA_EMISION_FACTURA , NULL, DECODE(tbj.TBJ_IMPORTE_TOTAL, NULL, 1, 0, 1, 0), 1) AS FACTURADO,
+			ttr.dd_ttr_filtrar AS DD_TTR_FILTRAR,
 			DECODE (gtb.tbj_id, NULL, 0, 1) AS EN_OTRO_GASTO,
-			IRE.DD_IRE_DESCRIPCION,
-    		TBJ.TBJ_FECHA_CAMBIO_ESTADO,
-            usu2.usu_username as TBJ_RESPONSABLE_TRABAJO,
-			usu3.usu_username AS GestorResponsable
+			IRE.DD_IRE_DESCRIPCION AS DD_IRE_DESCRIPCION,
+    			TBJ.TBJ_FECHA_CAMBIO_ESTADO AS TBJ_FECHA_CAMBIO_ESTADO, 
+            		usu2.usu_username as TBJ_RESPONSABLE_TRABAJO,
+			usu3.usu_username AS GESTORRESPONSABLE
 
-     	FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj 
-			JOIN ' || V_ESQUEMA || '.act_tbj atj 							ON atj.tbj_id = tbj.tbj_id
-			LEFT JOIN ' || V_ESQUEMA || '.act_activo act 					ON act.act_id = atj.act_id and act.borrado = 0
-			LEFT JOIN ' || V_ESQUEMA || '.act_pac_propietario_activo actpro ON act.act_id = actpro.act_id
-			LEFT JOIN ' || V_ESQUEMA || '.act_agr_agrupacion agr 			ON agr.agr_id = tbj.agr_id and agr.borrado = 0
+     			FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj 
+			JOIN ' || V_ESQUEMA || '.act_tbj atj 					ON atj.tbj_id = tbj.tbj_id
+			LEFT JOIN ' || V_ESQUEMA || '.act_activo act 				ON act.act_id = atj.act_id and act.borrado = 0
+			LEFT JOIN ' || V_ESQUEMA || '.act_pac_propietario_activo actpro 	ON act.act_id = actpro.act_id
+			LEFT JOIN ' || V_ESQUEMA || '.act_agr_agrupacion agr 		ON agr.agr_id = tbj.agr_id and agr.borrado = 0
 			LEFT JOIN ' || V_ESQUEMA || '.gac_gestor_add_activo gac 		ON gac.act_id = act.act_id
-			LEFT JOIN ' || V_ESQUEMA || '.gee_gestor_entidad gee 			ON gac.gee_id = gee.gee_id
-			JOIN ' || V_ESQUEMA_MASTER || '.dd_tge_tipo_gestor tge 			ON (tge.dd_tge_id = gee.dd_tge_id AND tge.dd_tge_codigo = ''GACT'')
-			LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios usu 			ON gee.usu_id = usu.usu_id
-			LEFT JOIN ' || V_ESQUEMA || '.act_loc_localizacion loc 			ON (loc.act_id = NVL (tbj.act_id, agr.agr_act_principal))
-			LEFT JOIN ' || V_ESQUEMA || '.bie_localizacion bieloc 			ON loc.bie_loc_id = bieloc.bie_loc_id
-			LEFT JOIN ' || V_ESQUEMA_MASTER || '.dd_loc_localidad ddloc 	ON bieloc.dd_loc_id = ddloc.dd_loc_id
-			LEFT JOIN ' || V_ESQUEMA_MASTER || '.dd_prv_provincia ddprv 	ON bieloc.dd_prv_id = ddprv.dd_prv_id
-			JOIN ' || V_ESQUEMA || '.dd_ttr_tipo_trabajo ttr 				ON (ttr.dd_ttr_id = tbj.dd_ttr_id and ttr.dd_ttr_filtrar IS NULL)
+			LEFT JOIN ' || V_ESQUEMA || '.gee_gestor_entidad gee 		ON gac.gee_id = gee.gee_id
+			JOIN ' || V_ESQUEMA_MASTER || '.dd_tge_tipo_gestor tge 		ON (tge.dd_tge_id = gee.dd_tge_id AND tge.dd_tge_codigo = ''GACT'')
+			LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios usu 		ON gee.usu_id = usu.usu_id
+			LEFT JOIN ' || V_ESQUEMA || '.act_loc_localizacion loc 		ON (loc.act_id = NVL (tbj.act_id, agr.agr_act_principal))
+			LEFT JOIN ' || V_ESQUEMA || '.bie_localizacion bieloc 		ON loc.bie_loc_id = bieloc.bie_loc_id
+			LEFT JOIN ' || V_ESQUEMA_MASTER || '.dd_loc_localidad ddloc 		ON bieloc.dd_loc_id = ddloc.dd_loc_id
+			LEFT JOIN ' || V_ESQUEMA_MASTER || '.dd_prv_provincia ddprv 		ON bieloc.dd_prv_id = ddprv.dd_prv_id
+			JOIN ' || V_ESQUEMA || '.dd_ttr_tipo_trabajo ttr 			ON (ttr.dd_ttr_id = tbj.dd_ttr_id and ttr.dd_ttr_filtrar IS NULL)
 			LEFT JOIN ' || V_ESQUEMA || '.dd_str_subtipo_trabajo str 		ON str.dd_str_id = tbj.dd_str_id
 			LEFT JOIN ' || V_ESQUEMA || '.dd_est_estado_trabajo est 		ON tbj.dd_est_id = est.dd_est_id
-			INNER JOIN ' || V_ESQUEMA || '.dd_cra_cartera cra 				ON cra.dd_cra_id = act.dd_cra_id
-			INNER JOIN ' || V_ESQUEMA || '.dd_scr_subcartera scr 			ON scr.dd_scr_id = act.dd_scr_id
+			INNER JOIN ' || V_ESQUEMA || '.dd_cra_cartera cra 			ON cra.dd_cra_id = act.dd_cra_id
+			INNER JOIN ' || V_ESQUEMA || '.dd_scr_subcartera scr 		ON scr.dd_scr_id = act.dd_scr_id
 			LEFT JOIN ' || V_ESQUEMA || '.act_pvc_proveedor_contacto pvc 	ON pvc.pvc_id = tbj.pvc_id
 			LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve 			ON pve.pve_id = pvc.pve_id
-			LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve2 			ON pve2.pve_id = tbj.mediador_id
+			LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve2 		ON pve2.pve_id = tbj.mediador_id
 			LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios solic 		ON solic.usu_id = tbj.usu_id
-			LEFT JOIN ' || V_ESQUEMA || '.gld_tbj gtb                       ON tbj.tbj_id = gtb.tbj_id AND GTB.BORRADO = 0
+			LEFT JOIN ' || V_ESQUEMA || '.gld_tbj gtb                       	ON tbj.tbj_id = gtb.tbj_id AND GTB.BORRADO = 0
 			LEFT JOIN ' || V_ESQUEMA || '.DD_IRE_IDENTIFICADOR_REAM IRE		ON TBJ.DD_IRE_ID = IRE.DD_IRE_ID
-			LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios usu2	 		ON usu2.usu_id = tbj.TBJ_RESPONSABLE_TRABAJO
-			LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios usu3	 		ON usu3.usu_id = tbj.TBJ_GESTOR_ACTIVO_RESPONSABLE
-          where tbj.borrado = 0
+			LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios usu2	 	ON usu2.usu_id = tbj.TBJ_RESPONSABLE_TRABAJO
+			LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios usu3	 	ON usu3.usu_id = tbj.TBJ_GESTOR_ACTIVO_RESPONSABLE
+          		where tbj.borrado = 0
+          )
+		SELECT 
+		TBJ_ID,
+		IDACTIVO,
+		RANGO,
+		TBJ_NUM_TRABAJO,
+		TBJ_WEBCOM_ID,
+		TBJ_CUBRE_SEGURO,
+		TBJ_IMPORTE_TOTAL,
+		TBJ_FECHA_EJECUTADO,
+		NUM_ACTIVO_AGRUPACION,
+		TIPO_ENTIDAD,
+		DD_TTR_CODIGO,
+		DD_TTR_DESCRIPCION,
+		DD_STR_CODIGO,
+		DD_STR_DESCRIPCION,
+		TBJ_FECHA_SOLICITUD,
+		DD_EST_CODIGO,
+		DD_EST_DESCRIPCION,
+		PROVEEDOR,
+		PROPIETARIO,
+		PVE_ID,
+		SOLICITANTE,
+		POBLACION,
+		DD_PRV_CODIGO,
+		PROVINCIA,
+		CODPOSTAL,
+		NUMACTIVO,
+		NUMAGRUPACION,
+		CARTERA,
+		DESCRIPCIONCARTERA,
+		SUBCARTERA,
+		DESCRIPCIONSUBCARTERA,
+		GESTOR_ACTIVO,
+		CON_CIERRE_ECONOMICO,
+		TBJ_FECHA_CIERRE_ECONOMICO,
+		FACTURADO,
+		DD_TTR_FILTRAR,
+		EN_OTRO_GASTO,
+		DD_IRE_DESCRIPCION,
+		TBJ_FECHA_CAMBIO_ESTADO,
+		TBJ_RESPONSABLE_TRABAJO,
+		GESTORRESPONSABLE
+		FROM busqueda_trabajos
+		WHERE ROW_NUM = 1
           ';
 
 

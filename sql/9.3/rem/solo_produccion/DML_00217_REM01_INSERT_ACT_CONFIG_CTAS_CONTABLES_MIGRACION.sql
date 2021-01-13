@@ -35,8 +35,8 @@ DECLARE
     V_ITEM VARCHAR2(25 CHAR):= 'HREOS-11745';
 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_CONFIG_CTAS_CONTABLES'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_DD_LBK VARCHAR(50 CHAR); -- Vble. que almacena el id de la cartera LBK.
-    V_DD_BNK VARCHAR(50 CHAR); -- Vble. que almacena el id de la cartera BNK.
+    V_LBK VARCHAR(50 CHAR); -- Vble. que almacena el id de la cartera LBK.
+    V_BNK VARCHAR(50 CHAR); -- Vble. que almacena el id de la cartera BNK.
 	  V_EJE_ID VARCHAR(50 CHAR); -- Vble. que almacena el id del año.
 
     V_CONSTRAINT_NAME VARCHAR2(30 CHAR);

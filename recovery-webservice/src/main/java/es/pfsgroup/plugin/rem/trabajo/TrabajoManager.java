@@ -2341,13 +2341,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setResolucionComiteId(dtoTrabajo.getResolucionComiteId());
 		}		
 
+		SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
+		SimpleDateFormat formatoFechaHora = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat formatoFechaString = new SimpleDateFormat("dd/MM/yyyy");
+		
 		if ((dtoTrabajo.getFechaConcretaString() != null && !dtoTrabajo.getFechaConcretaString().isEmpty()) 
 			|| (dtoTrabajo.getHoraConcretaString() != null && !dtoTrabajo.getHoraConcretaString().isEmpty())) {		
 			//
-			SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
-			SimpleDateFormat formatoFechaHora = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-			SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
-			SimpleDateFormat formatoFechaString = new SimpleDateFormat("dd/MM/yyyy");
+			
 			Date fechaHoraConcreta = null;
 			
 			if(dtoTrabajo.getFechaConcretaString().isEmpty()) {
@@ -2373,6 +2375,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajo.setFechaCompromisoEjecucion(fechaHoraConcreta);
 			}
 		
+		}else if(dtoTrabajo.getFechaConcreta() != null && dtoTrabajo.getHoraConcreta() != null){
+			if(dtoTrabajo.getHoraConcreta() != null) {
+				String hora = formatoHora.format(dtoTrabajo.getHoraConcreta());
+				String fecha = formatoFecha.format(dtoTrabajo.getFechaConcreta());
+				if(!hora.isEmpty() && !fecha.isEmpty()) {
+					trabajo.setFechaHoraConcreta(formatoFechaHora.parse(fecha+" "+hora));
+				}
+			}else {
+				trabajo.setFechaHoraConcreta(dtoTrabajo.getFechaConcreta());
+			}
 		}else {
 			trabajo.setFechaHoraConcreta(null);
 		}

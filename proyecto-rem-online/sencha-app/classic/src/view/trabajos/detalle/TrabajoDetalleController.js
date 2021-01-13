@@ -1264,7 +1264,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
         		waitMsg: HreRem.i18n('msg.mask.loading'),
         		params: params,
     	   		success: function(fp, o){
-<<<<<<< HEAD
     	   			var idProceso = Ext.JSON.decode(o.response.responseText).idProceso;
 					var parameters = {};
     	   			parameters.idProcess = idProceso;
@@ -1297,20 +1296,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 					 });
     		    }		
     	    });
-=======
-    	   			idProceso = Ext.JSON.decode(o.response.responseText).idProceso;
-    	   			//btn.up('creartrabajowindow').getViewModel().getData().trabajo.getData().idProceso = idProceso;
-    	   			//btn.up('creartrabajowindow').lookupReference('')form.getBindRecord().set("idActivo", idActivo);
-    	   			var window = btn.up('crearpeticiontrabajowin');
-    	   			window.idProceso = idProceso;
-    	   			window.lookupReference('listaActivosSubidaRef').getStore().getProxy().setExtraParams({'idProceso':idProceso});
-    	   			window.lookupReference('listaActivosSubidaRef').getStore().load(1);    
-    	   			//Si carga correctametne desde listado, ya no sera obligatorio insertar archivo
-    	   			window.lookupReference('filefieldActivosRef').allowBlank=true;
-    		    }
-    				
-    	    })
->>>>>>> R-Okitsu
        	}
      },
      

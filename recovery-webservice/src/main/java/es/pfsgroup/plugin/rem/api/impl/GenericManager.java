@@ -775,19 +775,13 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 						}
 					} else if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
 							&& !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())
-							&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())) {
+							&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())
+							&& !DDTipoTrabajo.CODIGO_PRECIOS.equals(tipoTrabajo.getCodigo())) {
 						// El resto de tipos, si no es comercialización o
 						// tasación,
 						// se pueden generar.
 						tiposTrabajoFiltered.add(tipoTrabajo);
 
-					} else if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
-							&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())
-							&& !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())) {
-						// El resto de tipos, si no es comercialización o
-						// tasación,
-						// se pueden generar.
-						tiposTrabajoFiltered.add(tipoTrabajo);
 					}
 				}
 			}
@@ -798,7 +792,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				// comercialización.
 				if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
 						&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())
-						&& !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())) {
+						&& !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())
+						&& !DDTipoTrabajo.CODIGO_PRECIOS.equals(tipoTrabajo.getCodigo())) {
 					// El resto de tipos, si no es comercialización o tasación,
 					// se pueden generar.
 

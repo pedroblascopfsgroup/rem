@@ -2456,8 +2456,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				BigDecimal drF3SuperficieConstruida = new BigDecimal(dto.getDrF3SuperficieConstruida());
 				if(dqF3SuperficieConstruida.compareTo(BigDecimal.ZERO) > 0) {
 					BigDecimal calcSupConstruida = drF3SuperficieConstruida.divide(dqF3SuperficieConstruida,2,RoundingMode.HALF_UP);				 
-					DecimalFormat df = new DecimalFormat("#.##");
-					Double supConstruida = new Double(df.format(calcSupConstruida));
+					Double supConstruida = calcSupConstruida.doubleValue();
 					
 					if(supConstruida >= 0.8 && supConstruida <= 1.2 ) {
 						dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_OK);
@@ -2493,8 +2492,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				BigDecimal drF3SuperficieUtil = new BigDecimal(dto.getDrF3SuperficieUtil());
 				if (dqF3SuperficieUtil.compareTo(BigDecimal.ZERO) > 0) {
 					BigDecimal calcSupUtil = drF3SuperficieUtil.divide(dqF3SuperficieUtil, 2, RoundingMode.HALF_UP); 
-					DecimalFormat df = new DecimalFormat("#.##");
-					Double supUtil = new Double(df.format(calcSupUtil));
+					Double supUtil = calcSupUtil.doubleValue();
 					
 					if(supUtil >= 0.8 && supUtil <= 1.2 ) {
 						dto.setCorrectoF3SuperficieUtil(ICONO_TICK_OK);

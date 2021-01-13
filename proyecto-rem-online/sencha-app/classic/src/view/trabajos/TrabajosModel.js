@@ -37,8 +37,15 @@ Ext.define('HreRem.view.trabajos.TrabajosModel', {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'estadoTrabajo'}
+				remoteUrl: 'trabajo/getComboEstadoTrabajo'
+			}
+    	},    	
+    	
+    	filtroComboAreaPeticionaria: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'trabajo/getComboAreaPeticionaria'
 			}
     	}
  	}

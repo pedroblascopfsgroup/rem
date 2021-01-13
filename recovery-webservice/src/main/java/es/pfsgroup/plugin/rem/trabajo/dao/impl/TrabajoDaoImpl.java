@@ -18,23 +18,29 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.devon.hibernate.pagination.PageHibernate;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VBusquedaTrabajosGastos;
+import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
+import es.pfsgroup.plugin.rem.trabajo.dto.DtoHistorificadorCampos;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoGridFilter;
 
@@ -48,6 +54,9 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	private GenericABMDao genericDao;
 	
 	protected static final Log logger = LogFactory.getLog(TrabajoDaoImpl.class);
+	private static final String NIE_HAYA = "A86744349";
+	private static final String PERFIL_PROV = "HAYAPROV";
+	
 	
 	@Override
 	public Page findAll(DtoTrabajoFilter dto) {
@@ -109,8 +118,8 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	   		if (dto.getCodigoTipo2()!=null) {
 	   			listaTipo.add(dto.getCodigoTipo2());
 	   		}
-	   		HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.codigoTipo", listaTipo);   		
-	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoSubtipo", dto.getCodigoSubtipo());
+	   		HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.codigoTipo", listaTipo);
+	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoSubtipo",dto.getCodigoSubtipo());
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", dto.getCodigoEstado());
 	   		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.descripcionPoblacion", dto.getDescripcionPoblacion(), true);
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoProvincia", dto.getCodigoProvincia());
@@ -126,6 +135,9 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.conCierreEconomico", dto.getConCierreEconomico());
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.facturado", dto.getFacturado());
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
+	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.gestorActual", dto.getGestorActual());
+	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.areaPeticionaria", dto.getAreaPeticionaria());
+	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.responsableTrabajo", dto.getResponsableTrabajo());
 
 	   		if(!Checks.esNulo(dto.getIdProveedor())) {
 	   			hb.appendWhere("tbj.importeTotal > " +BigDecimal.ZERO);
@@ -152,6 +164,22 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 					calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
 
 					HQLBuilder.addFiltroBetweenSiNotNull(hb, "tbj.fechaSolicitud", null, calendar.getTime());
+				}
+				
+				if (dto.getFechaCambioEstadoDesde() != null) {
+					Date fechaDesde = DateFormat.toDate(dto.getFechaCambioEstadoDesde());
+					HQLBuilder.addFiltroBetweenSiNotNull(hb, "tbj.fechaCambioEstado", fechaDesde, null);
+				}
+				
+				if (dto.getFechaCambioEstadoHasta() != null) {
+					Date fechaHasta = DateFormat.toDate(dto.getFechaCambioEstadoHasta());
+			
+					// Se le añade un día para que encuentre las fechas del día anterior hasta las 23:59
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(fechaHasta); // Configuramos la fecha que se recibe
+					calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
+
+					HQLBuilder.addFiltroBetweenSiNotNull(hb, "tbj.fechaCambioEstado", null, calendar.getTime());
 				}
 				
 	   		} catch (ParseException e) {
@@ -239,7 +267,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	}
 	
 	private Page getSeleccionTarifasTrabajoConSubcartera(DtoGestionEconomicaTrabajo filtro, Usuario usuarioLogado) {
-
+	    Integer tarifaPve = 0;
 		HQLBuilder hb = new HQLBuilder(" from ConfiguracionTarifa cfgTar");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.tipoTrabajo.codigo", filtro.getTipoTrabajoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.subtipoTrabajo.codigo", filtro.getSubtipoTrabajoCodigo());
@@ -248,12 +276,20 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.tipoTarifa.codigo", filtro.getCodigoTarifaTrabajo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.tipoTarifa.descripcion", filtro.getDescripcionTarifaTrabajo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.subcartera.codigo", filtro.getSubcarteraCodigo());
-
+		
+		for (Perfil prov : usuarioLogado.getPerfiles()) {
+			if(prov.getCodigo().equals(PERFIL_PROV)) {
+				tarifaPve = 1;
+				break;
+			}
+		}
+		
+		HQLBuilder.addFiltroIgualQue(hb, "cfgTar.tarifaPve", tarifaPve);
 		return HibernateQueryUtils.page(this, hb, filtro);
 	}
 	
 	private Page getSeleccionTarifasTrabajoSinSubcartera(DtoGestionEconomicaTrabajo filtro, Usuario usuarioLogado) {
-
+		Integer tarifaPve = 0;
 		HQLBuilder hb = new HQLBuilder(" from ConfiguracionTarifa cfgTar");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.tipoTrabajo.codigo", filtro.getTipoTrabajoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.subtipoTrabajo.codigo", filtro.getSubtipoTrabajoCodigo());
@@ -262,6 +298,14 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.tipoTarifa.codigo", filtro.getCodigoTarifaTrabajo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.tipoTarifa.descripcion", filtro.getDescripcionTarifaTrabajo());
 
+		for (Perfil prov : usuarioLogado.getPerfiles()) {
+			if(prov.getCodigo().equals(PERFIL_PROV)) {
+				tarifaPve = 1;
+				break;
+			}
+		}
+		
+		HQLBuilder.addFiltroIgualQue(hb, "cfgTar.tarifaPve", tarifaPve);
 		return HibernateQueryUtils.page(this, hb, filtro);
 	}
 	
@@ -272,6 +316,19 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "traCfgTar.trabajo.id", filtro.getIdTrabajo());
 		
 		return HibernateQueryUtils.page(this, hb, filtro);
+	}
+	
+	@Override
+	public Page getHistTrabajo(Long filtro)
+	{
+		
+		DtoHistorificadorCampos dto = new DtoHistorificadorCampos();
+		
+		dto.setIdTrabajo(filtro);
+		HQLBuilder hb = new HQLBuilder(" from HistorificadorPestanas histPest");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "histPest.trabajo.id", dto.getIdTrabajo());
+		
+		return HibernateQueryUtils.page(this, hb, dto);
 	}
 	
 	@Override
@@ -419,5 +476,79 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		}
 		return HibernateQueryUtils.page(this, hb, dto);
 	}
+	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public DtoPage findBuscadorGasto(DtoTrabajoFilter dto) {
+		
+		Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", dto.getNumGasto());
+		GastoProveedor gasto = genericDao.get(GastoProveedor.class, filtroGasto);
+		
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaTrabajosGastos tbj");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numTrabajo", dto.getNumTrabajo());
+
+   		if (dto.getCodigoTipo()!=null) {
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoTipo", dto.getCodigoTipo());
+   		}
+   		else if(dto.getCodigoTipo2()!=null) {
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoTipo", dto.getCodigoTipo2());
+   		}
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.cubreSeguro", dto.getCubreSeguro());
+   		
+   		
+   		if (dto.getCodigoSubtipo()!=null) {
+   		  List<String> listaSubTipo = new ArrayList<String>();
+   		  for (String subTipo : dto.getCodigoSubtipo().split(",")) {
+   			  listaSubTipo.add("'" + subTipo + "'");
+   		  }
+   		  HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.codigoSubtipo",listaSubTipo);
+   		} 		
+		
+		if(gasto.getProveedor().getDocIdentificativo().equals(NIE_HAYA)) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.propietario", gasto.getPropietario().getId());
+		}
+		else {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.propietario", gasto.getPropietario().getId());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idProveedor", gasto.getProveedor().getId());
+		}
+		
+   		try {
+   			
+
+			if (dto.getFechaPeticionDesde() != null) {
+				Date fechaDesde = DateFormat.toDate(dto.getFechaPeticionDesde());
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "tbj.fechaSolicitud", fechaDesde, null);
+			}
+			
+			if (dto.getFechaPeticionHasta() != null) {
+				Date fechaHasta = DateFormat.toDate(dto.getFechaPeticionHasta());
+		
+				// Se le añade un día para que encuentre las fechas del día anterior hasta las 23:59
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(fechaHasta); // Configuramos la fecha que se recibe
+				calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
+
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "tbj.fechaSolicitud", null, calendar.getTime());
+			}
+			
+   		} catch (ParseException e) {
+   			logger.error(e);
+		}
+		
+		hb.orderBy("descripcionSubtipo", HQLBuilder.ORDER_ASC);
+		
+		
+		Page pageTrabajos = HibernateQueryUtils.page(this, hb, dto);
+		List<VBusquedaTrabajosGastos> trabajoGastos = (List<VBusquedaTrabajosGastos>) pageTrabajos.getResults();
+		for(VBusquedaTrabajosGastos trabajoGasto : trabajoGastos) {
+			if(!Checks.esNulo(gasto.getDestinatarioGasto()) && gasto.getDestinatarioGasto().getCodigo().equals(DDDestinatarioGasto.CODIGO_HAYA)) {
+				trabajoGasto.setImporteTotal(trabajoGasto.getImportePresupuesto());
+			}
+		}
+		
+		return new DtoPage(trabajoGastos, pageTrabajos.getTotalCount());
+	}
+	
 
 }

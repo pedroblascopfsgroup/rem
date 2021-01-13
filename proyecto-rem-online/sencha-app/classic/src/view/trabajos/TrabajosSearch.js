@@ -121,7 +121,19 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 				            	fieldLabel: HreRem.i18n('fieldlabel.proveedor'),
 				            	name: 'proveedor',
 				            	width: 		230
-						    }
+						    },
+				            { 
+					        	xtype: 'combo',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.trabajo.area.peticionaria'),
+					        	labelWidth:	150,
+					        	width: 		230,
+					        	name: 'areaPeticionaria',
+					        	bind: {
+				            		store: '{filtroComboAreaPeticionaria}'
+				            	},
+				            	displayField: 'descripcion',
+								valueField: 'descripcion'
+					        }
 					        
 					     ]
 					},
@@ -181,13 +193,15 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 											items :	[
 														{
 															fieldLabel: HreRem.i18n('fieldlabel.municipio'),
-											            	name:		'localidadDescripcion'
+															labelWidth:	150,
+															name:		'localidadDescripcion'
 														 },
 														 {
 												        	xtype: 'comboboxfieldbase',
 												        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 												        	name: 'provinciaCodigo',
 												        	addUxReadOnlyEditFieldPlugin: false,
+												        	labelWidth:	150,
 												        	bind: {
 											            		store: '{comboFiltroProvincias}'
 											            	},
@@ -197,6 +211,7 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 												         }, 
 														 {
 															fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
+															labelWidth:	150,
 											                name:		'codPostal'
 														 }
 											]
@@ -214,17 +229,67 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 											items :	[
 														 {
 															fieldLabel: HreRem.i18n('fieldlabel.gestor.activo'),
+															labelWidth:	150,
 											            	name:		'gestorActivo'
 														 },
 														 { 
 												        	xtype: 'comboboxfieldbase',
 					    									addUxReadOnlyEditFieldPlugin: false,
+					    									labelWidth:	150,
 												        	fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
 												        	name: 'carteraCodigo',
 												        	bind: {
 											            		store: '{comboEntidadPropietaria}'
 											            	}
-												        }
+												        },
+												        {
+															fieldLabel: HreRem.i18n('fieldlabel.usuario.responsable.trabajo'),
+															labelWidth:	150,
+											            	name:		'responsableTrabajo'
+														}
+											]
+							                
+							            },
+							            
+							            {    			                
+											xtype:'fieldset',
+											cls	 : 'fieldsetBase',
+											collapsible: true,
+											defaultType: 'textfield',
+											defaults: {
+												anchor: '100%', style: 'width: 33%'},
+											layout: 'column',
+											items :	[
+														{
+															fieldLabel: HreRem.i18n('fieldlabel.usuario.ultima.edicion'),
+															labelWidth:	150,
+															name:		'gestorActual'
+														},
+														{ 
+										                	xtype:'datefield',
+													 		fieldLabel: HreRem.i18n('fieldlabel.fecha.estado.desde'),
+													 		labelWidth:	150,
+													 		//width: 		275,
+													 		name: 'fechaCambioEstadoDesde',
+											            	formatter: 'date("d/m/Y")',
+								            	        	listeners : {
+												            	change: function (a, b) {
+												            		//Eliminar la fechaCreacionhasta e instaurar
+												            		//como minValue a su campo el velor de fechaCreacionDesde
+												            		var me = this;
+												            		me.next().reset();
+												            		me.next().setMinValue(me.getValue());
+												                }
+											            	}
+														},
+														{ 
+										                	xtype:'datefield',
+													 		fieldLabel: HreRem.i18n('fieldlabel.fecha.estado.hasta'),
+													 		labelWidth:	150,
+													 		//width: 		275,
+													 		name: 'fechaCambioEstadoHasta',
+													 		formatter: 'date("d/m/Y")'
+														}
 											]
 							                
 							            }

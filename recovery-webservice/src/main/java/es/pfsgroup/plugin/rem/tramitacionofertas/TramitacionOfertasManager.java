@@ -377,9 +377,11 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		if (activo != null) {
 			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			List<ActivoValoraciones> precios = null;
 			ActivoValoraciones precio = null;
 			Filter filtroTof = null;
 			Filter filtroMin = null;
+			Filter fechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
 			String msg;
 
 			if (esAlquiler) {
@@ -398,7 +400,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
 			}
 
-			precio = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroTof);
+			precios = genericDao.getList(ActivoValoraciones.class, filtroActivo, filtroTof, fechaFin);
+			
+			if (precios != null && !precios.isEmpty())
+				precio = precios.get(0);
 
 			if (activo.getCartera() != null
 					&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {
@@ -1472,7 +1477,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (Checks.esNulo(oferta.getAgrupacion())) {
 				if (!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo())) {
 					List<VPreciosVigentes> vPreciosVigentes = activoAdapter
-							.getPreciosVigentesById(activoBancario.getActivo().getId());
+							.getPreciosVigentesByIdAndNotFecha(activoBancario.getActivo().getId());
 					if (!Checks.estaVacio(vPreciosVigentes)) {
 						for (VPreciosVigentes precio : vPreciosVigentes) {
 							if (DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(precio.getCodigoTipoPrecio())
@@ -1488,7 +1493,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				if (!Checks.estaVacio(activos)) {
 					for (ActivoAgrupacionActivo activoOferta : activos) {
 						List<VPreciosVigentes> vPreciosVigentes = activoAdapter
-								.getPreciosVigentesById(activoOferta.getId());
+								.getPreciosVigentesByIdAndNotFecha(activoOferta.getId());
 						if (!Checks.estaVacio(vPreciosVigentes)) {
 							for (VPreciosVigentes precio : vPreciosVigentes) {
 								if (DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(precio.getCodigoTipoPrecio())
@@ -1599,8 +1604,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				&& DDSubcartera.CODIGO_YUBAI.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
 			filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
 					DDComiteSancion.CODIGO_THIRD_PARTIES_YUBAI);
-		}else if(DDCartera.CODIGO_CARTERA_BBVA.equals(carteraCodigo)
-				&& DDSubcartera.CODIGO_BBVA.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
+		} else if (DDCartera.CODIGO_CARTERA_BBVA.equals(carteraCodigo)) {
 			filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",	calcularComiteBBVA(oferta));
 		}
 

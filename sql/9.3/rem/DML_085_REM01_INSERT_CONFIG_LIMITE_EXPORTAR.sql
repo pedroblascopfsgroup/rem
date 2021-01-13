@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--## 		0.2 se reelanza
 --##########################################
 --*/
 

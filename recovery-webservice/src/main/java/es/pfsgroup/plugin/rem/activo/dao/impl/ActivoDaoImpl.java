@@ -1396,6 +1396,14 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 		return HibernateQueryUtils.list(this, hb);
 	}
+	
+	@Override
+	public Page getListActivosPorID(List<String> activosID, DtoTrabajoListActivos dto) {
+		HQLBuilder hb = new HQLBuilder("from VBusquedaActivosCrearTrabajo");
+
+		HQLBuilder.addFiltroWhereInSiNotNull(hb, "idActivo", activosID);
+		return HibernateQueryUtils.page(this, hb, dto);
+	}
 
 	@Override
 	public Boolean todasLasOfertasEstanAnuladas(Long idActivo) {
@@ -2068,6 +2076,22 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				+ " AND BORRADO = 0"				
 			);
 		session.createSQLQuery(sb.toString()).executeUpdate();
+	}
+	
+
+
+	@Override
+	public Long getComunidadAutonomaId(Activo activo) {
+		if(activo.getProvincia() == null) {
+			return null;
+		}
+		
+		String sql = " SELECT DD_CCA_ID FROM remmaster.DD_PRV_PROVINCIA prv WHERE DD_PRV_CODIGO = " +activo.getProvincia();
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return Long.valueOf(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult().toString());
+		}
+		return null;
 	}
 	
 	@Override

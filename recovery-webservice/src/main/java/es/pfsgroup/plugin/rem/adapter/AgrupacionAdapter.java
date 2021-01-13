@@ -23,7 +23,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -4263,4 +4262,7 @@ public class AgrupacionAdapter {
 		return this.createAgrupacion(dto);
 	}
 	
+	public ActivoAgrupacion getAgrupacionObjectById(Long id) {
+		return genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+	}
 }

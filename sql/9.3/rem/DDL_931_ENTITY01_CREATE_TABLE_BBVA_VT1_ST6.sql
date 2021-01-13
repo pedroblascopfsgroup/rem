@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Dean Ibañez VIño
---## FECHA_CREACION=20200825
+--## AUTOR=Joaquin Arnal Diaz
+--## FECHA_CREACION=20201010
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10918
 --## PRODUCTO=NO
---## Finalidad: Creacion TBJ_HPE_HISTORIFICADOR_PESTANAS
+--## Finalidad: Creacion BBVA_VT1_ST6
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - Dean Ibañez VIño
+--##        0.2 - MODIFY COD_ERROR VARCHAR(3 CHAR);
 --##########################################
 --*/
 
@@ -54,10 +55,10 @@ BEGIN
             V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TABLA||'
             (
                 ACT_ID                      NUMBER(16,0),
-                OPERACION                   VARCHAR(1),
+                OPERACION                   VARCHAR(1 CHAR),
                 ERROR                       NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE,
-                COD_ERROR                   VARCHAR(2),
-                DESC_ERROR                  VARCHAR(200)
+                COD_ERROR                   VARCHAR(3 CHAR),
+                DESC_ERROR                  VARCHAR(200 CHAR)
             )
             LOGGING 
             NOCOMPRESS 

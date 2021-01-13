@@ -3,10 +3,12 @@ package es.pfsgroup.plugin.rem.trabajo.dao;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
+import es.pfsgroup.plugin.rem.trabajo.dto.DtoHistorificadorCampos;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoGridFilter;
 
@@ -50,5 +52,9 @@ public interface TrabajoDao extends AbstractDao<Trabajo, Long>{
 	public Page getBusquedaTrabajosGrid(DtoTrabajoGridFilter dto, Long idUsuario);
 
 	public void flush();
+	
+	DtoPage findBuscadorGasto (DtoTrabajoFilter dtoTrabajoFiltro);
+	
+	Page getHistTrabajo(Long filtro);
 
 }

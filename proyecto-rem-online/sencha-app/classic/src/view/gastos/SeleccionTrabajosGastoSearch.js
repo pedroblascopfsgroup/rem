@@ -19,7 +19,7 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGastoSearch', {
     	me.removeCls('shadow-panel');
   		
     	me.buttonAlign = 'left';
-    	me.buttons = [{ text: 'Buscar', handler: 'onSearchClick' },{ text: 'Limpiar', handler: 'onCleanFiltersClick'}];
+    	me.buttons = [{ reference: 'searchButton', text: 'Buscar', handler: 'onSearchClick', disabled: true },{ text: 'Limpiar', handler: 'onCleanFiltersClick'}];
     	
 	    me.items= [
 	    
@@ -27,8 +27,12 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGastoSearch', {
 				    		items: [
 					        				{ 
 								            	fieldLabel: HreRem.i18n('fieldlabel.numero.trabajo'),
+								            	reference: 'numTrabajo',
 								            	name: 'numTrabajo',
-								            	style: 'width: 33%'
+								            	style: 'width: 33%',
+			    								listeners: {
+			    									change: 'onChangeNumTrabajo'
+			    								}
 								            },
 								            { 
 							                	xtype:'datefield',
@@ -80,7 +84,7 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGastoSearch', {
 									        	reference: 'filtroComboTipoTrabajo',
 									        	name: 'codigoTipo',
 									        	bind: {
-								            		store: '{comboTipoTrabajo}'
+								            		store: '{filtroComboTipoTrabajo}'
 								            	},
 								            	displayField: 'descripcion',
 					    						valueField: 'codigo',
@@ -101,10 +105,12 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGastoSearch', {
 				    						{ 
 									        	xtype: 'combo',
 									        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
+									        	reference: 'filtroComboTipoTrabajo1',
 									        	name: 'codigoSubtipo',
 									        	queryMode: 'remote',
-									        	forceSelection: true,
+									        	multiSelect: true,
 									        	bind: {
+									        		hidden: '{esPropietarioBankia}',
 								            		store: '{filtroComboSubtipoTrabajo}',
 								                    disabled: '{!filtroComboTipoTrabajo.value}',
 								                    filters: {
@@ -112,6 +118,31 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGastoSearch', {
 								                        value: '{filtroComboTipoTrabajo.value}'
 								                    }
 								            	},
+			    								listeners: {
+			    									change: 'onChangeCheckboxCodigoSubtipo'
+			    								},
+								            	displayField: 'descripcion',
+												valueField: 'codigo',
+												style: 'width: 33%'
+				    						},
+				    						{
+									        	xtype: 'combo',
+									        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
+									        	reference: 'filtroComboTipoTrabajo2',
+									        	name: 'codigoSubtipo',
+									        	queryMode: 'remote',
+									        	bind: {
+									        		hidden: '{!esPropietarioBankia}',
+								            		store: '{filtroComboSubtipoTrabajo}',
+								                    disabled: '{!filtroComboTipoTrabajo.value}',
+								                    filters: {
+								                        property: 'codigoTipoTrabajo',
+								                        value: '{filtroComboTipoTrabajo.value}'
+								                    }
+								            	},
+			    								listeners: {
+			    									change: 'onChangeCheckboxCodigoSubtipo'
+			    								},
 								            	displayField: 'descripcion',
 												valueField: 'codigo',
 												style: 'width: 33%'

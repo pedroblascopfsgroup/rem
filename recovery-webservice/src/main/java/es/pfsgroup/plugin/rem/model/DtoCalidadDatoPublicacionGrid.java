@@ -59,10 +59,9 @@ public class DtoCalidadDatoPublicacionGrid extends WebDto{
 						BigDecimal drF3SuperficieCons = new BigDecimal(rem);
 						if (dqF3SuperficieCons.compareTo(BigDecimal.ZERO) > 0) {
 							BigDecimal calcSupUtil = drF3SuperficieCons.divide(dqF3SuperficieCons, 2, RoundingMode.HALF_UP); 
-							DecimalFormat df = new DecimalFormat("#.##");
-							Double supUtil = new Double(df.format(calcSupUtil));
+							Double supConstruida = calcSupUtil.doubleValue();
 							
-							if(supUtil >= 0.8 && supUtil <= 1.2 ) {
+							if(supConstruida >= 0.8 && supConstruida <= 1.2 ) {
 								this.indicadorCorrecto = 1;								
 							}else {
 								this.indicadorCorrecto = 0;	
@@ -84,8 +83,7 @@ public class DtoCalidadDatoPublicacionGrid extends WebDto{
 						BigDecimal drF3SuperficieUtil = new BigDecimal(rem);
 						if (dqF3SuperficieUtil.compareTo(BigDecimal.ZERO) > 0) {
 							BigDecimal calcSupUtil = drF3SuperficieUtil.divide(dqF3SuperficieUtil, 2, RoundingMode.HALF_UP); 
-							DecimalFormat df = new DecimalFormat("#.##");
-							Double supUtil = new Double(df.format(calcSupUtil));
+							Double supUtil = calcSupUtil.doubleValue();
 							
 							if(supUtil >= 0.8 && supUtil <= 1.2 ) {
 								this.indicadorCorrecto = 1;

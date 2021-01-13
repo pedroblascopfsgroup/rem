@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Cristian Montoya
---## FECHA_CREACION=20200514
+--## AUTOR=DAP
+--## FECHA_CREACION=20210113
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10216
+--## INCIDENCIA_LINK=HREOS-12684
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade los datos iniciales a la tabla ACT_CONFIG_SUPLIDOS.
@@ -34,17 +34,34 @@ DECLARE
     V_TGA_ID VARCHAR2(16);
     V_STG_ID VARCHAR2(16);
     V_TABLA VARCHAR2(50 CHAR):= 'ACT_CONFIG_SUPLIDOS';
-    V_USUARIO VARCHAR2(25 CHAR):= 'HREOS-10216';
+    V_USUARIO VARCHAR2(25 CHAR):= 'HREOS-12684';
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-			    -- (DD_CRA_CODIGO, DD_SCR_CODIGO, DD_TGA_CODIGO, DD_STG_CODIGO)
-		T_TIPO_DATA('07', '151', '11', NULL),
-		T_TIPO_DATA('07', '152', '11', NULL),
-		T_TIPO_DATA('07', '151', '12', '53'),
-		T_TIPO_DATA('07', '152', '12', '53')
-
+		--(DD_CRA_CODIGO, DD_SCR_CODIGO, DD_TGA_CODIGO, DD_STG_CODIGO)
+      T_TIPO_DATA('07', '151', '11', '43'),
+      T_TIPO_DATA('07', '151', '11', '44'),
+      T_TIPO_DATA('07', '151', '11', '45'),
+      T_TIPO_DATA('07', '151', '11', '46'),
+      T_TIPO_DATA('07', '151', '11', '47'),
+      T_TIPO_DATA('07', '151', '11', '48'),
+      T_TIPO_DATA('07', '151', '11', '49'),
+      T_TIPO_DATA('07', '151', '11', '50'),
+      T_TIPO_DATA('07', '151', '11', '51'),
+      T_TIPO_DATA('07', '151', '11', '52'),
+  		T_TIPO_DATA('07', '152', '11', '43'),
+      T_TIPO_DATA('07', '152', '11', '44'),
+      T_TIPO_DATA('07', '152', '11', '45'),
+      T_TIPO_DATA('07', '152', '11', '46'),
+      T_TIPO_DATA('07', '152', '11', '47'),
+      T_TIPO_DATA('07', '152', '11', '48'),
+      T_TIPO_DATA('07', '152', '11', '49'),
+      T_TIPO_DATA('07', '152', '11', '50'),
+      T_TIPO_DATA('07', '152', '11', '51'),
+      T_TIPO_DATA('07', '152', '11', '52'),
+  		T_TIPO_DATA('07', '151', '12', '53'),
+  		T_TIPO_DATA('07', '152', '12', '53')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
    

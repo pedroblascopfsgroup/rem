@@ -4227,16 +4227,32 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.fireEvent("log", "Obligatorio jsonData para guardar el activo");
 		} else {
 
-			Ext.Ajax.request({
-				method : 'POST',
-				url : url,
-				jsonData : Ext.JSON.encode(jsonData),
-				success : successFn,
-				failure : function(response, opts) {
-					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-				}
+			if(successFn.$emptyFn){
+				Ext.Ajax.request({
+					method : 'POST',
+					url : url,
+					jsonData : Ext.JSON.encode(jsonData),
+					success : function(response,ops,x){
+						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+						me.getView().unmask();
+					},
+					failure : function(response, opts) {
+						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					}
 
-			});
+				});
+			}else{
+				Ext.Ajax.request({
+					method : 'POST',
+					url : url,
+					jsonData : Ext.JSON.encode(jsonData),
+					success : successFn,
+					failure : function(response, opts) {
+						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					}
+
+				});
+			}
 		}
 	},
 
@@ -5986,23 +6002,30 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
          }
     },
 
+   
+    //si el activo está ocupado, activa el campo titulo y fuerza validación, si no, lo deshabilita y deshabilita validacion
+    
     onChangeComboOcupado: function(combo, newValue, oldValue, eOpts) {
-    	var me = this;
-        var conTitulo = combo.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]');
 
-        if (newValue == 0 && oldValue == null) {
-            conTitulo.setDisabled(true);
-            conTitulo.setValue(null);
-        }else if (newValue == 1 && oldValue == null){
-            conTitulo.setValue(me.getViewModel().get('situacionPosesoria.conTitulo'));
-            conTitulo.setDisabled(false);
-        }else if (newValue == 0){
-            conTitulo.setDisabled(true);
-            conTitulo.reset();
-        }else {
-            conTitulo.setDisabled(false);
-            conTitulo.setValue(0);
+        var conTitulo = combo.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]');
+        
+        if (newValue == 0 || newValue == null) {
+        	
+        	conTitulo.setDisabled(true);
+        	conTitulo.setValue('');
+        	//conTitulo.allowBlank = true;
+        	conTitulo.setAllowBlank(true);
+        	
+        }else if (newValue == 1){
+        	 
+        	 conTitulo.setDisabled(false);
+        	// conTitulo.allowBlank = false;
+        	 //conTitulo.setValue(me.getViewModel().get('situacionPosesoria.conTitulo'));
+        	 conTitulo.setAllowBlank(false);
+        	conTitulo.validateValue(conTitulo.getValue());
+            
         }
+        
 
 	},
 

@@ -1,5 +1,9 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 import es.capgemini.devon.dto.WebDto;
 
 public class DtoCalidadDatoPublicacionGrid extends WebDto{
@@ -45,6 +49,57 @@ public class DtoCalidadDatoPublicacionGrid extends WebDto{
 			}else if("Idufir".equals(nombre) && dq != null){
 				this.indicadorCorrecto = 0;
 			}
+			
+			if ("Superficie Construida".equals(nombre)) {
+				if(dq == null) {
+					this.indicadorCorrecto = null;					
+				}else{
+					if ((dq != null && !dq.isEmpty()) && (rem != null && !rem.isEmpty())) {
+						BigDecimal dqF3SuperficieCons = new BigDecimal(dq);
+						BigDecimal drF3SuperficieCons = new BigDecimal(rem);
+						if (dqF3SuperficieCons.compareTo(BigDecimal.ZERO) > 0) {
+							BigDecimal calcSupUtil = drF3SuperficieCons.divide(dqF3SuperficieCons, 2, RoundingMode.HALF_UP); 
+							Double supConstruida = calcSupUtil.doubleValue();
+							
+							if(supConstruida >= 0.8 && supConstruida <= 1.2 ) {
+								this.indicadorCorrecto = 1;								
+							}else {
+								this.indicadorCorrecto = 0;	
+							}
+						}else {
+							this.indicadorCorrecto = 0;
+						}						
+					}else {
+						this.indicadorCorrecto = null;
+					}			
+				}
+			}
+			if ("Superficie útil".equals(nombre)) {
+				if(dq == null) {
+					this.indicadorCorrecto = null;
+				}else{
+					if ((dq != null && !dq.isEmpty()) && (rem != null && !rem.isEmpty())) {
+						BigDecimal dqF3SuperficieUtil = new BigDecimal(dq);
+						BigDecimal drF3SuperficieUtil = new BigDecimal(rem);
+						if (dqF3SuperficieUtil.compareTo(BigDecimal.ZERO) > 0) {
+							BigDecimal calcSupUtil = drF3SuperficieUtil.divide(dqF3SuperficieUtil, 2, RoundingMode.HALF_UP); 
+							Double supUtil = calcSupUtil.doubleValue();
+							
+							if(supUtil >= 0.8 && supUtil <= 1.2 ) {
+								this.indicadorCorrecto = 1;
+							}else {
+								this.indicadorCorrecto = 0;
+							}
+						}else {
+							this.indicadorCorrecto = 0;
+						}
+						
+					}else {
+						this.indicadorCorrecto = null;
+					}			
+				}
+			}
+						
 			this.codigoGrid = codGrid;
 			
 			

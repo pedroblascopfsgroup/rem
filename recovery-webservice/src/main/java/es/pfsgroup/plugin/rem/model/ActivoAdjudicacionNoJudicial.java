@@ -75,6 +75,9 @@ public class ActivoAdjudicacionNoJudicial implements Serializable, Auditable {
 
 	@Column(name = "ADN_EXP_DEF_TESTI")
 	private Long defectosTestimonio;
+
+	@Column(name = "ADN_ID_ASUNTO_REC")
+	private Long idAsuntoRecAlaska;
 	
 	@Version   
 	private Long version;
@@ -171,4 +174,11 @@ public class ActivoAdjudicacionNoJudicial implements Serializable, Auditable {
 		this.defectosTestimonio = defectosTestimonio;
 	}
 
+	public Long getIdAsuntoRecAlaska() {
+		return idAsuntoRecAlaska;
+	}
+
+	public void setIdAsuntoRecAlaska(Long idAsuntoRecAlaska) {
+		this.idAsuntoRecAlaska = idAsuntoRecAlaska;
+	}
 }

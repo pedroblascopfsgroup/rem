@@ -265,22 +265,42 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		}
 		
 		if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
-			if (gencat == "true") {
-				msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
-			}
-			Ext.Msg.show({
-			   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
-			   msg: msg,
-			   buttons: Ext.MessageBox.YESNO,
-			   fn: function(buttonId) {
-			        if (buttonId == 'yes') {
-			        	me.saveFn(editor, me, context);
+			var url = $AC.getRemoteUrl('ofertas/isEpaAlquilado');
+			Ext.Ajax.request({
+				url: url,
+				method: 'POST',
+				params:{
+					idAgrupacion : agrupacion.id
+				},
+				success: function (response){
+					var data = JSON.parse(response.responseText);
+					if(data.agrupacionEpaAlquilado == '1'){
+						msg = HreRem.i18n('msg.activo.epa');
 					}
-			    	else{
-			    		me.getStore().load();	
-			    	}
+					if (data.agrupacionEpaAlquilado == '2'){
+						msg = HreRem.i18n("msg.activo.alquilados");
+					}if(data.agrupacionEpaAlquilado == '3'){
+						msg = HreRem.i18n("msg.activo.epa.alquilados");
+					}
+					if (gencat == "true") {
+						msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
+					}
+					Ext.Msg.show({
+					   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
+					   msg: msg,
+					   buttons: Ext.MessageBox.YESNO,
+					   fn: function(buttonId) {
+					        if (buttonId == 'yes') {
+					        	me.saveFn(editor, me, context);
+							}
+					    	else{
+					    		me.getStore().load();	
+					    	}
+						}
+					});
 				}
-			});
+			})
+			
 		} else {
 			
 			//Si todos los estados de las Ofertas = Rechazada -> Se podran agregar activos a al agrupacion

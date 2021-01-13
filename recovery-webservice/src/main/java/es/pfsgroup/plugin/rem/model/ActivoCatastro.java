@@ -104,7 +104,8 @@ public class ActivoCatastro implements Serializable, Auditable {
 	@Column(name = "CAT_FECHA_SOLICITUD_901")
 	private Date fechaSolicitud901;
 	
-	
+	@Column(name = "CAT_FECHA_ALTERACION")
+	private Date fechaAlteracion;
 	
 	
 	@Version   
@@ -283,6 +284,14 @@ public class ActivoCatastro implements Serializable, Auditable {
 
 	public void setFechaSolicitud901(Date fechaSolicitud901) {
 		this.fechaSolicitud901 = fechaSolicitud901;
+	}
+
+	public Date getFechaAlteracion() {
+		return fechaAlteracion;
+	}
+
+	public void setFechaAlteracion(Date fechaAlteracion) {
+		this.fechaAlteracion = fechaAlteracion;
 	}
 	
 	

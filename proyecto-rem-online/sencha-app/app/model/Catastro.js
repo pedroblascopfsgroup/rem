@@ -75,6 +75,11 @@ Ext.define('HreRem.model.Catastro', {
     		},
     		{
     			name:'resultadoSiNO'
+    		},
+    		{
+    			name:'fechaAlteracion',
+    			type:'date',
+    			dateFormat: 'c'
     		}
     ],
     

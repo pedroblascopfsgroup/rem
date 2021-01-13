@@ -31,6 +31,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDMotivoAnulacionOferta implements Auditable, Dictionary {
 	
 	private static final long serialVersionUID = 1L;
+	
 
 	@Id
 	@Column(name = "DD_MAO_ID")

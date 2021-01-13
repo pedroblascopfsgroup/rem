@@ -75,4 +75,6 @@ public interface ActivoPublicacionHistoricoDao extends AbstractDao<ActivoPublica
 	 * @return Devuelve el ActivoPublicacionHistorico.
 	 */
 	ActivoPublicacionHistorico getActivoPublicacionHistoricoActualAlquiler(Long idActivo);
+
+	Long obtenerMesesPorEstadoPublicacionVentaActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException;
 }

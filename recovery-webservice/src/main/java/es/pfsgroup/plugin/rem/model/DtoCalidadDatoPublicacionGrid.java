@@ -44,9 +44,9 @@ public class DtoCalidadDatoPublicacionGrid extends WebDto{
 				this.indicadorCorrecto = 1;
 			}
 			
-			if ("Idufir".equals(nombre) && dq == null) {
+			if ("Idufir".equals(nombre) && (dq == null || dq.isEmpty())) {
 				this.indicadorCorrecto = 1;
-			}else if("Idufir".equals(nombre) && dq != null){
+			}else if("Idufir".equals(nombre) && (dq != null && !dq.isEmpty())){
 				this.indicadorCorrecto = 0;
 			}
 			

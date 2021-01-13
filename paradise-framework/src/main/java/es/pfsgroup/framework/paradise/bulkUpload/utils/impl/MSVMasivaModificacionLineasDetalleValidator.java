@@ -83,7 +83,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	private static final String LINEA_BORRAR_REPETIDA ="Esta línea ya se ha marcado para borrar";
 	private static final String LINEA_NO_EXISTE_EN_GASTO ="Esta línea no existe en el gasto";
 
-
+	private static final String SUPLIDO_NO_MODIFICABLE = "El gasto es suplido. No se puede modificar";
 
 	
 	public static final Integer COL_ID_GASTO = 0;
@@ -213,6 +213,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 			mapaErrores.put(COLUMNA_TEXTO_PRT_LINEA_DETALLE,comprobarDouble(exc,COL_PARTICIPACION_LINEA_DETALLE));
 			mapaErrores.put(LINEA_BORRAR_REPETIDA,borrarExisteLinea(exc));
 			mapaErrores.put(LINEA_NO_EXISTE_EN_GASTO,lineaNoExisteEnGasto(exc));
+			mapaErrores.put(SUPLIDO_NO_MODIFICABLE,suplidoNoModificable(exc));
 			
 
 
@@ -259,7 +260,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 					|| !mapaErrores.get(COLUMNA_TEXTO_PRT_LINEA_DETALLE).isEmpty()
 					|| !mapaErrores.get(LINEA_BORRAR_REPETIDA).isEmpty()
 					|| !mapaErrores.get(LINEA_NO_EXISTE_EN_GASTO).isEmpty()
-
+					|| !mapaErrores.get(SUPLIDO_NO_MODIFICABLE).isEmpty()
 
 
 					
@@ -1257,5 +1258,29 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 		}
         return listaFilas;   
 	 }
+   
+
+   private List<Integer> suplidoNoModificable(MSVHojaExcel exc){
+        List<Integer> listaFilas = new ArrayList<Integer>();
+        
+        try{
+            for(int i=1; i<this.numFilasHoja;i++){
+                try {
+                    if(!Checks.esNulo(exc.dameCelda(i, COL_ID_GASTO)) 
+                    		&& particularValidator.getGastoSuplidoConFactura(exc.dameCelda(i, COL_ID_GASTO)))
+                        listaFilas.add(i);
+                } catch (ParseException e) {
+                    listaFilas.add(i);
+                }
+            }
+            } catch (IllegalArgumentException e) {
+                listaFilas.add(0);
+                e.printStackTrace();
+            } catch (IOException e) {
+                listaFilas.add(0);
+                e.printStackTrace();
+            }
+        return listaFilas;   
+   }
 
 }

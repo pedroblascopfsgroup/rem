@@ -1402,6 +1402,8 @@ public interface ParticularValidatorApi {
 	public String devolverEstadoGastoApartirDeAlbaran(String idAlbaran);
 
 	List<String> getIdPrefacturasByNumAlbaran(String numAlbaran);
+	
+    Boolean getGastoSuplidoConFactura(String idGastoAfectado);
 
 
 }

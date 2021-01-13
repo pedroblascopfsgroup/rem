@@ -748,10 +748,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		},
 		
 		disabledComboConTituloTPA: function(get){
+			
+			
 			var esTipoEstadoAlquilerAlquilado = get('esTipoEstadoAlquilerAlquilado');
 			var ocupado = get('situacionPosesoria.ocupado');
 			
+		
+			
+			
 			return (esTipoEstadoAlquilerAlquilado || ocupado == CONST.COMBO_OCUPACION["NO"]) 
+			
+			
 				&&  !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 		},
 

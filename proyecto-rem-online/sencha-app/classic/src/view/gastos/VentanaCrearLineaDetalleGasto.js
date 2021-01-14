@@ -31,7 +31,10 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     	var isGastoRefacturadoPadre = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPadre;
     	var tieneTrabajos = me.lookupController().getView().getViewModel().getData().gasto.getData().tieneTrabajos;
     	var disabledCuotaTipoImpositivo = false;
-    	
+    	var tieneSuplidos = me.lookupController().getView().getViewModel().getData().gasto.getData().suplidosVinculadosCod;
+    	var tieneNumeroFacturaPrincipal = me.lookupController().getView().getViewModel().getData().gasto.getData().facturaPrincipalSuplido;
+    	var suplidosONumeroFactura =  tieneSuplidos  == CONST.COMBO_SIN_NO['SI'] || !Ext.isEmpty(tieneNumeroFacturaPrincipal);
+    
 	    var subtipoGasto= null,		baseSujeta= null,		baseNoSujeta= null,			recargo= null,
     	tipoRecargo= null,			interes= null,			costas= null,				otros= null,
     	provSupl= null,				tipoImpuesto= null,		operacionExentaImp= null,	esRenunciaExenta= null,
@@ -147,6 +150,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 						    				colspan: 3,
 						    				margin: '10 0 10 0',
 						    				allowBlank: false,
+						    				readOnly:suplidosONumeroFactura,
 						    				displayField: 'descripcion',
 											valueField: 'codigo',
 						    				bind: {

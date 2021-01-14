@@ -1336,25 +1336,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		List<Activo> activosList = activoApi.getListActivosPorID(activosID);
 
 		Trabajo trabajo = null;
-		Double participacion = null;
-		Integer participacionTotalPorCien = 10000;
-		Integer participacionPorCien = 0;
+		
 		for (Activo activo : activosList) {
-			participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activosList, null);
-			participacionPorCien = (int)(participacion*100);				
-			participacionTotalPorCien -= participacionPorCien;
-			dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : String.valueOf(participacionPorCien/100f));
+			dtoTrabajo.setParticipacion("100");
 			trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
 			trabajos.add(trabajo);
 		}
-		if(participacionTotalPorCien != 0) {
-			while(participacionTotalPorCien != 0) {
-				participacionTotalPorCien--;
-				trabajo.getActivosTrabajo().get(participacionTotalPorCien).setParticipacion(
-						trabajo.getActivosTrabajo().get(participacionTotalPorCien).getParticipacion()+(1/100f));
-			}
-			trabajoDao.saveOrUpdate(trabajo);
-		}
+		
 
 		return trabajos;
 
@@ -2322,13 +2310,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setResolucionComiteId(dtoTrabajo.getResolucionComiteId());
 		}		
 
+		SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
+		SimpleDateFormat formatoFechaHora = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat formatoFechaString = new SimpleDateFormat("dd/MM/yyyy");
+		
 		if ((dtoTrabajo.getFechaConcretaString() != null && !dtoTrabajo.getFechaConcretaString().isEmpty()) 
 			|| (dtoTrabajo.getHoraConcretaString() != null && !dtoTrabajo.getHoraConcretaString().isEmpty())) {		
 			//
-			SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
-			SimpleDateFormat formatoFechaHora = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-			SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
-			SimpleDateFormat formatoFechaString = new SimpleDateFormat("dd/MM/yyyy");
+			
 			Date fechaHoraConcreta = null;
 			
 			if(dtoTrabajo.getFechaConcretaString().isEmpty()) {
@@ -2354,6 +2344,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajo.setFechaCompromisoEjecucion(fechaHoraConcreta);
 			}
 		
+		}else if(dtoTrabajo.getFechaConcreta() != null && dtoTrabajo.getHoraConcreta() != null){
+			if(dtoTrabajo.getHoraConcreta() != null) {
+				String hora = formatoHora.format(dtoTrabajo.getHoraConcreta());
+				String fecha = formatoFecha.format(dtoTrabajo.getFechaConcreta());
+				if(!hora.isEmpty() && !fecha.isEmpty()) {
+					trabajo.setFechaHoraConcreta(formatoFechaHora.parse(fecha+" "+hora));
+				}
+			}else {
+				trabajo.setFechaHoraConcreta(dtoTrabajo.getFechaConcreta());
+			}
 		}else {
 			trabajo.setFechaHoraConcreta(null);
 		}

@@ -1033,11 +1033,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	},
 
 	onChangeProveedor: function(combo, value) {
-		var me = this;		
-
+		var me = this;
 		me.getViewModel().set('proveedor', combo.getSelection());
-		//combo.validate();
 	},
+	
 	onChangeProveedorGestionEconomica: function(combo, value){
 		var me = this;		
 		if (combo.store != null && combo.store.data != null && combo.store.data.items.length == 0) {
@@ -1045,17 +1044,29 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		}
 	},
 
-	onChangeComboProveedorLlave: function(combo) {
+	onChangeComboProveedorLlave: function(combo, newValue, oldValue) {
 		var me = this;
-		var proveedorContactoCombo = combo.getValue();
-		if(proveedorContactoCombo != null && proveedorContactoCombo !== '' ){
-			me.lookupReference('comboReceptorLlave').setAllowBlank(false);
-		} else {
-			me.lookupReference('comboReceptorLlave').setAllowBlank(true);
+		var comboReceptor = me.lookupReference('comboReceptorLlave');
+		if(!Ext.isEmpty(comboReceptor)){
+			if(newValue != null && newValue !== ''){
+				comboReceptor.setAllowBlank(false);
+				comboReceptor.enable();
+				if(!Ext.isEmpty(comboReceptor.getStore())){					
+					comboReceptor.getStore().getProxy().setExtraParams({
+						idProveedor: newValue
+					});
+					comboReceptor.getStore().load(1);
+					if(!Ext.isEmpty(comboReceptor.getValue()) && newValue != me.getViewModel().get("trabajo.idProveedorLlave"))
+						comboReceptor.clearValue();
+				}
+			} else {
+				comboReceptor.setAllowBlank(true);
+				comboReceptor.disable();
+				comboReceptor.clearValue();
+				comboReceptor.getStore().removeAll();
+			}
+			comboReceptor.validate();
 		}
-
-		me.lookupReference('comboReceptorLlave').validate();
-
 	},
 
 	onListadoTramitesTareasTrabajoDobleClick : function(gridView,record) {

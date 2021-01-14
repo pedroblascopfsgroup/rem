@@ -467,6 +467,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					        	colspan: 2,
 					        	bind: {
 				            		store: '{comboProveedorReceptor}',
+									disabled: '{!comboProveedorLlave.selection}',
 				            		value: '{trabajo.idProveedorReceptor}'
 				            	},
 				            	displayField: 'nombre',

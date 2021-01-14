@@ -29,6 +29,7 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	private DateDataType fechaVenta;
 	private DateDataType fechaReserva;
 	private DateDataType fechaAlquiler;
+	private DateDataType fechaCreacionOpSf;
 	
 	public LongDataType getIdUsuarioRemAccion() {
 		return idUsuarioRemAccion;
@@ -119,6 +120,12 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	}
 	public void setFechaAlquiler(DateDataType fechaAlquiler) {
 		this.fechaAlquiler = fechaAlquiler;
+	}
+	public DateDataType getFechaCreacionOpSf() {
+		return fechaCreacionOpSf;
+	}
+	public void setFechaCreacionOpSf(DateDataType fechaCreacionOpSf) {
+		this.fechaCreacionOpSf = fechaCreacionOpSf;
 	}
 	
 

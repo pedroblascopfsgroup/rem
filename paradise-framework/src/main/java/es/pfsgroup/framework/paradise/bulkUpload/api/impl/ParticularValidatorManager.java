@@ -6609,5 +6609,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return listaString;
 	}
+	
+	public Boolean getGastoSuplidoConFactura(String idGastoAfectado) {
+		if(Checks.esNulo(idGastoAfectado)){
+			return false;
+			}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "FROM GPV_GASTOS_PROVEEDOR GPV WHERE "
+				+ "GPV.gpv_num_gasto_haya = '"+idGastoAfectado+"' "
+				+ "AND (GPV.gpv_suplidos_vinculados = '1' "
+				+ "OR GPV.gpv_numero_factura_ppal IS NOT NULL) "
+				+ "AND GPV.BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+
 
 }

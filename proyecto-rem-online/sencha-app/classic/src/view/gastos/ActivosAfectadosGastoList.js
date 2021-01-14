@@ -289,19 +289,30 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 
 		var idGasto= me.up('form').viewWithModel.getViewModel().get('gasto.id');
 		var parent= me.up('form');
-		Ext.create('HreRem.view.gastos.AnyadirNuevoGastoActivo',{idGasto: idGasto, parent: parent}).show();
-		
+		var tieneSuplidos = me.lookupController().getView().getViewModel().getData().gasto.getData().suplidosVinculadosCod;
+    	var tieneNumeroFacturaPrincipal = me.lookupController().getView().getViewModel().getData().gasto.getData().facturaPrincipalSuplido;
+	
+		if(!Ext.isEmpty(tieneSuplidos) && (tieneSuplidos  == CONST.COMBO_SIN_NO['SI'] || !Ext.isEmpty(tieneNumeroFacturaPrincipal))){
+    		me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.crear.gasto.linea.detalle.con.activo")); 
+    	}else{
+			Ext.create('HreRem.view.gastos.AnyadirNuevoGastoActivo',{idGasto: idGasto, parent: parent}).show();
+    	}
     },
     
     onDeleteClick: function(record){
 		var me = this;
 		var idElemento = me.selection.data.id;
 		var elementoVacio = me.selection.data.idElemento;
-
+		var tieneSuplidos = me.lookupController().getView().getViewModel().getData().gasto.getData().suplidosVinculadosCod;
+    	var tieneNumeroFacturaPrincipal = me.lookupController().getView().getViewModel().getData().gasto.getData().facturaPrincipalSuplido;
+		
 		if(Ext.isEmpty(elementoVacio)){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ok.linea.detalle.informacion"));
 			return;
-		}
+		}else if(!Ext.isEmpty(tieneSuplidos) && (tieneSuplidos  == CONST.COMBO_SIN_NO['SI'] || !Ext.isEmpty(tieneNumeroFacturaPrincipal))){
+    		me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.eliminar.gasto.linea.detalle.con.activo")); 
+    		return;
+    	}
 		var url =  $AC.getRemoteUrl('gastosproveedor/desasociarElementosAgastos');
 		
 		me.mask(HreRem.i18n("msg.mask.loading"));
@@ -402,6 +413,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
     	var estadoParaGuardar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
     	var isGastoRefacturado = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPorOtroGasto;
     	var isGastoRefacturadoPadre = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPadre;
+    	var suplidos = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPadre;
     	var edicion = true;
     	
     	if(me.up('gastodetallemain').getViewModel().get('gasto.asignadoATrabajos') || me.up('gastodetallemain').getViewModel().get('gasto.autorizado')){

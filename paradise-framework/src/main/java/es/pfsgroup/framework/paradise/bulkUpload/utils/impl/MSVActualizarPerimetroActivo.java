@@ -73,6 +73,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 
 	public static final String VALID_MOTIVO_ADMISION = "msg.error.masivo.actualizar.perimetro.activo.admision.texto.no.relleno";
 	public static final String ADMISION_ERROR = "msg.error.masivo.actualizar.perimetro.activo.admision.texto.no.valido";
+	public static final String ON_EFECTOS_COMERCIALIZACION_ERROR = "msg.error.masivo.actualizar.perimetro.activo.on.efectos.comercializacion.texto.no.valido";
+	public static final String ON_VALOR_INTRODUCIDO = "msg.error.masivo.actualizar.perimetro.activo.on.efectos.comercializacion.texto.ya.introducido";
 
 	public static final String VALID_PERIMETRO_ESTA_HAYA = "msg.error.masivo.actualizar.perimetro.activo.ya.esta.haya";
 
@@ -97,6 +99,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final int COL_NUM_PERIMETRO_MACC = 16;
 	public static final int COL_NUM_ADMISION = 17;
 	public static final int COL_NUM_TXT_MOTIVO_ADMISION = 18;
+	public static final int COL_NUM_CHECK_ON_EFECTOS_COMERCIALIZACION=19;
 
 	// Codigos tipo comercializacion
 	public static final String CODIGO_VENTA = "01";
@@ -113,7 +116,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
     
     private static final String[] listaValidos = { "S", "N", "SI", "NO" };
     private static final String[] listaValidosPositivos = { "S", "SI" };
-
+    private static final String[] listaValidosNegativos = {"N","NO"};
+ 
     protected final Log logger = LogFactory.getLog(getClass());
     
 	@Autowired
@@ -196,8 +200,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(messageServices.getMessage(VALID_SEGMENTO_PERIMETRO_MACC), esPerimetorYSegmentoMACC(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_MOTIVO_ADMISION), estaRellenoCampoAdmision(exc));
 				mapaErrores.put(messageServices.getMessage(ADMISION_ERROR), isBooleanValidator(exc, COL_NUM_ADMISION));
-
-
+				mapaErrores.put(messageServices.getMessage(ON_EFECTOS_COMERCIALIZACION_ERROR), isBooleanValidator(exc, COL_NUM_CHECK_ON_EFECTOS_COMERCIALIZACION));
+				mapaErrores.put(messageServices.getMessage(ON_VALOR_INTRODUCIDO), isActivoObraNuevaConEfectosComercializacion(exc));
 				for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
 					if (!registro.getValue().isEmpty()) {
 						dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -1085,5 +1089,42 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		return listaFilas;
 	}
 	
+	private List<Integer> isActivoObraNuevaConEfectosComercializacion(MSVHojaExcel exc){
+		
+		
+	List<Integer> listaFilas = new ArrayList<Integer>();
 	
+	
+	try{
+		for(int i=1; i<this.numFilasHoja;i++){
+			try {
+				String celdaCOEfectos = exc.dameCelda(i, COL_NUM_CHECK_ON_EFECTOS_COMERCIALIZACION);
+				String celdaActivo = exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
+				if(Arrays.asList(listaValidos).contains(celdaCOEfectos.toUpperCase())
+						&& celdaCOEfectos!=null
+						&& !celdaCOEfectos.isEmpty() ){
+					if(particularValidator.existeActivoConONMarcadoSi(celdaActivo)							
+								&& Arrays.asList(listaValidosPositivos).contains(celdaCOEfectos.toUpperCase())) {
+						listaFilas.add(i);
+					}else if(!particularValidator.existeActivoConONMarcadoSi(celdaActivo)							
+							&& Arrays.asList(listaValidosNegativos).contains(celdaCOEfectos.toUpperCase())) {
+						listaFilas.add(i);
+					}
+				}
+				
+				
+			} catch (ParseException e) {
+				listaFilas.add(i);
+			}
+		}
+	} catch (IllegalArgumentException e) {
+		listaFilas.add(0);
+		e.printStackTrace();
+	} catch (IOException e) {
+		listaFilas.add(0);
+		e.printStackTrace();
+	}
+	
+	return listaFilas;
+}
 }

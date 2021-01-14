@@ -1336,8 +1336,6 @@ public interface ParticularValidatorApi {
 
 	Boolean existePais(String pais);
 
-	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
-
 	Boolean gastoRepetido(String factura, String fechaEmision, String nifEmisor, String nifPropietario);
 
 	Boolean propietarioPerteneceCartera(String docIdent, List<String> listaCodigoCarteras);
@@ -1356,12 +1354,15 @@ public interface ParticularValidatorApi {
 
 	boolean tieneGastoFechaPagado(String idGasto);
 
-
 	Boolean estadoPrevioTrabajo(String celdaTrabajo);
 
 	Boolean fechaEjecucionCumplimentada(String celdaTrabajo);
 
 	Boolean resolucionComite(String celdaTrabajo);
+
+	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
+	
+	Boolean existeActivoConONMarcadoSi(String columnaActivo);
 
 	Boolean checkComite(String celdaTrabajo);
 

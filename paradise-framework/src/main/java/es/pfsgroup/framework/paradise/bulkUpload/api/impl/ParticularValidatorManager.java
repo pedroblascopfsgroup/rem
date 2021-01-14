@@ -6443,6 +6443,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 
 	}
+
 	@Override
 	public Boolean esSubtipoTrabajoTomaPosesionPaquete(String subtrabajo) {
 		if (subtrabajo == null) {
@@ -6457,6 +6458,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return "0".equals(resultado);
 	}
+
 	@Override
 	public Boolean esTarifaEnCarteradelActivo(String codTarifa, String idActivo) {
 		if (codTarifa == null || idActivo == null) {
@@ -6468,9 +6470,24 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ " FROM ACT_CFT_CONFIG_TARIFA CFT " 
 				+ " JOIN DD_TTF_TIPO_TARIFA TTF ON CFT.DD_TTF_ID = TTF.DD_TTF_ID AND ttf.dd_ttf_codigo ='"+codTarifa+"'" 
 				+ " JOIN ACT_ACTIVO ACT ON ACT.DD_CRA_ID = CFT.DD_CRA_ID AND act.act_num_activo = "+numActivo+" ");
+		return !"0".equals(resultado);
+	}
+
+	public Boolean existeActivoConONMarcadoSi(String columnaActivo) {
+		if(Checks.esNulo(columnaActivo)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "		 FROM REM01.ACT_ACTIVO ACT  "
+				+ "      INNER JOIN REMMASTER.DD_SIN_SINO dd on act.act_ovn_comerc = dd.DD_SIN_ID"
+				+"		 WHERE dd.dd_sin_codigo='01' "
+				+ "		 AND act.act_num_activo = '" + columnaActivo + "'"
+				+ "		 AND act.BORRADO = 0");
 
 		return !"0".equals(resultado);
 	}
+
 	@Override
 	public Boolean existeProveedorEnCarteraActivo(String proveedor, String idActivo) {
 		if (proveedor == null || idActivo != null) {
@@ -6487,7 +6504,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "0".equals(resultado);
 	}
 
-	
 	@Override
 	public Boolean datosRegistralesRepetidos(String refCatastral,String finca, String folio, String libro, String tomo,  String numRegistro, String codigoLocalidad){
 		String resultado;
@@ -6507,7 +6523,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 
-	
 	@Override
 	public Boolean subtipoPerteneceTipoActivo(String subtipo, String tipo){
 

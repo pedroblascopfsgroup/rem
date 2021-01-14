@@ -541,6 +541,12 @@ public class Activo implements Serializable, Auditable {
     private DDEstadoRegistralActivo estadoRegistral; 
     
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_OVN_COMERC")
+    private DDSinSiNo tieneObraNuevaAEfectosComercializacion;
+    
+    @Column(name = "ACT_OVN_COMERC_FECHA")
+	private Date obraNuevaAEfectosComercializacionFecha;
+
     @JoinColumn(name = "DD_TTA_ID_BBVA")
     private DDTipoTituloActivo tipoTituloBbva;
     
@@ -2094,6 +2100,24 @@ public class Activo implements Serializable, Auditable {
 	public DDTipoTituloActivo getTipoTituloBbva() {
 		return tipoTituloBbva;
 	}
+
+	public DDSinSiNo getTieneObraNuevaAEfectosComercializacion() {
+		return tieneObraNuevaAEfectosComercializacion;
+	}
+
+	public void setTieneObraNuevaAEfectosComercializacion(DDSinSiNo tieneObraNuevaAEfectosComercializacion) {
+		this.tieneObraNuevaAEfectosComercializacion = tieneObraNuevaAEfectosComercializacion;
+	}
+
+	public Date getObraNuevaAEfectosComercializacionFecha() {
+		return obraNuevaAEfectosComercializacionFecha;
+	}
+
+	public void setObraNuevaAEfectosComercializacionFecha(Date obraNuevaAEfectosComercializacionFecha) {
+		this.obraNuevaAEfectosComercializacionFecha = obraNuevaAEfectosComercializacionFecha;
+	}
+
+
 
 	public void setTipoTituloBbva(DDTipoTituloActivo tipoTituloBbva) {
 		this.tipoTituloBbva = tipoTituloBbva;

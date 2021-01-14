@@ -369,6 +369,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setTipoGastoCodigo(gasto.getTipoGasto().getCodigo());
 				dto.setTipoGastoDescripcion(gasto.getTipoGasto().getDescripcion());
 			}
+	
 			dto.setVisibleSuplidos(true);
 			if(gasto.getGastoLineaDetalleList() != null && !gasto.getGastoLineaDetalleList().isEmpty()){
 				for (GastoLineaDetalle gastoLinea: gasto.getGastoLineaDetalleList()) {
@@ -397,8 +398,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						}
 					}			
 				}
+			}else {
+				dto.setVisibleSuplidos(false);
 			}
-			
+
 				
 			if (!Checks.esNulo(gasto.getEstadoGasto())) {
 				dto.setEstadoGastoCodigo(gasto.getEstadoGasto().getCodigo());
@@ -3920,30 +3923,34 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 		}
 		
-		if(gastoProveedor.getGastoLineaDetalleList() != null && !gastoProveedor.getGastoLineaDetalleList().isEmpty()){
-			for (GastoLineaDetalle gastoLinea: gastoProveedor.getGastoLineaDetalleList()) {
-				Filter filter = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.id",gastoLinea.getId());
-				Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "entidadGasto.codigo",DDEntidadGasto.CODIGO_ACTIVO);
-				List <GastoLineaDetalleEntidad> gastoLineaEntidadList= genericDao.getList(GastoLineaDetalleEntidad.class,filter,filterAct);
-				if(gastoLineaEntidadList==null || gastoLineaEntidadList.isEmpty()) {
-					throw new JsonViewerException("Hay lineas sin activos asociados");
-				}else {
-					for (GastoLineaDetalleEntidad gastoLineaDetalleEntidad : gastoLineaEntidadList) {
-						Activo activo = activoDao.getActivoById(gastoLineaDetalleEntidad.getEntidad());
-						if(activo == null || gastoProveedor.getCartera()==null || activo.getSubcartera()==null || gastoProveedor.getTipoGasto()==null) {
-							throw new JsonViewerException("No hay datos");						
-						}
-						ConfiguracionSuplidos config = genericDao.get(ConfiguracionSuplidos.class,
-								genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", gastoProveedor.getCartera().getCodigo()),
-								genericDao.createFilter(FilterType.EQUALS, "subCartera.codigo", activo.getSubcartera().getCodigo()),
-								genericDao.createFilter(FilterType.EQUALS, "tipoGasto.codigo", gastoProveedor.getTipoGasto().getCodigo()),
-								genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.codigo",gastoLinea.getSubtipoGasto().getCodigo()));
-						if(config==null) {
-							throw new JsonViewerException("El gasto no puede ser o tener Suplidos");							
+		if(dto.getFacturaPrincipalSuplido() != null && !dto.getFacturaPrincipalSuplido().isEmpty() || dto.getSuplidosVinculadosCod() != null) {
+			if(gastoProveedor.getGastoLineaDetalleList() != null && !gastoProveedor.getGastoLineaDetalleList().isEmpty()){
+				for (GastoLineaDetalle gastoLinea: gastoProveedor.getGastoLineaDetalleList()) {
+					Filter filter = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.id",gastoLinea.getId());
+					Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "entidadGasto.codigo",DDEntidadGasto.CODIGO_ACTIVO);
+					List <GastoLineaDetalleEntidad> gastoLineaEntidadList= genericDao.getList(GastoLineaDetalleEntidad.class,filter,filterAct);
+					if(gastoLineaEntidadList==null || gastoLineaEntidadList.isEmpty()) {
+						throw new JsonViewerException("Hay lineas sin activos asociados");
+					}else {
+						for (GastoLineaDetalleEntidad gastoLineaDetalleEntidad : gastoLineaEntidadList) {
+							Activo activo = activoDao.getActivoById(gastoLineaDetalleEntidad.getEntidad());
+							if(activo == null || gastoProveedor.getCartera()==null || activo.getSubcartera()==null || gastoProveedor.getTipoGasto()==null) {
+								throw new JsonViewerException("No hay datos");						
+							}
+							ConfiguracionSuplidos config = genericDao.get(ConfiguracionSuplidos.class,
+									genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", gastoProveedor.getCartera().getCodigo()),
+									genericDao.createFilter(FilterType.EQUALS, "subCartera.codigo", activo.getSubcartera().getCodigo()),
+									genericDao.createFilter(FilterType.EQUALS, "tipoGasto.codigo", gastoProveedor.getTipoGasto().getCodigo()),
+									genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.codigo",gastoLinea.getSubtipoGasto().getCodigo()));
+							if(config==null) {
+								throw new JsonViewerException("El gasto no puede ser o tener Suplidos");							
+							}
 						}
 					}
-				}
-			}			
+				}			
+			}else {
+				throw new JsonViewerException("El gasto no puede ser o tener Suplidos");
+			}
 		}
 		
 	}

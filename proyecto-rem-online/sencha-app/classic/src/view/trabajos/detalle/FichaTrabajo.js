@@ -188,7 +188,10 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                		value: '{trabajo.aplicaComite}'
 				                	},
 				                	reference: 'aplicaComiteRef',
-				                	readOnly: true
+				                	readOnly: true,
+									listeners:{
+										change: 'onChangeCheckAplicaComite'
+									}
 				                	
 				                },
 				                {

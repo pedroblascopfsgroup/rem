@@ -2041,6 +2041,29 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 
     finalizacionTrabajoProveedor: function(combo, newValue, oldValue) {
     	var me = this;
+
+		var fechaComite = me.lookupReference('fechaResolucionComiteRef');
+		var idComite = me.lookupReference('resolucionComiteIdRef');
+		
+		if(!Ext.isEmpty(fechaComite) && !Ext.isEmpty(idComite)){
+			if(!fechaComite.isDisabled() && newValue === "FIN"){
+				fechaComite.setAllowBlank(false);
+				if(Ext.isEmpty(fechaComite.getValue()))
+					fechaComite.markInvalid("Obligatorio para marcar como \"Finalizado\" el estado del trabajo");
+			} else {
+				fechaComite.setAllowBlank(true);
+				fechaComite.clearInvalid();
+			}
+			if(!idComite.isDisabled() && newValue === "FIN"){ 
+				idComite.setAllowBlank(false);
+				if(Ext.isEmpty(idComite.getValue()))
+					idComite.markInvalid("Obligatorio para marcar como \"Finalizado\" el estado del trabajo");
+			} else {
+				idComite.setAllowBlank(true);
+				idComite.clearInvalid();
+			}
+		}
+		
     	var esProveedor = $AU.userIsRol(CONST.PERFILES['PROVEEDOR']);
     	if (esProveedor && newValue === "FIN") {
     		me.getView().mask(HreRem.i18n("msg.mask.loading"));
@@ -2118,5 +2141,31 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		me.lookupReference('fechaConcreta').setAllowBlank(true);
     		me.lookupReference('horaConcreta').setAllowBlank(true);
     	}
-    }
+    },
+
+	onChangeCheckAplicaComite: function(field, newValue, oldValue){
+		var me = this;
+		var fechaComite = me.lookupReference('fechaResolucionComiteRef');
+		var idComite = me.lookupReference('resolucionComiteIdRef');
+		var comboEstadoTrabajo = me.lookupReference('comboEstadoTrabajoRef');
+		if(!Ext.isEmpty(comboEstadoTrabajo) && !Ext.isEmpty(comboEstadoTrabajo.getValue()) && comboEstadoTrabajo.getValue() === "FIN"){
+			if(!Ext.isEmpty(fechaComite) && !Ext.isEmpty(idComite)){
+				if(newValue){
+					fechaComite.setAllowBlank(false);
+					if(Ext.isEmpty(fechaComite.getValue()))
+						fechaComite.markInvalid("Obligatorio para marcar como \"Finalizado\" el estado del trabajo");
+					idComite.setAllowBlank(false);
+					if(Ext.isEmpty(idComite.getValue()))
+						idComite.markInvalid("Obligatorio para marcar como \"Finalizado\" el estado del trabajo");
+				} else {
+					fechaComite.setAllowBlank(true);
+					fechaComite.clearInvalid();
+					idComite.setAllowBlank(true);
+					idComite.clearInvalid();
+
+				}
+				
+			}
+		}
+	}
 });

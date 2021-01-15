@@ -1308,9 +1308,9 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
            				 exc.dameCelda(i, COL_NIF_EMISOR),exc.dameCelda(i, COL_NIF_PROPIETARIO),exc.dameCelda(i, COL_SUBTIPO_GASTO),
            				 exc.dameCelda(i, COL_TIPO_IMPUESTO),exc.dameCelda(i, COL_TIPO_IMPOSITIVO),exc.dameCelda(i, COL_ID_ELEMENTO),
            				 exc.dameCelda(i, COL_TIPO_ELEMENTO),Integer.toString(i));
-            		String[] cadenaActual = cadena.split("$");
+            		String[] cadenaActual = cadena.split("[$]");
             		for (String string : listaCadenas) {
-						String[] lineaGasto = string.split("$");
+						String[] lineaGasto = string.split("[$]");
 						//para que no se compare consigo misma,despues comprueba que los datos no sean iguales
 						if (!lineaGasto[8].equals(cadenaActual[8])) {
 							if(lineaGasto[0].equals(cadenaActual[0]) && lineaGasto[1].equals(cadenaActual[1]) && lineaGasto[2].equals(cadenaActual[2]) &&

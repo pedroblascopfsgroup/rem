@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20200819
+--## FECHA_CREACION=20210115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10730
@@ -36,15 +36,14 @@ DECLARE
 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_P20_PRORRATA_DIARIO20'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     
-    
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     -- PARTIDA_PRESUPUESTARIA   DD_TGA_CODIGO  DD_TIM_CODIGO   DD_SCR_CODIGO
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('B84921758',56,44),
-        T_TIPO_DATA('A78485752',41, 59),
-        T_TIPO_DATA('A86486461',30, 70),
-        T_TIPO_DATA('A86201993',7, 93)
+        T_TIPO_DATA('B84921758',57),
+        T_TIPO_DATA('A78485752',41),
+        T_TIPO_DATA('A86486461',30),
+        T_TIPO_DATA('A86201993',7)
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -56,34 +55,52 @@ BEGIN
       LOOP
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
-       
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE
-        PRO_ID = (SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO WHERE PRO_DOCIDENTIF = '''||V_TMP_TIPO_DATA(1)||''')
-        AND P20_PRORRATA = '||V_TMP_TIPO_DATA(2)||'
-        AND P20_GASTO = '||V_TMP_TIPO_DATA(3)||'';
-        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-        IF V_NUM_TABLAS = 1 THEN
-          DBMS_OUTPUT.PUT_LINE('[INFO]: La '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe');
-        ELSE
-          DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
-          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'.NEXTVAL FROM DUAL';
-          EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
-          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' (
-                      P20_ID,PRO_ID, P20_PRORRATA, P20_GASTO, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) VALUES (
-                       ' || V_ID || '
-                       ,(SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO WHERE BORRADO = 0 AND PRO_DOCIDENTIF = '''||V_TMP_TIPO_DATA(1)||''')
-                       ,'||V_TMP_TIPO_DATA(2)||'
-                       ,'||V_TMP_TIPO_DATA(3)||'
-                       ,0,'''||V_ITEM||''',SYSDATE,0)';
-                        DBMS_OUTPUT.PUT_LINE(V_MSQL);
+
+          DBMS_OUTPUT.PUT_LINE('[INFO]: FUSIONAMOS EL REGISTRO '''||TRIM(V_TMP_TIPO_DATA(1))||'''');
+          V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' T1
+            USING (
+              SELECT P20.P20_ID
+                , PRO.PRO_ID
+              FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' P20 
+              JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_DOCIDENTIF = '''||V_TMP_TIPO_DATA(1)||'''
+                AND PRO.BORRADO = 0
+              WHERE P20.BORRADO = 0
+                AND P20.P20_PRORRATA <> '||V_TMP_TIPO_DATA(2)||'
+            ) T2
+            ON (T1.P20_ID = T2.P20_ID)
+            WHEN MATCHED THEN
+              UPDATE SET T1.P20_PRORRATA = '||V_TMP_TIPO_DATA(2)||'
+                , T1.P20_GASTO = 100 - '||V_TMP_TIPO_DATA(2)||'
+                , T1.USUARIOMODIFICAR = '''||V_ITEM||'''
+                , T1.FECHAMODIFICAR = SYSDATE
+            WHEN NOT MATCHED THEN
+              INSERT (
+                T1.P20_ID
+                , T1.PRO_ID
+                , T1.P20_PRORRATA
+                , T1.P20_GASTO
+                , T1.USUARIOCREAR
+                , T1.FECHACREAR
+              )
+              VALUES (
+                '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'.NEXTVAL
+                , T2.PRO_ID
+                , '||V_TMP_TIPO_DATA(2)||'
+                , 100 - '||V_TMP_TIPO_DATA(2)||'
+                , '''||V_ITEM||'''
+                , SYSDATE
+              )';
+
+          DBMS_OUTPUT.PUT_LINE(V_MSQL);
           EXECUTE IMMEDIATE V_MSQL;
+
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
-        END IF;
+
       END LOOP;
+
     COMMIT;
 
     DBMS_OUTPUT.PUT_LINE('[FIN]: Tabla '||V_TEXT_TABLA||' MODIFICADA CORRECTAMENTE ');
-   
 
 EXCEPTION
      WHEN OTHERS THEN

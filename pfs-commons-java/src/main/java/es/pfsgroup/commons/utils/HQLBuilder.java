@@ -2,6 +2,7 @@ package es.pfsgroup.commons.utils;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.hibernate.Query;
@@ -202,6 +203,65 @@ public class HQLBuilder {
 		}
 	}
 
+	
+	/**
+	 * Ayuda a crear una cláusula WHERE campo IN (valor1, valor2 ...) en dónde
+	 * el conjunto se referencia a través de un parámetro con nombre.
+	 * <strong>sólo en el caso que el conjunto de valores no está vacío</strong>
+	 * 
+	 * <strong>El conjunto de valores tiene que ser una colección,</strong>
+	 * 
+	 * @param hqlBuilder
+	 *            Constructor de la sentencia
+	 * @param nombreCampo
+	 *            Nombre del campo para la cláusula WHERE IN
+	 * 
+	 * @param valores
+	 *            Conjunto de valores entre los que se debe encontrar el valor
+	 *            del campo
+	 */
+
+	@SuppressWarnings("unchecked")
+	public static void addFiltroWhereInStringSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo,
+			final Collection valores) {
+		if (!Checks.estaVacio(valores)) {
+			final StringBuilder b = new StringBuilder();
+			boolean first = true;
+			for (Object o : valores) {
+				if(o !=null) {
+					if (!first) {
+						b.append(", ");
+
+					} else {
+						first = false;
+					}
+					b.append(o.toString());
+				}
+			}
+			hqlBuilder.appendWhere(nombreCampo.concat(" in ('").concat(b.toString()).concat("')"));
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void addFiltroWhereInSiNotNullForceString(final HQLBuilder hqlBuilder, final String nombreCampo,
+			final Collection valores) {
+		if (!Checks.estaVacio(valores)) {
+			final StringBuilder b = new StringBuilder();
+			boolean first = true;
+			for (Object o : valores) {
+				if(o !=null) {
+					if (!first) {
+						b.append(", '");
+					} else {
+						first = false;
+					}
+					b.append(o.toString());
+				}
+			}
+			hqlBuilder.appendWhere(nombreCampo.concat(" in ('").concat(b.toString()).concat("')"));
+		}
+	}
+
 	/**
 	 * Ayuda a crear una cláusula WHERE campo like %valor% en dónde valor se
 	 * referencia a través de un parámetro con nombre <strong>sólo en el caso
@@ -391,6 +451,25 @@ public class HQLBuilder {
 		this.stringBuilder.append("))");
 
 	}
+	/**
+	 * Introducir clausula GROUP BY pasando por valor los campos por los que se desea agrupar
+	 * 
+	 *  @param field
+	 *  			campos de la select por los que agrupar
+	 */
+	public static void appendGroupBy(final HQLBuilder hqlBuilder, String... fields) {
+		hqlBuilder.stringBuilder.append(" GROUP BY ");
+		boolean primero = true;
+		for(String g: fields) {
+			if(!primero){
+				hqlBuilder.stringBuilder.append(", ");
+			}else {
+				primero = false;
+			}
+			hqlBuilder.stringBuilder.append(g);
+		}
+	}
+	
 	/**
 	 * añade una clausula WHERE para comprobar si un determinado campo está
 	 * entre unos determinados valores

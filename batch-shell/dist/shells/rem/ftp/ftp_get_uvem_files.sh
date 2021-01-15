@@ -1,7 +1,7 @@
 cd $DIR_INPUT_AUX
 rm -f $2.*
 
-lftp -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59 <<EOF
+lftp -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.126.66 <<EOF
 cd /datos/usuarios/socpart/CISA/in/
 mget $2.*
 bye
@@ -11,7 +11,7 @@ check_integrity_1=`md5sum $2.txt`
 rm -f $2.*
 sleep 30
 
-lftp -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59 <<EOF
+lftp -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.126.66 <<EOF
 cd /datos/usuarios/socpart/CISA/in/
 mget $2.*
 bye

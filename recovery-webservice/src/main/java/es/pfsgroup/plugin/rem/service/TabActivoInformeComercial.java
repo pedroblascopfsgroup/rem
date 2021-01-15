@@ -571,7 +571,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 				}
 				
 				//Vivienda
-				if (actInfoComercial.getVivienda() != null) {
+				if (actInfoComercial.getVivienda() != null && activoInformeDto.getTipoViviendaCodigo() != null) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getTipoViviendaCodigo());
 					DDTipoVivienda tipoVivienda = (DDTipoVivienda) genericDao.get(DDTipoVivienda.class, filtro);
 					beanUtilNotNull.copyProperty(vivienda, "tipoVivienda", tipoVivienda);

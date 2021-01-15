@@ -124,7 +124,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            		change: function(combo, value) {
 					            			var me = this;
 					            			if(value=='1') {
-					            				me.up('formBase').down('[reference=datefieldTapiado]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefieldTapiado]').allowBlank = false;
 					            				me.up('formBase').down('[reference=datefieldTapiado]').setDisabled(false);
 					            				me.up('formBase').down('[reference=datefieldTapiado]').validate();
 					            			} else {
@@ -170,7 +170,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            		change: function(combo, value) {
 					            			var me = this;
 					            			if(value=='1') {
-					            				me.up('formBase').down('[reference=datefieldPuertaAntiocupa]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefieldPuertaAntiocupa]').allowBlank = false;
 					            				me.up('formBase').down('[reference=datefieldPuertaAntiocupa]').setDisabled(false);
 					            				me.up('formBase').down('[reference=datefieldPuertaAntiocupa]').validate();
 					            			} else {

@@ -54,6 +54,9 @@ public class GestorDocumentalConstants {
 	public static final String[] gastoMetadatos = {"'ID':", "'ID Gasto':", "'ID Reo':", "'Fecha gasto':", "'Cliente':"};
 	public static final String[] metadataCrearContenedor = {"\"ID\":", "\"ID Externo\":", "\"ID Sistema Origen\":", "\"Cliente\":"};
 
+	public static final String[] metadataEspecifica = {"\"Aplica\":","\"Fecha emision\":", "\"Fecha caducidad\":", "\"Fecha obtencion\":", "\"Fecha etiqueta\":", "\"Registro\":"};
+
+	
 	public final static HashMap<String, String> tipoExpedientePorCodigo;
 
     static

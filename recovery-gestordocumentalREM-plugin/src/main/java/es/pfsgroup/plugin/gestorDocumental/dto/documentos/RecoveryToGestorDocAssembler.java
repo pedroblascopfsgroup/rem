@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.gestorDocumental.dto.documentos;
 
+import java.util.HashMap;
 import java.util.Properties;
 
 import es.capgemini.devon.files.WebFileItem;
@@ -70,6 +71,7 @@ public class RecoveryToGestorDocAssembler {
 
 	public CrearDocumentoDto getCrearDocumentoDto(WebFileItem webFileItem, String userLogin, String matricula) {
 		CrearDocumentoDto doc = new CrearDocumentoDto();
+		DtoMetadatosEspecificos dto = new DtoMetadatosEspecificos();
 		String[] arrayMatricula = new String[4];
 		if (matricula!=null && matricula.contains("-")) {
 			arrayMatricula = matricula.split("-");
@@ -82,11 +84,12 @@ public class RecoveryToGestorDocAssembler {
 		} else {
 			doc.setUsuarioOperacional(userLogin);
 		}
-		
+		//TODO Rellenar el dto cuando vengan los campos del formulario relleno. Si no está relleno no añadir nada.
 		doc.setDocumento(webFileItem.getFileItem().getFile());
 		doc.setNombreDocumento(webFileItem.getFileItem().getFileName());
 		doc.setDescripcionDocumento(webFileItem.getParameter("descripcion"));
 		doc.setGeneralDocumento(rellenarGeneralDocumento(arrayMatricula[1], arrayMatricula[2], arrayMatricula[3]));
+		doc.setEspecíficoDocumento(rellenarMetadatosEspecificos(dto));
 		doc.setArchivoFisico("{}");
 		
 		return doc;
@@ -286,6 +289,34 @@ public class RecoveryToGestorDocAssembler {
 				sb.append(GestorDocumentalConstants.metadataComunicaciones[5]).append("\"" + PROCESO_CARGA + "\"").append("},");
 				sb.append(GestorDocumentalConstants.metadataComunicaciones[6]).append("{");
 				sb.append(GestorDocumentalConstants.metadataComunicaciones[7]).append("\"CONT\"");
+			sb.append("}");
+		sb.append("}");
+		return sb.toString();
+	}
+	
+	private String rellenarMetadatosEspecificos (DtoMetadatosEspecificos dto) {
+		StringBuilder sb = new StringBuilder();
+		int indice = 1;
+		sb.append("{");
+			sb.append(GestorDocumentalConstants.metadataEspecifica[0]).append("{");
+				if(dto.getAplica() != null) {
+					sb.append(GestorDocumentalConstants.metadataEspecifica[indice]).append("\""+dto.getAplica()+"\"").append(",");
+				}
+				if(dto.getFechaEmision() != null) {
+					sb.append(GestorDocumentalConstants.metadataEspecifica[indice]).append("\""+dto.getFechaEmision()+"\"").append(",");
+				}
+				if(dto.getFechaCaducidad()!= null) {
+					sb.append(GestorDocumentalConstants.metadataEspecifica[indice]).append("\""+dto.getFechaCaducidad()+"\"").append(",");
+				}
+				if(dto.getFechaObtencion()!= null) {
+					sb.append(GestorDocumentalConstants.metadataEspecifica[indice]).append("\""+dto.getFechaObtencion()+"\"").append(",");
+				}
+				if(dto.getFechaEtiqueta()!= null) {
+					sb.append(GestorDocumentalConstants.metadataEspecifica[indice]).append("\""+dto.getFechaEtiqueta()+"\"").append(",");
+				}
+				if(dto.getRegistro()!= null) {
+					sb.append(GestorDocumentalConstants.metadataEspecifica[indice]).append("\""+dto.getRegistro()+"\"").append(",");
+				}
 			sb.append("}");
 		sb.append("}");
 		return sb.toString();

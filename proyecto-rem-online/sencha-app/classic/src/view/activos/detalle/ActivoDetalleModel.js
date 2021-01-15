@@ -1054,36 +1054,37 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			
 		},
 
-		isGestorAdmisionAndSuperComboTipoAltaBlo: function(get){
-			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) 
-			|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) 
-			||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
-			var me = this;
-			
-			var tipoAltaCodigo = me.getView().getViewModel().get('activo.tipoAltaCodigo');
-			var comboActivoRecovery = me.getView().getViewModel().get('activo.idRecovery');
-			var comboTipoAltaRef = me.getView().down("[reference='tipoAltaRef']");
-			
-			
-			if(gestores){
-				if (comboActivoRecovery != null) {
-					comboTipoAltaRef.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
-					return false;
-				}else if(comboActivoRecovery == null && tipoAltaCodigo == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']){
-					return true;
-				}else{
-					if(tipoAltaCodigo == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']) {
-						comboTipoAltaRef.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
-         				return false;
-         			} else if (tipoAltaCodigo != CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA'] || tipoAltaCodigo == null) {
-         				return true;         				
-         			} 
-
+		isGestorAdmisionAndSuperComboTipoAltaBlo: function(get){			
+			if(get("activo.isCarteraBbva")){
+				var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) 
+				|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) 
+				||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
+				var me = this;
+				
+				var tipoAltaCodigo = me.getView().getViewModel().get('activo.tipoAltaCodigo');
+				var comboActivoRecovery = me.getView().getViewModel().get('activo.idRecovery');
+				var comboTipoAltaRef = me.getView().down("[reference='tipoAltaRef']");
+				
+				
+				if(gestores){
+					if (comboActivoRecovery != null) {
+						if(!Ext.isEmpty(comboTipoAltaRef)) comboTipoAltaRef.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
+						return false;
+					}else if(comboActivoRecovery == null && tipoAltaCodigo == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']){
+						return true;
+					}else{
+						if(tipoAltaCodigo == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']) {
+							if(!Ext.isEmpty(comboTipoAltaRef)) comboTipoAltaRef.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
+	         				return false;
+	         			} else if (tipoAltaCodigo != CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA'] || tipoAltaCodigo == null) {
+	         				return true;         				
+	         			} 
+	
+					}
+	
+					}
+									
 				}
-
-				}
-								
-			
 			return false;
 		},
 		

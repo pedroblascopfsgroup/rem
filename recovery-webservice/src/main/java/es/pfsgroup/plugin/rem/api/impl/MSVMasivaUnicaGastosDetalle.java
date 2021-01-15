@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -41,6 +42,7 @@ import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoGenerico;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoCargaMasivaUnicaGastos;
@@ -88,35 +90,34 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 	public static final Integer COL_NUM_CONEXION = 14;
 	public static final Integer COL_F_CONEXION = 15;
 	public static final Integer COL_OFICINA = 16;
-	public static final Integer COL_RETENCION_GARANTIA_BASE = 17;
-	public static final Integer COL_RETENCION_GARANTIA_PORCENTAJE = 18;
-	public static final Integer COL_TIPO_RETENCION = 19;
-	public static final Integer COL_IRPF_BASE = 20;
-	public static final Integer COL_IRPF_PORCENTAJE = 21;
-	public static final Integer COL_IRPF_CLAVE = 22;
-	public static final Integer COL_IRPF_SUBCLAVE = 23;
-	public static final Integer COL_PLAN_VISITAS = 24;
-	public static final Integer COL_ACTIVABLE = 25;
-	public static final Integer COL_EJERCICIO = 26;
-	public static final Integer COL_TIPO_COMISIONADO = 27;
-	public static final Integer COL_COD_AGRUPACION_LINEA_DETALLE = 28;
-	public static final Integer COL_SUBTIPO_GASTO = 29;
-	public static final Integer COL_PRINCIPAL_SUJETO_IMPUESTOS = 30;
-	public static final Integer COL_PRINCIPAL_NO_SUJETO_IMPUESTOS = 31;
-	public static final Integer COL_TIPO_RECARGO = 32;
-	public static final Integer COL_IMPORTE_RECARGO = 33;
-	public static final Integer COL_INTERES_DEMORA = 34;
-	public static final Integer COL_COSTES = 35;
-	public static final Integer COL_OTROS_INCREMENTOS = 36;
-	public static final Integer COL_PROVISIONES_Y_SUPLIDOS = 37;
-	public static final Integer COL_TIPO_IMPUESTO = 38;
-	public static final Integer COL_OPERACION_EXENTA = 39;
-	public static final Integer COL_RENUNCIA_EXENCION = 40;
-	public static final Integer COL_TIPO_IMPOSITIVO = 41;
-	public static final Integer COL_OPTA_CRITERIO_CAJA_IVA = 42;
-	public static final Integer COL_ID_ELEMENTO = 43;
-	public static final Integer COL_TIPO_ELEMENTO = 44;
-	public static final Integer COL_PARTICIPACION_LINEA_DETALLE = 45;
+	public static final Integer COL_RETENCION_GARANTIA_PORCENTAJE = 17;
+	public static final Integer COL_TIPO_RETENCION = 18;
+	public static final Integer COL_IRPF_BASE = 19;
+	public static final Integer COL_IRPF_PORCENTAJE = 20;
+	public static final Integer COL_IRPF_CLAVE = 21;
+	public static final Integer COL_IRPF_SUBCLAVE = 22;
+	public static final Integer COL_PLAN_VISITAS = 23;
+	public static final Integer COL_ACTIVABLE = 24;
+	public static final Integer COL_EJERCICIO = 25;
+	public static final Integer COL_TIPO_COMISIONADO = 26;
+	public static final Integer COL_COD_AGRUPACION_LINEA_DETALLE = 27;
+	public static final Integer COL_SUBTIPO_GASTO = 28;
+	public static final Integer COL_PRINCIPAL_SUJETO_IMPUESTOS = 29;
+	public static final Integer COL_PRINCIPAL_NO_SUJETO_IMPUESTOS = 30;
+	public static final Integer COL_TIPO_RECARGO = 31;
+	public static final Integer COL_IMPORTE_RECARGO = 32;
+	public static final Integer COL_INTERES_DEMORA = 33;
+	public static final Integer COL_COSTES = 34;
+	public static final Integer COL_OTROS_INCREMENTOS = 35;
+	public static final Integer COL_PROVISIONES_Y_SUPLIDOS = 36;
+	public static final Integer COL_TIPO_IMPUESTO = 37;
+	public static final Integer COL_OPERACION_EXENTA = 38;
+	public static final Integer COL_RENUNCIA_EXENCION = 39;
+	public static final Integer COL_TIPO_IMPOSITIVO = 40;
+	public static final Integer COL_OPTA_CRITERIO_CAJA_IVA = 41;
+	public static final Integer COL_ID_ELEMENTO = 42;
+	public static final Integer COL_TIPO_ELEMENTO = 43;
+	public static final Integer COL_PARTICIPACION_LINEA_DETALLE = 44;
 
 	
 	
@@ -421,6 +422,35 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 						gastoLineaDetalleEntidad.setParticipacionGasto(Double.parseDouble(exc.dameCelda(fila, COL_PARTICIPACION_LINEA_DETALLE)));
 						genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);
 						
+					}else if(DDEntidadGasto.CODIGO_ACTIVO_GENERICO.equals(entidadGasto.getCodigo())) {
+					
+						Filter filtroNumActivoGen = genericDao.createFilter(FilterType.EQUALS, "numActivoGenerico", exc.dameCelda(fila, COL_ID_ELEMENTO));
+						Filter filtroSubtipoGasto = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.codigo", newGastoLineaDetalle.getSubtipoGasto().getCodigo());
+						Filter filtroPropietario= genericDao.createFilter(FilterType.EQUALS, "propietario.id", newGastoLineaDetalle.getGastoProveedor().getPropietario().getId());
+						Filter filtroAnyo;
+						    if(newGastoLineaDetalle.getGastoProveedor().getFechaEmision() != null) {
+								SimpleDateFormat fyear = new SimpleDateFormat("yyyy");
+								String year = fyear.format(newGastoLineaDetalle.getGastoProveedor().getFechaEmision());
+								filtroAnyo = genericDao.createFilter(FilterType.EQUALS, "anyoActivoGenerico", Integer.parseInt(year));
+							}else {
+								filtroAnyo = genericDao.createFilter(FilterType.NULL, "anyoActivoGenerico");
+							}
+						ActivoGenerico activoGenerico =  genericDao.get(ActivoGenerico.class, filtroNumActivoGen, filtroSubtipoGasto,filtroPropietario, filtroAnyo);
+							if(activoGenerico == null) {
+								filtroAnyo = genericDao.createFilter(FilterType.NULL, "anyoActivoGenerico");
+								activoGenerico =  genericDao.get(ActivoGenerico.class, filtroNumActivoGen, filtroSubtipoGasto,filtroPropietario,filtroAnyo);
+						        }
+
+						if(activoGenerico != null) {
+							GastoLineaDetalleEntidad gastoLineaDetalleEntidad = new GastoLineaDetalleEntidad();
+							gastoLineaDetalleEntidad.setGastoLineaDetalle(newGastoLineaDetalle);
+							gastoLineaDetalleEntidad.setEntidad(activoGenerico.getId());
+							gastoLineaDetalleEntidad.setEntidadGasto(entidadGasto);
+							gastoLineaDetalleEntidad.setParticipacionGasto(Double.parseDouble(exc.dameCelda(fila, COL_PARTICIPACION_LINEA_DETALLE)));
+							genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);
+						}
+						
+					
 					}else if(DDEntidadGasto.CODIGO_SIN_ACTIVOS.equals(entidadGasto.getCodigo())) {		
 						
 					}else {
@@ -471,12 +501,9 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 						gastoDetalleEconomico.setOficinaBankia(exc.dameCelda(fila, COL_OFICINA));
 					}
 					
-					if(exc.dameCelda(fila, COL_RETENCION_GARANTIA_BASE) != null && !exc.dameCelda(fila, COL_RETENCION_GARANTIA_BASE).isEmpty()) {
-						gastoDetalleEconomico.setRetencionGarantiaBase(Double.parseDouble(exc.dameCelda(fila, COL_RETENCION_GARANTIA_BASE)));
-					}
-					
 					if(exc.dameCelda(fila, COL_RETENCION_GARANTIA_PORCENTAJE) != null && !exc.dameCelda(fila, COL_RETENCION_GARANTIA_PORCENTAJE).isEmpty()) {
 						gastoDetalleEconomico.setRetencionGarantiaTipoImpositivo(Double.parseDouble(exc.dameCelda(fila, COL_RETENCION_GARANTIA_PORCENTAJE)));
+						gastoDetalleEconomico.setRetencionGarantiaAplica(true);
 					}
 					
 					if(exc.dameCelda(fila, COL_IRPF_BASE) != null && !exc.dameCelda(fila, COL_IRPF_BASE).isEmpty()) {
@@ -510,25 +537,13 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 						}
 					}
 					
-					if(!Checks.esNulo(exc.dameCelda(fila, COL_RETENCION_GARANTIA_BASE)) && !Checks.esNulo(exc.dameCelda(fila, COL_RETENCION_GARANTIA_PORCENTAJE))) {
-						BigDecimal retencionGarantiaPorcentaje = new BigDecimal(exc.dameCelda(fila, COL_RETENCION_GARANTIA_BASE));
-						BigDecimal retencionGarantiaBase = new BigDecimal(exc.dameCelda(fila, COL_RETENCION_GARANTIA_PORCENTAJE));
-						gastoDetalleEconomico.setRetencionGarantiaAplica(true);
-						
-						DDTipoRetencion tipoRetencion = genericDao.get(DDTipoRetencion.class, genericDao.createFilter(FilterType.EQUALS, "codigo",  exc.dameCelda(fila, COL_TIPO_RETENCION)));
-						
-						if(tipoRetencion != null) {
-							gastoDetalleEconomico.setTipoRetencion(tipoRetencion);
-						}
-						if(BigDecimal.ZERO.compareTo(retencionGarantiaPorcentaje) != 0 && BigDecimal.ZERO.compareTo(retencionGarantiaBase) != 0) {
-							BigDecimal cuota = retencionGarantiaPorcentaje.multiply(retencionGarantiaBase).divide(new BigDecimal(100));
-							gastoDetalleEconomico.setRetencionGarantiaCuota(cuota.doubleValue());
-						}else {
-							gastoDetalleEconomico.setRetencionGarantiaCuota(new Double(0));
-						}
-							
-						genericDao.save(GastoDetalleEconomico.class, gastoDetalleEconomico);
+					DDTipoRetencion tipoRetencion = genericDao.get(DDTipoRetencion.class, genericDao.createFilter(FilterType.EQUALS, "codigo",  exc.dameCelda(fila, COL_TIPO_RETENCION)));
+					
+					if(tipoRetencion != null) {
+						gastoDetalleEconomico.setTipoRetencion(tipoRetencion);
 					}
+						
+					genericDao.save(GastoDetalleEconomico.class, gastoDetalleEconomico);
 				}
 			
 				dtoGastos.setGastoDetalleEconomico(gastoDetalleEconomico);
@@ -596,7 +611,8 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 					if(ejercicio != null) {
 						gastoInfoContabilidad.setEjercicio(ejercicio);
 					}else {
-						Date hoy = new Date();
+						String fecha = exc.dameCelda(fila, COL_F_EMISION_DEVENGO);
+						Date hoy=new SimpleDateFormat("dd/MM/yyyy").parse(fecha);  
 						Calendar calendar = new GregorianCalendar();
 						calendar.setTime(hoy);
 						String year =  Integer.toString(calendar.get(Calendar.YEAR));
@@ -604,8 +620,7 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 						ejercicio = genericDao.get(Ejercicio.class, filtroEjercicio);
 						gastoInfoContabilidad.setEjercicio(ejercicio);
 					}
-					
-					gastoInfoContabilidad.setEjercicio(ejercicio);
+										
 					
 					genericDao.save(GastoInfoContabilidad.class, gastoInfoContabilidad);
 				
@@ -634,6 +649,12 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 
 					if(gastosList != null && !gastosList.isEmpty()) {
 						for (GastoDetalleEconomico gastoDetalle : gastosList) {
+								
+								Double importeGarantiaBase = gastoProveedorApi.recalcularImporteRetencionGarantia(gastoDetalle);
+								gastoDetalle.setRetencionGarantiaBase(importeGarantiaBase);
+								Double importeCuota = gastoProveedorApi.recalcularCuotaRetencionGarantia(gastoDetalle, importeGarantiaBase);
+								gastoDetalle.setRetencionGarantiaCuota(importeCuota);
+								
 								importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gastoDetalle);
 								gastoDetalle.setImporteTotal(importeTotal);
 								GastoDetalleEconomico updateGastoDetalleEconomico = HibernateUtils.merge(gastoDetalle);

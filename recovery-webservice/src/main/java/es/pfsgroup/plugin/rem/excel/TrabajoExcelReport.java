@@ -55,7 +55,7 @@ public class TrabajoExcelReport extends AbstractExcelReport implements ExcelRepo
 			fila.add(trabajo.getSolicitante());
 			fila.add(trabajo.getProveedor());
 			fila.add(this.getDateStringValue(trabajo.getFechaSolicitud()));
-			fila.add(trabajo.getDescripcionAreaPeticionaria());
+			fila.add(trabajo.getAreaPeticionaria());
 			
 			valores.add(fila);
 		}

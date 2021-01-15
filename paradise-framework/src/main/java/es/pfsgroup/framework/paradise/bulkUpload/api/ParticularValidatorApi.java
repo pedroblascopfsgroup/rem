@@ -1345,6 +1345,65 @@ public interface ParticularValidatorApi {
 	String getDocIdentfPropietarioByNumGasto(String numGasto);
 
 	boolean existeTipoRetencion(String tipoRetencion);
-
+	
 	boolean existeLineaEnGasto(String idLinea, String numGasto);
+
+	boolean conEstadoGasto(String idGasto,String codigoEstado);
+
+	String devolverEstadoGasto(String idGasto);
+
+	boolean tieneGastoFechaContabilizado(String idGasto);
+
+	boolean tieneGastoFechaPagado(String idGasto);
+
+
+	Boolean estadoPrevioTrabajo(String celdaTrabajo);
+
+	Boolean fechaEjecucionCumplimentada(String celdaTrabajo);
+
+	Boolean resolucionComite(String celdaTrabajo);
+
+	Boolean checkComite(String celdaTrabajo);
+
+	Boolean tieneLlaves(String celdaTrabajo);
+
+	Boolean checkLlaves(String celdaTrabajo);
+
+	Boolean checkProveedoresLlaves(String celdaTrabajo);
+
+	public String sacarCodigoSubtipoActivo(String descripcion);
+
+	Boolean existeTrabajoByCodigo(String codTrabajo);
+	
+	Boolean existeSubtrabajoByCodigo(String codSubtrabajo);
+	
+	Boolean esSubtrabajoByCodTrabajoByCodSubtrabajo(String codTrabajo, String codSubtrabajo);
+	
+	Boolean existeProveedorAndProveedorContacto(String codProveedor, String proveedorContacto);
+	
+	Boolean esSubtipoTrabajoTomaPosesionPaquete(String subtrabajo);
+	
+	Boolean esTarifaEnCarteradelActivo(String codTarifa, String idActivo);
+	
+	Boolean existeProveedorEnCarteraActivo(String proveedor,String idActivo);
+	
+	Boolean existePromocionBBVA(String promocion);
+
+	Boolean datosRegistralesRepetidos(String refCatastral, String finca, String folio, String libro, String tomo, String numRegistro, String codigoLocalidad);
+
+	Boolean subtipoPerteneceTipoActivo(String subtipo, String tipo);
+
+	Boolean existeAlbaran(String idAlbaran);
+	
+	Boolean existePrefactura(String idPrefactura);
+	
+	public String devolverEstadoGastoApartirDePrefactura(String idPrefactura);
+	
+	public String devolverEstadoGastoApartirDeAlbaran(String idAlbaran);
+
+	List<String> getIdPrefacturasByNumAlbaran(String numAlbaran);
+	
+    Boolean getGastoSuplidoConFactura(String idGastoAfectado);
+
+
 }

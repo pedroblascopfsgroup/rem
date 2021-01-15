@@ -75,26 +75,26 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
   	private String cexperBbva;
     
 	@Column(name = "BBVA_ID_PROCESO_ORIGEN")
-  	private Long idProcesoOrigen;
+  	private String idProcesoOrigen;
     
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BBVA_ACTIVO_EPA")
   	private DDSinSiNo activoEpa;
     
 	@Column(name = "BBVA_EMPRESA")
-  	private Long empresa;
+  	private String empresa;
     
 	@Column(name = "BBVA_OFICINA")
-  	private Long oficina;
+  	private String oficina;
     
 	@Column(name = "BBVA_CONTRAPARTIDA")
-  	private Long contrapartida;
+  	private String contrapartida;
     
 	@Column(name = "BBVA_FOLIO")
-  	private Long folio;
+  	private String folio;
     
 	@Column(name = "BBVA_CDPEN")
-  	private Long cdpen;
+  	private String cdpen;
     
 	@Version   
 	private Long version;
@@ -186,14 +186,6 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 		this.cexperBbva = cexperBbva;
 	}
 
-	public Long getIdProcesoOrigen() {
-		return idProcesoOrigen;
-	}
-
-	public void setIdProcesoOrigen(Long idProcesoOrigen) {
-		this.idProcesoOrigen = idProcesoOrigen;
-	}
-
 	public DDSinSiNo getActivoEpa() {
 		return activoEpa;
 	}
@@ -202,44 +194,36 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 		this.activoEpa = activoEpa;
 	}
 
-	public Long getEmpresa() {
+	public String getEmpresa() {
 		return empresa;
 	}
 
-	public void setEmpresa(Long empresa) {
+	public void setEmpresa(String empresa) {
 		this.empresa = empresa;
 	}
 
-	public Long getOficina() {
+	public String getOficina() {
 		return oficina;
 	}
 
-	public void setOficina(Long oficina) {
+	public void setOficina(String oficina) {
 		this.oficina = oficina;
 	}
 
-	public Long getContrapartida() {
+	public String getContrapartida() {
 		return contrapartida;
 	}
 
-	public void setContrapartida(Long contrapartida) {
+	public void setContrapartida(String contrapartida) {
 		this.contrapartida = contrapartida;
 	}
 
-	public Long getFolio() {
+	public String getFolio() {
 		return folio;
 	}
 
-	public void setFolio(Long folio) {
+	public void setFolio(String folio) {
 		this.folio = folio;
-	}
-
-	public Long getCdpen() {
-		return cdpen;
-	}
-
-	public void setCdpen(Long cdpen) {
-		this.cdpen = cdpen;
 	}
 
 	public Long getVersion() {
@@ -257,5 +241,20 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 	public void setCodPromocion(String codPromocion) {
 		this.codPromocion = codPromocion;
 	}
-	
+
+	public String getIdProcesoOrigen() {
+		return idProcesoOrigen;
+	}
+
+	public void setIdProcesoOrigen(String idProcesoOrigen) {
+		this.idProcesoOrigen = idProcesoOrigen;
+	}
+
+	public String getCdpen() {
+		return cdpen;
+	}
+
+	public void setCdpen(String cdpen) {
+		this.cdpen = cdpen;
+	}
 }

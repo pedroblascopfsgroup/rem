@@ -6,6 +6,8 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -55,7 +57,7 @@ public class VbusquedaAlbaranes implements Serializable{
 	private String nombreSolicitante;
 	
 	@Column(name = "TBJ_ID")
-	private Long idTrabajo;
+	private VBusquedaTrabajos idTrabajo;
 	
 	@Column(name = "TBJ_NUM_TRABAJO")
 	private Long numTrabajo;
@@ -89,6 +91,17 @@ public class VbusquedaAlbaranes implements Serializable{
 	
 	@Column(name = "VALIDARALBARAN")
 	private Boolean validarAlbaran;
+	
+	@Column(name = "DD_IRE_CODIGO")
+	private String ddIreCodigo;
+
+	public String getDdIreCodigo() {
+		return ddIreCodigo;
+	}
+
+	public void setDdIreCodigo(String ddIreCodigo) {
+		this.ddIreCodigo = ddIreCodigo;
+	}
 
 	public Long getId() {
 		return id;
@@ -178,11 +191,11 @@ public class VbusquedaAlbaranes implements Serializable{
 		this.solicitante = solicitante;
 	}
 
-	public Long getIdTrabajo() {
+	public VBusquedaTrabajos getIdTrabajo() {
 		return idTrabajo;
 	}
 
-	public void setIdTrabajo(Long idTrabajo) {
+	public void setIdTrabajo(VBusquedaTrabajos idTrabajo) {
 		this.idTrabajo = idTrabajo;
 	}
 

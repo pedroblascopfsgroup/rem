@@ -631,7 +631,7 @@ x-panel x-tabpanel-child x-panel-default {
 .x-tabpanel-child .x-tabpanel-child .x-tab.x-tab-active.x-tab-default {
 
   color: #054664 !important;
-  border-top: 3px solid #606060 !important!;
+  border-top: 3px solid #606060 !important;
   top: 0px !important;
   padding-bottom:6px;
   height: 30px !important;
@@ -731,7 +731,7 @@ x-panel x-tabpanel-child x-panel-default {
 
 /* Modificaciones para reducir espacios entre tabs */
 .x-tab-bar-default-top > .x-tab-bar-body-default {
-	padding-bottom: 0px !important!;
+	padding-bottom: 0px !important;
 	min-height: 0px !important; 
 }
 
@@ -802,12 +802,12 @@ x-panel x-tabpanel-child x-panel-default {
 .x-toast,
 .x-toast-info, 
 .x-toast-error, 
-.x-toast-warn, {
+.x-toast-warn {
 	opacity: 1 !important;
 	border-radius: 15px !important;
 	text-align: center !important;
 	padding-top: 25px !important;
-},
+}
 
 .x-toast .x-window-body,
 .x-toast-info .x-window-body, 
@@ -1315,8 +1315,8 @@ body.x-masked > .x-mask {
 }
 
 .x-fieldset.x-fieldset-anyadir-gasto, .x-fieldset-default.x-fieldset-anyadir-gasto {
-	background-color: transparent !impportant;
-	border: none !impportant;		
+	background-color: transparent !important;
+	border: none !important;		
 }
 
 .anyadir-gasto-form .x-panel-body {
@@ -1325,8 +1325,8 @@ body.x-masked > .x-mask {
 }
 
 .x-fieldset.x-fieldset-detalle-carga, .x-fieldset-default.x-fieldset-detalle-carga {
-	background-color: transparent !impportant;
-	border: none !impportant;		
+	background-color: transparent !important;
+	border: none !important;		
 }
 
 .detalle-carga-form .x-panel-body {
@@ -1355,14 +1355,35 @@ position:fixed !important;
 	  background: url(images/clonar_expdtes.svg) center center no-repeat;
 }
 
+
 .force-max-width {
 	max-width: 100%!important;
 	width: 100%!important;
 }
 
+.margen-derecha {
+	margin-right: 5px;
+}
 
+fieldset.x-fieldset {
+	overflow: visible;
+}
 
 .margen-derecha {
 	margin-right: 5px;
 }
 
+
+.x-fieldset {
+  overflow: visible;
+}
+.x-fieldset-header-default > .x-fieldset-header {
+	position:static;
+}
+.x-fieldset-header-default > .x-fieldset-header-text {
+	position:static;
+}
+
+div.x-fieldset-header-text {
+	position: static;
+}

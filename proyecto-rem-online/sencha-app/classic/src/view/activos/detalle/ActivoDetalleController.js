@@ -216,13 +216,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		ventana.show();
 	},
 
-	onTasacionListClick : function(grid, record) {
-
-		var me = this, form = grid.up("form"), model = Ext
-				.create('HreRem.model.ActivoTasacion'), idTasacion = record
-				.get("id");
-
-		var fieldset = me.lookupReference('detalleTasacion');
+	
+	onTasacionListClick: function (grid, record) {
+		var me = this,
+		form = grid.up("form"),
+		model = Ext.create('HreRem.model.ActivoTasacion'),
+		idTasacion = record.get("id");
+		
+		var fieldset =  me.lookupReference('detalleTasacion');
 		fieldset.mask(HreRem.i18n("msg.mask.loading"));
 
 		model.setId(idTasacion);
@@ -635,6 +636,43 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	
     },
+
+
+    destroyWindowCrearActivoAdmision: function (btn){
+    	var me = this;
+    	btn.up('window').destroy();
+    },
+    
+    hideWindowCrearActivoAdmision: function(btn) {
+    	var me = this;
+    	btn.up('window').hide();   	
+    },
+    
+    onClickCrearTrabajo: function (btn) {
+    	var me = this;
+    	
+    	me.getView().mask(HreRem.i18n("msg.mask.loading"));	
+    	
+    	var idActivo = me.getViewModel().get("activo.id");
+    	var codSubcartera = me.getViewModel().get("activo.subcarteraCodigo");
+    	var codCartera = me.getViewModel().get("activo.entidadPropietariaCodigo");
+    	var gestorActivo = $AU.getUser().userName;
+    	
+    	var ventana = Ext.create("HreRem.view.trabajos.detalle.CrearPeticionTrabajo", {
+			idActivo: idActivo, 
+			codCartera: codCartera, 
+			codSubcartera: codSubcartera, 
+			logadoGestorMantenimiento: true,
+			idAgrupacion: null,
+			idGestor: null, 
+			gestorActivo: gestorActivo,
+			trabajoDesdeActivo: true});
+		btn.lookupViewModel().getView().add(ventana);
+		ventana.show();
+		me.getView().unmask();
+
+    },
+
     
     onAnyadirPropietarioClick: function (btn) {    	
     	var me = this;
@@ -663,12 +701,70 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		});
   	    	
     },
-    
-    onChangeChainedCombo: function(combo) {
-    	var me = this,
-    	chainedCombo = me.lookupReference(combo.chainedReference);    	
-    	me.getViewModel().notify();
-    	if(!Ext.isEmpty(chainedCombo.store) && !Ext.isEmpty(chainedCombo.getValue())) {
+
+
+	destroyWindowCrearActivoAdmision : function(btn) {
+		var me = this;
+		btn.up('window').destroy();
+	},
+
+	hideWindowCrearActivoAdmision : function(btn) {
+		var me = this;
+		btn.up('window').hide();
+	},
+
+	onClickCrearTrabajo : function(btn) {
+		var me = this;
+		var idActivo = me.getViewModel().get("activo.id");
+		var codSubcartera = me.getViewModel().get("activo.subcarteraCodigo");
+		var codCartera = me.getViewModel()
+				.get("activo.entidadPropietariaCodigo");
+		me.getView().fireEvent('openModalWindow',
+				"HreRem.view.trabajos.detalle.CrearTrabajo", {
+					idActivo : idActivo,
+					idAgrupacion : null,
+					codCartera : codCartera,
+					codSubcartera : codSubcartera,
+					logadoGestorMantenimiento : true
+				});
+	},
+
+	onAnyadirPropietarioClick : function(btn) {
+		var me = this;
+		var idActivo = me.getViewModel().get("activo.id");
+		me.getView().fireEvent('openModalWindow',
+				"HreRem.view.activos.detalle.AnyadirPropietario");
+	},
+
+	onEliminarPropietarioClick : function(btn) {
+
+		var me = this;
+		var grid = btn.up('fieldsettable').down('#listadoPropietarios');
+
+		Ext.Msg.show({
+					title : HreRem.i18n('title.confirmar.eliminacion'),
+					msg : HreRem.i18n('msg.desea.eliminar'),
+					buttons : Ext.MessageBox.YESNO,
+					fn : function(buttonId) {
+						if (buttonId == 'yes') {
+							var sm = grid.getSelectionModel();
+							sm.getSelection()[0].erase();
+							if (grid.getStore().getCount() > 0) {
+								sm.select(0);
+							}
+						}
+					}
+				});
+
+	},
+
+	onChangeChainedCombo : function(combo) {
+		var me = this, chainedCombo = me
+				.lookupReference(combo.chainedReference);
+		me.getViewModel().notify();
+		if (!Ext.isEmpty(chainedCombo.store)
+				&& !Ext.isEmpty(chainedCombo.getValue())) {
+
 			chainedCombo.clearValue();
 		}
 
@@ -3794,6 +3890,89 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			}
 		});
 	},
+	
+	onVisitasListDobleClick: function(grid,record,tr,rowIndex) {        	       
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex);
+    	
+    	Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record}).show();
+    	
+        	
+    },
+    
+   	onClickBotonCerrarDetalleVisita: function(btn) {
+		var me = this,
+		window = btn.up('window');
+    	window.close();
+	},
+	
+	onProveedoresListClick: function(gridView, record){
+		var me=this;
+		
+		if($AU.getUser().codigoCartera === CONST.CARTERA['BBVA']){
+			return;
+		}
+		idProveedor= record.get('idFalso').id;
+		idActivo= record.get('idFalso').idActivo;
+		
+		
+		gridView.up('form').down('[reference=listadogastosref]').getStore().getProxy().setExtraParams({'idActivo': idActivo,'idProveedor': idProveedor});
+		gridView.up('form').down('[reference=listadogastosref]').getStore().load();
+		
+		
+	},
+	
+	// Función que abre la pestaña de proveedor.
+   abrirPestanyaProveedor: function(tableView, indiceFila, indiceColumna){
+   		var me = this;
+		var grid = tableView.up('grid');
+	    var record = grid.store.getAt(indiceFila);
+	    grid.setSelection(record);
+	    var idFalso = record.get('idFalso');
+	    var idFalsoProv;
+	    if(idFalso != null){
+	    	idFalsoProv = record.get('idFalso').id;
+	    }
+	    
+	    if(!Ext.isEmpty(record.get('idProveedor'))){
+	    	var idProveedor = record.get("idProveedor");
+	    	record.data.id= idProveedor;
+	    	var codigoProveedor = record.get('codigoProveedorRem');
+	    	record.data.codigo = codigoProveedor;
+	    	me.getView().fireEvent('abrirDetalleProveedor', record);
+	    }else if(!Ext.isEmpty(idFalsoProv)){
+	    	record.data.id= idFalsoProv;
+	    	var codigoProveedor = record.get('codigoProveedorRem');
+	    	record.data.codigo = codigoProveedor;
+	    	me.getView().fireEvent('abrirDetalleProveedor', record);
+	    }
+	    else if(!Ext.isEmpty(record.get('id'))){
+	    	var codigoProveedor = record.get('codigoProveedorRem');
+	    	record.data.codigo = codigoProveedor;
+	    	me.getView().fireEvent('abrirDetalleProveedor', record);
+	    }
+   },
+   
+   	onClickAbrirGastoProveedor: function(grid, record){
+		var me = this;
+		record.setId(record.data.idGasto);
+		
+    	me.getView().fireEvent('abrirDetalleGasto', record);
+		
+	},
+	
+	onClickAbrirGastoProveedorIcono: function(tableView, indiceFila, indiceColumna){
+		var me = this;
+		
+		var grid = tableView.up('grid');
+	    var record = grid.store.getAt(indiceFila);
+	    grid.setSelection(record);
+	    if(!Ext.isEmpty(record.get('id'))){
+// me.redirectTo('activos', true);
+	    	record.setId(record.data.idGasto);
+	    	me.getView().fireEvent('abrirDetalleGasto', record);
+	    }
+	},
 
 	onClickBotonCancelarCarga : function(btn) {
 		var me = this;
@@ -6820,8 +6999,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		for (item in items) {
 			fechas[items[item].dataIndex] = items[item];
 		}
-		var storeGridCalificacionNegativa = combo.up().up().up().up().up()
-				.down('[reference=calificacionnegativagrid]').getStore();
+		
+		var storeGridCalificacionNegativa;
+		var gridCalifcacion;
+		
+		if('historicotramitaciontituloadref' === combo.up('grid').getReference()){
+			gridCalifcacion = me.lookupReference('calificacionnegativagridad');
+			storeGridCalificacionNegativa = gridCalifcacion.getStore();
+			
+		}else{
+			gridCalifcacion = me.lookupReference('calificacionnegativagrid');
+			storeGridCalificacionNegativa = gridCalifcacion.getStore();
+			
+		}
 		if (storeGridCalificacionNegativa.data.length > 0) {
 			var noSubsanado = false;
 			for (var iterador in storeGridCalificacionNegativa.data.items) {
@@ -6830,22 +7020,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				}
 			}
 
-			if (noSubsanado
-					&& newValue != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']) {
-				me
-						.fireEvent(
-								"errorToast",
-								HreRem
-										.i18n("msg.operacion.ko.calificado.negativamente"));
-				combo
-						.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']);
+			if (noSubsanado&& newValue != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']) {
+				me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko.calificado.negativamente"));
+				combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']); 
 				return;
 			};
 		}
-		me.lookupReference('calificacionnegativagrid').disableAddButton(true);
+		
+		gridCalifcacion.disableAddButton(true);
 		if (combo.getValue() == CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE'])
-			me.lookupReference('calificacionnegativagrid')
-					.disableAddButton(false);
+			gridCalifcacion.disableAddButton(false);
 		switch (newValue) {
 
 			case CONST.DD_ESP_ESTADO_PRESENTACION['PRESENTACION_EN_REGISTRO'] :
@@ -6881,8 +7065,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	checkDateInterval : function(obj) {
 		if (!obj.readOnly && !obj.disabled) {
 			var me = this;
-			var dateStamp = me.lookupReference("fechaPresentacionRegistro")
-					.getValue().getTime();
+			var dateStamp = obj.previousSibling('[reference=fechaPresentacionRegistro]').getValue().getTime();
 			obj.setMinValue(new Date(dateStamp));
 			if (obj.isExpanded) {
 				obj.collapse();
@@ -7335,6 +7518,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		return this.getViewModel().get('activo.unidadAlquilable');
 	},
 
+
 	checkVisibilityOfBtnCrearTrabajo: function () {
 		var me = this;
 		var enPerimetro = me.getViewModel().get('activo.incluidoEnPerimetro') == 'true';
@@ -7347,6 +7531,32 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 							  
 		
 	 },
+
+	
+	validarEdicionHistoricoSolicitudesPrecios: function(editor, grid) {
+    	var me = this;
+    	
+    	if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PRECIOS']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PUBLICACION'])) {
+    		return grid.record.data.esEditable;
+    	}
+    	
+    	return false;
+    	
+    },
+    checkVisibilityOfBtnCrearTrabajo: function () {
+       var me = this;
+       var enPerimetro = me.getViewModel().get('activo.incluidoEnPerimetro') == 'true';
+       var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+       var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+	   var isGestorAlquiler = $AU.userGroupHasRole(CONST.PERFILES['GESTOR_ALQUILER_HPM']);
+	   var isUserGestedi = $AU.userIsRol(CONST.PERFILES['GESTEDI']);
+	   
+       return !enPerimetro || (!isSuper && !isGestorActivos && !isGestorAlquiler && !isUserGestedi);
+        					 
+       
+    },
+	
+
 
 	validarEdicionHistoricoSolicitudesPrecios : function(editor, grid) {
 		var me = this;
@@ -7640,6 +7850,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		btn.up('window').hide();
 	},
+
+    
+    mostrarObservacionesGrid: function(event, target, options) {   	
+    	var me = this;
+    	var observacionesAdmision = target.data.observacionesEvolucion;
+  	
+    	me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.CrearEvolucionObservaciones", {
+            observacionesAdmision: observacionesAdmision
+        });
+        
+    },
+    
+    onClickCerrarObservacionesEvolucion: function(btn) {
+    	var me = this;
+    	btn.up('window').hide();
+    },
+
+
 
 	onClickBotonAnyadirGastoAsociadoAdquisicion : function(btn) {
 

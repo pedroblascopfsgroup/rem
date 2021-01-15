@@ -224,7 +224,7 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired
 	private MSVMasivaModificacionLineasDetalleValidator modificacionLineasDetalle;
-	
+
 	@Autowired
 	private MSVMasivaUnicaGastosValidator cargaMasivaUnicaGastos;
 
@@ -233,7 +233,16 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVActualizacionComplementoTituloValidator complementoTitulo;
-	
+
+	@Autowired
+	private MSVValidatorTarifasPresupuestos validatorTarifasPresupuesto;
+
+	@Autowired
+	private MSVSancionesBBVAExcelValidator sancionesBBVA;
+
+	@Autowired
+	private MSVMasivaDatosSobreGastoValidator datosSobreGasto;
+
 	@Autowired
 	private MSVValidatorCargaGastosAsociadosAdquisicion cargaGastosAsociadosAdquisicion;
 
@@ -241,10 +250,11 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVMasivaAltaBBVAValidator altaActivosBBVA;
 
 	@Autowired
-	private MSVSancionesBBVAExcelValidator sancionesBBVA;
+	private MSVActualizarEstadosTrabajos cargaMasivaEstadoTrabajos;
 
 	@Autowired
-	private MSVValidatorTarifasPresupuestos validatorTarifasPresupuesto;
+	private MSVMasivaAltaTrabajosValidator altaTrabajos;
+
 
 	@Autowired
 	private MSVValidatorCargaCamposAccesibilidad cargaCamposAccesibilidad;
@@ -412,6 +422,12 @@ public class MSVExcelValidatorFactoryImpl {
 			return sancionesBBVA;
 		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CAMPOS_ACCESIBILIDAD.equals(codTipoOperacion)) {
 			return cargaCamposAccesibilidad;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SOBRE_GASTOS.equals(codTipoOperacion)) {
+			return datosSobreGasto;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_ESTADO_TRABAJOS.equals(codTipoOperacion)) {
+			return cargaMasivaEstadoTrabajos;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ALTA_TRABAJOS.equals(codTipoOperacion)) {
+			return altaTrabajos;
 		}
 
 		return null;

@@ -1,6 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
-import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,7 +52,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoAgendaTrabajo;
-import es.pfsgroup.plugin.rem.trabajo.dto.DtoHistorificadorCampos;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 
 public interface TrabajoApi {
@@ -931,4 +930,7 @@ public interface TrabajoApi {
 	
 	public List<DDIdentificadorReam>getComboAreaPeticionaria();
 
+	void EnviarCorreoTrabajos(Trabajo trabajo, String origen);
+
+	public BigDecimal getImporteTotalSuplidosByTrabajo(Trabajo trabajo);
 }

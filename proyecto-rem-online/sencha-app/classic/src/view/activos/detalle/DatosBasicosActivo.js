@@ -249,23 +249,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						        	bind: { 
 						        		value:'{activo.sociedadPagoAnterior}',
 						        		store: '{comboSituacionPagoAnterior}',
-						        		//store: '{comboSociedadAnteriorBBVA}',
 						        		readOnly: '{!activo.isSubcarteraDivarian}',
-						        		hidden: '{activo.isCarteraBbva}'
-						        	},
-						        	displayField: 'descripcion',
-						        	style:'margin-left:10px'
-						        },
-						        //PARA BBVA
-						        {
-						        	xtype: 'comboboxfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
-						        	bind: { 
-						        		value:'{activo.sociedadPagoAnterior}',
-						        		//store: '{comboSituacionPagoAnterior}',
-						        		store: '{comboSociedadAnteriorBBVA}',
-						        		readOnly: '{!activo.isSubcarteraDivarian}',
-						        		hidden: '{!activo.isCarteraBbva}'
+						        		hidden:'{!activo.isSubcarteraDivarian}'
 						        	},
 						        	displayField: 'descripcion',
 						        	style:'margin-left:10px'
@@ -287,7 +272,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                	bind:{
 				                		value: '{activo.descripcion}'
 				                	}
-				                },
+				                },   
 				                {
 									xtype:'comboboxfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.activobbva.tipoTransmision'),
@@ -311,6 +296,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									}*/
 									
 								},
+				                {
+				                	xtype: 'comboboxfieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.estado.registral'),
+				                	name: 'comboEstadoRegistral',
+				                	eference: 'comboEstadoRegistralRef',
+				                	bind: {
+					                	store: '{comboEstadoRegistral}',
+					                	value: '{activo.estadoRegistralCodigo}',
+					                	readOnly: '{!activo.esEditableActivoEstadoRegistral}'
+				                	}
+				                },
 				                {
 				                	//Campo para dejar un espacio entre los campos por estetica.
 				                	readOnly: true
@@ -587,19 +583,30 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					{
 						xtype: 'textfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.perimetro.ofertas.vivas'),
+						colspan: 1,
 						bind:{
-								value:'{activo.ofertasVivas}'
-									
+								value:'{activo.ofertasVivas}'		
 						},
-						readOnly	: true
+						readOnly	: true,
+						listeners: {
+						   'render': function(panel) {
+						       if($AU.getUser().codigoCartera == CONST.CARTERA['BBVA']){
+						    	  this.colspan = 3;
+						       }
+						    }
+						}
 					},
 					{
 						xtype: 'textfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.perimetro.trabajos.vivos'),
 						colspan: 2,
-						bind:		'{activo.trabajosVivos}',
+						bind: {
+							value: '{activo.trabajosVivos}',
+							hidden: '{esUsuarioBBVA}'
+						},
 						readOnly	: true
 					},
+					
 		            {    
 		                
 						xtype:'fieldsettable',
@@ -1141,7 +1148,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						            	}
 									},
 									{
-										xtype:'numberfieldbase',
+										xtype:'textfield',
+										disabled: true,
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.cdpen'),
 										reference: 'activobbvaCdpen',
 										bind: {

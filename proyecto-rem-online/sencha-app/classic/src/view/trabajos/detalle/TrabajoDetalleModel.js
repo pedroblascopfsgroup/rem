@@ -149,6 +149,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    	}
 	    	return true;
 	    }
+	   
     },
     
     stores: {

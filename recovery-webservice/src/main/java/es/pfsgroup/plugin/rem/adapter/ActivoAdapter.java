@@ -56,6 +56,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.action.utils.BeanUtilsActionsExceptions;
 import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -1746,28 +1747,51 @@ public class ActivoAdapter {
 
 	public List<DtoListadoTramites> getTramitesActivo(Long idActivo, WebDto webDto) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
+		List<String> listaCodigosTramite = new ArrayList<String>() {
+			{
+				add(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC);
+				add(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEE);
+				add(ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA);
+				add(ActivoTramiteApi.CODIGO_TRAMITE_TASACION);
+				add(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA);
+				add(ActivoTramiteApi.CODIGO_TRAMITE_INFORME);
+			}
+		};
 		List<DtoListadoTramites> listadoTramitesDto = new ArrayList<DtoListadoTramites>();
 		List<VBusquedaTramitesActivo> tramitesActivo = genericDao.getList(VBusquedaTramitesActivo.class, filtro);
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		boolean esUsuarioBBVA = false;
+		if(usuarioCartera != null && usuarioCartera.getCartera() != null) {
+			esUsuarioBBVA = DDCartera.CODIGO_CARTERA_BBVA.equals(usuarioCartera.getCartera().getCodigo());
+		}
+		
+		
 		for (VBusquedaTramitesActivo tramite : tramitesActivo) {
-			DtoListadoTramites dtoTramite = new DtoListadoTramites();
-			try {
-				beanUtilNotNull.copyProperties(dtoTramite, tramite);
+			
+			if((esUsuarioBBVA && !listaCodigosTramite.contains(tramite.getCodigoTipoTramite())) || !esUsuarioBBVA) {
+				DtoListadoTramites dtoTramite = new DtoListadoTramites();
+				try {
+					beanUtilNotNull.copyProperties(dtoTramite, tramite);
 
-			} catch (IllegalAccessException e) {
-				logger.error("Error en ActivoAdapter", e);
-			} catch (InvocationTargetException e) {
-				logger.error("Error en ActivoAdapter", e);
+				} catch (IllegalAccessException e) {
+					logger.error("Error en ActivoAdapter", e);
+				} catch (InvocationTargetException e) {
+					logger.error("Error en ActivoAdapter", e);
+				}
+				listadoTramitesDto.add(dtoTramite);
 			}
-			listadoTramitesDto.add(dtoTramite);
+						
 		}
 		if (activoDao.isActivoMatriz(idActivo)) {
 			List<DtoListadoTramites> listadoTramitesDtoActivoMatriz = new ArrayList<DtoListadoTramites>();
 			for (DtoListadoTramites tramite : listadoTramitesDto ) {
 				Filter fTramite = genericDao.createFilter(FilterType.EQUALS, "idTramite", tramite.getIdTramite());
 				List<VBusquedaTramitesActivoMatriz> tramiteAM = genericDao.getList(VBusquedaTramitesActivoMatriz.class, fTramite);
-				if (tramiteAM.size() == 1) {
-					listadoTramitesDtoActivoMatriz.add(tramite);
-				}
+				if(tramiteAM.size() == 1) {
+						listadoTramitesDtoActivoMatriz.add(tramite);							
+				}								
 			}
 			return listadoTramitesDtoActivoMatriz;
 		}
@@ -2015,7 +2039,6 @@ public class ActivoAdapter {
 
 		Activo activo = activoApi.get(id);
 		List<DtoTasacion> listaDtoTasacion = new ArrayList<DtoTasacion>();
-
 		if (activo.getTasacion() != null) {
 			for (int i = 0; i < activo.getTasacion().size(); i++) {
 
@@ -2036,10 +2059,28 @@ public class ActivoAdapter {
 						BeanUtils.copyProperty(tasacionDto, "importeValorTasacion",
 								activo.getTasacion().get(i).getImporteTasacionFin());
 					}
+
 					if (DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())) {
 						BeanUtils.copyProperty(tasacionDto, "codigoFirma",
 								activo.getTasacion().get(i).getCodigoFirmaBbva());
 					}
+
+
+					if(activo.getTasacion().get(i).isIlocalizable() != null) {
+						if (activo.getTasacion().get(i).isIlocalizable()) {
+							BeanUtils.copyProperty(tasacionDto, "ilocalizable", activo.getTasacion().get(i).isIlocalizable());
+						}else if (!activo.getTasacion().get(i).isIlocalizable()) {
+							BeanUtils.copyProperty(tasacionDto, "ilocalizable", activo.getTasacion().get(i).isIlocalizable());
+						}
+						
+					}
+					
+					if (activo.getTasacion().get(i).getIdExternoBbva() != null) {
+						BeanUtils.copyProperty(tasacionDto, "externoBbva", activo.getTasacion().get(i).getIdExternoBbva());
+					}
+
+					
+
 				} catch (IllegalAccessException e) {
 					logger.error("Error en ActivoAdapter", e);
 				} catch (InvocationTargetException e) {
@@ -2091,7 +2132,9 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperty(dtoTramite, "tramiteAlquilerAnulado", false);
 			if (!Checks.esNulo(tramite.getTramitePadre()))
 				beanUtilNotNull.copyProperty(dtoTramite, "idTramitePadre", tramite.getTramitePadre().getId());
+			
 			beanUtilNotNull.copyProperty(dtoTramite, "idActivo", tramite.getActivo().getId());
+
 			if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo())) {
 				beanUtilNotNull.copyProperty(dtoTramite, "nombre", T017_TRAMITE_BBVA_DESCRIPCION);
 				beanUtilNotNull.copyProperty(dtoTramite, "tipoTramite", T017_TRAMITE_BBVA_DESCRIPCION);
@@ -2217,13 +2260,13 @@ public class ActivoAdapter {
 					if(expedienteComercial.getEstado() != null) {
 						beanUtilNotNull.copyProperty(dtoTramite, "descripcionEstadoEC",
 								expedienteComercial.getEstado().getDescripcion());
-						beanUtilNotNull.copyProperty(dtoTramite, "codigoEstadoExpedienteComercial",
-								expedienteComercial.getEstado().getCodigo());
-							boolean isGestorBoarding = perteneceGrupoBoarding(genericAdapter.getUsuarioLogado());
-							boolean expedienteComercialNoAprobado = expedienteComercialNoAprobado(dtoTramite.getCodigoEstadoExpedienteComercial());
-							if ( isGestorBoarding && expedienteComercialNoAprobado) {
-								dtoTramite.setOcultarBotonResolucion(true);
-							}
+						boolean isGestorBoarding = perteneceGrupoBoarding(genericAdapter.getUsuarioLogado());
+						boolean expedienteComercialNoAprobado = expedienteComercialNoAprobado(expedienteComercial.getEstado().getCodigo());
+						if ( isGestorBoarding && expedienteComercialNoAprobado ) {
+							dtoTramite.setOcultarBotonResolucion(true);
+						}else if( isGestorBoarding && !ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA.equals(tramite.getTipoTramite().getCodigo()) ) {
+							dtoTramite.setOcultarBotonResolucion(true);
+						}
 					}
 					beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());
 				}
@@ -3924,6 +3967,8 @@ public class ActivoAdapter {
 			oferta.setOrigenComprador(origenComprador);
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
 			
+			oferta.setIdOfertaOrigen(dto.getIdOfertaOrigen());
+			
 			ofertaCreada = genericDao.save(Oferta.class, oferta);
 			
 			if(activo != null && activo.getSubcartera() != null &&
@@ -4812,5 +4857,15 @@ public class ActivoAdapter {
 		}
 		genericDao.deleteById(AdjuntoGastoAsociado.class, aga.getId());
 		return true;
+	}
+	
+	public List<VPreciosVigentes> getPreciosVigentesByIdAndNotFecha(Long idActivo) {
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo.toString());
+		Filter filtroFecha = genericDao.createFilter(FilterType.NULL, "fechaFin");
+		Order order = new Order(OrderType.ASC, "orden");
+
+		return genericDao.getListOrdered(VPreciosVigentes.class, order, filtro, filtroFecha);
+
 	}
 }

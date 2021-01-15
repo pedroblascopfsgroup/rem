@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
@@ -90,9 +91,10 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		GestorEntidadDto ge = new GestorEntidadDto();
+		
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-
+			Activo activo = ofertaAceptada.getActivoPrincipal();
 			if (!Checks.esNulo(expediente)) {
 						
 				for (TareaExternaValor valor : valores) {
@@ -110,7 +112,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 							&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
 							expediente.setComiteSancion(expedienteComercialApi.comiteSancionadorByCodigo(valor.getValor()));
 					}
-					if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {															
+					/*if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {															
 						EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 								.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
 						
@@ -120,7 +122,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 						ge.setIdTipoGestor(tipoGestorComercial.getId());
 						gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
 						
-					}
+					}*/
 					if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 						if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
@@ -144,7 +146,21 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 							}
 							
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
-	
+							
+							/*if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null
+									&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) //REMVIP-8388,todas menos Cerberus hasta que digan lo contrario
+									&& gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {															
+								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+										.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
+								
+								ge.setIdEntidad(expediente.getId());
+								ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+								ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());	
+								ge.setIdTipoGestor(tipoGestorComercial.getId());
+								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
+								
+							}*/
+							
 							// Una vez aprobado el expediente, se congelan el resto de ofertas que no
 							// estén rechazadas (aceptadas y pendientes)
 							List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());

@@ -355,10 +355,15 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
     	var idGasto = me.lookupController().getView().getViewModel().get("gasto.id")
 		var grid = me;
     	var tieneTrabajos = me.lookupController().getView().getViewModel().getData().gasto.getData().tieneTrabajos;
+    	var tieneSuplidos = me.lookupController().getView().getViewModel().getData().gasto.getData().suplidosVinculadosCod;
+    	var tieneNumeroFacturaPrincipal = me.lookupController().getView().getViewModel().getData().gasto.getData().facturaPrincipalSuplido;
 	
     	if(tieneTrabajos){
     		me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.crear.gasto.linea.detalle.con.trabajos")); 
+    	}else if(!Ext.isEmpty(tieneSuplidos) && (tieneSuplidos  == CONST.COMBO_SIN_NO['SI'] || !Ext.isEmpty(tieneNumeroFacturaPrincipal))){
+    		me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.crear.gasto.linea.detalle.con.suplidos")); 
     	}else{
+    	
     		Ext.create("HreRem.view.gastos.VentanaCrearLineaDetalleGasto",
 				{entidad: 'lineaDetalleGasto', idGasto: idGasto, parent:grid, idLineaDetalleGasto: null, record:null}).show();
     	}
@@ -369,9 +374,14 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
     	var me = this;
     	var selection =  me.getSelection();
     	var grid = me;
+    	var tieneSuplidos = me.lookupController().getView().getViewModel().getData().gasto.getData().suplidosVinculadosCod;
+    	var tieneNumeroFacturaPrincipal = me.lookupController().getView().getViewModel().getData().gasto.getData().facturaPrincipalSuplido;
     	
     	if(selection.length == 0){
     		me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.eliminar.gasto.linea.detalle")); 
+    		return;
+    	}else if(tieneSuplidos  == CONST.COMBO_SIN_NO['SI'] || !Ext.isEmpty(tieneNumeroFacturaPrincipal)){
+    		me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.eliminar.gasto.linea.suplidos")); 
     		return;
     	}
     	var idGasto  =  me.lookupController().getView().getViewModel().get("gasto.id");

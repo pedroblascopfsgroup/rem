@@ -36,7 +36,7 @@ public class DtoActivoCatastro extends WebDto {
 	private String idCatastro;
 	private Date fechaSolicitud901;
 	private String resultadoSiNO;
-	
+	private Date fechaAlteracion;
 	public Long getIdActivo() {
 		return idActivo;
 	}
@@ -157,6 +157,12 @@ public class DtoActivoCatastro extends WebDto {
 	}
 	public void setResultadoSiNO(String resultadoSiNO) {
 		this.resultadoSiNO = resultadoSiNO;
+	}
+	public Date getFechaAlteracion() {
+		return fechaAlteracion;
+	}
+	public void setFechaAlteracion(Date fechaAlteracion) {
+		this.fechaAlteracion = fechaAlteracion;
 	}
 	
 	

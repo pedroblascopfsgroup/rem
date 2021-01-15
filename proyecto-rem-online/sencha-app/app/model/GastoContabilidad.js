@@ -111,6 +111,10 @@ Ext.define('HreRem.model.GastoContabilidad', {
         	name:'errorDiarios'
         },
         {
+        	name:'excluirEnvioLbk',
+        		type: 'boolean'
+        },
+        {
         	name:'resultadoDiarios',
         	type:'boolean'
         },

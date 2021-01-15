@@ -196,19 +196,36 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcelElementosGasto(Long idLinea, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException{
+	public void generateExcelElementosGasto(Long idGasto, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException{
 
-		List<VElementosLineaDetalle> listaElementos = (List<VElementosLineaDetalle>) getElementosAfectados(idLinea, model, request).getModel().get("data");
+
 		String cartera = null;
 		ExcelReport report = null;
-		if ( listaElementos != null && !listaElementos.isEmpty()) {
-			cartera = gastoProveedorApi.getCodigoCarteraGastoByIdGasto(listaElementos.get(0).getIdGasto());
-			report = new ElementosLineasExcelReport(listaElementos, cartera);
-		}else {
-			report = new ElementosLineasExcelReport(listaElementos);
+
+		List<VElementosLineaDetalle> listaElementos = gastoLineaDetalleApi.getTodosElementosAfectados(idGasto);
+
+		try {
+			if (listaElementos != null && !listaElementos.isEmpty()) {
+				cartera = gastoProveedorApi.getCodigoCarteraGastoByIdGasto(listaElementos.get(0).getIdGasto());
+				report = new ElementosLineasExcelReport(listaElementos, cartera);
+			}
+			
+			model.put("data", listaElementos);
+				
+			trustMe.registrarSuceso(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER);
+
+			model.put("success", true);
+			
+			excelReportGeneratorApi.generateAndSend(report, response);
+			
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			logger.error("error cargarElemetnosAfectados");
+			model.put("success", false);
+			trustMe.registrarError(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
-		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 
 
@@ -497,7 +514,6 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			model.put("msg", e.getMessage());
 			model.put("success", false);
 			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "contabilidad", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}

@@ -276,16 +276,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private Boolean pazSocial;
 	private String numActivoDivarian;
-	
 	private Boolean activoEpa;
-    private Long empresa;
-    private Long oficina;
-    private Long contrapartida;
-    private Long folio;
-    private Long cdpen;
+    private String empresa;
+    private String oficina;
+    private String contrapartida;
+    private String folio;
+    private String cdpen;
     
 	private String numActivoBbva;
-    private Long idDivarianBbva;
     private Long lineaFactura;
     private Long idOrigenHre;
     private String uicBbva;
@@ -295,6 +293,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
     private String tipoTransmisionDescripcion;
     private String tipoAltaDescripcion;
     private Boolean isGrupoOficinaKAM;
+
 
 	//Estado Admision
 	private Boolean incluidoEnPerimetroAdmision;
@@ -2140,44 +2139,36 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.activoEpa = activoEpa;
 	}
 
-	public Long getEmpresa() {
+	public String getEmpresa() {
 		return empresa;
 	}
 
-	public void setEmpresa(Long empresa) {
+	public void setEmpresa(String empresa) {
 		this.empresa = empresa;
 	}
 
-	public Long getOficina() {
+	public String getOficina() {
 		return oficina;
 	}
 
-	public void setOficina(Long oficina) {
+	public void setOficina(String oficina) {
 		this.oficina = oficina;
 	}
 
-	public Long getContrapartida() {
+	public String getContrapartida() {
 		return contrapartida;
 	}
 
-	public void setContrapartida(Long contrapartida) {
+	public void setContrapartida(String contrapartida) {
 		this.contrapartida = contrapartida;
 	}
 
-	public Long getFolio() {
+	public String getFolio() {
 		return folio;
 	}
 
-	public void setFolio(Long folio) {
+	public void setFolio(String folio) {
 		this.folio = folio;
-	}
-
-	public Long getCdpen() {
-		return cdpen;
-	}
-
-	public void setCdpen(Long cdpen) {
-		this.cdpen = cdpen;
 	}
 
 	public String getNumActivoBbva() {
@@ -2404,4 +2395,13 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setCodPromocionBbva(String codPromocionBbva) {
 		this.codPromocionBbva = codPromocionBbva;
 	}
+
+	public String getCdpen() {
+		return cdpen;
+	}
+
+	public void setCdpen(String cdpen) {
+		this.cdpen = cdpen;
+	}	
+	
 }

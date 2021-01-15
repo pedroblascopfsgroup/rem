@@ -136,9 +136,8 @@ public interface GastoProveedorApi {
 		/**
 		 * Método que actualiza la la contabilidad de un gasto
 		 * @return
-		 * @throws Exception 
 		 */
-		boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto, Long idGasto) throws Exception;
+		boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto, Long idGasto);
 
 		/**
 		 * crea un gasto
@@ -427,6 +426,11 @@ public interface GastoProveedorApi {
 		String validacionNifEmisorFactura(DtoFichaGastoProveedor dto, Long idGasto);
 
 		String getCodigoCarteraGastoByIdGasto(Long idGasto);
+
+		Double recalcularImporteRetencionGarantia(GastoDetalleEconomico gasto);
+
+		Double recalcularCuotaRetencionGarantia(GastoDetalleEconomico detalleGasto, Double importeGarantiaBase);
+
 
 }
 

@@ -113,7 +113,7 @@ BEGIN
   					, '''||V_ITEM||'''
   					, SYSDATE
   					, PRO.PRO_ID
-  					, '||TRIM(V_TMP_TIPO_DATA(2))||'
+  					, '''||TRIM(V_TMP_TIPO_DATA(2))||'''
   				FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO
           JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON 1 = 1
           	AND STG.BORRADO = 0 
@@ -124,7 +124,7 @@ BEGIN
               FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' AUX
               WHERE AUX.PRO_ID = PRO.PRO_ID
                 AND AUX.DD_STG_ID = STG.DD_STG_ID
-                AND AUX.AGS_ACTIVO_GENERICO = '||TRIM(V_TMP_TIPO_DATA(2))||'
+                AND AUX.AGS_ACTIVO_GENERICO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
                 AND AUX.BORRADO = 0
             )';                          
 				EXECUTE IMMEDIATE V_MSQL;

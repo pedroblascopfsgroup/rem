@@ -68,7 +68,6 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	public static final String RENUNCIA_EXENCION_ERROR = "El campo 'Renuncia a exención' solo puede estar rellenado con 'S' para sí y 'N' para no.";
 	public static final String OPTA_CRITERIO_CAJA_IVA_ERROR = "El campo 'Opta por criterio de caja en IVA' solo puede estar rellenado con 'S' para sí y 'N' para no.";
 	
-	public static final String RETENCION_GARANTIA_PORCENTAJE_VACIO = "Si el campo 'Retención garantía Base' está informado, 'Retención garantía Porcentaje' no puede estar vacío.";
 	public static final String SUBTIPO_GASTO_CORRESPONDE_TIPO_GASTO= "El subtipo del gasto no corresponde con el tipo de gasto.";
 	public static final String SI_TIPO_ELEMENTO_ES_ACT_ID_ELEMENTO_EXISTE= "El tipo de elemento es 'Activo' pero el id del elemento no existe.";
 	public static final String IRPF_PORCENTAJE_VACIO= "Si el campo 'IRPF Base' está informado, 'IRPF Porcentaje' no puede estar vacío.";
@@ -92,7 +91,6 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	private static final String PROPIETARIO_NO_EXISTE= "El propietario no existe";
 	private static final String EMISOR_NO_EXISTE= "El emisor no existe";
 	private static final String IRPF_BASE_VACIA = "Si el campo 'IRPF Porcentaje' está informado, 'IRPF Base' no puede estar vacío.";
-	private static final String RETENCION_BASE_VACIA = "Si el campo 'Retención garantía Porcentaje' está informado, 'Retención garantía Base' no puede estar vacío.";
 	private static final String LINEA_DIFERENTE_STG_TIM_TIIM = "A esta línea ya se le ha asignado anteriormente un subtipo de gasto, tipo impositivo y tipo de impuesto, debe coincidir.";
 	private static final String GASTO_REPETIDO_BBDD = "El gasto ya existe";
 	private static final String GASTO_REPETIDO_CARGA = "Gasto repetido";
@@ -102,7 +100,6 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	private static final String TIPO_IMPOS_IMPUEST_RELLENO = "Cuando el tipo impositivo está relleno el tipo impuesto debe estarlo, y viceversa.";
 	private static final String SIN_ACTIVOS_NO_VALIDO_CARTERA = "Cuando el propietario es de la cartera: Sareb, Tango o Giants no se puede marcar como línea sin activos.";
 
-	private static final String COLUMNA_TEXTO_RET_GARANTIA_BASE ="Se ha cambiado la celda de Retención garantía base a tipo texto";
 	private static final String COLUMNA_TEXTO_RET_GARANTIA_PORCENTAJE="Se ha cambiado la celda de Retención garantía porcentje a tipo texto";
 	private static final String COLUMNA_TEXTO_IRPF_BASE="Se ha cambiado la celda de IRPF Base a tipo texto";
 	private static final String COLUMNA_TEXTO_IRPF_PORCENTAJE="Se ha cambiado la celda de IRPF Porcentaje a tipo texto";
@@ -117,8 +114,8 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	private static final String COLUMNA_TEXTO_PARTI_LINEA_DETALLE="Se ha cambiado la celda de Participación en la linea de detalle a tipo texto";
 	
 	private static final String TIPO_RETENCION_NO_EXISTE="El tipo de retención no existe.";
-	private static final String TIPO_RETENCION_VACIO="Si no están rellenos los campos de Retención garantía base y retención garantía porcentaje, el campo de tipo retención debe estar vacío.";
-	private static final String TIPO_RETENCION_RELLENO="Si los campos de Retención garantía base y Retención garantía porcentaje están rellenos el campo de tipo debe estar relleno.";
+	private static final String TIPO_RETENCION_VACIO="Si no esta relleno el campo Retención garantía porcentaje, el campo de tipo retención debe estar vacío.";
+	private static final String TIPO_RETENCION_RELLENO="Si el campo Retención garantía porcentaje está relleno el campo de tipo debe estar relleno.";
 
 	
 	public static final Integer COL_ID_AGRUPADOR_GASTO = 0;
@@ -138,35 +135,34 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	public static final Integer COL_NUM_CONEXION = 14;
 	public static final Integer COL_F_CONEXION = 15;
 	public static final Integer COL_OFICINA = 16;
-	public static final Integer COL_RETENCION_GARANTIA_BASE = 17;
-	public static final Integer COL_RETENCION_GARANTIA_PORCENTAJE = 18;
-	public static final Integer COL_TIPO_RETENCION = 19;
-	public static final Integer COL_IRPF_BASE = 20;
-	public static final Integer COL_IRPF_PORCENTAJE = 21;
-	public static final Integer COL_IRPF_CLAVE = 22;
-	public static final Integer COL_IRPF_SUBCLAVE = 23;
-	public static final Integer COL_PLAN_VISITAS = 24;
-	public static final Integer COL_ACTIVABLE = 25;
-	public static final Integer COL_EJERCICIO = 26;
-	public static final Integer COL_TIPO_COMISIONADO = 27;
-	public static final Integer COL_COD_AGRUPACION_LINEA_DETALLE = 28;
-	public static final Integer COL_SUBTIPO_GASTO = 29;
-	public static final Integer COL_PRINCIPAL_SUJETO_IMPUESTOS = 30;
-	public static final Integer COL_PRINCIPAL_NO_SUJETO_IMPUESTOS = 31;
-	public static final Integer COL_TIPO_RECARGO = 32;
-	public static final Integer COL_IMPORTE_RECARGO = 33;
-	public static final Integer COL_INTERES_DEMORA = 34;
-	public static final Integer COL_COSTES = 35;
-	public static final Integer COL_OTROS_INCREMENTOS = 36;
-	public static final Integer COL_PROVISIONES_Y_SUPLIDOS = 37;
-	public static final Integer COL_TIPO_IMPUESTO = 38;
-	public static final Integer COL_OPERACION_EXENTA = 39;
-	public static final Integer COL_RENUNCIA_EXENCION = 40;
-	public static final Integer COL_TIPO_IMPOSITIVO = 41;
-	public static final Integer COL_OPTA_CRITERIO_CAJA_IVA = 42;
-	public static final Integer COL_ID_ELEMENTO = 43;
-	public static final Integer COL_TIPO_ELEMENTO = 44;
-	public static final Integer COL_PARTICIPACION_LINEA_DETALLE = 45;
+	public static final Integer COL_RETENCION_GARANTIA_PORCENTAJE = 17;
+	public static final Integer COL_TIPO_RETENCION = 18;
+	public static final Integer COL_IRPF_BASE = 19;
+	public static final Integer COL_IRPF_PORCENTAJE = 20;
+	public static final Integer COL_IRPF_CLAVE = 21;
+	public static final Integer COL_IRPF_SUBCLAVE = 22;
+	public static final Integer COL_PLAN_VISITAS = 23;
+	public static final Integer COL_ACTIVABLE = 24;
+	public static final Integer COL_EJERCICIO = 25;
+	public static final Integer COL_TIPO_COMISIONADO = 26;
+	public static final Integer COL_COD_AGRUPACION_LINEA_DETALLE = 27;
+	public static final Integer COL_SUBTIPO_GASTO = 28;
+	public static final Integer COL_PRINCIPAL_SUJETO_IMPUESTOS = 29;
+	public static final Integer COL_PRINCIPAL_NO_SUJETO_IMPUESTOS = 30;
+	public static final Integer COL_TIPO_RECARGO = 31;
+	public static final Integer COL_IMPORTE_RECARGO = 32;
+	public static final Integer COL_INTERES_DEMORA = 33;
+	public static final Integer COL_COSTES = 34;
+	public static final Integer COL_OTROS_INCREMENTOS = 35;
+	public static final Integer COL_PROVISIONES_Y_SUPLIDOS = 36;
+	public static final Integer COL_TIPO_IMPUESTO = 37;
+	public static final Integer COL_OPERACION_EXENTA = 38;
+	public static final Integer COL_RENUNCIA_EXENCION = 39;
+	public static final Integer COL_TIPO_IMPOSITIVO = 40;
+	public static final Integer COL_OPTA_CRITERIO_CAJA_IVA = 41;
+	public static final Integer COL_ID_ELEMENTO = 42;
+	public static final Integer COL_TIPO_ELEMENTO = 43;
+	public static final Integer COL_PARTICIPACION_LINEA_DETALLE = 44;
 
 	
 	
@@ -256,7 +252,6 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(OPTA_CRITERIO_CAJA_IVA_ERROR, isBooleanValidator(exc, COL_OPTA_CRITERIO_CAJA_IVA));
 			mapaErrores.put(F_EMISION_DEVENGO_ERROR, isFechaValidator(exc, COL_F_EMISION_DEVENGO));
 			mapaErrores.put(F_CONEXION_ERROR, isFechaValidator(exc, COL_F_CONEXION));
-			mapaErrores.put(RETENCION_GARANTIA_PORCENTAJE_VACIO, esRetencionGarantiaPorcentajeVacio(exc)); 
 			mapaErrores.put(SUBTIPO_GASTO_CORRESPONDE_TIPO_GASTO, subtipoPerteneceATipoGasto(exc));
 			mapaErrores.put(SI_TIPO_ELEMENTO_ES_ACT_ID_ELEMENTO_EXISTE, siElementoActExiste(exc));
 			mapaErrores.put(IRPF_PORCENTAJE_VACIO, esIrpfPorcentajeVacio(exc));
@@ -280,7 +275,6 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(PROPIETARIO_NO_EXISTE, existePropietario(exc));
 			mapaErrores.put(EMISOR_NO_EXISTE, existeEmisor(exc));
 			mapaErrores.put(IRPF_BASE_VACIA, esIrpfBaseVacio(exc));
-			mapaErrores.put(RETENCION_BASE_VACIA, esRetencionGarantiaBaseVacio(exc));
 			mapaErrores.put(LINEA_DIFERENTE_STG_TIM_TIIM, mismaLineaDiferenteTipo(exc));
 			mapaErrores.put(GASTO_REPETIDO_BBDD, gastoRepetidoBBDD(exc));
 			mapaErrores.put(GASTO_REPETIDO_CARGA, gastoRepetidoEnCarga(exc));
@@ -289,7 +283,6 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(LINEA_SIN_ACTIVOS_CON_ID_PARTICIPACION, lineaSinActivosElementoyPorcentajeVacio(exc));
 			mapaErrores.put(TIPO_IMPOS_IMPUEST_RELLENO, tipoImpositivoEimpuestoRellenos(exc));
 			mapaErrores.put(SIN_ACTIVOS_NO_VALIDO_CARTERA, sinActivosNoValidoCartera(exc));
-			mapaErrores.put(COLUMNA_TEXTO_RET_GARANTIA_BASE,comprobarDouble(exc,COL_RETENCION_GARANTIA_BASE));
 			mapaErrores.put(COLUMNA_TEXTO_RET_GARANTIA_PORCENTAJE,comprobarDouble(exc,COL_RETENCION_GARANTIA_PORCENTAJE));
 			mapaErrores.put(COLUMNA_TEXTO_IRPF_BASE,comprobarDouble(exc,COL_IRPF_BASE));
 			mapaErrores.put(COLUMNA_TEXTO_IRPF_PORCENTAJE,comprobarDouble(exc,COL_IRPF_PORCENTAJE));
@@ -326,7 +319,6 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(OPTA_CRITERIO_CAJA_IVA_ERROR).isEmpty()
 					|| !mapaErrores.get(F_EMISION_DEVENGO_ERROR).isEmpty()
 					|| !mapaErrores.get(F_CONEXION_ERROR).isEmpty()
-					|| !mapaErrores.get(RETENCION_GARANTIA_PORCENTAJE_VACIO).isEmpty()
 					|| !mapaErrores.get(SUBTIPO_GASTO_CORRESPONDE_TIPO_GASTO).isEmpty()
 					|| !mapaErrores.get(SI_TIPO_ELEMENTO_ES_ACT_ID_ELEMENTO_EXISTE).isEmpty()
 					|| !mapaErrores.get(IRPF_PORCENTAJE_VACIO).isEmpty()
@@ -342,7 +334,6 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(PROPIETARIO_NO_EXISTE).isEmpty()
 					|| !mapaErrores.get(EMISOR_NO_EXISTE).isEmpty()
 					|| !mapaErrores.get(IRPF_BASE_VACIA).isEmpty()
-					|| !mapaErrores.get(RETENCION_BASE_VACIA).isEmpty()
 					|| !mapaErrores.get(LINEA_DIFERENTE_STG_TIM_TIIM).isEmpty()
 					|| !mapaErrores.get(ACTIVABLE_SOLO_BBVA_LBK).isEmpty()
 					|| !mapaErrores.get(GASTO_REPETIDO_BBDD).isEmpty()
@@ -352,7 +343,6 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(LINEA_SIN_ACTIVOS_CON_ID_PARTICIPACION).isEmpty()
 					|| !mapaErrores.get(TIPO_IMPOS_IMPUEST_RELLENO).isEmpty()
 					|| !mapaErrores.get(SIN_ACTIVOS_NO_VALIDO_CARTERA).isEmpty()
-					|| !mapaErrores.get(COLUMNA_TEXTO_RET_GARANTIA_BASE).isEmpty()
 					|| !mapaErrores.get(COLUMNA_TEXTO_RET_GARANTIA_PORCENTAJE).isEmpty()
 					|| !mapaErrores.get(COLUMNA_TEXTO_IRPF_BASE).isEmpty()
 					|| !mapaErrores.get(COLUMNA_TEXTO_IRPF_PORCENTAJE).isEmpty()
@@ -710,53 +700,6 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
          return listaFilas;   
     }
 	
-	private List<Integer> esRetencionGarantiaPorcentajeVacio(MSVHojaExcel exc){
-        List<Integer> listaFilas = new ArrayList<Integer>();
-
-         try{
-             for(int i=1; i<this.numFilasHoja;i++){
-                 try {
-                     
-                     if(!Checks.esNulo(exc.dameCelda(i, COL_RETENCION_GARANTIA_BASE)) 
-                             && Checks.esNulo(exc.dameCelda(i, COL_RETENCION_GARANTIA_PORCENTAJE)))
-                         listaFilas.add(i);
-                 } catch (ParseException e) {
-                     listaFilas.add(i);
-                 }
-             }
-         } catch (IllegalArgumentException e) {
-             listaFilas.add(0);
-             e.printStackTrace();
-         } catch (IOException e) {
-             listaFilas.add(0);
-             e.printStackTrace();
-         }
-         return listaFilas;   
-    }
-	
-	private List<Integer> esRetencionGarantiaBaseVacio(MSVHojaExcel exc){
-        List<Integer> listaFilas = new ArrayList<Integer>();
-
-         try{
-             for(int i=1; i<this.numFilasHoja;i++){
-                 try {
-                     
-                     if(Checks.esNulo(exc.dameCelda(i, COL_RETENCION_GARANTIA_BASE)) 
-                             && !Checks.esNulo(exc.dameCelda(i, COL_RETENCION_GARANTIA_PORCENTAJE)))
-                         listaFilas.add(i);
-                 } catch (ParseException e) {
-                     listaFilas.add(i);
-                 }
-             }
-         } catch (IllegalArgumentException e) {
-             listaFilas.add(0);
-             e.printStackTrace();
-         } catch (IOException e) {
-             listaFilas.add(0);
-             e.printStackTrace();
-         }
-         return listaFilas;   
-    }
 	
 	private List<Integer> subtipoPerteneceATipoGasto(MSVHojaExcel exc){
         List<Integer> listaFilas = new ArrayList<Integer>();
@@ -1353,18 +1296,20 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
          try{
         	 List<String> listaCadenas = new ArrayList<String>();
         	 for(int i=1; i<this.numFilasHoja;i++){
-        		 String cadena = createCadenaGastoRepetido(exc.dameCelda(i, COL_NUM_FACTURA_LIQUIDACION),exc.dameCelda(i, COL_F_EMISION_DEVENGO),
-         				 exc.dameCelda(i, COL_NIF_EMISOR),exc.dameCelda(i, COL_NIF_PROPIETARIO), exc.dameCelda(i, COL_ID_AGRUPADOR_GASTO));
+        		 String cadena = createCadenaGastoRepetido(exc.dameCelda(i, COL_NUM_FACTURA_LIQUIDACION),
+        				 exc.dameCelda(i, COL_NIF_EMISOR),exc.dameCelda(i, COL_NIF_PROPIETARIO),Integer.toString(i));
         		  listaCadenas.add(cadena);
         	 }
              for(int i=1; i<this.numFilasHoja;i++){
             	 try {
-            		String cadena = createCadenaGastoRepetido(exc.dameCelda(i, COL_NUM_FACTURA_LIQUIDACION),exc.dameCelda(i, COL_F_EMISION_DEVENGO),
-            		exc.dameCelda(i, COL_NIF_EMISOR),exc.dameCelda(i, COL_NIF_PROPIETARIO), exc.dameCelda(i, COL_ID_AGRUPADOR_GASTO));
-            		String[] cadenaActual = cadena.split(",,");
+            		String cadena = createCadenaGastoRepetido(exc.dameCelda(i, COL_NUM_FACTURA_LIQUIDACION),
+           				 exc.dameCelda(i, COL_NIF_EMISOR),exc.dameCelda(i, COL_NIF_PROPIETARIO),Integer.toString(i));
+            		String[] cadenaActual = cadena.split("/");
             		for (String string : listaCadenas) {
-						String[] lineaGasto = string.split(",,");
-						if(lineaGasto[0].equals(cadenaActual[0]) && !lineaGasto[1].equals(cadenaActual[1])) {
+						String[] lineaGasto = string.split("/");
+						//para que no se compare consigo misma,despues comprueba que los datos no sean iguales
+						if (!lineaGasto[3].equals(cadenaActual[3]))
+						if(lineaGasto[0].equals(cadenaActual[0]) && lineaGasto[1].equals(cadenaActual[1]) && lineaGasto[2].equals(cadenaActual[2])) {
 							listaFilas.add(i);
 							break;
 						}
@@ -1386,8 +1331,8 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
          return listaFilas;   
 	 }
 
-	 private String createCadenaGastoRepetido(String factura, String fechaEmision, String nifEmisor, String nifPropietario, String idAgrupador){
-		 String cadena = factura + "/" + fechaEmision + "/" + nifEmisor + "/" + nifPropietario + ",,"+ idAgrupador ;
+	 private String createCadenaGastoRepetido(String factura, String nifEmisor, String nifPropietario, String numRow){
+		 String cadena = factura + "/" + nifEmisor + "/" + nifPropietario + "/" + numRow ;
 		 return cadena;
 	 }
 	 
@@ -1592,8 +1537,7 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 
         try{
        	 for(int i=1; i<this.numFilasHoja;i++){
-               if(Checks.esNulo(exc.dameCelda(i, COL_TIPO_RETENCION))  &&  !Checks.esNulo(exc.dameCelda(i, COL_RETENCION_GARANTIA_BASE)) 
-            	&& !Checks.esNulo(exc.dameCelda(i, COL_RETENCION_GARANTIA_PORCENTAJE))) {
+               if(Checks.esNulo(exc.dameCelda(i, COL_TIPO_RETENCION)) && !Checks.esNulo(exc.dameCelda(i, COL_RETENCION_GARANTIA_PORCENTAJE))) {
             	   listaFilas.add(i);
                }
        	 }
@@ -1617,8 +1561,7 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 
         try{
        	 for(int i=1; i<this.numFilasHoja;i++){
-               if(!Checks.esNulo(exc.dameCelda(i, COL_TIPO_RETENCION))  && ( Checks.esNulo(exc.dameCelda(i, COL_RETENCION_GARANTIA_BASE)) 
-            	|| Checks.esNulo(exc.dameCelda(i, COL_RETENCION_GARANTIA_PORCENTAJE)))) {
+               if(!Checks.esNulo(exc.dameCelda(i, COL_TIPO_RETENCION))  &&  Checks.esNulo(exc.dameCelda(i, COL_RETENCION_GARANTIA_PORCENTAJE))) {
             	   listaFilas.add(i);
                }
        	 }

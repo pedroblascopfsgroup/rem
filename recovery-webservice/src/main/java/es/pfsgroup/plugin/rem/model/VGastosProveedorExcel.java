@@ -249,6 +249,22 @@ public class VGastosProveedorExcel implements Serializable {
 	@Column(name = "ELEMENTO")
 	private String elemento;
 	
+	@Column(name = "IMP_PRINCIPAL_SUJETO")
+	private Double impPrincipalSujeto;
+	
+	@Column(name = "IMP_PRINCIPAL_NO_SUJETO")
+	private Double impPrincipalNoSujeto;
+	
+	@Column(name = "IMP_RECARGO")
+	private Double impRecargo;
+	
+	@Column(name = "IMP_INTERES_DEMORA")
+	private Double impDemora;
+	
+	@Column(name = "IMP_COSTES_TASAS")
+	private Double impTasas;
+	
+	
 	@Transient
 	private boolean esGastoAgrupado; 
 	
@@ -882,7 +898,47 @@ public class VGastosProveedorExcel implements Serializable {
 
 	public void setElemento(String elemento) {
 		this.elemento = elemento;
-	}	
-	
+	}
+
+	public Double getImpPrincipalSujeto() {
+		return impPrincipalSujeto;
+	}
+
+	public void setImpPrincipalSujeto(Double impPrincipalSujeto) {
+		this.impPrincipalSujeto = impPrincipalSujeto;
+	}
+
+	public Double getImpPrincipalNoSujeto() {
+		return impPrincipalNoSujeto;
+	}
+
+	public void setImpPrincipalNoSujeto(Double impPrincipalNoSujeto) {
+		this.impPrincipalNoSujeto = impPrincipalNoSujeto;
+	}
+
+	public Double getImpRecargo() {
+		return impRecargo;
+	}
+
+	public void setImpRecargo(Double impRecargo) {
+		this.impRecargo = impRecargo;
+	}
+
+	public Double getImpDemora() {
+		return impDemora;
+	}
+
+	public void setImpDemora(Double impDemora) {
+		this.impDemora = impDemora;
+	}
+
+	public Double getImpTasas() {
+		return impTasas;
+	}
+
+	public void setImpTasas(Double impTasas) {
+		this.impTasas = impTasas;
+	}
+
 	
 }

@@ -169,8 +169,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
-import es.pfsgroup.plugin.rem.model.DtoActivosAlquiladosGrid;
-import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.plusvalia.NotificationPlusvaliaManager;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
@@ -1999,9 +1997,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		
-		if(!Checks.esNulo(oferta.getActivoPrincipal())) {
+		if(oferta.getAgrupacion() != null && oferta.getAgrupacion().getTipoAgrupacion() != null && 
+				DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+			ActivoLoteComercial agrupacionLoteCom = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
+			if(agrupacionLoteCom != null && agrupacionLoteCom.getUsuarioGestorComercialBackOffice() != null) {
+				dto.setCorreoGestorBackoffice(agrupacionLoteCom.getUsuarioGestorComercialBackOffice().getEmail());
+			}
+		} else if(oferta.getActivoPrincipal() != null) {
 			Usuario usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-			if(!Checks.esNulo(usuarioBackOffice) && !Checks.esNulo(usuarioBackOffice.getEmail())) {
+			if(usuarioBackOffice != null && usuarioBackOffice.getEmail() != null) {
 				dto.setCorreoGestorBackoffice(usuarioBackOffice.getEmail());
 			}
 		}
@@ -3169,6 +3173,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				Reserva reserva = expedienteComercial.getReserva();
 				if (!Checks.esNulo(reserva)) {
 					reserva.getAuditoria().setBorrado(false);
+					if (!Checks.esNulo(dto.getPlazoFirmaReserva()) && !Checks.esNulo(reserva.getFechaFirma())) {
+						Calendar calendar = Calendar.getInstance();
+						calendar.setTime(reserva.getFechaFirma());
+						if(!Checks.esNulo(dto.getPlazoFirmaReserva())){
+							calendar.add(Calendar.DAY_OF_YEAR, dto.getPlazoFirmaReserva());
+						}
+						reserva.setFechaVencimiento(calendar.getTime());
+					}
 					genericDao.update(Reserva.class, reserva);
 				}
 

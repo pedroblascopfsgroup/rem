@@ -61,7 +61,7 @@ public class ActivoGenerico implements Serializable, Auditable {
     private ActivoPropietario propietario;
 	
 	@Column(name = "AGS_ACTIVO_GENERICO")
-    private Long numActivoGenerico;
+    private String numActivoGenerico;
 	
 	
 	@Version   
@@ -102,11 +102,11 @@ public class ActivoGenerico implements Serializable, Auditable {
 		this.propietario = propietario;
 	}
 
-	public Long getNumActivoGenerico() {
+	public String getNumActivoGenerico() {
 		return numActivoGenerico;
 	}
 
-	public void setNumActivoGenerico(Long numActivoGenerico) {
+	public void setNumActivoGenerico(String numActivoGenerico) {
 		this.numActivoGenerico = numActivoGenerico;
 	}
 

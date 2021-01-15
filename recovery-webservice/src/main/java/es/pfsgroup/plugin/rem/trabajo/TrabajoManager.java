@@ -68,6 +68,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
+import es.pfsgroup.framework.paradise.http.client.HttpSimpleGetRequest;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -179,7 +180,6 @@ import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
-import es.pfsgroup.plugin.rem.restclient.httpclient.HttpSimpleGetRequest;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesTrabajo;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
@@ -1355,12 +1355,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		List<Activo> activosList = activoApi.getListActivosPorID(activosID);
 
 		Trabajo trabajo = null;
+		
 		for (Activo activo : activosList) {
-			Double participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activosList, null);
-			dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
+			dtoTrabajo.setParticipacion("100");
 			trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
 			trabajos.add(trabajo);
 		}
+		
 
 		return trabajos;
 
@@ -1438,12 +1439,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			List<Activo> activosList = activoApi.getListActivosPorID(activosID);
 
 			Boolean isFirstLoop = true;
+			Double participacion = null;
+			Integer participacionTotalPorCien = 10000;
+			Integer participacionPorCien = 0;
 			for (VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
 				Activo activo = activoDao.get(Long.valueOf(activoAgrupacion.getIdActivo()));
 
-				Double participacion = updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), activosList, activo);
+				participacion = updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), activosList, activo);
 
-				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
+				participacionPorCien = (int)(participacion*100);				
+				participacionTotalPorCien -= participacionPorCien;
+				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : String.valueOf(participacionPorCien/100f));
 
 				// FIXME: Datos del trabajo que se definen por un activo, en
 				// agrupación de activos están tomándose del primer activo del
@@ -1552,24 +1558,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			//Cuando haya tiempo se debe cambiar el siguiente codigo repetido en varios sitios para meterlo en un mismo metodo.
 
-			participacionTotal = activotrabajoDao.getImporteParticipacionTotal(trabajo.getNumTrabajo());
+			if(participacionTotalPorCien != 0){
 
-			if(participacionTotal != 100f) {
+				Filter filter = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
 
-				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
-
-				ActivoTrabajo activoTrabajoParaActualizar = genericDao.get(ActivoTrabajo.class, f1, f2);
-
-				Float participacionOriginal = activoTrabajoParaActualizar.getParticipacion();
-
-				Float participacionFinal = 100f - participacionTotal + participacionOriginal;
-
-				activoTrabajoParaActualizar.setParticipacion(participacionFinal);
-
-				genericDao.update(ActivoTrabajo.class, activoTrabajoParaActualizar);
-
+				List<ActivoTrabajo> listaActTbj = genericDao.getList(ActivoTrabajo.class, filter);
+				
+				for(ActivoTrabajo actTbj : listaActTbj) {
+					actTbj.setParticipacion(actTbj.getParticipacion()+(1/100f));
+					genericDao.update(ActivoTrabajo.class, actTbj);
+					participacionTotalPorCien--;
+					if(participacionTotalPorCien == 0) break;
+				}				
 			}
+
 			
 			if(dtoTrabajo.getImportePresupuesto() != null) {
 				PresupuestoTrabajo presupuesto = new PresupuestoTrabajo();
@@ -1624,16 +1626,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 				mapaValores.put(activo.getId(), valor);
 			}
+			Double participacion = null;
+			Integer participacionTotalPorCien = 10000;
+			Integer participacionPorCien = 0;
 			for (Activo activo : listaActivos) {
-				Double participacion = null;
+				participacion = null;
 				
 				if (algunoSinPrecio) {
 					participacion = (100d / listaActivos.size());
 				} else {
 					participacion = (mapaValores.get(activo.getId()) / total) * 100;
 				}
-
-				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
+				
+				participacionPorCien = (int)(participacion*100);				
+				participacionTotalPorCien -= participacionPorCien;
+				
+				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : String.valueOf(participacionPorCien/100f));
 
 				Usuario usuarioGestor = null;
 
@@ -1796,22 +1804,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 			}
 
-			participacionTotal = activotrabajoDao.getImporteParticipacionTotal(trabajo.getNumTrabajo());
+			
 
-			if(participacionTotal != 100f){
+			if(participacionTotalPorCien != 0){
 
-				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+				Filter filter = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
 
-				ActivoTrabajo activoTrabajoParaActualizar = genericDao.get(ActivoTrabajo.class, f1, f2);
-
-				Float participacionOriginal = activoTrabajoParaActualizar.getParticipacion();
-
-				Float participacionFinal = 100f - participacionTotal + participacionOriginal;
-
-				activoTrabajoParaActualizar.setParticipacion(participacionFinal);
-
-				genericDao.update(ActivoTrabajo.class, activoTrabajoParaActualizar);
+				List<ActivoTrabajo> listaActTbj = genericDao.getList(ActivoTrabajo.class, filter);
+				
+				for(ActivoTrabajo actTbj : listaActTbj) {
+					actTbj.setParticipacion(actTbj.getParticipacion()+(1/100f));
+					genericDao.update(ActivoTrabajo.class, actTbj);
+					participacionTotalPorCien--;
+					if(participacionTotalPorCien == 0) break;
+				}				
 			}
 			
 			actualizarImporteTotalTrabajo(trabajo.getId());
@@ -2249,7 +2255,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		activoTrabajo.setActivo(activo);
 		activoTrabajo.setTrabajo(trabajo);
 		activoTrabajo.setPrimaryKey(new ActivoTrabajoPk(activo.getId(),trabajo.getId()));
-		activoTrabajo.setParticipacion(new Float(participacion));
+		activoTrabajo.setParticipacion(Float.valueOf(participacion));
 		return activoTrabajo;
 	}
 
@@ -2323,13 +2329,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setResolucionComiteId(dtoTrabajo.getResolucionComiteId());
 		}		
 
+		SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
+		SimpleDateFormat formatoFechaHora = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat formatoFechaString = new SimpleDateFormat("dd/MM/yyyy");
+		
 		if ((dtoTrabajo.getFechaConcretaString() != null && !dtoTrabajo.getFechaConcretaString().isEmpty()) 
 			|| (dtoTrabajo.getHoraConcretaString() != null && !dtoTrabajo.getHoraConcretaString().isEmpty())) {		
 			//
-			SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
-			SimpleDateFormat formatoFechaHora = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-			SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
-			SimpleDateFormat formatoFechaString = new SimpleDateFormat("dd/MM/yyyy");
+			
 			Date fechaHoraConcreta = null;
 			
 			if(dtoTrabajo.getFechaConcretaString().isEmpty()) {
@@ -2355,6 +2363,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajo.setFechaCompromisoEjecucion(fechaHoraConcreta);
 			}
 		
+		}else if(dtoTrabajo.getFechaConcreta() != null && dtoTrabajo.getHoraConcreta() != null){
+			if(dtoTrabajo.getHoraConcreta() != null) {
+				String hora = formatoHora.format(dtoTrabajo.getHoraConcreta());
+				String fecha = formatoFecha.format(dtoTrabajo.getFechaConcreta());
+				if(!hora.isEmpty() && !fecha.isEmpty()) {
+					trabajo.setFechaHoraConcreta(formatoFechaHora.parse(fecha+" "+hora));
+				}
+			}else {
+				trabajo.setFechaHoraConcreta(dtoTrabajo.getFechaConcreta());
+			}
 		}else {
 			trabajo.setFechaHoraConcreta(null);
 		}
@@ -3281,13 +3299,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setEsProveedorEditable(true);
 			dtoTrabajo.setEsListadoTarifasEditable(true);
 			dtoTrabajo.setEsListadoPresupuestosEditable(true);
+			dtoTrabajo.setEsGridSuplidosEditable(true);
 		} else if (CASO1_2.equals(casoActual)) {
 			dtoTrabajo.setEsListadoTarifasEditable(true);
 			dtoTrabajo.setEsProveedorEditable(false);
+			dtoTrabajo.setEsGridSuplidosEditable(true);
 		} else if (CASO2.equals(casoActual)) {
 			dtoTrabajo.setEsListadoTarifasEditable(true);
 			dtoTrabajo.setEsListadoPresupuestosEditable(true);
 			dtoTrabajo.setEsProveedorEditable(false);
+			dtoTrabajo.setEsGridSuplidosEditable(true);
 		}
 		
 		if(usuarioCartera != null) {
@@ -6040,6 +6061,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return true;
 	}
 	
+	@Override
 	public List<DDEstadoTrabajo> getComboEstadoTrabajo(){
 		List<DDEstadoTrabajo> list = new ArrayList<DDEstadoTrabajo>();
 		boolean identificadorFlag = true;
@@ -6051,7 +6073,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return list;
 	}
-
+	
 	public List<DDEstadoGasto> getComboEstadoGasto(){
 		List<DDEstadoGasto> list = new ArrayList<DDEstadoGasto>();
 		
@@ -6074,7 +6096,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return list;
 	}
-
+	@Override
 	public Date getFechaConcretaParametrizada(String tipoTrabajo, String subtipoTrabajo,String cartera, String subcartera) {
 		Date fechaMod = new Date();
 		if(tipoTrabajo != null && subtipoTrabajo != null && cartera != null && subcartera != null) {
@@ -6093,6 +6115,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return fechaMod;
 	}
 	
+	@Override
 	public Boolean getAplicaComiteParametrizado(String tipoTrabajo, String subtipoTrabajo,String cartera, String subcartera) {
 		Boolean resultado = false;
 		if(tipoTrabajo != null && subtipoTrabajo != null && cartera != null && subcartera != null) {
@@ -6152,6 +6175,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return new ArrayList<VProveedores>();
 	}
 	
+	@Override
 	public DtoProveedorMediador getProveedorParametrizado(Long idActivo, String tipoTrabajo, String subtipoTrabajo,String cartera, String subcartera) {
 		CFGProveedorPredeterminado pvePredeterminado = new CFGProveedorPredeterminado();
 		CFGProveedorPredeterminado segundo = new CFGProveedorPredeterminado();
@@ -6228,7 +6252,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return mapaDocumentosFin;
 	}
 	
-	private void EnviarCorreoTrabajos(Trabajo trabajo, String origen) {
+	@Override
+	public void EnviarCorreoTrabajos(Trabajo trabajo, String origen) {
 		
 		if(trabajo == null || trabajo.getTipoTrabajo() == null || !DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {
 			return;
@@ -6465,6 +6490,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 	}
 	
+	@Override
 	public List<DDIdentificadorReam> getComboAreaPeticionaria(){
 		List<DDIdentificadorReam> list = new ArrayList<DDIdentificadorReam>();
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "borrado", 0);
@@ -6475,4 +6501,21 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return list;
 	}
+	
+	@Override
+	public BigDecimal getImporteTotalSuplidosByTrabajo(Trabajo trabajo) {
+		BigDecimal importeSuplidos = new BigDecimal(0);
+		if(trabajo != null) {
+			List<TrabajoProvisionSuplido> suplidos = trabajo.getProvisionSuplido();
+			if(suplidos != null && !suplidos.isEmpty()) {
+				for (TrabajoProvisionSuplido trabajoProvisionSuplido : suplidos) {
+					importeSuplidos = importeSuplidos.add(new BigDecimal(trabajoProvisionSuplido.getImporte()));
+				}
+			}
+			
+		}
+		return importeSuplidos;
+	}
+	
+	
 }

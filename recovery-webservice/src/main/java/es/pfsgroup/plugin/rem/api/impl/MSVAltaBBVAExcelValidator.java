@@ -35,6 +35,8 @@ import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoDeudoresAcreditados;
 import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
 import es.pfsgroup.plugin.rem.model.DtoAltaActivoThirdParty;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
@@ -73,169 +75,131 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 		static final int FILA_CABECERA = 1;
 		static final int DATOS_PRIMERA_FILA = 2;
 		
-		//llaves
-		static final int NUM_ACTIVO_HAYA = 0;
-		static final int COD_PROMOCION = 1;
-		static final int COD_SUBCARTERA = 2;
-		static final int COD_SUBTIPO_TITULO = 3;
-		static final int NUM_ACTIVO_EXTERNO = 4;
-		static final int COD_TIPO_ACTIVO = 5;
-		static final int COD_SUBTIPO_ACTIVO = 6;
-		static final int COD_ESTADO_FISICO = 7;
-		static final int COD_USO_DOMINANTE = 8;
-		static final int DESC_ACTIVO = 9;
-		
-		//Dirección
-		static final int COD_TIPO_VIA = 10;
-		static final int NOMBRE_VIA = 11;
-		static final int NUM_VIA = 12;
-		static final int ESCALERA = 13;
-		static final int PLANTA = 14;
-		static final int PUERTA = 15;
-		static final int COD_PROVINCIA = 16;
-		static final int COD_MUNICIPIO = 17;
-		static final int COD_UNIDAD_MUNICIPIO = 18;
-		static final int CODPOSTAL = 19;
-		
-		//Comercializacion
-		static final int COD_DESTINO_COMER = 20;
-		static final int COD_TIPO_ALQUILER = 21;
-		static final int COD_TIPO_DE_COMERCIALIZACION = 22;
-		
-		//Inscripción
-		static final int POBL_REGISTRO = 23;
-		static final int NUM_REGISTRO = 24;
-		static final int TOMO = 25;
-		static final int LIBRO = 26;
-		static final int FOLIO = 27;
-		static final int FINCA = 28;
-		static final int IDUFIR_CRU = 29;
-		static final int SUPERFICIE_CONSTRUIDA_M2 = 30;
-		static final int SUPERFICIE_UTIL_M2 = 31;
-		static final int SUPERFICIE_REPERCUSION_EE_CC = 32;
-		static final int PARCELA = 33; // (INCLUIDA OCUPADA EDIFICACION)
-		static final int ES_INTEGRADO_DIV_HORIZONTAL = 34;
-		
-		//Titulo
-		static final int NIF_PROPIETARIO = 35;
-		static final int GRADO_PROPIEDAD = 36;
-		static final int PERCENT_PROPIEDAD = 37;
-		static final int PROP_ANTERIOR = 38;
-		
-		//
-		static final int REF_CATASTRAL = 39;
-		static final int VPO = 40;
-		static final int CALIFICACION_CEE = 41;
-		static final int CED_HABITABILIDAD = 42;
-		
-		//Información publicación
-		static final int NIF_MEDIADOR = 43;
-		static final int VIVIENDA_NUM_PLANTAS = 44;
-		static final int VIVIENDA_NUM_BANYOS = 45;
-		static final int VIVIENDA_NUM_ASEOS = 46;
-		static final int VIVIENDA_NUM_DORMITORIOS = 47;
-		static final int TRASTERO_ANEJO = 48;
-		static final int GARAJE_ANEJO = 49;
-		static final int ASCENSOR = 50;
-		
-		//Información precios
-		static final int PRECIO_MINIMO = 51;
-		static final int PRECIO_VENTA_WEB = 52;
-		static final int VALOR_TASACION = 53;
-		static final int FECHA_TASACION = 54;
-		
-		//Gestores del activo
-		static final int GESTOR_COMERCIAL = 55;
-		static final int SUPER_GESTOR_COMERCIAL = 56;
-		static final int GESTOR_FORMALIZACION = 57;
-		static final int SUPER_GESTOR_FORMALIZACION = 58;
-		static final int GESTOR_ADMISION = 59;
-		static final int GESTOR_ACTIVOS = 60;
-		static final int GESTORIA_DE_FORMALIZACION= 61;
-		
-		//Datos relevantes admisión
-		static final int FECHA_INSCRIPCION = 62;
-		static final int FECHA_OBT_TITULO = 63;
-		static final int FECHA_TOMA_POSESION = 64;
-		static final int FECHA_LANZAMIENTO = 65;
-		static final int OCUPADO = 66;
-		static final int TIENE_TITULO = 67;
-		static final int LLAVES = 68;
-		static final int CARGAS = 69;
-		
-		//
-		static final int TIPO_ACTIVO = 70;
-		static final int FORMALIZACION = 71;
-		
-		//Datos propietarios
-		static final int NOMBRE_PROPIETARIO = 72;
-		static final int APELLIDO1_PROPIETARIO = 73;
-		static final int APELLIDO2_PROPIETARIO = 74;
-		static final int TIPO_PROPIETARIO = 75;
-		static final int NIF_CIF_PROPIETARIO = 76;
-		
-		//BBVA
-		static final int ACTIVO_BBVA = 77;
-		static final int TIPO_TITULO_BBVA = 78;
-		static final int SEGMENTO_BBVA = 79;
-		static final int ID_HAYA_ORIGEN_BBVA = 80;
-		static final int TIPO_TRANSMISION_BBVA = 81;
-		static final int TIPO_DE_ALTA_BBVA = 82;
-		static final int IUC_BBVA = 83;
-		static final int CEXPER_BBVA = 84;
-		static final int INDICADOR_ACTIVO_EPA_BBVA = 85;
-		
-		//CUENTA DE MORA
-		static final int EMPRESA_CM = 86;
-		static final int OFICINA_CM = 87;
-		static final int CONTRAPARTIDA_CM = 88;
-		static final int FOLIO_CM = 89;
-		static final int CDPEN_CM = 90;
-		
-		//VPO
-		static final int REGIMEN_DE_PROTECCION_VPO = 91;
-		static final int DESCALIFICADO_VPO = 92;
-		static final int FECHA_CALIFICACION_VPO = 93;
-		static final int N_EXPEDIENTE_CALIFICACION_VPO = 94;
-		static final int F_FIN_VIGENCIA_VPO=95;
-		static final int PRECISA_COMUNICAR_VPO = 96;
-		static final int NECESARIO_INSCRIBIR_EN_REGISTRO_VPO = 97;
+		 static final int NUM_ACTIVO_HAYA = 	0;
+			static final int COD_PROMOCION_EXISTENTE = 	1;
+			static final int COD_PROMOCION = 	2;
+			static final int COD_SUBCARTERA = 	3;
+			static final int COD_SUBTIPO_TITULO = 	4;
+			static final int NUM_ACTIVO_EXTERNO = 	5;
+			static final int COD_TIPO_ACTIVO = 	6;
+			static final int COD_SUBTIPO_ACTIVO = 	7;
+			static final int COD_ESTADO_FISICO = 	8;
+			static final int COD_USO_DOMINANTE = 	9;
+			static final int DESC_ACTIVO = 	10;
+			static final int COD_TIPO_VIA = 	11;
+			static final int NOMBRE_VIA = 	12;
+			static final int NUM_VIA = 	13;
+			static final int ESCALERA = 	14;
+			static final int PLANTA = 	15;
+			static final int PUERTA = 	16;
+			static final int COD_PROVINCIA = 	17;
+			static final int COD_MUNICIPIO = 	18;
+			static final int COD_UNIDAD_MUNICIPIO = 	19;
+			static final int CODPOSTAL = 	20;
+			static final int COD_DESTINO_COMER = 	21;
+			static final int COD_TIPO_ALQUILER = 	22;
+			static final int COD_TIPO_DE_COMERCIALIZACION = 	23;
+			static final int POBL_REGISTRO = 	24;
+			static final int NUM_REGISTRO = 	25;
+			static final int TOMO = 	26;
+			static final int LIBRO = 	27;
+			static final int FOLIO = 	28;
+			static final int FINCA = 	29;
+			static final int AUTORIZACION = 	30;
+			static final int IDUFIR_CRU = 	31;
+			static final int SUPERFICIE_CONSTRUIDA_M2 = 	32;
+			static final int SUPERFICIE_UTIL_M2 = 	33;
+			static final int SUPERFICIE_REPERCUSION_EE_CC = 	34;
+			static final int PARCELA =  35; // (INCLUIDA OCUPADA EDIFICACION)	
+			static final int ES_INTEGRADO_DIV_HORIZONTAL = 	36;
+			static final int NIF_PROPIETARIO = 	37;
+			static final int GRADO_PROPIEDAD = 	38;
+			static final int PERCENT_PROPIEDAD = 	39;
+			static final int PROP_ANTERIOR = 	40;
+			static final int REF_CATASTRAL = 	41;
+			static final int VPO = 	42;
+			static final int CALIFICACION_CEE = 	43;
+			static final int CED_HABITABILIDAD = 	44;
+			static final int NIF_MEDIADOR = 	45;
+			static final int VIVIENDA_NUM_PLANTAS = 	46;
+			static final int VIVIENDA_NUM_BANYOS = 	47;
+			static final int VIVIENDA_NUM_ASEOS = 	48;
+			static final int VIVIENDA_NUM_DORMITORIOS = 	49;
+			static final int TRASTERO_ANEJO = 	50;
+			static final int GARAJE_ANEJO = 	51;
+			static final int ASCENSOR = 	52;
+			static final int PRECIO_MINIMO = 	53;
+			static final int PRECIO_VENTA_WEB = 	54;
+			static final int VALOR_TASACION = 	55;
+			static final int FECHA_TASACION = 	56;
+			static final int GESTOR_COMERCIAL = 	57;
+			static final int SUPER_GESTOR_COMERCIAL = 	58;
+			static final int GESTOR_FORMALIZACION = 	59;
+			static final int SUPER_GESTOR_FORMALIZACION = 	60;
+			static final int GESTOR_ADMISION = 	61;
+			static final int GESTOR_ACTIVOS = 	62;
+			static final int GESTORIA_DE_FORMALIZACION= 	63;
+			static final int FECHA_INSCRIPCION = 	64;
+			static final int FECHA_OBT_TITULO = 	65;
+			static final int FECHA_TOMA_POSESION = 	66;
+			static final int FECHA_LANZAMIENTO = 	67;
+			static final int OCUPADO = 	68;
+			static final int TIENE_TITULO = 	69;
+			static final int LLAVES = 	70;
+			static final int CARGAS = 	71;
+			static final int TIPO_ACTIVO = 	72;
+			static final int FORMALIZACION = 	73;
+			static final int NOMBRE_PROPIETARIO = 	74;
+			static final int APELLIDO1_PROPIETARIO = 	75;
+			static final int APELLIDO2_PROPIETARIO = 	76;
+			static final int TIPO_PROPIETARIO = 	77;
+			static final int NIF_CIF_PROPIETARIO = 	78;
+			static final int TIPO_TITULO_BBVA = 	79;
+			static final int SEGMENTO_BBVA = 	80;
+			static final int ID_HAYA_ORIGEN_BBVA = 	81;
+			static final int TIPO_TRANSMISION_BBVA = 	82;
+			static final int TIPO_DE_ALTA_BBVA = 	83;
+			static final int IUC_BBVA = 	84;
+			static final int CEXPER_BBVA = 	85;
+			static final int INDICADOR_ACTIVO_EPA_BBVA = 	86;
+			static final int EMPRESA_CM = 	87;
+			static final int OFICINA_CM = 	88;
+			static final int CONTRAPARTIDA_CM = 	89;
+			static final int FOLIO_CM = 	90;
+			static final int CDPEN_CM = 	91;
+			static final int REGIMEN_DE_PROTECCION_VPO = 	92;
+			static final int DESCALIFICADO_VPO = 	93;
+			static final int FECHA_CALIFICACION_VPO = 	94;
+			static final int N_EXPEDIENTE_CALIFICACION_VPO = 	95;
+			static final int F_FIN_VIGENCIA_VPO=	96;
+			static final int PRECISA_COMUNICAR_VPO = 	97;
+			static final int NECESARIO_INSCRIBIR_EN_REGISTRO_VPO = 	98;
+			static final int TIPO_DOCUMENTO_DEUDOR1= 	99;
+			static final int N_DOCUMENTO_DEUDOR1= 	100;
+			static final int RAZON_SOCIAL_DEUDOR1 = 	101;
+			static final int APELLIDO_DEUDOR1 = 	102;
+			static final int APELLIDO2_DEUDOR1 = 	103;
+			static final int TIPO_DOCUMENTO_DEUDOR2= 	104;
+			static final int N_DOCUMENTO_DEUDOR2= 	105;
+			static final int RAZON_SOCIAL_DEUDOR2 = 	106;
+			static final int APELLIDO_DEUDOR2 = 	107;
+			static final int APELLIDO2_DEUDOR2 = 	108;
+			static final int TIPO_DOCUMENTO_DEUDOR3= 	109;
+			static final int N_DOCUMENTO_DEUDOR3= 	110;
+			static final int RAZON_SOCIAL_DEUDOR3 = 	111;
+			static final int APELLIDO_DEUDOR3 = 	112;
+			static final int APELLIDO2_DEUDOR3 = 	113;
+			static final int TIPO_DOCUMENTO_DEUDOR4= 	114;
+			static final int N_DOCUMENTO_DEUDOR4= 	115;
+			static final int RAZON_SOCIAL_DEUDOR4 = 	116;
+			static final int APELLIDO_DEUDOR4 = 	117;
+			static final int APELLIDO2_DEUDOR4 = 	118;
+			static final int TIPO_DOCUMENTO_DEUDOR5= 	119;
+			static final int N_DOCUMENTO_DEUDOR5= 	120;
+			static final int RAZON_SOCIAL_DEUDOR5 = 	121;
+			static final int APELLIDO_DEUDOR5 = 	122;
+			static final int APELLIDO2_DEUDOR5 = 	123;
 
-		
-		//DEUDOR ACREDITADO 1
-		static final int TIPO_DOCUMENTO_DEUDOR1= 98;
-		static final int N_DOCUMENTO_DEUDOR1= 99;
-		static final int RAZON_SOCIAL_DEUDOR1 = 100;
-		static final int APELLIDO_DEUDOR1 = 101;
-		static final int APELLIDO2_DEUDOR1 = 102;
-		
-		//DEUDOR ACREDITADO 2
-		static final int TIPO_DOCUMENTO_DEUDOR2= 103;
-		static final int N_DOCUMENTO_DEUDOR2= 104;
-		static final int RAZON_SOCIAL_DEUDOR2 = 105;
-		static final int APELLIDO_DEUDOR2 = 106;
-		static final int APELLIDO2_DEUDOR2 = 107;
-		
-		//DEUDOR ACREDITADO 3
-		static final int TIPO_DOCUMENTO_DEUDOR3= 108;
-		static final int N_DOCUMENTO_DEUDOR3= 109;
-		static final int RAZON_SOCIAL_DEUDOR3 = 110;
-		static final int APELLIDO_DEUDOR3 = 111;
-		static final int APELLIDO2_DEUDOR3 = 112;
-		
-		//DEUDOR ACREDITADO 4
-		static final int TIPO_DOCUMENTO_DEUDOR4= 113;
-		static final int N_DOCUMENTO_DEUDOR4= 114;
-		static final int RAZON_SOCIAL_DEUDOR4 = 115;
-		static final int APELLIDO_DEUDOR4 = 116;
-		static final int APELLIDO2_DEUDOR4 = 117;
-		
-		//DEUDOR ACREDITADO 5
-		static final int TIPO_DOCUMENTO_DEUDOR5= 118;
-		static final int N_DOCUMENTO_DEUDOR5= 119;
-		static final int RAZON_SOCIAL_DEUDOR5 = 120;
-		static final int APELLIDO_DEUDOR5 = 121;
-		static final int APELLIDO2_DEUDOR5 = 122;
 	};
 	
 	@Override
@@ -248,7 +212,10 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
 		// Carga los datos de activo de la Fila excel al DTO
 		String colNActivo = exc.dameCelda(fila, COL_NUM.NUM_ACTIVO_HAYA);
-		String colNActivoBBVA = exc.dameCelda(fila, COL_NUM.ACTIVO_BBVA);
+
+
+		//String colIdAppDivarian = exc.dameCelda(fila, COL_NUM.ID_APP_DIVARIAN_BBVA);
+
 		String colIdHayaOrigen = exc.dameCelda(fila, COL_NUM.ID_HAYA_ORIGEN_BBVA);		
 		String colTipoTransmision = exc.dameCelda(fila, COL_NUM.TIPO_TRANSMISION_BBVA);
 		String colTipoDeAlta = exc.dameCelda(fila, COL_NUM.TIPO_DE_ALTA_BBVA);
@@ -306,6 +273,7 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 		String colApellido2Deudor5 = exc.dameCelda(fila, COL_NUM.APELLIDO2_DEUDOR5);
 		String colVPO = exc.dameCelda(fila, COL_NUM.VPO);
 		
+		String colPromocionExistente = exc.dameCelda(fila, COL_NUM.COD_PROMOCION_EXISTENTE);
 		String colPromocion = exc.dameCelda(fila, COL_NUM.COD_PROMOCION);
 		
 		
@@ -329,6 +297,7 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 			//ACT_ACTIVO Segmento y titulo
 			DDTipoTituloActivo tipoTitulo = null;
 			DDTipoSegmento tipoSegmento = null;
+			DDEstadoAdmision filtroEstadoAdmision=null;
 			Filter filtroTitulo = genericDao.createFilter(FilterType.EQUALS, codigo, colTipoDeTitulo);
 			tipoTitulo = genericDao.get(DDTipoTituloActivo.class, filtroTitulo);
 			Filter filtroSegmento = genericDao.createFilter(FilterType.EQUALS, codigo, colSegmento);
@@ -341,7 +310,17 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 				activo.setTipoTitulo(tipoTitulo);
 			}
 			
+			
+			Filter filtroAdmision = genericDao.createFilter(FilterType.EQUALS, "codigo",  DDEstadoAdmision.CODIGO_PENDIENTE_TITULO);				
+			DDEstadoAdmision estadoAdmision = genericDao.get(DDEstadoAdmision.class, filtroAdmision);
+			activo.setEstadoAdmision(estadoAdmision);
+			
+			
 			genericDao.save(Activo.class,activo);
+			//Perimetro Activo
+			PerimetroActivo pac = activoApi.getPerimetroByIdActivo(activo.getId());		
+			pac.setAplicaAdmision(true);
+			genericDao.save(PerimetroActivo.class,pac);
 			
 			//ACT_BBVA_ACTIVOS
 			ActivoBbvaActivos activoBBVA = new ActivoBbvaActivos();
@@ -363,9 +342,10 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 			if(activo!=null) {
 				activoBBVA.setActivo(activo);
 			}			
-			if(colNActivoBBVA!=null && !colNActivoBBVA.isEmpty()) {
-				activoBBVA.setNumActivoBbva(colNActivoBBVA);
-			}
+	
+			activoBBVA.setNumActivoBbva(activoDao.getNextBbvaNumActivo().toString());
+		
+
 			if(colIdHayaOrigen!=null && !colIdHayaOrigen.isEmpty()) {
 				activoBBVA.setIdOrigenHre(Long.parseLong(colIdHayaOrigen));
 			}
@@ -389,22 +369,25 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 				}
 			}
 			if(colEmpresa!=null && !colEmpresa.isEmpty()) {
-				activoBBVA.setEmpresa(Long.parseLong(colEmpresa));
+				activoBBVA.setEmpresa(colEmpresa);
 			}
 			if(colOficina!=null && !colOficina.isEmpty() ) {
-				activoBBVA.setOficina(Long.parseLong(colOficina));
+				activoBBVA.setOficina(colOficina);
 			}
 			if(colContrapartida!=null && !colContrapartida.isEmpty()) {
-				activoBBVA.setContrapartida(Long.parseLong(colContrapartida));
+				activoBBVA.setContrapartida(colContrapartida);
 			}
 			if(colFolio!=null && !colFolio.isEmpty()) {
-				activoBBVA.setFolio(Long.parseLong(colFolio));
+				activoBBVA.setFolio(colFolio);
 			}
 			if(colCDPEN!=null && !colCDPEN.isEmpty()) {
-				activoBBVA.setCdpen(Long.parseLong(colCDPEN));
+				activoBBVA.setCdpen(colCDPEN);
 			}
 			
-			if(colPromocion != null && !colPromocion.isEmpty()) {
+			
+			if(colPromocionExistente != null && !colPromocionExistente.isEmpty()) {
+				activoBBVA.setCodPromocion(colPromocionExistente);
+			}else if(colPromocion != null && !colPromocion.isEmpty()) {
 				String pbNew = null;
 				List<String> promocionesAnteriores = new ArrayList<String>();
 				for(int i = fila; i >= COL_NUM.DATOS_PRIMERA_FILA; i--) {
@@ -610,8 +593,10 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 				genericDao.save(ActivoDeudoresAcreditados.class,tipoDeudorAcr5);
 			}
 			
-			
-			
+		}catch(IndexOutOfBoundsException e){
+			throw new JsonViewerException("No se ha rellenado la carga correctamente.");	
+		}catch(SQLException e){
+			throw new JsonViewerException("No se ha rellenado la carga correctamente.");
 		}catch(Exception e){
 			throw new JsonViewerException(e.getMessage());
 		}

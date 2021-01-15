@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20201102
+--## AUTOR=DAP
+--## FECHA_CREACION=20201222
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-11928
+--## INCIDENCIA_LINK=HREOS-12580
 --## PRODUCTO=SI
 --## Finalidad: DDL
 --##           
@@ -67,8 +67,30 @@ BEGIN
 			INNER JOIN ' || V_ESQUEMA || '.dd_ttr_tipo_trabajo ttr 					ON (ttr.dd_ttr_id = tbj.dd_ttr_id AND ttr.borrado = 0 AND ttr.dd_ttr_filtrar IS NULL)
 			INNER JOIN ' || V_ESQUEMA || '.dd_str_subtipo_trabajo str 				ON (str.dd_str_id = tbj.dd_str_id AND str.borrado = 0)
           WHERE tbj.borrado = 0
-          	and nvl(tbj.tbj_importe_total, 0) <> 0
-          	and nvl(tbj.TBJ_IMPORTE_PRESUPUESTO, 0) <> 0
+          	and (
+                (NVL(TBJ.TBJ_IMPORTE_TOTAL, 0) <> 0
+                    AND NVL(TBJ.TBJ_IMPORTE_PRESUPUESTO, 0) <> 0)
+                OR EXISTS (
+                    SELECT 1
+                    FROM (
+                        SELECT PSU.TBJ_ID, SUM(
+                                CASE
+                                    WHEN TAD.DD_TAD_CODIGO = ''01''
+                                        THEN -NVL(PSU.PSU_IMPORTE, 0)
+                                    WHEN TAD.DD_TAD_CODIGO = ''02''
+                                        THEN NVL(PSU.PSU_IMPORTE, 0)
+                                END
+                            ) IMPORTE_PROV_SUPL
+                        FROM ' || V_ESQUEMA || '.ACT_PSU_PROVISION_SUPLIDO PSU
+                        JOIN ' || V_ESQUEMA || '.DD_TAD_TIPO_ADELANTO TAD ON TAD.DD_TAD_ID = PSU.DD_TAD_ID
+                            AND TAD.BORRADO = 0
+                        WHERE PSU.BORRADO = 0
+                        GROUP BY PSU.TBJ_ID
+                    ) PSU
+                    WHERE PSU.TBJ_ID = TBJ.TBJ_ID
+                        AND PSU.IMPORTE_PROV_SUPL <> 0
+                )
+            )
           	and est.dd_est_codigo in (''05'',''13'')
        	  AND NOT EXISTS (
            	SELECT 1

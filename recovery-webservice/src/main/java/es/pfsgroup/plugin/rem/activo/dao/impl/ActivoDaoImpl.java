@@ -53,6 +53,8 @@ import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
 import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
@@ -1935,8 +1937,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.claseActivoBancarioCodigo", dto.getClaseActivoBancarioCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subclaseActivoBancarioCodigo", dto.getSubclaseActivoBancarioCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoBbva", dto.getNumActivoBbva());
-	
-		
+
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoActivoCodigo", dto.getTipoActivoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subtipoActivoCodigo", dto.getSubtipoActivoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.selloCalidad",	dto.getSelloCalidad());		
@@ -2028,12 +2029,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		session.createSQLQuery(sb.toString()).executeUpdate();
 	}
 	
-	@Override
-	public Long getNextBbvaNumActivo() {
-		String sql = "SELECT S_BBVA_NUM_ACTIVO.NEXTVAL FROM DUAL ";
-		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())
-				.longValue();
-	}
+
 
 	@Override
 	public Long getComunidadAutonomaId(Activo activo) {
@@ -2047,6 +2043,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			return Long.valueOf(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult().toString());
 		}
 		return null;
+	}
+	
+	@Override
+	public Long getNextBbvaNumActivo() {
+		String sql = "SELECT S_BBVA_NUM_ACTIVO.NEXTVAL FROM DUAL ";
+		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())
+				.longValue();
 	}
 
 	@Override
@@ -2063,5 +2066,32 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		} else {
 			return null;
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos) {
+
+		HQLBuilder hql = new HQLBuilder("from ActivoTasacion ");
+		HQLBuilder.addFiltroWhereInSiNotNull(hql, "activo", idActivos);
+		hql.orderBy("fechaInicioTasacion", HQLBuilder.ORDER_ASC);
+		
+		List<ActivoTasacion> tasacionesList = (List<ActivoTasacion>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hql.toString()).list();
+		
+		return tasacionesList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivosAlquilados> getListActivosAlquiladosByIdActivos(List<Long> idActivos) {
+
+		HQLBuilder hql = new HQLBuilder("from ActivosAlquilados ");
+		HQLBuilder.addFiltroWhereInSiNotNull(hql, "activoAlq", idActivos);
+		
+		List<ActivosAlquilados> actAlquiladosList = (List<ActivosAlquilados>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hql.toString()).list();
+		
+		return actAlquiladosList;
 	}
 }

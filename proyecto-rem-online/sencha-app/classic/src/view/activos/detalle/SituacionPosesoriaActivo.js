@@ -406,8 +406,9 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 									
 							        bind: {        
 							        	store : '{comboDDTipoTituloActivoTPA}',
-						            	value: '{situacionPosesoria.conTitulo}',			                           
-			                            readOnly: '{disabledComboConTituloTPA}'			                            
+						            	value: '{situacionPosesoria.conTitulo}',	
+						            	readOnly: '{esTipoEstadoAlquilerAlquilado}'
+			                            //readOnly: '{disabledComboConTituloTPA}'			                            
 						            }//,
 							        
 //					            	labelWidth: 80,

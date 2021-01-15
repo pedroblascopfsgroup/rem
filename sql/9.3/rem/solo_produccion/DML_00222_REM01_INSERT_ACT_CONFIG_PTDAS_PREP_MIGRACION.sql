@@ -35,7 +35,8 @@ DECLARE
     V_ITEM VARCHAR2(25 CHAR):= 'HREOS-11745';
 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_CONFIG_PTDAS_PREP'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_DD_CRA_ID VARCHAR(50 CHAR); -- Vble. que almacena el id de la cartera.
+    V_LBK VARCHAR(50 CHAR); -- Vble. que almacena el id de la cartera LBK.
+    V_BNK VARCHAR(50 CHAR); -- Vble. que almacena el id de la cartera BNK.
 	  V_EJE_ID VARCHAR(50 CHAR); -- Vble. que almacena el id del año.
 
     V_CONSTRAINT_NAME VARCHAR2(30 CHAR);
@@ -88,11 +89,16 @@ BEGIN
     EXECUTE IMMEDIATE V_SQL;
 
     DBMS_OUTPUT.PUT_LINE('[INFO] Recogemos el valor id de la cartera, porque es el mismo para todos.');
-
+    
     V_SQL := 'SELECT DD_CRA_ID 
       FROM '||V_ESQUEMA||'.DD_CRA_CARTERA 
       WHERE DD_CRA_CODIGO = ''08''';
-    EXECUTE IMMEDIATE V_SQL INTO V_DD_CRA_ID;
+    EXECUTE IMMEDIATE V_SQL INTO V_LBK;
+
+    V_SQL := 'SELECT DD_CRA_ID 
+      FROM '||V_ESQUEMA||'.DD_CRA_CARTERA 
+      WHERE DD_CRA_CODIGO = ''03''';
+    EXECUTE IMMEDIATE V_SQL INTO V_BNK;
 	 
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN TMP_'||V_TEXT_TABLA);
     V_MSQL := '
@@ -109,7 +115,7 @@ BEGIN
         ' WHERE CPP.BORRADO = 0 '||
         '  AND CPP.CPP_PARTIDA_PRESUPUESTARIA IS NOT NULL'||
         '  AND CPP.DD_CRA_ID IS NOT NULL'||
-        '  AND CPP.DD_CRA_ID <> '||V_DD_CRA_ID||'
+        '  AND CPP.DD_CRA_ID NOT IN ('||V_LBK||', '||V_BNK||')
       ';
     EXECUTE IMMEDIATE V_MSQL;
 

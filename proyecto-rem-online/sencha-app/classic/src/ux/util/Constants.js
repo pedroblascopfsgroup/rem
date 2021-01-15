@@ -205,7 +205,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	'12': 'GIANTS',
     	'15': 'GALEON',
     	'14': 'ZEUS',
-    	'15': 'BBVA'
+    	'16': 'BBVA'
     },
 
     NOMBRE_CARTERA2: {
@@ -792,8 +792,23 @@ Ext.define('HreRem.ux.util.Constants', {
     	RECHAZADO: 'REJ',
     	CANCELADO: 'CAN',
     	FINALIZADO: 'FIN',
-    	SUBSANADO: 'SUB',
-    	VALIDADO: '13'
+    	SUBSANADO: 'SUB', 	
+    	PDTE_CIERRE:'PCI',
+    	CIERRE:'CIE',
+    	SOLICITADO:'01',
+    	ANULADO:'02',
+    	RECHAZADO_COD:'03',
+    	EN_TRAMITE:'04',
+    	PDTE_PAGO:'05',
+    	PAGADO:'06',
+    	IMPOSIBLE_OBTENCION:'07',
+    	FALLIDO:'08',
+    	CON_CEE_PDTE_ETIQUETA:'09',
+    	FINALIZADO_PDTE_VALIDACION:'10',
+    	PDTE_CIERRE_ECONOMICO:'11',
+    	FINALIZADO_COD:'12',
+    	VALIDADO: '13',
+    	PAGADO_CON_TARIFA_PLANA:'14'
     },
     
 	ESTADOS_PREFACTURAS: {
@@ -882,5 +897,9 @@ Ext.define('HreRem.ux.util.Constants', {
 		ACTIVO : 'activo',
 		SANEAMIENTO: 'saneamiento',
 		REVISION_TITULO: 'revisionTitulo'
+	},
+	TIPO_RETENCION: {
+		ANTES : 'ANT',
+		DESPUES: 'DESP'
 	}
 });

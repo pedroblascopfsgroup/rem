@@ -2116,12 +2116,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		try {
 			if (dto != null) {				
 				Activo activo = null;
+				ActivoTituloAdicional tituloAdicional = null;
 				ActivoCalificacionNegativaAdicional activoCalificacionNegativaAd = new ActivoCalificacionNegativaAdicional();
 				if (dto.getIdActivo() != null) {
 					activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdActivo()));
-					if ((activo.getTitulo() != null && activo.getTitulo().getEstado() !=null) && DDEstadoTitulo.ESTADO_INSCRITO.equals(activo.getTitulo().getEstado().getCodigo())) {
+					tituloAdicional= genericDao.get(ActivoTituloAdicional.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", dto.getIdActivo()));
+					if(activo == null || tituloAdicional == null) {
 						return false;
-
+					}
+					
+					if((tituloAdicional == null|| tituloAdicional.getEstadoTitulo() == null)
+							|| (tituloAdicional != null && tituloAdicional.getEstadoTitulo() !=null && DDEstadoTitulo.ESTADO_INSCRITO.equals(tituloAdicional.getEstadoTitulo().getCodigo()))) {
+						return false;
 					}
 					activoCalificacionNegativaAd.setActivo(activo);
 				} else {
@@ -2170,7 +2176,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				
 
-				Filter filter = genericDao.createFilter(FilterType.EQUALS, "tituloAdicional.id", activo.getTitulo().getId());
+				Filter filter = genericDao.createFilter(FilterType.EQUALS, "tituloAdicional.id", tituloAdicional.getId());
 			
 				Order order = new Order(OrderType.DESC, "id");
 				List<ActivoHistoricoTituloAdicional> historicoTramitacionTituloList = genericDao.getListOrdered(ActivoHistoricoTituloAdicional.class, order, filter);
@@ -6220,6 +6226,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return uAsAlquiladas;
 	}
+	
+	@Override
+	public boolean isAlquiladoTotalmente(Long idActivoMatriz) {
+		boolean uAsAlquiladas = true;
+		ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(idActivoMatriz);
+		
+		List<ActivoAgrupacionActivo> activos = agr.getActivos();
+		
+		if (!Checks.estaVacio(activos)) {
+			for (ActivoAgrupacionActivo activo : activos) {
+				if (!isActivoMatriz(activo.getActivo().getId()) && (!isActivoAlquilado(activo.getActivo()) && !isOcupadoConTituloOrEstadoAlquilado(activo.getActivo()))) {
+					uAsAlquiladas = false;
+					break;
+				}
+			}
+		}
+		
+		return uAsAlquiladas;
+	}
 
 	@Override
 	public List<DDCesionSaneamiento> getPerimetroAppleCesion(String codigoServicer) {
@@ -6304,14 +6329,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			} else {
 				tributo.setNumTributo(dto.getNumTributo());
 			}
-
-			if (!Checks.esNulo(tributo.getId())) {
-				genericDao.update(ActivoTributos.class, tributo);
-			} else {
-				tributo.setAuditoria(Auditoria.getNewInstance());
-				genericDao.save(ActivoTributos.class, tributo);
-			}
-				
+	
 			if(!Checks.esNulo(dto.getTipoTributo())) {
 				DDTipoTributo tipoTributo = genericDao.get(DDTipoTributo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoTributo()));
 				tributo.setTipoTributo(tipoTributo);
@@ -6355,7 +6373,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					tributo.setMotivoExento(motivoexento);
 				}
 			}
-									
+					
+			if (!Checks.esNulo(tributo.getId())) {
+				genericDao.update(ActivoTributos.class, tributo);
+			} else {
+				tributo.setAuditoria(Auditoria.getNewInstance());
+				genericDao.save(ActivoTributos.class, tributo);
+			}
+			
 			return true;
 		} else {
 			return false;
@@ -7816,6 +7841,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	public List<DDTipoSegmento> getComboTipoSegmento(String codSubcartera) {
+		List<DDTipoSegmento> tiposSegmento = new ArrayList<DDTipoSegmento>();
+		Filter filtroSubcartera;
+		List<DDSegmentoCarteraSubcartera> segmentosSubcartera = null;
+		if (codSubcartera != null) {
+			filtroSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", codSubcartera);
+			segmentosSubcartera = genericDao.getList(DDSegmentoCarteraSubcartera.class, filtroSubcartera);
+			if (segmentosSubcartera != null) {
+				for (DDSegmentoCarteraSubcartera tipoSegmento : segmentosSubcartera) {
+					if (tipoSegmento.getTipoSegmento() != null) {
+						tiposSegmento.add(tipoSegmento.getTipoSegmento());
+					}
+					
+				}
+			}
+		}		
+		return tiposSegmento;
+	}
+	
+	@Override
 	public boolean estanTodosActivosVendidos(List<Activo> activos) {
 		boolean estanTodosVendidos = false;
 		boolean auxiliarSalir = true;
@@ -7867,6 +7912,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return todosActivoAlquilados;
 	}
+
+	
+	@Override
+	public Boolean isGrupoOficinaKAM() {
+		Boolean isGrupoOficinaKAM = false;
+		GrupoUsuario grupoOfiKAM = null;
+		Usuario logedUser = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		if (logedUser != null) {
+			grupoOfiKAM = genericDao.get(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "grupo.username", GRUPO_OFICIONA_KAM), genericDao.createFilter(FilterType.EQUALS, "usuario.username", logedUser.getUsername()));
+			if (grupoOfiKAM != null) {
+				isGrupoOficinaKAM = true;
+			}
+		}
+		return isGrupoOficinaKAM;
+	}
+
 
 	@Override
 	public List<ReqFaseVentaDto> getReqFaseVenta(Long idActivo) {
@@ -8792,26 +8853,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			return false;
 		}
 	}
-
-	@Override
-	public List<DDTipoSegmento> getComboTipoSegmento(String codSubcartera) {
-		List<DDTipoSegmento> tiposSegmento = new ArrayList<DDTipoSegmento>();
-		Filter filtroSubcartera;
-		List<DDSegmentoCarteraSubcartera> segmentosSubcartera = null;
-		if (codSubcartera != null) {
-			filtroSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", codSubcartera);
-			segmentosSubcartera = genericDao.getList(DDSegmentoCarteraSubcartera.class, filtroSubcartera);
-			if (segmentosSubcartera != null) {
-				for (DDSegmentoCarteraSubcartera tipoSegmento : segmentosSubcartera) {
-					if (tipoSegmento.getTipoSegmento() != null) {
-						tiposSegmento.add(tipoSegmento.getTipoSegmento());
-					}
-					
-				}
-			}
-		}		
-		return tiposSegmento;
-	}
 	
 	@Override
 	public boolean isActivoExisteEnRem(Long idActivo) {
@@ -8841,19 +8882,5 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return false;
-	}
-	
-	@Override
-	public Boolean isGrupoOficinaKAM() {
-		Boolean isGrupoOficinaKAM = false;
-		GrupoUsuario grupoOfiKAM = null;
-		Usuario logedUser = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		if (logedUser != null) {
-			grupoOfiKAM = genericDao.get(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "grupo.username", GRUPO_OFICIONA_KAM), genericDao.createFilter(FilterType.EQUALS, "usuario.username", logedUser.getUsername()));
-			if (grupoOfiKAM != null) {
-				isGrupoOficinaKAM = true;
-			}
-		}
-		return isGrupoOficinaKAM;
 	}
 }

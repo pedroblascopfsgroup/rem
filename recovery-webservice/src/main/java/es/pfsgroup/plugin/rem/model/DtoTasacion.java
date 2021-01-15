@@ -40,6 +40,8 @@ public class DtoTasacion {
     private String importeValorLegalFinca; 
     private String importeValorSolar; 
     private String observaciones;
+    private Boolean ilocalizable;
+    private String externoBbva;
 
 
 	public Long getId() {
@@ -234,7 +236,21 @@ public class DtoTasacion {
 	}
 	public void setIdActivo(Long idActivo) {
 		this.idActivo = idActivo;
-	} 
+	}
+	
+	public String getExternoBbva() {
+		return externoBbva;
+	}
+	public void setExternoBbva(String externoBbva) {
+		this.externoBbva = externoBbva;
+	}
+	public Boolean getIlocalizable() {
+		return ilocalizable;
+	}
+	public void setIlocalizable(Boolean ilocalizable) {
+		this.ilocalizable = ilocalizable;
+	}
+
 	
 	
     

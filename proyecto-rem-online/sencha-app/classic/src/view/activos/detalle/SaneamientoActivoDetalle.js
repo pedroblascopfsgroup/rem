@@ -207,7 +207,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 												reference: "calificacionnegativagrid", 
 												colspan: 3,
 												bind:{
-													//disabled:'{!saneamiento.puedeEditarCalificacionNegativa}'
+													disabled:'{!saneamiento.puedeEditarCalificacionNegativa}'
 												}
 											}
 										]
@@ -347,7 +347,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 												reference: "calificacionnegativagridad", 
 												colspan: 3,
 												bind:{
-													disabled:'{!datosRegistrales.puedeEditarCalificacionNegativa}'
+													disabled:'{!saneamiento.puedeEditarCalificacionNegativaAdicional}' 
 												}
 											}
 										]
@@ -380,6 +380,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 							xtype:'fieldsettable',
 							defaultType: 'textfieldbase',
 							title: HreRem.i18n('title.gastos.asociados.adquisicion'),
+							hidden: $AU.getUser().codigoCartera == CONST.CARTERA['BBVA'],
 							items :
 								[
 									{

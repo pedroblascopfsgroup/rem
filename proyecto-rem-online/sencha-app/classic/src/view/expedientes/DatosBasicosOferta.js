@@ -109,7 +109,9 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							readOnly : 'true',
 							hidden : '{esTipoAlquiler}'
 						}
-					},{
+					},
+					{bind : {hidden : '{!esTipoAlquiler}'}},
+					{
 						xtype : 'fieldsettable',
 						defaultType : 'displayfieldbase',
 						title : 'Bulk Advisory Note',

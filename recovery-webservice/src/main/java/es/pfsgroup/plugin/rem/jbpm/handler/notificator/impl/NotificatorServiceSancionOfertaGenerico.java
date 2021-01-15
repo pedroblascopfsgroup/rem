@@ -454,12 +454,14 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
 		
-		if (!Checks.esNulo(buzonRem) && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
+		if (!Checks.esNulo(buzonRem) && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) { 
+			//|| DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()))) {
 			destinatarios.add(buzonRem.getEmail());
 		}
-		if (buzonReservaHaya != null && !DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
+		/*if (buzonReservaHaya != null && !DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo()) 
+				&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())) {
 			destinatarios.add(buzonReservaHaya.getEmail());
-		}
+		}*/
 		
 		if (!Checks.esNulo(buzonPfs)) {
 			destinatarios.add(buzonPfs.getEmail());

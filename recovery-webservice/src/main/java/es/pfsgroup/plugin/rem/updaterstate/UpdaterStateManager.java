@@ -164,10 +164,13 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		
 		if(activoApi.isActivoVendido(activo)) {
 			codigo = DDSituacionComercial.CODIGO_VENDIDO;
-		}else if (!Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion()) && (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) && (activoApi.isActivoAlquilado(activo) || activoApi.isOcupadoConTituloOrEstadoAlquilado(activo))) {
+		}else if (!Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion()) && (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) 
+				&& (!activoApi.isActivoMatriz(activo.getId()) && (activoApi.isActivoAlquilado(activo) || activoApi.isOcupadoConTituloOrEstadoAlquilado(activo)) 
+				|| (activoApi.isActivoMatriz(activo.getId()) && activoApi.isAlquiladoTotalmente(activo.getId())))) {
 			codigo = DDSituacionComercial.CODIGO_ALQUILADO;
 		}
-		else if (!Checks.esNulo(activo.getTipoComercializacion()) && (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) && (activoApi.isActivoMatriz(activo.getId()) && activoApi.isAlquiladoParcialmente(activo.getId()))) {
+		else if (!Checks.esNulo(activo.getTipoComercializacion()) && (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) 
+				&& (activoApi.isActivoMatriz(activo.getId()) && activoApi.isAlquiladoParcialmente(activo.getId()))) {
 			codigo = DDSituacionComercial.CODIGO_ALQUILADO_PARCIALMENTE;
 		}
 		else if(activoApi.isActivoConReservaByEstado(activo,DDEstadosReserva.CODIGO_FIRMADA)) {
@@ -244,10 +247,6 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	
 	public Double calcularParticipacionPorActivo(String codigoTipoTrabajo, List<Activo> activosLista, Activo activo_check){
 		//Si algún parámetro es nulo, omitimos el procedimiento.
-		if (codigoTipoTrabajo == null || activo_check == null) {
-			return null;
-		}
-
 		//Si todos los argumentos son null, se devuelve un 100% de participación.
 		if((activosLista == null || activosLista.isEmpty()) || codigoTipoTrabajo == null || activo_check == null){
 			return 100d;
@@ -468,9 +467,6 @@ public class UpdaterStateManager implements UpdaterStateApi{
 			return;
 		}
 
-		Long idActivo = null;
-		Float participacionTotal = null;
-		Boolean isFirstLoop = true;
 
 		try{
 			Trabajo trabajo = trabajoApi.findOne(idTrabajo);
@@ -482,42 +478,31 @@ public class UpdaterStateManager implements UpdaterStateApi{
 				activosLista.add(activoTrabajo.getActivo());
 			}
 
-			Double participacion = null; 
+			Double participacion = null;
+			Integer participacionTotalPorCien = 10000;
+			Integer participacionPorCien = 0;
 			for(ActivoTrabajo activoTrabajo : activosTrabajoLista){
 				participacion = calcularParticipacionPorActivo(codigoTipoTrabajo, activosLista, activoTrabajo.getActivo());
 
 				if(participacion == null){
 					participacion = (100d / activosLista.size());
 				}
-
-				activoTrabajo.setParticipacion(participacion.floatValue());
+				
+				participacionPorCien = (int)(participacion*100);				
+				participacionTotalPorCien -= participacionPorCien;
+				
+				activoTrabajo.setParticipacion(participacionPorCien/100f);
 
 				genericDao.update(ActivoTrabajo.class, activoTrabajo);
 
-				if (isFirstLoop) {
-					idActivo = activoTrabajo.getActivo().getId();
-				}
-
-				isFirstLoop = false;
 			}
-
-			participacionTotal = activotrabajoDao.getImporteParticipacionTotal(trabajo.getNumTrabajo());
-
-			if(participacionTotal != 100f) {
-
-				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
-
-				ActivoTrabajo activoTrabajoParaActualizar = genericDao.get(ActivoTrabajo.class, f1, f2);
-
-				Float participacionOriginal = activoTrabajoParaActualizar.getParticipacion();
-
-				Float participacionFinal = 100f - participacionTotal + participacionOriginal;
-
-				activoTrabajoParaActualizar.setParticipacion(participacionFinal);
-
-				genericDao.update(ActivoTrabajo.class, activoTrabajoParaActualizar);
-
+			if(participacionTotalPorCien != 0) {
+				for(ActivoTrabajo activoTrabajo : activosTrabajoLista){
+					activoTrabajo.setParticipacion(activoTrabajo.getParticipacion()+(1/100f));					
+					genericDao.update(ActivoTrabajo.class, activoTrabajo);
+					participacionTotalPorCien--;
+					if(participacionTotalPorCien == 0) break;
+				}
 			}
 
 		} catch (Exception e) {

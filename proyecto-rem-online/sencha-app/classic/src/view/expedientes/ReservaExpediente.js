@@ -45,9 +45,8 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.envio'),
 		                	bind:{
 		                		value: '{reserva.fechaEnvio}',
-		                		readOnly:'{!readOnlyGestBoarding}'
-	                			}
-		                	
+		                		readOnly:'{readOnlyGestBoarding}'
+	                		}
 		                },
 		                {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe'),

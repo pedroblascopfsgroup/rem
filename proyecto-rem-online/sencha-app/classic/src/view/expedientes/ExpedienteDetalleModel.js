@@ -586,11 +586,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	 	},
 
 	 	readOnlyGestBoarding: function(get){
-	 		var me = this;	 		
-	 		var perfBoarding = $AU.userIsRol(CONST.PERFILES['GESTBOARDING']);
-	 		return perfBoarding;
+	 		var me = this;
+			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+			var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+	 		var isBoarding = $AU.userIsRol(CONST.PERFILES['GESTBOARDING']);
+			/*if(CONST.CARTERA['CERBERUS'] == carteraCodigo || CONST.CARTERA['BBVA'] == carteraCodigo){
+				return !isSuper;//CARTERAS NO BANCO
+			}
+	 		return !isSuper && !isBoarding;//CARTERAS BANCO*/
+	 		return !isSuper;
 	 	},
-
 	 	
 	 	habilitarBotonGenerarFicha: function(get){;
 			 var me = this;
@@ -1375,6 +1380,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	}
 		},
+
+
+		storeAuditoriaDesbloqueo: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.AuditoriaDesbloqueo',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getAuditoriaDesbloqueo',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}
+		},
+
 		storeActivosAlquilados: {
 			pageSize: $AC.getDefaultPageSize(),
 	    	model: 'HreRem.model.ActivoAlquiladosGrid',
@@ -1385,6 +1402,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	},
 			autoLoad: true
 		},
+
 		storeAuditoriaDesbloqueo: {
 			pageSize: $AC.getDefaultPageSize(),
 	    	model: 'HreRem.model.AuditoriaDesbloqueo',
@@ -1395,6 +1413,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	}
 		},
 		
+
 		comboMotivoAmpliacionArras: {
 	    	model: 'HreRem.model.ComboBase',
 			proxy: {

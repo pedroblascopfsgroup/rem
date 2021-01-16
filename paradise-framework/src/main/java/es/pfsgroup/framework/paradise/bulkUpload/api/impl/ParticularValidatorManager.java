@@ -5682,4 +5682,64 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return false;
 	}
+	
+	public String getNumActivoPrincipal(String numAgr) {
+		String resultado = null;
+		
+		if(numAgr != null && !numAgr.isEmpty())
+		resultado = rawDao.getExecuteSQL("SELECT ACT_NUM_ACTIVO FROM ACT_ACTIVO ACT "
+				+ "JOIN ACT_AGR_AGRUPACION AGR ON AGR_ACT_PRINCIPAL = ACT_ID "
+				+ "WHERE AGR_NUM_AGRUP_REM = "+ numAgr +" AND AGR.BORRADO = 0");
+		
+		
+		if(resultado == null)
+			return "";
+		else
+		return resultado;
+	}
+	
+	public String getExcluirValidaciones(String numActivo) {
+		String resultado = null;
+		
+		if(numActivo != null && !numActivo.isEmpty())
+		resultado = rawDao.getExecuteSQL("SELECT PAC_EXCLUIR_VALIDACIONES FROM ACT_PAC_PERIMETRO_ACTIVO PAC "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID "
+				+ "WHERE ACT_NUM_ACTIVO = "+ numActivo +" AND PAC.BORRADO = 0");
+		
+		if(resultado == null)
+			return "";
+		else
+		return resultado;
+	}
+	
+	public String getCheckGestorComercial(String numActivo) {
+		
+		String resultado = null;
+		
+		if(numActivo != null && !numActivo.isEmpty())
+		resultado = rawDao.getExecuteSQL("SELECT PAC_CHECK_GESTION_COMERCIAL FROM ACT_PAC_PERIMETRO_ACTIVO PAC "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID "
+				+ "WHERE ACT_NUM_ACTIVO = "+ numActivo +" AND PAC.BORRADO = 0");
+		
+		if(resultado == null)
+			return "";
+		else
+		return resultado;
+	}
+	
+	public String getMotivoGestionComercial(String numActivo) {
+		String resultado = null;
+		
+		if(numActivo != null && !numActivo.isEmpty())
+		resultado = rawDao.getExecuteSQL("SELECT PAC_MOTIVO_GESTION_COMERCIAL FROM ACT_PAC_PERIMETRO_ACTIVO PAC "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID "
+				+ "WHERE ACT_NUM_ACTIVO = "+ numActivo +" AND PAC.BORRADO = 0");
+		
+		if(resultado == null)
+			return "";
+		else
+		return resultado;
+	}
+	
+	
 }

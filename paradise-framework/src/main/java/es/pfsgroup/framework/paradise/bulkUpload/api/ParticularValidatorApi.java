@@ -1295,5 +1295,13 @@ public interface ParticularValidatorApi {
 	Boolean datosRegistralesRepetidos(String refCatastral, String finca, String folio, String libro, String tomo, String numRegistro, String codigoLocalidad);
 
 	Boolean subtipoPerteneceTipoActivo(String subtipo, String tipo);
+	
+	String getNumActivoPrincipal(String numAgr);
+
+	String getExcluirValidaciones(String numActivo);
+
+	String getCheckGestorComercial(String numActivo);
+
+	String getMotivoGestionComercial(String numActivo);
 
 }

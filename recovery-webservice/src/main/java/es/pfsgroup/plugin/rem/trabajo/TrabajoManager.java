@@ -100,6 +100,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
+import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo.ActivoTrabajoPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -138,6 +139,7 @@ import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAdelanto;
@@ -4460,4 +4462,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	 	
 	 	return esTramiteValido;
  	}
+	
+	public Boolean esActivoContabilizado(Long idActivo) {
+		
+		Filter filtroSareb = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		ActivoSareb activoSareb  = genericDao.get(ActivoSareb.class, filtroSareb);
+		
+		return !(activoSareb != null && activoSareb.getReoContabilizado() != null && activoSareb.getReoContabilizado().getCodigo().equals(DDSinSiNo.CODIGO_NO));
+			
+		
+		
+	}
 }

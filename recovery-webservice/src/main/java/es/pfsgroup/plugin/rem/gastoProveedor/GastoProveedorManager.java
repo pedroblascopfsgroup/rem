@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.ConfigCuentaContable;
@@ -1408,6 +1409,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (Checks.esNulo(activo)) {
 				throw new JsonViewerException("Este activo no existe");
 			}
+			
+			Filter filtroSareb = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", numActivo);
+			ActivoSareb activoSareb  = genericDao.get(ActivoSareb.class, filtroSareb);
+			
+			
+			if (activoSareb != null && activoSareb.getReoContabilizado() != null && activoSareb.getReoContabilizado().getCodigo().equals(DDSinSiNo.CODIGO_NO)) {
+				throw new JsonViewerException("No se puede generar un gasto para un activo no contabilizado");
+			}
+			
 
 			Filter filtroG = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
 			Filter filtroA = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", numActivo);

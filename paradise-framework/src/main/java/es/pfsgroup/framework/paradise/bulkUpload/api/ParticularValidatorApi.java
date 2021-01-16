@@ -1239,4 +1239,10 @@ public interface ParticularValidatorApi {
 	Boolean existePais(String pais);
 
 	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
+	
+	Boolean existeDiccionarioByTipoCampo(String codigoCampo, String valorCampo);
+	
+	String getCodigoTipoDato(String codigoCampo);
+	 
+	
 }

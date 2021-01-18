@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Jesus Jativa
---## FECHA_CREACION=20210107
+--## AUTOR=DAP
+--## FECHA_CREACION=20210118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-12661
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-12816
 --## PRODUCTO=NO
 --## Finalidad: DDL creación vista VI_BUSQUEDA_GASTOS_PROVEEDOR_E.
 --##
@@ -18,7 +18,8 @@
 --##		    0.6 Daniel Algaba		- Adaptación de consulta al nuevo modelo de facturación
 --##            0.7 DAP             - Añadir campos
 --##		    0.8 Jesus Jativa		- Añadidos campos GLD_PRINCIPAL_SUJETO||GLD_PRINCIPAL_NO_SUJETO||GLD_RECARGO||GLD_INTERES_DEMORA||GLD_COSTAS
---##                                      para HREOS-12661
+--##                                      para HREOS-1266
+--##        0.9 DAP             - Cambio en cruce GLD
 --##########################################
 --*/
 

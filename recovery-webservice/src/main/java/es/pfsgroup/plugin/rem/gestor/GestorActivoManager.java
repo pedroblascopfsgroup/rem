@@ -612,4 +612,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  		return usuariosAdmision.contains(usuario);
  	}
  	
+ 	public Boolean isGestorBoarding(Activo activo, Usuario usuario){
+ 		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_GESTOR_BOARDING);
+ 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+ 		
+ 		List<Usuario> usuariosActivos = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
+ 		return usuariosActivos.contains(usuario);
+ 	}
+ 	
  }

@@ -22,6 +22,8 @@ public interface ParticularValidatorApi {
 	Boolean activoEnAgrupacionRestringida(Long numActivo);
 
 	Boolean esActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
+	
+	boolean existeProveedor(String codProveedor);
 
 	Boolean esActivoEnAgrupacionPorTipo(Long numActivo, String codTipoAgrupacion);
 
@@ -1205,6 +1207,7 @@ public interface ParticularValidatorApi {
 
 	public Boolean relacionEstadoSubestadoAdmisionValido(String codEstadoAdmision, String codSubestadoAdmision);
 
+
 	Boolean existeTipoSuministroByCod(String codigo);
 
 	Boolean existeSubtipoSuministroByCod(String codigo);
@@ -1227,14 +1230,113 @@ public interface ParticularValidatorApi {
 
 	Boolean existeIdentificadorSubregistro(String subtipo, String identificador);
 
-	Boolean relacionPoblacionLocalidad(String columnaPoblacion, String columnaMunicipio);
+	public boolean incluidoActivoIdOrigenBBVA (String numActivo);
 
+	Boolean estaPerimetroHaya(String activoId);
+	
+	Boolean estaPerimetroAdmision(String activoId);
+	
+	Boolean existeActivoPorId(String activoId);
+	
+	Boolean comprobarCodigoTipoTitulo(String codTipoTitulo);
+	
+	public boolean existeTipoDeGastoAsociadoCMGA(String codTipoGasto);
+
+	public Boolean esTipoAltaBBVAMenosAltaAutamatica(String codCampo);
+
+	public Boolean esTipoRegimenProteccion(String codCampo);
+
+	Boolean mismaCarteraLineaDetalleGasto(String numGasto, String tipoElemento);
+
+	Boolean isActivoBankia(String numActivo);
+
+	Boolean tipoDeElemento(String tipoElemento);
+
+	Boolean gastoTieneLineaDetalle(String numGasto);
+
+	Boolean subtipoGastoCorrespondeGasto(String numGasto, String subtipoGasto);
+
+	Boolean lineaSubtipoDeGastoRepetida(String numGasto, String subtipoGasto, String tipoImpositivo, String tipoImpuesto);
+
+	Boolean participaciones(String numGasto);
+
+	Boolean existeSubtipoGasto(String codSubtipoGasto);
+
+	Boolean perteneceGastoBankia(String numGasto);
+
+	Boolean agrupacionSinActivos(String numAgrupacion);
+
+	Boolean esGastoYAgrupacionMismoPropietarioByNumGasto(String numAgrupacion, String numGasto);
+
+	Boolean esGastoYActivoMismoPropietarioByNumGasto(String numElemento, String numGastoHaya, String tipoElemento);
+
+	Boolean existeEntidadGasto(String entidad);
+
+	Boolean esGastoRefacturadoPadre(String numGasto);
+
+	Boolean esGastoRefacturadoHijo(String numGasto);
+
+	Boolean gastoEstadoIncompletoPendienteAutorizado(String numGasto);
+	
+	Boolean existeTipoGastoByCod(String codigo);
+
+	Boolean existeDestinatarioByCod(String codigo);
+
+	Boolean existeTipoOperacionGastoByCod(String codigo);
+
+	Boolean existeTipoRecargoByCod(String codigo);
+
+	Boolean existeTipoElementoByCod(String codigo);
+
+	Boolean subtipoPerteneceATipoGasto(String tipoGasto, String subtipoGasto);
+
+	Boolean esPropietarioDeCarteraByCodigo(String docIdentificadorPropietario, String cartera);
+
+	Boolean esGastoYActivoMismoPropietario(String docIdentificadorPropietario, String numElemento, String tipoElemento);
+
+	Boolean esGastoYAgrupacionMismoPropietario(String docIdentificadorPropietario, String numAgrupacion);
+
+	Boolean existeEmisor(String emisorNIF);
+
+	Boolean relacionPoblacionLocalidad(String columnaPoblacion, String columnaMunicipio);
 
 	Boolean existeMunicipioByDescripcion(String columnaMunicipio);
 
 	Boolean existePoblacionByDescripcion(String columnaPoblacion);
 
 	boolean isProveedorSuministroVigente(String codRem);
+
+	public Boolean esTipoDeTransmisionBBVA(String dameCelda);
+	
+	public Boolean esTipoDeTituloBBVA(String dameCelda);
+	
+	public Boolean existeActivoParaCMBBVA(String dameCelda);
+	
+	public Boolean activoesDeCarteraCerberusBbvaCMBBVA(String dameCelda);
+	
+	public Boolean esActivoVendidoParaCMBBVA(String numActivo);
+
+	public Boolean esActivoIncluidoPerimetroParaCMBBVA(String numActivo);
+
+	public Boolean esActivoRepetidoNumActivoBBVA(String numActivo);
+
+	public Boolean codigoComercializacionIncorrecto(String codCampo);
+	
+	boolean existeMismoProveedorContactoInformado(String codProveedor, String numTrabajo);
+
+	boolean isTipoTarifaValidoEnConfiguracion(String codigoTarifa, String numTrabajo);
+
+	String getEstadoTrabajoByNumTrabajo(String numTrabajo);
+	
+	Boolean existeGastoConElIdLinea(String idGasto, String idLinea);
+
+	Boolean esOfertaBBVA(String numOferta);
+
+	Boolean esOfertaAnulada(String numOferta);
+
+	Boolean esOfertaVendida(String numOferta);
+
+	Boolean esOfertaErronea(String numOferta);
 
 	Boolean existePais(String pais);
 
@@ -1243,6 +1345,72 @@ public interface ParticularValidatorApi {
 	Boolean existeDiccionarioByTipoCampo(String codigoCampo, String valorCampo);
 	
 	String getCodigoTipoDato(String codigoCampo);
-	 
+
+	Boolean gastoRepetido(String factura, String fechaEmision, String nifEmisor, String nifPropietario);
+
+	Boolean propietarioPerteneceCartera(String docIdent, List<String> listaCodigoCarteras);
+
+	String getDocIdentfPropietarioByNumGasto(String numGasto);
+
+	boolean existeTipoRetencion(String tipoRetencion);
 	
+	boolean existeLineaEnGasto(String idLinea, String numGasto);
+
+	boolean conEstadoGasto(String idGasto,String codigoEstado);
+
+	String devolverEstadoGasto(String idGasto);
+
+	boolean tieneGastoFechaContabilizado(String idGasto);
+
+	boolean tieneGastoFechaPagado(String idGasto);
+
+
+	Boolean estadoPrevioTrabajo(String celdaTrabajo);
+
+	Boolean fechaEjecucionCumplimentada(String celdaTrabajo);
+
+	Boolean resolucionComite(String celdaTrabajo);
+
+	Boolean checkComite(String celdaTrabajo);
+
+	Boolean tieneLlaves(String celdaTrabajo);
+
+	Boolean checkLlaves(String celdaTrabajo);
+
+	Boolean checkProveedoresLlaves(String celdaTrabajo);
+
+	public String sacarCodigoSubtipoActivo(String descripcion);
+
+	Boolean existeTrabajoByCodigo(String codTrabajo);
+	
+	Boolean existeSubtrabajoByCodigo(String codSubtrabajo);
+	
+	Boolean esSubtrabajoByCodTrabajoByCodSubtrabajo(String codTrabajo, String codSubtrabajo);
+	
+	Boolean existeProveedorAndProveedorContacto(String codProveedor, String proveedorContacto);
+	
+	Boolean esSubtipoTrabajoTomaPosesionPaquete(String subtrabajo);
+	
+	Boolean esTarifaEnCarteradelActivo(String codTarifa, String idActivo);
+	
+	Boolean existeProveedorEnCarteraActivo(String proveedor,String idActivo);
+	
+	Boolean existePromocionBBVA(String promocion);
+
+	Boolean datosRegistralesRepetidos(String refCatastral, String finca, String folio, String libro, String tomo, String numRegistro, String codigoLocalidad);
+
+	Boolean subtipoPerteneceTipoActivo(String subtipo, String tipo);
+
+	Boolean existeAlbaran(String idAlbaran);
+	
+	Boolean existePrefactura(String idPrefactura);
+	
+	public String devolverEstadoGastoApartirDePrefactura(String idPrefactura);
+	
+	public String devolverEstadoGastoApartirDeAlbaran(String idAlbaran);
+
+	List<String> getIdPrefacturasByNumAlbaran(String numAlbaran);
+	
+    Boolean getGastoSuplidoConFactura(String idGastoAfectado);
+
 }

@@ -152,7 +152,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		FOTOSSOLI:		'fotostrabajo.fotostrabajosolicitante',
 		FOTOSPROV:		'fotostrabajo.fotostrabajoproveedor',
 		DOCU:			'documentostrabajo',
-		GESECO:			'gestioneconomicatrabajo'
+		GESECO:			'gestioneconomicatrabajo',
+		AGENDA:			'agendatrabajo'
 //		INVISIBLE:		Si creamos un registro-enlace-trabajo en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
 	},
 
@@ -187,7 +188,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	GIANTS: '12',
     	EGEO: '13',
     	GALEON:'15',
-    	ZEUS: '14'
+    	ZEUS: '14',
+    	BBVA: '16'
     },
 
     NOMBRE_CARTERA:	{
@@ -202,7 +204,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	'11': 'THIRDPARTIES',
     	'12': 'GIANTS',
     	'15': 'GALEON',
-    	'14': 'ZEUS'
+    	'14': 'ZEUS',
+    	'16': 'BBVA'
     },
 
     NOMBRE_CARTERA2: {
@@ -215,7 +218,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	GIANTS: 'GIANTS',
     	LIBERBANK:'LIBERBANK',
     	GALEON:'GALEON',
-    	ZEUS :'ZEUS'
+    	ZEUS :'ZEUS',
+    	BBVA :'BBVA'
     },
 
     SUBCARTERA: {
@@ -252,7 +256,13 @@ Ext.define('HreRem.ux.util.Constants', {
 		DIVARIAN: '150',
 		OMEGA: '65',
 		DIVARIANARROW:'151',
-		DIVARIANREMAINING:'152'
+		DIVARIANREMAINING:'152',
+		BBVA:'153',
+		ANIDA:'154',
+		CX:'155',
+		GAT:'156',
+		EDT:'157',
+		USGAI:'158'
     },
 
     NOMBRE_SUBCARTERA: {
@@ -301,9 +311,12 @@ Ext.define('HreRem.ux.util.Constants', {
 		HAYA_GRUPO_CES:'HAYAGRUPOCES',
 		DIRECCION_TERRITORIAL:'DIRTERRITORIAL',
 		GESTOR_PRECIOS:'HAYAGESTPREC',
+		PERFGCONTROLLER:'PERFGCONTROLLER',
 		GESTOR_PUBLICACION:'HAYAGESTPUBL',
 		SUPERVISOR_ADMISION:'HAYASUPADM',
-		SUPER_EDITA_COMPRADOR: 'SUPEREDITACOMPRADOR'
+		SUPER_EDITA_COMPRADOR: 'SUPEREDITACOMPRADOR',
+		GESTOR_ALQUILER_HPM: 'GESTALQ',
+		GESTBOARDING: 'PERFGBOARDING'
     },
 
     TIPOS_OFERTA: {
@@ -342,7 +355,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	AP_CES_PTE_MAN: '36',
     	CONT_CES: '38',
     	RES_PTE_MAN: '39',
-    	AP_PTE_MAN : '40'
+    	AP_PTE_MAN : '40',
+    	PEN_RES_OFER_COM : '43'
     },
 
     ESTADOS_GASTO: {
@@ -446,7 +460,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		TRAMITAR_PROPUESTA_PRECIOS: '44',
 		TRAMITAR_PROPUESTA_DESCUENTO: '45',
 		TOMA_POSESION: '57',
-		OBRA_MENOR_NO_TARIFICADA:'38'
+		OBRA_MENOR_NO_TARIFICADA:'38',
+		PAQUETES:'PAQ'
 	},
 
 	TIPO_IMPUESTO: {
@@ -487,6 +502,11 @@ Ext.define('HreRem.ux.util.Constants', {
 	COMBO_SI_NO: {
 		SI: 1,
 		NO: 0
+	},
+	
+	COMBO_SIN_NO: {
+		SI: '01',
+		NO: '02'
 	},
 	
 	COMBO_SIN_SINO: {
@@ -696,6 +716,22 @@ Ext.define('HreRem.ux.util.Constants', {
 	INDIVIDUAL:'03'
 	},
 	
+	DD_TAL_TIPO_ALTA:{
+	ALTA_AUTOMATICA:'AUT',
+	MANUAL_ACTIVO_APARECIDO:'MAA',
+	MANUAL_INCIDENCIA_PROCESO_AUTOMATICO:'MIA',
+	MANUAL_DIVISION_HORIZONTAL:'MDH',
+	MANUAL_AGRUPACIONES:'MAG'
+	},
+	
+	DD_STA_SUBTIPO_TITULO_ACTIVO:{
+	LEASING:'LEA',
+	NOTARIAL_COMPRA:'NCC',
+	EJECUCION_HIPOTECARIA:'EHC',
+	NOTARIAL_LEASING:'NLE',
+	NOTARIAL_RECOMPRA:'NRE'
+	},
+	
 	DD_TIPO_RECARGO:{
 	NO_EVITABLE:'NO_EVI'
 	},
@@ -744,6 +780,93 @@ Ext.define('HreRem.ux.util.Constants', {
 		CODIGO_HAYA_REMAINING: '41',
 		CODIGO_HAYA_APPLE: '42'
 	},
+
+	BTN: {
+		CREAR_TRABAJO: 'BtnCrearTrabajo'
+	},
+
+	ESTADOS_TRABAJO: {
+    	EN_CURSO : 'CUR',
+    	RECHAZADO: 'REJ',
+    	CANCELADO: 'CAN',
+    	FINALIZADO: 'FIN',
+    	SUBSANADO: 'SUB', 	
+    	PDTE_CIERRE:'PCI',
+    	CIERRE:'CIE',
+    	SOLICITADO:'01',
+    	ANULADO:'02',
+    	RECHAZADO_COD:'03',
+    	EN_TRAMITE:'04',
+    	PDTE_PAGO:'05',
+    	PAGADO:'06',
+    	IMPOSIBLE_OBTENCION:'07',
+    	FALLIDO:'08',
+    	CON_CEE_PDTE_ETIQUETA:'09',
+    	FINALIZADO_PDTE_VALIDACION:'10',
+    	PDTE_CIERRE_ECONOMICO:'11',
+    	FINALIZADO_COD:'12',
+    	VALIDADO: '13',
+    	PAGADO_CON_TARIFA_PLANA:'14'
+    },
+    
+	ESTADOS_PREFACTURAS: {
+		VALIDADO: 'Validada',
+		PENDIENTE: 'Pendiente'
+	},
+	
+	ESTADOS_ALBARANES: {
+		VALIDADO: 'Validado',
+		PENDIENTE: 'Pendiente'
+    },
+	
+	PES_PESTANYAS: {
+		DETALLE_ECONOMICO: 'DEC',
+		FICHA: 'FIC'
+	},
+
+	TIPO_ELEMENTOS_GASTO:{
+		CODIGO_ACTIVO: 'ACT',
+		CODIGO_AGRUPACION: 'AGR',
+		CODIGO_ACTIVO_GENERICO:  'GEN',
+		CODIGO_PROMOCION: 'PRO',
+		CODIGO_SIN_ACTIVOS: 'SIN'
+	},
+	
+
+	ESTADO_ADMISION: {
+		CODIGO_PENDIENTE_TITULO: 'PET',
+		CODIGO_PENDIENTE_REVISION: 'PRT',
+		CODIGO_PENDIENTE_SANEAMIENTO: 'PSR',
+		CODIGO_SANEADO_REGISTRALMENTE: 'SAR'
+	},
+	
+	SUBESTADO_ADMISION: {
+		CODIGO_PENDIENTE_INSCRIPCION: 'PIN',
+		CODIGO_INCIDENCIA_INSC: 'IIN',
+		CODIGO_PENDIENTE_CARGAS: 'PCA',
+		CODIGO_CONCURSO_ACREEDORES: 'CAC'
+
+	},
+	DD_TOB_TIPO_OBSERVACION: {
+		STOCK: '01',
+		POSESION: '02',
+		INSCRIPCION: '03',
+		CARGAS: '04',
+		LLAVES: '05',
+		SANEAMIENTO: '06',
+		REVISION_TITULO: '07'
+	},
+	OBSERVACIONES_TAB_LAUNCH: {
+		ACTIVO : 'activo',
+		SANEAMIENTO: 'saneamiento',
+		REVISION_TITULO: 'revisionTitulo'
+	},
+	
+	APROBACION_COMITE: {
+		SOLICITADO: 'SOL',
+		APROBADO: 'APR',
+		RECHAZADO: 'REC'
+	},
 	
 	ESTADO_ADMISION: {
 		CODIGO_PENDIENTE_TITULO: 'PET',
@@ -772,5 +895,9 @@ Ext.define('HreRem.ux.util.Constants', {
 		ACTIVO : 'activo',
 		SANEAMIENTO: 'saneamiento',
 		REVISION_TITULO: 'revisionTitulo'
+	},
+	TIPO_RETENCION: {
+		ANTES : 'ANT',
+		DESPUES: 'DESP'
 	}
 });

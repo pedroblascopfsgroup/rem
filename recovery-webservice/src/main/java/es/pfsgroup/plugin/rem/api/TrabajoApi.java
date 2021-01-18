@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,18 +32,26 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoProveedorContactoSimple;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFiltradoManual;
+import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoParticipa;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.dd.DDAcoAprobacionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificadorReam;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
+import es.pfsgroup.plugin.rem.trabajo.dto.DtoAgendaTrabajo;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 
 public interface TrabajoApi {
@@ -844,6 +853,8 @@ public interface TrabajoApi {
 	boolean checkLiberbank(TareaExterna tareaExterna);
 
 	boolean checkLiberbank(Trabajo trabajo);
+	
+	boolean checkBBVA(TareaExterna tareaExterna);
 
 	public boolean superaLimiteLiberbank(Long idTrabajo);
 
@@ -868,4 +879,58 @@ public interface TrabajoApi {
 	public ActivoTramite createTramiteTrabajo(Long idTrabajo, ExpedienteComercial expedienteComercial);
 
 	ActivoTramite createTramiteTrabajo(Trabajo trabajo, ExpedienteComercial expedienteComercial);
+	
+
+	/*Envía una lista de DTOs de proveedores filtrados por cartera siempre con el 'nombre', de manera que,
+	 * ya sea el campo nombre o el campo nombreComercial el seleccionado, se envíe siempre como 'nombre' para
+	 * evitar conflictos*/
+	public List<DtoProveedorFiltradoManual> getComboProveedorFiltradoManual(Long idTrabajo) throws Exception;
+	
+	public List<DDEstadoTrabajo> getComboEstadoSegunEstadoGdaOProveedor(Long idTrabajo);
+	
+	public DtoPage getListHistoricoDeCampos(Long idTrabajo, String codPestanya);
+
+	/**
+	 * Recupera la lista completa de Trabajos para el buscador de gastos
+	 * 
+	 * @return List<Trabajo>
+	 */
+	@BusinessOperationDefinition("trabajoManager.findBuscadorGastos")
+	public DtoPage findBuscadorGastos(DtoTrabajoFilter dto);
+
+	
+	public List<DDAcoAprobacionComite> getComboAprobacionComite();
+	
+	public List<DtoAgendaTrabajo> getListAgendaTrabajo(Long idTrabajo);
+	
+	@BusinessOperationDefinition("trabajoManager.createAgendaTrabajo")
+	public boolean createAgendaTrabajo(DtoAgendaTrabajo agendaTrabajo);
+	
+	@BusinessOperationDefinition("trabajoManager.deleteAgendaTrabajo")
+	public boolean deleteAgendaTrabajo(Long id);
+	
+	public List<DDEstadoTrabajo>getComboEstadoTrabajo();
+	public List<DDEstadoGasto> getComboEstadoGasto();
+
+	List<VBusquedaActivosTrabajoParticipa> getListActivosTrabajo(Long id);
+
+	public Date getFechaConcretaParametrizada(String tipoTrabajo, String subtipoTrabajo,String cartera, String subCartera);
+	
+	public Boolean getAplicaComiteParametrizado(String tipoTrabajo, String subtipoTrabajo,String cartera, String subCartera);
+
+	public List<String> getTransicionesEstadoTrabajoByCodigoEstado(String estadoActual);
+	
+	public DtoProveedorMediador getProveedorParametrizado(Long idActivo, String tipoTrabajo, String subtipoTrabajo,String cartera, String subcartera);
+
+	public List<VProveedores> getComboProveedorFilteredCreaTrabajo(String codCartera);
+
+	public Map<String, String> getDocumentosFinalizacionTrabajo(Long idTrabajo);
+
+	public Object getExisteTareaWebServiceHaya(String idTareaHaya);
+	
+	public List<DDIdentificadorReam>getComboAreaPeticionaria();
+
+	void EnviarCorreoTrabajos(Trabajo trabajo, String origen);
+
+	public BigDecimal getImporteTotalSuplidosByTrabajo(Trabajo trabajo);
 }

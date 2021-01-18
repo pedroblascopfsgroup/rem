@@ -39,7 +39,7 @@
 		            },
 		            {
 		                "text":   "Trabajos",
-		                "view":   "trabajos.TrabajosMain",
+		                "view":   "trabajosMainMenu.trabajosMainMenu",
 		                "leaf":   true,
 		                "iconCls": "app-menu-ico ico-trabajos",
 		                "cls": "app-menu-item",

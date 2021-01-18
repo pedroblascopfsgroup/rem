@@ -35,7 +35,9 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.model.dd.DDAcoAprobacionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificadorReam;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAdelanto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
@@ -75,6 +77,10 @@ public class Trabajo implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVC_ID")
     private ActivoProveedorContacto proveedorContacto;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PFA_ID")
+    private Prefactura prefactura;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="USU_ID")
@@ -165,6 +171,9 @@ public class Trabajo implements Serializable, Auditable {
     @Column(name = "TBJ_IMPORTE_TOTAL")
    	private Double importeTotal;
     
+    @Column(name = "TBJ_IMPORTE_PRESUPUESTO")
+   	private Double importePresupuesto;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="MEDIADOR_ID")
     private ActivoProveedor mediador;
@@ -237,7 +246,7 @@ public class Trabajo implements Serializable, Auditable {
     
     @OneToOne(mappedBy = "trabajo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "TBJ_ID")
-    private GastoProveedorTrabajo gastoTrabajo;
+    private GastoLineaDetalleTrabajo gastoTrabajo;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="TBJ_GESTOR_ACTIVO_RESPONSABLE")
@@ -260,6 +269,10 @@ public class Trabajo implements Serializable, Auditable {
 	@Column(name="TBJ_NOMBRE_EXPEDIENTE_TRABAJO")
     private String nombreExpedienteTrabajo;
     
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="DD_IRE_ID")
+    private DDIdentificadorReam identificadorReam; 
+	
     public Usuario getUsuarioResponsableTrabajo() {
 		return usuarioResponsableTrabajo;
 	}
@@ -297,6 +310,54 @@ public class Trabajo implements Serializable, Auditable {
 	
 	@Column(name="TBJ_NOMBRE_DND")
     private String nombreDnd;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="TBJ_GESTOR_ALTA")
+    private Usuario gestorAlta;
+	
+	@Column(name="TBJ_ID_TAREA")
+    private String idTarea;
+	
+	@Column(name="TBJ_APLICA_COMITE")
+    private Boolean aplicaComite;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ACO_ID")
+    private DDAcoAprobacionComite aprobacionComite;
+	
+	@Column(name="TBJ_FECHA_RES_COMITE")
+    private Date fechaResolucionComite;	
+	
+	@Column(name="TBJ_RES_COMITE_ID")
+    private String resolucionComiteId;
+
+	@Column(name="TBJ_REF_IMPORTE_PRESUPUESTO")
+    private String resolucionImportePresupuesto;
+	
+	@Column(name="TBJ_SINIESTRO")
+    private Boolean siniestro;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVC_ID_LLAVES")
+    private ActivoProveedorContacto proveedorContactoLlaves;
+   
+    @Column(name="TBJ_FECHA_ENTREGA_LLAVES")
+    private Date fechaEntregaLlaves;
+   
+    @Column(name="TBJ_NO_APLICA_LLAVES")
+    private Boolean noAplicaLlaves;  
+   
+    @Column(name="TBJ_MOTIVO_LLAVES")
+    private String motivoLlaves;  
+	
+	@Column(name="TBJ_PRIM_TOMA_POS")
+    private Boolean tomaPosesion;
+	
+	@Column(name="TBJ_FECHA_CAMBIO_ESTADO")
+	private Date fechaCambioEstado;
+
+	@Column(name = "TBJ_IMPORTE_ASEGURADO")
+   	private Double importeAsegurado;
 	
 	public Long getId() {
 		return id;
@@ -684,11 +745,18 @@ public class Trabajo implements Serializable, Auditable {
 			Date fechaActual = new Date();
 			Date fechaCompromiso = new Date();
 			Integer diasRetraso = null;
+			Date fechaFin = null;
+			if (getFechaEjecucionReal()== null ) {
+				fechaFin= fechaActual;
+			}else {
+				fechaFin = getFechaEjecucionReal();
+			}
 			
+				
 			if((getFechaCompromisoEjecucion() != null && getFechaFin() == null) || (getFechaCompromisoEjecucion() != null && fechaActual.before(getFechaFin()))){
 				fechaCompromiso = getFechaCompromisoEjecucion();
 				if(fechaActual != null){
-					Long retrasoLong = TimeUnit.DAYS.convert(new Long(fechaActual.getTime() - fechaCompromiso.getTime()), TimeUnit.MILLISECONDS);
+					Long retrasoLong = TimeUnit.DAYS.convert(new Long(fechaFin.getTime() - fechaCompromiso.getTime()), TimeUnit.MILLISECONDS);
 					diasRetraso = new Integer(retrasoLong.intValue());
 				}
 			}
@@ -864,11 +932,11 @@ public class Trabajo implements Serializable, Auditable {
 		this.fechaEmisionFactura = fechaEmisionFactura;
 	}
 
-	public GastoProveedorTrabajo getGastoTrabajo() {
+	public GastoLineaDetalleTrabajo getGastoTrabajo() {
 		return gastoTrabajo;
 	}
 
-	public void setGastoTrabajo(GastoProveedorTrabajo gastoTrabajo) {
+	public void setGastoTrabajo(GastoLineaDetalleTrabajo gastoTrabajo) {
 		this.gastoTrabajo = gastoTrabajo;
 	}
 
@@ -994,6 +1062,150 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setNombreExpedienteTrabajo(String nombreExpedienteTrabajo) {
 		this.nombreExpedienteTrabajo = nombreExpedienteTrabajo;
+	}
+
+	public Usuario getGestorAlta() {
+		return gestorAlta;
+	}
+
+	public void setGestorAlta(Usuario gestorAlta) {
+		this.gestorAlta = gestorAlta;
+	}
+
+	public String getIdTarea() {
+		return idTarea;
+	}
+
+	public void setIdTarea(String idTarea) {
+		this.idTarea = idTarea;
+	}
+
+	public Date getFechaResolucionComite() {
+		return fechaResolucionComite;
+	}
+
+	public void setFechaResolucionComite(Date fechaResolucionComite) {
+		this.fechaResolucionComite = fechaResolucionComite;
+	}
+
+	public String getResolucionComiteId() {
+		return resolucionComiteId;
+	}
+
+	public void setResolucionComiteId(String resolucionComiteId) {
+		this.resolucionComiteId = resolucionComiteId;
+	}
+
+	public Double getImportePresupuesto() {
+		return importePresupuesto;
+	}
+
+	public void setImportePresupuesto(Double importePresupuesto) {
+		this.importePresupuesto = importePresupuesto;
+	}
+
+	public String getResolucionImportePresupuesto() {
+		return resolucionImportePresupuesto;
+	}
+
+	public void setResolucionImportePresupuesto(String resolucionImportePresupuesto) {
+		this.resolucionImportePresupuesto = resolucionImportePresupuesto;
+	}
+
+	public Boolean getSiniestro() {
+		return siniestro;
+	}
+
+	public void setSiniestro(Boolean siniestro) {
+		this.siniestro = siniestro;
+	}
+
+	public Prefactura getPrefactura() {
+		return prefactura;
+	}
+
+	public void setPrefactura(Prefactura prefactura) {
+		this.prefactura = prefactura;
+	}
+
+	public Boolean getAplicaComite() {
+		return aplicaComite;
+	}
+
+	public void setAplicaComite(Boolean aplicaComite) {
+		this.aplicaComite = aplicaComite;
+	}
+
+	public DDAcoAprobacionComite getAprobacionComite() {
+		return aprobacionComite;
+	}
+
+	public void setAprobacionComite(DDAcoAprobacionComite aprobacionComite) {
+		this.aprobacionComite = aprobacionComite;
+	}
+
+	public ActivoProveedorContacto getProveedorContactoLlaves() {
+		return proveedorContactoLlaves;
+	}
+
+	public void setProveedorContactoLlaves(ActivoProveedorContacto proveedorContactoLlaves) {
+		this.proveedorContactoLlaves = proveedorContactoLlaves;
+	}
+
+	public Date getFechaEntregaLlaves() {
+		return fechaEntregaLlaves;
+	}
+
+	public void setFechaEntregaLlaves(Date fechaEntregaLlaves) {
+		this.fechaEntregaLlaves = fechaEntregaLlaves;
+	}
+
+	public Boolean getNoAplicaLlaves() {
+		return noAplicaLlaves;
+	}
+
+	public void setNoAplicaLlaves(Boolean noAplicaLlaves) {
+		this.noAplicaLlaves = noAplicaLlaves;
+	}
+
+	public String getMotivoLlaves() {
+		return motivoLlaves;
+	}
+
+	public void setMotivoLlaves(String motivoLlaves) {
+		this.motivoLlaves = motivoLlaves;
+	}
+
+	public Boolean getTomaPosesion() {
+		return tomaPosesion;
+	}
+
+	public void setTomaPosesion(Boolean tomaPosesion) {
+		this.tomaPosesion = tomaPosesion;
+	}
+
+	public Date getFechaCambioEstado() {
+		return fechaCambioEstado;
+	}
+
+	public void setFechaCambioEstado(Date fechaCambioEstado) {
+		this.fechaCambioEstado = fechaCambioEstado;
+	}
+
+	public Double getImporteAsegurado() {
+		return importeAsegurado;
+	}
+
+	public void setImporteAsegurado(Double importeAsegurado) {
+		this.importeAsegurado = importeAsegurado;
+	}
+
+	public DDIdentificadorReam getIdentificadorReam() {
+		return identificadorReam;
+	}
+
+	public void setIdentificadorReam(DDIdentificadorReam identificadorReam) {
+		this.identificadorReam = identificadorReam;
 	}
     
     

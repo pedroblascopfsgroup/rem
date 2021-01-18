@@ -1672,6 +1672,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var tipoArras = me.down('[name=tipoArras]');
         var estadoReserva = me.down('[name=estadoReserva]');
         var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+		var storeMotivoAnulacion = me.down('[name=motivoAnulacion]').getStore();
 
         me.deshabilitarCampo(me.down('[name=comboProcede]'));
         if(CONST.CARTERA['BANKIA'] == codigoCartera) {
@@ -1697,6 +1698,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	//me.down('[name=comboMotivoAnulacionReserva]').reset();
             }
         });
+
+		storeMotivoAnulacion.addListener('load', function(store, records, successful, operation, eOpts){
+			store.filter('visibleWeb', true);
+		});
     },
     
     T013_RespuestaBankiaDevolucionValidacion: function() {
@@ -2469,7 +2474,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	var comboResolucion = me.down('[name=comboResolucion]');
     	var comboContraoferta = me.down('[name=numImporteContra]');
     	me.deshabilitarCampo(comboContraoferta);
-		
+    	
+    	  if(CONST.CARTERA['BBVA']===me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera')){   		   		  
+    		  me.down('[name=comboResolucion]').setFieldLabel(HreRem.i18n('title.resolucion'));
+    		  me.down('[name=numImporteContra]').setFieldLabel(HreRem.i18n('fieldlabel.importe.contraoferta'));
+    		  me.down('[name=fechaRespuesta]').setFieldLabel(HreRem.i18n('fieldlabel.fecha.respuesta'));
+  	  }
+        
     	comboResolucion.addListener('change', function(){
 	        if(comboResolucion.value == '03'){
 	        	me.habilitarCampo(comboContraoferta);
@@ -2630,12 +2641,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     		me.campoObligatorio(me.down('[name=fechaFirma]'));
     	}
     },
-        T017_ResolucionExpedienteValidacion: function() {
+    T017_ResolucionExpedienteValidacion: function() {
         var me = this;
         var tipoArras = me.down('[name=tipoArras]');
         var estadoReserva = me.down('[name=estadoReserva]');
         var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-
+		var storeMotivoAnulacion = me.down('[name=motivoAnulacion]').getStore();
+		
         me.deshabilitarCampo(me.down('[name=comboProcede]'));
         if(CONST.CARTERA['BANKIA'] == codigoCartera) {
         	me.deshabilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
@@ -2660,6 +2672,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	//me.down('[name=comboMotivoAnulacionReserva]').reset();
             }
         });
+
+		storeMotivoAnulacion.addListener('load', function(store, records, successful, operation, eOpts){
+			store.filter('visibleWeb', true);
+		});
     },
     T017_PosicionamientoYFirmaValidacion: function() {
         var me = this;
@@ -2731,6 +2747,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.habilitarCampo(me.down('[name=fechaIngreso]'));
 	        me.down('[name=fechaIngreso]').allowBlank = false;
 	        me.down('[name=fechaIngreso]').validate();
+		}else if(CONST.CARTERA['BBVA'] == codigoCartera){
+			me.down('[name=fechaIngreso]').allowBlank = false;
 		}
 
 		me.down('[name=checkboxVentaDirecta]').addListener('change', function(checkbox, newValue, oldValue, eOpts) {

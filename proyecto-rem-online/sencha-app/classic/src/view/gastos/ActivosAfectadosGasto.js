@@ -11,7 +11,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 		
 	recordClass: "HreRem.model.GastoProveedor",
     
-    requires: ['HreRem.model.GastoProveedor', 'HreRem.view.gastos.ActivosAfectadosGastoList'],
+    requires: ['HreRem.model.GastoProveedor', 'HreRem.view.gastos.ActivosAfectadosGastoList', 'HreRem.model.LineaDetalleGastoGridModel'],
 
     listeners: {
 		activate: function(me, eOpts) {
@@ -26,47 +26,72 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 			else{
 				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').setVisible(false);
 			}
+
 		}
 	},
     
 	initComponent : function() {
 
 		var me = this;
+		var isCarteraLiberbank = false;
+		var cartera = me.lookupController().getViewModel().get('gasto').get('cartera');
+		if(CONST.CARTERA['LIBERBANK'] == cartera){
+			isCarteraLiberbank = true;
+		}
 		
-		me.setTitle(HreRem.i18n('title.gasto.activos.afectados'));
+		var asignadoTrabajo = me.lookupController().getViewModel().get('gasto').get('asignadoATrabajos');
+		
+		me.setTitle(HreRem.i18n('title.gasto.elementos.afectados'));
+		
 		var items = [
-				
-				{   
-					xtype:'fieldset',
-					padding: 10,
-					layout: 'hbox',
-					collapsible: false,
-					bind: {
-						hidden: '{asignadoAActivosPropietarioSareb}'
-					},
-					items :	[
-				                {
-				                	xtype: 'checkboxfieldbase',
-				                	bind:	{
-				                		value:	'{gasto.gastoSinActivos}'
-				                	},
-				                	width: 30
-				                	
-				                }, 
-				                {
-				                	xtype: 'label',
-				                	padding: '4 0 0 0',
-				                	text: HreRem.i18n('fieldlabel.permite.gasto.sin.activos')
-				                }
-				     ]
-				},
-				{
-					xtype : 'activosafectadosgastolist',
-					reference : 'listadoActivosAfectadosRef'					
-
-				}
-
-		];
+			{
+				xtype:'fieldsettable',
+				layout:'hbox',
+				defaultType: 'container',
+		        title: HreRem.i18n('title.identificacion'),
+				items :
+					[{ 
+						defaultType: 'textfieldbase',
+						flex: 1,
+						items:[
+							{
+								xtype: "combobox",
+			    				fieldLabel: HreRem.i18n('title.gasto.detalle.economico.lineas.detalle'),
+			    				reference: 'comboLineasDetalleReference',
+			    				name: 'comboLineaDetalleName',
+			    				width:'30%',	
+			    				colspan: 3,
+			    				flex: 3,
+			    				margin: '10 0 10 0',
+			    				displayField: 'descripcion',
+								valueField: 'codigo',
+			    				bind: {
+			    					store: '{comboLineasDetallePorGasto}'
+			    				},
+			    				listeners:{
+			    					change: 'onChangeLineaDetalleStore'
+			    				}
+							},	
+							{
+				            	colspan: 3,
+				    			flex: 3,
+								xtype : 'activosafectadosgastolist',
+								reference : 'listadoActivosAfectadosRef'					
+			
+							},
+							{
+								xtype: 'button',
+								text: HreRem.i18n('btn.reparto.segun.valor.adquisicion'),
+								reference: 'btnReparto',
+								itemId: 'btnReparto',
+								margin: '10 10 10 10',
+								handler: 'asignarParticipacionActivos',
+								hidden: !isCarteraLiberbank, 
+								disabled: true
+							}]
+					}]
+	
+			}];
 
 		me.addPlugin({
 					ptype : 'lazyitems',

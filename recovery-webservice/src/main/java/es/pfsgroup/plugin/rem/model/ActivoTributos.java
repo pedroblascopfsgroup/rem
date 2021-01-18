@@ -114,7 +114,7 @@ public class ActivoTributos implements Serializable, Auditable {
 	
 	
     @Column(name = "NUM_EXPEDIENTE")
-    private Long expediente;
+    private String expediente;
 	
 	@Column(name = "ACT_TRI_FECHA_COM_DEV_INGRESO")
 	private Date fechaComunicacionDevolucionIngreso;
@@ -312,11 +312,11 @@ public class ActivoTributos implements Serializable, Auditable {
 		this.importePagado = importePagado;
 	}
 
-	public Long getExpediente() {
+	public String getExpediente() {
 		return expediente;
 	}
 
-	public void setExpediente(Long expediente) {
+	public void setExpediente(String expediente) {
 		this.expediente = expediente;
 	}
 

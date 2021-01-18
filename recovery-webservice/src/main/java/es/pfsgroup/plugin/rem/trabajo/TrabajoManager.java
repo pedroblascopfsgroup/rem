@@ -1393,14 +1393,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
 			trabajos.add(trabajo);
 		}
-		if(participacionTotalPorCien != 0) {
-			while(participacionTotalPorCien != 0) {
-				participacionTotalPorCien--;
-				trabajo.getActivosTrabajo().get(participacionTotalPorCien).setParticipacion(
-						trabajo.getActivosTrabajo().get(participacionTotalPorCien).getParticipacion()+(1/100f));
-			}
-			trabajoDao.saveOrUpdate(trabajo);
-		}
 
 		return trabajos;
 

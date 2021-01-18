@@ -287,10 +287,6 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	
 	public Double calcularParticipacionPorActivo(String codigoTipoTrabajo, List<Activo> activosLista, Activo activo_check, HashMap<Activo, List<ActivoValoraciones>> valoraciones){
 		//Si algún parámetro es nulo, omitimos el procedimiento.
-		if (codigoTipoTrabajo == null || activo_check == null) {
-			return null;
-		}
-
 		//Si todos los argumentos son null, se devuelve un 100% de participación.
 		if((activosLista == null || activosLista.isEmpty()) || codigoTipoTrabajo == null || activo_check == null){
 			return 100d;

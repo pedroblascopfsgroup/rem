@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=20210115
+--## AUTOR=Jonathan Ovalle
+--## FECHA_CREACION=20210113
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10730
+--## INCIDENCIA_LINK=HREOS-12763
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en ACT_P20_PRORRATA_DIARIO20 los datos añadidos en T_ARRAY_DATA
+--## Finalidad: Script que añade en DD_TAL_TIPO_ALTA los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -32,18 +32,16 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-10730';
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-12763';
 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_P20_PRORRATA_DIARIO20'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_TAL_TIPO_ALTA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     -- PARTIDA_PRESUPUESTARIA   DD_TGA_CODIGO  DD_TIM_CODIGO   DD_SCR_CODIGO
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('B84921758',57),
-        T_TIPO_DATA('A78485752',41),
-        T_TIPO_DATA('A86486461',30),
-        T_TIPO_DATA('A86201993',7)
+        T_TIPO_DATA('PAM','Proceso de Alta Manual','Proceso de Alta Manual')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -55,55 +53,34 @@ BEGIN
       LOOP
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
-
-          DBMS_OUTPUT.PUT_LINE('[INFO]: FUSIONAMOS EL REGISTRO '''||TRIM(V_TMP_TIPO_DATA(1))||'''');
-          V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' T1
-            USING (
-              SELECT P20.P20_ID
-                , PRO.PRO_ID
-              FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' P20 
-              JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_DOCIDENTIF = '''||V_TMP_TIPO_DATA(1)||'''
-                AND PRO.BORRADO = 0
-              WHERE P20.BORRADO = 0
-                AND P20.P20_PRORRATA <> '||V_TMP_TIPO_DATA(2)||'
-            ) T2
-            ON (T1.P20_ID = T2.P20_ID)
-            WHEN MATCHED THEN
-              UPDATE SET T1.P20_PRORRATA = '||V_TMP_TIPO_DATA(2)||'
-                , T1.P20_GASTO = 100 - '||V_TMP_TIPO_DATA(2)||'
-                , T1.USUARIOMODIFICAR = '''||V_ITEM||'''
-                , T1.FECHAMODIFICAR = SYSDATE
-            WHEN NOT MATCHED THEN
-              INSERT (
-                T1.P20_ID
-                , T1.PRO_ID
-                , T1.P20_PRORRATA
-                , T1.P20_GASTO
-                , T1.USUARIOCREAR
-                , T1.FECHACREAR
-              )
-              VALUES (
-                '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'.NEXTVAL
-                , T2.PRO_ID
-                , '||V_TMP_TIPO_DATA(2)||'
-                , 100 - '||V_TMP_TIPO_DATA(2)||'
-                , '''||V_ITEM||'''
-                , SYSDATE
-              )';
-
+       
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE
+        DD_TAL_CODIGO = '''||V_TMP_TIPO_DATA(1)||'''
+        AND DD_TAL_DESCRIPCION = '''||V_TMP_TIPO_DATA(2)||'''
+        AND DD_TAL_DESCRIPCION_LARGA = '''||V_TMP_TIPO_DATA(3)||'''';
+         DBMS_OUTPUT.PUT_LINE(V_SQL);
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        IF V_NUM_TABLAS = 1 THEN
+          DBMS_OUTPUT.PUT_LINE('[INFO]: La '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe');
+        ELSE
+          DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
+          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' (
+                      DD_TAL_ID,DD_TAL_CODIGO, DD_TAL_DESCRIPCION,DD_TAL_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) VALUES(
+                       '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'.NEXTVAL
+                       ,'''||V_TMP_TIPO_DATA(1)||''','''||V_TMP_TIPO_DATA(2)||'''
+                       ,'''||V_TMP_TIPO_DATA(3)||''',0,'''||V_ITEM||''',SYSDATE,0)';
           DBMS_OUTPUT.PUT_LINE(V_MSQL);
           EXECUTE IMMEDIATE V_MSQL;
-
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
-
+        END IF;
       END LOOP;
-
     COMMIT;
 
     DBMS_OUTPUT.PUT_LINE('[FIN]: Tabla '||V_TEXT_TABLA||' MODIFICADA CORRECTAMENTE ');
+   
 
 EXCEPTION
-     WHEN OTHERS THEN
+     WHEN OTHERS THEN   
           err_num := SQLCODE;
           err_msg := SQLERRM;
 

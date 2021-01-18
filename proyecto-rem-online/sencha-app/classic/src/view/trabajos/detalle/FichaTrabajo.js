@@ -188,7 +188,10 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                		value: '{trabajo.aplicaComite}'
 				                	},
 				                	reference: 'aplicaComiteRef',
-				                	readOnly: true
+				                	readOnly: true,
+									listeners:{
+										change: 'onChangeCheckAplicaComite'
+									}
 				                	
 				                },
 				                {
@@ -467,6 +470,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					        	colspan: 2,
 					        	bind: {
 				            		store: '{comboProveedorReceptor}',
+									disabled: '{!comboProveedorLlave.selection}',
 				            		value: '{trabajo.idProveedorReceptor}'
 				            	},
 				            	displayField: 'nombre',

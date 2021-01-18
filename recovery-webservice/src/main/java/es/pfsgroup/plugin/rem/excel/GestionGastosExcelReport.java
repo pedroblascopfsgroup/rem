@@ -154,8 +154,8 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 			fila.add(gastoProveedor.getProvisionFondos());
 			fila.add(String.valueOf(gastoProveedor.getIdLinea()));
 			
-			fila.add(String.valueOf(gastoProveedor.getImpPrincipalSujeto()));
-			fila.add(String.valueOf(gastoProveedor.getImpPrincipalNoSujeto()));
+			fila.add(getImporte(gastoProveedor.getImpPrincipalSujeto()));
+			fila.add(getImporte(gastoProveedor.getImpPrincipalNoSujeto()));
 			
 			fila.add(gastoProveedor.getApartadoBase());
 			fila.add(gastoProveedor.getCapituloBase());
@@ -163,7 +163,7 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 			fila.add(gastoProveedor.getConceptoContable());
 			fila.add(gastoProveedor.getSubcuentaContableBase());
 			
-			fila.add(String.valueOf(gastoProveedor.getImpRecargo()));
+			fila.add(getImporte(gastoProveedor.getImpRecargo()));
 			
 			fila.add(gastoProveedor.getApartadoRecargo());
 			fila.add(gastoProveedor.getCapituloRecargo());
@@ -171,7 +171,7 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 			fila.add(gastoProveedor.getCuentaContableRecargo());
 			fila.add(gastoProveedor.getSubcuentaContableRecargo());
 			
-			fila.add(String.valueOf(gastoProveedor.getImpDemora()));
+			fila.add(getImporte(gastoProveedor.getImpDemora()));
 			
 			fila.add(gastoProveedor.getApartadoIntereses());
 			fila.add(gastoProveedor.getCapituloIntereses());
@@ -179,7 +179,7 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 			fila.add(gastoProveedor.getCuentaContableIntereses());
 			fila.add(gastoProveedor.getSubcuentaContableIntereses());
 			
-			fila.add(String.valueOf(gastoProveedor.getImpTasas()));
+			fila.add(getImporte(gastoProveedor.getImpTasas()));
 			
 			fila.add(gastoProveedor.getApartadoTasa());
 			fila.add(gastoProveedor.getCapituloTasa());
@@ -196,5 +196,14 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 
 	public String getReportName() {
 		return AbstractExcelReport.LISTA_DE_GESTION_GASTOS_XLS;
+	}
+	
+	private String getImporte(Double importe) {
+		if (importe != null) {
+			return String.valueOf(importe);
+		}else {
+			return "0.0";
+		}
+		
 	}
 }

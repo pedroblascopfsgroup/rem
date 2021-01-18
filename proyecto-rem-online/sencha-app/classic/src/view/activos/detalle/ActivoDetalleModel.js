@@ -1187,6 +1187,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 			return retorno;
 		},
+		esPerfilSuperYSupercomercial :function(get){
+			
+		 	return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERCOMERCIAL']);
+		},	
 		
 		esUsuarioBBVA: function(get) {
 			return $AU.getUser().codigoCartera == CONST.CARTERA['BBVA'];
@@ -1195,12 +1199,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		btnNuevaPeticionTrabajoOculto: function(get) {
 			var isIncluidoEnPerimetro = get('activo.incluidoEnPerimetro');
 			return (isIncluidoEnPerimetro == false || $AU.getUser().codigoCartera == CONST.CARTERA['BBVA']);
-		},
-		
-			esPerfilSuperYSupercomercial :function(get){
-			
-		 	return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERCOMERCIAL']);
-				
 		}
 	 
     },

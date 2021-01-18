@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Beltrán
---## FECHA_CREACION=20200319
+--## FECHA_CREACION=20200320
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-5485

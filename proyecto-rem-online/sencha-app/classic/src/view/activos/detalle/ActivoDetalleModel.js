@@ -2238,7 +2238,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		
 		storeEntidades: {
 			pageSize: $AC.getDefaultPageSize(),
-			model: 'HreRem.model.Proveedor',
+			model: 'HreRem.model.ActivoIntegrado',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'activo/getProveedoresByActivoIntegrado',

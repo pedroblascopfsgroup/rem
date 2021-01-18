@@ -3465,8 +3465,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(activoIntegrado.getRetenerPago())) {
 				if (activoIntegrado.getRetenerPago() == 1) {
 					dto.setRetenerPagos(true);
+					dto.setPagosRetenidos(1);
 				} else {
 					dto.setRetenerPagos(false);
+					dto.setPagosRetenidos(0);
 				}
 			}
 

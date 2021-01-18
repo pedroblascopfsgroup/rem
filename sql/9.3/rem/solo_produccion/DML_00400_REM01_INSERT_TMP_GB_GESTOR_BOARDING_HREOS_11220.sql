@@ -56,6 +56,7 @@ BEGIN
        and coe.coe_solicita_reserva=1
       and tap.tap_codigo in (''T013_PBCReserva'', ''T017_PBCReserva'', ''T013_InstruccionesReserva'',''T013_ObtencionContratoReserva'',''T017_InstruccionesReserva'',''T017_ObtencionContratoReserva'')
      and eco.eco_num_expediente not in (87143,86139,17261,17236)';
+
     EXECUTE IMMEDIATE V_MSQL;
 
     COMMIT;

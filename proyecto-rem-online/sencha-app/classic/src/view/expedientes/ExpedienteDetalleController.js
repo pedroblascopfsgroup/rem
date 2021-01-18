@@ -653,6 +653,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this,
 	    activeTab = null,
 	    refrescarTabActiva = Ext.isEmpty(refrescarTabActiva) ? false : refrescarTabActiva;
+		
 	    if(!Ext.isEmpty(me.getView().down("tabpanel"))){
 	         activeTab = me.getView().down("tabpanel").getActiveTab();
 	    }else {
@@ -4910,6 +4911,11 @@ comprobarFormatoModificar: function() {
 		
 	},
 	
+	editarAuditoriaDesbloqueo: function(viewChained){
+		var expediente = this.getViewModel().get("expediente.id");
+		var window = Ext.create("HreRem.view.expedientes.editarAuditoriaDesbloqueo",{expediente: expediente, viewChained: viewChained}).show();
+	},
+	
 	comprobarProcesoAsincrono: function(tabPanel, view) {			
 		var me= this;
 		var url = $AC.getRemoteUrl('tramitacionofertas/checkProceso');						
@@ -5062,6 +5068,100 @@ comprobarFormatoModificar: function() {
 			}
 		});
 		
-	}
+	},
 	
+	onClickBotonCancelarAuditoria: function(btn){
+		var me = this;
+		test = btn.up('window');
+		test.close();
+		test.destroy();
+	},
+	
+	onClickBotonGuardarAuditoria: function(btn){
+		var me =this;
+		var url = $AC.getRemoteUrl('expedientecomercial/insertarRegistroAuditoriaDesbloqueo');
+		var view = btn.up('window');
+		var user = $AU.getUser().userId;
+		var comentario = view.items.items[0].items.items[0].value;
+		var expediente = view.expediente;
+		
+		if ( comentario.length > 0 ) {
+			me.getView().mask(HreRem.i18n("msg.mask.espere"));
+			
+			Ext.Ajax.request({
+				url: url,
+			    params:  {
+			    	expedienteId : expediente,
+			    	comentario: comentario,
+			    	usuId: user
+			    },
+			    
+			    success: function(response, opts) {
+			    	
+			    	var data = {};
+			    	try {
+			    		data = Ext.decode(response.responseText);
+			    	}  catch (e){ 
+			    		console.log( e );
+			    	}
+	               
+			    	if(data.success === "true") {
+			    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			    		view.viewChained.habilitarGrid();
+			    		me.onClickBotonCancelarAuditoria(btn);
+			    	}else {
+			    		if(data.errorUvem == "true"){
+			    			me.fireEvent("errorToast", data.msg);		
+			    		}
+			    		else{
+			    			Utils.defaultRequestFailure(response, opts);
+			    		}
+			    	}
+			     },
+
+			     failure: function(response, opts) {
+			    	 if(data.errorUvem == "true"){
+			    		 me.fireEvent("errorToast", data.msg);		
+			    	 } else {
+			    		 Utils.defaultRequestFailure(response, opts);
+			    	 }
+			     }
+			});	
+		} else {
+			 me.fireEvent("errorToast", "El comentario no puede estar vac&iacute;o");
+		}
+	},
+	checkVisibilidadBotonAuditoriaDesbloqueo: function( viewModel ) {
+		var me = this;
+		var url = $AC.getRemoteUrl('expedientecomercial/getCierreEconomicoFinalizado');
+		var expedienteId = viewModel.get('expediente.id')
+		var btn = me.lookupReference("botonAuditoriaDesbloqueo");
+		var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION'])
+		|| $AU.userIsRol(CONST.PERFILES['PERFGCONTROLLER']);
+		var listadoHonorarios = me.lookupReference("listadohoronarios");
+		if ( usuariosValidos ){
+			Ext.Ajax.request({
+				url: url,
+				method: 'GET',
+			    params:  {
+			    	expedienteId : expedienteId
+			    },
+			    success: function(response, opts) {
+			    	try {
+			    		data = Ext.decode(response.responseText);
+				    	if(data.success === "true" && data.data === "true") {
+				    		listadoHonorarios.setDisabledAddBtn(true);
+				    		listadoHonorarios.setDisabledDeleteBtn(true);
+				    		btn.setVisible(true)
+				    	}
+			    	}  catch (e){ 
+			    		console.log( e );
+			    	}
+			     },
+			     failure: function(response, opts) {
+		    		 Utils.defaultRequestFailure(response, opts);
+			     }
+			});	
+		}
+	}
 });

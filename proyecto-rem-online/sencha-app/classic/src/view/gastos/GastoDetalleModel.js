@@ -4,7 +4,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase',
 			'HreRem.model.GastoActivo', 'HreRem.model.GestionGasto',
 			'HreRem.model.BusquedaTrabajo', 'HreRem.model.AdjuntoGasto',
-			'HreRem.model.GastoRefacturableGridExistenteStore'],
+			'HreRem.model.GastoRefacturableGridExistenteStore', 'HreRem.model.BusquedaTrabajoGasto',
+			'HreRem.model.LineaDetalleGastoGridModel'],
 
 	data : {
 		gasto : null,
@@ -48,9 +49,35 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 
 			return true;
 		},
-		ocultarBotonesTrabajos : function(get) {
-			var codigoEstadoCodigo = get('gasto.estadoGastoCodigo');
+		
+		esPropietarioBankia : function(get){
+			var me = this;
+			var gasto = me.getData().gasto;
+			if (Ext.isEmpty(gasto)) {
+				return false;
+			} else {
+				var nombrePropietario = gasto.get('nombrePropietario');
+			}
 
+			if ( Ext.isEmpty(nombrePropietario)) {
+				return false;
+			}
+			
+			if(nombrePropietario == CONST.NOMBRE_CARTERA2['BANKIA'] || nombrePropietario == CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT']){
+				return true;
+			}
+			else{
+				return false;
+			}
+			
+		},
+		ocultarBotonesTrabajos : function(get) {
+			var me = this;
+			var codigoEstadoCodigo = get('gasto.estadoGastoCodigo');
+			var lineasNoDeTrabajos = me.getData().gasto.getData().lineasNoDeTrabajos
+			if(lineasNoDeTrabajos){
+				return true;
+			}
 			if (codigoEstadoCodigo == CONST.ESTADOS_GASTO['INCOMPLETO']
 					|| codigoEstadoCodigo == CONST.ESTADOS_GASTO['RECHAZADO']
 					|| codigoEstadoCodigo == CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']
@@ -62,7 +89,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 		},
 
 		ocultarBotonesActivos : function(get) {
+			var me = this;
 
+			var estadoParaGuardar = me.getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
+	    	var isGastoRefacturado = me.getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPorOtroGasto;
+	    	var isGastoRefacturadoPadre = me.getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPadre;
+	    	
+			if(!estadoParaGuardar || isGastoRefacturado || isGastoRefacturadoPadre){
+				return true;
+			}
+			
 			return get('gasto.autorizado') || get('gasto.asignadoATrabajos');
 		},
 
@@ -145,14 +181,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 
 		},
 
-		calcularImporteTotalGasto : function(get) {
-
-			var irpfCuota = get('detalleeconomico.irpfCuota');
-			var sumatorioConceptosGasto = get('sumatorioConceptosgasto');
-
-			return sumatorioConceptosGasto - irpfCuota;
-
-		},
+//		calcularImporteTotalGasto : function(get) {
+//			var irpfCuota = get('detalleeconomico.irpfCuota');
+//			var sumatorioConceptosGasto = get('sumatorioConceptosgasto');
+//
+//			return sumatorioConceptosGasto - irpfCuota;
+//
+//		},
 
 		esGastoAnulado : function(get) {
 			var e = !Ext.isEmpty(get('gestion.comboMotivoAnulado'));
@@ -188,24 +223,12 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			var estaRechazadoPropietario = CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO'] == get('gasto.estadoGastoCodigo');
 			var estaAutorizadoAdministracion = CONST.ESTADOS_GASTO['AUTORIZADO'] == get('gasto.estadoGastoCodigo');
 			var estaAutorizadoPropietario = CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO'] == get('gasto.estadoGastoCodigo');
-			var estaInformadoCuentaContable = get('gasto.partidaPresupuestaria');
-			var estaInformadoPartidaPresupuestaria = get('gasto.partidaPresupuestaria');
 
-			if (me.get('esCerberusDivarianApple')) {
-				return !estaEnviado && !estaAutorizado && !estaContabilizado
-						&& !estaAnulado && !estaRetenido && !estaIncompleto
-						&& !estaRechazadoPropietario
-						&& !estaAutorizadoAdministracion
-						&& !estaAutorizadoPropietario
-						&& !estaInformadoCuentaContable
-						&& !estaInformadoPartidaPresupuestaria;
-			} else {
-				return !estaEnviado && !estaAutorizado && !estaContabilizado
-						&& !estaAnulado && !estaRetenido && !estaIncompleto
-						&& !estaRechazadoPropietario
-						&& !estaAutorizadoAdministracion
-						&& !estaAutorizadoPropietario;
-			}
+			return !estaEnviado && !estaAutorizado && !estaContabilizado
+					&& !estaAnulado && !estaRetenido && !estaIncompleto
+					&& !estaRechazadoPropietario
+					&& !estaAutorizadoAdministracion
+					&& !estaAutorizadoPropietario;
 
 		},
 
@@ -250,9 +273,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 		getTipoGasto : function(get) {
 
 			var tipoGastoDescripcion = get('gasto.tipoGastoDescripcion');
-			var subtipoGastoDescripcion = get('gasto.subtipoGastoDescripcion');
 			var tipoOperacion = get('gasto.tipoOperacionDescripcion');
-			return tipoGastoDescripcion + ' - ' + subtipoGastoDescripcion;
+			return tipoGastoDescripcion;
 
 		},
 
@@ -320,6 +342,14 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 		emisorSoloLectura : function(get) {
 			return $AU.userIsRol(CONST.PERFILES['PROVEEDOR'])
 					|| get('gasto.tieneGastosRefacturables');
+		},
+		
+		esLiberbank : function(get) {
+			var cartera = get('detalleeconomico.cartera');
+			if(CONST.CARTERA['LIBERBANK'] == cartera){
+				return true;
+			}
+			return false;
 		}
 
 	},
@@ -367,7 +397,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				extraParams : {
 					codigoTipoGasto : '{gasto.tipoGastoCodigo}'
 				}
-			}
+			},
+			autoLoad: true
 		},
 
 		comboSubtiposNuevoGasto : {
@@ -434,7 +465,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				extraParams : {
 					diccionario : 'tiposImpuestos'
 				}
-			}
+			},
+			autoLoad: true
 		},
 
 		storeActivosAfectados : {
@@ -556,26 +588,39 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				}
 			}
 		},
-
-		filtroComboSubtipoTrabajo : {
+		
+		
+		filtroComboTipoTrabajo : {
 			model : 'HreRem.model.ComboBase',
 			proxy : {
 				type : 'uxproxy',
-				remoteUrl : 'generic/getDiccionario',
+				remoteUrl : 'gastosproveedor/getTiposTrabajoByIdGasto',
 				extraParams : {
-					diccionario : 'subtiposTrabajo'
+					idGasto : '{gasto.id}'
 				}
 			}
 
 		},
 
+		filtroComboSubtipoTrabajo : {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'gastosproveedor/getSubTiposTrabajoByIdGasto',
+				extraParams : {
+					idGasto : '{gasto.id}'
+				}
+			}
+
+		},
+		
 		seleccionTrabajosGasto : {
 			pageSize : $AC.getDefaultPageSize(),
-			model : 'HreRem.model.BusquedaTrabajo',
+			model : 'HreRem.model.BusquedaTrabajoGasto',
 			proxy : {
 				type : 'uxproxy',
 				localUrl : '/trabajosgasto.json',
-				remoteUrl : 'trabajo/findAll',
+				remoteUrl : 'trabajo/findBuscadorGastos',
 				actionMethods : {
 					read : 'POST'
 				}
@@ -609,7 +654,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				extraParams : {
 					diccionario : 'tiposDeRecargo'
 				}
-			}
+			},
+			autoLoad: true
 		},
 
 		storeGastosRefacturablesExistentes : {
@@ -633,12 +679,123 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				}
 			}
 		},
+		
+		comboSiNoGastos : {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'generic/getDiccionario',
+				extraParams : {
+					diccionario : 'DDSiNo'
+				}
+			}
+		},
 
         comboSiNoContabilidad: {
             data : [
                 {"codigo":"01", "descripcion":"Si"},
                 {"codigo":"02", "descripcion":"No"}
             ]
-        }
+        },
+        
+        storeLineaGastoDetalle : {
+			model : 'HreRem.model.LineaDetalleGastoGridModel',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'gastosproveedor/getGastoLineaDetalle',
+				extraParams : {
+					idGasto : '{gasto.id}'
+				}
+			}
+		},
+		
+		storeVImporteGastoLbkGrid : {
+			model : 'HreRem.model.VImporteGastoLbkGrid',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'gastosproveedor/getVImporteGastoLbk',
+				extraParams : {
+					idGasto : '{gasto.id}'
+				}
+			}
+		},
+		comboSiNoGastoBoolean : {
+			data : [
+                {"codigo":true, "descripcion":"Si"},
+                {"codigo":false, "descripcion":"No"}
+            ],
+			autoLoad: true
+		},
+
+		comboTipoComision : {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {
+					diccionario: 'tipoComision'
+				}
+			}
+		},
+		
+		storeElementosAfectados : {
+			pageSize : $AC.getDefaultPageSize(),
+			model : 'HreRem.model.GastoProveedor',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'gastosproveedor/getElementosAfectados',
+				extraParams : {
+					idLinea : -1
+				}
+			},
+			
+			autoLoad: false
+		},
+		
+		comboLineasDetallePorGasto : {
+			model : 'HreRem.model.GastoActivo',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'gastosproveedor/getLineasDetalleGastoCombo',
+				extraParams : {
+					idGasto : '{gasto.id}'
+				}
+			},
+			autoLoad: true
+		},
+		storeTipoElemento : {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'generic/getComboTipoElementoGasto',
+				extraParams : {
+					//cargaDinamica
+				}
+			}
+		},
+		
+		storeSubpartidas : {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'generic/getComboSubpartidaPresupuestaria',
+				extraParams : {
+					idGasto : '{gasto.id}'
+				}
+			},
+			autoLoad: true
+		},
+		
+		comboTipoRetencion : {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'generic/getDiccionario',
+				extraParams : {
+					diccionario : 'tipoRetencion'
+				}
+			},
+			autoLoad: true
+		}
 	}
 });

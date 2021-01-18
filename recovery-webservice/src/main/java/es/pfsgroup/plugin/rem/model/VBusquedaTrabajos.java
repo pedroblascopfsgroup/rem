@@ -122,7 +122,25 @@ public class VBusquedaTrabajos implements Serializable {
 	
 	@Column(name="EN_OTRO_GASTO")
 	private Boolean enOtroGasto;
+	
+	@Column(name="TBJ_FECHA_CAMBIO_ESTADO")
+	private Date fechaCambioEstado;
+	
+	@Column(name="TBJ_RESPONSABLE_TRABAJO")
+	private String gestorActual;
+	
+	@Column(name = "DESCRIPCIONCARTERA")
+	private String descripcionCartera;
+	
+	@Column(name = "DESCRIPCIONSUBCARTERA")
+	private String descripcionSubcartera;
 
+	@Column(name="DD_IRE_DESCRIPCION")
+	private String areaPeticionaria;
+
+	@Column(name = "GESTORRESPONSABLE")
+	private String responsableTrabajo;
+	
 	public Integer getCubreSeguro() {
 		return cubreSeguro;
 	}
@@ -359,6 +377,94 @@ public class VBusquedaTrabajos implements Serializable {
 
 	public void setEnOtroGasto(Boolean enOtroGasto) {
 		this.enOtroGasto = enOtroGasto;
+	}
+
+	public Date getFechaCambioEstado() {
+		return fechaCambioEstado;
+	}
+
+	public void setFechaCambioEstado(Date fechaCambioEstado) {
+		this.fechaCambioEstado = fechaCambioEstado;
+	}
+
+	public String getGestorActual() {
+		return gestorActual;
+	}
+
+	public void setGestorActual(String gestorActual) {
+		this.gestorActual = gestorActual;
+	}
+
+	public String getDescripcionCartera() {
+		return descripcionCartera;
+	}
+
+	public void setDescripcionCartera(String descripcionCartera) {
+		this.descripcionCartera = descripcionCartera;
+	}
+
+	public String getDescripcionSubcartera() {
+		return descripcionSubcartera;
+	}
+
+	public void setDescripcionSubcartera(String descripcionSubcartera) {
+		this.descripcionSubcartera = descripcionSubcartera;
+	}
+
+	public String getResponsableTrabajo() {
+		return responsableTrabajo;
+	}
+
+	public void setResponsableTrabajo(String responsableTrabajo) {
+		this.responsableTrabajo = responsableTrabajo;
+	}
+
+	public Long getNumActivo() {
+		return numActivo;
+	}
+
+	public void setNumActivo(Long numActivo) {
+		this.numActivo = numActivo;
+	}
+
+	public Long getIdActivo() {
+		return idActivo;
+	}
+
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
+	}
+
+	public Long getNumAgrupacionRem() {
+		return numAgrupacionRem;
+	}
+
+	public void setNumAgrupacionRem(Long numAgrupacionRem) {
+		this.numAgrupacionRem = numAgrupacionRem;
+	}
+
+	public String getSubcartera() {
+		return subcartera;
+	}
+
+	public void setSubcartera(String subcartera) {
+		this.subcartera = subcartera;
+	}
+
+	public Integer getFacturado() {
+		return facturado;
+	}
+
+	public void setFacturado(Integer facturado) {
+		this.facturado = facturado;
+	}
+
+	public String getAreaPeticionaria() {
+		return areaPeticionaria;
+	}
+
+	public void setAreaPeticionaria(String areaPeticionaria) {
+		this.areaPeticionaria = areaPeticionaria;
 	}
 	
 }

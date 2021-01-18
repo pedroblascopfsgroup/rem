@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivosAlquiladosGrid;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoAuditoriaDesbloqueo;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
@@ -1308,6 +1309,21 @@ public interface ExpedienteComercialApi {
 	String doCalculateComiteByExpedienteId(Long idExpediente);
 	
 	DtoOrigenLead getOrigenLeadList(Long idExpediente);
+	
+	List<DtoAuditoriaDesbloqueo> getAuditoriaDesbloqueoList(Long idExpediente);
+	
+	void insertarRegistroAuditoriaDesbloqueo(Long expedienteId, String comentario, Long usuId);
+
+	/*
+	 * Devuelve si el expediente ha finalizado la tarea Cierre Económico
+	 * @param idOferta
+	 * @return DDComiteSancion
+	 */
+	boolean finalizadoCierreEconomico(ExpedienteComercial expediente);
+	
+	boolean cumpleCondicionesCrearHonorario(Long idEntidad);
+
+	boolean finalizadoCierreEconomico(Long expedienteId);
 	/**
 	 * Método para activar compradores de la pestaña 'Compradores' del expediente comercial que están de baja 
 	 * @param idExpediente 

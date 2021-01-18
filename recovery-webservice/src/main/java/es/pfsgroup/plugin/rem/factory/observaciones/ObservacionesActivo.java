@@ -41,7 +41,8 @@ public class ObservacionesActivo extends GridObservaciones implements GridObserv
 				DDTipoObservacionActivo.CODIGO_CARGAS,
 				DDTipoObservacionActivo.CODIGO_LLAVES,
 				DDTipoObservacionActivo.CODIGO_SANEAMIENTO,
-				DDTipoObservacionActivo.CODIGO_REVISION_TITULO
+				DDTipoObservacionActivo.CODIGO_REVISION_TITULO,
+				DDTipoObservacionActivo.CODIGO_TRABAJOS
 			};
 	}
 	

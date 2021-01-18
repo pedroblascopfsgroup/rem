@@ -284,8 +284,8 @@ public class GenericController extends ParadiseJsonController{
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboSubtipoActivo(String codigoTipoActivo){
-		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoActivo(codigoTipoActivo)));	
+	public ModelAndView getComboSubtipoActivo(String codigoTipoActivo, String idActivo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoActivo(codigoTipoActivo,idActivo)));	
 	}	
 
 	@SuppressWarnings("unchecked")
@@ -686,6 +686,14 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getPartidaPresupuestaria(Long idSubpartida){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getPartidaPresupuestaria(idSubpartida)));	
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboTipoElementoGasto(Long idGasto, Long idLinea) {
+		if(idLinea == -1) {
+			return null;
+		}
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoElementoGasto(idGasto, idLinea)));	
+	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboActivoProveedorSuministro(){
@@ -711,7 +719,7 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getcomboSociedadAnteriorBBVA() {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getcomboSociedadAnteriorBBVA()));	
 	}
-		
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboEstadoAdmision(WebDto webDto, ModelMap model){

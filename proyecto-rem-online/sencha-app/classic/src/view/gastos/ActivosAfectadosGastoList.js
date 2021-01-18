@@ -12,41 +12,49 @@ var sumaValores = function(record, field) {
 Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 	extend : 'HreRem.view.common.GridBaseEditableRow',
 	xtype : 'activosafectadosgastolist',
-	requires: ['HreRem.view.gastos.AnyadirNuevoGastoActivo'],
+	requires: ['HreRem.view.gastos.AnyadirNuevoGastoActivo', 'HreRem.model.LineaDetalleGastoGridModel'],
 	cls : 'panel-base shadow-panel',
 	idPrincipal : 'id',
 	bind : {
-		store : '{storeActivosAfectados}'
+		store : '{storeElementosAfectados}'
 	},
 	listeners : {
 		
 		beforeedit : function(editor, e) {
 			var me = this;
-			if(!me.up('gastodetallemain').getViewModel().get('gasto.asignadoATrabajos')){
-				var record = e.record;
-				var columnas = me.getColumns();
-				for (var i = 0; i < columnas.length; i++) {
-					if (columnas[i].dataIndex == 'referenciaCatastral') {
-						var columna = columnas[i];
-					}
+			var record = e.record;
+			var columnas = me.getColumns();
+			var referenciaCatastral, tipoElementoCodigo, participacion;
+			for (var i = 0; i < columnas.length; i++) {
+				if (columnas[i].dataIndex == 'referenciaCatastral') {
+					referenciaCatastral = columnas[i];
 				}
-				var combo = columna.getEditor();
-	
-				var objetoStore = [];
-				var objeto = null;
-				if(record.get("referenciasCatastrales")){
-					var data = record.get("referenciasCatastrales").split(",");
-					for (var i = 0; i < data.length; i++) {
-						objeto = {
-							descripcion : '' + data[i] + '',
-							codigo : '' + data[i] + ''
-						};
-						objetoStore.push(objeto);
-					};
+				if (columnas[i].dataIndex == 'participacion') {
+					participacion = columnas[i];
 				}
-				combo.getStore().setData(objetoStore);
-			}else{
-				return false;
+			}
+
+			var estadoParaGuardar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
+	    	var isGastoRefacturado = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPorOtroGasto;
+	    	var isGastoRefacturadoPadre = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPadre;
+	    	var edicion = true;
+	    	
+	    	if(me.up('gastodetallemain').getViewModel().get('gasto.asignadoATrabajos') || me.up('gastodetallemain').getViewModel().get('gasto.autorizado')){
+	    		edicion = false;
+	    	}
+	    	
+			var columnaReferenciaCatastral = referenciaCatastral.getEditor();
+			var columnaParticipacion = participacion.getEditor();
+			if( edicion && estadoParaGuardar && !isGastoRefacturado && !isGastoRefacturadoPadre){
+				if(CONST.TIPO_ELEMENTOS_GASTO['CODIGO_ACTIVO'] === record.getData().tipoElementoCodigo){
+					columnaReferenciaCatastral.setDisabled(false);
+				}else{
+					columnaReferenciaCatastral.setDisabled(true);
+				}
+				columnaParticipacion.setDisabled(false);
+			}else{;
+				columnaReferenciaCatastral.setDisabled(true);
+				columnaParticipacion.setDisabled(true);
 			}
 		},
 		
@@ -57,11 +65,11 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 	},
 	
 	initComponent : function() {
-
-		var me = this;
 		
-		var catastroStore = Ext.create('Ext.data.Store',{model: 'HreRem.model.ComboBase', autoload:false});
-
+		var me = this;
+		var cartera = me.lookupController().getView().getViewModel().getData().gasto.getData().cartera
+		const esBBVA = CONST.CARTERA['BBVA'] === cartera;
+		
 		me.tbar =  {
 			xtype: 'toolbar',
 			dock: 'top',
@@ -88,57 +96,87 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					hideable : false
 				},
 				{
+					text: HreRem.i18n('header.elementos.afectados.id.linea.id'),
+					dataIndex : 'idLinea',
+					flex : 1,
+					hidden : false,
+					hideable : false
+				},
+				{
 					dataIndex : 'idActivo',
 					flex : 1,
 					hidden : true,
 					hideable : false
-				}, {
-					text : HreRem.i18n('header.activos.afectados.id.activo'),
+				},
+				{
+					dataIndex : 'idElemento',
+					flex : 1,
+					hidden : true
+				},
+				{
+					dataIndex : 'tipoElementoCodigo',
+					flex : 1,
+					hidden : true
+				},
+				{
+					text : HreRem.i18n('header.elementos.afectados.id.linea'),
+					dataIndex : 'descripcionLinea',
+					flex : 1,
+					hidden : false,
+					hideable : false
+				},
+				{
+					text : HreRem.i18n('header.elementos.afectados.tipo.elemento'),
+					dataIndex : 'tipoElemento',
+					flex : 1,
+					hidden : false
+				},
+				{
+					text : HreRem.i18n('header.elementos.afectados.id.elemento'),
 					xtype: 'actioncolumn',
-		        	dataIndex: 'numActivo',
+		        	dataIndex: 'idElemento',
 			        items: [{
-			            tooltip: HreRem.i18n('fieldlabel.ver.activo'),
 			            getClass: function(v, metadata, record ) {
-			            	return "app-list-ico ico-ver-activov2";
+			            	if(CONST.TIPO_ELEMENTOS_GASTO['CODIGO_ACTIVO'] === record.getData().tipoElementoCodigo){
+			            		return "app-list-ico ico-ver-activov2";
+			            	}
 			            				            	
 			            },
-			            handler: 'onEnlaceActivosClick'
+			            handler: 'onEnlaceActivosElementosAfectados'
 			        }],
-			        renderer: function(value, metadata, record) {
-			        		return '<div style="float:right; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>'
-			        	
+			        renderer: function(value, metadata, record) {        	
+			        	return '<div style="float:right; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>'
 			        },
 		            flex     : 1,            
 		            align: 'left',
-//		            menuDisabled: true,
 		            hideable: false,
 		            sortable: true
-				}, {
-					text : HreRem.i18n('header.activos.afectados.referencia.catastral'),
-					dataIndex : 'referenciaCatastral',
-					editor: {
-						xtype: 'comboboxfieldbase',
-						reference: 'comboReferenciaEditar',
-						store: catastroStore,
-						displayField: 'descripcion',
-						addUxReadOnlyEditFieldPlugin: false,
-    					valueField: 'codigo'
-					},
-					renderer: function(value, a, record, e) {
-						return value;
-					},
-					flex : 1
-				}, {
+				},{
 					text : HreRem.i18n('header.activos.afectados.subtipo.activo'),
-					dataIndex : 'subtipoDescripcion',
+					dataIndex : 'tipoActivo',
 					flex : 1
-				}, {
+				}, 
+				{
+					text : HreRem.i18n('header.elementos.afectados.linea.factura'),
+					dataIndex : 'lineaFactura',
+					hidden : !esBBVA,
+					flex : 1
+				},
+				{
 					text : HreRem.i18n('header.activos.afectados.direccion'),
 					dataIndex : 'direccion',
 					flex : 1
-				}, {
-					xtype: 'numbercolumn',
-					text : HreRem.i18n('header.activos.afectados.porcentaje.participacion.gasto'),
+				}, 
+				{
+					text : HreRem.i18n('header.activos.afectados.referencia.catastral'),
+					dataIndex : 'referenciaCatastral',
+					editor: {
+						xtype: 'textfield',
+						reference: 'comboReferenciaEditar'
+					},
+					flex : 1
+				},{
+					text : HreRem.i18n('header.activos.afectados.porcentaje.participacion.linea'),
 					dataIndex : 'participacion',
 					renderer: function(value) {
 						const formatter = new Intl.NumberFormat('es-ES', {
@@ -155,6 +193,8 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					summaryType: function(){
 						var store = this;
 	                    var records = store.getData().items;
+	                    records = records.filter(function(value, index, self) { 
+	                    	  return self.indexOf(value) === index;});
 	                    var field = ['participacion'];
 	                    
 	                    if (this.isGrouped()) {
@@ -197,52 +237,50 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 			          return formatter.format(value) + "\u20AC";
 			        },
 					text : HreRem.i18n('header.activos.afectados.importe.proporcional.total'),
-					dataIndex : 'importeProporcinalTotal',
+					dataIndex : 'importeProporcinalSujeto',
 					flex : 1,
-					summaryType: function(){
-						var store = this;
-	                    var records = store.getData().items;
-	                    var field = ['importeProporcinalTotal'];
-	                    
-	                    if (this.isGrouped()) {
-	                        var groups = this.getGroups();
-	                        var i = 0;
-	                        var len = groups.length;
-	                        var out = {};
-	                        var group;
-	                        for (; i < len; i++) {
-	                            group = groups[i];
-	                            out[group.name] = sumaValores.apply(store, [group.children].concat(field));
-	                        }
-	                        var groupSum = out[groups[w].name];
-	                        w++;
-	                        return groupSum;
-	                    } else {
-	                        return sumaValores.apply(store, [records].concat(field));
-	                    }
-					},
+					summaryType: 'sum',
 		            summaryRenderer: function(value, summaryData, dataIndex) {
 		            	const formatter = new Intl.NumberFormat('es-ES', {
 		            		   minimumFractionDigits: 2,      
 		            		   maximumFractionDigits: 2
-		            		});
-		            	var value2 = formatter.format(value);
-		            	var msg = HreRem.i18n("header.activos.afectados.importe.proporcional.total") + " " + value2 + "\u20AC";
-		            	var style = "style= 'color: black'";
-
-		            	var importeTotal = 0;
-		            	if(!Ext.isEmpty(me.store.getData().items[0])){
-							importeTotal = me.store.getData().items[0].get('importeTotalGasto');
-						}
-		            	if(parseFloat(value).toFixed(2) != parseFloat(importeTotal).toFixed(2)) {		            		
-		            		style = "style= 'color: red'";
-		            	}			            	
-		            	return "<span "+style+ ">"+msg+"</span>";
+		            	});
+		            	var store = me.lookupController().getView().lookupReference('listadoActivosAfectadosRef').getStore();
+		            	if(!Ext.isEmpty(store)){
+			            	var dataStore = store.getData().items;
+			            	var sumaValue = parseFloat(0.0);
+			            	for(var i = 0; i < dataStore.length; i++){
+			            		if(!Ext.isEmpty(dataStore[i].data)  && !Ext.isEmpty(dataStore[i].data.importeProporcinalSujeto)){
+			            			sumaValue = sumaValue + parseFloat(dataStore[i].data.importeProporcinalSujeto);
+			            		}
+			            	}
+			            	var value2 = formatter.format(sumaValue);
+			            	var msg = HreRem.i18n("header.activos.afectados.importe.proporcional.total") + " " + value2 + "\u20AC";
+			            	var style = "style= 'color: black'";
+			            	var importeTotal = formatter.format(dataStore[0].get('importeTotalSujetoLinea'));
+			            	if(importeTotal==""){
+			            		importeTotal = formatter.format(0);
+			            	}
+			            	if(value2 != importeTotal) {
+			            		style = "style= 'color: red'";
+			            	}			            	
+			            	return "<span "+style+ ">"+msg+"</span>"
+		            	}
 		            }
-
 				}
 		];
-		
+		 me.dockedItems = [
+	        {
+	            xtype: 'pagingtoolbar',
+	            dock: 'bottom',
+	            itemId: 'activosPaginationToolbar',
+	            inputItemWidth: 60,
+	            displayInfo: true,
+	            bind: {
+	                store: '{storeElementosAfectados}'
+	            }
+	        }
+	    ];
 		me.callParent();
 	},
 	
@@ -251,36 +289,59 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 
 		var idGasto= me.up('form').viewWithModel.getViewModel().get('gasto.id');
 		var parent= me.up('form');
-		Ext.create('HreRem.view.gastos.AnyadirNuevoGastoActivo',{idGasto: idGasto, parent: parent}).show();
-		
+		var tieneSuplidos = me.lookupController().getView().getViewModel().getData().gasto.getData().suplidosVinculadosCod;
+    	var tieneNumeroFacturaPrincipal = me.lookupController().getView().getViewModel().getData().gasto.getData().facturaPrincipalSuplido;
+	
+		if(!Ext.isEmpty(tieneSuplidos) && (tieneSuplidos  == CONST.COMBO_SIN_NO['SI'] || !Ext.isEmpty(tieneNumeroFacturaPrincipal))){
+    		me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.crear.gasto.linea.detalle.con.activo")); 
+    	}else{
+			Ext.create('HreRem.view.gastos.AnyadirNuevoGastoActivo',{idGasto: idGasto, parent: parent}).show();
+    	}
     },
     
-    onDeleteClick: function(){
+    onDeleteClick: function(record){
 		var me = this;
+		var idElemento = me.selection.data.id;
+		var elementoVacio = me.selection.data.idElemento;
+		var tieneSuplidos = me.lookupController().getView().getViewModel().getData().gasto.getData().suplidosVinculadosCod;
+    	var tieneNumeroFacturaPrincipal = me.lookupController().getView().getViewModel().getData().gasto.getData().facturaPrincipalSuplido;
 		
-		var idGastoActivo = me.selection.data.id;
-		var params = {};
-		params.id = idGastoActivo;
-		var url =  $AC.getRemoteUrl('gastosproveedor/deleteGastoActivo');
+		if(Ext.isEmpty(elementoVacio)){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ok.linea.detalle.informacion"));
+			return;
+		}else if(!Ext.isEmpty(tieneSuplidos) && (tieneSuplidos  == CONST.COMBO_SIN_NO['SI'] || !Ext.isEmpty(tieneNumeroFacturaPrincipal))){
+    		me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.eliminar.gasto.linea.detalle.con.activo")); 
+    		return;
+    	}
+		var url =  $AC.getRemoteUrl('gastosproveedor/desasociarElementosAgastos');
+		
+		me.mask(HreRem.i18n("msg.mask.loading"));
 		
 		Ext.Ajax.request({		    			
 		 		url: url,
-		   		params: params,	    		
+		 		method: 'GET',
+		 		params: {
+		 			idElemento: idElemento
+		 		},   		
 		    	success: function(response, opts) {		    		
-					var data = Ext.decode(response.responseText);
-					if(!Ext.isEmpty(data) && data.success == "true") {
-						me.up('form').funcionRecargar();
-						me.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
-						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-					} else {	
-						me.up('form').funcionRecargar();
-						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-					}
+					me.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
+					me.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));		
+
+    	    		var gridActivosLbk = me.up('gastodetalle').down('contabilidadgasto').down('[reference=vImporteGastoLbkGrid]');
+	 		        if(gridActivosLbk && gridActivosLbk.getStore()){
+	 		        	var idGasto  =  me.lookupController().getView().getViewModel().get("gasto.id");
+	 		        	gridActivosLbk.getStore().getProxy().setExtraParams({'idGasto':idGasto});
+	 		        	gridActivosLbk.getStore().load();
+	 		        }
 		    	},
 	   			failure: function(response) {
-	   				me.up('form').funcionRecargar();
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-    		    }
+    		    },
+    		    callback: function(records, operation, success) {
+    		    	me.up('form').funcionRecargar();
+    		    	me.unmask();
+    			}
 		});		
     },
     
@@ -302,6 +363,69 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		if($AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK'])) {
 			me.rowEditing.clearListeners();
 		}
+    },
+    
+    editFuncion: function(editor, context, record){
+      	var me = this;
+    	var url =  $AC.getRemoteUrl('gastosproveedor/updateElementosDetalle');
+    	var data = context.newValues;
+    	var edicion = me.estadoParaEditar(me);
+    	if(Ext.isEmpty(data.idLinea)){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ok.linea.detalle.informacion"));
+			return;
+		}
+    	
+    	if(!edicion){
+    		me.getStore().load();
+    		return;
+    	}
+    	
+ 
+    	me.mask(HreRem.i18n("msg.mask.loading"));	
+    	Ext.Ajax.request({		    			
+            url: url,
+            method: 'POST',
+            params: {
+            	id: data.id,
+            	participacion:data.participacion,
+            	referenciaCatastral: data.referenciaCatastral
+            },  	
+			success: function(a, operation, c){
+				me.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
+				me.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
+				me.up('gastodetalle').down('contabilidadgasto').funcionRecargar();
+				me.down('toolbar').down('[itemId=addButton]').setDisabled(!edicion);
+
+			},
+			failure: function(a, operation){
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			},
+			callback: function(records, operation, success) {
+				me.getStore().load()
+				me.unmask();
+			}
+			
+		});   	
+    },
+    
+    estadoParaEditar: function(me){
+    	
+    	var estadoParaGuardar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
+    	var isGastoRefacturado = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPorOtroGasto;
+    	var isGastoRefacturadoPadre = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPadre;
+    	var suplidos = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPadre;
+    	var edicion = true;
+    	
+    	if(me.up('gastodetallemain').getViewModel().get('gasto.asignadoATrabajos') || me.up('gastodetallemain').getViewModel().get('gasto.autorizado')){
+    		edicion = false;
+    	}
+    	
+		if( edicion && estadoParaGuardar && !isGastoRefacturado && !isGastoRefacturadoPadre){ 
+			edicion = true;
+		}else{
+			edicion = false;
+		}
+		return edicion;
     }
 
 });

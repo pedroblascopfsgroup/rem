@@ -225,7 +225,45 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
    		{
    			name:'noAnyadirEliminarGastosRefacturados',
    			type:'boolean'
-   		}
+   		},
+   		{
+			name : 'irpfTipoImpositivoRetG',
+			type: 'number',
+   			defaultValue: 0
+		},
+		{
+			name : 'irpfCuotaRetG',
+			type: 'number',
+			defaultValue: 0
+		},
+		{
+			name : 'baseRetG',
+			type: 'number',
+			defaultValue: 0
+		},
+		{
+			name : 'baseImpI',
+			type: 'number',
+			defaultValue: 0
+		},
+		{
+   			name: 'retencionGarantiaAplica',
+   			type: 'boolean'
+   		},
+		{
+			name: 'clave'
+		},
+		{
+			name: 'subclave'
+		},
+		{
+			name: 'importeBrutoLbk',
+			type: 'number',
+			defaultValue: 0
+		},
+		{
+			name: 'tipoRetencionCodigo'
+		}
 	],
     
 	proxy: {

@@ -2837,6 +2837,18 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getActivoParaCrearPeticionTrabajo(Long idActivo, ModelMap model) {
+		try {
+			model.put(RESPONSE_DATA_KEY, activoApi.getActivoParaCrearPeticionTrabajobyId(idActivo));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getActivosPropagables(String idActivo, ModelMap model){
@@ -3673,29 +3685,6 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getComboTipoSegmento(String codSubcartera, WebDto webDto, ModelMap model) {
-		
-		model.put(RESPONSE_DATA_KEY, activoApi.getComboTipoSegmento(codSubcartera));
-		model.put("success", true);
-
-		return new ModelAndView("jsonView", model);
-	}
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboTipoSegmentoActivo(ModelMap model, String codSubcartera) {
-		
-		try {
-			model.put(RESPONSE_DATA_KEY, activoApi.getComboTipoSegmento(codSubcartera));
-			model.put(RESPONSE_SUCCESS_KEY, true);
-		} catch (Exception e) {
-			logger.error("Error en activoController", e);
-			model.put(RESPONSE_SUCCESS_KEY, false);
-		}
-	
-		return createModelAndViewJson(model);
-	}
-
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getReqFaseVenta(ModelMap model, Long id) {
 		
@@ -3870,12 +3859,34 @@ public class ActivoController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getComboTipoSegmento(String codSubcartera, WebDto webDto, ModelMap model) {
+		
+		model.put(RESPONSE_DATA_KEY, activoApi.getComboTipoSegmento(codSubcartera));
+		model.put("success", true);
+
+		return new ModelAndView("jsonView", model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboTipoSegmentoActivo(ModelMap model, String codSubcartera) {
+		
+		try {
+			model.put(RESPONSE_DATA_KEY, activoApi.getComboTipoSegmento(codSubcartera));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("Error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 		}
 		
 		return createModelAndViewJson(model);
 	}
 	
+
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView updateActivoComplementoTitulo(DtoActivoComplementoTitulo cargaDto,  ModelMap model) { 
@@ -4003,7 +4014,7 @@ public class ActivoController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET)
 	public void descargarFacturaGastoAsociado(HttpServletRequest request, HttpServletResponse response) {
 		ServletOutputStream salida = null;

@@ -1,7 +1,7 @@
 --/*
 --###########################################
 --## AUTOR=Cristian Montoya
---## FECHA_CREACION=20200921
+--## FECHA_CREACION=20201229
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11077
@@ -38,7 +38,7 @@ DECLARE
 	V_USUARIOCREAR VARCHAR2(50 CHAR) := 'HREOS-11077';
 
 	TYPE T_PWD IS TABLE OF VARCHAR2(50 CHAR);
-	V_PWD T_PWD := T_PWD('1234');
+	V_PWD T_PWD := T_PWD('NDNVZGQQDF');
 	
 	-- Arrays de usuarios:
 	TYPE T_USU IS TABLE OF VARCHAR2(50 CHAR);
@@ -46,7 +46,7 @@ DECLARE
 	-- USU_USERNAME, USU_PASSWORD, USU_NOMBRE, USU_APELLIDO1, USU_APELLIDO2, USU_GRUPO
 	V_USER T_USUARIOS := T_USUARIOS(
 		T_USU('RECOVERY', ''||V_PWD(1)||'', 'Usuario origen de WS RECOVERY','','','1'),
-		T_USU('ALASKA', ''||V_PWD(1)||'', 'Usuario origen de WS ALASKA','','','1')
+		T_USU('FENIX', ''||V_PWD(1)||'', 'Usuario origen de WS FENIX','','','1')
 		
 	);
 	V_TMP_USU T_USU;

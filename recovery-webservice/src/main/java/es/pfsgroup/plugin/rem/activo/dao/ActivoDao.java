@@ -88,6 +88,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	Activo getActivoByNumActivo(Long activoVinculado);
 
 	Activo getActivoById(Long activoId);
+	
+	Page getListActivosPorID(List<String> activosID, DtoTrabajoListActivos dto);
 
 	PropuestaActivosVinculados getPropuestaActivosVinculadosByID(Long id);
 
@@ -360,21 +362,22 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
 	public String getUltimaFasePublicacion(Long id);
 
+	Long getComunidadAutonomaId(Activo activo);
+	
+	boolean existeactivoIdHAYA(Long idActivo);
+
+	boolean activoPerteneceABBVAAndCERBERUS(Long idActivo);
+
+	boolean activoEstadoVendido(Long idActivo);
 
 	boolean isActivoBBVADivarian(Long idActivo);
-
-	boolean existeactivoIdHAYA(Long idActivo); 
-
-	boolean activoPerteneceABBVAAndCERBERUS(Long idActivo); 
-
-	boolean activoEstadoVendido(Long idActivo); 
 
 	boolean activoFueraPerimetroHAYA(Long idActivo); 
 
 	List<ActivoCalificacionNegativaAdicional> getListActivoCalificacionNegativaAdicionalByIdActivo(Long idActivo);
-
+	
 	Long getNextBbvaNumActivo();
-
+	
 	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras);
 
 	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos);

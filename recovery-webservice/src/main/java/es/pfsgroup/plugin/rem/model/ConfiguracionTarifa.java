@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -83,6 +84,19 @@ public class ConfiguracionTarifa implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="DD_SCR_ID")
 	private DDSubcartera subcartera;
+    
+    @Column(name = "CFT_FECHA_INI")
+    private Date fechaInicio;
+    
+    @Column(name = "CFT_FECHA_FIN")
+    private Date fechaFin;
+    
+    @Column(name = "CFT_PRECIO_UNITARIO_CLIENTE")
+    private Double precioUnitarioCliente;
+    
+    @Column(name = "CFT_TARIFA_PVE")
+    private Integer tarifaPve;
+    
     
 	@Version   
 	private Long version;
@@ -180,6 +194,38 @@ public class ConfiguracionTarifa implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Date getFechaInicio() {
+		return fechaInicio;
+	}
+
+	public void setFechaInicio(Date fechaInicio) {
+		this.fechaInicio = fechaInicio;
+	}
+
+	public Date getFechaFin() {
+		return fechaFin;
+	}
+
+	public void setFechaFin(Date fechaFin) {
+		this.fechaFin = fechaFin;
+	}
+
+	public Double getPrecioUnitarioCliente() {
+		return precioUnitarioCliente;
+	}
+
+	public void setPrecioUnitarioCliente(Double precioUnitarioCliente) {
+		this.precioUnitarioCliente = precioUnitarioCliente;
+	}
+
+	public Integer getTarifaPve() {
+		return tarifaPve;
+	}
+
+	public void setTarifaPve(Integer tarifaPve) {
+		this.tarifaPve = tarifaPve;
 	}
 
 

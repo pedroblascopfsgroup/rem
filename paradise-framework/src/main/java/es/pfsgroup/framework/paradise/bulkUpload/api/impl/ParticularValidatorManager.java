@@ -5785,6 +5785,53 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean existeDiccionarioByTipoCampo(String codigoCampo, String valorCampo) {
+		String tabla;
+		String campo;
+		
+		campo = rawDao.getExecuteSQL("SELECT CCS.DD_CCS_CAMPO "
+					+ "		 FROM DD_CCS_CAMPOS_CONV_SAREB CCS"
+					+ "      JOIN DD_COS_CAMPOS_ORIGEN_CONV_SAREB COS "
+					+ "      ON COS.DD_COS_ID = CCS.DD_COS_ID "
+					+ "      WHERE COS.DD_COS_CODIGO = '"+codigoCampo+"'"
+					+ "		 AND CCS.BORRADO = 0 AND ROWNUM <=1");
+		
+		tabla = rawDao.getExecuteSQL("SELECT CCS.DD_CCS_TABLA "
+					+ "		 FROM DD_CCS_CAMPOS_CONV_SAREB CCS"
+					+ "      JOIN DD_COS_CAMPOS_ORIGEN_CONV_SAREB COS "
+					+ "      ON COS.DD_COS_ID = CCS.DD_COS_ID "
+					+ "      WHERE COS.DD_COS_CODIGO = '"+codigoCampo+"'"
+					+ "		 AND CCS.BORRADO = 0 AND ROWNUM <=1");
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+					+ "		 FROM "+ tabla +" WHERE"
+					+ "		 "+ campo +" = " + valorCampo + ""
+					+ "		 AND BORRADO = 0");
+			
+
+
+		return !"0".equals(resultado);
+		 
+	}
+	
+	@Override
+	public String getCodigoTipoDato(String codigoCampo) {
+		
+		String resultado = rawDao.getExecuteSQL("SELECT CTD.DD_CTD_CODIGO "
+				+ "		 FROM DD_CTD_CAMPO_TIPO_DATO CTD"
+				+ "      JOIN DD_CCS_CAMPOS_CONV_SAREB CCS "
+				+ "      ON CTD.DD_CTD_ID  = CCS.DD_CTD_ID  "
+				+ "      JOIN DD_COS_CAMPOS_ORIGEN_CONV_SAREB COS "
+				+ "      ON COS.DD_COS_ID = CCS.DD_COS_ID "
+				+ "      WHERE COS.DD_COS_CODIGO = '"+codigoCampo+"'"
+				+ "		 AND CTD.BORRADO = 0 AND ROWNUM <=1" );
+
+
+	return resultado;
+		
+	}
+
+	@Override
 	public Boolean esGastoRefacturadoHijo(String numGasto) {
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
@@ -6342,6 +6389,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return resultado;
 	}
 	
+	@Override
 	public String devolverEstadoGastoApartirDePrefactura(String idPrefactura) {
 		if(Checks.esNulo(idPrefactura)) {
 			return null;
@@ -6357,6 +6405,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return res;
 	}
 	
+	@Override
 	public String devolverEstadoGastoApartirDeAlbaran(String idAlbaran) {
 		if(Checks.esNulo(idAlbaran)) {
 			return null;
@@ -6610,6 +6659,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return listaString;
 	}
 	
+	@Override
 	public Boolean getGastoSuplidoConFactura(String idGastoAfectado) {
 		if(Checks.esNulo(idGastoAfectado)){
 			return false;
@@ -6623,6 +6673,5 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "AND GPV.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
-
 
 }

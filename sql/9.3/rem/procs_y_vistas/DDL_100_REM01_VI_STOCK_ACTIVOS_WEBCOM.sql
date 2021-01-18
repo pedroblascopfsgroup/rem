@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Carlos Augusto
---## FECHA_CREACION=20201109
+--## AUTOR=Juan Beltrán
+--## FECHA_CREACION=20201130
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-11927

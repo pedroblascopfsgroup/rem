@@ -94,6 +94,41 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						        		readOnly : '{!esUA}',
 						        		hidden: '{!esUA}'
 						        	}
+				                },
+						        {
+									xtype: 'comboboxfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.activo.bde'),
+						        	reference: 'tipoActivoBde',
+						        	bind: {
+						        		readOnly : '{esUA}',
+					            		store: '{comboTipoActivoBde}',
+					            		value: '{activo.tipoActivoCodigoBde}',
+					            		hidden: '{!activo.isCarteraLiberbank}'
+					            	},
+					            	style:'margin-left:10px'
+						        },
+						        {
+						        	xtype: 'comboboxfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.subtipo.activo.bde'),
+									reference: 'subtipoActivoComboBde',
+						        	bind: {
+						        		readOnly : '{esUA}',
+					            		store: '{comboSubtipoActivoBde}',
+					            		value: '{activo.subtipoActivoCodigoBde}',
+					            		hidden: '{!activo.isCarteraLiberbank}'
+					            	}
+						        },
+						        {
+				                	xtype: 'datefieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.fin.prevista.adecuacion'),
+				                	name: 'fechaFinPrevistaAdecuacion',
+				                	reference: 'fechaFinPrevistaAdecuacionRef',
+				                	bind: {	
+					                	readOnly : !$AU.userIsRol("HAYASUPER"),
+										value: '{activo.fechaFinPrevistaAdecuacion}',
+				                		hidden: '{!activo.isCarteraSareb}'
+				                	}
+				                
 				                }
 							]
 						},
@@ -269,7 +304,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						                		hidden: '{!activo.isCarteraBankia}',
 						                		readOnly: true
 						                	}
-						                }
+						                },
+
 									]
 								},
 								//PARA DIVARIAN
@@ -284,7 +320,64 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						        	},
 						        	displayField: 'descripcion',
 						        	style:'margin-left:10px'
-						        }
+						        },
+						        {
+						        	xtype: 'comboboxfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo.oe'),
+									reference: 'tipoActivoOE',
+						        	chainedStore: 'comboSubtipoActivoOE',
+									chainedReference: 'subtipoActivoComboOE',
+						        	bind: {
+					            		store: '{comboTipoActivoOE}',
+					            		value: '{activo.tipoActivoCodigoOE}',
+					            		hidden: '{!activo.isCarteraSareb}', 
+					            		readOnly:'{!esSuperUsuarioAndNoUA}'
+					            	},
+		    						listeners: {
+					                	select: 'onChangeChainedCombo'
+					            	},
+					            	style:'margin-left:10px'
+						        },
+				                {
+									xtype: 'comboboxfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo.oe'),
+						        	reference: 'subtipoActivoComboOE',
+						        	bind: {
+					            		store: '{comboSubtipoActivoOE}',
+					            		value: '{activo.subtipoActivoCodigoOE}',
+					            		disabled: '{!activo.tipoActivoCodigoOE}',
+					            		hidden: '{!activo.isCarteraSareb}', 
+					            		readOnly:'{!esSuperUsuarioAndNoUA}'
+					            	},
+					            	style:'margin-left:10px'
+						        },
+						        {
+				                	xtype: 'comboboxfieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.reo.contabilizado.sap'),
+				                	name: 'comboreocontabilizadosap',
+				                	reference: 'comboreocontabilizadosapRef',
+				                	bind: {	
+					                	readOnly : !$AU.userIsRol("HAYASUPER"),
+				                		store: '{comboSiNoBoolean}',
+										value: '{activo.reoContabilizadoSap}',
+				                		hidden: '{!activo.isCarteraSareb}'
+				                	}
+				                
+				                },
+				                {
+				                	xtype: 'comboboxfieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.estado.adecuacion.sareb'),
+				                	name: 'comboreoadecuacionsareb',
+				                	reference: 'comboreoadecuacionsarebRef',
+				                	bind: {	
+					                	readOnly : !$AU.userIsRol("HAYASUPER"),
+				                		store: '{comboEstadoAdecuacionSareb}',
+										value: '{activo.estadoAdecuacionSarebCodigo}',
+				                		hidden: '{!activo.isCarteraSareb}'
+				                	}
+				                
+				                }
+						       
 								
 							]
 						},
@@ -352,45 +445,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                		hidden: '{!mostrarCamposDivarianandBbva}',
 				                		readOnly : '{!editarSegmentoDivarianandBbva}'
 				                	}
-				                },
-								{
-									xtype: 'comboboxfieldbase',
-									fieldLabel:  HreRem.i18n('fieldlabel.reo.contabilizado.sap'),
-									name: 'comboreocontabilizadosap',
-									reference: 'comboreocontabilizadosapRef',
-									bind: {	
-										readOnly : !$AU.userIsRol("HAYASUPER"),
-										store: '{comboSiNoBoolean}',
-										value: '{activo.reoContabilizadoSap}',
-										hidden: '{!activo.isCarteraSareb}'
-									}
-								
-								},
-								{
-									xtype: 'comboboxfieldbase',
-									fieldLabel:  HreRem.i18n('fieldlabel.estado.adecuacion.sareb'),
-									name: 'comboreoadecuacionsareb',
-									reference: 'comboreoadecuacionsarebRef',
-									bind: {	
-										readOnly : !$AU.userIsRol("HAYASUPER"),
-										store: '{comboEstadoAdecuacionSareb}',
-										value: '{activo.estadoAdecuacionSarebCodigo}',
-										hidden: '{!activo.isCarteraSareb}'
-									}
-								
-								},
-								{
-									xtype: 'datefieldbase',
-									fieldLabel:  HreRem.i18n('fieldlabel.fecha.fin.prevista.adecuacion'),
-									name: 'fechaFinPrevistaAdecuacion',
-									reference: 'fechaFinPrevistaAdecuacionRef',
-									bind: {	
-										readOnly : !$AU.userIsRol("HAYASUPER"),
-										value: '{activo.fechaFinPrevistaAdecuacion}',
-										hidden: '{!activo.isCarteraSareb}'
-									}
-								
-								}
+				                }
+				               
 				            ]
 						}
 					]},
@@ -401,6 +457,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						title: HreRem.i18n('title.bbva'),
 						border: true,
 						colspan: 3,
+						bind:{hidden: '{!activo.isCarteraBbva}'},
 						items :
 							[
 							{
@@ -498,7 +555,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			            		store: '{comboTipoVia}',
 			            		value: '{activo.tipoViaCodigoOE}',
 			            		hidden: '{!activo.isCarteraSareb}', 
-			            		readOnly:'{!esSuperUsuario}'			            		
+			            		readOnly:'{!esSuperUsuarioAndNoUA}'			            		
 			            	}
 						},
 						{
@@ -563,7 +620,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                	bind:{
 		                		value: '{activo.nombreViaOE}',
 			            		hidden: '{!activo.isCarteraSareb}', 
-			            		readOnly:'{!esSuperUsuario}'
+			            		readOnly:'{!esSuperUsuarioAndNoUA}'
 		                	}
 		                },
 		                {
@@ -633,7 +690,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                	bind:{
 		                		value: '{activo.numeroDomicilioOE}',
 			            		hidden: '{!activo.isCarteraSareb}', 
-			            		readOnly:'{!esSuperUsuario}'
+			            		readOnly:'{!esSuperUsuarioAndNoUA}'
 		                	}
 		                },
 		                {
@@ -641,7 +698,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                bind:{
 			                	value: '{activo.escaleraOE}',
 			            		hidden: '{!activo.isCarteraSareb}', 
-			            		readOnly:'{!esSuperUsuario}'
+			            		readOnly:'{!esSuperUsuarioAndNoUA}'
 			                }
 						},
 				        { 
@@ -694,7 +751,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                	bind:{
 		                		value: '{activo.pisoOE}',
 			            		hidden: '{!activo.isCarteraSareb}', 
-			            		readOnly:'{!esSuperUsuario}'
+			            		readOnly:'{!esSuperUsuarioAndNoUA}'
 		                	}
 		                },	
 						// fila 6
@@ -721,7 +778,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                	bind:{
 		                		value: '{activo.puertaOE}',
 			            		hidden: '{!activo.isCarteraSareb}', 
-			            		readOnly:'{!esSuperUsuario}'
+			            		readOnly:'{!esSuperUsuarioAndNoUA}'
 		                	}
 		                },
 		                {

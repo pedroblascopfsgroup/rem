@@ -72,6 +72,7 @@ import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoGenerico;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
@@ -369,6 +370,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setTipoGastoCodigo(gasto.getTipoGasto().getCodigo());
 				dto.setTipoGastoDescripcion(gasto.getTipoGasto().getDescripcion());
 			}
+	
 			dto.setVisibleSuplidos(true);
 			if(gasto.getGastoLineaDetalleList() != null && !gasto.getGastoLineaDetalleList().isEmpty()){
 				for (GastoLineaDetalle gastoLinea: gasto.getGastoLineaDetalleList()) {
@@ -397,8 +399,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						}
 					}			
 				}
+			}else {
+				dto.setVisibleSuplidos(false);
 			}
-			
+
 				
 			if (!Checks.esNulo(gasto.getEstadoGasto())) {
 				dto.setEstadoGastoCodigo(gasto.getEstadoGasto().getCodigo());
@@ -1513,8 +1517,19 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (Checks.esNulo(activo)) {
 				throw new JsonViewerException("Este activo no existe");
 			}
+
+			
+			Filter filtroSareb = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", numActivo);
+			ActivoSareb activoSareb  = genericDao.get(ActivoSareb.class, filtroSareb);
+			
+			
+			if (activoSareb != null && activoSareb.getReoContabilizado() != null && activoSareb.getReoContabilizado().getCodigo().equals(DDSinSiNo.CODIGO_NO)) {
+				throw new JsonViewerException("No se puede generar un gasto para un activo no contabilizado");
+			}
+			
 			GastoLineaDetalleEntidad gastoActivo = null;
 			
+
 			Filter filtroA = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", numActivo);
 			Activo act = genericDao.get(Activo.class,filtroA);
 			if(!Checks.esNulo(act)) {
@@ -3920,30 +3935,34 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 		}
 		
-		if(gastoProveedor.getGastoLineaDetalleList() != null && !gastoProveedor.getGastoLineaDetalleList().isEmpty()){
-			for (GastoLineaDetalle gastoLinea: gastoProveedor.getGastoLineaDetalleList()) {
-				Filter filter = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.id",gastoLinea.getId());
-				Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "entidadGasto.codigo",DDEntidadGasto.CODIGO_ACTIVO);
-				List <GastoLineaDetalleEntidad> gastoLineaEntidadList= genericDao.getList(GastoLineaDetalleEntidad.class,filter,filterAct);
-				if(gastoLineaEntidadList==null || gastoLineaEntidadList.isEmpty()) {
-					throw new JsonViewerException("Hay lineas sin activos asociados");
-				}else {
-					for (GastoLineaDetalleEntidad gastoLineaDetalleEntidad : gastoLineaEntidadList) {
-						Activo activo = activoDao.getActivoById(gastoLineaDetalleEntidad.getEntidad());
-						if(activo == null || gastoProveedor.getCartera()==null || activo.getSubcartera()==null || gastoProveedor.getTipoGasto()==null) {
-							throw new JsonViewerException("No hay datos");						
-						}
-						ConfiguracionSuplidos config = genericDao.get(ConfiguracionSuplidos.class,
-								genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", gastoProveedor.getCartera().getCodigo()),
-								genericDao.createFilter(FilterType.EQUALS, "subCartera.codigo", activo.getSubcartera().getCodigo()),
-								genericDao.createFilter(FilterType.EQUALS, "tipoGasto.codigo", gastoProveedor.getTipoGasto().getCodigo()),
-								genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.codigo",gastoLinea.getSubtipoGasto().getCodigo()));
-						if(config==null) {
-							throw new JsonViewerException("El gasto no puede ser o tener Suplidos");							
+		if(dto.getFacturaPrincipalSuplido() != null && !dto.getFacturaPrincipalSuplido().isEmpty() || dto.getSuplidosVinculadosCod() != null) {
+			if(gastoProveedor.getGastoLineaDetalleList() != null && !gastoProveedor.getGastoLineaDetalleList().isEmpty()){
+				for (GastoLineaDetalle gastoLinea: gastoProveedor.getGastoLineaDetalleList()) {
+					Filter filter = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.id",gastoLinea.getId());
+					Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "entidadGasto.codigo",DDEntidadGasto.CODIGO_ACTIVO);
+					List <GastoLineaDetalleEntidad> gastoLineaEntidadList= genericDao.getList(GastoLineaDetalleEntidad.class,filter,filterAct);
+					if(gastoLineaEntidadList==null || gastoLineaEntidadList.isEmpty()) {
+						throw new JsonViewerException("Hay lineas sin activos asociados");
+					}else {
+						for (GastoLineaDetalleEntidad gastoLineaDetalleEntidad : gastoLineaEntidadList) {
+							Activo activo = activoDao.getActivoById(gastoLineaDetalleEntidad.getEntidad());
+							if(activo == null || gastoProveedor.getCartera()==null || activo.getSubcartera()==null || gastoProveedor.getTipoGasto()==null) {
+								throw new JsonViewerException("No hay datos");						
+							}
+							ConfiguracionSuplidos config = genericDao.get(ConfiguracionSuplidos.class,
+									genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", gastoProveedor.getCartera().getCodigo()),
+									genericDao.createFilter(FilterType.EQUALS, "subCartera.codigo", activo.getSubcartera().getCodigo()),
+									genericDao.createFilter(FilterType.EQUALS, "tipoGasto.codigo", gastoProveedor.getTipoGasto().getCodigo()),
+									genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.codigo",gastoLinea.getSubtipoGasto().getCodigo()));
+							if(config==null) {
+								throw new JsonViewerException("El gasto no puede ser o tener Suplidos");							
+							}
 						}
 					}
-				}
-			}			
+				}			
+			}else {
+				throw new JsonViewerException("El gasto no puede ser o tener Suplidos");
+			}
 		}
 		
 	}

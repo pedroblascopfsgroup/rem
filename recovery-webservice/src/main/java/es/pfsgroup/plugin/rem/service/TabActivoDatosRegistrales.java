@@ -455,6 +455,16 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 			}
 
+		}	
+		
+		if(activo.getInfoRegistral() != null && activo.getInfoRegistral().getTieneAnejosRegistrales() != null){
+			DDSinSiNo tiene = activo.getInfoRegistral().getTieneAnejosRegistrales();
+			if (DDSinSiNo.CODIGO_SI.equals(tiene.getCodigo())) {
+				activoDto.setTieneAnejosRegistralesInt(1);
+			} else {
+				activoDto.setTieneAnejosRegistralesInt(0);
+			}
+
 		}
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
@@ -478,15 +488,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				}
 			}else if(activoBbva != null && activo.getPropietarioPrincipal() != null && activo.getPropietarioPrincipal().getDocIdentificativo() != null) {
 				activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());
-			}
-		}	
-		
-		if(activo.getInfoRegistral() != null && activo.getInfoRegistral().getTieneAnejosRegistrales() != null){
-			DDSinSiNo tiene = activo.getInfoRegistral().getTieneAnejosRegistrales();
-			if (DDSinSiNo.CODIGO_SI.equals(tiene.getCodigo())) {
-				activoDto.setTieneAnejosRegistralesInt(1);
-			} else {
-				activoDto.setTieneAnejosRegistralesInt(0);
 			}
 		}
 		

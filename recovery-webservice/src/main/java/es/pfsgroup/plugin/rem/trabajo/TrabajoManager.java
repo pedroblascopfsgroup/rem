@@ -106,6 +106,7 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo.ActivoTrabajoPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -1355,25 +1356,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		List<Activo> activosList = activoApi.getListActivosPorID(activosID);
 
 		Trabajo trabajo = null;
-		Double participacion = null;
-		Integer participacionTotalPorCien = 10000;
-		Integer participacionPorCien = 0;
+		
 		for (Activo activo : activosList) {
-			participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activosList, null);
-			participacionPorCien = (int)(participacion*100);				
-			participacionTotalPorCien -= participacionPorCien;
-			dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : String.valueOf(participacionPorCien/100f));
+			dtoTrabajo.setParticipacion("100");
 			trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
 			trabajos.add(trabajo);
 		}
-		if(participacionTotalPorCien != 0) {
-			while(participacionTotalPorCien != 0) {
-				participacionTotalPorCien--;
-				trabajo.getActivosTrabajo().get(participacionTotalPorCien).setParticipacion(
-						trabajo.getActivosTrabajo().get(participacionTotalPorCien).getParticipacion()+(1/100f));
-			}
-			trabajoDao.saveOrUpdate(trabajo);
-		}
+		
 
 		return trabajos;
 
@@ -5782,6 +5771,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	 	return esTramiteValido;
  	}
 	
+
+	public Boolean esActivoContabilizado(Long idActivo) {
+		
+		Filter filtroSareb = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		ActivoSareb activoSareb  = genericDao.get(ActivoSareb.class, filtroSareb);
+		
+		return !(activoSareb != null && activoSareb.getReoContabilizado() != null && activoSareb.getReoContabilizado().getCodigo().equals(DDSinSiNo.CODIGO_NO));
+			
+		
+		
+	}
+
+	@Override
 	public List<DtoProveedorFiltradoManual> getComboProveedorFiltradoManual(Long idTrabajo) throws Exception {
 		
 		List<DtoProveedorFiltradoManual> listaDtoProveedoresFiltradoManual = new ArrayList<DtoProveedorFiltradoManual>();
@@ -6530,4 +6532,5 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 	
 	
+
 }

@@ -2068,32 +2068,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos) {
-
-		HQLBuilder hql = new HQLBuilder("from ActivoTasacion ");
-		HQLBuilder.addFiltroWhereInSiNotNull(hql, "activo", idActivos);
-		hql.orderBy("fechaInicioTasacion", HQLBuilder.ORDER_ASC);
-		
-		List<ActivoTasacion> tasacionesList = (List<ActivoTasacion>) this.getSessionFactory().getCurrentSession()
-				.createQuery(hql.toString()).list();
-		
-		return tasacionesList;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ActivosAlquilados> getListActivosAlquiladosByIdActivos(List<Long> idActivos) {
-
-		HQLBuilder hql = new HQLBuilder("from ActivosAlquilados ");
-		HQLBuilder.addFiltroWhereInSiNotNull(hql, "activoAlq", idActivos);
-		
-		List<ActivosAlquilados> actAlquiladosList = (List<ActivosAlquilados>) this.getSessionFactory().getCurrentSession()
-				.createQuery(hql.toString()).list();
-		
-		return actAlquiladosList;
-	}
 
 	@Override 
 	public Long getCarga(String idBieCarRecovery) {
@@ -2120,6 +2094,33 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				+ " WHERE BIE_CAR_ID = " + idBieCar
 				+ " AND BORRADO = 0"				
 			);
-		session.createSQLQuery(sb.toString()).executeUpdate();	
+		session.createSQLQuery(sb.toString()).executeUpdate();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos) {
+
+		HQLBuilder hql = new HQLBuilder("from ActivoTasacion ");
+		HQLBuilder.addFiltroWhereInSiNotNull(hql, "activo", idActivos);
+		hql.orderBy("fechaInicioTasacion", HQLBuilder.ORDER_ASC);
+		
+		List<ActivoTasacion> tasacionesList = (List<ActivoTasacion>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hql.toString()).list();
+		
+		return tasacionesList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivosAlquilados> getListActivosAlquiladosByIdActivos(List<Long> idActivos) {
+
+		HQLBuilder hql = new HQLBuilder("from ActivosAlquilados ");
+		HQLBuilder.addFiltroWhereInSiNotNull(hql, "activoAlq", idActivos);
+		
+		List<ActivosAlquilados> actAlquiladosList = (List<ActivosAlquilados>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hql.toString()).list();
+		
+		return actAlquiladosList;
 	}
 }

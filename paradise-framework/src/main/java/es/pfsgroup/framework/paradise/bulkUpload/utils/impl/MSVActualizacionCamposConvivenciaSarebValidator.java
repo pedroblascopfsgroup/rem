@@ -3,7 +3,9 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,12 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 	private static final String SUBTIPO_NO_EXISTE = "msg.error.masivo.convivencia.sareb.no.subtipo";
 	private static final String IDENTIFICADOR_SUBTIPO_NO_EXISTE = "msg.error.masivo.convivencia.sareb.no.identificador";
 	private static final String VALOR_NUEVO = "msg.error.masivo.convivencia.sareb.valor.nuevo";
+	private static final String CAMPO_FECHA = "msg.error.masivo.convivencia.sareb.incorrecto.fecha";
+	private static final String CAMPO_DECIMAL = "msg.error.masivo.convivencia.sareb.incorrecto.decimal";
+	private static final String CAMPO_SINO = "msg.error.masivo.convivencia.sareb.incorrecto.boolean";
+	private static final String CAMPO_DICCIONARIO = "msg.error.masivo.convivencia.sareb.incorrecto.dd";
+	private static final String CAMPO_NUMERICO = "msg.error.masivo.convivencia.sareb.incorrecto.numerico";
+	
 	
 	private static final int FILA_CABECERA = 0;
 	private static final int FILA_DATOS = 1;
@@ -110,7 +118,13 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 			mapaErrores.put(messageServices.getMessage(SUBTIPO_NO_EXISTE), isSubtipoRegistroNotExistsRows(exc));
 			mapaErrores.put(messageServices.getMessage(DEPENCENCIA_SUBTIPO_REGISTRO), isSubtipoDependienteExistsRows(exc));
 			mapaErrores.put(messageServices.getMessage(IDENTIFICADOR_SUBTIPO_NO_EXISTE), isIdentificadorRegistroNotExistsRows(exc));
-			mapaErrores.put(messageServices.getMessage(VALOR_NUEVO), isNuevoCorrecto(exc));
+			mapaErrores.put(messageServices.getMessage(CAMPO_FECHA), isTipoCampoFecha(exc));
+			mapaErrores.put(messageServices.getMessage(CAMPO_DICCIONARIO), isTipoCampoDiccionario(exc));
+			mapaErrores.put(messageServices.getMessage(CAMPO_NUMERICO), isTipoCampoNumerico(exc));
+			mapaErrores.put(messageServices.getMessage(CAMPO_DECIMAL), isTipoCampoDecimal(exc));
+			mapaErrores.put(messageServices.getMessage(CAMPO_SINO), isTipoCampoSiNo(exc));
+			
+
 			
 			for (Entry<String, List<Integer>> registros : mapaErrores.entrySet()) {
 				if(!registros.getValue().isEmpty()) {
@@ -300,5 +314,175 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 	            }
 	        return listaFilas;   
 	}	
+	
+	private List<Integer> isTipoCampoNumerico(MSVHojaExcel exc){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+	       String codigoCampo = "";
+	        try{
+	            for(int i=1; i<this.numFilasHoja;i++){
+	                try {
+	                    if(!Checks.esNulo(exc.dameCelda(i, COL_CAMPO)) && !Checks.esNulo(exc.dameCelda(i, COL_VALOR_NUEVO))) 
+	                    		//&& (!Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) ? !(Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 1 || Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 0) : false))
+	                        codigoCampo = particularValidator.getCodigoTipoDato(exc.dameCelda(i, COL_CAMPO));
+	                    	if ("04".equals(codigoCampo)) {
+								if (!esNumerico(exc.dameCelda(i, COL_VALOR_NUEVO)))
+									listaFilas.add(i);
+							}
+	                } catch (ParseException e) {
+	                    listaFilas.add(i);
+	                }
+	            }
+	            } catch (IllegalArgumentException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            }
+	        return listaFilas;   
+	}	
+	
+	private List<Integer> isTipoCampoDecimal(MSVHojaExcel exc){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+	       String codigoCampo = "";
+	        try{
+	            for(int i=1; i<this.numFilasHoja;i++){
+	                try {
+	                    if(!Checks.esNulo(exc.dameCelda(i, COL_CAMPO)) && !Checks.esNulo(exc.dameCelda(i, COL_VALOR_NUEVO))) 
+	                    		//&& (!Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) ? !(Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 1 || Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 0) : false))
+	                        codigoCampo = particularValidator.getCodigoTipoDato(exc.dameCelda(i, COL_CAMPO));
+	                    	if ("03".equals(codigoCampo)) {
+								if (!esDecimal(exc.dameCelda(i, COL_VALOR_NUEVO)))
+									listaFilas.add(i);
+							}
+	                } catch (ParseException e) {
+	                    listaFilas.add(i);
+	                }
+	            }
+	            } catch (IllegalArgumentException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            }
+	        return listaFilas;    
+	}	
+	
+	private List<Integer> isTipoCampoDiccionario(MSVHojaExcel exc){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+	       String codigoCampo = "";
+	        try{
+	            for(int i=1; i<this.numFilasHoja;i++){
+	                try {
+	                    if(!Checks.esNulo(exc.dameCelda(i, COL_CAMPO)) && !Checks.esNulo(exc.dameCelda(i, COL_VALOR_NUEVO))) 
+	                    		//&& (!Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) ? !(Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 1 || Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 0) : false))
+	                        codigoCampo = particularValidator.getCodigoTipoDato(exc.dameCelda(i, COL_CAMPO));
+	                    	if ("05".equals(codigoCampo)) {
+								if (!particularValidator.existeDiccionarioByTipoCampo(exc.dameCelda(i, COL_CAMPO), exc.dameCelda(i, COL_VALOR_NUEVO)))
+									listaFilas.add(i);
+							}
+	                } catch (ParseException e) {
+	                    listaFilas.add(i);
+	                }
+	            }
+	            } catch (IllegalArgumentException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            }
+	        return listaFilas;  
+	}	
+	
+	private List<Integer> isTipoCampoSiNo(MSVHojaExcel exc){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+	       String codigoCampo = "";
+	        try{
+	            for(int i=1; i<this.numFilasHoja;i++){
+	                try {
+	                    if(!Checks.esNulo(exc.dameCelda(i, COL_CAMPO)) && !Checks.esNulo(exc.dameCelda(i, COL_VALOR_NUEVO))) 
+	                    		//&& (!Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) ? !(Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 1 || Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 0) : false))
+	                        codigoCampo = particularValidator.getCodigoTipoDato(exc.dameCelda(i, COL_CAMPO));
+	                    	if ("01".equals(codigoCampo)) {
+								if (Integer.parseInt(exc.dameCelda(i, COL_VALOR_NUEVO)) != 1 && Integer.parseInt(exc.dameCelda(i, COL_VALOR_NUEVO)) != 0 ) 
+									listaFilas.add(i);
+							}
+	                } catch (ParseException e) {
+	                    listaFilas.add(i);
+	                }
+	            }
+	            } catch (IllegalArgumentException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            }
+	        return listaFilas;  
+	}	
+	
+	private List<Integer> isTipoCampoFecha(MSVHojaExcel exc){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+	       String codigoCampo = "";
+	        try{
+	            for(int i=1; i<this.numFilasHoja;i++){
+	                try {
+	                    if(!Checks.esNulo(exc.dameCelda(i, COL_CAMPO)) && !Checks.esNulo(exc.dameCelda(i, COL_VALOR_NUEVO))) 
+	                    		//&& (!Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) ? !(Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 1 || Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 0) : false))
+	                        codigoCampo = particularValidator.getCodigoTipoDato(exc.dameCelda(i, COL_CAMPO));
+	                    	if ("02".equals(codigoCampo)) {
+								if (!esFecha(exc.dameCelda(i, COL_VALOR_NUEVO)))
+									listaFilas.add(i);
+							}
+	                } catch (ParseException e) {
+	                    listaFilas.add(i);
+	                }
+	            }
+	            } catch (IllegalArgumentException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            }
+	        return listaFilas;  
+	}	
+	
+	private boolean esDecimal(String valor) {
+
+		try {
+			Double.parseDouble(valor);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	private boolean esNumerico(String valor) {
+		
+		try {
+			Long.parseLong(valor);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+				
+	}
+	private boolean esFecha(String valor) {
+		
+		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+		Date fecha = null;
+		
+		try {
+			fecha = formato.parse(valor);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+		
+			
+	}
+
 	
 }

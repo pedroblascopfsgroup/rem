@@ -983,6 +983,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 		}
 		
+
 		if(perimetroActivo.getAplicaAdmision() != null) {
 			activoDto.setPerimetroAdmision(perimetroActivo.getAplicaAdmision());
 		}

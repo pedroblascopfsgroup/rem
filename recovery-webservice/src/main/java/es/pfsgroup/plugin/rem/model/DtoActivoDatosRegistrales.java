@@ -772,6 +772,13 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	public void setFechaTituloAnterior(Date fechaTituloAnterior) {
 		this.fechaTituloAnterior = fechaTituloAnterior;
 	}
+	public Integer getTieneAnejosRegistralesInt() {
+		return tieneAnejosRegistralesInt;
+	}
+	public void setTieneAnejosRegistralesInt(Integer tieneAnejosRegistralesInt) {
+		this.tieneAnejosRegistralesInt = tieneAnejosRegistralesInt;
+	}
+	
 	public String getSociedadPagoAnterior() {
 		return sociedadPagoAnterior;
 	}
@@ -797,12 +804,6 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setIdProcesoOrigen(String idProcesoOrigen) {
 		this.idProcesoOrigen = idProcesoOrigen;
-	}
-	public Integer getTieneAnejosRegistralesInt() {
-		return tieneAnejosRegistralesInt;
-	}
-	public void setTieneAnejosRegistralesInt(Integer tieneAnejosRegistralesInt) {
-		this.tieneAnejosRegistralesInt = tieneAnejosRegistralesInt;
 	}
 
 }

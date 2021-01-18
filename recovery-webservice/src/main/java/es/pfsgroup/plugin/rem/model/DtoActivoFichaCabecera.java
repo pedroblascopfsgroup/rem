@@ -2562,22 +2562,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.esEditableActivoEstadoRegistral = esEditableActivoEstadoRegistral;
 	}
 
-	public String getCodPromocionBbva() {
-		return codPromocionBbva;
-	}
-
-	public void setCodPromocionBbva(String codPromocionBbva) {
-		this.codPromocionBbva = codPromocionBbva;
-	}
-
-	public String getCdpen() {
-		return cdpen;
-	}
-
-	public void setCdpen(String cdpen) {
-		this.cdpen = cdpen;
-	}	
-
 	public Date getFechaFinPrevistaAdecuacion() {
 		return fechaFinPrevistaAdecuacion;
 	}
@@ -2601,5 +2585,21 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setEstadoAdecuacionSarebDescripcion(String estadoAdecuacionSarebDescripcion) {
 		this.estadoAdecuacionSarebDescripcion = estadoAdecuacionSarebDescripcion;
 	}
-	
+
+	public String getCodPromocionBbva() {
+		return codPromocionBbva;
+	}
+
+	public void setCodPromocionBbva(String codPromocionBbva) {
+		this.codPromocionBbva = codPromocionBbva;
+	}
+
+	public String getCdpen() {
+		return cdpen;
+	}
+
+	public void setCdpen(String cdpen) {
+		this.cdpen = cdpen;
+	}	
+
 }

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -514,7 +515,7 @@ public interface OfertaApi {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	public List<DtoGastoExpediente> calculaHonorario(Oferta oferta,Activo activo) throws IllegalAccessException, InvocationTargetException;
+	public List<DtoGastoExpediente> calculaHonorario(Oferta oferta,Activo activo,boolean reenvioPorMas180Dias) throws IllegalAccessException, InvocationTargetException;
 
 	/**
 	 * Método que ratifica el comité de Bankia
@@ -823,5 +824,7 @@ public interface OfertaApi {
 	public Integer isEpaAlquilado(Long idAgrupacion);
 
 	public DtoExcelFichaComercial getListOfertasFilter(Long idExpediente);
+	
+	public void comprobarFechasParaLanzarComisionamiento(Oferta oferta, Date fechaEntrada);
 
 }

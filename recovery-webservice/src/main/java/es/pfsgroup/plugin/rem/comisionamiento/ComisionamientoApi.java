@@ -23,6 +23,6 @@ public interface ComisionamientoApi {
 
 	Double calculaImporteCalculo(Double importeOferta, Double comision);
 
-	List<DtoPrescriptoresComision> getTiposDeComisionAccionGasto(Oferta oferta);
+	List<DtoPrescriptoresComision> getTiposDeComisionAccionGasto(Oferta oferta,boolean reenvioPorMas180Dias);
 
 }

@@ -74,7 +74,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 	}
 	
 	@Override
-	public List<DtoPrescriptoresComision> getTiposDeComisionAccionGasto(Oferta oferta){
+	public List<DtoPrescriptoresComision> getTiposDeComisionAccionGasto(Oferta oferta,boolean reenvioPorMas180Dias){
 		List<DtoPrescriptoresComision> listAcciones = new ArrayList<DtoPrescriptoresComision>();
 		
 		Visita visita = oferta.getVisita();
@@ -93,7 +93,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 				: visita.getProveedorVisita().getCodigoProveedorRem().toString(); 
 		offerPrescriber = (oferta.getPrescriptor().getCodigoProveedorRem().toString());
 		
-		String codLeadOrigin = calculaLeadOrigin(oferta);
+		String codLeadOrigin = calculaLeadOrigin(oferta,reenvioPorMas180Dias);
 		
 		DtoPrescriptoresComision dto = getNewDtoComision();
 		
@@ -131,14 +131,22 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		return dto;
 	}
 	
-	public String calculaLeadOrigin(Oferta oferta) {
+	public String calculaLeadOrigin(Oferta oferta,boolean reenvioPorMas180Dias) {
 		
 		String codLeadOrigin = null;
 		
 		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getOrigenComprador())) {
-			codLeadOrigin = oferta.getOrigenComprador().getCodigo();
+			if(reenvioPorMas180Dias== true && DDOrigenComprador.CODIGO_ORC_HRE.equals(oferta.getOrigenComprador())) {
+				codLeadOrigin = DDOrigenComprador.CODIGO_ORC_API_PROPIO;
+			}else {
+				codLeadOrigin = oferta.getOrigenComprador().getCodigo();
+			}
 		} else if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getVisita()) && !Checks.esNulo(oferta.getVisita().getOrigenComprador())) {
-			codLeadOrigin = oferta.getVisita().getOrigenComprador().getCodigo();
+			if(reenvioPorMas180Dias == true && DDOrigenComprador.CODIGO_ORC_HRE.equals(oferta.getVisita().getOrigenComprador())) {
+				codLeadOrigin = DDOrigenComprador.CODIGO_ORC_API_PROPIO;
+			}else {
+				codLeadOrigin = oferta.getVisita().getOrigenComprador().getCodigo();
+			}			
 		} else {
 			codLeadOrigin = DDOrigenComprador.CODIGO_ORC_HRE;
 		}

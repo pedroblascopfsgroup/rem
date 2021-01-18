@@ -7180,7 +7180,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		List<GastosExpediente> listaGastos = new ArrayList<GastosExpediente>();
 
-		List<DtoGastoExpediente> listDtoGastoExpediente = ofertaApi.calculaHonorario(oferta, activo);
+		List<DtoGastoExpediente> listDtoGastoExpediente = ofertaApi.calculaHonorario(oferta, activo,false);
 
 		for (DtoGastoExpediente dtoGastoExpediente : listDtoGastoExpediente) {
 			GastosExpediente gastoExpediente = new GastosExpediente();
@@ -11107,7 +11107,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		 
 
-		List<DtoGastoExpediente> listDtoGastoExpediente = ofertaApi.calculaHonorario(oferta, activo);
+		List<DtoGastoExpediente> listDtoGastoExpediente = ofertaApi.calculaHonorario(oferta, activo,false);
 
 		for (DtoGastoExpediente dtoGastoExpediente : listDtoGastoExpediente) {
 			DDAccionGastos acciongasto = (DDAccionGastos) utilDiccionarioApi

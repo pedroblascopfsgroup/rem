@@ -87,8 +87,9 @@ import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
+import es.pfsgroup.plugin.rem.rest.dto.ActivoCrearPeticionTrabajoDto;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
@@ -1341,9 +1342,12 @@ public interface ActivoApi {
 
 	Boolean updateHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
 
-	public List<DDTipoSegmento> getComboTipoSegmento(String codSubcartera);
+	ActivoCrearPeticionTrabajoDto getActivoParaCrearPeticionTrabajobyId(Long activoId);
 
-	public Boolean isGrupoOficinaKAM();
+	boolean estanTodosActivosVendidos(List<Activo> activos);
+
+	boolean estanTodosActivosAlquilados(List<Activo> activos);
+
 
 	List<ReqFaseVentaDto> getReqFaseVenta(Long idActivo);
 
@@ -1368,7 +1372,7 @@ public interface ActivoApi {
 	Boolean deleteSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
 
 	Boolean updateSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
-	
+
 	
 	/**
 	 * Devuelve la Lista de Dtos para rellenar un grid
@@ -1418,8 +1422,12 @@ public interface ActivoApi {
 			String nombre, String apellido1, String apellido2, String tipoDocIdentificativoDesc);
 
 	String uploadFactura(WebFileItem webFileItem, Long idDocRestClient, GastoAsociadoAdquisicion gas, DDTipoDocumentoGastoAsociado tipoDocGastoAsociado) throws UserException;
-	
+
+	public List<DDTipoSegmento> getComboTipoSegmento(String codSubcartera);
+
 	boolean isActivoExisteEnRem(Long idActivo);
+
+	public Boolean isGrupoOficinaKAM();
 
 	boolean createHistoricoTramitacionTituloAdicional(DtoHistoricoTramitacionTituloAdicional tramitacionDto, Long idActivo) throws HistoricoTramitacionException;
 	

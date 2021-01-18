@@ -1,0 +1,293 @@
+--/*
+--##########################################
+--## AUTOR=DAP
+--## FECHA_CREACION=20201204
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-12373
+--## PRODUCTO=NO
+--##
+--## Finalidad: Rellenar tabla
+--## INSTRUCCIONES: 
+--## VERSIONES:
+--##        0.1 Version inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_AGS_ACTIVO_GENERICO_STG'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_ITEM VARCHAR2(30 CHAR) := 'HREOS-12373';
+    
+    V_PROPIETARIO VARCHAR2(4000 CHAR);
+    
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+		T_TIPO_DATA('GINM08016','8016'),
+		T_TIPO_DATA('GEN008016','8016'),
+		T_TIPO_DATA('GINM08025','8025'),
+		T_TIPO_DATA('GEN008025','8025'),
+		T_TIPO_DATA('GINM08011','8011'),
+		T_TIPO_DATA('GEN008011','8011'),
+		T_TIPO_DATA('GINM08006','8006'),
+		T_TIPO_DATA('GEN008006','8006'),
+		T_TIPO_DATA('GINM08013','8013'),
+		T_TIPO_DATA('GEN008013','8013'),
+		T_TIPO_DATA('GINM08009','8009'),
+		T_TIPO_DATA('GEN008009','8009'),
+		T_TIPO_DATA('GINM08012','8012'),
+		T_TIPO_DATA('GEN008012','8012'),
+		T_TIPO_DATA('GINM08017','8017'),
+		T_TIPO_DATA('GEN008017','8017'),
+		T_TIPO_DATA('GINM08014','8014'),
+		T_TIPO_DATA('GEN008014','8014'),
+		T_TIPO_DATA('GINM08015','8015'),
+		T_TIPO_DATA('GEN008015','8015'),
+		T_TIPO_DATA('GINM08026','8026'),
+		T_TIPO_DATA('GEN008026','8026'),
+		T_TIPO_DATA('GINM08029','8029'),
+		T_TIPO_DATA('GEN008029','8029'),
+		T_TIPO_DATA('GINM08027','8027'),
+		T_TIPO_DATA('GEN008027','8027'),
+		T_TIPO_DATA('GINM08003','8003'),
+		T_TIPO_DATA('GEN008003','8003'),
+		T_TIPO_DATA('GINM08005','8005'),
+		T_TIPO_DATA('GEN008005','8005'),
+		T_TIPO_DATA('GINM08023','8023'),
+		T_TIPO_DATA('GEN008023','8023'),
+		T_TIPO_DATA('GINM08008','8008'),
+		T_TIPO_DATA('GEN008008','8008'),
+		T_TIPO_DATA('GINM08007','8007'),
+		T_TIPO_DATA('GEN008007','8007'),
+		T_TIPO_DATA('GINM08022','8022'),
+		T_TIPO_DATA('GEN008022','8022'),
+		T_TIPO_DATA('GINM08019','8019'),
+		T_TIPO_DATA('GEN008019','8019'),
+		T_TIPO_DATA('GINM08021','8021'),
+		T_TIPO_DATA('GEN008021','8021'),
+		T_TIPO_DATA('GINM09713','9713'),
+		T_TIPO_DATA('GEN009713','9713'),
+		T_TIPO_DATA('GINM09739','9739'),
+		T_TIPO_DATA('GEN009739','9739'),
+		T_TIPO_DATA('GINM09729','9729'),
+		T_TIPO_DATA('GEN009729','9729'),
+		T_TIPO_DATA('GINM08020','8020'),
+		T_TIPO_DATA('GEN008020','8020'),
+		T_TIPO_DATA('GEN203','203'),
+		T_TIPO_DATA('GINM33','33'),
+		T_TIPO_DATA('GEN33','33'),
+		T_TIPO_DATA('GEN219','219'),
+		T_TIPO_DATA('GEN401','401'),
+		T_TIPO_DATA('GEN116','116'),
+		T_TIPO_DATA('GEN221','221'),
+		T_TIPO_DATA('GINM220','220'),
+		T_TIPO_DATA('GEN250','220'),
+		T_TIPO_DATA('GEN220','220'),
+		T_TIPO_DATA('GEN223','223'),
+		T_TIPO_DATA('GEN105','105'),
+		T_TIPO_DATA('GEN135','135'),
+		T_TIPO_DATA('GINM08001','997'),
+		T_TIPO_DATA('GEN008001','997'),
+		T_TIPO_DATA('SLA000999','999'),
+		T_TIPO_DATA('GINM999','999'),
+		T_TIPO_DATA('GEN999','999'),
+		T_TIPO_DATA('GEN206','206'),
+		T_TIPO_DATA('GEN52','52'),
+		T_TIPO_DATA('GEN224','224'),
+		T_TIPO_DATA('GEN205','205'),
+		T_TIPO_DATA('GEN216','216'),
+		T_TIPO_DATA('GEN67','67'),
+		T_TIPO_DATA('GEN83','83'),
+		T_TIPO_DATA('GEN45','45'),
+		T_TIPO_DATA('GEN107','107'),
+		T_TIPO_DATA('GEN214','214'),
+		T_TIPO_DATA('GEN211','211'),
+		T_TIPO_DATA('GEN215','215'),
+		T_TIPO_DATA('GEN42','42'),
+		T_TIPO_DATA('GINM08004','998'),
+		T_TIPO_DATA('GEN008004','998'),
+		T_TIPO_DATA('GEN104','104'),
+		T_TIPO_DATA('GEN50','50'),
+		T_TIPO_DATA('GINM09760','9760'),
+		T_TIPO_DATA('GEN009760','9760'),
+		T_TIPO_DATA('GINM09761','9761'),
+		T_TIPO_DATA('GEN009761','9761'),
+		T_TIPO_DATA('GINM09762','9762'),
+		T_TIPO_DATA('GEN009762','9762'),
+		T_TIPO_DATA('GINM69','69'),
+		T_TIPO_DATA('GEN69','69'),
+		T_TIPO_DATA('GINM09763','9763'),
+		T_TIPO_DATA('GEN009763','9763'),
+		T_TIPO_DATA('GINM08010','8010'),
+		T_TIPO_DATA('GEN008010','8010'),
+		T_TIPO_DATA('GINM09714','9714'),
+		T_TIPO_DATA('GEN009714','9714'),
+		T_TIPO_DATA('GINM09740','9740'),
+		T_TIPO_DATA('GEN009740','9740'),
+		T_TIPO_DATA('GINM09709','9709'),
+		T_TIPO_DATA('GEN009709','9709'),
+		T_TIPO_DATA('GINM09710','9710'),
+		T_TIPO_DATA('GEN009710','9710'),
+		T_TIPO_DATA('GINM09711','9711'),
+		T_TIPO_DATA('GEN009711','9711'),
+		T_TIPO_DATA('GINM09701','9701'),
+		T_TIPO_DATA('GEN009701','9701'),
+		T_TIPO_DATA('GINM09736','9736'),
+		T_TIPO_DATA('GEN009736','9736'),
+		T_TIPO_DATA('GINM09702','9702'),
+		T_TIPO_DATA('GEN009702','9702'),
+		T_TIPO_DATA('GINM09703','9703'),
+		T_TIPO_DATA('GEN009703','9703'),
+		T_TIPO_DATA('GINM09712','9712'),
+		T_TIPO_DATA('GEN009712','9712'),
+		T_TIPO_DATA('GINM09753','9753'),
+		T_TIPO_DATA('GEN009753','9753'),
+		T_TIPO_DATA('GINM09726','9726'),
+		T_TIPO_DATA('GEN009726','9726'),
+		T_TIPO_DATA('GINM09704','9704'),
+		T_TIPO_DATA('GEN009704','9704'),
+		T_TIPO_DATA('GINM09749','9749'),
+		T_TIPO_DATA('GEN009749','9749'),
+		T_TIPO_DATA('GINM09748','9748'),
+		T_TIPO_DATA('GEN009748','9748'),
+		T_TIPO_DATA('GINM09737','9737'),
+		T_TIPO_DATA('GEN009737','9737'),
+		T_TIPO_DATA('GINM09755','9755'),
+		T_TIPO_DATA('GEN009755','9755'),
+		T_TIPO_DATA('GINM09718','9718'),
+		T_TIPO_DATA('GEN009718','9718'),
+		T_TIPO_DATA('GINM09725','9725'),
+		T_TIPO_DATA('GEN009725','9725'),
+		T_TIPO_DATA('GINM09719','9719'),
+		T_TIPO_DATA('GEN009719','9719'),
+		T_TIPO_DATA('GINM09717','9717'),
+		T_TIPO_DATA('GEN009717','9717'),
+		T_TIPO_DATA('GINM09716','9716'),
+		T_TIPO_DATA('GEN009716','9716'),
+		T_TIPO_DATA('GINM09745','9745'),
+		T_TIPO_DATA('GEN009745','9745'),
+		T_TIPO_DATA('GINM09754','9754'),
+		T_TIPO_DATA('GEN009754','9754'),
+		T_TIPO_DATA('GINM09708','9708'),
+		T_TIPO_DATA('GEN009708','9708'),
+		T_TIPO_DATA('GINM09732','9732'),
+		T_TIPO_DATA('GEN009732','9732'),
+		T_TIPO_DATA('GINM09738','9738'),
+		T_TIPO_DATA('GEN009738','9738'),
+		T_TIPO_DATA('GINM09730','9730'),
+		T_TIPO_DATA('GEN009730','9730'),
+		T_TIPO_DATA('GINM09733','9733'),
+		T_TIPO_DATA('GEN009733','9733'),
+		T_TIPO_DATA('GINM09715','9715'),
+		T_TIPO_DATA('GEN009715','9715'),
+		T_TIPO_DATA('GINM09707','9707'),
+		T_TIPO_DATA('GEN009707','9707'),
+		T_TIPO_DATA('GINM08018','8018'),
+		T_TIPO_DATA('GEN008018','8018'),
+		T_TIPO_DATA('GINM08002','8002'),
+		T_TIPO_DATA('GEN008002','8002')
+    ); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+
+BEGIN
+    
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Iniciamos la inserción de activos genéricos...');
+
+	DBMS_OUTPUT.PUT_LINE('	[INFO] Inserción en '||V_TEXT_TABLA);
+
+	V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' AND OWNER = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 0 THEN
+	
+			DBMS_OUTPUT.PUT_LINE('[INFO]: No existe la tabla '||V_TEXT_TABLA);
+	
+	ELSE
+
+		-- LOOP para insertar los valores --
+		FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+			LOOP
+				V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+	            DBMS_OUTPUT.put_line('[INFO]: Insertando fila '||I||'. Código de propietario entidad: '''||V_TMP_TIPO_DATA(2)||''',  Activo genérico: '''||V_TMP_TIPO_DATA(2)||''''); 
+				--T_TIPO_DATA('PROPIETARIO'1,'ACTIVO GENERICO'2,'AÑO'3)
+	                
+					V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
+			  				AGS_ID
+			  				, DD_STG_ID
+			  				, USUARIOCREAR
+			  				, FECHACREAR
+			  				, PRO_ID
+			  				, AGS_ACTIVO_GENERICO
+		  				) 
+		  				SELECT 
+		  					'||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL
+		  					, STG.DD_STG_ID
+		  					, '''||V_ITEM||'''
+		  					, SYSDATE
+		  					, PRO.PRO_ID
+		  					, '''||TRIM(V_TMP_TIPO_DATA(1))||''' AGS_ACTIVO_GENERICO
+		  				FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO
+			          	JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON 1 = 1
+			          		AND STG.BORRADO = 0 
+			  			WHERE PRO.BORRADO = 0 
+			  				AND PRO.PRO_CODIGO_ENTIDAD = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+			            	AND NOT EXISTS (
+				              SELECT 1
+				              FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' AUX
+				              WHERE AUX.PRO_ID = PRO.PRO_ID
+				                AND AUX.DD_STG_ID = STG.DD_STG_ID
+				                AND AUX.AGS_ACTIVO_GENERICO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''
+				                AND AUX.BORRADO = 0
+				            )';                          
+					EXECUTE IMMEDIATE V_MSQL;
+	                
+		        IF SQL%ROWCOUNT = 1 THEN
+
+		            DBMS_OUTPUT.PUT_LINE('	[INFO] Se ha insertado 1 registro para la fila '||I||' en la tabla '||V_TEXT_TABLA||'.');
+		        
+		        ELSIF SQL%ROWCOUNT > 1 THEN
+		        
+		            DBMS_OUTPUT.PUT_LINE('	[INFO] Se han insertado '||SQL%ROWCOUNT||' registros para la fila '||I||' en la tabla '||V_TEXT_TABLA||'.');
+		        
+		        ELSE
+		        
+		            DBMS_OUTPUT.PUT_LINE('	[INFO] No se insertó ningún registro para la fila '||I||' en la tabla '||V_TEXT_TABLA||'.');
+		        
+		        END IF;
+	                
+			END LOOP;
+
+	END IF;
+
+	COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(V_MSQL); 
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

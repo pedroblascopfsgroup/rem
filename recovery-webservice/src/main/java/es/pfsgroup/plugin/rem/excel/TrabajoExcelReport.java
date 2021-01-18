@@ -22,12 +22,15 @@ public class TrabajoExcelReport extends AbstractExcelReport implements ExcelRepo
 		List<String> listaCabeceras = new ArrayList<String>();
 		listaCabeceras.add("Nº de trabajo");
 		listaCabeceras.add("Nº de activo");
+		listaCabeceras.add("Cartera");
+		listaCabeceras.add("Subcartera");
 		listaCabeceras.add("Tipo de trabajo");
 		listaCabeceras.add("Subtipo de trabajo");
 		listaCabeceras.add("Estado");
 		listaCabeceras.add("Solicitante");
 		listaCabeceras.add("Proveedor");
 		listaCabeceras.add("Fecha de petición");
+		listaCabeceras.add("Área peticionaria");
 		
 		return listaCabeceras;
 	}
@@ -44,12 +47,15 @@ public class TrabajoExcelReport extends AbstractExcelReport implements ExcelRepo
 			List<String> fila = new ArrayList<String>();
 			fila.add(trabajo.getNumTrabajo());
 			fila.add(trabajo.getNumActivoAgrupacion().toString());
+			fila.add(trabajo.getDescripcionCartera());
+			fila.add(trabajo.getDescripcionSubcartera());
 			fila.add(trabajo.getDescripcionTipo());
 			fila.add(trabajo.getDescripcionSubtipo());
 			fila.add(trabajo.getDescripcionEstado());
 			fila.add(trabajo.getSolicitante());
 			fila.add(trabajo.getProveedor());
 			fila.add(this.getDateStringValue(trabajo.getFechaSolicitud()));
+			fila.add(trabajo.getAreaPeticionaria());
 			
 			valores.add(fila);
 		}

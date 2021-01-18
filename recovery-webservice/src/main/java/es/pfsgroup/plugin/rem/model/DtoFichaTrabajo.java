@@ -65,8 +65,12 @@ public class DtoFichaTrabajo {
 	private Boolean esSolicitudConjunta;
 
 	private Date fechaConcreta;
+	
+	private String fechaConcretaString;
 
 	private Date horaConcreta;
+	
+	private String horaConcretaString;
 
 	private Date fechaTope;
 
@@ -177,7 +181,88 @@ public class DtoFichaTrabajo {
 	private String nombreProyecto;
 
 	private String nombreExpediente;
+	
+	private String gestorActivo;
+	
+	private Boolean tieneTramiteCreado;
+	
+	private Boolean esFEjecucionEditable;
+	
+	private Boolean esTarifaPlanaEditable;
+	
+	private Boolean esSiniestroEditable;
+	
+	private Boolean esEstadoEditable;
+	
+	private String idTarea;
+	
+	private String idTarifas;
+	
+	private Double importePresupuesto;
+	
+	private String refImportePresupueso;
+	private Boolean riesgosTerceros;
+	
+	private String descripcionGeneral;
+	
+	private Long gestorActivoCodigo;
+	
+	private Long numAlbaran;
+	
+	private Long numGasto;
 
+	private String estadoGastoCodigo;
+	
+	private Boolean cubiertoSeguro;
+	
+	private Double importePrecio;
+	
+	private Boolean aplicaComite;
+	
+	private String resolucionComiteCodigo;
+	
+	private Date fechaResolucionComite;
+	
+	private String resolucionComiteId;
+	
+	private String estadoTrabajoCodigo;
+	
+	private Date fechaEjecucionTrabajo;
+	
+	private Boolean tarifaPlana;
+	
+	private Boolean riesgoSiniestro;
+	
+	private String proovedorCodigo;
+	
+	private Date fechaEntregaLlaves;
+	
+	private String receptorCodigo;
+	
+	private Boolean llavesNoAplica;
+	
+	private String llavesMotivo;
+	
+	private Long idProveedorReceptor;
+	private Long idProveedorLlave;
+	
+	//
+	private Boolean llavesNoAplicaTrabajo;
+	private Boolean riesgoSiniestroTrabajo;
+	private Boolean tarifaPlanaTrabajo;
+	private Boolean aplicaComiteTrabajo;
+	private Boolean riesgosTercerosTrabajo;
+	
+	private Boolean visualizarLlaves;
+	
+	private Integer tomaPosesion;
+	
+	private Long proveedorContact;
+	private String estadoDescripcionyFecha;
+	
+	
+	private String identificadorReamCodigo;
+	
 	public Long getIdTrabajo() {
 		return idTrabajo;
 	}
@@ -413,12 +498,28 @@ public class DtoFichaTrabajo {
 		this.fechaConcreta = fechaConcreta;
 	}
 
+	public String getFechaConcretaString() {
+		return fechaConcretaString;
+	}
+
+	public void setFechaConcretaString(String fechaConcretaString) {
+		this.fechaConcretaString = fechaConcretaString;
+	}
+
 	public Date getHoraConcreta() {
 		return horaConcreta;
 	}
 
 	public void setHoraConcreta(Date horaConcreta) {
 		this.horaConcreta = horaConcreta;
+	}
+
+	public String getHoraConcretaString() {
+		return horaConcretaString;
+	}
+
+	public void setHoraConcretaString(String horaConcretaString) {
+		this.horaConcretaString = horaConcretaString;
 	}
 
 	public Date getFechaTope() {
@@ -861,5 +962,379 @@ public class DtoFichaTrabajo {
 	public void setNombreExpediente(String nombreExpediente) {
 		this.nombreExpediente = nombreExpediente;
 	}
+
+	public String getGestorActivo() {
+		return gestorActivo;
+	}
+
+	public void setGestorActivo(String gestorActivo) {
+		this.gestorActivo = gestorActivo;
+	}
+
+	public Boolean getTieneTramiteCreado() {
+		return tieneTramiteCreado;
+	}
+
+	public void setTieneTramiteCreado(Boolean tieneTramiteCreado) {
+		this.tieneTramiteCreado = tieneTramiteCreado;
+	}
+
+	public Boolean getEsFEjecucionEditable() {
+		return esFEjecucionEditable;
+	}
+
+	public void setEsFEjecucionEditable(Boolean esFEjecucionEditable) {
+		this.esFEjecucionEditable = esFEjecucionEditable;
+	}
+
+	public Boolean getEsTarifaPlanaEditable() {
+		return esTarifaPlanaEditable;
+	}
+
+	public void setEsTarifaPlanaEditable(Boolean esTarifaPlanaEditable) {
+		this.esTarifaPlanaEditable = esTarifaPlanaEditable;
+	}
+
+	public Boolean getEsSiniestroEditable() {
+		return esSiniestroEditable;
+	}
+
+	public void setEsSiniestroEditable(Boolean esSiniestroEditable) {
+		this.esSiniestroEditable = esSiniestroEditable;
+	}
+
+	public Boolean getEsEstadoEditable() {
+		return esEstadoEditable;
+	}
+
+	public void setEsEstadoEditable(Boolean esEstadoEditable) {
+		this.esEstadoEditable = esEstadoEditable;
+	}
+
+
+	public String getIdTarea() {
+		return idTarea;
+	}
+
+	public void setIdTarea(String idTarea) {
+		this.idTarea = idTarea;
+	}
+
+	public String getIdTarifas() {
+		return idTarifas;
+	}
+
+	public void setIdTarifas(String idTarifas) {
+		this.idTarifas = idTarifas;
+	}
+
+	public Double getImportePresupuesto() {
+		return importePresupuesto;
+	}
+
+	public void setImportePresupuesto(Double importePresupuesto) {
+		this.importePresupuesto = importePresupuesto;
+	}
+
+	public String getRefImportePresupueso() {
+		return refImportePresupueso;
+	}
+
+	public void setRefImportePresupueso(String refImportePresupueso) {
+		this.refImportePresupueso = refImportePresupueso;
+	}
+
+	public String getDescripcionGeneral() {
+		return descripcionGeneral;
+	}
+
+	public void setDescripcionGeneral(String descripcionGeneral) {
+		this.descripcionGeneral = descripcionGeneral;
+	}
+
+	public Long getGestorActivoCodigo() {
+		return gestorActivoCodigo;
+	}
+
+	public void setGestorActivoCodigo(Long gestorActivoCodigo) {
+		this.gestorActivoCodigo = gestorActivoCodigo;
+	}
+
+	public Long getNumAlbaran() {
+		return numAlbaran;
+	}
+
+	public void setNumAlbaran(Long numAlbaran) {
+		this.numAlbaran = numAlbaran;
+	}
+
+	public Long getNumGasto() {
+		return numGasto;
+	}
+
+	public void setNumGasto(Long numGasto) {
+		this.numGasto = numGasto;
+	}
+
+	public String getEstadoGastoCodigo() {
+		return estadoGastoCodigo;
+	}
+
+	public void setEstadoGastoCodigo(String estadoGastoCodigo) {
+		this.estadoGastoCodigo = estadoGastoCodigo;
+	}
+
+	public Boolean isCubiertoSeguro() {
+		return cubiertoSeguro;
+	}
+
+	public void setCubiertoSeguro(Boolean cubiertoSeguro) {
+		this.cubiertoSeguro = cubiertoSeguro;
+	}
+
+	public Double getImportePrecio() {
+		return importePrecio;
+	}
+
+	public void setImportePrecio(Double importePrecio) {
+		this.importePrecio = importePrecio;
+	}
+
+	public Boolean isAplicaComite() {
+		return aplicaComite;
+	}
+
+	public void setAplicaComite(Boolean aplicaComite) {
+		this.aplicaComite = aplicaComite;
+	}
+
+	public String getResolucionComiteCodigo() {
+		return resolucionComiteCodigo;
+	}
+
+	public void setResolucionComiteCodigo(String resolucionComiteCodigo) {
+		this.resolucionComiteCodigo = resolucionComiteCodigo;
+	}
+
+
+	public Date getFechaResolucionComite() {
+		return fechaResolucionComite;
+	}
+
+	public void setFechaResolucionComite(Date fechaResolucionComite) {
+		this.fechaResolucionComite = fechaResolucionComite;
+	}
+
+
+	public String getResolucionComiteId() {
+		return resolucionComiteId;
+	}
+
+	public void setResolucionComiteId(String resolucionComiteId) {
+		this.resolucionComiteId = resolucionComiteId;
+	}
+
+
+
+	public String getEstadoTrabajoCodigo() {
+		return estadoTrabajoCodigo;
+	}
+
+	public void setEstadoTrabajoCodigo(String estadoTrabajoCodigo) {
+		this.estadoTrabajoCodigo = estadoTrabajoCodigo;
+	}
+
+	public Date getFechaEjecucionTrabajo() {
+		return fechaEjecucionTrabajo;
+	}
+
+	public void setFechaEjecucionTrabajo(Date fechaEjecucionTrabajo) {
+		this.fechaEjecucionTrabajo = fechaEjecucionTrabajo;
+	}
+
+	public Boolean isTarifaPlana() {
+		return tarifaPlana;
+	}
+
+	public void setTarifaPlana(Boolean tarifaPlana) {
+		this.tarifaPlana = tarifaPlana;
+	}
+
+	public Boolean isRiesgoSiniestro() {
+		return riesgoSiniestro;
+	}
+
+	public void setRiesgoSiniestro(Boolean riesgoSiniestro) {
+		this.riesgoSiniestro = riesgoSiniestro;
+	}
+
+	public String getProovedorCodigo() {
+		return proovedorCodigo;
+	}
+
+	public void setProovedorCodigo(String proovedorCodigo) {
+		this.proovedorCodigo = proovedorCodigo;
+	}
+
+	public String getReceptorCodigo() {
+		return receptorCodigo;
+	}
+
+	public void setReceptorCodigo(String receptorCodigo) {
+		this.receptorCodigo = receptorCodigo;
+	}
+
+	public Boolean isLlavesNoAplica() {
+		return llavesNoAplica;
+	}
+
+	public void setLlavesNoAplica(Boolean llavesNoAplica) {
+		this.llavesNoAplica = llavesNoAplica;
+	}
+
+	public String getLlavesMotivo() {
+		return llavesMotivo;
+	}
+
+	public void setLlavesMotivo(String llavesMotivo) {
+		this.llavesMotivo = llavesMotivo;
+	}
+
+	public Boolean isRiesgosTerceros() {
+		return riesgosTerceros;
+	}
+
+	public void setRiesgosTerceros(Boolean riesgosTerceros) {
+		this.riesgosTerceros = riesgosTerceros;
+	}
+
+	public Boolean getLlavesNoAplicaTrabajo() {
+		return llavesNoAplicaTrabajo;
+	}
+
+	public void setLlavesNoAplicaTrabajo(Boolean llavesNoAplicaTrabajo) {
+		this.llavesNoAplicaTrabajo = llavesNoAplicaTrabajo;
+	}
+
+	public Boolean getRiesgoSiniestroTrabajo() {
+		return riesgoSiniestroTrabajo;
+	}
+
+	public void setRiesgoSiniestroTrabajo(Boolean riesgoSiniestroTrabajo) {
+		this.riesgoSiniestroTrabajo = riesgoSiniestroTrabajo;
+	}
+
+	public Boolean getTarifaPlanaTrabajo() {
+		return tarifaPlanaTrabajo;
+	}
+
+	public void setTarifaPlanaTrabajo(Boolean tarifaPlanaTrabajo) {
+		this.tarifaPlanaTrabajo = tarifaPlanaTrabajo;
+	}
+
+	public Boolean getAplicaComiteTrabajo() {
+		return aplicaComiteTrabajo;
+	}
+
+	public void setAplicaComiteTrabajo(Boolean aplicaComiteTrabajo) {
+		this.aplicaComiteTrabajo = aplicaComiteTrabajo;
+	}
+
+	public Boolean getRiesgosTercerosTrabajo() {
+		return riesgosTercerosTrabajo;
+	}
+
+	public void setRiesgosTercerosTrabajo(Boolean riesgosTercerosTrabajo) {
+		this.riesgosTercerosTrabajo = riesgosTercerosTrabajo;
+	}
+
+	public Boolean getRiesgosTerceros() {
+		return riesgosTerceros;
+	}
+
+	public Boolean getCubiertoSeguro() {
+		return cubiertoSeguro;
+	}
+
+	public Boolean getAplicaComite() {
+		return aplicaComite;
+	}
+
+	public Boolean getTarifaPlana() {
+		return tarifaPlana;
+	}
+
+	public Boolean getRiesgoSiniestro() {
+		return riesgoSiniestro;
+	}
+
+	public Boolean getLlavesNoAplica() {
+		return llavesNoAplica;
+	}
+
+	public Boolean getVisualizarLlaves() {
+		return visualizarLlaves;
+	}
+
+	public void setVisualizarLlaves(Boolean visualizarLlaves) {
+		this.visualizarLlaves = visualizarLlaves;
+	}
+
+	public Long getIdProveedorReceptor() {
+		return idProveedorReceptor;
+	}
+
+	public void setIdProveedorReceptor(Long idProveedorReceptor) {
+		this.idProveedorReceptor = idProveedorReceptor;
+	}
+
+	public Long getIdProveedorLlave() {
+		return idProveedorLlave;
+	}
+
+	public void setIdProveedorLlave(Long idProveedorLlave) {
+		this.idProveedorLlave = idProveedorLlave;
+	}
+
+	public Date getFechaEntregaLlaves() {
+		return fechaEntregaLlaves;
+	}
+
+	public void setFechaEntregaLlaves(Date fechaEntregaLlaves) {
+		this.fechaEntregaLlaves = fechaEntregaLlaves;
+	}
+	
+	public Integer getTomaPosesion() {
+		return tomaPosesion;
+	}
+
+	public void setTomaPosesion(Integer tomaPosesion) {
+		this.tomaPosesion = tomaPosesion;
+
+	}
+	public Long getProveedorContact() {
+		return proveedorContact;
+	}
+
+	public void setProveedorContact(Long proveedorContact) {
+		this.proveedorContact = proveedorContact;
+	}
+
+	public String getEstadoDescripcionyFecha() {
+		return estadoDescripcionyFecha;
+	}
+
+	public void setEstadoDescripcionyFecha(String estadoDescripcionyFecha) {
+		this.estadoDescripcionyFecha = estadoDescripcionyFecha;
+	}
+	
+	public String getIdentificadorReamCodigo() {
+		return identificadorReamCodigo;
+	}
+
+	public void setIdentificadorReamCodigo(String identificadorReamCodigo) {
+		this.identificadorReamCodigo = identificadorReamCodigo;
+	}
+	
 	
 }

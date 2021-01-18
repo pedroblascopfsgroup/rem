@@ -80,6 +80,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	return CONST.CARTERA['BANKIA'] == carteraCodigo;
 	     },
 	     
+	     visibleBotonAuditoriaDesbloqueo: function(get){
+	    	var me = this;
+	    	var finEconomico = me.getData().expediente.getData().finalizadoCierreEconomico;
+			var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION'])
+					|| $AU.userIsRol(CONST.PERFILES['PERFGCONTROLLER']);
+			return usuariosValidos && finEconomico;
+			
+	     },
+	     
 	     esBankiaHabitat: function(get) {
 		    	var subCartera = get('expediente.propietario');
 		     	return CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT'] == subCartera;
@@ -1372,6 +1381,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	}
 		},
 
+
+		storeAuditoriaDesbloqueo: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.AuditoriaDesbloqueo',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getAuditoriaDesbloqueo',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}
+		},
+
 		storeActivosAlquilados: {
 			pageSize: $AC.getDefaultPageSize(),
 	    	model: 'HreRem.model.ActivoAlquiladosGrid',
@@ -1382,6 +1402,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	},
 			autoLoad: true
 		},
+
+		storeAuditoriaDesbloqueo: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.AuditoriaDesbloqueo',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getAuditoriaDesbloqueo',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}
+		},
+		
 
 		comboMotivoAmpliacionArras: {
 	    	model: 'HreRem.model.ComboBase',

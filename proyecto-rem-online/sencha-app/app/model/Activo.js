@@ -942,74 +942,7 @@ Ext.define('HreRem.model.Activo', {
     			name: 'numActivoDivarian'
     		},
     		{
-    			name: 'empresa'
-    		},
-    		{
-    			name: 'oficina'
-    		},
-    		{
-    			name: 'contrapartida'
-    		},
-    		{
-    			name: 'folio'
-    		},
-    		{
-    			name: 'cdpen'
-    		},
-    		{
-    			name: 'numActivoBbva'
-    		},
-    		{
-    			name: 'lineaFactura'
-    		},
-    		{
-    			name: 'idOrigenHre'
-    		},
-    		{
-    			name: 'uicBbva'
-    		},
-    		{
-    			name: 'cexperBbva'
-    		},
-    		{
-    			name: 'subestadoAdmisionDescCabecera'
-			},
-			{
-	 			name: 'estadoRegistralCodigo'
-			},
-			{
-	 			name: 'esEditableActivoEstadoRegistral',
-    			type: 'boolean'	 			
-			},
-			{
     			name: 'activoEpa',
-				type: 'boolean'
-			},
-			{
-    			name: 'tipoTransmisionCodigo'
-    		},
-    		{
-    			name: 'tipoTransmisionDescripcion'
-    		},
-    		{
-    			name: 'tipoAltaCodigo'
-    		},
-    		{
-    			name: 'tipoAltaDescripcion'
-    		},
-    		{
-    			name: 'isCarteraBbva',
-    			calculate: function(data) {
-    				return data.entidadPropietariaCodigo == CONST.CARTERA['BBVA'];
-    			},
-    			depends: 'entidadPropietariaCodigo'
-    		},
-    		{
-    			name: 'isGrupoOficinaKAM',
-    			type: 'boolean'
-			},
-			{
-    			name: 'perimetroAdmision',
     			type: 'boolean'
     		},
 			{
@@ -1040,7 +973,10 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'estadoAdmisionDesc' 
-    		},
+			},
+			{
+				name: 'lineaFactura'
+			},
     		{
     			name: 'subestadoAdmisionDesc'
     		},
@@ -1052,6 +988,73 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'estadoAdmisionDescCabecera' 
+    		},
+    		{
+    			name: 'subestadoAdmisionDescCabecera'
+			},
+			{
+	 			name: 'estadoRegistralCodigo'
+			},
+			{
+	 			name: 'esEditableActivoEstadoRegistral',
+    			type: 'boolean'	 			
+			},
+    		{
+				name: 'empresa'
+    		},
+    		{
+    			name: 'oficina'
+    		},
+    		{
+    			name: 'contrapartida'
+    		},
+    		{
+    			name: 'folio'
+    		},
+    		{
+				name: 'cdpen'
+			},
+			{
+    			name: 'isGrupoOficinaKAM',
+    			type: 'boolean'
+			},
+			{
+    			name: 'perimetroAdmision',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'numActivoBbva'
+    		},
+    		{
+    			name: 'lineaFactura'
+    		},
+    		{
+    			name: 'idOrigenHre'
+    		},
+    		{
+    			name: 'uicBbva'
+    		},
+    		{
+    			name: 'cexperBbva'
+    		},
+    		{
+    			name: 'tipoTransmisionCodigo'
+    		},
+    		{
+    			name: 'tipoTransmisionDescripcion'
+    		},
+    		{
+    			name: 'tipoAltaCodigo'
+    		},
+    		{
+    			name: 'tipoAltaDescripcion'
+    		},
+    		{
+    			name: 'isCarteraBbva',
+    			calculate: function(data) {
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['BBVA'];
+    			},
+    			depends: 'entidadPropietariaCodigo'
     		},
     		{
     			name: 'subestadoAdmisionDescCabecera'

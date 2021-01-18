@@ -12,14 +12,98 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 	recordClass	: "HreRem.model.GestionEconomicaTrabajo",
     requires	: ['HreRem.model.GestionEconomicaTrabajo','HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo','HreRem.model.RecargoProveedor',
                		'HreRem.view.trabajos.detalle.AnyadirNuevoPresupuesto','HreRem.view.trabajos.detalle.ModificarPresupuesto',
-               		'HreRem.view.common.FieldSetTable','HreRem.model.PresupuestoTrabajo','HreRem.model.ProvisionSuplido'],
-
+               		'HreRem.view.common.FieldSetTable','HreRem.model.PresupuestoTrabajo','HreRem.model.ProvisionSuplido', 'HreRem.view.trabajos.detalle.HistorificacionDeCamposGrid'],
+    totalProv	: null,
+    totalCli	: null,
+    refreshaftersave: true,
+    afterLoad: function () {
+    	this.lookupController().desbloqueaCamposSegunEstadoTrabajo(this);
+    },
     initComponent: function () {
     	var me = this;
     	me.setTitle(HreRem.i18n('title.gestion.economica'));
 
+    	me.idTrabajo= me.lookupController().getViewModel().get('trabajo').get('idTrabajo');
     	me.items = [
-	            {
+    		{
+				xtype:'fieldset',
+				title: HreRem.i18n('title.proveedor'),
+				cls	: 'panel-base shadow-panel',
+				reference: 'fieldsetProveedorGestionEconomica',
+				layout: {
+			        type: 'table',
+			        // The total column count must be specified here
+			        columns: 2,
+			        tableAttrs: {
+			            style: {
+			                width: '100%'
+							}
+			        }
+				},
+				defaultType: 'textfieldbase',
+				collapsed: false,
+			 		scrollable	: 'y',
+				cls:'',	    				
+			    
+				items: [
+					{ 
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.nombre'),
+						labelWidth: 150,
+						width: 480,
+						reference: 'comboProveedorGestionEconomica',
+						chainedReference: 'proveedorContactoCombo',
+						bind: {
+							store: '{comboProveedorFiltradoManual}',
+							value: '{gestionEconomica.idProveedor}',
+							readOnly: '{!gestionEconomica.esProveedorEditable}'
+						},
+						displayField: 'nombreComercial',
+						valueField: 'idProveedor',
+						filtradoEspecial: true,
+						listeners: {
+		                	select: 'onChangeComboProveedorGE'
+		            	}
+					},
+					{
+						fieldLabel: HreRem.i18n('fieldlabel.email.contacto'),
+						xtype: 'textfieldbase',
+						width: 480,
+						bind: {
+							value: '{gestionEconomica.emailProveedorContacto}'
+						},
+						readOnly: true
+					},
+					{ 
+						xtype: 'comboboxfieldbase',
+			        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.contacto'),
+			        	reference: 'proveedorContactoCombo',
+			        	labelWidth:	150,
+			        	width: 		480,
+			        	bind: {
+		            		store: '{comboProveedorContacto}',
+		            		value: '{gestionEconomica.idProveedorContacto}',
+		            		disabled: '{!gestionEconomica.idProveedor}'
+		            	},
+		            	displayField: 'nombre',
+						valueField: 'id',
+						allowBlank: true,
+						listeners: {
+							change: 'onChangeProveedor',
+							expand: 'onChangeProveedorGestionEconomica'
+						}
+			        },
+					{
+						fieldLabel: HreRem.i18n('fieldlabel.telefono.contacto'),
+						width: 480,
+						bind: {
+							value: '{gestionEconomica.telefonoProveedorContacto}'
+						},
+						readOnly: true
+					}
+				]
+			},
+			{
 	            	xtype:'fieldset',
 					cls	: 'panel-base shadow-panel',
 					layout: {
@@ -36,10 +120,8 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 					},
 				    collapsible: true,
 				    collapsed: false,
-					hidden: true,
 					bind: {
-						hidden: '{!showTarificacion}',
-						disabled: '{disableTarificacion}'
+						disabled: '{!disableTarificacion}'
 					},	
 					reference: 'fieldsettarifasref',
 					defaultType: 'textfieldbase',
@@ -93,15 +175,56 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 		            				},
 	    				        	editor: {
 	    				        		xtype:'numberfield', 
+	    				        		allowBlank: false,
 	    				        		hideTrigger: true,
 	    				        		keyNavEnable: false,
-	    				        		mouseWheelEnable: false},
-	    				        	flex: 1 
+	    				        		mouseWheelEnable: false,
+	    				        		reference: 'preciounitarioref',
+	    				        		listeners:{
+	    				        			change: function(x, y, z){
+	    				        				var field = this;
+	    				        				var precioUniCli = field.up().down("[reference='preciounitarioclienteref']");
+	    				        				if(!precioUniCli.hidden){
+	    				        					precioUniCli.setMinValue(field.value);
+	    				        					precioUniCli.validate();
+	    				        				}
+	    				        			}
+	    				        		}
+	    				        	},
+	    				        	flex: 1,
+	    				        	bind: {
+	    				            	hidden: '{!mostrarTotalProveedor}'
+	    				            }
+	    				        },
+	    				        {   text: HreRem.i18n('header.precio.unitario.cliente'),
+	    				        	dataIndex: 'precioUnitarioCliente',
+	    				        	renderer: function(value) {
+		            					return Ext.util.Format.currency(value)
+		            				},
+	    				        	editor: {
+	    				        		xtype:'numberfield', 
+	    				        		allowBlank: false,
+	    				        		hideTrigger: true,
+	    				        		keyNavEnable: false,
+	    				        		mouseWheelEnable: false,
+	    				        		reference: 'preciounitarioclienteref',
+	    				        		listeners:{
+	    				        			change: function(x, y, z){
+	    				        				var field = this;
+	    				        				field.setMinValue(field.up().down("[reference='preciounitarioref']").value);
+	    				        			}
+	    				        		}
+		            				},
+	    				        	flex: 1,
+	    				        	bind: {
+	    				            	hidden: '{!mostrarTotalCliente}'
+	    				            }
 	    				        },	
 	    				        {   text: HreRem.i18n('header.medicion'),
 	    				        	dataIndex: 'medicion',
 	    				        	editor: {
 	    				        		xtype:'numberfield',
+	    				        		allowBlank: false,
 	    				        		hideTrigger: true,
 	    				        		keyNavEnable: false,
 	    				        		mouseWheelEnable: false},
@@ -115,20 +238,22 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 	    				        	text: HreRem.i18n('header.importe.total'),
 	    				            dataIndex: 'importeTotal',
 	    				            renderer: function(value) {
-		            					return Ext.util.Format.currency(value)
+		            					return Ext.util.Format.currency(value);
 		            				},
 	    				            flex: 1,
-	    				            summaryType: function(){
-	    								var store = this;
-	    			                    var records = store.getData().items;
-	    			                    
-	    			                    if(!Ext.isEmpty(records) || !Ext.isEmpty(records[0])){
-	    			                    	return records[0].get('importeTotalTarifas');
-	    			                    }
-	    			                   return 0; 
-	    							},
-	    				            summaryRenderer: function(value, summaryData, dataIndex) {
-	    				            	return "<span>"+Ext.util.Format.currency(value)+"</span>"
+	    				            bind: {
+	    				            	hidden: '{!mostrarTotalProveedor}'
+	    				            }
+	    						},	
+	    						{
+	    				        	text: HreRem.i18n('header.importe.total.cliente'),
+	    				        	dataIndex: 'importeCliente',
+	    				            renderer: function(value) {
+		            					return Ext.util.Format.currency(value);
+		            				},
+	    				            flex: 1,
+	    				            bind: {
+	    				            	hidden: '{!mostrarTotalCliente}'
 	    				            }
 	    						}
 	    				    ],
@@ -163,110 +288,7 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 	    						var me = this;
 	    						me.up('gestioneconomicatrabajo').funcionRecargar();
 	    					}
-	    				},
-	    				{
-	    					xtype:'fieldset',
-	    					title: HreRem.i18n('title.proveedor'),
-	    					cls	: 'panel-base shadow-panel',
-	    					reference: 'fieldsetProveedorGestionEconomica',
-	    					layout: {
-	    				        type: 'table',
-	    				        // The total column count must be specified here
-	    				        columns: 2,
-	    				        tableAttrs: {
-	    				            style: {
-	    				                width: '100%'
-	    								}
-	    				        }
-	    					},
-	    					defaultType: 'textfieldbase',
-		    				collapsed: false,
-		   			 		scrollable	: 'y',
-		    				cls:'',	    				
-						    
-	    					items: [
-	    						
-	    						{ 
-						        	xtype: 'comboboxfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.tipo.proveedor'),
-						        	rowspan:	2,
-						        	labelWidth:	150,
-						        	width: 		480,
-									reference: 'comboTipoProveedorGestionEconomica',
-						        	chainedStore: 'comboTipoProveedorGestionEconomica',
-									chainedReference: 'comboProveedorGestionEconomica',
-						        	bind: {
-					            		store: '{comboTipoProveedorFiltered}',
-					            		value: '{gestionEconomica.codigoTipoProveedor}'
-					            	},
-					            	displayField: 'descripcion',
-		    						valueField: 'codigo',
-		    						listeners: {
-					                	select: 'onChangeComboProveedorGE'
-					            	}
-						        },
-			    				
-								{
-									fieldLabel: HreRem.i18n('fieldlabel.usuario.contacto'),
-									width: 		480,
-									bind:		'{proveedor.nombre}',
-									readOnly: true
-								},
-								{
-									fieldLabel: HreRem.i18n('fieldlabel.email.contacto'),
-									width: 		480,
-									bind:		'{proveedor.email}',
-									readOnly: true
-								},
-								{ 
-						        	xtype: 'comboboxfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.nombre'),
-						        	rowspan:	2,
-						        	labelWidth:	150,
-						        	width: 		480,
-									reference: 'comboProveedorGestionEconomica',
-						        	chainedStore: 'comboProveedorGestionEconomica',
-									chainedReference: 'proveedorContactoCombo',
-						        	bind: {
-					            		store: '{comboProveedorFiltered}',
-					            		value: '{gestionEconomica.idProveedor}',
-					            		disabled: '{!gestionEconomica.codigoTipoProveedor}'
-					            	},
-					            	displayField: 'nombreComercial',
-		    						valueField: 'idProveedor',
-		    						listeners: {
-					                	select: 'onChangeComboProveedorGE'
-					            	}
-						        },
-			    				
-			    				{ 
-									xtype: 'comboboxfieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.contacto'),
-						        	reference: 'proveedorContactoCombo',
-						        	labelWidth:	150,
-						        	width: 		480,
-						        	bind: {
-					            		store: '{comboProveedorContacto}',
-					            		value: '{gestionEconomica.idProveedorContacto}',
-					            		disabled: '{!gestionEconomica.idProveedor}'
-					            	},
-					            	displayField: 'nombre',
-		    						valueField: 'id',
-		    						allowBlank: true,
-		    						listeners: {
-		    							change: 'onChangeProveedor'
-		    						}
-						        },			      
-			    				
-								{
-									fieldLabel: HreRem.i18n('fieldlabel.telefono.contacto'),
-									width: 		480,
-									bind:		'{proveedor.telefono1}',
-									readOnly: true
-								}
-							]
-	    				}
-	    	            
+	    				}	    	            
 	    	        ]
 	            },
 	            {
@@ -299,10 +321,8 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 	    				        }
 	    					},
 	    					defaultType: 'textfieldbase',
-	    					hidden: true,
 	    					bind: {
-	    						hidden: '{!showPresupuesto}',
-	    						disabled: '{disablePresupuesto}'
+	    						disabled: '{!disablePresupuesto}'
 	    					},	
 	    					reference: 'fieldsetpresupuestoref',
 	    	            	title: HreRem.i18n('title.listado.presupuestos.presentados.proveedores'),
@@ -315,11 +335,10 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    					colspan:	2,
 			    					topBar: true,
 			    					cls	: 'panel-base shadow-panel',
-			    					//height: '100%',
 			    					reference: 'gridpresupuestostrabajo',
 			    					bind: {
-			    						store: '{storePresupuestosTrabajo}',
-			    						topBar: '{enableAddPresupuesto}'
+			    						store: '{storePresupuestosTrabajo}'
+
 			    					},
 			    					
 			    					secFunToEdit: 'EDITAR_LIST_PRESUPUESTOS_TRABAJO',
@@ -329,15 +348,20 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    					},	
 			    					
 			    					columns: [
-			    					    {   text: HreRem.i18n('header.documento'),
-			    				        	dataIndex: '',
-			    				        	flex: 1
-			    				        },
+//			    					    {   text: HreRem.i18n('header.documento'),
+//			    				        	dataIndex: '',
+//			    				        	flex: 1
+//			    				        },
 			    					    {   text: HreRem.i18n('header.id.presupuesto'),
 			    				        	dataIndex: 'id',
 			    				        	flex: 1
 			    				        },
+			    				        {   text: HreRem.i18n('fieldlabel.referencia.presupuesto.proveedor'),
+			    				        	dataIndex: 'refPresupuestoProveedor',
+			    				        	flex: 1
+			    				        },
 			    				        {   text: HreRem.i18n('header.proveedor'),
+			    				        	reference: 'proveedorDescripcionRef',
 			    				        	dataIndex: 'proveedorDescripcion',
 			    				        	flex: 1 
 			    				        },	
@@ -345,11 +369,11 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    				        	dataIndex: 'fecha',
 			    				        	flex: 1
 			    				        },		
-			    						{
-			    				        	text: HreRem.i18n('header.estado'),
-			    				            dataIndex: 'estadoPresupuestoDescripcion',
-			    				            flex: 1
-			    				        },
+//			    						{
+//			    				        	text: HreRem.i18n('header.estado'),
+//			    				            dataIndex: 'estadoPresupuestoDescripcion',
+//			    				            flex: 1
+//			    				        },
 			    				        {   text: HreRem.i18n('header.importe'),
 			    				        	dataIndex: 'importe',
 			    				        	renderer: function(value) {
@@ -376,15 +400,21 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    				    	subtipoTrabajoDescripcion = me.up('gestioneconomicatrabajo').getBindRecord().get('subtipoTrabajoDescripcion'),
 			    				    	parent = me.up('gestioneconomicatrabajo'),
 			    				    	modoEdicion = false;
-			    						presupuesto = Ext.create('HreRem.model.PresupuestosTrabajo', {tipoTrabajoDescripcion: tipoTrabajoDescripcion, subtipoTrabajoDescripcion: subtipoTrabajoDescripcion});
+			    						codigoTipoProveedor = parent.getBindRecord().get('codigoTipoProveedor');
+			    						idProveedor = parent.getBindRecord().get('idProveedor');
+			    				    	idProveedorContacto = parent.getBindRecord().get('idProveedorContacto');
+			    				    	emailProveedorContacto = parent.getBindRecord().get('emailProveedorContacto');
+			    				    	nombreProveedorContacto = parent.getBindRecord().get('nombreProveedorContacto');
+			    				    	usuarioProveedorContacto = parent.getBindRecord().get('usuarioProveedorContacto');
+			    						presupuesto = Ext.create('HreRem.model.PresupuestosTrabajo', {tipoTrabajoDescripcion: tipoTrabajoDescripcion, subtipoTrabajoDescripcion: subtipoTrabajoDescripcion, codigoTipoProveedor: codigoTipoProveedor, idProveedor: idProveedor, idProveedorContacto: idProveedorContacto, emailProveedorContacto: emailProveedorContacto, nombreProveedorContacto: nombreProveedorContacto, usuarioProveedorContacto: usuarioProveedorContacto});
 			    						
 			    				    	var window=Ext.create("HreRem.view.trabajos.detalle.AnyadirNuevoPresupuesto", {presupuesto: presupuesto, idTrabajo: idTrabajo, parent: parent, modoEdicion: modoEdicion}).show();
 			    				    	window.getViewModel().set('trabajo',me.lookupController().getViewModel().get('trabajo'));
 			    					},
 	
 			    				    listeners : [
-			    				    	{rowdblclick: 'onPresupuestosListDobleClick',
-			    				    	 rowclick: 'onPresupuestosListClick'
+			    				    	{rowdblclick: 'onPresupuestosListDobleClick'
+			    				    	 //rowclick: 'onPresupuestosListClick'
 			    				    	}
 			    				    ],
 			    				    saveSuccessFn: function () {
@@ -395,175 +425,13 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    						var me = this;
 			    						me.up('gestioneconomicatrabajo').funcionRecargar();
 			    					}
-			    				},
-			    				{
-			    					xtype:'fieldset',
-			    					title: HreRem.i18n('title.detalle.presupuesto.presentado.proveedor'),
-			    					reference: 'detallepresupuesto',
-			    					cls	: 'panel-base shadow-panel',
-			    					layout: {
-			    				        type: 'table',
-			    				        // The total column count must be specified here
-			    				        columns: 2,
-			    				        tableAttrs: {
-			    				            style: {
-			    				                width: '100%'
-			    								}
-			    				        }
-			    					},
-			    					defaultType: 'textfieldbase',
-				    				collapsed: false,
-				   			 		scrollable	: 'y',
-				    				cls:'',	    				
-								    
-			    					items: [
-										{
-											fieldLabel: HreRem.i18n('fieldlabel.tipo.trabajo'),
-											readOnly: true,
-											flex: 1,
-											bind:		'{presupuesto.tipoTrabajoDescripcion}'
-										},
-										{
-											fieldLabel: HreRem.i18n('fieldlabel.subtipo.trabajo'),
-											readOnly: true,
-											flex: 1,
-											bind:		'{presupuesto.subtipoTrabajoDescripcion}'
-										},
-										{
-											fieldLabel: HreRem.i18n('fieldlabel.id.presupuesto.rem'),
-											readOnly: true,
-											flex: 1,
-											bind:		'{presupuesto.id}'
-										},
-										{
-					    					xtype:'fieldset',
-					    					title: HreRem.i18n('title.proveedor'),
-					    					cls	: 'panel-base shadow-panel',
-					    					rowspan: 5,
-					    					layout: {
-					    				        type: 'table',
-					    				        // The total column count must be specified here
-					    				        columns: 1,
-					    				        trAttrs: {height: '45px', width: '100%'},
-					    				        tdAttrs: {width: '100%'},
-					    				        tableAttrs: {
-					    				            style: {
-					    				                width: '100%'
-					    							}
-					    				        }
-					    					},
-					    					defaultType: 'textfieldbase',
-						    				collapsed: false,
-						   			 		scrollable	: 'y',
-						    				cls:'',	    				
-										    
-						    				items: [
-													{
-														fieldLabel: HreRem.i18n('fieldlabel.nombre'),
-														width: 		480,
-														readOnly: true,
-														bind: 		'{presupuesto.nombreProveedor}'
-													},
-													{ 
-											        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.contacto'),
-											        	//itemId: 'comboProveedorContacto',
-														flex: 		1,
-											        	width: 		480,
-											        	bind: '{presupuesto.nombreProveedorContacto}',
-							    						readOnly: true
-							    						
-											        },
-													{
-														fieldLabel: HreRem.i18n('fieldlabel.usuario'),
-														width: 		280,
-														readOnly: true,
-														bind:		'{presupuesto.nombreProveedorContacto}'
-													},
-													
-													{
-														fieldLabel: HreRem.i18n('fieldlabel.email'),
-														width: 		480,
-														readOnly: true,
-														bind:		'{presupuesto.emailProveedorContacto}'
-													},
-													{
-														fieldLabel: HreRem.i18n('fieldlabel.telefono'),
-														width: 		480,
-														readOnly: true,
-														bind:		'{presupuesto.telefonoProveedor}'
-													}
-											]
-										},	
-										{
-											fieldLabel: HreRem.i18n('fieldlabel.referencia.presupuesto.proveedor'),
-											readOnly: true,
-											bind:		'{presupuesto.refPresupuestoProveedor}'
-										},
-										{
-											fieldLabel: HreRem.i18n('fieldlabel.fecha'),
-											readOnly: true,
-											bind:		'{presupuesto.fecha}'
-										},
-										{
-											xtype: 'currencyfieldbase',
-											fieldLabel: HreRem.i18n('fieldlabel.importe'),
-											readOnly: true,
-											bind:		'{presupuesto.importe}'
-										},
-										{
-											fieldLabel: HreRem.i18n('fieldlabel.comentarios'),
-											readOnly: true,
-											bind:		'{presupuesto.comentarios}'
-										},
-										{
-											fieldLabel: HreRem.i18n('fieldlabel.estado'),
-											readOnly: true,
-											bind:		'{presupuesto.estadoPresupuestoDescripcion}'
-										},
-										{
-					    					xtype:'fieldset',
-					    					title: HreRem.i18n('title.contabilidad'),
-					    					cls	: 'panel-base shadow-panel',
-					    					layout: {
-					    				        type: 'table',
-					    				        // The total column count must be specified here
-					    				        columns: 1,
-					    				        trAttrs: {height: '45px', width: '100%'},
-					    				        tdAttrs: {width: '100%'},
-					    				        tableAttrs: {
-					    				            style: {
-					    				                width: '100%'
-					    							}
-					    				        }
-					    					},
-					    					defaultType: 'comboboxfieldbase',
-						    				collapsed: false,
-						   			 		scrollable	: 'y',
-						    				cls:'',	    				
-										    
-						    				items: [
-													{
-														fieldLabel: HreRem.i18n('fieldlabel.cuenta.contable'),
-														width: 		280,
-														readOnly: true,
-														bind:		''
-													},
-													{
-														fieldLabel: HreRem.i18n('fieldlabel.partida.presupuestaria'),
-														width: 		280,
-														readOnly: true,
-														bind:		''
-													}
-											]
-										}
-									]
 			    				}
 	    	            	  ]
 	    					}
 	    	            ]
 	            	},
-					{
-						//Bloque de penalizaci�n
+	            	{
+						//Bloque de penalizacion
 					
 		            	xtype: 'fieldsettable',
 		            	defaultType: 'textfieldbase',
@@ -624,133 +492,10 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 		            	]
 	    	          
 					},
-					//Bloque de recargos
-					{
-						xtype: 'fieldsettable',
-		            	defaultType: 'textfieldbase',
-		            	title: HreRem.i18n('title.recargos.favor.proveedor'),
-						bind: {
-							disabled: '{disablePorCierreEconomico}'
-						},
-		            	items: [
-							{
-							    xtype		: 'gridBaseEditableRow',
-							    idPrincipal: 'trabajo.id',
-								layout:'fit',
-								minHeight: 150,
-								colspan:	3,
-								topBar: true,
-								cls	: 'panel-base shadow-panel',
-								bind: {
-									store: '{storeRecargosProveedor}'
-								},
-												
-		    					secFunToEdit: 'EDITAR_LIST_RECARGOS_TRABAJO',
-		    					
-		    					secButtons: {
-		    						secFunPermToEnable : 'EDITAR_LIST_RECARGOS_TRABAJO'
-		    					},	
-								columns: [
-								    {   text: HreRem.i18n('header.tipo'),
-							        	dataIndex: 'tipoRecargoCodigo',
-							        	editor: {
-							        		xtype: 'combobox',								        		
-							            	store: new Ext.data.Store({
-								    			model: 'HreRem.model.ComboBase',
-												proxy: {
-													type: 'uxproxy',
-													remoteUrl: 'generic/getDiccionario',
-													extraParams: {diccionario: 'tiposRecargo'}
-												},
-												autoLoad: true
-											}),
-											displayField: 'descripcion',
-											valueField: 'codigo'
-							        	},								        							        	
-							        	renderer: function(value) {								        		
-							        		var me = this,
-							        		comboEditor = me.columns  && me.columns[0].getEditor ? me.columns[0].getEditor() : me.getEditor ? me.getEditor() : null,
-							        		store, record;
-							        		
-							        		if(!Ext.isEmpty(comboEditor)) {
-								        		store = comboEditor.getStore(),							        		
-								        		record = store.findRecord("codigo", value);
-							        		
-								        		if(!Ext.isEmpty(record)) {								        			
-								        			return record.get("descripcion");								        		
-								        		} else {
-								        			comboEditor.setValue(value);								        			
-								        		}
-							        		}
-							        	},
-							        	flex: 1
-							        },
-							        {   text: HreRem.i18n('header.tipo.calculo'),
-							        	dataIndex: 'tipoCalculoCodigo',
-							        	editor: {
-							        		xtype: 'combobox',								        		
-							            	store: new Ext.data.Store({
-								    			model: 'HreRem.model.ComboBase',
-												proxy: {
-													type: 'uxproxy',
-													remoteUrl: 'generic/getDiccionario',
-													extraParams: {diccionario: 'tiposCalculo'}
-												},
-												autoLoad: true
-											}),
-											displayField: 'descripcion',
-											valueField: 'codigo'
-										},		        							        	
-							        	renderer: function(value) {								        		
-							        		var me = this,
-							        		comboEditor = me.columns  && me.columns[1].getEditor ? me.columns[1].getEditor() : me.getEditor ? me.getEditor() : null,
-							        		store,record;
-							        		
-							        		if(!Ext.isEmpty(comboEditor)) {
-								        		store = comboEditor.getStore(),							        		
-								        		record = store.findRecord("codigo", value);							        		
-								        		if(!Ext.isEmpty(record)) {								        			
-								        			return record.get("descripcion");								        		
-								        		} else {
-								        			comboEditor.setValue(value);								        			
-								        		}
-							        		}
-							        	},
-							        	flex: 1
-							        },
-							        {   text: HreRem.i18n('header.importe.calculo'),
-							        	dataIndex: 'importeCalculo',
-		        						editor: {
-		        							xtype:'numberfield', 
-		        							hideTrigger: true,
-		        							keyNavEnable: false,
-		        							mouseWheelEnable: false
-		        						},
-							        	flex: 1
-							        },
-							        {   text: HreRem.i18n('header.importe.final'),
-							        	dataIndex: 'importeFinal',
-							        	renderer: function(value) {
-		       								return Ext.util.Format.currency(value);
-		        						},
-							        	flex: 1
-							        }
-							    ],
-							   	saveSuccessFn: function () {
-			    					var me = this;
-			    					me.up('gestioneconomicatrabajo').funcionRecargar();
-		    					},
-		    					deleteSuccessFn: function () {
-		    						var me = this;
-		    						me.up('gestioneconomicatrabajo').funcionRecargar();
-		    					}
-							}
-		            	]
-					},
 					//Bloque de base imponible
 					{
 						xtype:'fieldset',
-						height: 50,
+						height: 100,
 						layout: {
 					        type: 'vbox',
 					        align: 'end'
@@ -761,10 +506,26 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 								margin: '10 0 10 0',
 								cls: 'txt-importe-total',
 								readOnly: true,
-								fieldLabel:  HreRem.i18n('fieldlabel.base.imponible.a.b.c'),
+								fieldLabel:  HreRem.i18n('header.importe.total'),
 								width: 		350,
-								bind: '{gestionEconomica.importeTotal}',
+								bind: {
+									hidden: '{!mostrarTotalProveedor}',
+									value: '{gestionEconomica.importePresupuesto}'
+								},
 								reference: 'importetotalref'
+							},
+							{
+								xtype: 'currencyfieldbase',
+								margin: '10 0 10 0',
+								cls: 'txt-importe-total',
+								readOnly: true,
+								fieldLabel:  HreRem.i18n('header.importe.total.cliente'),
+								width: 		350,
+								bind: {
+									hidden: '{!mostrarTotalCliente}',
+									value: '{gestionEconomica.importeTotal}'
+								},
+								reference: 'importetotalcliref'
 							}
 						]
 					},
@@ -772,7 +533,7 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 					{
 		            	xtype:'fieldsettable',
 						defaultType: 'textfieldbase',
-		            	title: HreRem.i18n('title.provisiones.suplidos'),
+		            	title: HreRem.i18n('title.provisiones.suplidos'),		            	
 						bind: {
 							disabled: '{disablePorCierreEconomicoSuplidos}'
 						},	
@@ -784,14 +545,16 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 		    					minHeight: 150,
 		    					colspan:	3,
 		    					topBar: true,
+		    					reference:'gridSuplidos',
 		    					cls	: 'panel-base shadow-panel',
-		    					secFunToEdit: 'EDITAR_LIST_PROVSUPLI_TRABAJO',
-		    					
+		    					secFunToEdit: 'EDITAR_LIST_PROVSUPLI_TRABAJO',		    					
 		    					secButtons: {
 		    						secFunPermToEnable : 'EDITAR_LIST_PROVSUPLI_TRABAJO'
 		    					},	
 		    					bind: {
-		    						store: '{storeProvisionesSuplidos}'
+		    						store: '{storeProvisionesSuplidos}',
+		    						topBar:'{!gestionEconomica.esGridSuplidosEditable}',
+		    						editOnSelect: '{!gestionEconomica.esGridSuplidosEditable}'
 		    					},
 		    					columns: [
 		    					    {   text: HreRem.i18n('header.tipo'),
@@ -871,7 +634,26 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 		    				}
 		            
 		    	        ]    	            	
-		            }	
+		            },
+		            {
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							colspan: 3,
+							reference:'historificacionCampos',
+							hidden: false, 
+							title: HreRem.i18n("title.historificacion.campos"),
+							
+							items :
+							[
+								{
+									xtype: "historificacioncamposgrid", 
+									reference: "historificacioncamposgrid",
+									idTrabajo: this.lookupController().getViewModel().get('trabajo').get('id'),
+									codigoPestanya: CONST.PES_PESTANYAS['DETALLE_ECONOMICO'],
+									colspan: 3
+								}
+							]
+		           		}
     	];
 
     	me.callParent();

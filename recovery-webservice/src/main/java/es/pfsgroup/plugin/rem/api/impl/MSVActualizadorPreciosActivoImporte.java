@@ -175,8 +175,9 @@ public class MSVActualizadorPreciosActivoImporte extends AbstractMSVActualizador
 		List<ActivoValoraciones> activoValoracionesList = genericDao.getListOrdered(ActivoValoraciones.class, orderIdDesc, filtroActivo, filtroTipoPrecio);
 		ActivoValoraciones activoValoracion = null;
 		
-		if (activoValoracionesList.size() > 0)
+		if (activoValoracionesList.size() > 0) {
 			activoValoracion = activoValoracionesList.get(0);
+		}
 		
 		//Preparamos un registro de valoraciones/precios, con los datos indicados en el excel
 		DtoPrecioVigente dtoActivoValoracion = new DtoPrecioVigente();

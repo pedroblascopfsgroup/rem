@@ -223,8 +223,26 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVActualizarCalidadDatosExcelValidator calidadDatos;
 	
 	@Autowired
+	private MSVMasivaModificacionLineasDetalleValidator modificacionLineasDetalle;
+
+	@Autowired
+	private MSVMasivaUnicaGastosValidator cargaMasivaUnicaGastos;
+
+	@Autowired
+	private MSVValidatorConfiguracionPeriodosVoluntarios cargaMasivaConfiguracionPeriodosVoluntarios;
+
+	@Autowired
 	private MSVActualizacionComplementoTituloValidator complementoTitulo;
-	
+
+	@Autowired
+	private MSVValidatorTarifasPresupuestos validatorTarifasPresupuesto;
+
+	@Autowired
+	private MSVSancionesBBVAExcelValidator sancionesBBVA;
+
+	@Autowired
+	private MSVMasivaDatosSobreGastoValidator datosSobreGasto;
+
 	@Autowired
 	private MSVValidatorCargaGastosAsociadosAdquisicion cargaGastosAsociadosAdquisicion;
 
@@ -232,13 +250,14 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVMasivaAltaBBVAValidator altaActivosBBVA;
 
 	@Autowired
-	private MSVSancionesBBVAExcelValidator sancionesBBVA;
-	
-	@Autowired
-	private MSVValidatorConfiguracionPeriodosVoluntarios cargaMasivaConfiguracionPeriodosVoluntarios;
-	
+	private MSVActualizarEstadosTrabajos cargaMasivaEstadoTrabajos;
+
 	@Autowired
 	private MSVActualizarPorcentajeConstruccion actualizarPorcentajeConstruccion;
+
+	@Autowired
+	private MSVMasivaAltaTrabajosValidator altaTrabajos;
+
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -384,6 +403,34 @@ public class MSVExcelValidatorFactoryImpl {
 			return estadosAdmision;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_MASIVO_CALIDAD_DATOS.equals(codTipoOperacion)) {
 			return calidadDatos;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_MODIFICACION_LINEAS_DE_DETALLE.equals(codTipoOperacion)) {
+			return modificacionLineasDetalle;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_UNICA_GASTOS.equals(codTipoOperacion)) {
+			return cargaMasivaUnicaGastos;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CONFIGURACION_PERIODOS_VOLUNTARIOS.equals(codTipoOperacion)) {
+			return cargaMasivaConfiguracionPeriodosVoluntarios;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_COMPLEMENTO_TITULO.equals(codTipoOperacion)) {
+			return complementoTitulo;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_GASTOS_ASOCIADOS_ADQUISICION.equals(codTipoOperacion)) {
+			return cargaGastosAsociadosAdquisicion;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ALTA_ACTIVOS_BBVA.equals(codTipoOperacion)) {
+			return altaActivosBBVA;
+		}else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_MASIVO_TARIFAS_PRESUPUESTO.equals(codTipoOperacion)) {
+			return validatorTarifasPresupuesto;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SANCIONES_BBVA.equals(codTipoOperacion)) {
+			return sancionesBBVA;
+		}else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_MASIVO_TARIFAS_PRESUPUESTO.equals(codTipoOperacion)) {
+			return validatorTarifasPresupuesto;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CONFIGURACION_PERIODOS_VOLUNTARIOS.equals(codTipoOperacion)) {
+			return cargaMasivaConfiguracionPeriodosVoluntarios;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SOBRE_GASTOS.equals(codTipoOperacion)) {
+			return datosSobreGasto;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_ESTADO_TRABAJOS.equals(codTipoOperacion)) {
+			return cargaMasivaEstadoTrabajos;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ALTA_TRABAJOS.equals(codTipoOperacion)) {
+			return altaTrabajos;
+		}else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_MASIVO_TARIFAS_PRESUPUESTO.equals(codTipoOperacion)) {
+			return validatorTarifasPresupuesto;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_COMPLEMENTO_TITULO.equals(codTipoOperacion)) {
 			return complementoTitulo;
 		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_GASTOS_ASOCIADOS_ADQUISICION.equals(codTipoOperacion)) {
@@ -397,6 +444,7 @@ public class MSVExcelValidatorFactoryImpl {
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PORCENTAJE_CONSTRUCCION.equals(codTipoOperacion)) {
 			return actualizarPorcentajeConstruccion;
 		}
+
 		return null;
 	}
 }

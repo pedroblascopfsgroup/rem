@@ -139,6 +139,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String ACTIVO_VENDIDO= "msg.error.activo.vendido";
 	private static final String ACTIVO_FUERA_DE_PERIMETRO_HAYA= "msg.error.activo.fuera.perimetro";
 	private static final String ACTIVO_NO_COINCIDE_CON_CERBERUS_BBVA= "msg.error.activo.no.bbva.divarian";
+
 	@Autowired
 	private GenericABMDao genericDao;
 	
@@ -1005,7 +1006,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		activoDto.setIsGrupoOficinaKAM(activoApi.isGrupoOficinaKAM());
-
 		if(activo.getTipoTransmision() != null) {
 			activoDto.setTipoTransmisionCodigo(activo.getTipoTransmision().getCodigo());
 			activoDto.setTipoTransmisionDescripcion(activo.getTipoTransmision().getDescripcion());
@@ -1591,6 +1591,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 			}
+
 			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 			
 			if(dto.getPerimetroAdmision() != null) {
@@ -1661,28 +1662,28 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 
 					if (dto.getEmpresa() != null) {
-						if(dto.getEmpresa() == -1)
+						if("-1".equals(dto.getEmpresa()))
 							activoBbva.setEmpresa(null);
 						else
 							activoBbva.setEmpresa(dto.getEmpresa());
 					}
 
 					if (dto.getOficina() != null) {
-						if(dto.getOficina() == -1)
+						if("-1".equals(dto.getOficina()))
 							activoBbva.setOficina(null);
 						else	
 							activoBbva.setOficina(dto.getOficina());
 					}
 
 					if (dto.getContrapartida() != null) {
-						if(dto.getContrapartida() == -1)
+						if("-1".equals(dto.getContrapartida()))
 							activoBbva.setContrapartida(null);
 						else
 							activoBbva.setContrapartida(dto.getContrapartida());
 					}
 
 					if (dto.getFolio() != null) {
-						if(dto.getFolio() == -1)
+						if("-1".equals(dto.getFolio()))
 							activoBbva.setFolio(null);
 						else
 							activoBbva.setFolio(dto.getFolio());

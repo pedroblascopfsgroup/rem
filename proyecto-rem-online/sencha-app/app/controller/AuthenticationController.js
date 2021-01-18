@@ -292,7 +292,6 @@ Ext.define('HreRem.controller.AuthenticationController', {
     },
     
     userIsRol: function(roles) {
-    	
     	var me = this,
     	userIsRol = false;
 
@@ -335,7 +334,13 @@ Ext.define('HreRem.controller.AuthenticationController', {
     	}
     	return tipoGestor;
     }, 
-    
+    userGroupHasRole: function (role) {
+    	var groupRoles = this.getUser().groupRoles;
+    	if (groupRoles) {
+			return groupRoles.includes(role);    		
+    	}
+    	return false;
+    },
     getUser: function() { 
     	var me = this;
     	

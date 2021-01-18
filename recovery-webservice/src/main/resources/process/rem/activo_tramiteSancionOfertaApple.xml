@@ -123,7 +123,7 @@
         <transition to="T017_PBCVenta" name="venta"></transition>
     </fork><!--Fork Resolucion CES ACEPTA SIN RESERVA-->
 
-    <fork name="forkReservaSiBbva">  	
+    <fork name="forkReservaSiBbva">  
         <transition to="T017_PBCReserva" name="reserva"></transition>
     </fork>
     <fork name="forkReservaNoBbva">  

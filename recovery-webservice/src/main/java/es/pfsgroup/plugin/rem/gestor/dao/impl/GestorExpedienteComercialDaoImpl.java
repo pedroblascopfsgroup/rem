@@ -62,11 +62,12 @@ public class GestorExpedienteComercialDaoImpl extends AbstractEntityDao<GestorEx
 	}	
 	
 	@Override
-	public Long getUsuarioGestorFormalizacion(Long idActivo){		
+	public Long getUsuarioGestorFormalizacion(Long idActivo, Long idOferta){		
 		
-		String procedureHQL = "BEGIN SP_CALCULAR_USUARIO_GFORM(:P_ACT_ID);  END;";
+		String procedureHQL = "BEGIN SP_CALCULAR_USUARIO_GFORM(:P_ACT_ID, :P_OFR_ID);  END;";
 		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
 		callProcedureSql.setParameter("P_ACT_ID", idActivo);
+		callProcedureSql.setParameter("P_OFR_ID", idOferta);
 		callProcedureSql.executeUpdate();
 
 		String resultado = rawDao.getExecuteSQL("SELECT USUARIO FROM TMP_ASIGNACION_USU_GFORM WHERE ACT_ID = "+ idActivo);

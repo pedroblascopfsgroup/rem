@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import es.capgemini.devon.files.FileItem;
@@ -8,8 +9,9 @@ import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
+import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -20,13 +22,18 @@ import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
+import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 
 
 public interface GastoProveedorApi {
@@ -311,16 +318,16 @@ public interface GastoProveedorApi {
 
 
 
-		public GastoProveedorActivo buscarRelacionPorActivoYGasto(Activo activo, GastoProveedor gasto);
+		public GastoLineaDetalleEntidad buscarRelacionPorActivoYGasto(Activo activo, GastoProveedor gasto);
 		
 		/**
 		 * Método que devuelve el porcenaje de participación del último gasto ajustado para corregir errores de redondeo.
 		 * 
-		 * @param  gastosActivosList: lista de GastoProveedorActivo
+		 * @param  gastosActivosList: lista de GastoLineaDetalleEntidad
 		 * @param ultimoPorcentaje: porcentaje de participación del último gasto
 		 * 
 		 * */
-		public float regulaPorcentajeUltimoGasto(List<GastoProveedorActivo> gastosActivosList, Float ultimoPorcentaje);
+		public float regulaPorcentajeUltimoGasto(List<GastoLineaDetalleEntidad> gastosLineaDetalleEntidad, Float ultimoPorcentaje);
 
 
 		DtoPage getListGastosExcel(DtoGastosFilter dtoGastosFilter);
@@ -355,7 +362,7 @@ public interface GastoProveedorApi {
 
 		AdjuntoGasto createAdjuntoGasto(WebFileItem fileItem, GastoProveedor gasto, Long idDocRestClient)
 				throws Exception;
-		public List<String> getGastosRefacturados(String listaGastos, String nifPropietario);
+		public List<String> getGastosRefacturados(String listaGastos, String nifPropietario, String tipoGasto);
 
 
 		List<String> getGastosNoRefacturados(String listaGastos, List<String> gastosRefacturables);
@@ -374,7 +381,7 @@ public interface GastoProveedorApi {
 		List<GastoProveedor> getGastosRefacturablesGasto(Long id);
 
 
-		public void anyadirGastosRefacturadosAGastoExistente(String idGasto, List<String> gastosRefacturablesLista);
+		public void anyadirGastosRefacturadosAGastoExistente(String idGasto, List<String> gastosRefacturablesLista) throws IllegalAccessException, InvocationTargetException;
 
 
 		public Boolean eliminarGastoRefacturado(Long idGasto, Long numGastoRefacturado);
@@ -392,6 +399,38 @@ public interface GastoProveedorApi {
 		void validarGastosARefacturar(String idGasto, String listaGastos);
 		
 		GastoProveedor calcularParticipacionActivosGasto(GastoProveedor gasto);
+
+		Double recalcularImporteTotalGasto(GastoDetalleEconomico gasto);
+
+		boolean isGastoSareb(GastoProveedor gastoProveedor);
+
+		void anyadirGastosRefacturablesSiCumplenCondiciones(String idGasto, String gastosRefacturables, String nifPropietario) throws IllegalAccessException, InvocationTargetException;
+
+
+		List<DtoVImporteGastoLbk> getVImporteGastoLbk(Long idGasto);
+		
+		List<DDTipoTrabajo> getTiposTrabajoByIdGasto(Long idGasto);
+		
+		List<DDSubtipoTrabajo> getSubTiposTrabajoByIdGasto(Long idGasto); 	
+
+		boolean actualizarReparto(Long idLinea);
+		
+		boolean actualizarRepartoTrabajo(Long idLinea);
+
+		boolean isEstadosGastosLiberbankParaLecturaDirectaDeTabla(GastoProveedor gasto);
+
+		ActivoSubtipoGastoProveedorTrabajo getSubtipoGastoBySubtipoTrabajo(Trabajo trabajo);
+		
+		String validarAutorizacionSuplido(long idGasto);
+		
+		String validacionNifEmisorFactura(DtoFichaGastoProveedor dto, Long idGasto);
+
+		String getCodigoCarteraGastoByIdGasto(Long idGasto);
+
+		Double recalcularImporteRetencionGarantia(GastoDetalleEconomico gasto);
+
+		Double recalcularCuotaRetencionGarantia(GastoDetalleEconomico detalleGasto, Double importeGarantiaBase);
+
 
 }
 

@@ -185,10 +185,14 @@ Ext.define('HreRem.view.activos.ActivosController', {
 		    
 		onClickCrearTrabajo: function (btn) {
 			var me = this;
+			me.getView().mask(HreRem.i18n("msg.mask.loading"));	
+			
 			var idActivo = null;
 			var codCartera = null;
 			var codSubcartera = null;
+			var gestorActivo = $AU.getUser().userName;
 			var grid = me.getView().down('grid');
+			
 			if(Ext.isEmpty(grid)){ 
 				return true;
 			}
@@ -197,10 +201,24 @@ Ext.define('HreRem.view.activos.ActivosController', {
 			if(!Ext.isEmpty(selected)) {
 			
 				idActivo = selected[0].getData().id;
-		  		codCartera = selected[0].getData().entidadPropietariaCodigo;
+		  		codCartera = selected[0].getData().carteraCodigo;
 		  		codSubcartera = selected[0].getData().subcarteraCodigo;
 		  	}
-			 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: idActivo, codCartera: codCartera, codSubcartera: codSubcartera, logadoGestorMantenimiento: true,idAgrupacion: null, idGestor: null});    	
+		  	
+			var ventana = Ext.create("HreRem.view.trabajos.detalle.CrearPeticionTrabajo", {
+				idActivo: idActivo, 
+				codCartera: codCartera, 
+				codSubcartera: codSubcartera, 
+				logadoGestorMantenimiento: true,
+				idAgrupacion: null,
+				idGestor: null, 
+				gestorActivo: gestorActivo});
+			btn.lookupViewModel().getView().add(ventana);
+			ventana.show();
+			me.getView().unmask();
+			
+			
+//			 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearPeticionTrabajo",{idActivo: idActivo, codCartera: codCartera, codSubcartera: codSubcartera, logadoGestorMantenimiento: true,idAgrupacion: null, idGestor: null, gestorActivo: gestorActivo});    	
 		},
 
 	onChangeChainedCombo: function(combo) {

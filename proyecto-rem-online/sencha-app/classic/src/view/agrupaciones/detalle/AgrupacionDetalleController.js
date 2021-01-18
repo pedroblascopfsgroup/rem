@@ -58,24 +58,53 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     onClickCrearTrabajo: function (btn) {
     	
     	var me = this;
+    	
+    	me.getView().mask(HreRem.i18n("msg.mask.loading"));	
+    	
     	var idActivo = me.getViewModel().get("activo.id");
 	  	var idAgrupacion = me.getViewModel().get("agrupacionficha.id");
 	  	var codCartera = me.getViewModel().get("agrupacionficha.codigoCartera");
 	  	var codSubcartera = me.getViewModel().get("agrupacionficha.codSubcartera");
 	  	var url= $AC.getRemoteUrl('trabajo/getSupervisorGestorTrabajo');
     	var tipoAgrupacionCodigo= me.getViewModel().get("agrupacionficha.tipoAgrupacionCodigo");
+    	var gestorActivo = $AU.getUser().userName;
     	
     	var data;
 		Ext.Ajax.request({
 		     url: url,
-		     params: {idActivo : idActivo, idAgrupacion : idAgrupacion},
+		     params: {idActivo : idActivo, idAgrupacion : idAgrupacion, gestorActivo: gestorActivo},
 		     success: function(response, opts) {
-		    	 data = Ext.decode(response.responseText);
-		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera, codSubcartera: codSubcartera, idGestor: data.data.GACT, idSupervisor: data.data.SUPACT, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true});
-		         
+		    	data = Ext.decode(response.responseText);
+		    	//me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearPeticionTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera, codSubcartera: codSubcartera, idGestor: data.data.GACT, idSupervisor: data.data.SUPACT, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true, gestorActivo: gestorActivo});
+		    	var ventana = Ext.create("HreRem.view.trabajos.detalle.CrearPeticionTrabajo",{
+		    		idActivo: null,
+		    		idAgrupacion: idAgrupacion,
+		    		codCartera: codCartera,
+		    		codSubcartera: codSubcartera,
+		    		idGestor: data.data.GACT,
+		    		idSupervisor: data.data.SUPACT,
+		    		tipoAgrupacionCodigo: tipoAgrupacionCodigo,
+		    		logadoGestorMantenimiento: true,
+		    		gestorActivo: gestorActivo});
+		    	btn.lookupViewModel().getView().add(ventana);
+				ventana.show();
+		        me.getView().unmask();
+		        
 		     },
 		     failure: function(response) {
-		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera, codSubcartera: codSubcartera, idUsuario: null, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true});
+		    	//me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearPeticionTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera, codSubcartera: codSubcartera, idUsuario: null, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true, gestorActivo: gestorActivo});
+		    	var ventana = Ext.create("HreRem.view.trabajos.detalle.CrearPeticionTrabajo",{
+		    		idActivo: null,
+		    		idAgrupacion: idAgrupacion,
+		    		codCartera: codCartera,
+		    		codSubcartera: codSubcartera,
+		    		idUsuario: null,
+		    		tipoAgrupacionCodigo: tipoAgrupacionCodigo,
+		    		logadoGestorMantenimiento: true,
+		    		gestorActivo: gestorActivo});
+		    	btn.lookupViewModel().getView().add(ventana);
+				ventana.show();
+		     	me.getView().unmask();
 		     }
 		 });   	    	
     },
@@ -1337,5 +1366,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		} else {
 			me.getView().lookupReference('autorizacionTramOfertasAgrupacion').setHidden(true);
 		}
-	}
+	},
+    checkVisibilityOfBtnCrearTrabajo: function () {
+       var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+       var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+	   var isGestorAlquiler = $AU.userGroupHasRole(CONST.PERFILES['GESTOR_ALQUILER_HPM']);
+	   var isUserGestedi = $AU.userIsRol(CONST.PERFILES['GESTEDI']);
+	   
+       return (!isSuper && !isGestorActivos && !isGestorAlquiler && !isUserGestedi);
+        					 
+       
+    }
 });

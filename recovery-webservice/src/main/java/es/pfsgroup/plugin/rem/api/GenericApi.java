@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -80,7 +81,7 @@ public interface GenericApi {
 	 * @return
 	 */
 	@BusinessOperationDefinition("genericManager.getComboSubtipoActivo")
-	public List<DDSubtipoActivo> getComboSubtipoActivo(String codigoTipo);	
+	public List<DDSubtipoActivo> getComboSubtipoActivo(String codigoTipo, String idActivo);	
 	
 	/**
 	 * Devuelve los subtipos de carga del tipo que recibe
@@ -325,6 +326,8 @@ public interface GenericApi {
 	 */
 	public String getPartidaPresupuestaria(Long idSubpartida);
 
+	List<DDEntidadGasto> getComboTipoElementoGasto(Long idGasto, Long idLinea);
+
 	/*
 	 * Devuelve los proveedores de Suministros que están vigentes.
 	 */
@@ -349,4 +352,5 @@ public interface GenericApi {
 	public List<DtoPropietario> getcomboSociedadAnteriorBBVA();
 	
 	List<DDEstadoAdmision> getComboEstadoAdmisionFiltrado(Set<String> tipoEstadoAdmisionCodigo);
+
 }

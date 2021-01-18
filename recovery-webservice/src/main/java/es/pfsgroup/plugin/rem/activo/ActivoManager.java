@@ -187,6 +187,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoSuministro;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloComplemento;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
@@ -197,6 +198,7 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
+import es.pfsgroup.plugin.rem.rest.dto.ActivoCrearPeticionTrabajoDto;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
@@ -3041,6 +3043,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			for (ActivoTributos tributo : listTributos) {
 				DtoActivoTributos dtoTributo = new DtoActivoTributos();
 				dtoTributo.setIdTributo(tributo.getId());
+
 				if(tributo.getFechaPresentacionRecurso() != null) {
 					dtoTributo.setFechaPresentacion(tributo.getFechaPresentacionRecurso().toString());
 				}
@@ -6311,9 +6314,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(!Checks.esNulo(resultadoSolicitud)){
 					tributo.setResultadoSolicitud(resultadoSolicitud);
 				}
-
 			}
-
 			if (!Checks.esNulo(dto.getNumGastoHaya())) {
 				Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", dto.getNumGastoHaya());
 				GastoProveedor gasto = genericDao.get(GastoProveedor.class, filtroGasto);
@@ -6382,7 +6383,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 			
 			return true;
-
 		} else {
 			return false;
 		}
@@ -7057,20 +7057,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (htt.getTitulo() != null) {
 				titulo = htt.getTitulo();
 				if (titulo != null) {
-					
+
 					List<ActivoCalificacionNegativa> calNegList = genericDao.getList(ActivoCalificacionNegativa.class,
 							genericDao.createFilter(FilterType.EQUALS, "historicoTramitacionTitulo.id", htt.getId()));
-					for(ActivoCalificacionNegativa calNeg : calNegList ) {
+					for (ActivoCalificacionNegativa calNeg : calNegList) {
 						calNeg.getAuditoria().setBorrado(true);
 						calNeg.getAuditoria().setFechaBorrar(new Date());
 						calNeg.getAuditoria().setUsuarioBorrar(usuarioApi.getUsuarioLogado().getUsername());
-						
+
 						genericDao.save(ActivoCalificacionNegativa.class, calNeg);
 					}
 				}
-			
+
 				genericDao.deleteById(HistoricoTramitacionTitulo.class, htt.getId());
-				
+
 				Order order = new Order(OrderType.DESC, "id");
 				List<HistoricoTramitacionTitulo> histTraTitList = genericDao.getListOrdered(
 						HistoricoTramitacionTitulo.class, order,
@@ -7113,7 +7113,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 
 	}	
-
 	
 	
 	@Override
@@ -7371,6 +7370,35 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	public ActivoCrearPeticionTrabajoDto getActivoParaCrearPeticionTrabajobyId(Long idActivo) {
+		ActivoCrearPeticionTrabajoDto dto = new ActivoCrearPeticionTrabajoDto();
+		Activo activo = activoAdapter.getActivoById(idActivo);
+		
+		if(activo != null) {
+			try {
+				beanUtilNotNull.copyProperties(dto, activo);
+				if(activo.getTipoActivo() != null && activo.getTipoActivo().getDescripcion() != null) {
+					beanUtilNotNull.copyProperty(dto, "tipoActivo", activo.getTipoActivo().getDescripcion());
+				}
+				if(activo.getTipoActivo() != null && activo.getTipoActivo().getCodigo() != null) {
+					beanUtilNotNull.copyProperty(dto, "tipoActivoCodigo", activo.getTipoActivo().getCodigo());
+				}
+				if(activo.getSubtipoActivo() != null && activo.getSubtipoActivo().getDescripcion() != null) {
+					beanUtilNotNull.copyProperty(dto, "subtipoActivo", activo.getSubtipoActivo().getDescripcion());
+				}
+				if(activo.getSubtipoActivo() != null && activo.getSubtipoActivo().getCodigo() != null) {
+					beanUtilNotNull.copyProperty(dto, "subtipoActivoCodigo", activo.getSubtipoActivo().getCodigo());
+				}
+			}catch (IllegalAccessException e) {
+				logger.error(e.getMessage(),e);
+			} catch (InvocationTargetException e) {
+				logger.error(e.getMessage(),e);
+			}
+		}
+		return dto;
+	}
+	
+	@Override
 	public ActivoDto getDatosActivo(Long activoId) {
 		ActivoDto activoDto = new ActivoDto();
 
@@ -7550,8 +7578,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		}
 	}
-	
-	
+
 	private void doCheckEstadoTramitacionTituloAdicional(ActivoTituloAdicional titulo, DDEstadoPresentacion estado) throws HistoricoTramitacionException {
 		List<DtoHistoricoTramitacionTituloAdicional> listaTramitacionTitulo = getHistoricoTramitacionTituloAdicional(titulo.getActivo().getId());
 		if (!listaTramitacionTitulo.isEmpty()) {
@@ -7835,6 +7862,60 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
+	public boolean estanTodosActivosVendidos(List<Activo> activos) {
+		boolean estanTodosVendidos = false;
+		boolean auxiliarSalir = true;
+		
+
+		if(activos != null && !activos.isEmpty()) {
+			for (Activo activo : activos) {
+				if(activo.getSituacionComercial() != null && DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) {
+					estanTodosVendidos = true;
+					auxiliarSalir = false;
+				}
+				if(auxiliarSalir) {
+					estanTodosVendidos = false;
+					break;
+				}
+				
+				auxiliarSalir = true;
+			}
+		}
+
+		return estanTodosVendidos;
+	}
+	
+	@Override
+	public boolean estanTodosActivosAlquilados(List<Activo> activos) {
+		boolean todosActivoAlquilados = false;
+		boolean auxiliarSalir = true;
+		
+
+		if(activos != null && !activos.isEmpty()) {
+			for (Activo activo : activos) {
+				
+				if(activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getOcupado() != null
+						&& activo.getSituacionPosesoria().getConTitulo() != null &&  activo.getSituacionPosesoria().getOcupado() == 1
+						&& DDTipoTituloActivoTPA.tipoTituloSi.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo())
+						&& activo.getSituacionPosesoria().getTipoTituloPosesorio() != null 
+						&&  DDTipoTituloPosesorio.CODIGO_ARRENDAMIENTO.equals(activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo())) {
+							todosActivoAlquilados = true;
+							auxiliarSalir = false;
+				}
+				if(auxiliarSalir) {
+					todosActivoAlquilados = false;
+					break;
+				}
+				
+				auxiliarSalir = true;
+			}
+		}
+
+		return todosActivoAlquilados;
+	}
+
+	
+	@Override
 	public Boolean isGrupoOficinaKAM() {
 		Boolean isGrupoOficinaKAM = false;
 		GrupoUsuario grupoOfiKAM = null;
@@ -7847,6 +7928,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return isGrupoOficinaKAM;
 	}
+
 
 	@Override
 	public List<ReqFaseVentaDto> getReqFaseVenta(Long idActivo) {
@@ -8309,7 +8391,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		try {
 			Long idActivo = Long.parseLong(activoId);
 			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 			Filter filtroEstadoAdmision = genericDao.createFilter(FilterType.EQUALS, "codigo", codEstadoAdmision);
 
 			DDEstadoAdmision estadoAdmision = genericDao.get(DDEstadoAdmision.class, filtroBorrado,
@@ -8532,6 +8613,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 	
+
 	@Transactional
 	@Override
 	public Boolean updateDeudorAcreditado(DtoActivoDeudoresAcreditados dto) {
@@ -8636,7 +8718,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public Boolean deleteGastoAsociadoAdquisicion(DtoGastoAsociadoAdquisicion cargaDto) {
 		if (cargaDto.getId() != null) {
 			genericDao.deleteById(GastoAsociadoAdquisicion.class, cargaDto.getId());
-
 			return true;
 		}
 
@@ -8686,6 +8767,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 
+
 	@Transactional
 	@Override
 	public Boolean createGastoAsociadoAdquisicion(String activoId, String gastoAsociado,
@@ -8702,7 +8784,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			Long idActivo = Long.parseLong(activoId);
 			
 			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 			Filter filtroCodGasto = genericDao.createFilter(FilterType.EQUALS, "codigo", gastoAsociado);
 			DDTipoGastoAsociado ddt =  genericDao.get(DDTipoGastoAsociado.class, filtroBorrado,
 					filtroCodGasto);
@@ -8773,7 +8854,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			return false;
 		}
 	}
-
+	
 	@Override
 	public boolean isActivoExisteEnRem(Long idActivo) {
 		return activoDao.existeActivo(idActivo);
@@ -8800,8 +8881,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			}
 		}
-		
+
 		return false;
 	}
 }
-

@@ -4327,4 +4327,8 @@ public class AgrupacionAdapter {
 			}
 		}
 	}
+	
+	public ActivoAgrupacion getAgrupacionObjectById(Long id) {
+		return genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+	}
 }

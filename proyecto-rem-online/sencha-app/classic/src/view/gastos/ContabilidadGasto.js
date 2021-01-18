@@ -10,7 +10,7 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 	refreshAfterSave: true,
 	recordClass: "HreRem.model.GastoContabilidad",
     
-    requires: ['HreRem.model.GastoContabilidad'],
+    requires: ['HreRem.model.GastoContabilidad','HreRem.model.VImporteGastoLbkGrid','HreRem.view.gastos.VImporteGastoLbkGrid'],
     
     listeners: {
 		boxready:'cargarTabData',
@@ -23,7 +23,8 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
     
     initComponent: function () {
 
-        var me = this;
+       var me = this;
+        var isCarteraLiberbank = CONST.CARTERA['LIBERBANK'] == me.lookupController().getViewModel().getData().gasto.getData().cartera;
 		me.setTitle(HreRem.i18n('title.gasto.contabilidad'));
         var items= [
        
@@ -40,7 +41,6 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 													{ 
 														xtype:'comboboxfieldbase',
 														fieldLabel:  HreRem.i18n('fieldlabel.gasto.contabilidad.ejercicio.imputa.gasto'),
-														labelWidth: 200,
 														reference: 'comboboxfieldFechaEjercicio',
 										        		bind: {
 									            			store: '{comboEjercicioContabilidad}',
@@ -50,25 +50,15 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 														valueField		: 'id',
 														readOnly: true
 											        },
-													{ 
-														xtype: 'textfieldbase',
-														reference: 'cuentaContable',
-														labelWidth: 200,
-														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable'),
-										                bind: '{contabilidad.cuentaContable}',
-										                maskRe: /[0-9]/
-													},
 													{
 														xtype: 'datefieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.fecha.contabilizacion'),
-														labelWidth: 200,
 														bind:		'{contabilidad.fechaContabilizacion}',
 														formatter: 'date("d/m/Y")',
 														readOnly: true
 													},
 													{
 														xtype: 'datefieldbase',
-														labelWidth: 200,
 														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.fecha.devengo'),
 														reference: 'fechaDevengoEspecial',
 														bind:		'{contabilidad.fechaDevengoEspecial}',
@@ -77,68 +67,18 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 //										            	},
 //										            	editable: false,
 														formatter: 'date("d/m/Y")'
-													},
-													{ 
-														xtype: 'textfieldbase',
-														reference: 'partidaPresupuestaria',
-														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria'),
-														labelWidth: 200,
-										                bind: '{contabilidad.partidaPresupuestaria}'		                 
 													},																								
 													{ 
 														xtype: 'displayfieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.contabilizado.por'),
-														labelWidth: 200,
 										                bind: '{contabilidad.contabilizadoPorDescripcion}'
 													},														
 													{ 
 														xtype: 'textfieldbase',
-														labelWidth: 200,
 														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.periodicidad'),
 										                bind: '{contabilidad.periodicidadDescripcion}',
 										                readOnly: true						
 													},
-													{ 
-														xtype:'comboboxfieldbase',
-														fieldLabel:  HreRem.i18n('fieldlabel.gasto.contabilidad.subpartidaPresupuestaria'),
-														labelWidth: 200,
-														reference: 'comboboxfieldSubpartidaPresupuestaria',
-														hidden: true,
-														listeners:{	
-															change:function(){
-																		var campoPartidaPresupuestaria = this.lookupController().lookupReference('partidaPresupuestaria');
-																		var url = $AC.getRemoteUrl('generic/getPartidaPresupuestaria');
-																		var valor = this.value;
-																  		
-																  		Ext.Ajax.request({
-			    			
-															    		     url: url,
-															    		     params: {idSubpartida : valor},
-															    			method: 'GET',
-															    		     success: function (a, operation, context) {												
-												                                	var data = Ext.decode(a.responseText);												                                											                                	
-												                                	
-												                                	if(data){												                                
-												                                		campoPartidaPresupuestaria.setValue(data.data);
-												                                	}
-												                                	
-												                                },
-												                                
-												                                failure: function (a, operation, context) {												
-												                                	
-												                                }
-															    		     
-															    		 });
-																												  		
-    	 													}
-														},
-										        		bind: {
-									            			store: '{comboSubpartidaPresupuestaria}',
-									            			value: '{contabilidad.idSubpartidaPresupuestaria}'
-									            		},
-									            		displayField	: 'descripcion',  
-														valueField		: 'id'												
-											        },
                                                     {
                                                         xtype: 'comboboxfieldbase',
                                                         fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.activable'),
@@ -148,8 +88,189 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
                                                             value: '{contabilidad.comboActivable}'
                                                         },
                                                         hidden: true
-                                                    }
+                                                    },														
+													{ 
+														xtype: 'comboboxfieldbase',
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.planvisitas'),
+														reference: 'gicPlanVisitas',
+														bind: {
+															store: '{comboSiNoBoolean}',
+															value: '{contabilidad.gicPlanVisitasBoolean}'
+														},
+                                                        hidden: true					
+													},														
+													{ 
+														xtype: 'comboboxfieldbase',
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.tipocomision'),
+														reference: 'tipoComisionadoHre',
+														bind: {
+															store: '{comboTipoComision}',
+															value: '{contabilidad.tipoComisionadoHreCodigo}'
+														},
+                                                        hidden: true						
+													},
+													
+													{ 
+														xtype: 'comboboxfieldbase',
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.inversion.sujeto.pasivo'),
+														reference: 'inversionSujetoPasivo',
+														bind: {
+															store: '{comboSiNoBoolean}',
+															value: '{contabilidad.inversionSujetoPasivoBoolean}'
+														},
+                                                        hidden: !isCarteraLiberbank					
+													},
+													{ 
+														xtype: 'comboboxfieldbase',
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.inversion.sujeto.pasivo'),
+														reference: 'inversionSujetoPasivo',
+														bind: {
+															store: '{comboSiNoBoolean}',
+															value: '{contabilidad.inversionSujetoPasivoBoolean}'
+														},
+                                                        hidden: !isCarteraLiberbank					
+													},
+													{ 
+														
+														xtype: 'checkboxfieldbase',
+											        	boxLabel: HreRem.i18n('fieldlabel.gasto.excluir.envio.lbk'),
+											        	//name: 'agrupacionesVinculadas',
+											        	//reference: 'excluirEnvioLbk1', 	
+											        	bind: '{contabilidad.excluirEnvioLbk}',
+											        	hidden: !isCarteraLiberbank				
+													}
+													
 										]
+					           },
+					           {   
+									xtype:'fieldsettable',
+									collapsible: true,
+									collapsable: false,
+									reference: 'liberbankGrids',
+									hidden : !isCarteraLiberbank,
+									title: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank'),
+									colspan: 3,
+									items :
+										[
+													{ 
+														xtype: 'textfieldbase',
+														fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.diario1'),
+														reference : 'diario1',
+										                bind: '{contabilidad.diario1}',
+										                colspan: 3,
+										                readOnly: true						
+													},	
+
+													{ 
+														xtype:'fieldsettable',
+														collapsible: false,
+														refence : 'diario1Grid',
+														colspan : 3,
+														items :
+															[
+																{ 
+																	xtype: 'currencyfieldbase',
+																	symbol: HreRem.i18n("symbol.euro"),
+																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.Base'),
+																	reference : 'baseDiario1',
+													                bind: '{contabilidad.diario1Base}',
+													                readOnly: true						
+																},
+																{ 
+																	xtype: 'numberfieldbase',
+																	symbol: HreRem.i18n("symbol.porcentaje"),
+																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.tipo.impositivo'),
+																	reference : 'diario1Tipo',
+													                bind: '{contabilidad.diario1Tipo}',
+													                readOnly: true						
+																}
+																
+																
+															]
+											        },
+											        { 
+														xtype: 'textfieldbase',
+														fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.diario2'),
+														reference : 'diario2',
+										                bind: {
+										                	value: '{contabilidad.diario2}',
+										                	hidden :'{contabilidad.isEmpty}'
+										                },
+										                colspan: 3,
+										                readOnly: true						
+													},	
+
+											        { 
+														xtype:'fieldsettable',
+														colspan : 3,
+														refence : 'diario2Grid',
+														bind : {hidden :'{contabilidad.isEmpty}'},
+														collapsible: false,
+														items :
+															[
+																{ 
+																	xtype: 'currencyfieldbase',
+																	symbol: HreRem.i18n("symbol.euro"),
+																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.Base'),
+													                bind: {value :'{contabilidad.diario2Base}',
+													                	   hidden :'{contabilidad.isEmpty}'
+													                },
+													                reference : 'baseDiario2',
+													                readOnly: true						
+																},
+																{ 
+																	xtype: 'numberfieldbase',
+																	symbol: HreRem.i18n("symbol.porcentaje"),
+																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.tipo.impositivo'),
+													                bind: { value :'{contabilidad.diario2Tipo}',
+													                		hidden :'{contabilidad.isEmpty}'
+													                },
+													                reference: 'tipoImpositivoDiario2',
+													                readOnly: true						
+																},
+																{ 
+																	xtype: 'currencyfieldbase',
+																	symbol: HreRem.i18n("symbol.euro"),
+																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.cuota'),
+																	reference : 'cuotaDiario2',
+													                bind: {value :'{contabilidad.diario2Cuota}',
+													                	   hidden :'{contabilidad.isEmpty}'
+													                },
+													                readOnly: true						
+																}
+																
+															]
+											        }
+										]
+					           },
+					           {
+						        	xtype:'fieldsettable',
+									title: HreRem.i18n('title.importe.gasto.liberbank'),
+									hidden : !isCarteraLiberbank,
+									width: '100%',
+									colspan: 3,
+					                flex: 3,
+									items :[
+										{ 
+											xtype: 'label',
+											fieldLabel: HreRem.i18n('title.gasto.contabiliadad.error.diarios'),
+											reference : 'errorDiariosRef',
+											style: ' font-weight: bold; font-size: 13px;',
+											margin: '10 10 10 10',
+							                bind: '{contabilidad.errorDiarios}',
+							                colspan: 3,
+							                flex: 3,
+							                readOnly: true,
+							                width: '100%'
+										},	
+										
+										{
+											xtype: 'vImporteGastoLbkGrid',
+											reference: 'vImporteGastoLbkGrid',
+											colspan: 3,
+							                flex: 3
+										}
+									]
 					           }
            
     	];

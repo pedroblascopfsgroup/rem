@@ -1355,25 +1355,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		List<Activo> activosList = activoApi.getListActivosPorID(activosID);
 
 		Trabajo trabajo = null;
-		Double participacion = null;
-		Integer participacionTotalPorCien = 10000;
-		Integer participacionPorCien = 0;
+		
 		for (Activo activo : activosList) {
-			participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activosList, null);
-			participacionPorCien = (int)(participacion*100);				
-			participacionTotalPorCien -= participacionPorCien;
-			dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : String.valueOf(participacionPorCien/100f));
+			dtoTrabajo.setParticipacion("100");
 			trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
 			trabajos.add(trabajo);
 		}
-		if(participacionTotalPorCien != 0) {
-			while(participacionTotalPorCien != 0) {
-				participacionTotalPorCien--;
-				trabajo.getActivosTrabajo().get(participacionTotalPorCien).setParticipacion(
-						trabajo.getActivosTrabajo().get(participacionTotalPorCien).getParticipacion()+(1/100f));
-			}
-			trabajoDao.saveOrUpdate(trabajo);
-		}
+		
 
 		return trabajos;
 

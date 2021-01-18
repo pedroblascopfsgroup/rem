@@ -58,7 +58,14 @@ BEGIN
 		    AND TDI.DD_TBE_ID = TBE.DD_TBE_ID
 		    AND TDI.BORRADO = 0
 		WHERE ENT.DD_ENT_CODIGO = ''ACT''
-		    AND CRA.DD_CRA_CODIGO = ''08''';
+		    AND CRA.DD_CRA_CODIGO = ''08''
+		    AND NOT EXISTS (
+		    	SELECT 1
+			FROM '||V_ESQUEMA||'.'||V_TABLA||' AUX
+			WHERE AUX.ENT_ID = ACT.ACT_ID
+				AND AUX.DD_ENT_ID = ENT.DD_ENT_ID
+				AND AUX.BORRADO = 0
+		    )';
 	EXECUTE IMMEDIATE V_SQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] Se han insertado en total '||SQL%ROWCOUNT||' registros en la tabla '||V_TABLA);
 	COMMIT;

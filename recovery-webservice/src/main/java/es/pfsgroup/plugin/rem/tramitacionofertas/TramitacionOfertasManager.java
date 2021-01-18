@@ -1207,9 +1207,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						(activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)
 						|| activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB)
 						|| activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO)) 
+						|| DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())
 						) {
 					idUsuarioGestorFormalizacion = gestorExpedienteComercialDao
-							.getUsuarioGestorFormalizacion(activo.getId());
+							.getUsuarioGestorFormalizacion(activo.getId(),oferta.getId());
 				} else {
 					idUsuarioGestorFormalizacion = gestorExpedienteComercialDao
 							.getUsuarioGestorFormalizacionBasico(activo.getId());

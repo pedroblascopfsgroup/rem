@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Jesus Jativa
---## FECHA_CREACION=20210107
+--## FECHA_CREACION=20210118
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-12661

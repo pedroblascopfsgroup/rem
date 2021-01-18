@@ -1297,21 +1297,28 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
         	 List<String> listaCadenas = new ArrayList<String>();
         	 for(int i=1; i<this.numFilasHoja;i++){
         		 String cadena = createCadenaGastoRepetido(exc.dameCelda(i, COL_NUM_FACTURA_LIQUIDACION),
-        				 exc.dameCelda(i, COL_NIF_EMISOR),exc.dameCelda(i, COL_NIF_PROPIETARIO),Integer.toString(i));
-        		  listaCadenas.add(cadena);
+           				 exc.dameCelda(i, COL_NIF_EMISOR),exc.dameCelda(i, COL_NIF_PROPIETARIO),exc.dameCelda(i, COL_SUBTIPO_GASTO),
+           				 exc.dameCelda(i, COL_TIPO_IMPUESTO),exc.dameCelda(i, COL_TIPO_IMPOSITIVO),exc.dameCelda(i, COL_ID_ELEMENTO),
+           				 exc.dameCelda(i, COL_TIPO_ELEMENTO),Integer.toString(i));
+        		 listaCadenas.add(cadena);
         	 }
              for(int i=1; i<this.numFilasHoja;i++){
             	 try {
             		String cadena = createCadenaGastoRepetido(exc.dameCelda(i, COL_NUM_FACTURA_LIQUIDACION),
-           				 exc.dameCelda(i, COL_NIF_EMISOR),exc.dameCelda(i, COL_NIF_PROPIETARIO),Integer.toString(i));
-            		String[] cadenaActual = cadena.split("/");
+           				 exc.dameCelda(i, COL_NIF_EMISOR),exc.dameCelda(i, COL_NIF_PROPIETARIO),exc.dameCelda(i, COL_SUBTIPO_GASTO),
+           				 exc.dameCelda(i, COL_TIPO_IMPUESTO),exc.dameCelda(i, COL_TIPO_IMPOSITIVO),exc.dameCelda(i, COL_ID_ELEMENTO),
+           				 exc.dameCelda(i, COL_TIPO_ELEMENTO),Integer.toString(i));
+            		String[] cadenaActual = cadena.split("[$]");
             		for (String string : listaCadenas) {
-						String[] lineaGasto = string.split("/");
+						String[] lineaGasto = string.split("[$]");
 						//para que no se compare consigo misma,despues comprueba que los datos no sean iguales
-						if (!lineaGasto[3].equals(cadenaActual[3]))
-						if(lineaGasto[0].equals(cadenaActual[0]) && lineaGasto[1].equals(cadenaActual[1]) && lineaGasto[2].equals(cadenaActual[2])) {
-							listaFilas.add(i);
-							break;
+						if (!lineaGasto[8].equals(cadenaActual[8])) {
+							if(lineaGasto[0].equals(cadenaActual[0]) && lineaGasto[1].equals(cadenaActual[1]) && lineaGasto[2].equals(cadenaActual[2]) &&
+									lineaGasto[3].equals(cadenaActual[3]) && lineaGasto[4].equals(cadenaActual[4]) && lineaGasto[5].equals(cadenaActual[5]) && 
+									lineaGasto[6].equals(cadenaActual[6]) && lineaGasto[7].equals(cadenaActual[7]) ) {
+								listaFilas.add(i);
+								break;
+							}
 						}
 					}
                  } catch (ParseException e) {
@@ -1331,8 +1338,10 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
          return listaFilas;   
 	 }
 
-	 private String createCadenaGastoRepetido(String factura, String nifEmisor, String nifPropietario, String numRow){
-		 String cadena = factura + "/" + nifEmisor + "/" + nifPropietario + "/" + numRow ;
+	 private String createCadenaGastoRepetido(String factura, String nifEmisor, String nifPropietario, String subtipoGasto, String tipoImpuesto,
+			 String tipoImpositivo, String idElemento, String tipoElemento, String numRow){
+		 String cadena = factura + "$" + nifEmisor + "$" + nifPropietario + "$" + subtipoGasto + "$" + tipoImpuesto + "$" + tipoImpositivo + "$"
+				 + idElemento + "$" + tipoElemento + "$" + numRow;
 		 return cadena;
 	 }
 	 

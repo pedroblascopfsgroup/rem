@@ -274,8 +274,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						                		hidden: '{!activo.isCarteraBankia}',
 						                		readOnly: true
 						                	}
-						                },
-
+						                }
 									]
 								},
 								//PARA DIVARIAN

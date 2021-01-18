@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20200601
+--## FECHA_CREACION=20200609
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-7424
@@ -90,39 +90,48 @@ BEGIN
 	FOR I IN V_FUNCION.FIRST .. V_FUNCION.LAST
 	LOOP
 		V_TMP_FUNCION := V_FUNCION(I);
-	
-		DBMS_OUTPUT.PUT_LINE('****************************************************');	
-		DBMS_OUTPUT.PUT_LINE('[INFO]: Comprobando si existe el usuario '''||V_TMP_FUNCION(2)||''' asociado al grupo '''||V_TMP_FUNCION(1)||'');
-		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.'||V_TABLA||' 
-			WHERE USU_ID_GRUPO = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_FUNCION(1)||''') 
-			AND USU_ID_USUARIO = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_FUNCION(2)||''')';
+
+		V_SQL := 'SELECT count(1) FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_FUNCION(1)||''' ';
 		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-			
-		-- Si existe la FILA
-		IF V_NUM_TABLAS > 0 THEN	  
-			DBMS_OUTPUT.PUT_LINE('[INFO]: Ya existe el usuario en ese grupo.');		
-		ELSE
-			DBMS_OUTPUT.PUT_LINE('[ OK ]: 	No existe en el grupo. Comprobadno si existe usuario.');
-			
-			V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_FUNCION(2)||'''';
+
+		IF V_NUM_TABLAS > 0 THEN
+
+			DBMS_OUTPUT.PUT_LINE('****************************************************');	
+			DBMS_OUTPUT.PUT_LINE('[INFO]: Comprobando si existe el usuario '''||V_TMP_FUNCION(2)||''' asociado al grupo '''||V_TMP_FUNCION(1)||'');
+			V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.'||V_TABLA||' 
+				WHERE USU_ID_GRUPO = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_FUNCION(1)||''') 
+				AND USU_ID_USUARIO = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_FUNCION(2)||''')';
 			EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 			
-			IF V_NUM_TABLAS > 0 THEN	
-				DBMS_OUTPUT.PUT_LINE('[INFO]: 	Insertando relación '''||V_TMP_FUNCION(1)||''' - '''||V_TMP_FUNCION(2)||'''.');
-				V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_TABLA||'' ||
-					' (GRU_ID, USU_ID_GRUPO, USU_ID_USUARIO, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)' ||
-					' SELECT '||V_ESQUEMA_M||'.S_'||V_TABLA||'.NEXTVAL' ||
-					',(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_FUNCION(1)||''')' ||
-					',(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_FUNCION(2)||''')' ||
-					',0, '''||V_USUARIO||''', SYSDATE, 0 FROM DUAL';
-			    DBMS_OUTPUT.PUT_LINE(V_MSQL);	
-				EXECUTE IMMEDIATE V_MSQL;
-				DBMS_OUTPUT.PUT_LINE('[INFO] Relación insertada correctamente.');
+			-- Si existe la FILA
+			IF V_NUM_TABLAS > 0 THEN	  
+				DBMS_OUTPUT.PUT_LINE('[INFO]: Ya existe el usuario en ese grupo.');		
 			ELSE
-				DBMS_OUTPUT.PUT_LINE('[INFO]: El usuario no existe en la BBDD.');	
-			END IF;
+				DBMS_OUTPUT.PUT_LINE('[ OK ]: 	No existe en el grupo. Comprobadno si existe usuario.');
+			
+				V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_FUNCION(2)||'''';
+				EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+			
+				IF V_NUM_TABLAS > 0 THEN	
+					DBMS_OUTPUT.PUT_LINE('[INFO]: 	Insertando relación '''||V_TMP_FUNCION(1)||''' - '''||V_TMP_FUNCION(2)||'''.');
+					V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_TABLA||'' ||
+						' (GRU_ID, USU_ID_GRUPO, USU_ID_USUARIO, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)' ||
+						' SELECT '||V_ESQUEMA_M||'.S_'||V_TABLA||'.NEXTVAL' ||
+						',(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_FUNCION(1)||''')' ||
+						',(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_FUNCION(2)||''')' ||
+						',0, '''||V_USUARIO||''', SYSDATE, 0 FROM DUAL';
+				    DBMS_OUTPUT.PUT_LINE(V_MSQL);	
+					EXECUTE IMMEDIATE V_MSQL;
+					DBMS_OUTPUT.PUT_LINE('[INFO] Relación insertada correctamente.');
+				ELSE
+					DBMS_OUTPUT.PUT_LINE('[INFO]: El usuario no existe en la BBDD.');	
+				END IF;
 				
-		END IF;	
+			END IF;	
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('[INFO]: El usuario no existe en la BBDD.');	
+		END IF;
+
 	END LOOP;
 	
 	COMMIT;

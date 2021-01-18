@@ -47,7 +47,32 @@ Ext.define('HreRem.model.GastoActivo', {
             },
             {
             	name: 'subtipoDescripcion'
+            },
+            {
+            	name:'idElemento'
+            },
+            {
+            	name:'tipoElemento'
+            },
+            {
+            	name:'tipoElementoCodigo'
+            },
+            {
+            	name:'tipoActivo'
+            },
+            {
+            	name: 'importeTotalLinea',
+            	type: 'number'
+            },
+            {
+            	name: 'importeTotalSujetoLinea',
+            	type: 'number'
+            },
+            {
+            	name: 'importeProporcinalSujeto',
+            	type: 'number'
             }
+            
     ],
     
 	proxy: {

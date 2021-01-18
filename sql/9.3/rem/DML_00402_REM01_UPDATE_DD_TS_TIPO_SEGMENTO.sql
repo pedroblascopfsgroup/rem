@@ -1,10 +1,10 @@
 --/*
 --######################################### 
---## AUTOR=KEVIN HONORATO
---## FECHA_CREACION=20201210
+--## AUTOR=PIER GOTTA
+--## FECHA_CREACION=20201224
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-12376
+--## INCIDENCIA_LINK=HREOS-12608
 --## PRODUCTO=NO
 --##            
 --## INSTRUCCIONES:  
@@ -40,40 +40,40 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-            T_TIPO_DATA('00200','BC NO R'),
-            T_TIPO_DATA('00201','SLA (R)'),
-            T_TIPO_DATA('00202','BC POST'),
-            T_TIPO_DATA('00203','NEW REO'),
-            T_TIPO_DATA('00205','SLA (RECOMPRAS)'),
-            T_TIPO_DATA('00206','SLA (T)'),
-            T_TIPO_DATA('00210','SLA 4.1'),
-            T_TIPO_DATA('00211','SLA 4.1 (n)'),
-            T_TIPO_DATA('00212','SLA 4.1 (b)'),
-            T_TIPO_DATA('00213','SLA 4.1 (b) (n)'),
-            T_TIPO_DATA('00214','118 4.1'),
-            T_TIPO_DATA('00215','118 4.1 (n)'),
-            T_TIPO_DATA('00216','118 3.1.3'),
-            T_TIPO_DATA('00217','SLA (ex118)'),
-            T_TIPO_DATA('00218','NEW REO PF:ANFR'),
-            T_TIPO_DATA('00219','NEW REO PF:ANFR'),
-            T_TIPO_DATA('00220','NEW REO PF:ANFR'),
-            T_TIPO_DATA('00221','NEW REO PF:ANFR-SUB'),
-            T_TIPO_DATA('00222','NEW REO PF:HERC'),
-            T_TIPO_DATA('00223','SLA 4.1 PF:HERC'),
-            T_TIPO_DATA('00224','NEW REO PF:SNTR'),
-            T_TIPO_DATA('00225','SLA 4.1 (b) PF:SNTR'),
-            T_TIPO_DATA('00226','SLA (ex118) PF:SNTR'),
-            T_TIPO_DATA('00227','SLA 4.1 (b) PF:JAIP'),
-            T_TIPO_DATA('00228','SLA 4.1 PF:JAIP'),
-            T_TIPO_DATA('00229','SLA (ex118) PF:JAIP'),
-            T_TIPO_DATA('00230','SLA 4.1 PF:SARB'),
-            T_TIPO_DATA('00231','SLA 4.3 PF:HERC'),
-            T_TIPO_DATA('00232','SLA 4.3 PF:SNTR'),
-            T_TIPO_DATA('00233','SLA 4.3 PF:SARB'),
-            T_TIPO_DATA('00234','SLA 4.3'),           
-            T_TIPO_DATA('00235','118 4.1 (a)'),
-            T_TIPO_DATA('00236','118 3.1.3 (a)'),
-            T_TIPO_DATA('00237','SLA (P)'),
+            T_TIPO_DATA('00200','NEW REO'),
+            T_TIPO_DATA('00202','SLA (RECOMPRAS)'),
+            T_TIPO_DATA('00203','SLA (T)'),
+            T_TIPO_DATA('00207','SLA 4.1'),
+            T_TIPO_DATA('00208','SLA 4.1 (n)'),
+            T_TIPO_DATA('00209','SLA 4.1 (b)'),
+            T_TIPO_DATA('00210','SLA 4.1 (b) (n)'),
+            T_TIPO_DATA('00211','118 4.1'),
+            T_TIPO_DATA('00212','118 4.1 (n)'),
+            T_TIPO_DATA('00213','118 3.1.3'),
+            T_TIPO_DATA('00214','SLA (ex118)'),
+            T_TIPO_DATA('00215','NEW REO PF:ANFR'),
+            T_TIPO_DATA('00216','NEW REO PF:ANFR'),
+            T_TIPO_DATA('00217','NEW REO PF:ANFR'),
+            T_TIPO_DATA('00218','NEW REO PF:ANFR-SUB'),
+            T_TIPO_DATA('00219','NEW REO PF:HERC'),
+            T_TIPO_DATA('00220','SLA 4.1 PF:HERC'),
+            T_TIPO_DATA('00221','NEW REO PF:SNTR'),
+            T_TIPO_DATA('00222','SLA 4.1 (b) PF:SNTR'),
+            T_TIPO_DATA('00223','SLA (ex118) PF:SNTR'),
+            T_TIPO_DATA('00224','SLA 4.1 (b) PF:JAIP'),
+            T_TIPO_DATA('00225','SLA 4.1 PF:JAIP'),
+            T_TIPO_DATA('00226','SLA (ex118) PF:JAIP'),
+            T_TIPO_DATA('00227','SLA 4.1 PF:SARB'),
+            T_TIPO_DATA('00228','SLA 4.3 PF:HERC'),
+            T_TIPO_DATA('00229','SLA 4.3 PF:SNTR'),
+            T_TIPO_DATA('00230','SLA 4.3 PF:SARB'),
+            T_TIPO_DATA('00231','SLA 4.3'),
+            T_TIPO_DATA('00232','118 4.1 (a)'),
+            T_TIPO_DATA('00233','118 3.1.3 (a)'),
+            T_TIPO_DATA('00234','SLA (P)'),           
+            T_TIPO_DATA('00235','BC NO R'),
+            T_TIPO_DATA('00236','SLA (R)'),
+            T_TIPO_DATA('00237','BC POST'),
             T_TIPO_DATA('00238','APORTADOS'),
             T_TIPO_DATA('00239','ESC NO R')
 		); 

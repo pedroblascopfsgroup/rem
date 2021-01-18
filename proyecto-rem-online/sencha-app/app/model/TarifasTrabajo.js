@@ -60,6 +60,29 @@ Ext.define('HreRem.model.TarifasTrabajo', {
     			name:'importeTotalTarifas',
     			type: 'float',
     			defaultValue: 0
+    		},
+    		{
+    			name:'precioUnitarioCliente',
+    			type: 'float'
+    		},
+    		{
+    			name:'importeCliente',
+    			type: 'float',
+    			calculate: function (data) {
+     				if(!Ext.isEmpty(data.medicion) && !Ext.isEmpty(data.precioUnitarioCliente)) {
+     					return  data.medicion * data.precioUnitarioCliente;
+     				}
+     				else
+     				{
+     					return null;
+     				}
+     				
+    			}
+    		},
+    		{
+    			name:'importeTotalCliente',
+    			type: 'float',
+    			defaultValue: 0
     		}
     ],
     

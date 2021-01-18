@@ -85,33 +85,45 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										xtype: 'textfieldbase',
 										fieldLabel:  HreRem.i18n('fieldlabel.gasto.referencia.emisor'),
 						                bind:		'{gasto.referenciaEmisor}',
+						               	reference: 'referenciaEmisor',
+						               	name: 'referenciaEmisor',
 						                allowBlank: false
 									},
-									{ 
-										xtype: 'comboboxfieldbase',
-						               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.subtipo.gasto'),
-						               	reference: 'subtipoGastoCombo',
-								      	bind: {
-							           		store: '{comboSubtiposGasto}',
-							           		value: '{gasto.subtipoGastoCodigo}',
-							           		disabled: '{!gasto.tipoGastoCodigo}'
-							         	},
-							         	allowBlank: false
-							    	},
 							    	{ 
 										xtype: 'comboboxfieldbase',
 						               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.tipo.gasto'),
 						               	reference: 'tipoGasto',
-		        						chainedStore: 'comboSubtipoGasto',
-										chainedReference: 'subtipoGastoCombo',
 								      	bind: {
 							           		store: '{comboTiposGasto}',
 							           		value: '{gasto.tipoGastoCodigo}'
 							         	},
+							         	allowBlank: false
+							    	},
+							    	{
+							    		xtype: 'comboboxfieldbase',
+						               	fieldLabel:  HreRem.i18n('fieldlabel.suplidos.vinculados'),
+						               	reference: 'suplidosVinculados',
+						               	name: 'suplidosVinculados',
+								      	bind: {
+							           		store: '{comboSiNoGastos}',
+							           		value: '{gasto.suplidosVinculadosCod}',
+							           		hidden: '{!gasto.visibleSuplidos}'
+							         	},
 							         	listeners: {
-						                	select: 'onChangeChainedCombo'
+						                	select: 'onChangeComboSuplidos'
 						            	},
 							         	allowBlank: false
+							    	},							    	
+							    	{
+							    		xtype: 'textfieldbase',
+						               	fieldLabel:  HreRem.i18n('fieldlabel.numero.factura.principal'),
+						               	reference: 'facturaPrincipalSuplido',
+						               	name: 'facturaPrincipalSuplido',
+								      	bind: {
+							           		value: '{gasto.facturaPrincipalSuplido}',
+							           		disabled: '{!gasto.suplidoVinculadoNo}',
+							           		hidden: '{!gasto.visibleSuplidos}'
+							         	}
 							    	}
 								]
 							},
@@ -127,6 +139,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											xtype: 'textfieldbase',
 											fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.emisor'),		
 											reference: 'buscadorNifEmisorField',
+						               		name: 'buscadorNifEmisor',
 											bind: {
 												value:'{gasto.buscadorNifEmisor}',
 												readOnly: '{emisorSoloLectura}'
@@ -403,6 +416,16 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								        	flex: 1,
 								        	hidden: true,
 									        hideable: false
+								       },
+								       {
+								    	   text	 : HreRem.i18n('header.elementos.afectados.id.linea.id'),
+							               flex	 : 1,
+							               dataIndex: 'idLinea'
+								       },
+								       {
+								    	   text	 : HreRem.i18n('header.elementos.afectados.id.linea'),
+							               flex	 : 1,
+							               dataIndex: 'descripcionLinea'
 								       },
 								       {
 							            	text	 : HreRem.i18n('header.numero.trabajo'),

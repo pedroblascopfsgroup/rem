@@ -23,16 +23,28 @@ public class DtoInfoContabilidadGasto extends WebDto {
 
 	private Long ejercicioImputaGasto;
 	private String periodicidadDescripcion;
-	private String partidaPresupuestaria;
-	private String cuentaContable;
 	private Date fechaDevengoEspecial;
 	private String periodicidadEspecialDescripcion;
-	private String partidaPresupuestariaEspecial;
-	private String cuentaContableEspecial;
 	private Date fechaContabilizacion;
 	private String contabilizadoPorDescripcion;
 	private Long idSubpartidaPresupuestaria;
 	private String comboActivable;
+	private String diario1;
+	private Double diario1Base;
+	private Double diario1Tipo;
+	private Double diario1Cuota;
+	private String diario2;
+	private Double diario2Base;
+	private Double diario2Tipo;
+	private Double diario2Cuota;
+	private Boolean isEmpty;
+	private Boolean gicPlanVisitasBoolean;
+	private String tipoComisionadoHreCodigo;
+	private String tipoComisionadoHreDescripcion;
+	private String errorDiarios;
+	private boolean resultadoDiarios;
+	private Boolean inversionSujetoPasivoBoolean;
+	private Boolean excluirEnvioLbk;
 
 	public Long getEjercicioImputaGasto() {
 		return ejercicioImputaGasto;
@@ -46,19 +58,6 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setPeriodicidadDescripcion(String periodicidadDescripcion) {
 		this.periodicidadDescripcion = periodicidadDescripcion;
 	}
-	public String getPartidaPresupuestaria() {
-		return partidaPresupuestaria;
-	}
-	public void setPartidaPresupuestaria(
-			String partidaPresupuestaria) {
-		this.partidaPresupuestaria = partidaPresupuestaria;
-	}
-	public String getCuentaContable() {
-		return cuentaContable;
-	}
-	public void setCuentaContable(String cuentaContable) {
-		this.cuentaContable = cuentaContable;
-	}
 	public Date getFechaDevengoEspecial() {
 		return fechaDevengoEspecial;
 	}
@@ -71,20 +70,6 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setPeriodicidadEspecialDescripcion(
 			String periodicidadEspecialDescripcion) {
 		this.periodicidadEspecialDescripcion = periodicidadEspecialDescripcion;
-	}
-	public String getPartidaPresupuestariaEspecial() {
-		return partidaPresupuestariaEspecial;
-	}
-	public void setPartidaPresupuestariaEspecial(
-			String partidaPresupuestariaEspecial) {
-		this.partidaPresupuestariaEspecial = partidaPresupuestariaEspecial;
-	}
-	public String getCuentaContableEspecial() {
-		return cuentaContableEspecial;
-	}
-	public void setCuentaContableEspecial(
-			String cuentaContableEspecial) {
-		this.cuentaContableEspecial = cuentaContableEspecial;
 	}
 	public Date getFechaContabilizacion() {
 		return fechaContabilizacion;
@@ -112,5 +97,104 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setComboActivable(String comboActivable) {
 		this.comboActivable = comboActivable;
 	}
-   	
+	
+	public String getDiario1() {
+		return diario1;
+	}
+	public void setDiario1(String diario1) {
+		this.diario1 = diario1;
+	}
+
+	public Double getDiario1Base() {
+		return diario1Base;
+	}
+	public void setDiario1Base(Double diario1Base) {
+		this.diario1Base = diario1Base;
+	}
+	public Double getDiario1Tipo() {
+		return diario1Tipo;
+	}
+	public void setDiario1Tipo(Double diario1Tipo) {
+		this.diario1Tipo = diario1Tipo;
+	}
+	public Double getDiario1Cuota() {
+		return diario1Cuota;
+	}
+	public void setDiario1Cuota(Double diario1Cuota) {
+		this.diario1Cuota = diario1Cuota;
+	}
+	public String getDiario2() {
+		return diario2;
+	}
+	public void setDiario2(String diario2) {
+		this.diario2 = diario2;
+	}
+	public Double getDiario2Base() {
+		return diario2Base;
+	}
+	public void setDiario2Base(Double diario2Base) {
+		this.diario2Base = diario2Base;
+	}
+	public Double getDiario2Tipo() {
+		return diario2Tipo;
+	}
+	public void setDiario2Tipo(Double diario2Tipo) {
+		this.diario2Tipo = diario2Tipo;
+	}
+	public Double getDiario2Cuota() {
+		return diario2Cuota;
+	}
+	public void setDiario2Cuota(Double diario2Cuota) {
+		this.diario2Cuota = diario2Cuota;
+	}
+	public Boolean getIsEmpty() {
+		return isEmpty;
+	}
+	public void setIsEmpty(Boolean isEmpty) {
+		this.isEmpty = isEmpty;
+	}
+
+	public Boolean getGicPlanVisitasBoolean() {
+		return gicPlanVisitasBoolean;
+	}
+	public void setGicPlanVisitasBoolean(Boolean gicPlanVisitasBoolean) {
+		this.gicPlanVisitasBoolean = gicPlanVisitasBoolean;
+	}
+	public String getTipoComisionadoHreCodigo() {
+		return tipoComisionadoHreCodigo;
+	}
+	public void setTipoComisionadoHreCodigo(String tipoComisionadoHreCodigo) {
+		this.tipoComisionadoHreCodigo = tipoComisionadoHreCodigo;
+	}
+	public String getTipoComisionadoHreDescripcion() {
+		return tipoComisionadoHreDescripcion;
+	}
+	public void setTipoComisionadoHreDescripcion(String tipoComisionadoHreDescripcion) {
+		this.tipoComisionadoHreDescripcion = tipoComisionadoHreDescripcion;
+	}
+	public String getErrorDiarios() {
+		return errorDiarios;
+	}
+	public void setErrorDiarios(String errorDiarios) {
+		this.errorDiarios = errorDiarios;
+	}
+	public boolean isResultadoDiarios() {
+		return resultadoDiarios;
+	}
+	public void setResultadoDiarios(boolean resultadoDiarios) {
+		this.resultadoDiarios = resultadoDiarios;
+	}
+	public Boolean getInversionSujetoPasivoBoolean() {
+		return inversionSujetoPasivoBoolean;
+	}
+	public void setInversionSujetoPasivoBoolean(Boolean inversionSujetoPasivoBoolean) {
+		this.inversionSujetoPasivoBoolean = inversionSujetoPasivoBoolean;
+	}
+	public void setExcluirEnvioLbk(Boolean excluirEnvioLbk) {
+		this.excluirEnvioLbk = excluirEnvioLbk;
+	}
+	public Boolean getExcluirEnvioLbk() {
+		return excluirEnvioLbk;
+	}
+	
 }

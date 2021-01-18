@@ -29,7 +29,7 @@ DECLARE
     V_COUNT_TOTAL NUMBER(16):=0; --Vble para contar registros totales
     V_COUNT_TOTAL_FALLOS NUMBER(16):=0; --Vble para contar registros totales
     --TOTAL EN EL ARRAY: 859
-    V_TEXTO VARCHAR2(300 CHAR):= 'El Inmueble se encuentra gravado con una carga, la cual se encuentra pendiente de cancelación. Consultar su situación actual, así como, sus posibles limitaciones y la asunción de su cancelación.';
+    V_TEXTO VARCHAR2(300 CHAR):= 'El Inmueble se encuentra gravado con una carga, la cual se encuentra pendiente de cancelación. Consultar su situación actual, así como, sus posibles limitaciones y la asunción de su cancelación';
 
 
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
@@ -337,17 +337,17 @@ BEGIN
 
     V_MSQL := 'SELECT COUNT(*) FROM '|| V_ESQUEMA ||'.ACT_COE_CONDICION_ESPECIFICA WHERE 
                 ACT_ID = (SELECT ACT_ID FROM '|| V_ESQUEMA ||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '||V_TMP_TIPO_DATA(1)||' AND BORRADO = 0)
-                AND COE_TEXTO = '''||V_TEXTO||''' AND COE_FECHA_HASTA IS NULL AND BORRADO = 0' ;
+                AND COE_TEXTO LIKE ''%'''||V_TEXTO||'''%'' AND COE_FECHA_HASTA IS NULL AND BORRADO = 0' ;
     EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 
-    IF V_NUM_TABLAS = 1 THEN
+    IF V_NUM_TABLAS != 0 THEN
 
         V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_COE_CONDICION_ESPECIFICA SET
                     COE_FECHA_HASTA = SYSDATE,
                     USUARIOMODIFICAR = '''||V_USU||''',
                     FECHAMODIFICAR = SYSDATE
                     WHERE ACT_ID = (SELECT ACT_ID FROM '|| V_ESQUEMA ||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '||V_TMP_TIPO_DATA(1)||' AND BORRADO = 0)
-                    AND COE_TEXTO = '''||V_TEXTO||''' AND COE_FECHA_HASTA IS NULL AND BORRADO = 0' ;	
+                    AND COE_TEXTO = ''%'''||V_TEXTO||'''%'' AND COE_FECHA_HASTA IS NULL AND BORRADO = 0' ;	
         EXECUTE IMMEDIATE V_MSQL;
 
         DBMS_OUTPUT.PUT_LINE('[INFO] CONDICION ESPECIFICA MODIFICADA CORRECTAMENTE EN ACT_COE_CONDICION_ESPECIFICA');
@@ -356,7 +356,7 @@ BEGIN
 
     ELSE
 
-        DBMS_OUTPUT.PUT_LINE('[INFO] EL ACTIVO '||V_TMP_TIPO_DATA(1)||' NO TIENE CONDICION ESPECIFICA, NO EXISTE O ESTA BORRADO');
+        DBMS_OUTPUT.PUT_LINE('[INFO] EL ACTIVO '||V_TMP_TIPO_DATA(1)||' NO TIENE CONDICION ESPECIFICA ACTIVA, NO EXISTE O ESTA BORRADO');
 
         V_COUNT_TOTAL_FALLOS:=V_COUNT_TOTAL_FALLOS+1;
 

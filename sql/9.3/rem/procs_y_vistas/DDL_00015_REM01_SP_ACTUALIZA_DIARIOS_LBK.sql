@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20201202
+--## FECHA_CREACION=20210119
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12358
+--## INCIDENCIA_LINK=REMVIP-8707
 --## PRODUCTO=NO
 --## 
 --## Finalidad:  Creación del SP

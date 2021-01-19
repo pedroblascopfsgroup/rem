@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20201218
+--## FECHA_CREACION=20210119
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12505
+--## INCIDENCIA_LINK=REMVIP-8707
 --## PRODUCTO=NO
 --## Finalidad: Vista para calcular el importe de los gastos Liberbank separado por activos
 --##           

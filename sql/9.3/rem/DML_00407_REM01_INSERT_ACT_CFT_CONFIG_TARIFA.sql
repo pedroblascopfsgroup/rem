@@ -90,6 +90,7 @@ BEGIN
                         AND CFT.DD_SCR_ID='||V_ID_SCR_APPLE||'
                         AND TTF.BORRADO=0
                         AND CFT.BORRADO=0
+                        AND TTF.DD_TTF_CODIGO LIKE ''AP%''
                     )
                     ';
 
@@ -117,6 +118,7 @@ BEGIN
                         FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' CFT
                         JOIN '||V_ESQUEMA||'.'||V_TABLA_DD_TTF||' TTF ON TTF.DD_TTF_ID=CFT.DD_TTF_ID
                         WHERE CFT.DD_CRA_ID='||V_ID_CRA_CER||' AND CFT.DD_SCR_ID='||V_ID_SCR_APPLE||' AND CFT.BORRADO=0 AND TTF.BORRADO=0
+                        AND TTF.DD_TTF_CODIGO LIKE ''AP%''
                         ';
             EXECUTE IMMEDIATE V_SQL;
 

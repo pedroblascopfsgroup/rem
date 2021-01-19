@@ -835,6 +835,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		numFincaAnterior.setValue("");
     	}
     	
+    	poblacionAnterior.validate();
+    	numRegistroAnterior.validate();
+    	numFincaAnterior.validate();
 
     },
     

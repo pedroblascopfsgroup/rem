@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20210118
+--## FECHA_CREACION=20210121
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8713
@@ -53,7 +53,7 @@ BEGIN
 
                 V_MSQL :=   'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' 
                             SET DD_COS_ID = (SELECT DD_COS_ID FROM '||V_ESQUEMA||'.DD_COS_COMITES_SANCION WHERE DD_COS_CODIGO='||V_COMITE_CODIGO||'),
-                            SET DD_COS_ID_PROPUESTO = (SELECT DD_COS_ID FROM '||V_ESQUEMA||'.DD_COS_COMITES_SANCION WHERE DD_COS_CODIGO='||V_COMITE_CODIGO||'),
+                            DD_COS_ID_PROPUESTO = (SELECT DD_COS_ID FROM '||V_ESQUEMA||'.DD_COS_COMITES_SANCION WHERE DD_COS_CODIGO='||V_COMITE_CODIGO||'),
                             USUARIOMODIFICAR = '''|| V_USR ||''',
                             FECHAMODIFICAR = SYSDATE
                             WHERE OFR_ID = (SELECT OFR_ID FROM '||V_ESQUEMA||'.'||V_TABLA_OFERTA||' WHERE OFR_NUM_OFERTA='||V_NUM_OFERTA||')';

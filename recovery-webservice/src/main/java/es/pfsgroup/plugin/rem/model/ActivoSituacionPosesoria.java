@@ -146,6 +146,24 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 
 	@Column(name = "SPS_POSESION_NEG")
 	private Boolean spsPosesionNeg;
+	
+	@Column(name = "SPS_ALARMA")
+	private Integer conAlarma;
+	
+	@Column(name = "SPS_FECHA_INSTALA_ALARMA")
+	private Date fechaInstalacionAlarma;
+	
+	@Column(name = "SPS_FECHA_DESINSTALA_ALARMA")
+	private Date fechaDesinstalacionAlarma;
+	
+	@Column(name = "SPS_VIGILANCIA")
+	private Integer conVigilancia;
+	
+	@Column(name = "SPS_FECHA_INSTALA_VIGILANCIA")
+	private Date fechaInstalacionVigilancia;
+	
+	@Column(name = "SPS_FECHA_DESINSTALA_VIGILANCIA")
+	private Date fechaDesinstalacionVigilancia;
 
 	@Version   
 	private Long version;
@@ -408,6 +426,57 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	public void setSpsPosesionNeg(Boolean spsPosesionNeg) {
 		this.spsPosesionNeg = spsPosesionNeg;
 	}
+
+	public Integer getConAlarma() {
+		return conAlarma;
+	}
+
+	public void setConAlarma(Integer conAlarma) {
+		this.conAlarma = conAlarma;
+	}
+
+	public Date getFechaInstalacionAlarma() {
+		return fechaInstalacionAlarma;
+	}
+
+	public void setFechaInstalacionAlarma(Date fechaInstalacionAlarma) {
+		this.fechaInstalacionAlarma = fechaInstalacionAlarma;
+	}
+
+	public Date getFechaDesinstalacionAlarma() {
+		return fechaDesinstalacionAlarma;
+	}
+
+	public void setFechaDesinstalacionAlarma(Date fechaDesinstalacionAlarma) {
+		this.fechaDesinstalacionAlarma = fechaDesinstalacionAlarma;
+	}
+
+	public Integer getConVigilancia() {
+		return conVigilancia;
+	}
+
+	public void setConVigilancia(Integer conVigilancia) {
+		this.conVigilancia = conVigilancia;
+	}
+
+	public Date getFechaInstalacionVigilancia() {
+		return fechaInstalacionVigilancia;
+	}
+
+	public void setFechaInstalacionVigilancia(Date fechaInstalacionVigilancia) {
+		this.fechaInstalacionVigilancia = fechaInstalacionVigilancia;
+	}
+
+	public Date getFechaDesinstalacionVigilancia() {
+		return fechaDesinstalacionVigilancia;
+	}
+
+	public void setFechaDesinstalacionVigilancia(Date fechaDesinstalacionVigilancia) {
+		this.fechaDesinstalacionVigilancia = fechaDesinstalacionVigilancia;
+	}
+
+	
+	
 
 
 	

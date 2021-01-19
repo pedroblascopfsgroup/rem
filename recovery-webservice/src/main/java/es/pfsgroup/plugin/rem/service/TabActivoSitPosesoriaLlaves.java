@@ -156,6 +156,31 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 					 
 				 }
 			 }
+			 
+			 if(activo.getSituacionPosesoria()!=null) {
+				 //ALARMA
+				 if(activo.getSituacionPosesoria().getConAlarma()!=null) {
+					 activoDto.setTieneAlarma(activo.getSituacionPosesoria().getConAlarma());
+				 }
+				 if(activo.getSituacionPosesoria().getFechaInstalacionAlarma()!=null) {
+					 activoDto.setFechaInstalacionAlarma(activo.getSituacionPosesoria().getFechaInstalacionAlarma());
+				 }
+				 if(activo.getSituacionPosesoria().getFechaDesinstalacionAlarma()!=null) {
+					 activoDto.setFechaDesinstalacionAlarma(activo.getSituacionPosesoria().getFechaDesinstalacionAlarma());
+				 }				 
+				 //VIGILANCIA
+				 
+				 if(activo.getSituacionPosesoria().getConVigilancia()!=null) {
+					 activoDto.setTieneVigilancia(activo.getSituacionPosesoria().getConVigilancia());
+				 }
+				 if(activo.getSituacionPosesoria().getFechaInstalacionVigilancia()!=null) {
+					 activoDto.setFechaInstalacionVigilancia(activo.getSituacionPosesoria().getFechaInstalacionVigilancia());
+				 }
+				 if(activo.getSituacionPosesoria().getFechaDesinstalacionVigilancia()!=null) {
+					 activoDto.setFechaDesinstalacionVigilancia(activo.getSituacionPosesoria().getFechaDesinstalacionVigilancia());
+				 }
+				 
+			 }
 		}
 		
 		Filter filtroFechaNotNull = genericDao.createFilter(FilterType.NOTNULL, "fechaRecepcion");
@@ -191,10 +216,9 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			// Buscamos los campos que pueden ser propagados para esta pestaña
 			activoDto.setCamposPropagables(TabActivoService.TAB_SIT_POSESORIA_LLAVES);
 		}
-		
-		if(activo.getSituacionPosesoria().getSpsPosesionNeg() != null)
-			activoDto.setPosesionNegociada(activo.getSituacionPosesoria().getSpsPosesionNeg() ? "1" : "0");
-	
+		if(activo.getSituacionPosesoria()!=null && activo.getSituacionPosesoria().getSpsPosesionNeg()!=null) {		
+		activoDto.setPosesionNegociada(activo.getSituacionPosesoria().getSpsPosesionNeg() ? "1" : "0");
+		}
 		return activoDto;
 		
 	}
@@ -298,6 +322,40 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			if(dto.getPosesionNegociada() != null) {
 				activoSituacionPosesoria.setSpsPosesionNeg("1".equals(dto.getPosesionNegociada()));
 			}
+			
+			if(dto.getTieneAlarma()!=null) {
+				activoSituacionPosesoria.setConAlarma(dto.getTieneAlarma());					
+			}
+			if(dto.getFechaDesinstalacionAlarma()!=null) {
+				activoSituacionPosesoria.setFechaDesinstalacionAlarma(dto.getFechaDesinstalacionAlarma());
+			}
+			if(dto.getFechaInstalacionAlarma()!=null) {
+				activoSituacionPosesoria.setFechaInstalacionAlarma(dto.getFechaInstalacionAlarma());
+			}
+			if(dto.getTieneAlarma()!=null && activoSituacionPosesoria.getFechaDesinstalacionAlarma()!=null) {
+				if(dto.getTieneAlarma()==1) {
+					activoSituacionPosesoria.setConAlarma(dto.getTieneAlarma());
+					activoSituacionPosesoria.setFechaDesinstalacionAlarma(null);
+				}
+			}
+			
+			if(dto.getTieneVigilancia()!=null) {
+				activoSituacionPosesoria.setConVigilancia(dto.getTieneVigilancia());
+			}
+			if(dto.getFechaDesinstalacionVigilancia()!=null) {
+				activoSituacionPosesoria.setFechaDesinstalacionVigilancia(dto.getFechaDesinstalacionVigilancia());
+			}
+			if(dto.getFechaInstalacionVigilancia()!=null) {
+				activoSituacionPosesoria.setFechaInstalacionVigilancia(dto.getFechaInstalacionVigilancia());
+			}
+			
+			if(dto.getTieneVigilancia()!=null && activoSituacionPosesoria.getFechaDesinstalacionVigilancia()!=null) {
+				if(dto.getTieneVigilancia()==1) {
+					activoSituacionPosesoria.setConVigilancia(dto.getTieneVigilancia());
+					activoSituacionPosesoria.setFechaDesinstalacionVigilancia(null);
+				}
+			}
+			
 		}
 		
 		activo.setSituacionPosesoria(genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria));

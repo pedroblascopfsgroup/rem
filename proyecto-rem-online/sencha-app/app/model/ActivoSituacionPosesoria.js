@@ -127,6 +127,26 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
         },
         	{
         	name: 'posesionNegociada'
+        },{
+        	name:'tieneAlarma'
+        },{
+        	name:'fechaInstalacionAlarma',
+            type:'date',
+            dateFormat: 'c'
+        },{
+        	name:'fechaDesinstalacionAlarma',
+            type:'date',
+            dateFormat: 'c'
+        },{
+        	name:'tieneVigilancia'
+        },{
+        	name:'fechaInstalacionVigilancia',
+            type:'date',
+            dateFormat: 'c'
+        },{
+        	name:'fechaDesinstalacionVigilancia',
+            type:'date',
+            dateFormat: 'c'
         }
         
     ],

@@ -87,7 +87,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;	
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
@@ -1634,6 +1634,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 			}
+
 			
 			Filter filtroActivoSareb = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			ActivoSareb activoSareb = genericDao.get(ActivoSareb.class, filtroActivoSareb);
@@ -1730,6 +1731,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				
 				genericDao.update(ActivoSareb.class, activoSareb);
 			}
+
 
 			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 			

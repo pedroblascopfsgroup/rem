@@ -1816,6 +1816,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {codTipoActivo: '{activo.tipoActivoCodigo}'}
 				}
     		},
+
     		
     		comboSubtipoActivoOE: {
 				model: 'HreRem.model.ComboBase',
@@ -1825,7 +1826,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {codigoTipoActivo: '{activo.tipoActivoCodigoOE}'}
 				}
     		},
-	    	    		
+
     		comboSubtipoActivoAdmision: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {

@@ -1045,21 +1045,21 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 						bind: {
 							value: '{calidaddatopublicacionactivo.numFotosMinimaResolucion}'
 						}
-					}, {
-						xtype:'textfieldbase',
-						fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes.minima.resolucion.y'),
-						reference: 'numFotosMinimaYRef',
-						readOnly: true,
-						bind: {
-							value: '{calidaddatopublicacionactivo.numFotosMinimaResolucionY}'
-						}
-					}, {
+					},{
 						xtype:'textfieldbase',
 						fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes.minima.resolucion.x'),
 						reference: 'numFotosMinimaXRef',
 						readOnly: true,
 						bind: {
 							value: '{calidaddatopublicacionactivo.numFotosMinimaResolucionX}'
+						}
+					},{
+						xtype:'textfieldbase',
+						fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes.minima.resolucion.y'),
+						reference: 'numFotosMinimaYRef',
+						readOnly: true,
+						bind: {
+							value: '{calidaddatopublicacionactivo.numFotosMinimaResolucionY}'
 						}
 					},{
 						xtype:'textfieldbase',
@@ -1177,7 +1177,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					reference: 'geodistanciaRef',
 					readOnly: true,
 					bind: {
-						value: '{calidaddatopublicacionactivo.geodistanciaDQ}'
+						value: '{calidaddatopublicacionactivo.geodistanciaDQ} km'
 					}
 				}]
 			}, {

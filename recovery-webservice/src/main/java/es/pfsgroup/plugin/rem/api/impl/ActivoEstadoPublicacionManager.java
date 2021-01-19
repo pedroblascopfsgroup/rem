@@ -52,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoDatosDq;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
@@ -1971,7 +1972,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqAnyoConstruccionFase1() == null && dto.getDrAnyoConstruccionFase1() == null) {
 			ko=false;
 			interrogante=false;
-		}		
+		}
 		//TIPOLOGIA
 		
 		if(dto.getDqTipologiaFase1()==null) {
@@ -2682,6 +2683,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		ActivoPropietarioActivo activoPropietario  = genericDao.get(ActivoPropietarioActivo.class, filter);
 		ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class,filter);
+		ActivoCargas cargas = genericDao.get(ActivoCargas.class,filter);
+
+		
 		
 		//FASE 2
 		if (activo.getInfoRegistral() != null) {
@@ -2893,6 +2897,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("% propiedad", "", "", CALIDADDATO_REGISTRO));
 			}
 		}
+			if (actDatosDq.getDescripcionCargas()!=null && cargas !=null && cargas.getDescripcionCarga()!=null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Descripcion Cargas", cargas.getDescripcionCarga().toString(), actDatosDq.getDescripcionCargas().toString(), CALIDADDATO_REGISTRO));
+			}else if(actDatosDq.getDescripcionCargas()!=null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Descripcion Cargas", "", actDatosDq.getDescripcionCargas().toString(), CALIDADDATO_REGISTRO));
+			}
+			else {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Descripcion Cargas", "", "", CALIDADDATO_REGISTRO));
+			}
 		//FASE 3
 		
 		if (activoCatastro != null && activoCatastro.getRefCatastral() != null && actDatosDq.getReferenciaCatastralDdq() != null) {

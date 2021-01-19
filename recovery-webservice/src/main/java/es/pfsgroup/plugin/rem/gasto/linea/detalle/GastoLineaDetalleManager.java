@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.ActivoConfiguracionPtdasPrep;
 import es.pfsgroup.plugin.rem.model.ActivoGenerico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoTrabajoGastoImpuesto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
@@ -81,6 +82,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	private static final String ERROR_NO_EXISTE_ACTIVO = "El activo no existe";
 	private static final String ERROR_NO_EXISTE_ACTIVO_GENERICO= "El activo genérico no existe";
 	private static final String ERROR_CARTERA_DIFERENTE  ="El elemento es de un propietario diferente al gasto.";
+	private static final String ACTIVO_NO_CONTABILIZADO="No se puede generar un gasto para un activo no contabilizado";
+
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -1200,9 +1203,17 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				
 				GastoLineaDetalleEntidad gastoLineaDetalleEntidad = new GastoLineaDetalleEntidad();
 				gastoLineaDetalleEntidad.setGastoLineaDetalle(gastoLineaDetalle);
-				gastoLineaDetalleEntidad.setEntidadGasto(tipoElemento);
+				gastoLineaDetalleEntidad.setEntidadGasto(tipoElemento);		
+				Activo activo = activoDao.getActivoByNumActivo(Long.parseLong(dto.getIdElemento()));
+				ActivoSareb activoSareb = null;
+				
+				if (activo != null) {
+					Filter filtroSareb = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activo.getNumActivo());
+					activoSareb  = genericDao.get(ActivoSareb.class, filtroSareb);
+				}
+				
 				if(DDEntidadGasto.CODIGO_ACTIVO.equals(dto.getTipoElemento())) {
-					Activo activo = activoDao.getActivoByNumActivo(Long.parseLong(dto.getIdElemento()));
+					
 					if(activo == null) {
 						error = ERROR_NO_EXISTE_ACTIVO;
 						return error;
@@ -1210,6 +1221,10 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 						|| !activo.getPropietarioPrincipal().equals(gasto.getPropietario())) {
 						error = ERROR_CARTERA_DIFERENTE;
 						return error;
+					}else if(activoSareb != null && activoSareb.getReoContabilizado() != null && activoSareb.getReoContabilizado().getCodigo().equals(DDSinSiNo.CODIGO_NO)) {
+						error = ACTIVO_NO_CONTABILIZADO;
+						return error;
+				 			
 					}
 					gastoLineaDetalleEntidad.setEntidad(activo.getId());
 				}else if(DDEntidadGasto.CODIGO_ACTIVO_GENERICO.contentEquals(dto.getTipoElemento())) {

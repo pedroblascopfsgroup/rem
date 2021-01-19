@@ -123,6 +123,9 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 			mapaErrores.put(messageServices.getMessage(CAMPO_NUMERICO), isTipoCampoNumerico(exc));
 			mapaErrores.put(messageServices.getMessage(CAMPO_DECIMAL), isTipoCampoDecimal(exc));
 			mapaErrores.put(messageServices.getMessage(CAMPO_SINO), isTipoCampoSiNo(exc));
+			mapaErrores.put(messageServices.getMessage(VALOR_NUEVO), isNuevoCorrecto(exc));
+			
+			
 			
 
 			
@@ -453,7 +456,7 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 	private boolean esDecimal(String valor) {
 
 		try {
-			Double.parseDouble(valor);
+			Double.valueOf(valor.replaceAll(",","."));
 			return true;
 		} catch (Exception e) {
 			return false;

@@ -94,7 +94,20 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						        		readOnly : '{!esUA}',
 						        		hidden: '{!esUA}'
 						        	}
-				                },  
+				                }, 
+				                {
+				                	xtype: 'comboboxfieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.estado.adecuacion.sareb'),
+				                	name: 'comboreoadecuacionsareb',
+				                	reference: 'comboreoadecuacionsarebRef',
+				                	bind: {	
+					                	readOnly : !$AU.userIsRol("HAYASUPER"),
+				                		store: '{comboEstadoAdecuacionSareb}',
+										value: '{activo.estadoAdecuacionSarebCodigo}',
+				                		hidden: '{!activo.isCarteraSareb}'
+				                	}
+				                
+				                },
 						        {
 				                	xtype: 'datefieldbase',
 				                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.fin.prevista.adecuacion'),
@@ -118,20 +131,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                		hidden: '{!activo.isCarteraSareb}'
 				                	}
 				                
-				                },
-				                {
-				                	xtype: 'comboboxfieldbase',
-				                	fieldLabel:  HreRem.i18n('fieldlabel.estado.adecuacion.sareb'),
-				                	name: 'comboreoadecuacionsareb',
-				                	reference: 'comboreoadecuacionsarebRef',
-				                	bind: {	
-					                	readOnly : !$AU.userIsRol("HAYASUPER"),
-				                		store: '{comboEstadoAdecuacionSareb}',
-										value: '{activo.estadoAdecuacionSarebCodigo}',
-				                		hidden: '{!activo.isCarteraSareb}'
-				                	}
-				                
 				                }
+				                
 							]
 						},
 						{	// Columna 2
@@ -164,18 +165,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						        },
 						        {
 									xtype: 'comboboxfieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
-						        	reference: 'subtipoActivoCombo',
-						        	bind: {
-					            		store: '{comboSubtipoActivo}',
-					            		value: '{activo.subtipoActivoCodigo}',
-					            		disabled: '{!activo.tipoActivoCodigo}'
-					            	},
-		    						allowBlank: false,
-					            	style:'margin-left:10px'
-						        },
-						        {
-									xtype: 'comboboxfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.activo.bde'),
 						        	reference: 'tipoActivoBde',
 						        	bind: {
@@ -186,6 +175,18 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					            	},
 					            	style:'margin-left:10px'
 						        },
+						        {
+									xtype: 'comboboxfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
+						        	reference: 'subtipoActivoCombo',
+						        	bind: {
+					            		store: '{comboSubtipoActivo}',
+					            		value: '{activo.subtipoActivoCodigo}',
+					            		disabled: '{!activo.tipoActivoCodigo}'
+					            	},
+		    						allowBlank: false,
+					            	style:'margin-left:10px'
+						        },  
 						        {
 						        	xtype: 'comboboxfieldbase',
 						        	fieldLabel: HreRem.i18n('fieldlabel.subtipo.activo.bde'),

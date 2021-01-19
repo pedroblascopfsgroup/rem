@@ -214,8 +214,12 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
             map = new HashMap<String, Object>();
 
             map.put("idDefecto", calificaciones.getId());
-            map.put("estado", calificaciones.getEstadoMotivoCalificacionNegativa().getCodigo());
-            map.put("responsable", calificaciones.getResponsableSubsanar().getCodigo());
+            if(calificaciones.getEstadoMotivoCalificacionNegativa() != null) {
+            	map.put("estado", calificaciones.getEstadoMotivoCalificacionNegativa().getCodigo());
+            }
+            if(calificaciones.getResponsableSubsanar()!= null) {
+            	map.put("responsable", calificaciones.getResponsableSubsanar().getCodigo());
+            }
             if(calificaciones.getFechaSubsanacion() != null){
                 map.put("fechaSubsanacion", calificaciones.getFechaSubsanacion().getTime());
             }else{

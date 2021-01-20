@@ -360,7 +360,7 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					Date fecha = sdfSal.parse(fechaString);
 					tasacion.setFechaRecepcionTasacion(fecha);
 				}else if("107".equalsIgnoreCase(campo)) {
-					tasacion.setImporteTasacionFin(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
+					tasacion.setImporteTasacionFin(getDouble(exc.dameCelda(fila, VALOR_NUEVO)));
 				}else if("108".equalsIgnoreCase(campo)) {
 					DDTipoTasacion tipoTasacion = genericDao.get(DDTipoTasacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
 					tasacion.setTipoTasacion(tipoTasacion);
@@ -383,19 +383,19 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				if("099".equalsIgnoreCase(campo)) {
 					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
 							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA));
-					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
+					activoVal.setImporte(getDouble(exc.dameCelda(fila, VALOR_NUEVO)));
 				}else if("100".equalsIgnoreCase(campo)) {
 					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
 							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA));
-					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
+					activoVal.setImporte(getDouble(exc.dameCelda(fila, VALOR_NUEVO)));
 				}else if("101".equalsIgnoreCase(campo)) {
 					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
 							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO));
-					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
+					activoVal.setImporte(getDouble(exc.dameCelda(fila, VALOR_NUEVO)));
 				}else if("109".equalsIgnoreCase(campo)) {
 					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
 							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA));
-					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
+					activoVal.setImporte(getDouble(exc.dameCelda(fila, VALOR_NUEVO)));
 				}else if("110".equalsIgnoreCase(campo)) {
 					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
 							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA));
@@ -413,11 +413,11 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				}else if("112".equalsIgnoreCase(campo)) {
 					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
 							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA));
-					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
+					activoVal.setImporte(getDouble(exc.dameCelda(fila, VALOR_NUEVO)));
 				}else if("113".equalsIgnoreCase(campo)) {
 					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
 							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA));
-					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
+					activoVal.setImporte(getDouble(exc.dameCelda(fila, VALOR_NUEVO)));
 					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
 					String fechaString = sdfSal.format(fechaOri);
 					Date fecha = sdfSal.parse(fechaString);
@@ -425,7 +425,7 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				}else if("114".equalsIgnoreCase(campo)) {
 					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
 							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA));
-					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
+					activoVal.setImporte(getDouble(exc.dameCelda(fila, VALOR_NUEVO)));
 					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
 					String fechaString = sdfSal.format(fechaOri);
 					Date fecha = sdfSal.parse(fechaString);
@@ -433,7 +433,7 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				}else if("115".equalsIgnoreCase(campo)) {
 					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
 							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_MIN_AUT_PROP_RENTA));
-					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
+					activoVal.setImporte(getDouble(exc.dameCelda(fila, VALOR_NUEVO)));
 				}
 				genericDao.save(ActivoValoraciones.class, activoVal);
 			}else if("BIE_ADJ_ADJUDICACION".equalsIgnoreCase(convivencia.getTabla())) {
@@ -832,7 +832,7 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					Date fecha = sdfSal.parse(fechaString);
 					tasacion.setFechaRecepcionTasacion(fecha);
 				}else if("107".equalsIgnoreCase(campo)) {
-					tasacion.setImporteTasacionFin(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
+					tasacion.setImporteTasacionFin(getDouble(exc.dameCelda(fila, VALOR_NUEVO)));
 				}else if("108".equalsIgnoreCase(campo)) {
 					DDTipoTasacion tipoTasacion = genericDao.get(DDTipoTasacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
 					tasacion.setTipoTasacion(tipoTasacion);
@@ -851,4 +851,9 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 		return DATOS_PRIMERA_FILA;
 	}
 
+	private Double getDouble (String doubleString) {
+			
+			return Double.parseDouble(doubleString.replaceAll(",","."));
+		
+	}
 }

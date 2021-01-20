@@ -475,6 +475,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.comite.aprobado"));
 			}
 		}
+		
+		if(activo != null) {
+			if (!esActivoContabilizado(activo.getId()))
+				throw new JsonViewerException("No se puede validar un trabajo para un activo no contabilizado");
+		}
 
 		try {
 			// Si estado trabajo = EMITIDO PENDIENTE PAGO y se ha rellenado
@@ -488,9 +493,21 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				dtoTrabajo.setEstadoCodigo(DDEstadoTrabajo.ESTADO_PAGADO);
 			}
 			
+			
+			
+			
+			
 			historificarCambiosFicha(dtoTrabajo, trabajo);
 			dtoToTrabajo(dtoTrabajo, trabajo);
 
+			
+			if(dtoTrabajo.getEstadoCodigo() != null && DDEstadoTrabajo.ESTADO_VALIDADO.equals(dtoTrabajo.getEstadoCodigo())) {
+				
+			}
+			
+			
+			
+			
 			if (tareaActivo != null) {
 				if(!Checks.esNulo(tareaActivo.getTareaExterna()) && !Checks.esNulo(tareaActivo.getTareaExterna().getTareaProcedimiento()) &&
 						!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo()) &&
@@ -503,6 +520,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					editarTramites(trabajo);
 				}
 			}
+			
+			
+			
 			if(trabajo.getEstado() != null) {
 				if(DDEstadoTrabajo.CODIGO_ESTADO_RECHAZADO.equals(trabajo.getEstado().getCodigo()) || DDEstadoTrabajo.ESTADO_RECHAZADO.equals(trabajo.getEstado().getCodigo())) {
 					EnviarCorreoTrabajos(trabajo, EMAIL_RECHAZADO);

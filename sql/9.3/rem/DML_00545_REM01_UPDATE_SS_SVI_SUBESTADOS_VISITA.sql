@@ -1,7 +1,7 @@
 --/*
 --###########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20210120
+--## FECHA_CREACION=20210119
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8724
@@ -38,7 +38,7 @@ DECLARE
     
    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     -- 		DD_EVI_CODIGO, DD_SVI_CODIGO, DD_SVI_DESCRIPCION
-        T_TIPO_DATA('05','25','Pdte Compradores')
+        T_TIPO_DATA('05','25','Pdte Confirmación')
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

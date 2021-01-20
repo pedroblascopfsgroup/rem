@@ -1807,16 +1807,20 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		//Comprobaciones Correcto
 		boolean interrogante=false;
 		boolean ko = false;
+		int countKo = 0;
+		int countInterrogante =0;
 		//IDUFIR
 		if(dto.getDqIdufirFase1()==null) {
 			dto.setCorrectoIdufirFase1(ICONO_TICK_OK);			
 		}else {
 			dto.setCorrectoIdufirFase1(ICONO_TICK_KO);
+			countKo++;
 			ko=true;
 		}
 		//FINCA REGISTRAL
 		if(dto.getDqFincaRegistralFase1()==null) {
 			dto.setCorrectoFincaRegistralFase1(ICONO_TICK_INTERROGANTE);
+			countInterrogante++;
 			interrogante=true;
 		}else if(dto.getDrFincaRegistralFase1()!=null
 				&& (dto.getDrFincaRegistralFase1().equals(dto.getDqFincaRegistralFase1()))) {
@@ -1824,6 +1828,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}else {
 			dto.setCorrectoFincaRegistralFase1(ICONO_TICK_KO);
 			ko=true;
+			countKo++;
 		}
 		
 		if (dto.getDqFincaRegistralFase1() == null && dto.getDrFincaRegistralFase1() == null) {
@@ -1833,6 +1838,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		//TOMO
 		if(dto.getDqTomoFase1()==null) {
 			dto.setCorrectoTomoFase1(ICONO_TICK_INTERROGANTE);
+			countInterrogante++;
 			interrogante=true;
 		}else if(dto.getDrFincaRegistralFase1()!=null
 				&& (dto.getDrTomoFase1().equals(dto.getDqTomoFase1()))) {
@@ -1840,6 +1846,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}else {
 			dto.setCorrectoTomoFase1(ICONO_TICK_KO);
 			ko=true;
+			countKo++;
 		}
 		if (dto.getDqTomoFase1() == null && dto.getDrTomoFase1() == null) {
 			ko=false;
@@ -1848,6 +1855,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		//LIBRO
 		if(dto.getDqLibroFase1()==null) {
 			dto.setCorrectoLibroFase1(ICONO_TICK_INTERROGANTE);
+			countInterrogante++;
 			interrogante = true;
 		}else if(dto.getDrLibroFase1()!=null
 				&& (dto.getDrLibroFase1().equals(dto.getDqLibroFase1()))) {
@@ -1855,6 +1863,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}else {
 			dto.setCorrectoLibroFase1(ICONO_TICK_KO);
 			ko=true;
+			countKo++;
+
 		}
 		
 		if (dto.getDqLibroFase1() == null && dto.getDrLibroFase1() == null) {
@@ -1864,6 +1874,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		//FOLIO
 		if(dto.getDqFolioFase1()==null) {
 			dto.setCorrectoFolioFase1(ICONO_TICK_INTERROGANTE);
+			countInterrogante++;
 			interrogante= true;
 		}else if(dto.getDrFolioFase1()!=null
 				&& (dto.getDrFolioFase1().equals(dto.getDqFolioFase1()))) {
@@ -1871,6 +1882,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}else {
 			dto.setCorrectoFolioFase1(ICONO_TICK_KO);
 			ko=true;
+			countKo++;
 		}
 		
 		if (dto.getDqFolioFase1() == null && dto.getDrFolioFase1() == null) {
@@ -1880,6 +1892,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		//USO DOMINANTE
 		if(dto.getDqUsoDominanteFase1()==null) {
 			dto.setCorrectoUsoDominanteFase1(ICONO_TICK_INTERROGANTE);
+			countInterrogante++;
 			interrogante=true;
 		}else if(dto.getDrUsoDominanteFase1()!=null
 				&& (dto.getDrUsoDominanteFase1().equals(dto.getDqUsoDominanteFase1()))) {
@@ -1887,6 +1900,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}else {
 			dto.setCorrectoUsoDominanteFase1(ICONO_TICK_KO);
 			ko=true;
+			countKo++;
 		}
 		
 		if (dto.getDqUsoDominanteFase1() == null && dto.getDrUsoDominanteFase1() == null) {
@@ -1896,6 +1910,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		//MUNICIPIO DEL REGISTRO
 		if(dto.getDqMunicipioDelRegistroFase1()==null) {
 			dto.setCorrectoUsoDominanteFase1(ICONO_TICK_INTERROGANTE);
+			countInterrogante++;
 			interrogante = true;
 		}else if(dto.getDrMunicipioDelRegistroFase1()!=null
 				&& (dto.getDrMunicipioDelRegistroFase1().equals(dto.getDqMunicipioDelRegistroFase1()))) {
@@ -1903,6 +1918,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}else {
 			dto.setCorrectoMunicipioDelRegistroFase1(ICONO_TICK_KO);
 			ko=true;
+			countKo++;
 		}
 		
 		if (dto.getDqMunicipioDelRegistroFase1() == null && dto.getDrMunicipioDelRegistroFase1() == null) {
@@ -1912,6 +1928,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		//PROVINCIA DEL REGISTRO
 		if(dto.getDqProvinciaDelRegistroFase1()==null) {
 			dto.setCorrectoProvinciaDelRegistroFase1(ICONO_TICK_INTERROGANTE);
+			countInterrogante++;
 			interrogante=true;
 		}else if(dto.getDrProvinciaDelRegistroFase1()!=null
 				&& (dto.getDrProvinciaDelRegistroFase1().equals(dto.getDqProvinciaDelRegistroFase1()))) {
@@ -1919,6 +1936,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}else {
 			dto.setCorrectoProvinciaDelRegistroFase1(ICONO_TICK_KO);
 			ko = true;
+			countKo++;
 		}
 		
 		if (dto.getDqProvinciaDelRegistroFase1() == null && dto.getDrProvinciaDelRegistroFase1() == null) {
@@ -1929,12 +1947,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(dto.getDqNumeroDelRegistroFase1()==null) {
 			dto.setCorrectoNumeroDelRegistroFase1(ICONO_TICK_INTERROGANTE);
 			interrogante= true;
+			countInterrogante++;
 		}else if(dto.getDrNumeroDelRegistroFase1()!=null 
 				&& (dto.getDrNumeroDelRegistroFase1().equals(dto.getDqNumeroDelRegistroFase1()))) {
 			dto.setCorrectoNumeroDelRegistroFase1(ICONO_TICK_OK);
 		}else {
 			dto.setCorrectoNumeroDelRegistroFase1(ICONO_TICK_KO);
 			ko=true;
+			countKo++;
 		}
 		
 		if (dto.getDqNumeroDelRegistroFase1() == null && dto.getDrNumeroDelRegistroFase1() == null) {
@@ -1945,12 +1965,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(dto.getDqVpoFase1()==null) {
 			interrogante= true;
 			dto.setCorrectoVpoFase1(ICONO_TICK_INTERROGANTE);
+			countInterrogante++;
 		}else if(dto.getDrVpoFase1()!=null 
 				&& (dto.getDrVpoFase1().equals(dto.getDqVpoFase1()))) {
 			dto.setCorrectoVpoFase1(ICONO_TICK_OK);
 		}else {
 			dto.setCorrectoVpoFase1(ICONO_TICK_KO);
 			ko=true;
+			countKo++;
 		}
 		
 		if (dto.getDqVpoFase1() == null && dto.getDrVpoFase1() == null) {
@@ -1960,6 +1982,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		//ANYO CONSTRUCCION
 		
 		if(dto.getDqAnyoConstruccionFase1()==null) {
+			countInterrogante++;
 			interrogante=true;
 			dto.setCorrectoAnyoConstruccionFase1(ICONO_TICK_INTERROGANTE);
 		}else if(dto.getDrAnyoConstruccionFase1()!=null && 
@@ -1968,6 +1991,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}else {
 			dto.setCorrectoAnyoConstruccionFase1(ICONO_TICK_KO);
 			ko=true;
+			countKo++;
 		}
 		if (dto.getDqAnyoConstruccionFase1() == null && dto.getDrAnyoConstruccionFase1() == null) {
 			ko=false;
@@ -1977,6 +2001,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		
 		if(dto.getDqTipologiaFase1()==null) {
 			interrogante=true;
+			countInterrogante++;
 			dto.setCorrectoTipologiaFase1(ICONO_TICK_INTERROGANTE);
 		}else if(dto.getDrTipologianFase1()!=null 
 				&& (dto.getDrTipologianFase1().equals(dto.getDqTipologiaFase1()))) {
@@ -1984,6 +2009,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}else {
 			dto.setCorrectoTipologiaFase1(ICONO_TICK_KO);
 			ko=true;
+			countKo++;
 		}
 		if (dto.getDqTipologiaFase1() == null && dto.getDrTipologianFase1() == null) {
 			ko=false;
@@ -1993,6 +2019,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		//SUBTIPOLOGIA
 		if(dto.getDqSubtipologiaFase1()==null) {
 			dto.setCorrectoSubtipologiaFase1(ICONO_TICK_INTERROGANTE);
+			countInterrogante++;
 			interrogante=true;
 		}else if(dto.getDrSubtipologianFase1()!=null 
 				&& (dto.getDrSubtipologianFase1().equals(dto.getDqSubtipologiaFase1()))) {
@@ -2000,6 +2027,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}else {
 			dto.setCorrectoSubtipologiaFase1(ICONO_TICK_KO);
 			ko=true;
+			countKo++;
 		}
 		if (dto.getDqSubtipologiaFase1() == null && dto.getDrSubtipologianFase1() == null) {
 			ko=false;
@@ -2008,12 +2036,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		//INFORMACION CARGAS
 		if(dto.getDqInformacionCargasFase1()==null) {
 			dto.setCorrectoInformacionCargasFase1(ICONO_TICK_INTERROGANTE);
+			countInterrogante++;
 			interrogante=true;
 		}else if(dto.getDrInformacionCargasFase1()!=null && (dto.getDrInformacionCargasFase1().equals(dto.getDqInformacionCargasFase1()))) {
 			dto.setCorrectoInformacionCargasFase1(ICONO_TICK_OK);
 		}else {
 			dto.setCorrectoInformacionCargasFase1(ICONO_TICK_KO);
 			ko=true;
+			countKo++;
 		}
 		if (dto.getDqInformacionCargasFase1() == null && dto.getDrInformacionCargasFase1() == null) {
 			ko=false;
@@ -2022,6 +2052,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		//INSCRIPCION CORRECTA
 		if(dto.getDqInscripcionCorrectaFase1()==null) {
 			dto.setCorrectoInscripcionCorrectaFase1(ICONO_TICK_INTERROGANTE);
+			countInterrogante++;
 			interrogante=true;
 		}else if(dto.getDrInscripcionCorrectaFase1()!=null &&
 				(dto.getDrInscripcionCorrectaFase1().equals(dto.getDqInscripcionCorrectaFase1()))) {
@@ -2029,6 +2060,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}else {
 			dto.setCorrectoInscripcionCorrectaFase1(ICONO_TICK_KO);
 			ko=true;
+			countKo++;
 		}
 		if (dto.getDqInscripcionCorrectaFase1() == null && dto.getDrInscripcionCorrectaFase1() == null) {
 			ko=false;
@@ -2039,21 +2071,24 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(dto.getDqPor100PropiedadFase1()==null) {
 			dto.setCorrectoPor100PropiedadFase1(ICONO_TICK_INTERROGANTE);
 			interrogante=true;
+			countInterrogante++;
+
 		}else if(dto.getDrPor100PropiedadFase1()!=null && 
 				(dto.getDrPor100PropiedadFase1().equals(dto.getDqPor100PropiedadFase1()))) {
 			dto.setCorrectoPor100PropiedadFase1(ICONO_TICK_OK);
 		}else {
 			dto.setCorrectoPor100PropiedadFase1(ICONO_TICK_KO);
 			ko =true;
+			countKo++;
 		}
 		
 		if (dto.getDqPor100PropiedadFase1() == null && dto.getDrPor100PropiedadFase1() == null) {
 			ko=false;
 			interrogante=false;
 		}
-		if(ko) {
+		if(ko || countKo > 0 ) {
 			dto.setCorrectoDatosRegistralesFase1(ICONO_TICK_KO);
-		}else if(interrogante) {
+		}else if(interrogante || countInterrogante > 0) {
 			dto.setCorrectoDatosRegistralesFase1(ICONO_TICK_INTERROGANTE);
 		}else {
 			dto.setCorrectoDatosRegistralesFase1(ICONO_TICK_OK);
@@ -2415,16 +2450,20 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private void setCorrectoFase3(DtoCalidadDatoPublicacionActivo dto,ActivoDatosDq actDatosDq) {
 
 		boolean interrogante = false, cruzroja = false;
+		int countKo = 0;
+		int countInterrogante =0;
 			
 		//bloque ref catastral
 		if(dto.getDqF3ReferenciaCatastral() == null) {
 			dto.setCorrectoF3ReferenciaCatastral(ICONO_TICK_INTERROGANTE);
+			countInterrogante++;
 			interrogante = true;
 		}else if(dto.getDrF3ReferenciaCatastral() != null 
 				&& (dto.getDrF3ReferenciaCatastral().equals(dto.getDqF3ReferenciaCatastral()))) {
 			dto.setCorrectoF3ReferenciaCatastral(ICONO_TICK_OK);
 		}else {
 			dto.setCorrectoF3ReferenciaCatastral(ICONO_TICK_KO);
+			countKo++;
 			cruzroja = true;
 		}
 		if (dto.getDqF3ReferenciaCatastral() == null && dto.getDrF3ReferenciaCatastral() == null) {
@@ -2436,6 +2475,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(dto.getDqF3SuperficieConstruida() == null) {
 			dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_INTERROGANTE);
 			interrogante = true;
+			countInterrogante++;
 		}else{
 			if (dto.getDqF3SuperficieConstruida() != null && dto.getDrF3SuperficieConstruida() != null) {
 				BigDecimal dqF3SuperficieConstruida = new BigDecimal(dto.getDqF3SuperficieConstruida());
@@ -2448,15 +2488,18 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_OK);
 					}else {
 						dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_KO);
-						cruzroja = true;	
+						cruzroja = true;
+						countKo++;
 					}
 				}else {
 					dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_KO);
-					cruzroja = true;	
+					cruzroja = true;
+					countKo++;
 				}
 			}else {
 				dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_INTERROGANTE);
 				interrogante = true;
+				countInterrogante++;
 			}
 			
 			
@@ -2472,6 +2515,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(dto.getDqF3SuperficieUtil() == null) {
 			dto.setCorrectoF3SuperficieUtil(ICONO_TICK_INTERROGANTE);
 			interrogante = true;
+			countInterrogante++;
 		}else{
 			if (dto.getDqF3SuperficieUtil() != null && dto.getDrF3SuperficieUtil() != null) {
 				BigDecimal dqF3SuperficieUtil = new BigDecimal(dto.getDqF3SuperficieUtil());
@@ -2484,16 +2528,20 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						dto.setCorrectoF3SuperficieUtil(ICONO_TICK_OK);
 					}else {
 						dto.setCorrectoF3SuperficieUtil(ICONO_TICK_KO);
-						cruzroja = true;	
+						cruzroja = true;
+						countKo++;
 					}
 				}else {
 					dto.setCorrectoF3SuperficieUtil(ICONO_TICK_KO);
-					cruzroja = true;	
+					cruzroja = true;
+					countKo++;
 				}
 				
 			}else {
 				dto.setCorrectoF3SuperficieUtil(ICONO_TICK_INTERROGANTE);
 				interrogante = true;
+				countInterrogante++;
+
 			}			
 		}
 		if (dto.getDqF3SuperficieUtil() == null && dto.getDrF3SuperficieUtil() == null) {
@@ -2504,16 +2552,20 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(dto.getDqF3AnyoConstruccion() == null) {
 			dto.setCorrectoF3AnyoConstruccion(ICONO_TICK_INTERROGANTE);
 			interrogante = true;
+			countInterrogante++;
 		}else if(dto.getDrF3AnyoConstruccion() != null) {
 			if(dto.getDrF3AnyoConstruccion().compareTo(dto.getDqF3AnyoConstruccion()) == 0) {
 				dto.setCorrectoF3AnyoConstruccion(ICONO_TICK_OK);	
 			}else {
 				dto.setCorrectoF3AnyoConstruccion(ICONO_TICK_KO);
 				cruzroja = true;
+				countKo++;
 			}
 		}else {
 			dto.setCorrectoF3AnyoConstruccion(ICONO_TICK_KO);
 			cruzroja = true;
+			countKo++;
+
 		}
 		if (dto.getDqF3AnyoConstruccion() == null && dto.getDrF3AnyoConstruccion() == null) {
 			interrogante = false;
@@ -2523,12 +2575,15 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(dto.getDqF3TipoVia() == null) {
 			dto.setCorrectoF3TipoVia(ICONO_TICK_INTERROGANTE);
 			interrogante = true;
+			countInterrogante++;
+
 		}else if(dto.getDrF3TipoVia() != null 
 				&& (dto.getDrF3TipoVia().equals(dto.getDqF3TipoVia()))) {
 			dto.setCorrectoF3TipoVia(ICONO_TICK_OK);
 		}else {
 			dto.setCorrectoF3TipoVia(ICONO_TICK_KO);
 			cruzroja = true;
+			countKo++;
 		}
 		if (dto.getDqF3TipoVia() == null && dto.getDrF3TipoVia() == null) {
 			interrogante = false;
@@ -2537,25 +2592,31 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		//NOMBRE CALLE ESPECIAL
 		if (dto.getDqF3NomCalle() == null) {
 			interrogante = true;
+			countInterrogante++;
+
 		}else if(dto.getDqF3NomCalle().equals(dto.getDrF3NomCalle())) {
 			dto.setCorrectoF3NomCalle(ICONO_TICK_OK);
 		}else {
+			countKo++;
 			cruzroja = true;
 		}
 		
 		if(actDatosDq.getCalleCorrectaProb() == null) {
 			dto.setCorrectoF3NomCalle(ICONO_TICK_INTERROGANTE);
+			countInterrogante++;
 			interrogante = true;
 		}else if(actDatosDq.getCalleCorrectaProb() > 0.8) {
 			dto.setCorrectoF3NomCalle(ICONO_TICK_OK);
 		}else {
 			dto.setCorrectoF3NomCalle(ICONO_TICK_KO);
+			countKo++;
 			cruzroja = true;
 		}
 		
 		//CP
 		if(dto.getDqF3CP() == null) {
 			dto.setCorrectoF3CP(ICONO_TICK_INTERROGANTE);
+			countInterrogante++;
 			interrogante = true;
 		}else if(dto.getDrF3CP() != null 
 				&& (dto.getDrF3CP().equals(dto.getDqF3CP()))) {
@@ -2563,6 +2624,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}else {
 			dto.setCorrectoF3CP(ICONO_TICK_KO);
 			cruzroja = true;
+			countKo++;
+
 		}
 		if (dto.getDqF3CP() == null && dto.getDrF3CP() == null) {
 			interrogante = false;
@@ -2571,12 +2634,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		//MUNICIPIO
 		if(dto.getDqF3Municipio() == null) {
 			dto.setCorrectoF3Municipio(ICONO_TICK_INTERROGANTE);
+			countInterrogante++;
 			interrogante = true;
 		}else if(dto.getDrF3Municipio() != null 
 				&& (dto.getDrF3Municipio().equals(dto.getDqF3Municipio()))) {
 			dto.setCorrectoF3Municipio(ICONO_TICK_OK);
 		}else {
 			dto.setCorrectoF3Municipio(ICONO_TICK_KO);
+			countKo++;
 			cruzroja = true;
 		}
 		if (dto.getDqF3Municipio() == null && dto.getDrF3Municipio() == null) {
@@ -2587,11 +2652,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(dto.getDqF3Provincia() == null) {
 			dto.setCorrectoF3Provincia(ICONO_TICK_INTERROGANTE);
 			interrogante = true;
+			countInterrogante++;
 		}else if(dto.getDrF3Provincia() != null 
 				&& (dto.getDrF3Provincia().equals(dto.getDqF3Provincia()))) {
 			dto.setCorrectoF3Provincia(ICONO_TICK_OK);
 		}else {
 			dto.setCorrectoF3Provincia(ICONO_TICK_KO);
+			countKo++;
 			cruzroja = true;
 		}
 		
@@ -2600,9 +2667,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			cruzroja= false;
 		}
 		
-		if(cruzroja) {
+		if(cruzroja || countKo > 0) {
 			dto.setCorrectoF3BloqueFase3(ICONO_TICK_KO);
-		}else if(interrogante) {
+		}else if(interrogante || countInterrogante > 0) {
 			dto.setCorrectoF3BloqueFase3(ICONO_TICK_INTERROGANTE);
 		}else {
 			dto.setCorrectoF3BloqueFase3(ICONO_TICK_OK);

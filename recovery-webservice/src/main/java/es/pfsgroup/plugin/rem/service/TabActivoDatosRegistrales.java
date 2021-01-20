@@ -121,6 +121,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	private final String PERFIL_HAYAGESTADM = "HAYAGESTADM";
 	private final String PERFIL_HAYASUPADM = "HAYASUPADM";
 	private final String PERFIL_GESTOADM = "GESTOADM";
+	private final String PERFIL_HAYAGESACT = "HAYAGESACT";
 	private static final String MENSAJE_ERROR_SUPERFICIE_CONSTRUIDA  = "msg.error.superficie.construida.UAs";
 	private static final String MENSAJE_ERROR_SUPERFICIE_UTIL        = "msg.error.superficie.util.UAs";
 	private static final String MENSAJE_ERROR_SUPERFICIE_REPERCUSION = "msg.error.superficie.repercusion.UAs";
@@ -481,6 +482,31 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());
 			}
 			
+		}
+		
+		if(activo.getAdjNoJudicial() != null && activo.getAdjNoJudicial().getFechaPosesion() != null) {
+			activoDto.setFechaAdjudicacion(activo.getAdjNoJudicial().getFechaPosesion());
+		}
+		
+		String carteras[] = {DDSubcartera.CODIGO_APPLE_INMOBILIARIO,
+				DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB
+				, DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB};
+		String perfilesPermitidos[] = {PERFIL_HAYASUPER,PERFIL_HAYAGESACT};
+			
+		if(activo.getSubcartera() != null ) {
+				Boolean fechaPosesionVisible = Arrays.asList(carteras).contains(activo.getSubcartera().getCodigo());
+				activoDto.setFechaPosesionVisible(fechaPosesionVisible);
+		}
+		
+		if (activoApi.isActivoIncluidoEnPerimetro(activo.getId())) {
+			Boolean fechaPosesionEditable = true;
+			for (Perfil perfil : perfiles) {
+				if(Arrays.asList(perfilesPermitidos).contains(perfil.getCodigo())){
+					fechaPosesionEditable = false;
+					break;
+				}
+			}
+			activoDto.setFechaPosesoriaEditable(fechaPosesionEditable);
 		}
 		
 		return activoDto;

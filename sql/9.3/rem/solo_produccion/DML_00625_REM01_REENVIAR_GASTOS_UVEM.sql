@@ -138,8 +138,17 @@ BEGIN
 12583586,
 12583587,
 12583588,
-12583589,
-12583590,
+12583589;'	
+
+   REM01.SP_EXT_REENVIO_GASTO ( V_PAR , V_USUARIOMODIFICAR, V_RET );
+
+-----------------------------------------------------------------------------------------------------------------
+
+   DBMS_OUTPUT.PUT_LINE( V_RET );
+   DBMS_OUTPUT.PUT_LINE(' [INFO] Reenviado gastos ');
+   DBMS_OUTPUT.PUT_LINE('[FIN] ');
+  
+   V_PAR := '12583590,
 12583591,
 12583592,
 12583593,
@@ -189,9 +198,9 @@ BEGIN
 12584890,
 12584891,
 12584892,
-12584964';	
+12584964';
 
-   REM01.SP_EXT_REENVIO_GASTO ( V_PAR , V_USUARIOMODIFICAR, V_RET );
+ REM01.SP_EXT_REENVIO_GASTO ( V_PAR , V_USUARIOMODIFICAR, V_RET );
 
 -----------------------------------------------------------------------------------------------------------------
 

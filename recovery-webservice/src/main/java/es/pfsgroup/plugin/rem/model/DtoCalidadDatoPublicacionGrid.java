@@ -32,7 +32,9 @@ public class DtoCalidadDatoPublicacionGrid extends WebDto{
 			if (dq != null) {
 				this.valorDq = dq;
 			}
-			if ((rem != null && !rem.isEmpty()) && (dq != null && !dq.isEmpty())) {
+			if ((rem == null || rem.isEmpty()) && (dq !=null && !dq.isEmpty())) {
+				this.indicadorCorrecto = 0;
+			}else if ((rem != null && !rem.isEmpty()) && (dq != null && !dq.isEmpty())) {
 				if (!rem.equals(dq)) {
 					this.indicadorCorrecto = 0;
 				}else {

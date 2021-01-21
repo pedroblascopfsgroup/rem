@@ -2406,12 +2406,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			
 			Date fechaHoraConcreta = null;
 			
-			if(dtoTrabajo.getFechaConcretaString().isEmpty()) {
-				String hora = dtoTrabajo.getHoraConcretaString();
-				fechaHoraConcreta = formatoHora.parse(hora);
-				trabajo.setFechaHoraConcreta(fechaHoraConcreta);
-				trabajo.setFechaCompromisoEjecucion(fechaHoraConcreta);
-			}else if(!"1970-01-01".equals(groovyft.format(formatoFechaString.parse(dtoTrabajo.getFechaConcretaString())))) {
+			if(!"1970-01-01".equals(groovyft.format(formatoFechaString.parse(dtoTrabajo.getFechaConcretaString())))) {
 
 				String fecha = dtoTrabajo.getFechaConcretaString();
 				String hora = dtoTrabajo.getHoraConcretaString();
@@ -2431,10 +2426,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		}else if(dtoTrabajo.getFechaConcreta() != null && dtoTrabajo.getHoraConcreta() != null){
 			if(dtoTrabajo.getHoraConcreta() != null) {
-				String hora = formatoHora.format(dtoTrabajo.getHoraConcreta());
-				String fecha = formatoFecha.format(dtoTrabajo.getFechaConcreta());
-				if(!hora.isEmpty() && !fecha.isEmpty()) {
-					trabajo.setFechaHoraConcreta(formatoFechaHora.parse(fecha+" "+hora));
+				if (!"1970-01-01".equals(groovyft.format(dtoTrabajo.getFechaConcreta()))){
+					String hora = formatoHora.format(dtoTrabajo.getHoraConcreta());
+					String fecha = formatoFecha.format(dtoTrabajo.getFechaConcreta());
+					if(!hora.isEmpty() && !fecha.isEmpty()) {
+						trabajo.setFechaHoraConcreta(formatoFechaHora.parse(fecha+" "+hora));
+					}
+				}else {
+					trabajo.setFechaHoraConcreta(null);
 				}
 			}else {
 				trabajo.setFechaHoraConcreta(dtoTrabajo.getFechaConcreta());
@@ -3016,8 +3015,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		if(trabajo.getFechaHoraConcreta() != null && !"1970-01-01".equals(groovyft.format(trabajo.getFechaHoraConcreta()))) {
 			dtoTrabajo.setFechaConcreta(trabajo.getFechaHoraConcreta());
+			dtoTrabajo.setHoraConcreta(trabajo.getFechaHoraConcreta());
 		}
-		dtoTrabajo.setHoraConcreta(trabajo.getFechaHoraConcreta());
 
 		if (trabajo.getAgrupacion() != null) {
 			dtoTrabajo.setNumAgrupacion(trabajo.getAgrupacion().getNumAgrupRem());

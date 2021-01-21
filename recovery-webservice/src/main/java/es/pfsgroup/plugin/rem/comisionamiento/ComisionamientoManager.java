@@ -136,13 +136,13 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		String codLeadOrigin = null;
 		
 		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getOrigenComprador())) {
-			if(reenvioPorMas180Dias== true && DDOrigenComprador.CODIGO_ORC_HRE.equals(oferta.getOrigenComprador())) {
+			if(reenvioPorMas180Dias  && DDOrigenComprador.CODIGO_ORC_HRE.equals(oferta.getOrigenComprador())) {
 				codLeadOrigin = DDOrigenComprador.CODIGO_ORC_API_PROPIO;
 			}else {
 				codLeadOrigin = oferta.getOrigenComprador().getCodigo();
 			}
 		} else if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getVisita()) && !Checks.esNulo(oferta.getVisita().getOrigenComprador())) {
-			if(reenvioPorMas180Dias == true && DDOrigenComprador.CODIGO_ORC_HRE.equals(oferta.getVisita().getOrigenComprador())) {
+			if(reenvioPorMas180Dias && DDOrigenComprador.CODIGO_ORC_HRE.equals(oferta.getVisita().getOrigenComprador())) {
 				codLeadOrigin = DDOrigenComprador.CODIGO_ORC_API_PROPIO;
 			}else {
 				codLeadOrigin = oferta.getVisita().getOrigenComprador().getCodigo();

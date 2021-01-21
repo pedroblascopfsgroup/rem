@@ -133,7 +133,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				}
 				expediente.setFechaSancion(new Date());
 				
-				if(expediente.getFechaSancion()!=null) {
+				if(expediente.getOferta()!=null &&  expediente.getFechaSancion()!=null) {
 					ofertaApi.comprobarFechasParaLanzarComisionamiento(expediente.getOferta(), expediente.getFechaSancion());
 				}
 			

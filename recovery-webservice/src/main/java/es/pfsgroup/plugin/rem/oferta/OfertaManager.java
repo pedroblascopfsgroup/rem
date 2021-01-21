@@ -6465,13 +6465,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		 Activo activo = oferta.getActivoPrincipal();
 			 try {
 				 if(activo!=null && oferta.getFechaCreacionOpSf()!=null) {		
-					     long diferenciaDeDias = fechaEntrada.getTime() - oferta.getFechaCreacionOpSf().getTime();	
-					     long diastotales = diferenciaDeDias / (24*60*60*1000);
-					   
-					     if(diastotales > 180 || diastotales <-180) {
-						    this.calculaHonorario(oferta, activo, true);
-					     }
-				 }
+				     long diferenciaDeDias = fechaEntrada.getTime() - oferta.getFechaCreacionOpSf().getTime();	
+				     long diastotales = diferenciaDeDias / (24*60*60*1000);
+				     List<ActivoOferta> listActivosOferta = oferta.getActivosOferta();
+				     for (ActivoOferta activoOferta : listActivosOferta) {
+				    	 if(diastotales > 180 || diastotales <-180) {
+							    this.calculaHonorario(oferta, activoDao.getActivoById(activoOferta.getActivoId()), true);
+						     }
+					 		}
+					}
 			 }catch (Exception e) {
 				 e.printStackTrace();
 			 }

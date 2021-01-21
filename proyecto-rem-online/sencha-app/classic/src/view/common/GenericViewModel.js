@@ -540,6 +540,106 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 	    			remoteUrl: 'activo/getComboImpideVenta',
 	    			extraParams: {codEstadoCarga: '{comboestadocargaref.value}'}
     			}
+    		},
+    		comboTiposGastos: {
+		    	model: 'HreRem.model.ComboBase',
+		    	proxy: {
+			        type: 'uxproxy',
+			        remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposGastos'}
+		    	}
+		    	
+	    	},
+    		comboEstadoGastos: {
+		    	model: 'HreRem.model.ComboBase',
+		    	proxy: {
+			        type: 'uxproxy',
+			        remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadoGasto'}
+		    	}
+		    	
+	    	},
+			
+    		comboTipoTransmision: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoTransmision'}
+				}/*,autoLoad: true*/
+    		},
+    		comboTipoAlta: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoAlta'}
+				}/*,autoLoad: true*/
+			},
+    		// Stores para el grid observaciones. Se crean 3 para solucionar problemas de instancia 
+    		/*
+
+    		 * Valor de la constante 
+    		  	OBSERVACIONES_TAB_LAUNCH: {
+				ACTIVO : 'activo',
+				SANEAMIENTO: 'saneamiento',
+				REVISION_TITULO: 'revisionTitulo'
+			}*/
+    		storeObservaciones_activo: {    
+    		 pageSize: $AC.getDefaultPageSize(),
+    		 model: 'HreRem.model.Observaciones',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getListObservaciones',
+		        extraParams: {} // Dynamic.
+	    	 },
+	    	 autoLoad: true
+    		},
+    		storeObservaciones_saneamiento: {    
+    		 pageSize: $AC.getDefaultPageSize(),
+    		 model: 'HreRem.model.Observaciones',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getListObservaciones',
+		        extraParams: {} // Dynamic.
+	    	 },
+	    	 autoLoad: true
+    		},
+    		storeObservaciones_revisionTitulo: {    
+    		 pageSize: $AC.getDefaultPageSize(),
+    		 model: 'HreRem.model.Observaciones',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getListObservaciones',
+		        extraParams: {} // Dynamic.
+	    	 },
+	    	 autoLoad: true
+    		},
+    		comboTipoTransmision: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoTransmision'}
+				}/*,autoLoad: true*/
+    		},
+    		comboTipoAlta: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoAlta'}
+				}/*,autoLoad: true*/
+    		},
+    		//Admite mascota
+    		comboAdmiteMascota: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposAdmiteMascota'}
+				},
+    		autoLoad: true
     		}
     		
      }    

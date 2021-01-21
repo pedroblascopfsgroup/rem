@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=VIOREL REMUS OVIDIU
---## FECHA_CREACION=20201125
+--## FECHA_CREACION=20210121
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8397
@@ -56,7 +56,7 @@ V_SQL := 'INSERT INTO '||V_ESQUEMA||'.MAIL_AVISOS_RESERVA	(
 		values ( 
 				 ''noreply.rem@haya.es'',
 				 '''',
-				 ''jpoyatos@haya.es;backup.rem@pfsgroup.es'',
+				 ''backup.rem@pfsgroup.es'',
 				 '''',
 				 '''',
 				''''

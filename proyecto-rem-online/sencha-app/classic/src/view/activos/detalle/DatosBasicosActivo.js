@@ -173,7 +173,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										store: '{comboTipoActivoOE}',
 										value: '{activo.tipoActivoCodigoOE}',
 										hidden: '{!activo.isCarteraSareb}', 
-										readOnly:'{!esSuperUsuario}'
+										readOnly:'{!esSuperUsuarioAndNoUA}'
 									},
 									listeners: {
 										select: 'onChangeChainedCombo'
@@ -201,7 +201,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										value: '{activo.subtipoActivoCodigoOE}',
 										disabled: '{!activo.tipoActivoCodigoOE}',
 										hidden: '{!activo.isCarteraSareb}', 
-										readOnly:'{!esSuperUsuario}'
+										readOnly:'{!esSuperUsuarioAndNoUA}'
 									},
 									style:'margin-left:10px'
 								},

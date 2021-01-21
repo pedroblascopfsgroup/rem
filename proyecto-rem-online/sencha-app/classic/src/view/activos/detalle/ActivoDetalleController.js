@@ -8159,6 +8159,31 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	onChangeDebeComprobarNIF: function(combo,newValue,oldValue,eOpts){
 			this.comprobarNIF(combo);
-	}
-	
+	},
+    
+    onChkbxExclValPerimetroChange: function(chkbx){
+		var me = this;
+
+		var excluido = chkbx.getValue();
+		var comboMotivoGestionComercial = me.lookupReference('comboMotivoGestionComercial');
+		
+		comboMotivoGestionComercial.allowBlank = !excluido;
+		comboMotivoGestionComercial.readOnly = !excluido;	
+		
+		if(!excluido){
+			comboMotivoGestionComercial.reset();
+		}
+    },
+    
+    onChkbxGestionComercialChange: function(chkbx){
+		var me = this;
+		
+		var incluido = chkbx.getValue();
+		var codSubfasePublicacion = me.getViewModel().get('activo.codSubfasePublicacion');
+		
+		if(incluido == true && codSubfasePublicacion == CONST.SUBFASES_PUBLICACION['COD_EXCLUIDO_CLIENTE']){
+			chkbx.reset();
+	    	me.fireEvent("errorToast", HreRem.i18n("msg.subfase.excluido.publicacion")); 
+		}
+    }
 });

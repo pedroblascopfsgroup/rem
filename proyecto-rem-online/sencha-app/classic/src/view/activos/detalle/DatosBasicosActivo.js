@@ -822,18 +822,19 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									value: '{activo.motivoAplicaFormalizar}'
 								}
 							},
-							//Fila Condiciones de inclusión en perímetro Haya
+							//Fila Condiciones de inclusión en perímetro Haya						
+							
+							//Fila gesti�n comercial
 							{
 								xtype:'checkboxfieldbase',
-								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.visibleGestionComercial'),
-								reference: 'chkbxGestionComercial',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.gestion.comercial'),
+								reference: 'checkGestionComercial',
 								bind: {
-									value: '{activo.checkGestorComercial}',
-									readOnly: '{activo.restringido}'
-
+									value: '{activo.checkGestorComercial}'
+									,readOnly: '{activo.restringido}'
 								},
 								listeners: {
-									change: 'onChkbxPerimetroChange'
+									change: 'onChkbxGestionComercialChange'
 								}
 							},
 							{
@@ -843,15 +844,31 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								readOnly: '{activo.restringido}'
 							},
 							{
+								xtype:'checkboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.excluir.validaciones'),
+								reference: 'checkExclusionGestionComercial',
+								bind: {
+									value: '{activo.checkExcluirValidacionesGestionComercial}', 
+									readOnly: '{activo.restringido}'
+								},
+								listeners: {
+									change: 'onChkbxExclValPerimetroChange'
+								}
+							},
+							{
 								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetros.motivoDeExcluido'),
+								colspan: 3,
 								reference: 'comboMotivoGestionComercial',
 								bind: {
 									store: '{comboMotivoGestionComercialActivo}',
 									value: '{activo.motivoGestionComercialCodigo}', 
-									readOnly: '{activo.restringido}'
+									readOnly: '{!esEditableComboMotivoExclusionGestorComercial}',
+									allowBlank: '{!esEditableComboMotivoExclusionGestorComercial}'
 
 								}
 							},
+							
 							//Bloque Comercialización
 							{    
 								xtype:'fieldsettable',

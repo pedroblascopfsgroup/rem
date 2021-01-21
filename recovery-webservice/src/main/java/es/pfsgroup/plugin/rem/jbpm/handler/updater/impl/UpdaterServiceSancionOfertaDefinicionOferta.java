@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -76,6 +77,9 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	
 	@Autowired
 	private UsuarioApi usuarioApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDefinicionOferta.class);
 
@@ -135,7 +139,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 						DDEstadosExpedienteComercial.APROBADO);
 				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 				expediente.setEstado(estado);
-				
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 				/*if(expediente.getCondicionante().getSolicitaReserva()!=null 
 						&& RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {
 					EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
@@ -150,6 +155,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 						gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);
 					}
 				}*/
+
 				// Una vez aprobado el expediente, se congelan el resto de
 				// ofertas que no estén rechazadas (aceptadas y pendientes)
 				List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
@@ -189,6 +195,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 						estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					}
 					expediente.setEstado(estado);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 				}
 			}
 
@@ -203,6 +211,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_SANCION);
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					expediente.setEstado(estado);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 				}	
 				if (FECHA_ENVIO_COMITE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) && CODIGO_CARTERA_THIRD_PARTY.equals(codCartera)) {
 					try {
@@ -237,8 +247,11 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 						if(!Checks.esNulo(comiteSuperior)) {
 							expediente.setComiteSuperior(comiteSuperior);
 							expediente.setComiteSancion(comiteSuperior);
-							expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
-									DDEstadosExpedienteComercial.PTE_SANCION)));
+							DDEstadosExpedienteComercial estado =genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
+									DDEstadosExpedienteComercial.PTE_SANCION));
+							expediente.setEstado(estado);
+							recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 						}
 						
 					}else {

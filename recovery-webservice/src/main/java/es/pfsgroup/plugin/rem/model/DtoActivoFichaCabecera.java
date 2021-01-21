@@ -330,6 +330,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private String codPromocionBbva;
 	
+	private Boolean checkExcluirValidacionesGestionComercial;
+	private String codSubfasePublicacion;
+	
+	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
 	}
@@ -2443,6 +2447,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setRestringido(Boolean restringido) {
 		this.restringido = restringido;
+	}
+
+	public Boolean getCheckExcluirValidacionesGestionComercial() {
+		return checkExcluirValidacionesGestionComercial;
+	}
+
+	public void setCheckExcluirValidacionesGestionComercial(Boolean checkExcluirValidacionesGestionComercial) {
+		this.checkExcluirValidacionesGestionComercial = checkExcluirValidacionesGestionComercial;
+	}
+
+	public String getCodSubfasePublicacion() {
+		return codSubfasePublicacion;
+	}
+
+	public void setCodSubfasePublicacion(String codSubfasePublicacion) {
+		this.codSubfasePublicacion = codSubfasePublicacion;
 	}
 
 	

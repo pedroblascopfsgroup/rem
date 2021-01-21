@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -39,6 +40,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioContratoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
+import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -48,6 +50,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -66,8 +69,10 @@ import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -97,6 +102,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
@@ -207,6 +213,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
+	
+	@Autowired
+	private ActivoPublicacionDao activoPublicacionDao;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosBasicos.class);	
 
@@ -1061,7 +1073,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());				
 					}
 				}
-			}			
+			}
+		}	
+
+		if(perimetroActivo.getExcluirValidaciones() != null) {
+			activoDto.setCheckExcluirValidacionesGestionComercial(perimetroActivo.getExcluirValidaciones().getCodigo().equals(DDSinSiNo.CODIGO_SI));
+		}
+		
+		HistoricoFasePublicacionActivo fasePublicacionActivoVigente = activoPublicacionDao.getFasePublicacionVigentePorIdActivo(activo.getId());
+		
+		if(fasePublicacionActivoVigente != null && fasePublicacionActivoVigente.getSubFasePublicacion() != null) {
+			activoDto.setCodSubfasePublicacion(fasePublicacionActivoVigente.getSubFasePublicacion().getCodigo());
 		}
 		
 		return activoDto;
@@ -1278,7 +1300,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				dto.getFechaAplicaComercializar() != null || dto.getMotivoAplicaComercializarDescripcion() != null ||
 				dto.getFechaAplicaFormalizar() != null || dto.getMotivoAplicaFormalizar() != null || dto.getAplicaPublicar() != null ||
 				dto.getFechaAplicaPublicar() != null || dto.getMotivoAplicaPublicar() != null ||dto.getMotivoGestionComercialCodigo() !=null ||
-				dto.getMotivoGestionComercialDescripcion() !=null ||dto.getFechaGestionComercial()  !=null || dto.getCheckGestorComercial() !=null)
+				dto.getMotivoGestionComercialDescripcion() !=null ||dto.getFechaGestionComercial()  !=null || dto.getCheckGestorComercial() !=null ||
+				dto.getCheckExcluirValidacionesGestionComercial() !=null)
 			{
 				PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 				beanUtilNotNull.copyProperties(perimetroActivo, dto);
@@ -1309,6 +1332,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				if(!Checks.esNulo(dto.getAplicaComercializar())) {	
 					
 					perimetroActivo.setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, null);
 					perimetroActivo.setFechaAplicaComercializar(new Date());					
 					
 					//Acciones al desmarcar check comercializar
@@ -1348,13 +1372,19 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					perimetroActivo.setFechaAplicaPublicar(new Date());
 					
 				}
-				if(!Checks.esNulo(dto.getCheckGestorComercial())) {
-					perimetroActivo.setCheckGestorComercial(dto.getCheckGestorComercial());
-					perimetroActivo.setFechaGestionComercial(new Date());
+				
+				if(dto.getCheckExcluirValidacionesGestionComercial() != null) {
+					DDSinSiNo excluirValidaciones = dto.getCheckExcluirValidacionesGestionComercial() ? (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI) : (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
 					
-					validateCheckGestorComercial(dto, activo);
-					
+					perimetroActivo.setExcluirValidaciones(excluirValidaciones);				
 				}
+				
+				if(!Checks.esNulo(dto.getCheckGestorComercial())) {		
+					perimetroActivo.setCheckGestorComercial(dto.getCheckGestorComercial());
+					perimetroActivo.setFechaGestionComercial(new Date());	
+					recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, null));
+				}
+								
 				if (!Checks.esNulo(dto.getMotivoGestionComercialCodigo())) {
 					DDMotivoGestionComercial motivoGestionComercial = (DDMotivoGestionComercial) diccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class,  dto.getMotivoGestionComercialCodigo());
 					perimetroActivo.setMotivoGestionComercial(motivoGestionComercial);
@@ -2021,183 +2051,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			throw new JsonViewerException("No puede cambiar el segmento a MACC ya que el destino comercial tiene que ser alquiler");
 		}
 		
-	}
-	
-	private void validateCheckGestorComercial(DtoActivoFichaCabecera dto, Activo activo) {
-		
-		if(dto.getCheckGestorComercial() == true) {
-			
-			estadoExpedienteComercial(dto, activo);
-			fechaVentaExternaActivo(dto, activo);
-			estadoPublicacionActivoBankia(dto, activo);
-			checkComercializacionMarcado(dto, activo);
-			vpoCajamar(dto, activo);
-			sociedadParticipadaBBVA(dto, activo);
-			destinoComercialActivo(dto, activo);
-			activoConCargas(dto, activo);
-			estadoAlquiladoActivo(dto, activo);
-			
-		} else if(dto.getCheckGestorComercial() == false){
-			
-			ofertaEnTramitacion(dto, activo);
-		}
-	}
-	
-	private void estadoAlquiladoActivo(DtoActivoFichaCabecera dto, Activo activo) {
-		
-		if (activo.getTipoAlquiler() != null && (DDTipoAlquiler.CODIGO_FONDO_SOCIAL.equals(activo.getTipoAlquiler().getCodigo()))) {
-			throw new JsonViewerException("Activo incluido en perímetro de alquiler social");
-		}
-	}
-	
-	private void estadoExpedienteComercial(DtoActivoFichaCabecera dto, Activo activo) {
-		
-		List<ActivoOferta> listaActivoOferta = activo.getOfertas();
-
-		 for (ActivoOferta actOfr : listaActivoOferta) {
-			Oferta oferta = actOfr.getPrimaryKey().getOferta();
-		 	if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())) {
-		 		
-		 		Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
-		 		ExpedienteComercial expedienteBuscado  = genericDao.get(ExpedienteComercial.class, filtroExpediente);
-		 		
-		 		if (expedienteBuscado != null && expedienteBuscado.getEstado() != null &&
-		 			(DDEstadosExpedienteComercial.FIRMADO.equals(expedienteBuscado.getEstado().getCodigo()) || 
-		 			DDEstadosExpedienteComercial.VENDIDO.equals(expedienteBuscado.getEstado().getCodigo()) ||
-		 			DDEstadosExpedienteComercial.RESERVADO.equals(expedienteBuscado.getEstado().getCodigo()))) {
-		 			throw new JsonViewerException("Activo con oferta reservada, firmada o vendida");
-				}
-		 	}
-		}
-	}
-	
-	private void fechaVentaExternaActivo(DtoActivoFichaCabecera dto, Activo activo) {
-		
-		if (activo.getFechaVentaExterna() != null && activo.getFechaVentaExterna() != null) {
-			throw new JsonViewerException("Activo vendido de forma externa");
-		}
-	}
-	
-	private void estadoPublicacionActivoBankia(DtoActivoFichaCabecera dto, Activo activo) {
-		
-		if(activo.getCartera() != null && (DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()))){
-			
-	 		Filter filtroActivoPublicacion = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-	 		ActivoPublicacion activoPublicacion  = genericDao.get(ActivoPublicacion.class, filtroActivoPublicacion);
-			
-			if (activoPublicacion != null && (activoPublicacion.getEstadoPublicacionAlquiler().getCodigo() != null ||
-					activoPublicacion.getEstadoPublicacionVenta().getCodigo() != null)) {
-				if (DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo()) ||
-						DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo())) {
-					throw new JsonViewerException("Activo cuyo estado de publicación no permite la inclusión en perímetro");
-				}
-			}
-		}
-	}
-	
-	private void checkComercializacionMarcado(DtoActivoFichaCabecera dto, Activo activo) {
-		
- 		Filter filtroCheckComercializacionMarcado = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
- 		PerimetroActivo perimetroActivo  = genericDao.get(PerimetroActivo.class, filtroCheckComercializacionMarcado);
- 		
- 		if (perimetroActivo != null && perimetroActivo.getAplicaComercializar() != null) {
- 			if (perimetroActivo.getAplicaComercializar() == 0) {
- 				throw new JsonViewerException("Activo no comercializable");
-			}
-		}
-	}
-	
-	private void destinoComercialActivo(DtoActivoFichaCabecera dto, Activo activo) {
-		
-		if (activo.getTipoComercializacion() != null && 
-				(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo()))) {
-			
-	 		Filter filtroActivoPublicacion = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-	 		ActivoPublicacion activoPublicacion  = genericDao.get(ActivoPublicacion.class, filtroActivoPublicacion);
-			
-			if (activoPublicacion != null && activoPublicacion.getEstadoPublicacionAlquiler().getCodigo() != null) {
-				if (DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())){
-					throw new JsonViewerException("Activo cuyo estado de publicación no permite la inclusión en perímetro");
-				}
-			}
-		}
-	}
-	
-	private void activoConCargas(DtoActivoFichaCabecera dto, Activo activo) {
-		
-		if (activo.getPerimetroMacc() != null && activo.getPerimetroMacc() == 1) {
-			
-			Filter filtroCheckGestorComercialMarcado = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-	 		PerimetroActivo perimetroActivo  = genericDao.get(PerimetroActivo.class, filtroCheckGestorComercialMarcado);
-	 		
-	 		if (perimetroActivo != null && perimetroActivo.getCheckGestorComercial() != null && perimetroActivo.getCheckGestorComercial() == false) {
-				perimetroActivo.setCheckGestorComercial(true);
-			}
-			
-		} else {
-			
-			if (activo.getConCargas() != null && activo.getConCargas() == 1) {
-				throw new JsonViewerException("Activo con cargas");
-			}
-			
-		}
-	}
-	
-	private void vpoCajamar(DtoActivoFichaCabecera dto, Activo activo) {
-		
-		if (activo.getCartera() != null && (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo()))) {
-			
-	 		Filter filtroActivoPublicacion = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-	 		ActivoPublicacion activoPublicacion  = genericDao.get(ActivoPublicacion.class, filtroActivoPublicacion);
-			
-			if (activoPublicacion != null && activoPublicacion.getEstadoPublicacionAlquiler().getCodigo() != null) {
-				if (DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())) {
-					if (activo.getVpo() == 0) {
-						throw new JsonViewerException("Activo no tiene indicado que pertenece a una VPO");
-					}
-				}
-			}
-			
-		}
-	}
-	
-	private void sociedadParticipadaBBVA(DtoActivoFichaCabecera dto, Activo activo) {
-		
-		if (activo.getCartera() != null && (DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo()))) {
-			
-	 		Filter filtroPropietario= genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-	 		ActivoPropietarioActivo activoPropietario  = genericDao.get(ActivoPropietarioActivo.class, filtroPropietario);
-	 		
-	 		Filter filtroActivoPublicacion = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-	 		ActivoPublicacion activoPublicacion  = genericDao.get(ActivoPublicacion.class, filtroActivoPublicacion);
-		
-	 		if (activoPropietario != null && activoPropietario.getPropietario() != null && activoPropietario.getPropietario().getDocIdentificativo() != null) {
-	 			if (activoPublicacion != null && activoPublicacion.getEstadoPublicacionAlquiler().getCodigo() != null && 
-	 				(DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo()) ||
-						DDEstadoPublicacionVenta.CODIGO_NO_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo()))) {
-					if (Ecoarenys.equals(activoPropietario.getPropietario().getDocIdentificativo()) || 
-							JaleProcam.equals(activoPropietario.getPropietario().getDocIdentificativo()) ||
-							PromocionesMiesdelValle.equals(activoPropietario.getPropietario().getDocIdentificativo())) {
-						throw new JsonViewerException("Propietario con sociedad participada");
-					}
-				}
-			}
-		}
-	}
-	
-	private void ofertaEnTramitacion(DtoActivoFichaCabecera dto, Activo activo) {
-		
-		List<ActivoOferta> listaActivoOferta = activo.getOfertas();
-
-		 for (ActivoOferta actOfr : listaActivoOferta) {
-			Oferta oferta = actOfr.getPrimaryKey().getOferta();
-		 	if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())) {
-		 		if (oferta.getEstadoOferta() != null &&
-		 			(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()))) {
-		 			throw new JsonViewerException("Activo con ofertas pendientes");
-				}
-		 	}
-		}
 	}
 }
 

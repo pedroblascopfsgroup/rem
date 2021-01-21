@@ -485,28 +485,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		}
 		
 		if(activo.getAdjNoJudicial() != null && activo.getAdjNoJudicial().getFechaPosesion() != null) {
-			activoDto.setFechaAdjudicacion(activo.getAdjNoJudicial().getFechaPosesion());
-		}
-		
-		String carteras[] = {DDSubcartera.CODIGO_APPLE_INMOBILIARIO,
-				DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB
-				, DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB};
-		String perfilesPermitidos[] = {PERFIL_HAYASUPER,PERFIL_HAYAGESACT};
-			
-		if(activo.getSubcartera() != null ) {
-				Boolean fechaPosesionVisible = Arrays.asList(carteras).contains(activo.getSubcartera().getCodigo());
-				activoDto.setFechaPosesionVisible(fechaPosesionVisible);
-		}
-		
-		if (activoApi.isActivoIncluidoEnPerimetro(activo.getId())) {
-			Boolean fechaPosesionEditable = true;
-			for (Perfil perfil : perfiles) {
-				if(Arrays.asList(perfilesPermitidos).contains(perfil.getCodigo())){
-					fechaPosesionEditable = false;
-					break;
-				}
-			}
-			activoDto.setFechaPosesoriaEditable(fechaPosesionEditable);
+			activoDto.setFechaPosesion(activo.getAdjNoJudicial().getFechaPosesion());
 		}
 		
 		return activoDto;
@@ -1021,6 +1000,11 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				activoPropietario.setPropietario(propietario);
 				
 				}
+			}
+		
+			if(dto.getFechaPosesion() != null) {
+				activo.getAdjNoJudicial().setFechaPosesion(dto.getFechaPosesion());
+				activo.getSituacionPosesoria().setFechaTomaPosesion(dto.getFechaPosesion());
 			}
 			
 		} catch (JsonViewerException jvex) {

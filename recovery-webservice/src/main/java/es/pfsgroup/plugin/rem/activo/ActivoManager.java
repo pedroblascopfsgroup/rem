@@ -4734,7 +4734,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			} else if (DDTipoTituloActivo.tipoTituloNoJudicial.equals(activo.getTipoTitulo().getCodigo())
 					&& !Checks.esNulo(activo.getAdjNoJudicial()) && !Checks.esNulo(activo.getSituacionPosesoria())) {
-				activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
+				if (activo.getAdjNoJudicial().getFechaPosesion() != null) {
+					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaPosesion());
+				} else {
+					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
+				}
+				
 
 			}
 		}

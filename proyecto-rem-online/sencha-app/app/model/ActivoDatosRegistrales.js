@@ -538,14 +538,6 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
 	    				}
     				}
     			}
-    		},
-    		{
-    			name: 'fechaPosesionVisible',
-    			type: 'boolean'
-    		},
-    		{
-    			name: 'fechaPosesionEditable',
-    			type: 'boolean'
     		}
     ],
     

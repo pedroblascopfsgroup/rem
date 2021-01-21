@@ -14,10 +14,10 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
@@ -388,7 +388,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		
 		if (activoDao.isUnidadAlquilable(activo.getId())) {
 			activoApi.cambiarSituacionComercialActivoMatriz(activo.getId());
-		}		
+		}
 	}
 	
 	public Integer calculodiasCambiosActivo(Date fechaIni){

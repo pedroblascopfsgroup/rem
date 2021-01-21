@@ -953,8 +953,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						 		fieldLabel: HreRem.i18n('fieldlabel.adjudicacion.no.judicial.fecha.posesion'),
 						 		bind: {
 						 			value: '{datosRegistrales.fechaPosesion}',
-						 			readOnly: '{datosRegistrales.fechaPosesoriaEditable}',
-						 			hidden: '{!datosRegistrales.fechaPosesionVisible}'
+						 			readOnly: '{isGestorActivosAndSuper}',
+						 			hidden: '{!isSubcarteraCerberus}'
 						 		}
 
 							},

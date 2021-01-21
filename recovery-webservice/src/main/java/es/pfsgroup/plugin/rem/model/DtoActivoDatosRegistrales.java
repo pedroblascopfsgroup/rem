@@ -141,8 +141,6 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String origenAnteriorActivoBbvaCodigo;
 	private Long idAsuntoRecAlaska;
 	private Date fechaPosesion;
-	private Boolean fechaPosesionVisible;
-	private Boolean fechaPosesoriaEditable;
 	/*
 
     private NMBAdjudicacionBien adjudicacionBien;
@@ -805,18 +803,6 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setFechaPosesion(Date fechaPosesion) {
 		this.fechaPosesion = fechaPosesion;
-	}
-	public Boolean getFechaPosesionVisible() {
-		return fechaPosesionVisible;
-	}
-	public void setFechaPosesionVisible(Boolean fechaPosesionVisible) {
-		this.fechaPosesionVisible = fechaPosesionVisible;
-	}
-	public Boolean getFechaPosesoriaEditable() {
-		return fechaPosesoriaEditable;
-	}
-	public void setFechaPosesoriaEditable(Boolean fechaPosesoriaEditable) {
-		this.fechaPosesoriaEditable = fechaPosesoriaEditable;
 	}
 	
 	

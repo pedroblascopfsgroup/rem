@@ -136,7 +136,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 										gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
 									}					
 								}
-								/*if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {															
+								if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {															
 									EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 											.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
 									
@@ -147,7 +147,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 										ge.setIdTipoGestor(tipoGestorComercial.getId());
 										gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
 									}
-								}*/
+								}
 							}
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);

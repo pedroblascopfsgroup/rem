@@ -25,7 +25,7 @@ function findInputParam() {
 function empaqueta() {
 	echo "Llamando a... ${FUNCNAME[0]} ($1)"
 
-	if [ "$1" == "val03" ]; then
+	if [ "$1" == "val01" ]; then
 		cp rem-web/target/pfs-${version}.war $WORKING_DIR/pfs-rec-web.war
 	else
 		cp rem-web/target/pfs-${version}.war $WORKING_DIR/pfs.war

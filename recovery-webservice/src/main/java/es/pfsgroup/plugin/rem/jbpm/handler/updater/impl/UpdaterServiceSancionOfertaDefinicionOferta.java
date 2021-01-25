@@ -141,20 +141,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				expediente.setEstado(estado);
 				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 
-				/*if(expediente.getCondicionante().getSolicitaReserva()!=null 
-						&& RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {
-					EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
-					
-					if (tipoGestorComercial != null && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()) 
-							&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) //REMVIP-8388,todas menos Cerberus hasta que digan lo contrario
-							&& gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
-						ge.setIdEntidad(expediente.getId());
-						ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
-						ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());	
-						ge.setIdTipoGestor(tipoGestorComercial.getId());
-						gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);
-					}
-				}*/
+
+				}
 
 				// Una vez aprobado el expediente, se congelan el resto de
 				// ofertas que no estén rechazadas (aceptadas y pendientes)
@@ -275,7 +263,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 
 		
 		
-	}
+	
 
 	public String[] getCodigoTarea() {
 		return new String[] { CODIGO_T013_DEFINICION_OFERTA , CODIGO_T017_DEFINICION_OFERTA };

@@ -32,7 +32,7 @@ function header() {
 
 function asignar_grants() {
 
-	if [ "$ENTORNO" == "val03" ]; then 
+	if [ "$ENTORNO" == "val01" ]; then 
 		source ~/.bash_profile
 		
 		echo "Llamando a... ${FUNCNAME[0]}"
@@ -69,7 +69,7 @@ function deployScripts() {
 		exit 1
 	fi
 
-	if [ "$ENTORNO" == "val03" ]; then
+	if [ "$ENTORNO" == "val01" ]; then
 		source ~/.bash_profile
 
 		header "Desplegando entorno [$ENTORNO - $DB_PRODUCTO] ..."

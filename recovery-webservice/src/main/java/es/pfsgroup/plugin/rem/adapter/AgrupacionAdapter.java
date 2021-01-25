@@ -2513,6 +2513,13 @@ public class AgrupacionAdapter {
 			
 			if(!Checks.esNulo(dto.getClaseOferta())) {
 				oferta.setClaseOferta(genericDao.get(DDClaseOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOferta())));
+			} else if (DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta.getCodigo()) && activo != null && activo.getCartera() != null 
+					&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
+				DDClaseOferta clase = null;
+				clase = genericDao.get(DDClaseOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL) );
+				if(clase != null) {
+					oferta.setClaseOferta(clase);
+				}
 			}
 			
 

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Jesus Jativa
---## FECHA_CREACION=20210107
+--## AUTOR=DAP
+--## FECHA_CREACION=20210118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-12661
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-12816
 --## PRODUCTO=NO
 --## Finalidad: DDL creación vista VI_BUSQUEDA_GASTOS_PROVEEDOR_E.
 --##
@@ -18,7 +18,8 @@
 --##		    0.6 Daniel Algaba		- Adaptación de consulta al nuevo modelo de facturación
 --##            0.7 DAP             - Añadir campos
 --##		    0.8 Jesus Jativa		- Añadidos campos GLD_PRINCIPAL_SUJETO||GLD_PRINCIPAL_NO_SUJETO||GLD_RECARGO||GLD_INTERES_DEMORA||GLD_COSTAS
---##                                      para HREOS-12661
+--##                                      para HREOS-1266
+--##        0.9 DAP             - Cambio en cruce GLD
 --##########################################
 --*/
 
@@ -146,12 +147,8 @@ BEGIN
         GEN.GLD_PARTICIPACION_GASTO,
         GEN.GLD_REFERENCIA_CATASTRAL
     FROM '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV
-    JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
-        AND GLD.BORRADO = 0
     JOIN '|| V_ESQUEMA ||'.DD_TGA_TIPOS_GASTO TGA ON GPV.DD_TGA_ID = TGA.DD_TGA_ID
         AND TGA.BORRADO = 0
-    JOIN '|| V_ESQUEMA ||'.DD_STG_SUBTIPOS_GASTO STG ON GLD.DD_STG_ID = STG.DD_STG_ID
-        AND STG.BORRADO = 0
     JOIN '|| V_ESQUEMA ||'.DD_EGA_ESTADOS_GASTO EGA ON GPV.DD_EGA_ID = EGA.DD_EGA_ID
         AND EGA.BORRADO = 0
     JOIN '|| V_ESQUEMA ||'.DD_DEG_DESTINATARIOS_GASTO DEG ON GPV.DD_DEG_ID = DEG.DD_DEG_ID
@@ -168,6 +165,10 @@ BEGIN
         AND CRA.BORRADO = 0
     LEFT JOIN '|| V_ESQUEMA ||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON GPV.DD_TPE_ID = TPE.DD_TPE_ID
         AND TPE.BORRADO = 0
+    LEFT JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
+        AND GLD.BORRADO = 0
+    LEFT JOIN '|| V_ESQUEMA ||'.DD_STG_SUBTIPOS_GASTO STG ON GLD.DD_STG_ID = STG.DD_STG_ID
+        AND STG.BORRADO = 0
     LEFT JOIN '|| V_ESQUEMA ||'.GLD_ENT GEN ON GEN.GLD_ID = GLD.GLD_ID
         AND GEN.BORRADO = 0
     LEFT JOIN '|| V_ESQUEMA ||'.DD_ENT_ENTIDAD_GASTO ENT ON GEN.DD_ENT_ID = ENT.DD_ENT_ID

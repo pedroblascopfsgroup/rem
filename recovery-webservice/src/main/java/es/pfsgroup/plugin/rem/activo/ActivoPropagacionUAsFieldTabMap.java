@@ -100,7 +100,21 @@ public class ActivoPropagacionUAsFieldTabMap {
     				"oficina",
     				"contrapartida",
     				"folio",
-    				"cdpen"
+    				"cdpen",
+    				
+    				//Esparta convivencia
+    				"tipoActivoCodigoOE",
+    				"subtipoActivoCodigoOE",
+    				"estadoAdecuacionSarebCodigo",
+    				"fechaFinPrevistaAdecuacion",
+    				"reoContabilizadoSap",
+    				"tipoViaCodigoOE",
+    				"nombreViaOE",
+    				"provinciaCodigoOE",
+    				"municipioCodigoOE",
+    				"numeroDomicilioOE",
+    				"puertaOE",
+    				"codPostalOE"
     			));
 
 
@@ -124,7 +138,7 @@ public class ActivoPropagacionUAsFieldTabMap {
 					"numAnterior",
 					"localidadAnteriorCodigo",
 					"numFincaAnterior",
-					
+					"tieneAnejosRegistralesInt",
 
 
 					

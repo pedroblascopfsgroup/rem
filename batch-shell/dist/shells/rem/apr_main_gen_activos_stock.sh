@@ -25,7 +25,7 @@ if [ -f $MAINSH ]; then
         
 if [ $? = 0 ]; then
 
-  lftp -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59 <<EOF
+  lftp -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.126.66 <<EOF
   cd /datos/usuarios/socpart/CISA/in/
   mput $DIR_SALIDA/RUSTOCK.txt
   cd /datos/usuarios/socpart/CISA/out/
@@ -41,9 +41,9 @@ EOF
 		echo "A falta de las altas de hoy, los tiempos de entrega de los ficheros en el ftp de intercambio con Uvem son los siguientes:"	
 	fi
 
-   lftp -c "open -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59; ls /datos/usuarios/socpart/CISA/in | grep RUFACTUSP.txt"
-   lftp -c "open -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59; ls /datos/usuarios/socpart/CISA/in | grep RUFACTUCP.txt"
-   lftp -c "open -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59; ls /datos/usuarios/socpart/CISA/in | grep RUSTOCK.txt"
+   lftp -c "open -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.126.66; ls /datos/usuarios/socpart/CISA/in | grep RUFACTUSP.txt"
+   lftp -c "open -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.126.66; ls /datos/usuarios/socpart/CISA/in | grep RUFACTUCP.txt"
+   lftp -c "open -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.126.66; ls /datos/usuarios/socpart/CISA/in | grep RUSTOCK.txt"
   exit 0
 fi    
 

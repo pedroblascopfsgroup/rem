@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoDatosDq;
+import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
@@ -1849,6 +1850,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqFincaRegistralFase1() == null && dto.getDrFincaRegistralFase1() == null) {
 			ko=false;
 			interrogante=false;
+			//El count interrogante es porque esta añadiendo 1 al ser dq null, por eso le quitamos en caso de que los 2 campos dr y dq sean nuls.
+			countInterrogante--;
 		}
 		//TOMO
 		if(dto.getDqTomoFase1()==null) {
@@ -1866,6 +1869,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqTomoFase1() == null && dto.getDrTomoFase1() == null) {
 			ko=false;
 			interrogante=false;
+			countInterrogante--;
 		}
 		//LIBRO
 		if(dto.getDqLibroFase1()==null) {
@@ -1885,6 +1889,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqLibroFase1() == null && dto.getDrLibroFase1() == null) {
 			ko=false;
 			interrogante=false;
+			countInterrogante--;
 		}
 		//FOLIO
 		if(dto.getDqFolioFase1()==null) {
@@ -1903,6 +1908,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqFolioFase1() == null && dto.getDrFolioFase1() == null) {
 			ko=false;
 			interrogante=false;
+			countInterrogante--;
 		}
 		//USO DOMINANTE
 		if(dto.getDqUsoDominanteFase1()==null) {
@@ -1921,6 +1927,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqUsoDominanteFase1() == null && dto.getDrUsoDominanteFase1() == null) {
 			ko=false;
 			interrogante=false;
+			countInterrogante--;
 		}
 		//MUNICIPIO DEL REGISTRO
 		if(dto.getDqMunicipioDelRegistroFase1()==null) {
@@ -1939,6 +1946,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqMunicipioDelRegistroFase1() == null && dto.getDrMunicipioDelRegistroFase1() == null) {
 			ko=false;
 			interrogante=false;
+			countInterrogante--;
 		}
 		//PROVINCIA DEL REGISTRO
 		if(dto.getDqProvinciaDelRegistroFase1()==null) {
@@ -1957,6 +1965,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqProvinciaDelRegistroFase1() == null && dto.getDrProvinciaDelRegistroFase1() == null) {
 			ko=false;
 			interrogante=false;
+			countInterrogante--;
 		}
 		//NUMERO DE REGISTRO
 		if(dto.getDqNumeroDelRegistroFase1()==null) {
@@ -1975,6 +1984,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqNumeroDelRegistroFase1() == null && dto.getDrNumeroDelRegistroFase1() == null) {
 			ko=false;
 			interrogante=false;
+			countInterrogante--;
 		}
 		//VPO
 		if(dto.getDqVpoFase1()==null) {
@@ -1993,6 +2003,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqVpoFase1() == null && dto.getDrVpoFase1() == null) {
 			ko=false;
 			interrogante=false;
+			countInterrogante--;
 		}
 		//ANYO CONSTRUCCION
 		
@@ -2011,6 +2022,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqAnyoConstruccionFase1() == null && dto.getDrAnyoConstruccionFase1() == null) {
 			ko=false;
 			interrogante=false;
+			countInterrogante--;
 		}
 		//TIPOLOGIA
 		
@@ -2029,6 +2041,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqTipologiaFase1() == null && dto.getDrTipologianFase1() == null) {
 			ko=false;
 			interrogante=false;
+			countInterrogante--;
 		}
 				
 		//SUBTIPOLOGIA
@@ -2047,6 +2060,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqSubtipologiaFase1() == null && dto.getDrSubtipologianFase1() == null) {
 			ko=false;
 			interrogante=false;
+			countInterrogante--;
 		}		
 		//INFORMACION CARGAS
 		if(dto.getDqInformacionCargasFase1()==null) {
@@ -2063,6 +2077,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqInformacionCargasFase1() == null && dto.getDrInformacionCargasFase1() == null) {
 			ko=false;
 			interrogante=false;
+			countInterrogante--;
 		}		
 		//INSCRIPCION CORRECTA
 		if(dto.getDqInscripcionCorrectaFase1()==null) {
@@ -2080,6 +2095,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqInscripcionCorrectaFase1() == null && dto.getDrInscripcionCorrectaFase1() == null) {
 			ko=false;
 			interrogante=false;
+			countInterrogante--;
 		}
 		//% PROPIEDAD
 		
@@ -2100,6 +2116,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqPor100PropiedadFase1() == null && dto.getDrPor100PropiedadFase1() == null) {
 			ko=false;
 			interrogante=false;
+			countInterrogante--;
 		}
 		if(ko || countKo > 0 ) {
 			dto.setCorrectoDatosRegistralesFase1(ICONO_TICK_KO);
@@ -2193,9 +2210,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			if (activo.getInfoComercial().getAnyoConstruccion() != null) {
 				dto.setDrAnyoConstruccionFase1(activo.getInfoComercial().getAnyoConstruccion().toString());
 			}
-			if (activo.getInfoComercial().getDescripcionComercial() != null) {
-				dto.setDrFase4Descripcion(activo.getInfoComercial().getDescripcionComercial());
+			Filter infoComercialFilter = genericDao.createFilter(FilterType.EQUALS, "infoComercial.id",activo.getInfoComercial().getId());
+			ActivoEdificio edificio = genericDao.get(ActivoEdificio.class, infoComercialFilter);
+			if (!Checks.esNulo(edificio)) {
+				dto.setDrFase4Descripcion(edificio.getEdiDescripcion());
 			}
+			
 			
 		}
 		if(activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null) {
@@ -2246,8 +2266,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setMensajeDQFotos(activoDatosDq.getImagenesMensaje());
 		
 		// Descripcion
-		if(activo.getInfoComercial() != null && activo.getInfoComercial().getDescripcionComercial() != null) {
-			dto.setDrFase4Descripcion(activo.getInfoComercial().getDescripcionComercial());
+		if(activo.getInfoComercial() != null ) {
+			Filter infoComercialFilter = genericDao.createFilter(FilterType.EQUALS, "infoComercial.id",activo.getInfoComercial().getId());
+			ActivoEdificio edificio = genericDao.get(ActivoEdificio.class, infoComercialFilter);
+			if (!Checks.esNulo(edificio)) {
+				dto.setDrFase4Descripcion(edificio.getEdiDescripcion());
+			}
 		}
 		
 		if(activoDatosDq.getDescripcion() != null) {
@@ -2484,6 +2508,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqF3ReferenciaCatastral() == null && dto.getDrF3ReferenciaCatastral() == null) {
 			interrogante = false;
 			cruzroja= false;
+			countInterrogante--;
 		}
 		
 		//superficie construida ESPECIAL
@@ -2522,6 +2547,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqF3SuperficieConstruida() == null && dto.getDrF3SuperficieConstruida() == null) {
 			interrogante = false;
 			cruzroja= false;
+			countInterrogante--;
 		}
 		
 		
@@ -2562,6 +2588,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqF3SuperficieUtil() == null && dto.getDrF3SuperficieUtil() == null) {
 			interrogante = false;
 			cruzroja= false;
+			countInterrogante--;
 		}
 		//ANYO CONSTRUCCION
 		if(dto.getDqF3AnyoConstruccion() == null) {
@@ -2585,6 +2612,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqF3AnyoConstruccion() == null && dto.getDrF3AnyoConstruccion() == null) {
 			interrogante = false;
 			cruzroja= false;
+			countInterrogante--;
 		}
 		//TIPO VIA
 		if(dto.getDqF3TipoVia() == null) {
@@ -2603,6 +2631,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqF3TipoVia() == null && dto.getDrF3TipoVia() == null) {
 			interrogante = false;
 			cruzroja= false;
+			countInterrogante--;
 		}
 		//NOMBRE CALLE ESPECIAL
 		if (dto.getDqF3NomCalle() == null) {
@@ -2645,6 +2674,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqF3CP() == null && dto.getDrF3CP() == null) {
 			interrogante = false;
 			cruzroja= false;
+			countInterrogante--;
 		}
 		//MUNICIPIO
 		if(dto.getDqF3Municipio() == null) {
@@ -2662,6 +2692,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqF3Municipio() == null && dto.getDrF3Municipio() == null) {
 			interrogante = false;
 			cruzroja= false;
+			countInterrogante--;
 		}
 		//PROVINCIA
 		if(dto.getDqF3Provincia() == null) {
@@ -2680,6 +2711,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (dto.getDqF3Provincia() == null && dto.getDrF3Provincia() == null) {
 			interrogante = false;
 			cruzroja= false;
+			countInterrogante--;
 		}
 		
 		if(cruzroja || countKo > 0) {
@@ -2702,7 +2734,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(idList.size() == 1 && quieroActualizar) {
 			Activo activo = activoDao.get(idList.get(0));
 			Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-			Filter filterTipoAgrupacion = genericDao.createFilter(FilterType.EQUALS, "numActivo", activo.getId());
 			List<ActivoAgrupacionActivo> agList = genericDao.getList(ActivoAgrupacionActivo.class, filterActivo);
 			
 			for (ActivoAgrupacionActivo activoAgrupacionActivo : agList) {
@@ -2713,8 +2744,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						Activo activoSub = activoAgrupacionActivo2.getActivo();
 						ActivoInfoComercial actInfoComercial = activoSub.getInfoComercial(); 
 						if(actInfoComercial != null) {
-							actInfoComercial.setDescripcionComercial(datoDq);
-							activoDao.saveOrUpdate(activo);
+							Filter infoComercialFilter = genericDao.createFilter(FilterType.EQUALS, "infoComercial.id", actInfoComercial.getId());
+							ActivoEdificio edificio = (ActivoEdificio) genericDao.get(ActivoEdificio.class, infoComercialFilter);
+							if (edificio != null) {
+								edificio.setEdiDescripcion(datoDq);
+								genericDao.save(ActivoEdificio.class, edificio);
+							} 
 						}	
 					}
 				}				
@@ -2725,8 +2760,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				Activo activo = activoDao.get(id);
 				ActivoInfoComercial actInfoComercial = activo.getInfoComercial(); 
 				if(actInfoComercial != null) {
-					actInfoComercial.setDescripcionComercial(datoDq);
-					activoDao.saveOrUpdate(activo);
+					Filter infoComercialFilter = genericDao.createFilter(FilterType.EQUALS, "infoComercial.id", actInfoComercial.getId());
+					ActivoEdificio edificio = (ActivoEdificio) genericDao.get(ActivoEdificio.class, infoComercialFilter);
+					if (edificio != null) {
+						edificio.setEdiDescripcion(datoDq);
+						genericDao.save(ActivoEdificio.class, edificio);
+					} 
+					
 				}			
 			}
 		}
@@ -2952,6 +2992,15 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		
 		listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Información Cargas", valorBooleanActivoInfoCargas, valorBooleanActivoDqInfoCargas, CALIDADDATO_REGISTRO));
 		
+		if (actDatosDq.getDescripcionCargas()!=null && cargas !=null && cargas.getDescripcionCarga()!=null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Descripción Cargas", cargas.getDescripcionCarga().toString(), actDatosDq.getDescripcionCargas().toString(), CALIDADDATO_REGISTRO ,2));
+		}else if(actDatosDq.getDescripcionCargas()!=null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Descripción Cargas", "", actDatosDq.getDescripcionCargas().toString(), CALIDADDATO_REGISTRO,2));
+		}
+		else {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Descripción Cargas", "", "", CALIDADDATO_REGISTRO,2));
+		}
+		
 		if(activo.getInfoRegistral() != null 
 				&& activo.getInfoRegistral().getInfoRegistralBien() != null 
 				&& activo.getInfoRegistral().getInfoRegistralBien().getFechaInscripcion()!=null) {
@@ -2979,14 +3028,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("% propiedad", "", "", CALIDADDATO_REGISTRO));
 			}
 		}
-			if (actDatosDq.getDescripcionCargas()!=null && cargas !=null && cargas.getDescripcionCarga()!=null) {
-				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Descripcion Cargas", cargas.getDescripcionCarga().toString(), actDatosDq.getDescripcionCargas().toString(), CALIDADDATO_REGISTRO));
-			}else if(actDatosDq.getDescripcionCargas()!=null) {
-				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Descripcion Cargas", "", actDatosDq.getDescripcionCargas().toString(), CALIDADDATO_REGISTRO));
-			}
-			else {
-				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Descripcion Cargas", "", "", CALIDADDATO_REGISTRO));
-			}
+			
 		//FASE 3
 		
 		if (activoCatastro != null && activoCatastro.getRefCatastral() != null && actDatosDq.getReferenciaCatastralDdq() != null) {

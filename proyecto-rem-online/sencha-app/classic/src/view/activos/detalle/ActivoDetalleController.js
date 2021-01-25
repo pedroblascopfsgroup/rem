@@ -7890,6 +7890,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     actualizarPropagacionEq: function(activosParaPropagar, valor, soyRestringidaQuieroActualizar, window ){
     	var me = this;
     	var url = $AC.getRemoteUrl('activo/saveDatoRemCalidadDatoPublicacion');
+
+    	me.getView().mask(HreRem.i18n("msg.mask.loading"));
     	Ext.Ajax.request({
 			url: url,
 			method : 'POST',
@@ -7899,11 +7901,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				soyRestringidaQuieroActualizar: soyRestringidaQuieroActualizar
 			},
 			success: function(response, opts){
+			
 				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-				window.close();
+				me.refrescarActivo(true);
+				me.getView().unmask();
 			}, failure: function (a, operation, context) {
-				window.close();
             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+            	me.refrescarActivo(true);
+            	me.getView().unmask();
             }
 		     
     	});

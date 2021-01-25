@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20201202
+--## FECHA_CREACION=20210119
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12358
+--## INCIDENCIA_LINK=REMVIP-8707
 --## PRODUCTO=NO
 --## 
 --## Finalidad:  Creación del SP
@@ -254,13 +254,13 @@ BEGIN
                                 SELECT GIL.GIL_ID
                                     , CASE
                                         WHEN DCL.DIARIO1 = ''20'' THEN 
-                                            (NVL(P20.P20_GASTO, 100) / 100 * DCL.DIARIO1_CUOTA + BRU.IMPORTE_BRUTO + NVL(DCL.DIARIO2_BASE, 0)) 
+                                            (NVL(P20.P20_GASTO, 100) / 100 * DCL.DIARIO1_CUOTA + BRU.IMPORTE_BRUTO) 
                                                 - SUM(GIL.IMPORTE_ACTIVO) OVER(ORDER BY GIL.GPV_ID)
                                         WHEN DCL.DIARIO1 = ''1'' THEN
-                                            (BRU.IMPORTE_BRUTO + NVL(DCL.DIARIO2_BASE, 0)) 
+                                            (BRU.IMPORTE_BRUTO) 
                                                 - SUM(GIL.IMPORTE_ACTIVO) OVER(ORDER BY GIL.GPV_ID)
                                         WHEN DCL.DIARIO1 = ''2'' THEN 
-                                            (DCL.DIARIO1_CUOTA + BRU.IMPORTE_BRUTO + NVL(DCL.DIARIO2_BASE, 0)) 
+                                            (DCL.DIARIO1_CUOTA + BRU.IMPORTE_BRUTO) 
                                                 - SUM(GIL.IMPORTE_ACTIVO) OVER(ORDER BY GIL.GPV_ID)
                                         WHEN DCL.DIARIO1 = ''60'' THEN
                                             (BRU.IMPORTE_BRUTO) 

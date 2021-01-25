@@ -7,6 +7,7 @@ public class AuthenticationData {
 	private Long userId;
 	private List<String> authorities;
 	private List<String> roles;
+	private List<String> groupRoles;
 	private String codigoGestor;
 	private Integer esGestorSustituto;
 	private String codigoCartera;
@@ -76,4 +77,13 @@ public class AuthenticationData {
 	public void setCodigoCartera(String codigoCartera) {
 		this.codigoCartera = codigoCartera;
 	}
+
+	public List<String> getGroupRoles() {
+		return groupRoles;
+	}
+
+	public void setGroupRoles(List<String> groupRoles) {
+		this.groupRoles = groupRoles;
+	}
+
 }

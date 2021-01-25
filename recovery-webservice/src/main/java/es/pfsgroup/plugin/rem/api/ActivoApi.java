@@ -9,10 +9,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.web.servlet.ModelAndView;
-
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
@@ -38,7 +37,9 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
+import es.pfsgroup.plugin.rem.model.DtoActivoComplementoTitulo;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
+import es.pfsgroup.plugin.rem.model.DtoActivoDeudoresAcreditados;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
@@ -54,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoGastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDiarioGestion;
@@ -72,6 +74,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
+import es.pfsgroup.plugin.rem.model.GastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -83,6 +86,9 @@ import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
+import es.pfsgroup.plugin.rem.rest.dto.ActivoCrearPeticionTrabajoDto;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
@@ -1177,6 +1183,8 @@ public interface ActivoApi {
 	boolean getMotivosCalificacionNegativaSubsanados(Long idActivo, String idMotivo);
 
 	boolean esCerberus(Long idActivo);
+	
+	boolean esBBVA(Long idActivo);
 
 	boolean esEgeo(Long idActivo);
 
@@ -1333,6 +1341,13 @@ public interface ActivoApi {
 
 	Boolean updateHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
 
+	ActivoCrearPeticionTrabajoDto getActivoParaCrearPeticionTrabajobyId(Long activoId);
+
+	boolean estanTodosActivosVendidos(List<Activo> activos);
+
+	boolean estanTodosActivosAlquilados(List<Activo> activos);
+
+
 	List<ReqFaseVentaDto> getReqFaseVenta(Long idActivo);
 
 	Boolean createReqFaseVenta(ReqFaseVentaDto reqFaseVentaDto) throws ParseException;
@@ -1356,7 +1371,63 @@ public interface ActivoApi {
 	Boolean deleteSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
 
 	Boolean updateSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
+
 	
+	/**
+	 * Devuelve la Lista de Dtos para rellenar un grid
+	 * 
+	 * @param dto
+	 * @return
+	 */
+	List<DtoActivoComplementoTitulo> getListComplementoTituloById(Long id);
+
+	
+	/**
+	 * Borrado de un complemento titulo
+	 * @param cargaDto
+	 * @return
+	 */
+	Boolean deleteActivoComplementoTitulo(DtoActivoComplementoTitulo cargaDto);
+	
+	/**
+	 * 
+	 * @param cargaDto
+	 * @return
+	 */
+	Boolean updateActivoComplementoTitulo(DtoActivoComplementoTitulo cargaDto);
+	
+	/**
+	 * Anyade un Complemento titulo
+	 * @param cargaDto
+	 * @return
+	 */
+	Boolean createComplementoTitulo(String activoId, String codTitulo, String fechaSolicitud,
+			String fechaTitulo, String fechaRecepcion, String fechaInscripcion, String observaciones);
+	
+	List<DtoGastoAsociadoAdquisicion> getListGastosAsociadosAdquisicion(Long id);
+	
+	Boolean deleteGastoAsociadoAdquisicion(DtoGastoAsociadoAdquisicion cargaDto);
+	
+	Boolean updateGastoAsociadoAdquisicion(DtoGastoAsociadoAdquisicion cargaDto);
+	
+	Boolean createGastoAsociadoAdquisicion(String activoId, String gastoAsociado, String fechaSolicitudGastoAsociado,
+			String fechaPagoGastoAsociado, String importe, String observaciones);
+
+	Boolean destroyDeudorById(DtoActivoDeudoresAcreditados dto);
+	
+	Boolean updateDeudorAcreditado(DtoActivoDeudoresAcreditados dto);
+	
+	Boolean createDeudorAcreditado(Long idEntidad, String docIdentificativo,
+			String nombre, String apellido1, String apellido2, String tipoDocIdentificativoDesc);
+
+	String uploadFactura(WebFileItem webFileItem, Long idDocRestClient, GastoAsociadoAdquisicion gas, DDTipoDocumentoGastoAsociado tipoDocGastoAsociado) throws UserException;
+
+	public List<DDTipoSegmento> getComboTipoSegmento(String codSubcartera);
+
+	boolean isActivoExisteEnRem(Long idActivo);
+
+	public Boolean isGrupoOficinaKAM();
+
 	boolean createHistoricoTramitacionTituloAdicional(DtoHistoricoTramitacionTituloAdicional tramitacionDto, Long idActivo) throws HistoricoTramitacionException;
 	
 	boolean updateHistoricoTramitacionTituloAdicional(DtoHistoricoTramitacionTituloAdicional tramitacionDto) throws Exception, HistoricoTramitacionException;
@@ -1372,7 +1443,5 @@ public interface ActivoApi {
 	boolean createCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto) throws JsonViewerException, Exception;
 	
 	boolean destroyCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
-	
-	
-	
+
 }

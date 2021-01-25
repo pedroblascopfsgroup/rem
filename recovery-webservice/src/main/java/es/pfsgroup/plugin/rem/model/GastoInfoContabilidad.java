@@ -10,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
@@ -17,6 +19,8 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComisionado;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
@@ -37,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 @Table(name = "GIC_GASTOS_INFO_CONTABILIDAD", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
+@Inheritance(strategy=InheritanceType.JOINED)
 public class GastoInfoContabilidad implements Serializable, Auditable {
 	
     /**
@@ -65,18 +70,6 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
     @JoinColumn(name = "DD_DEG_ID_CONTABILIZA")
     private DDDestinatarioGasto contabilizadoPor;
     
-    @Column(name="GIC_CUENTA_CONTABLE")
-    private String cuentaContable;
-    
-    @Column(name="GIC_PTDA_PRESUPUESTARIA")
-    private String partidaPresupuestaria;
-    
-    @Column(name="GIC_CUENTA_CONTABLE_ESP")
-    private String cuentaContableEspecial;
-    
-    @Column(name="GIC_PTDA_PRESUPUESTARIA_ESP")
-    private String partidaPresupuestariaEspecial;
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPE_ID_ESPECIAL")
     private DDTipoPeriocidad tipoPeriocidadEspecial;
@@ -87,10 +80,25 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CPS_ID")
     private ConfiguracionSubpartidasPresupuestarias configuracionSubpartidasPresupuestarias;
-
+    
+    @Column(name="GIC_EXCLUIR_ENVIO_LBK")
+    private Boolean excluirEnvioLbk;
+    
 	@JoinColumn(name = "GIC_ACTIVABLE")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private DDSinSiNo activable;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TCH_ID")
+    private DDTipoComisionado tipoComisionadoHre;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "GIC_PLAN_VISITAS")
+	private DDSinSiNo gicPlanVisitas;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "GIC_INV_SUJ_PASIVO")
+	private DDSinSiNo inversionSujetoPasivo;
 
 	@Version   
 	private Long version;
@@ -156,39 +164,6 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
 		this.fechaDevengoEspecial = fechaDevengoEspecial;
 	}
 
-	public String getCuentaContable() {
-		return cuentaContable;
-	}
-
-	public void setCuentaContable(String cuentaContable) {
-		this.cuentaContable = cuentaContable;
-	}
-
-	public String getPartidaPresupuestaria() {
-		return partidaPresupuestaria;
-	}
-
-	public void setPartidaPresupuestaria(String partidaPresupuestaria) {
-		this.partidaPresupuestaria = partidaPresupuestaria;
-	}
-
-	public String getCuentaContableEspecial() {
-		return cuentaContableEspecial;
-	}
-
-	public void setCuentaContableEspecial(String cuentaContableEspecial) {
-		this.cuentaContableEspecial = cuentaContableEspecial;
-	}
-
-	public String getPartidaPresupuestariaEspecial() {
-		return partidaPresupuestariaEspecial;
-	}
-
-	public void setPartidaPresupuestariaEspecial(
-			String partidaPresupuestariaEspecial) {
-		this.partidaPresupuestariaEspecial = partidaPresupuestariaEspecial;
-	}
-
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
@@ -209,6 +184,46 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
+	public DDSinSiNo getActivable() {
+		return activable;
+	}
+
+	public void setActivable(DDSinSiNo activable) {
+		this.activable = activable;
+	}
+
+	public DDTipoComisionado getTipoComisionadoHre() {
+		return tipoComisionadoHre;
+	}
+
+	public void setTipoComisionadoHre(DDTipoComisionado tipoComisionadoHre) {
+		this.tipoComisionadoHre = tipoComisionadoHre;
+	}
+
+	public DDSinSiNo getGicPlanVisitas() {
+		return gicPlanVisitas;
+	}
+
+	public void setGicPlanVisitas(DDSinSiNo gicPlanVisitas) {
+		this.gicPlanVisitas = gicPlanVisitas;
+	}
+
+	public DDSinSiNo getInversionSujetoPasivo() {
+		return inversionSujetoPasivo;
+	}
+
+	public void setInversionSujetoPasivo(DDSinSiNo inversionSujetoPasivo) {
+		this.inversionSujetoPasivo = inversionSujetoPasivo;
+	}
+	
+	public void setExcluirEnvioLbk (Boolean excluirEnvioLbk) {
+		this.excluirEnvioLbk = excluirEnvioLbk;
+	}
+	
+	public Boolean getExcluirEnvioLbk () {
+		return excluirEnvioLbk;
+	}
+
 	public ConfiguracionSubpartidasPresupuestarias getConfiguracionSubpartidasPresupuestarias() {
 		return configuracionSubpartidasPresupuestarias;
 	}
@@ -218,11 +233,4 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
 		this.configuracionSubpartidasPresupuestarias = configuracionSubpartidasPresupuestarias;
 	}
 
-	public DDSinSiNo getActivable() {
-		return activable;
-	}
-
-	public void setActivable(DDSinSiNo activable) {
-		this.activable = activable;
-	}
 }

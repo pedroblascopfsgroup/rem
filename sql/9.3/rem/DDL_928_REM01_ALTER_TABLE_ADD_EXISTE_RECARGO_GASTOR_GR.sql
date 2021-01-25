@@ -1,13 +1,13 @@
 --/*
 --######################################### 
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200309
+--## AUTOR=DAP
+--## FECHA_CREACION=20200929
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9716
 --## PRODUCTO=NO
 --## 
---## Finalidad: Incluir campo EXISTE_RECARGO en tabla APR_AUX_GES_GASTOS_GR.
+--## Finalidad: Incluir campo EXISTE_RECARGO y TRIBUTOS TERCEROS en tabla APR_AUX_GES_GASTOS_GR.
 --##            
 --## INSTRUCCIONES:  
 --## VERSIONES:
@@ -38,6 +38,7 @@ DECLARE
   V_COL T_ARRAY_COL := T_ARRAY_COL(
       -- Recordatorios
   	  T_COL(''||V_ESQUEMA||'', 'APR_AUX_GES_GASTOS_GR', 'EXISTE_RECARGO', 'NUMBER(1,0)', 'Existe recargo')
+      , T_COL(''||V_ESQUEMA||'', 'APR_AUX_GES_GASTOS_GR', 'TRIBUTOS_TERCEROS', 'VARCHAR2(5)', 'Tributos a terceros')
  
   );  
   V_TMP_COL T_COL;

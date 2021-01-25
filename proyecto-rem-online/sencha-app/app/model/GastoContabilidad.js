@@ -56,7 +56,72 @@ Ext.define('HreRem.model.GastoContabilidad', {
     	},
         {
             name: 'comboActivable'
+        },
+        {
+        	name: 'isEmpty',
+        	type: 'boolean'
+        },
+        {
+            name: 'gicPlanVisitasBoolean',
+            type: 'boolean'
+        },
+        {
+            name: 'tipoComisionadoHreCodigo'
+        },
+        {
+            name: 'tipoComisionadoHreDescripcion'
+        },
+        {
+        	name: 'idElemento'
+        },
+        {
+        	name: 'tipoElemento'
+        },
+        {
+        	name: 'importeGasto'
+        },
+        {
+        	name:'subPartidas'
+        },
+        {
+        	name:'diario1'
+        },
+        {
+        	name: 'diario1Base'
+        },
+        {
+        	name: 'diario1Tipo'
+        },
+        {
+        	name: 'diario1Cuota'
+        },
+        {
+        	name:'diario2'
+        },
+        {
+        	name:'diario2Base'
+        },
+        {
+        	name: 'diario2Tipo'
+        },
+        {
+        	name: 'diario2Cuota'
+        },
+        {
+        	name:'errorDiarios'
+        },
+        {
+        	name:'excluirEnvioLbk',
+        		type: 'boolean'
+        },
+        {
+        	name:'resultadoDiarios',
+        	type:'boolean'
+        },
+        {
+        	name:'inversionSujetoPasivoBoolean'
         }
+
     ],
     
 	proxy: {

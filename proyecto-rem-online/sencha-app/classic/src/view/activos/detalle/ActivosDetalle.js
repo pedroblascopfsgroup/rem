@@ -168,7 +168,10 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	var disabled = me.lookupController().getViewModel().get('activo.perimetroAdmision')==false;
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'admisionactivo', ocultarBotonesEdicion: true,disabled:disabled})}, 'TAB_ACTIVO_ADMISION');
     	
+	    //Si el usuario logeado es no es bbva, anyadir el tab activo gestion
+	    if($AU.getUser().codigoCartera != CONST.CARTERA['BBVA']) {
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'gestionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_GESTION');
+	    }		    
     	//}
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'preciosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PRECIOS');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'publicacionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PUBLICACION');

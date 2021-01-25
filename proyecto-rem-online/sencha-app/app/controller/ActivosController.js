@@ -12,7 +12,7 @@ Ext.define('HreRem.controller.ActivosController', {
     'HreRem.model.FichaProveedorModel', 'HreRem.model.PerfilDetalleModel','HreRem.model.FichaPerfilModel', 'HreRem.model.GastoProveedor', 'HreRem.model.GastoAviso',
     'HreRem.view.expedientes.ExpedienteDetalleMain', 'HreRem.model.FichaProveedorModel', 'HreRem.view.configuracion.administracion.proveedores.detalle.ProveedoresDetalleMain', 
     'HreRem.view.gastos.GastoDetalleMain', 'HreRem.model.GastoProveedor', 'HreRem.model.GastoAviso', 'HreRem.view.administracion.juntas.JuntasDetalleMain',
-    'HreRem.view.administracion.juntas.GestionJuntas','HreRem.model.ActivoSaneamiento'],
+    'HreRem.view.administracion.juntas.GestionJuntas','HreRem.model.ActivoSaneamiento', 'HreRem.model.GastoAsociadoAdquisicionModel'],
 
 
     requires: ['HreRem.view.configuracion.administracion.perfiles.detalle.DetallePerfil', 'HreRem.view.expedientes.ExpedienteDetalleMain', 'HreRem.view.gastos.GastoDetalleMain', 
@@ -231,6 +231,9 @@ Ext.define('HreRem.controller.ActivosController', {
     	
     	'gencatcomercialactivo':{
     		abrirDetalleExpedienteOferta: 'abrirDetalleExpedienteOferta'
+    	},
+    	'albaranesMain': {
+    		abrirDetalleTrabajo: 'abrirDetalleTrabajo'
     	}
 
     },
@@ -594,7 +597,6 @@ Ext.define('HreRem.controller.ActivosController', {
     	HreRem.model.FichaTrabajo.load(id, {
     		scope: this,
 		    success: function(trabajo) {
-		    	
 		    	detalle.getViewModel().set("trabajo", trabajo);		    	
 		    	detalle.configCmp(trabajo);
 		    	
@@ -644,7 +646,10 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	
 		    	tab.getViewModel().set("trabajo", trabajo);
 		    	tab.configCmp(trabajo);
-		    	
+		    	var form = tab.lookupController().lookupReference("fichatrabajo");
+		    	if(Ext.isFunction(form.afterLoad)) {
+		    		form.afterLoad();
+		    	}
 		    	HreRem.model.TrabajoAviso.load(id, {
 		    		scope: this,
 				    success: function(avisos) {

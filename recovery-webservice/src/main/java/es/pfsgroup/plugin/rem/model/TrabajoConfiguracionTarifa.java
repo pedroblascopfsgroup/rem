@@ -63,8 +63,8 @@ public class TrabajoConfiguracionTarifa implements Serializable, Auditable {
     @Column(name="TCT_MEDICION")
     private Float medicion;
 
-
-
+    @Column(name="TCT_PRECIO_UNITARIO_CLIENTE")
+    private Double precioUnitarioCliente;
     
 	@Version   
 	private Long version;
@@ -130,6 +130,14 @@ public class TrabajoConfiguracionTarifa implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Double getPrecioUnitarioCliente() {
+		return precioUnitarioCliente;
+	}
+
+	public void setPrecioUnitarioCliente(Double precioUnitarioCliente) {
+		this.precioUnitarioCliente = precioUnitarioCliente;
 	}
 
 

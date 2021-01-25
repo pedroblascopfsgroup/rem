@@ -218,7 +218,43 @@ Ext.define('HreRem.model.GastoProveedor', {
    		},
    		{
    			name: 'estadoEmisor'   			
-   		}   		
+   		},
+   		{
+   			name:'estadoModificarLineasDetalleGasto',
+   			type:'boolean'
+   		},
+   		{
+   			name:'isGastoRefacturadoPorOtroGasto',
+   			type:'boolean'
+   		},
+   		{
+   			name:'isGastoRefacturadoPadre',
+   			type:'boolean'
+   		},
+   		{
+   			name:'tieneTrabajos',
+   			type:'boolean'
+   		},
+   		{
+   			name:'lineasNoDeTrabajos',
+   			type:'boolean'
+   		},{
+   			name: 'suplidosVinculadosCod'
+   		},
+   		{
+   			name: 'facturaPrincipalSuplido'
+   		},
+    	{
+    		name: 'suplidoVinculadoNo',
+    		calculate: function(data) {
+    			return data.suplidosVinculadosCod == CONST.COMBO_SIN_NO['NO'];
+    		},
+    		depends: 'suplidosVinculadosCod'
+    	},
+    	{
+    		name: 'visibleSuplidos',
+    		type: 'boolean'
+    	}
    		
     ],
     

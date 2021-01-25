@@ -314,7 +314,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     				return 'Comité seleccionado';
     			},
     			depends: ['tipoExpedienteCodigo','entidadPropietariaCodigo']
-    		}
+    		},
+    		{
+    			name:'finalizadoCierreEconomico',
+    			type: 'boolean'
+			}
     ],
     formulas: {
     	esExpedienteBloqueado: function(get) {

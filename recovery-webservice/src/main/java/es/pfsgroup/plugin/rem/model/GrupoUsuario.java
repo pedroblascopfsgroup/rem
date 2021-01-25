@@ -43,6 +43,7 @@ import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 
 @Entity
 @Table(name = "GRU_GRUPOS_USUARIOS", schema = "${master.schema}")
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class GrupoUsuario implements Serializable{
     private static final long serialVersionUID = 1L;

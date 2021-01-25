@@ -673,6 +673,10 @@
             	def activoTramiteManager = ctx.getBean("activoTramiteManager");
 				return activoTramiteManager.esOfertaPrincipalSinDependientes(tareaExterna);
             }
+            def esBBVA = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.esBBVA(tareaExterna);
+            }
   			 ]]></value>
   		</list>
   	</property>

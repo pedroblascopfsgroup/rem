@@ -114,6 +114,8 @@ public class DtoActivoFilter extends WebDto {
 	private String tipoSegmento;
 	private String perimetroMacc;
 	private String equipoGestion;
+	private Long numActivoBbva;
+
 	
 	public String getNumActivo() {
 		return numActivo;
@@ -788,4 +790,11 @@ public class DtoActivoFilter extends WebDto {
 	public void setEquipoGestion(String equipoGestion) {
 		this.equipoGestion = equipoGestion;
 	}
+	public Long getNumActivoBbva() {
+		return numActivoBbva;
+	}
+	public void setNumActivoBbva(Long numActivoBbva) {
+		this.numActivoBbva = numActivoBbva;
+	}
+
 }

@@ -312,24 +312,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                	readOnly: true
 				                },
 				                {
-				                	xtype: 'numberfieldbase',
-									symbol: HreRem.i18n("symbol.porcentaje"),
-				                	fieldLabel:  HreRem.i18n('fieldlabel.porcentaje.construccion'),
-				                	name: 'porcentajeConstruccion',
-				                	reference: 'porcentajeConstruccion',
-				                	maskRe: /[0-9.]/,
-				                	bind: {
-				                		readOnly: '{!activo.isEditablePorcentajeConstruccion}',
-				                		value: '{activo.porcentajeConstruccion}'
-				                	},
-				                	validator: function(v) {
-		                            	if(!Ext.isEmpty(this.getValue()) && (this.getValue() < 0 || this.getValue() >  100 )){
-			                            	return false;
-		                            	}
-			                            return true;
-			                        }
-				                },
-				                {
 				                	xtype: 'comboboxfieldbase',
 				                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.segmento'),
 				                	name: 'combotipoSegmento',
@@ -384,7 +366,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							            fn:'onClickActivoHRE'									       
 							        }
 								}
-							}Z,{
+							},
+							{
 								xtype:'textfieldbase',
 								reference:'tfcodpromocionbbva',
 								fieldLabel: HreRem.i18n('fieldlabel.activobbva.codPromocionBbva'),
@@ -394,13 +377,13 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								}
 							}
 						],
-						bind:{
-							hidden: '{!activo.isCarteraBbva}'
-						}
-					}]
-            },
-            {    				
-            	    
+	                bind:{
+	                	hidden: '{!activo.isCarteraBbva}'
+	                }
+	                }
+				]
+				},				
+            	{    
                 
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
@@ -839,6 +822,53 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									value: '{activo.motivoAplicaFormalizar}'
 								}
 							},
+							//Fila Condiciones de inclusión en perímetro Haya						
+							
+							//Fila gesti�n comercial
+							{
+								xtype:'checkboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.gestion.comercial'),
+								reference: 'checkGestionComercial',
+								bind: {
+									value: '{activo.checkGestorComercial}'
+									,readOnly: '{activo.restringido}'
+								},
+								listeners: {
+									change: 'onChkbxGestionComercialChange'
+								}
+							},
+							{
+								xtype: 'datefieldbase',
+								bind:		'{activo.fechaGestionComercial}',
+								reference: 'datefieldFechaGestionComercial',
+								readOnly: '{activo.restringido}'
+							},
+							{
+								xtype:'checkboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.excluir.validaciones'),
+								reference: 'checkExclusionGestionComercial',
+								bind: {
+									value: '{activo.checkExcluirValidacionesGestionComercial}', 
+									readOnly: '{activo.restringido}'
+								},
+								listeners: {
+									change: 'onChkbxExclValPerimetroChange'
+								}
+							},
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetros.motivoDeExcluido'),
+								colspan: 3,
+								reference: 'comboMotivoGestionComercial',
+								bind: {
+									store: '{comboMotivoGestionComercialActivo}',
+									value: '{activo.motivoGestionComercialCodigo}', 
+									readOnly: '{!esEditableComboMotivoExclusionGestorComercial}',
+									allowBlank: '{!esEditableComboMotivoExclusionGestorComercial}'
+
+								}
+							},
+							
 							//Bloque Comercialización
 							{    
 								xtype:'fieldsettable',

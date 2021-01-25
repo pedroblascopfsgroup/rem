@@ -26,10 +26,10 @@ if [ -f $MAINSH ]; then
     
 if [ $? = 0 ]; then
 echo "Inicio de transferencia ficheros RUFACTUCP.txt/RUFACTUSP.txt"
-   lftp -c "open -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59; ls /datos/usuarios/socpart/CISA/out"
+   lftp -c "open -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.126.66; ls /datos/usuarios/socpart/CISA/out"
 
 
-  lftp -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59 <<EOF
+  lftp -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.126.66 <<EOF
   cd /datos/usuarios/socpart/CISA/out/
   mput $DIR_SALIDA/RUFACTUCP.txt
   mput $DIR_SALIDA/RUFACTUSP.txt 

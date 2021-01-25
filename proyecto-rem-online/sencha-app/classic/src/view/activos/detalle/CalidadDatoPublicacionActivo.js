@@ -1075,26 +1075,26 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 				xtype:'fieldsettable',
 				title:HreRem.i18n('publicacion.calidad.datos.fase4.descripcion'),
 				defaultType:'textfieldbase',
-				items : [
-					
+				items : [	
 					{
-						fieldLabel: HreRem.i18n('publicacion.calidad.datos.indicador.correcto'),
-						colspan:3,						
-						xtype: 'button',						
-						cls: 'no-pointer',
-						style: 'background: transparent; border: none;',
-						bind: {
-							iconCls:'{getIconClsDQescripcion}'
+					fieldLabel: HreRem.i18n('publicacion.calidad.datos.indicador.correcto'),
+					colspan:1,
+					width: 50,
+					xtype: 'button',						
+					cls: 'no-pointer',
+					style: 'background: transparent; border: none',
+					bind: {
+						iconCls:'{getIconClsDQescripcion}'
 						}
 					},
 					{
 					xtype:'button',
 					text: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.boton.aplicar'),
 					reference: 'btnAplicaDescripcionRef',
+					style: 'float: left;',
 					readOnly: true,
 					handler: 'aplicarDescripcion',	
-					colspan:3,
-					rowspan:2,
+					colspan:2,
 					bind:{
 						disabled: '{disableBtnDescF1}'
 						}
@@ -1103,9 +1103,9 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					xtype:'textfieldbase',
 					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.dato.rem'),
 					reference: 'datoRemRef',
-	                //maxLength: 100,
-          		  	maxWidth: 500,
-					//colspan:3,
+          		  	maxWidth:  '100%',
+          		  	style: 'text-align: justify;',
+					colspan:3,
 					readOnly: true,
 					bind: {
 						value: '{calidaddatopublicacionactivo.drFase4Descripcion}'
@@ -1114,9 +1114,9 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					xtype:'textfieldbase',
 					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.dato.rq'),
 					reference: 'datoDQRef',
-					//colspan:3,
-					//maxLength: '100%',
-          		  	maxWidth: 500,
+					style: 'text-align: justify;',
+					colspan:3,
+					maxWidth:  '100%',
 					readOnly: true,
 					bind: {
 						value: '{calidaddatopublicacionactivo.dqFase4Descripcion}'

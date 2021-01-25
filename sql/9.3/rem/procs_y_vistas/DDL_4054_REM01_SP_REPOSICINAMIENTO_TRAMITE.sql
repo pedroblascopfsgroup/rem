@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=DAP
---## FECHA_CREACION=20180226
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20210125
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.14
 --## INCIDENCIA_LINK=REMVIP

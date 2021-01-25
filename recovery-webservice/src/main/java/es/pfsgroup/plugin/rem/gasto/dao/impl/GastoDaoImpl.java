@@ -12,6 +12,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -25,10 +26,14 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
 import es.pfsgroup.plugin.rem.model.VGastosProvision;
@@ -41,6 +46,9 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 	@Autowired
 	ProveedoresDao proveedorDao;
+	
+	@Autowired
+	ActivoDao activoDao;
 	
 	@Autowired
 	private MSVRawSQLDao rawDao;
@@ -68,6 +76,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 			Boolean isGestoria, Boolean isGenerateExcel) {
 
 		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, isGenerateExcel);
+
 
 		List<String> nombresProveedor = proveedorDao.getNombreProveedorByIdUsuario(idUsuario);
 		if (!Checks.estaVacio(nombresProveedor)) {
@@ -99,6 +108,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 	private DtoPage getListadoGastosCompleto(DtoGastosFilter dtoGastosFilter, HQLBuilder hb) {
 		
 		Page pageGastos = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
+
 		List<VGastosProveedor> gastos = (List<VGastosProveedor>) pageGastos.getResults();
 		if (dtoGastosFilter.getIdProvision() != null) {
 			dtoGastosFilter.setLimit(100000);
@@ -143,6 +153,8 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 	private HQLBuilder rellenarFiltrosBusquedaGasto(DtoGastosFilter dtoGastosFilter, Boolean isGenerateExcel) {
 		String select = "select vgasto ";
+
+		
 		String from;
 		if (isGenerateExcel) {
 			from = "from VGastosProveedorExcel vgasto";
@@ -153,17 +165,19 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		boolean hasWhere = false;
 		HQLBuilder hb = null;
 
-		
-		if(!isGenerateExcel) {
-			// Por si es necesario filtrar por datos de los activos del gasto
-			String fromGastoActivos = GastoActivosHqlHelper.getFrom(dtoGastosFilter);
-			if (!Checks.esNulo(fromGastoActivos)) {
-				select = "select distinct vgasto ";
-				from = from + fromGastoActivos;
+		// Por si es necesario filtrar por datos de los activos del gasto
+		String fromGastoActivos = GastoActivosHqlHelper.getFrom(dtoGastosFilter);
+		if (!Checks.esNulo(fromGastoActivos)) {
+			from = from + fromGastoActivos;
 				where = where + GastoActivosHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere);
 				hasWhere = true;
+		}
 
-			}
+		if(dtoGastosFilter.getSubentidadPropietariaCodigo() != null) {
+			String fromGastoActivosSubcartera = GastoActivosHqlHelper.getFromSubcartera(dtoGastosFilter);
+			from = from + fromGastoActivosSubcartera;
+			where = where + GastoActivosHqlHelper.getWhereJoinSubcartera(dtoGastosFilter, hasWhere);
+			hasWhere = true;
 		}
 
 		// Por si es necesario filtrar por datos de la provision de gastos
@@ -187,18 +201,15 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 			hb.setHasWhere(true);
 		}
 		
-		if(isGenerateExcel) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.numActivo", dtoGastosFilter.getNumActivo());
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.subentidadPropietariaCodigo",
-					dtoGastosFilter.getSubentidadPropietariaCodigo());
-		}else {
-		
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.activo.numActivo", dtoGastosFilter.getNumActivo());
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.activo.subcartera.codigo",
-					dtoGastosFilter.getSubentidadPropietariaCodigo());
-		
+		if(dtoGastosFilter.getNumActivo() != null) {
+			Activo activo = activoDao.getActivoByNumActivo(dtoGastosFilter.getNumActivo());
+			if(activo != null) {
+				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.entidad", activo.getId());
+			}
 		}
 		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcartera.codigo", dtoGastosFilter.getSubentidadPropietariaCodigo());
+	
 		if (!Checks.esNulo(dtoGastosFilter.getNumProvision())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "provision.numProvision",
 					Long.parseLong(dtoGastosFilter.getNumProvision()));
@@ -341,11 +352,20 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 				.longValue();
 
 	}
+	
+	@Override
+	public Long getNextIdGasto() {
+
+		String sql = "SELECT S_GPV_GASTOS_PROVEEDOR.NEXTVAL FROM DUAL ";
+		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())
+				.longValue();
+
+	}
 
 	@Override
 	public void deleteGastoTrabajoById(Long id) {
 
-		StringBuilder sb = new StringBuilder("delete from GastoProveedorTrabajo gpt where gpt.id = " + id);
+		StringBuilder sb = new StringBuilder("delete from GastoLineaDetalleTrabajo gpt where gpt.id = " + id);
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 
 	}
@@ -456,5 +476,81 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		}
 		
 		return existeGasto;
+	}
+
+
+	@Override
+	public void saveGasto(GastoProveedor gasto) {
+		Session session = getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		try {
+			session.save(gasto);
+			session.getTransaction().commit();
+			session.close();
+		} catch (Exception e) {
+			logger.error("error al persistir el gasto", e);
+			tx.rollback();
+		}
+	}
+	
+	
+	@Override
+	public Long getIdProveedorByGasto(GastoProveedor gasto) {
+		try {
+			Session session = this.getSessionFactory().getCurrentSession();
+			Query query = session.createSQLQuery(
+					"SELECT GPV.PRO_ID FROM  gpv_gastos_proveedor GPV "
+						+ "WHERE GPV.GPV_ID = "+ gasto.getId() +" AND GPV.BORRADO = 0 ");
+	
+			String contador = query.uniqueResult().toString();
+	
+			if(contador != null) {
+				return Long.parseLong(contador);
+			}
+		}catch(NumberFormatException e){
+			
+		}
+		return null;
+	}
+	
+	@Override
+	public Long getIdCarteraByGasto(GastoProveedor gasto) {
+		try {
+			Session session = this.getSessionFactory().getCurrentSession();
+			Query query = session.createSQLQuery(
+					"SELECT PRO.DD_CRA_ID FROM  gpv_gastos_proveedor GPV  "
+						+ " JOIN ACT_PRO_PROPIETARIO PRO ON GPV.PRO_ID = PRO.PRO_ID AND "
+						+ " GPV.GPV_ID = "+ gasto.getId() +" AND GPV.BORRADO = 0 AND PRO.BORRADO = 0");
+	
+			String contador = query.uniqueResult().toString();
+	
+			if(contador != null) {
+				return Long.parseLong(contador);
+			}
+		}catch(NumberFormatException e){
+			
+		}
+		return null;
+	}
+	
+	@Override
+    public void deleteGastoSuplido(Long id) {
+		
+    	StringBuilder sb = new StringBuilder("delete from GastoSuplido gss where gss.id='"+id+"'");
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VBusquedaGastoActivo> getListGastosByIdActivos(List<Long> idActivos) {
+		
+		HQLBuilder hql = new HQLBuilder("from VBusquedaGastoActivo ");
+		HQLBuilder.addFiltroWhereInSiNotNull(hql, "idActivo", idActivos);
+		
+		List<VBusquedaGastoActivo> actAlquiladosList = (List<VBusquedaGastoActivo>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hql.toString()).list();
+
+		return actAlquiladosList;
 	}
 }

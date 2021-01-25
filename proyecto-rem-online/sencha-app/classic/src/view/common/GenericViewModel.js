@@ -447,16 +447,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboTipoTrabajoCreaFiltered'
 				}
-    		},    	    	
-
-    		comboEstadoTrabajo: {
-				model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'estadoTrabajo'}
-				}
-			},
+    		},
 			
 			comboValoracionTrabajo: {
 				model: 'HreRem.model.ComboBase',
@@ -550,6 +541,41 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 	    			extraParams: {codEstadoCarga: '{comboestadocargaref.value}'}
     			}
     		},
+    		comboTiposGastos: {
+		    	model: 'HreRem.model.ComboBase',
+		    	proxy: {
+			        type: 'uxproxy',
+			        remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposGastos'}
+		    	}
+		    	
+	    	},
+    		comboEstadoGastos: {
+		    	model: 'HreRem.model.ComboBase',
+		    	proxy: {
+			        type: 'uxproxy',
+			        remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadoGasto'}
+		    	}
+		    	
+	    	},
+			
+    		comboTipoTransmision: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoTransmision'}
+				}/*,autoLoad: true*/
+    		},
+    		comboTipoAlta: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoAlta'}
+				}/*,autoLoad: true*/
+			},
     		// Stores para el grid observaciones. Se crean 3 para solucionar problemas de instancia 
     		/*
 
@@ -589,6 +615,22 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 	    	 },
 	    	 autoLoad: true
     		},
+    		comboTipoTransmision: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoTransmision'}
+				}/*,autoLoad: true*/
+    		},
+    		comboTipoAlta: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoAlta'}
+				}/*,autoLoad: true*/
+    		},
     		//Admite mascota
     		comboAdmiteMascota: {
 				model: 'HreRem.model.ComboBase',
@@ -596,8 +638,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposAdmiteMascota'}
-				}
-    		,
+				},
     		autoLoad: true
     		}
     		

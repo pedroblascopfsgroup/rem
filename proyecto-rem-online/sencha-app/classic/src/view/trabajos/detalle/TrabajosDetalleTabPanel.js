@@ -7,7 +7,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
     requires 	: ['HreRem.view.trabajos.detalle.TrabajoDetalleController', 'HreRem.view.trabajos.detalle.TrabajoDetalleModel', 'HreRem.ux.button.BotonFavorito',
     			'HreRem.view.trabajos.detalle.FichaTrabajo', 'HreRem.view.trabajos.detalle.ActivosTrabajo', 'HreRem.view.trabajos.detalle.TramitesTareasTrabajo',
     			'HreRem.view.trabajos.detalle.DocumentosTrabajo', 'HreRem.view.trabajos.detalle.FotosTrabajo', 'HreRem.view.trabajos.detalle.DiarioGestionesTrabajo', 
-    			'HreRem.view.trabajos.detalle.GestionEconomicaTrabajo'],
+    			'HreRem.view.trabajos.detalle.GestionEconomicaTrabajo','HreRem.view.trabajos.detalle.AgendaTrabajo'],
    	listeners: {
 		boxready: function (tabPanel) {
 			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
@@ -45,6 +45,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 					if(!Ext.isEmpty(tab)) {tab.setDisabled(true);}
 					break;
 			}
+			
 		},
 
         beforetabchange: function (tabPanel, tabNext, tabCurrent) {
@@ -116,14 +117,19 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
     initComponent: function () {
     	var me = this;
     	var items = [];
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fichatrabajo', funPermEdition: ['EDITAR_FICHA_TRABAJO']})}, ['TAB_FICHA_TRABAJO']),
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activostrabajo', ocultarBotonesEdicion: true})}, ['TAB_ACTIVOS_TRABAJO']),
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tramitestareastrabajo', ocultarBotonesEdicion: true})}, ['TAB_TRAMITES_TRABAJO']),
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'diariogestionestrabajo', ocultarBotonesEdicion: true})}, ['TAB_DIARIO_GESTIONES_TRABAJO']),
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fotostrabajo', ocultarBotonesEdicion: true})}, ['TAB_FOTOS_TRABAJO']),
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentostrabajo', ocultarBotonesEdicion: true})}, ['TAB_DOCUMENTOS_TRABAJO']),
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestioneconomicatrabajo', funPermEdition: ['EDITAR_GESTION_ECONOMICA_TRABAJO']})}, ['TAB_GESTION_ECONOMICA_TRABAJO'])
-
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fichatrabajo', funPermEdition: ['EDITAR_FICHA_TRABAJO']})}, ['TAB_FICHA_TRABAJO']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activostrabajo', ocultarBotonesEdicion: true})}, ['TAB_ACTIVOS_TRABAJO']);
+    	
+    	//	if(me.lookupController().getViewModel().get('trabajo.tieneTramiteCreado')){
+	    //		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tramitestareastrabajo', ocultarBotonesEdicion: true})}, ['TAB_TRAMITES_TRABAJO']);    		
+    	//	}
+    	//	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'diariogestionestrabajo', ocultarBotonesEdicion: true})}, ['TAB_DIARIO_GESTIONES_TRABAJO']);
+    	
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'agendatrabajo', ocultarBotonesEdicion: true})}, ['TAB_FICHA_TRABAJO']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fotostrabajo', ocultarBotonesEdicion: true})}, ['TAB_FOTOS_TRABAJO']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentostrabajo', ocultarBotonesEdicion: true})}, ['TAB_DOCUMENTOS_TRABAJO']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestioneconomicatrabajo', funPermEdition: ['EDITAR_GESTION_ECONOMICA_TRABAJO']})}, ['TAB_GESTION_ECONOMICA_TRABAJO']);
+    	
         me.addPlugin({ptype: 'lazyitems', items: items});
         me.callParent();
     },
@@ -132,7 +138,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 		var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
 	
+		
 		var editionEnabled = function() {
+			
 			var visible = false;
 			var notFechaEjecucionReal = Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaEjecucionReal'));
 			var notFechaCierreEconomico = Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaCierreEconomico'));
@@ -167,7 +175,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 				|| tipoTrabajoCod === CONST.TIPOS_TRABAJO['SUELO']){
 				visible = isRolSuper;
 			}
-			
+			visible=true;
 			me.down("[itemId=botoneditar]").setVisible(visible);
 		}
 

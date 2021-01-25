@@ -21,88 +21,55 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			name:'numTrabajo'
     		},
     		{
-    			name: 'nombreProveedor'
+    			name: 'descripcionGeneral'
     		},
     		{
-    			name: 'tipoTrabajoCodigo'
+    			name: 'gestorActivoCodigo'
     		},
     		{
-    			name: 'tipoTrabajoDescripcion'
+    			name: 'numAlbaran'
     		},
     		{
-    			name: 'subtipoTrabajoCodigo'
+    			name: 'numGasto'
     		},
     		{
-    			name: 'subtipoTrabajoDescripcion'
+    			name: 'estadoGastoCodigo'
     		},
     		{
-    			name: 'estadoCodigo'
-    		},
-    		{
-    			name: 'estadoDescripcion'
-    		},
-    		{
-    			name: 'descripcion'
-    		},
-    		{
-    			name: 'fechaSolicitud',
-    			type:'date',
-    			dateFormat: 'c'
-    		},
-    		{
-    			name: 'fechaAprobacion',
-    			type:'date',
-    			dateFormat: 'c'		
-    		},
-    		{
-    			name: 'fechaRechazo',
-    			type:'date',
-    			dateFormat: 'c'   			
-    		},
-    		{
-    			name: 'fechaInicio',
-    			type:'date',
-    			dateFormat: 'c'
-    		},
-    		{
-    			name: 'fechaFin',
-    			type:'date',
-    			dateFormat: 'c'
-    		},
-    		{
-    			name: 'fechaEjecucionReal',
-    			type:'date',
-    			dateFormat: 'c'
-    		},
-    		{
-    			name: 'continuoObservaciones'
-    		},
-    		{
-    			name: 'cubreSeguro'
+    			name: 'cubreSeguro',
+    			type: 'boolean'
     		},
     		{
     			name: 'ciaAseguradora'
     		},
     		{
-    			name: 'idGestorActivoResponsable'
+    			name: 'importePrecio'
     		},
     		{
-    			name: 'gestorActivoResponsable'
+    			name: 'urgente',
+    			type: 'boolean'
     		},
     		{
-    			name: 'idSupervisorActivo'
+    			name: 'riesgosTerceros',
+    			type: 'boolean'
     		},
     		{
-    			name: 'supervisorActivo'
+    			name: 'aplicaComite',
+    			type: 'boolean'
     		},
     		{
-    			name: 'idSupervisorAlquileres'
+    			name: 'resolucionComiteCodigo'
     		},
     		{
-    			name: 'idSupervisorSuelos'
+    			name: 'fechaResolucionComite',
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
-    			name: 'idSupervisorEdificaciones'
+    			name: 'resolucionComiteId'
+    		},
+    		{
+    			name: 'tomaPosesion'
     		},
     		{
     			name: 'fechaConcreta',
@@ -120,153 +87,56 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			dateFormat: 'c'
     		},
     		{
-    			name: 'fechaCierreEconomico',
+    			name: 'estadoTrabajoCodigo'
+    		},
+    		{
+    			name: 'fechaEjecucionTrabajo',
     			type:'date',
     			dateFormat: 'c'
     		},
     		{
-    			name: 'fechaValidacion',
-    			type:'date',
-    			dateFormat: 'c'
-    		},
-    		{
-    			name: 'fechaPago',
-    			type:'date',
-    			dateFormat: 'c'
-    		},
-    		{
-    			name: 'fechaEleccionProveedor',
-    			type:'date',
-    			dateFormat: 'c'
-    		}, 
-    		{
-    			name: 'bloquearResponsable',
+    			name: 'tarifaPlana',
     			type: 'boolean'
     		},
     		{
-    			name: 'urgente'
+    			name: 'riesgoSiniestro',
+    			type: 'boolean'
     		},
     		{
-    			name: 'riesgoInminenteTerceros'
+    			name: 'idProveedorLlave'
     		},
     		{
-    			name: 'motivoRechazo'
-    		},
-    		{
-    			name: 'tipoCalidadCodigo'	
-    		},
-    		{
-    			name: 'terceroNombre'
-    		},
-    		{
-    			name: 'terceroEmail'
-    		},
-    		{    			
-    			name: 'terceroDireccion'
-    		},
-    		{
-    			name: 'terceroContacto'
-    		},
-    		{
-    			name: 'terceroTel1'
-    		},
-    		{
-    			name: 'terceroTel1'
-    		},
-    		{
-    			name: 'gastoProveedor'
-    		},
-    		{
-    			name: 'estadoGasto'
-    		},
-    		{
-    			name: 'esSolicitudConjunta',
-    			convert: function(value) {
-    				if(Ext.isEmpty(value))return false;
-    				return value;
-    			}
-    		},
-    		{
-    			name: 'checkFechaConcreta',
-    			calculate: function(data) {
-    				return !Ext.isEmpty(data.fechaConcreta);
-    			}
-    		},
-    		{
-    			name: 'checkFechaTope'
-    		},
-    		{
-    			name: 'checkFechaContinuado',
-    			calculate: function(data) {
-    				return !Ext.isEmpty(data.fechaInicio);
-    			}
-    			
-    		},
-    		{
-    			name: 'checkRequeridoTercero',
-    			calculate: function(data) {
-    				return !Ext.isEmpty(data.terceroNombre);
-    			}
-    			
-    		},
-    		{
-    			name: 'nombreMediador'
-    		},
-    		{
-    			name: 'idProceso'
-    		},
-    		{
-    			name: 'fechaEmisionFactura',
+    			name: 'fechaEntregaLlaves',
     			type:'date',
     			dateFormat: 'c'
     		},
     		{
-    			name: 'esTarifaPlana'
+    			name: 'idProveedorReceptor'
     		},
     		{
-    			name: 'fechaAutorizacionPropietario',
-    			type:'date',
-        		dateFormat: 'c'
-    		},
-    		{
-    			name: 'cartera'
-    		},
-    		{
-    			name: 'codCartera'
-    		},
-    		{
-    			name: 'requerimiento',
+    			name: 'llavesNoAplica',
     			type: 'boolean'
     		},
     		{
-    			name: 'esSareb',
-    			calculate: function(data) {
-    				 return data.codCartera == CONST.CARTERA['SAREB'];
-    			}
-    			
+    			name: 'llavesMotivo'
+
     		},
     		{
-    			name: 'logadoGestorMantenimiento',
+    			name: 'idTarea'
+    		},
+    		{
+    			name: 'importePresupuesto'
+    		},
+    		{
+    			name: 'refImportePresupueso'
+    		},
+    		{
+    			name: 'idTarifas'
+
+    		},
+    		{
+    			name: 'visualizarLlaves',
     			type: 'boolean'
-    		},
-    		{
-    			name: 'codSubcartera'
-    		},
-    		{
-    			name:'perteneceDNDtipoEdificacion',
-    			type:'boolean'
-    		},
-    		{
-    			name: 'codigoPartida'
-    		},
-    		{
-    			name: 'codigoSubpartida' 
-    		},
-    		{
-    			name: 'nombreUg' 
-    		},
-    		{
-    			name: 'nombreExpediente' 
     		},
     		{
     			name: 'nombreProyecto' 
@@ -280,7 +150,9 @@ Ext.define('HreRem.model.FichaTrabajo', {
     				 return data.tipoTrabajoCodigo == CONST.TIPOS_TRABAJO['EDIFICACION'] || data.tipoTrabajoCodigo == CONST.TIPOS_TRABAJO['SUELO'];
     			},
     			depends: 'tipoTrabajoCodigo'
-    			
+    		},
+			{	
+    			name: 'identificadorReamCodigo'
     		}
     		
     ],

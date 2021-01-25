@@ -284,8 +284,8 @@ public class GenericController extends ParadiseJsonController{
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboSubtipoActivo(String codigoTipoActivo){
-		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoActivo(codigoTipoActivo)));	
+	public ModelAndView getComboSubtipoActivo(String codigoTipoActivo, String idActivo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoActivo(codigoTipoActivo,idActivo)));	
 	}	
 
 	@SuppressWarnings("unchecked")
@@ -688,6 +688,14 @@ public class GenericController extends ParadiseJsonController{
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboTipoElementoGasto(Long idGasto, Long idLinea) {
+		if(idLinea == -1) {
+			return null;
+		}
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoElementoGasto(idGasto, idLinea)));	
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboActivoProveedorSuministro(){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboActivoProveedorSuministro()));	
 	}
@@ -700,6 +708,16 @@ public class GenericController extends ParadiseJsonController{
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getDiccionarioSubtipologiaAgendaSaneamiento(String codTipo){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getSubtipologiaAgendaSaneamiento(codTipo)));	
+	}
+
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboBBVATipoAlta(Long idRecovery) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboBBVATipoAlta(idRecovery)));	
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getcomboSociedadAnteriorBBVA() {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getcomboSociedadAnteriorBBVA()));	
 	}
 	
 	@SuppressWarnings("unchecked")

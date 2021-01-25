@@ -676,6 +676,16 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			        		xtype:'datefield'
 			        	},
 			        	flex: 1
+			        },
+			        {   
+			        	text: HreRem.i18n('fieldlabel.alteracion.catastral'),
+			        	dataIndex: 'fechaAlteracion',
+			        	formatter: 'date("d/m/Y")',
+			        	
+			        	editor: {
+			        		xtype:'datefield'
+			        	},
+			        	flex: 1
 			        }
 			       	        
 			    ],

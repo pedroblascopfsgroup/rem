@@ -80,15 +80,12 @@ Ext.define('HreRem.controller.AuthenticationController', {
      * @param {} session que lanzará el evento 'usuarioIdentificado'
      */
     cargarUsuarioIdentificado: function(session) {
-    	
     	var me = this;  
     	me.session = session;
+
     	if(Ext.isEmpty(session.user)) {
     		me.warn("No se ha cargado el usuario.");
-    	} else {
-    		me.log(session.user.getData());
     	}
-    	
     },
     
     /**
@@ -295,7 +292,6 @@ Ext.define('HreRem.controller.AuthenticationController', {
     },
     
     userIsRol: function(roles) {
-    	
     	var me = this,
     	userIsRol = false;
 
@@ -338,7 +334,13 @@ Ext.define('HreRem.controller.AuthenticationController', {
     	}
     	return tipoGestor;
     }, 
-    
+    userGroupHasRole: function (role) {
+    	var groupRoles = this.getUser().groupRoles;
+    	if (groupRoles) {
+			return groupRoles.includes(role);    		
+    	}
+    	return false;
+    },
     getUser: function() { 
     	var me = this;
     	

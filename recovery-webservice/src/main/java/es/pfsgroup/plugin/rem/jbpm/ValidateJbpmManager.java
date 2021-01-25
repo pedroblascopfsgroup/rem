@@ -68,7 +68,18 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 				return ofertaApi.isValidateOfertasDependientes(tareaExterna, valores);
 			}
 		}
-		return null;
+		
+		if (trabajoApi.checkBBVA(tareaExterna)) {
+			String errores = activoTramiteApi.existeAdjuntoUGValidacion(tareaExterna,"36","E");
+			if(Checks.esNulo(errores)) {
+				return null;
+			}else {
+				return errores;
+			}
+		}
+		
+			return null;
+	
 	}
 	
 	@Override

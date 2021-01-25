@@ -84,6 +84,9 @@ public class ActivoTitulo implements Serializable, Auditable {
 	private Date fechaNotaSimple;
 	
 	
+	@Column(name = "TIT_FEC_MARCAJE_INSC")
+	private Date fechaMarcajeInscripcion;
+	
 	@Version   
 	private Long version;
 	
@@ -196,6 +199,14 @@ public class ActivoTitulo implements Serializable, Auditable {
 
 	public void setActivo(Activo activo) {
 		this.activo = activo;
+	}
+
+	public Date getFechaMarcajeInscripcion() {
+		return fechaMarcajeInscripcion;
+	}
+
+	public void setFechaMarcajeInscripcion(Date fechaMarcajeInscripcion) {
+		this.fechaMarcajeInscripcion = fechaMarcajeInscripcion;
 	}
 	
 	

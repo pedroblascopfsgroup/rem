@@ -1,0 +1,340 @@
+--/*
+--##########################################
+--## AUTOR=DAP
+--## FECHA_CREACION=20201113
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-11745
+--## PRODUCTO=NO
+--##
+--## Finalidad: Script que añade en ACT_CONFIG_CTAS_CONTABLES los datos añadidos en T_ARRAY_DATA
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+	
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_ENTIDAD_ID NUMBER(16);
+    V_ID NUMBER(16);
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-11745';
+
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_CONFIG_CTAS_CONTABLES'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_DD_CRA_ID VARCHAR(50 CHAR); -- Vble. que almacena el id de la cartera.
+	  V_EJE_ID VARCHAR(50 CHAR); -- Vble. que almacena el id del año.
+
+    V_CONSTRAINT_NAME VARCHAR2(30 CHAR);
+
+    V_DURACION INTERVAL DAY(0) TO SECOND;
+    V_INICIO TIMESTAMP := SYSTIMESTAMP;
+    V_FIN TIMESTAMP;
+    V_PASO_INI TIMESTAMP;
+    V_PASO_FIN TIMESTAMP;
+
+    CURSOR CONSTRAINTS_ENABLED IS SELECT CONSTRAINT_NAME
+      FROM ALL_CONSTRAINTS
+      WHERE TABLE_NAME = 'ACT_CONFIG_CTAS_CONTABLES'
+          AND STATUS = 'ENABLED'
+          AND CONSTRAINT_TYPE IN ('C', 'U', 'F', 'P');
+
+    CURSOR CONSTRAINTS_DISABLED IS SELECT CONSTRAINT_NAME 
+      FROM ALL_CONSTRAINTS
+      WHERE TABLE_NAME = 'ACT_CONFIG_CTAS_CONTABLES'
+          AND STATUS = 'DISABLED'
+          AND CONSTRAINT_TYPE IN ('C', 'U', 'F', 'P');
+    
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    -- CUENTA_CONTABLE   DD_TGA_CODIGO  DD_TIM_CODIGO   DD_SCR_CODIGO
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+T_TIPO_DATA('Z01','15','84'),
+T_TIPO_DATA('Z01','15','70'),
+T_TIPO_DATA('Z01','15','82'),
+T_TIPO_DATA('Z01','15','81'),
+T_TIPO_DATA('Z02','15','73'),
+T_TIPO_DATA('Z02','15','76'),
+T_TIPO_DATA('Z02','15','75'),
+T_TIPO_DATA('Z02','15','74'),
+T_TIPO_DATA('Z01','15','83'),
+T_TIPO_DATA('ZA06','15','80'),
+T_TIPO_DATA('Z01','15','79'),
+T_TIPO_DATA('Z02','15','72'),
+T_TIPO_DATA('Z01','15','77'),
+T_TIPO_DATA('Z01','15','71'),
+T_TIPO_DATA('Z01','15','78'),
+
+
+T_TIPO_DATA('Z04','13','55'),
+T_TIPO_DATA('Z33','06','29'),
+T_TIPO_DATA('Z33','06','28'),
+T_TIPO_DATA('Z33','05','93'),
+T_TIPO_DATA('Z33','05','27'),
+T_TIPO_DATA('Z33','05','26'),
+T_TIPO_DATA('Z17','12','53'),
+T_TIPO_DATA('Z17','12','54'),
+T_TIPO_DATA('Z66','01','05'),
+T_TIPO_DATA('Z39','01','01'),
+T_TIPO_DATA('Z39','01','02'),
+T_TIPO_DATA('ZA07','01','06'),
+T_TIPO_DATA('Z38','01','07'),
+T_TIPO_DATA('Z62','01','03'),
+T_TIPO_DATA('Z62','01','04'),
+T_TIPO_DATA('Z48','01','92'),
+T_TIPO_DATA('Z08','14','62'),
+T_TIPO_DATA('Z17','14','60'),
+T_TIPO_DATA('Z06','14','58'),
+T_TIPO_DATA('Z08','14','61'),
+T_TIPO_DATA('Z08','14','69'),
+T_TIPO_DATA('Z08','14','57'),
+T_TIPO_DATA('Z08','14','68'),
+T_TIPO_DATA('Z40','14','59'),
+T_TIPO_DATA('Z08','14','64'),
+T_TIPO_DATA('Z08','14','63'),
+T_TIPO_DATA('Z08','14','67'),
+T_TIPO_DATA('Z08','14','66'),
+T_TIPO_DATA('Z08','14','65'),
+T_TIPO_DATA('Z33','07','31'),
+T_TIPO_DATA('Z33','07','30'),
+T_TIPO_DATA('Z33','08','33'),
+T_TIPO_DATA('Z33','08','32'),
+T_TIPO_DATA('Z33','08','34'),
+
+
+
+T_TIPO_DATA('Z23','18','89'),
+
+T_TIPO_DATA('Z40','03','19'),
+T_TIPO_DATA('Z40','03','20'),
+T_TIPO_DATA('Z50','17','88'),
+T_TIPO_DATA('Z46','04','24'),
+T_TIPO_DATA('Z46','04','25'),
+T_TIPO_DATA('Z46','04','23'),
+T_TIPO_DATA('Z46','04','22'),
+T_TIPO_DATA('Z46','04','21'),
+T_TIPO_DATA('Z26','10','42'),
+T_TIPO_DATA('Z26','10','41'),
+T_TIPO_DATA('Z26','10','40'),
+T_TIPO_DATA('Z26','10','39'),
+T_TIPO_DATA('Z13','11','97'),
+T_TIPO_DATA('Z13','11','96'),
+T_TIPO_DATA('Z13','11','95'),
+T_TIPO_DATA('Z13','11','48'),
+T_TIPO_DATA('Z21','11','49'),
+T_TIPO_DATA('Z13','11','94'),
+T_TIPO_DATA('Z15','11','44'),
+T_TIPO_DATA('Z13','11','52'),
+T_TIPO_DATA('Z13','11','47'),
+T_TIPO_DATA('Z15','11','46'),
+T_TIPO_DATA('Z19','11','43'),
+T_TIPO_DATA('Z05','11','51'),
+T_TIPO_DATA('Z08','11','50'),
+T_TIPO_DATA('Z29','09','36'),
+T_TIPO_DATA('Z30','09','35'),
+T_TIPO_DATA('Z31','09','37'),
+
+T_TIPO_DATA('Z40','02','10'),
+T_TIPO_DATA('Z40','02','09'),
+T_TIPO_DATA('Z40','02','08'),
+T_TIPO_DATA('Z40','02','12'),
+T_TIPO_DATA('Z40','02','14'),
+T_TIPO_DATA('Z40','02','16'),
+T_TIPO_DATA('Z40','02','15'),
+T_TIPO_DATA('Z40','02','18'),
+T_TIPO_DATA('Z40','02','17'),
+T_TIPO_DATA('Z40','02','13'),
+T_TIPO_DATA('Z40','02','11'),
+T_TIPO_DATA('Z03','16','86'),
+T_TIPO_DATA('Z24','16','87'),
+T_TIPO_DATA('Z24','16','85')
+
+		); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+    
+BEGIN	
+
+    DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_INICIO);
+
+    --ANALIZAMOS LA TABLA
+    #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','ACT_CONFIG_CTAS_CONTABLES');
+
+    V_PASO_FIN := SYSTIMESTAMP;
+    V_DURACION := V_PASO_FIN - V_INICIO;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Tabla '||V_TEXT_TABLA||' analizada. '||V_DURACION);
+    V_PASO_INI := SYSTIMESTAMP;
+
+    /*--DESACTIVAMOS CLAVES ANTES DE EMPEZAR PARA MEJORAR EL DESEMPEÑO
+    FOR CLAVES IN CONSTRAINTS_ENABLED 
+      LOOP
+
+        V_CONSTRAINT_NAME := CLAVES.CONSTRAINT_NAME; 
+
+        V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
+          DISABLE CONSTRAINT '||V_CONSTRAINT_NAME;
+        EXECUTE IMMEDIATE V_MSQL;
+
+        DBMS_OUTPUT.PUT_LINE('[INFO] Desactivada la clave '||V_CONSTRAINT_NAME);
+
+      END LOOP;*/
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] Vaciamos tabla temporal... ');
+    V_SQL := 'TRUNCATE TABLE '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA;
+    EXECUTE IMMEDIATE V_SQL;
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] Recogemos el valor id de la cartera, porque es el mismo para todos.');
+
+    V_SQL :=    'SELECT DD_CRA_ID 
+                FROM '||V_ESQUEMA||'.DD_CRA_CARTERA 
+                WHERE DD_CRA_CODIGO = ''16''';
+    EXECUTE IMMEDIATE V_SQL INTO V_DD_CRA_ID;
+
+	 
+    -- LOOP para insertar los valores -----------------------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN TMP_'||V_TEXT_TABLA||' ');
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+      
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+       
+        V_SQL := 'SELECT COUNT(1) 
+          FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||' TMP
+          JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TMP.DD_TGA_ID = TGA.DD_TGA_ID
+            AND TGA.BORRADO = 0
+          JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON TMP.DD_STG_ID = STG.DD_STG_ID
+            AND STG.DD_TGA_ID = TGA.DD_TGA_ID
+            AND STG.BORRADO = 0
+          WHERE CCC_CUENTA_CONTABLE = '''||TRIM(V_TMP_TIPO_DATA(1))||''' 
+            AND TGA.DD_TGA_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''
+            AND STG.DD_STG_CODIGO = '''||V_TMP_TIPO_DATA(3)||'''
+            AND DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''16'')';
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        IF V_NUM_TABLAS = 1 THEN
+          DBMS_OUTPUT.PUT_LINE('[INFO]: La CCC '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe');
+        ELSE
+          DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
+          V_ID := I;	
+          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.TMP_'||V_TEXT_TABLA||' (' ||
+                      'CCC_CTAS_ID, CCC_CUENTA_CONTABLE, DD_TGA_ID, DD_STG_ID, DD_CRA_ID, FECHACREAR, BORRADO) VALUES (' ||
+                      ''|| V_ID ||','''||V_TMP_TIPO_DATA(1)||''',(SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO WHERE DD_TGA_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''),'||
+                      '(SELECT DD_STG_ID FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG '||
+                      ' JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = STG.DD_TGA_ID AND TGA.DD_TGA_CODIGO = '''||V_TMP_TIPO_DATA(2)||''''||
+                      ' WHERE STG.DD_STG_CODIGO = '''||V_TMP_TIPO_DATA(3)||'''),'||
+                      ' '''||TRIM(V_DD_CRA_ID)||''', SYSDATE, 0)';
+          EXECUTE IMMEDIATE V_MSQL;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
+	  EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA INTO V_NUM_TABLAS;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: '||V_NUM_TABLAS||' registros en la tabla TMP_'||V_TEXT_TABLA);
+        END IF;
+
+      END LOOP;
+    COMMIT;
+
+    V_PASO_FIN := SYSTIMESTAMP;
+    V_DURACION := V_PASO_FIN - V_PASO_INI;
+    DBMS_OUTPUT.PUT_LINE('[INFO]: Tabla TMP_'||V_TEXT_TABLA||' MODIFICADA CORRECTAMENTE. '||V_DURACION);
+    V_PASO_INI := SYSTIMESTAMP;
+
+    DBMS_OUTPUT.PUT_LINE('[INFO]: Preparamos cuentas para tabla de negocio.');
+
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||' T1
+      USING (
+          SELECT CCC_CTAS_ID
+              , ROW_NUMBER() OVER(
+                  PARTITION BY DD_TGA_ID, DD_STG_ID, DD_TIM_ID, DD_CRA_ID, DD_SCR_ID
+                      , PRO_ID, EJE_ID, CCC_ARRENDAMIENTO, CCC_REFACTURABLE, DD_TBE_ID
+                      , CCC_ACTIVABLE, CCC_PLAN_VISITAS, DD_TCH_ID, DD_TRT_ID
+                      , CCC_VENDIDO
+                  ORDER BY CCC_CTAS_ID
+              ) RN
+          FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||'
+      ) T2
+      ON (T1.CCC_CTAS_ID = T2.CCC_CTAS_ID)
+      WHEN MATCHED THEN 
+          UPDATE SET T1.CCC_PRINCIPAL = CASE WHEN T2.RN = 1 THEN 1 ELSE 0 END';
+    EXECUTE IMMEDIATE V_MSQL;
+
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||'
+      SET DD_TIM_ID = (SELECT DD_TIM_ID FROM DD_TIM_TIPO_IMPORTE WHERE DD_TIM_CODIGO = ''BAS'')
+      WHERE DD_TIM_ID IS NULL';
+    EXECUTE IMMEDIATE V_MSQL;
+
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||' T1
+      USING (
+          SELECT CCC_CTAS_ID
+              , ROW_NUMBER() OVER(
+                  PARTITION BY DD_TGA_ID, DD_STG_ID, DD_TIM_ID, DD_CRA_ID, DD_SCR_ID
+                      , PRO_ID, EJE_ID, CCC_ARRENDAMIENTO, CCC_REFACTURABLE, DD_TBE_ID
+                      , CCC_ACTIVABLE, CCC_PLAN_VISITAS, DD_TCH_ID, DD_TRT_ID
+                      , CCC_VENDIDO
+                  ORDER BY CCC_CTAS_ID
+              ) RN
+          FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||'
+          WHERE CCC_PRINCIPAL = 0
+      ) T2
+      ON (T1.CCC_CTAS_ID = T2.CCC_CTAS_ID AND T2.RN > 1)
+      WHEN MATCHED THEN
+          UPDATE SET T1.BORRADO = 1';
+    EXECUTE IMMEDIATE V_MSQL;
+
+    V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||'
+      WHERE BORRADO = 1';
+    EXECUTE IMMEDIATE V_MSQL;
+
+    V_PASO_FIN := SYSTIMESTAMP;
+    V_DURACION := V_PASO_FIN - V_PASO_INI;
+    DBMS_OUTPUT.PUT_LINE('[INFO]: Cuentas anteriores 2020 preparadas. '||V_DURACION);
+
+    COMMIT;  
+
+    --ACTIVAMOS CLAVES ANTES DE EMPEZAR PARA MEJORAR EL DESEMPEÑO
+    FOR CLAVES IN CONSTRAINTS_DISABLED 
+      LOOP
+
+        V_CONSTRAINT_NAME := CLAVES.CONSTRAINT_NAME; 
+
+        V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
+          ENABLE CONSTRAINT '||V_CONSTRAINT_NAME;
+        EXECUTE IMMEDIATE V_MSQL;
+
+        DBMS_OUTPUT.PUT_LINE('[INFO] Activada la clave '||V_CONSTRAINT_NAME);
+
+      END LOOP;
+
+    EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA INTO V_NUM_TABLAS;
+    DBMS_OUTPUT.PUT_LINE('[INFO]: '||V_NUM_TABLAS||' registros en la tabla TMP_'||V_TEXT_TABLA);
+
+    V_FIN := SYSTIMESTAMP;
+    V_DURACION := V_FIN - V_INICIO;
+    DBMS_OUTPUT.PUT_LINE('[FIN] '||V_DURACION);
+
+EXCEPTION
+     WHEN OTHERS THEN
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+
+/
+
+EXIT

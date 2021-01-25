@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -9,31 +10,32 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
+import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.GastoSuplido;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProvisionGastos;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Service("updaterStateGastoManager")
 public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 
-	
 	@Autowired
 	private GenericABMDao genericDao;
 	
 	protected final Log logger = LogFactory.getLog(getClass());
-	
-//	@Autowired
-//	private GenericAdapter genericAdapter;
 	
 	@Resource
     MessageService messageServices;
@@ -42,12 +44,17 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	private static final String VALIDACION_DOCUMENTO_ADJUNTO_GASTO = "msg.validacion.gasto.documento.adjunto";
 	private static final String VALIDACION_ACTIVOS_ASIGNADOS = "msg.validacion.gasto.activos.asignados";
 	private static final String VALIDACION_PARTIDA_PRESUPUESTARIA = "msg.validacion.gasto.partida.presupuestaria";
+	private static final String VALIDACION_AL_MENOS_CUENTAS_Y_PARTIDAS = "msg.validacion.gasto.al.menos.cuenta.partida";
+	private static final String VALIDACION_CUENTA_PARTIDAS_APARTADO_CAPITULO = "msg.validacion.gasto.partida.contable.lbk";
 	private static final String VALIDACION_CUENTA_CONTABLE = "msg.validacion.gasto.cuenta.contable";
 	private static final String VALIDACION_IMPORTE_TOTAL = "msg.validacion.gasto.importe.total";
 	private static final String VALIDACION_TIPO_PERIODICIDAD = "msg.validacion.gasto.tipo.periodicidad";
 	private static final String VALIDACION_TIPO_OPERACION = "msg.validacion.gasto.tipo.operacion";
 	private static final String VALIDACION_PROPIETARIO = "msg.validacion.gasto.propietario";
 	private static final String VALIDACION_TIPO_SUBTIPO = "msg.validacion.gasto.tipo.subtipo";
+	private static final String VALIDACION_SUPLIDOS_NIF_EMISOR_CUENTA = "msg.validacion.gasto.suplidos.nif.emisor.cuenta";
+	private static final String VALIDACION_SUPLIDOS_NIF_ESTADO_GASTO = "msg.validacion.gasto.suplidos.nif.estado.gasto";
+	private static final String VALIDACION_SUPLIDOS_ABONO_CUENTA = "msg.validacion.gasto.suplidos.abono.cuenta";
 	
 	private static final String COD_DESTINATARIO_HAYA = "02";
 
@@ -64,6 +71,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	private static final String VALIDACION_GASTO_SIN_CONCEPTO = "msg.validacion.gasto.sin.concepto";
 
 	private static final String VALIDACION_GASTO_SIN_TIPO_IMP_INDIRECTO = "msg.validacion.gasto.sin.tipo.impuesto.indirecto";
+	
+	private static final String VALIDACION_LINEA_DETALLE = "msg.validacion.gasto.sin.tipo.impuesto.indirecto";
 	
 	private DDEstadoProvisionGastos estadoProvision = null;
 	
@@ -90,6 +99,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		String error = null;
 		
 		if(!Checks.esNulo(gasto)) {
+			List<GastoLineaDetalle> gastoListaDetalleList = gasto.getGastoLineaDetalleList();
+			
 			if(Checks.esNulo(gasto.getId())) {
 				error = messageServices.getMessage(VALIDACION_GASTO_SIN_ID);
 				return error;
@@ -102,10 +113,19 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				error = messageServices.getMessage(VALIDACION_GASTO_SIN_NUM_FACTURA);
 				return error;
 			}
-			if(Checks.esNulo(gasto.getTipoGasto()) || Checks.esNulo(gasto.getSubtipoGasto())) {
-				error = messageServices.getMessage(VALIDACION_TIPO_SUBTIPO);
+			if(gastoListaDetalleList == null || gastoListaDetalleList.isEmpty()) {
+				error = messageServices.getMessage(VALIDACION_LINEA_DETALLE);
 				return error;
 			}
+			
+			for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+				if(gastodetalleLinea.getSubtipoGasto() == null) {
+					error = messageServices.getMessage(VALIDACION_TIPO_SUBTIPO);
+					return error;
+				}
+			}
+
+			
 			if(Checks.esNulo(gasto.getProveedor())) {
 				error = messageServices.getMessage(VALIDACION_GASTO_SIN_EMISOR);
 				return error;
@@ -137,41 +157,55 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				error = messageServices.getMessage(VALIDACION_IMPORTE_TOTAL);
 				return error;
 			}
-			if(Checks.esNulo(gasto.getGestoria()) && (Checks.esNulo(gasto.getGastoDetalleEconomico()) || Checks.esNulo(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo()))) {
-				error = messageServices.getMessage(VALIDACION_GASTO_SIN_TIPO_IMP_INDIRECTO);
-				return error;
-			}
 			
-//			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera())){
-//				if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo())){
-//					if (Checks.esNulo(gasto.getGastoInfoContabilidad()) ||
-//							(Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable()) &&
-//									(!DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())))) {
-//						error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
-//						return error;
-//					}
-//				}
-//			}else{
-//				if(!Checks.esNulo(gasto.getPropietario().getCartera())) {
-//					if (Checks.esNulo(gasto.getGastoInfoContabilidad()) ||
-//							(Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable()) &&
-//									(!Checks.esNulo(gasto.getPropietario()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())))) {
-//						error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
-//						return error;
-//					}
-//				}
-//			}
-			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera()) && !Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
-				if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())){
-					if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable())) {
-						error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
+			if(gasto.getGestoria() == null) {
+				for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+					if((gastodetalleLinea.getTipoImpuesto() == null && gastodetalleLinea.getPrincipalSujeto() != null && gastodetalleLinea.getPrincipalSujeto() != 0.0 )) {
+						error = messageServices.getMessage(VALIDACION_GASTO_SIN_TIPO_IMP_INDIRECTO);
 						return error;
 					}
-				}
-				if(!Checks.esNulo(gasto.getSubtipoGasto().getCodigo()) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !"100".equals(gasto.getSubtipoGasto().getCodigo())) {
-					if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getPartidaPresupuestaria())) {
-						error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA); 
-						return error;
+				}	
+			}
+			
+			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera()) && !Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
+				String codigoCartera = gasto.getPropietario().getCartera().getCodigo();
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)) {
+					if(gasto.getGestoria() == null) {
+						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+							if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCccBase().isEmpty()) {
+								error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_Y_PARTIDAS);
+								return error;
+							}
+						}
+					}else {
+						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+							if(gastodetalleLinea.getCppBase() == null  || gastodetalleLinea.getCppBase().isEmpty()) {
+								error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA);
+								return error;
+							}
+						}
+					}
+				}else if(DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)){
+						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+							if(gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCccBase().isEmpty()) {
+								error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
+								return error;
+							}
+						}
+				}else if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera)) {
+					for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+						if(gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCapituloBase() == null || gastodetalleLinea.getApartadoBase() == null
+						|| gastodetalleLinea.getCccBase().isEmpty() || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCapituloBase().isEmpty() || gastodetalleLinea.getApartadoBase().isEmpty()) {
+							error = messageServices.getMessage(VALIDACION_CUENTA_PARTIDAS_APARTADO_CAPITULO);
+							return error;
+						}
+					}
+				}else{
+					for(GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+						if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase().isEmpty()) {
+							error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_Y_PARTIDAS); 
+							return error;
+						}
 					}
 				}
 			}else {
@@ -179,9 +213,12 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				return error;
 			}
 
-			if(Checks.estaVacio(gasto.getGastoProveedorActivos()) && !gasto.esAutorizadoSinActivos()) {
-				error = messageServices.getMessage(VALIDACION_ACTIVOS_ASIGNADOS); 
-				return error;
+			for (GastoLineaDetalle gastoLineaDetalle : gastoListaDetalleList) {
+				if((gastoLineaDetalle.getGastoLineaEntidadList() == null && !gastoLineaDetalle.esAutorizadoSinActivos()) 
+					|| (gastoLineaDetalle.getGastoLineaEntidadList().isEmpty() && !gastoLineaDetalle.esAutorizadoSinActivos())) {
+					error = messageServices.getMessage(VALIDACION_ACTIVOS_ASIGNADOS); 
+					return error;
+				}
 			}
 			
 			if(codEstadoProvision == null || !DDEstadoProvisionGastos.CODIGO_RECHAZADO_SUBSANABLE.equals(codEstadoProvision)) {
@@ -190,6 +227,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 					return error;
 				}
 			}
+			
 		}
 		return error;
 	}
@@ -346,6 +384,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
 			DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
 			gasto.setEstadoGasto(estadoGasto);
+		
 			return true;
 		}
 		
@@ -590,4 +629,72 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		}
 		
 	}*/
+
+	@Override
+	public String validarAutorizacionSuplido(GastoProveedor gasto) {
+		
+		String error = null;
+		
+		if(isGastoSuplido(gasto)) {
+			
+			GastoSuplido gastoSuplido = genericDao.get(GastoSuplido.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedorSuplido", gasto));
+			GastoProveedor gastoPrincipal = null;
+			
+			if(gastoSuplido != null) {
+				gastoPrincipal = gastoSuplido.getGastoProveedorPadre();
+			}
+			
+			GastoDetalleEconomico detalleGasto = genericDao.get(GastoDetalleEconomico.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId()));
+			
+			if(detalleGasto != null && gastoPrincipal != null && gastoPrincipal.getProveedor() != null
+					&& ((detalleGasto.getNifTitularCuentaAbonar() != null &&   !detalleGasto.getNifTitularCuentaAbonar().equals(gastoPrincipal.getProveedor().getDocIdentificativo()))
+					|| (gastoPrincipal.getProveedor() == null || detalleGasto == null))) {
+				if(error == null) {
+					error = "";
+				}
+				error += "- " + messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_EMISOR_CUENTA) + "<br/>";
+			}
+			
+			if(gastoPrincipal != null && gastoPrincipal.getEstadoGasto() != null
+					&& !DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gastoPrincipal.getEstadoGasto().getCodigo())) {
+				if(error == null) {
+					error = "";
+				}
+				error += "- " + messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_ESTADO_GASTO) + "<br/>";
+			}
+			
+		}
+		return error;
+		
+	}
+	
+	@Override
+	public Boolean isGastoSuplido(GastoProveedor gasto) {
+		if(((gasto.getSuplidosVinculados() != null && DDSinSiNo.CODIGO_NO.equals(gasto.getSuplidosVinculados().getCodigo())) || gasto.getSuplidosVinculados() == null)
+				&& gasto.getNumeroFacturaPrincipal() != null) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public String validarDatosPagoGastoPrincipal(GastoProveedor gasto) {
+		
+		String error = null;
+		
+		if(gasto != null && isGastoSuplido(gasto)) {
+			GastoDetalleEconomico detalleGasto = genericDao.get(GastoDetalleEconomico.class,
+					genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId()));
+			
+			if(detalleGasto == null || detalleGasto.getAbonoCuenta() == null ||
+					detalleGasto.getAbonoCuenta() == 0)  {
+				error = messageServices.getMessage(VALIDACION_SUPLIDOS_ABONO_CUENTA);
+			}			
+			
+		}
+
+		return error;
+		
+	}
 }

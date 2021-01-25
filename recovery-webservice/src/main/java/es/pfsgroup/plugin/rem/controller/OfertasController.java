@@ -25,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.config.ConfigManager;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
@@ -47,8 +48,12 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
+import es.pfsgroup.plugin.rem.model.DtoExcelFichaComercial;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
@@ -59,8 +64,10 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -430,6 +437,7 @@ public class OfertasController {
 		Oferta oferta = ofertaApi.getOfertaById(idOferta);
 		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
 	}
+
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -858,6 +866,8 @@ public class OfertasController {
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 	
+
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getClaseOferta(Long idExpediente, ModelMap model) {
@@ -892,4 +902,67 @@ public class OfertasController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView isEpaAlquilado(Long idAgrupacion, ModelMap model) {
+		Integer agrupacionEpaAlquilado = ofertaApi.isEpaAlquilado(idAgrupacion);
+	
+		try {	
+			model.put("agrupacionEpaAlquilado", agrupacionEpaAlquilado);
+			model.put("success", true);
+		}catch(Exception e) {
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelBBVA(Long idExpediente, HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+		try {
+			 	DtoExcelFichaComercial listaOfertasFilter = ofertaApi.getListOfertasFilter(idExpediente);
+				File file = null;
+				file = excelReportGeneratorApi.generateBbvaReportGetFile(listaOfertasFilter,request);
+				excelReportGeneratorApi.sendReport(file, response);
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+ 
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView generarFichaComercial(ModelMap model, Long idOferta, Long idExpediente, HttpServletRequest request) {
+
+		try {
+
+			Oferta oferta = ofertaApi.getOfertaById(idOferta);
+			DtoExcelFichaComercial dtoExcelFichaComercial = ofertaApi.getListOfertasFilter(idExpediente);
+			String nameFile = excelReportGeneratorApi.generateBbvaReportGetName(dtoExcelFichaComercial,request);
+			String errorCode = notificationOferta.enviarMailFichaComercial(oferta, nameFile,request);
+
+			if(errorCode == null || errorCode.isEmpty()){
+				model.put("success", true);
+			}
+			else{
+				model.put("success", false);
+				model.put("errorCode", errorCode);
+			}
+
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("errorCode", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
 }

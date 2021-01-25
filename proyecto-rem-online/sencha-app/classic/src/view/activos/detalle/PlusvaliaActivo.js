@@ -139,7 +139,7 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
             	},
             	allowBlank: false
 	        } ,{
-	            xtype : 'numberfieldbase',
+	            xtype : 'textfieldbase',
 	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.numExpediente'),
 	            bind : {
 	                value : '{plusvalia.numExpediente}'

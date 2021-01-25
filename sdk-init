@@ -114,7 +114,6 @@ function sdk_appserver () {
 		-p=8080:8080 \
 		-p=8081:8081 \
 		-p=1045:1045 \
-		--network=host \
 		--name=${SDK_DOCKER_CONTAINER_NAME} \
 		${SDK_APPSERVER_DOCKER_IMAGE}
 
@@ -132,7 +131,6 @@ function mvn () {
 		-u $(id -u):$(id -g) \
 		-t \
 		--rm \
-		--network=host \
 		--name sdk-maven-builder \
 		-v "$(pwd)":/usr/src/project \
 		-v $HOME/.m2/repository:/usr/share/maven/external-repo \
@@ -148,7 +146,6 @@ function java () {
 	docker run \
 		-u $(id -u):$(id -g) \
 		-v $(pwd):$(pwd) \
-		--network=host \
 		--name sdk-maven-builder \
 		--rm \
 		${SDK_MAVEN_DOCKER_IMAGE} \
@@ -197,7 +194,7 @@ function sdk_appserver_update () {
 		return
 	fi
 
-	docker cp ./rec-web/target/pfs-9.3-SNAPSHOT.war ${SDK_DOCKER_CONTAINER_NAME}:/recovery/app-server && \
+	docker cp ./rem-web/target/pfs-3.0.0-REM.war ${SDK_DOCKER_CONTAINER_NAME}:/recovery/app-server && \
 	docker exec -d ${SDK_DOCKER_CONTAINER_NAME} /recovery/app-server/stopAndUpdateWar.sh && \
 	sdk_appserver_log
 }

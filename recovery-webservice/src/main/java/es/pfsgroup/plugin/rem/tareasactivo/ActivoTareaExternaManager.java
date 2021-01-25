@@ -71,7 +71,8 @@ public class ActivoTareaExternaManager /*extends TareaExternaManager*/ implement
 	public List<TareaExterna> getActivasByIdTramite(Long idTramite, Usuario usuarioLogado) {
 
 		List<EXTGrupoUsuarios> grupos = genericDao.getList(EXTGrupoUsuarios.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()),
+				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 
 		// Implementacion de gestores sustitutos, metemos a los USU_ID como si fueran
 		// grupos para que luego al tirar la query HQL recupere las tareas de los

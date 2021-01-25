@@ -16,9 +16,11 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.BulkOferta;
 import es.pfsgroup.plugin.rem.model.CondicionesActivo;
+import es.pfsgroup.plugin.rem.model.DtoActivosAlquiladosGrid;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoAuditoriaDesbloqueo;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
@@ -53,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
+import es.pfsgroup.plugin.rem.model.DtoActivosAlquiladosGrid;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
@@ -1306,6 +1309,21 @@ public interface ExpedienteComercialApi {
 	String doCalculateComiteByExpedienteId(Long idExpediente);
 	
 	DtoOrigenLead getOrigenLeadList(Long idExpediente);
+	
+	List<DtoAuditoriaDesbloqueo> getAuditoriaDesbloqueoList(Long idExpediente);
+	
+	void insertarRegistroAuditoriaDesbloqueo(Long expedienteId, String comentario, Long usuId);
+
+	/*
+	 * Devuelve si el expediente ha finalizado la tarea Cierre Económico
+	 * @param idOferta
+	 * @return DDComiteSancion
+	 */
+	boolean finalizadoCierreEconomico(ExpedienteComercial expediente);
+	
+	boolean cumpleCondicionesCrearHonorario(Long idEntidad);
+
+	boolean finalizadoCierreEconomico(Long expedienteId);
 	/**
 	 * Método para activar compradores de la pestaña 'Compradores' del expediente comercial que están de baja 
 	 * @param idExpediente 
@@ -1313,7 +1331,9 @@ public interface ExpedienteComercialApi {
 	 * @return boolean
 	 */
 	boolean activarCompradorExpediente(Long idCompradorExpediente, Long idExpediente);
-
+	
+	public Boolean getActivoExpedienteEpa(ExpedienteComercial expediente);
+	public Boolean getActivoExpedienteAlquilado(ExpedienteComercial expediente);
 	public Long uploadDocumentoGestorDocumental(ExpedienteComercial expedienteComercial, WebFileItem webFileItem,
 			DDSubtipoDocumentoExpediente subtipoDocumento, String username) throws Exception;
 
@@ -1321,6 +1341,12 @@ public interface ExpedienteComercialApi {
 			String username) throws Exception;
 
 	boolean ofertasEnLaMismaTarea(BulkOferta blkOfr);
+	
+	List<DtoActivosAlquiladosGrid> getActivosAlquilados(Long idExpediente);
+
+	boolean esBBVA(TareaExterna tareaExterna);
+
+	boolean updateActivosAlquilados(DtoActivosAlquiladosGrid dto);
 
 	boolean sacarBulk(Long idExpediente);
 

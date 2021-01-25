@@ -101,5 +101,6 @@ public class TareaController extends ParadiseJsonController{
 		dto.setValues(valores);
 		return dto;
 	}
+    
 
 }

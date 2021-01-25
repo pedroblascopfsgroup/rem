@@ -32,6 +32,8 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
@@ -42,6 +44,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
@@ -79,7 +82,12 @@ public class TrabajoAdapter {
     @Autowired
 	private GestorDocumentalFotosApi gestorDocumentalFotos;
     
+    @Autowired
+    private AgrupacionAdapter agrupacionAdapter;
+    
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+    
+    private static final String T017_TRAMITE_BBVA_DESCRIPCION = "Trámite comercial de venta BBVA";
 	
 	public List<ActivoTrabajo> getListadoActivoTrabajos(Long idActivo, String codigoSubtipotrabajo){
 		List<ActivoTrabajo> ActivoTrabajo = new ArrayList<ActivoTrabajo>();
@@ -117,10 +125,13 @@ public class TrabajoAdapter {
 					if(!Checks.esNulo(tramite.getTramitePadre())) {
 						beanUtilNotNull.copyProperty(dtoTramite, "idTramitePadre", tramite.getTramitePadre().getId());
 					}
-					/*if(!Checks.estaVacio(listaActivosTrabajo)) {
-						beanUtilNotNull.copyProperty(dtoTramite, "idActivo", listaActivosTrabajo.get(0).getIdActivo());
-					}*/
-					beanUtilNotNull.copyProperty(dtoTramite, "nombre", tramite.getTipoTramite().getDescripcion());
+					
+					if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo())) {
+						beanUtilNotNull.copyProperty(dtoTramite, "nombre", T017_TRAMITE_BBVA_DESCRIPCION);
+					}else {
+						beanUtilNotNull.copyProperty(dtoTramite, "nombre", tramite.getTipoTramite().getDescripcion());
+					}
+					
 					beanUtilNotNull.copyProperty(dtoTramite, "estado", tramite.getEstadoTramite().getDescripcion());
 					
 					List<TareaExterna> tareasTramite = activoTareaExternaApi.getTareasByIdTramite(tramite.getId());
@@ -145,7 +156,12 @@ public class TrabajoAdapter {
 						}
 						//idTramite necesario para poder abrir desde listado de tareas del trabajo
 						beanUtilNotNull.copyProperty(dtoListadoTareas, "idTramite", tramite.getId());
-						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTramite", tramite.getTipoTramite().getDescripcion());
+						if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo())) {
+							beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTramite", T017_TRAMITE_BBVA_DESCRIPCION);
+						}else {
+							beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTramite", tramite.getTipoTramite().getDescripcion());
+						}
+						
 						beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaInicio", tarea.getTareaPadre().getFechaInicio());
 						beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaFin", tarea.getTareaPadre().getFechaFin());
 						beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaVenc", tarea.getTareaPadre().getFechaVenc());
@@ -241,6 +257,97 @@ public class TrabajoAdapter {
 		}
 		return true;
 	}
+	
+	public String getAdvertenciaCreacionTrabajo(Long idActivo, Long idAgrupacion, String codigoSubtipoTrabajo){
+
+		String mensaje = "";
+		List<ActivoTrabajo> listaActivoTrabajo = new ArrayList<ActivoTrabajo>();
+		List<ActivoTrabajo> listaFiltrada = new ArrayList<ActivoTrabajo>();
+		
+		if(!Checks.esNulo(idActivo)) {
+			listaActivoTrabajo = getListadoActivoTrabajos(idActivo, codigoSubtipoTrabajo);
+		}
+		
+		if(!Checks.esNulo(idAgrupacion)) {
+			Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion);
+			
+			ActivoAgrupacion agrupacion= genericDao.get(ActivoAgrupacion.class, filtroId);
+			
+			for (ActivoAgrupacionActivo act : agrupacion.getActivos()) {
+				List<ActivoTrabajo> listaActivosTrabajos = getListadoActivoTrabajos(act.getActivo().getId(), codigoSubtipoTrabajo);
+				if(!Checks.esNulo(listaActivosTrabajos) && !listaActivosTrabajos.isEmpty()) {
+					listaActivoTrabajo.addAll(listaActivosTrabajos);
+				}
+			}
+			
+		}
+		
+		for(ActivoTrabajo activo :listaActivoTrabajo) {
+			if(!activo.getTrabajo().getEstado().getCodigo().equals(DDEstadoTrabajo.ESTADO_VALIDADO)){
+				listaFiltrada.add(activo);
+			}
+		}
+
+		if (!listaFiltrada.isEmpty()){
+
+			Integer countActivoTrabajos = listaActivoTrabajo.size();
+			String tipoTrabajoDescripcion = listaActivoTrabajo.get(0).getTrabajo().getTipoTrabajo().getDescripcion();
+			String subTipoTrabajoDescripcion = listaActivoTrabajo.get(0).getTrabajo().getSubtipoTrabajo().getDescripcion();
+			
+			if (countActivoTrabajos == 1){
+				mensaje = messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.activo").concat(" "); //"Advertencia: Para este activo ya existe un trabajo del tipo ";
+				mensaje = mensaje.concat(listaActivoTrabajo.get(0).getActivo().getNumActivo().toString());
+				mensaje = mensaje.concat(" ");
+				mensaje = mensaje.concat(messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.activo.yaExiste").concat(" "));
+				mensaje = mensaje.concat(tipoTrabajoDescripcion);
+				mensaje = mensaje.concat(" / ");
+				mensaje = mensaje.concat(subTipoTrabajoDescripcion);
+				mensaje = mensaje.concat(" ").concat(messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.uno.conEstado")).concat(" "); //mensaje.concat(" y en estado ");
+				mensaje = mensaje.concat(listaActivoTrabajo.get(0).getTrabajo().getEstado().getDescripcion()).concat(".");
+				
+				
+			}else {
+				String estados = new String();
+				String activos = new String();
+				//Se almacenan los estados de todos los trabajos encontrados en un objeto tipo HashSet para
+				//crear una colección de estados distintos
+				HashSet<String> listaEstadosTrabajos = new HashSet<String>();
+				HashSet<String> listaActivos = new HashSet<String>();
+				
+				for (ActivoTrabajo activoTrabajo : listaActivoTrabajo){
+					if(!activoTrabajo.getTrabajo().getEstado().getCodigo().equals(DDEstadoTrabajo.ESTADO_VALIDADO)){
+						listaEstadosTrabajos.add(activoTrabajo.getTrabajo().getEstado().getDescripcion());
+					}
+					listaActivos.add(activoTrabajo.getActivo().getNumActivo().toString());
+				}
+				
+				for (String estadosTrabajos : listaEstadosTrabajos){
+					estados = estados.concat(estadosTrabajos).concat(", ");
+				}
+				
+				for (String activoTrabajo : listaActivos){
+					activos = activos.concat(activoTrabajo).concat(", ");
+				}
+				
+				estados = estados.substring(0, estados.length()-2);
+				activos = activos.substring(0, activos.length()-2);
+				
+				mensaje = messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.activos").concat(" "); //"Advertencia: Para este activo ya existen ";
+				mensaje = mensaje.concat(activos).concat(" ");
+				mensaje = mensaje.concat(messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.activos.yaExiste").concat(" ")); //"Advertencia: Para este activo ya existen ";
+				mensaje = mensaje.concat(" ").concat(messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.varios.trabajosTipo")).concat(" "); //mensaje.concat(" trabajos del tipo ");
+				mensaje = mensaje.concat(tipoTrabajoDescripcion);
+				mensaje = mensaje.concat(" / ");
+				mensaje = mensaje.concat(subTipoTrabajoDescripcion);
+				mensaje = mensaje.concat(" ").concat(messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.varios.conEstado")).concat(" "); //mensaje.concat(" y en estados ");
+				mensaje = mensaje.concat(estados).concat(".");
+			}
+		}
+	
+			
+		return mensaje;
+	}
+	
 	
 	public String getAdvertenciaCrearTrabajo(Long idActivo, String codigoSubtipoTrabajo, List<ActivoTrabajo> listaActivoTrabajo ){
 
@@ -346,6 +453,40 @@ public class TrabajoAdapter {
 		}
 		if(!Checks.estaVacio(listIdActivos))
 			return activoDao.getActivosFromCrearTrabajo(listIdActivos, webDto);
+		return null;
+	}
+	
+	public Page getListActivosById(String idActivo, DtoTrabajoListActivos webDto) {
+		
+		List<String> listaActivo = new ArrayList<String>();
+		if (idActivo.contains(",")) {
+			String[] activos = idActivo.split(",");
+			for(int i =0 ; i< activos.length; i++) {
+				listaActivo.add(activos[i]);
+			}
+		}else {
+			listaActivo.add(idActivo);
+		}
+		
+		return activoDao.getListActivosPorID(listaActivo, webDto);
+	}
+	
+	public Page getListActivosCrearTrabajoByAgrupacion(Long idAgrupacion, DtoTrabajoListActivos webDto) {
+		
+		List<String> idActivos = new ArrayList<String>();
+		
+		ActivoAgrupacion agr = agrupacionAdapter.getAgrupacionObjectById(idAgrupacion);
+		
+		if(agr!=null) {
+			
+			for(ActivoAgrupacionActivo aga: agr.getActivos()) {
+				idActivos.add(aga.getActivo().getId().toString());
+			}
+			
+			return activoDao.getListActivosPorID(idActivos, webDto);
+			
+		}
+		
 		return null;
 	}
 

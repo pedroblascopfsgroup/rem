@@ -29,10 +29,12 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
@@ -71,12 +73,12 @@ public class GastoProveedor implements Serializable, Auditable {
     @JoinColumn(name = "DD_TGA_ID")
     private DDTipoGasto tipoGasto;
 	
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_STG_ID")
-    private DDSubtipoGasto subtipoGasto;
-	
 	@Column(name="GPV_CONCEPTO")
 	private String concepto;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PFA_ID")
+    private Prefactura prefactura;
 	
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPE_ID")
@@ -130,7 +132,12 @@ public class GastoProveedor implements Serializable, Auditable {
     @JoinColumn(name = "GPV_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private GastoInfoContabilidad gastoInfoContabilidad;    
-	
+    
+    @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
+    @JoinColumn(name = "GPV_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private List<GastoLineaDetalle> gastoLineaDetalleList;    
+
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="PRG_ID")
 	private ProvisionGastos provision;
@@ -141,16 +148,7 @@ public class GastoProveedor implements Serializable, Auditable {
     /**
      * Lista de adjuntos que se adjuntan sin servicio del gestor documental
      */
-    private List<AdjuntoGasto> adjuntos;   
-    
-    @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
-    @JoinColumn(name = "GPV_ID")
-    @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private List<GastoProveedorTrabajo> gastoProveedorTrabajos;
-    
-    @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
-    @JoinColumn(name = "GPV_ID")
-    private List<GastoProveedorActivo> gastoProveedorActivos;
+    private List<AdjuntoGasto> adjuntos;
     
     @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
@@ -167,10 +165,7 @@ public class GastoProveedor implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="NUM_GASTO_ABONADO")
     private GastoProveedor gastoProveedorAbonado;
-    
-    @Column(name="GPV_GASTO_SIN_ACTIVOS")
-    private Integer gastoSinActivos;
-
+ 
 	@Column(name="NUM_GASTO_DESTINATARIO")
 	private String numGastoDestinatario;
 	
@@ -191,6 +186,13 @@ public class GastoProveedor implements Serializable, Auditable {
 	
 	@Column(name="GPV_FECHA_REC_HAYA")
 	private Date fechaRecHaya;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="GPV_SUPLIDOS_VINCULADOS")
+	private DDSinSiNo suplidosVinculados;
+	
+	@Column(name="GPV_NUMERO_FACTURA_PPAL")
+	private String numeroFacturaPrincipal;
     
 	@Version   
 	private Long version;
@@ -220,14 +222,6 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setTipoGasto(DDTipoGasto tipoGasto) {
 		this.tipoGasto = tipoGasto;
-	}
-
-	public DDSubtipoGasto getSubtipoGasto() {
-		return subtipoGasto;
-	}
-
-	public void setSubtipoGasto(DDSubtipoGasto subtipoGasto) {
-		this.subtipoGasto = subtipoGasto;
 	}
 
 	public String getConcepto() {
@@ -375,23 +369,6 @@ public class GastoProveedor implements Serializable, Auditable {
 		this.gastoDetalleEconomico = gastoDetalleEconomico;
 	}
 
-	public List<GastoProveedorTrabajo> getGastoProveedorTrabajos() {
-		return gastoProveedorTrabajos;
-	}
-
-	public void setGastoProveedorTrabajos(
-			List<GastoProveedorTrabajo> gastoProveedorTrabajos) {
-		this.gastoProveedorTrabajos = gastoProveedorTrabajos;
-	}
-
-	public List<GastoProveedorActivo> getGastoProveedorActivos() {
-		return gastoProveedorActivos;
-	}
-
-	public void setGastoProveedorActivos(
-			List<GastoProveedorActivo> gastoProveedorActivos) {
-		this.gastoProveedorActivos = gastoProveedorActivos;
-	}
 	public List<AdjuntoGasto> getAdjuntos() {
 		return adjuntos;
 	}
@@ -455,26 +432,13 @@ public class GastoProveedor implements Serializable, Auditable {
 		
 		DDCartera cartera = null;
 		
-		if(!Checks.estaVacio(this.gastoProveedorActivos)) {
-			cartera = this.gastoProveedorActivos.get(0).getActivo().getCartera();			
+		if(this.getPropietario() != null && this.getPropietario().getCartera() != null){
+			cartera= this.getPropietario().getCartera();
 		}
-	
 		return cartera;
 	
 	}
 	
-	public Integer getGastoSinActivos() {
-		return gastoSinActivos;
-	}
-
-	public void setGastoSinActivos(Integer gastoSinActivos) {
-		this.gastoSinActivos = gastoSinActivos;
-	}
-
-	public boolean esAutorizadoSinActivos() {
-		return new Integer(1).equals(this.gastoSinActivos);
-	}
-
 	public Integer getExisteDocumento() {
 		return existeDocumento;
 	}
@@ -491,17 +455,7 @@ public class GastoProveedor implements Serializable, Auditable {
 		this.gastoProveedorAvisos = gastoProveedorAvisos;
 	}
 	
-	public DDSubcartera getSubcartera() {
-		
-		DDSubcartera subcartera = null;
-		
-		if(!Checks.estaVacio(this.gastoProveedorActivos)) {
-			subcartera = this.gastoProveedorActivos.get(0).getActivo().getSubcartera();			
-		}
-	
-		return subcartera;
-	
-	}
+
 
 	public String getIdentificadorUnico() {
 		return identificadorUnico;
@@ -553,5 +507,37 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setFechaRecHaya(Date fechaRecHaya) {
 		this.fechaRecHaya = (Date) fechaRecHaya.clone();
+	}
+
+	public List<GastoLineaDetalle> getGastoLineaDetalleList() {
+		return gastoLineaDetalleList;
+	}
+
+	public void setGastoLineaDetalleList(List<GastoLineaDetalle> gastoLineaDetalleList) {
+		this.gastoLineaDetalleList = gastoLineaDetalleList;
+	}
+
+	public Prefactura getPrefactura() {
+		return prefactura;
+	}
+
+	public void setPrefactura(Prefactura prefactura) {
+		this.prefactura = prefactura;
+	}
+	
+	public DDSinSiNo getSuplidosVinculados() {
+		return suplidosVinculados;
+	}
+
+	public void setSuplidosVinculados(DDSinSiNo suplidosVinculados) {
+		this.suplidosVinculados = suplidosVinculados;
+	}
+
+	public String getNumeroFacturaPrincipal() {
+		return numeroFacturaPrincipal;
+	}
+
+	public void setNumeroFacturaPrincipal(String numeroFacturaPrincipal) {
+		this.numeroFacturaPrincipal = numeroFacturaPrincipal;
 	}
 }

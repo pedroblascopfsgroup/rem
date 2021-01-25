@@ -330,6 +330,10 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 			name:'fechaRecepcionRespuestaOrganismo',
 			type:'date',
 			dateFormat: 'c'
+		},
+		{
+			name: 'puedeEditarCalificacionNegativaAdicional',
+			type: 'boolean'
 		}
     ],
 

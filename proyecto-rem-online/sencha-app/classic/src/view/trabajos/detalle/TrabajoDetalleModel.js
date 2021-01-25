@@ -3,7 +3,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     alias: 'viewmodel.trabajodetalle',
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.ActivoTrabajo', 'HreRem.model.ActivoTrabajoSubida',
-    'HreRem.model.AdjuntoTrabajo', 'HreRem.model.TareaList', 'HreRem.model.ObservacionesTrabajo', 'HreRem.model.Llaves', 'HreRem.model.FichaTrabajo'],
+    'HreRem.model.AdjuntoTrabajo', 'HreRem.model.TareaList', 'HreRem.model.ObservacionesTrabajo', 'HreRem.model.Llaves', 'HreRem.model.FichaTrabajo',
+    'HreRem.model.HistoricoDeCamposModel','HreRem.model.TarifasGridModel'],
     
     data: {
     	trabajo: null
@@ -37,40 +38,26 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    },
 	    
 		disableTarificacion: function (get) {
-			 var fechaEjecucionReal = get('trabajo.fechaEjecucionReal');
-			 var fechaCierreEco = get('trabajo.fechaCierreEconomico');
-			 var fechaEmisionFactura = get('trabajo.fechaEmisionFactura');
-	    	 var esTarificado = get('gestionEconomica.esTarificado');
-	    	 var isSupervisorActivo = $AU.userIsRol('HAYASUPACT') || $AU.userIsRol('HAYASUPADM') || $AU.userIsRol('HAYASUPER');
-		     var isGestorActivos = $AU.userIsRol('HAYAGESACT') || $AU.userIsRol('HAYAGESTADM');
-		     var isProveedor = $AU.userIsRol('HAYAPROV') || $AU.userIsRol('HAYACERTI') 
-		     				   || $AU.userIsRol('GESTOCED') || $AU.userIsRol('GESTOADM');
+	    	 var isSupervisorActivo = $AU.userIsRol('HAYASUPER');
+		     var isGestorActivos = $AU.userIsRol('HAYAGESACT');
+		     var isProveedor = $AU.userIsRol('HAYAPROV');
 
-		     if(!Ext.isEmpty(fechaEmisionFactura)){
-		    	 return true;	    		
-		     } else if(isSupervisorActivo){
-		    	return false;		    		
-		     } else if(isGestorActivos){
-		    	if (!Ext.isEmpty(fechaCierreEco))
-			    	 return true;
-			    else {
-				   	 if (esTarificado)
-				   		 return false;
-				    else
-				    	 return true;
-			    }	    		
-		    } else if(isProveedor){
-		    	if (Ext.isEmpty(fechaEjecucionReal))
-	    			return false;
-	    		else {
-	    			return true;
-	    		}
-		    } else {
-		    	return true;
-		    }
+		     return isSupervisorActivo || isGestorActivos || isProveedor;
 	    	 
-	    	 
-	    	 
+	    },
+	    
+	    mostrarTotalProveedor: function(get){
+	    	var isGestorActivos = $AU.userIsRol('HAYAGESACT');
+	    	var isSuper = $AU.userIsRol('HAYASUPER');
+	    	var isProveedor = $AU.userIsRol('HAYAPROV');
+	    	return isGestorActivos || isSuper || isProveedor;
+	    },
+	    
+	    mostrarTotalCliente: function(get){
+	    	var isGestorActivos = $AU.userIsRol('HAYAGESACT');
+	    	var isSuper = $AU.userIsRol('HAYASUPER');
+	    	var isUsuarioCliente = get('gestionEconomica.esUsuarioCliente');
+	    	return isGestorActivos || isSuper || isUsuarioCliente;
 	    },
 	    
 	    editableTarificacionProveedor: function (get){
@@ -79,18 +66,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    },
 	    
 	    disablePresupuesto: function (get) {
-	    	
-	    	 var fechaCierreEco = get('trabajo.fechaCierreEconomico');
-	    	 var esTarificado = get('gestionEconomica.esTarificado');
-	    	
-	    	 if (!Ext.isEmpty(fechaCierreEco))
-	    		 return true;
-	    	 else {
-		    	 if (esTarificado || Ext.isEmpty(esTarificado))
-		    		 return true;
-		    	 else
-		    		 return false;
-	    	 }
+    		var isSupervisorActivo = $AU.userIsRol('HAYASUPER');
+		    var isGestorActivos = $AU.userIsRol('HAYAGESACT');
+		    var isProveedor = $AU.userIsRol('HAYAPROV');
+
+		    return isSupervisorActivo || isGestorActivos || isProveedor;
 	    },
 	    
 	    enableAddPresupuesto: function(get) {
@@ -142,6 +122,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				 return false;
 		},
 		
+	 	mostrarVentanaTrabajoGridActivo: function(get){
+	 		me = this;
+	 		var resultado = me.getView().idActivo == null ? true : false;
+	 		return resultado;
+	 	},
+		
 		esVisibleGasto: function(get){
 	    		me = this;
 	    		
@@ -150,8 +136,20 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    			return true;
 	    		}else
 					return false;
+	    },
+	    
+	    deshabilitarCheckMultiactivo: function(get){
+	    	me = this;
+	    	var deshabilitar = me.getView().idActivo != null || me.getView().idAgrupacion != null;
+	    	var checkboxMultiActivo = me.getView().lookupReference('checkMultiActivo');
+	    	if(checkboxMultiActivo != null) {
+	    		checkboxMultiActivo.checked = !deshabilitar;
+	    		checkboxMultiActivo.setValue(!deshabilitar);
+	    		checkboxMultiActivo.fireEvent('change', null, !deshabilitar, deshabilitar, null);
+	    	}
+	    	return true;
 	    }
-		
+	   
     },
     
     stores: {
@@ -181,6 +179,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboSubtipoTrabajo',
 					extraParams: {tipoTrabajoCodigo: '{trabajo.tipoTrabajoCodigo}',idActivo: '{idActivo}'}
+				}  		
+    		},
+    		
+    		comboSubtipoTrabajoFicha: {    		
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboSubtipoTrabajo',
+					extraParams: {tipoTrabajoCodigo: '{trabajo.tipoTrabajoCodigo}',idActivo: '{trabajo.idActivo}'}
 				}  		
     		},
     		
@@ -333,6 +340,17 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				}
     		},
     		
+    		storeTipoTrabajoFichaFiltered: {
+	    		model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboTipoTrabajoCreaFiltered',
+					extraParams: {
+						idActivo: '{trabajo.idActivo}'
+					}
+				}
+    		},
+    		
     		comboProveedor: {    		
 				model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -370,6 +388,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				}
     		},
     		
+			comboProveedorFiltradoManual: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorFiltradoManual',
+					extraParams: {idTrabajo: '{trabajo.id}'}
+				},
+				autoLoad: true
+			},
+			
     		comboEstadoPresupuesto: {
 	    		model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -397,12 +425,40 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     	        }*/
     		},
     		
+    		listaActivosAgrupacion: {
+    			pageSize: 10,
+    			model:'HreRem.model.ActivoTrabajoSubida',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'trabajo/getListActivosByID',
+    				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+    				extraParams: {idActivo: '{idActivo}', idAgrupacion:'{idAgrupacion}'}
+    			},
+    			//session: true,
+    	    	remoteSort: true,
+    	    	remoteFilter: true,
+    	    	autoLoad:true,
+    	    	listeners : {
+    	            beforeload : 'loadGridSegundo'
+    	        }
+    		},
+    		
     		comboProveedorContacto : {
     			model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'trabajo/getComboProveedorContacto',
 					extraParams: {idProveedor: '{gestionEconomica.idProveedor}'}
+				}, 
+				autoLoad: false
+    		},
+    		
+    		comboProveedorReceptor: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorContacto',
+					extraParams: {idProveedor: '{trabajo.idProveedorLlave}'}
 				}, 
 				autoLoad: false
     		},
@@ -425,6 +481,18 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 						idTrabajo: '{trabajo.id}',
 						codigoTipoProveedor: '{comboTipoProveedorGestionEconomica.selection.codigo}'
 						
+					}
+				},
+				autoLoad: false
+    		},
+    		comboProveedorFilteredLlaves : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorFiltered',
+					extraParams: {
+						idTrabajo: '{trabajo.id}',
+						codigoTipoProveedor: '05'
 					}
 				},
 				autoLoad: false
@@ -513,7 +581,85 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 						idTrabajo: '{trabajo.id}'
 					}	
 				}
+    		},	    
+    		
+    		comboEstadoSegunEstadoGdaOProveedor: {
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+	    			type: 'uxproxy',
+	    			remoteUrl: 'trabajo/getComboEstadoSegunEstadoGdaOProveedor',
+	    			extraParams: {idTrabajo: '{trabajo.id}'}
+    			}
+    		},
+    		storeHistorificacionDeCampos: {
+		    	model: 'HreRem.model.HistoricoDeCamposModel',
+		    	proxy: {
+			        type: 'uxproxy',
+			        remoteUrl: 'trabajo/getHistoricoDeCampos'
+		    	}
+    		},
+    		comboEstadoTrabajo: {    		
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'generic/getDiccionario',
+    				extraParams: {diccionario: 'estadoTrabajo'}
+    			},
+    			autoLoad: true
+        	},
+    		comboApiPrimario: {
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'albaran/getProveedores'
+    			},
+    		    displayField: 'descripcion',
+    			valueField: 'id'				
+    		},
+    		comboAprobacionComite: {    		
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboAprobacionComite'
+				}
+    		},
+    		comboGridTarifa: {    		
+				model: 'HreRem.model.TarifasGridModel',
+				proxy: {
+					type: 'uxproxy'
+				}
+    		},
+    		storeAgendaTrabajo: {
+		    	model: 'HreRem.model.AgendaTrabajoModel',
+		    	proxy: {
+			        type: 'uxproxy',
+			        remoteUrl: 'trabajo/getAgendaTrabajo',
+			        extraParams: {idTrabajo: '{trabajo.id}'}
+		    	}    			
+    		},
+    		comboEstadoTrabajoFicha:{
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboEstadoTrabajo'
+				}
+    		},
+    		comboEstadoGastosFicha:{
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboEstadoGasto'
+				}
+    		},
+    		comboIdentificadorReam: {
+	    		model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'identificadorReam'}
+				}
     		}
+    		
     }
 
 });

@@ -39,7 +39,7 @@ CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'
 (
     ACT_COT_ID                     	NUMBER(16,0) NOT NULL,
     ACT_ID                          NUMBER(16,0) NOT NULL,
-    COT_FECHA_ALTA                  NUMBER(16,0) NULL,
+    COT_FECHA_ALTA                  DATE,
     COT_GESTOR_ALTA                 NUMBER(16,0) NULL,
     DD_TTC_ID                 		NUMBER(16,0) NULL,
     COT_FECHA_SOLICITUD    			DATE,

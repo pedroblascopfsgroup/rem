@@ -1,10 +1,10 @@
-Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDcomento2', {	
-    extend		: 'HreRem.view.common.FormBase',
+Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formularioTipoDocumento2', {	
+	 extend		: 'Ext.form.Panel',
     xtype		: 'xtypeFormularioTipoDocumento2',
     cls	: 'panel-base shadow-panel',
     collapsed: false,
     reference: 'xtypeFormularioTipoDocumento2',
-    layout: 'form',
+    layout: 'fit',
     isEditForm: true,
     autoScroll: true,
     
@@ -15,21 +15,37 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDcomento2', {
     },
     
     items: [
-    	
-            {
-		    	xtype: 'combosino',
-		    	title: 'Aplica'
-            },
-            {
-		    	xtype: 'Datefield',
-		    	title: 'Fecha Emisión',
-		    	name: 'fechaEmision'
-            },
-            {
-		    	xtype: 'Datefield',
-		    	title: 'Fecha Caducidad',
-		    	name: 'fechaCaducidad'
-
-            }
+    		{
+			xtype: 'fieldsettable',
+			layout: {
+				type: 'vbox',
+				align:'center'
+			},
+			margin: '20',
+			reference: 'fieldsetDocumentoIdentidad',
+			collapsible: false,
+			defaults: {
+				addUxReadOnlyEditFieldPlugin: false
+			},
+			items: [
+	    	
+	            {
+			    	xtype: 'combosino',
+			    	title: 'Aplica'
+	            },
+	            {
+			    	xtype: 'datefield',
+			    	title: 'Fecha Emisión',
+			    	name: 'fechaEmision'
+	            },
+	            {
+			    	xtype: 'datefield',
+			    	title: 'Fecha Caducidad',
+			    	name: 'fechaCaducidad'
+	
+	            }
+	            ]
+    		}
+	            
     ]
 	});

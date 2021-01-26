@@ -8,7 +8,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
     		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
     		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo',
-    		'HreRem.model.ComercialActivoModel', 'HreRem.view.activos.detalle.CrearEvolucionObservaciones', 'HreRem.view.activos.detalle.SuministrosActivo', 'HreRem.view.activos.detalle.SaneamientoActivoDetalle'],
+    		'HreRem.model.ComercialActivoModel', 'HreRem.view.activos.detalle.CrearEvolucionObservaciones', 'HreRem.view.activos.detalle.SuministrosActivo',
+    		'HreRem.view.common.adjuntos.formularioTipoDocumento.WizardAdjuntarDocumentoModel','HreRem.view.common.WizardBase',
+    		'HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocumentoWizard1','HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocumentoWizard2'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -1430,14 +1432,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	},
 
-	abrirFormularioAdjuntarDocumentos : function(grid) {
+	abrirFormularioAdjuntarDocumentos : function(grid,record) {
 
-		var me = this, idActivo = me.getViewModel().get("activo.id");
-		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumento", {
-					entidad : 'activo',
-					idEntidad : idActivo,
-					parent : grid
-				}).show();
+		var me = this;
+		var idActivo = me.getViewModel().get("activo.id");
+		var viewPortWidth = Ext.Element.getViewportWidth();
+	    var viewPortHeight = Ext.Element.getViewportHeight();
+	    var a = record;
+		var wizard = Ext.create('HreRem.view.common.WizardBase',
+				{
+					slides: [
+						'adjuntardocumentowizard1',
+						'adjuntardocumentowizard2'
+					],
+					title: 'Adjuntar Documento',
+					activo: idActivo,
+					modoEdicion: true,
+					width: viewPortWidth > 1370 ? viewPortWidth / 2 : viewPortWidth / 1.5,
+					height: viewPortHeight > 500 ? 500 : viewPortHeight - 100,
+					x: viewPortWidth / 2 - ((viewPortWidth > 1370 ? viewPortWidth / 2 : viewPortWidth /1.5) / 2),
+	    			y: viewPortHeight / 2 - ((viewPortHeight > 500 ? 500 : viewPortHeight - 100) / 2)
+				}
+			).show();
 
 	},
 

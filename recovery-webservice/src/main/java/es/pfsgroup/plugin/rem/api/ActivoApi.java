@@ -72,7 +72,6 @@ import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
-import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.GastoAsociadoAdquisicion;
@@ -1341,14 +1340,13 @@ public interface ActivoApi {
 	Boolean createHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
 
 	Boolean updateHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
-
+	
 	ActivoCrearPeticionTrabajoDto getActivoParaCrearPeticionTrabajobyId(Long activoId);
 
 	boolean estanTodosActivosVendidos(List<Activo> activos);
 
 	boolean estanTodosActivosAlquilados(List<Activo> activos);
-
-
+	
 	List<ReqFaseVentaDto> getReqFaseVenta(Long idActivo);
 
 	Boolean createReqFaseVenta(ReqFaseVentaDto reqFaseVentaDto) throws ParseException;
@@ -1444,7 +1442,4 @@ public interface ActivoApi {
 	boolean createCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto) throws JsonViewerException, Exception;
 	
 	boolean destroyCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
-	
-	public Page getPublicacionGrid(DtoPublicacionGridFilter dto);
-
 }

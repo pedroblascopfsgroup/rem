@@ -142,14 +142,13 @@ import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
+import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VGridBusquedaActivos;
-import es.pfsgroup.plugin.rem.model.VGridBusquedaPublicaciones;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
@@ -2011,38 +2010,28 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-	
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getPublicacionGrid(DtoPublicacionGridFilter dto, ModelMap model) {
-		try {
-			Page page = activoApi.getPublicacionGrid(dto);
-			model.put(RESPONSE_DATA_KEY, page.getResults());
-			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
-			model.put(RESPONSE_SUCCESS_KEY, true);
-		} catch (Exception e) {
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			logger.error("error en ActivoController::getPublicacionGrid", e);
-		}
-		return createModelAndViewJson(model);
-	}
 
+	
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcelPublicaciones(DtoPublicacionGridFilter dto, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		dto.setStart(excelReportGeneratorApi.getStart());
-		dto.setLimit(excelReportGeneratorApi.getLimit());
-		List<VGridBusquedaPublicaciones> listaPublicacionesActivos = (List<VGridBusquedaPublicaciones>) activoApi.getPublicacionGrid(dto).getResults();
+	public void generateExcelPublicaciones(DtoActivosPublicacion dtoActivosPublicacion, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		dtoActivosPublicacion.setStart(excelReportGeneratorApi.getStart());
+		dtoActivosPublicacion.setLimit(excelReportGeneratorApi.getLimit());
+
+		List<VBusquedaPublicacionActivo> listaPublicacionesActivos = (List<VBusquedaPublicacionActivo>) activoApi.getActivosPublicacion(dtoActivosPublicacion).getResults();
+
 		ExcelReport report = new PublicacionExcelReport(listaPublicacionesActivos);
 		excelReportGeneratorApi.generateAndSend(report, response);
-	}	
+	}
+	
 	
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional()
-	public ModelAndView registrarExportacionPublicaciones(DtoPublicacionGridFilter dto, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView registrarExportacionPublicaciones(DtoActivosPublicacion dtoActivosPublicacion, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelMap model = new ModelMap();
 		Usuario user = null;
 		Boolean isSuperExport = false;
 		try {
-			int count = activoApi.getPublicacionGrid(dto).getTotalCount();
+			int count = activoApi.getActivosPublicacion(dtoActivosPublicacion).getTotalCount();
 			user = usuarioManager.getUsuarioLogado();
 			AuditoriaExportaciones ae = new AuditoriaExportaciones();
 			ae.setBuscador(buscador);
@@ -2071,7 +2060,8 @@ public class ActivoController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("error en activoController", e);
 		}
-		return createModelAndViewJson(model);		
+		return createModelAndViewJson(model);
+		
 	}
 	
 	

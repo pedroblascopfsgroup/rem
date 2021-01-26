@@ -177,8 +177,7 @@ Ext.define('HreRem.view.activos.ActivosList', {
 		        {
 		            dataIndex: 'via',
 		            text: HreRem.i18n('header.via'),
-		            flex: 1,
-		            sortable: false
+		            flex: 1		            
 		        },
 		        {
 		            dataIndex: 'localidadDescripcion',

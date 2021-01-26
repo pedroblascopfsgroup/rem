@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20210126
+--## FECHA_CREACION=20210127
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8787
@@ -101,7 +101,7 @@ BEGIN
                             WHERE GIL.GPV_ID = GPV.GPV_ID
                                 AND GIL.ENT_ID = GEN.ENT_ID
                                 AND GIL.DD_ENT_ID = GEN.DD_ENT_ID)';
-
+        EXECUTE IMMEDIATE V_MSQL;
 
         DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTROS INSERTADOS CORRECTAMENTE EN '||V_TABLA_GIL||': '||sql%rowcount ||'');
 

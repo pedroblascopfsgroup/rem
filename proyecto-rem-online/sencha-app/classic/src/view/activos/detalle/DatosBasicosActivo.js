@@ -1084,7 +1084,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								items :
 									[
 									{
-										xtype:'numberfieldbase',
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.empresa'),
 										reference: 'activobbvaEmpresa',
 										bind: {
@@ -1100,7 +1100,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						            	}
 									},
 									{
-										xtype:'numberfieldbase',
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.oficina'),
 										reference: 'activobbvaOficina',
 										bind: {
@@ -1116,7 +1116,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						            	}
 									},
 									{
-										xtype:'numberfieldbase',
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.contrapartida'),
 										reference: 'activobbvaContrapartida',
 										bind: {
@@ -1132,7 +1132,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						            	}
 									},
 									{
-										xtype:'numberfieldbase',
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.folio'),
 										reference: 'activobbvaFolio',
 										bind: {
@@ -1148,7 +1148,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						            	}
 									},
 									{
-										xtype:'textfield',
+										xtype:'textfieldbase',
 										disabled: true,
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.cdpen'),
 										reference: 'activobbvaCdpen',

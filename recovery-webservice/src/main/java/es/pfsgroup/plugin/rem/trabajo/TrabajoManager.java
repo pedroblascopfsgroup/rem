@@ -193,7 +193,6 @@ import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoAgendaTrabajo;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoHistorificadorCampos;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
-import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoGridFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
@@ -412,24 +411,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 
 		return trabajoDao.findAll(dto);
-	}
-	
-	@Override	
-	public Page getBusquedaTrabajosGrid(DtoTrabajoGridFilter dto, Usuario usuarioLogado) {
-		Long idUsuario = usuarioLogado.getId();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", idUsuario));
-		if (usuarioCartera != null) dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());					
-		if(this.gestorActivoDao.isUsuarioGestorExterno(idUsuario)) {
-			dto.setEsGestorExterno(true);						
-			for (Perfil perfil : usuarioLogado.getPerfiles()) {
-				if(PERFIL_CAPA_CONTROL_BANKIA.equals(perfil.getCodigo()) ||  PERFIL_USUARIOS_DE_CONSULTA.equals(perfil.getCodigo())){
-					dto.setEsControlConsulta(true);
-					dto.setEsGestorExterno(false);
-					break;
-				}						
-			}
-		}
-		return trabajoDao.getBusquedaTrabajosGrid(dto, idUsuario);
 	}
 
 	@Override

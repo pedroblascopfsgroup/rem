@@ -2,10 +2,8 @@ Ext.define('HreRem.view.trabajos.TrabajosList', {
     extend: 'HreRem.view.common.GridBase',
     xtype: 'trabajoslist',
 	bind: {
-		store: '{gridBusquedaTrabajos}'
+		store: '{trabajos}'
 	},
-	
-    loadAfterBind: false,
 	
     initComponent: function () {
      	
@@ -66,17 +64,17 @@ Ext.define('HreRem.view.trabajos.TrabajosList', {
 	            {
 		            text: HreRem.i18n('header.tipo'),
 		           	flex	 : 1,
-		           	dataIndex: 'tipoTrabajoDescripcion'
+		           	dataIndex: 'descripcionTipo'
 	            },		            
 		        {
 		           	text: HreRem.i18n('header.subtipo'),
 		            flex	 : 1,
-		            dataIndex: 'subtipoTrabajoDescripcion'
+		            dataIndex: 'descripcionSubtipo'
 		        },
 	            {
 	            	text	 : HreRem.i18n('header.estado'),
 	                flex	 : 1,
-	                dataIndex: 'estadoTrabajoDescripcion'
+	                dataIndex: 'descripcionEstado'
 	            },
 	            {
 	            	text	 : HreRem.i18n('header.solicitante'),
@@ -98,7 +96,7 @@ Ext.define('HreRem.view.trabajos.TrabajosList', {
 			    {
 			    	text: HreRem.i18n('header.poblacion'),
 		            flex	 : 1,
-		            dataIndex: 'localidadDescripcion',
+		            dataIndex: 'descripcionPoblacion',
 		            hidden: true
 			    },
 			    {
@@ -110,7 +108,7 @@ Ext.define('HreRem.view.trabajos.TrabajosList', {
 			    {
 			    	text: HreRem.i18n('header.provincia'),
 		            flex	 : 1,
-		            dataIndex: 'provinciaDescripcion',
+		            dataIndex: 'descripcionProvincia',
 		            hidden: true
 			    }
 
@@ -123,7 +121,7 @@ Ext.define('HreRem.view.trabajos.TrabajosList', {
 	            itemId: 'trabajosPaginationToolbar',
 	            displayInfo: true,
 	            bind: {
-	                store: '{gridBusquedaTrabajos}'
+	                store: '{trabajos}'
 	            }
 	        }
 	    ];

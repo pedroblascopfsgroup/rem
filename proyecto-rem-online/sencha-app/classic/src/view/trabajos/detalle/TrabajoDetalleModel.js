@@ -395,7 +395,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 					remoteUrl: 'trabajo/getComboProveedorFiltradoManual',
 					extraParams: {idTrabajo: '{trabajo.id}'}
 				},
-				autoLoad: true
+				autoLoad: false
 			},
 			
     		comboEstadoPresupuesto: {
@@ -437,10 +437,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			//session: true,
     	    	remoteSort: true,
     	    	remoteFilter: true,
-    	    	autoLoad:true,
+    	    	autoLoad: false/*,
     	    	listeners : {
     	            beforeload : 'loadGridSegundo'
-    	        }
+    	        }*/
     		},
     		
     		comboProveedorContacto : {
@@ -621,12 +621,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'trabajo/getComboAprobacionComite'
-				}
-    		},
-    		comboGridTarifa: {    		
-				model: 'HreRem.model.TarifasGridModel',
-				proxy: {
-					type: 'uxproxy'
 				}
     		},
     		storeAgendaTrabajo: {

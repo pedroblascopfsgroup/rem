@@ -1266,11 +1266,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
      onClickUploadListaActivos: function(btn) {
        	var me = this,
        	form = me.getView().lookupReference("formSubirListaActivos");
-       	formBase = me.getView().lookupReference("formBaseCrearTrabajo");
        	var params = form.getValues(false,false,false,true);
        	params.idTipoOperacion = "141";
-       	
-       	if(form.isValid() && formBase.isValid()){
+       	if(form.isValid()){
         	form.submit({
         		waitMsg: HreRem.i18n('msg.mask.loading'),
         		params: params,
@@ -1286,7 +1284,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 					     params: parameters,
 					     timeout: 120000,  // 2 min
 					     success: function(response, opts) {
-		    	   			var window = btn.up('creartrabajowindow');
+		    	   			var window = btn.up('windowBase');
 							var data = Ext.JSON.decode(response.responseText).data;
 		    	   			window.idProceso = idProceso;
 							me.getView().unmask();
@@ -1307,7 +1305,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 					 });
     		    }		
     	    });
-       	}
+       	}else{
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+		}
      },
      
      onClickGenerarPropuesta: function(btn) {

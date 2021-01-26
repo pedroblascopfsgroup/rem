@@ -113,15 +113,22 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
             listaCargas = this.cargasInfo(activo);
 
             model.put("numActivo", activo.getNumActivo());
-            if(activoAdjudicacionJudicial.getIdAsunto() != null){
-                model.put("idAsuntoRecovery", activoAdjudicacionJudicial.getIdAsunto());
+            if(activoAdjudicacionJudicial != null) {
+            	if(activoAdjudicacionJudicial.getIdAsunto() != null){
+                    model.put("idAsuntoRecovery", activoAdjudicacionJudicial.getIdAsunto());
+                }
             }
-            if(activoAdjudicacionNoJudicial.getIdAsuntoRecAlaska() != null){
-                model.put("idAsuntoRecovery", activoAdjudicacionNoJudicial.getIdAsuntoRecAlaska());
+           
+            if(activoAdjudicacionNoJudicial != null) {
+            	if(activoAdjudicacionNoJudicial.getIdAsuntoRecAlaska() != null){
+                    model.put("idAsuntoRecovery", activoAdjudicacionNoJudicial.getIdAsuntoRecAlaska());
+                }
             }
-            if(activoAdjudicacionNoJudicial.getIdAsuntoRecAlaska() == null && activoAdjudicacionJudicial.getIdAsunto() == null){
-                model.put("idAsuntoRecovery", null);
+            
+            if(!model.containsAttribute("idAsuntoRecovery")) {
+            	model.put("idAsuntoRecovery", null);
             }
+           
             model.put("codigoCartera", activo.getCartera().getCodigo());
             if(activo.getTitulo() != null){
                 if(activo.getTitulo().getEstado() != null){

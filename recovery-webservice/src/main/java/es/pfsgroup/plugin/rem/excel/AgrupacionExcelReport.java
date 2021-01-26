@@ -3,13 +3,13 @@ package es.pfsgroup.plugin.rem.excel;
 import java.util.ArrayList;
 import java.util.List;
 
-import es.pfsgroup.plugin.rem.model.VGridBusquedaAgrupaciones;
+import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 
 public class AgrupacionExcelReport extends AbstractExcelReport implements ExcelReport {
 	
-	private List<VGridBusquedaAgrupaciones> listaAgrupaciones;
+	private List<VBusquedaAgrupaciones> listaAgrupaciones;
 
-	public AgrupacionExcelReport(List<VGridBusquedaAgrupaciones> listaAgrupaciones) {
+	public AgrupacionExcelReport(List<VBusquedaAgrupaciones> listaAgrupaciones) {
 		this.listaAgrupaciones = listaAgrupaciones;
 	}
 
@@ -35,26 +35,36 @@ public class AgrupacionExcelReport extends AbstractExcelReport implements ExcelR
 		
 		List<List<String>> valores = new ArrayList<List<String>>();
 		
-		for(VGridBusquedaAgrupaciones agrupacion: listaAgrupaciones){
+		for(VBusquedaAgrupaciones agrupacion: listaAgrupaciones){
 			List<String> fila = new ArrayList<String>();
-			fila.add(String.valueOf(agrupacion.getNumAgrupacionRem()));
-			fila.add(agrupacion.getTipoAgrupacionDescripcion());
+			fila.add(agrupacion.getNumAgrupacionRem());
+			fila.add(this.getDictionaryValue(agrupacion.getTipoAgrupacion()));
 			fila.add(agrupacion.getNombre());
 			fila.add(agrupacion.getDescripcion());
-			fila.add(agrupacion.getProvinciaDescripcion());
-			fila.add(agrupacion.getLocalidadDescripcion());
+			fila.add(this.getDictionaryValue(agrupacion.getProvincia()));
+			
+			if (agrupacion.getLocalidad() != null){
+				fila.add(agrupacion.getLocalidad().getDescripcion());
+			}else{
+				fila.add("");
+			}
+			
 			fila.add(agrupacion.getDireccion());
 			fila.add(this.getDateStringValue(agrupacion.getFechaAlta()));
 			fila.add(this.getDateStringValue(agrupacion.getFechaBaja()));
-			fila.add(String.valueOf(agrupacion.getNumActivos()));
-			fila.add(String.valueOf(agrupacion.getNumPublicados()));
+			fila.add(agrupacion.getActivos());
+			fila.add(agrupacion.getPublicados());
+
 			valores.add(fila);
 		}
+		
 		return valores;
 	}
 
 	public String getReportName() {
 		return LISTA_DE_AGRUPACIONES_XLS;
 	}
+	
+	
 
 }

@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.VParticipacionElementosLinea;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -71,6 +72,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
+import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
 
 @Service("gastoLineaDetalleManager")
@@ -111,6 +113,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	
 	@Autowired
 	private GastoDao gastoDao;
+	
+	@Autowired
+	private TrabajoDao trabajoDao;
 	
 	@Override 
 	public GastoLineaDetalle getLineaDetalleByIdLinea(Long idLinea) {
@@ -1707,7 +1712,15 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		String stringLinea = null;
 		for (Long trabajoLong : trabajos) {
 			Trabajo trabajo = trabajoApi.findOne(trabajoLong);
-			if(trabajo != null) {
+			if(trabajo != null) {				
+				if(trabajo.getEstado().equals((DDEstadoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoTrabajo.class,
+						DDEstadoTrabajo.ESTADO_VALIDADO))) {
+					trabajo.setEstado((DDEstadoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoTrabajo.class,
+							DDEstadoTrabajo.CODIGO_ESTADO_PDT_CIERRE));
+					trabajo.setFechaCambioEstado(new Date());
+					trabajoDao.saveOrUpdate(trabajo);
+				}
+
 				stringLinea = getTipoLineaByTrabajo(trabajo);
 				if(stringLinea != null) {
 					List<String> lineaParte = Arrays.asList(stringLinea.split("-"));

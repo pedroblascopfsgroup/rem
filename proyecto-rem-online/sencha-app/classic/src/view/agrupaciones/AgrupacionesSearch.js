@@ -100,7 +100,7 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesSearch', {
 									},
 							        {
 							        	fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
-							        	name: 'numAgrupacionUvem'
+							        	name: 'numAgrUVEM'
 							        }
 							        
 			        			]

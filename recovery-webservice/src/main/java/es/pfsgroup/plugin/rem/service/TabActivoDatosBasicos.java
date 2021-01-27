@@ -1684,14 +1684,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 							}else {
 								isCarteraBBVADivarian=false;
 							}
-							//isCarteraBBVADivarian = activoDao.isActivoBBVADivarian(activoOrigenHRE.getId());
+
 							isVendido = activoApi.isVendido(activoOrigenHRE.getId());
-							isFueraPerimetro = !activoApi.isActivoIncluidoEnPerimetro(activoOrigenHRE.getId());
-							
+							isFueraPerimetro = !activoApi.isActivoIncluidoEnPerimetro(activoOrigenHRE.getId());							
 						
 							boolean isOrigenHRE = !activoDao.existeactivoIdHAYA(dto.getIdOrigenHre()); 
 							isVendido = activoDao.activoEstadoVendido(dto.getIdOrigenHre()); 
-							boolean isCarteraBBVACERBERUS = !activoDao.activoPerteneceABBVAAndCERBERUS(dto.getIdOrigenHre()); 
 							isFueraPerimetro = activoDao.activoFueraPerimetroHAYA(dto.getIdOrigenHre()); 
 													
 							if(isOrigenHRE) {
@@ -1703,18 +1701,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 							}
 							if (!isVendido && !isFueraPerimetro) {
 								throw new JsonViewerException(messageServices.getMessage(ACTIVO_VENDIDO_FUERA_DE_PERIMETRO_HAYA));
-							}
-							
+							}							
 						
 							activoBbva.setIdOrigenHre(dto.getIdOrigenHre());
 							
-							if (activoOrigenHRE.getPropietarioPrincipal() != null) {
-								List<ActivoPropietarioActivo> actOriginal= activo.getPropietariosActivo();
-								if (!actOriginal.isEmpty()) {
-									ActivoPropietarioActivo actPropAct = actOriginal.get(0);
-									actPropAct.setPropietario(activoOrigenHRE.getPropietarioPrincipal());
-								}
-							}
+							activoBbva.setSociedadPagoAnterior(activoOrigenHRE.getPropietarioPrincipal());
 							
 							if(activoOrigenHRE.getTipoTitulo()!= null) {
 								activo.setTipoTitulo(activoOrigenHRE.getTipoTitulo());
@@ -1737,10 +1728,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 							throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_EXISTE));
 						}
 					}
-
-					
-					
-					
 				}else {
 					//throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_BBVA));
 				}

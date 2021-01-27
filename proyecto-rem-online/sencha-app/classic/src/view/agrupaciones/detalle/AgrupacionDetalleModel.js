@@ -789,7 +789,22 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		        },
 		        extraParams: {id: '{agrupacionficha.id}', tipoFoto: '01'}
 		     }
-    	},    	
+    	}, 
+    	
+    	storeDescripcionFoto: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'descripcionesFoto'}
+			},
+			autoLoad: false,
+			remoteFilter: false,
+			filters: {
+    			property: 'codigoSubtipoActivo',
+    			value: '{fotoSelected.codigoSubtipoActivo}'  
+    		}
+    	},
 
 		storeActivos: {
 			 pageSize: $AC.getDefaultPageSize(),

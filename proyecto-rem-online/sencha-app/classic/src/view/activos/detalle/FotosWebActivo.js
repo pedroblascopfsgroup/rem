@@ -81,6 +81,9 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
                 	}
                 	Ext.global.console.log(record.data);
 	        		this.up('form').setBindRecord(record.data);
+	        		
+	        		this.lookupController().getViewModel().set('fotoSelected', record);
+	        		this.lookupController().getViewModel().notify();
 	        	}
             }
         });
@@ -124,11 +127,14 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 							}
 		                },
 		                { 
-		                	xtype: 'textareafieldbase',
-		                	name: 'descripcion',
+		                	xtype: 'comboboxfieldbase',
+		                	name: 'comboDescripcionFoto',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.descripcion'),
+		                	editable: false,
+		                	queryMode: 'local',
 		                	bind: {
-								value: '{descripcion}'
+		                		store: '{storeDescripcionFoto}',
+				        		value: '{codigoDescripcionFoto}'
 							}
 		                },
 		                { 

@@ -28,21 +28,21 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 				       		{ 
 					        	xtype: 'checkboxfield',
 					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.admision'),
-					        	name: 'checkOkAdmision',
-					        	value: true,
+					        	name: 'admision',
+					        	value: true, // Establecido por defecto.
 					        	inputValue: true					        	
 					        },
 					        { 
 					        	xtype: 'checkboxfield',
 					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.gestion'),
-					        	name: 'checkOkGestion',
-					        	value: true, 
+					        	name: 'gestion',
+					        	value: true, // Establecido por defecto.
 					        	inputValue: true					
 					        },
 					        { 
 					        	xtype: 'checkboxfield',
 					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.informe.comercial'),
-					        	name: 'checkOkInformeComercial',
+					        	name: 'informeComercial',
 					        	inputValue: true					        	
 					        }
 						]
@@ -53,19 +53,19 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					       	{ 
 					        	xtype: 'checkboxfield',
 					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.precios'),
-					        	name: 'checkOkPrecio',
+					        	name: 'precio',
 					        	inputValue: true					        	
 					        },
 				       		{ 
 					        	xtype: 'checkboxfield',
 					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.venta'),
-					        	name: 'checkOkVenta',
+					        	name: 'okventa',
 					        	inputValue: true					        	
 					        },
 					        { 
 					        	xtype: 'checkboxfield',
 					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.alquiler'),
-					        	name: 'checkOkAlquiler',
+					        	name: 'okalquiler',
 					        	inputValue: true					        	
 					        }
 						]
@@ -83,7 +83,7 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        	xtype: 'comboboxfieldbase',
 					        	addUxReadOnlyEditFieldPlugin: false,
 					        	fieldLabel: HreRem.i18n('combolabel.publicaciones.combo.activos.cartera'),
-					        	name: 'carteraCodigo',
+					        	name: 'cartera',
 					        	bind: {
 				            		store: '{comboEntidadPropietaria}'
 				            	}
@@ -92,7 +92,7 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        	xtype: 'comboboxfieldbase',
 					        	addUxReadOnlyEditFieldPlugin: false,
 					        	fieldLabel: HreRem.i18n('combolabel.publicaciones.combo.estado.venta'),
-					        	name: 'estadoPublicacionVentaCodigo',
+					        	name: 'estadoPublicacionCodigo',
 					        	reference: 'estadoPublicacionVenta',
 					        	//value: CONST.ESTADO_PUBLICACION_VENTA['NO_PUBLICADO'], // Establecido por defecto.
 					        	bind: {
@@ -106,7 +106,7 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        	xtype: 'comboboxfieldbase',
 					        	addUxReadOnlyEditFieldPlugin: false,
 					        	fieldLabel: HreRem.i18n('combolabel.publicaciones.combo.motivos.ocultacion'),
-					        	name: 'motivosOcultacionVentaCodigo',
+					        	name: 'motivosOcultacionCodigo',
 					        	hidden: true,
 					        	reference: 'motivosOcultacionVenta',
 					        	bind: {
@@ -148,7 +148,7 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        	addUxReadOnlyEditFieldPlugin: false,
 					        	fieldLabel: HreRem.i18n('fieldlabel.publicaciones.activos.search.tipoActivo'),
 					        	reference: 'filtroComboTipoActivo',
-					        	name: 'tipoActivoCodigo',
+					        	name: 'tipoActivo',
 					        	bind: {
 				            		store: '{comboTipoActivo}'
 				            	},
@@ -158,7 +158,7 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        	xtype: 'comboboxfieldbase',
 					        	addUxReadOnlyEditFieldPlugin: false,
 					        	fieldLabel: HreRem.i18n('fieldlabel.publicaciones.activos.search.subtipoActivo'),
-					        	name: 'subtipoActivoCodigo',
+					        	name: 'subtipoActivo',
 					        	bind: {
 				            		store: '{comboSubtipoActivo}',
 				            		disabled: '{!filtroComboTipoActivo.value}',

@@ -36,6 +36,21 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesSearch', {
 	    		
 			        items: [
 			        
+			        /*
+			         * {
+			    			items:[
+						        { 
+						        	fieldLabel: HreRem.i18n('fieldlabel.id.activo.haya'),
+						        	name: 'numActivo'
+		
+						        },
+						        { 
+						        	fieldLabel: HreRem.i18n('fieldlabel.propietario'),
+						        	name: 'propietario'
+						        }
+							]
+						},
+			         */
 			        	{
 			        			items: [
 			        				{ 
@@ -45,8 +60,8 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesSearch', {
 						       		{ 
 							        	xtype: 'combo',
 							        	fieldLabel: HreRem.i18n('fieldlabel.tipo'),
-							        	reference: 'comboTipoAgrupacionSearch',
-							        	name: 'tipoAgrupacionCodigo',
+							        	reference: 'prueba',
+							        	name: 'tipoAgrupacion',
 							        	bind: {
 						            		store: '{comboTodosTipoAgrupacion}'
 						            	},
@@ -59,7 +74,7 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesSearch', {
 							        { 
 							        	xtype: 'combo',
 							        	fieldLabel: HreRem.i18n('fieldlabel.tipo.alquiler'),
-							        	name: 'tipoAlquilerCodigo',
+							        	name: 'tipoAlquiler',
 							        	hidden: true,
 							        	bind: {
 						            		store: '{comboTipoAlquilerAgrupaciones}'
@@ -68,39 +83,36 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesSearch', {
 			    						valueField: 'codigo',
 			    						reference: 'comboTipoAlquiler'
 							        },
-							        
-							        
-									{
+							        { 
 										xtype: 'combo',
-										name: 'carteraCodigo',
-							        	fieldLabel :  HreRem.i18n('fieldlabel.entidad.propietaria'),
-						              	reference: 'comboCarteraSearch',									              	
-										bind: {
-												store: '{comboCartera}'
-										},
-						            	publishes: 'value',
-						            	displayField: 'descripcion',
-										valueField: 'codigo'													
-									},
-									{ 
-							        	xtype: 'combo',
-							        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
-							        	name: 'subcarteraCodigo',	
+							        	fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
+							        	name: 'codCartera',
 							        	displayField: 'descripcion',
-										valueField: 'codigo',
-										forceSelection	: true,
+			    						valueField: 'codigo',
 							        	bind: {
-							            		store: '{comboSubcartera}',
-							            		disabled: '{!comboCarteraSearch.selection}',
-							                    filters: {
-								                        property: 'carteraCodigo',
-								                        value: '{comboCarteraSearch.value}'
-							                    }													
-						            	}								    						
-									},
+						            		store: '{comboEntidadPropietaria}'
+						            	},
+						            	reference: 'comboCarteraActivoSearch',
+						            	chainedStore: 'comboSubcarteraFiltered',
+										chainedReference: 'comboSubcarteraActivoSearch',
+										listeners: {
+											select: 'onChangeChainedCombo'
+										}
+							        },
+							        { 
+										xtype: 'combo',
+							        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
+							        	name: 'subcarteraCodigo',
+							        	bind: {
+						            		store: '{comboSubcarteraFiltered}'
+						            	},
+						            	reference: 'comboSubcarteraActivoSearch',
+						            	valueField: 'codigo',
+			    						displayField: 'descripcion'
+							        },
 							        {
 							        	fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
-							        	name: 'numAgrupacionUvem'
+							        	name: 'numAgrUVEM'
 							        }
 							        
 			        			]
@@ -110,11 +122,18 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesSearch', {
 			        	
 						        { 
 					            	fieldLabel: HreRem.i18n('fieldlabel.nombre'),
-					            	name: 'nombre'					            
+					            	name: 'nombre',
+					            	labelWidth:	150,
+						        	width: 		230
 					            },
 					            { 
-						        	xtype: 'combo',						      
-						        	fieldLabel:  HreRem.i18n('fieldlabel.publicada.web'),						        
+						        	xtype: 'combo',
+						        	//hidden: true,
+						        	editable: false,
+						        	disabled: true,
+						        	fieldLabel:  HreRem.i18n('fieldlabel.publicada.web'),
+						        	labelWidth:	150,
+						        	width: 		230,
 						        	name: 'publicado',
 						        	bind: {
 					            		store: '{comboSiNoRem}'
@@ -129,16 +148,18 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesSearch', {
 						        {
 						        	xtype: 'combo',
 						        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
-						        	name: 'provinciaCodigo',
+						        	name: 'codProvincia',
 						        	bind: {
-						        		store: '{comboProvincia}'
+						        		store: '{comboFiltroProvincias}'
 						        	},
 						        	displayField: 'descripcion',
 						        	valueField: 'codigo'
+						        	
 						        },
 						        {
 						        	fieldLabel: HreRem.i18n('fieldlabel.municipio'),
-						        	name: 'localidadDescripcion'
+						        	name: 'localidadDescripcion',
+						        	valueField: 'descripcion'
 						        }
 						     ]
 						},

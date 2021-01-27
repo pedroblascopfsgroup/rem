@@ -3,7 +3,6 @@ package es.pfsgroup.plugin.rem.trabajo.dao.impl;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -11,7 +10,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -27,7 +25,6 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
@@ -42,7 +39,6 @@ import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoHistorificadorCampos;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
-import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoGridFilter;
 
 @Repository("TrabajoDao")
 public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements TrabajoDao{
@@ -392,89 +388,6 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	@Override
 	public void flush() {
 		this.getSessionFactory().getCurrentSession().flush();
-	}  
-	
-	@Override
-	public Page getBusquedaTrabajosGrid(DtoTrabajoGridFilter dto, Long idUsuario) {
-		HQLBuilder hb = new HQLBuilder(" from VGridBusquedaTrabajos vgrid");
-
-		if (Boolean.TRUE.equals(dto.getEsGestorExterno())) {
-			List<Long> proveedorIds = proveedorDao.getIdsProveedorByIdUsuario(idUsuario);
-			if (Checks.estaVacio(proveedorIds)) {
-				hb.appendWhere("vgrid.id is null");
-			} else {
-				HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.idProveedor", proveedorIds);
-			}
-		}
-		
-		if (Boolean.TRUE.equals(dto.getEsControlConsulta())) {
-			List<String> codigos = Arrays.asList(TrabajoApi.CODIGO_OBTENCION_DOCUMENTACION, TrabajoApi.CODIGO_ACTUACION_TECNICA);
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.tipoTrabajoCodigo", codigos);
-		}else {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoTrabajoCodigo", dto.getTipoTrabajoCodigo());
-		}		
-		
-		if (dto.getNumTrabajo() != null && StringUtils.isNumeric(dto.getNumTrabajo()))
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numTrabajo", Long.valueOf(dto.getNumTrabajo()));
-		if (dto.getNumAgrupacion() != null && StringUtils.isNumeric(dto.getNumAgrupacion()))
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numAgrupacion", Long.valueOf(dto.getNumAgrupacion()));
-		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subtipoTrabajoCodigo", dto.getSubtipoTrabajoCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.estadoTrabajoCodigo", dto.getEstadoTrabajoCodigo());
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.solicitante", dto.getSolicitante(), true);
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.proveedor", dto.getProveedor(), true);
-		
-		if(dto.getGestorActivo() != null) {
-			hb.appendWhere(" exists (select 1 from GestorActivo ga, IN (ga.activo.activoTrabajos) atj "
-					+ " where ga.tipoGestor.codigo = 'GACT' "
-					+ " and UPPER(ga.usuario.username) = '" + dto.getGestorActivo().toUpperCase() + "' "
-					+ " and vgrid.id = atj.trabajo.id) ");
-		}
-		
-		
-		if(dto.getNumActivo() != null || dto.getCarteraCodigo() != null) {
-			StringBuilder sb = new StringBuilder(" exists (select 1 from ActivoTrabajo atj join atj.activo act"
-					+ " where vgrid.id = atj.trabajo.id ");			
-			if(dto.getNumActivo() != null && StringUtils.isNumeric(dto.getNumActivo())) { 	
-				sb.append(" and act.numActivo =  " + Long.valueOf(dto.getNumActivo()));						
-			}			
-			if(dto.getCarteraCodigo() != null) {			
-				sb.append(" and act.cartera.codigo =  '" + dto.getCarteraCodigo() + "' ");
-			}			
-			sb.append("  )");
-			hb.appendWhere(sb.toString());
-		}
-		
-		if(dto.getLocalidadDescripcion() != null || dto.getProvinciaCodigo() != null || dto.getCodPostal() != null ) {
-			StringBuilder sb = new StringBuilder(" exists (select 1 from ActivoTrabajo atj join atj.activo.localizacion.localizacionBien loc "
-					+ " where vgrid.id = atj.trabajo.id ");
-			if(dto.getLocalidadDescripcion() != null) 		
-				sb.append( " and UPPER(loc.localidad.descripcion) LIKE '%" + dto.getLocalidadDescripcion().toUpperCase() +"%' ");			
-			if(dto.getProvinciaCodigo() != null) 
-				sb.append(" and loc.provincia.codigo = '" + dto.getProvinciaCodigo() + "' ");			
-			if(dto.getCodPostal() != null) 
-				sb.append(" and loc.codPostal = '" + dto.getCodPostal() + "' ");			
-		
-			sb.append("  )");
-			hb.appendWhere(sb.toString());
-		}			
-		
-		try {
-			if (dto.getFechaPeticionDesde() != null && dto.getFechaPeticionHasta() != null) {
-				Date fechaDesde = DateFormat.toDate(dto.getFechaPeticionDesde());
-				Date fechaHasta = DateFormat.toDate(dto.getFechaPeticionHasta());
-				HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaSolicitud", fechaDesde, fechaHasta);
-			} else if (dto.getFechaPeticionDesde() != null) {
-				Date fechaDesde = DateFormat.toDate(dto.getFechaPeticionDesde());
-				HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaSolicitud", fechaDesde, null);
-			} else if (dto.getFechaPeticionHasta() != null) {
-				Date fechaHasta = DateFormat.toDate(dto.getFechaPeticionHasta());
-				HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaSolicitud", null, fechaHasta);			
-			}
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-		}
-		return HibernateQueryUtils.page(this, hb, dto);
 	}
 	
 
@@ -550,5 +463,38 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		return new DtoPage(trabajoGastos, pageTrabajos.getTotalCount());
 	}
 	
+	@Override
+	public Page findAllFilteredHistoricoPeticion(DtoTrabajoFilter dto, Long idUsuario) {
+		
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaTrabajosHistoricoPeticion tbj");
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
+
+		if(idUsuario != null) {
+			List<Long> proveedorId = proveedorDao.getIdsProveedorByIdUsuario(idUsuario);
+			if(!Checks.estaVacio(proveedorId)) {
+				HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.idProveedor", proveedorId);
+			}
+//			else {
+//				//Si no hay proveedores, no debe mostrar ningún trabajo en el listado
+//				hb.appendWhere("tbj.id is null");
+//			}
+		}
+		
+		Collection<String> listaTipo = new ArrayList<String>();
+   		if (dto.getCodigoTipo()!=null) {
+   			listaTipo.add(dto.getCodigoTipo());
+   		}
+   		if (dto.getCodigoTipo2()!=null) {
+   			listaTipo.add(dto.getCodigoTipo2());
+   		}
+   		
+   		if(!listaTipo.isEmpty()) {
+   			HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.codigoTipo", listaTipo);
+   		}
+		
+		
+   		return HibernateQueryUtils.page(this, hb, dto);
+	}
 
 }

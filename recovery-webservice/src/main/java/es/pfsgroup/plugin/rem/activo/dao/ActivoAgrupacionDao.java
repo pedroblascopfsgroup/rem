@@ -10,7 +10,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
-import es.pfsgroup.plugin.rem.model.DtoAgrupacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 
@@ -52,7 +51,5 @@ public interface ActivoAgrupacionDao extends AbstractDao<ActivoAgrupacion, Long>
 	Double getPorcentajeParticipacionUATotalDeUnAMById(Long id);
 	
 	ActivoAgrupacion getAgrupacionById(Long idAgrupacion);
-
-	Page getBusquedaAgrupacionesGrid(DtoAgrupacionGridFilter dto);
 
 }

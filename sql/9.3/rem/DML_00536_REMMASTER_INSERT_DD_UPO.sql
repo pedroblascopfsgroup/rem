@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Dean Ibañez Viño
---## FECHA_CREACION=20210111
+--## FECHA_CREACION=20210118
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12589
+--## INCIDENCIA_LINK=HREOS-12827
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade a uno varios perfiles, las funciones añadidas en T_ARRAY_FUNCION
@@ -32,7 +32,7 @@ DECLARE
     ERR_MSG VARCHAR2(2048); -- Mensaje de error
 
     -- EDITAR NÚMERO DE ITEM
-    V_ITEM VARCHAR2(20) := 'HREOS-12589';
+    V_ITEM VARCHAR2(20) := 'HREOS-12827';
 
     -- EDITAR: FUNCIONES
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
@@ -6669,12 +6670,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = null;
 		
 		if(numActivo != null && !numActivo.isEmpty())
-		resultado = rawDao.getExecuteSQL("SELECT PAC_EXCLUIR_VALIDACIONES FROM ACT_PAC_PERIMETRO_ACTIVO PAC "
+		resultado = rawDao.getExecuteSQL("SELECT DD_SIN_CODIGO FROM ACT_PAC_PERIMETRO_ACTIVO PAC "
 				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID "
+				+ "JOIN ${master.schema}.DD_SIN_SINO DD ON DD.DD_SIN_ID = PAC.PAC_EXCLUIR_VALIDACIONES "
 				+ "WHERE ACT_NUM_ACTIVO = "+ numActivo +" AND PAC.BORRADO = 0");
 		
 		if(resultado == null)
-			return "";
+			return DDSiNo.NO;
 		else
 		return resultado;
 	}
@@ -6689,7 +6691,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "WHERE ACT_NUM_ACTIVO = "+ numActivo +" AND PAC.BORRADO = 0");
 		
 		if(resultado == null)
-			return "";
+			return "0";
 		else
 		return resultado;
 	}

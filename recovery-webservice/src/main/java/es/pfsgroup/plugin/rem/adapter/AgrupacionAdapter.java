@@ -1257,6 +1257,8 @@ public class AgrupacionAdapter {
 		}else if(perimetroActivoPrincipal.getCheckGestorComercial() != null && perimetroActivoActual.getCheckGestorComercial() != null) {
 			errorFlag = perimetroActivoPrincipal.getCheckGestorComercial() == perimetroActivoActual.getCheckGestorComercial();
 		}
+		
+		
 		DDSinSiNo excluirValidacionesPrincipal = perimetroActivoPrincipal.getExcluirValidaciones();
 		DDSinSiNo excluirValidacionesActual = perimetroActivoActual.getExcluirValidaciones();
 		if((excluirValidacionesPrincipal!= null && excluirValidacionesActual == null) 
@@ -1277,8 +1279,8 @@ public class AgrupacionAdapter {
 				||(motivoGestionPrincipal == null && motivoGestionActual != null) ) {
 			errorFlag = true;
 		}else if((motivoGestionPrincipal != null && motivoGestionActual != null)
-				&& (motivoGestionPrincipal.getCodigo() != null && motivoGestionActual.getCodigo() == null) 
-				||(motivoGestionPrincipal.getCodigo() == null && motivoGestionActual.getCodigo() != null)) {
+				&& ((motivoGestionPrincipal.getCodigo() != null && motivoGestionActual.getCodigo() == null) 
+				||(motivoGestionPrincipal.getCodigo() == null && motivoGestionActual.getCodigo() != null))) {
 			errorFlag = true;
 		}else if(motivoGestionPrincipal != null && motivoGestionActual != null && 
 				motivoGestionPrincipal.getCodigo() != null && motivoGestionActual.getCodigo() != null) {

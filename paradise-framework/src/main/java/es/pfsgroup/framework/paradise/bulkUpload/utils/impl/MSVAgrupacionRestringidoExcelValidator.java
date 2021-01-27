@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -556,7 +557,7 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 				if (!actPrincipal.isEmpty()) {				
 					if (!particularValidator.getExcluirValidaciones(numActivo).equals(particularValidator.getExcluirValidaciones(actPrincipal))
 					|| !particularValidator.getCheckGestorComercial(numActivo).equals(particularValidator.getCheckGestorComercial(actPrincipal))	
-					|| !particularValidator.getMotivoGestionComercial(numActivo).equals(particularValidator.getMotivoGestionComercial(actPrincipal))  ) {
+					|| (particularValidator.getExcluirValidaciones(actPrincipal).equals(DDSiNo.SI) && !particularValidator.getMotivoGestionComercial(numActivo).equals(particularValidator.getMotivoGestionComercial(actPrincipal)) )  ) {
 						listaFilas.add(i);
 					}
 				}	

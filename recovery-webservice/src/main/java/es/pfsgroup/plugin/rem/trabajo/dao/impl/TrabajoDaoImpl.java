@@ -465,5 +465,38 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		return new DtoPage(trabajoGastos, pageTrabajos.getTotalCount());
 	}
 	
+	@Override
+	public Page findAllFilteredHistoricoPeticion(DtoTrabajoFilter dto, Long idUsuario) {
+		
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaTrabajosHistoricoPeticion tbj");
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
+
+		if(idUsuario != null) {
+			List<Long> proveedorId = proveedorDao.getIdsProveedorByIdUsuario(idUsuario);
+			if(!Checks.estaVacio(proveedorId)) {
+				HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.idProveedor", proveedorId);
+			}
+//			else {
+//				//Si no hay proveedores, no debe mostrar ningún trabajo en el listado
+//				hb.appendWhere("tbj.id is null");
+//			}
+		}
+		
+		Collection<String> listaTipo = new ArrayList<String>();
+   		if (dto.getCodigoTipo()!=null) {
+   			listaTipo.add(dto.getCodigoTipo());
+   		}
+   		if (dto.getCodigoTipo2()!=null) {
+   			listaTipo.add(dto.getCodigoTipo2());
+   		}
+   		
+   		if(!listaTipo.isEmpty()) {
+   			HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.codigoTipo", listaTipo);
+   		}
+		
+		
+   		return HibernateQueryUtils.page(this, hb, dto);
+	}
 
 }

@@ -376,6 +376,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		
+		boolean esHistoricoPeticion = false;
+		
+		if(dto.getEsHistoricoPeticionActivo() != null) {
+			esHistoricoPeticion = dto.getEsHistoricoPeticionActivo();
+		}
+		
 		if (!Checks.esNulo(usuarioCartera)){
 			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
 				dto.setCartera(usuarioCartera.getCartera().getCodigo());
@@ -403,12 +410,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if (esControlConsulta) {
 				dto.setCodigoTipo(CODIGO_OBTENCION_DOCUMENTACION);
 				dto.setCodigoTipo2(CODIGO_ACTUACION_TECNICA);
-				return trabajoDao.findAll(dto);
+				
+				if(esHistoricoPeticion) {
+					return trabajoDao.findAllFilteredHistoricoPeticion(dto, usuarioLogado.getId());
+				}else {
+					return trabajoDao.findAll(dto);
+				}
+				
 			}
 			return trabajoDao.findAllFilteredByProveedorContacto(dto, usuarioLogado.getId());
 		}
 
-		return trabajoDao.findAll(dto);
+		if(esHistoricoPeticion) {
+			return trabajoDao.findAllFilteredHistoricoPeticion(dto, null);
+		}else {
+			return trabajoDao.findAll(dto);
+		}
 	}
 
 	@Override

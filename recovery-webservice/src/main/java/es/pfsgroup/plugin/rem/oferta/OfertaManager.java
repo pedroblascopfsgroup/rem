@@ -5106,14 +5106,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			dtoFichaComercial.setNroPisos(nroPisos);
 			dtoFichaComercial.setNroOtros(nroOtros);
 			dtoFichaComercial.setNroGaraje(nroGaraje);
-			nroTotal = nroViviendas+nroPisos+nroOtros+nroGaraje;
+			nroTotal = nroViviendas+nroOtros;
 			dtoFichaComercial.setNroTotal(nroTotal);
 			
 			dtoFichaComercial.setOfertaViviendas(ofertaViviendas);
 			dtoFichaComercial.setOfertaPisos(ofertaPisos);
 			dtoFichaComercial.setOfertaOtros(ofertaOtros);
 			dtoFichaComercial.setOfertaGaraje(ofertaGaraje);
-			ofertaTotal = ofertaViviendas+ofertaPisos+ofertaOtros+ofertaGaraje;
+			ofertaTotal = ofertaViviendas+ofertaOtros;
 			dtoFichaComercial.setOfertaTotal(ofertaTotal);
 			
 			Calendar calendar = Calendar.getInstance();
@@ -5207,7 +5207,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dtoFichaComercial.setPvpComitePisos(pvpComitePisos);
 				dtoFichaComercial.setPvpComiteOtros(pvpComiteOtros);
 				dtoFichaComercial.setPvpComiteGaraje(pvpComiteGaraje);
-				pvpComiteTotal = pvpComiteViviendas+pvpComitePisos+pvpComiteOtros+pvpComiteGaraje;
+				pvpComiteTotal = pvpComiteViviendas+pvpComiteOtros;
 				dtoFichaComercial.setPvpComiteTotal(pvpComiteTotal);
 			}
 			
@@ -5291,7 +5291,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					Activo act = activos.getActivo();
 					Filter filtroAct = genericDao.createFilter(FilterType.EQUALS ,"id", act.getId());
 					Filter filtroAct_id = genericDao.createFilter(FilterType.EQUALS ,"activo.id", oferta.getActivoPrincipal().getId());
-
+					Order orderFechaTasacionDesc = new Order(OrderType.DESC, "valoracionBien.fechaValorTasacion");
 					
 					//TODO es la misma oferta para toda la agrupacion?
 					
@@ -5404,25 +5404,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 					}
 					
-					Filter filtroTasacion= genericDao.createFilter(FilterType.EQUALS ,"activo.id", act.getId());
-					List<ActivoTasacion> activoTasacionList = genericDao.getListOrdered(ActivoTasacion.class, orderDesc, filtroTasacion);
+					List<ActivoTasacion> activoTasacionList = genericDao.getListOrdered(ActivoTasacion.class, orderFechaTasacionDesc, filtroAct_id);
 					if(activoTasacionList != null && activoTasacionList.get(0) != null && dtoFichaComercial.getTasacionActual() == null) {
 						dtoFichaComercial.setTasacionActual(activoTasacionList.get(0).getImporteTasacionFin());
+						activosFichaComercial.setTasacion(activoTasacionList.get(0).getImporteTasacionFin());
+						tasacionTotal += activoTasacionList.get(0).getImporteTasacionFin();
 					}
 
 	
 					if(!Checks.esNulo(act.getBien().getAdjudicacion()) && !Checks.esNulo(act.getBien().getAdjudicacion().getImporteAdjudicacion())) {
 						activosFichaComercial.setImporteAdj(act.getBien().getAdjudicacion().getImporteAdjudicacion().doubleValue());
 						importeAdjTotal += act.getBien().getAdjudicacion().getImporteAdjudicacion().doubleValue();
-					}
-					
-					ActivoTasacion tasacion = genericDao.get(ActivoTasacion.class,filtroAct);
-					if(!Checks.esNulo(tasacion)) {
-						if(!Checks.esNulo(tasacion.getImporteTasacionFin())) {
-							activosFichaComercial.setTasacion(tasacion.getImporteTasacionFin());
-							tasacionTotal += tasacion.getImporteTasacionFin();
-						}
-						
 					}
 					
 					ActivosAlquilados actAlq = genericDao.get(ActivosAlquilados.class,filtroAct);
@@ -5601,6 +5593,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				activosFichaComercial = new DtoActivosFichaComercial();
 				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS ,"id", oferta.getActivoPrincipal().getId());
 				Filter filtroAct_id = genericDao.createFilter(FilterType.EQUALS ,"activo.id", oferta.getActivoPrincipal().getId());
+				Order orderFechaTasacionDesc = new Order(OrderType.DESC, "valoracionBien.fechaValorTasacion");
 				activosFichaComercial.setIdActivo(oferta.getActivoPrincipal().getNumActivo());
 	
 				if(!Checks.esNulo(oferta.getActivoPrincipal().getBien().getInformacionRegistral()) && !oferta.getActivoPrincipal().getBien().getInformacionRegistral().isEmpty()) {
@@ -5635,7 +5628,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				
 				if (DDTipoActivo.COD_VIVIENDA.equals(oferta.getActivoPrincipal().getTipoActivo().getCodigo())) {
-					ActivoInfoComercial activoComercial = genericDao.get(ActivoInfoComercial.class,filtroActivo);
+					ActivoInfoComercial activoComercial = genericDao.get(ActivoInfoComercial.class,filtroAct_id);
 					activosFichaComercial.setGaraje("No");
 					activosFichaComercial.setTrastero("No");
 					if(!Checks.esNulo(activoComercial)) {
@@ -5713,13 +5706,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					importeAdjTotal += oferta.getActivoPrincipal().getBien().getAdjudicacion().getImporteAdjudicacion().doubleValue();
 				}
 				
-				ActivoTasacion tasacion = genericDao.get(ActivoTasacion.class,filtroActivo);
-				if(!Checks.esNulo(tasacion)) {
-					if(!Checks.esNulo(tasacion.getImporteTasacionFin())) {
-						activosFichaComercial.setTasacion(tasacion.getImporteTasacionFin());
-						tasacionTotal += tasacion.getImporteTasacionFin();
-					}
-					
+				List<ActivoTasacion> activoTasacionList = genericDao.getListOrdered(ActivoTasacion.class, orderFechaTasacionDesc, filtroAct_id);
+				if(activoTasacionList != null && activoTasacionList.get(0) != null) {
+					activosFichaComercial.setTasacion(activoTasacionList.get(0).getImporteTasacionFin());
+					tasacionTotal += activoTasacionList.get(0).getImporteTasacionFin();
 				}
 				
 				ActivosAlquilados actAlq = genericDao.get(ActivosAlquilados.class,filtroActivo);
@@ -5921,7 +5911,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			dtoFichaComercial.setGastosPendientesTotal(gastosPendientesTotal);
 			dtoFichaComercial.setCostesLegalesTotal(costesLegalesTotal);
 			dtoFichaComercial.setOfertaNetaTotal(ofertaNetaTotal);
-			dtoFichaComercial.setTotalOfertaNeta(ofertaNetaTotal - gastosPendientesTotal);
+			dtoFichaComercial.setTotalOfertaNeta(ofertaNetaTotal);
 			dtoFichaComercial.setComisionHayaDivarian(comisionHayaTotal);
 			dtoFichaComercial.setCostesLegales(costesLegalesTotal);
 			dtoFichaComercial.setGastosPendientes(gastosPendientesTotal);
@@ -5936,6 +5926,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS ,"activo", aaaHcoOfr.getActivo().getId());
 					Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS ,"activo.id", aaaHcoOfr.getActivo().getId());
 					Filter filtroId = genericDao.createFilter(FilterType.EQUALS ,"id", aaaHcoOfr.getActivo().getId());
+					Order orderFechaTasacionDesc = new Order(OrderType.DESC, "valoracionBien.fechaValorTasacion");
 					List<ActivoOferta> ofertasActivo = genericDao.getListOrdered(ActivoOferta.class,orderDesc,filtroActivo);
 					for(ActivoOferta ofertas : ofertasActivo) {
 						DtoHcoComercialFichaComercial historicoOfertas = new DtoHcoComercialFichaComercial();
@@ -5973,11 +5964,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							}
 						}
 						
-						List<ActivoTasacion> tasacionList = genericDao.getListOrdered(ActivoTasacion.class,orderDesc,filtroActivoId);
-						if(!tasacionList.isEmpty()) {
-							if(tasacionList.get(0).getImporteTasacionFin() != null) {
-								historicoOfertas.setTasacion(tasacionList.get(0).getImporteTasacionFin());
-							}
+						List<ActivoTasacion> tasacionList = genericDao.getListOrdered(ActivoTasacion.class,orderFechaTasacionDesc,filtroActivoId);
+						if(tasacionList != null && !tasacionList.isEmpty() && tasacionList.get(0).getImporteTasacionFin() != null) {
+							historicoOfertas.setTasacion(tasacionList.get(0).getImporteTasacionFin());
 						}
 						
 						//Campos faltantes
@@ -5993,6 +5982,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS ,"activo", oferta.getActivoPrincipal().getId());
 				Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS ,"activo.id", oferta.getActivoPrincipal().getId());
 				Filter filtroId = genericDao.createFilter(FilterType.EQUALS ,"id", oferta.getActivoPrincipal().getId());
+				Order orderFechaTasacionDesc = new Order(OrderType.DESC, "valoracionBien.fechaValorTasacion");
 				List<ActivoOferta> ofertasActivo = genericDao.getListOrdered(ActivoOferta.class,orderDesc,filtroActivo);
 				for(ActivoOferta ofertas : ofertasActivo) {
 					DtoHcoComercialFichaComercial historicoOfertas = new DtoHcoComercialFichaComercial();
@@ -6030,7 +6020,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 					}
 					
-					List<ActivoTasacion> tasacionList = genericDao.getListOrdered(ActivoTasacion.class,orderDesc,filtroActivoId);
+					List<ActivoTasacion> tasacionList = genericDao.getListOrdered(ActivoTasacion.class,orderFechaTasacionDesc,filtroActivoId);
 					if(!tasacionList.isEmpty()) {
 						if(tasacionList.get(0).getImporteTasacionFin() != null) {
 							historicoOfertas.setTasacion(tasacionList.get(0).getImporteTasacionFin());
@@ -6218,6 +6208,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			} else {
 				tmpDto.setTasacionActual(importe);
 			}
+			break;
 		}
 		
 		return tmpDto;

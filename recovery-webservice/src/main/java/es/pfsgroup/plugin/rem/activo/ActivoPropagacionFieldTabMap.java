@@ -97,20 +97,7 @@ public class ActivoPropagacionFieldTabMap {
     				"oficina",
     				"contrapartida",
     				"folio",
-    				"cdpen",
-    				
-    				//Esparta convivencia
-    				"tipoActivoCodigoOE",
-    				"subtipoActivoCodigoOE",
-    				"estadoAdecuacionSarebCodigo",
-    				"fechaFinPrevistaAdecuacion",
-    				"reoContabilizadoSap",
-    				"nombreViaOE",
-    				"provinciaCodigoOE",
-    				"municipioCodigoOE",
-    				"numeroDomicilioOE",
-    				"puertaOE",
-    				"codPostalOE"
+    				"cdpen"
     			));
 
     	pmap.put(TAB_SIT_POSESORIA,
@@ -484,8 +471,7 @@ public class ActivoPropagacionFieldTabMap {
 					"codigoMotivoCalificacionNegativa",
 					"codigoEstadoMotivoCalificacionNegativa",
 					"idProcesoOrigen",
-					"sociedadDePagoAnterior",
-					"tieneAnejosRegistralesInt"
+					"sociedadDePagoAnterior"
     			));
 
     	pmap.put(TAB_INFO_ADMINISTRATIVA,

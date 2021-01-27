@@ -112,8 +112,6 @@ public class ActivoPropagacionUAsFieldTabMap {
     				"nombreViaOE",
     				"provinciaCodigoOE",
     				"municipioCodigoOE",
-    				"numeroDomicilioOE",
-    				"puertaOE",
     				"codPostalOE"
     			));
 

@@ -1828,6 +1828,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
 		    		me.lookupReference('fechaEjecucionRef').setReadOnly(false);
 		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
+		    		me.lookupReference('comboProveedorLlave').setReadOnly(false);	
+	    			me.lookupReference('fechaEntregaTrabajoRef').setReadOnly(false);
+	    			me.lookupReference('comboReceptorLlave').setReadOnly(false);
+	    			me.lookupReference('llavesNoAplicaRef').setReadOnly(false);
+					me.lookupReference('llavesMotivoRef').setReadOnly(false);
     			} else {
     				me.lookupReference('gridtarifastrabajo').setTopBar(true)
     	    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
@@ -1843,6 +1848,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
 		    		me.lookupReference('fechaEjecucionRef').setReadOnly(false);
 		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
+		    		me.lookupReference('comboProveedorLlave').setReadOnly(false);	
+	    			me.lookupReference('fechaEntregaTrabajoRef').setReadOnly(false);
+	    			me.lookupReference('comboReceptorLlave').setReadOnly(false);
+	    			me.lookupReference('llavesNoAplicaRef').setReadOnly(false);
+					me.lookupReference('llavesMotivoRef').setReadOnly(false);
     			} else {
     				me.lookupReference('gridtarifastrabajo').setTopBar(true)
     	    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)

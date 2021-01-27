@@ -21,6 +21,7 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
 		        remoteUrl: 'proveedores/getProveedores',
 		        actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
 	    	},
+			autoLoad: false,
 	    	session: true,
 	    	remoteSort: true,
 	    	remoteFilter: true,

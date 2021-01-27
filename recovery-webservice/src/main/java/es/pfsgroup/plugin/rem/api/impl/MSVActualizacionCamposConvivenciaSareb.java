@@ -853,7 +853,7 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 
 	private Double getDouble (String doubleString) {
 			
-			return Double.parseDouble(doubleString.replaceAll(",","."));
+			return Double.valueOf(doubleString.replaceAll(",","."));
 		
 	}
 }

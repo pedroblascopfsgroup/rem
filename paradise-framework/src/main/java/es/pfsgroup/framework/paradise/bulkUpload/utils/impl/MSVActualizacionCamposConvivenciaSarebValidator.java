@@ -474,7 +474,7 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 	}
 	private boolean esFecha(String valor) {
 		
-		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat formato = new SimpleDateFormat("yyyy/MM/dd");
 		Date fecha = null;
 		
 		try {

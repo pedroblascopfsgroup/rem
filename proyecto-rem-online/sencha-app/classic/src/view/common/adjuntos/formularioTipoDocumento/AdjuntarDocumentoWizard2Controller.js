@@ -28,29 +28,38 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 			form = me.getView(),
 			wizard = form.up('wizardBase');
 	if(form.isValid()){
-				Ext.Ajax.request({
-					url: $AC.getRemoteUrl('ofertas/checkPedirDoc'),
-					method: 'POST',
-					params: {
-						idExpediente: idExpediente,
-						idActivo: idActivo,
-						idAgrupacion: idAgrupacion,					
-						dniComprador: wizard.numDocumento,
-						codtipoDoc: wizard.codTipoDocumento
-					},
-					success: function(response, opts) {
-		    			me.getView().unmask();
-		    			wizard.nextSlide();
-					},
-					failure: function(record, operation) {
-						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-				   }
-				});
-	
-		me.getView().unmask();
-		wizard.nextSlide();
+		me.upload();
 			} else {
 				me.fireEvent('errorToast', HreRem.i18n('msg.numero.documento.comprador.incorrecto'));
 			}
+	},
+	
+	upload : function (){
+		var me = this,
+		form = me.getView(),
+		wizard = form.up('wizardBase');
+		debugger;
+		var fileupload = me.getView().wizardAnterior.down('[reference = fileUpload]').value;
+		var comboTipoDocumento = me.getView().wizardAnterior.down('[reference = tipoDocumentoNuevoComprador]').value;
+		var url =  $AC.getRemoteUrl('activo/upload');
+		var activoId = wizard.activo;
+		form.submit({
+			url: url,
+			waitMsg: HreRem.i18n('msg.mask.loading'),
+			params: {fileupload : fileupload,idEntidad : activoId,tipo : comboTipoDocumento},
+			success: function(fp, o) {
+				if(o.result.success == "false") {
+					me.fireEvent("errorToast", o.result.errores);
+
+				} else {
+					debugger;
+					me.getView().unmask();
+					form.up('wizardBase').close();
+					form.up('wizardBase').padre.refrescarActivo(true);
+					
+				}
+			}
+	   })
 	}
+	
 });

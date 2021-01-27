@@ -1435,10 +1435,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	abrirFormularioAdjuntarDocumentos : function(grid,record) {
 
 		var me = this;
+		debugger;
 		var idActivo = me.getViewModel().get("activo.id");
 		var viewPortWidth = Ext.Element.getViewportWidth();
 	    var viewPortHeight = Ext.Element.getViewportHeight();
-	    var a = record;
 		var wizard = Ext.create('HreRem.view.common.WizardBase',
 				{
 					slides: [
@@ -1446,6 +1446,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						'adjuntardocumentowizard2'
 					],
 					title: 'Adjuntar Documento',
+					padre : me,
 					activo: idActivo,
 					modoEdicion: true,
 					width: viewPortWidth > 1370 ? viewPortWidth / 2 : viewPortWidth / 1.5,

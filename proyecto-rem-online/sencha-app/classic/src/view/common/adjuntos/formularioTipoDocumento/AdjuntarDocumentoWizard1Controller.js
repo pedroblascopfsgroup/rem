@@ -50,6 +50,7 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 			me.upload();
 		}
 		if(inside){
+			form.next().wizardAnterior = form;
 			me.getView().unmask();
 			wizard.nextSlide();
 		}
@@ -68,32 +69,22 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 		var comboTipoDocumento = me.lookupReference('tipoDocumentoNuevoComprador').value;
 		var url =  $AC.getRemoteUrl('activo/upload');
 		var activoId = wizard.activo;
-		
 		form.submit({
 			url: url,
 			waitMsg: HreRem.i18n('msg.mask.loading'),
-			params: {fileupload : fileupload,idEntidad : activoId,codigo : comboTipoDocumento},
+			params: {fileupload : fileupload,idEntidad : activoId,tipo : comboTipoDocumento},
 			success: function(fp, o) {
 				if(o.result.success == "false") {
 					me.fireEvent("errorToast", o.result.errores);
 
 				} else {
-					me.parent.mask("Cargando datos comprador");
-					var url = null;
+					debugger;
+					me.getView().unmask();
+					form.up('wizardBase').close();
+					form.up('wizardBase').padre.refrescarActivo(true);
+					
 				}
 			}
-
-//			Ext.Ajax.request({
-//				url: $AC.getRemoteUrl('activo/upload'),
-//				params : {fileupload : fileupload},
-//				success: function(response, opts) {
-//	    			me.getView().unmask();
-//	    			wizard.close();
-//				},
-//				failure: function(record, operation) {
-//					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-//			   }
-//		})
 	   })
 	}
 });

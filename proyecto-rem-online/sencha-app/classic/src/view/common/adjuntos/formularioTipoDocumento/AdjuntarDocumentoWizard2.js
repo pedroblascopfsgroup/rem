@@ -6,6 +6,7 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 	margin: '0',
 	cls: 'panel-base',
 	formExtType : null,
+	wizardAnterior : null,
 	
 	requires: [
 		'HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocumentoWizard2Controller',

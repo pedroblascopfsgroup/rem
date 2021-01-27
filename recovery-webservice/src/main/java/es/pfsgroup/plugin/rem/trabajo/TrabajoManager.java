@@ -6255,6 +6255,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public Map<String, String> getDocumentosFinalizacionTrabajo(Long idTrabajo) {
 		
 		Trabajo trabajo = null;
+		Integer checkTamanyoLista;
+		Boolean tieneUnDocumento = false;
 		Map<String, String> mapaDocumentosFin = new HashMap<String, String>();
 		List<DDTipoDocumentoActivo> documentosFinalizacion = new ArrayList<DDTipoDocumentoActivo>();
 		List<DDTipoDocumentoActivo> documentosTrabajo = new ArrayList<DDTipoDocumentoActivo>();
@@ -6271,6 +6273,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				for (CFGFinalizarTrabajos finalizarTrabajos : finalizarTrabajosList) {
 					documentosFinalizacion.add(finalizarTrabajos.getTipoDocumento());
 				}
+				checkTamanyoLista = documentosFinalizacion.size();
 				List<AdjuntoTrabajo> adjTrabajoList = genericDao.getList(AdjuntoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()),
 						genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 				if (!adjTrabajoList.isEmpty()) {
@@ -6278,11 +6281,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						documentosTrabajo.add(adjuntoTrabajo.getTipoDocumentoActivo());
 					}
 					documentosFinalizacion.removeAll(documentosTrabajo);
+					if(checkTamanyoLista > documentosFinalizacion.size()) {
+						tieneUnDocumento = true;
+					}
 				}
 			}
 		}
 
-		if (!documentosFinalizacion.isEmpty()) {
+		if (!documentosFinalizacion.isEmpty() && !tieneUnDocumento) {
 			StringBuilder documentos = new StringBuilder();
 			for (DDTipoDocumentoActivo tipoDoc : documentosFinalizacion) {
 				if (tipoDoc.equals(documentosFinalizacion.get(0))) {

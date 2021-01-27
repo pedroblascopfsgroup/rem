@@ -41,6 +41,14 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 
 		me.items = [
 			{
+				xtype: 'formBase',
+				reference: 'adjuntarDocumentoFormRef',
+				collapsed: false,
+			 		scrollable	: 'y',
+			 		layout: 'fit',
+				cls:'formbase_no_shadow',
+				items: [
+			{
 				xtype: 'fieldsettable',
 				layout: {
 					type: 'vbox',
@@ -71,6 +79,7 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 
 						xtype: 'filefield',
 				        fieldLabel:   HreRem.i18n('fieldlabel.archivo'),
+				        reference: 'fileUpload',
 				        name: 'fileUpload',
 				        //allowBlank: false,
 				        msgTarget: 'side',
@@ -90,6 +99,8 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 						
 					}
 				]
+			}
+			]
 			}
 		];
 

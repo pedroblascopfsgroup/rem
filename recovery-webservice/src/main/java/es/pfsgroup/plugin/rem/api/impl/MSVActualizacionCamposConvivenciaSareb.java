@@ -218,10 +218,10 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 			}else if("ACT_LOC_LOCALIZACION".equalsIgnoreCase(convivencia.getTabla())) {
 				ActivoLocalizacion activoLoc = genericDao.get(ActivoLocalizacion.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
 				if("060".equalsIgnoreCase(campo)) {
-					BigDecimal bd = new BigDecimal(exc.dameCelda(fila, VALOR_NUEVO));
+					BigDecimal bd = getBigDecimal(exc.dameCelda(fila, VALOR_NUEVO));
 					activoLoc.setLatitud(bd);
 				}else if("062".equalsIgnoreCase(campo)) {
-					BigDecimal bd = new BigDecimal(exc.dameCelda(fila, VALOR_NUEVO));
+					BigDecimal bd = getBigDecimal(exc.dameCelda(fila, VALOR_NUEVO));
 					activoLoc.setLongitud(bd);
 				}
 				genericDao.save(ActivoLocalizacion.class, activoLoc);
@@ -292,10 +292,10 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				}else if("059".equalsIgnoreCase(campo)) {
 					activoSareb.setCodPostalOE(exc.dameCelda(fila, VALOR_NUEVO));
 				}else if("061".equalsIgnoreCase(campo)) {
-					BigDecimal bd = new BigDecimal(exc.dameCelda(fila, VALOR_NUEVO));
+					BigDecimal bd = getBigDecimal(exc.dameCelda(fila, VALOR_NUEVO));
 					activoSareb.setLatitudOE(bd);
 				}else if("063".equalsIgnoreCase(campo)) {
-					BigDecimal bd = new BigDecimal(exc.dameCelda(fila, VALOR_NUEVO));
+					BigDecimal bd = getBigDecimal(exc.dameCelda(fila, VALOR_NUEVO));
 					activoSareb.setLongitudOE(bd);
 				}else if("097".equalsIgnoreCase(campo)) {
 					DDEstadoAdecucionSareb adecuacion = genericDao.get(DDEstadoAdecucionSareb.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
@@ -495,7 +495,7 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				}else if("074".equalsIgnoreCase(campo)) {
 					datos.setReferenciaCatastralBien(exc.dameCelda(fila, VALOR_NUEVO));
 				}else if("075".equalsIgnoreCase(campo)) {
-					BigDecimal bd = new BigDecimal(exc.dameCelda(fila, VALOR_NUEVO));
+					BigDecimal bd = getBigDecimal(exc.dameCelda(fila, VALOR_NUEVO));
 					datos.setSuperficieConstruida(bd);
 				}
 				genericDao.save(NMBInformacionRegistralBien.class, datos);
@@ -855,5 +855,9 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 			
 			return Double.valueOf(doubleString.replaceAll(",","."));
 		
+	}
+	
+	private BigDecimal getBigDecimal (String bigDecimalString) {
+		return new BigDecimal(bigDecimalString.replaceAll(",","."));
 	}
 }

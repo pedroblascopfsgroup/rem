@@ -1249,6 +1249,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			logger.error("[ERROR] - Crear trabajo multiactivo: ".concat(mensaje));
 			throw e;
 		}
+		
+		EnviarCorreoTrabajos(trabajo, EMAIL_CREACION);
 
 		return trabajo;
 	}
@@ -1344,7 +1346,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajo.setEsTarificado(false);
 			}
 		}
+		
 		EnviarCorreoTrabajos(trabajo, EMAIL_CREACION);
+		
 		return trabajo.getId();
 	}
 
@@ -1881,6 +1885,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			
 			actualizarImporteTotalTrabajo(trabajo.getId());
+			
+			EnviarCorreoTrabajos(trabajo, EMAIL_CREACION);
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());			

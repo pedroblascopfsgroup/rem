@@ -31,6 +31,7 @@ initComponent: function() {
     	var me = this;
     	me.buttonAlign = 'left';
     	me.buttons = [
+    		
 			{
 				text: HreRem.i18n('btn.cancelBtnText'),
 				handler: 'onClickCancelar'
@@ -40,7 +41,16 @@ initComponent: function() {
 				handler: 'onClickContinuar'
 			}
 		];
-    	me.items = [{
+    	me.items = [
+    		{
+    			xtype: 'formBase',
+    			reference: 'adjuntarDocumentoFormRef2',
+    			collapsed: false,
+    		 		scrollable	: 'y',
+    		 		layout: 'fit',
+    			cls:'formbase_no_shadow',
+    			items: [
+    		{
     		xtype : 'xtypeFormularioTipoDocumento1',
     		refence : 'xtypeFormularioTipoDocumento1'
     	},
@@ -51,7 +61,10 @@ initComponent: function() {
     	{
     		xtype : 'xtypeFormularioTipoDocumento3',
     		refence : 'xtypeFormularioTipoDocumento3'
-    	}]
+    	}
+    		]
+    		}
+    	]
     	me.callParent();
     }
 

@@ -9,9 +9,14 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.WizardAdjuntarDo
 		{
 			name : 'fileUpload'	
 		},
-		
 		{
 		name : 'descripcionAdjuntarDocumento'
+		},
+		{
+			name : 'fechaEmision'
+		},
+		{
+			name : 'combosinoAplica'
 		}
 	]
 	});

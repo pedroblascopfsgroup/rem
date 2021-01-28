@@ -7,14 +7,6 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
     layout: 'fit',
     isEditForm: true,
     autoScroll: true,
-    
-    defaults: {
-        layout: 'form',
-        xtype: 'container',
-        defaultType: 'displayfield'
-    },
-
-
     items: [
     		{
 			xtype: 'fieldsettable',
@@ -31,14 +23,15 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
 			items: [  
 	            {
 			    	xtype: 'combosino',
-			    	title: 'Aplica'
+			    	title: 'Aplica',
+			    	reference : 'combosinoAplica'
 	            },
 	            {
 			    	xtype: 'datefield',
 			    	title: 'Fecha emisión',
-			    	name: 'fechaEmision'
+			    	reference: 'fechaEmision'
 	            }
     	   ]
     	}
-    ]
+    	]
 	});

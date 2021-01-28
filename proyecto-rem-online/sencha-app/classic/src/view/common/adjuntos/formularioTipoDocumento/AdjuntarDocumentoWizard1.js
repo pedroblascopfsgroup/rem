@@ -42,7 +42,7 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 		me.items = [
 			{
 				xtype: 'formBase',
-				reference: 'adjuntarDocumentoFormRef',
+				reference: 'adjuntarDocumentoFormRef1',
 				collapsed: false,
 			 		scrollable	: 'y',
 			 		layout: 'fit',

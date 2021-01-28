@@ -79,9 +79,10 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 
 				} else {
 					debugger;
+					var padre = form.up('wizardBase').padre;
 					me.getView().unmask();
 					form.up('wizardBase').close();
-					form.up('wizardBase').padre.refrescarActivo(true);
+					padre.refrescarActivo(true);
 					
 				}
 			}

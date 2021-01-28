@@ -3707,7 +3707,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					if(gastoLineaDetalle.getImporteTotal() != null) {
 						importeTotal+= gastoLineaDetalle.getImporteTotal();
 					}
-					if (gastoLineaDetalle.getImporteIndirectoCuota() != null ) {
+					if (gastoLineaDetalle.getImporteIndirectoCuota() != null && !gastoLineaDetalle.getEsImporteIndirectoExento() ) {
 						cuotaIvaRetenida += gastoLineaDetalle.getImporteIndirectoCuota();
 					}
 				}

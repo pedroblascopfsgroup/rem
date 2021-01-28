@@ -3112,6 +3112,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(condiciones.getRevisionMercadoMeses())) {
 				dto.setRevisionMercadoMeses(condiciones.getRevisionMercadoMeses());
 			}
+			if (!Checks.esNulo(condiciones.getTributosSobrePropiedad())) {
+				dto.setTributosSobrePropiedad(condiciones.getTributosSobrePropiedad());
+			}
 
 			List<HistoricoCondicionanteExpediente> listaHistorico = condiciones.getListHistoricoCondiciones();
 			if (!Checks.esNulo(listaHistorico)) {

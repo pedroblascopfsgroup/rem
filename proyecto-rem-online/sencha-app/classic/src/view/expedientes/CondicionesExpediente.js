@@ -225,7 +225,16 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 											value : '{condiciones.reservaConImpuesto}',
 											readOnly : '{!esOfertaVenta}'
 										}
-									} 
+									},
+									{
+										xtype : 'checkboxfieldbase',
+										reference : 'chkboxTributosPropiedad',
+										fieldLabel : HreRem.i18n('fieldlabel.tributos.sobre.propiedad'),
+										bind : {
+											value : '{condiciones.tributosSobrePropiedad}',
+											readOnly : '{!esOfertaVenta}'
+										}
+									}  
 								]
 							}
 						]

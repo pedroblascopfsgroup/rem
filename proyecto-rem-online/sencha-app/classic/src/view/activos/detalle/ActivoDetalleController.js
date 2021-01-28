@@ -7769,6 +7769,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					
 					
 							if (activo.get("pertenceAgrupacionObraNueva")){
+								me.up('form').mask(HreRem.i18n("msg.mask.loading"));
 								btn.up().lookupController().crearVentanaPropagacionCalidadDato(valor);
 								
 							} else if (activo.get("pertenceAgrupacionRestringida")) {
@@ -7806,7 +7807,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     crearVentanaPropagacionCalidadDato: function(valor) {
    	 	var url =  $AC.getRemoteUrl('activo/getActivosPropagables');
    	 	var activo = this.getViewModel().get("activo.id");
-   	 	var me = this;
+   	 	var me = this; 
 		Ext.Ajax.request({
 			url: url,
 			method : 'POST',
@@ -7825,6 +7826,35 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             }
 		     
 		 });
+    },
+    
+    onClickGuardarPropagarCambiosEq: function(btn) {
+        var me = this;
+    	var window = btn.up("window"),
+    	grid = me.lookupReference("listaActivos"),
+    	radioGroup = me.lookupReference("opcionesPropagacion"),
+    	activosSeleccionados = grid.getSelectionModel().getSelection(),
+    	opcionPropagacion = radioGroup.getValue().seleccion;
+        var estaActivoActual = false;
+        window.mask(HreRem.i18n("msg.mask.loading"));
+    	if (opcionPropagacion == "4" &&  activosSeleccionados.length == 0) {
+        	me.fireEvent("errorToast", HreRem.i18n("msg.no.activos.seleccionados"));
+        	window.unmask();
+        	return false;
+    	}
+    	
+    	var activosParaPropagar = [];
+    	for(var i = 0; i < activosSeleccionados.length; i++){
+    		activosParaPropagar.push(activosSeleccionados[i].data.activoId);
+		}
+    	
+    	if(!activosParaPropagar.includes(window.activoActual.toString())) {
+    		activosParaPropagar.push(window.activoActual);
+    	}
+    	// Comprobar si en la lista activosParaPropagar está el activoActual. Si no está se añade.
+    	
+    	me.actualizarPropagacionEq(activosParaPropagar, window.valor, false, window);
+    	
 	},
 
 	checkVisibilityOfBtnCrearTrabajo: function () {
@@ -7859,38 +7889,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 					
 	},
-    onClickGuardarPropagarCambiosEq: function(btn) {
-        var me = this;
-    	var window = btn.up("window"),
-    	grid = me.lookupReference("listaActivos"),
-    	radioGroup = me.lookupReference("opcionesPropagacion"),
-    	activosSeleccionados = grid.getSelectionModel().getSelection(),
-    	opcionPropagacion = radioGroup.getValue().seleccion;
-        var estaActivoActual = false;
-    	if (opcionPropagacion == "4" &&  activosSeleccionados.length == 0) {
-        	me.fireEvent("errorToast", HreRem.i18n("msg.no.activos.seleccionados"));
-        	return false;
-    	}
-    	
-    	var activosParaPropagar = [];
-    	for(var i = 0; i < activosSeleccionados.length; i++){
-    		activosParaPropagar.push(activosSeleccionados[i].data.activoId);
-		}
-    	
-    	if(!activosParaPropagar.indexOf(window.activoActual.toString())) {
-    		activosParaPropagar.push(window.activoActual);
-    	}
-    	// Comprobar si en la lista activosParaPropagar está el activoActual. Si no está se añade.
-    	
-    	me.actualizarPropagacionEq(activosParaPropagar, window.valor, false, window);
-    	
-    },
 
     
     actualizarPropagacionEq: function(activosParaPropagar, valor, soyRestringidaQuieroActualizar, window ){
     	var me = this;
     	var url = $AC.getRemoteUrl('activo/saveDatoRemCalidadDatoPublicacion');
-
+    	var ventana = window;
+    	
     	me.getView().mask(HreRem.i18n("msg.mask.loading"));
     	Ext.Ajax.request({
 			url: url,
@@ -7901,12 +7906,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				soyRestringidaQuieroActualizar: soyRestringidaQuieroActualizar
 			},
 			success: function(response, opts){
-			
 				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				me.refrescarActivo(true);
+				ventana.unmask();
+				ventana.close();
 				me.getView().unmask();
 			}, failure: function (a, operation, context) {
             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+            	ventana.unmask();
+				ventana.close();
             	me.refrescarActivo(true);
             	me.getView().unmask();
             }

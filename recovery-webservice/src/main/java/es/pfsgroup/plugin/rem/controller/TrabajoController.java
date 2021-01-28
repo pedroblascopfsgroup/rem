@@ -55,7 +55,7 @@ import es.pfsgroup.plugin.rem.api.TrabajoAvisadorApi;
 import es.pfsgroup.plugin.rem.excel.ActivosTrabajoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
-import es.pfsgroup.plugin.rem.excel.TrabajoGridExcelReport;
+import es.pfsgroup.plugin.rem.excel.TrabajoExcelReport;
 import es.pfsgroup.plugin.rem.factory.GenerarPropuestaPreciosFactoryApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
@@ -86,7 +86,6 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoParticipa;
 import es.pfsgroup.plugin.rem.model.VBusquedaTrabajos;
-import es.pfsgroup.plugin.rem.model.VGridBusquedaTrabajos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.propuestaprecios.service.GenerarPropuestaPreciosService;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
@@ -100,7 +99,6 @@ import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoAgendaTrabajo;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
-import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoGridFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 import net.sf.json.JSONObject;
@@ -175,9 +173,7 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";
 	private static final String RESPONSE_ERROR_KEY = "error";
-	
 	private static final String RESPONSE_DATA_KEY = "data";
-	private static final String RESPONSE_TOTALCOUNT_KEY = "totalCount";
 
 	private static final String ERROR_DUPLICADOS_CREAR_TRABAJOS = "El fichero contiene registros duplicados";
 	private static final String ERROR_GD_NO_EXISTE_CONTENEDOR = "No existe contenedor para este trabajo. Se creará uno nuevo.";
@@ -223,22 +219,6 @@ public class TrabajoController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 		
-	}	
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getBusquedaTrabajosGrid(DtoTrabajoGridFilter dto, ModelMap model){	
-		try {
-			Page page = trabajoApi.getBusquedaTrabajosGrid(dto, genericAdapter.getUsuarioLogado());			
-			model.put(RESPONSE_DATA_KEY, page.getResults());
-			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
-			model.put(RESPONSE_SUCCESS_KEY, true);
-		}catch(Exception e) {
-			logger.error(e.getMessage(), e);
-			model.put(RESPONSE_ERROR_KEY, e.getMessage());
-			model.put(RESPONSE_SUCCESS_KEY, false);
-		}		
-		return createModelAndViewJson(model);		
 	}	
 	
 	@SuppressWarnings("unchecked")
@@ -1243,26 +1223,31 @@ public class TrabajoController extends ParadiseJsonController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcel(DtoTrabajoGridFilter dto, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		dto.setStart(excelReportGeneratorApi.getStart());
-		dto.setLimit(excelReportGeneratorApi.getLimit());
+	public void generateExcel(DtoTrabajoFilter dtoTrabajoFilter, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		dtoTrabajoFilter.setStart(excelReportGeneratorApi.getStart());
+		dtoTrabajoFilter.setLimit(excelReportGeneratorApi.getLimit());
 		
 		@SuppressWarnings("unchecked")
-		List<VGridBusquedaTrabajos> listaTrabajos = (List<VGridBusquedaTrabajos>) trabajoApi.getBusquedaTrabajosGrid(dto, genericAdapter.getUsuarioLogado()).getResults();		
-		new EmptyParamDetector().isEmpty(listaTrabajos.size(), "trabajos",  usuarioManager.getUsuarioLogado().getUsername());		
-		ExcelReport report = new TrabajoGridExcelReport(listaTrabajos);
+		List<VBusquedaTrabajos> listaTrabajos = (List<VBusquedaTrabajos>) trabajoApi.findAll(dtoTrabajoFilter, genericAdapter.getUsuarioLogado()).getResults();
+		
+		new EmptyParamDetector().isEmpty(listaTrabajos.size(), "trabajos",  usuarioManager.getUsuarioLogado().getUsername());
+		
+		ExcelReport report = new TrabajoExcelReport(listaTrabajos);
+
 		excelReportGeneratorApi.generateAndSend(report, response);
+
 	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional()
-	public ModelAndView registrarExportacion(DtoTrabajoGridFilter dto, Boolean exportar, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView registrarExportacion(DtoTrabajoFilter dtoTrabajoFilter, Boolean exportar, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelMap model = new ModelMap();
 		Usuario user = null;
 		Boolean isSuperExport = false;
 		try {
-			int count = trabajoApi.getBusquedaTrabajosGrid(dto, genericAdapter.getUsuarioLogado()).getTotalCount();
+			int count = trabajoApi.findAll(dtoTrabajoFilter, genericAdapter.getUsuarioLogado()).getTotalCount();
 			user = usuarioManager.getUsuarioLogado();
 			AuditoriaExportaciones ae = new AuditoriaExportaciones();
 			ae.setBuscador("trabajos");

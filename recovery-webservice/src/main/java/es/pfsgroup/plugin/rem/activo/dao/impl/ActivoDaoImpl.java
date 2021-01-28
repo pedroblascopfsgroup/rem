@@ -65,7 +65,6 @@ import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
-import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
@@ -81,7 +80,6 @@ import es.pfsgroup.plugin.rem.model.VPlusvalia;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.utils.MSVREMUtils;
@@ -772,53 +770,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.subFasePublicacionCodigo", dto.getSubfasePublicacionCodigo());
    		if (!Checks.esNulo(dto.getTipoComercializacionCodigo()))HQLBuilder.addFiltroWhereInSiNotNull(hb, "activopubli.tipoComercializacionCodigo", Arrays.asList(dto.getTipoComercializacionCodigo()));
 
-		return HibernateQueryUtils.page(this, hb, dto);
-	}
-	
-	@Override
-	public Page getBusquedaPublicacionGrid(DtoPublicacionGridFilter dto) {
-		HQLBuilder hb = new HQLBuilder(" from VGridBusquedaPublicaciones vgrid");
-
-		if (dto.getNumActivo() != null && StringUtils.isNumeric(dto.getNumActivo()))
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivo", Long.valueOf(dto.getNumActivo()));
-
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.estadoPublicacionVentaCodigo", dto.getEstadoPublicacionVentaCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.motivosOcultacionVentaCodigo", dto.getMotivosOcultacionVentaCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.estadoPublicacionAlquilerCodigo", dto.getEstadoPublicacionAlquilerCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.motivosOcultacionAlquilerCodigo", dto.getMotivosOcultacionAlquilerCodigo());
-
-		if (dto.getEstadoPublicacionVentaCodigo() != null && dto.getEstadoPublicacionAlquilerCodigo() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoComercializacionCodigo", DDTipoComercializacion.CODIGO_ALQUILER_VENTA);
-		} else if (dto.getEstadoPublicacionVentaCodigo() != null) {
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.tipoComercializacionCodigo", Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA));
-		} else if (dto.getEstadoPublicacionAlquilerCodigo() != null) {
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.tipoComercializacionCodigo", Arrays.asList(DDTipoComercializacion.CODIGOS_ALQUILER));
-		}
-
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoActivoCodigo", dto.getTipoActivoCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subtipoActivoCodigo", dto.getSubtipoActivoCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.fasePublicacionCodigo", dto.getFasePublicacionCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subfasePublicacionCodigo", dto.getSubfasePublicacionCodigo());
-
-		if (Boolean.TRUE.equals(dto.getCheckOkAdmision()) || Boolean.TRUE.equals(dto.getCheckOkVenta()) || Boolean.TRUE.equals(dto.getCheckOkAlquiler()))
-			HQLBuilder.addFiltroIgualQue(hb, "vgrid.admision", 1);
-		if (Boolean.TRUE.equals(dto.getCheckOkGestion()) || Boolean.TRUE.equals(dto.getCheckOkVenta()) || Boolean.TRUE.equals(dto.getCheckOkAlquiler()))
-			HQLBuilder.addFiltroIgualQue(hb, "vgrid.gestion", 1);		
-		if (Boolean.TRUE.equals(dto.getCheckOkInformeComercial()))
-			HQLBuilder.addFiltroIgualQue(hb, "vgrid.informeComercial", 1);
-		if (Boolean.TRUE.equals(dto.getCheckOkPrecio()))
-			HQLBuilder.addFiltroIgualQue(hb, "vgrid.precio", 1);		
-		if (Boolean.TRUE.equals(dto.getCheckOkVenta())) {		
-			hb.appendWhere(" (vgrid.adecuacionAlquilerCodigo = '02' OR vgrid.publicarSinPrecioVenta = 1) "
-					+ " AND NVL(vgrid.informeComercial, 0) = CASE WHEN vgrid.carteraCodigo IN ('01','08') THEN 1 ELSE NVL(vgrid.informeComercial, 0) END ");			
-		}
-		if (Boolean.TRUE.equals(dto.getCheckOkAlquiler())) {		
-			hb.appendWhere(" vgrid.tipoActivoCodigo = '02' AND vgrid.adjuntoActivo = 1 "
-					+ " AND vgrid.adecuacionAlquilerCodigo IN ('01', '03') AND (vgrid.conPrecioAlquiler = 1 OR vgrid.publicarSinPrecioAlquiler = 1) "
-					+ " AND NVL(vgrid.informeComercial, 0) = CASE WHEN vgrid.carteraCodigo IN ('01','08') THEN 1 ELSE NVL(vgrid.informeComercial, 0) END ");
-		}
 		return HibernateQueryUtils.page(this, hb, dto);
 	}
 

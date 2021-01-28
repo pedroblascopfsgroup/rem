@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -52,8 +51,8 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
@@ -68,7 +67,10 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
+import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -95,7 +97,6 @@ import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
-import es.pfsgroup.plugin.rem.model.DtoAgrupacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -173,6 +174,7 @@ public class AgrupacionAdapter {
 	@Autowired
 	private ActivoAdapter activoAdapter;
 
+	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
@@ -251,6 +253,7 @@ public class AgrupacionAdapter {
 	@Autowired
 	private ActivoHistoricoPatrimonioDao activoHistoricoPatrimonioDao;
 	
+	
 	@Autowired
 	private ClienteComercialDao clienteComercialDao;
 
@@ -262,9 +265,6 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
-	
-	@Autowired
-	private ActivoAgrupacionDao activoAgrupacionDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -852,18 +852,6 @@ public class AgrupacionAdapter {
 			logger.error("error en agrupacionAdapter", e);
 			return null;
 		}
-	}
-	
-	public Page getBusquedaAgrupacionesGrid(DtoAgrupacionGridFilter dto) {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (usuarioCartera != null) {
-			dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
-			if (usuarioCartera.getSubCartera() != null) {
-				dto.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
-			}
-		}
-		return activoAgrupacionDao.getBusquedaAgrupacionesGrid(dto);		
 	}
 
 	public Page getListAgrupaciones(DtoAgrupacionFilter dtoAgrupacionFilter) {
@@ -4229,37 +4217,6 @@ public class AgrupacionAdapter {
 	@Transactional(readOnly = false)
 	public Oferta clonateOfertaAgrupacion(String idOferta) {
 		return genericAdapter.clonateOferta(idOferta, true);
-	}
-	
-	@Transactional(readOnly = false)
-	public boolean deleteAgrupacionesById(Long id) {
-		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
-		if (DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-			genericDao.deleteById(ActivoObraNueva.class, id);
-		} else if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-			genericDao.deleteById(ActivoRestringida.class, id);
-		} else if (DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-			genericDao.deleteById(ActivoProyecto.class, id);
-		} else if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-			genericDao.deleteById(ActivoAsistida.class, id);
-		} else if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-			genericDao.deleteById(ActivoLoteComercial.class, id);
-		}
-
-		List<ActivoAgrupacionActivo> list = agrupacion.getActivos();
-		if (!Checks.estaVacio(list)) {
-			Iterator<ActivoAgrupacionActivo> iterator = list.iterator();
-			while (iterator.hasNext()) {
-				activoAgrupacionActivoApi.delete(iterator.next());
-			}
-		}
-		return true;
-	}
-		
-	@Transactional(readOnly = false)
-	public DtoAgrupacionesCreateDelete createAgrupacionesGrid(DtoAgrupacionesCreateDelete dto) throws Exception {		
-		dto.setTipoAgrupacion(dto.getTipoAgrupacionDescripcion());
-		return this.createAgrupacion(dto);
 	}
 	
 	public ActivoAgrupacion getAgrupacionObjectById(Long id) {

@@ -53,7 +53,6 @@ import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoAgendaTrabajo;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
-import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoGridFilter;
 
 public interface TrabajoApi {
 
@@ -880,14 +879,6 @@ public interface TrabajoApi {
 	public ActivoTramite createTramiteTrabajo(Long idTrabajo, ExpedienteComercial expedienteComercial);
 
 	ActivoTramite createTramiteTrabajo(Trabajo trabajo, ExpedienteComercial expedienteComercial);
-
-	/**
-	 * Devuelve un objeto Page con los trabajos que se cargarán en el grid
-	 * @param dto
-	 * @param usuarioLogado
-	 * @return 
-	 */
-	public Page getBusquedaTrabajosGrid(DtoTrabajoGridFilter dto, Usuario usuarioLogado);
 
 	/*Envía una lista de DTOs de proveedores filtrados por cartera siempre con el 'nombre', de manera que,
 	 * ya sea el campo nombre o el campo nombreComercial el seleccionado, se envíe siempre como 'nombre' para

@@ -81,6 +81,8 @@ Ext.define('HreRem.view.activos.detalle.FotosTecnicasActivo', {
                 },
                 itemclick: function(dataview,record) {
 	        		this.up('form').setBindRecord(record.data);
+	        		this.lookupController().getViewModel().set('fotoSelected', record);
+	        		this.lookupController().getViewModel().notify();
 	        	}
             }
         });
@@ -123,11 +125,14 @@ Ext.define('HreRem.view.activos.detalle.FotosTecnicasActivo', {
 							}
 		                },
 		                { 
-		                	name: 'descripcion',
-		                	xtype: 'textareafieldbase',
+		                	name: 'comboDescripcionFoto',
+		                	xtype: 'comboboxfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.descripcion'),
+		                	editable: false,
+		                	queryMode: 'local',
 		                	bind: {
-								value: '{fotoWeb.descripcion}'
+		                		store: '{storeDescripcionFoto}',
+				        		value: '{fotoWeb.codigoDescripcionFoto}'
 							}
 		                },
 		                { 

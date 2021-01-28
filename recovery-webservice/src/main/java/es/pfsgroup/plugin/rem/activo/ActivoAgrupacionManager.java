@@ -31,7 +31,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -59,11 +58,15 @@ import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAfectosGencatAgrupacion;
+import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VListaActivosAgrupacionVSCondicionantes;
+import es.pfsgroup.plugin.rem.model.VSubdivisionesAgrupacion;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
@@ -114,12 +117,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 	@Autowired
 	private UsuarioManager usuarioApi;
+
 	
 	@Autowired
 	private ActivoAgrupacionFactoryApi activoAgrupacionFactoryApi;
-	
-	@Autowired
-	private GenericAdapter genericAdapter;
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -225,13 +226,20 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		if(agrupacion != null) {
 			Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(idAgrupacion, null) + 1;
 			ActivoFoto activoFoto = null;
-			FileResponse fileReponse;
+			FileResponse fileReponse = null;
 			try {
 				if (gestorDocumentalFotos.isActive()) {
+					
+					if (fileItem.getParameter("comboDescripcionFoto") != null) {
+						
+						DDDescripcionFotoActivo descripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto")));
+						
+						if (descripcionFoto != null ) {
+							fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),fileItem.getFileItem().getFileName(),
+								PROPIEDAD.AGRUPACION, idAgrupacion, null, descripcionFoto.getDescripcion(), null, null, orden);
+						}
 	
-					fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),
-							fileItem.getFileItem().getFileName(), PROPIEDAD.AGRUPACION, idAgrupacion, null,
-							fileItem.getParameter("descripcion"), null, null, orden);
+					}
 					activoFoto = new ActivoFoto(fileReponse.getData());
 	
 				} else {
@@ -245,7 +253,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 				activoFoto.setNombre(fileItem.getFileItem().getFileName());
 	
-				activoFoto.setDescripcion(fileItem.getParameter("descripcion"));
+				activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto"))).getDescripcion());
+				activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto"))));
 	
 				activoFoto.setPrincipal(true);
 	
@@ -291,8 +300,20 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 				activoFoto.setNombre(fileItem.getBasename());
 
+				String descripcion = null;
+				DDSubtipoActivo subtipoActivo = genericDao.get(DDSubtipoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubtipoActivo.CODIGO_EN_CONSTRUCCION));
+				DDDescripcionFotoActivo descripcionFoto = null;
+
 				if (fileItem.getMetadata().containsKey("descripcion")) {
-					activoFoto.setDescripcion(fileItem.getMetadata().get("descripcion"));
+					descripcion = fileItem.getMetadata().get("descripcion");
+					if (descripcion != null && subtipoActivo != null) {
+						descripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "descripcion", descripcion), 
+							genericDao.createFilter(FilterType.EQUALS, "subtipoActivo", subtipoActivo));
+					}
+					if (descripcionFoto != null) {
+						activoFoto.setDescripcion(descripcionFoto.getDescripcion());
+						activoFoto.setDescripcionFoto(descripcionFoto);
+					}
 				}
 
 				activoFoto.setPrincipal(false);
@@ -354,8 +375,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		PRINCIPAL principal = null;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupacionId);
 		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
-		FileResponse fileReponse;
-		ActivoFoto activoFoto;
+		FileResponse fileReponse = null;
+		ActivoFoto activoFoto = null;
 		Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId);
 		orden++;
 		try {
@@ -380,9 +401,15 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 					situacion = SITUACION.EXTERIOR;
 				}
 				
-				fileReponse = gestorDocumentalFotos.uploadSubdivision(fileItem.getFileItem().getFile(),
-						fileItem.getFileItem().getFileName(), subdivisionId, agrupacion,
-						fileItem.getParameter("descripcion"),tipo,principal,situacion, orden);
+				if (fileItem.getParameter("comboDescripcionFoto") != null) {
+				
+					fileReponse = gestorDocumentalFotos.uploadSubdivision(fileItem.getFileItem().getFile(),
+							fileItem.getFileItem().getFileName(), subdivisionId, agrupacion,
+							genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto"))).getDescripcion(),
+							tipo,principal,situacion, orden);
+					
+				}
+					 
 				activoFoto = new ActivoFoto(fileReponse.getData());
 
 			} else {
@@ -398,7 +425,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 			activoFoto.setNombre(fileItem.getFileItem().getFileName());
 			
-			activoFoto.setDescripcion(fileItem.getParameter("descripcion"));
+			activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto"))).getDescripcion());
+			activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto"))));
 
 			activoFoto.setPrincipal(Boolean.valueOf(fileItem.getParameter("principal")));
 			
@@ -445,8 +473,21 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 				activoFoto.setNombre(fileItem.getBasename());
 
+				String descripcion = null;
+				String codigoSubtipoActivo = genericDao.get(VSubdivisionesAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", subdivisionId)).getCodigoSubtipoActivo();
+				DDSubtipoActivo subtipoActivo = genericDao.get(DDSubtipoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoSubtipoActivo));
+				DDDescripcionFotoActivo descripcionFoto = null;
+
 				if (fileItem.getMetadata().containsKey("descripcion")) {
-					activoFoto.setDescripcion(fileItem.getMetadata().get("descripcion"));
+					descripcion = fileItem.getMetadata().get("descripcion");
+					if (descripcion != null && subtipoActivo != null) {
+						descripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "descripcion", descripcion), 
+							genericDao.createFilter(FilterType.EQUALS, "subtipoActivo", subtipoActivo));
+					}
+					if (descripcionFoto != null) {
+						activoFoto.setDescripcion(descripcionFoto.getDescripcion());
+						activoFoto.setDescripcionFoto(descripcionFoto);
+					}
 				}
 
 				activoFoto.setPrincipal(false);
@@ -811,21 +852,6 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		}
 		
 		return  listDtoTipoAgrupacion;
-	}
-	
-	@Override
-	public List<DDTipoAgrupacion> getComboTipoAgrupacionFiltro() {
-		List <DDTipoAgrupacion> listaDDTipoAgrupacion = genericDao.getList(DDTipoAgrupacion.class);		
-		for(Perfil p : genericAdapter.getUsuarioLogado().getPerfiles()) {
-			if(USUARIO_IT.equals(p.getCodigo()) || GESTOR_COMERCIAL_ALQUILER.equals(p.getCodigo()) || SUPERVISOR_COMERCIAL_ALQUILER.equals(p.getCodigo())) {
-				return  listaDDTipoAgrupacion;
-			}
-		}
-		
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
-		DDTipoAgrupacion promocionAlquiler = genericDao.get(DDTipoAgrupacion.class, filtro);	
-		listaDDTipoAgrupacion.remove(promocionAlquiler);
-		return  listaDDTipoAgrupacion;
 	}
 
 	@Override

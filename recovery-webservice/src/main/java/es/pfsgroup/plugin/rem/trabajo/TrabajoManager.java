@@ -193,7 +193,6 @@ import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoAgendaTrabajo;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoHistorificadorCampos;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
-import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoGridFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
@@ -379,6 +378,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		
+		boolean esHistoricoPeticion = false;
+		
+		if(dto.getEsHistoricoPeticionActivo() != null) {
+			esHistoricoPeticion = dto.getEsHistoricoPeticionActivo();
+		}
+		
 		if (!Checks.esNulo(usuarioCartera)){
 			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
 				dto.setCartera(usuarioCartera.getCartera().getCodigo());
@@ -406,30 +412,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if (esControlConsulta) {
 				dto.setCodigoTipo(CODIGO_OBTENCION_DOCUMENTACION);
 				dto.setCodigoTipo2(CODIGO_ACTUACION_TECNICA);
-				return trabajoDao.findAll(dto);
+				
+				if(esHistoricoPeticion) {
+					return trabajoDao.findAllFilteredHistoricoPeticion(dto, usuarioLogado.getId());
+				}else {
+					return trabajoDao.findAll(dto);
+				}
+				
 			}
 			return trabajoDao.findAllFilteredByProveedorContacto(dto, usuarioLogado.getId());
 		}
 
-		return trabajoDao.findAll(dto);
-	}
-	
-	@Override	
-	public Page getBusquedaTrabajosGrid(DtoTrabajoGridFilter dto, Usuario usuarioLogado) {
-		Long idUsuario = usuarioLogado.getId();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", idUsuario));
-		if (usuarioCartera != null) dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());					
-		if(this.gestorActivoDao.isUsuarioGestorExterno(idUsuario)) {
-			dto.setEsGestorExterno(true);						
-			for (Perfil perfil : usuarioLogado.getPerfiles()) {
-				if(PERFIL_CAPA_CONTROL_BANKIA.equals(perfil.getCodigo()) ||  PERFIL_USUARIOS_DE_CONSULTA.equals(perfil.getCodigo())){
-					dto.setEsControlConsulta(true);
-					dto.setEsGestorExterno(false);
-					break;
-				}						
-			}
+		if(esHistoricoPeticion) {
+			return trabajoDao.findAllFilteredHistoricoPeticion(dto, null);
+		}else {
+			return trabajoDao.findAll(dto);
 		}
-		return trabajoDao.getBusquedaTrabajosGrid(dto, idUsuario);
 	}
 
 	@Override
@@ -2406,12 +2404,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			
 			Date fechaHoraConcreta = null;
 			
-			if(dtoTrabajo.getFechaConcretaString().isEmpty()) {
-				String hora = dtoTrabajo.getHoraConcretaString();
-				fechaHoraConcreta = formatoHora.parse(hora);
-				trabajo.setFechaHoraConcreta(fechaHoraConcreta);
-				trabajo.setFechaCompromisoEjecucion(fechaHoraConcreta);
-			}else if(!"1970-01-01".equals(groovyft.format(formatoFechaString.parse(dtoTrabajo.getFechaConcretaString())))) {
+			if(!"1970-01-01".equals(groovyft.format(formatoFechaString.parse(dtoTrabajo.getFechaConcretaString())))) {
 
 				String fecha = dtoTrabajo.getFechaConcretaString();
 				String hora = dtoTrabajo.getHoraConcretaString();
@@ -2431,10 +2424,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		}else if(dtoTrabajo.getFechaConcreta() != null && dtoTrabajo.getHoraConcreta() != null){
 			if(dtoTrabajo.getHoraConcreta() != null) {
-				String hora = formatoHora.format(dtoTrabajo.getHoraConcreta());
-				String fecha = formatoFecha.format(dtoTrabajo.getFechaConcreta());
-				if(!hora.isEmpty() && !fecha.isEmpty()) {
-					trabajo.setFechaHoraConcreta(formatoFechaHora.parse(fecha+" "+hora));
+				if (!"1970-01-01".equals(groovyft.format(dtoTrabajo.getFechaConcreta()))){
+					String hora = formatoHora.format(dtoTrabajo.getHoraConcreta());
+					String fecha = formatoFecha.format(dtoTrabajo.getFechaConcreta());
+					if(!hora.isEmpty() && !fecha.isEmpty()) {
+						trabajo.setFechaHoraConcreta(formatoFechaHora.parse(fecha+" "+hora));
+					}
+				}else {
+					trabajo.setFechaHoraConcreta(null);
 				}
 			}else {
 				trabajo.setFechaHoraConcreta(dtoTrabajo.getFechaConcreta());
@@ -3016,8 +3013,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		if(trabajo.getFechaHoraConcreta() != null && !"1970-01-01".equals(groovyft.format(trabajo.getFechaHoraConcreta()))) {
 			dtoTrabajo.setFechaConcreta(trabajo.getFechaHoraConcreta());
+			dtoTrabajo.setHoraConcreta(trabajo.getFechaHoraConcreta());
 		}
-		dtoTrabajo.setHoraConcreta(trabajo.getFechaHoraConcreta());
 
 		if (trabajo.getAgrupacion() != null) {
 			dtoTrabajo.setNumAgrupacion(trabajo.getAgrupacion().getNumAgrupRem());
@@ -6275,6 +6272,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public Map<String, String> getDocumentosFinalizacionTrabajo(Long idTrabajo) {
 		
 		Trabajo trabajo = null;
+		Integer checkTamanyoLista;
+		Boolean tieneUnDocumento = false;
 		Map<String, String> mapaDocumentosFin = new HashMap<String, String>();
 		List<DDTipoDocumentoActivo> documentosFinalizacion = new ArrayList<DDTipoDocumentoActivo>();
 		List<DDTipoDocumentoActivo> documentosTrabajo = new ArrayList<DDTipoDocumentoActivo>();
@@ -6291,6 +6290,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				for (CFGFinalizarTrabajos finalizarTrabajos : finalizarTrabajosList) {
 					documentosFinalizacion.add(finalizarTrabajos.getTipoDocumento());
 				}
+				checkTamanyoLista = documentosFinalizacion.size();
 				List<AdjuntoTrabajo> adjTrabajoList = genericDao.getList(AdjuntoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()),
 						genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 				if (!adjTrabajoList.isEmpty()) {
@@ -6298,17 +6298,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						documentosTrabajo.add(adjuntoTrabajo.getTipoDocumentoActivo());
 					}
 					documentosFinalizacion.removeAll(documentosTrabajo);
+					if(checkTamanyoLista > documentosFinalizacion.size()) {
+						tieneUnDocumento = true;
+					}
 				}
 			}
 		}
 
-		if (!documentosFinalizacion.isEmpty()) {
+		if (!documentosFinalizacion.isEmpty() && !tieneUnDocumento) {
 			StringBuilder documentos = new StringBuilder();
 			for (DDTipoDocumentoActivo tipoDoc : documentosFinalizacion) {
 				if (tipoDoc.equals(documentosFinalizacion.get(0))) {
 					documentos.append(tipoDoc.getDescripcion());
 				} else {
-					documentos.append(", "+tipoDoc.getDescripcion());
+					documentos.append(" o "+tipoDoc.getDescripcion());
 				}
 			}
 			mapaDocumentosFin.put("docs", documentos.toString());

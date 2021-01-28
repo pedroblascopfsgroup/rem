@@ -19,8 +19,8 @@ public class DtoAgrupacionesCreateDelete {
 	private Usuario gestorComercial;
 	private Long numAgrupacionRem;
 	private String direccion;
-	private Boolean esFormalizacion;	
-	private String tipoAgrupacionDescripcion;
+	private Boolean esFormalizacion;
+
 	
 	public String getNombre() {
 		return nombre;
@@ -82,11 +82,5 @@ public class DtoAgrupacionesCreateDelete {
 	}
 	public void setEsFormalizacion(Boolean esFormalizacion) {
 		this.esFormalizacion = esFormalizacion;
-	}
-	public String getTipoAgrupacionDescripcion() {
-		return tipoAgrupacionDescripcion;
-	}
-	public void setTipoAgrupacionDescripcion(String tipoAgrupacionDescripcion) {
-		this.tipoAgrupacionDescripcion = tipoAgrupacionDescripcion;
 	}
 }

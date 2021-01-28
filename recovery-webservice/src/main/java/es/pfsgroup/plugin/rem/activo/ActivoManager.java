@@ -1638,9 +1638,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		ActivoInformeComercialHistoricoMediador historicoMediadorPrimero = new ActivoInformeComercialHistoricoMediador();
 		Activo activo = null;
 		Date fechaHoy = new Date();
-		DDTipoRolMediador tipoRol = genericDao.get(DDTipoRolMediador.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getRol()));
+		if(dto.getRol() == null) {
+			throw new JsonViewerException("No existe el rol.");
+		}
+		DDTipoRolMediador tipoRol = genericDao.get(DDTipoRolMediador.class,genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getRol()));
 
+		if(tipoRol == null) {
+			tipoRol = genericDao.get(DDTipoRolMediador.class,genericDao.createFilter(FilterType.EQUALS, "descripcion", dto.getRol()));
+		}
+		
+		if(tipoRol == null) {
+			throw new JsonViewerException("El tipo de rol no es válido.");
+		}
+		
 		if (!Checks.esNulo(dto.getIdActivo())) {
 			activo = activoDao.get(dto.getIdActivo());
 		}
@@ -1707,11 +1717,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			beanUtilNotNull.copyProperty(historicoMediador, "activo", activo);
 			historicoMediador.setTipoRolMediador(tipoRol);
 
-			if (!Checks.esNulo(dto.getMediador()) || !dto.getMediador().equals("")) { // si no se selecciona mediador en
+			if (!Checks.esNulo(dto.getMediador()) && !dto.getMediador().isEmpty()) { // si no se selecciona mediador en
 																						// el combo, se devuelve
 																						// mediador "", no null.
-				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
-						Long.parseLong(dto.getMediador()));
+				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",Long.parseLong(dto.getMediador()));
 				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, proveedorFiltro);
 
 				if (Checks.esNulo(proveedor)) {

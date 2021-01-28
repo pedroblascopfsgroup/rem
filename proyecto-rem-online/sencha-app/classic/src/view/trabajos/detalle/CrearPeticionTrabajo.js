@@ -401,7 +401,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															loadAfterBind: false,
 															colspan:3,
 															bind: {
-				        	   									store: '{listaActivosSubida}'														
+				        	   									store: '{listaActivosSubida}'
 															},
 															columns: [
 				        	   									{

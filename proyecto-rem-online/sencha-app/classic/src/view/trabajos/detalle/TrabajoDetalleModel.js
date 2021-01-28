@@ -412,17 +412,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			model:'HreRem.model.ActivoTrabajoSubida',
     			proxy: {
     				type: 'uxproxy',
-    				remoteUrl: 'trabajo/getListActivosByProceso',
-    				//actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+    				remoteUrl: 'trabajo/getListActivosByProceso',    				
     				extraParams: {idProceso: 'idProceso'}
     			},
-    			//session: true,
     	    	remoteSort: true,
     	    	remoteFilter: true,
-    	    	autoLoad:false/*,
-    	    	listeners : {
-    	            beforeload : 'paramLoading'
-    	        }*/
+    	    	autoLoad:false
     		},
     		
     		listaActivosAgrupacion: {
@@ -431,16 +426,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			proxy: {
     				type: 'uxproxy',
     				remoteUrl: 'trabajo/getListActivosByID',
-    				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
     				extraParams: {idActivo: '{idActivo}', idAgrupacion:'{idAgrupacion}'}
     			},
-    			//session: true,
     	    	remoteSort: true,
     	    	remoteFilter: true,
-    	    	autoLoad: false/*,
-    	    	listeners : {
-    	            beforeload : 'loadGridSegundo'
-    	        }*/
+    	    	autoLoad: true
     		},
     		
     		comboProveedorContacto : {

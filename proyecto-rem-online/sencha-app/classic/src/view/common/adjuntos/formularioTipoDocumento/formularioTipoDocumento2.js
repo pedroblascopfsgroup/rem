@@ -15,37 +15,35 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
     },
     
     items: [
-    		{
-			xtype: 'fieldsettable',
-			layout: {
-				type: 'vbox',
-				align:'center'
-			},
-			margin: '20',
-			reference: 'fieldsetDocumentoIdentidad',
-			collapsible: false,
-			defaults: {
-				addUxReadOnlyEditFieldPlugin: false
-			},
+    	{
+			xtype: 'formBase',
+			reference: 'adjuntarDocumentoFormRef2',
+			collapsed: false,
+		 		scrollable	: 'y',
+		 		layout: 'fit',
+			cls:'formbase_no_shadow',
 			items: [
-	    	
-	            {
+
+				 {
 			    	xtype: 'combosino',
-			    	title: 'Aplica'
+			    	title: 'Aplica',
+			    	reference : 'combosinoAplica',
+			    	value : '{wizardAdjuntarDocumentoModel.aplica}'
 	            },
 	            {
 			    	xtype: 'datefield',
-			    	title: 'Fecha Emisión',
-			    	name: 'fechaEmision'
+			    	title: 'Fecha emisión',
+			    	reference: 'fechaEmision',
+			    	value : '{wizardAdjuntarDocumentoModel.fechaEmision}'
 	            },
 	            {
 			    	xtype: 'datefield',
 			    	title: 'Fecha Caducidad',
-			    	name: 'fechaCaducidad'
+			    	name: 'fechaCaducidad',
+			    	value : '{wizardAdjuntarDocumentoModel.fechaCaducidad}'
 	
 	            }
 	            ]
-    		}
-	            
-    ]
+    		}       
+    	]
 	});

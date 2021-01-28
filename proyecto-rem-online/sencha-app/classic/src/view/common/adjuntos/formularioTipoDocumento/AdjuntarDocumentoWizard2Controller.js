@@ -42,11 +42,14 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 		var fileupload = me.getView().wizardAnterior.down('[reference = fileUpload]').value;
 		var comboTipoDocumento = me.getView().wizardAnterior.down('[reference = tipoDocumentoNuevoComprador]').value;
 		var url =  $AC.getRemoteUrl('activo/upload');
-		var activoId = wizard.activo;
-		form.submit({
+		var activoId = wizard.activo; 
+		form2 = me.getView().wizardAnterior.down('form');
+		var nuevosParametros = me.devolverParametros(me.getView().formExtType, form);
+		params = {fileupload : fileupload,idEntidad : activoId,tipo : comboTipoDocumento, dto:nuevosParametros};
+		form2.submit({
 			url: url,
 			waitMsg: HreRem.i18n('msg.mask.loading'),
-			params: {fileupload : fileupload,idEntidad : activoId,tipo : comboTipoDocumento},
+			params: params,
 			success: function(fp, o) {
 				if(o.result.success == "false") {
 					me.fireEvent("errorToast", o.result.errores);
@@ -60,6 +63,20 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 				}
 			}
 	   })
+	},
+	
+	devolverParametros: function(xtype, form){
+		debugger;
+		var nuevosParametros = {};
+		
+		var formulario = form.down('[reference='+xtype+']');
+		nuevosParametros[formulario.down('[name=aplica]').reference] = formulario.down('[name=aplica]').value;
+		while (Ext.isEmpty(formulario.down('[name=aplica]').nextSibling())){
+			nuevosParametros [formulario.down('[name=aplica]').reference] = formulario.down('[name=aplica]').value;
+		}
+		
+		return nuevosParametros;
 	}
+		
 	
 });

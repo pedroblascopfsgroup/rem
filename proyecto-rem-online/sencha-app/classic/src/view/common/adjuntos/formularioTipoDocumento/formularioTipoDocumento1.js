@@ -24,12 +24,14 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
 	            {
 			    	xtype: 'combosino',
 			    	title: 'Aplica',
-			    	reference : 'combosinoAplica'
+			    	reference : 'aplica',
+			    	value : '{wizardAdjuntarDocumentoModel.aplica}'
 	            },
 	            {
 			    	xtype: 'datefield',
 			    	title: 'Fecha emisión',
-			    	reference: 'fechaEmision'
+			    	reference: 'fechaEmision',
+			    	value : '{wizardAdjuntarDocumentoModel.fechaEmision}'
 	            }
     	   ]
     	}

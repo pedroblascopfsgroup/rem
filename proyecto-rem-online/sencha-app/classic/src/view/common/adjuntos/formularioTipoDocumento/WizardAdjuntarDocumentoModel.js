@@ -3,20 +3,34 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.WizardAdjuntarDo
 	idProperty : 'id',
 	fields : [
 		{
-		name : 'codigoComboTipoDocumento'	
+			name : 'codigoComboTipoDocumento'	
 		},
-		
 		{
 			name : 'fileUpload'	
 		},
 		{
-		name : 'descripcionAdjuntarDocumento'
+			name : 'descripcionAdjuntarDocumento'
 		},
 		{
 			name : 'fechaEmision'
 		},
 		{
 			name : 'combosinoAplica'
+		},
+		{
+			name : 'aplica'	
+		},
+		{
+			name : 'fechaCaducidad'
+		},
+		{
+			name : 'fechaObtencion'
+		},
+		{
+			name : 'fechaEtiqueta'
+		},
+		{
+			name : 'registro'
 		}
 	]
 	});

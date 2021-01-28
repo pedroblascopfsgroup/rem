@@ -6311,7 +6311,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				if (tipoDoc.equals(documentosFinalizacion.get(0))) {
 					documentos.append(tipoDoc.getDescripcion());
 				} else {
-					documentos.append(", "+tipoDoc.getDescripcion());
+					documentos.append(" o "+tipoDoc.getDescripcion());
 				}
 			}
 			mapaDocumentosFin.put("docs", documentos.toString());

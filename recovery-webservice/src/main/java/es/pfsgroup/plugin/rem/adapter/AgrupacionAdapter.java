@@ -2450,6 +2450,14 @@ public class AgrupacionAdapter {
 
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
 			
+			oferta.setIdOfertaOrigen(dto.getIdOfertaOrigen());
+			
+			if(Checks.esNulo(dto.getOfrDocRespPrescriptor())) {
+				oferta.setOfrDocRespPrescriptor(true);
+			} else {
+				oferta.setOfrDocRespPrescriptor(dto.getOfrDocRespPrescriptor());
+			}
+			
 			ofertaNueva = genericDao.save(Oferta.class, oferta);
 			
 			if(activo != null && activo.getSubcartera() != null &&

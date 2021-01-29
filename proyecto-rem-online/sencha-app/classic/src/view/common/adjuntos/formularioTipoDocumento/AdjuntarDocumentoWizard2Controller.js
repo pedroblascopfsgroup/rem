@@ -45,7 +45,7 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 		var activoId = wizard.activo; 
 		form2 = me.getView().wizardAnterior.down('form');
 		var nuevosParametros = me.devolverParametros(me.getView().formExtType, form);
-		params = {fileupload : fileupload,idEntidad : activoId,tipo : comboTipoDocumento, dto:nuevosParametros};
+		var params = {fileupload : fileupload,idEntidad : activoId,tipo : comboTipoDocumento, dto:nuevosParametros};
 		form2.submit({
 			url: url,
 			waitMsg: HreRem.i18n('msg.mask.loading'),
@@ -56,9 +56,10 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 
 				} else {
 					debugger;
+					var padre = form.up('wizardBase').padre;
 					me.getView().unmask();
 					form.up('wizardBase').close();
-					form.up('wizardBase').padre.refrescarActivo(true);
+					padre.refrescarActivo(true);
 					
 				}
 			}
@@ -70,9 +71,9 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 		var nuevosParametros = {};
 		
 		var formulario = form.down('[reference='+xtype+']');
-		nuevosParametros[formulario.down('[name=aplica]').reference] = formulario.down('[name=aplica]').value;
-		while (Ext.isEmpty(formulario.down('[name=aplica]').nextSibling())){
-			nuevosParametros [formulario.down('[name=aplica]').reference] = formulario.down('[name=aplica]').value;
+		nuevosParametros[formulario.down('[reference=aplica]').reference] = formulario.down('[reference=aplica]').value;
+		while (Ext.isEmpty(formulario.down('[reference=aplica]').nextSibling())){
+			nuevosParametros [formulario.down('[reference=aplica]').reference] = formulario.down('[reference=aplica]').value;
 		}
 		
 		return nuevosParametros;

@@ -25,24 +25,24 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
     	
 	            {
 			    	xtype: 'datefield',
-			    	title: 'Fecha Obtención',
+			    	fieldLabel: 'Fecha Obtención',
 			    	name: 'fechaObtencion'
 			    		
 	            },
 	            {
 			    	xtype: 'datefield',
-			    	title: 'Fecha Caducidad',
+			    	fieldLabel: 'Fecha Caducidad',
 			    	name: 'fechaCaducidad'
 	            },
 	            {
 			    	xtype: 'datefield',
-			    	title: 'Fecha Etiqueta',
+			    	fieldLabel: 'Fecha Etiqueta',
 			    	name: 'fechaEtiqueta'
 	
 	            },
 	            {
 			    	xtype: 'combobox',
-			    	title: 'Fecha Etiqueta',
+			    	fieldLabel: 'Fecha Etiqueta',
 			    	name: 'fechaEtiquetaCombo',
 			    		store: Ext.create('Ext.data.Store',{								        		
 			    			model: 'HreRem.model.ComboBase',
@@ -57,7 +57,7 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
 	            },
 	            {
 			    	xtype: 'textfieldbase',
-			    	title: 'Registro',
+			    	fieldLabel: 'Registro',
 			    	name: 'registro'
 	
 	            }

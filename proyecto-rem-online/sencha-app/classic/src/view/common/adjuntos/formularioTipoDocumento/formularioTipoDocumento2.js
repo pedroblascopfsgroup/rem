@@ -26,19 +26,19 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
 
 				 {
 			    	xtype: 'combosino',
-			    	title: 'Aplica',
-			    	reference : 'combosinoAplica',
+			    	fieldLabel: 'Aplica',
+			    	reference : 'aplica',
 			    	value : '{wizardAdjuntarDocumentoModel.aplica}'
 	            },
 	            {
 			    	xtype: 'datefield',
-			    	title: 'Fecha emisión',
+			    	fieldLabel: 'Fecha emisión',
 			    	reference: 'fechaEmision',
 			    	value : '{wizardAdjuntarDocumentoModel.fechaEmision}'
 	            },
 	            {
 			    	xtype: 'datefield',
-			    	title: 'Fecha Caducidad',
+			    	fieldLabel: 'Fecha Caducidad',
 			    	name: 'fechaCaducidad',
 			    	value : '{wizardAdjuntarDocumentoModel.fechaCaducidad}'
 	

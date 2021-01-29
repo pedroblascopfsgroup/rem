@@ -95,9 +95,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
                 	
                 	Ext.global.console.log(record.data);
 	        		this.up('form').setBindRecord(record.data);
-	        		
-	        		this.lookupController().getViewModel().set('fotoSelected', record);
-	        		this.lookupController().getViewModel().notify();
 	        	}
             }
         });
@@ -144,14 +141,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
 							}
 		                },
 		                { 
-		                	name: 'comboDescripcionFoto',
-		                	xtype: 'comboboxfieldbase',
+		                	name: 'descripcion',
+		                	xtype: 'textareafieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.descripcion'),
-		                	editable: false,
-		                	queryMode: 'local',
 		                	bind: {
-		                		store: '{storeDescripcionFoto}',
-				        		value: '{codigoDescripcionFoto}'
+								value: '{descripcion}'
 							}
 		                },
 		                { 

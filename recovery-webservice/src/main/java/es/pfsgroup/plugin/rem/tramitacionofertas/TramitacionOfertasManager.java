@@ -18,6 +18,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -44,6 +45,7 @@ import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
@@ -213,6 +215,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	
 	@Autowired
 	private OfertasAgrupadasLbkDao ofertasAgrupadasLbkDao;
+	
+	@Autowired
+	private BoardingComunicacionApi boardingComunicacionApi;
 
 	@Override
 	@Transactional(readOnly = false)
@@ -1927,6 +1932,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		expedienteComercial.setFormalizacion(this.crearFormalizacion(expedienteComercial));
 		
 		activoManager.actualizarOfertasTrabajosVivos(activo.getId());
+		
+		boardingComunicacionApi.datosCliente(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap());
+		
 		return activoTramite;
 	}
 
@@ -1972,6 +1980,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (idActivo != null) {
 				activoManager.actualizarOfertasTrabajosVivos(idActivo);
 			}
+			
+			boardingComunicacionApi.datosCliente(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap());
 		
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

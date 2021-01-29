@@ -66,7 +66,7 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 						fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
 						name: 'codigoComboTipoDocumento',
 						reference: 'tipoDocumentoNuevoComprador',
-						//allowBlank: false,
+						allowBlank: false,
 						padding: '120px 0 0 0',
 						bind: {
 							store: '{comboTipoDocumento}',
@@ -81,7 +81,7 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 				        fieldLabel:   HreRem.i18n('fieldlabel.archivo'),
 				        reference: 'fileUpload',
 				        name: 'fileUpload',
-				        //allowBlank: false,
+				        allowBlank: false,
 				        msgTarget: 'side',
 				        buttonConfig: {
 				        	iconCls: 'ico-search-white',

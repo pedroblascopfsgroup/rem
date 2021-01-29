@@ -9,7 +9,7 @@ public class DtoSubirDocumento extends DtoTabActivo{
 
 	private String aplica;
 	private String fechaEmision;
-	private Date fechaCaducidad;
+	private String fechaCaducidad;
 	private Boolean fechaObtencion;
 	private String fechaEtiqueta;
 	private Double registro;
@@ -26,10 +26,10 @@ public class DtoSubirDocumento extends DtoTabActivo{
 	public void setFechaEmision(String fechaEmision) {
 		this.fechaEmision = fechaEmision;
 	}
-	public Date getFechaCaducidad() {
+	public String getFechaCaducidad() {
 		return fechaCaducidad;
 	}
-	public void setFechaCaducidad(Date fechaCaducidad) {
+	public void setFechaCaducidad(String fechaCaducidad) {
 		this.fechaCaducidad = fechaCaducidad;
 	}
 	public Boolean getFechaObtencion() {

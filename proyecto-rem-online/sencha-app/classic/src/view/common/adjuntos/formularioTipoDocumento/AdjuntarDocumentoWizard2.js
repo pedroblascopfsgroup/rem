@@ -47,7 +47,10 @@ initComponent: function() {
     			reference: 'adjuntarDocumentoFormRef2',
     			collapsed: false,
     		 		scrollable	: 'y',
-    		 		layout: 'fit',
+    		 		layout: {
+    					type: 'fit',
+    					align:'center'
+    				},
     			cls:'formbase_no_shadow',
     			items: [
     		{

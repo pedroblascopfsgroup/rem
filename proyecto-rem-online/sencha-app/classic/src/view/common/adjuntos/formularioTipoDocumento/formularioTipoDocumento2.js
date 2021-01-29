@@ -11,12 +11,17 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
     
     items: [
     	{
-			xtype: 'formBase',
-			reference: 'adjuntarDocumentoFormRef2',
-			collapsed: false,
-		 		scrollable	: 'y',
-		 		layout: 'fit',
-			cls:'formbase_no_shadow',
+			xtype: 'fieldsettable',
+			layout: {
+				type: 'vbox',
+				align:'center'
+			},
+			margin: '20',
+			reference: 'fieldsetDocumentoIdentidad',
+			collapsible: false,
+			defaults: {
+				addUxReadOnlyEditFieldPlugin: false
+			},
 			items: [
 				{
 			    	reference : 'primero',

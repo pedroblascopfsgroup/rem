@@ -1,0 +1,76 @@
+--/*
+--#########################################
+--## AUTOR=DAP
+--## FECHA_CREACION=20210129
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-12958
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Creación de las tablas
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+	TABLE_COUNT NUMBER(1,0) := 0;
+	V_ESQUEMA VARCHAR2(20 CHAR) := 'PFSREM';
+
+	TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+	TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+	V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+		T_TIPO_DATA('TMP_RAM_RECIBIDOS'),
+		T_TIPO_DATA('TMP_RAM_CRUZAN'),
+		T_TIPO_DATA('TMP_RAM_NO_CRUZAN'),
+		T_TIPO_DATA('TMP_RAM_OTROS')
+	); 
+   	V_TMP_TIPO_DATA T_TIPO_DATA;
+
+BEGIN
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO]: CREACIÓN DE TABLAS');
+
+		FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+		LOOP
+
+        		V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+			
+				SELECT COUNT(1) INTO TABLE_COUNT FROM ALL_TABLES WHERE TABLE_NAME = ''||V_TMP_TIPO_DATA(1)||'' AND OWNER= ''||V_ESQUEMA||'';
+
+				IF TABLE_COUNT > 0 THEN
+
+	    			DBMS_OUTPUT.PUT_LINE('[INFO] TABLA '||V_ESQUEMA||'.'||V_TMP_TIPO_DATA(1)||' YA EXISTENTE. SE PROCEDE A BORRAR Y CREAR DE NUEVO.');
+	    			EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TMP_TIPO_DATA(1)||'';
+	    
+				END IF;
+
+				EXECUTE IMMEDIATE 
+				'CREATE TABLE '||V_ESQUEMA||'.'||V_TMP_TIPO_DATA(1)||
+				'(
+					TBJ_NUM_TRABAJO VARCHAR2(50 CHAR),
+					PFA_ID VARCHAR2(50 CHAR)
+				)';
+
+				DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TMP_TIPO_DATA(1)||' CREADA.');
+
+		END LOOP;
+
+EXCEPTION
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+END;
+/
+EXIT;

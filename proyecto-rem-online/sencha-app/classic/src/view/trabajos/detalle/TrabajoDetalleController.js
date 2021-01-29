@@ -1715,6 +1715,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		if(esFichaTrabajo){
     			me.lookupReference('comboGestorActivoResposable').setReadOnly(false);	
     			me.lookupReference('descripcionGeneralRef').setReadOnly(false);
+    			me.lookupReference('riesgosTercerosRef').setReadOnly(false);
+    			me.lookupReference('checkboxUrgente').setReadOnly(false);	
     		}
     		
     		if(estadoTrabajo == "CUR" /*|| estadoTrabajo == "REJ"*/){

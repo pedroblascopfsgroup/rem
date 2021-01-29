@@ -1149,7 +1149,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			 proxy: {
 			    type: 'uxproxy',
 				remoteUrl: 'trabajo/getListActivosByID',
-				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
 				extraParams: {idActivo: me.getView().idActivo, idAgrupacion: me.getView().idAgrupacion}
 			 },
 			 listeners:{

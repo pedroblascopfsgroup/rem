@@ -1712,9 +1712,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		String stringLinea = null;
 		for (Long trabajoLong : trabajos) {
 			Trabajo trabajo = trabajoApi.findOne(trabajoLong);
-			if(trabajo != null) {				
-				if(trabajo.getEstado().equals((DDEstadoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoTrabajo.class,
-						DDEstadoTrabajo.ESTADO_VALIDADO))) {
+			if(trabajo != null) {		
+				
+				if(trabajo.getEstado() != null && DDEstadoTrabajo.ESTADO_VALIDADO.equals(trabajo.getEstado().getCodigo())) {
 					trabajo.setEstado((DDEstadoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoTrabajo.class,
 							DDEstadoTrabajo.CODIGO_ESTADO_PDT_CIERRE));
 					trabajo.setFechaCambioEstado(new Date());
@@ -1959,7 +1959,13 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			return false;
 		}
 		
-
+		if(trabajo.getEstado() != null && DDEstadoTrabajo.CODIGO_ESTADO_PDT_CIERRE.equals(trabajo.getEstado().getCodigo())) {
+			trabajo.setEstado((DDEstadoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoTrabajo.class,
+					DDEstadoTrabajo.ESTADO_VALIDADO));
+			trabajo.setFechaCambioEstado(new Date());
+			trabajoDao.saveOrUpdate(trabajo);
+		}
+		
 		Filter trabajoLineaFilter = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
 		List<GastoLineaDetalleTrabajo> gastoTrabajoList = genericDao.getList(GastoLineaDetalleTrabajo.class,trabajoLineaFilter);
 	

@@ -3,7 +3,6 @@
  */
 Ext.define('HreRem.model.Subdivisiones', {
     extend: 'HreRem.model.Base',
-    idProperty: 'id',
 
     fields: [
     	
@@ -13,9 +12,6 @@ Ext.define('HreRem.model.Subdivisiones', {
     	},
     	{
     		name: 'descripcion'	
-    	},
-    	{
-    		name: 'codigoSubtipoActivo'
     	},
     	{
     		name: 'numActivos'

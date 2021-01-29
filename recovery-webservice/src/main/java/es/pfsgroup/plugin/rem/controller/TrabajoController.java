@@ -1315,11 +1315,11 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListActivosByID(String idActivo, Long idAgrupacion, DtoTrabajoListActivos webDto, ModelMap model) {
 		
-		if(idActivo == null && idAgrupacion == null) {
-			return createModelAndViewJson(model);
+		if((idActivo == null || idActivo.equals("")) && idAgrupacion == null) {
+			model.put("success", false);
 		}else {
 			if(idAgrupacion != null) {
 				Page page = trabajoAdapter.getListActivosCrearTrabajoByAgrupacion(idAgrupacion, webDto);
@@ -1338,12 +1338,9 @@ public class TrabajoController extends ParadiseJsonController {
 					logger.error(e.getMessage());
 					model.put("success", false);
 				}
-			}
-			
-
-			return createModelAndViewJson(model);
+			}			
 		}
-		
+		return createModelAndViewJson(model);		
 	}
 
 	

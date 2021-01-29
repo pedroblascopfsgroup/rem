@@ -2803,10 +2803,20 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		String valorIncripcionCorrectaActivoDq = "";
 		
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Order order = new Order(OrderType.DESC,"id");
 		ActivoPropietarioActivo activoPropietario  = genericDao.get(ActivoPropietarioActivo.class, filter);
-		ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class,filter);
-		ActivoCargas cargas = genericDao.get(ActivoCargas.class,filter);
-
+		List <ActivoCargas> cargasList = activo.getCargas();
+		List <ActivoCatastro> actCatastroList = genericDao.getListOrdered(ActivoCatastro.class, order, filter);
+		ActivoCargas cargas = null;
+		ActivoCatastro activoCatastro =null;
+		
+		
+		if(cargasList != null && !cargasList.isEmpty()) {
+			cargas = cargasList.get(0);
+		}
+		if(actCatastroList != null && !actCatastroList.isEmpty()) {
+			activoCatastro = actCatastroList.get(0);
+		}
 		
 		
 		//FASE 2

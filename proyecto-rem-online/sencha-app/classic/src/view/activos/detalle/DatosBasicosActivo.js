@@ -162,7 +162,18 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					            	allowBlank: false,
 					            	style:'margin-left:10px'
 						        },
-						       
+						        {
+									xtype: 'comboboxfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.activo.bde'),
+						        	reference: 'tipoActivoBde',
+						        	bind: {
+						        		readOnly : '{esUA}',
+					            		store: '{comboTipoActivoBde}',
+					            		value: '{activo.tipoActivoCodigoBde}',
+					            		hidden: '{!activo.isCarteraLiberbank}'
+					            	},
+					            	style:'margin-left:10px'
+						        },
 								{
 									xtype: 'comboboxfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.tipo.activo.oe'),
@@ -180,61 +191,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									},
 									style:'margin-left:10px'
 								},
-								{
-									xtype: 'comboboxfieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
-						        	reference: 'subtipoActivoCombo',
-						        	bind: {
-					            		store: '{comboSubtipoActivo}',
-					            		value: '{activo.subtipoActivoCodigo}',
-					            		disabled: '{!activo.tipoActivoCodigo}'
-					            	},
-		    						allowBlank: false,
-					            	style:'margin-left:10px'
-								},
-								{
-									xtype: 'comboboxfieldbase',
-									fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo.oe'),
-									reference: 'subtipoActivoComboOE',
-									bind: {
-										store: '{comboSubtipoActivoOE}',
-										value: '{activo.subtipoActivoCodigoOE}',
-										disabled: '{!activo.tipoActivoCodigoOE}',
-										hidden: '{!activo.isCarteraSareb}', 
-										readOnly:'{!esSuperUsuarioAndNoUA}'
-									},
-									style:'margin-left:10px'
-								},
-						        {
-									xtype: 'comboboxfieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.activo.bde'),
-						        	reference: 'tipoActivoBde',
-						        	bind: {
-						        		readOnly : '{esUA}',
-					            		store: '{comboTipoActivoBde}',
-					            		value: '{activo.tipoActivoCodigoBde}',
-					            		hidden: '{!activo.isCarteraLiberbank}'
-					            	},
-					            	style:'margin-left:10px'
-						        },
-						        {
-
-						        	xtype: 'comboboxfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo.oe'),
-									reference: 'tipoActivoOE',
-						        	chainedStore: 'comboSubtipoActivoOE',
-									chainedReference: 'subtipoActivoComboOE',
-						        	bind: {
-					            		store: '{comboTipoActivoOE}',
-					            		value: '{activo.tipoActivoCodigoOE}',
-					            		hidden: '{!activo.isCarteraSareb}', 
-					            		readOnly:'{!esSuperUsuarioCalidadDatoAndNoUA}'
-					            	},
-		    						listeners: {
-					                	select: 'onChangeChainedCombo'
-					            	},
-					            	style:'margin-left:10px'
-						        },
 						        {
 									xtype: 'comboboxfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),

@@ -119,7 +119,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
@@ -896,21 +895,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activoFoto.setActivo(activo);
 				activoFoto.setTipoFoto(tipoFoto);
 				activoFoto.setNombre(fileItem.getBasename());
-				
-				String descripcion = null;
-				DDSubtipoActivo subtipoActivo = activo.getSubtipoActivo();
-				DDDescripcionFotoActivo descripcionFoto = null;
 
 				if (fileItem.getMetadata().containsKey("descripcion")) {
-					descripcion = fileItem.getMetadata().get("descripcion");
-					if (descripcion != null && subtipoActivo != null) {
-						descripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "descripcion", descripcion), 
-							genericDao.createFilter(FilterType.EQUALS, "subtipoActivo", subtipoActivo));
-					}
-					if (descripcionFoto != null) {
-						activoFoto.setDescripcion(descripcionFoto.getDescripcion());
-						activoFoto.setDescripcionFoto(descripcionFoto);
-					}
+					activoFoto.setDescripcion(fileItem.getMetadata().get("descripcion"));
 				}
 
 				if (fileItem.getMetadata().containsKey("principal") && fileItem.getMetadata().get("principal") != null
@@ -966,8 +953,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
 		DDTipoFoto tipoFoto = genericDao.get(DDTipoFoto.class, filtro);
 		TIPO tipo = null;
-		FileResponse fileReponse = null;
-		ActivoFoto activoFoto = null;
+		FileResponse fileReponse;
+		ActivoFoto activoFoto;
 		SITUACION situacion;
 		PRINCIPAL principal;
 		Integer orden = activoDao.getMaxOrdenFotoById(Long.parseLong(fileItem.getParameter("idEntidad")));
@@ -999,14 +986,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					situacion = SITUACION.EXTERIOR;
 				}
 
-				if (fileItem.getParameter("comboDescripcionFoto") != null) {
-					
-					fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),
-							fileItem.getFileItem().getFileName(), PROPIEDAD.ACTIVO, activo.getNumActivo(), tipo,
-							genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto"))).getDescripcion(),
-							principal, situacion, orden);
-					
-				}
+				fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),
+						fileItem.getFileItem().getFileName(), PROPIEDAD.ACTIVO, activo.getNumActivo(), tipo,
+						fileItem.getParameter("descripcion"), principal, situacion, orden);
 				activoFoto = new ActivoFoto(fileReponse.getData());
 
 			} else {
@@ -1017,8 +999,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			activoFoto.setTipoFoto(tipoFoto);
 			activoFoto.setTamanyo(fileItem.getFileItem().getLength());
 			activoFoto.setNombre(fileItem.getFileItem().getFileName());
-			activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto"))).getDescripcion());
-			activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto"))));
+			activoFoto.setDescripcion(fileItem.getParameter("descripcion"));
 			activoFoto.setPrincipal(Boolean.valueOf(fileItem.getParameter("principal")));
 			activoFoto.setFechaDocumento(new Date());
 			activoFoto.setInteriorExterior(Boolean.valueOf(fileItem.getParameter("interiorExterior")));

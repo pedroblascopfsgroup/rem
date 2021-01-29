@@ -27,7 +27,6 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 
@@ -103,10 +102,6 @@ public class ActivoFoto implements Serializable, Auditable {
 
 	@Column(name = "FOT_DESCRIPCION")
 	private String descripcion;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_DFA_ID")
-	private DDDescripcionFotoActivo descripcionFoto;
 
 	@Column(name = "FOT_FECHA_DOCUMENTO")
 	private Date fechaDocumento;
@@ -321,14 +316,6 @@ public class ActivoFoto implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}
-
-	public DDDescripcionFotoActivo getDescripcionFoto() {
-		return descripcionFoto;
-	}
-
-	public void setDescripcionFoto(DDDescripcionFotoActivo descripcionFoto) {
-		this.descripcionFoto = descripcionFoto;
 	}
 
 }

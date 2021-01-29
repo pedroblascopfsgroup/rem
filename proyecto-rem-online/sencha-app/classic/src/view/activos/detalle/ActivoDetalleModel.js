@@ -919,6 +919,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	}
     		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]) && !UA;
 	    },
+	    
+	    esSuperUsuarioCalidadDatoAndNoUA: function(get){
+	    	var UA = false;
+	    	if (get('activo.unidadAlquilable') != undefined) {
+	    		UA = get('activo.unidadAlquilable');
+	    	}
+    		return ($AU.userIsRol(CONST.PERFILES["HAYASUPER"]) || $AU.userIsRol(CONST.PERFILES["HAYASUPCAL"])) && !UA;
+	    },
 
     	esOtrosotivoAutorizacionTramitacion: function(get){
     		

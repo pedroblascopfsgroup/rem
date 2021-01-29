@@ -382,8 +382,11 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 	                    		//&& (!Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) ? !(Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 1 || Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 0) : false))
 	                        codigoCampo = particularValidator.getCodigoTipoDato(exc.dameCelda(i, COL_CAMPO));
 	                    	if ("05".equals(codigoCampo)) {
-								if (!particularValidator.existeDiccionarioByTipoCampo(exc.dameCelda(i, COL_CAMPO), exc.dameCelda(i, COL_VALOR_NUEVO)))
+								if (!exc.dameCelda(i, COL_VALOR_NUEVO).matches("[0-9]+")) {
 									listaFilas.add(i);
+								}else if (!particularValidator.existeDiccionarioByTipoCampo(exc.dameCelda(i, COL_CAMPO), exc.dameCelda(i, COL_VALOR_NUEVO))) {
+									listaFilas.add(i);
+								}
 							}
 	                } catch (ParseException e) {
 	                    listaFilas.add(i);
@@ -414,15 +417,17 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 							}
 	                } catch (ParseException e) {
 	                    listaFilas.add(i);
-	                }
+	                } catch (NumberFormatException n) {
+	                	listaFilas.add(i);
+	                } 
 	            }
-	            } catch (IllegalArgumentException e) {
-	                listaFilas.add(0);
-	                e.printStackTrace();
-	            } catch (IOException e) {
-	                listaFilas.add(0);
-	                e.printStackTrace();
-	            }
+	         } catch (IllegalArgumentException e) {
+	            listaFilas.add(0);
+	            e.printStackTrace();
+	         } catch (IOException e) {
+	            listaFilas.add(0);
+	            e.printStackTrace();
+	         }
 	        return listaFilas;  
 	}	
 	

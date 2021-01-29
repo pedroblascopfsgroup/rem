@@ -26,18 +26,18 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
 	            {
 			    	xtype: 'datefield',
 			    	fieldLabel: 'Fecha Obtención',
-			    	name: 'fechaObtencion'
+			    	reference: 'fechaObtencion'
 			    		
 	            },
 	            {
 			    	xtype: 'datefield',
 			    	fieldLabel: 'Fecha Caducidad',
-			    	name: 'fechaCaducidad'
+			    	reference: 'fechaCaducidad'
 	            },
 	            {
 			    	xtype: 'datefield',
 			    	fieldLabel: 'Fecha Etiqueta',
-			    	name: 'fechaEtiqueta'
+			    	reference: 'fechaEtiqueta'
 	
 	            },
 	            {
@@ -58,7 +58,7 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
 	            {
 			    	xtype: 'textfieldbase',
 			    	fieldLabel: 'Registro',
-			    	name: 'registro'
+			    	reference: 'registro'
 	
 	            }
            ]

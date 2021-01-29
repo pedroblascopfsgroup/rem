@@ -67,12 +67,13 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 		debugger;
 		var fileupload = form.down('[reference = fileUpload]').value;
 		var comboTipoDocumento = me.lookupReference('tipoDocumentoNuevoComprador').value;
+		var descripcion = me.lookupReference('descripcion').value;
 		var url =  $AC.getRemoteUrl('activo/upload');
 		var activoId = wizard.activo;
 		form.submit({
 			url: url,
 			waitMsg: HreRem.i18n('msg.mask.loading'),
-			params: {fileupload : fileupload,idEntidad : activoId,tipo : comboTipoDocumento},
+			params: {fileupload : fileupload,idEntidad : activoId,tipo : comboTipoDocumento,descripcion:descripcion},
 			success: function(fp, o) {
 				if(o.result.success == "false") {
 					me.fireEvent("errorToast", o.result.errores);

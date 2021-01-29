@@ -91,7 +91,6 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 		    		{
 						xtype: 'textareafield',
 						fieldLabel: HreRem.i18n('fieldlabel.calificacion.descripcion'),
-						name: 'descripcionAdjuntarDocumento',
 						reference: 'descripcion',
 						bind: {
 							value : '{wizardAdjuntarDocumentoModel.descripcionAdjuntarDocumento}'

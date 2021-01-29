@@ -7,12 +7,7 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
     layout: 'fit',
     isEditForm: true,
     autoScroll: true,
-    
-    defaults: {
-        layout: 'form',
-        xtype: 'container',
-        defaultType: 'displayfield'
-    },
+
     
     items: [
     	{
@@ -23,24 +18,25 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
 		 		layout: 'fit',
 			cls:'formbase_no_shadow',
 			items: [
+				{
+			    	reference : 'primero',
+			    	hidden : true
+	            },
 
 				 {
 			    	xtype: 'combosino',
 			    	fieldLabel: 'Aplica',
-			    	reference : 'aplica',
-			    	value : '{wizardAdjuntarDocumentoModel.aplica}'
+			    	reference : 'aplica'
 	            },
 	            {
 			    	xtype: 'datefield',
 			    	fieldLabel: 'Fecha emisión',
-			    	reference: 'fechaEmision',
-			    	value : '{wizardAdjuntarDocumentoModel.fechaEmision}'
+			    	reference: 'fechaEmision'
 	            },
 	            {
 			    	xtype: 'datefield',
 			    	fieldLabel: 'Fecha Caducidad',
-			    	name: 'fechaCaducidad',
-			    	value : '{wizardAdjuntarDocumentoModel.fechaCaducidad}'
+			    	reference: 'fechaCaducidad'
 	
 	            }
 	            ]

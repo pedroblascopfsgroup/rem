@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Jorge Ros
---## FECHA_CREACION=20170227
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20210129
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1645
+--## INCIDENCIA_LINK=HREOS-12961
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           

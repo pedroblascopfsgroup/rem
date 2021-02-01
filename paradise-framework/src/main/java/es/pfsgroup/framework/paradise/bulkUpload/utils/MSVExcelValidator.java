@@ -28,6 +28,6 @@ public interface MSVExcelValidator {
 	
 	MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile)  throws Exception;
 	
-	
+	Integer getNumFilasHoja();
 
 }

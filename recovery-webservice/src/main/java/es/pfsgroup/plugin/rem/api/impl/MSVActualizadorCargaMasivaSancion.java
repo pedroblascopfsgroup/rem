@@ -38,11 +38,13 @@ import es.pfsgroup.plugin.rem.gencat.NotificacionesGencatManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
@@ -103,6 +105,21 @@ public class MSVActualizadorCargaMasivaSancion extends AbstractMSVActualizador i
 			Activo activo = null;
 			activo = activoApi.getByNumActivo(Long.valueOf(exc.dameCelda(fila, POSICION_COLUMNA_NUMERO_ACTIVO)));
 			List<ComunicacionGencat> list = new ArrayList<ComunicacionGencat>();
+			
+			ExpedienteComercial expediente = null;
+			
+			if (!Checks.estaVacio(activo.getOfertas())) {
+				for (ActivoOferta activoOferta : activo.getOfertas()) {
+					if (!Checks.esNulo(activoOferta.getPrimaryKey().getOferta()) && DDEstadoOferta.CODIGO_ACEPTADA
+							.equals(activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id",
+								activoOferta.getPrimaryKey().getOferta().getId());
+						expediente = genericDao.get(ExpedienteComercial.class, filtro);
+						
+						break;
+					}
+				}
+			}
 		
 			if (COD_EJERCE.equals(exc.dameCelda(fila, POSICION_COLUMNA_RESULTADO_SANCION))) {
 
@@ -187,7 +204,7 @@ public class MSVActualizadorCargaMasivaSancion extends AbstractMSVActualizador i
 					DtoGencatSave gencatDto = new DtoGencatSave();
 					gencatDto.setFechaSancion(dateformat.format(tmp.getFechaSancion()));
 					gencatDto.setSancion(tmp.getSancion().getDescripcion());
-					notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo, tmp.getSancion());
+					notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo, tmp.getSancion(), expediente);
 					darDeBajaAgrupacionRestringida(activo);
 				}
 				comunicacionGencatApi.saveOrUpdate(tmp);

@@ -1431,36 +1431,37 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			
 		},
 
-		isGestorAdmisionAndSuperComboTipoAltaBlo: function(get){
-			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) 
-			|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) 
-			||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
-			var me = this;
-			
-			var tipoAltaCodigo = me.getView().getViewModel().get('activo.tipoAltaCodigo');
-			var comboActivoRecovery = me.getView().getViewModel().get('activo.idRecovery');
-			var comboTipoAltaRef = me.getView().down("[reference='tipoAltaRef']");
-			
-			
-			if(gestores){
-				if (comboActivoRecovery != null) {
-					comboTipoAltaRef.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
-					return false;
-				}else if(comboActivoRecovery == null && tipoAltaCodigo == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']){
-					return true;
-				}else{
-					if(tipoAltaCodigo == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']) {
-						comboTipoAltaRef.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
-         				return false;
-         			} else if (tipoAltaCodigo != CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA'] || tipoAltaCodigo == null) {
-         				return true;         				
-         			} 
-
+		isGestorAdmisionAndSuperComboTipoAltaBlo: function(get){			
+			if(get("activo.isCarteraBbva")){
+				var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) 
+				|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) 
+				||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
+				var me = this;
+				
+				var tipoAltaCodigo = me.getView().getViewModel().get('activo.tipoAltaCodigo');
+				var comboActivoRecovery = me.getView().getViewModel().get('activo.idRecovery');
+				var comboTipoAltaRef = me.getView().down("[reference='tipoAltaRef']");
+				
+				
+				if(gestores){
+					if (comboActivoRecovery != null) {
+						if(!Ext.isEmpty(comboTipoAltaRef)) comboTipoAltaRef.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
+						return false;
+					}else if(comboActivoRecovery == null && tipoAltaCodigo == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']){
+						return true;
+					}else{
+						if(tipoAltaCodigo == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']) {
+							if(!Ext.isEmpty(comboTipoAltaRef)) comboTipoAltaRef.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
+	         				return false;
+	         			} else if (tipoAltaCodigo != CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA'] || tipoAltaCodigo == null) {
+	         				return true;         				
+	         			} 
+	
+					}
+	
+					}
+									
 				}
-
-				}
-								
-			
 			return false;
 		},
 		
@@ -1547,6 +1548,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMINISTRACION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION']);
 		},
 		
+	    esActivoMacc: function (get) {
+	    	
+	    	 var esMacc = get('activo.perimetroMacc');
+	    	 
+	    	 if (esMacc == 1)
+	    		 return false;
+	    	 else
+	    		 return true;
+	    },
+	    
 		estadoAdmisionVisible : function(get){
 			
 			var retorno = !($AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) 
@@ -1566,7 +1577,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var isIncluidoEnPerimetro = get('activo.incluidoEnPerimetro');
 			return (isIncluidoEnPerimetro == false || $AU.getUser().codigoCartera == CONST.CARTERA['BBVA']);
 		}
-	 
     },
     
 	 stores: {
@@ -1767,10 +1777,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	       		 pageSize: $AC.getDefaultPageSize(),
 	       		 model: 'HreRem.model.OfertaActivo',
 	       		 sorters: [
-				 			{
-				        		property: 'estadoOferta',
-				        		direction: 'ASC'	
-				 			},
 				 			{
 				        		property: 'fechaCreacion',
 				        		direction: 'DESC'	
@@ -2083,7 +2089,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			        type: 'uxproxy',
 			        localUrl: '/trabajos.json',
 			        remoteUrl: 'trabajo/findAll',
-		        	extraParams: {idActivo: '{activo.id}'},
+		        	extraParams: {numActivo: '{activo.numActivo}' ,esHistoricoPeticionActivo: true},
 		        	actionMethods: {read: 'POST'} // Necesario para que el filtro no se mande en la URL lo que provoca un problema de encoding
 		        	
 		    	},	    		
@@ -2602,7 +2608,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		
 		storeEntidades: {
 			pageSize: $AC.getDefaultPageSize(),
-			model: 'HreRem.model.Proveedor',
+			model: 'HreRem.model.ActivoIntegrado',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'activo/getProveedoresByActivoIntegrado',
@@ -3379,6 +3385,68 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {id: '{activo.id}'}
 			},
 			autoLoad: true
+		},
+		// Stores para el grid observaciones. Se crean 3 para solucionar problemas de instancia 
+		/*
+
+		 * Valor de la constante 
+		  	OBSERVACIONES_TAB_LAUNCH: {
+			ACTIVO : 'activo',
+			SANEAMIENTO: 'saneamiento',
+			REVISION_TITULO: 'revisionTitulo'
+		}*/
+		/*storeObservaciones_activo: {    
+		 pageSize: $AC.getDefaultPageSize(),
+		 model: 'HreRem.model.Observaciones',
+	     proxy: {
+	        type: 'uxproxy',
+	        remoteUrl: 'activo/getListObservaciones',
+	        extraParams: {} // Dynamic.
+    	 }
+		},
+		storeObservaciones_saneamiento: {    
+		 pageSize: $AC.getDefaultPageSize(),
+		 model: 'HreRem.model.Observaciones',
+	     proxy: {
+	        type: 'uxproxy',
+	        remoteUrl: 'activo/getListObservaciones',
+	        extraParams: {} // Dynamic.
+    	 }
+		},
+		storeObservaciones_revisionTitulo: {    
+		 pageSize: $AC.getDefaultPageSize(),
+		 model: 'HreRem.model.Observaciones',
+	     proxy: {
+	        type: 'uxproxy',
+	        remoteUrl: 'activo/getListObservaciones',
+	        extraParams: {} // Dynamic.
+    	 }
+		},*/
+		comboTipoTransmision: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoTransmision'}
+			}/*,autoLoad: true*/
+		},
+		comboTipoAlta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoAlta'}
+			}/*,autoLoad: true*/
+		},
+		//Admite mascota
+		comboAdmiteMascota: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposAdmiteMascota'}
+			}
 		}
+		
 	 }
 });

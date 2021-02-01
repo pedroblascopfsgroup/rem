@@ -989,6 +989,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		numFincaAnterior.setValue("");
     	}
     	
+    	poblacionAnterior.validate();
+    	numRegistroAnterior.validate();
+    	numFincaAnterior.validate();
 
     },
     
@@ -2486,22 +2489,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		me.onSaveFormularioCompletoOferta(form, window);
 	},
-
-	onChkbxOfertasAnuladas : function(chkbox, checked) {
-		var me = this;
-		var grid = chkbox.up('ofertascomercialactivo')
-				.down("ofertascomercialactivolist");
-		var store = me.getViewModel().get("storeOfertasActivo");
-
-		var prox = store.getProxy();
-		var _id = prox.getExtraParams().id;
-		var _incluirOfertasAnuladas = checked;
-
-		prox.setExtraParams({
-					"id" : _id,
-					"incluirOfertasAnuladas" : _incluirOfertasAnuladas
-				});
-		store.load();
+	
+	onChkbxOfertasAnuladas: function(chkbox, checked){
+    	var me = this;
+    	var grid = chkbox.up('ofertascomercialactivo').down("ofertascomercialactivolist");
+    	var _id = me.getViewModel().getData().activo.id;
+    	var store = grid.getStore();
+    	var prox = store.getProxy();
+    	var _incluirOfertasAnuladas = checked;
+    	
+    	prox.setExtraParams({
+    		"id": _id, 
+    		"incluirOfertasAnuladas": _incluirOfertasAnuladas
+    	});
+    	store.load();
 	},
 
 	// Este mÃ©todo copia los valores de los campos de 'Datos Mediador' a los
@@ -3202,8 +3203,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	abrirFormularioAnyadirEntidadActivo : function(grid) {
-		var me = this;
+		var me = this, record = Ext.create("HreRem.model.ActivoIntegrado"),
 		idActivo = me.getViewModel().get("activo.id");
+		record.set("idActivo", idActivo);
 		Ext.create("HreRem.view.activos.detalle.AnyadirEntidadActivo", {
 					parent : grid,
 					idActivo : idActivo
@@ -3372,17 +3374,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		var form = combo.up('formBase');
 		var motivoRetencionField = form.down('[name=motivoRetencion]');
-		var fechaInicioRetencionField = form
-				.down('[name=fechaInicioRetencion]');
+		var fechaInicioRetencionField = form.down('[name=fechaInicioRetencion]');
 
 		if (!combo.getValue()) {
-			motivoRetencionField.reset()
+			motivoRetencionField.reset();
 			fechaInicioRetencionField.reset();
 			motivoRetencionField.setDisabled(true);
 			fechaInicioRetencionField.setDisabled(true);
+			me.getViewModel().set("activoIntegrado.pagosRetenidos", 0);
 		} else {
 			motivoRetencionField.setDisabled(false);
 			fechaInicioRetencionField.setDisabled(false);
+			me.getViewModel().set("activoIntegrado.pagosRetenidos", 1);
 		}
 	},
 
@@ -3392,11 +3395,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var idActivo = me.getViewModel().get("activo.id");
 		var storeGrid = gridView.store;
 		Ext.create("HreRem.view.activos.detalle.AnyadirEntidadActivo", {
-					idActivoIntegrado : idActivoIntegrado,
-					idActivo : idActivo,
 					parent : gridView,
 					modoEdicion : true,
-					storeGrid : storeGrid
+					storeGrid : storeGrid,
+					idActivo : idActivo,
+					idActivoIntegrado: idActivoIntegrado
 				}).show();
 
 	},
@@ -4081,6 +4084,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
    		var me = this;
 		var grid = tableView.up('grid');
 	    var record = grid.store.getAt(indiceFila);
+		var recordProveedor = Ext.create("HreRem.model.Proveedor");
 	    grid.setSelection(record);
 	    var idFalso = record.get('idFalso');
 	    var idFalsoProv;
@@ -4090,20 +4094,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    
 	    if(!Ext.isEmpty(record.get('idProveedor'))){
 	    	var idProveedor = record.get("idProveedor");
-	    	record.data.id= idProveedor;
+	    	recordProveedor.set('id', idProveedor);
 	    	var codigoProveedor = record.get('codigoProveedorRem');
-	    	record.data.codigo = codigoProveedor;
-	    	me.getView().fireEvent('abrirDetalleProveedor', record);
+			recordProveedor.set('codigo', codigoProveedor);
+	    	me.getView().fireEvent('abrirDetalleProveedor', recordProveedor);
 	    }else if(!Ext.isEmpty(idFalsoProv)){
-	    	record.data.id= idFalsoProv;
+			recordProveedor.set('id', idFalsoProv);
 	    	var codigoProveedor = record.get('codigoProveedorRem');
-	    	record.data.codigo = codigoProveedor;
-	    	me.getView().fireEvent('abrirDetalleProveedor', record);
+	    	recordProveedor.set('codigo', codigoProveedor);
+	    	me.getView().fireEvent('abrirDetalleProveedor', recordProveedor);
 	    }
 	    else if(!Ext.isEmpty(record.get('id'))){
 	    	var codigoProveedor = record.get('codigoProveedorRem');
-	    	record.data.codigo = codigoProveedor;
-	    	me.getView().fireEvent('abrirDetalleProveedor', record);
+	    	recordProveedor.set('codigo', codigoProveedor);
+	    	me.getView().fireEvent('abrirDetalleProveedor', recordProveedor);
 	    }
    },
    

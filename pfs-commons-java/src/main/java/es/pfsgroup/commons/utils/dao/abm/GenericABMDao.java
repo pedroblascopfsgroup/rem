@@ -264,7 +264,9 @@ public interface GenericABMDao {
 	 *            ID De la entidad a borrar.
 	 */
 	<T extends Serializable> void deleteById(Class<T> clazz, Long id);
-
+	
+	<T extends Serializable> List<T> delete(Class<T> clazz, Filter... filters);
+	
 	<T extends Serializable> RWOperations<T> readWrite(Class<T> clazz);
 
 

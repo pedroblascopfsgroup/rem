@@ -408,38 +408,43 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				
 			}
 			if(!Checks.esNulo(dto.getCarteraCodigo())) {
-				List<String> codigosCarteras = Arrays.asList(dto.getCarteraCodigo().split(","));
-				
-				Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
-				List<EntidadProveedor> entidadProveedorByProvID = genericDao.getList(EntidadProveedor.class, filtroProveedor);
-				
-				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
-				for(EntidadProveedor e : entidadProveedorByProvID){
-					if(!codigosCarteras.contains(e.getCartera().getCodigo())){
-						Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.id", e.getCartera().getId());
-						EntidadProveedor entidadABorrar = genericDao.get(EntidadProveedor.class, filtroCartera, filtroProveedor);
-						if(!Checks.esNulo(entidadABorrar)) {
-							genericDao.deleteById(EntidadProveedor.class, entidadABorrar.getId());
+				if(dto.getCarteraCodigo().equals("VALOR_POR_DEFECTO")) {					
+					Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
+					genericDao.delete(EntidadProveedor.class, filtroProveedor);
+				} else {
+					List<String> codigosCarteras = Arrays.asList(dto.getCarteraCodigo().split(","));
+					
+					Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
+					List<EntidadProveedor> entidadProveedorByProvID = genericDao.getList(EntidadProveedor.class, filtroProveedor);
+					
+					// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+					for(EntidadProveedor e : entidadProveedorByProvID){
+						if(!codigosCarteras.contains(e.getCartera().getCodigo())){
+							Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.id", e.getCartera().getId());
+							EntidadProveedor entidadABorrar = genericDao.get(EntidadProveedor.class, filtroCartera, filtroProveedor);
+							if(!Checks.esNulo(entidadABorrar)) {
+								genericDao.deleteById(EntidadProveedor.class, entidadABorrar.getId());
+							}
 						}
 					}
-				}
-				
-				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
-				// Dejar los elementos que vangan en la lista y exista en la DDBB.
-				for(String codigo : codigosCarteras) {
-					DDCartera cartera = (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, codigo);
-					if(!Checks.esNulo(cartera)) {
-						Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.id", cartera.getId());
-						List<EntidadProveedor> entidadProveedores = genericDao.getList(EntidadProveedor.class, filtroProveedor, filtroCartera);
-						if(Checks.estaVacio(entidadProveedores)) {
-							EntidadProveedor entidadProveedor = new EntidadProveedor();
-							entidadProveedor.setCartera(cartera);
-							entidadProveedor.setProveedor(proveedor);
-							Auditoria auditoria = new Auditoria();
-							auditoria.setUsuarioCrear("REM");
-							auditoria.setFechaCrear(new Date());
-							entidadProveedor.setAuditoria(auditoria);
-							genericDao.save(EntidadProveedor.class, entidadProveedor);
+					
+					// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+					// Dejar los elementos que vangan en la lista y exista en la DDBB.
+					for(String codigo : codigosCarteras) {
+						DDCartera cartera = (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, codigo);
+						if(!Checks.esNulo(cartera)) {
+							Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.id", cartera.getId());
+							List<EntidadProveedor> entidadProveedores = genericDao.getList(EntidadProveedor.class, filtroProveedor, filtroCartera);
+							if(Checks.estaVacio(entidadProveedores)) {
+								EntidadProveedor entidadProveedor = new EntidadProveedor();
+								entidadProveedor.setCartera(cartera);
+								entidadProveedor.setProveedor(proveedor);
+								Auditoria auditoria = new Auditoria();
+								auditoria.setUsuarioCrear("REM");
+								auditoria.setFechaCrear(new Date());
+								entidadProveedor.setAuditoria(auditoria);
+								genericDao.save(EntidadProveedor.class, entidadProveedor);
+							}
 						}
 					}
 				}

@@ -119,6 +119,7 @@ public class ProcessController extends ParadiseJsonController {
 
 			result = processAdapter.subirFichero(fileItem);
 			model.put("success", result);
+			model.put("idProceso", idProceso);
 			if (!result) {
 				model.put("errorMessage", "Error subiendo el fichero");
 			}

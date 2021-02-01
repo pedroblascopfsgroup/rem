@@ -371,6 +371,12 @@ public class MSVValidatorCargaCamposAccesibilidad extends MSVExcelValidatorAbstr
 		return null;
 	}
 
+	@Override
+	public Integer getNumFilasHoja() {
+		// TODO Auto-generated method stub
+		return this.numFilasHoja;
+	}
+
 }
 
 

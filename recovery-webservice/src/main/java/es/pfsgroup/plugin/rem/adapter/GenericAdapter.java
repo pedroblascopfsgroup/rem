@@ -434,6 +434,10 @@ public class GenericAdapter {
 				
 				dtoOfertaNueva.setIdOfertaOrigen(numIdOferta);
 				
+				if(!Checks.esNulo(ofertaOrigen.getOfrDocRespPrescriptor())) {
+					dtoOfertaNueva.setOfrDocRespPrescriptor(ofertaOrigen.getOfrDocRespPrescriptor());
+				}
+				
 				if(!Checks.esNulo(clienteOfertaOrigen.getEstadoCivil())) {
 					dtoOfertaNueva.setEstadoCivil(clienteOfertaOrigen.getEstadoCivil().getCodigo());
 				}

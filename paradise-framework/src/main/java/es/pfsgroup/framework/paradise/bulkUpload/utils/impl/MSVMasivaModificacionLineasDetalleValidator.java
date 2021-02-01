@@ -1283,4 +1283,9 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
         return listaFilas;   
    }
 
+   @Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+
 }

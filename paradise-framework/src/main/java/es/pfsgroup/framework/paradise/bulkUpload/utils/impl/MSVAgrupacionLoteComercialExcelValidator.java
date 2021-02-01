@@ -796,5 +796,10 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 		
 		return listaFilas;
 	}
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
 	
 }

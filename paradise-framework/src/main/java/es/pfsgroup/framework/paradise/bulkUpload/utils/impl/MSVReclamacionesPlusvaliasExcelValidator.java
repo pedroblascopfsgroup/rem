@@ -364,4 +364,9 @@ public class MSVReclamacionesPlusvaliasExcelValidator extends MSVExcelValidatorA
 		}
 	}
 
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }

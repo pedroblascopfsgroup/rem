@@ -515,4 +515,9 @@ public class MSVActualizarPropuestaPreciosActivoEntidad02 extends MSVExcelValida
 	}
 
 
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }

@@ -44,7 +44,7 @@ public class MSVFileUploadParadise {
 				dto.setProcessId(Long.parseLong(uploadForm.getParameter("idProceso")));
 				dto.setIdTipoOperacion(Long.parseLong(uploadForm.getParameter("idTipoOperacion")));
 				dto.setExcelFile(efb);
-				proxyFactory.proxy(ExcelManagerApi.class).uploadAndValidate(dto);
+				excelManagerApi.uploadAndValidate(dto);
 
 			}
 		}catch (Exception e) {

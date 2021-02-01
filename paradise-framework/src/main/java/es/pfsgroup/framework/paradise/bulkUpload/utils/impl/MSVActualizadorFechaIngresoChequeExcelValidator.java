@@ -551,7 +551,11 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 		}
 		return listaFilas;
 	}
-	
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
 	 
 }
 

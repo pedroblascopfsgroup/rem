@@ -128,6 +128,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String correoGestorBackoffice;
 
 	private Boolean tareaAutorizacionPropiedadFinalizada;
+	
+	private String tipoResponsableCodigo;
 
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
@@ -136,6 +138,7 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setEstadoAprobadoLbk(Boolean estadoAprobadoLbk) {
 		this.estadoAprobadoLbk = estadoAprobadoLbk;
 	}
+	
 	public Long getTipoBulkAdvisoryNote() {
 		return tipoBulkAdvisoryNote;
 	}
@@ -577,5 +580,13 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public Boolean getTareaAutorizacionPropiedadFinalizada() {
 		return this.tareaAutorizacionPropiedadFinalizada;
 	}
+	
+	public String getTipoResponsableCodigo() {
+		return tipoResponsableCodigo;
+	}
 
+	public void setTipoResponsableCodigo(String tipoResponsableCodigo) {
+		this.tipoResponsableCodigo = tipoResponsableCodigo;
+	}
+	
 }

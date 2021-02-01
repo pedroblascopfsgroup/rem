@@ -1134,7 +1134,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
          	 },
          	 groupField: 'descripcionTipo',
 		     remoteSort: true,
-         	 autoLoad: true
+         	 autoLoad: false
 		}
     }
 });

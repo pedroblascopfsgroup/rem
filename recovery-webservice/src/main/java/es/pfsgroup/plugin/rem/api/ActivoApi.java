@@ -1340,14 +1340,13 @@ public interface ActivoApi {
 	Boolean createHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
 
 	Boolean updateHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
-
+	
 	ActivoCrearPeticionTrabajoDto getActivoParaCrearPeticionTrabajobyId(Long activoId);
 
 	boolean estanTodosActivosVendidos(List<Activo> activos);
 
 	boolean estanTodosActivosAlquilados(List<Activo> activos);
-
-
+	
 	List<ReqFaseVentaDto> getReqFaseVenta(Long idActivo);
 
 	Boolean createReqFaseVenta(ReqFaseVentaDto reqFaseVentaDto) throws ParseException;
@@ -1443,5 +1442,4 @@ public interface ActivoApi {
 	boolean createCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto) throws JsonViewerException, Exception;
 	
 	boolean destroyCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
-
 }

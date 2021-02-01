@@ -12,9 +12,9 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
-
 
 @Service
 public class NotificacionesGencatManager extends AbstractNotificatorService{
@@ -25,7 +25,7 @@ public class NotificacionesGencatManager extends AbstractNotificatorService{
 	@Autowired
 	private UsuarioRemApi usuarioRemApiImpl;
 	
-	public void sendMailNotificacionSancionGencat(DtoGencatSave gencatDto, Activo activo,DDSancionGencat sancion) {
+	public void sendMailNotificacionSancionGencat(DtoGencatSave gencatDto, Activo activo,DDSancionGencat sancion, ExpedienteComercial expediente) {
 		String fechaSancion = gencatDto.getFechaSancion();
 		String sancionDto = gencatDto.getSancion();
 		String numActivo = Long.toString(activo.getNumActivo());
@@ -41,6 +41,11 @@ public class NotificacionesGencatManager extends AbstractNotificatorService{
 			usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, false);
 			usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, mailsPara, mailsCC, false);
 			
+			if(expediente != null) {
+				usuarioRemApiImpl.rellenaListaCorreos(expediente, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION, mailsPara, mailsCC, false);
+				usuarioRemApiImpl.rellenaListaCorreos(expediente, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION, mailsPara, mailsCC, false);
+			}
+
 			if(!mailsPara.isEmpty()) {
 				if(mailsCC.isEmpty()){
 					mailsCC.clear();

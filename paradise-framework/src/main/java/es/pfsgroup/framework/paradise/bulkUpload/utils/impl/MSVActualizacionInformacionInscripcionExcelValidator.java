@@ -378,5 +378,11 @@ public class MSVActualizacionInformacionInscripcionExcelValidator extends MSVExc
 	private boolean esEquis(String cadena) {
 		return cadena.trim().equalsIgnoreCase("X");
 	}
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }
 

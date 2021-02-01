@@ -52,13 +52,12 @@ Ext.define('HreRem.view.activos.detalle.InfoVivienda', {
 								 		items: [
 											{ 
 												xtype: 'comboboxfieldbase',
-												editable: false,
 												fieldLabel: HreRem.i18n('fieldlabel.tipo.vivienda'),
 												bind: {
 													store: '{comboTipoVivienda}',
-													value: '{infoComercial.tipoViviendaCodigo}'			            		
-												},
-												readOnly: true
+													value: '{infoComercial.tipoViviendaCodigo}',
+													readOnly: '{esActivoMacc}'
+												}
 											},  
 											{ 
 									        	xtype: 'comboboxfieldbase',
@@ -266,7 +265,6 @@ Ext.define('HreRem.view.activos.detalle.InfoVivienda', {
 														   	store: '{comboAdmiteMascota}',
 															value: '{infoComercial.admiteMascotaCodigo}'	
 														   	}
-														//allowBlank: false
 			    		    						}
 										            
 										        ]

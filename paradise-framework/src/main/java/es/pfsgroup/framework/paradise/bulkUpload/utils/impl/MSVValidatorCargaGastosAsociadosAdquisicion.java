@@ -203,6 +203,11 @@ public class MSVValidatorCargaGastosAsociadosAdquisicion extends MSVExcelValidat
 		return null;
 	}
 
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+
 }
 
 

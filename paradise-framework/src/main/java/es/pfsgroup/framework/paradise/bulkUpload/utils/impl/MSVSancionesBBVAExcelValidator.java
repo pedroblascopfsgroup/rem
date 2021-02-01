@@ -260,15 +260,71 @@ public class MSVSancionesBBVAExcelValidator extends MSVExcelValidatorAbstract {
 		return listaFilas;
 	}
 	
-private List<Integer> esOfertaErronea(MSVHojaExcel exc) {
+	private List<Integer> esOfertaErronea(MSVHojaExcel exc) {
+			
+			List<Integer> listaFilas = new ArrayList<Integer>();
+			String numOferta = "";
+			int i = 0;
+			try {
+				for(i=1; i<this.numFilasHoja;i++){
+					numOferta = exc.dameCelda(i, COL_NUM.NUM_OFERTA_BBVA);
+					if(!particularValidator.esOfertaErronea(numOferta))
+						listaFilas.add(i);
+				}
+			} catch (Exception e) {
+				if (i != 0) listaFilas.add(i);
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			}
+			
+			return listaFilas;
+		}
+	
+	
+	/**
+	 * Método genérico para comprobar si el valor de una columna está informado
+	 * o no.
+	 * 
+	 * @param exc
+	 *            : documento excel con los datos.
+	 * @param columnNumber
+	 *            : número de columna a comprobar.
+	 * @return Devuelve una lista con los errores econtrados. Tantos registros
+	 *         como errores.
+	 */
+	private List<Integer> isColumnNullByRows(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+	
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if (Checks.esNulo(exc.dameCelda(i, columnNumber))) {
+					listaFilas.add(i);
+				}
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage(),e);
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage(),e);
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage(),e);
+				listaFilas.add(i);
+			}
+		}
+	
+		return listaFilas;
+	}
+	
+	
+	private List<Integer> esContraoferta(MSVHojaExcel exc) {
 		
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		String numOferta = "";
+		String resolucionComite = "";
 		int i = 0;
 		try {
 			for(i=1; i<this.numFilasHoja;i++){
-				numOferta = exc.dameCelda(i, COL_NUM.NUM_OFERTA_BBVA);
-				if(!particularValidator.esOfertaErronea(numOferta))
+				resolucionComite = exc.dameCelda(i, COL_NUM.RESOLUCION_COMITE);
+				if("03".equals(resolucionComite)) 
 					listaFilas.add(i);
 			}
 		} catch (Exception e) {
@@ -279,83 +335,32 @@ private List<Integer> esOfertaErronea(MSVHojaExcel exc) {
 		
 		return listaFilas;
 	}
-
-
-/**
- * Método genérico para comprobar si el valor de una columna está informado
- * o no.
- * 
- * @param exc
- *            : documento excel con los datos.
- * @param columnNumber
- *            : número de columna a comprobar.
- * @return Devuelve una lista con los errores econtrados. Tantos registros
- *         como errores.
- */
-private List<Integer> isColumnNullByRows(MSVHojaExcel exc, int columnNumber) {
-	List<Integer> listaFilas = new ArrayList<Integer>();
-
-	for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+	
+	
+	private List<Integer> esContraofertaAndImporteVacio(MSVHojaExcel exc) {
+		
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		String importe = "";
+		String resolucionComite = "";
+		int i = 0;
 		try {
-			if (Checks.esNulo(exc.dameCelda(i, columnNumber))) {
-				listaFilas.add(i);
+			for(i=1; i<this.numFilasHoja;i++){
+				importe = exc.dameCelda(i, COL_NUM.IMPORTE_CONTRAOFERTA);
+				resolucionComite = exc.dameCelda(i, COL_NUM.RESOLUCION_COMITE);
+				if("03".equals(resolucionComite) && Checks.esNulo(importe)) 
+					listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage(),e);
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
 			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage(),e);
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage(),e);
-			listaFilas.add(i);
 		}
-	}
-
-	return listaFilas;
-}
-
-
-private List<Integer> esContraoferta(MSVHojaExcel exc) {
-	
-	List<Integer> listaFilas = new ArrayList<Integer>();
-	String resolucionComite = "";
-	int i = 0;
-	try {
-		for(i=1; i<this.numFilasHoja;i++){
-			resolucionComite = exc.dameCelda(i, COL_NUM.RESOLUCION_COMITE);
-			if("03".equals(resolucionComite)) 
-				listaFilas.add(i);
-		}
-	} catch (Exception e) {
-		if (i != 0) listaFilas.add(i);
-		logger.error(e.getMessage());
-		e.printStackTrace();
+		
+		return listaFilas;
 	}
 	
-	return listaFilas;
-}
-
-
-private List<Integer> esContraofertaAndImporteVacio(MSVHojaExcel exc) {
-	
-	List<Integer> listaFilas = new ArrayList<Integer>();
-	String importe = "";
-	String resolucionComite = "";
-	int i = 0;
-	try {
-		for(i=1; i<this.numFilasHoja;i++){
-			importe = exc.dameCelda(i, COL_NUM.IMPORTE_CONTRAOFERTA);
-			resolucionComite = exc.dameCelda(i, COL_NUM.RESOLUCION_COMITE);
-			if("03".equals(resolucionComite) && Checks.esNulo(importe)) 
-				listaFilas.add(i);
-		}
-	} catch (Exception e) {
-		if (i != 0) listaFilas.add(i);
-		logger.error(e.getMessage());
-		e.printStackTrace();
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
 	}
-	
-	return listaFilas;
-}
 }

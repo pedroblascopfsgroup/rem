@@ -328,5 +328,10 @@ public class MSVActivosGastoPorcentajeValidator extends MSVExcelValidatorAbstrac
 		} 
 		return listaFilas;
 	}
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
 		
 }

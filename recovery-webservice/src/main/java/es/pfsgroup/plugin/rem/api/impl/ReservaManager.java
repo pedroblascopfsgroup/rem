@@ -106,7 +106,7 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 						dtoOfertasFilter.setEstadoOferta(DDEstadoOferta.CODIGO_RECHAZADA);
 						dtoOfertasFilter.setExcluirGencat(true);
 						List<VOfertasActivosAgrupacion> listaOfer = ofertaApi.getListOfertasFromView(dtoOfertasFilter);
-						if(!Checks.esNulo(listaOfer) && listaOfer.isEmpty()){
+						if(!Checks.esNulo(listaOfer) && !listaOfer.isEmpty()){
 							Long idOferta = listaOfer.get(0).getIdOferta();
 							if(!Checks.esNulo(idOferta)){
 								oferta = ofertaApi.getOfertaById(idOferta);

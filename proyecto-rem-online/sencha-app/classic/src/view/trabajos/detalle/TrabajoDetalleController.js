@@ -712,9 +712,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			form.getBindRecord().set("codSubcartera", codSubcartera);
 			form.getBindRecord().set("fechaEjecucionTrabajo", null);
 			form.getBindRecord().set("fechaEntregaLlaves", null);
+			
+			window.getViewModel().getView().mask(HreRem.i18n("msg.mask.espere"));
 					
 			var success = function(record, operation) {
 				me.getView().unmask();
+				window.getViewModel().getView().unmask();
 				var response = Ext.decode(operation.getResponse().responseText);
 				if(response.success === "true" && Ext.isDefined(response.warn)) {
 					me.fireEvent("warnToast", response.warn);
@@ -1146,7 +1149,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			 proxy: {
 			    type: 'uxproxy',
 				remoteUrl: 'trabajo/getListActivosByID',
-				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
 				extraParams: {idActivo: me.getView().idActivo, idAgrupacion: me.getView().idAgrupacion}
 			 },
 			 listeners:{
@@ -1263,28 +1265,48 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
      onClickUploadListaActivos: function(btn) {
        	var me = this,
        	form = me.getView().lookupReference("formSubirListaActivos");
-       	
        	var params = form.getValues(false,false,false,true);
        	params.idTipoOperacion = "141";
-       	
        	if(form.isValid()){
         	form.submit({
         		waitMsg: HreRem.i18n('msg.mask.loading'),
         		params: params,
     	   		success: function(fp, o){
-    	   			idProceso = Ext.JSON.decode(o.response.responseText).idProceso;
-    	   			//btn.up('creartrabajowindow').getViewModel().getData().trabajo.getData().idProceso = idProceso;
-    	   			//btn.up('creartrabajowindow').lookupReference('')form.getBindRecord().set("idActivo", idActivo);
-    	   			var window = btn.up('crearpeticiontrabajowin');
-    	   			window.idProceso = idProceso;
-    	   			window.lookupReference('listaActivosSubidaRef').getStore().getProxy().setExtraParams({'idProceso':idProceso});
-    	   			window.lookupReference('listaActivosSubidaRef').getStore().load(1);    
-    	   			//Si carga correctametne desde listado, ya no sera obligatorio insertar archivo
-    	   			window.lookupReference('filefieldActivosRef').allowBlank=true;
-    		    }
-    				
-    	    })
-       	}
+    	   			var idProceso = Ext.JSON.decode(o.response.responseText).idProceso;
+					var parameters = {};
+    	   			parameters.idProcess = idProceso;
+			    	var url =  $AC.getRemoteUrl('process/validar');
+			    	me.getView().mask('Validando...');
+					Ext.Ajax.request({
+						 method: 'GET',
+					     url: url,
+					     params: parameters,
+					     timeout: 120000,  // 2 min
+					     success: function(response, opts) {
+		    	   			var window = btn.up('windowBase');
+							var data = Ext.JSON.decode(response.responseText).data;
+		    	   			window.idProceso = idProceso;
+							me.getView().unmask();
+							if(data == "true"){
+								window.lookupReference('listaActivosSubidaRef').getStore().getProxy().setExtraParams({'idProceso':idProceso});
+			    	   			window.lookupReference('listaActivosSubidaRef').getStore().load(1);    
+			    	   			//Si carga correctametne desde listado, ya no sera obligatorio insertar archivo
+			    	   			window.lookupReference('filefieldActivosRef').allowBlank=true;
+							}else{
+								me.fireEvent("errorToast", "Ha fallado la validación del fichero. Vaya al apartado de \"Carga Masiva\" para descargar el fichero de errores.");
+							}
+		    	   			
+					     },
+					     failure: function(response, opts) {						     	
+						    me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+							me.getView().unmask();
+					     }
+					 });
+    		    }		
+    	    });
+       	}else{
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+		}
      },
      
      onClickGenerarPropuesta: function(btn) {
@@ -1805,6 +1827,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
 		    		me.lookupReference('fechaEjecucionRef').setReadOnly(false);
 		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
+		    		me.lookupReference('comboProveedorLlave').setReadOnly(false);	
+	    			me.lookupReference('fechaEntregaTrabajoRef').setReadOnly(false);
+	    			me.lookupReference('comboReceptorLlave').setReadOnly(false);
+	    			me.lookupReference('llavesNoAplicaRef').setReadOnly(false);
+					me.lookupReference('llavesMotivoRef').setReadOnly(false);
     			} else {
     				me.lookupReference('gridtarifastrabajo').setTopBar(true)
     	    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
@@ -1820,6 +1847,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
 		    		me.lookupReference('fechaEjecucionRef').setReadOnly(false);
 		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
+		    		me.lookupReference('comboProveedorLlave').setReadOnly(false);	
+	    			me.lookupReference('fechaEntregaTrabajoRef').setReadOnly(false);
+	    			me.lookupReference('comboReceptorLlave').setReadOnly(false);
+	    			me.lookupReference('llavesNoAplicaRef').setReadOnly(false);
+					me.lookupReference('llavesMotivoRef').setReadOnly(false);
     			} else {
     				me.lookupReference('gridtarifastrabajo').setTopBar(true)
     	    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)

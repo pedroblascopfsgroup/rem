@@ -64,7 +64,19 @@ public class DtoGestionEconomicaTrabajo extends WebDto {
 	private String descripcionTarifaTrabajo;
 	
 	private String subcarteraCodigo;
-
+	
+	private Boolean esProveedorEditable;
+	
+	private Boolean esListadoTarifasEditable;
+	
+	private Boolean esListadoPresupuestosEditable;
+	
+	private Boolean esUsuarioCliente;
+	
+	private Double importePresupuesto;
+	
+	private Boolean esGridSuplidosEditable;
+	
 	public Long getIdTrabajo() {
 		return idTrabajo;
 	}
@@ -265,4 +277,53 @@ public class DtoGestionEconomicaTrabajo extends WebDto {
 	public void setSubcarteraCodigo(String subcarteraCodigo) {
 		this.subcarteraCodigo = subcarteraCodigo;
 	}
+
+	public Boolean getEsProveedorEditable() {
+		return esProveedorEditable;
+	}
+
+	public void setEsProveedorEditable(Boolean esProveedorEditable) {
+		this.esProveedorEditable = esProveedorEditable;
+	}
+
+	public Boolean getEsListadoTarifasEditable() {
+		return esListadoTarifasEditable;
+	}
+
+	public void setEsListadoTarifasEditable(Boolean esListadoTarifasEditable) {
+		this.esListadoTarifasEditable = esListadoTarifasEditable;
+	}
+
+	public Boolean getEsListadoPresupuestosEditable() {
+		return esListadoPresupuestosEditable;
+	}
+
+	public void setEsListadoPresupuestosEditable(Boolean esListadoPresupuestosEditable) {
+		this.esListadoPresupuestosEditable = esListadoPresupuestosEditable;
+	}
+
+	public Boolean getEsUsuarioCliente() {
+		return esUsuarioCliente;
+	}
+
+	public void setEsUsuarioCliente(Boolean esUsuarioCliente) {
+		this.esUsuarioCliente = esUsuarioCliente;
+	}
+
+	public Double getImportePresupuesto() {
+		return importePresupuesto;
+	}
+
+	public void setImportePresupuesto(Double importePresupuesto) {
+		this.importePresupuesto = importePresupuesto;
+	}
+
+	public Boolean isEsGridSuplidosEditable() {
+		return esGridSuplidosEditable;
+	}
+
+	public void setEsGridSuplidosEditable(Boolean esGridSuplidosEditable) {
+		this.esGridSuplidosEditable = esGridSuplidosEditable;
+	}
+
 }

@@ -3,7 +3,7 @@
  */
 Ext.define('HreRem.model.BusquedaTrabajo', {
     extend: 'HreRem.model.Base',
-    idProperty: 'id',    
+    idProperty: 'idTrabajo',    
     
 
     fields: [ 
@@ -87,6 +87,12 @@ Ext.define('HreRem.model.BusquedaTrabajo', {
     		},
     		{
     			name: 'importeTotal'
+    		},
+    		{
+    			name:'descripcionLinea'
+    		},
+    		{
+    			name:'idLinea'
     		}
     ] 
     

@@ -45,7 +45,10 @@ Ext.define('HreRem.view.gastos.AnyadirNuevoGastoActivo', {
     	
     	var me = this;
     	
-    	me.buttons = [ { itemId: 'btnGuardar', text: 'Añadir', handler: 'onClickBotonGuardarGastoActivo'},  { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarGastoActivo'}];
+    	me.buttons = [ 
+			{ itemId: 'btnGuardar', text: 'Añadir', handler: 'onClickBotonGuardarGastoActivo', disabled: true, reference:'btnGuardarGastoActivo'},
+			{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarGastoActivo'}
+    	];
     	
     	me.items = [
 					{
@@ -54,7 +57,7 @@ Ext.define('HreRem.view.gastos.AnyadirNuevoGastoActivo', {
     	];
     	
     	me.callParent();
-    	me.setTitle(HreRem.i18n('title.anyadir.activo.agrupacion'));
+    	me.setTitle(HreRem.i18n('title.anyadir.elemento'));
     },
     
     resetWindow: function() {

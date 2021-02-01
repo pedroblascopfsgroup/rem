@@ -4,116 +4,44 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
     cls			: 'panel-base shadow-panel',
     collapsed	: false,
     scrollable	: 'y',
+    reference   : 'fichatrabajo',
     recordName	: "trabajo",
 	recordClass	: "HreRem.model.FichaTrabajo",
-    requires	: ['HreRem.model.FichaTrabajo'],
-
+    requires	: ['HreRem.model.FichaTrabajo', 'HreRem.view.trabajos.detalle.HistorificacionDeCamposGrid'],
+    refreshaftersave: true,
+    afterLoad: function () {
+    	this.lookupController().desbloqueaCamposSegunEstadoTrabajo(this);
+    },
     initComponent: function () {
         var me = this;
-        console.log(this);
         me.setTitle(HreRem.i18n('title.ficha'));
-        
-        //Si el tipo es de Precios/Publicacion/Sancion no mostrar el bloque -Cuando hay que hacerlo...-
-        me.codigoTipoTrabajo = me.lookupController().getViewModel().get('trabajo').get('tipoTrabajoCodigo');
-        me.idGestorActivoResponsable = me.lookupController().getViewModel().get('trabajo').get('idGestorActivoResponsable');
-        me.idSupervisorActivo = me.lookupController().getViewModel().get('trabajo').get('idSupervisorActivo');
-        me.idProveedor =  me.lookupController().getViewModel().get('trabajo').get('idProveedor');
-        me.idSolicitante =  me.lookupController().getViewModel().get('trabajo').get('idSolicitante');
-        me.idResponsableTrabajo = me.lookupController().getViewModel().get('trabajo').get('idResponsableTrabajo');
-        me.idSupervisorEdificaciones = me.lookupController().getViewModel().get('trabajo').get('idSupervisorEdificaciones');
-        me.idSupervisorAlquileres = me.lookupController().getViewModel().get('trabajo').get('idSupervisorAlquileres');
-        me.idSupervisorSuelos = me.lookupController().getViewModel().get('trabajo').get('idSupervisorSuelos');
-        
-        var logadoGestorMantenimiento= me.lookupController().getViewModel().get('trabajo').get('logadoGestorMantenimiento');
-        var editar = me.lookupController().getViewModel().get('trabajo').get('bloquearResponsable');
-        //NOTA: En cuanto a la visualización del campo “Responsable del trabajo”, 
-        //lo podrán ver tanto el “Gestor/Supervisor de activo” y el “Gestor/Supervisor de alquileres, edificaciones, suelo”, así comomo, el proveedor y el solicitante.
-        var mostrar =  !($AU.getUser().userId ==  me.idResponsableTrabajo|| $AU.getUser().userId ==   me.idSupervisorActivo || 
-        		$AU.getUser().userId == me.idGestorActivoResponsable || $AU.getUser().userId == me.idProveedor || $AU.getUser().userId == me.idSolicitante ||
-        		$AU.getUser().userId == me.idSupervisorEdificaciones || $AU.getUser().userId == me.idSupervisorAlquileres || $AU.getUser().userId == me.idSupervisorSuelos);
+    	me.idTrabajo= me.lookupController().getViewModel().get('trabajo').get('id')
              me.items= [
-        			{
-						xtype:'fieldsettable',
-						defaultType: 'textfieldbase',						
-						title: HreRem.i18n('title.objeto'),
-						items :
-							[
-				                { 
+            	 	{
+            	 		xtype:'fieldsettable',
+						defaultType: 'textfieldbase',
+						title: HreRem.i18n('title.general'),
+						reference: 'generalFieldSetRef',
+						items : [
+							 	{ 
 				                	xtype: 'displayfieldbase',
 				                	fieldLabel:  HreRem.i18n('fieldlabel.numero.trabajo'),
 				                	bind:		'{trabajo.numTrabajo}'
-				                },				                
-				                { 
-				                	xtype: 'displayfieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.propietario.activo'),
-									bind:		'{trabajo.propietario}'
 				                },
 				                {
-						        	xtype: 'displayfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
-									bind:		'{trabajo.cartera}'
-								},
-								{
-						        	xtype: 'comboboxfieldbase',
-						        	editable: false,
-						        	fieldLabel: HreRem.i18n('fieldlabel.responsable.trabajo'),
-						        	bind: {
-					            		store: '{comboResponsableTrabajo}',
-					            		value: '{trabajo.idResponsableTrabajo}',
-					            		readOnly: '{trabajo.bloquearResponsable}'
-					            	},
-					            	displayField: 'apellidoNombre',
-		    						valueField: 'id',
-		    						//readOnly: editar,
-		    						hidden: mostrar,
-						        	reference: 'comboTrabajoResposable'
-
-						    
-						        },
-				                { 
-						        	xtype: 'displayfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.tipo.trabajo'),
-						        	bind: '{trabajo.tipoTrabajoDescripcion}'
-						        },
-						        {
-									xtype: 'displayfieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.solicitante'),
-									bind:		'{trabajo.solicitante}'
-						        },
-								{ 
 				                	xtype: 'textareafieldbase',
+				                	cls: 'force-max-width',
+				                	fieldLabel: HreRem.i18n('header.descripcion'),
+				                	labelAlign: 'top',
+				                	grow: true,
+				                	height: 110,
+				                	colspan: 3, 
 				                	rowspan: 2,
-				                	height: 100,
-				                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),
-				                	width: 		'100%',
-				                	bind:		'{trabajo.descripcion}',
-				                	maxLength: 256
-		                		},
-								{ 
-									xtype: 'displayfieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.trabajo'),						        	
-						        	bind: '{trabajo.subtipoTrabajoDescripcion}'
-						        },	
-						        {
-						        	xtype: 'displayfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.proveedor'),
-						        	bind: '{trabajo.nombreProveedor}'				        	
-						        	
-						        },
-						        {
-						        	xtype: 'comboboxfieldbase',
-						        	editable: false,
-						        	fieldLabel: HreRem.i18n('fieldlabel.supervisor.activo'),
-						        	bind: {
-					            		store: '{comboSupervisorActivoResponsable}',
-					            		value: '{trabajo.idSupervisorActivo}'
-					            	},
-					            	displayField: 'apellidoNombre',
-		    						valueField: 'id',
-		    						readOnly: (Ext.isEmpty(this.idSupervisorActivo)),
-					            	hidden: (this.codigoTipoTrabajo!="03"),
-						        	reference: 'comboSupervisorActivo'
-						        },
+				                	bind: {
+				                		value: '{trabajo.descripcionGeneral}'
+				                	},
+				                	reference: 'descripcionGeneralRef'
+				                },
 						        {
 						        	xtype: 'comboboxfieldbase',
 						        	editable: false,
@@ -124,523 +52,488 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					            	},
 					            	displayField: 'apellidoNombre',
 		    						valueField: 'id',
-		    						readOnly: (Ext.isEmpty(this.idGestorActivoResponsable)),
-					            	hidden: (this.codigoTipoTrabajo!="03"),
+		    						//readOnly: (Ext.isEmpty(this.gestorActivoCodigo)),
 						        	reference: 'comboGestorActivoResposable'
-						        },
-						        { 
-									xtype: 'displayfieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.codigo.promocion'),						        	
-						        	bind: '{trabajo.codigoPromocionPrinex}'
-						        },
-						        {
-						        	xtype: 'checkboxfieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.actuacion.cubierta.seguro'),
-						        	reference: 'checkCiaAseguradora',
-						        	labelWidth: 200,
-						        	bind: '{trabajo.cubreSeguro}',
-						        	listeners: {
-						        		change: function(check, checked) {
-						        			var fieldTextCiaAseguradora = check.up("form").down('[reference=comboCiaAseguradora]');
-						        			if(checked) {
-						        				fieldTextCiaAseguradora.allowBlank=false;
-						        			} else {	
-						        				fieldTextCiaAseguradora.setValue("");
-						        				fieldTextCiaAseguradora.allowBlank=true;						        				
-						        				fieldTextCiaAseguradora.validate();
-						        			}
-						        		}
-						        	}
-						        },
-						        {
+					        	},
+					        	 { 
+    								xtype: 'comboboxfieldbase',
+    								fieldLabel: HreRem.i18n('fieldlabel.primera.actuacion.toma.posesion'),
+    								reference: 'tomaDePosesion',
+    								bind: {
+										store: '{comboSiNoRem}',
+	    								value: '{trabajo.tomaPosesion}'
+	    								
+	    									}
+//									listeners: {
+//										afterrender: 'hiddenComboTomaPosesion'
+//									}
+        						},
+        						{ 
 						        	xtype: 'comboboxfieldbase',
 						        	editable: false,
-						        	fieldLabel: HreRem.i18n('fieldlabel.compania.aseguradora'),
+						        	fieldLabel: HreRem.i18n('fieldlabel.tipo.trabajo'),
+									reference: 'tipoTrabajoFicha',
+						        	chainedStore: 'comboSubtipoTrabajoFicha',
+									chainedReference: 'subtipoTrabajoComboFicha',
+						        	bind: 
+						        		{
+					            			store: '{storeTipoTrabajoFichaFiltered}',
+					            			value: '{trabajo.tipoTrabajoCodigo}'
+				            			},
+		    						listeners: 
+		    							{
+					                		select: 'onChangeChainedCombo'
+					                		
+					            		},
+					            	allowBlank: false
+						        },
+						        { 
+									xtype: 'comboboxfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.trabajo'),
+						        	reference: 'subtipoTrabajoComboFicha',
+						        	editable: false,
+						        	bind: 
+						        		{
+				            				store: '{comboSubtipoTrabajoFicha}',
+					            			value: '{trabajo.subtipoTrabajoCodigo}',
+					            			disabled: '{!trabajo.tipoTrabajoCodigo}'
+					            		},
+					            		listeners:{
+					            			change:'bloquearCombosFechaConcretayHoraPorSubtipoTomaPosesionYPaquetes'
+					            		},
+									allowBlank: false
+						        },
+        						{
+        							xtype : 'textfieldbase',
+						            reference:'idTarea',
+						            fieldLabel : HreRem.i18n('fieldlabel.id.tarea.trabajo'),
+						            allowBlank: true,
+						            maxLength:10,
+						            readOnly: true,
+						            bind: {
+	    								value: '{trabajo.idTarea}'
+	    							}
+        						},
+							 	{ 
+				                	xtype: 'textfieldbase',
+				                	fieldLabel:  HreRem.i18n('title.general.albaran.numAlbaran'),
+				                	bind:		'{trabajo.numAlbaran}',
+				                	readOnly: true
+				                },
+							 	{ 
+				                	xtype: 'textfieldbase',
+				                	fieldLabel:  HreRem.i18n('title.general.gasto.numGasto'),
+				                	bind:		'{trabajo.numGasto}',
+				                	readOnly: true
+				                },
+							 	{
+				                	xtype: 'comboboxfieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.gasto.estado.gasto'),
+				                	reference: 'estadoGastoRef',
+				                	bind:	{
+				                		store: '{comboEstadoGastos}',
+				                		value: '{trabajo.estadoGastoCodigo}'
+				                	},
+				                	readOnly: true
+				                },
+							 	{ 
+				                	xtype: 'checkboxfieldbase',
+				                	fieldLabel:  HreRem.i18n('header.gasto.cubierto.seguro'),
+				                	bind:		'{trabajo.cubreSeguro}',
+				                	reference: 'checkboxCubreSeguroRef'
+				                },
+						        {
+						        	xtype: 'comboboxfieldbase',
+				                	fieldLabel:  HreRem.i18n('title.general.com.aseguradora'),
 						        	bind: {
+						        		disabled: '{!trabajo.cubreSeguro}',
 					            		store: '{comboCiasAseguradoras}',
 					            		value: '{trabajo.ciaAseguradora}'
 					            	},
 					            	valueField: 'id',
 						        	reference: 'comboCiaAseguradora'
 						        },
-						        { 
-						        	xtype: 'comboboxfieldbase',
-						        	colspan: 2,
-						        	fieldLabel: HreRem.i18n('fieldlabel.tarifa.plana'),
-						        	readOnly: true,
-						        	bind: {
-					            		store: '{comboSiNoRem}',
-										value: '{trabajo.esTarifaPlana}'	            		
-					            	}
-			        			},
-			        			{
-			                   		fieldLabel: HreRem.i18n('fieldlabel.nombre.ug'),
-			                   		cls: 'cabecera-info-field',
-									bind:{
-										value:'{trabajo.nombreUg}',
-										hidden:'{!trabajo.perteneceDNDtipoEdificacion}',
-										readOnly: !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])
-									}
-			                   	},
-								{ 
-									fieldLabel: HreRem.i18n('fieldlabel.nombre.expediente.trabajo'),
-									cls: 'cabecera-info-field',
-									bind:{
-										value:'{trabajo.nombreExpediente}',
-										hidden:'{!trabajo.perteneceDNDtipoEdificacion}',
-										readOnly: !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])
-									}
+							 	{ 
+				                	xtype: 'numberfieldbase',
+				                	fieldLabel:  HreRem.i18n('header.listado.precios.importe'),
+				                	bind:{
+				                		disabled: '{!trabajo.cubreSeguro}',
+			                			value: '{trabajo.importePrecio}'
+				                	},
+				                	reference: 'importePrecioAseguradoRef'
 				                },
-			                   	{
-			                   		fieldLabel: HreRem.i18n('fieldlabel.nombre.proyecto'),
-			                   		cls: 'cabecera-info-field',
-			                   		bind:{
-										value:'{trabajo.nombreProyecto}',
-										hidden:'{!trabajo.perteneceDNDtipoEdificacion}',
-										readOnly: !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])
+							 	{ 
+									xtype: 'checkboxfieldbase',
+									reference: "checkboxUrgente",
+									fieldLabel: HreRem.i18n('fieldlabel.check.riesgo.urgente'),
+									bind: {
+										value: '{trabajo.urgente}'		
+									},
+									readOnly: true
+								},
+							 	{ 
+				                	xtype: 'checkboxfieldbase',
+				                	fieldLabel:  HreRem.i18n('title.general.con.riesgos.terceros'),
+				                	bind: {
+				                		value : '{trabajo.riesgosTerceros}' 
+				                	},
+				                	reference: 'riesgosTercerosRef',
+				                	readOnly: true
+				                		
+				                },
+							 	{ 
+				                	xtype: 'checkboxfieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.aplica.comite.trabajo'),
+				                	bind:{
+				                		value: '{trabajo.aplicaComite}'
+				                	},
+				                	reference: 'aplicaComiteRef',
+				                	readOnly: true,
+									listeners:{
+										change: 'onChangeCheckAplicaComite'
 									}
-									
-			                   	},
-			                   	{
-			                   		fieldLabel: HreRem.i18n('fieldlabel.codigo.subpartida'),
-			                   		cls: 'cabecera-info-field',
-			                   		bind:{
-										value:'{trabajo.codigoSubpartida}',
-										hidden:'{!trabajo.perteneceDNDtipoEdificacion}',
-										readOnly: !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])
-									}
-									
-			                   	}
-							]
-		           },
-		           {
-						xtype:'fieldset',
-						layout: {
-					        type: 'hbox',
-					        align: 'stretch'
+				                	
+				                },
+				                {
+				                	xtype: 'comboboxfieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.trabajo.area.peticionaria'),
+				                	bind:{
+				                		store: '{comboIdentificadorReam}',
+				                		value: '{trabajo.identificadorReamCodigo}'
+				                	},
+				                	editable: false,
+				                	reference: 'comboIdentificadorReamRef',
+				                	readOnly: false
+				                }
+						]
+            	 	},
+        			{
+						xtype:'fieldsettable',
+						defaultType: 'textfieldbase',						
+						title: HreRem.i18n('fieldlabel.comite'),
+						bind : {
+							disabled: '{!trabajo.aplicaComite}'
 						},
-						defaults:{
-					        xtype: 'fieldset',
-					        flex: 1
-					    }, 
-					    collapsible: true,
-					    collapsed: false,
-						title: HreRem.i18n('title.momento.realizacion'),
-						hidden: (this.codigoTipoTrabajo!="02" && this.codigoTipoTrabajo!="03"),
+						reference: 'comiteFieldSet',
 						items :
 							[
-								{	
-									defaultType: 'textfieldbase',
-									items: [
-											{
-												xtype: 'checkboxfieldbase',
-												boxLabel: HreRem.i18n('title.fecha.concreta'),
-												bind: '{trabajo.checkFechaConcreta}',
-												reference: 'checkFechaConcreta',
-												listeners: {
-													change: function(check, checked) {
-														var form = check.up("form");
-														if(checked) {
-															form.down("[reference=checkFechaTope]").setValue(false);
-															form.down("[reference=checkFechaContinuado]").setValue(false);
-															Ext.Array.each(check.up("fieldset").query("field"), function(field, index) {
-																field.allowBlank=false;																
-															});
-														} else {
-															Ext.Array.each(check.up("fieldset").query("field"), function(field, index) {
-																field.allowBlank=true;
-																field.validate();
-																field.setValue("");
-																															
-															});
-														}
-													}
-													
-												}
-											},
-											{
-												xtype: 'datefieldbase',
-												fieldLabel: HreRem.i18n('fieldlabel.fecha.debe.realizarse.trabajo'),
-												maxValue: null,
-												bind: {
-														value:  '{trabajo.fechaConcreta}',
-														minValue: '{trabajo.fechaSolicitud}'
-												}
-											},
-											{
-												xtype: 'timefieldbase',
-												fieldLabel: HreRem.i18n('fieldlabel.hora.debe.realizarse.trabajo'),
-												bind: {
-													value: '{trabajo.horaConcreta}'
-												}
-												
-											}										
-									
-									]
-								},
+						        {
+						        	fieldLabel:  HreRem.i18n('fieldlabel.resolucion.comite.trabajo'),
+						        	xtype: 'comboboxfieldbase',
+						        	bind: {
+					            		store: '{comboAprobacionComite}',
+					            		value: '{trabajo.resolucionComiteCodigo}'
+					            	},
+						        	reference: 'comboResolucionComite'
+						        },
 								{
-									defaultType: 'textfieldbase',
-									items: [
+									fieldLabel:  HreRem.i18n('fielblabel.fecha.comite.trabajo'),
+									xtype: 'datefieldbase',
+									bind: {
+											value:  '{trabajo.fechaResolucionComite}'
+									},
+									reference: 'fechaResolucionComiteRef'
+								},
+							 	{ 
+				                	xtype: 'textfieldbase',
+				                	fieldLabel:  HreRem.i18n('title.resolucion.comite.id'),
+				                	bind: {
+				                		value: '{trabajo.resolucionComiteId}'
+				                	},
+				                	reference: 'resolucionComiteIdRef'
+				                }
+							]
+        			},
+        			{
+						xtype:'fieldsettable',
+						defaultType: 'textfieldbase',						
+						title: HreRem.i18n('title.plazos.trabajo.nuevo'),
+						reference: 'plazosFieldSet',
+						items :
+							[
+								{
+									xtype:'fieldsettable',
+									title: HreRem.i18n('fieldlabel.fecha.concreta.trabajo'),
+									reference: 'fechaConcretaFieldSet',
+									colspan: 3,
+									items : [
 											{
-												xtype: 'checkboxfieldbase',
-												boxLabel:  HreRem.i18n('title.fecha.tope'),												
-												reference: 'checkFechaTope',
-												listeners: {
-													change: function(check, checked) {																		
-														var form = check.up("form");
-														if(checked) {
-															var me =this;
-															form.down("[reference=checkFechaConcreta]").setValue(false);
-															form.down("[reference=checkFechaContinuado]").setValue(false);
-															Ext.Array.each(check.up("fieldset").query("field"), function(field, index) {
-																field.allowBlank=false;																
-															});
-														} else {
-															Ext.Array.each(check.up("fieldset").query("field"), function(field, index) {
-																field.allowBlank=true;
-																field.validate();
-																field.setValue("");
-																															
-															});
-														}
-													}
-													
-												}
-											},
-											{
-												xtype: 'checkboxfieldbase',
-												boxLabel:  HreRem.i18n('fieldlabel.requerimiento'),												
-												reference: 'checkRequerimiento',
-												//hidden: !isSareb,
-												readOnly: !logadoGestorMantenimiento,
-												bind:{
-													value: '{trabajo.requerimiento}'													
-												}
-											},
-											{
+												fieldLabel: HreRem.i18n('fieldlabel.plazos.fecha.fecha.simple'),
 												xtype: 'datefieldbase',
-												reference: 'datefieldFechaTope',
-												fieldLabel: HreRem.i18n('fieldlabel.fecha.debe.finalizar.trabajo'),
+												name: 'fechaConcreta',
+												reference: 'fechaConcreta',
 												maxValue: null,
+												allowBlank: true,
 												bind: {
-													value: '{trabajo.fechaTope}',
-													minValue: '{trabajo.fechaSolicitud}'
+													value: '{trabajo.fechaConcreta}'
 												},
-												listeners: {
-													select: function(datefield, newValue) {
-														var form = datefield.up("form");
-														form.down("[reference=checkboxUrgente]").setValue(false);
-														form.down("[reference=checkboxRiesgoInminente]").setValue(false);
-													}
-												}
-											},
-											{
-												xtype: 'checkboxfieldbase',
-												reference: "checkboxUrgente",
-												fieldLabel: HreRem.i18n('fieldlabel.urgente.respuesta.tres.horas'),
-												bind: {
-													value: '{trabajo.urgente}'															
-												},
-												listeners: {
-													change: function(check, checked) {
-														var form = check.up("form");
-														if(checked) {
-															var fechaTope = $AC.getCurrentDate();
-															form.down("[reference=checkboxRiesgoInminente]").setValue(false);
-															form.down("[reference=datefieldFechaTope]").setValue(fechaTope);																			
+												listeners:{
+    				        						select: function(x, y, z){
+    				        							var field = this; 
+    				        							field.up("[reference='plazosFieldSet']").down("[reference='fechaTope']").setMinValue(field.value);
+    				        							field.up("[reference='plazosFieldSet']").down("[reference='fechaTope']").validate();
+	    				        					},
+	    				        					change: function(x, y, z){
+														var field = this;
+														if(!Ext.isEmpty(field.value)){
+															field.up('[reference = fechaConcretaFieldSet]').down('[reference=horaConcreta]').allowBlank = false;
+														}else{
+															field.up('[reference = fechaConcretaFieldSet]').down('[reference=horaConcreta]').allowBlank = true;
+															field.up('[reference = fechaConcretaFieldSet]').down('[reference=horaConcreta]').validate();
 														}
 													}
 												}
 											},
 											{
-												xtype: 'checkboxfieldbase',
-												reference: "checkboxRiesgoInminente",
-												fieldLabel: HreRem.i18n('fieldlabel.riesgo.inminente.terceros'),
+												fieldLabel: HreRem.i18n('fieldlabel.plazos.fecha.hora.simple'),
+												xtype: 'timefieldbase',
+												name: 'horaConcreta',
+												reference: 'horaConcreta',
+												//colspan:2,			
+												format: 'H:i',
+												increment: 30,
+												allowBlank: true,
 												bind: {
-													value: '{trabajo.riesgoInminenteTerceros}'
+													value:  '{trabajo.horaConcreta}'
 												},
-												listeners: {
-													change: function(check, checked) {
-														var form = check.up("form");
-														if(checked) {
-															var fechaTope = Ext.Date.add($AC.getCurrentDate(), Ext.Date.DAY, 2);
-															form.down("[reference=checkboxUrgente]").setValue(false);
-															form.down("[reference=datefieldFechaTope]").setValue(fechaTope);																			
+												listeners:{
+													change: function(x, y, z){
+														var field = this;
+														if(!Ext.isEmpty(field.value)){
+															field.up('[reference = fechaConcretaFieldSet]').down('[reference=fechaConcreta]').allowBlank = false;
+														}else{
+															field.up('[reference = fechaConcretaFieldSet]').down('[reference=fechaConcreta]').allowBlank = true;
+															field.up('[reference = fechaConcretaFieldSet]').down('[reference=fechaConcreta]').validate();
 														}
 													}
 												}
 											}
-									]	
+									]
 								},
 								{
-									defaultType: 'textfieldbase',
-									disabled: true,
-									items: [
-											{
-												xtype: 'checkboxfieldbase',
-												boxLabel:  HreRem.i18n('title.trabajo.continuado'),
-												bind :'{trabajo.checkFechaContinuado}',
-												reference: 'checkFechaContinuado',
-												listeners: {
-													change: function(check, checked) {
-														var form = check.up("form");
-														if(checked) {
-															var me =this;
-															form.down("[reference=checkFechaConcreta]").setValue(false);
-															form.down("[reference=checkFechaTope]").setValue(false);
-															Ext.Array.each(check.up("fieldset").query("field"), function(field, index) {
-																field.allowBlank=false;																
-															});
-														} else {
-															Ext.Array.each(check.up("fieldset").query("field"), function(field, index) {
-																field.allowBlank=true;
-																field.validate();
-																field.setValue("");														
-															});
-														}
-													}
-												}
-											},		
-											{
-												xtype: 'datefieldbase',
-												fieldLabel: HreRem.i18n('fieldlabel.fecha.inicio'),
-												minValue: $AC.getCurrentDate(),
-												maxValue: null,
-												bind: {
-													value: '{trabajo.fechaInicio}'
-												}
+									xtype:'fieldsettable',
+									defaultType: 'datefieldbase',						
+									title: HreRem.i18n('fieldlabel.fecha.tope.trabajo'),
+									reference: 'fechaTopeFieldSet',
+									colspan: 3,
+									items : [
+										{
+											fieldLabel: HreRem.i18n('fieldlabel.plazos.fecha.fecha.simple'),
+											xtype: 'datefieldbase',
+											reference: 'fechaTope',
+											maxValue: null,
+											allowBlank: false,
+											bind: {
+												value: '{trabajo.fechaTope}'
 											},
-											{
-												xtype: 'datefieldbase',
-												fieldLabel: HreRem.i18n('fieldlabel.fecha.fin'),
-												minValue: $AC.getCurrentDate(),
-												maxValue: null,
-												bind: {
-													value: '{trabajo.fechaFin}'	
+											listeners:{
+	    				        					select: 
+	    				        					function(x, y, z){
+	    				        						var field = this;
+	    				        						field.setMinValue(field.up().up().down("[reference='fechaConcreta']").value);
+	    				        						field.validate();
+	    				        					}
 												}
-											},
-											{
-							                	xtype: 'textareafieldbase',
-							                	fieldLabel: HreRem.i18n('fieldlabel.observaciones'),
-							                	bind: {
-													value: '{trabajo.continuoObservaciones}'	
-												},
-							                	width: '100%', 
-							                	maxLength: 256
-					                		}
+										}
 									]
 								}
 							]
-		           },
-		           {     
+        			},
+					{
 						xtype:'fieldsettable',
-						defaultType: 'textfieldbase',
-						//title: HreRem.i18n('title.estado'),				
-						items :
+						title: HreRem.i18n('title.trabajo.informe.situacion'),
+						reference: 'informeSituacionFieldSet',
+						items : [
+					        {
+					        	fieldLabel: HreRem.i18n('fieldlabel.estado.trabajo'),
+					        	xtype: 'comboboxfieldbase',
+					        	bind: {
+				            		store: '{comboEstadoSegunEstadoGdaOProveedor}',
+				            		value: '{trabajo.estadoCodigo}'
+				            	},
+				            	listeners:{
+		        					select: 
+		        					function(x, y, z){
+		        						//me.up().previousSibling("[reference='generalFieldSetRef']").down("[reference='aplicaComiteRef']")
+		        						var me = this;
+		        						var sup = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+		        						var esGestorActivo = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+		        						var esProvActivo = $AU.userIsRol(CONST.PERFILES['PROVEEDOR']);
+		        						var readOnlyFinalizado = !sup && !esGestorActivo;
+		        						if(me.getSelection().data.codigo == "13" && 
+		        								me.up().previousSibling("[reference='generalFieldSetRef']").down("[reference='aplicaComiteRef']").checked){
+		        							var oldValue = me.bind.value.lastValue;
+		        							if( me.up().previousSibling("[reference='comiteFieldSet']").down("[reference='comboResolucionComite']").getValue() == null
+		        								 || me.up().previousSibling("[reference='comiteFieldSet']").down("[reference='comboResolucionComite']").getValue() != "APR"){
+		        								Ext.MessageBox.alert("Error","No se puede validar un trabajo que aplique comité sin la aprobación del mismo");
+		        								for(var i = 0 ; i< me.getStore().getData().length ; i++){
+		        									if(me.getStore().getData().items[i].data.codigo == me.bind.value.lastValue){
+		        										me.setSelection(me.getStore().getData().items[i])
+		        										return;
+		        									}
+		        								}
+		        							}
+		        						}
+		        						if(me.bind.value.lastValue == "FIN" && me.getValue() == "REJ"){
+		        							
+		        							//me.up().down("[reference='fechaEjecucionRef']").setValue(null);
+		        							me.up().previousSibling("[reference='plazosFieldSet']").down("[reference='fechaConcreta']").setReadOnly(readOnlyFinalizado);
+		        							me.up().previousSibling("[reference='plazosFieldSet']").down("[reference='horaConcreta']").setReadOnly(readOnlyFinalizado);
+		        							me.up().previousSibling("[reference='plazosFieldSet']").down("[reference='fechaTope']").setReadOnly(readOnlyFinalizado);
+		        						}
+		        						if(((me.bind.value.lastValue == "REJ" && me.getValue() == "SUB") || me.getValue() == "FIN") && (esProvActivo || sup)){
+		        							me.up().down("[reference='fechaEjecucionRef']").setAllowBlank(false);
+		        							me.up().down("[reference='fechaEjecucionRef']").validate();
+		        						}else{
+		        							me.up().down("[reference='fechaEjecucionRef']").setAllowBlank(true);
+		        							me.up().down("[reference='fechaEjecucionRef']").validate();
+		        						}
+		        						me.lookupController().getViewModel().get('trabajo').data.llavesObligatoriasEstadoTrabajo = false;
+		        						if((me.bind.value.lastValue == "CUR" && me.getValue() == "FIN") || (me.bind.value.lastValue == "SUB" && me.getValue() == "13")){
+		        							me.lookupController().getViewModel().get('trabajo').data.llavesObligatoriasEstadoTrabajo = true;
+		        						}
+		        						me.lookupController().calcularObligatoriedadCamposLlaves();
+		        					},
+		        					change: 'finalizacionTrabajoProveedor'
+								},
+					        	reference: 'comboEstadoTrabajoRef',
+					        	colspan: 2
+					        },
+							{
+					        	xtype: 'datefieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.fecha.ejecucion.simple'),
+								reference: 'fechaEjecucionRef',
+								bind: {
+									value: '{trabajo.fechaEjecucionTrabajo}'
+								}
+							},
+						 	{ 
+			                	xtype: 'checkboxfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.tarifa.plana'),
+			                	name: 'checkTarifaPlana',
+			                	reference: 'checkTarifaPlanaRef',
+			                	bind: {
+			                		value : '{trabajo.tarifaPlana}' 
+			                	},
+			                	colspan: 2
+			                		
+			                },
+						 	{ 
+			                	xtype: 'checkboxfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.check.riesgo.siniestro'),
+			                	name: 'checkSiniestro',
+			                	reference: 'checkSiniestroRef',
+			                	bind: {
+			                		value : '{trabajo.riesgoSiniestro}' 
+			                	}
+			                		
+			                }
+						]
+					},
+					{
+						xtype:'fieldsettable',
+						title: HreRem.i18n('title.trabajo.llaves'),
+						reference: 'informeSituacionFieldSet',
+						bind : {
+							hidden: '{!trabajo.visualizarLlaves}'
+						},
+						items : [
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.proveedor.llaves.trabajo'),
+								colspan: 2,
+								reference: 'comboProveedorLlave',
+								chainedReference: 'comboReceptorLlave',
+								bind: {
+									store: '{comboProveedorFiltradoManual}',
+									value: '{trabajo.idProveedorLlave}'
+								},
+								displayField: 'nombreComercial',
+	    						valueField: 'idProveedor',
+								filtradoEspecial: true,
+								listeners: {
+				                	change: 'onChangeComboProveedorLlave'
+				            	}
+							},
+							{
+					        	xtype: 'datefieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.trabajo.llaves.fecha.entrega'),
+								reference: 'fechaEntregaTrabajoRef',
+								bind: {
+									value: '{trabajo.fechaEntregaLlaves}'
+								}
+							},
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.receptor.llaves.trabajo'),
+					        	reference: 'comboReceptorLlave',
+					        	colspan: 2,
+					        	bind: {
+				            		store: '{comboProveedorReceptor}',
+									disabled: '{!comboProveedorLlave.selection}',
+				            		value: '{trabajo.idProveedorReceptor}'
+				            	},
+				            	displayField: 'nombre',
+								valueField: 'id',
+								listeners: {
+									change: 'onChangeProveedor'
+								}
+					        },
+						 	{
+			                	xtype: 'checkboxfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.trabajo.llaves.no.aplica'),
+			                	reference: 'llavesNoAplicaRef',
+			                	bind: {
+			                		value : '{trabajo.llavesNoAplica}'
+			                	},
+			                	listeners: {
+									change: 'calcularObligatoriedadCamposLlaves'
+								}
+			                },
+			                {
+			                	xtype: 'textfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.calificacion.motivo'),
+			                	reference: 'llavesMotivoRef',
+			                	flex: 3,
+			                	bind: {
+			                		disabled: '{!trabajo.llavesNoAplica}',
+			                		value: '{trabajo.llavesMotivo}'
+			                	}
+			                }
+						]
+					},
+					{
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							colspan: 3,
+							
+							reference:'historificacionCampos',
+							hidden: false, 
+							title: HreRem.i18n("title.historificacion.campos"),
+							
+							items :
 							[
-								// Fila 1
-								{ 
-						        	xtype: 'comboboxfieldbase',
-						        	editable: false,
-						        	fieldLabel: HreRem.i18n('fieldlabel.estado'),
-						        	bind: {
-					            		store: '{comboEstadoTrabajo}',
-					            		value: '{trabajo.estadoCodigo}'
-					            	},
-					            	readOnly: true
-						        	
-						        },
-						        {
-									xtype: 'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fecha.eleccion.proveedor'),
-									bind: '{trabajo.fechaEleccionProveedor}',
-									readOnly: true
-								},
 								{
-									xtype: 'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fecha.cierre.economico'),
-									bind: '{trabajo.fechaCierreEconomico}',
-									readOnly: true
-								},
-						        //Fila 2
-						        {
-						        	xtype: 'comboboxfieldbase',
-						        	editable: false,
-						        	fieldLabel: HreRem.i18n('fieldlabel.valoracion.trabajo'),
-						        	bind: {
-					            		store: '{comboValoracionTrabajo}',
-					            		value: '{trabajo.tipoCalidadCodigo}'
-					            	},
-						        	readOnly: true
-						        },
-						        {												
-						        	xtype: 'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fecha.autorizacion.propietario'),
-									bind: {
-										value: '{trabajo.fechaAutorizacionPropietario}',
-										hidden: '{!esVisibleFechaAutorizacionPropietario}',
-										readOnly: true
-									}
-						        },
-								{
-									xtype: 'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fecha.rechazo'),
-									bind: '{trabajo.fechaRechazo}',
-									readOnly: true
-								},	
-						        // Fila 3
-						        {
-									xtype: 'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fecha.solicitud'),									
-									bind: '{trabajo.fechaSolicitud}',
-									readOnly: true
-								},
-								{
-									xtype: 'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fecha.ejecucion.real'),
-									bind: {
-										value:'{trabajo.fechaEjecucionReal}',
-										hidden: '{!esVisibleFechaEjecucionReal}',
-										readOnly: true
-									}
-								},
-								{ 
-				                	xtype: 'displayfieldbase',
-				                	fieldLabel:  HreRem.i18n('fieldlabel.motivo.rechazo'),
-				                	bind:	{	
-				                		value: '{trabajo.motivoRechazo}'				                					                	
-				                	}
-				                },				        
-						        // Fila 4
-							    {
-									xtype: 'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fecha.aprobacion'),
-									bind: '{trabajo.fechaAprobacion}',
-									readOnly: true,
-									rowspan:2
-								},
-								{
-									xtype: 'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fecha.validacion'),
-									bind: {
-										value: '{trabajo.fechaValidacion}',
-										hidden: '{!esVisibleFechaValidacion}',
-										readOnly: true
-										}
-								},
-								{
-									xtype: 'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fecha.emision.factura'),
-									bind: '{trabajo.fechaEmisionFactura}',
-									readOnly: true
-								},
-								//Fila 5
-								{
-									xtype: 'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fecha.pago'),
-									bind: '{trabajo.fechaPago}',
-									readOnly: true
-								},
-								{
-									xtype: 'textfieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.gasto.asociado'),
-									bind:{ 
-										value: '{trabajo.gastoProveedor}'
-										//hidden: '{esVisibleGasto}'
-									},
-									readOnly: true,
-									cls: 'show-text-as-link',
-										listeners: {
-									        click: {
-									            element: 'el', //bind to the underlying el property on the panel
-									            fn:'onClickGasto'									       
-									        }
-										}
-								},
-								{
-									xtype: 'comboboxfieldbase',
-									editable: false,
-									fieldLabel: HreRem.i18n('fieldlabel.estado.gasto'),
-									bind: {
-					            		store: '{comboEstadoGasto}',
-					            		value: '{trabajo.estadoGasto}'
-					            	},
-									readOnly: true
+									xtype: "historificacioncamposgrid", 
+									reference: "historificacioncamposgrid", 
+									colspan: 3,
+									idTrabajo: this.lookupController().getViewModel().get('trabajo').get('id'),
+									codigoPestanya: CONST.PES_PESTANYAS['FICHA']
 								}
 							]
-		           },
-		           {     
-						xtype:'fieldsettable',
-						defaultType: 'textfieldbase',
-						title: HreRem.i18n('title.trabajo.requerido.tercero'),				
-						items : [
-								{
-									fieldLabel: HreRem.i18n('fieldlabel.nombre'),
-									bind:'{trabajo.terceroNombre}',
-									width: 		'100%',
-									colspan: 2	
-								},
-								{
-									fieldLabel: HreRem.i18n('fieldlabel.persona.contacto'),
-									bind:'{trabajo.terceroContacto}',
-									width: 		'100%'
-								},
-								{
-									fieldLabel: HreRem.i18n('fieldlabel.email'),
-									bind:'{trabajo.terceroEmail}',
-									vtype: 'email',
-									width: 		'100%'
-								},
-								{
-									fieldLabel: HreRem.i18n('fieldlabel.telefono1'),
-									bind:'{trabajo.terceroTel1}',
-									vtype: 'telefono',
-									width: 		'100%'
-								},
-								{
-									fieldLabel: HreRem.i18n('fieldlabel.telefono2'),
-									bind:'{trabajo.terceroTel2}',
-									vtype: 'telefono',
-									width: 		'100%'
-								},
-								{ 
-				                	xtype: 'textareafieldbase',
-				                	width: 		'90%',
-				                	height: 160,
-				                	fieldLabel: HreRem.i18n('fieldlabel.direccion'),
-				                	bind:		'{trabajo.terceroDireccion}'
-		                		}						
-						]
-		           }
-        ];  
+		           		}
+        ];
+
     	me.callParent();
-    	var cartera= me.lookupController().getViewModel().get('trabajo').get('codCartera');
-    	var fechatope = me.lookupController().getViewModel().get('trabajo').get('fechaTope');
-    	if(fechatope !== null){
-    		me.down("[reference=checkFechaTope]").setValue(true);
-    	}else {
-    		me.down("[reference=checkFechaTope]").setValue(false);
-    	}    	
+    	
     },
 
     funcionRecargar: function() {
     	var me = this; 
 		me.recargar = false;
-    },
-
-    getErrorsExtendedFormBase: function() {
-    	var me = this,
-    	checkFechaConcreta= me.down("[reference=checkFechaConcreta]"),
-    	checkFechaTope = me.down("[reference=checkFechaTope]"),
-    	checkFechaContinuado = me.down("[reference=checkFechaContinuado]");
-
-    	if((checkFechaConcreta.checked && checkFechaTope.checked) ||
-    	(checkFechaConcreta.checked && checkFechaContinuado.checked) ||
-    	(checkFechaTope.checked && checkFechaContinuado.checked) ){
-    		me.addExternalErrors(HreRem.i18n("error.validacion.marcado.mas.de.una.opcion"));
-    		if(checkFechaConcreta.checked) checkFechaConcreta.markInvalid(HreRem.i18n("error.validacion.marcado.mas.de.una.opcion"));
-    		if(checkFechaTope.checked) checkFechaTope.markInvalid(HreRem.i18n("error.validacion.marcado.mas.de.una.opcion"));
-    		if(checkFechaContinuado.checked) checkFechaContinuado.markInvalid(HreRem.i18n("error.validacion.marcado.mas.de.una.opcion"));
-    	}
+		me.lookupController().cargarTabData(me);
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().load();
+  		});
     }
 });

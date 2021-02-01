@@ -34,6 +34,7 @@ import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
@@ -53,6 +54,8 @@ import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
+import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -72,7 +75,8 @@ import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoUsuarios;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GestionCCPP;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
@@ -85,11 +89,13 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
@@ -129,6 +135,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	protected static final Log logger = LogFactory.getLog(GenericManager.class);
 
+	private static final String MENU_TRABAJOS= "MENU_TRABAJOS";
+	private static final String MENU_ADMINISTRACION = "MENU_ADMINISTRACION";
+	
 	@Autowired
 	private GenericABMDao genericDao;
 
@@ -167,8 +176,15 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 	
+	@Autowired
+	private GastoProveedorApi gastoProveedorApi;
+	
+	@Autowired
+	private GastoLineaDetalleApi gastoLineaDetalleApi;
+
 	@Autowired 
 	private ActivoPropietarioDao activoPropietarioDao;
+
 
 	@Override
 	public String managerName() {
@@ -190,6 +206,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 			List<String> authorities = new ArrayList<String>();
 			List<String> roles = new ArrayList<String>();
+			List<String> groupRoles = new ArrayList<String>();
 
 			/**
 			 * Al lanzar este método en un hilo diferente
@@ -211,6 +228,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 			for(GrupoUsuario usuarioGrupo : gruUsu) {
 				for (Perfil perfil : usuarioGrupo.getGrupo().getPerfiles()) {
+					if ( !groupRoles.contains(perfil.getCodigo())) {
+						groupRoles.add(perfil.getCodigo());
+					}
 					for (Funcion funcion : perfil.getFunciones()) {
 						if(!authorities.contains(funcion.getDescripcion())) {
 							authorities.add(funcion.getDescripcion());
@@ -221,9 +241,10 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 			authData.setUserName(usuario.getApellidoNombre());
 			authData.setAuthorities(authorities);
-
+			
 			authData.setUserId(usuario.getId());
 			authData.setRoles(roles);
+			authData.setGroupRoles(groupRoles);
 			authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(usuario.getId()));
 
 			authData.setEsGestorSustituto(esGestorSustituto(usuario));
@@ -314,7 +335,14 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		Scanner scan = null;
 		Object obj = null;
-
+		Usuario usuarioLogado = adapter.getUsuarioLogado();
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		boolean esUsuCarteraBBVA = false;
+		if(usuarioCartera != null && usuarioCartera.getCartera() != null) {
+			esUsuCarteraBBVA = DDCartera.CODIGO_CARTERA_BBVA.equals(usuarioCartera.getCartera().getCodigo()); 
+		}
+			
 		// Leemos el fichero completo
 		try {
 			scan = new Scanner(menuItemsJsonFile);
@@ -335,13 +363,19 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		for (Object item : menuItems) {
 			String secFunPermToRender = null;
+			String nombreEntidad = null;
 			JSONObject itemObject = JSONObject.fromObject(item);
-
+			
+			if (itemObject.containsKey("text")) {
+				nombreEntidad = itemObject.getString("text");
+			}
 			if (itemObject.containsKey("secFunPermToRender")) {
 				secFunPermToRender = itemObject.getString("secFunPermToRender");
 			}
-
-			if (secFunPermToRender == null || authData.getAuthorities().contains(secFunPermToRender)) {
+						
+			if((secFunPermToRender == null || authData.getAuthorities().contains(secFunPermToRender)) && 
+					((esUsuCarteraBBVA && !MENU_ADMINISTRACION.equalsIgnoreCase(secFunPermToRender) && !MENU_TRABAJOS.equalsIgnoreCase(secFunPermToRender)) ||
+					!esUsuCarteraBBVA)) {
 				DtoMenuItem menuItem = new DtoMenuItem();
 				try {
 					beanUtilNotNull.copyProperties(menuItem, itemObject);
@@ -350,7 +384,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 					logger.error(e.getCause());
 				}
 				menuItemsPerm.add(menuItem);
-			}
+			} 
+				
 		}
 
 		return menuItemsPerm;
@@ -436,11 +471,25 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboSubtipoActivo")
-	public List<DDSubtipoActivo> getComboSubtipoActivo(String codigoTipo) {
-
+	public List<DDSubtipoActivo> getComboSubtipoActivo(String codigoTipo, String idActivo) {
+		Activo act = null;
+		if (idActivo != null) {
+			act = activoApi.get(Long.parseLong(idActivo));
+		}
+		
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.codigo", codigoTipo);
-		return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter);
+		Filter filtroNoEsEnBbva = genericDao.createFilter(FilterType.EQUALS, "enBbva",false);
+		
+		if (act != null && DDCartera.CODIGO_CARTERA_BBVA.equals(act.getCartera().getCodigo())) {
+			return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter);
+		}else {
+			if (act != null) {
+				return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter, filtroNoEsEnBbva);
+			}else {
+				return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter);
+			}		
+		}
 
 	}
 
@@ -726,19 +775,13 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 						}
 					} else if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
 							&& !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())
-							&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())) {
+							&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())
+							&& !DDTipoTrabajo.CODIGO_PRECIOS.equals(tipoTrabajo.getCodigo())) {
 						// El resto de tipos, si no es comercialización o
 						// tasación,
 						// se pueden generar.
 						tiposTrabajoFiltered.add(tipoTrabajo);
 
-					} else if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
-							&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())
-							&& !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())) {
-						// El resto de tipos, si no es comercialización o
-						// tasación,
-						// se pueden generar.
-						tiposTrabajoFiltered.add(tipoTrabajo);
 					}
 				}
 			}
@@ -749,7 +792,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				// comercialización.
 				if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
 						&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())
-						&& !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())) {
+						&& !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())
+						&& !DDTipoTrabajo.CODIGO_PRECIOS.equals(tipoTrabajo.getCodigo())) {
 					// El resto de tipos, si no es comercialización o tasación,
 					// se pueden generar.
 
@@ -1384,10 +1428,10 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	public List<ConfiguracionSubpartidasPresupuestarias> getComboSubpartidaPresupuestaria(Long idGasto) {	
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);		
 		Filter filtroGpv = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
-		GastoInfoContabilidad gic = genericDao.get(GastoInfoContabilidad.class, filtroGpv, filtroBorrado);
+		GastoLineaDetalle gld = genericDao.get(GastoLineaDetalle.class, filtroGpv, filtroBorrado);
 		
-		Filter filtroCuentaContable = genericDao.createFilter(FilterType.EQUALS, "cuentaContable", gic.getCuentaContable());
-		return (!Checks.esNulo(gic) && !Checks.esNulo(gic.getCuentaContable())) ? genericDao.getList(ConfiguracionSubpartidasPresupuestarias.class, filtroCuentaContable, filtroBorrado) : null; 
+		Filter filtroCuentaContable = genericDao.createFilter(FilterType.EQUALS, "cuentaContable", gld.getCccBase());
+		return (!Checks.esNulo(gld) && !Checks.esNulo(gld.getCccBase())) ? genericDao.getList(ConfiguracionSubpartidasPresupuestarias.class, filtroCuentaContable, filtroBorrado) : null; 
 
 	}
 
@@ -1397,6 +1441,44 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "id", idSubpartida);
 		ConfiguracionSubpartidasPresupuestarias cps = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, filtroId);
 		return (cps != null) ? cps.getPartidaPresupuestaria() : null;
+	}
+
+	
+	@Override
+	public List<DDEntidadGasto> getComboTipoElementoGasto(Long idGasto, Long idLinea) {
+		GastoProveedor gasto = gastoProveedorApi.findOne(idGasto);
+		GastoLineaDetalle linea = gastoLineaDetalleApi.getLineaDetalleByIdLinea(idLinea);
+		List<DDEntidadGasto> entidades = genericDao.getList(DDEntidadGasto.class);
+		DDEntidadGasto sinActivos = genericDao.get(DDEntidadGasto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEntidadGasto.CODIGO_SIN_ACTIVOS));
+		if(!linea.getGastoLineaEntidadList().isEmpty() || (gasto.getPropietario() != null &&  gasto.getPropietario().getCartera() != null &&
+			(DDCartera.CODIGO_CARTERA_SAREB.equals(gasto.getPropietario().getCartera().getCodigo())
+			|| DDCartera.CODIGO_CARTERA_GIANTS.equals(gasto.getPropietario().getCartera().getCodigo())
+			|| DDCartera.CODIGO_CARTERA_TANGO.equals(gasto.getPropietario().getCartera().getCodigo()))
+		)) {
+			if(entidades.contains(sinActivos)) {
+				entidades.remove(sinActivos);
+			}
+		}
+		return entidades;
+	}
+	
+	@Override
+	public List<ActivoProveedorReducido> getComboActivoProveedorSuministro() {
+		List<ActivoProveedorReducido> listaActivoProveedor = new ArrayList<ActivoProveedorReducido>();
+		
+		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_SUMINISTRO);
+		Filter filtroEstado = genericDao.createFilter(FilterType.EQUALS, "estadoProveedor.codigo", DDEstadoProveedor.ESTADO_BIGENTE);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		List<ActivoProveedor> listProveedorSuministroVigente = genericDao.getList(ActivoProveedor.class, filtroSubtipo, filtroEstado, filtroBorrado);
+		
+		for (ActivoProveedor psv : listProveedorSuministroVigente) {
+			ActivoProveedorReducido p = new ActivoProveedorReducido();
+			p.setId(psv.getId());
+			p.setNombre(psv.getNombre());
+			listaActivoProveedor.add(p);
+		}
+		return listaActivoProveedor;
+
 	}
 
 	@Override
@@ -1434,13 +1516,13 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			} else if(idRecovery!=null && DDTipoAlta.CODIGO_AUT.equals(tipo.getCodigo())){	
 					listaTiposFiltered.add(tipo);
 			}
-								
-			
 		}
 
 		return listaTiposFiltered;
 	}
 
+
+	@Override
 	public List<DtoPropietario> getcomboSociedadAnteriorBBVA() {
 	
 		List<ActivoPropietario> listaDD= activoPropietarioDao.getPropietarioIdDescripcionCodigo();
@@ -1456,22 +1538,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		return listaDto;
 	}
 
-	public List<ActivoProveedorReducido> getComboActivoProveedorSuministro() {
-		List<ActivoProveedorReducido> listaActivoProveedor = new ArrayList<ActivoProveedorReducido>();
-		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_SUMINISTRO);
-		Filter filtroEstado = genericDao.createFilter(FilterType.EQUALS, "estadoProveedor.codigo", DDEstadoProveedor.ESTADO_BIGENTE);
-		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		List<ActivoProveedor> listProveedorSuministroVigente = genericDao.getList(ActivoProveedor.class, filtroSubtipo, filtroEstado, filtroBorrado);
-		
-		for (ActivoProveedor psv : listProveedorSuministroVigente) {
-			ActivoProveedorReducido p = new ActivoProveedorReducido();
-			p.setId(psv.getId());
-			p.setNombre(psv.getNombre());
-			listaActivoProveedor.add(p);
-		}
-		return listaActivoProveedor;
-
-	}
 
 	@Override
 	public List<DDEstadoAdmision> getComboEstadoAdmisionFiltrado(Set<String> tipoEstadoAdmisionCodigo) {		

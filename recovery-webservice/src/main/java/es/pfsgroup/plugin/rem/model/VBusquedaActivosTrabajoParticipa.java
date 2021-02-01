@@ -78,6 +78,17 @@ public class VBusquedaActivosTrabajoParticipa implements Serializable {
 	@Column(name = "SALDO_DISPONIBLE")
 	private String saldoDisponible;
 	
+	@Column(name="ULTIMO_TRABAJO")
+	private String ultimoTrabajo;
+	
+	@Column(name="FECHA")
+	private String fecha;
+	
+	
+	public void setFecha(String fecha) {
+		this.fecha = fecha;
+	}
+
 	public String getIdVista() {
 		return idVista;
 	}
@@ -237,5 +248,17 @@ public class VBusquedaActivosTrabajoParticipa implements Serializable {
 
 	public void setSaldoDisponible(String saldoDisponible) {
 		this.saldoDisponible = saldoDisponible;
+	}
+	
+	public String getUltimoTrabajo() {
+		return ultimoTrabajo;
+	}
+
+	public void setUltimoTrabajo(String ultimoTrabajo) {
+		this.ultimoTrabajo = ultimoTrabajo;
+	}
+
+	public String getFecha() {
+		return fecha;
 	}
 }

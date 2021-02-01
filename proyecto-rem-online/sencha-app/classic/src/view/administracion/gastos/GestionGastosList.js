@@ -51,11 +51,6 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	    	                    	 dataIndex: 'tipoDescripcion'
 	    	                     },
 	    	                     {
-	    	                    	 text: HreRem.i18n('header.subtipo.gasto'),
-	    	                    	 flex: 1,
-	    	                    	 dataIndex: 'subtipoDescripcion'
-	    	                     },
-	    	                     {
 	    	                    	 text: HreRem.i18n('header.concepto.gasto'),
 	    	                    	 flex: 1,
 	    	                    	 dataIndex: 'concepto',

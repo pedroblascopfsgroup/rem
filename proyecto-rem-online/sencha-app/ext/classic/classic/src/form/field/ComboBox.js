@@ -2184,7 +2184,7 @@ Ext.define('Ext.form.field.ComboBox', {
     
     /**
      * @private
-     * Si el booleano filtradoEspecial es True, se ejecutará este método que configura y añade el filtrado sin tener en cuenta las mayúsculas ni tildes.
+     * Si el booleano filtradoEspecial es True, se ejecutarï¿½ este mï¿½todo que configura y aï¿½ade el filtrado sin tener en cuenta las mayï¿½sculas ni tildes.
      */
     anyadirFiltradoEspecial: function(){
     	var me = this;
@@ -2203,9 +2203,11 @@ Ext.define('Ext.form.field.ComboBox', {
 										    property: me.displayField,
 										    value: me.getRawValue(),
 										    filterFn: function (candidate) {
-										    	var cleanCandidate = candidate.data[this.config.property].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-									            var cleanValue = this.config.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-										        return cleanCandidate.indexOf(cleanValue) !== -1;													        
+										    	if(candidate.data[this.config.property]){
+										    		var cleanCandidate = candidate.data[this.config.property].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+										    		var cleanValue = this.config.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+										    		return cleanCandidate.indexOf(cleanValue) !== -1;
+										    	}
 									   		}
 										};
 										

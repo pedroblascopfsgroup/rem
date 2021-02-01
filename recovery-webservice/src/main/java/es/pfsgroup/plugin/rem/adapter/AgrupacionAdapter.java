@@ -22,7 +22,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -52,7 +51,6 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
-import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
@@ -68,10 +66,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
-import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
-import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -2440,6 +2435,13 @@ public class AgrupacionAdapter {
 			
 			if(!Checks.esNulo(dto.getClaseOferta())) {
 				oferta.setClaseOferta(genericDao.get(DDClaseOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOferta())));
+			} else if (DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta.getCodigo()) && activo != null && activo.getCartera() != null 
+					&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
+				DDClaseOferta clase = null;
+				clase = genericDao.get(DDClaseOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL) );
+				if(clase != null) {
+					oferta.setClaseOferta(clase);
+				}
 			}
 			
 
@@ -4212,5 +4214,9 @@ public class AgrupacionAdapter {
 	@Transactional(readOnly = false)
 	public Oferta clonateOfertaAgrupacion(String idOferta) {
 		return genericAdapter.clonateOferta(idOferta, true);
+	}
+	
+	public ActivoAgrupacion getAgrupacionObjectById(Long id) {
+		return genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
 	}
 }

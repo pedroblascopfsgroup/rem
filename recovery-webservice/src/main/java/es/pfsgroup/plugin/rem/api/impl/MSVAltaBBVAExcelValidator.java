@@ -369,16 +369,16 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 				}
 			}
 			if(colEmpresa!=null && !colEmpresa.isEmpty()) {
-				activoBBVA.setEmpresa(Long.parseLong(colEmpresa));
+				activoBBVA.setEmpresa(colEmpresa);
 			}
 			if(colOficina!=null && !colOficina.isEmpty() ) {
-				activoBBVA.setOficina(Long.parseLong(colOficina));
+				activoBBVA.setOficina(colOficina);
 			}
 			if(colContrapartida!=null && !colContrapartida.isEmpty()) {
-				activoBBVA.setContrapartida(Long.parseLong(colContrapartida));
+				activoBBVA.setContrapartida(colContrapartida);
 			}
 			if(colFolio!=null && !colFolio.isEmpty()) {
-				activoBBVA.setFolio(Long.parseLong(colFolio));
+				activoBBVA.setFolio(colFolio);
 			}
 			if(colCDPEN!=null && !colCDPEN.isEmpty()) {
 				activoBBVA.setCdpen(colCDPEN);

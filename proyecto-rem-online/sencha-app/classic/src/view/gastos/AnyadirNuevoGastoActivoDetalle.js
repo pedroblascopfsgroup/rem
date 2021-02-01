@@ -40,16 +40,52 @@ Ext.define('HreRem.view.gastos.AnyadirNuevoGastoActivoDetalle', {
 										bind:		'{gastoActivo.id}',
 										hidden:		true
 				            	    },
-									
-									{
-										fieldLabel: HreRem.i18n('fieldlabel.nuevo.activo.gasto'),
-				            	    	name:		'numActivo',
-										bind:		'{gastoActivo.numActivo}'
-				            	    },
 				            	    {
-				            	    	fieldLabel: HreRem.i18n('fieldlabel.nuevo.agrupacion.gasto'),
-				            	    	name:		'numAgrupacion',
-										bind:		'{gastoActivo.numAgrupacion}'
+										xtype: "combobox",
+					    				fieldLabel: HreRem.i18n('title.gasto.detalle.economico.lineas.detalle'),
+					    				reference: 'comboLineasDetalleReferenceAnyadir',
+					    				name: 'comboLineaDetalleName',
+					    				chainedStore: 'storeTipoElemento',
+										chainedReference: 'comboElementoAAnyadir',
+					    				flex: 3,
+					    				width:'80%',
+					    				margin: '10 0 10 0',
+					    				displayField: 'descripcion',
+										valueField: 'codigo',
+					    				bind: {
+					    					store: '{comboLineasDetallePorGasto}'
+					    				},
+					    				listeners:{
+					    					select:'onChangeChainedSeleccionarLineaDetalle'
+					    				}
+									},
+									{
+										xtype: "combobox",
+					    				fieldLabel: HreRem.i18n('title.gasto.detalle.economico.elementos.lineas.detalle'),
+					    				reference: 'comboElementoAAnyadir',
+					    				name: 'comboElementoAAnyadir',
+					    				flex: 3,
+					    				width:'80%',
+					    				margin: '10 0 10 0',
+					    				displayField: 'descripcion',
+										valueField: 'codigo',
+										disabled: true,
+					    				bind: {
+					    					store: '{storeTipoElemento}'
+					    				},
+					    				listeners:{
+					    					change:'onChangeSeleccionarLineaDetalle'
+					    				}
+									},
+				            	    {
+										xtype: "textfield",
+				            	    	fieldLabel: HreRem.i18n('title.gasto.detalle.economico.id.elemento.linea.detalle'),
+				            	    	name:		'numElemento',
+				            	    	reference:	'elementoAnyadir',
+				            	    	disabled: true,
+				            	    	listeners:{
+				            	    		change: 'onChangeSeleccionarLineaDetalle'
+					    				}
 				            	    }
 
 				            	]
@@ -59,7 +95,6 @@ Ext.define('HreRem.view.gastos.AnyadirNuevoGastoActivoDetalle', {
     	];
     	
     	me.callParent();
-    	//me.setTitle(HreRem.i18n('title.nueva.oferta'));
     }
     
 });

@@ -1124,7 +1124,12 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		listaFilas.add(0);
 		e.printStackTrace();
 	}
-	
 	return listaFilas;
-}
+	
+	}
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}		
 }

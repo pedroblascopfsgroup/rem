@@ -281,5 +281,9 @@ public class MSVValidatorTarifasPresupuestos extends MSVExcelValidatorAbstract {
 			mapaErrores.put(key, new ArrayList<Integer>(Arrays.asList(fila)));
 		}
 	}
-
+	
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
 }

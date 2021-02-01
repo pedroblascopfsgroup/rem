@@ -8,7 +8,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
     bind			: {
         store: '{configuracionproveedores}'
     },
-
+	loadAfterBind: false,
     initComponent: function () {
      	var me = this;
      	me.listeners = {

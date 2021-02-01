@@ -148,12 +148,12 @@ public abstract class GridObservaciones extends GridObservacionesConstants {
 					StringBuilder nombreCompleto = new StringBuilder();
 					nombreCompleto.append(observacion.getUsuario().getNombre());
 					Long idUsuario = observacion.getUsuario().getId();
-					if (observacion.getUsuario().getApellido1() != null) {
-						nombreCompleto.append(observacion.getUsuario().getApellido1());
-
-						if (observacion.getUsuario().getApellido2() != null) {
-							nombreCompleto.append(observacion.getUsuario().getApellido2());
-						}
+					if (observacion.getUsuario().getApellido1() != null 
+							&& observacion.getUsuario().getApellido2() != null) {
+						nombreCompleto.insert(0, observacion.getUsuario().getApellido1() + " " 
+							+ observacion.getUsuario().getApellido2() + ", ");
+					}else if(observacion.getUsuario().getApellido1() != null){
+						nombreCompleto.append(" " + observacion.getUsuario().getApellido1());
 					}
 					if (observacion.getTipoObservacion() != null) {
 						BeanUtils.copyProperty(observacionDto, "tipoObservacionCodigo",

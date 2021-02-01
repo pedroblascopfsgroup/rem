@@ -11,11 +11,14 @@ Ext.define('HreRem.model.ActivoIntegrado', {
 	    	name: 'idActivo',
 	    	critical: true
 	    },
+		{
+	    	name: 'idProveedor'
+	    },
     	{	
     		name: 'codigoProveedorRem'
     	},
     	{
-    		name: 'subtipoProveedor'
+    		name: 'subtipoProveedorDescripcion'
    	 	},
    	 	{
    	 		name: 'nombreProveedor'
@@ -31,47 +34,37 @@ Ext.define('HreRem.model.ActivoIntegrado', {
    		},
    		{
    			name: 'fechaInclusion',
-			convert: function(value) {
-    				if (!Ext.isEmpty(value)) {
-						if  ((typeof value) == 'string') {
-	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-	    				} else {
-	    					return value;
-	    				}
-    				}
-    			}
+			type: 'date',
+			dateFormat: 'c'
    		},
    		{
    			name: 'fechaExclusion',
-			convert: function(value) {
-    				if (!Ext.isEmpty(value)) {
-						if  ((typeof value) == 'string') {
-	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-	    				} else {
-	    					return value;
-	    				}
-    				}
-    			}
+			type: 'date',
+			dateFormat: 'c'
    		},
+		{
+			name: 'pagosRetenidos'
+		},
    		{
    			name: 'retenerPagos',
-   			type: 'boolean'
+			critical: true,
+			type: 'boolean',
+			calculate: function(data){
+				return data.pagosRetenidos == 1;
+			},
+			depends: 'pagosRetenidos'
    		},
     	{
     		name: 'motivoRetencionPago'
     	},
     	{
     		name: 'fechaRetencionPago',
-			convert: function(value) {
-    				if (!Ext.isEmpty(value)) {
-						if  ((typeof value) == 'string') {
-	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-	    				} else {
-	    					return value;
-	    				}
-    				}
-    			}
-    	}
+			type: 'date',
+			dateFormat: 'c'
+    	},
+		{  
+	    	name:'estadoProveedorDescripcion'
+        }
 
     		
     ],

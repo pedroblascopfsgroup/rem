@@ -465,6 +465,11 @@ public class MSVSituacionPlusvaliaExcelValidator extends MSVExcelValidatorAbstra
 	}
 
 
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 
 
 	

@@ -1216,7 +1216,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		if (!Checks.esNulo(mensaje)) {
-			mensaje = messageServices.getMessage("tramite.admision.CheckingInformacion.validacionPre.debeInformar")
+			mensaje = messageServices.getMessage("tramite.CheckingInformacion.validacionPre.debeInformar")
 					.concat(mensaje);
 		}
 
@@ -3453,8 +3453,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(activoIntegrado.getRetenerPago())) {
 				if (activoIntegrado.getRetenerPago() == 1) {
 					dto.setRetenerPagos(true);
+					dto.setPagosRetenidos(1);
 				} else {
 					dto.setRetenerPagos(false);
+					dto.setPagosRetenidos(0);
 				}
 			}
 
@@ -5560,9 +5562,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							&& (!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
 									|| !Checks.esNulo(posesoria.getFechaTomaPosesion()))))) {
 				if (!Checks.esNulo(ocupado) && (1 == ocupado && DDTipoTituloActivoTPA.tipoTituloNo.equals(conTitulo))) {
-					boolean val = compruebaSiExisteActivoBienPorMatricula(id,
-							DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION);
-					if (val) {
+					if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 
 						List<DtoAdjunto> listAdjuntos;
 						DtoAdjunto adjuntoAux = null;

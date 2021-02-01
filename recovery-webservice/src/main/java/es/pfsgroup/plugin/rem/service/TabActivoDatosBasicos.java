@@ -742,7 +742,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		List<VAdmisionDocumentos> admisionDocumentos = adapter.getListAdmisionCheckDocumentos(activo.getId());
 		
 		for (VAdmisionDocumentos doc : admisionDocumentos) {
-			if ("CEE (Certificado de eficiencia energética)".equals(doc.getDescripcionTipoDoc()) && doc.getAplica().equals("1")) {
+			if ("CEE (Certificado de eficiencia energética)".equals(doc.getDescripcionTipoDoc()) 
+					&& doc.getAplica() != null && doc.getAplica().equals("1")) {
 				BeanUtils.copyProperty(activoDto, "tieneCEE", true);
 				break;
 			}

@@ -6,18 +6,24 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 	listeners: { 	
     	boxready: function (tabPanel) { 
     		tabPanel.evaluarEdicion();
-    	},
-    	show: function(tab){
-    		tab.doLoad(tab);
     	}
     },
 
     initComponent: function () {
     	
-    	//Configuración de la pestaña
+    	//Configuraciï¿½n de la pestaï¿½a
         var me = this;
         me.reference = "observacionesactivoref_"+me.launch;
-        me.store = me.lookupController().getViewModel().getStore("storeObservaciones_"+me.launch)
+
+		me.store = Ext.create('Ext.data.Store', {
+		 pageSize: $AC.getDefaultPageSize(),
+		 model: 'HreRem.model.Observaciones',
+	     proxy: {
+	        type: 'uxproxy',
+	        remoteUrl: 'activo/getListObservaciones',
+	        extraParams: {} // Dynamic.
+    	 }});
+
         me.setTitle(HreRem.i18n('title.observaciones'));
         var items = [
 			{
@@ -27,9 +33,8 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 			    disabledDeleteBtn: true,
 			    reference: 'listadoObservaciones_'+me.launch,
 				cls	: 'panel-base shadow-panel',
-				bind: {
-					store: '{storeObservaciones_'+me.launch+'}'
-				},
+				store: me.store,
+
 				secButtons: {
 					secFunPermToEnable : 'ACTIVO_OBSERVACIONES_ADD'
 				},
@@ -153,9 +158,7 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 			            xtype: 'pagingtoolbar',
 			            dock: 'bottom',
 			            displayInfo: true,
-			            bind: {
-			                store: '{storeObservaciones_'+me.launch+'}'
-			            }
+						store: me.store
 			        }
 			    ]
 			}
@@ -176,7 +179,6 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
     doLoad: function( panel ) {
     	var storeObservaciones = panel.buildStoreWithProxy(panel);
 		// Extraparams en el store para hacer una carga dinamica dependiendo del tab. Utiliza el model Observaciones.
-    	
     	if (!storeObservaciones.isLoading()){
 			storeObservaciones.load({
 				callback: function (records, operation, success) {
@@ -200,7 +202,7 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
         	id: viewModel.get("activo.id"),
         	tab: panel.launch
         };
-		var storeObservaciones = viewModel.getStore("storeObservaciones_"+panel.launch);
+		var storeObservaciones = panel.store;
 		panel.setExtraParamsToTarget(storeObservaciones, extraParams);
 		
     	return storeObservaciones;

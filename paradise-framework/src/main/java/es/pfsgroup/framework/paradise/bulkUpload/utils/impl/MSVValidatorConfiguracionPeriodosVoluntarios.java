@@ -308,6 +308,11 @@ public class MSVValidatorConfiguracionPeriodosVoluntarios extends MSVExcelValida
 	}
 	
 
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 	
 	
 }

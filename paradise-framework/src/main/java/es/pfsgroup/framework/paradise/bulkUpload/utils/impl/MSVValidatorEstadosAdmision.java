@@ -243,5 +243,11 @@ public class MSVValidatorEstadosAdmision extends MSVExcelValidatorAbstract {
 		
 		return listaActivos;
 	}
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 	
 }

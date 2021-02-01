@@ -276,4 +276,10 @@ public class MSVActualizacionPerimetroAppleExcelValidator extends MSVExcelValida
 		return listaFilas;
 	}
 
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
+
 }

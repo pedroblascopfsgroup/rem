@@ -271,4 +271,9 @@ public class MSVGestionPeticionesDePreciosExcelValidator extends MSVExcelValidat
 		return listaFilas;
 	}
 
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }

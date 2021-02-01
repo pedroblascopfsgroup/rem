@@ -449,4 +449,9 @@ private List<Integer> motivoExentoObligatorio(MSVHojaExcel exc) {
 		return listaFilas;
 	}	
 
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }

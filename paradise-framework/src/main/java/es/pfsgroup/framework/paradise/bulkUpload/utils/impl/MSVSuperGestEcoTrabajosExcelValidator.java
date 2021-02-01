@@ -548,5 +548,11 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 		return (Integer) null;	
 		
 	}	
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }
 

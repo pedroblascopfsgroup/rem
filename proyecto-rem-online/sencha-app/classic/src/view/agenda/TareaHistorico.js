@@ -120,6 +120,7 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 								combo.name = me.campos[i].name;
 								combo.diccionario = me.campos[i].store;
 								combo.fieldLabel = me.campos[i].fieldLabel;
+								combo.readOnly = true;
 								combo.value = me.campos[i].value;
 								camposFiltrados.push(combo);
 								break;

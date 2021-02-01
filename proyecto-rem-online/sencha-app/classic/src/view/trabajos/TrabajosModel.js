@@ -14,10 +14,11 @@ Ext.define('HreRem.view.trabajos.TrabajosModel', {
 		        localUrl: '/trabajos.json',
 				remoteUrl: 'trabajo/findAll',
 				actionMethods: {read: 'POST'} // Necesario para que el filtro no se mande en la URL lo que provoca un problema de encoding
-	    	},	    		
+	    	},
+			session: true,
 	    	remoteSort: true,
 	    	remoteFilter: true,	    	
-	    	autoLoad: true,
+	    	autoLoad: false,
 	        listeners : {
 	            beforeload : 'paramLoading'	        
 	        }

@@ -184,7 +184,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										store: '{comboTipoActivoOE}',
 										value: '{activo.tipoActivoCodigoOE}',
 										hidden: '{!activo.isCarteraSareb}', 
-										readOnly:'{!esSuperUsuarioAndNoUA}'
+										readOnly:'{!esSuperUsuarioCalidadDatoAndNoUA}'
 									},
 									listeners: {
 										select: 'onChangeChainedCombo'

@@ -1,30 +1,39 @@
-Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDcomento1', {	
-    extend		: 'HreRem.view.common.FormBase',
+Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formularioTipoDocumento1', {	
+    extend		: 'Ext.form.Panel',
     xtype		: 'xtypeFormularioTipoDocumento1',
-    cls	: 'panel-base shadow-panel',
     collapsed: false,
     reference: 'xtypeFormularioTipoDocumento1',
-    layout: 'form',
+    layout: 'fit',
     isEditForm: true,
-    autoScroll: true,
-    
-    defaults: {
-        layout: 'form',
-        xtype: 'container',
-        defaultType: 'displayfield'
-    },
-
-
+    autoScroll: false,
     items: [
-	          
-            {
-		    	xtype: 'combosino',
-		    	title: 'Aplica'
-            },
-            {
-		    	xtype: 'Datefield',
-		    	title: 'Fecha emisión',
-		    	name: 'fechaEmision'
-            }
-    ]
+    		{
+			xtype: 'fieldsettable',
+			layout: {
+				type: 'vbox',
+				align:'center'
+			},
+			reference: 'fieldsetDocumentoIdentidad',
+			collapsible: false,
+			collapsed: false,
+			border: false,
+			cls:'formbase_no_shadow',
+			padding: '60px 0 0 0',
+			defaults: {
+				addUxReadOnlyEditFieldPlugin: false
+			},
+			items: [  
+	            {
+			    	xtype: 'combosino',
+			    	fieldLabel: 'Aplica',
+			    	reference : 'aplica'
+	            },
+	            {
+			    	xtype: 'datefield',
+			    	fieldLabel: 'Fecha emisión',
+			    	reference: 'fechaEmision'
+	            }
+    	   ]
+    	}
+    	]
 	});

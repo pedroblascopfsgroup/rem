@@ -1,58 +1,69 @@
-Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDcomento3', {	
-    extend		: 'HreRem.view.common.FormBase',
+Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formularioTipoDocumento3', {	
+	 extend		: 'Ext.form.Panel',
     xtype		: 'xtypeFormularioTipoDocumento3',
-    cls	: 'panel-base shadow-panel',
     collapsed: false,
     reference: 'xtypeFormularioTipoDocumento3',
-    layout: 'form',
+    layout: 'fit',
     isEditForm: true,
-    autoScroll: true,
-    
-    defaults: {
-        layout: 'form',
-        xtype: 'container',
-        defaultType: 'displayfield'
-    },
+    autoScroll: false,
     
     items: [
+    		{
+			xtype: 'fieldsettable',
+			layout: {
+				type: 'vbox',
+				align:'center'
+			},
+			reference: 'fieldsetDocumentoIdentidad',
+			collapsible: false,
+			collapsed: false,
+			border: false,
+			cls:'formbase_no_shadow',
+			padding: '60px 0 0 0',
+			defaults: {
+				addUxReadOnlyEditFieldPlugin: false
+			},
+			items: [
     	
-            {
-		    	xtype: 'Datefield',
-		    	title: 'Fecha Obtención',
-		    	name: 'fechaObtencion'
-		    		
-            },
-            {
-		    	xtype: 'Datefield',
-		    	title: 'Fecha Caducidad',
-		    	name: 'fechaCaducidad'
-            },
-            {
-		    	xtype: 'Datefield',
-		    	title: 'Fecha Etiqueta',
-		    	name: 'fechaEtiqueta'
-
-            },
-            {
-		    	xtype: 'combobox',
-		    	title: 'Fecha Etiqueta',
-		    	name: 'fechaEtiqueta',
-		    		store: Ext.create('Ext.data.Store',{								        		
-		    			model: 'HreRem.model.ComboBase',
-						proxy: {
-							type: 'uxproxy',
-							remoteUrl: 'generic/getDiccionario',
-							extraParams: {diccionario: 'calificacionEnergetica'}
-						},
-						autoLoad: true
-					})	
-
-            },
-            {
-		    	xtype: 'textfieldbase',
-		    	title: 'Registro',
-		    	name: 'registro'
-
-            }
+	            {
+			    	xtype: 'datefield',
+			    	fieldLabel: 'Fecha Obtención',
+			    	reference: 'fechaObtencion'
+			    		
+	            },
+	            {
+			    	xtype: 'datefield',
+			    	fieldLabel: 'Fecha Caducidad',
+			    	reference: 'fechaCaducidad'
+	            },
+	            {
+			    	xtype: 'datefield',
+			    	fieldLabel: 'Fecha Etiqueta',
+			    	reference: 'fechaEtiqueta'
+	
+	            },
+	            {
+			    	xtype: 'combobox',
+			    	fieldLabel: 'Fecha Etiqueta',
+			    	name: 'fechaEtiquetaCombo',
+			    		store: Ext.create('Ext.data.Store',{								        		
+			    			model: 'HreRem.model.ComboBase',
+							proxy: {
+								type: 'uxproxy',
+								remoteUrl: 'generic/getDiccionario',
+								extraParams: {diccionario: 'calificacionEnergetica'}
+							},
+							autoLoad: true
+						})	
+	
+	            },
+	            {
+			    	xtype: 'textfieldbase',
+			    	fieldLabel: 'Registro',
+			    	reference: 'registro'
+	
+	            }
+           ]
+    	}
     ]
 	});

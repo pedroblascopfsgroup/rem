@@ -246,7 +246,7 @@ BEGIN
                     then ''Alquilado Contratado''    
                  when
                         SCM.DD_SCM_CODIGO = ''12'' --	Disponible para venta y alquiler con oferta
-                    then ''
+                    then ''''
                 when
                         SCM.DD_SCM_CODIGO = ''10'' --	Alquilado
                     then ''Alquilado''

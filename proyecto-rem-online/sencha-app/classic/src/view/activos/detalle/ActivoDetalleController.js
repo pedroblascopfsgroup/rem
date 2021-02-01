@@ -1435,7 +1435,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	abrirFormularioAdjuntarDocumentos : function(grid,record) {
 
 		var me = this;
-		debugger;
 		var idActivo = me.getViewModel().get("activo.id");
 		var viewPortWidth = Ext.Element.getViewportWidth();
 	    var viewPortHeight = Ext.Element.getViewportHeight();

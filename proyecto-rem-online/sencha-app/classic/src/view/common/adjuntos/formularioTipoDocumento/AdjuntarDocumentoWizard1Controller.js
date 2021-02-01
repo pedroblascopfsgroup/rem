@@ -64,7 +64,6 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 		var me = this,
 		form = me.getView(),
 		wizard = form.up('wizardBase');
-		debugger;
 		var fileupload = form.down('[reference = fileUpload]').value;
 		var comboTipoDocumento = me.lookupReference('tipoDocumentoNuevoComprador').value;
 		var descripcion = me.lookupReference('descripcion').value;
@@ -79,7 +78,6 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 					me.fireEvent("errorToast", o.result.errores);
 
 				} else {
-					debugger;
 					var padre = form.up('wizardBase').padre;
 					me.getView().unmask();
 					form.up('wizardBase').close();

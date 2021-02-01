@@ -229,5 +229,11 @@ public class MSVCambioApiValidator extends MSVExcelValidatorAbstract{
 				e.printStackTrace();
 			}
 		return listaFilas;
-	}	
+	}
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }

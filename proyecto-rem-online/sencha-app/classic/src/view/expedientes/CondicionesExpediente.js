@@ -3,7 +3,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 	xtype : 'condicionesexpediente',
 	cls : 'panel-base shadow-panel',
 	collapsed : false,
-	disableValidation : true,
+	disableValidation : false,
 	reference : 'condicionesExpediente',
 	scrollable : 'y',
 	recordName : "condiciones",

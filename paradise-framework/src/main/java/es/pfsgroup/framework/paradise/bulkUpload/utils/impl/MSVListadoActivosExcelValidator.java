@@ -218,4 +218,10 @@ public class MSVListadoActivosExcelValidator extends MSVExcelValidatorAbstract {
 		return true;
 	}
 
+	@Override
+	public Integer getNumFilasHoja() {
+		return numFilasHoja;
+	}
+
+
 }

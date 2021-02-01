@@ -69,7 +69,14 @@ Ext.define('HreRem.model.FichaProveedorModel', {
 		    	name: 'territorialCodigo'
 		    },
 		    {
-		    	name: 'carteraCodigo'
+		    	name: 'carteraCodigo',
+		    	convert: function(value) {
+		    		if(Ext.isEmpty(value)){
+		    			return 'VALOR_POR_DEFECTO';
+		    		} else {
+		    			return value;
+		    		}
+		    	}
 		    },
 		    {
 		    	name: 'subcarteraCodigo'

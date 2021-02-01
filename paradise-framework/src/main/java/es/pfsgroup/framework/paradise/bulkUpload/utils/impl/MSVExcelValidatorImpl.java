@@ -45,4 +45,10 @@ public class MSVExcelValidatorImpl extends MSVExcelValidatorAbstract{
 		return null;
 	}
 
+	@Override
+	public Integer getNumFilasHoja() {
+		return null;
+	}
+	
+
 }

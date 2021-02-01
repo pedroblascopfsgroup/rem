@@ -1,12 +1,11 @@
 Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formularioTipoDocumento1', {	
     extend		: 'Ext.form.Panel',
     xtype		: 'xtypeFormularioTipoDocumento1',
-    cls	: 'panel-base shadow-panel',
     collapsed: false,
     reference: 'xtypeFormularioTipoDocumento1',
     layout: 'fit',
     isEditForm: true,
-    autoScroll: true,
+    autoScroll: false,
     items: [
     		{
 			xtype: 'fieldsettable',
@@ -14,9 +13,12 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
 				type: 'vbox',
 				align:'center'
 			},
-			margin: '20',
 			reference: 'fieldsetDocumentoIdentidad',
 			collapsible: false,
+			collapsed: false,
+			border: false,
+			cls:'formbase_no_shadow',
+			padding: '60px 0 0 0',
 			defaults: {
 				addUxReadOnlyEditFieldPlugin: false
 			},

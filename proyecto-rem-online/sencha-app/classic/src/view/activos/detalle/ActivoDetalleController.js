@@ -1449,8 +1449,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					padre : me,
 					activo: idActivo,
 					modoEdicion: true,
-					width: viewPortWidth > 1370 ? viewPortWidth / 2 : viewPortWidth / 1.5,
-					height: viewPortHeight > 500 ? 500 : viewPortHeight - 100,
+					width: viewPortWidth > 1370 ? viewPortWidth / 2.5 : viewPortWidth / 3.5,
+					height: viewPortHeight > 500 ? 350 : viewPortHeight - 100,
 					x: viewPortWidth / 2 - ((viewPortWidth > 1370 ? viewPortWidth / 2 : viewPortWidth /1.5) / 2),
 	    			y: viewPortHeight / 2 - ((viewPortHeight > 500 ? 500 : viewPortHeight - 100) / 2)
 				}

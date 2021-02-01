@@ -29,7 +29,7 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 initComponent: function() {
     	
     	var me = this;
-    	me.buttonAlign = 'left';
+
     	me.buttons = [
     		
 			{
@@ -43,30 +43,31 @@ initComponent: function() {
 		];
     	me.items = [
     		{
-    			xtype: 'formBase',
-    			reference: 'adjuntarDocumentoFormRef2',
-    			collapsed: false,
-    		 		scrollable	: 'y',
-    		 		layout: {
-    					type: 'fit',
-    					align:'center'
-    				},
-    			cls:'formbase_no_shadow',
-    			items: [
-    		{
-    		xtype : 'xtypeFormularioTipoDocumento1',
-    		refence : 'xtypeFormularioTipoDocumento1'
-    	},
-    	{
-    		xtype : 'xtypeFormularioTipoDocumento2',
-    		refence : 'xtypeFormularioTipoDocumento2'
-    	},
-    	{
-    		xtype : 'xtypeFormularioTipoDocumento3',
-    		refence : 'xtypeFormularioTipoDocumento3'
-    	}
-    		]
-    		}
+				xtype: 'formBase',
+				reference: 'adjuntarDocumentoFormRef2',
+				collapsed: false,
+				collapsible: false,
+		 		layout: {
+					type: 'fit',
+					align:'center'
+				},
+				
+				cls:'formbase_no_shadow',
+				items: [
+					{
+			    		xtype : 'xtypeFormularioTipoDocumento1',
+			    		refence : 'xtypeFormularioTipoDocumento1'
+			    	},
+			    	{
+			    		xtype : 'xtypeFormularioTipoDocumento2',
+			    		refence : 'xtypeFormularioTipoDocumento2'
+			    	},
+			    	{
+			    		xtype : 'xtypeFormularioTipoDocumento3',
+			    		refence : 'xtypeFormularioTipoDocumento3'
+			    	}
+			    ]
+		 	}
     	]
     	me.callParent();
     }

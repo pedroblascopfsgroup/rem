@@ -44,62 +44,65 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 				xtype: 'formBase',
 				reference: 'adjuntarDocumentoFormRef1',
 				collapsed: false,
-			 		scrollable	: 'y',
-			 		layout: 'fit',
+			 	layout: 'fit',
 				cls:'formbase_no_shadow',
 				items: [
-			{
-				xtype: 'fieldsettable',
-				layout: {
-					type: 'vbox',
-					align:'center'
-				},
-				margin: '20',
-				reference: 'fieldsetDocumentoIdentidad',
-				collapsible: false,
-				defaults: {
-					addUxReadOnlyEditFieldPlugin: false
-				},
-				items: [
-					{
-						xtype: 'comboboxfieldbase',
-						fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
-						name: 'codigoComboTipoDocumento',
-						reference: 'tipoDocumentoNuevoComprador',
-						allowBlank: false,
-						padding: '120px 0 0 0',
-						bind: {
-							store: '{comboTipoDocumento}',
-							value : '{wizardAdjuntarDocumentoModel.codigoComboTipoDocumento}'
-						}
-						
-						
+				{
+					xtype: 'fieldsettable',
+					layout: {
+						type: 'vbox',
+						align:'center'
+	
 					},
-					{
-
-						xtype: 'filefield',
-				        fieldLabel:   HreRem.i18n('fieldlabel.archivo'),
-				        reference: 'fileUpload',
-				        name: 'fileUpload',
-				        allowBlank: false,
-				        msgTarget: 'side',
-				        buttonConfig: {
-				        	iconCls: 'ico-search-white',
-				        	text: ''
-				        }
-		    		},
-		    		{
-						xtype: 'textareafield',
-						fieldLabel: HreRem.i18n('fieldlabel.calificacion.descripcion'),
-						reference: 'descripcion',
-						bind: {
-							value : '{wizardAdjuntarDocumentoModel.descripcionAdjuntarDocumento}'
+					reference: 'fieldsetDocumentoIdentidad',
+					collapsible: false,
+					defaults: {
+			 			columnWidth: '50%',
+			 			width: '50%',
+			 			labelWidth: 100,
+			 			msgTarget: 'side',
+			 			addUxReadOnlyEditFieldPlugin: false,
+			 			labelWidth: 100
+			 		},
+					items: [
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
+							name: 'codigoComboTipoDocumento',
+							reference: 'tipoDocumentoNuevoComprador',
+							allowBlank: false,
+							padding: '60px 0 0 0',
+							bind: {
+								store: '{comboTipoDocumento}',
+								value : '{wizardAdjuntarDocumentoModel.codigoComboTipoDocumento}'
+							}
+							
+							
+						},
+						{
+	
+							xtype: 'filefield',
+					        fieldLabel:   HreRem.i18n('fieldlabel.archivo'),
+					        reference: 'fileUpload',
+					        name: 'fileUpload',
+					        allowBlank: false,
+					        msgTarget: 'side',
+					        buttonConfig: {
+					        	iconCls: 'ico-search-white',
+					        	text: ''
+					        }
+			    		},
+			    		{
+							xtype: 'textareafield',
+							fieldLabel: HreRem.i18n('fieldlabel.calificacion.descripcion'),
+							reference: 'descripcion',
+							bind: {
+								value : '{wizardAdjuntarDocumentoModel.descripcionAdjuntarDocumento}'
+							}
+							
 						}
-						
-					}
-				]
-			}
-			]
+					]
+				}]
 			}
 		];
 

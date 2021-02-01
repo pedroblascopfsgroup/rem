@@ -2683,6 +2683,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'tipoDireccionComercial'}
 			}
 		},
+		
+		storeDescripcionFoto: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'descripcionesFoto'}
+			},
+			autoLoad: false,
+			remoteFilter: false,
+			filters: {
+    			property: 'codigoSubtipoActivo',
+    			value: '{fotoSelected.codigoSubtipoActivo}'  
+    		}
+    	},
  		
  		storeOrigenAnteriorActivo: {
 			model: 'HreRem.model.ComboBase',

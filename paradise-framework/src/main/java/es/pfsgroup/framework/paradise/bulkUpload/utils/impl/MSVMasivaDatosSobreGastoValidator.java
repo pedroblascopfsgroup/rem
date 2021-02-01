@@ -335,5 +335,9 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 		
 		return true;
 	}
-
+	
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
 }

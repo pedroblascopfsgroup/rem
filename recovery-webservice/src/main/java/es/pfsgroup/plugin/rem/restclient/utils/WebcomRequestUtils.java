@@ -24,7 +24,7 @@ public class WebcomRequestUtils {
 
 	public static final String JSON_PROPERTY_ID = "id";
 
-	private static final String DATETIME_FORMAT = "yyyy-MM-dd'T'hh:mm:ss";
+	private static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
 	public static JSONObject createRequestJson(ParamsList paramsList) {
 		JSONArray dataArray = new JSONArray();

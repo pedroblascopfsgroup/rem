@@ -14,7 +14,7 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesModel', {
 		        localUrl: '/tareas.json',
 		        remoteUrl: 'agrupacion/getListAgrupaciones'
 	    	},
-	    	autoLoad: true,
+	    	autoLoad: false,
 	    	session: true,
 	    	remoteSort: true,
 	    	remoteFilter: true,

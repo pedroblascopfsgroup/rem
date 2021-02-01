@@ -242,6 +242,16 @@ public class TabActivoPatrimonio implements TabActivoService {
 						activoPatrimonio.setAdecuacionAlquiler(null);
 					}
 				}
+			} else {
+				if(!Checks.esNulo(activoPatrimonioDto.getEstadoAlquiler()) && !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())) {
+					activoHistPatrimonio.setAdecuacionAlquiler(activoPatrimonio.getAdecuacionAlquiler());
+				}
+				if(DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE.equals(activoPatrimonioDto.getEstadoAlquiler())) {
+					activoPatrimonio.setAdecuacionAlquilerAnterior(activoPatrimonio.getAdecuacionAlquiler());
+					
+					DDAdecuacionAlquiler adecuacionAlquiler = genericDao.get(DDAdecuacionAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo","02")); //codigo adecuacion NO
+					activoPatrimonio.setAdecuacionAlquiler(adecuacionAlquiler);
+				}
 			}
 
 			if (!Checks.estaVacio(listHistPatrimonio)) {

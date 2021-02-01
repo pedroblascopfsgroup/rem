@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSiniSiNoIndiferente;
 
@@ -100,6 +101,9 @@ public class TabActivoInformeComercial implements TabActivoService {
 	
 	@Resource
 	private Properties appProperties;
+	
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
 	
 	// Patrón para validar el email
     Pattern pattern = Pattern
@@ -566,6 +570,12 @@ public class TabActivoInformeComercial implements TabActivoService {
 					beanUtilNotNull.copyProperty(actInfoComercial, "admiteMascotaOtrasCaracteristicas", tipoAdmiteMascota);
 				}
 				
+				//Vivienda
+				if (actInfoComercial.getVivienda() != null && activoInformeDto.getTipoViviendaCodigo() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getTipoViviendaCodigo());
+					DDTipoVivienda tipoVivienda = (DDTipoVivienda) genericDao.get(DDTipoVivienda.class, filtro);
+					beanUtilNotNull.copyProperty(vivienda, "tipoVivienda", tipoVivienda);
+				}
 
 				// Datos de Infraestructura
 				if (Checks.esNulo(actInfoComercial.getInfraestructura())) {

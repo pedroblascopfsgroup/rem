@@ -115,10 +115,18 @@ public class ActivoTareaExternaDaoImpl extends AbstractEntityDao<TareaExterna, L
 		//HQLBuilder hb = new HQLBuilder("select tac from TareaActivo");
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tac.tramite.id", idTramite);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tac.tareaFinalizada", false);
 		hb.orderBy("tac.id", HQLBuilder.ORDER_ASC);
 		
 		listaTareas = HibernateQueryUtils.list(this, hb);
 		
+		if (listaTareas.isEmpty()) {
+			HQLBuilder hql = new HQLBuilder("select tex from TareaExterna tex join tex.tareaPadre tac ");			 
+			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "tac.tramite.id", idTramite);
+			hql.orderBy("tac.id", HQLBuilder.ORDER_ASC);
+			
+			listaTareas = HibernateQueryUtils.list(this, hql);
+		}
 		return listaTareas;
 	}
 

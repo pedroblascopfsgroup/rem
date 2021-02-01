@@ -7,7 +7,7 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
     bind		: {
 		store: '{agrupaciones}'
 	},
-
+	loadAfterBind: false,
 	secFunToEdit: 'EDITAR_LIST_AGRUPACIONES',
 
 	secButtons: {

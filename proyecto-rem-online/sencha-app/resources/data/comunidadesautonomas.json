@@ -17,6 +17,7 @@
 		{"id": "38", "codigo": "05" , "descripcion": "Canarias, Islas" , "provincia": "38"},
 		{"id": "39", "codigo": "06" , "descripcion": "Cantabria" , "provincia": "39"},
 		{"id": "24", "codigo": "07" , "descripcion": "Castilla y León" , "provincia": "24"},
+		{"id": "40", "codigo": "07" , "descripcion": "Castilla y León" , "provincia": "40"},
 		{"id": "34", "codigo": "07" , "descripcion": "Castilla y León" , "provincia": "34"},
 		{"id": "37", "codigo": "07" , "descripcion": "Castilla y León" , "provincia": "37"},
 		{"id": "42", "codigo": "07" , "descripcion": "Castilla y León" , "provincia": "42"},

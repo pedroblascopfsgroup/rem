@@ -1002,6 +1002,32 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			DDClaseOferta claseOferta = genericDao.get(DDClaseOferta.class, genericDao.createFilter(FilterType.EQUALS,
 					"codigo", DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL));
 			oferta.setClaseOferta(claseOferta);
+			
+			if (!Checks.esNulo(ofertaDto.getEsOfertaSingular())) {
+				oferta.setOfertaSingular(ofertaDto.getEsOfertaSingular());
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())) {
+				oferta.setOfrRecomendacionRc(ofertaDto.getRecomendacionRc());
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionRc())) {
+				oferta.setOfrFechaRecomendacionRc(ofertaDto.getFechaRecomendacionRc());
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())) {
+				oferta.setOfrRecomendacionDc(ofertaDto.getRecomendacionDc());
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDc())) {
+				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDc());
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getDocResponsabilidadPrescriptor())) {
+				oferta.setOfrDocRespPrescriptor(ofertaDto.getDocResponsabilidadPrescriptor());
+			} else {
+				oferta.setOfrDocRespPrescriptor(true);
+			}
 
 			Long idOferta = this.saveOferta(oferta);
 			ofertaDao.flush();
@@ -1044,26 +1070,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
-			}
-			
-			if (!Checks.esNulo(ofertaDto.getEsOfertaSingular())) {
-				oferta.setOfertaSingular(ofertaDto.getEsOfertaSingular());
-			}
-			
-			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())) {
-				oferta.setOfrRecomendacionRc(ofertaDto.getRecomendacionRc());
-			}
-			
-			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionRc())) {
-				oferta.setOfrFechaRecomendacionRc(ofertaDto.getFechaRecomendacionRc());
-			}
-			
-			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())) {
-				oferta.setOfrRecomendacionDc(ofertaDto.getRecomendacionDc());
-			}
-			
-			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDc())) {
-				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDc());
 			}
 
 		}
@@ -1278,6 +1284,42 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setCodTipoProveedorOrigenCliente(ofertaDto.getCodTipoProveedorOrigenCliente());
 				modificado = true;
 			}
+			
+			if (!Checks.esNulo(ofertaDto.getEsOfertaSingular())
+					&& !ofertaDto.getEsOfertaSingular().equals(oferta.getOfertaSingular())) {
+				oferta.setOfertaSingular(ofertaDto.getEsOfertaSingular());
+				modificado = true;
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())
+					&& !ofertaDto.getRecomendacionRc().equals(oferta.getOfrRecomendacionRc())) {
+				oferta.setOfrRecomendacionRc(ofertaDto.getRecomendacionRc());
+				modificado = true;
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionRc())
+					&& !ofertaDto.getFechaRecomendacionRc().equals(oferta.getOfrFechaRecomendacionRc())) {
+				oferta.setOfrFechaRecomendacionRc(ofertaDto.getFechaRecomendacionRc());
+				modificado = true;
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())
+					&& !ofertaDto.getRecomendacionDc().equals(oferta.getOfrRecomendacionDc())) {
+				oferta.setOfrRecomendacionDc(ofertaDto.getRecomendacionDc());
+				modificado = true;
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDc())
+					&& !ofertaDto.getFechaRecomendacionDc().equals(oferta.getOfrFechaRecomendacionDc())) {
+				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDc());
+				modificado = true;
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getDocResponsabilidadPrescriptor())
+					&& !ofertaDto.getDocResponsabilidadPrescriptor().equals(oferta.getOfrDocRespPrescriptor())) {
+				oferta.setOfrDocRespPrescriptor(ofertaDto.getDocResponsabilidadPrescriptor());
+				modificado = true;
+			}
 
 			if (modificado) {
 				ofertaDao.saveOrUpdate(oferta);
@@ -1298,31 +1340,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
 				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
-			}
-			
-			if (!Checks.esNulo(ofertaDto.getEsOfertaSingular())
-					&& !ofertaDto.getEsOfertaSingular().equals(oferta.getOfertaSingular())) {
-				oferta.setOfertaSingular(ofertaDto.getEsOfertaSingular());
-			}
-			
-			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())
-					&& !ofertaDto.getRecomendacionRc().equals(oferta.getOfrRecomendacionRc())) {
-				oferta.setOfrRecomendacionRc(ofertaDto.getRecomendacionRc());
-			}
-			
-			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionRc())
-					&& !ofertaDto.getFechaRecomendacionRc().equals(oferta.getOfrFechaRecomendacionRc())) {
-				oferta.setOfrFechaRecomendacionRc(ofertaDto.getFechaRecomendacionRc());
-			}
-			
-			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())
-					&& !ofertaDto.getRecomendacionDc().equals(oferta.getOfrRecomendacionDc())) {
-				oferta.setOfrRecomendacionDc(ofertaDto.getRecomendacionDc());
-			}
-			
-			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDc())
-					&& !ofertaDto.getFechaRecomendacionDc().equals(oferta.getOfrFechaRecomendacionDc())) {
-				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDc());
 			}
 
 		}

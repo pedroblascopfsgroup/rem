@@ -1,6 +1,8 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -118,10 +120,14 @@ public class ExcelManager implements ExcelManagerApi {
 			process = validateFormat(document);
 			if (MSVDDEstadoProceso.CODIGO_ERROR.equals(process.getEstadoProceso().getCodigo())) return false;
 			process = validateContent(document);
+			if(process.getEstadoProceso() != null && process.getEstadoProceso().getCodigo().equals(MSVDDEstadoProceso.CODIGO_ERROR)){
+				return false;
+			}else{
+				return true;
+			}
 		} catch (Exception e) {
 			return false;
 		}
-		return true;
 	}
 	
 	@Override
@@ -296,7 +302,9 @@ public class ExcelManager implements ExcelManagerApi {
 				archivo.setContenidoFichero(dtoResultado.getExcelErroresFormato());
 				archivo.setErroresFicheroProcesar(dtoResultado.getExcelErroresFormato());
 				archivo.setResultadoFich(dtoResultado.getExcelErroresFormato());
+				
 			}
+			proceso.setTotalFilas(Long.valueOf(validador.getNumFilasHoja()-1));
 		} else {
 			resultadoValidacion = false;
 		}

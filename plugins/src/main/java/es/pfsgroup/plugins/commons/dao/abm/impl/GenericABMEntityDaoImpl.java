@@ -290,4 +290,14 @@ public class GenericABMEntityDaoImpl implements GenericABMDao {
 		return dao;
 	}
 
+	@Override
+	public <T extends Serializable> List<T> delete(Class<T> clazz, Filter... filters) {
+		List<T> lista =  this.getListOrdered(clazz, noOrder(), filters);
+		ExtendedDao<T> dao = (ExtendedDao<T>) createExtendedDao(clazz);
+		for (T obj : lista) {
+			dao.delete(obj);
+		}
+		return lista;
+	}
+
 }

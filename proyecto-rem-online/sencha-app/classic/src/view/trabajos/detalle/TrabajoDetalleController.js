@@ -764,11 +764,28 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	},
 	
 	abrirFormularioAdjuntarDocumentos: function(grid) {
-		
 		var me = this,
 		idTrabajo = me.getViewModel().get("trabajo.id");
 		tipoTrabajoCodigo = me.getViewModel().get("trabajo.tipoTrabajoCodigo");
-		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumento", {entidad: 'trabajo', idEntidad: idTrabajo, tipoTrabajoCodigo: tipoTrabajoCodigo, parent: grid}).show();
+		var viewPortWidth = Ext.Element.getViewportWidth();
+	    var viewPortHeight = Ext.Element.getViewportHeight();
+		var wizard = Ext.create('HreRem.view.common.WizardBase',
+				{
+					slides: [
+						'adjuntardocumentowizard1',
+						'adjuntardocumentowizard2'
+					],
+					title: 'Adjuntar Documento',
+					padre : me,
+					idEntidad: idTrabajo,
+					entidad:'trabajo', 
+					modoEdicion: true,
+					width: viewPortWidth > 1370 ? viewPortWidth / 2.5 : viewPortWidth / 3.5,
+					height: viewPortHeight > 500 ? 350 : viewPortHeight - 100,
+					x: viewPortWidth / 2 - ((viewPortWidth > 1370 ? viewPortWidth / 2 : viewPortWidth /1.5) / 2),
+	    			y: viewPortHeight / 2 - ((viewPortHeight > 500 ? 500 : viewPortHeight - 100) / 2)
+				}
+			).show();
 
 	},
 	

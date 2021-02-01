@@ -42,9 +42,10 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 		var comboTipoDocumento = me.getView().wizardAnterior.down('[reference = tipoDocumentoNuevoComprador]').value;
 		var descripcion =me.getView().wizardAnterior.down('[reference = descripcion]').value;
 		var url =  $AC.getRemoteUrl('activo/upload');
-		var activoId = wizard.activo; 
+		var idEntidad = wizard.idEntidad; 
+		var entidad = wizard.entidad; 
 		form2 = me.getView().wizardAnterior.down('form');
-		var params = {fileupload : fileupload,idEntidad : activoId,tipo : comboTipoDocumento,descripcion:descripcion};
+		var params = {fileupload : fileupload, idEntidad : idEntidad, entidad: entidad, tipo : comboTipoDocumento,descripcion:descripcion};
 		params = me.devolverParametros(me.getView().formExtType, form,params);
 		form2.submit({
 			url: url,

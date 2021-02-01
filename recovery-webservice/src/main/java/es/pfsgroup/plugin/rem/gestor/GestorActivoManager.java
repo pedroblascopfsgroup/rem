@@ -59,6 +59,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 	public static final String USERNAME_COMITE_ARROW = "grucoarrow";
 	public static final String USERNAME_GRUPO_CES_REMAINING = "grucoces1";
 	public static final String USERNAME_GRUPO_DIVARIAN = "grucodivarian";
+	public static final String USERNAME_GRUPO_BACKOFFICE_APPLE = "grusbackoffman";
  	
  	@Autowired
  	private GenericABMDao genericDao;
@@ -547,7 +548,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  	@Override
  	@Transactional(readOnly = false)
 	public Usuario supervisorTareaApple(String codigoTarea) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, USERNAME_GRUPO_BACKOFFICE_APPLE);
 		return genericDao.get(Usuario.class, filtro);
 	}
  	

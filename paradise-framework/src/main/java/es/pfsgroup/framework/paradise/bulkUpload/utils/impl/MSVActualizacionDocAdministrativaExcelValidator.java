@@ -267,4 +267,9 @@ public class MSVActualizacionDocAdministrativaExcelValidator extends MSVExcelVal
 		return resultado;
 	}
 
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }

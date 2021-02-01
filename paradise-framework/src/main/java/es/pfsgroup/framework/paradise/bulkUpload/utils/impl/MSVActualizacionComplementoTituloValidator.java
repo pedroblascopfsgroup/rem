@@ -245,5 +245,10 @@ public class MSVActualizacionComplementoTituloValidator extends MSVExcelValidato
 		return resultado;
 	}
 
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+
 
 }

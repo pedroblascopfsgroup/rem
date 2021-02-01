@@ -208,7 +208,7 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		try {
 			result = jbpmMActivoScriptExecutorApi.evaluaScript(getActivoTramite(executionContext).getId(), tareaExterna.getId(), tareaExterna.getTareaProcedimiento().getId(), null, script).toString();
 		} catch (Exception e) {
-			logger.info("Error en el script de decisión [" + script + "]. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "].", e);
+			logger.error("Error en el script de decisión [" + script + "]. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "].", e);
 			throw new UserException("bpm.error.script");
 		}
 		return result;

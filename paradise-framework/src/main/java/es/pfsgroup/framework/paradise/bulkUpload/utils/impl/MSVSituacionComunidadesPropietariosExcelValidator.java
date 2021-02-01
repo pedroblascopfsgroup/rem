@@ -532,6 +532,11 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 
 
 
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 
 	
 }

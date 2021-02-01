@@ -496,4 +496,10 @@ public class MSVActualizacionTomaPosesionExcelValidator extends MSVExcelValidato
 		}
 		return true;
 	}
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }

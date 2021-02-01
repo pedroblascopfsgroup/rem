@@ -38,7 +38,6 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -96,11 +95,9 @@ import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoRespuestaDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
-import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoAgendaTrabajo;
-import es.pfsgroup.plugin.rem.trabajo.dto.DtoHistorificadorCampos;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
@@ -173,14 +170,9 @@ public class TrabajoController extends ParadiseJsonController {
 
 	@Autowired
 	private ConfigManager configManager;
-
-	@Autowired
-	private MSVRawSQLDao rawDao;
 	
-	@Autowired
-	private TrabajoManager trabajoManager;
-	
-	private static final String RESPONSE_SUCCESS_KEY = "success";	
+	private static final String RESPONSE_SUCCESS_KEY = "success";
+	private static final String RESPONSE_ERROR_KEY = "error";
 	private static final String RESPONSE_DATA_KEY = "data";
 
 	private static final String ERROR_DUPLICADOS_CREAR_TRABAJOS = "El fichero contiene registros duplicados";
@@ -282,7 +274,7 @@ public class TrabajoController extends ParadiseJsonController {
 			
 			Long idTrabajo = trabajoApi.create(dtoTrabajo);
 			if(new Long(-1L).equals(idTrabajo))
-				model.put("warn", "Proceso de creación trabajos en marcha, vaya al apartado de 'Carga Masiva' para ver si ha terminado.");
+				model.put("warn", "Proceso de creación trabajos en ejecución, vaya al apartado de 'Carga Masiva' para ver si ha terminado.");
 			else
 				dtoTrabajo.setIdTrabajo(idTrabajo);
 			success = true;
@@ -1323,11 +1315,11 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListActivosByID(String idActivo, Long idAgrupacion, DtoTrabajoListActivos webDto, ModelMap model) {
 		
-		if(idActivo == null && idAgrupacion == null) {
-			return createModelAndViewJson(model);
+		if((idActivo == null || idActivo.equals("")) && idAgrupacion == null) {
+			model.put("success", false);
 		}else {
 			if(idAgrupacion != null) {
 				Page page = trabajoAdapter.getListActivosCrearTrabajoByAgrupacion(idAgrupacion, webDto);
@@ -1346,12 +1338,9 @@ public class TrabajoController extends ParadiseJsonController {
 					logger.error(e.getMessage());
 					model.put("success", false);
 				}
-			}
-			
-
-			return createModelAndViewJson(model);
+			}			
 		}
-		
+		return createModelAndViewJson(model);		
 	}
 
 	

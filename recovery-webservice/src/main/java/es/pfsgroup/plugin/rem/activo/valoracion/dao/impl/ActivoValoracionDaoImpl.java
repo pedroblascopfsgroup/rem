@@ -165,13 +165,19 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 
 	@Override
 	public Double getImporteValoracionRentaWebPorIdActivo(Long idActivo) {
-		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoValoraciones.class);
-		criteria.setProjection(Projections.property("importe"));
-		criteria.add(Restrictions.eq("activo.id", idActivo)).createCriteria("tipoPrecio").add(Restrictions.eq("codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA));
-
-		Double resultadoPrecioWeb = HibernateUtils.castObject(Double.class, criteria.uniqueResult());
-		if(Checks.esNulo(resultadoPrecioWeb)) {
-			resultadoPrecioWeb = 0.0; 
+		Double resultadoPrecioWeb = null; 
+		
+		HQLBuilder hql = new HQLBuilder("from ActivoValoraciones");
+		hql.appendWhere("activo.id = " + idActivo);
+		hql.appendWhere("auditoria.borrado = 0");
+		hql.appendWhere("fechaFin is null or fechaFin >= sysdate");
+		hql.appendWhere("tipoPrecio.codigo = " + DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA);
+		ActivoValoraciones query = HibernateQueryUtils.uniqueResult(this, hql);
+		
+		if (query != null) {
+			resultadoPrecioWeb = query.getImporte();
+		} else {
+			resultadoPrecioWeb = 0.0;
 		}
 		return resultadoPrecioWeb;
 	}

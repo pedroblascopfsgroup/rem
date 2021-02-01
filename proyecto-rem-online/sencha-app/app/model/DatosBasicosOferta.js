@@ -230,7 +230,10 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     	    				}
         				}
         			}
-        		}
+    		},
+    		{
+    			name:'tipoResponsableCodigo'
+    		}
     ],
 
 	proxy: {

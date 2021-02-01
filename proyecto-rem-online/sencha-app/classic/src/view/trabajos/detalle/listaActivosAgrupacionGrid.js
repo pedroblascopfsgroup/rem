@@ -5,11 +5,8 @@ Ext.define('HreRem.view.trabajos.detalle.listaActivosAgrupacionGrid', {
     bind: {
         store: '{listaActivosAgrupacion}'
     },
-    loadAfterBind: false,    
+    loadAfterBind: true,    
     plugins: 'pagingselectpersist',
-	listeners: {
-		beforeload: 'loadGridSegundo'
-	},
     
     
     initComponent: function () {

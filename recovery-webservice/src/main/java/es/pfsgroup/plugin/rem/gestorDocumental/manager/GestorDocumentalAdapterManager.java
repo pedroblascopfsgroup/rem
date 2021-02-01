@@ -184,9 +184,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		for (DtoAdjunto adjunto : list) {
 			DDTdnTipoDocumento tipoDoc = (DDTdnTipoDocumento) diccionarioApi.dameValorDiccionarioByCod(DDTdnTipoDocumento.class, adjunto.getCodigoTipo());
-			if (tipoDoc == null) {
-				adjunto.setDescripcionTipo("");
-			} else {
+			if (tipoDoc != null) {
 				adjunto.setDescripcionTipo(tipoDoc.getDescripcion());
 			}
 		}
@@ -661,9 +659,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		for (DtoAdjunto adjunto : list) {
 			DDTdnTipoDocumento tipoDoc = (DDTdnTipoDocumento) diccionarioApi
 					.dameValorDiccionarioByCod(DDTdnTipoDocumento.class, adjunto.getCodigoTipo());
-			if (tipoDoc == null) {
-				adjunto.setDescripcionTipo("");
-			} else {
+			if (tipoDoc != null) {
 				adjunto.setDescripcionTipo(tipoDoc.getDescripcion());
 			}
 		}

@@ -1,9 +1,10 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 
 public interface UpdaterStateApi {
 	/**
@@ -63,7 +64,7 @@ public interface UpdaterStateApi {
 	 * @param activosLista : se pasan la lista de todos los activos a calcular(Se puede dejar en null si solamente se quiere calcular un activo).
 	 * @param activo_check : es el activo que se calcula.
 	 */
-	public Double calcularParticipacionPorActivo(String codigoTipoTrabajo, List<Activo> activosLista, Activo activo_check);
+	public Double calcularParticipacionPorActivo(String codigoTipoTrabajo, List<Activo> activosLista, Activo activo_check, HashMap<Activo, List<ActivoValoraciones>> valoraciones);
 	
 	/**
 	 * Recalcula la participación de cada activo dependiendo de la cartera. 
@@ -74,4 +75,6 @@ public interface UpdaterStateApi {
 	public void recalcularParticipacion(Long idTrabajo);
 	
 	public Double calcularParticipacionValorPorActivo(String codigoTipoTrabajo, Activo activo);
+	
+	public HashMap<Activo, List<ActivoValoraciones>> obtenerValoracionesActivos(List<Activo> activosLista);
 }

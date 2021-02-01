@@ -291,4 +291,10 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 		}
 		return listaFilas;
 	}
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }

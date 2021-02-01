@@ -80,6 +80,7 @@ public class OfertaDto implements Serializable {
 	private String recomendacionDc;
 	private Date fechaRecomendacionDc;
 	private Date fechaCreacionOpSf;
+	private Boolean docResponsabilidadPrescriptor;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -336,4 +337,10 @@ public class OfertaDto implements Serializable {
 		this.fechaCreacionOpSf = fechaCreacionOpSf;
 	}
 	
+	public Boolean getDocResponsabilidadPrescriptor() {
+		return docResponsabilidadPrescriptor;
+	}
+	public void setDocResponsabilidadPrescriptor(Boolean docResponsabilidadPrescriptor) {
+		this.docResponsabilidadPrescriptor = docResponsabilidadPrescriptor;
+	}
 }

@@ -415,6 +415,8 @@ public interface ParticularValidatorApi {
 
 	boolean isMismoEpuActivoPrincipalAgrupacion(String numActivo, String numAgrupacion);
 	
+	boolean isMismoTcoActivoPrincipalAgrupacion(String numActivo, String numAgrupacion);
+	
 	boolean isMismoEpuActivoPrincipalExcel(String numActivo, String numActivoPrincipalExcel);
 
 	String idAgrupacionDelActivoPrincipal(String numActivo);

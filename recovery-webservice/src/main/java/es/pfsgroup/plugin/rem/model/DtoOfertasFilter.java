@@ -88,6 +88,9 @@ public class DtoOfertasFilter extends WebDto {
 	
 	//REMVIP-8377
 	private Long idOfertaOrigen;
+	
+	//REMVIP-8524
+	private Boolean ofrDocRespPrescriptor;
 		
 	public Long getNumOferta() {
 		return numOferta;
@@ -506,6 +509,18 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setIdOfertaOrigen(Long idOfertaOrigen) {
 		this.idOfertaOrigen = idOfertaOrigen;
+	}
+	
+	
+	
+	
+	//REMVIP-8524
+	public Boolean getOfrDocRespPrescriptor() {
+		return ofrDocRespPrescriptor;
+	}
+
+	public void setOfrDocRespPrescriptor(Boolean ofrDocRespPrescriptor) {
+		this.ofrDocRespPrescriptor = ofrDocRespPrescriptor;
 	}
 	
 }

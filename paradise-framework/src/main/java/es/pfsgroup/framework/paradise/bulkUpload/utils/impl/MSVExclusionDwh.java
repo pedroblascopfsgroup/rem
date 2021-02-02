@@ -222,4 +222,10 @@ public class MSVExclusionDwh extends MSVExcelValidatorAbstract{
 		}
 		return listaFilas;
 	}
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }

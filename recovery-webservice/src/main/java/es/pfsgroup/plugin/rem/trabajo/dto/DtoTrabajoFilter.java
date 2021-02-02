@@ -86,6 +86,8 @@ public class DtoTrabajoFilter extends WebDto {
 	private String areaPeticionaria;
 	
 	private String responsableTrabajo;
+	
+	private Boolean esHistoricoPeticionActivo;
 
 	public String getIdTrabajo() {
 		return idTrabajo;
@@ -357,6 +359,14 @@ public class DtoTrabajoFilter extends WebDto {
 
 	public void setResponsableTrabajo(String responsableTrabajo) {
 		this.responsableTrabajo = responsableTrabajo;
+	}
+	
+	public Boolean getEsHistoricoPeticionActivo() {
+		return esHistoricoPeticionActivo;
+	}
+
+	public void setEsHistoricoPeticionActivo(Boolean esHistoricoPeticionActivo) {
+		this.esHistoricoPeticionActivo = esHistoricoPeticionActivo;
 	}
 
 }

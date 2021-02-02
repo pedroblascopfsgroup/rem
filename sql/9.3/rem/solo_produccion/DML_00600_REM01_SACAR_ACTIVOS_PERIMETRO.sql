@@ -1,0 +1,167 @@
+--/*
+--##########################################
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20201230
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-8618
+--## PRODUCTO=NO
+--##
+--## Finalidad: 
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+    V_ESQUEMA VARCHAR2(25 CHAR) := '#ESQUEMA#'; -- Configuracion Esquema.
+    V_ESQUEMA_MASTER VARCHAR2(25 CHAR) := '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master.
+    ERR_NUM NUMBER(25); -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(10024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_TABLA_ACTIVO VARCHAR2(100 CHAR):= 'ACT_ACTIVO';
+    V_TABLA_PAC  VARCHAR2(100 CHAR):= 'ACT_PAC_PERIMETRO_ACTIVO';
+    V_USUARIO VARCHAR(100 CHAR):= 'REMVIP-8618'; -- Vble. para el usuario modificar.
+    V_MSQL VARCHAR2(32000 CHAR); -- Vble. auxiliar para almacenar la sentencia a ejecutar.
+	V_RET VARCHAR( 1024 CHAR );
+	V_ACT_ID NUMBER(16);
+	V_ID  NUMBER(16);
+	V_COUNT NUMBER(16);
+	V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+
+	TYPE T_JBV IS TABLE OF VARCHAR2(32000);
+    TYPE T_ARRAY_JBV IS TABLE OF T_JBV; 
+	
+	V_JBV T_ARRAY_JBV := T_ARRAY_JBV( 
+T_JBV(7292636),
+T_JBV(7292613),
+T_JBV(7292599),
+T_JBV(7292634),
+T_JBV(7292618),
+T_JBV(6077296),
+T_JBV(7292615),
+T_JBV(7292584),
+T_JBV(7292600),
+T_JBV(7292581),
+T_JBV(7292631),
+T_JBV(7292624),
+T_JBV(7292607),
+T_JBV(7292610),
+T_JBV(6077299),
+T_JBV(7292602),
+T_JBV(7292629),
+T_JBV(6077297),
+T_JBV(7292626),
+T_JBV(7292617),
+T_JBV(7292635),
+T_JBV(7292633),
+T_JBV(6077298),
+T_JBV(7292588),
+T_JBV(7292625),
+T_JBV(7292601),
+T_JBV(6077295),
+T_JBV(7292604),
+T_JBV(7292612),
+T_JBV(7292575),
+T_JBV(7292603),
+T_JBV(7292606),
+T_JBV(7292609),
+T_JBV(7292637),
+T_JBV(7292605),
+T_JBV(7292632),
+T_JBV(7292616),
+T_JBV(7292594),
+T_JBV(7292608),
+T_JBV(7292621),
+T_JBV(7292611),
+T_JBV(6077300),
+T_JBV(7292622),
+T_JBV(7292614),
+T_JBV(7292627),
+T_JBV(7292590),
+T_JBV(7292619),
+T_JBV(7292620),
+T_JBV(7292628),
+T_JBV(7292587),
+T_JBV(7292574)
+	); 
+	V_TMP_JBV T_JBV;
+   
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('[INICIO]');
+
+	V_COUNT := 0;
+
+	FOR I IN V_JBV.FIRST .. V_JBV.LAST
+	
+	LOOP
+ 
+	V_TMP_JBV := V_JBV(I);
+	V_ACT_ID := TRIM(V_TMP_JBV(1));
+	
+	------
+	DBMS_OUTPUT.PUT_LINE('[INFO]: SACAMOS DE PERIMETRO EL ACTIVO '||V_ACT_ID||' ');
+      
+      --Obtener ACT_ID a través del ACT_NUM_ACTIVO
+        V_MSQL := 'SELECT ACT_ID FROM '||V_ESQUEMA||'.'||V_TABLA_ACTIVO||' WHERE ACT_NUM_ACTIVO = '||V_ACT_ID||'';
+        EXECUTE IMMEDIATE V_MSQL INTO V_ID;
+        DBMS_OUTPUT.PUT_LINE(V_ID);
+          
+        --Comprobar si existe en la tabla el activo.
+        V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_PAC||' WHERE ACT_ID = '''||V_ID||'''';
+        EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+        DBMS_OUTPUT.PUT_LINE(V_ID);
+        IF V_NUM_TABLAS > 0 THEN
+        
+		V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC SET
+								  PAC_INCLUIDO = 0
+								, PAC_CHECK_TRA_ADMISION = 0
+								, PAC_CHECK_GESTIONAR = 0
+								, PAC_CHECK_COMERCIALIZAR = 0
+								, PAC_CHECK_PUBLICAR = 0
+								, PAC_CHECK_FORMALIZAR = 0
+								, PAC_CHECK_ADMISION = 0 
+								, PAC_FECHA_COMERCIALIZAR = SYSDATE
+								, PAC_FECHA_FORMALIZAR = SYSDATE
+								, PAC_FECHA_PUBLICAR = SYSDATE
+								, PAC_FECHA_ADMISION = SYSDATE
+								, PAC_FECHA_GESTIONAR = SYSDATE
+								, PAC_FECHA_TRA_ADMISION = SYSDATE
+								, USUARIOMODIFICAR  = '''||V_USUARIO||''' 
+		  						, FECHAMODIFICAR    = SYSDATE 
+							WHERE PAC.ACT_ID = '||V_ID||'';
+							
+		EXECUTE IMMEDIATE V_MSQL;
+		
+		V_COUNT := V_COUNT + 1;
+							
+		DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha modificado EL ACTIVO '||V_ACT_ID||' EN LA TABLA ACT_PAC_PERIMETRO_ACTIVO, SE HAN QUITADO TODOS LOS CHECKS');
+
+	ELSE
+
+		DBMS_OUTPUT.PUT_LINE('[INFO]: El activo  '||V_ACT_ID||'  no existe');
+
+	END IF;
+	
+	END LOOP;
+	
+	DBMS_OUTPUT.PUT_LINE('	[INFO] '||V_COUNT||' activos sacados de perímetro');
+
+    DBMS_OUTPUT.PUT_LINE('[FIN]');
+    COMMIT;
+ 
+EXCEPTION
+    WHEN OTHERS THEN
+         ERR_NUM := SQLCODE;
+         ERR_MSG := SQLERRM;
+         DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+         DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+         DBMS_OUTPUT.put_line(ERR_MSG);
+         ROLLBACK;
+         RAISE;   
+END;
+/
+EXIT;

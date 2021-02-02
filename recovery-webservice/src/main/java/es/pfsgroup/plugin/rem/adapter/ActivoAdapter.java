@@ -2787,7 +2787,8 @@ public class ActivoAdapter {
 			BeanUtils.copyProperties(dto, activoEntrada.getSituacionPosesoria());
 			if (activoEntrada.getSituacionPosesoria().getConTitulo() != null)
 				dto.setConTitulo(activoEntrada.getSituacionPosesoria().getConTitulo().getCodigo());
-			activoApi.compruebaParaEnviarEmailAvisoOcupacion(dto, activoEntrada.getId());
+			if(tipoDocumento.getCodigo().equals(DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION))
+				activoApi.compruebaParaEnviarEmailAvisoOcupacion(dto, activoEntrada.getId());
 		}
 		return null;
 	}
@@ -3958,6 +3959,14 @@ public class ActivoAdapter {
 				ofertasAgrupadas = ofertaApi.buildListaOfertasAgrupadasLbk(oferPrincipal, oferta, dto.getClaseOferta());
 			}
 			
+			if(Checks.esNulo(dto.getClaseOferta()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo()) 
+					&& DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta.getCodigo())) {
+				DDClaseOferta clase = null;
+				clase = genericDao.get(DDClaseOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL) );
+				if(clase != null) {
+					oferta.setClaseOferta(clase);
+				}
+			}
 			oferta.setOfertasAgrupadas(ofertasAgrupadas);
 			
 			oferta.setOfertaExpress(false);
@@ -3968,6 +3977,12 @@ public class ActivoAdapter {
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
 			
 			oferta.setIdOfertaOrigen(dto.getIdOfertaOrigen());
+			
+			if(Checks.esNulo(dto.getOfrDocRespPrescriptor())) {
+				oferta.setOfrDocRespPrescriptor(true);
+			} else {
+				oferta.setOfrDocRespPrescriptor(dto.getOfrDocRespPrescriptor());
+			}
 			
 			ofertaCreada = genericDao.save(Oferta.class, oferta);
 			
@@ -4181,7 +4196,9 @@ public class ActivoAdapter {
 
 		if (Checks.esNulo(llave)) {
 			return false;
-		}
+		}		/*if(!Checks.esNulo(dto.getOfrDocRespPrescriptor())) {
+		oferta.setOfrDocRespPrescriptor(true);
+	}*/
 
 		DDTipoTenedor tipoTenedor = (DDTipoTenedor) proxyFactory.proxy(UtilDiccionarioApi.class)
 				.dameValorDiccionarioByCod(DDTipoTenedor.class, dto.getCodigoTipoTenedor());
@@ -4565,7 +4582,9 @@ public class ActivoAdapter {
 			}
 		} catch(JsonViewerException e) {
 			throw e;
-		}
+		}		/*if(!Checks.esNulo(dto.getOfrDocRespPrescriptor())) {
+		oferta.setOfrDocRespPrescriptor(true);
+	}*/
 
 		return aprobado;
 	}

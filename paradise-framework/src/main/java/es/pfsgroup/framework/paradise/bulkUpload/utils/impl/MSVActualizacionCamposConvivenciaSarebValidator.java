@@ -492,5 +492,11 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 			
 	}
 
+	@Override
+	public Integer getNumFilasHoja() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 }

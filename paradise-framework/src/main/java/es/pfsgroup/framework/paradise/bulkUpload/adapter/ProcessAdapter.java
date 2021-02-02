@@ -86,10 +86,18 @@ public class ProcessAdapter {
 		
 	}
 	
-	public Boolean subirFichero(WebFileItem fileItem) {
+	public Boolean subirFichero(WebFileItem fileItem) throws Exception {
+		Boolean resultado = false;
+		TransactionStatus transaction = null;
+		try{
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			resultado = fileUploadParadise.upload(fileItem);
+		}catch(Exception e){
+			transactionManager.rollback(transaction);
+			throw e;
+		}
 		
-		return fileUploadParadise.upload(fileItem);
-		
+		return resultado;		
 	}
 	
 	public Boolean validarMasivo(Long idProceso) throws Exception {

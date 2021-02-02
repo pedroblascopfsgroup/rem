@@ -752,4 +752,10 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
          }
          return listaFilas;   
     }
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }

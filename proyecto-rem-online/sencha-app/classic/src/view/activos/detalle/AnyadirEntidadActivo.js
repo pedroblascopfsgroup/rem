@@ -47,7 +47,6 @@ Ext.define('HreRem.view.activos.detalle.AnyadirEntidadActivo', {
 			);
     	}
 		
-    	me.getViewModel().set('carga', me.carga);
     	
     },
     
@@ -159,6 +158,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirEntidadActivo', {
 										},
 										{
 											xtype: 'datefieldbase',
+											formatter: 'date("d/m/Y")',
 											fieldLabel: HreRem.i18n('fieldlabel.entidad.activo.fecha.exclusion'),
 											bind:	{
 												value: '{activoIntegrado.fechaExclusion}',
@@ -198,6 +198,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirEntidadActivo', {
 													{
 														xtype:'checkboxfieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.entidad.activo.retener.pagos.entidad'),
+														name: 'retenerPagos',
 														bind:		'{activoIntegrado.retenerPagos}',
 														reference: 'retenerPagosRef',
 														listeners: {
@@ -218,6 +219,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirEntidadActivo', {
 													 },
 													 {
 														xtype: 'datefieldbase',
+														formatter: 'date("d/m/Y")',
 														fieldLabel: HreRem.i18n('fieldlabel.entidad.activo.fecha.inicio.retencion'),
 														bind:{		
 															value: '{activoIntegrado.fechaRetencionPago}',

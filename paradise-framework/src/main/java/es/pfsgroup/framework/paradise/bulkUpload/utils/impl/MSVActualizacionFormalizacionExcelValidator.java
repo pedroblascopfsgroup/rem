@@ -325,5 +325,10 @@ public class MSVActualizacionFormalizacionExcelValidator extends  MSVExcelValida
 			
 			return listaFilas;
 	}
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
 	
 }

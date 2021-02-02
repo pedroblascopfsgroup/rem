@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20210129
+--## FECHA_CREACION=20210201
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11680
@@ -226,9 +226,6 @@ BEGIN
                         AND RES.RES_FECHA_FIRMA is null
                         AND ECO.ECO_ESTADO_PBC = 1
                     then ''Alquilado Reservado''*/
-                when 
-                        SCM.DD_SCM_CODIGO = ''03'' --	Disponible para la venta con oferta
-                    then ''Alquilado Reservado''
                 /* when 
                         SCM.DD_SCM_CODIGO = ''04'' --	Disponible para la venta con reserva
                         AND last_oferta.DD_EOF_CODIGO in (''01'') 
@@ -240,10 +237,7 @@ BEGIN
                         AND DD_ERE_ESTADOS_RESERVA.DD_ERE_CODIGO = ''02''
                         AND RES.RES_FECHA_FIRMA is not null
                         AND (ECO.ECO_ESTADO_PBC = 1 or ECO.ECO_ESTADO_PBC is null)   
-                    then ''Alquilado Contratado'' */
-                when 
-                        SCM.DD_SCM_CODIGO = ''04'' --	Disponible para la venta con reserva
-                    then ''Alquilado Contratado''    
+                    then ''Alquilado Contratado'' */  
                  when
                         SCM.DD_SCM_CODIGO = ''12'' --	Disponible para venta y alquiler con oferta
                     then ''''

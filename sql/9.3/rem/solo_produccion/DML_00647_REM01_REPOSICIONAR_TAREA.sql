@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20210202
+--## FECHA_CREACION=20210201
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8822

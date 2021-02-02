@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20210202
+--## FECHA_CREACION=20210201
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8818
@@ -31,9 +31,9 @@ BEGIN
 
    REM01.AVANCE_TRAMITE (
        V_USUARIO,
-       '222567',
+       '236009',
        'T013_InstruccionesReserva',
-       '222567', '11', PL_OUTPUT);
+       '236009', '11', PL_OUTPUT);
    DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
                
    COMMIT;

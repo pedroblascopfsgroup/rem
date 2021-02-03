@@ -147,6 +147,18 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	@Column(name = "SPS_POSESION_NEG")
 	private Boolean spsPosesionNeg;
 
+	@Column(name="SPS_USUARIOMODIFICAR_OCUPADO")
+	private String usuarioModificarOcupado;
+
+	@Column(name="SPS_FECHAMODIFICAR_OCUPADO")
+	private Date fechaModificarOcupado;
+
+	@Column(name="SPS_USUARIOMODIFICAR_CON_TITULO")
+	private String usuarioModificarConTitulo;
+
+	@Column(name="SPS_FECHAMODIFICAR_CON_TITULO")
+	private Date fechaModificarConTitulo;
+
 	@Version   
 	private Long version;
 
@@ -409,7 +421,37 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 		this.spsPosesionNeg = spsPosesionNeg;
 	}
 
+	public String getUsuarioModificarOcupado() {
+		return usuarioModificarOcupado;
+	}
 
+	public void setUsuarioModificarOcupado(String usuarioModificarOcupado) {
+		this.usuarioModificarOcupado = usuarioModificarOcupado;
+	}
+
+	public Date getFechaModificarOcupado() {
+		return fechaModificarOcupado;
+	}
+
+	public void setFechaModificarOcupado(Date fechaModificarOcupado) {
+		this.fechaModificarOcupado = fechaModificarOcupado;
+	}
+
+	public String getUsuarioModificarConTitulo() {
+		return usuarioModificarConTitulo;
+	}
+
+	public void setUsuarioModificarConTitulo(String usuarioModificarConTitulo) {
+		this.usuarioModificarConTitulo = usuarioModificarConTitulo;
+	}
+
+	public Date getFechaModificarConTitulo() {
+		return fechaModificarConTitulo;
+	}
+
+	public void setFechaModificarConTitulo(Date fechaModificarConTitulo) {
+		this.fechaModificarConTitulo = fechaModificarConTitulo;
+	}
 	
 	
 }

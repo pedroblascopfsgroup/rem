@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -135,8 +136,19 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	protected static final Log logger = LogFactory.getLog(GenericManager.class);
 
+	private static final String MENU_TAREAS = "MENU_ADMINISTRACION";
+	private static final String MENU_ACTIVOS= "MENU_ACTIVOS";
+	private static final String MENU_AGRUPACIONES= "MENU_AGRUPACIONES";
 	private static final String MENU_TRABAJOS= "MENU_TRABAJOS";
+	private static final String MENU_PRECIOS= "MENU_PRECIOS";
+	private static final String MENU_PUBLICACION= "MENU_PUBLICACION";
+	private static final String MENU_COMERCIAL= "MENU_COMERCIAL";
 	private static final String MENU_ADMINISTRACION = "MENU_ADMINISTRACION";
+	private static final String MENU_MASIVO= "MENU_MASIVO";
+	private static final String MENU_CONFIGURACION= "MENU_CONFIGURACION";
+	
+
+	private static final List<String> TABS_BBVA = Arrays.asList(MENU_ACTIVOS, MENU_COMERCIAL);
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -325,7 +337,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	@BusinessOperationDefinition("genericManager.getMenuItems")
 	public List<DtoMenuItem> getMenuItems(String tipo) {
-
 		AuthenticationData authData = getAuthenticationData();
 		JsonParser jsonParser = new JsonParser();
 		List<DtoMenuItem> menuItemsPerm = new ArrayList<DtoMenuItem>();
@@ -374,8 +385,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			}
 						
 			if((secFunPermToRender == null || authData.getAuthorities().contains(secFunPermToRender)) && 
-					((esUsuCarteraBBVA && !MENU_ADMINISTRACION.equalsIgnoreCase(secFunPermToRender) && !MENU_TRABAJOS.equalsIgnoreCase(secFunPermToRender)) ||
-					!esUsuCarteraBBVA)) {
+					((esUsuCarteraBBVA && TABS_BBVA.contains(secFunPermToRender)) || !esUsuCarteraBBVA)) {
 				DtoMenuItem menuItem = new DtoMenuItem();
 				try {
 					beanUtilNotNull.copyProperties(menuItem, itemObject);

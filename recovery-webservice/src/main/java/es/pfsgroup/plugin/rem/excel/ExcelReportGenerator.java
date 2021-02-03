@@ -841,7 +841,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			cellReference = new CellReference("D18");
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
-			if(dtoExcelFichaComercial.getNroViviendas() != null) {
+			if(dtoExcelFichaComercial.getNroViviendas() != null && dtoExcelFichaComercial.getNroViviendas() > 0) {
 			c.setCellValue(dtoExcelFichaComercial.getNroViviendas());
 			}
 			
@@ -864,7 +864,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			cellReference = new CellReference("D19");
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
-			if(dtoExcelFichaComercial.getNroPisos() != null) {
+			if(dtoExcelFichaComercial.getNroPisos() != null && dtoExcelFichaComercial.getNroPisos() > 0) {
 			c.setCellValue(dtoExcelFichaComercial.getNroPisos());
 			}
 			
@@ -887,7 +887,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			cellReference = new CellReference("D20");
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
-			if(dtoExcelFichaComercial.getNroOtros() != null) {
+			if(dtoExcelFichaComercial.getNroOtros() != null && dtoExcelFichaComercial.getNroOtros() > 0) {
 			c.setCellValue(dtoExcelFichaComercial.getNroOtros());
 			}
 			
@@ -910,7 +910,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			cellReference = new CellReference("D21");
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
-			if(dtoExcelFichaComercial.getNroGaraje() != null) {
+			if(dtoExcelFichaComercial.getNroGaraje() != null && dtoExcelFichaComercial.getNroGaraje() > 0) {
 			c.setCellValue(dtoExcelFichaComercial.getNroGaraje());
 			}
 			

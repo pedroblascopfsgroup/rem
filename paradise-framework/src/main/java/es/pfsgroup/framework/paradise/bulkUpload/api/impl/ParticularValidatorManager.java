@@ -3403,6 +3403,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean estadoPrevioTrabajoFinalizado(String celdaTrabajo) {
+		if(Checks.esNulo(celdaTrabajo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)  "
+				+"		FROM ACT_TBJ_TRABAJO"
+				+"		WHERE TBJ_NUM_TRABAJO = "+celdaTrabajo+""
+				+"	AND dd_est_id = 61 AND BORRADO= 0");
+
+		return "1".equals(resultado);
+
+	}
+	
+	@Override
 	public Boolean fechaEjecucionCumplimentada(String celdaTrabajo) {
 		if(Checks.esNulo(celdaTrabajo))
 			return false;

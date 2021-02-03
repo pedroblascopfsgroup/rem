@@ -898,14 +898,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activoFoto.setNombre(fileItem.getBasename());
 				
 				String descripcion = null;
-				DDSubtipoActivo subtipoActivo = activo.getSubtipoActivo();
+				String codigoSubtipoActivo = activo.getSubtipoActivo().getCodigo();
 				DDDescripcionFotoActivo descripcionFoto = null;
 
 				if (fileItem.getMetadata().containsKey("descripcion")) {
 					descripcion = fileItem.getMetadata().get("descripcion");
-					if (descripcion != null && subtipoActivo != null) {
+					if (descripcion != null && codigoSubtipoActivo != null) {
 						descripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "descripcion", descripcion), 
-							genericDao.createFilter(FilterType.EQUALS, "subtipoActivo", subtipoActivo));
+							genericDao.createFilter(FilterType.EQUALS, "subtipoActivo.codigo", codigoSubtipoActivo));
 					}
 					if (descripcionFoto != null) {
 						activoFoto.setDescripcion(descripcionFoto.getDescripcion());

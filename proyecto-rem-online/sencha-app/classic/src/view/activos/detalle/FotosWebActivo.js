@@ -143,7 +143,8 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 		                	bind: {
 		                		store: '{storeDescripcionFoto}',
 				        		value: '{codigoDescripcionFoto}'
-							}
+							},
+							allowBlank: false
 		                },
 		                { 
 		                	xtype: 'datefieldbase',

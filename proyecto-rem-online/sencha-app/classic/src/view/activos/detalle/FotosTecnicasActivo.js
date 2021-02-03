@@ -142,7 +142,8 @@ Ext.define('HreRem.view.activos.detalle.FotosTecnicasActivo', {
 		                	bind: {
 		                		store: '{storeDescripcionFoto}',
 				        		value: '{fotoWeb.codigoDescripcionFoto}'
-							}
+							},
+							allowBlank: false
 		                },
 		                { 
 		                	name: 'fechaDocumento',

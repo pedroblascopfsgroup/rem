@@ -149,7 +149,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
 		                	bind: {
 		                		store: '{storeDescripcionFoto}',
 				        		value: '{codigoDescripcionFoto}'
-							}
+							},
+							allowBlank: false
 		                },
 		                { 
 		                	name: 'fechaDocumento',

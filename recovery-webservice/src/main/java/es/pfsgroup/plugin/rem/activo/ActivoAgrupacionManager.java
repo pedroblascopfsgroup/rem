@@ -301,14 +301,18 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				activoFoto.setNombre(fileItem.getBasename());
 				
 				String descripcion = null;
-				DDSubtipoActivo subtipoActivo = genericDao.get(DDSubtipoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubtipoActivo.CODIGO_EN_CONSTRUCCION));
+				String codigoSubtipoActivo = DDSubtipoActivo.CODIGO_EN_CONSTRUCCION;
+				
+				if (subdivisionId != null) {
+					codigoSubtipoActivo = genericDao.get(VSubdivisionesAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", subdivisionId)).getCodigoSubtipoActivo();
+				}
 				DDDescripcionFotoActivo descripcionFoto = null;
 
 				if (fileItem.getMetadata().containsKey("descripcion")) {
 					descripcion = fileItem.getMetadata().get("descripcion");
-					if (descripcion != null && subtipoActivo != null) {
+					if (descripcion != null && codigoSubtipoActivo != null) {
 						descripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "descripcion", descripcion), 
-							genericDao.createFilter(FilterType.EQUALS, "subtipoActivo", subtipoActivo));
+							genericDao.createFilter(FilterType.EQUALS, "subtipoActivo.codigo", codigoSubtipoActivo));
 					}
 					if (descripcionFoto != null) {
 						activoFoto.setDescripcion(descripcionFoto.getDescripcion());
@@ -475,14 +479,13 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				
 				String descripcion = null;
 				String codigoSubtipoActivo = genericDao.get(VSubdivisionesAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", subdivisionId)).getCodigoSubtipoActivo();
-				DDSubtipoActivo subtipoActivo = genericDao.get(DDSubtipoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoSubtipoActivo));
 				DDDescripcionFotoActivo descripcionFoto = null;
 
 				if (fileItem.getMetadata().containsKey("descripcion")) {
 					descripcion = fileItem.getMetadata().get("descripcion");
-					if (descripcion != null && subtipoActivo != null) {
+					if (descripcion != null && codigoSubtipoActivo != null) {
 						descripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "descripcion", descripcion), 
-							genericDao.createFilter(FilterType.EQUALS, "subtipoActivo", subtipoActivo));
+							genericDao.createFilter(FilterType.EQUALS, "subtipoActivo.codigo", codigoSubtipoActivo));
 					}
 					if (descripcionFoto != null) {
 						activoFoto.setDescripcion(descripcionFoto.getDescripcion());

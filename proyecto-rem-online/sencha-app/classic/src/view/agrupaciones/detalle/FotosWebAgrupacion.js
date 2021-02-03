@@ -134,7 +134,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosWebAgrupacion', {
 		                	bind: {
 		                		store: '{storeDescripcionFoto}',
 				        		value: '{codigoDescripcionFoto}'
-							}
+							},
+							allowBlank: false
 		                },
 		                { 
 		                	name: 'fechaDocumento',

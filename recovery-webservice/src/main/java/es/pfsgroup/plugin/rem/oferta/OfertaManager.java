@@ -131,6 +131,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPrescriptoresComision;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.DtoVariablesCalculoComiteLBK;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -143,6 +144,7 @@ import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.ProveedorGestorCajamar;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoConfiguracionTarifa;
@@ -192,6 +194,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertasAgrupadasLbkDao;
 import es.pfsgroup.plugin.rem.oferta.dao.VListadoOfertasAgrupadasLbkDao;
@@ -1036,6 +1039,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setTitularesAdicionales(null);
 				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta, false);
 			}
+			
+			DtoTextosOferta dto;
+			dto = new DtoTextosOferta();
+			if (!Checks.esNulo(ofertaDto.getPorcentajeDescuento())) {
+				dto.setCampoCodigo("07");
+				dto.setCampoDescripcion("Descuento respecto a precio publicado");
+				dto.setTexto(ofertaDto.getPorcentajeDescuento());
+				
+				saveTextoOfertaWS(dto, oferta);
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getJustificacionOferta())) {
+				dto.setCampoCodigo("08");
+				dto.setCampoDescripcion("Justificación del API");
+				dto.setTexto(ofertaDto.getJustificacionOferta());
+				
+				saveTextoOfertaWS(dto, oferta);
+			}
 
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion());
 			
@@ -1318,6 +1339,26 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getDocResponsabilidadPrescriptor())
 					&& !ofertaDto.getDocResponsabilidadPrescriptor().equals(oferta.getOfrDocRespPrescriptor())) {
 				oferta.setOfrDocRespPrescriptor(ofertaDto.getDocResponsabilidadPrescriptor());
+				modificado = true;
+			}
+			
+			DtoTextosOferta dto;
+			dto = new DtoTextosOferta();
+			if(!Checks.esNulo(ofertaDto.getPorcentajeDescuento())) {
+				dto.setCampoCodigo("07");
+				dto.setCampoDescripcion("Descuento respecto a precio publicado");
+				dto.setTexto(ofertaDto.getPorcentajeDescuento());
+				
+				saveTextoOfertaWS(dto, oferta);
+				modificado = true;
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getJustificacionOferta())){
+				dto.setCampoCodigo("08");
+				dto.setCampoDescripcion("Justificación del API");
+				dto.setTexto(ofertaDto.getJustificacionOferta());
+				
+				saveTextoOfertaWS(dto, oferta);
 				modificado = true;
 			}
 
@@ -6448,5 +6489,41 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			return gastoPendiente;
 	}	
 	
+	public void saveTextoOfertaWS(DtoTextosOferta dto, Oferta oferta) throws UserException {
+		TextosOferta textoOferta;
+		
+		Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+		Filter filtroTipoTexto;
+		
+		if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_DESCUENTO)) {
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_DESCUENTO);
+		}else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_JUSTIFICACION)){
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_JUSTIFICACION);
+		}else{
+			filtroTipoTexto = null;
+		}
+		
+		textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
+
+		if (textoOferta == null) {
+			// Estamos creando un texto que no existía.
+			textoOferta = new TextosOferta();
+			textoOferta.setOferta(oferta);
+			if (dto.getTexto() != null && dto.getTexto().length() > 2048) {
+				throw new UserException("La longitud del texto no puede exceder los 2048 car&acute;cteres");
+			}
+			textoOferta.setTexto(dto.getTexto());
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCampoCodigo());
+			DDTiposTextoOferta tipoTexto = genericDao.get(DDTiposTextoOferta.class, filtro);
+			textoOferta.setTipoTexto(tipoTexto);
+
+		} else {
+			// Modificamos un texto existente
+			textoOferta.setTexto(dto.getTexto());
+		}
+
+		genericDao.save(TextosOferta.class, textoOferta);
+		
+	}
 	
 }

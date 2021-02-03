@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=DAP
---## FECHA_CREACION=20210203
+--## FECHA_CREACION=20210204
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-12983
@@ -65,34 +65,30 @@ DECLARE
       T_TIPO_DATA('F03' ,'No pueden darse de alta prefacturas con trabajos sin importes, importes a cero y/o sin suplidos', '1', 'WHERE EXISTS (
         SELECT 1
         FROM #ESQUEMA#.ACT_TBJ_TRABAJO TBJ
+        LEFT JOIN (
+                SELECT PSU.TBJ_ID, PSU.IMPORTE_PROV_SUPL
+                FROM (
+                    SELECT PSU.TBJ_ID
+                        , SUM(
+                            CASE
+                                WHEN TAD.DD_TAD_CODIGO = ''''01''''
+                                THEN -NVL(PSU.PSU_IMPORTE, 0)
+                                WHEN TAD.DD_TAD_CODIGO = ''''02''''
+                                THEN NVL(PSU.PSU_IMPORTE, 0)
+                            END
+                        ) IMPORTE_PROV_SUPL
+                    FROM #ESQUEMA#.ACT_PSU_PROVISION_SUPLIDO PSU
+                    JOIN #ESQUEMA#.DD_TAD_TIPO_ADELANTO TAD ON TAD.DD_TAD_ID = PSU.DD_TAD_ID
+                    AND TAD.BORRADO = 0
+                    WHERE PSU.BORRADO = 0
+                    GROUP BY PSU.TBJ_ID
+                ) PSU
+                WHERE PSU.IMPORTE_PROV_SUPL <> 0
+            ) SUP ON SUP.TBJ_ID = TBJ.TBJ_ID
         WHERE TBJ.BORRADO = 0
-            AND (
-                    (
-                        NVL(TBJ.TBJ_IMPORTE_TOTAL, 0) <> 0
-                        AND NVL(TBJ.TBJ_IMPORTE_PRESUPUESTO, 0) <> 0
-                    )
-                    OR EXISTS (
-                        SELECT 1
-                        FROM (
-                            SELECT PSU.TBJ_ID
-                                , SUM(
-                                    CASE
-                                        WHEN TAD.DD_TAD_CODIGO = ''''01''''
-                                        THEN -NVL(PSU.PSU_IMPORTE, 0)
-                                        WHEN TAD.DD_TAD_CODIGO = ''''02''''
-                                        THEN NVL(PSU.PSU_IMPORTE, 0)
-                                    END
-                                ) IMPORTE_PROV_SUPL
-                            FROM #ESQUEMA#.ACT_PSU_PROVISION_SUPLIDO PSU
-                            JOIN #ESQUEMA#.DD_TAD_TIPO_ADELANTO TAD ON TAD.DD_TAD_ID = PSU.DD_TAD_ID
-                            AND TAD.BORRADO = 0
-                            WHERE PSU.BORRADO = 0
-                            GROUP BY PSU.TBJ_ID
-                        ) PSU
-                    WHERE PSU.TBJ_ID = TBJ.TBJ_ID
-                    AND PSU.IMPORTE_PROV_SUPL <> 0
-                    )
-                )
+            AND NVL(TBJ.TBJ_IMPORTE_TOTAL, 0) = 0 
+            AND NVL(TBJ.TBJ_IMPORTE_PRESUPUESTO, 0) = 0 
+            AND NVL(SUP.IMPORTE_PROV_SUPL, 0) = 0
             AND TBJ.TBJ_ID = AUX.TBJ_ID
     )'),
       T_TIPO_DATA('F04' ,'No pueden darse de alta prefacturas con trabajos incluidos en gastos previamente', '1', 'WHERE EXISTS (

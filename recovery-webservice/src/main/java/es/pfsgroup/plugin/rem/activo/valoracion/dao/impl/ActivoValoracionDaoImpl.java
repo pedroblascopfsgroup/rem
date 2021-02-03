@@ -476,10 +476,10 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 	}
 	
 	@Override
-	public List<ActivoValoraciones> getListActivoValoracionesByIdActivos(List<Long> idActivos) {
+	public List<ActivoValoraciones> getListActivoValoracionesByIdActivo(Long idActivo) {
 		
 		HQLBuilder hql = new HQLBuilder("from ActivoValoraciones ");
-		HQLBuilder.addFiltroWhereInSiNotNull(hql, "activo", idActivos);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "activo.id", idActivo);
 		hql.orderBy("fechaInicio", HQLBuilder.ORDER_ASC);
 
 		return HibernateQueryUtils.list(this, hql);

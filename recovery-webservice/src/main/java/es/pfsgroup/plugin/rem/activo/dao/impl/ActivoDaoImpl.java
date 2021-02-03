@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativaAdicional;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -936,6 +937,17 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder hb = new HQLBuilder(" from ActivoTasacion tas");
 		hb.appendWhere(" tas.activo.id = " + idActivo);
 		hb.orderBy("tas.valoracionBien.fechaValorTasacion", HQLBuilder.ORDER_DESC);
+		List<ActivoTasacion> activoTasacionList = (List<ActivoTasacion>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).list();
+		return activoTasacionList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoTasacion> getListActivoTasacionByIdActivoAsc(Long idActivo) {
+		HQLBuilder hb = new HQLBuilder(" from ActivoTasacion tas");
+		hb.appendWhere(" tas.activo.id = " + idActivo);
+		hb.orderBy("tas.valoracionBien.fechaValorTasacion", HQLBuilder.ORDER_ASC);
 		List<ActivoTasacion> activoTasacionList = (List<ActivoTasacion>) this.getSessionFactory().getCurrentSession()
 				.createQuery(hb.toString()).list();
 		return activoTasacionList;
@@ -2093,5 +2105,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				.createQuery(hql.toString()).list();
 		
 		return actAlquiladosList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivo(Long idActivo) {
+		
+		Order order = new Order(OrderType.ASC,"fechaInicio");
+		return genericDao.getListOrdered(ActivoHistoricoValoraciones.class, order, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
 	}
 }

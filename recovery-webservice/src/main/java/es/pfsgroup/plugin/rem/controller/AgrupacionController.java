@@ -70,6 +70,7 @@ import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 
@@ -481,6 +482,8 @@ public class AgrupacionController extends ParadiseJsonController {
 
 						BeanUtils.copyProperties(fotoDto, listaFotos.get(i));
 						
+						BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", DDSubtipoActivo.CODIGO_EN_CONSTRUCCION);
+						
 						if(listaFotos.get(i).getDescripcionFoto() != null) {
 							BeanUtils.copyProperty(fotoDto, "codigoDescripcionFoto", listaFotos.get(i).getDescripcionFoto().getCodigo());
 							BeanUtils.copyProperty(fotoDto, "descripcion", listaFotos.get(i).getDescripcionFoto().getDescripcion());
@@ -520,6 +523,8 @@ public class AgrupacionController extends ParadiseJsonController {
 						}
 						BeanUtils.copyProperties(fotoDto, listaFotos.get(i));
 						BeanUtils.copyProperty(fotoDto, "numeroActivo", listaFotos.get(i).getActivo().getId());
+						
+						BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", DDSubtipoActivo.CODIGO_EN_CONSTRUCCION);
 						
 						if(listaFotos.get(i).getDescripcionFoto() != null) {
 							BeanUtils.copyProperty(fotoDto, "codigoDescripcionFoto", listaFotos.get(i).getDescripcionFoto().getCodigo());
@@ -579,6 +584,10 @@ public class AgrupacionController extends ParadiseJsonController {
 						} else {
 							BeanUtils.copyProperty(fotoDto, "tituloFoto", "Principal EXTERIOR");
 						}
+					}
+					
+					if (subdivision.getCodigoSubtipoActivo() != null) {
+						BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", subdivision.getCodigoSubtipoActivo());
 					}
 					
 					if(listaFotos.get(i).getDescripcionFoto() != null) {

@@ -45,6 +45,9 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoSubdivision', {
 
     	me.buttons = [ { itemId: 'btnGuardar', text: 'Adjuntar', handler: 'onClickBotonAdjuntarFotoSubdivision'},{ itemId: 'btnCancelar', text: 'Cancelar',  handler: 'closeWindow', scope: this}];
 
+    	me.getViewModel().set('codigoSubtipoActivo', me.codigoSubtipoActivo);
+		me.getViewModel().notify();
+    	
     	me.items = [
     	
     	
@@ -121,7 +124,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoSubdivision', {
 						        {
 						        	xtype: 'combobox',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.descripcion'),
-						        	name: 'comboDescripcionFoto',
+						        	name: 'codigoDescripcionFoto',
 						        	editable: false,
 					            	bind: {
 						        		store: '{storeDescripcionAdjuntarFoto}'

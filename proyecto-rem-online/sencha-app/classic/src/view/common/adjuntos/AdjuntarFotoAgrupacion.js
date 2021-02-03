@@ -46,6 +46,9 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoAgrupacion', {
 		me.getViewModel().notify();
 
     	me.buttons = [ { itemId: 'btnGuardar', text: 'Adjuntar', handler: 'onClickBotonAdjuntarFoto'},{ itemId: 'btnCancelar', text: 'Cancelar',  handler: 'closeWindow', scope: this}];
+    	
+    	me.getViewModel().set('codigoSubtipoActivo', me.codigoSubtipoActivo);
+		me.getViewModel().notify();
 
     	me.items = [
     				{
@@ -92,7 +95,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoAgrupacion', {
 					    		{
 									xtype: 'combobox',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.descripcion'),
-						        	name: 'comboDescripcionFoto',
+						        	name: 'codigoDescripcionFoto',
 						        	editable: false,
 					            	bind: {
 						        		store: '{storeDescripcionAdjuntarFoto}'

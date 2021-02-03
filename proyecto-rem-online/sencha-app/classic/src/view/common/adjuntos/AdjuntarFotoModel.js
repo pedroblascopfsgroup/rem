@@ -18,6 +18,6 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoModel', {
     			property: 'codigoSubtipoActivo',
     			value: '{codigoSubtipoActivo}' 
     		}
-    	}	   
+    	}
     }
 });

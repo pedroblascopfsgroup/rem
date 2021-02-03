@@ -85,15 +85,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
                 	if(Ext.isEmpty(record.getData().nombre)){
                 		this.up('form').getForm().findField('nombre').setValue();
                 	}
-                	if(Ext.isEmpty(record.getData().descripcion)){
-                		this.up('form').getForm().findField('descripcion').setValue();
+                	if(Ext.isEmpty(record.getData().codigoDescripcionFoto)){
+                		this.up('form').getForm().findField('codigoDescripcionFoto').setValue();
                 	}
                 	if(Ext.isEmpty(record.getData().fechaDocumento)){
                 		this.up('form').getForm().findField('fechaDocumento').setValue();
                 	}
-                	
-                	
-                	Ext.global.console.log(record.data);
 	        		this.up('form').setBindRecord(record.data);
 	        		
 	        		this.lookupController().getViewModel().set('fotoSelected', record);
@@ -144,7 +141,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
 							}
 		                },
 		                { 
-		                	name: 'comboDescripcionFoto',
+		                	name: 'codigoDescripcionFoto',
 		                	xtype: 'comboboxfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.descripcion'),
 		                	editable: false,

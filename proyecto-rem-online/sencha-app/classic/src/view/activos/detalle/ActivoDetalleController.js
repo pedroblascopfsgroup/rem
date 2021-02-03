@@ -3557,8 +3557,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			if (form.findField("orden") != null) {
 				params['orden'] = form.findField("orden").getValue();
 			}
-			if (form.findField("descripcion") != null) {
-				params['descripcion'] = form.findField("descripcion")
+			if (form.findField("codigoDescripcionFoto") != null) {
+				params['codigoDescripcionFoto'] = form.findField("codigoDescripcionFoto")
 						.getValue();
 			}
 			if (form.findField("fechaDocumento") != null) {

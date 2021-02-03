@@ -230,9 +230,9 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			try {
 				if (gestorDocumentalFotos.isActive()) {
 					
-					if (fileItem.getParameter("comboDescripcionFoto") != null) {
+					if (fileItem.getParameter("codigoDescripcionFoto") != null) {
 						
-						DDDescripcionFotoActivo descripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto")));
+						DDDescripcionFotoActivo descripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto")));
 						
 						if (descripcionFoto != null ) {
 							fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),fileItem.getFileItem().getFileName(),
@@ -253,8 +253,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 				activoFoto.setNombre(fileItem.getFileItem().getFileName());
 	
-				activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto"))).getDescripcion());
-				activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto"))));
+				activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion());
+				activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))));
 	
 				activoFoto.setPrincipal(true);
 	
@@ -299,7 +299,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				}
 
 				activoFoto.setNombre(fileItem.getBasename());
-
+				
 				String descripcion = null;
 				DDSubtipoActivo subtipoActivo = genericDao.get(DDSubtipoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubtipoActivo.CODIGO_EN_CONSTRUCCION));
 				DDDescripcionFotoActivo descripcionFoto = null;
@@ -401,11 +401,11 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 					situacion = SITUACION.EXTERIOR;
 				}
 				
-				if (fileItem.getParameter("comboDescripcionFoto") != null) {
+				if (fileItem.getParameter("codigoDescripcionFoto") != null) {
 				
 					fileReponse = gestorDocumentalFotos.uploadSubdivision(fileItem.getFileItem().getFile(),
 							fileItem.getFileItem().getFileName(), subdivisionId, agrupacion,
-							genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto"))).getDescripcion(),
+							genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion(),
 							tipo,principal,situacion, orden);
 					
 				}
@@ -425,8 +425,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 			activoFoto.setNombre(fileItem.getFileItem().getFileName());
 			
-			activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto"))).getDescripcion());
-			activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto"))));
+			activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion());
+			activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))));
 
 			activoFoto.setPrincipal(Boolean.valueOf(fileItem.getParameter("principal")));
 			
@@ -472,7 +472,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				activoFoto.setAgrupacion(agrupacion);
 
 				activoFoto.setNombre(fileItem.getBasename());
-
+				
 				String descripcion = null;
 				String codigoSubtipoActivo = genericDao.get(VSubdivisionesAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", subdivisionId)).getCodigoSubtipoActivo();
 				DDSubtipoActivo subtipoActivo = genericDao.get(DDSubtipoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoSubtipoActivo));
@@ -487,7 +487,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 					if (descripcionFoto != null) {
 						activoFoto.setDescripcion(descripcionFoto.getDescripcion());
 						activoFoto.setDescripcionFoto(descripcionFoto);
-					}
+					}				
 				}
 
 				activoFoto.setPrincipal(false);

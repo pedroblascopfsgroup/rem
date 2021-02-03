@@ -359,8 +359,8 @@ public class ActivoAdapter {
 			if(!Checks.esNulo(dtoFoto.getOrden())) {
 				activoFoto.setOrden(dtoFoto.getOrden());
 			}
-			if (dtoFoto.getDescripcion() != null) {
-				DDDescripcionFotoActivo ddDescripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoFoto.getDescripcion()));
+			if (dtoFoto.getCodigoDescripcionFoto() != null) {
+				DDDescripcionFotoActivo ddDescripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoFoto.getCodigoDescripcionFoto()));
 				descripcion = ddDescripcionFoto.getDescripcion();
 				activoFoto.setDescripcionFoto(ddDescripcionFoto);
 				activoFoto.setDescripcion(descripcion);
@@ -389,7 +389,7 @@ public class ActivoAdapter {
 					throw new RuntimeException(fileReponse.getError());
 				}
 			}
-
+			
 			genericDao.save(ActivoFoto.class, activoFoto);
 
 		} catch (Exception e) {

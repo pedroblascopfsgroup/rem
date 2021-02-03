@@ -798,7 +798,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'descripcionesFoto'}
 			},
-			autoLoad: false,
+			autoLoad: true,
 			remoteFilter: false,
 			filters: {
     			property: 'codigoSubtipoActivo',
@@ -897,7 +897,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'agrupacion/getFotosSubdivisionById',
-		        extraParams: {id: '{subdivisionFoto.id}', agrId: '{subdivisionFoto.agrupacionId}'}
+		        extraParams: {id: '{subdivisionFoto.id}', agrId: '{subdivisionFoto.agrupacionId}', codigoSubtipoActivo: '{subdivisionFoto.codigoSubtipoActivo}'}
 		     }
     	},
     	

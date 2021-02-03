@@ -2691,11 +2691,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'descripcionesFoto'}
 			},
-			autoLoad: false,
+			autoLoad: true,
 			remoteFilter: false,
 			filters: {
     			property: 'codigoSubtipoActivo',
-    			value: '{fotoSelected.codigoSubtipoActivo}'  
+    			value: '{activo.subtipoActivoCodigo}'  
     		}
     	},
  		

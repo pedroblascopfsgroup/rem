@@ -558,6 +558,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	cargarFotosSubdivision: function (recordSelected) {
 
 		var me = this;
+    	
 		me.getViewModel().set("subdivisionFoto",recordSelected);
 		me.getViewModel().notify();
 		me.lookupReference("imageDataViewSubdivision").getStore().load();
@@ -755,8 +756,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		if(form.findField("orden")!=null){
 			params['orden']= form.findField("orden").getValue();
 		}
-		if(form.findField("descripcion")!=null){
-			params['descripcion']= form.findField("descripcion").getValue();
+		if(form.findField("codigoDescripcionFoto")!=null){
+			params['codigoDescripcionFoto']= form.findField("codigoDescripcionFoto").getValue();
 		}
 		if(form.findField("fechaDocumento")!=null){
 			params['fechaDocumento']= form.findField("fechaDocumento").getValue();

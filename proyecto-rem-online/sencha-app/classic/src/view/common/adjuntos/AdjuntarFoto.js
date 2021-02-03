@@ -136,7 +136,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFoto', {
 						        {
 						        	xtype: 'combobox',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.descripcion'),
-						        	name: 'comboDescripcionFoto',
+						        	name: 'codigoDescripcionFoto',
 						        	editable: false,
 					            	bind: {
 						        		store: '{storeDescripcionAdjuntarFoto}'

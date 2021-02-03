@@ -999,11 +999,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					situacion = SITUACION.EXTERIOR;
 				}
 
-				if (fileItem.getParameter("comboDescripcionFoto") != null) {
+				if (fileItem.getParameter("codigoDescripcionFoto") != null) {
 					
 					fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),
 							fileItem.getFileItem().getFileName(), PROPIEDAD.ACTIVO, activo.getNumActivo(), tipo,
-							genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto"))).getDescripcion(),
+							genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion(),
 							principal, situacion, orden);
 					
 				}
@@ -1017,8 +1017,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			activoFoto.setTipoFoto(tipoFoto);
 			activoFoto.setTamanyo(fileItem.getFileItem().getLength());
 			activoFoto.setNombre(fileItem.getFileItem().getFileName());
-			activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto"))).getDescripcion());
-			activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("comboDescripcionFoto"))));
+			activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion());
+			activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))));
 			activoFoto.setPrincipal(Boolean.valueOf(fileItem.getParameter("principal")));
 			activoFoto.setFechaDocumento(new Date());
 			activoFoto.setInteriorExterior(Boolean.valueOf(fileItem.getParameter("interiorExterior")));

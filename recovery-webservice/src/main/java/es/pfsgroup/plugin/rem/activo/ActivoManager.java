@@ -6706,6 +6706,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				order, filtro);
 		String estadoTitulo = null;
 		try {
+			if (!Checks.esNulo(titulo)) throw new HistoricoTramitacionException(
+					"Debe informarse algún dato de 'Tramitación título' para poder crear un registro.");
 			if (!Checks.estaVacio(listasTramitacion)) {
 				if (!Checks.esNulo(listasTramitacion.get(0).getFechaCalificacion()) && listasTramitacion.get(0)
 						.getFechaCalificacion().after(tramitacionDto.getFechaPresentacionRegistro())) {

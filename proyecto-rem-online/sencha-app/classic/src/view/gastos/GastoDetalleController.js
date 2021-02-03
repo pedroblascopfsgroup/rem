@@ -897,7 +897,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	onGuardarGastoComprobarExisteGasto: function(window, form) {
 		var me = this;
 		var url =  $AC.getRemoteUrl('gastosproveedor/existeGasto');
-		
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		Ext.Ajax.request({		    			
 	 		url: url,
 	   		params: form.getBindRecord().getData(),		    		
@@ -929,8 +929,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	            	
 	            } else if (!Ext.isEmpty(data) && data.success == "false"){		            		
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-	            }	
-	    	}
+	            }
+				me.getView().unmask();	
+	    	},
+			failure: function (a, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				me.getView().unmask();
+			}
 		});
 	},
 	
@@ -2251,13 +2256,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var valorCuota = 0;
     	var tipoImpositivoRetg = me.lookupReference('irpfTipoImpositivoRetG').getValue();
     	var despues;
-    
+		var esLiberbank = me.getViewModel().get('esLiberbank');
+		
     	if (Number.isNaN(value)){
     		despues = value;
     	}else{
     		despues = (CONST.TIPO_RETENCION['DESPUES'] == me.lookupReference('comboTipoRetencionRef').getValue());
     	}
-    	
     	
     	if(tipoImpositivo != null && base != null){
     		cuota = (tipoImpositivo * base)/100;
@@ -2276,7 +2281,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     		importeTotal = me.getImporteTotalLineasDetalle(me);
     		importeTotal = importeTotal - cuota;
     		if(cuotaRetG != null && cuotaRetG != undefined ){
-    			if(despues == false ){
+    			if(despues == false && esLiberbank ){
     				importeTotal = importeTotal - cuotaRetG - valorCuota ;
     	    	}else{
     	    		importeTotal = importeTotal - cuotaRetG;
@@ -2793,7 +2798,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     getImporteRetencionLineasDetalle: function(me, despues){
     	var importeTotal = 0;
     	
-
+		var esLiberbank = me.getViewModel().get('esLiberbank');
     	if(me.lookupReference('lineaDetalleGastoGrid').getStore() != null && me.lookupReference('lineaDetalleGastoGrid').getStore() != undefined){
     		for(var i = 0; i < me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items.length; i++){
     			var baseSujeta = me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('baseSujeta');
@@ -2806,7 +2811,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     			if(!Ext.isEmpty(baseNoSujeta)){
     				importeTotal+= parseFloat(baseNoSujeta);
     			}
-    			if(despues && !Ext.isEmpty(cuota)){  		
+    			if(despues && !Ext.isEmpty(cuota) && esLiberbank){  
     				importeTotal+= parseFloat(cuota);
     			}
     		}

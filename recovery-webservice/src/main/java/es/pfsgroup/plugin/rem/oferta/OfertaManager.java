@@ -1017,7 +1017,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionRc())) {
 				oferta.setOfrFechaRecomendacionRc(ofertaDto.getFechaRecomendacionRc());
 			}
-			
+
 			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())) {
 				oferta.setOfrRecomendacionDc(ofertaDto.getRecomendacionDc());
 			}
@@ -1042,6 +1042,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			DtoTextosOferta dto;
 			dto = new DtoTextosOferta();
+			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())) {
+				dto.setCampoCodigo("05");
+				dto.setCampoDescripcion("Recomendación RC");
+				dto.setTexto(ofertaDto.getRecomendacionRc());
+				
+				saveTextoOfertaWS(dto, oferta);
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())) {
+				dto.setCampoCodigo("06");
+				dto.setCampoDescripcion("Recomendación DC");
+				dto.setTexto(ofertaDto.getRecomendacionDc());
+				
+				saveTextoOfertaWS(dto, oferta);
+			}
+			
 			if (!Checks.esNulo(ofertaDto.getPorcentajeDescuento())) {
 				dto.setCampoCodigo("07");
 				dto.setCampoDescripcion("Descuento respecto a precio publicado");
@@ -1311,7 +1327,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setOfertaSingular(ofertaDto.getEsOfertaSingular());
 				modificado = true;
 			}
-			
+
 			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())
 					&& !ofertaDto.getRecomendacionRc().equals(oferta.getOfrRecomendacionRc())) {
 				oferta.setOfrRecomendacionRc(ofertaDto.getRecomendacionRc());
@@ -1323,7 +1339,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setOfrFechaRecomendacionRc(ofertaDto.getFechaRecomendacionRc());
 				modificado = true;
 			}
-			
+
 			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())
 					&& !ofertaDto.getRecomendacionDc().equals(oferta.getOfrRecomendacionDc())) {
 				oferta.setOfrRecomendacionDc(ofertaDto.getRecomendacionDc());
@@ -1344,6 +1360,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			DtoTextosOferta dto;
 			dto = new DtoTextosOferta();
+			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())) {
+				dto.setCampoCodigo("05");
+				dto.setCampoDescripcion("Recomendación RC");
+				dto.setTexto(ofertaDto.getRecomendacionRc());
+				
+				saveTextoOfertaWS(dto, oferta);
+				modificado = true;
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())) {
+				dto.setCampoCodigo("06");
+				dto.setCampoDescripcion("Recomendación DC");
+				dto.setTexto(ofertaDto.getRecomendacionDc());
+				
+				saveTextoOfertaWS(dto, oferta);
+				modificado = true;
+			}
+			
 			if(!Checks.esNulo(ofertaDto.getPorcentajeDescuento())) {
 				dto.setCampoCodigo("07");
 				dto.setCampoDescripcion("Descuento respecto a precio publicado");
@@ -6499,7 +6533,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_DESCUENTO);
 		}else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_JUSTIFICACION)){
 			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_JUSTIFICACION);
-		}else{
+		}else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_DC)) {
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_DC);
+		} else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC)) {
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC);
+		} else{
 			filtroTipoTexto = null;
 		}
 		

@@ -2273,8 +2273,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	if(tipoImpositivoRetg != null ){
     		valorCuota = (tipoImpositivoRetg * valorCuota)/100;	
     	}
-    	
+
     	var importeTotal = 0;
+		cuota = Number(Math.round(cuota + "e+" + 2)  + "e-" + 2);
     	me.lookupReference('cuotaIRPFImpD').setValue(cuota);
 
     	if(!me.lookupReference('lineaDetalleGastoGrid').getStore().loading){

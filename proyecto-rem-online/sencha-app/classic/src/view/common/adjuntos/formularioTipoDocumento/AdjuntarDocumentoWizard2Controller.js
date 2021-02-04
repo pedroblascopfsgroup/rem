@@ -41,7 +41,7 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 		var fileupload = me.getView().wizardAnterior.down('[reference = fileUpload]').value;
 		var comboTipoDocumento = me.getView().wizardAnterior.down('[reference = tipoDocumentoNuevoComprador]').value;
 		var descripcion =me.getView().wizardAnterior.down('[reference = descripcion]').value;
-		var url =  $AC.getRemoteUrl('activo/upload');
+		var url =  $AC.getRemoteUrl('gestordocumental/upload');
 		var idEntidad = wizard.idEntidad; 
 		var entidad = wizard.entidad; 
 		form2 = me.getView().wizardAnterior.down('form');
@@ -72,7 +72,14 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 		siguienteReferencia = form.down('[reference=primero]');
 		while (!Ext.isEmpty(siguienteReferencia.nextSibling())){
 			siguienteReferencia = siguienteReferencia.nextSibling();
-			nuevosParametros [siguienteReferencia.reference] = siguienteReferencia.value;
+			if(siguienteReferencia.xtype.match('datefield')){
+				var fecha = siguienteReferencia.value.toLocaleDateString();
+				nuevosParametros [siguienteReferencia.reference] = fecha;
+			}else{
+				siguienteReferencia = siguienteReferencia.nextSibling();
+				nuevosParametros [siguienteReferencia.reference] = siguienteReferencia.value;
+			}
+			
 		}
 		
 		return nuevosParametros;

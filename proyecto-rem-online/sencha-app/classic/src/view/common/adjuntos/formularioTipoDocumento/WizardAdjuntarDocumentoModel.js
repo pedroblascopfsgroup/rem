@@ -12,7 +12,9 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.WizardAdjuntarDo
 			name : 'descripcion'
 		},
 		{
-			name : 'fechaEmision'
+			name : 'fechaEmision',
+			type:'date',
+			dateFormat: 'c'
 		},
 		{
 			name : 'combosinoAplica'
@@ -21,13 +23,19 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.WizardAdjuntarDo
 			name : 'aplica'	
 		},
 		{
-			name : 'fechaCaducidad'
+			name : 'fechaCaducidad',
+			type:'date',
+			dateFormat: 'c'
 		},
 		{
-			name : 'fechaObtencion'
+			name : 'fechaObtencion',
+			type:'date',
+			dateFormat: 'c'
 		},
 		{
-			name : 'fechaEtiqueta'
+			name : 'fechaEtiqueta',
+			type:'date',
+			dateFormat: 'c'
 		},
 		{
 			name : 'registro'

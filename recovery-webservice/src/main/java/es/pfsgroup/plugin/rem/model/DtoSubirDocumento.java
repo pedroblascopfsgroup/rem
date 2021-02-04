@@ -10,9 +10,9 @@ public class DtoSubirDocumento extends DtoTabActivo{
 	private String aplica;
 	private String fechaEmision;
 	private String fechaCaducidad;
-	private Boolean fechaObtencion;
+	private String fechaObtencion;
 	private String fechaEtiqueta;
-	private Double registro;
+	private String registro;
 	
 	public String getAplica() {
 		return aplica;
@@ -32,10 +32,10 @@ public class DtoSubirDocumento extends DtoTabActivo{
 	public void setFechaCaducidad(String fechaCaducidad) {
 		this.fechaCaducidad = fechaCaducidad;
 	}
-	public Boolean getFechaObtencion() {
+	public String getFechaObtencion() {
 		return fechaObtencion;
 	}
-	public void setFechaObtencion(Boolean fechaObtencion) {
+	public void setFechaObtencion(String fechaObtencion) {
 		this.fechaObtencion = fechaObtencion;
 	}
 	public String getFechaEtiqueta() {
@@ -44,10 +44,10 @@ public class DtoSubirDocumento extends DtoTabActivo{
 	public void setFechaEtiqueta(String fechaEtiqueta) {
 		this.fechaEtiqueta = fechaEtiqueta;
 	}
-	public Double getRegistro() {
+	public String getRegistro() {
 		return registro;
 	}
-	public void setRegistro(Double registro) {
+	public void setRegistro(String registro) {
 		this.registro = registro;
 	}
 

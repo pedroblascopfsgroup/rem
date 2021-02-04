@@ -333,6 +333,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean checkExcluirValidacionesGestionComercial;
 	private String codSubfasePublicacion;
 	
+	private Boolean editarVisibilidadGestionComercial;
+	
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -2481,6 +2483,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setCdpen(String cdpen) {
 		this.cdpen = cdpen;
+	}
+
+	public Boolean getEditarVisibilidadGestionComercial() {
+		return editarVisibilidadGestionComercial;
+	}
+
+	public void setEditarVisibilidadGestionComercial(Boolean editarVisibilidadGestionComercial) {
+		this.editarVisibilidadGestionComercial = editarVisibilidadGestionComercial;
 	}	
 	
 }

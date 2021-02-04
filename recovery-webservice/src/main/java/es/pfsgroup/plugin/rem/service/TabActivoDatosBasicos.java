@@ -1087,6 +1087,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setCodSubfasePublicacion(fasePublicacionActivoVigente.getSubFasePublicacion().getCodigo());
 		}
 		
+		if((DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(activoDto.getEstadoAlquilerCodigo()) 
+				|| DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(activoDto.getEstadoVentaCodigo()))
+				&& !activoDto.getPertenceAgrupacionRestringida()) {
+			activoDto.setEditarVisibilidadGestionComercial(true);
+		}else {
+			activoDto.setEditarVisibilidadGestionComercial(false);
+		}
 		return activoDto;
 	}
 	

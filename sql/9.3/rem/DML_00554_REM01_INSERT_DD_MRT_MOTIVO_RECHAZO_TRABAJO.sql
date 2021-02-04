@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=DAP
---## FECHA_CREACION=20210204
+--## FECHA_CREACION=20210205
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-12983
@@ -159,7 +159,29 @@ DECLARE
         FROM #ESQUEMA#.ACT_TBJ_TRABAJO TBJ
         JOIN #ESQUEMA#.PROC_AUX_TRABAJOS_INCL INCL ON INCL.TBJ_NUM_TRABAJO = TBJ.TBJ_NUM_TRABAJO
         WHERE TBJ.BORRADO = 0
-    ) > 0')
+    ) > 0'
+    ),
+      T_TIPO_DATA('F12' ,'No pueden darse de alta prefacturas con trabajos de la cartera CAJAMAR', '1', 'WHERE EXISTS (
+        SELECT 1
+        FROM #ESQUEMA#.ACT_TBJ_TRABAJO TBJ
+        JOIN #ESQUEMA#.ACT_TBJ ATB ON ATB.TBJ_ID = TBJ.TBJ_ID
+        JOIN #ESQUEMA#.ACT_ACTIVO ACT ON ACT.ACT_ID = ATB.ACT_ID
+            AND ACT.BORRADO = 0
+        JOIN #ESQUEMA#.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
+            AND CRA.BORRADO = 0
+        WHERE TBJ.BORRADO = 0
+            AND CRA.DD_CRA_CODIGO = ''''01''''
+            AND TBJ.TBJ_ID = AUX.TBJ_ID
+    )'
+    ),
+      T_TIPO_DATA('F13' ,'No pueden darse de alta prefacturas con trabajos sin proveedor', '1', 'WHERE EXISTS (
+        SELECT 1
+        FROM #ESQUEMA#.ACT_TBJ_TRABAJO TBJ
+        WHERE TBJ.BORRADO = 0
+            AND TBJ.PVC_ID IS NULL
+            AND TBJ.TBJ_ID = AUX.TBJ_ID
+    )'
+    )
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

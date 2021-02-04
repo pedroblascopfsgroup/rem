@@ -387,4 +387,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public List<ActivosAlquilados> getListActivosAlquiladosByIdActivos(List<Long> idActivos);
 	
 	public List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivo(Long idActivo);
+
+	boolean activocheckGestion(Long idActivo);
 }

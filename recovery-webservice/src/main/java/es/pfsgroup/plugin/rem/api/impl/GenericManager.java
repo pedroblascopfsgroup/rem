@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.LazyInitializationException;
+import org.hibernate.annotations.Filters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -60,6 +61,7 @@ import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
@@ -85,6 +87,7 @@ import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.LocalizacionSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
@@ -743,7 +746,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboTipoTrabajoCreaFiltered")
-	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered(String idActivo) {
+	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered(String idActivo,String numTrabajo) {
 
 		List<DDTipoTrabajo> tiposTrabajo = new ArrayList<DDTipoTrabajo>();
 		List<DDTipoTrabajo> tiposTrabajoFiltered = new ArrayList<DDTipoTrabajo>();
@@ -761,6 +764,22 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 		if (idActivo != null && !idActivo.isEmpty() && StringUtils.isNumeric(idActivo)) {
 			Activo act = activoApi.get(Long.parseLong(idActivo));
+			// Si no hay registro en BBDD de perimetro, el get nos
+			// devuelve un PerimetroActivo nuevo
+			// con todas las condiciones de perimetro activas
+			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(Long.parseLong(idActivo));
+			if(!Checks.esNulo(perimetroActivo.getAplicaGestion())
+					&& perimetroActivo.getAplicaGestion()==0) {
+				
+				if(numTrabajo !=null && !numTrabajo.isEmpty() && StringUtils.isNumeric(numTrabajo)) {
+					
+					Trabajo trabajo = genericDao.get(Trabajo.class, genericDao.createFilter(FilterType.EQUALS, "numTrabajo",Long.parseLong(numTrabajo)) );
+					if(trabajo.getTipoTrabajo()!=null) {
+						tiposTrabajoFiltered.add(trabajo.getTipoTrabajo());
+						return tiposTrabajoFiltered;
+					}
+				}
+			}
 			for (DDTipoTrabajo tipoTrabajo : tiposTrabajo) {
 				// No se pueden crear tipos de trabajo ACTUACION TECNICA ni
 				// OBTENCION DOCUMENTAL
@@ -771,19 +790,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 						tiposTrabajoFiltered.add(tipoTrabajo);
 					}
 				} else {
-					if (DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tipoTrabajo.getCodigo())
-							|| DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(tipoTrabajo.getCodigo())) {
-						// Si no hay registro en BBDD de perimetro, el get nos
-						// devuelve un PerimetroActivo nuevo
-						// con todas las condiciones de perimetro activas
-						PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(Long.parseLong(idActivo));
-
-						if (!Checks.esNulo(perimetroActivo.getAplicaGestion())
-								&& perimetroActivo.getAplicaGestion() == 1) {
-							// Activo con Gestion en perimetro
-							tiposTrabajoFiltered.add(tipoTrabajo);
-						}
-					} else if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
+					if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
 							&& !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())
 							&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())
 							&& !DDTipoTrabajo.CODIGO_PRECIOS.equals(tipoTrabajo.getCodigo())) {
@@ -794,7 +801,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 					}
 				}
-			}
+			}			
 		} else {
 
 			for (DDTipoTrabajo tipoTrabajo : tiposTrabajo) {
@@ -814,11 +821,11 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 				}
 			}
-		}
+		}		
 		return tiposTrabajoFiltered;
 
 	}
-
+	
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboSubtipoTrabajo")
 	public List<DDSubtipoTrabajo> getComboSubtipoTrabajo(String tipoTrabajoCodigo, Long idActivo) {

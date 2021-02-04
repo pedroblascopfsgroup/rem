@@ -2157,6 +2157,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return activoEPU.equals("1");
 	}
+	
+	@Override
+	public boolean isMismoTcoActivoPrincipalAgrupacion(String numActivo, String numAgrupacion) {
+		String activoTCO = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_ACTIVO ACT "
+				+"					JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID "
+				+"					WHERE ACT.ACT_NUM_ACTIVO = "+numActivo 
+				+"					AND APU.DD_TCO_ID = (SELECT APU.DD_TCO_ID FROM ACT_APU_ACTIVO_PUBLICACION APU" 
+				+"					JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID" 
+				+"	       			JOIN ACT_AGR_AGRUPACION AGR ON ACT.ACT_ID = AGR.AGR_ACT_PRINCIPAL" 
+				+"	       			AND AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+")"
+		);
+
+		return activoTCO.equals("1");
+	}
 
 	@Override
 	public boolean isMismoEpuActivoPrincipalExcel(String numActivo, String numActivoPrincipalExcel) {

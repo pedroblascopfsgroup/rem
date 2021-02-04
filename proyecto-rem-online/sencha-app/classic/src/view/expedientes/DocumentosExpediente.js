@@ -44,6 +44,35 @@ Ext.define('HreRem.view.expedientes.DocumentosExpediente', {
 			        }
             	]
 				},
+				{
+					xtype : 'fieldsettable',
+					height : 50,
+					margin : '0 10 10 0',
+					layout : {
+						type : 'table',
+						columns : 1
+			        	},
+			        	bind: {
+					    	hidden: '{!esOfertaVenta}'
+			            },
+						defaultType: 'textfieldbase',
+						title: HreRem.i18n("title.responsabilidad"),
+						items :
+							[
+							
+								{ 
+									xtype : 'comboboxfieldbase',
+									readOnly : true,
+									fieldLabel: HreRem.i18n('fieldlabel.responsable.documentacion.cliente'),
+									labelWidth: 200,
+									bind : {
+										store : '{comboTipoResponsable}',
+										value : '{datosbasicosoferta.tipoResponsableCodigo}'
+									}
+						        }
+				                
+							]
+				},
 				{ 
 				    xtype		: 'gridBase',
 				    topBar		: $AU.userHasFunction(['EDITAR_TAB_DOCUMENTOS_EXPEDIENTES']),

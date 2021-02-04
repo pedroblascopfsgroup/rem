@@ -574,4 +574,10 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 	}
 	
 	
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }

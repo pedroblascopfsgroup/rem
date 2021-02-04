@@ -486,4 +486,9 @@ public class MSVAgrupacionProyectoExcelValidator extends MSVExcelValidatorAbstra
 		return listaFilasError;
 	}
 
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }

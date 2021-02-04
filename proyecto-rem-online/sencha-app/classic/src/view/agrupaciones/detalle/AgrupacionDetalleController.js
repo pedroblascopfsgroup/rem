@@ -68,8 +68,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	  	var url= $AC.getRemoteUrl('trabajo/getSupervisorGestorTrabajo');
     	var tipoAgrupacionCodigo= me.getViewModel().get("agrupacionficha.tipoAgrupacionCodigo");
     	var gestorActivo = $AU.getUser().userName;
-    	
     	var data;
+    	
+    	me.getView().mask(HreRem.i18n("msg.mask.loading"));
+    	
 		Ext.Ajax.request({
 		     url: url,
 		     params: {idActivo : idActivo, idAgrupacion : idAgrupacion, gestorActivo: gestorActivo},
@@ -89,7 +91,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		    	btn.lookupViewModel().getView().add(ventana);
 				ventana.show();
 		        me.getView().unmask();
-		        
 		     },
 		     failure: function(response) {
 		    	//me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearPeticionTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera, codSubcartera: codSubcartera, idUsuario: null, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true, gestorActivo: gestorActivo});

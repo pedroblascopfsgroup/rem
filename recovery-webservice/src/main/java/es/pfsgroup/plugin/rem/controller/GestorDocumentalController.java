@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,13 +20,17 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
+import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DtoMetadatosEspecificos;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
 
 @Controller
 public class GestorDocumentalController extends ParadiseJsonController {
@@ -58,6 +61,9 @@ public class GestorDocumentalController extends ParadiseJsonController {
 	@Autowired
 	private GenericABMDao genericDao;
 
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
+		
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView upload(HttpServletRequest request, DtoMetadatosEspecificos dto) {
@@ -67,20 +73,16 @@ public class GestorDocumentalController extends ParadiseJsonController {
 			String entidad = webFileItem.getParameter("entidad");
 			String idEntidad = webFileItem.getParameter("idEntidad"); 
 			String tipoDocumento = webFileItem.getParameter("tipo");
-
-			//redireccion de si viene de trabajo o activo
-			if(entidad != null) {
-				if(webFileItem.getParameter("entidad").equalsIgnoreCase("activo")) {
+			
+			if( entidad != null && idEntidad != null && dto != null && tipoDocumento != null) {
+				this.guardarFormularioSubidaDocumento(idEntidad , entidad, tipoDocumento, dto);
+				if(GestorDocumentalApi.ENTIDAD_ACTIVO.equalsIgnoreCase(entidad)) {
 					adapter.upload(webFileItem, dto);
-				}else{
+				}else if(GestorDocumentalApi.ENTIDAD_TRABAJO.equalsIgnoreCase(entidad)){
 					trabajoApi.upload(webFileItem);
 				}
 			}
 
-			if(!entidad.equals(null) && !idEntidad.equals(null) && dto != null) {
-				this.guardarFormularioSubidaDocumento(idEntidad , entidad, dto);
-			}
-			
 			model.put(RESPONSE_SUCCESS_KEY, true);			
 		} catch (GestorDocumentalException e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
@@ -97,12 +99,17 @@ public class GestorDocumentalController extends ParadiseJsonController {
 
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public void guardarFormularioSubidaDocumento(String idEntidad , String entidad, DtoMetadatosEspecificos dto) throws ParseException {
-		Filter f2 = genericDao.createFilter(FilterType.EQUALS, "activo.id",Long.parseLong(idEntidad));
-		ActivoAdmisionDocumento activoAdmisionDocumento = genericDao.get(ActivoAdmisionDocumento.class, f2);
+	public void guardarFormularioSubidaDocumento(String idEntidad , String entidad, String tipoDocumento, DtoMetadatosEspecificos dto) throws ParseException {
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id",Long.parseLong(idEntidad));
+		Activo activo = genericDao.get(Activo.class, filtroActivo);
 		
-		Filter activ = genericDao.createFilter(FilterType.EQUALS, "id",Long.parseLong(idEntidad));
-		Activo activo = genericDao.get(Activo.class, activ);
+		DDTipoDeDocumento tipoDocDiccionario = (DDTipoDeDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPresentacion.class, tipoDocumento);
+		Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.id", tipoDocDiccionario.getId());
+		Filter filtrotipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.id",activo.getTipoActivo().getId());
+		ActivoConfigDocumento actConfDoc = genericDao.get(ActivoConfigDocumento.class, filtroDocumento,filtrotipoActivo);
+		
+		Filter filtroActConfDoc = genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", actConfDoc.getId());
+		ActivoAdmisionDocumento activoAdmisionDocumento = genericDao.get(ActivoAdmisionDocumento.class, filtroActivo, filtroActConfDoc);
 		
 		
 		if(activoAdmisionDocumento == null) {

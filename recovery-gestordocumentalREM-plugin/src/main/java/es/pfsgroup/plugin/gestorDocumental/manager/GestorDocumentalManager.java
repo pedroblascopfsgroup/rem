@@ -76,6 +76,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	private static final String URL_REST_CLIENT_GESTOR_DOCUMENTAL_DOCUMENTOS = "rest.client.gestor.documental.documentos";
 	public static final String ERROR_SERVER_NOT_RESPONDING="El servidor de gestor documental no responde.";
 	private static final Map<String, String> contents;
+	private static final String ENTIDAD_ACTIVO = "activo";
 	
 	static {
 		contents = new HashMap<String, String>();

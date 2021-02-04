@@ -1593,6 +1593,27 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
+	public boolean activocheckGestion(Long idActivo) {
+		String sql = "          SELECT count(1)  " +
+		" FROM REM01.ACT_ACTIVO ACT  " +
+		" JOIN REM01.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID=ACT.ACT_ID " +
+		" WHERE ACT_NUM_ACTIVO = "+ idActivo +
+		" AND ACT.BORRADO = 0 AND PAC.PAC_CHECK_GESTIONAR=1";
+		int result;
+	
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			result=((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue();
+			if (result==1) {
+				return true;
+			}else {
+				return false;
+			}			 
+		}
+		return false;
+
+	}
+	
+	@Override
 	public boolean activoPerteneceABBVAAndCERBERUS(Long idActivo) { 
 		String sql = "          SELECT count(1)  " +
 				"				FROM REM01.ACT_ACTIVO ACT " +

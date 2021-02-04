@@ -26,9 +26,11 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
 
@@ -50,19 +52,16 @@ public class GestorDocumentalController extends ParadiseJsonController {
 	SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy");
 
 	@Autowired
-	private ActivoAdapter adapter;
+	private ActivoAdapter activoAdapter;
 
 	@Autowired
 	private UploadAdapter uploadAdapter;
 	
 	@Autowired
 	private TrabajoApi trabajoApi;
-	
-	@Autowired
-	private GenericABMDao genericDao;
 
 	@Autowired
-	private UtilDiccionarioApi utilDiccionarioApi;
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 		
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -73,14 +72,26 @@ public class GestorDocumentalController extends ParadiseJsonController {
 			String entidad = webFileItem.getParameter("entidad");
 			String idEntidad = webFileItem.getParameter("idEntidad"); 
 			String tipoDocumento = webFileItem.getParameter("tipo");
-			
+			Long idActivo = null;
+			boolean tbjValidado = false;
 			if( entidad != null && idEntidad != null && dto != null && tipoDocumento != null) {
-				this.guardarFormularioSubidaDocumento(idEntidad , entidad, tipoDocumento, dto);
-				if(GestorDocumentalApi.ENTIDAD_ACTIVO.equalsIgnoreCase(entidad)) {
-					adapter.upload(webFileItem, dto);
-				}else if(GestorDocumentalApi.ENTIDAD_TRABAJO.equalsIgnoreCase(entidad)){
+				
+				if(GestorDocumentalAdapterApi.ENTIDAD_ACTIVO.equalsIgnoreCase(entidad)) {
+					idActivo = Long.parseLong(idEntidad);
+					//tbjValidado = trabajoApi.activoTieneTrabajoValidadoByTipoDocumento(idActivo);
+					activoAdapter.upload(webFileItem, dto);
+				}else if(GestorDocumentalAdapterApi.ENTIDAD_TRABAJO.equalsIgnoreCase(entidad)){
+					Trabajo trabajo = trabajoApi.findOne(Long.parseLong(idEntidad));
+					Activo activo = trabajo.getActivo();
+					if(activo != null) {
+						idActivo = activo.getId();
+					}
 					trabajoApi.upload(webFileItem);
 				}
+				if(dto != null && idActivo != null) {				
+					gestorDocumentalAdapterApi.guardarFormularioSubidaDocumento(idActivo, tipoDocumento, dto);
+				}
+				
 			}
 
 			model.put(RESPONSE_SUCCESS_KEY, true);			
@@ -95,50 +106,5 @@ public class GestorDocumentalController extends ParadiseJsonController {
 		}
 
 		return createModelAndViewJson(model);
-	}
-
-	
-	@RequestMapping(method = RequestMethod.POST)
-	public void guardarFormularioSubidaDocumento(String idEntidad , String entidad, String tipoDocumento, DtoMetadatosEspecificos dto) throws ParseException {
-		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id",Long.parseLong(idEntidad));
-		Activo activo = genericDao.get(Activo.class, filtroActivo);
-		
-		DDTipoDeDocumento tipoDocDiccionario = (DDTipoDeDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPresentacion.class, tipoDocumento);
-		Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.id", tipoDocDiccionario.getId());
-		Filter filtrotipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.id",activo.getTipoActivo().getId());
-		ActivoConfigDocumento actConfDoc = genericDao.get(ActivoConfigDocumento.class, filtroDocumento,filtrotipoActivo);
-		
-		Filter filtroActConfDoc = genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", actConfDoc.getId());
-		ActivoAdmisionDocumento activoAdmisionDocumento = genericDao.get(ActivoAdmisionDocumento.class, filtroActivo, filtroActConfDoc);
-		
-		
-		if(activoAdmisionDocumento == null) {
-			activoAdmisionDocumento = new ActivoAdmisionDocumento();
-			activoAdmisionDocumento.setActivo(activo);
-		}
-		
-		if(dto.getFechaObtencion() != null) {
-			activoAdmisionDocumento.setFechaObtencion(parser.parse(dto.getFechaCaducidad()));
-		}
-		if(dto.getFechaCaducidad() != null) {
-			activoAdmisionDocumento.setFechaCaducidad(parser.parse(dto.getFechaCaducidad()));
-		}
-		if(dto.getFechaEmision() != null) {
-			activoAdmisionDocumento.setFechaEmision(parser.parse(dto.getFechaEmision()));
-		}
-		if(dto.getFechaEtiqueta() != null) {
-			activoAdmisionDocumento.setFechaEtiqueta(parser.parse(dto.getFechaEtiqueta()));
-		}
-		
-		if("SI".equalsIgnoreCase(dto.getAplica())) {
-			activoAdmisionDocumento.setAplica(true);
-		}else {
-			activoAdmisionDocumento.setAplica(false);
-		}
-		
-		activoAdmisionDocumento.setRegistro(dto.getRegistro());
-
-		genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
-	
 	}
 }

@@ -33,6 +33,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 public interface GestorDocumentalAdapterApi {
 	
+	public static final String ENTIDAD_ACTIVO = "activo";
+	public static final String ENTIDAD_TRABAJO = "trabajo";
+	
 	List<DtoAdjunto> getAdjuntosActivo (Activo activo) throws GestorDocumentalException;
 	
 	List<DtoAdjunto> getAdjuntosActuacionesTecnicas (Trabajo trabajo) throws GestorDocumentalException;
@@ -138,5 +141,7 @@ public interface GestorDocumentalAdapterApi {
 	Runnable crearProyecto(Activo activo, ActivoProyecto proyecto, String usuarioLogado, String tipoExpediente) throws GestorDocumentalException;
 
 	Long upload(Activo activo, WebFileItem webFileItem, String userLogin, String matricula, DtoMetadatosEspecificos dtoMetadatos) throws Exception;
+
+	void guardarFormularioSubidaDocumento(Long idEntidad, String tipoDocumento, DtoMetadatosEspecificos dto) throws ParseException;
 
 }

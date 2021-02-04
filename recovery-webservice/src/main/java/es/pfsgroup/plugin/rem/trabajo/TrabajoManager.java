@@ -6586,5 +6586,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return importeSuplidos;
 	}
 	
+	public boolean activoTieneTrabajoValidadoByTipoDocumento(Long idActivo){
+		return false;
+	}
 	
 }

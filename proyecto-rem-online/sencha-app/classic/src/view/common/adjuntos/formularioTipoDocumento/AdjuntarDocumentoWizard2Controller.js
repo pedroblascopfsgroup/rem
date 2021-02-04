@@ -76,7 +76,6 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 				var fecha = siguienteReferencia.value.toLocaleDateString();
 				nuevosParametros [siguienteReferencia.reference] = fecha;
 			}else{
-				siguienteReferencia = siguienteReferencia.nextSibling();
 				nuevosParametros [siguienteReferencia.reference] = siguienteReferencia.value;
 			}
 			

@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.exception.UserException;
@@ -67,8 +68,10 @@ import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecover
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoTributo;
+import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
@@ -96,6 +99,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
@@ -112,6 +116,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	private static final String GESTOR_DOCUMENTAL = "GESTOR_DOC";
 	private static final String CLIENTE_HRE = "Haya Real Estate";
 	private static final String CODIGO_ESTADO_UA = "10";
+	SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy");
 
 	@Resource
 	private Properties appProperties;
@@ -145,6 +150,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
     @Autowired
     private ActivoTributoApi activoTributoApi;
+    
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
 
 
     public static final String CODIGO_CLASE_PROYECTO = "09", CODIGO_TIPO_EXPEDIENTE_REO = "AI", CODIGO_CLASE_AGRUPACIONES = "08";
@@ -1655,6 +1663,52 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			fileItem = this.getFileItem(adjunto.getIdentificadorGestorDocumental(), nombreDocumento);
 		}
 		return fileItem;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void guardarFormularioSubidaDocumento(Long idEntidad , String tipoDocumento, DtoMetadatosEspecificos dto) throws ParseException {
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", idEntidad);
+		Activo activo = genericDao.get(Activo.class, filtroActivo);
+		
+		DDTipoDeDocumento tipoDocDiccionario = (DDTipoDeDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDeDocumento.class, tipoDocumento);
+		Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.id", tipoDocDiccionario.getId());
+		Filter filtrotipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.id",activo.getTipoActivo().getId());
+		ActivoConfigDocumento actConfDoc = genericDao.get(ActivoConfigDocumento.class, filtroDocumento,filtrotipoActivo);
+		Filter filtroFechaCaducidadNull = genericDao.createFilter(FilterType.NULL, "fechaCaducidad");
+		Filter filtroActConfDoc = genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", actConfDoc.getId());
+		ActivoAdmisionDocumento activoAdmisionDocumento = genericDao.get(ActivoAdmisionDocumento.class, filtroActivo, filtroActConfDoc, filtroFechaCaducidadNull);
+		
+		
+		if(activoAdmisionDocumento == null) {
+			activoAdmisionDocumento = new ActivoAdmisionDocumento();
+			activoAdmisionDocumento.setActivo(activo);
+			activoAdmisionDocumento.setConfigDocumento(actConfDoc);
+		}
+		
+		if(dto.getFechaObtencion() != null) {
+			activoAdmisionDocumento.setFechaObtencion(parser.parse(dto.getFechaCaducidad()));
+		}
+		if(dto.getFechaCaducidad() != null) {
+			activoAdmisionDocumento.setFechaCaducidad(parser.parse(dto.getFechaCaducidad()));
+		}
+		if(dto.getFechaEmision() != null) {
+			activoAdmisionDocumento.setFechaEmision(parser.parse(dto.getFechaEmision()));
+		}
+		if(dto.getFechaEtiqueta() != null) {
+			activoAdmisionDocumento.setFechaEtiqueta(parser.parse(dto.getFechaEtiqueta()));
+		}
+		
+		if("SI".equalsIgnoreCase(dto.getAplica())) {
+			activoAdmisionDocumento.setAplica(true);
+		}else {
+			activoAdmisionDocumento.setAplica(false);
+		}
+		
+		activoAdmisionDocumento.setRegistro(dto.getRegistro());
+
+		genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
+	
 	}
 	
 }

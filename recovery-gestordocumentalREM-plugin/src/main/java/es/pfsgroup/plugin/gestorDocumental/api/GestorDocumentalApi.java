@@ -22,8 +22,7 @@ import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosE
 
 public interface GestorDocumentalApi {
 	
-	public static final String ENTIDAD_ACTIVO = "activo";
-	public static final String ENTIDAD_TRABAJO = "trabajo";
+
 	/**
 	 * Permite obtener un listado de documentos dentro de un expediente (con o sin relaciones)
 	 * 

@@ -71,7 +71,7 @@ public class RecoveryToGestorDocAssembler {
 
 	public CrearDocumentoDto getCrearDocumentoDto(WebFileItem webFileItem, String userLogin, String matricula) {
 		CrearDocumentoDto doc = new CrearDocumentoDto();
-		DtoMetadatosEspecificos dto = new DtoMetadatosEspecificos();
+
 		String[] arrayMatricula = new String[4];
 		if (matricula!=null && matricula.contains("-")) {
 			arrayMatricula = matricula.split("-");
@@ -89,7 +89,6 @@ public class RecoveryToGestorDocAssembler {
 		doc.setNombreDocumento(webFileItem.getFileItem().getFileName());
 		doc.setDescripcionDocumento(webFileItem.getParameter("descripcion"));
 		doc.setGeneralDocumento(rellenarGeneralDocumento(arrayMatricula[1], arrayMatricula[2], arrayMatricula[3]));
-		doc.setEspecíficoDocumento(rellenarMetadatosEspecificos(dto));
 		doc.setArchivoFisico("{}");
 		
 		return doc;
@@ -315,10 +314,18 @@ public class RecoveryToGestorDocAssembler {
 					sb.append(GestorDocumentalConstants.metadataEspecifica[indice]).append("\""+dto.getFechaEtiqueta()+"\"").append(",");
 				}
 				if(dto.getRegistro()!= null) {
-					sb.append(GestorDocumentalConstants.metadataEspecifica[indice]).append("\""+dto.getRegistro()+"\"").append(",");
+					sb.append(GestorDocumentalConstants.metadataEspecifica[indice]).append("\""+dto.getRegistro()+"\"");
 				}
 			sb.append("}");
 		sb.append("}");
 		return sb.toString();
+	}
+	
+	public CrearDocumentoDto getCrearDocumentoDtoConFormulario(WebFileItem webFileItem, String userLogin, String matricula, DtoMetadatosEspecificos dto) {
+		CrearDocumentoDto doc = getCrearDocumentoDto(webFileItem, userLogin,  matricula);
+		if(dto != null) {
+			doc.setEspecíficoDocumento(rellenarMetadatosEspecificos(dto));
+		}
+		return doc;
 	}
 }

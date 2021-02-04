@@ -28,7 +28,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 @Entity
 @Table(name = "TPD_STR_DOCSUBTBJ", schema = "${entity.schema}")
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
-public class MetadatosDocumentos implements Serializable, Auditable{
+public class TipoDocumentoSubtipoTrabajo implements Serializable, Auditable{
 
 	private static final long serialVersionUID = -8745320767092816790L;
 

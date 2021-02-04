@@ -64,6 +64,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DtoMetadatosEspecificos;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -2753,7 +2754,7 @@ public class ActivoAdapter {
 		return listaAdjuntos;
 	}
 
-	public String uploadDocumento(WebFileItem webFileItem, Activo activoEntrada, String matricula) throws Exception {
+	public String uploadDocumento(WebFileItem webFileItem, Activo activoEntrada, String matricula, DtoMetadatosEspecificos dtoMetadatos) throws Exception {
 		if(webFileItem == null) return null; //No seguimos
 		
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
@@ -2774,8 +2775,7 @@ public class ActivoAdapter {
 		tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);
 		
 		if(tipoDocumento != null && gestorDocumentalActivado)
-			idDocRestClient = gestorDocumentalAdapterApi.upload(activoEntrada, webFileItem,
-					username, tipoDocumento.getMatricula());
+			idDocRestClient = gestorDocumentalAdapterApi.upload(activoEntrada, webFileItem, username, tipoDocumento.getMatricula(), dtoMetadatos);
 		
 		if (gestorDocumentalActivado) {
 			activoApi.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
@@ -2793,8 +2793,8 @@ public class ActivoAdapter {
 		return null;
 	}
 
-	public String upload(WebFileItem webFileItem) throws Exception {
-		return uploadDocumento(webFileItem, null, null);
+	public String upload(WebFileItem webFileItem, DtoMetadatosEspecificos dto) throws Exception {
+		return uploadDocumento(webFileItem, null, null, dto);
 	}
 	
 	public void uploadFactura(WebFileItem webFileItem) throws Exception {
@@ -2813,7 +2813,7 @@ public class ActivoAdapter {
 		tipoDocGastoAsociado = genericDao.get(DDTipoDocumentoGastoAsociado.class, filtro);
 		if(tipoDocGastoAsociado != null) {
 			if(gestorDocumentalActivado) {
-				idDocRestClient = gestorDocumentalAdapterApi.upload(gas.getActivo(), webFileItem, username, tipoDocGastoAsociado.getMatricula());
+				idDocRestClient = gestorDocumentalAdapterApi.upload(gas.getActivo(), webFileItem, username, tipoDocGastoAsociado.getMatricula(), null);
 				activoApi.uploadFactura(webFileItem, idDocRestClient, gas, tipoDocGastoAsociado);
 			}else {
 				activoApi.uploadFactura(webFileItem, null, gas, tipoDocGastoAsociado);

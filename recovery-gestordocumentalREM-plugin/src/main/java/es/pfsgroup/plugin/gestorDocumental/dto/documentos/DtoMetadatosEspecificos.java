@@ -6,42 +6,41 @@ public class DtoMetadatosEspecificos{
 
 	private static final long serialVersionUID = 1L;
 
-	private Boolean aplica;
-	private Date fechaEmision;
-	private Date fechaCaducidad;
-	private Date fechaObtencion;
-	private Date fechaEtiqueta;
+	private String aplica;
+	private String fechaEmision;
+	private String fechaCaducidad;
+	private Boolean fechaObtencion;
+	private String fechaEtiqueta;
 	private String registro;
 	
-
-	public Boolean getAplica() {
+	public String getAplica() {
 		return aplica;
 	}
-	public void setAplica(Boolean aplica) {
+	public void setAplica(String aplica) {
 		this.aplica = aplica;
 	}
-	public Date getFechaEmision() {
+	public String getFechaEmision() {
 		return fechaEmision;
 	}
-	public void setFechaEmision(Date fechaEmision) {
+	public void setFechaEmision(String fechaEmision) {
 		this.fechaEmision = fechaEmision;
 	}
-	public Date getFechaCaducidad() {
+	public String getFechaCaducidad() {
 		return fechaCaducidad;
 	}
-	public void setFechaCaducidad(Date fechaCaducidad) {
+	public void setFechaCaducidad(String fechaCaducidad) {
 		this.fechaCaducidad = fechaCaducidad;
 	}
-	public Date getFechaObtencion() {
+	public Boolean getFechaObtencion() {
 		return fechaObtencion;
 	}
-	public void setFechaObtencion(Date fechaObtencion) {
+	public void setFechaObtencion(Boolean fechaObtencion) {
 		this.fechaObtencion = fechaObtencion;
 	}
-	public Date getFechaEtiqueta() {
+	public String getFechaEtiqueta() {
 		return fechaEtiqueta;
 	}
-	public void setFechaEtiqueta(Date fechaEtiqueta) {
+	public void setFechaEtiqueta(String fechaEtiqueta) {
 		this.fechaEtiqueta = fechaEtiqueta;
 	}
 	public String getRegistro() {
@@ -50,6 +49,9 @@ public class DtoMetadatosEspecificos{
 	public void setRegistro(String registro) {
 		this.registro = registro;
 	}
+	
+
+	
 
 
 }

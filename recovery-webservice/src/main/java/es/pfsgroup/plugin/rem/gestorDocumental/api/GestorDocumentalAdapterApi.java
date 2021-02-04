@@ -7,6 +7,7 @@ import java.util.List;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DtoMetadatosEspecificos;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -40,7 +41,7 @@ public interface GestorDocumentalAdapterApi {
 
 	FileItem getFileItem(Long idDocumento, String nombreDocumento) throws Exception;
 	
-	Long upload(Activo activo, WebFileItem webFileItem, String userLogin, String matricula) throws Exception;
+	//Long upload(Activo activo, WebFileItem webFileItem, String userLogin, String matricula) throws Exception;
 	
 	Long uploadDocumentoGasto(GastoProveedor gasto, WebFileItem webFileItem, String userLogin, String matricula) throws Exception;
 	
@@ -135,5 +136,7 @@ public interface GestorDocumentalAdapterApi {
 	public List<DtoAdjunto> getAdjuntosProveedor(ActivoProveedor proveedor) throws GestorDocumentalException;
 
 	Runnable crearProyecto(Activo activo, ActivoProyecto proyecto, String usuarioLogado, String tipoExpediente) throws GestorDocumentalException;
+
+	Long upload(Activo activo, WebFileItem webFileItem, String userLogin, String matricula, DtoMetadatosEspecificos dtoMetadatos) throws Exception;
 
 }

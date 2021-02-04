@@ -37,11 +37,11 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
 	            },
 	            {
 			    	xtype: 'datefield',
-			    	fieldLabel: 'Fecha emisión',
+			    	fieldLabel: 'Fecha Emisión',
 			    	reference: 'fechaEmision'
 	            },
 	            {
-			    	xtype: 'datefield',
+	            	xtype: 'datefield',
 			    	fieldLabel: 'Fecha Caducidad',
 			    	reference: 'fechaCaducidad'
 	

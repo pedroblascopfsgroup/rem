@@ -13,7 +13,7 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.WizardAdjuntarDo
 		},
 		{
 			name : 'fechaEmision',
-			type:'date',
+			type:'date', 
 			dateFormat: 'c'
 		},
 		{

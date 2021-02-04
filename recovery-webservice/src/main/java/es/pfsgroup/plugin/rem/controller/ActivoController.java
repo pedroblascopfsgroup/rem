@@ -1476,7 +1476,7 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
-			adapter.upload(webFileItem);
+			adapter.upload(webFileItem, null);
 			model.put(RESPONSE_SUCCESS_KEY, true);			
 		} catch (GestorDocumentalException e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);

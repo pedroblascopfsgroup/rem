@@ -6045,6 +6045,19 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean existeCodProveedorRem(String codProveedorREM) {
+		if(Checks.esNulo(codProveedorREM) || !StringUtils.isNumeric(codProveedorREM)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_PVE_PROVEEDOR WHERE"
+				+ "		 	PVE_COD_REM = '"+codProveedorREM+"' "
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
 	@Override
 	public Boolean existePoblacionByDescripcion(String codigoPoblacion) {
 		if(Checks.esNulo(codigoPoblacion)) {

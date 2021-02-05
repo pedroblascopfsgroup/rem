@@ -147,6 +147,7 @@ import es.pfsgroup.plugin.rem.model.Prefactura;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.TipoDocumentoSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
@@ -6586,7 +6587,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return importeSuplidos;
 	}
 	
-	public boolean activoTieneTrabajoValidadoByTipoDocumento(Long idActivo, String tipoDocumento){
+
+	@Override
+	public boolean activoTieneTrabajoValidadoByTipoDocumento(Long idActivo , String tipoDocumento){
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", tipoDocumento);
+		TipoDocumentoSubtipoTrabajo tipoDocumentoSubtipoTrabajo = genericDao.get(TipoDocumentoSubtipoTrabajo.class, filtro);
+		if(tipoDocumentoSubtipoTrabajo != null && idActivo != null) {
+			Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "trabajo.subtipoTrabajo.id", tipoDocumentoSubtipoTrabajo.getSubtipoTrabajo().getId());
+			Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+			List<ActivoTrabajo> activoTrabajoList = genericDao.getList(ActivoTrabajo.class, filtro4,filtro3);
+			for (ActivoTrabajo activoTrabajo : activoTrabajoList) {
+				if(activoTrabajo.getTrabajo() != null && activoTrabajo.getTrabajo().getEstado() != null && 
+						DDEstadoTrabajo.ESTADO_VALIDADO.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())){
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 	

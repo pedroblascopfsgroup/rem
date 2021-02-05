@@ -24,6 +24,10 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
 				addUxReadOnlyEditFieldPlugin: false
 			},
 			items: [
+				{
+			    	reference : 'primero',
+			    	hidden : true
+	            },
     	
 	            {
 			    	xtype: 'datefield',

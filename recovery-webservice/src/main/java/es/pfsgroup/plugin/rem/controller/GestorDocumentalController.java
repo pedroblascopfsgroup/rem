@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,27 +13,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.files.WebFileItem;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
-import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DtoMetadatosEspecificos;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
-import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
 import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
 
 @Controller
 public class GestorDocumentalController extends ParadiseJsonController {
@@ -80,7 +69,7 @@ public class GestorDocumentalController extends ParadiseJsonController {
 				
 				if(GestorDocumentalAdapterApi.ENTIDAD_ACTIVO.equalsIgnoreCase(entidad)) {
 					idActivo = Long.parseLong(idEntidad);
-					//tbjValidado = trabajoApi.activoTieneTrabajoValidadoByTipoDocumento(idActivo);
+					tbjValidado = trabajoApi.activoTieneTrabajoValidadoByTipoDocumento(idActivo,tipoDocumento);
 					activoAdapter.upload(webFileItem, dto);
 				}else if(GestorDocumentalAdapterApi.ENTIDAD_TRABAJO.equalsIgnoreCase(entidad)){
 					Trabajo trabajo = trabajoApi.findOne(Long.parseLong(idEntidad));
@@ -109,11 +98,12 @@ public class GestorDocumentalController extends ParadiseJsonController {
 			model.put("errorMessage", "Ha habido un problema con la subida del fichero al gestor documental.");
 
 		} catch (Exception e) {
-			logger.error("error en activoController", e);
+			logger.error("error en GestorDocumentalController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errorMessage", "Ha habido un problema con la subida del fichero.");
 		}
 
 		return createModelAndViewJson(model);
 	}
+
 }

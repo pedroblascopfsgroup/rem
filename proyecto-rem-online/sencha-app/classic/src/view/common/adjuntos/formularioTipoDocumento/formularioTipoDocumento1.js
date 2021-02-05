@@ -22,7 +22,11 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
 			defaults: {
 				addUxReadOnlyEditFieldPlugin: false
 			},
-			items: [  
+			items: [
+				{
+			    	reference : 'primero',
+			    	hidden : true
+	            }, 
 	            {
 			    	xtype: 'combosino',
 			    	fieldLabel: 'Aplica',

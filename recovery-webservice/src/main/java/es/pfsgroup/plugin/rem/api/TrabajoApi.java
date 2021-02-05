@@ -932,4 +932,6 @@ public interface TrabajoApi {
 	void EnviarCorreoTrabajos(Trabajo trabajo, String origen);
 
 	public BigDecimal getImporteTotalSuplidosByTrabajo(Trabajo trabajo);
+
+	boolean activoTieneTrabajoValidadoByTipoDocumento(Long idActivo, String tipoDocumento);
 }

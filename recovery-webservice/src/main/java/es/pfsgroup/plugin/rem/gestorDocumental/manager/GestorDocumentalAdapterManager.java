@@ -1706,9 +1706,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 		
 		activoAdmisionDocumento.setRegistro(dto.getRegistro());
-		
 		activoAdmisionDocumento.setValidado(tbjValidado);
-		
 
 		genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
 	

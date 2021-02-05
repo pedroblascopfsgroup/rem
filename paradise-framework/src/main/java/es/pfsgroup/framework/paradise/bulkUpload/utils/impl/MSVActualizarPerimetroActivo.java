@@ -465,7 +465,6 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			String valorConFormalizar = "-";
 			String valorConPublicar = "-";
 			String valorGestionComercial = "-";
-			String valorExcluirValidaciones = "-";
 
 			for(int i=1; i<this.numFilasHoja;i++){
 				
@@ -480,7 +479,6 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
 					valorConPublicar = exc.dameCelda(i, COL_NUM_CON_PUBLICAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_PUBLICAR_SN).trim().toUpperCase();
 					valorGestionComercial = exc.dameCelda(i, COL_NUM_VISIBLE_GESTION_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_VISIBLE_GESTION_COMERCIAL_SN).trim().toUpperCase();
-					valorExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES).trim().toUpperCase();
 					
 					// Valida valores correctos de los campos S/N/<nulo>
 					if(!("S".equals(valorEnPerimetro) || "N".equals(valorEnPerimetro) || "-".equals(valorEnPerimetro))
@@ -489,7 +487,6 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 							|| !("S".equals(valorConFormalizar) || "N".equals(valorConFormalizar) || "-".equals(valorConFormalizar))
 							|| !("S".equals(valorConPublicar) || "N".equals(valorConPublicar) || "-".equals(valorConPublicar))
 							|| !("S".equals(valorGestionComercial) || "N".equals(valorGestionComercial) || "-".equals(valorGestionComercial))
-							|| !("S".equals(valorExcluirValidaciones) || "N".equals(valorExcluirValidaciones) || "-".equals(valorExcluirValidaciones))
 							)
 						listaFilas.add(i);
 				} catch (ParseException e) {
@@ -702,7 +699,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
-					if(celdaExcluirValidaciones.equals("02")) {
+					if(celdaExcluirValidaciones.equals("2")) {
 					String valorConFormalizar= exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
 					String valorEnPerimetro = exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).trim().toUpperCase();
 					String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();	
@@ -908,7 +905,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					String celdaExclusion = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
-					if(celdaExclusion.equals("02")) {
+					if(celdaExclusion.equals("2")) {
 					if(particularValidator.isActivoEnAlquilerSocial(exc.dameCelda(i, 0)))
 						listaFilas.add(i);
 					}
@@ -1134,9 +1131,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					String celdaMotivoPerimetroGestion = exc.dameCelda(i, COL_NUM_MOTIVO_EXCLUSION_INCLUSION_PERIMETRO_VISIBLE);
-					String celdaVisibleGestionComercial = exc.dameCelda(i, COL_NUM_VISIBLE_GESTION_COMERCIAL_SN);
-					if (!Checks.esNulo(celdaMotivoPerimetroGestion) &&(!Checks.esNulo(celdaVisibleGestionComercial)  && !particularValidator.existeCodigoMotivoAdmision(celdaMotivoPerimetroGestion))
-							){
+					if (!Checks.esNulo(celdaMotivoPerimetroGestion) && !particularValidator.existeCodigoMotivoAdmision("0" + celdaMotivoPerimetroGestion)){
 						listaFilas.add(i);				
 					}
 				} catch (ParseException e) {
@@ -1162,12 +1157,11 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					String celdaMotivoPerimetroGestion = exc.dameCelda(i, COL_NUM_MOTIVO_EXCLUSION_INCLUSION_PERIMETRO_VISIBLE);
-					String celdaVisibleGestionComercial = exc.dameCelda(i, COL_NUM_VISIBLE_GESTION_COMERCIAL_SN);
-					if (!Checks.esNulo(celdaMotivoPerimetroGestion)&&(Checks.esNulo(celdaVisibleGestionComercial))){
-						listaFilas.add(i);				
-					}
-					if (Checks.esNulo(celdaMotivoPerimetroGestion)&&(!Checks.esNulo(celdaVisibleGestionComercial))){
-						listaFilas.add(i);				
+					String excluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
+					if ((!Checks.esNulo(excluirValidaciones) && excluirValidaciones.equals("1"))){
+						if (Checks.esNulo(celdaMotivoPerimetroGestion)){
+							listaFilas.add(i);		
+						}
 					}
 					
 				} catch (ParseException e) {
@@ -1227,11 +1221,9 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					String celdaMotivoPerimetroGestion = exc.dameCelda(i, COL_NUM_MOTIVO_EXCLUSION_INCLUSION_PERIMETRO_VISIBLE);
 					String celdaVisibleGestionComercial = exc.dameCelda(i, COL_NUM_VISIBLE_GESTION_COMERCIAL_SN);
-					String celdaExsentoValidacion = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
 					String celdaFechaGestion = exc.dameCelda(i, COL_NUM_FECHA_CAMBIO);
-					if (!Checks.esNulo(celdaMotivoPerimetroGestion)  || !Checks.esNulo(celdaExsentoValidacion) || !Checks.esNulo(celdaFechaGestion)){
+					if (!Checks.esNulo(celdaFechaGestion)){
 						if(Checks.esNulo(celdaVisibleGestionComercial)) {
 						listaFilas.add(i);				
 						}
@@ -1260,7 +1252,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				try {
 					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
 					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
-					if(celdaExcluirValidaciones == null || celdaExcluirValidaciones.equalsIgnoreCase("N")) {
+					if(celdaExcluirValidaciones == null || celdaExcluirValidaciones.equals("2")) {
 						if(activo != null) {
 							if(!particularValidator.tieneFechaVentaExterna(activo)) {
 								listaFilas.add(i);	
@@ -1291,9 +1283,9 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				try {
 					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
 					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
-					if(celdaExcluirValidaciones == null || celdaExcluirValidaciones.equalsIgnoreCase("N")) {
+					if(celdaExcluirValidaciones == null || celdaExcluirValidaciones.equals("2")) {
 						if(activo != null) {
-							if(!particularValidator.bankiaPublicado(activo)) {
+							if(particularValidator.bankiaPublicado(activo)) {
 								listaFilas.add(i);	
 							}
 						}
@@ -1322,7 +1314,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				try {
 					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
 					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
-					if(celdaExcluirValidaciones == null || celdaExcluirValidaciones.equalsIgnoreCase("N")) {
+					if(celdaExcluirValidaciones == null || celdaExcluirValidaciones.equals("2")) {
 						if(activo != null) {
 							if(!particularValidator.activoNoComercializable(activo)) {
 								listaFilas.add(i);	
@@ -1353,7 +1345,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				try {
 					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
 					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
-					if(celdaExcluirValidaciones == null || celdaExcluirValidaciones.equalsIgnoreCase("N")) {
+					if(celdaExcluirValidaciones == null || celdaExcluirValidaciones.equals("2")) {
 						if(activo != null) {
 							if(!particularValidator.estadoPublicacion(activo)) {
 								listaFilas.add(i);	
@@ -1386,7 +1378,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					String macc = exc.dameCelda(i, COL_NUM_PERIMETRO_MACC);
 					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
 					if(macc.equalsIgnoreCase("S") || macc.equalsIgnoreCase("SI")) {
-					if(celdaExcluirValidaciones != null && celdaExcluirValidaciones.equalsIgnoreCase("S")) {
+					if(celdaExcluirValidaciones != null && celdaExcluirValidaciones.equals("1")) {
 						if(activo != null) {
 							if(particularValidator.maccConCargas(activo)) {
 								listaFilas.add(i);	
@@ -1418,9 +1410,9 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				try {
 					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
 					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
-					if(celdaExcluirValidaciones != null && celdaExcluirValidaciones.equalsIgnoreCase("N")) {
+					if(celdaExcluirValidaciones != null && celdaExcluirValidaciones.equals("2")) {
 						if(activo != null) {
-							if(!particularValidator.estadoExpedienteComercial(activo)) {
+							if(particularValidator.estadoExpedienteComercial(activo)) {
 								listaFilas.add(i);	
 							}
 						}

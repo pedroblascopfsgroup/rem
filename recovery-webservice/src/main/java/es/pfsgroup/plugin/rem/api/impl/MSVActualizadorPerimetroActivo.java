@@ -283,11 +283,6 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 				}else {
 					perimetroActivo.setCheckGestorComercial(false);
 				}
-				perimetroActivo.setMotivoGestionComercial((DDMotivoGestionComercial) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, motivoGestionComercial.substring(0, 2)));
-				perimetroActivo.setExcluirValidaciones(((DDSinSiNo) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDSinSiNo.class, exclusionValidaciones.substring(0, 2))));
-				
 				if(!Checks.esNulo(fechaCambio)) {
 				SimpleDateFormat sdfSal = new SimpleDateFormat("dd/MM/yyyy"); 
 				Date fecha = sdfSal.parse(fechaCambio);
@@ -295,7 +290,16 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 				}else {
 					perimetroActivo.setFechaGestionComercial(new Date());
 				}
-				
+			}
+			
+			// Check excluir validaciones ------------------
+			if (exclusionValidaciones != null) {
+				perimetroActivo.setExcluirValidaciones(((DDSinSiNo) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDSinSiNo.class, "0" + exclusionValidaciones)));
+				if (exclusionValidaciones.equals("1") && motivoGestionComercial != null){
+					perimetroActivo.setMotivoGestionComercial((DDMotivoGestionComercial) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, "0" + motivoGestionComercial));
+				}
 			}
 
 			// Aplica Formalizar ---------------------------

@@ -144,4 +144,6 @@ public interface GestorDocumentalAdapterApi {
 
 	void guardarFormularioSubidaDocumento(Long idEntidad, String tipoDocumento, boolean tbjValidado, DtoMetadatosEspecificos dto) throws ParseException;
 
+	void actualizarAdmisionValidado(Trabajo tbj) throws ParseException;
+
 }

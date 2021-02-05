@@ -521,6 +521,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				if(DDEstadoTrabajo.CODIGO_ESTADO_RECHAZADO.equals(trabajo.getEstado().getCodigo()) || DDEstadoTrabajo.ESTADO_RECHAZADO.equals(trabajo.getEstado().getCodigo())) {
 					EnviarCorreoTrabajos(trabajo, EMAIL_RECHAZADO);
 				}else if (DDEstadoTrabajo.ESTADO_VALIDADO.equals(trabajo.getEstado().getCodigo())) {
+					gestorDocumentalAdapterApi.actualizarAdmisionValidado(trabajo);
 					EnviarCorreoTrabajos(trabajo, EMAIL_VALIDADO);
 				}
 				

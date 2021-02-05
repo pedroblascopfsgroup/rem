@@ -78,6 +78,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProyecto;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
 import es.pfsgroup.plugin.rem.model.AdjuntoGastoAsociado;
@@ -93,6 +94,7 @@ import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.MapeoGestorDocumental;
 import es.pfsgroup.plugin.rem.model.MapeoPropietarioGestorDocumental;
 import es.pfsgroup.plugin.rem.model.RelacionHistoricoComunicacion;
+import es.pfsgroup.plugin.rem.model.TipoDocumentoSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
@@ -100,6 +102,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
@@ -1671,7 +1674,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", idEntidad);
 		Activo activo = genericDao.get(Activo.class, filtroActivo);
 		
-		DDTipoDeDocumento tipoDocDiccionario = (DDTipoDeDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDeDocumento.class, tipoDocumento);
+		DDTipoDocumentoActivo tipoDocDiccionario = (DDTipoDocumentoActivo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumentoActivo.class, tipoDocumento);
 		Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.id", tipoDocDiccionario.getId());
 		Filter filtrotipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.id",activo.getTipoActivo().getId());
 		ActivoConfigDocumento actConfDoc = genericDao.get(ActivoConfigDocumento.class, filtroDocumento,filtrotipoActivo);
@@ -1710,6 +1713,39 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
 	
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void actualizarAdmisionValidado(Trabajo tbj) throws ParseException{
+		
+		Filter filterSubTipoTrabajo= genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.id", tbj.getSubtipoTrabajo().getId());
+		List<TipoDocumentoSubtipoTrabajo> tipoDocList = genericDao.getList(TipoDocumentoSubtipoTrabajo.class, filterSubTipoTrabajo);
+
+		List<ActivoTrabajo> activos = tbj.getActivosTrabajo();
+		
+		if(tipoDocList == null || activos == null || activos.isEmpty() || tipoDocList.isEmpty() ) {
+			return;
+		}
+		
+		for (TipoDocumentoSubtipoTrabajo tipoDoc : tipoDocList) {
+			if(tipoDoc.getTipoDocumento() != null) {
+				for (ActivoTrabajo activoTrabajo : activos) {
+					Activo activo = activoTrabajo.getActivo();
+					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", activo.getId());
+					Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo", tipoDoc.getTipoDocumento().getCodigo());
+					Filter filtrotipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.id",activo.getTipoActivo().getId());
+					ActivoConfigDocumento actConfDoc = genericDao.get(ActivoConfigDocumento.class, filtroDocumento,filtrotipoActivo);
+					Filter filtroFechaCaducidadNull = genericDao.createFilter(FilterType.NULL, "fechaCaducidad");
+					Filter filtroActConfDoc = genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", actConfDoc.getId());
+					ActivoAdmisionDocumento activoAdmisionDocumento = genericDao.get(ActivoAdmisionDocumento.class, filtroActivo, filtroActConfDoc, filtroFechaCaducidadNull);
+					if(activoAdmisionDocumento != null) {
+						activoAdmisionDocumento.setValidado(true);
+						genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
+					}
+				}	
+			}
+		}		
 	}
 	
 }

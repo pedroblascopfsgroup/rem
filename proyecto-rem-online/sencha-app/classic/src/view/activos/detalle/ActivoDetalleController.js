@@ -7753,7 +7753,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     aplicarDescripcion: function(btn, form) {
-    	
     	var me = btn.up();
     	Ext.Msg.show({
 		   title: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.aplicar'),
@@ -7761,7 +7760,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		   buttons: Ext.MessageBox.YESNO,
 		   fn: function(buttonId) {
 		        if (buttonId == 'yes') {
-
 		        	var url =  $AC.getRemoteUrl('activo/saveDatoRemCalidadDatoPublicacion');
 		        	var activoId = btn.up("form").getBindRecord().data.idActivo;
 					var activo = btn.up("form").lookupController().getViewModel().get("activo");
@@ -7912,13 +7910,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			success: function(response, opts){
 				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				me.refrescarActivo(true);
-				ventana.unmask();
-				ventana.close();
+				if(ventana != undefined){
+					ventana.unmask();
+					ventana.close();
+				}
 				me.getView().unmask();
 			}, failure: function (a, operation, context) {
             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-            	ventana.unmask();
-				ventana.close();
+            	if(ventana != undefined){
+					ventana.unmask();
+					ventana.close();
+				}
             	me.refrescarActivo(true);
             	me.getView().unmask();
             }

@@ -1170,7 +1170,16 @@ public class AgrupacionAdapter {
 				}
 			}
 		}
-
+		Activo activoP = agrupacion.getActivoPrincipal();
+		Filter filtroactivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Filter filtroprincipal = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoP.getId());
+		PerimetroActivo perimetroActivoActual = genericDao.get(PerimetroActivo.class, filtroactivo);
+		PerimetroActivo perimetroActivoPrincipal = genericDao.get(PerimetroActivo.class, filtroprincipal);
+		boolean errorFlag = calculateEqualsPerimetros(perimetroActivoPrincipal, perimetroActivoActual);
+				
+		if(errorFlag) {
+			throw new JsonViewerException("Los activos no tienen la misma situación para la visibilidad de gestión comercial");
+		}
 		// En asistidas hay que hacer una serie de actualizaciones
 		// 'especiales'.
 		if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
@@ -1186,10 +1195,9 @@ public class AgrupacionAdapter {
 						String.valueOf(agrupacion.getNumAgrupRem()))) {
 					DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion();
 					dto.setIdActivo(activo.getId());
-	
 					ActivoAgrupacionActivo aga = activoApi
 							.getActivoAgrupacionActivoAgrRestringidaPorActivoID(agrupacion.getActivoPrincipal().getId());
-					if (!Checks.esNulo(aga)) {
+					if (aga != null && !errorFlag) {
 						activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(aga.getAgrupacion().getId(), dto);
 					}
 	
@@ -1238,22 +1246,7 @@ public class AgrupacionAdapter {
 			}
 		}
 		
-		//HREOS-12346() TODO: falta por añadir el campo Marca Excluido en los Activos. 
-					Activo activoP = agrupacion.getActivoPrincipal();
-					Filter filtroactivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-					Filter filtroprincipal = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoP.getId());
-					PerimetroActivo perimetroActivoActual = genericDao.get(PerimetroActivo.class, filtroactivo);
-					PerimetroActivo perimetroActivoPrincipal = genericDao.get(PerimetroActivo.class, filtroprincipal);
-					boolean errorFlag = calculateEqualsPerimetros(perimetroActivoPrincipal, perimetroActivoActual);
-				
-					
-					if(errorFlag) {
-						throw new JsonViewerException("Los activos no tienen la misma situación para la visibilidad de gestión comercial");
-					}
-				
-						
-					
-					
+	
 	}
 	
 	private boolean calculateEqualsPerimetros(PerimetroActivo perimetroActivoPrincipal,
@@ -1264,8 +1257,8 @@ public class AgrupacionAdapter {
 		if((perimetroActivoPrincipal.getCheckGestorComercial() != null && perimetroActivoActual.getCheckGestorComercial() == null) 
 				||(perimetroActivoPrincipal.getCheckGestorComercial() == null && perimetroActivoActual.getCheckGestorComercial() != null) ) {
 			errorFlag = true;
-		}else if(perimetroActivoPrincipal.getCheckGestorComercial() != null && perimetroActivoActual.getCheckGestorComercial() != null) {
-			errorFlag = perimetroActivoPrincipal.getCheckGestorComercial() == perimetroActivoActual.getCheckGestorComercial();
+		}else if(perimetroActivoPrincipal.getCheckGestorComercial() != null && perimetroActivoActual.getCheckGestorComercial() != null && !errorFlag) {
+			errorFlag = !(perimetroActivoPrincipal.getCheckGestorComercial() == perimetroActivoActual.getCheckGestorComercial());
 		}
 		
 		
@@ -1279,8 +1272,8 @@ public class AgrupacionAdapter {
 				||(excluirValidacionesPrincipal.getCodigo() == null && excluirValidacionesActual.getCodigo() != null)) {
 			errorFlag = true;
 		}else if(excluirValidacionesPrincipal != null && excluirValidacionesActual != null && 
-				excluirValidacionesPrincipal.getCodigo() != null && excluirValidacionesActual.getCodigo() != null) {
-			errorFlag = excluirValidacionesPrincipal.getCodigo().equals(excluirValidacionesActual.getCodigo());
+				excluirValidacionesPrincipal.getCodigo() != null && excluirValidacionesActual.getCodigo() != null && !errorFlag) {
+			errorFlag = !(excluirValidacionesPrincipal.getCodigo().equals(excluirValidacionesActual.getCodigo()));
 		}
 		
 		DDMotivoGestionComercial motivoGestionPrincipal = perimetroActivoPrincipal.getMotivoGestionComercial();
@@ -1293,7 +1286,7 @@ public class AgrupacionAdapter {
 				||(motivoGestionPrincipal.getCodigo() == null && motivoGestionActual.getCodigo() != null))) {
 			errorFlag = true;
 		}else if(motivoGestionPrincipal != null && motivoGestionActual != null && 
-				motivoGestionPrincipal.getCodigo() != null && motivoGestionActual.getCodigo() != null) {
+				motivoGestionPrincipal.getCodigo() != null && motivoGestionActual.getCodigo() != null && !errorFlag) {
 			errorFlag = motivoGestionPrincipal.getCodigo().equals(motivoGestionActual.getCodigo());
 		}
 	

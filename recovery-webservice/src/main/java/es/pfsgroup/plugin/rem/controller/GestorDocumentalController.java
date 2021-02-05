@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -32,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
 
 @Controller
@@ -82,6 +84,13 @@ public class GestorDocumentalController extends ParadiseJsonController {
 					activoAdapter.upload(webFileItem, dto);
 				}else if(GestorDocumentalAdapterApi.ENTIDAD_TRABAJO.equalsIgnoreCase(entidad)){
 					Trabajo trabajo = trabajoApi.findOne(Long.parseLong(idEntidad));
+					if(trabajo == null) {
+						throw new Exception("No existe el trabajo.");
+					}
+					if(trabajo.getEstado() != null && DDEstadoTrabajo.ESTADO_VALIDADO.equals(trabajo.getEstado().getCodigo())) {
+						tbjValidado = true;
+					}
+					
 					Activo activo = trabajo.getActivo();
 					if(activo != null) {
 						idActivo = activo.getId();
@@ -89,7 +98,7 @@ public class GestorDocumentalController extends ParadiseJsonController {
 					trabajoApi.upload(webFileItem);
 				}
 				if(dto != null && idActivo != null) {				
-					gestorDocumentalAdapterApi.guardarFormularioSubidaDocumento(idActivo, tipoDocumento, dto);
+					gestorDocumentalAdapterApi.guardarFormularioSubidaDocumento(idActivo, tipoDocumento, tbjValidado, dto);
 				}
 				
 			}

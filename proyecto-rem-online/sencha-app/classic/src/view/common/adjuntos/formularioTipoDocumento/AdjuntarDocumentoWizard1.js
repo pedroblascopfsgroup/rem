@@ -25,8 +25,19 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
     
 	initComponent: function() {
 		var me = this;
-		// TODO: llevar esta linea hacia el metodo que abra el 'wizard de ofertas' en base al método que abre el 'wizard de compradores'.
-		// IF WIZARD-ALTA-OFERTA THEN wizardTitle = HreRem.i18n('title.nueva.oferta');
+		var entidad = me.up('panel').entidad;
+
+		
+		var comboTipoDocumento = new Ext.data.Store({
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionarioTiposDocumento',
+				extraParams: {diccionario: 'tiposDocumento', entidad: entidad}
+			}
+			
+    	});
+
 		
 		me.buttons = [
 			{
@@ -71,13 +82,11 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 							name: 'codigoComboTipoDocumento',
 							reference: 'tipoDocumentoNuevoComprador',
 							allowBlank: false,
+							filtradoEspecial: true,
 							padding: '60px 0 0 0',
-							bind: {
-								store: '{comboTipoDocumento}',
-								value : '{wizardAdjuntarDocumentoModel.codigoComboTipoDocumento}'
-							}
-							
-							
+							store: comboTipoDocumento,
+							displayField	: 'descripcion',
+						    valueField		: 'codigo'
 						},
 						{
 	

@@ -142,6 +142,6 @@ public interface GestorDocumentalAdapterApi {
 
 	Long upload(Activo activo, WebFileItem webFileItem, String userLogin, String matricula, DtoMetadatosEspecificos dtoMetadatos) throws Exception;
 
-	void guardarFormularioSubidaDocumento(Long idEntidad, String tipoDocumento, DtoMetadatosEspecificos dto) throws ParseException;
+	void guardarFormularioSubidaDocumento(Long idEntidad, String tipoDocumento, boolean tbjValidado, DtoMetadatosEspecificos dto) throws ParseException;
 
 }

@@ -1667,7 +1667,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	
 	@Override
 	@Transactional(readOnly = false)
-	public void guardarFormularioSubidaDocumento(Long idEntidad , String tipoDocumento, DtoMetadatosEspecificos dto) throws ParseException {
+	public void guardarFormularioSubidaDocumento(Long idEntidad, String tipoDocumento, boolean tbjValidado, DtoMetadatosEspecificos dto) throws ParseException{
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", idEntidad);
 		Activo activo = genericDao.get(Activo.class, filtroActivo);
 		
@@ -1706,6 +1706,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 		
 		activoAdmisionDocumento.setRegistro(dto.getRegistro());
+		
+		activoAdmisionDocumento.setValidado(tbjValidado);
+		
 
 		genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
 	

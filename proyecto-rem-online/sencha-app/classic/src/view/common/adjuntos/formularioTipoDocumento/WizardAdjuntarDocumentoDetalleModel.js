@@ -12,16 +12,17 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.WizardAdjuntarDo
 			        {"codigo":"true", "descripcion":"Si"},
 			        {"codigo":"false", "descripcion":"No"}
 			    ]
-			},
-			comboTipoDocumento: {
-				model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'generic/getDiccionario',
-					extraParams: {
-						diccionario: 'tiposDocumento'
-					}
-				}
 			}
+//			comboTipoDocumento: {
+//				model: 'HreRem.model.ComboBase',
+//				proxy: {
+//					type: 'uxproxy',
+//					remoteUrl: 'generic/getDiccionario',
+//					extraParams: {
+//						diccionario: 'tiposDocumento'
+//					}
+//				} 
+//			}
+//		
 	}
 });

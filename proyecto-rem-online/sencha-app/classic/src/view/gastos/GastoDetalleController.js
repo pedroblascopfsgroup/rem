@@ -930,7 +930,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	            } else if (!Ext.isEmpty(data) && data.success == "false"){		            		
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	            }
-				me.getView().unmask();	
 	    	},
 			failure: function (a, operation) {
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
@@ -943,7 +942,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var me = this;
 		
 		var success = function(record, operation) {
-			me.getView().unmask();
 	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	    	window.parent.funcionRecargar();
 	    	var data = {};
@@ -956,6 +954,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
             
 	    	window.parent.up('administraciongastosmain').fireEvent('abrirDetalleGasto', record);
 	    	
+			me.getView().unmask();
 	    	window.destroy();  	
 		};
 		

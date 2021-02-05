@@ -10779,8 +10779,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							diccionario = new DtoDiccionario();
 							Usuario gestorComercialPrescriptor = gestorActivoApi.getGestorByActivoYTipo(act,
 									GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-							diccionario.setDescripcion(gestorComercialPrescriptor.getApellidoNombre());
-							diccionario.setCodigo(gestorComercialPrescriptor.getId().toString());
+							if(gestorComercialPrescriptor != null) {
+								diccionario.setDescripcion(gestorComercialPrescriptor.getApellidoNombre());
+								diccionario.setCodigo(gestorComercialPrescriptor.getId().toString());
+							}
 							listado.add(diccionario);
 							return listado;
 						}

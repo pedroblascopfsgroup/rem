@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=REMVIP-8867
 --## PRODUCTO=NO
 --## 
---## Finalidad: Poner importe a 0
+--## Finalidad: Eliminar registro borrado lógicamente
 --##			
 --## INSTRUCCIONES:  
 --## VERSIONES:
@@ -46,15 +46,11 @@ BEGIN
 
         IF V_COUNT > 0 THEN
 
-            V_MSQL:= 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET
-               VAL_IMPORTE = 0,
-               USUARIOMODIFICAR = '''|| V_USUARIO ||''',
-               FECHAMODIFICAR = SYSDATE
-               WHERE BORRADO = 1 AND ACT_ID = '''||V_ID||'''';
-
+            V_MSQL:= 'DELETE FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE BORRADO = 1 AND ACT_ID = '''||V_ID||'''';
             EXECUTE IMMEDIATE V_MSQL;         
             
-             DBMS_OUTPUT.PUT_LINE('[INFO] MODIFICACIÓN REALIZADA CORRECTAMENTE ');
+            DBMS_OUTPUT.PUT_LINE('[INFO] BORRADO REALIZADO CORRECTAMENTE ');
+            
         ELSE 
 
             DBMS_OUTPUT.PUT_LINE('[INFO] NO EXISTE VALORACIÓN PARA EL ACTIVO '''||V_NUM_ACTIVO||''' ');

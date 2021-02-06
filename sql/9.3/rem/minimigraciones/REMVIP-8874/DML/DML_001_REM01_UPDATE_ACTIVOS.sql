@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20210205
+--## FECHA_CREACION=20210206
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8874
@@ -34,33 +34,12 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INICIO] ');
   
 
-	    	V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1
-                    USING ( 
-                        SELECT ACT_ID,TDC.DD_TDC_ID,EQG.DD_EQG_ID FROM '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
-                        JOIN '||V_ESQUEMA||'.'||V_TABLA||' ACT ON ACT.ACT_NUM_ACTIVO=AUX.ACT_NUM_ACTIVO
-                        JOIN '||V_ESQUEMA||'.DD_TDC_TERRITORIOS_DIR_COM TDC ON TDC.DD_TDC_CODIGO=AUX.TERRITORIO
-                        JOIN '||V_ESQUEMA||'.DD_EQG_EQUIPO_GESTION EQG ON EQG.DD_EQG_CODIGO=AUX.GESTION
-                        WHERE ACT.BORRADO=0 AND TDC.BORRADO=0 AND EQG.BORRADO=0 AND AUX.GESTION IS NOT NULL
-                        ) T2
-                    ON (T1.ACT_ID = T2.ACT_ID)
-                    WHEN MATCHED THEN
-                        UPDATE SET 
-                            T1.DD_TDC_ID = T2.DD_TDC_ID,
-                            T1.DD_EQG_ID = T2.DD_EQG_ID,
-                            USUARIOMODIFICAR = '''||V_USUARIO||''',
-                            FECHAMODIFICAR = SYSDATE
-			 ';
-		
-	EXECUTE IMMEDIATE V_MSQL;  
-
-	DBMS_OUTPUT.PUT_LINE('[FIN] Se han updateado en total '||SQL%ROWCOUNT||' registros QUE LA GESTION NO ERA NULO');
-
     	    	V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1
                     USING ( 
                         SELECT ACT_ID,TDC.DD_TDC_ID FROM '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
                         JOIN '||V_ESQUEMA||'.'||V_TABLA||' ACT ON ACT.ACT_NUM_ACTIVO=AUX.ACT_NUM_ACTIVO
                         JOIN '||V_ESQUEMA||'.DD_TDC_TERRITORIOS_DIR_COM TDC ON TDC.DD_TDC_CODIGO=AUX.TERRITORIO
-                        WHERE ACT.BORRADO=0 AND TDC.BORRADO=0 AND AUX.GESTION IS NULL
+                        WHERE ACT.BORRADO=0 AND TDC.BORRADO=0
                         ) T2
                     ON (T1.ACT_ID = T2.ACT_ID)
                     WHEN MATCHED THEN
@@ -72,7 +51,7 @@ BEGIN
 		
 	EXECUTE IMMEDIATE V_MSQL;  
 
-	DBMS_OUTPUT.PUT_LINE('[FIN] Se han updateado en total '||SQL%ROWCOUNT||' registros QUE LA GESTION ES NULO');
+	DBMS_OUTPUT.PUT_LINE('[FIN] Se han updateado en total '||SQL%ROWCOUNT||' registros');
    
 	COMMIT;
 

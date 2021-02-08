@@ -62,7 +62,7 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
 	
 	            },
 	            {
-			    	xtype: 'textfieldbase',
+			    	xtype: 'textfield',
 			    	fieldLabel: 'Registro',
 			    	reference: 'registro'
 	

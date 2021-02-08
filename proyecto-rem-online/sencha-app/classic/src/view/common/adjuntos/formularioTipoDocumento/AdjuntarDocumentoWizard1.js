@@ -77,7 +77,7 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 			 		},
 					items: [
 						{
-							xtype: 'comboboxfieldbase',
+							xtype: 'combobox',
 							fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
 							name: 'codigoComboTipoDocumento',
 							reference: 'tipoDocumentoNuevoComprador',

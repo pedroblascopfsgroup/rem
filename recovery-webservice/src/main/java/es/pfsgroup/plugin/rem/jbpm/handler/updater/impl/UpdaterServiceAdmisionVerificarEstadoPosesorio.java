@@ -10,14 +10,18 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 
 @Component
@@ -25,6 +29,9 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 	
 	
 	private static final String FECHA = "fecha";
@@ -41,6 +48,8 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 		Filter tituloActivo;
 		DDTipoTituloActivoTPA tipoTitulo;
 		
+		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		String usuarioModificar = usu == null ? CODIGO_T001_VERIFICAR_ESTADO_POSESORIO : CODIGO_T001_VERIFICAR_ESTADO_POSESORIO + " - " + usu.getUsername();
 		
 		//Valores trasladados a pestaña "Situación Posesoria"
 		for(TareaExternaValor valor :  valores){
@@ -55,8 +64,12 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 				}
 
 			// Activo ocupado si/no
-			if(COMBO_OCUPADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
-				sitpos.setOcupado((DDSiNo.NO.equals(valor.getValor()))? 0 : 1);
+			if(COMBO_OCUPADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				sitpos.setOcupado((DDSiNo.NO.equals(valor.getValor()))? 0 : 1);			
+				sitpos.setFechaModificarOcupado(new Date());
+				sitpos.setUsuarioModificarOcupado(usuarioModificar);
+				
+			}
 			
 			// Ocupante con titulo xa activo
 			if(COMBO_TITULO.equals(valor.getNombre()))
@@ -67,6 +80,8 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 				} else {//En el caso de que no se haya rellenado el campo título lo nuleamos por si tuviese algún valor anteriormente.
 					sitpos.setConTitulo(null);
 				}
+				sitpos.setUsuarioModificarConTitulo(usuarioModificar);
+				sitpos.setFechaModificarConTitulo(new Date());
 				sitpos.setFechaUltCambioTit(new Date());
 		}
 		genericDao.save(ActivoSituacionPosesoria.class, sitpos);

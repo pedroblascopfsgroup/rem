@@ -130,8 +130,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			me.lookupReference("codigoPromocionPrinex").setDisabled(true);
 			me.lookupReference("codigoPromocionPrinex").setValue(null);
 		}*/
+		
+		if (!Ext.isEmpty(me.lookupReference("listaActivosSubidaRef")) && 
+			!Ext.isEmpty(me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion"))  ){
+			
+			me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(false);
+		}
 
-		me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(false);  	
+		  	
 		
     },
     
@@ -1731,6 +1737,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		if(esFichaTrabajo){
     			me.lookupReference('comboGestorActivoResposable').setReadOnly(false);	
     			me.lookupReference('descripcionGeneralRef').setReadOnly(false);
+    			me.lookupReference('riesgosTercerosRef').setReadOnly(false);
+    			me.lookupReference('checkboxUrgente').setReadOnly(false);	
     		}
     		
     		if(estadoTrabajo == "CUR" /*|| estadoTrabajo == "REJ"*/){

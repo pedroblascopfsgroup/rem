@@ -48,6 +48,7 @@ public class MSVValidatorTarifasPresupuestos extends MSVExcelValidatorAbstract {
 	private final static String ERROR_ESTADO_TRABAJO_INCORRECTO_TARIFA="msg.error.masivo-tarifa.presupuesto.estado.trabajo.incorrecto.tarifa";
 	private final static String ERROR_ESTADO_TRABAJO_INCORRECTO_PRESUPUESTO="msg.error.masivo-tarifa.presupuesto.estado.trabajo.incorrecto.presupuesto";
 	private final static String ERROR_NO_EXISTE_PROVEEDOR="msg.error.masivo-tarifa.presupuesto.proveedor.no.existe";
+	private final static String ERROR_ESTADO_TRABAJO_INCORRECTO_TAR_PRES="msg.error.masivo-tarifa.presupuesto.estado.trabajo.incorrecto.tar.pres";
 	
 	
 	//CAMPOS
@@ -146,11 +147,11 @@ public class MSVValidatorTarifasPresupuestos extends MSVExcelValidatorAbstract {
 									&& !CODIGO_ESTADO_EN_CURSO.equals(codigoEstadoTrabajo)) {
 								this.validado = false;
 								if (TIPO_TARIFA.equals(exc.dameCelda(fila, COL_TIPO_REGISTRO))) {
-									addErrorToMap(ERROR_ESTADO_TRABAJO_INCORRECTO_TARIFA, fila);
-									
-								} else if (TIPO_TARIFA.equals(exc.dameCelda(fila, COL_TIPO_REGISTRO))) {
-									addErrorToMap(ERROR_ESTADO_TRABAJO_INCORRECTO_PRESUPUESTO, fila);
-									
+									addErrorToMap(ERROR_ESTADO_TRABAJO_INCORRECTO_TARIFA, fila);							
+								} else if (TIPO_PRESUPUESTO.equals(exc.dameCelda(fila, COL_TIPO_REGISTRO))) {
+									addErrorToMap(ERROR_ESTADO_TRABAJO_INCORRECTO_PRESUPUESTO, fila);	
+								}else {
+									addErrorToMap(ERROR_ESTADO_TRABAJO_INCORRECTO_TAR_PRES, fila);
 								}
 							}
 						} else {
@@ -177,7 +178,9 @@ public class MSVValidatorTarifasPresupuestos extends MSVExcelValidatorAbstract {
 				logger.error(e.getMessage());
 			}
 		}
-		
+		if(this.mapaErrores.isEmpty()) {
+			this.validado = true;
+		}
 		return this.validado;
 	}
 

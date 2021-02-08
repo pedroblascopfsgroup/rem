@@ -62,7 +62,18 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosWebAgrupacion', {
             
             listeners: {
                 itemclick: function(dataview,record) {
+                	if(Ext.isEmpty(record.getData().nombre)){
+                		this.up('form').getForm().findField('nombre').setValue();
+                	}
+                	if(Ext.isEmpty(record.getData().codigoDescripcionFoto)){
+                		this.up('form').getForm().findField('codigoDescripcionFoto').setValue();
+                	}
+                	if(Ext.isEmpty(record.getData().fechaDocumento)){
+                		this.up('form').getForm().findField('fechaDocumento').setValue();
+                	}
 	        		this.up('form').setBindRecord(record.data);
+	        		this.lookupController().getViewModel().set('fotoSelected', record);
+	        		this.lookupController().getViewModel().notify();
 	        	}
             }
             
@@ -115,12 +126,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosWebAgrupacion', {
 							}
 		                },
 		                { 
-		                	name: 'descripcion',
-		                	xtype: 'textareafieldbase',
+		                	name: 'codigoDescripcionFoto',
+		                	xtype: 'comboboxfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.descripcion'),
+		                	editable: false,
+		                	queryMode: 'local',
 		                	bind: {
-								value: '{descripcion}'
-							}
+		                		store: '{storeDescripcionFoto}',
+				        		value: '{codigoDescripcionFoto}'
+							},
+							allowBlank: false
 		                },
 		                { 
 		                	name: 'fechaDocumento',

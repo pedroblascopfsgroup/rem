@@ -18,6 +18,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
         var me = this;
         var isCarteraBbva = me.lookupController().getViewModel().getData().activo.getData().isCarteraBbva;
         var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']);
+        var ocultoUsuariosBBVA = $AU.getUser().codigoCartera == CONST.CARTERA['BBVA'];
 		me.setTitle(HreRem.i18n('title.datos.basicos'));
         var items= [
 			{
@@ -592,12 +593,29 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		               
 					]               
           	},
+          	// Perimetros  BBVA-----------------------------------------------
+          	{    
+				xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				title: HreRem.i18n('title.perimetros'),
+				hidden: !ocultoUsuariosBBVA,
+				items :[					
+					{
+						xtype: 'datefieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.perimetro.fecha.alta.activo'),
+						colspan: 2,
+						bind:		'{activo.fechaAltaActivoRem}',
+						readOnly	: true
+					}
+				]
+ 			},
           	// Perimetros -----------------------------------------------
             {    
                 
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.perimetros'),
+				hidden: ocultoUsuariosBBVA,
 				items :
 					[
 					{
@@ -1118,7 +1136,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								items :
 									[
 									{
-										xtype:'numberfieldbase',
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.empresa'),
 										reference: 'activobbvaEmpresa',
 										bind: {
@@ -1134,7 +1152,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						            	}
 									},
 									{
-										xtype:'numberfieldbase',
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.oficina'),
 										reference: 'activobbvaOficina',
 										bind: {
@@ -1150,7 +1168,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						            	}
 									},
 									{
-										xtype:'numberfieldbase',
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.contrapartida'),
 										reference: 'activobbvaContrapartida',
 										bind: {
@@ -1166,7 +1184,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						            	}
 									},
 									{
-										xtype:'numberfieldbase',
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.folio'),
 										reference: 'activobbvaFolio',
 										bind: {
@@ -1182,7 +1200,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						            	}
 									},
 									{
-										xtype:'textfield',
+										xtype:'textfieldbase',
 										disabled: true,
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.cdpen'),
 										reference: 'activobbvaCdpen',

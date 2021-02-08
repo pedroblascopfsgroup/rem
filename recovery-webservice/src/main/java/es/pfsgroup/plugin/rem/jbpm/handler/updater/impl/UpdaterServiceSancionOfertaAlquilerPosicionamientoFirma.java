@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -12,18 +13,19 @@ import org.springframework.stereotype.Component;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -32,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements UpdaterService {
@@ -50,6 +53,9 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
     
     @Autowired
 	private ActivoAdapter activoAdapter;
+    
+    @Autowired
+    private ApiProxyFactory proxyFactory;
 
         
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma.class);
@@ -98,6 +104,15 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 					
 					situacionPosesoria.setConTitulo(tipoTitulo);
 					situacionPosesoria.setOcupado(1);
+					
+					Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+					String usuarioModificar = usu == null ? CODIGO_T014_POSICIONAMIENTO_FIRMA : CODIGO_T014_POSICIONAMIENTO_FIRMA + " - " + usu.getUsername();
+					
+					situacionPosesoria.setUsuarioModificarOcupado(usuarioModificar);
+					situacionPosesoria.setFechaModificarOcupado(new Date());
+					situacionPosesoria.setUsuarioModificarConTitulo(usuarioModificar);
+					situacionPosesoria.setFechaModificarConTitulo(new Date());
+					
 					try {
 						situacionPosesoria.setFechaTomaPosesion(ft.parse(valor.getValor()));
 					} catch (ParseException e) {

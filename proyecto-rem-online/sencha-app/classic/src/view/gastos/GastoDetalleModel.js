@@ -783,7 +783,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 					idGasto : '{gasto.id}'
 				}
 			},
-			autoLoad: true
+			autoLoad: false
 		},
 		
 		comboTipoRetencion : {

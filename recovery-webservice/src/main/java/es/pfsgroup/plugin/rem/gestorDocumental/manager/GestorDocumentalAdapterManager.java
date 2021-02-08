@@ -1678,9 +1678,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.id", tipoDocDiccionario.getId());
 		Filter filtrotipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.id",activo.getTipoActivo().getId());
 		ActivoConfigDocumento actConfDoc = genericDao.get(ActivoConfigDocumento.class, filtroDocumento,filtrotipoActivo);
-		Filter filtroFechaCaducidadNull = genericDao.createFilter(FilterType.NULL, "fechaCaducidad");
 		Filter filtroActConfDoc = genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", actConfDoc.getId());
-		ActivoAdmisionDocumento activoAdmisionDocumento = genericDao.get(ActivoAdmisionDocumento.class, filtroActivo, filtroActConfDoc, filtroFechaCaducidadNull);
+		ActivoAdmisionDocumento activoAdmisionDocumento = genericDao.get(ActivoAdmisionDocumento.class, filtroActivo, filtroActConfDoc);
 		
 		
 		if(activoAdmisionDocumento == null) {
@@ -1736,9 +1735,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 					Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo", tipoDoc.getTipoDocumento().getCodigo());
 					Filter filtrotipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.id",activo.getTipoActivo().getId());
 					ActivoConfigDocumento actConfDoc = genericDao.get(ActivoConfigDocumento.class, filtroDocumento,filtrotipoActivo);
-					Filter filtroFechaCaducidadNull = genericDao.createFilter(FilterType.NULL, "fechaCaducidad");
 					Filter filtroActConfDoc = genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", actConfDoc.getId());
-					ActivoAdmisionDocumento activoAdmisionDocumento = genericDao.get(ActivoAdmisionDocumento.class, filtroActivo, filtroActConfDoc, filtroFechaCaducidadNull);
+					ActivoAdmisionDocumento activoAdmisionDocumento = genericDao.get(ActivoAdmisionDocumento.class, filtroActivo, filtroActConfDoc);
 					if(activoAdmisionDocumento != null) {
 						activoAdmisionDocumento.setValidado(true);
 						genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,6 +23,7 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 
@@ -70,6 +72,9 @@ public class GestorDocumentalController extends ParadiseJsonController {
 				if(GestorDocumentalAdapterApi.ENTIDAD_ACTIVO.equalsIgnoreCase(entidad)) {
 					idActivo = Long.parseLong(idEntidad);
 					tbjValidado = trabajoApi.activoTieneTrabajoValidadoByTipoDocumento(idActivo,tipoDocumento);
+					if(dto != null && idActivo != null) {				
+						gestorDocumentalAdapterApi.guardarFormularioSubidaDocumento(idActivo, tipoDocumento, tbjValidado, dto);
+					}
 					activoAdapter.upload(webFileItem, dto);
 				}else if(GestorDocumentalAdapterApi.ENTIDAD_TRABAJO.equalsIgnoreCase(entidad)){
 					Trabajo trabajo = trabajoApi.findOne(Long.parseLong(idEntidad));
@@ -80,15 +85,16 @@ public class GestorDocumentalController extends ParadiseJsonController {
 						tbjValidado = true;
 					}
 					
-					Activo activo = trabajo.getActivo();
-					if(activo != null) {
-						idActivo = activo.getId();
+					List<ActivoTrabajo> activoTrabajoList = trabajo.getActivosTrabajo();
+					for (ActivoTrabajo activoTrabajo : activoTrabajoList) {
+						idActivo = activoTrabajo.getActivo().getId();
+						if(dto != null && idActivo != null) {
+							gestorDocumentalAdapterApi.guardarFormularioSubidaDocumento(idActivo, tipoDocumento, tbjValidado, dto);
+						}
 					}
 					trabajoApi.upload(webFileItem);
 				}
-				if(dto != null && idActivo != null) {				
-					gestorDocumentalAdapterApi.guardarFormularioSubidaDocumento(idActivo, tipoDocumento, tbjValidado, dto);
-				}
+				
 				
 			}
 

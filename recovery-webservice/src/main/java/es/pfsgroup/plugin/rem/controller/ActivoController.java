@@ -4169,6 +4169,7 @@ public class ActivoController extends ParadiseJsonController {
 		}		
 		return createModelAndViewJson(model);	
 	}		
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getCheckGestionActivo(Long idActivo, ModelMap model){
 		try{

@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -239,16 +241,23 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 	public void actualizaSituacionPosesoria (MSVHojaExcel exc, int fila, ActivoSituacionPosesoria sitPosesoria) throws IOException, ParseException {
 		
 		if(sitPosesoria != null ) {
+			Usuario usu = usuarioApi.getUsuarioLogado();
+			String usuarioModificar = usu == null ? MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_TACTICO_ESPARTA_PUBLICACIONES : MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_TACTICO_ESPARTA_PUBLICACIONES + usu.getUsername();
+			
 			if(!exc.dameCelda(fila, PUERTA_ANTIOCUPA).isEmpty()) {
 				sitPosesoria.setAccesoAntiocupa(traducirSiNo(exc.dameCelda(fila, PUERTA_ANTIOCUPA)));
 			}
 			if(!exc.dameCelda(fila, OCUPADO).isEmpty()) {
 				sitPosesoria.setOcupado(traducirSiNo(exc.dameCelda(fila, OCUPADO)));
+				sitPosesoria.setUsuarioModificarOcupado(usuarioModificar);
+				sitPosesoria.setFechaModificarOcupado(new Date());
 			}
 			if(!exc.dameCelda(fila, CON_TITULO).isEmpty()) {
 				Filter filtroDDTipoTituloActivoTPA  = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, CON_TITULO));
 				DDTipoTituloActivoTPA ddTipoTituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, filtroDDTipoTituloActivoTPA);
 				sitPosesoria.setConTitulo(ddTipoTituloActivoTPA);
+				sitPosesoria.setUsuarioModificarConTitulo(usuarioModificar);
+				sitPosesoria.setFechaModificarConTitulo(new Date());
 			}
 			if(!exc.dameCelda(fila, TAPIADO).isEmpty()) {
 				sitPosesoria.setAccesoTapiado(traducirSiNo(exc.dameCelda(fila, TAPIADO)));

@@ -151,24 +151,39 @@ public class MSVActualizadorTarifasPresupuestos extends AbstractMSVActualizador 
 			}
 		}
 
-		return getConfiguracionTarifa(idTipoTarifa, idCartera, idSubcartera);//, idTipoTrabajo, idSubtipoTrabajo);
+		return getConfiguracionTarifa(idTipoTarifa, idCartera, idSubcartera, trabajo);
 	}
 
-	private ConfiguracionTarifa getConfiguracionTarifa(Long idTipoTarifa, Long idCartera, Long idSubcartera) {//, Long idTipoTrabajo,
-			//Long idSubtipoTrabajo) {
+	private ConfiguracionTarifa getConfiguracionTarifa(Long idTipoTarifa, Long idCartera, Long idSubcartera, Trabajo trabajo) {
 
-		if (idCartera != null && idTipoTarifa != null && idSubcartera != null) {
+		if (idCartera != null && idTipoTarifa != null && idSubcartera != null && trabajo.getTipoTrabajo() != null && trabajo.getSubtipoTrabajo() != null) {
 			Filter fCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.id", idCartera);
 			Filter fTipoTarifa = genericDao.createFilter(FilterType.EQUALS, "tipoTarifa.id", idTipoTarifa);
 			Filter fSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.id", idSubcartera);
-//			Filter fTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.id", idTipoTrabajo);
-//			Filter fSubtipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.id", idSubtipoTrabajo);
-
-			ConfiguracionTarifa cfg = genericDao.get(ConfiguracionTarifa.class, fCartera, fTipoTarifa, fSubcartera);//, fTipoTrabajo, fSubtipoTrabajo);
-			if(cfg == null) {
-				List<ConfiguracionTarifa> listcfg = genericDao.getList(ConfiguracionTarifa.class, fCartera, fTipoTarifa);
-				if(listcfg != null) {
-					cfg = listcfg.get(0);
+			Filter fTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.id", trabajo.getTipoTrabajo().getId());
+			Filter fSubtipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.id", trabajo.getSubtipoTrabajo().getId());
+			Filter fProveedor;
+			
+			ConfiguracionTarifa  cfg = null; 
+			if(trabajo.getProveedorContacto() != null) {
+				fProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", trabajo.getProveedorContacto().getId());
+				cfg = genericDao.get(ConfiguracionTarifa.class, fCartera, fTipoTarifa, fSubcartera, fTipoTrabajo, fSubtipoTrabajo, fProveedor);
+			}
+			
+			
+			if( cfg == null) {
+				fProveedor = genericDao.createFilter(FilterType.NULL, "proveedor.id");
+				List<ConfiguracionTarifa> cfgList = genericDao.getList(ConfiguracionTarifa.class, fCartera, fTipoTarifa, fSubcartera, fTipoTrabajo, fSubtipoTrabajo, fProveedor);
+				if(cfgList == null || cfgList.isEmpty()) {
+					fSubcartera = genericDao.createFilter(FilterType.NULL, "subcartera.id");
+					cfgList = genericDao.getList(ConfiguracionTarifa.class, fCartera, fTipoTarifa, fTipoTrabajo, fSubtipoTrabajo, fProveedor);
+					if(cfgList != null && !cfgList.isEmpty() ) {
+						cfg = cfgList.get(0);
+					}
+				}else {
+					if(cfgList != null && !cfgList.isEmpty()) {
+						cfg = cfgList.get(0);
+					}
 				}
 			}
 			return cfg;

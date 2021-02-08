@@ -89,7 +89,6 @@ public class MSVActualizadorEstadoTrabajos extends AbstractMSVActualizador imple
 
 			if (DDEstadoTrabajo.ESTADO_VALIDADO.equals(estadoTrabajo.getCodigo())) {
 				trabajoApi.EnviarCorreoTrabajos(trabajo, EMAIL_VALIDADO);
-
 			} else if (DDEstadoTrabajo.CODIGO_ESTADO_RECHAZADO.equals(estadoTrabajo.getCodigo())) {
 				trabajoApi.EnviarCorreoTrabajos(trabajo, EMAIL_RECHAZADO);
 			}

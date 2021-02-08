@@ -70,6 +70,7 @@ public class DtoCondiciones extends WebDto {
 	private Integer solicitaReserva;
 	private Boolean operacionExenta;
 	private Boolean inversionDeSujetoPasivo;
+	private Boolean tributosSobrePropiedad;
 	
 	private Integer mesesFianza;
 	private Double importeFianza;
@@ -843,6 +844,14 @@ public class DtoCondiciones extends WebDto {
 
 	public void setDepositoReserva(Double depositoReserva) {
 		this.depositoReserva = depositoReserva;
+	}
+
+	public Boolean getTributosSobrePropiedad() {
+		return tributosSobrePropiedad;
+	}
+
+	public void setTributosSobrePropiedad(Boolean tributosSobrePropiedad) {
+		this.tributosSobrePropiedad = tributosSobrePropiedad;
 	}
 
 	

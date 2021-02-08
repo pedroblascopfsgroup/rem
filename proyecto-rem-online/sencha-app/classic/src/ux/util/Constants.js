@@ -67,6 +67,10 @@ Ext.define('HreRem.ux.util.Constants', {
 		OTROS: '07'
 	},
 
+	SUBTIPOS_ACTIVO: {
+		OBRA_NUEVA: '23'
+	},
+
 	TIPOS_EXPEDIENTE_COMERCIAL: {
 		VENTA: '01',
 		ALQUILER: '02'

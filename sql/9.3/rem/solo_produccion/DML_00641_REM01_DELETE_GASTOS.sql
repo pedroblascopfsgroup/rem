@@ -1,0 +1,156 @@
+--/*
+--#########################################
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20210128
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-8811
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Realizar borrado logico gastos
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF; 
+
+DECLARE
+
+
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar   
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master 
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-8811';
+
+    V_ID NUMBER(16); -- Vble. para el id del activo
+
+    V_TABLA VARCHAR2(50 CHAR):= 'GPV_GASTOS_PROVEEDOR';
+    V_TABLA_GDE VARCHAR2(100 CHAR):='GDE_GASTOS_DETALLE_ECONOMICO';
+
+    V_GASTO_ESP1 VARCHAR2(100 CHAR):='12616249';
+    V_GASTO_ESP2 VARCHAR2(100 CHAR):='12616251';
+
+	V_COUNT NUMBER(16); -- Vble. para comprobar
+
+    V_IMPORTE_TOTAL NUMBER(16);
+    
+
+BEGIN
+	DBMS_OUTPUT.PUT_LINE('[INICIO]');
+    DBMS_OUTPUT.PUT_LINE('[INFO]: BORRADO LOGICO GASTOS EN '||V_TABLA_GDE||'');
+
+    --BORRADO GRUPO ESPECIAL DE HOY
+
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1
+                USING(
+                   WITH DUPLICADOS_GESTORIA AS (
+                    SELECT GPV_NUM_GASTO_GESTORIA, DD_GRF_ID
+                    FROM REM01.GPV_GASTOS_PROVEEDOR
+                    WHERE BORRADO = 0
+                        AND GPV_NUM_GASTO_GESTORIA IS NOT NULL
+                        AND DD_GRF_ID IS NOT NULL
+                    GROUP BY GPV_NUM_GASTO_GESTORIA, DD_GRF_ID
+                    HAVING COUNT(1) > 1
+                )
+
+                    SELECT GPV.GPV_NUM_GASTO_HAYA, GPV.FECHACREAR, GPV.USUARIOCREAR, GGE.GGE_FECHA_ENVIO_PRPTRIO
+                        , GPV.GPV_NUM_GASTO_GESTORIA, GPV.DD_GRF_ID, EGA.DD_EGA_DESCRIPCION, EGA.DD_EGA_CODIGO
+                        , DENSE_RANK() OVER(PARTITION BY 1 ORDER BY GPV.GPV_NUM_GASTO_GESTORIA, GPV.DD_GRF_ID) GRUPO
+                        , DECODE(EGA.DD_EGA_CODIGO, ''06'', -1, ''12'', 0, ''01'', 1, ''03'', 2, ''08'', 3) PRIORIDAD
+                    FROM REM01.GPV_GASTOS_PROVEEDOR GPV
+                    JOIN REM01.GGE_GASTOS_GESTION GGE ON GGE.GPV_ID = GPV.GPV_ID
+                        AND GGE.BORRADO = 0
+                    JOIN REM01.DD_EGA_ESTADOS_GASTO EGA ON EGA.DD_EGA_ID = GPV.DD_EGA_ID
+                        AND EGA.BORRADO = 0
+                        AND EGA.DD_EGA_CODIGO NOT IN (''04'', ''05'')
+                    JOIN DUPLICADOS_GESTORIA DUP ON DUP.GPV_NUM_GASTO_GESTORIA = GPV.GPV_NUM_GASTO_GESTORIA
+                        AND DUP.DD_GRF_ID = GPV.DD_GRF_ID
+                    WHERE GPV.BORRADO = 0 and GGE.GGE_FECHA_ENVIO_PRPTRIO IS NOT NULL AND GPV_NUM_GASTO_HAYA NOT IN ('||V_GASTO_ESP1||',
+                    '||V_GASTO_ESP2||')
+
+                ) AUX
+                ON (T1.GPV_NUM_GASTO_HAYA = AUX.GPV_NUM_GASTO_HAYA)
+                WHEN MATCHED THEN UPDATE SET                
+                BORRADO=1,
+                T1.USUARIOBORRAR = '''||V_USUARIO||''',
+                T1.FECHABORRAR = SYSDATE
+                ';
+		
+	EXECUTE IMMEDIATE V_MSQL;  
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] BORRADOS '||SQL%ROWCOUNT||' GASTOS ');
+
+--BORRADO RESTO DE GASTOS
+
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1
+                USING(
+                   select GPV_NUM_GASTO_HAYA from (                  
+WITH DUPLICADOS_GESTORIA AS (
+    SELECT GPV_NUM_GASTO_GESTORIA, DD_GRF_ID
+    FROM REM01.GPV_GASTOS_PROVEEDOR
+    WHERE BORRADO = 0
+        AND GPV_NUM_GASTO_GESTORIA IS NOT NULL
+        AND DD_GRF_ID IS NOT NULL
+    GROUP BY GPV_NUM_GASTO_GESTORIA, DD_GRF_ID
+    HAVING COUNT(1) > 1
+)
+
+SELECT GPV.GPV_NUM_GASTO_HAYA, GPV.FECHACREAR, GPV.USUARIOCREAR, GGE.GGE_FECHA_ENVIO_PRPTRIO
+    , GPV.GPV_NUM_GASTO_GESTORIA, GPV.DD_GRF_ID, EGA.DD_EGA_DESCRIPCION, EGA.DD_EGA_CODIGO
+    , DENSE_RANK() OVER(PARTITION BY 1 ORDER BY GPV.GPV_NUM_GASTO_GESTORIA, GPV.DD_GRF_ID) GRUPO
+    , DECODE(EGA.DD_EGA_CODIGO, ''06'', -1, ''12'', 0, ''01'', 1, ''03'', 2, ''08'', 3) PRIORIDAD
+    ,row_number() OVER(
+                		PARTITION BY GPV.GPV_NUM_GASTO_GESTORIA
+                		ORDER BY GPV.GPV_NUM_GASTO_HAYA DESC
+            		) ROW_NUM
+FROM REM01.GPV_GASTOS_PROVEEDOR GPV
+JOIN REM01.GGE_GASTOS_GESTION GGE ON GGE.GPV_ID = GPV.GPV_ID
+    AND GGE.BORRADO = 0
+JOIN REM01.DD_EGA_ESTADOS_GASTO EGA ON EGA.DD_EGA_ID = GPV.DD_EGA_ID
+    AND EGA.BORRADO = 0
+    AND EGA.DD_EGA_CODIGO NOT IN (''04'', ''05'')
+JOIN DUPLICADOS_GESTORIA DUP ON DUP.GPV_NUM_GASTO_GESTORIA = GPV.GPV_NUM_GASTO_GESTORIA
+    AND DUP.DD_GRF_ID = GPV.DD_GRF_ID 
+WHERE GPV.BORRADO = 0 AND GPV.FECHACREAR>TO_DATE(''15012021'',''DDMMYYYY'') AND GGE.GGE_FECHA_ENVIO_PRPTRIO IS NULL
+
+
+) WHERE ROW_NUM>1 AND GPV_NUM_GASTO_HAYA NOT IN (12615515,12615495,12615494)
+
+                ) AUX
+                ON (T1.GPV_NUM_GASTO_HAYA = AUX.GPV_NUM_GASTO_HAYA)
+                WHEN MATCHED THEN UPDATE SET                
+                BORRADO=1,
+                T1.USUARIOBORRAR = '''||V_USUARIO||''',
+                T1.FECHABORRAR = SYSDATE
+                ';
+		
+	EXECUTE IMMEDIATE V_MSQL;  
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] BORRADOS '||SQL%ROWCOUNT||' GASTOS ');
+
+
+
+
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('[FIN]');
+ 
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

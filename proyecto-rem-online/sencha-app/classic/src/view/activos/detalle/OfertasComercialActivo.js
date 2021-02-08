@@ -12,7 +12,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 
     initComponent: function () {        
         var me = this;
-
+        var ocultoUsuariosBBVA = $AU.getUser().codigoCartera == CONST.CARTERA['BBVA'];
         me.setTitle(HreRem.i18n("title.activos.listado.ofertas"));
 
         var items = [
@@ -295,6 +295,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 							title: HreRem.i18n('title.horonarios'),
 							collapsible: true,
 							colspan: 3,
+							hidden: ocultoUsuariosBBVA,
 							items :
 								[
 									{

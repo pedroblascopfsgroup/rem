@@ -15,6 +15,7 @@ public class DtoSubdivisiones extends WebDto {
 	private Long id;
 	private Long agrId;
 	private String nombre;
+	private String codigoSubtipoActivo;
 	private Integer numHabitaciones;
 	private Integer numPlantas;
 	private String tipoSubdivisionCodigo;
@@ -82,6 +83,12 @@ public class DtoSubdivisiones extends WebDto {
 	}
 	public void setPublicaciones(String publicaciones) {
 		this.publicaciones = publicaciones;
+	}
+	public String getCodigoSubtipoActivo() {
+		return codigoSubtipoActivo;
+	}
+	public void setCodigoSubtipoActivo(String codigoSubtipoActivo) {
+		this.codigoSubtipoActivo = codigoSubtipoActivo;
 	}
 
 

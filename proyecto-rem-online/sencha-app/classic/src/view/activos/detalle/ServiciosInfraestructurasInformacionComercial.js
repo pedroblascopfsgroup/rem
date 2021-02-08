@@ -19,7 +19,7 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 			        type: 'table',
 			        // The total column count must be specified here
 			        columns: 2,
-			        trAttrs: {height: '30px', width: '100%'},
+			        trAttrs: {height: '150px', width: '100%'},
 			        tdAttrs: {width: '50%'},
 			        tableAttrs: {
 			            style: {
@@ -192,7 +192,7 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 			        type: 'table',
 			        // The total column count must be specified here
 			        columns: 2,
-			        trAttrs: {height: '30px', width: '100%'},
+			        trAttrs: {height: '150px', width: '100%'},
 			        tdAttrs: {width: '50%'},
 			        tableAttrs: {
 			            style: {
@@ -335,7 +335,7 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 			        type: 'table',
 			        // The total column count must be specified here
 			        columns: 2,
-			        trAttrs: {height: '30px', width: '100%'},
+			        trAttrs: {height: '150px', width: '100%'},
 			        tdAttrs: {width: '50%'},
 			        tableAttrs: {
 			            style: {

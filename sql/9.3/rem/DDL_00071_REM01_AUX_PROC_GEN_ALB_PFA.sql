@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200807
+--## AUTOR=DAP
+--## FECHA_CREACION=20210203
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10704
+--## INCIDENCIA_LINK=HREOS-12983
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Creación de tabla auxiliar para AUX_PROC_GEN_ALB_PFA
@@ -53,7 +53,13 @@ BEGIN
 		TBJ_ID		NUMBER(16,0)
 		, PVE_ID	NUMBER(16,0)
 		, PRO_ID	NUMBER(16,0)
+		, DD_TGA_ID NUMBER(16,0)
+		, DD_STG_ID NUMBER(16,0)
+		, DD_DEG_ID NUMBER(16,0)	
 		, ANYO		NUMBER(4,0)
+		, ZONA		NUMBER(1,0)
+		, DD_IRE_ID	NUMBER(16,0)
+		, DD_CRA_ID NUMBER(16,0)
 		, GRUPO		NUMBER(16,0)
 		, ALB_ID	NUMBER(16,0)
 	)';

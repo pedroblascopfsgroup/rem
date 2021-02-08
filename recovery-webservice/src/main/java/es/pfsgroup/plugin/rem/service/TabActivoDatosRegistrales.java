@@ -1005,17 +1005,11 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					if(dto.getIdProcesoOrigen() != null) {
 						activoBbva.setIdProcesoOrigen(dto.getIdProcesoOrigen());
 					}
-				}
-				//Sociedad Pago Anterior de BBVA que tiene diferente logica al resto.
-				if (!Checks.esNulo(dto.getSociedadPagoAnterior())) {
-				
-				
-				Filter filtroPropietarioAct = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				Filter filtroPropietario = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo",dto.getSociedadPagoAnterior());
-				ActivoPropietarioActivo activoPropietario = genericDao.get(ActivoPropietarioActivo.class, filtroPropietarioAct);
-				ActivoPropietario propietario = genericDao.get(ActivoPropietario.class, filtroPropietario);
-				activoPropietario.setPropietario(propietario);
-				
+					if(dto.getSociedadPagoAnterior() != null) {
+						Filter filtroPropietario = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getSociedadPagoAnterior());
+						ActivoPropietario propietario = genericDao.get(ActivoPropietario.class, filtroPropietario);
+						activoBbva.setSociedadPagoAnterior(propietario);
+					}
 				}
 			}
 			

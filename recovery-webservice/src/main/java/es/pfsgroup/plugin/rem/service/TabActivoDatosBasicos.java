@@ -1090,9 +1090,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(((activoDto.getEstadoAlquilerCodigo() != null && DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(activoDto.getEstadoAlquilerCodigo()))
 				|| (activoDto.getEstadoVentaCodigo() != null && DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(activoDto.getEstadoVentaCodigo())))
 				&& (activoDto.getPertenceAgrupacionRestringida() != null && !activoDto.getPertenceAgrupacionRestringida())) {
-			activoDto.setEditarVisibilidadGestionComercial(true);
-		}else {
 			activoDto.setEditarVisibilidadGestionComercial(false);
+		}else {
+			activoDto.setEditarVisibilidadGestionComercial(true);
 		}
 		return activoDto;
 	}

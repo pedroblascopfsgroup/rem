@@ -3116,6 +3116,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(condiciones.getRevisionMercadoMeses())) {
 				dto.setRevisionMercadoMeses(condiciones.getRevisionMercadoMeses());
 			}
+			if (!Checks.esNulo(condiciones.getTributosSobrePropiedad())) {
+				dto.setTributosSobrePropiedad(condiciones.getTributosSobrePropiedad());
+			}
 
 			List<HistoricoCondicionanteExpediente> listaHistorico = condiciones.getListHistoricoCondiciones();
 			if (!Checks.esNulo(listaHistorico)) {
@@ -10780,8 +10783,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							diccionario = new DtoDiccionario();
 							Usuario gestorComercialPrescriptor = gestorActivoApi.getGestorByActivoYTipo(act,
 									GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-							diccionario.setDescripcion(gestorComercialPrescriptor.getApellidoNombre());
-							diccionario.setCodigo(gestorComercialPrescriptor.getId().toString());
+							if(gestorComercialPrescriptor != null) {
+								diccionario.setDescripcion(gestorComercialPrescriptor.getApellidoNombre());
+								diccionario.setCodigo(gestorComercialPrescriptor.getId().toString());
+							}
 							listado.add(diccionario);
 							return listado;
 						}

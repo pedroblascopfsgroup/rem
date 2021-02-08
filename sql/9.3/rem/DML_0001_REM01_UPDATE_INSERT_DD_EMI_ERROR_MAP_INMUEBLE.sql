@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Salt
---## FECHA_CREACION=20201012
+--## FECHA_CREACION=20210201
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=1.2.0
 --## INCIDENCIA_LINK=HREOS-11214
@@ -56,7 +56,7 @@ DECLARE
         T_TIPO_DATA('sinDeterminarOkupas','27',  'No se puede determinar si el inmueble tiene okupas.',  'No se puede determinar si el inmueble tiene okupas.'),
         T_TIPO_DATA('sinDeterminarOrigenInmueble','28',  'No se puede determinar el origen del inmueble.',  'No se puede determinar el origen del inmueble.'),
         T_TIPO_DATA('sinDeterminarPosesion','29',  'No se puede determinar la posesión del inmueble.',  'No se puede determinar la posesión del inmueble.'),
-        T_TIPO_DATA('noSeEncuentraInmueble','31',  'Formato de código de inmueble incorrecto.',  'Formato de código de inmueble incorrecto.'),
+        T_TIPO_DATA('noSeEncuentraInmueble','31',  'No se ha encontrado el inmueble consultado.',  'No se ha encontrado el inmueble consultado.'),
         T_TIPO_DATA('inmuebleEnFondoSocial','31',  'Inmueble de CARTERA FONDO SOCIAL.',  'Inmueble de CARTERA FONDO SOCIAL.'),
         T_TIPO_DATA('inmuebleAlquilado','31',  'Inmueble con situación comercial ALQUILADO.',  'Inmueble con situación comercial ALQUILADO.'),
 	T_TIPO_DATA('inmuebleEscriturado','31',  'Inmueble con situación comercial ESCRITURADO.',  'Inmueble con situación comercial ESCRITURADO.'),

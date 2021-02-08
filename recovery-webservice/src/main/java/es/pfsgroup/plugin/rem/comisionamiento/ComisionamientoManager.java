@@ -86,7 +86,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 				oferta.getProveedorPrescriptorRemOrigenLead().getId() : null;
 		
 		providerType = (visita == null || visita.getProveedorPrescriptorOportunidad() == null) ? null
-				: visita.getProveedorPrescriptorOportunidad().getCodigoProveedorRem().toString();
+				: visita.getProveedorPrescriptorOportunidad().getTipoProveedor().getCodigo().toString();
 		visitPrescriber = (visita == null || visita.getPrescriptor() == null) ? null 
 				: visita.getPrescriptor().getCodigoProveedorRem().toString();
 		visitMaker = (visita == null || visita.getProveedorVisita() == null) ? null

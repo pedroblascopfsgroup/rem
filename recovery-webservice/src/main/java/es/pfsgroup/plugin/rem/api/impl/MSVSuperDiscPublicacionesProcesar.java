@@ -9,7 +9,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -69,6 +72,10 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 	@Autowired
 	private ActivoDao activoDao;
 
+	@Autowired
+	private ApiProxyFactory proxyFactory;
+	
+	
 	@Override
 	public String getValidOperation() {
 		return VALID_OPERATION;
@@ -109,6 +116,9 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 		Integer divisionHorizontal = 0;
 		Integer inscritoDivisionHorizontal = 0;
 		Date fechaHoy = new Date();
+		
+		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		String usuarioModificar = usu == null ? MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DISCLAIMER_PUBLICACION : MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DISCLAIMER_PUBLICACION + " - " + usu.getUsername();
 
 		// Ocupado
 		if (Arrays.asList(LISTA_SI).contains(celdaOcupado.toUpperCase())) {
@@ -116,6 +126,8 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 		}
 
 		situacionPosesoria.setOcupado(ocupado);
+		situacionPosesoria.setUsuarioModificarOcupado(usuarioModificar);
+		situacionPosesoria.setFechaModificarOcupado(new Date());
 
 		// ConTitulo
 		if (ARROBA.equals(celdaOcupado)) {
@@ -127,6 +139,8 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 			DDTipoTituloActivoTPA tipoTitulo = genericDao.get(DDTipoTituloActivoTPA.class, filtroTipoTitulo);
 			situacionPosesoria.setConTitulo(tipoTitulo);
 		}
+		situacionPosesoria.setUsuarioModificarConTitulo(usuarioModificar);
+		situacionPosesoria.setFechaModificarOcupado(new Date());
 
 		// Tapiado
 		if (Arrays.asList(LISTA_SI).contains(celdaTapiado.toUpperCase())) {

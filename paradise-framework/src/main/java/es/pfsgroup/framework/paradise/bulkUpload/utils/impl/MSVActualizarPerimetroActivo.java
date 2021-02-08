@@ -1347,7 +1347,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
 					if(celdaExcluirValidaciones == null || celdaExcluirValidaciones.equals("2")) {
 						if(activo != null) {
-							if(!particularValidator.estadoPublicacion(activo)) {
+							if(particularValidator.estadoPublicacion(activo)) {
 								listaFilas.add(i);	
 							}
 						}

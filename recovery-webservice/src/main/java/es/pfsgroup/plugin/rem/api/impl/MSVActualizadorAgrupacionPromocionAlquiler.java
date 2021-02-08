@@ -16,6 +16,7 @@ import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -64,7 +65,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.service.AltaActivoService;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Component @Transactional(readOnly = false)
 public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActualizador implements MSVLiberator {
@@ -98,6 +101,9 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 	
 	
 	@Autowired
@@ -874,6 +880,9 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			actSitPosUA.setAuditoria(auditoria);
 			actSitPosUA.setActivo(unidadAlquilable);
 			actSitPosUA.setOcupado(0);
+			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			String usuarioModificar = usu == null ? MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_PROMOCION_ALQUILER : MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_PROMOCION_ALQUILER + " - " + usu.getUsername();
+			actSitPosUA.setUsuarioModificarOcupado(usuarioModificar);
 			actSitPosUA.setAccesoAntiocupa(0);
 			actSitPosUA.setAccesoTapiado(0);
 			actSitPosUA.setActivo(unidadAlquilable);

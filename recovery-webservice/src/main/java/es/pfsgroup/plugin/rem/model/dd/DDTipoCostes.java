@@ -43,7 +43,7 @@ public class DDTipoCostes implements Auditable, Dictionary {
 	private String descripcionLarga;
 	    
 	@Column(name = "DD_TCT_PORCENTAJE")   
-	private Long porcentaje;
+	private Double porcentaje;
 	
 	@Version   
 	private Long version;
@@ -83,11 +83,11 @@ public class DDTipoCostes implements Auditable, Dictionary {
 		this.descripcionLarga = descripcionLarga;
 	}
 
-	public Long getPorcentaje() {
+	public Double getPorcentaje() {
 		return porcentaje;
 	}
 
-	public void setPorcentaje(Long porcentaje) {
+	public void setPorcentaje(Double porcentaje) {
 		this.porcentaje = porcentaje;
 	}
 

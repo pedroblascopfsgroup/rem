@@ -15,6 +15,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -84,7 +85,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
+import es.pfsgroup.plugin.rem.service.AltaActivoService;
 import es.pfsgroup.plugin.rem.service.AltaActivoThirdPartyService;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 
 @Component
@@ -109,6 +112,9 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 	
 	
 	
@@ -142,7 +148,11 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 			actSit.setActivo(activo);
 			actSit.setAccesoAntiocupa(0);
 			actSit.setAccesoTapiado(0);		
-			actSit.setOcupado(0);		
+			actSit.setOcupado(0);
+			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			String usuarioModificar = usu == null ? AltaActivoThirdPartyService.CODIGO_ALTA_ACTIVO_THIRD_PARTY : AltaActivoThirdPartyService.CODIGO_ALTA_ACTIVO_THIRD_PARTY + usu.getUsername();
+			actSit.setUsuarioModificarOcupado(usuarioModificar);
+			actSit.setFechaModificarOcupado(new Date());
 			actSit.setComboOtro(0);
 			actSit.setVersion(0L);
 			actSit.setAuditoria(auditoria);

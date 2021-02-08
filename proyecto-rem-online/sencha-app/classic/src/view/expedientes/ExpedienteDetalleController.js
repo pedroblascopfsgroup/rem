@@ -5,7 +5,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		'HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosClienteUrsus','HreRem.model.ActivoExpedienteCondicionesModel',
 		'HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', 'HreRem.view.activos.detalle.OpcionesPropagacionCambios',
 		'HreRem.view.common.WizardBase','HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', 'HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCliente', 
-		'HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumento'
+		'HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumento', 'HreRem.view.expedientes.editarAuditoriaDesbloqueo'
 	],
     
     control: {

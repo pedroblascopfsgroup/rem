@@ -3704,11 +3704,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		Double importeTotal = 0.0, cuotaIvaRetenida = 0.0;
 		boolean retencionAntes = false;
-		
-		
-		
+
 		if(gasto.getGastoProveedor() != null) {
-			
+			DDCartera carteraGasto = gasto.getGastoProveedor().getCartera();
 			retencionAntes = gasto.getTipoRetencion() != null && DDTipoRetencion.CODIGO_TRE_ANTES.equals(gasto.getTipoRetencion().getCodigo());
 			
 			Filter filter = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getGastoProveedor().getId());
@@ -3731,7 +3729,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if(gasto.getRetencionGarantiaCuota() != null && gasto.getRetencionGarantiaAplica() != null && gasto.getRetencionGarantiaAplica()) {
 				importeTotal = importeTotal - gasto.getRetencionGarantiaCuota();
 			}
-			if (retencionAntes && gasto.getRetencionGarantiaTipoImpositivo() != null ) {
+			if (retencionAntes && gasto.getRetencionGarantiaTipoImpositivo() != null 
+					&& carteraGasto != null && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(carteraGasto.getCodigo())) {
 				try {
 					importeTotal = importeTotal - (cuotaIvaRetenida / 100 * gasto.getRetencionGarantiaTipoImpositivo());
 					
@@ -4163,7 +4162,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		
 		if(gasto.getGastoProveedor() != null) {
-
+			DDCartera carteraGasto = gasto.getGastoProveedor().getCartera();
 			Filter filter = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getGastoProveedor().getId());
 			List<GastoLineaDetalle> gastoLineaDetalleList = genericDao.getList(GastoLineaDetalle.class, filter);
 	
@@ -4176,7 +4175,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						importeRetencionGarantia = importeRetencionGarantia.add(new BigDecimal(gastoLineaDetalle.getPrincipalNoSujeto()));
 					}
 
-					if(esDespues && gastoLineaDetalle.getImporteIndirectoCuota() != null) {
+					if(esDespues && gastoLineaDetalle.getImporteIndirectoCuota() != null
+							&& carteraGasto != null && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(carteraGasto.getCodigo())) {
 						importeRetencionGarantia = importeRetencionGarantia.add(new BigDecimal(gastoLineaDetalle.getImporteIndirectoCuota()));
 					}
 				}

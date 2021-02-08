@@ -45,6 +45,7 @@ public class ComisionesDto implements WebcomRESTDto {
 	
 	private LongDataType baja;
 	
+	private StringDataType honorariosRatificados;
 	
 	public DateDataType getFechaAccion() {
 		return fechaAccion;
@@ -174,5 +175,12 @@ public class ComisionesDto implements WebcomRESTDto {
 		this.idActivoHaya = idActivoHaya;
 	}
 	
+	public StringDataType getHonorariosRatificados() {
+		return honorariosRatificados;
+	}
+
+	public void setHonorariosRatificados(StringDataType honorariosRatificados) {
+		this.honorariosRatificados = honorariosRatificados;
+	}
 
 }

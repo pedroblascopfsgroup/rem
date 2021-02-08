@@ -1146,6 +1146,18 @@ public class ActivoController extends ParadiseJsonController {
 							}
 
 							BeanUtils.copyProperties(fotoDto, aListaActivoFoto);
+							
+							if(aListaActivoFoto.getActivo().getSubtipoActivo() != null) {
+								BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", aListaActivoFoto.getActivo().getSubtipoActivo().getCodigo());
+							}
+														
+							if(aListaActivoFoto.getDescripcionFoto() != null) {
+								BeanUtils.copyProperty(fotoDto, "codigoDescripcionFoto", aListaActivoFoto.getDescripcionFoto().getCodigo());
+								BeanUtils.copyProperty(fotoDto, "descripcion", aListaActivoFoto.getDescripcionFoto().getDescripcion());
+								if (aListaActivoFoto.getDescripcionFoto().getSubtipo() != null) {
+									BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", aListaActivoFoto.getDescripcionFoto().getSubtipo().getCodigo());
+								}
+							}
 
 							if (aListaActivoFoto.getPrincipal() != null && aListaActivoFoto.getPrincipal()) {
 								if (aListaActivoFoto.getInteriorExterior() != null) {
@@ -4158,4 +4170,17 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);	
 	}
 	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getCheckGestionActivo(Long idActivo, ModelMap model){
+		try{
+			model.put(RESPONSE_DATA_KEY, activoDao.activocheckGestion(idActivo)); 
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

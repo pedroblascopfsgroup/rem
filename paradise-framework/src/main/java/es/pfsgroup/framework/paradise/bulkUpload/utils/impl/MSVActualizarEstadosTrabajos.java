@@ -42,6 +42,7 @@ public class MSVActualizarEstadosTrabajos extends MSVExcelValidatorAbstract {
 	public static final String ACCION_VALIDA = "msg.error.masivo.estado.trabajos.accion.valida";
 	public static final String COMENTARIO_OBLIGATORIO = "msg.error.masivo.estado.trabajos.comentario.obligatorio";
 	public static final String ESTADO_FINALIZADO_SUBSANADO = "msg.error.masivo.estado.trabajos.estado.finalizado.subsanado";
+	public static final String ESTADO_EN_CURSO = "msg.error.masivo.estado.trabajos.estado.curso";
 	public static final String FECHA_EJECUCION_CUMPLIMENTADA = "msg.error.masivo.estado.trabajos.fecha.ejecucion.cumplimentada";
 	public static final String RESOLUCION_COMITE = "msg.error.masivo.estado.trabajos.resolucion.comite";
 	public static final String LLAVES_CUMPLIMENTADAS = "msg.error.masivo.estado.trabajos.llaves.cumplimentadas";
@@ -106,6 +107,7 @@ public class MSVActualizarEstadosTrabajos extends MSVExcelValidatorAbstract {
 				mapaErrores.put(messageServices.getMessage(ACCION_VALIDA), isAccionValid(exc));
 				mapaErrores.put(messageServices.getMessage(COMENTARIO_OBLIGATORIO), comentarioObligatorio(exc));
 				mapaErrores.put(messageServices.getMessage(ESTADO_FINALIZADO_SUBSANADO), isEstadoPrevioFinalizadoSubsanado(exc));
+				mapaErrores.put(messageServices.getMessage(ESTADO_EN_CURSO), isEstadoPrevioEnCurso(exc));
 				mapaErrores.put(messageServices.getMessage(FECHA_EJECUCION_CUMPLIMENTADA), isFechaEjecucionCumplimentada(exc));
 				mapaErrores.put(messageServices.getMessage(RESOLUCION_COMITE), resolucionComite(exc));
 				mapaErrores.put(messageServices.getMessage(LLAVES_CUMPLIMENTADAS), isTieneLlaves(exc));
@@ -198,7 +200,8 @@ public class MSVActualizarEstadosTrabajos extends MSVExcelValidatorAbstract {
 						codigoAccion = null;
 					}
 
-					if(!Checks.esNulo(codigoAccion) && !codigoAccion.equalsIgnoreCase("13") && !codigoAccion.equalsIgnoreCase("REJ") && !codigoAccion.equalsIgnoreCase("CAN") ) {
+					if(!Checks.esNulo(codigoAccion) && !codigoAccion.equalsIgnoreCase("13") && !codigoAccion.equalsIgnoreCase("REJ") && !codigoAccion.equalsIgnoreCase("CAN") 
+							&& !codigoAccion.equalsIgnoreCase("FIN")) {
 						listaFilas.add(i);
 					}
 
@@ -272,6 +275,27 @@ public class MSVActualizarEstadosTrabajos extends MSVExcelValidatorAbstract {
 	}
 	return listaFilas;
 }
+	
+	private List<Integer> isEstadoPrevioEnCurso(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		for (int i = 1; i < this.numFilasHoja; i++) {
+			try {
+				String celdaAccion= exc.dameCelda(i, COL_ACCION);
+				String celdaTrabajo = exc.dameCelda(i, COL_ID_TRABAJO);
+				
+				if (celdaAccion.equalsIgnoreCase("FIN")){
+					if(!particularValidator.estadoPrevioTrabajoFinalizado(celdaTrabajo)) {
+						listaFilas.add(i);	
+					}
+				}
+				
+			} catch (Exception e) {
+				listaFilas.add(i);
+				logger.error(e.getMessage());
+			}
+		}
+		return listaFilas;
+	}
 	
 	private List<Integer> isFechaEjecucionCumplimentada(MSVHojaExcel exc){
 	List<Integer> listaFilas = new ArrayList<Integer>();

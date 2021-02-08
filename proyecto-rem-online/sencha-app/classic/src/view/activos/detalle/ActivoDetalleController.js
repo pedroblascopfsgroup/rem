@@ -649,8 +649,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     onClickCrearTrabajo: function (btn) {
-    	var me = this;
-    	
+		var me = this;
+		
     	me.getView().mask(HreRem.i18n("msg.mask.loading"));	
     	
     	var idActivo = me.getViewModel().get("activo.id");
@@ -969,16 +969,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	onClickCrearTrabajo: function (btn) {
-	 	var me = this;
-	 	
+		 var me = this;
+		 	 	
 	 	me.getView().mask(HreRem.i18n("msg.mask.loading"));	
 	 	
 	 	var idActivo = me.getViewModel().get("activo.id");
 	 	var codSubcartera = me.getViewModel().get("activo.subcarteraCodigo");
 	 	var codCartera = me.getViewModel().get("activo.entidadPropietariaCodigo");
 	 	var gestorActivo = $AU.getUser().userName;
-	 	
-	 	var ventana = Ext.create("HreRem.view.trabajos.detalle.CrearPeticionTrabajo", {
+		var checkGestion = me.getViewModel().get("activo.aplicaGestion");
+		
+		if (checkGestion){
+			var ventana = Ext.create("HreRem.view.trabajos.detalle.CrearPeticionTrabajo", {
 			idActivo: idActivo, 
 			codCartera: codCartera, 
 			codSubcartera: codSubcartera, 
@@ -990,6 +992,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		btn.lookupViewModel().getView().add(ventana);
 		ventana.show();
 		me.getView().unmask();
+		
+		}else{
+			me.getView().unmask();
+			me.fireEvent("errorToast",HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.mensaje"))
+		}
 	 },
 
 	onAnyadirPropietarioClick : function(btn) {
@@ -1803,10 +1810,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	onAddFotoClick : function(grid) {
 
-		var me = this, idActivo = me.getViewModel().get("activo.id");
+		var me = this, idActivo = me.getViewModel().get("activo.id"),
+		codigoSubtipoActivo = me.getViewModel().get("activo.subtipoActivoCodigo");
 
 		Ext.create("HreRem.view.common.adjuntos.AdjuntarFoto", {
 					idEntidad : idActivo,
+					codigoSubtipoActivo: codigoSubtipoActivo,
 					parent : grid
 				}).show();
 
@@ -1956,26 +1965,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	cargarTabFotos : function(form) {
 
-		var me = this, idActivo = me.getViewModel().get("activo.id");
-		me.getView().mask(HreRem.i18n("msg.mask.loading"));
-
-		me.getViewModel().data.storeFotos.getProxy().setExtraParams({
-					'id' : idActivo,
-					tipoFoto : '01'
-				});
-		me.getViewModel().data.storeFotosTecnicas.getProxy().setExtraParams({
-					'id' : idActivo,
-					tipoFoto : '02'
-				});
-
-		me.getViewModel().data.storeFotos.on('load', function() {
-					me.getViewModel().data.storeFotosTecnicas.load();
-				});
-
-		me.getViewModel().data.storeFotosTecnicas.on('load', function() {
-					me.getView().unmask();
-				});
+		var me = this;
 		me.getViewModel().data.storeFotos.load();
+		me.getViewModel().data.storeFotosTecnicas.load();
 
 	},
 
@@ -3572,8 +3564,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			if (form.findField("orden") != null) {
 				params['orden'] = form.findField("orden").getValue();
 			}
-			if (form.findField("descripcion") != null) {
-				params['descripcion'] = form.findField("descripcion")
+			if (form.findField("codigoDescripcionFoto") != null) {
+				params['codigoDescripcionFoto'] = form.findField("codigoDescripcionFoto")
 						.getValue();
 			}
 			if (form.findField("fechaDocumento") != null) {

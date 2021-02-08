@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20200925
+--## FECHA_CREACION=20210201
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10742
+--## INCIDENCIA_LINK=HREOS-12983
 --## PRODUCTO=NO
 --##
 --## Finalidad: Actualizar instrucciones
@@ -154,7 +154,8 @@ DECLARE
       T_TIPO_DATA('07','142','14','57'),
       T_TIPO_DATA('07','143','14','57'),
       T_TIPO_DATA('07','144','11','52'),
-      T_TIPO_DATA('07','145','14','57')
+      T_TIPO_DATA('07','145','14','57'),
+      T_TIPO_DATA('03','ACO','15','78')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

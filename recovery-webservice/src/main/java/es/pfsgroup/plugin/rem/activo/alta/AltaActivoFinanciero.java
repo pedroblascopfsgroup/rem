@@ -13,7 +13,9 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -83,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.service.AltaActivoService;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Component
 public class AltaActivoFinanciero implements AltaActivoService {
@@ -106,6 +109,9 @@ public class AltaActivoFinanciero implements AltaActivoService {
 	
 	@Autowired
 	private GestorActivoApi gestorActivoManager;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 
 	@Override
 	public String[] getKeys() {
@@ -138,7 +144,11 @@ public class AltaActivoFinanciero implements AltaActivoService {
 			actSit.setActivo(activo);
 			actSit.setAccesoAntiocupa(0);
 			actSit.setAccesoTapiado(0);		
-			actSit.setOcupado(0);		
+			actSit.setOcupado(0);
+			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			String usuarioModificar = usu == null ? AltaActivoService.CODIGO_ALTA_ACTIVO_FINANCIERO : AltaActivoService.CODIGO_ALTA_ACTIVO_FINANCIERO + usu.getUsername();
+			actSit.setUsuarioModificarOcupado(usuarioModificar);
+			actSit.setFechaModificarOcupado(new Date());
 			actSit.setComboOtro(0);
 			actSit.setVersion(new Long(0));
 			actSit.setAuditoria(auditoria);

@@ -122,7 +122,8 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 								}
 							}
 							
-							if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {															
+							/*if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null
+									&& gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
 								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 										.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
 								
@@ -132,7 +133,7 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 								ge.setIdTipoGestor(tipoGestorComercial.getId());
 								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
 								
-							}
+							}*/
 														
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {

@@ -34,11 +34,14 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoDeudoresAcreditados;
 import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
+import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.DtoAltaActivoThirdParty;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
@@ -347,7 +350,68 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 		
 
 			if(colIdHayaOrigen!=null && !colIdHayaOrigen.isEmpty()) {
-				activoBBVA.setIdOrigenHre(Long.parseLong(colIdHayaOrigen));
+				Long idOrigenHaya = Long.parseLong(colIdHayaOrigen);
+				activoBBVA.setIdOrigenHre(idOrigenHaya);
+				
+				Activo activoOrigenHRE = activoApi.getByNumActivo(idOrigenHaya);
+				
+				boolean isVendido =  false;
+				boolean isCarteraBBVADivarian =  false;
+				boolean isFueraPerimetro =  false;
+
+				if (activoOrigenHRE != null) {
+					
+					if (activoOrigenHRE.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA) 
+							|| (activoOrigenHRE.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS) 
+							&& (activoOrigenHRE.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)) 
+							|| activoOrigenHRE.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB))) {
+						isCarteraBBVADivarian=true;
+					}else {
+						isCarteraBBVADivarian=false;
+					}
+					isVendido = activoApi.isVendido(activoOrigenHRE.getId());
+					isFueraPerimetro = !activoApi.isActivoIncluidoEnPerimetro(activoOrigenHRE.getId());					
+				
+					boolean isOrigenHRE = !activoDao.existeactivoIdHAYA(idOrigenHaya); 
+					isVendido = activoDao.activoEstadoVendido(idOrigenHaya); 
+					isFueraPerimetro = activoDao.activoFueraPerimetroHAYA(idOrigenHaya); 
+											
+					if(isOrigenHRE) {
+						throw new JsonViewerException("El activo ID Origen HAYA no existe.");
+					}
+					
+					if (!isCarteraBBVADivarian) {
+						throw new JsonViewerException("El activo ID Origen HAYA debe ser de cartera Divarian o BBVA.");
+					}
+					if (!isVendido && !isFueraPerimetro) {
+						throw new JsonViewerException("El activo ID Origen HAYA debe estar Vendido o Fuera de perimetro HAYA.");
+					}					
+				
+					activoBBVA.setIdOrigenHre(idOrigenHaya);					
+					
+					activoBBVA.setSociedadPagoAnterior(activoOrigenHRE.getPropietarioPrincipal());
+					
+					if(activoOrigenHRE.getTipoTitulo()!= null) {
+						activo.setTipoTitulo(activoOrigenHRE.getTipoTitulo());
+						activo.setTipoTituloBbva(activoOrigenHRE.getTipoTitulo());
+					}
+					
+					if (DDTipoTituloActivo.tipoTituloNoJudicial.equals(activoOrigenHRE.getTipoTitulo().getCodigo())
+							&& activoOrigenHRE.getAdjNoJudicial() != null) {
+						activo.setFechaTituloAnterior(activoOrigenHRE.getAdjNoJudicial().getFechaTitulo());
+					}
+					if (DDTipoTituloActivo.tipoTituloJudicial.equals(activoOrigenHRE.getTipoTitulo().getCodigo())
+							&& activoOrigenHRE.getAdjJudicial() != null) {
+						activo.setFechaTituloAnterior(activoOrigenHRE.getAdjJudicial().getFechaAdjudicacion());
+					}
+
+					if(activoOrigenHRE.getSociedadDePagoAnterior() != null) {
+						activo.setSociedadDePagoAnterior(activoOrigenHRE.getSociedadDePagoAnterior());
+					}
+				} else {
+					throw new JsonViewerException("El activo indicado no existe");
+				}
+				
 			}
 			if(colTipoTransmision!=null && !colTipoTransmision.isEmpty()) {
 				activoBBVA.setTipoTransmision(tipoTransmision);
@@ -598,7 +662,7 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 		}catch(SQLException e){
 			throw new JsonViewerException("No se ha rellenado la carga correctamente.");
 		}catch(Exception e){
-			throw new JsonViewerException(e.getMessage());
+			throw new JsonViewerException(e.getCause() + " - " + e.getMessage());
 		}
 		return resultado;
 	}

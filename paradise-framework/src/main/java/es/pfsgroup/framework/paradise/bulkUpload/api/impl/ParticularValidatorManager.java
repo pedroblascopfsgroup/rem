@@ -4984,7 +4984,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+" JOIN ACT_ACTIVO act ON act.ACT_ID = pta.ACT_ID AND act.ACT_NUM_ACTIVO = " +  numActivo
 				+" WHERE pta.PTA_TRAMITE_ALQ_SOCIAL = 1"
 				);
-		return "0".equals(resultado); 
+		return "1".equals(resultado); 
 	}
 	
 	@Override

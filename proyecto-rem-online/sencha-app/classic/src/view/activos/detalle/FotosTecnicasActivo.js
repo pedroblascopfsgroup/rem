@@ -80,7 +80,18 @@ Ext.define('HreRem.view.activos.detalle.FotosTecnicasActivo', {
                     this.up('panel').setTitle('Fotos Técnicas (' + l + ' item' + s + ' seleccionado' +  s + ')');
                 },
                 itemclick: function(dataview,record) {
+                	if(Ext.isEmpty(record.getData().nombre)){
+                		this.up('form').getForm().findField('nombre').setValue();
+                	}
+                	if(Ext.isEmpty(record.getData().codigoDescripcionFoto)){
+                		this.up('form').getForm().findField('codigoDescripcionFoto').setValue();
+                	}
+                	if(Ext.isEmpty(record.getData().fechaDocumento)){
+                		this.up('form').getForm().findField('fechaDocumento').setValue();
+                	}
 	        		this.up('form').setBindRecord(record.data);
+	        		this.lookupController().getViewModel().set('fotoSelected', record);
+	        		this.lookupController().getViewModel().notify();
 	        	}
             }
         });
@@ -123,12 +134,16 @@ Ext.define('HreRem.view.activos.detalle.FotosTecnicasActivo', {
 							}
 		                },
 		                { 
-		                	name: 'descripcion',
-		                	xtype: 'textareafieldbase',
+		                	name: 'codigoDescripcionFoto',
+		                	xtype: 'comboboxfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.descripcion'),
+		                	editable: false,
+		                	queryMode: 'local',
 		                	bind: {
-								value: '{fotoWeb.descripcion}'
-							}
+		                		store: '{storeDescripcionFoto}',
+				        		value: '{fotoWeb.codigoDescripcionFoto}'
+							},
+							allowBlank: false
 		                },
 		                { 
 		                	name: 'fechaDocumento',

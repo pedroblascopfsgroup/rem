@@ -74,7 +74,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						        	fieldLabel: HreRem.i18n('fieldlabel.tipo.trabajo'),
 									reference: 'tipoTrabajoFicha',
 						        	chainedStore: 'comboSubtipoTrabajoFicha',
-									chainedReference: 'subtipoTrabajoComboFicha',
+									chainedReference: 'subtipoTrabajoComboFicha',									
 						        	bind: 
 						        		{
 					            			store: '{storeTipoTrabajoFichaFiltered}',

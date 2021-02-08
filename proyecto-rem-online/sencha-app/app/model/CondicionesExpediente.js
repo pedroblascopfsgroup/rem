@@ -349,6 +349,9 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 		},
 		{
 			name: 'depositoReserva'  
+		},
+		{
+			name: 'tributosSobrePropiedad'  
 		}
 	    
     ],

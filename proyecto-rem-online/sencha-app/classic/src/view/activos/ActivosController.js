@@ -190,6 +190,7 @@ Ext.define('HreRem.view.activos.ActivosController', {
 			var idActivo = null;
 			var codCartera = null;
 			var codSubcartera = null;
+			var numActivo = null;
 			var gestorActivo = $AU.getUser().userName;
 			var grid = me.getView().down('grid');
 			
@@ -203,19 +204,54 @@ Ext.define('HreRem.view.activos.ActivosController', {
 				idActivo = selected[0].getData().id;
 		  		codCartera = selected[0].getData().carteraCodigo;
 		  		codSubcartera = selected[0].getData().subcarteraCodigo;
-		  	}
-		  	
-			var ventana = Ext.create("HreRem.view.trabajos.detalle.CrearPeticionTrabajo", {
-				idActivo: idActivo, 
-				codCartera: codCartera, 
-				codSubcartera: codSubcartera, 
-				logadoGestorMantenimiento: true,
-				idAgrupacion: null,
-				idGestor: null, 
-				gestorActivo: gestorActivo});
-			btn.lookupViewModel().getView().add(ventana);
-			ventana.show();
-			me.getView().unmask();
+				numActivo = selected[0].getData().numActivo;
+				
+				if(numActivo != null){
+				  	var url= $AC.getRemoteUrl('activo/getCheckGestionActivo');
+		        	var data;
+		    		Ext.Ajax.request({
+		    		     url: url,
+		    		     params: {idActivo : numActivo},
+		    		     success: function(response, opts) {
+		    		    	 data = Ext.JSON.decode(response.responseText);
+
+		    		    	 if(data.data == "true"){
+		    		    		 var ventana = Ext.create("HreRem.view.trabajos.detalle.CrearPeticionTrabajo", {
+									idActivo: idActivo, 
+									codCartera: codCartera, 
+									codSubcartera: codSubcartera, 
+									logadoGestorMantenimiento: true,
+									idAgrupacion: null,
+									idGestor: null, 
+									gestorActivo: gestorActivo});
+								btn.lookupViewModel().getView().add(ventana);
+								ventana.show();
+								me.getView().unmask();
+		    		    	 }else{
+								me.getView().unmask();
+		        		    	me.fireEvent("errorToast",HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.mensaje"));								 
+		    		    	 }		    		          
+		    		     },
+		    		     failure: function(response) {
+		    		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    		    	  me.getView().unmask();
+		    		     }
+		    		 });    
+			
+				}
+		  	}else{
+				var ventana = Ext.create("HreRem.view.trabajos.detalle.CrearPeticionTrabajo", {
+					idActivo: idActivo, 
+					codCartera: codCartera, 
+					codSubcartera: codSubcartera, 
+					logadoGestorMantenimiento: true,
+					idAgrupacion: null,
+					idGestor: null, 
+					gestorActivo: gestorActivo});
+				btn.lookupViewModel().getView().add(ventana);
+				ventana.show();
+				me.getView().unmask();
+		}			
 			
 			
 //			 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearPeticionTrabajo",{idActivo: idActivo, codCartera: codCartera, codSubcartera: codSubcartera, logadoGestorMantenimiento: true,idAgrupacion: null, idGestor: null, gestorActivo: gestorActivo});    	

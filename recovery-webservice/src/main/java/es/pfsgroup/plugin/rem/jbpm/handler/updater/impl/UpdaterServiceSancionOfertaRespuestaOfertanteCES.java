@@ -94,10 +94,10 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	 			}else if (COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 	 				if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
 						Filter f1 = null;
-						if(DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())) {
-							f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
-						}else {
+						if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())) {
 							f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA);
+						} else if (DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())){
+							f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_SANCION_CES);
 						}
 	 					DDEstadosExpedienteComercial aprobado = genericDao.get(DDEstadosExpedienteComercial.class, f1);
 	 					expediente.setEstado(aprobado);	 					

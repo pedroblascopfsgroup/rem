@@ -467,24 +467,8 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		
 		if(activoBbva != null) {
 			activoDto.setIdProcesoOrigen(activoBbva.getIdProcesoOrigen());
-			
-		}
-		
-		
-		
-		if (!Checks.esNulo(activo.getPropietarioPrincipal()) && activoBbva != null) {
-			if (activoBbva != null && activoBbva.getIdOrigenHre() != null) {
-				Activo activoPadre = activoApi.getByNumActivo(activoBbva.getIdOrigenHre());
-				if (activoPadre != null 
-						&& !(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activoPadre.getCartera().getCodigo()) 
-								&& (DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activoPadre.getSubcartera().getCodigo()) 
-										|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activoPadre.getSubcartera().getCodigo())))) {
-					activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());
-				}
-			}else if(activoBbva != null && activo.getPropietarioPrincipal() != null && activo.getPropietarioPrincipal().getDocIdentificativo() != null) {
-				activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());
-			}
-			
+			activoDto.setSociedadPagoAnterior(activoBbva.getSociedadPagoAnterior() != null ? 
+					activoBbva.getSociedadPagoAnterior().getDocIdentificativo() : null);			
 		}
 		
 		return activoDto;
@@ -987,17 +971,11 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					if(dto.getIdProcesoOrigen() != null) {
 						activoBbva.setIdProcesoOrigen(dto.getIdProcesoOrigen());
 					}
-				}
-				//Sociedad Pago Anterior de BBVA que tiene diferente logica al resto.
-				if (!Checks.esNulo(dto.getSociedadPagoAnterior())) {
-				
-				
-				Filter filtroPropietarioAct = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				Filter filtroPropietario = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo",dto.getSociedadPagoAnterior());
-				ActivoPropietarioActivo activoPropietario = genericDao.get(ActivoPropietarioActivo.class, filtroPropietarioAct);
-				ActivoPropietario propietario = genericDao.get(ActivoPropietario.class, filtroPropietario);
-				activoPropietario.setPropietario(propietario);
-				
+					if(dto.getSociedadPagoAnterior() != null) {
+						Filter filtroPropietario = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getSociedadPagoAnterior());
+						ActivoPropietario propietario = genericDao.get(ActivoPropietario.class, filtroPropietario);
+						activoBbva.setSociedadPagoAnterior(propietario);
+					}
 				}
 			}
 			

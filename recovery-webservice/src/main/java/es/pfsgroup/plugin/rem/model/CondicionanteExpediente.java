@@ -325,6 +325,9 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @JoinColumn(name = "DD_ETF_ID")
 	private DDEntidadFinanciera entidadFinanciera;
     
+    @Column(name="COE_TRIBUTOS_PROPIEDAD")
+    private Boolean tributosSobrePropiedad;
+    
     @OneToMany(mappedBy = "condicionante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "COE_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -1029,6 +1032,14 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 
 	public void setEntidadFinanciera(DDEntidadFinanciera entidadFinanciera) {
 		this.entidadFinanciera = entidadFinanciera;
+	}
+
+	public Boolean getTributosSobrePropiedad() {
+		return tributosSobrePropiedad;
+	}
+
+	public void setTributosSobrePropiedad(Boolean tributosSobrePropiedad) {
+		this.tributosSobrePropiedad = tributosSobrePropiedad;
 	}
 
 }

@@ -16,7 +16,9 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -39,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Component
 public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements UpdaterService {
@@ -60,6 +63,9 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+
+	private ApiProxyFactory proxyFactory;
+
 
 	@Resource
 	private MessageService messageServices;
@@ -181,7 +187,10 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 						DDTipoTituloActivoTPA tipoTitulo;
 						tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
 						tipoTitulo = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
-
+						
+						Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+						String usuarioModificar = usu == null ? "PosicionamientoYFirma" : "PosicionamientoYFirma" + " - " + usu.getUsername();
+						
 						if (!Checks.esNulo(situacionPosesoria) && !Checks.esNulo(situacionPosesoria.getConTitulo())
 								&& (DDTipoTituloActivoTPA.tipoTituloSi
 										.equals(situacionPosesoria.getConTitulo().getCodigo())
@@ -189,6 +198,11 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							situacionPosesoria.setConTitulo(tipoTitulo);
 							situacionPosesoria.setFechaUltCambioTit(new Date());
 							situacionPosesoria.setOcupado(1);
+							situacionPosesoria.setUsuarioModificarOcupado(usuarioModificar);
+							situacionPosesoria.setFechaModificarOcupado(new Date());
+							situacionPosesoria.setUsuarioModificarConTitulo(usuarioModificar);
+							situacionPosesoria.setFechaModificarConTitulo(new Date());
+
 						} else if (!Checks.esNulo(situacionPosesoria)
 								&& !Checks.esNulo(situacionPosesoria.getConTitulo())
 								&& (DDTipoTituloActivoTPA.tipoTituloNo
@@ -199,6 +213,11 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							situacionPosesoria.setConTitulo(tipoTitulo);
 							situacionPosesoria.setFechaUltCambioTit(new Date());
 							situacionPosesoria.setOcupado(0);
+							situacionPosesoria.setUsuarioModificarOcupado(usuarioModificar);
+							situacionPosesoria.setFechaModificarOcupado(new Date());
+							situacionPosesoria.setUsuarioModificarConTitulo(usuarioModificar);
+							situacionPosesoria.setFechaModificarConTitulo(new Date());
+
 						}
 
 						try {

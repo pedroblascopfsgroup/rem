@@ -1431,5 +1431,7 @@ public interface ParticularValidatorApi {
 	
     Boolean getGastoSuplidoConFactura(String idGastoAfectado);
 
+	Boolean estadoPrevioTrabajoFinalizado(String celdaTrabajo);
+
 
 }

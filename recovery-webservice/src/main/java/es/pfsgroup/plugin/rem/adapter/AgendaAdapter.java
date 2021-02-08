@@ -855,7 +855,11 @@ public class AgendaAdapter {
 	    			activo.setSituacionComercial(situacionComercial);
 	    			if (!Checks.esNulo(activoSituacionPosesoria)) {
 	    				activoSituacionPosesoria.setOcupado(0);
+	    				activoSituacionPosesoria.setUsuarioModificarOcupado(usuarioLogado.getUsername());
+	    				activoSituacionPosesoria.setFechaModificarOcupado(new Date());
 	    				activoSituacionPosesoria.setConTitulo(null);
+	    				activoSituacionPosesoria.setUsuarioModificarConTitulo(usuarioLogado.getUsername());
+	    				activoSituacionPosesoria.setFechaModificarConTitulo(new Date());
 	    				activoSituacionPosesoria.setFechaUltCambioTit(new Date());
 	    				activo.setSituacionPosesoria(activoSituacionPosesoria);
 	    			}

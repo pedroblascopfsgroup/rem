@@ -82,7 +82,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     
 	     visibleBotonAuditoriaDesbloqueo: function(get){
 	    	var me = this;
-	    	var finEconomico = me.getData().expediente.getData().finalizadoCierreEconomico;
+	    	var finEconomico = false;
+	    	if (get('expediente.finalizadoCierreEconomico') != null){
+	    		finEconomico = get('expediente.finalizadoCierreEconomico');
+	    	}
 			var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION'])
 					|| $AU.userIsRol(CONST.PERFILES['PERFGCONTROLLER']);
 			return usuariosValidos && finEconomico;

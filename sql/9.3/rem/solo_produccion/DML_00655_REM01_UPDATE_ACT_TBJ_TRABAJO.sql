@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Carlos Santos Vílchez
---## FECHA_CREACION=20210205
+--## FECHA_CREACION=20210208
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8846
@@ -44,7 +44,7 @@ BEGIN
         IF V_COUNT > 0 THEN
 
             V_MSQL:= 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET
-            DD_EST_ID = (SELECT DD_EST_ID FROM '||V_ESQUEMA||'.DD_EST_ESTADO_TRABAJO WHERE DD_EST_CODIGO = ''01''),
+            DD_EST_ID = (SELECT DD_EST_ID FROM '||V_ESQUEMA||'.DD_EST_ESTADO_TRABAJO WHERE DD_EST_CODIGO = ''CUR''),
             USUARIOMODIFICAR = '''||V_USUARIO||''',
             FECHAMODIFICAR = SYSDATE
             WHERE TBJ_NUM_TRABAJO = '''||V_NUM_TRABAJO||'''';

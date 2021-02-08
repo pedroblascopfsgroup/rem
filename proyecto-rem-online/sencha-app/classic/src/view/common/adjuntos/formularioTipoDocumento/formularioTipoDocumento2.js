@@ -26,7 +26,7 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
 			},
 			items: [
 				{
-			    	reference : 'primero',
+			    	reference : 'primeroxtypeFormularioTipoDocumento2',
 			    	hidden : true
 	            },
 
@@ -37,7 +37,7 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
 	            },
 	            {
 			    	xtype: 'datefield',
-			    	fieldLabel: 'Fecha Emisión',
+			    	fieldLabel: 'Fecha emisión',
 			    	reference: 'fechaEmision'
 	            },
 	            {

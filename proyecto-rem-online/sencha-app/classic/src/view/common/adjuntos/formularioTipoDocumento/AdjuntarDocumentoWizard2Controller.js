@@ -69,7 +69,7 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 	devolverParametros: function(xtype, form,nuevosParametros){
 		var siguienteReferencia = null;
 		var formulario = form.down('[reference='+xtype+']');
-		siguienteReferencia = form.down('[reference=primero]');
+		siguienteReferencia = form.down('[reference=primero'+xtype+']');
 		while (!Ext.isEmpty(siguienteReferencia.nextSibling())){
 			siguienteReferencia = siguienteReferencia.nextSibling();
 			if(siguienteReferencia.xtype.match('datefield')){

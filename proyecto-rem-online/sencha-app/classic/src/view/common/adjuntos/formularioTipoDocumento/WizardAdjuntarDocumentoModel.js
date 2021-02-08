@@ -39,6 +39,9 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.WizardAdjuntarDo
 		},
 		{
 			name : 'registro'
+		},
+		{
+			name : 'calificacionEnergetica'
 		}
 	]
 	});

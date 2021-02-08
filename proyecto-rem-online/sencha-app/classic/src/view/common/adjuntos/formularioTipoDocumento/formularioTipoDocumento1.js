@@ -24,7 +24,7 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
 			},
 			items: [
 				{
-			    	reference : 'primero',
+			    	reference : 'primeroxtypeFormularioTipoDocumento1',
 			    	hidden : true
 	            }, 
 	            {

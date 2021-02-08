@@ -12,6 +12,15 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.WizardAdjuntarDo
 			        {"codigo":"true", "descripcion":"Si"},
 			        {"codigo":"false", "descripcion":"No"}
 			    ]
-			}
-	}
+			},
+			
+			storeEnergia: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'calificacionEnergetica'}
+					}
+				}
+			}	
 });

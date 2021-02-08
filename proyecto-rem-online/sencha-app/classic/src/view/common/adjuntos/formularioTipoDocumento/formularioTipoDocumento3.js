@@ -25,7 +25,7 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
 			},
 			items: [
 				{
-			    	reference : 'primero',
+			    	reference : 'primeroxtypeFormularioTipoDocumento3',
 			    	hidden : true
 	            },
     	
@@ -47,19 +47,13 @@ Ext.define('HreRem.view.activos.common.adjuntos.formularioTipoDocumento.formular
 	
 	            },
 	            {
-			    	xtype: 'combobox',
-			    	fieldLabel: 'Fecha Etiqueta',
-			    	name: 'fechaEtiquetaCombo',
-			    		store: Ext.create('Ext.data.Store',{								        		
-			    			model: 'HreRem.model.ComboBase',
-							proxy: {
-								type: 'uxproxy',
-								remoteUrl: 'generic/getDiccionario',
-								extraParams: {diccionario: 'calificacionEnergetica'}
-							},
-							autoLoad: true
-						})	
-	
+	            xtype: 'comboboxfieldbase',
+	            reference: 'calificacionEnergetica',
+	            fieldLabel: 'Calificacion Energetica',
+        		//editable: false,
+        		bind:{
+        		store: '{storeEnergia}'
+        		}
 	            },
 	            {
 			    	xtype: 'textfield',

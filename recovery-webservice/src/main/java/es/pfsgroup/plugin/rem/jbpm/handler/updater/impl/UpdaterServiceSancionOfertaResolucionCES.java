@@ -139,7 +139,9 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 //								
 //							}	
 							
-							boardingComunicacionApi.datosCliente(expediente.getNumExpediente(), ofertaAceptada.getNumOferta(), new ModelMap());
+							if(ofertaAceptada.getOfertaEspecial() != null && !ofertaAceptada.getOfertaEspecial()) {
+								boardingComunicacionApi.datosCliente(expediente.getNumExpediente(), ofertaAceptada.getNumOferta(), new ModelMap());
+							}
 															
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {

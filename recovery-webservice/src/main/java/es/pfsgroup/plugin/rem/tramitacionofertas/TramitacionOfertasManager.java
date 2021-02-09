@@ -1933,7 +1933,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		
 		activoManager.actualizarOfertasTrabajosVivos(activo.getId());
 		
-		boardingComunicacionApi.datosCliente(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap());
+		if(oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial()) {
+			boardingComunicacionApi.datosCliente(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap());
+		}
 		
 		return activoTramite;
 	}
@@ -1981,7 +1983,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				activoManager.actualizarOfertasTrabajosVivos(idActivo);
 			}
 			
-			boardingComunicacionApi.datosCliente(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap());
+			if(oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial()) {
+				boardingComunicacionApi.datosCliente(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap());
+			}
 		
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

@@ -57,8 +57,8 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
         String usuario = "sdiaz";
         String contrasenya = "1234";
         String schema = "HAYA06";
-        String urlLogin = !Checks.esNulo(appProperties.getProperty("rest.client.autenticacion.recovery"))
-                ? appProperties.getProperty("rest.client.autenticacion.recovery") : "";
+        String urlLogin = !Checks.esNulo(appProperties.getProperty("rest.client.autenticacion.boarding"))
+                ? appProperties.getProperty("rest.client.autenticacion.boarding") : "";
         jsonResp.put("username", usuario);
         jsonResp.put("password", contrasenya);
         jsonResp.put("schema", schema);
@@ -95,8 +95,8 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
             try {
                 json = mapper.writeValueAsString(model);
                 System.out.println("ResultingJSONstring = " + json);
-                urlEnvio = !Checks.esNulo(appProperties.getProperty("rest.client.convivencia.recovery"))
-                        ? appProperties.getProperty("rest.client.convivencia.recovery") : "";
+                urlEnvio = !Checks.esNulo(appProperties.getProperty("rest.client.boarding"))
+                        ? appProperties.getProperty("rest.client.boarding") : "";
 
                 llamada = procesarPeticion(this.httpClientFacade, urlEnvio, POST_METHOD, headers, json, 30, "UTF-8");
 

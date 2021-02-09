@@ -304,6 +304,9 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name="OFR_ID_REALIZA_ORI_LEAD")
 	private ActivoProveedor proveedorRealizadorRemOrigenLead;
 	
+	@Column(name = "OFR_OFERTA_ESPECIAL")
+    private Boolean ofertaEspecial;
+	
 	@Column(name = "ID_OFERTA_ORIGEN")
     private Long idOfertaOrigen;
 	
@@ -927,6 +930,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setProveedorRealizadorRemOrigenLead(ActivoProveedor proveedorRealizadorRemOrigenLead) {
 		this.proveedorRealizadorRemOrigenLead = proveedorRealizadorRemOrigenLead;
+	}
+	
+	public Boolean getOfertaEspecial() {
+		return ofertaEspecial;
+	}
+
+	public void setOfertaEspecial(Boolean ofertaEspecial) {
+		this.ofertaEspecial = ofertaEspecial;
 	}
 	
 	public Long getIdOfertaOrigen() {

@@ -849,7 +849,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								reference: 'checkGestionComercial',
 								bind: {
 									value: '{activo.checkGestorComercial}'
-									,readOnly: '{!activo.editarVisibilidadGestionComercial}'
 								},
 								listeners: {
 									change: 'onChkbxGestionComercialChange'

@@ -1097,10 +1097,6 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'codSubfasePublicacion'
-			},
-			{
-				name:'editarVisibilidadGestionComercial',
-				type:'boolean'
 			}
     		
     ],

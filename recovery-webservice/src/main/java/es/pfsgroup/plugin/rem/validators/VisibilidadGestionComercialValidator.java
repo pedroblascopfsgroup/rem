@@ -140,9 +140,9 @@ public class VisibilidadGestionComercialValidator {
 						if (activoPublicacion != null
 								&& (activoPublicacion.getEstadoPublicacionAlquiler().getCodigo() != null
 										|| activoPublicacion.getEstadoPublicacionVenta().getCodigo() != null)) {
-							if (DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER
+							if (!DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER
 									.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())
-									|| DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA
+									|| !DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA
 											.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo())) {
 								erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
 							}

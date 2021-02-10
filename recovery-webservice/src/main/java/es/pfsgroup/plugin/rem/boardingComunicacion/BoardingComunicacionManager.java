@@ -17,7 +17,9 @@ import org.springframework.ui.ModelMap;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.registro.dao.RestLlamadaDao;
@@ -42,6 +44,9 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
 
     @Resource
     private Properties appProperties;
+    
+    @Autowired
+	private ExpedienteComercialDao expedienteComercialDao;
 
     @Override
     public String managerName() {
@@ -76,7 +81,9 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
     }
 
     public void datosCliente(Long numExpediente, Long numOferta, ModelMap model) {
-
+    	
+    	ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByNumeroExpediente(numExpediente);
+    	
         String urlEnvio = null;
         String json = null;
         JSONObject llamada = null;
@@ -90,6 +97,11 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
 
             model.put("numeroOferta", numOferta);
             model.put("numExpediente", numExpediente);
+            if(expediente != null) {
+            	model.put("fechaVenta", expediente.getFechaVenta());
+            }else {
+            	model.put("fechaVenta", expediente.getFechaVenta());
+            }
 
             ObjectMapper mapper = new ObjectMapper();
             try {

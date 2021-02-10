@@ -32,5 +32,7 @@ public interface PerfilApi {
 	 * @return Devuelve un dto con los datos de Perfil.
 	 */
 	public List<DtoPerfilAdministracionFilter> getFuncionesByPerfilId(Long id, DtoPerfilAdministracionFilter dto);
+
+	boolean usuarioHasPerfil(String codPerfil, String userName);
 	
 }

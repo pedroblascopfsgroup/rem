@@ -537,10 +537,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "motivoGestionComercialCodigo", perimetroActivo.getMotivoGestionComercial().getCodigo());
 			BeanUtils.copyProperty(activoDto, "motivoGestionComercialDescripcion", perimetroActivo.getMotivoGestionComercial().getDescripcion());
 		}
-		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getMotivoGestionComercial())) {
-			BeanUtils.copyProperty(activoDto, "motivoGestionComercialCodigo", perimetroActivo.getMotivoGestionComercial().getCodigo());
-			BeanUtils.copyProperty(activoDto, "motivoGestionComercialDescripcion", perimetroActivo.getMotivoGestionComercial().getDescripcion());
-		}
 		
 		// Si no exite perimetro en BBDD, se crea una nueva instancia PerimetroActivo, con todas las condiciones marcadas
 		// y por tanto, por defecto se marcan los checkbox.
@@ -1301,8 +1297,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				dto.getFechaAplicaComercializar() != null || dto.getMotivoAplicaComercializarDescripcion() != null ||
 				dto.getFechaAplicaFormalizar() != null || dto.getMotivoAplicaFormalizar() != null || dto.getAplicaPublicar() != null ||
 				dto.getFechaAplicaPublicar() != null || dto.getMotivoAplicaPublicar() != null ||dto.getMotivoGestionComercialCodigo() !=null ||
-				dto.getMotivoGestionComercialDescripcion() !=null ||dto.getFechaGestionComercial()  !=null || dto.getCheckGestorComercial() !=null ||
-				dto.getCheckExcluirValidacionesGestionComercial() !=null)
+				dto.getMotivoGestionComercialDescripcion() !=null || dto.getFechaGestionComercial()  !=null || 
+				dto.getCheckGestorComercial() !=null || dto.getCheckExcluirValidacionesGestionComercial() !=null)
 			{
 				PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 				beanUtilNotNull.copyProperties(perimetroActivo, dto);
@@ -1449,9 +1445,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						perimetroActivoUA.setFechaGestionComercial(new Date());
 						if(Checks.esNulo(dto.getMotivoGestionComercialCodigo())) {
 							perimetroActivoUA.setMotivoGestionComercial(perimetroActivo.getMotivoGestionComercial());
+							perimetroActivoUA.setExcluirValidaciones(perimetroActivo.getExcluirValidaciones());
 						}else {
 							DDMotivoGestionComercial gestionComercial = genericDao.get(DDMotivoGestionComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", dto.getMotivoGestionComercialCodigo()));
 							perimetroActivoUA.setMotivoGestionComercial(gestionComercial);
+							DDSinSiNo excluirValidaciones = dto.getCheckExcluirValidacionesGestionComercial() ? (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI) : (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
+							perimetroActivoUA.setExcluirValidaciones(excluirValidaciones);
 						}
 					}
 									

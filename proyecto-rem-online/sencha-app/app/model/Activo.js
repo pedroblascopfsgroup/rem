@@ -1079,6 +1079,9 @@ Ext.define('HreRem.model.Activo', {
 	 			name: 'motivoGestionComercialDescripcion'
 			},
 			{
+	 			name: 'motivoGestionComercialCodigo' 
+			},
+			{
 	 			name: 'checkGestorComercial',
 	 			type: 'boolean'
 

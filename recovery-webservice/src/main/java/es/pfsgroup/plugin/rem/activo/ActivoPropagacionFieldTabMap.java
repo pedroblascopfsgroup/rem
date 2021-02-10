@@ -73,6 +73,7 @@ public class ActivoPropagacionFieldTabMap {
 	    			"aplicaFormalizar",
 	    			"aplicaComercializar",
 	    			"motivoGestionComercialCodigo",
+	    			"checkExcluirValidacionesGestionComercial",
 	    			"checkGestorComercial",
 
 	    			// comercializacion

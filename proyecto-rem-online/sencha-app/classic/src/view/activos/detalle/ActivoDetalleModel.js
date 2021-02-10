@@ -1206,10 +1206,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		btnNuevaPeticionTrabajoOculto: function(get) {
 			var isIncluidoEnPerimetro = get('activo.incluidoEnPerimetro');
 			return (isIncluidoEnPerimetro == false || $AU.getUser().codigoCartera == CONST.CARTERA['BBVA']);
-		},
-		
-	    esEditableComboMotivoExclusionGestorComercial: function(get){
-			return get('activo.restringido') == false && get('activo.checkExcluirValidacionesGestionComercial') == true;
 		}
     },
     

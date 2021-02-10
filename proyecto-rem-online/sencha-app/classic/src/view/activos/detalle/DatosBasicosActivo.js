@@ -875,14 +875,11 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							{
 								xtype: 'comboboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetros.motivoDeExcluido'),
-								colspan: 3,
+								colspan: 3, 
 								reference: 'comboMotivoGestionComercial',
 								bind: {
 									store: '{comboMotivoGestionComercialActivo}',
-									value: '{activo.motivoGestionComercialCodigo}', 
-									readOnly: '{!esEditableComboMotivoExclusionGestorComercial}',
-									allowBlank: '{!esEditableComboMotivoExclusionGestorComercial}'
-
+									value: '{activo.motivoGestionComercialCodigo}'
 								}
 							},
 							

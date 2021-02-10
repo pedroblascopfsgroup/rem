@@ -8159,16 +8159,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     onChkbxExclValPerimetroChange: function(chkbx){
 		var me = this;
-
 		var excluido = chkbx.getValue();
 		var comboMotivoGestionComercial = me.lookupReference('comboMotivoGestionComercial');
+		disabled = excluido == 0;
 		
-		comboMotivoGestionComercial.allowBlank = !excluido;
-		comboMotivoGestionComercial.readOnly = !excluido;	
+		comboMotivoGestionComercial.setDisabled(disabled);
+    	
+    	if(disabled){
+    		comboMotivoGestionComercial.editable = false;
+    	}else{
+    		comboMotivoGestionComercial.editable = true;
+    	}
 		
-		if(!excluido){
-			comboMotivoGestionComercial.reset();
-		}
     },
     
     onChkbxGestionComercialChange: function(chkbx){

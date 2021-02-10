@@ -12,6 +12,7 @@ public class DtoSubirDocumento extends DtoTabActivo{
 	private String fechaCaducidad;
 	private String fechaObtencion;
 	private String fechaEtiqueta;
+	private String calificacionEnergetica;
 	private String registro;
 	
 	public String getAplica() {
@@ -50,7 +51,14 @@ public class DtoSubirDocumento extends DtoTabActivo{
 	public void setRegistro(String registro) {
 		this.registro = registro;
 	}
+	public String getCalificacionEnergetica() {
+		return calificacionEnergetica;
+	}
+	public void setCalificacionEnergetica(String calificacionEnergetica) {
+		this.calificacionEnergetica = calificacionEnergetica;
+	}
 
+	
 
 	
 

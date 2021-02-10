@@ -1678,9 +1678,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.id", tipoDocDiccionario.getId());
 		Filter filtrotipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.id",activo.getTipoActivo().getId());
 		ActivoConfigDocumento actConfDoc = genericDao.get(ActivoConfigDocumento.class, filtroDocumento,filtrotipoActivo);
-		Filter filtroActConfDoc = genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", actConfDoc.getId());
-		ActivoAdmisionDocumento activoAdmisionDocumento = genericDao.get(ActivoAdmisionDocumento.class, filtroActivo, filtroActConfDoc);
-		
+		if(actConfDoc != null) {
+			Filter filtroActConfDoc = genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", actConfDoc.getId());
+			ActivoAdmisionDocumento activoAdmisionDocumento = genericDao.get(ActivoAdmisionDocumento.class, filtroActivo, filtroActConfDoc);
 		
 		if(activoAdmisionDocumento == null) {
 			activoAdmisionDocumento = new ActivoAdmisionDocumento();
@@ -1711,6 +1711,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		activoAdmisionDocumento.setValidado(tbjValidado);
 
 		genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
+		}
+		return;
 	
 	}
 	

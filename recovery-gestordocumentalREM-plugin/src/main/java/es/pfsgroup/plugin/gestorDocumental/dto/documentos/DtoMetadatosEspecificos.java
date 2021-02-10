@@ -9,8 +9,9 @@ public class DtoMetadatosEspecificos{
 	private String aplica;
 	private String fechaEmision;
 	private String fechaCaducidad;
-	private Boolean fechaObtencion;
+	private String fechaObtencion;
 	private String fechaEtiqueta;
+	private String calificacionEnergetica;
 	private String registro;
 	
 	public String getAplica() {
@@ -31,12 +32,6 @@ public class DtoMetadatosEspecificos{
 	public void setFechaCaducidad(String fechaCaducidad) {
 		this.fechaCaducidad = fechaCaducidad;
 	}
-	public Boolean getFechaObtencion() {
-		return fechaObtencion;
-	}
-	public void setFechaObtencion(Boolean fechaObtencion) {
-		this.fechaObtencion = fechaObtencion;
-	}
 	public String getFechaEtiqueta() {
 		return fechaEtiqueta;
 	}
@@ -48,6 +43,18 @@ public class DtoMetadatosEspecificos{
 	}
 	public void setRegistro(String registro) {
 		this.registro = registro;
+	}
+	public String getCalificacionEnergetica() {
+		return calificacionEnergetica;
+	}
+	public void setCalificacionEnergetica(String calificacionEnergetica) {
+		this.calificacionEnergetica = calificacionEnergetica;
+	}
+	public void setFechaObtencion(String fechaObtencion) {
+		this.fechaObtencion = fechaObtencion;
+	}
+	public String getFechaObtencion() {
+		return fechaObtencion;
 	}
 	
 

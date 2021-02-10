@@ -20,7 +20,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 /**
- * Modelo que gestiona el Tipo de Documento de la  entodad
+ * Modelo que gestiona el Tipo de Documento de la  entidad
  */
 @Entity
 @Table(name = "DD_TDO_TIPO_DOC_ENTIDAD", schema = "${entity.schema}")

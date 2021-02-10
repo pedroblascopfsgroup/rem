@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=DAP
---## FECHA_CREACION=20210205
+--## FECHA_CREACION=20210210
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-12983
@@ -126,7 +126,7 @@ DECLARE
             AND TRUNC(ALB.ALB_FECHA_ALBARAN) = TRUNC(SYSDATE)
             AND ESA.DD_ESA_CODIGO = ''''VAL''''
     )'),
-      T_TIPO_DATA('F08' ,'No pueden darse de alta prefacturas con trabajos sin identificador REAM', '1', 'WHERE EXISTS (
+      T_TIPO_DATA('F08' ,'No pueden darse de alta prefacturas con trabajos sin área peticionaria', '1', 'WHERE EXISTS (
         SELECT 1
         FROM #ESQUEMA#.ACT_TBJ_TRABAJO TBJ
         WHERE TBJ.DD_IRE_ID IS NULL
@@ -181,7 +181,16 @@ DECLARE
             AND TBJ.PVC_ID IS NULL
             AND TBJ.TBJ_ID = AUX.TBJ_ID
     )'
-    )
+    ),
+      T_TIPO_DATA('F14' ,'No pueden darse de alta prefacturas con trabajos con área peticionaria de Edificación', '1', 'WHERE EXISTS (
+        SELECT 1
+        FROM #ESQUEMA#.ACT_TBJ_TRABAJO TBJ
+        JOIN #ESQUEMA#.DD_IRE_IDENTIFICADOR_REAM IRE ON IRE.DD_IRE_ID = TBJ.DD_IRE_ID
+            AND IRE.BORRADO = 0
+        WHERE TBJ.BORRADO = 0
+            AND IRE.DD_IRE_CODIGO = ''''04''''
+            AND TBJ.TBJ_ID = AUX.TBJ_ID
+    )')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

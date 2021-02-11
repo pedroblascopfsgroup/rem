@@ -300,7 +300,7 @@ Ext.define('HreRem.view.activos.detalle.InfoVivienda', {
            {    
                 
 				xtype:'fieldset',
-				height: 600,
+				height: 1720,
 				layout: {type: 'hbox'},
 				collapsible: true,
 				title:HreRem.i18n('title.calidades'),

@@ -39,7 +39,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 	    	var isGastoRefacturadoPadre = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPadre;
 	    	var edicion = true;
 	    	
-	    	if(me.up('gastodetallemain').getViewModel().get('gasto.asignadoATrabajos') || me.up('gastodetallemain').getViewModel().get('gasto.autorizado')){
+	    	if(/*me.up('gastodetallemain').getViewModel().get('gasto.asignadoATrabajos') || */me.up('gastodetallemain').getViewModel().get('gasto.autorizado')){
 	    		edicion = false;
 	    	}
 	    	
@@ -180,7 +180,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					dataIndex : 'participacion',
 					renderer: function(value) {
 						const formatter = new Intl.NumberFormat('es-ES', {
-	            		   minimumFractionDigits: 2,      
+	            		   minimumFractionDigits: 0,      
 	            		   maximumFractionDigits: 4
 	            		});
 			          return formatter.format(value) + "%";
@@ -216,7 +216,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					},
 		            summaryRenderer: function(value, summaryData, dataIndex) {
 		            	const formatter = new Intl.NumberFormat('es-ES', {
-		            		   minimumFractionDigits: 2,      
+		            		   minimumFractionDigits: 0,      
 		            		   maximumFractionDigits: 4
 		            		});
 		            	var value2 = formatter.format(value);
@@ -231,8 +231,8 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					xtype: 'numbercolumn', 
 					renderer: function(value) {
 						const formatter = new Intl.NumberFormat('es-ES', {
-	            		   minimumFractionDigits: 2,      
-	            		   maximumFractionDigits: 4
+	            		   minimumFractionDigits: 0,      
+	            		   maximumFractionDigits: 2
 	            		});
 			          return formatter.format(value) + "\u20AC";
 			        },
@@ -242,7 +242,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					summaryType: 'sum',
 		            summaryRenderer: function(value, summaryData, dataIndex) {
 		            	const formatter = new Intl.NumberFormat('es-ES', {
-		            		   minimumFractionDigits: 2,      
+		            		   minimumFractionDigits: 0,      
 		            		   maximumFractionDigits: 2
 		            	});
 		            	var store = me.lookupController().getView().lookupReference('listadoActivosAfectadosRef').getStore();
@@ -416,7 +416,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
     	var suplidos = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPadre;
     	var edicion = true;
     	
-    	if(me.up('gastodetallemain').getViewModel().get('gasto.asignadoATrabajos') || me.up('gastodetallemain').getViewModel().get('gasto.autorizado')){
+    	if(/*me.up('gastodetallemain').getViewModel().get('gasto.asignadoATrabajos') || */me.up('gastodetallemain').getViewModel().get('gasto.autorizado')){
     		edicion = false;
     	}
     	

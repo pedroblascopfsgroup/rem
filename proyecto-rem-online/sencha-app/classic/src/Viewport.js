@@ -120,6 +120,13 @@ Ext.define('HreRem.view.Viewport', {
 				                    html: $AC.getLabelVersion()
 				            },
 				            { xtype: 'tbfill'   },
+							{ 
+								xtype: 'tbtext',
+								//cls: Ext.baseCSSPrefix + 'toast',
+								height: '50px',
+								style: 'font-weight: bold;font-size: small; background-color: #FF8C8C;text-align: center;border: 2px solid red;border-radius: 10px;padding: 10px; margin: 5px;',
+								text: '** Debido a la migración de la cartera BBVA a Sistemas Haya,<br> el acceso a REM será suspendido temporalmente entre el jueves 11-feb a las 15:00 hasta el lunes 15-feb a las 8:00. **'
+							},{ xtype: 'tbfill'   },
 				            {
 			                    cls: 'delete-focus-bg no-pointer',
 			                    iconCls:'app-tb-ico ico-user',

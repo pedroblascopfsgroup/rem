@@ -101,6 +101,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionSer
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
@@ -350,8 +351,20 @@ public class ActivoAdapter {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoFoto.getId());
 		ActivoFoto activoFoto = genericDao.get(ActivoFoto.class, filtro);
+		String descripcion  = null;
 		boolean resultado = false;
 		try {
+			
+			beanUtilNotNull.copyProperties(activoFoto, dtoFoto);
+			if(!Checks.esNulo(dtoFoto.getOrden())) {
+				activoFoto.setOrden(dtoFoto.getOrden());
+			}
+			if (dtoFoto.getCodigoDescripcionFoto() != null) {
+				DDDescripcionFotoActivo ddDescripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoFoto.getCodigoDescripcionFoto()));
+				descripcion = ddDescripcionFoto.getDescripcion();
+				activoFoto.setDescripcionFoto(ddDescripcionFoto);
+				activoFoto.setDescripcion(descripcion);
+			}
 
 			if (gestorDocumentalFotos.isActive()) {
 				PRINCIPAL principal = null;
@@ -371,15 +384,12 @@ public class ActivoAdapter {
 					}
 				}
 				FileResponse fileReponse = gestorDocumentalFotos.update(activoFoto.getRemoteId(), dtoFoto.getNombre(),
-						null, dtoFoto.getDescripcion(), principal, situacion, dtoFoto.getOrden());
+						null, descripcion, principal, situacion, dtoFoto.getOrden());
 				if (fileReponse.getError() != null && !fileReponse.getError().isEmpty()) {
 					throw new RuntimeException(fileReponse.getError());
 				}
 			}
-			beanUtilNotNull.copyProperties(activoFoto, dtoFoto);
-			if(!Checks.esNulo(dtoFoto.getOrden())) {
-				activoFoto.setOrden(dtoFoto.getOrden());
-			}
+			
 			genericDao.save(ActivoFoto.class, activoFoto);
 
 		} catch (Exception e) {
@@ -3959,6 +3969,14 @@ public class ActivoAdapter {
 				ofertasAgrupadas = ofertaApi.buildListaOfertasAgrupadasLbk(oferPrincipal, oferta, dto.getClaseOferta());
 			}
 			
+			if(Checks.esNulo(dto.getClaseOferta()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo()) 
+					&& DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta.getCodigo())) {
+				DDClaseOferta clase = null;
+				clase = genericDao.get(DDClaseOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL) );
+				if(clase != null) {
+					oferta.setClaseOferta(clase);
+				}
+			}
 			oferta.setOfertasAgrupadas(ofertasAgrupadas);
 			
 			oferta.setOfertaExpress(false);

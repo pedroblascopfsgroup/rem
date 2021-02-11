@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20210211
+--## FECHA_CREACION=20210212
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-13147
@@ -39,7 +39,8 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     --				CODIGO COA		DESCRIPCION				DESCRIPCION_LARGA		CODIGO CARTERA
-        T_TIPO_DATA('23',			'BBVA',						'BBVA',				'16')
+        T_TIPO_DATA('23',			'HAYA',						'HAYA',				'16'),
+        T_TIPO_DATA('24',			'BBVA',						'BBVA',				'16')
         
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

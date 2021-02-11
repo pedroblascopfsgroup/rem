@@ -1089,7 +1089,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					},
 					{
 					xtype:'button',
-					text: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.boton.aplicar'),
+					text: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.aplicar'),
 					reference: 'btnAplicaDescripcionRef',
 					style: 'float: left;',
 					readOnly: true,

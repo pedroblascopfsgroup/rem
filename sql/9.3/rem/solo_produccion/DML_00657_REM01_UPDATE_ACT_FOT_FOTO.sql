@@ -38,7 +38,7 @@ BEGIN
                   INNER JOIN '||V_ESQUEMA||'.DD_DFA_DESCRIPCION_FOTO_ACTIVO DD ON (
                         TRIM(LOWER(TRANSLATE(DD.DD_DFA_DESCRIPCION,''ÁáÉéÍíÓóÚú'',''AaEeIiOoUu''))) = TRIM(LOWER(TRANSLATE(FOT.FOT_DESCRIPCION,''ÁáÉéÍíÓóÚú'',''AaEeIiOoUu'')))
                                                                                     )
-                  WHERE DD.DD_SAC_ID = 23 AND FOT.SDV_ID IS NULL AND FOT.ACT_ID IS NULL AND FOT.BORRADO = 0) T2
+                  WHERE DD.DD_SAC_ID = 23 AND FOT.SDV_ID IS NULL AND FOT.ACT_ID IS NULL AND FOT.BORRADO = 0 AND FOT.DD_DFA_ID IS NULL) T2
             ON (T1.FOT_ID = T2.FOT_ID)
             WHEN MATCHED THEN UPDATE SET
             DD_DFA_ID = T2.DD_DFA_ID,
@@ -56,7 +56,7 @@ BEGIN
                                                                                     )
                   INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = FOT.ACT_ID
                   INNER JOIN '||V_ESQUEMA||'.DD_SAC_SUBTIPO_aCTIVO SAC ON SAC.DD_SAC_ID = DD.DD_sAC_ID AND ACT.DD_sAC_ID = SAC.DD_sAC_ID
-                  WHERE FOT.SDV_ID IS NULL AND FOT.AGR_ID IS NULL AND FOT.BORRADO = 0) T2
+                  WHERE FOT.SDV_ID IS NULL AND FOT.AGR_ID IS NULL AND FOT.BORRADO = 0  AND FOT.DD_DFA_ID IS NULL) T2
             ON (T1.FOT_ID = T2.FOT_ID)
             WHEN MATCHED THEN UPDATE SET
             DD_DFA_ID = T2.DD_DFA_ID,
@@ -75,7 +75,7 @@ BEGIN
                                                                                     )
                   inner join '||V_ESQUEMA||'.v_subdivisiones_agrupacion sub on sub.id = fot.sdv_id
                   INNER JOIN '||V_ESQUEMA||'.DD_SAC_SUBTIPO_aCTIVO SAC ON SAC.DD_SAC_ID = DD.DD_sAC_ID AND sac.dd_sac_codigo = sub.cod_subtipo_activo
-                  WHERE FOT.SDV_ID IS NOT NULL AND FOT.ACT_ID IS NULL AND FOT.BORRADO = 0) T2
+                  WHERE FOT.SDV_ID IS NOT NULL AND FOT.ACT_ID IS NULL AND FOT.BORRADO = 0  AND FOT.DD_DFA_ID IS NULL) T2
             ON (T1.FOT_ID = T2.FOT_ID)
             WHEN MATCHED THEN UPDATE SET
             DD_DFA_ID = T2.DD_DFA_ID,

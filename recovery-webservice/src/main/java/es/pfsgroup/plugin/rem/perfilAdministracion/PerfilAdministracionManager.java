@@ -84,6 +84,10 @@ public class PerfilAdministracionManager extends BusinessOperationOverrider<Perf
 	
 	@Override
 	public boolean usuarioHasPerfil(String codPerfil, String userName) {
+		
+		if( codPerfil == null || userName == null) {
+			return false;
+		}
 		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.username", userName);
 		Filter filtroPerfil = genericDao.createFilter(FilterType.EQUALS, "perfil.codigo", codPerfil);
 		List<ZonaUsuarioPerfil> zonaUsuPefList = genericDao.getList(ZonaUsuarioPerfil.class, filtroUsuario, filtroPerfil);

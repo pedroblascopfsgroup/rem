@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Carlos Augusto
---## FECHA_CREACION=202102010
+--## AUTOR= Lara Pablo
+--## FECHA_CREACION=20210211
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13072
@@ -34,6 +34,9 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
+    V_CODIGO VARCHAR2(25 CHAR):= 'TDY';
+    V_TABLA VARCHAR2(40 CHAR):= 'dd_tdy_tipo_doc_proyecto';
+    V_TIPOENTIDAD VARCHAR2(25 CHAR):= 'PROY';
 
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
@@ -42,34 +45,24 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 
-  
-        
-    DBMS_OUTPUT.PUT_LINE('[INFO]: Se comprueba si ya existen los valores');
-        --Comprobamos el dato a insertar
-        V_SQL := 'SELECT count(1) 
-                    from '||V_ESQUEMA||'.DD_TDO_TIPO_DOC_ENTIDAD
-                    where  DD_TDO_CODIGO in
-                    (SELECT DD_TPD_CODIGO from '||V_ESQUEMA||'.DD_TPD_TIPO_DOCUMENTO where dd_tpd_visible=1) ';
-        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-         DBMS_OUTPUT.PUT_LINE('[INFO]: Se realiza la comprobacion' );
-        --Si existe no hacemos nada
-        IF V_NUM_TABLAS > 0 THEN				
-            DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTROS INSERTADO ANTERIORMENTE NO SE REALIZA NADA');
-        
-          
-       --Si no existe, lo insertamos   
-       ELSE
-         DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO');
-       	  V_MSQL := '  INSERT INTO  '||V_ESQUEMA||'.DD_TDO_TIPO_DOC_ENTIDAD (DD_TDO_ID, DD_TED_ID, DD_TDO_CODIGO, DD_TDO_DESCRIPCION, DD_TDO_DESCRIPCION_LARGA, DD_TDO_MATRICULA, USUARIOCREAR, FECHACREAR, BORRADO)
-                            SELECT S_DD_TDO_TIPO_DOC_ENTIDAD.NEXTVAL,
-                            (select dd_Ted_id from '||V_ESQUEMA||'.DD_TED_TIP_ENTIDAD_DOC where dd_ted_codigo = ''ACT''),
-                                dd_TPD_CODIGO,dd_tpd_descripcion,dd_tpd_descripcion_larga,dd_tpd_matricula_gd, ''HREOS-13072'', SYSDATE, BORRADO 
-                                    FROM '||V_ESQUEMA||'.DD_TPD_TIPO_DOCUMENTO WHERE dd_tpd_visible=1';
-          EXECUTE IMMEDIATE V_MSQL;
-          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTROS Añadidos CORRECTAMENTE');
+	 DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO');
+   	 V_MSQL := '  INSERT INTO  '||V_ESQUEMA||'.DD_TDO_TIPO_DOC_ENTIDAD (DD_TDO_ID, DD_TED_ID, DD_TDO_CODIGO, DD_TDO_DESCRIPCION, DD_TDO_DESCRIPCION_LARGA, DD_TDO_MATRICULA, USUARIOCREAR, FECHACREAR, BORRADO)
+                    SELECT S_DD_TDO_TIPO_DOC_ENTIDAD.NEXTVAL,
+                     (select dd_Ted_id from '||V_ESQUEMA||'.DD_TED_TIP_ENTIDAD_DOC where dd_ted_codigo = '''||V_TIPOENTIDAD||'''),
+                     DD_'||V_CODIGO||'_CODIGO,
+					 DD_'||V_CODIGO||'_DESCRIPCION, 
+					 DD_'||V_CODIGO||'_DESCRIPCION_LARGA,
+                     DD_'||V_CODIGO||'_MATRICULA_GD, 
+            		 ''HREOS-13072'', SYSDATE, 
+					BORRADO
+                    FROM '||V_ESQUEMA||'.'||V_TABLA||'';
+                    
+      DBMS_OUTPUT.PUT_LINE(V_MSQL);
+                    
+	  EXECUTE IMMEDIATE V_MSQL;
+	  DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTROS Añadidos CORRECTAMENTE');
         
         
-       END IF;
     COMMIT;
 
    

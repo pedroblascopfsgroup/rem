@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos Augusto
---## FECHA_CREACION=20210210
+--## FECHA_CREACION=20210215
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13072
@@ -176,8 +176,8 @@ BEGIN
       V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     	DBMS_OUTPUT.PUT_LINE('[INFO]: Comprobamos Dato '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
       --Comprobamos el dato a insertar
-      V_SQL :=   'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_TDO_ID =(
-          SELECT DD_TDO_ID FROM '||V_ESQUEMA||'.DD_TDO_TIPO_DOC_ENTIDAD  WHERE DD_TDO_MATRICULA ='''||TRIM(V_TMP_TIPO_DATA(1))||''')';
+      V_SQL :=   'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_TDO_ID in (
+          SELECT DD_TDO_ID FROM '||V_ESQUEMA||'.DD_TDO_TIPO_DOC_ENTIDAD  WHERE DD_TDO_MATRICULA  in('''||TRIM(V_TMP_TIPO_DATA(1))||'''))';
          
       EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
       
@@ -198,7 +198,7 @@ BEGIN
             ''HREOS-13072'',
             SYSDATE,
             0
-            FROM '|| V_ESQUEMA ||'.DD_TDO_TIPO_DOC_ENTIDAD WHERE DD_TDO_MATRICULA ='''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''';
+            FROM '|| V_ESQUEMA ||'.DD_TDO_TIPO_DOC_ENTIDAD WHERE DD_TDO_MATRICULA in ('''|| TRIM(V_TMP_TIPO_DATA(1)) ||''')';
         EXECUTE IMMEDIATE V_MSQL;
        
       

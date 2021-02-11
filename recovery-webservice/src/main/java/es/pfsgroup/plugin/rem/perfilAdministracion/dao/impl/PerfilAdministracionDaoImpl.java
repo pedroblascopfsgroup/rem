@@ -115,7 +115,7 @@ public class PerfilAdministracionDaoImpl extends AbstractEntityDao<VBusquedaPerf
 	public String getBlackListMatriculasByUsuario(String username) {
 
 		String blackListMatriculas = "";
-		HQLBuilder hb = new HQLBuilder("select doc.matricula from DDTipoDocumentoEntidad doc, ConfiguracionOcultarPerfilDocumento conf, ZonaUsuarioPerfil zon, Usuario usu");
+		HQLBuilder hb = new HQLBuilder("select distinct(doc.matricula) from DDTipoDocumentoEntidad doc, ConfiguracionOcultarPerfilDocumento conf, ZonaUsuarioPerfil zon, Usuario usu");
 		hb.appendWhere("doc.id = conf.tipoDocumentoEntidad.id");
 		hb.appendWhere("conf.perfil.id = zon.perfil.id");
 		hb.appendWhere("zon.usuario.id = usu.id and usu.username = '" + username +"'");

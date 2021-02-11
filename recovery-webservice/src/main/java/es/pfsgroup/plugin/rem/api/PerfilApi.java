@@ -9,6 +9,7 @@ import es.pfsgroup.plugin.rem.perfilAdministracion.dto.DtoPerfilAdministracionFi
 
 public interface PerfilApi {
 
+	public final static String COD_PERFIL_CARTERA_BBVA = "CARTERA_BBVA";
 	/**
 	 * Devuelve una lista de perfiles aplicando el filtro que recibe.
 	 * 

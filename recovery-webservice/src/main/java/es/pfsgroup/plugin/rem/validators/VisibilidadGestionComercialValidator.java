@@ -46,6 +46,7 @@ public class VisibilidadGestionComercialValidator {
 	public static final String VALID_ACTIVO_CON_CARGAS = "Activo con cargas";
 	public static final String VALID_ACTIVO_ALQUILER_SOCIAL = "Activo incluido en perímetro de alquiler social";
 	public static final String VALID_ACTIVO_OFERTAS_PENDIENTES = "Activo con ofertas pendientes";
+	public static final String VALID_ACTIVO_GESTION = "Activo cuyo estadp de publicacion no permite la edicion de Visibilidad Gestion Comercial";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -190,6 +191,16 @@ public class VisibilidadGestionComercialValidator {
 							}
 						}
 					}
+					
+					//Validación que comprueba el check
+				
+						if (activoPublicacion != null && activoPublicacion.getEstadoPublicacionAlquiler() != null) {
+							if (!DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())
+									&& (perimetroActivo.getCheckGestorComercial() !=null && perimetroActivo.getCheckGestorComercial())) {
+								erroresActivo.add(VALID_ACTIVO_GESTION);
+							}
+						}
+					
 
 					// Validación que comprueba si tiene el destino comercial adecuado
 					if (activoActual.getTipoComercializacion() != null 

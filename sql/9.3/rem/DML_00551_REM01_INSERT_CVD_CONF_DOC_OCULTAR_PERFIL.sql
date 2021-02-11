@@ -1,0 +1,227 @@
+--/*
+--##########################################
+--## AUTOR=Carlos Augusto
+--## FECHA_CREACION=20210210
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-13072
+--## PRODUCTO=NO
+--##
+--## Finalidad: Script que añade en DD_TED_TIP_ENTIDAD_DOC los datos añadidos en T_ARRAY_DATA
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+	
+    V_ID NUMBER(16);
+    V_TABLA VARCHAR2(50 CHAR):= 'CVD_CONF_DOC_OCULTAR_PERFIL';
+    V_USUARIO VARCHAR2(25 CHAR):= 'HREOS-13072';
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+            -- MATRICULA  			      PERFIL                        
+
+
+        T_TIPO_DATA('AI-15-FACT-AM' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-AK' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-AJ' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-AI' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-AH' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-AG' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-AF' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-AE' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-AD' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-AC' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-AB' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-AA' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-99' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-98' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-97' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-96' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-95' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-94' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-93' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-92' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-91' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-90' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-89' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-88' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-87' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-86' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-85' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-84' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-83' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-82' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-81' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-80' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-79' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-78' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-77' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-76' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-75' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-74' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-71' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-70' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-69' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-68' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-67' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-66' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-65' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-63' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-62' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-61' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-60' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-59' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-58' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-45' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-44' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-43' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-FACT-42' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-CP' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-CN' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-CM' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-CL' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-CK' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-CJ' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-CI' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-CH' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-CG' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-CF' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-CE' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-CD' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-CC' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-CB' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-CA' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BZ' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BY' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BX' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BW' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BV' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BU' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BT' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BS' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BR' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BQ' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BP' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BO' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BN' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BM' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BL' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BK' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BJ' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BI' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BH' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BG' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BF' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BE' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BD' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-BA' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-AZ' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-AY' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-AX' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-AW' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-AV' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-AU' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-AS' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-AR' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-AQ' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-AP' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-AO' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-AN' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-AA' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-99' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-98' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-15-CERA-97' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-10-CERT-26' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-09-ESIN-45' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-05-FOTO-01' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-05-CERJ-85' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-04-TASA-29' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-03-ESIN-BZ' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-02-ESIN-97' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-02-CNCV-40' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-02-CERJ-AR' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-02-CERJ-AQ' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-02-CERJ-43' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-01-FACT-10' ,'CARTERA_BBVA'),
+        T_TIPO_DATA('AI-01-ESIN-BR' ,'CARTERA_BBVA')
+
+    ); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+   
+BEGIN	
+	
+
+	 
+    -- LOOP para insertar los valores -----------------------------------------------------------------
+
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+
+      V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+    	DBMS_OUTPUT.PUT_LINE('[INFO]: Comprobamos Dato '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+      --Comprobamos el dato a insertar
+      V_SQL :=   'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_TDO_ID =(
+          SELECT DD_TDO_ID FROM '||V_ESQUEMA||'.DD_TDO_TIPO_DOC_ENTIDAD  WHERE DD_TDO_MATRICULA ='''||TRIM(V_TMP_TIPO_DATA(1))||''')';
+         
+      EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+      
+      
+      --Si existe lo modificamos
+      IF V_NUM_TABLAS > 0 THEN				
+      
+        DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' Insertado ANTERIORMENTE');
+        
+      --Si no existe, lo insertamos   
+      ELSE
+              DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS LOS REGISTROS');   
+        
+        V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TABLA||' (CVD_ID,PEF_ID,DD_TDO_ID,USUARIOCREAR,FECHACREAR,BORRADO) 
+            SELECT S_'||V_TABLA||'.NEXTVAL,
+            (SELECT PEF_ID FROM '|| V_ESQUEMA ||'.PEF_PERFILES WHERE PEF_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''),
+            DD_TDO_ID,
+            ''HREOS-13072'',
+            SYSDATE,
+            0
+            FROM '|| V_ESQUEMA ||'.DD_TDO_TIPO_DOC_ENTIDAD WHERE DD_TDO_MATRICULA ='''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''';
+        EXECUTE IMMEDIATE V_MSQL;
+       
+      
+      END IF;
+
+    END LOOP;
+  COMMIT;
+   
+
+EXCEPTION
+     WHEN OTHERS THEN
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+
+/
+
+EXIT

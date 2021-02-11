@@ -293,6 +293,7 @@ public class ActivoAdapter {
 	public static final String CODIGO_SUPERVISOR_COMERCIAL_ALQUILER = "SUPCOMALQ";
 	
 	private static final String T017_TRAMITE_BBVA_DESCRIPCION = "Trámite comercial de venta BBVA";
+    private static final String CODIGO_TRAMITE_T017 = "T017";
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -2145,7 +2146,8 @@ public class ActivoAdapter {
 			
 			beanUtilNotNull.copyProperty(dtoTramite, "idActivo", tramite.getActivo().getId());
 
-			if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo())) {
+			if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo())
+					&& CODIGO_TRAMITE_T017.equals(tramite.getTipoTramite().getCodigo())) {
 				beanUtilNotNull.copyProperty(dtoTramite, "nombre", T017_TRAMITE_BBVA_DESCRIPCION);
 				beanUtilNotNull.copyProperty(dtoTramite, "tipoTramite", T017_TRAMITE_BBVA_DESCRIPCION);
 			}else {

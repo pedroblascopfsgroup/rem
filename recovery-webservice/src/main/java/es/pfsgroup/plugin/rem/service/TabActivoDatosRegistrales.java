@@ -492,6 +492,10 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 
 		}
 		
+		if (activo.getBien() != null && activo.getBien().getAdjudicacion() != null && activo.getBien().getAdjudicacion().getFechaRealizacionPosesion() != null) {
+			activoDto.setFechaPosesionNoJudicial(activo.getBien().getAdjudicacion().getFechaRealizacionPosesion());
+		}
+		
 		return activoDto;
 	}
 
@@ -1011,6 +1015,10 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 						activoBbva.setSociedadPagoAnterior(propietario);
 					}
 				}
+			}
+			
+			if (dto.getFechaPosesionNoJudicial() != null) {
+				activo.getBien().getAdjudicacion().setFechaRealizacionPosesion(dto.getFechaPosesionNoJudicial());
 			}
 			
 		} catch (JsonViewerException jvex) {

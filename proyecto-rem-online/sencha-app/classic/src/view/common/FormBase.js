@@ -413,7 +413,7 @@
 		me.errors.length = 0;
 
 		Ext.Array.each(me.getForm().getFields().items, function(field, index) {
-			if(!field.validate() && !field.hidden) {
+			if(!field.validate() && !field.hidden && !field.readOnly) {
 				me.errors = me.errors.concat(field.getActiveErrors());
 			}
 		});

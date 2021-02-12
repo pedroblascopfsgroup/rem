@@ -205,7 +205,8 @@ public class ActivoPropagacionUAsFieldTabMap {
 					"codigoMotivoCalificacionNegativa",
 					"codigoEstadoMotivoCalificacionNegativa",
 					"idProcesoOrigen",
-					"sociedadDePagoAnterior"
+					"sociedadDePagoAnterior",
+					"fechaPosesionNoJudicial"
     			));
 
     	pmap.put(TAB_SIT_POSESORIA,

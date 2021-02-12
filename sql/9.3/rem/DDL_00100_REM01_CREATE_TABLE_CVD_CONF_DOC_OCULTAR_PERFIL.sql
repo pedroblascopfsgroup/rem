@@ -43,10 +43,14 @@ BEGIN
     -- Comprobamos si existe la tabla   
     V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-    
+
     -- Si no existe la tabla se crea
-    IF V_NUM_TABLAS = 0 THEN 
+    IF V_NUM_TABLAS = 1 THEN 
                 		    
+          -- Verificar si la tabla ya existe
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Ya existe. Se borrará.');
+		EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' CASCADE CONSTRAINTS';
+	END IF;
         --Creamos la tabla
         DBMS_OUTPUT.PUT_LINE('[CREAMOS '||V_TEXT_TABLA||']');
     	 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
@@ -72,14 +76,15 @@ BEGIN
 		-- Comprobamos si existe la secuencia
 		V_MSQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TEXT_TABLA||''' and SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
 		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS; 
-		IF V_NUM_TABLAS = 0 THEN
+		 IF V_NUM_TABLAS = 1 THEN 
+	    	DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'... Ya existe. Se borrará.');  
+			EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
+		END IF;
 				
 			V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
 		    EXECUTE IMMEDIATE V_MSQL;		
 		    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||' creada');
-
-		END IF;
-             
+ 
         EXECUTE IMMEDIATE 'COMMENT ON TABLE  ' || V_ESQUEMA || '.CVD_CONF_DOC_OCULTAR_PERFIL IS ''Tabla de Configuracion Ocultar Perfil Documento''';
         EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.CVD_CONF_DOC_OCULTAR_PERFIL.CVD_ID IS ''PK Identificador único de Configuracion Ocultar Perfil Documento''';
         EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.CVD_CONF_DOC_OCULTAR_PERFIL.PEF_ID IS ''FK a PEF_PERFILES''';
@@ -94,10 +99,7 @@ BEGIN
         EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.CVD_CONF_DOC_OCULTAR_PERFIL.BORRADO IS ''Indicador de borrado''';
     
         DBMS_OUTPUT.PUT_LINE('Creados los comentarios en TABLA '|| V_ESQUEMA ||'.CVD_CONF_DOC_OCULTAR_PERFIL... OK');
-    ELSE
-        -- Si existe la tabla no se hace nada
-        DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... La Tabla YA EXISTE.');
-    END IF;
+   
 
 COMMIT;
 DBMS_OUTPUT.PUT_LINE('[INFO] COMMIT');

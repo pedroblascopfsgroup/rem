@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos Augusto
---## FECHA_CREACION=20210209
+--## FECHA_CREACION=20210211
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13072
@@ -46,13 +46,16 @@ BEGIN
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     -- Si existe la tabla no hacemos nada
     IF V_NUM_TABLAS = 1 THEN 
-            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||'... Tabla YA EXISTE');
-    ELSE  
+            -- Verificar si la tabla ya existe
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Ya existe. Se borrará.');
+		EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA||' CASCADE CONSTRAINTS';
+		
+    END IF;
     	 --Creamos la tabla
     	 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'
                (DD_'||V_CODIGO_TABLA||'_ID NUMBER (16,0) NOT NULL
-               ,DD_TED_ID NUMBER (16,0) NOT NULL
-				  , DD_'||V_CODIGO_TABLA||'_CODIGO VARCHAR2(100 CHAR) 
+               ,DD_TED_ID NUMBER (16,0) NOT NULL 
+				  , DD_'||V_CODIGO_TABLA||'_CODIGO VARCHAR2(100 CHAR) NOT NULL
 				  , DD_'||V_CODIGO_TABLA||'_DESCRIPCION VARCHAR2(250 CHAR) 
 				  , DD_'||V_CODIGO_TABLA||'_DESCRIPCION_LARGA VARCHAR2(250 CHAR) 
                   , DD_'||V_CODIGO_TABLA||'_MATRICULA VARCHAR2(250 CHAR) 
@@ -73,8 +76,7 @@ BEGIN
 		
 	
 		-- execute immediate 'grant select, insert, delete, update, REFERENCES(DD_TDG_ID) on ' || V_ESQUEMA || '.'||V_TABLA||' to '||V_ESQUEMA||'';
-		
-    END IF;
+
     
     -- Creamos la secuencia
     -- Comprobamos si existe la secuencia   
@@ -82,11 +84,12 @@ BEGIN
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     -- Si existe la secuencia no hacemos nada
     IF V_NUM_TABLAS = 1 THEN 
-    	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TABLA||'... Secuencia YA EXISTE'); 
-    ELSE
+    	DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_'||V_TABLA||'... Ya existe. Se borrará.');  
+		EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_'||V_TABLA||'';		
+  	END IF;
     	execute immediate 'CREATE SEQUENCE ' || V_ESQUEMA || '.S_'||V_TABLA||'  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 100 NOORDER  NOCYCLE';
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.S_'||V_TABLA||'... Secuencia creada correctamente.');
-	END IF;
+
 	
     -- Creamos comentario	
 	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TABLA||' IS ''Tabla para gestionar la relacion de tipo documento entidad.''';		
@@ -114,6 +117,10 @@ BEGIN
 	
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... Comentarios creados sobre las columnas de la tabla.');
+	
+	
+COMMIT;
+DBMS_OUTPUT.PUT_LINE('[INFO] COMMIT');
     
 EXCEPTION
   WHEN OTHERS THEN

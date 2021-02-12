@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Carlos Augusto
---## FECHA_CREACION=20210215
+--## AUTOR= Lara Pablo
+--## FECHA_CREACION=20210219
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13072
@@ -176,9 +176,10 @@ BEGIN
       V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     	DBMS_OUTPUT.PUT_LINE('[INFO]: Comprobamos Dato '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
       --Comprobamos el dato a insertar
-      V_SQL :=   'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_TDO_ID in (
-          SELECT DD_TDO_ID FROM '||V_ESQUEMA||'.DD_TDO_TIPO_DOC_ENTIDAD  WHERE DD_TDO_MATRICULA  in('''||TRIM(V_TMP_TIPO_DATA(1))||'''))';
+      V_SQL :=   'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE PEF_ID = (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''')
+				 AND DD_TDO_ID in (SELECT DD_TDO_ID FROM '||V_ESQUEMA||'.DD_TDO_TIPO_DOC_ENTIDAD  WHERE DD_TDO_MATRICULA  = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
          
+       DBMS_OUTPUT.PUT_LINE(V_SQL);
       EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
       
       

@@ -232,7 +232,9 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						DDTipoRechazoOferta tipoRechazo = (DDTipoRechazoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoRechazoOferta.class, DDTipoRechazoOferta.CODIGO_ANULADA);
 
 						DDMotivoRechazoOferta motivoRechazo = (DDMotivoRechazoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRechazoOferta.class, valor.getValor());
-						motivoRechazo.setTipoRechazo(tipoRechazo);
+						if(motivoRechazo != null) {
+							motivoRechazo.setTipoRechazo(tipoRechazo);
+						}	
 						ofertaAceptada.setMotivoRechazo(motivoRechazo);
 						genericDao.save(Oferta.class, ofertaAceptada);
 						genericDao.save(ExpedienteComercial.class, expediente);

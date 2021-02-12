@@ -130,7 +130,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "           FROM ACT_AGR_AGRUPACION AGR, ACT_ACTIVO ACT "
 				+ "           WHERE ACT.ACT_ID  = AGR.AGR_ACT_PRINCIPAL "
 				+ "           AND ACT.ACT_NUM_ACTIVO = "+numActivo+" "
-				+ "           AND AGR.BORRADO  = 0 "
+				+ "           AND AGR.BORRADO  = 0 AND AGR.AGR_FECHA_BAJA IS NULL"
 				+ "           AND ACT.BORRADO  = 0");
 		return !"0".equals(resultado);
 	}

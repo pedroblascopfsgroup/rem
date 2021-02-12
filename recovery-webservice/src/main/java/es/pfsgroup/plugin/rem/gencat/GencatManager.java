@@ -1291,7 +1291,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		AdecuacionGencat adecuacionGencat = new AdecuacionGencat();
 		OfertaGencat ofertaGencat = new OfertaGencat();
 		Auditoria auditoria = new Auditoria();
-		
+		Activo activo = activoApi.get(idActivo);
 		
 		// Creamos el estado de la nueva comunicacion a CREADO
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
@@ -1305,7 +1305,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 
 		// Creamos la nueva comunicación
 		comunicacionGencat.setAuditoria(auditoria);
-		comunicacionGencat.setActivo(activoApi.get(idActivo));
+		comunicacionGencat.setActivo(activo);
 		comunicacionGencat.setComunicadoAnulacionAGencat(false);
 		comunicacionGencat.setEstadoComunicacion(estadoComunicacion);
 		comunicacionGencat.setFechaPreBloqueo(new Date());
@@ -1323,18 +1323,17 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		ofertaGencat.setTiposPersona(oferta.getCliente().getTipoPersona());
 		ofertaGencat.setAuditoria(auditoria);
 		ofertaGencat.setVersion(0L);
-		
 
-		ActivoAdmisionRevisionTitulo revisionTitulo = comunicacionGencat.getActivo().getAdmisionRevisionTitulo();
-		DDCedulaHabitabilidad cedula = (revisionTitulo != null) ? revisionTitulo.getCedulaHabitabilidad() : null;
-		if(revisionTitulo != null || cedula != null && cedula.getCodigo().equals(DDCedulaHabitabilidad.CODIGO_OBTENIDO)) {
+		if(activo.tieneCedulaHabitabilidad()) {
 			adecuacionGencat.setNecesitaReforma(false);
 		}else {
 			adecuacionGencat.setNecesitaReforma(true);
 			Filter filtroBien = genericDao.createFilter(FilterType.EQUALS, "bien.numeroActivo", comunicacionGencat.getActivo().getNumActivo());
-			NMBInformacionRegistralBien informacionRegistralBien = genericDao.get(NMBInformacionRegistralBien.class, filtro);
+			NMBInformacionRegistralBien informacionRegistralBien = genericDao.get(NMBInformacionRegistralBien.class, filtroBien);
 			
-			adecuacionGencat.setImporteReforma(informacionRegistralBien.getSuperficieConstruida().multiply(new BigDecimal(PRECIO_REFORMA_ADECUACION)).setScale(2).doubleValue());
+			BigDecimal superficieConstruida = (informacionRegistralBien.getSuperficieConstruida() != null) ? informacionRegistralBien.getSuperficieConstruida() : new BigDecimal(0);
+			
+			adecuacionGencat.setImporteReforma(superficieConstruida.multiply(new BigDecimal(PRECIO_REFORMA_ADECUACION)).setScale(2).doubleValue());
 		}
 		
 		// Creamos la nueva adecuación, habiendo creado previamente la comunicación

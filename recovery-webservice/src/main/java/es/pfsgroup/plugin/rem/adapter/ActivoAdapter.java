@@ -1758,6 +1758,7 @@ public class ActivoAdapter {
 
 	public List<DtoListadoTramites> getTramitesActivo(Long idActivo, WebDto webDto) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
+		Activo activo = activoApi.get(idActivo);
 		List<String> listaCodigosTramite = new ArrayList<String>() {
 			{
 				add(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC);
@@ -1785,6 +1786,11 @@ public class ActivoAdapter {
 				DtoListadoTramites dtoTramite = new DtoListadoTramites();
 				try {
 					beanUtilNotNull.copyProperties(dtoTramite, tramite);
+					
+					if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(activo.getCartera().getCodigo())
+							&& CODIGO_TRAMITE_T017.equals(tramite.getCodigoTipoTramite())) {
+						beanUtilNotNull.copyProperty(dtoTramite, "nombre", T017_TRAMITE_BBVA_DESCRIPCION);
+					}
 
 				} catch (IllegalAccessException e) {
 					logger.error("Error en ActivoAdapter", e);

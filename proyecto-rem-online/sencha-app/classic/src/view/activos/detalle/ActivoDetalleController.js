@@ -7685,21 +7685,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			activobbvaFolio = me.lookupReference('activobbvaFolio'), 
 			activobbvaCdpen = me.lookupReference('activobbvaCdpen');
 
-		if(activoEpa.value == "true"|| activobbvaEmpresa.value != null || activobbvaOficina.value != null 
-				|| activobbvaContrapartida.value != null || activobbvaFolio.value != null || activobbvaCdpen.value != null) {
+		if(activoEpa.value == "true" 
+			|| (!Ext.isEmpty(activobbvaEmpresa.getValue()) || !Ext.isEmpty(activobbvaOficina.getValue()) || !Ext.isEmpty(activobbvaContrapartida.getValue()) 
+			|| !Ext.isEmpty(activobbvaFolio.getValue()) || !Ext.isEmpty(activobbvaCdpen.getValue()))) {
 			activobbvaEmpresa.allowBlank = false;
 			activobbvaOficina.allowBlank = false;
 			activobbvaContrapartida.allowBlank = false;
 			activobbvaFolio.allowBlank = false;
 			activobbvaCdpen.allowBlank = false;
-		} else {
+		} else{
 			activobbvaEmpresa.allowBlank = true;
 			activobbvaOficina.allowBlank = true;
 			activobbvaContrapartida.allowBlank = true;
 			activobbvaFolio.allowBlank = true;
 			activobbvaCdpen.allowBlank = true;
 		}
-		
 	},
 
 	onClickBotonCancelarVentanaComplementoTitulo : function(btn) {

@@ -2040,7 +2040,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     			data = Ext.decode(response.responseText);
     			if(data != null && data.data != null && data.data.id != null){
     				var idProveedor = data.data.id;
+					var nombreProveedor = data.data.nombre;
     				me.getView().lookupReference('comboProveedorGestionEconomica2').setValue(idProveedor);
+					me.getView().lookupReference('comboProveedorGestionEconomica2').setRawValue(nombreProveedor);
     			}
     		},
     		failure: function () {

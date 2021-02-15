@@ -33,7 +33,7 @@ DECLARE
 	TYPE T_USUARIO IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_USUARIO IS TABLE OF T_USUARIO;
     V_USUARIO T_ARRAY_USUARIO := T_ARRAY_USUARIO(
-      T_USUARIO('lcanozadads'),
+      T_USUARIO('lcano'),
       T_USUARIO('smoya'),
 	  T_USUARIO('biglesias'),
       T_USUARIO('cberenguel'),

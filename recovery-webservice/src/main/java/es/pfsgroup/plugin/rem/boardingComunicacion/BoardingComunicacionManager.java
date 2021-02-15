@@ -59,21 +59,20 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
         headers.put("Accept", "application/json");
         JSONObject jsonResp = new JSONObject();
         JSONObject jwtToken = null;
-        String usuario = "sdiaz";
-        String contrasenya = "1234";
-        String schema = "HAYA06";
+        String email = !Checks.esNulo(appProperties.getProperty("rest.client.autenticacion.email.boarding"))
+                ? appProperties.getProperty("rest.client.autenticacion.email.boarding") : "";
+        String password = !Checks.esNulo(appProperties.getProperty("rest.client.autenticacion.password.boarding"))
+                ? appProperties.getProperty("rest.client.autenticacion.password.boarding") : "";
         String urlLogin = !Checks.esNulo(appProperties.getProperty("rest.client.autenticacion.boarding"))
                 ? appProperties.getProperty("rest.client.autenticacion.boarding") : "";
-        jsonResp.put("username", usuario);
-        jsonResp.put("password", contrasenya);
-        jsonResp.put("schema", schema);
+        String urlLoginFinal = urlLogin + "?email="+email+"&password="+password;
 
         try {
-            jwtToken = procesarPeticion(this.httpClientFacade, urlLogin, POST_METHOD, headers, jsonResp.toString(), 30, "UTF-8");
+            jwtToken = procesarPeticion(this.httpClientFacade, urlLoginFinal, POST_METHOD, headers, jsonResp.toString(), 30, "UTF-8");
         } catch(Exception e) {
             e.printStackTrace();
         }
-        return jwtToken != null ? jwtToken.get("jwt").toString() : "";
+        return jwtToken != null ? jwtToken.get("token").toString() : "";
     }
 
     private JSONObject procesarPeticion(HttpClientFacade httpClientFacade, String serviceUrl, String sendMethod, Map<String, String> headers, String jsonString, int responseTimeOut, String charSet) throws HttpClientException {
@@ -100,7 +99,7 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
             if(expediente != null) {
             	model.put("fechaVenta", expediente.getFechaVenta());
             }else {
-            	model.put("fechaVenta", expediente.getFechaVenta());
+            	model.put("fechaVenta", null);
             }
 
             ObjectMapper mapper = new ObjectMapper();

@@ -1459,14 +1459,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					detalleGasto.setRetencionGarantiaTipoImpositivo(dto.getIrpfTipoImpositivoRetG());
 				}
 
-				Double importeGarantiaBase = recalcularImporteRetencionGarantia(detalleGasto);
-				detalleGasto.setRetencionGarantiaBase(importeGarantiaBase);
-				Double importeCuota = this.recalcularCuotaRetencionGarantia(gasto.getGastoDetalleEconomico(), importeGarantiaBase);
-				gasto.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuota);
+				if(dto.getBaseRetG() !=null) {
+					detalleGasto.setRetencionGarantiaBase(dto.getBaseRetG());
+				}
 				
+				if(dto.getIrpfCuotaRetG()!=null) {
+					gasto.getGastoDetalleEconomico().setRetencionGarantiaCuota(dto.getIrpfCuotaRetG());
+				}
 				
-				Double importeTotal = recalcularImporteTotalGasto(detalleGasto);
-				detalleGasto.setImporteTotal(importeTotal);
+				if(dto.getImporteTotal()!=null) {
+					detalleGasto.setImporteTotal(dto.getImporteTotal());
+				}
 				
 				if((dto.getRetencionGarantiaAplica() != null || dto.getTipoRetencionCodigo() != null || dto.getIrpfTipoImpositivoRetG() != null) 
 				&& (gasto != null && gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null &&
@@ -3703,20 +3706,29 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if(gastoLineaDetalleList != null && !gastoLineaDetalleList.isEmpty()){
 				for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
 					if(gastoLineaDetalle.getImporteTotal() != null) {
-						importeTotal+= gastoLineaDetalle.getImporteTotal();
+						
+						importeTotal += gastoLineaDetalle.getPrincipalSujeto() + gastoLineaDetalle.getProvSuplidos() + gastoLineaDetalle.getPrincipalNoSujeto()
+						+ gastoLineaDetalle.getRecargo() + gastoLineaDetalle.getInteresDemora() + gastoLineaDetalle.getCostas() + gastoLineaDetalle.getOtrosIncrementos();
 					}
+					
 					if (gastoLineaDetalle.getImporteIndirectoCuota() != null && gastoLineaDetalle.getEsImporteIndirectoExento() !=null && !gastoLineaDetalle.getEsImporteIndirectoExento() ) {
-						cuotaIvaRetenida += gastoLineaDetalle.getImporteIndirectoCuota();
+						
+						cuotaIvaRetenida += (gastoLineaDetalle.getPrincipalSujeto() * gastoLineaDetalle.getImporteIndirectoTipoImpositivo()) / 100;
+						
+						importeTotal += (gastoLineaDetalle.getPrincipalSujeto() * gastoLineaDetalle.getImporteIndirectoTipoImpositivo()) / 100;
+						
 					}
 				}
 			}
 			
 			if(gasto.getIrpfCuota() != null) {
-				importeTotal = importeTotal - gasto.getIrpfCuota();
+				importeTotal = importeTotal - ((gasto.getIrpfBase() * gasto.getIrpfTipoImpositivo()) / 100);
 			}
-			if(gasto.getRetencionGarantiaCuota() != null && gasto.getRetencionGarantiaAplica() != null && gasto.getRetencionGarantiaAplica()) {
-				importeTotal = importeTotal - gasto.getRetencionGarantiaCuota();
+			
+			if(gasto.getRetencionGarantiaCuota() != null && gasto.getRetencionGarantiaAplica() != null && gasto.getRetencionGarantiaAplica()) {				
+				importeTotal = importeTotal - ((gasto.getRetencionGarantiaBase() * gasto.getRetencionGarantiaTipoImpositivo()) / 100);
 			}
+			
 			if (retencionAntes && gasto.getRetencionGarantiaTipoImpositivo() != null 
 					&& carteraGasto != null && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(carteraGasto.getCodigo())) {
 				try {

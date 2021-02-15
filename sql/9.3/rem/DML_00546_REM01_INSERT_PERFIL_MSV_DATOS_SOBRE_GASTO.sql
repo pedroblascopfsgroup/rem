@@ -115,7 +115,7 @@ BEGIN
 								'''||V_USU||''', SYSDATE FROM DUAL';
 					EXECUTE IMMEDIATE V_MSQL;
 
-				ELSE
+				ELSE 
 
 					DBMS_OUTPUT.PUT_LINE('[INFO] El usuario '''||TRIM(V_TMP_USUARIO(1))||''' no existe.');
 

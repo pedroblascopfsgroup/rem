@@ -6119,7 +6119,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					Activo activo = activoTrabajo.getActivo();
 					Filter filtroActivoObservacion = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 					Filter filtroActivoObservacion2 = genericDao.createFilter(FilterType.EQUALS, "observacion", agendaTrabajo.getObservaciones());
-					ActivoObservacion actObs = genericDao.get(ActivoObservacion.class, filtroActivoObservacion, filtroActivoObservacion2);
+					Filter filtroTipoObservacion = genericDao.createFilter(FilterType.EQUALS, "tipoObservacion.codigo", DDTipoObservacionActivo.CODIGO_TRABAJOS);
+					ActivoObservacion actObs = genericDao.get(ActivoObservacion.class, filtroActivoObservacion, filtroActivoObservacion2, filtroTipoObservacion);
 					
 					if (!Checks.esNulo(actObs)) {
 						genericDao.deleteById(ActivoObservacion.class, actObs.getId());

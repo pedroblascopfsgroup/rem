@@ -4932,7 +4932,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT count(1) FROM eco_expediente_comercial where ofr_id in (SELECT ofr_id FROM ofr_ofertas where "
 				+"		ofr_id in (SELECT ofr_id FROM act_ofr where act_id in (SELECT act_id from act_activo where "
-				+"		act_num_activo = '"+activo+"'))) and eco_expediente_comercial.dd_eec_id not in ('03','06','08') ");
+				+"		act_num_activo = '"+activo+"'))) and eco_expediente_comercial.dd_eec_id not in (SELECT ddexp.DD_eec_id from dd_eec_est_exp_comercial ddexp WHERE ddexp.dd_eec_codigo  in ('03','06','08')) ");
 
 		return "1".equals(resultado);
 	}

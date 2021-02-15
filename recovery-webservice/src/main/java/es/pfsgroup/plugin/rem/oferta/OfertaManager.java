@@ -5711,7 +5711,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				List<ActivoTasacion> activoTasacionList = genericDao.getListOrdered(ActivoTasacion.class, orderFechaTasacionDesc, filtroAct_id);
 				if(activoTasacionList != null && activoTasacionList.get(0) != null) {
 					activosFichaComercial.setTasacion(activoTasacionList.get(0).getImporteTasacionFin());
-					tasacionTotal += activoTasacionList.get(0).getImporteTasacionFin();
+					if(activoTasacionList.get(0).getImporteTasacionFin() != null) {
+						tasacionTotal += activoTasacionList.get(0).getImporteTasacionFin();
+					}
 				}
 				
 				ActivosAlquilados actAlq = genericDao.get(ActivosAlquilados.class,filtroActivo);
@@ -6262,9 +6264,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public String linkCabecera(Long idActivo) {
 		
 		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
-		if (activoPublicacion == null || activoPublicacion.getActivo() == null
-			|| DDEstadoPublicacionVenta.CODIGO_NO_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo())
-			|| DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())) {
+		if (activoPublicacion == null || activoPublicacion.getActivo() == null || activoPublicacion.getEstadoPublicacionVenta() == null
+			|| DDEstadoPublicacionVenta.CODIGO_NO_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo())) {
 			return "";
 		}
 		

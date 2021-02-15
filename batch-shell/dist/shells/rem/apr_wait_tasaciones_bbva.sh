@@ -18,12 +18,12 @@ hora_actual=`date +%Y%m%d%H%M%S`
 echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
 
 for fichero in $arrayfichero; do
-  ficheroTxt=${DIR_DESTINO}bbva$fichero$extensionTxt
+  ficheroTxt=${DIR_DESTINO}bbva/$fichero$extensionTxt
 
   echo "$ficheroTxt"
   while [[ "$hora_actual" -lt "$hora_limite" ]] && [[ ! -e $ficheroTxt ]]; do
     if [[ "$#" -eq 1 ]]; then
-      ./ftp/ftp_get_st_bbva_files.sh $1 $fichero
+      ./ftp/ftp_get_tasaciones_bbva_files.sh $1 $fichero
     fi
     sleep 10
     hora_actual=`date +%Y%m%d%H%M%S`

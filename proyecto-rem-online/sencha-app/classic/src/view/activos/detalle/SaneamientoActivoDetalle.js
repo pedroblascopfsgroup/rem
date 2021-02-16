@@ -380,7 +380,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 							xtype:'fieldsettable',
 							defaultType: 'textfieldbase',
 							title: HreRem.i18n('title.gastos.asociados.adquisicion'),
-							hidden: $AU.getUser().codigoCartera == CONST.CARTERA['BBVA'],
+							hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']),
 							items :
 								[
 									{

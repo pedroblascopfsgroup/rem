@@ -65,8 +65,10 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
         headers.put("Accept", "application/json");
         JSONObject jsonResp = new JSONObject();
         JSONObject jwtToken = null;
-        String usuario = "sdiaz";
-        String contrasenya = "1234";
+        String usuario = !Checks.esNulo(appProperties.getProperty("rest.client.autenticacion.usuario.recovery"))
+                ? appProperties.getProperty("rest.client.autenticacion.usuario.recovery") : "";
+        String contrasenya = !Checks.esNulo(appProperties.getProperty("rest.client.autenticacion.contrasenya.recovery"))
+                ? appProperties.getProperty("rest.client.autenticacion.contrasenya.recovery") : "";
         String schema = "HAYA06";
         String urlLogin = !Checks.esNulo(appProperties.getProperty("rest.client.autenticacion.recovery"))
                 ? appProperties.getProperty("rest.client.autenticacion.recovery") : "";

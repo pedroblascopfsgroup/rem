@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20201118
+--## FECHA_CREACION=20210216
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.20
---## INCIDENCIA_LINK=HREOS-12163
+--## INCIDENCIA_LINK=HREOS-13190
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_GASTOS
@@ -21,6 +21,7 @@
 --##	    1.05 Se añaden modificaciones según el ítem HREOS-10666.
 --##        1.06 Se añaden modificaciones según el ítem HREOS-11761.
 --##        1.07 Se añaden modificaciones según el ítem HREOS-12163.
+--##        1.08 Se añade error según el ítem HREOS-13190.
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -354,8 +355,6 @@ BEGIN
 
         END IF;
 
-    END IF;
-
     -------------------------------------------------------
     --Aquí comenzamos directamente con el CASE, ya que al ser el inicio, está claro que COD_RETORNO = 0.
     CASE
@@ -372,7 +371,7 @@ BEGIN
             THEN V_ERROR_DESC := '[ERROR] Se ha informado FECHA_PAGO y FECHA_CONTABILIZACION simultaneamente. Por favor, informe solo una de éstas fechas. Paramos la ejecución.';
                  COD_RETORNO := 1;*/
 
-    ELSE
+            ELSE
         COD_RETORNO := 0;
 
         V_DD_STG_CODIGO                 := DD_STG_CODIGO;
@@ -555,6 +554,11 @@ BEGIN
             EXECUTE IMMEDIATE V_MSQL
             INTO V_GPV_ID, V_TIT_ID, V_EGA_CODIGO, V_EGA_ID, V_NUM_FACTUR_UVEM, V_FEC_CONTABILIZACION, V_EJE_ID, V_CUENTA_CONTABLE, V_PTDA_PRESUPESTARIA, V_FECHA_PAGO, V_GIC_ID, V_GDE_ID, V_GLD_ID
             USING V_GPV_NUM_GASTO_HAYA, V_DD_STG_CODIGO, V_DD_TIT_CODIGO, V_GLD_IMP_IND_TIPO_IMPOSITIVO;*/
+        ELSIF V_NUM = 0 THEN 
+
+            COD_RETORNO := 1;
+            V_ERROR_DESC := '[ERROR] El gasto con el NÚMERO DE GASTO HAYA '||V_GPV_NUM_GASTO_HAYA||' tiene falta de información (Contabilidad, Detalle económico, Gestión, etc). Paramos la ejecución.';
+
         ELSE
             --Si no existe el gasto, asignamos COD_RETORNO = 1 para finalizar el proceso.
             COD_RETORNO := 1;

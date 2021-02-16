@@ -12,7 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -24,7 +23,6 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 
 @Entity
@@ -33,20 +31,23 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class HistoricoOcupadoTitulo implements Serializable,Auditable {
 	
-    private static final long serialVersionUID = 1L;
-    private static String COD_ALTA_ACTIVO = "Alta de activos";
-    private static String COD_SIT_POS = "Situación posesoria y llaves";
-    private static String COD_PATRIMONIO = "Pestaña de patrimonio como";
-    private static String COD_OFERTA_ALQUILER = "Oferta de alquiler";
-    private static String COD_CARGA_MASIVA = "Carga masiva";
+    
+    public static String COD_ALTA_ACTIVO = "Alta de activos";
+    public static String COD_SIT_POS = "Situación posesoria y llaves";
+    public static String COD_PATRIMONIO = "Pestaña de patrimonio como";
+    public static String COD_OFERTA_ALQUILER = "Oferta de alquiler";
+    public static String COD_CARGA_MASIVA = "Carga masiva";
+    public static final long serialVersionUID = 1L;
+    
+   
 
     @Id
     @Column(name = "HOT_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "ActivoGenerator")
-    @SequenceGenerator(name = "ActivoGenerator", sequenceName = "S_ACT_HOT_HIST_OCUPADO_TITULO")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "HistoricoOcupadoTituloGenerator")
+    @SequenceGenerator(name = "HistoricoOcupadoTituloGenerator", sequenceName = "S_ACT_HOT_HIST_OCUPADO_TITULO")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     private Activo activo;
 
@@ -73,22 +74,21 @@ public class HistoricoOcupadoTitulo implements Serializable,Auditable {
 	@Embedded
 	private Auditoria auditoria;
 	
-	private HistoricoOcupadoTitulo() {}
 	
-	public static HistoricoOcupadoTitulo getHistoricoOcupadoTitulo(Activo activo, ActivoSituacionPosesoria posesoria, Usuario usuario, 
+	public HistoricoOcupadoTitulo(Activo activo, ActivoSituacionPosesoria posesoria, Usuario usuario, 
 			String lugarModificacion, String valorConcreto) {
-		HistoricoOcupadoTitulo obj = new HistoricoOcupadoTitulo();
-		obj.setActivo(activo);
-		obj.setConTitulo(posesoria.getConTitulo());
-		obj.setOcupado(posesoria.getOcupado());
-		obj.setUsuario(usuario);
-		obj.setFechaHoraAlta(new Date());
-		if(valorConcreto.equalsIgnoreCase(COD_SIT_POS) || valorConcreto.equalsIgnoreCase(COD_CARGA_MASIVA)) {
-			obj.setLugarModificacion(lugarModificacion.concat(valorConcreto));
+		
+		this.activo = activo;
+		this.conTitulo = posesoria.getConTitulo();
+		this.ocupado = posesoria.getOcupado();
+		this.usuario = usuario;
+		this.fechaHoraAlta = new Date();
+		if(valorConcreto.equalsIgnoreCase(HistoricoOcupadoTitulo.COD_SIT_POS) || valorConcreto.equalsIgnoreCase(HistoricoOcupadoTitulo.COD_CARGA_MASIVA)) {
+			this.lugarModificacion = lugarModificacion.concat(valorConcreto);
 		}else {
-			obj.setLugarModificacion(lugarModificacion);
+			this.lugarModificacion = lugarModificacion;
 		}
-				return obj;
+				
 	}
 
 	public Long getId() {
@@ -105,14 +105,6 @@ public class HistoricoOcupadoTitulo implements Serializable,Auditable {
 
 	public void setActivo(Activo activo) {
 		this.activo = activo;
-	}
-
-	public Long getVersion() {
-		return version;
-	}
-
-	public void setVersion(Long version) {
-		this.version = version;
 	}
 
 	public Auditoria getAuditoria() {

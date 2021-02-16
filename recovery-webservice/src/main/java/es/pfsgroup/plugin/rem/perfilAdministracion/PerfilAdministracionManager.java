@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -37,6 +39,9 @@ public class PerfilAdministracionManager extends BusinessOperationOverrider<Perf
 
 	@Autowired
 	private PerfilAdministracionDao perfilDao;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 
 	@Override
 	public String managerName() {
@@ -75,6 +80,23 @@ public class PerfilAdministracionManager extends BusinessOperationOverrider<Perf
 	@Override
 	public List<DtoPerfilAdministracionFilter> getFuncionesByPerfilId(Long id, DtoPerfilAdministracionFilter dto) {				
 		return perfilDao.getFuncionesByPerfilId(id, dto);
+	}
+	
+	@Override
+	public boolean usuarioHasPerfil(String codPerfil, String userName) {
+		
+		if( codPerfil == null || userName == null) {
+			return false;
+		}
+		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.username", userName);
+		Filter filtroPerfil = genericDao.createFilter(FilterType.EQUALS, "perfil.codigo", codPerfil);
+		List<ZonaUsuarioPerfil> zonaUsuPefList = genericDao.getList(ZonaUsuarioPerfil.class, filtroUsuario, filtroPerfil);
+		
+		if(zonaUsuPefList == null || zonaUsuPefList.isEmpty()) {
+			return false;
+		}
+		
+		return true;
 	}
 }
 

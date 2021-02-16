@@ -108,6 +108,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.perfilAdministracion.dao.PerfilAdministracionDao;
 
 
 @Service("gestorDocumentalAdapterManager")
@@ -157,6 +158,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 
+	@Autowired
+	private PerfilAdministracionDao perfilAdministracionDao;
 
     public static final String CODIGO_CLASE_PROYECTO = "09", CODIGO_TIPO_EXPEDIENTE_REO = "AI", CODIGO_CLASE_AGRUPACIONES = "08";
     
@@ -185,6 +188,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(activo.getNumActivo().toString(), getTipoExpediente(activo), codigoEstado);
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
+		docExpDto.setBlacklistmatriculas(perfilAdministracionDao.getBlackListMatriculasByUsuario(userLogin.getUsername()));
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
 	  /*if (!Checks.esNulo(respuesta.getDocumentos())) {
@@ -1104,6 +1108,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(codPromo, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, GestorDocumentalConstants.CODIGO_CLASE_PROMOCIONES);
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
+		docExpDto.setBlacklistmatriculas(perfilAdministracionDao.getBlackListMatriculasByUsuario(userLogin.getUsername()));
 		List<DtoAdjuntoPromocion> list = GestorDocToRecoveryAssembler.getListDtoAdjuntoPromo(respuesta);
 
 		for (DtoAdjuntoPromocion adjunto : list) {
@@ -1496,6 +1501,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(codProyecto, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, CODIGO_CLASE_PROYECTO);
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
+		docExpDto.setBlacklistmatriculas(perfilAdministracionDao.getBlackListMatriculasByUsuario(userLogin.getUsername()));
 		List<DtoAdjuntoProyecto> list = GestorDocToRecoveryAssembler.getListDtoAdjuntoProyecto(respuesta);
 
 		for (DtoAdjuntoProyecto adjunto : list) {

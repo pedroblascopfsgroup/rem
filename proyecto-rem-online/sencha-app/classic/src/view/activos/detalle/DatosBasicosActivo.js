@@ -18,7 +18,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
         var me = this;
         var isCarteraBbva = me.lookupController().getViewModel().getData().activo.getData().isCarteraBbva;
         var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']);
-        var ocultoUsuariosBBVA = $AU.getUser().codigoCartera == CONST.CARTERA['BBVA'];
 		me.setTitle(HreRem.i18n('title.datos.basicos'));
         var items= [
 			{
@@ -745,7 +744,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.perimetros'),
-				hidden: !ocultoUsuariosBBVA,
+				hidden:!$AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']),
 				items :[					
 					{
 						xtype: 'datefieldbase',
@@ -762,7 +761,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.perimetros'),
-				hidden: ocultoUsuariosBBVA,
+				hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']),
 				items :
 					[
 					{
@@ -789,7 +788,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						readOnly	: true,
 						listeners: {
 						   'render': function(panel) {
-						       if($AU.getUser().codigoCartera == CONST.CARTERA['BBVA']){
+						       if($AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])){
 						    	  this.colspan = 3;
 						       }
 						    }
@@ -801,7 +800,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						colspan: 2,
 						bind: {
 							value: '{activo.trabajosVivos}',
-							hidden: '{esUsuarioBBVA}'
+							hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])
 						},
 						readOnly	: true
 					},
@@ -1348,7 +1347,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									},
 									{
 										xtype:'textfieldbase',
-										disabled: true,
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.cdpen'),
 										reference: 'activobbvaCdpen',
 										bind: {

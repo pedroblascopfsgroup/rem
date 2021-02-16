@@ -45,7 +45,7 @@ Ext.define('HreRem.view.activos.tramites.TramitesActivo', {
     	                    	 flex: 1,
     	                    	 dataIndex: 'subtipoTrabajo',
     	                    	 bind: {
-    	                    		 hidden:'{esUsuarioBBVA}'
+    	                    		 hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])
     	                    	 }
     	                     },
     	                     {

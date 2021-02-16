@@ -1,0 +1,598 @@
+--/*
+--##########################################
+--## AUTOR=DAP
+--## FECHA_CREACION=20210211
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-13151
+--## PRODUCTO=NO
+--##
+--## Finalidad: Script que añade en ACT_CONFIG_CTAS_CONTABLES los datos añadidos en T_ARRAY_DATA
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+	
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_ENTIDAD_ID NUMBER(16);
+    V_ID NUMBER(16);
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-13151';
+
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_CONFIG_CTAS_CONTABLES'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_DD_CRA_ID VARCHAR(50 CHAR); -- Vble. que almacena el id de la cartera.
+	  V_EJE_ID VARCHAR(50 CHAR); -- Vble. que almacena el id del año.
+    
+    V_CONSTRAINT_NAME VARCHAR2(30 CHAR);
+
+    V_DURACION INTERVAL DAY(0) TO SECOND;
+    V_INICIO TIMESTAMP := SYSTIMESTAMP;
+    V_FIN TIMESTAMP;
+    V_PASO_INI TIMESTAMP;
+    V_PASO_FIN TIMESTAMP;
+
+    CURSOR CONSTRAINTS_ENABLED IS SELECT CONSTRAINT_NAME
+      FROM ALL_CONSTRAINTS
+      WHERE TABLE_NAME = 'ACT_CONFIG_CTAS_CONTABLES'
+          AND STATUS = 'ENABLED'
+          AND CONSTRAINT_TYPE IN ('C', 'U', 'F', 'P');
+
+    CURSOR CONSTRAINTS_DISABLED IS SELECT CONSTRAINT_NAME 
+      FROM ALL_CONSTRAINTS
+      WHERE TABLE_NAME = 'ACT_CONFIG_CTAS_CONTABLES'
+          AND STATUS = 'DISABLED'
+          AND CONSTRAINT_TYPE IN ('C', 'U', 'F', 'P');
+    
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    -- CUENTA_CONTABLE   DD_TGA_CODIGO  DD_STG_CODIGO, EJERCICIO, TIPO_IMPORTE
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+		T_TIPO_DATA('Z01','15','84','2021','BAS'),
+		T_TIPO_DATA('Z01','15','70','2021','BAS'),
+		T_TIPO_DATA('Z01','15','82','2021','BAS'),
+		T_TIPO_DATA('Z01','15','81','2021','BAS'),
+		T_TIPO_DATA('Z02','15','73','2021','BAS'),
+		T_TIPO_DATA('Z02','15','76','2021','BAS'),
+		T_TIPO_DATA('Z02','15','75','2021','BAS'),
+		T_TIPO_DATA('Z02','15','74','2021','BAS'),
+		T_TIPO_DATA('Z01','15','83','2021','BAS'),
+		T_TIPO_DATA('ZA06','15','80','2021','BAS'),
+		T_TIPO_DATA('Z01','15','79','2021','BAS'),
+		T_TIPO_DATA('Z02','15','72','2021','BAS'),
+		T_TIPO_DATA('Z01','15','77','2021','BAS'),
+		T_TIPO_DATA('Z01','15','71','2021','BAS'),
+		T_TIPO_DATA('Z01','15','78','2021','BAS'),
+		T_TIPO_DATA('Z04','13','55','2021','BAS'),
+		T_TIPO_DATA('Z33','06','29','2021','BAS'),
+		T_TIPO_DATA('Z33','06','28','2021','BAS'),
+		T_TIPO_DATA('Z33','05','93','2021','BAS'),
+		T_TIPO_DATA('Z33','05','27','2021','BAS'),
+		T_TIPO_DATA('Z33','05','26','2021','BAS'),
+		T_TIPO_DATA('Z17','12','53','2021','BAS'),
+		T_TIPO_DATA('Z17','12','54','2021','BAS'),
+		T_TIPO_DATA('Z35','01','05','2021','BAS'),
+		T_TIPO_DATA('Z34','01','01','2021','BAS'),
+		T_TIPO_DATA('Z34','01','02','2021','BAS'),
+		T_TIPO_DATA('ZA07','01','06','2021','BAS'),
+		T_TIPO_DATA('Z38','01','07','2021','BAS'),
+		T_TIPO_DATA('Z37','01','03','2021','BAS'),
+		T_TIPO_DATA('Z37','01','04','2021','BAS'),
+		T_TIPO_DATA('Z48','01','92','2021','BAS'),
+		T_TIPO_DATA('Z08','14','62','2021','BAS'),
+		T_TIPO_DATA('Z17','14','60','2021','BAS'),
+		T_TIPO_DATA('Z06','14','58','2021','BAS'),
+		T_TIPO_DATA('Z08','14','61','2021','BAS'),
+		T_TIPO_DATA('Z08','14','69','2021','BAS'),
+		T_TIPO_DATA('Z08','14','57','2021','BAS'),
+		T_TIPO_DATA('Z08','14','68','2021','BAS'),
+		T_TIPO_DATA('Z36','14','59','2021','BAS'),
+		T_TIPO_DATA('Z08','14','64','2021','BAS'),
+		T_TIPO_DATA('Z08','14','63','2021','BAS'),
+		T_TIPO_DATA('Z08','14','67','2021','BAS'),
+		T_TIPO_DATA('Z08','14','66','2021','BAS'),
+		T_TIPO_DATA('Z08','14','65','2021','BAS'),
+		T_TIPO_DATA('Z33','07','31','2021','BAS'),
+		T_TIPO_DATA('Z33','07','30','2021','BAS'),
+		T_TIPO_DATA('Z33','08','33','2021','BAS'),
+		T_TIPO_DATA('Z33','08','32','2021','BAS'),
+		T_TIPO_DATA('Z33','08','34','2021','BAS'),
+		T_TIPO_DATA('Z23','18','89','2021','BAS'),
+		T_TIPO_DATA('Z36','03','19','2021','BAS'),
+		T_TIPO_DATA('Z36','03','20','2021','BAS'),
+		T_TIPO_DATA('Z50','17','88','2021','BAS'),
+		T_TIPO_DATA('Z46','04','24','2021','BAS'),
+		T_TIPO_DATA('Z46','04','25','2021','BAS'),
+		T_TIPO_DATA('Z46','04','23','2021','BAS'),
+		T_TIPO_DATA('Z46','04','22','2021','BAS'),
+		T_TIPO_DATA('Z46','04','21','2021','BAS'),
+		T_TIPO_DATA('Z26','10','42','2021','BAS'),
+		T_TIPO_DATA('Z26','10','41','2021','BAS'),
+		T_TIPO_DATA('Z26','10','40','2021','BAS'),
+		T_TIPO_DATA('Z26','10','39','2021','BAS'),
+		T_TIPO_DATA('Z13','11','97','2021','BAS'),
+		T_TIPO_DATA('Z13','11','96','2021','BAS'),
+		T_TIPO_DATA('Z13','11','95','2021','BAS'),
+		T_TIPO_DATA('Z13','11','48','2021','BAS'),
+		T_TIPO_DATA('Z21','11','49','2021','BAS'),
+		T_TIPO_DATA('Z13','11','94','2021','BAS'),
+		T_TIPO_DATA('Z15','11','44','2021','BAS'),
+		T_TIPO_DATA('Z13','11','52','2021','BAS'),
+		T_TIPO_DATA('Z13','11','47','2021','BAS'),
+		T_TIPO_DATA('Z15','11','46','2021','BAS'),
+		T_TIPO_DATA('Z19','11','43','2021','BAS'),
+		T_TIPO_DATA('Z05','11','51','2021','BAS'),
+		T_TIPO_DATA('Z08','11','50','2021','BAS'),
+		T_TIPO_DATA('Z29','09','36','2021','BAS'),
+		T_TIPO_DATA('Z30','09','35','2021','BAS'),
+		T_TIPO_DATA('Z31','09','37','2021','BAS'),
+		T_TIPO_DATA('Z36','02','10','2021','BAS'),
+		T_TIPO_DATA('Z36','02','09','2021','BAS'),
+		T_TIPO_DATA('Z36','02','08','2021','BAS'),
+		T_TIPO_DATA('Z36','02','12','2021','BAS'),
+		T_TIPO_DATA('Z36','02','14','2021','BAS'),
+		T_TIPO_DATA('Z36','02','16','2021','BAS'),
+		T_TIPO_DATA('Z36','02','15','2021','BAS'),
+		T_TIPO_DATA('Z36','02','18','2021','BAS'),
+		T_TIPO_DATA('Z36','02','17','2021','BAS'),
+		T_TIPO_DATA('Z36','02','13','2021','BAS'),
+		T_TIPO_DATA('Z36','02','11','2021','BAS'),
+		T_TIPO_DATA('Z03','16','86','2021','BAS'),
+		T_TIPO_DATA('Z24','16','87','2021','BAS'),
+		T_TIPO_DATA('Z24','16','85','2021','BAS'),
+		T_TIPO_DATA('Z01','15','84','2020','BAS'),
+		T_TIPO_DATA('Z01','15','70','2020','BAS'),
+		T_TIPO_DATA('Z01','15','82','2020','BAS'),
+		T_TIPO_DATA('Z01','15','81','2020','BAS'),
+		T_TIPO_DATA('Z02','15','73','2020','BAS'),
+		T_TIPO_DATA('Z02','15','76','2020','BAS'),
+		T_TIPO_DATA('Z02','15','75','2020','BAS'),
+		T_TIPO_DATA('Z02','15','74','2020','BAS'),
+		T_TIPO_DATA('Z01','15','83','2020','BAS'),
+		T_TIPO_DATA('ZA06','15','80','2020','BAS'),
+		T_TIPO_DATA('Z01','15','79','2020','BAS'),
+		T_TIPO_DATA('Z02','15','72','2020','BAS'),
+		T_TIPO_DATA('Z01','15','77','2020','BAS'),
+		T_TIPO_DATA('Z01','15','71','2020','BAS'),
+		T_TIPO_DATA('Z01','15','78','2020','BAS'),
+		T_TIPO_DATA('Z04','13','55','2020','BAS'),
+		T_TIPO_DATA('Z33','06','29','2020','BAS'),
+		T_TIPO_DATA('Z33','06','28','2020','BAS'),
+		T_TIPO_DATA('Z33','05','93','2020','BAS'),
+		T_TIPO_DATA('Z33','05','27','2020','BAS'),
+		T_TIPO_DATA('Z33','05','26','2020','BAS'),
+		T_TIPO_DATA('Z17','12','53','2020','BAS'),
+		T_TIPO_DATA('Z17','12','54','2020','BAS'),
+		T_TIPO_DATA('Z66','01','05','2020','BAS'),
+		T_TIPO_DATA('Z39','01','01','2020','BAS'),
+		T_TIPO_DATA('Z39','01','02','2020','BAS'),
+		T_TIPO_DATA('ZA07','01','06','2020','BAS'),
+		T_TIPO_DATA('Z38','01','07','2020','BAS'),
+		T_TIPO_DATA('Z62','01','03','2020','BAS'),
+		T_TIPO_DATA('Z62','01','04','2020','BAS'),
+		T_TIPO_DATA('Z48','01','92','2020','BAS'),
+		T_TIPO_DATA('Z08','14','62','2020','BAS'),
+		T_TIPO_DATA('Z17','14','60','2020','BAS'),
+		T_TIPO_DATA('Z06','14','58','2020','BAS'),
+		T_TIPO_DATA('Z08','14','61','2020','BAS'),
+		T_TIPO_DATA('Z08','14','69','2020','BAS'),
+		T_TIPO_DATA('Z08','14','57','2020','BAS'),
+		T_TIPO_DATA('Z08','14','68','2020','BAS'),
+		T_TIPO_DATA('Z40','14','59','2020','BAS'),
+		T_TIPO_DATA('Z08','14','64','2020','BAS'),
+		T_TIPO_DATA('Z08','14','63','2020','BAS'),
+		T_TIPO_DATA('Z08','14','67','2020','BAS'),
+		T_TIPO_DATA('Z08','14','66','2020','BAS'),
+		T_TIPO_DATA('Z08','14','65','2020','BAS'),
+		T_TIPO_DATA('Z33','07','31','2020','BAS'),
+		T_TIPO_DATA('Z33','07','30','2020','BAS'),
+		T_TIPO_DATA('Z33','08','33','2020','BAS'),
+		T_TIPO_DATA('Z33','08','32','2020','BAS'),
+		T_TIPO_DATA('Z33','08','34','2020','BAS'),
+		T_TIPO_DATA('Z23','18','89','2020','BAS'),
+		T_TIPO_DATA('Z40','03','19','2020','BAS'),
+		T_TIPO_DATA('Z40','03','20','2020','BAS'),
+		T_TIPO_DATA('Z50','17','88','2020','BAS'),
+		T_TIPO_DATA('Z46','04','24','2020','BAS'),
+		T_TIPO_DATA('Z46','04','25','2020','BAS'),
+		T_TIPO_DATA('Z46','04','23','2020','BAS'),
+		T_TIPO_DATA('Z46','04','22','2020','BAS'),
+		T_TIPO_DATA('Z46','04','21','2020','BAS'),
+		T_TIPO_DATA('Z26','10','42','2020','BAS'),
+		T_TIPO_DATA('Z26','10','41','2020','BAS'),
+		T_TIPO_DATA('Z26','10','40','2020','BAS'),
+		T_TIPO_DATA('Z26','10','39','2020','BAS'),
+		T_TIPO_DATA('Z13','11','97','2020','BAS'),
+		T_TIPO_DATA('Z13','11','96','2020','BAS'),
+		T_TIPO_DATA('Z13','11','95','2020','BAS'),
+		T_TIPO_DATA('Z13','11','48','2020','BAS'),
+		T_TIPO_DATA('Z21','11','49','2020','BAS'),
+		T_TIPO_DATA('Z13','11','94','2020','BAS'),
+		T_TIPO_DATA('Z15','11','44','2020','BAS'),
+		T_TIPO_DATA('Z13','11','52','2020','BAS'),
+		T_TIPO_DATA('Z13','11','47','2020','BAS'),
+		T_TIPO_DATA('Z15','11','46','2020','BAS'),
+		T_TIPO_DATA('Z19','11','43','2020','BAS'),
+		T_TIPO_DATA('Z05','11','51','2020','BAS'),
+		T_TIPO_DATA('Z08','11','50','2020','BAS'),
+		T_TIPO_DATA('Z29','09','36','2020','BAS'),
+		T_TIPO_DATA('Z30','09','35','2020','BAS'),
+		T_TIPO_DATA('Z31','09','37','2020','BAS'),
+		T_TIPO_DATA('Z40','02','10','2020','BAS'),
+		T_TIPO_DATA('Z40','02','09','2020','BAS'),
+		T_TIPO_DATA('Z40','02','08','2020','BAS'),
+		T_TIPO_DATA('Z40','02','12','2020','BAS'),
+		T_TIPO_DATA('Z40','02','14','2020','BAS'),
+		T_TIPO_DATA('Z40','02','16','2020','BAS'),
+		T_TIPO_DATA('Z40','02','15','2020','BAS'),
+		T_TIPO_DATA('Z40','02','18','2020','BAS'),
+		T_TIPO_DATA('Z40','02','17','2020','BAS'),
+		T_TIPO_DATA('Z40','02','13','2020','BAS'),
+		T_TIPO_DATA('Z40','02','11','2020','BAS'),
+		T_TIPO_DATA('Z03','16','86','2020','BAS'),
+		T_TIPO_DATA('Z24','16','87','2020','BAS'),
+		T_TIPO_DATA('Z24','16','85','2020','BAS'),
+		T_TIPO_DATA('Z48','01','05','2021','INT'),
+		T_TIPO_DATA('Z48','01','01','2021','INT'),
+		T_TIPO_DATA('Z48','01','02','2021','INT'),
+		T_TIPO_DATA('Z48','01','06','2021','INT'),
+		T_TIPO_DATA('Z48','01','07','2021','INT'),
+		T_TIPO_DATA('Z48','01','03','2021','INT'),
+		T_TIPO_DATA('Z48','01','04','2021','INT'),
+		T_TIPO_DATA('Z48','01','92','2021','INT'),
+		T_TIPO_DATA('Z48','03','19','2021','INT'),
+		T_TIPO_DATA('Z48','03','20','2021','INT'),
+		T_TIPO_DATA('Z48','04','24','2021','INT'),
+		T_TIPO_DATA('Z48','04','25','2021','INT'),
+		T_TIPO_DATA('Z48','04','23','2021','INT'),
+		T_TIPO_DATA('Z48','04','22','2021','INT'),
+		T_TIPO_DATA('Z48','04','21','2021','INT'),
+		T_TIPO_DATA('Z48','02','10','2021','INT'),
+		T_TIPO_DATA('Z48','02','09','2021','INT'),
+		T_TIPO_DATA('Z48','02','08','2021','INT'),
+		T_TIPO_DATA('Z48','02','12','2021','INT'),
+		T_TIPO_DATA('Z48','02','14','2021','INT'),
+		T_TIPO_DATA('Z48','02','16','2021','INT'),
+		T_TIPO_DATA('Z48','02','15','2021','INT'),
+		T_TIPO_DATA('Z48','02','18','2021','INT'),
+		T_TIPO_DATA('Z48','02','17','2021','INT'),
+		T_TIPO_DATA('Z48','02','13','2021','INT'),
+		T_TIPO_DATA('Z48','02','11','2021','INT'),
+		T_TIPO_DATA('Z52','01','05','2021','TAS'),
+		T_TIPO_DATA('Z52','01','01','2021','TAS'),
+		T_TIPO_DATA('Z52','01','02','2021','TAS'),
+		T_TIPO_DATA('Z52','01','06','2021','TAS'),
+		T_TIPO_DATA('Z52','01','07','2021','TAS'),
+		T_TIPO_DATA('Z52','01','03','2021','TAS'),
+		T_TIPO_DATA('Z52','01','04','2021','TAS'),
+		T_TIPO_DATA('Z52','01','92','2021','TAS'),
+		T_TIPO_DATA('Z52','03','19','2021','TAS'),
+		T_TIPO_DATA('Z52','03','20','2021','TAS'),
+		T_TIPO_DATA('Z52','04','24','2021','TAS'),
+		T_TIPO_DATA('Z52','04','25','2021','TAS'),
+		T_TIPO_DATA('Z52','04','23','2021','TAS'),
+		T_TIPO_DATA('Z52','04','22','2021','TAS'),
+		T_TIPO_DATA('Z52','04','21','2021','TAS'),
+		T_TIPO_DATA('Z52','02','10','2021','TAS'),
+		T_TIPO_DATA('Z52','02','09','2021','TAS'),
+		T_TIPO_DATA('Z52','02','08','2021','TAS'),
+		T_TIPO_DATA('Z52','02','12','2021','TAS'),
+		T_TIPO_DATA('Z52','02','14','2021','TAS'),
+		T_TIPO_DATA('Z52','02','16','2021','TAS'),
+		T_TIPO_DATA('Z52','02','15','2021','TAS'),
+		T_TIPO_DATA('Z52','02','18','2021','TAS'),
+		T_TIPO_DATA('Z52','02','17','2021','TAS'),
+		T_TIPO_DATA('Z52','02','13','2021','TAS'),
+		T_TIPO_DATA('Z52','02','11','2021','TAS'),
+		T_TIPO_DATA('Z46','01','05','2021','REC'),
+		T_TIPO_DATA('Z46','01','01','2021','REC'),
+		T_TIPO_DATA('Z46','01','02','2021','REC'),
+		T_TIPO_DATA('Z46','01','06','2021','REC'),
+		T_TIPO_DATA('Z46','01','07','2021','REC'),
+		T_TIPO_DATA('Z46','01','03','2021','REC'),
+		T_TIPO_DATA('Z46','01','04','2021','REC'),
+		T_TIPO_DATA('Z46','01','92','2021','REC'),
+		T_TIPO_DATA('Z46','03','19','2021','REC'),
+		T_TIPO_DATA('Z46','03','20','2021','REC'),
+		T_TIPO_DATA('Z46','04','24','2021','REC'),
+		T_TIPO_DATA('Z46','04','25','2021','REC'),
+		T_TIPO_DATA('Z46','04','23','2021','REC'),
+		T_TIPO_DATA('Z46','04','22','2021','REC'),
+		T_TIPO_DATA('Z46','04','21','2021','REC'),
+		T_TIPO_DATA('Z46','02','10','2021','REC'),
+		T_TIPO_DATA('Z46','02','09','2021','REC'),
+		T_TIPO_DATA('Z46','02','08','2021','REC'),
+		T_TIPO_DATA('Z46','02','12','2021','REC'),
+		T_TIPO_DATA('Z46','02','14','2021','REC'),
+		T_TIPO_DATA('Z46','02','16','2021','REC'),
+		T_TIPO_DATA('Z46','02','15','2021','REC'),
+		T_TIPO_DATA('Z46','02','18','2021','REC'),
+		T_TIPO_DATA('Z46','02','17','2021','REC'),
+		T_TIPO_DATA('Z46','02','13','2021','REC'),
+		T_TIPO_DATA('Z46','02','11','2021','REC')
+	); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+    
+BEGIN	
+
+    DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_INICIO);
+
+    --ANALIZAMOS LA TABLA
+    #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','ACT_CONFIG_CTAS_CONTABLES');
+    
+    V_PASO_FIN := SYSTIMESTAMP;
+    V_DURACION := V_PASO_FIN - V_INICIO;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Tabla '||V_TEXT_TABLA||' analizada. '||V_DURACION);
+    V_PASO_INI := SYSTIMESTAMP;
+
+    /*--DESACTIVAMOS CLAVES ANTES DE EMPEZAR PARA MEJORAR EL DESEMPEÑO
+    FOR CLAVES IN CONSTRAINTS_ENABLED 
+      LOOP
+
+        V_CONSTRAINT_NAME := CLAVES.CONSTRAINT_NAME; 
+
+        V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
+           DISABLE CONSTRAINT '||V_CONSTRAINT_NAME;
+        EXECUTE IMMEDIATE V_MSQL;
+
+        DBMS_OUTPUT.PUT_LINE('[INFO] Desactivada la clave '||V_CONSTRAINT_NAME);
+
+      END LOOP;*/
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] Vaciamos tabla temporal... ');
+    V_SQL := 'TRUNCATE TABLE '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA;
+    EXECUTE IMMEDIATE V_SQL;
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] Recogemos el valor id de la cartera, porque es el mismo para todos.');
+
+    V_SQL := 'SELECT DD_CRA_ID
+       FROM '||V_ESQUEMA||'.DD_CRA_CARTERA
+       WHERE DD_CRA_CODIGO = ''16''';
+    EXECUTE IMMEDIATE V_SQL INTO V_DD_CRA_ID;
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] Recogemos el valor id del año.');
+
+    V_SQL := 'SELECT EJE_ID
+       FROM '||V_ESQUEMA||'.ACT_EJE_EJERCICIO
+       WHERE EJE_ANYO = 2021';
+    EXECUTE IMMEDIATE V_SQL INTO V_EJE_ID;
+	 
+    -- LOOP para insertar los valores -----------------------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN TMP_'||V_TEXT_TABLA||' ');
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+      
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+        
+        IF V_TMP_TIPO_DATA(4) = '2021' THEN
+
+        	DBMS_OUTPUT.PUT_LINE('[INFO]: Ejercicio 2021.');
+
+	        V_SQL := 'SELECT COUNT(1) 
+				FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||' TMP
+				JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TMP.DD_TGA_ID = TGA.DD_TGA_ID
+					AND TGA.BORRADO = 0
+				JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON TMP.DD_STG_ID = STG.DD_STG_ID
+					AND STG.DD_TGA_ID = TGA.DD_TGA_ID
+					AND STG.BORRADO = 0
+				JOIN '||V_ESQUEMA||'.DD_TIM_TIPO_IMPORTE TIM ON TMP.DD_TIM_ID = TIM.DD_TIM_ID
+					AND TIM.BORRADO = 0
+				WHERE CCC_CUENTA_CONTABLE = '''||TRIM(V_TMP_TIPO_DATA(1))||'''
+					AND TGA.DD_TGA_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''
+					AND STG.DD_STG_CODIGO = '''||V_TMP_TIPO_DATA(3)||'''
+					AND TIM.DD_TIM_CODIGO = '''||V_TMP_TIPO_DATA(5)||'''
+					AND TMP.EJE_ID = '||V_EJE_ID||'
+					AND TMP.DD_CRA_ID = '||V_DD_CRA_ID;
+
+	        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||' (CCC_CTAS_ID, CCC_CUENTA_CONTABLE, DD_TGA_ID, DD_STG_ID, DD_TIM_ID, DD_CRA_ID, EJE_ID, FECHACREAR, BORRADO)
+	        	WITH MAX AS (
+	        		SELECT NVL(MAX(CCC_CTAS_ID), 0) MAXIMUM
+	        		FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||'
+	        	)
+				SELECT MAXIMUM + ROWNUM CCC_CTAS_ID,
+					'''||V_TMP_TIPO_DATA(1)||''' CCC_CUENTA_CONTABLE,
+					(SELECT DD_TGA_ID 
+						FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO 
+						WHERE DD_TGA_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''
+							AND BORRADO = 0) DD_TGA_ID,
+					(SELECT DD_STG_ID 
+						FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG 
+						JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = STG.DD_TGA_ID 
+							AND TGA.BORRADO = 0
+						WHERE STG.DD_STG_CODIGO = '''||V_TMP_TIPO_DATA(3)||'''
+							AND TGA.DD_TGA_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''
+							AND STG.BORRADO = 0) DD_STG_ID,
+					(SELECT DD_TIM_ID
+						FROM '||V_ESQUEMA||'.DD_TIM_TIPO_IMPORTE
+						WHERE BORRADO = 0
+							AND DD_TIM_CODIGO = '''||V_TMP_TIPO_DATA(5)||''') DD_TIM_ID,
+					'||TRIM(V_DD_CRA_ID)||' DD_CRA_ID,
+					'||TRIM(V_EJE_ID)||' EJE_ID,
+					SYSDATE,
+					0
+				FROM DUAL
+				JOIN MAX ON 1 = 1';
+	    
+	    ELSE
+
+	    	DBMS_OUTPUT.PUT_LINE('[INFO]: Ejercicios anteriores a 2021.');
+
+	        V_SQL := 'SELECT COUNT(1) 
+				FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||' TMP
+				JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TMP.DD_TGA_ID = TGA.DD_TGA_ID
+					AND TGA.BORRADO = 0
+				JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON TMP.DD_STG_ID = STG.DD_STG_ID
+					AND STG.DD_TGA_ID = TGA.DD_TGA_ID
+					AND STG.BORRADO = 0
+				JOIN '||V_ESQUEMA||'.DD_TIM_TIPO_IMPORTE TIM ON TMP.DD_TIM_ID = TIM.DD_TIM_ID
+					AND TIM.BORRADO = 0
+				WHERE CCC_CUENTA_CONTABLE = '''||TRIM(V_TMP_TIPO_DATA(1))||'''
+					AND TGA.DD_TGA_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''
+					AND STG.DD_STG_CODIGO = '''||V_TMP_TIPO_DATA(3)||'''
+					AND TIM.DD_TIM_CODIGO = '''||V_TMP_TIPO_DATA(5)||'''
+					AND TMP.EJE_ID <> '||V_EJE_ID||'
+					AND TMP.DD_CRA_ID = '||V_DD_CRA_ID;
+
+	       	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||' (CCC_CTAS_ID, CCC_CUENTA_CONTABLE, DD_TGA_ID, DD_STG_ID, DD_TIM_ID, DD_CRA_ID, EJE_ID, FECHACREAR, BORRADO) 
+				WITH MAX AS (
+	        		SELECT NVL(MAX(CCC_CTAS_ID), 0) MAXIMUM
+	        		FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||'
+	        	)
+				SELECT MAXIMUM + ROWNUM CCC_CTAS_ID,
+					'''||V_TMP_TIPO_DATA(1)||''' CCC_CUENTA_CONTABLE,
+					(SELECT DD_TGA_ID 
+						FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO 
+						WHERE DD_TGA_CODIGO = '''||V_TMP_TIPO_DATA(2)||''') DD_TGA_ID,
+					(SELECT DD_STG_ID 
+						FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG 
+						JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = STG.DD_TGA_ID 
+							AND TGA.DD_TGA_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''
+						WHERE STG.DD_STG_CODIGO = '''||V_TMP_TIPO_DATA(3)||''') DD_STG_ID,
+					(SELECT DD_TIM_ID
+						FROM '||V_ESQUEMA||'.DD_TIM_TIPO_IMPORTE
+						WHERE BORRADO = 0
+							AND DD_TIM_CODIGO = '''||V_TMP_TIPO_DATA(5)||''') DD_TIM_ID,
+					'||TRIM(V_DD_CRA_ID)||' DD_CRA_ID,
+					EJE.EJE_ID,
+					SYSDATE,
+					0
+				FROM DUAL
+				JOIN '||V_ESQUEMA||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ID <> '||V_EJE_ID||'
+					AND EJE.BORRADO = 0
+				JOIN MAX ON 1 = 1';
+
+	    END IF;
+
+	    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+        IF V_NUM_TABLAS > 0 THEN
+
+          DBMS_OUTPUT.PUT_LINE('[INFO]: La CCC '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe para algún ejercicio.');
+
+        ELSE
+
+          DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL/LOS REGISTRO/S'); 
+
+          EXECUTE IMMEDIATE V_MSQL;
+
+          DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTRO/S INSERTADO/S CORRECTAMENTE');
+
+        END IF;
+
+      END LOOP;
+
+      V_SQL := 'SELECT COUNT(1) 
+          FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||' TMP';
+      EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+      DBMS_OUTPUT.PUT_LINE('[INFO]: Tabla TMP_'||V_TEXT_TABLA||' rellenada con '||V_NUM_TABLAS||' registros.');
+
+    COMMIT;
+
+    V_PASO_FIN := SYSTIMESTAMP;
+    V_DURACION := V_PASO_FIN - V_PASO_INI;
+    DBMS_OUTPUT.PUT_LINE('[INFO]: Tabla TMP_'||V_TEXT_TABLA||' MODIFICADA CORRECTAMENTE. '||V_DURACION);
+    V_PASO_INI := SYSTIMESTAMP;
+
+    DBMS_OUTPUT.PUT_LINE('[INFO]: Preparamos cuentas para tabla de negocio.');
+
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||' T1
+      USING (
+          SELECT CCC_CTAS_ID
+              , ROW_NUMBER() OVER(
+                  PARTITION BY DD_TGA_ID, DD_STG_ID, DD_TIM_ID, DD_CRA_ID, DD_SCR_ID
+                      , PRO_ID, EJE_ID, CCC_ARRENDAMIENTO, CCC_REFACTURABLE, DD_TBE_ID
+                      , CCC_ACTIVABLE, CCC_PLAN_VISITAS, DD_TCH_ID, DD_TRT_ID
+                      , CCC_VENDIDO
+                  ORDER BY CCC_CTAS_ID
+              ) RN
+          FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||'
+      ) T2
+      ON (T1.CCC_CTAS_ID = T2.CCC_CTAS_ID)
+      WHEN MATCHED THEN 
+          UPDATE SET T1.CCC_PRINCIPAL = CASE WHEN T2.RN = 1 THEN 1 ELSE 0 END';
+    EXECUTE IMMEDIATE V_MSQL;
+
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||'
+      SET DD_TIM_ID = (SELECT DD_TIM_ID FROM DD_TIM_TIPO_IMPORTE WHERE DD_TIM_CODIGO = ''BAS'')
+      WHERE DD_TIM_ID IS NULL';
+    EXECUTE IMMEDIATE V_MSQL;
+
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||' T1
+      USING (
+          SELECT CCC_CTAS_ID
+              , ROW_NUMBER() OVER(
+                  PARTITION BY DD_TGA_ID, DD_STG_ID, DD_TIM_ID, DD_CRA_ID, DD_SCR_ID
+                      , PRO_ID, EJE_ID, CCC_ARRENDAMIENTO, CCC_REFACTURABLE, DD_TBE_ID
+                      , CCC_ACTIVABLE, CCC_PLAN_VISITAS, DD_TCH_ID, DD_TRT_ID
+                      , CCC_VENDIDO
+                  ORDER BY CCC_CTAS_ID
+              ) RN
+          FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||'
+          WHERE CCC_PRINCIPAL = 0
+      ) T2
+      ON (T1.CCC_CTAS_ID = T2.CCC_CTAS_ID AND T2.RN > 1)
+      WHEN MATCHED THEN
+          UPDATE SET T1.BORRADO = 1';
+    EXECUTE IMMEDIATE V_MSQL;
+
+    V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||'
+      WHERE BORRADO = 1';
+    --EXECUTE IMMEDIATE V_MSQL;
+
+    V_PASO_FIN := SYSTIMESTAMP;
+    V_DURACION := V_PASO_FIN - V_PASO_INI;
+    DBMS_OUTPUT.PUT_LINE('[INFO]: Cuentas 2020 preparadas. '||V_DURACION);
+
+    --ACTIVAMOS CLAVES ANTES DE EMPEZAR PARA MEJORAR EL DESEMPEÑO
+    FOR CLAVES IN CONSTRAINTS_DISABLED 
+      LOOP
+
+        V_CONSTRAINT_NAME := CLAVES.CONSTRAINT_NAME; 
+
+        V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
+          ENABLE CONSTRAINT '||V_CONSTRAINT_NAME;
+        EXECUTE IMMEDIATE V_MSQL;
+
+        DBMS_OUTPUT.PUT_LINE('[INFO] Activada la clave '||V_CONSTRAINT_NAME);
+
+      END LOOP;
+
+    EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA INTO V_NUM_TABLAS;
+    DBMS_OUTPUT.PUT_LINE('[INFO]: '||V_NUM_TABLAS||' registros en la tabla TMP_'||V_TEXT_TABLA);
+
+    V_FIN := SYSTIMESTAMP;
+    V_DURACION := V_FIN - V_INICIO;
+    DBMS_OUTPUT.PUT_LINE('[FIN] '||V_DURACION);
+
+EXCEPTION
+     WHEN OTHERS THEN
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+
+/
+
+EXIT

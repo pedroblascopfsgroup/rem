@@ -41,7 +41,7 @@ public class ConfiguracionReam implements Serializable,Auditable{
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_CRA_ID")
-	DDCartera cartera;
+	private DDCartera cartera;
 	
 	 @ManyToOne(fetch = FetchType.LAZY)
 	 @JoinColumn(name = "DD_SCR_ID")
@@ -51,8 +51,8 @@ public class ConfiguracionReam implements Serializable,Auditable{
 	 @JoinColumn(name = "HOT_DD_TPA_ID")
 	 private DDTipoTituloActivoTPA conTitulo;
 	 
-	 @Column(name = "HOT_OCUPADO")
-	 private Integer ocupado;
+	 @Column(name = "CFM_CARTERA_MAC")
+	 private Integer carteraMac;
 	 
 
 	@Embedded
@@ -98,13 +98,13 @@ public class ConfiguracionReam implements Serializable,Auditable{
 		this.conTitulo = conTitulo;
 	}
 
-	public Integer getOcupado() {
-		return ocupado;
+	public Integer getCarteraMac() {
+		return carteraMac;
 	}
 
-	public void setOcupado(Integer ocupado) {
-		this.ocupado = ocupado;
+	public void setCarteraMac(Integer carteraMac) {
+		this.carteraMac = carteraMac;
 	}
-	
+
 
 }

@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 - VRO - REMVIP-8858 - Añadir control para no duplicar registros
 --##########################################
 --*/
 
@@ -32,6 +33,8 @@ DECLARE
     V_USUARIO VARCHAR2(30 CHAR) := 'HREOS-11680';
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
+    V_TPA_ID NUMBER(16);
+    V_SAC_ID NUMBER(16);
     V_ID NUMBER(16);
  
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(3200);
@@ -86,34 +89,64 @@ BEGIN
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP      
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
-	
-		       	   V_MSQL := '
-		                     INSERT INTO '|| V_ESQUEMA ||'.'||V_TABLA||' (
-		                        TIB_ID,
-			                    DD_TPA_ID,
-                                DD_SAC_ID,
-                                TIB_CODIGO_SGITAS,
-                                TIB_DESCRIPCION_SGITAS,
-                                TIB_CODIGO_ACOGE,
-                                TIB_DESCRIPCION_ACOGE,
-                                TIB_TIPOLOGIA_BBVA,
-                                USUARIOCREAR, 
-                                FECHACREAR	                       
-		                    ) VALUES (
-		                        '|| V_ESQUEMA ||'.S_'||V_TABLA||'.NEXTVAL,
-		                        (SELECT DD_TPA_ID FROM '|| V_ESQUEMA ||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = '''||V_TMP_TIPO_DATA(1)||'''),
-		                        (SELECT DD_SAC_ID FROM '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO WHERE DD_SAC_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''),
-		                        '''||V_TMP_TIPO_DATA(3)||''',
-								'''||V_TMP_TIPO_DATA(4)||''',
-                                '''||V_TMP_TIPO_DATA(5)||''',
-								'''||V_TMP_TIPO_DATA(6)||''',
-                                '''||V_TMP_TIPO_DATA(7)||''',
-                                '''||V_USUARIO||''',
-                                SYSDATE                   
-		                      )';
-		
-		          EXECUTE IMMEDIATE V_MSQL;          
-      
+        
+         --sacamos dd_sac y dd_tpa
+         V_SQL := 'SELECT DD_TPA_ID FROM '|| V_ESQUEMA ||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = '''||V_TMP_TIPO_DATA(1)||'''';
+        EXECUTE IMMEDIATE V_SQL INTO V_TPA_ID;
+        
+         V_SQL := 'SELECT DD_SAC_ID FROM '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO WHERE DD_SAC_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''';
+        EXECUTE IMMEDIATE V_SQL INTO V_SAC_ID;
+        
+        
+         --Comprobamos el dato a insertar
+        V_SQL := 'SELECT COUNT(1) FROM '|| V_ESQUEMA ||'.'||V_TABLA||' WHERE DD_TPA_ID = '''||V_TPA_ID||''' AND  DD_SAC_ID = '''||V_SAC_ID||''' AND BORRADO = 0';
+                        
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        
+        --Si existe lo modificamos
+        IF V_NUM_TABLAS > 0 THEN				
+          
+          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO');
+       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TABLA||' '||
+                    'SET TIB_CODIGO_SGITAS = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
+					', TIB_CODIGO_ACOGE = '''||TRIM(V_TMP_TIPO_DATA(5))||''''||
+					', USUARIOMODIFICAR = '''||V_USUARIO||''' , FECHAMODIFICAR = SYSDATE '||
+					'WHERE DD_TPA_ID = '''||V_TPA_ID||''' AND DD_SAC_ID = '''||V_SAC_ID||''' AND BORRADO = 0';
+          EXECUTE IMMEDIATE V_MSQL;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
+          
+       --Si no existe, lo insertamos   
+       ELSE
+       
+  V_MSQL := ' INSERT INTO '|| V_ESQUEMA ||'.'||V_TABLA||' (
+                TIB_ID,
+	        DD_TPA_ID,
+                DD_SAC_ID,
+                TIB_CODIGO_SGITAS,
+                TIB_DESCRIPCION_SGITAS,
+                TIB_CODIGO_ACOGE,
+                TIB_DESCRIPCION_ACOGE,
+                TIB_TIPOLOGIA_BBVA,
+                USUARIOCREAR, 
+                FECHACREAR	                       
+                    ) VALUES (
+                        '|| V_ESQUEMA ||'.S_'||V_TABLA||'.NEXTVAL,
+                        (SELECT DD_TPA_ID FROM '|| V_ESQUEMA ||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = '''||V_TMP_TIPO_DATA(1)||'''),
+                        (SELECT DD_SAC_ID FROM '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO WHERE DD_SAC_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''),
+                        '''||V_TMP_TIPO_DATA(3)||''',
+						'''||V_TMP_TIPO_DATA(4)||''',
+                '''||V_TMP_TIPO_DATA(5)||''',
+						'''||V_TMP_TIPO_DATA(6)||''',
+                '''||V_TMP_TIPO_DATA(7)||''',
+                '''||V_USUARIO||''',
+                SYSDATE                   
+                      )';   
+
+          EXECUTE IMMEDIATE V_MSQL;          
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
+        
+       END IF;
+
       END LOOP;
       
     COMMIT;

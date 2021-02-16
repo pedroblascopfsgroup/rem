@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20210201
+--## FECHA_CREACION=20210209
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11680
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial - HREOS-11680 - JAD
 --##        0.1 Versión inicial - HREOS-11680 - Quitamos no definido
 --##        0.2 REMVIP-8799 - VRO - se cambia calculo para FECHA_DEP_JURIDICA
+--##        0.3 REMVIP-8858 - VRO - CORRECCION CALCULO SITUACION Contrato privado
 --##########################################
 --*/
 
@@ -187,8 +188,8 @@ BEGIN
                         last_oferta.DD_EOF_CODIGO in (''01'') 
                     then ''Contrato privado''*/
                  WHEN SCM.DD_SCM_CODIGO = ''03'' --	Disponible para la venta con oferta
-                        AND ((DIC_TIP_ENT_ACT.DD_TTA_DESCRIPCION = ''Adjudicación judicial'' AND COALESCE(BIEADJ.BIE_ADJ_F_DECRETO_FIRME, NOADJ.ADN_FECHA_TITULO)  IS NULL)
-                    	OR (DIC_TIP_ENT_ACT.DD_TTA_DESCRIPCION = ''Adjudicación no judicia'' AND COALESCE(TIT.TIT_FECHA_INSC_REG,BIEADJ.BIE_ADJ_F_INSCRIP_TITULO) IS NULL))
+                        AND ((DIC_TIP_ENT_ACT.DD_TTA_CODIGO = ''01'' AND COALESCE(BIEADJ.BIE_ADJ_F_DECRETO_FIRME, NOADJ.ADN_FECHA_TITULO)  IS NULL)
+                    	OR (DIC_TIP_ENT_ACT.DD_TTA_CODIGO = ''02'' AND COALESCE(TIT.TIT_FECHA_INSC_REG,BIEADJ.BIE_ADJ_F_INSCRIP_TITULO) IS NULL))
                     THEN ''Contrato privado''
                 when 
                         SCM.DD_SCM_CODIGO = ''06'' --	Disponible para la venta con oferta

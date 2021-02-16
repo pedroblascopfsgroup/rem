@@ -1,10 +1,10 @@
 --/*
 --######################################### 
 --## AUTOR=DAP
---## FECHA_CREACION=20210210
+--## FECHA_CREACION=20210216
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12983
+--## INCIDENCIA_LINK=HREOS-13187
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Añadimos motivos de rechazo a DD_MRT_MOTIVO_RECHAZO_TRABAJO
@@ -182,7 +182,7 @@ DECLARE
             AND TBJ.TBJ_ID = AUX.TBJ_ID
     )'
     ),
-      T_TIPO_DATA('F14' ,'No pueden darse de alta prefacturas con trabajos con área peticionaria de Edificación', '1', 'WHERE EXISTS (
+      T_TIPO_DATA('F14' ,'No pueden darse de alta prefacturas con trabajos con área peticionaria (Edificación)', '1', 'WHERE EXISTS (
         SELECT 1
         FROM #ESQUEMA#.ACT_TBJ_TRABAJO TBJ
         JOIN #ESQUEMA#.DD_IRE_IDENTIFICADOR_REAM IRE ON IRE.DD_IRE_ID = TBJ.DD_IRE_ID
@@ -190,6 +190,16 @@ DECLARE
         WHERE TBJ.BORRADO = 0
             AND IRE.DD_IRE_CODIGO = ''''04''''
             AND TBJ.TBJ_ID = AUX.TBJ_ID
+    )'),
+      T_TIPO_DATA('F15' ,'No pueden darse de alta prefacturas con trabajos con área peticionaria (REAM) en esta ejecución', '1', 'WHERE EXISTS (
+        SELECT 1
+        FROM #ESQUEMA#.ACT_TBJ_TRABAJO TBJ
+        JOIN #ESQUEMA#.DD_IRE_IDENTIFICADOR_REAM IRE ON IRE.DD_IRE_ID = TBJ.DD_IRE_ID
+            AND IRE.BORRADO = 0
+        WHERE TBJ.BORRADO = 0
+            AND IRE.DD_IRE_CODIGO IN (''''01'''', ''''02'''')
+            AND TBJ.TBJ_ID = AUX.TBJ_ID
+            AND TO_CHAR(SYSDATE,''''DD'''') = ''''12''''
     )')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

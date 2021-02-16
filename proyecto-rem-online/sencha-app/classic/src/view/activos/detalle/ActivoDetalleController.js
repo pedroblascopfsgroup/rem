@@ -3904,7 +3904,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onProveedoresListClick: function(gridView, record){
 		var me=this;
 		
-		if($AU.getUser().codigoCartera === CONST.CARTERA['BBVA']){
+		if($AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])){
 			return;
 		}
 		idProveedor= record.get('idFalso').id;

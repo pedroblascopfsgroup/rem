@@ -1200,21 +1200,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		},
 		
 		esUsuarioBBVA: function(get) {
-			return $AU.getUser().codigoCartera == CONST.CARTERA['BBVA'];
+			return $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']);
 		},
 		
 		btnNuevaPeticionTrabajoOculto: function(get) {
 			var isIncluidoEnPerimetro = get('activo.incluidoEnPerimetro');
-			return (isIncluidoEnPerimetro == false || $AU.getUser().codigoCartera == CONST.CARTERA['BBVA']);
+			return (isIncluidoEnPerimetro == false || $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']));
 		},
+		
 		esEditablePorcentajeConstruccion: function(get){
-		 var isGestorActivos = $AU.userIsRol('HAYAGESACT');
-		 var isUnidadAlquilable = false;
-		 if(get('activo.unidadAlquilable')){
-    		 isUnidadAlquilable = true;
-		 }
-		 if(isGestorActivos && isUnidadAlquilable) return true;
-			 else return false;
+			 var isGestorActivos = $AU.userIsRol('HAYAGESACT');
+			 var isUnidadAlquilable = false;
+			 if(get('activo.unidadAlquilable')){
+	    		 isUnidadAlquilable = true;
+			 }
+			 if(isGestorActivos && isUnidadAlquilable) return true;
+				 else return false;
 	 	}
 	 },
     

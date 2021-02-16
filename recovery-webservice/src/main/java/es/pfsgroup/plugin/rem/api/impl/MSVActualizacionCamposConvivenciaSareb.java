@@ -350,6 +350,10 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 						situacionPosesioria.setFechaAccesoTapiado(null);
 					}
 					situacionPosesioria.setFechaUltCambioTapiado(new Date());
+				}else if("014".equalsIgnoreCase(campo)) {
+					situacionPosesioria.setConVigilancia(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)));
+				}else if("015".equalsIgnoreCase(campo)) {
+					situacionPosesioria.setConAlarma(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)));
 				}
 				genericDao.save(ActivoSituacionPosesoria.class, situacionPosesioria);
 			}else if("ACT_TAS_TASACION".equalsIgnoreCase(convivencia.getTabla()) && Integer.parseInt(exc.dameCelda(fila, NUEVO)) == 0) {

@@ -9,6 +9,7 @@ import es.pfsgroup.plugin.rem.perfilAdministracion.dto.DtoPerfilAdministracionFi
 
 public interface PerfilApi {
 
+	public final static String COD_PERFIL_CARTERA_BBVA = "CARTERA_BBVA";
 	/**
 	 * Devuelve una lista de perfiles aplicando el filtro que recibe.
 	 * 
@@ -32,5 +33,7 @@ public interface PerfilApi {
 	 * @return Devuelve un dto con los datos de Perfil.
 	 */
 	public List<DtoPerfilAdministracionFilter> getFuncionesByPerfilId(Long id, DtoPerfilAdministracionFilter dto);
+
+	boolean usuarioHasPerfil(String codPerfil, String userName);
 	
 }

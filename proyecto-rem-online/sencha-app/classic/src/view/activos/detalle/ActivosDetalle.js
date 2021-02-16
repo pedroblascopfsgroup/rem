@@ -151,7 +151,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 		}
 	    
 	    
-	    if($AU.getUser().codigoCartera != CONST.CARTERA['BBVA']) {
+	    if(!$AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])) {
 
 		    $AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'datosgeneralesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DATOS_GENERALES');
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'tramitesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_ACTUACIONES');

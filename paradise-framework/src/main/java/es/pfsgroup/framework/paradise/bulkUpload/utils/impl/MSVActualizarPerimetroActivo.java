@@ -906,7 +906,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				try {
 					String celdaExclusion = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
 					if(celdaExclusion.equals("2")) {
-					if(particularValidator.isActivoEnAlquilerSocial(exc.dameCelda(i, 0)))
+					if(particularValidator.isActivoEnPerimetroAlquilerSocial(exc.dameCelda(i, 0)))
 						listaFilas.add(i);
 					}
 				} catch (ParseException e) {

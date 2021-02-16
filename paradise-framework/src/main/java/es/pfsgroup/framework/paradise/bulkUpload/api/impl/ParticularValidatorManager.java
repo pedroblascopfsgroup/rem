@@ -6822,5 +6822,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 
+	
+	public Boolean isActivoEnPerimetroAlquilerSocial(String numActivo) {
+		
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT count(1)   " + 
+				"				 FROM ACT_PTA_PATRIMONIO_ACTIVO pta    " + 
+				"				INNER JOIN ACT_ACTIVO act ON act.ACT_ID = pta.ACT_ID " + 
+				"                INNER JOIN DD_TAL_TIPO_ALQUILER dd ON  dd.dd_tal_id = act.dd_tal_id " + 
+				"				WHERE act.act_num_activo = '"+numActivo+"' " + 
+				"                AND dd.dd_tal_codigo = '03' " + 
+				"                AND ACT.borrado = 0 " + 
+				"                AND pta.borrado = 0");
+		return !"0".equals(resultado); 
+	}
+
 
 }

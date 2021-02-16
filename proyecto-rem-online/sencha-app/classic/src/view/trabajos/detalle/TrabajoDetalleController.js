@@ -2040,7 +2040,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     			data = Ext.decode(response.responseText);
     			if(data != null && data.data != null && data.data.id != null){
     				var idProveedor = data.data.id;
-    				me.getView().lookupReference('comboProveedorGestionEconomica2').setValue(idProveedor);
+					var nombreProveedor = data.data.nombre;
+					var record = new Ext.data.Model({idProveedor: idProveedor, nombreComercial: nombreProveedor});
+					me.getView().lookupReference('comboProveedorGestionEconomica2').getStore().add(record);
+    				me.getView().lookupReference('comboProveedorGestionEconomica2').setValue(record);
+
+					me.onChangeProveedorCombo();
     			}
     		},
     		failure: function () {

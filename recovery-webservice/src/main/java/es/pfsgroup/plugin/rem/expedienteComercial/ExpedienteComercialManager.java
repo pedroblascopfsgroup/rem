@@ -4940,7 +4940,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoEstado())));
 				}
 
-				if (Checks.esNulo(dto.getEstadoPbc()) || !Checks.esNulo(dto.getConflictoIntereses())
+				if (!Checks.esNulo(dto.getConflictoIntereses())
 						|| !Checks.esNulo(dto.getRiesgoReputacional())) {
 					ofertaApi.resetPBC(expedienteComercial, false);
 				}

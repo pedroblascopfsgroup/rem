@@ -65,6 +65,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	private static final String CLASE_EXPEDIENTE_PATH = "clase_expediente=";
 	private static final String ID_ACTIVO_PATH = "id_activo=";
 	private static final String OPERACION_PATH = "operacion=";
+	private static final String BLACK_LIST_MATRICULAS_PATH = "blacklistmatriculas=";
 	
 	private static final String DOCUMENTO = "documento";
 	private static final String USUARIO = "usuario";
@@ -149,6 +150,10 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		sb.append("&").append(VINCULO_DOCUMENTO_PATH).append(docExpDto.getVinculoDocumento());
 		sb.append("&").append(VINCULO_EXPEDIENTE_PATH).append(docExpDto.getVinculoExpediente());
 		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(docExpDto.getUsuarioOperacional());
+		if(docExpDto.getBlacklistmatriculas() == null) {
+			docExpDto.setBlacklistmatriculas("");
+		}
+		sb.append("&").append(BLACK_LIST_MATRICULAS_PATH).append(docExpDto.getBlacklistmatriculas());
 		return sb.toString();
 	}
 	

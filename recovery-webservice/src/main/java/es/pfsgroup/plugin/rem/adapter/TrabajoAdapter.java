@@ -88,6 +88,7 @@ public class TrabajoAdapter {
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
     
     private static final String T017_TRAMITE_BBVA_DESCRIPCION = "Trámite comercial de venta BBVA";
+    private static final String CODIGO_TRAMITE_T017 = "T017";
 	
 	public List<ActivoTrabajo> getListadoActivoTrabajos(Long idActivo, String codigoSubtipotrabajo){
 		List<ActivoTrabajo> ActivoTrabajo = new ArrayList<ActivoTrabajo>();
@@ -126,7 +127,8 @@ public class TrabajoAdapter {
 						beanUtilNotNull.copyProperty(dtoTramite, "idTramitePadre", tramite.getTramitePadre().getId());
 					}
 					
-					if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo())) {
+					if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo())
+							&& CODIGO_TRAMITE_T017.equals(tramite.getTipoTramite().getCodigo())) {
 						beanUtilNotNull.copyProperty(dtoTramite, "nombre", T017_TRAMITE_BBVA_DESCRIPCION);
 					}else {
 						beanUtilNotNull.copyProperty(dtoTramite, "nombre", tramite.getTipoTramite().getDescripcion());
@@ -156,7 +158,8 @@ public class TrabajoAdapter {
 						}
 						//idTramite necesario para poder abrir desde listado de tareas del trabajo
 						beanUtilNotNull.copyProperty(dtoListadoTareas, "idTramite", tramite.getId());
-						if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo())) {
+						if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo())
+								&& CODIGO_TRAMITE_T017.equals(tramite.getTipoTramite().getCodigo())) {
 							beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTramite", T017_TRAMITE_BBVA_DESCRIPCION);
 						}else {
 							beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTramite", tramite.getTipoTramite().getDescripcion());

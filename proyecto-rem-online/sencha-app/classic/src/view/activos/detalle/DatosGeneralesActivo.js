@@ -140,7 +140,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 	    } */
 
 	    var items = [];
-	    if($AU.getUser().codigoCartera == CONST.CARTERA['BBVA']) {
+	    if($AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])) {
 	    	items = me.tabsBBVA(items, ocultarDatosbasicosactivo, ocultarTituloinformacionregistralactivo, ocultarInformacionadministrativaactivo);
 	    }else{
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosactivo', ocultarBotonesEdicion:ocultarDatosbasicosactivo })}, ['TAB_DATOS_BASICOS_ACTIVO']);

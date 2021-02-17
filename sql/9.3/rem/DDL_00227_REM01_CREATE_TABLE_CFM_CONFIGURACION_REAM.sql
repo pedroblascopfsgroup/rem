@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=SENTO VISIEDO RUBIO
---## FECHA_CREACION=202102015
+--## AUTOR= Lara Pablo Flores
+--## FECHA_CREACION=202102017
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13133
@@ -52,7 +52,7 @@ BEGIN
             CFM_ID                          NUMBER(16,0) NOT NULL,
             DD_CRA_ID                       NUMBER(16,0) NOT NULL,
             DD_SCR_ID        	            NUMBER(16,0),
-            HOT_DD_TPA_ID             		NUMBER(16,0),
+            PRO_ID		             		NUMBER(16,0),
 			CFM_CARTERA_MAC                 NUMBER(1,0),
             VERSION                         NUMBER(38,0) DEFAULT 0 NOT NULL ENABLE, 
             USUARIOCREAR                    VARCHAR2(50 CHAR) NOT NULL ENABLE, 
@@ -72,25 +72,25 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'_PK... PK creada.');
 
         -- Creamos foreign key
-        V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD CONSTRAINT DD_CRA_ID_FK 
+        V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD CONSTRAINT CFM_DD_CRA_ID_FK 
         FOREIGN KEY (DD_CRA_ID)
         REFERENCES '||V_ESQUEMA||'.DD_CRA_CARTERA (DD_CRA_ID)';
         EXECUTE IMMEDIATE V_MSQL;
-        DBMS_OUTPUT.PUT_LINE('[INFO] DD_CRA_ID_FK ... FK creada.');
+        DBMS_OUTPUT.PUT_LINE('[INFO] CFM_DD_CRA_ID_FK ... FK creada.');
 
         -- Creamos foreign key
-        V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD CONSTRAINT DD_SCR_ID_FK 
+        V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD CONSTRAINT CFM_DD_SCR_ID_FK 
         FOREIGN KEY (DD_SCR_ID)
         REFERENCES '||V_ESQUEMA||'.DD_SCR_SUBCARTERA (DD_SCR_ID)';
         EXECUTE IMMEDIATE V_MSQL;
-        DBMS_OUTPUT.PUT_LINE('[INFO] DD_SCR_ID_FK ... FK creada.');
+        DBMS_OUTPUT.PUT_LINE('[INFO] CFM_DD_SCR_ID_FK ... FK creada.');
 
         -- Creamos foreign key
-        V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD CONSTRAINT HOT_DD_TPA_ID_FK 
-        FOREIGN KEY (HOT_DD_TPA_ID)
-        REFERENCES '||V_ESQUEMA_M||'.DD_CRA_CARTERA (HOT_DD_TPA_ID)';
+        V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD CONSTRAINT CFM_PRO_ID_FK 
+        FOREIGN KEY (ACT_PRO_PROPIETARIO)
+        REFERENCES '||V_ESQUEMA_M||'.ACT_PRO_PROPIETARIO (PRO_ID)';
         EXECUTE IMMEDIATE V_MSQL;
-        DBMS_OUTPUT.PUT_LINE('[INFO] HOT_DD_TPA_ID_FK ... FK creada.');
+        DBMS_OUTPUT.PUT_LINE('[INFO] CFM_PRO_ID_FK ... FK creada.');
 
         -- Comprobamos si existe la secuencia
         V_MSQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TABLA||''' and sequence_owner = '''||V_ESQUEMA||'''';

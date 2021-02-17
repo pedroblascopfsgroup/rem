@@ -48,8 +48,8 @@ public class ConfiguracionReam implements Serializable,Auditable{
 	 private DDSubcartera subcartera;
 	 
 	 @ManyToOne(fetch = FetchType.LAZY)
-	 @JoinColumn(name = "HOT_DD_TPA_ID")
-	 private DDTipoTituloActivoTPA conTitulo;
+	 @JoinColumn(name = "PRO_ID")
+	 private ActivoPropietario propietario;
 	 
 	 @Column(name = "CFM_CARTERA_MAC")
 	 private Integer carteraMac;
@@ -90,12 +90,12 @@ public class ConfiguracionReam implements Serializable,Auditable{
 		this.subcartera = subcartera;
 	}
 
-	public DDTipoTituloActivoTPA getConTitulo() {
-		return conTitulo;
+	public ActivoPropietario getPropietario() {
+		return propietario;
 	}
 
-	public void setConTitulo(DDTipoTituloActivoTPA conTitulo) {
-		this.conTitulo = conTitulo;
+	public void setPropietario(ActivoPropietario propietario) {
+		this.propietario = propietario;
 	}
 
 	public Integer getCarteraMac() {

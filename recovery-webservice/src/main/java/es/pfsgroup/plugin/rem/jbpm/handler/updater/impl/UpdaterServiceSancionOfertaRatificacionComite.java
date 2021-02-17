@@ -107,6 +107,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 		GestorEntidadDto ge = new GestorEntidadDto();		
 		if(!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			Activo activo = ofertaAceptada.getActivoPrincipal();
 
 			if(!Checks.esNulo(expediente)) {
 				
@@ -132,7 +133,8 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 										gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
 									}					
 								}
-								if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {															
+								if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null
+										&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())) {															
 									EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 											.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
 									

@@ -100,7 +100,7 @@ public class VisibilidadGestionComercialValidator {
 			if (!excluirValidaciones) {
 				
 				//validacion que comprueba si el activo pertenece a una agrupacion restringida y tenga motivo de excluido
-				if(activoApi.isActivoIntegradoAgrupacionRestringida(activoActual.getId()) && perimetroActivo.getMotivoGestionComercial()!=null) {
+				if(activoApi.isActivoIntegradoAgrupacionRestringida(activoActual.getId()) && (perimetroActivo.getMotivoGestionComercial()!=null || perimetroActivo.getMotivoGestionComercial() == null)) {
 					erroresActivo.add(VALID_MOTIVO_EXCLUIDO);
 					
 				}

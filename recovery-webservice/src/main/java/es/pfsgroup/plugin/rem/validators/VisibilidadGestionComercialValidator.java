@@ -12,7 +12,9 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
@@ -26,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 
@@ -47,9 +50,13 @@ public class VisibilidadGestionComercialValidator {
 	public static final String VALID_ACTIVO_ALQUILER_SOCIAL = "Activo incluido en perímetro de alquiler social";
 	public static final String VALID_ACTIVO_OFERTAS_PENDIENTES = "Activo con ofertas pendientes";
 	public static final String VALID_ACTIVO_GESTION = "Activo cuyo estado de publicación no permite la edición de Visibilidad Gestion Comercial";
+	public static final String VALID_MOTIVO_EXCLUIDO= "Activo con Agrupación restringida no puede tener Motivo de excluido ";
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ActivoApi activoApi;
 
 	public Map<Long, List<String>> validarPerimetroActivo(Activo activo, Boolean dtoCheckGestorComercial,
 			Boolean dtoExcluirValidaciones) {
@@ -83,6 +90,7 @@ public class VisibilidadGestionComercialValidator {
 			ActivoPublicacion activoPublicacion = genericDao.get(ActivoPublicacion.class, filtroIdActivo);
 			PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroIdActivo);
 			ActivoPropietarioActivo activoPropietario = genericDao.get(ActivoPropietarioActivo.class, filtroIdActivo);
+			
 
 			Boolean checkGestorComercial = dtoCheckGestorComercial != null ? dtoCheckGestorComercial
 					: perimetroActivo.getCheckGestorComercial() != null && perimetroActivo.getCheckGestorComercial() == true; // Comparo con True para tomar null como false
@@ -90,7 +98,13 @@ public class VisibilidadGestionComercialValidator {
 					: perimetroActivo.getExcluirValidaciones() != null && DDSinSiNo.CODIGO_SI.equals(perimetroActivo.getExcluirValidaciones().getCodigo());
 
 			if (!excluirValidaciones) {
-
+				
+				//validacion que comprueba si el activo pertenece a una agrupacion restringida y tenga motivo de excluido
+				if(activoApi.isActivoIntegradoAgrupacionRestringida(activoActual.getId()) && perimetroActivo.getMotivoGestionComercial()!=null) {
+					erroresActivo.add(VALID_MOTIVO_EXCLUIDO);
+					
+				}
+			
 				if (checkGestorComercial) {
 
 					// Validación que comprueba si el activo tiene algun expediente comercial en
@@ -240,6 +254,7 @@ public class VisibilidadGestionComercialValidator {
 							}
 						}
 					}
+
 				}
 			}
 			

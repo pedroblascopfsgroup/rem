@@ -1379,11 +1379,14 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				if(!Checks.esNulo(dto.getCheckGestorComercial())) {		
 					perimetroActivo.setCheckGestorComercial(dto.getCheckGestorComercial());
 					perimetroActivo.setFechaGestionComercial(new Date());	
-					recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, null));
+					Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, null);
+					recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
 				}
 								
 				if (!Checks.esNulo(dto.getMotivoGestionComercialCodigo())) {
 					DDMotivoGestionComercial motivoGestionComercial = (DDMotivoGestionComercial) diccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class,  dto.getMotivoGestionComercialCodigo());
+					Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, null);
+					recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
 					perimetroActivo.setMotivoGestionComercial(motivoGestionComercial);
 				}
 

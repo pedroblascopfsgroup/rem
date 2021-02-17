@@ -194,7 +194,8 @@ public class VisibilidadGestionComercialValidator {
 					
 					//Validación que comprueba el check
 				
-						if (activoPublicacion != null && activoPublicacion.getEstadoPublicacionAlquiler() != null) {
+						if (activoPublicacion != null && activoPublicacion.getEstadoPublicacionAlquiler() != null && activoActual.getTipoComercializacion() != null 
+								&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoActual.getTipoComercializacion().getCodigo())) {
 							if (!DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())
 									&& (perimetroActivo.getCheckGestorComercial() !=null && perimetroActivo.getCheckGestorComercial())) {
 								erroresActivo.add(VALID_ACTIVO_GESTION);

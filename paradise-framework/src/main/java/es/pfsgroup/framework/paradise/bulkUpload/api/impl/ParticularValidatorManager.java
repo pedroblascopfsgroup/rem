@@ -6853,5 +6853,35 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado); 
 	}
 
+	@Override
+	public Boolean situacionComercialAlquilado(String activo) {
+		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_ACTIVO a "
+				+ "JOIN DD_SCM_SITUACION_COMERCIAL scm ON a.DD_SCM_ID = scm.DD_SCM_ID AND "
+				+ "a.ACT_NUM_ACTIVO = '"+ activo +"' and scm.DD_SCM_CODIGO = '10' and scm.borrado = 0 ");
+
+
+		return "1".equals(resultado);
+	}
+	
+
+	public Boolean estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(String numActivo) {
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT (1) FROM ACT_ACTIVO ACT " + 
+				" INNER JOIN ACT_APU_ACTIVO_PUBLICACION APU on act.act_id = apu.act_id " + 
+				" INNER JOIN DD_EPA_ESTADO_PUB_ALQUILER  est on est.dd_epa_id = apu.dd_epa_id " + 
+				" INNER JOIN dd_cra_cartera car on car.dd_cra_id = act.dd_cra_id " +
+				" INNER JOIN dd_tco_tipo_comercializacion tpo on tpo.dd_tco_id = apu.dd_tco_id" +
+				" WHERE act.act_num_activo = '"+numActivo+"'" + 
+				" and est.dd_epa_codigo <> '03' " +
+				" and car.dd_cra_codigo = '01' " +
+				" and act.act_vpo = '0' " + 
+				" and tpo.dd_tco_codigo = '03' " +
+				" and act.borrado = 0 ");
+
+		return "1".equals(resultado);
+	}
 
 }

@@ -1350,6 +1350,8 @@ public interface ParticularValidatorApi {
 	
 	boolean existeLineaEnGasto(String idLinea, String numGasto);
 
+	Boolean existeActivoConONMarcadoSi(String columnaActivo);
+	
 	boolean conEstadoGasto(String idGasto,String codigoEstado);
 
 	String devolverEstadoGasto(String idGasto);

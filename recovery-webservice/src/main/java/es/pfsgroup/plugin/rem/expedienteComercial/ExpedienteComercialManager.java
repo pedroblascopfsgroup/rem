@@ -1202,7 +1202,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if(gastos == null || gastos.isEmpty()) {
 					creaGastoExpediente(expedienteComercial, oferta, oferta.getActivoPrincipal());
 				} else {
-					actualizarGastosExpediente(expedienteComercial, oferta);
+					actualizarGastosExpediente(expedienteComercial, oferta,null);
 				}
 				
 				genericDao.save(Oferta.class, oferta);
@@ -1306,7 +1306,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if ((!Checks.esNulo(dto.getNumVisita()) && ((!Checks.esNulo(visitaOferta) && Long.parseLong(dto.getNumVisita()) != visitaOferta.getNumVisitaRem()) || Checks.esNulo(visitaOferta)))
 				|| !Checks.esNulo(dto.getImporteOferta())) {
-			this.actualizarGastosExpediente(expedienteComercial, oferta);
+			this.actualizarGastosExpediente(expedienteComercial, oferta, null);
 		}
 		
 		if (dto.getImporteOferta() != null && DDCartera.CODIGO_CARTERA_BBVA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
@@ -11129,10 +11129,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta)
+	public boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta, Activo activo)
 			throws IllegalAccessException, InvocationTargetException {
 		gastosExpedienteApi.deleteGastosExpediente(expedienteComercial.getId());
-		Activo activo = oferta.getActivoPrincipal();
+		
+		if (activo == null) {
+			activo = oferta.getActivoPrincipal();
+		}
+		 
 
 		List<DtoGastoExpediente> listDtoGastoExpediente = ofertaApi.calculaHonorario(oferta, activo);
 

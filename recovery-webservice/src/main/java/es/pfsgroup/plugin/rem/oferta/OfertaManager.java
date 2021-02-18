@@ -5225,6 +5225,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 				dtoFichaComercial.setTotalOferta(importeOferta);
+				dtoFichaComercial.setComisionHayaDivarian(importeOferta);
 				//dtoFichaComercial.setTotalOfertaNeta(importeOferta - honorarios);
 			}
 			
@@ -5799,11 +5800,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					dtoFichaComercial.setTotalSuperficie(oferta.getActivoPrincipal().getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida());
 				}
 				
-				Filter filtroGastosExpediente= genericDao.createFilter(FilterType.EQUALS ,"expediente.id", expediente.getId());
-				gastosExpediente = genericDao.get(GastosExpediente.class, filtroGastosExpediente);
-				if(gastosExpediente != null) {
-					dtoFichaComercial.setComisionHayaDivarian(gastosExpediente.getImporteFinal());
-				}
 				
 				activosFichaComercial.setLink(linkCabecera(oferta.getActivoPrincipal().getId()));
 				

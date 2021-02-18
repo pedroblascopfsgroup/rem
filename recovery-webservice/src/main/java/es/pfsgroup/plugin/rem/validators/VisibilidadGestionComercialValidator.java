@@ -208,8 +208,8 @@ public class VisibilidadGestionComercialValidator {
 					
 					//Validación que comprueba el check
 				
-						if (activoPublicacion != null && activoPublicacion.getEstadoPublicacionAlquiler() != null && activoActual.getTipoComercializacion() != null 
-								&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoActual.getTipoComercializacion().getCodigo())) {
+						if (activoPublicacion != null && activoPublicacion.getEstadoPublicacionAlquiler() != null && activoPublicacion.getTipoComercializacion() != null 
+								&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoPublicacion.getTipoComercializacion().getCodigo())) {
 							if (!DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())
 									&& (perimetroActivo.getCheckGestorComercial() !=null && perimetroActivo.getCheckGestorComercial())) {
 								erroresActivo.add(VALID_ACTIVO_GESTION);
@@ -218,8 +218,8 @@ public class VisibilidadGestionComercialValidator {
 					
 
 					// Validación que comprueba si tiene el destino comercial adecuado
-					if (activoActual.getTipoComercializacion() != null 
-							&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoActual.getTipoComercializacion().getCodigo())) {
+					if (activoPublicacion.getTipoComercializacion() != null 
+							&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoPublicacion.getTipoComercializacion().getCodigo())) {
 						if (activoPublicacion != null && activoPublicacion.getEstadoPublicacionAlquiler() != null) {
 							if (!DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())
 									&& (activoActual.getPerimetroMacc() == null || activoActual.getPerimetroMacc() == 0)) {

@@ -16,15 +16,30 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 		var titlePorcentaje = HreRem.i18n('header.procentaje.compra');
 		var msgPorcentajeTotal = HreRem.i18n("fieldlabel.porcentaje.compra.total");
 		var msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.compra.total.error");
+		var habilitarBtnValidar = null;
+		var estadoActual = me.lookupViewModel().get('expediente.codigoEstado');
+		var estadosAntesAprobado = [CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'],
+			CONST.ESTADOS_EXPEDIENTE['PTE_FIRMA'],
+			CONST.ESTADOS_EXPEDIENTE['CONTRAOFERTADO'],
+			CONST.ESTADOS_EXPEDIENTE['PTE_RESOLUCION_CES'],
+			CONST.ESTADOS_EXPEDIENTE['RPTA_OFERTANTE'],
+			CONST.ESTADOS_EXPEDIENTE['PEN_RES_OFER_COM'],
+			CONST.ESTADOS_EXPEDIENTE['PTE_RESOLUCION_CES']];
 
+		var estadosDespuesReservado = [CONST.ESTADOS_EXPEDIENTE['RESERVADO'],
+			CONST.ESTADOS_EXPEDIENTE['PTE_PBC'],
+			CONST.ESTADOS_EXPEDIENTE['PTE_CIERRE'],
+			CONST.ESTADOS_EXPEDIENTE['PTE_POSICIONAMIENTO']];
+		
+		me.setTitle(title);
+		
 		if(me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
 			title = HreRem.i18n('title.inquilinos');
 			titlePorcentaje = HreRem.i18n('header.procentaje.alquiler');
 			msgPorcentajeTotal = HreRem.i18n("fieldlabel.porcentaje.alquiler.total");
 			msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.alquiler.total.error");		
 		};
-		
-		me.setTitle(title);
+
 		
 		var coloredRender = function (value, meta, record) {
     		var borrado = record.get('borrado');
@@ -54,11 +69,23 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     		}else{
     			return true;
     		}
+    	};  	
+    	var habilitarBotonValidar= function() {
+    		if(estadosAntesAprobado.includes(estadoActual)) {
+    			return true;   			
+    		} else {
+    			return false;   			
+    		}
     	};
     	
-
-		
-		
+    	var habilitarBotonEnviar= function() {	
+    		if(estadosAntesAprobado.includes(estadoActual) || estadosDespuesReservado.includes(estadoActual)) {
+    			return true;
+    		} else {
+    			return false;
+    		}
+    	};
+	
         var items= [
 
 			{   
@@ -70,6 +97,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						text: HreRem.i18n('btn.enviar.compradores'),
 						handler: 'enviarTitularesUvem',
 						margin: '10 5 5 10',
+						disabled: habilitarBotonEnviar(),
 						bind: {
 							hidden: '{!esEditableCompradores}'
 						}
@@ -81,10 +109,11 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						margin: '10 5 5 10',
 						visible:true,
 						hidden: cartera(),
-				        hideable: !cartera()
+				        hideable: !cartera(),
+				        disabled: habilitarBotonValidar()
 						/*bind: {
 							hidden: '{!esEditableCompradores}'
-						}*/
+						}*/			        
 					},
                 	{
 					    xtype		: 'gridBase',

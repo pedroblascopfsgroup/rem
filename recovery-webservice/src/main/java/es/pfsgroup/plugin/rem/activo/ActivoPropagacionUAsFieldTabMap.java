@@ -287,7 +287,8 @@ public class ActivoPropagacionUAsFieldTabMap {
     	pmap.put(TAB_COMERCIAL,
     			Arrays.asList(
 					//"id", // ID de activo.
-	    			"direccionComercial"
+	    			"direccionComercial",
+	    			"importeComunidadMensualSareb"
     			));
 
 /*

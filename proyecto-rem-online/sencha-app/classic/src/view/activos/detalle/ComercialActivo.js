@@ -162,6 +162,17 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				            	value:'{comercial.ventaSobrePlano}',
 				            	readOnly: true  //'{!esAgrupacionObraNueva}'
 				           	}
+						},
+						{
+							xtype: 'currencyfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.importe.comunidad.mensual.sareb'),
+							reference: 'comunidadMensualSareb',
+							allowBlank: false,
+							bind : {
+				        		value: '{comercial.importeComunidadMensualSareb}',
+				        		hidden: '{!isCarteraSareb}',
+				        		readOnly: '{!importeComunidadMensualSarebEditable}'
+							}						
 						}
 				]
 			}, 

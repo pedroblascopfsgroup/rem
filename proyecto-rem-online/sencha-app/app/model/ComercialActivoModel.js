@@ -45,6 +45,9 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 		{
 			name: 'ventaSobrePlano',
 			type: 'boolean'
+		},
+		{
+			name: 'importeComunidadMensualSareb'
 		}
     ],
     

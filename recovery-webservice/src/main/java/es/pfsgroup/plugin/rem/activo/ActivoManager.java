@@ -3918,6 +3918,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(dto, "direccionComercial", activo.getTerritorio().getCodigo());
 
 			}
+			
+			if (activo.getNumActivo() != null) {
+				ActivoSareb activoSareb = genericDao.get(ActivoSareb.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activo.getNumActivo()));
+				if(activoSareb != null) {
+					dto.setImporteComunidadMensualSareb(activoSareb.getImporteComunidadMensualSareb());
+				}
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -3995,6 +4002,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					Thread guardadoAsincrono = new Thread(new GuardarActivosRestringidasAsync(activo.getId(),
 							genericAdapter.getUsuarioLogado().getUsername()));
 					guardadoAsincrono.start();
+				}
+			}
+			
+			if (dto.getImporteComunidadMensualSareb()!= null && activo.getNumActivo() != null) {
+				ActivoSareb activoSareb = genericDao.get(ActivoSareb.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activo.getNumActivo()));
+				if(activoSareb != null) {
+					activoSareb.setImporteComunidadMensualSareb(dto.getImporteComunidadMensualSareb());
+					genericDao.update(ActivoSareb.class, activoSareb);
 				}
 			}
 

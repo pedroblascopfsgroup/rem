@@ -107,6 +107,9 @@ public class ActivoSareb implements Serializable, Auditable {
 
 	@Embedded
 	private Auditoria auditoria;
+	
+	@Column(name = "IMP_COM_MENSUAL")
+	private Double importeComunidadMensualSareb;
 
 	public Long getId() {
 		return id;
@@ -267,4 +270,14 @@ public class ActivoSareb implements Serializable, Auditable {
 	public void setFechaFinPrevistaAdecuacion(Date fechaFinPrevistaAdecuacion) {
 		this.fechaFinPrevistaAdecuacion = fechaFinPrevistaAdecuacion;
 	}
+
+	public Double getImporteComunidadMensualSareb() {
+		return importeComunidadMensualSareb;
+	}
+
+	public void setImporteComunidadMensualSareb(Double importeComunidadMensualSareb) {
+		this.importeComunidadMensualSareb = importeComunidadMensualSareb;
+	}
+	
+	
 }

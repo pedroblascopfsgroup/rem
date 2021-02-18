@@ -1701,7 +1701,10 @@ public class ActivoAdapter {
 		Boolean incluirVenta;
 		Boolean incluirAlquiler;
 		
-		String tipoComercializacion = activoApi.get(idActivo).getTipoComercializacion().getCodigo();
+		String tipoComercializacion = null;
+		if(activoApi.get(idActivo).getActivoPublicacion() != null && activoApi.get(idActivo).getActivoPublicacion().getTipoComercializacion() != null) {
+			tipoComercializacion =activoApi.get(idActivo).getActivoPublicacion().getTipoComercializacion().getCodigo();
+		}
 		
 		if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion) || DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(tipoComercializacion)) {
 			incluirVenta = false;

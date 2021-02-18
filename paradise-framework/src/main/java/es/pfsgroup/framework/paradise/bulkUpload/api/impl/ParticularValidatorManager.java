@@ -4327,6 +4327,37 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public boolean gastoSarebAnyadeRefacturable(String numGasto) {
+		boolean enc=true;
+		
+		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		
+		String resultado = rawDao
+				.getExecuteSQL("SELECT COUNT(*) " 						
+						+ "FROM GPV_GASTOS_PROVEEDOR GPV "
+						+ "JOIN GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID=GPV.GPV_ID "
+						+ "JOIN ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID " 
+						+ "JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID " 
+						+ "WHERE CRA.DD_CRA_CODIGO = 02 AND GLD.BORRADO = 0 AND GPV.BORRADO = 0 " 
+						+ "AND GPV.GPV_NUM_GASTO_HAYA ='" + numGasto + "'");
+		
+		String resultado2 = rawDao
+				.getExecuteSQL("SELECT COUNT(*) " 						
+						+ "FROM GPV_GASTOS_PROVEEDOR GPV "
+						+ "JOIN GRG_REFACTURACION_GASTOS GRG ON GRG.GRG_GPV_ID = GPV.GPV_ID "						
+						+ "WHERE GPV.BORRADO = 0 AND GRG.BORRADO = 0 " 
+						+ "AND GPV.GPV_NUM_GASTO_HAYA ='" + numGasto + "'");
+
+		if (Integer.parseInt(resultado)>=1 && Integer.parseInt(resultado2)<=0) {
+			enc=false;
+		}
+		
+		return enc;
+
+	}
+	
+	@Override
 	public Boolean perteneceGastoBankiaSareb(String numGasto) {
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;

@@ -1411,5 +1411,7 @@ public interface ParticularValidatorApi {
 
 	Boolean existeCodProveedorRem(String codProveedorREM);
 
+	boolean gastoSarebAnyadeRefacturable(String numGasto);
+
 
 }

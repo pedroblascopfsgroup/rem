@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.gastoProveedor;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.Object;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -75,6 +74,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
+import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSuplidos;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
@@ -111,7 +111,6 @@ import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 import es.pfsgroup.plugin.rem.model.VDiarioCalculoLbk;
-import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
 import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
@@ -145,7 +144,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.provisiongastos.dao.ProvisionGastosDao;
 import es.pfsgroup.plugin.rem.thread.ActualizaSuplidosAsync;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
-import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
 
 @Service("gastoProveedorManager")
 public class GastoProveedorManager implements GastoProveedorApi {
@@ -3705,13 +3703,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 			if(gastoLineaDetalleList != null && !gastoLineaDetalleList.isEmpty()){
 				for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
-					if(gastoLineaDetalle.getImporteTotal() != null) {
-						
-						importeTotal += gastoLineaDetalle.getPrincipalSujeto() + gastoLineaDetalle.getProvSuplidos() + gastoLineaDetalle.getPrincipalNoSujeto()
-						+ gastoLineaDetalle.getRecargo() + gastoLineaDetalle.getInteresDemora() + gastoLineaDetalle.getCostas() + gastoLineaDetalle.getOtrosIncrementos();
-					}
+					importeTotal += sumaImportesLineaDetalle(importeTotal, gastoLineaDetalle);					
 					
-					if (gastoLineaDetalle.getImporteIndirectoCuota() != null && gastoLineaDetalle.getEsImporteIndirectoExento() !=null && !gastoLineaDetalle.getEsImporteIndirectoExento() ) {
+					if (gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != null && gastoLineaDetalle.getPrincipalSujeto() != null
+							&& gastoLineaDetalle.getEsImporteIndirectoExento() !=null && !gastoLineaDetalle.getEsImporteIndirectoExento() ) {
 						
 						cuotaIvaRetenida += (gastoLineaDetalle.getPrincipalSujeto() * gastoLineaDetalle.getImporteIndirectoTipoImpositivo()) / 100;
 						
@@ -3721,11 +3716,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				}
 			}
 			
-			if(gasto.getIrpfCuota() != null) {
+			if(gasto.getIrpfBase() != null && gasto.getIrpfTipoImpositivo() != null) {
 				importeTotal = importeTotal - ((gasto.getIrpfBase() * gasto.getIrpfTipoImpositivo()) / 100);
 			}
 			
-			if(gasto.getRetencionGarantiaCuota() != null && gasto.getRetencionGarantiaAplica() != null && gasto.getRetencionGarantiaAplica()) {				
+			if(gasto.getRetencionGarantiaBase() != null && gasto.getRetencionGarantiaTipoImpositivo() != null && gasto.getRetencionGarantiaAplica() != null && gasto.getRetencionGarantiaAplica()) {				
 				importeTotal = importeTotal - ((gasto.getRetencionGarantiaBase() * gasto.getRetencionGarantiaTipoImpositivo()) / 100);
 			}
 			
@@ -3742,6 +3737,36 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		}		
 		return importeTotal;
+	}
+	
+	private Double sumaImportesLineaDetalle(Double importeTotal,GastoLineaDetalle gastoLineaDetalle) {
+		Double importeFinal=importeTotal;
+		
+		if(gastoLineaDetalle.getPrincipalSujeto() != null) {
+			importeFinal+=gastoLineaDetalle.getPrincipalSujeto();
+		}
+		if(gastoLineaDetalle.getPrincipalNoSujeto() != null) {
+			importeFinal+=gastoLineaDetalle.getPrincipalNoSujeto();
+		}
+		if(gastoLineaDetalle.getProvSuplidos() != null) {
+			importeFinal+=gastoLineaDetalle.getProvSuplidos();
+		}
+		if(gastoLineaDetalle.getPrincipalNoSujeto() != null) {
+			importeFinal+=gastoLineaDetalle.getPrincipalNoSujeto();
+		}
+		if(gastoLineaDetalle.getRecargo() != null) {
+			importeFinal+=gastoLineaDetalle.getRecargo();
+		}
+		if(gastoLineaDetalle.getInteresDemora() != null) {
+			importeFinal+=gastoLineaDetalle.getInteresDemora();
+		}
+		if(gastoLineaDetalle.getCostas() != null) {
+			importeFinal+=gastoLineaDetalle.getCostas();
+		}
+		if(gastoLineaDetalle.getOtrosIncrementos() != null) {
+			importeFinal+=gastoLineaDetalle.getOtrosIncrementos();
+		}
+		return importeFinal;
 	}
 	
 	public boolean isGastoRefacturadoPorOtroGasto(Long idGasto) {
@@ -3773,17 +3798,20 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public void anyadirGastosRefacturablesSiCumplenCondiciones(String idGasto, String gastosRefacturables, String nifPropietario) throws IllegalAccessException, InvocationTargetException {
+	public void anyadirGastosRefacturablesSiCumplenCondiciones(String idGasto, String gastosRefacturables, String nifPropietario) throws IllegalAccessException, InvocationTargetException,Exception {
 		List<String> gastosRefacturablesLista = new ArrayList<String>();
 		boolean gastoSinLineas = true;
 
 		this.validarGastosARefacturar(idGasto, gastosRefacturables);
 		GastoProveedor gastoProveedor = this.findOne(Long.valueOf(idGasto));
+		
 		Filter filtroRefPadre = genericDao.createFilter(FilterType.EQUALS, "idGastoProveedor", Long.valueOf(idGasto));
 		List<GastoRefacturable> listaGastosRefacturables = genericDao.getList(GastoRefacturable.class, filtroRefPadre);
 		if(gastoProveedor.getGastoLineaDetalleList() != null && !gastoProveedor.getGastoLineaDetalleList().isEmpty()
+				&& (gastoProveedor.getCartera() != null && gastoProveedor.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) 
 				&& (listaGastosRefacturables == null || listaGastosRefacturables.isEmpty())) {
 			gastoSinLineas = false;
+			throw new Exception("No se puede añadir un gasto refacturable a un gasto que ya tiene lineas de detalle");
 		}
 		
 		if(gastosRefacturables != null && gastoProveedor != null && gastoProveedor.getTipoGasto() != null && gastoSinLineas) {

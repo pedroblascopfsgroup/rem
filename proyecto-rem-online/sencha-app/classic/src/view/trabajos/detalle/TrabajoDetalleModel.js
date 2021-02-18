@@ -448,7 +448,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
-					remoteUrl: 'trabajo/getComboProveedorContacto',
+					remoteUrl: 'trabajo/getComboProveedorContactoLlaves',
 					extraParams: {idProveedor: '{trabajo.idProveedorLlave}'}
 				}, 
 				autoLoad: false

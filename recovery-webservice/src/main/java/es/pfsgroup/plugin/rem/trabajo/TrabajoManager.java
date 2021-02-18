@@ -852,11 +852,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.RECEPTOR_ENTREGA_LLAVES);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_RECEPTOR_LLAVES);
 			if(!Checks.esNulo(trabajo.getProveedorContactoLlaves())) {
-				dtoHistorificador.setValorAnterior(trabajo.getProveedorContactoLlaves().getApellidoNombre());
+				if (trabajo.getProveedorContactoLlaves().getUsuario() != null) {
+					dtoHistorificador.setValorAnterior(trabajo.getProveedorContactoLlaves().getApellidoNombre());
+				}else {
+					dtoHistorificador.setValorAnterior(trabajo.getProveedorContactoLlaves().getNombre());
+				}
 			}
 			Filter filtroCont = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdProveedorReceptor());
 			ActivoProveedorContacto proveedorContactoRecep = genericDao.get(ActivoProveedorContacto.class, filtroCont);
-			dtoHistorificador.setValorNuevo(proveedorContactoRecep.getApellidoNombre());
+			if (proveedorContactoRecep.getUsuario() != null) {
+				dtoHistorificador.setValorNuevo(proveedorContactoRecep.getApellidoNombre());
+			} else {
+				dtoHistorificador.setValorNuevo(proveedorContactoRecep.getNombre());
+			}
 			
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 			
@@ -4678,6 +4686,34 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						}						
 						listaDtoProveedorContactoSimple.add(target);
 					}
+				} catch (IllegalAccessException e) {
+					logger.error("Error al consultar las localidades sin filtro", e);
+					throw new Exception(e);
+				} catch (InvocationTargetException e) {
+					logger.error("Error al consultar las localidades sin filtro", e);
+					throw new Exception(e);
+				}
+			}
+		}
+		Collections.sort(listaDtoProveedorContactoSimple);
+		return listaDtoProveedorContactoSimple;
+	}
+	
+	@Override
+	public List<DtoProveedorContactoSimple> getComboProveedorContactoLlaves(Long idProveedor) throws Exception {
+		
+		List<DtoProveedorContactoSimple> listaDtoProveedorContactoSimple = new ArrayList<DtoProveedorContactoSimple>();		
+		
+		if (Checks.esNulo(idProveedor)) {
+			throw new JsonViewerException("Debe seleccionar antes un proveedor.");
+		} else {
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", idProveedor);
+			List<ActivoProveedorContacto> listaProveedorContacto =  genericDao.getList(ActivoProveedorContacto.class, filtro1);
+			for (ActivoProveedorContacto source : listaProveedorContacto) {
+				try {
+						DtoProveedorContactoSimple target = new DtoProveedorContactoSimple();				
+						BeanUtils.copyProperties(target, source);				
+						listaDtoProveedorContactoSimple.add(target);
 				} catch (IllegalAccessException e) {
 					logger.error("Error al consultar las localidades sin filtro", e);
 					throw new Exception(e);

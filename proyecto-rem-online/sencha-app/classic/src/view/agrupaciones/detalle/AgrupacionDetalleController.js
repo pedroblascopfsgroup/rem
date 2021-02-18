@@ -1363,6 +1363,20 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 			me.getView().lookupReference('autorizacionTramOfertasAgrupacion').setHidden(true);
 		}
 	},
+
+    excluidoMarcado: function(get) {
+    	var me = this;
+    	var marcaExcluidoMarcado = me.getView().lookupReference('chkMarcaDeExcluido').value;
+    	var cbMotivoDeExcluido = me.getView().lookupReference('cbMotivoDeExcluido');
+     	if(marcaExcluidoMarcado == "true") {
+     		cbMotivoDeExcluido.setHidden(false);
+     		return false;
+     	} else {
+     		cbMotivoDeExcluido.setHidden(true);
+     		return true;
+     	}
+ 	},
+	
     checkVisibilityOfBtnCrearTrabajo: function () {
        var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
        var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);

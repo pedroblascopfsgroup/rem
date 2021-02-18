@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -40,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -121,6 +123,10 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			String admision = exc.dameCelda(fila, 17);
 			String motivoAdmision = exc.dameCelda(fila, 18);
 			String checkOnEfectosComercializacion = exc.dameCelda(fila, 19);
+			Integer visibleGestionComercial = getCheckValue(exc.dameCelda(fila,19));
+			String motivoGestionComercial = exc.dameCelda(fila,20);
+			String exclusionValidaciones = exc.dameCelda(fila,21);
+			String fechaCambio = exc.dameCelda(fila, 22);
 			
 			Activo activo = activoApi.getByNumActivo(numActivo);
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
@@ -269,6 +275,32 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 
 				// Comprobamos si es necesario actualizar el estado de
 				// publicación del activo.
+			}
+			
+			//Vible para gestion comercial
+			if(visibleGestionComercial != null) {
+				if(visibleGestionComercial == 1) {
+					perimetroActivo.setCheckGestorComercial(true);
+				}else {
+					perimetroActivo.setCheckGestorComercial(false);
+				}
+				if(!Checks.esNulo(fechaCambio)) {
+				SimpleDateFormat sdfSal = new SimpleDateFormat("dd/MM/yyyy"); 
+				Date fecha = sdfSal.parse(fechaCambio);
+				perimetroActivo.setFechaGestionComercial(fecha);
+				}else {
+					perimetroActivo.setFechaGestionComercial(new Date());
+				}
+			}
+			
+			// Check excluir validaciones ------------------
+			if (exclusionValidaciones != null) {
+				perimetroActivo.setExcluirValidaciones(((DDSinSiNo) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDSinSiNo.class, "0" + exclusionValidaciones)));
+				if (exclusionValidaciones.equals("1") && motivoGestionComercial != null){
+					perimetroActivo.setMotivoGestionComercial((DDMotivoGestionComercial) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, "0" + motivoGestionComercial));
+				}
 			}
 
 			// Aplica Formalizar ---------------------------
@@ -431,6 +463,10 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		if(!CHECK_VALOR_NO.equals(perimetro.getAplicaTramiteAdmision())) {
 			perimetro.setAplicaTramiteAdmision(CHECK_VALOR_NO);
 			perimetro.setFechaAplicaTramiteAdmision(new Date());
+		}
+		if(!perimetro.getCheckGestorComercial()) {
+			perimetro.setCheckGestorComercial(false);
+			perimetro.setFechaGestionComercial(new Date());
 		}
 		if(perimetro.getAplicaPublicar()) {
 			perimetro.setAplicaPublicar(BooleanUtils.toBooleanObject(CHECK_VALOR_NO));

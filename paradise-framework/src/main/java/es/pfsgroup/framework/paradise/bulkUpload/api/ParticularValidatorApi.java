@@ -1367,6 +1367,22 @@ public interface ParticularValidatorApi {
 
 	Boolean resolucionComite(String celdaTrabajo);
 
+	Boolean existeCodigoMotivoAdmision(String codMotivo);
+	
+	Boolean isCheckVisibleGestionComercial(String numActivo,Integer celdaVisibleGestionComercial);
+
+	Boolean tieneFechaVentaExterna(String activo);
+
+	Boolean bankiaPublicado(String activo);
+
+	Boolean activoNoComercializable(String activo);
+
+	Boolean estadoPublicacion(String activo);
+
+	Boolean maccConCargas(String activo);
+
+	Boolean estadoExpedienteComercial(String activo);
+	
 	Boolean checkComite(String celdaTrabajo);
 
 	Boolean tieneLlaves(String celdaTrabajo);
@@ -1396,6 +1412,14 @@ public interface ParticularValidatorApi {
 	Boolean datosRegistralesRepetidos(String refCatastral, String finca, String folio, String libro, String tomo, String numRegistro, String codigoLocalidad);
 
 	Boolean subtipoPerteneceTipoActivo(String subtipo, String tipo);
+	
+	String getNumActivoPrincipal(String numAgr);
+
+	String getExcluirValidaciones(String numActivo);
+
+	String getCheckGestorComercial(String numActivo);
+
+	String getMotivoGestionComercial(String numActivo);
 
 	Boolean existeAlbaran(String idAlbaran);
 	
@@ -1410,6 +1434,8 @@ public interface ParticularValidatorApi {
     Boolean getGastoSuplidoConFactura(String idGastoAfectado);
 
 	Boolean estadoPrevioTrabajoFinalizado(String celdaTrabajo);
+	
+	Boolean isActivoEnPerimetroAlquilerSocial(String numActivo);
 
 
 }

@@ -1057,8 +1057,51 @@ Ext.define('HreRem.model.Activo', {
     			depends: 'entidadPropietariaCodigo'
     		},
     		{
+    			name: 'subestadoAdmisionDescCabecera'
+			},
+			{
+	 			name: 'estadoRegistralCodigo'
+			},
+			{
+	 			name: 'esEditableActivoEstadoRegistral',
+    			type: 'boolean'	 			
+			},
+			{
+				name:'excluirValidaciones',
+    			type: 'boolean'	 			
+			},
+			{
+	 			name: 'fechaGestionComercial',
+				type:'date',
+				dateFormat: 'c'
+			},
+			{
+	 			name: 'motivoGestionComercialDescripcion'
+			},
+			{
+	 			name: 'motivoGestionComercialCodigo' 
+			},
+			{
+	 			name: 'checkGestorComercial',
+	 			type: 'boolean'
+
+			},
+			{
+	 			name: 'restringido',
+	 			type: 'boolean'
+			},
+    		{
     			name: 'codPromocionBbva'
-    		}
+    		},
+			{
+	 			name: 'checkExcluirValidacionesGestionComercial',
+	 			type: 'boolean'
+
+			},
+			{
+				name: 'codSubfasePublicacion'
+			}
+    		
     ],
     
 	proxy: {

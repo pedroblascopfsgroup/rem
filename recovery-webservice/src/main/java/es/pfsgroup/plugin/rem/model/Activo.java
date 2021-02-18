@@ -538,7 +538,7 @@ public class Activo implements Serializable, Auditable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_ERA_ID")
-    private DDEstadoRegistralActivo estadoRegistral; 
+    private DDEstadoRegistralActivo estadoRegistral;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_OVN_COMERC")

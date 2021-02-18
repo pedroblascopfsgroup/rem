@@ -3035,6 +3035,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			},
 			autoLoad: true
 		},
+		
+		comboMotivoGestionComercialActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoGestionComercial'}
+			}
+		},
 		// Stores para el grid observaciones. Se crean 3 para solucionar problemas de instancia 
 		/*
 
@@ -3095,7 +3104,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposAdmiteMascota'}
 			}
-		}
-		
+		}		
 	 }
 });

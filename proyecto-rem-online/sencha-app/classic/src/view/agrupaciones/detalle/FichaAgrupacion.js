@@ -405,6 +405,50 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 				]
           },
           {
+          	  xtype			:'fieldsettable',
+          	  collapsible	: true,
+          	  defaultType	: 'textfieldbase',
+          	  title			: HreRem.i18n('title.datos.gestion.comercial'),
+          	  bind			: {
+          		  hidden: '{!esAgrupacionRestringida}'
+          	  },
+          	  items			: [
+    						{
+    							xtype:'checkboxfieldbase',
+    							fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.visibleGestionComercial'),
+    							reference: 'chkVisibleGestionComercial',
+    							bind: {
+    								value: '{agrupacionficha.visibleGestionComercial}'
+    							}
+    						},
+    						{
+    							xtype: 'comboboxfieldbase',
+    				        	fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.marcaDeExcluido'),
+    				        	reference: 'chkMarcaDeExcluido',
+    				        	bind: {	
+    			            		store: '{comboSiNoBoolean}',
+    			            		value: '{agrupacionficha.marcaDeExcluido}',
+        				        	listeners: {
+    									change: 'excluidoMarcado'
+    								}
+    			            	}
+    						},
+    						{
+    							xtype		: 'comboboxfieldbase',
+    				        	fieldLabel	: HreRem.i18n('fieldlabel.perimetros.motivoDeExcluido'),
+    				        	reference	: 'cbMotivoDeExcluido',
+    							allowBlank	: false,
+    				        	bind		: {
+    			            		store: '{comboMotivoDeExcluido}',
+    			            		value: '{agrupacionficha.motivoDeExcluidoCodigo}',
+    			            		hidden: '{!agrupacionficha.marcaDeExcluido}'
+    			            	}
+    						}
+    						
+    						
+    					]
+              	},
+          {
 				xtype: 'gridBase',
 				title: HreRem.i18n('title.historico.vigencias'),
 			    minHeight: 100,

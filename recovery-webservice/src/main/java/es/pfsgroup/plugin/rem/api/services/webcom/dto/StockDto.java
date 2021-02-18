@@ -377,6 +377,18 @@ public class StockDto implements WebcomRESTDto{
 	
 	@WebcomRequired
 	private StringDataType codEquipoGestion;
+
+	@WebcomRequired
+	private BooleanDataType checkGestionComercial;
+	
+	@WebcomRequired
+	private BooleanDataType excluirValidaciones;
+	
+	@WebcomRequired
+	private DateDataType fechaGestionComercial;
+	
+	@WebcomRequired
+	private StringDataType motivoGestionComercial;
 	
 	@WebcomRequired
 	private LongDataType onvComercializacion;
@@ -1089,5 +1101,29 @@ public class StockDto implements WebcomRESTDto{
 		this.onvComercializacionFecha = onvComercializacionFecha;
 	}
 
+	public BooleanDataType getCheckGestionComercial() {
+		return checkGestionComercial;
+	}
+	public void setCheckGestionComercial(BooleanDataType checkGestionComercial) {
+		this.checkGestionComercial = checkGestionComercial;
+	}
+	public BooleanDataType getExcluirValidaciones() {
+		return excluirValidaciones;
+	}
+	public void setExcluirValidaciones(BooleanDataType excluirValidaciones) {
+		this.excluirValidaciones = excluirValidaciones;
+	}
+	public DateDataType getFechaGestionComercial() {
+		return fechaGestionComercial;
+	}
+	public void setFechaGestionComercial(DateDataType fechaGestionComercial) {
+		this.fechaGestionComercial = fechaGestionComercial;
+	}
+	public StringDataType getMotivoGestionComercial() {
+		return motivoGestionComercial;
+	}
+	public void setMotivoGestionComercial(StringDataType motivoGestionComercial) {
+		this.motivoGestionComercial = motivoGestionComercial;
+	}
 	
 }

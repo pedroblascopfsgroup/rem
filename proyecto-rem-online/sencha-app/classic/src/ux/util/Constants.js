@@ -905,5 +905,8 @@ Ext.define('HreRem.ux.util.Constants', {
 	TIPO_RETENCION: {
 		ANTES : 'ANT',
 		DESPUES: 'DESP'
+	},
+	SUBFASES_PUBLICACION: {
+		COD_EXCLUIDO_CLIENTE : '14'
 	}
 });

@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 public class EjecutarSPPublicacionAsincrono implements Runnable {
@@ -21,6 +23,9 @@ public class EjecutarSPPublicacionAsincrono implements Runnable {
 
 	@Autowired
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	public EjecutarSPPublicacionAsincrono(String userName, ArrayList<Long> listaIdActivo) {
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
@@ -29,6 +34,7 @@ public class EjecutarSPPublicacionAsincrono implements Runnable {
 	}
 
 	@Override
+	@Transactional
 	public void run() {
 		try {
 			restApi.doSessionConfig(this.userName);
@@ -38,6 +44,8 @@ public class EjecutarSPPublicacionAsincrono implements Runnable {
 							.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo, false);
 				}
 			}
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivo);
+
 		} catch (Exception e) {
 			logger.error("error ejecutando SP de publicaciones", e);
 		}

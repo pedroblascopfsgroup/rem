@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
@@ -89,6 +90,9 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 	
 	@Autowired
 	private GestorExpedienteComercialApi gestorExpedienteComercialApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaRespuestaOfertante.class);
 
@@ -138,6 +142,8 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 								
 								expediente.setEstado(estado);
+								recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 								if(DDEstadosExpedienteComercial.APROBADO.equals(estado.getCodigo())) {
 									if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva())) {															
 										EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
@@ -153,6 +159,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 										}
 									}
 								}
+
 								//Una vez aprobado el expediente, se congelan el resto de ofertas que no estén rechazadas (aceptadas y pendientes)
 								List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 								for(Oferta oferta : listaOfertas){
@@ -176,6 +183,8 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 							expediente.setFechaVenta(null);
 							expediente.setEstado(estado);
+							recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 
 							//Finaliza el trámite
 							Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);

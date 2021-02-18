@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceDesbloqExpCambioSitJuridica;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
@@ -113,6 +114,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 	
 	@Resource
 	private MessageService messageServices;
@@ -973,6 +977,10 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 						activoBbva.setSociedadPagoAnterior(propietario);
 					}
 				}
+			}
+			
+			if(dto.getVpo() != null) {
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, null);
 			}
 			
 		} catch (JsonViewerException jvex) {

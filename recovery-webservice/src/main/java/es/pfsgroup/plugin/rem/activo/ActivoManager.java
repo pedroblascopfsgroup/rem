@@ -8904,4 +8904,57 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return false;
 	}
+
+	@Override
+	public List<DtoHistoricoOcupadoTitulo> getListHistoricoOcupadoTitulo(Long id) {
+		List<DtoHistoricoOcupadoTitulo> listDto = new ArrayList<DtoHistoricoOcupadoTitulo>();
+		
+		if (id != null) {
+			
+			List<HistoricoOcupadoTitulo> act = genericDao.getList(HistoricoOcupadoTitulo.class,
+					genericDao.createFilter(FilterType.EQUALS, "activo.id", id));
+
+			if (act != null && !act.isEmpty()) {
+				for (HistoricoOcupadoTitulo hot : act) {
+					DtoHistoricoOcupadoTitulo dto = new DtoHistoricoOcupadoTitulo();
+
+					//dto.getId(id);
+					dto.setId(hot.getId());
+					
+					if (hot.getOcupado() != null) {
+						if(hot.getOcupado() == 0){
+							dto.setOcupado("No");
+						}else{
+							dto.setOcupado("Si");
+						}
+						
+					}
+					
+					if (hot.getConTitulo() != null) {
+						dto.setConTitulo(hot.getConTitulo().getCodigo());
+					}
+					
+					if (hot.getFechaHoraAlta() != null) {
+						dto.setFechaAlta(hot.getFechaHoraAlta());
+						dto.setHoraAlta(hot.getFechaHoraAlta().getHours()+":"+hot.getFechaHoraAlta().getMinutes());
+					}
+
+					if (hot.getUsuario() != null) {
+						dto.setUsuarioAlta(hot.getUsuario().getUsername());
+					}
+
+					if (hot.getLugarModificacion() != null) {
+						dto.setLugarModificacion(hot.getLugarModificacion());
+					}
+					
+					
+					listDto.add(dto);
+				}
+			}
+
+		}
+
+		return listDto;
+	}
+
 }

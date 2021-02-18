@@ -80,6 +80,7 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
@@ -123,6 +124,7 @@ import es.pfsgroup.plugin.rem.model.DtoGastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
@@ -144,6 +146,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
@@ -4135,6 +4138,22 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView getCheckGestionActivo(Long idActivo, ModelMap model){
 		try{
 			model.put(RESPONSE_DATA_KEY, activoDao.activocheckGestion(idActivo)); 
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListHistoricoOcupadoTitulo(Long id, ModelMap model){
+		try{
+
+			model.put(RESPONSE_DATA_KEY, activoApi.getListHistoricoOcupadoTitulo(id)); 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);

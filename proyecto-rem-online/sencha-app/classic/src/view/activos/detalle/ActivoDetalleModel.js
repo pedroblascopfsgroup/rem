@@ -3091,7 +3091,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposAdmiteMascota'}
 			}
-		}
+		},
+		storeSituacionOcupacional: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.SituacionOcupacionalGridModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getListHistoricoOcupadoTitulo',
+				extraParams: {id: '{activo.id}'}
+		   }
+	   }
 		
 	 }
 });

@@ -74,7 +74,7 @@ public class HistoricoOcupadoTitulo implements Serializable,Auditable {
 	@Embedded
 	private Auditoria auditoria;
 	
-	
+	private HistoricoOcupadoTitulo() {}
 	public HistoricoOcupadoTitulo(Activo activo, ActivoSituacionPosesoria posesoria, Usuario usuario, 
 			String lugarModificacion, String valorConcreto) {
 		

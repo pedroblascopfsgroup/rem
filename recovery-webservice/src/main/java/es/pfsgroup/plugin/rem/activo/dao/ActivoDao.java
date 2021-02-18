@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
@@ -116,7 +117,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	void actualizarRatingActivo(Long idActivo, String username);
 
 	List<VOfertasActivosAgrupacion> getListOfertasActivo(Long idActivo);
-
+	
 	/**
 	 * Realiza una llamada al procedure CALCULO_SINGULAR_RETAIL_AUTO, el cual calcula el tipo comercializar que 
 	 * le corresponde al activo según X criterios.
@@ -389,4 +390,5 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivo(Long idActivo);
 
 	boolean activocheckGestion(Long idActivo);
+
 }

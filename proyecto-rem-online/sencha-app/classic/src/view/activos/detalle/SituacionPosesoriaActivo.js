@@ -471,6 +471,18 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					
 					]
                 
+			},
+			{
+				xtype:'fieldsettable',
+				title:HreRem.i18n('title.situacion.ocupacional'),
+				reference: 'fieldSituacionOcupacionalGrid',
+				defaultType: 'textfieldbase',
+				items : [
+	                {
+	                    xtype:'situacionOcupacionalGrid',
+						colspan: 3
+	                }
+				]
             },
             {
 				xtype:'fieldsettable',

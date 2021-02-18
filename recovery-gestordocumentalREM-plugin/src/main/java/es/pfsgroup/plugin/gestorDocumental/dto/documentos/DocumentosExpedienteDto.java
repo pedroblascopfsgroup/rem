@@ -37,6 +37,8 @@ public class DocumentosExpedienteDto {
 	 */
 	private Boolean vinculoExpediente;
 	
+	private String blacklistmatriculas;
+	
 
 	public String getUsuario() {
 		return usuario;
@@ -86,4 +88,12 @@ public class DocumentosExpedienteDto {
 		this.usuarioOperacional = usuarioOperacional;
 	}
 
+	public String getBlacklistmatriculas() {
+		return blacklistmatriculas;
+	}
+
+	public void setBlacklistmatriculas(String blacklistmatriculas) {
+		this.blacklistmatriculas = blacklistmatriculas;
+	}
+	
 }

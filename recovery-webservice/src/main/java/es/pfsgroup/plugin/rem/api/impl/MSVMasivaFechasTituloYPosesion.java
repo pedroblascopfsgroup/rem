@@ -60,7 +60,7 @@ public class MSVMasivaFechasTituloYPosesion extends AbstractMSVActualizador impl
 		ActivoAdjudicacionNoJudicial actNoJudicial = genericDao.get(ActivoAdjudicacionNoJudicial.class, filtro);
 		ActivoSituacionPosesoria  sitPosesoria = genericDao.get(ActivoSituacionPosesoria.class, filtro);
 		
-		if (exc.dameCelda(fila, 1) != null) {
+		if (exc.dameCelda(fila, 1) != null && !exc.dameCelda(fila, 1).isEmpty() ) {
 
 			String fechaTitulo = exc.dameCelda(fila, 1);
 			String pattern = "dd/MM/yyyy";
@@ -69,7 +69,7 @@ public class MSVMasivaFechasTituloYPosesion extends AbstractMSVActualizador impl
 
 			actNoJudicial.setFechaTitulo(fchTitulo);
 		}
-		if (exc.dameCelda(fila, 2) != null) {
+		if (exc.dameCelda(fila, 2) != null && !exc.dameCelda(fila, 2).isEmpty()) {
 
 			String fechaPosesion = exc.dameCelda(fila, 2);
 			String pattern = "dd/MM/yyyy";

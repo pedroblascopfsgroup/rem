@@ -168,7 +168,7 @@ public class MSVMasivaFechasTituloYPosesionValidator extends MSVExcelValidatorAb
 						mapaErrores.get(messageServices.getMessage(ACTIVO_UA)).add(fila);
 						esCorrecto = false;
 					}
-					if((fechaPos == null && fechaTitulo == null)) {
+					if((fechaPos == null || fechaPos.isEmpty() ) && (fechaTitulo == null || fechaTitulo.isEmpty())) {
 						mapaErrores.get(messageServices.getMessage(FECHAS_VACIAS)).add(fila);
 						esCorrecto = false;
 					}

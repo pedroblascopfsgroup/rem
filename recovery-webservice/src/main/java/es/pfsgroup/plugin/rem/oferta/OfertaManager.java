@@ -4952,7 +4952,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public DtoExcelFichaComercial getListOfertasFilter(Long idExpediente) {
+	public DtoExcelFichaComercial getListOfertasFilter(Long idExpediente) throws UserException{
 		if(idExpediente == null) {
 			return null;
 		}
@@ -4979,7 +4979,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dtoFichaComercial.setNumOferta(oferta.getNumOferta());
 				
 				Filter filtroCompradorExpediente = genericDao.createFilter(FilterType.EQUALS ,"expediente", expediente.getId());
-				compradorExpediente = genericDao.get(CompradorExpediente.class, filtroCompradorExpediente);
+				Filter filtroCompradorExpedientePrincipal = genericDao.createFilter(FilterType.EQUALS ,"titularContratacion", 1);
+				Filter filtroCompradorExpedienteBorrado = genericDao.createFilter(FilterType.EQUALS ,"auditoria.borrado", 0);
+				List<CompradorExpediente> listaCompradores = genericDao.getList(CompradorExpediente.class, 
+															filtroCompradorExpediente, filtroCompradorExpedientePrincipal, filtroCompradorExpedienteBorrado);
+				if(listaCompradores == null || listaCompradores.size() == 0) {
+					throw new UserException("Expediente sin comprador principal.");
+				}
+				if(listaCompradores.size() > 1) {
+					throw new UserException("Expediente con más de 1 comprador principal.");
+				}
+				compradorExpediente = listaCompradores.get(0);
 				
 				if(compradorExpediente != null) {
 					Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS ,"id", compradorExpediente.getComprador());

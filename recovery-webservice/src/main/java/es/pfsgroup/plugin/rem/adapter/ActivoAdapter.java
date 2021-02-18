@@ -1793,6 +1793,7 @@ public class ActivoAdapter {
 					if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(activo.getCartera().getCodigo())
 							&& CODIGO_TRAMITE_T017.equals(tramite.getCodigoTipoTramite())) {
 						beanUtilNotNull.copyProperty(dtoTramite, "nombre", T017_TRAMITE_BBVA_DESCRIPCION);
+						beanUtilNotNull.copyProperty(dtoTramite, "tipoTramite", T017_TRAMITE_BBVA_DESCRIPCION);
 					}
 
 				} catch (IllegalAccessException e) {

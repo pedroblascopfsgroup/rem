@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -306,6 +307,16 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name = "OFR_OFERTA_ESPECIAL")
     private Boolean ofertaEspecial;
+	
+	@Column(name = "OFR_VENTA_CARTERA")
+    private Boolean ventaCartera;
+    
+	@Column(name = "OFR_VENTA_SOBRE_PLANO")
+    private Boolean ventaSobrePlano;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_ROP_ID")
+    private DDRiesgoOperacion riesgoOperacion;
 	
 	@Column(name = "ID_OFERTA_ORIGEN")
     private Long idOfertaOrigen;
@@ -979,4 +990,33 @@ public class Oferta implements Serializable, Auditable {
 	public void setOfrFechaRecomendacionDc(Date ofrFechaRecomendacionDc) {
 		this.ofrFechaRecomendacionDc = ofrFechaRecomendacionDc;
 	}
+
+	public Boolean getVentaCartera() {
+		return ventaCartera;
+	}
+
+	public void setVentaCartera(Boolean ventaCartera) {
+		this.ventaCartera = ventaCartera;
+	}
+
+	public DDRiesgoOperacion getRiesgoOperacion() {
+		return riesgoOperacion;
+	}
+
+	public void setRiesgoOperacion(DDRiesgoOperacion riesgoOperacion) {
+		this.riesgoOperacion = riesgoOperacion;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public Boolean getVentaSobrePlano() {
+		return ventaSobrePlano;
+	}
+
+	public void setVentaSobrePlano(Boolean ventaSobrePlano) {
+		this.ventaSobrePlano = ventaSobrePlano;
+	}
+	
 }

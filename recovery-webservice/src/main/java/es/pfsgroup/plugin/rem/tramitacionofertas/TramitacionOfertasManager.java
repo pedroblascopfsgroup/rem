@@ -101,6 +101,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -261,6 +262,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		// expediente comercial
 
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
+			oferta = anyadirCamposOferta(oferta, dto);
 			trabajo = doAceptaOferta(oferta, activo);
 			esAcepta = trabajo != null;
 		}
@@ -2060,6 +2062,24 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 		
 		genericDao.save(ActivosAlquilados.class, activoAlquilado);
+	}
+	
+
+
+	private Oferta anyadirCamposOferta(Oferta oferta, DtoOfertaActivo dto) {
+		
+		oferta.setOfertaEspecial(dto.getOfertaEspecial());
+		oferta.setVentaCartera(dto.getVentaCartera());
+		oferta.setVentaSobrePlano(dto.getVentaSobrePlano());
+		
+		if(dto.getCodRiesgoOperacion() != null){
+			DDRiesgoOperacion riesgoOperacion = genericDao.get(DDRiesgoOperacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodRiesgoOperacion()));
+			if(riesgoOperacion != null) {
+				oferta.setRiesgoOperacion(riesgoOperacion);
+			}
+		}
+		
+		return oferta;
 	}
 
 }

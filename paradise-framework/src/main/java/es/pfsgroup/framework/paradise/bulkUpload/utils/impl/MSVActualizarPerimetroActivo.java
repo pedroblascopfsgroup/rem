@@ -87,7 +87,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final String VALID_ESTADO_EXPEDIENTE="msg.error.masivo.actializar.perimetro.activo.estado.expediente";
 
 	public static final String VALID_PERIMETRO_ESTA_HAYA = "msg.error.masivo.actualizar.perimetro.activo.ya.esta.haya";
-
+	public static final String VALID_GESTION_COMERCIAL_ALQUILADO = "msg.error.masivo.actializar.perimetro.activo.situacion.comercial.alquilado.visibilidad.gestion";
 
 	//Posición de los datos
 	private	static final int DATOS_PRIMERA_FILA = 1;
@@ -129,6 +129,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
     
     private static final String[] listaValidos = { "S", "N", "SI", "NO" };
     private static final String[] listaValidosPositivos = { "S", "SI" };
+    private static final String COD_NO_EXCLUIR_VALIDACIONES ="2";
+    private static final String COD_EXCLUIR_VALIDACIONES ="1";
 
     protected final Log logger = LogFactory.getLog(getClass());
     
@@ -223,6 +225,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(messageServices.getMessage(VALID_MACC_CON_CARGAS), maccConCargas(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_ESTADO_EXPEDIENTE), estadoExpedienteComercial(exc));
 				mapaErrores.put(messageServices.getMessage(ADMISION_ERROR), isBooleanValidator(exc, COL_NUM_ADMISION));
+				mapaErrores.put(messageServices.getMessage(VALID_GESTION_COMERCIAL_ALQUILADO), visibilidadGestionComercialAlquilado(exc));
 				
 
 
@@ -1415,6 +1418,37 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 							if(particularValidator.estadoExpedienteComercial(activo)) {
 								listaFilas.add(i);	
 							}
+						}
+					}
+					
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+		
+	}
+	
+	private List<Integer> visibilidadGestionComercialAlquilado(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
+					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
+					String celdaCheckVisibilidadGestion = exc.dameCelda(i, COL_NUM_VISIBLE_GESTION_COMERCIAL_SN);
+					if((Checks.esNulo(celdaExcluirValidaciones) || COD_NO_EXCLUIR_VALIDACIONES.equals(celdaExcluirValidaciones)) && !Checks.esNulo(celdaCheckVisibilidadGestion)) {
+						if(particularValidator.situacionComercialAlquilado(activo)) {
+							listaFilas.add(i);	
 						}
 					}
 					

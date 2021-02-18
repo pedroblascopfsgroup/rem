@@ -6837,5 +6837,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado); 
 	}
 
+	@Override
+	public Boolean situacionComercialAlquilado(String activo) {
+		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_ACTIVO a "
+				+ "JOIN DD_SCM_SITUACION_COMERCIAL scm ON a.DD_SCM_ID = scm.DD_SCM_ID AND "
+				+ "a.ACT_NUM_ACTIVO = '"+ activo +"' and scm.DD_SCM_CODIGO = '10' and scm.borrado = 0 ");
 
+		return "1".equals(resultado);
+	}
+	
 }

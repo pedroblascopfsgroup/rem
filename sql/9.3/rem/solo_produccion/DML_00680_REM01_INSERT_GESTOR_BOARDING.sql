@@ -52,28 +52,18 @@ DECLARE
             T_TIPO_DATA('7007637'),
             T_TIPO_DATA('7007691'),
             T_TIPO_DATA('7008159'),
-            T_TIPO_DATA('7008159'),
             T_TIPO_DATA('7013257'),
-            T_TIPO_DATA('7013257'),
-            T_TIPO_DATA('7013258'),
-            T_TIPO_DATA('7013258'),
-            T_TIPO_DATA('7013259'),
+            T_TIPO_DATA('7013258'),            
             T_TIPO_DATA('7013259'),
             T_TIPO_DATA('7013263'),
-            T_TIPO_DATA('7013263'),
-            T_TIPO_DATA('7008105'),
-            T_TIPO_DATA('7008186'),
-            T_TIPO_DATA('7008186'),
+            T_TIPO_DATA('7008105'),            
+            T_TIPO_DATA('7008186'),            
             T_TIPO_DATA('7013273'),
-            T_TIPO_DATA('7013273'),
-            T_TIPO_DATA('7007937'),
             T_TIPO_DATA('7007937'),
             T_TIPO_DATA('7008139'),
             T_TIPO_DATA('7013254'),
-            T_TIPO_DATA('7013254'),
             T_TIPO_DATA('90298543'),
             T_TIPO_DATA('7009326'),
-            T_TIPO_DATA('7010549'),
             T_TIPO_DATA('7010549'),
             T_TIPO_DATA('7008133'),
             T_TIPO_DATA('90299418')
@@ -146,7 +136,7 @@ BEGIN
                             EXECUTE IMMEDIATE 'SELECT '||V_ESQUEMA||'.S_GEH_GESTOR_ENTIDAD_HIST.NEXTVAL FROM DUAL' INTO V_GEH_ID;
 
                             V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST (GEH_ID, USU_ID, DD_TGE_ID, GEH_FECHA_DESDE, USUARIOCREAR, FECHACREAR) VALUES
-                                    ('||V_GEH_ID||', '||V_ID_USU||', '||V_ID_TGE||', TO_DATE(SYSDATE,''DD/MM/YYYY''), '''||V_USUARIO||''', SYSDATE)';
+                                    ('||V_GEH_ID||', '||V_ID_USU||', '||V_ID_TGE||', TO_DATE(SYSDATE,''DD/MM/RRRR''), '''||V_USUARIO||''', SYSDATE)';
                             EXECUTE IMMEDIATE V_MSQL;
 
             --INSERTAMOS GCH

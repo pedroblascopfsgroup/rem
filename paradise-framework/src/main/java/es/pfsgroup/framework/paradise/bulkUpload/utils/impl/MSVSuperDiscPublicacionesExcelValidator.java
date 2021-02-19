@@ -2,6 +2,7 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,8 +20,14 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
@@ -50,7 +57,8 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 	private static final String VALORES_NO_VALIDOS_OTROS_MOTIVOS = "msg.error.masivo.disclaimer.motivo.otros";
 	private static final String VALORES_ACTIVO_INTEGRADO_NO_VALIDO = "msg.error.masivo.disclaimer.activo.integrado";
 	private static final String VALOR_CAMPO_ESTADO_NO_VALIDO = "msg.error.masivo.disclaimer.estado";
-	private static final String VALOR_CAMPO_ESTADO_NO_INTEGRADO_NO_VALIDO = "msg.error.masivo.disclaimer.estado.sino.inscrito";	
+	private static final String VALOR_CAMPO_ESTADO_NO_INTEGRADO_NO_VALIDO = "msg.error.masivo.disclaimer.estado.sino.inscrito";
+	private static final String NO_ES_USUARIO_VALIDO = "Activo gestionado por Seguridad REAM";
 	
 	private	static final int FILA_CABECERA = 0;
 	private	static final int DATOS_PRIMERA_FILA = 1;
@@ -89,6 +97,9 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 	@Autowired
 	private MSVBusinessValidationFactory validationFactory;
 	
+	@Autowired
+	private GenericABMDao genericDao;
+	
 	private Integer numFilasHoja;	
 	
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -119,6 +130,7 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), isActiveNotExistsRows(exc));
+			mapaErrores.put(NO_ES_USUARIO_VALIDO, isActivoGestionadoReam(exc));
 			mapaErrores.put(messageServices.getMessage(ESTADO_ACTIVO_INVALIDO), perteneceDDEstadoActivo(exc));
 			mapaErrores.put(messageServices.getMessage(VALORES_NO_VALIDOS_OCUPADO), isOcupadoValorSiNo(exc));
 			mapaErrores.put(messageServices.getMessage(VALORES_NO_VALIDOS_CON_TITULO), isConTitulo(exc));
@@ -581,6 +593,53 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 			}
 		}
 		return listaFilas;
+	}
+	
+	private List<Integer> isActivoGestionadoReam(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(!Checks.esNulo(exc.dameCelda(i, COL_ACTIVO)) && (!Checks.esNulo(exc.dameCelda(i, COL_OCUPADO))
+						|| !Checks.esNulo(exc.dameCelda(i, COL_CON_TITULO))) && particularValidator.isActivoGestionadoReam(exc.dameCelda(i, COL_ACTIVO))) {
+						if (!isSuperSeguridadReam()) {
+							listaFilas.add(i);
+						}
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private boolean isSuperSeguridadReam() {
+		final String USUARIOSEGURIDADREAM = "SEGURIDAD_REAM";
+		final String USUARIOSUPER = "HAYASUPER";
+		Perfil perfilSeguridadReam = genericDao.get(Perfil.class, genericDao.createFilter(FilterType.EQUALS, "codigo", USUARIOSEGURIDADREAM));
+		Perfil perfilSuper = genericDao.get(Perfil.class, genericDao.createFilter(FilterType.EQUALS, "codigo", USUARIOSUPER));
+		
+		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		
+		ZonaUsuarioPerfil usuarioSeguridadReam  = genericDao.get(ZonaUsuarioPerfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario", usu),
+				genericDao.createFilter(FilterType.EQUALS, "perfil", perfilSeguridadReam),
+				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		ZonaUsuarioPerfil usuarioSuper = genericDao.get(ZonaUsuarioPerfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario", usu),
+				genericDao.createFilter(FilterType.EQUALS, "perfil", perfilSuper),
+				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+
+		return usuarioSuper != null || usuarioSeguridadReam != null;
 	}
 	
 	private File recogerPlantilla(Long idTipoOperacion)  {

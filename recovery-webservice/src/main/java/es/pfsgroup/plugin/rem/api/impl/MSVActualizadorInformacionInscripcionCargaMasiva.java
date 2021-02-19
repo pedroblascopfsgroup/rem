@@ -6,6 +6,8 @@ import java.util.Date;
 
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,7 +174,8 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 			transactionManager.commit(transaction);
 
 			if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
-				recoveryComunicacionManager.datosCliente(activo, new ModelMap());
+				Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo, new ModelMap()));
+				llamadaAsincrona.start();
 			}
 		}
 		return new ResultadoProcesarFila();

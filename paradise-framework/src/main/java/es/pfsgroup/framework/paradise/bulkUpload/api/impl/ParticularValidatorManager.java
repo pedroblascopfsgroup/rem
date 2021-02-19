@@ -6838,12 +6838,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	@Override
-	public Boolean situacionComercialAlquilado(String activo) {
+	public Boolean situacionComercialPublicadoAlquiler(String activo) {
 		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_ACTIVO a "
-				+ "JOIN DD_SCM_SITUACION_COMERCIAL scm ON a.DD_SCM_ID = scm.DD_SCM_ID AND "
-				+ "a.ACT_NUM_ACTIVO = '"+ activo +"' and scm.DD_SCM_CODIGO = '10' and scm.borrado = 0 ");
+				+ "JOIN act_apu_activo_publicacion apu ON a.act_id = apu.act_id AND apu.borrado = 0 "
+				+ "JOIN dd_epa_estado_pub_alquiler epa ON apu.DD_EPA_ID = epa.DD_EPA_ID AND epa.borrado = 0 "
+				+ "WHERE a.ACT_NUM_ACTIVO = '"+ activo +"' AND epa.DD_EPA_CODIGO = '03' AND a.borrado = 0 ");
 
 
 		return "1".equals(resultado);

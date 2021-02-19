@@ -1451,7 +1451,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
 					String celdaCheckVisibilidadGestion = exc.dameCelda(i, COL_NUM_VISIBLE_GESTION_COMERCIAL_SN);
 					if((Checks.esNulo(celdaExcluirValidaciones) || COD_NO_EXCLUIR_VALIDACIONES.equals(celdaExcluirValidaciones)) && !Checks.esNulo(celdaCheckVisibilidadGestion)) {
-						if(particularValidator.situacionComercialAlquilado(activo)) {
+						if(!particularValidator.situacionComercialPublicadoAlquiler(activo)) {
 							listaFilas.add(i);	
 						}
 					}

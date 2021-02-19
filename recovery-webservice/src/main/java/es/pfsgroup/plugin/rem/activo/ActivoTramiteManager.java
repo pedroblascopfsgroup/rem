@@ -21,12 +21,14 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gencat.GencatManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
@@ -44,6 +46,7 @@ import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 public class ActivoTramiteManager implements ActivoTramiteApi{
 
 	private static final String MOTIVO_INCORRECCION = "motivoIncorreccion";
+	private static final String REST_USER_USERNAME = "REST-USER";
 	
 	@Resource
     MessageService messageServices;
@@ -92,6 +95,9 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private GenericAdapter adapter;
     
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -254,6 +260,13 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		
 		// Si no le pasamos el codigo de DocAdjunto, va a buscar el tipo de documento que corresponde
 		// por cada subtipo de trabajo
+		
+		Usuario usuario = adapter.getUsuarioLogado();
+		
+		if (REST_USER_USERNAME.equals(usuario.getUsername())) {
+			return true;
+		}
+		
 		if (("A".equals(uGestion) || "T".equals(uGestion)) && Checks.esNulo(codigoDocAdjunto)){
 			codigoDocAdjunto = diccionarioTargetClassMap.getTipoDocumento(trabajoApi.getTrabajoByTareaExterna(tareaExterna).getSubtipoTrabajo().getCodigo());
 		}

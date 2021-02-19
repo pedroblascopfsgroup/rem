@@ -5954,7 +5954,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							historicoOfertas.setFechaSancion(dateFormat.format(expComercial.getFechaSancion()));
 						}
 						
-						historicoOfertas.setOfertante(ofertaActivo.getCliente().getNombreCompleto());
+						if(ofertaActivo.getCliente() != null) {
+							historicoOfertas.setOfertante(ofertaActivo.getCliente().getNombreCompleto());
+						}
 						
 						if(!Checks.esNulo(ofertaActivo.getEstadoOferta())) {
 							historicoOfertas.setEstado(ofertaActivo.getEstadoOferta().getDescripcion());
@@ -6010,7 +6012,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						historicoOfertas.setFechaSancion(dateFormat.format(expComercial.getFechaSancion()));
 					}
 					
-					historicoOfertas.setOfertante(ofertaActivo.getCliente().getNombreCompleto());
+					if(ofertaActivo.getCliente() != null) {
+						historicoOfertas.setOfertante(ofertaActivo.getCliente().getNombreCompleto());
+					}
 					
 					if(!Checks.esNulo(ofertaActivo.getEstadoOferta())) {
 						historicoOfertas.setEstado(ofertaActivo.getEstadoOferta().getDescripcion());

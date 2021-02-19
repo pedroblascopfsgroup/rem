@@ -1233,6 +1233,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		btnNuevaPeticionTrabajoOculto: function(get) {
 			var isIncluidoEnPerimetro = get('activo.incluidoEnPerimetro');
 			return (isIncluidoEnPerimetro == false || $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']));
+		},
+		
+		importeComunidadMensualSarebEditable: function(get) {
+			var me = this; 
+			var esUA = false;
+			if(me.get('activo.unidadAlquilable') != undefined){
+				esUA = me.get('activo.unidadAlquilable');
+			}
+			
+			return esUA === false && $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
 		}
     },
     

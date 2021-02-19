@@ -20,6 +20,7 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private String observacionesAutoTram;
 	private String direccionComercial;
 	private Boolean ventaSobrePlano;
+	private Double importeComunidadMensualSareb;
 
 
 
@@ -126,5 +127,15 @@ public class DtoComercialActivo extends DtoTabActivo{
 	public void setVentaSobrePlano(Boolean ventaSobrePlano) {
 		this.ventaSobrePlano = ventaSobrePlano;
 	}
+
+	public Double getImporteComunidadMensualSareb() {
+		return importeComunidadMensualSareb;
+	}
+
+	public void setImporteComunidadMensualSareb(Double importeComunidadMensualSareb) {
+		this.importeComunidadMensualSareb = importeComunidadMensualSareb;
+	}
+	
+	
 
 }

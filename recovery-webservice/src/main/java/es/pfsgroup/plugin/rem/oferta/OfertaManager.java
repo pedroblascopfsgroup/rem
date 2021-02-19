@@ -4980,7 +4980,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				Filter filtroCompradorExpediente = genericDao.createFilter(FilterType.EQUALS ,"expediente", expediente.getId());
 				Filter filtroCompradorExpedientePrincipal = genericDao.createFilter(FilterType.EQUALS ,"titularContratacion", 1);
-				Filter filtroCompradorExpedienteBorrado = genericDao.createFilter(FilterType.EQUALS ,"auditoria.borrado", 0);
+				Filter filtroCompradorExpedienteBorrado = genericDao.createFilter(FilterType.EQUALS ,"auditoria.borrado", false);
 				List<CompradorExpediente> listaCompradores = genericDao.getList(CompradorExpediente.class, 
 															filtroCompradorExpediente, filtroCompradorExpedientePrincipal, filtroCompradorExpedienteBorrado);
 				if(listaCompradores == null || listaCompradores.size() == 0) {

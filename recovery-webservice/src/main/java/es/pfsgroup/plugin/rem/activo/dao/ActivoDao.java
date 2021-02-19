@@ -391,4 +391,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	boolean activocheckGestion(Long idActivo);
 
+	boolean perteneceActivoREAM(Long idActivo);
+
 }

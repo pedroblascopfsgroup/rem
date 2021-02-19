@@ -742,9 +742,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 		esTipoEstadoAlquilerAlquilado: function(get){
 			var estadoAlquilerCodigo = get('situacionPosesoria.tipoEstadoAlquiler');
-			
-			return CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo 
+			var estadoReam = get('situacionPosesoria.perteneceActivoREAM');
+			if(estadoReam == true){
+				if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SEGURIDAD_REAM'])){
+					return false;
+				}
+				return true; 
+			}else{
+				return CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo
 				|| !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
+			}
+			
 		},
 		
 		disabledComboConTituloTPA: function(get){

@@ -97,7 +97,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	
 	
 	public DtoActivoSituacionPosesoria getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
-
+		
 		DtoActivoSituacionPosesoria activoDto = new DtoActivoSituacionPosesoria();
 		if (activo != null){
 			BeanUtils.copyProperty(activoDto, "necesarias", activo.getLlavesNecesarias());
@@ -200,6 +200,10 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		
 		if(activo.getSituacionPosesoria().getSpsPosesionNeg() != null)
 			activoDto.setPosesionNegociada(activo.getSituacionPosesoria().getSpsPosesionNeg() ? "1" : "0");
+		
+		if (activo != null && activo.getId() != null ) {
+			activoDto.setPerteneceActivoREAM(activoDao.perteneceActivoREAM(activo.getId()));
+		}
 	
 		return activoDto;
 		

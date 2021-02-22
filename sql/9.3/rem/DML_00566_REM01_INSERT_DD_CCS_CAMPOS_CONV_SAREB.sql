@@ -30,12 +30,12 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	  V_ID NUMBER(16); -- Vble. auxiliar para almacenar temporalmente el numero de la sequencia.
-	  V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_CCS_CAMPOS_CONV_SAREB'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+	  V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_COS_CAMPOS_ORIGEN_CONV_SAREB'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      T_TIPO_DATA('142','Importe Comunidad Mensual SAREB','ACT_SAREB_ACTIVOS','IMP_COM_MENSUAL','ACT_ID')
+      T_TIPO_DATA('132','Importe Comunidad Mensual SAREB','ACT_SAREB_ACTIVOS','IMP_COM_MENSUAL','ACT_ID')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

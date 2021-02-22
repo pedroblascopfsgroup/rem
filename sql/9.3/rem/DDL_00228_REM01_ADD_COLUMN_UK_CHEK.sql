@@ -1,13 +1,13 @@
 --/*
 --######################################### 
 --## AUTOR=Sento Visiedo Rubio
---## FECHA_CREACION=20210219
+--## FECHA_CREACION=20210222
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13133
 --## PRODUCTO=NO
 --## 
---## Finalidad: Añadircolumnas y UK a tablas de gastos
+--## Finalidad: Añadircolumnas y UK a cfm_configuracion_ream
 --##            
 --## INSTRUCCIONES:  
 --## VERSIONES:

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=202102017
+--## AUTOR= Sento Visiedo Rubio
+--## FECHA_CREACION=20210222
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13133
@@ -87,8 +87,8 @@ BEGIN
 
         -- Creamos foreign key
         V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD CONSTRAINT CFM_PRO_ID_FK 
-        FOREIGN KEY (ACT_PRO_PROPIETARIO)
-        REFERENCES '||V_ESQUEMA_M||'.ACT_PRO_PROPIETARIO (PRO_ID)';
+        FOREIGN KEY (PRO_ID)
+        REFERENCES '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO (PRO_ID)';
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('[INFO] CFM_PRO_ID_FK ... FK creada.');
 
@@ -121,9 +121,9 @@ BEGIN
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_SCR_ID creado.');
 
-        V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.HOT_DD_TPA_ID IS ''HOT_DD_TPA_ID''';
+        V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.PRO_ID IS ''FK a ACT_PRO_ID''';
         EXECUTE IMMEDIATE V_MSQL;
-        DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna HOT_DD_TPA_ID creado.');
+        DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna ACT_PRO_ID creado.');
 
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.CFM_CARTERA_MAC IS ''Campo para Cartera MAC''';
         EXECUTE IMMEDIATE V_MSQL;

@@ -71,8 +71,40 @@ Ext.define('HreRem.view.ViewportController', {
                 Ext.resumeLayouts(true);
             }
         }
-
-        menuPrincipal.setSelection(node);
+		if(node != null){
+			menuPrincipal.lastNode = node;
+	        menuPrincipal.setSelection(node);
+	        var totalP = store.getRootNode().childNodes.length;
+			var botonTareas = me.getView().down("[reference=contadorTareas]");
+			var botonAlertas = me.getView().down("[reference=contadorAlertas]");
+			var botonAvisos = me.getView().down("[reference=contadorAvisos]");
+			var botonFav = me.getView().down("[reference=btnFavoritos]");
+			if(node.get("routeId") == "masivo"){
+				for(var i=0; i<totalP; i++){
+					if(store.getRootNode().childNodes[i].get("routeId") != "masivo"){
+						var element = menuPrincipal.getViewModel().getView().getItem(store.getAt(i)).getToolElement();
+						element.setVisibilityMode(Ext.dom.Element.DISPLAY);
+						element.setVisible(false);
+					}
+				}
+				if(!Ext.isEmpty(botonTareas)) botonTareas.hide();
+				if(!Ext.isEmpty(botonAlertas)) botonAlertas.hide();
+				if(!Ext.isEmpty(botonAvisos)) botonAvisos.hide();
+				if(!Ext.isEmpty(botonFav)) botonFav.hide();
+			}else {
+				for(var i=0; i<totalP; i++){
+					if(store.getRootNode().childNodes[i].get("routeId") != "masivo"){
+						var element = menuPrincipal.getViewModel().getView().getItem(store.getAt(i)).getToolElement();
+						element.setVisibilityMode(Ext.dom.Element.DISPLAY);
+						element.setVisible(true);
+					}					
+				}
+				if(!Ext.isEmpty(botonTareas)) botonTareas.show();
+				if(!Ext.isEmpty(botonAlertas)) botonAlertas.show();
+				if(!Ext.isEmpty(botonAvisos)) botonAvisos.show();
+				if(!Ext.isEmpty(botonFav)) botonFav.show();
+			}
+		}
 
         if (newView.isFocusable(true)) {
             newView.focus();
@@ -146,14 +178,14 @@ Ext.define('HreRem.view.ViewportController', {
     	
     	var me = this,    	
     	item = tree.getItem(node);  
-    	
         if (node && node.get('view')) {
 			if(node.get("routeId") == "masivo"){
-				me.fireEvent("errorToast", "Para ir a \"Carga Masiva\" utilize el panel de Haya!");
+				if(tree.lastNode != null && tree.lastNode.get("routeId") != "masivo")
+					me.fireEvent("errorToast", "Para ir a \"Carga Masiva\" utilice el panel de Haya!");
+				tree.setSelection(tree.lastNode);
 			}else{
 				this.redirectTo( node.get("routeId"));
 			}
-           
         }
 
     },

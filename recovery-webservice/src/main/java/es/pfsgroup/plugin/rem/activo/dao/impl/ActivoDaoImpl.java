@@ -52,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -79,6 +80,7 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPlusvalia;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -2140,5 +2142,69 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		Order order = new Order(OrderType.ASC,"fechaInicio");
 		return genericDao.getListOrdered(ActivoHistoricoValoraciones.class, order, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivoAndTipoPrecio(Long idActivo, String codigoTipoPrecio) {
+		
+		Order order = new Order(OrderType.ASC,"fechaInicio");
+		Filter tipo = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", codigoTipoPrecio);
+		Filter activo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		return genericDao.getListOrdered(ActivoHistoricoValoraciones.class, order, activo, tipo);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoValoraciones> getListActivoValoracionesByIdActivoAndTipoPrecio(Long idActivo, String codigoTipoPrecio) {
+		
+		Order order = new Order(OrderType.DESC,"id");
+		Filter tipo = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", codigoTipoPrecio);
+		Filter activo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		return genericDao.getListOrdered(ActivoValoraciones.class, order, activo, tipo);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean isPublicadoVentaHistoricoByFechaValoracion(Long idActivo, Date fechaValoracion) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String fecha = formatter.format(fechaValoracion);
+		
+		HQLBuilder hb = new HQLBuilder("select estadoPublicacionVenta.id from ActivoPublicacionHistorico ");
+		hb.appendWhere("TO_DATE('"+ fecha +"', 'DD/MM/YYYY') between fechaInicioVenta and fechaFinVenta");
+		hb.appendWhere("activo = " + idActivo );
+	
+		List<String> estadoPublicacionList = this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		if(estadoPublicacionList != null && !estadoPublicacionList.isEmpty()) {
+			DDEstadoPublicacionVenta estadoPublicacion = genericDao.get(DDEstadoPublicacionVenta.class, genericDao.createFilter(FilterType.EQUALS, "id", estadoPublicacionList.get(0)));
+			if(estadoPublicacion != null) {
+				return !DDEstadoPublicacionVenta.isNoPublicado(estadoPublicacion.getCodigo());
+			}
+		}
+		
+		return false;
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean isPublicadoVentaByFechaValoracion(Long idActivo, Date fechaValoracion) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String fecha = formatter.format(fechaValoracion);
+		
+		HQLBuilder hb = new HQLBuilder("select estadoPublicacionVenta.id from ActivoPublicacion ");
+		hb.appendWhere("fechaInicioVenta <= TO_DATE('"+ fecha +"', 'DD/MM/YYYY')");
+		hb.appendWhere("activo = " + idActivo );
+	
+		List<String> estadoPublicacionList = this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		if(estadoPublicacionList != null && !estadoPublicacionList.isEmpty()) {
+			DDEstadoPublicacionVenta estadoPublicacion = genericDao.get(DDEstadoPublicacionVenta.class, genericDao.createFilter(FilterType.EQUALS, "id", estadoPublicacionList.get(0)));
+			if(estadoPublicacion != null) {
+				return !DDEstadoPublicacionVenta.isNoPublicado(estadoPublicacion.getCodigo());
+			}
+		}
+		
+		return false;
+		
 	}
 }

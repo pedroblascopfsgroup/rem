@@ -400,7 +400,19 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 		Page page = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
 		List<VGastosProvision> gastos = (List<VGastosProvision>) page.getResults();
-
+		dtoGastosFilter.setLimit(100000);
+		Page pageGastosAll = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
+		List<VGastosProvision> gastosAll = (List<VGastosProvision>) pageGastosAll.getResults();
+		Double importeTotalAgrupacion = new Double(0);
+		for (VGastosProvision gasto : gastosAll) {
+			if (gasto.getImporteTotal() != null && gasto.getEstadoGastoCodigo() != null
+					&& gasto.getEstadoGastoCodigo().equals(DDEstadoGasto.AUTORIZADO_ADMINISTRACION)) {
+				importeTotalAgrupacion += gasto.getImporteTotal();
+			}
+		}
+		for (VGastosProvision gasto : gastos) {
+			gasto.setImporteTotalAgrupacion(importeTotalAgrupacion);
+		}
 		return new DtoPage(gastos, page.getTotalCount());
 	}
 

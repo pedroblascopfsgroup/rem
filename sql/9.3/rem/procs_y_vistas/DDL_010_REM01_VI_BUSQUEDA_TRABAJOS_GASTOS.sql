@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20201222
+--## FECHA_CREACION=20210211
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-12580
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--## 		0.2 Añadir condición - REMVIP-8892
 --#########################################
 --*/
 
@@ -66,6 +67,7 @@ BEGIN
 			INNER JOIN ' || V_ESQUEMA || '.dd_est_estado_trabajo est 				ON (tbj.dd_est_id = est.dd_est_id AND est.borrado=0)
 			INNER JOIN ' || V_ESQUEMA || '.dd_ttr_tipo_trabajo ttr 					ON (ttr.dd_ttr_id = tbj.dd_ttr_id AND ttr.borrado = 0 AND ttr.dd_ttr_filtrar IS NULL)
 			INNER JOIN ' || V_ESQUEMA || '.dd_str_subtipo_trabajo str 				ON (str.dd_str_id = tbj.dd_str_id AND str.borrado = 0)
+			LEFT  JOIN ' || V_ESQUEMA || '.dd_ire_identificador_ream ire 			ON (ire.dd_ire_id = tbj.dd_ire_id AND ire.borrado = 0)
           WHERE tbj.borrado = 0
           	and (
                 (NVL(TBJ.TBJ_IMPORTE_TOTAL, 0) <> 0
@@ -92,8 +94,9 @@ BEGIN
                 )
             )
           	and est.dd_est_codigo in (''05'',''13'')
+			and (ire.dd_ire_codigo = ''04'' or tbj.dd_ire_id is null)
        	  AND NOT EXISTS (
-           	SELECT 1
+           	SELECT 1 
            	FROM ' || V_ESQUEMA || '.gpv_gastos_proveedor gpv
           	INNER JOIN ' || V_ESQUEMA || '.gld_gastos_linea_detalle gld ON gld.gpv_id = gpv.gpv_id AND gld.borrado = 0
            	INNER JOIN ' || V_ESQUEMA || '.gld_tbj gtb ON gtb.gld_id = gld.gld_id AND gtb.borrado = 0

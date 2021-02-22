@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.activo.dao;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
@@ -18,6 +19,7 @@ import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -389,4 +391,12 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivo(Long idActivo);
 
 	boolean activocheckGestion(Long idActivo);
+
+	List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivoAndTipoPrecio(Long idActivo,String codigoTipoPrecio);
+
+	List<ActivoValoraciones> getListActivoValoracionesByIdActivoAndTipoPrecio(Long idActivo, String codigoTipoPrecio);
+
+	boolean isPublicadoVentaHistoricoByFechaValoracion(Long idActivo, Date fechaValoracion);
+
+	boolean isPublicadoVentaByFechaValoracion(Long idActivo, Date fechaValoracion);
 }

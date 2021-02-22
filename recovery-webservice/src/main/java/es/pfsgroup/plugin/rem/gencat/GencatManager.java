@@ -1832,6 +1832,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		nuevaOferta.setCanalPrescripcion(oferta.getCanalPrescripcion());
 		nuevaOferta.setPrescriptor(oferta.getPrescriptor());
 		nuevaOferta.setImporteOferta(oferta.getImporteOferta());
+		nuevaOferta.setOfrDocRespPrescriptor(oferta.getOfrDocRespPrescriptor());
 		// Activo/s
 		List<ActivoOferta> listaActOfr = ofertaApi.buildListaActivoOferta(cmg.getActivo(), null, nuevaOferta); 
 		Long idActivo = cmg.getActivo().getId();

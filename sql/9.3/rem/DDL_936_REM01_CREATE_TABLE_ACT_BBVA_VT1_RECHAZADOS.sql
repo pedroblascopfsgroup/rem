@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Dean Ibañez VIño
---## FECHA_CREACION=20200908
+--## FECHA_CREACION=20210215
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10918
@@ -46,7 +46,42 @@ BEGIN
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
 	IF V_NUM_TABLAS = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Ya existe.');
+	
+		V_MSQL := 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA||'';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||' borrada.');
+		
+		 -- Creamos la tabla
+            DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TABLA||'...');
+            V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TABLA||'
+            (
+                ACT_NUM_ACTIVO               NUMBER(16,0)
+                ,FECHA_PROCESADO             TIMESTAMP (6)
+                ,OPERACION                   VARCHAR2(1 CHAR)
+                ,COD_ERROR                   VARCHAR2(6 CHAR)
+                ,DESC_ERROR                  VARCHAR2(200 CHAR)
+            )
+            ';
+            EXECUTE IMMEDIATE V_MSQL;
+            DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... Tabla creada.');
+
+            -- Creamos comentario
+            V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TABLA||' IS ''Tabla ACT_BBVA_VT1_RECHAZADOS.''';
+		    EXECUTE IMMEDIATE V_MSQL;	
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.ACT_NUM_ACTIVO IS ''Identificador del activo''';
+            EXECUTE IMMEDIATE V_SQL;
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.FECHA_PROCESADO IS ''Fecha del procesado del ETL''';
+            EXECUTE IMMEDIATE V_SQL;
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.OPERACION IS ''A = Alta, M = Modificación, V = Venta ''';
+            EXECUTE IMMEDIATE V_SQL;
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.COD_ERROR IS ''Código de error de las validaciones VT1''';
+            EXECUTE IMMEDIATE V_SQL;
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.DESC_ERROR IS ''Descripción de error de las validaciones VT1''';
+            EXECUTE IMMEDIATE V_SQL;
+
+            DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... Comentarios creados.');
+            
+            DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... OK');
 		
     ELSE
             -- Creamos la tabla
@@ -55,9 +90,9 @@ BEGIN
             (
                 ACT_NUM_ACTIVO               NUMBER(16,0)
                 ,FECHA_PROCESADO             TIMESTAMP (6)
-                ,OPERACION                   VARCHAR(1)
-                ,COD_ERROR                   VARCHAR(6)
-                ,DESC_ERROR                  VARCHAR(200)
+                ,OPERACION                   VARCHAR2(1 CHAR)
+                ,COD_ERROR                   VARCHAR2(6 CHAR)
+                ,DESC_ERROR                  VARCHAR2(200 CHAR)
             )
             ';
             EXECUTE IMMEDIATE V_MSQL;

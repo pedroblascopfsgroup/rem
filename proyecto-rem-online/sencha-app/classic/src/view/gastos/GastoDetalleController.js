@@ -930,7 +930,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	            } else if (!Ext.isEmpty(data) && data.success == "false"){		            		
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	            }
-				me.getView().unmask();	
 	    	},
 			failure: function (a, operation) {
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
@@ -943,7 +942,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var me = this;
 		
 		var success = function(record, operation) {
-			me.getView().unmask();
 	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	    	window.parent.funcionRecargar();
 	    	var data = {};
@@ -956,6 +954,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
             
 	    	window.parent.up('administraciongastosmain').fireEvent('abrirDetalleGasto', record);
 	    	
+			me.getView().unmask();
 	    	window.destroy();  	
 		};
 		
@@ -2144,54 +2143,56 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var me=this;
     	var importeTotal = 0;
 
-    	var baseSujeta = formulario.findField('baseSujeta').getValue();
-    	var baseNoSujeta = formulario.findField('baseNoSujeta').getValue();
-		var recargo = formulario.findField('recargo').getValue();
-		var interes = formulario.findField('interes').getValue();
-		var costas = formulario.findField('costas').getValue();
-		var otros = formulario.findField('otros').getValue();
-		var provSupl = formulario.findField('provSupl').getValue();
-		var cuota = formulario.findField('cuota').getValue();
-		var operacionExentaImp = formulario.findField('operacionExentaImp').getValue();
-		var operacionExentaRenuncia = formulario.findField('esRenunciaExenta').getValue();
+    	var baseSujeta = formulario.findField('baseSujeta').getValue()==null?0:formulario.findField('baseSujeta').getValue();
+    	var baseNoSujeta = formulario.findField('baseNoSujeta').getValue()==null?0:formulario.findField('baseNoSujeta').getValue();
+		var recargo = formulario.findField('recargo').getValue()==null?0:formulario.findField('recargo').getValue();
+		var interes = formulario.findField('interes').getValue()==null?0:formulario.findField('interes').getValue();
+		var costas = formulario.findField('costas').getValue()==null?0:formulario.findField('costas').getValue();
+		var otros = formulario.findField('otros').getValue()==null?0:formulario.findField('otros').getValue();
+		var provSupl = formulario.findField('provSupl').getValue()==null?0:formulario.findField('provSupl').getValue();
+		var tipoImpositivo = formulario.findField('tipoImpositivo').getValue()==null?0:formulario.findField('tipoImpositivo').getValue();
+		var cuota = baseSujeta*tipoImpositivo/100;
 		
-		if(baseSujeta != null){
+		var operacionExentaImp = formulario.findField('operacionExentaImp').getValue()==null?0:formulario.findField('operacionExentaImp').getValue();
+		var operacionExentaRenuncia = formulario.findField('esRenunciaExenta').getValue()==null?0:formulario.findField('esRenunciaExenta').getValue();
+		
+		if(baseSujeta != 0){
 			importeTotal = importeTotal + baseSujeta;
 		}else{
 			formulario.findField('baseSujeta').setValue(0);
 		}
-		if(baseNoSujeta != null){
+		if(baseNoSujeta != 0){
 			importeTotal = importeTotal + baseNoSujeta;
 		}else{
 			formulario.findField('baseNoSujeta').setValue(0);
 		}
-		if(recargo != null){
+		if(recargo != 0){
 			importeTotal = importeTotal + recargo;
 		}else{
 			formulario.findField('recargo').setValue(0);
 		}
-		if(interes != null){
+		if(interes != 0){
 			importeTotal = importeTotal + interes;
 		}else{
 			formulario.findField('interes').setValue(0);
 		}
-		if(costas != null){
+		if(costas != 0){
 			importeTotal = importeTotal + costas;
 		}else{
 			formulario.findField('costas').setValue(0);
 		}
-		if(otros != null){
+		if(otros != 0){
 			importeTotal = importeTotal + otros;
 		}else{
 			formulario.findField('otros').setValue(0);
 		}
-		if(provSupl != null){
+		if(provSupl != 0){
 			importeTotal = importeTotal + provSupl;
 		}else{
 			formulario.findField('provSupl').setValue(0);
 		}
 
-		if(cuota != null && (!operacionExentaImp || (operacionExentaImp && operacionExentaRenuncia))){
+		if(cuota != 0 && (!operacionExentaImp || (operacionExentaImp && operacionExentaRenuncia))){
 			importeTotal = importeTotal + cuota;
 		}else{
 			formulario.findField('cuota').setValue(0);
@@ -2241,6 +2242,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     
 
     	me.lookupReference('baseIRPFRetG').setValue(base);
+		cuota = Number(Math.round(cuota + "e+" + 2)  + "e-" + 2);
     	me.lookupReference('cuotaIRPFRetG').setValue(cuota);
 
     	me.onChangeCuotaImpuestoDirecto(me,despues);
@@ -2250,7 +2252,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var me = this;
     	var tipoImpositivo = me.lookupReference('tipoImpositivoIRPFImpD').getValue();
     	var base = me.lookupReference('baseIRPFImpD').getValue();
-    	var cuotaRetG = me.lookupReference('cuotaIRPFRetG').getValue();
+    	var cuotaRetG = me.lookupReference('baseIRPFRetG').getValue()*me.lookupReference('irpfTipoImpositivoRetG').getValue()/100;
     	var valFechaPago = me.lookupReference('fechaPago').getValue();
     	var cuota = 0;
     	var valorCuota = 0;
@@ -2268,7 +2270,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     		cuota = (tipoImpositivo * base)/100;
     	}
     	
-    	valorCuota = me.getImporteRetencionCuota(me);
+    	valorCuota = me.getImporteTotalCuotaIndirecta(me);
     	
     	if(tipoImpositivoRetg != null ){
     		valorCuota = (tipoImpositivoRetg * valorCuota)/100;	
@@ -2280,7 +2282,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 
     	if(!me.lookupReference('lineaDetalleGastoGrid').getStore().loading){
     		importeTotal = me.getImporteTotalLineasDetalle(me);
-    		importeTotal = importeTotal - cuota;
+    		importeTotal = importeTotal - (tipoImpositivo * base)/100;
     		if(cuotaRetG != null && cuotaRetG != undefined ){
     			if(despues == false && esLiberbank ){
     				importeTotal = importeTotal - cuotaRetG - valorCuota ;
@@ -2303,12 +2305,50 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var importeTotal = 0;
     	if(me.lookupReference('lineaDetalleGastoGrid').getStore() != null && me.lookupReference('lineaDetalleGastoGrid').getStore() != undefined){
     		for(var i = 0; i < me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items.length; i++){
-    			importeTotal+= parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('importeTotal'));
+    			importeTotal+= parseFloat(me.calcularImporteTotalLineaDetalle(i));
     		}
     	}
     	
     	return importeTotal;
     },
+
+	calcularImporteTotalLineaDetalle: function(linea){
+		var me=this;
+		var importeTotal=0;
+		
+		var baseSujeta = parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('baseSujeta')==null?
+							0:me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('baseSujeta'));
+    	var baseNoSujeta = parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('baseNoSujeta')==null?
+							0:me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('baseNoSujeta'));
+		var recargo = parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('recargo')==null?
+							0:me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('recargo'));
+		var interes = parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('interes')==null?
+							0:me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('interes'));
+		var costas = parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('costas')==null?
+							0:me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('costas'));
+		var otros = parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('otros')==null?
+							0:me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('otros'));
+		var provSupl = parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('provSupl')==null?
+							0:me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('provSupl'));
+		var tipoImpositivo = parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('tipoImpositivo')==null?
+							0:me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('tipoImpositivo'));
+		var cuota = baseSujeta*tipoImpositivo/100;
+		
+		var operacionExentaImp = parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('operacionExentaImp')==null?
+							0:me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('operacionExentaImp'));
+		var operacionExentaRenuncia = parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('esRenunciaExenta')==null?
+							0:me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('esRenunciaExenta'));
+		
+		
+		importeTotal = importeTotal + baseSujeta + baseNoSujeta + recargo + interes + costas + otros + provSupl;
+		
+
+		if(cuota != null && (!operacionExentaImp || (operacionExentaImp && operacionExentaRenuncia))){
+			importeTotal = importeTotal + cuota;
+		}
+		
+		return importeTotal;
+	},
     
     onChangeSubtipoGasto: function(){
     	var me = this;
@@ -2821,12 +2861,12 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	return importeTotal;
     },
     
-    getImporteRetencionCuota: function(me){
+    getImporteTotalCuotaIndirecta: function(me){
     	var cuotaTotal = 0;
 
     	if(me.lookupReference('lineaDetalleGastoGrid').getStore() != null && me.lookupReference('lineaDetalleGastoGrid').getStore() != undefined){
     		for(var i = 0; i < me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items.length; i++){	
-    				cuotaTotal+= parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('cuota'));	
+    				cuotaTotal+= parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('baseSujeta')*me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('tipoImpositivo')/100);	
     		}
     	}
     	

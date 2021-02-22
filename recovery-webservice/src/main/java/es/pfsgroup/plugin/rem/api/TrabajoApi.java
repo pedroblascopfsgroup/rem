@@ -932,4 +932,6 @@ public interface TrabajoApi {
 	void EnviarCorreoTrabajos(Trabajo trabajo, String origen);
 
 	public BigDecimal getImporteTotalSuplidosByTrabajo(Trabajo trabajo);
+
+	public List<DtoProveedorContactoSimple> getComboProveedorContactoLlaves(Long idProveedor) throws Exception;
 }

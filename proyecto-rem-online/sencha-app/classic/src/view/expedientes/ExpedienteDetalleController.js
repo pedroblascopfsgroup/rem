@@ -5007,7 +5007,7 @@ comprobarFormatoModificar: function() {
 							idExpediente : me.getViewModel().data.expediente.id
 					};
 					
-					me.getView().mask();
+					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 					Ext.Ajax.request({
 			    	     url: url,
 			    	     params: parametros,

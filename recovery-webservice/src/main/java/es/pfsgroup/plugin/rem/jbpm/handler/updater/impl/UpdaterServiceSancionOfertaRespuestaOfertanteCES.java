@@ -97,20 +97,21 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 						}
 	 					DDEstadosExpedienteComercial aprobado = genericDao.get(DDEstadosExpedienteComercial.class, f1);
 	 					expediente.setEstado(aprobado);
-	 					//REMVIP-8388
-//	 					if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva())) {															
-//							EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
-//									.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
-//
-//							if(gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
-//								GestorEntidadDto ge = new GestorEntidadDto();
-//								ge.setIdEntidad(expediente.getId());
-//								ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
-//								ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());								
-//								ge.setIdTipoGestor(tipoGestorComercial.getId());
-//								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
-//							}
-//						}
+	 					
+	 					if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva())
+	 							&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())) {														
+							EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+									.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
+
+							if(gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
+								GestorEntidadDto ge = new GestorEntidadDto();
+								ge.setIdEntidad(expediente.getId());
+								ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+								ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());								
+								ge.setIdTipoGestor(tipoGestorComercial.getId());
+								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
+							}
+						}
 	 				}else if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 	 					ofertaApi.rechazarOferta(ofertaAceptada);
 	 					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES);

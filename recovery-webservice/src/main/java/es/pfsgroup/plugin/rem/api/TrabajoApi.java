@@ -934,4 +934,7 @@ public interface TrabajoApi {
 	public BigDecimal getImporteTotalSuplidosByTrabajo(Trabajo trabajo);
 
 	boolean activoTieneTrabajoValidadoByTipoDocumento(Long idActivo, String tipoDocumento);
+
+	public List<DtoProveedorContactoSimple> getComboProveedorContactoLlaves(Long idProveedor) throws Exception;
+
 }

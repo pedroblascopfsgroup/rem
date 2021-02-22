@@ -1840,7 +1840,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     					me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
     					me.lookupReference('comboIdentificadorReamRef').setReadOnly(false);
     				}
-    			}
+    			} else {
+					me.lookupReference('gridpresupuestostrabajo').setTopBar(true);
+					me.lookupReference('gridSuplidos').setTopBar(true);
+					me.lookupReference('gridSuplidos').setDisabled(false);
+		    		me.lookupReference('gridpresupuestostrabajo').setDisabled(false);
+				}
 	    		
 	    	}
     		
@@ -1925,7 +1930,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	} else {
     		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(true);
     		me.lookupReference('proveedorContactoCombo').setReadOnly(true);
-		    me.lookupReference('gridpresupuestostrabajo').setTopBar(false)
+		    me.lookupReference('gridpresupuestostrabajo').setTopBar(false);
 		    me.lookupReference('gridSuplidos').setTopBar(false);
 			me.lookupReference('gridSuplidos').setDisabled(true);
 		    me.lookupReference('gridpresupuestostrabajo').setDisabled(true);

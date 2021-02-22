@@ -64,8 +64,8 @@ public class ElementosLineasExcelReport extends AbstractExcelReport implements E
 			if(elemento.getParticipacion() != null) {
 				fila.add(elemento.getParticipacion().toString() + "%");
 			}
-			if(elemento.getImporteProporcinalTotal() != null) {
-				BigDecimal elementoBigDecimal  = BigDecimal.valueOf(elemento.getImporteProporcinalTotal());
+			if(elemento.getImporteProporcinalSujeto() != null) {
+				BigDecimal elementoBigDecimal  = BigDecimal.valueOf(elemento.getImporteProporcinalSujeto());
 				elementoBigDecimal = elementoBigDecimal.round(new MathContext(4));
 				fila.add(elementoBigDecimal.toString());
 			}

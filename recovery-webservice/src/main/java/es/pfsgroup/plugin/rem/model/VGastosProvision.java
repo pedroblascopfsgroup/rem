@@ -71,7 +71,8 @@ public class VGastosProvision implements Serializable {
 	@Column(name = "DD_EAP_DESCRIPCION")
 	private String estadoAutorizacionPropietarioDescripcion;
 	
-
+	@Column(name = "DD_EGA_CODIGO")
+	private String estadoGastoCodigo;
 	
 	@Column(name = "DD_EGA_DESCRIPCION")
 	private String estadoGastoDescripcion;
@@ -261,6 +262,14 @@ public class VGastosProvision implements Serializable {
 
 	public void setMotivoRechazo(String motivoRechazo) {
 		this.motivoRechazo = motivoRechazo;
+	}
+
+	public String getEstadoGastoCodigo() {
+		return estadoGastoCodigo;
+	}
+
+	public void setEstadoGastoCodigo(String estadoGastoCodigo) {
+		this.estadoGastoCodigo = estadoGastoCodigo;
 	}
 	
 	

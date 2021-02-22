@@ -82,7 +82,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     
 	     visibleBotonAuditoriaDesbloqueo: function(get){
 	    	var me = this;
-	    	var finEconomico = me.getData().expediente.getData().finalizadoCierreEconomico;
+	    	var finEconomico = false;
+	    	if (get('expediente.finalizadoCierreEconomico') != null){
+	    		finEconomico = get('expediente.finalizadoCierreEconomico');
+	    	}
 			var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION'])
 					|| $AU.userIsRol(CONST.PERFILES['PERFGCONTROLLER']);
 			return usuariosValidos && finEconomico;
@@ -590,7 +593,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 			var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
 	 		var isBoarding = $AU.userIsRol(CONST.PERFILES['GESTBOARDING']);
-			if(CONST.CARTERA['CERBERUS'] == carteraCodigo || CONST.CARTERA['BBVA'] == carteraCodigo){
+			if(CONST.CARTERA['CERBERUS'] == carteraCodigo){
 				return !isSuper;//CARTERAS NO BANCO
 			}
 	 		return !isSuper && !isBoarding;//CARTERAS BANCO

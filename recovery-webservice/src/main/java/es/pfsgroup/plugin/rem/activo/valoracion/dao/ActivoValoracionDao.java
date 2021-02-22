@@ -5,6 +5,7 @@ import java.util.List;
 
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;

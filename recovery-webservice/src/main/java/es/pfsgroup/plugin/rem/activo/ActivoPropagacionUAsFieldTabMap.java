@@ -41,6 +41,7 @@ public class ActivoPropagacionUAsFieldTabMap {
     	    		"subtipoActivoCodigo",
     	    		"porcentajeConstruccion",
     	    		"tipoTransmision",
+    	    		"tipoSegmentoCodigo",
     	    		
     	    		// identificación BBVA
 	    			"lineaFactura",

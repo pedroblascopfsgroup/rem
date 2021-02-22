@@ -393,10 +393,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	boolean activocheckGestion(Long idActivo);
 
-<<<<<<< HEAD
 	boolean perteneceActivoREAM(Long idActivo);
 
-=======
 	List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivoAndTipoPrecio(Long idActivo,String codigoTipoPrecio);
 
 	List<ActivoValoraciones> getListActivoValoracionesByIdActivoAndTipoPrecio(Long idActivo, String codigoTipoPrecio);
@@ -404,5 +402,5 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	boolean isPublicadoVentaHistoricoByFechaValoracion(Long idActivo, Date fechaValoracion);
 
 	boolean isPublicadoVentaByFechaValoracion(Long idActivo, Date fechaValoracion);
->>>>>>> rem_mirror
+
 }

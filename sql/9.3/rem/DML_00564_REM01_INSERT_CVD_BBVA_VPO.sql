@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20210215
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-896
+--## INCIDENCIA_LINK=REMVIP-8965
 --## PRODUCTO=NO
 --##
 --## Finalidad: Insertar config subpartidas

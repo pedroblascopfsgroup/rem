@@ -156,8 +156,10 @@ Ext.define('HreRem.view.ViewportController', {
     onMainViewRender:function() {
     	var me = this,
 	    viewModel = me.getViewModel(),
-	    vmData = viewModel.getData();
-        this.redirectTo(vmData.defaultView , true);        
+	    vmData = viewModel.getData(),
+		hash = window.location.hash,
+		id = hash.replace("#", "");
+        this.redirectTo(id, true);        
     },
 
     onToggleNavigationSize: function (button) {

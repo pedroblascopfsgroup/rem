@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=Jonathan Ovalle
---## FECHA_CREACION=20201120
+--## AUTOR= Lara Pablo Flores
+--## FECHA_CREACION=20210222
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12132
+--## INCIDENCIA_LINK=HREOS-13207
 --## PRODUCTO=NO
 --## 
 --## Finalidad: modificar DD_OPM_OPERACION_MASIVA para la carga masiva Actualizar perimetro de activos
@@ -39,7 +39,7 @@ BEGIN
 	V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET 
 				  USUARIOMODIFICAR = '''||V_USUARIO||'''
 				, FECHAMODIFICAR = SYSDATE
-				, DD_OPM_VALIDACION_FORMATO = ''nD*,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,f''
+				, DD_OPM_VALIDACION_FORMATO = ''nD*,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,f''
 				WHERE DD_OPM_CODIGO = ''ACPA''
 				';
 

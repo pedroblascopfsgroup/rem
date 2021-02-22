@@ -1442,4 +1442,6 @@ public interface ParticularValidatorApi {
 	boolean gastoSarebAnyadeRefacturable(String numGasto);
 
 	Boolean situacionComercialPublicadoAlquiler(String activo);
+
+	Boolean activoPrincipalEnAgrupacionRestringida(String numActivo);
 }

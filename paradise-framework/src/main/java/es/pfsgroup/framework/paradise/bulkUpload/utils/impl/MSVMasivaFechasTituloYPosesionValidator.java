@@ -200,4 +200,10 @@ public class MSVMasivaFechasTituloYPosesionValidator extends MSVExcelValidatorAb
 		return null;
 	}
 
+	@Override
+	public Integer getNumFilasHoja() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

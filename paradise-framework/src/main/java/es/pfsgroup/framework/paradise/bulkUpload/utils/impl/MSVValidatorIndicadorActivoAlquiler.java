@@ -325,5 +325,10 @@ public class MSVValidatorIndicadorActivoAlquiler extends MSVExcelValidatorAbstra
 			return listaFilas;
 			
 		}
+
+		@Override
+		public Integer getNumFilasHoja() {
+			return this.numFilasHoja;
+		}
 		
 }

@@ -68,8 +68,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	  	var url= $AC.getRemoteUrl('trabajo/getSupervisorGestorTrabajo');
     	var tipoAgrupacionCodigo= me.getViewModel().get("agrupacionficha.tipoAgrupacionCodigo");
     	var gestorActivo = $AU.getUser().userName;
-    	
     	var data;
+    	
+    	me.getView().mask(HreRem.i18n("msg.mask.loading"));
+    	
 		Ext.Ajax.request({
 		     url: url,
 		     params: {idActivo : idActivo, idAgrupacion : idAgrupacion, gestorActivo: gestorActivo},
@@ -89,7 +91,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		    	btn.lookupViewModel().getView().add(ventana);
 				ventana.show();
 		        me.getView().unmask();
-		        
 		     },
 		     failure: function(response) {
 		    	//me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearPeticionTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera, codSubcartera: codSubcartera, idUsuario: null, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true, gestorActivo: gestorActivo});
@@ -309,14 +310,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     
     cargarTabFotos: function (form) {
 
-		var me = this,
-		idAgrupacion = me.getViewModel().get("agrupacionficha.id");
-		me.getView().mask(HreRem.i18n("msg.mask.loading"));
-
-		me.getViewModel().data.storeFotos.getProxy().setExtraParams({'id':idAgrupacion});
-		me.getViewModel().data.storeFotos.on('load',function(){
-			me.getView().unmask();
-		});
+		var me = this;
 		me.getViewModel().data.storeFotos.load();
 		
 	},
@@ -344,11 +338,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		
 		var me = this,
 		idAgrupacion = me.getViewModel().get("agrupacionficha.id"),
-		idSubdivision = me.getViewModel().get("subdivisionFoto.id");
+		idSubdivision = me.getViewModel().get("subdivisionFoto.id"),
+		codigoSubtipoActivo = me.getViewModel().get("subdivisionFoto.codigoSubtipoActivo");
 		if(Ext.isEmpty(idSubdivision)) {
 			me.fireEvent("warnToast", HreRem.i18n("msg.error.necesario.seleccionar.subdivision"));
 		} else {
-			Ext.create("HreRem.view.common.adjuntos.AdjuntarFotoSubdivision", {idSubdivision: idSubdivision, idAgrupacion: idAgrupacion, parentToRefresh: btn.up("form"), storeSubdivision: me.getViewModel().data.storeFotosSubdivision }).show();
+			Ext.create("HreRem.view.common.adjuntos.AdjuntarFotoSubdivision", {idSubdivision: idSubdivision, idAgrupacion: idAgrupacion, codigoSubtipoActivo:codigoSubtipoActivo, parentToRefresh: btn.up("form"), storeSubdivision: me.getViewModel().data.storeFotosSubdivision }).show();
 		}		
 	},
 	
@@ -563,6 +558,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	cargarFotosSubdivision: function (recordSelected) {
 
 		var me = this;
+    	
 		me.getViewModel().set("subdivisionFoto",recordSelected);
 		me.getViewModel().notify();
 		me.lookupReference("imageDataViewSubdivision").getStore().load();
@@ -760,8 +756,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		if(form.findField("orden")!=null){
 			params['orden']= form.findField("orden").getValue();
 		}
-		if(form.findField("descripcion")!=null){
-			params['descripcion']= form.findField("descripcion").getValue();
+		if(form.findField("codigoDescripcionFoto")!=null){
+			params['codigoDescripcionFoto']= form.findField("codigoDescripcionFoto").getValue();
 		}
 		if(form.findField("fechaDocumento")!=null){
 			params['fechaDocumento']= form.findField("fechaDocumento").getValue();

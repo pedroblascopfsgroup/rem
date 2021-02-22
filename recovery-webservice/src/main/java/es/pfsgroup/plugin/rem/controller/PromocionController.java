@@ -46,7 +46,7 @@ public class PromocionController extends ParadiseJsonController {
 		try {
 			model.put("data", promocionAdapter.getAdjuntosPromocion(id));
 		} catch (GestorDocumentalException e) {
-			logger.error("error en promocionController");
+			logger.error("error en promocionController", e);
 			model.put("success", false);
 			model.put("errorMessage",
 					"Gestor documental: No existe la promoción o no tiene permisos para listar el contenedor");
@@ -120,7 +120,7 @@ public class PromocionController extends ParadiseJsonController {
 			}
 	
 		} catch (Exception e) {
-			logger.error("error en activoController", e);
+			logger.error("error en promocionController", e);
 		}finally {
 			try {
 				if (salida!=null) {

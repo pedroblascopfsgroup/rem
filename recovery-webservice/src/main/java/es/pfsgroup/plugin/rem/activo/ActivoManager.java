@@ -119,6 +119,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
@@ -895,9 +896,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activoFoto.setActivo(activo);
 				activoFoto.setTipoFoto(tipoFoto);
 				activoFoto.setNombre(fileItem.getBasename());
+				
+				String descripcion = null;
+				String codigoSubtipoActivo = activo.getSubtipoActivo().getCodigo();
+				DDDescripcionFotoActivo descripcionFoto = null;
 
 				if (fileItem.getMetadata().containsKey("descripcion")) {
-					activoFoto.setDescripcion(fileItem.getMetadata().get("descripcion"));
+					descripcion = fileItem.getMetadata().get("descripcion");
+					if (descripcion != null && codigoSubtipoActivo != null) {
+						descripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "descripcion", descripcion), 
+							genericDao.createFilter(FilterType.EQUALS, "subtipoActivo.codigo", codigoSubtipoActivo));
+					}
+					if (descripcionFoto != null) {
+						activoFoto.setDescripcion(descripcionFoto.getDescripcion());
+						activoFoto.setDescripcionFoto(descripcionFoto);
+					}
 				}
 
 				if (fileItem.getMetadata().containsKey("principal") && fileItem.getMetadata().get("principal") != null
@@ -953,8 +966,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
 		DDTipoFoto tipoFoto = genericDao.get(DDTipoFoto.class, filtro);
 		TIPO tipo = null;
-		FileResponse fileReponse;
-		ActivoFoto activoFoto;
+		FileResponse fileReponse = null;
+		ActivoFoto activoFoto = null;
 		SITUACION situacion;
 		PRINCIPAL principal;
 		Integer orden = activoDao.getMaxOrdenFotoById(Long.parseLong(fileItem.getParameter("idEntidad")));
@@ -986,9 +999,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					situacion = SITUACION.EXTERIOR;
 				}
 
-				fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),
-						fileItem.getFileItem().getFileName(), PROPIEDAD.ACTIVO, activo.getNumActivo(), tipo,
-						fileItem.getParameter("descripcion"), principal, situacion, orden);
+				if (fileItem.getParameter("codigoDescripcionFoto") != null) {
+					
+					fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),
+							fileItem.getFileItem().getFileName(), PROPIEDAD.ACTIVO, activo.getNumActivo(), tipo,
+							genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion(),
+							principal, situacion, orden);
+					
+				}
 				activoFoto = new ActivoFoto(fileReponse.getData());
 
 			} else {
@@ -999,7 +1017,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			activoFoto.setTipoFoto(tipoFoto);
 			activoFoto.setTamanyo(fileItem.getFileItem().getLength());
 			activoFoto.setNombre(fileItem.getFileItem().getFileName());
-			activoFoto.setDescripcion(fileItem.getParameter("descripcion"));
+			activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion());
+			activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))));
 			activoFoto.setPrincipal(Boolean.valueOf(fileItem.getParameter("principal")));
 			activoFoto.setFechaDocumento(new Date());
 			activoFoto.setInteriorExterior(Boolean.valueOf(fileItem.getParameter("interiorExterior")));
@@ -1216,7 +1235,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		if (!Checks.esNulo(mensaje)) {
-			mensaje = messageServices.getMessage("tramite.admision.CheckingInformacion.validacionPre.debeInformar")
+			mensaje = messageServices.getMessage("tramite.CheckingInformacion.validacionPre.debeInformar")
 					.concat(mensaje);
 		}
 
@@ -3453,8 +3472,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(activoIntegrado.getRetenerPago())) {
 				if (activoIntegrado.getRetenerPago() == 1) {
 					dto.setRetenerPagos(true);
+					dto.setPagosRetenidos(1);
 				} else {
 					dto.setRetenerPagos(false);
+					dto.setPagosRetenidos(0);
 				}
 			}
 
@@ -5565,9 +5586,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							&& (!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
 									|| !Checks.esNulo(posesoria.getFechaTomaPosesion()))))) {
 				if (!Checks.esNulo(ocupado) && (1 == ocupado && DDTipoTituloActivoTPA.tipoTituloNo.equals(conTitulo))) {
-					boolean val = compruebaSiExisteActivoBienPorMatricula(id,
-							DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION);
-					if (val) {
+					if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 
 						List<DtoAdjunto> listAdjuntos;
 						DtoAdjunto adjuntoAux = null;
@@ -6692,6 +6711,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				order, filtro);
 		String estadoTitulo = null;
 		try {
+			if (Checks.esNulo(titulo)) throw new HistoricoTramitacionException(
+					"Debe informarse algún dato de 'Tramitación título' para poder crear un registro.");
 			if (!Checks.estaVacio(listasTramitacion)) {
 				if (!Checks.esNulo(listasTramitacion.get(0).getFechaCalificacion()) && listasTramitacion.get(0)
 						.getFechaCalificacion().after(tramitacionDto.getFechaPresentacionRegistro())) {

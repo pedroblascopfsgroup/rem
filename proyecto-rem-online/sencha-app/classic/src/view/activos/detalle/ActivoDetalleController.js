@@ -649,8 +649,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     onClickCrearTrabajo: function (btn) {
-    	var me = this;
-    	
+		var me = this;
+		
     	me.getView().mask(HreRem.i18n("msg.mask.loading"));	
     	
     	var idActivo = me.getViewModel().get("activo.id");
@@ -835,6 +835,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		numFincaAnterior.setValue("");
     	}
     	
+    	poblacionAnterior.validate();
+    	numRegistroAnterior.validate();
+    	numFincaAnterior.validate();
 
     },
     
@@ -966,16 +969,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	onClickCrearTrabajo: function (btn) {
-	 	var me = this;
-	 	
+		 var me = this;
+		 	 	
 	 	me.getView().mask(HreRem.i18n("msg.mask.loading"));	
 	 	
 	 	var idActivo = me.getViewModel().get("activo.id");
 	 	var codSubcartera = me.getViewModel().get("activo.subcarteraCodigo");
 	 	var codCartera = me.getViewModel().get("activo.entidadPropietariaCodigo");
 	 	var gestorActivo = $AU.getUser().userName;
-	 	
-	 	var ventana = Ext.create("HreRem.view.trabajos.detalle.CrearPeticionTrabajo", {
+		var checkGestion = me.getViewModel().get("activo.aplicaGestion");
+		
+		if (checkGestion){
+			var ventana = Ext.create("HreRem.view.trabajos.detalle.CrearPeticionTrabajo", {
 			idActivo: idActivo, 
 			codCartera: codCartera, 
 			codSubcartera: codSubcartera, 
@@ -987,6 +992,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		btn.lookupViewModel().getView().add(ventana);
 		ventana.show();
 		me.getView().unmask();
+		
+		}else{
+			me.getView().unmask();
+			me.fireEvent("errorToast",HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.mensaje"))
+		}
 	 },
 
 	onAnyadirPropietarioClick : function(btn) {
@@ -1800,10 +1810,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	onAddFotoClick : function(grid) {
 
-		var me = this, idActivo = me.getViewModel().get("activo.id");
+		var me = this, idActivo = me.getViewModel().get("activo.id"),
+		codigoSubtipoActivo = me.getViewModel().get("activo.subtipoActivoCodigo");
 
 		Ext.create("HreRem.view.common.adjuntos.AdjuntarFoto", {
 					idEntidad : idActivo,
+					codigoSubtipoActivo: codigoSubtipoActivo,
 					parent : grid
 				}).show();
 
@@ -1953,26 +1965,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	cargarTabFotos : function(form) {
 
-		var me = this, idActivo = me.getViewModel().get("activo.id");
-		me.getView().mask(HreRem.i18n("msg.mask.loading"));
-
-		me.getViewModel().data.storeFotos.getProxy().setExtraParams({
-					'id' : idActivo,
-					tipoFoto : '01'
-				});
-		me.getViewModel().data.storeFotosTecnicas.getProxy().setExtraParams({
-					'id' : idActivo,
-					tipoFoto : '02'
-				});
-
-		me.getViewModel().data.storeFotos.on('load', function() {
-					me.getViewModel().data.storeFotosTecnicas.load();
-				});
-
-		me.getViewModel().data.storeFotosTecnicas.on('load', function() {
-					me.getView().unmask();
-				});
+		var me = this;
 		me.getViewModel().data.storeFotos.load();
+		me.getViewModel().data.storeFotosTecnicas.load();
 
 	},
 
@@ -2332,22 +2327,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		me.onSaveFormularioCompletoOferta(form, window);
 	},
-
-	onChkbxOfertasAnuladas : function(chkbox, checked) {
-		var me = this;
-		var grid = chkbox.up('ofertascomercialactivo')
-				.down("ofertascomercialactivolist");
-		var store = me.getViewModel().get("storeOfertasActivo");
-
-		var prox = store.getProxy();
-		var _id = prox.getExtraParams().id;
-		var _incluirOfertasAnuladas = checked;
-
-		prox.setExtraParams({
-					"id" : _id,
-					"incluirOfertasAnuladas" : _incluirOfertasAnuladas
-				});
-		store.load();
+	
+	onChkbxOfertasAnuladas: function(chkbox, checked){
+    	var me = this;
+    	var grid = chkbox.up('ofertascomercialactivo').down("ofertascomercialactivolist");
+    	var _id = me.getViewModel().getData().activo.id;
+    	var store = grid.getStore();
+    	var prox = store.getProxy();
+    	var _incluirOfertasAnuladas = checked;
+    	
+    	prox.setExtraParams({
+    		"id": _id, 
+    		"incluirOfertasAnuladas": _incluirOfertasAnuladas
+    	});
+    	store.load();
 	},
 
 	// Este mÃ©todo copia los valores de los campos de 'Datos Mediador' a los
@@ -3048,8 +3041,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	abrirFormularioAnyadirEntidadActivo : function(grid) {
-		var me = this;
+		var me = this, record = Ext.create("HreRem.model.ActivoIntegrado"),
 		idActivo = me.getViewModel().get("activo.id");
+		record.set("idActivo", idActivo);
 		Ext.create("HreRem.view.activos.detalle.AnyadirEntidadActivo", {
 					parent : grid,
 					idActivo : idActivo
@@ -3218,17 +3212,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		var form = combo.up('formBase');
 		var motivoRetencionField = form.down('[name=motivoRetencion]');
-		var fechaInicioRetencionField = form
-				.down('[name=fechaInicioRetencion]');
+		var fechaInicioRetencionField = form.down('[name=fechaInicioRetencion]');
 
 		if (!combo.getValue()) {
-			motivoRetencionField.reset()
+			motivoRetencionField.reset();
 			fechaInicioRetencionField.reset();
 			motivoRetencionField.setDisabled(true);
 			fechaInicioRetencionField.setDisabled(true);
+			me.getViewModel().set("activoIntegrado.pagosRetenidos", 0);
 		} else {
 			motivoRetencionField.setDisabled(false);
 			fechaInicioRetencionField.setDisabled(false);
+			me.getViewModel().set("activoIntegrado.pagosRetenidos", 1);
 		}
 	},
 
@@ -3238,11 +3233,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var idActivo = me.getViewModel().get("activo.id");
 		var storeGrid = gridView.store;
 		Ext.create("HreRem.view.activos.detalle.AnyadirEntidadActivo", {
-					idActivoIntegrado : idActivoIntegrado,
-					idActivo : idActivo,
 					parent : gridView,
 					modoEdicion : true,
-					storeGrid : storeGrid
+					storeGrid : storeGrid,
+					idActivo : idActivo,
+					idActivoIntegrado: idActivoIntegrado
 				}).show();
 
 	},
@@ -3569,8 +3564,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			if (form.findField("orden") != null) {
 				params['orden'] = form.findField("orden").getValue();
 			}
-			if (form.findField("descripcion") != null) {
-				params['descripcion'] = form.findField("descripcion")
+			if (form.findField("codigoDescripcionFoto") != null) {
+				params['codigoDescripcionFoto'] = form.findField("codigoDescripcionFoto")
 						.getValue();
 			}
 			if (form.findField("fechaDocumento") != null) {
@@ -3909,7 +3904,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onProveedoresListClick: function(gridView, record){
 		var me=this;
 		
-		if($AU.getUser().codigoCartera === CONST.CARTERA['BBVA']){
+		if($AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])){
 			return;
 		}
 		idProveedor= record.get('idFalso').id;
@@ -3927,6 +3922,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
    		var me = this;
 		var grid = tableView.up('grid');
 	    var record = grid.store.getAt(indiceFila);
+		var recordProveedor = Ext.create("HreRem.model.Proveedor");
 	    grid.setSelection(record);
 	    var idFalso = record.get('idFalso');
 	    var idFalsoProv;
@@ -3936,20 +3932,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    
 	    if(!Ext.isEmpty(record.get('idProveedor'))){
 	    	var idProveedor = record.get("idProveedor");
-	    	record.data.id= idProveedor;
+	    	recordProveedor.set('id', idProveedor);
 	    	var codigoProveedor = record.get('codigoProveedorRem');
-	    	record.data.codigo = codigoProveedor;
-	    	me.getView().fireEvent('abrirDetalleProveedor', record);
+			recordProveedor.set('codigo', codigoProveedor);
+	    	me.getView().fireEvent('abrirDetalleProveedor', recordProveedor);
 	    }else if(!Ext.isEmpty(idFalsoProv)){
-	    	record.data.id= idFalsoProv;
+			recordProveedor.set('id', idFalsoProv);
 	    	var codigoProveedor = record.get('codigoProveedorRem');
-	    	record.data.codigo = codigoProveedor;
-	    	me.getView().fireEvent('abrirDetalleProveedor', record);
+	    	recordProveedor.set('codigo', codigoProveedor);
+	    	me.getView().fireEvent('abrirDetalleProveedor', recordProveedor);
 	    }
 	    else if(!Ext.isEmpty(record.get('id'))){
 	    	var codigoProveedor = record.get('codigoProveedorRem');
-	    	record.data.codigo = codigoProveedor;
-	    	me.getView().fireEvent('abrirDetalleProveedor', record);
+	    	recordProveedor.set('codigo', codigoProveedor);
+	    	me.getView().fireEvent('abrirDetalleProveedor', recordProveedor);
 	    }
    },
    
@@ -7664,6 +7660,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 
+	onChangeExento: function(combo, value){
+		var me = this;
+		var res = me.lookupReference('motExento');
+		if(value == '01'){
+			res.allowBlank=false;
+		}else{
+			res.allowBlank=true;
+		}
+	},
+
 	mostrarObservacionesGrid : function(event, target, options) {
 		var me = this;
 		var observacionesAdmision = target.data.observacionesEvolucion;
@@ -7689,21 +7695,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			activobbvaFolio = me.lookupReference('activobbvaFolio'), 
 			activobbvaCdpen = me.lookupReference('activobbvaCdpen');
 
-		if(activoEpa.value == "true"|| activobbvaEmpresa.value != null || activobbvaOficina.value != null 
-				|| activobbvaContrapartida.value != null || activobbvaFolio.value != null || activobbvaCdpen.value != null) {
+		if(activoEpa.value == "true" 
+			|| (!Ext.isEmpty(activobbvaEmpresa.getValue()) || !Ext.isEmpty(activobbvaOficina.getValue()) || !Ext.isEmpty(activobbvaContrapartida.getValue()) 
+			|| !Ext.isEmpty(activobbvaFolio.getValue()) || !Ext.isEmpty(activobbvaCdpen.getValue()))) {
 			activobbvaEmpresa.allowBlank = false;
 			activobbvaOficina.allowBlank = false;
 			activobbvaContrapartida.allowBlank = false;
 			activobbvaFolio.allowBlank = false;
 			activobbvaCdpen.allowBlank = false;
-		} else {
+		} else{
 			activobbvaEmpresa.allowBlank = true;
 			activobbvaOficina.allowBlank = true;
 			activobbvaContrapartida.allowBlank = true;
 			activobbvaFolio.allowBlank = true;
 			activobbvaCdpen.allowBlank = true;
 		}
-		
 	},
 
 	onClickBotonCancelarVentanaComplementoTitulo : function(btn) {

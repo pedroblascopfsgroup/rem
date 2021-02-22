@@ -12,7 +12,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 
     initComponent: function () {        
         var me = this;
-
         me.setTitle(HreRem.i18n("title.activos.listado.ofertas"));
 
         var items = [
@@ -295,6 +294,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 							title: HreRem.i18n('title.horonarios'),
 							collapsible: true,
 							colspan: 3,
+							hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']),
 							items :
 								[
 									{

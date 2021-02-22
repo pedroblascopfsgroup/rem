@@ -344,9 +344,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    		model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
-					remoteUrl: 'generic/getComboTipoTrabajoCreaFiltered',
+					remoteUrl: 'generic/getComboTipoTrabajoFiltered',
 					extraParams: {
-						idActivo: '{trabajo.idActivo}'
+						idActivo: '{trabajo.idActivo}',
+						numTrabajo: '{trabajo.numTrabajo}'
 					}
 				}
     		},
@@ -395,7 +396,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 					remoteUrl: 'trabajo/getComboProveedorFiltradoManual',
 					extraParams: {idTrabajo: '{trabajo.id}'}
 				},
-				autoLoad: true
+				autoLoad: false
 			},
 			
     		comboEstadoPresupuesto: {
@@ -412,17 +413,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			model:'HreRem.model.ActivoTrabajoSubida',
     			proxy: {
     				type: 'uxproxy',
-    				remoteUrl: 'trabajo/getListActivosByProceso',
-    				//actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+    				remoteUrl: 'trabajo/getListActivosByProceso',    				
     				extraParams: {idProceso: 'idProceso'}
     			},
-    			//session: true,
     	    	remoteSort: true,
     	    	remoteFilter: true,
-    	    	autoLoad:false/*,
-    	    	listeners : {
-    	            beforeload : 'paramLoading'
-    	        }*/
+    	    	autoLoad:false
     		},
     		
     		listaActivosAgrupacion: {
@@ -431,16 +427,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			proxy: {
     				type: 'uxproxy',
     				remoteUrl: 'trabajo/getListActivosByID',
-    				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
     				extraParams: {idActivo: '{idActivo}', idAgrupacion:'{idAgrupacion}'}
     			},
-    			//session: true,
     	    	remoteSort: true,
     	    	remoteFilter: true,
-    	    	autoLoad:true,
-    	    	listeners : {
-    	            beforeload : 'loadGridSegundo'
-    	        }
+    	    	autoLoad: true
     		},
     		
     		comboProveedorContacto : {
@@ -457,7 +448,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
-					remoteUrl: 'trabajo/getComboProveedorContacto',
+					remoteUrl: 'trabajo/getComboProveedorContactoLlaves',
 					extraParams: {idProveedor: '{trabajo.idProveedorLlave}'}
 				}, 
 				autoLoad: false
@@ -623,12 +614,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 					remoteUrl: 'trabajo/getComboAprobacionComite'
 				}
     		},
-    		comboGridTarifa: {    		
-				model: 'HreRem.model.TarifasGridModel',
-				proxy: {
-					type: 'uxproxy'
-				}
-    		},
     		storeAgendaTrabajo: {
 		    	model: 'HreRem.model.AgendaTrabajoModel',
 		    	proxy: {
@@ -657,8 +642,26 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'identificadorReam'}
+				},
+				listeners: {
+					load: function(store, records) {
+						store.insert(0, [{
+							descripcion: "--",
+							id: null
+						}]);
+					}
+				
 				}
-    		}
+    		},
+			comboEstadoGastos: {
+		    	model: 'HreRem.model.ComboBase',
+		    	proxy: {
+			        type: 'uxproxy',
+			        remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadoGasto'}
+		    	}
+		    	
+	    	}
     		
     }
 

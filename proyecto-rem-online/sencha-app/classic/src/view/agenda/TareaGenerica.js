@@ -446,7 +446,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
         var parametros = me.down("form").getValues();
         parametros.idTarea = me.idTarea;
-        
         var urlTipoTitulo =  $AC.getRemoteUrl('agenda/getTipoTituloActivoByIdTarea');
 		Ext.Ajax.request({
 			
@@ -470,8 +469,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             success: function(response, opts) {            	
                 //me.parent.fireEvent('aftersaveTarea', me.parent);
                 me.json = Ext.decode(response.responseText);
-
-                if (me.json.errorValidacionGuardado) {
+				if(me.json.errorTareaFinalizada){
+					me.getViewModel().set("errorValidacionGuardado", "La tarea ya ha sido finalizada");
+                    me.unmask();
+				}else if (me.json.errorValidacionGuardado) {
                     me.getViewModel().set("errorValidacionGuardado", me.json.errorValidacionGuardado);
                     me.unmask();
                 } else { 

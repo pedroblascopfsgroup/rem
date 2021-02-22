@@ -105,6 +105,10 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 	@Column(name = "BBVA_COD_PROMOCION")
   	private String codPromocion;
 	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PRO_ID_ORIGEN")
+	private ActivoPropietario sociedadPagoAnterior;
+	
 	
 	public Auditoria getAuditoria() {
 		return auditoria;
@@ -257,4 +261,13 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 	public void setCdpen(String cdpen) {
 		this.cdpen = cdpen;
 	}
+
+	public ActivoPropietario getSociedadPagoAnterior() {
+		return sociedadPagoAnterior;
+	}
+
+	public void setSociedadPagoAnterior(ActivoPropietario sociedadPagoAnterior) {
+		this.sociedadPagoAnterior = sociedadPagoAnterior;
+	}
+	
 }

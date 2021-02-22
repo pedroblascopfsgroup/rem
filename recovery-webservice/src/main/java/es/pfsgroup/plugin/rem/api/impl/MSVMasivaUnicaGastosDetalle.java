@@ -79,45 +79,46 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 	public static final Integer COL_CONCEPTO_GASTO = 3;
 	public static final Integer COL_IDENTIFICADOR_UNICO = 4;
 	public static final Integer COL_NUM_FACTURA_LIQUIDACION = 5;
-	public static final Integer COL_NIF_EMISOR = 6;
-	public static final Integer COL_DESTINATARIO = 7;
-	public static final Integer COL_NIF_PROPIETARIO = 8;
-	public static final Integer COL_F_EMISION_DEVENGO = 9;
-	public static final Integer COL_TIPO_OPERACION = 10;
-	public static final Integer COL_C_GASTO_REFACTURABLE = 11;
-	public static final Integer COL_REPERCUTIBLE_INQUILINO = 12;
-	public static final Integer COL_C_PAGO_CONEXION = 13;
-	public static final Integer COL_NUM_CONEXION = 14;
-	public static final Integer COL_F_CONEXION = 15;
-	public static final Integer COL_OFICINA = 16;
-	public static final Integer COL_RETENCION_GARANTIA_PORCENTAJE = 17;
-	public static final Integer COL_TIPO_RETENCION = 18;
-	public static final Integer COL_IRPF_BASE = 19;
-	public static final Integer COL_IRPF_PORCENTAJE = 20;
-	public static final Integer COL_IRPF_CLAVE = 21;
-	public static final Integer COL_IRPF_SUBCLAVE = 22;
-	public static final Integer COL_PLAN_VISITAS = 23;
-	public static final Integer COL_ACTIVABLE = 24;
-	public static final Integer COL_EJERCICIO = 25;
-	public static final Integer COL_TIPO_COMISIONADO = 26;
-	public static final Integer COL_COD_AGRUPACION_LINEA_DETALLE = 27;
-	public static final Integer COL_SUBTIPO_GASTO = 28;
-	public static final Integer COL_PRINCIPAL_SUJETO_IMPUESTOS = 29;
-	public static final Integer COL_PRINCIPAL_NO_SUJETO_IMPUESTOS = 30;
-	public static final Integer COL_TIPO_RECARGO = 31;
-	public static final Integer COL_IMPORTE_RECARGO = 32;
-	public static final Integer COL_INTERES_DEMORA = 33;
-	public static final Integer COL_COSTES = 34;
-	public static final Integer COL_OTROS_INCREMENTOS = 35;
-	public static final Integer COL_PROVISIONES_Y_SUPLIDOS = 36;
-	public static final Integer COL_TIPO_IMPUESTO = 37;
-	public static final Integer COL_OPERACION_EXENTA = 38;
-	public static final Integer COL_RENUNCIA_EXENCION = 39;
-	public static final Integer COL_TIPO_IMPOSITIVO = 40;
-	public static final Integer COL_OPTA_CRITERIO_CAJA_IVA = 41;
-	public static final Integer COL_ID_ELEMENTO = 42;
-	public static final Integer COL_TIPO_ELEMENTO = 43;
-	public static final Integer COL_PARTICIPACION_LINEA_DETALLE = 44;
+	public static final Integer COL_COD_PROVEEDOR_REM = 6;
+	public static final Integer COL_NIF_EMISOR = 7;
+	public static final Integer COL_DESTINATARIO = 8;
+	public static final Integer COL_NIF_PROPIETARIO = 9;
+	public static final Integer COL_F_EMISION_DEVENGO = 10;
+	public static final Integer COL_TIPO_OPERACION = 11;
+	public static final Integer COL_C_GASTO_REFACTURABLE = 12;
+	public static final Integer COL_REPERCUTIBLE_INQUILINO = 13;
+	public static final Integer COL_C_PAGO_CONEXION = 14;
+	public static final Integer COL_NUM_CONEXION = 15;
+	public static final Integer COL_F_CONEXION = 16;
+	public static final Integer COL_OFICINA = 17;
+	public static final Integer COL_RETENCION_GARANTIA_PORCENTAJE = 18;
+	public static final Integer COL_TIPO_RETENCION = 19;
+	public static final Integer COL_IRPF_BASE = 20;
+	public static final Integer COL_IRPF_PORCENTAJE = 21;
+	public static final Integer COL_IRPF_CLAVE = 22;
+	public static final Integer COL_IRPF_SUBCLAVE = 23;
+	public static final Integer COL_PLAN_VISITAS = 24;
+	public static final Integer COL_ACTIVABLE = 25;
+	public static final Integer COL_EJERCICIO = 26;
+	public static final Integer COL_TIPO_COMISIONADO = 27;
+	public static final Integer COL_COD_AGRUPACION_LINEA_DETALLE = 28;
+	public static final Integer COL_SUBTIPO_GASTO = 29;
+	public static final Integer COL_PRINCIPAL_SUJETO_IMPUESTOS = 30;
+	public static final Integer COL_PRINCIPAL_NO_SUJETO_IMPUESTOS = 31;
+	public static final Integer COL_TIPO_RECARGO = 32;
+	public static final Integer COL_IMPORTE_RECARGO = 33;
+	public static final Integer COL_INTERES_DEMORA = 34;
+	public static final Integer COL_COSTES = 35;
+	public static final Integer COL_OTROS_INCREMENTOS = 36;
+	public static final Integer COL_PROVISIONES_Y_SUPLIDOS = 37;
+	public static final Integer COL_TIPO_IMPUESTO = 38;
+	public static final Integer COL_OPERACION_EXENTA = 39;
+	public static final Integer COL_RENUNCIA_EXENCION = 40;
+	public static final Integer COL_TIPO_IMPOSITIVO = 41;
+	public static final Integer COL_OPTA_CRITERIO_CAJA_IVA = 42;
+	public static final Integer COL_ID_ELEMENTO = 43;
+	public static final Integer COL_TIPO_ELEMENTO = 44;
+	public static final Integer COL_PARTICIPACION_LINEA_DETALLE = 45;
 
 	
 	
@@ -208,8 +209,14 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 						newGastoProveedor.setReferenciaEmisor(exc.dameCelda(fila, COL_NUM_FACTURA_LIQUIDACION));
 					}
 					
+					List<ActivoProveedor> emisor = null;
 					
-					List<ActivoProveedor> emisor = genericDao.getList(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", exc.dameCelda(fila, COL_NIF_EMISOR)));
+					if (Checks.esNulo(exc.dameCelda(fila, COL_COD_PROVEEDOR_REM))) {
+						emisor = genericDao.getList(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", exc.dameCelda(fila, COL_NIF_EMISOR)));
+					} else {
+						emisor = genericDao.getList(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", exc.dameCelda(fila, COL_COD_PROVEEDOR_REM)));
+					}
+					
 					if(!Checks.esNulo(emisor) && !emisor.isEmpty()) {
 						newGastoProveedor.setProveedor(emisor.get(0));
 					}
@@ -631,7 +638,14 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 				/////////////////////////////////////////
 				
 				if(exc.dameCelda(fila, COL_OPTA_CRITERIO_CAJA_IVA) != null && !exc.dameCelda(fila, COL_OPTA_CRITERIO_CAJA_IVA).isEmpty()) {
-					List<ActivoProveedor> emisorList = genericDao.getList(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", exc.dameCelda(fila, COL_NIF_EMISOR)));
+					List<ActivoProveedor> emisorList = null;
+					
+					if (Checks.esNulo(exc.dameCelda(fila, COL_COD_PROVEEDOR_REM))) {
+						emisorList = genericDao.getList(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", exc.dameCelda(fila, COL_NIF_EMISOR)));
+					} else {
+						emisorList = genericDao.getList(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", exc.dameCelda(fila, COL_COD_PROVEEDOR_REM)));
+					}
+					
 					if(emisorList != null && !emisorList.isEmpty()) {
 						for (ActivoProveedor emisor : emisorList) {
 							if(emisor != null) {

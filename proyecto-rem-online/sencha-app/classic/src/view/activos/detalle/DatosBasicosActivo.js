@@ -558,12 +558,29 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		               
 					]               
           	},
+          	// Perimetros  BBVA-----------------------------------------------
+          	{    
+				xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				title: HreRem.i18n('title.perimetros'),
+				hidden:!$AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']),
+				items :[					
+					{
+						xtype: 'datefieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.perimetro.fecha.alta.activo'),
+						colspan: 2,
+						bind:		'{activo.fechaAltaActivoRem}',
+						readOnly	: true
+					}
+				]
+ 			},
           	// Perimetros -----------------------------------------------
             {    
                 
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.perimetros'),
+				hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']),
 				items :
 					[
 					{
@@ -590,7 +607,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						readOnly	: true,
 						listeners: {
 						   'render': function(panel) {
-						       if($AU.getUser().codigoCartera == CONST.CARTERA['BBVA']){
+						       if($AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])){
 						    	  this.colspan = 3;
 						       }
 						    }
@@ -602,7 +619,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						colspan: 2,
 						bind: {
 							value: '{activo.trabajosVivos}',
-							hidden: '{esUsuarioBBVA}'
+							hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])
 						},
 						readOnly	: true
 					},
@@ -1084,7 +1101,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								items :
 									[
 									{
-										xtype:'numberfieldbase',
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.empresa'),
 										reference: 'activobbvaEmpresa',
 										bind: {
@@ -1092,15 +1109,11 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											value: '{activo.empresa}'
 										},
 										listeners: {
-						                	change:  'onActivoEpa',
-							            	update: function(){
-												if(Ext.isEmpty(this.getValue()))
-													this.setValue(-1);
-											}
+						                	change:  'onActivoEpa'
 						            	}
 									},
 									{
-										xtype:'numberfieldbase',
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.oficina'),
 										reference: 'activobbvaOficina',
 										bind: {
@@ -1108,15 +1121,11 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											value: '{activo.oficina}'
 										},
 										listeners: {
-						                	change:  'onActivoEpa',
-							            	update: function(){
-												if(Ext.isEmpty(this.getValue()))
-													this.setValue(-1);
-											}
+						                	change:  'onActivoEpa'
 						            	}
 									},
 									{
-										xtype:'numberfieldbase',
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.contrapartida'),
 										reference: 'activobbvaContrapartida',
 										bind: {
@@ -1124,15 +1133,11 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											value: '{activo.contrapartida}'
 										},
 										listeners: {
-						                	change:  'onActivoEpa',
-							            	update: function(){
-												if(Ext.isEmpty(this.getValue()))
-													this.setValue(-1);
-											}
+						                	change:  'onActivoEpa'
 						            	}
 									},
 									{
-										xtype:'numberfieldbase',
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.folio'),
 										reference: 'activobbvaFolio',
 										bind: {
@@ -1140,16 +1145,11 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											value: '{activo.folio}'
 										},
 										listeners: {
-						                	change:  'onActivoEpa',
-							            	update: function(){
-												if(Ext.isEmpty(this.getValue()))
-													this.setValue(-1);
-											}
+						                	change:  'onActivoEpa'
 						            	}
 									},
 									{
-										xtype:'textfield',
-										disabled: true,
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.cdpen'),
 										reference: 'activobbvaCdpen',
 										bind: {
@@ -1157,11 +1157,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											value: '{activo.cdpen}'
 										},
 										listeners: {
-						                	change:  'onActivoEpa',
-							            	update: function(){
-												if(Ext.isEmpty(this.getValue()))
-													this.setValue(-1);
-											}
+						                	change:  'onActivoEpa'
 						            	}
 									}
 								]

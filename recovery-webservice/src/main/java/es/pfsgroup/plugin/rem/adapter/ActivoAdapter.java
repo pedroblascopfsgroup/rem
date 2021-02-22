@@ -101,6 +101,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionSer
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
@@ -292,6 +293,7 @@ public class ActivoAdapter {
 	public static final String CODIGO_SUPERVISOR_COMERCIAL_ALQUILER = "SUPCOMALQ";
 	
 	private static final String T017_TRAMITE_BBVA_DESCRIPCION = "Trámite comercial de venta BBVA";
+    private static final String CODIGO_TRAMITE_T017 = "T017";
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -350,8 +352,20 @@ public class ActivoAdapter {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoFoto.getId());
 		ActivoFoto activoFoto = genericDao.get(ActivoFoto.class, filtro);
+		String descripcion  = null;
 		boolean resultado = false;
 		try {
+			
+			beanUtilNotNull.copyProperties(activoFoto, dtoFoto);
+			if(!Checks.esNulo(dtoFoto.getOrden())) {
+				activoFoto.setOrden(dtoFoto.getOrden());
+			}
+			if (dtoFoto.getCodigoDescripcionFoto() != null) {
+				DDDescripcionFotoActivo ddDescripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoFoto.getCodigoDescripcionFoto()));
+				descripcion = ddDescripcionFoto.getDescripcion();
+				activoFoto.setDescripcionFoto(ddDescripcionFoto);
+				activoFoto.setDescripcion(descripcion);
+			}
 
 			if (gestorDocumentalFotos.isActive()) {
 				PRINCIPAL principal = null;
@@ -371,15 +385,12 @@ public class ActivoAdapter {
 					}
 				}
 				FileResponse fileReponse = gestorDocumentalFotos.update(activoFoto.getRemoteId(), dtoFoto.getNombre(),
-						null, dtoFoto.getDescripcion(), principal, situacion, dtoFoto.getOrden());
+						null, descripcion, principal, situacion, dtoFoto.getOrden());
 				if (fileReponse.getError() != null && !fileReponse.getError().isEmpty()) {
 					throw new RuntimeException(fileReponse.getError());
 				}
 			}
-			beanUtilNotNull.copyProperties(activoFoto, dtoFoto);
-			if(!Checks.esNulo(dtoFoto.getOrden())) {
-				activoFoto.setOrden(dtoFoto.getOrden());
-			}
+			
 			genericDao.save(ActivoFoto.class, activoFoto);
 
 		} catch (Exception e) {
@@ -1690,7 +1701,10 @@ public class ActivoAdapter {
 		Boolean incluirVenta;
 		Boolean incluirAlquiler;
 		
-		String tipoComercializacion = activoApi.get(idActivo).getTipoComercializacion().getCodigo();
+		String tipoComercializacion = null;
+		if(activoApi.get(idActivo).getActivoPublicacion() != null && activoApi.get(idActivo).getActivoPublicacion().getTipoComercializacion() != null) {
+			tipoComercializacion =activoApi.get(idActivo).getActivoPublicacion().getTipoComercializacion().getCodigo();
+		}
 		
 		if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion) || DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(tipoComercializacion)) {
 			incluirVenta = false;
@@ -1747,6 +1761,7 @@ public class ActivoAdapter {
 
 	public List<DtoListadoTramites> getTramitesActivo(Long idActivo, WebDto webDto) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
+		Activo activo = activoApi.get(idActivo);
 		List<String> listaCodigosTramite = new ArrayList<String>() {
 			{
 				add(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC);
@@ -1774,6 +1789,12 @@ public class ActivoAdapter {
 				DtoListadoTramites dtoTramite = new DtoListadoTramites();
 				try {
 					beanUtilNotNull.copyProperties(dtoTramite, tramite);
+					
+					if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(activo.getCartera().getCodigo())
+							&& CODIGO_TRAMITE_T017.equals(tramite.getCodigoTipoTramite())) {
+						beanUtilNotNull.copyProperty(dtoTramite, "nombre", T017_TRAMITE_BBVA_DESCRIPCION);
+						beanUtilNotNull.copyProperty(dtoTramite, "tipoTramite", T017_TRAMITE_BBVA_DESCRIPCION);
+					}
 
 				} catch (IllegalAccessException e) {
 					logger.error("Error en ActivoAdapter", e);
@@ -2135,7 +2156,8 @@ public class ActivoAdapter {
 			
 			beanUtilNotNull.copyProperty(dtoTramite, "idActivo", tramite.getActivo().getId());
 
-			if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo())) {
+			if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo())
+					&& CODIGO_TRAMITE_T017.equals(tramite.getTipoTramite().getCodigo())) {
 				beanUtilNotNull.copyProperty(dtoTramite, "nombre", T017_TRAMITE_BBVA_DESCRIPCION);
 				beanUtilNotNull.copyProperty(dtoTramite, "tipoTramite", T017_TRAMITE_BBVA_DESCRIPCION);
 			}else {
@@ -2787,7 +2809,8 @@ public class ActivoAdapter {
 			BeanUtils.copyProperties(dto, activoEntrada.getSituacionPosesoria());
 			if (activoEntrada.getSituacionPosesoria().getConTitulo() != null)
 				dto.setConTitulo(activoEntrada.getSituacionPosesoria().getConTitulo().getCodigo());
-			activoApi.compruebaParaEnviarEmailAvisoOcupacion(dto, activoEntrada.getId());
+			if(tipoDocumento.getCodigo().equals(DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION))
+				activoApi.compruebaParaEnviarEmailAvisoOcupacion(dto, activoEntrada.getId());
 		}
 		return null;
 	}
@@ -3958,6 +3981,14 @@ public class ActivoAdapter {
 				ofertasAgrupadas = ofertaApi.buildListaOfertasAgrupadasLbk(oferPrincipal, oferta, dto.getClaseOferta());
 			}
 			
+			if(Checks.esNulo(dto.getClaseOferta()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo()) 
+					&& DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta.getCodigo())) {
+				DDClaseOferta clase = null;
+				clase = genericDao.get(DDClaseOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL) );
+				if(clase != null) {
+					oferta.setClaseOferta(clase);
+				}
+			}
 			oferta.setOfertasAgrupadas(ofertasAgrupadas);
 			
 			oferta.setOfertaExpress(false);
@@ -3968,6 +3999,12 @@ public class ActivoAdapter {
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
 			
 			oferta.setIdOfertaOrigen(dto.getIdOfertaOrigen());
+			
+			if(Checks.esNulo(dto.getOfrDocRespPrescriptor())) {
+				oferta.setOfrDocRespPrescriptor(true);
+			} else {
+				oferta.setOfrDocRespPrescriptor(dto.getOfrDocRespPrescriptor());
+			}
 			
 			ofertaCreada = genericDao.save(Oferta.class, oferta);
 			
@@ -4181,7 +4218,9 @@ public class ActivoAdapter {
 
 		if (Checks.esNulo(llave)) {
 			return false;
-		}
+		}		/*if(!Checks.esNulo(dto.getOfrDocRespPrescriptor())) {
+		oferta.setOfrDocRespPrescriptor(true);
+	}*/
 
 		DDTipoTenedor tipoTenedor = (DDTipoTenedor) proxyFactory.proxy(UtilDiccionarioApi.class)
 				.dameValorDiccionarioByCod(DDTipoTenedor.class, dto.getCodigoTipoTenedor());
@@ -4565,7 +4604,9 @@ public class ActivoAdapter {
 			}
 		} catch(JsonViewerException e) {
 			throw e;
-		}
+		}		/*if(!Checks.esNulo(dto.getOfrDocRespPrescriptor())) {
+		oferta.setOfrDocRespPrescriptor(true);
+	}*/
 
 		return aprobado;
 	}

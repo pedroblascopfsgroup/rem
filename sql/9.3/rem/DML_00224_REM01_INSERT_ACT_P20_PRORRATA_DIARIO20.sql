@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20210115
+--## FECHA_CREACION=20210118
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10730
@@ -63,6 +63,7 @@ BEGIN
                 , PRO.PRO_ID
               FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' P20 
               JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_DOCIDENTIF = '''||V_TMP_TIPO_DATA(1)||'''
+                AND PRO.PRO_ID = P20.PRO_ID
                 AND PRO.BORRADO = 0
               WHERE P20.BORRADO = 0
                 AND P20.P20_PRORRATA <> '||V_TMP_TIPO_DATA(2)||'
@@ -94,7 +95,7 @@ BEGIN
           DBMS_OUTPUT.PUT_LINE(V_MSQL);
           EXECUTE IMMEDIATE V_MSQL;
 
-          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO FUSIONADO CORRECTAMENTE');
 
       END LOOP;
 

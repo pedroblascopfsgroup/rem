@@ -789,7 +789,22 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		        },
 		        extraParams: {id: '{agrupacionficha.id}', tipoFoto: '01'}
 		     }
-    	},    	
+    	}, 
+    	
+    	storeDescripcionFoto: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'descripcionesFoto'}
+			},
+			autoLoad: true,
+			remoteFilter: false,
+			filters: {
+    			property: 'codigoSubtipoActivo',
+    			value: '{fotoSelected.codigoSubtipoActivo}'  
+    		}
+    	},
 
 		storeActivos: {
 			 pageSize: $AC.getDefaultPageSize(),
@@ -882,7 +897,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'agrupacion/getFotosSubdivisionById',
-		        extraParams: {id: '{subdivisionFoto.id}', agrId: '{subdivisionFoto.agrupacionId}'}
+		        extraParams: {id: '{subdivisionFoto.id}', agrId: '{subdivisionFoto.agrupacionId}', codigoSubtipoActivo: '{subdivisionFoto.codigoSubtipoActivo}'}
 		     }
     	},
     	
@@ -1134,7 +1149,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
          	 },
          	 groupField: 'descripcionTipo',
 		     remoteSort: true,
-         	 autoLoad: true
+         	 autoLoad: false
 		}
     }
 });

@@ -40,6 +40,7 @@ public class ActivoPropagacionUAsFieldTabMap {
     	    		"tipoActivoCodigo",
     	    		"subtipoActivoCodigo",
     	    		"tipoTransmision",
+    	    		"tipoSegmentoCodigo",
     	    		
     	    		// identificación BBVA
 	    			"lineaFactura",

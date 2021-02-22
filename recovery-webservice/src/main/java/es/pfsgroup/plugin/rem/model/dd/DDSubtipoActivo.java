@@ -54,13 +54,14 @@ public class DDSubtipoActivo implements Auditable, Dictionary {
 	public static final String CODIGO_SUBTIPO_NAVE_ADOSADA = "18";
 	public static final String CODIGO_SUBTIPO_APARCAMIENTO= "19";
 	public static final String CODIGO_SUBTIPO_HOTEL_O_APARTAMENTOS_TURISTICOS = "20";
+	public static final String CODIGO_EN_CONSTRUCCION = "23";
 	public static final String COD_GARAJE ="24";
 	public static final String COD_TRASTERO ="25";
 	public static final String CODIGO_SUBTIPO_LOCAL_COMERCIAL = "13";
-	public static final String CODIGO_SUBTIPO_APARTAMENTO_TURISTICO = "38";
-	public static final String CODIGO_SUBTIPO_HOSTELERO = "39";
-	public static final String CODIGO_SUBTIPO_SUELO_URBANO_NO_CONSOLIDADO = "40";
-
+	public static final String CODIGO_SUBTIPO_APARTAMENTO_TURISTICO = "40";
+	public static final String CODIGO_SUBTIPO_HOSTELERO = "41";
+	public static final String CODIGO_SUBTIPO_SUELO_URBANO_NO_CONSOLIDADO = "42";
+	public static final String CODIGO_SUBTIPO_RESIDENCIAL_VIVIENDAS_LOCALES_TRASTEROS_GARAJES= "43";
 
 
 	/**

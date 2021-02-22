@@ -79,6 +79,9 @@ public class OfertaDto implements Serializable {
 	private Date fechaRecomendacionRc;
 	private String recomendacionDc;
 	private Date fechaRecomendacionDc;
+	private Boolean docResponsabilidadPrescriptor;
+	private String porcentajeDescuento;
+	private String justificacionOferta;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -327,5 +330,23 @@ public class OfertaDto implements Serializable {
 	}
 	public void setFechaRecomendacionDc(Date fechaRecomendacionDc) {
 		this.fechaRecomendacionDc = fechaRecomendacionDc;
+	}
+	public Boolean getDocResponsabilidadPrescriptor() {
+		return docResponsabilidadPrescriptor;
+	}
+	public void setDocResponsabilidadPrescriptor(Boolean docResponsabilidadPrescriptor) {
+		this.docResponsabilidadPrescriptor = docResponsabilidadPrescriptor;
+	}
+	public String getPorcentajeDescuento() {
+		return porcentajeDescuento;
+	}
+	public void setPorcentajeDescuento(String porcentajeDescuento) {
+		this.porcentajeDescuento = porcentajeDescuento;
+	}
+	public String getJustificacionOferta() {
+		return justificacionOferta;
+	}
+	public void setJustificacionOferta(String justificacionOferta) {
+		this.justificacionOferta = justificacionOferta;
 	}
 }

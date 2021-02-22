@@ -206,21 +206,26 @@ public class AgendaController extends TareaController {
 
 		boolean success = false;
 		try {
-			boolean esBulk = bulkAdvisoryNoteAdapter.ofertaEnBulkAN(request.getParameterMap());
-			boolean cumpleCondiciones = false;
-			
-			if(esBulk)
-				cumpleCondiciones = bulkAdvisoryNoteAdapter.validarTareasOfertasBulk(request.getParameterMap());
-			
-			if(!esBulk || (esBulk && cumpleCondiciones)) {
+			if(!adapter.estaTareaFinalizada(request.getParameterMap())) {
 				
-				success = adapter.save(request.getParameterMap());
+				boolean esBulk = bulkAdvisoryNoteAdapter.ofertaEnBulkAN(request.getParameterMap());
+				boolean cumpleCondiciones = false;
 				
-				if(esBulk && cumpleCondiciones) {
-					bulkAdvisoryNoteAdapter.avanzarTareasOfertasBulk(request.getParameterMap());
+				if(esBulk)
+					cumpleCondiciones = bulkAdvisoryNoteAdapter.validarTareasOfertasBulk(request.getParameterMap());
+				
+				if(!esBulk || (esBulk && cumpleCondiciones)) {
+					
+					success = adapter.save(request.getParameterMap());
+					
+					if(esBulk && cumpleCondiciones) {
+						bulkAdvisoryNoteAdapter.avanzarTareasOfertasBulk(request.getParameterMap());
+					}
+				}else {
+					throw new JsonViewerException("La oferta Bulk no cumple las condiciones para avanzar.");
 				}
 			}else {
-				throw new JsonViewerException("La oferta Bulk no cumple las condiciones para avanzar.");
+				model.put("errorTareaFinalizada", true);
 			}
 
 		} catch (InvalidDataAccessResourceUsageException e) {

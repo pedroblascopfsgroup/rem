@@ -7,7 +7,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
                 'HreRem.model.ComparecienteBusqueda', 'HreRem.model.Honorario','HreRem.model.HstcoSeguroRentas','HreRem.model.TipoDocumentoExpediente',
 				'HreRem.model.CompradorExpediente', 'HreRem.model.FichaComprador','HreRem.model.BloqueoActivo','HreRem.model.TanteoActivo',
 				'HreRem.model.ExpedienteScoring', 'HreRem.model.HistoricoExpedienteScoring', 'HreRem.model.SeguroRentasExpediente', 'HreRem.model.HistoricoCondiciones',
-				'HreRem.model.OfertasAgrupadasModel', 'HreRem.model.OrigenLead'],
+				'HreRem.model.OfertasAgrupadasModel', 'HreRem.model.OrigenLead', 'HreRem.model.AuditoriaDesbloqueo', 'HreRem.model.ActivoAlquiladosGrid'],
     
     data: {
     },
@@ -82,7 +82,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     
 	     visibleBotonAuditoriaDesbloqueo: function(get){
 	    	var me = this;
-	    	var finEconomico = me.getData().expediente.getData().finalizadoCierreEconomico;
+	    	var finEconomico = false;
+	    	if (get('expediente.finalizadoCierreEconomico') != null){
+	    		finEconomico = get('expediente.finalizadoCierreEconomico');
+	    	}
 			var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION'])
 					|| $AU.userIsRol(CONST.PERFILES['PERFGCONTROLLER']);
 			return usuariosValidos && finEconomico;
@@ -590,11 +593,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 			var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
 	 		var isBoarding = $AU.userIsRol(CONST.PERFILES['GESTBOARDING']);
-			/*if(CONST.CARTERA['CERBERUS'] == carteraCodigo || CONST.CARTERA['BBVA'] == carteraCodigo){
+			if(CONST.CARTERA['CERBERUS'] == carteraCodigo){
 				return !isSuper;//CARTERAS NO BANCO
 			}
-	 		return !isSuper && !isBoarding;//CARTERAS BANCO*/
-	 		return !isSuper;
+	 		return !isSuper && !isBoarding;//CARTERAS BANCO
 	 	},
 	 	
 	 	habilitarBotonGenerarFicha: function(get){;
@@ -1403,23 +1405,21 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			autoLoad: true
 		},
 
-		storeAuditoriaDesbloqueo: {
-			pageSize: $AC.getDefaultPageSize(),
-	    	model: 'HreRem.model.AuditoriaDesbloqueo',
-	    	proxy: {
-		        type: 'uxproxy',
-		        remoteUrl: 'expedientecomercial/getAuditoriaDesbloqueo',
-		        extraParams: {idExpediente: '{expediente.id}'}
-	    	}
-		},
-		
-
 		comboMotivoAmpliacionArras: {
 	    	model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'motivoAmpliacionArras'}
+			}
+	    },
+	    
+		comboTipoResponsable: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoResponsable'}
 			}
 	    }
 		

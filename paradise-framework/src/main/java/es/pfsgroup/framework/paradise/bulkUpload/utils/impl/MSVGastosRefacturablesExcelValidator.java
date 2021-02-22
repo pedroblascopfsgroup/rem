@@ -43,6 +43,7 @@ public class MSVGastosRefacturablesExcelValidator extends MSVExcelValidatorAbstr
 	private static final String GASTO_PADRE_NO_PERTENECE_BANKIA_SAREB = "msg.error.masivo.gasto.refacturable.validator.padre.no.pertenece.bankia.sareb";
 	private static final String GASTO_PADRE_NO_EMISOR_HAYA = "msg.error.masivo.gasto.refacturable.validator.padre.no.emisor.haya";
 	private static final String GASTO_PADRE_NO_DESTINATARIO_PROPIETARIO = "msg.error.masivo.gasto.refacturable.validator.padre.no.destinatario.propietario";
+	private static final String GASTO_PADRE_CON_LINEAS = "msg.error.masivo.gasto.refacturable.validator.padre.lineas.detalle";
 
 	private static final String GASTO_HIJO_NO_EXISTE = "msg.error.masivo.gasto.refacturable.validator.hijo.no.existe";
 	private static final String GASTO_HIJO_NO_REFACTURABLE = "msg.error.masivo.gasto.refacturable.validator.hijo.no.refacturable";
@@ -118,6 +119,7 @@ public class MSVGastosRefacturablesExcelValidator extends MSVExcelValidatorAbstr
 			mapaErrores.put(messageServices.getMessage(GASTO_PADRE_NO_EMISOR_HAYA), esGastoEmisorHaya(exc, COL_GASTO_PADRE));
 			mapaErrores.put(messageServices.getMessage(GASTO_PADRE_NO_PERTENECE_BANKIA_SAREB), perteneceGastoBankiaSareb(exc, COL_GASTO_PADRE));
 			mapaErrores.put(messageServices.getMessage(GASTO_PADRE_NO_DESTINATARIO_PROPIETARIO), esGastoDestinatarioPropietario(exc, COL_GASTO_PADRE));
+			mapaErrores.put(messageServices.getMessage(GASTO_PADRE_CON_LINEAS), gastoSarebAnyadeRefacturable(exc,COL_GASTO_PADRE));
 
 			mapaErrores.put(messageServices.getMessage(GASTO_HIJO_EXISTE), existeGastoRefacturable(exc, COL_GASTO_HIJO));
 			mapaErrores.put(messageServices.getMessage(GASTO_HIJO_NO_EXISTE), existeGasto(exc, COL_GASTO_HIJO));
@@ -284,6 +286,35 @@ public class MSVGastosRefacturablesExcelValidator extends MSVExcelValidatorAbstr
 		}
 		return listaFilas;
 	}
+	
+	
+	/**
+	 * Comprueba si el gasto tiene lineas de detalle, pero no tiene gastos refacturados
+	 * @param exc
+	 * @param colGasto número de columna con los gastos a comprobar
+	 * @return listado con el número de fila en las que el gasto no es posible
+	 *         refacturar
+	 */
+	private List<Integer> gastoSarebAnyadeRefacturable(MSVHojaExcel exc, int colGasto) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+	
+		for (int i = FILA_DATOS; i < this.numFilasHoja; i++) {
+			try {							
+
+				if (!particularValidator.gastoSarebAnyadeRefacturable(exc.dameCelda(i, colGasto))) {
+					listaFilas.add(i);
+				}
+
+			} catch (ParseException e) {
+				listaFilas.add(i);
+				logger.error(e.getMessage());
+			} catch (Exception e) {
+				listaFilas.add(0);
+				logger.error(e.getMessage());
+			}
+		}
+		return listaFilas;
+	}
 
 	/**
 	 * Comprueba si el gasto es pertenece a BANKIA o SAREB	  
@@ -411,4 +442,9 @@ public class MSVGastosRefacturablesExcelValidator extends MSVExcelValidatorAbstr
 		return listaFilas;
 	}
 
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }

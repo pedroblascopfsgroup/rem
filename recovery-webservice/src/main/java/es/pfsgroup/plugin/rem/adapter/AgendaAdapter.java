@@ -504,6 +504,12 @@ public class AgendaAdapter {
 
 		return true;
 	}
+	
+	public boolean estaTareaFinalizada(Map<String,String[]> valores) {
+		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(Long.valueOf(valores.get("idTarea")[0]));
+		TareaNotificacion tar2 = genericDao.get(TareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(valores.get("idTarea")[0])));
+		return tar.getTareaFinalizada() || tar2.getTareaFinalizada() || tar.getFechaFin() != null || tar2.getFechaFin() != null;
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public DtoGenericForm rellenaDTO(Long idTarea, Map<String,String> camposFormulario) throws Exception {
@@ -844,7 +850,11 @@ public class AgendaAdapter {
 	    			activo.setSituacionComercial(situacionComercial);
 	    			if (!Checks.esNulo(activoSituacionPosesoria)) {
 	    				activoSituacionPosesoria.setOcupado(0);
+	    				activoSituacionPosesoria.setUsuarioModificarOcupado(usuarioLogado.getUsername());
+	    				activoSituacionPosesoria.setFechaModificarOcupado(new Date());
 	    				activoSituacionPosesoria.setConTitulo(null);
+	    				activoSituacionPosesoria.setUsuarioModificarConTitulo(usuarioLogado.getUsername());
+	    				activoSituacionPosesoria.setFechaModificarConTitulo(new Date());
 	    				activoSituacionPosesoria.setFechaUltCambioTit(new Date());
 	    				activo.setSituacionPosesoria(activoSituacionPosesoria);
 	    			}

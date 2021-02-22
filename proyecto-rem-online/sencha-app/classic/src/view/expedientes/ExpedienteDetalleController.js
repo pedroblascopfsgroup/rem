@@ -5,7 +5,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		'HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosClienteUrsus','HreRem.model.ActivoExpedienteCondicionesModel',
 		'HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', 'HreRem.view.activos.detalle.OpcionesPropagacionCambios',
 		'HreRem.view.common.WizardBase','HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', 'HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCliente', 
-		'HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumento'
+		'HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumento', 'HreRem.view.expedientes.editarAuditoriaDesbloqueo'
 	],
     
     control: {
@@ -108,7 +108,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		models = null,
 		nameModels = null,
 		id = me.getViewModel().get("expediente.id");
-		form.mask(HreRem.i18n("msg.mask.loading"));
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		if(!form.saveMultiple) {	
 			model = form.getModelInstance(),
 			model.setId(id);
@@ -122,20 +122,20 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				    		me.tareaDefinicionDeOferta(itemReserva);   
 				    	}
 				    	form.setBindRecord(record);			    	
-				    	form.unmask();
+				    	me.getView().unmask();
 				    	if(Ext.isFunction(form.afterLoad)) {
 				    		form.afterLoad();
 				    	}
 				    }, 		    
 				    failure: function(operation) {		    	
-				    	form.unmask();
+				    	me.getView().unmask();
 				    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
 				    }
 				});
 			} else {
 				// Si la API no contiene metodo de lectura (read).
 				form.setBindRecord(model);			    	
-		    	form.unmask();
+		    	me.getView().unmask();
 		    	if(Ext.isFunction(form.afterLoad)) {
 		    		form.afterLoad();
 		    	}
@@ -193,11 +193,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					if (index < models.length) {							
 						me.cargarTabDataMultiple(form, index, models, nameModels);
 					} else {	
-						form.unmask();				
+						me.getView().unmask();				
 					}
 			    },			            
 				failure: function (a, operation) {
-					 form.unmask();
+					 me.getView().unmask();
 				}
 			});
 		} else {
@@ -208,7 +208,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			if (index < models.length) {							
 				me.cargarTabDataMultiple(form, index, models, nameModels);
 			} else {	
-				form.unmask();				
+				me.getView().unmask();				
 			}
 		}
 	
@@ -345,7 +345,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	saveMultipleRecords: function(contador, records) {
 		var me = this;
-		
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		if(Ext.isDefined(records[contador].getProxy().getApi().create) || Ext.isDefined(records[contador].getProxy().getApi().update)) {
 			// Si la API tiene metodo de escritura (create or update).
 			records[contador].save({
@@ -375,7 +375,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	saveMultipleRecordsActivoExpediente: function(contador, records) {
 		var me = this;
-		
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		if(Ext.isDefined(records[contador].getProxy().getApi().create) || Ext.isDefined(records[contador].getProxy().getApi().update)) {
 			// Si la API tiene metodo de escritura (create or update).
 			records[contador].save({
@@ -442,7 +442,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
 		var activeTab = btn.up('tabpanel').getActiveTab();
 		if(activeTab.xtype == "datosbasicosoferta"){
-			me.getView().mask();
+			me.getView().mask(HreRem.i18n("msg.mask.loading"));
 			var url =  $AC.getRemoteUrl('expedientecomercial/esOfertaDependiente');
 			var numOfertaPrin = me.getViewModel().data.datosbasicosoferta.data.numOferPrincipal;
 			var nuevoNumOferta = me.getViewModel().data.datosbasicosoferta.data.nuevoNumOferPrincipal;
@@ -5007,7 +5007,7 @@ comprobarFormatoModificar: function() {
 							idExpediente : me.getViewModel().data.expediente.id
 					};
 					
-					me.getView().mask();
+					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 					Ext.Ajax.request({
 			    	     url: url,
 			    	     params: parametros,

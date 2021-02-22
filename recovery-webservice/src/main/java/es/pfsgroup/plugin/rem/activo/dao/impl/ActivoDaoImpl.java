@@ -48,9 +48,11 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativaAdicional;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -78,6 +80,7 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPlusvalia;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -940,6 +943,17 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				.createQuery(hb.toString()).list();
 		return activoTasacionList;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoTasacion> getListActivoTasacionByIdActivoAsc(Long idActivo) {
+		HQLBuilder hb = new HQLBuilder(" from ActivoTasacion tas");
+		hb.appendWhere(" tas.activo.id = " + idActivo);
+		hb.orderBy("tas.valoracionBien.fechaValorTasacion", HQLBuilder.ORDER_ASC);
+		List<ActivoTasacion> activoTasacionList = (List<ActivoTasacion>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).list();
+		return activoTasacionList;
+	}
 
 
 
@@ -1581,6 +1595,27 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
+	public boolean activocheckGestion(Long idActivo) {
+		String sql = "          SELECT count(1)  " +
+		" FROM REM01.ACT_ACTIVO ACT  " +
+		" JOIN REM01.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID=ACT.ACT_ID " +
+		" WHERE ACT_NUM_ACTIVO = "+ idActivo +
+		" AND ACT.BORRADO = 0 AND PAC.PAC_CHECK_GESTIONAR=1";
+		int result;
+	
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			result=((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue();
+			if (result==1) {
+				return true;
+			}else {
+				return false;
+			}			 
+		}
+		return false;
+
+	}
+	
+	@Override
 	public boolean activoPerteneceABBVAAndCERBERUS(Long idActivo) { 
 		String sql = "          SELECT count(1)  " +
 				"				FROM REM01.ACT_ACTIVO ACT " +
@@ -2093,5 +2128,77 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				.createQuery(hql.toString()).list();
 		
 		return actAlquiladosList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivo(Long idActivo) {
+		
+		Order order = new Order(OrderType.ASC,"fechaInicio");
+		return genericDao.getListOrdered(ActivoHistoricoValoraciones.class, order, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivoAndTipoPrecio(Long idActivo, String codigoTipoPrecio) {
+		
+		Order order = new Order(OrderType.ASC,"fechaInicio");
+		Filter tipo = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", codigoTipoPrecio);
+		Filter activo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		return genericDao.getListOrdered(ActivoHistoricoValoraciones.class, order, activo, tipo);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoValoraciones> getListActivoValoracionesByIdActivoAndTipoPrecio(Long idActivo, String codigoTipoPrecio) {
+		
+		Order order = new Order(OrderType.DESC,"id");
+		Filter tipo = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", codigoTipoPrecio);
+		Filter activo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		return genericDao.getListOrdered(ActivoValoraciones.class, order, activo, tipo);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean isPublicadoVentaHistoricoByFechaValoracion(Long idActivo, Date fechaValoracion) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String fecha = formatter.format(fechaValoracion);
+		
+		HQLBuilder hb = new HQLBuilder("select estadoPublicacionVenta.id from ActivoPublicacionHistorico ");
+		hb.appendWhere("TO_DATE('"+ fecha +"', 'DD/MM/YYYY') between fechaInicioVenta and fechaFinVenta");
+		hb.appendWhere("activo = " + idActivo );
+	
+		List<String> estadoPublicacionList = this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		if(estadoPublicacionList != null && !estadoPublicacionList.isEmpty()) {
+			DDEstadoPublicacionVenta estadoPublicacion = genericDao.get(DDEstadoPublicacionVenta.class, genericDao.createFilter(FilterType.EQUALS, "id", estadoPublicacionList.get(0)));
+			if(estadoPublicacion != null) {
+				return !DDEstadoPublicacionVenta.isNoPublicado(estadoPublicacion.getCodigo());
+			}
+		}
+		
+		return false;
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean isPublicadoVentaByFechaValoracion(Long idActivo, Date fechaValoracion) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String fecha = formatter.format(fechaValoracion);
+		
+		HQLBuilder hb = new HQLBuilder("select estadoPublicacionVenta.id from ActivoPublicacion ");
+		hb.appendWhere("fechaInicioVenta <= TO_DATE('"+ fecha +"', 'DD/MM/YYYY')");
+		hb.appendWhere("activo = " + idActivo );
+	
+		List<String> estadoPublicacionList = this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		if(estadoPublicacionList != null && !estadoPublicacionList.isEmpty()) {
+			DDEstadoPublicacionVenta estadoPublicacion = genericDao.get(DDEstadoPublicacionVenta.class, genericDao.createFilter(FilterType.EQUALS, "id", estadoPublicacionList.get(0)));
+			if(estadoPublicacion != null) {
+				return !DDEstadoPublicacionVenta.isNoPublicado(estadoPublicacion.getCodigo());
+			}
+		}
+		
+		return false;
+		
 	}
 }

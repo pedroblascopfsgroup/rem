@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -41,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Component
 public class TabActivoSitPosesoriaLlaves implements TabActivoService {
@@ -74,6 +77,9 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	
 	@Autowired
 	private UpdaterStateApi updaterState;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoSitPosesoriaLlaves.class);
 	
@@ -211,8 +217,11 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		}
 		
 		if(activoSituacionPosesoria != null) {
+			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			if (!Checks.esNulo(dto.getOcupado())) {
 				activoSituacionPosesoria.setOcupado(dto.getOcupado());
+				activoSituacionPosesoria.setUsuarioModificarOcupado(usu.getUsername());
+				activoSituacionPosesoria.setFechaModificarOcupado(new Date());
 			}
 			
 			Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
@@ -222,9 +231,13 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			
 			if (!Checks.esNulo(dto.getOcupado()) && !BooleanUtils.toBoolean(dto.getOcupado()) && dto.getOcupado() == 0) {
 				activoSituacionPosesoria.setConTitulo(null);
+				activoSituacionPosesoria.setUsuarioModificarConTitulo(usu.getUsername());
+				activoSituacionPosesoria.setFechaModificarConTitulo(new Date());
 				activoSituacionPosesoria.setFechaUltCambioTit(new Date());
 				tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE));
 			} else  if (!Checks.esNulo(dto.getConTitulo())) {
+				activoSituacionPosesoria.setUsuarioModificarConTitulo(usu.getUsername());
+				activoSituacionPosesoria.setFechaModificarConTitulo(new Date());
 				Filter tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getConTitulo());
 				DDTipoTituloActivoTPA tituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
 				activoSituacionPosesoria.setConTitulo(tituloActivoTPA);

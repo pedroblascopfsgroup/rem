@@ -165,13 +165,19 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 
 	@Override
 	public Double getImporteValoracionRentaWebPorIdActivo(Long idActivo) {
-		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoValoraciones.class);
-		criteria.setProjection(Projections.property("importe"));
-		criteria.add(Restrictions.eq("activo.id", idActivo)).createCriteria("tipoPrecio").add(Restrictions.eq("codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA));
-
-		Double resultadoPrecioWeb = HibernateUtils.castObject(Double.class, criteria.uniqueResult());
-		if(Checks.esNulo(resultadoPrecioWeb)) {
-			resultadoPrecioWeb = 0.0; 
+		Double resultadoPrecioWeb = null; 
+		
+		HQLBuilder hql = new HQLBuilder("from ActivoValoraciones");
+		hql.appendWhere("activo.id = " + idActivo);
+		hql.appendWhere("auditoria.borrado = 0");
+		hql.appendWhere("fechaFin is null or fechaFin >= sysdate");
+		hql.appendWhere("tipoPrecio.codigo = " + DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA);
+		ActivoValoraciones query = HibernateQueryUtils.uniqueResult(this, hql);
+		
+		if (query != null) {
+			resultadoPrecioWeb = query.getImporte();
+		} else {
+			resultadoPrecioWeb = 0.0;
 		}
 		return resultadoPrecioWeb;
 	}
@@ -445,8 +451,8 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 		Double resultadoPrecioWeb = null;
 
 		String sql = " SELECT COUNT(1) FROM (SELECT VAL_IMPORTE FROM REM01.ACT_VAL_VALORACIONES           " +
-				" WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM REM01.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = "+DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA+") " +
-				" AND ACT_ID IN (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = "+idAgrupacion+")) " +
+				" WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM REM01.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = "+DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA+" AND BORRADO = 0) " +
+				" AND ACT_ID IN (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = "+idAgrupacion+") AND BORRADO = 0) " +
 				" GROUP BY VAL_IMPORTE " +
 				" HAVING (VAL_IMPORTE = 0 OR VAL_IMPORTE IS NULL) ";
 
@@ -455,7 +461,7 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 				&& ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).doubleValue() == 0.0)) {
 			sql = " SELECT SUM(VAL_IMPORTE) FROM (SELECT VAL_IMPORTE FROM REM01.ACT_VAL_VALORACIONES           " +
 					" WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM REM01.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = "+DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA+") " +
-					" AND ACT_ID IN (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = "+idAgrupacion+")) ";
+					" AND ACT_ID IN (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = "+idAgrupacion+") AND BORRADO = 0) ";
 
 			if (Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
 				resultadoPrecioWeb = 0.0;
@@ -470,10 +476,10 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 	}
 	
 	@Override
-	public List<ActivoValoraciones> getListActivoValoracionesByIdActivos(List<Long> idActivos) {
+	public List<ActivoValoraciones> getListActivoValoracionesByIdActivo(Long idActivo) {
 		
 		HQLBuilder hql = new HQLBuilder("from ActivoValoraciones ");
-		HQLBuilder.addFiltroWhereInSiNotNull(hql, "activo", idActivos);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "activo.id", idActivo);
 		hql.orderBy("fechaInicio", HQLBuilder.ORDER_ASC);
 
 		return HibernateQueryUtils.list(this, hql);

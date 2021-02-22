@@ -84,6 +84,8 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	private static final String LINEA_NO_EXISTE_EN_GASTO ="Esta línea no existe en el gasto";
 
 	private static final String SUPLIDO_NO_MODIFICABLE = "El gasto es suplido. No se puede modificar";
+	
+	private static final String ACTIVO_REPETIDO_BANKIA = "El activo ya ha sido introducido en la línea de detalle";
 
 	
 	public static final Integer COL_ID_GASTO = 0;
@@ -214,7 +216,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 			mapaErrores.put(LINEA_BORRAR_REPETIDA,borrarExisteLinea(exc));
 			mapaErrores.put(LINEA_NO_EXISTE_EN_GASTO,lineaNoExisteEnGasto(exc));
 			mapaErrores.put(SUPLIDO_NO_MODIFICABLE,suplidoNoModificable(exc));
-			
+			mapaErrores.put(ACTIVO_REPETIDO_BANKIA, activoRepetidoBankia(exc));
 
 
 
@@ -261,7 +263,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 					|| !mapaErrores.get(LINEA_BORRAR_REPETIDA).isEmpty()
 					|| !mapaErrores.get(LINEA_NO_EXISTE_EN_GASTO).isEmpty()
 					|| !mapaErrores.get(SUPLIDO_NO_MODIFICABLE).isEmpty()
-
+					|| !mapaErrores.get(ACTIVO_REPETIDO_BANKIA).isEmpty()
 
 					
 				){
@@ -379,8 +381,13 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
                         if(!Checks.esNulo(exc.dameCelda(i, COL_ID_GASTO)) && Boolean.TRUE.equals(particularValidator.perteneceGastoBankia(exc.dameCelda(i, COL_ID_GASTO)))) {
                         	if(!Checks.esNulo(tipoAccion) && Arrays.asList(listaCampoAccionAnyadir).contains(tipoAccion.toUpperCase())) {
 	                        	for(int x = 1; x<i;x++) {
-	                        		if(exc.dameCelda(x, COL_ID_GASTO).equals(exc.dameCelda(i, COL_ID_GASTO)) && 
-	                        		Arrays.asList(listaCampoAccionAnyadir).contains(exc.dameCelda(x, COL_ACCION_LINEA_DETALLE).toUpperCase())) {
+	                        		if(!(exc.dameCelda(x, COL_ID_GASTO).equals(exc.dameCelda(i, COL_ID_GASTO)) && 
+	                        		Arrays.asList(listaCampoAccionAnyadir).contains(exc.dameCelda(x, COL_ACCION_LINEA_DETALLE).toUpperCase()) &&
+	                        		exc.dameCelda(x, COL_SUBTIPO_GASTO).equals(exc.dameCelda(i, COL_SUBTIPO_GASTO)) &&
+	                        		exc.dameCelda(x, COL_TIPO_IMPUESTO).equals(exc.dameCelda(i, COL_TIPO_IMPUESTO)) &&
+	                        		exc.dameCelda(x, COL_TIPO_IMPOSITIVO).equals(exc.dameCelda(i, COL_TIPO_IMPOSITIVO)) &&
+	                        		exc.dameCelda(x, COL_TIPO_ELEMENTO).equals(exc.dameCelda(i, COL_TIPO_ELEMENTO)))
+	                        		) {
 	                        			listaFilas.add(i);
 	                        			addError = true;
 	                        			break;
@@ -388,8 +395,13 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	                        	}
                         	if(Boolean.TRUE.equals(particularValidator.gastoTieneLineaDetalle(exc.dameCelda(i, COL_ID_GASTO))) && !addError) {
                         		for(int x = 1; x<i;x++) {
-                            		if(exc.dameCelda(x, COL_ID_GASTO).equals(exc.dameCelda(i, COL_ID_GASTO)) && 
-                            		Arrays.asList(listaCampoAccionBorrar).contains(exc.dameCelda(x, COL_ACCION_LINEA_DETALLE).toUpperCase())) {
+                            		if(!(exc.dameCelda(x, COL_ID_GASTO).equals(exc.dameCelda(i, COL_ID_GASTO)) && 
+	                        		Arrays.asList(listaCampoAccionAnyadir).contains(exc.dameCelda(x, COL_ACCION_LINEA_DETALLE).toUpperCase()) &&
+	                        		exc.dameCelda(x, COL_SUBTIPO_GASTO).equals(exc.dameCelda(i, COL_SUBTIPO_GASTO)) &&
+	                        		exc.dameCelda(x, COL_TIPO_IMPUESTO).equals(exc.dameCelda(i, COL_TIPO_IMPUESTO)) &&
+	                        		exc.dameCelda(x, COL_TIPO_IMPOSITIVO).equals(exc.dameCelda(i, COL_TIPO_IMPOSITIVO)) &&
+	                        		exc.dameCelda(x, COL_TIPO_ELEMENTO).equals(exc.dameCelda(i, COL_TIPO_ELEMENTO))) 
+                            		) {
                             			tieneBorrar = true;
                             			break;
                             		}
@@ -1269,6 +1281,72 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
                     if(!Checks.esNulo(exc.dameCelda(i, COL_ID_GASTO)) 
                     		&& particularValidator.getGastoSuplidoConFactura(exc.dameCelda(i, COL_ID_GASTO)))
                         listaFilas.add(i);
+                } catch (ParseException e) {
+                    listaFilas.add(i);
+                }
+            }
+            } catch (IllegalArgumentException e) {
+                listaFilas.add(0);
+                e.printStackTrace();
+            } catch (IOException e) {
+                listaFilas.add(0);
+                e.printStackTrace();
+            }
+        return listaFilas;   
+   }
+
+   @Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+   
+   private List<Integer> activoRepetidoBankia(MSVHojaExcel exc){
+       List<Integer> listaFilas = new ArrayList<Integer>();
+
+        try{
+            for(int i=1; i<this.numFilasHoja;i++){
+                try {
+                	boolean tieneBorrar = false;
+                	boolean addError = false;
+                	String tipoAccion = exc.dameCelda(i, COL_ACCION_LINEA_DETALLE);
+                    if(!Checks.esNulo(exc.dameCelda(i, COL_ID_GASTO)) && Boolean.TRUE.equals(particularValidator.perteneceGastoBankia(exc.dameCelda(i, COL_ID_GASTO)))) {
+                    	if(!Checks.esNulo(tipoAccion) && Arrays.asList(listaCampoAccionAnyadir).contains(tipoAccion.toUpperCase())) {
+                        	for(int x = 1; x<i;x++) {
+                        		if(exc.dameCelda(x, COL_ID_GASTO).equals(exc.dameCelda(i, COL_ID_GASTO)) && 
+                        		Arrays.asList(listaCampoAccionAnyadir).contains(exc.dameCelda(x, COL_ACCION_LINEA_DETALLE).toUpperCase()) &&
+                        		exc.dameCelda(x, COL_SUBTIPO_GASTO).equals(exc.dameCelda(i, COL_SUBTIPO_GASTO)) &&
+                        		exc.dameCelda(x, COL_TIPO_IMPUESTO).equals(exc.dameCelda(i, COL_TIPO_IMPUESTO)) &&
+                        		exc.dameCelda(x, COL_TIPO_IMPOSITIVO).equals(exc.dameCelda(i, COL_TIPO_IMPOSITIVO)) &&
+                        		exc.dameCelda(x, COL_TIPO_ELEMENTO).equals(exc.dameCelda(i, COL_TIPO_ELEMENTO)) &&
+                        		exc.dameCelda(x, COL_ID_ELEMENTO).equals(exc.dameCelda(i, COL_ID_ELEMENTO))
+                        		) {
+                        			listaFilas.add(i);
+                        			addError = true;
+                        			break;
+                        		}
+                        	}
+                    	if(Boolean.TRUE.equals(particularValidator.gastoTieneLineaDetalle(exc.dameCelda(i, COL_ID_GASTO))) && !addError) {
+                    		for(int x = 1; x<i;x++) {
+                        		if(exc.dameCelda(x, COL_ID_GASTO).equals(exc.dameCelda(i, COL_ID_GASTO)) && 
+                        		Arrays.asList(listaCampoAccionAnyadir).contains(exc.dameCelda(x, COL_ACCION_LINEA_DETALLE).toUpperCase()) &&
+                        		exc.dameCelda(x, COL_SUBTIPO_GASTO).equals(exc.dameCelda(i, COL_SUBTIPO_GASTO)) &&
+                        		exc.dameCelda(x, COL_TIPO_IMPUESTO).equals(exc.dameCelda(i, COL_TIPO_IMPUESTO)) &&
+                        		exc.dameCelda(x, COL_TIPO_IMPOSITIVO).equals(exc.dameCelda(i, COL_TIPO_IMPOSITIVO)) &&
+                        		exc.dameCelda(x, COL_TIPO_ELEMENTO).equals(exc.dameCelda(i, COL_TIPO_ELEMENTO)) &&
+                        		exc.dameCelda(x, COL_ID_ELEMENTO).equals(exc.dameCelda(i, COL_ID_ELEMENTO))
+                        		) {
+                        			tieneBorrar = true;
+                        			break;
+                        		}
+                        	}
+                    		if(!tieneBorrar) {
+                    			listaFilas.add(i);
+                    		}
+                    	}
+                      }
+                    }
+                    	
+                        
                 } catch (ParseException e) {
                     listaFilas.add(i);
                 }

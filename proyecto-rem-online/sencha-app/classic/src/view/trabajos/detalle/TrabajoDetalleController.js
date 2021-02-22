@@ -130,8 +130,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			me.lookupReference("codigoPromocionPrinex").setDisabled(true);
 			me.lookupReference("codigoPromocionPrinex").setValue(null);
 		}*/
+		
+		if (!Ext.isEmpty(me.lookupReference("listaActivosSubidaRef")) && 
+			!Ext.isEmpty(me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion"))  ){
+			
+			me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(false);
+		}
 
-		me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(false);  	
+		  	
 		
     },
     
@@ -712,9 +718,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			form.getBindRecord().set("codSubcartera", codSubcartera);
 			form.getBindRecord().set("fechaEjecucionTrabajo", null);
 			form.getBindRecord().set("fechaEntregaLlaves", null);
+			
+			window.getViewModel().getView().mask(HreRem.i18n("msg.mask.espere"));
 					
 			var success = function(record, operation) {
 				me.getView().unmask();
+				window.getViewModel().getView().unmask();
 				var response = Ext.decode(operation.getResponse().responseText);
 				if(response.success === "true" && Ext.isDefined(response.warn)) {
 					me.fireEvent("warnToast", response.warn);
@@ -1146,7 +1155,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			 proxy: {
 			    type: 'uxproxy',
 				remoteUrl: 'trabajo/getListActivosByID',
-				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
 				extraParams: {idActivo: me.getView().idActivo, idAgrupacion: me.getView().idAgrupacion}
 			 },
 			 listeners:{
@@ -1263,28 +1271,48 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
      onClickUploadListaActivos: function(btn) {
        	var me = this,
        	form = me.getView().lookupReference("formSubirListaActivos");
-       	
        	var params = form.getValues(false,false,false,true);
        	params.idTipoOperacion = "141";
-       	
        	if(form.isValid()){
         	form.submit({
         		waitMsg: HreRem.i18n('msg.mask.loading'),
         		params: params,
     	   		success: function(fp, o){
-    	   			idProceso = Ext.JSON.decode(o.response.responseText).idProceso;
-    	   			//btn.up('creartrabajowindow').getViewModel().getData().trabajo.getData().idProceso = idProceso;
-    	   			//btn.up('creartrabajowindow').lookupReference('')form.getBindRecord().set("idActivo", idActivo);
-    	   			var window = btn.up('crearpeticiontrabajowin');
-    	   			window.idProceso = idProceso;
-    	   			window.lookupReference('listaActivosSubidaRef').getStore().getProxy().setExtraParams({'idProceso':idProceso});
-    	   			window.lookupReference('listaActivosSubidaRef').getStore().load(1);    
-    	   			//Si carga correctametne desde listado, ya no sera obligatorio insertar archivo
-    	   			window.lookupReference('filefieldActivosRef').allowBlank=true;
-    		    }
-    				
-    	    })
-       	}
+    	   			var idProceso = Ext.JSON.decode(o.response.responseText).idProceso;
+					var parameters = {};
+    	   			parameters.idProcess = idProceso;
+			    	var url =  $AC.getRemoteUrl('process/validar');
+			    	me.getView().mask('Validando...');
+					Ext.Ajax.request({
+						 method: 'GET',
+					     url: url,
+					     params: parameters,
+					     timeout: 120000,  // 2 min
+					     success: function(response, opts) {
+		    	   			var window = btn.up('windowBase');
+							var data = Ext.JSON.decode(response.responseText).data;
+		    	   			window.idProceso = idProceso;
+							me.getView().unmask();
+							if(data == "true"){
+								window.lookupReference('listaActivosSubidaRef').getStore().getProxy().setExtraParams({'idProceso':idProceso});
+			    	   			window.lookupReference('listaActivosSubidaRef').getStore().load(1);    
+			    	   			//Si carga correctametne desde listado, ya no sera obligatorio insertar archivo
+			    	   			window.lookupReference('filefieldActivosRef').allowBlank=true;
+							}else{
+								me.fireEvent("errorToast", "Ha fallado la validación del fichero. Vaya al apartado de \"Carga Masiva\" para descargar el fichero de errores.");
+							}
+		    	   			
+					     },
+					     failure: function(response, opts) {						     	
+						    me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+							me.getView().unmask();
+					     }
+					 });
+    		    }		
+    	    });
+       	}else{
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+		}
      },
      
      onClickGenerarPropuesta: function(btn) {
@@ -1692,6 +1720,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		if(esFichaTrabajo){
     			me.lookupReference('comboGestorActivoResposable').setReadOnly(false);	
     			me.lookupReference('descripcionGeneralRef').setReadOnly(false);
+    			me.lookupReference('riesgosTercerosRef').setReadOnly(false);
+    			me.lookupReference('checkboxUrgente').setReadOnly(false);	
     		}
     		
     		if(estadoTrabajo == "CUR" /*|| estadoTrabajo == "REJ"*/){
@@ -1793,7 +1823,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     					me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
     					me.lookupReference('comboIdentificadorReamRef').setReadOnly(false);
     				}
-    			}
+    			} else {
+					me.lookupReference('gridpresupuestostrabajo').setTopBar(true);
+					me.lookupReference('gridSuplidos').setTopBar(true);
+					me.lookupReference('gridSuplidos').setDisabled(false);
+		    		me.lookupReference('gridpresupuestostrabajo').setDisabled(false);
+				}
 	    		
 	    	}
     		
@@ -1805,6 +1840,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
 		    		me.lookupReference('fechaEjecucionRef').setReadOnly(false);
 		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
+		    		me.lookupReference('comboProveedorLlave').setReadOnly(false);	
+	    			me.lookupReference('fechaEntregaTrabajoRef').setReadOnly(false);
+	    			me.lookupReference('comboReceptorLlave').setReadOnly(false);
+	    			me.lookupReference('llavesNoAplicaRef').setReadOnly(false);
+					me.lookupReference('llavesMotivoRef').setReadOnly(false);
     			} else {
     				me.lookupReference('gridtarifastrabajo').setTopBar(true)
     	    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
@@ -1820,6 +1860,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
 		    		me.lookupReference('fechaEjecucionRef').setReadOnly(false);
 		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
+		    		me.lookupReference('comboProveedorLlave').setReadOnly(false);	
+	    			me.lookupReference('fechaEntregaTrabajoRef').setReadOnly(false);
+	    			me.lookupReference('comboReceptorLlave').setReadOnly(false);
+	    			me.lookupReference('llavesNoAplicaRef').setReadOnly(false);
+					me.lookupReference('llavesMotivoRef').setReadOnly(false);
     			} else {
     				me.lookupReference('gridtarifastrabajo').setTopBar(true)
     	    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
@@ -1868,7 +1913,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	} else {
     		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(true);
     		me.lookupReference('proveedorContactoCombo').setReadOnly(true);
-		    me.lookupReference('gridpresupuestostrabajo').setTopBar(false)
+		    me.lookupReference('gridpresupuestostrabajo').setTopBar(false);
 		    me.lookupReference('gridSuplidos').setTopBar(false);
 			me.lookupReference('gridSuplidos').setDisabled(true);
 		    me.lookupReference('gridpresupuestostrabajo').setDisabled(true);
@@ -2000,7 +2045,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     			data = Ext.decode(response.responseText);
     			if(data != null && data.data != null && data.data.id != null){
     				var idProveedor = data.data.id;
-    				me.getView().lookupReference('comboProveedorGestionEconomica2').setValue(idProveedor);
+					var nombreProveedor = data.data.nombre;
+					var record = new Ext.data.Model({idProveedor: idProveedor, nombreComercial: nombreProveedor});
+					me.getView().lookupReference('comboProveedorGestionEconomica2').getStore().add(record);
+    				me.getView().lookupReference('comboProveedorGestionEconomica2').setValue(record);
+
+					me.onChangeProveedorCombo();
     			}
     		},
     		failure: function () {

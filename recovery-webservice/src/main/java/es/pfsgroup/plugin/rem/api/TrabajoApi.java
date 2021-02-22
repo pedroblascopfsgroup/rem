@@ -879,7 +879,6 @@ public interface TrabajoApi {
 	public ActivoTramite createTramiteTrabajo(Long idTrabajo, ExpedienteComercial expedienteComercial);
 
 	ActivoTramite createTramiteTrabajo(Trabajo trabajo, ExpedienteComercial expedienteComercial);
-	
 
 	/*Envía una lista de DTOs de proveedores filtrados por cartera siempre con el 'nombre', de manera que,
 	 * ya sea el campo nombre o el campo nombreComercial el seleccionado, se envíe siempre como 'nombre' para
@@ -933,4 +932,6 @@ public interface TrabajoApi {
 	void EnviarCorreoTrabajos(Trabajo trabajo, String origen);
 
 	public BigDecimal getImporteTotalSuplidosByTrabajo(Trabajo trabajo);
+
+	public List<DtoProveedorContactoSimple> getComboProveedorContactoLlaves(Long idProveedor) throws Exception;
 }

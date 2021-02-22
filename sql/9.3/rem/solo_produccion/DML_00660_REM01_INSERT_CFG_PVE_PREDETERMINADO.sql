@@ -1,0 +1,142 @@
+--/*
+--#########################################
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20210211
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-8880
+--## PRODUCTO=NO
+--## 
+--## Finalidad: MODIFICAR 
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF; 
+
+DECLARE
+
+
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar   
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master 
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-8880'; --Vble USUARIOMODIFICAR/USUARIOCREAR
+
+    V_ID NUMBER(16); -- Vble. para el id del activo
+
+    V_TABLA VARCHAR2(50 CHAR):= 'CFG_PVE_PREDETERMINADO'; --Vble. Tabla a modificar proveedores
+
+    V_COUNT NUMBER(16); -- Vble. para comprobar
+
+
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('[INICIO]');
+    
+/*   DBMS_OUTPUT.PUT_LINE('[INFO]: BORRAMOS REGISTROS ANTERIORES CONFIGURADOS PARA BBVA');
+    
+    V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''16'')';
+	EXECUTE IMMEDIATE V_MSQL;
+
+    DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTROS eliminados en  '||V_TABLA||': '||sql%rowcount ||'');
+
+*/
+    
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS NUEVOS REGISTROS EN CFG_PVE_PREDETERMINADO');
+    
+	--INSERTAMOS EN TABLA GIL_GASTOS_IMPORTES_LIBERBANK
+/*
+	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (CPP_ID,DD_CRA_ID,DD_SCR_ID,DD_TTR_ID,DD_STR_ID,PVE_ID,VERSION,USUARIOCREAR,FECHACREAR,BORRADO,DD_PRV_ID)
+		    SELECT '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL
+		        CFT.DD_CRA_ID,
+		        CFT.DD_SCR_ID,
+		        CFT.DD_TTR_ID, 
+		        CFT.DD_STR_ID, 
+		        PVE.PVE_ID, 
+		        0, 
+		        ''REMVIP-8880'',
+		        SYSDATE,
+		        0,
+		        PROV.DD_PRV_ID
+			FROM '||V_ESQUEMA||'.AUX_REMVIP_8880_1 AUX1 
+			INNER JOIN '||V_ESQUEMA||'.AUX_REMVIP_8880_2 AUX2 ON AUX1.PROVEEDOR = AUX2.PROVEEDOR 
+			INNER JOIN  REMMASTER.DD_PRV_PROVINCIA PROV ON AUX2.PROVINCIA = PROV.DD_PRV_DESCRIPCION 
+			INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_REM = AUX1.COD_PROVEEDOR
+			INNER JOIN '||V_ESQUEMA||'.DD_TTF_TIPO_TARIFA TTF ON TTF.DD_TTF_CODIGO = AUX1.TARIFA_CODIGO 
+			INNER JOIN '||V_ESQUEMA||'.ACT_CFT_CONFIG_TARIFA CFT ON CFT.DD_TTF_ID = TTF.DD_TTF_ID
+			INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = CFT.DD_CRA_ID AND CRA.DD_CRA_ID = 162)';
+	EXECUTE IMMEDIATE V_MSQL;
+
+        DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTROS INSERTADOS CORRECTAMENTE EN '||V_TABLA_GIL||': '||sql%rowcount ||'');
+
+*/
+    
+        V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1
+                USING(
+                       SELECT DISTINCT CFT.DD_CRA_ID, CFT.DD_SCR_ID, CFT.DD_TTR_ID, CFT.DD_STR_ID, PVE.PVE_ID, PROV.DD_PRV_ID, CFG.CPP_ID
+			FROM '||V_ESQUEMA||'.AUX_REMVIP_8880_1 AUX1 
+			INNER JOIN '||V_ESQUEMA||'.AUX_REMVIP_8880_2 AUX2 ON AUX1.PROVEEDOR = AUX2.PROVEEDOR 
+			INNER JOIN  REMMASTER.DD_PRV_PROVINCIA PROV ON AUX2.PROVINCIA = PROV.DD_PRV_DESCRIPCION 
+			INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_REM = AUX1.COD_PROVEEDOR
+			INNER JOIN '||V_ESQUEMA||'.DD_TTF_TIPO_TARIFA TTF ON TTF.DD_TTF_CODIGO = AUX1.TARIFA_CODIGO AND TTF.BORRADO = 0
+			INNER JOIN '||V_ESQUEMA||'.ACT_CFT_CONFIG_TARIFA CFT ON CFT.DD_TTF_ID = TTF.DD_TTF_ID AND CFT.BORRADO = 0 
+			INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = CFT.DD_CRA_ID AND DD_CRA_CODIGO = ''16''
+			LEFT JOIN '||V_ESQUEMA||'.CFG_PVE_PREDETERMINADO CFG ON CFG.DD_CRA_ID = CFT.DD_CRA_ID 
+			AND CFG.DD_SCR_ID = CFT.DD_SCR_ID AND CFG.DD_TTR_ID = CFT.DD_TTR_ID AND CFT.DD_STR_ID = CFG.DD_STR_ID 
+			AND CFG.PVE_ID = PVE.PVE_ID AND CFG.DD_PRV_ID = PROV.DD_PRV_ID
+                ) AUX
+                ON (T1.CPP_ID = AUX.CPP_ID)
+                WHEN NOT MATCHED THEN 
+                INSERT  (
+                CPP_ID,
+                DD_CRA_ID,
+                DD_SCR_ID,
+                DD_TTR_ID,
+                DD_STR_ID,
+                PVE_ID,
+                VERSION,
+                USUARIOCREAR,
+                FECHACREAR,
+                BORRADO,
+                DD_PRV_ID
+                )   
+                VALUES  (
+                '||V_ESQUEMA||'.S_ACT_PTO_PRESUPUESTO.NEXTVAL,
+                AUX.DD_CRA_ID,
+                AUX.DD_SCR_ID,
+                AUX.DD_TTR_ID,
+                AUX.DD_STR_ID,
+                AUX.PVE_ID 
+                ,0,
+                ''REMVIP-8880'',
+                SYSDATE,
+                0,
+                AUX.DD_PRV_ID
+                )';
+		
+	EXECUTE IMMEDIATE V_MSQL;  
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] INSERTADOS '||SQL%ROWCOUNT||' REGISTROS');
+
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('[FIN]');
+ 
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

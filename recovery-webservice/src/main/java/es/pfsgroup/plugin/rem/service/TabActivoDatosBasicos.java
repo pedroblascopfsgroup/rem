@@ -1645,9 +1645,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if(dto.getPerimetroAdmision() != null) {
 				perimetroActivo.setAplicaAdmision(dto.getPerimetroAdmision());
 				perimetroActivo.setFechaAplicaAdmision(new Date());
-				perimetroActivo.setMotivoAplicaAdmision(dto.getMotivoPerimetroAdmision());
-				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
 			}
+			if(dto.getMotivoPerimetroAdmision() != null) {
+				perimetroActivo.setMotivoAplicaAdmision(dto.getMotivoPerimetroAdmision());
+			}
+			activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
+			
 			DDEstadoRegistralActivo ddEstadoReg = (DDEstadoRegistralActivo) diccionarioApi.dameValorDiccionarioByCod(DDEstadoRegistralActivo.class, dto.getEstadoRegistralCodigo());
 			if(ddEstadoReg != null) {
 				activo.setEstadoRegistral(ddEstadoReg);

@@ -132,7 +132,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									checkBuscadorOferta.setHidden(false);
 	    									lockClaseOferta.setDisabled(false);
 	    									checkNumOferPrin.setDisabled(false);
-	    									checkBuscadorOferta.setDisabled(false);
+	    									checkBuscadorOferta.setDisabled(true);
 	    								} else {
 	    									lockClaseOferta.setHidden(true);
 	    									checkNumOferPrin.setHidden(true);
@@ -368,7 +368,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								name: 'claseOferta',								
 								flex:	1,
 					        	colspan: 2,
-								allowBlank: true,
+								allowBlank: false,
 								bind: {											
 									store: '{comboClaseOferta}',
 									value: '{oferta.claseOferta}'

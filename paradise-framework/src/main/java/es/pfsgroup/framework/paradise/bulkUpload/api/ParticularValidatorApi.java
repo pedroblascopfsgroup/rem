@@ -1437,5 +1437,9 @@ public interface ParticularValidatorApi {
 
 	Boolean estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(String numActivo);
 
+	Boolean existeCodProveedorRem(String codProveedorREM);
+
+	boolean gastoSarebAnyadeRefacturable(String numGasto);
+
 	Boolean situacionComercialPublicadoAlquiler(String activo);
 }

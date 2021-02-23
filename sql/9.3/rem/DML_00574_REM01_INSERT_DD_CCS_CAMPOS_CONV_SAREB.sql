@@ -35,26 +35,24 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      T_TIPO_DATA('145','Nº Autos','ACT_AJD_ADJJUDICIAL','AJD_NUM_AUTO','ACT_ID'),
-      T_TIPO_DATA('146','Procurador','ACT_AJD_ADJJUDICIAL','AJD_PROCURADOR','ACT_ID'),
-      T_TIPO_DATA('147','Letrado','ACT_AJD_ADJJUDICIAL','AJD_LETRADO','ACT_ID'),
-      T_TIPO_DATA('148','ID Asunto Recovery','ACT_AJD_ADJJUDICIAL','AJD_ID_ASUNTO','ACT_ID'),
-      T_TIPO_DATA('149','Fecha solicitud moratoria','BIE_ADJ_ADJUDICACION','BIE_ADJ_F_SOL_MORATORIA','BIE_ID'),
-      T_TIPO_DATA('150','Fecha resolución moratoria','BIE_ADJ_ADJUDICACION','BIE_ADJ_F_RES_MORATORIA','BIE_ID'),
-      T_TIPO_DATA('151','Resolución moratoria','BIE_ADJ_ADJUDICACION','DD_FAV_ID','BIE_ID'),
-      T_TIPO_DATA('152','Fecha señalamiento posesión','BIE_ADJ_ADJUDICACION','BIE_ADJ_F_SEN_POSESION','BIE_ID'),
-      T_TIPO_DATA('153','Fecha realización posesión','BIE_ADJ_ADJUDICACION','BIE_ADJ_F_REA_POSESION','BIE_ID'),
-      T_TIPO_DATA('154','Lanzamiento necesario','BIE_ADJ_ADJUDICACION','BIE_ADJ_LANZAMIENTO_NECES','BIE_ID'),
-      T_TIPO_DATA('155','Fecha lanzamiento efectuado','BIE_ADJ_ADJUDICACION','BIE_ADJ_F_REA_LANZAMIENTO','BIE_ID'),
-      
-      T_TIPO_DATA('156','Fecha título','ACT_ADN_ADJNOJUDICIAL','ADN_FECHA_TITULO','ACT_ID'),
-      
-      T_TIPO_DATA('157','Fecha entrega del título a la gestoria','ACT_TIT_TITULO','TIT_FECHA_ENTREGA_GESTORIA','ACT_ID'),
-      T_TIPO_DATA('158','Fecha presentación en Hacienda','ACT_TIT_TITULO','TIT_FECHA_PRESENT_HACIENDA','ACT_ID'),
-      T_TIPO_DATA('159','Fecha última presentación en el registro','ACT_TIT_TITULO','TIT_FECHA_PRESENT2_REG','ACT_ID'),
-      T_TIPO_DATA('160','Fecha presentación en el registro','ACT_TIT_TITULO','TIT_FECHA_PRESENT1_REG','ACT_ID'),
-      T_TIPO_DATA('161','Fecha retirada definitiva registro','ACT_TIT_TITULO','TIT_FECHA_RETIRADA_REG','ACT_ID'),
-      T_TIPO_DATA('163','Fecha de presentación en el registro','ACT_TIT_TITULO','TIT_FECHA_PRESENT2_REG','ACT_ID')
+      T_TIPO_DATA('145','Nº Autos','ACT_AJD_ADJJUDICIAL','AJD_NUM_AUTO','ACT_ID','04'),
+      T_TIPO_DATA('146','Procurador','ACT_AJD_ADJJUDICIAL','AJD_PROCURADOR','ACT_ID','06'),
+      T_TIPO_DATA('147','Letrado','ACT_AJD_ADJJUDICIAL','AJD_LETRADO','ACT_ID','06'),
+      T_TIPO_DATA('148','ID Asunto Recovery','ACT_AJD_ADJJUDICIAL','AJD_ID_ASUNTO','ACT_ID','04'),
+      T_TIPO_DATA('149','Fecha solicitud moratoria','BIE_ADJ_ADJUDICACION','BIE_ADJ_F_SOL_MORATORIA','BIE_ID','02'),
+      T_TIPO_DATA('150','Fecha resolución moratoria','BIE_ADJ_ADJUDICACION','BIE_ADJ_F_RES_MORATORIA','BIE_ID','02'),
+      T_TIPO_DATA('151','Resolución moratoria','BIE_ADJ_ADJUDICACION','DD_FAV_ID','BIE_ID','05'),
+      T_TIPO_DATA('152','Fecha señalamiento posesión','BIE_ADJ_ADJUDICACION','BIE_ADJ_F_SEN_POSESION','BIE_ID','02'),
+      T_TIPO_DATA('153','Fecha realización posesión','BIE_ADJ_ADJUDICACION','BIE_ADJ_F_REA_POSESION','BIE_ID','02'),
+      T_TIPO_DATA('154','Lanzamiento necesario','BIE_ADJ_ADJUDICACION','BIE_ADJ_LANZAMIENTO_NECES','BIE_ID','01'),
+      T_TIPO_DATA('155','Fecha lanzamiento efectuado','BIE_ADJ_ADJUDICACION','BIE_ADJ_F_REA_LANZAMIENTO','BIE_ID','02'),
+      T_TIPO_DATA('156','Fecha título','ACT_ADN_ADJNOJUDICIAL','ADN_FECHA_TITULO','ACT_ID','02'),
+      T_TIPO_DATA('157','Fecha entrega del título a la gestoria','ACT_TIT_TITULO','TIT_FECHA_ENTREGA_GESTORIA','ACT_ID','02'),
+      T_TIPO_DATA('158','Fecha presentación en Hacienda','ACT_TIT_TITULO','TIT_FECHA_PRESENT_HACIENDA','ACT_ID','02'),
+      T_TIPO_DATA('159','Fecha última presentación en el registro','ACT_TIT_TITULO','TIT_FECHA_PRESENT2_REG','ACT_ID','02'),
+      T_TIPO_DATA('160','Fecha presentación en el registro','ACT_TIT_TITULO','TIT_FECHA_PRESENT1_REG','ACT_ID','02'),
+      T_TIPO_DATA('161','Fecha retirada definitiva registro','ACT_TIT_TITULO','TIT_FECHA_RETIRADA_REG','ACT_ID','02'),
+      T_TIPO_DATA('163','Fecha segunda presentación en el registro','ACT_TIT_TITULO','TIT_FECHA_PRESENT2_REG','ACT_ID','02')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
@@ -82,6 +80,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               DD_CCS_CRUCE,
               DD_CCS_DESCRIPCION,
               DD_COS_ID,
+              DD_CTD_ID,
               VERSION,
               USUARIOCREAR,
               FECHACREAR,
@@ -93,6 +92,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               '''||TRIM(V_TMP_TIPO_DATA(5))||''',
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               (SELECT DD_COS_ID FROM '||V_ESQUEMA||'.DD_COS_CAMPOS_ORIGEN_CONV_SAREB WHERE DD_COS_CODIGO ='''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0),
+              (SELECT DD_CTD_ID FROM '||V_ESQUEMA||'.DD_CTD_CAMPO_TIPO_DATO WHERE DD_CTD_CODIGO ='''||TRIM(V_TMP_TIPO_DATA(6))||''' AND BORRADO = 0),
               0,
               ''HREOS-13209'',
               SYSDATE,

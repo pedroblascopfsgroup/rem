@@ -212,12 +212,13 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		if (!Checks.esNulo(oferta)) {
 			ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
 			Activo activo = oferta.getActivoPrincipal();
-			destinatarios = getDestinatariosNotificacion(activo, oferta, expediente);
+			
 			if (permiteNotificarAprobacion && !Checks.esNulo(expediente)
 					&& (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
 							|| DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA.equals(expediente.getEstado().getCodigo())
 							|| (oferta.getOfertaExpress() && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())))) { // APROBACIÓN
-
+				destinatarios = getDestinatariosNotificacion(activo, oferta, expediente);
+				
 				if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
 					Usuario usuarioFicticioCajamar = usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR);
 					if (usuarioFicticioCajamar != null && usuarioFicticioCajamar.getEmail() != null) {

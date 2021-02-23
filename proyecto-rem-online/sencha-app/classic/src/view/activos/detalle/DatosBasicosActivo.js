@@ -1279,11 +1279,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											value: '{activo.empresa}'
 										},
 										listeners: {
-						                	change:  'onActivoEpa',
-							            	update: function(){
-												if(Ext.isEmpty(this.getValue()))
-													this.setValue(-1);
-											}
+						                	change:  'onActivoEpa'
 						            	}
 									},
 									{
@@ -1295,11 +1291,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											value: '{activo.oficina}'
 										},
 										listeners: {
-						                	change:  'onActivoEpa',
-							            	update: function(){
-												if(Ext.isEmpty(this.getValue()))
-													this.setValue(-1);
-											}
+						                	change:  'onActivoEpa'
 						            	}
 									},
 									{
@@ -1311,11 +1303,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											value: '{activo.contrapartida}'
 										},
 										listeners: {
-						                	change:  'onActivoEpa',
-							            	update: function(){
-												if(Ext.isEmpty(this.getValue()))
-													this.setValue(-1);
-											}
+						                	change:  'onActivoEpa'
 						            	}
 									},
 									{
@@ -1327,11 +1315,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											value: '{activo.folio}'
 										},
 										listeners: {
-						                	change:  'onActivoEpa',
-							            	update: function(){
-												if(Ext.isEmpty(this.getValue()))
-													this.setValue(-1);
-											}
+						                	change:  'onActivoEpa'
 						            	}
 									},
 									{
@@ -1343,11 +1327,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											value: '{activo.cdpen}'
 										},
 										listeners: {
-						                	change:  'onActivoEpa',
-							            	update: function(){
-												if(Ext.isEmpty(this.getValue()))
-													this.setValue(-1);
-											}
+						                	change:  'onActivoEpa'
 						            	}
 									}
 								]

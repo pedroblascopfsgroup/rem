@@ -91,7 +91,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final String VALID_PERIMETRO_ESTA_HAYA = "msg.error.masivo.actualizar.perimetro.activo.ya.esta.haya";
 	public static final String VALID_GESTION_COMERCIAL_ALQUILADO = "msg.error.masivo.actializar.perimetro.activo.situacion.comercial.alquilado.visibilidad.gestion";
 	public static final String VALID_CAJAMAR_VPO = "msg.error.masivo.actualizar.perimetro.activo.cajamar";
-
+	public static final String VALID_AGRUPACION_RESTRINGIDA = "msg.error.masivo.agrupacion.restringida";
 
 	//Posición de los datos
 	private	static final int DATOS_PRIMERA_FILA = 1;
@@ -237,6 +237,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(messageServices.getMessage(ON_EFECTOS_COMERCIALIZACION_ERROR), isBooleanValidator(exc, COL_NUM_CHECK_ON_EFECTOS_COMERCIALIZACION));
 				mapaErrores.put(messageServices.getMessage(ON_VALOR_INTRODUCIDO), isActivoObraNuevaConEfectosComercializacion(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_GESTION_COMERCIAL_ALQUILADO), visibilidadGestionComercialAlquilado(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_AGRUPACION_RESTRINGIDA), activoPrincipalAgrupacionRestringida(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_CAJAMAR_VPO), estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(exc));
 				
 
@@ -1500,7 +1501,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
 					String celdaCheckVisibilidadGestion = exc.dameCelda(i, COL_NUM_VISIBLE_GESTION_COMERCIAL_SN);
 					if((Checks.esNulo(celdaExcluirValidaciones) || COD_NO_EXCLUIR_VALIDACIONES.equals(celdaExcluirValidaciones)) && !Checks.esNulo(celdaCheckVisibilidadGestion)) {
-						if(particularValidator.situacionComercialAlquilado(activo)) {
+						if(!particularValidator.situacionComercialPublicadoAlquiler(activo)) {
 							listaFilas.add(i);	
 						}
 					}
@@ -1518,7 +1519,38 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		}
 		
 		return listaFilas;
-	}	
+		
+	}
+	
+	private List<Integer> activoPrincipalAgrupacionRestringida(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
+						if(!particularValidator.activoPrincipalEnAgrupacionRestringida(activo)) {
+							listaFilas.add(i);	
+						}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
 	
 	private List<Integer> estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
@@ -1550,12 +1582,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		return listaFilas;
 		
 	}
-
-	@Override
-	public Integer getNumFilasHoja() {
-		return this.numFilasHoja;
-
-	}		
+	
 
 
 }

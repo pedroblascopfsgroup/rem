@@ -100,8 +100,10 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 							f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_SANCION_CES);
 						}
 	 					DDEstadosExpedienteComercial aprobado = genericDao.get(DDEstadosExpedienteComercial.class, f1);
-	 					expediente.setEstado(aprobado);
-	 					
+
+	 					expediente.setEstado(aprobado);	 					
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), aprobado);
+		
 	 					if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva())
 	 							&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())) {														
 							EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
@@ -116,6 +118,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
 							}
 						}
+
 	 				}else if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 	 					ofertaApi.rechazarOferta(ofertaAceptada);
 	 					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES);

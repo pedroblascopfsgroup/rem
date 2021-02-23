@@ -1438,10 +1438,13 @@ public interface ParticularValidatorApi {
 	Boolean isActivoEnPerimetroAlquilerSocial(String numActivo);
 
 	Boolean situacionComercialAlquilado(String activo);
+	Boolean estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(String numActivo);
+
 	Boolean existeCodProveedorRem(String codProveedorREM);
 
 	boolean gastoSarebAnyadeRefacturable(String numGasto);
 
+	Boolean situacionComercialPublicadoAlquiler(String activo);
 
-	Boolean estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(String numActivo);
+	Boolean activoPrincipalEnAgrupacionRestringida(String numActivo);
 }

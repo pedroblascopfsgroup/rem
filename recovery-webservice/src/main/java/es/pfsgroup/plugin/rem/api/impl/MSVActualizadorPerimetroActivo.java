@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -35,6 +36,7 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -44,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
@@ -130,6 +133,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			
 			Activo activo = activoApi.getByNumActivo(numActivo);
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
+			ActivoAgrupacionActivo activoAgrupacion = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());
 
 			
 			// Evalua si ha encontrado un registro de perimetro para el activo
@@ -279,18 +283,28 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			
 			//Vible para gestion comercial
 			if(visibleGestionComercial != null) {
-				if(visibleGestionComercial == 1) {
-					perimetroActivo.setCheckGestorComercial(true);
-				}else {
-					perimetroActivo.setCheckGestorComercial(false);
+				if(activoAgrupacion != null && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+					List<ActivoAgrupacionActivo> activos= activoAgrupacion.getAgrupacion().getActivos();
+					for (ActivoAgrupacionActivo activoAgrupacionActivo : activos) {
+						PerimetroActivo perimetroActivoAgrupacion = activoApi.getPerimetroByIdActivo(activoAgrupacionActivo.getActivo().getId());
+						Activo activoAg = activoAgrupacionActivo.getActivo();
+						activoApi.getPerimetroByIdActivo(activoAg.getId());
+						if(visibleGestionComercial == 1) {
+							perimetroActivoAgrupacion.setCheckGestorComercial(true);
+						}else {
+							perimetroActivoAgrupacion.setCheckGestorComercial(false);
+						}
+						if(!Checks.esNulo(fechaCambio)) {
+							SimpleDateFormat sdfSal = new SimpleDateFormat("dd/MM/yyyy"); 
+							Date fecha = sdfSal.parse(fechaCambio);
+							perimetroActivoAgrupacion.setFechaGestionComercial(fecha);
+							}else {
+								perimetroActivoAgrupacion.setFechaGestionComercial(new Date());
+							}
+						activoApi.saveOrUpdatePerimetroActivo(perimetroActivoAgrupacion);
+					}
 				}
-				if(!Checks.esNulo(fechaCambio)) {
-				SimpleDateFormat sdfSal = new SimpleDateFormat("dd/MM/yyyy"); 
-				Date fecha = sdfSal.parse(fechaCambio);
-				perimetroActivo.setFechaGestionComercial(fecha);
-				}else {
-					perimetroActivo.setFechaGestionComercial(new Date());
-				}
+				
 			}
 			
 			// Check excluir validaciones ------------------

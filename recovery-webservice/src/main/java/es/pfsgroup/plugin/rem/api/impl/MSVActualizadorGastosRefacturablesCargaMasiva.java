@@ -50,7 +50,8 @@ public class MSVActualizadorGastosRefacturablesCargaMasiva extends AbstractMSVAc
 		
 		List<String> gastosRefacturablesLista = new ArrayList<String>();
 		gastosRefacturablesLista.add(exc.dameCelda(fila, COL_GASTO_HIJO));
-		gastoProveedorApi.anyadirGastosRefacturadosAGastoExistente(exc.dameCelda(fila, COL_GASTO_PADRE), gastosRefacturablesLista);
+		GastoProveedor gastoProveedorPadre = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.valueOf(exc.dameCelda(fila, COL_GASTO_PADRE))));
+		gastoProveedorApi.anyadirGastosRefacturadosAGastoExistente(String.valueOf(gastoProveedorPadre.getId()), gastosRefacturablesLista);
 		
 		return new ResultadoProcesarFila();
 	}

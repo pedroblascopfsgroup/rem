@@ -128,32 +128,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivoPrincipalEnAgrupacion(Long numActivo) {
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(AGR.AGR_ID) "
-				+ "           FROM ACT_AGR_AGRUPACION AGR, ACT_ACTIVO ACT "
-				+ "           WHERE ACT.ACT_ID  = AGR.AGR_ACT_PRINCIPAL "
-				+ "           AND ACT.ACT_NUM_ACTIVO = "+numActivo+" "
-				+ "           AND AGR.BORRADO  = 0 "
-				+ "           AND ACT.BORRADO  = 0");
-		return !"0".equals(resultado);
+		return esActivoPrincipalEnAgrupacion(numActivo, null);
 	}
+	
 	@Override
 	public Boolean esActivoPrincipalEnAgrupacion(Long numActivo, String tipoAgr) {
-		String resultado = rawDao.getExecuteSQL("SELECT " +
-				"Case " +
-				"WHEN AGR.AGR_FECHA_BAJA is nuLL then (select COUNT(AGR.AGR_ID) FROM ACT_ACTIVO ACT " +
-				"                                        INNER JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID " +
-				"                                        INNER JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID and AGR.BORRADO  = 0 " +
-				"                                        INNER join DD_TAG_TIPO_AGRUPACION TAG ON AGR.DD_TAG_ID = TAG.DD_TAG_ID " +
-				"                                        WHERE ACT.ACT_NUM_ACTIVO = " + numActivo + " and (AGA.AGA_PRINCIPAL = 1 OR AGR.AGR_ACT_PRINCIPAL = ACT.ACT_ID)) " +
-				"ELSE 1 " +
-				"END as validacion " +
-				"FROM ACT_ACTIVO ACT " +
-				"INNER JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID " +
-				"INNER JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID and AGR.BORRADO  = 0 " +
-				"INNER join DD_TAG_TIPO_AGRUPACION TAG ON AGR.DD_TAG_ID = TAG.DD_TAG_ID " +
-				"WHERE ACT.ACT_NUM_ACTIVO = " + numActivo + " " +
-				"AND ACT.BORRADO = 0 " +
-				"AND TAG.DD_TAG_CODIGO = " + tipoAgr);
+		String sql = "SELECT COUNT(AGR.AGR_ID) "
+				+ "           FROM ACT_AGR_AGRUPACION AGR, ACT_ACTIVO ACT "
+				+ "           WHERE ACT.ACT_ID  = AGR.AGR_ACT_PRINCIPAL " 
+				+ "           AND ACT.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "           AND AGR.BORRADO  = 0 AND AGR.AGR_FECHA_BAJA IS NULL"
+				+ "           AND ACT.BORRADO  = 0";
+		if(tipoAgr != null) {
+			sql += " AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = '" + tipoAgr + "')";
+		}
+		String resultado = rawDao.getExecuteSQL(sql);
 		return !"0".equals(resultado);
 	}
 
@@ -4340,6 +4329,37 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public boolean gastoSarebAnyadeRefacturable(String numGasto) {
+		boolean enc=true;
+		
+		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		
+		String resultado = rawDao
+				.getExecuteSQL("SELECT COUNT(*) " 						
+						+ "FROM GPV_GASTOS_PROVEEDOR GPV "
+						+ "JOIN GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID=GPV.GPV_ID "
+						+ "JOIN ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID " 
+						+ "JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID " 
+						+ "WHERE CRA.DD_CRA_CODIGO = 02 AND GLD.BORRADO = 0 AND GPV.BORRADO = 0 " 
+						+ "AND GPV.GPV_NUM_GASTO_HAYA ='" + numGasto + "'");
+		
+		String resultado2 = rawDao
+				.getExecuteSQL("SELECT COUNT(*) " 						
+						+ "FROM GPV_GASTOS_PROVEEDOR GPV "
+						+ "JOIN GRG_REFACTURACION_GASTOS GRG ON GRG.GRG_GPV_ID = GPV.GPV_ID "						
+						+ "WHERE GPV.BORRADO = 0 AND GRG.BORRADO = 0 " 
+						+ "AND GPV.GPV_NUM_GASTO_HAYA ='" + numGasto + "'");
+
+		if (Integer.parseInt(resultado)>=1 && Integer.parseInt(resultado2)<=0) {
+			enc=false;
+		}
+		
+		return enc;
+
+	}
+	
+	@Override
 	public Boolean perteneceGastoBankiaSareb(String numGasto) {
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
@@ -6112,6 +6132,19 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_PVE_PROVEEDOR WHERE"
 				+ "		 	PVE_DOCIDENTIF = '"+emisorNIF+"' "
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeCodProveedorRem(String codProveedorREM) {
+		if(Checks.esNulo(codProveedorREM) || !StringUtils.isNumeric(codProveedorREM)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_PVE_PROVEEDOR WHERE"
+				+ "		 	PVE_COD_REM = '"+codProveedorREM+"' "
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}

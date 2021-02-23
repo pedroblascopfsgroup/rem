@@ -852,11 +852,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.RECEPTOR_ENTREGA_LLAVES);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_RECEPTOR_LLAVES);
 			if(!Checks.esNulo(trabajo.getProveedorContactoLlaves())) {
-				dtoHistorificador.setValorAnterior(trabajo.getProveedorContactoLlaves().getApellidoNombre());
+				if (trabajo.getProveedorContactoLlaves().getUsuario() != null) {
+					dtoHistorificador.setValorAnterior(trabajo.getProveedorContactoLlaves().getApellidoNombre());
+				}else {
+					dtoHistorificador.setValorAnterior(trabajo.getProveedorContactoLlaves().getNombre());
+				}
 			}
 			Filter filtroCont = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdProveedorReceptor());
 			ActivoProveedorContacto proveedorContactoRecep = genericDao.get(ActivoProveedorContacto.class, filtroCont);
-			dtoHistorificador.setValorNuevo(proveedorContactoRecep.getApellidoNombre());
+			if (proveedorContactoRecep.getUsuario() != null) {
+				dtoHistorificador.setValorNuevo(proveedorContactoRecep.getApellidoNombre());
+			} else {
+				dtoHistorificador.setValorNuevo(proveedorContactoRecep.getNombre());
+			}
 			
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 			
@@ -4690,6 +4698,34 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Collections.sort(listaDtoProveedorContactoSimple);
 		return listaDtoProveedorContactoSimple;
 	}
+	
+	@Override
+	public List<DtoProveedorContactoSimple> getComboProveedorContactoLlaves(Long idProveedor) throws Exception {
+		
+		List<DtoProveedorContactoSimple> listaDtoProveedorContactoSimple = new ArrayList<DtoProveedorContactoSimple>();		
+		
+		if (Checks.esNulo(idProveedor)) {
+			throw new JsonViewerException("Debe seleccionar antes un proveedor.");
+		} else {
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", idProveedor);
+			List<ActivoProveedorContacto> listaProveedorContacto =  genericDao.getList(ActivoProveedorContacto.class, filtro1);
+			for (ActivoProveedorContacto source : listaProveedorContacto) {
+				try {
+						DtoProveedorContactoSimple target = new DtoProveedorContactoSimple();				
+						BeanUtils.copyProperties(target, source);				
+						listaDtoProveedorContactoSimple.add(target);
+				} catch (IllegalAccessException e) {
+					logger.error("Error al consultar las localidades sin filtro", e);
+					throw new Exception(e);
+				} catch (InvocationTargetException e) {
+					logger.error("Error al consultar las localidades sin filtro", e);
+					throw new Exception(e);
+				}
+			}
+		}
+		Collections.sort(listaDtoProveedorContactoSimple);
+		return listaDtoProveedorContactoSimple;
+	}
 
 	@Override
 	@BusinessOperationDefinition("trabajoManager.getRecargosProveedor")
@@ -6060,6 +6096,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public boolean createAgendaTrabajo(DtoAgendaTrabajo dtoAgendaTrabajo) {
 		AgendaTrabajo agenda = new AgendaTrabajo();
 		Trabajo trabajo = null;
+		
 		if(dtoAgendaTrabajo.getIdTrabajo() != null) {
 			trabajo = trabajoDao.get(dtoAgendaTrabajo.getIdTrabajo());
 			agenda.setTrabajo(trabajo);
@@ -6073,7 +6110,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			agenda.setTipoGestion(tipoGestion);
 		}
 		agenda.setGestor(usuarioManager.getUsuarioLogado());
-		agenda.setFecha(new Date());		
+		agenda.setFecha(new Date());	
 		genericDao.save(AgendaTrabajo.class,agenda);
 		
 		if (DDTipoApunte.CODIGO_ESTADO_ACTIVO.equals(dtoAgendaTrabajo.getTipoGestion())) {
@@ -6089,7 +6126,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					activoObservacion.setUsuario(usuarioLogado);
 					activoObservacion.setActivo(activo);
 					
-	
+
 					if(dtoAgendaTrabajo.getObservacionesAgenda() != null) {
 						Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoAgendaTrabajo.getTipoGestion());
 						DDTipoObservacionActivo tipoObservacion = genericDao.get(DDTipoObservacionActivo.class, f1);
@@ -6119,10 +6156,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					Activo activo = activoTrabajo.getActivo();
 					Filter filtroActivoObservacion = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 					Filter filtroActivoObservacion2 = genericDao.createFilter(FilterType.EQUALS, "observacion", agendaTrabajo.getObservaciones());
-					ActivoObservacion actObs = genericDao.get(ActivoObservacion.class, filtroActivoObservacion, filtroActivoObservacion2);
+					Filter filtroTipoObservacion = genericDao.createFilter(FilterType.EQUALS, "tipoObservacion.codigo", DDTipoObservacionActivo.CODIGO_TRABAJOS);
+					Filter filtroFecha = genericDao.createFilter(FilterType.EQUALS, "fecha", agendaTrabajo.getFecha());
+					List<ActivoObservacion> actObs = genericDao.getList(ActivoObservacion.class, filtroActivoObservacion, filtroActivoObservacion2, filtroTipoObservacion, filtroFecha);
 					
-					if (!Checks.esNulo(actObs)) {
-						genericDao.deleteById(ActivoObservacion.class, actObs.getId());
+					if (!actObs.isEmpty()) {
+						genericDao.deleteById(ActivoObservacion.class, actObs.get(0).getId());
 					}
 				}
 			}

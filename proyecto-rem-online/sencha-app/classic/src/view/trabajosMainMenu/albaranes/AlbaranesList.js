@@ -18,13 +18,6 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesList', {
 		        		{
 							xtype : 'albaranGrid',
 							reference : 'albaranGrid'
-						},
-						{
-				            xtype: 'button',
-				            text : HreRem.i18n('fieldlabel.albaran.validar'),
-				            reference: 'botonValidarAlbaran',
-				            disabled: true,
-				            handler: 'validaAlbaranes'
 						}
 						
 		        	]

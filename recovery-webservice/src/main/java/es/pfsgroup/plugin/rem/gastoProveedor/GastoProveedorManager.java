@@ -3570,6 +3570,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		GastoRefacturable gastoRefacturable = genericDao.get(GastoRefacturable.class, gastoId, gastoRefacturadoId);
 		
 		gastoRefacturable.getAuditoria().setBorrado(true);
+		gastoRefacturable.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+		gastoRefacturable.getAuditoria().setFechaBorrar(new Date());
 		genericDao.update(GastoRefacturable.class, gastoRefacturable);
 		
 		listaDeGastosRefacturablesDelGasto = gastoDao.getGastosRefacturablesDelGasto(idGasto);

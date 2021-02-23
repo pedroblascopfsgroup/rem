@@ -83,6 +83,13 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	@Resource
 	private Properties appProperties;
 	
+	
+	
+	private void limpiarMails() {
+		this.mailsPara.clear();
+		this.mailsCC.clear();
+		this.mailsSustituto.clear();
+	}
 	/**
 	 * Cada vez que llegue una oferta de un activo, 
 	 * se enviará una notificación (correo) al gestor comercial correspondiente, 
@@ -99,7 +106,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		Usuario buzonOfertaApple = null;
 		Activo activo = oferta.getActivoPrincipal();
 		Usuario usuarioBackOffice = null;
-		List<String> mailsSustituto = new ArrayList();
+		limpiarMails();
 
 		if (!Checks.esNulo(oferta.getAgrupacion()) 
 		        && !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion())
@@ -314,7 +321,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 		Usuario usuario = null;
 		Activo activo = oferta.getActivoPrincipal();
-		
+		limpiarMails();
 		usuario = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_ALQUILERES);
 
 		if (activo != null && usuario != null) {
@@ -346,9 +353,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	
 	private void getEmailDestinatariosAprobacion(Activo activo, Oferta ofertaAceptada, ExpedienteComercial expediente) {
 		
-		mailsPara.clear();
-		mailsCC.clear();
-		
+		limpiarMails();
 		ActivoProveedor prescriptor = null;
 		ActivoProveedor custodio = null;
 		Usuario usuarioBackOffice = null;
@@ -400,7 +405,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	public String enviarMailAprobacion(Oferta oferta) {
 		
 		String errorCode = "";
-		
+		limpiarMails();
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 		Activo activo = oferta.getActivoPrincipal();
 		ActivoTramite tramite = new ActivoTramite();
@@ -466,7 +471,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	public void enviarPropuestaOfertaTipoAlquiler(Oferta oferta) {
 		
 		Activo activo = oferta.getActivoPrincipal();
-		
+		limpiarMails();
 		ArrayList<String> mailsPara = new ArrayList<String>();
 		ArrayList<String> mailsCC = new ArrayList<String>();
 	
@@ -527,6 +532,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	public void sendNotificationDND(Oferta oferta, Activo activo) {
 		Usuario usuario = null;
 		Usuario supervisor= null;
+		limpiarMails();
 		List<String> mailsPara 		= new ArrayList<String>();
 		List<String> mailsCC 		= new ArrayList<String>();	
 		String titulo = null;
@@ -621,7 +627,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		StringBuffer url = request.getRequestURL();
 		String uri = request.getRequestURI();
 		String base = url.substring(0, url.length() - uri.length());
-		
+		limpiarMails();
 		String errorCode = "";
 		Activo activo = oferta.getActivoPrincipal();
 		DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();

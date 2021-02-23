@@ -451,8 +451,8 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 		Double resultadoPrecioWeb = null;
 
 		String sql = " SELECT COUNT(1) FROM (SELECT VAL_IMPORTE FROM REM01.ACT_VAL_VALORACIONES           " +
-				" WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM REM01.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = "+DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA+") " +
-				" AND ACT_ID IN (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = "+idAgrupacion+")) " +
+				" WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM REM01.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = "+DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA+" AND BORRADO = 0) " +
+				" AND ACT_ID IN (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = "+idAgrupacion+") AND BORRADO = 0) " +
 				" GROUP BY VAL_IMPORTE " +
 				" HAVING (VAL_IMPORTE = 0 OR VAL_IMPORTE IS NULL) ";
 
@@ -461,7 +461,7 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 				&& ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).doubleValue() == 0.0)) {
 			sql = " SELECT SUM(VAL_IMPORTE) FROM (SELECT VAL_IMPORTE FROM REM01.ACT_VAL_VALORACIONES           " +
 					" WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM REM01.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = "+DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA+") " +
-					" AND ACT_ID IN (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = "+idAgrupacion+")) ";
+					" AND ACT_ID IN (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = "+idAgrupacion+") AND BORRADO = 0) ";
 
 			if (Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
 				resultadoPrecioWeb = 0.0;

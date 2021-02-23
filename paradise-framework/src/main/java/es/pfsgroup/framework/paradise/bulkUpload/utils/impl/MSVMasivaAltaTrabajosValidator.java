@@ -400,7 +400,7 @@ public class MSVMasivaAltaTrabajosValidator extends MSVExcelValidatorAbstract {
 				if (!Checks.esNulo(fechaConcreta)) {
 					try {
 						Date fechaConcretaparse = ft.parse(fechaConcreta);
-						if (fechaConcretaparse != null && listaCodSubtrabajos.contains(subtipoTrabajo)) {
+						if (fechaConcretaparse == null && listaCodSubtrabajos.contains(subtipoTrabajo)) {
 							mapaErrores.get(messageServices.getMessage(ERROR_FECHA_CONCRETA_SUBTIPOS)).add(fila);
 							esCorrecto = false;
 						}

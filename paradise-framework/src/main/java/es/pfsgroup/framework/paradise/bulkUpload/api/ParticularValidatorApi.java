@@ -1410,5 +1410,9 @@ public interface ParticularValidatorApi {
 
 	Boolean estadoPrevioTrabajoFinalizado(String celdaTrabajo);
 
+	Boolean existeCodProveedorRem(String codProveedorREM);
+
+	boolean gastoSarebAnyadeRefacturable(String numGasto);
+
 
 }

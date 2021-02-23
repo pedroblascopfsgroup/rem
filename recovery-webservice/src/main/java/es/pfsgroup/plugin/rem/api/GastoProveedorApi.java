@@ -404,7 +404,7 @@ public interface GastoProveedorApi {
 
 		boolean isGastoSareb(GastoProveedor gastoProveedor);
 
-		void anyadirGastosRefacturablesSiCumplenCondiciones(String idGasto, String gastosRefacturables, String nifPropietario) throws IllegalAccessException, InvocationTargetException;
+		void anyadirGastosRefacturablesSiCumplenCondiciones(String idGasto, String gastosRefacturables, String nifPropietario) throws IllegalAccessException, InvocationTargetException, Exception;
 
 
 		List<DtoVImporteGastoLbk> getVImporteGastoLbk(Long idGasto);

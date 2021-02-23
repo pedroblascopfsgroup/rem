@@ -62,7 +62,6 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		btn.up("[reference='albaranessearch']").nextSibling().down("[reference='detallePrefacturaGrid']").getStore().removeAll();
 		
 		//Setear los botones a disabled
-		btn.up("[reference='albaranessearch']").nextSibling().down("[reference='botonValidarAlbaran']").setDisabled(true);
 		btn.up("[reference='albaranessearch']").nextSibling().down("[reference='botonValidarPrefactura']").setDisabled(true);
 		btn.up("[reference='albaranessearch']").nextSibling().down("[reference='botonValidarTrabajo']").setDisabled(true);
 		me.lookupReference('totalAlbaran').setValue(0);
@@ -89,7 +88,6 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var codAreaPeticionaria = this.lookupReference('areaPeticionariaSearch').value;
 		listaTrabajos.data = [];
 		me.data.acumulador = 0;
-		var boton = me.lookupReference('botonValidarAlbaran');
 		var exportarTrabajosPrefacturas = $AU.userHasFunction('EXPORTAR_BUSQUEDA_TRABAJOS_PREFACTURA');
 		if (exportarTrabajosPrefacturas) {
 			this.lookupReference('btnExportarPrefactura').setDisabled(false);
@@ -113,14 +111,6 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 			me.deselectAlbaran(grid);
 		}
 		
-		if((numPrefactura!= null && numPrefactura!= "") || (fechaPrefactura != null && fechaPrefactura !="") 
-				|| ( estadoPrefactura!= null && estadoPrefactura!= "") || (numTrabajo != null && numTrabajo != "") 
-				|| (estadoTrabajo != null && estadoTrabajo != "") || (anyoTrabajo!= null && anyoTrabajo!= "")){
-			 me.lookupReference('botonValidarAlbaran').setDisabled(true);
-		}
-		else{
-			me.habilitarAlbaran(listaDetalleAlbaran,boton,record);
-		}
 		
 	},
 	
@@ -134,7 +124,6 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 			this.lookupReference('btnExportarPrefactura').setDisabled(true);
 		}
 
-		this.lookupReference('botonValidarAlbaran').setDisabled(true);
 		this.lookupReference('botonValidarPrefactura').setDisabled(true);
 		this.lookupReference('botonValidarTrabajo').setDisabled(true);
 		this.lookupReference('totalAlbaran').setValue(0);

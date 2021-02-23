@@ -80,6 +80,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
@@ -353,17 +354,25 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 			info.setMediadorInforme(mediador);
 		}
 		beanUtilNotNull.copyProperty(info, "planta", dtoAATP.getNumPlantasVivienda());
-		genericDao.save(ActivoInfoComercial.class, info);
 		if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
+			info.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoInfoComercial.COD_VIVIENDA)));
+			genericDao.save(ActivoInfoComercial.class, info);
+			
 			ActivoVivienda vivienda = new ActivoVivienda();
 			vivienda.setNumPlantasInter(dtoAATP.getNumPlantasVivienda());
 			vivienda.setInformeComercial(info);
 			genericDao.save(ActivoVivienda.class, vivienda);
 		} else if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
+			info.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoInfoComercial.COD_LOCAL_COMERCIAL)));
+			genericDao.save(ActivoInfoComercial.class, info);
+			
 			ActivoLocalComercial localComercial = new ActivoLocalComercial();
 			localComercial.setInformeComercial(info);
 			genericDao.save(ActivoLocalComercial.class, localComercial);
 		} else if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
+			info.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoInfoComercial.COD_PLAZA_APARCAMIENTO)));
+			genericDao.save(ActivoInfoComercial.class, info);
+			
 			ActivoPlazaAparcamiento aparcamiento = new ActivoPlazaAparcamiento();
 			aparcamiento.setInformeComercial(info);
 			genericDao.save(ActivoPlazaAparcamiento.class, aparcamiento);

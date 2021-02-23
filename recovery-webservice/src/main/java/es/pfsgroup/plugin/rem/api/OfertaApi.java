@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -822,6 +823,6 @@ public interface OfertaApi {
 
 	public Integer isEpaAlquilado(Long idAgrupacion);
 
-	public DtoExcelFichaComercial getListOfertasFilter(Long idExpediente);
+	public DtoExcelFichaComercial getListOfertasFilter(Long idExpediente) throws UserException;
 
 }

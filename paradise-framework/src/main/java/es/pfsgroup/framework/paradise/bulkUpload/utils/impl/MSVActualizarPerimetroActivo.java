@@ -114,10 +114,10 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final int COL_NUM_ADMISION = 17;
 	public static final int COL_NUM_TXT_MOTIVO_ADMISION = 18;
 	public static final int COL_NUM_CHECK_ON_EFECTOS_COMERCIALIZACION=19;
-	public static final int COL_NUM_VISIBLE_GESTION_COMERCIAL_SN = 19;
-	public static final int COL_NUM_MOTIVO_EXCLUSION_INCLUSION_PERIMETRO_VISIBLE = 20;
-	public static final int COL_NUM_EXCLUSION_VALIDACIONES = 21;
-	public static final int COL_NUM_FECHA_CAMBIO = 22;
+	public static final int COL_NUM_VISIBLE_GESTION_COMERCIAL_SN = 20;
+	public static final int COL_NUM_MOTIVO_EXCLUSION_INCLUSION_PERIMETRO_VISIBLE = 21;
+	public static final int COL_NUM_EXCLUSION_VALIDACIONES = 22;
+	public static final int COL_NUM_FECHA_CAMBIO = 23;
 
 	// Codigos tipo comercializacion
 	public static final String CODIGO_VENTA = "01";

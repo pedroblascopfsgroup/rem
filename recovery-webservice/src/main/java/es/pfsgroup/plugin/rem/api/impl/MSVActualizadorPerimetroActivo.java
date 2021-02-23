@@ -126,10 +126,10 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			String admision = exc.dameCelda(fila, 17);
 			String motivoAdmision = exc.dameCelda(fila, 18);
 			String checkOnEfectosComercializacion = exc.dameCelda(fila, 19);
-			Integer visibleGestionComercial = getCheckValue(exc.dameCelda(fila,19));
-			String motivoGestionComercial = exc.dameCelda(fila,20);
-			String exclusionValidaciones = exc.dameCelda(fila,21);
-			String fechaCambio = exc.dameCelda(fila, 22);
+			Integer visibleGestionComercial = getCheckValue(exc.dameCelda(fila,20));
+			String motivoGestionComercial = exc.dameCelda(fila,21);
+			String exclusionValidaciones = exc.dameCelda(fila,22);
+			String fechaCambio = exc.dameCelda(fila, 23);
 			
 			Activo activo = activoApi.getByNumActivo(numActivo);
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());

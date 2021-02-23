@@ -35,7 +35,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      T_TIPO_DATA('132','Importe Comunidad Mensual SAREB','ACT_SAREB_ACTIVOS','IMP_COM_MENSUAL','ACT_ID')
+      T_TIPO_DATA('132','Importe Comunidad Mensual SAREB','ACT_SAREB_ACTIVOS','IMP_COM_MENSUAL','ACT_ID','03')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
@@ -63,6 +63,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               DD_CCS_CRUCE,
               DD_CCS_DESCRIPCION,
               DD_COS_ID,
+              DD_CTD_ID,
               VERSION,
               USUARIOCREAR,
               FECHACREAR,
@@ -74,6 +75,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               '''||TRIM(V_TMP_TIPO_DATA(5))||''',
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               (SELECT DD_COS_ID FROM '||V_ESQUEMA||'.DD_COS_CAMPOS_ORIGEN_CONV_SAREB WHERE DD_COS_CODIGO ='''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0),
+              (SELECT DD_CTD_ID FROM '||V_ESQUEMA||'.DD_CTD_CAMPO_TIPO_DATO WHERE DD_CTD_CODIGO ='''||TRIM(V_TMP_TIPO_DATA(6))||''' AND BORRADO = 0),
               0,
               ''HREOS-13208'',
               SYSDATE,

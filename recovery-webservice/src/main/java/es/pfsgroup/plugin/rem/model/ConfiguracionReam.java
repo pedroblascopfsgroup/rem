@@ -52,7 +52,7 @@ public class ConfiguracionReam implements Serializable,Auditable{
 	 private ActivoPropietario propietario;
 	 
 	 @Column(name = "CFM_CARTERA_MAC")
-	 private Integer carteraMac;
+	 private Integer carteraMacc;
 	 
 
 	@Embedded
@@ -98,12 +98,12 @@ public class ConfiguracionReam implements Serializable,Auditable{
 		this.propietario = propietario;
 	}
 
-	public Integer getCarteraMac() {
-		return carteraMac;
+	public Integer getCarteraMacc() {
+		return carteraMacc;
 	}
 
-	public void setCarteraMac(Integer carteraMac) {
-		this.carteraMac = carteraMac;
+	public void setCarteraMacc(Integer carteraMacc) {
+		this.carteraMacc = carteraMacc;
 	}
 
 

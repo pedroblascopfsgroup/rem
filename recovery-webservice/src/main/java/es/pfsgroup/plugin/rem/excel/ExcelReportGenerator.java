@@ -187,7 +187,45 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				logger.error(e.getMessage(), e);
 			}
 		}
+		if("LISTA_MANTENIMIENTO_CONFIGURACION.xls".equals(report.getReportName())) {
+			try {
+				fis = new FileInputStream(file.getAbsolutePath());
+				HSSFWorkbook myWorkBook = new HSSFWorkbook(fis);
+				fileOut = new File(file.getAbsolutePath());
+				FileOutputStream fileOutStream = new FileOutputStream(file);
+				HSSFSheet mySheet = myWorkBook.getSheetAt(0);
+				
+				HSSFRow r = mySheet.getRow(0);
+				HSSFCell c;
+				HSSFCellStyle style = myWorkBook.createCellStyle();
+				HSSFFont font = myWorkBook.createFont();
+				font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+				style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+				style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+				style.setWrapText(true);
+				style.setFont(font);
+				style.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+				style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+				style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+				style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+				style.setBorderRight(HSSFCellStyle.BORDER_THIN);
+				style.setBorderTop(HSSFCellStyle.BORDER_THIN);
+				r.setHeight((short) 350);
+				for(int i = 0; i <= 5; i++ ) { //5 sin el id
+					c = r.getCell(i);
+					c.setCellStyle(style);
+					mySheet.setColumnWidth(i, 8000);
+				}
 
+				myWorkBook.write(fileOutStream);
+				fileOutStream.close();
+				
+			} catch (FileNotFoundException e) {
+				logger.error(e.getMessage(), e);
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+			}
+		}
 		return fileOut;
 		
 	}

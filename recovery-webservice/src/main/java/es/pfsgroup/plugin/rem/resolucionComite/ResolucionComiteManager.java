@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -17,6 +18,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -73,6 +75,9 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 	
 	@Autowired
 	private AnotacionApi anotacionApi;
+	
+ 	@Autowired
+ 	private ActivoTareaExternaApi activoTareaExternaApi;
 	
 	@Autowired
 	private NotificatorServiceResolucionComite notificatorApi;
@@ -131,14 +136,14 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 
 								} else {
 
-									List<TareaProcedimiento> listaTareas = activoTramiteApi
+									List<TareaExterna> listaTareas = activoTareaExternaApi
 											.getTareasByIdTramite(tramite.getId());
 									for (int i = 0; i < listaTareas.size(); i++) {
-										TareaProcedimiento tarea = listaTareas.get(i);
+										TareaExterna tarea = listaTareas.get(i);
 										if (!Checks.esNulo(tarea)) {
-											if (tarea.getCodigo().equalsIgnoreCase("T013_ResolucionComite")
-													|| tarea.getCodigo().equalsIgnoreCase("T013_RatificacionComite")) {
-												usu = gestorActivoApi.userFromTarea(tarea.getCodigo(), tramite.getId());
+											if (tarea.getTareaProcedimiento().getCodigo().equalsIgnoreCase("T013_ResolucionComite")
+													|| tarea.getTareaProcedimiento().getCodigo().equalsIgnoreCase("T013_RatificacionComite")) {
+												usu = gestorActivoApi.userFromTarea(tarea.getTareaProcedimiento().getCodigo(), tramite.getId());
 												break;
 											}
 										}

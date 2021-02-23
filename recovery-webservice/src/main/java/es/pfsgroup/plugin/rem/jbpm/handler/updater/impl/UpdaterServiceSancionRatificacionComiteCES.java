@@ -90,12 +90,12 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
-		Activo activo = ofertaAceptada.getActivoPrincipal();
 		OfertaExclusionBulk ofertaExclusionBulkNew = null;
 		GestorEntidadDto ge = new GestorEntidadDto();	
 		
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			Activo activo = ofertaAceptada.getActivoPrincipal();
 
 			if (!Checks.esNulo(expediente)) {
 						
@@ -126,7 +126,8 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 								}
 							}
 							
-							/*if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null
+							if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null
+									&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())
 									&& gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
 								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 										.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
@@ -135,9 +136,8 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 								ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
 								ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());	
 								ge.setIdTipoGestor(tipoGestorComercial.getId());
-								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
-								
-							}*/
+								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);
+							}
 														
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {

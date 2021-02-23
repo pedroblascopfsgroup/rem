@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
@@ -109,6 +110,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		if(!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			Activo activo = ofertaAceptada.getActivoPrincipal();
 
 			if(!Checks.esNulo(expediente)) {
 
@@ -145,7 +147,8 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 								recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 
 								if(DDEstadosExpedienteComercial.APROBADO.equals(estado.getCodigo())) {
-									if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva())) {															
+									if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva())
+											&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())) {															
 										EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 												.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
 

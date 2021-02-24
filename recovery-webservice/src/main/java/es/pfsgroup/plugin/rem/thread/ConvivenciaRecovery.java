@@ -29,17 +29,20 @@ public class ConvivenciaRecovery implements Runnable{
 	private final Log logger = LogFactory.getLog(getClass());
 	private Activo activo = null;
 	private ModelMap model = null;
+	private String userName = null;
 	
-	public ConvivenciaRecovery(Activo activo, ModelMap model) {
+	public ConvivenciaRecovery(Activo activo, ModelMap model, String userName) {
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		this.activo = activo;
 		this.model = model;
+		this.userName = userName;
 	}
 	
 	@Override
 	public void run() {
 		
 		try {
+			restApi.doSessionConfig(this.userName);
 			recoveryComunicacionManager.datosCliente(this.activo, this.model);
 			
 		} catch (Exception e) {

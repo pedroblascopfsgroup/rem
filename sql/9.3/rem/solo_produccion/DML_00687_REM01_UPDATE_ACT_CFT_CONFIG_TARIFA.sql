@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20210221
+--## FECHA_CREACION=20210224
 --## ARTEFACTO=Batch
 --## VERSION_ARTEFACTO=3.0
 --## INCIDENCIA_LINK=REMVIP-9049

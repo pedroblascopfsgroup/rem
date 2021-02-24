@@ -2288,8 +2288,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     				importeTotal = importeTotal - cuotaRetG - valorCuota ;
     	    	}else{
     	    		importeTotal = importeTotal - cuotaRetG;
-    	    	}
-    			
+				}
+				
     		}
     	}else{
     		importeTotal = me.getViewModel().get('detalleeconomico.importeTotal'); 
@@ -2862,11 +2862,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     },
     
     getImporteTotalCuotaIndirecta: function(me){
-    	var cuotaTotal = 0;
-
+		var cuotaTotal = 0;
+		
     	if(me.lookupReference('lineaDetalleGastoGrid').getStore() != null && me.lookupReference('lineaDetalleGastoGrid').getStore() != undefined){
     		for(var i = 0; i < me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items.length; i++){	
+    			if (me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('baseSujeta') != undefined && me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('tipoImpositivo') != undefined){
     				cuotaTotal+= parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('baseSujeta')*me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('tipoImpositivo')/100);	
+    			}
     		}
     	}
     	

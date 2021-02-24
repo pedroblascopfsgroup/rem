@@ -3705,7 +3705,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 			if(gastoLineaDetalleList != null && !gastoLineaDetalleList.isEmpty()){
 				for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
-					importeTotal += sumaImportesLineaDetalle(importeTotal, gastoLineaDetalle);					
+					importeTotal = sumaImportesLineaDetalle(importeTotal, gastoLineaDetalle);					
 					
 					if (gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != null && gastoLineaDetalle.getPrincipalSujeto() != null
 							&& gastoLineaDetalle.getEsImporteIndirectoExento() !=null && !gastoLineaDetalle.getEsImporteIndirectoExento() ) {
@@ -3752,9 +3752,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		if(gastoLineaDetalle.getProvSuplidos() != null) {
 			importeFinal+=gastoLineaDetalle.getProvSuplidos();
-		}
-		if(gastoLineaDetalle.getPrincipalNoSujeto() != null) {
-			importeFinal+=gastoLineaDetalle.getPrincipalNoSujeto();
 		}
 		if(gastoLineaDetalle.getRecargo() != null) {
 			importeFinal+=gastoLineaDetalle.getRecargo();

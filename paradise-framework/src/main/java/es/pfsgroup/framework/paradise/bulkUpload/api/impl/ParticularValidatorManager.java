@@ -6923,4 +6923,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "1".equals(resultado);
 	}
 
+
+	public Boolean activoPerteneceAgrupacion (String numActivo) {
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
+			return false;
+		String resultado = rawDao.getExecuteSQL (" SELECT COUNT(*) FROM  REM01.ACT_AGA_AGRUPACION_ACTIVO aga, "+ 
+			    " REM01.ACT_AGR_AGRUPACION agr, "+
+			    " REM01.ACT_ACTIVO act WHERE aga.AGR_ID = agr.AGR_ID "+
+				   " AND act.act_id  = aga.act_id " +
+                   " AND act.ACT_NUM_ACTIVO = '"+numActivo+"'" + 
+                   " AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE) "+
+                   " AND aga.BORRADO  = 0 "+
+                   " AND agr.BORRADO  = 0 "+
+                   " AND act.BORRADO  = 0 ");
+		return "0".equals(resultado);
+	}
+
 }

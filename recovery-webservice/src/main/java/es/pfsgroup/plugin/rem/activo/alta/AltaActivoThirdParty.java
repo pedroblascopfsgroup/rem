@@ -61,6 +61,7 @@ import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.DtoAltaActivoThirdParty;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -159,6 +160,11 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 			actSit.setAuditoria(auditoria);
 			
 			genericDao.save(ActivoSituacionPosesoria.class, actSit);
+			
+			if(activo!=null && actSit!=null && usu!=null) {			
+				HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,actSit,usu,HistoricoOcupadoTitulo.COD_ALTA_ACTIVO,null);
+				genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+		}
 			
 			ActivoTitulo actTit = new ActivoTitulo();
 			actTit.setActivo(activo);

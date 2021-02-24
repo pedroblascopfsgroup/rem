@@ -34,9 +34,9 @@ public class HistoricoOcupadoTitulo implements Serializable,Auditable {
     
     public static String COD_ALTA_ACTIVO = "Alta de activos";
     public static String COD_SIT_POS = "Situación posesoria y llaves";
-    public static String COD_PATRIMONIO = "Pestaña de patrimonio como";
+    public static String COD_PATRIMONIO = "Pestaña de patrimonio como ";
     public static String COD_OFERTA_ALQUILER = "Oferta de alquiler";
-    public static String COD_CARGA_MASIVA = "Carga masiva";
+    public static String COD_CARGA_MASIVA = "Carga masiva ";
     public static final long serialVersionUID = 1L;
     
    
@@ -83,13 +83,14 @@ public class HistoricoOcupadoTitulo implements Serializable,Auditable {
 		this.ocupado = posesoria.getOcupado();
 		this.usuario = usuario;
 		this.fechaHoraAlta = new Date();
-		if(valorConcreto.equalsIgnoreCase(HistoricoOcupadoTitulo.COD_SIT_POS) || valorConcreto.equalsIgnoreCase(HistoricoOcupadoTitulo.COD_CARGA_MASIVA)) {
+		if((HistoricoOcupadoTitulo.COD_PATRIMONIO.equalsIgnoreCase(lugarModificacion) || HistoricoOcupadoTitulo.COD_CARGA_MASIVA.equalsIgnoreCase(lugarModificacion)) && valorConcreto!=null) {
 			this.lugarModificacion = lugarModificacion.concat(valorConcreto);
 		}else {
 			this.lugarModificacion = lugarModificacion;
 		}
 				
 	}
+	
 
 	public Long getId() {
 		return id;

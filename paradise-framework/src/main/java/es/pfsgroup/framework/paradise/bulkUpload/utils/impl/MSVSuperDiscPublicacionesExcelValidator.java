@@ -58,7 +58,7 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 	private static final String VALORES_ACTIVO_INTEGRADO_NO_VALIDO = "msg.error.masivo.disclaimer.activo.integrado";
 	private static final String VALOR_CAMPO_ESTADO_NO_VALIDO = "msg.error.masivo.disclaimer.estado";
 	private static final String VALOR_CAMPO_ESTADO_NO_INTEGRADO_NO_VALIDO = "msg.error.masivo.disclaimer.estado.sino.inscrito";
-	private static final String NO_ES_USUARIO_VALIDO = "Activo gestionado por Seguridad REAM";
+	private static final String NO_ES_USUARIO_VALIDO = "msg.error.masivo.disclaimer.activo.gestionado.seguridad.ream";
 	
 	private	static final int FILA_CABECERA = 0;
 	private	static final int DATOS_PRIMERA_FILA = 1;
@@ -130,7 +130,7 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), isActiveNotExistsRows(exc));
-			mapaErrores.put(NO_ES_USUARIO_VALIDO, isActivoGestionadoReam(exc));
+			mapaErrores.put(messageServices.getMessage(NO_ES_USUARIO_VALIDO), isActivoGestionadoReam(exc));
 			mapaErrores.put(messageServices.getMessage(ESTADO_ACTIVO_INVALIDO), perteneceDDEstadoActivo(exc));
 			mapaErrores.put(messageServices.getMessage(VALORES_NO_VALIDOS_OCUPADO), isOcupadoValorSiNo(exc));
 			mapaErrores.put(messageServices.getMessage(VALORES_NO_VALIDOS_CON_TITULO), isConTitulo(exc));

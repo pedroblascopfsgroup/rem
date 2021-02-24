@@ -3196,15 +3196,18 @@ public class ActivoAdapter {
 	
 	@Transactional(readOnly = false)
 	public boolean actualizarEstadoPublicacionActivo(Long idActivo) {
-		ArrayList<Long> listaIdActivo = new ArrayList<Long>();
-		listaIdActivo.add(idActivo);
-		return this.actualizarEstadoPublicacionActivo(listaIdActivo,true);
+		return actualizarEstadoPublicacionActivo(idActivo, true);
 	}
 	
-	
+	@Transactional(readOnly = false)
+	public boolean actualizarEstadoPublicacionActivo(Long idActivo, boolean asincrono) {
+		ArrayList<Long> listaIdActivo = new ArrayList<Long>();
+		listaIdActivo.add(idActivo);
+		return this.actualizarEstadoPublicacionActivo(listaIdActivo, asincrono);
+	}
 	
 	@Transactional(readOnly = false)
-	public boolean actualizarEstadoPublicacionActivo(ArrayList<Long> listaIdActivo,Boolean asincrono){
+	public boolean actualizarEstadoPublicacionActivo(ArrayList<Long> listaIdActivo,boolean asincrono){
 		boolean resultado = true;
 		if(asincrono){
 			activoDao.hibernateFlush();

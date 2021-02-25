@@ -1304,6 +1304,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		me.lookupReference('comboTipoRetencionRef').setAllowBlank(!checked);
 		if(!checked){
 			me.lookupReference('comboTipoRetencionRef').setValue('');
+			me.lookupReference('baseIRPFRetG').setValue('');
+			me.lookupReference('irpfTipoImpositivoRetG').setValue(0);
+			me.lookupReference('cuotaIRPFRetG').setValue('');
 		}
 		me.onChangeCuotaRetencionGarantia(checked);
 		
@@ -2279,7 +2282,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var importeTotal = 0;
 		cuota = Number(Math.round(cuota + "e+" + 2)  + "e-" + 2);
     	me.lookupReference('cuotaIRPFImpD').setValue(cuota);
-
+    	
     	if(!me.lookupReference('lineaDetalleGastoGrid').getStore().loading){
     		importeTotal = me.getImporteTotalLineasDetalle(me);
     		importeTotal = importeTotal - (tipoImpositivo * base)/100;

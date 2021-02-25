@@ -3707,8 +3707,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
 					importeTotal = sumaImportesLineaDetalle(importeTotal, gastoLineaDetalle);					
 					
-					if (gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != null && gastoLineaDetalle.getPrincipalSujeto() != null
-							&& gastoLineaDetalle.getEsImporteIndirectoExento() !=null && !gastoLineaDetalle.getEsImporteIndirectoExento() ) {
+					if (gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != null && gastoLineaDetalle.getPrincipalSujeto() != null && 
+							//op exenta no y rellena
+							((gastoLineaDetalle.getEsImporteIndirectoExento() !=null && !gastoLineaDetalle.getEsImporteIndirectoExento()) ||
+							//op exenta si y rellena y renuncia si y rellena
+							(gastoLineaDetalle.getEsImporteIndirectoExento() !=null && gastoLineaDetalle.getEsImporteIndirectoExento() 
+							&& gastoLineaDetalle.getEsImporteIndirectoRenunciaExento() !=null && gastoLineaDetalle.getEsImporteIndirectoRenunciaExento()) ||
+							//op exenta vacia
+							(gastoLineaDetalle.getEsImporteIndirectoExento() == null))) {
 						
 						cuotaIvaRetenida += (gastoLineaDetalle.getPrincipalSujeto() * gastoLineaDetalle.getImporteIndirectoTipoImpositivo()) / 100;
 						

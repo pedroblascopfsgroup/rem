@@ -459,8 +459,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				"select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = "
 						+ id + " and act.agrupacion.tipoAgrupacion.codigo = "
 						+ DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
-
-		return ((ActivoAgrupacionActivo) getHibernateTemplate().find(hb.toString()).get(0));
+		List <ActivoAgrupacionActivo> activoAgrupacionlist = (List<ActivoAgrupacionActivo>) getHibernateTemplate().find(hb.toString());
+		
+		if (activoAgrupacionlist != null && !activoAgrupacionlist.isEmpty()) {
+			return activoAgrupacionlist.get(0);
+		}
+		return null;
 	}
 	
 	@Override

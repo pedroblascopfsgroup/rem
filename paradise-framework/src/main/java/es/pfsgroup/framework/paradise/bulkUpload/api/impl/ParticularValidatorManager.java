@@ -167,7 +167,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean activoPrincipalEnAgrupacionRestringida(String numActivo) {
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(aga.AGR_ID) "
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
 				+ "			    ACT_AGR_AGRUPACION agr, "
 				+ "			    ACT_ACTIVO act, "
@@ -178,7 +178,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			    AND tipoAgr.DD_TAG_CODIGO = '02' "
 				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE)"
-				+"              AND aga.AGA_PRINCIPAL = 1"
+				+"              AND aga.AGA_PRINCIPAL = 0"
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND agr.BORRADO  = 0 "
@@ -5240,23 +5240,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean estadoPublicacion(String activo) {
-		
-		 if(activo == null || activo.isEmpty())
-			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
-		 
-		 if(Boolean.FALSE.equals(StringUtils.isNumeric(activo)))
-			 return false;
-
-		String resultado = rawDao.getExecuteSQL(
-				"SELECT COUNT(1) "+ 
-				"FROM act_activo act"+ 
-				" WHERE act.dd_tco_id = '03'"+
-				" AND act.act_num_activo ='"+activo+"' AND act.dd_epu_id <> '06'  AND act.borrado = 0");
-		return "1".equals(resultado);
-	}
-	
-	@Override
 	public Boolean maccConCargas(String activo) {
 		
 		 if(activo == null || activo.isEmpty())
@@ -6948,7 +6931,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean activoPerteneceAgrupacion (String numActivo) {
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
 			return false;
-		String resultado = rawDao.getExecuteSQL (" SELECT COUNT(*) FROM  REM01.ACT_AGA_AGRUPACION_ACTIVO aga, "+ 
+		String resultado = rawDao.getExecuteSQL (" SELECT COUNT(1) FROM  REM01.ACT_AGA_AGRUPACION_ACTIVO aga, "+ 
 			    " REM01.ACT_AGR_AGRUPACION agr, "+
 			    " REM01.ACT_ACTIVO act WHERE aga.AGR_ID = agr.AGR_ID "+
 				   " AND act.act_id  = aga.act_id " +
@@ -6957,7 +6940,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
                    " AND aga.BORRADO  = 0 "+
                    " AND agr.BORRADO  = 0 "+
                    " AND act.BORRADO  = 0 ");
-		return "0".equals(resultado);
+		return "1".equals(resultado);
 	}
 	
 	public Boolean activoBBVAPerteneceSociedadParticipada (String numActivo) {

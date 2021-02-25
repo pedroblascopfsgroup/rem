@@ -3066,7 +3066,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] Actualizacion en '||V_TABLA_TRABAJO||' y '||V_TAB
 
         V_COUNT_TOTAL:=V_COUNT_TOTAL+1;
 
-        V_SQL :='SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_TRABAJO||' WHERE TBJ_NUM_TRABAJO='''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        V_SQL :='SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_TRABAJO||' WHERE TBJ_NUM_TRABAJO='''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO=0';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
         IF V_NUM_TABLAS = 1 THEN
@@ -3106,7 +3106,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] Actualizacion en '||V_TABLA_TRABAJO||' y '||V_TAB
                                 TCT_PRECIO_UNITARIO_CLIENTE=(SELECT CFT.CFT_PRECIO_UNITARIO_CLIENTE FROM '||V_ESQUEMA||'.'||V_TABLA_CFT||' CFT WHERE CFT.CFT_ID='||V_CFT_ID||'),
                                 USUARIOMODIFICAR = '''||V_USUARIO||''',
                                 FECHAMODIFICAR = SYSDATE
-                            WHERE TCT_ID='||TRIM(V_TMP_TIPO_DATA(3))||' ';
+                            WHERE TCT_ID='||TRIM(V_TMP_TIPO_DATA(3))||' AND BORRADO=0 ';
 
                 EXECUTE IMMEDIATE V_SQL;
 
@@ -3114,11 +3114,11 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] Actualizacion en '||V_TABLA_TRABAJO||' y '||V_TAB
                         TBJ_IMPORTE_PRESUPUESTO=(SELECT TCT.TCT_PRECIO_UNITARIO * TCT.TCT_MEDICION AS PRECIO_PROVEEDOR 
                                                     FROM '||V_ESQUEMA||'.'||V_TABLA_TRABAJO||' TBJ
                                                     JOIN '||V_ESQUEMA||'.'||V_TABLA_TCT||' TCT ON TCT.TBJ_ID=TBJ.TBJ_ID
-                                                    WHERE TBJ.TBJ_ID='||V_ID||'),
+                                                    WHERE TBJ.TBJ_ID='||V_ID||' AND TCT_ID='||TRIM(V_TMP_TIPO_DATA(3))||' AND TCT.BORRADO=0),
                         TBJ_IMPORTE_TOTAL=(SELECT TCT.TCT_PRECIO_UNITARIO_CLIENTE * TCT.TCT_MEDICION AS PRECIO_CLIENTE
                                                     FROM '||V_ESQUEMA||'.'||V_TABLA_TRABAJO||' TBJ
                                                     JOIN '||V_ESQUEMA||'.'||V_TABLA_TCT||' TCT ON TCT.TBJ_ID=TBJ.TBJ_ID
-                                                    WHERE TBJ.TBJ_ID='||V_ID||'),
+                                                    WHERE TBJ.TBJ_ID='||V_ID||' AND TCT_ID='||TRIM(V_TMP_TIPO_DATA(3))||' AND TCT.BORRADO=0),
                         USUARIOMODIFICAR = '''||V_USUARIO||''',
                         FECHAMODIFICAR = SYSDATE
                     WHERE TBJ_ID = '||V_ID||' ';

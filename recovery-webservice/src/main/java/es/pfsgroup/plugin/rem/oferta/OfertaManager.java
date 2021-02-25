@@ -3046,7 +3046,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		ConsultaComisionDto consultaComisionDtoVacio = new ConsultaComisionDto();
 		consultaComisionDto.setAmount(importe);
 		consultaComisionDto.setOfferType(codigoOferta);
-		consultaComisionDto.setComercialType(tipoComercializar);
+		
+		
+		if(activo != null && activo.getTieneObraNuevaAEfectosComercializacion() != null && 
+				DDSinSiNo.CODIGO_SI.equals(activo.getTieneObraNuevaAEfectosComercializacion().getCodigo()) ){
+			consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);	
+		}else {
+			consultaComisionDto.setComercialType(tipoComercializar);
+		}
+
 		consultaComisionDto.setAssetType(codTipoActivo);
 		consultaComisionDto.setAssetSubtype(codSubtipoActivo);
 		consultaComisionDto.setPortfolio(codPortfolio);

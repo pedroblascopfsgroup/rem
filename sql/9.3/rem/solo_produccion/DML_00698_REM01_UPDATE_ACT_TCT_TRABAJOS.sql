@@ -3077,7 +3077,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] Actualizacion en '||V_TABLA_TRABAJO||' y '||V_TAB
                     WHERE TTF.DD_TTF_CODIGO='''||TRIM(V_TMP_TIPO_DATA(2))||'''
                     AND CFT.DD_STR_ID=(SELECT TBJ.DD_STR_ID FROM '||V_ESQUEMA||'.'||V_TABLA_TRABAJO||' TBJ WHERE TBJ.TBJ_NUM_TRABAJO='''||TRIM(V_TMP_TIPO_DATA(1))||''' )
                     AND CFT.DD_CRA_ID=(SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA CRA WHERE CRA.DD_CRA_CODIGO=16 )
-                    AND CFT.DD_SCR_ID=(SELECT ACT.DD_SCR_ID FROM '||V_ESQUEMA||'.'||V_TABLA_TRABAJO||' TBJ 
+                    AND CFT.DD_SCR_ID=(SELECT DISTINCT ACT.DD_SCR_ID FROM '||V_ESQUEMA||'.'||V_TABLA_TRABAJO||' TBJ 
                                         JOIN '||V_ESQUEMA||'.ACT_TBJ ACTB ON ACTB.TBJ_ID=TBJ.TBJ_ID
                                         JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID=ACTB.ACT_ID
                                         WHERE ACT.BORRADO=0 AND TBJ.TBJ_NUM_TRABAJO='''||TRIM(V_TMP_TIPO_DATA(1))||''')';
@@ -3091,7 +3091,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] Actualizacion en '||V_TABLA_TRABAJO||' y '||V_TAB
                     WHERE TTF.DD_TTF_CODIGO='''||TRIM(V_TMP_TIPO_DATA(2))||'''
                     AND CFT.DD_STR_ID=(SELECT TBJ.DD_STR_ID FROM '||V_ESQUEMA||'.'||V_TABLA_TRABAJO||' TBJ WHERE TBJ.TBJ_NUM_TRABAJO='''||TRIM(V_TMP_TIPO_DATA(1))||''' )
                     AND CFT.DD_CRA_ID=(SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA CRA WHERE CRA.DD_CRA_CODIGO=16 )
-                    AND CFT.DD_SCR_ID=(SELECT ACT.DD_SCR_ID FROM '||V_ESQUEMA||'.'||V_TABLA_TRABAJO||' TBJ 
+                    AND CFT.DD_SCR_ID=(SELECT DISTINCT ACT.DD_SCR_ID FROM '||V_ESQUEMA||'.'||V_TABLA_TRABAJO||' TBJ 
                                         JOIN '||V_ESQUEMA||'.ACT_TBJ ACTB ON ACTB.TBJ_ID=TBJ.TBJ_ID
                                         JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID=ACTB.ACT_ID
                                         WHERE ACT.BORRADO=0 AND TBJ.TBJ_NUM_TRABAJO='''||TRIM(V_TMP_TIPO_DATA(1))||''')';

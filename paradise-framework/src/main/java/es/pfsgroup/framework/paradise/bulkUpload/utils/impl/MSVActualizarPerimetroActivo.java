@@ -1454,7 +1454,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				try {
 					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
 					if(particularValidator.activoEnAgrupacionRestringida(Long.valueOf(activo))) {
-						if(particularValidator.activoPrincipalEnAgrupacionRestringida(activo)) {
+						if(particularValidator.activoNoPrincipalEnAgrupacionRestringida(activo)) {
 							listaFilas.add(i);	
 						}
 					}

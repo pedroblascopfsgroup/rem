@@ -6925,12 +6925,12 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean activoBBVAPerteneceSociedadParticipada (String numActivo) {
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
 			return false;
-		String resultado = rawDao.getExecuteSQL ("SELECT COUNT(1) from ACT_ACTIVO ACT " + 
-				" INNER JOIN ACT_BBVA_ACTIVOS BBVA ON ACT.ACT_ID = bbva.act_id " + 
-				" INNER JOIN ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = bbva.pro_id_origen " + 
-				" INNER JOIN ACT_APU_ACTIVO_PUBLICACION PUBLI ON publi.act_id = act.act_id " + 
-				" INNER JOIN DD_EPA_ESTADO_PUB_ALQUILER ALQUILER ON alquiler.dd_epa_id = publi.dd_epa_id " + 
-				" INNER JOIN DD_EPV_ESTADO_PUB_VENTA VENTA ON venta.dd_epv_id = publi.dd_epv_id " + 
+		String resultado = rawDao.getExecuteSQL ("SELECT COUNT(1) from REM01.ACT_ACTIVO ACT " + 
+				" INNER JOIN REM01.ACT_BBVA_ACTIVOS BBVA ON ACT.ACT_ID = bbva.act_id " + 
+				" INNER JOIN REM01.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = bbva.pro_id_origen " + 
+				" INNER JOIN REM01.ACT_APU_ACTIVO_PUBLICACION PUBLI ON publi.act_id = act.act_id " + 
+				" INNER JOIN REM01.DD_EPA_ESTADO_PUB_ALQUILER ALQUILER ON alquiler.dd_epa_id = publi.dd_epa_id " + 
+				" INNER JOIN REM01.DD_EPV_ESTADO_PUB_VENTA VENTA ON venta.dd_epv_id = publi.dd_epv_id " + 
 				" WHERE  ACT.ACT_NUM_ACTIVO = '"+numActivo+"'" + 
 				" AND PRO.PRO_DOCIDENTIF IN ('B63442974','B11819935','B39488549','A83827907') " + 
 				" AND (ALQUILER.DD_EPA_CODIGO = '01' OR VENTA.DD_EPV_CODIGO = '01')");

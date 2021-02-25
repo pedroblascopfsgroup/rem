@@ -14,7 +14,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -1544,10 +1543,15 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
-						if(!particularValidator.activoBBVAPerteneceSociedadParticipada(activo)) {
-							listaFilas.add(i);	
-					}
+						String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
+						String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
+						if(celdaExcluirValidaciones == null || celdaExcluirValidaciones.equals("2")) {
+							if(activo != null) {
+								if(!particularValidator.activoBBVAPerteneceSociedadParticipada(activo)) {
+									listaFilas.add(i);	
+								}
+							}
+						}
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}

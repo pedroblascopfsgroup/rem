@@ -6,7 +6,7 @@
 		<meta charset='UTF-8'>
 		<meta name="viewport" content="width=device-width, user-scalable=no" />
 		<title>REM Attachment Resources</title>
-		<link rel="shortcut icon" href="../js/plugin/rem/resources/images/favicon.png" type="image/png">
+		<link rel="shortcut icon" href="../resources/images/favicon.png" type="image/png">
 		<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 		<style>
 			body {
@@ -16,7 +16,7 @@
 			}
 			.page {
 			  padding: 20px;
-			  background-image: url(../js/plugin/rem/resources/images/fondologin-min.jpg);
+			  background-image: url(../resources/images/fondologin-min.jpg);
 			  background-repeat: no-repeat;
 			  background-size: cover;
 			  display: flex;

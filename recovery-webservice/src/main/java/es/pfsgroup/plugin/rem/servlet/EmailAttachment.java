@@ -120,7 +120,9 @@ public class EmailAttachment extends HttpServlet {
 			return;
 		}
 
-		this.doPost(req, resp);
+		/// Envía la página de login sin mostrar en la url el cambio de espacio visual y mantiene los url params
+		RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/js/plugin/rem/email-attachment/attachment-resource-login.jsp");
+		dispatcher.forward(req, resp);
 	}
 
 	/**
@@ -136,6 +138,15 @@ public class EmailAttachment extends HttpServlet {
 	@SuppressWarnings({"squid:S1989"})
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		String fileName = req.getParameter(FILE_NAME_PARAMETER);
+		String username = req.getParameter(FORM_USERNAME_NAME_PARAMETER);
+		String password = req.getParameter(FORM_PASSWORD_NAME_PARAMETER);
+
+		// Comprobar validez de las credenciales
+		if (!this.isValidUser(username, password)) {
+			resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			resp.sendRedirect("/pfs/js/plugin/rem/email-attachment/invalid-credentials.jsp");
+			return;
+		}
 
 		// Obtener archivo por el nombre de archivo
 		File srcFile = this.getFileByName(fileName);

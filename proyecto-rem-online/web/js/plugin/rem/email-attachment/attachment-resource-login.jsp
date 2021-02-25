@@ -161,7 +161,7 @@
               <div class="text">Inicie sesión primero para obtener acceso al recurso solicitado</div>
             </div>
             <div class="right">
-              <form action="/pfs/adjunto/email?file=<%= request.getParameter("file") %>" class="form" method="post">
+              <form action="/pfs/email/attachment?file=<%= request.getParameter("file") %>" class="form" method="post">
                 <div class="input-box username">
                     <input class="" type="text" placeholder="Username" name="username"></input>
                 </div>

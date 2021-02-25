@@ -144,6 +144,7 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.EjecutarSPPublicacionAsincrono;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
@@ -3780,6 +3781,7 @@ public class ActivoAdapter {
 		}
 	}
 
+	@Transactional(readOnly = false)
 	private void afterSaveTabActivo(WebDto dto, Activo activo, TabActivoService tabActivoService) {
 		
 		if (tabActivoService instanceof TabActivoDatosBasicos) {			
@@ -3805,7 +3807,8 @@ public class ActivoAdapter {
 
 		if(tabActivoService instanceof TabActivoSaneamiento || tabActivoService instanceof TabActivoCargas){
 			if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
-				recoveryComunicacionManager.datosCliente(activo, new ModelMap());
+				Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo, new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+				llamadaAsincrona.start();
 			}
 		}
 

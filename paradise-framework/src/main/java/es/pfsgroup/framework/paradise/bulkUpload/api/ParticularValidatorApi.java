@@ -1375,8 +1375,6 @@ public interface ParticularValidatorApi {
 
 	Boolean activoNoComercializable(String activo);
 
-	Boolean estadoPublicacion(String activo);
-
 	Boolean maccConCargas(String activo);
 
 	Boolean estadoExpedienteComercial(String activo);

@@ -34,6 +34,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVVentaDeCarteraExcelValidator.COL_NUM;
 
 
 @Component
@@ -224,7 +225,6 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(messageServices.getMessage(VALID_FECHA_VENTA_EXTERNA), tieneFechaVentaExterna(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_BANKIA_PUBLICADO), bankiaPublicado(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_ACTIVO_NO_COMERCIALIZABLE), activoNoComercializable(exc));
-				mapaErrores.put(messageServices.getMessage(VALID_ESTADO_PUBLICACION), estadoPublicacion(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_MACC_CON_CARGAS), maccConCargas(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_ESTADO_EXPEDIENTE), estadoExpedienteComercial(exc));
 				mapaErrores.put(messageServices.getMessage(ADMISION_ERROR), isBooleanValidator(exc, COL_NUM_ADMISION));
@@ -1347,36 +1347,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		
 	}
 	
-	private List<Integer> estadoPublicacion(MSVHojaExcel exc) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		try{
-			for(int i=1; i<this.numFilasHoja;i++){
-				try {
-					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
-					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
-					if(celdaExcluirValidaciones == null || celdaExcluirValidaciones.equals("2")) {
-						if(activo != null) {
-							if(particularValidator.estadoPublicacion(activo)) {
-								listaFilas.add(i);	
-							}
-						}
-					}
-				} catch (ParseException e) {
-					listaFilas.add(i);
-				}
-			}
-		} catch (IllegalArgumentException e) {
-			listaFilas.add(0);
-			e.printStackTrace();
-		} catch (IOException e) {
-			listaFilas.add(0);
-			e.printStackTrace();
-		}
-		
-		return listaFilas;
-		
-	}
+	
 	
 	private List<Integer> maccConCargas(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
@@ -1388,7 +1359,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					String macc = exc.dameCelda(i, COL_NUM_PERIMETRO_MACC);
 					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
 					if(macc.equalsIgnoreCase("S") || macc.equalsIgnoreCase("SI")) {
-					if(celdaExcluirValidaciones != null && celdaExcluirValidaciones.equals("1")) {
+					if(celdaExcluirValidaciones != null && COD_NO_EXCLUIR_VALIDACIONES.equals(celdaExcluirValidaciones)) {
 						if(activo != null) {
 							if(particularValidator.maccConCargas(activo)) {
 								listaFilas.add(i);	
@@ -1482,8 +1453,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
-					if(!particularValidator.activoPerteneceAgrupacion(activo)) {
-						if(!particularValidator.activoPrincipalEnAgrupacionRestringida(activo)) {
+					if(particularValidator.activoEnAgrupacionRestringida(Long.valueOf(activo))) {
+						if(particularValidator.activoPrincipalEnAgrupacionRestringida(activo)) {
 							listaFilas.add(i);	
 						}
 					}

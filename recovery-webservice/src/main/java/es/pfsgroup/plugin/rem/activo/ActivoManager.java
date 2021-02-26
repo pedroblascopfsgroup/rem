@@ -167,6 +167,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCorrectivoSareb;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocPlusvalias;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -3923,6 +3924,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				ActivoSareb activoSareb = genericDao.get(ActivoSareb.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activo.getNumActivo()));
 				if(activoSareb != null) {
 					dto.setImporteComunidadMensualSareb(activoSareb.getImporteComunidadMensualSareb());
+					if (activoSareb.getSiniestroSareb() != null) {
+						dto.setSiniestroSareb(activoSareb.getSiniestroSareb().getCodigo());
+					}
+					if(activoSareb.getTipoCorrectivoSareb() != null) {
+						dto.setTipoCorrectivoSareb(activoSareb.getTipoCorrectivoSareb().getCodigo());
+					}					
+					dto.setFechaFinCorrectivoSareb(activoSareb.getFechaFinCorrectivoSareb());
 				}
 			}
 
@@ -4009,6 +4017,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				ActivoSareb activoSareb = genericDao.get(ActivoSareb.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activo.getNumActivo()));
 				if(activoSareb != null) {
 					activoSareb.setImporteComunidadMensualSareb(dto.getImporteComunidadMensualSareb());
+					
+					DDSinSiNo siniestro = (DDSinSiNo) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDSinSiNo.class, dto.getSiniestroSareb());
+					activoSareb.setSiniestroSareb(siniestro);
+					
+					DDTipoCorrectivoSareb tipoCorrectivoSareb = (DDTipoCorrectivoSareb) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDTipoCorrectivoSareb.class, dto.getTipoCorrectivoSareb())              ;
+					activoSareb.setTipoCorrectivoSareb(tipoCorrectivoSareb);
+					
+					activoSareb.setFechaFinCorrectivoSareb(dto.getFechaFinCorrectivoSareb());
+					
 					genericDao.update(ActivoSareb.class, activoSareb);
 				}
 			}

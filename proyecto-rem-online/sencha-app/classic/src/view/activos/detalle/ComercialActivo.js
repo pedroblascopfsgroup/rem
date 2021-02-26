@@ -167,9 +167,40 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 							xtype: 'currencyfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.importe.comunidad.mensual.sareb'),
 							reference: 'comunidadMensualSareb',
-							allowBlank: false,
 							bind : {
 				        		value: '{comercial.importeComunidadMensualSareb}',
+				        		hidden: '{!isCarteraSareb}',
+				        		readOnly: '{!importeComunidadMensualSarebEditable}'
+							}						
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.siniestro.sareb'),
+							reference: 'siniestroSarebRef',
+							bind : {
+				        		value: '{comercial.siniestroSareb}',
+				        		store: '{comboSinSino}',
+				        		hidden: '{!isCarteraSareb}',
+				        		readOnly: '{!importeComunidadMensualSarebEditable}'
+							}						
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.tipo.correctivo.sareb'),
+							reference: 'tipoCorrectivoSarebRef',
+							bind : {
+				        		value: '{comercial.tipoCorrectivoSareb}',
+				        		store: '{comboDDTipoCorrectivoSareb}',
+				        		hidden: '{!isCarteraSareb}',
+				        		readOnly: '{!importeComunidadMensualSarebEditable}'
+							}						
+						},
+						{
+							xtype: 'datefieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.fecha.fin.correctivo.sareb'),
+							reference: 'fechaFinCorrectivoSarebRef',
+							bind : {
+				        		value: '{comercial.fechaFinCorrectivoSareb}',
 				        		hidden: '{!isCarteraSareb}',
 				        		readOnly: '{!importeComunidadMensualSarebEditable}'
 							}						

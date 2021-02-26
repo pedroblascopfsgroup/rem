@@ -29,7 +29,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdecucionSareb;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCorrectivoSareb;
 
+/**
+ * @author javier.urban@pfsgroup.local
+ *
+ */
 @Entity
 @Table(name = "ACT_SAREB_ACTIVOS", schema = "${entity.schema}")
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -110,6 +115,17 @@ public class ActivoSareb implements Serializable, Auditable {
 	
 	@Column(name = "IMP_COM_MENSUAL")
 	private Double importeComunidadMensualSareb;
+	
+	@OneToOne
+    @JoinColumn(name = "SINIESTRO")
+    private DDSinSiNo siniestroSareb;
+	
+	@OneToOne
+    @JoinColumn(name = "DD_TCS_ID")
+	private DDTipoCorrectivoSareb tipoCorrectivoSareb;
+	
+	@Column(name = "FEC_FIN_CORRECTIVO")
+    private Date fechaFinCorrectivoSareb;
 
 	public Long getId() {
 		return id;
@@ -278,6 +294,31 @@ public class ActivoSareb implements Serializable, Auditable {
 	public void setImporteComunidadMensualSareb(Double importeComunidadMensualSareb) {
 		this.importeComunidadMensualSareb = importeComunidadMensualSareb;
 	}
+
+	public DDSinSiNo getSiniestroSareb() {
+		return siniestroSareb;
+	}
+
+	public void setSiniestroSareb(DDSinSiNo siniestroSareb) {
+		this.siniestroSareb = siniestroSareb;
+	}
+
+	public DDTipoCorrectivoSareb getTipoCorrectivoSareb() {
+		return tipoCorrectivoSareb;
+	}
+
+	public void setTipoCorrectivoSareb(DDTipoCorrectivoSareb tipoCorrectivoSareb) {
+		this.tipoCorrectivoSareb = tipoCorrectivoSareb;
+	}
+
+	public Date getFechaFinCorrectivoSareb() {
+		return fechaFinCorrectivoSareb;
+	}
+
+	public void setFechaFinCorrectivoSareb(Date fechaFinCorrectivoSareb) {
+		this.fechaFinCorrectivoSareb = fechaFinCorrectivoSareb;
+	}
+	
 	
 	
 }

@@ -166,7 +166,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean activoPrincipalEnAgrupacionRestringida(String numActivo) {
+	public Boolean activoNoPrincipalEnAgrupacionRestringida(String numActivo) {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
 				+ "			    ACT_AGR_AGRUPACION agr, "

@@ -1235,7 +1235,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			return (isIncluidoEnPerimetro == false || $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']));
 		},
 		
-		importeComunidadMensualSarebEditable: function(get) {
+		noEditableUASSoloSuper: function(get) {
 			var me = this; 
 			var esUA = false;
 			if(me.get('activo.unidadAlquilable') != undefined){

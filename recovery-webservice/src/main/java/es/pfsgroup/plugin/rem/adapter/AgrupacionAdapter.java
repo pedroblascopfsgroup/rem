@@ -307,7 +307,7 @@ public class AgrupacionAdapter {
 	private static final String ACTIVO_FUERA_AGRUPACION = "El activo no se encuentra dentro de la agrupación";
 	private static final String ACTIVO_NO_YUBAI = "El activo no es de Yubai";
 	private static final String ACTIVO_NO_OBRA_NUEVA = "El activo no es de obra nueva";
-
+	private static final String TIPO_COMERCIALIZACION_NO_VALIDO = "El tipo de comercialización no es válido.";
 
 	public static final String SPLIT_VALUE = ";s;";
 
@@ -3481,9 +3481,22 @@ public class AgrupacionAdapter {
 					Boolean ofertaVivaAlquiler = false;
 					String codigo = null;
 
-					DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDTipoComercializacion.class, dto.getTipoComercializacionCodigo());
-
+					DDTipoComercializacion tipoComercializacion = null;
+					
+					if(dto.getTipoComercializacionCodigo() != null) {
+						tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, dto.getTipoComercializacionCodigo());
+					}else {
+						Activo activoParaRestringida = null;
+						if(restringida.getActivoPrincipal() != null) {
+							activoParaRestringida = restringida.getActivoPrincipal();
+						}else if(restringida.getActivos() != null && !restringida.getActivos().isEmpty()){
+							activoParaRestringida = restringida.getActivos().get(0).getActivo();
+						}	
+						if(activoParaRestringida != null && activoParaRestringida.getActivoPublicacion() != null && activoParaRestringida.getActivoPublicacion().getTipoComercializacion() != null) {
+							String tipoComercializacionString = activoParaRestringida.getActivoPublicacion().getTipoComercializacion().getCodigo();
+							tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, tipoComercializacionString);
+						}
+					}
 
 
 					if(!Checks.estaVacio(ofertasAgr)) {
@@ -3547,7 +3560,7 @@ public class AgrupacionAdapter {
 									activoPublicacion.setActivo(activoAgrupacionActivo.getActivo());
 								}
 
-								if(!Checks.esNulo(tipoComercializacion)) {
+								if(dto.getTipoComercializacionCodigo() != null) {
 									activoEstadoPublicacionApi.actualizarPublicacionActivoCambioTipoComercializacion(activo, dto.getTipoComercializacionCodigo());
 								}
 								
@@ -3635,9 +3648,11 @@ public class AgrupacionAdapter {
 							}
 						}
 					} else {
-						if (ofertaVivaAlquiler && DDTipoComercializacion.CODIGO_VENTA.equals(tipoComercializacion.getCodigo())) {
+						if(tipoComercializacion  == null) {
+							throw new JsonViewerException(TIPO_COMERCIALIZACION_NO_VALIDO);
+						}else if (ofertaVivaAlquiler && DDTipoComercializacion.CODIGO_VENTA.equals(tipoComercializacion.getCodigo())) {
 							throw new JsonViewerException(AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS);
-						} else if (ofertaVivaVenta && DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion.getCodigo())) {
+						} else if ( ofertaVivaVenta && DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion.getCodigo())) {
 							throw new JsonViewerException(AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS);
 						}
 					}

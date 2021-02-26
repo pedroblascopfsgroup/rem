@@ -21,6 +21,9 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private String direccionComercial;
 	private Boolean ventaSobrePlano;
 	private Double importeComunidadMensualSareb;
+	private String siniestroSareb;
+	private String tipoCorrectivoSareb;
+	private Date fechaFinCorrectivoSareb;
 
 
 
@@ -134,6 +137,30 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	public void setImporteComunidadMensualSareb(Double importeComunidadMensualSareb) {
 		this.importeComunidadMensualSareb = importeComunidadMensualSareb;
+	}
+
+	public String getSiniestroSareb() {
+		return siniestroSareb;
+	}
+
+	public void setSiniestroSareb(String siniestroSareb) {
+		this.siniestroSareb = siniestroSareb;
+	}
+
+	public String getTipoCorrectivoSareb() {
+		return tipoCorrectivoSareb;
+	}
+
+	public void setTipoCorrectivoSareb(String tipoCorrectivoSareb) {
+		this.tipoCorrectivoSareb = tipoCorrectivoSareb;
+	}
+
+	public Date getFechaFinCorrectivoSareb() {
+		return fechaFinCorrectivoSareb;
+	}
+
+	public void setFechaFinCorrectivoSareb(Date fechaFinCorrectivoSareb) {
+		this.fechaFinCorrectivoSareb = fechaFinCorrectivoSareb;
 	}
 	
 	

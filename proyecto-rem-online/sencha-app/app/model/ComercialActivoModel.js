@@ -48,6 +48,17 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 		},
 		{
 			name: 'importeComunidadMensualSareb'
+		},
+		{
+			name: 'siniestroSareb'
+		},
+		{
+			name: 'tipoCorrectivoSareb'
+		},
+		{
+			name: 'fechaFinCorrectivoSareb',
+			type:'date',
+			dateFormat: 'c'
 		}
     ],
     

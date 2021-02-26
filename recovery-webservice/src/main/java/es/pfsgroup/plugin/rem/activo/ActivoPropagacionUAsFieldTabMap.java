@@ -289,7 +289,11 @@ public class ActivoPropagacionUAsFieldTabMap {
     			Arrays.asList(
 					//"id", // ID de activo.
 	    			"direccionComercial",
-	    			"importeComunidadMensualSareb"
+	    			"importeComunidadMensualSareb",
+	    			"siniestroSareb",
+	    			"tipoCorrectivoSareb",
+	    			"fechaFinCorrectivoSareb"
+	    			
     			));
 
 /*

@@ -302,8 +302,28 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 							}
 						activoApi.saveOrUpdatePerimetroActivo(perimetroActivoAgrupacion);
 					}
+				}else {
+					if(visibleGestionComercial != null) {
+						if(visibleGestionComercial == 1) {
+							perimetroActivo.setCheckGestorComercial(true);
+						}else {
+							perimetroActivo.setCheckGestorComercial(false);
+						}
+						if(!Checks.esNulo(motivoGestionComercial) && motivoGestionComercial.length() > 1) {
+							perimetroActivo.setMotivoGestionComercial((DDMotivoGestionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, motivoGestionComercial.substring(0, 2)));
+						}
+						if(!Checks.esNulo(exclusionValidaciones) && exclusionValidaciones.length() > 1) {
+							perimetroActivo.setExcluirValidaciones(((DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, exclusionValidaciones.substring(0, 2))));
+						}
+						if(!Checks.esNulo(fechaCambio)) {
+							SimpleDateFormat sdfSal = new SimpleDateFormat("dd/MM/yyyy"); 
+							Date fecha = sdfSal.parse(fechaCambio);
+							perimetroActivo.setFechaGestionComercial(fecha);
+						}else {
+							perimetroActivo.setFechaGestionComercial(new Date());
+						}		
+					}
 				}
-				
 			}
 			
 			// Check excluir validaciones ------------------

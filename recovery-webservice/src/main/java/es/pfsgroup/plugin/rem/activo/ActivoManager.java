@@ -1061,7 +1061,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@BusinessOperationDefinition("activoManager.getMaxOrdenFotoByIdSubdivision")
-	public Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, BigDecimal hashSdv) {
+	public Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, Long hashSdv) {
 		return activoDao.getMaxOrdenFotoByIdSubdivision(idEntidad, hashSdv);
 	}
 

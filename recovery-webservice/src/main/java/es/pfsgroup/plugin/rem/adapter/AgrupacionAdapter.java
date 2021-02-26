@@ -654,7 +654,9 @@ public class AgrupacionAdapter {
 
 				Activo activoPrincipal = agrupacion.getActivoPrincipal();
 				List<ActivoAgrupacionActivo> listaActivosAgr = agrupacion.getActivos();
-
+				Filter filtroActPr = genericDao.createFilter(FilterType.EQUALS, "activo.id",
+						activoPrincipal.getId());
+				PerimetroActivo periAGA = genericDao.get(PerimetroActivo.class, filtroActPr);
 				if(activoPrincipal != null) {
 					PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activoPrincipal.getId());
 					
@@ -710,7 +712,7 @@ public class AgrupacionAdapter {
 							BeanUtils.copyProperty(dtoAgrupacion, "propietario", propietario.getFullName());
 						}
 					}
-
+				
 					if (!Checks.esNulo(activoPrincipal.getCartera()) && !DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 						BeanUtils.copyProperty(dtoAgrupacion, "cartera", activoPrincipal.getCartera().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", activoPrincipal.getCartera().getCodigo());
@@ -718,6 +720,12 @@ public class AgrupacionAdapter {
 					} else if (!Checks.esNulo(agrupacion.getActivos()) && !agrupacion.getActivos().isEmpty() && !Checks.esNulo(agrupacion.getActivos().get(0).getActivo().getCartera()) && !DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 						BeanUtils.copyProperty(dtoAgrupacion, "cartera", agrupacion.getActivos().get(0).getActivo().getCartera().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", agrupacion.getActivos().get(0).getActivo().getCartera().getCodigo());
+					}
+					
+					
+					if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA) && periAGA!= null && periAGA.getCheckGestorComercial()!= null && periAGA.getCheckGestorComercial()) {
+						BeanUtils.copyProperty(dtoAgrupacion, "visibleGestionComercial",
+								Boolean.TRUE.equals(periAGA.getCheckGestorComercial()));
 					}
 
 

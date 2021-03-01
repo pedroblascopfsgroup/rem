@@ -1446,4 +1446,6 @@ public interface ParticularValidatorApi {
 	Boolean activoPerteneceAgrupacion(String numActivo);
 	
 	Boolean activoBBVAPerteneceSociedadParticipada (String numActivo);
+
+	Boolean situacionComercialPublicadoAlquilerOVenta(String activo);
 }

@@ -2176,7 +2176,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		if(estadoPublicacionList != null && !estadoPublicacionList.isEmpty()) {
 			DDEstadoPublicacionVenta estadoPublicacion = genericDao.get(DDEstadoPublicacionVenta.class, genericDao.createFilter(FilterType.EQUALS, "id", estadoPublicacionList.get(0)));
 			if(estadoPublicacion != null) {
-				return !DDEstadoPublicacionVenta.isNoPublicado(estadoPublicacion.getCodigo());
+				return !DDEstadoPublicacionVenta.isNoPublicadoVenta(estadoPublicacion);
 			}
 		}
 		
@@ -2198,7 +2198,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		if(estadoPublicacionList != null && !estadoPublicacionList.isEmpty()) {
 			DDEstadoPublicacionVenta estadoPublicacion = genericDao.get(DDEstadoPublicacionVenta.class, genericDao.createFilter(FilterType.EQUALS, "id", estadoPublicacionList.get(0)));
 			if(estadoPublicacion != null) {
-				return !DDEstadoPublicacionVenta.isNoPublicado(estadoPublicacion.getCodigo());
+				return !DDEstadoPublicacionVenta.isNoPublicadoVenta(estadoPublicacion);
 			}
 		}
 		

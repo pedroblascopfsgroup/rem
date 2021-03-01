@@ -150,18 +150,19 @@ public class VisibilidadGestionComercialValidator {
 
 					// Validación que comprueba si su estado de publicación es compatible con la
 					// inclusión en perímetro
-					if (activoActual.getCartera() != null
-							&& (DDCartera.CODIGO_CARTERA_BANKIA.equals(activoActual.getCartera().getCodigo()))) {
-						if (activoPublicacion != null
-								&& (activoPublicacion.getEstadoPublicacionAlquiler().getCodigo() != null
-										|| activoPublicacion.getEstadoPublicacionVenta().getCodigo() != null)) {
-							if (!DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER
-									.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())
-									|| !DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA
-											.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo())) {
+					if(activoPublicacion != null) {
+						if(DDCartera.isCarteraBk(activoActual.getCartera())) {
+							if(!DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta())
+							&& !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler())) {
+								erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
+							}
+						}else {
+							if(!DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler())) {
 								erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
 							}
 						}
+					}else {
+						erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
 					}
 
 					// Validación que comprueba si el activo es comercializable

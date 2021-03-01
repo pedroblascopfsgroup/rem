@@ -6633,7 +6633,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			Activo activo = activoDao.getActivoById(idActivo);
 			if(activo != null && activo.getActivoPublicacion() != null && activo.getActivoPublicacion().getEstadoPublicacionVenta() != null) {
-				if(DDEstadoPublicacionVenta.isNoPublicado(activo.getActivoPublicacion().getEstadoPublicacionVenta().getCodigo())){
+				if(DDEstadoPublicacionVenta.isNoPublicadoVenta(activo.getActivoPublicacion().getEstadoPublicacionVenta())){
 					precioWebActualActivo = null;
 				}
 			}

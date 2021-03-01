@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20210129
+--## FECHA_CREACION=20210226
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10975
@@ -14,6 +14,7 @@
 --##        0.2 HREOS-11680 - JAD - reformulamos la vista VI_NOR_BBVA_VT1
 --##        0.3 HREOS-11680 - JAD - quitamos el num_linia es vacio que esta mal
 --##        0.4 REMVIP-8799 - VRO - se cambia calculo para FECHA_DEP_JURIDICA
+--##        0.5 REMVIP-8960 - VRO - se pone LEFT en dd_eca_estado_carga_activos y se mete tabla BIE_DATOS_REGISTRALES
 --##########################################
 --*/
 
@@ -202,7 +203,7 @@ BEGIN
         JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BIEL ON BIEN.BIE_ID = BIEL.BIE_ID
         JOIN '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD LOC2 ON LOC2.DD_LOC_ID = BIEL.DD_LOC_ID
         LEFT JOIN '||V_ESQUEMA||'.ACT_AJD_ADJJUDICIAL AJD ON AJD.ACT_ID = ACT.ACT_ID
-        LEFT JOIN '||V_ESQUEMA||'.BIE_BIEN_ENTIDAD ENT ON ENT.BIE_ID = BIEN.BIE_ID
+        LEFT JOIN '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES ENT ON ENT.BIE_ID = BIEN.BIE_ID
         JOIN '||V_ESQUEMA||'.ACT_CAT_CATASTRO CAT ON CAT.ACT_ID = ACT.ACT_ID
         LEFT JOIN
         (
@@ -250,7 +251,7 @@ BEGIN
         JOIN '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID
         JOIN '||V_ESQUEMA||'.ACT_TIT_TITULO TIT ON ACT.ACT_ID = TIT.ACT_ID
         LEFT JOIN '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO ETI ON TIT.DD_ETI_ID = ETI.DD_ETI_ID
-        JOIN '||V_ESQUEMA||'.dd_eca_estado_carga_activos eca ON act.DD_ECa_ID = eca.DD_ECa_ID
+        LEFT JOIN '||V_ESQUEMA||'.dd_eca_estado_carga_activos eca ON act.DD_ECa_ID = eca.DD_ECa_ID
         JOIN '||V_ESQUEMA||'.V_FECHA_POSESION_ACTIVO VTA_POS ON VTA_POS.ACT_ID = ACT.ACT_ID
         JOIN '||V_ESQUEMA||'.ACT_PAC_PROPIETARIO_ACTIVO PAC ON ACT.ACT_ID = PAC.ACT_ID
         JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = PAC.PRO_ID

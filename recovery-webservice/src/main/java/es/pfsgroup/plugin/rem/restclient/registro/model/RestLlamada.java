@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Where;
 
@@ -96,6 +97,9 @@ public class RestLlamada implements Serializable, Auditable {
 	
 	@Transient
 	private ArrayList<JSONObject> datosErroneos;
+	
+	@Version   
+	private Long version;
 	
 
 	public RestLlamada() {
@@ -319,6 +323,14 @@ public class RestLlamada implements Serializable, Auditable {
 
 	public void setMsRefrescoVista(Long msRefrescoVista) {
 		this.msRefrescoVista = msRefrescoVista;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 
 }

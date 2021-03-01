@@ -210,7 +210,7 @@ public interface ActivoApi {
 	Integer getMaxOrdenFotoById(Long id);
 
 	@BusinessOperationDefinition("activoManager.getMaxOrdenFotoByIdSubdivision")
-	Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, BigDecimal hashSdv);
+	Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, Long hashSdv);
 
 	/**
 	 * Obtiene el presupuesto de un activo para el ejercicio actual (no el ultimo ejercicio de tabla ejercicios, sino el del año actual)

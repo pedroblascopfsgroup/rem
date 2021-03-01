@@ -249,7 +249,8 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 			if (!Checks.esNulo(visitaDto.getIdClienteRem())) {
 				ClienteComercial cliente = (ClienteComercial) genericDao.get(ClienteComercial.class,
-						genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visitaDto.getIdClienteRem()));
+						genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visitaDto.getIdClienteRem()),
+						genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom"));
 				if (!Checks.esNulo(cliente)) {
 					visita.setCliente(cliente);
 				}
@@ -380,7 +381,8 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			if (((JSONObject) jsonFields).containsKey("idClienteRem")) {
 				if (!Checks.esNulo(visitaDto.getIdClienteRem())) {
 					ClienteComercial cliente = (ClienteComercial) genericDao.get(ClienteComercial.class,
-							genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visitaDto.getIdClienteRem()));
+							genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visitaDto.getIdClienteRem()),
+							genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom"));
 					if (!Checks.esNulo(cliente)) {
 						visita.setCliente(cliente);
 					}

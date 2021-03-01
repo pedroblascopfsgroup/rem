@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Lista;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
@@ -26,7 +27,7 @@ public class VisitaDto implements Serializable {
 	private Long idVisitaWebcom;
 	private Long idVisitaRem;
 	@NotNull(groups = { Insert.class })
-	@Diccionary(clase = ClienteComercial.class, message = "El idClienteRem no existe", groups = { Insert.class,
+	@Lista(clase = ClienteComercial.class, message = "El idClienteRem no existe", groups = { Insert.class,
 			Update.class },foreingField="idClienteRem")
 	private Long idClienteRem;
 	@NotNull(groups = { Insert.class })

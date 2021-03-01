@@ -93,6 +93,6 @@ public class MSVActualizadorAdecuacionCargaMasiva extends AbstractMSVActualizado
 	// SP_CAMBIO_ESTADO_PUBLICACION.
 	private void actualizarEstadoPublicacion(Activo activo) {
 		@SuppressWarnings("unused")
-		boolean result = activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+		boolean result = activoAdapter.actualizarEstadoPublicacionActivo(activo.getId(), false);
 	}
 }

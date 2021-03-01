@@ -202,7 +202,7 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 		activoDao.saveOrUpdate(activo);
 		// genericDao.save(ActivoInfoRegistral.class, activoInfoRegistral);
 		// lanzar el SP de publicaciones para el activo
-		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId(), false);
 
 		if(activo!=null && situacionPosesoria!=null && usu!=null) {
 			String cmasivaCodigo = this.getValidOperation();

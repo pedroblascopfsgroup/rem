@@ -148,7 +148,7 @@ Ext.define('HreRem.view.ViewportController', {
     	item = tree.getItem(node);  
     	
         if (node && node.get('view')) {
-            this.redirectTo( node.get("routeId"));
+			this.redirectTo( node.get("routeId"));
         }
 
     },

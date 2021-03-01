@@ -208,6 +208,7 @@ import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
 import es.pfsgroup.plugin.rem.rest.dto.SaneamientoAgendaDto;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.GuardarActivosRestringidasAsync;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
@@ -1061,7 +1062,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@BusinessOperationDefinition("activoManager.getMaxOrdenFotoByIdSubdivision")
-	public Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, BigDecimal hashSdv) {
+	public Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, Long hashSdv) {
 		return activoDao.getMaxOrdenFotoByIdSubdivision(idEntidad, hashSdv);
 	}
 
@@ -4147,7 +4148,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		transactionManager.commit(transaction);
 
 		if(activo != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
-			recoveryComunicacionManager.datosCliente(activo, new ModelMap());
+			Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo, new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+			llamadaAsincrona.start();
 		}
 
 		return true;
@@ -4510,7 +4512,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if(carga != null){
 			if(carga.getActivo() != null && carga.getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
-				recoveryComunicacionManager.datosCliente(carga.getActivo(), new ModelMap());
+				Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(carga.getActivo(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+				llamadaAsincrona.start();
 			}
 		}
 
@@ -4990,7 +4993,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = false)
 	public boolean updateCalificacionNegativa(DtoActivoDatosRegistrales dto) {
 
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -5051,7 +5054,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				transactionManager.commit(transaction);
 
 				if(activoCalificacionNegativa.getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
-					recoveryComunicacionManager.datosCliente(activoCalificacionNegativa.getActivo(), new ModelMap());
+					Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activoCalificacionNegativa.getActivo(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+					llamadaAsincrona.start();
 				}
 
 				return true;
@@ -5067,7 +5071,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = false)
 	public boolean createCalificacionNegativa(DtoActivoDatosRegistrales dto) throws Exception {
 
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -5158,7 +5162,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				transactionManager.commit(transaction);
 
 				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
-					recoveryComunicacionManager.datosCliente(activo, new ModelMap());
+					Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo, new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+					llamadaAsincrona.start();
 				}
 
 				return true;
@@ -5174,7 +5179,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = false)
 	public boolean destroyCalificacionNegativa(DtoActivoDatosRegistrales dto) {
 
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -5194,7 +5199,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			transactionManager.commit(transaction);
 
 			if(activo != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
-				recoveryComunicacionManager.datosCliente(activo, new ModelMap());
+				Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo, new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+				llamadaAsincrona.start();
 			}
 
 			return true;
@@ -6775,7 +6781,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		transactionManager.commit(transaction);
 
 		if(activo != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)) {
-			recoveryComunicacionManager.datosCliente(activo, new ModelMap());
+			Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo, new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+			llamadaAsincrona.start();
 		}
 
 		return true;
@@ -6967,7 +6974,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		transactionManager.commit(transaction);
 
 		if(activo != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)) {
-			recoveryComunicacionManager.datosCliente(activo, new ModelMap());
+			Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo, new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+			llamadaAsincrona.start();
 		}
 
 		return true;
@@ -7126,7 +7134,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			transactionManager.commit(transaction);
 
 			if(activo != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)) {
-				recoveryComunicacionManager.datosCliente(activo, new ModelMap());
+				Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo, new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+				llamadaAsincrona.start();
 			}
 
 			return true;

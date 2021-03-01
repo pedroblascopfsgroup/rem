@@ -1304,6 +1304,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		me.lookupReference('comboTipoRetencionRef').setAllowBlank(!checked);
 		if(!checked){
 			me.lookupReference('comboTipoRetencionRef').setValue('');
+			me.lookupReference('baseIRPFRetG').setValue('');
+			me.lookupReference('irpfTipoImpositivoRetG').setValue(0);
+			me.lookupReference('cuotaIRPFRetG').setValue('');
 		}
 		me.onChangeCuotaRetencionGarantia(checked);
 		
@@ -2279,7 +2282,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var importeTotal = 0;
 		cuota = Number(Math.round(cuota + "e+" + 2)  + "e-" + 2);
     	me.lookupReference('cuotaIRPFImpD').setValue(cuota);
-
+    	
     	if(!me.lookupReference('lineaDetalleGastoGrid').getStore().loading){
     		importeTotal = me.getImporteTotalLineasDetalle(me);
     		importeTotal = importeTotal - (tipoImpositivo * base)/100;
@@ -2288,8 +2291,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     				importeTotal = importeTotal - cuotaRetG - valorCuota ;
     	    	}else{
     	    		importeTotal = importeTotal - cuotaRetG;
-    	    	}
-    			
+				}
+				
     		}
     	}else{
     		importeTotal = me.getViewModel().get('detalleeconomico.importeTotal'); 
@@ -2862,11 +2865,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     },
     
     getImporteTotalCuotaIndirecta: function(me){
-    	var cuotaTotal = 0;
-
+		var cuotaTotal = 0;
+		
     	if(me.lookupReference('lineaDetalleGastoGrid').getStore() != null && me.lookupReference('lineaDetalleGastoGrid').getStore() != undefined){
     		for(var i = 0; i < me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items.length; i++){	
+    			if (me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('baseSujeta') != undefined && me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('tipoImpositivo') != undefined){
     				cuotaTotal+= parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('baseSujeta')*me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('tipoImpositivo')/100);	
+    			}
     		}
     	}
     	

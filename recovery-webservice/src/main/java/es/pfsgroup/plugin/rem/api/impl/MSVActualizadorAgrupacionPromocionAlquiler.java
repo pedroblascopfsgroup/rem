@@ -941,7 +941,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 	//HREOS-5902. Los registros de la fila son correctos. Se lanza el SP_CAMBIO_ESTADO_PUBLICACION.
 	private void actualizarEstadoPublicacion(Activo unidadAlquilable) {
 		@SuppressWarnings("unused")
-		boolean result = activoAdapter.actualizarEstadoPublicacionActivo(unidadAlquilable.getId());
+		boolean result = activoAdapter.actualizarEstadoPublicacionActivo(unidadAlquilable.getId(), false);
 	}
 	
 	@Override

@@ -89,13 +89,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	       	}
 		});	
 		var panelTanteo = tabPanel.down('activoexpedientetanteo');
-		var grid = panelTanteo.down('gridBaseEditableRow');
-		if(grid != undefined){
-			var store = grid.getStore();
-			grid.expand();
-			store.loadPage(1)
+		if(!Ext.isEmtpy(panelTanteo)){
+			var grid = panelTanteo.down('gridBaseEditableRow');
+			if(grid != undefined){
+				var store = grid.getStore();
+				grid.expand();
+				store.loadPage(1)
+			}
 		}
-		
 		var panelJuridico = tabPanel.down('activoexpedientejuridico');
 		if(panelJuridico != undefined){
 			me.cargarTabDataInformeJuridico(panelJuridico,false);

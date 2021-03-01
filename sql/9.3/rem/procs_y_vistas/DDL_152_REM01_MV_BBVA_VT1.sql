@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20210129
+--## FECHA_CREACION=20210226
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10975
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 REMVIP-8960 - VRO - se pone LEFT en dd_eca_estado_carga_activos y se mete tabla BIE_DATOS_REGISTRALES en vista vi_nor_bbva_vt1
 --##########################################
 --*/
 

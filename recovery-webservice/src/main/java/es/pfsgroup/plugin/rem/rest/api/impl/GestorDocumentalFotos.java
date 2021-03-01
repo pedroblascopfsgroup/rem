@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.rest.api.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -154,7 +153,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 	}
 
 	@Override
-	public FileResponse uploadSubdivision(File fileToUpload, String name, BigDecimal idSubdivision, ActivoAgrupacion agrupacion,
+	public FileResponse uploadSubdivision(File fileToUpload, String name, Long idSubdivision, ActivoAgrupacion agrupacion,
 			String descripcion,TIPO tipo,PRINCIPAL principal,SITUACION situacion, Integer orden ) throws IOException, RestClientException, HttpClientException {
 		FileUpload file = new FileUpload();
 		file.setFile_base64(FileUtilsREM.base64Encode(fileToUpload));

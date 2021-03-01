@@ -29,6 +29,8 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalExpedientesApi;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.BajaDocumentoDto;
@@ -1679,21 +1681,26 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	public void guardarFormularioSubidaDocumento(Long idEntidad, String tipoDocumento, boolean tbjValidado, DtoMetadatosEspecificos dto) throws ParseException{
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", idEntidad);
 		Activo activo = genericDao.get(Activo.class, filtroActivo);
+		Order order = new Order(OrderType.DESC, "id");
+		ActivoAdmisionDocumento activoAdmisionDocumento = null;
+		ActivoConfigDocumento actConfDoc = null;
 		
 		DDTipoDocumentoActivo tipoDocDiccionario = (DDTipoDocumentoActivo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumentoActivo.class, tipoDocumento);
 		Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.id", tipoDocDiccionario.getId());
 		Filter filtrotipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.id",activo.getTipoActivo().getId());
-		ActivoConfigDocumento actConfDoc = genericDao.get(ActivoConfigDocumento.class, filtroDocumento,filtrotipoActivo);
-		if(actConfDoc != null) {
+		if(filtroDocumento != null && filtrotipoActivo != null) {
+		List<ActivoConfigDocumento> actConfDocList = genericDao.getListOrdered(ActivoConfigDocumento.class, order,filtroDocumento,filtrotipoActivo);
+		if(actConfDocList != null && !actConfDocList.isEmpty()) {
+			actConfDoc = actConfDocList.get(0);
 			Filter filtroActConfDoc = genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", actConfDoc.getId());
-			ActivoAdmisionDocumento activoAdmisionDocumento = genericDao.get(ActivoAdmisionDocumento.class, filtroActivo, filtroActConfDoc);
-		
-		if(activoAdmisionDocumento == null) {
+			List<ActivoAdmisionDocumento> activoAdmisionDocumentoList = genericDao.getListOrdered(ActivoAdmisionDocumento.class,order, filtroActivo, filtroActConfDoc);
+			
+		if(activoAdmisionDocumentoList == null || activoAdmisionDocumentoList.isEmpty()) {
 			activoAdmisionDocumento = new ActivoAdmisionDocumento();
 			activoAdmisionDocumento.setActivo(activo);
 			activoAdmisionDocumento.setConfigDocumento(actConfDoc);
-		}
-		
+		}else {
+			activoAdmisionDocumento = activoAdmisionDocumentoList.get(0);
 		if(dto.getFechaObtencion() != null) {
 			activoAdmisionDocumento.setFechaObtencion(parser.parse(dto.getFechaCaducidad()));
 		}
@@ -1717,6 +1724,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		activoAdmisionDocumento.setValidado(tbjValidado);
 
 		genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
+		
+			}
+		}
 		}
 		return;
 	

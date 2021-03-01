@@ -68,17 +68,6 @@ BEGIN
 									
 	EXECUTE IMMEDIATE V_MSQL;
 	
-	V_MSQL := ' UPDATE '|| V_ESQUEMA ||'.ACT_BBVA_ACTIVOS SET 
-                    DD_TAL_ID =  65,
-                    USUARIOMODIFICAR = '''||V_USUARIO||''',
-                    FECHAMODIFICAR = SYSDATE
-                    WHERE ACT_ID IN (533795, 
-									535218, 
-									535220, 
-									560100)';
-									
-	EXECUTE IMMEDIATE V_MSQL;
-	
 	V_MSQL := ' UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION SET 
                     DD_TCO_ID =  1,
                     USUARIOMODIFICAR = '''||V_USUARIO||''',

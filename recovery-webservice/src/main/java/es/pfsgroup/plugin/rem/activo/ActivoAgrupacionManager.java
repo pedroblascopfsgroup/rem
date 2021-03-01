@@ -58,7 +58,6 @@ import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAfectosGencatAgrupacion;
-import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VListaActivosAgrupacionVSCondicionantes;
 import es.pfsgroup.plugin.rem.model.VSubdivisionesAgrupacion;
@@ -281,7 +280,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		}
 
 		Long agrupacionId = Long.parseLong(fileItem.getMetadata().get("id_agrupacion_haya"));
-		BigDecimal subdivisionId = null;
+		Long subdivisionId = null;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", agrupacionId);
 		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
 		try {
@@ -294,7 +293,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				activoFoto.setAgrupacion(agrupacion);
 				
 				if (fileItem.getMetadata().get("id_subdivision") != null) {
-					subdivisionId = new BigDecimal(fileItem.getMetadata().get("id_subdivision"));
+					subdivisionId = Long.parseLong(fileItem.getMetadata().get("id_subdivision"));
 					activoFoto.setSubdivision(subdivisionId); 
 				}
 
@@ -304,7 +303,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				String codigoSubtipoActivo = DDSubtipoActivo.CODIGO_EN_CONSTRUCCION;
 				
 				if (subdivisionId != null) {
-					codigoSubtipoActivo = genericDao.get(VSubdivisionesAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", subdivisionId)).getCodigoSubtipoActivo();
+					codigoSubtipoActivo = genericDao.get(VSubdivisionesAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", subdivisionId),
+							genericDao.createFilter(FilterType.EQUALS, "agrupacionId", agrupacionId)).getCodigoSubtipoActivo();
 				}
 				DDDescripcionFotoActivo descripcionFoto = null;
 
@@ -370,7 +370,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@Transactional(readOnly = false)
 	public String uploadFotoSubdivision(WebFileItem fileItem) {
 
-		BigDecimal subdivisionId = new BigDecimal(fileItem.getParameter("id"));
+		Long subdivisionId = Long.parseLong(fileItem.getParameter("id"));
 		Long agrupacionId = Long.parseLong(fileItem.getParameter("agrId"));
 		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
 		DDTipoFoto tipoFoto = genericDao.get(DDTipoFoto.class, filtroTipo);
@@ -459,7 +459,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		if (fileItem.getMetadata().get("id_agrupacion_haya") == null) {
 			throw new Exception("La foto no tiene agrupacion");
 		}
-		BigDecimal subdivisionId = new BigDecimal(fileItem.getMetadata().get("id_subdivision"));
+		Long subdivisionId = Long.parseLong(fileItem.getMetadata().get("id_subdivision"));
 		Long agrupacionId = Long.parseLong(fileItem.getMetadata().get("id_agrupacion_haya"));
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", agrupacionId);
 		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
@@ -478,7 +478,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				activoFoto.setNombre(fileItem.getBasename());
 				
 				String descripcion = null;
-				String codigoSubtipoActivo = genericDao.get(VSubdivisionesAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", subdivisionId)).getCodigoSubtipoActivo();
+				String codigoSubtipoActivo = genericDao.get(VSubdivisionesAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", subdivisionId),
+										genericDao.createFilter(FilterType.EQUALS, "agrupacionId", agrupacionId)).getCodigoSubtipoActivo();
 				DDDescripcionFotoActivo descripcionFoto = null;
 
 				if (fileItem.getMetadata().containsKey("descripcion")) {

@@ -16,114 +16,82 @@ public class StockDto implements WebcomRESTDto{
 	@WebcomRequired
 	private LongDataType idUsuarioRemAccion;
 	
-	@WebcomRequired
 	private DateDataType fechaAccion;
 	
 	@WebcomRequired
 	private LongDataType idActivoHaya;
 	
-	@WebcomRequired
 	private LongDataType idActivoSareb;
 	
-	@WebcomRequired
 	private LongDataType idActivoPrinex;
 	
 	@WebcomRequired
 	private LongDataType idActivoRem;
 	
-	@WebcomRequired
 	private StringDataType codTipoVia;
 	
-	@WebcomRequired
 	private StringDataType nombreCalle;
 	
-	@WebcomRequired
 	private StringDataType numeroCalle;
 	
-	@WebcomRequired
 	private StringDataType escalera;
 	
-	@WebcomRequired
 	private StringDataType planta;
 	
-	@WebcomRequired
 	private StringDataType puerta;
 	
-	@WebcomRequired
 	private StringDataType codMunicipio;
 	
-	@WebcomRequired
 	private StringDataType codPedania;
 	
-	@WebcomRequired
 	private StringDataType codProvincia;
 	
-	@WebcomRequired
 	private StringDataType codigoPostal;
 	
-	@WebcomRequired
 	private StringDataType codTipoInmueble;
 	
-	@WebcomRequired
 	private StringDataType codSubtipoInmueble;
 	
-	@WebcomRequired
 	private StringDataType fincaRegistral;
 	
-	@WebcomRequired
 	private StringDataType codMunicipioRegistro;
 	
-	@WebcomRequired
 	private StringDataType registro;
 	
-	@WebcomRequired
 	private StringDataType referenciaCatastral;
 	
-	@WebcomRequired
 	private BooleanDataType ascensor;
 	
-	@WebcomRequired
 	private LongDataType dormitorios;
 	
-	@WebcomRequired
 	private LongDataType banyos;
 	
-	@WebcomRequired
 	private LongDataType aseos;
 	
-	@WebcomRequired
 	private LongDataType garajes;
 	
 	@WebcomRequired
 	private StringDataType codEstadoComercial;
 	
-	@WebcomRequired
 	private StringDataType codTipoVenta;
 	
-	@WebcomRequired
 	@DecimalDataTypeFormat(decimals=8)
 	private DoubleDataType lat;
 	
-	@WebcomRequired
 	@DecimalDataTypeFormat(decimals=8)
 	private DoubleDataType lng;
 	
-	@WebcomRequired
 	private StringDataType codEstadoConstruccion;
 	
-	@WebcomRequired
 	private LongDataType terrazas;
 	
 	@WebcomRequired
 	private StringDataType codEstadoPublicacion;
 	
-	@WebcomRequired
 	private DateDataType publicadoDesde;
 	
-	@WebcomRequired
 	private BooleanDataType reformas;
 	
-	@WebcomRequired
 	private StringDataType codRegimenProteccion;
 	
 	@WebcomRequired
@@ -138,95 +106,69 @@ public class StockDto implements WebcomRESTDto{
 	@WebcomRequired
 	private LongDataType codigoCabeceraObraNueva;
 	
-	@WebcomRequired
 	private LongDataType idProveedorRemAnterior;
 	
 	@WebcomRequired
 	private LongDataType idProveedorRem;
 	
-	@WebcomRequired
 	private StringDataType nombreGestorComercial;
 	
-	@WebcomRequired
 	private StringDataType telefonoGestorComercial;
 	
-	@WebcomRequired
 	private StringDataType emailGestorComercial;
 	
-	@WebcomRequired
 	private StringDataType codCee;
 	
-	@WebcomRequired
 	private LongDataType antiguedad;
 	
-	@WebcomRequired
 	private StringDataType codCartera;
 	
-	@WebcomRequired
 	private StringDataType codRatio;
 	
-	@WebcomRequired
 	private BooleanDataType esNuevo;
 	
-	@WebcomRequired
 	@DecimalDataTypeFormat(decimals=2)
 	private DoubleDataType utilSuperficie;
 	
-	@WebcomRequired
 	@DecimalDataTypeFormat(decimals=2)
 	private DoubleDataType construidaSuperficie;
 	
-	
-	@WebcomRequired
 	@DecimalDataTypeFormat(decimals=2)
 	private DoubleDataType registralSuperficie;
 	
-	@WebcomRequired
 	@DecimalDataTypeFormat(decimals=2)
 	private DoubleDataType parcelaSuperficie;
 	
-	@WebcomRequired
 	private LongDataType idActivoUvem;
 	
 	@WebcomRequired
 	private BooleanDataType riesgoOcupacion;
 	
-	@WebcomRequired
 	private DateDataType fechaPosesion;
 	
-	@WebcomRequired
 	@MappedColumn("FECHA_CONTRATO_DATOS_OCU")
 	private DateDataType fechaContratoDatosOcupacionales;
 	
 	@MappedColumn("PLAZO_CONTRATO_DATOS_OCU")
-	@WebcomRequired
 	private DateDataType plazoContratoDatosOcupacionales;
 	
-	@WebcomRequired
 	@MappedColumn("RENTA_MENSUAL_DATOS_OCU")
-	
 	private DoubleDataType rentaMensualDatosOcupacionales;
 	
-	@WebcomRequired
 	@MappedColumn("RECIBIDO_IMPORTE_DATOS_ADM")
 	private DoubleDataType recibidoImporteDatosAdministracion;
 	
-	@WebcomRequired
 	@MappedColumn("IBI_IMPORTE_DATOS_ADM")
 	private DoubleDataType ibiImporteDatosAdministracion;
 	
-	@WebcomRequired
 	@MappedColumn("DERRAMA_IMPORTE_DATOS_ADM")
 	private DoubleDataType derramaImporteDatosAdministracion;
 	
-	@WebcomRequired
 	@MappedColumn("DETALLE_DERRAMA_DATOS_ADM")
 	private StringDataType detalleDerramaDatosAdministracion;
 	
-	@WebcomRequired
 	private StringDataType anejoTrastero;
 	
-	@WebcomRequired
 	private BooleanDataType existePiscina;
 	
 	//HREOS-1479
@@ -267,16 +209,12 @@ public class StockDto implements WebcomRESTDto{
 	@DecimalDataTypeFormat(decimals=2)
 	private DoubleDataType anteriorValorAprobadoVenta;
 	
-	@WebcomRequired
 	private LongDataType idAsistida;
 	
-	@WebcomRequired
 	private LongDataType codigoCabeceraAsistida;
 	
-	@WebcomRequired
 	private StringDataType codSubtipoTitulo;
 	
-	@WebcomRequired
 	private StringDataType codSubCartera;
 	
 	@WebcomRequired
@@ -310,41 +248,29 @@ public class StockDto implements WebcomRESTDto{
 	@WebcomRequired
 	private LongDataType codigoAgrupacionComercialRem;
 	
-	@WebcomRequired
 	private StringDataType descripcionOtros;
 
-	@WebcomRequired
 	private LongDataType activoProveedorTecnico;
 
-	@WebcomRequired
 	private StringDataType codEstadoFisico;
 
-	@WebcomRequired
 	private StringDataType codTipoUsoDestino;
 	
 	//HREOS-6082
-	@WebcomRequired
 	private BooleanDataType esActivoMatrizPa;
 	
-	@WebcomRequired
 	private LongDataType idActivoHayaPa;
 	
-	@WebcomRequired
 	private LongDataType codigoAgrupacionPa;
 	
-	@WebcomRequired
 	private LongDataType codigoCabeceraPa;
 	
-	@WebcomRequired
 	private StringDataType nombreGmo;
 	
-	@WebcomRequired
 	private StringDataType telefonoGmo;
 	
-	@WebcomRequired
 	private StringDataType emailGmo;
 
-	@WebcomRequired
 	private StringDataType codTipoAlquiler;
 
 	@WebcomRequired
@@ -352,8 +278,7 @@ public class StockDto implements WebcomRESTDto{
 	
 	@WebcomRequired
 	private String codSubfasePublicacion;
-		
-	@WebcomRequired
+	
 	@NestedDto(groupBy="idActivoHaya", type=PoseedorLlavesDto.class)
 	private List<PoseedorLlavesDto> arrProveedorLlavesRem;
 	
@@ -363,19 +288,15 @@ public class StockDto implements WebcomRESTDto{
 	@WebcomRequired
 	private BooleanDataType perimetroMacc;
 	
-	@WebcomRequired
 	private StringDataType scomEmail;
 	
-	@WebcomRequired
 	private StringDataType scomNombre;
 	
-	@WebcomRequired
 	private StringDataType scomTelefono;
 	
 	@WebcomRequired
 	private StringDataType codTipoComercializar;
 	
-	@WebcomRequired
 	private StringDataType codEquipoGestion;
 
 	@WebcomRequired

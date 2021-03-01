@@ -511,7 +511,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 
 	@Override
-	public Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, BigDecimal hashSdv) {
+	public Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, Long hashSdv) {
 		HQLBuilder hb = new HQLBuilder("select max(orden) from ActivoFoto foto where foto.agrupacion.id = " + idEntidad);
 		if(hashSdv != null)
 				hb.appendWhere("foto.subdivision = " + hashSdv);

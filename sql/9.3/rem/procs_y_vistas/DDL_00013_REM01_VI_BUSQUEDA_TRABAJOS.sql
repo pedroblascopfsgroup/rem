@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Dean Ibañez Viño
---## FECHA_CREACION=20210113
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20210222
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12764
+--## INCIDENCIA_LINK=REMVIP-8721
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -22,6 +22,7 @@
 --##		1.0 HREOS-12002 Agregar campos solicitados
 --##		1.1 HREOS-12030 Ajustar campos solicitados
 --##		1.2 HREOS-12764 Adaptar consulta para evitar duplicar trabajos
+--##		1.3 REMVIP-8721 Adaptar consulta para que salgan todos los trabajos de los activos
 --##########################################
 --*/
 
@@ -69,10 +70,9 @@ BEGIN
 			tbj.tbj_id AS TBJ_ID,
 			act.act_id AS IDACTIVO,
 			1 AS RANGO,
-            		row_number() OVER(
-                		PARTITION BY tbj.tbj_num_trabajo
-                		ORDER BY act.act_id DESC
-            		) ROW_NUM, 
+            		DENSE_RANK() OVER(
+            			PARTITION BY tbj.tbj_num_trabajo 
+            			ORDER BY act.act_num_activo) ROW_NUM,
 			tbj.tbj_num_trabajo AS TBJ_NUM_TRABAJO,
 			tbj.tbj_webcom_id AS TBJ_WEBCOM_ID,
 			tbj.tbj_cubre_seguro AS TBJ_CUBRE_SEGURO,

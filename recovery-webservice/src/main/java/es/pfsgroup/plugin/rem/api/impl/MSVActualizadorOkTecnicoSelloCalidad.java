@@ -72,7 +72,7 @@ public class MSVActualizadorOkTecnicoSelloCalidad extends AbstractMSVActualizado
 			}
 
 			activoApi.saveOrUpdate(activo);
-			activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+			activoAdapter.actualizarEstadoPublicacionActivo(activo.getId(), false);
 			
 		}
 

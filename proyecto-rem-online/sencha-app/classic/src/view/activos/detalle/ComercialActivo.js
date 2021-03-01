@@ -170,7 +170,7 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 							bind : {
 				        		value: '{comercial.importeComunidadMensualSareb}',
 				        		hidden: '{!isCarteraSareb}',
-				        		readOnly: '{!importeComunidadMensualSarebEditable}'
+				        		readOnly: '{!noEditableUASSoloSuper}'
 							}						
 						},
 						{
@@ -181,7 +181,7 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        		value: '{comercial.siniestroSareb}',
 				        		store: '{comboSinSino}',
 				        		hidden: '{!isCarteraSareb}',
-				        		readOnly: '{!importeComunidadMensualSarebEditable}'
+				        		readOnly: '{!noEditableUASSoloSuper}'
 							}						
 						},
 						{
@@ -192,7 +192,7 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        		value: '{comercial.tipoCorrectivoSareb}',
 				        		store: '{comboDDTipoCorrectivoSareb}',
 				        		hidden: '{!isCarteraSareb}',
-				        		readOnly: '{!importeComunidadMensualSarebEditable}'
+				        		readOnly: '{!noEditableUASSoloSuper}'
 							}						
 						},
 						{
@@ -202,7 +202,7 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 							bind : {
 				        		value: '{comercial.fechaFinCorrectivoSareb}',
 				        		hidden: '{!isCarteraSareb}',
-				        		readOnly: '{!importeComunidadMensualSarebEditable}'
+				        		readOnly: '{!noEditableUASSoloSuper}'
 							}						
 						}
 				]

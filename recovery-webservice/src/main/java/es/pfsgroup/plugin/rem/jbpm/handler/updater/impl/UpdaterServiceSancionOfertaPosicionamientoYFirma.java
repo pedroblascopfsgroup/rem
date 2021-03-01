@@ -63,7 +63,8 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
-
+	
+	@Autowired
 	private ApiProxyFactory proxyFactory;
 
 

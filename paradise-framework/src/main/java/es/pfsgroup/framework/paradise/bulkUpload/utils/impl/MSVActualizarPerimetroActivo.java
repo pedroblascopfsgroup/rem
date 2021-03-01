@@ -84,7 +84,6 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final String VALID_FECHA_VENTA_EXTERNA ="msg.error.masivo.actializar.perimetro.activo.fecha.venta.externa";
 	public static final String VALID_BANKIA_PUBLICADO ="msg.error.masivo.actializar.perimetro.activo.bankia.publicado";
 	public static final String VALID_ACTIVO_NO_COMERCIALIZABLE ="msg.error.masivo.actializar.perimetro.activo.no.comercializable";
-	public static final String VALID_ESTADO_PUBLICACION ="msg.error.masivo.actializar.perimetro.activo.estado.publicacion";
 	public static final String VALID_MACC_CON_CARGAS ="msg.error.masivo.actializar.perimetro.activo.macc.con.cargas";
 	public static final String VALID_ESTADO_EXPEDIENTE="msg.error.masivo.actializar.perimetro.activo.estado.expediente";
 
@@ -1474,7 +1473,11 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
 					String celdaCheckVisibilidadGestion = exc.dameCelda(i, COL_NUM_VISIBLE_GESTION_COMERCIAL_SN);
 					if((Checks.esNulo(celdaExcluirValidaciones) || COD_NO_EXCLUIR_VALIDACIONES.equals(celdaExcluirValidaciones)) && !Checks.esNulo(celdaCheckVisibilidadGestion)) {
-						if(!particularValidator.situacionComercialPublicadoAlquiler(activo)) {
+						if(particularValidator.isActivoBankia(activo)) {
+							if(!particularValidator.situacionComercialPublicadoAlquilerOVenta(activo)) {
+								listaFilas.add(i);
+							}
+						}else if(!particularValidator.situacionComercialPublicadoAlquiler(activo)) {
 							listaFilas.add(i);	
 						}
 					}

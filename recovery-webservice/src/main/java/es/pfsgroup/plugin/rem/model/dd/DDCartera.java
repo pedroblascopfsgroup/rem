@@ -136,5 +136,14 @@ public class DDCartera implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+	
+	public static boolean isCarteraBk(DDCartera cartera) {
+		boolean isCarteraBk = false;
+		if(cartera != null && CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo())) {
+			isCarteraBk = true;
+		}
+		
+		return isCarteraBk;
+	}
 
 }

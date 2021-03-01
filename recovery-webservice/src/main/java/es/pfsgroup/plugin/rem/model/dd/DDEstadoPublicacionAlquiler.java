@@ -102,5 +102,13 @@ public class DDEstadoPublicacionAlquiler implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+	
+	public static boolean isPublicadoAlquiler(DDEstadoPublicacionAlquiler estado) {
+		boolean isNoPublicado = false;
+		if(estado != null && CODIGO_PUBLICADO_ALQUILER.equals(estado.getCodigo())) {
+			isNoPublicado = true;
+		}
+		return isNoPublicado;
+	}
 
 }

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Jonathan Ovalle
---## FECHA_CREACION=20200728
+--## AUTOR=DAP
+--## FECHA_CREACION=20210226
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10730
+--## INCIDENCIA_LINK=HREOS-XXXXX
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en ACT_TDI_TIPO_DIARIO los datos añadidos en T_ARRAY_DATA
@@ -31,7 +31,7 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-10730';
+    V_ITEM VARCHAR2(25 CHAR):= 'ITREM-23951';
 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_TDI_TIPO_DIARIO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     
@@ -64,7 +64,8 @@ DECLARE
         T_TIPO_DATA('FR', '03','2','Diario 2, IVA no deducible'),
         T_TIPO_DATA('SU', '03','1','Diario 1, IVA deducible'),
         T_TIPO_DATA('ED', '07','1','Diario 1, IVA deducible'),
-        T_TIPO_DATA('ED', '01','1','Diario 1, IVA deducible')
+        T_TIPO_DATA('ED', '01','1','Diario 1, IVA deducible'),
+        T_TIPO_DATA('ED', '02','2','Diario 2, IVA no deducible')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

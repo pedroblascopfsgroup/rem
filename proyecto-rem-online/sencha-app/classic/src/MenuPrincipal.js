@@ -33,7 +33,7 @@ Ext.define('HreRem.MenuPrincipal', {
     listeners: {
         selectionchange: 'onMenuPrincipalSelectionChange'
     },
-    
+    lastNode: null,
    	constructor: function(config) {
 	        var me = this;
 	        	      

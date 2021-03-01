@@ -96,7 +96,7 @@ public class ActivoControllerDispatcher {
 
 	private static Object convertToType(Class<?> type, Object object) {
 		Object value = null;
-		if (!Checks.esNulo(object)) {
+		if (object != null) {
 			try {
 				if (String.class.isAssignableFrom(type)) {
 					value = object.toString();

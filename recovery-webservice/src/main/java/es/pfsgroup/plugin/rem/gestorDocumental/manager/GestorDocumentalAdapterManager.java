@@ -1688,7 +1688,6 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		DDTipoDocumentoActivo tipoDocDiccionario = (DDTipoDocumentoActivo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumentoActivo.class, tipoDocumento);
 		Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.id", tipoDocDiccionario.getId());
 		Filter filtrotipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.id",activo.getTipoActivo().getId());
-		if(filtroDocumento != null && filtrotipoActivo != null) {
 		List<ActivoConfigDocumento> actConfDocList = genericDao.getListOrdered(ActivoConfigDocumento.class, order,filtroDocumento,filtrotipoActivo);
 		if(actConfDocList != null && !actConfDocList.isEmpty()) {
 			actConfDoc = actConfDocList.get(0);
@@ -1726,7 +1725,6 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
 		
 			}
-		}
 		}
 		return;
 	

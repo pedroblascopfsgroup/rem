@@ -471,7 +471,8 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 			existeGasto = true;
 			Session session = this.getSessionFactory().getCurrentSession();
 			Query query = session.createSQLQuery("UPDATE GRG_REFACTURACION_GASTOS SET BORRADO = 0,"
-					+ " USUARIOMODIFICAR = '"+ usuario + "', FECHAMODIFICAR = (TO_DATE('"+ sdf.format(new Date()) + "', 'dd/MM/yyyy hh:mi:ss')) WHERE GRG_ID = "+ gastoRefacturableBorradoString);
+					+ " USUARIOMODIFICAR = '"+ usuario + "', FECHAMODIFICAR = (TO_DATE('"+ sdf.format(new Date()) + "', 'dd/MM/yyyy hh:mi:ss')),"
+					+"USUARIOBORRAR = NULL, FECHABORRAR = NULL WHERE GRG_ID = "+ gastoRefacturableBorradoString);
 					
 			query.executeUpdate();
 		} else {
@@ -481,7 +482,8 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 				existeGasto = true;
 				Session session = this.getSessionFactory().getCurrentSession();
 				Query query = session.createSQLQuery("UPDATE GRG_REFACTURACION_GASTOS SET BORRADO = 0, "
-						+ " USUARIOMODIFICAR = '"+ usuario + "', FECHAMODIFICAR = (TO_DATE('"+ sdf.format(new Date()) + "', 'dd/MM/yyyy hh:mi:ss')), GRG_GPV_ID ="+idGastoPadre+" WHERE GRG_ID = "+ gastoRefacturableBorradoString);
+						+ " USUARIOMODIFICAR = '"+ usuario + "', FECHAMODIFICAR = (TO_DATE('"+ sdf.format(new Date()) + "', 'dd/MM/yyyy hh:mi:ss')),"
+						+" USUARIOBORRAR = NULL, FECHABORRAR = NULL, GRG_GPV_ID ="+idGastoPadre+" WHERE GRG_ID = "+ gastoRefacturableBorradoString);
 						
 				query.executeUpdate();
 			}

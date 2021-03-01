@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -85,7 +84,7 @@ public class ActivoFoto implements Serializable, Auditable {
 	private ActivoAgrupacion agrupacion;
 
 	@Column(name = "SDV_ID")
-	private BigDecimal subdivision;
+	private Long subdivision;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ADJ_ID")
@@ -211,11 +210,11 @@ public class ActivoFoto implements Serializable, Auditable {
 		this.agrupacion = agrupacion;
 	}
 
-	public BigDecimal getSubdivision() {
+	public Long getSubdivision() {
 		return subdivision;
 	}
 
-	public void setSubdivision(BigDecimal subdivision) {
+	public void setSubdivision(Long subdivision) {
 		this.subdivision = subdivision;
 	}
 

@@ -3582,6 +3582,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		GastoRefacturable gastoRefacturable = genericDao.get(GastoRefacturable.class, gastoId, gastoRefacturadoId);
 		
 		gastoRefacturable.getAuditoria().setBorrado(true);
+		gastoRefacturable.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+		gastoRefacturable.getAuditoria().setFechaBorrar(new Date());
 		genericDao.update(GastoRefacturable.class, gastoRefacturable);
 		
 		listaDeGastosRefacturablesDelGasto = gastoDao.getGastosRefacturablesDelGasto(idGasto);
@@ -3715,10 +3717,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 			if(gastoLineaDetalleList != null && !gastoLineaDetalleList.isEmpty()){
 				for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
-					importeTotal += sumaImportesLineaDetalle(importeTotal, gastoLineaDetalle);					
+					importeTotal = sumaImportesLineaDetalle(importeTotal, gastoLineaDetalle);					
 					
-					if (gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != null && gastoLineaDetalle.getPrincipalSujeto() != null
-							&& gastoLineaDetalle.getEsImporteIndirectoExento() !=null && !gastoLineaDetalle.getEsImporteIndirectoExento() ) {
+					if (gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != null && gastoLineaDetalle.getPrincipalSujeto() != null && 
+							//op exenta no y rellena
+							((gastoLineaDetalle.getEsImporteIndirectoExento() !=null && !gastoLineaDetalle.getEsImporteIndirectoExento()) ||
+							//op exenta si y rellena y renuncia si y rellena
+							(gastoLineaDetalle.getEsImporteIndirectoExento() !=null && gastoLineaDetalle.getEsImporteIndirectoExento() 
+							&& gastoLineaDetalle.getEsImporteIndirectoRenunciaExento() !=null && gastoLineaDetalle.getEsImporteIndirectoRenunciaExento()) ||
+							//op exenta vacia
+							(gastoLineaDetalle.getEsImporteIndirectoExento() == null))) {
 						
 						cuotaIvaRetenida += (gastoLineaDetalle.getPrincipalSujeto() * gastoLineaDetalle.getImporteIndirectoTipoImpositivo()) / 100;
 						
@@ -3762,9 +3770,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		if(gastoLineaDetalle.getProvSuplidos() != null) {
 			importeFinal+=gastoLineaDetalle.getProvSuplidos();
-		}
-		if(gastoLineaDetalle.getPrincipalNoSujeto() != null) {
-			importeFinal+=gastoLineaDetalle.getPrincipalNoSujeto();
 		}
 		if(gastoLineaDetalle.getRecargo() != null) {
 			importeFinal+=gastoLineaDetalle.getRecargo();

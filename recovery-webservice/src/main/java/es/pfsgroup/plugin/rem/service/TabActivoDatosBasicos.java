@@ -1764,8 +1764,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}else {
 						throw new JsonViewerException("La Promoción con código \""+dto.getCodPromocionBbva()+"\" no existe.");
 					}
-				}else {
-					activoBbva.setCodPromocion(null);
 				}
 				//No comprobar los nulos, porque siempre se van a setear,
 				//controlado por sencha (onSaveFormularioCompleto de ActivoDetalleController.js)
@@ -1808,38 +1806,23 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 
 					if (dto.getEmpresa() != null) {
-						if("-1".equals(dto.getEmpresa()))
-							activoBbva.setEmpresa(null);
-						else
-							activoBbva.setEmpresa(dto.getEmpresa());
+						activoBbva.setEmpresa(dto.getEmpresa());
 					}
 
-					if (dto.getOficina() != null) {
-						if("-1".equals(dto.getOficina()))
-							activoBbva.setOficina(null);
-						else	
-							activoBbva.setOficina(dto.getOficina());
+					if (dto.getOficina() != null) {	
+						activoBbva.setOficina(dto.getOficina());
 					}
 
 					if (dto.getContrapartida() != null) {
-						if("-1".equals(dto.getContrapartida()))
-							activoBbva.setContrapartida(null);
-						else
-							activoBbva.setContrapartida(dto.getContrapartida());
+						activoBbva.setContrapartida(dto.getContrapartida());
 					}
 
 					if (dto.getFolio() != null) {
-						if("-1".equals(dto.getFolio()))
-							activoBbva.setFolio(null);
-						else
-							activoBbva.setFolio(dto.getFolio());
+						activoBbva.setFolio(dto.getFolio());
 					}
 
 					if (dto.getCdpen() != null) {
-						if(dto.getCdpen() == "-1")
-							activoBbva.setCdpen(null);
-						else
-							activoBbva.setCdpen(dto.getCdpen());
+						activoBbva.setCdpen(dto.getCdpen());
 					}
 
 					if (dto.getNumActivoBbva() != null) {

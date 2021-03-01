@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
@@ -144,14 +145,23 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 							activoDto.setDiasCambioPosesion(calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioPos()));
 						}
 					}					
-				} else {
-					if (!Checks.esNulo(activo.getSituacionPosesoria().getFechaRevisionEstado())
-							|| !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion())) {
+				} else if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
+						DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()) &&
+						activo.getAdjNoJudicial() != null) {
+					if (activo.getAdjNoJudicial().getFechaPosesion() != null) {
 						BeanUtils.copyProperty(activoDto, "indicaPosesion", 1);
-					} else {
+					}else {
 						BeanUtils.copyProperty(activoDto, "indicaPosesion", 0);
+						}	
 					}
-				}
+					else{
+						if (!Checks.esNulo(activo.getSituacionPosesoria().getFechaRevisionEstado())
+								|| !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion())) {
+							BeanUtils.copyProperty(activoDto, "indicaPosesion", 1);
+						} else {
+							BeanUtils.copyProperty(activoDto, "indicaPosesion", 0);
+						}
+					}
 			}
 			
 			ActivoPatrimonio activoP = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());

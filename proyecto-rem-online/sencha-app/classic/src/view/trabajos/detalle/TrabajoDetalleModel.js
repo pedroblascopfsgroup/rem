@@ -61,8 +61,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    },
 	    
 	    editableTarificacionProveedor: function (get){
-	    	return true;
-	    	 
+	    	me = this;
+	    	var isProveedor = $AU.userIsRol('HAYAPROV');
+	    	
+	    	if (isProveedor && CONST.ESTADOS_TRABAJO["VALIDADO"] == me.get('trabajo.estadoCodigo')) {
+	    		return false;
+	    	} else {
+	    		return true;
+	    	}
 	    },
 	    
 	    disablePresupuesto: function (get) {

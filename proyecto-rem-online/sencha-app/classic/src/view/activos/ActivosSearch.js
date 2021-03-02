@@ -47,17 +47,13 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        },
 				        {
 							xtype: 'comboboxfieldbase',
-							name: 'carteraCodigo',  
+							name: 'carteraCodigo',
 			              	fieldLabel :  HreRem.i18n('fieldlabel.entidad.propietaria'),
 			              	reference: 'comboCarteraSearch',
 							bind: {
 								store: '{comboCartera}'
 							},
-							listeners : {
-			        			change: 'onChangeCartera'
-			        		},
-			            	publishes: 'value'
-							
+			            	publishes: 'value'					
 						},
 						{ 
 				        	xtype: 'comboboxfieldbase',

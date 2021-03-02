@@ -1793,7 +1793,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    		proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboSubtipoActivoFiltered',
-					extraParams: {codCartera: '{activo.entidadPropietariaCodigo}',codTipoActivo: '{activo.tipoActivoCodigo}'}
+					extraParams: {codTipoActivo: '{activo.tipoActivoCodigo}'}
 				}
     		},
     		//

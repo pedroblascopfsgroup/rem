@@ -107,5 +107,15 @@ public class DDTipoComercializacion implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+	
+	public static boolean isDestinoComercialSoloAlquiler(DDTipoComercializacion comercializacion) {
+		boolean isDestinoComercialAlquiler = false;
+		
+		if(comercializacion != null && CODIGO_SOLO_ALQUILER.equals(comercializacion.getCodigo())) {
+			isDestinoComercialAlquiler = true;
+		}
+		
+		return isDestinoComercialAlquiler;
+	}
 
 }

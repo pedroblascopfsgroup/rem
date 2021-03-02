@@ -91,7 +91,6 @@ Ext.define('HreRem.view.Viewport', {
 		        },
 		        {
 		        	xtype: 'container',
-					reference: 'mainContainerTop',
 		        	//style: 'z-index: 1999',
 		        	flex: 1,
 		    	    layout: {
@@ -170,7 +169,6 @@ Ext.define('HreRem.view.Viewport', {
 			                			                
 			                {
 			                    cls: 'delete-focus-bg',
-								reference: 'btnFavoritos',
 			                    iconCls:'app-tb-ico ico-favorito',
 			                    text: HreRem.i18n('btn.favoritos'),
 			                    //flex: 1,

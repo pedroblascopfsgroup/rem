@@ -2118,7 +2118,7 @@ Ext.define('Ext.form.field.ComboBox', {
         // Also, may be called before the store has been loaded.
         // In these cases, just return the value.
         // In other cases, check that the rawValue matches the selected records.
-        if (!store.isEmptyStore && me.getDisplayValue() !== rawValue) {
+        if (!Ext.isEmpty(store) && !store.isEmptyStore && me.getDisplayValue() !== rawValue) {
             me.displayTplData = undefined;
             if (picker) {
                 // We do not need to hear about this clearing out of the value collection,

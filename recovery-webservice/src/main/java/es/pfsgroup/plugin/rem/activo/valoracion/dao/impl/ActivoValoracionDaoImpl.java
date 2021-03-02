@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.activo.valoracion.dao.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,12 +13,17 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.rem.activo.valoracion.dao.ActivoValoracionDao;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 
 @Repository("ActivoValoracionDao")
 public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoraciones, Long> implements ActivoValoracionDao {
@@ -159,13 +165,19 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 
 	@Override
 	public Double getImporteValoracionRentaWebPorIdActivo(Long idActivo) {
-		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoValoraciones.class);
-		criteria.setProjection(Projections.property("importe"));
-		criteria.add(Restrictions.eq("activo.id", idActivo)).createCriteria("tipoPrecio").add(Restrictions.eq("codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA));
-
-		Double resultadoPrecioWeb = HibernateUtils.castObject(Double.class, criteria.uniqueResult());
-		if(Checks.esNulo(resultadoPrecioWeb)) {
-			resultadoPrecioWeb = 0.0; 
+		Double resultadoPrecioWeb = null; 
+		
+		HQLBuilder hql = new HQLBuilder("from ActivoValoraciones");
+		hql.appendWhere("activo.id = " + idActivo);
+		hql.appendWhere("auditoria.borrado = 0");
+		hql.appendWhere("fechaFin is null or fechaFin >= sysdate");
+		hql.appendWhere("tipoPrecio.codigo = " + DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA);
+		ActivoValoraciones query = HibernateQueryUtils.uniqueResult(this, hql);
+		
+		if (query != null) {
+			resultadoPrecioWeb = query.getImporte();
+		} else {
+			resultadoPrecioWeb = 0.0;
 		}
 		return resultadoPrecioWeb;
 	}
@@ -439,8 +451,8 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 		Double resultadoPrecioWeb = null;
 
 		String sql = " SELECT COUNT(1) FROM (SELECT VAL_IMPORTE FROM REM01.ACT_VAL_VALORACIONES           " +
-				" WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM REM01.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = "+DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA+") " +
-				" AND ACT_ID IN (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = "+idAgrupacion+")) " +
+				" WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM REM01.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = "+DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA+" AND BORRADO = 0) " +
+				" AND ACT_ID IN (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = "+idAgrupacion+") AND BORRADO = 0) " +
 				" GROUP BY VAL_IMPORTE " +
 				" HAVING (VAL_IMPORTE = 0 OR VAL_IMPORTE IS NULL) ";
 
@@ -449,7 +461,7 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 				&& ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).doubleValue() == 0.0)) {
 			sql = " SELECT SUM(VAL_IMPORTE) FROM (SELECT VAL_IMPORTE FROM REM01.ACT_VAL_VALORACIONES           " +
 					" WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM REM01.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = "+DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA+") " +
-					" AND ACT_ID IN (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = "+idAgrupacion+")) ";
+					" AND ACT_ID IN (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = "+idAgrupacion+") AND BORRADO = 0) ";
 
 			if (Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
 				resultadoPrecioWeb = 0.0;
@@ -461,6 +473,16 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 		}
 
 		return resultadoPrecioWeb;
+	}
+	
+	@Override
+	public List<ActivoValoraciones> getListActivoValoracionesByIdActivo(Long idActivo) {
+		
+		HQLBuilder hql = new HQLBuilder("from ActivoValoraciones ");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "activo.id", idActivo);
+		hql.orderBy("fechaInicio", HQLBuilder.ORDER_ASC);
+
+		return HibernateQueryUtils.list(this, hql);
 	}
 	
 }

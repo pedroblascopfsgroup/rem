@@ -15,4 +15,6 @@ public interface Downloader {
 	FileItem getFileItemTributo(Long id, String nombreDocumento)  throws Exception;
 	FileItem getFileItemAgrupacion(Long id, String nombreDocumento) throws Exception;
 
+	FileItem getFileItemFactura(Long id, String nombreDocumento);
+
 }

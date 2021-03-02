@@ -26,6 +26,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionJuridica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
@@ -75,7 +76,7 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	private Date fechaTomaPosesion;
 	
 	@Column(name = "SPS_OCUPADO")
-	private Integer ocupado;
+	private Integer ocupado = 0;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPA_ID")
@@ -103,13 +104,13 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	private Date fechaLanzamientoEfectivo;
 
 	@Column(name = "SPS_ACC_TAPIADO")
-	private Integer accesoTapiado;
+	private Integer accesoTapiado = 0;
 	
 	@Column(name = "SPS_FECHA_ACC_TAPIADO")
 	private Date fechaAccesoTapiado;
 	
 	@Column(name = "SPS_ACC_ANTIOCUPA")
-	private Integer accesoAntiocupa;
+	private Integer accesoAntiocupa = 0;
 	
 	@Column(name = "SPS_FECHA_ACC_ANTIOCUPA")
 	private Date fechaAccesoAntiocupa;
@@ -143,6 +144,21 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	private Integer spsConTitulo;
 	
 
+	@Column(name = "SPS_POSESION_NEG")
+	private Boolean spsPosesionNeg;
+
+	@Column(name="SPS_USUARIOMODIFICAR_OCUPADO")
+	private String usuarioModificarOcupado;
+
+	@Column(name="SPS_FECHAMODIFICAR_OCUPADO")
+	private Date fechaModificarOcupado;
+
+	@Column(name="SPS_USUARIOMODIFICAR_CON_TITULO")
+	private String usuarioModificarConTitulo;
+
+	@Column(name="SPS_FECHAMODIFICAR_CON_TITULO")
+	private Date fechaModificarConTitulo;
+
 	@Version   
 	private Long version;
 
@@ -150,6 +166,8 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	private Auditoria auditoria;
 	
 	
+	
+
 	public Integer getSpsConTitulo() {
 		return spsConTitulo;
 	}
@@ -395,4 +413,45 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 		this.comboOtro = comboOtro;
 	}
 
+	public Boolean getSpsPosesionNeg() {
+		return spsPosesionNeg;
+	}
+
+	public void setSpsPosesionNeg(Boolean spsPosesionNeg) {
+		this.spsPosesionNeg = spsPosesionNeg;
+	}
+
+	public String getUsuarioModificarOcupado() {
+		return usuarioModificarOcupado;
+	}
+
+	public void setUsuarioModificarOcupado(String usuarioModificarOcupado) {
+		this.usuarioModificarOcupado = usuarioModificarOcupado;
+	}
+
+	public Date getFechaModificarOcupado() {
+		return fechaModificarOcupado;
+	}
+
+	public void setFechaModificarOcupado(Date fechaModificarOcupado) {
+		this.fechaModificarOcupado = fechaModificarOcupado;
+	}
+
+	public String getUsuarioModificarConTitulo() {
+		return usuarioModificarConTitulo;
+	}
+
+	public void setUsuarioModificarConTitulo(String usuarioModificarConTitulo) {
+		this.usuarioModificarConTitulo = usuarioModificarConTitulo;
+	}
+
+	public Date getFechaModificarConTitulo() {
+		return fechaModificarConTitulo;
+	}
+
+	public void setFechaModificarConTitulo(Date fechaModificarConTitulo) {
+		this.fechaModificarConTitulo = fechaModificarConTitulo;
+	}
+	
+	
 }

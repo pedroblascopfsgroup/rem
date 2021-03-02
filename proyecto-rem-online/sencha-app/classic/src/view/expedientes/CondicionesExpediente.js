@@ -3,12 +3,12 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 	xtype : 'condicionesexpediente',
 	cls : 'panel-base shadow-panel',
 	collapsed : false,
-	disableValidation : true,
+	disableValidation : false,
 	reference : 'condicionesExpediente',
 	scrollable : 'y',
 	recordName : "condiciones",
 	recordClass : "HreRem.model.CondicionesExpediente",
-	requires : [ 'HreRem.model.CondicionesExpediente' ],
+	requires : [ 'HreRem.model.CondicionesExpediente','HreRem.view.common.GridBaseEditableRow'],
 	refreshAfterSave: true, 
 	listeners : {
 		boxready : 'cargarTabData'
@@ -225,7 +225,16 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 											value : '{condiciones.reservaConImpuesto}',
 											readOnly : '{!esOfertaVenta}'
 										}
-									} 
+									},
+									{
+										xtype : 'checkboxfieldbase',
+										reference : 'chkboxTributosPropiedad',
+										fieldLabel : HreRem.i18n('fieldlabel.tributos.sobre.propiedad'),
+										bind : {
+											value : '{condiciones.tributosSobrePropiedad}',
+											readOnly : '{!esOfertaVenta}'
+										}
+									}  
 								]
 							}
 						]
@@ -495,6 +504,18 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					}
 				]
 			},
+			{
+				xtype:'fieldsettable',
+				colspan: 3,
+				title: HreRem.i18n("title.expediente.condiciones.activos.alquilados"),
+				items :[
+					{
+						xtype: "activosAlquiladosGrid", 
+						reference: "activosAlquiladosGrid",
+						colspan: 3
+					}
+				]
+       		},
 			{
 				xtype : 'fieldset',
 				collapsible : true,

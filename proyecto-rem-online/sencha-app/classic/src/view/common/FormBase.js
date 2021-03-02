@@ -140,9 +140,15 @@
     		me.collapsible = true;
     		me.collapsed = false;
     		me.buttonAlign = 'left';
+		    var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+       		var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+	   		var isGestorAlquiler = $AU.userGroupHasRole(CONST.PERFILES['GESTOR_ALQUILER_HPM']);
+	   		var isUserGestedi = $AU.userIsRol(CONST.PERFILES['GESTEDI']);
+            var isHidden = !isSuper && !isGestorActivos && !isGestorAlquiler && !isUserGestedi;
+            
     		//me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}, { text: HreRem.i18n('btn.crearTrabajo'), handler: 'onClickCrearTrabajo', hidden: !$AU.userIsRol(CONST.PERFILES['SUPERVISOR_ACTIVO'])}]
     		//El botón de crear trabajo se pone visible para todos en el arranque
-    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.abrir.activo'), handler: 'onSearchBusquedaDirectaActivos', reference: 'btnActivo', disabled: true },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel', disabled: !exportarActivos}, { text: HreRem.i18n('btn.crearTrabajo'), handler: 'onClickCrearTrabajo'}]
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.abrir.activo'), handler: 'onSearchBusquedaDirectaActivos', reference: 'btnActivo', disabled: true },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel', disabled: !exportarActivos}, { text: HreRem.i18n('btn.crearTrabajo'), hidden: isHidden , handler: 'onClickCrearTrabajo'}]
     	}
     	
     	if (me.isSearchFormAgrupaciones) {
@@ -250,6 +256,14 @@
     		me.collapsed= false;
     		me.buttonAlign = 'left';
     		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel', disabled: !exportarOfertas}];
+    	}
+    	
+    	if (me.isSearchFormTrabajosPrefactura) {
+
+    		me.collapsible= true;
+    		me.collapsed= false;
+    		me.buttonAlign = 'left';
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), reference: 'btnExportarPrefactura', handler: 'onClickDescargarExcel', disabled: true}];
     	}
 
     	me.callParent();
@@ -399,7 +413,7 @@
 		me.errors.length = 0;
 
 		Ext.Array.each(me.getForm().getFields().items, function(field, index) {
-			if(!field.validate() && !field.hidden) {
+			if(!field.validate() && !field.hidden && !field.readOnly) {
 				me.errors = me.errors.concat(field.getActiveErrors());
 			}
 		});

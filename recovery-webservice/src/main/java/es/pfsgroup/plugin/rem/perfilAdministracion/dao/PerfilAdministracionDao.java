@@ -14,5 +14,7 @@ public interface PerfilAdministracionDao extends AbstractDao<VBusquedaPerfiles, 
 	VBusquedaPerfiles getPerfilById(Long id);
 	
 	List<DtoPerfilAdministracionFilter> getFuncionesByPerfilId(Long id, DtoPerfilAdministracionFilter dto);
+
+	String getBlackListMatriculasByUsuario(String username);
 	
 }

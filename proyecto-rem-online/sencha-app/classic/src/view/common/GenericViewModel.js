@@ -291,7 +291,9 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposVivienda'}
-				}/*,autoLoad: true*/
+				}
+				
+				/*,autoLoad: true*/
     		},
     		
     		comboTipoOrientacion: {
@@ -447,16 +449,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboTipoTrabajoCreaFiltered'
 				}
-    		},    	    	
-
-    		comboEstadoTrabajo: {
-				model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'estadoTrabajo'}
-				}
-			},
+    		},
 			
 			comboValoracionTrabajo: {
 				model: 'HreRem.model.ComboBase',
@@ -549,57 +542,6 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 	    			remoteUrl: 'activo/getComboImpideVenta',
 	    			extraParams: {codEstadoCarga: '{comboestadocargaref.value}'}
     			}
-    		},
-    		// Stores para el grid observaciones. Se crean 3 para solucionar problemas de instancia 
-    		/*
-
-    		 * Valor de la constante 
-    		  	OBSERVACIONES_TAB_LAUNCH: {
-				ACTIVO : 'activo',
-				SANEAMIENTO: 'saneamiento',
-				REVISION_TITULO: 'revisionTitulo'
-			}*/
-    		storeObservaciones_activo: {    
-    		 pageSize: $AC.getDefaultPageSize(),
-    		 model: 'HreRem.model.Observaciones',
-		     proxy: {
-		        type: 'uxproxy',
-		        remoteUrl: 'activo/getListObservaciones',
-		        extraParams: {} // Dynamic.
-	    	 },
-	    	 autoLoad: true
-    		},
-    		storeObservaciones_saneamiento: {    
-    		 pageSize: $AC.getDefaultPageSize(),
-    		 model: 'HreRem.model.Observaciones',
-		     proxy: {
-		        type: 'uxproxy',
-		        remoteUrl: 'activo/getListObservaciones',
-		        extraParams: {} // Dynamic.
-	    	 },
-	    	 autoLoad: true
-    		},
-    		storeObservaciones_revisionTitulo: {    
-    		 pageSize: $AC.getDefaultPageSize(),
-    		 model: 'HreRem.model.Observaciones',
-		     proxy: {
-		        type: 'uxproxy',
-		        remoteUrl: 'activo/getListObservaciones',
-		        extraParams: {} // Dynamic.
-	    	 },
-	    	 autoLoad: true
-    		},
-    		//Admite mascota
-    		comboAdmiteMascota: {
-				model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'tiposAdmiteMascota'}
-				}
-    		,
-    		autoLoad: true
     		}
-    		
      }    
 });

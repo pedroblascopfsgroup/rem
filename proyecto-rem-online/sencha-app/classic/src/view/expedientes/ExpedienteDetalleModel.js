@@ -7,7 +7,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
                 'HreRem.model.ComparecienteBusqueda', 'HreRem.model.Honorario','HreRem.model.HstcoSeguroRentas','HreRem.model.TipoDocumentoExpediente',
 				'HreRem.model.CompradorExpediente', 'HreRem.model.FichaComprador','HreRem.model.BloqueoActivo','HreRem.model.TanteoActivo',
 				'HreRem.model.ExpedienteScoring', 'HreRem.model.HistoricoExpedienteScoring', 'HreRem.model.SeguroRentasExpediente', 'HreRem.model.HistoricoCondiciones',
-				'HreRem.model.OfertasAgrupadasModel', 'HreRem.model.OrigenLead'],
+				'HreRem.model.OfertasAgrupadasModel', 'HreRem.model.OrigenLead', 'HreRem.model.AuditoriaDesbloqueo', 'HreRem.model.ActivoAlquiladosGrid'],
     
     data: {
     },
@@ -80,6 +80,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	return CONST.CARTERA['BANKIA'] == carteraCodigo;
 	     },
 	     
+	     visibleBotonAuditoriaDesbloqueo: function(get){
+	    	var me = this;
+	    	var finEconomico = false;
+	    	if (get('expediente.finalizadoCierreEconomico') != null){
+	    		finEconomico = get('expediente.finalizadoCierreEconomico');
+	    	}
+			var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION'])
+					|| $AU.userIsRol(CONST.PERFILES['PERFGCONTROLLER']);
+			return usuariosValidos && finEconomico;
+			
+	     },
+	     
 	     esBankiaHabitat: function(get) {
 		    	var subCartera = get('expediente.propietario');
 		     	return CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT'] == subCartera;
@@ -108,7 +120,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     
 	     comiteSancionadorNoEditable: function(get) {
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
-	     	return CONST.CARTERA['BANKIA'] == carteraCodigo || CONST.CARTERA['CAJAMAR'] == carteraCodigo || CONST.CARTERA['LIBERBANK'] == carteraCodigo;	
+	     	return CONST.CARTERA['BANKIA'] == carteraCodigo || CONST.CARTERA['CAJAMAR'] == carteraCodigo || CONST.CARTERA['LIBERBANK'] == carteraCodigo || CONST.CARTERA['BBVA'] == carteraCodigo;	
 	     }, 
 	     
 	     esCarteraSareb: function(get) {
@@ -200,6 +212,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 		     	var tipoExpediente = get('expediente.tipoExpedienteCodigo');
 		     	return CONST.CARTERA['LIBERBANK'] == carteraCodigo && CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpediente;
+		 },
+	     
+	     esCarteraBBVA: function(get) {
+		     	
+	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	     	return CONST.CARTERA['BBVA'] == carteraCodigo;
 		 },
 		 
 		 esReadOnly: function(get) {
@@ -568,8 +586,41 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	 	esComiteHaya: function(get){
 	 		var me = this;
 	 		return me.get('expediente.esComiteHaya');
-	 	}
+	 	},
+
+	 	readOnlyGestBoarding: function(get){
+	 		var me = this;
+			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+			var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+	 		var isBoarding = $AU.userIsRol(CONST.PERFILES['GESTBOARDING']);
+			if(CONST.CARTERA['CERBERUS'] == carteraCodigo){
+				return !isSuper;//CARTERAS NO BANCO
+			}
+	 		return !isSuper && !isBoarding;//CARTERAS BANCO
+	 	},
 	 	
+	 	habilitarBotonGenerarFicha: function(get){;
+			 var me = this;
+			 var codExpediente = get('expediente.codigoEstado');
+			 	if (CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'] == codExpediente
+			 		|| CONST.ESTADOS_EXPEDIENTE['PENDIENTE_SANCION'] == codExpediente
+			 		|| CONST.ESTADOS_EXPEDIENTE['PEN_RES_OFER_COM'] == codExpediente) {
+			 		
+			 		return true;
+			 	}else{
+			 		return false;
+			 	}
+				
+	 	},
+		esBbva: function(get) {
+			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	     	
+	     	if(CONST.CARTERA['BBVA'] == carteraCodigo){
+	     		return true;
+	     	}else{
+	     		return false;
+	     	}
+		}
 	 },
 	 
 
@@ -1331,12 +1382,44 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	}
 		},
+
+
+		storeAuditoriaDesbloqueo: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.AuditoriaDesbloqueo',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getAuditoriaDesbloqueo',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}
+		},
+
+		storeActivosAlquilados: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.ActivoAlquiladosGrid',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getActivosAlquilados',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	},
+			autoLoad: true
+		},
+
 		comboMotivoAmpliacionArras: {
 	    	model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'motivoAmpliacionArras'}
+			}
+	    },
+	    
+		comboTipoResponsable: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoResponsable'}
 			}
 	    }
 		

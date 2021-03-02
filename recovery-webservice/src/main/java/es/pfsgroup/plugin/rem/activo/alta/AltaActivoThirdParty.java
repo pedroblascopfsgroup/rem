@@ -15,6 +15,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -79,12 +80,15 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
+import es.pfsgroup.plugin.rem.service.AltaActivoService;
 import es.pfsgroup.plugin.rem.service.AltaActivoThirdPartyService;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 
 @Component
@@ -109,6 +113,9 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 	
 	
 	
@@ -142,7 +149,11 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 			actSit.setActivo(activo);
 			actSit.setAccesoAntiocupa(0);
 			actSit.setAccesoTapiado(0);		
-			actSit.setOcupado(0);		
+			actSit.setOcupado(0);
+			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			String usuarioModificar = usu == null ? AltaActivoThirdPartyService.CODIGO_ALTA_ACTIVO_THIRD_PARTY : AltaActivoThirdPartyService.CODIGO_ALTA_ACTIVO_THIRD_PARTY + usu.getUsername();
+			actSit.setUsuarioModificarOcupado(usuarioModificar);
+			actSit.setFechaModificarOcupado(new Date());
 			actSit.setComboOtro(0);
 			actSit.setVersion(0L);
 			actSit.setAuditoria(auditoria);
@@ -275,7 +286,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		beanUtilNotNull.copyProperty(activoInforRegistral, "idufir", dtoAATP.getIdufirCruRegistro());
 		beanUtilNotNull.copyProperty(activoInforRegistral, "superficieElementosComunes", dtoAATP.getSuperficieRepercusionEECCRegistro());
 		beanUtilNotNull.copyProperty(activoInforRegistral, "superficieParcela", dtoAATP.getParcelaRegistro());
-		beanUtilNotNull.copyProperty(activoInforRegistral, "superficieutil", dtoAATP.getSuperficieUtilRegistro());
+		beanUtilNotNull.copyProperty(activoInforRegistral, "superficieUtil", dtoAATP.getSuperficieUtilRegistro());
 		if (!Checks.esNulo(dtoAATP.getEsIntegradoDivHorizontalRegistro())){
 			beanUtilNotNull.copyProperty(activoInforRegistral, "divHorInscrito", dtoAATP.getEsIntegradoDivHorizontalRegistro().equalsIgnoreCase("si") ? 1 : 0);
 		}
@@ -343,17 +354,25 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 			info.setMediadorInforme(mediador);
 		}
 		beanUtilNotNull.copyProperty(info, "planta", dtoAATP.getNumPlantasVivienda());
-		genericDao.save(ActivoInfoComercial.class, info);
 		if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
+			info.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoInfoComercial.COD_VIVIENDA)));
+			genericDao.save(ActivoInfoComercial.class, info);
+			
 			ActivoVivienda vivienda = new ActivoVivienda();
 			vivienda.setNumPlantasInter(dtoAATP.getNumPlantasVivienda());
 			vivienda.setInformeComercial(info);
 			genericDao.save(ActivoVivienda.class, vivienda);
 		} else if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
+			info.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoInfoComercial.COD_LOCAL_COMERCIAL)));
+			genericDao.save(ActivoInfoComercial.class, info);
+			
 			ActivoLocalComercial localComercial = new ActivoLocalComercial();
 			localComercial.setInformeComercial(info);
 			genericDao.save(ActivoLocalComercial.class, localComercial);
 		} else if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
+			info.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoInfoComercial.COD_PLAZA_APARCAMIENTO)));
+			genericDao.save(ActivoInfoComercial.class, info);
+			
 			ActivoPlazaAparcamiento aparcamiento = new ActivoPlazaAparcamiento();
 			aparcamiento.setInformeComercial(info);
 			genericDao.save(ActivoPlazaAparcamiento.class, aparcamiento);
@@ -428,7 +447,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				Usuario usu = genericDao.get(Usuario.class, f1);
 				GestorEntidadDto dto = new GestorEntidadDto();
 				dto.setIdEntidad(activo.getId());
-				dto.setIdUsuario(usu.getId());
+				if (usu != null) {
+					dto.setIdUsuario(usu.getId());
+				}
 				dto.setIdTipoGestor(tipoGestorComercial.getId());
 				activoAdapter.insertarGestorAdicional(dto);
 		
@@ -438,7 +459,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				Usuario usu2 = genericDao.get(Usuario.class, f2);
 				GestorEntidadDto dto2 = new GestorEntidadDto();
 				dto2.setIdEntidad(activo.getId());
-				dto2.setIdUsuario(usu2.getId());
+				if (usu2 != null) {
+					dto2.setIdUsuario(usu2.getId());
+				}
 				dto2.setIdTipoGestor(tipoSupervisorComercial.getId());
 				activoAdapter.insertarGestorAdicional(dto2);
 		
@@ -449,7 +472,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 					Usuario usu3 = genericDao.get(Usuario.class, f3);
 					GestorEntidadDto dto3 = new GestorEntidadDto();
 					dto3.setIdEntidad(activo.getId());
-					dto3.setIdUsuario(usu3.getId());
+					if (usu3 != null) {
+						dto3.setIdUsuario(usu3.getId());
+					}
 					dto3.setIdTipoGestor(tipoGestorFormalizacion.getId());
 					activoAdapter.insertarGestorAdicional(dto3);
 				}
@@ -460,7 +485,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				Usuario usu4 = genericDao.get(Usuario.class, f4);
 				GestorEntidadDto dto4 = new GestorEntidadDto();
 				dto4.setIdEntidad(activo.getId());
-				dto4.setIdUsuario(usu4.getId());
+				if (usu4 != null) {
+					dto4.setIdUsuario(usu4.getId());
+				}
 				dto4.setIdTipoGestor(tipoSupervisorFormalizacion.getId());
 				activoAdapter.insertarGestorAdicional(dto4);
 		
@@ -470,7 +497,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				Usuario usu5 = genericDao.get(Usuario.class, f5);
 				GestorEntidadDto dto5 = new GestorEntidadDto();
 				dto5.setIdEntidad(activo.getId());
-				dto5.setIdUsuario(usu5.getId());
+				if (usu5 != null) {
+					dto5.setIdUsuario(usu5.getId());
+				}
 				dto5.setIdTipoGestor(tipoGestorAdmision.getId());
 				activoAdapter.insertarGestorAdicional(dto5);
 		
@@ -480,7 +509,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				Usuario usu6 = genericDao.get(Usuario.class, f6);
 				GestorEntidadDto dto6 = new GestorEntidadDto();
 				dto6.setIdEntidad(activo.getId());
-				dto6.setIdUsuario(usu6.getId());
+				if (usu6 != null) {
+					dto6.setIdUsuario(usu6.getId());
+				}
 				dto6.setIdTipoGestor(tipoGestorActivos.getId());
 				activoAdapter.insertarGestorAdicional(dto6);
 		
@@ -491,7 +522,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 					Usuario usu7 = genericDao.get(Usuario.class, f7);
 					GestorEntidadDto dto7 = new GestorEntidadDto();
 					dto7.setIdEntidad(activo.getId());
-					dto7.setIdUsuario(usu7.getId());
+					if (usu7 != null) {
+						dto7.setIdUsuario(usu7.getId());
+					}
 					dto7.setIdTipoGestor(tipoGestoriaFormalizacion.getId());
 					activoAdapter.insertarGestorAdicional(dto7);
 				}

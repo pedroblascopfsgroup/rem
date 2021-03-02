@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -20,11 +21,14 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
+import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -54,6 +58,9 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 
     @Autowired 
     private GestorExpedienteComercialManager gestorExpedienteComercialManager;
+    
+    @Autowired
+    private UtilDiccionarioApi utilDiccionarioApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionTanteo.class);
 
@@ -61,6 +68,7 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
     private static final String CAMPO_ADMINISTRACION = "administracion";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
     private static final String CODIGO_T013_RESOLUCION_TANTEO = "T013_ResolucionTanteo";
+   	private static final Integer RESERVA_SI = 1;
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -74,6 +82,7 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 
 		if(!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			Activo activo = ofertaAceptada.getActivoPrincipal();
 
 			if(!Checks.esNulo(expediente)) {
 
@@ -132,8 +141,23 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 						}
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
-						if(DDEstadosExpedienteComercial.ANULADO.equals(estado)){
+						if(DDEstadosExpedienteComercial.ANULADO.equals(estado.getCodigo())){
 							expediente.setFechaVenta(null);
+						}else if(DDEstadosExpedienteComercial.APROBADO.equals(estado.getCodigo())) {
+							if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva())
+									&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())) {													
+								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+										.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
+
+								if(gestorExpedienteComercialManager.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
+									GestorEntidadDto ge = new GestorEntidadDto();
+									ge.setIdEntidad(expediente.getId());
+									ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+									ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());								
+									ge.setIdTipoGestor(tipoGestorComercial.getId());
+									gestorExpedienteComercialManager.insertarGestorAdicionalExpedienteComercial(ge);																	
+								}
+							}
 						}
 						valorCampoEjerce = resultadoTanteo.getDescripcion();
 					}

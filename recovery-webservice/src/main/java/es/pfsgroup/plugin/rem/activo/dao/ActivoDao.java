@@ -1,6 +1,6 @@
 package es.pfsgroup.plugin.rem.activo.dao;
 
-import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
@@ -15,10 +15,13 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativaAdicional;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
 import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
@@ -60,7 +63,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	Long getUltimoHistoricoPresupuesto(Long id);
 
-	Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, BigDecimal hashSdv);
+	Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, Long hashSdv);
 	
 	Page getListActivosPrecios(DtoActivoFilter dto);
 
@@ -87,12 +90,16 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	Activo getActivoByNumActivo(Long activoVinculado);
 
 	Activo getActivoById(Long activoId);
+	
+	Page getListActivosPorID(List<String> activosID, DtoTrabajoListActivos dto);
 
 	PropuestaActivosVinculados getPropuestaActivosVinculadosByID(Long id);
 
 	ActivoTasacion getActivoTasacion(Long id);
 
 	List<ActivoTasacion> getListActivoTasacionByIdActivo(Long idActivo);
+	
+	List<ActivoTasacion> getListActivoTasacionByIdActivoAsc(Long idActivo);
 
 	Page getActivosFromCrearTrabajo(List<String> listIdActivos, DtoTrabajoListActivos dto);
 	
@@ -357,7 +364,37 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	void actualizaDatoCDC(CalidadDatosConfig cdc, String valor, String identificador, String username);
 
+	Long getComunidadAutonomaId(Activo activo);
+	
+	boolean existeactivoIdHAYA(Long idActivo);
+
+	boolean activoPerteneceABBVAAndCERBERUS(Long idActivo);
+
+	boolean activoEstadoVendido(Long idActivo);
+
+	boolean isActivoBBVADivarian(Long idActivo);
+
+	boolean activoFueraPerimetroHAYA(Long idActivo); 
+
 	List<ActivoCalificacionNegativaAdicional> getListActivoCalificacionNegativaAdicionalByIdActivo(Long idActivo);
 	
+	Long getNextBbvaNumActivo();
+	
 	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras);
+
+	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos);
+
+	public List<ActivosAlquilados> getListActivosAlquiladosByIdActivos(List<Long> idActivos);
+	
+	public List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivo(Long idActivo);
+
+	boolean activocheckGestion(Long idActivo);
+
+	List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivoAndTipoPrecio(Long idActivo,String codigoTipoPrecio);
+
+	List<ActivoValoraciones> getListActivoValoracionesByIdActivoAndTipoPrecio(Long idActivo, String codigoTipoPrecio);
+
+	boolean isPublicadoVentaHistoricoByFechaValoracion(Long idActivo, Date fechaValoracion);
+
+	boolean isPublicadoVentaByFechaValoracion(Long idActivo, Date fechaValoracion);
 }

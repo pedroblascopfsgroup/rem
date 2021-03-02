@@ -441,6 +441,11 @@ public class MSVJuntasOrdinariaExtraExcelValidator extends MSVExcelValidatorAbst
 	private boolean esArroba(String cadena) {
 		return cadena.trim().equals("@");
 	}
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
 	
 	 
 }

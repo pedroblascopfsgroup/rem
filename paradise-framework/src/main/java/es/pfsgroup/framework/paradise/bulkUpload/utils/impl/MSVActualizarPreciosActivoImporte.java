@@ -1401,4 +1401,10 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		}
 		return listaFilas;
 	}
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }

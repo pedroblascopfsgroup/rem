@@ -22,7 +22,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -1162,45 +1161,51 @@ public class AgrupacionAdapter {
 		}
 
 		if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-
-			if (particularValidator.isMismoEpuActivoPrincipalAgrupacion(String.valueOf(numActivo),
+			
+			if (particularValidator.isMismoTcoActivoPrincipalAgrupacion(String.valueOf(numActivo),
 					String.valueOf(agrupacion.getNumAgrupRem()))) {
-				DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion();
-				dto.setIdActivo(activo.getId());
 
-				ActivoAgrupacionActivo aga = activoApi
-						.getActivoAgrupacionActivoAgrRestringidaPorActivoID(agrupacion.getActivoPrincipal().getId());
-				if (!Checks.esNulo(aga)) {
-					activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(aga.getAgrupacion().getId(), dto);
+				if (particularValidator.isMismoEpuActivoPrincipalAgrupacion(String.valueOf(numActivo),
+						String.valueOf(agrupacion.getNumAgrupRem()))) {
+					DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion();
+					dto.setIdActivo(activo.getId());
+	
+					ActivoAgrupacionActivo aga = activoApi
+							.getActivoAgrupacionActivoAgrRestringidaPorActivoID(agrupacion.getActivoPrincipal().getId());
+					if (!Checks.esNulo(aga)) {
+						activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(aga.getAgrupacion().getId(), dto);
+					}
+	
+					ActivoPublicacion activoPublicacionPrincipal = activoPublicacionDao
+							.getActivoPublicacionPorIdActivo(agrupacion.getActivoPrincipal().getId());
+					ActivoPublicacion activoPublicacion = activoPublicacionDao
+							.getActivoPublicacionPorIdActivo(activo.getId());
+					BeanUtils.copyProperty(activoPublicacion, "estadoPublicacionVenta",
+							activoPublicacionPrincipal.getEstadoPublicacionVenta());
+					BeanUtils.copyProperty(activoPublicacion, "estadoPublicacionAlquiler",
+							activoPublicacionPrincipal.getEstadoPublicacionAlquiler());
+					BeanUtils.copyProperty(activoPublicacion, "checkPublicarVenta",
+							activoPublicacionPrincipal.getCheckPublicarVenta());
+					BeanUtils.copyProperty(activoPublicacion, "checkPublicarAlquiler",
+							activoPublicacionPrincipal.getCheckPublicarAlquiler());
+					BeanUtils.copyProperty(activoPublicacion, "checkOcultarVenta",
+							activoPublicacionPrincipal.getCheckOcultarVenta());
+					BeanUtils.copyProperty(activoPublicacion, "checkOcultarAlquiler",
+							activoPublicacionPrincipal.getCheckOcultarAlquiler());
+					BeanUtils.copyProperty(activoPublicacion, "checkSinPrecioVenta",
+							activoPublicacionPrincipal.getCheckSinPrecioVenta());
+					BeanUtils.copyProperty(activoPublicacion, "checkSinPrecioAlquiler",
+							activoPublicacionPrincipal.getCheckSinPrecioAlquiler());
+					BeanUtils.copyProperty(activoPublicacion, "checkOcultarPrecioVenta",
+							activoPublicacionPrincipal.getCheckOcultarPrecioVenta());
+					BeanUtils.copyProperty(activoPublicacion, "checkOcultarPrecioAlquiler",
+							activoPublicacionPrincipal.getCheckOcultarPrecioAlquiler());
+					activoPublicacionDao.saveOrUpdate(activoPublicacion);
+				} else {
+					throw new JsonViewerException(BusinessValidators.ERROR_ESTADO_PUBLICACION_NOT_EQUAL);
 				}
-
-				ActivoPublicacion activoPublicacionPrincipal = activoPublicacionDao
-						.getActivoPublicacionPorIdActivo(agrupacion.getActivoPrincipal().getId());
-				ActivoPublicacion activoPublicacion = activoPublicacionDao
-						.getActivoPublicacionPorIdActivo(activo.getId());
-				BeanUtils.copyProperty(activoPublicacion, "estadoPublicacionVenta",
-						activoPublicacionPrincipal.getEstadoPublicacionVenta());
-				BeanUtils.copyProperty(activoPublicacion, "estadoPublicacionAlquiler",
-						activoPublicacionPrincipal.getEstadoPublicacionAlquiler());
-				BeanUtils.copyProperty(activoPublicacion, "checkPublicarVenta",
-						activoPublicacionPrincipal.getCheckPublicarVenta());
-				BeanUtils.copyProperty(activoPublicacion, "checkPublicarAlquiler",
-						activoPublicacionPrincipal.getCheckPublicarAlquiler());
-				BeanUtils.copyProperty(activoPublicacion, "checkOcultarVenta",
-						activoPublicacionPrincipal.getCheckOcultarVenta());
-				BeanUtils.copyProperty(activoPublicacion, "checkOcultarAlquiler",
-						activoPublicacionPrincipal.getCheckOcultarAlquiler());
-				BeanUtils.copyProperty(activoPublicacion, "checkSinPrecioVenta",
-						activoPublicacionPrincipal.getCheckSinPrecioVenta());
-				BeanUtils.copyProperty(activoPublicacion, "checkSinPrecioAlquiler",
-						activoPublicacionPrincipal.getCheckSinPrecioAlquiler());
-				BeanUtils.copyProperty(activoPublicacion, "checkOcultarPrecioVenta",
-						activoPublicacionPrincipal.getCheckOcultarPrecioVenta());
-				BeanUtils.copyProperty(activoPublicacion, "checkOcultarPrecioAlquiler",
-						activoPublicacionPrincipal.getCheckOcultarPrecioAlquiler());
-				activoPublicacionDao.saveOrUpdate(activoPublicacion);
 			} else {
-				throw new JsonViewerException(BusinessValidators.ERROR_ESTADO_PUBLICACION_NOT_EQUAL);
+				throw new JsonViewerException(BusinessValidators.ERROR_DESTINO_COMERCIAL_NOT_EQUAL);
 			}
 		}
 
@@ -2440,10 +2445,25 @@ public class AgrupacionAdapter {
 			
 			if(!Checks.esNulo(dto.getClaseOferta())) {
 				oferta.setClaseOferta(genericDao.get(DDClaseOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOferta())));
+			} else if (DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta.getCodigo()) && activo != null && activo.getCartera() != null 
+					&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
+				DDClaseOferta clase = null;
+				clase = genericDao.get(DDClaseOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL) );
+				if(clase != null) {
+					oferta.setClaseOferta(clase);
+				}
 			}
 			
 
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
+			
+			oferta.setIdOfertaOrigen(dto.getIdOfertaOrigen());
+			
+			if(Checks.esNulo(dto.getOfrDocRespPrescriptor())) {
+				oferta.setOfrDocRespPrescriptor(true);
+			} else {
+				oferta.setOfrDocRespPrescriptor(dto.getOfrDocRespPrescriptor());
+			}
 			
 			ofertaNueva = genericDao.save(Oferta.class, oferta);
 			
@@ -4212,5 +4232,9 @@ public class AgrupacionAdapter {
 	@Transactional(readOnly = false)
 	public Oferta clonateOfertaAgrupacion(String idOferta) {
 		return genericAdapter.clonateOferta(idOferta, true);
+	}
+	
+	public ActivoAgrupacion getAgrupacionObjectById(Long id) {
+		return genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
 	}
 }

@@ -11,20 +11,26 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.exception.PlusvaliaActivoException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -54,6 +60,12 @@ public class UpdaterTransitionService {
 	
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
+
+	@Autowired
+	private GestorExpedienteComercialApi gestorExpedienteComercialApi;
 	
 	
 	public void updateFrom(DtoSaltoTarea dto) throws Exception {
@@ -209,6 +221,22 @@ public class UpdaterTransitionService {
 		Reserva reserva = expediente.getReserva();
 		
 		expediente.setEstado(estado);
+		if(DDEstadosExpedienteComercial.APROBADO.equals(estado.getCodigo()) 
+				&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
+			if(expediente.getCondicionante().getSolicitaReserva()!=null && 1 == expediente.getCondicionante().getSolicitaReserva()) {															
+				EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+						.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
+	
+				if(gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
+					GestorEntidadDto ge = new GestorEntidadDto();
+					ge.setIdEntidad(expediente.getId());
+					ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+					ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());								
+					ge.setIdTipoGestor(tipoGestorComercial.getId());
+					gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
+				}
+			}
+		}
 		
 		updateExpediente(expediente, dto);
 		

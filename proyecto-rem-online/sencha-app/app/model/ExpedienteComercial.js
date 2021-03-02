@@ -236,7 +236,8 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		{
     			name: 'mostrarPbcReserva',
     			calculate: function(data) { 
-    				return data.entidadPropietariaCodigo == CONST.CARTERA['CERBERUS'] && (data.subcarteraCodigo == CONST.SUBCARTERA['APPLEINMOBILIARIO'] || data.subcarteraCodigo == CONST.SUBCARTERA['DIVARIANARROW'] || data.subcarteraCodigo == CONST.SUBCARTERA['DIVARIANREMAINING']);
+    				return (data.entidadPropietariaCodigo == CONST.CARTERA['CERBERUS'] && (data.subcarteraCodigo == CONST.SUBCARTERA['APPLEINMOBILIARIO'] || data.subcarteraCodigo == CONST.SUBCARTERA['DIVARIANARROW'] || data.subcarteraCodigo == CONST.SUBCARTERA['DIVARIANREMAINING']))
+							 || data.entidadPropietariaCodigo == CONST.CARTERA['BBVA'];
     			},
 				depends: ['subcarteraCodigo','entidadPropietariaCodigo']
     		},
@@ -314,7 +315,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     				return 'Comité seleccionado';
     			},
     			depends: ['tipoExpedienteCodigo','entidadPropietariaCodigo']
-    		}
+    		},
+    		{
+    			name:'finalizadoCierreEconomico',
+    			type: 'boolean'
+			}
     ],
     formulas: {
     	esExpedienteBloqueado: function(get) {

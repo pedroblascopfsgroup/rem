@@ -36,8 +36,8 @@ public class MSVActualizadorOkTecnicoSelloCalidad extends AbstractMSVActualizado
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
-	private List<String> comprobacionTrue = Arrays.asList("S","SI");
-	private List<String> comprobacionFalse = Arrays.asList("N","NO");
+	private List<String> comprobacionTrue = Arrays.asList("S","SI","s","si");
+	private List<String> comprobacionFalse = Arrays.asList("N","NO","n","no");
 	
 	
 
@@ -72,7 +72,7 @@ public class MSVActualizadorOkTecnicoSelloCalidad extends AbstractMSVActualizado
 			}
 
 			activoApi.saveOrUpdate(activo);
-			activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+			activoAdapter.actualizarEstadoPublicacionActivo(activo.getId(), false);
 			
 		}
 

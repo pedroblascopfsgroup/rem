@@ -130,7 +130,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     			var importeTotalAcumulado = 0;
     			var importeTotalAgrupacion = 0;
     			Ext.Array.each(persistedSelection, function (item) {
-    				if(importeTotalAgrupacion == 0){
+    				if(importeTotalAgrupacion == 0 && !Ext.isEmpty(item.data.importeTotalAgrupacion)){
     					importeTotalAgrupacion = parseFloat(item.data.importeTotalAgrupacion);
     				}
     				if(item.data.importeTotal && item.data.estadoGastoCodigo != '03'){
@@ -140,7 +140,9 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     				
                 });
     			
-    			displayImporteTotal.setValue(Number(importeTotalAcumulado+importeTotalAgrupacion).toFixed(2));
+    			displayImporteTotal.setValue(Number(importeTotalAgrupacion).toFixed(2) 
+											+ " + " + Number(importeTotalAcumulado).toFixed(2) 
+											+ " = " + Number(importeTotalAcumulado+importeTotalAgrupacion).toFixed(2));
     		}
     		
     	},

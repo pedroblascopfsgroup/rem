@@ -5,7 +5,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		'HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosClienteUrsus','HreRem.model.ActivoExpedienteCondicionesModel',
 		'HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', 'HreRem.view.activos.detalle.OpcionesPropagacionCambios',
 		'HreRem.view.common.WizardBase','HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', 'HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCliente', 
-		'HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumento'
+		'HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumento', 'HreRem.view.expedientes.editarAuditoriaDesbloqueo'
 	],
     
     control: {
@@ -89,13 +89,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	       	}
 		});	
 		var panelTanteo = tabPanel.down('activoexpedientetanteo');
-		var grid = panelTanteo.down('gridBaseEditableRow');
-		if(grid != undefined){
-			var store = grid.getStore();
-			grid.expand();
-			store.loadPage(1)
+		if(!Ext.isEmtpy(panelTanteo)){
+			var grid = panelTanteo.down('gridBaseEditableRow');
+			if(grid != undefined){
+				var store = grid.getStore();
+				grid.expand();
+				store.loadPage(1)
+			}
 		}
-		
 		var panelJuridico = tabPanel.down('activoexpedientejuridico');
 		if(panelJuridico != undefined){
 			me.cargarTabDataInformeJuridico(panelJuridico,false);
@@ -108,7 +109,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		models = null,
 		nameModels = null,
 		id = me.getViewModel().get("expediente.id");
-		form.mask(HreRem.i18n("msg.mask.loading"));
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		if(!form.saveMultiple) {	
 			model = form.getModelInstance(),
 			model.setId(id);
@@ -122,20 +123,20 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				    		me.tareaDefinicionDeOferta(itemReserva);   
 				    	}
 				    	form.setBindRecord(record);			    	
-				    	form.unmask();
+				    	me.getView().unmask();
 				    	if(Ext.isFunction(form.afterLoad)) {
 				    		form.afterLoad();
 				    	}
 				    }, 		    
 				    failure: function(operation) {		    	
-				    	form.unmask();
+				    	me.getView().unmask();
 				    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
 				    }
 				});
 			} else {
 				// Si la API no contiene metodo de lectura (read).
 				form.setBindRecord(model);			    	
-		    	form.unmask();
+		    	me.getView().unmask();
 		    	if(Ext.isFunction(form.afterLoad)) {
 		    		form.afterLoad();
 		    	}
@@ -193,11 +194,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					if (index < models.length) {							
 						me.cargarTabDataMultiple(form, index, models, nameModels);
 					} else {	
-						form.unmask();				
+						me.getView().unmask();				
 					}
 			    },			            
 				failure: function (a, operation) {
-					 form.unmask();
+					 me.getView().unmask();
 				}
 			});
 		} else {
@@ -208,7 +209,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			if (index < models.length) {							
 				me.cargarTabDataMultiple(form, index, models, nameModels);
 			} else {	
-				form.unmask();				
+				me.getView().unmask();				
 			}
 		}
 	
@@ -345,7 +346,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	saveMultipleRecords: function(contador, records) {
 		var me = this;
-		
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		if(Ext.isDefined(records[contador].getProxy().getApi().create) || Ext.isDefined(records[contador].getProxy().getApi().update)) {
 			// Si la API tiene metodo de escritura (create or update).
 			records[contador].save({
@@ -375,7 +376,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	saveMultipleRecordsActivoExpediente: function(contador, records) {
 		var me = this;
-		
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		if(Ext.isDefined(records[contador].getProxy().getApi().create) || Ext.isDefined(records[contador].getProxy().getApi().update)) {
 			// Si la API tiene metodo de escritura (create or update).
 			records[contador].save({
@@ -442,7 +443,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
 		var activeTab = btn.up('tabpanel').getActiveTab();
 		if(activeTab.xtype == "datosbasicosoferta"){
-			me.getView().mask();
+			me.getView().mask(HreRem.i18n("msg.mask.loading"));
 			var url =  $AC.getRemoteUrl('expedientecomercial/esOfertaDependiente');
 			var numOfertaPrin = me.getViewModel().data.datosbasicosoferta.data.numOferPrincipal;
 			var nuevoNumOferta = me.getViewModel().data.datosbasicosoferta.data.nuevoNumOferPrincipal;
@@ -653,6 +654,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this,
 	    activeTab = null,
 	    refrescarTabActiva = Ext.isEmpty(refrescarTabActiva) ? false : refrescarTabActiva;
+		
 	    if(!Ext.isEmpty(me.getView().down("tabpanel"))){
 	         activeTab = me.getView().down("tabpanel").getActiveTab();
 	    }else {
@@ -4910,6 +4912,11 @@ comprobarFormatoModificar: function() {
 		
 	},
 	
+	editarAuditoriaDesbloqueo: function(viewChained){
+		var expediente = this.getViewModel().get("expediente.id");
+		var window = Ext.create("HreRem.view.expedientes.editarAuditoriaDesbloqueo",{expediente: expediente, viewChained: viewChained}).show();
+	},
+	
 	comprobarProcesoAsincrono: function(tabPanel, view) {			
 		var me= this;
 		var url = $AC.getRemoteUrl('tramitacionofertas/checkProceso');						
@@ -4973,6 +4980,54 @@ comprobarFormatoModificar: function() {
 		}		
 	},
 	
+	onClickGeneraFichaComercialHojaExcel: function(btn) {
+				var me = this, config = {};
+		
+				config.params = {};
+				config.params.idExpediente = me.getViewModel().get("expediente.id");
+				config.url= $AC.getRemoteUrl("ofertas/generateExcelBBVA");
+				
+				me.fireEvent("downloadFile", config);
+			},
+	
+	onClickGenerarFichaComercial: function(btn) {
+		
+		var me = this;
+		var correo = me.getViewModel().get("datosbasicosoferta.correoGestorBackoffice");
+		
+    	Ext.Msg.show({
+		    title: HreRem.i18n("title.generar.ficha.activo"),
+		    message: HreRem.i18n("msg.generar.ficha.comercial.envio") + " " + correo + " " + HreRem.i18n("msg.generar.ficha.comercial.lista"), 
+		    buttons: Ext.Msg.OK,
+		    icon: Ext.Msg.INFO,
+		    fn: function(btn) {
+		        if (btn === 'ok') {
+					var url = $AC.getRemoteUrl("ofertas/generarFichaComercial");
+					var parametros = {
+							idOferta: me.getViewModel().get("datosbasicosoferta.idOferta"),
+							idExpediente : me.getViewModel().data.expediente.id
+					};
+					
+					me.getView().mask(HreRem.i18n("msg.mask.loading"));
+					Ext.Ajax.request({
+			    	     url: url,
+			    	     params: parametros,
+			    	     success: function(response, opts) {
+			    	    	 if(Ext.decode(response.responseText).success == "false") {
+			    	    		me.fireEvent("errorToast", Ext.decode(response.responseText).errorCode);
+			    	    		me.getView().unmask();
+			    	         }
+			    	    	 else if (Ext.decode(response.responseText).success == "true"){
+			    	        	me.getView().unmask();
+			    	        	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+							 }
+			    	     }
+			    	 });
+		        }
+		    }
+		});  
+	},
+	
 	sacarBulk: function(btn){
 		var me = this,
 		form = btn.up('formBase'),
@@ -5014,6 +5069,100 @@ comprobarFormatoModificar: function() {
 			}
 		});
 		
-	}
+	},
 	
+	onClickBotonCancelarAuditoria: function(btn){
+		var me = this;
+		test = btn.up('window');
+		test.close();
+		test.destroy();
+	},
+	
+	onClickBotonGuardarAuditoria: function(btn){
+		var me =this;
+		var url = $AC.getRemoteUrl('expedientecomercial/insertarRegistroAuditoriaDesbloqueo');
+		var view = btn.up('window');
+		var user = $AU.getUser().userId;
+		var comentario = view.items.items[0].items.items[0].value;
+		var expediente = view.expediente;
+		
+		if ( comentario.length > 0 ) {
+			me.getView().mask(HreRem.i18n("msg.mask.espere"));
+			
+			Ext.Ajax.request({
+				url: url,
+			    params:  {
+			    	expedienteId : expediente,
+			    	comentario: comentario,
+			    	usuId: user
+			    },
+			    
+			    success: function(response, opts) {
+			    	
+			    	var data = {};
+			    	try {
+			    		data = Ext.decode(response.responseText);
+			    	}  catch (e){ 
+			    		console.log( e );
+			    	}
+	               
+			    	if(data.success === "true") {
+			    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			    		view.viewChained.habilitarGrid();
+			    		me.onClickBotonCancelarAuditoria(btn);
+			    	}else {
+			    		if(data.errorUvem == "true"){
+			    			me.fireEvent("errorToast", data.msg);		
+			    		}
+			    		else{
+			    			Utils.defaultRequestFailure(response, opts);
+			    		}
+			    	}
+			     },
+
+			     failure: function(response, opts) {
+			    	 if(data.errorUvem == "true"){
+			    		 me.fireEvent("errorToast", data.msg);		
+			    	 } else {
+			    		 Utils.defaultRequestFailure(response, opts);
+			    	 }
+			     }
+			});	
+		} else {
+			 me.fireEvent("errorToast", "El comentario no puede estar vac&iacute;o");
+		}
+	},
+	checkVisibilidadBotonAuditoriaDesbloqueo: function( viewModel ) {
+		var me = this;
+		var url = $AC.getRemoteUrl('expedientecomercial/getCierreEconomicoFinalizado');
+		var expedienteId = viewModel.get('expediente.id')
+		var btn = me.lookupReference("botonAuditoriaDesbloqueo");
+		var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION'])
+		|| $AU.userIsRol(CONST.PERFILES['PERFGCONTROLLER']);
+		var listadoHonorarios = me.lookupReference("listadohoronarios");
+		if ( usuariosValidos ){
+			Ext.Ajax.request({
+				url: url,
+				method: 'GET',
+			    params:  {
+			    	expedienteId : expedienteId
+			    },
+			    success: function(response, opts) {
+			    	try {
+			    		data = Ext.decode(response.responseText);
+				    	if(data.success === "true" && data.data === "true") {
+				    		listadoHonorarios.setDisabledAddBtn(true);
+				    		listadoHonorarios.setDisabledDeleteBtn(true);
+				    		btn.setVisible(true)
+				    	}
+			    	}  catch (e){ 
+			    		console.log( e );
+			    	}
+			     },
+			     failure: function(response, opts) {
+		    		 Utils.defaultRequestFailure(response, opts);
+			     }
+			});	
+		}
+	}
 });

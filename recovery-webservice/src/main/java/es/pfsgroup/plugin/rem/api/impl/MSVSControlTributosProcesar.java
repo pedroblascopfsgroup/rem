@@ -194,8 +194,7 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 			
 			
 			if(exc.dameCelda(fila, COL_NUM.COL_NUM_NUMERO_EXPEDIENTE) != null && !exc.dameCelda(fila, COL_NUM.COL_NUM_NUMERO_EXPEDIENTE).isEmpty()) {
-				Long numExpediente = Long.parseLong(exc.dameCelda(fila, COL_NUM.COL_NUM_NUMERO_EXPEDIENTE));
-				activoTributos.setExpediente(numExpediente);
+				activoTributos.setExpediente(exc.dameCelda(fila, COL_NUM.COL_NUM_NUMERO_EXPEDIENTE));
 			}
 
 			Filter filtroTipoTributo = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(exc.dameCelda(fila, COL_NUM.COL_NUM_TIPO_TRIBUTO)));

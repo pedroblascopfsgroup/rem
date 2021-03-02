@@ -4,6 +4,10 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoRestringida;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -74,7 +79,17 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 	@Autowired
 	private UsuarioManager usuarioManager;
-
+	
+	@Resource
+	private Properties appProperties;
+	
+	
+	
+	private void limpiarMails() {
+		this.mailsPara.clear();
+		this.mailsCC.clear();
+		this.mailsSustituto.clear();
+	}
 	/**
 	 * Cada vez que llegue una oferta de un activo, 
 	 * se enviará una notificación (correo) al gestor comercial correspondiente, 
@@ -91,7 +106,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		Usuario buzonOfertaApple = null;
 		Activo activo = oferta.getActivoPrincipal();
 		Usuario usuarioBackOffice = null;
-		List<String> mailsSustituto = new ArrayList();
+		limpiarMails();
 
 		if (!Checks.esNulo(oferta.getAgrupacion()) 
 		        && !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion())
@@ -306,7 +321,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 		Usuario usuario = null;
 		Activo activo = oferta.getActivoPrincipal();
-		
+		limpiarMails();
 		usuario = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_ALQUILERES);
 
 		if (activo != null && usuario != null) {
@@ -338,9 +353,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	
 	private void getEmailDestinatariosAprobacion(Activo activo, Oferta ofertaAceptada, ExpedienteComercial expediente) {
 		
-		mailsPara.clear();
-		mailsCC.clear();
-		
+		limpiarMails();
 		ActivoProveedor prescriptor = null;
 		ActivoProveedor custodio = null;
 		Usuario usuarioBackOffice = null;
@@ -392,7 +405,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	public String enviarMailAprobacion(Oferta oferta) {
 		
 		String errorCode = "";
-		
+		limpiarMails();
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 		Activo activo = oferta.getActivoPrincipal();
 		ActivoTramite tramite = new ActivoTramite();
@@ -458,7 +471,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	public void enviarPropuestaOfertaTipoAlquiler(Oferta oferta) {
 		
 		Activo activo = oferta.getActivoPrincipal();
-		
+		limpiarMails();
 		ArrayList<String> mailsPara = new ArrayList<String>();
 		ArrayList<String> mailsCC = new ArrayList<String>();
 	
@@ -519,6 +532,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	public void sendNotificationDND(Oferta oferta, Activo activo) {
 		Usuario usuario = null;
 		Usuario supervisor= null;
+		limpiarMails();
 		List<String> mailsPara 		= new ArrayList<String>();
 		List<String> mailsCC 		= new ArrayList<String>();	
 		String titulo = null;
@@ -607,4 +621,78 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				}
 		} 
 	}
+	
+	
+	public String enviarMailFichaComercial(Oferta oferta, String nameFile, HttpServletRequest request ) {
+		StringBuffer url = request.getRequestURL();
+		String uri = request.getRequestURI();
+		String base = url.substring(0, url.length() - uri.length());
+		limpiarMails();
+		String errorCode = "";
+		Activo activo = oferta.getActivoPrincipal();
+		DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
+		List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();
+		Usuario usuarioBackOffice = null;
+		ActivoLoteComercial agrupacionLoteCom = null;
+		if(oferta.getAgrupacion() != null && oferta.getAgrupacion().getTipoAgrupacion() != null && DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+			agrupacionLoteCom = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
+			if(agrupacionLoteCom != null) {
+				usuarioBackOffice = agrupacionLoteCom.getUsuarioGestorComercialBackOffice();
+			}
+		} else {
+			usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		}
+		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
+		if(!Checks.esNulo(usuarioBackOffice)){	
+			mailsPara.add(usuarioBackOffice.getEmail());
+		}
+		else {
+			mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(usuarioBackOffice);
+			mailsPara.addAll(mailsSustituto);
+		}
+
+		mailsCC.add(buzonPfs.getEmail());
+		
+		if(!mailsPara.isEmpty()) {
+		
+			String asunto = "Ficha comercial de la oferta " + oferta.getNumOferta();
+			String cuerpo = "<p>La ficha comercial de la oferta  " + oferta.getNumOferta() + " esta lista para descargar.</p>";
+			cuerpo =  cuerpo + "<p>\n" + 
+					"			<a href=\"" + base +"/pfs/email/attachment?file=" + nameFile + "\"\n" + 
+					"			   title=\"descarga el archivo\n" + 
+					"			          \">Ficha Comercial</a>\n" + 
+					"			</p>";
+			cuerpo = cuerpo + "<p>La ficha estará disponible para su descarga durante 7 días</p>";
+
+			dtoSendNotificator.setTitulo(asunto);
+			if(oferta.getAgrupacion() != null) {
+				if(agrupacionLoteCom != null) {
+					dtoSendNotificator.setNumAgrupacion(agrupacionLoteCom.getNumAgrupRem());
+					dtoSendNotificator.setDireccion(agrupacionLoteCom.getDireccion());
+				} else if(oferta.getAgrupacion().getTipoAgrupacion() != null && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+					ActivoRestringida agrupacionRest = genericDao.get(ActivoRestringida.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
+					if (agrupacionRest != null) {
+						dtoSendNotificator.setNumAgrupacion(agrupacionRest.getNumAgrupRem());
+						dtoSendNotificator.setDireccion(agrupacionRest.getDireccion());
+					}
+				}
+			} else {
+				dtoSendNotificator.setNumActivo(activo.getNumActivo());
+				dtoSendNotificator.setDireccion(activo.getDireccionCompleta());
+			}
+			
+			String cuerpoMail = generateBodyMailFichaComercial(dtoSendNotificator,cuerpo,base);
+			
+			genericAdapter.sendMail(mailsPara, mailsCC, asunto, cuerpoMail,adjuntos);
+			
+		}
+		else {
+			errorCode = "No se ha podido enviar email de la ficha comercial de la oferta.";
+		}
+		
+		return errorCode;
+	}
+	
+	
+	
 }

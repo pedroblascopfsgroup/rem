@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +27,8 @@ import org.hibernate.LazyInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.utils.MessageUtils;
@@ -51,9 +54,12 @@ import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
+import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.PerfilApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
@@ -63,14 +69,15 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.CarteraCondicionesPrecios;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
-import es.pfsgroup.plugin.rem.model.DtoActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
+import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoUsuarios;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GestionCCPP;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
@@ -78,11 +85,13 @@ import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.LocalizacionSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
@@ -100,6 +109,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -110,6 +120,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
+import es.pfsgroup.plugin.rem.propietario.dao.ActivoPropietarioDao;
 import es.pfsgroup.plugin.rem.trabajo.dao.DDSubtipoTrabajoDao;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -125,6 +136,20 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	protected static final Log logger = LogFactory.getLog(GenericManager.class);
 
+	private static final String MENU_TAREAS = "MENU_ADMINISTRACION";
+	private static final String MENU_ACTIVOS= "MENU_ACTIVOS";
+	private static final String MENU_AGRUPACIONES= "MENU_AGRUPACIONES";
+	private static final String MENU_TRABAJOS= "MENU_TRABAJOS";
+	private static final String MENU_PRECIOS= "MENU_PRECIOS";
+	private static final String MENU_PUBLICACION= "MENU_PUBLICACION";
+	private static final String MENU_COMERCIAL= "MENU_COMERCIAL";
+	private static final String MENU_ADMINISTRACION = "MENU_ADMINISTRACION";
+	private static final String MENU_MASIVO= "MENU_MASIVO";
+	private static final String MENU_CONFIGURACION= "MENU_CONFIGURACION";
+	
+
+	private static final List<String> TABS_BBVA = Arrays.asList(MENU_ACTIVOS, MENU_COMERCIAL);
+	
 	@Autowired
 	private GenericABMDao genericDao;
 
@@ -162,6 +187,19 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private GastoProveedorApi gastoProveedorApi;
+	
+	@Autowired
+	private GastoLineaDetalleApi gastoLineaDetalleApi;
+
+	@Autowired 
+	private ActivoPropietarioDao activoPropietarioDao;
+	
+	@Autowired 
+	private PerfilApi perfilApi;
+
 
 	@Override
 	public String managerName() {
@@ -183,6 +221,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 			List<String> authorities = new ArrayList<String>();
 			List<String> roles = new ArrayList<String>();
+			List<String> groupRoles = new ArrayList<String>();
 
 			/**
 			 * Al lanzar este método en un hilo diferente
@@ -204,6 +243,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 			for(GrupoUsuario usuarioGrupo : gruUsu) {
 				for (Perfil perfil : usuarioGrupo.getGrupo().getPerfiles()) {
+					if ( !groupRoles.contains(perfil.getCodigo())) {
+						groupRoles.add(perfil.getCodigo());
+					}
 					for (Funcion funcion : perfil.getFunciones()) {
 						if(!authorities.contains(funcion.getDescripcion())) {
 							authorities.add(funcion.getDescripcion());
@@ -214,9 +256,10 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 			authData.setUserName(usuario.getApellidoNombre());
 			authData.setAuthorities(authorities);
-
+			
 			authData.setUserId(usuario.getId());
 			authData.setRoles(roles);
+			authData.setGroupRoles(groupRoles);
 			authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(usuario.getId()));
 
 			authData.setEsGestorSustituto(esGestorSustituto(usuario));
@@ -225,7 +268,10 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				authData.setCodigoCartera(uca.get(0).getCartera().getCodigo());
 			}
 
-			authData.setJwt(createJwtForTheSession(usuario.getUsername(), roles));
+			String jwtToken = createJwtForTheSession(usuario.getUsername(), roles);
+			// El token se traslada a la interfaz, a través del auhtData, y se establece en la sesión de usuario para su uso en el servidor
+			authData.setJwt(jwtToken);
+			RequestContextHolder.getRequestAttributes().setAttribute("token_jwt", jwtToken, RequestAttributes.SCOPE_SESSION);
 
 		}catch(LazyInitializationException e){
 			logger.info(e.getMessage());
@@ -245,7 +291,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		// Time for the token to be valid
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
-		calendar.add(Calendar.HOUR_OF_DAY, 8);
+		calendar.add(Calendar.HOUR_OF_DAY, Integer.parseInt(appProperties.getProperty("jwt.valid.signed.time", "12")));
 		Date validJwtSignedTime = calendar.getTime();
 
 		//The JWT signature algorithm we will be using to sign the token
@@ -256,7 +302,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		//We will sign our JWT with our ApiKey secret
 		byte[] apiKeySecretBytes = DatatypeConverter
-				.parseBase64Binary(appProperties.getProperty("jwt.secret.key", "default_rest_api_key"));
+				.parseBase64Binary(appProperties.getProperty("jwt.secret.key", "1234567890"));
 		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
 		//Let's set the JWT Claims
@@ -294,7 +340,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	@BusinessOperationDefinition("genericManager.getMenuItems")
 	public List<DtoMenuItem> getMenuItems(String tipo) {
-
 		AuthenticationData authData = getAuthenticationData();
 		JsonParser jsonParser = new JsonParser();
 		List<DtoMenuItem> menuItemsPerm = new ArrayList<DtoMenuItem>();
@@ -304,7 +349,11 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		Scanner scan = null;
 		Object obj = null;
+		Usuario usuarioLogado = adapter.getUsuarioLogado();
+		
+		boolean esUsuCarteraBBVA = perfilApi.usuarioHasPerfil(PerfilApi.COD_PERFIL_CARTERA_BBVA, usuarioLogado.getUsername());
 
+			
 		// Leemos el fichero completo
 		try {
 			scan = new Scanner(menuItemsJsonFile);
@@ -325,13 +374,18 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		for (Object item : menuItems) {
 			String secFunPermToRender = null;
+			String nombreEntidad = null;
 			JSONObject itemObject = JSONObject.fromObject(item);
-
+			
+			if (itemObject.containsKey("text")) {
+				nombreEntidad = itemObject.getString("text");
+			}
 			if (itemObject.containsKey("secFunPermToRender")) {
 				secFunPermToRender = itemObject.getString("secFunPermToRender");
 			}
-
-			if (secFunPermToRender == null || authData.getAuthorities().contains(secFunPermToRender)) {
+						
+			if((secFunPermToRender == null || authData.getAuthorities().contains(secFunPermToRender)) && 
+					((esUsuCarteraBBVA && TABS_BBVA.contains(secFunPermToRender)) || !esUsuCarteraBBVA)) {
 				DtoMenuItem menuItem = new DtoMenuItem();
 				try {
 					beanUtilNotNull.copyProperties(menuItem, itemObject);
@@ -340,7 +394,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 					logger.error(e.getCause());
 				}
 				menuItemsPerm.add(menuItem);
-			}
+			} 
+				
 		}
 
 		return menuItemsPerm;
@@ -426,11 +481,25 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboSubtipoActivo")
-	public List<DDSubtipoActivo> getComboSubtipoActivo(String codigoTipo) {
-
+	public List<DDSubtipoActivo> getComboSubtipoActivo(String codigoTipo, String idActivo) {
+		Activo act = null;
+		if (idActivo != null) {
+			act = activoApi.get(Long.parseLong(idActivo));
+		}
+		
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.codigo", codigoTipo);
-		return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter);
+		Filter filtroNoEsEnBbva = genericDao.createFilter(FilterType.EQUALS, "enBbva",false);
+		
+		if (act != null && DDCartera.CODIGO_CARTERA_BBVA.equals(act.getCartera().getCodigo())) {
+			return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter);
+		}else {
+			if (act != null) {
+				return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter, filtroNoEsEnBbva);
+			}else {
+				return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter);
+			}		
+		}
 
 	}
 
@@ -674,7 +743,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboTipoTrabajoCreaFiltered")
-	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered(String idActivo) {
+	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered(String idActivo,String numTrabajo) {
 
 		List<DDTipoTrabajo> tiposTrabajo = new ArrayList<DDTipoTrabajo>();
 		List<DDTipoTrabajo> tiposTrabajoFiltered = new ArrayList<DDTipoTrabajo>();
@@ -692,6 +761,22 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 		if (idActivo != null && !idActivo.isEmpty() && StringUtils.isNumeric(idActivo)) {
 			Activo act = activoApi.get(Long.parseLong(idActivo));
+			// Si no hay registro en BBDD de perimetro, el get nos
+			// devuelve un PerimetroActivo nuevo
+			// con todas las condiciones de perimetro activas
+			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(Long.parseLong(idActivo));
+			if(!Checks.esNulo(perimetroActivo.getAplicaGestion())
+					&& perimetroActivo.getAplicaGestion()==0) {
+				
+				if(numTrabajo !=null && !numTrabajo.isEmpty() && StringUtils.isNumeric(numTrabajo)) {
+					
+					Trabajo trabajo = genericDao.get(Trabajo.class, genericDao.createFilter(FilterType.EQUALS, "numTrabajo",Long.parseLong(numTrabajo)) );
+					if(trabajo.getTipoTrabajo()!=null) {
+						tiposTrabajoFiltered.add(trabajo.getTipoTrabajo());
+						return tiposTrabajoFiltered;
+					}
+				}
+			}
 			for (DDTipoTrabajo tipoTrabajo : tiposTrabajo) {
 				// No se pueden crear tipos de trabajo ACTUACION TECNICA ni
 				// OBTENCION DOCUMENTAL
@@ -702,36 +787,18 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 						tiposTrabajoFiltered.add(tipoTrabajo);
 					}
 				} else {
-					if (DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tipoTrabajo.getCodigo())
-							|| DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(tipoTrabajo.getCodigo())) {
-						// Si no hay registro en BBDD de perimetro, el get nos
-						// devuelve un PerimetroActivo nuevo
-						// con todas las condiciones de perimetro activas
-						PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(Long.parseLong(idActivo));
-
-						if (!Checks.esNulo(perimetroActivo.getAplicaGestion())
-								&& perimetroActivo.getAplicaGestion() == 1) {
-							// Activo con Gestion en perimetro
-							tiposTrabajoFiltered.add(tipoTrabajo);
-						}
-					} else if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
+					if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
 							&& !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())
-							&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())) {
+							&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())
+							&& !DDTipoTrabajo.CODIGO_PRECIOS.equals(tipoTrabajo.getCodigo())) {
 						// El resto de tipos, si no es comercialización o
 						// tasación,
 						// se pueden generar.
 						tiposTrabajoFiltered.add(tipoTrabajo);
 
-					} else if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
-							&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())
-							&& !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())) {
-						// El resto de tipos, si no es comercialización o
-						// tasación,
-						// se pueden generar.
-						tiposTrabajoFiltered.add(tipoTrabajo);
 					}
 				}
-			}
+			}			
 		} else {
 
 			for (DDTipoTrabajo tipoTrabajo : tiposTrabajo) {
@@ -739,7 +806,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				// comercialización.
 				if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
 						&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())
-						&& !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())) {
+						&& !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())
+						&& !DDTipoTrabajo.CODIGO_PRECIOS.equals(tipoTrabajo.getCodigo())) {
 					// El resto de tipos, si no es comercialización o tasación,
 					// se pueden generar.
 
@@ -750,11 +818,11 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 				}
 			}
-		}
+		}		
 		return tiposTrabajoFiltered;
 
 	}
-
+	
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboSubtipoTrabajo")
 	public List<DDSubtipoTrabajo> getComboSubtipoTrabajo(String tipoTrabajoCodigo, Long idActivo) {
@@ -959,9 +1027,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filtro;
 		Filter filtroCartera;
 		if(!Checks.esNulo(subcarteraCodigo)){
-			filtro = genericDao.createFilter(FilterType.EQUALS,"Subcartera.codigo", subcarteraCodigo);
+			
 			filtroCartera = genericDao.createFilter(FilterType.EQUALS,"cartera.codigo", carteraCodigo);
-			listaComites = genericDao.getList(DDComiteSancion.class,filtro,filtroCartera);
+			listaComites = genericDao.getList(DDComiteSancion.class,filtroCartera);
 
 		}
 		if(Checks.esNulo(subcarteraCodigo) || Checks.estaVacio(listaComites)){
@@ -1374,10 +1442,10 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	public List<ConfiguracionSubpartidasPresupuestarias> getComboSubpartidaPresupuestaria(Long idGasto) {	
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);		
 		Filter filtroGpv = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
-		GastoInfoContabilidad gic = genericDao.get(GastoInfoContabilidad.class, filtroGpv, filtroBorrado);
+		GastoLineaDetalle gld = genericDao.get(GastoLineaDetalle.class, filtroGpv, filtroBorrado);
 		
-		Filter filtroCuentaContable = genericDao.createFilter(FilterType.EQUALS, "cuentaContable", gic.getCuentaContable());
-		return (!Checks.esNulo(gic) && !Checks.esNulo(gic.getCuentaContable())) ? genericDao.getList(ConfiguracionSubpartidasPresupuestarias.class, filtroCuentaContable, filtroBorrado) : null; 
+		Filter filtroCuentaContable = genericDao.createFilter(FilterType.EQUALS, "cuentaContable", gld.getCccBase());
+		return (!Checks.esNulo(gld) && !Checks.esNulo(gld.getCccBase())) ? genericDao.getList(ConfiguracionSubpartidasPresupuestarias.class, filtroCuentaContable, filtroBorrado) : null; 
 
 	}
 
@@ -1387,6 +1455,25 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "id", idSubpartida);
 		ConfiguracionSubpartidasPresupuestarias cps = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, filtroId);
 		return (cps != null) ? cps.getPartidaPresupuestaria() : null;
+	}
+
+	
+	@Override
+	public List<DDEntidadGasto> getComboTipoElementoGasto(Long idGasto, Long idLinea) {
+		GastoProveedor gasto = gastoProveedorApi.findOne(idGasto);
+		GastoLineaDetalle linea = gastoLineaDetalleApi.getLineaDetalleByIdLinea(idLinea);
+		List<DDEntidadGasto> entidades = genericDao.getList(DDEntidadGasto.class);
+		DDEntidadGasto sinActivos = genericDao.get(DDEntidadGasto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEntidadGasto.CODIGO_SIN_ACTIVOS));
+		if(!linea.getGastoLineaEntidadList().isEmpty() || (gasto.getPropietario() != null &&  gasto.getPropietario().getCartera() != null &&
+			(DDCartera.CODIGO_CARTERA_SAREB.equals(gasto.getPropietario().getCartera().getCodigo())
+			|| DDCartera.CODIGO_CARTERA_GIANTS.equals(gasto.getPropietario().getCartera().getCodigo())
+			|| DDCartera.CODIGO_CARTERA_TANGO.equals(gasto.getPropietario().getCartera().getCodigo()))
+		)) {
+			if(entidades.contains(sinActivos)) {
+				entidades.remove(sinActivos);
+			}
+		}
+		return entidades;
 	}
 	
 	@Override
@@ -1428,13 +1515,49 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "tipoAgendaSaneamiento.codigo", codTipo);
 		return genericDao.getList(DDSubtipoAgendaSaneamiento.class, filtroId);
 	}
+	
+	@Override
+	public List<DDTipoAlta> getComboBBVATipoAlta(Long idRecovery) {
+		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		List<DDTipoAlta> listaDD = genericDao.getListOrdered(DDTipoAlta.class, order);
+		List<DDTipoAlta> listaTiposFiltered = new ArrayList<DDTipoAlta>();
+	
+		
+		for (DDTipoAlta tipo : listaDD) {
+			if (!DDTipoAlta.CODIGO_AUT.equals(tipo.getCodigo()) && idRecovery==null){
+				listaTiposFiltered.add(tipo);
+			} else if(idRecovery!=null && DDTipoAlta.CODIGO_AUT.equals(tipo.getCodigo())){	
+					listaTiposFiltered.add(tipo);
+			}
+		}
+
+		return listaTiposFiltered;
+	}
+
+
+	@Override
+	public List<DtoPropietario> getcomboSociedadAnteriorBBVA() {
+	
+		List<ActivoPropietario> listaDD= activoPropietarioDao.getPropietarioIdDescripcionCodigo();
+		List<DtoPropietario> listaDto = new ArrayList<DtoPropietario>();
+		
+		for (ActivoPropietario activoPropietario : listaDD) {
+			DtoPropietario dtop = new DtoPropietario();	
+			dtop.setId(activoPropietario.getId());
+			dtop.setDescripcion(activoPropietario.getNombre());
+			dtop.setCodigo(activoPropietario.getDocIdentificativo());		
+			listaDto.add(dtop);
+		}
+		return listaDto;
+	}
+
 
 	@Override
 	public List<DDEstadoAdmision> getComboEstadoAdmisionFiltrado(Set<String> tipoEstadoAdmisionCodigo) {		
 		Order order = new Order(GenericABMDao.OrderType.ASC, "codigo");
 		List<DDEstadoAdmision> lista = genericDao.getListOrdered(DDEstadoAdmision.class,order, genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 		List<DDEstadoAdmision> listaResultado = new ArrayList<DDEstadoAdmision>();
-
 		for (DDEstadoAdmision tipoEstadoAdmision : lista) {
 			if (tipoEstadoAdmisionCodigo.contains(tipoEstadoAdmision.getCodigo())) {
 				listaResultado.add(tipoEstadoAdmision);
@@ -1442,4 +1565,5 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 		return listaResultado;
 	}
+
 }

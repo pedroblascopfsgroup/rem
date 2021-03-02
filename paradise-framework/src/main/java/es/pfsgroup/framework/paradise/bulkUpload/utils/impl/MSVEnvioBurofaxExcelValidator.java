@@ -265,6 +265,11 @@ public class MSVEnvioBurofaxExcelValidator extends MSVExcelValidatorAbstract {
 		return listaFilas;
 	}
 	
+
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
 	
 }
 

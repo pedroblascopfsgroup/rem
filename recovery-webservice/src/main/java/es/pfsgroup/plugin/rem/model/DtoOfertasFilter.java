@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.util.Date;
+
 import es.capgemini.devon.dto.WebDto;
 
 /**
@@ -68,7 +70,9 @@ public class DtoOfertasFilter extends WebDto {
 	private Long idUvem;
 	private Long idCliente;
 	private Boolean excluirGencat;
-	private Long numOferPrincipal; 
+	private Long numOferPrincipal;
+	private String direccionComercial;
+	private Date fechaAlta;
 	
 	//HREOS-6905
 	private String claseOferta;
@@ -84,8 +88,10 @@ public class DtoOfertasFilter extends WebDto {
 	
 	//REMVIP-8377
 	private Long idOfertaOrigen;
-		
 	
+	//REMVIP-8524
+	private Boolean ofrDocRespPrescriptor;
+		
 	public Long getNumOferta() {
 		return numOferta;
 	}
@@ -481,6 +487,18 @@ public class DtoOfertasFilter extends WebDto {
 	public void setClaseOferta(String claseOferta) {
 		this.claseOferta = claseOferta;
 	}
+	public String getDireccionComercial() {
+		return direccionComercial;
+	}
+	public void setDireccionComercial(String direccionComercial) {
+		this.direccionComercial = direccionComercial;
+	}
+	public Date getFechaAlta() {
+		return fechaAlta;
+	}
+	public void setFechaAlta(Date fechaAlta) {
+		this.fechaAlta = fechaAlta;
+	}
 	
 	
 	
@@ -491,6 +509,18 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setIdOfertaOrigen(Long idOfertaOrigen) {
 		this.idOfertaOrigen = idOfertaOrigen;
+	}
+	
+	
+	
+	
+	//REMVIP-8524
+	public Boolean getOfrDocRespPrescriptor() {
+		return ofrDocRespPrescriptor;
+	}
+
+	public void setOfrDocRespPrescriptor(Boolean ofrDocRespPrescriptor) {
+		this.ofrDocRespPrescriptor = ofrDocRespPrescriptor;
 	}
 	
 }

@@ -12,7 +12,7 @@ Ext.define('HreRem.controller.ActivosController', {
     'HreRem.model.FichaProveedorModel', 'HreRem.model.PerfilDetalleModel','HreRem.model.FichaPerfilModel', 'HreRem.model.GastoProveedor', 'HreRem.model.GastoAviso',
     'HreRem.view.expedientes.ExpedienteDetalleMain', 'HreRem.model.FichaProveedorModel', 'HreRem.view.configuracion.administracion.proveedores.detalle.ProveedoresDetalleMain', 
     'HreRem.view.gastos.GastoDetalleMain', 'HreRem.model.GastoProveedor', 'HreRem.model.GastoAviso', 'HreRem.view.administracion.juntas.JuntasDetalleMain',
-    'HreRem.view.administracion.juntas.GestionJuntas','HreRem.model.ActivoSaneamiento'],
+    'HreRem.view.administracion.juntas.GestionJuntas','HreRem.model.ActivoSaneamiento', 'HreRem.model.GastoAsociadoAdquisicionModel'],
 
 
     requires: ['HreRem.view.configuracion.administracion.perfiles.detalle.DetallePerfil', 'HreRem.view.expedientes.ExpedienteDetalleMain', 'HreRem.view.gastos.GastoDetalleMain', 
@@ -231,6 +231,9 @@ Ext.define('HreRem.controller.ActivosController', {
     	
     	'gencatcomercialactivo':{
     		abrirDetalleExpedienteOferta: 'abrirDetalleExpedienteOferta'
+    	},
+    	'albaranesMain': {
+    		abrirDetalleTrabajo: 'abrirDetalleTrabajo'
     	}
 
     },
@@ -326,13 +329,16 @@ Ext.define('HreRem.controller.ActivosController', {
 		     	//me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.seleccionmasivo.SeleccionCambiosMasivo");
 		    },
 		    failure: function (a, operation) {
-		    	if(operation.getResponse().status === 408){
-		    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-		    	}else{
-		    		var response = Ext.decode(operation.getResponse().responseText);
-	 		    	me.fireEvent("errorToast", response.error);
-		    	}
-		    	//me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				if(!Ext.isEmpty(operation) && !Ext.isEmpty(operation.getResponse())){
+			    	if(operation.getResponse().status === 408){
+			    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    	}else{
+			    		var response = Ext.decode(operation.getResponse().responseText);
+		 		    	me.fireEvent("errorToast", response.error);
+			    	}
+				}else{
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				}
 				tab.unmask();
 				Ext.resumeLayouts(true);
 	       	}
@@ -594,7 +600,6 @@ Ext.define('HreRem.controller.ActivosController', {
     	HreRem.model.FichaTrabajo.load(id, {
     		scope: this,
 		    success: function(trabajo) {
-		    	
 		    	detalle.getViewModel().set("trabajo", trabajo);		    	
 		    	detalle.configCmp(trabajo);
 		    	
@@ -644,7 +649,10 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	
 		    	tab.getViewModel().set("trabajo", trabajo);
 		    	tab.configCmp(trabajo);
-		    	
+		    	var form = tab.lookupController().lookupReference("fichatrabajo");
+		    	if(Ext.isFunction(form.afterLoad)) {
+		    		form.afterLoad();
+		    	}
 		    	HreRem.model.TrabajoAviso.load(id, {
 		    		scope: this,
 				    success: function(avisos) {
@@ -938,7 +946,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	cfg.title = titulo;
      	
     	var tab = me.createTab (me.getActivosMain(), 'tramite', "tramitesdetalle",  id, cfg);    	
-
+		tab.mask(HreRem.i18n('msg.mask.loading'));
     	me.setLogTime(); 
     	HreRem.model.Tramite.load(id, {
     		scope: this,
@@ -947,6 +955,7 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	me.setLogTime(); 
 		    	tab.getViewModel().set("tramite", tramite);
 		    	me.logTime("Fin Set values");
+				tab.unmask();
 		    },
 		    failure: function (a, operation) {
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
@@ -962,7 +971,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	cfg.title = titulo;
      	
     	var tab = me.createTab (me.getActivosMain(), 'tramite', "tramitesdetalle",  id, cfg);    	
-
+		tab.mask(HreRem.i18n('msg.mask.loading'));
     	me.setLogTime(); 
     	HreRem.model.Tramite.load(id, {
     		scope: this,
@@ -973,6 +982,7 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	//tab.configCmp(tramite);
 		    	me.logTime("Fin Set values");
 		    	me.idActivo = tramite.get("idActivo");
+				tab.unmask();
 		    },
 		    failure: function (a, operation) {
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

@@ -28,14 +28,16 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
             name:'accesoAntiocupa'
         },
         {
-            name:'conTitulo',
+            name:'conTitulo'/*,
             convert: function(v, model){
-                if(model.get('ocupado')=='0'){
+               
+            	var ocupado = model.get('ocupado');
+            	if(model.get('ocupado')=='0'){
                     return null;
                 }else{
                     return v;
                 }
-            }
+            } */
         },
         {
             name:'riesgoOcupacion'
@@ -122,6 +124,9 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
         },
         {
         	name:  'diasTapiado'
+        },
+        	{
+        	name: 'posesionNegociada'
         }
         
     ],

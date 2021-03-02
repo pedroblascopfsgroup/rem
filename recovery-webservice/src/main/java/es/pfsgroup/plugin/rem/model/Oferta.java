@@ -322,6 +322,10 @@ public class Oferta implements Serializable, Auditable {
 	@Column(name = "FECHA_ENT_CRM_SF")
     private Date fechaEntradaCRMSF;	
 
+	@Column(name = "OFR_DOC_RESP_PRESCRIPTOR")
+    private Boolean ofrDocRespPrescriptor;
+
+
 	public Date getFechaAlta() {
 		return fechaAlta;
 	}
@@ -977,5 +981,13 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setFechaEntradaCRMSF(Date fechaEntradaCRMSF) {
 		this.fechaEntradaCRMSF = fechaEntradaCRMSF;
+	}
+	
+	public Boolean getOfrDocRespPrescriptor() {
+		return ofrDocRespPrescriptor;
+	}
+
+	public void setOfrDocRespPrescriptor(Boolean ofrDocRespPrescriptor) {
+		this.ofrDocRespPrescriptor = ofrDocRespPrescriptor;
 	}
 }

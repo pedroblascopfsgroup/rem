@@ -14,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -38,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -47,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Component
 public class TabActivoPatrimonio implements TabActivoService {
@@ -77,6 +81,9 @@ public class TabActivoPatrimonio implements TabActivoService {
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 	
 	
 	@Autowired
@@ -149,9 +156,13 @@ public class TabActivoPatrimonio implements TabActivoService {
 				}
 			}
 			
-			activoPatrimonioDto.setIsCarteraCerberusDivarian(activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)
-																|| activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB));
-						
+			activoPatrimonioDto.setIsCarteraCerberusDivarian(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo()));
+			
+			activoPatrimonioDto.setIsCarteraCerberusDivarianOBBVA(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo()));
+			
 			if(!Checks.esNulo(activo.getTipoAlquiler())) {
 				activoPatrimonioDto.setTipoAlquilerCodigo(activo.getTipoAlquiler().getCodigo());
 			}
@@ -171,6 +182,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 		ActivoSituacionPosesoria activoSituacionPosesoria;
 		ActivoPatrimonioContrato patrimonioContrato = genericDao.get(ActivoPatrimonioContrato.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		
 		activoDao.validateAgrupacion(activo.getId());
 		if(Checks.esNulo(activoPatrimonio)) {
@@ -229,6 +241,16 @@ public class TabActivoPatrimonio implements TabActivoService {
 					} else {
 						activoPatrimonio.setAdecuacionAlquiler(null);
 					}
+				}
+			} else {
+				if(!Checks.esNulo(activoPatrimonioDto.getEstadoAlquiler()) && !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())) {
+					activoHistPatrimonio.setAdecuacionAlquiler(activoPatrimonio.getAdecuacionAlquiler());
+				}
+				if(DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE.equals(activoPatrimonioDto.getEstadoAlquiler())) {
+					activoPatrimonio.setAdecuacionAlquilerAnterior(activoPatrimonio.getAdecuacionAlquiler());
+					
+					DDAdecuacionAlquiler adecuacionAlquiler = genericDao.get(DDAdecuacionAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo","02")); //codigo adecuacion NO
+					activoPatrimonio.setAdecuacionAlquiler(adecuacionAlquiler);
 				}
 			}
 
@@ -347,6 +369,12 @@ public class TabActivoPatrimonio implements TabActivoService {
 					DDTipoTituloActivoTPA tipoTituloActivoTPA = (DDTipoTituloActivoTPA) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloSi);
 					activoSituacionPosesoria.setConTitulo(tipoTituloActivoTPA);
 					activoSituacionPosesoria.setFechaUltCambioTit(new Date());
+					activoSituacionPosesoria.setUsuarioModificarOcupado(usu.getUsername());
+					activoSituacionPosesoria.setFechaModificarOcupado(new Date());
+					activoSituacionPosesoria.setUsuarioModificarConTitulo(usu.getUsername());
+					activoSituacionPosesoria.setFechaModificarConTitulo(new Date());
+					
+					
 				} else if(DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE.equals(activoPatrimonioDto.getEstadoAlquiler())) {
 	
 					if (Checks.esNulo(activoSituacionPosesoria)) {
@@ -356,6 +384,10 @@ public class TabActivoPatrimonio implements TabActivoService {
 	
 					activoSituacionPosesoria.setOcupado(0);
 					activoSituacionPosesoria.setConTitulo(null);
+					activoSituacionPosesoria.setUsuarioModificarOcupado(usu.getUsername());
+					activoSituacionPosesoria.setFechaModificarOcupado(new Date());
+					activoSituacionPosesoria.setUsuarioModificarConTitulo(usu.getUsername());
+					activoSituacionPosesoria.setFechaModificarConTitulo(new Date());
 					activoSituacionPosesoria.setFechaUltCambioTit(new Date());
 					activoPatrimonio.setTipoInquilino(null);
 				}

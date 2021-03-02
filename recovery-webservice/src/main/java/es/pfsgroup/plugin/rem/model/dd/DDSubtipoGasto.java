@@ -34,6 +34,7 @@ import es.pfsgroup.commons.utils.Checks;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDSubtipoGasto implements Auditable, Dictionary {
 	
+    public static final String OTROS = "01";
 
 	/**
 	 * 
@@ -51,7 +52,21 @@ public class DDSubtipoGasto implements Auditable, Dictionary {
 	public static final String COD_TASAS_ADMINISTRATIVAS = "111"; 
 	public static final String COD_TRIBUTO_METROPOLITANO_MOVILIDAD = "112"; 
 	public static final String COD_VADO = "113"; 
-	
+	public static final String COD_HONORARIOS_GESTION_ACTIVOS = "53";
+	public static final String COD_REGISTRO = "43";
+	public static final String COD_NOTARIA = "44";
+	public static final String COD_ABOGADO = "45";
+	public static final String COD_PROCURADOR = "46";
+	public static final String COD_OTROS_SERVICIOS_JURIDICOS = "47";
+	public static final String COD_ADMINISTRADOR_COMUNIDAD_PROPIETARIOS = "48";
+	public static final String COD_ASESORIA = "49";
+	public static final String COD_TECNICO = "50";
+	public static final String COD_TASACION = "51";
+	public static final String COD_OTROS = "52";
+	public static final String COD_GESTION_DE_SUELO = "94";
+	public static final String COD_ABOGADO_OCUPACIONAL = "95";
+	public static final String COD_ABOGADO_ASUNTOS_GENERALES = "96";
+	public static final String COD_ABOGADO_ASISTENCIA_JURIDiCA = "97";
 
 	@Id
 	@Column(name = "DD_STG_ID")

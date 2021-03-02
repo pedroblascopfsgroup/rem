@@ -343,4 +343,9 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 		mapaErrores.put(messageServices.getMessage(VALIDAR_FILA_EXCEPTION), new ArrayList<Integer>());
 	}
 
+	@Override
+	public Integer getNumFilasHoja() {
+		return this.numFilasHoja;
+	}
+	
 }

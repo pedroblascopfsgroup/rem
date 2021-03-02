@@ -62,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
@@ -73,9 +74,8 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.model.DtoTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
-import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
+import es.pfsgroup.plugin.rem.model.VGridBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
@@ -86,7 +86,7 @@ public class AgrupacionController extends ParadiseJsonController {
 	private static final String RESPONSE_SUCCESS_KEY = "success";
 	private static final String RESPONSE_MESSAGE_KEY = "msg";
 	private static final String RESPONSE_DATA_KEY = "data";
-	
+	private static final String RESPONSE_TOTALCOUNT_KEY = "totalCount";	
 	
 	@Autowired
 	private AgrupacionAdapter adapter;
@@ -166,6 +166,19 @@ public class AgrupacionController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getBusquedaAgrupacionesGrid(DtoAgrupacionGridFilter dto, ModelMap model) {
+		try {
+			Page page = adapter.getBusquedaAgrupacionesGrid(dto);
+			model.put(RESPONSE_DATA_KEY, page.getResults());
+			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("error en AgrupacionController::getBusquedaAgrupacionesGrid", e);
+		}
+		return createModelAndViewJson(model);
+	}
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAgrupaciones(DtoAgrupacionFilter dtoAgrupacionFilter, ModelMap model) {
@@ -316,7 +329,29 @@ public class AgrupacionController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteAgrupacionesById(Long id, ModelMap model) {
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, adapter.deleteAgrupacionesById(id));
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("error en AgrupacionController::deleteAgrupacionesById", e);
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createAgrupacionesGrid(DtoAgrupacionesCreateDelete dto, ModelMap model) {
+		try {			
+			model.put(RESPONSE_DATA_KEY, adapter.createAgrupacionesGrid(dto));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error(e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		return createModelAndViewJson(model);
+	}
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListObservacionesAgrupacionById(Long id, ModelMap model, HttpServletRequest request) {
@@ -702,29 +737,20 @@ public class AgrupacionController extends ParadiseJsonController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcel(DtoAgrupacionFilter dtoAgrupacionFilter, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-
-		dtoAgrupacionFilter.setStart(excelReportGeneratorApi.getStart());
-		dtoAgrupacionFilter.setLimit(excelReportGeneratorApi.getLimit());
-
-		
-		List<VBusquedaAgrupaciones> listaAgrupaciones = (List<VBusquedaAgrupaciones>) adapter
-				.getListAgrupaciones(dtoAgrupacionFilter).getResults();
-		
+	public void generateExcel(DtoAgrupacionGridFilter dto, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		dto.setStart(excelReportGeneratorApi.getStart());
+		dto.setLimit(excelReportGeneratorApi.getLimit());
+		List<VGridBusquedaAgrupaciones> listaAgrupaciones = (List<VGridBusquedaAgrupaciones>) adapter.getBusquedaAgrupacionesGrid(dto).getResults();		
 		new EmptyParamDetector().isEmpty(listaAgrupaciones.size(), "agrupaciones",  usuarioManager.getUsuarioLogado().getUsername());
-
 		ExcelReport report = new AgrupacionExcelReport(listaAgrupaciones);
-
 		excelReportGeneratorApi.generateAndSend(report, response);
-	}
-	
+	}	
 	
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional()
-	public ModelAndView registrarExportacion(DtoAgrupacionFilter dtoAgrupacionFilter, Boolean exportar, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView registrarExportacion(DtoAgrupacionGridFilter dto, Boolean exportar, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String intervaloTiempo = !Checks.esNulo(appProperties.getProperty("haya.tiempo.espera.export")) ? appProperties.getProperty("haya.tiempo.espera.export") : "300000";
-		ModelMap model = new ModelMap();		 
+		ModelMap model = new ModelMap();
 		Boolean isSuperExport = false;
 		Boolean permitido = true;
 		String filtros = parameterParser(request.getParameterMap());
@@ -732,6 +758,7 @@ public class AgrupacionController extends ParadiseJsonController {
 		Long tiempoPermitido = System.currentTimeMillis() - Long.parseLong(intervaloTiempo);
 		String cuentaAtras = null;
 		try {
+
 			Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId());
 			Filter filtroConsulta = genericDao.createFilter(FilterType.EQUALS, "filtros", filtros);
 			Filter filtroAccion = genericDao.createFilter(FilterType.EQUALS, "accion", true);
@@ -752,7 +779,7 @@ public class AgrupacionController extends ParadiseJsonController {
 			}
 			
 			if(permitido) {
-				int count = adapter.getListAgrupaciones(dtoAgrupacionFilter).getTotalCount();
+				int count = adapter.getBusquedaAgrupacionesGrid(dto).getTotalCount();
 				AuditoriaExportaciones ae = new AuditoriaExportaciones();
 				ae.setBuscador("agrupaciones");
 				ae.setFechaExportacion(new Date());
@@ -1064,6 +1091,18 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", false);
 		}
 		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboTipoAgrupacionFiltro(ModelMap model) {
+		try {
+			model.put(RESPONSE_DATA_KEY, activoAgrupacionApi.getComboTipoAgrupacionFiltro());
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("error en AgrupacionController::getComboTipoAgrupacionFiltro", e);
+		}		
 		return createModelAndViewJson(model);
 	}
 	

@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -28,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -518,6 +520,64 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		}
 		return null;
 	}
+	
+	@Override
+	public Page getBusquedaAgrupacionesGrid(DtoAgrupacionGridFilter dto) {		
+		HQLBuilder hb = new HQLBuilder("select vgrid from VGridBusquedaAgrupaciones vgrid ");
+		if (dto.getNumAgrupacionRem() != null && StringUtils.isNumeric(dto.getNumAgrupacionRem()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numAgrupacionRem", Long.valueOf(dto.getNumAgrupacionRem()));
+		if (dto.getNumAgrupacionUvem() != null && StringUtils.isNumeric(dto.getNumAgrupacionUvem()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numAgrupacionUvem", Long.valueOf(dto.getNumAgrupacionUvem()));
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoAgrupacionCodigo", dto.getTipoAgrupacionCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoAlquilerCodigo", dto.getTipoAlquilerCodigo());
+		
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.nombre", dto.getNombre(), true);		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.publicado", dto.getPublicado());		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.provinciaCodigo", dto.getProvinciaCodigo());
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.localidadDescripcion", dto.getLocalidadDescripcion(), true);
+		
+		if(dto.getNumActHaya() != null || dto.getNumActPrinex() != null || dto.getNumActSareb() != null 
+				|| dto.getNumActUVEM() != null || dto.getNumActReco() != null) {			
+			StringBuilder sb = new StringBuilder(" exists (select 1 from ActivoAgrupacionActivo aga "
+					+ " where vgrid.id = aga.agrupacion.id ");
+			if(dto.getNumActHaya() != null && StringUtils.isNumeric(dto.getNumActHaya()))
+				sb.append(" and aga.activo.numActivo = " + dto.getNumActHaya());			
+			if(dto.getNumActPrinex() != null && StringUtils.isNumeric(dto.getNumActPrinex())) 
+				sb.append(" and aga.activo.idProp = " + dto.getNumActPrinex());			
+			if(dto.getNumActSareb() != null) 
+				sb.append(" and aga.activo.idSareb = '" + dto.getNumActSareb() + "' ");
+			if(dto.getNumActUVEM() != null && StringUtils.isNumeric(dto.getNumActUVEM())) 
+				sb.append(" and aga.activo.numActivoUvem = " + dto.getNumActUVEM());
+			if(dto.getNumActReco() != null && StringUtils.isNumeric(dto.getNumActReco())) 
+				sb.append(" and aga.activo.idRecovery = " + dto.getNumActReco());		
+			sb.append("  ) ");
+			hb.appendWhere(sb.toString());
+   		}
+		
+		if(dto.getNif() != null) 
+			hb.appendWhere(" exists (select 1 from ActivoPropietarioActivo apa where apa.propietario.docIdentificativo = '" + dto.getNif() + "' "
+					+ " and apa.activo.id IN (select actag.activo.id from ActivoAgrupacionActivo actag where vgrid.id = actag.agrupacion.id) ) ");		
+		
+		try {				
+				Date fechaCreacionDesde = dto.getFechaCreacionDesde() != null ? DateFormat.toDate(dto.getFechaCreacionDesde()) : null;
+				Date fechaCreacionHasta = dto.getFechaCreacionHasta() != null ? DateFormat.toDate(dto.getFechaCreacionHasta()) : null;			
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaAlta", fechaCreacionDesde, fechaCreacionHasta);
+				
+				Date fechaInicioVigenciaDesde = dto.getFechaInicioVigenciaDesde() != null ? DateFormat.toDate(dto.getFechaInicioVigenciaDesde()) : null;
+				Date fechaInicioVigenciaHasta = dto.getFechaInicioVigenciaHasta() != null ? DateFormat.toDate(dto.getFechaInicioVigenciaHasta()) : null;			
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaInicioVigencia", fechaInicioVigenciaDesde, fechaInicioVigenciaHasta);
+				
+				Date fechaFinVigenciaDesde = dto.getFechaFinVigenciaDesde() != null ? DateFormat.toDate(dto.getFechaFinVigenciaDesde()) : null;
+				Date fechaFinVigenciaHasta = dto.getFechaFinVigenciaHasta() != null ? DateFormat.toDate(dto.getFechaFinVigenciaHasta()) : null;			
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaFinVigencia", fechaFinVigenciaDesde, fechaFinVigenciaHasta);				
+
+		} catch (ParseException e) {
+			logger.error(e.getMessage());
+			}
+		
+		return HibernateQueryUtils.page(this, hb, dto);		
+	}							
 
 }
-

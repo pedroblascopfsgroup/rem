@@ -1413,5 +1413,7 @@ public interface ParticularValidatorApi {
 
 	boolean gastoSarebAnyadeRefacturable(String numGasto);
 
+	Boolean esSubCarterasCerberusAppleDivarian(String numActivo);
+
 
 }

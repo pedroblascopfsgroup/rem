@@ -89,7 +89,7 @@ public class MSVMasivaFechasTituloYPosesionValidator extends MSVExcelValidatorAb
 		Long idTipoOperacion = dtoFile.getIdTipoOperacion();		
 		if (idTipoOperacion == null) {
 			throw new IllegalArgumentException(
-					"MSVActualizarPerimetroActivos::validarContenidoFichero -> idTipoOperacion no puede ser null");
+					"MSVMasivaFechasTituloYPosesionValidator::validarContenidoFichero -> idTipoOperacion no puede ser null");
 		}
 		
 		List<String> lista = recuperarFormato(idTipoOperacion);
@@ -160,7 +160,7 @@ public class MSVMasivaFechasTituloYPosesionValidator extends MSVExcelValidatorAb
 						mapaErrores.get(messageServices.getMessage(ACTIVO_NO_ADJUDICACION_NO_FAMILIAR)).add(fila);
 						esCorrecto = false;
 					}
-					if(fechaPos != null && !particularValidator.esSubcarteraDivarian(numActivo) ) {
+					if(fechaPos != null && !particularValidator.esSubCarterasCerberusAppleDivarian(numActivo)) {
 						mapaErrores.get(messageServices.getMessage(FECHA_POSESION_SUBCARTERA_ERRONEA)).add(fila);
 						esCorrecto = false;
 					}
@@ -202,8 +202,7 @@ public class MSVMasivaFechasTituloYPosesionValidator extends MSVExcelValidatorAb
 
 	@Override
 	public Integer getNumFilasHoja() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.numFilasHoja;
 	}
 
 }

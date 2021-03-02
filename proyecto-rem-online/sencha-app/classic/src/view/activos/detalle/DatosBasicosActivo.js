@@ -859,6 +859,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								reference: 'datefieldFechaGestionComercial',
 								readOnly: '{activo.restringido}'
 							},
+							
 							{
 								xtype:'checkboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.excluir.validaciones'),
@@ -872,15 +873,21 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								}
 							},
 							{
+								xtype: 'textfieldbase',
+								readOnly : true,
+								colspan: 2
+							},
+							
+							{
 								xtype: 'comboboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetros.motivoDeExcluido'),
-								colspan: 3, 
 								reference: 'comboMotivoGestionComercial',
 								bind: {
 									store: '{comboMotivoGestionComercialActivo}',
 									value: '{activo.motivoGestionComercialCodigo}'
 								}
 							},
+
 							
 							//Bloque Comercialización
 							{    
@@ -944,6 +951,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									}
 									]
 							},
+						
 							//Bloque Comercialización
 							{    
 								xtype:'fieldsettable',

@@ -39,7 +39,7 @@ BEGIN
 
     IF V_COUNT > 0 THEN
 
-        V_MSQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = 7434899';
+        V_MSQL := 'SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = 7434899';
         EXECUTE IMMEDIATE V_MSQL INTO V_ACT_ID;
 
         V_MSQL := 'SELECT '||V_ESQUEMA||'.S_BBVA_NUM_ACTIVO.NEXTVAL FROM DUAL';
@@ -47,6 +47,7 @@ BEGIN
 
         V_MSQL := ' UPDATE '|| V_ESQUEMA ||'.ACT_BBVA_ACTIVOS SET 
                         BBVA_NUM_ACTIVO = TO_CHAR('||V_BBVA_NUM||'),
+                        BBVA_NUM_ACTIVO_NUM = '||V_BBVA_NUM||',
                         USUARIOMODIFICAR = '''||V_USUARIO||''',
                         FECHAMODIFICAR = SYSDATE
                         WHERE ACT_ID = '||V_ACT_ID||' ';

@@ -109,7 +109,8 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 	@Column(name = "REG_FECHA_CFO")
 	private Date fechaCfo;
 
-	@Column(name = "TIENE_ANEJOS_REGISTRALES")
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TIENE_ANEJOS_REGISTRALES")
 	private DDSinSiNo tieneAnejosRegistrales;
 
 	@Version   

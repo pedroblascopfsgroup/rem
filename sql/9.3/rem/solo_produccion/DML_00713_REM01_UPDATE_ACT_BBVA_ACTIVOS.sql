@@ -28,6 +28,7 @@ DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar
     V_ACT_ID NUMBER(16);
     V_COUNT NUMBER(16);
+    V_BBVA_NUM NUMBER(16);
 
 BEGIN
 
@@ -41,8 +42,11 @@ BEGIN
         V_MSQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = 7434899';
         EXECUTE IMMEDIATE V_MSQL INTO V_ACT_ID;
 
+        V_MSQL := 'SELECT '||V_ESQUEMA||'.S_BBVA_NUM_ACTIVO.NEXTVAL FROM DUAL';
+        EXECUTE IMMEDIATE V_MSQL INTO V_BBVA_NUM;
+
         V_MSQL := ' UPDATE '|| V_ESQUEMA ||'.ACT_BBVA_ACTIVOS SET 
-                        BBVA_NUM_ACTIVO = (SELECT '||V_ESQUEMA||'.S_BBVA_NUM_ACTIVO.NEXTVAL FROM DUAL),
+                        BBVA_NUM_ACTIVO = TO_CHAR('||V_BBVA_NUM||'),
                         USUARIOMODIFICAR = '''||V_USUARIO||''',
                         FECHAMODIFICAR = SYSDATE
                         WHERE ACT_ID = '||V_ACT_ID||' ';

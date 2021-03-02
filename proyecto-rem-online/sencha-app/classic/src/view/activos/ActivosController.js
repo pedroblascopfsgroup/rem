@@ -259,11 +259,12 @@ Ext.define('HreRem.view.activos.ActivosController', {
 
 	onChangeChainedCombo: function(combo) {
 		var me = this,
-		chainedCombo = me.lookupReference(combo.chainedReference);   
+		chainedCombo = me.lookupReference(combo.chainedReference),   
+		carteraSearch = me.getViewModel().data.comboCarteraSearch.value;
 
 		me.getViewModel().notify();
 
-		if(!Ext.isEmpty(chainedCombo.getValue())) {
+		if(!Ext.isEmpty(chainedCombo.getValue()) && !Ext.isEmpty(carteraSearch)) {
 			chainedCombo.clearValue();
 		}
 		
@@ -272,7 +273,7 @@ Ext.define('HreRem.view.activos.ActivosController', {
 			store.getProxy().setExtraParams({'idCartera':combo.getValue()});
 		} else if (combo.chainedStore == 'comboFiltroSubtipoActivo') {
 			var store=chainedCombo.getStore(); 
-			store.getProxy().setExtraParams({'codTipoActivo':combo.getValue()});
+			store.getProxy().setExtraParams({'codCartera':carteraSearch,'codTipoActivo':combo.getValue()});
 		}
 
 		chainedCombo.getStore().load({ 			
@@ -393,6 +394,19 @@ Ext.define('HreRem.view.activos.ActivosController', {
 	  			  }
 	  		  }
 	  		});
+    },
+    
+    onChangeCartera: function(){
+    	var me = this,
+    	comboTipoActivo = me.lookupReference('comboFiltroTipoActivoSearch'),
+    	comboSubTipoActivo = me.lookupReference('comboFiltroSubtipoActivoSearch');
+    	
+    	comboTipoActivo.getStore().load();
+    	comboTipoActivo.clearValue();
+    	
+    	comboSubTipoActivo.getStore().load();
+    	comboSubTipoActivo.clearValue();
+    	
     }
     
 });

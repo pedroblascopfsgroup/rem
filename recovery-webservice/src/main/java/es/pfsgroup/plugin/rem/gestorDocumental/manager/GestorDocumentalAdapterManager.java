@@ -1694,12 +1694,14 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			Filter filtroActConfDoc = genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", actConfDoc.getId());
 			List<ActivoAdmisionDocumento> activoAdmisionDocumentoList = genericDao.getListOrdered(ActivoAdmisionDocumento.class,order, filtroActivo, filtroActConfDoc);
 			
-		if(activoAdmisionDocumentoList == null || activoAdmisionDocumentoList.isEmpty()) {
+		if(activoAdmisionDocumentoList != null && !activoAdmisionDocumentoList.isEmpty()) {
+			activoAdmisionDocumento = activoAdmisionDocumentoList.get(0);
+			
+		}else {
 			activoAdmisionDocumento = new ActivoAdmisionDocumento();
 			activoAdmisionDocumento.setActivo(activo);
 			activoAdmisionDocumento.setConfigDocumento(actConfDoc);
-		}else {
-			activoAdmisionDocumento = activoAdmisionDocumentoList.get(0);
+		}
 		if(dto.getFechaObtencion() != null) {
 			activoAdmisionDocumento.setFechaObtencion(parser.parse(dto.getFechaCaducidad()));
 		}
@@ -1723,8 +1725,6 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		activoAdmisionDocumento.setValidado(tbjValidado);
 
 		genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
-		
-			}
 		}
 		return;
 	

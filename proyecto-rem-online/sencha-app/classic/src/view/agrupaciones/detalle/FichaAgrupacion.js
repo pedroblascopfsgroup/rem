@@ -427,21 +427,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
     				        	reference: 'chkMarcaDeExcluido',
     				        	bind: {	
     			            		store: '{comboSiNoBoolean}',
-    			            		value: '{agrupacionficha.marcaDeExcluido}',
-        				        	listeners: {
-    									change: 'excluidoMarcado'
-    								}
+    			            		value: '{agrupacionficha.marcaDeExcluido}'
     			            	}
     						},
     						{
     							xtype		: 'comboboxfieldbase',
     				        	fieldLabel	: HreRem.i18n('fieldlabel.perimetros.motivoDeExcluido'),
     				        	reference	: 'cbMotivoDeExcluido',
-    							allowBlank	: false,
     				        	bind		: {
     			            		store: '{comboMotivoDeExcluido}',
     			            		value: '{agrupacionficha.motivoDeExcluidoCodigo}',
-    			            		hidden: '{!agrupacionficha.marcaDeExcluido}'
+    			            		disabled: '{!agrupacionficha.marcaDeExcluido}'
     			            	}
     						}
     						

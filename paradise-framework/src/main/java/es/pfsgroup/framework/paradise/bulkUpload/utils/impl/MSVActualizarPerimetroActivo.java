@@ -1428,7 +1428,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 							if(!particularValidator.situacionComercialPublicadoAlquilerOVenta(activo)) {
 								listaFilas.add(i);
 							}
-						}else if(!particularValidator.situacionComercialPublicadoAlquiler(activo)) {
+						}else if(particularValidator.activoConDestinoComercialAlquiler(activo) && !particularValidator.situacionComercialPublicadoAlquiler(activo)) {
 							listaFilas.add(i);	
 						}
 					}

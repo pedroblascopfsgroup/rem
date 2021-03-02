@@ -4353,10 +4353,11 @@ public class AgrupacionAdapter {
 					if (dto.getMarcaDeExcluido() != null) {
 						if (dto.getMarcaDeExcluido()) {
 							codigoSinSino = DDSinSiNo.CODIGO_SI;
-							Filter filtroMotivoExcluido = genericDao.createFilter(FilterType.EQUALS, "codigo",
-									dto.getMotivoDeExcluidoCodigo());
-							DDMotivoGestionComercial ddtr1 = genericDao.get(DDMotivoGestionComercial.class, filtroMotivoExcluido);
-							perimetroActivo.setMotivoGestionComercial(ddtr1);
+							if(dto.getMotivoDeExcluidoCodigo() != null) {
+								Filter filtroMotivoExcluido = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoDeExcluidoCodigo());
+								DDMotivoGestionComercial ddtr1 = genericDao.get(DDMotivoGestionComercial.class, filtroMotivoExcluido);
+								perimetroActivo.setMotivoGestionComercial(ddtr1);
+							}
 						} else {
 							codigoSinSino = DDSinSiNo.CODIGO_NO;
 							perimetroActivo.setMotivoGestionComercial(null);

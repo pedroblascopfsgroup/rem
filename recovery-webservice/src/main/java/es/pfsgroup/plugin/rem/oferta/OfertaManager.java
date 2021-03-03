@@ -837,64 +837,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getImporte())) {
 				oferta.setImporteOferta(ofertaDto.getImporte());
 			}
-			if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote()) {
+			if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote() && !Checks.esNulo(agrup)) {
 				List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
-				boolean esLoteComercial = false;
-
-				for (ActivosLoteOfertaDto idActivo : ofertaDto.getActivosLote()) {
-					ActivoAgrupacion agrupacion = null;
-					List<ActivoOferta> buildListaActOfr = new ArrayList<ActivoOferta>();
-					List<ActivoAgrupacionActivo> listaAgrups = null;
-
-					activo = genericDao.get(Activo.class,
-							genericDao.createFilter(FilterType.EQUALS, "numActivo", idActivo.getIdActivoHaya()));
-					if (!Checks.esNulo(activo)) {
-
-						// Comprobamos si el activo pertenece a una agrupación
-						// restringida o de lote comercial
-						DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
-						dtoAgrupActivo.setActId(activo.getId());
-						dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
-						listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
-
-						if (Checks.esNulo(listaAgrups) || listaAgrups.isEmpty()) {
-							dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA);
-							listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
-							esLoteComercial = true;
-						}
-
-						if (Checks.esNulo(listaAgrups) || listaAgrups.isEmpty()) {
-							dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER);
-							listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
-							esLoteComercial = true;
-						}
-
-						if (!Checks.esNulo(listaAgrups) && !listaAgrups.isEmpty()) {
-							ActivoAgrupacionActivo agrAct = listaAgrups.get(0);
-							if (!Checks.esNulo(agrAct) && !Checks.esNulo(agrAct.getAgrupacion())) {
-								// Seteamos la agrupación a la oferta
-								agrupacion = agrAct.getAgrupacion();
-								oferta.setAgrupacion(agrupacion);
-								esLoteComercial = true;
-							}
-						}
-
-						if (!Checks.esNulo(agrupacion)) {
-							// Oferta sobre 1 lote restringido de n activos
-							buildListaActOfr = buildListaActivoOferta(null, agrupacion, oferta);
-							listaActOfr.addAll(buildListaActOfr);							
-						} else {
-							// Oferta sobre 1 único activo
-							buildListaActOfr = buildListaActivoOferta(activo, null, oferta);
-							listaActOfr.addAll(buildListaActOfr);
-						}
-						if(esLoteComercial) break;
-					}
-				}
-
-				// Seteamos la lista de ActivosOferta
+			
+				listaActOfr = buildListaActivoOferta(null, agrup, oferta);			
 				oferta.setActivosOferta(listaActOfr);
-				// Seteamos la agrupación a la que pertenece la oferta
 				oferta.setAgrupacion(agrup);
 
 			} else if (!Checks.esNulo(ofertaDto.getIdActivoHaya())) {

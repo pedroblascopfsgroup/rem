@@ -1760,11 +1760,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setDqTipologiaFase1(actDatosDq.getTipoActivo().getDescripcion());
 		}
 		//Subtipologia
-		if(activo.getSubtipoTitulo() !=null && activo.getSubtipoTitulo().getDescripcion() != null) {
-			dto.setDrSubtipologianFase1(activo.getSubtipoTitulo().getDescripcion());
+		if(activo.getSubtipoActivo() !=null && activo.getSubtipoActivo().getDescripcion() != null) {
+			dto.setDrSubtipologianFase1(activo.getSubtipoActivo().getDescripcion());
 		}
-		if(actDatosDq.getSubtipoTitulo() !=null && actDatosDq.getSubtipoTitulo().getDescripcion() != null) {
-			dto.setDqSubtipologiaFase1(actDatosDq.getSubtipoTitulo().getDescripcion());
+		if(actDatosDq.getSubtipoActivo() !=null && actDatosDq.getSubtipoActivo().getDescripcion() != null) {
+			dto.setDqSubtipologiaFase1(actDatosDq.getSubtipoActivo().getDescripcion());
 			
 		}
 		//Informacion Cargas
@@ -2958,13 +2958,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			}
 		}
 		
-		if(activo.getSubtipoTitulo() !=null && actDatosDq.getSubtipoTitulo() != null) {
-			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Subtipologia", activo.getSubtipoTitulo().getDescripcion(), actDatosDq.getSubtipoTitulo().getDescripcion(), CALIDADDATO_REGISTRO));
+		if(activo.getSubtipoActivo() !=null && actDatosDq.getSubtipoActivo() != null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Subtipologia", activo.getSubtipoActivo().getDescripcion(), actDatosDq.getSubtipoActivo().getDescripcion(), CALIDADDATO_REGISTRO));
 		}else {
-			if (activo.getSubtipoTitulo() !=null) {
-				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Subtipologia", activo.getSubtipoTitulo().getDescripcion(), "", CALIDADDATO_REGISTRO));
-			}else if(actDatosDq.getSubtipoTitulo() != null) {
-				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Subtipologia", "", actDatosDq.getSubtipoTitulo().getDescripcion(), CALIDADDATO_REGISTRO));
+			if (activo.getSubtipoActivo() !=null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Subtipologia", activo.getSubtipoActivo().getDescripcion(), "", CALIDADDATO_REGISTRO));
+			}else if(actDatosDq.getSubtipoActivo() != null) {
+				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Subtipologia", "", actDatosDq.getSubtipoActivo().getDescripcion(), CALIDADDATO_REGISTRO));
 			}else {
 				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Subtipologia", "", "", CALIDADDATO_REGISTRO));
 			}
@@ -3269,8 +3269,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Tipologia", "", CALIDADDATO_REGISTRO));
 		}
 		
-		if(activo.getSubtipoTitulo() !=null) {
-			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Subtipologia", activo.getSubtipoTitulo().getDescripcion(), CALIDADDATO_REGISTRO));
+		if(activo.getSubtipoActivo() !=null) {
+			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Subtipologia", activo.getSubtipoActivo().getDescripcion(), CALIDADDATO_REGISTRO));
 		}else {			
 			listCalidadDatoPub.add(new DtoCalidadDatoPublicacionGrid("Subtipologia", "",CALIDADDATO_REGISTRO));		
 		}

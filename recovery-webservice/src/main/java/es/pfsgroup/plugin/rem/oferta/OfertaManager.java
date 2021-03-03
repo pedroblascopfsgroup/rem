@@ -4953,21 +4953,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			
 				dtoFichaComercial.setNumExpediente(expediente.getNumExpediente());
-				if(expediente.getComiteSancion() != null) {
-					if(DDComiteSancion.CODIGO_HAYA_BBVA.equals(expediente.getComiteSancion().getCodigo())) {
-						dtoFichaComercial.setComite("Si");
-					}else {
-						dtoFichaComercial.setComite("No");
-						if(oferta.getImporteOferta() <= 150000) {
-							dtoFichaComercial.setDtoComite(0.10);
-						} else {
-							dtoFichaComercial.setDtoComite(0.05);
-						}
-					}
-				}
-				else {
-					dtoFichaComercial.setComite("");
-				}
+				
 			}
 
 			if(oferta.getAgrupacion() != null) {
@@ -6087,6 +6073,25 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				listaFichaAutorizacion.add(ficha);
 				
+			}
+			if(expediente.getComiteSancion() != null) {
+				if(DDComiteSancion.CODIGO_HAYA_BBVA.equals(expediente.getComiteSancion().getCodigo())) {
+					dtoFichaComercial.setComite("Si");
+				}else {
+					dtoFichaComercial.setComite("No");
+					if(dtoFichaComercial.getTotalOferta() != null && dtoFichaComercial.getPrecioComiteActual() != null && dtoFichaComercial.getPrecioComiteActual() != 0.0) {
+
+						BigDecimal valorTotalOfertaBigDecimal  = new BigDecimal(dtoFichaComercial.getTotalOferta());
+						BigDecimal precioComiteActualBigDecimal  = new BigDecimal(dtoFichaComercial.getPrecioComiteActual());
+						BigDecimal porcien  = new BigDecimal(100);
+						BigDecimal resta = valorTotalOfertaBigDecimal.subtract(precioComiteActualBigDecimal);
+						BigDecimal multy = resta.multiply(porcien);
+						dtoFichaComercial.setDtoComite(multy.divide(precioComiteActualBigDecimal, 0, 2));
+					}
+				}
+			}
+			else {
+				dtoFichaComercial.setComite("");
 			}
 			
 			dtoFichaComercial.setListaFichaAutorizacion(listaFichaAutorizacion);

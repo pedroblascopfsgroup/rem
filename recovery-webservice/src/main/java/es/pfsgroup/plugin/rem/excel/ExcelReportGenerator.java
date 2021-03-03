@@ -1075,7 +1075,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
 			if(dtoExcelFichaComercial.getDtoComite() != null) {
-			c.setCellValue(dtoExcelFichaComercial.getDtoComite());
+			c.setCellValue(dtoExcelFichaComercial.getDtoComite().doubleValue());
 			}else {
 			c.setCellValue("");	
 			}

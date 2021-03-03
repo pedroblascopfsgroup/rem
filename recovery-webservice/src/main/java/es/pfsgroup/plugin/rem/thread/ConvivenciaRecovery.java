@@ -27,13 +27,13 @@ public class ConvivenciaRecovery implements Runnable{
     private PlatformTransactionManager transactionManager;
 	
 	private final Log logger = LogFactory.getLog(getClass());
-	private Activo activo = null;
+	private Long idActivo = null;
 	private ModelMap model = null;
 	private String userName = null;
 	
-	public ConvivenciaRecovery(Activo activo, ModelMap model, String userName) {
+	public ConvivenciaRecovery(Long idActivo, ModelMap model, String userName) {
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-		this.activo = activo;
+		this.idActivo = idActivo;
 		this.model = model;
 		this.userName = userName;
 	}
@@ -43,7 +43,7 @@ public class ConvivenciaRecovery implements Runnable{
 		
 		try {
 			restApi.doSessionConfig(this.userName);
-			recoveryComunicacionManager.datosCliente(this.activo, this.model);
+			recoveryComunicacionManager.datosCliente(this.idActivo, this.model);
 			
 		} catch (Exception e) {
 			logger.error("error en la convivencia REM-RCV", e);

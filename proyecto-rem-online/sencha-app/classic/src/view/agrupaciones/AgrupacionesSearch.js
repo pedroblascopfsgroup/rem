@@ -113,7 +113,9 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesSearch', {
 					            	name: 'nombre'					            
 					            },
 					            { 
-						        	xtype: 'combo',						      
+						        	xtype: 'combo',
+						        	editable: false,
+						        	disabled: true,
 						        	fieldLabel:  HreRem.i18n('fieldlabel.publicada.web'),						        
 						        	name: 'publicado',
 						        	bind: {

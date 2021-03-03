@@ -2131,7 +2131,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private void getDatosActivoSinDQ(DtoCalidadDatoPublicacionActivo dto, Activo activo) {
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		ActivoPropietarioActivo activoPropietario  = genericDao.get(ActivoPropietarioActivo.class, filter);
-		ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class,filter);
+		ActivoCatastro activoCatastro = null;
+		Order order = new Order(OrderType.DESC,"id");
+		List <ActivoCatastro> actCatastroList = genericDao.getListOrdered(ActivoCatastro.class, order, filter);
+
+		if(actCatastroList != null && !actCatastroList.isEmpty()) {
+			activoCatastro = actCatastroList.get(0);
+		}
+		
 		if(activo.getInfoRegistral()!=null && activo.getInfoRegistral().getInfoRegistralBien() != null){
 			if (activo.getInfoRegistral().getIdufir() != null) {
 				dto.setDrIdufirFase1(activo.getInfoRegistral().getIdufir());
@@ -2393,7 +2400,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	}
 	private void setDataFase3(DtoCalidadDatoPublicacionActivo dto, Activo activo, ActivoDatosDq actDatosDq) {
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());		
-		ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class,filter);
+		Order order = new Order(OrderType.DESC,"id");
+		List <ActivoCatastro> actCatastroList = genericDao.getListOrdered(ActivoCatastro.class, order, filter);
+		ActivoCatastro activoCatastro =null;
+
+		if(actCatastroList != null && !actCatastroList.isEmpty()) {
+			activoCatastro = actCatastroList.get(0);
+		}
+		
 		
 		if(activo.getInfoRegistral() != null && activo.getInfoRegistral().getInfoRegistralBien() != null) {	
 			if (activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida() != null) {
@@ -3204,8 +3218,15 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		String valorIncripcionCorrectaActivoDq = "";
 		
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Order order = new Order(OrderType.DESC,"id");
 		ActivoPropietarioActivo activoPropietario  = genericDao.get(ActivoPropietarioActivo.class, filter);
-		ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class,filter);
+		List <ActivoCatastro> actCatastroList = genericDao.getListOrdered(ActivoCatastro.class, order, filter);
+		ActivoCatastro activoCatastro =null;
+
+		if(actCatastroList != null && !actCatastroList.isEmpty()) {
+			activoCatastro = actCatastroList.get(0);
+		}
+
 		
 		//FASE 2
 		if (activo.getInfoRegistral() != null) {

@@ -26,6 +26,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
@@ -60,8 +61,8 @@ public class ActivoDatosDq implements Serializable, Auditable {
     private DDTipoActivo tipoActivo;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_STA_ID")
-    private DDSubtipoTituloActivo subtipoTitulo;
+    @JoinColumn(name = "DD_SAC_ID")
+    private DDSubtipoActivo subtipoActivo;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TUD_ID")
@@ -236,13 +237,14 @@ public class ActivoDatosDq implements Serializable, Auditable {
 	public void setTipoActivo(DDTipoActivo tipoActivo) {
 		this.tipoActivo = tipoActivo;
 	}
+	
 
-	public DDSubtipoTituloActivo getSubtipoTitulo() {
-		return subtipoTitulo;
+	public DDSubtipoActivo getSubtipoActivo() {
+		return subtipoActivo;
 	}
 
-	public void setSubtipoTitulo(DDSubtipoTituloActivo subtipoTitulo) {
-		this.subtipoTitulo = subtipoTitulo;
+	public void setSubtipoActivo(DDSubtipoActivo subtipoActivo) {
+		this.subtipoActivo = subtipoActivo;
 	}
 
 	public DDTipoUsoDestino getTipoUsoDestino() {

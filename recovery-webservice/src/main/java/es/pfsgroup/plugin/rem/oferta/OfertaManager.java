@@ -227,6 +227,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	private static final String T017 = "T017";
 	private static final String DD_TCR_CODIGO_OBRA_NUEVA = "03";
+	private static final String CODIGO_TIPO_GESTOR_COMERCIAL = "GCOM";
 
 	@Resource
 	MessageService messageServices;
@@ -6264,7 +6265,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private void setInformacionGestorComercial(DtoExcelFichaComercial dtoFichaComercial, Long idActivo) {
 		List<DtoListadoGestores> gestoresList = activoAdapterApi.getGestores(idActivo);
 		for (DtoListadoGestores gestor : gestoresList) {
-			if ("HAYAGBOINM".equals(gestor.getCodigo()) && gestor.getFechaHasta() == null) {
+			if (CODIGO_TIPO_GESTOR_COMERCIAL.equals(gestor.getCodigo()) && gestor.getFechaHasta() == null) {
 				dtoFichaComercial.setNombreYApellidosComercial(gestor.getApellidoNombre());
 				dtoFichaComercial.setTelefonoComercial(gestor.getTelefono());
 				dtoFichaComercial.setCorreoComercial(gestor.getEmail());

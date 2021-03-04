@@ -1456,10 +1456,11 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
-					if(particularValidator.activoEnAgrupacionRestringida(Long.valueOf(activo))) {
-						if(particularValidator.activoNoPrincipalEnAgrupacionRestringida(activo)) {
+					String celdaVisibleGestionComercial = exc.dameCelda(i, COL_NUM_VISIBLE_GESTION_COMERCIAL_SN);
+					if (!Checks.esNulo(celdaVisibleGestionComercial) &&
+						Arrays.asList(listaValidosPositivos).contains(celdaVisibleGestionComercial.toUpperCase())&&
+						particularValidator.activoNoPrincipalEnAgrupacionRestringida(activo)) {
 							listaFilas.add(i);	
-						}
 					}
 				} catch (ParseException e) {
 					listaFilas.add(i);

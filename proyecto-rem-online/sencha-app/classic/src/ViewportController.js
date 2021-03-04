@@ -181,7 +181,7 @@ Ext.define('HreRem.view.ViewportController', {
         if (node && node.get('view')) {
 			if(node.get("routeId") == "masivo"){
 				if(tree.lastNode != null && tree.lastNode.get("routeId") != "masivo")
-					me.fireEvent("errorToast", "Para ir a \"Carga Masiva\" utilice el panel de Haya!");
+					me.fireEvent("errorToast", "Para acceder a este m&oacute;dulo dir&iacute;jase a REM Cargas Masivas");
 				tree.setSelection(tree.lastNode);
 			}else{
 				this.redirectTo( node.get("routeId"));

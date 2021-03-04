@@ -180,7 +180,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE)"
 				+"              AND aga.AGA_PRINCIPAL = 0"
 				+ "			    AND aga.BORRADO  = 0 "
-				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND agr.BORRADO  = 0 "
 				+ "			    AND act.BORRADO  = 0 ");
 		return "1".equals(resultado);

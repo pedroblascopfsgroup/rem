@@ -92,6 +92,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final String VALID_CAJAMAR_VPO = "msg.error.masivo.actualizar.perimetro.activo.cajamar";
 	public static final String VALID_AGRUPACION_RESTRINGIDA = "msg.error.masivo.agrupacion.restringida";
 	public static final String VALID_ACTIVO_BBVA_SOCIEDAD_PARTICIPADA = "msg.error.masivo.activo.BBVA.sociedad.participada";
+	public static final String VALID_VALORES_NUMERICOS = "msg.error.masivo.activo.valores.numericos";	
+	public static final String VALID_VALORES_VALIDOS_EN_VISIBLE_GESTION_COMERCIAL = "msg.error.masivo.actualizar.validos.visible.gestion.comercial";
 
 
 	//Posición de los datos
@@ -141,6 +143,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
     private static final String COD_NO_EXCLUIR_VALIDACIONES ="2";
     private static final String COD_EXCLUIR_VALIDACIONES ="1";
 
+    private static final String [] listaExcluir = {"1","2",""};  
 
     protected final Log logger = LogFactory.getLog(getClass());
     
@@ -242,6 +245,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(messageServices.getMessage(VALID_ACTIVO_BBVA_SOCIEDAD_PARTICIPADA), activoBBVAPerteneceSociedadParticipada(exc));
 				
 
+				mapaErrores.put(messageServices.getMessage(VALID_VALORES_NUMERICOS), isNumericoODiferenteVacio(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_VALORES_VALIDOS_EN_VISIBLE_GESTION_COMERCIAL), isBooleanValidator(exc,COL_NUM_VISIBLE_GESTION_COMERCIAL_SN));
 				
 
 
@@ -497,7 +502,6 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();
 					valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
 					valorConPublicar = exc.dameCelda(i, COL_NUM_CON_PUBLICAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_PUBLICAR_SN).trim().toUpperCase();
-					valorGestionComercial = exc.dameCelda(i, COL_NUM_VISIBLE_GESTION_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_VISIBLE_GESTION_COMERCIAL_SN).trim().toUpperCase();
 					
 					// Valida valores correctos de los campos S/N/<nulo>
 					if(!("S".equals(valorEnPerimetro) || "N".equals(valorEnPerimetro) || "-".equals(valorEnPerimetro))
@@ -505,7 +509,6 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 							|| !("S".equals(valorConComercial) || "N".equals(valorConComercial) || "-".equals(valorConComercial))
 							|| !("S".equals(valorConFormalizar) || "N".equals(valorConFormalizar) || "-".equals(valorConFormalizar))
 							|| !("S".equals(valorConPublicar) || "N".equals(valorConPublicar) || "-".equals(valorConPublicar))
-							|| !("S".equals(valorGestionComercial) || "N".equals(valorGestionComercial) || "-".equals(valorGestionComercial))
 							)
 						listaFilas.add(i);
 				} catch (ParseException e) {
@@ -1215,7 +1218,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					}else {
 						valorCeldaInteger = 2;
 					}
-					if (!Checks.esNulo(celdaVisibleGestionComercial) && !particularValidator.isCheckVisibleGestionComercial(numActivo,valorCeldaInteger)){
+					if (!Checks.esNulo(celdaVisibleGestionComercial) && valorCeldaInteger == 1 && !particularValidator.isCheckVisibleGestionComercial(numActivo,valorCeldaInteger)){
 						listaFilas.add(i);				
 					}
 				} catch (ParseException e) {
@@ -1505,10 +1508,11 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
-					if(particularValidator.activoEnAgrupacionRestringida(Long.valueOf(activo))) {
-						if(particularValidator.activoNoPrincipalEnAgrupacionRestringida(activo)) {
+					String celdaVisibleGestionComercial = exc.dameCelda(i, COL_NUM_VISIBLE_GESTION_COMERCIAL_SN);
+					if (!Checks.esNulo(celdaVisibleGestionComercial) &&
+						Arrays.asList(listaValidosPositivos).contains(celdaVisibleGestionComercial.toUpperCase())&&
+						particularValidator.activoNoPrincipalEnAgrupacionRestringida(activo)) {
 							listaFilas.add(i);	
-						}
 					}
 				} catch (ParseException e) {
 					listaFilas.add(i);
@@ -1591,4 +1595,29 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	
 
 
+	private List<Integer> isNumericoODiferenteVacio(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					String escluir= exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
+				
+					if(!Arrays.asList(listaExcluir).contains(escluir) )
+						listaFilas.add(i);
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
 }

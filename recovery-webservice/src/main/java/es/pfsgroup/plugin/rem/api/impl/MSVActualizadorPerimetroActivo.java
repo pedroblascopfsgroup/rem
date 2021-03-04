@@ -63,6 +63,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
     private static final Integer CHECK_NO_CAMBIAR = -1;
     private static final String[] listaValidosPositivos = { "S", "SI" };
 	private static final String[] listaValidosNegativos = { "N", "NO" };
+	private static final String VALOR_NO = "2";
 
     @Autowired
     private ActivoAdapter activoAdapter;
@@ -313,8 +314,12 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 						if(!Checks.esNulo(motivoGestionComercial) && motivoGestionComercial.length() > 1) {
 							perimetroActivo.setMotivoGestionComercial((DDMotivoGestionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, motivoGestionComercial.substring(0, 2)));
 						}
-						if(!Checks.esNulo(exclusionValidaciones) && exclusionValidaciones.length() > 1) {
-							perimetroActivo.setExcluirValidaciones(((DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, exclusionValidaciones.substring(0, 2))));
+						if(exclusionValidaciones!=null && !exclusionValidaciones.isEmpty()) {
+							perimetroActivo.setExcluirValidaciones(((DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, exclusionValidaciones)));
+							
+						}	
+						if(VALOR_NO.equals(exclusionValidaciones) || exclusionValidaciones.isEmpty()) {
+							perimetroActivo.setMotivoGestionComercial(null);
 						}
 						if(!Checks.esNulo(fechaCambio)) {
 							SimpleDateFormat sdfSal = new SimpleDateFormat("dd/MM/yyyy"); 

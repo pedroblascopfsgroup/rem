@@ -4,6 +4,8 @@ import org.springframework.ui.ModelMap;
 
 public interface BoardingComunicacionApi {
 	
-	public void datosCliente(Long numExpediente, Long numOferta, ModelMap model);
+	public String actualizarOfertaBoarding(Long numExpediente, Long numOferta, ModelMap model);
+
+	public boolean modoRestClientBoardingActivado();
 
 }

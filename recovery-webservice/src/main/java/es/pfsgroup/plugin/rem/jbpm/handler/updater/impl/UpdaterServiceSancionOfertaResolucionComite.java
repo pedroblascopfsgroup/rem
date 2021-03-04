@@ -178,10 +178,6 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 							// Se comprueba si cada activo tiene KO de admisión o de gestión
 							// y se envía una notificación
 							notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
-							
-							if(ofertaAceptada.getOfertaEspecial() != null && !ofertaAceptada.getOfertaEspecial()) {
-								boardingComunicacionApi.datosCliente(expediente.getNumExpediente(), ofertaAceptada.getNumOferta(), new ModelMap());
-							}
 														
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {

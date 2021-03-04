@@ -137,11 +137,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 //								ge.setIdTipoGestor(tipoGestorComercial.getId());
 //								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
 //								
-//							}	
-							
-							if(ofertaAceptada.getOfertaEspecial() != null && !ofertaAceptada.getOfertaEspecial()) {
-								boardingComunicacionApi.datosCliente(expediente.getNumExpediente(), ofertaAceptada.getNumOferta(), new ModelMap());
-							}
+//							}
 															
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {

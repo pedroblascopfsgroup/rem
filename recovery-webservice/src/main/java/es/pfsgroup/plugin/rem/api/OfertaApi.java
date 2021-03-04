@@ -824,4 +824,6 @@ public interface OfertaApi {
 
 	public DtoExcelFichaComercial getListOfertasFilter(Long idExpediente);
 
+	public String actualizarOfertaBoarding(TareaExterna tareaExterna);
+
 }

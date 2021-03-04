@@ -1935,8 +1935,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		
 		activoManager.actualizarOfertasTrabajosVivos(activo.getId());
 		
-		if(oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial()) {
-			boardingComunicacionApi.datosCliente(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap());
+		if(oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial() && boardingComunicacionApi.modoRestClientBoardingActivado()) {
+			boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap());
 		}
 		
 		return activoTramite;
@@ -1985,8 +1985,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				activoManager.actualizarOfertasTrabajosVivos(idActivo);
 			}
 			
-			if(oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial()) {
-				boardingComunicacionApi.datosCliente(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap());
+			if(oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial() && boardingComunicacionApi.modoRestClientBoardingActivado()) {
+				boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap());
 			}
 		
 		} catch (Exception e) {

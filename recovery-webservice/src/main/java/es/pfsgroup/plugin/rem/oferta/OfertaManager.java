@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
@@ -67,6 +69,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
@@ -223,6 +226,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	private static final String T017 = "T017";
 	private static final String DD_TCR_CODIGO_OBRA_NUEVA = "03";
+	
+	private static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
+	private static final String CODIGO_T017_DEFINICION_OFERTA = "T017_DefinicionOferta";
+	private static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
+	private static final String CODIGO_T017_RESOLUCION_CES = "T017_ResolucionCES";
 
 	@Resource
 	MessageService messageServices;
@@ -356,6 +364,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Autowired
 	private ActivoCargasApi activoCargasApi;
 	
+	@Autowired
+	private BoardingComunicacionApi boardingComunicacionApi;
+	
+	@Resource
+    private Properties appProperties;	
 	
 
 	@Override
@@ -6429,7 +6442,31 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 			return gastoPendiente;
-	}	
+	}
+	
+	@Override
+	public String actualizarOfertaBoarding(TareaExterna tareaExterna) {
+		
+		if(!boardingComunicacionApi.modoRestClientBoardingActivado()) {
+			return null;
+		}
+		
+		String resultado = null;
+		Oferta oferta = tareaExternaToOferta(tareaExterna);
+		ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+		
+		if (oferta != null && expedienteComercial != null && (oferta.getOfertaEspecial() == null || !oferta.getOfertaEspecial())) {
+			if(checkAtribuciones(tareaExterna) && (CODIGO_T013_DEFINICION_OFERTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) ||
+					CODIGO_T017_DEFINICION_OFERTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()))) {
+				resultado = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap());
+			} else if (!checkAtribuciones(tareaExterna) && (CODIGO_T013_RESOLUCION_COMITE.equals(tareaExterna.getTareaProcedimiento().getCodigo()) ||
+					CODIGO_T017_RESOLUCION_CES.equals(tareaExterna.getTareaProcedimiento().getCodigo()))) {
+				resultado = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap());
+			}
+		}
+		
+		return resultado;
+	}
 	
 	
 }

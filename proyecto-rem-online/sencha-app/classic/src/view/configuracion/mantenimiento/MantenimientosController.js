@@ -129,22 +129,34 @@ Ext.define('HreRem.view.configuracion.mantenimiento.MantenimientosController', {
 				grid = view.up('grid');
 			}
 
-			url = $AC.getRemoteUrl('configuracion/deleteMantenimiento');
-			Ext.Ajax.request({
-				url : url,
-				params : {
-					idMantenimiento : idMantenimiento
-				},
-				success : function(response, opts) {
-					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-					grid.getStore().load();
-				},
-				failure : function(record, operation) {
-					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-					
-				},
-				callback : function(record, operation) {
-					me.getView().unmask();
+			Ext.Msg.show({
+				title : HreRem.i18n('title.eliminar'),
+				msg : HreRem.i18n('msg.confirmar.borrado.mantenimiento'),
+				buttons : Ext.MessageBox.YESNO,
+				fn : function(buttonId) {
+
+					if (buttonId == 'yes') {
+						url = $AC.getRemoteUrl('configuracion/deleteMantenimiento');
+						Ext.Ajax.request({
+							url : url,
+							params : {
+								idMantenimiento : idMantenimiento
+							},
+							success : function(response, opts) {
+								me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+								grid.getStore().load();
+							},
+							failure : function(record, operation) {
+								me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+								
+							},
+							callback : function(record, operation) {
+								me.getView().unmask();
+							}
+						});
+					}else{
+						me.getView().unmask();
+					}
 				}
 			});
 		},

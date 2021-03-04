@@ -28,6 +28,46 @@ Ext.define('HreRem.ux.button.BotonTab', {
     beforeClick: function() {
     	return null;
     	
-    }
+    },
+	privates: {
+		            
+		/**
+		 * Overrride del método original para en el momento de hacer el bind llamar al evaluar botones
+			* si el activeTab tiene ocultarbotoneseditar
+		 * @param {} value
+		 * @param {} oldValue
+		 * @param {} binding
+		 */
+		onBindNotify: function(value, oldValue, binding) {
+			binding.syncing = (binding.syncing + 1) || 1;
+			this[binding._config.names.set](value);
+			--binding.syncing;
+			if(binding._config.names.set == 'setHidden'){
+				if(this.itemId == 'botoneditar'){
+					var tabpanel = this.up("tabpanel");
+					if(!Ext.isEmpty(tabpanel)){
+						if(Ext.isDefined(tabpanel.getActiveTab())){
+							if(!tabpanel.getActiveTab().ocultarBotonesEdicion && !value){
+								tabpanel.evaluarBotonesEdicion(tabpanel.getActiveTab());
+							}else{
+								this.hide();
+							}
+						}else{
+							this.hide();
+						}
+					}
+				}else if(this.itemId == 'botonguardar' || this.itemId == 'botoncancelar'){
+					var tabpanel = this.up("tabpanel");
+					if(!Ext.isEmpty(tabpanel)){
+						if(!value)
+							tabpanel.down("[itemId=botoneditar]").hide();
+					}
+				}
+			}
+			this.fireEvent("afterbind", this);
+		
+		}
+
+     }
     
 });

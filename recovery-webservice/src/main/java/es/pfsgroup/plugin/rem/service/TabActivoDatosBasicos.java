@@ -1374,7 +1374,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					DDSinSiNo excluirValidaciones = dto.getCheckExcluirValidacionesGestionComercial() ? (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI) : (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
 					
 					perimetroActivo.setExcluirValidaciones(excluirValidaciones);				
-				}
+				}				
 				
 				if(!Checks.esNulo(dto.getCheckGestorComercial())) {		
 					perimetroActivo.setCheckGestorComercial(dto.getCheckGestorComercial());
@@ -1388,6 +1388,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, null);
 					recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
 					perimetroActivo.setMotivoGestionComercial(motivoGestionComercial);
+				}
+				
+				if(DDSinSiNo.CODIGO_NO.equals(perimetroActivo.getExcluirValidaciones().getCodigo()) && perimetroActivo.getMotivoGestionComercial()!=null) {
+					perimetroActivo.setMotivoGestionComercial(null);
 				}
 
 				beanUtilNotNull.copyProperty(perimetroActivo, "motivoNoAplicaComercializar", dto.getMotivoNoAplicaComercializar());

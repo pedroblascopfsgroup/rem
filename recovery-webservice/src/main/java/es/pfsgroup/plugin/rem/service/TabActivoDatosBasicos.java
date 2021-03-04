@@ -1584,8 +1584,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}else {
 						throw new JsonViewerException("La Promoción con código \""+dto.getCodPromocionBbva()+"\" no existe.");
 					}
-				}else {
-					activoBbva.setCodPromocion(null);
 				}
 				//No comprobar los nulos, porque siempre se van a setear,
 				//controlado por sencha (onSaveFormularioCompleto de ActivoDetalleController.js)

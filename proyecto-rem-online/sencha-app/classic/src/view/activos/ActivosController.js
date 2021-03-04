@@ -400,12 +400,16 @@ Ext.define('HreRem.view.activos.ActivosController', {
     	var me = this,
     	comboTipoActivo = me.lookupReference('comboFiltroTipoActivoSearch'),
     	comboSubTipoActivo = me.lookupReference('comboFiltroSubtipoActivoSearch');
-    	
-    	comboTipoActivo.getStore().load();
     	comboTipoActivo.clearValue();
-    	
-    	comboSubTipoActivo.getStore().load();
     	comboSubTipoActivo.clearValue();
+    	
+    	if (comboTipoActivo.value == null || comboTipoActivo.value == undefined) {
+        	comboTipoActivo.getStore().load();
+		}
+    	
+    	if (comboSubTipoActivo.value == null || comboSubTipoActivo.value == undefined) {
+    		comboSubTipoActivo.getStore().load();
+		}
     	
     }
     

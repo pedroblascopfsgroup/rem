@@ -308,7 +308,7 @@ public interface GenericApi {
 
 	public DDSubestadoGestion getSubestadoGestion(Long idActivo);
 	
-	List<DDSubtipoActivo> getComboSubtipoActivoFiltered(String codTipoActivo);
+	List<DDSubtipoActivo> getComboSubtipoActivoFiltered(String codCartera, String codTipoActivo);
 	
 	List<DDComiteSancion> getComitesResolucionLiberbank(Long idExp)throws Exception;
 

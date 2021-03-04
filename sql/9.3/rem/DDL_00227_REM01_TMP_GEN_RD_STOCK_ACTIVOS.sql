@@ -2,6 +2,7 @@
 --#########################################
 --## AUTOR=DAP
 --## FECHA_CREACION=20210302
+--## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-9099
 --## PRODUCTO=NO

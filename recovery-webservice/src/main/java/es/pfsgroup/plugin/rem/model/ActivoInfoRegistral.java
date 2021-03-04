@@ -108,10 +108,11 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 
 	@Column(name = "REG_FECHA_CFO")
 	private Date fechaCfo;
-
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TIENE_ANEJOS_REGISTRALES")
-	private DDSinSiNo tieneAnejosRegistrales;
+	
+//Para Esparta
+//	@OneToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "TIENE_ANEJOS_REGISTRALES")
+//	private DDSinSiNo tieneAnejosRegistrales;
 
 	@Version   
 	private Long version;
@@ -284,13 +285,13 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
-	public DDSinSiNo getTieneAnejosRegistrales() {
-		return tieneAnejosRegistrales;
-	}
-
-	public void setTieneAnejosRegistrales(DDSinSiNo tieneAnejosRegistrales) {
-		this.tieneAnejosRegistrales = tieneAnejosRegistrales;
-	}
+//	public DDSinSiNo getTieneAnejosRegistrales() {
+//		return tieneAnejosRegistrales;
+//	}
+//
+//	public void setTieneAnejosRegistrales(DDSinSiNo tieneAnejosRegistrales) {
+//		this.tieneAnejosRegistrales = tieneAnejosRegistrales;
+//	}
 	
 	
 }

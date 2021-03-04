@@ -291,8 +291,10 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		if (!Checks.esNulo(dtoAATP.getEsIntegradoDivHorizontalRegistro())){
 			beanUtilNotNull.copyProperty(activoInforRegistral, "divHorInscrito", dtoAATP.getEsIntegradoDivHorizontalRegistro().equalsIgnoreCase("si") ? 1 : 0);
 		}
-		DDSinSiNo ddsino = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDSinSiNo.CODIGO_NO));
-		activoInforRegistral.setTieneAnejosRegistrales(ddsino);
+		
+//Para Esparta
+//		DDSinSiNo ddsino = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDSinSiNo.CODIGO_NO));
+//		activoInforRegistral.setTieneAnejosRegistrales(ddsino);
 		genericDao.save(ActivoInfoRegistral.class, activoInforRegistral);
 		
 		

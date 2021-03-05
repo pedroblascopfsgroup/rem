@@ -39,7 +39,8 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
 		            items: [{
 			            tooltip: HreRem.i18n('tooltip.ver.activo.agrupacion'),
 			            getClass: function(v, metadata, record ) {
-			            	if (Ext.isEmpty(record.get("idAgrupacion"))) {
+//			            	if (Ext.isEmpty(record.get("idAgrupacion"))) {
+			            	if (Ext.isEmpty(record.get("numAgrupacion"))) {
 			            		return 'app-list-ico ico-ver-activov2';
 			            	}
 			            	else{
@@ -51,13 +52,14 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
 			        renderer: function(value, metadata, record) {
 			        	return '<div style="float:left; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>';
 			        },
-		            flex     : 1,
+//		            flex     : 1,
 		            align: 'center',
 		            hideable: false,
 		            sortable: true
 		        },
 		        {	        	
-		            dataIndex: 'estadoOferta',
+//		            dataIndex: 'estadoOferta',
+		        	dataIndex: 'descripcionEstadoOferta',
 		            text: HreRem.i18n('header.oferta.estadoOferta'),
 		            flex: 1		        	
 		        },
@@ -148,10 +150,14 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
 					align	 : 'center',
 					hideable: false,
 					renderer: function(data) {
-	                	if(data == 'true'){
-	                		var data = 'resources/images/green_16x16.png';
-	                		return '<div> <img src="'+ data +'"></div>';
-					    }
+//	                	if(data == 'true'){
+//	                		var data = 'resources/images/green_16x16.png';
+//	                		return '<div> <img src="'+ data +'"></div>';
+//					    }
+						if(data == 1){
+							var png = 'resources/images/green_16x16.png';
+							return '<div> <img src="'+ png +'"></div>';
+							 		 }
 	                }
 						
 				}

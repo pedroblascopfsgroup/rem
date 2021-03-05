@@ -142,6 +142,8 @@ public class OfertasController {
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_DATA_KEY = "data";
+	private static final String RESPONSE_TOTALCOUNT_KEY = "totalCount";
+	private static final String RESPONSE_ERROR_KEY = "error";
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

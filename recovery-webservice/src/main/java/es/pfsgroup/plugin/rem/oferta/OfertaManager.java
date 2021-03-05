@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -127,6 +128,7 @@ import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoListFichaAutorizacion;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.DtoOferta;
+import es.pfsgroup.plugin.rem.model.DtoOfertaGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPrescriptoresComision;
@@ -6625,5 +6627,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		dtoFichaComercial.setPvpComiteGaraje(pvpComiteGaraje);
 		pvpComiteTotal = pvpComiteViviendas+pvpComiteOtros;
 		dtoFichaComercial.setPvpComiteTotal(pvpComiteTotal);
+	}
+
+	@Override
+	public Page getBusquedaOfertasGridUsuario(DtoOfertaGridFilter dto) {
+		// Carterización del buscador.
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				// Pendiente definir filtro para gestoria y usuario gestor
+				// DDIdentificacionGestoria gestoria = gestorActivoApi.isGestoria(usuarioLogado);
+				// dto.setGestoriaBag(gestoria != null ? gestoria.getId() : null);
+				UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+				if (usuarioCartera != null) {
+					dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
+					if (usuarioCartera.getSubCartera() != null) {			
+						dto.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
+					}
+				}		
+				return ofertaDao.getBusquedaOfertasGrid(dto);
 	}
 }

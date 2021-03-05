@@ -103,7 +103,8 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 		            		{
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.oferta'),
-					        	name: 'tipoOferta',
+//					        	name: 'tipoOferta',
+					        	name: 'codigoTipoOferta',
 					        	reference: 'tipoOfertaComercial',
 				            	listeners: {
 							    	change: 'activarComboEstadoExpediente'
@@ -116,7 +117,8 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 					        	xtype: 'comboboxfieldbase',
 					        	multiSelect: true,
 					        	fieldLabel:  HreRem.i18n('fieldlabel.estado.expediente.alquiler'),
-					        	name: 'estadosExpedienteAlquiler',
+//					        	name: 'estadosExpedienteAlquiler',
+					        	name: 'estadoExpedienteAlquiler',
 					        	reference: 'comboExpedienteAlquiler',
 					        	disabled: true,
 					        	bind: {
@@ -127,7 +129,8 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 					        	xtype: 'comboboxfieldbase',
 					        	multiSelect: true,
 					        	fieldLabel:  HreRem.i18n('fieldlabel.estado.expediente.venta'),
-					        	name: 'estadosExpediente',
+//					        	name: 'estadosExpediente',
+					        	name: 'estadoExpedienteVenta',
 					        	reference: 'comboExpedienteVenta',
 					        	disabled: true,
 					        	bind: {
@@ -138,7 +141,8 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 					        	xtype: 'comboboxfieldbase',
 					        	multiSelect: false,
 					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.comercializar'),
-					        	name: 'tipoComercializacion',
+//					        	name: 'tipoComercializacion',
+					        	name: 'tipoComercializacionCodigo',
 					        	bind: {
 					        		store: '{comboTiposComercializarActivo}'					        		
 					        	}
@@ -147,8 +151,8 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.gestor'),
 					        	bind: {
-				            		store: '{comboTipoGestorOfertas}',
-				            		value: $AU.userTipoGestor()				            			
+				            		store: '{comboTipoGestorOfertas}'
+//				            		,value: $AU.userTipoGestor()				            			
 				            	},
 								reference: 'tipoGestor',
 								name: 'tipoGestor',
@@ -193,7 +197,8 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 					        	xtype: 'comboboxfieldbase',
 					        	multiSelect: true,
 					        	fieldLabel:  HreRem.i18n('fieldlabel.estado.oferta'),
-					        	name: 'estadosOferta',					        	
+//					        	name: 'estadosOferta',
+					        	name: 'codigoEstadoOferta',
 				            	bind: {
 				            		store: '{comboEstadoOferta}'
 				            	}				            	
@@ -202,7 +207,8 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 					        	xtype: 'comboboxfieldbase',
 					        	multiSelect: false,
 					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.clase.activo'),
-					        	name: 'claseActivoBancario',
+//					        	name: 'claseActivoBancario',
+					        	name: 'claseActivoBancarioCodigo',
 					        	bind: {
 					        		store: '{comboClaseActivo}'
 					        	}
@@ -224,8 +230,8 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 								queryMode: 'local',
 					        	bind: {
 				            		store: '{comboUsuarios}',
-				            		disabled: '{!tipoGestor.selection}',
-				            		value: $AU.getUser().userId				            			
+				            		disabled: '{!tipoGestor.selection}'
+//				            		,value: $AU.getUser().userId				            			
 				            	},
 				            	displayField: 'apellidoNombre',
 	    						valueField: 'id',
@@ -270,11 +276,14 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
     				        	displayField: 'descripcion',
         						valueField: 'codigo',
     				        	bind: {
-    			            		store: '{comboEntidadPropietaria}'
+//    			            		store: '{comboEntidadPropietaria}'
+    				        		store: '{comboCartera}'
     			            	},
-    			            	reference: 'comboCarteraOfertaSearch',
+//    			            	reference: 'comboCarteraOfertaSearch',
+    			            	reference: 'comboCarteraSearch',
     			            	chainedStore: 'comboSubcarteraFiltered',
     							chainedReference: 'comboSubcarteraOfertaSearch',
+    							publishes: 'value',
     							listeners: {
     								select: 'onChangeChainedCombo'
     							}
@@ -284,7 +293,13 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 					        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
 					        	name: 'subcarteraCodigo',
 					        	bind: {
-				            		store: '{comboSubcarteraFiltered}'
+//				            		store: '{comboSubcarteraFiltered}'
+					        		store: '{comboSubcartera}',
+					        		disabled: '{!comboCarteraSearch.selection}',
+					        		filters: {
+					        			property: 'carteraCodigo',
+					        			value: '{comboCarteraSearch.value}'
+					        		}
 				            	},
 				            	reference: 'comboSubcarteraOfertaSearch',
 				            	valueField: 'codigo',
@@ -305,8 +320,9 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 	    						valueField: 'id',
 					        	bind: {
 				            		store: '{comboUsuariosGestoria}',
-				            		value: $AU.getUser().userId,
-				            	    readOnly: $AU.userTipoGestor()=="GIAFORM"
+//				            		value: $AU.getUser().userId,
+//				            	    readOnly: $AU.userTipoGestor()=="GIAFORM"
+				            		readOnly: !$AU.userIsRol("HAYASUPER")
 				            	},
 								name: 'gestoria'
 							},

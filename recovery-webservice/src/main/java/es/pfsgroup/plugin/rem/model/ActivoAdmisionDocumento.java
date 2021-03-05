@@ -114,7 +114,7 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 	private String registro;
 	
 	@Column(name = "ADO_NO_VALIDADO")
-	private Boolean validado;
+	private Boolean noValidado;
 		
 	@Version   
 	private Long version;
@@ -299,13 +299,15 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
-	public Boolean getValidado() {
-		return validado;
+	public Boolean getNoValidado() {
+		return noValidado;
 	}
 
-	public void setValidado(Boolean validado) {
-		this.validado = validado;
+	public void setNoValidado(Boolean noValidado) {
+		this.noValidado = noValidado;
 	}
+
+
 	
 	
 }

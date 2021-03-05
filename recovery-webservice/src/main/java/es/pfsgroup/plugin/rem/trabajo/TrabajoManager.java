@@ -6649,7 +6649,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			List<ActivoTrabajo> activoTrabajoList = genericDao.getList(ActivoTrabajo.class, filtro4,filtro3);
 			for (ActivoTrabajo activoTrabajo : activoTrabajoList) {
 				if(activoTrabajo.getTrabajo() != null && activoTrabajo.getTrabajo().getEstado() != null && 
-						DDEstadoTrabajo.ESTADO_VALIDADO.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())){
+						!DDEstadoTrabajo.ESTADO_VALIDADO.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())){
 					return true;
 				}
 			}

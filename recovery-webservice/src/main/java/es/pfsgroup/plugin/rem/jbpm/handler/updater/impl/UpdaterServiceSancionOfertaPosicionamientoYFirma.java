@@ -197,7 +197,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							situacionPosesoria.setFechaModificarConTitulo(new Date());
 							
 							if(situacionPosesoria!=null && usu!=null) {			
-								HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,situacionPosesoria,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
+								HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,situacionPosesoria,usu,HistoricoOcupadoTitulo.COD_OFERTA_VENTA,null);
 								genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
 							}
 
@@ -218,7 +218,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							situacionPosesoria.setFechaModificarConTitulo(new Date());
 							
 							if(situacionPosesoria!=null && usu!=null) {			
-								HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,situacionPosesoria,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
+								HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,situacionPosesoria,usu,HistoricoOcupadoTitulo.COD_OFERTA_VENTA,null);
 								genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
 							}
 

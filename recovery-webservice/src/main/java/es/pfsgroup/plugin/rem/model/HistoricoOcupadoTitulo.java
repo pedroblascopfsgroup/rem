@@ -37,6 +37,7 @@ public class HistoricoOcupadoTitulo implements Serializable,Auditable {
     public static String COD_PATRIMONIO = "Pestaña de patrimonio como ";
     public static String COD_OFERTA_ALQUILER = "Oferta de alquiler";
     public static String COD_CARGA_MASIVA = "Carga masiva ";
+    public static String COD_OFERTA_VENTA = "Oferta de venta";
     public static final long serialVersionUID = 1L;
     
    

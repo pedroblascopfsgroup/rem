@@ -56,6 +56,7 @@ import es.pfsgroup.plugin.rem.excel.ActivosTrabajoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TrabajoExcelReport;
+import es.pfsgroup.plugin.rem.excel.TrabajoGridExcelReport;
 import es.pfsgroup.plugin.rem.factory.GenerarPropuestaPreciosFactoryApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
@@ -86,6 +87,7 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoParticipa;
 import es.pfsgroup.plugin.rem.model.VBusquedaTrabajos;
+import es.pfsgroup.plugin.rem.model.VGridBusquedaTrabajos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.propuestaprecios.service.GenerarPropuestaPreciosService;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
@@ -99,6 +101,7 @@ import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoAgendaTrabajo;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
+import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoGridFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 import net.sf.json.JSONObject;
@@ -174,6 +177,7 @@ public class TrabajoController extends ParadiseJsonController {
 	private static final String RESPONSE_SUCCESS_KEY = "success";
 	private static final String RESPONSE_ERROR_KEY = "error";
 	private static final String RESPONSE_DATA_KEY = "data";
+	private static final String RESPONSE_TOTALCOUNT_KEY = "totalCount";
 
 	private static final String ERROR_DUPLICADOS_CREAR_TRABAJOS = "El fichero contiene registros duplicados";
 	private static final String ERROR_GD_NO_EXISTE_CONTENEDOR = "No existe contenedor para este trabajo. Se creará uno nuevo.";
@@ -221,6 +225,21 @@ public class TrabajoController extends ParadiseJsonController {
 		
 	}	
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getBusquedaTrabajosGrid(DtoTrabajoGridFilter dto, ModelMap model){	
+		try {
+			Page page = trabajoApi.getBusquedaTrabajosGrid(dto, genericAdapter.getUsuarioLogado());			
+			model.put(RESPONSE_DATA_KEY, page.getResults());
+			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}		
+		return createModelAndViewJson(model);		
+	}
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveFichaTrabajo(ModelMap model, DtoFichaTrabajo dtoTrabajo, @RequestParam Long id, HttpServletRequest request){

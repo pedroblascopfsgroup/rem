@@ -5656,7 +5656,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				
 				List<ActivoTasacion> activoTasacionList = genericDao.getListOrdered(ActivoTasacion.class, orderFechaTasacionDesc, filtroAct_id);
-				if(activoTasacionList != null && activoTasacionList.get(0) != null) {
+				if(activoTasacionList != null && !activoTasacionList.isEmpty() && activoTasacionList.get(0) != null) {
 					activosFichaComercial.setTasacion(activoTasacionList.get(0).getImporteTasacionFin());
 					if(activoTasacionList.get(0).getImporteTasacionFin() != null) {
 						tasacionTotal += activoTasacionList.get(0).getImporteTasacionFin();
@@ -6079,14 +6079,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					dtoFichaComercial.setComite("Si");
 				}else {
 					dtoFichaComercial.setComite("No");
-					if(dtoFichaComercial.getTotalOferta() != null && dtoFichaComercial.getPrecioComiteActual() != null && dtoFichaComercial.getPrecioComiteActual() != 0.0) {
-
-						BigDecimal valorTotalOfertaBigDecimal  = new BigDecimal(dtoFichaComercial.getTotalOferta());
-						BigDecimal precioComiteActualBigDecimal  = new BigDecimal(dtoFichaComercial.getPrecioComiteActual());
-						BigDecimal porcien  = new BigDecimal(100);
-						BigDecimal resta = valorTotalOfertaBigDecimal.subtract(precioComiteActualBigDecimal);
-						BigDecimal multy = resta.multiply(porcien);
-						dtoFichaComercial.setDtoComite(multy.divide(precioComiteActualBigDecimal, 0, 2));
+					if(dtoFichaComercial.getTotalOferta() != null && dtoFichaComercial.getPrecioComiteActual() != null && dtoFichaComercial.getPrecioComiteActual() != 0.0) {						
+						BigDecimal multy = new BigDecimal(dtoFichaComercial.getTotalOferta()).multiply(new BigDecimal(100));
+						BigDecimal porcentaje = multy.divide(new BigDecimal(dtoFichaComercial.getPrecioComiteActual()), 2, 2);
+						BigDecimal resta = new BigDecimal(100).subtract(porcentaje);
+						dtoFichaComercial.setDtoComite(resta);
 					}
 				}
 			}

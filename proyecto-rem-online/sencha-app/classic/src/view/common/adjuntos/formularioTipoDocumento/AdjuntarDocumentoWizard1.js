@@ -26,17 +26,22 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 	initComponent: function() {
 		var me = this;
 		var entidad = me.up('panel').entidad;
-
-		
+		var subtipoTrabajo = null;
+		if(entidad == 'trabajo'){
+		subtipoTrabajo =  me.up().padre.view.refs.subtipoTrabajoComboFicha.value;
+		}
 		var comboTipoDocumento = new Ext.data.Store({
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionarioTiposDocumento',
-				extraParams: {diccionario: 'tiposDocumento', entidad: entidad}
+				extraParams: {diccionario: 'tiposDocumento', entidad: entidad, subtipoTrabajo: subtipoTrabajo}
 			}
 			
     	});
+		
+		
+		
 
 		
 		me.buttons = [

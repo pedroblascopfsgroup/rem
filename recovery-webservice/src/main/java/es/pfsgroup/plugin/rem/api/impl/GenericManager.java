@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PerfilApi;
+import es.pfsgroup.plugin.rem.controller.GenericController;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
@@ -85,6 +86,7 @@ import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.LocalizacionSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.TipoDocumentoSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -113,6 +115,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -121,6 +124,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.propietario.dao.ActivoPropietarioDao;
+import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
 import es.pfsgroup.plugin.rem.trabajo.dao.DDSubtipoTrabajoDao;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -149,6 +153,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 
 	private static final List<String> TABS_BBVA = Arrays.asList(MENU_ACTIVOS, MENU_COMERCIAL);
+	
+	private static final String DICCIONARIO_TIPO_DOCUMENTO_ENTIDAD_ACTIVO = "activo";
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -1564,6 +1570,29 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			}
 		}
 		return listaResultado;
+	}
+	
+	@Override
+	public List<DDTipoDocumentoActivoDto> getDiccionarioTiposDocumentoBySubtipoTrabajo(String subtipoTrabajo , String entidad) {
+		Filter filtroSubtipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.id", Long.parseLong(subtipoTrabajo));
+		List<DDTipoDocumentoActivoDto> out = new ArrayList<DDTipoDocumentoActivoDto>();
+		List<TipoDocumentoSubtipoTrabajo> subtipoDocumentoSubtipoTrabajoList =  genericDao.getList(TipoDocumentoSubtipoTrabajo.class, filtroSubtipoTrabajo);
+		if(subtipoDocumentoSubtipoTrabajoList != null && !subtipoDocumentoSubtipoTrabajoList.isEmpty()) {
+			for (TipoDocumentoSubtipoTrabajo tipoDocumentoSubtipoTrabajo : subtipoDocumentoSubtipoTrabajoList) {
+				if(tipoDocumentoSubtipoTrabajo.getTipoDocumento() != null) {
+					if(DICCIONARIO_TIPO_DOCUMENTO_ENTIDAD_ACTIVO.equals(entidad)){
+						if(tipoDocumentoSubtipoTrabajo.getTipoDocumento().getVisible()){
+							out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) tipoDocumentoSubtipoTrabajo.getTipoDocumento()));
+						}
+					}else {
+						if(!tipoDocumentoSubtipoTrabajo.getTipoDocumento().getVisible()){
+							out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) tipoDocumentoSubtipoTrabajo.getTipoDocumento()));
+						}
+					}
+				}
+			}
+		}
+		return out;
 	}
 
 }

@@ -76,34 +76,46 @@ Ext.define('HreRem.view.activos.detalle.OfertantesOfertaDetalleList', {
 		        	flex:2
 		        },{
 					   xtype: 'actioncolumn',
-					      flex: 1,
-					      hideable: false,
-					      text: HreRem.i18n('column.ofertantes.documento.identificativo'),
-					        items: [{
-					           	iconCls: 'ico-download',
-					           	tooltip: "Documento Identificativo",
-					            handler: function(grid, rowIndex, colIndex) {
-					            	var record = grid.getRecord(rowIndex);
-						            var grid = me;
-						            var idDocumento = record.get('aDCOMIdDocumentoIdentificativo');			
-						            grid.getController().downloadDocumentoAdjuntoOfertasController(grid, record, idDocumento);
-			            		}
-					        }]
+				      flex: 1,
+				      hideable: false,
+				      text: HreRem.i18n('column.ofertantes.documento.identificativo'),
+				        items: [{
+				           	iconCls: 'ico-download',
+				           	tooltip: "Documento Identificativo",
+				            handler: function(grid, rowIndex, colIndex) {
+				            	var record = grid.getRecord(rowIndex);
+					            var grid = me;
+					            var idDocumento = record.get('aDCOMIdDocumentoIdentificativo');			
+					            grid.getController().downloadDocumentoAdjuntoOfertasController(grid, record, idDocumento);
+		            		},
+		            		isDisabled: function(view, rowIndex, colIndex, item, record) {
+		                        if (record.get('aDCOMIdDocumentoIdentificativo') != null) {
+		                        	return false
+		                        }
+		                        return true;
+		                    }
+				        }]
 				   },{
-					   xtype: 'actioncolumn',
-					      flex: 1,
-					      hideable: false,
-					      text: HreRem.i18n('column.ofertantes.documento.gdpr'),
-					        items: [{
-					           	iconCls: 'ico-download',
-					           	tooltip: "Documento GDPR",
-					            handler: function(grid, rowIndex) {
-					            	var record = grid.getRecord(rowIndex);
-						            var grid = me;			
-						            var idDocumento = record.get('aDCOMIdDocumentoGDPR');			
-						            grid.getController().downloadDocumentoAdjuntoOfertasController(grid, record, idDocumento);
-			            		}
-					        }]
+					  xtype: 'actioncolumn',
+				      flex: 1,
+				      hideable: false,
+				      text: HreRem.i18n('column.ofertantes.documento.gdpr'),
+				        items: [{
+				           	iconCls: 'ico-download',
+				           	tooltip: "Documento GDPR",
+				            handler: function(grid, rowIndex) {
+				            	var record = grid.getRecord(rowIndex);
+					            var grid = me;			
+					            var idDocumento = record.get('aDCOMIdDocumentoGDPR');			
+					            grid.getController().downloadDocumentoAdjuntoOfertasController(grid, record, idDocumento);
+		            		},
+		            		isDisabled: function(view, rowIndex, colIndex, item, record) {
+		                        if (record.get('aDCOMIdDocumentoGDPR') != null) {
+		                        	return false
+		                        }
+		                        return true;
+		                    }
+				        }]        
 				   },{
 			        	dataIndex: 'ADCOMIdDocumentoIdentificativo',
 			        	text: HreRem.i18n('fieldlabel.proveedores.id'),

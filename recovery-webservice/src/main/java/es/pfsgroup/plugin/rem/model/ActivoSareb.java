@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCorrectivoSareb;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCuotaComunidad;
 
 /**
  * @author javier.urban@pfsgroup.local
@@ -126,6 +127,10 @@ public class ActivoSareb implements Serializable, Auditable {
 	
 	@Column(name = "FEC_FIN_CORRECTIVO")
     private Date fechaFinCorrectivoSareb;
+	
+	@OneToOne
+    @JoinColumn(name = "DD_TCC_ID")
+	private DDTipoCuotaComunidad tipoCuotaComunidad;
 
 	public Long getId() {
 		return id;
@@ -317,6 +322,14 @@ public class ActivoSareb implements Serializable, Auditable {
 
 	public void setFechaFinCorrectivoSareb(Date fechaFinCorrectivoSareb) {
 		this.fechaFinCorrectivoSareb = fechaFinCorrectivoSareb;
+	}
+
+	public DDTipoCuotaComunidad getTipoCuotaComunidad() {
+		return tipoCuotaComunidad;
+	}
+
+	public void setTipoCuotaComunidad(DDTipoCuotaComunidad tipoCuotaComunidad) {
+		this.tipoCuotaComunidad = tipoCuotaComunidad;
 	}
 	
 	

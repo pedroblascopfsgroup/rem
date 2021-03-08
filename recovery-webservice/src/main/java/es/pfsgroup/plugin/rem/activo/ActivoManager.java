@@ -168,6 +168,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCorrectivoSareb;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCuotaComunidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocPlusvalias;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -3932,6 +3933,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						dto.setTipoCorrectivoSareb(activoSareb.getTipoCorrectivoSareb().getCodigo());
 					}					
 					dto.setFechaFinCorrectivoSareb(activoSareb.getFechaFinCorrectivoSareb());
+					if(activoSareb.getTipoCuotaComunidad() != null) {
+						dto.setTipoCuotaComunidad(activoSareb.getTipoCuotaComunidad().getCodigo());
+					}
 				}
 			}
 
@@ -4014,21 +4018,31 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			}
 			
-			if (dto.getImporteComunidadMensualSareb()!= null && activo.getNumActivo() != null) {
+			if (activo.getNumActivo() != null) {
 				ActivoSareb activoSareb = genericDao.get(ActivoSareb.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activo.getNumActivo()));
 				if(activoSareb != null) {
-					activoSareb.setImporteComunidadMensualSareb(dto.getImporteComunidadMensualSareb());
-					
-					DDSinSiNo siniestro = (DDSinSiNo) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDSinSiNo.class, dto.getSiniestroSareb());
-					activoSareb.setSiniestroSareb(siniestro);
-					
-					DDTipoCorrectivoSareb tipoCorrectivoSareb = (DDTipoCorrectivoSareb) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDTipoCorrectivoSareb.class, dto.getTipoCorrectivoSareb())              ;
-					activoSareb.setTipoCorrectivoSareb(tipoCorrectivoSareb);
-					
-					activoSareb.setFechaFinCorrectivoSareb(dto.getFechaFinCorrectivoSareb());
-					
+					if (dto.getImporteComunidadMensualSareb() != null) {
+						activoSareb.setImporteComunidadMensualSareb(dto.getImporteComunidadMensualSareb());
+					}
+					if(dto.getSiniestroSareb() != null) {
+						DDSinSiNo siniestro = (DDSinSiNo) utilDiccionarioApi
+								.dameValorDiccionarioByCod(DDSinSiNo.class, dto.getSiniestroSareb());
+						activoSareb.setSiniestroSareb(siniestro);
+					}
+					if(dto.getTipoCorrectivoSareb() != null) {
+						DDTipoCorrectivoSareb tipoCorrectivoSareb = (DDTipoCorrectivoSareb) utilDiccionarioApi
+								.dameValorDiccionarioByCod(DDTipoCorrectivoSareb.class, dto.getTipoCorrectivoSareb());
+						activoSareb.setTipoCorrectivoSareb(tipoCorrectivoSareb);
+					}
+					if(dto.getFechaFinCorrectivoSareb() != null) {
+						activoSareb.setFechaFinCorrectivoSareb(dto.getFechaFinCorrectivoSareb());
+					}
+					if(dto.getTipoCuotaComunidad() != null) {
+						DDTipoCuotaComunidad tipoCuotaComunidad = (DDTipoCuotaComunidad) utilDiccionarioApi
+								.dameValorDiccionarioByCod(DDTipoCuotaComunidad.class, dto.getTipoCuotaComunidad());
+						
+						activoSareb.setTipoCuotaComunidad(tipoCuotaComunidad);
+					}
 					genericDao.update(ActivoSareb.class, activoSareb);
 				}
 			}

@@ -292,8 +292,8 @@ public class ActivoPropagacionUAsFieldTabMap {
 	    			"importeComunidadMensualSareb",
 	    			"siniestroSareb",
 	    			"tipoCorrectivoSareb",
-	    			"fechaFinCorrectivoSareb"
-	    			
+	    			"fechaFinCorrectivoSareb",
+	    			"tipoCuotaComunidad"
     			));
 
 /*

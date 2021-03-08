@@ -3768,7 +3768,7 @@ public class ActivoAdapter {
 
 		if(tabActivoService instanceof TabActivoSaneamiento || tabActivoService instanceof TabActivoCargas){
 			if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
-				Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo, new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+				Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
 				llamadaAsincrona.start();
 			}
 		}

@@ -1075,9 +1075,10 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
 			if(dtoExcelFichaComercial.getDtoComite() != null) {
-			c.setCellValue(dtoExcelFichaComercial.getDtoComite());
+				String dtoComiteString = dtoExcelFichaComercial.getDtoComite().toString();
+				c.setCellValue(dtoComiteString + " %");
 			}else {
-			c.setCellValue("");	
+				c.setCellValue("");	
 			}
 
 			cellReference = new CellReference("E34");

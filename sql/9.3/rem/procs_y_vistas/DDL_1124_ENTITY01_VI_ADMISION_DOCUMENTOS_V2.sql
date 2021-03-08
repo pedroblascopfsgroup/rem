@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos Santos Vílchez
---## FECHA_CREACION=20201217
+--## FECHA_CREACION=20210308
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -14,6 +14,9 @@
 --## 		0.2 Versión - HREOS-3118 Añadidos campos fechaCaducidad, fechaEtiqueta, y tipoCalificacionCodigo DANIEL GUTIERREZ 20160408
 --##		0.3 Versión -  Ivan Rubio - HREOS-7997 Añadir campos ADO.DATA_ID_DOCUMENTO, ADO.LETRA_CONSUMO, ADO.CONSUMO, ADO.EMISION, ADO.REGISTRO para admision activos 
 --##		0.4 Versión - Carlos Santos - REMVIP-8402 Añadido filtrado por tipo y comprobación de comunidad autónoma
+--##		0.5 Versión - Jesus Játiva - Exclusion de filtro de tipoActivo para entradas en la CFD HREOS-13379 	
+--##		solo las muestra en el grid si tienen fecha de obtencion	
+--##
 --##########################################
 --*/
 
@@ -68,7 +71,7 @@ BEGIN
 				ADO.EMISION,
 				ADO.REGISTRO
 		FROM ' || V_ESQUEMA || '.ACT_CFD_CONFIG_DOCUMENTO CFD
-		INNER JOIN ' || V_ESQUEMA || '.ACT_ACTIVO ACT ON ACT.DD_TPA_ID = CFD.DD_TPA_ID
+		INNER JOIN ' || V_ESQUEMA || '.ACT_ACTIVO ACT ON ACT.DD_TPA_ID = CFD.DD_TPA_ID  or (CFD.DD_TPA_ID is null and cfd.cfd_id in (select cfd_id from ' || V_ESQUEMA || '.ACT_ADO_ADMISION_DOCUMENTO where ado_fecha_obtencion is not null and borrado = 0))
 		INNER JOIN ' || V_ESQUEMA || '.ACT_LOC_LOCALIZACION LOC ON LOC.ACT_ID = ACT.ACT_ID
 		INNER JOIN ' || V_ESQUEMA || '.BIE_LOCALIZACION BIE ON BIE.BIE_LOC_ID = LOC.BIE_LOC_ID
 		INNER JOIN ' || V_ESQUEMA || '.APR_AUX_DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = BIE.DD_PRV_ID

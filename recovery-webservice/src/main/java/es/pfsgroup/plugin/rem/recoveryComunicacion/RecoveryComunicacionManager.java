@@ -88,8 +88,10 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
         return httpClientFacade.processRequest(serviceUrl, sendMethod, headers, jsonString, responseTimeOut, charSet);
     }
 
-    public void datosCliente(Activo activo, ModelMap model) {
+    public void datosCliente(Long idActivo, ModelMap model) {
 
+    	Filter activoIdFilter = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, activoIdFilter);
         String urlEnvio = null;
         String json = null;
         JSONObject llamada = null;

@@ -52,7 +52,7 @@ public class DtoExcelFichaComercial extends WebDto {
 	private Double gastosPendientes;
 	private Double costesLegales;
 	private Date fechaUltimoPrecioAprobado;
-	private Double dtoComite;
+	private BigDecimal dtoComite;
 	private Integer visitas;
 	private String leads;
 	private Integer totalOfertas;
@@ -279,10 +279,10 @@ public class DtoExcelFichaComercial extends WebDto {
 	public void setFechaUltimoPrecioAprobado(Date fechaUltimoPrecioAprobado) {
 		this.fechaUltimoPrecioAprobado = fechaUltimoPrecioAprobado;
 	}
-	public Double getDtoComite() {
+	public BigDecimal getDtoComite() {
 		return dtoComite;
 	}
-	public void setDtoComite(Double dtoComite) {
+	public void setDtoComite(BigDecimal dtoComite) {
 		this.dtoComite = dtoComite;
 	}
 	public Integer getVisitas() {

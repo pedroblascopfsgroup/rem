@@ -218,7 +218,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		if((CODIGO_T017_POSICIONAMIENTO_FIRMA.equals(codigoTarea)
 				|| CODIGO_T017_DOCUMENTOS_POSTVENTA.equals(codigoTarea)) && DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)) {
 			
-			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 			
 			tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
 			

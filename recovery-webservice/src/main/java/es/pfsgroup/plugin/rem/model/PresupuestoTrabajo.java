@@ -63,6 +63,9 @@ public class PresupuestoTrabajo implements Serializable, Auditable {
     @Column(name = "PRT_IMPORTE")
 	private Float importe;
     
+    @Column(name = "PRT_IMPORTE_CLIENTE")
+	private Float importeCliente;
+    
     @Column(name = "PRT_FECHA")
   	private Date fecha;
     
@@ -184,6 +187,14 @@ public class PresupuestoTrabajo implements Serializable, Auditable {
 
 	public void setProveedorContacto(ActivoProveedorContacto proveedorContacto) {
 		this.proveedorContacto = proveedorContacto;
+	}
+
+	public Float getImporteCliente() {
+		return importeCliente;
+	}
+
+	public void setImporteCliente(Float importeCliente) {
+		this.importeCliente = importeCliente;
 	}
 
 	

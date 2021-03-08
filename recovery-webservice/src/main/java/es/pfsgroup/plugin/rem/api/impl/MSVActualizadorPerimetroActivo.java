@@ -314,11 +314,11 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 						if(!Checks.esNulo(motivoGestionComercial) && motivoGestionComercial.length() > 1) {
 							perimetroActivo.setMotivoGestionComercial((DDMotivoGestionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, motivoGestionComercial.substring(0, 2)));
 						}
-						if(exclusionValidaciones!=null && !exclusionValidaciones.isEmpty()) {
-							perimetroActivo.setExcluirValidaciones(((DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, exclusionValidaciones)));
+						if(exclusionValidaciones!=null && !exclusionValidaciones.isEmpty() && Arrays.asList(listaValidosPositivos).contains(exclusionValidaciones.toUpperCase())) {
+							perimetroActivo.setExcluirValidaciones(((DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, "01")));
 							
 						}	
-						if(VALOR_NO.equals(exclusionValidaciones) || exclusionValidaciones.isEmpty()) {
+						if(Arrays.asList(listaValidosNegativos).contains(exclusionValidaciones.toUpperCase())|| exclusionValidaciones.isEmpty() ){
 							perimetroActivo.setMotivoGestionComercial(null);
 						}
 						if(!Checks.esNulo(fechaCambio)) {
@@ -333,14 +333,16 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			}
 			
 			// Check excluir validaciones ------------------
-			if (exclusionValidaciones != null) {
+			if (exclusionValidaciones != null && Arrays.asList(listaValidosNegativos).contains(exclusionValidaciones.toUpperCase()) ) {
 				perimetroActivo.setExcluirValidaciones(((DDSinSiNo) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDSinSiNo.class, "0" + exclusionValidaciones)));
-				if (exclusionValidaciones.equals("1") && motivoGestionComercial != null){
-					perimetroActivo.setMotivoGestionComercial((DDMotivoGestionComercial) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, "0" + motivoGestionComercial));
+						.dameValorDiccionarioByCod(DDSinSiNo.class, "02")));
 				}
+			
+			if (Arrays.asList(listaValidosPositivos).contains(exclusionValidaciones.toUpperCase())&& motivoGestionComercial != null){
+					perimetroActivo.setMotivoGestionComercial((DDMotivoGestionComercial) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, "01"));
 			}
+			
 
 			// Aplica Formalizar ---------------------------
 			if (!CHECK_NO_CAMBIAR.equals(tmpAplicaFormalizar)) {

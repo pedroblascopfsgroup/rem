@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20200826
+--## AUTOR=Adrian Molina
+--## FECHA_CREACION=20210403
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-7935
+--## INCIDENCIA_LINK=REMVIP-8898
 --## PRODUCTO=NO
 --## Finalidad: correción errores SP
 --##           
@@ -16,10 +16,11 @@
 --##		0.4 Pablo Meseguer - Añadir filtro para ACT_EN_TRAMITE
 --##		0.5 Pablo Meseguer - actualizamos el tipo de activo junto con el subtipo a traves del COTSIN
 --##		0.6 Maria Presencia - Modificado fallo en PROD
---##    0.7 DAP - Modificado ultimo cambio posesión
---##    0.8 Daniel Algaba - HREOS-8087 - Modificación cálculo situación del título
---##    0.9 Daniel Algaba - HREOS-8737 - Se añaden nuevas casuísticas en la actualización/inserción de registros en ACT_AHT_HIST_TRAM_TITULO
---##    0.10 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
+--##    	0.7 DAP - Modificado ultimo cambio posesión
+--##    	0.8 Daniel Algaba - HREOS-8087 - Modificación cálculo situación del título
+--##    	0.9 Daniel Algaba - HREOS-8737 - Se añaden nuevas casuísticas en la actualización/inserción de registros en ACT_AHT_HIST_TRAM_TITULO
+--##    	0.10 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
+--##    	0.11 Adrian Molina - REMVIP-8898 - Modificado inserción en la ADO para que tenga en cuenta los borrados de la CFD
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -1739,7 +1740,8 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
             LEFT JOIN '||V_ESQUEMA||'.ACT_ADO_ADMISION_DOCUMENTO ADO ON ADO.ACT_ID = ACT.ACT_ID AND ADO.CFD_ID = CFD.CFD_ID
             WHERE APR.REM = 1
             AND CRA.DD_CRA_CODIGO = ''03''
-            AND ACT.BORRADO = 0
+            AND ACT.BORRADO = 0 
+			AND CFD.BORRADO = 0
             AND (APR.COESEN = ''01'' OR (APR.COESEN = ''02'' AND ESA.COESEN = 0 AND APR.FEC_BAJA_ACTIVO IS NULL))
           ) TMP
           ON (TMP.ADO_ID = ACT.ADO_ID)

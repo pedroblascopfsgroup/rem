@@ -48,6 +48,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 						    		me.fireEvent('viewonly');
 									me.lookupController().getViewModel().set("editingFirstLevel", false);
 									me.lookupController().getViewModel().set("editing", false);
+									me.lookupController().getViewModel().notify();
 						    	} else {
 							    	if (!me.disabled && !me.readOnly) {
 	            						me.setValue(!me.checked);
@@ -98,6 +99,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 						    		me.fireEvent('viewonly');
 									me.lookupController().getViewModel().set("editingFirstLevel", false);
 									me.lookupController().getViewModel().set("editing", false);
+									me.lookupController().getViewModel().notify();
 						    	} else {
 							    	if (!me.disabled && !me.readOnly) {
 	            						me.setValue(!me.checked);

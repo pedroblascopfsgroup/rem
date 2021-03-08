@@ -25,5 +25,7 @@ public interface UpdaterStateGastoApi {
 	Boolean isGastoSuplido(GastoProveedor gasto);
 
 	String validarDatosPagoGastoPrincipal(GastoProveedor gasto);
+
+	Boolean isGastoSuplidoPadre(GastoProveedor gasto);
 	
 }

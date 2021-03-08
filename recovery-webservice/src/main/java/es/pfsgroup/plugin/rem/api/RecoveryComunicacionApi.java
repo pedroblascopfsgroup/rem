@@ -5,6 +5,6 @@ import org.springframework.ui.ModelMap;
 
 public interface RecoveryComunicacionApi {
 
-    void datosCliente(Activo activo, ModelMap model);
+    void datosCliente(Long idActivo, ModelMap model);
 
 }

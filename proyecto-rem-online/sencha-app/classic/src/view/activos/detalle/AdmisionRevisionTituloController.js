@@ -46,7 +46,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTituloController', {
 			btn.hide();
 			btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
 			btn.up('tabbar').down('button[itemId=botoneditar]').show();
-			me.getView().up("tabpanel").lookupController().getViewModel().set("editing", false)
+			me.getView().up("tabpanel").lookupController().getViewModel().set("editing", false);
+			me.getView().up("tabpanel").lookupController().getViewModel().notify();
 			Ext.Array.each(btn.up('tabpanel').getActiveTab()
 							.query('field[isReadOnlyEdit]'), function(
 							field, index) {

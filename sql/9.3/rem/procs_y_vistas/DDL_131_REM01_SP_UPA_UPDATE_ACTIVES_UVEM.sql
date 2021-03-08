@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20201221
+--## AUTOR=Adrian Molina
+--## FECHA_CREACION=20210403
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-8455
+--## INCIDENCIA_LINK=REMVIP-8898
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM - UVEM. Nuevas columnas. Anula DDL_99900087
 --##           
@@ -24,7 +24,8 @@
 --##    	0.12 Oscar Diestre - REMVIP-6203 - Modificados merges asociados a ACT_ACTIVO para minimizar cambios y comentados merges duplicados ( parte 4 )
 --##    	0.13 Oscar Diestre - REMVIP-6374 - En el insert de ACT_MLV_MOVIMIENTO_LLAVE informar también MLV_COD_TENEDOR_PED_NO_PVE
 --##    	0.14 Juan Beltrán  - REMVIP-7944 - Prevalece el valor del campo ACT_VPO si viene informado desde REM
---##      0.15 Juan Alfonso  - REMVIP-8455 - Modificado titulo activo, si codigo entrada es 14 o 12 subtipo titulo activo: propio de origen funcional 13
+--##        0.15 Juan Alfonso  - REMVIP-8455 - Modificado titulo activo, si codigo entrada es 14 o 12 subtipo titulo activo: propio de origen funcional 13
+--##        0.16 Adrian Molina - REMVIP-8898 - Modificado inserción en la ADO para que tenga en cuenta los borrados de la CFD
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -2077,7 +2078,8 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
               ON ADO.ACT_ID = ACT.ACT_ID AND ADO.CFD_ID = CFD.CFD_ID
             WHERE APR.REM = 1
               AND CRA.DD_CRA_CODIGO = ''03''
-              and act.borrado = 0
+              and act.borrado = 0 
+			  AND CFD.BORRADO = 0
           ) TMP
           ON (TMP.ADO_ID = ACT.ADO_ID)
           WHEN MATCHED THEN UPDATE SET

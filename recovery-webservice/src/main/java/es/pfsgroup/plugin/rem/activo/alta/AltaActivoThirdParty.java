@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
@@ -296,6 +297,10 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		if (!Checks.esNulo(dtoAATP.getEsIntegradoDivHorizontalRegistro())){
 			beanUtilNotNull.copyProperty(activoInforRegistral, "divHorInscrito", dtoAATP.getEsIntegradoDivHorizontalRegistro().equalsIgnoreCase("si") ? 1 : 0);
 		}
+		
+//Para Esparta
+//		DDSinSiNo ddsino = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDSinSiNo.CODIGO_NO));
+//		activoInforRegistral.setTieneAnejosRegistrales(ddsino);
 		genericDao.save(ActivoInfoRegistral.class, activoInforRegistral);
 		
 		

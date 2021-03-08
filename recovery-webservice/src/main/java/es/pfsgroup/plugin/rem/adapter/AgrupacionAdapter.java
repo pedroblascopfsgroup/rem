@@ -654,9 +654,7 @@ public class AgrupacionAdapter {
 
 				Activo activoPrincipal = agrupacion.getActivoPrincipal();
 				List<ActivoAgrupacionActivo> listaActivosAgr = agrupacion.getActivos();
-				Filter filtroActPr = genericDao.createFilter(FilterType.EQUALS, "activo.id",
-						activoPrincipal.getId());
-				PerimetroActivo periAGA = genericDao.get(PerimetroActivo.class, filtroActPr);
+				
 				if(activoPrincipal != null) {
 					PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activoPrincipal.getId());
 					
@@ -723,9 +721,14 @@ public class AgrupacionAdapter {
 					}
 					
 					
-					if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA) && periAGA!= null && periAGA.getCheckGestorComercial()!= null && periAGA.getCheckGestorComercial()) {
-						BeanUtils.copyProperty(dtoAgrupacion, "visibleGestionComercial",
+					if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {			
+						Filter filtroActPr = genericDao.createFilter(FilterType.EQUALS, "activo.id",
+								activoPrincipal.getId());
+						PerimetroActivo periAGA = genericDao.get(PerimetroActivo.class, filtroActPr);
+						if(periAGA!= null && periAGA.getCheckGestorComercial()!= null && periAGA.getCheckGestorComercial()) {
+							BeanUtils.copyProperty(dtoAgrupacion, "visibleGestionComercial",
 								Boolean.TRUE.equals(periAGA.getCheckGestorComercial()));
+						}
 					}
 
 

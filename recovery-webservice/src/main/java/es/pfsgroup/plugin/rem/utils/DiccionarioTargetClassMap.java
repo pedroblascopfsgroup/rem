@@ -308,6 +308,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposAdmiteMascota", DDSiniSiNoIndiferente.class); 
 		mapa.put("tipoResponsable", DDResponsableDocumentacionCliente.class);
 		mapa.put("tipoCorrectivoSareb", DDTipoCorrectivoSareb.class); 
+		mapa.put("tipoCuotaComunidad", DDTipoCuotaComunidad.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

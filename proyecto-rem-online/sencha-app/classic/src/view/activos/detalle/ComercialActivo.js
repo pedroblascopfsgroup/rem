@@ -204,6 +204,17 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        		hidden: '{!isCarteraSareb}',
 				        		readOnly: '{!noEditableUASSoloSuper}'
 							}						
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.tipo.cuota.comunidad'),
+							reference: 'tipoCuotaComunidadRef',
+							bind : {
+				        		value: '{comercial.tipoCuotaComunidad}',
+				        		store: '{comboDDTipoCuotaComunidad}',
+				        		hidden: '{!isCarteraSareb}',
+				        		readOnly: '{!noEditableUASSoloSuper}'
+							}						
 						}
 				]
 			}, 

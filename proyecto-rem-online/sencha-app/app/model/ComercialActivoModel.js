@@ -59,6 +59,9 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 			name: 'fechaFinCorrectivoSareb',
 			type:'date',
 			dateFormat: 'c'
+		},
+		{
+			name: 'tipoCuotaComunidad'
 		}
     ],
     

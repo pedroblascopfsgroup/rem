@@ -413,6 +413,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				} else {
 					me.getViewModel().set("editing", false);
 				}
+				me.getViewModel().notify();
 			}
 
 			// Obtener jsondata para guardar activo
@@ -1324,6 +1325,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		} else {
 			me.getViewModel().set("editing", true);
 		}
+		me.getViewModel().notify();
 		if ("admisionrevisiontitulo" === btn.up("tabpanel").getActiveTab().xtype) {
 			// Solucion al bug para mostrar los botones la segunda vez que se
 			// hace click en el boton editar
@@ -1389,7 +1391,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	onClickBotonCancelar : function(btn) {
 		var me = this, activeTab = btn.up('tabpanel').getActiveTab();
-
+		if (Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+			me.getViewModel().set("editingFirstLevel", false);
+		} else {
+			me.getViewModel().set("editing", false);
+		}
+		me.getViewModel().notify();
 		if (!activeTab.saveMultiple) {
 			if (activeTab && activeTab.getBindRecord
 					&& activeTab.getBindRecord()) {
@@ -1415,12 +1422,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					field.fireEvent('save');
 					field.fireEvent('update');
 				});
-
-		if (Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
-			me.getViewModel().set("editingFirstLevel", false);
-		} else {
-			me.getViewModel().set("editing", false);
-		}
 	},
 
 	onClickBotonCancelarPropietario : function(btn) {
@@ -3315,6 +3316,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				} else {
 					me.getViewModel().set("editing", false);
 				}
+				me.getViewModel().notify();
 			}
 
 			if (!form.saveMultiple) {
@@ -3748,6 +3750,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					} else {
 						me.getViewModel().set("editing", false);
 					}
+					me.getViewModel().notify();
 				},
 				failure : function(a, operation, context) {
 					Ext.toast({
@@ -6139,7 +6142,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
         btn.hide();
         btn.up('tabbar').down('button[itemId=botonguardar]').hide();
-        btn.up('tabbar').down('button[itemId=botoneditar]').show();
+		btn.up('tabbar').down('button[itemId=botoneditar]').show();
 
         Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
                         function (field, index)
@@ -6152,6 +6155,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
          } else {
              me.getViewModel().set("editing", false);
          }
+		me.getViewModel().notify();
     },
 
    

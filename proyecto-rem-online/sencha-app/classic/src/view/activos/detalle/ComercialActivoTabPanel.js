@@ -15,7 +15,11 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivoTabPanel', {
 			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
 				var tab = tabPanel.items.items[0];
 				tabPanel.setActiveTab(tab);
-				this.evaluarBotonesEdicion(tab);
+			}
+			if(tab.ocultarBotonesEdicion) {
+				tabPanel.down("[itemId=botoneditar]").setVisible(false);
+			} else {
+            	tabPanel.evaluarBotonesEdicion(tab);
 			}
 			
 		},
@@ -99,8 +103,8 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivoTabPanel', {
 
 		var items = [];
 
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'ofertascomercialactivo'})}, ['TAB_COMERCIAL_OFERTAS']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'visitascomercialactivo'})}, ['TAB_COMERCIAL_VISITAS']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'ofertascomercialactivo',ocultarBotonesEdicion: true})}, ['TAB_COMERCIAL_OFERTAS']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'visitascomercialactivo',ocultarBotonesEdicion: true})}, ['TAB_COMERCIAL_VISITAS']);
 		
 		if (me.lookupViewModel().get('activo.afectoAGencat')) {
 			items.push({xtype: 'gencatcomercialactivo'});
@@ -119,10 +123,15 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivoTabPanel', {
     evaluarBotonesEdicion: function(tab) {
     	var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
-		
-		if (tab.xtype === "gencatcomercialactivo") {
+		var editionEnabled = function() {
 			me.down("[itemId=botoneditar]").setVisible(true);
 		}
 
+		// Si la pestaña recibida no tiene asignados roles de edicion 
+		if(Ext.isEmpty(tab.funPermEdition)) {
+    		editionEnabled();
+    	} else {
+    		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+    	}
     }
 });

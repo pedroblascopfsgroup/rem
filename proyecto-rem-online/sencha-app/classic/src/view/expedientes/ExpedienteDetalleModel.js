@@ -86,8 +86,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	if (get('expediente.finalizadoCierreEconomico') != null){
 	    		finEconomico = get('expediente.finalizadoCierreEconomico');
 	    	}
-			var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION'])
-					|| $AU.userIsRol(CONST.PERFILES['PERFGCONTROLLER']);
+			var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['PERFGCONTROLLER']);
 			return usuariosValidos && finEconomico;
 			
 	     },

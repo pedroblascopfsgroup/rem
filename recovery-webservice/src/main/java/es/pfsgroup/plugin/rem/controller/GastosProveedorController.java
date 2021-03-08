@@ -1560,11 +1560,15 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getAvisosSuplidos(Long idGasto, ModelMap model) {
+		try {
+			String validacion = gastoProveedorApi.validarAutorizacionSuplido(idGasto);
 		
-		String validacion = gastoProveedorApi.validarAutorizacionSuplido(idGasto);
-		
-		model.put("error", validacion);
-		
+			model.put("error", validacion);
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
+		}
+				
 		return createModelAndViewJson(model);
 	}
 	

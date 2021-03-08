@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20210125
+--## FECHA_CREACION=20210302
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.14
 --## INCIDENCIA_LINK=REMVIP
@@ -112,6 +112,9 @@ BEGIN
     V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.ACT_TBJ T1 WHERE EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.'||V_TABLA_REP||' T2 WHERE T1.TBJ_ID = T2.TBJ_ID)';
     EXECUTE IMMEDIATE V_MSQL;
     PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] Borrados '||SQL%ROWCOUNT||' relaciones activos/trabajos.';
+    V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.HIST_ENVIO_STOCK_TRABAJO T1 WHERE EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.'||V_TABLA_REP||' T2 WHERE T1.TBJ_ID = T2.TBJ_ID)';
+    EXECUTE IMMEDIATE V_MSQL;
+    PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] Borrados '||SQL%ROWCOUNT||' relaciones envío stock/trabajos.';
     V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.ACT_TBJ_TRABAJO T1 WHERE EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.'||V_TABLA_REP||' T2 WHERE T1.TBJ_ID = T2.TBJ_ID)';
     EXECUTE IMMEDIATE V_MSQL;
     PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] Borrados '||SQL%ROWCOUNT||' trabajos.';

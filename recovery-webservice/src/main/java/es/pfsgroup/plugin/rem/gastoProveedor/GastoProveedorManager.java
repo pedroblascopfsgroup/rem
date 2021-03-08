@@ -4112,8 +4112,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public String validarAutorizacionSuplido(long idGasto) {
 		
 		GastoProveedor gasto = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", idGasto));
+		String state = updaterStateApi.validarAutorizacionSuplido(gasto);
 		
-		return updaterStateApi.validarAutorizacionSuplido(gasto);
+		if (!Checks.esNulo(state)) {
+			throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede autorizar: " + state);
+		}
+		
+		return state;
 	}
 	
 	private Boolean esGastoAutorizado(GastoProveedor gasto) {

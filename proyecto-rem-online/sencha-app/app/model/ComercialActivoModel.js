@@ -50,8 +50,7 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 			name: 'importeComunidadMensualSareb'
 		},
 		{
-			name: 'siniestroSareb',
-			defaultValue: '02'
+			name: 'siniestroSareb'
 		},
 		{
 			name: 'tipoCorrectivoSareb'

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos Santos Vílchez
---## FECHA_CREACION=20210310
+--## FECHA_CREACION=20210311
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -14,6 +14,8 @@
 --## 		0.2 Versión - HREOS-3118 Añadidos campos fechaCaducidad, fechaEtiqueta, y tipoCalificacionCodigo DANIEL GUTIERREZ 20160408
 --##		0.3 Versión -  Ivan Rubio - HREOS-7997 Añadir campos ADO.DATA_ID_DOCUMENTO, ADO.LETRA_CONSUMO, ADO.CONSUMO, ADO.EMISION, ADO.REGISTRO para admision activos 
 --##		0.4 Versión - Carlos Santos - REMVIP-8402 Añadido filtrado por tipo y comprobación de comunidad autónoma
+--##		0.5 Versión - Jesus Jativa - HREOS-13379 modificacion vista V_ADMISION_DOCUMENTO para mostrar nuevos documentos ln 75 y 87
+--##
 --##		
 --##
 --##########################################
@@ -70,7 +72,7 @@ BEGIN
 				ADO.EMISION,
 				ADO.REGISTRO
 		FROM ' || V_ESQUEMA || '.ACT_CFD_CONFIG_DOCUMENTO CFD
-		INNER JOIN ' || V_ESQUEMA || '.ACT_ACTIVO ACT ON ACT.DD_TPA_ID = CFD.DD_TPA_ID 
+		CROSS JOIN ' || V_ESQUEMA || '.ACT_ACTIVO ACT 
 		INNER JOIN ' || V_ESQUEMA || '.ACT_LOC_LOCALIZACION LOC ON LOC.ACT_ID = ACT.ACT_ID
 		INNER JOIN ' || V_ESQUEMA || '.BIE_LOCALIZACION BIE ON BIE.BIE_LOC_ID = LOC.BIE_LOC_ID
 		INNER JOIN ' || V_ESQUEMA || '.APR_AUX_DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = BIE.DD_PRV_ID
@@ -82,7 +84,7 @@ BEGIN
     		LEFT JOIN ' || V_ESQUEMA || '.ACT_CTD_CONFIG_TDOCUMENTO CTD ON CTD.DD_TPD_ID = TPD.DD_TPD_ID
 		LEFT JOIN ' || V_ESQUEMA_M || '.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_ID = CTD.DD_TGE_ID
 		LEFT JOIN ' || V_ESQUEMA || '.DD_TCE_TIPO_CALIF_ENERGETICA TCE ON TCE.DD_TCE_ID = ADO.DD_TCE_ID
-    where act.borrado = 0 and (act.dd_sac_id = cfd.dd_sac_id or cfd.dd_sac_id is null) and cfd.borrado = 0';
+    where act.borrado = 0 and (act.dd_sac_id = cfd.dd_sac_id or cfd.dd_sac_id is null) and (act.dd_tpa_id = cfd.dd_tpa_id or (cfd.dd_tpa_id is null and ado.ado_fecha_obtencion is not null)) and cfd.borrado = 0';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_ADMISION_DOCUMENTOS...Creada OK');
   EXCEPTION

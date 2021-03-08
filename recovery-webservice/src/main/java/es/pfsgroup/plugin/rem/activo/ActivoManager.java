@@ -4190,7 +4190,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		transactionManager.commit(transaction);
 
 		if(activo != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo, new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+			Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
 			llamadaAsincrona.start();
 		}
 
@@ -4554,7 +4554,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if(carga != null){
 			if(carga.getActivo() != null && carga.getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
-				Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(carga.getActivo(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+				Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(carga.getActivo().getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
 				llamadaAsincrona.start();
 			}
 		}
@@ -5096,7 +5096,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				transactionManager.commit(transaction);
 
 				if(activoCalificacionNegativa.getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
-					Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activoCalificacionNegativa.getActivo(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+					Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activoCalificacionNegativa.getActivo().getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
 					llamadaAsincrona.start();
 				}
 
@@ -5204,7 +5204,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				transactionManager.commit(transaction);
 
 				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
-					Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo, new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+					Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
 					llamadaAsincrona.start();
 				}
 
@@ -5241,7 +5241,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			transactionManager.commit(transaction);
 
 			if(activo != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
-				Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo, new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+				Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
 				llamadaAsincrona.start();
 			}
 
@@ -6823,7 +6823,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		transactionManager.commit(transaction);
 
 		if(activo != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)) {
-			Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo, new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+			Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
 			llamadaAsincrona.start();
 		}
 
@@ -7016,7 +7016,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		transactionManager.commit(transaction);
 
 		if(activo != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)) {
-			Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo, new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+			Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
 			llamadaAsincrona.start();
 		}
 
@@ -7176,7 +7176,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			transactionManager.commit(transaction);
 
 			if(activo != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)) {
-				Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo, new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+				Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
 				llamadaAsincrona.start();
 			}
 

@@ -1515,10 +1515,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 					data = Ext.decode(response.responseText);
 					}
 				catch (e){ };
-				if(data.error != null){
-					var msg = "Advertencias:<br/>";
-					msg += "<br/>" + data.error + "<br/>";
-					msg += HreRem.i18n('msg.desea.autorizar.gasto');
+				if(!Ext.isEmpty(data.msg)){
+					me.fireEvent("errorToast", data.msg);
 				} else {
 					msg = HreRem.i18n('msg.desea.autorizar.gasto');
 				}

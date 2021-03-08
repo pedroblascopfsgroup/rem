@@ -175,7 +175,7 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 			transactionManager.commit(transaction);
 
 			if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
-				Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo, new ModelMap(), adapter.getUsuarioLogado().getUsername()));
+				Thread llamadaAsincrona = new Thread(new ConvivenciaRecovery(activo.getId(), new ModelMap(), adapter.getUsuarioLogado().getUsername()));
 				llamadaAsincrona.start();
 			}
 		}

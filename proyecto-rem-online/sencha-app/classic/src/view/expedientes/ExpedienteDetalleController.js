@@ -5137,8 +5137,7 @@ comprobarFormatoModificar: function() {
 		var url = $AC.getRemoteUrl('expedientecomercial/getCierreEconomicoFinalizado');
 		var expedienteId = viewModel.get('expediente.id')
 		var btn = me.lookupReference("botonAuditoriaDesbloqueo");
-		var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION'])
-		|| $AU.userIsRol(CONST.PERFILES['PERFGCONTROLLER']);
+		var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['PERFGCONTROLLER']);
 		var listadoHonorarios = me.lookupReference("listadohoronarios");
 		if ( usuariosValidos ){
 			Ext.Ajax.request({

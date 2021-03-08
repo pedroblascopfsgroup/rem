@@ -16,6 +16,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
@@ -55,6 +56,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	private static final String VALIDACION_SUPLIDOS_NIF_EMISOR_CUENTA = "msg.validacion.gasto.suplidos.nif.emisor.cuenta";
 	private static final String VALIDACION_SUPLIDOS_NIF_ESTADO_GASTO = "msg.validacion.gasto.suplidos.nif.estado.gasto";
 	private static final String VALIDACION_SUPLIDOS_ABONO_CUENTA = "msg.validacion.gasto.suplidos.abono.cuenta";
+	private static final String VALIDACION_SUPLIDOS_VINCULADOS_NULL = "msg.validacion.gasto.suplidos.no.vinculados";
 	
 	private static final String COD_DESTINATARIO_HAYA = "02";
 
@@ -663,6 +665,15 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				error += "- " + messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_ESTADO_GASTO) + "<br/>";
 			}
 			
+		} else if(isGastoSuplidoPadre(gasto)) {
+			GastoSuplido gastoSuplido = genericDao.get(GastoSuplido.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedorPadre", gasto));
+			
+			if(gastoSuplido == null) {
+				if(error == null) {
+					error = "";
+				}
+				error += "- " + messageServices.getMessage(VALIDACION_SUPLIDOS_VINCULADOS_NULL) + "<br/>";
+			}
 		}
 		return error;
 		
@@ -672,6 +683,15 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	public Boolean isGastoSuplido(GastoProveedor gasto) {
 		if(((gasto.getSuplidosVinculados() != null && DDSinSiNo.CODIGO_NO.equals(gasto.getSuplidosVinculados().getCodigo())) || gasto.getSuplidosVinculados() == null)
 				&& gasto.getNumeroFacturaPrincipal() != null) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public Boolean isGastoSuplidoPadre(GastoProveedor gasto) {
+		if(gasto.getSuplidosVinculados() != null && DDSinSiNo.CODIGO_SI.equals(gasto.getSuplidosVinculados().getCodigo())) {
 			return true;
 		}
 		

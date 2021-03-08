@@ -228,6 +228,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	private static final String T017 = "T017";
 	private static final String DD_TCR_CODIGO_OBRA_NUEVA = "03";
+	private static final String CODIGO_TIPO_GESTOR_COMERCIAL = "GCOM";
 
 	@Resource
 	MessageService messageServices;
@@ -837,64 +838,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getImporte())) {
 				oferta.setImporteOferta(ofertaDto.getImporte());
 			}
-			if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote()) {
+			if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote() && !Checks.esNulo(agrup)) {
 				List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
-				boolean esLoteComercial = false;
-
-				for (ActivosLoteOfertaDto idActivo : ofertaDto.getActivosLote()) {
-					ActivoAgrupacion agrupacion = null;
-					List<ActivoOferta> buildListaActOfr = new ArrayList<ActivoOferta>();
-					List<ActivoAgrupacionActivo> listaAgrups = null;
-
-					activo = genericDao.get(Activo.class,
-							genericDao.createFilter(FilterType.EQUALS, "numActivo", idActivo.getIdActivoHaya()));
-					if (!Checks.esNulo(activo)) {
-
-						// Comprobamos si el activo pertenece a una agrupación
-						// restringida o de lote comercial
-						DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
-						dtoAgrupActivo.setActId(activo.getId());
-						dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
-						listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
-
-						if (Checks.esNulo(listaAgrups) || listaAgrups.isEmpty()) {
-							dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA);
-							listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
-							esLoteComercial = true;
-						}
-
-						if (Checks.esNulo(listaAgrups) || listaAgrups.isEmpty()) {
-							dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER);
-							listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
-							esLoteComercial = true;
-						}
-
-						if (!Checks.esNulo(listaAgrups) && !listaAgrups.isEmpty()) {
-							ActivoAgrupacionActivo agrAct = listaAgrups.get(0);
-							if (!Checks.esNulo(agrAct) && !Checks.esNulo(agrAct.getAgrupacion())) {
-								// Seteamos la agrupación a la oferta
-								agrupacion = agrAct.getAgrupacion();
-								oferta.setAgrupacion(agrupacion);
-								esLoteComercial = true;
-							}
-						}
-
-						if (!Checks.esNulo(agrupacion)) {
-							// Oferta sobre 1 lote restringido de n activos
-							buildListaActOfr = buildListaActivoOferta(null, agrupacion, oferta);
-							listaActOfr.addAll(buildListaActOfr);							
-						} else {
-							// Oferta sobre 1 único activo
-							buildListaActOfr = buildListaActivoOferta(activo, null, oferta);
-							listaActOfr.addAll(buildListaActOfr);
-						}
-						if(esLoteComercial) break;
-					}
-				}
-
-				// Seteamos la lista de ActivosOferta
+			
+				listaActOfr = buildListaActivoOferta(null, agrup, oferta);			
 				oferta.setActivosOferta(listaActOfr);
-				// Seteamos la agrupación a la que pertenece la oferta
 				oferta.setAgrupacion(agrup);
 
 			} else if (!Checks.esNulo(ofertaDto.getIdActivoHaya())) {
@@ -5061,21 +5009,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			
 				dtoFichaComercial.setNumExpediente(expediente.getNumExpediente());
-				if(expediente.getComiteSancion() != null) {
-					if(DDComiteSancion.CODIGO_HAYA_BBVA.equals(expediente.getComiteSancion().getCodigo())) {
-						dtoFichaComercial.setComite("Si");
-					}else {
-						dtoFichaComercial.setComite("No");
-						if(oferta.getImporteOferta() <= 150000) {
-							dtoFichaComercial.setDtoComite(0.10);
-						} else {
-							dtoFichaComercial.setDtoComite(0.05);
-						}
-					}
-				}
-				else {
-					dtoFichaComercial.setComite("");
-				}
+				
 			}
 
 			if(oferta.getAgrupacion() != null) {
@@ -5778,7 +5712,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				
 				List<ActivoTasacion> activoTasacionList = genericDao.getListOrdered(ActivoTasacion.class, orderFechaTasacionDesc, filtroAct_id);
-				if(activoTasacionList != null && activoTasacionList.get(0) != null) {
+				if(activoTasacionList != null && !activoTasacionList.isEmpty() && activoTasacionList.get(0) != null) {
 					activosFichaComercial.setTasacion(activoTasacionList.get(0).getImporteTasacionFin());
 					if(activoTasacionList.get(0).getImporteTasacionFin() != null) {
 						tasacionTotal += activoTasacionList.get(0).getImporteTasacionFin();
@@ -6196,6 +6130,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				listaFichaAutorizacion.add(ficha);
 				
 			}
+			if(expediente.getComiteSancion() != null) {
+				if(DDComiteSancion.CODIGO_HAYA_BBVA.equals(expediente.getComiteSancion().getCodigo())) {
+					dtoFichaComercial.setComite("Si");
+				}else {
+					dtoFichaComercial.setComite("No");
+					if(dtoFichaComercial.getTotalOferta() != null && dtoFichaComercial.getPrecioComiteActual() != null && dtoFichaComercial.getPrecioComiteActual() != 0.0) {						
+						BigDecimal multy = new BigDecimal(dtoFichaComercial.getTotalOferta()).multiply(new BigDecimal(100));
+						BigDecimal porcentaje = multy.divide(new BigDecimal(dtoFichaComercial.getPrecioComiteActual()), 2, 2);
+						BigDecimal resta = new BigDecimal(100).subtract(porcentaje);
+						dtoFichaComercial.setDtoComite(resta);
+					}
+				}
+			}
+			else {
+				dtoFichaComercial.setComite("");
+			}
 			
 			dtoFichaComercial.setListaFichaAutorizacion(listaFichaAutorizacion);
 				
@@ -6320,7 +6270,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private void setInformacionGestorComercial(DtoExcelFichaComercial dtoFichaComercial, Long idActivo) {
 		List<DtoListadoGestores> gestoresList = activoAdapterApi.getGestores(idActivo);
 		for (DtoListadoGestores gestor : gestoresList) {
-			if ("HAYAGBOINM".equals(gestor.getCodigo()) && gestor.getFechaHasta() == null) {
+			if (CODIGO_TIPO_GESTOR_COMERCIAL.equals(gestor.getCodigo()) && gestor.getFechaHasta() == null) {
 				dtoFichaComercial.setNombreYApellidosComercial(gestor.getApellidoNombre());
 				dtoFichaComercial.setTelefonoComercial(gestor.getTelefono());
 				dtoFichaComercial.setCorreoComercial(gestor.getEmail());

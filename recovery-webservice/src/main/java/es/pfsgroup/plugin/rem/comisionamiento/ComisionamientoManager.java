@@ -141,7 +141,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		} else if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getVisita()) && !Checks.esNulo(oferta.getVisita().getOrigenComprador())) {
 			codLeadOrigin = oferta.getVisita().getOrigenComprador().getCodigo();
 		} else if(DDTipoProveedor.isTipoProveedorOficina(oferta.getPrescriptor())){
-			codLeadOrigin = oferta.getPrescriptor().getTipoProveedor().getCodigo();
+			codLeadOrigin = DDOrigenComprador.CODIGO_ORC_OFICINA;
 		}else {
 			codLeadOrigin = DDOrigenComprador.CODIGO_ORC_HRE;
 		}

@@ -18,6 +18,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
@@ -147,7 +148,9 @@ public class ComisionamientoManager implements ComisionamientoApi {
 			}else {
 				codLeadOrigin = oferta.getVisita().getOrigenComprador().getCodigo();
 			}			
-		} else {
+		} else if(DDTipoProveedor.isTipoProveedorOficina(oferta.getPrescriptor())){
+			codLeadOrigin = oferta.getPrescriptor().getTipoProveedor().getCodigo();
+		}else {
 			codLeadOrigin = DDOrigenComprador.CODIGO_ORC_HRE;
 		}
 		

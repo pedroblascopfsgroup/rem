@@ -1585,7 +1585,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 	@Override
 	public List<DDTipoDocumentoActivoDto> getDiccionarioTiposDocumentoBySubtipoTrabajo(String subtipoTrabajo , String entidad) {
-		Filter filtroSubtipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.id", Long.parseLong(subtipoTrabajo));
+		Filter filtroSubtipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.codigo", subtipoTrabajo);
 		List<DDTipoDocumentoActivoDto> out = new ArrayList<DDTipoDocumentoActivoDto>();
 		List<TipoDocumentoSubtipoTrabajo> subtipoDocumentoSubtipoTrabajoList =  genericDao.getList(TipoDocumentoSubtipoTrabajo.class, filtroSubtipoTrabajo);
 		if(subtipoDocumentoSubtipoTrabajoList != null && !subtipoDocumentoSubtipoTrabajoList.isEmpty()) {

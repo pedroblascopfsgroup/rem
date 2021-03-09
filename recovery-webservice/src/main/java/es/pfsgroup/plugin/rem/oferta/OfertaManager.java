@@ -1602,7 +1602,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								oferta.setFechaEntradaCRMSF(fechaAccion);
 							}else if (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta)) {
 								oferta.setFechaAlta(fechaAccion);
-								oferta.setFechaEntradaCRMSF(null);
+								oferta.setFechaEntradaCRMSF(fechaAccion);
 							}
 							
 						}else if(oferta.getEstadoOferta() != null) {							
@@ -1610,7 +1610,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							//Cuando codigo es Pendiente Consentimiento
 							if (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta) && DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(oferta.getEstadoOferta().getCodigo())) {
 								oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
-								oferta.setFechaAlta(fechaAccion);
+								oferta.setFechaAlta(new Date());
 							} else if((DDEstadoOferta.CODIGO_CADUCADA.equals(estadoOferta) 
 										|| DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta))
 									&& (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()) 

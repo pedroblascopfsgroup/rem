@@ -293,7 +293,8 @@ public class ProcessAdapter {
 			masivoDto.setId(procesomasivo.getId().toString());
 			masivoDto.setNombre(procesomasivo.getDescripcion());
 			if (procesomasivo.getEstadoProceso() != null) {
-				if (MSVDDEstadoProceso.CODIGO_VALIDADO.equals(procesomasivo.getEstadoProceso().getCodigo())) {
+				if (MSVDDEstadoProceso.CODIGO_VALIDADO.equals(procesomasivo.getEstadoProceso().getCodigo()) && 
+						!MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_LISTAACTIVOS.equals(procesomasivo.getTipoOperacion().getCodigo())) {
 					sePuedeProcesar = true;
 				} else if (!procesomasivo.getTipoOperacion().getResultado() && (MSVDDEstadoProceso.CODIGO_PROCESADO.equals(procesomasivo.getEstadoProceso().getCodigo()) || 
 						MSVDDEstadoProceso.CODIGO_PROCESADO_CON_ERRORES.equals(procesomasivo.getEstadoProceso().getCodigo()))) {

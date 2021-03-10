@@ -452,21 +452,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean bankiaPublicado(String numActivo){
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
-				+ "		FROM ACT_ACTIVO WHERE"
-				+ "			ACT_NUM_ACTIVO ='"+numActivo+"' "
-				+ "	AND DD_CRA_ID = '21' AND BORRADO = 0 "
-				+ "			AND ( DD_EPU_ID IS NULL "
-				+ "			      OR DD_EPU_ID IN (SELECT DD_EPU_ID"
-				+ "				     FROM DD_EPU_ESTADO_PUBLICACION EPU"
-				+ "				     WHERE DD_EPU_CODIGO IN ('06')) )");
-		return "1".equals(resultado);
-	}
-	
-	
-
-	@Override
 	public Boolean estadoOcultaractivo(String numActivo){
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO WHERE"

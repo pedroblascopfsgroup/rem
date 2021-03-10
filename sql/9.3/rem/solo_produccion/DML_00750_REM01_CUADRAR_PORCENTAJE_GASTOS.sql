@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20210310
+--## FECHA_CREACION=20210311
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-9182_2
@@ -51,7 +51,7 @@ DECLARE
             T_TIPO_DATA('6872487','13619790','2,1258'),
             T_TIPO_DATA('6938739','13619746','3,0304'),
             T_TIPO_DATA('7075689','13619743','11,0616'),
-            T_TIPO_DATA('6973414','13619736','33.3334')
+            T_TIPO_DATA('6973414','13619736','33,3334')
 
 
 

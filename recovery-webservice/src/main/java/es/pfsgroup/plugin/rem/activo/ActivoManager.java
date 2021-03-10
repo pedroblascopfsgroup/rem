@@ -3996,7 +3996,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 			
 			if(dto.getFechaVenta() != null) {
-				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, null);
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false,false);
 			}
 			
 		} catch (IllegalAccessException e) {

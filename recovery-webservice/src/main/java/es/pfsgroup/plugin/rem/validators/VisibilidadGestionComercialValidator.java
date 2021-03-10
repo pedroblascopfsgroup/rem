@@ -64,7 +64,7 @@ public class VisibilidadGestionComercialValidator {
 	}
 
 	public Map<Long, List<String>> validarPerimetroActivos(Activo[] activos, DDEstadosExpedienteComercial nuevoEstadoExpediente) {
-		return getErrores(activos, null, null, nuevoEstadoExpediente);
+		return getErrores(activos, null, false, nuevoEstadoExpediente);
 	}
 	
 	public Map<Long, List<String>> validarPerimetroActivosOferta(Oferta oferta) {
@@ -100,7 +100,7 @@ public class VisibilidadGestionComercialValidator {
 			if (!excluirValidaciones) {
 				
 				//validacion que comprueba si el activo pertenece a una agrupacion restringida y tenga motivo de excluido
-				if(activoApi.isActivoIntegradoAgrupacionRestringida(activoActual.getId()) && (perimetroActivo.getMotivoGestionComercial()!=null || perimetroActivo.getMotivoGestionComercial() == null)) {
+				if(activoApi.isActivoIntegradoAgrupacionRestringida(activoActual.getId()) && (perimetroActivo.getMotivoGestionComercial()!=null)) {
 					erroresActivo.add(VALID_MOTIVO_EXCLUIDO);
 					
 				}

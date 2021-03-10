@@ -63,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoTramitacionTitulo;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -980,7 +981,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			}
 			
 			if(dto.getVpo() != null) {
-				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, null);
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false,true);
 			}
 			
 		} catch (JsonViewerException jvex) {

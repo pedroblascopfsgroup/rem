@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -148,6 +149,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String ACTIVO_VENDIDO= "msg.error.activo.vendido";
 	private static final String ACTIVO_FUERA_DE_PERIMETRO_HAYA= "msg.error.activo.fuera.perimetro";
 	private static final String ACTIVO_NO_COINCIDE_CON_CERBERUS_BBVA= "msg.error.activo.no.bbva.divarian";
+	private static final String VALID_MOTIVO_EXCLUIDO= "Activo con Agrupación restringida no puede tener Motivo de excluido ";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -1329,7 +1331,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				if(!Checks.esNulo(dto.getAplicaComercializar())) {	
 					
 					perimetroActivo.setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
-					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, null);
+					if(dto.getCheckGestorComercial()==null) {
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false,false);
+					}
 					perimetroActivo.setFechaAplicaComercializar(new Date());					
 					
 					//Acciones al desmarcar check comercializar
@@ -1373,26 +1377,32 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				if(dto.getCheckExcluirValidacionesGestionComercial() != null) {
 					DDSinSiNo excluirValidaciones = dto.getCheckExcluirValidacionesGestionComercial() ? (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI) : (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
 					
-					perimetroActivo.setExcluirValidaciones(excluirValidaciones);				
+					perimetroActivo.setExcluirValidaciones(excluirValidaciones);	
+					if(!dto.getCheckExcluirValidacionesGestionComercial()) {
+						perimetroActivo.setMotivoGestionComercial(null);
+					}
 				}				
 				
 				if(!Checks.esNulo(dto.getCheckGestorComercial())) {		
 					perimetroActivo.setCheckGestorComercial(dto.getCheckGestorComercial());
-					perimetroActivo.setFechaGestionComercial(new Date());	
-					Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, null);
+					perimetroActivo.setFechaGestionComercial(new Date());						
+					Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones()),true,false);
 					recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
 				}
 								
 				if (!Checks.esNulo(dto.getMotivoGestionComercialCodigo())) {
 					DDMotivoGestionComercial motivoGestionComercial = (DDMotivoGestionComercial) diccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class,  dto.getMotivoGestionComercialCodigo());
-					Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, null);
-					recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
+					if(activoApi.isActivoIntegradoAgrupacionRestringida(activo.getId())) {
+						Map <Long,List<String>> map = new HashMap<Long, List<String>>();
+						List <String> lista = new ArrayList<String>();
+						lista.add(VALID_MOTIVO_EXCLUIDO);
+						map.put(activo.getNumActivo(), lista);
+						recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
+					}
+					
 					perimetroActivo.setMotivoGestionComercial(motivoGestionComercial);
 				}
 				
-				if(DDSinSiNo.CODIGO_NO.equals(perimetroActivo.getExcluirValidaciones().getCodigo()) && perimetroActivo.getMotivoGestionComercial()!=null) {
-					perimetroActivo.setMotivoGestionComercial(null);
-				}
 
 				beanUtilNotNull.copyProperty(perimetroActivo, "motivoNoAplicaComercializar", dto.getMotivoNoAplicaComercializar());
 				

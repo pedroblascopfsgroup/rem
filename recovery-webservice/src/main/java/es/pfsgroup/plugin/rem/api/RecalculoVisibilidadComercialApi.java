@@ -10,7 +10,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
 public interface RecalculoVisibilidadComercialApi {
 	
-	public Map<Long, List<String>> recalcularVisibilidadComercial(Activo activo, Boolean dtoCheckGestorComercial, Boolean dtoExcluirValidaciones);
+	public Map<Long, List<String>> recalcularVisibilidadComercial(Activo activo, Boolean dtoCheckGestorComercial, Boolean dtoExcluirValidaciones,boolean fichaActivo,boolean modificaVPO);
 	
 	public Map<Long, List<String>> recalcularVisibilidadComercial(Activo[] activos, DDEstadosExpedienteComercial nuevoEstadoExpediente);
 

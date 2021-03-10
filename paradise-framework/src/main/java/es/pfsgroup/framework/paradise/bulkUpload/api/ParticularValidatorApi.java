@@ -1373,8 +1373,6 @@ public interface ParticularValidatorApi {
 
 	Boolean tieneFechaVentaExterna(String activo);
 
-	Boolean bankiaPublicado(String activo);
-
 	Boolean activoNoComercializable(String activo);
 
 	Boolean maccConCargas(String activo);

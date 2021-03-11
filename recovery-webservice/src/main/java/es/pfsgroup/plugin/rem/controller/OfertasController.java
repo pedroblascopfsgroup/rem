@@ -24,8 +24,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.config.ConfigManager;
-import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
@@ -46,15 +46,13 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
-import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
+import es.pfsgroup.plugin.rem.excel.OfertaGridExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoExcelFichaComercial;
-import es.pfsgroup.plugin.rem.model.DtoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
+import es.pfsgroup.plugin.rem.model.DtoOfertaGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
@@ -63,11 +61,11 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.VGridBusquedaOfertas;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -161,47 +159,32 @@ public class OfertasController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcel(DtoOfertasFilter dtoOfertasFilter, HttpServletRequest request, HttpServletResponse response) throws IOException {
-		dtoOfertasFilter.setStart(excelReportGeneratorApi.getStart());
-		dtoOfertasFilter.setLimit(excelReportGeneratorApi.getLimit());
+	public void generateExcel(DtoOfertaGridFilter dto, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		dto.setStart(excelReportGeneratorApi.getStart());
+		dto.setLimit(excelReportGeneratorApi.getLimit());
 		
-		String dtoCarteraCodigo = dtoOfertasFilter.getCarteraCodigo();
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		List<VOfertasActivosAgrupacion> listaOfertas = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasUsuario(dtoOfertasFilter).getResults();
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		List<VGridBusquedaOfertas> listaOfertas = (List<VGridBusquedaOfertas>) ofertaApi.getBusquedaOfertasGridUsuario(dto).getResults();
 		HashMap<Long,String> fechasReunionComite = new HashMap<Long, String>();
 		HashMap<Long,String> sancionadores = new HashMap<Long, String>();
+		boolean esCarteraLBK = false;
 		
-		if((!Checks.esNulo(usuarioCartera) && (DDCartera.CODIGO_CARTERA_LIBERBANK).equals(usuarioCartera.getCartera().getCodigo()))
-				|| (!Checks.esNulo(dtoCarteraCodigo) && (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(dtoCarteraCodigo)))){
-			for(VOfertasActivosAgrupacion oferta : listaOfertas){
-				List<Long> TareasExternasId = activoTareaExternaDao.getTareasExternasIdByOfertaId(oferta.getId());
+		if((usuarioCartera != null  && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(usuarioCartera.getCartera().getCodigo()))
+				|| DDCartera.CODIGO_CARTERA_LIBERBANK.equals(dto.getCarteraCodigo())){			
+			esCarteraLBK = true;
+			for(VGridBusquedaOfertas oferta : listaOfertas){
+				List<Long> tareasExternasId = activoTareaExternaDao.getTareasExternasIdByOfertaId(oferta.getId());
 				Filter filterTap01 = genericDao.createFilter(FilterType.EQUALS, "codigo", "T013_ResolucionComite");
 				Long idResolucionComite = genericDao.get(TareaProcedimiento.class, filterTap01).getId();
 				Filter filterTap02 = genericDao.createFilter(FilterType.EQUALS, "codigo", "T015_ResolucionExpediente");
 				Long idResolucionExpediente = genericDao.get(TareaProcedimiento.class, filterTap02).getId();
 				
-				//01->Venta, 02->Alquiler
-				if(("01").equals(oferta.getCodigoTipoOferta())){
-					for(Long tareaExternaId : TareasExternasId){
+				if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getCodigoTipoOferta()) || DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getCodigoTipoOferta())){
+					for(Long tareaExternaId : tareasExternasId){
 						TareaExterna tareaExterna = activoTareaExternaApi.get(tareaExternaId);
-						if((idResolucionComite).equals(tareaExterna.getTareaProcedimiento().getId())){
-							List<TareaExternaValor> valores = activoTareaExternaDao.getByTareaExterna(tareaExterna.getId());
-							for(TareaExternaValor valor : valores){
-								if(("fechaReunionComite").equals(valor.getNombre())){
-									fechasReunionComite.put(oferta.getId(), valor.getValor());
-								}
-								if(("comiteInternoSancionador").equals(valor.getNombre())){
-									sancionadores.put(oferta.getId(), valor.getValor());
-								}
-							}
-						}
-					}
-				}else if(("02").equals(oferta.getCodigoTipoOferta())){
-					for(Long tareaExternaId : TareasExternasId){
-						TareaExterna tareaExterna = activoTareaExternaApi.get(tareaExternaId);
-						if((idResolucionExpediente).equals(tareaExterna.getTareaProcedimiento().getId())){
+						if(idResolucionComite.equals(tareaExterna.getTareaProcedimiento().getId()) ||
+						   idResolucionExpediente.equals(tareaExterna.getTareaProcedimiento().getId())){
 							List<TareaExternaValor> valores = activoTareaExternaDao.getByTareaExterna(tareaExterna.getId());
 							for(TareaExternaValor valor : valores){
 								if(("fechaReunionComite").equals(valor.getNombre())){
@@ -216,23 +199,21 @@ public class OfertasController {
 				}
 			}
 		}
-		
-		new EmptyParamDetector().isEmpty(listaOfertas.size(), "ofertas",  usuarioManager.getUsuarioLogado().getUsername());
-		
-		ExcelReport report = new OfertasExcelReport(listaOfertas, dtoCarteraCodigo, usuarioCartera, fechasReunionComite, sancionadores);
 
+		new EmptyParamDetector().isEmpty(listaOfertas.size(), "ofertas",  usuarioManager.getUsuarioLogado().getUsername());		
+		ExcelReport report = new OfertaGridExcelReport(listaOfertas, esCarteraLBK, fechasReunionComite, sancionadores);
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}	
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional()
-	public ModelAndView registrarExportacion(DtoOfertasFilter dtoOfertasFilter, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView registrarExportacion(DtoOfertaGridFilter dto, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelMap model = new ModelMap();
 		Usuario user = null;
 		Boolean isSuperExport = false;
 		try {
-			int count = ofertaApi.getListOfertasUsuario(dtoOfertasFilter).getTotalCount();
+			int count = ofertaApi.getBusquedaOfertasGridUsuario(dto).getTotalCount();
 			user = usuarioManager.getUsuarioLogado();
 			AuditoriaExportaciones ae = new AuditoriaExportaciones();
 			ae.setBuscador(buscador);
@@ -965,6 +946,23 @@ public class OfertasController {
 
 		return createModelAndViewJson(model);
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getBusquedaOfertasGrid(DtoOfertaGridFilter dto, ModelMap model) {
+		try {
+			Page page = ofertaApi.getBusquedaOfertasGridUsuario(dto);
+			model.put(RESPONSE_DATA_KEY, page.getResults());
+			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
+			model.put(RESPONSE_SUCCESS_KEY, true);
+			
+		} catch (Exception e) {			
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			logger.error("Error en ofertasController", e);
+		}
+		return createModelAndViewJson(model);
 	}
 	
 }

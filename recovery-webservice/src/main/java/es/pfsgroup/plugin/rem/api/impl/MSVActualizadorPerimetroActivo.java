@@ -345,8 +345,12 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 				if(!Checks.esNulo(exclusionValidaciones)) {
 					DDSinSiNo validacion = getCheckValueToDDSinSiNo(exclusionValidaciones);
 					perimetroActivo.setExcluirValidaciones(validacion);
-					if(!Checks.esNulo(motivoGestionComercial) && validacion != null && DDSinSiNo.CODIGO_SI.equalsIgnoreCase(validacion.getCodigo())) {
-						perimetroActivo.setMotivoGestionComercial((DDMotivoGestionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, motivoGestionComercial));
+					if(!Checks.esNulo(motivoGestionComercial) && validacion != null ) {
+						if(DDSinSiNo.CODIGO_SI.equalsIgnoreCase(validacion.getCodigo())) {
+							perimetroActivo.setMotivoGestionComercial((DDMotivoGestionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, motivoGestionComercial));
+						}else {
+							perimetroActivo.setMotivoGestionComercial(null);
+						}
 					}
 				}
 			}

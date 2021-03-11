@@ -140,6 +140,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			// dado.
 			// En caso de que no exista, crea uno nuevo relacionado sin datos
 			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+			boolean propagarRestringida = false;
 			
 			// Perimetro Macc---------------------------
 			if (CHECK_NO_CAMBIAR.equals(tmpPerimetroMacc) 
@@ -281,52 +282,74 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 				// publicación del activo.
 			}
 			
-			//Vible para gestion comercial
-			if(!Checks.esNulo(visibleGestionComercial)) {
-				if(activoAgrupacion != null && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())) {
-					List<ActivoAgrupacionActivo> activos= activoAgrupacion.getAgrupacion().getActivos();
-					for (ActivoAgrupacionActivo activoAgrupacionActivo : activos) {
-						PerimetroActivo perimetroActivoAgrupacion = activoApi.getPerimetroByIdActivo(activoAgrupacionActivo.getActivo().getId());
-						Activo activoAg = activoAgrupacionActivo.getActivo();
-						activoApi.getPerimetroByIdActivo(activoAg.getId());
-						if(Arrays.asList(listaValidosPositivos).contains(visibleGestionComercial.toUpperCase())) {
-							perimetroActivo.setCheckGestorComercial(true);
-						}else if(Arrays.asList(listaValidosNegativos).contains(visibleGestionComercial.toUpperCase())){
-							perimetroActivo.setCheckGestorComercial(false);
-						}
-						if(!Checks.esNulo(fechaCambio)) {
-							SimpleDateFormat sdfSal = new SimpleDateFormat("dd/MM/yyyy"); 
-							Date fecha = sdfSal.parse(fechaCambio);
-							perimetroActivoAgrupacion.setFechaGestionComercial(fecha);
-							}else {
-								perimetroActivoAgrupacion.setFechaGestionComercial(new Date());
-							}
-						activoApi.saveOrUpdatePerimetroActivo(perimetroActivoAgrupacion);
+			
+			if(activoAgrupacion != null && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())
+					&& (!Checks.esNulo(visibleGestionComercial) || !Checks.esNulo(exclusionValidaciones))) {
+				
+				Boolean checkGestorComercialAg = null;
+				Date fecha = new Date();
+				DDSinSiNo validacion = null;
+				DDMotivoGestionComercial motivo = null;
+				if(!Checks.esNulo(visibleGestionComercial)) {
+					if(Arrays.asList(listaValidosPositivos).contains(visibleGestionComercial.toUpperCase())) {
+						checkGestorComercialAg = true;
+					}else {
+						checkGestorComercialAg = false;
 					}
-				}else {
-						if(Arrays.asList(listaValidosPositivos).contains(visibleGestionComercial.toUpperCase())) {
-							perimetroActivo.setCheckGestorComercial(true);
-						}else if(Arrays.asList(listaValidosNegativos).contains(visibleGestionComercial.toUpperCase())){
-							perimetroActivo.setCheckGestorComercial(false);
-						}
-						if(!Checks.esNulo(motivoGestionComercial) && motivoGestionComercial.length() > 1) {
-							perimetroActivo.setMotivoGestionComercial((DDMotivoGestionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, motivoGestionComercial));
-						}
-						if(exclusionValidaciones!=null && !exclusionValidaciones.isEmpty() && Arrays.asList(listaValidosPositivos).contains(exclusionValidaciones.toUpperCase())) {
-							perimetroActivo.setExcluirValidaciones(((DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, "01")));
-						}	
-						if(Arrays.asList(listaValidosNegativos).contains(exclusionValidaciones.toUpperCase()) || exclusionValidaciones.isEmpty() ){
-							perimetroActivo.setMotivoGestionComercial(null);
-						}
-						if(!Checks.esNulo(fechaCambio)) {
-							SimpleDateFormat sdfSal = new SimpleDateFormat("dd/MM/yyyy"); 
-							Date fecha = sdfSal.parse(fechaCambio);
-							perimetroActivo.setFechaGestionComercial(fecha);
-						}else {
-							perimetroActivo.setFechaGestionComercial(new Date());
-						}		
+					
+					if(!Checks.esNulo(fechaCambio)) {
+						SimpleDateFormat sdfSal = new SimpleDateFormat("dd/MM/yyyy"); 
+						fecha = sdfSal.parse(fechaCambio);
 					}
 				}
+						
+				if(!Checks.esNulo(exclusionValidaciones)) {
+					validacion = getCheckValueToDDSinSiNo(exclusionValidaciones);
+					if(!Checks.esNulo(motivoGestionComercial) && validacion != null && DDSinSiNo.CODIGO_SI.equalsIgnoreCase(validacion.getCodigo())) {
+						motivo = (DDMotivoGestionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, motivoGestionComercial);
+					}
+				}
+					
+				List<ActivoAgrupacionActivo> activos= activoAgrupacion.getAgrupacion().getActivos();
+				
+				for (ActivoAgrupacionActivo activoAgrupacionActivo : activos) {
+					PerimetroActivo perimetroActivoAgrupacion = activoApi.getPerimetroByIdActivo(activoAgrupacionActivo.getActivo().getId());
+					if(checkGestorComercialAg != null) {
+						perimetroActivo.setCheckGestorComercial(checkGestorComercialAg);
+						perimetroActivoAgrupacion.setFechaGestionComercial(fecha);
+					}
+					if(!Checks.esNulo(exclusionValidaciones)) {
+						perimetroActivo.setExcluirValidaciones(validacion);
+						perimetroActivo.setMotivoGestionComercial(motivo);
+					}
+						
+					activoApi.saveOrUpdatePerimetroActivo(perimetroActivoAgrupacion);
+				}
+					
+
+			}else if(!Checks.esNulo(visibleGestionComercial) || !Checks.esNulo(exclusionValidaciones)){
+				if(!Checks.esNulo(visibleGestionComercial)) {
+					if(Arrays.asList(listaValidosPositivos).contains(visibleGestionComercial.toUpperCase())) {
+						perimetroActivo.setCheckGestorComercial(true);
+					}else {
+						perimetroActivo.setCheckGestorComercial(false);
+					}
+					Date fecha = new Date();
+					if(!Checks.esNulo(fechaCambio)) {
+						SimpleDateFormat sdfSal = new SimpleDateFormat("dd/MM/yyyy"); 
+						fecha = sdfSal.parse(fechaCambio);
+					}
+					perimetroActivo.setFechaGestionComercial(fecha);
+				}
+						
+				if(!Checks.esNulo(exclusionValidaciones)) {
+					DDSinSiNo validacion = getCheckValueToDDSinSiNo(exclusionValidaciones);
+					perimetroActivo.setExcluirValidaciones(validacion);
+					if(!Checks.esNulo(motivoGestionComercial) && validacion != null && DDSinSiNo.CODIGO_SI.equalsIgnoreCase(validacion.getCodigo())) {
+						perimetroActivo.setMotivoGestionComercial((DDMotivoGestionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, motivoGestionComercial));
+					}
+				}
+			}
 
 			// Aplica Formalizar ---------------------------
 			if (!CHECK_NO_CAMBIAR.equals(tmpAplicaFormalizar)) {
@@ -483,5 +506,18 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		}
 	}
 
+	private DDSinSiNo getCheckValueToDDSinSiNo(String cellValue){
+		DDSinSiNo diccionario = null;
+		if(!Checks.esNulo(cellValue)){
+			if(Arrays.asList(listaValidosPositivos).contains(cellValue)) {		
+				diccionario =  (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI);
+			}else if(Arrays.asList(listaValidosNegativos).contains(cellValue)) {
+				diccionario = (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI);
+			}
+		}
+
+		return diccionario;
+		
+	}
 
 }

@@ -283,8 +283,8 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 					        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
 					        	name: 'subcarteraCodigo',
 					        	bind: {
-//				            		store: '{comboSubcarteraFiltered}'
-					        		store: '{comboSubcartera}',
+				            		store: '{comboSubcarteraFiltered}',
+//					        		store: '{comboSubcartera}',
 					        		disabled: '{!comboCarteraSearch.selection}',
 					        		filters: {
 					        			property: 'carteraCodigo',

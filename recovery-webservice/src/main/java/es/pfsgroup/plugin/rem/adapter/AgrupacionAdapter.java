@@ -115,6 +115,7 @@ import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
+import es.pfsgroup.plugin.rem.model.VCalculosActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.VCondicionantesAgrDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VFechasPubCanalesAgr;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
@@ -324,15 +325,15 @@ public class AgrupacionAdapter {
 		dtoAgrupacionFilter.setLimit(1);
 		dtoAgrupacionFilter.setStart(0);
 
-		VBusquedaAgrupaciones agrupacionVista = (VBusquedaAgrupaciones) activoAgrupacionApi
-				.getListAgrupaciones(dtoAgrupacionFilter, usuarioLogado).getResults().get(0);
+		/*VBusquedaAgrupaciones agrupacionVista = (VBusquedaAgrupaciones) activoAgrupacionApi
+				.getListAgrupaciones(dtoAgrupacionFilter, usuarioLogado).getResults().get(0);*/
 		
-		
+		VCalculosActivoAgrupacion agrupacionVistaCalculado = genericDao.get(VCalculosActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", agrupacion.getId()));
 
 		try {
 			BeanUtils.copyProperties(dtoAgrupacion, agrupacion);
-			BeanUtils.copyProperty(dtoAgrupacion, "numeroPublicados", agrupacionVista.getPublicados());
-			BeanUtils.copyProperty(dtoAgrupacion, "numeroActivos", agrupacionVista.getActivos());
+			BeanUtils.copyProperty(dtoAgrupacion, "numeroPublicados", agrupacionVistaCalculado.getNumActivosPublicados());
+			BeanUtils.copyProperty(dtoAgrupacion, "numeroActivos", agrupacionVistaCalculado.getNumActivos());
 			
 
 			if (agrupacion.getTipoAgrupacion() != null) {

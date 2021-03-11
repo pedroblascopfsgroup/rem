@@ -158,7 +158,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					            		store: '{comboSubtipoActivoBde}',
 					            		value: '{activo.subtipoActivoCodigoBde}',
 					            		hidden: '{!activo.isCarteraLiberbank}'
-					            	}
+					            	},
+					            	style:'margin-left:10px'
 						        },
 						        {
 				                	xtype: 'comboboxfieldbase',

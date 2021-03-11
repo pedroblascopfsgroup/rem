@@ -449,6 +449,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
 
 		return dto;
@@ -5923,7 +5924,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
  	public String esEstadoValidoGDAOProveedor(Trabajo trabajo, Usuario usuariologado){
  		Boolean isProveedor = genericAdapter.isProveedor(usuariologado);
  		String resultado = "no";
- 		String estado = trabajo.getEstado().getCodigo();
+ 		String estado = null;
+ 		if(trabajo.getEstado() != null) {
+ 			estado = trabajo.getEstado().getCodigo();
+ 		}
  		Filter filtroGDA = genericDao.createFilter(FilterType.EQUALS, "codigo", PERFIL_GESTOR_ACTIVO);
 		Perfil perfilGDA = genericDao.get(Perfil.class, filtroGDA);
 		Boolean isGDA = usuariologado.getPerfiles().contains(perfilGDA);

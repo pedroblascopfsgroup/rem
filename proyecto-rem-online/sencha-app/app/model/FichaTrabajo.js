@@ -153,6 +153,9 @@ Ext.define('HreRem.model.FichaTrabajo', {
     		},
 			{	
     			name: 'identificadorReamCodigo'
+    		},
+    		{
+    			name: 'tipoTrabajoCodigo'
     		}
     		
     ],

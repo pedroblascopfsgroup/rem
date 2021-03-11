@@ -340,7 +340,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		//ActivoAdmisionDocumento
 		ActivoAdmisionDocumento admisionDocumento = new ActivoAdmisionDocumento();
 		admisionDocumento.setActivo(activo);
-		admisionDocumento.setNoValidado(false);
+		admisionDocumento.setNoValidado(true);
 		admisionDocumento.setConfigDocumento(configDocumento);
 		beanUtilNotNull.copyProperty(admisionDocumento, "tipoCalificacionEnergetica", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalificacionEnergetica.class, dtoAATP.getCalificacionCeeCodigo()));
 		genericDao.save(ActivoAdmisionDocumento.class, admisionDocumento);

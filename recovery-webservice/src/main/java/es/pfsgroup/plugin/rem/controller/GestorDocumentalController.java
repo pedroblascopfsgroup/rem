@@ -66,7 +66,7 @@ public class GestorDocumentalController extends ParadiseJsonController {
 			String idEntidad = webFileItem.getParameter("idEntidad"); 
 			String tipoDocumento = webFileItem.getParameter("tipo");
 			Long idActivo = null;
-			boolean tbjValidado = false;
+			boolean tbjValidado = true;
 			if( entidad != null && idEntidad != null && dto != null && tipoDocumento != null) {
 				
 				if(GestorDocumentalAdapterApi.ENTIDAD_ACTIVO.equalsIgnoreCase(entidad)) {
@@ -82,7 +82,7 @@ public class GestorDocumentalController extends ParadiseJsonController {
 						throw new Exception("No existe el trabajo.");
 					}
 					if(trabajo.getEstado() != null && DDEstadoTrabajo.ESTADO_VALIDADO.equals(trabajo.getEstado().getCodigo())) {
-						tbjValidado = true;
+						tbjValidado = false;
 					}
 					
 					List<ActivoTrabajo> activoTrabajoList = trabajo.getActivosTrabajo();

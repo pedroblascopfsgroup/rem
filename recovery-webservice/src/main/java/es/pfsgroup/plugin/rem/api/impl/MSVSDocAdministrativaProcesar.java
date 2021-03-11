@@ -122,7 +122,7 @@ public class MSVSDocAdministrativaProcesar extends AbstractMSVActualizador imple
 			ado = new ActivoAdmisionDocumento();
 			ado.setActivo(activo);
 			ado.setConfigDocumento(activoConfigDocumento);
-			ado.setNoValidado(false);
+			ado.setNoValidado(true);
 			ado.setAuditoria(Auditoria.getNewInstance());			
 		}
 		

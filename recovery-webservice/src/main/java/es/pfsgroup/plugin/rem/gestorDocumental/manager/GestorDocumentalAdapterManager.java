@@ -1733,7 +1733,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	@Override
 	@Transactional(readOnly = false)
 	public void actualizarAdmisionValidado(Trabajo tbj) throws ParseException{
-		
+		Order order = new Order(OrderType.DESC, "id");
+		ActivoAdmisionDocumento activoAdmisionDocumento = null;
 		Filter filterSubTipoTrabajo= genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.id", tbj.getSubtipoTrabajo().getId());
 		List<TipoDocumentoSubtipoTrabajo> tipoDocList = genericDao.getList(TipoDocumentoSubtipoTrabajo.class, filterSubTipoTrabajo);
 
@@ -1751,11 +1752,18 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 					Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo", tipoDoc.getTipoDocumento().getCodigo());
 					Filter filtrotipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.id",activo.getTipoActivo().getId());
 					ActivoConfigDocumento actConfDoc = genericDao.get(ActivoConfigDocumento.class, filtroDocumento,filtrotipoActivo);
-					Filter filtroActConfDoc = genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", actConfDoc.getId());
-					ActivoAdmisionDocumento activoAdmisionDocumento = genericDao.get(ActivoAdmisionDocumento.class, filtroActivo, filtroActConfDoc);
-					if(activoAdmisionDocumento != null) {
-						activoAdmisionDocumento.setNoValidado(true);
-						genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
+					List<ActivoConfigDocumento> actConfDocList = genericDao.getListOrdered(ActivoConfigDocumento.class, order,filtroDocumento,filtrotipoActivo);
+					if(actConfDocList != null && !actConfDocList.isEmpty()) {
+						actConfDoc = actConfDocList.get(0);
+						Filter filtroActConfDoc = genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", actConfDoc.getId());
+						List<ActivoAdmisionDocumento> activoAdmisionDocumentoList = genericDao.getListOrdered(ActivoAdmisionDocumento.class,order, filtroActivo, filtroActConfDoc);
+						if(activoAdmisionDocumentoList != null && !activoAdmisionDocumentoList.isEmpty()) {
+							activoAdmisionDocumento = activoAdmisionDocumentoList.get(0);
+						}
+						if(activoAdmisionDocumento != null) {
+							activoAdmisionDocumento.setNoValidado(false);
+							genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
+						}
 					}
 				}	
 			}

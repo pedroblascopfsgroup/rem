@@ -211,14 +211,12 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
 		var grid = tableView.up('grid');
 	    var record = grid.store.getAt(indiceFila);
 	    grid.setSelection(record);
-//	    if(Ext.isEmpty(record.get('idAgrupacion'))){
 	    if(Ext.isEmpty(record.get('numAgrupacion'))){
 	    	var idActivo = record.get("idActivo");
 	   		me.redirectTo('activos', true);
 	    	me.getView().fireEvent('abrirDetalleActivo', record);
 	    }
 	    else{
-//	    	var idAgrupacion = record.get("idAgrupacion");
 	    	me.getView().fireEvent('abrirDetalleAgrupacion', record);
 	    }
 	

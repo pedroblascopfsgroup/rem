@@ -1411,7 +1411,7 @@ public interface ParticularValidatorApi {
 	
 	String getNumActivoPrincipal(String numAgr);
 
-	String getExcluirValidaciones(String numActivo);
+	boolean getExcluirValidaciones(String numActivo);
 
 	String getCheckGestorComercial(String numActivo);
 
@@ -1449,4 +1449,6 @@ public interface ParticularValidatorApi {
 	Boolean activoBBVAPerteneceSociedadParticipada (String numActivo);
 
 	Boolean situacionComercialPublicadoAlquilerOVenta(String activo);
+
+	boolean userHasFunction(String funcion, Long idUsuario);
 }

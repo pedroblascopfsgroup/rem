@@ -177,7 +177,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			    AND tipoAgr.DD_TAG_ID = agr.DD_TAG_ID "
 				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			    AND tipoAgr.DD_TAG_CODIGO = '02' "
-				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE)"
+				+ "				AND (agr.AGR_FECHA_BAJA is not null OR agr.AGR_FECHA_BAJA  < SYSDATE)"
 				+"              AND aga.AGA_PRINCIPAL = 0"
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND agr.BORRADO  = 0 "
@@ -6761,7 +6761,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return resultado;
 	}
 	
-	public String getExcluirValidaciones(String numActivo) {
+	public boolean getExcluirValidaciones(String numActivo) {
 		String resultado = null;
 		
 		if(numActivo != null && !numActivo.isEmpty())
@@ -6770,10 +6770,12 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "JOIN ${master.schema}.DD_SIN_SINO DD ON DD.DD_SIN_ID = PAC.PAC_EXCLUIR_VALIDACIONES "
 				+ "WHERE ACT_NUM_ACTIVO = "+ numActivo +" AND PAC.BORRADO = 0");
 		
-		if(resultado == null)
-			return DDSiNo.NO;
-		else
-		return resultado;
+		if(resultado == null || DDSiNo.NO.equals(resultado) ) {
+			return false;
+		}
+		return true;
+			
+
 	}
 	
 	public String getCheckGestorComercial(String numActivo) {
@@ -6956,5 +6958,25 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return "1".equals(resultado);
 	}
+	
+	@Override
+	public boolean userHasFunction (String funcion, Long idUsuario) {
+		if(Checks.esNulo(idUsuario) || Checks.esNulo(funcion)  )
+			return false;
+		String resultado = rawDao.getExecuteSQL("select count(1) " + 
+				" from remmaster.usu_usuarios usu " + 
+				" inner join rem01.zon_pef_usu zonpefusu on usu.usu_id = zonpefusu.usu_id " + 
+				" inner join rem01.pef_perfiles pef on pef.pef_id = zonpefusu.pef_id " + 
+				" inner join fun_pef funpef on funpef.pef_id=pef.pef_id " + 
+				" inner join REMMASTER.fun_funciones fun on fun.fun_id = funpef.fun_id " + 
+				" where fun.fun_descripcion='"+funcion+"' " + 
+				" and usu.borrado = 0 " + 
+				" and pef.borrado = 0 " + 
+				" and funpef.borrado = 0 " + 
+				" and zonpefusu.borrado = 0 " + 
+				" and usu.usu_id= "+idUsuario+"");
+		return "1".equals(resultado);
+	}
+	
 
 }

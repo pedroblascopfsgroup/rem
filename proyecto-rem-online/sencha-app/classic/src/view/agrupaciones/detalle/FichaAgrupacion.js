@@ -418,7 +418,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
     							fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.visibleGestionComercial'),
     							reference: 'chkVisibleGestionComercial',
     							bind: {
-    								value: '{agrupacionficha.visibleGestionComercial}'
+    								value: '{agrupacionficha.visibleGestionComercial}',
+    			            		readOnly:'{esEditableExcluirValidaciones}'
     							}
     						},
     						{
@@ -427,7 +428,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
     				        	reference: 'chkMarcaDeExcluido',
     				        	bind: {	
     			            		store: '{comboSiNoBoolean}',
-    			            		value: '{agrupacionficha.marcaDeExcluido}'
+    			            		value: '{agrupacionficha.marcaDeExcluido}',
+    			              		readOnly:'{esEditableExcluirValidaciones}'
     			            	}
     						},
     						{
@@ -437,7 +439,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
     				        	bind		: {
     			            		store: '{comboMotivoDeExcluido}',
     			            		value: '{agrupacionficha.motivoDeExcluidoCodigo}',
-    			            		disabled: '{!agrupacionficha.marcaDeExcluido}'
+    			            		disabled: '{!agrupacionficha.marcaDeExcluido}',
+    			              		readOnly:'{esEditableExcluirValidaciones}'
     			            	}
     						}
     						

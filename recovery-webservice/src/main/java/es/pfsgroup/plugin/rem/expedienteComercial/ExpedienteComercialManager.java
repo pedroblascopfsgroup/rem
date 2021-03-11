@@ -626,7 +626,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Oferta ofertaPrincipal = null;
 		DDClaseOferta claseOferta = null;
 		Usuario usuarioModificador = genericAdapter.getUsuarioLogado();
-		
 		if(!Checks.esNulo(dto.getClaseOfertaCodigo())) {
 			Filter f = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
 			claseOferta = genericDao.get(DDClaseOferta.class, f);
@@ -1218,6 +1217,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(dto.getImporteOferta())) {
 			ofertaApi.resetPBC(expedienteComercial, false);
 		}
+
 		if(!Checks.esNulo(dto.getIdGestorComercialPrescriptor())) {
 			if(dto.getIdGestorComercialPrescriptor().equals(0l)) {
 				oferta.setGestorComercialPrescriptor(null);
@@ -1298,6 +1298,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		// el listado de activos.
 		// También se actualiza el importe de la reserva. Actualizar honorarios para el
 		// nuevo importe de contraoferta u oferta.
+
 		if (!Checks.esNulo(dto.getImporteOferta()) || !Checks.esNulo(dto.getImporteContraOferta())) {
 			this.updateParticipacionActivosOferta(oferta);
 			this.actualizarImporteReservaPorExpediente(expedienteComercial);
@@ -4793,36 +4794,32 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
 		List<GastosExpediente> gastosExpediente = genericDao.getList(GastosExpediente.class, filtro);
 		List<GastosExpediente> honorarios = new ArrayList<GastosExpediente>();
-		
-		
-		for (GastosExpediente gastoExpediente : gastosExpediente) {
-			// Solo actualizar los importes finales si el gasto utiliza porcentajes sobre el
-			// importe de oferta o contra-oferta.
-			if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(gastoExpediente.getTipoCalculo().getCodigo())) {
-				Oferta oferta = gastoExpediente.getExpediente().getOferta();
-
-				Double calculoImporteC = gastoExpediente.getImporteCalculo();
-
-				Long idActivo = gastoExpediente.getActivo().getId();
-
-				for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
-					if (!Checks.esNulo(activoOferta.getImporteActivoOferta())) {
-						if (activoOferta.getPrimaryKey().getActivo().getId().equals(idActivo)) {
+		ExpedienteComercial eco = this.findOne(idExpediente);
+		if(eco != null) {
+			Oferta oferta = eco.getOferta();
+			boolean isAlquiler = DDTipoOferta.isTipoAlquiler(oferta.getTipoOferta());
+			if(oferta != null) {			
+				for (GastosExpediente gastoExpediente : gastosExpediente) {
+					if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(gastoExpediente.getTipoCalculo().getCodigo())) {
+						Double calculoImporteC = gastoExpediente.getImporteCalculo();
+						Long idActivo = gastoExpediente.getActivo().getId();
+						Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", idActivo);
+						Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "oferta", oferta.getId());
+						ActivoOferta activoOferta = genericDao.get(ActivoOferta.class, filtroActivo, filtroOferta);
+						if(activoOferta != null && activoOferta.getImporteActivoOferta() != null && calculoImporteC != null) {
 							Double honorario = (activoOferta.getImporteActivoOferta() * calculoImporteC / 100);
-							// Si el honorario es menor de 100 € el valor final será, salvo si el importe es
-							// fijo, de 100 €. HREOS-5149
-							if (honorario < 100.00) {
+							// Si el honorario es menor de 100 € y es de tipo alquiler el valor final será, salvo si el importe es fijo, de 100 €. HREOS-5149
+							if (honorario < 100.00 && isAlquiler) {
 								gastoExpediente.setImporteFinal(100.00);
 							} else {
 								gastoExpediente.setImporteFinal(honorario);
 							}
-							gastoExpediente.setImporteFinal(honorario);
 						}
+		
+						honorarios.add(gastoExpediente);
+						genericDao.save(GastosExpediente.class, gastoExpediente);
 					}
 				}
-
-				honorarios.add(gastoExpediente);
-				genericDao.save(GastosExpediente.class, gastoExpediente);
 			}
 		}
 		return honorarios;
@@ -4882,12 +4879,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		// Si el honorario es menor de 100 € el valor final será, salvo si el importe es
 		// fijo, de 100 €. HREOS-5149
-		if (dtoGastoExpediente.getHonorarios() < 100.00
-				&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dtoGastoExpediente.getCodigoTipoCalculo())
-				&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO.equals(dtoGastoExpediente.getCodigoTipoCalculo())) {
-			gastoExpediente.setImporteFinal(100.00);
-		} else {
-			gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
+		if(gastoExpediente.getExpediente() != null && gastoExpediente.getExpediente().getOferta() != null) {
+			Oferta oferta = gastoExpediente.getExpediente().getOferta();
+			
+			if (dtoGastoExpediente.getHonorarios() < 100.00 && DDTipoOferta.isTipoAlquiler(oferta.getTipoOferta())
+					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dtoGastoExpediente.getCodigoTipoCalculo())
+					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO.equals(dtoGastoExpediente.getCodigoTipoCalculo())) {
+				gastoExpediente.setImporteFinal(100.00);
+			} else {
+				gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
+			}
 		}
 
 		gastoExpediente.setObservaciones(dtoGastoExpediente.getObservaciones());
@@ -6300,14 +6301,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		gastoExpediente.setImporteCalculo(dto.getImporteCalculo());
 
-		// Si el honorario es menor de 100 € el valor final será, salvo si el importe es
-		// fijo, de 100 €. HREOS-5149
-		if (dto.getHonorarios() < 100.00
-				&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dto.getCodigoTipoCalculo())
-				&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO.equals(dto.getCodigoTipoCalculo())) {
-			gastoExpediente.setImporteFinal(100.00);
-		} else {
-			gastoExpediente.setImporteFinal(dto.getHonorarios());
+		if(gastoExpediente.getExpediente() != null && gastoExpediente.getExpediente().getOferta() != null) {
+			Oferta oferta = gastoExpediente.getExpediente().getOferta();
+			
+			// Si el honorario es menor de 100 € el valor final será, salvo si el importe es
+			// fijo, de 100 €. HREOS-5149
+			if (dto.getHonorarios() < 100.00 && DDTipoOferta.isTipoAlquiler(oferta.getTipoOferta())
+					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dto.getCodigoTipoCalculo())
+					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO.equals(dto.getCodigoTipoCalculo())) {
+				gastoExpediente.setImporteFinal(100.00);
+			} else {
+				gastoExpediente.setImporteFinal(dto.getHonorarios());
+			}
 		}
 
 		gastoExpediente.setObservaciones(dto.getObservaciones());
@@ -7253,7 +7258,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			gastoExpediente.setImporteCalculo(dtoGastoExpediente.getImporteCalculo());
 			// Si el honorario es menor de 100 € el valor final será, salvo si el importe es
 			// fijo, de 100 €. HREOS-5149
-			if (dtoGastoExpediente.getHonorarios() < 100.00
+			
+				
+			if (dtoGastoExpediente.getHonorarios() < 100.00 && DDTipoOferta.isTipoAlquiler(oferta.getTipoOferta())
 					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dtoGastoExpediente.getCodigoTipoCalculo())
 					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO.equals(dtoGastoExpediente.getCodigoTipoCalculo())) {
 				gastoExpediente.setImporteFinal(100.00);
@@ -11188,7 +11195,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			gastoExpediente.setImporteCalculo(dtoGastoExpediente.getImporteCalculo());
 			// Si el honorario es menor de 100 € el valor final será, salvo si el importe es
 			// fijo, de 100 €. HREOS-5149
-			if (dtoGastoExpediente.getHonorarios() < 100.00
+			if (dtoGastoExpediente.getHonorarios() < 100.00 && DDTipoOferta.isTipoAlquiler(oferta.getTipoOferta())
 					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dtoGastoExpediente.getCodigoTipoCalculo())
 					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO.equals(dtoGastoExpediente.getCodigoTipoCalculo())) {
 				gastoExpediente.setImporteFinal(100.00);

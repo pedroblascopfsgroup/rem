@@ -847,7 +847,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.gestion.comercial'),
 								reference: 'checkGestionComercial',
 								bind: {
-									value: '{activo.checkGestorComercial}'
+									value: '{activo.checkGestorComercial}',
+									readOnly: '{esEditableExcluirValidaciones}'
 								},
 								listeners: {
 									change: 'onChkbxGestionComercialChange'
@@ -857,7 +858,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype: 'datefieldbase',
 								bind:		'{activo.fechaGestionComercial}',
 								reference: 'datefieldFechaGestionComercial',
-								readOnly: '{activo.restringido}'
+								readOnly: '{esEditableExcluirValidaciones}'
 							},
 							
 							{
@@ -866,7 +867,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								reference: 'checkExclusionGestionComercial',
 								bind: {
 									value: '{activo.checkExcluirValidacionesGestionComercial}', 
-									readOnly: '{activo.restringido}'
+									readOnly: '{esEditableExcluirValidaciones}'
 								},
 								listeners: {
 									change: 'onChkbxExclValPerimetroChange'
@@ -884,7 +885,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								reference: 'comboMotivoGestionComercial',
 								bind: {
 									store: '{comboMotivoGestionComercialActivo}',
-									value: '{activo.motivoGestionComercialCodigo}'
+									value: '{activo.motivoGestionComercialCodigo}',
+									readOnly: '{esEditableExcluirValidaciones}'
 								}
 							},
 

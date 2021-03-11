@@ -1206,6 +1206,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		btnNuevaPeticionTrabajoOculto: function(get) {
 			var isIncluidoEnPerimetro = get('activo.incluidoEnPerimetro');
 			return (isIncluidoEnPerimetro == false || $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']));
+		},
+		
+		esEditableExcluirValidaciones: function(get){
+			var restringido = this.get('activo.restringido');
+			var perfiles = $AU.userHasFunction('EDITAR_EXCLUIR_VALIDACIONES');
+			if (restringido == false)
+				return !perfiles;
+			else
+				return !perfiles && restringido;
 		}
     },
     

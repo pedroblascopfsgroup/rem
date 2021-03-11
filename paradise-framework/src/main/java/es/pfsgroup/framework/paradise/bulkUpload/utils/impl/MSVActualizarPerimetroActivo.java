@@ -19,7 +19,13 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
@@ -90,6 +96,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final String VALID_ACTIVO_BBVA_SOCIEDAD_PARTICIPADA = "msg.error.masivo.activo.BBVA.sociedad.participada";
 	public static final String VALID_VALORES_EXCLUSION= "msg.error.masivo.activo.valores.exclusion";	
 	public static final String VALID_VALORES_VALIDOS_EN_VISIBLE_GESTION_COMERCIAL = "msg.error.masivo.actualizar.validos.visible.gestion.comercial";
+	public static final String VALID_VALORES_CAMPOS_NO_MODIFICABLE_POR_USUARIOS = "msg.error.masivo.actualizar.validos.campos.no.modificables.por.usuarios";
 
 
 	//Posición de los datos
@@ -136,8 +143,12 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
     private static final String COD_EXCLUIR_VALIDACIONES ="1";
     private static final String [] listaExcluir = {"1","2",""};
     private static final String [] listaValidosNegativos = {"N" ,"NO"};
+
+    private static final String EDITAR_EXCLUIR_VALIDACIONES = "EDITAR_EXCLUIR_VALIDACIONES";
+
   
     protected final Log logger = LogFactory.getLog(getClass());
+    
     
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -153,6 +164,13 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
+	
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
+	
 	
 	@Resource
     MessageService messageServices;
@@ -232,8 +250,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(messageServices.getMessage(VALID_AGRUPACION_RESTRINGIDA), activoPrincipalAgrupacionRestringida(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_CAJAMAR_VPO), estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_ACTIVO_BBVA_SOCIEDAD_PARTICIPADA), activoBBVAPerteneceSociedadParticipada(exc));
-				
-				
+				mapaErrores.put(messageServices.getMessage(VALID_VALORES_CAMPOS_NO_MODIFICABLE_POR_USUARIOS), usuariosPermitidos(exc));
 
 
 				for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
@@ -1262,22 +1279,18 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				
 				try {
 					if(!Checks.esNulo(exc.dameCelda(i,COL_NUM_VISIBLE_GESTION_COMERCIAL_SN))) {
-					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
-					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
-					if(Checks.esNulo(celdaExcluirValidaciones)) {
-						if("01".equals(particularValidator.getExcluirValidaciones(activo))) {
-						celdaExcluirValidaciones = "S";
-						}else if("02".equals(particularValidator.getExcluirValidaciones(activo))) {
-							celdaExcluirValidaciones = "N";
-							}
-					}
-					if(Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase())) {
-						if(activo != null) {
-							if(!particularValidator.tieneFechaVentaExterna(activo)) {
-								listaFilas.add(i);	
+						String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
+						String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
+						Boolean excluirValidaciones = null;
+						if(Checks.esNulo(celdaExcluirValidaciones)) {
+							excluirValidaciones= particularValidator.getExcluirValidaciones(activo);
+						}
+						if(Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase())
+						|| (excluirValidaciones != null && !excluirValidaciones)){
+							if(activo != null && !particularValidator.tieneFechaVentaExterna(activo)) {
+									listaFilas.add(i);	
 							}
 						}
-					}
 					}
 				} catch (ParseException e) {
 					listaFilas.add(i);
@@ -1306,18 +1319,14 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					if(!Checks.esNulo(exc.dameCelda(i,COL_NUM_VISIBLE_GESTION_COMERCIAL_SN))) {
 					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
 					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
+					Boolean excluirValidaciones = null;
 					if(Checks.esNulo(celdaExcluirValidaciones)) {
-						if("01".equals(particularValidator.getExcluirValidaciones(activo))) {
-						celdaExcluirValidaciones = "S";
-						}else if("02".equals(particularValidator.getExcluirValidaciones(activo))) {
-							celdaExcluirValidaciones = "N";
-							}
+						excluirValidaciones= particularValidator.getExcluirValidaciones(activo);
 					}
-					if(Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase())) {
-						if(activo != null) {
-							if(!particularValidator.activoNoComercializable(activo)) {
+					if(Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase())
+						|| (excluirValidaciones != null && !excluirValidaciones)){
+						if(activo != null && !particularValidator.activoNoComercializable(activo)) {
 								listaFilas.add(i);	
-							}
 						}
 					}
 					}
@@ -1383,14 +1392,16 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				try {
 					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
 					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
-					if(celdaExcluirValidaciones != null && Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase())) {
-						if(activo != null) {
-							if(particularValidator.estadoExpedienteComercial(activo)) {
+					Boolean excluirValidaciones = null;
+					if(Checks.esNulo(celdaExcluirValidaciones)) {
+						excluirValidaciones= particularValidator.getExcluirValidaciones(activo);
+					}
+					if(celdaExcluirValidaciones != null && Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase())
+					|| (excluirValidaciones != null && !excluirValidaciones)) {
+						if(activo != null && particularValidator.estadoExpedienteComercial(activo)) {
 								listaFilas.add(i);	
-							}
 						}
 					}
-					
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
@@ -1414,29 +1425,24 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					if(!Checks.esNulo(exc.dameCelda(i,COL_NUM_VISIBLE_GESTION_COMERCIAL_SN))) {
-					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
-					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
-					String celdaCheckVisibilidadGestion = exc.dameCelda(i, COL_NUM_VISIBLE_GESTION_COMERCIAL_SN);
-					if(!Checks.esNulo(celdaCheckVisibilidadGestion)) {
-						if(Checks.esNulo(celdaExcluirValidaciones)) {
-							if("01".equals(particularValidator.getExcluirValidaciones(activo))) {
-							celdaExcluirValidaciones = "S";
-							}else if("02".equals(particularValidator.getExcluirValidaciones(activo))) {
-								celdaExcluirValidaciones = "N";
+						String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
+						String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
+						String celdaCheckVisibilidadGestion = exc.dameCelda(i, COL_NUM_VISIBLE_GESTION_COMERCIAL_SN);
+						Boolean excluirValidaciones = null;
+						if(!Checks.esNulo(celdaCheckVisibilidadGestion)) {
+							if(Checks.esNulo(celdaExcluirValidaciones)) {
+								excluirValidaciones= particularValidator.getExcluirValidaciones(activo);
+							}
+							if(Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase())
+							|| (excluirValidaciones != null && !excluirValidaciones)){
+								if(particularValidator.isActivoBankia(activo) && !particularValidator.situacionComercialPublicadoAlquilerOVenta(activo)) {
+									listaFilas.add(i);
+								}else if(particularValidator.activoConDestinoComercialAlquiler(activo) && !particularValidator.situacionComercialPublicadoAlquiler(activo)) {
+									listaFilas.add(i);	
 								}
-						}
-						if(Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase())) {
-							if(particularValidator.isActivoBankia(activo)) {
-								if(!particularValidator.situacionComercialPublicadoAlquilerOVenta(activo)) {
-								listaFilas.add(i);
-								}
-							}else if(particularValidator.activoConDestinoComercialAlquiler(activo) && !particularValidator.situacionComercialPublicadoAlquiler(activo)) {
-							listaFilas.add(i);	
 							}
 						}
 					}
-					}
-					
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
@@ -1497,18 +1503,14 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					if(!Checks.esNulo(exc.dameCelda(i,COL_NUM_VISIBLE_GESTION_COMERCIAL_SN))) {
 					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
 					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
+					Boolean excluirValidaciones = null;
 					if(Checks.esNulo(celdaExcluirValidaciones)) {
-						if("01".equals(particularValidator.getExcluirValidaciones(activo))) {
-						celdaExcluirValidaciones = "S";
-						}else if("02".equals(particularValidator.getExcluirValidaciones(activo))) {
-							celdaExcluirValidaciones = "N";
-							}
+						excluirValidaciones= particularValidator.getExcluirValidaciones(activo);
 					}
-					if(Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase())) {
-						if(activo != null) {
-							if(particularValidator.estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(activo)) {
+					if(Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase())
+					|| (excluirValidaciones != null && !excluirValidaciones)) {
+						if(activo != null && particularValidator.estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(activo)) {
 								listaFilas.add(i);	
-							}
 						}
 					}
 					}
@@ -1536,18 +1538,14 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					if(!Checks.esNulo(exc.dameCelda(i,COL_NUM_VISIBLE_GESTION_COMERCIAL_SN))) {
 						String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
 						String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
+						Boolean excluirValidaciones = null;
 						if(Checks.esNulo(celdaExcluirValidaciones)) {
-							if("01".equals(particularValidator.getExcluirValidaciones(activo))) {
-							celdaExcluirValidaciones = "S";
-							}else if("02".equals(particularValidator.getExcluirValidaciones(activo))) {
-								celdaExcluirValidaciones = "N";
-								}
+							excluirValidaciones= particularValidator.getExcluirValidaciones(activo);
 						}
-						if(Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase())) {
-							if(activo != null) {
-								if(!particularValidator.activoBBVAPerteneceSociedadParticipada(activo)) {
+						if(Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase())
+						|| (excluirValidaciones != null && !excluirValidaciones)) {
+							if(activo != null && !particularValidator.activoBBVAPerteneceSociedadParticipada(activo)) {
 									listaFilas.add(i);	
-								}
 							}
 						}
 					}
@@ -1580,6 +1578,37 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					listaFilas.add(i);
 				}
 			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	private List<Integer> usuariosPermitidos(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		
+		try{
+			if(!Checks.esNulo(usu) && !particularValidator.userHasFunction(EDITAR_EXCLUIR_VALIDACIONES,usu.getId())) {
+			
+				for(int i=1; i<this.numFilasHoja;i++){
+					try {
+						String excluir = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
+						String visible = exc.dameCelda(i, COL_NUM_VISIBLE_GESTION_COMERCIAL_SN);
+						String fechaGestion = exc.dameCelda(i, COL_NUM_FECHA_CAMBIO);
+						String motivoExclusion= exc.dameCelda(i, COL_NUM_MOTIVO_EXCLUSION_INCLUSION_PERIMETRO_VISIBLE);
+						if(!Checks.esNulo(excluir) || !Checks.esNulo(visible) ||!Checks.esNulo(fechaGestion) || !Checks.esNulo(motivoExclusion)) {
+							listaFilas.add(i);
+						}
+					} catch (ParseException e) {
+						listaFilas.add(i);
+					}
+				}
+			}		
 		} catch (IllegalArgumentException e) {
 			listaFilas.add(0);
 			e.printStackTrace();

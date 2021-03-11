@@ -41,12 +41,12 @@ DECLARE
     	V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     		T_TIPO_DATA('138'),
             T_TIPO_DATA('131'),
-            T_TIPO_DATA('132'),
             T_TIPO_DATA('133'),
             T_TIPO_DATA('134'),
             T_TIPO_DATA('135'),
             T_TIPO_DATA('136'),
-            T_TIPO_DATA('137')
+            T_TIPO_DATA('137'),
+            T_TIPO_DATA('27')
     	); 
     	V_TMP_TIPO_DATA T_TIPO_DATA;
 

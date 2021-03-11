@@ -1,13 +1,12 @@
 package es.pfsgroup.plugin.rem.servlet;
 
-import es.capgemini.pfs.users.dao.UsuarioDao;
-import es.capgemini.pfs.users.domain.Usuario;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Date;
+import java.util.Properties;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -17,25 +16,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import java.io.*;
-import java.util.Date;
-import java.util.Properties;
 
-/**
- * Esta clase sirve de punto de entrada para la gestión de adjuntos o asociados a un email.
- * <br>
- * Es un servlet con cierta lógica embebida.
- * <br><br>
- * Primero recibe la orden como método GET y comprueba que tenga los datos necesarios.
- * Si contiene el parámetro en la url del nombre del adjunto hace un traspase a la JSP de validar
- * credenciales del usuario.
- * El formulario de validación de credenciales vuelve a este servlet con una llamada de tipo POST
- * junto a los datos del formulario de validación de credenciales.
- * Se comprueba que las credenciales sean válidas y que el archivo exista. Si son correctas,
- * manda de vuelta como respuesta el archivo para ser descargado por el usuario que ha iniciado el
- * proceso.
- */
-public class EmailAttachment extends HttpServlet {
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import es.capgemini.pfs.users.dao.UsuarioDao;
+import es.capgemini.pfs.users.domain.Usuario;
+
+public class AdjuntoEmail extends HttpServlet {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4494247704018310688L;
+
 	private static final String FILE_NAME_PARAMETER = "file";
 	private static final String HOST_ENVIRONMENT_VAR_DEVON_DIRECTORY = "DEVON_HOME";
 	private static final String DEVON_PROPERTIES_FILE_NAME = "devon.properties";
@@ -120,7 +118,9 @@ public class EmailAttachment extends HttpServlet {
 			return;
 		}
 
-		this.doPost(req, resp);
+		/// Envía la página de login sin mostrar en la url el cambio de espacio visual y mantiene los url params
+		RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/js/plugin/rem/email-attachment/attachment-resource-login.jsp");
+		dispatcher.forward(req, resp);
 	}
 
 	/**
@@ -136,6 +136,15 @@ public class EmailAttachment extends HttpServlet {
 	@SuppressWarnings({"squid:S1989"})
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		String fileName = req.getParameter(FILE_NAME_PARAMETER);
+		String username = req.getParameter(FORM_USERNAME_NAME_PARAMETER);
+		String password = req.getParameter(FORM_PASSWORD_NAME_PARAMETER);
+		
+		// Comprobar validez de las credenciales
+		if (!this.isValidUser(username, password)) {
+			resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			resp.sendRedirect("/pfs/js/plugin/rem/email-attachment/invalid-credentials.jsp");
+			return;
+		}
 
 		// Obtener archivo por el nombre de archivo
 		File srcFile = this.getFileByName(fileName);
@@ -196,5 +205,4 @@ public class EmailAttachment extends HttpServlet {
 
 		return null != usuario && !usuario.getAuditoria().isBorrado() && usuario.getPassword().equals(password) && usuario.isEnabled() && !usuario.getFechaVigenciaPassword().before(new Date());
 	}
-
 }

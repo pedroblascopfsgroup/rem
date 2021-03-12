@@ -118,6 +118,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VCalculosActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.VCondicionantesAgrDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VFechasPubCanalesAgr;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
@@ -2235,11 +2236,11 @@ public class AgrupacionAdapter {
 
 	}
 
-	public List<VOfertasActivosAgrupacion> getListOfertasAgrupacion(Long idAgrupacion) {
+	public List<VGridOfertasActivosAgrupacionIncAnuladas> getListOfertasAgrupacion(Long idAgrupacion) {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion);
 
-		List<VOfertasActivosAgrupacion> ofertasAgrupacion = genericDao.getList(VOfertasActivosAgrupacion.class, filtro);
+		List<VGridOfertasActivosAgrupacionIncAnuladas> ofertasAgrupacion = genericDao.getList(VGridOfertasActivosAgrupacionIncAnuladas.class, filtro);
 
 		return ofertasAgrupacion;
 

@@ -516,7 +516,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			if(Arrays.asList(listaValidosPositivos).contains(cellValue)) {		
 				diccionario =  (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI);
 			}else if(Arrays.asList(listaValidosNegativos).contains(cellValue)) {
-				diccionario = (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI);
+				diccionario = (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
 			}
 		}
 

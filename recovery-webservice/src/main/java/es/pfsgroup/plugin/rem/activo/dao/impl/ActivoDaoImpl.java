@@ -52,7 +52,6 @@ import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -77,7 +76,8 @@ import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPlusvalia;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -1073,9 +1073,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VOfertasActivosAgrupacion> getListOfertasActivo(Long idActivo) {
+	public List<VGridOfertasActivosAgrupacionIncAnuladas> getListOfertasActivo(Long idActivo) {
 
-		String hql = " from VOfertasActivosAgrupacion voa ";
+		String hql = " from VGridOfertasActivosAgrupacionIncAnuladas voa ";
 		String listaIdsOfertas = "";
 
 		HQLBuilder hb = new HQLBuilder(hql);
@@ -1095,16 +1095,16 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			hb.appendWhere(" voa.idOferta in (" + listaIdsOfertas + ") ");
 		}
 
-		return (List<VOfertasActivosAgrupacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString())
+		return (List<VGridOfertasActivosAgrupacionIncAnuladas>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString())
 				.list();
 
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo) {
+	public List<VGridOfertasActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo) {
 
-		String hql = " from VOfertasTramitadasPendientesActivosAgrupacion voa2 ";
+		String hql = " from VGridOfertasActivosAgrupacion voa2 ";
 		String listaIdsOfertas = "";
 
 		HQLBuilder hb = new HQLBuilder(hql);
@@ -1124,7 +1124,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			hb.appendWhere(" voa2.idOferta in (" + listaIdsOfertas + ") ");
 		}
 
-		return (List<VOfertasTramitadasPendientesActivosAgrupacion>) this.getSessionFactory().getCurrentSession()
+		return (List<VGridOfertasActivosAgrupacion>) this.getSessionFactory().getCurrentSession()
 				.createQuery(hb.toString()).list();
 
 	}

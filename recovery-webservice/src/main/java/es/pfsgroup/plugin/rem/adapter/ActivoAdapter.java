@@ -2553,13 +2553,13 @@ public class ActivoAdapter {
 
 	}
 
-	public List<VOfertasActivosAgrupacion> getListOfertasActivos(Long idActivo) {
+	public List<VGridOfertasActivosAgrupacionIncAnuladas> getListOfertasActivos(Long idActivo) {
 
 		return activoDao.getListOfertasActivo(idActivo);
 
 	}
 	
-	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasVendidasActivos(Long idActivo) {
+	public List<VGridOfertasActivosAgrupacion> getListOfertasTramitadasVendidasActivos(Long idActivo) {
 
 		return activoDao.getListOfertasTramitadasPendientesActivo(idActivo);
 

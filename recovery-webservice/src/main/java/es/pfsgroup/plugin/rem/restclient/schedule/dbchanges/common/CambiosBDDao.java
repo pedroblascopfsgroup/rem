@@ -533,11 +533,11 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	}
 
 	private String paginarConsulta(CambiosList cambios, String columns, String queryString, InfoTablasBD infoTabla) {
-		String clavePrimariaJson = infoTabla.clavePrimariaJson(), query = "";
+		String clavePrimaria = infoTabla.clavePrimaria(), query = "";
 		if (cambios.getPaginacion().getTamanyoBloque() != null) {
-			query = "SELECT " + columns + ", DENSE_RANK() OVER(ORDER BY " + clavePrimariaJson + ") "
+			query = "SELECT " + columns + ", DENSE_RANK() OVER(ORDER BY " + clavePrimaria + ") "
 					+ "AS NUM_FILAS FROM (SELECT "
-					+ "DENSE_RANK() OVER(ORDER BY CONSULTA." + clavePrimariaJson + ") " 
+					+ "DENSE_RANK() OVER(ORDER BY CONSULTA." + clavePrimaria + ") " 
 					+ "AS CONTADOR, CONSULTA.* FROM(" + queryString
 					+ ") CONSULTA) WHERE CONTADOR > "
 					+ String.valueOf(

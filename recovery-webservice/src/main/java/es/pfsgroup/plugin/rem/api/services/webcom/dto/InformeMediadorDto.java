@@ -12,9 +12,9 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Neste
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
 public class InformeMediadorDto implements WebcomRESTDto {
-	@WebcomRequired
+	@WebcomRequired //No se puede quitar
 	private LongDataType idUsuarioRemAccion;
-	@WebcomRequired
+	@WebcomRequired //No se puede quitar
 	private DateDataType fechaAccion;
 	@WebcomRequired
 	private LongDataType idActivoHaya;

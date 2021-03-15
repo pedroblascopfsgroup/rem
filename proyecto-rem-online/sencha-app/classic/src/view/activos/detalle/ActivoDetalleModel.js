@@ -1862,7 +1862,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				}
     		},
 
-	    	    		
     		comboSubtipoActivoAdmision: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {

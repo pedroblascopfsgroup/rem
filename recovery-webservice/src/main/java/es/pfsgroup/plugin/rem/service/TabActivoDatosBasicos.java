@@ -60,8 +60,8 @@ import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
-import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
+import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
@@ -907,7 +907,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
 		
-
 		Filter filtroActivoSareb = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		ActivoSareb activoSareb = genericDao.get(ActivoSareb.class, filtroActivoSareb);
 		

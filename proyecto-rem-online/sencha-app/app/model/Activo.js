@@ -1013,6 +1013,10 @@ Ext.define('HreRem.model.Activo', {
     			name: 'numActivoDivarian'
     		},
     		{
+    			name: 'activoEpa',
+    			type: 'boolean'
+    		},
+    		{
     			name: 'reoContabilizadoSap',
     			type: 'boolean'
 			},

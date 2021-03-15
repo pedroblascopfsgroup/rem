@@ -2157,7 +2157,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				.createQuery(hql.toString()).list();
 		
 		return actAlquiladosList;
-
 	}
 	
 	@SuppressWarnings("unchecked")

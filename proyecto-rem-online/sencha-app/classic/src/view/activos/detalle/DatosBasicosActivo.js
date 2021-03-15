@@ -94,7 +94,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						        		readOnly : '{!esUA}',
 						        		hidden: '{!esUA}'
 						        	}
-				                }, 
+				                },
 				                {
 				                	xtype: 'comboboxfieldbase',
 				                	fieldLabel:  HreRem.i18n('fieldlabel.estado.adecuacion.sareb'),
@@ -105,8 +105,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                		store: '{comboEstadoAdecuacionSareb}',
 										value: '{activo.estadoAdecuacionSarebCodigo}',
 				                		hidden: '{!activo.isCarteraSareb}'
-				                	}
-				                
+				                	}			                
 				                },
 						        {
 				                	xtype: 'datefieldbase',
@@ -175,23 +174,23 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					            	},
 					            	style:'margin-left:10px'
 						        },
-						        {
-						        	xtype: 'comboboxfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo.oe'),
+								{
+									xtype: 'comboboxfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.tipo.activo.oe'),
 									reference: 'tipoActivoOE',
-						        	chainedStore: 'comboSubtipoActivoOE',
+									chainedStore: 'comboSubtipoActivoOE',
 									chainedReference: 'subtipoActivoComboOE',
-						        	bind: {
-					            		store: '{comboTipoActivoOE}',
-					            		value: '{activo.tipoActivoCodigoOE}',
-					            		hidden: '{!activo.isCarteraSareb}', 
-					            		readOnly:'{!esSuperUsuarioCalidadDatoAndNoUA}'
-					            	},
-		    						listeners: {
-					                	select: 'onChangeChainedCombo'
-					            	},
-					            	style:'margin-left:10px'
-						        },
+									bind: {
+										store: '{comboTipoActivoOE}',
+										value: '{activo.tipoActivoCodigoOE}',
+										hidden: '{!activo.isCarteraSareb}', 
+										readOnly:'{!esSuperUsuarioCalidadDatoAndNoUA}'
+									},
+									listeners: {
+										select: 'onChangeChainedCombo'
+									},
+									style:'margin-left:10px'
+								},
 						        {
 									xtype: 'comboboxfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
@@ -308,6 +307,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						                		readOnly: true
 						                	}
 						                }
+
 									]
 								},
 								//PARA DIVARIAN
@@ -322,7 +322,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						        	},
 						        	displayField: 'descripcion',
 						        	style:'margin-left:10px'
-						        } 	
+						        }
+						     
 							]
 						},
 						{ // Columna 3 
@@ -435,13 +436,23 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							            fn:'onClickActivoHRE'									       
 							        }
 								}
+							},
+							{
+								xtype:'textfieldbase',
+								reference:'tfcodpromocionbbva',
+								fieldLabel: HreRem.i18n('fieldlabel.activobbva.codPromocionBbva'),
+								bind: {
+									readOnly : '{!isGestorOSupervisorAdmisionAndSuper}',
+									value: '{activo.codPromocionBbva}'
+								}
 							}
 						]
-					}]
+	                }
+				]
+								
             },
           				
             	{    
-
                 
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',

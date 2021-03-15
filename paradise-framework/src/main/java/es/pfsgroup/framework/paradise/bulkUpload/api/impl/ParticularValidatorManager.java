@@ -5516,6 +5516,46 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public boolean existeProveedor(String codProveedor) {
+		String resultado = null;
+		String query = "SELECT COUNT(1) FROM ACT_PVE_PROVEEDOR WHERE PVE_COD_REM = "+codProveedor;
+		
+		
+		resultado = rawDao.getExecuteSQL(query);
+		return Boolean.TRUE.equals("1".equals(resultado));
+	}
+	
+
+	@Override
+	public boolean isTipoTarifaValidoEnConfiguracion(String codigoTarifa, String numTrabajo) {
+		String queryForGetIds = "SELECT " + 
+				"TBJ.DD_TTR_ID,   " + 
+				"TBJ.DD_STR_ID,   " + 
+				"ACT.DD_CRA_ID   " + 
+				"FROM ACT_TBJ_TRABAJO TBJ   " + 
+				"INNER JOIN ACT_TBJ ACTTBJ ON TBJ.TBJ_ID = ACTTBJ.TBJ_ID   " + 
+				"INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = ACTTBJ.ACT_ID   " + 
+				"  WHERE TBJ.TBJ_NUM_TRABAJO = " + numTrabajo
+				+" GROUP BY TBJ.DD_TTR_ID, TBJ.DD_STR_ID, ACT.DD_CRA_ID";
+		Object [] resultSet = rawDao.getExecuteSQLArray(queryForGetIds);
+		
+		if ( resultSet != null ) {
+			String query = "SELECT DD_TTF_ID FROM DD_TTF_TIPO_TARIFA WHERE DD_TTF_CODIGO = '" + codigoTarifa+ "'";
+			String tarifaId = rawDao.getExecuteSQL(query);
+			if ( tarifaId != null) {
+				 query = "SELECT COUNT(1) " + 
+							"FROM ACT_CFT_CONFIG_TARIFA CONFIG_TARIFA " + 
+							//"WHERE  DD_TTR_ID   = "   + resultSet[0]
+							"WHERE DD_CRA_ID   = "    + resultSet[2] 
+							+ " AND DD_TTF_ID   = "	  + tarifaId;
+					String resultado = rawDao.getExecuteSQL(query);
+					return Boolean.TRUE.equals(!"0".equals(resultado));
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public Boolean existeCampo(String numCampo){
 		if(Checks.esNulo(numCampo))
 			return false;
@@ -5560,76 +5600,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		return !"0".equals(resultado);
 	}	
-		
-	@Override
-	public boolean existeProveedor(String codProveedor) {
-		String resultado = null;
-		String query = "SELECT COUNT(1) FROM ACT_PVE_PROVEEDOR WHERE PVE_COD_REM = "+codProveedor;
-		
-		
-		resultado = rawDao.getExecuteSQL(query);
-		return Boolean.TRUE.equals("1".equals(resultado));
-	}
-	
-
-	@Override
-	public boolean isTipoTarifaValidoEnConfiguracion(String codigoTarifa, String numTrabajo) {
-		String queryForGetIds = "SELECT " + 
-				"TBJ.DD_TTR_ID,   " + 
-				"TBJ.DD_STR_ID,   " + 
-				"ACT.DD_CRA_ID,   " +
-				"ACT.DD_SCR_ID,   " +
-				"pvc.pve_id   " +
-				"FROM ACT_TBJ_TRABAJO TBJ   " + 
-				"INNER JOIN ACT_TBJ ACTTBJ ON TBJ.TBJ_ID = ACTTBJ.TBJ_ID   " + 
-				"INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = ACTTBJ.ACT_ID   " + 
-				"INNER JOIN act_pvc_proveedor_contacto PVC on tbj.pvc_id = pvc.pvc_id " + 
-				"WHERE TBJ.TBJ_NUM_TRABAJO = " + numTrabajo + " "+
-				"GROUP BY TBJ.DD_TTR_ID, TBJ.DD_STR_ID, ACT.DD_CRA_ID, pvc.pve_id, act.dd_Scr_id";
-		Object [] resultSet = rawDao.getExecuteSQLArray(queryForGetIds);
-		
-		if ( resultSet != null ) {
-			String query = "SELECT DD_TTF_ID FROM DD_TTF_TIPO_TARIFA WHERE DD_TTF_CODIGO = '" + codigoTarifa+ "'";
-			String tarifaId = rawDao.getExecuteSQL(query);
-			if ( tarifaId != null) {
-				 query = "SELECT COUNT(1) " + 
-							"FROM ACT_CFT_CONFIG_TARIFA CONFIG_TARIFA " + 
-							"WHERE DD_TTR_ID   = "   + resultSet[0]
-							+ " AND DD_STR_ID   = "    + resultSet[1]
-							+ " AND DD_CRA_ID   = "    + resultSet[2] 
-							+ " AND DD_SCR_ID   = "    + resultSet[3] 
-						    + " AND PVE_ID   = "    + resultSet[4] 
-							+ " AND DD_TTF_ID   = "	  + tarifaId;
-					String resultado = rawDao.getExecuteSQL(query);
-					
-				if("0".equals(resultado)) {
-					 query = "SELECT COUNT(1) " + 
-								"FROM ACT_CFT_CONFIG_TARIFA CONFIG_TARIFA " + 
-								"WHERE DD_TTR_ID   = "   + resultSet[0]
-								+ " AND DD_STR_ID   = "    + resultSet[1]
-								+ " AND DD_CRA_ID   = "    + resultSet[2] 
-								+ " AND DD_SCR_ID   = "    + resultSet[3] 
-							    + " AND PVE_ID  IS  NULL" 
-								+ " AND DD_TTF_ID   = "	  + tarifaId;
-					 resultado = rawDao.getExecuteSQL(query);
-					 
-					 if("0".equals(resultado)) {
-						 query = "SELECT COUNT(1) " + 
-									"FROM ACT_CFT_CONFIG_TARIFA CONFIG_TARIFA " + 
-									"WHERE DD_TTR_ID   = "   + resultSet[0]
-									+ " AND DD_STR_ID   = "    + resultSet[1]
-									+ " AND DD_CRA_ID   = "    + resultSet[2] 
-									+ " AND DD_SCR_ID   IS NULL"  
-								    + " AND PVE_ID   IS NULL" 
-									+ " AND DD_TTF_ID   = "	  + tarifaId;
-						 resultado = rawDao.getExecuteSQL(query);
-					 }
-				}
-					return Boolean.TRUE.equals(!"0".equals(resultado));
-			}
-		}
-		return false;
-	}
 
 	@Override
 	public String getEstadoTrabajoByNumTrabajo(String numTrabajo) {

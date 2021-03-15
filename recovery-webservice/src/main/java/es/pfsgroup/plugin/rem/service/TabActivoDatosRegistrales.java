@@ -489,7 +489,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			}else if(activoBbva != null && activo.getPropietarioPrincipal() != null && activo.getPropietarioPrincipal().getDocIdentificativo() != null) {
 				activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());
 			}
-
 		}
 		
 		if (activo.getBien() != null && activo.getBien().getAdjudicacion() != null && activo.getBien().getAdjudicacion().getFechaRealizacionPosesion() != null) {

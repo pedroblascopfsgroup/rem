@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20210113
+--## FECHA_CREACION=20210311
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12481
+--## INCIDENCIA_LINK=REMVIP-9180
 --## PRODUCTO=NO
 --##
 --## Finalidad: Informar propietarios BBVA
@@ -28,7 +28,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_PRO_PROPIETARIO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_ITEM VARCHAR2(30 CHAR) := 'HREOS-12481';
+    V_ITEM VARCHAR2(30 CHAR) := 'REMVIP-9180';
 
     V_DURACION INTERVAL DAY(0) TO SECOND;
     V_INICIO TIMESTAMP := SYSTIMESTAMP;
@@ -40,6 +40,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+      --T_TIPO_DATA('DD_LOC_CODIGO'1,'DD_PRV_CODIGO'2,'PRO_CODIGO_UVEM'3,'DD_TPE_CODIGO'4,'PRO_NOMBRE'5,'DD_TDI_CODIGO'6,'PRO_DOCIDENTIF'7,'PRO_DIR'8,'PRO_TELF'9,'PRO_CP'10,'PRO_CODIGO_ENTIDAD'11,'PRO_TITULIZADO'12)
 		T_TIPO_DATA('08019','8','6087','2','HIPOCAT 19 FTA','15','V65161754','','','8010','8501','9129'),
 		T_TIPO_DATA('08019','8','6088','2','HIPOCAT 10 FTA','15','V64241474','','','8010','8502','9113'),
 		T_TIPO_DATA('08019','8','6089','2','HIPOCAT 11 FTA','15','V64478373','','','8010','8503','9115'),
@@ -161,7 +162,11 @@ DECLARE
 		T_TIPO_DATA('','','6236','2','PROV-INFI-ARRAHONA SLU','15','B63651145','Sant Quirze, 4-18','','8201','9715',''),
 		T_TIPO_DATA('','','6237','2','CAIXA MANRESA IMMOBILIARIA SOCIAL S.L.','15','B63680292','Sant Quirze, 4-18','938782700','8240','8018',''),
 		T_TIPO_DATA('','','6238','2','CATALUNYA BANC, SA','15','A65587198','PZ ANTONI MAURA 6','','28042','8001',''),
-		T_TIPO_DATA('','','6189','2','BBVA AUTOS 1 Fondo de Tit. de Activos','15','V84135532','','','28042','8891','')
+		T_TIPO_DATA('','','6189','2','BBVA AUTOS 1 Fondo de Tit. de Activos','15','V84135532','','','28042','8891',''),
+		T_TIPO_DATA('','','','2','INTERCOMARCAL, S.L.','15','B59818815','','','','8041',''),
+		T_TIPO_DATA('','','','2','GESCAT SINEVA, S.L.','15','B63934590','','','','8044',''),
+		T_TIPO_DATA('','','','2','INPAU, S.A.','15','A59513572','','','','8042',''),
+		T_TIPO_DATA('','','','2','SATICEM IMMOBILIARIA, S.L.','15','B63821334','','','','8040','')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

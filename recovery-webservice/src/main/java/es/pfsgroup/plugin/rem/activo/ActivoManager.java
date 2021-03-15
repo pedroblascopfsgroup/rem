@@ -5626,30 +5626,33 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 								}
 
 								sendAdj.add(adj);
-							}
 
-							Usuario usu = usuarioApi.getByUsername(EMAIL_OCUPACIONES);
-							if (!Checks.esNulo(usu) && !Checks.esNulo(usu.getEmail())) {
-								List<String> para = new ArrayList<String>();
-								para.add(usu.getEmail());
-								String activoS = activo.getNumActivo() + "";
-								String carteraS = activo.getCartera().getDescripcion();
-								StringBuilder cuerpo = new StringBuilder(
-										"<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><META http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body>");
-								cuerpo.append("<div><p>Se ha marcado en REM una ocupación ilegal del activo ");
-								cuerpo.append(activoS);
-								cuerpo.append(" de la cartera ");
-								cuerpo.append(carteraS);
-								cuerpo.append(
-										"</p><p>Se anexa el informe de ocupación remitido por el API custodio</p><p>Un saludo</p></div></body></html>");
-								genericAdapter.sendMail(para, null,
-										"Ocupación ilegal del activo: " + activoS + ", de la cartera " + carteraS,
-										cuerpo.toString(), sendAdj);
+								Usuario usu = usuarioApi.getByUsername(EMAIL_OCUPACIONES);
+								if (!Checks.esNulo(usu) && !Checks.esNulo(usu.getEmail())) {
+									List<String> para = new ArrayList<String>();
+									para.add(usu.getEmail());
+									String activoS = activo.getNumActivo() + "";
+									String carteraS = activo.getCartera().getDescripcion();
+									StringBuilder cuerpo = new StringBuilder(
+											"<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><META http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body>");
+									cuerpo.append("<div><p>Se ha marcado en REM una ocupación ilegal del activo ");
+									cuerpo.append(activoS);
+									cuerpo.append(" de la cartera ");
+									cuerpo.append(carteraS);
+									cuerpo.append(
+											"</p><p>Se anexa el informe de ocupación remitido por el API custodio</p><p>Un saludo</p></div></body></html>");
+									genericAdapter.sendMail(para, null,
+											"Ocupación ilegal del activo: " + activoS + ", de la cartera " + carteraS,
+											cuerpo.toString(), sendAdj);
+								}
+								
+								// se envia un true, por que ya hemos mandado el
+								// correo
+								// y tiene que guardar los cambios
+								return true;
+							}else {
+								return false;
 							}
-							// se envia un true, por que ya hemos mandado el
-							// correo
-							// y tiene que guardar los cambios
-							return true;
 
 						} catch (IllegalAccessException e) {
 							logger.error(e.getMessage(), e);

@@ -8,9 +8,9 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Webco
 
 public class UsuarioDto implements WebcomRESTDto{
 
-	@WebcomRequired
+	@WebcomRequired //No se puede quitar
 	private DateDataType fechaAccion;
-	@WebcomRequired
+	@WebcomRequired //No se puede quitar
 	private LongDataType idUsuarioRemAccion;
 	@WebcomRequired
 	private LongDataType idProveedorRem;

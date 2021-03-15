@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20210118
+--## FECHA_CREACION=20210310
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-12816
@@ -20,6 +20,7 @@
 --##		    0.8 Jesus Jativa		- Añadidos campos GLD_PRINCIPAL_SUJETO||GLD_PRINCIPAL_NO_SUJETO||GLD_RECARGO||GLD_INTERES_DEMORA||GLD_COSTAS
 --##                                      para HREOS-1266
 --##        0.9 DAP             - Cambio en cruce GLD
+--##        1.0 Carlos Santos   - Revertir 1 por 0 en SUJETO_IMPUESTO_INDIRECTO - REMVIP-9125
 --##########################################
 --*/
 
@@ -84,7 +85,7 @@ BEGIN
         GDE.GDE_IMPORTE_TOTAL,
         GDE.GDE_FECHA_PAGO,
         GDE.GDE_FECHA_TOPE_PAGO,
-        NVL2(GLD.DD_TIT_ID,0,1) AS SUJETO_IMPUESTO_INDIRECTO,
+        NVL2(GLD.DD_TIT_ID,1,0) AS SUJETO_IMPUESTO_INDIRECTO,
         EAH.DD_EAH_CODIGO,
         EAH.DD_EAH_DESCRIPCION,
         EAP.DD_EAP_CODIGO,

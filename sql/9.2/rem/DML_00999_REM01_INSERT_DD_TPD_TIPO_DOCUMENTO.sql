@@ -35,7 +35,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    T_TIPO_DATA('138','Licencia de Obra','Licencia de Obra',),
+    T_TIPO_DATA('138','Licencia de Obra','Licencia de Obra'),
     T_TIPO_DATA('131','Informe técnico habitabilidad','Informe técnico habitabilidad'),
     T_TIPO_DATA('133','Licencia de actividad comercial','Licencia de actividad comercial'),
     T_TIPO_DATA('134','Boletín telecomunicaciones','Boletín telecomunicaciones'),

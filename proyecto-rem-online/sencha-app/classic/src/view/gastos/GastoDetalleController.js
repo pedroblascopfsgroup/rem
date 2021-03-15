@@ -2125,6 +2125,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     		cuota = (baseSujeta * tipoImpositivo )/ 100;
     	}
     	
+    	cuota = Number(Math.round(cuota + "e+" + 2)  + "e-" + 2);
+    	
     	formulario.findField('cuota').setValue(cuota);
    
     	var importeTotal = me.calcularImporteTotal(formulario);

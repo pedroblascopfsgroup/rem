@@ -151,7 +151,6 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 					
 					if (tipoGestorComercial != null && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()) 
 							&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) //REMVIP-8388,todas menos Cerberus hasta que digan lo contrario
-							&& !DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())
 							&& gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
 						ge.setIdEntidad(expediente.getId());
 						ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);

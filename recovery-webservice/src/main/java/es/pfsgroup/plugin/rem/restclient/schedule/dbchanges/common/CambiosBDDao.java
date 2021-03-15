@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.dao.SessionFactoryFacade;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
@@ -141,7 +143,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			String selectFromDatosHistoricos = SELECT + columns + FROM + infoTablas.nombreTablaDatosHistoricos();
 			String queryString = selectFromDatosActuales + MINUS + selectFromDatosHistoricos;
 
-			queryString = this.paginarConsulta(cambios, columns, queryString);
+			queryString = this.paginarConsulta(cambios, columns, queryString, infoTablas);
 
 			List<Object[]> resultado = null;
 
@@ -149,7 +151,8 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 			if (resultado != null && !resultado.isEmpty()) {
 				if (cambios.getPaginacion().getTamanyoBloque() != null) {
-					cambios.getPaginacion().setTotalFilas(resultado.size());
+					cambios.getPaginacion().setTotalFilas(
+							((BigDecimal) resultado.get(resultado.size()-1)[resultado.get(0).length-1]).intValue());
 				}
 				List<Object[]> historicos = obtenerHistoricosBloque(session, columns, infoTablas, resultado);
 				int posPk = posicionColumna(columns, infoTablas.clavePrimaria());
@@ -169,6 +172,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			} else {
 				if (cambios.getPaginacion().getTamanyoBloque() != null) {
 					cambios.getPaginacion().setHasMore(false);
+					cambios.getPaginacion().setTotalFilas(0);
 				}
 			}
 		} finally {
@@ -201,7 +205,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 		trace("[DETECCIÓN CAMBIOS] obteniedo registros "+ infoTablas.nombreVistaDatosActuales());
 		String queryString = SELECT + columns + FROM + infoTablas.nombreVistaDatosActuales();
-		queryString = this.paginarConsulta(cambios, columns, queryString);
+		queryString = this.paginarConsulta(cambios, columns, queryString, infoTablas);
 		try {
 			List<Object[]> resultado = null;
 
@@ -528,16 +532,20 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		}
 	}
 
-	private String paginarConsulta(CambiosList cambios, String columns, String queryString) {
+	private String paginarConsulta(CambiosList cambios, String columns, String queryString, InfoTablasBD infoTabla) {
+		String clavePrimaria = infoTabla.clavePrimaria(), query = "";
 		if (cambios.getPaginacion().getTamanyoBloque() != null) {
-			queryString = "SELECT " + columns + " FROM (SELECT ROWNUM AS CONTADOR,CONSULTA.* FROM(" + queryString
-					+ ") CONSULTA) WHERE CONTADOR >"
+			query = "SELECT " + columns + ", DENSE_RANK() OVER(ORDER BY " + clavePrimaria + ") "
+					+ "AS NUM_FILAS FROM (SELECT "
+					+ "DENSE_RANK() OVER(ORDER BY CONSULTA." + clavePrimaria + ") " 
+					+ "AS CONTADOR, CONSULTA.* FROM(" + queryString
+					+ ") CONSULTA) WHERE CONTADOR > "
 					+ String.valueOf(
 							cambios.getPaginacion().getTamanyoBloque() * cambios.getPaginacion().getNumeroBloque())
-					+ " AND CONTADOR <" + String.valueOf(((cambios.getPaginacion().getNumeroBloque() + 1)
+					+ " AND CONTADOR < " + String.valueOf(((cambios.getPaginacion().getNumeroBloque() + 1)
 							* cambios.getPaginacion().getTamanyoBloque()) + 1);
 		}
-		return queryString;
+		return query;
 	}
 
 	private void cerrarSesionBbdd(Session session) {

@@ -1094,11 +1094,6 @@ Ext.define('HreRem.model.Activo', {
     			name: 'codPromocionBbva'
     		},
 			{
-	 			name: 'checkExcluirValidacionesGestionComercial',
-	 			type: 'boolean'
-
-			},
-			{
 				name: 'codSubfasePublicacion'
 			}
     		

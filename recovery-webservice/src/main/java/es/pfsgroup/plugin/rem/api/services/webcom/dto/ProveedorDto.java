@@ -13,9 +13,9 @@ import es.pfsgroup.plugin.rem.rest.dto.CodigoCarterasDto;
 
 public class ProveedorDto implements WebcomRESTDto {
 
-	@WebcomRequired
+	@WebcomRequired //No se puede quitar
 	private DateDataType fechaAccion;
-	@WebcomRequired
+	@WebcomRequired //No se puede quitar
 	private LongDataType idUsuarioRemAccion;
 
 	@WebcomRequired

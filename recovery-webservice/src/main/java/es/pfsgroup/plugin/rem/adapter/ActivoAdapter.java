@@ -2291,7 +2291,8 @@ public class ActivoAdapter {
 						boolean expedienteComercialNoAprobado = expedienteComercialNoAprobado(expedienteComercial.getEstado().getCodigo());
 						if ( isGestorBoarding && expedienteComercialNoAprobado ) {
 							dtoTramite.setOcultarBotonResolucion(true);
-						}else if( isGestorBoarding && !ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA.equals(tramite.getTipoTramite().getCodigo()) ) {
+						}else if( isGestorBoarding && ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE.equals(tramite.getTipoTramite().getCodigo())
+								&& DDCartera.CODIGO_CARTERA_CERBERUS.equals(tramite.getActivo().getCartera().getCodigo())) {
 							dtoTramite.setOcultarBotonResolucion(true);
 						}
 					}
@@ -3191,7 +3192,13 @@ public class ActivoAdapter {
 					}
 				} else {
 					this.updateGestoresTabActivoTransactional(dto, id);
-					this.actualizarEstadoPublicacionActivo(id);
+					if(!Checks.esNulo(dtofichacabecera.getCheckGestorComercial())){
+						ArrayList<Long> listaActivo = new ArrayList<Long>();
+						listaActivo.add(id);
+						this.actualizarEstadoPublicacionActivoPerimetro(listaActivo, new ArrayList<Long>());
+					}else {
+						this.actualizarEstadoPublicacionActivo(id);
+					}
 				}
 			}
 
@@ -4920,5 +4927,15 @@ public class ActivoAdapter {
 
 		return genericDao.getListOrdered(VPreciosVigentes.class, order, filtro, filtroFecha);
 
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean actualizarEstadoPublicacionActivoPerimetro(ArrayList<Long> listaIdActivo, ArrayList<Long> listaIdActivoSinVisibilidad){
+
+		activoDao.hibernateFlush();
+		Thread hilo = new Thread(new EjecutarSPPublicacionAsincrono(genericAdapter.getUsuarioLogado().getUsername(), listaIdActivo, listaIdActivoSinVisibilidad));
+		hilo.start();
+		
+		return true;
 	}
 }

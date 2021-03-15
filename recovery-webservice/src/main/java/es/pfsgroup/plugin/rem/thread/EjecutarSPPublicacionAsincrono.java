@@ -17,6 +17,7 @@ public class EjecutarSPPublicacionAsincrono implements Runnable {
 	private final Log logger = LogFactory.getLog(getClass());
 	private String userName = null;
 	ArrayList<Long> listaIdActivo = null;
+	ArrayList<Long> listaIdActivoSinVisibilidad = null;
 
 	@Autowired
 	private RestApi restApi;
@@ -32,6 +33,15 @@ public class EjecutarSPPublicacionAsincrono implements Runnable {
 		this.userName = userName;
 		this.listaIdActivo = listaIdActivo;
 	}
+	
+	public EjecutarSPPublicacionAsincrono(String userName, ArrayList<Long> listaIdActivo, ArrayList<Long> listaIdActivoSinVisibilidad ) {
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+		this.userName = userName;
+		this.listaIdActivo = listaIdActivo;
+		this.listaIdActivoSinVisibilidad = listaIdActivoSinVisibilidad;
+	}
+	
+	
 
 	@Override
 	@Transactional
@@ -44,7 +54,11 @@ public class EjecutarSPPublicacionAsincrono implements Runnable {
 							.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo, false);
 				}
 			}
-			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivo);
+			if(listaIdActivoSinVisibilidad != null) {
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivoSinVisibilidad);
+			}else {
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivo);
+			}
 
 		} catch (Exception e) {
 			logger.error("error ejecutando SP de publicaciones", e);

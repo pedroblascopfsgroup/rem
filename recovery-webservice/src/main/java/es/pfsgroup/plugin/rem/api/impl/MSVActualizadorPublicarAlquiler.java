@@ -70,7 +70,7 @@ public class MSVActualizadorPublicarAlquiler extends AbstractMSVActualizador imp
 			activoEstadoPublicacionApi.setDatosPublicacionActivo(dto);
 		}
 		
-		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false,false);
+		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false);
 
 		return new ResultadoProcesarFila();
 	}

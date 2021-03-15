@@ -157,7 +157,7 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 		
 		if(!exc.dameCelda(fila, VPO).isEmpty()) {
 			activo.setVpo(traducirSiNo(exc.dameCelda(fila, VPO)));
-			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false,false);
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false);
 		}
 		if(!exc.dameCelda(fila, CON_CARGAS).isEmpty()) {
 

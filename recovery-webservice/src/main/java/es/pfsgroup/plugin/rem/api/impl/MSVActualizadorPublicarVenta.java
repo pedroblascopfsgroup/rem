@@ -71,7 +71,7 @@ public class MSVActualizadorPublicarVenta extends AbstractMSVActualizador implem
 			activoEstadoPublicacionApi.setDatosPublicacionActivo(dto);
 		}
 		
-		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false,false);
+		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false);
 
 		return new ResultadoProcesarFila();
 	}

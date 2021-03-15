@@ -61,7 +61,7 @@ public class MSVActualizadorExlusionActivos extends AbstractMSVActualizador impl
 			Integer exluirDwh = Integer.parseInt(exc.dameCelda(fila, COL_NUM.EXCLUIR_DWH));
 
 			activo.setFechaVentaExterna(fechaVenta);
-			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false,false);
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false);
 			activo.setImporteVentaExterna(importeVenta);
 
 			if (exluirDwh == 1) {

@@ -1152,6 +1152,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public Trabajo actualizarImporteTotalTrabajo(Long idTrabajo) {
 
 		Double importePresupuestosTrabajo = new Double("0.0");
+		Double importeClientePresupuestosTrabajo = new Double("0.0");
 		Double importeTarifasTotalProveedor = new Double("0.0");
 		Double importeTarifasTotalCliente = new Double("0.0");
 		
@@ -1167,6 +1168,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				if(presupuesto.getImporte() != null) {
 					importePresupuestosTrabajo += presupuesto.getImporte();
 				}
+				if(presupuesto.getImporteCliente() != null) {
+					importeClientePresupuestosTrabajo += presupuesto.getImporteCliente();
+				}
 			}
 		}
 		if(!cfgTarifas.isEmpty()) {
@@ -1180,7 +1184,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 		}
 		
-		importeTarifasTotalCliente += importePresupuestosTrabajo;
+		importeTarifasTotalCliente += importeClientePresupuestosTrabajo;
 		importeTarifasTotalProveedor += importePresupuestosTrabajo;
 		importeTarifasTotalProveedor -= trabajo.getImportePenalizacionTotal();
 		

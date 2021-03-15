@@ -1243,6 +1243,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 			
 			return esUA === false && $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+		},
+		
+		noEditableSareb: function(get) {
+			var me = this;
+			var isCarteraSareb = get('activo.isCarteraSareb');
+			
+			if(isCarteraSareb != true){
+				return false;
+			}
+			return true;
 		}
     },
     

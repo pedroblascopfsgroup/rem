@@ -5177,8 +5177,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					
 				}else {
 					List<ActivoAgrupacionActivo> agrupacionOrdenada = genericDao.getListOrdered(ActivoAgrupacionActivo.class, orderAsc,filtroAgrupacion);
-					if(agrupacionOrdenada.get(0) != null && agrupacionOrdenada.get(0).getActivo() != null 
-							&& agrupacionOrdenada.get(0).getActivo().getTerritorio() != null) {
+					if(agrupacionOrdenada != null && !agrupacionOrdenada.isEmpty() && agrupacionOrdenada.get(0) != null 
+							&& agrupacionOrdenada.get(0).getActivo() != null && agrupacionOrdenada.get(0).getActivo().getTerritorio() != null) {
 						direccion = agrupacionOrdenada.get(0).getActivo().getTerritorio().getDescripcion();
 						if(agrupacionOrdenada.get(0).getActivo().getLocalidad() != null)
 							dtoFichaComercial.setLocalidad(agrupacionOrdenada.get(0).getActivo().getLocalidad().getDescripcion());
@@ -5512,7 +5512,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 					
 					List<ActivoTasacion> activoTasacionList = genericDao.getListOrdered(ActivoTasacion.class, orderFechaTasacionDesc, filtroAct_id);
-					if(activoTasacionList != null && activoTasacionList.get(0) != null && dtoFichaComercial.getTasacionActual() == null) {
+					if(activoTasacionList != null && !activoTasacionList.isEmpty() && activoTasacionList.get(0) != null && dtoFichaComercial.getTasacionActual() == null) {
 						dtoFichaComercial.setTasacionActual(activoTasacionList.get(0).getImporteTasacionFin());
 						activosFichaComercial.setTasacion(activoTasacionList.get(0).getImporteTasacionFin());
 						tasacionTotal += activoTasacionList.get(0).getImporteTasacionFin();

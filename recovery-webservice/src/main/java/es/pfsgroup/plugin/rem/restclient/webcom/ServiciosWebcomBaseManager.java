@@ -296,7 +296,7 @@ public abstract class ServiciosWebcomBaseManager {
 				paramsList.add(params);
 			}
 			}catch(Exception e){
-				
+				logger.error(e.getStackTrace().toString());
 			}
 		} else {
 			logger.trace("'dtoList' es NULL");

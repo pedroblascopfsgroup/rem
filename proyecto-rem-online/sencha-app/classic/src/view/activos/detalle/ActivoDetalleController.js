@@ -1391,6 +1391,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	onClickBotonCancelar : function(btn) {
 		var me = this, activeTab = btn.up('tabpanel').getActiveTab();
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		if (Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
 			me.getViewModel().set("editingFirstLevel", false);
 		} else {
@@ -1422,6 +1423,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					field.fireEvent('save');
 					field.fireEvent('update');
 				});
+		me.getView().unmask();
 	},
 
 	onClickBotonCancelarPropietario : function(btn) {

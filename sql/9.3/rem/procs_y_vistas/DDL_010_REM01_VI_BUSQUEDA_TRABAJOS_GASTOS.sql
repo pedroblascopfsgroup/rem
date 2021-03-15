@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20210211
+--## FECHA_CREACION=20210308
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-12580
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --## 		0.2 Añadir condición - REMVIP-8892
+--## 		0.3 Añadir condición - REMVIP-9036
 --#########################################
 --*/
 
@@ -55,7 +56,8 @@ BEGIN
 			pve.pve_nombre AS proveedor, 
 			actpro.pro_id AS propietario,
 			pve.pve_id,
-			tbj.TBJ_IMPORTE_PRESUPUESTO
+			tbj.TBJ_IMPORTE_PRESUPUESTO,
+			tga.dd_tga_codigo
 
      	FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj 
 			INNER JOIN ' || V_ESQUEMA || '.act_tbj atj 								ON atj.tbj_id = tbj.tbj_id
@@ -68,6 +70,9 @@ BEGIN
 			INNER JOIN ' || V_ESQUEMA || '.dd_ttr_tipo_trabajo ttr 					ON (ttr.dd_ttr_id = tbj.dd_ttr_id AND ttr.borrado = 0 AND ttr.dd_ttr_filtrar IS NULL)
 			INNER JOIN ' || V_ESQUEMA || '.dd_str_subtipo_trabajo str 				ON (str.dd_str_id = tbj.dd_str_id AND str.borrado = 0)
 			LEFT  JOIN ' || V_ESQUEMA || '.dd_ire_identificador_ream ire 			ON (ire.dd_ire_id = tbj.dd_ire_id AND ire.borrado = 0)
+			INNER JOIN ' || V_ESQUEMA || '.act_sgt_subtipo_gpv_tbj sgt            	ON (str.dd_str_id = sgt.dd_str_id AND sgt.borrado = 0)
+			INNER JOIN ' || V_ESQUEMA || '.dd_stg_subtipos_gasto stg            	ON (sgt.dd_stg_id = stg.dd_stg_id AND stg.borrado = 0)
+			INNER JOIN ' || V_ESQUEMA || '.dd_tga_tipos_gasto tga            		ON (stg.dd_tga_id = tga.dd_tga_id AND tga.borrado = 0)
           WHERE tbj.borrado = 0
           	and (
                 (NVL(TBJ.TBJ_IMPORTE_TOTAL, 0) <> 0

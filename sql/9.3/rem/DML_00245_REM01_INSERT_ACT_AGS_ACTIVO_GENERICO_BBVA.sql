@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20201204
+--## FECHA_CREACION=20210310
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12373
+--## INCIDENCIA_LINK=REMVIP-9180
 --## PRODUCTO=NO
 --##
 --## Finalidad: Rellenar tabla
@@ -30,7 +30,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_AGS_ACTIVO_GENERICO_STG'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_ITEM VARCHAR2(30 CHAR) := 'HREOS-12373';
+    V_ITEM VARCHAR2(30 CHAR) := 'REMVIP-9180';
     
     V_PROPIETARIO VARCHAR2(4000 CHAR);
     
@@ -199,7 +199,19 @@ DECLARE
 		T_TIPO_DATA('GINM08018','8018'),
 		T_TIPO_DATA('GEN008018','8018'),
 		T_TIPO_DATA('GINM08002','8002'),
-		T_TIPO_DATA('GEN008002','8002')
+		T_TIPO_DATA('GEN008002','8002'),
+		T_TIPO_DATA('GEN008041','8041'),
+		T_TIPO_DATA('GINM08041','8041'),
+		T_TIPO_DATA('GEN008044','8044'),
+		T_TIPO_DATA('GINM08044','8044'),
+		T_TIPO_DATA('GEN008042','8042'),
+		T_TIPO_DATA('GINM08042','8042'),
+		T_TIPO_DATA('GEN008036','8036'),
+		T_TIPO_DATA('GINM08036','8036'),
+		T_TIPO_DATA('GEN008040','8040'),
+		T_TIPO_DATA('GINM08040','8040'),
+		T_TIPO_DATA('GEN008030','8030'),
+		T_TIPO_DATA('GINM08030','8030')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

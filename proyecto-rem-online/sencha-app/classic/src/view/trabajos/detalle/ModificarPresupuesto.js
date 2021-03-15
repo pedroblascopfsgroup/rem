@@ -239,7 +239,20 @@ Ext.define('HreRem.view.trabajos.detalle.ModificarPresupuesto', {
 										fieldLabel: HreRem.i18n('fieldlabel.importe'),
 										flex: 		1,
 										name:		'importe',
-										bind:		'{presupuesto.importe}'
+		    				            bind: {
+		    				            	value: '{presupuesto.importe}',
+		    				            	hidden: '{!mostrarTotalProveedor}'
+		    				            }	
+									},
+									{
+										xtype:		'currencyfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.importe.cliente'),
+										flex: 		1,
+										name:		'importeCliente',
+										bind: {
+		    				            	value: '{presupuesto.importeCliente}',
+		    				            	hidden: '{!mostrarTotalCliente}'
+		    				            }
 									},
 									{
 										xtype: 		'textareafieldbase',

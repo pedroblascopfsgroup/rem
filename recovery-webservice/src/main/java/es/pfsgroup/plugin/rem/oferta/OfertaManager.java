@@ -153,6 +153,8 @@ import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VDatosCalculoLBK;
 import es.pfsgroup.plugin.rem.model.VListOfertasCES;
+import es.pfsgroup.plugin.rem.model.VListadoActivosExpediente;
+import es.pfsgroup.plugin.rem.model.VListadoActivosExpedienteBBVA;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -5917,8 +5919,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							historicoOfertas.setTasacion(tasacionList.get(0).getImporteTasacionFin());
 						}
 						
-						//Campos faltantes
-						//FFRR
+						if ( ofertaActivo.getActivosOferta() != null) {
+							historicoOfertas.setFfrr(ofertaActivo.getActivosOferta().size());
+						} else {
+							historicoOfertas.setFfrr(0);
+						}
 						
 						listaHistoricoOfertas.add(historicoOfertas);
 					}
@@ -5993,11 +5998,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			//Datos pestaña Ficha autorización
 			
 			List<DtoListFichaAutorizacion> listaFichaAutorizacion = new ArrayList<DtoListFichaAutorizacion>();
+			List<VListadoActivosExpedienteBBVA> listadoActivosBbva;
 			
 			if(oferta.getAgrupacion() != null) {
 				for(ActivoAgrupacionActivo activos : oferta.getAgrupacion().getActivos()) {
 					DtoListFichaAutorizacion ficha = new DtoListFichaAutorizacion();
 					Activo act = activos.getActivo();
+					Filter idActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", act.getId());
+					Filter idOferta = genericDao.createFilter(FilterType.EQUALS, "idOferta", oferta.getId().toString());
+					listadoActivosBbva = genericDao.getList(VListadoActivosExpedienteBBVA.class,
+							idActivo, idOferta);
 					
 					ficha.setIdActivo(act.getNumActivo());
 	
@@ -6029,8 +6039,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						ficha.setCondicionesVenta(oferta.getCondicionesTransmision());
 					}
 					
-					if(!Checks.esNulo(oferta.getImporteOfertaAprobado())) {
-						ficha.setPrecioVenta(oferta.getImporteOfertaAprobado());
+					if(!Checks.esNulo(listadoActivosBbva.get(0).getImporteParticipacion())) {
+						ficha.setPrecioVenta(listadoActivosBbva.get(0).getImporteParticipacion());
 					}
 					
 					listaFichaAutorizacion.add(ficha);

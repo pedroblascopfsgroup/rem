@@ -3188,7 +3188,13 @@ public class ActivoAdapter {
 					}
 				} else {
 					this.updateGestoresTabActivoTransactional(dto, id);
-					this.actualizarEstadoPublicacionActivo(id);
+					if(!Checks.esNulo(dtofichacabecera.getCheckGestorComercial())){
+						ArrayList<Long> listaActivo = new ArrayList<Long>();
+						listaActivo.add(id);
+						this.actualizarEstadoPublicacionActivoPerimetro(listaActivo, new ArrayList<Long>());
+					}else {
+						this.actualizarEstadoPublicacionActivo(id);
+					}
 				}
 			}
 
@@ -4915,5 +4921,15 @@ public class ActivoAdapter {
 
 		return genericDao.getListOrdered(VPreciosVigentes.class, order, filtro, filtroFecha);
 
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean actualizarEstadoPublicacionActivoPerimetro(ArrayList<Long> listaIdActivo, ArrayList<Long> listaIdActivoSinVisibilidad){
+
+		activoDao.hibernateFlush();
+		Thread hilo = new Thread(new EjecutarSPPublicacionAsincrono(genericAdapter.getUsuarioLogado().getUsername(), listaIdActivo, listaIdActivoSinVisibilidad));
+		hilo.start();
+		
+		return true;
 	}
 }

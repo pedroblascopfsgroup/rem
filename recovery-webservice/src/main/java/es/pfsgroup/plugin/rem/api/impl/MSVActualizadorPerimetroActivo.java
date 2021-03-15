@@ -443,12 +443,16 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		Integer numFilas = exc.getNumeroFilas();
 		ArrayList<Long> idList = new ArrayList<Long>();
+		ArrayList<Long> idListSinVisibilidadComercial = new ArrayList<Long>();
 		try{
 			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 				idList.add(activo.getId());
+				if(Checks.esNulo(exc.dameCelda(fila,19))) {
+					idListSinVisibilidadComercial.add(activo.getId());
+				}
 			}
-			activoAdapter.actualizarEstadoPublicacionActivo(idList, true);
+			activoAdapter.actualizarEstadoPublicacionActivoPerimetro(idList, idListSinVisibilidadComercial);
 			transactionManager.commit(transaction);
 		}catch(Exception e){
 			transactionManager.rollback(transaction);

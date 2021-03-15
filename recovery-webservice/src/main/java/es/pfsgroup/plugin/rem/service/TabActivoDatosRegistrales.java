@@ -980,10 +980,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				}
 			}
 			
-			if(dto.getVpo() != null) {
-				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false,true);
-			}
-			
 		} catch (JsonViewerException jvex) {
 			throw jvex;
 		} catch (IllegalAccessException e) {

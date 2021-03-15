@@ -39,24 +39,21 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 	
 	@Override
 	@Transactional
-	public Map<Long, List<String>> recalcularVisibilidadComercial(Activo activo, Boolean dtoCheckGestorComercial, Boolean dtoExcluirValidaciones,boolean fichaActivo , boolean modificaVPO) {
+	public Map<Long, List<String>> recalcularVisibilidadComercial(Activo activo, Boolean dtoCheckGestorComercial, Boolean dtoExcluirValidaciones,boolean fichaActivo) {
 
 		Map<Long, List<String>> mapaErrores = visibilidadGestionComercialValidator.validarPerimetroActivo(activo, dtoCheckGestorComercial, dtoExcluirValidaciones);
 		
 		List<String> listaErrores = mapaErrores.get(activo.getNumActivo());
 		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-		Filter filtroDDsinsiNO = genericDao.createFilter(FilterType.EQUALS, "codigo",DDSinSiNo.CODIGO_NO);
-		DDSinSiNo codigoNo = genericDao.get(DDSinSiNo.class, filtroDDsinsiNO);
+
 		PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroIdActivo);
 		boolean tieneErrores = false;		
 		if(listaErrores != null && !listaErrores.isEmpty()){
 			tieneErrores = true;
 		}
 
-		
 		if(!fichaActivo) {
 			perimetroActivo.setCheckGestorComercial(!tieneErrores);
-			
 			genericDao.update(PerimetroActivo.class, perimetroActivo);
 
 		}
@@ -68,8 +65,6 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 	@Override
 	@Transactional
 	public Map<Long, List<String>> recalcularVisibilidadComercial(Activo[] activos, DDEstadosExpedienteComercial nuevoEstadoExpediente) {
-		Filter filtroDDsinsiNO = genericDao.createFilter(FilterType.EQUALS, "codigo",DDSinSiNo.CODIGO_NO);
-		DDSinSiNo codigoNo = genericDao.get(DDSinSiNo.class, filtroDDsinsiNO);
 		Map<Long, List<String>> mapaErrores = visibilidadGestionComercialValidator.validarPerimetroActivos(activos, nuevoEstadoExpediente);
 		
 		Boolean tieneErrores = false;
@@ -84,11 +79,8 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 		
 		for (Activo activo : activos) {
 			Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-			
 			PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroIdActivo);
-			
 			perimetroActivo.setCheckGestorComercial(!tieneErrores);	
-
 			genericDao.update(PerimetroActivo.class,perimetroActivo);
 		}
 		

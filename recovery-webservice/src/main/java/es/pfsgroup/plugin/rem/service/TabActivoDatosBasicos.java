@@ -1332,9 +1332,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				if(!Checks.esNulo(dto.getAplicaComercializar())) {	
 					
 					perimetroActivo.setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
-					if(dto.getCheckGestorComercial()==null) {
-						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false,false);
-					}
 					perimetroActivo.setFechaAplicaComercializar(new Date());					
 					
 					//Acciones al desmarcar check comercializar
@@ -1389,10 +1386,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					perimetroActivo.setCheckGestorComercial(dto.getCheckGestorComercial());
 					perimetroActivo.setFechaGestionComercial(new Date());			
 					if(dto.getCheckGestorComercial()) {
-						Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones()),true,false);
+						Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones()),true);
 						recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
 					}
-				
 				}
 								
 				if (!Checks.esNulo(dto.getMotivoGestionComercialCodigo()) && !borrarMotivoExcluirValidaciones) {

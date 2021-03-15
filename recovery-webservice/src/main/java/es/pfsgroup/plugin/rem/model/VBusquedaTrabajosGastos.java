@@ -66,6 +66,9 @@ public class VBusquedaTrabajosGastos implements Serializable {
 	@Column(name="TBJ_IMPORTE_PRESUPUESTO")
 	private Double importePresupuesto;
 	
+    @Column(name = "DD_TGA_CODIGO")
+	private String codigoTipoGasto;
+	
 	public Integer getCubreSeguro() {
 		return cubreSeguro;
 	}
@@ -186,6 +189,14 @@ public class VBusquedaTrabajosGastos implements Serializable {
 
 	public void setImportePresupuesto(Double importePresupuesto) {
 		this.importePresupuesto = importePresupuesto;
+	}
+	
+	public String getCodigoTipoGasto() {
+		return codigoTipoGasto;
+	}
+
+	public void setCodigoTipoGasto(String codigoTipoGasto) {
+		this.codigoTipoGasto = codigoTipoGasto;
 	}
 	
 }

@@ -962,7 +962,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	@Transactional()
+	@Transactional
 	public ModelAndView registrarExportacion(DtoGastosFilter dtoGastosFilter, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelMap model = new ModelMap();
 		Usuario user = null;
@@ -998,6 +998,21 @@ public class GastosProveedorController extends ParadiseJsonController {
 			logger.error("error en gastosProveedorController", e);
 		}
 		return createModelAndViewJson(model);
+		
+	}
+	
+	@Transactional
+	private void registrarExportacion(int count, String buscador) throws Exception {
+		Usuario user = null;
+				
+		user = usuarioManager.getUsuarioLogado();
+		AuditoriaExportaciones ae = new AuditoriaExportaciones();
+		ae.setBuscador(buscador);
+		ae.setFechaExportacion(new Date());
+		ae.setNumRegistros(Long.valueOf(count));
+		ae.setUsuario(user);
+		ae.setAccion(true);
+		genericDao.save(AuditoriaExportaciones.class, ae);		
 		
 	}
 	
@@ -1101,23 +1116,25 @@ public class GastosProveedorController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcelFacturas(HttpServletRequest request, HttpServletResponse response) throws IOException{
+	@RequestMapping(method = RequestMethod.POST)
+	@Transactional
+	public void generateExcelFacturas(HttpServletRequest request, HttpServletResponse response) throws Exception{
 
 		List<VFacturasProveedores> listaFacturas = gastoProveedorApi.getListFacturas();
-
+		
 		ExcelReport report = new FacturasProveedoresExcelReport(listaFacturas);
-
+		registrarExportacion(listaFacturas.size(), "gastos-facturas");
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcelTasasImpuestos(HttpServletRequest request, HttpServletResponse response) throws IOException{
+	@RequestMapping(method = RequestMethod.POST)
+	@Transactional
+	public void generateExcelTasasImpuestos(HttpServletRequest request, HttpServletResponse response) throws Exception{
 
 		List<VTasasImpuestos> listaTasasImpuestos = gastoProveedorApi.getListTasasImpuestos();
 
 		ExcelReport report = new TasasImpuestosExcelReport(listaTasasImpuestos);
-
+		registrarExportacion(listaTasasImpuestos.size(), "gastos-tasas");
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 	

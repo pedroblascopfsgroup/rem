@@ -1550,7 +1550,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		var config = {};
 
 		config.url= url;
-		
+		config.method = "POST";
 		me.fireEvent("downloadFile", config);		
 	},
 	
@@ -1560,7 +1560,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		var config = {};
 
 		config.url= url;
-		
+		config.method = "POST";
 		me.fireEvent("downloadFile", config);		
 	},	
 

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo
---## FECHA_CREACION=20210204
+--## AUTOR= IVAN REPISO
+--## FECHA_CREACION=20210308
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13026
+--## INCIDENCIA_LINK=REMVIP-9137
 --## PRODUCTO=NO
 --## Finalidad: DDLque modifica la tabla ACT_PRT_PRESUPUESTO_TRABAJO
 --##           
@@ -28,7 +28,7 @@ DECLARE
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
     V_TEXT_TABLA VARCHAR2(150 CHAR):= 'ACT_PRT_PRESUPUESTO_TRABAJO'; -- Vble. con el nombre de la tabla.
-    V_TEXT_COLUMNA VARCHAR2(150 CHAR):= 'PRT_REF_PRESUPUESTO_PROVEEDOR'; -- Vble. con el nombre de la tabla.
+    V_TEXT_COLUMNA VARCHAR2(150 CHAR):= 'PRT_IMPORTE_CLIENTE'; -- Vble. con el nombre de la tabla.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
@@ -45,15 +45,17 @@ BEGIN
     	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TEXT_TABLA||''' AND COLUMN_NAME = '''||V_TEXT_COLUMNA||'''';
          EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS; 
             
-        IF V_NUM_TABLAS = 1 THEN
-	    	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' MODIFY '||V_TEXT_COLUMNA||' VARCHAR2(100 CHAR)';        	
+        IF V_NUM_TABLAS = 0 THEN
+	    	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD '||V_TEXT_COLUMNA||' NUMBER(16,2)';        	
 			EXECUTE IMMEDIATE V_MSQL;
-			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.'||V_TEXT_COLUMNA||'... Columna modificada');
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.'||V_TEXT_COLUMNA||'... Columna creada');
+
+            EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TEXT_COLUMNA||' IS ''Importe cliente presupuesto trabajo.''';
 		ELSE
-			DBMS_OUTPUT.PUT_LINE('[INFO] La columna ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.'||V_TEXT_COLUMNA||' no existe');
+			DBMS_OUTPUT.PUT_LINE('[INFO] La columna ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.'||V_TEXT_COLUMNA||' ya existe');
 		END IF;	
     ELSE
-        DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... La Tabla NO YA EXISTE.');
+        DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... La Tabla NO EXISTE.');
     END IF;
 
 COMMIT;

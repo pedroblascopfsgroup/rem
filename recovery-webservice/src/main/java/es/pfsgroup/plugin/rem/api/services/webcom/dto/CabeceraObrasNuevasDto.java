@@ -7,9 +7,9 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Mappe
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
 public class CabeceraObrasNuevasDto implements WebcomRESTDto {
-	@WebcomRequired
+	@WebcomRequired //No se puede quitar
 	private DateDataType fechaAccion;
-	@WebcomRequired
+	@WebcomRequired //No se puede quitar
 	private LongDataType idUsuarioRemAccion;
 	@WebcomRequired
 	@MappedColumn("ID_SUBDIVISION_REM")

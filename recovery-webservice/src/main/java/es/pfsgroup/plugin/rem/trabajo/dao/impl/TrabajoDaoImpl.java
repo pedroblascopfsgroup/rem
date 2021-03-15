@@ -540,6 +540,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaTrabajosGastos tbj");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numTrabajo", dto.getNumTrabajo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoTipoGasto", gasto.getTipoGasto().getCodigo());
 
    		if (dto.getCodigoTipo()!=null) {
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoTipo", dto.getCodigoTipo());

@@ -2248,7 +2248,8 @@ public class ActivoAdapter {
 						boolean expedienteComercialNoAprobado = expedienteComercialNoAprobado(expedienteComercial.getEstado().getCodigo());
 						if ( isGestorBoarding && expedienteComercialNoAprobado ) {
 							dtoTramite.setOcultarBotonResolucion(true);
-						}else if( isGestorBoarding && !ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA.equals(tramite.getTipoTramite().getCodigo()) ) {
+						}else if( isGestorBoarding && ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE.equals(tramite.getTipoTramite().getCodigo())
+								&& DDCartera.CODIGO_CARTERA_CERBERUS.equals(tramite.getActivo().getCartera().getCodigo())) {
 							dtoTramite.setOcultarBotonResolucion(true);
 						}
 					}

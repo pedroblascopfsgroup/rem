@@ -513,9 +513,9 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 	private DDSinSiNo getCheckValueToDDSinSiNo(String cellValue){
 		DDSinSiNo diccionario = null;
 		if(!Checks.esNulo(cellValue)){
-			if(Arrays.asList(listaValidosPositivos).contains(cellValue)) {		
+			if(Arrays.asList(listaValidosPositivos).contains(cellValue.toUpperCase())) {		
 				diccionario =  (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI);
-			}else if(Arrays.asList(listaValidosNegativos).contains(cellValue)) {
+			}else if(Arrays.asList(listaValidosNegativos).contains(cellValue.toUpperCase())) {
 				diccionario = (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
 			}
 		}

@@ -1076,7 +1076,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}	
 
 		if(perimetroActivo.getExcluirValidaciones() != null) {
-			activoDto.setCheckExcluirValidacionesGestionComercial(perimetroActivo.getExcluirValidaciones().getCodigo().equals(DDSinSiNo.CODIGO_SI));
+			activoDto.setExcluirValidaciones(perimetroActivo.getExcluirValidaciones().getCodigo().equals(DDSinSiNo.CODIGO_SI));
 		}
 		
 		HistoricoFasePublicacionActivo fasePublicacionActivoVigente = activoPublicacionDao.getFasePublicacionVigentePorIdActivo(activo.getId());
@@ -1104,6 +1104,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto)  throws JsonViewerException {
 		DtoActivoFichaCabecera dto = (DtoActivoFichaCabecera) webDto;
+		boolean borrarMotivoExcluirValidaciones = false;
 		
 		validateSaveDatosBasicos(dto, activo);
 		
@@ -1300,7 +1301,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				dto.getFechaAplicaFormalizar() != null || dto.getMotivoAplicaFormalizar() != null || dto.getAplicaPublicar() != null ||
 				dto.getFechaAplicaPublicar() != null || dto.getMotivoAplicaPublicar() != null ||dto.getMotivoGestionComercialCodigo() !=null ||
 				dto.getMotivoGestionComercialDescripcion() !=null || dto.getFechaGestionComercial()  !=null || 
-				dto.getCheckGestorComercial() !=null || dto.getCheckExcluirValidacionesGestionComercial() !=null)
+				dto.getCheckGestorComercial() !=null || dto.getExcluirValidaciones() !=null)
 			{
 				PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 				beanUtilNotNull.copyProperties(perimetroActivo, dto);
@@ -1374,23 +1375,27 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					
 				}
 				
-				if(dto.getCheckExcluirValidacionesGestionComercial() != null) {
-					DDSinSiNo excluirValidaciones = dto.getCheckExcluirValidacionesGestionComercial() ? (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI) : (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
+				if(dto.getExcluirValidaciones() != null) {
+					DDSinSiNo excluirValidaciones = dto.getExcluirValidaciones() ? (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI) : (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
 					
 					perimetroActivo.setExcluirValidaciones(excluirValidaciones);	
-					if(!dto.getCheckExcluirValidacionesGestionComercial()) {
+					if(!dto.getExcluirValidaciones()) {
 						perimetroActivo.setMotivoGestionComercial(null);
+						borrarMotivoExcluirValidaciones = true;
 					}
 				}				
 				
 				if(!Checks.esNulo(dto.getCheckGestorComercial())) {		
 					perimetroActivo.setCheckGestorComercial(dto.getCheckGestorComercial());
-					perimetroActivo.setFechaGestionComercial(new Date());						
-					Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones()),true,false);
-					recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
+					perimetroActivo.setFechaGestionComercial(new Date());			
+					if(dto.getCheckGestorComercial()) {
+						Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones()),true,false);
+						recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
+					}
+				
 				}
 								
-				if (!Checks.esNulo(dto.getMotivoGestionComercialCodigo())) {
+				if (!Checks.esNulo(dto.getMotivoGestionComercialCodigo()) && !borrarMotivoExcluirValidaciones) {
 					DDMotivoGestionComercial motivoGestionComercial = (DDMotivoGestionComercial) diccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class,  dto.getMotivoGestionComercialCodigo());
 					if(activoApi.isActivoIntegradoAgrupacionRestringida(activo.getId())) {
 						Map <Long,List<String>> map = new HashMap<Long, List<String>>();
@@ -1466,7 +1471,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						}else {
 							DDMotivoGestionComercial gestionComercial = genericDao.get(DDMotivoGestionComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", dto.getMotivoGestionComercialCodigo()));
 							perimetroActivoUA.setMotivoGestionComercial(gestionComercial);
-							DDSinSiNo excluirValidaciones = dto.getCheckExcluirValidacionesGestionComercial() ? (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI) : (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
+							DDSinSiNo excluirValidaciones = dto.getExcluirValidaciones() ? (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI) : (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
 							perimetroActivoUA.setExcluirValidaciones(excluirValidaciones);
 						}
 					}

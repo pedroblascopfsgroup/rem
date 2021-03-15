@@ -52,18 +52,15 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 		if(listaErrores != null && !listaErrores.isEmpty()){
 			tieneErrores = true;
 		}
-		perimetroActivo.setCheckGestorComercial(!tieneErrores);	
+
 		
-		if(!tieneErrores && !fichaActivo) {
-			perimetroActivo.setMotivoGestionComercial(null);
-			perimetroActivo.setExcluirValidaciones(codigoNo);
-		}
-		if(modificaVPO) {
-			perimetroActivo.setCheckGestorComercial(tieneErrores);	
+		if(!fichaActivo) {
+			perimetroActivo.setCheckGestorComercial(!tieneErrores);
+			
+			genericDao.update(PerimetroActivo.class, perimetroActivo);
+
 		}
 	
-		
-		genericDao.update(PerimetroActivo.class, perimetroActivo);
 		
 		return mapaErrores;
 	}
@@ -78,7 +75,7 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 		Boolean tieneErrores = false;
 		
 		for (Map.Entry<Long, List<String>> entry : mapaErrores.entrySet()) {
-			
+		
 			if(entry.getValue() != null && !entry.getValue().isEmpty()) {
 				tieneErrores = true;
 				break;
@@ -91,18 +88,9 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 			PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroIdActivo);
 			
 			perimetroActivo.setCheckGestorComercial(!tieneErrores);	
-			
-			if(!tieneErrores) {
-				perimetroActivo.setMotivoGestionComercial(null);
-				perimetroActivo.setExcluirValidaciones(codigoNo);
-				
-			}
-		
-			
-			
+
 			genericDao.update(PerimetroActivo.class,perimetroActivo);
 		}
-		
 		
 		return mapaErrores;
 	}

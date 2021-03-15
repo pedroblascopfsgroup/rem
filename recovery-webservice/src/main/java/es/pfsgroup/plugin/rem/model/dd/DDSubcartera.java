@@ -65,6 +65,20 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public static final String CODIGO_OMEGA = "65";
 	public static final String CODIGO_DIVARIAN_ARROW_INMB = "151";
 	public static final String CODIGO_DIVARIAN_REMAINING_INMB = "152";
+	public static final String CODIGO_OTRAS_CARTERAS_INMB = "11";
+	public static final String CODIGO_SIN_DEFINIR_INMB = "13";
+	public static final String CODIGO_CERB_DIVARIAN = "150";
+	public static final String CODIGO_CERB_INMOVILIARIO = "17";
+	public static final String CODIGO_JAIPUR_JAIPUR = "091";
+	public static final String CODIGO_LBKN_CLM = "58";
+	public static final String CODIGO_LBKN_BYP = "59";
+	public static final String CODIGO_LBKN_LIBERBANK = "56";
+	public static final String CODIGO_LBKN_MOSCATA = "57";
+	public static final String CODIGO_LBKN_RETAMAR = "60";
+	
+	
+	
+	
 
 	@Id
 	@Column(name = "DD_SCR_ID")

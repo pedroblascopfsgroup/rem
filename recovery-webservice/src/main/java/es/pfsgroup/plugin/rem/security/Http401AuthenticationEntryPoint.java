@@ -35,7 +35,12 @@ public class Http401AuthenticationEntryPoint extends AuthenticationProcessingFil
 	        String redirectUrl = null;
 	        
 	        boolean forceRedirect = ("/").equals(httpRequest.getServletPath());
-
+	        if("/email/attachment".equals(httpRequest.getServletPath())) {
+	        	RequestDispatcher dispatcher = httpRequest.getRequestDispatcher("/js/plugin/rem/email-attachment/attachment-resource-login.jsp");
+				dispatcher.forward(request, response);
+				return;
+	        }
+	        
 	        if (isServerSideRedirect()) {
 
 	            if (isForceHttps() && "http".equals(request.getScheme())) {

@@ -34,6 +34,9 @@ Ext.define('HreRem.model.PresupuestosTrabajo', {
     			name:'importe'
     		},
     		{
+    			name:'importeCliente'
+    		},
+    		{
     			name:'fecha',
     			convert: function(value) {
     				if (!Ext.isEmpty(value)) {

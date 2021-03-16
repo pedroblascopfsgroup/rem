@@ -949,9 +949,11 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)) {
 				cuerpo = cuerpo + " hasta la formalización de las arras/reserva";
 			}
-
-			cuerpo = cuerpo
-					+ ". Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización";
+			
+			if (!DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)) {
+				cuerpo = cuerpo
+						+ ". Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización";
+			}
 
 			if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera)) {
 				cuerpo = cuerpo + ", así como la Ficha cliente a cumplimentar</p>";
@@ -1003,11 +1005,29 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				}
 
 			}
+			
+			if (DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera) && !tieneReserva) {
+				cuerpo = cuerpo + "<p> En los próximos días recibirá un e-mail con un enlace web en el que se le requerirá la información y documentación necesaria para la formalización de la operación, relativos a los siguientes puntos: </p>";
+			}
+			
+			if (DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera) && tieneReserva) {
+				cuerpo = cuerpo + "<p> En los próximos días recibirá un e-mail con un enlace web en el que se le requerirá la información y documentación necesaria para la reserva y formalización de la operación, relativos a los siguientes puntos: </p>";
+			}
+			
+			if (DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)) {
+				cuerpo = cuerpo + "<p> - Documentación identificativa de los compradores (DNI, NIE, CIF…)</p>"
+								+ "<p> - Origen de los fondos (por actividad, financiación bancaria o no bancaria, ahorros…)</p>"
+								+ "<p> - Forma de pago empleados en la compra.</p>"
+								+ "<p> En cualquier caso, se le asignará un gestor de formalización específico que le guiará durante todo el proceso de compra.</p>";
+			}
+			
 			if (DDCartera.CODIGO_CARTERA_SAREB.equals(codigoCartera)) {
 				cuerpo = cuerpo + "<p>A tal efecto le solicitamos a través de este documento que:</p>"
 						+ "<p>- Confirme los datos de la oferta remitidos informando de cualquier error que detecte en los mismos.</p>"
 						+ "<p>- Autorice a HAYA REAL ESTATE, S.A. para que a través de sus colaboradores pueda elevar en su nombre la documentación necesaria a la indicada herramienta ePBC.</p>";
 			}
+			
+			
 
 			cuerpo = cuerpo
 					+ "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
@@ -1060,7 +1080,6 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 							(gestorFormalizacion != null) ? gestorFormalizacion.getEmail() : STR_MISSING_VALUE);
 				}
 			}
-			
 
 			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
 			dtoSendNotificator.setTitulo(asunto);

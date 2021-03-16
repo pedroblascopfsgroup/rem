@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +38,10 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -110,8 +116,10 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@Autowired
 	private ConfigManager configManager;
-	
-	
+
+	@Resource
+	private Properties appProperties;
+
 	/**
 	 * Método que recupera una Agrupación según su id y lo mapea a un DTO
 	 * 
@@ -740,35 +748,62 @@ public class AgrupacionController extends ParadiseJsonController {
 	
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional()
-	public ModelAndView registrarExportacion(DtoAgrupacionGridFilter dto, Boolean exportar, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView registrarExportacion(DtoAgrupacionFilter dtoAgrupacionFilter, Boolean exportar, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		String intervaloTiempo = !Checks.esNulo(appProperties.getProperty("haya.tiempo.espera.export")) ? appProperties.getProperty("haya.tiempo.espera.export") : "300000";
 		ModelMap model = new ModelMap();
-		Usuario user = null;
 		Boolean isSuperExport = false;
+		Boolean permitido = true;
+		String filtros = parameterParser(request.getParameterMap());
+		Usuario user = usuarioManager.getUsuarioLogado();
+		Long tiempoPermitido = System.currentTimeMillis() - Long.parseLong(intervaloTiempo);
+		String cuentaAtras = null;
 		try {
-			int count = adapter.getBusquedaAgrupacionesGrid(dto).getTotalCount();
-			user = usuarioManager.getUsuarioLogado();
-			AuditoriaExportaciones ae = new AuditoriaExportaciones();
-			ae.setBuscador("agrupaciones");
-			ae.setFechaExportacion(new Date());
-			ae.setNumRegistros(Long.valueOf(count));
-			ae.setUsuario(user);
-			ae.setFiltros(parameterParser(request.getParameterMap()));
-			ae.setAccion(exportar);
-			genericDao.save(AuditoriaExportaciones.class, ae);
-			model.put(RESPONSE_SUCCESS_KEY, true);
-			model.put(RESPONSE_DATA_KEY, count);
-			for(Perfil pef : user.getPerfiles()) {
-				if(pef.getCodigo().equals("SUPEREXPORTACTAGR")) {
-					isSuperExport = true;
-					break;
-				}
+			Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId());
+			Filter filtroConsulta = genericDao.createFilter(FilterType.EQUALS, "filtros", filtros);
+			Filter filtroAccion = genericDao.createFilter(FilterType.EQUALS, "accion", true);
+			Order orden = new Order(OrderType.DESC, "fechaExportacion");
+			List<AuditoriaExportaciones> listaExportaciones =  genericDao.getListOrdered(AuditoriaExportaciones.class, orden, filtroUsuario, filtroConsulta, filtroAccion);
+			
+			if(listaExportaciones != null && !listaExportaciones.isEmpty()) {
+				Long ultimaExport = listaExportaciones.get(0).getFechaExportacion().getTime();
+				permitido = ultimaExport > tiempoPermitido ? false : true;
+
+				double entero = Math.floor((ultimaExport - tiempoPermitido)/60000);
+		        if (entero < 2) {
+		        	cuentaAtras = "un minuto";
+		        } else {
+		        	cuentaAtras = Double.toString(entero);
+		        	cuentaAtras = cuentaAtras.substring(0, 1) + " minutos";
+		        }
 			}
-			if(isSuperExport) {
-				model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.activos").getValor());
-				model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.activos").getValor());
-			}else {
-				model.put("limite", configManager.getConfigByKey("limite.exportar.excel.activos").getValor());
-				model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.activos").getValor());
+			
+			if(permitido) {
+				int count = adapter.getListAgrupaciones(dtoAgrupacionFilter).getTotalCount();
+				AuditoriaExportaciones ae = new AuditoriaExportaciones();
+				ae.setBuscador("agrupaciones");
+				ae.setFechaExportacion(new Date());
+				ae.setNumRegistros(Long.valueOf(count));
+				ae.setUsuario(user);
+				ae.setFiltros(filtros);
+				ae.setAccion(exportar);
+				genericDao.save(AuditoriaExportaciones.class, ae);
+				model.put(RESPONSE_SUCCESS_KEY, true);
+				model.put(RESPONSE_DATA_KEY, count);
+				for(Perfil pef : user.getPerfiles()) {
+					if(pef.getCodigo().equals("SUPEREXPORTACTAGR")) {
+						isSuperExport = true;
+						break;
+					}
+				}
+				if(isSuperExport) {
+					model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.activos").getValor());
+					model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.activos").getValor());
+				}else {
+					model.put("limite", configManager.getConfigByKey("limite.exportar.excel.activos").getValor());
+					model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.activos").getValor());
+				}
+			} else {
+				model.put("msg",cuentaAtras);
 			}
 		}catch(Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);

@@ -14,7 +14,13 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     			name:'poblacionRegistro'
     		},
     		{
+    			name:'poblacionRegistroDescripcion'
+    		},
+			{
     			name:'provinciaRegistro'
+    		},
+			{
+    			name:'provinciaRegistroDescripcion'
     		},
     		{
     			name:'numRegistro'
@@ -82,11 +88,17 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     		{
     			name:'estadoDivHorizontalCodigo'
     		},
+			{
+    			name:'estadoDivHorizontalDescripcion'
+    		},
     		{
     			name:'divHorizontal'
     		},
     		{
     			name:'estadoObraNuevaCodigo'
+    		},
+			{
+    			name:'estadoObraNuevaDescripcion'
     		},
     		{
     			name:'gestionHre'
@@ -354,17 +366,29 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     		{
     			name:'tipoJuzgadoCodigo'
     		},
+			{
+    			name:'tipoJuzgadoDescripcion'
+    		},
     		{
     			name:'estadoAdjudicacionCodigo'
     		},
+			{
+    			name:'estadoAdjudicacionDescripcion'
+    		},
     		{
     			name:'tipoPlazaCodigo'
+    		},
+			{
+    			name:'tipoPlazaDescripcion'
     		},
     		{
     			name:'entidadAdjudicatariaCodigo'
     		},
     		{
     			name:'entidadEjecutanteCodigo'
+    		},
+			{
+    			name:'entidadEjecutanteDescripcion'
     		},
     		{
     			name:'fechaRealizacionPosesion',
@@ -419,6 +443,9 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     		},
     		{
     			name:'resolucionMoratoriaCodigo'
+    		},
+			{
+    			name:'resolucionMoratoriaDescripcion'
     		},
     		{
     			name:'fechaResolucionMoratoria',
@@ -476,8 +503,12 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     		{
 				name: 'unidadAlquilable',
 				type: 'boolean'
-    		},{
+    		},
+			{
     			name:'localidadAnteriorCodigo'
+    		},
+			{
+    			name:'localidadAnteriorDescripcion'
     		},
     		{
     			name: 'isJudicial',
@@ -506,8 +537,14 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     		{
     			name: 'origenAnteriorActivoCodigo'
     		},
-    		    		{
+			{
+    			name: 'origenAnteriorActivoDescripcion'
+    		},
+    		{
     			name: 'origenAnteriorActivoBbvaCodigo'
+    		},
+			{
+    			name: 'origenAnteriorActivoBbvaDescripcion'
     		},
     		{
     			name:'fechaTituloAnterior',
@@ -526,7 +563,22 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     		},
     		{
     			name: 'sociedadPagoAnterior'
-    		}
+    		},
+			{
+    			name: 'sociedadPagoAnteriorDescripcion'
+    		},
+			{
+				name: 'tipoTituloCodigo'
+			},
+			{
+				name: 'tipoTituloDescripcion'
+			},
+			{
+				name: 'subtipoTituloCodigo'
+			},
+			{
+				name: 'subtipoTituloDescripcion'
+			}
     ],
     
     

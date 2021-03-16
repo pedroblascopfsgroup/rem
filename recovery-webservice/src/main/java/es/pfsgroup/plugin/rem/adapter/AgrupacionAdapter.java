@@ -3524,18 +3524,19 @@ public class AgrupacionAdapter {
 					}
 					//HREOS-12346
 					if(dto.getMarcaDeExcluido() != null || dto.getVisibleGestionComercial() != null) {
-						Boolean excluirValidaciones = dto.getMarcaDeExcluido();
-						for (ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
-							if(excluirValidaciones == null) {
-								if(aga.getActivo() != null) {
+						if(dto.getVisibleGestionComercial() == null || dto.getVisibleGestionComercial()){
+							Boolean excluirValidaciones = dto.getMarcaDeExcluido();
+							for (ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
+								if(excluirValidaciones == null && aga.getActivo() != null) {
 									PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(aga.getActivo().getId());
 									if(perimetroActivo != null) {
-										excluirValidaciones = perimetroActivo.getCheckGestorComercial();
+										excluirValidaciones = DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones());
 									}
+									
 								}
+								Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(aga.getActivo(), null, excluirValidaciones ,true);
+								recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
 							}
-							Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(aga.getActivo(), null, excluirValidaciones ,true);
-							recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
 						}
 					}
 					saveActivosVisiblesGestionComercial(dto,id);

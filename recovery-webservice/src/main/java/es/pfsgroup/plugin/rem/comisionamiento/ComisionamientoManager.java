@@ -131,7 +131,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		
 		return dto;
 	}
-	
+	@Override
 	public String calculaLeadOrigin(Oferta oferta,boolean reenvioPorMas180Dias) {
 		
 		String codLeadOrigin = null;

@@ -25,4 +25,6 @@ public interface ComisionamientoApi {
 
 	List<DtoPrescriptoresComision> getTiposDeComisionAccionGasto(Oferta oferta,boolean reenvioPorMas180Dias);
 
+	String calculaLeadOrigin(Oferta oferta,boolean reenvioPorMas180Dias);
+
 }

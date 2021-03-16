@@ -29,6 +29,6 @@ public interface ActivoGenericFormManagerApi {
 	 *
 	 * @param dto
 	 */
-	public void saveValues(DtoGenericForm dto);
+	public void saveValues(DtoGenericForm dto) throws Exception;
 
 }

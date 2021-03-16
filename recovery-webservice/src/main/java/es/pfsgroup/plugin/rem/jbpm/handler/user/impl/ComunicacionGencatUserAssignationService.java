@@ -57,7 +57,8 @@ public class ComunicacionGencatUserAssignationService implements UserAssigantion
 						|| DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)
 						|| DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera)
 						|| DDCartera.CODIGO_CARTERA_SAREB.equals(codigoCartera)
-						|| DDCartera.CODIGO_CARTERA_CERBERUS.equals(codigoCartera))) {
+						|| DDCartera.CODIGO_CARTERA_CERBERUS.equals(codigoCartera)
+						|| DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera))) {
 			
 			return genericDao.get(Usuario.class,
 					genericDao.createFilter(FilterType.EQUALS, "username", GRUPO_FORM_GENCAT));

@@ -1067,7 +1067,7 @@ Ext.define('HreRem.model.Activo', {
     			type: 'boolean'	 			
 			},
 			{
-				name:'excluirValidaciones',
+				name:'excluirValidacionesBool', 
     			type: 'boolean'	 			
 			},
 			{

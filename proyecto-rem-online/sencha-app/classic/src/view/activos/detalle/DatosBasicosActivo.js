@@ -866,7 +866,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.excluir.validaciones'),
 								reference: 'checkExclusionGestionComercial',
 								bind: {
-									value: '{activo.excluirValidaciones}', 
+									value: '{activo.excluirValidacionesBool}', 
 									readOnly: '{esEditableExcluirValidaciones}'
 								},
 								listeners: {
@@ -886,7 +886,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind: {
 									store: '{comboMotivoGestionComercialActivo}',
 									value: '{activo.motivoGestionComercialCodigo}',
-									readOnly: '{esEditableExcluirValidaciones}'
+									readOnly: '{esEditableExcluirValidaciones}',
+									allowBlank:'{!activo.excluirValidacionesBool}'
 								}
 							},
 

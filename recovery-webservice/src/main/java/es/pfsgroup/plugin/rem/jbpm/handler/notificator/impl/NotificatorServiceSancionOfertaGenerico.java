@@ -1080,8 +1080,6 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 							(gestorFormalizacion != null) ? gestorFormalizacion.getEmail() : STR_MISSING_VALUE);
 				}
 			}
-			
-			cuerpo = cuerpo + "<p>Este mensaje es una notificación automática. No responda a este correo.</p>";
 
 			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
 			dtoSendNotificator.setTitulo(asunto);

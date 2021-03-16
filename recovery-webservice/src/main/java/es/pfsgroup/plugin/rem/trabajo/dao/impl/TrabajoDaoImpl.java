@@ -497,5 +497,145 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		
    		return HibernateQueryUtils.page(this, hb, dto);
 	}
+	
+	@Override
+	public Page findAllFilteredIncluidoFactura(DtoTrabajoFilter dto, Long idUsuario) {
+		
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaTrabajosGasto btg");
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "btg.numTrabajo", dto.getNumTrabajo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "btg.conCierreEconomico", dto.getConCierreEconomico());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "btg.facturado", dto.getFacturado());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "btg.codigoSubtipo", dto.getCodigoSubtipo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "btg.cubreSeguro", dto.getCubreSeguro());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "btg.cartera", dto.getCartera());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "btg.subcartera", dto.getSubcartera());
+
+		if(idUsuario != null) {
+			List<Long> proveedorId = proveedorDao.getIdsProveedorByIdUsuario(idUsuario);
+			if(!Checks.estaVacio(proveedorId)) {
+				HQLBuilder.addFiltroWhereInSiNotNull(hb, "btg.idProveedor", proveedorId);
+			}
+			else {
+				//Si no hay proveedores, no debe mostrar ningún trabajo en el listado
+				hb.appendWhere("btg.id is null");
+			}
+		}
+		
+		GastoProveedor gasto = null;
+		if (dto.getNumGasto() != null) {
+			gasto = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", dto.getNumGasto()));
+			
+			if(dto.getIdProveedor() != null) {
+				hb.appendWhere("btg.importeTotal > " + BigDecimal.ZERO);
+				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "btg.codigoEstado", DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO);
+				if(gasto != null && gasto.getPropietario() != null) {
+					HQLBuilder.addFiltroIgualQueSiNotNull(hb, "btg.propietario", gasto.getPropietario().getId());
+				}
+			}
+		}
+		
+		Collection<String> listaTipo = new ArrayList<String>();
+   		if (dto.getCodigoTipo()!=null) {
+   			listaTipo.add(dto.getCodigoTipo());
+   		}
+   		if (dto.getCodigoTipo2()!=null) {
+   			listaTipo.add(dto.getCodigoTipo2());
+   		}
+   		
+   		if(!listaTipo.isEmpty()) {
+   			HQLBuilder.addFiltroWhereInSiNotNull(hb, "btg.codigoTipo", listaTipo);
+   		}
+		
+   		return HibernateQueryUtils.page(this, hb, dto);
+	}
+	
+	
+	
+	@Override
+    public Page findAllNoVista(DtoTrabajoFilter dto) {
+        List <String> in = new  ArrayList<String>();
+        StringBuilder sb = new StringBuilder(" select tbj from Trabajo tbj ");
+        // JOIN solo si entra cartera o numero de activo
+        if (dto.getCartera() != null || dto.getSubcartera() != null || dto.getNumActivo() != null) {
+            sb.append(" join tbj.activosTrabajo acttbj ");
+            sb.append(" join acttbj.activo act ");
+        }
+        HQLBuilder hb = new HQLBuilder(sb.toString());
+        
+        if ((dto.getCodigoTipo()!=null)){
+            in.add(dto.getCodigoTipo());
+        }
+        if (dto.getCodigoTipo2() != null){
+            in.add(dto.getCodigoTipo2());
+        }
+        if (in.size() > 0) {
+            HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.tipoTrabajo", in);
+        }
+        if (dto.getNumTrabajo() != null){
+            HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numTrabajo", dto.getNumTrabajo());
+        }
+        
+        if (dto.getNumActivo() != null){
+            HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo()); 
+        }else {
+            if (dto.getCartera() != null){
+                HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.cartera.codigo", dto.getCartera());
+            }
+            if (dto.getSubcartera() != null){
+                HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcartera.codigo", dto.getSubcartera());
+            }
+        }
+        
+        return HibernateQueryUtils.page(this, hb, dto);
+    }
+	
+	  @Override
+	    public Page findAllFilteredByProveedorContactoNoVista(DtoTrabajoFilter dto, Long idUsuario) {
+        List <Long>  proveedorId = proveedorDao.getIdsProveedorByIdUsuario(idUsuario);
+        List <String> in = new  ArrayList<String>();
+        StringBuilder sb = new StringBuilder(" select tbj from Trabajo tbj ");
+        // JOIN solo si entra cartera o num activo
+        if (dto.getCartera() != null || dto.getSubcartera() != null || dto.getNumActivo() != null) {
+	            sb.append(" join tbj.activosTrabajo acttbj ");
+	            sb.append(" join acttbj.activo act ");
+        }	
+        HQLBuilder hb = new HQLBuilder(sb.toString());
+        
+        if ((dto.getCodigoTipo()!=null)){
+            in.add(dto.getCodigoTipo());
+        }
+        if (dto.getCodigoTipo2() != null){
+            in.add(dto.getCodigoTipo2());
+        }
+        if (in.size() > 0) {
+            HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.tipoTrabajo", in);
+        }
+        if (dto.getNumTrabajo() != null){
+            HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numTrabajo", dto.getNumTrabajo());
+        }
+        
+        if (dto.getNumActivo() != null){
+            HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo()); 
+        }else {
+            if (dto.getCartera() != null){
+                HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.cartera.codigo", dto.getCartera());
+            }
+            if (dto.getSubcartera() != null){
+                HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcartera.codigo", dto.getSubcartera());
+            }
+        }
+        if (proveedorId.size() >0) {
+            // ID Proveedor
+            HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.proveedorContacto.id", proveedorId);
+        }
+        
+        return HibernateQueryUtils.page(this, hb, dto);
+	   }
+	  
+	  
+	  
+	
+	
 
 }

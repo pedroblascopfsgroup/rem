@@ -424,7 +424,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			},
     	    	remoteSort: true,
     	    	remoteFilter: true,
-    	    	autoLoad:false
+    	    	listeners: {
+					load: 'getPlazoComiteProveedor'
+				}
     		},
     		
     		listaActivosAgrupacion: {

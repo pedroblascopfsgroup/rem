@@ -313,7 +313,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String subestadoAdmisionDescCabecera;
 	
 	//Visible Gestion comercial
-	private Boolean excluirValidaciones;
+	private Boolean excluirValidacionesBool;
 	private Date fechaGestionComercial;
 	private Boolean checkGestorComercial;
 	private String motivoGestionComercialCodigo;
@@ -2399,12 +2399,12 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.esEditableActivoEstadoRegistral = esEditableActivoEstadoRegistral;
 	}
 
-	public Boolean getExcluirValidaciones() {
-		return excluirValidaciones;
+	public Boolean getExcluirValidacionesBool() {
+		return excluirValidacionesBool;
 	}
 
-	public void setExcluirValidaciones(Boolean excluirValidaciones) {
-		this.excluirValidaciones = excluirValidaciones;
+	public void setExcluirValidacionesBool(Boolean excluirValidacionesBool) {
+		this.excluirValidacionesBool = excluirValidacionesBool;
 	}
 
 	public Date getFechaGestionComercial() {

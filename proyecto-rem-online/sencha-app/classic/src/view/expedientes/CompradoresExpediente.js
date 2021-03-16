@@ -265,7 +265,50 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					           renderer: coloredRender,
 					           hidden: cartera(),
 					           hideable: !cartera()
-						   }   
+						   } ,
+						   {
+
+							   text: HreRem.i18n('header.estado.contraste'),
+							   dataIndex: 'descripcionEstadoECL',
+							   flex: 1,
+					           renderer: coloredRender
+					          
+						   } ,
+						   {
+						   
+						        xtype: 'actioncolumn',
+						        reference: 'tickEstadoContraste',
+						        width: 30,
+						        text: 'Estado Contraste',
+								hideable: false,
+								items: [
+								        	{
+								        		//NS NO solicitado  , PEND Pendietne , NEG Negativo , FP	Falso Positivo,PRA	Positivo real aprobado,PRD	Positivo real denegado
+									            getClass: function(v, meta, rec) {							            	
+									                if (rec.get('codigoEstadoEcl') == CONST.ESTADO_CONT_LISTAS["NEGATIVO"] || rec.get('codigoEstadoEcl') == CONST.ESTADO_CONT_LISTAS["FALSO_POSITIVO"]) {
+									                    return 'fa fa-check green-color';
+									                    //TODO icono rojo
+									                } else if(rec.get('codigoEstadoEcl') == CONST.ESTADO_CONT_LISTAS["POSITIVO_REAL_DENEGADO"]){
+									                    return 'app-tbfiedset-ico icono-tickko';
+									                }else if(rec.get('codigoEstadoEcl') == CONST.ESTADO_CONT_LISTAS["POSITIVO_REAL_APROBADO"]){
+									                	return 'fa fa-check yellow-color';
+									                }else{
+									                	return '';
+									                }
+									                	
+									                
+									            }
+								        	}
+								 ]
+				    		},	 {
+
+							   text: HreRem.i18n('header.fecha.contraste'),
+							   dataIndex: 'fechaContraste',
+							   flex: 1,
+					           renderer: coloredRender,
+					           formatter: 'date("d/m/Y h:i")'
+					          
+						   }
 						  ],
 					    dockedItems : [
 					        {

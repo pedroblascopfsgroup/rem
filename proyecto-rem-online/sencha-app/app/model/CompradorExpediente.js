@@ -99,7 +99,18 @@ Ext.define('HreRem.model.CompradorExpediente', {
 			},
 			{
 				name:'regimenMatrimonialUrsus'
+			},{
+				name:'estadoContraste'
+			},{
+				name:'fechaContraste',
+				type : 'date',
+        		dateFormat: 'c'
+			},{
+				name:'descripcionEstadoECL'
+			},{
+				name:'codigoEstadoEcl'
 			}
+			
     ],
     
     proxy: {

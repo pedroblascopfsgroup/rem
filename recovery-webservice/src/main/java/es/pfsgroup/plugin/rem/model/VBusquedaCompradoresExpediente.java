@@ -113,6 +113,15 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 	
 	@Column(name = "CEX_NUM_URSUS_CONYUGE_BH_REM")
 	private String numeroClienteUrsusBhConyuge;
+		
+	@Column(name = "COD_ESTADO_ECL")
+	private String codigoEstadoEcl;
+		
+	@Column(name = "DESC_ESTADO_ECL")
+	private String descripcionEstadoECL;
+	
+	@Column(name = "ECO_ECL_FECHA")
+	private String fechaContraste;
 	
     
 	public String getId() {
@@ -362,6 +371,32 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 	public void setNumeroClienteUrsusBhConyuge(String numeroClienteUrsusBhConyuge) {
 		this.numeroClienteUrsusBhConyuge = numeroClienteUrsusBhConyuge;
 	}
+
+
+	public String getCodigoEstadoEcl() {
+		return codigoEstadoEcl;
+	}
+
+	public void setCodigoEstadoEcl(String codigoEstadoEcl) {
+		this.codigoEstadoEcl = codigoEstadoEcl;
+	}
+
+	public String getDescripcionEstadoECL() {
+		return descripcionEstadoECL;
+	}
+
+	public void setDescripcionEstadoECL(String descripcionEstadoECL) {
+		this.descripcionEstadoECL = descripcionEstadoECL;
+	}
+
+	public String getFechaContraste() {
+		return fechaContraste;
+	}
+
+	public void setFechaContraste(String fechaContraste) {
+		this.fechaContraste = fechaContraste;
+	}
+	
 	
 	
 	

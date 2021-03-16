@@ -76,42 +76,47 @@ Ext.define('HreRem.view.comercial.ComercialVisitasController', {
 		    	var count = Ext.decode(a.responseText).data;
 		    	var limite = Ext.decode(a.responseText).limite;
 		    	var limiteMax = Ext.decode(a.responseText).limiteMax;
-		    	if(count < limite){
-		    		config.params.exportar = true;
-		    		Ext.Ajax.request({			
-		   		     url: url,
-				     params: params,
-				     method: 'POST'
-				    ,success: function (a, operation, context) {
-				    	me.fireEvent("downloadFile", config);
-			    		view.unmask();
-		           },           
-		           failure: function (a, operation, context) {
-		           	  Ext.toast({
-						     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACI\u00d3N',
-						     width: 360,
-						     height: 100,
-						     align: 't'
-						 });
-		           	  view.unmask();
-		           }
-			     
-				});
-		    	}else {
-		    		var win = Ext.create('HreRem.view.common.WindowExportar', {
-		        		title: 'Exportar visitas',
-		        		height: 150,
-		        		width: 700,
-		        		modal: true,
-		        		config: config,
-		        		params: params,
-		        		url: url,
-		        		count: count,
-		        		limiteMax: limiteMax,
-		        		view: view,
-		        		renderTo: view.body		        		
-		        	});
-		        	win.show();
+		    	if(!Ext.isEmpty(msg)){
+		    		me.fireEvent("errorToastLong", HreRem.i18n("msg.error.export") + msg);
+		    		view.unmask();
+		    	} else {
+			    	if(count < limite){
+			    		config.params.exportar = true;
+			    		Ext.Ajax.request({			
+			   		     url: url,
+					     params: params,
+					     method: 'POST'
+					    ,success: function (a, operation, context) {
+					    	me.fireEvent("downloadFile", config);
+				    		view.unmask();
+			           },           
+			           failure: function (a, operation, context) {
+			           	  Ext.toast({
+							     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACI\u00d3N',
+							     width: 360,
+							     height: 100,
+							     align: 't'
+							 });
+			           	  view.unmask();
+			           }
+				     
+					});
+			    	}else {
+			    		var win = Ext.create('HreRem.view.common.WindowExportar', {
+			        		title: 'Exportar visitas',
+			        		height: 150,
+			        		width: 700,
+			        		modal: true,
+			        		config: config,
+			        		params: params,
+			        		url: url,
+			        		count: count,
+			        		limiteMax: limiteMax,
+			        		view: view,
+			        		renderTo: view.body		        		
+			        	});
+			        	win.show();
+			    	}
 		    	}
            },           
            failure: function (a, operation, context) {

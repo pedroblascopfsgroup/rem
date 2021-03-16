@@ -171,6 +171,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
@@ -4925,6 +4926,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			DtoExcelFichaComercial dtoFichaComercial = new DtoExcelFichaComercial();
 			Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS ,"id", idExpediente);
 			expediente = genericDao.get(ExpedienteComercial.class, filtroExpediente);
+			Integer visitasRealizadas = null;
+			Filter filtroActivoVisitado = null;
+			Filter filtroRealizada = null;
+			List<Visita> visitas = null;
 		
 			if(expediente != null) {
 				oferta = expediente.getOferta();
@@ -4999,7 +5004,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 					
 					if(agrupacion.getActivoPrincipal().getVisitas() != null) {
-						dtoFichaComercial.setVisitas(oferta.getActivoPrincipal().getVisitas().size());
+						filtroActivoVisitado = genericDao.createFilter(FilterType.EQUALS, "activo.id", oferta.getActivoPrincipal().getId());
+						filtroRealizada = genericDao.createFilter(FilterType.EQUALS, "estadoVisita.codigo", DDEstadosVisita.CODIGO_REALIZADA);
+						visitas = genericDao.getList(Visita.class, filtroActivoVisitado, filtroRealizada);
+						visitasRealizadas = visitas.size();
+						dtoFichaComercial.setVisitas(visitasRealizadas);
 					}
 					
 					if(agrupacion.getActivoPrincipal().getOfertas()!=null) {
@@ -5031,7 +5040,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							dtoFichaComercial.setCodigoPostal(agrupacionOrdenada.get(0).getActivo().getCodPostal());
 						
 						if(agrupacionOrdenada.get(0).getActivo().getVisitas() != null)
-							dtoFichaComercial.setVisitas(oferta.getActivoPrincipal().getVisitas().size());
+							filtroActivoVisitado = genericDao.createFilter(FilterType.EQUALS, "activo.id", oferta.getActivoPrincipal().getId());
+							filtroRealizada = genericDao.createFilter(FilterType.EQUALS, "estadoVisita.codigo", DDEstadosVisita.CODIGO_REALIZADA);
+							visitas = genericDao.getList(Visita.class, filtroActivoVisitado, filtroRealizada);
+							visitasRealizadas = visitas.size();
+							dtoFichaComercial.setVisitas(visitasRealizadas);
 						
 						if(agrupacionOrdenada.get(0).getActivo().getOfertas()!=null)
 							dtoFichaComercial.setTotalOfertas(agrupacionOrdenada.get(0).getActivo().getOfertas().size());
@@ -5080,7 +5093,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					linkHaya = linkCabecera(oferta.getActivoPrincipal().getId());
 					
 					if(oferta.getActivoPrincipal().getVisitas() != null)
-						dtoFichaComercial.setVisitas(oferta.getActivoPrincipal().getVisitas().size());
+						filtroActivoVisitado = genericDao.createFilter(FilterType.EQUALS, "activo.id", oferta.getActivoPrincipal().getId());
+						filtroRealizada = genericDao.createFilter(FilterType.EQUALS, "estadoVisita.codigo", DDEstadosVisita.CODIGO_REALIZADA);
+						visitas = genericDao.getList(Visita.class, filtroActivoVisitado, filtroRealizada);
+						visitasRealizadas = visitas.size();
+						dtoFichaComercial.setVisitas(visitasRealizadas);
 					if(oferta.getActivoPrincipal().getTerritorio() != null)
 						dtoFichaComercial.setDireccionComercial(oferta.getActivoPrincipal().getTerritorio().getDescripcion());
 					if(oferta.getActivoPrincipal().getOfertas()!=null)
@@ -5240,6 +5257,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					Activo act = activos.getActivo();
 					Filter filtroAct = genericDao.createFilter(FilterType.EQUALS ,"id", act.getId());
 					Filter filtroAct_id = genericDao.createFilter(FilterType.EQUALS ,"activo.id", oferta.getActivoPrincipal().getId());
+					Filter filtroAct_id_Agr = genericDao.createFilter(FilterType.EQUALS ,"activo.id", act.getId());
 					Order orderFechaTasacionDesc = new Order(OrderType.DESC, "valoracionBien.fechaValorTasacion");
 					
 					//TODO es la misma oferta para toda la agrupacion?
@@ -5354,7 +5372,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 					}
 					
-					List<ActivoTasacion> activoTasacionList = genericDao.getListOrdered(ActivoTasacion.class, orderFechaTasacionDesc, filtroAct_id);
+					List<ActivoTasacion> activoTasacionList = genericDao.getListOrdered(ActivoTasacion.class, orderFechaTasacionDesc, filtroAct_id_Agr);
 					if(activoTasacionList != null && !activoTasacionList.isEmpty() && activoTasacionList.get(0) != null && dtoFichaComercial.getTasacionActual() == null) {
 						dtoFichaComercial.setTasacionActual(activoTasacionList.get(0).getImporteTasacionFin());
 						activosFichaComercial.setTasacion(activoTasacionList.get(0).getImporteTasacionFin());
@@ -5382,7 +5400,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 					
 					
-					ActivoBbvaActivos actBbva = genericDao.get(ActivoBbvaActivos.class,filtroAct_id);
+					ActivoBbvaActivos actBbva = genericDao.get(ActivoBbvaActivos.class,filtroAct_id_Agr);
 					if(!Checks.esNulo(actBbva)) {
 						activosFichaComercial.setActivoBbva(actBbva.getNumActivoBbva());
 						if(actBbva.getActivoEpa() != null) {
@@ -6199,10 +6217,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		for (Map.Entry<Long, DtoExcelFichaComercial> entry : data.entrySet()) {
 			DtoExcelFichaComercial entryData = entry.getValue();
-			importeFinalTasacionActual  += importeFinalTasacionActual  + (entryData.getTasacionActual() 			  == null ? 0 : entryData.getTasacionActual());
-			importeFinalTasacion18Meses += importeFinalTasacion18Meses + (entryData.getTasacionDieciochoMesesOferta() == null ? 0 : entryData.getTasacionDieciochoMesesOferta());
-			importeFinalTasacion12Meses += importeFinalTasacion12Meses + (entryData.getTasacionDoceMesesOferta()      == null ? 0 : entryData.getTasacionDoceMesesOferta());
-			importeFinalTasacion6Meses  += importeFinalTasacion6Meses  + (entryData.getTasacionSeisMesesOferta()      == null ? 0 : entryData.getTasacionSeisMesesOferta());
+			importeFinalTasacionActual  = importeFinalTasacionActual  + (entryData.getTasacionActual() 			  == null ? 0 : entryData.getTasacionActual());
+			importeFinalTasacion18Meses = importeFinalTasacion18Meses + (entryData.getTasacionDieciochoMesesOferta() == null ? 0 : entryData.getTasacionDieciochoMesesOferta());
+			importeFinalTasacion12Meses = importeFinalTasacion12Meses + (entryData.getTasacionDoceMesesOferta()      == null ? 0 : entryData.getTasacionDoceMesesOferta());
+			importeFinalTasacion6Meses  = importeFinalTasacion6Meses  + (entryData.getTasacionSeisMesesOferta()      == null ? 0 : entryData.getTasacionSeisMesesOferta());
 		}
 		dtoFichaComercial.setTasacionActual(importeFinalTasacionActual);
 		dtoFichaComercial.setTasacionDieciochoMesesOferta(importeFinalTasacion18Meses);

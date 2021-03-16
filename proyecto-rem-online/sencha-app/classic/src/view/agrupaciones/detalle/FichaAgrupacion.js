@@ -440,7 +440,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
     			            		store: '{comboMotivoDeExcluido}',
     			            		value: '{agrupacionficha.motivoDeExcluidoCodigo}',
     			            		disabled: '{!agrupacionficha.marcaDeExcluido}',
-    			              		readOnly:'{esEditableExcluirValidaciones}'
+    			              		readOnly:'{esEditableExcluirValidaciones}',
+    			              		allowBlank:'{!agrupacionficha.marcaDeExcluido}'
     			            	}
     						}
     						

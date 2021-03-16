@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -67,6 +68,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
@@ -266,6 +268,9 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -3518,11 +3523,23 @@ public class AgrupacionAdapter {
 						}
 					}
 					//HREOS-12346
+					if(dto.getMarcaDeExcluido() != null || dto.getVisibleGestionComercial() != null) {
+						Boolean excluirValidaciones = dto.getMarcaDeExcluido();
+						for (ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
+							if(excluirValidaciones == null) {
+								if(aga.getActivo() != null) {
+									PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(aga.getActivo().getId());
+									if(perimetroActivo != null) {
+										excluirValidaciones = perimetroActivo.getCheckGestorComercial();
+									}
+								}
+							}
+							Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(aga.getActivo(), null, excluirValidaciones ,true);
+							recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
+						}
+					}
 					saveActivosVisiblesGestionComercial(dto,id);
 
-//					if (dto.getVisibleGestionComercial()==true && dto.getMarcaDeExcluido()==true) {
-//						checkActivosVisiblesGestionComercial(dto,id);
-//					}
 					
 					if(!ofertaViva) {
 						List<ActivoAgrupacionActivo> listaActivos = restringida.getActivos();
@@ -4356,18 +4373,18 @@ public class AgrupacionAdapter {
 					if (dto.getMarcaDeExcluido() != null) {
 						if (dto.getMarcaDeExcluido()) {
 							codigoSinSino = DDSinSiNo.CODIGO_SI;
-							if(dto.getMotivoDeExcluidoCodigo() != null) {
-								Filter filtroMotivoExcluido = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoDeExcluidoCodigo());
-								DDMotivoGestionComercial ddtr1 = genericDao.get(DDMotivoGestionComercial.class, filtroMotivoExcluido);
-								perimetroActivo.setMotivoGestionComercial(ddtr1);
-							}
-						} else {
+						}else {
 							codigoSinSino = DDSinSiNo.CODIGO_NO;
 							perimetroActivo.setMotivoGestionComercial(null);
 						}
 						Filter filtroDict = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoSinSino);
 						DDSinSiNo ddSinSiNo = genericDao.get(DDSinSiNo.class, filtroDict);
 						perimetroActivo.setExcluirValidaciones(ddSinSiNo);
+					}
+					if(dto.getMotivoDeExcluidoCodigo() != null && DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones())) {
+						Filter filtroMotivoExcluido = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoDeExcluidoCodigo());
+						DDMotivoGestionComercial ddtr1 = genericDao.get(DDMotivoGestionComercial.class, filtroMotivoExcluido);
+						perimetroActivo.setMotivoGestionComercial(ddtr1);
 					}
 					genericDao.save(PerimetroActivo.class, perimetroActivo);
 				}					

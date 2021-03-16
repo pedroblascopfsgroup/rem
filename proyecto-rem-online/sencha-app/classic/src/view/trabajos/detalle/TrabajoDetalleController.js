@@ -147,16 +147,110 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	    gridSeleccionTarifas.getStore().load();
 	    
     },
+    
+    getPlazoComiteProveedor: function(){
+    	var me = this;
+    	var urlCfg = $AC.getRemoteUrl('trabajo/getPlazoEjecucion');
+    	var urlComite = $AC.getRemoteUrl('trabajo/getAplicaComiteParametrizado');
+    	var comboProveedor = me.lookupReference('comboProveedorGestionEconomica2');
+    	var gridActivos = me.lookupReference('listaActivosSubidaRef');
+    	var codigoSubtipoTrabajo = me.lookupReference('subtipoTrabajoCombo').getValue();
+    	var codigoTrabajo = me.lookupReference('tipoTrabajo').getValue();
+    	var codCartera = null;
+    	var codSubcartera = me.getView().codSubcartera;
+    	if (gridActivos.getStore().getData().items[0] != null && gridActivos.getStore().getData().items[0] != undefined){
+    		codCartera = gridActivos.getStore().getData().items[0].data.cartera;
+    	}
+    	if (codigoSubtipoTrabajo != null && codigoTrabajo != null && codCartera != null){
+    		comboProveedor.setDisabled(false);
+	    	Ext.Ajax.request({
+				  url:urlCfg,
+				  params:  {tipoTrabajo : codigoTrabajo, 
+					  		subtipoTrabajo : codigoSubtipoTrabajo,
+					  		cartera: codCartera,
+					  		subCartera: codSubcartera},
+				  success: function(response,opts){
+					  var decode = Ext.JSON.decode(response.responseText);
+					  var fecha = decode["data"];
+					  var prehora = fecha.split('T');
+					  fecha = new Date(fecha);
+					 				 
+					  if(me.lookupReference("tipoTrabajo").getValue() == CONST.TIPOS_TRABAJO['ACTUACION_TECNICA'] && 
+					  ( me.getViewModel().get("trabajo.subtipoTrabajoCodigo") == CONST.SUBTIPOS_TRABAJO['PAQUETES'])
+					  ||  me.getViewModel().get("trabajo.subtipoTrabajoCodigo") == CONST.SUBTIPOS_TRABAJO['TOMA_POSESION']){
+					  	 me.lookupReference('fechaConcretaTrabajo').setValue(fecha);
+					  	 var hora = prehora[1];
+					  	 me.lookupReference('fechaConcretaTrabajo').setAllowBlank(false);
+					  	 me.lookupReference('horaConcretaTrabajo').setAllowBlank(false);
+					  	 
+							  prehora = hora.split(':');
+							  if(prehora[1] >= 30){
+								  me.lookupReference('horaConcretaTrabajo').setSelection(prehora[0]*2 + 1);
+							  }else{
+								  me.lookupReference('horaConcretaTrabajo').setSelection(prehora[0]*2);
+							  }
+						 }else{
+						 	 me.lookupReference('fechaConcretaTrabajo').setAllowBlank(true);
+					 		 me.lookupReference('horaConcretaTrabajo').setAllowBlank(true);
+						 }
+					 
+					  me.lookupReference('fechaTopeTrabajo').setValue(fecha);
+					
+				  }
+	      	});
+	      	
+	      	Ext.Ajax.request({
+				  url:urlComite,
+				  params:  {tipoTrabajo : codigoTrabajo, 
+					  		subtipoTrabajo : codigoSubtipoTrabajo,
+					  		cartera: codCartera,
+					  		subCartera: codSubcartera},
+				  success: function(response,opts){
+					  var decode = Ext.JSON.decode(response.responseText);
+					  var result = decode["data"];
+					  if(result == "true"){
+						  me.lookupReference('checkAplicaComite').setValue(true);
+						  me.onCheckChangeAplicaComite(null,null,false,null);
+					  }else{
+						me.lookupReference('checkAplicaComite').setValue(false);
+						me.onCheckChangeAplicaComite(null,null,true,null);
+					  }
+				  }
+	        	});
+	      	comboProveedor.setSelection(null);
+	      	me.lookupReference('proveedorContactoCombo2').setSelection(null);
+			comboProveedor.setStore(new Ext.data.Store({
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorFilteredCreaTrabajo',
+					extraParams: {cartera: codCartera}
+				},
+				listeners: {
+					load: function(store, records, successful, operation, e0pts){
+						if (records.length > 0){
+							me.onAfterLoadProveedor();
+							if (comboProveedor.getSelection() != null && comboProveedor.getSelection().getData().idProveedor != undefined) {
+							  me.loadComboProveedorContacto(comboProveedor.getSelection().getData().idProveedor);
+							}
+						} else {
+							comboProveedor.setActiveError('No existe proveedor para las selecciones marcadas y activos cargados');
+						}
+					}
+				}
+			}));
+			comboProveedor.onTriggerClick();
+	    }
+    },
 	
 	onChangeSubtipoTrabajoCombo: function(combo) {
 		var me = this;
     	var idActivo = combo.up("window").idActivo;
     	var idAgrupacion = combo.up("window").idAgrupacion
     	var codigoSubtipoTrabajo = combo.getValue();
-    	var codigoTrabajo = me.lookupReference('tipoTrabajo').getValue();
     	var advertencia;
-    	var codCartera;
-    	var codSubcartera;
+    	var codCartera = null;
+    	var codSubcartera = null;
     	var parametrico=false;
     	if ((Ext.isDefined(idActivo) && idActivo != null) || Ext.isDefined(idAgrupacion) && idAgrupacion != null){
 		    var url = $AC.getRemoteUrl('trabajo/getAdvertenciaCrearTrabajo');
@@ -165,7 +259,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			  params:  {
 				  		idActivo : idActivo,
 				  		idAgrupacion : idAgrupacion, 
-			  			codigoSubtipoTrabajo : combo.getValue()
+			  			codigoSubtipoTrabajo : codigoSubtipoTrabajo
 			  			},
 			  success: function(response,opts){
 				  advertencia = Ext.JSON.decode(response.responseText).advertencia;
@@ -173,9 +267,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			  }
 		    });
 		}
-    	var urlCfg = $AC.getRemoteUrl('trabajo/getPlazoEjecucion');
-    	var urlComite = $AC.getRemoteUrl('trabajo/getAplicaComiteParametrizado');
-    	var urlProveedorPredeterminado = $AC.getRemoteUrl('trabajo/getComboProveedorFilteredCreaTrabajo');
     	if(me.getView().codCartera != null){
     		codCartera = me.getView().codCartera;
     		codSubcartera = me.getView().codSubcartera;
@@ -187,88 +278,17 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     			parametrico = true;
     		}
     	}
-    	if(parametrico){
-        	Ext.Ajax.request({
-			  url:urlCfg,
-			  params:  {tipoTrabajo : codigoTrabajo, 
-				  		subtipoTrabajo : codigoSubtipoTrabajo,
-				  		cartera: codCartera,
-				  		subCartera: codSubcartera},
-			  success: function(response,opts){
-				  var decode = Ext.JSON.decode(response.responseText);
-				  var fecha = decode["data"];
-				  var prehora = fecha.split('T');
-				  fecha = new Date(fecha);
-				 				 
-				  if(me.lookupReference("tipoTrabajo").getValue() == CONST.TIPOS_TRABAJO['ACTUACION_TECNICA'] && 
-				  ( me.getViewModel().get("trabajo.subtipoTrabajoCodigo") == CONST.SUBTIPOS_TRABAJO['PAQUETES'])
-				  ||  me.getViewModel().get("trabajo.subtipoTrabajoCodigo") == CONST.SUBTIPOS_TRABAJO['TOMA_POSESION']){
-				  	 me.lookupReference('fechaConcretaTrabajo').setValue(fecha);
-				  	 var hora = prehora[1];
-				  	 me.lookupReference('fechaConcretaTrabajo').setAllowBlank(false);
-				  	 me.lookupReference('horaConcretaTrabajo').setAllowBlank(false);
-				  	 
-						  prehora = hora.split(':');
-						  if(prehora[1] >= 30){
-							  me.lookupReference('horaConcretaTrabajo').setSelection(prehora[0]*2 + 1);
-						  }else{
-							  me.lookupReference('horaConcretaTrabajo').setSelection(prehora[0]*2);
-						  }
-					 }else{
-					 	 me.lookupReference('fechaConcretaTrabajo').setAllowBlank(true);
-				 		 me.lookupReference('horaConcretaTrabajo').setAllowBlank(true);
-					 }
-				 
-				  me.lookupReference('fechaTopeTrabajo').setValue(fecha);
-				
-			  }
-        	});
-        	
-        	Ext.Ajax.request({
-  			  url:urlComite,
-  			  params:  {tipoTrabajo : codigoTrabajo, 
-  				  		subtipoTrabajo : codigoSubtipoTrabajo,
-  				  		cartera: codCartera,
-  				  		subCartera: codSubcartera},
-  			  success: function(response,opts){
-  				  var decode = Ext.JSON.decode(response.responseText);
-  				  var result = decode["data"];
-  				  if(result == "true"){
-  					  me.lookupReference('checkAplicaComite').setValue(true);
-  					  me.onCheckChangeAplicaComite(null,null,false,null);
-  				  }else{
-  					me.lookupReference('checkAplicaComite').setValue(false);
-  					me.onCheckChangeAplicaComite(null,null,true,null);
-  				  }
-  			  }
-          	});
-        	me.lookupReference('comboProveedorGestionEconomica2').setSelection(null);
-        	me.lookupReference('proveedorContactoCombo2').setSelection(null);
-        	Ext.Ajax.request({
-    			  url:urlProveedorPredeterminado,
-    			  params:  {cartera: codCartera},
-    			  success: function(response,opts){
-    				  var decode = Ext.JSON.decode(response.responseText);
-    				  var result = decode["data"];
-    				  if(result.length > 0){
-						me.lookupReference('comboProveedorGestionEconomica2').setStore(new Ext.data.Store({
-						model: 'HreRem.model.ComboBase',
-							    data: result
-						}));
-						me.onAfterLoadProveedor();
-						me.lookupReference('comboProveedorGestionEconomica2').setDisabled(false);
-						var comboProveedor = me.lookupReference('comboProveedorGestionEconomica2');
-						if (comboProveedor.getSelection() != null && comboProveedor.getSelection().getData().idProveedor != undefined) {
-						  me.loadComboProveedorContacto(comboProveedor.getSelection().getData().idProveedor);
-						}
-    				  }
-    			  }
-            	});
+    	
+    	if(!parametrico){
+        	me.lookupReference('comboProveedorGestionEconomica2').setDisabled(false);
+    		me.lookupReference('comboProveedorGestionEconomica2').setActiveError('Es necesario cargar el listado de activos para poder seleccionar el proveedor del trabajo');
+    	} else {
+    		me.getPlazoComiteProveedor();
     	}
 
     	
-    	if(combo.getValue() == CONST.SUBTIPOS_TRABAJO['TRAMITAR_PROPUESTA_PRECIOS'] 
-    		|| combo.getValue() == CONST.SUBTIPOS_TRABAJO['TRAMITAR_PROPUESTA_DESCUENTO']) {
+    	if(codigoSubtipoTrabajo == CONST.SUBTIPOS_TRABAJO['TRAMITAR_PROPUESTA_PRECIOS'] 
+    		|| codigoSubtipoTrabajo == CONST.SUBTIPOS_TRABAJO['TRAMITAR_PROPUESTA_DESCUENTO']) {
     		me.lookupReference("checkEnglobaTodosActivosRef").setValue(true);
     		me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(true);
     		
@@ -1298,7 +1318,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			    	   			window.lookupReference('listaActivosSubidaRef').getStore().load(1);    
 			    	   			//Si carga correctametne desde listado, ya no sera obligatorio insertar archivo
 			    	   			window.lookupReference('filefieldActivosRef').allowBlank=true;
-							}else{
+			    	   		}else{
 								me.fireEvent("errorToast", "Ha fallado la validación del fichero. Vaya al apartado de \"Carga Masiva\" para descargar el fichero de errores.");
 							}
 		    	   			

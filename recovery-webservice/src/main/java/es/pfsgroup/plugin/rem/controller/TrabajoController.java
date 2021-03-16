@@ -951,7 +951,7 @@ public class TrabajoController extends ParadiseJsonController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboProveedorFilteredCreaTrabajo(String cartera, WebDto webDto, ModelMap model) {
 		
 		model.put("data", trabajoApi.getComboProveedorFilteredCreaTrabajo(cartera));

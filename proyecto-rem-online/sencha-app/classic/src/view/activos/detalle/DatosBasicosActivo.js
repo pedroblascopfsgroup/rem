@@ -887,7 +887,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									store: '{comboMotivoGestionComercialActivo}',
 									value: '{activo.motivoGestionComercialCodigo}',
 									readOnly: '{esEditableExcluirValidaciones}',
-									allowBlank:'{!activo.excluirValidacionesBool}'
+									allowBlank:'{!activo.excluirValidacionesBool}',
+									disabled:'{!activo.excluirValidacionesBool}'
 								}
 							},
 

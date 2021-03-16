@@ -31,6 +31,15 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDEstadoContrasteListas implements Auditable, Dictionary {
+	public static final String NO_SOLICITADO = "NS";
+	public static final String PENDIENTE = "PEND";
+	public static final String NEGATIVO = "NEG";
+	public static final String FALSO_POSITIVO = "FP";
+	public static final String POSITIVO_REAL_APROBADO = "PRA";
+	public static final String POSITIVO_REAL_DENEGADO = "PRD";
+
+
+	
 
 	private static final long serialVersionUID = 1L;
 

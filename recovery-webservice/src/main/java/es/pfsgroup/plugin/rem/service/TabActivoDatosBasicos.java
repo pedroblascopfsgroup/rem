@@ -881,25 +881,23 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		ActivoAdmisionRevisionTitulo actRevTitulo = genericDao.get(ActivoAdmisionRevisionTitulo.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-		DDEstadoRegistralActivo ddEstadoReg = new DDEstadoRegistralActivo();
 		boolean perimetroAdmision = false;
 		if(perimetroActivo.getAplicaAdmision() != null) {
 			perimetroAdmision = perimetroActivo.getAplicaAdmision();
 			activoDto.setPerimetroAdmision(perimetroAdmision);
 		}
-		if(perimetroAdmision && actRevTitulo != null) {
-			if(actRevTitulo.getTipoIncidenciaRegistral() != null) {
-				ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getTipoIncidenciaRegistral().getDescripcion()));
-			}else if(actRevTitulo.getSituacionConstructivaRegistral() != null) {
-				ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getSituacionConstructivaRegistral().getDescripcion()));
-			}
-			
-			if(ddEstadoReg != null) {
-				activoDto.setEstadoRegistralCodigo(ddEstadoReg.getCodigo());	
-			}
-			
-		}else if(activo.getEstadoRegistral() != null){
+		
+		DDEstadoRegistralActivo ddEstadoReg = null;
+		if(perimetroAdmision && actRevTitulo != null && actRevTitulo.getTipoIncidenciaRegistral() != null) {
+			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getTipoIncidenciaRegistral().getDescripcion()));
+		} else if(perimetroAdmision && actRevTitulo != null && actRevTitulo.getSituacionConstructivaRegistral() != null) {
+			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getSituacionConstructivaRegistral().getDescripcion()));
+		} else if(activo.getEstadoRegistral() != null) {
 			activoDto.setEstadoRegistralCodigo(activo.getEstadoRegistral().getCodigo());
+		}
+		
+		if(ddEstadoReg != null) {
+			activoDto.setEstadoRegistralCodigo(ddEstadoReg.getCodigo());	
 		}
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));

@@ -124,6 +124,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoContrasteListas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
@@ -4688,11 +4689,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			} else if (!Checks.esNulo(comprador.getAdjunto())) {
 				compradorExpediente.setDocumentoAdjunto(comprador.getAdjunto());
 			}
+			if(dto.getApellidos()!=null || dto.getNumDocumento()!=null || dto.getNombreRazonSocial()!=null) {
+				DDEstadoContrasteListas estadoNoSolicitado = genericDao.get(DDEstadoContrasteListas.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoContrasteListas.NO_SOLICITADO));
+				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);				
+			}
 
 			if (esNuevo) {
 				genericDao.save(Comprador.class, comprador);
 				expedienteComercial.getCompradores().add(compradorExpediente);
 				genericDao.save(ExpedienteComercial.class, expedienteComercial);
+				cambiarEstadoContrasteListasaNoSolicitado(compradorExpediente.getExpediente());
 			} else {
 				genericDao.save(Comprador.class, comprador);
 				genericDao.update(CompradorExpediente.class, compradorExpediente);
@@ -11684,6 +11690,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		bulkOfertaDao.update(blkOfr);
 		
 		return true;
+	}
+	
+	public void  cambiarEstadoContrasteListasaNoSolicitado(Long idExpediente) {
+
+		CompradorExpediente cexpediente = genericDao.get(CompradorExpediente.class, genericDao.createFilter(FilterType.EQUALS, "expediente", idExpediente));
+		DDEstadoContrasteListas estadoNoSolicitado = genericDao.get(DDEstadoContrasteListas.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoContrasteListas.NO_SOLICITADO));
+		cexpediente.setEstadoContrasteListas(estadoNoSolicitado);
+		genericDao.save(CompradorExpediente.class, cexpediente);
 	}
 	
 }

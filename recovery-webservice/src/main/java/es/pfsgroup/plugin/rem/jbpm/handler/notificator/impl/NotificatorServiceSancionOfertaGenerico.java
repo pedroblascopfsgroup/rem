@@ -999,7 +999,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 						cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/"
 								+ reservationKey + "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
 					}
-				} else {
+				} else if (!DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)){
 					cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/"
 							+ reservationKey + "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
 				}

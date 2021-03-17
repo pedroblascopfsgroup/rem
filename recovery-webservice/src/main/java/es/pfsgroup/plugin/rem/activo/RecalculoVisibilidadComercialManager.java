@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.activo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,13 +41,19 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 	@Override
 	@Transactional
 	public Map<Long, List<String>> recalcularVisibilidadComercial(Activo activo, Boolean dtoCheckGestorComercial, Boolean dtoExcluirValidaciones,boolean fichaActivo) {
+		Map<Long, List<String>> mapaErrores = new HashMap<Long, List<String>>();
 
-		Map<Long, List<String>> mapaErrores = visibilidadGestionComercialValidator.validarPerimetroActivo(activo, dtoCheckGestorComercial, dtoExcluirValidaciones);
+		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+		
+		if(!fichaActivo && perimetroActivo.getCheckGestorComercial() != null && perimetroActivo.getCheckGestorComercial() && perimetroActivo.getExcluirValidaciones() != null
+			 && DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones())) {
+			return mapaErrores;
+		}
+
+		mapaErrores = visibilidadGestionComercialValidator.validarPerimetroActivo(activo, dtoCheckGestorComercial, dtoExcluirValidaciones);
 		
 		List<String> listaErrores = mapaErrores.get(activo.getNumActivo());
-		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 
-		PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroIdActivo);
 		boolean tieneErrores = false;		
 		if(listaErrores != null && !listaErrores.isEmpty()){
 			tieneErrores = true;
@@ -80,8 +87,13 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 		for (Activo activo : activos) {
 			Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroIdActivo);
-			perimetroActivo.setCheckGestorComercial(!tieneErrores);	
-			genericDao.update(PerimetroActivo.class,perimetroActivo);
+
+			if(!(perimetroActivo.getCheckGestorComercial() != null && perimetroActivo.getCheckGestorComercial() && perimetroActivo.getExcluirValidaciones() != null
+					 && DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones()))) {
+				perimetroActivo.setCheckGestorComercial(!tieneErrores);	
+				genericDao.update(PerimetroActivo.class,perimetroActivo);
+			}
+			
 		}
 		
 		return mapaErrores;

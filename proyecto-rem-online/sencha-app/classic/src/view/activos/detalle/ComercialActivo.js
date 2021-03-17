@@ -215,6 +215,19 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        		hidden: '{!isCarteraSareb}',
 				        		readOnly: '{!noEditableUASSoloSuper}'
 							}						
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.ggaa.sareb'),
+							reference: 'ggaaSarebRef',
+							bind : {
+				        		value: '{comercial.ggaaSareb}',
+				        		store: '{comboSinSino}',
+				        		hidden: '{!isCarteraSareb}',
+				        		//readOnly: '{!noEditableUASSoloSuper}',
+				        		readOnly: true,
+				        		editable: false
+							}						
 						}
 				]
 			}, 

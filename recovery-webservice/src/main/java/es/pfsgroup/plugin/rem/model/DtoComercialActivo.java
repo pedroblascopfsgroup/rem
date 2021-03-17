@@ -25,6 +25,7 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private String tipoCorrectivoSareb;
 	private Date fechaFinCorrectivoSareb;
 	private String tipoCuotaComunidad;
+	private String ggaaSareb;
 
 
 
@@ -170,6 +171,14 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	public void setTipoCuotaComunidad(String tipoCuotaComunidad) {
 		this.tipoCuotaComunidad = tipoCuotaComunidad;
+	}
+
+	public String getGgaaSareb() {
+		return ggaaSareb;
+	}
+
+	public void setGgaaSareb(String ggaaSareb) {
+		this.ggaaSareb = ggaaSareb;
 	}
 	
 	

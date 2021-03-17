@@ -293,7 +293,8 @@ public class ActivoPropagacionUAsFieldTabMap {
 	    			"siniestroSareb",
 	    			"tipoCorrectivoSareb",
 	    			"fechaFinCorrectivoSareb",
-	    			"tipoCuotaComunidad"
+	    			"tipoCuotaComunidad",
+	    			"ggaaSareb"
     			));
 
 /*

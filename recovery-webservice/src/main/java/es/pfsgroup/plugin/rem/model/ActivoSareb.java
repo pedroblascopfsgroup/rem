@@ -131,6 +131,10 @@ public class ActivoSareb implements Serializable, Auditable {
 	@OneToOne
     @JoinColumn(name = "DD_TCC_ID")
 	private DDTipoCuotaComunidad tipoCuotaComunidad;
+	
+	@OneToOne
+    @JoinColumn(name = "GGAA")
+    private DDSinSiNo ggaaSareb;
 
 	public Long getId() {
 		return id;
@@ -330,6 +334,14 @@ public class ActivoSareb implements Serializable, Auditable {
 
 	public void setTipoCuotaComunidad(DDTipoCuotaComunidad tipoCuotaComunidad) {
 		this.tipoCuotaComunidad = tipoCuotaComunidad;
+	}
+
+	public DDSinSiNo getGgaaSareb() {
+		return ggaaSareb;
+	}
+
+	public void setGgaaSareb(DDSinSiNo ggaaSareb) {
+		this.ggaaSareb = ggaaSareb;
 	}
 	
 	

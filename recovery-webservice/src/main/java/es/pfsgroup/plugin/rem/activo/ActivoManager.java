@@ -3936,6 +3936,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					if(activoSareb.getTipoCuotaComunidad() != null) {
 						dto.setTipoCuotaComunidad(activoSareb.getTipoCuotaComunidad().getCodigo());
 					}
+					if (activoSareb.getGgaaSareb() != null) {
+						dto.setGgaaSareb(activoSareb.getGgaaSareb().getCodigo());
+					}
 				}
 			}
 

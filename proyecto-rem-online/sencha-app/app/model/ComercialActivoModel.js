@@ -62,11 +62,15 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 		},
 		{
 			name: 'tipoCuotaComunidad'
+		},
+		{
+			name: 'ggaaSareb'
 		}
     ],
     
 	proxy: {
 		type: 'uxproxy',
+		timeout: 60000,
 		remoteUrl : 'activo/getComercialActivo',
 		api: {
 			remoteUrl: 'activo/getComercialActivo',

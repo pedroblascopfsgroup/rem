@@ -154,12 +154,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	var urlComite = $AC.getRemoteUrl('trabajo/getAplicaComiteParametrizado');
     	var comboProveedor = me.lookupReference('comboProveedorGestionEconomica2');
     	var gridActivos = me.lookupReference('listaActivosSubidaRef');
+    	var gridActivosAgrupacion = me.lookupReference('activosagrupaciontrabajo');
     	var codigoSubtipoTrabajo = me.lookupReference('subtipoTrabajoCombo').getValue();
     	var codigoTrabajo = me.lookupReference('tipoTrabajo').getValue();
     	var codCartera = null;
     	var codSubcartera = me.getView().codSubcartera;
     	if (gridActivos.getStore().getData().items[0] != null && gridActivos.getStore().getData().items[0] != undefined){
     		codCartera = gridActivos.getStore().getData().items[0].data.cartera;
+    	} else if (gridActivosAgrupacion.getStore().getData().items[0] != null && gridActivosAgrupacion.getStore().getData().items[0] != undefined){
+    		codCartera = gridActivosAgrupacion.getStore().getData().items[0].data.cartera;
     	}
     	if (codigoSubtipoTrabajo != null && codigoTrabajo != null && codCartera != null){
     		comboProveedor.setDisabled(false);
@@ -277,8 +280,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     			codCartera = me.lookupReference('listaActivosSubidaRef').getStore().getData().items[0].data.cartera;
     			parametrico = true;
     		}
-    	}
-    	
+		}
+		
     	if(!parametrico){
         	me.lookupReference('comboProveedorGestionEconomica2').setDisabled(false);
     		me.lookupReference('comboProveedorGestionEconomica2').setActiveError('Es necesario cargar el listado de activos para poder seleccionar el proveedor del trabajo');

@@ -514,25 +514,37 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     			name: 'isJudicial',
     			type:'boolean',
     			calculate: function(data) {
-    				if (data.tipoTituloActivoMatriz === CONST.TIPO_TITULO_ACTIVO['JUDICIAL']) {
+    				if (data.tipoTituloActivoMatriz === CONST.TIPO_TITULO_ACTIVO['JUDICIAL'] || data.tipoTituloCodigo === CONST.TIPO_TITULO_ACTIVO['JUDICIAL']) {
 						return true;
     				}else{
     					return false;
     				}
     			},
-    			depends:'tipoTituloActivoMatriz'
+    			depends: ['tipoTituloActivoMatriz','tipoTituloCodigo']
     		},
     		{
     			name: 'isNotJudicial',
     			type:'boolean',
     			calculate: function(data) {
-    				if (data.tipoTituloActivoMatriz === CONST.TIPO_TITULO_ACTIVO['NO_JUDICIAL']) {
+    				if (data.tipoTituloActivoMatriz === CONST.TIPO_TITULO_ACTIVO['NO_JUDICIAL'] || data.tipoTituloCodigo === CONST.TIPO_TITULO_ACTIVO['NO_JUDICIAL']) {
 						return true;
     				}else{
     					return false;
     				}
     			},
-    			depends:'tipoTituloActivoMatriz'
+    			depends: ['tipoTituloActivoMatriz','tipoTituloCodigo']
+    		},
+			{
+    			name: 'isPdv',
+    			type:'boolean',
+    			calculate: function(data) {
+    				if (data.tipoTituloActivoMatriz === CONST.TIPO_TITULO_ACTIVO['PDV'] || data.tipoTituloCodigo === CONST.TIPO_TITULO_ACTIVO['PDV']) {
+						return true;
+    				}else{
+    					return false;
+    				}
+    			},
+    			depends: ['tipoTituloActivoMatriz','tipoTituloCodigo']
     		},
     		{
     			name: 'origenAnteriorActivoCodigo'

@@ -40,17 +40,15 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 								return record.get('descripcion') == me.valorMostrado;
 							};
 							var record = records.find(esItem);
-							function seleccionar(record){
-								if(record != null){
-									if(me.isExpanded){
-										me.select(record.get('codigo'));
-										me.expand();
-									}else{
-										me.select(record.get('codigo'));
-									}
+							if(record != null){
+								if(me.isExpanded){
+									me.select(record.get('codigo'));
+									me.expand();
+								}else{
+									me.select(record.get('codigo'));
 								}
-							};
-							setTimeout(seleccionar(record), 10000);
+							}
+							
 						}
 					}
 				});
@@ -60,9 +58,7 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 			this[binding._config.names.set](value);
 			--binding.syncing;
 	    	this.fireEvent("afterbind", this, value);
-			if(binding._config.names.set == 'setRawValue' && me.chainedReference != null){
-				me.up('form').down('[reference='+me.chainedReference+']').getStore().load();
-			}
+			
 		},
 		
 		bindStore: function(store, preventFilter, /* private */initial) {
@@ -80,8 +76,8 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 
 		setRawValue: function (value) {
 			if(value == null) value = '';
-    		this.callParent([value]);
-			this.setValorMostrado(value);
+			this.callParent([value]);
+			this.setValorMostrado(value);   		
         },
 
 		setValorMostrado: function(value){

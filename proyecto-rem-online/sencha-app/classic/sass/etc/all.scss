@@ -368,6 +368,17 @@ white-space: normal !important;
   background-size: 15px;
 }
 
+.icono-cross-ko {
+	 background: url(images/sin_hacer.svg) center center no-repeat;
+}
+
+.icono-check-ok-green {
+	 background: url(images/hecho.svg) center center no-repeat;
+}
+
+.icono-check-ok-yellow {
+	 background: url(images/hecho_amarillo.png) center center no-repeat;
+}
 //------------------ PANEL BASE----------------------------
 
 .panel-base {  
@@ -1388,10 +1399,4 @@ div.x-fieldset-header-text {
 	position: static;
 }
 
-.yellow-color {
-	color: #FFFF00;
-}
 
-.icono-sin-hacer{
-	 background: url(images/sin_hacer.svg) center center no-repeat;
-}

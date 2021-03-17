@@ -284,14 +284,13 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 								items: [
 								        	{
 								        		//NS NO solicitado  , PEND Pendietne , NEG Negativo , FP	Falso Positivo,PRA	Positivo real aprobado,PRD	Positivo real denegado
-									            getClass: function(v, meta, rec) {							            	
+									            getClass: function(v, meta, rec) {
 									                if (rec.get('codigoEstadoEcl') == CONST.ESTADO_CONT_LISTAS["NEGATIVO"] || rec.get('codigoEstadoEcl') == CONST.ESTADO_CONT_LISTAS["FALSO_POSITIVO"]) {
-									                    return 'fa fa-check green-color';
-									                    //TODO icono rojo
+									                    return 'app-tbfiedset-ico icono-check-ok-green';			         
 									                } else if(rec.get('codigoEstadoEcl') == CONST.ESTADO_CONT_LISTAS["POSITIVO_REAL_DENEGADO"]){
-									                    return 'app-tbfiedset-ico icono-tickko';
+									                    return 'app-tbfiedset-ico icono-cross-ko';
 									                }else if(rec.get('codigoEstadoEcl') == CONST.ESTADO_CONT_LISTAS["POSITIVO_REAL_APROBADO"]){
-									                	return 'fa fa-check yellow-color';
+									                	return 'app-tbfiedset-ico icono-check-ok-yellow';
 									                }else{
 									                	return '';
 									                }

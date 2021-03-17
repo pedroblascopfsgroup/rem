@@ -849,9 +849,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind: {
 									value: '{activo.checkGestorComercial}',
 									readOnly: '{esEditableExcluirValidaciones}'
-								},
-								listeners: {
-									change: 'onChkbxGestionComercialChange'
 								}
 							},
 							{

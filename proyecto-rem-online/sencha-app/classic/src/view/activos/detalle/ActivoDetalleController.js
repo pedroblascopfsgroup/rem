@@ -8187,17 +8187,5 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		comboMotivoGestionComercial.editable = true;
     	}
 		
-    },
-    
-    onChkbxGestionComercialChange: function(chkbx){
-		var me = this;
-		
-		var incluido = chkbx.getValue();
-		var codSubfasePublicacion = me.getViewModel().get('activo.codSubfasePublicacion');
-		
-		if(incluido == true && codSubfasePublicacion == CONST.SUBFASES_PUBLICACION['COD_EXCLUIDO_CLIENTE']){
-			chkbx.reset();
-	    	me.fireEvent("errorToast", HreRem.i18n("msg.subfase.excluido.publicacion")); 
-		}
     }
 });

@@ -19,6 +19,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 
 @Entity
 @Table(name = "DD_SFP_SUBFASE_PUBLICACION", schema = "${entity.schema}")
@@ -138,5 +139,14 @@ public class DDSubfasePublicacion implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
+	public static boolean isHistoricoFasesExcPubEstrategiaCl(HistoricoFasePublicacionActivo hist) {
+		boolean isExclPubEstrCl = false;
+		
+		if(hist.getSubFasePublicacion() != null && CODIGO_EXCLUIDO_PUBLICACION_ESTRATEGICA_DEL_CLIENTE.equals(hist.getSubFasePublicacion().getCodigo())) {
+			isExclPubEstrCl = true;
+		}
+		
+		return isExclPubEstrCl;
+	}
 
 }

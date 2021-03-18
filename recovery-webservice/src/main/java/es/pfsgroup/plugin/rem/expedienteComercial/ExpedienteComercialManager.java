@@ -4526,6 +4526,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					filtroExpedienteComercial);
 			CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtroComprador,
 					filtroExpComComprador);
+			DDEstadoContrasteListas estadoNoSolicitado = genericDao.get(DDEstadoContrasteListas.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoContrasteListas.NO_SOLICITADO));
 			boolean esNuevo = false;
 			if (Checks.esNulo(compradorExpediente)) {
 				compradorExpediente = new CompradorExpediente();
@@ -4690,15 +4691,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setDocumentoAdjunto(comprador.getAdjunto());
 			}
 			if(dto.getApellidos()!=null || dto.getNumDocumento()!=null || dto.getNombreRazonSocial()!=null) {
-				DDEstadoContrasteListas estadoNoSolicitado = genericDao.get(DDEstadoContrasteListas.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoContrasteListas.NO_SOLICITADO));
 				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);				
 			}
 
 			if (esNuevo) {
 				genericDao.save(Comprador.class, comprador);
-				expedienteComercial.getCompradores().add(compradorExpediente);
+				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
+				expedienteComercial.getCompradores().add(compradorExpediente);						
 				genericDao.save(ExpedienteComercial.class, expedienteComercial);
-				cambiarEstadoContrasteListasaNoSolicitado(compradorExpediente.getExpediente());
+				genericDao.update(CompradorExpediente.class, compradorExpediente);		
+				
 			} else {
 				genericDao.save(Comprador.class, comprador);
 				genericDao.update(CompradorExpediente.class, compradorExpediente);
@@ -5179,6 +5181,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idExpediente);
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
 		CompradorExpediente compradorExpediente = new CompradorExpediente();
+		DDEstadoContrasteListas estadoNoSolicitado = genericDao.get(DDEstadoContrasteListas.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoContrasteListas.NO_SOLICITADO));
 		//compradorExpediente.setBorrado(false);
 
 		if (!Checks.esNulo(compradorBusqueda)) {
@@ -5252,7 +5255,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			if(!Checks.estaVacio(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.get(0).getIdPersonaHaya()))
 				compradorBusqueda.setIdPersonaHaya(tmpClienteGDPR.get(0).getIdPersonaHaya());
-
+			compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
 			expediente.getCompradores().add(compradorExpediente);
 
 			genericDao.save(ExpedienteComercial.class, expediente);
@@ -5473,8 +5476,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				Filter filtroAdjunto = genericDao.createFilter(FilterType.NOTNULL, "idAdjunto");
 				Filter filtroPersona = genericDao.createFilter(FilterType.NOTNULL, "idPersonaHaya");
 				List<TmpClienteGDPR> tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, 
-						genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()), filtroAdjunto, filtroPersona);
-				
+						genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()), filtroAdjunto, filtroPersona);				
 				if(tmpClienteGDPR.size() < 1) {
 					tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, 
 							genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()), filtroPersona);
@@ -5527,13 +5529,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(docAdjunto)) {
 					clienteCompradorGDPR.setAdjuntoComprador(docAdjunto);
 				}
+				
 				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
 
 				genericDao.save(Comprador.class, comprador);
+				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
 				expediente.getCompradores().add(compradorExpediente);
 
 				genericDao.save(ExpedienteComercial.class, expediente);
-
+				
 				ofertaApi.resetPBC(expediente, true);
 
 				if(!Checks.estaVacio(tmpClienteGDPR))
@@ -11691,13 +11695,5 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		return true;
 	}
-	
-	public void  cambiarEstadoContrasteListasaNoSolicitado(Long idExpediente) {
-
-		CompradorExpediente cexpediente = genericDao.get(CompradorExpediente.class, genericDao.createFilter(FilterType.EQUALS, "expediente", idExpediente));
-		DDEstadoContrasteListas estadoNoSolicitado = genericDao.get(DDEstadoContrasteListas.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoContrasteListas.NO_SOLICITADO));
-		cexpediente.setEstadoContrasteListas(estadoNoSolicitado);
-		genericDao.save(CompradorExpediente.class, cexpediente);
-	}
-	
+		
 }

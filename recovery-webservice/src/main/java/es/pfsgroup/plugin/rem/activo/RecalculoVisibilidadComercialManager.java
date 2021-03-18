@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.activo;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,7 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 
 		if(!fichaActivo) {
 			perimetroActivo.setCheckGestorComercial(!tieneErrores);
+			perimetroActivo.setFechaGestionComercial(new Date());
 			genericDao.update(PerimetroActivo.class, perimetroActivo);
 
 		}
@@ -91,6 +93,7 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 			if(!(perimetroActivo.getCheckGestorComercial() != null && perimetroActivo.getCheckGestorComercial() && perimetroActivo.getExcluirValidaciones() != null
 					 && DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones()))) {
 				perimetroActivo.setCheckGestorComercial(!tieneErrores);	
+				perimetroActivo.setFechaGestionComercial(new Date());
 				genericDao.update(PerimetroActivo.class,perimetroActivo);
 			}
 			

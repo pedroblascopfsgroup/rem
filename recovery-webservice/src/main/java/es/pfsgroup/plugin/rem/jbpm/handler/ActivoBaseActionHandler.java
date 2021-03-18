@@ -831,7 +831,10 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 			}
 		}
 		
-		if(DDCartera.CODIGO_CARTERA_BBVA.equals(cartera.getCodigo()) && ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+		if((DDCartera.CODIGO_CARTERA_BBVA.equals(cartera.getCodigo()) && 
+				ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE.equals(tareaExterna.getTareaProcedimiento().getCodigo())) || 
+				(!DDCartera.CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo()) && 
+						ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE.equals(tareaExterna.getTareaProcedimiento().getCodigo()))) {
 			if(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expedienteComercial.getEstado().getCodigo()) ||
 					DDEstadosExpedienteComercial.PTE_SANCION.equals(expedienteComercial.getEstado().getCodigo()) ||
 					DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES.equals(expedienteComercial.getEstado().getCodigo()) ||

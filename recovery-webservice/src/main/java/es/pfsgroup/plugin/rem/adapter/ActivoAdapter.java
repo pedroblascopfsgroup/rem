@@ -2285,11 +2285,10 @@ public class ActivoAdapter {
 								expedienteComercial.getEstado().getDescripcion());
 						boolean isGestorBoarding = perteneceGrupoBoarding(genericAdapter.getUsuarioLogado());
 						boolean expedienteComercialNoAprobado = expedienteComercialNoAprobado(expedienteComercial.getEstado().getCodigo());
-						if ( isGestorBoarding && expedienteComercialNoAprobado ) {
+						if(!DDCartera.CODIGO_CARTERA_CERBERUS.equals(tramite.getActivo().getCartera().getCodigo()) && isGestorBoarding && expedienteComercialNoAprobado) {
 							dtoTramite.setOcultarBotonResolucion(true);
-						}else if( isGestorBoarding && ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE.equals(tramite.getTipoTramite().getCodigo())
-								&& DDCartera.CODIGO_CARTERA_CERBERUS.equals(tramite.getActivo().getCartera().getCodigo())) {
-							dtoTramite.setOcultarBotonResolucion(true);
+						} else {
+							dtoTramite.setOcultarBotonResolucion(false);
 						}
 					}
 					beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());
@@ -2335,16 +2334,6 @@ public class ActivoAdapter {
 			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(tramite.getActivo().getId());
 			boolean aplicaGestion = !Checks.esNulo(perimetroActivo) && Integer.valueOf(1).equals(perimetroActivo.getAplicaGestion())? true: false;
 			beanUtilNotNull.copyProperty(dtoTramite, "activoAplicaGestion", aplicaGestion);
-			
-			boolean isGestorBoarding = perteneceGrupoBoarding(genericAdapter.getUsuarioLogado());
-			
-			if(DDCartera.CODIGO_CARTERA_BBVA.equals(tramite.getActivo().getCartera().getCodigo()) && isGestorBoarding) {
-				if(expedienteComercialNoAprobado(expedienteComercial.getEstado().getCodigo())) {
-					dtoTramite.setOcultarBotonResolucion(true);
-				} else {
-					dtoTramite.setOcultarBotonResolucion(false);
-				}
-			}
 			
 		} catch (Exception e) {
 			logger.error("Error en ActivoAdapter", e);

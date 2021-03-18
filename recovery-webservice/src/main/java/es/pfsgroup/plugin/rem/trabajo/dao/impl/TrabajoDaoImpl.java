@@ -419,6 +419,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.estadoTrabajoCodigo", dto.getEstadoTrabajoCodigo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.solicitante", dto.getSolicitante(), true);
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.proveedor", dto.getProveedor(), true);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.areaPeticionaria", dto.getAreaPeticionaria());
 		
 		if(dto.getGestorActivo() != null) {
 			hb.appendWhere(" exists (select 1 from GestorActivo ga, IN (ga.activo.activoTrabajos) atj "

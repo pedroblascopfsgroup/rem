@@ -70,6 +70,9 @@ public class VGridBusquedaTrabajos implements Serializable {
 
 	@Column(name = "COD_POSTAL")
 	private String codPostal;
+	
+	@Column(name = "DD_IRE_DESCRIPCION")
+	private String areaPeticionaria;
 
 	public Long getId() {
 		return id;
@@ -221,6 +224,14 @@ public class VGridBusquedaTrabajos implements Serializable {
 
 	public void setCodPostal(String codPostal) {
 		this.codPostal = codPostal;
+	}
+
+	public String getAreaPeticionaria() {
+		return areaPeticionaria;
+	}
+
+	public void setAreaPeticionaria(String areaPeticionaria) {
+		this.areaPeticionaria = areaPeticionaria;
 	}
 
 }

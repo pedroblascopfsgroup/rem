@@ -30,6 +30,7 @@ public class DtoTrabajoGridFilter extends WebDto {
 	private String carteraCodigo;	
 	private Boolean esControlConsulta;
 	private Boolean esGestorExterno;
+	private String areaPeticionaria;
 	
 	public Long getId() {
 		return id;
@@ -187,4 +188,11 @@ public class DtoTrabajoGridFilter extends WebDto {
 	public void setEsGestorExterno(Boolean esGestorExterno) {
 		this.esGestorExterno = esGestorExterno;
 	}
+	public String getAreaPeticionaria() {
+		return areaPeticionaria;
+	}
+	public void setAreaPeticionaria(String areaPeticionaria) {
+		this.areaPeticionaria = areaPeticionaria;
+	}
+
 }

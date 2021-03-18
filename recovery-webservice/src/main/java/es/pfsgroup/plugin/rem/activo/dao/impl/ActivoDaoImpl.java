@@ -818,8 +818,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 					+ " AND NVL(vgrid.informeComercial, 0) = CASE WHEN vgrid.carteraCodigo IN ('01','08') THEN 1 ELSE NVL(vgrid.informeComercial, 0) END ");			
 		}
 		if (Boolean.TRUE.equals(dto.getCheckOkAlquiler())) {		
-			hb.appendWhere(" vgrid.tipoActivoCodigo = '02' AND vgrid.adjuntoActivo = 1 "
-					+ " AND vgrid.adecuacionAlquilerCodigo IN ('01', '03') AND (vgrid.conPrecioAlquiler = 1 OR vgrid.publicarSinPrecioAlquiler = 1) "
+			hb.appendWhere(" vgrid.tipoActivoCodigo = '02'"
+					+ " AND vgrid.adecuacionAlquilerCodigo = '01' OR vgrid.adecuacionAlquilerCodigo = '03' AND vgrid.adjuntoActivo = 1  AND (vgrid.conPrecioAlquiler = 1 OR vgrid.publicarSinPrecioAlquiler = 1) "
 					+ " AND NVL(vgrid.informeComercial, 0) = CASE WHEN vgrid.carteraCodigo IN ('01','08') THEN 1 ELSE NVL(vgrid.informeComercial, 0) END ");
 		}
 		return HibernateQueryUtils.page(this, hb, dto);

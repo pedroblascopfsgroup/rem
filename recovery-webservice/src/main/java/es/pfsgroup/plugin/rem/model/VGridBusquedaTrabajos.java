@@ -22,9 +22,6 @@ public class VGridBusquedaTrabajos implements Serializable {
 
 	@Column(name = "NUM_TRABAJO")
 	private Long numTrabajo;
-	
-	@Column(name = "NUM_AGRUPACION")
-	private Long numAgrupacion;	
 
 	@Column(name = "NUM_ACTIVO_AGRUPACION")
 	private String numActivoAgrupacion;
@@ -71,6 +68,18 @@ public class VGridBusquedaTrabajos implements Serializable {
 	@Column(name = "COD_POSTAL")
 	private String codPostal;
 	
+	@Column(name = "CARTERA_CODIGO")
+	private String carteraCodigo;
+	
+	@Column(name = "CARTERA_DESCRIPCION")
+	private String carteraDescripcion;
+	
+	@Column(name = "SUBCARTERA_CODIGO")
+	private String subcarteraCodigo;
+	
+	@Column(name = "SUBCARTERA_DESCRIPCION")
+	private String subcarteraDescripcion;
+	
 	@Column(name = "DD_IRE_DESCRIPCION")
 	private String areaPeticionaria;
 	
@@ -99,14 +108,6 @@ public class VGridBusquedaTrabajos implements Serializable {
 
 	public void setNumTrabajo(Long numTrabajo) {
 		this.numTrabajo = numTrabajo;
-	}
-
-	public Long getNumAgrupacion() {
-		return numAgrupacion;
-	}
-
-	public void setNumAgrupacion(Long numAgrupacion) {
-		this.numAgrupacion = numAgrupacion;
 	}
 
 	public String getNumActivoAgrupacion() {
@@ -227,6 +228,38 @@ public class VGridBusquedaTrabajos implements Serializable {
 
 	public void setCodPostal(String codPostal) {
 		this.codPostal = codPostal;
+	}
+
+	public String getCarteraCodigo() {
+		return carteraCodigo;
+	}
+
+	public void setCarteraCodigo(String carteraCodigo) {
+		this.carteraCodigo = carteraCodigo;
+	}
+
+	public String getCarteraDescripcion() {
+		return carteraDescripcion;
+	}
+
+	public void setCarteraDescripcion(String carteraDescripcion) {
+		this.carteraDescripcion = carteraDescripcion;
+	}
+
+	public String getSubcarteraCodigo() {
+		return subcarteraCodigo;
+	}
+
+	public void setSubcarteraCodigo(String subcarteraCodigo) {
+		this.subcarteraCodigo = subcarteraCodigo;
+	}
+
+	public String getSubcarteraDescripcion() {
+		return subcarteraDescripcion;
+	}
+
+	public void setSubcarteraDescripcion(String subcarteraDescripcion) {
+		this.subcarteraDescripcion = subcarteraDescripcion;
 	}
 
 	public String getAreaPeticionaria() {

@@ -1271,27 +1271,23 @@ public class TrabajoController extends ParadiseJsonController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcel(DtoTrabajoFilter dtoTrabajoFilter, HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-		dtoTrabajoFilter.setStart(excelReportGeneratorApi.getStart());
-		dtoTrabajoFilter.setLimit(excelReportGeneratorApi.getLimit());
+	public void generateExcel(DtoTrabajoGridFilter dto, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		dto.setStart(excelReportGeneratorApi.getStart());
+		dto.setLimit(excelReportGeneratorApi.getLimit());
 		
-		@SuppressWarnings("unchecked")
-		List<VBusquedaTrabajos> listaTrabajos = (List<VBusquedaTrabajos>) trabajoApi.findAll(dtoTrabajoFilter, genericAdapter.getUsuarioLogado()).getResults();
-		
-		new EmptyParamDetector().isEmpty(listaTrabajos.size(), "trabajos",  usuarioManager.getUsuarioLogado().getUsername());
-		
-		ExcelReport report = new TrabajoExcelReport(listaTrabajos);
+		List<VGridBusquedaTrabajos> listaTrabajos = (List<VGridBusquedaTrabajos>) trabajoApi.getBusquedaTrabajosGrid(dto, genericAdapter.getUsuarioLogado()).getResults();		
+		new EmptyParamDetector().isEmpty(listaTrabajos.size(), "trabajos",  usuarioManager.getUsuarioLogado().getUsername());		
+		ExcelReport report = new TrabajoGridExcelReport(listaTrabajos);
 
 		excelReportGeneratorApi.generateAndSend(report, response);
-
 	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional()
-	public ModelAndView registrarExportacion(DtoTrabajoFilter dtoTrabajoFilter, Boolean exportar, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView registrarExportacion(DtoTrabajoGridFilter dto, Boolean exportar, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String intervaloTiempo = !Checks.esNulo(appProperties.getProperty("haya.tiempo.espera.export")) ? appProperties.getProperty("haya.tiempo.espera.export") : "300000";
 		ModelMap model = new ModelMap();		 
 		Boolean isSuperExport = false;
@@ -1321,7 +1317,7 @@ public class TrabajoController extends ParadiseJsonController {
 			}
 			
 			if(permitido) {
-				int count = trabajoApi.findAll(dtoTrabajoFilter, genericAdapter.getUsuarioLogado()).getTotalCount();
+				int count = trabajoApi.getBusquedaTrabajosGrid(dto, genericAdapter.getUsuarioLogado()).getTotalCount();
 				AuditoriaExportaciones ae = new AuditoriaExportaciones();
 				ae.setBuscador("trabajos");
 				ae.setFechaExportacion(new Date());

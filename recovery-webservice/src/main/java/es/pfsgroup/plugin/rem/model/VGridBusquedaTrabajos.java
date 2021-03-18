@@ -85,7 +85,10 @@ public class VGridBusquedaTrabajos implements Serializable {
 	
 	@Column(name = "TBJ_RESPONSABLE_TRABAJO")
 	private String responsableTrabajo;
-
+	
+	@Column(name = "TBJ_FECHA_CAMBIO_ESTADO")
+	private Date fechaCambioEstado;
+	
 	public Long getId() {
 		return id;
 	}
@@ -278,5 +281,13 @@ public class VGridBusquedaTrabajos implements Serializable {
 		this.responsableTrabajo = responsableTrabajo;
 	}
 
+	public Date getFechaCambioEstado() {
+		return fechaCambioEstado;
+	}
+
+	public void setFechaCambioEstado(Date fechaCambioEstado) {
+		this.fechaCambioEstado = fechaCambioEstado;
+	}
+	
 }
 

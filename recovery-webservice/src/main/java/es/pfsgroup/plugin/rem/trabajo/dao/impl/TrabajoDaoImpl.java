@@ -421,7 +421,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.proveedor", dto.getProveedor(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.areaPeticionaria", dto.getAreaPeticionaria());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.responsableTrabajo", dto.getResponsableTrabajo());
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.responsableTrabajo", dto.getResponsableTrabajo(), true);
 		
 		if(dto.getGestorActivo() != null) {
 			hb.appendWhere(" exists (select 1 from GestorActivo ga, IN (ga.activo.activoTrabajos) atj "
@@ -463,6 +463,19 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 				Date fechaHasta = DateFormat.toDate(dto.getFechaPeticionHasta());
 				HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaSolicitud", null, fechaHasta);			
 			}
+			
+			if (dto.getFechaCambioEstadoDesde() != null && dto.getFechaCambioEstadoHasta() != null) {
+				Date fechaCambioDesde = DateFormat.toDate(dto.getFechaCambioEstadoDesde());
+				Date fechaCambioHasta = DateFormat.toDate(dto.getFechaCambioEstadoHasta());
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaCambioEstado", fechaCambioDesde, fechaCambioHasta);
+			} else if (dto.getFechaPeticionDesde() != null) {
+				Date fechaCambioDesde = DateFormat.toDate(dto.getFechaCambioEstadoDesde());
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaCambioEstado", fechaCambioDesde, null);
+			} else if (dto.getFechaPeticionHasta() != null) {
+				Date fechaCambioHasta = DateFormat.toDate(dto.getFechaCambioEstadoHasta());
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaCambioEstado", null, fechaCambioHasta);			
+			}
+			
 		} catch (ParseException e) {
 			logger.error(e.getMessage());
 		}

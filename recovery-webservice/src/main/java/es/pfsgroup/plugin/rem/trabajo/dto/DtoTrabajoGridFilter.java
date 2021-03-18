@@ -32,6 +32,8 @@ public class DtoTrabajoGridFilter extends WebDto {
 	private Boolean esGestorExterno;
 	private String areaPeticionaria;
 	private String responsableTrabajo;
+	private String fechaCambioEstadoHasta;
+	private String fechaCambioEstadoDesde;
 	
 	public Long getId() {
 		return id;
@@ -201,5 +203,19 @@ public class DtoTrabajoGridFilter extends WebDto {
 	public void setResponsableTrabajo(String responsableTrabajo) {
 		this.responsableTrabajo = responsableTrabajo;
 	}
+	public String getFechaCambioEstadoHasta() {
+		return fechaCambioEstadoHasta;
+	}
+	public void setFechaCambioEstadoHasta(String fechaCambioEstadoHasta) {
+		this.fechaCambioEstadoHasta = fechaCambioEstadoHasta;
+	}
+	public String getFechaCambioEstadoDesde() {
+		return fechaCambioEstadoDesde;
+	}
+	public void setFechaCambioEstadoDesde(String fechaCambioEstadoDesde) {
+		this.fechaCambioEstadoDesde = fechaCambioEstadoDesde;
+	}
+	
+	
 
 }

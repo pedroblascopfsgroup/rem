@@ -4691,12 +4691,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setDocumentoAdjunto(comprador.getAdjunto());
 			}
 			if(dto.getApellidos()!=null || dto.getNumDocumento()!=null || dto.getNombreRazonSocial()!=null) {
-				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);				
+				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);		
+				compradorExpediente.setFechaContrasteListas(new Date());
 			}
 
 			if (esNuevo) {
 				genericDao.save(Comprador.class, comprador);
 				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
+				compradorExpediente.setFechaContrasteListas(new Date());
 				expedienteComercial.getCompradores().add(compradorExpediente);						
 				genericDao.save(ExpedienteComercial.class, expedienteComercial);
 				genericDao.update(CompradorExpediente.class, compradorExpediente);		
@@ -5256,6 +5258,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(!Checks.estaVacio(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.get(0).getIdPersonaHaya()))
 				compradorBusqueda.setIdPersonaHaya(tmpClienteGDPR.get(0).getIdPersonaHaya());
 			compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
+			compradorExpediente.setFechaContrasteListas(new Date());
 			expediente.getCompradores().add(compradorExpediente);
 
 			genericDao.save(ExpedienteComercial.class, expediente);
@@ -5534,6 +5537,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				genericDao.save(Comprador.class, comprador);
 				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
+				compradorExpediente.setFechaContrasteListas(new Date());
 				expediente.getCompradores().add(compradorExpediente);
 
 				genericDao.save(ExpedienteComercial.class, expediente);

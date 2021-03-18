@@ -954,6 +954,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			compradorExpedienteNuevo.setPaisRte(cliente.getPaisRepresentante());
 			compradorExpedienteNuevo.setCodigoPostalRepresentante(cliente.getCodigoPostalRepresentante());
 			compradorExpedienteNuevo.setEstadoContrasteListas(estadoNoSolicitado);
+			compradorExpedienteNuevo.setFechaContrasteListas(new Date());
 
 			List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
 					genericDao.createFilter(FilterType.EQUALS, "numDocumento", cliente.getDocumento()),

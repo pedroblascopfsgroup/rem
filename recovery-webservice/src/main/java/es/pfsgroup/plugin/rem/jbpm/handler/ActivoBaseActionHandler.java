@@ -66,10 +66,12 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionServiceFactoryApi
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TimerTareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -521,7 +523,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     	executionContext.setVariable(key, value);
     }
 
-    /**
+    /**tarea
      * PONER JAVADOC FO.
      * @param key key
      * @return b
@@ -705,6 +707,10 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 		EXTTareaProcedimiento tareaProcedimiento = (EXTTareaProcedimiento) tareaExterna.getTareaProcedimiento();
 		Usuario usuarioLogado = adapter.getUsuarioLogado();
 		String nombreUsuarioWS = RestApi.REST_LOGGED_USER_USERNAME;
+		ActivoTramite tramite = tareaActivo.getTramite();
+		Filter filtroEC = genericDao.createFilter(FilterType.EQUALS, "trabajo.id",
+				tramite.getTrabajo().getId());
+		ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroEC);
 
 		// Factoria asignador gestores por tarea
     	UserAssigantionService userAssigantionService = userAssigantionServiceFactoryApi.getService(tareaProcedimiento.getCodigo());
@@ -824,6 +830,17 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 				}
 			}
 		}
+		
+		if(DDCartera.CODIGO_CARTERA_BBVA.equals(cartera.getCodigo()) && ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+			if(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expedienteComercial.getEstado().getCodigo()) ||
+					DDEstadosExpedienteComercial.PTE_SANCION.equals(expedienteComercial.getEstado().getCodigo()) ||
+					DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES.equals(expedienteComercial.getEstado().getCodigo()) ||
+					DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo())){
+						tareaActivo.setUsuario(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
+					} else {
+						tareaActivo.setUsuario(usuarioManager.getByUsername("gruboarding"));
+					}
+		}
 
 		// Asignador de SUPERVISOR por factoria - Supervisores encontrados por tarea-Activo
 		if(!Checks.esNulo(supervisor)){
@@ -839,7 +856,8 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 					tareaActivo.setSupervisorActivo(usuarioLogado);
 				}
 			}
-		}		
+		}	
+		
     }
     
     /**

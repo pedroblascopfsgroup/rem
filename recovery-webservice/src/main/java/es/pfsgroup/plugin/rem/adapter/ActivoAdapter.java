@@ -2145,7 +2145,10 @@ public class ActivoAdapter {
 		ActivoTramite tramite = activoTramiteApi.get(idTramite);
 		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
 		List<TareaProcedimiento> listaTareas = activoTramiteApi.getTareasActivasByIdTramite(idTramite);
-
+		Filter filtroEC = genericDao.createFilter(FilterType.EQUALS, "trabajo.id",
+				tramite.getTrabajo().getId());
+		ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroEC);
+		
 		try {
 			beanUtilNotNull.copyProperty(dtoTramite, "idTramite", tramite.getId());
 			beanUtilNotNull.copyProperty(dtoTramite, "idTipoTramite", tramite.getTipoTramite().getId());
@@ -2274,9 +2277,6 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperty(dtoTramite, "tieneEC", false);
 			if (!Checks.esNulo(tramite.getTrabajo())) {
 				// Trabajos asociados con expediente comercial
-				Filter filtroEC = genericDao.createFilter(FilterType.EQUALS, "trabajo.id",
-						tramite.getTrabajo().getId());
-				ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroEC);
 				if (!Checks.esNulo(expedienteComercial)) {
 					beanUtilNotNull.copyProperty(dtoTramite, "tieneEC", true);
 					beanUtilNotNull.copyProperty(dtoTramite, "idExpediente", expedienteComercial.getId());
@@ -2335,6 +2335,16 @@ public class ActivoAdapter {
 			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(tramite.getActivo().getId());
 			boolean aplicaGestion = !Checks.esNulo(perimetroActivo) && Integer.valueOf(1).equals(perimetroActivo.getAplicaGestion())? true: false;
 			beanUtilNotNull.copyProperty(dtoTramite, "activoAplicaGestion", aplicaGestion);
+			
+			boolean isGestorBoarding = perteneceGrupoBoarding(genericAdapter.getUsuarioLogado());
+			
+			if(DDCartera.CODIGO_CARTERA_BBVA.equals(tramite.getActivo().getCartera().getCodigo()) && isGestorBoarding) {
+				if(expedienteComercialNoAprobado(expedienteComercial.getEstado().getCodigo())) {
+					dtoTramite.setOcultarBotonResolucion(true);
+				} else {
+					dtoTramite.setOcultarBotonResolucion(false);
+				}
+			}
 			
 		} catch (Exception e) {
 			logger.error("Error en ActivoAdapter", e);

@@ -99,11 +99,11 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionList', {
 		        },
 		        {
 		            dataIndex: 'fasePublicacionDescripcion',
-		            text: HreRem.i18n('header.fase.publicacion'),
+		            text: HreRem.i18n('header.fase.publicacion'), 
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'subFasePublicacionDescripcion',
+		            dataIndex: 'subfasePublicacionDescripcion',
 		            text: HreRem.i18n('header.subfase.publicacion'),
 		            flex: 1
 		        },

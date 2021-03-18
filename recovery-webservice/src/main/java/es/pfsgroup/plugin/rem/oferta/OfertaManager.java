@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.oferta;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -18,6 +19,8 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -208,6 +211,9 @@ import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
+import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
@@ -3074,8 +3080,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(!Checks.esNulo(agrOfertada)) {
 				
 					if(!Checks.esNulo(visita)) {
-						Double importeActGarTrast = 0.0;
-						Double importeActPrinc = 0.0;
 						DDSubtipoActivo subtipoAct = null;
 						Activo activoDeVisita = null;
 						Activo activoOfr = null;
@@ -3092,65 +3096,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							
 						}
 						
-						
-						
 						if(contieneActPrincAgrObraNueva) {
 							listActOfr = oferta.getActivosOferta();
-							for (ActivoOferta activoOferta : listActOfr) {
-								activoOfr = activoAdapter.getActivoById(activoOferta.getActivoId());
-								if(!Checks.esNulo(activoOfr) && !Checks.esNulo(activoOfr.getSubtipoActivo())
-										&& (DDSubtipoActivo.COD_GARAJE.equals(activoOfr.getSubtipoActivo().getCodigo())
-												|| DDSubtipoActivo.COD_TRASTERO.equals(activoOfr.getSubtipoActivo().getCodigo()))) {
-									importeActGarTrast += activoOferta.getImporteActivoOferta();
-									contieneActGarTrast = true;
-								}else {
-									importeActPrinc += activoOferta.getImporteActivoOferta();
-									contieneActPrinc = true;
-								}
-							}
-						}
-						
-						if(contieneActPrinc) {
-							consultaComisionDto.setAmount(importeActPrinc);
+							consultaComisionDto.setAmount(importe);
 							consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
-							try {
-								primeraLlamadaActPrinc = comisionamientoApi.createCommission(consultaComisionDto);
-							} catch (Exception e) {
-								logger.error("Error en la llamada al comisionamiento: " + e);
-							}
-						}else {
-							try {
-								primeraLlamadaActPrinc = comisionamientoApi.createCommission(consultaComisionDtoVacio);
-							} catch (Exception e) {
-								logger.error("Error en la llamada al comisionamiento: " + e);
-							}
-							primeraLlamadaActPrinc.setCommissionAmount((double) 0);
-						}	
-						
-						if(contieneActGarTrast) {
-							consultaComisionDto.setAmount(importeActGarTrast);
-							consultaComisionDto.setComercialType(activoDeVisita.getTipoComercializar().getCodigo());
-							try {
-								segundaLlamadaActTrastGar = comisionamientoApi.createCommission(consultaComisionDto);
-							} catch (Exception e) {
-								logger.error("Error en la llamada al comisionamiento: " + e);
-							}
-						}else {
-							try {
-								segundaLlamadaActTrastGar = comisionamientoApi.createCommission(consultaComisionDtoVacio);
-							} catch (Exception e) {
-								logger.error("Error en la llamada al comisionamiento: " + e);
-							}
-							segundaLlamadaActTrastGar.setCommissionAmount((double) 0);
 						}
 						
-						if(segundaLlamadaActTrastGar.getCommissionAmount() > 0) {
-							calculoComision = segundaLlamadaActTrastGar;
-						}else {
-							calculoComision = primeraLlamadaActPrinc;
+						try {
+							calculoComision = comisionamientoApi.createCommission(consultaComisionDto);
+						} catch (Exception e) {
+							logger.error("Error en la llamada al comisionamiento: " + e);
 						}
 						
-						calculoComision.setCommissionAmount(primeraLlamadaActPrinc.getCommissionAmount() + segundaLlamadaActTrastGar.getCommissionAmount());
 						
 					}else {
 						try {

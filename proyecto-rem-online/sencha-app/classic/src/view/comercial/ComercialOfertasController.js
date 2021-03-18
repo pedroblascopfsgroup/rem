@@ -155,6 +155,7 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
 		    	var count = Ext.decode(a.responseText).data;
 		    	var limite = Ext.decode(a.responseText).limite;
 		    	var limiteMax = Ext.decode(a.responseText).limiteMax;
+		    	var msg = Ext.decode(a.responseText).msg;
 		    	if(!Ext.isEmpty(msg)){
 		    		me.fireEvent("errorToastLong", HreRem.i18n("msg.error.export") + msg);
 		    		view.unmask();

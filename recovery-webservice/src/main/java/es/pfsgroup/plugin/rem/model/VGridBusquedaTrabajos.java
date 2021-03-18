@@ -73,6 +73,9 @@ public class VGridBusquedaTrabajos implements Serializable {
 	
 	@Column(name = "DD_IRE_DESCRIPCION")
 	private String areaPeticionaria;
+	
+	@Column(name = "TBJ_RESPONSABLE_TRABAJO")
+	private String responsableTrabajo;
 
 	public Long getId() {
 		return id;
@@ -232,6 +235,14 @@ public class VGridBusquedaTrabajos implements Serializable {
 
 	public void setAreaPeticionaria(String areaPeticionaria) {
 		this.areaPeticionaria = areaPeticionaria;
+	}
+
+	public String getResponsableTrabajo() {
+		return responsableTrabajo;
+	}
+
+	public void setResponsableTrabajo(String responsableTrabajo) {
+		this.responsableTrabajo = responsableTrabajo;
 	}
 
 }

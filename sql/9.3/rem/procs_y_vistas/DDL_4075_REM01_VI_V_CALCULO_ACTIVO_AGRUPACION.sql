@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20190701
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20210317
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4640
+--## INCIDENCIA_LINK=HREOS-13480
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##		0.2 Corrección activos publicados (módulo de publicaciones)
 --##		0.3 Contador activos UAs
+--##		0.4 Hacer que recoja agrupaciones que no estén registradas en la AGA
 --##########################################
 --*/
 
@@ -82,7 +83,7 @@ BEGIN
       SELECT DISTINCT AGR.AGR_ID AS AGR_ID, NVL(ANUM.NUM_ACTIVOS, 0) AS NUM_ACTIVOS,
       NVL(APUB.ACT_PUBLICADOS, 0) AS ACT_PUBLICADOS
       FROM '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR
-      JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID
+      LEFT JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID
       LEFT JOIN AUX_NUM_ACTIVOS ANUM ON AGR.AGR_ID = ANUM.AGR_ID
       LEFT JOIN AUX_ACT_PUBLICADOS APUB ON AGR.AGR_ID = APUB.AGR_ID';  
 

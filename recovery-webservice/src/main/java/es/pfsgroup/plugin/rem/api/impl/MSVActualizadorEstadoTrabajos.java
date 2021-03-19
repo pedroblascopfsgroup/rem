@@ -73,6 +73,11 @@ public class MSVActualizadorEstadoTrabajos extends AbstractMSVActualizador imple
 			DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", tmpAccion));
 			trabajo.setEstado(estadoTrabajo);
+			trabajo.setFechaCambioEstado(new Date());
+			
+			if (DDEstadoTrabajo.ESTADO_VALIDADO.equals(estadoTrabajo.getCodigo())) {
+				trabajo.setFechaValidacion(new Date());
+			}
 			genericDao.update(Trabajo.class, trabajo);
 			
 			if (tmpComentario != null && !tmpComentario.isEmpty()) {

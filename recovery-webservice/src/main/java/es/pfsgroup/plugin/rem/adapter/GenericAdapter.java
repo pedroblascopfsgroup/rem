@@ -101,62 +101,22 @@ public class GenericAdapter {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Dictionary> getDiccionario(String diccionario) {
-		
-		Class<?> clase = null;
-		List lista = null;
-		
-		//TODO: Código bueno:
-//		try {
-//			if(!Checks.esNulo(clase.getMethod("getAuditoria"))){
-//				lista = diccionarioApi.dameValoresDiccionario(clase);
-//			}
-//		} catch (SecurityException e) {
-//			lista = diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
-//		} catch (NoSuchMethodException e) {
-//			lista = diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
-//		}
-		clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
-		
-		//TODO: Para ver que diccionarios no tienen auditoria.
-		if("gestorCommiteLiberbank".equals(diccionario)) {
-			lista = new ArrayList();
-			lista.add(diccionarioApi.dameValorDiccionarioByCod(DiccionarioTargetClassMap.convertToTargetClass("entidadesPropietarias")
-					, DDCartera.CODIGO_CARTERA_LIBERBANK));
-		}else {
-			
-			lista = diccionarioApi.dameValoresDiccionario(clase);
 
-			List listaPeriodicidad = new ArrayList();
-			//sí el diccionario es 'tiposPeriodicidad' modificamos el orden
-			if(clase.equals(DDTipoPeriocidad.class)){
-				if(!Checks.esNulo(lista)){
-					for(int i=1; i<=lista.size();i++){
-						String cod;
-						if(i<10)
-							cod = "0"+i;
-						else
-							cod = ""+i;
-						listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, cod));
-					}
-				}
-			} else if (clase.equals(DDCartera.class)) {
-				Usuario usuarioLogado = getUsuarioLogado();
-				List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class,
-						genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-				if (usuarioCartera != null && !usuarioCartera.isEmpty()) { 	
-					listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, usuarioCartera.get(0).getCartera().getCodigo()));
-					lista = listaPeriodicidad;	
-				}
-			} else if (clase.equals(DDSubcartera.class)) {
-				Usuario usuarioLogado = getUsuarioLogado();
-				List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class,
-						genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-				for (UsuarioCartera uca : usuarioCartera) {
-					if(uca.getSubCartera() != null) {
-						listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, uca.getSubCartera().getCodigo()));
-						lista = listaPeriodicidad;
-					}
-				}
+		List lista = new ArrayList();		
+		if("gestorCommiteLiberbank".equals(diccionario)) {			
+			lista.add(diccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CARTERA_LIBERBANK));
+		}else {
+			UsuarioCartera usuarioCartera = null;
+			Class<?> clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
+			if (clase.equals(DDCartera.class) || clase.equals(DDSubcartera.class)) {				
+				usuarioCartera = genericDao.get(UsuarioCartera.class,	genericDao.createFilter(FilterType.EQUALS, "usuario.id", getUsuarioLogado().getId()));
+				if (usuarioCartera != null) {
+					lista.add(diccionarioApi.dameValorDiccionarioByCod(clase, clase.equals(DDCartera.class) ? usuarioCartera.getCartera().getCodigo() :  usuarioCartera.getSubCartera().getCodigo()));	
+				}				
+			}
+			
+			if(usuarioCartera == null) {
+				lista = diccionarioApi.dameValoresDiccionario(clase);
 			}
 		}
 		return lista;

@@ -1561,8 +1561,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
         		        type: 'uxproxy',
         		        remoteUrl: 'activo/getOrigenActivo',
         		        extraParams: {id: '{activo.id}'}
-    	    	},
-    	    	autoLoad: true
+    	    	}
 			},
 
     		storeGestores: {
@@ -3081,7 +3080,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoTransmision'}
-			}/*,autoLoad: true*/
+			}
 		},
 		comboTipoAlta: {
 			model: 'HreRem.model.ComboBase',

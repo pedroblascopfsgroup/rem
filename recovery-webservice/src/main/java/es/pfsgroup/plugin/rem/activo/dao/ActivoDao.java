@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
 import es.pfsgroup.plugin.rem.model.HistoricoRequisitosFaseVenta;
@@ -401,4 +402,5 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	boolean isPublicadoVentaByFechaValoracion(Long idActivo, Date fechaValoracion);
 
+	public Page getBusquedaPublicacionGrid(DtoPublicacionGridFilter dto);
 }

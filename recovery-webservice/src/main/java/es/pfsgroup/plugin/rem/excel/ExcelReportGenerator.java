@@ -2741,6 +2741,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				
 				currentRowComercial++;
 
+				mySheetAutorizacion.shiftRows(currentRowComercial, mySheetAutorizacion.getLastRowNum() - 1, 1);
 			}
 			
 			for (int x=1; x<35; x++) {

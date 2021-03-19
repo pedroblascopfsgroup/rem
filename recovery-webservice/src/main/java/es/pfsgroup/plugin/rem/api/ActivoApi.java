@@ -73,6 +73,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
+import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.GastoAsociadoAdquisicion;
@@ -1445,4 +1446,6 @@ public interface ActivoApi {
 	boolean destroyCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
 	
 	List<DtoHistoricoOcupadoTitulo> getListHistoricoOcupadoTitulo(Long idActivo);
+
+	public Page getPublicacionGrid(DtoPublicacionGridFilter dto);
 }

@@ -10,7 +10,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
         type: 'trabajodetalle'
     },
     requires: ['HreRem.model.FichaTrabajo','HreRem.view.trabajos.detalle.ActivosAgrupacionTrabajoList',
-				'HreRem.view.trabajos.detalle.VentanaTarifasTrabajo','HreRem.view.trabajos.detalle.listaActivosAgrupacionGrid','HreRem.model.TarifasGridModel'],
+				'HreRem.view.trabajos.detalle.VentanaTarifasTrabajo','HreRem.view.trabajos.detalle.listaActivosAgrupacionGrid','HreRem.model.TarifasGridModel', 'HreRem.view.common.ComboBoxFieldBaseDD'],
     
 	listeners: {
 
@@ -161,7 +161,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															allowBlank: false
 												        },
 									    				{ 
-												        	xtype: 'comboboxfieldbase',
+												        	xtype: 'comboboxfieldbasedd',
 												        	fieldLabel: HreRem.i18n('fieldlabel.proveedor'),
 															flex: 		1,
 															colspan: 3,
@@ -169,6 +169,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															chainedReference: 'proveedorContactoCombo2',
 											            	listeners: {
 											            		select: 'onChangeProveedorCombo'
+											            	},
+											            	listConfig: {
+											            		loadingText: 'Buscando proveedores...'
 											            	},
 															disabled: true,
 											            	displayField: 'nombreComercial',

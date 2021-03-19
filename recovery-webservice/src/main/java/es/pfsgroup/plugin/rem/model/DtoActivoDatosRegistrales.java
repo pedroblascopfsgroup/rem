@@ -62,18 +62,26 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	
 	// Mapeados a mano
 	private String estadoDivHorizontalCodigo;
+	private String estadoDivHorizontalDescripcion;
 	private String estadoObraNuevaCodigo;
+	private String estadoObraNuevaDescripcion;
 	private String poblacionRegistro;
+	private String poblacionRegistroDescripcion;
 	private String provinciaRegistro;
+	private String provinciaRegistroDescripcion;
 	private String localidadAnteriorCodigo;
+	private String localidadAnteriorDescripcion;
 	private String tipoTituloCodigo;
+	private String tipoTituloDescripcion;
 	private String subtipoTituloCodigo;
+	private String subtipoTituloDescripcion;
 	private String propiedadActivoDescripcion;
 	private String propiedadActivoCodigo;
 	private String propiedadActivoNif;
 	private String propiedadActivoDireccion;
 	private String tipoGradoPropiedadCodigo;
 	private String origenAnteriorActivoCodigo;
+	private String origenAnteriorActivoDescripcion;
 	private Date fechaTituloAnterior;
 	
 	private String estadoTitulo;   
@@ -94,13 +102,16 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private Date fechaRealizacionLanzamiento;
 	private Date fechaSolicitudMoratoria;
 	private String resolucionMoratoriaCodigo;
+	private String resolucionMoratoriaDescripcion;
 	private Date fechaResolucionMoratoria;
 	private String defectosTestimonio;
 	private String idProcesoOrigen;
 	private String sociedadPagoAnterior;
+	private String sociedadPagoAnteriorDescripcion;
 	
 	// Mapeados a mano
 	private String tipoJuzgadoCodigo;
+	private String tipoJuzgadoDescripcion;
 	public String getDefectosTestimonio() {
 		return defectosTestimonio;
 	}
@@ -108,9 +119,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 		this.defectosTestimonio = defectosTestimonio;
 	}
 	private String estadoAdjudicacionCodigo;
+	private String estadoAdjudicacionDescripcion;
 	private String tipoPlazaCodigo;
+	private String tipoPlazaDescripcion;
 	private String entidadAdjudicatariaCodigo;
 	private String entidadEjecutanteCodigo;
+	private String entidadEjecutanteDescripcion;
 	
 	//Calificacion negativa
 	private String calificacionNegativa;
@@ -140,6 +154,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String tipoTituloActivoMatriz;
 	
 	private String origenAnteriorActivoBbvaCodigo;
+	private String origenAnteriorActivoBbvaDescripcion;
 	private Long idAsuntoRecAlaska;
 	private Date fechaPosesionNoJudicial;
 	/*
@@ -362,6 +377,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setEstadoDivHorizontalCodigo(String estadoDivHorizontalCodigo) {
 		this.estadoDivHorizontalCodigo = estadoDivHorizontalCodigo;
+	}
+	public String getEstadoDivHorizontalDescripcion() {
+		return estadoDivHorizontalDescripcion;
+	}
+	public void setEstadoDivHorizontalDescripcion(String estadoDivHorizontalDescripcion) {
+		this.estadoDivHorizontalDescripcion = estadoDivHorizontalDescripcion;
 	}
 	public String getEstadoObraNuevaCodigo() {
 		return estadoObraNuevaCodigo;
@@ -813,4 +834,88 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 		this.fechaPosesionNoJudicial = fechaPosesionNoJudicial;
 	}
 
+	public String getPoblacionRegistroDescripcion() {
+		return poblacionRegistroDescripcion;
+	}
+	public void setPoblacionRegistroDescripcion(String poblacionRegistroDescripcion) {
+		this.poblacionRegistroDescripcion = poblacionRegistroDescripcion;
+	}
+	public String getProvinciaRegistroDescripcion() {
+		return provinciaRegistroDescripcion;
+	}
+	public void setProvinciaRegistroDescripcion(String provinciaRegistroDescripcion) {
+		this.provinciaRegistroDescripcion = provinciaRegistroDescripcion;
+	}
+	public String getLocalidadAnteriorDescripcion() {
+		return localidadAnteriorDescripcion;
+	}
+	public void setLocalidadAnteriorDescripcion(String localidadAnteriorDescripcion) {
+		this.localidadAnteriorDescripcion = localidadAnteriorDescripcion;
+	}
+	public String getEstadoObraNuevaDescripcion() {
+		return estadoObraNuevaDescripcion;
+	}
+	public void setEstadoObraNuevaDescripcion(String estadoObraNuevaDescripcion) {
+		this.estadoObraNuevaDescripcion = estadoObraNuevaDescripcion;
+	}
+	public String getTipoTituloDescripcion() {
+		return tipoTituloDescripcion;
+	}
+	public void setTipoTituloDescripcion(String tipoTituloDescripcion) {
+		this.tipoTituloDescripcion = tipoTituloDescripcion;
+	}
+	public String getSubtipoTituloDescripcion() {
+		return subtipoTituloDescripcion;
+	}
+	public void setSubtipoTituloDescripcion(String subtipoTituloDescripcion) {
+		this.subtipoTituloDescripcion = subtipoTituloDescripcion;
+	}
+	public String getOrigenAnteriorActivoDescripcion() {
+		return origenAnteriorActivoDescripcion;
+	}
+	public void setOrigenAnteriorActivoDescripcion(String origenAnteriorActivoDescripcion) {
+		this.origenAnteriorActivoDescripcion = origenAnteriorActivoDescripcion;
+	}
+	public String getOrigenAnteriorActivoBbvaDescripcion() {
+		return origenAnteriorActivoBbvaDescripcion;
+	}
+	public void setOrigenAnteriorActivoBbvaDescripcion(String origenAnteriorActivoBbvaDescripcion) {
+		this.origenAnteriorActivoBbvaDescripcion = origenAnteriorActivoBbvaDescripcion;
+	}
+	public String getSociedadPagoAnteriorDescripcion() {
+		return sociedadPagoAnteriorDescripcion;
+	}
+	public void setSociedadPagoAnteriorDescripcion(String sociedadPagoAnteriorDescripcion) {
+		this.sociedadPagoAnteriorDescripcion = sociedadPagoAnteriorDescripcion;
+	}
+	public String getEntidadEjecutanteDescripcion() {
+		return entidadEjecutanteDescripcion;
+	}
+	public void setEntidadEjecutanteDescripcion(String entidadEjecutanteDescripcion) {
+		this.entidadEjecutanteDescripcion = entidadEjecutanteDescripcion;
+	}
+	public String getEstadoAdjudicacionDescripcion() {
+		return estadoAdjudicacionDescripcion;
+	}
+	public void setEstadoAdjudicacionDescripcion(String estadoAdjudicacionDescripcion) {
+		this.estadoAdjudicacionDescripcion = estadoAdjudicacionDescripcion;
+	}
+	public String getResolucionMoratoriaDescripcion() {
+		return resolucionMoratoriaDescripcion;
+	}
+	public void setResolucionMoratoriaDescripcion(String resolucionMoratoriaDescripcion) {
+		this.resolucionMoratoriaDescripcion = resolucionMoratoriaDescripcion;
+	}
+	public String getTipoJuzgadoDescripcion() {
+		return tipoJuzgadoDescripcion;
+	}
+	public void setTipoJuzgadoDescripcion(String tipoJuzgadoDescripcion) {
+		this.tipoJuzgadoDescripcion = tipoJuzgadoDescripcion;
+	}
+	public String getTipoPlazaDescripcion() {
+		return tipoPlazaDescripcion;
+	}
+	public void setTipoPlazaDescripcion(String tipoPlazaDescripcion) {
+		this.tipoPlazaDescripcion = tipoPlazaDescripcion;
+	}
 }

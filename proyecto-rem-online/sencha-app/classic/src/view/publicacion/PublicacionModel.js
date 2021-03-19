@@ -3,7 +3,7 @@ Ext.define('HreRem.view.publicacion.PublicacionModel', {
     alias: 'viewmodel.publicaciones',
     
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase',
-    	'HreRem.model.BusquedaActivosPublicacion', 'HreRem.model.ConfiguracionPublicacionModel'],
+    	'HreRem.model.BusquedaPublicacionGrid', 'HreRem.model.ConfiguracionPublicacionModel'],
     
     stores: {
     	
@@ -27,15 +27,15 @@ Ext.define('HreRem.view.publicacion.PublicacionModel', {
 		
 		activospublicacion: {
 			pageSize: $AC.getDefaultPageSize(),
-	    	model: 'HreRem.model.BusquedaActivosPublicacion',
+	    	model: 'HreRem.model.BusquedaPublicacionGrid',
 	    	proxy: {
 		        type: 'uxproxy',
 		        timeout: 120000,
-		        remoteUrl: 'activo/getActivosPublicacion',
+		        remoteUrl: 'activo/getPublicacionGrid',
 			    actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
 	    	},
 	    	session: true,
-	    	remoteSort: true,
+	    	remoteSort: true,	    	
 	    	remoteFilter: true,
 	    	listeners : {
 	            beforeload : 'paramLoading'

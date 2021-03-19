@@ -2001,6 +2001,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 							BigDecimal principalSujetoLinea = new BigDecimal(gastoLineaDetalle.getPrincipalSujeto());
 							BigDecimal importeTotalLinea = new BigDecimal(gastoLineaDetalle.getImporteTotal());
 							BigDecimal importeTotalTrabajo = null;
+							BigDecimal impuestoIndirectoCuota = new BigDecimal(gastoLineaDetalle.getImporteIndirectoCuota());
+							BigDecimal tipoImpositivoIndirecto = new BigDecimal(gastoLineaDetalle.getImporteIndirectoTipoImpositivo());		
 							
 							if(gasto.getDestinatarioGasto() !=  null && DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())
 									&& trabajo.getImportePresupuesto() != null) {
@@ -2011,8 +2013,13 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 							if(importeTotalTrabajo != null) {
 								principalSujetoLinea = principalSujetoLinea.subtract(importeTotalTrabajo);
 								gastoLineaDetalle.setPrincipalSujeto(principalSujetoLinea.doubleValue());
+
+								impuestoIndirectoCuota = impuestoIndirectoCuota.subtract(importeTotalTrabajo.multiply(tipoImpositivoIndirecto.divide(new BigDecimal(100)))); 
+								gastoLineaDetalle.setImporteIndirectoCuota(impuestoIndirectoCuota.doubleValue());
+								
 								importeTotalLinea = importeTotalLinea.subtract(importeTotalTrabajo);
-								gastoLineaDetalle.setPrincipalSujeto(importeTotalLinea.doubleValue());
+								importeTotalLinea = importeTotalLinea.subtract(importeTotalTrabajo.multiply(tipoImpositivoIndirecto.divide(new BigDecimal(100)))); 
+								gastoLineaDetalle.setImporteTotal(importeTotalLinea.doubleValue());
 							}
 							
 							genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);

@@ -140,6 +140,9 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name:'paisCodigo'
     		},
+			{
+    			name:'paisDescripcion'
+    		},
     		{
     			name: 'idufir'
     		},
@@ -222,6 +225,9 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name:'estadoActivoCodigo'
+    		},
+			{
+    			name:'estadoActivoDescripcion'
     		},
     		{
     			name: 'diasCambioEstadoActivo'
@@ -645,6 +651,9 @@ Ext.define('HreRem.model.Activo', {
 				name: 'subtipoClaseActivoCodigo'
 			},
 			{
+				name: 'subtipoClaseActivoDescripcion'
+			},
+			{
 				name: 'numExpRiesgo'
 			},
 			{
@@ -722,6 +731,9 @@ Ext.define('HreRem.model.Activo', {
 				name: 'entradaActivoBankiaCodigo'
 			},
 			{
+				name: 'entradaActivoBankiaDescripcion'
+			},
+			{
 				name: 'numInmovilizadoBankia'
 			},
 			{
@@ -788,6 +800,9 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'tipoAlquilerCodigo'
     		},
+			{
+    			name: 'tipoAlquilerDescripcion'
+    		},
     		{
     			name: 'tieneCEE',
     			type: 'boolean'
@@ -832,8 +847,14 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'servicerActivoCodigo'
     		},
+			{
+    			name: 'servicerActivoDescripcion'
+    		},
     		{
     			name: 'cesionSaneamientoCodigo'
+    		},
+			{
+    			name: 'cesionSaneamientoDescripcion'
     		},
     		{
     			name: 'perimetroMacc'
@@ -846,6 +867,9 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'tipoEquipoGestionCodigo'
+			},
+			{
+    			name: 'tipoEquipoGestionDescripcion'
 			},
     		{
     			name: 'checkGestionarReadOnly',
@@ -872,6 +896,9 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'sociedadPagoAnterior'
+    		},
+			{
+    			name: 'sociedadPagoAnteriorDescripcion'
     		},
     		{
     			name: 'pazSocial',
@@ -913,6 +940,9 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'tipoSegmentoCodigo'
+    		},
+			{
+    			name: 'tipoSegmentoDescripcion'
     		},
     		{
     			name: 'isAppleOrDivarian',
@@ -996,6 +1026,9 @@ Ext.define('HreRem.model.Activo', {
 	 			name: 'estadoRegistralCodigo'
 			},
 			{
+	 			name: 'estadoRegistralDescripcion'
+			},
+			{
 	 			name: 'esEditableActivoEstadoRegistral',
     			type: 'boolean'	 			
 			},
@@ -1058,7 +1091,19 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'codPromocionBbva'
-    		}
+    		},
+			{
+				name: 'tipoComercializarCodigo'
+			},
+			{
+				name: 'tipoComercializarDescripcion'
+			},
+			{
+				name: 'estadoExpIncorrienteCodigo'
+			},
+			{
+				name: 'estadoExpIncorrienteDescripcion'
+			}
     ],
     
 	proxy: {

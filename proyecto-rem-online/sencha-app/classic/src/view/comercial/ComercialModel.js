@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.comercial.ComercialModel', {
     extend: 'HreRem.view.common.DDViewModel',
     alias: 'viewmodel.comercial',
-    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.Visitas','HreRem.model.Ofertas'],
+    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.Visitas', 'HreRem.model.BusquedaOfertaGrid'],
     
     stores: {
     	
@@ -47,11 +47,10 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 		}, 
     	ofertasComercial: {
     		pageSize: $AC.getDefaultPageSize(),
-	    	model: 'HreRem.model.Ofertas',
+    		model: 'HreRem.model.BusquedaOfertaGrid',
 	    	proxy: {
-		        type: 'uxproxy',
-		        localUrl: '/ofertas.json',
-		        remoteUrl: 'ofertas/getListOfertas' 
+	    		type: 'uxproxy',		 
+	    		remoteUrl: 'ofertas/getBusquedaOfertasGrid' 
 	    	},
 	    	session: true,
 	    	remoteSort: true,
@@ -135,7 +134,7 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 				remoteUrl: 'ofertas/getDiccionarioSubtipoProveedorCanal'
 			}
 		},
-		comboEntidadPropietaria: {
+		comboCartera: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
@@ -159,8 +158,6 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 					remoteUrl: 'generic/getComboSubcartera'
 				}
 		}
-    	
-    	
     		
     }
 });

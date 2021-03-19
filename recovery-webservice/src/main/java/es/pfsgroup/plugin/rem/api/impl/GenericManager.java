@@ -1556,7 +1556,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		for (ActivoPropietario activoPropietario : listaDD) {
 			DtoPropietario dtop = new DtoPropietario();	
 			dtop.setId(activoPropietario.getId());
-			dtop.setDescripcion(activoPropietario.getNombre());
+			dtop.setDescripcion(activoPropietario.getFullName());
 			dtop.setCodigo(activoPropietario.getDocIdentificativo());		
 			listaDto.add(dtop);
 		}

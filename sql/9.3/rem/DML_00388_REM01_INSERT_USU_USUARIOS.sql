@@ -1,7 +1,7 @@
 --/*
 --###########################################
 --## AUTOR=Cristian Montoya
---## FECHA_CREACION=20201229
+--## FECHA_CREACION=20210316
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11077
@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 REMVIP-9249 - Añadir usuario CFV
 --###########################################
 ----*/
 
@@ -46,7 +47,8 @@ DECLARE
 	-- USU_USERNAME, USU_PASSWORD, USU_NOMBRE, USU_APELLIDO1, USU_APELLIDO2, USU_GRUPO
 	V_USER T_USUARIOS := T_USUARIOS(
 		T_USU('RECOVERY', ''||V_PWD(1)||'', 'Usuario origen de WS RECOVERY','','','1'),
-		T_USU('FENIX', ''||V_PWD(1)||'', 'Usuario origen de WS FENIX','','','1')
+		T_USU('FENIX', ''||V_PWD(1)||'', 'Usuario origen de WS FENIX','','','1'),
+		T_USU('usercfv', ''||V_PWD(1)||'', 'CFV','','','1')
 		
 	);
 	V_TMP_USU T_USU;

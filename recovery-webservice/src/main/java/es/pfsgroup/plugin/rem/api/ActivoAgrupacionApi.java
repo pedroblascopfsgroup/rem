@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.model.DtoTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.rest.dto.ActivosLoteOfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 
@@ -175,5 +176,10 @@ public interface ActivoAgrupacionApi {
 	 * @param activoAgrupacion
 	 */
 	Date getFechaInicioBloqueo(ActivoAgrupacion activoAgrupacion);
+
+	/**	 
+	 * @return Devuelve tipos de agrupacion según el perfil de usuario
+	 */
+	List<DDTipoAgrupacion> getComboTipoAgrupacionFiltro();
 
 }

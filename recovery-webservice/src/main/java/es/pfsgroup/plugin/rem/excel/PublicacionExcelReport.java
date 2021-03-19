@@ -3,7 +3,7 @@ package es.pfsgroup.plugin.rem.excel;
 import java.util.ArrayList;
 import java.util.List;
 
-import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.VGridBusquedaPublicaciones;
 
 
 public class PublicacionExcelReport extends AbstractExcelReport implements ExcelReport {
@@ -17,16 +17,13 @@ public class PublicacionExcelReport extends AbstractExcelReport implements Excel
 	private static final String CAB_DPTO_GESTION = "Dtpo. Gestion";
 	private static final String CAB_DPTO_PUBLICACION = "Dpto. Publicación";
 	private static final String CAB_PRECIO = "Precio";
-	private List<VBusquedaPublicacionActivo> listaPublicacionActivos;
-
+	private List<VGridBusquedaPublicaciones> listaPublicacionActivos;
 	
-	public PublicacionExcelReport(List<VBusquedaPublicacionActivo> listaActivos) {
+	public PublicacionExcelReport(List<VGridBusquedaPublicaciones> listaActivos) {
 		this.listaPublicacionActivos = listaActivos;
-	}
-		
+	}		
 
-	public List<String> getCabeceras() {
-		
+	public List<String> getCabeceras() {		
 		List<String> listaCabeceras = new ArrayList<String>();
 		listaCabeceras.add(CAB_NUM_ACTIVO);
 		listaCabeceras.add(CAB_TIPO);
@@ -38,20 +35,17 @@ public class PublicacionExcelReport extends AbstractExcelReport implements Excel
 		listaCabeceras.add(CAB_DPTO_GESTION);
 		listaCabeceras.add(CAB_DPTO_PUBLICACION);
 		listaCabeceras.add(CAB_PRECIO);
-
 		return listaCabeceras;
 	}
 
-	public List<List<String>> getData() {
-		
-		List<List<String>> valores = new ArrayList<List<String>>();
-		
-		for(VBusquedaPublicacionActivo publicacion: listaPublicacionActivos){
+	public List<List<String>> getData() {		
+		List<List<String>> valores = new ArrayList<List<String>>();		
+		for(VGridBusquedaPublicaciones publicacion: listaPublicacionActivos){
 			List<String> fila = new ArrayList<String>();
-			fila.add(publicacion.getNumActivo());
+			fila.add(publicacion.getNumActivo().toString());
 			fila.add(publicacion.getTipoActivoDescripcion());
 			fila.add(publicacion.getSubtipoActivoDescripcion());
-			fila.add(publicacion.getCartera());
+			fila.add(publicacion.getCarteraCodigo());
 			fila.add(publicacion.getDireccion());
 			fila.add(publicacion.getEstadoPublicacionDescripcion());
 			fila.add(mapeoBoolean(publicacion.getAdmision()));
@@ -59,17 +53,12 @@ public class PublicacionExcelReport extends AbstractExcelReport implements Excel
 			fila.add(mapeoBoolean(publicacion.getPublicacion()));
 			fila.add(mapeoBoolean(publicacion.getPrecio()));
 			valores.add(fila);
-		}
-		
+		}		
 		return valores;
 	}
 	
-	private String mapeoYesNo(Boolean dato){
-		return (dato == null) ? null : dato ? "Si" : "No";
-	}
-	
-	private String mapeoBoolean(Boolean dato){
-		return (dato == null) ? null : dato ? "OK" : "KO";
+	private String mapeoBoolean(Integer dato){
+		return dato != null && dato == 1 ? "OK" : "KO";		
 	}
 
 	public String getReportName() {

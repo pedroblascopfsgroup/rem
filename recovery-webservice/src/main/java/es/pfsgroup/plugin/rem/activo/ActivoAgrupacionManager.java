@@ -31,6 +31,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -116,10 +117,12 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 	@Autowired
 	private UsuarioManager usuarioApi;
-
 	
 	@Autowired
 	private ActivoAgrupacionFactoryApi activoAgrupacionFactoryApi;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -856,6 +859,21 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		}
 		
 		return  listDtoTipoAgrupacion;
+	}
+	
+	@Override
+	public List<DDTipoAgrupacion> getComboTipoAgrupacionFiltro() {
+		List <DDTipoAgrupacion> listaDDTipoAgrupacion = genericDao.getList(DDTipoAgrupacion.class);		
+		for(Perfil p : genericAdapter.getUsuarioLogado().getPerfiles()) {
+			if(USUARIO_IT.equals(p.getCodigo()) || GESTOR_COMERCIAL_ALQUILER.equals(p.getCodigo()) || SUPERVISOR_COMERCIAL_ALQUILER.equals(p.getCodigo())) {
+				return  listaDDTipoAgrupacion;
+			}
+		}
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+		DDTipoAgrupacion promocionAlquiler = genericDao.get(DDTipoAgrupacion.class, filtro);	
+		listaDDTipoAgrupacion.remove(promocionAlquiler);
+		return  listaDDTipoAgrupacion;
 	}
 
 	@Override

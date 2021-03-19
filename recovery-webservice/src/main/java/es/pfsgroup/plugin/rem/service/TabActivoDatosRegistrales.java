@@ -206,6 +206,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				
 				if (!Checks.esNulo(activo.getInfoRegistral().getEstadoDivHorizontal())) {
 					BeanUtils.copyProperty(activoDto, "estadoDivHorizontalCodigo", activo.getInfoRegistral().getEstadoDivHorizontal().getCodigo());
+					BeanUtils.copyProperty(activoDto, "estadoDivHorizontalDescripcion", activo.getInfoRegistral().getEstadoDivHorizontal().getDescripcion());
 				}
 				
 				if(Checks.esNulo(activo.getInfoRegistral().getDivHorInscrito())) {
@@ -214,18 +215,22 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				
 				if (!Checks.esNulo(activo.getInfoRegistral().getEstadoObraNueva())) {
 					BeanUtils.copyProperty(activoDto, "estadoObraNuevaCodigo", activo.getInfoRegistral().getEstadoObraNueva().getCodigo());
+					BeanUtils.copyProperty(activoDto, "estadoObraNuevaDescripcion", activo.getInfoRegistral().getEstadoObraNueva().getDescripcion());
 				}
 				
 				if (!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien().getLocalidad())) {
 					BeanUtils.copyProperty(activoDto, "poblacionRegistro", activo.getInfoRegistral().getInfoRegistralBien().getLocalidad().getCodigo());
+					BeanUtils.copyProperty(activoDto, "poblacionRegistroDescripcion", activo.getInfoRegistral().getInfoRegistralBien().getLocalidad().getDescripcion());
 				}
 	
 				if (!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien().getProvincia())) {
 					BeanUtils.copyProperty(activoDto, "provinciaRegistro", activo.getInfoRegistral().getInfoRegistralBien().getProvincia().getCodigo());
+					BeanUtils.copyProperty(activoDto, "provinciaRegistroDescripcion", activo.getInfoRegistral().getInfoRegistralBien().getProvincia().getDescripcion());
 				}
 				
 				if (!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activo.getInfoRegistral().getLocalidadAnterior())) {
 					BeanUtils.copyProperty(activoDto, "localidadAnteriorCodigo", activo.getInfoRegistral().getLocalidadAnterior().getCodigo());
+					BeanUtils.copyProperty(activoDto, "localidadAnteriorDescripcion", activo.getInfoRegistral().getLocalidadAnterior().getDescripcion());
 				}
 				if (!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activo.getInfoRegistral().getSuperficieUtil())) {
 					BeanUtils.copyProperty(activoDto, "superficieUtil", activo.getInfoRegistral().getSuperficieUtil());
@@ -233,9 +238,11 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				
 				if (!Checks.esNulo(activo.getTipoTitulo())) {
 					BeanUtils.copyProperty(activoDto, "tipoTituloCodigo", activo.getTipoTitulo().getCodigo());
+					BeanUtils.copyProperty(activoDto, "tipoTituloDescripcion", activo.getTipoTitulo().getDescripcion());
 				}
 				if (!Checks.esNulo(activo.getSubtipoTitulo())) {
 					BeanUtils.copyProperty(activoDto, "subtipoTituloCodigo", activo.getSubtipoTitulo().getCodigo());
+					BeanUtils.copyProperty(activoDto, "subtipoTituloDescripcion", activo.getSubtipoTitulo().getDescripcion());
 				}
 				if (!Checks.esNulo(activo.getCartera())) {
 					BeanUtils.copyProperty(activoDto, "entidadPropietariaCodigo", activo.getCartera().getCodigo());
@@ -243,12 +250,14 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				
 				if (!Checks.esNulo(activo.getOrigenAnterior())) {
 					BeanUtils.copyProperty(activoDto, "origenAnteriorActivoCodigo", activo.getOrigenAnterior().getCodigo());
+					BeanUtils.copyProperty(activoDto, "origenAnteriorActivoDescripcion", activo.getOrigenAnterior().getDescripcion());
 				}
 				if (!Checks.esNulo(activo.getFechaTituloAnterior())) {
 					BeanUtils.copyProperty(activoDto, "fechaTituloAnterior", activo.getFechaTituloAnterior());
 				}
 				if (activo.getTipoTituloBbva() != null) {
 					BeanUtils.copyProperty(activoDto, "origenAnteriorActivoBbvaCodigo", activo.getTipoTituloBbva().getCodigo());
+					BeanUtils.copyProperty(activoDto, "origenAnteriorActivoBbvaDescripcion", activo.getTipoTituloBbva().getDescripcion());
 				}
 			}
 		
@@ -284,25 +293,29 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					
 				if(!Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria())){
 					BeanUtils.copyProperty(activoDto, "resolucionMoratoriaCodigo", activo.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria().getCodigo());
+					BeanUtils.copyProperty(activoDto, "resolucionMoratoriaDescripcion", activo.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria().getDescripcion());
 				}
 				
 			}
 			
 			if (!Checks.esNulo(activo.getAdjJudicial().getEntidadEjecutante())) {
 				BeanUtils.copyProperty(activoDto, "entidadEjecutanteCodigo", activo.getAdjJudicial().getEntidadEjecutante().getCodigo());
+				BeanUtils.copyProperty(activoDto, "entidadEjecutanteDescripcion", activo.getAdjJudicial().getEntidadEjecutante().getDescripcion());
 			}
 
 			if (!Checks.esNulo(activo.getAdjJudicial().getJuzgado())) {
 				BeanUtils.copyProperty(activoDto, "tipoJuzgadoCodigo", activo.getAdjJudicial().getJuzgado().getCodigo());
+				BeanUtils.copyProperty(activoDto, "tipoJuzgadoDescripcion", activo.getAdjJudicial().getJuzgado().getDescripcion());
 			}
 			
 			if (!Checks.esNulo(activo.getAdjJudicial().getPlazaJuzgado())) {
 				BeanUtils.copyProperty(activoDto, "tipoPlazaCodigo", activo.getAdjJudicial().getPlazaJuzgado().getCodigo());
+				BeanUtils.copyProperty(activoDto, "tipoPlazaDescripcion", activo.getAdjJudicial().getPlazaJuzgado().getDescripcion());
 			}
 			
 			if (!Checks.esNulo(activo.getAdjJudicial().getEstadoAdjudicacion())) {
 				BeanUtils.copyProperty(activoDto, "estadoAdjudicacionCodigo", activo.getAdjJudicial().getEstadoAdjudicacion().getCodigo());
-
+				BeanUtils.copyProperty(activoDto, "estadoAdjudicacionDescripcion", activo.getAdjJudicial().getEstadoAdjudicacion().getDescripcion());
 			}
 				
 		}
@@ -418,44 +431,48 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					activoDto.setImporteAdjudicacion(null);
 				}
 				
-			if(Checks.esNulo(activoMatriz.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario())){
-				activoDto.setLanzamientoNecesario(null);
-			}else{
-				if(activoMatriz.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario()){
-					activoDto.setLanzamientoNecesario(1);
-					activoApi.calcularFechaTomaPosesion(activoMatriz);
+				if(Checks.esNulo(activoMatriz.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario())){
+					activoDto.setLanzamientoNecesario(null);
+				}else{
+					if(activoMatriz.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario()){
+						activoDto.setLanzamientoNecesario(1);
+						activoApi.calcularFechaTomaPosesion(activoMatriz);
+					}
+					else{
+						activoDto.setLanzamientoNecesario(0);
+						activoApi.calcularFechaTomaPosesion(activoMatriz);
+					}
 				}
-				else{
-					activoDto.setLanzamientoNecesario(0);
-					activoApi.calcularFechaTomaPosesion(activoMatriz);
-				}
-			}
-			
-			if (!Checks.esNulo(activoMatriz.getAdjJudicial().getAdjudicacionBien().getEntidadAdjudicataria())) {
-				BeanUtils.copyProperty(activoDto, "entidadAdjudicatariaCodigo", activoMatriz.getAdjJudicial().getAdjudicacionBien().getEntidadAdjudicataria().getCodigo());
-			}
 				
-			if(!Checks.esNulo(activoMatriz.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria())){
-				BeanUtils.copyProperty(activoDto, "resolucionMoratoriaCodigo", activoMatriz.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria().getCodigo());
+				if (!Checks.esNulo(activoMatriz.getAdjJudicial().getAdjudicacionBien().getEntidadAdjudicataria())) {
+					BeanUtils.copyProperty(activoDto, "entidadAdjudicatariaCodigo", activoMatriz.getAdjJudicial().getAdjudicacionBien().getEntidadAdjudicataria().getCodigo());
+				}
+					
+				if(!Checks.esNulo(activoMatriz.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria())){
+					BeanUtils.copyProperty(activoDto, "resolucionMoratoriaCodigo", activoMatriz.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria().getCodigo());
+					BeanUtils.copyProperty(activoDto, "resolucionMoratoriaDescripcion", activoMatriz.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria().getDescripcion());
 				}
 				
 			}
 			
 			if (!Checks.esNulo(activoMatriz.getAdjJudicial().getEntidadEjecutante())) {
 				BeanUtils.copyProperty(activoDto, "entidadEjecutanteCodigo", activoMatriz.getAdjJudicial().getEntidadEjecutante().getCodigo());
+				BeanUtils.copyProperty(activoDto, "entidadEjecutanteDescripcion", activoMatriz.getAdjJudicial().getEntidadEjecutante().getDescripcion());
 			}
 			
 			if (!Checks.esNulo(activoMatriz.getAdjJudicial().getJuzgado())) {
 				BeanUtils.copyProperty(activoDto, "tipoJuzgadoCodigo", activoMatriz.getAdjJudicial().getJuzgado().getCodigo());
+				BeanUtils.copyProperty(activoDto, "tipoJuzgadoDescripcion", activoMatriz.getAdjJudicial().getJuzgado().getDescripcion());
 			}
 			
 			if (!Checks.esNulo(activoMatriz.getAdjJudicial().getPlazaJuzgado())) {
 				BeanUtils.copyProperty(activoDto, "tipoPlazaCodigo", activoMatriz.getAdjJudicial().getPlazaJuzgado().getCodigo());
+				BeanUtils.copyProperty(activoDto, "tipoPlazaDescripcion", activoMatriz.getAdjJudicial().getPlazaJuzgado().getDescripcion());
 			}
 			
 			if (!Checks.esNulo(activoMatriz.getAdjJudicial().getEstadoAdjudicacion())) {
 				BeanUtils.copyProperty(activoDto, "estadoAdjudicacionCodigo", activoMatriz.getAdjJudicial().getEstadoAdjudicacion().getCodigo());
-			
+				BeanUtils.copyProperty(activoDto, "estadoAdjudicacionDescripcion", activoMatriz.getAdjJudicial().getEstadoAdjudicacion().getDescripcion());
 			}
 		}
 		
@@ -465,7 +482,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		if(activoBbva != null) {
 			activoDto.setIdProcesoOrigen(activoBbva.getIdProcesoOrigen());
 			activoDto.setSociedadPagoAnterior(activoBbva.getSociedadPagoAnterior() != null ? 
-					activoBbva.getSociedadPagoAnterior().getDocIdentificativo() : null);			
+					activoBbva.getSociedadPagoAnterior().getDocIdentificativo() : null);
+			activoDto.setSociedadPagoAnteriorDescripcion(activoBbva.getSociedadPagoAnterior() != null ? 
+					activoBbva.getSociedadPagoAnterior().getFullName() : null);
 		}
 		
 		if(activo.getAdjNoJudicial() != null && activo.getAdjNoJudicial().getFechaPosesion() != null) {

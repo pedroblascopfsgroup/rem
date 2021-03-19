@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -24,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.DtoExcelFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOferta;
+import es.pfsgroup.plugin.rem.model.DtoOfertaGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
@@ -826,5 +828,7 @@ public interface OfertaApi {
 	
 	public void comprobarFechasParaLanzarComisionamiento(Oferta oferta, Date fechaEntrada);
 	public DtoExcelFichaComercial getListOfertasFilter(Long idExpediente) throws UserException;
+	
+	public Page getBusquedaOfertasGridUsuario(DtoOfertaGridFilter dto);
 
 }

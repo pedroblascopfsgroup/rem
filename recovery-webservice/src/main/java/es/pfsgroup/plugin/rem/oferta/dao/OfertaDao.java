@@ -8,6 +8,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.model.DtoOfertaGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -109,5 +110,7 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	List<String> getTareasActivas(String numOferta);
 
 	public Boolean tieneTareaFinalizada(String tarea, String numOferta);
+	
+	public Page getBusquedaOfertasGrid(DtoOfertaGridFilter dto);
 	
 }

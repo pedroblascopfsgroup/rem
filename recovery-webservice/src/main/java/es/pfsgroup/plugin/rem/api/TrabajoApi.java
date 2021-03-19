@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoAgendaTrabajo;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
+import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoGridFilter;
 
 public interface TrabajoApi {
 
@@ -937,4 +938,11 @@ public interface TrabajoApi {
 
 	public List<DtoProveedorContactoSimple> getComboProveedorContactoLlaves(Long idProveedor) throws Exception;
 
+	/**
+	 * Devuelve un objeto Page con los trabajos que se cargarán en el grid
+	 * @param dto
+	 * @param usuarioLogado
+	 * @return 
+	 */
+	public Page getBusquedaTrabajosGrid(DtoTrabajoGridFilter dto, Usuario usuarioLogado);
 }

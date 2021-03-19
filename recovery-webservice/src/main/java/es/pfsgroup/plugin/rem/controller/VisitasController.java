@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,6 +26,10 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.api.VisitaApi;
 import es.pfsgroup.plugin.rem.api.VisitaGencatApi;
@@ -64,6 +70,9 @@ public class VisitasController {
 
 	@Autowired
 	private ConfigManager configManager;
+	
+	@Resource
+	private Properties appProperties;
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_DATA_KEY = "data";
@@ -198,34 +207,61 @@ public class VisitasController {
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional()
 	public ModelAndView registrarExportacion(DtoVisitasFilter dtoVisitasFilter, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ModelMap model = new ModelMap();
-		Usuario user = null;
+		String intervaloTiempo = !Checks.esNulo(appProperties.getProperty("haya.tiempo.espera.export")) ? appProperties.getProperty("haya.tiempo.espera.export") : "300000";
+		ModelMap model = new ModelMap();		 
 		Boolean isSuperExport = false;
+		Boolean permitido = true;
+		String filtros = parameterParser(request.getParameterMap());
+		Usuario user = usuarioManager.getUsuarioLogado();
+		Long tiempoPermitido = System.currentTimeMillis() - Long.parseLong(intervaloTiempo);
+		String cuentaAtras = null;
 		try {
-			int count = visitaApi.getListVisitas(dtoVisitasFilter).getTotalCount();
-			user = usuarioManager.getUsuarioLogado();
-			AuditoriaExportaciones ae = new AuditoriaExportaciones();
-			ae.setBuscador(buscador);
-			ae.setFechaExportacion(new Date());
-			ae.setNumRegistros(Long.valueOf(count));
-			ae.setUsuario(user);
-			ae.setFiltros(parameterParser(request.getParameterMap()));
-			ae.setAccion(exportar);
-			genericDao.save(AuditoriaExportaciones.class, ae);
-			model.put(RESPONSE_SUCCESS_KEY, true);
-			model.put(RESPONSE_DATA_KEY, count);
-			for(Perfil pef : user.getPerfiles()) {
-				if(pef.getCodigo().equals("SUPEREXPORTOFR")) {
-					isSuperExport = true;
-					break;
-				}
+			Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId());
+			Filter filtroConsulta = genericDao.createFilter(FilterType.EQUALS, "filtros", filtros);
+			Filter filtroAccion = genericDao.createFilter(FilterType.EQUALS, "accion", true);
+			Order orden = new Order(OrderType.DESC, "fechaExportacion");
+			List<AuditoriaExportaciones> listaExportaciones =  genericDao.getListOrdered(AuditoriaExportaciones.class, orden, filtroUsuario, filtroConsulta, filtroAccion);
+			
+			if(listaExportaciones != null && !listaExportaciones.isEmpty()) {
+				Long ultimaExport = listaExportaciones.get(0).getFechaExportacion().getTime();
+				permitido = ultimaExport > tiempoPermitido ? false : true;
+
+				double entero = Math.floor((ultimaExport - tiempoPermitido)/60000);
+		        if (entero < 2) {
+		        	cuentaAtras = "un minuto";
+		        } else {
+		        	cuentaAtras = Double.toString(entero);
+		        	cuentaAtras = cuentaAtras.substring(0, 1) + " minutos";
+		        }
 			}
-			if(isSuperExport) {
-				model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.ofertas").getValor());
-				model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.ofertas").getValor());
-			}else {
-				model.put("limite", configManager.getConfigByKey("limite.exportar.excel.ofertas").getValor());
-				model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.ofertas").getValor());
+			
+			if(permitido) {
+				int count = visitaApi.getListVisitas(dtoVisitasFilter).getTotalCount();
+				AuditoriaExportaciones ae = new AuditoriaExportaciones();
+				ae.setBuscador(buscador);
+				ae.setFechaExportacion(new Date());
+				ae.setNumRegistros(Long.valueOf(count));
+				ae.setUsuario(user);
+				ae.setFiltros(filtros);
+				ae.setAccion(exportar);
+				genericDao.save(AuditoriaExportaciones.class, ae);
+				model.put(RESPONSE_SUCCESS_KEY, true);
+				model.put(RESPONSE_DATA_KEY, count);
+				for(Perfil pef : user.getPerfiles()) {
+					if(pef.getCodigo().equals("SUPEREXPORTOFR")) {
+						isSuperExport = true;
+						break;
+					}
+				}
+				if(isSuperExport) {
+					model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.ofertas").getValor());
+					model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.ofertas").getValor());
+				}else {
+					model.put("limite", configManager.getConfigByKey("limite.exportar.excel.ofertas").getValor());
+					model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.ofertas").getValor());
+				}
+			} else {
+				model.put("msg",cuentaAtras);
 			}
 		}catch(Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);

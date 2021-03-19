@@ -223,14 +223,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 			if (activo.getLocalizacion().getLocalizacionBien() != null && activo.getLocalizacion().getLocalizacionBien().getTipoVia() != null) {
 				BeanUtils.copyProperty(activoDto, "tipoViaCodigo", activo.getLocalizacion().getLocalizacionBien().getTipoVia().getCodigo());
-			}
-			
-			if (activo.getLocalizacion().getLocalizacionBien() != null && activo.getLocalizacion().getLocalizacionBien().getTipoVia() != null) {
 				BeanUtils.copyProperty(activoDto, "tipoViaDescripcion", activo.getLocalizacion().getLocalizacionBien().getTipoVia().getDescripcion());
 			}
 			
 			if (activo.getLocalizacion().getLocalizacionBien() != null && activo.getLocalizacion().getLocalizacionBien().getPais() != null) {
 				BeanUtils.copyProperty(activoDto, "paisCodigo", activo.getLocalizacion().getLocalizacionBien().getPais().getCodigo());
+				BeanUtils.copyProperty(activoDto, "paisDescripcion", activo.getLocalizacion().getLocalizacionBien().getPais().getDescripcion());
 			}
 			if (activo.getLocalizacion().getLocalizacionBien() != null && activo.getLocalizacion().getLocalizacionBien().getLocalidad() != null) {
 				BeanUtils.copyProperty(activoDto, "municipioCodigo", activo.getLocalizacion().getLocalizacionBien().getLocalidad().getCodigo());
@@ -330,6 +328,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if (activo.getEstadoActivo() != null) {
 			BeanUtils.copyProperty(activoDto, "estadoActivoCodigo", activo.getEstadoActivo().getCodigo());
+			BeanUtils.copyProperty(activoDto, "estadoActivoDescripcion", activo.getEstadoActivo().getDescripcion());
 			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
 				
 				if(!Checks.esNulo(activo.getFechaUltCambioTipoActivo())) {
@@ -594,11 +593,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getEstadoExpIncorriente())) {
 			BeanUtils.copyProperty(activoDto, "estadoExpIncorrienteCodigo", activoBancario.getEstadoExpIncorriente().getCodigo());
+			BeanUtils.copyProperty(activoDto, "estadoExpIncorrienteDescripcion", activoBancario.getEstadoExpIncorriente().getDescripcion());
 		}
 
 		// En la sección de activo bancario pero no dependiente del mismo.
 		if(!Checks.esNulo(activo.getEntradaActivoBankia())) {
 			BeanUtils.copyProperty(activoDto, "entradaActivoBankiaCodigo", activo.getEntradaActivoBankia().getCodigo());
+			BeanUtils.copyProperty(activoDto, "entradaActivoBankiaDescripcion", activo.getEntradaActivoBankia().getDescripcion());
 		}
 
 		BeanUtils.copyProperty(activoDto, "integradoEnAgrupacionAsistida",activoApi.isIntegradoAgrupacionAsistida(activo));
@@ -837,14 +838,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if(activo.getCesionSaneamiento() != null) {
 			BeanUtils.copyProperty(activoDto, "cesionSaneamientoCodigo", activo.getCesionSaneamiento().getCodigo());
+			BeanUtils.copyProperty(activoDto, "cesionSaneamientoDescripcion", activo.getCesionSaneamiento().getDescripcion());
 		}
 		
 		if(activo.getServicerActivo() != null) {
 			BeanUtils.copyProperty(activoDto, "servicerActivoCodigo", activo.getServicerActivo().getCodigo());
+			BeanUtils.copyProperty(activoDto, "servicerActivoDescripcion", activo.getServicerActivo().getDescripcion());
 		}
 			
 		if (!Checks.esNulo(activo.getSociedadDePagoAnterior())) {
 			BeanUtils.copyProperty(activoDto, "sociedadPagoAnterior", activo.getSociedadDePagoAnterior().getCodigo());
+			BeanUtils.copyProperty(activoDto, "sociedadPagoAnteriorDescripcion", activo.getSociedadDePagoAnterior().getDescripcion());
 		}
 		
 		if (activo.getCartera() != null
@@ -878,6 +882,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if(activo.getTipoSegmento() != null) {
 			activoDto.setTipoSegmentoCodigo(activo.getTipoSegmento().getCodigo());
+			activoDto.setTipoSegmentoDescripcion(activo.getTipoSegmento().getDescripcion());
 		}
 		
 		ActivoAdmisionRevisionTitulo actRevTitulo = genericDao.get(ActivoAdmisionRevisionTitulo.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
@@ -893,9 +898,23 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		} else if(perimetroAdmision && actRevTitulo != null && actRevTitulo.getSituacionConstructivaRegistral() != null) {
 			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getSituacionConstructivaRegistral().getDescripcion()));
 		} else if(activo.getEstadoRegistral() != null) {
+		if(perimetroAdmision && actRevTitulo != null) {
+			if(actRevTitulo.getTipoIncidenciaRegistral() != null) {
+				ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getTipoIncidenciaRegistral().getDescripcion()));
+			}else if(actRevTitulo.getSituacionConstructivaRegistral() != null) {
+				ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getSituacionConstructivaRegistral().getDescripcion()));
+			}
+			
+			if(ddEstadoReg != null) {
+				activoDto.setEstadoRegistralCodigo(ddEstadoReg.getCodigo());
+				activoDto.setEstadoRegistralDescripcion(ddEstadoReg.getDescripcion());
+			}
+			
+		}else if(activo.getEstadoRegistral() != null){
 			activoDto.setEstadoRegistralCodigo(activo.getEstadoRegistral().getCodigo());
+			activoDto.setEstadoRegistralDescripcion(activo.getEstadoRegistral().getDescripcion());
 		}
-		
+		}
 		if(ddEstadoReg != null) {
 			activoDto.setEstadoRegistralCodigo(ddEstadoReg.getCodigo());	
 		}

@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210128
+--## FECHA_CREACION=20210322
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12758
+--## INCIDENCIA_LINK=HREOS-13241
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que realiza el cambio de oficinas en Bankia
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - HREOS-12758
+--##        0.2 Resolución de dudas, cambios - HREOS-13241
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -21,14 +22,16 @@ SET DEFINE OFF;
 CREATE OR REPLACE PROCEDURE SP_CAMBIO_OFICINA_BANKIA (
     V_USUARIO       VARCHAR2 DEFAULT 'SP_CAMBIO_OFICINA_BANKIA',
     PL_OUTPUT       OUT VARCHAR2,
-    PVE_COD_REM_ANTIGUA  IN REM01.ACT_PVE_PROVEEDOR.PVE_COD_REM%TYPE,
-    PVE_COD_REM_NUEVA  IN REM01.ACT_PVE_PROVEEDOR.PVE_COD_REM%TYPE) AS
---  0.1
+    PVE_COD_API_PROVEEDOR_ANTIGUA  IN REM01.ACT_PVE_PROVEEDOR.PVE_COD_API_PROVEEDOR%TYPE,
+    PVE_COD_API_PROVEEDOR_NUEVA  IN REM01.ACT_PVE_PROVEEDOR.PVE_COD_API_PROVEEDOR%TYPE) AS
+--  0.2
 
     V_ESQUEMA VARCHAR2(15 CHAR) := 'REM01';
     V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
     V_MSQL VARCHAR2(4000 CHAR);
     V_SQL VARCHAR2(4000 CHAR);
+    V_COUNT_OFICINA_ANTIGUA NUMBER(16);
+    V_COUNT_OFICINA_NUEVA NUMBER(16);
     V_OFICINA_ANTIGUA NUMBER(16);
     V_OFICINA_NUEVA NUMBER(16);
 
@@ -39,25 +42,37 @@ BEGIN
         ----------- COMPROBACIONES PREVIAS --------------------------------
         --------------------------------------------------------------------
     
-        V_SQL := 'SELECT PVE.PVE_ID FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE 
+        V_SQL := 'SELECT COUNT(PVE.PVE_ID) FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE 
         LEFT JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON PVE.DD_TPR_ID = TPR.DD_TPR_ID AND TPR.BORRADO = 0
-        WHERE TPR.DD_TPR_CODIGO = ''28'' AND PVE.BORRADO = 0 AND PVE_COD_REM = '||PVE_COD_REM_ANTIGUA;
-        EXECUTE IMMEDIATE V_SQL INTO V_OFICINA_ANTIGUA;
+		LEFT JOIN '||V_ESQUEMA||'.DD_EPR_ESTADO_PROVEEDOR EPR ON PVE.DD_EPR_ID = EPR.DD_EPR_ID AND EPR.BORRADO = 0
+        WHERE TPR.DD_TPR_CODIGO = ''28'' AND EPR.DD_EPR_CODIGO = ''04'' AND PVE.PVE_FECHA_BAJA IS NULL AND PVE.BORRADO = 0 AND PVE.PVE_COD_API_PROVEEDOR = '''||PVE_COD_API_PROVEEDOR_ANTIGUA||'''';
+        EXECUTE IMMEDIATE V_SQL INTO V_COUNT_OFICINA_ANTIGUA;
         
-        IF V_OFICINA_ANTIGUA IS NOT NULL THEN
-            V_SQL := 'SELECT PVE.PVE_ID FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE 
+        IF V_COUNT_OFICINA_ANTIGUA > 0 THEN
+            V_MSQL := 'SELECT PVE.PVE_ID FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE 
             LEFT JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON PVE.DD_TPR_ID = TPR.DD_TPR_ID AND TPR.BORRADO = 0
             LEFT JOIN '||V_ESQUEMA||'.DD_EPR_ESTADO_PROVEEDOR EPR ON PVE.DD_EPR_ID = EPR.DD_EPR_ID AND EPR.BORRADO = 0
-            WHERE TPR.DD_TPR_CODIGO = ''28'' AND EPR.DD_EPR_CODIGO = ''04'' AND PVE.BORRADO = 0 AND PVE_COD_REM = '||PVE_COD_REM_NUEVA;
-            EXECUTE IMMEDIATE V_SQL INTO V_OFICINA_NUEVA;
+            WHERE TPR.DD_TPR_CODIGO = ''28'' AND EPR.DD_EPR_CODIGO = ''04'' AND PVE.PVE_FECHA_BAJA IS NULL AND PVE.BORRADO = 0 AND PVE.PVE_COD_API_PROVEEDOR = '''||PVE_COD_API_PROVEEDOR_ANTIGUA||'''';
+            EXECUTE IMMEDIATE V_MSQL INTO V_OFICINA_ANTIGUA;
+
+            V_SQL := 'SELECT COUNT(PVE.PVE_ID) FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE 
+            LEFT JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON PVE.DD_TPR_ID = TPR.DD_TPR_ID AND TPR.BORRADO = 0
+            LEFT JOIN '||V_ESQUEMA||'.DD_EPR_ESTADO_PROVEEDOR EPR ON PVE.DD_EPR_ID = EPR.DD_EPR_ID AND EPR.BORRADO = 0
+            WHERE TPR.DD_TPR_CODIGO = ''28'' AND EPR.DD_EPR_CODIGO = ''04'' AND PVE.PVE_FECHA_BAJA IS NULL AND PVE.BORRADO = 0 AND PVE.PVE_COD_API_PROVEEDOR = '''||PVE_COD_API_PROVEEDOR_NUEVA||'''';
+            EXECUTE IMMEDIATE V_SQL INTO V_COUNT_OFICINA_NUEVA;
             
-            IF V_OFICINA_NUEVA IS NOT NULL THEN 
+            IF V_COUNT_OFICINA_NUEVA > 0 THEN 
+                V_MSQL := 'SELECT PVE.PVE_ID FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE 
+                LEFT JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON PVE.DD_TPR_ID = TPR.DD_TPR_ID AND TPR.BORRADO = 0
+                LEFT JOIN '||V_ESQUEMA||'.DD_EPR_ESTADO_PROVEEDOR EPR ON PVE.DD_EPR_ID = EPR.DD_EPR_ID AND EPR.BORRADO = 0
+                WHERE TPR.DD_TPR_CODIGO = ''28'' AND EPR.DD_EPR_CODIGO = ''04'' AND PVE.PVE_FECHA_BAJA IS NULL AND PVE.BORRADO = 0 AND PVE.PVE_COD_API_PROVEEDOR = '''||PVE_COD_API_PROVEEDOR_NUEVA||'''';
+                EXECUTE IMMEDIATE V_MSQL INTO V_OFICINA_NUEVA;
             
         --------------------------------------------------------------------
         ----------- DAR DE BAJA OFICINA ------------------------------------
         --------------------------------------------------------------------
         
-                PL_OUTPUT := PL_OUTPUT || '   [INFO] - COMIENZA EL PROCESO DE CAMBIO DE OFICINA BANKIA';
+                PL_OUTPUT := PL_OUTPUT || '   [INFO] - COMIENZA EL PROCESO DE CAMBIO DE OFICINA BANKIA' || CHR(10);
                     
                     
                 V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE 
@@ -67,12 +82,15 @@ BEGIN
                                 , PVE.PVE_FECHA_BAJA = SYSDATE
                                 , PVE.DD_EPR_ID = (SELECT EPR.DD_EPR_ID FROM '||V_ESQUEMA||'.DD_EPR_ESTADO_PROVEEDOR EPR WHERE EPR.BORRADO = 0 AND EPR.DD_EPR_CODIGO = ''07'')
                             WHERE PVE.BORRADO = 0 AND PVE.PVE_ID = '||V_OFICINA_ANTIGUA;
+                EXECUTE IMMEDIATE V_MSQL;
+                            
+                PL_OUTPUT := PL_OUTPUT || '     BORRADA OFICINA ANTIGUA' || CHR(10) ;
                             
         --------------------------------------------------------------------
         ----------- CAMBIO DE OFICINA --------------------------------------
         --------------------------------------------------------------------
         
-                PL_OUTPUT := PL_OUTPUT || '   [INFO] - COMIENZA EL CAMBIO EN CLIENTES';
+                PL_OUTPUT := PL_OUTPUT || '   [INFO] - COMIENZA EL CAMBIO EN CLIENTES' || CHR(10);
                 
                 V_MSQL := 'UPDATE '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL CLC 
                     SET 
@@ -80,8 +98,9 @@ BEGIN
                         , CLC.FECHAMODIFICAR = SYSDATE
                         , CLC.PVE_ID_PRESCRIPTOR = '||V_OFICINA_NUEVA||'
                     WHERE CLC.BORRADO = 0 AND CLC.PVE_ID_PRESCRIPTOR = '||V_OFICINA_ANTIGUA;
+                EXECUTE IMMEDIATE V_MSQL;
                     
-                PL_OUTPUT := PL_OUTPUT || '   [INFO] - PRESCRIPTOR CAMBIADO EN '||SQL%ROWCOUNT||' CLIENTES' ;
+                PL_OUTPUT := PL_OUTPUT || '     PRESCRIPTOR CAMBIADO EN '||SQL%ROWCOUNT||' CLIENTES' || CHR(10) ;
                 
                 V_MSQL := 'UPDATE '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL CLC 
                     SET 
@@ -89,16 +108,15 @@ BEGIN
                         , CLC.FECHAMODIFICAR = SYSDATE
                         , CLC.PVE_ID_RESPONSABLE = '||V_OFICINA_NUEVA||'
                     WHERE CLC.BORRADO = 0 AND CLC.PVE_ID_RESPONSABLE = '||V_OFICINA_ANTIGUA;
+                EXECUTE IMMEDIATE V_MSQL;
                     
-                PL_OUTPUT := PL_OUTPUT || '   [INFO] - RESPONSABLE CAMBIADO EN '||SQL%ROWCOUNT||' CLIENTES' ;
-                
-                REM01.OPERACION_DDL.DDL_TABLE('TRUNCATE','CLC_CLIENTE_COMERCIAL');
+                PL_OUTPUT := PL_OUTPUT || '     RESPONSABLE CAMBIADO EN '||SQL%ROWCOUNT||' CLIENTES' || CHR(10) ;
                 
         --------------------------------------------------------------------
         ----------- CAMBIO DE VISITAS --------------------------------------
         --------------------------------------------------------------------
-        -- ¿Y el custodio PVE_ID_API_CUSTODIO?
-                PL_OUTPUT := PL_OUTPUT || '   [INFO] - COMIENZA EL CAMBIO EN VISITAS';
+
+                PL_OUTPUT := PL_OUTPUT || '   [INFO] - COMIENZA EL CAMBIO EN VISITAS' || CHR(10);
                 
                 V_MSQL := 'UPDATE '||V_ESQUEMA||'.VIS_VISITAS VIS 
                     SET 
@@ -106,8 +124,9 @@ BEGIN
                         , VIS.FECHAMODIFICAR = SYSDATE
                         , VIS.PVE_ID_PRESCRIPTOR = '||V_OFICINA_NUEVA||'
                     WHERE VIS.BORRADO = 0 AND VIS.PVE_ID_PRESCRIPTOR = '||V_OFICINA_ANTIGUA;
+               EXECUTE IMMEDIATE V_MSQL;
                     
-                PL_OUTPUT := PL_OUTPUT || '   [INFO] - PRESCRIPTOR CAMBIADO EN '||SQL%ROWCOUNT||' VISITAS' ;
+                PL_OUTPUT := PL_OUTPUT || '     PRESCRIPTOR CAMBIADO EN '||SQL%ROWCOUNT||' VISITAS' || CHR(10) ;
                 
                 V_MSQL := 'UPDATE '||V_ESQUEMA||'.VIS_VISITAS VIS 
                     SET 
@@ -115,8 +134,9 @@ BEGIN
                         , VIS.FECHAMODIFICAR = SYSDATE
                         , VIS.PVE_ID_PVE_VISITA = '||V_OFICINA_NUEVA||'
                     WHERE VIS.BORRADO = 0 AND VIS.PVE_ID_PVE_VISITA = '||V_OFICINA_ANTIGUA;
+                EXECUTE IMMEDIATE V_MSQL;
                     
-                PL_OUTPUT := PL_OUTPUT || '   [INFO] - REALIZADOR CAMBIADO EN '||SQL%ROWCOUNT||' VISITAS' ;   
+                PL_OUTPUT := PL_OUTPUT || '     REALIZADOR CAMBIADO EN '||SQL%ROWCOUNT||' VISITAS' || CHR(10) ;   
                 
                 V_MSQL := 'UPDATE '||V_ESQUEMA||'.VIS_VISITAS VIS 
                     SET 
@@ -124,17 +144,14 @@ BEGIN
                         , VIS.FECHAMODIFICAR = SYSDATE
                         , VIS.PVE_ID_API_RESPONSABLE = '||V_OFICINA_NUEVA||'
                     WHERE VIS.BORRADO = 0 AND VIS.PVE_ID_API_RESPONSABLE = '||V_OFICINA_ANTIGUA;
+                EXECUTE IMMEDIATE V_MSQL;
                     
-                PL_OUTPUT := PL_OUTPUT || '   [INFO] - RESPONSABLE CAMBIADO EN '||SQL%ROWCOUNT||' VISITAS' ;   
-                
-                REM01.OPERACION_DDL.DDL_TABLE('TRUNCATE','VIS_VISITAS');
-                 
+                PL_OUTPUT := PL_OUTPUT || '     RESPONSABLE CAMBIADO EN '||SQL%ROWCOUNT||' VISITAS' || CHR(10);   
         --------------------------------------------------------------------
         ----------- CAMBIO DE OFERTAS Y EXPEDIENTES ------------------------
         --------------------------------------------------------------------
-        -- ¿Y el custodio PVE_ID_CUSTODIO y sucursal PVE_ID_SUCURSAL?
-        -- Cambiar los honorarios para el comisionamiento se ajuste a las nuevas oficinas en REM. Crear un volcado masivo de los honorarios a UVEM con el botón de "envío de honorarios"
-                PL_OUTPUT := PL_OUTPUT || '   [INFO] - COMIENZA EL CAMBIO EN OFERTAS Y EXPEDIENTE';
+
+                PL_OUTPUT := PL_OUTPUT || '   [INFO] - COMIENZA EL CAMBIO EN OFERTAS Y EXPEDIENTE' || CHR(10);
                 
                 V_MSQL := 'UPDATE '||V_ESQUEMA||'.OFR_OFERTAS OFR 
                     SET 
@@ -142,8 +159,9 @@ BEGIN
                         , OFR.FECHAMODIFICAR = SYSDATE
                         , OFR.PVE_ID_PRESCRIPTOR = '||V_OFICINA_NUEVA||'
                     WHERE OFR.BORRADO = 0 AND OFR.PVE_ID_PRESCRIPTOR = '||V_OFICINA_ANTIGUA;
+                EXECUTE IMMEDIATE V_MSQL;
                     
-                PL_OUTPUT := PL_OUTPUT || '   [INFO] - PRESCRIPTOR CAMBIADO EN '||SQL%ROWCOUNT||' OFERTAS' ;          
+                PL_OUTPUT := PL_OUTPUT || '     PRESCRIPTOR CAMBIADO EN '||SQL%ROWCOUNT||' OFERTAS' || CHR(10) ;          
                 
                 V_MSQL := 'UPDATE '||V_ESQUEMA||'.OFR_OFERTAS OFR 
                     SET 
@@ -151,16 +169,25 @@ BEGIN
                         , OFR.FECHAMODIFICAR = SYSDATE
                         , OFR.PVE_ID_API_RESPONSABLE = '||V_OFICINA_NUEVA||'
                     WHERE OFR.BORRADO = 0 AND OFR.PVE_ID_API_RESPONSABLE = '||V_OFICINA_ANTIGUA;
+                EXECUTE IMMEDIATE V_MSQL;
                     
-                PL_OUTPUT := PL_OUTPUT || '   [INFO] - RESPONSABLE CAMBIADO EN '||SQL%ROWCOUNT||' OFERTAS' ;  
+                PL_OUTPUT := PL_OUTPUT || '     RESPONSABLE CAMBIADO EN '||SQL%ROWCOUNT||' OFERTAS' || CHR(10) ;  
                 
-                REM01.OPERACION_DDL.DDL_TABLE('TRUNCATE','OFR_OFERTAS');                 
-            
+                V_MSQL := 'UPDATE '||V_ESQUEMA||'.GEX_GASTOS_EXPEDIENTE GEX 
+                    SET 
+                        GEX.USUARIOMODIFICAR = '''||V_USUARIO||'''
+                        , GEX.FECHAMODIFICAR = SYSDATE
+                        , GEX.GEX_PROVEEDOR = '||V_OFICINA_NUEVA||'
+                    WHERE GEX.BORRADO = 0 AND GEX.GEX_PROVEEDOR = '||V_OFICINA_ANTIGUA;
+                EXECUTE IMMEDIATE V_MSQL;
+                    
+                PL_OUTPUT := PL_OUTPUT || '     RESPONSABLE CAMBIADO EN '||SQL%ROWCOUNT||' HONORARIOS' || CHR(10) ;  
+
             ELSE
-                PL_OUTPUT := PL_OUTPUT || '   [INFO] - LA OFICINA NUEVA '||PVE_DOCIDENTIF||' NO ESTÁ VIGENTE, NO SE REALIZARÁ NINGUNA ACCIÓN';
+                PL_OUTPUT := PL_OUTPUT || '   [INFO] - LA OFICINA NUEVA '||PVE_COD_API_PROVEEDOR_NUEVA||' NO ESTÁ VIGENTE, NO SE REALIZARÁ NINGUNA ACCIÓN' || CHR(10);
             END IF;
         ELSE
-            PL_OUTPUT := PL_OUTPUT || '   [INFO] - LA OFICINA '||PVE_DOCIDENTIF||' NO EXISTE, NO SE REALIZARÁ NINGUNA ACCIÓN';
+            PL_OUTPUT := PL_OUTPUT || '   [INFO] - LA OFICINA ANTIGUA '||PVE_COD_API_PROVEEDOR_ANTIGUA||' NO ESTÁ VIGENTE, NO SE REALIZARÁ NINGUNA ACCIÓN' || CHR(10);
         END IF; 
 
     PL_OUTPUT := PL_OUTPUT || '[FIN]'||CHR(10);

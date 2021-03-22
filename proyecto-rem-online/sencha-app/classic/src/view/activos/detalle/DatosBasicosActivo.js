@@ -240,6 +240,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						                		hidden: '{!activo.isCarteraBankia}',
 						                		readOnly: true
 						                	}
+						                },
+						                {
+						                	xtype: 'comboboxfieldbase',
+						                	fieldLabel:  HreRem.i18n('fieldlabel.estado.registral'),
+						                	name: 'comboEstadoRegistral',
+						                	reference: 'comboEstadoRegistralRef',
+						                	bind: {
+						                		store: '{comboEstadoRegistral}',
+						                		value: '{activo.estadoRegistralCodigo}',
+						                		readOnly: true
+						                	}
 						                }
 									]
 								},
@@ -272,6 +283,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                	fieldLabel: HreRem.i18n('fieldlabel.breve.descripcion.activo'),
 				                	bind:{
 				                		value: '{activo.descripcion}'
+				                	}
+				                }, 
+				                {
+				                	xtype: 'comboboxfieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo.DND'),
+				                	name: 'comboEstadoFisicoActivoDND',
+				                	reference: 'comboEstadoFisicoActivoDNDRef',
+				                	bind: {			                		
+				                		value: '{activo.estadoFisicoActivoDND}',
+				                		store: '{comboEstadoActivoDND}',
+				                		readOnly:true
 				                	}
 				                },   
 				                {
@@ -373,6 +395,28 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								}
 							},
 							{
+			                	xtype: 'textareafieldbase',
+			                	labelWidth: 200,
+			                	rowspan: 5,
+			                	height: 130,
+			                	labelAlign: 'top',
+			                	fieldLabel: HreRem.i18n('fieldlabel.breve.descripcion.activo'),
+			                	bind:{
+			                		value: '{activo.descripcion}'
+			                	}
+			                },
+			                {
+			                	xtype: 'comboboxfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.segmento'),
+			                	name: 'combotipoSegmento',
+			                	reference: 'comboTipoSegmentoRef',
+			                	bind: {
+			                		store: '{comboTipoSegmento}',
+			                		value: '{activo.tipoSegmentoCodigo}',
+			                		hidden: '{!activo.isSubcarteraDivarian}'
+			                	}
+			                },
+		                	{
 								xtype:'textfieldbase',
 								reference:'tfcodpromocionbbva',
 								fieldLabel: HreRem.i18n('fieldlabel.activobbva.codPromocionBbva'),
@@ -381,14 +425,15 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									value: '{activo.codPromocionBbva}'
 								}
 							}
-						],
+			 			                
+					],
 	                bind:{
 	                	hidden: '{!activo.isCarteraBbva}'
-	                }
+	                	}
 	                }
 				]
-				},				
-            	{    
+            },
+            {    
                 
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',

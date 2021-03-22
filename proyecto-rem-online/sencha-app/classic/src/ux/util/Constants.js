@@ -83,7 +83,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		PRECIOS: '04',
 		PUBLICACIONES: '05',
 		COMERCIALIZACION: '06',
-		EDIFICACION: '07'
+		EDIFICACION: '07',
+		SUELO: '08'
 	},
 
 	TIPOS_CALCULO: {

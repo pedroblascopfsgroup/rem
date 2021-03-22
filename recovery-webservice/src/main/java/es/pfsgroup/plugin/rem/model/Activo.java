@@ -67,6 +67,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
+import es.pfsgroup.plugin.rem.model.dd.DDValidaEstadoActivo;
 
 /**
  * Modelo que gestiona los activos.
@@ -540,6 +541,10 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "DD_ERA_ID")
     private DDEstadoRegistralActivo estadoRegistral; 
     
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_VEA_ID")
+    private DDValidaEstadoActivo estadoValidacionActivoDND; 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TTA_ID_BBVA")
     private DDTipoTituloActivo tipoTituloBbva;
@@ -2093,6 +2098,15 @@ public class Activo implements Serializable, Auditable {
 	
 	public DDTipoTituloActivo getTipoTituloBbva() {
 		return tipoTituloBbva;
+	}
+
+
+	public DDValidaEstadoActivo getEstadoValidacionActivoDND() {
+		return estadoValidacionActivoDND;
+	}
+
+	public void setEstadoValidacionActivoDND(DDValidaEstadoActivo estadoValidacionActivoDND) {
+		this.estadoValidacionActivoDND = estadoValidacionActivoDND;
 	}
 
 	public void setTipoTituloBbva(DDTipoTituloActivo tipoTituloBbva) {

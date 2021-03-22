@@ -1,11 +1,12 @@
 package es.pfsgroup.plugin.rem.model.dd;
-
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -18,49 +19,38 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
+/**
+ * Modelo que gestiona el diccionario de estado de validacion del activo DND.
+ * 
+ * @author Carlos Augusto
+ *
+ */
 
 @Entity
-@Table(name = "DD_ERA_ESTADO_REG_ACTIVO", schema = "${entity.schema}")
+@Table(name = "DD_VEA_VALIDA_ESTADO_ACTIVO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDEstadoRegistralActivo implements Auditable, Dictionary {
+public class DDValidaEstadoActivo implements Auditable, Dictionary{
+	private static final long serialVersionUID = -3836191709700209057L;
 	
-	private static final long serialVersionUID = 1L;
-	
-	public static final String CODIGO_EDIFICACION_TERMINADA = "EDF_TER";
-	public static final String CODIGO_EN_CONTRUCCION = "CON_JUR";
-	public static final String CODIGO_OBRA_EN_CURSO = "EDF_WIP";
-	public static final String CODIGO_DISCREPANCIA_MAYOR_20 = "EXC_S20";
-	public static final String CODIGO_DISCREPANCIA_MENOR_20 = "EXC_I20";
-	public static final String CODIGO_DISCREPANCIA_SIN_INMATRICULAR = "EXC_SIM";
-	public static final String CODIGO_DISCREPANCIA_CAMBIO_USO = "EXC_CDU";
-	public static final String CODIGO_DISCREPANCIA_CAMBIO_DESC_REGISTRAL = "EXC_CDR";
-	public static final String CODIGO_DISCREPANCIA_DIVISION_HORIZONTAL = "EXC_DHO";
-	public static final String CODIGO_ILEGAL_IRREGU_URBANISTICAS = "CIL_IUR";
-	public static final String CODIGO_ILEGAL_FUERA_ORDENACION = "CIL_FOR";
-	public static final String CODIGO_ACTIVO_IRREGULAR = "ACT_IRR";
+	public static final String ESTADO_NO_VALIDADO = "01";
+	public static final String ESTADO_VALIDADO = "02";
 
 	@Id
-	@Column(name = "DD_ERA_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoRegistralActivoGenerator")
-	@SequenceGenerator(name = "DDEstadoRegistralActivoGenerator", sequenceName = "S_DD_ERA_ESTADO_REG_ACTIVO")
+	@Column(name = "DD_VEA_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDValidaEstadoActivoGenerator")
+	@SequenceGenerator(name = "DDValidaEstadoActivoGenerator", sequenceName = "S_DD_VEA_VALIDA_ESTADO_ACTIVO")
 	private Long id;
 	 
-	@Column(name = "DD_ERA_CODIGO")   
+	@Column(name = "DD_VEA_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_ERA_DESCRIPCION")   
+	@Column(name = "DD_VEA_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_ERA_DESCRIPCION_LARGA")   
+	@Column(name = "DD_VEA_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
 	    
-	@Version   
-	private Long version;
-
-	@Embedded
-	private Auditoria auditoria;
-
 	public Long getId() {
 		return id;
 	}
@@ -108,5 +98,13 @@ public class DDEstadoRegistralActivo implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
+	
+	    
+	@Version   
+	private Long version;
+
+	@Embedded
+	private Auditoria auditoria;
 
 }

@@ -889,12 +889,18 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		ActivoAdmisionRevisionTitulo actRevTitulo = genericDao.get(ActivoAdmisionRevisionTitulo.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-		DDEstadoRegistralActivo ddEstadoReg = new DDEstadoRegistralActivo();
 		boolean perimetroAdmision = false;
 		if(perimetroActivo.getAplicaAdmision() != null) {
 			perimetroAdmision = perimetroActivo.getAplicaAdmision();
 			activoDto.setPerimetroAdmision(perimetroAdmision);
 		}
+		
+		DDEstadoRegistralActivo ddEstadoReg = null;
+		if(perimetroAdmision && actRevTitulo != null && actRevTitulo.getTipoIncidenciaRegistral() != null) {
+			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getTipoIncidenciaRegistral().getDescripcion()));
+		} else if(perimetroAdmision && actRevTitulo != null && actRevTitulo.getSituacionConstructivaRegistral() != null) {
+			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getSituacionConstructivaRegistral().getDescripcion()));
+		} else if(activo.getEstadoRegistral() != null) {
 		if(perimetroAdmision && actRevTitulo != null) {
 			if(actRevTitulo.getTipoIncidenciaRegistral() != null) {
 				ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getTipoIncidenciaRegistral().getDescripcion()));
@@ -910,6 +916,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}else if(activo.getEstadoRegistral() != null){
 			activoDto.setEstadoRegistralCodigo(activo.getEstadoRegistral().getCodigo());
 			activoDto.setEstadoRegistralDescripcion(activo.getEstadoRegistral().getDescripcion());
+		}
+		}
+		if(ddEstadoReg != null) {
+			activoDto.setEstadoRegistralCodigo(ddEstadoReg.getCodigo());	
 		}
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
@@ -986,6 +996,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setEsEditableActivoEstadoRegistral(!perimetroAdmision);
 		}
 		
+		if(activo.getEstadoValidacionActivoDND()!=null) {
+			activoDto.setEstadoFisicoActivoDND(activo.getEstadoValidacionActivoDND().getCodigo());
+		}
+		
+
 		activoDto.setIsGrupoOficinaKAM(activoApi.isGrupoOficinaKAM());
 		if(activo.getTipoTransmision() != null) {
 			activoDto.setTipoTransmisionCodigo(activo.getTipoTransmision().getCodigo());

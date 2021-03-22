@@ -545,6 +545,10 @@ public class Activo implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_VEA_ID")
     private DDValidaEstadoActivo estadoValidacionActivoDND; 
+	
+    @Column(name = "ACT_PORCENTAJE_CONSTRUCCION")
+   	private Double porcentajeConstruccion;
+	   
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TTA_ID_BBVA")
     private DDTipoTituloActivo tipoTituloBbva;
@@ -2108,6 +2112,14 @@ public class Activo implements Serializable, Auditable {
 	public void setEstadoValidacionActivoDND(DDValidaEstadoActivo estadoValidacionActivoDND) {
 		this.estadoValidacionActivoDND = estadoValidacionActivoDND;
 	}
+	public Double getPorcentajeConstruccion() {
+		return porcentajeConstruccion;
+	}
+
+	public void setPorcentajeConstruccion(Double porcentajeConstruccion) {
+		this.porcentajeConstruccion = porcentajeConstruccion;
+	}
+	
 
 	public void setTipoTituloBbva(DDTipoTituloActivo tipoTituloBbva) {
 		this.tipoTituloBbva = tipoTituloBbva;

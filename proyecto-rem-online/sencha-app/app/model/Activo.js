@@ -1093,6 +1093,24 @@ Ext.define('HreRem.model.Activo', {
     			depends: 'entidadPropietariaCodigo'
     		},
     		{
+    			name: 'subestadoAdmisionDescCabecera'
+			},
+			{
+	 			name: 'estadoRegistralCodigo'
+			},
+			{
+	 			name: 'esEditableActivoEstadoRegistral',
+    			type: 'boolean'	 			
+			},
+			{
+	 			name: 'porcentajeConstruccion',
+	 			type: 'float'
+			},
+			{
+				name: 'isEditablePorcentajeConstruccion',
+				type: 'boolean'
+			},
+    		{
     			name: 'codPromocionBbva'
     		},
 			{

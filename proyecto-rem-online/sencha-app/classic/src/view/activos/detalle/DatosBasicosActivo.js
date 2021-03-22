@@ -338,7 +338,25 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                	readOnly: true
 				                },
 				                {
-				                	xtype: 'comboboxfieldbasedd',
+				                	xtype: 'numberfieldbase',
+									symbol: HreRem.i18n("symbol.porcentaje"),
+				                	fieldLabel:  HreRem.i18n('fieldlabel.porcentaje.construccion'),
+				                	name: 'porcentajeConstruccion',
+				                	reference: 'porcentajeConstruccion',
+				                	maskRe: /[0-9.]/,
+				                	bind: {
+				                		readOnly: '{!activo.isEditablePorcentajeConstruccion}',
+				                		value: '{activo.porcentajeConstruccion}'
+				                	},
+				                	validator: function(v) {
+		                            	if(!Ext.isEmpty(this.getValue()) && (this.getValue() < 0 || this.getValue() >  100 )){
+			                            	return false;
+		                            	}
+			                            return true;
+			                        }
+				                },
+				                {
+				                	xtype: 'comboboxfieldbase',
 				                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.segmento'),
 				                	name: 'combotipoSegmento',
 				                	reference: 'comboTipoSegmentoRef',
@@ -896,6 +914,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									value: '{activo.motivoAplicaFormalizar}'
 								}
 							},
+							
 							//Bloque Comercialización
 							{    
 								xtype:'fieldsettable',

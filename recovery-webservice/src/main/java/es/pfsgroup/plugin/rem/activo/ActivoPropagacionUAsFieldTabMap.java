@@ -41,6 +41,7 @@ public class ActivoPropagacionUAsFieldTabMap {
     	    		"usoDominanteCodigo",
     	    		"tipoActivoCodigo",
     	    		"subtipoActivoCodigo",
+    	    		"porcentajeConstruccion",
     	    		"tipoTransmision",
     	    		"tipoSegmentoCodigo",
     	    		

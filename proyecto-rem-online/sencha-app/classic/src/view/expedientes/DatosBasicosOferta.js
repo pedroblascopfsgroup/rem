@@ -533,7 +533,6 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							xtype : 'button',
 							reference : 'btngenerarfichacomercial',
 							bind : {
-								hidden : '{!esBbva}',
 								disabled : '{!habilitarBotonGenerarFicha}'
 							},
 							text : HreRem.i18n('btn.generar.ficha.comercial'),

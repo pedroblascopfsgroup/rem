@@ -620,18 +620,18 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	public Page getBusquedaOfertasGrid(DtoOfertaGridFilter dto) {
 		HQLBuilder hb = new HQLBuilder("select vgrid from VGridBusquedaOfertas vgrid");
 		
-		if (dto.getNumOferta() != null && StringUtils.isNumeric(dto.getNumOferta()))
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numOferta", Long.valueOf(dto.getNumOferta()));
-		if (dto.getNumExpediente() != null && StringUtils.isNumeric(dto.getNumExpediente()))
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numExpediente", Long.valueOf(dto.getNumExpediente()));
-		if (dto.getNumActivo() != null && StringUtils.isNumeric(dto.getNumActivo()))
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivo", Long.valueOf(dto.getNumActivo()));
-		if (dto.getNumAgrupacion() != null && StringUtils.isNumeric(dto.getNumAgrupacion()))
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numAgrupacion", Long.valueOf(dto.getNumAgrupacion()));
-		if (dto.getNumActivoUvem() != null && StringUtils.isNumeric(dto.getNumActivoUvem()))
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoUvem", Long.valueOf(dto.getNumActivoUvem()));
-		if (dto.getNumPrinex() != null && StringUtils.isNumeric(dto.getNumPrinex()))
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoPrinex", Long.valueOf(dto.getNumPrinex()));
+		if (dto.getNumOferta() != null && StringUtils.isNumeric(dto.getNumOferta().trim()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numOferta", Long.valueOf(dto.getNumOferta().trim()));
+		if (dto.getNumExpediente() != null && StringUtils.isNumeric(dto.getNumExpediente().trim()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numExpediente", Long.valueOf(dto.getNumExpediente().trim()));
+		if (dto.getNumActivo() != null && StringUtils.isNumeric(dto.getNumActivo().trim()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivo", Long.valueOf(dto.getNumActivo().trim()));
+		if (dto.getNumAgrupacion() != null && StringUtils.isNumeric(dto.getNumAgrupacion().trim()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numAgrupacion", Long.valueOf(dto.getNumAgrupacion().trim()));
+		if (dto.getNumActivoUvem() != null && StringUtils.isNumeric(dto.getNumActivoUvem().trim()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoUvem", Long.valueOf(dto.getNumActivoUvem().trim()));
+		if (dto.getNumPrinex() != null && StringUtils.isNumeric(dto.getNumPrinex().trim()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoPrinex", Long.valueOf(dto.getNumPrinex().trim()));
 		
 		if (dto.getTipoFecha() != null) {
 			try {				

@@ -5010,6 +5010,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 											DDEstadosReserva.class, DDEstadosReserva.CODIGO_RESUELTA_DEVUELTA));
 							expedienteComercial.getOferta().setEstadoOferta((DDEstadoOferta) utilDiccionarioApi
 									.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA));
+							for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
+								if (activoOferta != null && activoOferta.getPrimaryKey() != null 
+										&& activoOferta.getPrimaryKey().getActivo() != null) {
+									activoApi.devolucionFasePublicacionAnterior(activoOferta.getPrimaryKey().getActivo());
+								}								
+							}
 						}
 						// Descongelamos el resto de ofertas del activo.
 						ofertaApi.descongelarOfertas(expedienteComercial);

@@ -11686,4 +11686,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return true;
 	}
 	
+	@Override
+	public String tipoTratamiento(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		
+		return expedienteComercial.getEstado().getCodigo();
+	}
+	
 }

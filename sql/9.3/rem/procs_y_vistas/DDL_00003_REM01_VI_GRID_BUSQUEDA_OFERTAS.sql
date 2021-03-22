@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Javier Esbrí
---## FECHA_CREACION=20210304
+--## FECHA_CREACION=20210319
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13272
@@ -100,9 +100,9 @@ BEGIN
 			
 			JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA  								            		ON ACT.DD_CRA_ID = CRA.DD_CRA_ID
 			JOIN '|| V_ESQUEMA ||'.DD_SCR_SUBCARTERA SCR  						                    	ON ACT.DD_SCR_ID = SCR.DD_SCR_ID
-			LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR TCR                               	ON ACT.DD_TCR_ID = TCR.DD_TCR_ID			
+			JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR TCR                               	ON ACT.DD_TCR_ID = TCR.DD_TCR_ID			
 			LEFT JOIN '|| V_ESQUEMA ||'.DD_TPR_TIPO_PROVEEDOR TPR 			                            ON TPR.DD_TPR_ID = PVEPRES.DD_TPR_ID			
-			JOIN '|| V_ESQUEMA ||'.DD_EEC_EST_EXP_COMERCIAL EEC 		                            	ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
+			LEFT JOIN '|| V_ESQUEMA ||'.DD_EEC_EST_EXP_COMERCIAL EEC 		                            	ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
 			LEFT JOIN '|| V_ESQUEMA ||'.DD_CAP_CANAL_PRESCRIPCION CAP 	                                ON CAP.DD_CAP_ID = OFR.DD_CAP_ID			
 			JOIN '|| V_ESQUEMA ||'.DD_TOF_TIPOS_OFERTA TOF 					                    		ON TOF.DD_TOF_ID = OFR.DD_TOF_ID
 			JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF				                        	ON EOF.DD_EOF_ID = OFR.DD_EOF_ID				

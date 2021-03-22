@@ -8,6 +8,7 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
 		store: '{agrupaciones}'
 	},
 	loadAfterBind: false,
+
 	secFunToEdit: 'EDITAR_LIST_AGRUPACIONES',
 
 	secButtons: {
@@ -59,17 +60,14 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
 			                dataIndex: 'numAgrupacionRem'
 			            },
 			            {
-				            dataIndex: 'tipoAgrupacion',
+				            dataIndex: 'tipoAgrupacionDescripcion',
 				            text: HreRem.i18n('header.tipo'),
 							width: 250, 
-				            renderer: function (value) {
-				            	return Ext.isEmpty(value) ? "" : value.descripcion;
-				            },
 				            editor: {
 			        			xtype: 'combobox',
 			        			bind: {
-				            		store: '{comboTipoAgrupacion}',
-				            		value: '{tipoAgrupacion.codigo}'
+				            		store: '{comboTipoAgrupacionFiltro}',
+				            		value: '{tipoAgrupacionCodigo}'
 				            	},					            	
 				            	displayField: 'descripcion',
 								valueField: 'codigo',
@@ -111,18 +109,12 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
 			                editor: {xtype:'textfield'}
 			            },
 			            {
-				            dataIndex: 'localidad',
-				            text: HreRem.i18n('header.provincia'),
-				            renderer: function (value) {
-				            	return Ext.isEmpty(value) ? "" : value.provincia.descripcion;
-				            }
+				            dataIndex: 'provinciaDescripcion',
+				            text: HreRem.i18n('header.provincia')
 				        },
 				        {
-				            dataIndex: 'localidad',
-				            text: HreRem.i18n('header.municipio'),
-				            renderer: function (value) {
-				            	return Ext.isEmpty(value) ? "" : value.descripcion;
-				            }
+				            dataIndex: 'localidadDescripcion',
+				            text: HreRem.i18n('header.municipio')
 				        },
 				        {
 			            	text	 : HreRem.i18n('header.direccion'),
@@ -173,15 +165,15 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
 			            {
 			            	text	 : HreRem.i18n('header.numero.activos.incluidos'),
 			                flex	 : 1,
-			                dataIndex: 'activos'
+			                dataIndex: 'numActivos'
 			            },
 			            {
 			            	text	 : HreRem.i18n('header.numero.activos.publicados'),
 			                flex	 : 1,
-			                dataIndex: 'publicados'
+			                dataIndex: 'numPublicados'
 			            },
 			            {
-				            dataIndex: 'cartera',
+				            dataIndex: 'carteraCodigo',
 				            text: HreRem.i18n('header.entidad.propietaria'),
 				            width: 70,
 				            renderer: carteraRenderer
@@ -192,6 +184,7 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
 			me.onDeleteClick= function (btn) {
 				var me= this;
 				var numAgrupacionRem= me.getSelection()[0].get('numAgrupacionRem');
+				me.mask(HreRem.i18n("msg.mask.espere"));
 				Ext.Ajax.request({
 		    		url: $AC.getRemoteUrl('agrupacion/permiteEliminarAgrupacion'),
 		    		params: {numAgrupacionRem: numAgrupacionRem},
@@ -247,9 +240,11 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
 		    			else{
 		    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		    			}
+		    			 me.unmask();
 		    		},
 				 	failure: function(record, operation) {
 				 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				 		me.unmask();
 				    }
 		    	});
 			};

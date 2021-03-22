@@ -215,8 +215,8 @@ public class OfertasController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional()
-	public ModelAndView registrarExportacion(DtoOfertasFilter dtoOfertasFilter, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		String intervaloTiempo = !Checks.esNulo(appProperties.getProperty("haya.tiempo.espera.export")) ? appProperties.getProperty("haya.tiempo.espera.export") : "300000";
+	public ModelAndView registrarExportacion(DtoOfertaGridFilter dto, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	String intervaloTiempo = !Checks.esNulo(appProperties.getProperty("haya.tiempo.espera.export")) ? appProperties.getProperty("haya.tiempo.espera.export") : "300000";
 		ModelMap model = new ModelMap();
 		Boolean isSuperExport = false;
 		Boolean permitido = true;
@@ -243,9 +243,8 @@ public class OfertasController {
 		        	cuentaAtras = cuentaAtras.substring(0, 1) + " minutos";
 		        }
 			}
-			
 			if(permitido) {
-				int count = ofertaApi.getListOfertasUsuario(dtoOfertasFilter).getTotalCount();
+				int count = ofertaApi.getBusquedaOfertasGridUsuario(dto).getTotalCount();
 				AuditoriaExportaciones ae = new AuditoriaExportaciones();
 				ae.setBuscador(buscador);
 				ae.setFechaExportacion(new Date());

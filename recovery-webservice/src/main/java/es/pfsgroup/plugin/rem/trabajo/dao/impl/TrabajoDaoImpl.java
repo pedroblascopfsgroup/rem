@@ -419,6 +419,9 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.estadoTrabajoCodigo", dto.getEstadoTrabajoCodigo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.solicitante", dto.getSolicitante(), true);
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.proveedor", dto.getProveedor(), true);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.areaPeticionaria", dto.getAreaPeticionaria());
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.responsableTrabajo", dto.getResponsableTrabajo(), true);
 		
 		if(dto.getGestorActivo() != null) {
 			hb.appendWhere(" exists (select 1 from GestorActivo ga, IN (ga.activo.activoTrabajos) atj "
@@ -428,16 +431,9 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		}
 		
 		
-		if(dto.getNumActivo() != null || dto.getCarteraCodigo() != null) {
+		if(dto.getNumActivo() != null && StringUtils.isNumeric(dto.getNumActivo())) {
 			StringBuilder sb = new StringBuilder(" exists (select 1 from ActivoTrabajo atj join atj.activo act"
-					+ " where vgrid.id = atj.trabajo.id ");			
-			if(dto.getNumActivo() != null && StringUtils.isNumeric(dto.getNumActivo())) { 	
-				sb.append(" and act.numActivo =  " + Long.valueOf(dto.getNumActivo()));						
-			}			
-			if(dto.getCarteraCodigo() != null) {			
-				sb.append(" and act.cartera.codigo =  '" + dto.getCarteraCodigo() + "' ");
-			}			
-			sb.append("  )");
+					+ " where vgrid.id = atj.trabajo.id and act.numActivo =  " + Long.valueOf(dto.getNumActivo()) + " )");
 			hb.appendWhere(sb.toString());
 		}
 		
@@ -467,6 +463,19 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 				Date fechaHasta = DateFormat.toDate(dto.getFechaPeticionHasta());
 				HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaSolicitud", null, fechaHasta);			
 			}
+			
+			if (dto.getFechaCambioEstadoDesde() != null && dto.getFechaCambioEstadoHasta() != null) {
+				Date fechaCambioDesde = DateFormat.toDate(dto.getFechaCambioEstadoDesde());
+				Date fechaCambioHasta = DateFormat.toDate(dto.getFechaCambioEstadoHasta());
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaCambioEstado", fechaCambioDesde, fechaCambioHasta);
+			} else if (dto.getFechaPeticionDesde() != null) {
+				Date fechaCambioDesde = DateFormat.toDate(dto.getFechaCambioEstadoDesde());
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaCambioEstado", fechaCambioDesde, null);
+			} else if (dto.getFechaPeticionHasta() != null) {
+				Date fechaCambioHasta = DateFormat.toDate(dto.getFechaCambioEstadoHasta());
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaCambioEstado", null, fechaCambioHasta);			
+			}
+			
 		} catch (ParseException e) {
 			logger.error(e.getMessage());
 		}

@@ -209,7 +209,7 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 							{ 
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.canal'),
-					        	name: 'canal',
+					        	name: 'canalCodigo',
 					        	reference: 'canal',
 					        	bind: {
 				            		store: '{comboCanalOferta}'

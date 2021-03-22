@@ -2086,7 +2086,7 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional()
-	public ModelAndView registrarExportacionPublicaciones(DtoActivosPublicacion dtoActivosPublicacion, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView registrarExportacionPublicaciones(DtoPublicacionGridFilter dto, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String intervaloTiempo = !Checks.esNulo(appProperties.getProperty("haya.tiempo.espera.export")) ? appProperties.getProperty("haya.tiempo.espera.export") : "300000";
 		ModelMap model = new ModelMap();		 
 		Boolean isSuperExport = false;
@@ -2095,6 +2095,7 @@ public class ActivoController extends ParadiseJsonController {
 		Usuario user = usuarioManager.getUsuarioLogado();
 		Long tiempoPermitido = System.currentTimeMillis() - Long.parseLong(intervaloTiempo);
 		String cuentaAtras = null;
+
 		try {
 			Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId());
 			Filter filtroConsulta = genericDao.createFilter(FilterType.EQUALS, "filtros", filtros);
@@ -2114,9 +2115,8 @@ public class ActivoController extends ParadiseJsonController {
 		        	cuentaAtras = cuentaAtras.substring(0, 1) + " minutos";
 		        }
 			}
-			
 			if(permitido) {
-				int count = activoApi.getActivosPublicacion(dtoActivosPublicacion).getTotalCount();
+				int count = activoApi.getPublicacionGrid(dto).getTotalCount();
 				AuditoriaExportaciones ae = new AuditoriaExportaciones();
 				ae.setBuscador(buscador);
 				ae.setFechaExportacion(new Date());

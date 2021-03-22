@@ -18,12 +18,15 @@ public class TrabajoGridExcelReport extends AbstractExcelReport implements Excel
 		List<String> listaCabeceras = new ArrayList<String>();
 		listaCabeceras.add("Nº de trabajo");
 		listaCabeceras.add("Nº de activo");
+		listaCabeceras.add("Cartera");
+		listaCabeceras.add("Subcartera");
 		listaCabeceras.add("Tipo de trabajo");
 		listaCabeceras.add("Subtipo de trabajo");
 		listaCabeceras.add("Estado");
 		listaCabeceras.add("Solicitante");
 		listaCabeceras.add("Proveedor");
 		listaCabeceras.add("Fecha de petición");
+		listaCabeceras.add("Área peticionaria");
 		
 		return listaCabeceras;
 	}
@@ -35,13 +38,16 @@ public class TrabajoGridExcelReport extends AbstractExcelReport implements Excel
 		for(VGridBusquedaTrabajos trabajo: listaTrabajos){
 			List<String> fila = new ArrayList<String>();
 			fila.add(trabajo.getNumTrabajo().toString());
-			fila.add(trabajo.getNumActivoAgrupacion().toString());
+			fila.add(trabajo.getNumActivoAgrupacion());
+			fila.add(trabajo.getCarteraDescripcion());
+			fila.add(trabajo.getSubcarteraDescripcion());
 			fila.add(trabajo.getTipoTrabajoDescripcion());
 			fila.add(trabajo.getSubtipoTrabajoDescripcion());
 			fila.add(trabajo.getEstadoTrabajoDescripcion());
 			fila.add(trabajo.getSolicitante());
 			fila.add(trabajo.getProveedor());
 			fila.add(this.getDateStringValue(trabajo.getFechaSolicitud()));
+			fila.add(trabajo.getAreaPeticionaria());
 				
 			valores.add(fila);
 		}

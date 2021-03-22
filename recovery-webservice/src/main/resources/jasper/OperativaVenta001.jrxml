@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="OperativaVenta001" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="df415416-7b17-4495-a87b-cf5885d1390a">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
@@ -190,6 +190,11 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{Sucursal}]]></textFieldExpression>
 			</textField>
+			<rectangle>
+				<reportElement x="443" y="0" width="93" height="22" backcolor="#000000" uuid="57e0b161-7ddd-41d6-b25a-ea214f70866c">
+					<printWhenExpression><![CDATA[$P{Cartera}.equals("03")]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
 			<image isLazy="true">
 				<reportElement mode="Transparent" x="455" y="1" width="70" height="32" uuid="fbf118da-5da6-4736-991f-1e2da52dda37">
 					<printWhenExpression><![CDATA[$P{Cartera}.equals("03")]]></printWhenExpression>

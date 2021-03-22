@@ -377,7 +377,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 				+ "				<img src='"+this.getUrlImagenes()+"ico_notificacion.png' "
 				+ "					style='display: table-cell; padding: 12px; display: inline-block' />"
 				+ "				<div style='font-size: 20px; vertical-align: top; color: #333; display: table-cell; padding: 12px'>Notificación"
-				+ "					resolución comité Grupo Caixabank</div>"
+				+ "					resolución comité Bankia</div>"
 				+ "			</div>"
 				+ "			<div style='background: #b7ddf0; width: 700px; min-height: 400px; border-radius: 0px 20px 20px 20px; padding: 20px'>"
 				+ "				<div style='background: #054664; width: 600px; height: 200px; border-radius: 20px; color: #fff; display: inline-block'>"

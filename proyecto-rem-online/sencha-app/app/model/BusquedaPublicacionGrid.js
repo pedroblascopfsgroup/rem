@@ -68,23 +68,17 @@ Ext.define('HreRem.model.BusquedaPublicacionGrid', {
 		    },
 		    {
 		          name: 'indicadorAlquiler',
-		          calculate: function(data) {
-		          	if(data.tipoActivoCodigo == '02'){
-		          		if(data.carteraCodigo == '01' || data.carteraCodigo == '08'){
-		          			return data.admision == 1 
-		          				&& data.gestion == 1 
-				          		&& data.adjuntoActivo == 1
-				          		&& data.informeComercial == 1 
-				          		&& (data.adecuacionAlquilerCodigo == '01'  || data.adecuacionAlquilerCodigo == '03') 
-				          		&& (data.conPrecioAlquiler == 1 || data.publicarSinPrecioAlquiler == 1);
-		          		}
-		          	}else{
-		          		return data.admision == 1 
-		          				&& data.gestion == 1 
-				          		&& data.adjuntoActivo == 1				          		 
-				          		&& (data.adecuacionAlquilerCodigo == '01'  || data.adecuacionAlquilerCodigo == '03') 
-				          		&& (data.conPrecioAlquiler == 1 || data.publicarSinPrecioAlquiler == 1);
-		          	}	
+		          calculate: function(data) {		          	
+		          	if(data.tipoActivoCodigo == '02' && data.adecuacionAlquilerCodigo == '01'  || data.adecuacionAlquilerCodigo == '03' && data.adjuntoActivo == 1
+			          		&& (data.conPrecioAlquiler == 1 || data.publicarSinPrecioAlquiler == 1) && data.informeComercial == 1){
+		          			if (data.carteraCodigo == '01' || data.carteraCodigo == '08') {
+		          				return true;
+		          			} else {
+		          				return data.informeComercial == 1;
+		          			}
+	          		} else {
+	          			return false;
+	          		}
     			  },
     			  depends: ['tipoActivoCodigo', 'admision', 'adecuacionAlquilerCodigo', 'gestion', 'adjuntoActivo', 'conPrecioAlquiler', 'publicarSinPrecioAlquiler', 'informeComercial']
 		    },		   

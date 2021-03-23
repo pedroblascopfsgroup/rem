@@ -3116,11 +3116,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(!Checks.esNulo(agrOfertada)) {
 				
 					if(!Checks.esNulo(visita)) {
+						Double importeObraNueva = 0.0;
+						Double importeOtros = 0.0;
 						DDSubtipoActivo subtipoAct = null;
 						Activo activoDeVisita = null;
 						Activo activoOfr = null;
 						List<ActivoOferta> listActOfr = new ArrayList<ActivoOferta>();
 						List<ActivoAgrupacionActivo> listActivosAgr = new ArrayList<ActivoAgrupacionActivo>();
+						RespuestaComisionResultDto comisionObraNuevaDto = null;
+						RespuestaComisionResultDto otrosComisionDto = null;
+						ConsultaComisionDto consultaComisionObraNuevaDto = null;
+						ConsultaComisionDto consultaOtrosComisionDto = null;
 						activoDeVisita = visita.getActivo();
 						listActivosAgr = activoDeVisita.getAgrupaciones();
 						
@@ -3134,16 +3140,46 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						
 						if(contieneActPrincAgrObraNueva) {
 							listActOfr = oferta.getActivosOferta();
-							consultaComisionDto.setAmount(importe);
-							consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
+							for (ActivoOferta activoOferta : listActOfr) {
+								 activoOfr = activoAdapter.getActivoById(activoOferta.getActivoId());
+								 if(activoOfr != null && DDSinSiNo.CODIGO_SI.equals(activoOfr.getTieneObraNuevaAEfectosComercializacion().getCodigo())) {
+									 importeObraNueva += activoOferta.getImporteActivoOferta();
+								 }else {
+									 importeOtros += activoOferta.getImporteActivoOferta();
+								 }
+							}
+						}
+						if(importeObraNueva > 0.0) {
+							consultaComisionObraNuevaDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
+							consultaComisionObraNuevaDto.setAmount(importeObraNueva);
+							try {
+								comisionObraNuevaDto = comisionamientoApi.createCommission(consultaComisionObraNuevaDto);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} 
+						}else {
+							comisionObraNuevaDto.setCommissionAmount((double) 0);
 						}
 						
-						try {
-							calculoComision = comisionamientoApi.createCommission(consultaComisionDto);
-						} catch (Exception e) {
-							logger.error("Error en la llamada al comisionamiento: " + e);
+						if(importeOtros > 0.0) {
+							consultaOtrosComisionDto.setComercialType(activoDeVisita.getTipoComercializar().getCodigo());
+							consultaOtrosComisionDto.setAmount(importeOtros);
+							try {
+								otrosComisionDto = comisionamientoApi.createCommission(consultaOtrosComisionDto);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} 
+						}else {
+							otrosComisionDto.setCommissionAmount((double) 0);
 						}
-						
+						if(comisionObraNuevaDto.getCommissionAmount() > 0.0) {
+							calculoComision = comisionObraNuevaDto;
+						}else {
+							calculoComision = otrosComisionDto;
+						}
+						calculoComision.setCommissionAmount(comisionObraNuevaDto.getCommissionAmount()+otrosComisionDto.getCommissionAmount());
 						
 					}else {
 						try {

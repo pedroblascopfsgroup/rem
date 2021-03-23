@@ -3094,8 +3094,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						List<ActivoAgrupacionActivo> listActivosAgr = new ArrayList<ActivoAgrupacionActivo>();
 						RespuestaComisionResultDto comisionObraNuevaDto = null;
 						RespuestaComisionResultDto otrosComisionDto = null;
-						ConsultaComisionDto consultaComisionObraNuevaDto = null;
-						ConsultaComisionDto consultaOtrosComisionDto = null;
 						activoDeVisita = visita.getActivo();
 						listActivosAgr = activoDeVisita.getAgrupaciones();
 						
@@ -3119,31 +3117,38 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							}
 						}
 						if(importeObraNueva > 0.0) {
-							consultaComisionObraNuevaDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
-							consultaComisionObraNuevaDto.setAmount(importeObraNueva);
+							consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
+							consultaComisionDto.setAmount(importeObraNueva);
 							try {
-								comisionObraNuevaDto = comisionamientoApi.createCommission(consultaComisionObraNuevaDto);
+								comisionObraNuevaDto = comisionamientoApi.createCommission(consultaComisionDto);
 							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								logger.error("Error en la llamada a comisionamiento:" + e);
 							} 
 						}else {
-							comisionObraNuevaDto.setCommissionAmount((double) 0);
+							try {
+								comisionObraNuevaDto = comisionamientoApi.createCommission(consultaComisionDtoVacio)
+							} catch (Exception e) {
+								logger.error("Error en la llamada a comisionamiento:" + e);
+							}
 						}
 						
 						if(importeOtros > 0.0) {
-							consultaOtrosComisionDto.setComercialType(activoDeVisita.getTipoComercializar().getCodigo());
-							consultaOtrosComisionDto.setAmount(importeOtros);
+							consultaComisionDto.setComercialType(activoDeVisita.getTipoComercializar().getCodigo());
+							consultaComisionDto.setAmount(importeOtros);
 							try {
-								otrosComisionDto = comisionamientoApi.createCommission(consultaOtrosComisionDto);
+								otrosComisionDto = comisionamientoApi.createCommission(consultaComisionDto);
 							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								logger.error("Error en la llamada a comisionamiento:" + e);
 							} 
 						}else {
-							otrosComisionDto.setCommissionAmount((double) 0);
+							try {
+								otrosComisionDto = comisionamientoApi.createCommission(consultaComisionDtoVacio)
+							} catch (Exception e) {
+								logger.error("Error en la llamada a comisionamiento:" + e);
+							}
 						}
-						if(comisionObraNuevaDto.getCommissionAmount() > 0.0) {
+						
+						if(comisionObraNuevaDto.getCommissionAmount() > 0) {
 							calculoComision = comisionObraNuevaDto;
 						}else {
 							calculoComision = otrosComisionDto;

@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -31,6 +32,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoOfertaGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -609,5 +611,86 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	
 	public void flush() {
 		this.getSessionFactory().getCurrentSession().flush();
+	}
+
+	@Override
+	public Page getBusquedaOfertasGrid(DtoOfertaGridFilter dto) {
+		HQLBuilder hb = new HQLBuilder("select vgrid from VGridBusquedaOfertas vgrid");
+		
+		if (dto.getNumOferta() != null && StringUtils.isNumeric(dto.getNumOferta().trim()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numOferta", Long.valueOf(dto.getNumOferta().trim()));
+		if (dto.getNumExpediente() != null && StringUtils.isNumeric(dto.getNumExpediente().trim()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numExpediente", Long.valueOf(dto.getNumExpediente().trim()));
+		if (dto.getNumActivo() != null && StringUtils.isNumeric(dto.getNumActivo().trim()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivo", Long.valueOf(dto.getNumActivo().trim()));
+		if (dto.getNumAgrupacion() != null && StringUtils.isNumeric(dto.getNumAgrupacion().trim()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numAgrupacion", Long.valueOf(dto.getNumAgrupacion().trim()));
+		if (dto.getNumActivoUvem() != null && StringUtils.isNumeric(dto.getNumActivoUvem().trim()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoUvem", Long.valueOf(dto.getNumActivoUvem().trim()));
+		if (dto.getNumPrinex() != null && StringUtils.isNumeric(dto.getNumPrinex().trim()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoPrinex", Long.valueOf(dto.getNumPrinex().trim()));
+		
+		if (dto.getTipoFecha() != null) {
+			try {				
+				Date fechaDesde = dto.getFechaDesde() != null ? DateFormat.toDate(dto.getFechaDesde()) : null;
+				Date fechaHasta = dto.getFechaHasta() != null ? DateFormat.toDate(dto.getFechaHasta()) : null;
+				if (TIPO_FECHA_ALTA.equals(dto.getTipoFecha())) {
+					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaCreacion", fechaDesde, fechaHasta);
+				} else if (TIPO_FECHA_FIRMA_RESERVA.equals(dto.getTipoFecha())) {
+					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaFirmaReserva", fechaDesde, fechaHasta);
+				}
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+			}
+		}
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoComercializacionCodigo", dto.getTipoComercializacionCodigo());
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.ofertante", dto.getOfertante(), true);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.documentoOfertante", dto.getDocumentoOfertante());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.canalCodigo", dto.getCanalCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoSareb", dto.getNumActivoSareb());
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.telefonoOfertante", dto.getTelefonoOfertante(), true);
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.emailOfertante", dto.getEmailOfertante(), true);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraCodigo());
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.nombreCanal", dto.getNombreCanal(), true);
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.codigoPromocionPrinex", dto.getCodigoPromocionPrinex(), true);
+				
+		if(dto.getNumAgrupacion() == null
+				&& (dto.getAgrupacionesVinculadas() == null || Boolean.FALSE.equals(dto.getAgrupacionesVinculadas()))
+				&& (dto.getNumActivoUvem() != null || dto.getNumActivoSareb() != null || dto.getNumPrinex() != null || dto.getNumActivo() != null)){
+				HQLBuilder.addFiltroIsNull(hb, "vgrid.idAgrupacion");			
+			}						
+
+		if (dto.getClaseActivoBancarioCodigo() != null)
+			hb.appendWhere(" exists (select 1 from ActivoBancario ab where ab.claseActivo.codigo = '" +	 dto.getClaseActivoBancarioCodigo() + "' and vgrid.idActivo = ab.activo.id) ");
+
+		if (dto.getTipoGestor() != null || dto.getUsuarioGestor() != null) {
+			StringBuilder sb = new StringBuilder(" exists (select 1 from GestorActivo ga where vgrid.idActivo = ga.activo.id ");
+			if (dto.getTipoGestor() != null)
+				sb.append(" and ga.tipoGestor.codigo = '" + dto.getTipoGestor() + "' ");
+			if (dto.getUsuarioGestor() != null)
+				sb.append(" and ga.usuario.id = " + dto.getUsuarioGestor());
+			sb.append(" ) ");
+			hb.appendWhere(sb.toString());
+		}
+		
+		if (dto.getGestoria() != null)
+			hb.appendWhere(" exists (select 1 from GestorExpedienteComercial gex where vgrid.idExpediente = gex.expedienteComercial.id and gex.usuario.id = " + dto.getGestoria() + " ) ");		
+		if (dto.getGestoriaBag() != null) 
+			hb.appendWhere(" exists (select 1 from VBusquedaActivosGestorias bag where bag.gestoria = " + dto.getGestoria() + " and vgrid.idActivo = bag.id) ");	
+		
+		if (dto.getCodigoEstadoOferta() != null)
+			this.addFiltroWhereInSiNotNullConStrings(hb, "vgrid.codigoEstadoOferta", Arrays.asList(dto.getCodigoEstadoOferta().split(",")));
+		if (dto.getCodigoTipoOferta() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.codigoTipoOferta", dto.getCodigoTipoOferta());
+			if (dto.getEstadoExpedienteVenta() != null) {
+				this.addFiltroWhereInSiNotNullConStrings(hb, "vgrid.codigoEstadoExpediente", Arrays.asList(dto.getEstadoExpedienteVenta().split(",")));				
+			}else if (dto.getEstadoExpedienteAlquiler() != null) {
+				this.addFiltroWhereInSiNotNullConStrings(hb, "vgrid.codigoEstadoExpediente", Arrays.asList(dto.getEstadoExpedienteAlquiler().split(",")));
+				}
+		}			
+		
+		return HibernateQueryUtils.page(this, hb, dto);
 	}
 }

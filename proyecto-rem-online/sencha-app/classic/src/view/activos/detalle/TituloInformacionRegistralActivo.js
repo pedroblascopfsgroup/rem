@@ -18,7 +18,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 	
 	recordClass: "HreRem.model.ActivoDatosRegistrales",
 
-    requires: ['HreRem.model.ActivoDatosRegistrales', 'HreRem.view.common.FieldSetTable', 'HreRem.view.common.TextFieldBase', 'HreRem.view.common.ComboBoxFieldBase', 'HreRem.model.ActivoPropietario',
+    requires: ['HreRem.model.ActivoDatosRegistrales', 'HreRem.view.common.FieldSetTable', 'HreRem.view.common.TextFieldBase', 'HreRem.view.common.ComboBoxFieldBase', 'HreRem.view.common.ComboBoxFieldBaseDD', 'HreRem.model.ActivoPropietario',
     	'HreRem.view.activos.detalle.CalificacionNegativaGrid', 'HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid','HreRem.model.ActivoDeudorAcreditador'],
 
     initComponent: function () {
@@ -43,7 +43,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			            	bind: {
 			            		store: '{comboProvincia}',
 			            	    value: '{datosRegistrales.provinciaRegistro}',
-			            	    readOnly: '{datosRegistrales.unidadAlquilable}'
+			            	    readOnly: '{datosRegistrales.unidadAlquilable}'//,
+								//rawValue: '{datosRegistrales.provinciaRegistroDescripcion}'
 			            	},
     						listeners: {
 								select: 'onChangeChainedCombo'
@@ -73,13 +74,14 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						{
 							xtype: 'comboboxfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.poblacion.registro'),
-							selectFirst: true,
+							//selectFirst: true,
 			            	reference:	'poblacionRegistro',
 			            	bind: {
 			            		store: '{comboMunicipioRegistro}',
 			            		value: '{datosRegistrales.poblacionRegistro}',
 			            		disabled: '{!datosRegistrales.provinciaRegistro}',
-			            		readOnly: '{datosRegistrales.unidadAlquilable}'
+			            		readOnly: '{datosRegistrales.unidadAlquilable}'//,
+								//rawValue: '{datosRegistrales.poblacionRegistroDescripcion}'
 			            	}
                       },
 		                { 
@@ -109,7 +111,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							items :
 								[
 									{
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 										disabled: true,
 										fieldLabel: HreRem.i18n('fieldlabel.poblacion.anterior'),
 										labelWidth:	200,
@@ -117,7 +119,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						            	bind: {
 						            		store: '{comboMunicipio}',
 						            		value: '{datosRegistrales.localidadAnteriorCodigo}',
-						            		readOnly: '{datosRegistrales.unidadAlquilable}'
+						            		readOnly: '{datosRegistrales.unidadAlquilable}',
+											rawValue: '{datosRegistrales.localidadAnteriorDescripcion}'
 						            	}
 									},
 				
@@ -289,13 +292,14 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						            	}
 							        },
 							        {
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.estado.si.no.inscrita'),
 										reference: 'estadoDivHorizontalNoInscrita',
 						            	bind: {
 						            		store: '{comboEstadoDivHorizontal}',
 						            		value: '{datosRegistrales.estadoDivHorizontalCodigo}',
-						            		readOnly: '{datosRegistrales.unidadAlquilable}'
+						            		readOnly: '{datosRegistrales.unidadAlquilable}',
+											rawValue: '{datosRegistrales.estadoDivHorizontalDescripcion}'
 						            	}
 									}				              
 									
@@ -313,12 +317,13 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							defaultType: 'textfieldbase',
 							items :[									
 								{
-									xtype: 'comboboxfieldbase',
+									xtype: 'comboboxfieldbasedd',
 									fieldLabel: HreRem.i18n('fieldlabel.estado'),
 					                bind: {
 					                    store: '{comboEstadoObraNueva}',
 					                    value: '{datosRegistrales.estadoObraNuevaCodigo}',
-					                    readOnly: '{datosRegistrales.unidadAlquilable}'
+					                    readOnly: '{datosRegistrales.unidadAlquilable}',
+										rawValue: '{datosRegistrales.estadoObraNuevaDescripcion}'
 					                }
 								},
 				                {
@@ -349,7 +354,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					collapsible: false,
 					border: false,
 					items: [{
-						xtype: 'comboboxfieldbase',
+						xtype: 'comboboxfieldbasedd',
 						fieldLabel: HreRem.i18n('fieldlabel.origen.activo'),
 						reference: 'comboTipoTituloRef',
 						forceSelection: true,
@@ -357,20 +362,22 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		            	bind: {
 		            		store: '{storeTituloOrigenActivo}',
 		            		value: '{datosRegistrales.tipoTituloCodigo}',
-		            		readOnly: '{datosRegistrales.unidadAlquilable}'
+		            		readOnly: '{datosRegistrales.unidadAlquilable}',
+							rawValue: '{datosRegistrales.tipoTituloDescripcion}'
 		            	},
 		            	listeners: {
 							change: 'onChangeTipoTitulo'
 		            	}
 					},
 					{
-						xtype: 'comboboxfieldbase',
+						xtype: 'comboboxfieldbasedd',
 						fieldLabel: HreRem.i18n('fieldlabel.subtipo.titulo'),
 						forceSelection: true,
 		            	bind: {
 		            		store: '{comboSubtipoTitulo}',
 		            		value: '{datosRegistrales.subtipoTituloCodigo}',
-		            		readOnly: '{datosRegistrales.unidadAlquilable}'
+		            		readOnly: '{datosRegistrales.unidadAlquilable}',
+							rawValue: '{datosRegistrales.subtipoTituloDescripcion}'
 		            	},
 		            	listeners:{
 		            		change:'gestoresEstadoNotarialAndIDHayaNotNull'
@@ -388,25 +395,27 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			        },
 			        //ESTE ES EL COMBO QUE APARECE PARA LOS ACTIVOS DE DIVARIAN
 			        {
-			        	xtype: 'comboboxfieldbase',
+			        	xtype: 'comboboxfieldbasedd',
 						fieldLabel: HreRem.i18n('fieldlabel.origen.anterior.activo'),
 						reference: 'comboOrigenAnteriorActivoRef',				
 		            	bind: {
 		            		
 		            		store: '{storeOrigenAnteriorActivo}',
 		            		hidden: '{!mostrarCamposDivarian}',
-		            		value: '{datosRegistrales.origenAnteriorActivoCodigo}'
+		            		value: '{datosRegistrales.origenAnteriorActivoCodigo}',
+							rawValue: '{datosRegistrales.origenAnteriorActivoDescripcion}'
 		            	}
 	            	},
 	            	//ESTE ES EL COMBO QUE APARECE PARA LOS ACTIVOS DE BBVA
 			        {
-			        	xtype: 'comboboxfieldbase',
+			        	xtype: 'comboboxfieldbasedd',
 						fieldLabel: HreRem.i18n('fieldlabel.origen.anterior.activo'),
 						reference: 'comboOrigenAnteriorActivoBBVARef',				
 		            	bind: {
 		            		store: '{storeTituloOrigenActivo}',
 		            		hidden: '{!isCarteraBbva}',
-		            		value: '{datosRegistrales.origenAnteriorActivoBbvaCodigo}'
+		            		value: '{datosRegistrales.origenAnteriorActivoBbvaCodigo}',
+							rawValue: '{datosRegistrales.origenAnteriorActivoBbvaDescripcion}'
 		            	}
 	            	},
 					{
@@ -415,21 +424,22 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						reference:'fechaTituloAnteriorRef',
 				        fieldLabel: HreRem.i18n('fieldlabel.fecha.titulo.anterior'),
 				        bind: {				        	
-				        	 hidden: '{!mostrarCamposDivarianandBbva}',
-				        	 value: '{datosRegistrales.fechaTituloAnterior}'
+				        	hidden: '{!mostrarCamposDivarianandBbva}',
+				        	value: '{datosRegistrales.fechaTituloAnterior}'
 				        }
 				       
 					},
 					{
-			        	xtype: 'comboboxfieldbase',
+			        	xtype: 'comboboxfieldbasedd',
 			        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
 			        	reference:'sociedadPagoAnteriorRef',
 			        	
 			        	bind: {			        		
-			        		 store: '{comboSociedadAnteriorBBVA}',
-			        		 hidden: '{!isCarteraBbva}',
-			        		 readOnly:'{!isCarteraBbva}',
-			        		 value:'{datosRegistrales.sociedadPagoAnterior}'
+			        		store: '{comboSociedadAnteriorBBVA}',
+			        		hidden: '{!isCarteraBbva}',
+			        		readOnly:'{!isCarteraBbva}',
+			        		value:'{datosRegistrales.sociedadPagoAnterior}',
+							rawValue:'{datosRegistrales.sociedadPagoAnteriorDescripcion}'
 			        	}
 			        }
 				]},
@@ -685,23 +695,25 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						
 						[						
 							{
-								xtype: 'comboboxfieldbase',
-								fieldLabel: HreRem.i18n('fieldlabel.entidad.ejecutante.hipoteca'),								
+								xtype: 'comboboxfieldbasedd',
+								fieldLabel: HreRem.i18n('fieldlabel.entidad.ejecutante.hipoteca'),
 				            	bind: {
 				            		store: '{comboEntidadesEjecutantes}',
 				            		value: '{datosRegistrales.entidadEjecutanteCodigo}',
-				            		readOnly: '{datosRegistrales.unidadAlquilable}'
+				            		readOnly: '{datosRegistrales.unidadAlquilable}',
+									rawValue: '{datosRegistrales.entidadEjecutanteDescripcion}'
 				            	}
 
 							},
 
 			                {
-								xtype: 'comboboxfieldbase',
-								fieldLabel: HreRem.i18n('fieldlabel.estado.adjudicacion'),								
+								xtype: 'comboboxfieldbasedd',
+								fieldLabel: HreRem.i18n('fieldlabel.estado.adjudicacion'),
 				            	bind: {
 				            		store: '{comboEstadoAdjudicacion}',
 				            		value: '{datosRegistrales.estadoAdjudicacionCodigo}',
-				            		readOnly: '{datosRegistrales.unidadAlquilable}'
+				            		readOnly: '{datosRegistrales.unidadAlquilable}',
+									rawValue: '{datosRegistrales.estadoAdjudicacionDescripcion}'
 				            	}
                                  
 							},
@@ -783,12 +795,13 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								}
 			                },
 			                {
-								xtype: 'comboboxfieldbase',
-								fieldLabel: HreRem.i18n('fieldlabel.resolucion.moratoria'),								
+								xtype: 'comboboxfieldbasedd',
+								fieldLabel: HreRem.i18n('fieldlabel.resolucion.moratoria'),
 				            	bind: {
 				            		store: '{comboFavorableDesfavorable}',
 				            		value: '{datosRegistrales.resolucionMoratoriaCodigo}',
-				            		readOnly: '{datosRegistrales.unidadAlquilable}'
+				            		readOnly: '{datosRegistrales.unidadAlquilable}',
+									rawValue: '{datosRegistrales.resolucionMoratoriaDescripcion}'
 				            	}
 							},
 							{
@@ -820,7 +833,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				            	bind: {
 				            		store: '{comboTiposJuzgadoPlaza}',
 				            		value: '{datosRegistrales.tipoJuzgadoCodigo}',
-				            		readOnly: '{datosRegistrales.unidadAlquilable}'
+				            		readOnly: '{datosRegistrales.unidadAlquilable}'//,
+									//rawValue: '{datosRegistrales.tipoJuzgadoDescripcion}'
 				            	}
 							},
 			                {
@@ -831,7 +845,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				            	bind: {
 				            		store: '{comboTiposPlaza}',
 				            		value: '{datosRegistrales.tipoPlazaCodigo}',
-				            		readOnly: '{datosRegistrales.unidadAlquilable}'
+				            		readOnly: '{datosRegistrales.unidadAlquilable}'//,
+									//rawValue: '{datosRegistrales.tipoPlazaDescripcion}'
 				            	},
 								chainedStore: 'comboTiposJuzgadoPlaza',
 								chainedReference: 'comboJuzgado',
@@ -993,7 +1008,10 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						xtype:'fieldsettable',
 						reference:'pdv',
 						colspan: 3,
-						hidden: false,
+						bind:{
+							hidden: '{!datosRegistrales.isPdv}',
+							disabled: '{!datosRegistrales.isPdv}'
+						},
 						defaultType: 'textfieldbase',
 						title: 'PDV',
 						items : [

@@ -265,6 +265,14 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					           renderer: coloredRender,
 					           hidden: cartera(),
 					           hideable: !cartera()
+						   },{
+
+							   text: HreRem.i18n('header.fecha.acep.gpdr'),
+							   dataIndex: 'fechaAcepGdpr',
+							   flex: 1,
+					           renderer: coloredRender,
+					           formatter: 'date("d/m/Y h:i")'
+					          
 						   }   
 						  ],
 					    dockedItems : [

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -175,6 +176,9 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "ADCOM_GDPR")
     private AdjuntoComprador adcomIdDocumentoGDPR;
+    
+    @Column(name = "FECHA_ACEP_GDPR")
+    private Date fechaAcepGdpr;
     
     @Version   
 	private Long version;
@@ -489,4 +493,13 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 	public void setAdcomIdDocumentoGDPR(AdjuntoComprador adcomIdDocumentoGDPR) {
 		this.adcomIdDocumentoGDPR = adcomIdDocumentoGDPR;
 	}
+
+	public Date getFechaAcepGdpr() {
+		return fechaAcepGdpr;
+	}
+
+	public void setFechaAcepGdpr(Date fechaAcepGdpr) {
+		this.fechaAcepGdpr = fechaAcepGdpr;
+	}
+	
 }

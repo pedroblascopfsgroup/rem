@@ -90,6 +90,7 @@ public class OfertaDto implements Serializable {
 	private Boolean docResponsabilidadPrescriptor;
 	private String porcentajeDescuento;
 	private String justificacionOferta;
+	private Date fechaAceptacionGdpr;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -382,5 +383,11 @@ public class OfertaDto implements Serializable {
 	public void setJustificacionOferta(String justificacionOferta) {
 		this.justificacionOferta = justificacionOferta;
 
+	}
+	public Date getFechaAceptacionGdpr() {
+		return fechaAceptacionGdpr;
+	}
+	public void setFechaAceptacionGdpr(Date fechaAceptacionGdpr) {
+		this.fechaAceptacionGdpr = fechaAceptacionGdpr;
 	}
 }

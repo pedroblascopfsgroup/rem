@@ -1224,6 +1224,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						titAdi.setAdcomIdDocumentoGDPR(adjComprConsGDPR);
 					}
 				}
+				
+				if (ofertaDto.getFechaAceptacionGdpr() != null) {
+					titAdi.setFechaAcepGdpr(ofertaDto.getFechaAceptacionGdpr());
+				}
+				
 
 				listaTit.add(titAdi);
 				genericDao.save(TitularesAdicionalesOferta.class, titAdi);

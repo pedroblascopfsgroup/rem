@@ -1181,12 +1181,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	@Override
 	public Integer getEstadoIndicadorPublicacionAgrupacionVenta(Activo activoPrincipal) {
 		Integer estado = 0;
-
-		if (getEstadoIndicadorPublicacionVenta(activoPrincipal) == 0) {
+		int respuesta = getEstadoIndicadorPublicacionVenta(activoPrincipal);
+		if (respuesta == 0) {
 			estado = ESTADO_PUBLICACION_NARANJA;
-		} else if (getEstadoIndicadorPublicacionVenta(activoPrincipal) == 2) {
+		} else if (respuesta == 2) {
 			estado = ESTADO_PUBLICACION_AMARILLO;
-		} else if (getEstadoIndicadorPublicacionVenta(activoPrincipal) == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)) {
+		} else if (respuesta == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)) {
 			estado = ESTADO_PUBLICACION_AZUL;
 		}
 
@@ -1197,12 +1197,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	public Integer getEstadoIndicadorPublicacionAgrupacionAlquiler(Activo activoPrincipal) {
 		Integer estado = 0;
 
+		int respuesta = getEstadoIndicadorPublicacionAlquiler(activoPrincipal);
 		
-		if (getEstadoIndicadorPublicacionAlquiler(activoPrincipal) == 0) {
+		if (respuesta == 0) {
 			estado = ESTADO_PUBLICACION_NARANJA;
-		} else if (getEstadoIndicadorPublicacionAlquiler(activoPrincipal) == 2) {
+		} else if (respuesta == 2) {
 			estado = ESTADO_PUBLICACION_AMARILLO;
-		} else if (getEstadoIndicadorPublicacionAlquiler(activoPrincipal) == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)) {
+		} else if (respuesta == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)) {
 			estado = ESTADO_PUBLICACION_AZUL;
 		}
 

@@ -32,14 +32,15 @@ import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
 import es.pfsgroup.plugin.rem.model.HistoricoRequisitosFaseVenta;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 
 public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
@@ -115,7 +116,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
 	void actualizarRatingActivo(Long idActivo, String username);
 
-	List<VOfertasActivosAgrupacion> getListOfertasActivo(Long idActivo);
+	List<VGridOfertasActivosAgrupacionIncAnuladas> getListOfertasActivo(Long idActivo);
 
 	/**
 	 * Realiza una llamada al procedure CALCULO_SINGULAR_RETAIL_AUTO, el cual calcula el tipo comercializar que 
@@ -204,7 +205,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 */
 	void crearHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
 
-	List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo);
+	List<VGridOfertasActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo);
 
 	List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivo(Long idActivo);
 
@@ -397,4 +398,5 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	boolean isPublicadoVentaHistoricoByFechaValoracion(Long idActivo, Date fechaValoracion);
 
 	boolean isPublicadoVentaByFechaValoracion(Long idActivo, Date fechaValoracion);
+	public Page getBusquedaPublicacionGrid(DtoPublicacionGridFilter dto);
 }

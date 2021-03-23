@@ -32,7 +32,7 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 					me.loadPage();
 				}				
 			}
-			if(binding._config.names.set == 'setStore'){
+			if(binding._config.names.set == 'setStore' && value != null){
 				value.addListener({
 					load: function(store, records, successful, operation, eOpts){
 						if(successful && records.length > 0){

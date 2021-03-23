@@ -281,7 +281,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     			parametrico = true;
     		}
 		}
-		
     	if(!parametrico){
         	me.lookupReference('comboProveedorGestionEconomica2').setDisabled(false);
     		me.lookupReference('comboProveedorGestionEconomica2').setActiveError('Es necesario cargar el listado de activos para poder seleccionar el proveedor del trabajo');
@@ -2085,22 +2084,17 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     loadComboProveedorContacto: function(idProveedor) {
     	var me = this;
     	if (idProveedor != undefined) {
-    		var urlProveedorContacto = $AC.getRemoteUrl('trabajo/getComboProveedorContactoCreaTrabajo');
-        	Ext.Ajax.request({
-  			  url:urlProveedorContacto,
-  			  params:  {idProveedor: idProveedor},
-  			  success: function(response,opts){
-  				  var decode = Ext.JSON.decode(response.responseText);
-  				  var result = decode["data"];
-  				  if(result.length > 0){
-					  me.lookupReference('proveedorContactoCombo2').setStore(new Ext.data.Store({
-						  	model: 'HreRem.model.ComboBase',
-						    data: result
-					  }));
-	  				  me.lookupReference('proveedorContactoCombo2').setDisabled(false);
-  				  }
-  			  }
-          	});
+			me.lookupReference('proveedorContactoCombo2').setDisabled(false);
+			me.lookupReference('proveedorContactoCombo2').setStore(new Ext.data.Store({
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorContactoCreaTrabajo',
+					extraParams: {idProveedor: idProveedor}
+				}
+				,remoteFilter: false
+			}));
+			me.lookupReference('proveedorContactoCombo2').getStore().load();
     	}
     },
     
@@ -2110,6 +2104,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	if (comboProveedor.getSelection() != null && comboProveedor.getSelection().getData().idProveedor != undefined) {
         	me.loadComboProveedorContacto(comboProveedor.getSelection().getData().idProveedor);
     	}
+		comboProveedor.getStore().clearFilter();
     },
 
     finalizacionTrabajoProveedor: function(combo, newValue, oldValue) {

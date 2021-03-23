@@ -242,6 +242,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 					}
 				}
 			}));
+			comboProveedor.getStore().load();
 			comboProveedor.onTriggerClick();
 	    }
     },

@@ -3126,7 +3126,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							} 
 						}else {
 							try {
-								comisionObraNuevaDto = comisionamientoApi.createCommission(consultaComisionDtoVacio)
+								comisionObraNuevaDto = comisionamientoApi.createCommission(consultaComisionDtoVacio);
 							} catch (Exception e) {
 								logger.error("Error en la llamada a comisionamiento:" + e);
 							}
@@ -3143,7 +3143,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							} 
 						}else {
 							try {
-								otrosComisionDto = comisionamientoApi.createCommission(consultaComisionDtoVacio)
+								otrosComisionDto = comisionamientoApi.createCommission(consultaComisionDtoVacio);
 							} catch (Exception e) {
 								logger.error("Error en la llamada a comisionamiento:" + e);
 							}

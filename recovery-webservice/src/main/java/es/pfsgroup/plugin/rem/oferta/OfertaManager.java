@@ -3130,6 +3130,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							} catch (Exception e) {
 								logger.error("Error en la llamada a comisionamiento:" + e);
 							}
+							comisionObraNuevaDto.setCommissionAmount((double) 0);
 						}
 						
 						if(importeOtros > 0.0) {
@@ -3146,6 +3147,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							} catch (Exception e) {
 								logger.error("Error en la llamada a comisionamiento:" + e);
 							}
+							otrosComisionDto.setCommissionAmount((double) 0);
 						}
 						
 						if(comisionObraNuevaDto.getCommissionAmount() > 0) {

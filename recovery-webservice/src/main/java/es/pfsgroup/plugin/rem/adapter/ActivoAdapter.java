@@ -2288,7 +2288,9 @@ public class ActivoAdapter {
 						if(!DDCartera.CODIGO_CARTERA_CERBERUS.equals(tramite.getActivo().getCartera().getCodigo()) && isGestorBoarding && expedienteComercialNoAprobado) {
 							dtoTramite.setOcultarBotonResolucion(true);
 						} else {
-							dtoTramite.setOcultarBotonResolucion(false);
+							if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())) {
+								dtoTramite.setOcultarBotonResolucion(false);
+							}
 						}
 					}
 					beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());

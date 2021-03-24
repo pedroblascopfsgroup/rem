@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sento Visiedo
---## FECHA_CREACION=20210323
+--## FECHA_CREACION=20210324
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13408
@@ -32,7 +32,7 @@ BEGIN
 	
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
 	SET 
-  TAP_SCRIPT_VALIDACION = '' checkReservaInformada() ? checkImporteParticipacion() ? checkCamposComprador() ? checkCompradores() ? checkVendido() ? ''''El activo est&aacute; vendido'''' : compruebaEstadoNoSolicitadoPendiente()? ''''No se ha realizado el contraste de lista sobre todos los compradores.'''': compruebaEstadoPositivoRealDenegado()? ''''Contraste de listas no permite continuar.'''' : checkComercializable() ? null : ''''El activo debe ser comercializable'''' : ''''Los compradores deben sumar el 100%'''' : ''''Es necesario cumplimentar todos los campos obligatorios de los compradores para avanzar la tarea.'''' : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'''' : ''''En la reserva del expediente se debe marcar si es necesaria o no para poder avanzar.''''  '',
+  TAP_SCRIPT_VALIDACION = '' checkReservaInformada() ? checkImporteParticipacion() ? checkCamposComprador() ? checkCompradores() ? checkVendido() ? '''' El activo est&aacute; vendido '''' : checkComercializable() ? compruebaEstadoNoSolicitadoPendiente() ? '''' Hay compradores en los que no se ha realizado el contraste de listas'''' : compruebaEstadoPositivoRealDenegado() ?  ''''Hay compradores con un estado positivo real denegado en el contraste de listas'''' : null: ''''El activo debe ser comercializable'''' : ''''Los compradores deben sumar el 100%'''' : ''''Es necesario cumplimentar todos los campos obligatorios de los compradores para avanzar la tarea.'''' : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'''' : ''''En la reserva del expediente se debe marcar si es necesaria o no para poder avanzar.'''' '',
   USUARIOMODIFICAR = ''HREOS-13408'', 
 	FECHAMODIFICAR = SYSDATE 
 	WHERE TAP_CODIGO = ''T017_DefinicionOferta''';

@@ -241,17 +241,18 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						                		readOnly: true
 						                	}
 						                },
-						                {
-						                	xtype: 'comboboxfieldbase',
-						                	fieldLabel:  HreRem.i18n('fieldlabel.estado.registral'),
-						                	name: 'comboEstadoRegistral',
-						                	reference: 'comboEstadoRegistralRef',
-						                	bind: {
-						                		store: '{comboEstadoRegistral}',
-						                		value: '{activo.estadoRegistralCodigo}',
-						                		readOnly: true
-						                	}
-						                }
+						   				 {
+							                	xtype: 'comboboxfieldbasedd',
+							                	fieldLabel:  HreRem.i18n('fieldlabel.estado.registral'),
+							                	name: 'comboEstadoRegistral',
+							                	reference: 'comboEstadoRegistralRef',
+							                	bind: {
+								                	store: '{comboEstadoRegistral}',
+								                	value: '{activo.estadoRegistralCodigo}',
+								                	readOnly: '{!activo.esEditableActivoEstadoRegistral}',
+													rawValue: '{activo.estadoRegistralDescripcion}'
+							                	}
+							                }
 									]
 								},
 								//PARA DIVARIAN
@@ -320,19 +321,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										beforerender:'isGestorAdmisionAndSuperComboTipoAlta'
 									}*/
 									
-								},
-				                {
-				                	xtype: 'comboboxfieldbasedd',
-				                	fieldLabel:  HreRem.i18n('fieldlabel.estado.registral'),
-				                	name: 'comboEstadoRegistral',
-				                	reference: 'comboEstadoRegistralRef',
-				                	bind: {
-					                	store: '{comboEstadoRegistral}',
-					                	value: '{activo.estadoRegistralCodigo}',
-					                	readOnly: '{!activo.esEditableActivoEstadoRegistral}',
-										rawValue: '{activo.estadoRegistralDescripcion}'
-				                	}
-				                },
+								},				                
 				                {
 				                	//Campo para dejar un espacio entre los campos por estetica.
 				                	readOnly: true

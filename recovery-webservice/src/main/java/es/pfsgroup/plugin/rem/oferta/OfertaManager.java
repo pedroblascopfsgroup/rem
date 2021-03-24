@@ -6440,8 +6440,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// Estamos creando un texto que no existía.
 			textoOferta = new TextosOferta();
 			textoOferta.setOferta(oferta);
-			if (dto.getTexto() != null && dto.getTexto().length() > 2048) {
-				throw new UserException("La longitud del texto no puede exceder los 2048 car&acute;cteres");
+			if (dto.getTexto() != null && dto.getTexto().length() > 3000) {
+				throw new UserException("La longitud del texto no puede exceder los 3000 car&acute;cteres");
 			}
 			textoOferta.setTexto(dto.getTexto());
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCampoCodigo());

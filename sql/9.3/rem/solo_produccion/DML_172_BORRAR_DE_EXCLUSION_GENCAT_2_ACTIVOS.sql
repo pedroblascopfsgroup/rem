@@ -35,7 +35,7 @@ BEGIN
     V_MSQL := 'delete from '||V_ESQUEMA||'.act_exg_exclusion_gencat where act_id in (select distinct act_id from '||V_ESQUEMA||'.act_activo where act_num_activo in (7312432,7257159))';
     EXECUTE IMMEDIATE V_MSQL;
 
-    dbms_output.put_line('[INFO] Borrados '||SQL%ROWCOUNT||' registros de act_exg_exclusion_gencat.')
+    dbms_output.put_line('[INFO] Borrados '||SQL%ROWCOUNT||' registros de act_exg_exclusion_gencat.');
     
 
     COMMIT;

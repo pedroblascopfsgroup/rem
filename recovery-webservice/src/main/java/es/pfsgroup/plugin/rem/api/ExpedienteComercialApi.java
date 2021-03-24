@@ -1350,4 +1350,7 @@ public interface ExpedienteComercialApi {
 
 	boolean sacarBulk(Long idExpediente);
 
+	boolean compruebaEstadoNoSolicitadoPendiente(TareaExterna tareaExterna);
+	boolean compruebaEstadoPositivoRealDenegado(TareaExterna tareaExterna);
+
 }

@@ -254,6 +254,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private final String PERFIL_PERFGCONTROLLER = "PERFGCONTROLLER";
 	private final String FUNCION_EDITAR_TAB_GESTION = "EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES";
 	
+
 	@Resource
 	private MessageService messageServices;
 
@@ -11699,5 +11700,39 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		return true;
 	}
-		
+	
+	@Override
+	public boolean compruebaEstadoNoSolicitadoPendiente (TareaExterna tareaExterna){
+		boolean tipoEstado = false;
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente", expedienteComercial);
+		List <CompradorExpediente> cexpediente = genericDao.getList(CompradorExpediente.class, filtroExpediente);
+			
+		for (CompradorExpediente compradorExpediente : cexpediente) {
+				
+			if( DDEstadoContrasteListas.NO_SOLICITADO.equals(compradorExpediente.getEstadoContrasteListas().getCodigo()) || 
+					DDEstadoContrasteListas.PENDIENTE.equals(compradorExpediente.getEstadoContrasteListas().getCodigo()) ) {
+				tipoEstado = true;
+				break;
+			}
+		}
+		return tipoEstado;
+	}
+	@Override
+	public boolean compruebaEstadoPositivoRealDenegado (TareaExterna tareaExterna){
+		boolean tipoEstado = false;
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente", expedienteComercial);
+		List <CompradorExpediente> cexpediente = genericDao.getList(CompradorExpediente.class, filtroExpediente);
+			
+		for (CompradorExpediente compradorExpediente : cexpediente) {
+			if( DDEstadoContrasteListas.POSITIVO_REAL_DENEGADO.equals(compradorExpediente.getEstadoContrasteListas().getCodigo())) {
+				tipoEstado = true;
+				break;
+			}
+		}
+		return tipoEstado;
+	}
+
+	
 }

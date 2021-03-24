@@ -677,6 +677,14 @@
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.esBBVA(tareaExterna);
             }
+            def compruebaEstadoNoSolicitadoPendiente = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+	           	return expedienteComercialManager.compruebaEstadoNoSolicitadoPendiente(tareaExterna);
+            }
+            def compruebaEstadoPositivoRealDenegado = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+	           	return expedienteComercialManager.compruebaEstadoPositivoRealDenegado(tareaExterna);
+            }
   			 ]]></value>
   		</list>
   	</property>

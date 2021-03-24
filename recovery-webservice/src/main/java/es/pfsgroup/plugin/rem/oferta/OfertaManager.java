@@ -3136,17 +3136,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							
 						}
 						
-						if(contieneActPrincAgrObraNueva) {
-							listActOfr = oferta.getActivosOferta();
-							for (ActivoOferta activoOferta : listActOfr) {
-								 activoOfr = activoAdapter.getActivoById(activoOferta.getActivoId());
-								 if(activoOfr != null && DDSinSiNo.CODIGO_SI.equals(activoOfr.getTieneObraNuevaAEfectosComercializacion().getCodigo())) {
+						listActOfr = oferta.getActivosOferta();
+						for (ActivoOferta activoOferta : listActOfr) {
+							 activoOfr = activoAdapter.getActivoById(activoOferta.getActivoId());
+							 if(activoOfr != null) {
+								 if(activoOfr.getTieneObraNuevaAEfectosComercializacion() != null && DDSinSiNo.CODIGO_SI.equals(activoOfr.getTieneObraNuevaAEfectosComercializacion().getCodigo())) {
 									 importeObraNueva += activoOferta.getImporteActivoOferta();
 								 }else {
 									 importeOtros += activoOferta.getImporteActivoOferta();
 								 }
-							}
+							 }
 						}
+						
 						if(importeObraNueva > 0.0) {
 							consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
 							consultaComisionDto.setAmount(importeObraNueva);

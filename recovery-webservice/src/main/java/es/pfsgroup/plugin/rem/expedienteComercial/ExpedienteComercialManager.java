@@ -11705,12 +11705,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public boolean compruebaEstadoNoSolicitadoPendiente (TareaExterna tareaExterna){
 		boolean tipoEstado = false;
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
-		Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente", expedienteComercial);
-		List <CompradorExpediente> cexpediente = genericDao.getList(CompradorExpediente.class, filtroExpediente);
+		List <CompradorExpediente> cexpediente = expedienteComercial.getCompradores();
 			
 		for (CompradorExpediente compradorExpediente : cexpediente) {
 				
-			if( DDEstadoContrasteListas.NO_SOLICITADO.equals(compradorExpediente.getEstadoContrasteListas().getCodigo()) || 
+			if(Checks.esNulo(compradorExpediente.getEstadoContrasteListas()) ||
+					DDEstadoContrasteListas.NO_SOLICITADO.equals(compradorExpediente.getEstadoContrasteListas().getCodigo()) || 
 					DDEstadoContrasteListas.PENDIENTE.equals(compradorExpediente.getEstadoContrasteListas().getCodigo()) ) {
 				tipoEstado = true;
 				break;
@@ -11722,11 +11722,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public boolean compruebaEstadoPositivoRealDenegado (TareaExterna tareaExterna){
 		boolean tipoEstado = false;
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
-		Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente", expedienteComercial);
-		List <CompradorExpediente> cexpediente = genericDao.getList(CompradorExpediente.class, filtroExpediente);
+		List <CompradorExpediente> cexpediente = expedienteComercial.getCompradores();
 			
 		for (CompradorExpediente compradorExpediente : cexpediente) {
-			if( DDEstadoContrasteListas.POSITIVO_REAL_DENEGADO.equals(compradorExpediente.getEstadoContrasteListas().getCodigo())) {
+			
+			if(!Checks.esNulo(compradorExpediente.getEstadoContrasteListas()) &&  DDEstadoContrasteListas.POSITIVO_REAL_DENEGADO.equals(compradorExpediente.getEstadoContrasteListas().getCodigo())) {
 				tipoEstado = true;
 				break;
 			}

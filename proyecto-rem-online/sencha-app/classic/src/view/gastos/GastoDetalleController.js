@@ -2285,7 +2285,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	
     	if(!me.lookupReference('lineaDetalleGastoGrid').getStore().loading){
     		importeTotal = me.getImporteTotalLineasDetalle(me);
-    		importeTotal = importeTotal - (tipoImpositivo * base)/100;
+    		importeTotal = importeTotal - Number(Math.round(((tipoImpositivo * base)/100) + "e+" + 2)  + "e-" + 2);
     		importeTotal = Number(Math.round(importeTotal + "e+" + 2)  + "e-" + 2);
     		cuotaRetG = Number(Math.round(cuotaRetG + "e+" + 2)  + "e-" + 2);
     		valorCuota = Number(Math.round(valorCuota + "e+" + 2)  + "e-" + 2);

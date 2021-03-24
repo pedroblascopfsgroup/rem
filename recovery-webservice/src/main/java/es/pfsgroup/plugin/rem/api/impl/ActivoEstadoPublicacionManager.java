@@ -1573,13 +1573,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if (!Checks.esNulo(fasePublicacionActivoVigente.getComentario())) {
 			dto.setComentario(fasePublicacionActivoVigente.getComentario());
 		}
-		
-		if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	
-			dto.setCamposPropagablesUas(TabActivoService.TAB_FASE_PUBLICACION);
-		}else {
-			// Buscamos los campos que pueden ser propagados para esta pestaña
-			dto.setCamposPropagables(TabActivoService.TAB_FASE_PUBLICACION);
-		}
+//	HREOS-13592 Se bloquea el evolutivo de ocultación de activos para la subida 		
+//		if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	
+//			dto.setCamposPropagablesUas(TabActivoService.TAB_FASE_PUBLICACION);
+//		}else {
+//			// Buscamos los campos que pueden ser propagados para esta pestaña
+//			dto.setCamposPropagables(TabActivoService.TAB_FASE_PUBLICACION);
+//		}
 		
 		return dto;
 	}

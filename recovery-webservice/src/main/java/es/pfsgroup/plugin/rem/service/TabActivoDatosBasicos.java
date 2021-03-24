@@ -1487,60 +1487,60 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 				activo.setFechaRevisionSelloCalidad(new Date());
 				activo.setSelloCalidad(true);
-				
-				//HREOS-11733 Cambio en las fases de publicacion ( Se puede sacar a una funcion externa ) 
-				Filter filtroFecha = genericDao.createFilter(FilterType.NULL, "fechaFin");
-				Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				HistoricoFasePublicacionActivo histActivo = genericDao.get(HistoricoFasePublicacionActivo.class, filtroFecha,filtroActivoId);
-				
-				if(histActivo != null && histActivo.getFasePublicacion() != null && DDFasePublicacion.CODIGO_FASE_VI_CALIDAD_COMPROBADA.equals(histActivo.getFasePublicacion().getCodigo()) && 
-						histActivo.getSubFasePublicacion() != null && !DDSubfasePublicacion.CODIGO_CALIDAD_COMPROBADA.equals(histActivo.getSubFasePublicacion().getCodigo())) {
-					Filter filtroSubFase = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_CALIDAD_COMPROBADA);
-					DDSubfasePublicacion subfase = genericDao.get(DDSubfasePublicacion.class, filtroSubFase);
-					histActivo.setFechaFin(new Date());
-					HistoricoFasePublicacionActivo histoNuevo = new HistoricoFasePublicacionActivo();
-					genericDao.update(HistoricoFasePublicacionActivo.class, histActivo);
-					
-					try {
-						BeanUtils.copyProperties(histoNuevo, histActivo);
-						histoNuevo.setSubFasePublicacion(subfase);
-						histoNuevo.setFechaFin(null);
-						genericDao.save(HistoricoFasePublicacionActivo.class, histoNuevo);
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						e.printStackTrace();
-					}
-				}
+//				HREOS-13592 Se bloquea el evolutivo de ocultación de activos para la subida 
+//				//HREOS-11733 Cambio en las fases de publicacion ( Se puede sacar a una funcion externa ) 
+//				Filter filtroFecha = genericDao.createFilter(FilterType.NULL, "fechaFin");
+//				Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+//				HistoricoFasePublicacionActivo histActivo = genericDao.get(HistoricoFasePublicacionActivo.class, filtroFecha,filtroActivoId);
+//				
+//				if(histActivo != null && histActivo.getFasePublicacion() != null && DDFasePublicacion.CODIGO_FASE_VI_CALIDAD_COMPROBADA.equals(histActivo.getFasePublicacion().getCodigo()) && 
+//						histActivo.getSubFasePublicacion() != null && !DDSubfasePublicacion.CODIGO_CALIDAD_COMPROBADA.equals(histActivo.getSubFasePublicacion().getCodigo())) {
+//					Filter filtroSubFase = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_CALIDAD_COMPROBADA);
+//					DDSubfasePublicacion subfase = genericDao.get(DDSubfasePublicacion.class, filtroSubFase);
+//					histActivo.setFechaFin(new Date());
+//					HistoricoFasePublicacionActivo histoNuevo = new HistoricoFasePublicacionActivo();
+//					genericDao.update(HistoricoFasePublicacionActivo.class, histActivo);
+//					
+//					try {
+//						BeanUtils.copyProperties(histoNuevo, histActivo);
+//						histoNuevo.setSubFasePublicacion(subfase);
+//						histoNuevo.setFechaFin(null);
+//						genericDao.save(HistoricoFasePublicacionActivo.class, histoNuevo);
+//					} catch (IllegalAccessException e) {
+//						e.printStackTrace();
+//					} catch (InvocationTargetException e) {
+//						e.printStackTrace();
+//					}
+//				}
 			}else if(!Checks.esNulo(dto.getSelloCalidad()) && !dto.getSelloCalidad()){
 				activo.setGestorSelloCalidad(null);
 				activo.setFechaRevisionSelloCalidad(null);
 				activo.setSelloCalidad(false);
-				
-				//HREOS-11733 Cambio en las fases de publicacion
-				Filter filtroFecha = genericDao.createFilter(FilterType.NULL, "fechaFin");
-				Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				HistoricoFasePublicacionActivo histActivo = genericDao.get(HistoricoFasePublicacionActivo.class, filtroFecha,filtroActivoId);
-				
-				if(histActivo != null && histActivo.getFasePublicacion() != null && DDFasePublicacion.CODIGO_FASE_VI_CALIDAD_COMPROBADA.equals(histActivo.getFasePublicacion().getCodigo()) && 
-						histActivo.getSubFasePublicacion() != null && DDSubfasePublicacion.CODIGO_CALIDAD_COMPROBADA.equals(histActivo.getSubFasePublicacion().getCodigo())) {
-					Filter filtroSubFase = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_SIN_INCIDENCIAS);
-					DDSubfasePublicacion subfase = genericDao.get(DDSubfasePublicacion.class, filtroSubFase);
-					histActivo.setFechaFin(new Date());
-					HistoricoFasePublicacionActivo histoNuevo = new HistoricoFasePublicacionActivo();
-					genericDao.save(HistoricoFasePublicacionActivo.class, histActivo);
-					
-					try {
-						BeanUtils.copyProperties(histoNuevo, histActivo);
-						histoNuevo.setSubFasePublicacion(subfase);
-						histoNuevo.setFechaFin(null);
-						genericDao.save(HistoricoFasePublicacionActivo.class, histoNuevo);
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						e.printStackTrace();
-					}
-				}
+//				HREOS-13592 Se bloquea el evolutivo de ocultación de activos para la subida 
+//				//HREOS-11733 Cambio en las fases de publicacion
+//				Filter filtroFecha = genericDao.createFilter(FilterType.NULL, "fechaFin");
+//				Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+//				HistoricoFasePublicacionActivo histActivo = genericDao.get(HistoricoFasePublicacionActivo.class, filtroFecha,filtroActivoId);
+//				
+//				if(histActivo != null && histActivo.getFasePublicacion() != null && DDFasePublicacion.CODIGO_FASE_VI_CALIDAD_COMPROBADA.equals(histActivo.getFasePublicacion().getCodigo()) && 
+//						histActivo.getSubFasePublicacion() != null && DDSubfasePublicacion.CODIGO_CALIDAD_COMPROBADA.equals(histActivo.getSubFasePublicacion().getCodigo())) {
+//					Filter filtroSubFase = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_SIN_INCIDENCIAS);
+//					DDSubfasePublicacion subfase = genericDao.get(DDSubfasePublicacion.class, filtroSubFase);
+//					histActivo.setFechaFin(new Date());
+//					HistoricoFasePublicacionActivo histoNuevo = new HistoricoFasePublicacionActivo();
+//					genericDao.save(HistoricoFasePublicacionActivo.class, histActivo);
+//					
+//					try {
+//						BeanUtils.copyProperties(histoNuevo, histActivo);
+//						histoNuevo.setSubFasePublicacion(subfase);
+//						histoNuevo.setFechaFin(null);
+//						genericDao.save(HistoricoFasePublicacionActivo.class, histoNuevo);
+//					} catch (IllegalAccessException e) {
+//						e.printStackTrace();
+//					} catch (InvocationTargetException e) {
+//						e.printStackTrace();
+//					}
+//				}
 			}
 			
 			

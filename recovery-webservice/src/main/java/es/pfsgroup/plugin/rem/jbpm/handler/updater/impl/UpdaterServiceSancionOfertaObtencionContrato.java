@@ -136,33 +136,33 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 							gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
 						}
 					}
-					
-					HistoricoFasePublicacionActivo histoFasePubAct = new HistoricoFasePublicacionActivo();
-					DDFasePublicacion fasePublicacion = new DDFasePublicacion();
-					DDSubfasePublicacion subfasePublicacion = new DDSubfasePublicacion();
-
-					Usuario usu= proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", activoOferta.getPrimaryKey().getActivo().getId());
-					activo = genericDao.get(Activo.class, filtroActivo);
-//					histoFasePubAct = genericDao.get(HistoricoFasePublicacionActivo.class, filtroActivo);
-					Filter filtroFecha = genericDao.createFilter(FilterType.NULL, "fechaFin");
-					Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-					HistoricoFasePublicacionActivo histoActual = genericDao.get(HistoricoFasePublicacionActivo.class, filtroFecha,filtroActivoId);
-					Filter filtroFaseActual = genericDao.createFilter(FilterType.EQUALS, "codigo", DDFasePublicacion.CODIGO_FASE_V_INCIDENCIAS_PUBLICACION);
-					fasePublicacion = genericDao.get(DDFasePublicacion.class, filtroFaseActual);
-					Filter filtroSubFaseActual = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_ARRAS_RESERVADO);
-					subfasePublicacion = genericDao.get(DDSubfasePublicacion.class, filtroSubFaseActual);
-
-					histoFasePubAct.setActivo(activo);
-					histoFasePubAct.setFechaInicio(new Date());
-					histoFasePubAct.setUsuario(usu);
-					histoFasePubAct.setFasePublicacion(fasePublicacion);
-					histoFasePubAct.setSubFasePublicacion(subfasePublicacion);
-
-					genericDao.save(HistoricoFasePublicacionActivo.class, histoFasePubAct);
-					
-					histoActual.setFechaFin(new Date());
-					genericDao.save(HistoricoFasePublicacionActivo.class, histoActual);
+//					HREOS-13592 Se bloquea el evolutivo de ocultación de activos para la subida 
+//					HistoricoFasePublicacionActivo histoFasePubAct = new HistoricoFasePublicacionActivo();
+//					DDFasePublicacion fasePublicacion = new DDFasePublicacion();
+//					DDSubfasePublicacion subfasePublicacion = new DDSubfasePublicacion();
+//
+//					Usuario usu= proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+//					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", activoOferta.getPrimaryKey().getActivo().getId());
+//					activo = genericDao.get(Activo.class, filtroActivo);
+////					histoFasePubAct = genericDao.get(HistoricoFasePublicacionActivo.class, filtroActivo);
+//					Filter filtroFecha = genericDao.createFilter(FilterType.NULL, "fechaFin");
+//					Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+//					HistoricoFasePublicacionActivo histoActual = genericDao.get(HistoricoFasePublicacionActivo.class, filtroFecha,filtroActivoId);
+//					Filter filtroFaseActual = genericDao.createFilter(FilterType.EQUALS, "codigo", DDFasePublicacion.CODIGO_FASE_V_INCIDENCIAS_PUBLICACION);
+//					fasePublicacion = genericDao.get(DDFasePublicacion.class, filtroFaseActual);
+//					Filter filtroSubFaseActual = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_ARRAS_RESERVADO);
+//					subfasePublicacion = genericDao.get(DDSubfasePublicacion.class, filtroSubFaseActual);
+//
+//					histoFasePubAct.setActivo(activo);
+//					histoFasePubAct.setFechaInicio(new Date());
+//					histoFasePubAct.setUsuario(usu);
+//					histoFasePubAct.setFasePublicacion(fasePublicacion);
+//					histoFasePubAct.setSubFasePublicacion(subfasePublicacion);
+//
+//					genericDao.save(HistoricoFasePublicacionActivo.class, histoFasePubAct);
+//					
+//					histoActual.setFechaFin(new Date());
+//					genericDao.save(HistoricoFasePublicacionActivo.class, histoActual);
 				}
 	
 				activo = ofertaAceptada.getActivoPrincipal();

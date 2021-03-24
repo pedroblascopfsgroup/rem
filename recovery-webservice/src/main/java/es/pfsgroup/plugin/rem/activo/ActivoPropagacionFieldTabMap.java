@@ -578,15 +578,15 @@ public class ActivoPropagacionFieldTabMap {
     				"observaciones"
 
     			));
-      	
-    	pmap.put(TAB_FASE_PUBLICACION,
-    			Arrays.asList(
-    				"fasePublicacionCodigo",
-    				"subfasePublicacion",
-    				"subfasePublicacionCodigo",
-    				"comentario"
-    					
-    			));
+//      HREOS-13592 Se bloquea el evolutivo de ocultación de activos para la subida 	
+//    	pmap.put(TAB_FASE_PUBLICACION,
+//    			Arrays.asList(
+//    				"fasePublicacionCodigo",
+//    				"subfasePublicacion",
+//    				"subfasePublicacionCodigo",
+//    				"comentario"
+//    					
+//    			));
 
     	pmap.put(TAB_SANEAMIENTO,
     			Arrays.asList(

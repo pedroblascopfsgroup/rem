@@ -296,13 +296,13 @@ public class ActivoPropagacionUAsFieldTabMap {
 			Arrays.asList(
 					"chkPerimetroAlquiler"
 		   	));
-		
-    	pmap.put(TAB_FASE_PUBLICACION,
-    			Arrays.asList(
-    				"fasePublicacionCodigo",
-    				"subfasePublicacionCodigo",
-    				"comentario"
-    			));
+//		HREOS-13592 Se bloquea el evolutivo de ocultación de activos para la subida 
+//    	pmap.put(TAB_FASE_PUBLICACION,
+//    			Arrays.asList(
+//    				"fasePublicacionCodigo",
+//    				"subfasePublicacionCodigo",
+//    				"comentario"
+//    			));
 
 
         mapUAs = Collections.unmodifiableMap(pmap);

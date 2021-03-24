@@ -1210,11 +1210,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		
 		esEditableExcluirValidaciones: function(get){
 			var restringido = this.get('activo.restringido');
+			var esActPrincipal = this.get('activo.esActivoPrincipalAgrupacionRestringida');
 			var perfiles = $AU.userHasFunction('EDITAR_EXCLUIR_VALIDACIONES');
-			if (restringido == false)
+			
+			if (restringido == false){
 				return !perfiles;
-			else
-				return !perfiles && restringido;
+			}else{
+				if(esActPrincipal == false){
+					return true;
+				}else{
+					return !perfiles;
+				}
+			}							
 		}
     },
     

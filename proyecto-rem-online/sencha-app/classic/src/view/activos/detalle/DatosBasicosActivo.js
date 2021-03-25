@@ -225,6 +225,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
 								        	name: 'estadoActivoCodigo',
 								        	bind: {
+								        		readOnly : true,
 							            		store: '{comboEstadoActivo}',
 							            		value: '{activo.estadoActivoCodigo}',
 												rawValue: '{activo.estadoActivoDescripcion}'

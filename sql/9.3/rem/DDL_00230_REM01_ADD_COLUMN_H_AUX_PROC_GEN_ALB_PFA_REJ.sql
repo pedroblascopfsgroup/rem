@@ -29,9 +29,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-                    --TABLA               CAMPO       TIPO                            COMENTARIO                        CAMPO_FK    TABLA_FK                      NOMBRE_FK
-        T_TIPO_DATA('PFA_PREFACTURA'      ,'DD_DEG_ID', 'NUMBER(16,0)', 'Destinatario futuro del gasto', 'DD_DEG_ID', 'DD_DEG_DESTINATARIOS_GASTO', 'FK_PFA_DD_DEG_ID'),
-        T_TIPO_DATA('PFA_PREFACTURA'      ,'DD_TEG_ID', 'NUMBER(16,0)', 'Emisor futuro del gasto', 'DD_TEG_ID', 'DD_TEG_TIPO_EMISOR_GLD', 'FK_PFA_DD_TEG_ID')
+                    --TABLA               CAMPO       TIPO                            COMENTARIO                       
+        T_TIPO_DATA('H_AUX_PROC_GEN_ALB_PFA_REJ'      ,'DD_TEG_ID', 'NUMBER(16,0)', 'Emisor futuro del gasto')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
   
@@ -66,29 +65,6 @@ BEGIN
           DBMS_OUTPUT.PUT_LINE('[INFO] LA COLUMNA '||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||' YA EXISTE');
 		
 		    END IF;
-
-        V_SQL := 'SELECT COUNT(1)
-          FROM ALL_CONSTRAINTS CONS
-          INNER JOIN ALL_CONS_COLUMNS COL ON COL.CONSTRAINT_NAME = CONS.CONSTRAINT_NAME
-          WHERE CONS.OWNER = '''||V_ESQUEMA||''' 
-            AND CONS.TABLE_NAME = '''||V_TMP_TIPO_DATA(1)||''' 
-            AND CONS.CONSTRAINT_TYPE = ''R''
-            AND COL.COLUMN_NAME = '''||V_TMP_TIPO_DATA(2)||'''';
-        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-
-        IF V_NUM_TABLAS > 0 THEN
-
-          DBMS_OUTPUT.PUT_LINE('  [INFO] La FK '||V_TMP_TIPO_DATA(7)||'... Ya existe.');                 
-
-        ELSE
-          
-          DBMS_OUTPUT.PUT_LINE('  [INFO] Creando '||V_TMP_TIPO_DATA(7)||'...');           
-            
-          EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TMP_TIPO_DATA(1)||'
-            ADD (CONSTRAINT '||V_TMP_TIPO_DATA(7)||' FOREIGN KEY ('||V_TMP_TIPO_DATA(2)||') 
-              REFERENCES '||V_ESQUEMA||'.'||V_TMP_TIPO_DATA(6)||' ('||V_TMP_TIPO_DATA(5)||') ON DELETE SET NULL)';
-
-        END IF;
 		
       END LOOP;
 	

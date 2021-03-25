@@ -155,6 +155,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 			var subtipoTrabajoCod = me.lookupController().getViewModel().get('trabajo').get('subtipoTrabajoCodigo');
 			var subtiposPermitidosSupActivo = ["19", "21", "22", "23", "24", "25"]; //Subtipos de trabajo ODoc. con edicion permitida en gestion eco trabajo para superv. activo
 			var subtiposPermitidosSupAdmision = ["13", "15", "17"]; //Subtipos de trabajo ODoc. con edicion permitida en gestion eco trabajo para superv. admision
+			var perteneceGastoOPrefactura = me.lookupController().getViewModel().get('trabajo').get('perteneceGastoOPrefactura');
 			
 			if((notFechaEjecucionReal && (isRolProveedor))
 				|| (notFechaCierreEconomico && (isRolGesActivo || isRolGesAdmision))
@@ -174,7 +175,13 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 			if(tipoTrabajoCod === CONST.TIPOS_TRABAJO['EDIFICACION']){
 				visible = isRolSuper;
 			}
+			
 			visible=true;
+			
+			if (perteneceGastoOPrefactura == 'true') {
+				visible = false;
+			}
+			
 			me.down("[itemId=botoneditar]").setVisible(visible);
 		}
 

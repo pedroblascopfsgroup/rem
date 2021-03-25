@@ -162,6 +162,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDAcoAprobacionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
@@ -2983,6 +2984,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Activo activo = trabajo.getActivo();
 
 		Usuario usuariologado = adapter.getUsuarioLogado();
+		
+		dtoTrabajo.setPerteneceGastoOPrefactura(false);
 
 		if (!Checks.esNulo(activo)) {
 
@@ -3008,7 +3011,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setGastoProveedor(gasto.getNumGastoHaya());
 
 			dtoTrabajo.setEstadoGasto(gasto.getEstadoGasto().getCodigo());	
-
+			
+			if (!DDEstadoGasto.ANULADO.equals(gasto.getEstadoGasto().getCodigo())) {
+				dtoTrabajo.setPerteneceGastoOPrefactura(true);
+			}
+		}
+		
+		if (!Checks.esNulo(trabajo.getPrefactura()) && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+			dtoTrabajo.setPerteneceGastoOPrefactura(true);
 		}
 
 		if (trabajo.getTipoTrabajo() != null) {

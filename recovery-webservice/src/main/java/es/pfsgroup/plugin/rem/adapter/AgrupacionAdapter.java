@@ -117,6 +117,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VCondicionantesAgrDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VFechasPubCanalesAgr;
+import es.pfsgroup.plugin.rem.model.VGestoresActivo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
@@ -4225,20 +4226,32 @@ public class AgrupacionAdapter {
 	}
 	
 	private Boolean esGestorComercial(ActivoAgrupacion agrupacion) {
+		
 		final String CODIGO_GESTOR_COMERCIAL = "GCOM";
+		Usuario usu = genericAdapter.getUsuarioLogado();
 		boolean esGestorComercial = false;
-		if (!agrupacion.getActivos().isEmpty()) {
-			Usuario usu = genericAdapter.getUsuarioLogado();
-			for (int i = 0; i < agrupacion.getActivos().size(); i++) {
-				ActivoAgrupacionActivo agrupacionActivo = agrupacion.getActivos().get(i);
-				if (agrupacionActivo != null && agrupacionActivo.getActivo() != null 
-				&& usu.equals(gestorActivoApi
-						.getGestorComercialActual(agrupacionActivo.getActivo(), CODIGO_GESTOR_COMERCIAL))) {
-					esGestorComercial = true;
-					break;
+		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+		List<VGestoresActivo> activoConGestorComercial = new ArrayList<VGestoresActivo>();
+		ActivoAgrupacionActivo agrupacionActivo;
+		
+		if (!activos.isEmpty()) {
+			for (int i = 0; i < activos.size(); i++) {
+				agrupacionActivo = activos.get(i);
+				
+				if (agrupacionActivo != null && agrupacionActivo.getActivo() != null) {
+					Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activoId", agrupacionActivo.getActivo().getId());
+					Filter gestorFilter = genericDao.createFilter(FilterType.EQUALS, "tipoGestorCodigo", CODIGO_GESTOR_COMERCIAL);
+					Filter userFilter =  genericDao.createFilter(FilterType.EQUALS, "username", usu.getUsername());
+					activoConGestorComercial = genericDao.getList(VGestoresActivo.class, activoFilter, gestorFilter, userFilter);
+					
+					if (activoConGestorComercial != null) {
+						esGestorComercial = true;
+						break;
+					} 
 				}
 			}
 		}
+
 		return esGestorComercial;
 	}
 	

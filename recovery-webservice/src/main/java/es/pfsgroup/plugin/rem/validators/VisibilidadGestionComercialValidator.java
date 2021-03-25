@@ -43,7 +43,7 @@ public class VisibilidadGestionComercialValidator {
 	public static final String VALID_ACTIVO_VENTA_EXTERNA = "Activo vendido de forma externa";
 	public static final String VALID_ACTIVO_ESTADO_PUBLICACION = "Activo cuyo estado de publicación no permite la inclusión en perímetro";
 	public static final String VALID_ACTIVO_NO_COMERCIALIZABLE = "Activo no comercializable";
-	public static final String VALID_ACTIVO_NO_VPO = "Activo no tiene indicado que pertenece a una VPO";
+	public static final String VALID_ACTIVO_NO_VPO = "Activo tiene indicado que pertenece a una VPO";
 	public static final String VALID_ACTIVO_PROPIETARIO_SOCIEDAD = "Propietario con sociedad participada";
 	public static final String VALID_ACTIVO_DESTINO_COMERCIAL = "Activo cuyo destino comercial no permite la inclusión en perímetro";
 	public static final String VALID_ACTIVO_CON_CARGAS = "Activo con cargas";
@@ -106,11 +106,6 @@ public class VisibilidadGestionComercialValidator {
 
 			if (!excluirValidaciones) {
 				
-				//validacion que comprueba si el activo pertenece a una agrupacion restringida y tenga motivo de excluido
-				if(activoApi.isActivoIntegradoAgrupacionRestringida(activoActual.getId()) && (perimetroActivo.getMotivoGestionComercial()!=null)) {
-					erroresActivo.add(VALID_MOTIVO_EXCLUIDO);
-					
-				}
 			
 				if (checkGestorComercial) {
 
@@ -165,7 +160,7 @@ public class VisibilidadGestionComercialValidator {
 							}
 						}else {
 							if(DDTipoComercializacion.isDestinoComercialSoloAlquiler(activoActual.getTipoComercializacion()) 
-							&&  !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler())) {
+							&&  !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler()) && !DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activoActual.getCartera().getCodigo())) {
 								erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
 							}
 						}
@@ -182,12 +177,13 @@ public class VisibilidadGestionComercialValidator {
 
 					// Validación que comprueba si pertenece a una VPO
 					if (activoActual.getCartera() != null
-							&& (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activoActual.getCartera().getCodigo()))) {
+							&& (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activoActual.getCartera().getCodigo()))){
 						if (activoPublicacion != null
-								&& activoPublicacion.getEstadoPublicacionAlquiler().getCodigo() != null) {
-							if (DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER
+								&& activoPublicacion.getEstadoPublicacionAlquiler().getCodigo() != null && activoPublicacion.getTipoComercializacion() != null 
+										&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoPublicacion.getTipoComercializacion().getCodigo())) {
+							if (!DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER
 									.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())) {
-								if (activoActual.getVpo() == 0) {
+								if (activoActual.getVpo() == 1) {
 									erroresActivo.add(VALID_ACTIVO_NO_VPO);
 								}
 							}
@@ -218,7 +214,8 @@ public class VisibilidadGestionComercialValidator {
 					//Validación que comprueba el check
 				
 						if (activoPublicacion != null && activoPublicacion.getEstadoPublicacionAlquiler() != null && activoPublicacion.getTipoComercializacion() != null 
-								&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoPublicacion.getTipoComercializacion().getCodigo())) {
+								&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoPublicacion.getTipoComercializacion().getCodigo()) && activoActual.getCartera() != null
+										&& (!DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activoActual.getCartera().getCodigo()))) {
 							if (!DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())
 									&& (perimetroActivo.getCheckGestorComercial() !=null && perimetroActivo.getCheckGestorComercial())) {
 								erroresActivo.add(VALID_ACTIVO_GESTION);

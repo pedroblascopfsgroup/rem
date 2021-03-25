@@ -1092,6 +1092,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setCodSubfasePublicacion(fasePublicacionActivoVigente.getSubFasePublicacion().getCodigo());
 		}
 		
+		Boolean estaEnRestringida = Boolean.FALSE; 
+	
+		if(activoApi.isActivoPrincipalAgrupacionRestringida(activo.getId())) {
+			estaEnRestringida = Boolean.TRUE; 
+		}
+		activoDto.setEsActivoPrincipalAgrupacionRestringida(estaEnRestringida);
+		
 		return activoDto;
 	}
 	
@@ -1409,13 +1416,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 								
 				if (!Checks.esNulo(dto.getMotivoGestionComercialCodigo()) && !borrarMotivoExcluirValidaciones) {
 					DDMotivoGestionComercial motivoGestionComercial = (DDMotivoGestionComercial) diccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class,  dto.getMotivoGestionComercialCodigo());
-					if(activoApi.isActivoIntegradoAgrupacionRestringida(activo.getId())) {
-						Map <Long,List<String>> map = new HashMap<Long, List<String>>();
-						List <String> lista = new ArrayList<String>();
-						lista.add(VALID_MOTIVO_EXCLUIDO);
-						map.put(activo.getNumActivo(), lista);
-						recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
-					}
 					
 					perimetroActivo.setMotivoGestionComercial(motivoGestionComercial);
 				}
@@ -1835,6 +1835,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					//throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_BBVA));
 				}
 			}
+			if(activoApi.isActivoPrincipalAgrupacionRestringida(activo.getId()) && (dto.getCheckGestorComercial()!=null 
+					|| dto.getExcluirValidacionesBool()!=null || dto.getMotivoGestionComercialCodigo()!=null)){
+				modificarCheckVisibleGestionComercialRestringida(activo,dto);
+			}
 		} catch(JsonViewerException jve) {
 			throw jve;
 		} catch (IllegalAccessException e) {
@@ -2058,6 +2062,50 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			throw new JsonViewerException("No puede cambiar el segmento a MACC ya que el destino comercial tiene que ser alquiler");
 		}
 		
+	}
+	
+	private void modificarCheckVisibleGestionComercialRestringida(Activo activo,DtoActivoFichaCabecera dto) {
+		ActivoAgrupacionActivo activoAgrupacionActivo = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());
+			
+		if(activoAgrupacionActivo == null) {
+			return;
+		}
+
+		List<ActivoAgrupacionActivo> activoAgrupacionActivoList = activoAgrupacionActivo.getAgrupacion().getActivos();
+
+		for(ActivoAgrupacionActivo activos : activoAgrupacionActivoList) {
+			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activos.getActivo().getId());
+			if(perimetroActivo != null) {
+				
+				if(dto.getCheckGestorComercial()!=null) {
+					perimetroActivo.setCheckGestorComercial(dto.getCheckGestorComercial());	
+					if(dto.getCheckGestorComercial()) {
+						perimetroActivo.setFechaGestionComercial(new Date());
+					}				
+				}
+				
+				if(dto.getExcluirValidacionesBool()!=null) {
+					String excluir="";
+					if(dto.getExcluirValidacionesBool()) {
+						excluir=DDSinSiNo.CODIGO_SI;
+					}else {
+						excluir=DDSinSiNo.CODIGO_NO;
+					}
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", excluir);
+					
+					DDSinSiNo siONo = genericDao.get(DDSinSiNo.class, filtro);
+					perimetroActivo.setExcluirValidaciones(siONo);			
+				}
+				
+				if(dto.getMotivoGestionComercialCodigo()!=null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoGestionComercialCodigo());
+					DDMotivoGestionComercial motivo = genericDao.get(DDMotivoGestionComercial.class, filtro);
+					perimetroActivo.setMotivoGestionComercial(motivo);
+				}
+				genericDao.save(PerimetroActivo.class, perimetroActivo);
+			
+			}
+		}
 	}
 }
 

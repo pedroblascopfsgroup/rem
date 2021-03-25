@@ -1140,6 +1140,9 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'estadoExpIncorrienteDescripcion'
+			},{
+				name:'esActivoPrincipalAgrupacionRestringida',
+				type: 'boolean'
 			}
     ],
     

@@ -1444,9 +1444,8 @@ public interface ActivoApi {
 	boolean createCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto) throws JsonViewerException, Exception;
 	
 	boolean destroyCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
-	
+
 	public void updateHonorarios (Activo activo, List<ActivoOferta> listaActivoOfertas);
 	
-
 	public Page getPublicacionGrid(DtoPublicacionGridFilter dto);
 }

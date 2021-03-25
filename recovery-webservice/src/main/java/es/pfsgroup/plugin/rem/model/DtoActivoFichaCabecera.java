@@ -339,6 +339,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private String codSubfasePublicacion;
 	
+	private Boolean esActivoPrincipalAgrupacionRestringida;
+	
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -2535,6 +2537,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setCdpen(String cdpen) {
 		this.cdpen = cdpen;
+	}
+
+	public Boolean getEsActivoPrincipalAgrupacionRestringida() {
+		return esActivoPrincipalAgrupacionRestringida;
+	}
+
+	public void setEsActivoPrincipalAgrupacionRestringida(Boolean esActivoPrincipalAgrupacionRestringida) {
+		this.esActivoPrincipalAgrupacionRestringida = esActivoPrincipalAgrupacionRestringida;
 	}
 
 	

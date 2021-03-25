@@ -46,7 +46,6 @@ public class MSVActualizarPorcentajeConstruccion extends MSVExcelValidatorAbstra
 	public static final String ACTIVO_FUERA_PERIMETRO_HAYA = "Activo no está en perímetro HAYA.";
 	public static final String ACTIVO_UNIDAD_ALQUILABLE = "El activo es una unidad alquilable.";
 	public static final String PORCENTAJE_CONSTRUCCION_INCORRECTO = "% Construcción incorrecto.";	
-	public static final String PORCENTAJE_CONSTRUCCION_NO_DECIMAL = "% Construcción no es un número decimal.";	
 
 	//Posicion fija de Columnas excel, para validaciones especiales de diccionario
 	public static final int COL_NUM_ACTIVO = 0;
@@ -105,7 +104,6 @@ public class MSVActualizarPorcentajeConstruccion extends MSVExcelValidatorAbstra
 				mapaErrores.put(ACTIVO_FUERA_PERIMETRO_HAYA, activosFueraPerimetroRows(exc));
 				mapaErrores.put(ACTIVO_UNIDAD_ALQUILABLE, activosUnidadAlquilableRows(exc));
 				mapaErrores.put(PORCENTAJE_CONSTRUCCION_INCORRECTO, porcentajeConstruccionIncorrectoRows(exc));
-				mapaErrores.put(PORCENTAJE_CONSTRUCCION_NO_DECIMAL, porcentajeNumrico(exc));
 
 				for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
 					if (!registro.getValue().isEmpty()) {
@@ -157,25 +155,6 @@ public class MSVActualizarPorcentajeConstruccion extends MSVExcelValidatorAbstra
 		return resultado;
 	}
 	
-	private List<Integer> porcentajeNumrico(MSVHojaExcel exc) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		try{
-			for(int i=1; i<this.numFilasHoja;i++){
-				try {
-					if (!StringUtils.isNumeric(exc.dameCelda(i, COL_PORCENTAJE_CONSTRUCCION)))
-						listaFilas.add(i);
-				} catch (ParseException e) {
-					listaFilas.add(i);
-				}
-			}
-		} catch (Exception e) {
-			listaFilas.add(0);
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-		return listaFilas;
-	}
 	
 	private List<Integer> isColumnNullByRows(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();

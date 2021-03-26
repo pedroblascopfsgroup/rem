@@ -1586,7 +1586,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 }
 			 if(isGestorActivos && isUnidadAlquilable) return true;
 				 else return false;
-	 	}
+	 	},
+	 	
+	 	editarPorcentajeConstruccion: function(get){
+			var editable = get('activo.isEditablePorcentajeConstruccion');			
+		    var funcion = $AU.userHasFunction('ACTUALIZAR_PORCENTAJE_CONSTRUCCION');
+		    
+		    if(editable && funcion){
+		    	return true;
+		    }
+		    
+		    return false;
+		}
 	 },
     
 	 stores: {

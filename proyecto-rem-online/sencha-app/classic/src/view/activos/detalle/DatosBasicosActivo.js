@@ -242,18 +242,36 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						                		readOnly: true
 						                	}
 						                },
-						   				 {
-							                	xtype: 'comboboxfieldbasedd',
-							                	fieldLabel:  HreRem.i18n('fieldlabel.estado.registral'),
-							                	name: 'comboEstadoRegistral',
-							                	reference: 'comboEstadoRegistralRef',
-							                	bind: {
-								                	store: '{comboEstadoRegistral}',
-								                	value: '{activo.estadoRegistralCodigo}',
-								                	readOnly: '{!activo.esEditableActivoEstadoRegistral}',
-													rawValue: '{activo.estadoRegistralDescripcion}'
-							                	}
-							                }
+					   				 	{
+						                	xtype: 'comboboxfieldbasedd',
+						                	fieldLabel:  HreRem.i18n('fieldlabel.estado.registral'),
+						                	name: 'comboEstadoRegistral',
+						                	reference: 'comboEstadoRegistralRef',
+						                	bind: {
+							                	store: '{comboEstadoRegistral}',
+							                	value: '{activo.estadoRegistralCodigo}',
+							                	readOnly: '{!activo.esEditableActivoEstadoRegistral}',
+												rawValue: '{activo.estadoRegistralDescripcion}'
+						                	}
+						                },
+							            {
+						                	xtype: 'numberfieldbase',
+											symbol: HreRem.i18n("symbol.porcentaje"),
+						                	fieldLabel:  HreRem.i18n('fieldlabel.porcentaje.construccion'),
+						                	name: 'porcentajeConstruccion',
+						                	reference: 'porcentajeConstruccion',
+						                	maskRe: /[0-9.]/,
+						                	bind: {
+						                		readOnly: '{!editarPorcentajeConstruccion}',
+						                		value: '{activo.porcentajeConstruccion}'
+						                	},
+						                	validator: function(v) {
+				                            	if(!Ext.isEmpty(this.getValue()) && (this.getValue() < 0 || this.getValue() >  100 )){
+					                            	return false;
+				                            	}
+					                            return true;
+					                        }
+						                }
 									]
 								},
 								//PARA DIVARIAN
@@ -322,29 +340,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										beforerender:'isGestorAdmisionAndSuperComboTipoAlta'
 									}*/
 									
-								},				                
-				                {
-				                	//Campo para dejar un espacio entre los campos por estetica.
-				                	readOnly: true
-				                },
-				                {
-				                	xtype: 'numberfieldbase',
-									symbol: HreRem.i18n("symbol.porcentaje"),
-				                	fieldLabel:  HreRem.i18n('fieldlabel.porcentaje.construccion'),
-				                	name: 'porcentajeConstruccion',
-				                	reference: 'porcentajeConstruccion',
-				                	maskRe: /[0-9.]/,
-				                	bind: {
-				                		readOnly: '{!activo.isEditablePorcentajeConstruccion}',
-				                		value: '{activo.porcentajeConstruccion}'
-				                	},
-				                	validator: function(v) {
-		                            	if(!Ext.isEmpty(this.getValue()) && (this.getValue() < 0 || this.getValue() >  100 )){
-			                            	return false;
-		                            	}
-			                            return true;
-			                        }
-				                },
+								},				                				                
 				                {
 				                	xtype: 'comboboxfieldbase',
 				                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.segmento'),
@@ -401,18 +397,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							            fn:'onClickActivoHRE'									       
 							        }
 								}
-							},
-							{
-			                	xtype: 'textareafieldbase',
-			                	labelWidth: 200,
-			                	rowspan: 5,
-			                	height: 130,
-			                	labelAlign: 'top',
-			                	fieldLabel: HreRem.i18n('fieldlabel.breve.descripcion.activo'),
-			                	bind:{
-			                		value: '{activo.descripcion}'
-			                	}
-			                },
+							}, 
 			                {
 			                	xtype: 'comboboxfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.segmento'),

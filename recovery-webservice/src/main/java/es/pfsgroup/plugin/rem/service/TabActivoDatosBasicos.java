@@ -936,14 +936,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		boolean puedeEditarPorcentaje = false;
 		
-		for(Perfil pef : perfilesUser){
-			if(CODIGO_SUPER.equals(pef.getCodigo()) || CODIGO_GESTOR_ACTIVO.equals(pef.getCodigo())) {
-				puedeEditarPorcentaje = true;
-				break;
-			}				
-		}
-
-		if(activoDto.getIsUA() != null && !activoDto.getIsUA() && perimetroActivo.getIncluidoEnPerimetro() == 1 && puedeEditarPorcentaje) {
+		if(activoDto.getIsUA() != null && !activoDto.getIsUA() && perimetroActivo.getIncluidoEnPerimetro() == 1) {
 			activoDto.setIsEditablePorcentajeConstruccion(true);
 		}else {
 			activoDto.setIsEditablePorcentajeConstruccion(false);

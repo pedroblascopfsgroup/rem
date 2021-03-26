@@ -1165,12 +1165,13 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 
 	private List<Integer> esMotivoValido(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		
+	
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					String celdaMotivoPerimetroGestion = exc.dameCelda(i, COL_NUM_MOTIVO_EXCLUSION_INCLUSION_PERIMETRO_VISIBLE);
-					if (!Checks.esNulo(celdaMotivoPerimetroGestion) && !particularValidator.existeCodigoMotivoAdmision(celdaMotivoPerimetroGestion)){
+					String excluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
+					if (!Checks.esNulo(celdaMotivoPerimetroGestion) && Arrays.asList(listaValidosPositivos).contains(excluirValidaciones.toUpperCase()) && !particularValidator.existeCodigoMotivoAdmision(celdaMotivoPerimetroGestion)){
 						listaFilas.add(i);				
 					}
 				} catch (ParseException e) {

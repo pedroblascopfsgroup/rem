@@ -347,9 +347,10 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 					if(!Checks.esNulo(motivoGestionComercial) && validacion != null ) {
 						if(DDSinSiNo.CODIGO_SI.equalsIgnoreCase(validacion.getCodigo())) {
 							perimetroActivo.setMotivoGestionComercial((DDMotivoGestionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, motivoGestionComercial));
-						}else {
-							perimetroActivo.setMotivoGestionComercial(null);
 						}
+					}
+					if(DDSinSiNo.CODIGO_NO.equals(validacion.getCodigo())) {
+						perimetroActivo.setMotivoGestionComercial(null);
 					}
 				}
 			}
@@ -460,7 +461,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 				idList.add(activo.getId());
-				if(Checks.esNulo(exc.dameCelda(fila,19))) {
+				if(Checks.esNulo(exc.dameCelda(fila,20))) {
 					idListSinVisibilidadComercial.add(activo.getId());
 				}
 			}

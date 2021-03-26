@@ -92,7 +92,7 @@ BEGIN
                                                          )
 AS
    SELECT act_id, sin_toma_posesion_inicial, ocupado_contitulo, pendiente_inscripcion, proindiviso, tapiado, obranueva_sindeclarar, obranueva_enconstruccion, divhorizontal_noinscrita, ruina, vandalizado, otro, combo_otro,
-          sin_informe_aprobado, sin_informe_aprobado_REM, revision, procedimiento_judicial, con_cargas, sin_acceso, ocupado_sintitulo, estado_portal_externo, DECODE (est_disp_com_codigo1, '01', 1, 0) AS es_condicionado,
+          sin_informe_aprobado, sin_informe_aprobado_REM, revision, procedimiento_judicial, con_cargas, sin_acceso, ocupado_sintitulo, estado_portal_externo, DECODE (est_disp_com_codigo1, ''01'', 1, 0) AS es_condicionado,
           est_disp_com_codigo2,borrado
 
      FROM (SELECT act.act_id,

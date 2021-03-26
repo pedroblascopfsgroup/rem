@@ -633,7 +633,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 
 		if(!Checks.esNulo(activo.getTasacion()) && !activo.getTasacion().isEmpty()){
-			ActivoTasacion tasacionMasReciente = activo.getTasacion().get(0);
+			//ActivoTasacion tasacionMasReciente = activo.getTasacion().get(0);
+			ActivoTasacion tasacionMasReciente = activoApi.getTasacionMasReciente(activo);
 			BeanUtils.copyProperty(activoDto, "valorUltimaTasacion", tasacionMasReciente.getImporteTasacionFin());
 		}
 

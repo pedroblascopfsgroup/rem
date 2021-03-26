@@ -78,7 +78,6 @@ import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
-import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPlusvalia;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;

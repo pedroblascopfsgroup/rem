@@ -26,7 +26,7 @@ import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
@@ -105,7 +105,7 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 						dtoOfertasFilter.setIdActivo(activo.getId());
 						dtoOfertasFilter.setEstadoOferta(DDEstadoOferta.CODIGO_RECHAZADA);
 						dtoOfertasFilter.setExcluirGencat(true);
-						List<VOfertasActivosAgrupacion> listaOfer = ofertaApi.getListOfertasFromView(dtoOfertasFilter);
+						List<VGridOfertasActivosAgrupacionIncAnuladas> listaOfer = ofertaApi.getListOfertasFromView(dtoOfertasFilter);
 						if(!Checks.esNulo(listaOfer) && !listaOfer.isEmpty()){
 							Long idOferta = listaOfer.get(0).getIdOferta();
 							if(!Checks.esNulo(idOferta)){

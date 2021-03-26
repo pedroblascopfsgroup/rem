@@ -10,6 +10,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -5599,85 +5600,79 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							&& (!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
 									|| !Checks.esNulo(posesoria.getFechaTomaPosesion()))))) {
 				if (!Checks.esNulo(ocupado) && (1 == ocupado && DDTipoTituloActivoTPA.tipoTituloNo.equals(conTitulo))) {
-					if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-
-						List<DtoAdjunto> listAdjuntos;
-						DtoAdjunto adjuntoAux = null;
-						try {
-							listAdjuntos = activoAdapter.getAdjuntosActivo(activo.getId());
-							if (!Checks.estaVacio(listAdjuntos)) {
-								// Buscamos el adjunto de tipo ocupacionDesocupacion mas reciente
-
-								for (DtoAdjunto adjunto : listAdjuntos) {
-
-									boolean esOcupacionDesocupacion = DDTipoDocumentoActivo.MATRICULA_INFORME_OCUPACION_DESOCUPACION
-											.equals(adjunto.getMatricula());
-									if ((Checks.esNulo(adjuntoAux) && esOcupacionDesocupacion)) {
-										adjuntoAux = adjunto;
-									}
-
-								}
-							}
-							List<DtoAdjuntoMail> sendAdj = new ArrayList<DtoAdjuntoMail>();
-
-							if (!Checks.esNulo(adjuntoAux)) {
-								DtoAdjuntoMail adj = new DtoAdjuntoMail();
-								adj.setNombre(adjuntoAux.getNombre());
-								FileItem fileItem = null;
-								try {
-									if (!Checks.esNulo(adjuntoAux.getId())) {
-										fileItem = activoAdapter.download(adjuntoAux.getId(), adjuntoAux.getNombre());
-									}
-								} catch (UserException e) {
-									logger.error(e.getMessage(), e);
-								} catch (Exception e) {
-									logger.error(e.getMessage(), e);
-								}
-								if (!Checks.esNulo(fileItem)) {
-									adj.setAdjunto(new Adjunto(fileItem));
-								}
-
-								sendAdj.add(adj);
-
-								Usuario usu = usuarioApi.getByUsername(EMAIL_OCUPACIONES);
-								if (!Checks.esNulo(usu) && !Checks.esNulo(usu.getEmail())) {
-									List<String> para = new ArrayList<String>();
-									para.add(usu.getEmail());
-									String activoS = activo.getNumActivo() + "";
-									String carteraS = activo.getCartera().getDescripcion();
-									StringBuilder cuerpo = new StringBuilder(
-											"<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><META http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body>");
-									cuerpo.append("<div><p>Se ha marcado en REM una ocupación ilegal del activo ");
-									cuerpo.append(activoS);
-									cuerpo.append(" de la cartera ");
-									cuerpo.append(carteraS);
-									cuerpo.append(
-											"</p><p>Se anexa el informe de ocupación remitido por el API custodio</p><p>Un saludo</p></div></body></html>");
-									genericAdapter.sendMail(para, null,
-											"Ocupación ilegal del activo: " + activoS + ", de la cartera " + carteraS,
-											cuerpo.toString(), sendAdj);
-								}
+					List<DtoAdjunto> listAdjuntos;
+					DtoAdjunto adjuntoAux = null;
+					try {
+						listAdjuntos = activoAdapter.getAdjuntosActivo(activo.getId());
+						Collections.sort(listAdjuntos);
+						
+						if (!Checks.estaVacio(listAdjuntos)) {
+							// Buscamos el adjunto de tipo ocupacionDesocupacion mas reciente
+							for (DtoAdjunto adjunto: listAdjuntos) {
+								boolean esOcupacionDesocupacion = DDTipoDocumentoActivo.MATRICULA_INFORME_OCUPACION_DESOCUPACION
+										.equals(adjunto.getMatricula());
 								
-								// se envia un true, por que ya hemos mandado el
-								// correo
-								// y tiene que guardar los cambios
-								return true;
-							}else {
-								return false;
+								if (esOcupacionDesocupacion) {
+									adjuntoAux = adjunto;
+									break;
+								}
+							}
+						}
+						List<DtoAdjuntoMail> sendAdj = new ArrayList<DtoAdjuntoMail>();
+
+						if (!Checks.esNulo(adjuntoAux)) {
+							DtoAdjuntoMail adj = new DtoAdjuntoMail();
+							adj.setNombre(adjuntoAux.getNombre());
+							FileItem fileItem = null;
+							try {
+								if (!Checks.esNulo(adjuntoAux.getId())) {
+									fileItem = activoAdapter.download(adjuntoAux.getId(), adjuntoAux.getNombre());
+								}
+							} catch (UserException e) {
+								logger.error(e.getMessage(), e);
+							} catch (Exception e) {
+								logger.error(e.getMessage(), e);
+							}
+							if (!Checks.esNulo(fileItem)) {
+								adj.setAdjunto(new Adjunto(fileItem));
 							}
 
-						} catch (IllegalAccessException e) {
-							logger.error(e.getMessage(), e);
-						} catch (InvocationTargetException e) {
-							logger.error(e.getMessage(), e);
-						} catch (GestorDocumentalException e) {
-							logger.error(e.getMessage(), e);
+							sendAdj.add(adj);
+
+							Usuario usu = usuarioApi.getByUsername(EMAIL_OCUPACIONES);
+							if (!Checks.esNulo(usu) && !Checks.esNulo(usu.getEmail())) {
+								List<String> para = new ArrayList<String>();
+								para.add(usu.getEmail());
+								String activoS = activo.getNumActivo() + "";
+								String carteraS = activo.getCartera().getDescripcion();
+								StringBuilder cuerpo = new StringBuilder(
+										"<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><META http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body>");
+								cuerpo.append("<div><p>Se ha marcado en REM una ocupación ilegal del activo ");
+								cuerpo.append(activoS);
+								cuerpo.append(" de la cartera ");
+								cuerpo.append(carteraS);
+								cuerpo.append(
+										"</p><p>Se anexa el informe de ocupación remitido por el API custodio</p><p>Un saludo</p></div></body></html>");
+								genericAdapter.sendMail(para, null,
+										"Ocupación ilegal del activo: " + activoS + ", de la cartera " + carteraS,
+										cuerpo.toString(), sendAdj);
+							}
+							
+							// se envia un true, por que ya hemos mandado el
+							// correo
+							// y tiene que guardar los cambios
+							return true;
+						}else {
+							return false;
 						}
 
-					} else {
-						return false;
+					} catch (IllegalAccessException e) {
+						logger.error(e.getMessage(), e);
+					} catch (InvocationTargetException e) {
+						logger.error(e.getMessage(), e);
+					} catch (GestorDocumentalException e) {
+						logger.error(e.getMessage(), e);
 					}
-
 					// devolvemos un false por que no esta adjuntado el
 					// archivo
 					// y no se pueden guardar los cambios

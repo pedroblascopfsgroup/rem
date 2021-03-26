@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -2750,12 +2751,12 @@ public class ActivoAdapter {
 						adj.setDescripcionTipo(tipoDoc.getDescripcion());
 					}
 				}
-				
 			}
 
 		} else {
 			listaAdjuntos = getAdjuntosActivo(id, listaAdjuntos);
 		}
+		
 		return listaAdjuntos;
 	}
 
@@ -2770,9 +2771,12 @@ public class ActivoAdapter {
 			dto.setIdEntidad(activo.getId());
 			dto.setDescripcionTipo(adjunto.getTipoDocumentoActivo().getDescripcion());
 			dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
+			dto.setMatricula(adjunto.getTipoDocumentoActivo().getMatricula());
+			dto.setFechaDocumento(adjunto.getFechaDocumento());
 
 			listaAdjuntos.add(dto);
 		}
+		
 		return listaAdjuntos;
 	}
 

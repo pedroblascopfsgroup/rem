@@ -776,13 +776,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			storeSubfaseFiltered.getProxy().setExtraParams({
 						'codFase' : combo.getValue()
 					});
-		} else if (combo.chainedStore == 'comboSubestadoGestionFiltered') {
-			var storeSubestadoGestionFiltered = me.getViewModel()
-					.get("comboSubestadoGestionFiltered");
-			chainedCombo.bindStore(storeSubestadoGestionFiltered);
-			storeSubestadoGestionFiltered.getProxy().setExtraParams({
-						'codLocalizacion' : combo.getValue()
-					});
+
 		} else if (combo.chainedStore == 'comboSubestadoAdmisionNuevoFiltrado') {
 			var storeSubestadoAdmisionFiltered = me.getViewModel().data.comboSubestadoAdmisionNuevoFiltrado;
 			chainedCombo.bindStore(storeSubestadoAdmisionFiltered);
@@ -790,20 +784,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						'codEstadoAdmisionNuevo' : combo.getValue()
 					});
 		}
-
-		chainedCombo.getStore().load({
-					callback : function(records, operation, success) {
-						if (!Ext.isEmpty(records) && records.length > 0) {
-							if (chainedCombo.selectFirst == true) {
-								chainedCombo.setSelection(1);
-							};
-							chainedCombo.setDisabled(false);
-						} else {
-							chainedCombo.setDisabled(true);
-						}
+		chainedCombo.getStore().removeAll();
+		if(chainedCombo.getXType() != 'comboboxfieldbasedd'){
+			chainedCombo.getStore().load({
+				callback : function(records, operation, success) {
+					if (!Ext.isEmpty(records) && records.length > 0) {
+						if (chainedCombo.selectFirst == true) {
+							chainedCombo.setSelection(1);
+						};
+						chainedCombo.setDisabled(false);
+					} else {
+						chainedCombo.setDisabled(true);
 					}
-				});
-
+				}
+			});
+		}
 		if (me.lookupReference(chainedCombo.chainedReference) != null) {
 			var chainedDos = me.lookupReference(chainedCombo.chainedReference);
 			if (!chainedDos.isDisabled()) {

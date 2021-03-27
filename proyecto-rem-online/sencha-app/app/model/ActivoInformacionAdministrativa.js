@@ -122,6 +122,9 @@ Ext.define('HreRem.model.ActivoInformacionAdministrativa', {
     		{
     			name:'tributacionAdq'
     		},
+			{
+    			name:'tributacionAdqDescripcion'
+    		},
     		{
 				name:'fechaVencTpoBonificacion',
 				type:'date',
@@ -166,6 +169,9 @@ Ext.define('HreRem.model.ActivoInformacionAdministrativa', {
     		},
     		{
     			name:'estadoVentaCodigo'
+    		},
+			{
+    			name:'estadoVentaDesripcion'
     		},
     		
     		

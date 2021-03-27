@@ -1005,8 +1005,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoPersona'}
-			},
-			autoLoad: true
+			}
 	    },
 	    comboEstadoCivil: {
 			model: 'HreRem.model.ComboBase',

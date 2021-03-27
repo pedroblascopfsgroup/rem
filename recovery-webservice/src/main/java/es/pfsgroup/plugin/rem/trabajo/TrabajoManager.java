@@ -4716,7 +4716,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						}
 						if (!Checks.esNulo(usuario.getUsuarioGrupo())) {
 							target.setUsuarioGrupo(usuario.getUsuarioGrupo());
-						}						
+						}
+						target.setFullName(source.getFullName());
 						listaDtoProveedorContactoSimple.add(target);
 					}
 				} catch (IllegalAccessException e) {

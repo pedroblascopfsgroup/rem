@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceContabilidadBbva;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -66,6 +67,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
+	private NotificatorServiceContabilidadBbva notificatorServiceContabilidadBbva;
 
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
 	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
@@ -241,6 +245,10 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				if (!Checks.esNulo(tramite.getActivo())) {
 					activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
 				}
+				if (expediente.getOferta() != null &&
+						DDCartera.CODIGO_CARTERA_BBVA.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
+					notificatorServiceContabilidadBbva.notificatorFinTareaConValores(expediente);
+				}
 			}
 		}
 	}
@@ -252,5 +260,6 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	public String[] getKeys() {
 		return this.getCodigoTarea();
 	}
+	
 
 }

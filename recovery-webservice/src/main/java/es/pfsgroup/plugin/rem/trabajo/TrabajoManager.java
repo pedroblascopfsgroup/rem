@@ -493,6 +493,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@BusinessOperation(overrides = "trabajoManager.saveFichaTrabajo")
 	@Transactional
 	public boolean saveFichaTrabajo(DtoFichaTrabajo dtoTrabajo, Long id) {
+		
 		Trabajo trabajo = trabajoDao.get(id);
 		TareaActivo tareaActivo = null;
 
@@ -500,6 +501,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (!activoTramites.isEmpty()) {
 			ActivoTramite activoTramite = activoTramites.get(0);
 			tareaActivo = tareaActivoApi.getUltimaTareaActivoByIdTramite(activoTramite.getId());
+		}
+		
+		if (trabajo.getGastoTrabajo() != null && !DDEstadoGasto.ANULADO.equals(trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor().getEstadoGasto().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
+		}
+		
+		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
 		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getResolucionComiteCodigo()) && (DDAcoAprobacionComite.CODIGO_APROBADO.equals(dtoTrabajo.getResolucionComiteCodigo()) 
@@ -1110,6 +1119,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public boolean saveGestionEconomicaTrabajo(DtoGestionEconomicaTrabajo dtoGestionEconomica, Long id) {
 
 		Trabajo trabajo = trabajoDao.get(id);
+		
+		if (trabajo.getGastoTrabajo() != null && !DDEstadoGasto.ANULADO.equals(trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor().getEstadoGasto().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
+		}
+		
+		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
+		}
 
 		try {
 			
@@ -3485,9 +3502,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@BusinessOperation(overrides = "trabajoManager.createTarifaTrabajo")
 	@Transactional(readOnly = false)
 	public boolean createTarifaTrabajo(DtoTarifaTrabajo tarifaDto, Long idTrabajo) {
+		
 		Trabajo trabajo = trabajoDao.get(idTrabajo);
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", tarifaDto.getIdConfigTarifa());
 		ConfiguracionTarifa cfgTarifa = genericDao.get(ConfiguracionTarifa.class, filtro);
+		
+		if (trabajo.getGastoTrabajo() != null && !DDEstadoGasto.ANULADO.equals(trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor().getEstadoGasto().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
+		}
+		
+		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
+		}
 
 		try {
 			TrabajoConfiguracionTarifa traCfgTarifa = new TrabajoConfiguracionTarifa();
@@ -3518,11 +3544,21 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@BusinessOperation(overrides = "trabajoManager.createPresupuestoTrabajo")
 	@Transactional(readOnly = false)
 	public boolean createPresupuestoTrabajo(DtoPresupuestosTrabajo presupuestoDto, Long idTrabajo) {
+		
 		Trabajo trabajo = trabajoDao.get(idTrabajo);
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", presupuestoDto.getIdProveedor());
 		ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtro);
 		filtro = genericDao.createFilter(FilterType.EQUALS, "id", presupuestoDto.getIdProveedorContacto());
 		ActivoProveedorContacto proveedorContacto = genericDao.get(ActivoProveedorContacto.class, filtro);
+		
+		if (trabajo.getGastoTrabajo() != null && !DDEstadoGasto.ANULADO.equals(trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor().getEstadoGasto().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
+		}
+		
+		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
+		}
+		
 		try {
 
 			PresupuestoTrabajo presupuesto = new PresupuestoTrabajo();
@@ -3556,6 +3592,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(presupuestoDto.getId()));
 		PresupuestoTrabajo presupuestoTrabajo = genericDao.get(PresupuestoTrabajo.class, filtro);
 		Trabajo trabajo = findOne(presupuestoTrabajo.getTrabajo().getId());
+		
+		if (trabajo.getGastoTrabajo() != null && !DDEstadoGasto.ANULADO.equals(trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor().getEstadoGasto().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
+		}
+		
+		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
+		}
 
 		try {
 			beanUtilNotNull.copyProperties(presupuestoTrabajo, presupuestoDto);
@@ -3622,7 +3666,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(tarifaDto.getId()));
 		TrabajoConfiguracionTarifa tarifaTrabajo = genericDao.get(TrabajoConfiguracionTarifa.class, filtro);
+		Trabajo trabajo = tarifaTrabajo.getTrabajo();
 
+		if (trabajo.getGastoTrabajo() != null && !DDEstadoGasto.ANULADO.equals(trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor().getEstadoGasto().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
+		}
+		
+		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
+		}
+		
 		try {
 
 			beanUtilNotNull.copyProperties(tarifaTrabajo, tarifaDto);
@@ -3636,8 +3689,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		} catch (IllegalAccessException e) {
 			logger.error(e.getMessage());
+			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
 
 		return true;
@@ -3647,12 +3702,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@BusinessOperation(overrides = "trabajoManager.deletePresupuestoTrabajo")
 	@Transactional(readOnly = false)
 	public boolean deletePresupuestoTrabajo(Long id) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(id));
+		PresupuestoTrabajo presupuesto = genericDao.get(PresupuestoTrabajo.class, filtro);
+		Trabajo trabajo = presupuesto.getTrabajo();
+		
+		if (trabajo.getGastoTrabajo() != null && !DDEstadoGasto.ANULADO.equals(trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor().getEstadoGasto().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
+		}
+		
+		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
+		}
+		
 		try {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(id));
-
-			PresupuestoTrabajo presupuesto = genericDao.get(PresupuestoTrabajo.class, filtro);
-			Trabajo trabajo = presupuesto.getTrabajo();
-
 			genericDao.deleteById(PresupuestoTrabajo.class, id);
 
 			actualizarImporteTotalTrabajo(trabajo.getId());
@@ -3669,13 +3732,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@BusinessOperation(overrides = "trabajoManager.deleteTarifaTrabajo")
 	@Transactional(readOnly = false)
 	public boolean deleteTarifaTrabajo(Long id) {
+	
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(id));
+		TrabajoConfiguracionTarifa tarifa = genericDao.get(TrabajoConfiguracionTarifa.class, filtro);
+		Trabajo trabajo = tarifa.getTrabajo();
+		
+		if (trabajo.getGastoTrabajo() != null && !DDEstadoGasto.ANULADO.equals(trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor().getEstadoGasto().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
+		}
+		
+		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
+		}
+		
 		try {
-
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(id));
-
-			TrabajoConfiguracionTarifa tarifa = genericDao.get(TrabajoConfiguracionTarifa.class, filtro);
-			Trabajo trabajo = tarifa.getTrabajo();
-
 			genericDao.deleteById(TrabajoConfiguracionTarifa.class, id);
 
 			actualizarImporteTotalTrabajo(trabajo.getId());
@@ -4912,6 +4982,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public boolean createProvisionSuplido(DtoProvisionSuplido provisionSuplidoDto, Long idTrabajo) {
 
 		Trabajo trabajo = trabajoDao.get(idTrabajo);
+		
+		if (trabajo.getGastoTrabajo() != null && !DDEstadoGasto.ANULADO.equals(trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor().getEstadoGasto().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
+		}
+		
+		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
+		}
 
 		try {
 			TrabajoProvisionSuplido provisionSuplido = new TrabajoProvisionSuplido();
@@ -4940,7 +5018,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id",
 				Long.valueOf(provisionSuplidoDto.getIdProvisionSuplido()));
 		TrabajoProvisionSuplido provisionSuplido = genericDao.get(TrabajoProvisionSuplido.class, filtro);
-
+		Trabajo trabajo = provisionSuplido.getTrabajo();
+		
+		if (trabajo.getGastoTrabajo() != null && !DDEstadoGasto.ANULADO.equals(trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor().getEstadoGasto().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
+		}
+		
+		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
+		}
+		
 		try {
 
 			beanUtilNotNull.copyProperties(provisionSuplido, provisionSuplidoDto);
@@ -4965,6 +5052,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override
 	@Transactional(readOnly = false)
 	public boolean deleteProvisionSuplido(Long id) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
+		TrabajoProvisionSuplido provisionSuplido = genericDao.get(TrabajoProvisionSuplido.class, filtro);
+		Trabajo trabajo = provisionSuplido.getTrabajo();
+		
+		if (trabajo.getGastoTrabajo() != null && !DDEstadoGasto.ANULADO.equals(trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor().getEstadoGasto().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
+		}
+		
+		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
+		}
+		
 		try {
 			genericDao.deleteById(TrabajoProvisionSuplido.class, id);
 

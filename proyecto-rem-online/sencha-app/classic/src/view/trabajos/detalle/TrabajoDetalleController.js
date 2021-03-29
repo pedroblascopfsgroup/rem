@@ -1143,6 +1143,17 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	newRecord = Ext.create('HreRem.model.TarifasTrabajo', {idConfigTarifa: record.getData().id, codigoTarifa: record.getData().codigoTarifa, precioUnitario: record.getData().precioUnitario, precioUnitarioCliente: record.getData().precioUnitarioCliente, unidadMedida: record.getData().unidadmedida, idTrabajo: idTrabajo});
 		//Ahora hacer el save en el store para que se llame al controller java
     	newRecord.save({
+    		success: function() {
+    			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+    		},
+		 	failure: function(record, operation) {
+		 		var response = Ext.decode(operation.getResponse().responseText);
+		 		if(response.success === "false" && Ext.isDefined(response.error)) {
+					me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).error);
+		 		}else{
+		 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		 		}
+		    },
     		callback: function() {
     			windowSeleccionTarifas.parent.funcionRecargar();
     			windowSeleccionTarifas.hide();

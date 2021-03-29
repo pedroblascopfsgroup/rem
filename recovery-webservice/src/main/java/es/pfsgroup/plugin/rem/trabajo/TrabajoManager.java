@@ -379,10 +379,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@BusinessOperation(overrides = "trabajoManager.findAll")
 	public Page findAll(DtoTrabajoFilter dto, Usuario usuarioLogado) {
 
+        boolean esHistoricoPeticion = false;
+		boolean esActuacionTecnica = (dto.getIsOrigenActuacionesTecnicas() == null) ? false : dto.getIsOrigenActuacionesTecnicas();
+		boolean esIncluidoFactura = false;
+		
+		if(dto.getEsHistoricoPeticionActivo() != null) {
+			esHistoricoPeticion = dto.getEsHistoricoPeticionActivo();
+		} else if (dto.getEsIncluidoFacturaGastos() != null) {
+			esIncluidoFactura = dto.getEsIncluidoFacturaGastos();
+		}
+		
+
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
 		
-		boolean esHistoricoPeticion = false;
 		
 		if(dto.getEsHistoricoPeticionActivo() != null) {
 			esHistoricoPeticion = dto.getEsHistoricoPeticionActivo();
@@ -414,24 +424,48 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			if (esControlConsulta) {
 				dto.setCodigoTipo(CODIGO_OBTENCION_DOCUMENTACION);
-				dto.setCodigoTipo2(CODIGO_ACTUACION_TECNICA);
-				
-				if(esHistoricoPeticion) {
-					return trabajoDao.findAllFilteredHistoricoPeticion(dto, usuarioLogado.getId());
+                dto.setCodigoTipo2(CODIGO_ACTUACION_TECNICA);
+                if(esHistoricoPeticion) {
+					return trabajoDao.findAllFilteredHistoricoPeticion(dto, null);
+
+				} else if(esIncluidoFactura){
+					return trabajoDao.findAllFilteredIncluidoFactura(dto, null);
+					
+				}else if (esActuacionTecnica) {
+				    return trabajoDao.findAllNoVista(dto);
+
 				}else {
-					return trabajoDao.findAll(dto);
+				    return trabajoDao.findAll(dto);
 				}
-				
+            }
+            if(esHistoricoPeticion) {
+				return trabajoDao.findAllFilteredHistoricoPeticion(dto, usuarioLogado.getId());
+
+			} else if(esIncluidoFactura){
+				return trabajoDao.findAllFilteredIncluidoFactura(dto, usuarioLogado.getId());
+
+			} else if (esActuacionTecnica){
+			    return trabajoDao.findAllFilteredByProveedorContactoNoVista(dto, usuarioLogado.getId());
+			}else {
+
+				return trabajoDao.findAllFilteredByProveedorContacto(dto, usuarioLogado.getId());
 			}
-			return trabajoDao.findAllFilteredByProveedorContacto(dto, usuarioLogado.getId());
 		}
 
 		if(esHistoricoPeticion) {
 			return trabajoDao.findAllFilteredHistoricoPeticion(dto, null);
+
+		} else if(esIncluidoFactura){
+			return trabajoDao.findAllFilteredIncluidoFactura(dto, null);
+
+		}else if (esActuacionTecnica){
+			return trabajoDao.findAllNoVista(dto);
+
 		}else {
-			return trabajoDao.findAll(dto);
+		    return trabajoDao.findAll(dto);
 		}
 	}
+	
 
 	@Override	
 	public Page getBusquedaTrabajosGrid(DtoTrabajoGridFilter dto, Usuario usuarioLogado) {

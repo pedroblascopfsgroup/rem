@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.activo.dao.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -298,4 +299,19 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 			return null;
 		}
 	}
+	@Override
+	public boolean isTipoComercializacionesAgrupaciones(Long idAgrupacion) {
+		
+		String sql = " SELECT COUNT(1) FROM (SELECT Distinct(tco.dd_tco_id), aga.agr_id " + 
+				"		FROM dd_tco_tipo_comercializacion tco " + 
+				"		join act_apu_activo_publicacion apu on tco.dd_tco_id = apu.dd_tco_id " + 
+				"		join act_activo act on apu.act_id = act.act_id " + 
+				"		join act_aga_agrupacion_activo aga on act.act_id = aga.act_id " + 
+				"		where aga.agr_id =" + idAgrupacion + " "+ 
+				"		group by tco.dd_tco_id, aga.agr_id)";		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 1;
+		}
+		return false;				
+	}	
 }

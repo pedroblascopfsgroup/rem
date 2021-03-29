@@ -27,7 +27,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -85,7 +85,7 @@ public class ReservaController {
 					dtoOfertasFilter.setIdActivo(activo.getId());
 					dtoOfertasFilter.setEstadoOferta(DDEstadoOferta.CODIGO_RECHAZADA);
 					
-					List<VOfertasActivosAgrupacion> listaOfer = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasFromView(dtoOfertasFilter);
+					List<VGridOfertasActivosAgrupacionIncAnuladas> listaOfer = (List<VGridOfertasActivosAgrupacionIncAnuladas>) ofertaApi.getListOfertasFromView(dtoOfertasFilter);
 					if(!Checks.esNulo(listaOfer) && listaOfer.size()>0){
 						Long idOferta = listaOfer.get(0).getIdOferta();
 						if(!Checks.esNulo(idOferta)){

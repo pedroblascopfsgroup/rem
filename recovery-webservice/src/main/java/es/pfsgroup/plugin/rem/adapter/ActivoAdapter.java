@@ -14,8 +14,6 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
-import es.pfsgroup.plugin.rem.service.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -24,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.dto.WebDto;
@@ -57,7 +56,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
-import es.pfsgroup.framework.paradise.action.utils.BeanUtilsActionsExceptions;
 import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -127,7 +125,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
@@ -138,6 +135,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
+import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -145,12 +143,17 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
+import es.pfsgroup.plugin.rem.service.TabActivoCargas;
+import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
+import es.pfsgroup.plugin.rem.service.TabActivoDatosRegistrales;
+import es.pfsgroup.plugin.rem.service.TabActivoSaneamiento;
+import es.pfsgroup.plugin.rem.service.TabActivoService;
+import es.pfsgroup.plugin.rem.service.TabActivoSitPosesoriaLlaves;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.EjecutarSPPublicacionAsincrono;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
-import org.springframework.ui.ModelMap;
 
 @Service
 public class ActivoAdapter {
@@ -1154,54 +1157,12 @@ public class ActivoAdapter {
 		}
 	}
 
-	public List<DtoAgrupacionesActivo> getListAgrupacionesActivoById(Long id) {
+	public List<VBusquedaAgrupacionByActivo> getListAgrupacionesActivoById(Long id) {
 
-		Activo activo = activoApi.get(id);
-
-		List<VCalculosActivoAgrupacion> agrupacionesActivo = getCalculoActivoAgrupacion(id);
-
-		List<DtoAgrupacionesActivo> listaDtoAgrupaciones = new ArrayList<DtoAgrupacionesActivo>();
-
-		if (!Checks.esNulo(agrupacionesActivo) && !Checks.estaVacio(agrupacionesActivo)) {
-
-			for (VCalculosActivoAgrupacion calcAgrupacion: agrupacionesActivo) {
-				DtoAgrupacionesActivo dtoActivoAgrupaciones = new DtoAgrupacionesActivo();
-				try {
-
-					ActivoAgrupacionActivo agrupacion = genericDao.get(ActivoAgrupacionActivo.class,
-							genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", calcAgrupacion.getIdAgrupacion()),
-							genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-
-					BeanUtils.copyProperties(dtoActivoAgrupaciones, agrupacion);
-					BeanUtils.copyProperties(dtoActivoAgrupaciones, agrupacion.getAgrupacion());
-
-					BeanUtils.copyProperty(dtoActivoAgrupaciones, "fechaInclusion",
-							agrupacion.getFechaInclusion());
-					BeanUtils.copyProperty(dtoActivoAgrupaciones, "tipoAgrupacionDescripcion",
-							agrupacion.getAgrupacion().getTipoAgrupacion().getDescripcion());
-					BeanUtils.copyProperty(dtoActivoAgrupaciones, "tipoAgrupacionCodigo",
-							agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo());
-					BeanUtils.copyProperty(dtoActivoAgrupaciones, "idAgrupacion",
-							agrupacion.getAgrupacion().getId());
-					BeanUtils.copyProperty(dtoActivoAgrupaciones, "numActivos",
-							calcAgrupacion.getNumActivos());
-					BeanUtils.copyProperty(dtoActivoAgrupaciones, "numActivosPublicados",
-							calcAgrupacion.getNumActivosPublicados());
-
-				} catch (IllegalAccessException e) {
-					logger.error("Error en ActivoAdapter", e);
-				} catch (InvocationTargetException e) {
-					logger.error("Error en ActivoAdapter", e);
-				} catch (Exception e) {
-					logger.error("Error en ActivoAdapter, ", e);
-				}
-				listaDtoAgrupaciones.add(dtoActivoAgrupaciones);
-
-			}
-		}
-
-		return listaDtoAgrupaciones;
-
+		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", id );
+		List<VBusquedaAgrupacionByActivo> agrupacionesActivo = genericDao.getList(VBusquedaAgrupacionByActivo.class, filtroIdActivo);
+		
+		return agrupacionesActivo;
 	}
 
 	public List<VCalculosActivoAgrupacion> getCalculoActivoAgrupacion(Long idActivo){
@@ -2595,13 +2556,13 @@ public class ActivoAdapter {
 
 	}
 
-	public List<VOfertasActivosAgrupacion> getListOfertasActivos(Long idActivo) {
+	public List<VGridOfertasActivosAgrupacionIncAnuladas> getListOfertasActivos(Long idActivo) {
 
 		return activoDao.getListOfertasActivo(idActivo);
 
 	}
 	
-	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasVendidasActivos(Long idActivo) {
+	public List<VGridOfertasActivosAgrupacion> getListOfertasTramitadasVendidasActivos(Long idActivo) {
 
 		return activoDao.getListOfertasTramitadasPendientesActivo(idActivo);
 

@@ -850,10 +850,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			 model: 'HreRem.model.OfertasAgrupacion',
 			 sorters: [
 			 			{
-			        		property: 'estadoOferta',
-			        		direction: 'ASC'	
-			 			},
-			 			{
 			        		property: 'fechaCreacion',
 			        		direction: 'DESC'	
 			 			}

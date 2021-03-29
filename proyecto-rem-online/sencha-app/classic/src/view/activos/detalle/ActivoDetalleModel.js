@@ -10,9 +10,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
     'HreRem.model.HistoricoTramtitacionTituloModel', 'HreRem.model.HistoricoGestionGrid', 'HreRem.model.ListaActivoGrid', 'HreRem.model.HistoricoFasesDePublicacion',
     'HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','HreRem.model.DocumentacionAdministrativa', 'HreRem.model.ActivoPatrimonio',
-    'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel','HreRem.model.SuministrosActivoModel', 'HreRem.model.ActivoEvolucion',
-    'HreRem.model.ActivoSaneamiento', 'HreRem.model.ReqFaseVentaModel', 'HreRem.model.AgendaRevisionTituloGridModel', 'HreRem.model.SaneamientoAgenda', 'HreRem.model.CalificacionNegativaAdicionalModel',
-    'HreRem.model.HistoricoTramitacionTituloAdicionalModel'],
+    'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel','HreRem.model.SuministrosActivoModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento',
+	'HreRem.model.ReqFaseVentaModel', 'HreRem.model.AgendaRevisionTituloGridModel', 'HreRem.model.SaneamientoAgenda', 'HreRem.model.CalificacionNegativaAdicionalModel',
+	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel'],
 
     data: {
     	activo: null,
@@ -1020,7 +1020,377 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMINISTRACION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION']);
 		},
 		
-		
+	     getIconClsDQRefCatastral: function(get) {
+	     	var correctoF3ReferenciaCatastral = get('calidaddatopublicacionactivo.correctoF3ReferenciaCatastral');
+	     	
+	     	if("0" == correctoF3ReferenciaCatastral){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3ReferenciaCatastral){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQSupConstruida: function(get) {
+	     	var correctoF3ReferenciaCatastral = get('calidaddatopublicacionactivo.correctoF3SuperficieConstruida');
+	     	
+	     	if("0" == correctoF3ReferenciaCatastral){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3ReferenciaCatastral){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQSuperficieUtil: function(get) {
+	     	var correctoF3SuperficieUtil = get('calidaddatopublicacionactivo.correctoF3SuperficieUtil');
+	     	
+	     	if("0" == correctoF3SuperficieUtil){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3SuperficieUtil){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQAnyoConstruccion: function(get) {
+	     	var correctoF3AnyoConstruccion = get('calidaddatopublicacionactivo.correctoF3AnyoConstruccion');
+	     	
+	     	if("0" == correctoF3AnyoConstruccion){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3AnyoConstruccion){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQTipoVia: function(get) {
+	     	var correctoF3TipoVia = get('calidaddatopublicacionactivo.correctoF3TipoVia');
+
+	     	if("0" == correctoF3TipoVia){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3TipoVia){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQNomCalle: function(get) {
+	     	var correctoF3NomCalle = get('calidaddatopublicacionactivo.correctoF3NomCalle');
+	     	
+	     	if("0" == correctoF3NomCalle){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3NomCalle){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQCP: function(get) {
+	     	var correctoF3CP = get('calidaddatopublicacionactivo.correctoF3CP');
+	     	
+	     	if("0" == correctoF3CP){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3CP){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQMunicipio: function(get) {
+	     	var correctoF3Municipio = get('calidaddatopublicacionactivo.correctoF3Municipio');
+	     	
+	     	if("0" == correctoF3Municipio){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3Municipio){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQProvincia: function(get) {
+	     	var correctoF3Provincia = get('calidaddatopublicacionactivo.correctoF3Provincia');
+	     	
+	     	if("0" == correctoF3Provincia){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3Provincia){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQBloqueFase3: function(get) {
+	     	var correctoF3BloqueFase3 = get('calidaddatopublicacionactivo.correctoF3BloqueFase3');
+	     	
+	     	if("0" == correctoF3BloqueFase3){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3BloqueFase3){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },getIconClsIdufirCorrecto:function(get){
+	     	
+	     	var correctoIdufirFase1 = get('calidaddatopublicacionactivo.correctoIdufirFase1');
+	     	
+	     	if("0"==correctoIdufirFase1)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}
+	     },getIconClsFincaRegistralCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoFincaRegistralFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsTomoCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoTomoFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsLibroCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoLibroFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsFolioCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoFolioFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsUsoDominanteCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoUsoDominanteFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsMunicipioDelRegistroCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoMunicipioDelRegistroFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsProvinciaDelRegistroCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoProvinciaDelRegistroFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsProvinciaNumeroDelRegistroCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoNumeroDelRegistroFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsVPOCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoVpoFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsAnyoConstruccionCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoAnyoConstruccionFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsTipologiaCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoTipologiaFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsSubtipologiaCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoSubtipologiaFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsInformacionCargasCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoInformacionCargasFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsInscripcionCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoInscripcionCorrectaFase1');	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsPorCienCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoPor100PropiedadFase1');		
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getCorrectoDatosRegistralesFase0a2:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoDatosRegistralesFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },
+	     
+	     getIconClsDQFotos: function(get) {
+	     	var correctoF1Fotos = get('calidaddatopublicacionactivo.correctoFotos');
+	     	
+	     	if("0" == correctoF1Fotos){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF1Fotos){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },
+	     
+	       getIconClsDQescripcion: function(get) {
+	     	var correctoF1Descripcion = get('calidaddatopublicacionactivo.correctoDescripcion');
+	     	
+	     	if("0" == correctoF1Descripcion){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF1Descripcion){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	       getIconClsDQLocalizacion: function(get) {
+	     	var correctoF1Descripcion = get('calidaddatopublicacionactivo.correctoLocalizacion');
+	     	
+	     	if("0" == correctoF1Descripcion){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF1Descripcion){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	       getIconClsDQCEE: function(get) {
+	     	var correctoF1CEE = get('calidaddatopublicacionactivo.correctoCEE');
+	     	
+	     	if("0" == correctoF1CEE){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF1CEE){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	       getIconClsDQBloqueFase4: function(get) {
+	     	var correctoF4BloqueFase4 = get('calidaddatopublicacionactivo.correctoF4BloqueFase4');
+	     	
+	     	if("0" == correctoF4BloqueFase4){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF4BloqueFase4){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	       disableBtnDescF1: function(get) {
+	     
+	       	if(get('calidaddatopublicacionactivo.disableDescripcion')=='false'){
+	       		return false;
+	       	}else{
+	       		return true;
+	       	}
+	  	        	
+	     },
+	
 		activarCamposGridPreciosVigentes: function(){
 			var gestorPrecios = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PRECIOS']);
 			if(gestorPrecios){
@@ -1225,8 +1595,29 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return false;
 				}
 			return true;
+		},
+		
+		esEditablePorcentajeConstruccion: function(get){
+			 var isGestorActivos = $AU.userIsRol('HAYAGESACT');
+			 var isUnidadAlquilable = false;
+			 if(get('activo.unidadAlquilable')){
+	    		 isUnidadAlquilable = true;
+			 }
+			 if(isGestorActivos && isUnidadAlquilable) return true;
+				 else return false;
+	 	},
+	 	
+	 	editarPorcentajeConstruccion: function(get){
+			var editable = get('activo.isEditablePorcentajeConstruccion');			
+		    var funcion = $AU.userHasFunction('ACTUALIZAR_PORCENTAJE_CONSTRUCCION');
+		    
+		    if(editable && funcion){
+		    	return true;
+		    }
+		    
+		    return false;
 		}
-    },
+	 },
     
 	 stores: {
     		

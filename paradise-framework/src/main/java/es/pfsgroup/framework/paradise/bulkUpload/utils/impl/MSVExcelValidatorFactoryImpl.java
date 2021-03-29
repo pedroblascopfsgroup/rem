@@ -253,6 +253,9 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVActualizarEstadosTrabajos cargaMasivaEstadoTrabajos;
 
 	@Autowired
+	private MSVActualizarPorcentajeConstruccion actualizarPorcentajeConstruccion;
+
+	@Autowired
 	private MSVMasivaAltaTrabajosValidator altaTrabajos;
 	
 	@Autowired
@@ -443,7 +446,9 @@ public class MSVExcelValidatorFactoryImpl {
 			return cargaMasivaConfiguracionPeriodosVoluntarios;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_FECHA_TITULO_Y_POSESION.equals(codTipoOperacion)) {
 			return fechaTituloYposesion;
-			}
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PORCENTAJE_CONSTRUCCION.equals(codTipoOperacion)) {
+			return actualizarPorcentajeConstruccion;
+		}
 
 		return null;
 	}

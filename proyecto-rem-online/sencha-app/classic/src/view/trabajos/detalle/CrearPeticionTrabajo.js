@@ -161,28 +161,50 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															allowBlank: false
 												        },
 									    				{ 
-												        	xtype: 'comboboxfieldbasedd',
+												        	xtype: 'comboboxfieldbase',
 												        	fieldLabel: HreRem.i18n('fieldlabel.proveedor'),
 															flex: 		1,
 															colspan: 3,
 															reference: 'comboProveedorGestionEconomica2',
 															chainedReference: 'proveedorContactoCombo2',
-											            	listeners: {
-											            		select: 'onChangeProveedorCombo'
-											            	},
 											            	listConfig: {
+																loadingHeight: 200,
 											            		loadingText: 'Buscando proveedores...'
 											            	},
 															disabled: true,
 											            	displayField: 'nombreComercial',
 								    						valueField: 'idProveedor',
-								    						filtradoEspecial: true,
-								    						allowBlank: false
+															allowBlank: false,
+															forceSelection: false,
+															editable: true,
+															minChars: 0,
+								    						enableKeyEvents:true,
+							    						    listeners: {
+																select: 'onChangeProveedorCombo',
+							    						     	'keyup': function() {
+																	if(this.getStore().isLoaded()){
+																		this.queryMode='local';
+																		this.mode='local';
+																	}
+							    						    	   this.getStore().clearFilter();
+							    						    	   this.getStore().filter({
+							    						        	    property: 'nombreComercial',
+							    						        	    value: this.getRawValue(),
+							    						        	    anyMatch: true,
+							    						        	    caseSensitive: false
+							    						        	});
+							    						     	}
+							    						    }
 												        },
 												        { 
 															xtype: 'comboboxfieldbase',
 												        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.contacto'),
 												        	reference: 'proveedorContactoCombo2',
+															listConfig: {
+																loadingHeight: 200,
+											            		loadingText: 'Buscando proveedores contacto...',
+																emptyText: 'No se han encontrado proveedores contacto'
+											            	},					
 															flex: 		1,
 															colspan: 3,
 															disabled: true,

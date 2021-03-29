@@ -171,7 +171,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 				visible = false;
 			}
 			
-			if(tipoTrabajoCod === CONST.TIPOS_TRABAJO['EDIFICACION']){
+			if(tipoTrabajoCod === CONST.TIPOS_TRABAJO['EDIFICACION']
+				|| tipoTrabajoCod === CONST.TIPOS_TRABAJO['SUELO']){
 				visible = isRolSuper;
 			}
 			visible=true;

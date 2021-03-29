@@ -311,6 +311,10 @@ public class Trabajo implements Serializable, Auditable {
 	@Column(name="TBJ_NOMBRE_DND")
     private String nombreDnd;
 	
+
+	@Column(name="TBJ_TRABAJO_DND")
+    private Long trabajoDnd;
+
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="TBJ_GESTOR_ALTA")
     private Usuario gestorAlta;
@@ -1064,6 +1068,13 @@ public class Trabajo implements Serializable, Auditable {
 		this.nombreExpedienteTrabajo = nombreExpedienteTrabajo;
 	}
 
+	public Long getTrabajoDnd() {
+		return trabajoDnd;
+	}
+
+	public void setTrabajoDnd(Long trabajoDnd) {
+		this.trabajoDnd = trabajoDnd;
+	}
 	public Usuario getGestorAlta() {
 		return gestorAlta;
 	}

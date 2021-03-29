@@ -80,8 +80,7 @@ Ext.define('HreRem.ux.controller.ControllerBase', {
 		     height: 100,
 		     align: 't',
 		     cls: 'x-toast-info',
-		     autoCloseDelay: 2500,
-			 closeOnMouseOut:true
+		     autoCloseDelay: 2500
 		     
 		 });
 		
@@ -100,8 +99,7 @@ Ext.define('HreRem.ux.controller.ControllerBase', {
 		     height: 100,
 		     align: 't',
 		     cls: 'x-toast-warn',
-		     autoCloseDelay: 7000,
-			 closeOnMouseOut:true
+		     autoCloseDelay: 7000
 		 });
 		
 
@@ -118,8 +116,7 @@ Ext.define('HreRem.ux.controller.ControllerBase', {
 		     height: 100,
 		     align: 't',
 		     cls: 'x-toast-error',
-		     autoCloseDelay: 4000,
-			 closeOnMouseOut:true
+		     autoCloseDelay: 4000
 		 });
 		
 	},
@@ -135,8 +132,7 @@ Ext.define('HreRem.ux.controller.ControllerBase', {
 		     height: 130,
 		     align: 't',
 		     cls: 'x-toast-error',
-		     autoCloseDelay: 5000,
-			 closeOnMouseOut:true
+		     autoCloseDelay: 5000
 		 });
 		
 	}

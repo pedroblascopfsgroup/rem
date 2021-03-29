@@ -4,7 +4,7 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
     xtype		: 'publicacionactivo',
     reference	: 'publicacionactivoref',
     layout		: 'fit',
-    requires	: ['HreRem.view.activos.detalle.InformeComercialActivo', 'HreRem.view.activos.detalle.DatosPublicacionActivo', 'HreRem.view.activos.detalle.FasePublicacionActivo'],
+    requires	: ['HreRem.view.activos.detalle.InformeComercialActivo', 'HreRem.view.activos.detalle.DatosPublicacionActivo', 'HreRem.view.activos.detalle.FasePublicacionActivo', 'HreRem.view.activos.detalle.CalidadDatoPublicacionActivo'],
 
 	listeners: {
     	boxready: function (tabPanel) {
@@ -170,6 +170,7 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informecomercialactivo', ocultarBotonesEdicion: ocultarInformecomercialactivo})}, ['TAB_INFO_COMERCIAL_PUBLICACION']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datospublicacionactivo', ocultarBotonesEdicion: ocultarDatospublicacionactivo})}, ['TAB_DATOS_PUBLICACION']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fasepublicacionactivo', ocultarBotonesEdicion: ocultarDatosFasePublicacion})}, ['TAB_ACTIVO_PUBLICACION']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'calidaddatopublicacionactivo', ocultarBotonesEdicion: ocultarDatosFasePublicacion})}, ['TAB_ACTIVO_PUBLICACION']);
 
 		
 		me.addPlugin({ptype: 'lazyitems', items: items});

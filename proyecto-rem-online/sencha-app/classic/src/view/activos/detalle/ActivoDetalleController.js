@@ -9,7 +9,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
     		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo',
     		'HreRem.model.ComercialActivoModel', 'HreRem.view.trabajos.detalle.CrearPeticionTrabajo','HreRem.view.activos.detalle.CrearEvolucionObservaciones',
-    		'HreRem.view.activos.detalle.SuministrosActivo', 'HreRem.view.activos.detalle.SaneamientoActivoDetalle'],
+			'HreRem.view.activos.detalle.SuministrosActivo', 'HreRem.view.activos.detalle.SaneamientoActivoDetalle',
+			'HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -199,6 +200,161 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					}
 				});
 
+	},
+	
+	cargarTabDataCalidadDatoGrid: function (){
+		var me = this;		
+
+		var idActivo = me.getViewModel().get("activo.id");
+		var faseDatosRegistrales = me.getView().down('[reference="calidaddatopublicacionactivoref"]').down('[reference="fasedatosregistrales"]');
+		var faseDatosRegistro = me.getView().down('[reference="calidaddatopublicacionactivoref"]').down('[reference="fasedatosregistro"]');
+		var faseCalidadDatDireccion = me.getView().down('[reference="calidaddatopublicacionactivoref"]').down('[reference="fasecalidaddatodireccion"]');
+		var faseTresCalidadDato = me.getView().down('[reference="calidaddatopublicacionactivoref"]').down('[reference="fasetrescalidaddato"]');
+		
+		var cod01 = faseDatosRegistrales.codigoGrid;
+		var cod02 = faseDatosRegistro.codigoGrid;
+		var cod03 = faseTresCalidadDato.codigoGrid;
+		var cod04 = faseCalidadDatDireccion.codigoGrid;
+		
+		var storefaseDatosRegistrales;
+		var storefaseDatosRegistro;
+		var storefaseTresCalidadDato;
+		var storefaseCalidadDatDireccion;
+		
+		//DATOS REGISTRALES
+		storefaseDatosRegistrales = Ext.create('Ext.data.Store',{
+			model: 'HreRem.model.CalidadDatoFasesGridModel', 
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getCalidadDelDatoFiltered', 
+				extraParams: {id: idActivo} 
+			},
+			autoLoad: false,
+			session: false		
+			}			
+		).load();
+		
+		storefaseDatosRegistrales.filterBy( 
+			function (record, id) {
+				return record.get('codigoGrid') == cod01;
+			}
+		);				
+		faseDatosRegistrales.setStore(storefaseDatosRegistrales);
+		faseDatosRegistrales.getStore().load();		
+		//DATOS REGISTRO
+		storefaseDatosRegistro = Ext.create('Ext.data.Store',{
+			model: 'HreRem.model.CalidadDatoFasesGridModel', 
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getCalidadDelDatoFiltered', 
+				extraParams: {id: idActivo} 
+			},
+			autoLoad: false,
+			session: false		
+			}			
+		).load();
+		
+		storefaseDatosRegistro.filterBy( 
+			function (record, id) {
+				return record.get('codigoGrid') == cod02;
+			}
+		);
+		faseDatosRegistro.setStore(storefaseDatosRegistro);
+		faseDatosRegistro.getStore().load();
+		//DATOS FASE 3
+		storefaseTresCalidadDato = Ext.create('Ext.data.Store',{
+			model: 'HreRem.model.CalidadDatoFasesGridModel', 
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getCalidadDelDatoFiltered', 
+				extraParams: {id: idActivo} 
+			},
+			autoLoad: false,
+			session: false		
+			}			
+		).load();
+		storefaseTresCalidadDato.filterBy( 
+			function (record, id) {
+				return record.get('codigoGrid') == cod03;
+			}
+		);
+		faseTresCalidadDato.setStore(storefaseTresCalidadDato);
+		faseTresCalidadDato.getStore().load();
+		//DATOS FASE 3 DIRECCION
+		storefaseCalidadDatDireccion = Ext.create('Ext.data.Store',{
+			model: 'HreRem.model.CalidadDatoFasesGridModel', 
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getCalidadDelDatoFiltered', 
+				extraParams: {id: idActivo} 
+			},
+			autoLoad: false,
+			session: false		
+			}			
+		).load();
+		storefaseCalidadDatDireccion.filterBy( 
+			function (record, id) {
+				return record.get('codigoGrid') == cod04;
+			}
+		);
+		faseCalidadDatDireccion.setStore(storefaseCalidadDatDireccion);
+		faseCalidadDatDireccion.getStore().load();		
+	},
+	
+	
+	cargarTabDataCalidadDato: function (form) {
+		var me = this,
+		model = null,
+		models = null,
+		nameModels = null,
+		id = me.getViewModel().get("activo.id");
+		form.mask(HreRem.i18n("msg.mask.loading"));
+		if(!form.saveMultiple) {
+			model = form.getModelInstance(),
+			model.setId(id);
+			if(Ext.isDefined(model.getProxy().getApi().read)) {
+				// Si la API tiene metodo de lectura (read).
+				model.load({
+				    success: function(record,b,c,d) {
+				    	form.setBindRecord(record);			    	
+				    	form.unmask();
+				    	me.lookupReference('toolFieldFase0').setCollapsed(record.data.desplegable0Collapsed);
+				    	me.lookupReference('toolFieldFase1').setCollapsed(record.data.desplegable1Collapsed);
+				    	me.lookupReference('toolFieldFase2').setCollapsed(record.data.desplegable2Collapsed);
+				    	if(Ext.isFunction(form.afterLoad)) {
+				    		form.afterLoad();
+				    	}
+				    },
+				    failure: function(operation) {		    	
+				    	form.up("tabpanel").unmask();
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+				    }
+				});
+			} else {
+				// Si la API no contiene metodo de lectura (read).
+				form.setBindRecord(model);			    	
+		    	form.unmask();
+		    	if(Ext.isFunction(form.afterLoad)) {
+		    		form.afterLoad();
+		    	}
+			}
+		} else {
+			models = form.getModelsInstance();
+			me.cargarTabDataMultiple(form, 0, models, form.records);
+		}
+	},
+	
+	onListadoPropietariosDobleClick: function (grid, record) {
+    	var me = this
+    	
+    	var activo = me.getViewModel().get('activo'),
+ 		idActivo= activo.get('id');
+		var ventana = Ext.create("HreRem.view.activos.detalle.EditarPropietario", {	
+			propietario: record, 
+			activo: activo});
+    	
+		 grid.up('activosdetallemain').add(ventana);
+		 ventana.show();
 	},
 
 	onListadoPropietariosDobleClick : function(grid, record) {
@@ -4242,16 +4398,32 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.fireEvent("log", "Obligatorio jsonData para guardar el activo");
 		} else {
 
-			Ext.Ajax.request({
-				method : 'POST',
-				url : url,
-				jsonData : Ext.JSON.encode(jsonData),
-				success : successFn,
-				failure : function(response, opts) {
-					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-				}
+			if(successFn.$emptyFn){
+				Ext.Ajax.request({
+					method : 'POST',
+					url : url,
+					jsonData : Ext.JSON.encode(jsonData),
+					success : function(response,ops,x){
+						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+						me.getView().unmask();
+					},
+					failure : function(response, opts) {
+						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					}
 
-			});
+				});
+			}else{
+				Ext.Ajax.request({
+					method : 'POST',
+					url : url,
+					jsonData : Ext.JSON.encode(jsonData),
+					success : successFn,
+					failure : function(response, opts) {
+						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					}
+
+				});
+			}
 		}
 	},
 
@@ -4724,6 +4896,129 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		window.close();
 
 	},
+	
+	createTabDataCalificacionesNegativas : function(list, recordsGridArray) {
+		
+		var me = this, tabData = {};
+	    tabData.id = me.getViewModel().get("activo.id");
+	    tabData.models = [];
+	    
+	    var l_idMotivos = [];
+	    
+	    for (var i = 0; i < recordsGridArray.length; i++) {
+	    	l_idMotivos.push(recordsGridArray[i].data.idMotivo);
+	    }
+	    
+	    Ext.Array.each(list, function(record, index) {
+	          var model = {};
+	          model.name = 'calificacionNegativa';
+	          model.type = 'activo';
+	          model.data = {idsMotivo: l_idMotivos};
+	          model.data.idActivo = record.data.activoId;
+	          tabData.models.push(model);
+	        });
+	    
+	    return tabData;
+	},
+
+    createModelToSave: function(record, type) {
+    	var me = this;
+    	var model = null;
+    	if (Ext.isDefined(record.getProxy().getApi().update)) { 
+    		model = {};
+    		model.name= record.getProxy().getExtraParams().tab;
+    		model.type= type;
+    		model.data= record.getProxy().getWriter().getRecordData(record);
+    	} 
+    	
+    	return model;
+    		
+    },
+    
+    createFormPropagableData: function(form, tabData) {
+    	var me = this,
+    	propagableData=null,
+    	camposPropagables = [],
+    	dirtyFieldsModel =  [],
+    	propagableData = [];
+    	var records = [],
+    	models = [];
+    	if(form.saveMultiple) {
+    		records = records.concat(form.getBindRecords()) ;
+    	} else {
+    		records.push(form.getBindRecord());
+    	}
+
+    	Ext.Array.each(records, function(record, index) {
+    		var name = record.getProxy().getExtraParams().tab;
+    		camposPropagables[name] = record.get("camposPropagables");
+    	});
+
+    	Ext.Array.each(tabData.models, function(model, index) {
+    		var data = {},
+    		modelHasData = false;
+    		Ext.Array.each(camposPropagables[model.name], function(campo, index){
+    			if(Ext.isDefined(model.data[campo])) {
+    				data[campo] = model.data[campo];
+    				modelHasData=true;
+    			}
+    		});
+    		
+    		if(modelHasData) {
+    			model.data=data;
+    			models.push(model);	
+    		}
+    		
+    	});	
+    	
+    	if(models.length>0) {
+    		propagableData = {};
+    		propagableData.models = models
+    	}
+	
+    	return propagableData;
+    },
+    
+    onClickBotonGuardarMotivoRechazo: function(btn){
+    	var me = this;
+    	
+    	var window = btn.up('window');
+    	
+    	var grid = window.gridOfertas;
+    	var record = window.getViewModel().get('ofertaRecord');
+    	
+		if (grid.isValidRecord(record)) {				
+			
+    		record.save({
+
+                params: {
+                    idEntidad: Ext.isEmpty(grid.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(grid.idPrincipal),
+                    esAnulacion: true
+                },
+                success: function (a, operation, c) {																			
+					grid.saveSuccessFn();
+				},
+                
+				failure: function (a, operation) {
+                	grid.saveFailureFn(operation);
+              	
+                },
+    			callback: function() {
+                	grid.unmask();
+                	grid.getStore().load();
+                }
+            });	                            
+    		grid.disableAddButton(false);
+    		grid.disablePagingToolBar(false);
+    		grid.getSelectionModel().deselectAll();
+// TODO: Encontrar la manera de realizar esto que me ha obligado a
+// duplicar este save del record y en este punto "editor" es indefinido
+// editor.isNew = false;
+		} else {
+		   grid.getStore().load(); 	
+		}
+    	window.close();
+	},
 
 	onClickBotonCancelarDistribucion : function(btn) {
 		var me = this, window = btn.up('window');
@@ -5003,186 +5298,123 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						var subTabActiva = tabActiva.getActiveTab(), subReferencia = subTabActiva.reference;
 					}
 				}
-				if (isActivoMatriz == "true"
-						&& !(referencia == 'publicacionactivoref' && subReferencia == 'datospublicacionactivoref')) {
-					url3 = $AC.getRemoteUrl('activo/propagarActivosMatriz');
-					Ext.Ajax.request({
-						url : url3,
-						method : 'POST',
-						params : {
-							idActivo : idActivo
-						},
-						success : function(response, opts) {
-							var activosSeleccionados = Ext
-									.decode(response.responseText).data.activosPropagables;
-
-							if (me.getViewModel() != null) {
-								if (me.getViewModel().get('activo') != null) {
-									if (me.getViewModel().get('activo').data != null) {
-										me.getViewModel().get('activo').data.activosPropagables = activosSeleccionados;
-									}
-								}
-							}
-
-							var seCompruebanSueprficies = false;
-							if (tabData.models[0].name == "datosregistrales") {
-								seCompruebanSueprficies = true;
-								var EsLaSuperficieMenor = true;
-							}
-
-							if (seCompruebanSueprficies == true) {
-								var superficieConstruidaAcumulable = parseFloat(
-										"0", 10);
-								var superficieElementosComunesAcumulables = parseFloat(
-										"0", 10);
-								var superficieParcelaAcumulable = parseFloat(
-										"0", 10);
-								var superficieUtilAcumulable = parseFloat("0",
-										10);
-
-								for (var i = 0; i < activosSeleccionados.length; i++) {
-									if (activosSeleccionados[i].superficieConstruida == undefined) {
-										activosSeleccionados[i].superficieConstruida = parseFloat(
-												"0", 10);
-									}
-									superficieConstruidaAcumulable = parseFloat(
-											activosSeleccionados[i].superficieConstruida,
-											10)
-											+ superficieConstruidaAcumulable;
-									if (activosSeleccionados[i].superficieElementoComun == undefined) {
-										activosSeleccionados[i].superficieElementoComun = parseFloat(
-												"0", 10);
-									}
-									superficieElementosComunesAcumulables = parseFloat(
-											activosSeleccionados[i].superficieElementoComun,
-											10)
-											+ superficieElementosComunesAcumulables;
-									if (activosSeleccionados[i].superficieParcela == undefined) {
-										activosSeleccionados[i].superficieParcela = parseFloat(
-												"0", 10);
-									}
-									superficieParcelaAcumulable += parseFloat(
-											activosSeleccionados[i].superficieParcela,
-											10);
-									if (activosSeleccionados[i].superficieUtil == undefined) {
-										activosSeleccionados[i].superficieUtil = parseFloat(
-												"0", 10);
-									}
-									superficieUtilAcumulable += parseFloat(
-											activosSeleccionados[i].superficieUtil,
-											10);
-								}
-
-								if (superficieConstruidaAcumulable > form.viewModel.linkData.datosRegistrales.data.superficieConstruida) {
-									EsLaSuperficieMenor = false;
-								}
-								if (superficieElementosComunesAcumulables > form.viewModel.linkData.datosRegistrales.data.superficieElementosComunes) {
-									EsLaSuperficieMenor = false;
-								}
-								if (superficieParcelaAcumulable > form.viewModel.linkData.datosRegistrales.data.superficieParcela) {
-									EsLaSuperficieMenor = false;
-								}
-								if (superficieUtilAcumulable > form.viewModel.linkData.datosRegistrales.data.superficieUtil) {
-									EsLaSuperficieMenor = false;
-								}
-							}
-							if (EsLaSuperficieMenor == false) {
-								me
-										.getView()
-										.fireEvent(
-												"errorToast",
-												HreRem
-														.i18n("msg.operacion.ko.propagar.ua.superficies"));
-								me.getView().unmask();
-							} else {
-								if (activosSeleccionados.length > 0) {
-									tabPropagableData = me
-											.createFormPropagableData(form,
-													tabData);
-									if (!Ext.isEmpty(tabPropagableData)) {
-										// sacamos el activo actual del listado
-
-										if (tabPropagableData.models[0].data.numFinca != undefined) {
-											tabPropagableData.models[0].data.numFinca = me
-													.pad(
-															tabPropagableData.models[0].data.numFinca,
-															4);
-										}
-
-										var activo = function(activo) {
-											return activo.activoId == me
-													.getViewModel()
-													.get("activo.id")
-										};
-										for (var cont = 0; cont < activosSeleccionados.length; cont++) {
-											activosSeleccionados[cont].esUnidadAlquilable = true;
-
-										}
-										// Abrimos la ventana de selección de
-										// activos
-										var ventanaOpcionesPropagacionCambios = Ext
-												.create(
-														"HreRem.view.activos.detalle.OpcionesPropagacionCambiosMatrizExpediente",
-														{
-															form : form,
-															activoActual : activo,
-															activos : activosSeleccionados,
-															tabData : tabData,
-															propagableData : tabPropagableData
-														}).show();
-										me
-												.getView()
-												.add(ventanaOpcionesPropagacionCambios);
-										me.getView().unmask();
-										return false;
-									}
-								}
-
-								var successFn = function(response, eOpts) {
-
-									me.manageToastJsonResponse(me,
-											response.responseText);
-									me.getView().unmask();
-									me.refrescarActivo(form.refreshAfterSave);
-									me
-											.getView()
-											.fireEvent(
-													"refreshComponentOnActivate",
-													"container[reference=tabBuscadorActivos]");
-									me
-											.actualizarGridHistoricoDestinoComercial(form);
-								}
-
-								if (restringida == true) {
-									me.saveActivosAgrRestringida(tabData,
-											successFn);
-								} else {
-									me
-											.getView()
-											.fireEvent("No hay activos propagables");
-									me.saveActivo(tabData, successFn);
-								}
-								me.getView().unmask();
-							}
-						},
-						failure : function(record, operation) {
-							me.fireEvent("errorToast", HreRem
-											.i18n("msg.operacion.ko"));
-						}
-					});
-				} else {
-					url4 = $AC.getRemoteUrl('activo/getisActivoUa');
-					Ext.Ajax.request({
-						url : url4,
-						method : 'POST',
-						params : {
-							idActivo : idActivo
-						},
-						success : function(response, opts) {
-							var isActivoUa = Ext.decode(response.responseText).data;
-							if (isActivoUa != "true") {
-								url = $AC
-										.getRemoteUrl('activo/getActivosPropagables');
+				if(isActivoMatriz == "true" && !(referencia == 'publicacionactivoref'
+						&& subReferencia == 'datospublicacionactivoref')){
+					url3 =  $AC.getRemoteUrl('activo/propagarActivosMatriz');
+		    		Ext.Ajax.request({
+		        		url: url3,
+		    			method : 'POST',
+		        		params: {idActivo: idActivo},
+	    		    		success: function(response, opts){	
+	    		    			var activosSeleccionados = Ext.decode(response.responseText).data.activosPropagables;
+	    		    			
+		    		    			if(me.getViewModel() != null){
+	    		    					if(me.getViewModel().get('activo') != null){
+	    		    						if(me.getViewModel().get('activo').data != null){
+		    									me.getViewModel().get('activo').data.activosPropagables = activosSeleccionados;
+		    								}
+		    							}
+		    						}
+		    		    		
+		    		    			var seCompruebanSueprficies = false;
+		    		    			if( tabData.models[0].name == "datosregistrales"){
+		    		    				seCompruebanSueprficies = true;
+		    		    				var EsLaSuperficieMenor = true;
+		    		    			}
+		    		    			
+		    		    			if(seCompruebanSueprficies == true){
+			    		    			var superficieConstruidaAcumulable =  parseFloat("0",10);
+			    		    			var superficieElementosComunesAcumulables= parseFloat("0",10);
+			    		    			var superficieParcelaAcumulable= parseFloat("0",10);
+			    		    			var superficieUtilAcumulable= parseFloat("0",10);
+			    		    			for(var i = 0; i < activosSeleccionados.length; i++){
+			    		    				if(activosSeleccionados[i].superficieConstruida == undefined){
+			    		    					activosSeleccionados[i].superficieConstruida = parseFloat("0",10);
+			    		    				}
+			    		    				superficieConstruidaAcumulable = parseFloat(activosSeleccionados[i].superficieConstruida, 10) + superficieConstruidaAcumulable;
+			    		    				if(activosSeleccionados[i].superficieElementoComun == undefined){
+			    		    					activosSeleccionados[i].superficieElementoComun = parseFloat("0",10);
+			    		    				}
+			    		    				superficieElementosComunesAcumulables = parseFloat(activosSeleccionados[i].superficieElementoComun, 10) + superficieElementosComunesAcumulables;
+			    		    				if(activosSeleccionados[i].superficieParcela == undefined){
+			    		    					activosSeleccionados[i].superficieParcela = parseFloat("0",10);
+			    		    				}
+			    		    				superficieParcelaAcumulable += parseFloat(activosSeleccionados[i].superficieParcela, 10);
+			    		    				if(activosSeleccionados[i].superficieUtil == undefined){
+			    		    					activosSeleccionados[i].superficieUtil = parseFloat("0",10);
+			    		    				}
+			    		    				superficieUtilAcumulable += parseFloat(activosSeleccionados[i].superficieUtil, 10);
+			    		    			}
+			    		    			
+			    		    			if(superficieConstruidaAcumulable > form.viewModel.linkData.datosRegistrales.data.superficieConstruida){
+			    		    				EsLaSuperficieMenor = false;
+			    		    			}
+			    		    			if(superficieElementosComunesAcumulables > form.viewModel.linkData.datosRegistrales.data.superficieElementosComunes){
+			    		    				EsLaSuperficieMenor = false;
+			    		    			}
+			    		    			if(superficieParcelaAcumulable > form.viewModel.linkData.datosRegistrales.data.superficieParcela){
+			    		    				EsLaSuperficieMenor = false;
+			    		    			}	
+			    		    			if(superficieUtilAcumulable > form.viewModel.linkData.datosRegistrales.data.superficieUtil){
+			    		    				EsLaSuperficieMenor = false;
+			    		    			}	
+	    		    				}
+		    		    			if(EsLaSuperficieMenor==false){
+		    		    				me.getView().fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.propagar.ua.superficies"));
+		    		    				me.getView().unmask();
+		    		    			}else{
+		    		    				if(activosSeleccionados.length > 0) {
+		    								tabPropagableData = me.createFormPropagableData(form, tabData);
+		    								if (!Ext.isEmpty(tabPropagableData)) {
+		    									// sacamos el activo actual del listado
+		    									if(tabPropagableData.models[0].data.numFinca != undefined){
+		    										tabPropagableData.models[0].data.numFinca = me.pad(tabPropagableData.models[0].data.numFinca, 4);
+		    									}
+		    									
+		    									var activo = function(activo){return activo.activoId == me.getViewModel().get("activo.id")};
+		    									for(var cont=0; cont <activosSeleccionados.length; cont++){
+		    										activosSeleccionados[cont].esUnidadAlquilable=true;
+		    										
+		    									}
+		    									// Abrimos la ventana de selección de activos
+		    									var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambiosMatrizExpediente", {form: form, activoActual: activo, activos: activosSeleccionados, tabData: tabData, propagableData: tabPropagableData}).show();
+		    										me.getView().add(ventanaOpcionesPropagacionCambios);
+		    										me.getView().unmask();
+		    										return false;
+		    								}
+		    		    				}
+		    	
+	    								var successFn = function(response, eOpts) {
+		    		
+											me.manageToastJsonResponse(me, response.responseText);
+		   									me.getView().unmask();
+		   									me.refrescarActivo(form.refreshAfterSave);
+		   									me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+		   									me.actualizarGridHistoricoDestinoComercial(form);
+		    							}
+		    	
+										if(restringida == true){
+		    								me.saveActivosAgrRestringida(tabData, successFn);
+		    							} else {
+		    								me.getView().fireEvent("No hay activos propagables");
+		    								me.saveActivo(tabData, successFn);
+		    							}
+		    		    			me.getView().unmask();
+		    		    		}		
+	    		    		},failure: function(record, operation) {
+	    		    			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	    		    		}
+		    		});
+				}else{
+					url4 =  $AC.getRemoteUrl('activo/getisActivoUa');
+	    			Ext.Ajax.request({
+	    		   		url: url4,
+	    				method : 'POST',
+	    				params: {idActivo: idActivo},
+	    		   		success: function(response, opts){
+	    		   			var isActivoUa = Ext.decode(response.responseText).data;
+	    		    		if(isActivoUa != "true"){
+								url =  $AC.getRemoteUrl('activo/getActivosPropagables');
 								Ext.Ajax.request({
 									url : url,
 									method : 'POST',
@@ -5201,73 +5433,41 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 															.get('activo').data.activosPropagables = activosPropagables;
 												}
 											}
-										}
-										if (activosPropagables != null
-												&& isActivoMatriz != "true") {
-											if (activosPropagables.length > 0) {
-												tabPropagableData = me
-														.createFormPropagableData(
-																form, tabData);
-												if (!Ext
-														.isEmpty(tabPropagableData)) {
-													// sacamos el activo actual
-													// del listado
-													var activo = activosPropagables
-															.splice(
-																	activosPropagables
-																			.findIndex(
-																					function(
-																							activo) {
-																						return activo.activoId == me
-																								.getViewModel()
-																								.get("activo.id")
-																					}),
-																	1)[0];
-													var tieneDatosPropagables = false;
-													if (!Ext.isEmpty(form)) {
-
-														var fields = form
-																.getForm()
-																.getFields();
-
-														fields.each(function(
-																field) {
-
-															if (!Ext
-																	.isEmpty(field)
-																	&& !Ext
-																			.isEmpty(field.bind)
-																	&& !Ext
-																			.isEmpty(field.bind.value)
-																	&& !Ext
-																			.isEmpty(field.bind.value.stub)) {
-																var path = field.bind.value.stub.path;
-																var indexSeparator = path
-																		.indexOf(".");
-																var name = path
-																		.substring(
-																				0,
-																				indexSeparator);
-																var property = path
-																		.substring(
-																				indexSeparator
-																						+ 1,
-																				path.length);
-
-																Ext.Array
-																		.each(
-																				tabPropagableData.models,
-																				function(
-																						model,
-																						index) {
-																					if (model.type == name
-																							&& model.data
-																									.hasOwnProperty(property)) {
-																						tieneDatosPropagables = true;
-																					}
-																				});
-															}
-														});
+											if(activosPropagables != null && isActivoMatriz != "true"){
+													if(activosPropagables.length > 0) {
+														tabPropagableData = me.createFormPropagableData(form, tabData);
+														if (!Ext.isEmpty(tabPropagableData)) {
+															// sacamos el activo actual del listado
+															var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
+															var tieneDatosPropagables = false;
+															/*if(!Ext.isEmpty(form)) {
+													    		
+													    		var fields = form.getForm().getFields();
+													    		fields.each(function(field) {
+													    			
+													    			if (!Ext.isEmpty(field) && !Ext.isEmpty(field.bind) && !Ext.isEmpty(field.bind.value) && !Ext.isEmpty(field.bind.value.stub)  ) {
+													    				var path = field.bind.value.stub.path;
+													    				var indexSeparator = path.indexOf(".");
+													    				var name = path.substring(0,indexSeparator);
+													    				var property = path.substring(indexSeparator+1, path.length);
+													    				
+													    				Ext.Array.each(tabPropagableData.models, function(model,index) {
+													    					if (model.type == name && model.data.hasOwnProperty(property)) {
+													    						tieneDatosPropagables = true;
+													    					}
+													    				});
+													    			}
+													    		});
+													    	}*/
+															
+															//if(tieneDatosPropagables) {
+																// Abrimos la ventana de selección de activos
+																var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
+																	me.getView().add(ventanaOpcionesPropagacionCambios);
+																	me.getView().unmask();
+																	return false;
+															//}
+														}
 													}
 
 													if (tieneDatosPropagables) {
@@ -5288,8 +5488,27 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 																.getView()
 																.add(ventanaOpcionesPropagacionCambios);
 														me.getView().unmask();
+														me.refrescarActivo(form.refreshAfterSave);
+														me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+														me.actualizarGridHistoricoDestinoComercial(form);
+													}
+							
+													if(restringida == true){
+														me.saveActivosAgrRestringida(tabData, successFn);
+
+													} else {
+														me.getView().fireEvent("No hay activos propagables");
+														me.saveActivo(tabData, successFn);
 														return false;
 													}
+											}else{
+												var successFn = function(response, eOpts) {
+													
+													me.manageToastJsonResponse(me, response.responseText);
+													me.getView().unmask();
+													me.refrescarActivo(form.refreshAfterSave);
+													me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+													me.actualizarGridHistoricoDestinoComercial(form);
 												}
 											}
 
@@ -7514,7 +7733,124 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	getVisiblityOfBotons : function() {
 		return this.getViewModel().get('activo.unidadAlquilable');
 	},
+	
+	validarEdicionHistoricoSolicitudesPrecios: function(editor, grid) {
+    	var me = this;
+    	
+    	if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PRECIOS']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PUBLICACION'])) {
+    		return grid.record.data.esEditable;
+    	}
+    	
+    	return false;
+    	
+    },
+    
+    aplicarDescripcion: function(btn, form) {
+    	var me = btn.up();
+    	Ext.Msg.show({
+		   title: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.aplicar'),
+		   msg: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.aplicar.desea'),
+		   buttons: Ext.MessageBox.YESNO,
+		   fn: function(buttonId) {
+		        if (buttonId == 'yes') {
+		        	var url =  $AC.getRemoteUrl('activo/saveDatoRemCalidadDatoPublicacion');
+		        	var activoId = btn.up("form").getBindRecord().data.idActivo;
+					var activo = btn.up("form").lookupController().getViewModel().get("activo");
+					var idActivo = btn.up("form").getBindRecord().data.idActivo;
+					var listIdActivo = [idActivo];
+					var valor = btn.up("form").getBindRecord().data.dqFase4Descripcion;
+					
+					// CREACIÓN VENTANA
+					
+					
+							if (activo.get("pertenceAgrupacionObraNueva")){
+								me.up('form').mask(HreRem.i18n("msg.mask.loading"));
+								btn.up().lookupController().crearVentanaPropagacionCalidadDato(valor);
+								
+							} else if (activo.get("pertenceAgrupacionRestringida")) {
+								Ext.Msg.show({
+									   title: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.aplicar'),
+									   msg: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.aplicar.lote.restringido'),
+									   buttons: Ext.MessageBox.YESNO,
+									   fn: function(buttonId) {
+									        if (buttonId == 'yes') {      	
+									        	me.lookupController().actualizarPropagacionEq(listIdActivo, valor, true);
+											
+									        } else if(buttonId == 'no') {
+									        	me.lookupController().actualizarPropagacionEq(listIdActivo, valor, false);
+									        	this.close();
+									        }
+									   }
+									});
+								
+							} else {
+								me.lookupController().actualizarPropagacionEq(listIdActivo, valor, false);
+							}
 
+						
+		        } else if(buttonId == 'no') {
+		        	this.close();
+		        }
+		   }
+		});
+    },
+    
+    disableBtnDescF1: function(get){
+     	return get('calidaddatopublicacionactivo.disableDescripcion');
+	 },
+	 
+    crearVentanaPropagacionCalidadDato: function(valor) {
+   	 	var url =  $AC.getRemoteUrl('activo/getActivosPropagables');
+   	 	var activo = this.getViewModel().get("activo.id");
+   	 	var me = this; 
+		Ext.Ajax.request({
+			url: url,
+			method : 'POST',
+			params: {idActivo: activo},
+			success: function(response, opts){
+					var activosPropagables = Ext.decode(response.responseText).data.activosPropagables;
+					var arrayPropagables = [];
+					for(var i = 0; i < activosPropagables.length; i++){
+						arrayPropagables.push(activosPropagables[i]);
+					}
+					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq", {activoActual: activo, activos: arrayPropagables, valor: valor}).show();
+					me.getView().add(ventanaOpcionesPropagacionCambios);
+					me.getView().unmask();
+			}, failure: function (a, operation, context) {
+            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+            }
+		     
+		 });
+    },
+    
+    onClickGuardarPropagarCambiosEq: function(btn) {
+        var me = this;
+    	var window = btn.up("window"),
+    	grid = me.lookupReference("listaActivos"),
+    	radioGroup = me.lookupReference("opcionesPropagacion"),
+    	activosSeleccionados = grid.getSelectionModel().getSelection(),
+    	opcionPropagacion = radioGroup.getValue().seleccion;
+        var estaActivoActual = false;
+        window.mask(HreRem.i18n("msg.mask.loading"));
+    	if (opcionPropagacion == "4" &&  activosSeleccionados.length == 0) {
+        	me.fireEvent("errorToast", HreRem.i18n("msg.no.activos.seleccionados"));
+        	window.unmask();
+        	return false;
+    	}
+    	
+    	var activosParaPropagar = [];
+    	for(var i = 0; i < activosSeleccionados.length; i++){
+    		activosParaPropagar.push(activosSeleccionados[i].data.activoId);
+		}
+    	
+    	if(!activosParaPropagar.includes(window.activoActual.toString())) {
+    		activosParaPropagar.push(window.activoActual);
+    	}
+    	// Comprobar si en la lista activosParaPropagar está el activoActual. Si no está se añade.
+    	
+    	me.actualizarPropagacionEq(activosParaPropagar, window.valor, false, window);
+    	
+	},
 
 	checkVisibilityOfBtnCrearTrabajo: function () {
 		var me = this;
@@ -7530,45 +7866,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	 },
 
 	
-	validarEdicionHistoricoSolicitudesPrecios: function(editor, grid) {
-    	var me = this;
-    	
-    	if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PRECIOS']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PUBLICACION'])) {
-    		return grid.record.data.esEditable;
-    	}
-    	
-    	return false;
-    	
-    },
-    checkVisibilityOfBtnCrearTrabajo: function () {
-       var me = this;
-       var enPerimetro = me.getViewModel().get('activo.incluidoEnPerimetro') == 'true';
-       var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
-       var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
-	   var isGestorAlquiler = $AU.userGroupHasRole(CONST.PERFILES['GESTOR_ALQUILER_HPM']);
-	   var isUserGestedi = $AU.userIsRol(CONST.PERFILES['GESTEDI']);
-	   
-       return !enPerimetro || (!isSuper && !isGestorActivos && !isGestorAlquiler && !isUserGestedi);
-        					 
-       
-    },
-	
-
-
-	validarEdicionHistoricoSolicitudesPrecios : function(editor, grid) {
-		var me = this;
-
-		if ($AU.userIsRol(CONST.PERFILES['HAYASUPER'])
-				|| $AU.userIsRol(CONST.PERFILES['GESTOR_PRECIOS'])
-				|| $AU.userIsRol(CONST.PERFILES['GESTOR_PUBLICACION'])) {
-			return grid.record.data.esEditable;
-		}
-
-		return false;
-
-	},
-
-	onSaveFormularioCompletoTabAdmisionTitulo : function(btn, form) {
+    onSaveFormularioCompletoTabAdmisionTitulo : function(btn, form) {
 		// Redireccion al controlador de la vista para mantener todos los
 		// m�todos ordenados, sin alterar la arquitectura del tab principal.
 		form.lookupController().saveTabData(btn, form);
@@ -7587,8 +7885,44 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					
 	},
 
-	onChangeComboTributacionAdqusicion: function(combo, newValue, oldValue){
-		var me = this;
+    
+    actualizarPropagacionEq: function(activosParaPropagar, valor, soyRestringidaQuieroActualizar, window ){
+    	var me = this;
+    	var url = $AC.getRemoteUrl('activo/saveDatoRemCalidadDatoPublicacion');
+    	var ventana = window;
+    	
+    	me.getView().mask(HreRem.i18n("msg.mask.loading"));
+    	Ext.Ajax.request({
+			url: url,
+			method : 'POST',
+			params: {
+				activosSeleccionados: activosParaPropagar,
+				dqFase4Descripcion: valor,
+				soyRestringidaQuieroActualizar: soyRestringidaQuieroActualizar
+			},
+			success: function(response, opts){
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				me.refrescarActivo(true);
+				if(ventana != undefined){
+					ventana.unmask();
+					ventana.close();
+				}
+				me.getView().unmask();
+			}, failure: function (a, operation, context) {
+            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+            	if(ventana != undefined){
+					ventana.unmask();
+					ventana.close();
+				}
+            	me.refrescarActivo(true);
+            	me.getView().unmask();
+            }
+		     
+    	});
+    },
+	
+    onChangeComboTributacionAdqusicion: function(combo, newValue, oldValue){
+    	var me = this;
 		var fechaVencTpoBonificacion = me.lookupReference('fechaVencTpoBonificacion');
 		var fechaLiqComplementaria = me.lookupReference('fechaLiqComplementaria');
 
@@ -8166,6 +8500,32 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	onChangeDebeComprobarNIF: function(combo,newValue,oldValue,eOpts){
 			this.comprobarNIF(combo);
-	}
+	},
 	
+    
+    mostrarObservacionesGrid: function(event, target, options) {   	
+    	var me = this;
+    	var observacionesAdmision = target.data.observacionesEvolucion;
+  	
+    	me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.CrearEvolucionObservaciones", {
+            observacionesAdmision: observacionesAdmision
+        });
+        
+    },
+    
+    onClickCerrarObservacionesEvolucion: function(btn) {
+    	var me = this;
+    	btn.up('window').hide();
+    },
+    cargarStoreCalidadDatoFasesGrid: function(grid){
+    	var me = this;    	
+		
+		var storeCalidadDelDatoGrid = me.getViewModel().data.storeCalidadDelDatoGrid;
+		storeCalidadDelDatoGrid.getProxy().setExtraParams(
+		{'id':grid.idActivo,'codigoGrid':grid.codigoGrid});
+		if (grid.getStore() != null) {
+			grid.getStore().load();
+		}
+		
+    }
 });

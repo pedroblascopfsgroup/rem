@@ -749,6 +749,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		List<DDTipoTrabajo> tiposTrabajoFiltered = new ArrayList<DDTipoTrabajo>();
 		tiposTrabajo.addAll((List<DDTipoTrabajo>) (List) adapter.getDiccionario("tiposTrabajo"));
 		List<DDTipoTrabajo> tiposTrabajoNoBloqueados = new ArrayList<DDTipoTrabajo>();
+		Trabajo trabajo = null;
 		
 	
 		for (DDTipoTrabajo ddTipoTrabajo : tiposTrabajo) {
@@ -761,22 +762,31 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 		if (idActivo != null && !idActivo.isEmpty() && StringUtils.isNumeric(idActivo)) {
 			Activo act = activoApi.get(Long.parseLong(idActivo));
+			
+			
+			
 			// Si no hay registro en BBDD de perimetro, el get nos
 			// devuelve un PerimetroActivo nuevo
 			// con todas las condiciones de perimetro activas
 			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(Long.parseLong(idActivo));
-			if(!Checks.esNulo(perimetroActivo.getAplicaGestion())
-					&& perimetroActivo.getAplicaGestion()==0) {
+			
+			if(numTrabajo !=null && !numTrabajo.isEmpty() && StringUtils.isNumeric(numTrabajo))
+				trabajo = genericDao.get(Trabajo.class, genericDao.createFilter(FilterType.EQUALS, "numTrabajo",Long.parseLong(numTrabajo)) );
+			
+			if(trabajo != null && trabajo.getTipoTrabajo()!=null) {
 				
-				if(numTrabajo !=null && !numTrabajo.isEmpty() && StringUtils.isNumeric(numTrabajo)) {
-					
-					Trabajo trabajo = genericDao.get(Trabajo.class, genericDao.createFilter(FilterType.EQUALS, "numTrabajo",Long.parseLong(numTrabajo)) );
-					if(trabajo.getTipoTrabajo()!=null) {
+					if(!Checks.esNulo(perimetroActivo.getAplicaGestion())
+						&& perimetroActivo.getAplicaGestion()==0) {
 						tiposTrabajoFiltered.add(trabajo.getTipoTrabajo());
 						return tiposTrabajoFiltered;
-					}
-				}
+					
+					} else if (trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_SUELO) || trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_EDIFICACION )) {
+						tiposTrabajoFiltered.add(trabajo.getTipoTrabajo());
+						return tiposTrabajoFiltered;
+				} 
+				
 			}
+			
 			for (DDTipoTrabajo tipoTrabajo : tiposTrabajo) {
 				// No se pueden crear tipos de trabajo ACTUACION TECNICA ni
 				// OBTENCION DOCUMENTAL

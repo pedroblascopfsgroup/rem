@@ -469,6 +469,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
 
 		return dto;
@@ -2938,7 +2939,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		
 		//TODO DE MOMENTO EL TIPO DE TRABAJO DE EDIFICACIÓN VA LIGADO CON EL TRAMITE DE ACTUACIÓN TÉCNICA  HREOS-8327
-		if(trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_EDIFICACION)) {
+		if(DDTipoTrabajo.CODIGO_EDIFICACION.equals(trabajo.getTipoTrabajo().getCodigo())
+				|| DDTipoTrabajo.CODIGO_SUELO.equals(trabajo.getTipoTrabajo().getCodigo())) {
 			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA);
 		}
 		// Módulo de Expediente comercial ----------
@@ -3200,7 +3202,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		
 				
-		if (DDTipoTrabajo.CODIGO_EDIFICACION.equals(trabajo.getTipoTrabajo().getCodigo())) {
+		if (DDTipoTrabajo.CODIGO_EDIFICACION.equals(trabajo.getTipoTrabajo().getCodigo())
+				|| DDTipoTrabajo.CODIGO_SUELO.equals(trabajo.getTipoTrabajo().getCodigo())) {
 			dtoTrabajo.setPerteneceDNDtipoEdificacion(true);
 
 			dtoTrabajo.setCodigoPartida(trabajo.getCodigoPartida());
@@ -4745,7 +4748,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 						listaTiposProveedor.add(tipoProveedor);
 					}
-				}else if(DDTipoTrabajo.CODIGO_EDIFICACION.equals(trabajo.getTipoTrabajo().getCodigo())){
+				}else if(DDTipoTrabajo.CODIGO_EDIFICACION.equals(trabajo.getTipoTrabajo().getCodigo())
+						|| DDTipoTrabajo.CODIGO_SUELO.equals(trabajo.getTipoTrabajo().getCodigo())){
 					String codTipoProveedor = trabajo.getProveedorContacto().getProveedor().getTipoProveedor().getCodigo();
 					filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
 							codTipoProveedor);
@@ -6054,7 +6058,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
  	public String esEstadoValidoGDAOProveedor(Trabajo trabajo, Usuario usuariologado){
  		Boolean isProveedor = genericAdapter.isProveedor(usuariologado);
  		String resultado = "no";
- 		String estado = trabajo.getEstado().getCodigo();
+ 		String estado = null;
+ 		if(trabajo.getEstado() != null) {
+ 			estado = trabajo.getEstado().getCodigo();
+ 		}
  		Filter filtroGDA = genericDao.createFilter(FilterType.EQUALS, "codigo", PERFIL_GESTOR_ACTIVO);
 		Perfil perfilGDA = genericDao.get(Perfil.class, filtroGDA);
 		Boolean isGDA = usuariologado.getPerfiles().contains(perfilGDA);

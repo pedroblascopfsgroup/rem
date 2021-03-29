@@ -422,7 +422,9 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.areaPeticionaria", dto.getAreaPeticionaria());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.responsableTrabajo", dto.getResponsableTrabajo(), true);
-		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.provinciaCodigo", dto.getProvinciaCodigo());
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.localidadDescripcion", dto.getLocalidadDescripcion(), true);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.codPostal", dto.getCodPostal());
 		if(dto.getGestorActivo() != null) {
 			hb.appendWhere(" exists (select 1 from GestorActivo ga, IN (ga.activo.activoTrabajos) atj "
 					+ " where ga.tipoGestor.codigo = 'GACT' "
@@ -436,20 +438,6 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 					+ " where vgrid.id = atj.trabajo.id and act.numActivo =  " + Long.valueOf(dto.getNumActivo()) + " )");
 			hb.appendWhere(sb.toString());
 		}
-		
-		if(dto.getLocalidadDescripcion() != null || dto.getProvinciaCodigo() != null || dto.getCodPostal() != null ) {
-			StringBuilder sb = new StringBuilder(" exists (select 1 from ActivoTrabajo atj join atj.activo.localizacion.localizacionBien loc "
-					+ " where vgrid.id = atj.trabajo.id ");
-			if(dto.getLocalidadDescripcion() != null) 		
-				sb.append( " and UPPER(loc.localidad.descripcion) LIKE '%" + dto.getLocalidadDescripcion().toUpperCase() +"%' ");			
-			if(dto.getProvinciaCodigo() != null) 
-				sb.append(" and loc.provincia.codigo = '" + dto.getProvinciaCodigo() + "' ");			
-			if(dto.getCodPostal() != null) 
-				sb.append(" and loc.codPostal = '" + dto.getCodPostal() + "' ");			
-		
-			sb.append("  )");
-			hb.appendWhere(sb.toString());
-		}			
 		
 		try {
 			if (dto.getFechaPeticionDesde() != null && dto.getFechaPeticionHasta() != null) {

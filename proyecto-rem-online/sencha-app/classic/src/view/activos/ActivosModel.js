@@ -337,7 +337,15 @@ Ext.define('HreRem.view.activos.ActivosModel', {
                     extraParams: {diccionario: 'tiposEquipoGestion'}
                 }
             },
-            
+            comboEstadoActivoDND: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'estadoFisicoActivoDND'}
+					}
+    		},
+
             comboSociedadAnteriorBBVA: {
 				model : 'HreRem.model.ComboBase',
 				proxy : {
@@ -354,7 +362,6 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					extraParams:  {codSubcartera: '{comboSubcarteraRef.value}'}
 				}
 			}
-            
      }
 
 });

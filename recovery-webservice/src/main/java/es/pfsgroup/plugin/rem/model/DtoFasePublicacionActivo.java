@@ -2,8 +2,12 @@ package es.pfsgroup.plugin.rem.model;
 
 import es.capgemini.devon.dto.WebDto;
 
-public class DtoFasePublicacionActivo extends WebDto{
+public class DtoFasePublicacionActivo extends DtoTabActivo{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Long idActivo;
 	private String fasePublicacionCodigo;
 	private String subfasePublicacionCodigo;

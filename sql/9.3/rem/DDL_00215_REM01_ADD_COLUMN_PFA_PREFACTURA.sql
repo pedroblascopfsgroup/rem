@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20200707
+--## FECHA_CREACION=20210325
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10440
+--## INCIDENCIA_LINK=REMVIP-9323
 --## PRODUCTO=NO
 --##
 --## INSTRUCCIONES: 
@@ -15,6 +15,7 @@
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF; 
+
 DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
@@ -23,14 +24,14 @@ DECLARE
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_USR VARCHAR2(30 CHAR) := 'HREOS-12733'; -- USUARIOCREAR/USUARIOMODIFICAR.
+    V_USR VARCHAR2(30 CHAR) := 'REMVIP-9323'; -- USUARIOCREAR/USUARIOMODIFICAR.
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
                     --TABLA               CAMPO       TIPO                            COMENTARIO                        CAMPO_FK    TABLA_FK                      NOMBRE_FK
-        T_TIPO_DATA('AUX_PROC_GEN_ALB_PFA','DD_DEG_ID', 'NUMBER(16,0)', 'Destinatario futuro del gasto', 'DD_DEG_ID', 'DD_DEG_DESTINATARIOS_GASTO', 'FK_AUX_DD_DEG_ID'),
-        T_TIPO_DATA('PFA_PREFACTURA'      ,'DD_DEG_ID', 'NUMBER(16,0)', 'Destinatario futuro del gasto', 'DD_DEG_ID', 'DD_DEG_DESTINATARIOS_GASTO', 'FK_PFA_DD_DEG_ID')
+        T_TIPO_DATA('PFA_PREFACTURA'      ,'DD_DEG_ID', 'NUMBER(16,0)', 'Destinatario futuro del gasto', 'DD_DEG_ID', 'DD_DEG_DESTINATARIOS_GASTO', 'FK_PFA_DD_DEG_ID'),
+        T_TIPO_DATA('PFA_PREFACTURA'      ,'DD_TEG_ID', 'NUMBER(16,0)', 'Emisor futuro del gasto', 'DD_TEG_ID', 'DD_TEG_TIPO_EMISOR_GLD', 'FK_PFA_DD_TEG_ID')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
   

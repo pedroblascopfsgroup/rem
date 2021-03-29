@@ -2,10 +2,9 @@ package es.pfsgroup.plugin.rem.expedienteComercial.dao.impl;
 
 import java.util.List;
 
-import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
@@ -14,12 +13,14 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 
 @Repository("ExpedienteComercialDao")
 public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteComercial, Long> implements ExpedienteComercialDao {
+	
 
 	@Override
 	public Page getCompradoresByExpediente(Long idExpediente, WebDto webDto, boolean activoBankia) {

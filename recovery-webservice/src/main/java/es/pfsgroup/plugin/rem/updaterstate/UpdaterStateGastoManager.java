@@ -74,7 +74,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 
 	private static final String VALIDACION_GASTO_SIN_TIPO_IMP_INDIRECTO = "msg.validacion.gasto.sin.tipo.impuesto.indirecto";
 	
-	private static final String VALIDACION_LINEA_DETALLE = "msg.validacion.gasto.sin.tipo.impuesto.indirecto";
+	private static final String VALIDACION_LINEA_DETALLE = "msg.validacion.gasto.sin.lineas.detalle";
 	
 	private DDEstadoProvisionGastos estadoProvision = null;
 	

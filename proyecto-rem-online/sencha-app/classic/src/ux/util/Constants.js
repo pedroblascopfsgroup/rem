@@ -83,7 +83,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		PRECIOS: '04',
 		PUBLICACIONES: '05',
 		COMERCIALIZACION: '06',
-		EDIFICACION: '07'
+		EDIFICACION: '07',
+		SUELO: '08'
 	},
 
 	TIPOS_CALCULO: {
@@ -906,6 +907,14 @@ Ext.define('HreRem.ux.util.Constants', {
 		SANEAMIENTO: 'saneamiento',
 		REVISION_TITULO: 'revisionTitulo'
 	},
+	
+	GRID_CALIDAD_DATO: {
+		DATOSREGISTRALES: '01',
+		DATOSREGISTRO: '02',
+		DATFASE03: '03',
+		DATFASE03DIRECCION: '04'
+	},
+	
 	TIPO_RETENCION: {
 		ANTES : 'ANT',
 		DESPUES: 'DESP'

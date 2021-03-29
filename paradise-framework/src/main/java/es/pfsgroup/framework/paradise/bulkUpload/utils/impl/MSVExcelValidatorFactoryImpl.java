@@ -253,6 +253,9 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVActualizarEstadosTrabajos cargaMasivaEstadoTrabajos;
 
 	@Autowired
+	private MSVActualizarPorcentajeConstruccion actualizarPorcentajeConstruccion;
+
+	@Autowired
 	private MSVMasivaAltaTrabajosValidator altaTrabajos;
 
 
@@ -438,6 +441,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return sancionesBBVA;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CONFIGURACION_PERIODOS_VOLUNTARIOS.equals(codTipoOperacion)) {
 			return cargaMasivaConfiguracionPeriodosVoluntarios;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PORCENTAJE_CONSTRUCCION.equals(codTipoOperacion)) {
+			return actualizarPorcentajeConstruccion;
 		}
 
 		return null;

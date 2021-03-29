@@ -182,6 +182,9 @@ public class DtoFichaTrabajo {
 
 	private String nombreExpediente;
 	
+
+	private Long trabajoDnd;
+
 	private String gestorActivo;
 	
 	private Boolean tieneTramiteCreado;
@@ -963,6 +966,15 @@ public class DtoFichaTrabajo {
 		this.nombreExpediente = nombreExpediente;
 	}
 
+
+	public Long getTrabajoDnd() {
+		return trabajoDnd;
+	}
+
+	public void setTrabajoDnd(Long trabajoDnd) {
+		this.trabajoDnd = trabajoDnd;
+	}
+
 	public String getGestorActivo() {
 		return gestorActivo;
 	}
@@ -1336,5 +1348,6 @@ public class DtoFichaTrabajo {
 		this.identificadorReamCodigo = identificadorReamCodigo;
 	}
 	
+
 	
 }

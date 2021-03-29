@@ -2075,11 +2075,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				comboProveedor.setValue(idProveedor);
 					me.onChangeProveedorCombo(comboProveedor, idProveedor);
 					comboProveedor.setRawValue(nombreProveedor);
-					comboProveedor.valueNotFoundRecord = record;
-					
-					comboProveedor.setStore(store);
-					me.getView().unmask();
+					comboProveedor.valueNotFoundRecord = record;				
+										
     			}
+				comboProveedor.setStore(store);
+				me.getView().unmask();
     		},
     		failure: function () {
 				comboProveedor.setStore(store);
@@ -2091,7 +2091,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     
     loadComboProveedorContacto: function(idProveedor) {
     	var me = this;
-    	if (idProveedor != undefined) {
+    	if (idProveedor != null) {
+			if(idProveedor.data != null && idProveedor.data.idProveedor != null){
+				idProveedor = idProveedor.data.idProveedor;
+			}
 			me.lookupReference('proveedorContactoCombo2').setDisabled(false);
 			me.lookupReference('proveedorContactoCombo2').setStore(new Ext.data.Store({
 				model: 'HreRem.model.ComboBase',

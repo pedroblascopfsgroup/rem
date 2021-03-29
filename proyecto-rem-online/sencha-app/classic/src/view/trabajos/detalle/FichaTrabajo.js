@@ -192,8 +192,27 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									listeners:{
 										change: 'onChangeCheckAplicaComite'
 									}
-				                	
+									
+			                   	},
+						        {
+						        	xtype: 'displayfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.trabajo.dnd.id'),
+						        	bind: {
+						        		value: '{trabajo.trabajoDnd}',
+						        		hidden: '{!trabajo.esTrabajoDND}'
+						        	}
+						        	
+						        }
+							]
+		           },
+		           {
+						xtype:'fieldset',
+						layout: {
+					        type: 'hbox',
+					        align: 'stretch'
 				                },
+			                items :
+			                [
 				                {
 				                	xtype: 'comboboxfieldbase',
 				                	fieldLabel:  HreRem.i18n('fieldlabel.trabajo.area.peticionaria'),
@@ -205,7 +224,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	reference: 'comboIdentificadorReamRef',
 				                	readOnly: false
 				                }
-						]
+							]
             	 	},
         			{
 						xtype:'fieldsettable',

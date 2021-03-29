@@ -190,7 +190,7 @@ Ext.define('HreRem.view.configuracion.ConfiguracionController', {
 		    		me.fireEvent("errorToastLong", HreRem.i18n("msg.error.export") + msg);
 		    		view.unmask();
 		    	} else {
-			    	if(count < limite){
+			    	if(Number(count) < Number(limite)){
 			    		config.params.exportar = true;
 			    		Ext.Ajax.request({			
 			   		     url: url,

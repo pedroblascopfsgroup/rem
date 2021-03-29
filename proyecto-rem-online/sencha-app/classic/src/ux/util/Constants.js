@@ -199,7 +199,7 @@ Ext.define('HreRem.ux.util.Constants', {
     NOMBRE_CARTERA:	{
     	'01': 'CAJAMAR',
     	'02': 'SAREB',
-    	'03': 'BANKIA',
+    	'03': 'CAIXABANK',
     	'04': 'TERCEROS',
     	'06': 'HYT',
     	'07': 'CERBERUS',
@@ -223,7 +223,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	LIBERBANK:'LIBERBANK',
     	GALEON:'GALEON',
     	ZEUS :'ZEUS',
-    	BBVA :'BBVA'
+    	BBVA :'BBVA',
+		CAIXABANK : 'CAIXABANK'
     },
 
     SUBCARTERA: {
@@ -278,7 +279,8 @@ Ext.define('HreRem.ux.util.Constants', {
     IMAGENES_CARTERA: {
     	CAJAMAR: 'logo_cajamar.svg',
     	SAREB: 'logo_sareb.svg',
-    	BANKIA: 'logo_bankia.svg'
+    	BANKIA: 'logo_bankia.svg',
+		CAIXABANK: 'logo_bankia.svg'
     },
 
     PERFILES: {

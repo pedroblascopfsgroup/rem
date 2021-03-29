@@ -44,13 +44,7 @@ public class CrearDocumentoDto {
 	 * Objeto constituido por los metadatos de dónde está archivado físicamente el documento
 	 */
 	private String archivoFisico;
-	
-	/**
-	 * Objeto constituido por los metadatos especificos del documento
-	 */
-	
-	private String específicoDocumento;
-	
+		
 
 	public String getUsuario() {
 		return usuario;
@@ -116,12 +110,5 @@ public class CrearDocumentoDto {
 		this.archivoFisico = archivoFisico;
 	}
 
-	public String getEspecíficoDocumento() {
-		return específicoDocumento;
-	}
-
-	public void setEspecíficoDocumento(String específicoDocumento) {
-		this.específicoDocumento = específicoDocumento;
-	}
 	
 }

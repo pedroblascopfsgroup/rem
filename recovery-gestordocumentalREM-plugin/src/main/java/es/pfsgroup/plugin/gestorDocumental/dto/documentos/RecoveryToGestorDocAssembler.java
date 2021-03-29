@@ -88,23 +88,26 @@ public class RecoveryToGestorDocAssembler {
 		doc.setDocumento(webFileItem.getFileItem().getFile());
 		doc.setNombreDocumento(webFileItem.getFileItem().getFileName());
 		doc.setDescripcionDocumento(webFileItem.getParameter("descripcion"));
-		doc.setGeneralDocumento(rellenarGeneralDocumento(arrayMatricula[1], arrayMatricula[2], arrayMatricula[3]));
+		doc.setGeneralDocumento(rellenarGeneralDocumento(arrayMatricula[1], arrayMatricula[2], arrayMatricula[3], null));
 		doc.setArchivoFisico("{}");
 		
 		return doc;
 	}
 
-	private String rellenarGeneralDocumento (String serie, String tdn1, String tdn2) {
+	private String rellenarGeneralDocumento (String serie, String tdn1, String tdn2, DtoMetadatosEspecificos dto) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 			sb.append(GestorDocumentalConstants.modificarMetadatos[0]).append("{");
 				sb.append(GestorDocumentalConstants.modificarMetadatos[1]).append("\""+ALTA+"\"").append(",");
 				sb.append(GestorDocumentalConstants.modificarMetadatos[2]).append("\""+serie+"\"").append(",");
 				sb.append(GestorDocumentalConstants.modificarMetadatos[3]).append("\""+tdn1+"\"").append(",");
-				sb.append(GestorDocumentalConstants.modificarMetadatos[4]).append("\""+tdn2+"\"").append(",");
-				sb.append(GestorDocumentalConstants.modificarMetadatos[5]).append("\"" + PROCESO_CARGA + "\"").append("},");
-				sb.append(GestorDocumentalConstants.modificarMetadatos[6]).append("{");
-				sb.append(GestorDocumentalConstants.modificarMetadatos[7]).append("\"CONT\"");
+				if(dto != null) {
+					sb.append(GestorDocumentalConstants.modificarMetadatos[4]).append(rellenarMetadatosEspecificos(dto)).append(",");
+				}
+				sb.append(GestorDocumentalConstants.modificarMetadatos[5]).append("\""+tdn2+"\"").append(",");
+				sb.append(GestorDocumentalConstants.modificarMetadatos[6]).append("\"" + PROCESO_CARGA + "\"").append("},");
+				sb.append(GestorDocumentalConstants.modificarMetadatos[7]).append("{");
+				sb.append(GestorDocumentalConstants.modificarMetadatos[8]).append("\"CONT\"");
 			sb.append("}");
 		sb.append("}");
 		return sb.toString();
@@ -295,37 +298,61 @@ public class RecoveryToGestorDocAssembler {
 	
 	private String rellenarMetadatosEspecificos (DtoMetadatosEspecificos dto) {
 		StringBuilder sb = new StringBuilder();
-		int indice = 1;
+		String eliminarComas = "";
+	
 		sb.append("{");
-			sb.append(GestorDocumentalConstants.metadataEspecifica[0]).append("{");
 				if(dto.getAplica() != null) {
-					sb.append(GestorDocumentalConstants.metadataEspecifica[indice]).append("\""+dto.getAplica()+"\"").append(",");
+					sb.append(GestorDocumentalConstants.metadataEspecifica[0]).append("\""+dto.getAplica()+"\"").append(",");
 				}
 				if(dto.getFechaEmision() != null) {
-					sb.append(GestorDocumentalConstants.metadataEspecifica[indice]).append("\""+dto.getFechaEmision()+"\"").append(",");
+					sb.append(GestorDocumentalConstants.metadataEspecifica[1]).append("\""+dto.getFechaEmision()+"\"").append(",");
 				}
 				if(dto.getFechaCaducidad()!= null) {
-					sb.append(GestorDocumentalConstants.metadataEspecifica[indice]).append("\""+dto.getFechaCaducidad()+"\"").append(",");
+					sb.append(GestorDocumentalConstants.metadataEspecifica[2]).append("\""+dto.getFechaCaducidad()+"\"").append(",");
 				}
 				if(dto.getFechaObtencion()!= null) {
-					sb.append(GestorDocumentalConstants.metadataEspecifica[indice]).append("\""+dto.getFechaObtencion()+"\"").append(",");
+					sb.append(GestorDocumentalConstants.metadataEspecifica[3]).append("\""+dto.getFechaObtencion()+"\"").append(",");
 				}
 				if(dto.getFechaEtiqueta()!= null) {
-					sb.append(GestorDocumentalConstants.metadataEspecifica[indice]).append("\""+dto.getFechaEtiqueta()+"\"").append(",");
+					sb.append(GestorDocumentalConstants.metadataEspecifica[4]).append("\""+dto.getFechaEtiqueta()+"\"").append(",");
 				}
 				if(dto.getRegistro()!= null) {
-					sb.append(GestorDocumentalConstants.metadataEspecifica[indice]).append("\""+dto.getRegistro()+"\"");
+					sb.append(GestorDocumentalConstants.metadataEspecifica[5]).append("\""+dto.getRegistro()+"\"");
 				}
+			sb.append(",");
+			eliminarComas = sb.toString();
+			if(",".equals(eliminarComas.substring(eliminarComas.length() - 1))){
+				sb.deleteCharAt(eliminarComas.length()-1);
+			}
+			
+			
 			sb.append("}");
-		sb.append("}");
+		
 		return sb.toString();
 	}
 	
 	public CrearDocumentoDto getCrearDocumentoDtoConFormulario(WebFileItem webFileItem, String userLogin, String matricula, DtoMetadatosEspecificos dto) {
-		CrearDocumentoDto doc = getCrearDocumentoDto(webFileItem, userLogin,  matricula);
-		if(dto != null) {
-			doc.setEspecíficoDocumento(rellenarMetadatosEspecificos(dto));
+		CrearDocumentoDto doc = new CrearDocumentoDto();
+
+		String[] arrayMatricula = new String[4];
+		if (matricula!=null && matricula.contains("-")) {
+			arrayMatricula = matricula.split("-");
 		}
+		doc.setUsuario(USUARIO);
+		doc.setPassword(PASSWORD);
+		
+		if(!Checks.esNulo(userLogin) && userLogin.equals("REST-USER") ) {
+			doc.setUsuarioOperacional(OPWS);
+		} else {
+			doc.setUsuarioOperacional(userLogin);
+		}
+		//TODO Rellenar el dto cuando vengan los campos del formulario relleno. Si no está relleno no añadir nada.
+		doc.setDocumento(webFileItem.getFileItem().getFile());
+		doc.setNombreDocumento(webFileItem.getFileItem().getFileName());
+		doc.setDescripcionDocumento(webFileItem.getParameter("descripcion"));
+		doc.setGeneralDocumento(rellenarGeneralDocumento(arrayMatricula[1], arrayMatricula[2], arrayMatricula[3], dto));
+		doc.setArchivoFisico("{}");
+		
 		return doc;
 	}
 }

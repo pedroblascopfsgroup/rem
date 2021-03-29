@@ -23,7 +23,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
-import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
@@ -40,7 +39,6 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -92,7 +90,6 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
 	@Autowired
 	private ComunicacionGencatApi comunicacionGencatApi;
-	
 	
 	@Autowired
 	private ActivoTramiteDao activoTramiteDao;
@@ -194,7 +191,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						valorComboMotivoAnularReserva= valor.getValor();
 					}
 
-					if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
 						// Se incluye un motivo de anulacion del expediente, si se indico en la tarea
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
 						DDMotivoAnulacionExpediente motivoAnulacion = genericDao.get(DDMotivoAnulacionExpediente.class, filtro);

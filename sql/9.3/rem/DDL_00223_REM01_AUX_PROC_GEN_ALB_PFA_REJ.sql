@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20210203
+--## FECHA_CREACION=20210325
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12983
+--## INCIDENCIA_LINK=REMVIP-9323
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Creación de tabla auxiliar para AUX_PROC_GEN_ALB_PFA_REJ
@@ -57,7 +57,8 @@ BEGIN
 		, PRO_ID		NUMBER(16,0)
 		, DD_TGA_ID 	NUMBER(16,0)
 		, DD_STG_ID 	NUMBER(16,0)
-		, DD_DEG_ID 	NUMBER(16,0)	
+		, DD_DEG_ID 	NUMBER(16,0)
+		, DD_TEG_ID		NUMBER(16,0)	
 		, ANYO			NUMBER(4,0)
 		, ZONA			NUMBER(1,0)
 		, DD_IRE_ID		NUMBER(16,0)

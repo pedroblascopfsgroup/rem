@@ -119,8 +119,6 @@ import es.pfsgroup.plugin.rem.model.VCalculosActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.VCambioActivoPrecioPublicacionAgrupaciones;
 import es.pfsgroup.plugin.rem.model.VCondicionantesAgrDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VFechasPubCanalesAgr;
-import es.pfsgroup.plugin.rem.model.VGestoresActivo;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;

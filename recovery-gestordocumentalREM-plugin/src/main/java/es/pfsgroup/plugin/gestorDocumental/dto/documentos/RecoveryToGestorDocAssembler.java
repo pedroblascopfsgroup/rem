@@ -1,6 +1,12 @@
 package es.pfsgroup.plugin.gestorDocumental.dto.documentos;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Properties;
 
 import es.capgemini.devon.files.WebFileItem;
@@ -299,34 +305,43 @@ public class RecoveryToGestorDocAssembler {
 	private String rellenarMetadatosEspecificos (DtoMetadatosEspecificos dto) {
 		StringBuilder sb = new StringBuilder();
 		String eliminarComas = "";
-	
-		sb.append("{");
-				if(dto.getAplica() != null) {
-					sb.append(GestorDocumentalConstants.metadataEspecifica[0]).append("\""+dto.getAplica()+"\"").append(",");
-				}
-				if(dto.getFechaEmision() != null) {
-					sb.append(GestorDocumentalConstants.metadataEspecifica[1]).append("\""+dto.getFechaEmision()+"\"").append(",");
-				}
-				if(dto.getFechaCaducidad()!= null) {
-					sb.append(GestorDocumentalConstants.metadataEspecifica[2]).append("\""+dto.getFechaCaducidad()+"\"").append(",");
-				}
-				if(dto.getFechaObtencion()!= null) {
-					sb.append(GestorDocumentalConstants.metadataEspecifica[3]).append("\""+dto.getFechaObtencion()+"\"").append(",");
-				}
-				if(dto.getFechaEtiqueta()!= null) {
-					sb.append(GestorDocumentalConstants.metadataEspecifica[4]).append("\""+dto.getFechaEtiqueta()+"\"").append(",");
-				}
-				if(dto.getRegistro()!= null) {
-					sb.append(GestorDocumentalConstants.metadataEspecifica[5]).append("\""+dto.getRegistro()+"\"");
-				}
-			sb.append(",");
+		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+		SimpleDateFormat fromUser = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			
+			sb.append("{");
+			if(dto.getAplica() != null) {
+				sb.append(GestorDocumentalConstants.metadataEspecifica[0]).append("\""+dto.getAplica()+"\"").append(",");
+			}
+			if(dto.getFechaEmision() != null) {
+				String fechaEmision = format.format(fromUser.parse(dto.getFechaEmision()));
+				sb.append(GestorDocumentalConstants.metadataEspecifica[1]).append("\""+fechaEmision+"\"").append(",");
+			}
+			if(dto.getFechaCaducidad()!= null) {
+				String fechaCaducidad = format.format(fromUser.parse(dto.getFechaCaducidad()));
+				sb.append(GestorDocumentalConstants.metadataEspecifica[2]).append("\""+fechaCaducidad+"\"").append(",");
+			}
+			if(dto.getFechaObtencion()!= null) {
+				String fechaObtencion = format.format(fromUser.parse(dto.getFechaObtencion()));
+				sb.append(GestorDocumentalConstants.metadataEspecifica[3]).append("\""+fechaObtencion+"\"").append(",");
+			}
+			if(dto.getFechaEtiqueta()!= null) {
+				String fechaEtiqueta = format.format(fromUser.parse(dto.getFechaEtiqueta()));
+				sb.append(GestorDocumentalConstants.metadataEspecifica[4]).append("\""+fechaEtiqueta+"\"").append(",");
+			}
+			if(dto.getRegistro()!= null) {
+				sb.append(GestorDocumentalConstants.metadataEspecifica[5]).append("\""+dto.getRegistro()+"\"");
+			}
+
 			eliminarComas = sb.toString();
 			if(",".equals(eliminarComas.substring(eliminarComas.length() - 1))){
 				sb.deleteCharAt(eliminarComas.length()-1);
 			}
-			
-			
 			sb.append("}");
+			
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		
 		return sb.toString();
 	}

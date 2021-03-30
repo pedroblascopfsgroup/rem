@@ -66,6 +66,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	private static final String ID_ACTIVO_PATH = "id_activo=";
 	private static final String OPERACION_PATH = "operacion=";
 	private static final String BLACK_LIST_MATRICULAS_PATH = "blacklistmatriculas=";
+	private static final String METADATA_TDN_1_PATH = "tdn1metadata=";
 	
 	private static final String DOCUMENTO = "documento";
 	private static final String USUARIO = "usuario";
@@ -155,6 +156,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 			docExpDto.setBlacklistmatriculas("");
 		}
 		sb.append("&").append(BLACK_LIST_MATRICULAS_PATH).append(docExpDto.getBlacklistmatriculas());
+		sb.append("&").append(METADATA_TDN_1_PATH).append(true);
 		return sb.toString();
 	}
 	

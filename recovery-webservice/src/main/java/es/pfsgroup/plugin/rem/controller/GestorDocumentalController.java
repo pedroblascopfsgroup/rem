@@ -56,7 +56,7 @@ public class GestorDocumentalController extends ParadiseJsonController {
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 		
-
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView upload(HttpServletRequest request, DtoMetadatosEspecificos dto) {
 		ModelMap model = new ModelMap();
@@ -71,11 +71,12 @@ public class GestorDocumentalController extends ParadiseJsonController {
 				
 				if(GestorDocumentalAdapterApi.ENTIDAD_ACTIVO.equalsIgnoreCase(entidad)) {
 					idActivo = Long.parseLong(idEntidad);
+					activoAdapter.upload(webFileItem, dto);
 					tbjValidado = trabajoApi.activoTieneTrabajoValidadoByTipoDocumento(idActivo,tipoDocumento);
 					if(dto != null && idActivo != null) {				
 						gestorDocumentalAdapterApi.guardarFormularioSubidaDocumento(idActivo, tipoDocumento, tbjValidado, dto);
 					}
-					activoAdapter.upload(webFileItem, dto);
+					
 				}else if(GestorDocumentalAdapterApi.ENTIDAD_TRABAJO.equalsIgnoreCase(entidad)){
 					Trabajo trabajo = trabajoApi.findOne(Long.parseLong(idEntidad));
 					if(trabajo == null) {
@@ -86,13 +87,14 @@ public class GestorDocumentalController extends ParadiseJsonController {
 					}
 					
 					List<ActivoTrabajo> activoTrabajoList = trabajo.getActivosTrabajo();
+					trabajoApi.upload(webFileItem);
 					for (ActivoTrabajo activoTrabajo : activoTrabajoList) {
 						idActivo = activoTrabajo.getActivo().getId();
 						if(dto != null && idActivo != null) {
 							gestorDocumentalAdapterApi.guardarFormularioSubidaDocumento(idActivo, tipoDocumento, tbjValidado, dto);
 						}
 					}
-					trabajoApi.upload(webFileItem);
+					
 				}
 				
 				
@@ -100,8 +102,14 @@ public class GestorDocumentalController extends ParadiseJsonController {
 
 			model.put(RESPONSE_SUCCESS_KEY, true);			
 		} catch (GestorDocumentalException e) {
+			logger.error("error en GestorDocumentalController", e); 
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put("errorMessage", "Ha habido un problema con la subida del fichero al gestor documental.");
+			String errorFormateado = e.getMessage();
+			if(e.getMessage().contains("]")){
+				String[] errorFormated = e.getMessage().split("]");
+				errorFormateado = errorFormated[1];
+			}
+			model.put("errorMessage", errorFormateado);
 
 		} catch (Exception e) {
 			logger.error("error en GestorDocumentalController", e);

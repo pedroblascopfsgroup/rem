@@ -53,11 +53,17 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 			params: params,
 			success: function(fp, o) {
 				if(o.result.success == "false") {
-					me.fireEvent("errorToast", o.result.errores);
-
+	    			if(!Ext.isEmpty(o.response.responseText)) {
+	    				var error = Ext.decode(o.response.responseText).errorMessage;
+	    				wizard.fireEvent("errorToast", error);
+	    			} else {
+	    				wizard.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	    			}
+	    			wizard.previousSlide();
 				} else {
 					var padre = form.up('wizardBase').padre;
 					me.getView().unmask();
+					wizard.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 					form.up('wizardBase').close();
 					padre.refrescarActivo(true);
 					

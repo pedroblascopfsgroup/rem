@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * Dto para los datos de publicación de los activos.
  */
-public class DtoDatosPublicacionActivo extends WebDto {
+public class DtoDatosPublicacionActivo extends DtoTabActivo {
 
 	private Long idActivo;
 	private String estadoPublicacionVenta;

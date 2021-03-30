@@ -708,9 +708,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 		Usuario usuarioLogado = adapter.getUsuarioLogado();
 		String nombreUsuarioWS = RestApi.REST_LOGGED_USER_USERNAME;
 		ActivoTramite tramite = tareaActivo.getTramite();
-		Filter filtroEC = genericDao.createFilter(FilterType.EQUALS, "trabajo.id",
-				tramite.getTrabajo().getId());
-		ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroEC);
+		
 
 		// Factoria asignador gestores por tarea
     	UserAssigantionService userAssigantionService = userAssigantionServiceFactoryApi.getService(tareaProcedimiento.getCodigo());
@@ -830,21 +828,25 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 				}
 			}
 		}
-		
-		if((DDCartera.CODIGO_CARTERA_BBVA.equals(cartera.getCodigo()) && 
-				ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE.equals(tareaExterna.getTareaProcedimiento().getCodigo())) || 
-				(!DDCartera.CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo()) && 
-						ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE.equals(tareaExterna.getTareaProcedimiento().getCodigo()))) {
-			if(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expedienteComercial.getEstado().getCodigo()) ||
-					DDEstadosExpedienteComercial.PTE_SANCION.equals(expedienteComercial.getEstado().getCodigo()) ||
-					DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES.equals(expedienteComercial.getEstado().getCodigo()) ||
-					DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo())){
-						tareaActivo.setUsuario(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
-					} else {
-						tareaActivo.setUsuario(usuarioManager.getByUsername("gruboarding"));
-					}
+		if(tramite.getTrabajo() != null) {
+			Filter filtroEC = genericDao.createFilter(FilterType.EQUALS, "trabajo.id",
+					tramite.getTrabajo().getId());
+			ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroEC);
+			
+			if((DDCartera.CODIGO_CARTERA_BBVA.equals(cartera.getCodigo()) && 
+					ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE.equals(tareaExterna.getTareaProcedimiento().getCodigo())) || 
+					(!DDCartera.CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo()) && 
+							ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE.equals(tareaExterna.getTareaProcedimiento().getCodigo()))) {
+				if(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expedienteComercial.getEstado().getCodigo()) ||
+						DDEstadosExpedienteComercial.PTE_SANCION.equals(expedienteComercial.getEstado().getCodigo()) ||
+						DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES.equals(expedienteComercial.getEstado().getCodigo()) ||
+						DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo())){
+							tareaActivo.setUsuario(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
+						} else {
+							tareaActivo.setUsuario(usuarioManager.getByUsername("gruboarding"));
+						}
+			}
 		}
-
 		// Asignador de SUPERVISOR por factoria - Supervisores encontrados por tarea-Activo
 		if(!Checks.esNulo(supervisor)){
 			tareaActivo.setSupervisorActivo(supervisor);

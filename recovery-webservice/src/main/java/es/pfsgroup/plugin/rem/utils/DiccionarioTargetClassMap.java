@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.utils;
 
+import java.awt.dnd.DnDConstants;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -303,6 +304,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoDocGastoAsociado", DDTipoDocumentoGastoAsociado.class);
 		mapa.put("motivoAmpliacionArras", DDMotivoAmpliacionArras.class);
 		mapa.put("estadoAdecuacionSareb", DDEstadoAdecucionSareb.class);
+		mapa.put("estadoFisicoActivoDND", DDValidaEstadoActivo.class);
 		mapa.put("identificadorReam", DDIdentificadorReam.class);
 		mapa.put("tipoRetencion", DDTipoRetencion.class);
 		mapa.put("tiposAdmiteMascota", DDSiniSiNoIndiferente.class); 

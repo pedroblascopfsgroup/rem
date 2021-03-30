@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo
---## FECHA_CREACION=20200909
+--## AUTOR= IVAN REPISO
+--## FECHA_CREACION=20210325
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-11041
+--## INCIDENCIA_LINK=REMVIP-9321
 --## PRODUCTO=NO
 --## Finalidad: Crear la vista VI_BUSQUEDA_GASTO_TRABAJOS.
 --##           
@@ -14,6 +14,7 @@
 --##        0.2 Sin borrado en asociación gasto-trabajo.
 --##        0.3 Adaptación de consulta al nuevo modelo de facturación - Daniel Algaba - HREOS-10618
 --##		0.4 Adaptación de consulta para ver el tipo de línea y los importes - Lara Pablo - HREOS-11041
+--##        0.5 Importe de trabajos: si emisor Haya IMPORTE_TOTAL, sino IMPORTE_PRESUPUESTO - IVAN REPISO - REMVIP-9321
 --##########################################
 --*/
 
@@ -58,9 +59,9 @@ BEGIN
 				GLDTBJ.TBJ_ID,
 				TBJ.TBJ_NUM_TRABAJO,
 				TBJ.TBJ_CUBRE_SEGURO,
-				 CASE WHEN( DEG.DD_DEG_CODIGO = ''02'')
-                    THEN TBJ.TBJ_IMPORTE_PRESUPUESTO
-                    ELSE TBJ.TBJ_IMPORTE_TOTAL 
+				 CASE WHEN( PVE.PVE_DOCIDENTIF = ''A86744349'')
+                    THEN TBJ.TBJ_IMPORTE_TOTAL
+                    ELSE TBJ.TBJ_IMPORTE_PRESUPUESTO
                 END TBJ_IMPORTE_TOTAL,
 				TBJ.TBJ_FECHA_EJECUTADO,
 				TBJ.TBJ_FECHA_SOLICITUD,
@@ -80,6 +81,7 @@ BEGIN
 		JOIN ' || V_ESQUEMA || '.DD_STG_SUBTIPOS_GASTO STG ON GLD.DD_STG_ID = STG.DD_STG_ID AND STG.BORRADO = 0
 		LEFT JOIN ' || V_ESQUEMA || '.DD_TIT_TIPOS_IMPUESTO TIT ON GLD.DD_TIT_ID = TIT.DD_TIT_ID AND TIT.BORRADO = 0
  		JOIN ' || V_ESQUEMA || '.GPV_GASTOS_PROVEEDOR GPV ON GLD.GPV_ID = GPV.GPV_ID AND GPV.BORRADO = 0
+    JOIN ' || V_ESQUEMA || '.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = GPV.PVE_ID_EMISOR AND PVE.BORRADO = 0
         LEFT JOIN ' || V_ESQUEMA || '.DD_DEG_DESTINATARIOS_GASTO DEG ON DEG.DD_DEG_ID = GPV.DD_DEG_ID AND DEG.BORRADO = 0 
 		WHERE GLD.BORRADO = 0
     ';

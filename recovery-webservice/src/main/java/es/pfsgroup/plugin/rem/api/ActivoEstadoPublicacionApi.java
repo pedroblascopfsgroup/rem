@@ -210,4 +210,15 @@ public interface ActivoEstadoPublicacionApi {
 	 * @return List<DtoHistoricoFasesDePublicacion>
 	 */
 	List<DtoHistoricoFasesDePublicacion> getHistoricoFasesDePublicacionActivo(Long idActivo);
+	
+	/**
+	 * Este método obtiene los datos de la pestanya de calidad del dato de publicacion de un activo
+	 * @param idActivo
+	 * @return DtoFasePublicacionActivo
+	 */
+	DtoCalidadDatoPublicacionActivo getCalidadDatoPublicacionActivo(Long idActivo);
+	
+	Boolean saveDatoRemCalidadDatoPublicacion(List<Long> idList, String datoDq, boolean quieroActualizar);
+	
+	List <DtoCalidadDatoPublicacionGrid> getCalidadDatoPublicacionActivoGrid(Long idActivo);
 }

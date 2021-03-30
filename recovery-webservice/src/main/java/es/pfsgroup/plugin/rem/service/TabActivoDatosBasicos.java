@@ -67,6 +67,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -87,12 +88,14 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
+import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
@@ -126,6 +129,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String ERROR_PORCENTAJE_PARTICIPACION="msg.error.porcentaje.participacion";
 	private static final String CESION_USO_ERROR= "msg.error.activo.patrimonio.en.cesion.uso";
 	private static final String NO_GESTIONADO_POR_ADMISION = "msg.no.gestionado.admision";
+	private static final String PORCENTAJE_CONTRUCCION_FUERA_LIMITES = "msg.porcentaje.construccion.fuera.limites";
+	
+	private static String CODIGO_SUPER = "HAYASUPER";
+	private static String CODIGO_GESTOR_ACTIVO = "HAYAGESACT";
+
 	private static final String ID_HAYA_NO_EXISTE= "msg.error.activo.hre.no.existe";
 	private static final String ACTIVO_NO_BBVA = "msg.error.activo.hre.bbva.no.existe";
 	private static final String ACTIVO_VENDIDO_FUERA_DE_PERIMETRO_HAYA= "msg.error.activo.vendido.perimetro";
@@ -889,12 +897,18 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		ActivoAdmisionRevisionTitulo actRevTitulo = genericDao.get(ActivoAdmisionRevisionTitulo.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-		DDEstadoRegistralActivo ddEstadoReg = new DDEstadoRegistralActivo();
 		boolean perimetroAdmision = false;
 		if(perimetroActivo.getAplicaAdmision() != null) {
 			perimetroAdmision = perimetroActivo.getAplicaAdmision();
 			activoDto.setPerimetroAdmision(perimetroAdmision);
 		}
+		
+		DDEstadoRegistralActivo ddEstadoReg = null;
+		if(perimetroAdmision && actRevTitulo != null && actRevTitulo.getTipoIncidenciaRegistral() != null) {
+			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getTipoIncidenciaRegistral().getDescripcion()));
+		} else if(perimetroAdmision && actRevTitulo != null && actRevTitulo.getSituacionConstructivaRegistral() != null) {
+			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getSituacionConstructivaRegistral().getDescripcion()));
+		} else if(activo.getEstadoRegistral() != null) {
 		if(perimetroAdmision && actRevTitulo != null) {
 			if(actRevTitulo.getTipoIncidenciaRegistral() != null) {
 				ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getTipoIncidenciaRegistral().getDescripcion()));
@@ -911,6 +925,26 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setEstadoRegistralCodigo(activo.getEstadoRegistral().getCodigo());
 			activoDto.setEstadoRegistralDescripcion(activo.getEstadoRegistral().getDescripcion());
 		}
+		}
+		if(ddEstadoReg != null) {
+			activoDto.setEstadoRegistralCodigo(ddEstadoReg.getCodigo());	
+		}
+		Double porcentajeContruccion = activo.getPorcentajeConstruccion();
+		activoDto.setPorcentajeConstruccion(porcentajeContruccion);
+		
+		
+		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
+		
+		List<Perfil> perfilesUser = usuarioLogado.getPerfiles();
+		
+		boolean puedeEditarPorcentaje = false;
+		
+		if(activoDto.getIsUA() != null && !activoDto.getIsUA() && perimetroActivo.getIncluidoEnPerimetro() == 1) {
+			activoDto.setIsEditablePorcentajeConstruccion(true);
+		}else {
+			activoDto.setIsEditablePorcentajeConstruccion(false);
+		}
+		
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
 		
@@ -1065,6 +1099,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setEsEditableActivoEstadoRegistral(!perimetroAdmision);
 		}
 		
+		if(activo.getEstadoValidacionActivoDND()!=null) {
+			activoDto.setEstadoFisicoActivoDND(activo.getEstadoValidacionActivoDND().getCodigo());
+		}
+		
+
 		activoDto.setIsGrupoOficinaKAM(activoApi.isGrupoOficinaKAM());
 		if(activo.getTipoTransmision() != null) {
 			activoDto.setTipoTransmisionCodigo(activo.getTipoTransmision().getCodigo());
@@ -1166,8 +1205,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			beanUtilNotNull.copyProperties(activo.getLocalizacion(), dto);
 			beanUtilNotNull.copyProperties(activo.getLocalizacion().getLocalizacionBien(), dto);
 			
+			
 			activo.setLocalizacion(genericDao.save(ActivoLocalizacion.class, activo.getLocalizacion()));
-
+			
 			if (!Checks.esNulo(dto.getPaisCodigo())) {
 				DDCicCodigoIsoCirbeBKP pais = (DDCicCodigoIsoCirbeBKP) diccionarioApi.dameValorDiccionarioByCod(DDCicCodigoIsoCirbeBKP.class,  dto.getPaisCodigo());
 				activo.getLocalizacion().getLocalizacionBien().setPais(pais);
@@ -1233,6 +1273,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				activo.setNombreCarteraPerimetro(dto.getNombreCarteraPerimetro());
 			}
 			
+			if(!Checks.esNulo(dto.getPorcentajeConstruccion())) {
+				BigDecimal porcentajeDouble = new BigDecimal(dto.getPorcentajeConstruccion());
+				porcentajeDouble = porcentajeDouble.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+				activo.setPorcentajeConstruccion(porcentajeDouble.doubleValue());	 
+			}
 			activo.getLocalizacion().setLocalizacionBien(genericDao.save(NMBLocalizacionesBien.class, activo.getLocalizacion().getLocalizacionBien()));
 			
 			if (!Checks.esNulo(dto.getSociedadPagoAnterior())) {
@@ -1513,10 +1558,60 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 				activo.setFechaRevisionSelloCalidad(new Date());
 				activo.setSelloCalidad(true);
+//				HREOS-13592 Se bloquea el evolutivo de ocultación de activos para la subida 
+//				//HREOS-11733 Cambio en las fases de publicacion ( Se puede sacar a una funcion externa ) 
+//				Filter filtroFecha = genericDao.createFilter(FilterType.NULL, "fechaFin");
+//				Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+//				HistoricoFasePublicacionActivo histActivo = genericDao.get(HistoricoFasePublicacionActivo.class, filtroFecha,filtroActivoId);
+//				
+//				if(histActivo != null && histActivo.getFasePublicacion() != null && DDFasePublicacion.CODIGO_FASE_VI_CALIDAD_COMPROBADA.equals(histActivo.getFasePublicacion().getCodigo()) && 
+//						histActivo.getSubFasePublicacion() != null && !DDSubfasePublicacion.CODIGO_CALIDAD_COMPROBADA.equals(histActivo.getSubFasePublicacion().getCodigo())) {
+//					Filter filtroSubFase = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_CALIDAD_COMPROBADA);
+//					DDSubfasePublicacion subfase = genericDao.get(DDSubfasePublicacion.class, filtroSubFase);
+//					histActivo.setFechaFin(new Date());
+//					HistoricoFasePublicacionActivo histoNuevo = new HistoricoFasePublicacionActivo();
+//					genericDao.update(HistoricoFasePublicacionActivo.class, histActivo);
+//					
+//					try {
+//						BeanUtils.copyProperties(histoNuevo, histActivo);
+//						histoNuevo.setSubFasePublicacion(subfase);
+//						histoNuevo.setFechaFin(null);
+//						genericDao.save(HistoricoFasePublicacionActivo.class, histoNuevo);
+//					} catch (IllegalAccessException e) {
+//						e.printStackTrace();
+//					} catch (InvocationTargetException e) {
+//						e.printStackTrace();
+//					}
+//				}
 			}else if(!Checks.esNulo(dto.getSelloCalidad()) && !dto.getSelloCalidad()){
 				activo.setGestorSelloCalidad(null);
 				activo.setFechaRevisionSelloCalidad(null);
 				activo.setSelloCalidad(false);
+//				HREOS-13592 Se bloquea el evolutivo de ocultación de activos para la subida 
+//				//HREOS-11733 Cambio en las fases de publicacion
+//				Filter filtroFecha = genericDao.createFilter(FilterType.NULL, "fechaFin");
+//				Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+//				HistoricoFasePublicacionActivo histActivo = genericDao.get(HistoricoFasePublicacionActivo.class, filtroFecha,filtroActivoId);
+//				
+//				if(histActivo != null && histActivo.getFasePublicacion() != null && DDFasePublicacion.CODIGO_FASE_VI_CALIDAD_COMPROBADA.equals(histActivo.getFasePublicacion().getCodigo()) && 
+//						histActivo.getSubFasePublicacion() != null && DDSubfasePublicacion.CODIGO_CALIDAD_COMPROBADA.equals(histActivo.getSubFasePublicacion().getCodigo())) {
+//					Filter filtroSubFase = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_SIN_INCIDENCIAS);
+//					DDSubfasePublicacion subfase = genericDao.get(DDSubfasePublicacion.class, filtroSubFase);
+//					histActivo.setFechaFin(new Date());
+//					HistoricoFasePublicacionActivo histoNuevo = new HistoricoFasePublicacionActivo();
+//					genericDao.save(HistoricoFasePublicacionActivo.class, histActivo);
+//					
+//					try {
+//						BeanUtils.copyProperties(histoNuevo, histActivo);
+//						histoNuevo.setSubFasePublicacion(subfase);
+//						histoNuevo.setFechaFin(null);
+//						genericDao.save(HistoricoFasePublicacionActivo.class, histoNuevo);
+//					} catch (IllegalAccessException e) {
+//						e.printStackTrace();
+//					} catch (InvocationTargetException e) {
+//						e.printStackTrace();
+//					}
+//				}
 			}
 			
 			

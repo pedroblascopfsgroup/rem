@@ -340,7 +340,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String subestadoAdmisionCodCabecera;
 	private String estadoAdmisionDescCabecera;
 	private String subestadoAdmisionDescCabecera;
-	private Boolean esEditableActivoEstadoRegistral;  
+	private Boolean esEditableActivoEstadoRegistral;
+	private String estadoFisicoActivoDND;
+	private Double porcentajeConstruccion;
+	private Boolean isEditablePorcentajeConstruccion;
 
 	private Boolean activoChkPerimetroAlquiler;
 	private List<?> activosAgrupacionRestringida;
@@ -2649,6 +2652,29 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.estadoAdecuacionSarebDescripcion = estadoAdecuacionSarebDescripcion;
 	}
 
+	public String getEstadoFisicoActivoDND() {
+		return estadoFisicoActivoDND;
+	}
+
+	public void setEstadoFisicoActivoDND(String estadoFisicoActivoDND) {
+		this.estadoFisicoActivoDND = estadoFisicoActivoDND;
+	}
+
+	public Double getPorcentajeConstruccion() {
+		return porcentajeConstruccion;
+	}
+
+	public void setPorcentajeConstruccion(Double porcentajeConstruccion) {
+		this.porcentajeConstruccion = porcentajeConstruccion;
+	}
+
+	public Boolean getIsEditablePorcentajeConstruccion() {
+		return isEditablePorcentajeConstruccion;
+	}
+
+	public void setIsEditablePorcentajeConstruccion(Boolean isEditablePorcentajeConstruccion) {
+		this.isEditablePorcentajeConstruccion = isEditablePorcentajeConstruccion;
+	}
 	public String getCodPromocionBbva() {
 		return codPromocionBbva;
 	}

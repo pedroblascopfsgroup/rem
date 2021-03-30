@@ -26,6 +26,8 @@ public class ActivoPropagacionUAsFieldTabMap {
     public static final String TAB_COMERCIAL = "comercial";
     public static final String TAB_ADMINISTRACION = "administracion";
     public static final String TAB_PATRIMONIO = "patrimonio";
+    public static final String TAB_CALIDAD_DATOS = "calidaddatos";
+    public static final String TAB_FASE_PUBLICACION = "fasepublicacionactivo";
 
     static {
     	Map<String, List<String>> pmap = new HashMap<String, List<String>>();
@@ -39,6 +41,7 @@ public class ActivoPropagacionUAsFieldTabMap {
     	    		"usoDominanteCodigo",
     	    		"tipoActivoCodigo",
     	    		"subtipoActivoCodigo",
+    	    		"porcentajeConstruccion",
     	    		"tipoTransmision",
     	    		"tipoSegmentoCodigo",
     	    		
@@ -311,6 +314,13 @@ public class ActivoPropagacionUAsFieldTabMap {
 			Arrays.asList(
 					"chkPerimetroAlquiler"
 		   	));
+//		HREOS-13592 Se bloquea el evolutivo de ocultación de activos para la subida 
+//    	pmap.put(TAB_FASE_PUBLICACION,
+//    			Arrays.asList(
+//    				"fasePublicacionCodigo",
+//    				"subfasePublicacionCodigo",
+//    				"comentario"
+//    			));
 
 
         mapUAs = Collections.unmodifiableMap(pmap);

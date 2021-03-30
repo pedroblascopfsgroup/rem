@@ -2145,9 +2145,6 @@ public class ActivoAdapter {
 		ActivoTramite tramite = activoTramiteApi.get(idTramite);
 		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
 		List<TareaProcedimiento> listaTareas = activoTramiteApi.getTareasActivasByIdTramite(idTramite);
-		Filter filtroEC = genericDao.createFilter(FilterType.EQUALS, "trabajo.id",
-				tramite.getTrabajo().getId());
-		ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroEC);
 		
 		try {
 			beanUtilNotNull.copyProperty(dtoTramite, "idTramite", tramite.getId());
@@ -2277,6 +2274,9 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperty(dtoTramite, "tieneEC", false);
 			if (!Checks.esNulo(tramite.getTrabajo())) {
 				// Trabajos asociados con expediente comercial
+				Filter filtroEC = genericDao.createFilter(FilterType.EQUALS, "trabajo.id",
+						tramite.getTrabajo().getId());
+				ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroEC);
 				if (!Checks.esNulo(expedienteComercial)) {
 					beanUtilNotNull.copyProperty(dtoTramite, "tieneEC", true);
 					beanUtilNotNull.copyProperty(dtoTramite, "idExpediente", expedienteComercial.getId());
@@ -2288,7 +2288,9 @@ public class ActivoAdapter {
 						if(!DDCartera.CODIGO_CARTERA_CERBERUS.equals(tramite.getActivo().getCartera().getCodigo()) && isGestorBoarding && expedienteComercialNoAprobado) {
 							dtoTramite.setOcultarBotonResolucion(true);
 						} else {
-							dtoTramite.setOcultarBotonResolucion(false);
+							if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())) {
+								dtoTramite.setOcultarBotonResolucion(false);
+							}
 						}
 					}
 					beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());

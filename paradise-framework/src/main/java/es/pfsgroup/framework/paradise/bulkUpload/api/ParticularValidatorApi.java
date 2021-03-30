@@ -1357,6 +1357,8 @@ public interface ParticularValidatorApi {
 	boolean existeTipoRetencion(String tipoRetencion);
 	
 	boolean existeLineaEnGasto(String idLinea, String numGasto);
+	
+	public Boolean existePorcentajeConstruccion(String porcentajeConstruccion);
 
 	boolean conEstadoGasto(String idGasto,String codigoEstado);
 

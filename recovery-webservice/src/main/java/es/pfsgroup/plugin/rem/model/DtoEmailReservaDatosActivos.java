@@ -15,7 +15,7 @@ public class DtoEmailReservaDatosActivos extends WebDto {
 
 	private Long id;
 	private String sociedadPropietaria;
-	private String lineaFactura;
+	private Long lineaFactura;
 	private String fincaRegistral;
 	private Double participacion;
 	private String provincia;
@@ -34,10 +34,10 @@ public class DtoEmailReservaDatosActivos extends WebDto {
 	public void setSociedadPropietaria(String sociedadPropietaria) {
 		this.sociedadPropietaria = sociedadPropietaria;
 	}
-	public String getLineaFactura() {
+	public Long getLineaFactura() {
 		return lineaFactura;
 	}
-	public void setLineaFactura(String lineaFactura) {
+	public void setLineaFactura(Long lineaFactura) {
 		this.lineaFactura = lineaFactura;
 	}
 	public String getFincaRegistral() {

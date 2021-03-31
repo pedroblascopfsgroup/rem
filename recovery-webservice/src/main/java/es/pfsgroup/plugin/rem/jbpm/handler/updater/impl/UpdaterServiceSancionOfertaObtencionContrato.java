@@ -1,23 +1,16 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import es.pfsgroup.plugin.rem.model.*;
-
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -32,11 +25,18 @@ import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceContabilidadBbva;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaGencat;
+import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
-import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
-import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 
 @Component
 public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterService {
@@ -247,7 +247,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				}
 				if (expediente.getOferta() != null &&
 						DDCartera.CODIGO_CARTERA_BBVA.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
-					notificatorServiceContabilidadBbva.notificatorFinTareaConValores(expediente);
+					notificatorServiceContabilidadBbva.notificatorFinTareaConValores(expediente,true);
 				}
 			}
 		}

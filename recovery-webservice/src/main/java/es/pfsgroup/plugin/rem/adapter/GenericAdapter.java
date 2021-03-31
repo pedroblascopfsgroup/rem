@@ -185,13 +185,13 @@ public class GenericAdapter {
 	 * @param adjuntos Archivos adjuntos a manar por correo
 	 */
 	@Deprecated
-	public void sendMailSinc(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos) {
-		remCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
+	public void sendMailSinc(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos ,List<String> mailsBCC) {
+		remCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos, mailsBCC);
 		
 	}
 	
 	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo,
-			List<DtoAdjuntoMail> adjuntos) {
+			List<DtoAdjuntoMail> adjuntos, List<String> mailsBCC) {
 		String usuarioLogado = RestApi.REST_LOGGED_USER_USERNAME;
 		if(this.getUsuarioLogado() != null){
 			try{
@@ -201,7 +201,7 @@ public class GenericAdapter {
 			}
 		}
 		Thread hiloCorreo = new Thread(
-				new EnvioCorreoAsync(mailsPara, mailsCC, asunto, cuerpo, adjuntos, usuarioLogado));
+				new EnvioCorreoAsync(mailsPara, mailsCC, asunto, cuerpo, adjuntos, usuarioLogado,mailsBCC));
 
 		hiloCorreo.start();
 	}
@@ -215,8 +215,8 @@ public class GenericAdapter {
 	 *            Manda un correo electrónico sin adjunto al listado de emails
 	 *            indicado en mailsPara y mailsCC
 	 */
-	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo) {
-		this.sendMail(mailsPara, mailsCC, asunto, cuerpo, null);
+	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<String> mailsBCC) {
+		this.sendMail(mailsPara, mailsCC, asunto, cuerpo, null,mailsBCC);
 	}
 
 	/**

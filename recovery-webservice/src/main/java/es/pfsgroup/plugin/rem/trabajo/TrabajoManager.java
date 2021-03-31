@@ -591,7 +591,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 									}
 								}
 							}
-						}else if (DDSubtipoTrabajo.CODIGO_ALQUILER_PUERTAS_ANTIOCUPA.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
+						}else if (DDSubtipoTrabajo.CODIGO_AT_COLOCACION_PUERTAS.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
 							for (ActivoTrabajo activoTrabajo : activoTrabajoList) {
 								if(activoTrabajo.getActivo() != null) {
 									situacionPosesoria = activoTrabajo.getActivo().getSituacionPosesoria();

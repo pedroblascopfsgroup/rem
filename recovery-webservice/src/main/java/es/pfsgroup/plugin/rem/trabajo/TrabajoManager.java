@@ -500,6 +500,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Activo activo = trabajo.getActivo();
 		ActivoSituacionPosesoria situacionPosesoria = activo.getSituacionPosesoria();
 		ActivoTramite activoTramite = new ActivoTramite();
+		List<ActivoTrabajo> activoTrabajoList = trabajo.getActivosTrabajo();
 		
  		List<ActivoTramite> activoTramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());		
 		if (!activoTramites.isEmpty()) {
@@ -567,17 +568,42 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}else if (DDEstadoTrabajo.ESTADO_VALIDADO.equals(trabajo.getEstado().getCodigo())) {
 					
 					if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {					
-						if(DDSubtipoTrabajo.CODIGO_VIGILANCIA_SEGURIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo())) {																		
-							situacionPosesoria.setConVigilancia(1);
-							situacionPosesoria.setFechaInstalacionVigilancia(new Date());
-							genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
+						if(DDSubtipoTrabajo.CODIGO_VIGILANCIA_SEGURIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo())) {	
+							for (ActivoTrabajo activoTrabajo : activoTrabajoList) {
+								if(activoTrabajo.getActivo() != null) {
+									situacionPosesoria = activoTrabajo.getActivo().getSituacionPosesoria();
+									if(situacionPosesoria != null) {
+										situacionPosesoria.setConVigilancia(1);
+										situacionPosesoria.setFechaInstalacionVigilancia(new Date());
+										genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
+									}
+								}
+							}
+							
+						}else if(DDSubtipoTrabajo.CODIGO_ALARMAS.equals(trabajo.getSubtipoTrabajo().getCodigo())) {	
+							for (ActivoTrabajo activoTrabajo : activoTrabajoList) {
+								if(activoTrabajo.getActivo() != null) {
+									situacionPosesoria = activoTrabajo.getActivo().getSituacionPosesoria();
+									if(situacionPosesoria != null) {
+										situacionPosesoria.setConAlarma(1);
+										situacionPosesoria.setFechaInstalacionAlarma(new Date());
+										genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
+									}
+								}
+							}
+						}else if (DDSubtipoTrabajo.CODIGO_ALQUILER_PUERTAS_ANTIOCUPA.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
+							for (ActivoTrabajo activoTrabajo : activoTrabajoList) {
+								if(activoTrabajo.getActivo() != null) {
+									situacionPosesoria = activoTrabajo.getActivo().getSituacionPosesoria();
+									if(situacionPosesoria != null) {
+										situacionPosesoria.setAccesoAntiocupa(1);
+										situacionPosesoria.setFechaAccesoAntiocupa(new Date());
+										genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
+									}
+								}
+							}
 						}
 						
-						if(DDSubtipoTrabajo.CODIGO_ALARMAS.equals(trabajo.getSubtipoTrabajo().getCodigo())) {						
-							situacionPosesoria.setConAlarma(1);
-							situacionPosesoria.setFechaInstalacionAlarma(new Date());
-							genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
-						}
 					}
 					
 					EnviarCorreoTrabajos(trabajo, EMAIL_VALIDADO);

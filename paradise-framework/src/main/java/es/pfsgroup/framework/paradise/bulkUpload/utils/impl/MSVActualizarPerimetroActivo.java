@@ -1435,7 +1435,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 							}
 							if(Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase())
 							|| (excluirValidaciones != null && !excluirValidaciones)){
-								if(particularValidator.isActivoBankia(activo) && !particularValidator.situacionComercialPublicadoAlquilerOVenta(activo)) {
+								if((particularValidator.isActivoBankia(activo) || particularValidator.isActivoSareb(activo))
+										&& !particularValidator.situacionComercialPublicadoAlquilerOVenta(activo)) {
 									listaFilas.add(i);
 								}else if(particularValidator.activoConDestinoComercialAlquiler(activo) && !particularValidator.situacionComercialPublicadoAlquiler(activo)) {
 									listaFilas.add(i);	

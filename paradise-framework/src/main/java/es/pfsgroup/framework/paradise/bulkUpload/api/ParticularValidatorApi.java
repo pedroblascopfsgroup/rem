@@ -1450,4 +1450,6 @@ public interface ParticularValidatorApi {
 	Boolean situacionComercialPublicadoAlquilerOVenta(String activo);
 
 	boolean userHasFunction(String funcion, Long idUsuario);
+
+	Boolean isActivoSareb(String numActivo);
 }

@@ -153,7 +153,7 @@ public class VisibilidadGestionComercialValidator {
 					// Validación que comprueba si su estado de publicación es compatible con la
 					// inclusión en perímetro
 					if(activoPublicacion != null) {
-						if(DDCartera.isCarteraBk(activoActual.getCartera())) {
+						if(DDCartera.isCarteraBk(activoActual.getCartera()) || DDCartera.isCarteraSareb(activoActual.getCartera())) {
 							if(!DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta())
 							&& !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler())) {
 								erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);

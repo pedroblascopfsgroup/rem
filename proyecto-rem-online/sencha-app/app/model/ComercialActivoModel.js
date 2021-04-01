@@ -65,6 +65,9 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 		},
 		{
 			name: 'ggaaSareb'
+		},
+		{
+			name:'segmentacionSareb'
 		}
     ],
     

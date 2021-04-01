@@ -3572,7 +3572,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'tipoCuotaComunidad'}
 			},
 			autoLoad: true
+		},
+		comboSegmetacionSareb: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'segmentacionSareb'}
+			},
+			autoLoad: true
 		}
-		
 	 }
 });

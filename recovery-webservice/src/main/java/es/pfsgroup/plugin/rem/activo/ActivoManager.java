@@ -3951,6 +3951,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					if (activoSareb.getGgaaSareb() != null) {
 						dto.setGgaaSareb(activoSareb.getGgaaSareb().getCodigo());
 					}
+					if (activoSareb.getSegmentoSareb() != null) {
+						dto.setSegmentacionSareb(activoSareb.getSegmentoSareb().getCodigo());
+					}
 				}
 			}
 

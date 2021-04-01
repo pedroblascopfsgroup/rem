@@ -26,6 +26,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdecucionSareb;
+import es.pfsgroup.plugin.rem.model.dd.DDSegmentoSareb;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -135,6 +136,12 @@ public class ActivoSareb implements Serializable, Auditable {
 	@OneToOne
     @JoinColumn(name = "GGAA")
     private DDSinSiNo ggaaSareb;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "SEGMENTO_SAREB")
+	private DDSegmentoSareb segmentoSareb;
+
+	
 
 	public Long getId() {
 		return id;
@@ -344,6 +351,12 @@ public class ActivoSareb implements Serializable, Auditable {
 		this.ggaaSareb = ggaaSareb;
 	}
 	
-	
+	public DDSegmentoSareb getSegmentoSareb() {
+		return segmentoSareb;
+	}
+
+	public void setSegmentoSareb(DDSegmentoSareb segmentoSareb) {
+		this.segmentoSareb = segmentoSareb;
+	}
 	
 }

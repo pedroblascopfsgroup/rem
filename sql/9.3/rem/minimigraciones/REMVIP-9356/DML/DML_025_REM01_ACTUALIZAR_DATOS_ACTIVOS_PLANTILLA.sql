@@ -90,8 +90,7 @@ BEGIN
                 V_MSQL :='UPDATE '||V_ESQUEMA||'.'||V_TABLA_ACTIVO||' 
                 SET DD_TPA_ID = (SELECT DD_TPA_ID FROM REM01.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''),
                 DD_SAC_ID = (SELECT DD_SAC_ID FROM REM01.DD_SAC_SUBTIPO_ACTIVO WHERE DD_SAC_CODIGO = '''||V_TMP_TIPO_DATA(3)||'''),
-                DD_TUD_ID =  (SELECT DD_TUD_ID FROM REM01.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO = '''||V_TMP_TIPO_DATA(5)||'''),
-                USUARIOMODIFICAR = '''||V_USUARIO||''', 
+                DD_TUD_ID =  (SELECT DD_TUD_ID FROM REM01.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO = '''||V_TMP_TIPO_DATA(5)||'''),'''||V_TMP_TIPO_DATA(7)||''',
                 FECHAMODIFICAR = SYSDATE 
                 WHERE ACT_NUM_ACTIVO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
 
@@ -116,6 +115,9 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL INTO V_BIE_LOC;
         
                 V_MSQL :='UPDATE '||V_ESQUEMA||'.BIE_LOCALIZACION 
+                BIE_LOC_DIRECCION = '''||V_TMP_TIPO_DATA(7)||''',
+                BIE_LOC_NUMERO_DOMICILIO = '''||V_TMP_TIPO_DATA(8)||''',
+                BIE_LOC_PORTAL = '''||V_TMP_TIPO_DATA(8)||''',
                 SET BIE_LOC_PISO = '''||V_TMP_TIPO_DATA(10)||''',
                 BIE_LOC_PUERTA = '''||V_TMP_TIPO_DATA(11)||''',
                 USUARIOMODIFICAR = '''||V_USUARIO||''', 

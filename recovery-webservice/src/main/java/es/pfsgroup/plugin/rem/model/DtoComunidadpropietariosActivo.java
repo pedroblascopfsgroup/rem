@@ -25,7 +25,9 @@ public class DtoComunidadpropietariosActivo extends DtoTabActivo {
 	private String situacionCodigo;
 	private Boolean unidadAlquilable;
 	private String estadoLocalizacion;
+	private String estadoLocalizacionDescripcion;
 	private String subestadoGestion;
+	private String subestadoGestionDescripcion;
 	private Integer asistenciaJuntaObligatoria;
 	
 
@@ -118,6 +120,18 @@ public class DtoComunidadpropietariosActivo extends DtoTabActivo {
 	}
 	public void setSubestadoGestion(String subestadoGestion) {
 		this.subestadoGestion = subestadoGestion;
+	}
+	public String getEstadoLocalizacionDescripcion() {
+		return estadoLocalizacionDescripcion;
+	}
+	public void setEstadoLocalizacionDescripcion(String estadoLocalizacionDescripcion) {
+		this.estadoLocalizacionDescripcion = estadoLocalizacionDescripcion;
+	}
+	public String getSubestadoGestionDescripcion() {
+		return subestadoGestionDescripcion;
+	}
+	public void setSubestadoGestionDescripcion(String subestadoGestionDescripcion) {
+		this.subestadoGestionDescripcion = subestadoGestionDescripcion;
 	}
 	
 	

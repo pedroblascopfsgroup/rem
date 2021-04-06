@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20200115
+--## FECHA_CREACION=20210331
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
+--## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=SI
 --## Finalidad: DDL VISTA PARA SACAR LAS CONDICIONES

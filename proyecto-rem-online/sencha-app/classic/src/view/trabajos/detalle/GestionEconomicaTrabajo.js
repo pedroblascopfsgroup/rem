@@ -337,8 +337,8 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    					cls	: 'panel-base shadow-panel',
 			    					reference: 'gridpresupuestostrabajo',
 			    					bind: {
-			    						store: '{storePresupuestosTrabajo}'
-
+			    						store: '{storePresupuestosTrabajo}',
+			    						topBar: '{disableTopBarPresupuesto}'
 			    					},
 			    					
 			    					secFunToEdit: 'EDITAR_LIST_PRESUPUESTOS_TRABAJO',

@@ -232,7 +232,7 @@ public class VGridBusquedaTrabajos implements Serializable {
 	public void setCodPostal(String codPostal) {
 		this.codPostal = codPostal;
 	}
-
+	
 	public String getCarteraCodigo() {
 		return carteraCodigo;
 	}

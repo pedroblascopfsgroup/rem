@@ -215,7 +215,4 @@ public class DtoTrabajoGridFilter extends WebDto {
 	public void setFechaCambioEstadoDesde(String fechaCambioEstadoDesde) {
 		this.fechaCambioEstadoDesde = fechaCambioEstadoDesde;
 	}
-	
-	
-
 }

@@ -123,9 +123,11 @@ public class TabActivoDatosComunidad implements TabActivoService {
 				if(!Checks.esNulo(gestionAnterior)) {
 					if(!Checks.esNulo(gestionAnterior.getEstadoLocalizacion())) {
 						datosComunidad.setEstadoLocalizacion(gestionAnterior.getEstadoLocalizacion().getCodigo());
+						datosComunidad.setEstadoLocalizacionDescripcion(gestionAnterior.getEstadoLocalizacion().getDescripcion());
 					}
 					if(!Checks.esNulo(gestionAnterior.getSubestadoGestion())) {
 						datosComunidad.setSubestadoGestion(gestionAnterior.getSubestadoGestion().getCodigo());
+						datosComunidad.setSubestadoGestionDescripcion(gestionAnterior.getSubestadoGestion().getDescripcion());
 					}
 				}
 			}

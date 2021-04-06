@@ -106,15 +106,6 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 						extraParams: {diccionario: 'estadosActivo'}
 					}
     		},
-
-			comboSubcartera: {
-				model: 'HreRem.model.ComboBase',
-					proxy: {
-						type: 'uxproxy',
-						remoteUrl: 'generic/getDiccionario',
-						extraParams: {diccionario: 'subentidadesPropietarias'}
-					}
-			},
 			
 			comboSubcarteraFiltered: {
 				model: 'HreRem.model.ComboBase',
@@ -360,6 +351,15 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 				proxy : {
 					type : 'uxproxy',
 					remoteUrl : 'generic/getcomboSociedadAnteriorBBVA'
+				}
+			},
+			
+			comboTipoSegmento: {
+				model : 'HreRem.model.ComboBase',
+				proxy : {
+					type : 'uxproxy',
+					remoteUrl : 'activo/getComboTipoSegmento',
+					extraParams:  {codSubcartera: '{comboSubcarteraRef.value}'}
 				}
 			}
      }

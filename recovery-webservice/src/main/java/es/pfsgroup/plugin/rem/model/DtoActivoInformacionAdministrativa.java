@@ -62,6 +62,7 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	private Integer vpo;
 	
 	private String tributacionAdq;
+	private String tributacionAdqDescripcion;
 	private Date fechaVencTpoBonificacion;
 	private Date fechaLiqComplementaria;
 
@@ -74,6 +75,7 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	private Date fechaEnvioComunicacionOrganismo;
 	private Date fechaRecepcionRespuestaOrganismo;
 	private String estadoVentaCodigo;
+	private String estadoVentaDescripcion;
 	
 	public String getNumeroActivo() {
 		return numeroActivo;
@@ -341,5 +343,16 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	public void setEstadoVentaCodigo(String estadoVentaCodigo) {
 		this.estadoVentaCodigo = estadoVentaCodigo;
 	}
-	
+	public String getEstadoVentaDescripcion() {
+		return estadoVentaDescripcion;
+	}
+	public void setEstadoVentaDescripcion(String estadoVentaDescripcion) {
+		this.estadoVentaDescripcion = estadoVentaDescripcion;
+	}
+	public String getTributacionAdqDescripcion() {
+		return tributacionAdqDescripcion;
+	}
+	public void setTributacionAdqDescripcion(String tributacionAdqDescripcion) {
+		this.tributacionAdqDescripcion = tributacionAdqDescripcion;
+	}
 }

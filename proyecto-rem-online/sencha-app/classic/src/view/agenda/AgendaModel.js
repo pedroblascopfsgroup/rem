@@ -83,7 +83,7 @@ Ext.define('HreRem.view.agenda.AgendaModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'agenda/getComboNombreTarea',
-				extraParams: {idTipoTramite: '{descripcionTarea.selection.id}'}
+				extraParams: {idTipoTramite: '{tipoTramiteRef.selection.id}'}
 			}
 		},
 		tareasGestorSustituto: {

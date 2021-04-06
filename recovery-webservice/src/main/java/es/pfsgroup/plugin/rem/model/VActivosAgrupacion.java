@@ -54,8 +54,8 @@ public class VActivosAgrupacion implements Serializable {
 	@Column(name = "VAL_IMPORTE_APROBADO_RENTA")
 	private Double importeAprobadoRenta;
 	
-	@Column(name = "VAL_NETO_CONTABLE")
-	private Double importeNetoContable;	
+//	@Column(name = "VAL_NETO_CONTABLE")
+//	private Double importeNetoContable;	
 	
 	@Column(name = "VAL_IMPORTE_DESCUENTO_PUBLICO")
 	private Double importeDescuentoPublicado;
@@ -63,16 +63,16 @@ public class VActivosAgrupacion implements Serializable {
 	@Column(name="GENCAT")
 	private String activoGencat;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "propietario")
-	private ActivoPropietario propietario;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "propietario")
+//	private ActivoPropietario propietario;
     
     //@OneToOne(fetch = FetchType.LAZY)
     @Column(name = "SDV_NOMBRE")
 	private String subdivision;
 	
-	@Column(name = "numeropropietarios")
-	private Long numeroPropietarios;
+//	@Column(name = "numeropropietarios")
+//	private Long numeroPropietarios;
 	
 	@Column(name = "principal")
    	private Integer activoPrincipal;
@@ -86,12 +86,12 @@ public class VActivosAgrupacion implements Serializable {
 	@Column(name = "SITUACION_COMERCIAL")
 	private String situacionComercial;
 	
-	@Column(name = "SPS_OCUPADO")
-	private Integer situacionPosesoriaOcupado;
-	
-	@Column(name = "SPS_CON_TITULO")
-	private Integer situacionPosesoriaTitulo;
-	
+//	@Column(name = "SPS_OCUPADO")
+//	private Integer situacionPosesoriaOcupado;
+//	
+//	@Column(name = "SPS_CON_TITULO")
+//	private Integer situacionPosesoriaTitulo;
+//	
 	@Column(name = "direccion")
 	private String direccion;
 	
@@ -113,17 +113,17 @@ public class VActivosAgrupacion implements Serializable {
 	@Column(name = "ID_PRINEX_HPM")
 	private String idPrinexHPM;
 	
-	@Column(name ="REG_SUPERFICIE_UTIL")
-	private Float superficieUtil;
-	
-	@Column(name = "REG_SUPERFICIE_ELEM_COMUN")
-	private Float superficieElementoComun;
-	
-	@Column(name = "REG_SUPERFICIE_PARCELA")
-	private Float superficieParcela;
-
-	@Column(name = "ESTADO_TITULO")
-	private String estadoTitulo;
+//	@Column(name ="REG_SUPERFICIE_UTIL")
+//	private Float superficieUtil;
+//	
+//	@Column(name = "REG_SUPERFICIE_ELEM_COMUN")
+//	private Float superficieElementoComun;
+//	
+//	@Column(name = "REG_SUPERFICIE_PARCELA")
+//	private Float superficieParcela;
+//
+//	@Column(name = "ESTADO_TITULO")
+//	private String estadoTitulo;
 	
 	@Column(name = "ES_PISO_PILOTO")
 	private Boolean esPisoPiloto;
@@ -181,13 +181,13 @@ public class VActivosAgrupacion implements Serializable {
 		this.superficieConstruida = superficieConstruida;
 	}
 
-	public Double getImporteNetoContable() {
-		return importeNetoContable;
-	}
-
-	public void setImporteNetoContable(Double importeNetoContable) {
-		this.importeNetoContable = importeNetoContable;
-	}
+//	public Double getImporteNetoContable() {
+//		return importeNetoContable;
+//	}
+//
+//	public void setImporteNetoContable(Double importeNetoContable) {
+//		this.importeNetoContable = importeNetoContable;
+//	}
 
 	public String getTipoActivoDescripcion() {
 		return tipoActivoDescripcion;
@@ -197,21 +197,21 @@ public class VActivosAgrupacion implements Serializable {
 		this.tipoActivoDescripcion = tipoActivoDescripcion;
 	}
 
-	public ActivoPropietario getPropietario() {
-		return propietario;
-	}
-
-	public void setPropietario(ActivoPropietario propietario) {
-		this.propietario = propietario;
-	}
-
-	public Long getNumeroPropietarios() {
-		return numeroPropietarios;
-	}
-
-	public void setNumeroPropietarios(Long numeroPropietarios) {
-		this.numeroPropietarios = numeroPropietarios;
-	}
+//	public ActivoPropietario getPropietario() {
+//		return propietario;
+//	}
+//
+//	public void setPropietario(ActivoPropietario propietario) {
+//		this.propietario = propietario;
+//	}
+//
+//	public Long getNumeroPropietarios() {
+//		return numeroPropietarios;
+//	}
+//
+//	public void setNumeroPropietarios(Long numeroPropietarios) {
+//		this.numeroPropietarios = numeroPropietarios;
+//	}
 
 	public Date getFechaInclusion() {
 		return fechaInclusion;
@@ -237,21 +237,21 @@ public class VActivosAgrupacion implements Serializable {
 		this.situacionComercial = situacionComercial;
 	}
 
-	public Integer getSituacionPosesoriaOcupado() {
-		return situacionPosesoriaOcupado;
-	}
-
-	public void setSituacionPosesoriaOcupado(Integer situacionPosesoriaOcupado) {
-		this.situacionPosesoriaOcupado = situacionPosesoriaOcupado;
-	}
-
-	public Integer getSituacionPosesoriaTitulo() {
-		return situacionPosesoriaTitulo;
-	}
-
-	public void setSituacionPosesoriaTitulo(Integer situacionPosesoriaTitulo) {
-		this.situacionPosesoriaTitulo = situacionPosesoriaTitulo;
-	}
+//	public Integer getSituacionPosesoriaOcupado() {
+//		return situacionPosesoriaOcupado;
+//	}
+//
+//	public void setSituacionPosesoriaOcupado(Integer situacionPosesoriaOcupado) {
+//		this.situacionPosesoriaOcupado = situacionPosesoriaOcupado;
+//	}
+//
+//	public Integer getSituacionPosesoriaTitulo() {
+//		return situacionPosesoriaTitulo;
+//	}
+//
+//	public void setSituacionPosesoriaTitulo(Integer situacionPosesoriaTitulo) {
+//		this.situacionPosesoriaTitulo = situacionPosesoriaTitulo;
+//	}
 
 	public String getSubdivision() {
 		return subdivision;
@@ -369,37 +369,37 @@ public class VActivosAgrupacion implements Serializable {
 		this.idPrinexHPM = idPrinexHPM;
 	}
 
-	public Float getSuperficieUtil() {
-		return superficieUtil;
-	}
-
-	public void setSuperficieUtil(Float superficieUtil) {
-		this.superficieUtil = superficieUtil;
-	}
-
-	public Float getSuperficieElementoComun() {
-		return superficieElementoComun;
-	}
-
-	public void setSuperficieElementoComun(Float superficieElementoComun) {
-		this.superficieElementoComun = superficieElementoComun;
-	}
-
-	public Float getSuperficieParcela() {
-		return superficieParcela;
-	}
-
-	public void setSuperficieParcela(Float superficieParcela) {
-		this.superficieParcela = superficieParcela;
-	}
-	
-	public String getEstadoTitulo() {
-		return estadoTitulo;
-	}
-
-	public void setEstadoTitulo(String estadoTitulo) {
-		this.estadoTitulo = estadoTitulo;
-	}
+//	public Float getSuperficieUtil() {
+//		return superficieUtil;
+//	}
+//
+//	public void setSuperficieUtil(Float superficieUtil) {
+//		this.superficieUtil = superficieUtil;
+//	}
+//
+//	public Float getSuperficieElementoComun() {
+//		return superficieElementoComun;
+//	}
+//
+//	public void setSuperficieElementoComun(Float superficieElementoComun) {
+//		this.superficieElementoComun = superficieElementoComun;
+//	}
+//
+//	public Float getSuperficieParcela() {
+//		return superficieParcela;
+//	}
+//
+//	public void setSuperficieParcela(Float superficieParcela) {
+//		this.superficieParcela = superficieParcela;
+//	}
+//	
+//	public String getEstadoTitulo() {
+//		return estadoTitulo;
+//	}
+//
+//	public void setEstadoTitulo(String estadoTitulo) {
+//		this.estadoTitulo = estadoTitulo;
+//	}
 
 	public Double getImporteAprobadoRenta() {
 		return importeAprobadoRenta;

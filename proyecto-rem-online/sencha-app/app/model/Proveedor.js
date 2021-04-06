@@ -12,6 +12,16 @@ Ext.define('HreRem.model.Proveedor', {
             {
             	name: 'codigo'
             },
+			{
+				name: 'nombre'
+			},
+			{
+				name: 'descripcion',
+				calculate: function(data){
+					return data.nombre != null ? data.nombre : data.nombreProveedor;
+				},
+    			depends: ['nombre', 'nombreProveedor']
+			},
             {
             	name: 'tipoProveedorDescripcion'
             },

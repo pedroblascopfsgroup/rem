@@ -932,13 +932,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			storeSubfaseFiltered.getProxy().setExtraParams({
 						'codFase' : combo.getValue()
 					});
-		} else if (combo.chainedStore == 'comboSubestadoGestionFiltered') {
-			var storeSubestadoGestionFiltered = me.getViewModel()
-					.get("comboSubestadoGestionFiltered");
-			chainedCombo.bindStore(storeSubestadoGestionFiltered);
-			storeSubestadoGestionFiltered.getProxy().setExtraParams({
-						'codLocalizacion' : combo.getValue()
-					});
+
 		} else if (combo.chainedStore == 'comboSubestadoAdmisionNuevoFiltrado') {
 			var storeSubestadoAdmisionFiltered = me.getViewModel().data.comboSubestadoAdmisionNuevoFiltrado;
 			chainedCombo.bindStore(storeSubestadoAdmisionFiltered);
@@ -946,20 +940,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						'codEstadoAdmisionNuevo' : combo.getValue()
 					});
 		}
-
-		chainedCombo.getStore().load({
-					callback : function(records, operation, success) {
-						if (!Ext.isEmpty(records) && records.length > 0) {
-							if (chainedCombo.selectFirst == true) {
-								chainedCombo.setSelection(1);
-							};
-							chainedCombo.setDisabled(false);
-						} else {
-							chainedCombo.setDisabled(true);
-						}
+		chainedCombo.getStore().removeAll();
+		if(chainedCombo.getXType() != 'comboboxfieldbasedd'){
+			chainedCombo.getStore().load({
+				callback : function(records, operation, success) {
+					if (!Ext.isEmpty(records) && records.length > 0) {
+						if (chainedCombo.selectFirst == true) {
+							chainedCombo.setSelection(1);
+						};
+						chainedCombo.setDisabled(false);
+					} else {
+						chainedCombo.setDisabled(true);
 					}
-				});
-
+				}
+			});
+		}
 		if (me.lookupReference(chainedCombo.chainedReference) != null) {
 			var chainedDos = me.lookupReference(chainedCombo.chainedReference);
 			if (!chainedDos.isDisabled()) {
@@ -4403,32 +4398,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.fireEvent("log", "Obligatorio jsonData para guardar el activo");
 		} else {
 
-			if(successFn.$emptyFn){
-				Ext.Ajax.request({
-					method : 'POST',
-					url : url,
-					jsonData : Ext.JSON.encode(jsonData),
-					success : function(response,ops,x){
-						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-						me.getView().unmask();
-					},
-					failure : function(response, opts) {
-						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-					}
+			Ext.Ajax.request({
+				method : 'POST',
+				url : url,
+				jsonData : Ext.JSON.encode(jsonData),
+				success : successFn,
+				failure : function(response, opts) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				}
 
-				});
-			}else{
-				Ext.Ajax.request({
-					method : 'POST',
-					url : url,
-					jsonData : Ext.JSON.encode(jsonData),
-					success : successFn,
-					failure : function(response, opts) {
-						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-					}
-
-				});
-			}
+			});
 		}
 	},
 
@@ -5504,7 +5483,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 													} else {
 														me.getView().fireEvent("No hay activos propagables");
 														me.saveActivo(tabData, successFn);
-														return false;
 													}
 											}else{
 												var successFn = function(response, eOpts) {

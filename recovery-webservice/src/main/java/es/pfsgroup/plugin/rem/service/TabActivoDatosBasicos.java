@@ -156,7 +156,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String ACTIVO_VENDIDO= "msg.error.activo.vendido";
 	private static final String ACTIVO_FUERA_DE_PERIMETRO_HAYA= "msg.error.activo.fuera.perimetro";
 	private static final String ACTIVO_NO_COINCIDE_CON_CERBERUS_BBVA= "msg.error.activo.no.bbva.divarian";
-	private static final String VALID_MOTIVO_EXCLUIDO= "Activo con Agrupación restringida no puede tener Motivo de excluido ";
+	private static final String PERFIL_CHECKCOMERCIALIZAR = "CHECKCOMERCIALIZAR";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -676,7 +676,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 
 		if(!Checks.esNulo(activo.getTasacion()) && !activo.getTasacion().isEmpty()){
-			ActivoTasacion tasacionMasReciente = activo.getTasacion().get(0);
+			//ActivoTasacion tasacionMasReciente = activo.getTasacion().get(0);
+			ActivoTasacion tasacionMasReciente = activoApi.getTasacionMasReciente(activo);
 			BeanUtils.copyProperty(activoDto, "valorUltimaTasacion", tasacionMasReciente.getImporteTasacionFin());
 		}
 
@@ -2135,12 +2136,20 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	}
 	private void isActivoInCesionUso(Activo activo) {
 		ActivoPatrimonio activoP = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
+		Boolean puedeModificar = false;
+		Usuario  usuario = genericAdapter.getUsuarioLogado();
+		List<Perfil> perfiles = usuario.getPerfiles();
+		for (Perfil perfil : perfiles) {
+			if(PERFIL_CHECKCOMERCIALIZAR.equalsIgnoreCase(perfil.getCodigo())){
+				puedeModificar = true;
+			}
+		}
 		if (activoP != null && activoP.getCesionUso() != null) {
 			DDCesionUso cesion =  activoP.getCesionUso();
 			List<String> types = new ArrayList<String>(
 					Arrays.asList(DDCesionUso.CARITAS, DDCesionUso.CESION_GENERALITAT_CX,
 							DDCesionUso.CESION_OTRAS_OPERACIONES, DDCesionUso.EN_TRAMITE_OTRAS_OPERACIONES));
-			if (types.contains(cesion.getCodigo())) {
+			if (types.contains(cesion.getCodigo()) && !puedeModificar) {
 				throw new JsonViewerException(messageServices.getMessage(CESION_USO_ERROR));
 			}
 			

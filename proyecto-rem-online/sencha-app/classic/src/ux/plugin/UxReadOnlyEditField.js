@@ -402,7 +402,6 @@ Ext.define('HreRem.ux.plugin.UxReadOnlyEditField', {
 		var me = this;
 		
 		if(this.parent.rendered){
-			
 			if(Ext.isEmpty(this.parent.getValue())){
 			
 				if(!Ext.isEmpty(this.parent.emptyDisplayText)) {

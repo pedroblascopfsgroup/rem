@@ -304,5 +304,23 @@ public class ActivoProveedorContacto implements Serializable, Auditable {
 	public void setDelegacion(ActivoProveedorDireccion delegacion) {
 		this.delegacion = delegacion;
 	}
+	
+	public String getFullName() {
+		String fullname = "";
+		if(getNombre() != null && !getNombre().equalsIgnoreCase("")){
+			fullname = getNombre();
+		}
+		if(getApellido1() != null && !getApellido1().equalsIgnoreCase("")){
+			if(fullname.length()>0){
+				fullname = fullname.concat(" ").concat(getApellido1());
+			}			
+		}
+		if(getApellido2() != null && !getApellido2().equalsIgnoreCase("")){
+			if(fullname.length()>0){
+				fullname = fullname.concat(" ").concat(getApellido2());
+			}		
+		}
+		return fullname;
+	}
 
 }

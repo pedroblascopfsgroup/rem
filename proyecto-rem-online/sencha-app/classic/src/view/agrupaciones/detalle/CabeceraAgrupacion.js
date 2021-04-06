@@ -172,7 +172,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 														},
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion'),
-															bind:		'{agrupacionficha.numAgrupRem}'
+															bind:	{
+																value: '{getValueNumAgrupacion}'
+															}	
 									                   	},	
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),

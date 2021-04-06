@@ -36,10 +36,10 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
@@ -66,7 +66,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VGridBusquedaOfertas;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -135,34 +135,12 @@ public class OfertasController {
 	@Resource
 	private Properties appProperties;
 			
-	private static final String CLIENTE_HAYA = "HAYA";
 	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_DATA_KEY = "data";
 	private static final String RESPONSE_TOTALCOUNT_KEY = "totalCount";
 	private static final String RESPONSE_ERROR_KEY = "error";
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListOfertas(DtoOfertasFilter dtoOfertasFilter, ModelMap model) {
-		try {
-			dtoOfertasFilter.setSort("voferta.fechaCreacion");
-			dtoOfertasFilter.setDir("DESC");
-			
-			DtoPage page = ofertaApi.getListOfertasUsuario(dtoOfertasFilter);
-
-			model.put("data", page.getResults());
-			model.put("totalCount", page.getTotalCount());
-			model.put("success", true);
-
-		} catch (Exception e) {
-			logger.error("Error en ofertasController", e);
-			model.put("success", false);
-		}
-
-		return createModelAndViewJson(model);
-	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -596,7 +574,7 @@ public class OfertasController {
 					
 					DtoPage page = ofertaApi.getListOfertasGestoria(filtro);
 					
-					VOfertasActivosAgrupacion voaa;
+					VGridOfertasActivosAgrupacionIncAnuladas voaa;
 					
 					
 					
@@ -605,7 +583,7 @@ public class OfertasController {
 					if(!Checks.esNulo(page) && !Checks.esNulo(page.getResults())) {
 						for (Object obj : page.getResults()) {
 							
-								voaa = (VOfertasActivosAgrupacion) obj;
+								voaa = (VGridOfertasActivosAgrupacionIncAnuladas) obj;
 								oferta = ofertaApi.getOfertaById(voaa.getId());
 								if(ofertaApi.estaViva(oferta)) {			
 									ofr = new OfertaVivaRespuestaDto();

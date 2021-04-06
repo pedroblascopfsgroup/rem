@@ -9,18 +9,18 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.oferta.dao.VOfertaActivoDao;
 
 @Repository("VOfertasActivosAgrupacionDao")
-public class VOfertaActivoDaoImpl extends AbstractEntityDao<VOfertasActivosAgrupacion, Long> implements VOfertaActivoDao {
+public class VOfertaActivoDaoImpl extends AbstractEntityDao<VGridOfertasActivosAgrupacionIncAnuladas, Long> implements VOfertaActivoDao {
 
 	
 	
 	@Override
-	public List<VOfertasActivosAgrupacion> getListOfertasFromView(DtoOfertasFilter dtoOfertasFilter) {
+	public List<VGridOfertasActivosAgrupacionIncAnuladas> getListOfertasFromView(DtoOfertasFilter dtoOfertasFilter) {
 
-		HQLBuilder hb = new HQLBuilder(" from VOfertasActivosAgrupacion voferta");
+		HQLBuilder hb = new HQLBuilder(" from VGridOfertasActivosAgrupacionIncAnuladas voferta");
 
 		if (!Checks.esNulo(dtoOfertasFilter.getNumOferta())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numOferta", dtoOfertasFilter.getNumOferta());

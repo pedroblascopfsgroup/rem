@@ -69,11 +69,12 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 							items :
 								[
 									{ 
-								 		xtype: 'comboboxfieldbase',
+								 		xtype: 'comboboxfieldbasedd',
 								 		fieldLabel: HreRem.i18n('fieldlabel.regimen.proteccion'),	//R�gimen protecci�n 							 		
 								 		bind: {
 			            						store: '{comboTipoVpo}',
-			            						value: '{infoAdministrativa.tipoVpoCodigo}'
+			            						value: '{infoAdministrativa.tipoVpoCodigo}',
+												rawValue: '{infoAdministrativa.tipoVpoDescripcion}'
 			            					  }
 									},
 									{ 
@@ -347,12 +348,13 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 										items :
 											[								
 												 { 
-										        	xtype: 'comboboxfieldbase',							        	
+										        	xtype: 'comboboxfieldbasedd',							        	
 										        	fieldLabel:  HreRem.i18n('fieldlabel.estadoVenta'),	// estado venta
 										        	bind: {
 			            									store: '{comboEstadoVenta}',
 			            									readOnly : '{!auComprador}',
-			            									value: '{infoAdministrativa.estadoVentaCodigo}'
+			            									value: '{infoAdministrativa.estadoVentaCodigo}',
+															rawValue: '{infoAdministrativa.estadoVentaDescripcion}'
 			            								  }
 										        },
 										        { 
@@ -711,8 +713,8 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 				        { 
 						    xtype: 'comboboxfieldbase',
 				            fieldLabel: HreRem.i18n('fieldlabel.sujeto.a.expediente'),
-				            labelWidth: '25%',
-				            width: '15%',
+				            labelWidth: '150%',
+				            //width: '75%',
 				        	bind: {
 				        		readOnly : '{esUA}',
 				        		store: '{comboSiNoRem}',
@@ -780,21 +782,22 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 	            ]
            },
            {
-        	   xtype:'fieldset',
+        	   xtype:'fieldsettable',
 			   title: HreRem.i18n('fieldlabel.title.regularizacion.pago.impuesto.bonificado'), //Regularizacion del pago del impuesto bonificado
-        	   layout: {
-	                type: 'hbox'
-	            },
+//        	   layout: {
+//	                type: 'hbox'
+//	            },
 	            items: [
 				        { 
-						    xtype: 'comboboxfieldbase',
+						    xtype: 'comboboxfieldbasedd',
 				            fieldLabel: HreRem.i18n('fieldlabel.combo.tributacion.adquisicion'),
-				            labelWidth: '30%',
-				            width: '20%',
+				            //labelWidth: '30%',
+				            //width: '20%',
 				        	bind: {
 				        		store: '{comboTributacionAdquisicion}',
 				        		readOnly : '{!esGestorOrSupervisorAdmision}',
-				        		value: '{infoAdministrativa.tributacionAdq}'
+				        		value: '{infoAdministrativa.tributacionAdq}',
+								rawValue: '{infoAdministrativa.tributacionAdqDescripcion}'
 				        	},
 				        	listeners: {
 								change: 'onChangeComboTributacionAdqusicion'
@@ -804,7 +807,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 					    	xtype: 'datefieldbase',
 					    	fieldLabel: HreRem.i18n('fieldlabel.fecha.vencimiento.tipo.bonificacion'),
 					    	formatter: 'date("d/m/Y")',
-					    	width: '20%',
+					    	//width: '20%',
 					    	disabled: true,
 					    	maxValue: null,
 					    	reference: 'fechaVencTpoBonificacion',
@@ -817,7 +820,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 					    	xtype: 'datefieldbase',
 					    	fieldLabel: HreRem.i18n('fieldlabel.fecha.liquidacion.complementaria'),
 					    	formatter: 'date("d/m/Y")',
-					    	width: '20%',
+					    	//width: '20%',
 					    	disabled: true,
 					    	reference: 'fechaLiqComplementaria',
 				        	bind: {
@@ -831,6 +834,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
            	
 				title: HreRem.i18n('title.documentacion.administrativa'),
 				xtype: 'gridBase',
+				width: '100%',
 				cls	: 'panel-base shadow-panel',
 				bind: {
 					store: '{storeDocumentacionAdministrativa}'
@@ -840,57 +844,69 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 				
 				    {   text: 'Documento', 
 			        	dataIndex: 'descripcionTipoDocumentoActivo',
-			        	width: '25%'
+						flex: 2
+			        	//width: '25%'
 			        },
 			        {   text: 'Nº Documento', 
 			        	dataIndex: 'numDocumento',
-			        	width: '15%' 
+						flex: 1.5
+			        	//width: '15%' 
 			        },	
 					{
 			            text: 'Fecha solicitud',
 			            formatter: 'date("d/m/Y")',
 			            dataIndex: 'fechaSolicitud',
-			            width: '10%' 
+						flex: .75
+			           // width: '10%' 
 			        },
 			        {   text: 'Fecha emisión',
 			        	formatter: 'date("d/m/Y")',
 			        	dataIndex: 'fechaEmision',
-			        	width: '10%'  
+						flex: .75
+			        	//width: '10%'  
 			        },
 			        {   text: 'Fecha caducidad', 
 			        	formatter: 'date("d/m/Y")',
 			        	dataIndex: 'fechaCaducidad',
-			        	width: '10%' 
+						flex: .75
+			        	//width: '10%' 
 			        },
 			        {   text: 'Fecha etiqueta',
 			        	formatter: 'date("d/m/Y")',
 			        	dataIndex: 'fechaEtiqueta',
-			        	width: '10%' 
+						flex: .75
+			        	//width: '10%' 
 			        },
 			        {   text: 'Calificación', 
 			        	dataIndex: 'tipoCalificacionDescripcion',
-			        	width: '19%'
+						flex: .5
+			        	//width: '19%'
 			        },
-			        {   text: 'Dataid_Documento', 
+			        {   text: 'DataId Documento', 
 			        	dataIndex: 'dataIdDocumento',
-			        	width: '19%'
+						flex: .75
+			        	//width: '19%'
 			        	
 			        },
 			        {   text: 'Letra consumo', 
 			        	dataIndex: 'tipoLetraConsumoDescripcion',
-			        	width: '10%'
+						flex: .75
+			        	//width: '10%'
 			        },
 			        {   text: 'Consumo', 
 			        	dataIndex: 'consumo',
-			        	width: '19%'
+						flex: .5
+			        	//width: '19%'
 			        },
 			        {   text: 'Emisión', 
 			        	dataIndex: 'emision',
-			        	width: '19%'
+						flex: .5
+			        	//width: '19%'
 			        },
 			        {   text: 'Registro', 
 			        	dataIndex: 'registro',
-			        	width: '19%'
+						flex: .5
+			        	//width: '19%'
 			        }
 			        
 			       	        

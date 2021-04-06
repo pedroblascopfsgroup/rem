@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.rem.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+
 /**
  * Modelo que gestiona la informacion de los adjuntos.
  */
@@ -235,6 +237,10 @@ public class DtoAdjunto implements Serializable, Comparable<DtoAdjunto>{
 
 	@Override
 	public int compareTo(DtoAdjunto o) {
+		if(DDTipoDocumentoActivo.MATRICULA_INFORME_OCUPACION_DESOCUPACION
+				.equals(this.matricula)) {
+			return o.getFechaDocumento().compareTo(this.fechaDocumento);
+		}
 		if(this.getCreateDate() == null ){
 			return 1;
 		}

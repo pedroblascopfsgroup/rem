@@ -1515,6 +1515,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		for (ActivoProveedor psv : listProveedorSuministroVigente) {
 			ActivoProveedorReducido p = new ActivoProveedorReducido();
 			p.setId(psv.getId());
+			p.setCodigo(psv.getCodigoProveedorRem());
 			p.setNombre(psv.getNombre());
 			listaActivoProveedor.add(p);
 		}

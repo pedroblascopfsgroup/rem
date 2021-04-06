@@ -2343,20 +2343,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public DtoPage getActivosExpedienteVista(Long idExpediente) {
-		List<VListadoActivosExpediente> listadoActivos;
-		List<VListadoActivosExpedienteBBVA> listadoActivosBbva;
-		
+		List<VListadoActivosExpedienteGrid> listadoActivosGrid;
+		List<VListadoActivosExpedienteBbvaGrid> listadoActivosBbvaGrid;
+		DtoPage dtoListActivosExpediente = null;
 		if (DDCartera.CODIGO_CARTERA_BBVA.equals(getCodigoCarteraExpediente(idExpediente))) {
-			listadoActivosBbva = genericDao.getList(VListadoActivosExpedienteBBVA.class,
+			listadoActivosBbvaGrid = genericDao.getList(VListadoActivosExpedienteBbvaGrid.class,
 					genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
 			
-			return new DtoPage(listadoActivosBbva, listadoActivosBbva.size());
+			dtoListActivosExpediente = new DtoPage(listadoActivosBbvaGrid, listadoActivosBbvaGrid.size());
 		} else {
-			listadoActivos = genericDao.getList(VListadoActivosExpediente.class,
+			listadoActivosGrid = genericDao.getList(VListadoActivosExpedienteGrid.class,
 				genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
+			dtoListActivosExpediente = new DtoPage(listadoActivosGrid, listadoActivosGrid.size()); 
 		}
-			
-		return new DtoPage(listadoActivos, listadoActivos.size());
+		return dtoListActivosExpediente;	 
 	}
 	
 	@Override
@@ -11691,6 +11691,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		bulkOfertaDao.update(blkOfr);
 		
 		return true;
+	}
+	
+	@Override
+	public String tipoTratamiento(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		
+		return expedienteComercial.getEstado().getCodigo();
 	}
 	
 }

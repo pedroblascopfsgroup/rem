@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Dean Ibañez Viño
---## FECHA_CREACION=20201113
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210323
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.4.0
---## INCIDENCIA_LINK=HREOS-12150
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-13272
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -15,6 +15,8 @@
 --##		    0.3 Se añade Cerberus - Apple - Vicente Martinez
 --##        0.4 Se añaden subcarteras de Divarian
 --##        0.5 Se añaden subcarteras de BBVA
+--##        0.6 Se añaden subcarteras de BBVA 2.0
+--##        0.7 Se materializa la vista
 --##########################################
 --*/
 
@@ -37,7 +39,7 @@ DECLARE
     
 BEGIN
 	
---VI_ACTIVOS_AFECTOS_GENCAT v0.4
+--VI_ACTIVOS_AFECTOS_GENCAT v0.6
 
   SELECT COUNT(1) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'VI_ACTIVOS_AFECTOS_GENCAT' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='MATERIALIZED VIEW';  
   IF CUENTA > 0 THEN
@@ -53,8 +55,9 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('DROP VIEW '|| V_ESQUEMA ||'.VI_ACTIVOS_AFECTOS_GENCAT... borrada OK');
   END IF;
 
-  DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.VI_ACTIVOS_AFECTOS_GENCAT...');
-  EXECUTE IMMEDIATE 'CREATE VIEW '|| V_ESQUEMA ||'.VI_ACTIVOS_AFECTOS_GENCAT
+  DBMS_OUTPUT.PUT_LINE('CREATE MATERIALIZED VIEW '|| V_ESQUEMA ||'.VI_ACTIVOS_AFECTOS_GENCAT...');
+  EXECUTE IMMEDIATE 'CREATE MATERIALIZED VIEW '|| V_ESQUEMA ||'.VI_ACTIVOS_AFECTOS_GENCAT
+  	REFRESH COMPLETE ON DEMAND START WITH SYSDATE NEXT SYSDATE + 1
       AS
         WITH FECHA_ADJUDICACION AS 
         (
@@ -113,7 +116,7 @@ BEGIN
         ,(''02'',''04'')
         ,(''01'',''02'')
         ,(''08'',''18''),(''08'',''56''),(''08'',''57''),(''08'',''58''),(''08'',''59''),(''08'',''60''),(''08'',''136''),(''08'',''64'')
-        ,(''06'',''16''),(''07'',''138''),(''07'',''151''),(''07'',''152''), (''16'', ''153''), (''16'', ''159'')
+        ,(''06'',''16''),(''07'',''138''),(''07'',''151''),(''07'',''152''), (''16'', ''153''), (''16'', ''154''), (''16'', ''155''), (''16'', ''156''), (''16'', ''157''), (''16'', ''158'')
         )
 	AND NOT EXISTS ( SELECT 1
 			 FROM '|| V_ESQUEMA ||'.ACT_EXG_EXCLUSION_GENCAT EXG

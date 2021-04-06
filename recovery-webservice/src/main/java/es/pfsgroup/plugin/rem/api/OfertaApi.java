@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.exception.UserException;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -33,7 +33,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -86,23 +86,6 @@ public interface OfertaApi {
 	public Oferta getOfertaByIdOfertaWebcomNumOfertaRem(Long idOfertaWebcom, Long numOfertaRem) throws Exception;
 
 	/**
-	 * Devuelve un Page de Ofertas aplicando el filtro que recibe.
-	 *
-	 * @param dtoOfertasFilter
-	 *            con los parametros de filtro
-	 * @return Page<Oferta>
-	 */
-	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter);
-
-	/**
-	 * Devuelve un Page de Ofertas aplicando el filtro que recibe teniendo en cuenta si se filtra por usuario gestor o gestoria determinado, o ambos,
-	 * o en caso de no recibirlo, teniendo en cuenta el usuario logado.
-	 * @param dtoOfertasFilter
-	 * @return
-	 */
-	public DtoPage getListOfertasUsuario(DtoOfertasFilter dtoOfertasFilter);
-
-	/**
 	 * Devuelve un Page de Ofertas filtrando por usuario gestoria y número de activo.
 	 * @param dtoOfertasFilter
 	 * @return
@@ -116,7 +99,7 @@ public interface OfertaApi {
 	 * @param dtoOfertasFilter con los parametros de filtro
 	 * @return List<Oferta>
 	 */
-	public List<VOfertasActivosAgrupacion> getListOfertasFromView(DtoOfertasFilter dtoOfertasFilter);
+	public List<VGridOfertasActivosAgrupacionIncAnuladas> getListOfertasFromView(DtoOfertasFilter dtoOfertasFilter);
 
 
 	/**

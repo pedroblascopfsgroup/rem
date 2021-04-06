@@ -1,16 +1,18 @@
 --/*
 --##########################################
---## AUTOR=Carlos López
---## FECHA_CREACION=20180925
+--## AUTOR=IVAN REPISO
+--## FECHA_CREACION=20210330
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=HREOS-4525
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-8860
 --## PRODUCTO=NO
 --## Finalidad: Vista Materializada exclusiva para Stock que contiene la relación de activos y su última fecha de publicacion
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 REMVIP-8860 - Se adapta la vista para que coja la fecha publicación cuando se encuentra en estado publicado, tanto venta
+--##                          como alquiler, y si se encuentra en ambos, coge la más antigua que tenga publicado
 --##########################################
 --*/
 
@@ -56,9 +58,15 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('CREATING VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...');
   EXECUTE IMMEDIATE 'CREATE MATERIALIZED VIEW ' || V_ESQUEMA || '.'|| V_TEXT_VISTA ||' 
 	AS
-	        SELECT APU.APU_FECHA_INI_VENTA HEP_FECHA_DESDE, APU.ACT_ID
-	         FROM '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU         
-        ';
+	        SELECT APU.ACT_ID,
+              CASE WHEN APU.DD_TCO_ID = 1 AND APU.DD_EPV_ID = 3 THEN APU.APU_FECHA_INI_VENTA
+                  WHEN APU.DD_TCO_ID = 3 AND APU.DD_EPA_ID = 3 THEN APU.APU_FECHA_INI_ALQUILER
+                  WHEN APU.DD_TCO_ID = 2 AND (APU.DD_EPA_ID = 3 AND APU.DD_EPV_ID = 3) AND (APU.APU_FECHA_INI_ALQUILER < APU.APU_FECHA_INI_VENTA) THEN APU.APU_FECHA_INI_ALQUILER
+                  WHEN APU.DD_TCO_ID = 2 AND (APU.DD_EPA_ID = 3 AND APU.DD_EPV_ID = 3) AND (APU.APU_FECHA_INI_VENTA < APU.APU_FECHA_INI_ALQUILER) THEN APU.APU_FECHA_INI_VENTA
+                  WHEN APU.DD_TCO_ID = 2 AND APU.DD_EPA_ID = 3 THEN APU.APU_FECHA_INI_ALQUILER
+                  WHEN APU.DD_TCO_ID = 2 AND APU.DD_EPV_ID = 3 THEN APU.APU_FECHA_INI_VENTA
+                  ELSE NULL END AS HEP_FECHA_DESDE
+          FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU';
 
  	 DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...Creada OK');
   

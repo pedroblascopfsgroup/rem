@@ -41,6 +41,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    	 var isSupervisorActivo = $AU.userIsRol('HAYASUPER');
 		     var isGestorActivos = $AU.userIsRol('HAYAGESACT');
 		     var isProveedor = $AU.userIsRol('HAYAPROV');
+		     var perteneceGastoOPrefactura = get('trabajo.perteneceGastoOPrefactura');
+		     
+		     if (perteneceGastoOPrefactura == 'true') {
+		    	 return false;
+		     }
 
 		     return isSupervisorActivo || isGestorActivos || isProveedor;
 	    	 
@@ -75,7 +80,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     		var isSupervisorActivo = $AU.userIsRol('HAYASUPER');
 		    var isGestorActivos = $AU.userIsRol('HAYAGESACT');
 		    var isProveedor = $AU.userIsRol('HAYAPROV');
-
+		    var perteneceGastoOPrefactura = get('trabajo.perteneceGastoOPrefactura');
+		     
+		    if (perteneceGastoOPrefactura == 'true') {
+		    	return false;
+		    }
+		    
 		    return isSupervisorActivo || isGestorActivos || isProveedor;
 	    },
 	    
@@ -98,7 +108,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    disablePorCierreEconomicoSuplidos: function(get) {
 	    	var fechaCierreEco = get('trabajo.fechaCierreEconomico');
 	    	var esSuperGestorActivos = $AU.userIsRol('SUPERGESTACT');
-	    	if (!Ext.isEmpty(fechaCierreEco) && !esSuperGestorActivos)
+		    var perteneceGastoOPrefactura = get('trabajo.perteneceGastoOPrefactura');
+		    
+	    	if ((!Ext.isEmpty(fechaCierreEco) && !esSuperGestorActivos) || perteneceGastoOPrefactura == 'true')
 	    		 return true;
 	    	 else
 	    		 return false;

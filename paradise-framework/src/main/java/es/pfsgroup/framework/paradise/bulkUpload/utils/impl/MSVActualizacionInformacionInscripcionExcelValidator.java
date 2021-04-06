@@ -68,7 +68,7 @@ public class MSVActualizacionInformacionInscripcionExcelValidator extends MSVExc
 	public static final String ACTIVO_NO_EXISTE = "El activo debe existir.";
 	public static final String ACTIVO_ACCION_NO_PERMITIDA = "No se puede realizar la acción indicada con el activo solicitado.";
 	public static final String ACCION_NO_EXISTE = "La acción no existe o no es válida.";
-	public static final String ACTIVO_CARTERA_BANKIA = "El activo pertenece a la cartera bankia.";
+	public static final String ACTIVO_CARTERA_BANKIA = "El activo pertenece a la cartera CaixaBank.";
 	public static final String SITUACION_TITULO_NO_EXISTE = "La situación de titulo no existe o no es válida.";
 	public static final String FORMATO_FECHA_ENTREGA_TITULO_INVALIDO = "La fecha de entrega de titulo no contiene un formato válido.";
 	public static final String FORMATO_FECHA_PRESENTACION_INVALIDO = "La fecha de presentación no contiene un formato válido.";

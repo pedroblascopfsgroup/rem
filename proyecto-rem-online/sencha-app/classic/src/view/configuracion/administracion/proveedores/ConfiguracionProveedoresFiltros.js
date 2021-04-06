@@ -157,7 +157,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 											items :	[
 											       	 // fila 0
 												 	{ 
-											        	xtype: 'comboboxfieldbase',
+											        	xtype: 'comboboxfieldbasedd',
 											        	name: 'provinciaCodigo',
 											        	reference: 'provinciaCombo',
 												    	addUxReadOnlyEditFieldPlugin: false,
@@ -184,7 +184,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 										                }
 											        },
 											        { 
-											        	xtype: 'comboboxfieldbase',
+											        	xtype: 'comboboxfieldbasedd',
 											        	name: 'municipioCodigo',
 											        	reference: 'municipioCombo',
 												    	addUxReadOnlyEditFieldPlugin: false,

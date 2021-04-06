@@ -197,7 +197,7 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 											            	name:		'localidadDescripcion'
 														 },
 														 {
-												        	xtype: 'comboboxfieldbase',
+												        	xtype: 'comboboxfieldbasedd',
 												        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 												        	name: 'provinciaCodigo',
 												        	addUxReadOnlyEditFieldPlugin: false,

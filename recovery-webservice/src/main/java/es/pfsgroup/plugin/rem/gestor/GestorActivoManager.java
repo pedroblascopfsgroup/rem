@@ -392,12 +392,13 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  	@Override
  	public Usuario getGestorComercialActual(Activo activo, String codGestor) {
  		
+ 		final String CODIGO_GESTOR_COMERCIAL = "GCOM";
  		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", codGestor);
  		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
- 		
  		Usuario usuario = getGestorByActivoYTipo(activo,tipoGestor.getId());
- 		if(Checks.esNulo(usuario)) {
- 			filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM");
+ 		
+ 		if (Checks.esNulo(usuario) && !CODIGO_GESTOR_COMERCIAL.equals(codGestor)) {
+ 			filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_GESTOR_COMERCIAL);
  			tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
  			usuario = getGestorByActivoYTipo(activo,tipoGestor.getId());
  		}

@@ -310,7 +310,7 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 				"		where aga.agr_id =" + idAgrupacion + " "+ 
 				"		group by tco.dd_tco_id, aga.agr_id)";		
 		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
-			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 1;
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() == 1;
 		}
 		return false;				
 	}	

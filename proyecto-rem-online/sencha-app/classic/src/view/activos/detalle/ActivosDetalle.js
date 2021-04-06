@@ -195,5 +195,6 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'agrupacionesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_AGRUPACIONES');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'comercialactivo', ocultarBotonesEdicion: editable})}, 'TAB_ACTIVO_COMERCIAL');    			
     	me.add({xtype: 'patrimonioactivo', ocultarBotonesEdicion: true});
+    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'preciosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PRECIOS');
     }
 });

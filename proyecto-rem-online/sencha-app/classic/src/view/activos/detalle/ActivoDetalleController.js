@@ -4398,32 +4398,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.fireEvent("log", "Obligatorio jsonData para guardar el activo");
 		} else {
 
-			if(successFn.$emptyFn){
-				Ext.Ajax.request({
-					method : 'POST',
-					url : url,
-					jsonData : Ext.JSON.encode(jsonData),
-					success : function(response,ops,x){
-						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-						me.getView().unmask();
-					},
-					failure : function(response, opts) {
-						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-					}
+			Ext.Ajax.request({
+				method : 'POST',
+				url : url,
+				jsonData : Ext.JSON.encode(jsonData),
+				success : successFn,
+				failure : function(response, opts) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				}
 
-				});
-			}else{
-				Ext.Ajax.request({
-					method : 'POST',
-					url : url,
-					jsonData : Ext.JSON.encode(jsonData),
-					success : successFn,
-					failure : function(response, opts) {
-						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-					}
-
-				});
-			}
+			});
 		}
 	},
 
@@ -5499,7 +5483,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 													} else {
 														me.getView().fireEvent("No hay activos propagables");
 														me.saveActivo(tabData, successFn);
-														return false;
 													}
 											}else{
 												var successFn = function(response, eOpts) {

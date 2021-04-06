@@ -191,6 +191,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(activo.getNumActivo().toString(), getTipoExpediente(activo), codigoEstado);
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
 		docExpDto.setBlacklistmatriculas(perfilAdministracionDao.getBlackListMatriculasByUsuario(userLogin.getUsername()));
+		docExpDto.setMetadatatdn1(true);
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
 	  /*if (!Checks.esNulo(respuesta.getDocumentos())) {
@@ -219,6 +220,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 				trabajo.getNumTrabajo().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, GestorDocumentalConstants.CODIGO_CLASE_ACTUACION_TECNICA);
 		Usuario userLogin = genericAdapter.getUsuarioLogado();
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
+		docExpDto.setMetadatatdn1(true);
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
 		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);

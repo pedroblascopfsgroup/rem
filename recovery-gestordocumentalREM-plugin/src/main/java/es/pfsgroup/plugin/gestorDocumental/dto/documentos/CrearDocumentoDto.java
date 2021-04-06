@@ -44,6 +44,8 @@ public class CrearDocumentoDto {
 	 * Objeto constituido por los metadatos de dónde está archivado físicamente el documento
 	 */
 	private String archivoFisico;
+	
+	private String metadatatdn1;
 		
 
 	public String getUsuario() {
@@ -110,5 +112,13 @@ public class CrearDocumentoDto {
 		this.archivoFisico = archivoFisico;
 	}
 
+	public String getMetadatatdn1() {
+		return metadatatdn1;
+	}
+
+	public void setMetadatatdn1(String metadatatdn1) {
+		this.metadatatdn1 = metadatatdn1;
+	}
+	
 	
 }

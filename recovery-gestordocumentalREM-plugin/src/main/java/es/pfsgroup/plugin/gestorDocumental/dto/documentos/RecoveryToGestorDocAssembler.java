@@ -89,26 +89,23 @@ public class RecoveryToGestorDocAssembler {
 		doc.setDocumento(webFileItem.getFileItem().getFile());
 		doc.setNombreDocumento(webFileItem.getFileItem().getFileName());
 		doc.setDescripcionDocumento(webFileItem.getParameter("descripcion"));
-		doc.setGeneralDocumento(rellenarGeneralDocumento(arrayMatricula[1], arrayMatricula[2], arrayMatricula[3], null));
+		doc.setGeneralDocumento(rellenarGeneralDocumento(arrayMatricula[1], arrayMatricula[2], arrayMatricula[3]));
 		doc.setArchivoFisico("{}");
 		
 		return doc;
 	}
 
-	private String rellenarGeneralDocumento (String serie, String tdn1, String tdn2, DtoMetadatosEspecificos dto) {
+	private String rellenarGeneralDocumento (String serie, String tdn1, String tdn2) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 			sb.append(GestorDocumentalConstants.modificarMetadatos[0]).append("{");
 				sb.append(GestorDocumentalConstants.modificarMetadatos[1]).append("\""+ALTA+"\"").append(",");
 				sb.append(GestorDocumentalConstants.modificarMetadatos[2]).append("\""+serie+"\"").append(",");
 				sb.append(GestorDocumentalConstants.modificarMetadatos[3]).append("\""+tdn1+"\"").append(",");
-				if(dto != null) {
-					sb.append(GestorDocumentalConstants.modificarMetadatos[4]).append(rellenarMetadatosEspecificos(dto)).append(",");
-				}
-				sb.append(GestorDocumentalConstants.modificarMetadatos[5]).append("\""+tdn2+"\"").append(",");
-				sb.append(GestorDocumentalConstants.modificarMetadatos[6]).append("\"" + PROCESO_CARGA + "\"").append("},");
-				sb.append(GestorDocumentalConstants.modificarMetadatos[7]).append("{");
-				sb.append(GestorDocumentalConstants.modificarMetadatos[8]).append("\"CONT\"");
+				sb.append(GestorDocumentalConstants.modificarMetadatos[4]).append("\""+tdn2+"\"").append(",");
+				sb.append(GestorDocumentalConstants.modificarMetadatos[5]).append("\"" + PROCESO_CARGA + "\"").append("},");
+				sb.append(GestorDocumentalConstants.modificarMetadatos[6]).append("{");
+				sb.append(GestorDocumentalConstants.modificarMetadatos[7]).append("\"CONT\"");
 			sb.append("}");
 		sb.append("}");
 		return sb.toString();
@@ -360,7 +357,8 @@ public class RecoveryToGestorDocAssembler {
 		doc.setDocumento(webFileItem.getFileItem().getFile());
 		doc.setNombreDocumento(webFileItem.getFileItem().getFileName());
 		doc.setDescripcionDocumento(webFileItem.getParameter("descripcion"));
-		doc.setGeneralDocumento(rellenarGeneralDocumento(arrayMatricula[1], arrayMatricula[2], arrayMatricula[3], dto));
+		doc.setGeneralDocumento(rellenarGeneralDocumento(arrayMatricula[1], arrayMatricula[2], arrayMatricula[3]));
+		doc.setMetadatatdn1(rellenarMetadatosEspecificos(dto));
 		doc.setArchivoFisico("{}");
 		
 		return doc;

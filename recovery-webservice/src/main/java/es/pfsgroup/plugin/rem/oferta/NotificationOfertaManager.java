@@ -287,8 +287,8 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				}
 				//ADJUNTOS SI ES BANKIA
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
-					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia_v7.docx");
-					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_Bankia.docx"));
+					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_CaixaBank_v7.docx");
+					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_CaixaBank.docx"));
 				}
 				//ADJUNTOS SI ES TANGO
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)){

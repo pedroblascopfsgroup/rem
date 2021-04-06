@@ -97,7 +97,6 @@ BEGIN
 			LEFT JOIN '|| V_ESQUEMA ||'.ECO_EXPEDIENTE_COMERCIAL ECO 		                            ON ECO.OFR_ID = OFR.OFR_ID
 			LEFT JOIN '|| V_ESQUEMA ||'.RES_RESERVAS RES 											    ON RES.ECO_ID = ECO.ECO_ID	
 			LEFT JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR 						                    ON AGR.AGR_ID = OFR.AGR_ID
-			
 			JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA  								            		ON ACT.DD_CRA_ID = CRA.DD_CRA_ID
 			JOIN '|| V_ESQUEMA ||'.DD_SCR_SUBCARTERA SCR  						                    	ON ACT.DD_SCR_ID = SCR.DD_SCR_ID
 			JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR TCR                               	ON ACT.DD_TCR_ID = TCR.DD_TCR_ID			

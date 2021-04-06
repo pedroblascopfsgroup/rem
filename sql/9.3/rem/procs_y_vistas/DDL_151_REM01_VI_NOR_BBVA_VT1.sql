@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20210226
+--## FECHA_CREACION=20210405
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10975
@@ -15,6 +15,7 @@
 --##        0.3 HREOS-11680 - JAD - quitamos el num_linia es vacio que esta mal
 --##        0.4 REMVIP-8799 - VRO - se cambia calculo para FECHA_DEP_JURIDICA
 --##        0.5 REMVIP-8960 - VRO - se pone LEFT en dd_eca_estado_carga_activos y se mete tabla BIE_DATOS_REGISTRALES
+--##        0.6 REMVIP-9399 - VRO - se corrige calculo campos DEP_JURIDICAMENTE y FECHA_DEP_JURIDICA
 --##########################################
 --*/
 
@@ -83,14 +84,14 @@ BEGIN
         , COALESCE(UPPER(BIEL.BIE_LOC_COD_POST),''NULL'') AS CODIGO_POSTAL
         ,''011'' AS PAIS
         ,CASE
-            WHEN TIT.TIT_FECHA_INSC_REG IS NOT NULL AND ETI.DD_ETI_CODIGO = ''02'' AND ECa.DD_ECa_codigo = ''05'' AND VTA_POS.FECHA_POSESION IS NOT NULL
+            WHEN TIT.TIT_FECHA_INSC_REG IS NOT NULL AND ETI.DD_ETI_CODIGO = ''02'' AND (ECA.DD_ECA_CODIGO = ''05'' OR ECA.DD_ECA_CODIGO IS NULL) AND VTA_POS.FECHA_POSESION IS NOT NULL
             THEN ''S''
             ELSE ''N''
         END AS DEP_JURIDICAMENTE
         ,CASE
 	    WHEN VTA_POS.FECHA_POSESION IS NOT NULL
 		AND COALESCE(TIT.TIT_FECHA_INSC_REG,BIEADJ.BIE_ADJ_F_INSCRIP_TITULO) IS NOT NULL
-		AND (ECA.DD_ECA_CODIGO IN (''04'',''05'') AND ACT.ACT_FECHA_REV_CARGAS IS NOT NULL)
+       	AND (((ECA.DD_ECA_CODIGO IN (''04'',''05'')) AND ACT.ACT_FECHA_REV_CARGAS IS NOT NULL) OR ECA.DD_ECA_CODIGO IS NULL)
 	    THEN (
 		 CASE
 			WHEN VTA_POS.FECHA_POSESION IS NOT NULL

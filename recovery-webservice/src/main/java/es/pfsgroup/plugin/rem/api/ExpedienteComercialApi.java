@@ -1349,5 +1349,7 @@ public interface ExpedienteComercialApi {
 	boolean updateActivosAlquilados(DtoActivosAlquiladosGrid dto);
 
 	boolean sacarBulk(Long idExpediente);
+	
+	String tipoTratamiento(TareaExterna tareaExterna);
 
 }

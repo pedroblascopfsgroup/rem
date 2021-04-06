@@ -113,8 +113,7 @@ Ext.define('HreRem.view.common.DDViewModel', {
 					extraParams: {
 						diccionario: 'paises'
 					}
-				},
-				autoLoad: true
+				}
 			},
 			comboProvincia: {
 				model: 'HreRem.model.ComboBase',
@@ -132,7 +131,7 @@ Ext.define('HreRem.view.common.DDViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboMunicipio',
 					extraParams: {codigoProvincia: '{plusvalia.provinciaCodigo}'}
-				},autoLoad: true
+				}
 			},
 			comboTipoPersona: {
 				model: 'HreRem.model.ComboBase',
@@ -142,8 +141,7 @@ Ext.define('HreRem.view.common.DDViewModel', {
 					extraParams: {
 						diccionario: 'tipoPersona'
 					}
-				},
-				autoLoad: true
+				}
 			},
 			comboRegimenesMatrimoniales: {
 				model: 'HreRem.model.ComboBase',

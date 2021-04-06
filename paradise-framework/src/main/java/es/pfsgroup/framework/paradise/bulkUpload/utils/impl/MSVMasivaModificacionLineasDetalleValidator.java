@@ -40,7 +40,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	
 	private static final String GASTO_NO_EXISTE = "El gasto no existe";
 	private static final String ACTIVO_NO_EXISTE = "El activo no existe";
-	private static final String BANKIA_MAS_DE_UNA_LINEA = "La cartera Bankia no puede tener más de una línea";
+	private static final String BANKIA_MAS_DE_UNA_LINEA = "La cartera CaixaBank no puede tener más de una línea";
 	private static final String ACCION_BORRAR_ID_LINEA_REQUERIDO = "El id de línea es requerido si el tipo de acción es 'Borrar'";
 	private static final String ID_LINEA_EXISTE = "El id de línea no existe";
 	private static final String SUBTIPO_DIFERENTE_GASTO = "El subtipo es de un tipo diferente del gasto";

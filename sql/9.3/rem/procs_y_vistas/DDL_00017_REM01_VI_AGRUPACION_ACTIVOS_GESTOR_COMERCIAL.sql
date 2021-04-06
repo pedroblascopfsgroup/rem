@@ -1,0 +1,85 @@
+--/*
+--##########################################
+--## AUTOR=Sergio Gomez
+--## FECHA_CREACION=20210319
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-13501
+--## PRODUCTO=NO
+--## Finalidad: DDL
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+
+DECLARE
+    seq_count number(3); -- Vble. para validar la existencia de las Secuencias.
+    table_count number(3); -- Vble. para validar la existencia de las Tablas.
+    v_column_count number(3); -- Vble. para validar la existencia de las Columnas.    
+    v_constraint_count number(3); -- Vble. para validar la existencia de las Constraints.
+    err_num NUMBER; -- N?mero de errores
+    err_msg VARCHAR2(2048); -- Mensaje de error
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_MSQL VARCHAR2(4000 CHAR); 
+
+    CUENTA NUMBER(16); -- Vble. para validar la existencia de vista.
+    
+BEGIN
+	
+--VI_ACTIVOS_AGRUPACION_GENCAT v0.1
+
+  SELECT COUNT(1) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'VI_AGRUPACION_ACTIVOS_GESTOR_COMERCIAL' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='MATERIALIZED VIEW';  
+  IF CUENTA > 0 THEN
+    DBMS_OUTPUT.PUT_LINE('DROP MATERIALIZED VIEW '|| V_ESQUEMA ||'.VI_AGRUPACION_ACTIVOS_GESTOR_COMERCIAL...');
+    EXECUTE IMMEDIATE 'DROP MATERIALIZED VIEW ' || V_ESQUEMA || '.VI_AGRUPACION_ACTIVOS_GESTOR_COMERCIAL';  
+    DBMS_OUTPUT.PUT_LINE('DROP MATERIALIZED VIEW '|| V_ESQUEMA ||'.VI_AGRUPACION_ACTIVOS_GESTOR_COMERCIAL... borrada OK');
+  END IF;
+
+  SELECT COUNT(1) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'VI_AGRUPACION_ACTIVOS_GESTOR_COMERCIAL' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='VIEW';  
+  IF CUENTA > 0 THEN
+    DBMS_OUTPUT.PUT_LINE('DROP VIEW '|| V_ESQUEMA ||'.VI_AGRUPACION_ACTIVOS_GESTOR_COMERCIAL...');
+    EXECUTE IMMEDIATE 'DROP VIEW ' || V_ESQUEMA || '.VI_AGRUPACION_ACTIVOS_GESTOR_COMERCIAL';  
+    DBMS_OUTPUT.PUT_LINE('DROP VIEW '|| V_ESQUEMA ||'.VI_AGRUPACION_ACTIVOS_GESTOR_COMERCIAL... borrada OK');
+  END IF;
+
+  DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.VI_AGRUPACION_ACTIVOS_GESTOR_COMERCIAL...');
+  EXECUTE IMMEDIATE 'CREATE VIEW '|| V_ESQUEMA ||'.VI_AGRUPACION_ACTIVOS_GESTOR_COMERCIAL
+      AS
+        SELECT AGA.AGA_ID, AGA.AGR_ID, AGA.ACT_ID, USU.USU_ID 
+        FROM '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR 
+        JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID
+        JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TIAG ON TIAG.DD_TAG_ID = AGR.DD_TAG_ID AND TIAG.DD_TAG_CODIGO = ''01''
+        JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON AGA.ACT_ID = ACT.ACT_ID AND ACT.BORRADO=0 
+        JOIN '|| V_ESQUEMA ||'.GAH_GESTOR_ACTIVO_HISTORICO GAH ON GAH.ACT_ID = ACT.ACT_ID 
+        JOIN '|| V_ESQUEMA ||'.GEH_GESTOR_ENTIDAD_HIST GEH ON GEH.GEH_ID = GAH.GEH_ID AND GEH.BORRADO = 0 
+        JOIN '|| V_ESQUEMA_M ||'.DD_TGE_TIPO_GESTOR TGE ON GEH.DD_TGE_ID = TGE.DD_TGE_ID AND TGE.DD_TGE_CODIGO = ''GCOM''
+        JOIN '|| V_ESQUEMA_M ||'.USU_USUARIOS USU ON GEH.USU_ID = USU.USU_ID 
+        WHERE GEH.GEH_FECHA_HASTA IS NULL';
+
+  DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.VI_AGRUPACION_ACTIVOS_GESTOR_COMERCIAL...Creada OK');
+  
+EXCEPTION
+    WHEN OTHERS THEN
+         ERR_NUM := SQLCODE;
+         ERR_MSG := SQLERRM;
+
+         DBMS_OUTPUT.PUT_LINE('KO no modificada');
+         DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+         DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------'); 
+         DBMS_OUTPUT.PUT_LINE(ERR_MSG);
+
+         ROLLBACK;
+         RAISE;   
+		 
+END;
+/
+
+EXIT;

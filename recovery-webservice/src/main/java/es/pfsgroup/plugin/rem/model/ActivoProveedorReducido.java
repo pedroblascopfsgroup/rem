@@ -81,7 +81,8 @@ public class ActivoProveedorReducido implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
-	
+	@Column(name = "PVE_COD_REM")
+	private Long codigo;
 	
 	public Long getId() {
 		return id;
@@ -122,7 +123,13 @@ public class ActivoProveedorReducido implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-	
 
+	public Long getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(Long codigo) {
+		this.codigo = codigo;
+	}
 	
 }

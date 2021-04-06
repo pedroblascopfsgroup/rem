@@ -77,14 +77,13 @@ Ext.define('HreRem.view.activos.detalle.InformacionComercialActivo', {
 				items :
 					[
 						{ 
-				        	xtype: 'comboboxfieldbase',
+				        	xtype: 'comboboxfieldbasedd',
 				        	fieldLabel: HreRem.i18n('fieldlabel.ubicacion'),
 				        	bind: {
 			            		store: '{comboTipoUbicacion}',
-			            		value: '{infoComercial.ubicacionActivoCodigo}'
+			            		value: '{infoComercial.ubicacionActivoCodigo}',
+								rawValue: '{infoComercial.ubicacionActivoDescripcion}'
 			            	},
-			            	displayField: 'descripcion',
-    						valueField: 'codigo',
 							readOnly: true
 				        },
 						{
@@ -108,28 +107,26 @@ Ext.define('HreRem.view.activos.detalle.InformacionComercialActivo', {
 					 		labelAlign: 'top'
 						},
 						{ 
-				        	xtype: 'comboboxfieldbase',
+				        	xtype: 'comboboxfieldbasedd',
 				        	editable: false,
 				        	fieldLabel: HreRem.i18n('fieldlabel.estado.construccion'),
 				        	bind: {
 			            		store: '{comboEstadoConstruccion}',
 			            		value: '{infoComercial.estadoConstruccionCodigo}',
-			    				hidden: '{infoComercial.isSuelo}'
+			    				hidden: '{infoComercial.isSuelo}',
+								rawValue: '{infoComercial.estadoConstruccionDescripcion}'
 			            	},
-			            	displayField: 'descripcion',
-    						valueField: 'codigo',
 							readOnly: true
 				        },
 		                { 
-				        	xtype: 'comboboxfieldbase',
+				        	xtype: 'comboboxfieldbasedd',
 				        	editable: false,
 				        	fieldLabel: HreRem.i18n('fieldlabel.estado.conservacion'),
 				        	bind: {
 			            		store: '{comboEstadoConservacion}',
-			            		value: '{infoComercial.estadoConservacionCodigo}'
+			            		value: '{infoComercial.estadoConservacionCodigo}',
+								rawValue: '{infoComercial.estadoConservacionDescripcion}'
 			            	},
-			            	displayField: 'descripcion',
-    						valueField: 'codigo',
 							readOnly: true
 				        },
 						{ 
@@ -183,15 +180,14 @@ Ext.define('HreRem.view.activos.detalle.InformacionComercialActivo', {
 							width: '33%',
 							items: [
 								{ 
-						        	xtype: 'comboboxfieldbase',
+						        	xtype: 'comboboxfieldbasedd',
 						        	editable: false,
 						        	fieldLabel: HreRem.i18n('fieldlabel.estado.conservacion'),
 						        	bind: {
 					            		store: '{comboEstadoConservacion}',
-					            		value: '{infoComercial.estadoConservacionEdificioCodigo}'			            		
+					            		value: '{infoComercial.estadoConservacionEdificioCodigo}',
+										rawValue: '{infoComercial.estadoConservacionEdificioDescripcion}'
 					            	},
-					            	displayField: 'descripcion',
-		    						valueField: 'codigo',
 									readOnly: true
 						        },						        
 								{ 
@@ -214,8 +210,6 @@ Ext.define('HreRem.view.activos.detalle.InformacionComercialActivo', {
 					            		store: '{comboSiNoRem}',
 					            		value: '{infoComercial.ascensor}'			            		
 					            	},
-					            	displayField: 'descripcion',
-		    						valueField: 'codigo',
 									readOnly: true
 						        },
 				                { 
@@ -225,15 +219,14 @@ Ext.define('HreRem.view.activos.detalle.InformacionComercialActivo', {
 									readOnly: true
 								},
 								{ 
-						        	xtype: 'comboboxfieldbase',
+						        	xtype: 'comboboxfieldbasedd',
 						        	editable: false,
 						        	fieldLabel: HreRem.i18n('fieldlabel.material.fachada'),
 						        	bind: {
 					            		store: '{comboTipoFachada}',
-					            		value: '{infoComercial.tipoFachadaCodigo}'			            		
+					            		value: '{infoComercial.tipoFachadaCodigo}',
+										rawValue: '{infoComercial.tipoFachadaDescripcion}'
 					            	},
-					            	displayField: 'descripcion',
-		    						valueField: 'codigo',
 									readOnly: true
 						        }
 	            			]

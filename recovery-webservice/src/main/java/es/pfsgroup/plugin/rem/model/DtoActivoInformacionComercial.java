@@ -261,11 +261,16 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	private String zonaComunOtros;
 	
 	// Mapeados a mano
-	private String ubicacionActivoCodigo;   
-    private String estadoConstruccionCodigo;   
-    private String estadoConservacionCodigo; 
+	private String ubicacionActivoCodigo;
+	private String ubicacionActivoDescripcion;
+    private String estadoConstruccionCodigo;
+    private String estadoConstruccionDescripcion;
+    private String estadoConservacionCodigo;
+    private String estadoConservacionDescripcion;
     private String estadoConservacionEdificioCodigo;
+    private String estadoConservacionEdificioDescripcion;
     private String tipoFachadaCodigo; 
+    private String tipoFachadaDescripcion;
     private String tipoViviendaCodigo; 
     private String tipoOrientacionCodigo; 
     private String tipoRentaCodigo; 
@@ -1759,6 +1764,36 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	}
 	public void setTelefonoMediadorEspejo(String telefonoMediadorEspejo) {
 		this.telefonoMediadorEspejo = telefonoMediadorEspejo;
+	}
+	public String getUbicacionActivoDescripcion() {
+		return ubicacionActivoDescripcion;
+	}
+	public void setUbicacionActivoDescripcion(String ubicacionActivoDescripcion) {
+		this.ubicacionActivoDescripcion = ubicacionActivoDescripcion;
+	}
+	public String getEstadoConstruccionDescripcion() {
+		return estadoConstruccionDescripcion;
+	}
+	public void setEstadoConstruccionDescripcion(String estadoConstruccionDescripcion) {
+		this.estadoConstruccionDescripcion = estadoConstruccionDescripcion;
+	}
+	public String getEstadoConservacionDescripcion() {
+		return estadoConservacionDescripcion;
+	}
+	public void setEstadoConservacionDescripcion(String estadoConservacionDescripcion) {
+		this.estadoConservacionDescripcion = estadoConservacionDescripcion;
+	}
+	public String getEstadoConservacionEdificioDescripcion() {
+		return estadoConservacionEdificioDescripcion;
+	}
+	public void setEstadoConservacionEdificioDescripcion(String estadoConservacionEdificioDescripcion) {
+		this.estadoConservacionEdificioDescripcion = estadoConservacionEdificioDescripcion;
+	}
+	public String getTipoFachadaDescripcion() {
+		return tipoFachadaDescripcion;
+	}
+	public void setTipoFachadaDescripcion(String tipoFachadaDescripcion) {
+		this.tipoFachadaDescripcion = tipoFachadaDescripcion;
 	}
 	
 	

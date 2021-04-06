@@ -284,7 +284,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	tab = null;
     	cfg.title = titulo;
     	tab = me.createTab (me.getActivosMain(), 'activo', "activosdetallemain",  id, cfg);
-    	Ext.suspendLayouts();
+    	//Ext.suspendLayouts();
     	tab.mask(HreRem.i18n("msg.mask.loading"));
     	me.setLogTime();
     	HreRem.model.Activo.load(id, {
@@ -309,7 +309,7 @@ Ext.define('HreRem.controller.ActivosController', {
 				    }
 				});
 				tab.unmask();
-		    	Ext.resumeLayouts(true);
+		    	//Ext.resumeLayouts(true);
 		    	
 				/* Selector de subPestanyas del Trabajo:
 		    	 * - Se hace la comprobacion aqui (ademas de dentro de la funcion), 
@@ -340,7 +340,7 @@ Ext.define('HreRem.controller.ActivosController', {
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				}
 				tab.unmask();
-				Ext.resumeLayouts(true);
+				//Ext.resumeLayouts(true);
 	       	}
 		});
 		

@@ -134,6 +134,7 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 			activoDto.setNoTitularOtraVivienda(activo.getInfoAdministrativa().getNoTitularOtraVivienda());
 			if(activo.getInfoAdministrativa().getTributacionAdquisicion() != null) {
 				activoDto.setTributacionAdq(activo.getInfoAdministrativa().getTributacionAdquisicion().getCodigo());
+				activoDto.setTributacionAdqDescripcion(activo.getInfoAdministrativa().getTributacionAdquisicion().getDescripcion());
 			}
 			activoDto.setFechaLiqComplementaria(activo.getInfoAdministrativa().getFechaLiqComplementaria());
 			activoDto.setFechaVencTpoBonificacion(activo.getInfoAdministrativa().getFechaVencTpoBonificacion());
@@ -154,6 +155,7 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 			}
 			if(activo.getInfoAdministrativa().getEstadoVenta() != null) {
 				activoDto.setEstadoVentaCodigo(activo.getInfoAdministrativa().getEstadoVenta().getCodigo());
+				activoDto.setEstadoVentaDescripcion(activo.getInfoAdministrativa().getEstadoVenta().getDescripcion());
 			}
 			try {
 				List<ReqFaseVentaDto> requisitosVenta = activoApi.getReqFaseVenta(activo.getId());

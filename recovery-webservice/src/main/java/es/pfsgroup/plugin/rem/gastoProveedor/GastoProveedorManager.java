@@ -1543,7 +1543,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 				if (DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())
 						&& Checks.esNulo(activo.getNumInmovilizadoBnk())) {
-					throw new JsonViewerException("El activo carece de nº inmovilizado Bankia");
+					throw new JsonViewerException("El activo carece de nº inmovilizado CaixaBank");
 				}
 
 				if (!Checks.esNulo(gasto.getPropietario())) {

@@ -44,7 +44,13 @@ Ext.define('HreRem.model.ActivoComunidadPropietarios', {
     			name: 'estadoLocalizacion'
     		},
     		{
+    			name: 'estadoLocalizacionDescripcion'
+    		},
+    		{
     			name: 'subestadoGestion'
+    		},
+    		{
+    			name: 'subestadoGestionDescripcion'
     		},
     		{
     			name: 'unidadAlquilable',

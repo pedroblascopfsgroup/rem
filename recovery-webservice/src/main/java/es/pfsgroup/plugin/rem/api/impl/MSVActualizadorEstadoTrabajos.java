@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -22,11 +24,15 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.AgendaTrabajo;
+import es.pfsgroup.plugin.rem.model.HistorificadorPestanas;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDPestanas;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoApunte;
+import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesTrabajo;
 import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Component
@@ -47,6 +53,12 @@ public class MSVActualizadorEstadoTrabajos extends AbstractMSVActualizador imple
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 
 	@Override
 	public String getValidOperation() {
@@ -69,6 +81,19 @@ public class MSVActualizadorEstadoTrabajos extends AbstractMSVActualizador imple
 			Trabajo trabajo = trabajoApi.getTrabajoByNumeroTrabajo(tmpNumTrabajo);
 			AgendaTrabajo agenda = null;
 			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			HistorificadorPestanas historificador = new HistorificadorPestanas();
+			
+			historificador.setTrabajo(trabajo);
+			historificador.setCampo(ConstantesTrabajo.DD_EST_ID);
+			historificador.setColumna(ConstantesTrabajo.COLUMNA_DD_EST_ID);
+			historificador.setPestana((DDPestanas) utilDiccionarioApi.dameValorDiccionarioByCod(DDPestanas.class,DDPestanas.CODIGO_FICHA));
+			historificador.setTabla(ConstantesTrabajo.NOMBRE_TABLA);
+			historificador.setUsuario(usuarioManager.getUsuarioLogado());
+			historificador.setFechaModificacion(new Date());
+			
+			if(!Checks.esNulo(trabajo.getEstado().getDescripcion())) {
+				historificador.setValorAnterior(trabajo.getEstado().getDescripcion());
+			}
 
 			DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", tmpAccion));
@@ -79,6 +104,9 @@ public class MSVActualizadorEstadoTrabajos extends AbstractMSVActualizador imple
 				trabajo.setFechaValidacion(new Date());
 			}
 			genericDao.update(Trabajo.class, trabajo);
+			
+			historificador.setValorNuevo(estadoTrabajo.getDescripcion());
+			genericDao.save(HistorificadorPestanas.class, historificador);
 			
 			if (tmpComentario != null && !tmpComentario.isEmpty()) {
 				agenda = new AgendaTrabajo();

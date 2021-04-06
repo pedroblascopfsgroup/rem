@@ -279,6 +279,9 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     			name:'ubicacionActivoCodigo'
     		},
     		{
+    			name:'ubicacionActivoDescripcion'
+    		},
+    		{
     			name:'ubicacionAparcamientoCodigo'
     		},
     		{
@@ -288,13 +291,25 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     			name:'estadoConstruccionCodigo'
     		},
     		{
+    			name:'estadoConstruccionDescripcion'
+    		},
+    		{
     			name:'estadoConservacionCodigo'
     		},
     		{
+    			name:'estadoConservacionDescripcion'
+    		},
+    		{
     			name:'estadoConservacionEdificioCodigo'
-    		},   		
+    		},
+    		{
+    			name:'estadoConservacionEdificioDescripcion'
+    		},
     		{
     			name:'tipoFachadaCodigo'
+    		},
+    		{
+    			name:'tipoFachadaDescripcion'
     		},
     		{
     			name:'tipoViviendaCodigo'

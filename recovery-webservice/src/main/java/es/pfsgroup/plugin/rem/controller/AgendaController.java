@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.config.ConfigManager;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.UsuarioManager;
@@ -45,6 +46,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.bulkAdvisoryNote.BulkAdvisoryNoteAdapter;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -61,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
@@ -99,6 +102,9 @@ public class AgendaController extends TareaController {
 
 	@Autowired
 	private UsuarioManager usuarioManager;
+	
+	@Autowired
+    private TareaActivoApi tareaActivoApi;
 	
 	@Autowired
 	private BulkAdvisoryNoteAdapter bulkAdvisoryNoteAdapter;
@@ -529,6 +535,7 @@ public class AgendaController extends TareaController {
 		ExpedienteComercial eco = null;
 		List<ActivoTramite> listaTramites = null;
 		Boolean salto = false;
+		Boolean hayTarea = false;
 		WSDevolBankiaDto dto = null;
 		try {
 
@@ -554,6 +561,13 @@ public class AgendaController extends TareaController {
 						if (!Checks.esNulo(tarea) && ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION.equals(tarea.getTareaProcedimiento().getCodigo())) {
 							//Salto a tarea anterior y llamada a UVEM cosem1: 4
 							TareaExterna tareaSalto = activoTramiteApi.getTareaAnteriorByCodigoTarea(listaTramites.get(0).getId(), ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE);
+							Usuario usuario = usuarioManager.getUsuarioLogado();
+							
+							if (ComercialUserAssigantionService.CODIGO_T013_RESULTADO_PBC.equals(tareaSalto.getTareaProcedimiento().getCodigo()) && !tareaSalto.getAuditoria().isBorrado()) {	
+								tareaActivoApi.terminarTarea(tareaSalto, usuario);
+							}
+							
+							hayTarea = true;
 							salto = adapter.saltoTareaByCodigo(tarea.getId(), tareaSalto.getTareaProcedimiento().getCodigo());
 							if(salto){
 								//Se entiende que cuando salta a la tarea anterior a Resolución Expendiente, la reserva y el expediente han llegado en los siguientes estados
@@ -568,9 +582,9 @@ public class AgendaController extends TareaController {
 							}
 							break;
 						}
-						else{
-							throw new JsonViewerException("No se encuentra en la tarea para realizar esta acción");
-						}
+					}
+					if (!hayTarea) { 
+						throw new JsonViewerException("No se encuentra en la tarea para realizar esta acción");
 					}
 				}
 			}

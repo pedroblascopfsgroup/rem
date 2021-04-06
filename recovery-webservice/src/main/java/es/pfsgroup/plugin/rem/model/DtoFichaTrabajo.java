@@ -263,8 +263,9 @@ public class DtoFichaTrabajo {
 	private Long proveedorContact;
 	private String estadoDescripcionyFecha;
 	
-	
 	private String identificadorReamCodigo;
+	
+	private Boolean perteneceGastoOPrefactura;
 	
 	public Long getIdTrabajo() {
 		return idTrabajo;
@@ -1348,6 +1349,12 @@ public class DtoFichaTrabajo {
 		this.identificadorReamCodigo = identificadorReamCodigo;
 	}
 	
-
+	public Boolean getPerteneceGastoOPrefactura() {
+		return perteneceGastoOPrefactura;
+	}
+	
+	public void setPerteneceGastoOPrefactura(Boolean perteneceGastoOPrefactura) {
+		this.perteneceGastoOPrefactura = perteneceGastoOPrefactura;
+	}
 	
 }

@@ -3977,7 +3977,7 @@ public class ActivoController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboTipoSegmento(String codSubcartera, WebDto webDto, ModelMap model) {
 		
 		model.put(RESPONSE_DATA_KEY, activoApi.getComboTipoSegmento(codSubcartera));

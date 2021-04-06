@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=DAP
---## FECHA_CREACION=20200901
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20210329
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10729
+--## INCIDENCIA_LINK=REMVIP-9354
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Creación de tabla auxiliar para AUX_PROC_GEN_GASTO_ALB
@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##	    0.2 REMVIP-9354 Añadir columna GPV_ID
 --#########################################
 ----*/
 
@@ -50,7 +51,8 @@ BEGIN
 
 	EXECUTE IMMEDIATE '
 	CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||' (
-		PFA_ID		NUMBER(16,0)
+		GPV_ID		NUMBER(16,0)
+		, PFA_ID	NUMBER(16,0)
 		, TBJ_ID	NUMBER(16,0)
 		, DD_DEG_ID	NUMBER(16,0)
 		, DD_TTR_ID NUMBER(16,0)

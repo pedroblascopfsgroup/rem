@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -27,6 +28,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -58,6 +60,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 	private static final String ES_ACTIVO_CON_CHECK_PUBLICAR_COMERCIALIZAR_FORMALIZAR_ERROR = "msg.error.activo.cesion.uso.con.checks.publicar.comercializar.formalizar";
 	private static final String ES_ACTIVO_ALQUILADO_ERROR = "msg.error.es.activo.alquilado";
 	private static final String ES_ACTIVO_CON_OFERTAS_VIVAS_ERROR="msg.error.es.activo.con.ofertas.vivas";
+	private static final String PERFIL_CHECKCOMERCIALIZAR = "CHECKCOMERCIALIZAR";
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -90,6 +93,9 @@ public class TabActivoPatrimonio implements TabActivoService {
 	@Autowired
 	private ParticularValidatorApi particularValidator;
 
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
 	@Override
 	public String[] getKeys() {
 		return this.getCodigoTab();
@@ -454,9 +460,17 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 	private void isActivoConPublicarComercializarFormalizar(Activo activo) {
 		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
-		if ((perimetroActivo.getAplicaPublicar() != null&& perimetroActivo.getAplicaPublicar())
+		Boolean puedeModificar = false;
+		Usuario  usuario = genericAdapter.getUsuarioLogado();
+		List<Perfil> perfiles = usuario.getPerfiles();
+		for (Perfil perfil : perfiles) {
+			if(PERFIL_CHECKCOMERCIALIZAR.equalsIgnoreCase(perfil.getCodigo())){
+				puedeModificar = true;
+			}
+		}
+		if (((perimetroActivo.getAplicaPublicar() != null&& perimetroActivo.getAplicaPublicar())
 			||(perimetroActivo.getAplicaComercializar() != null && perimetroActivo.getAplicaComercializar() == 1)
-			||(perimetroActivo.getAplicaFormalizar() != null && perimetroActivo.getAplicaFormalizar() == 1)) {
+			||(perimetroActivo.getAplicaFormalizar() != null && perimetroActivo.getAplicaFormalizar() == 1)) && !puedeModificar) {
 			throw new JsonViewerException(messageServices.getMessage(ES_ACTIVO_CON_CHECK_PUBLICAR_COMERCIALIZAR_FORMALIZAR_ERROR));
 		}
 		

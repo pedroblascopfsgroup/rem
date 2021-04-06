@@ -12,8 +12,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposVia'}
-				},
-				autoLoad: true
+				}
     		},
     		
     		comboTipoActivo: {
@@ -22,8 +21,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposActivo'}
-				},
-				autoLoad: true
+				}
     		},
     		
     		comboSubtipoActivo: {
@@ -32,8 +30,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
     				type: 'uxproxy',
     				remoteUrl: 'generic/getDiccionario',
     				extraParams: {diccionario: 'subtiposActivo'}
-    			},
-				autoLoad: true
+    			}
     		},
     		
     		comboTipoActivoBde: {
@@ -42,8 +39,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposActivoBde'}
-				},
-				autoLoad: true
+				}
     		},
     		
     		comboSubtipoActivoBde: {
@@ -52,8 +48,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
     				type: 'uxproxy',
     				remoteUrl: 'generic/getDiccionario',
     				extraParams: {diccionario: 'subtiposActivoBde'}
-    			},
-				autoLoad: true
+    			}
     		},
     		
     		comboEstadoActivo: {
@@ -237,7 +232,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'administracion'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboTipoUbicacion: {
@@ -246,7 +241,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'ubicacionActivo'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboEstadoConstruccion: {
@@ -255,7 +250,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'estadosConstruccion'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboEstadoConservacion: {
@@ -264,7 +259,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'estadosConservacion'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboUbicacionAparcamiento: {
@@ -273,7 +268,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'ubicacionesAparcamiento'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboTipoFachada: {
@@ -282,7 +277,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposFachada'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboTipoVivienda: {
@@ -292,8 +287,6 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposVivienda'}
 				}
-				
-				/*,autoLoad: true*/
     		},
     		
     		comboTipoOrientacion: {
@@ -302,7 +295,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposOrientacion'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboTipoRenta: {
@@ -311,7 +304,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposRenta'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboTipoCarga: {
@@ -430,8 +423,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 			        type: 'uxproxy',
 			        remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tipoAgrupacion'}
-		    	},
-		    	autoLoad: true
+		    	}
 	    	},
 			    	
     		comboTipoTrabajo: {
@@ -531,8 +523,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 			        type: 'uxproxy',
 			        remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'estadoGasto'}
-		    	},
-		    	autoLoad: true
+		    	}
 	    	},	    
     		
     		storeComboImpideVenta: {

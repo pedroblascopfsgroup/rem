@@ -21,6 +21,7 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	private Date fechaTomaPosesion;
 	private Integer ocupado;
 	private String conTitulo;
+	private String conTituloDescripcion;
 	private Integer riesgoOcupacion;
 	private Date fechaAccesoTapiado;
 	private Date fechaAccesoAntiocupa;
@@ -248,6 +249,12 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 		this.perteneceActivoREAM = perteneceActivoREAM;
 	}
 	
+	public String getConTituloDescripcion() {
+		return conTituloDescripcion;
+	}
+	public void setConTituloDescripcion(String conTituloDescripcion) {
+		this.conTituloDescripcion = conTituloDescripcion;
+	}
 
 	
 }

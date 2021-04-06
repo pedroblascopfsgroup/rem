@@ -29,7 +29,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
         	// Comprobamos si estamos editando para confirmar el cambio de pestaña
         	if (tabCurrent != null)
         	{
-            	if (tabPanel.lookupController().getViewModel().get("editing"))
+            	if (tabPanel.lookupController().getViewModel().get("editing") || tabPanel.lookupController().getViewModel().get("editingRows"))
             	{	
             		Ext.Msg.show({
             			   title: HreRem.i18n('title.descartar.cambios'),
@@ -37,12 +37,18 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
             			   buttons: Ext.MessageBox.YESNO,
             			   fn: function(buttonId) {
             			        if (buttonId == 'yes') {
-            			        	var btn = tabPanel.down('button[itemId=botoncancelar]');
-            			        	Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
-            			        	tabPanel.getLayout().setActiveItem(tabNext);
-            			        	// Si la pestaña necesita botones de edición
-									if(!tabNext.ocultarBotonesEdicion) {
-					            		tabPanel.evaluarBotonesEdicion(tabNext);
+									tabPanel.lookupController().getViewModel().set("editingFirstLevel", false);
+									tabPanel.lookupController().getViewModel().set("editing", false);
+									tabPanel.lookupController().getViewModel().set("editingRows", false);
+									tabPanel.lookupController().getViewModel().notify();
+									if(!tabPanel.lookupController().getViewModel().get("editingRows")){
+	            			        	var btn = tabPanel.down('button[itemId=botoncancelar]');
+	            			        	Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
+	            			        	tabPanel.getLayout().setActiveItem(tabNext);
+	            			        	// Si la pestaña necesita botones de edición
+										if(!tabNext.ocultarBotonesEdicion) {
+						            		tabPanel.evaluarBotonesEdicion(tabNext);
+										}
 									}
             			        }
             			   }

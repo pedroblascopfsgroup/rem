@@ -677,6 +677,10 @@
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.esBBVA(tareaExterna);
             }
+            def tipoTratamiento = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.tipoTratamiento(tareaExterna);
+            }
   			 ]]></value>
   		</list>
   	</property>

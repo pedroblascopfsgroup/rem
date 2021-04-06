@@ -28,7 +28,8 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
         	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
         	// Comprobamos si estamos editando para confirmar el cambio de pestaña
         	if (tabCurrent != null) {
-            	if (tabPanel.lookupController().getViewModel().get("editingFirstLevel") || tabPanel.lookupController().getViewModel().get("editing")) {
+            	if (tabPanel.lookupController().getViewModel().get("editingFirstLevel") || tabPanel.lookupController().getViewModel().get("editing")
+					|| tabPanel.lookupController().getViewModel().get("editingRows")) {
             		Ext.Msg.show({
             			   title: HreRem.i18n('title.descartar.cambios'),
             			   msg: HreRem.i18n('msg.desea.descartar'),
@@ -37,23 +38,28 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
             			        if (buttonId == 'yes') {
 									tabPanel.lookupController().getViewModel().set("editingFirstLevel", false);
 									tabPanel.lookupController().getViewModel().set("editing", false);
+									tabPanel.lookupController().getViewModel().set("editingRows", false);
 									tabPanel.lookupController().getViewModel().notify();
-									var btn = tabPanel.down('button[itemId=botoncancelar]');
-        			        		Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
-									tabPanel.setActiveTab(tabNext);									
-									
-						            // Si la pestaña necesita botones de edición
-
-				   					if(!tabNext.ocultarBotonesEdicion) {
-					            		tabPanel.evaluarBotonesEdicion(tabNext);
-				   					} else {
-				   						tabPanel.down("[itemId=botoneditar]").setVisible(false);
-				   					}
+									if(!tabPanel.lookupController().getViewModel().get("editingRows")){
+										var btn = tabPanel.down('button[itemId=botoncancelar]');
+	        			        		Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
+										tabPanel.setActiveTab(tabNext);									
+										
+							            // Si la pestaña necesita botones de edición
+	
+					   					if(!tabNext.ocultarBotonesEdicion) {
+						            		tabPanel.evaluarBotonesEdicion(tabNext);
+					   					} else {
+					   						tabPanel.down("[itemId=botoneditar]").setVisible(false);
+					   					}
+									}
             			        }
 								else if(!tabCurrent.ocultarBotonesEdicion) {
-				            		tabPanel.evaluarBotonesEdicion(tabCurrent);
+				            		if(!tabPanel.lookupController().getViewModel().get("editingRows"))
+										tabPanel.evaluarBotonesEdicion(tabCurrent);
 								} else {
-									tabPanel.down("[itemId=botoneditar]").setVisible(false);
+									if(!tabPanel.lookupController().getViewModel().get("editingRows"))
+										tabPanel.down("[itemId=botoneditar]").setVisible(false);
 								}
             			   }
         			});
@@ -189,5 +195,6 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'agrupacionesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_AGRUPACIONES');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'comercialactivo', ocultarBotonesEdicion: editable})}, 'TAB_ACTIVO_COMERCIAL');    			
     	me.add({xtype: 'patrimonioactivo', ocultarBotonesEdicion: true});
+    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'preciosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PRECIOS');
     }
 });

@@ -647,5 +647,25 @@ public class TareaActivoManager implements TareaActivoApi {
 	     }
 	     return false;
 	}
+	 
+	@Override
+	public void terminarTarea(TareaExterna tareaExterna, Usuario usuarioLogado) {
+		TareaActivo tareaActiva = getByIdTareaExterna(tareaExterna.getId());
+
+		tareaActiva.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+		tareaActiva.getAuditoria().setFechaBorrar(new Date());
+		tareaActiva.getAuditoria().setBorrado(true);
+		
+		tareaExterna.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+		tareaExterna.getAuditoria().setFechaBorrar(new Date());
+		tareaExterna.getAuditoria().setBorrado(true);
+		
+		tareaExterna.getTareaPadre().setFechaFin(new Date());
+		tareaExterna.getTareaPadre().setTareaFinalizada(true);
+		tareaExterna.getTareaPadre().getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+		tareaExterna.getTareaPadre().getAuditoria().setFechaBorrar(new Date());
+		tareaExterna.getTareaPadre().getAuditoria().setBorrado(true);
+		
+	}
 	
 }

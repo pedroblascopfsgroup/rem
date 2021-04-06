@@ -23,7 +23,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivoHistorico;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.recovery.api.UsuarioApi;
 
@@ -178,9 +178,9 @@ public class ActivoAgrupacionActivoManager extends BusinessOperationOverrider<Ac
 	//Devuelve verdadero si en la agrupación existe alguna Oferta activa (estado != RECHAZADA)
 	@Override
 	public Boolean existenOfertasActivasEnAgrupacion(Long idAgrupacion) {
-		List<VOfertasActivosAgrupacion> lista = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
+		List<VGridOfertasActivosAgrupacionIncAnuladas> lista = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
 		
-		for(VOfertasActivosAgrupacion oferta : lista) {
+		for(VGridOfertasActivosAgrupacionIncAnuladas oferta : lista) {
 			if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getCodigoEstadoOferta())
 					&& !DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getCodigoEstadoOferta())
 					&& !DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getCodigoEstadoOferta()))

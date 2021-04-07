@@ -146,12 +146,20 @@ public class DDCartera implements Auditable, Dictionary {
 		return isCarteraBk;
 	}
 	
-	public static boolean isCarteraSareb (DDCartera cartera) {
+	public static boolean isCarteraSareb(DDCartera cartera) {
 		boolean isCarteraSareb = false;
 		if(cartera != null && ( CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()))) {
 			isCarteraSareb = true;
 		}
 		return isCarteraSareb;
+	}
+	
+	public static boolean isCarteraCajamar(DDCartera cartera) {
+		boolean isCarteraCajamar = false;
+		if(cartera != null && ( CODIGO_CARTERA_CAJAMAR.equals(cartera.getCodigo()))) {
+			isCarteraCajamar = true;
+		}
+		return isCarteraCajamar;
 	}
 
 }

@@ -412,10 +412,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 			}
-			if(pertenceAgrupacionRestringida != null) {
-				BeanUtils.copyProperty(activoDto, "restringido", pertenceAgrupacionRestringida);
 
-			}
 			Boolean perteneceAgrupacionRestringidaVigente = false;
 			Date currentDate = new Date();
 			for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
@@ -1452,10 +1449,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				if(!Checks.esNulo(dto.getCheckGestorComercial())) {		
 					perimetroActivo.setCheckGestorComercial(dto.getCheckGestorComercial());
 					perimetroActivo.setFechaGestionComercial(new Date());			
-					if(dto.getCheckGestorComercial()) {
-						Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones()),true);
-						recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
-					}
+					Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones()),true);
+					recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
+
 				}
 								
 				if (!Checks.esNulo(dto.getMotivoGestionComercialCodigo()) && !borrarMotivoExcluirValidaciones) {

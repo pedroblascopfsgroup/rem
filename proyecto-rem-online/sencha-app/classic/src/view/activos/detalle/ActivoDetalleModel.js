@@ -1580,19 +1580,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		},
 		
 		esEditableExcluirValidaciones: function(get){
-			var restringido = this.get('activo.restringido');
-			var esActPrincipal = this.get('activo.esActivoPrincipalAgrupacionRestringida');
-			var perfiles = $AU.userHasFunction('EDITAR_EXCLUIR_VALIDACIONES');
+
+			var tieneFuncion = $AU.userHasFunction('EDITAR_EXCLUIR_VALIDACIONES');
+			var perteneceAgrupacionRestringida = get('activo.pertenceAgrupacionRestringida');
 			
-			if (restringido == false){
-				return !perfiles;
-			}else{
-				if(esActPrincipal == false){
-					return true;
-				}else{
-					return !perfiles;
-				}
-			}							
+			if (perteneceAgrupacionRestringida || !tieneFuncion){
+				return true;
+			}			
+			
+			return false;
 		},
 		esEditablePorcentajeConstruccion: function(get){
 			 var isGestorActivos = $AU.userIsRol('HAYAGESACT');

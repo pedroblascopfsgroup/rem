@@ -315,12 +315,12 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 				for (ActivoAgrupacionActivo activoAgrupacionActivo : activos) {
 					PerimetroActivo perimetroActivoAgrupacion = activoApi.getPerimetroByIdActivo(activoAgrupacionActivo.getActivo().getId());
 					if(checkGestorComercialAg != null) {
-						perimetroActivo.setCheckGestorComercial(checkGestorComercialAg);
+						perimetroActivoAgrupacion.setCheckGestorComercial(checkGestorComercialAg);
 						perimetroActivoAgrupacion.setFechaGestionComercial(fecha);
 					}
 					if(!Checks.esNulo(exclusionValidaciones)) {
-						perimetroActivo.setExcluirValidaciones(validacion);
-						perimetroActivo.setMotivoGestionComercial(motivo);
+						perimetroActivoAgrupacion.setExcluirValidaciones(validacion);
+						perimetroActivoAgrupacion.setMotivoGestionComercial(motivo);
 					}
 						
 					activoApi.saveOrUpdatePerimetroActivo(perimetroActivoAgrupacion);

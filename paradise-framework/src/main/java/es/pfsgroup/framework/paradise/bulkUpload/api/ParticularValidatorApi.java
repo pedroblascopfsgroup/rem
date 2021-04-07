@@ -1452,4 +1452,6 @@ public interface ParticularValidatorApi {
 	boolean userHasFunction(String funcion, Long idUsuario);
 
 	Boolean isActivoSareb(String numActivo);
+
+	Boolean isActivoCajamar(String numActivo);
 }

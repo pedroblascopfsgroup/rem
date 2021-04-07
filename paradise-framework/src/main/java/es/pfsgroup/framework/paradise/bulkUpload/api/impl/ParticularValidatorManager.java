@@ -177,7 +177,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			    AND tipoAgr.DD_TAG_ID = agr.DD_TAG_ID "
 				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			    AND tipoAgr.DD_TAG_CODIGO = '02' "
-				+ "				AND (agr.AGR_FECHA_BAJA is not null OR agr.AGR_FECHA_BAJA  < SYSDATE)"
+				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  < SYSDATE)"
 				+"              AND aga.AGA_PRINCIPAL = 0"
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND agr.BORRADO  = 0 "
@@ -6977,6 +6977,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+"		FROM ACT_ACTIVO ACT "
 					+"		WHERE ACT.DD_CRA_ID IN (SELECT DD_CRA_ID FROM DD_CRA_CARTERA "
 					+"								WHERE DD_CRA_CODIGO IN ('02')"
+					+"								AND BORRADO = 0) "
+					+"		AND ACT.ACT_NUM_ACTIVO = "+ numActivo +"");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isActivoCajamar(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM ACT_ACTIVO ACT "
+					+"		WHERE ACT.DD_CRA_ID IN (SELECT DD_CRA_ID FROM DD_CRA_CARTERA "
+					+"								WHERE DD_CRA_CODIGO IN ('01')"
 					+"								AND BORRADO = 0) "
 					+"		AND ACT.ACT_NUM_ACTIVO = "+ numActivo +"");
 

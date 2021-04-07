@@ -3188,11 +3188,7 @@ public class ActivoAdapter {
 			resultado = true;
 		}else{
 			if(listaIdActivo != null && !listaIdActivo.isEmpty()){
-				for(Long idActivo : listaIdActivo){
-					if(idActivo != null){
-						return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo,true);
-					}
-				}
+				return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(listaIdActivo,true);
 			}
 		}
 		return resultado;

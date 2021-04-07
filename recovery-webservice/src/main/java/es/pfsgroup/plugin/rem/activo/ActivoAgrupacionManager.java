@@ -482,7 +482,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				
 				String descripcion = null;
 				String codigoSubtipoActivo = genericDao.get(VSubdivisionesAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", subdivisionId),
-										genericDao.createFilter(FilterType.EQUALS, "agrupacionId", agrupacionId)).getCodigoSubtipoActivo();
+										genericDao.createFilter(FilterType.EQUALS, "agrupacionId", agrupacion.getId())).getCodigoSubtipoActivo();
 				DDDescripcionFotoActivo descripcionFoto = null;
 
 				if (fileItem.getMetadata().containsKey("descripcion")) {

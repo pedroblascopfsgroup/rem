@@ -162,7 +162,25 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				            	value:'{comercial.ventaSobrePlano}',
 				            	readOnly: true  //'{!esAgrupacionObraNueva}'
 				           	}
+						},{
+							xtype:'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.combo.obra.nueva.comercializacion'),					
+							reference:'activoObraNuevaComercializacion',
+					        bind: {
+				            	store: '{comboSiNoDict}',
+				            	value:'{comercial.activoObraNuevaComercializacion}',
+				            	readOnly: '{!esPerfilSuperYSupercomercial}' 
+				           	}
+						},{
+							xtype: 'datefieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.combo.obra.nueva.f.comercializacion'),
+				        	reference: 'activoObraNuevaComercializacionFecha',
+				        	readOnly:true,
+				        	 bind: {
+				        	 	value:'{comercial.activoObraNuevaComercializacionFecha}'
+				        	 }
 						}
+						
 				]
 			}, 
 			{

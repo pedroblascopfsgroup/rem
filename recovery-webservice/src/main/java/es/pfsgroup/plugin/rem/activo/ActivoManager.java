@@ -3938,7 +3938,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			dto.setCamposPropagables(TabActivoService.TAB_COMERCIAL);
 		}
 		dto.setTramitable(this.isTramitable(activo));
-
+		
+		if(activo!=null) {
+			if(activo.getTieneObraNuevaAEfectosComercializacion()!=null) {
+				dto.setActivoObraNuevaComercializacion(activo.getTieneObraNuevaAEfectosComercializacion().getCodigo());
+			}
+			if(activo.getObraNuevaAEfectosComercializacionFecha()!=null) {
+				dto.setActivoObraNuevaComercializacionFecha(activo.getObraNuevaAEfectosComercializacionFecha());
+			}
+		}
 		return dto;
 	}
 
@@ -3950,6 +3958,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		Activo activo = activoDao.get(Long.parseLong(dto.getId()));
+		boolean actualizarHonorarios = false;
 
 		try {
 			beanUtilNotNull.copyProperty(activo, "fechaVentaExterna", dto.getFechaVenta());
@@ -3973,7 +3982,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 				List<ActivoOferta> listaActivoOfertas = activo.getOfertas();
 				if (listaActivoOfertas != null && listaActivoOfertas.size() > 0) {
-					DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
+							DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 							.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA);
 
 					for (ActivoOferta actOfr : listaActivoOfertas) {
@@ -3981,6 +3990,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						if (oferta.getEstadoOferta() != null
 								&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
 							oferta.setEstadoOferta(estadoOferta);
+							
 							Auditoria auditoriaOferta = oferta.getAuditoria();
 							if (auditoriaOferta != null) {
 								auditoriaOferta.setFechaModificar(new Date());
@@ -4002,7 +4012,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					guardadoAsincrono.start();
 				}
 			}
-
+			if(dto.getActivoObraNuevaComercializacion()!=null ) {
+				DDSinSiNo siono = (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, dto.getActivoObraNuevaComercializacion());
+				if(siono!=null) {
+					activo.setTieneObraNuevaAEfectosComercializacion(siono);
+					actualizarHonorarios = true;					
+				}
+				activo.setObraNuevaAEfectosComercializacionFecha(new Date());
+				
+			}
+			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
 			return false;
@@ -4019,6 +4038,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		activo.setEstaEnPuja(dto.getPuja());
 		activoDao.save(activo);
 
+		if (actualizarHonorarios) {
+			
+			updateHonorarios(activo, activo.getOfertas());
+		}
+		
 		return true;
 	}
 
@@ -8969,4 +8993,45 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return false;
 	}
+
+	@Override
+	public void updateHonorarios(Activo activo, List<ActivoOferta> listaActivoOfertas) {
+
+		try {
+
+			if (listaActivoOfertas != null && listaActivoOfertas.size() > 0) {
+
+				for (ActivoOferta activoOferta : listaActivoOfertas) {
+
+					Oferta oferta = activoOferta.getPrimaryKey().getOferta();
+
+					if (oferta != null && oferta.getEstadoOferta() != null
+							&& DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+
+						ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class,
+								genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+
+						if (expediente != null && expediente.getEstado() != null
+								&& !DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())) {
+
+							 //ofertaApi.calculaHonorario(oferta, activo);
+							 
+							 expedienteComercialApi.actualizarGastosExpediente(expediente,oferta,activo);
+							 
+						}
+					}
+
+				}
+
+			}
+
+		} catch (Exception e) {
+			logger.error("Error en updateHonorarios", e);
+		}
+
+	}
+
+
+	
 }
+

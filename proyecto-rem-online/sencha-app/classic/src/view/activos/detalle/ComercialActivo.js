@@ -228,6 +228,17 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        		readOnly: true,
 				        		editable: false
 							}						
+						},{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.segmentacion.sareb'),
+							reference: 'segmentacionSarebRef',
+							bind : {
+				        		value: '{comercial.segmentacionSareb}',
+				        		store: '{comboSegmetacionSareb}',
+				        		hidden: '{!isCarteraSareb}',
+				        		readOnly: true,
+				        		editable: false
+							}						
 						}
 				]
 			}, 

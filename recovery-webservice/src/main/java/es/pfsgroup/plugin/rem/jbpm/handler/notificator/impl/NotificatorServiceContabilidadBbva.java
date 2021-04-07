@@ -72,7 +72,7 @@ public class NotificatorServiceContabilidadBbva extends AbstractNotificatorServi
 			mailsCC.add(this.getCorreoFrom());
 			
 			
-			genericAdapter.sendMail(mailsPara, mailsCC, titulo, generateBodyMailVenta(dtoEmailReserva), adjuntos, mailsBCC);
+			genericAdapter.sendMailCopiaOculta(mailsPara, mailsCC, titulo, generateBodyMailVenta(dtoEmailReserva), adjuntos, mailsBCC);
 		}
 	
 	public DtoEmailReserva rellenarDtoEmailReserva(ExpedienteComercial expediente, boolean contratoReserva) {

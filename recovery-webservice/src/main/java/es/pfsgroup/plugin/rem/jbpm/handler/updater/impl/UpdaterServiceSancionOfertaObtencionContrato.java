@@ -16,6 +16,7 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -247,7 +248,11 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				}
 				if (expediente.getOferta() != null &&
 						DDCartera.CODIGO_CARTERA_BBVA.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
-					notificatorServiceContabilidadBbva.notificatorFinTareaConValores(expediente,true);
+					try {
+						notificatorServiceContabilidadBbva.notificatorFinTareaConValores(expediente,true);
+					} catch (GestorDocumentalException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}

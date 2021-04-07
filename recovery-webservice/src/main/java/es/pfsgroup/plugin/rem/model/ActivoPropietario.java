@@ -25,6 +25,7 @@ import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTSPTipoCorreo;
 
 /**
  * Modelo que gestiona los propietarios de los activos
@@ -133,7 +134,9 @@ public class ActivoPropietario implements Serializable, Auditable {
      @JoinColumn(name = "DD_CRA_ID")
 	 private DDCartera cartera;
 	 
-	 
+	 @ManyToOne
+     @JoinColumn(name = "DD_TSP_ID")
+	 private DDTSPTipoCorreo dDTSPTipoCorreo ;
 	 
 	 @Version   
 	 private Long version;
@@ -380,5 +383,15 @@ public class ActivoPropietario implements Serializable, Auditable {
 		this.cartera = cartera;
 	}
 
+	public DDTSPTipoCorreo getdDTSPTipoCorreo() {
+		return dDTSPTipoCorreo;
+	}
+
+	public void setdDTSPTipoCorreo(DDTSPTipoCorreo dDTSPTipoCorreo) {
+		this.dDTSPTipoCorreo = dDTSPTipoCorreo;
+	}
+
+	
+	
 }
 

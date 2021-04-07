@@ -191,7 +191,7 @@ public class GenericAdapter {
 	}
 	
 	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo,
-			List<DtoAdjuntoMail> adjuntos, List<String> mailsBCC) {
+			List<DtoAdjuntoMail> adjuntos) {
 		String usuarioLogado = RestApi.REST_LOGGED_USER_USERNAME;
 		if(this.getUsuarioLogado() != null){
 			try{
@@ -201,7 +201,7 @@ public class GenericAdapter {
 			}
 		}
 		Thread hiloCorreo = new Thread(
-				new EnvioCorreoAsync(mailsPara, mailsCC, asunto, cuerpo, adjuntos, usuarioLogado,mailsBCC));
+				new EnvioCorreoAsync(mailsPara, mailsCC, asunto, cuerpo, adjuntos, usuarioLogado));
 
 		hiloCorreo.start();
 	}
@@ -215,8 +215,8 @@ public class GenericAdapter {
 	 *            Manda un correo electrónico sin adjunto al listado de emails
 	 *            indicado en mailsPara y mailsCC
 	 */
-	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<String> mailsBCC) {
-		this.sendMail(mailsPara, mailsCC, asunto, cuerpo, null,mailsBCC);
+	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo) {
+		this.sendMail(mailsPara, mailsCC, asunto, cuerpo, null);
 	}
 
 	/**
@@ -615,5 +615,25 @@ public class GenericAdapter {
 	  Filter f2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 	  return genericDao.get(clase, f1, f2);
 	 }
+	 
+	 public void sendMailCopiaOculta(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo,List<String> mailsBCC) {
+			this.sendMailCopiaOculta(mailsPara, mailsCC, asunto, cuerpo, null,mailsBCC);
+		}
+	 
+	 public void sendMailCopiaOculta(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo,
+				List<DtoAdjuntoMail> adjuntos, List<String> mailsBCC) {
+			String usuarioLogado = RestApi.REST_LOGGED_USER_USERNAME;
+			if(this.getUsuarioLogado() != null){
+				try{
+					usuarioLogado = this.getUsuarioLogado().getUsername();
+				}catch(Exception e){
+					logger.info("No se puede obtner usuariologado, usamos rest",e);
+				}
+			}
+			Thread hiloCorreo = new Thread(
+					new EnvioCorreoAsync(mailsPara, mailsCC, asunto, cuerpo, adjuntos, usuarioLogado,mailsBCC));
+
+			hiloCorreo.start();
+		}
 
 }

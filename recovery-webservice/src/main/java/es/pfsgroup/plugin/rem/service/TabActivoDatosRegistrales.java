@@ -510,10 +510,13 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		
 		if (activo.getBien() != null && activo.getBien().getAdjudicacion() != null && activo.getBien().getAdjudicacion().getFechaRealizacionPosesion() != null) {
 			activoDto.setFechaPosesionNoJudicial(activo.getBien().getAdjudicacion().getFechaRealizacionPosesion());
-			activoDto.setSociedadPagoAnterior(activoBbva.getSociedadPagoAnterior() != null ? 
-					activoBbva.getSociedadPagoAnterior().getDocIdentificativo() : null);
-			activoDto.setSociedadPagoAnteriorDescripcion(activoBbva.getSociedadPagoAnterior() != null ? 
-					activoBbva.getSociedadPagoAnterior().getFullName() : null);
+			if (activoBbva != null && activoBbva.getSociedadPagoAnterior() != null) {
+				activoDto.setSociedadPagoAnterior(activoBbva.getSociedadPagoAnterior() != null ? 
+						activoBbva.getSociedadPagoAnterior().getDocIdentificativo() : null);
+				activoDto.setSociedadPagoAnteriorDescripcion(activoBbva.getSociedadPagoAnterior() != null ? 
+						activoBbva.getSociedadPagoAnterior().getFullName() : null);
+			}
+			
 		}
 		
 		return activoDto;

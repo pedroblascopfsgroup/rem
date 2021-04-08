@@ -2141,7 +2141,7 @@ public class Activo implements Serializable, Auditable {
 	public void setPorcentajeConstruccion(Double porcentajeConstruccion) {
 		this.porcentajeConstruccion = porcentajeConstruccion;
 	}
-	
+
 	public void setTipoTituloBbva(DDTipoTituloActivo tipoTituloBbva) {
 		this.tipoTituloBbva = tipoTituloBbva;
 	}

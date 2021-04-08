@@ -63,6 +63,7 @@ public class DDTipoProveedor implements Auditable, Dictionary {
 	public static final List<String> CODIGOS_OFICINAS = new ArrayList<String>(Arrays.asList(COD_OFICINA_BANKIA, COD_OFICINA_CAJAMAR, COD_OFICINA_LIBERBANK));
 
 
+
 	@Id
 	@Column(name = "DD_TPR_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoProveedorGenerator")

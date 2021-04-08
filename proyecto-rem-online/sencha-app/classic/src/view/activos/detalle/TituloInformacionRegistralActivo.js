@@ -35,7 +35,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				items :
 					[
 						{
-							xtype: 'comboboxfieldbase',
+							xtype: 'comboboxfieldbasedd',
 							fieldLabel: HreRem.i18n('fieldlabel.provincia.registro'),
 							reference: 'provinciaRegistro',
 							chainedStore: 'comboMunicipioRegistro',
@@ -43,8 +43,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			            	bind: {
 			            		store: '{comboProvincia}',
 			            	    value: '{datosRegistrales.provinciaRegistro}',
-			            	    readOnly: '{datosRegistrales.unidadAlquilable}'//,
-								//rawValue: '{datosRegistrales.provinciaRegistroDescripcion}'
+			            	    readOnly: '{datosRegistrales.unidadAlquilable}',
+								rawValue: '{datosRegistrales.provinciaRegistroDescripcion}'
 			            	},
     						listeners: {
 								select: 'onChangeChainedCombo'
@@ -72,7 +72,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			            	}
 				        }, 
 						{
-							xtype: 'comboboxfieldbase',
+							xtype: 'comboboxfieldbasedd',
 							fieldLabel: HreRem.i18n('fieldlabel.poblacion.registro'),
 							//selectFirst: true,
 			            	reference:	'poblacionRegistro',
@@ -80,8 +80,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			            		store: '{comboMunicipioRegistro}',
 			            		value: '{datosRegistrales.poblacionRegistro}',
 			            		disabled: '{!datosRegistrales.provinciaRegistro}',
-			            		readOnly: '{datosRegistrales.unidadAlquilable}'//,
-								//rawValue: '{datosRegistrales.poblacionRegistroDescripcion}'
+			            		readOnly: '{datosRegistrales.unidadAlquilable}',
+								rawValue: '{datosRegistrales.poblacionRegistroDescripcion}'
 			            	}
                       },
 		                { 
@@ -812,7 +812,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								}
 			                },
 			                {
-								xtype: 'comboboxfieldbase',
+								xtype: 'comboboxfieldbasedd',
 								name: 'comboJuzgado',
 								reference: 'comboJuzgado',
 			                	fieldLabel: HreRem.i18n('fieldlabel.tipo.juzgado'),
@@ -821,20 +821,20 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				            	bind: {
 				            		store: '{comboTiposJuzgadoPlaza}',
 				            		value: '{datosRegistrales.tipoJuzgadoCodigo}',
-				            		readOnly: '{datosRegistrales.unidadAlquilable}'//,
-									//rawValue: '{datosRegistrales.tipoJuzgadoDescripcion}'
+				            		readOnly: '{datosRegistrales.unidadAlquilable}',
+									rawValue: '{datosRegistrales.tipoJuzgadoDescripcion}'
 				            	}
 							},
 			                {
-								xtype: 'comboboxfieldbase',
+								xtype: 'comboboxfieldbasedd',
 								name: 'comboPlaza',
 								reference: 'comboPlaza',
 			                	fieldLabel: HreRem.i18n('fieldlabel.poblacion.juzgado'),
 				            	bind: {
 				            		store: '{comboTiposPlaza}',
 				            		value: '{datosRegistrales.tipoPlazaCodigo}',
-				            		readOnly: '{datosRegistrales.unidadAlquilable}'//,
-									//rawValue: '{datosRegistrales.tipoPlazaDescripcion}'
+				            		readOnly: '{datosRegistrales.unidadAlquilable}',
+									rawValue: '{datosRegistrales.tipoPlazaDescripcion}'
 				            	},
 								chainedStore: 'comboTiposJuzgadoPlaza',
 								chainedReference: 'comboJuzgado',

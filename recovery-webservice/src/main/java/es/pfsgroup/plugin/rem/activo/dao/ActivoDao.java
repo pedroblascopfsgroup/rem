@@ -39,8 +39,8 @@ import es.pfsgroup.plugin.rem.model.HistoricoRequisitosFaseVenta;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 
 public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
@@ -116,7 +116,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
 	void actualizarRatingActivo(Long idActivo, String username);
 
-	List<VOfertasActivosAgrupacion> getListOfertasActivo(Long idActivo);
+	List<VGridOfertasActivosAgrupacionIncAnuladas> getListOfertasActivo(Long idActivo);
 
 	/**
 	 * Realiza una llamada al procedure CALCULO_SINGULAR_RETAIL_AUTO, el cual calcula el tipo comercializar que 
@@ -205,7 +205,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 */
 	void crearHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
 
-	List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo);
+	List<VGridOfertasActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo);
 
 	List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivo(Long idActivo);
 
@@ -364,6 +364,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public List<ActivoSuministros> getSuministrosByIdActivo(Long idActivo);
 
 	void actualizaDatoCDC(CalidadDatosConfig cdc, String valor, String identificador, String username);
+	
+	public String getUltimaFasePublicacion(Long id);
 
 	Long getComunidadAutonomaId(Activo activo);
 	

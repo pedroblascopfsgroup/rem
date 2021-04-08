@@ -2348,20 +2348,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public DtoPage getActivosExpedienteVista(Long idExpediente) {
-		List<VListadoActivosExpediente> listadoActivos;
-		List<VListadoActivosExpedienteBBVA> listadoActivosBbva;
-		
+		List<VListadoActivosExpedienteGrid> listadoActivosGrid;
+		List<VListadoActivosExpedienteBbvaGrid> listadoActivosBbvaGrid;
+		DtoPage dtoListActivosExpediente = null;
 		if (DDCartera.CODIGO_CARTERA_BBVA.equals(getCodigoCarteraExpediente(idExpediente))) {
-			listadoActivosBbva = genericDao.getList(VListadoActivosExpedienteBBVA.class,
+			listadoActivosBbvaGrid = genericDao.getList(VListadoActivosExpedienteBbvaGrid.class,
 					genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
 			
-			return new DtoPage(listadoActivosBbva, listadoActivosBbva.size());
+			dtoListActivosExpediente = new DtoPage(listadoActivosBbvaGrid, listadoActivosBbvaGrid.size());
 		} else {
-			listadoActivos = genericDao.getList(VListadoActivosExpediente.class,
+			listadoActivosGrid = genericDao.getList(VListadoActivosExpedienteGrid.class,
 				genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
+			dtoListActivosExpediente = new DtoPage(listadoActivosGrid, listadoActivosGrid.size()); 
 		}
-			
-		return new DtoPage(listadoActivos, listadoActivos.size());
+		return dtoListActivosExpediente;	 
 	}
 	
 	@Override
@@ -5023,6 +5023,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 											DDEstadosReserva.class, DDEstadosReserva.CODIGO_RESUELTA_DEVUELTA));
 							expedienteComercial.getOferta().setEstadoOferta((DDEstadoOferta) utilDiccionarioApi
 									.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA));
+//							HREOS-13592 Se bloquea el evolutivo de ocultación de activos para la subida 							
+//							for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
+//								if (activoOferta != null && activoOferta.getPrimaryKey() != null 
+//										&& activoOferta.getPrimaryKey().getActivo() != null) {
+//									activoApi.devolucionFasePublicacionAnterior(activoOferta.getPrimaryKey().getActivo());
+//								}								
+//							}
 						}
 						// Descongelamos el resto de ofertas del activo.
 						ofertaApi.descongelarOfertas(expedienteComercial);
@@ -11709,6 +11716,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		bulkOfertaDao.update(blkOfr);
 		
 		return true;
+	}
+	
+	@Override
+	public String tipoTratamiento(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		
+		return expedienteComercial.getEstado().getCodigo();
 	}
 	
 }

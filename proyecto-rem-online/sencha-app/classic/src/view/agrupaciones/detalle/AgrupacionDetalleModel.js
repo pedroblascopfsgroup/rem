@@ -682,6 +682,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		 		return get('agrupacionficha.estadoAlquilerDescripcion');
 		 	}
 		 },
+		 getValueNumAgrupacion: function(get){
+			 if(get('esAgrupacionObraNueva') && get('agrupacionficha.numeroPublicados')>0){			 		
+			 		return '<a href="' + HreRem.i18n('fieldlabel.link.web.haya.on') + get('agrupacionficha.numAgrupRem')+
+			 		'?utm_source=rem&utm_medium=aplicacion&utm_campaign=agrupacion " target="_blank">' + get('agrupacionficha.numAgrupRem') + '</a>'
+			 	}else {
+			 		return get('agrupacionficha.numAgrupRem');
+			 	}
+		 },
 		 comercializableConstruccionPlano: function(get){
 			 return "true"===get('agrupacionficha.comercializableConsPlano');
 		 },
@@ -846,10 +854,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			 model: 'HreRem.model.OfertasAgrupacion',
 			 sorters: [
 			 			{
-			        		property: 'estadoOferta',
-			        		direction: 'ASC'	
-			 			},
-			 			{
 			        		property: 'fechaCreacion',
 			        		direction: 'DESC'	
 			 			}
@@ -1001,8 +1005,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoPersona'}
-			},
-			autoLoad: true
+			}
 	    },
 	    comboEstadoCivil: {
 			model: 'HreRem.model.ComboBase',

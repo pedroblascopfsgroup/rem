@@ -1032,6 +1032,9 @@ Ext.define('HreRem.model.Activo', {
 	 			name: 'esEditableActivoEstadoRegistral',
     			type: 'boolean'	 			
 			},
+			{
+				name:'estadoFisicoActivoDND'
+			},
     		{
 				name: 'empresa'
     		},
@@ -1120,8 +1123,12 @@ Ext.define('HreRem.model.Activo', {
 
 			},
 			{
-	 			name: 'restringido',
-	 			type: 'boolean'
+	 			name: 'porcentajeConstruccion',
+	 			type: 'float'
+			},
+			{
+				name: 'isEditablePorcentajeConstruccion',
+				type: 'boolean'
 			},
     		{
     			name: 'codPromocionBbva'

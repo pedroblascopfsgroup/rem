@@ -121,6 +121,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionDq;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
 import es.pfsgroup.plugin.rem.model.DtoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
@@ -3676,19 +3677,19 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveFasePublicacionActivo(DtoFasePublicacionActivo dto, ModelMap model) {
+	public ModelAndView saveFasePublicacionActivo(DtoFasePublicacionActivo dto, @RequestParam Long id, ModelMap model) {
 		try {
-			model.put(RESPONSE_SUCCESS_KEY, activoEstadoPublicacionApi.saveFasePublicacionActivo(dto));
+			dto.setIdActivo(id);
+			model.put(RESPONSE_DATA_KEY, activoEstadoPublicacionApi.saveFasePublicacionActivo(dto));
+			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (JsonViewerException jvex) {
-			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
-			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("success", false);
+			model.put("msgError", jvex.getMessage());
 		} catch (Exception e) {
-			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			logger.error("Error al guardar la fase de publicacion del activo", e);
 		} 
 		
 		return createModelAndViewJson(model);
@@ -3772,6 +3773,14 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCalidadDatoPublicacionActivo(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, activoEstadoPublicacionApi.getCalidadDatoPublicacionActivo(id));
+		model.put(RESPONSE_SUCCESS_KEY, true);
+		
+		return createModelAndViewJson(model);
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getReqFaseVenta(ModelMap model, Long id) {
 		
 		try {
@@ -3849,6 +3858,22 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveDatoRemCalidadDatoPublicacion(DtoDatosPublicacionDq dtoDq, ModelMap model) {
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, activoEstadoPublicacionApi.saveDatoRemCalidadDatoPublicacion(dtoDq.getActivosSeleccionados(), dtoDq.getDqFase4Descripcion(), dtoDq.isSoyRestringidaQuieroActualizar()));
+		} catch (JsonViewerException jvex) {
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		} catch (Exception e) {
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error al guardar Dato dQ", e);
+		} 
+		
+		return createModelAndViewJson(model);
+	}
+
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createSuministroActivo(DtoActivoSuministros dtoActivoSuministros,  ModelMap model) { 
 		
@@ -3949,7 +3974,7 @@ public class ActivoController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboTipoSegmento(String codSubcartera, WebDto webDto, ModelMap model) {
 		
 		model.put(RESPONSE_DATA_KEY, activoApi.getComboTipoSegmento(codSubcartera));
@@ -4204,6 +4229,20 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCalidadDelDatoFiltered(String id, ModelMap model) {
+		if (id != null) {
+			Long activoId = Long.parseLong(id);
+			try {
+				model.put(RESPONSE_DATA_KEY, activoEstadoPublicacionApi.getCalidadDatoPublicacionActivoGrid(activoId));
+				model.put(RESPONSE_SUCCESS_KEY, true);
+			} catch (Exception e) {
+				logger.error("error en activoController", e);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			}
+		}		
+		return createModelAndViewJson(model);	
+	}		
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getCheckGestionActivo(Long idActivo, ModelMap model){

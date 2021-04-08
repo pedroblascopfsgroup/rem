@@ -44,6 +44,9 @@ Ext.define('HreRem.view.agenda.AgendaSearch', {
 			    items: [
 	    
 		            {
+						defaults: {
+				    		addUxReadOnlyEditFieldPlugin: false
+				    	},
 		            	  items: [
 //		  						{ 
 //		  			            	fieldLabel: HreRem.i18n('fieldlabel.tarea'),
@@ -51,30 +54,30 @@ Ext.define('HreRem.view.agenda.AgendaSearch', {
 //		  				        }
 //		  						,
 		  				        { 
-						        	xtype: 'combo',
+						        	xtype: 'comboboxfieldbasedd',
 						        	name: 'descripcionTarea',
 						        	fieldLabel: 'Tipo trámite',
-									reference: 'tipoTramite',
+									reference: 'tipoTramiteRef',
 						        	bind: {
 					            		store: '{comboTipoTramite}'
 					            	},
 					            	displayField: 'descripcion',
 		    						valueField: 'codigo',
-		    						reference: 'descripcionTarea',
 		    						chainedStore: 'comboNombreTarea',
-		    						chainedReference: 'nombreTarea',
+		    						chainedReference: 'nombreTareaRef',
 		    						listeners: {
 		    							select : 'onChangeChainedCombo'
-		    						}         	
+		    						},
+									publishes: 'value'      	
 						        },
 						        {
-						        	xtype: 'combo',
+						        	xtype: 'comboboxfieldbasedd',
 						        	fieldLabel: HreRem.i18n('fieldlabel.tarea'),
-						        	reference: 'nombreTarea',
+						        	reference: 'nombreTareaRef',
 						        	name: 'nombreTarea',
 						        	bind: {
 					            		store: '{comboNombreTarea}',
-					            		disabled: '{!tipoTramite.selection}'
+					            		disabled: '{!tipoTramiteRef.selection}'
 					            	},
 					            	displayField: 'descripcion',
 		    						valueField: 'codigo',

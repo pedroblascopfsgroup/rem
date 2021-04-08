@@ -52,7 +52,6 @@ import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -77,8 +76,8 @@ import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.VPlusvalia;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
@@ -1077,9 +1076,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VOfertasActivosAgrupacion> getListOfertasActivo(Long idActivo) {
+	public List<VGridOfertasActivosAgrupacionIncAnuladas> getListOfertasActivo(Long idActivo) {
 
-		String hql = " from VOfertasActivosAgrupacion voa ";
+		String hql = " from VGridOfertasActivosAgrupacionIncAnuladas voa ";
 		String listaIdsOfertas = "";
 
 		HQLBuilder hb = new HQLBuilder(hql);
@@ -1099,16 +1098,16 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			hb.appendWhere(" voa.idOferta in (" + listaIdsOfertas + ") ");
 		}
 
-		return (List<VOfertasActivosAgrupacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString())
+		return (List<VGridOfertasActivosAgrupacionIncAnuladas>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString())
 				.list();
 
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo) {
+	public List<VGridOfertasActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo) {
 
-		String hql = " from VOfertasTramitadasPendientesActivosAgrupacion voa2 ";
+		String hql = " from VGridOfertasActivosAgrupacion voa2 ";
 		String listaIdsOfertas = "";
 
 		HQLBuilder hb = new HQLBuilder(hql);
@@ -1128,7 +1127,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			hb.appendWhere(" voa2.idOferta in (" + listaIdsOfertas + ") ");
 		}
 
-		return (List<VOfertasTramitadasPendientesActivosAgrupacion>) this.getSessionFactory().getCurrentSession()
+		return (List<VGridOfertasActivosAgrupacion>) this.getSessionFactory().getCurrentSession()
 				.createQuery(hb.toString()).list();
 
 	}
@@ -2134,6 +2133,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
+	public String getUltimaFasePublicacion(Long id) {
+		
+		String maxId = rawDao.getExecuteSQL("select max(hfp_id) from ACT_HFP_HIST_FASES_PUB where act_id = "+ id + " and hfp_fecha_fin is not null and borrado = 0");
+		return maxId;
+	}
+	
 	public Long getNextBbvaNumActivo() {
 		String sql = "SELECT S_BBVA_NUM_ACTIVO.NEXTVAL FROM DUAL ";
 		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())

@@ -13,18 +13,26 @@ public class DtoActivoSuministros extends DtoTabActivo {
 
 	private String idSuministro;
 	private Long idActivo;
-	private Long tipoSuministro; 
-	private Long subtipoSuministro; 
-	private Long companiaSuministro; 
-	private Long domiciliado;
+	private String tipoSuministro;
+	private String tipoSuministroDescripcion;
+	private String subtipoSuministro; 
+	private String subtipoSuministroDescripcion; 
+	private String companiaSuministro; 
+	private String companiaSuministroDescripcion; 
+	private String domiciliado;
+	private String domiciliadoDescripcion;
 	private String numContrato;
 	private String numCups;
-	private Long periodicidad;
+	private String periodicidad;
+	private String periodicidadDescripcion;
 	private Date fechaAlta;
-	private Long motivoAlta;
-	private String fechaBaja;
-	private Long motivoBaja;
-	private Long validado;
+	private String motivoAlta;
+	private String motivoAltaDescripcion;
+	private Date fechaBaja;
+	private String motivoBaja;
+	private String motivoBajaDescripcion;
+	private String validado;
+	private String validadoDescripcion;
 	
 	public String getIdSuministro() {
 		return idSuministro;
@@ -38,28 +46,28 @@ public class DtoActivoSuministros extends DtoTabActivo {
 	public void setIdActivo(Long idActivo) {
 		this.idActivo = idActivo;
 	}
-	public Long getTipoSuministro() {
+	public String getTipoSuministro() {
 		return tipoSuministro;
 	}
-	public void setTipoSuministro(Long tipoSuministro) {
+	public void setTipoSuministro(String tipoSuministro) {
 		this.tipoSuministro = tipoSuministro;
 	}
-	public Long getSubtipoSuministro() {
+	public String getSubtipoSuministro() {
 		return subtipoSuministro;
 	}
-	public void setSubtipoSuministro(Long subtipoSuministro) {
+	public void setSubtipoSuministro(String subtipoSuministro) {
 		this.subtipoSuministro = subtipoSuministro;
 	}
-	public Long getCompaniaSuministro() {
+	public String getCompaniaSuministro() {
 		return companiaSuministro;
 	}
-	public void setCompaniaSuministro(Long companiaSuministro) {
+	public void setCompaniaSuministro(String companiaSuministro) {
 		this.companiaSuministro = companiaSuministro;
 	}
-	public Long getDomiciliado() {
+	public String getDomiciliado() {
 		return domiciliado;
 	}
-	public void setDomiciliado(Long domiciliado) {
+	public void setDomiciliado(String domiciliado) {
 		this.domiciliado = domiciliado;
 	}
 	public String getNumContrato() {
@@ -74,10 +82,10 @@ public class DtoActivoSuministros extends DtoTabActivo {
 	public void setNumCups(String numCups) {
 		this.numCups = numCups;
 	}
-	public Long getPeriodicidad() {
+	public String getPeriodicidad() {
 		return periodicidad;
 	}
-	public void setPeriodicidad(Long periodicidad) {
+	public void setPeriodicidad(String periodicidad) {
 		this.periodicidad = periodicidad;
 	}
 	public Date getFechaAlta() {
@@ -86,29 +94,77 @@ public class DtoActivoSuministros extends DtoTabActivo {
 	public void setFechaAlta(Date fechaAlta) {
 		this.fechaAlta = fechaAlta;
 	}
-	public Long getMotivoAlta() {
+	public String getMotivoAlta() {
 		return motivoAlta;
 	}
-	public void setMotivoAlta(Long motivoAlta) {
+	public void setMotivoAlta(String motivoAlta) {
 		this.motivoAlta = motivoAlta;
 	}
-	public String getFechaBaja() {
+	public Date getFechaBaja() {
 		return fechaBaja;
 	}
-	public void setFechaBaja(String fechaBaja) {
+	public void setFechaBaja(Date fechaBaja) {
 		this.fechaBaja = fechaBaja;
 	}
-	public Long getMotivoBaja() {
+	public String getMotivoBaja() {
 		return motivoBaja;
 	}
-	public void setMotivoBaja(Long motivoBaja) {
+	public void setMotivoBaja(String motivoBaja) {
 		this.motivoBaja = motivoBaja;
 	}
-	public Long getValidado() {
+	public String getValidado() {
 		return validado;
 	}
-	public void setValidado(Long validado) {
+	public void setValidado(String validado) {
 		this.validado = validado;
+	}
+	public String getTipoSuministroDescripcion() {
+		return tipoSuministroDescripcion;
+	}
+	public void setTipoSuministroDescripcion(String tipoSuministroDescripcion) {
+		this.tipoSuministroDescripcion = tipoSuministroDescripcion;
+	}
+	public String getSubtipoSuministroDescripcion() {
+		return subtipoSuministroDescripcion;
+	}
+	public void setSubtipoSuministroDescripcion(String subtipoSuministroDescripcion) {
+		this.subtipoSuministroDescripcion = subtipoSuministroDescripcion;
+	}
+	public String getCompaniaSuministroDescripcion() {
+		return companiaSuministroDescripcion;
+	}
+	public void setCompaniaSuministroDescripcion(String companiaSuministroDescripcion) {
+		this.companiaSuministroDescripcion = companiaSuministroDescripcion;
+	}
+	public String getDomiciliadoDescripcion() {
+		return domiciliadoDescripcion;
+	}
+	public void setDomiciliadoDescripcion(String domiciliadoDescripcion) {
+		this.domiciliadoDescripcion = domiciliadoDescripcion;
+	}
+	public String getPeriodicidadDescripcion() {
+		return periodicidadDescripcion;
+	}
+	public void setPeriodicidadDescripcion(String periodicidadDescripcion) {
+		this.periodicidadDescripcion = periodicidadDescripcion;
+	}
+	public String getMotivoAltaDescripcion() {
+		return motivoAltaDescripcion;
+	}
+	public void setMotivoAltaDescripcion(String motivoAltaDescripcion) {
+		this.motivoAltaDescripcion = motivoAltaDescripcion;
+	}
+	public String getMotivoBajaDescripcion() {
+		return motivoBajaDescripcion;
+	}
+	public void setMotivoBajaDescripcion(String motivoBajaDescripcion) {
+		this.motivoBajaDescripcion = motivoBajaDescripcion;
+	}
+	public String getValidadoDescripcion() {
+		return validadoDescripcion;
+	}
+	public void setValidadoDescripcion(String validadoDescripcion) {
+		this.validadoDescripcion = validadoDescripcion;
 	}
 	
 }

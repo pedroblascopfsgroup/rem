@@ -52,6 +52,7 @@ public class VisibilidadGestionComercialValidator {
 	public static final String VALID_ACTIVO_GESTION = "Activo cuyo estado de publicación no permite la edición de Visibilidad Gestion Comercial";
 	public static final String VALID_MOTIVO_EXCLUIDO= "Activo con Agrupación restringida no puede tener Motivo de excluido ";
 	public static final String VALID_SUBFASE_PUBLICACION= "La subfase de publicación del activo no permite la modificación del check Visibilidad Gestion Comercial ";
+	public static final String VALID_DESMARCAR_SIN_ERRORES= "Se cumplen todas las condiciones para que estén marcados.";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -62,13 +63,12 @@ public class VisibilidadGestionComercialValidator {
 	@Autowired
 	private ActivoPublicacionDao activoPublicacionDao;
 
-	public Map<Long, List<String>> validarPerimetroActivo(Activo activo, Boolean dtoCheckGestorComercial,
-			Boolean dtoExcluirValidaciones) {
-		return getErrores(new Activo[] { activo }, dtoCheckGestorComercial, dtoExcluirValidaciones, null);
+	public Map<Long, List<String>> validarPerimetroActivo(Activo activo, Boolean dtoCheckGestorComercial, Boolean dtoExcluirValidaciones,boolean fichaActivo) {
+		return getErrores(new Activo[] { activo }, dtoCheckGestorComercial, dtoExcluirValidaciones, null, fichaActivo);
 	}
 
 	public Map<Long, List<String>> validarPerimetroActivos(Activo[] activos, DDEstadosExpedienteComercial nuevoEstadoExpediente) {
-		return getErrores(activos, null, false, nuevoEstadoExpediente);
+		return getErrores(activos, null, false, nuevoEstadoExpediente, false);
 	}
 	
 	public Map<Long, List<String>> validarPerimetroActivosOferta(Oferta oferta) {
@@ -78,11 +78,10 @@ public class VisibilidadGestionComercialValidator {
 		for (int i = 0; i< activosOferta.size(); i++) {
 			activos[i] = activosOferta.get(i).getPrimaryKey().getActivo();
 		}
-		return getErrores(activos, null, null, null);
+		return getErrores(activos, null, null, null, false);
 	}
 
-	private Map<Long, List<String>> getErrores(Activo[] activos, Boolean dtoCheckGestorComercial,
-			Boolean dtoExcluirValidaciones, DDEstadosExpedienteComercial nuevoEstadoExpediente) {
+	private Map<Long, List<String>> getErrores(Activo[] activos, Boolean dtoCheckGestorComercial, Boolean dtoExcluirValidaciones, DDEstadosExpedienteComercial nuevoEstadoExpediente, boolean ficha) {
 
 		Map<Long, List<String>> mapaErrores = new HashMap<Long, List<String>>();
 
@@ -103,168 +102,112 @@ public class VisibilidadGestionComercialValidator {
 					: perimetroActivo.getCheckGestorComercial() != null && perimetroActivo.getCheckGestorComercial() == true; // Comparo con True para tomar null como false
 			Boolean excluirValidaciones = dtoExcluirValidaciones != null ? dtoExcluirValidaciones
 					: perimetroActivo.getExcluirValidaciones() != null && DDSinSiNo.CODIGO_SI.equals(perimetroActivo.getExcluirValidaciones().getCodigo());
-
+			
+			List<ActivoOferta> listaActivoOferta = activoActual.getOfertas();
+			
 			if (!excluirValidaciones) {
 				
-			
-				if (checkGestorComercial) {
+				for (ActivoOferta actOfr : listaActivoOferta) {
+					Oferta oferta = actOfr.getPrimaryKey().getOferta();
+					if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())) {
 
-					// Validación que comprueba si el activo tiene algun expediente comercial en
-					// estado vendido, reservado o firmado.
-					List<ActivoOferta> listaActivoOferta = activoActual.getOfertas();
+						if(nuevoEstadoExpediente != null && (DDEstadosExpedienteComercial.FIRMADO.equals(nuevoEstadoExpediente.getCodigo())
+							|| DDEstadosExpedienteComercial.VENDIDO.equals(nuevoEstadoExpediente.getCodigo())
+							|| DDEstadosExpedienteComercial.RESERVADO.equals(nuevoEstadoExpediente.getCodigo()))) {
+							erroresActivo.add(VALID_ACTIVO_VENDIDO_RESERVADO_FIRMADO);
+							break;
+						}
+						
+						Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+						ExpedienteComercial expedienteBuscado = genericDao.get(ExpedienteComercial.class, filtroExpediente);
 
-					for (ActivoOferta actOfr : listaActivoOferta) {
-						Oferta oferta = actOfr.getPrimaryKey().getOferta();
-						if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())) {
-
-							if(nuevoEstadoExpediente != null && (DDEstadosExpedienteComercial.FIRMADO
-											.equals(nuevoEstadoExpediente.getCodigo())
-											|| DDEstadosExpedienteComercial.VENDIDO
-													.equals(nuevoEstadoExpediente.getCodigo())
-											|| DDEstadosExpedienteComercial.RESERVADO
-													.equals(nuevoEstadoExpediente.getCodigo()))) {
-								erroresActivo.add(VALID_ACTIVO_VENDIDO_RESERVADO_FIRMADO);
-								break;
-							}
-							
-							Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "oferta.id",
-									oferta.getId());
-							ExpedienteComercial expedienteBuscado = genericDao.get(ExpedienteComercial.class,
-									filtroExpediente);
-
-							if (expedienteBuscado != null && expedienteBuscado.getEstado() != null
-									&& (DDEstadosExpedienteComercial.FIRMADO
-											.equals(expedienteBuscado.getEstado().getCodigo())
-											|| DDEstadosExpedienteComercial.VENDIDO
-													.equals(expedienteBuscado.getEstado().getCodigo())
-											|| DDEstadosExpedienteComercial.RESERVADO
-													.equals(expedienteBuscado.getEstado().getCodigo()))) {
-								erroresActivo.add(VALID_ACTIVO_VENDIDO_RESERVADO_FIRMADO);
-								break;
-							}
+						if (expedienteBuscado != null && expedienteBuscado.getEstado() != null && 
+							(DDEstadosExpedienteComercial.FIRMADO.equals(expedienteBuscado.getEstado().getCodigo())
+							|| DDEstadosExpedienteComercial.VENDIDO.equals(expedienteBuscado.getEstado().getCodigo())
+							|| DDEstadosExpedienteComercial.RESERVADO.equals(expedienteBuscado.getEstado().getCodigo()))) {
+							erroresActivo.add(VALID_ACTIVO_VENDIDO_RESERVADO_FIRMADO);
+							break;
 						}
 					}
+				}
 
-					// Validación que comprueba si el activo se ha vendido de forma externa.
-					if (activoActual.getFechaVentaExterna() != null && activoActual.getFechaVentaExterna() != null) {
-						erroresActivo.add(VALID_ACTIVO_VENTA_EXTERNA);
-					}
+				// Validación que comprueba si el activo se ha vendido de forma externa.
+				if (activoActual.getFechaVentaExterna() != null && activoActual.getFechaVentaExterna() != null) {
+					erroresActivo.add(VALID_ACTIVO_VENTA_EXTERNA);
+				}
 
-					// Validación que comprueba si su estado de publicación es compatible con la
-					// inclusión en perímetro
-					if(activoPublicacion != null) {
-						if(DDCartera.isCarteraBk(activoActual.getCartera())) {
-							if(!DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta())
-							&& !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler())) {
-								erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
-							}
-						}else {
-							if(DDTipoComercializacion.isDestinoComercialSoloAlquiler(activoActual.getTipoComercializacion()) 
-							&&  !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler()) && !DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activoActual.getCartera().getCodigo())) {
-								erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
-							}
+				// Validación que comprueba si su estado de publicación es compatible con la inclusión en perímetro
+				if(activoPublicacion != null) {	
+					if(DDCartera.isCarteraCajamar(activoActual.getCartera())){
+						if(DDTipoComercializacion.isDestinoComercialSoloAlquiler(activoPublicacion.getTipoComercializacion())
+						&& !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler()) 
+						&& perimetroActivo.getCheckGestorComercial() != null && perimetroActivo.getCheckGestorComercial()) {
+							erroresActivo.add(VALID_ACTIVO_GESTION);
 						}
-					}else {
+					}else if(!DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta())
+						&& !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler())) {
 						erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
 					}
+				}else {
+					erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
+				}
 
-					// Validación que comprueba si el activo es comercializable
-					if (perimetroActivo != null && perimetroActivo.getAplicaComercializar() != null) {
-						if (perimetroActivo.getAplicaComercializar() == 0) {
-							erroresActivo.add(VALID_ACTIVO_NO_COMERCIALIZABLE);
-						}
-					}
+				// Validación que comprueba si el activo es comercializable
+				if (perimetroActivo != null && perimetroActivo.getAplicaComercializar() != null && perimetroActivo.getAplicaComercializar() == 0) {
+						erroresActivo.add(VALID_ACTIVO_NO_COMERCIALIZABLE);
+				}
 
-					// Validación que comprueba si pertenece a una VPO
-					if (activoActual.getCartera() != null
-							&& (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activoActual.getCartera().getCodigo()))){
-						if (activoPublicacion != null
-								&& activoPublicacion.getEstadoPublicacionAlquiler().getCodigo() != null && activoPublicacion.getTipoComercializacion() != null 
-										&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoPublicacion.getTipoComercializacion().getCodigo())) {
-							if (!DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER
-									.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())) {
-								if (activoActual.getVpo() == 1) {
-									erroresActivo.add(VALID_ACTIVO_NO_VPO);
-								}
-							}
-						}
-					}
-
-					// Validación que comprueba si el propietario tiene sociedad participada
-					if (activoActual.getCartera() != null
-							&& (DDCartera.CODIGO_CARTERA_BBVA.equals(activoActual.getCartera().getCodigo()))) {
-						if (activoPropietario != null && activoPropietario.getPropietario() != null
-								&& activoPropietario.getPropietario().getDocIdentificativo() != null) {
-							if (activoPublicacion != null
-									&& activoPublicacion.getEstadoPublicacionAlquiler().getCodigo() != null
-									&& (DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER
-											.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())
-											|| DDEstadoPublicacionVenta.CODIGO_NO_PUBLICADO_VENTA.equals(
-													activoPublicacion.getEstadoPublicacionVenta().getCodigo()))) {
-								if (Ecoarenys.equals(activoPropietario.getPropietario().getDocIdentificativo())
-										|| JaleProcam.equals(activoPropietario.getPropietario().getDocIdentificativo())
-										|| PromocionesMiesdelValle
-												.equals(activoPropietario.getPropietario().getDocIdentificativo())) {
-									erroresActivo.add(VALID_ACTIVO_PROPIETARIO_SOCIEDAD);
-								}
-							}
-						}
-					}
+				// Validación que comprueba si pertenece a una VPO
+				if (DDCartera.isCarteraCajamar(activoActual.getCartera()) && activoPublicacion != null 
+					&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoPublicacion.getTipoComercializacion().getCodigo())
+					&& !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler()) && activoActual.getVpo() == 1) {
+						erroresActivo.add(VALID_ACTIVO_NO_VPO);
 					
-					//Validación que comprueba el check
+				}
+
+				// Validación que comprueba si el propietario tiene sociedad participada
+				if (activoActual.getCartera() != null && (DDCartera.CODIGO_CARTERA_BBVA.equals(activoActual.getCartera().getCodigo()))) {
+					if (activoPropietario != null && activoPropietario.getPropietario() != null && activoPropietario.getPropietario().getDocIdentificativo() != null) {
+						if (activoPublicacion != null && activoPublicacion.getEstadoPublicacionAlquiler().getCodigo() != null
+							&& (DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())
+							|| DDEstadoPublicacionVenta.CODIGO_NO_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo()))) {
+							if (Ecoarenys.equals(activoPropietario.getPropietario().getDocIdentificativo()) || JaleProcam.equals(activoPropietario.getPropietario().getDocIdentificativo())
+							|| PromocionesMiesdelValle.equals(activoPropietario.getPropietario().getDocIdentificativo())) {
+								erroresActivo.add(VALID_ACTIVO_PROPIETARIO_SOCIEDAD);
+							}
+						}
+					}
+				}
+
+				// Validación que comprueba si el activo tiene cargas
+				if (activoActual.getConCargas() != null && activoActual.getConCargas() == 1) {
+					erroresActivo.add(VALID_ACTIVO_CON_CARGAS);
+				}
+
+				// Validación que comprueba si el activo está incluido en perímetro de alquiler social
+				if (activoActual.getTipoAlquiler() != null && (DDTipoAlquiler.CODIGO_FONDO_SOCIAL
+						.equals(activoActual.getTipoAlquiler().getCodigo()))) {
+					erroresActivo.add(VALID_ACTIVO_ALQUILER_SOCIAL);
+				}
 				
-						if (activoPublicacion != null && activoPublicacion.getEstadoPublicacionAlquiler() != null && activoPublicacion.getTipoComercializacion() != null 
-								&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoPublicacion.getTipoComercializacion().getCodigo()) && activoActual.getCartera() != null
-										&& (!DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activoActual.getCartera().getCodigo()))) {
-							if (!DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())
-									&& (perimetroActivo.getCheckGestorComercial() !=null && perimetroActivo.getCheckGestorComercial())) {
-								erroresActivo.add(VALID_ACTIVO_GESTION);
-							}
-						}
-					
-
-					// Validación que comprueba si tiene el destino comercial adecuado
-					if (activoPublicacion.getTipoComercializacion() != null 
-							&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoPublicacion.getTipoComercializacion().getCodigo())) {
-						if (activoPublicacion != null && activoPublicacion.getEstadoPublicacionAlquiler() != null) {
-							if (!DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())
-									&& (activoActual.getPerimetroMacc() == null || activoActual.getPerimetroMacc() == 0)) {
-								erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
-							}
-						}
-					}
-
-					// Validación que comprueba si el activo tiene cargas
-					if (activoActual.getConCargas() != null && activoActual.getConCargas() == 1) {
-						erroresActivo.add(VALID_ACTIVO_CON_CARGAS);
-					}
-
-					// Validación que comprueba si el activo está incluido en perímetro de alquiler
-					// social
-					if (activoActual.getTipoAlquiler() != null && (DDTipoAlquiler.CODIGO_FONDO_SOCIAL
-							.equals(activoActual.getTipoAlquiler().getCodigo()))) {
-						erroresActivo.add(VALID_ACTIVO_ALQUILER_SOCIAL);
-					}
-					
-					if(fasePublicacionActivoVigente != null && DDSubfasePublicacion.isHistoricoFasesExcPubEstrategiaCl(fasePublicacionActivoVigente)) {
-						erroresActivo.add(VALID_SUBFASE_PUBLICACION);
-					}
-					
-				} else {
-
-					// Validación que comprueba si el activo tiene ofertas pendientes
-					List<ActivoOferta> listaActivoOferta = activoActual.getOfertas();
-
+				if(fasePublicacionActivoVigente != null && DDSubfasePublicacion.isHistoricoFasesExcPubEstrategiaCl(fasePublicacionActivoVigente)) {
+					erroresActivo.add(VALID_SUBFASE_PUBLICACION);
+				}
+				
+				// Si se intenta desmarcar pero cumple todas las condiciones para estar marcado no deja.
+				if(!checkGestorComercial && erroresActivo.isEmpty() && ficha) {
+					erroresActivo.add(VALID_DESMARCAR_SIN_ERRORES);
+				}
+				
+				//Para desmarcar
+				if(!checkGestorComercial) {
 					for (ActivoOferta actOfr : listaActivoOferta) {
 						Oferta oferta = actOfr.getPrimaryKey().getOferta();
-						if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())) {
-							if (oferta.getEstadoOferta() != null
-									&& (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()))) {
-								erroresActivo.add(VALID_ACTIVO_OFERTAS_PENDIENTES);
-							}
+						if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta()) && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+							erroresActivo.add(VALID_ACTIVO_OFERTAS_PENDIENTES);
+							break;
 						}
 					}
-
 				}
 			}
 			

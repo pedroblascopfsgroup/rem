@@ -36,7 +36,7 @@ import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -658,7 +658,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 			dtoOfertasFilter.setIdActivo(activo.getId());
 			dtoOfertasFilter.setEstadoOferta(DDEstadoOferta.CODIGO_RECHAZADA);
 			
-			List<VOfertasActivosAgrupacion> listaOfer = (List<VOfertasActivosAgrupacion>) ofertaApi
+			List<VGridOfertasActivosAgrupacionIncAnuladas> listaOfer = (List<VGridOfertasActivosAgrupacionIncAnuladas>) ofertaApi
 					.getListOfertasFromView(dtoOfertasFilter);
 			if (!Checks.esNulo(listaOfer) && listaOfer.size() > 0) {
 				Long idOferta = listaOfer.get(0).getIdOferta();

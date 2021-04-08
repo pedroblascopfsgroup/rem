@@ -1349,6 +1349,8 @@ public interface ParticularValidatorApi {
 	boolean existeTipoRetencion(String tipoRetencion);
 	
 	boolean existeLineaEnGasto(String idLinea, String numGasto);
+	
+	public Boolean existePorcentajeConstruccion(String porcentajeConstruccion);
 
 	Boolean existeActivoConONMarcadoSi(String columnaActivo);
 	
@@ -1451,4 +1453,8 @@ public interface ParticularValidatorApi {
 	Boolean situacionComercialPublicadoAlquilerOVenta(String activo);
 
 	boolean userHasFunction(String funcion, Long idUsuario);
+
+	Boolean isActivoSareb(String numActivo);
+
+	Boolean isActivoCajamar(String numActivo);
 }

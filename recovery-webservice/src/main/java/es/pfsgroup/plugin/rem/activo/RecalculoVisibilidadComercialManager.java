@@ -99,13 +99,17 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 			Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroIdActivo);
 
-			if(perimetroActivo.getExcluirValidaciones() == null || !DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones())) {
-				perimetroActivo.setCheckGestorComercial(!tieneErrores);	
+			if(tieneErrores && perimetroActivo.getExcluirValidaciones() == null || !DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones())) {
+				perimetroActivo.setCheckGestorComercial(false);	
 				perimetroActivo.setFechaGestionComercial(new Date());
-				if(!tieneErrores) {
-					perimetroActivo.setExcluirValidaciones(diccionarioNo);
-					perimetroActivo.setMotivoGestionComercial(null);
-				}
+				
+			}
+			if(!tieneErrores) {
+				perimetroActivo.setCheckGestorComercial(true);	
+				perimetroActivo.setFechaGestionComercial(new Date());
+				perimetroActivo.setExcluirValidaciones(diccionarioNo);
+				perimetroActivo.setMotivoGestionComercial(null);
+				
 				genericDao.update(PerimetroActivo.class,perimetroActivo);
 			}
 			

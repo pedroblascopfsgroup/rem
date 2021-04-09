@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210322
+--## AUTOR=Sergio Gomez
+--## FECHA_CREACION=20210409
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13241
+--## INCIDENCIA_LINK=HREOS-13610
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que realiza el cambio de oficinas en Bankia
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - HREOS-12758
 --##        0.2 Resolución de dudas, cambios - HREOS-13241
+--##        0.3 Cierre Oficinas Bankia. Traspaso de Negocio - HREOS-13610
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -34,6 +35,7 @@ CREATE OR REPLACE PROCEDURE SP_CAMBIO_OFICINA_BANKIA (
     V_COUNT_OFICINA_NUEVA NUMBER(16);
     V_OFICINA_ANTIGUA NUMBER(16);
     V_OFICINA_NUEVA NUMBER(16);
+    V_TEXT_TABLA_AUX VARCHAR2(1024 CHAR):= 'AUX_CIERRE_OFICINAS_BANKIA';
 
 BEGIN
         PL_OUTPUT := '[INICIO]'||CHR(10);
@@ -67,7 +69,12 @@ BEGIN
                 LEFT JOIN '||V_ESQUEMA||'.DD_EPR_ESTADO_PROVEEDOR EPR ON PVE.DD_EPR_ID = EPR.DD_EPR_ID AND EPR.BORRADO = 0
                 WHERE TPR.DD_TPR_CODIGO = ''28'' AND EPR.DD_EPR_CODIGO = ''04'' AND PVE.PVE_FECHA_BAJA IS NULL AND PVE.BORRADO = 0 AND PVE.PVE_COD_API_PROVEEDOR = '''||PVE_COD_API_PROVEEDOR_NUEVA||'''';
                 EXECUTE IMMEDIATE V_MSQL INTO V_OFICINA_NUEVA;
-            
+
+
+        --------------------------------------------------------------------
+        ----------- TRUNCATE TABLA AUXILIAR --------------------------------
+        --------------------------------------------------------------------
+                #ESQUEMA#.OPERACION_DDL.DDL_TABLE('TRUNCATE', V_TEXT_TABLA_AUX);
         --------------------------------------------------------------------
         ----------- DAR DE BAJA OFICINA ------------------------------------
         --------------------------------------------------------------------
@@ -173,6 +180,11 @@ BEGIN
                     
                 PL_OUTPUT := PL_OUTPUT || '     RESPONSABLE CAMBIADO EN '||SQL%ROWCOUNT||' OFERTAS' || CHR(10) ;  
                 
+                V_MSQL := 'INSERT INTO '||V_TEXT_TABLA_AUX||' SELECT DISTINCT GEX.ECO_ID FROM 
+                        '||V_ESQUEMA||'.GEX_GASTOS_EXPEDIENTE GEX WHERE GEX.BORRADO = 0 AND GEX.GEX_PROVEEDOR = '||V_OFICINA_ANTIGUA;
+
+                EXECUTE IMMEDIATE V_MSQL;        
+
                 V_MSQL := 'UPDATE '||V_ESQUEMA||'.GEX_GASTOS_EXPEDIENTE GEX 
                     SET 
                         GEX.USUARIOMODIFICAR = '''||V_USUARIO||'''

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.activo.dao;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
@@ -15,10 +16,12 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativaAdicional;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
 import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -381,4 +384,10 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos);
 
 	public List<ActivosAlquilados> getListActivosAlquiladosByIdActivos(List<Long> idActivos);
+
+	/*public Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo);*/
+
+	List<Long> getIdsAuxiliarCierreOficinaBankias();
+
+	Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo, String username);
 }

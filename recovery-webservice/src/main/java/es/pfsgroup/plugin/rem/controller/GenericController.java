@@ -29,6 +29,7 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.diccionarios.Dictionary;
@@ -49,6 +50,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaDto;
+import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.DocumentoDto;
 import es.pfsgroup.plugin.rem.rest.dto.DocumentoRequestDto;
@@ -736,6 +739,71 @@ public class GenericController extends ParadiseJsonController{
 		
 
 		return new ModelAndView("jsonView", model);
+	}
+	
+	/**
+	 * traspasar la actividad de una oficina de Bankia 
+	 * a otra cuando se produce el cierre de alguna oficina 
+	 * Ejem: IP:8080/pfs/rest/cierreOficinas
+	 * HEADERS: Content-Type - application/json signature - sdgsdgsdgsdg
+	 * 
+	 * BODY: {"id":"111111114111","data": [{
+	 * "codProveedorAnterior": "1000", "codProveedorNuevo": "1"]}
+	 * 
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST, value = "/generic/cierreOficinas")
+	public void cierreOficinasBankia(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+		CierreOficinaBankiaRequestDto jsonData = null;
+		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		JSONObject jsonFields = null;
+		List<CierreOficinaBankiaDto> listCierreOficinaBankiaDto = null;
+		
+		try {
+			jsonFields = request.getJsonObject();
+			jsonData = (CierreOficinaBankiaRequestDto) request.getRequestData(CierreOficinaBankiaRequestDto.class);
+			listCierreOficinaBankiaDto = jsonData.getData();
+			
+			if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+
+			} else {
+				
+				boolean error = genericApi.traspasoCierreOficinaBankia(listCierreOficinaBankiaDto, jsonFields, listaRespuesta);
+				
+				//ofertaApi.saveOrUpdateOfertas(listaOfertaDto, jsonFields, listaRespuesta);
+
+				model.put("id", jsonFields.get("id"));
+				model.put("data", listaRespuesta);
+				if (error) {
+					model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+				}else {
+					model.put("error", "null");
+				}
+				
+			}
+			
+		} catch (UserException e) {
+			if (jsonFields!=null) {
+				model.put("id", jsonFields.get("id"));
+			}
+			model.put("data", listaRespuesta);
+			model.put("error", "null");
+			
+		} catch (Exception e) {
+			logger.error("Error cierre oficinas", e);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
+			if (jsonFields!=null) {
+				model.put("id", jsonFields.get("id"));			
+			}
+			model.put("data", listaRespuesta);
+			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+		}
+
+		restApi.sendResponse(response, model, request);
 	}
  }
 

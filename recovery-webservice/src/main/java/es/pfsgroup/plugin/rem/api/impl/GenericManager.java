@@ -8,7 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
@@ -25,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -50,6 +53,7 @@ import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -77,6 +81,7 @@ import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.GestionCCPP;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
@@ -120,6 +125,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.propietario.dao.ActivoPropietarioDao;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
+import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaDto;
+import es.pfsgroup.plugin.rem.thread.EjecutarEnviarHonorariosUvemAsincrono;
 import es.pfsgroup.plugin.rem.trabajo.dao.DDSubtipoTrabajoDao;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -184,6 +193,12 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Autowired 
 	private ActivoPropietarioDao activoPropietarioDao;
+		
+	@Autowired
+	private RestApi restApi;
+	
+	@Autowired 
+	private ActivoDao activoDao;
 
 
 	@Override
@@ -1536,7 +1551,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			listaDto.add(dtop);
 		}
 		return listaDto;
-	}
+	} 
 
 
 	@Override
@@ -1551,5 +1566,79 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 		return listaResultado;
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean traspasoCierreOficinaBankia(List<CierreOficinaBankiaDto>listCierreOficinaBankiaDto,JSONObject jsonFields, ArrayList<Map<String, Object>>listaRespuesta) 
+			throws Exception{
+		Map<String, Object> map = null;
+		CierreOficinaBankiaDto bankiaDto = null;
+		GastosExpediente gastoExpediente = null;
+		HashMap<String, String> errorsList = null;
+		Usuario usuario = adapter.getUsuarioLogado();
+		boolean error = false;
+		
+		
+		for (int i = 0; i < listCierreOficinaBankiaDto.size(); i++) {
+			map = new HashMap<String, Object>();
+			bankiaDto = listCierreOficinaBankiaDto.get(i);
+			
+			if (bankiaDto.getCodProveedorAnterior() != null && bankiaDto.getCodProveedorNuevo() != null) {
+				errorsList = llamarSPCambioOficinaBankia(bankiaDto, usuario);
+			}
+			
+			if (errorsList != null || !errorsList.isEmpty()) {
+				error = true;
+				map.put("codProveedorAnterior", bankiaDto.getCodProveedorAnterior());
+				map.put("codProveedorNuevo", bankiaDto.getCodProveedorNuevo());
+				map.put("success", false);
+
+				map.put("invalidFields", errorsList);
+				map.put("error", true);
+			}else {				
+				map.put("codProveedorAnterior", bankiaDto.getCodProveedorAnterior());
+				map.put("codProveedorNuevo", bankiaDto.getCodProveedorNuevo());
+				map.put("success", true);				
+			}								
+	
+			
+			List<Long> listaIdsAuxiliar = activoDao.getIdsAuxiliarCierreOficinaBankias();
+			/*for (Long idExpediente : listaIdsAuxiliar) {
+				expedienteComercialApi.enviarHonorariosUvem(idExpediente);
+			}*/
+			//TODO
+			if (!listaIdsAuxiliar.isEmpty()) {
+				Thread hilo = new Thread(new EjecutarEnviarHonorariosUvemAsincrono(usuario.getUsername(), listaIdsAuxiliar));
+				hilo.start();
+			}
+			
+			
+			listaRespuesta.add(map);
+			
+		}
+		return error;
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public HashMap<String, String> llamarSPCambioOficinaBankia(CierreOficinaBankiaDto bankiaDto, Usuario usuario) throws Exception {
+
+		HashMap<String, String> errorsList = null;
+		Boolean correcto = null;
+
+		errorsList = restApi.validateRequestObject(bankiaDto, TIPO_VALIDACION.INSERT);
+		
+		correcto = activoDao.cambiarSpOficinaBankia(bankiaDto.getCodProveedorAnterior(),bankiaDto.getCodProveedorNuevo(), usuario.getUsername());
+		
+		if (!correcto) {
+			errorsList.put("ERROR","Error en cambio oficina Bankia");
+			errorsList.put("codProveedorAnterior", bankiaDto.getCodProveedorNuevo());
+			errorsList.put("codProveedorNuevo", bankiaDto.getCodProveedorNuevo());
+		}
+
+		return errorsList;
+	}
+	
 
 }

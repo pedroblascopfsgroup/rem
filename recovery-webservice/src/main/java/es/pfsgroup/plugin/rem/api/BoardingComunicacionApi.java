@@ -8,4 +8,6 @@ public interface BoardingComunicacionApi {
 
 	public boolean modoRestClientBoardingActivado();
 
+	public boolean comunicacionBoardingActivada();
+
 }

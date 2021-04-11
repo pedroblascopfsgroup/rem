@@ -1973,7 +1973,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		
 		activoManager.actualizarOfertasTrabajosVivos(activo.getId());
 		
-		if(oferta != null && oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial() && ofertaApi.esOfertaValidaCFVByCarteraSubcartera(oferta)  && boardingComunicacionApi.modoRestClientBoardingActivado()) {
+		if(oferta != null && oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial() && ofertaManager.esOfertaValidaCFVByCarteraSubcartera(oferta)  && boardingComunicacionApi.comunicacionBoardingActivada()) {
 			boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap());
 		}
 		
@@ -2023,7 +2023,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				activoManager.actualizarOfertasTrabajosVivos(idActivo);
 			}
 			
-			if(oferta != null && ofertaApi.esOfertaValidaCFVByCarteraSubcartera(oferta) && oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial() && boardingComunicacionApi.modoRestClientBoardingActivado()) {
+			if(oferta != null && ofertaManager.esOfertaValidaCFVByCarteraSubcartera(oferta) && oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial() && boardingComunicacionApi.comunicacionBoardingActivada()) {
 				boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap());
 			}
 		

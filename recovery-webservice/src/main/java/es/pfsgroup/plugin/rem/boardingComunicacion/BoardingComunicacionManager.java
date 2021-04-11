@@ -15,8 +15,12 @@ import org.springframework.ui.ModelMap;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
+import es.pfsgroup.plugin.rem.model.PenParam;
+import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.registro.dao.RestLlamadaDao;
@@ -44,6 +48,10 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
 
     @Resource
     private Properties appProperties;
+    
+	@Autowired
+	private GenericABMDao genericDao;
+    
 
     @Override
     public String managerName() {
@@ -165,6 +173,22 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
 		}
 		
 		return activado;
+	}
+	
+	public boolean comunicacionBoardingActivada () {
+		
+		PenParam penParam = genericDao.get(PenParam.class,
+				genericDao.createFilter(FilterType.EQUALS, "param", "comunicacionBoardingActivada"));
+		
+		if (penParam == null) {
+			logger.debug("El parametro comunicacionBoardingActivada no se encuentra en la tabla PEN_PARAM Se procede a comprobar el parametro REST_CLIENT_ACTIVAR_BOARDING en devon.properties");
+			return modoRestClientBoardingActivado();
+		}else {
+			return (Boolean.valueOf(penParam.getValor()) && modoRestClientBoardingActivado());
+		}
+		
+		
+	
 	}
 
 }

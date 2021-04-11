@@ -6429,7 +6429,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public String actualizarOfertaBoarding(TareaExterna tareaExterna) {
 		
-		if(!boardingComunicacionApi.modoRestClientBoardingActivado()) {
+		
+		
+		if(!boardingComunicacionApi.comunicacionBoardingActivada()) {
 			return null;
 		}
 		

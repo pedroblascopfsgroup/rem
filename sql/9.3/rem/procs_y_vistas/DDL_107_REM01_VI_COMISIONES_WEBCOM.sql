@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=RLB
---## FECHA_CREACION=20210203
+--## FECHA_CREACION=20210412
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -11,7 +11,8 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
---##		0.2 REMVIP-8715 Carlos Santos Vílchez 
+--##		0.2 REMVIP-8715 Carlos Santos Vílchez
+--##		0.3 HREOS-13439 Cambio en el envío de prescripción y colaboración
 --##########################################
 --*/
 

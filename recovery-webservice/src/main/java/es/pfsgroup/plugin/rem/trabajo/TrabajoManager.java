@@ -6463,7 +6463,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override
 	public List<VProveedores> getComboProveedorFilteredCreaTrabajo(String codCartera) {
 		if(codCartera != null){
-			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "descripcion", codCartera);
+			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "codigo", codCartera);
 			DDCartera cartera = genericDao.get(DDCartera.class, filtroCartera);
 			if (cartera != null) {
 				codCartera = cartera.getCodigo();
@@ -6490,13 +6490,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				dto.setNombre(pvePredeterminado.getProveedor().getNombre());
 				dto.setId(pvePredeterminado.getProveedor().getId());
 				return dto;
-			}else {
-				segundo = genericDao.get(CFGProveedorPredeterminado.class, filtroTipoTrabajo,filtroCartera,filtroSubCartera,filtroProvincia);
-				if(segundo != null) {
-					dto.setId(segundo.getProveedor().getId());
-					dto.setNombre(segundo.getProveedor().getNombre());
-					return dto;
-				}
+//			}else {
+//				segundo = genericDao.get(CFGProveedorPredeterminado.class, filtroTipoTrabajo,filtroCartera,filtroSubCartera,filtroProvincia);
+//				if(segundo != null) {
+//					dto.setId(segundo.getProveedor().getId());
+//					dto.setNombre(segundo.getProveedor().getNombre());
+//					return dto;
+//				}
 			}
 		}
 		

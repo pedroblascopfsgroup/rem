@@ -98,8 +98,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	 					DDEstadosExpedienteComercial aprobado = genericDao.get(DDEstadosExpedienteComercial.class, f1);
 	 					expediente.setEstado(aprobado);
 	 					
-	 					if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva())
-	 							&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())) {														
+	 					if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva())) {														
 							EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 									.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
 

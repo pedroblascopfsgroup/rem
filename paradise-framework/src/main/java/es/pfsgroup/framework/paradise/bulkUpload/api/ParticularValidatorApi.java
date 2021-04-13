@@ -1352,6 +1352,8 @@ public interface ParticularValidatorApi {
 	
 	public Boolean existePorcentajeConstruccion(String porcentajeConstruccion);
 
+	Boolean existeActivoConONMarcadoSi(String columnaActivo);
+	
 	boolean conEstadoGasto(String idGasto,String codigoEstado);
 
 	String devolverEstadoGasto(String idGasto);

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.oferta;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -18,6 +19,8 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -207,6 +210,9 @@ import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
+import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
@@ -2961,7 +2967,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		ConsultaComisionDto consultaComisionDtoVacio = new ConsultaComisionDto();
 		consultaComisionDto.setAmount(importe);
 		consultaComisionDto.setOfferType(codigoOferta);
-		consultaComisionDto.setComercialType(tipoComercializar);
+		
+		
+		if(activo != null && activo.getTieneObraNuevaAEfectosComercializacion() != null && 
+				DDSinSiNo.CODIGO_SI.equals(activo.getTieneObraNuevaAEfectosComercializacion().getCodigo()) ){
+			consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);	
+		}else {
+			consultaComisionDto.setComercialType(tipoComercializar);
+		}
+
 		consultaComisionDto.setAssetType(codTipoActivo);
 		consultaComisionDto.setAssetSubtype(codSubtipoActivo);
 		consultaComisionDto.setPortfolio(codPortfolio);
@@ -3031,75 +3045,78 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(!Checks.esNulo(agrOfertada)) {
 				
 					if(!Checks.esNulo(visita)) {
-						Double importeActGarTrast = 0.0;
-						Double importeActPrinc = 0.0;
+						Double importeObraNueva = 0.0;
+						Double importeOtros = 0.0;
 						DDSubtipoActivo subtipoAct = null;
 						Activo activoDeVisita = null;
 						Activo activoOfr = null;
 						List<ActivoOferta> listActOfr = new ArrayList<ActivoOferta>();
 						List<ActivoAgrupacionActivo> listActivosAgr = new ArrayList<ActivoAgrupacionActivo>();
+						RespuestaComisionResultDto comisionObraNuevaDto = null;
+						RespuestaComisionResultDto otrosComisionDto = null;
 						activoDeVisita = visita.getActivo();
 						listActivosAgr = activoDeVisita.getAgrupaciones();
 						
-						contieneActPrincAgrObraNueva = this.perteneceAgrupacionObraNueva(listActivosAgr);
+						//contieneActPrincAgrObraNueva = this.perteneceAgrupacionObraNueva(listActivosAgr);
+											
 						
-						if(contieneActPrincAgrObraNueva) {
-							listActOfr = oferta.getActivosOferta();
-							for (ActivoOferta activoOferta : listActOfr) {
-								activoOfr = activoAdapter.getActivoById(activoOferta.getActivoId());
-								if(!Checks.esNulo(activoOfr) && !Checks.esNulo(activoOfr.getSubtipoActivo())
-										&& (DDSubtipoActivo.COD_GARAJE.equals(activoOfr.getSubtipoActivo().getCodigo())
-												|| DDSubtipoActivo.COD_TRASTERO.equals(activoOfr.getSubtipoActivo().getCodigo()))) {
-									importeActGarTrast += activoOferta.getImporteActivoOferta();
-									contieneActGarTrast = true;
-								}else {
-									importeActPrinc += activoOferta.getImporteActivoOferta();
-									contieneActPrinc = true;
-								}
-							}
+						if (activo != null && activo.getTieneObraNuevaAEfectosComercializacion() != null ) {
+							contieneActPrincAgrObraNueva = DDSinSiNo.CODIGO_SI.equals(activo.getTieneObraNuevaAEfectosComercializacion().getCodigo());
+							
 						}
 						
-						if(contieneActPrinc) {
-							consultaComisionDto.setAmount(importeActPrinc);
+						listActOfr = oferta.getActivosOferta();
+						for (ActivoOferta activoOferta : listActOfr) {
+							 activoOfr = activoAdapter.getActivoById(activoOferta.getActivoId());
+							 if(activoOfr != null) {
+								 if(activoOfr.getTieneObraNuevaAEfectosComercializacion() != null && DDSinSiNo.CODIGO_SI.equals(activoOfr.getTieneObraNuevaAEfectosComercializacion().getCodigo())) {
+									 importeObraNueva += activoOferta.getImporteActivoOferta();
+								 }else {
+									 importeOtros += activoOferta.getImporteActivoOferta();
+								 }
+							 }
+						}
+						
+						if(importeObraNueva > 0.0) {
 							consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
+							consultaComisionDto.setAmount(importeObraNueva);
 							try {
-								primeraLlamadaActPrinc = comisionamientoApi.createCommission(consultaComisionDto);
+								comisionObraNuevaDto = comisionamientoApi.createCommission(consultaComisionDto);
 							} catch (Exception e) {
-								logger.error("Error en la llamada al comisionamiento: " + e);
-							}
+								logger.error("Error en la llamada a comisionamiento:" + e);
+							} 
 						}else {
 							try {
-								primeraLlamadaActPrinc = comisionamientoApi.createCommission(consultaComisionDtoVacio);
+								comisionObraNuevaDto = comisionamientoApi.createCommission(consultaComisionDtoVacio);
 							} catch (Exception e) {
-								logger.error("Error en la llamada al comisionamiento: " + e);
+								logger.error("Error en la llamada a comisionamiento:" + e);
 							}
-							primeraLlamadaActPrinc.setCommissionAmount((double) 0);
-						}	
+							comisionObraNuevaDto.setCommissionAmount((double) 0);
+						}
 						
-						if(contieneActGarTrast) {
-							consultaComisionDto.setAmount(importeActGarTrast);
+						if(importeOtros > 0.0) {
 							consultaComisionDto.setComercialType(activoDeVisita.getTipoComercializar().getCodigo());
+							consultaComisionDto.setAmount(importeOtros);
 							try {
-								segundaLlamadaActTrastGar = comisionamientoApi.createCommission(consultaComisionDto);
+								otrosComisionDto = comisionamientoApi.createCommission(consultaComisionDto);
 							} catch (Exception e) {
-								logger.error("Error en la llamada al comisionamiento: " + e);
-							}
+								logger.error("Error en la llamada a comisionamiento:" + e);
+							} 
 						}else {
 							try {
-								segundaLlamadaActTrastGar = comisionamientoApi.createCommission(consultaComisionDtoVacio);
+								otrosComisionDto = comisionamientoApi.createCommission(consultaComisionDtoVacio);
 							} catch (Exception e) {
-								logger.error("Error en la llamada al comisionamiento: " + e);
+								logger.error("Error en la llamada a comisionamiento:" + e);
 							}
-							segundaLlamadaActTrastGar.setCommissionAmount((double) 0);
+							otrosComisionDto.setCommissionAmount((double) 0);
 						}
 						
-						if(segundaLlamadaActTrastGar.getCommissionAmount() > 0) {
-							calculoComision = segundaLlamadaActTrastGar;
+						if(comisionObraNuevaDto.getCommissionAmount() > 0) {
+							calculoComision = comisionObraNuevaDto;
 						}else {
-							calculoComision = primeraLlamadaActPrinc;
+							calculoComision = otrosComisionDto;
 						}
-						
-						calculoComision.setCommissionAmount(primeraLlamadaActPrinc.getCommissionAmount() + segundaLlamadaActTrastGar.getCommissionAmount());
+						calculoComision.setCommissionAmount(comisionObraNuevaDto.getCommissionAmount()+otrosComisionDto.getCommissionAmount());
 						
 					}else {
 						try {
@@ -3110,14 +3127,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}else {
 
-					contieneActPrincAgrObraNueva = this.perteneceAgrupacionObraNueva(activo.getAgrupaciones());
+					//contieneActPrincAgrObraNueva = this.perteneceAgrupacionObraNueva(activo.getAgrupaciones());
 
+					if (activo != null && activo.getTieneObraNuevaAEfectosComercializacion() != null ) {
+						contieneActPrincAgrObraNueva = DDSinSiNo.CODIGO_SI.equals(activo.getTieneObraNuevaAEfectosComercializacion().getCodigo());
+						
+					}
+					
 					if(contieneActPrincAgrObraNueva && !Checks.esNulo(visita)){
 						consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
+						
 					}
 
 					try {
 						calculoComision = comisionamientoApi.createCommission(consultaComisionDto);
+						
 					} catch (Exception e) {
 						logger.error("Error en la llamada al comisionamiento: " + e);
 					}

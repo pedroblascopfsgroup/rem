@@ -18,6 +18,9 @@ Ext.define('HreRem.model.ActivoTrabajoSubida', {
     		{
     			name:'cartera'
     		},
+			{
+    			name:'codigoCartera'
+    		},
     		{
     			name:'tipoActivo'
     		},

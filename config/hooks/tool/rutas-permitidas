@@ -145,6 +145,7 @@ R-Ricalate-backup|R-Okitsu
 R-Entrefina|R-Okitsu
 R-Cadenera|R-Ricalate
 version-2.21.5-rem|version-2.22.1-rem
+rem_mirror|func-rem-obraNuevaComisionamiento
 rem_mirror|func-rem-ocultacionActivosPrublicacion
 func-rem-ocultacionActivosPrublicacion|R-Fortune
 rem_mirror|func-rem-dqFasesPublicacion
@@ -174,11 +175,8 @@ func-rem-dnd-F3|func-rem-dnd-suelos
 func-rem-dnd-suelos|func-rem-dnd-tutelas
 R-Okitsu|func-rem-alaska-F2
 rem_mirror|func-rem-alaska-F2
-<<<<<<< HEAD
 R-Fortune|R-Arrufatina
 func-rem-porcentajeConstruccion|R-Arrufatina
 func-rem-dnd-tutelas|R-Arrufatina
-=======
 func-rem-mejorasRendimiento-BuscadorAgrupaciones|func-rem-mejorasRendimiento
 rem_mirror|func-rem-mejorasRendimiento-F2
->>>>>>> rem_mirror

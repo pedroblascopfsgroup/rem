@@ -6704,5 +6704,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 
+	public Boolean isActivoGestionadoReam(String numActivo) {
+		if(Checks.esNulo(numActivo)){
+			return false;
+			}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "FROM V_ACTIVOS_GESTIONADOS_REAM ream WHERE "
+				+ "ream.ACT_ID IN "
+				+ "(SELECT act.act_id FROM act_activo act WHERE act.act_num_activo = '"+numActivo+"' "
+				+ "AND act.BORRADO = 0)");
+		return "1".equals(resultado);
+	}
 
 }

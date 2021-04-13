@@ -32,10 +32,12 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
@@ -98,7 +100,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	
 	
 	public DtoActivoSituacionPosesoria getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
-
+		
 		DtoActivoSituacionPosesoria activoDto = new DtoActivoSituacionPosesoria();
 		if (activo != null){
 			BeanUtils.copyProperty(activoDto, "necesarias", activo.getLlavesNecesarias());
@@ -211,6 +213,10 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		
 		if(activo.getSituacionPosesoria().getSpsPosesionNeg() != null)
 			activoDto.setPosesionNegociada(activo.getSituacionPosesoria().getSpsPosesionNeg() ? "1" : "0");
+		
+		if (activo != null && activo.getId() != null ) {
+			activoDto.setPerteneceActivoREAM(activoDao.perteneceActivoREAM(activo.getId()));
+		}
 	
 		return activoDto;
 		
@@ -262,6 +268,13 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				(!Checks.esNulo(activoSituacionPosesoria.getOcupado()) && activoSituacionPosesoria.getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloNo.equals(dto.getConTitulo()))) {
 				activoApi.crearRegistroFaseHistorico(activo);
 			}		
+			
+			if (!Checks.esNulo(dto.getOcupado()) || !Checks.esNulo(dto.getConTitulo())) {
+					if(activo != null && activoSituacionPosesoria!=null && usu!=null) {
+						HistoricoOcupadoTitulo hist = new HistoricoOcupadoTitulo(activo,activoSituacionPosesoria,usu,HistoricoOcupadoTitulo.COD_SIT_POS,null);
+						genericDao.save(HistoricoOcupadoTitulo.class, hist);
+					}					
+			}	
 			
 			if (!Checks.esNulo(activoPatrimonio) && !Checks.esNulo(tipoEstadoAlquiler)) {
 				activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);

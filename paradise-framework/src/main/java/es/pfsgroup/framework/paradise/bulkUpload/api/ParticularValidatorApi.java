@@ -1413,11 +1413,14 @@ public interface ParticularValidatorApi {
 
 	Boolean estadoPrevioTrabajoFinalizado(String celdaTrabajo);
 
+	Boolean isActivoGestionadoReam(String string);
+
 	Boolean existeCodProveedorRem(String codProveedorREM);
 
 	boolean gastoSarebAnyadeRefacturable(String numGasto);
 
 	Boolean esSubCarterasCerberusAppleDivarian(String numActivo);
+
 
 
 }

@@ -88,6 +88,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final String VALID_ACTIVO_NO_COMERCIALIZABLE ="msg.error.masivo.actializar.perimetro.activo.no.comercializable";
 	public static final String VALID_MACC_CON_CARGAS ="msg.error.masivo.actializar.perimetro.activo.macc.con.cargas";
 	public static final String VALID_ESTADO_EXPEDIENTE="msg.error.masivo.actializar.perimetro.activo.estado.expediente";
+	public static final String ON_EFECTOS_COMERCIALIZACION_ERROR = "msg.error.masivo.actualizar.perimetro.activo.on.efectos.comercializacion.texto.no.valido";
+	public static final String ON_VALOR_INTRODUCIDO = "msg.error.masivo.actualizar.perimetro.activo.on.efectos.comercializacion.texto.ya.introducido";
 
 	public static final String VALID_PERIMETRO_ESTA_HAYA = "msg.error.masivo.actualizar.perimetro.activo.ya.esta.haya";
 	public static final String VALID_GESTION_COMERCIAL_ALQUILADO = "msg.error.masivo.actializar.perimetro.activo.situacion.comercial.alquilado.visibilidad.gestion";
@@ -124,6 +126,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final int COL_NUM_MOTIVO_EXCLUSION_INCLUSION_PERIMETRO_VISIBLE = 20;
 	public static final int COL_NUM_EXCLUSION_VALIDACIONES = 21;
 	public static final int COL_NUM_FECHA_CAMBIO = 22;
+	public static final int COL_NUM_CHECK_ON_EFECTOS_COMERCIALIZACION=19;
 
 	// Codigos tipo comercializacion
 	public static final String CODIGO_VENTA = "01";
@@ -148,6 +151,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
     private static final String EDITAR_EXCLUIR_VALIDACIONES = "EDITAR_EXCLUIR_VALIDACIONES";
 
   
+ 
     protected final Log logger = LogFactory.getLog(getClass());
     
     
@@ -253,6 +257,9 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(messageServices.getMessage(VALID_VALORES_GESTION_VISIBILIDAD_NO_DESMARCABLE), checkNoCumpleCondicionesDesmarcarse(mapaErrores, exc));
 
 				
+				mapaErrores.put(messageServices.getMessage(ADMISION_ERROR), isBooleanValidator(exc, COL_NUM_ADMISION));
+				mapaErrores.put(messageServices.getMessage(ON_EFECTOS_COMERCIALIZACION_ERROR), isBooleanValidator(exc, COL_NUM_CHECK_ON_EFECTOS_COMERCIALIZACION));
+				mapaErrores.put(messageServices.getMessage(ON_VALOR_INTRODUCIDO), isActivoObraNuevaConEfectosComercializacion(exc));
 				for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
 					if (!registro.getValue().isEmpty()) {
 						dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -1448,6 +1455,44 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		return listaFilas;
 	}
 	
+	private List<Integer> isActivoObraNuevaConEfectosComercializacion(MSVHojaExcel exc){
+		
+		
+	List<Integer> listaFilas = new ArrayList<Integer>();
+	
+	
+	try{
+		for(int i=1; i<this.numFilasHoja;i++){
+			try {
+				String celdaCOEfectos = exc.dameCelda(i, COL_NUM_CHECK_ON_EFECTOS_COMERCIALIZACION);
+				String celdaActivo = exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
+				if(Arrays.asList(listaValidos).contains(celdaCOEfectos.toUpperCase())
+						&& celdaCOEfectos!=null
+						&& !celdaCOEfectos.isEmpty() ){
+					if(particularValidator.existeActivoConONMarcadoSi(celdaActivo)							
+								&& Arrays.asList(listaValidosPositivos).contains(celdaCOEfectos.toUpperCase())) {
+						listaFilas.add(i);
+					}else if(!particularValidator.existeActivoConONMarcadoSi(celdaActivo)							
+							&& Arrays.asList(listaValidosNegativos).contains(celdaCOEfectos.toUpperCase())) {
+						listaFilas.add(i);
+					}
+				}
+				
+				
+			} catch (ParseException e) {
+				listaFilas.add(i);
+			}
+		}
+	} catch (IllegalArgumentException e) {
+		listaFilas.add(0);
+		e.printStackTrace();
+	} catch (IOException e) {
+		listaFilas.add(0);
+		e.printStackTrace();
+	}
+	return listaFilas;
+	
+	}
 
 	@Override
 	public Integer getNumFilasHoja() {
@@ -1627,4 +1672,4 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	}
 	
 	
-}
+	}		

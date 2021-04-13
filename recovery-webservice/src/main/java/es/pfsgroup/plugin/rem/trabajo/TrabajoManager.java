@@ -363,6 +363,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Autowired
 	private TareaAdapter tareaAdapter;
 	
+	@Autowired
+	private ActivoTrabajoDao activoTrabajoDao;
+	
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
 
@@ -551,6 +554,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if((Checks.esNulo(dtoTrabajo.getFechaResolucionComite()) && trabajo.getFechaResolucionComite() == null) || (Checks.esNulo(dtoTrabajo.getResolucionComiteId())) && trabajo.getResolucionComiteId() == null ) {
 				throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.comite.aprobado"));
 			}
+		}
+
+		if (DDEstadoTrabajo.ESTADO_VALIDADO.equals(dtoTrabajo.getEstadoCodigo())) {
+			Float participacion = activoTrabajoDao.getImporteParticipacionTotal(trabajo.getNumTrabajo());
+			if (participacion == null || participacion.doubleValue() != 100.00) {
+				throw new JsonViewerException("El trabajo no tiene activos o la participación de estos no suma 100%");
+			}  
 		}
 
 		try {
@@ -6453,7 +6463,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override
 	public List<VProveedores> getComboProveedorFilteredCreaTrabajo(String codCartera) {
 		if(codCartera != null){
-			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "descripcion", codCartera);
+			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "codigo", codCartera);
 			DDCartera cartera = genericDao.get(DDCartera.class, filtroCartera);
 			if (cartera != null) {
 				codCartera = cartera.getCodigo();
@@ -6480,13 +6490,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				dto.setNombre(pvePredeterminado.getProveedor().getNombre());
 				dto.setId(pvePredeterminado.getProveedor().getId());
 				return dto;
-			}else {
-				segundo = genericDao.get(CFGProveedorPredeterminado.class, filtroTipoTrabajo,filtroCartera,filtroSubCartera,filtroProvincia);
-				if(segundo != null) {
-					dto.setId(segundo.getProveedor().getId());
-					dto.setNombre(segundo.getProveedor().getNombre());
-					return dto;
-				}
+//			}else {
+//				segundo = genericDao.get(CFGProveedorPredeterminado.class, filtroTipoTrabajo,filtroCartera,filtroSubCartera,filtroProvincia);
+//				if(segundo != null) {
+//					dto.setId(segundo.getProveedor().getId());
+//					dto.setNombre(segundo.getProveedor().getNombre());
+//					return dto;
+//				}
 			}
 		}
 		

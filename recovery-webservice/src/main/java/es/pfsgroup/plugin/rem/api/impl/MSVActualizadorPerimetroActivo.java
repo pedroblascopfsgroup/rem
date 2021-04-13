@@ -130,6 +130,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			String motivoGestionComercial = exc.dameCelda(fila,20);
 			String exclusionValidaciones = exc.dameCelda(fila,21);
 			String fechaCambio = exc.dameCelda(fila, 22);
+			String checkOnEfectosComercializacion = exc.dameCelda(fila, 23);
 			
 			Activo activo = activoApi.getByNumActivo(numActivo);
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
@@ -415,6 +416,22 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 				perimetroActivo.setMotivoAplicaAdmision(motivoAdmision);
 				activo.setSubestadoAdmision(null);
 			}
+			
+			if(checkOnEfectosComercializacion!=null && !checkOnEfectosComercializacion.isEmpty()) {
+				DDSinSiNo diccionarioSi =  (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(
+						DDSinSiNo.class, DDSinSiNo.CODIGO_SI);
+				DDSinSiNo diccionarioNo =  (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(
+						DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
+				
+				
+					if(Arrays.asList(listaValidosPositivos).contains(checkOnEfectosComercializacion.toUpperCase())) {
+						activo.setTieneObraNuevaAEfectosComercializacion(diccionarioSi);					
+					}else if(Arrays.asList(listaValidosNegativos).contains(checkOnEfectosComercializacion.toUpperCase())){
+						activo.setTieneObraNuevaAEfectosComercializacion(diccionarioNo);
+					}
+					activo.setObraNuevaAEfectosComercializacionFecha(new Date());
+				
+			}
 
 			activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
 
@@ -453,6 +470,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 				}
 			}
 			activoAdapter.actualizarEstadoPublicacionActivoPerimetro(idList, idListSinVisibilidadComercial);
+			activoAdapter.actualizarEstadoPublicacionActivo(idList, false);
 			transactionManager.commit(transaction);
 		}catch(Exception e){
 			transactionManager.rollback(transaction);

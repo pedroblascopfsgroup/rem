@@ -88,6 +88,7 @@ import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
+import es.pfsgroup.plugin.rem.comisionamiento.ComisionamientoApi;
 import es.pfsgroup.plugin.rem.exception.RemUserException;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
@@ -278,6 +279,9 @@ public class ActivoAdapter {
 
 	@Autowired
 	private RecoveryComunicacionManager recoveryComunicacionManager;
+	
+	@Autowired
+	private ComisionamientoApi comisionamientoApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -2247,7 +2251,7 @@ public class ActivoAdapter {
 								expedienteComercial.getEstado().getDescripcion());
 						boolean isGestorBoarding = perteneceGrupoBoarding(genericAdapter.getUsuarioLogado());
 						boolean expedienteComercialNoAprobado = expedienteComercialNoAprobado(expedienteComercial.getEstado().getCodigo());
-						if(!DDCartera.CODIGO_CARTERA_CERBERUS.equals(tramite.getActivo().getCartera().getCodigo()) && isGestorBoarding && expedienteComercialNoAprobado) {
+						if(isGestorBoarding && expedienteComercialNoAprobado) {
 							dtoTramite.setOcultarBotonResolucion(true);
 						} else {
 							if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())) {
@@ -3190,11 +3194,7 @@ public class ActivoAdapter {
 			resultado = true;
 		}else{
 			if(listaIdActivo != null && !listaIdActivo.isEmpty()){
-				for(Long idActivo : listaIdActivo){
-					if(idActivo != null){
-						return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo,true);
-					}
-				}
+				return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(listaIdActivo,true);
 			}
 		}
 		return resultado;
@@ -3971,9 +3971,11 @@ public class ActivoAdapter {
 			oferta.setOfertasAgrupadas(ofertasAgrupadas);
 			
 			oferta.setOfertaExpress(false);
-			
-			DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,
-					"codigo", DDOrigenComprador.CODIGO_ORC_HRE));
+			String origenLead = comisionamientoApi.calculaLeadOrigin(oferta);
+			if(origenLead == null) {
+				origenLead = DDOrigenComprador.CODIGO_ORC_HRE;
+			}
+			DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS, "codigo", origenLead));
 			oferta.setOrigenComprador(origenComprador);
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
 			

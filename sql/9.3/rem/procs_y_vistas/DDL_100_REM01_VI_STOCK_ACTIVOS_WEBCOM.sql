@@ -24,6 +24,7 @@
 --##		0.12 Version Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##		0.13 Version Juan Beltrán - - REMVIP-8168 - Añadir campos COD_TIPO_COMERCIALIZAR, COD_EQUIPO_GESTION, SCOM_NOMBRE, SCOM_TELEFONO y SCOM_EMAIL
 --##        0.14 Version Jonathan Ovalle -> HREOS-12135 - Añadimos PAC_CHECK_GESTION_COMERCIAL,PAC_EXCLUIR_VALIDACIONES,PAC_FECHA_GESTION_COMERCIAL,PAC_MOTIVO_GESTION_COMERCIAL
+--##  		0.15 Versión Carlos Augusto -> HREOS-12201 - Añadir campos ONV_COMERCIALIZACION y ONV_COMERCIALIZACION_FECHA  
 --##########################################
 --*/
 

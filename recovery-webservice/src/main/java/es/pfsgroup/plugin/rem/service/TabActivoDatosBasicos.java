@@ -1756,7 +1756,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				for (Oferta oferta : ofertas) {
 					ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
 					if(!Checks.esNulo(expedienteComercial)) {
-						expedienteComercialApi.actualizarGastosExpediente(expedienteComercial, oferta);
+						expedienteComercialApi.actualizarGastosExpediente(expedienteComercial, oferta, null);
 					}
 				}
 			}

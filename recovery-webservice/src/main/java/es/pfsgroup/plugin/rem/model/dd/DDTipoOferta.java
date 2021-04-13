@@ -103,5 +103,25 @@ public class DDTipoOferta implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+	
+	public static boolean isTipoAlquiler(DDTipoOferta diccionario) {
+		boolean isAlquiler = false;
+		
+		if(diccionario != null && CODIGO_ALQUILER.equals(diccionario.getCodigo())) {
+			isAlquiler = true;
+		}	
+		
+		return isAlquiler;
+	}
+	
+	public static boolean isTipoVenta(DDTipoOferta diccionario) {
+		boolean isVenta = false;
+		
+		if(diccionario != null && CODIGO_VENTA.equals(diccionario.getCodigo())) {
+			isVenta = true;
+		}	
+		
+		return isVenta;
+	}
 
 }

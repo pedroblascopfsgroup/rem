@@ -6779,9 +6779,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					htt.getTitulo().setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 					estadoTitulo = DDEstadoTitulo.ESTADO_INSCRITO;
 				}
-
 				if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
 					estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
+				}
+				if (DDEstadoPresentacion.NULO.equals(estadoPresentacion.getCodigo())) {
+					estadoTitulo = DDEstadoTitulo.ESTADO_NULO;
+				}
+				if (DDEstadoPresentacion.INMATRICULADOS.equals(estadoPresentacion.getCodigo())) {
+					estadoTitulo = DDEstadoTitulo.ESTADO_INMATRICULADOS;
+				}
+				if (DDEstadoPresentacion.IMPOSIBLE_INSCRIPCION.equals(estadoPresentacion.getCodigo())) {
+					estadoTitulo = DDEstadoTitulo.ESTADO_IMPOSIBLE_INSCRIPCION;
+				}
+				if (DDEstadoPresentacion.DESCONOCIDO.equals(estadoPresentacion.getCodigo())) {
+					estadoTitulo = DDEstadoTitulo.ESTADO_DESCONOCIDO;
 				}
 			}
 			if (!Checks.esNulo(tramitacionDto.getFechaCalificacion())) {
@@ -6860,6 +6871,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					
 					if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
 						estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
+					}				
+					if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
+					}
+					if (DDEstadoPresentacion.NULO.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_NULO;
+					}
+					if (DDEstadoPresentacion.INMATRICULADOS.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_INMATRICULADOS;
+					}
+					if (DDEstadoPresentacion.IMPOSIBLE_INSCRIPCION.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_IMPOSIBLE_INSCRIPCION;
+					}
+					if (DDEstadoPresentacion.DESCONOCIDO.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_DESCONOCIDO;
 					}
 				}
 				if(!Checks.esNulo(tramitacionDto.getFechaCalificacion())) {

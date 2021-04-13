@@ -138,7 +138,6 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 							
 							if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null
-									&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) //REMVIP-8388,todas menos Cerberus hasta que digan lo contrario
 									&& gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {															
 								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 										.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");

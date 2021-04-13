@@ -45,6 +45,13 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 		{
 			name: 'ventaSobrePlano',
 			type: 'boolean'
+		},{
+			name:'activoObraNuevaComercializacion'
+		},
+		{
+			name: 'activoObraNuevaComercializacionFecha',
+			type:'date',
+			dateFormat: 'c'
 		}
     ],
     

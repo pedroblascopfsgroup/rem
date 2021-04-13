@@ -544,8 +544,17 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		var viewModel = me.getViewModel();
 		viewModel.set("provisionSeleccionada", record);
 		viewModel.notify();
-
+		
 		var grid = me.lookupReference('provisionesGastosList');
+		var displaySelection = grid.down('displayfield[itemId=displaySelection]');
+		var displayImporteTotalLabel = grid.down('displayfield[itemId=labelImporteTotal]');
+		var displayImporteTotal = grid.down('displayfield[itemId=displayImporteTotal]');
+		
+		grid.getSelectionModel().deselectAll();
+		displayImporteTotal.setHidden(true);
+		displayImporteTotalLabel.setHidden(true);
+		displaySelection.setValue("No seleccionados");
+
 		var store = grid.getStore();
 		grid.expand();
 		store.loadPage(1);

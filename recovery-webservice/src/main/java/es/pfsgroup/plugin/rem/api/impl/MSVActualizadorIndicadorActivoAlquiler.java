@@ -115,7 +115,7 @@ public class MSVActualizadorIndicadorActivoAlquiler extends AbstractMSVActualiza
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, POSICION_COLUMNA_ID_ACTIVO_HAYA)));
 				idList.add(activo.getId());
 			}
-			activoAdapter.actualizarEstadoPublicacionActivo(idList, true);
+			activoAdapter.actualizarEstadoPublicacionActivo(idList, false);
 			transactionManager.commit(transaction);
 		}catch(Exception e){
 			transactionManager.rollback(transaction);

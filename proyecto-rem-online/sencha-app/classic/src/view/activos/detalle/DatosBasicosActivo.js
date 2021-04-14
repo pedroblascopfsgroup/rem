@@ -341,7 +341,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									
 								},				                				                
 				                {
-				                	xtype: 'comboboxfieldbase',
+				                	xtype: 'comboboxfieldbasedd',
 				                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.segmento'),
 				                	name: 'combotipoSegmento',
 				                	reference: 'comboTipoSegmentoRef',

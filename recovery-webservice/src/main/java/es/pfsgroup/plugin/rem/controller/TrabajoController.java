@@ -50,6 +50,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
@@ -162,6 +163,9 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@Autowired
 	private ActivoDao activoDao;
+	
+	@Autowired
+	private ActivoTrabajoDao activoTrabajoDao;
 	
 	@Autowired
 	private ActivoApi activoApi;
@@ -446,6 +450,9 @@ public class TrabajoController extends ParadiseJsonController {
 		ModelMap model = new ModelMap();
 		try {
 			Page page = trabajoApi.getListActivos(dto);
+			Trabajo tbj = genericDao.get(Trabajo.class, genericDao.createFilter(FilterType.EQUALS, "id",Long.parseLong(dto.getIdTrabajo())));
+			Float participacion = activoTrabajoDao.getImporteParticipacionTotal(tbj.getNumTrabajo());
+			model.put("participacion", participacion);
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
 		} catch (Exception e) {

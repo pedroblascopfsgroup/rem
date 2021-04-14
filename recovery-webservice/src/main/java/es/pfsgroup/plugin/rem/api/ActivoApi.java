@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -1450,6 +1451,8 @@ public interface ActivoApi {
 	//Método que obtiene un archivo de ofertantes
 
 	FileItem getFileItemOfertante(DtoAdjunto dtoAdjunto, AdjuntoComprador adjuntoComprador);
+	public void updateHonorarios (Activo activo, List<ActivoOferta> listaActivoOfertas);
+	
 
 	public Page getPublicacionGrid(DtoPublicacionGridFilter dto);
 }

@@ -1587,7 +1587,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				errorsList = llamarSPCambioOficinaBankia(bankiaDto, usuario);
 			}
 			
-			if (errorsList != null || !errorsList.isEmpty()) {
+			if (errorsList != null && !errorsList.isEmpty()) {
 				error = true;
 				map.put("codProveedorAnterior", bankiaDto.getCodProveedorAnterior());
 				map.put("codProveedorNuevo", bankiaDto.getCodProveedorNuevo());
@@ -1603,10 +1603,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 			
 			List<Long> listaIdsAuxiliar = activoDao.getIdsAuxiliarCierreOficinaBankias();
-			/*for (Long idExpediente : listaIdsAuxiliar) {
-				expedienteComercialApi.enviarHonorariosUvem(idExpediente);
-			}*/
-			//TODO
+			
 			if (!listaIdsAuxiliar.isEmpty()) {
 				Thread hilo = new Thread(new EjecutarEnviarHonorariosUvemAsincrono(usuario.getUsername(), listaIdsAuxiliar));
 				hilo.start();
@@ -1618,6 +1615,20 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 		return error;
 		
+	}
+	
+	@Override
+	@Transactional
+	public void actualizaHonorariosUvem (List<Long> listaIdsAuxiliar) {
+		if (listaIdsAuxiliar != null && listaIdsAuxiliar.size() > 0) {
+			for (Long idExpediente : listaIdsAuxiliar) {
+				try {
+					expedienteComercialApi.enviarHonorariosUvem(idExpediente);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	@Override

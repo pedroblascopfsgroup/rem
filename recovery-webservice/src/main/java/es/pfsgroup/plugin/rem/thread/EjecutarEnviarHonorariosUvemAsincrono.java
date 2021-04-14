@@ -7,7 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 public class EjecutarEnviarHonorariosUvemAsincrono implements Runnable {
@@ -20,7 +20,7 @@ public class EjecutarEnviarHonorariosUvemAsincrono implements Runnable {
 	private RestApi restApi;
 
 	@Autowired
-	private ExpedienteComercialApi expedienteComercialApi;
+	private GenericApi genericApi;
 
 	public EjecutarEnviarHonorariosUvemAsincrono(String userName, List<Long> listaIdsAuxiliar) {
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
@@ -32,11 +32,8 @@ public class EjecutarEnviarHonorariosUvemAsincrono implements Runnable {
 	public void run() {
 		try {
 			restApi.doSessionConfig(this.userName);
-			if (listaIdsAuxiliar != null && listaIdsAuxiliar.size() > 0) {
-				for (Long idExpediente : listaIdsAuxiliar) {
-					expedienteComercialApi.enviarHonorariosUvem(idExpediente);
-				}
-			}
+			genericApi.actualizaHonorariosUvem(listaIdsAuxiliar);
+			
 		} catch (Exception e) {
 			logger.error("error ejecutando Thread de EjecutarEnviarHonorariosUvemAsincrono", e);
 		}

@@ -365,5 +365,7 @@ public interface GenericApi {
 
 	HashMap<String, String> llamarSPCambioOficinaBankia(CierreOficinaBankiaDto bankiaDto, Usuario usuario)
 			throws Exception;
+	
+	public void actualizaHonorariosUvem (List<Long> listaIdsAuxiliar);
 
 }

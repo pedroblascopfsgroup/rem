@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=RLB
---## FECHA_CREACION=20210412
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20210414
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##		0.2 REMVIP-8715 Carlos Santos Vílchez
 --##		0.3 HREOS-13439 Cambio en el envío de prescripción y colaboración
+--##		0.4 REMVIP-9482 Juan Bautista Alfonso - Modificado cruce honorarios para que pase por trabajos
 --##########################################
 --*/
 
@@ -159,13 +160,14 @@ BEGIN
 		LEFT JOIN (
 			SELECT AUX.TEV_VALOR, AUX.ACT_ID FROM 
 			(SELECT DISTINCT TEV.TEV_VALOR, ATT.ACT_ID,
-			ROW_NUMBER() OVER (PARTITION BY ATT.ACT_ID ORDER BY ATT.ACT_ID DESC) AS RN 
+			ROW_NUMBER() OVER (PARTITION BY ACT.ACT_ID ORDER BY ACT.ACT_ID DESC) AS RN 
 			FROM '||V_ESQUEMA||'.TEV_TAREA_EXTERNA_VALOR TEV
             INNER JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TEX.TEX_ID = TEV.TEX_ID
             INNER JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID = TEX.TAR_ID
             INNER JOIN '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC ON TAC.TAR_ID = TAR.TAR_ID
             INNER JOIN '||V_ESQUEMA||'.ACT_TRA_TRAMITE ATT ON ATT.TRA_ID = TAC.TRA_ID
-            INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ATT.ACT_ID
+            INNER JOIN '||V_ESQUEMA||'.ACT_TBJ ATB ON ATB.TBJ_ID = ATT.TBJ_ID
+            INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ATB.ACT_ID
 			WHERE TEV.TEV_NOMBRE = ''numHonorarios'') AUX
 			WHERE AUX.RN = 1
 		) HONORARIOS ON ACT.ACT_ID = HONORARIOS.ACT_ID

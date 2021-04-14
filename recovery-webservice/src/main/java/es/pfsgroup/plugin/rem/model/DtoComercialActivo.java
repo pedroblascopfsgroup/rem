@@ -20,7 +20,8 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private String observacionesAutoTram;
 	private String direccionComercial;
 	private Boolean ventaSobrePlano;
-
+	private String activoObraNuevaComercializacion;
+	private Date activoObraNuevaComercializacionFecha;
 
 
 	public String getId() {
@@ -125,6 +126,22 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	public void setVentaSobrePlano(Boolean ventaSobrePlano) {
 		this.ventaSobrePlano = ventaSobrePlano;
+	}
+
+	public String getActivoObraNuevaComercializacion() {
+		return activoObraNuevaComercializacion;
+	}
+
+	public void setActivoObraNuevaComercializacion(String activoObraNuevaComercializacion) {
+		this.activoObraNuevaComercializacion = activoObraNuevaComercializacion;
+	}
+
+	public Date getActivoObraNuevaComercializacionFecha() {
+		return activoObraNuevaComercializacionFecha;
+	}
+
+	public void setActivoObraNuevaComercializacionFecha(Date activoObraNuevaComercializacionFecha) {
+		this.activoObraNuevaComercializacionFecha = activoObraNuevaComercializacionFecha;
 	}
 
 }

@@ -6872,9 +6872,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
 						estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
 					}				
-					if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
-						estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
-					}
 					if (DDEstadoPresentacion.NULO.equals(estadoPresentacion.getCodigo())) {
 						estadoTitulo = DDEstadoTitulo.ESTADO_NULO;
 					}
@@ -6997,6 +6994,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					htt.setFechaInscripcion(null);
 					activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 				}
+				if (DDEstadoPresentacion.NULO.equals(estadoPresentacion.getCodigo())) {
+					estadoTitulo = DDEstadoTitulo.ESTADO_NULO;
+					htt.setFechaInscripcion(null);
+				}
+				if (DDEstadoPresentacion.INMATRICULADOS.equals(estadoPresentacion.getCodigo())) {
+					estadoTitulo = DDEstadoTitulo.ESTADO_INMATRICULADOS;
+					htt.setFechaInscripcion(null);
+					htt.setFechaCalificacion(null);
+				}
+				if (DDEstadoPresentacion.IMPOSIBLE_INSCRIPCION.equals(estadoPresentacion.getCodigo())) {
+					estadoTitulo = DDEstadoTitulo.ESTADO_IMPOSIBLE_INSCRIPCION;
+					htt.setFechaInscripcion(null);
+				}
+				if (DDEstadoPresentacion.DESCONOCIDO.equals(estadoPresentacion.getCodigo())) {
+					estadoTitulo = DDEstadoTitulo.ESTADO_DESCONOCIDO;
+					htt.setFechaInscripcion(null);
+					htt.setFechaCalificacion(null);
+				}
+			
 			}
 			if (!Checks.esNulo(tramitacionDto.getFechaCalificacion())) {
 				beanUtilNotNull.copyProperty(htt, "fechaCalificacion", tramitacionDto.getFechaCalificacion());
@@ -7095,6 +7111,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						ahtt.setFechaInscripcion(null);
 						activoTituloAdicional.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 					}
+					if (DDEstadoPresentacion.NULO.equals(estadoPresentacion.getCodigo())) {
+						estadoTituloAdicional = DDEstadoTitulo.ESTADO_NULO;
+						ahtt.setFechaInscripcion(null);
+					}
+					if (DDEstadoPresentacion.INMATRICULADOS.equals(estadoPresentacion.getCodigo())) {
+						estadoTituloAdicional = DDEstadoTitulo.ESTADO_INMATRICULADOS;
+						ahtt.setFechaInscripcion(null);
+						ahtt.setFechaCalificacion(null);
+					}
+					if (DDEstadoPresentacion.IMPOSIBLE_INSCRIPCION.equals(estadoPresentacion.getCodigo())) {
+						estadoTituloAdicional = DDEstadoTitulo.ESTADO_IMPOSIBLE_INSCRIPCION;
+						ahtt.setFechaInscripcion(null);
+					}
+					if (DDEstadoPresentacion.DESCONOCIDO.equals(estadoPresentacion.getCodigo())) {
+						estadoTituloAdicional = DDEstadoTitulo.ESTADO_DESCONOCIDO;
+						ahtt.setFechaInscripcion(null);
+						ahtt.setFechaCalificacion(null);
+					}
 				}
 				if(!Checks.esNulo(tramitacionDto.getFechaCalificacion())) {
 					beanUtilNotNull.copyProperty(ahtt, "fechaCalificacion", tramitacionDto.getFechaCalificacion());
@@ -7176,6 +7210,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						} else if (DDEstadoPresentacion.INSCRITO
 								.equals(histTraTit.getEstadoPresentacion().getCodigo())) {
 							codEstadoPres = DDEstadoTitulo.ESTADO_INSCRITO;
+						} else if (DDEstadoPresentacion.NULO
+									.equals(histTraTit.getEstadoPresentacion().getCodigo())) {
+								codEstadoPres = DDEstadoTitulo.ESTADO_NULO;
+						} else if (DDEstadoPresentacion.INMATRICULADOS
+								.equals(histTraTit.getEstadoPresentacion().getCodigo())) {
+							codEstadoPres = DDEstadoTitulo.ESTADO_INMATRICULADOS;
+						} else if (DDEstadoPresentacion.IMPOSIBLE_INSCRIPCION
+								.equals(histTraTit.getEstadoPresentacion().getCodigo())) {
+							codEstadoPres = DDEstadoTitulo.ESTADO_IMPOSIBLE_INSCRIPCION;
+						} else if (DDEstadoPresentacion.DESCONOCIDO
+								.equals(histTraTit.getEstadoPresentacion().getCodigo())) {
+							codEstadoPres = DDEstadoTitulo.ESTADO_DESCONOCIDO;
 						}
 					}
 					DDEstadoTitulo estadoTitulo = (DDEstadoTitulo) utilDiccionarioApi

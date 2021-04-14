@@ -7257,6 +7257,42 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				fechas['fechaInscripcion'].setDisabled(false);
 				fechas['fechaInscripcion'].allowBlank = false;
 				break;
+				
+			case CONST.DD_ESP_ESTADO_PRESENTACION['NULO'] :
+				fechas['fechaPresentacionRegistro'].setDisabled(false)
+				fechas['fechaPresentacionRegistro'].allowBlank = false;
+				fechas['fechaCalificacion'].setDisabled(false);
+				fechas['fechaCalificacion'].allowBlank = false;
+				fechas['fechaInscripcion'].setDisabled(true);
+				fechas['fechaInscripcion'].setValue();
+				break;
+				
+			case CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION'] :
+				fechas['fechaPresentacionRegistro'].setDisabled(false)
+				fechas['fechaPresentacionRegistro'].allowBlank = false;
+				fechas['fechaCalificacion'].setDisabled(false);
+				fechas['fechaCalificacion'].allowBlank = false;
+				fechas['fechaInscripcion'].setDisabled(true);
+				fechas['fechaInscripcion'].setValue();
+				break;
+				
+			case CONST.DD_ESP_ESTADO_PRESENTACION['INMATRICULADOS'] :
+				fechas['fechaPresentacionRegistro'].setDisabled(false)
+				fechas['fechaPresentacionRegistro'].allowBlank = false;
+				fechas['fechaCalificacion'].setDisabled(true);
+				fechas['fechaCalificacion'].setValue();
+				fechas['fechaInscripcion'].setDisabled(true);
+				fechas['fechaInscripcion'].setValue();
+				break;
+				
+			case CONST.DD_ESP_ESTADO_PRESENTACION['DESCONOCIDO'] :
+				fechas['fechaPresentacionRegistro'].setDisabled(false)
+				fechas['fechaPresentacionRegistro'].allowBlank = false;
+				fechas['fechaCalificacion'].setDisabled(true);
+				fechas['fechaCalificacion'].setValue();
+				fechas['fechaInscripcion'].setDisabled(true);
+				fechas['fechaInscripcion'].setValue();
+				break;
 		}
 
 		me.usuarioLogadoPuedeEditar();

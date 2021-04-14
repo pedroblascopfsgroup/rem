@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210409
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210414
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13610
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial - HREOS-12758
 --##        0.2 Resolución de dudas, cambios - HREOS-13241
 --##        0.3 Cierre Oficinas Bankia. Traspaso de Negocio - HREOS-13610
+--##        0.4 Se trunca la tabla auxiliar al principio del proceso
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -25,7 +26,7 @@ CREATE OR REPLACE PROCEDURE SP_CAMBIO_OFICINA_BANKIA (
     PL_OUTPUT       OUT VARCHAR2,
     PVE_COD_API_PROVEEDOR_ANTIGUA  IN REM01.ACT_PVE_PROVEEDOR.PVE_COD_API_PROVEEDOR%TYPE,
     PVE_COD_API_PROVEEDOR_NUEVA  IN REM01.ACT_PVE_PROVEEDOR.PVE_COD_API_PROVEEDOR%TYPE) AS
---  0.2
+--  0.4
 
     V_ESQUEMA VARCHAR2(15 CHAR) := 'REM01';
     V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
@@ -39,6 +40,11 @@ CREATE OR REPLACE PROCEDURE SP_CAMBIO_OFICINA_BANKIA (
 
 BEGIN
         PL_OUTPUT := '[INICIO]'||CHR(10);
+        
+        --------------------------------------------------------------------
+        ----------- TRUNCATE TABLA AUXILIAR --------------------------------
+        --------------------------------------------------------------------
+        #ESQUEMA#.OPERACION_DDL.DDL_TABLE('TRUNCATE', V_TEXT_TABLA_AUX);
     
         --------------------------------------------------------------------
         ----------- COMPROBACIONES PREVIAS --------------------------------
@@ -71,10 +77,6 @@ BEGIN
                 EXECUTE IMMEDIATE V_MSQL INTO V_OFICINA_NUEVA;
 
 
-        --------------------------------------------------------------------
-        ----------- TRUNCATE TABLA AUXILIAR --------------------------------
-        --------------------------------------------------------------------
-                #ESQUEMA#.OPERACION_DDL.DDL_TABLE('TRUNCATE', V_TEXT_TABLA_AUX);
         --------------------------------------------------------------------
         ----------- DAR DE BAJA OFICINA ------------------------------------
         --------------------------------------------------------------------

@@ -190,7 +190,7 @@ public class VisibilidadGestionComercialValidator {
 					erroresActivo.add(VALID_ACTIVO_ALQUILER_SOCIAL);
 				}
 				
-				if(fasePublicacionActivoVigente != null && DDSubfasePublicacion.isHistoricoFasesExcPubEstrategiaCl(fasePublicacionActivoVigente)) {
+				if(fasePublicacionActivoVigente != null && DDSubfasePublicacion.isHistoricoFasesExcPubEstrategiaCl(fasePublicacionActivoVigente) || DDSubfasePublicacion.isHistoricoFasesReqLegAdm(fasePublicacionActivoVigente) || DDSubfasePublicacion.isHistoricoFasesSinValor(fasePublicacionActivoVigente)) {
 					erroresActivo.add(VALID_SUBFASE_PUBLICACION);
 				}
 				

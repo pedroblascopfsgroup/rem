@@ -1456,4 +1456,6 @@ public interface ParticularValidatorApi {
 	Boolean isActivoSareb(String numActivo);
 
 	Boolean isActivoCajamar(String numActivo);
+
+	Boolean validacionSubfasePublicacion(String activo);
 }

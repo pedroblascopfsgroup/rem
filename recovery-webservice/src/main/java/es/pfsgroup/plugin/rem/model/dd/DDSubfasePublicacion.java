@@ -148,5 +148,26 @@ public class DDSubfasePublicacion implements Auditable, Dictionary {
 		
 		return isExclPubEstrCl;
 	}
+	
+	public static boolean isHistoricoFasesReqLegAdm(HistoricoFasePublicacionActivo hist) {
+		boolean isReqLegAdm = false;
+		
+		if(hist.getSubFasePublicacion() != null && CODIGO_REQUERIMIENTO_LEGAL_O_ADMINISTRATIVO.equals(hist.getSubFasePublicacion().getCodigo())) {
+			isReqLegAdm = true;
+		}
+		
+		return isReqLegAdm;
+	}
+
+	
+	public static boolean isHistoricoFasesSinValor(HistoricoFasePublicacionActivo hist) {
+		boolean isSinValor = false;
+		
+		if(hist.getSubFasePublicacion() != null && CODIGO_SIN_VALOR.equals(hist.getSubFasePublicacion().getCodigo())) {
+			isSinValor = true;
+		}
+		
+		return isSinValor;
+	}
 
 }

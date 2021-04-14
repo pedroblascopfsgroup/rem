@@ -7013,5 +7013,25 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	@Override
+	public Boolean validacionSubfasePublicacion (String activo) {
+		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo))
+			return false;
+		String resultado = rawDao.getExecuteSQL ("WITH ultimo AS (SELECT hfp_id,dd_sfp_id\n" + 
+				"FROM (SELECT hfp_id,dd_sfp_id\n" + 
+				"FROM act_hfp_hist_fases_pub hfp\n" + 
+				"JOIN ACT_ACTIVO a ON a.act_id = hfp.act_id AND hfp.borrado = 0 \n" + 
+				"WHERE  a.ACT_NUM_ACTIVO = "+ activo +" AND a.borrado = 0 \n" + 
+				"ORDER BY hfp.hfp_id DESC)\n" + 
+				"WHERE ROWNUM = 1)\n" + 
+				"\n" + 
+				"\n" + 
+				"SELECT COUNT(1)\n" + 
+				"FROM ultimo u\n" + 
+				"JOIN  dd_sfp_subfase_publicacion sp ON u.DD_SFP_ID = sp.DD_SFP_ID AND sp.borrado = 0\n" + 
+				"WHERE sp.DD_SFP_CODIGO = '15' OR sp.DD_SFP_CODIGO = '14'  OR sp.DD_SFP_CODIGO = '12'"
+);
+		return "0".equals(resultado);
+	}
 
 }

@@ -32,11 +32,9 @@ public class EjecutarSPPublicacionAsincrono implements Runnable {
 	public void run() {
 		try {
 			restApi.doSessionConfig(this.userName);
-			if (listaIdActivo != null && listaIdActivo.size() > 0) {
-				for (Long idActivo : listaIdActivo) {
-					activoEstadoPublicacionApi
-							.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo, false);
-				}
+			if (listaIdActivo != null && listaIdActivo.size() > 0) {				
+				activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(listaIdActivo, false);
+				
 			}
 		} catch (Exception e) {
 			logger.error("error ejecutando SP de publicaciones", e);

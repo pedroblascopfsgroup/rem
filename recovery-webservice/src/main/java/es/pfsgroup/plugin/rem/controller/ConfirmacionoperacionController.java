@@ -133,7 +133,7 @@ public class ConfirmacionoperacionController {
 							}
 						}					
 					}	
-					activoAdapterApi.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
+					activoAdapterApi.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,false);
 				}
 
 				model.put("id", jsonFields.get("id"));

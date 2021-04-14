@@ -102,7 +102,7 @@ public class Trabajo implements Serializable, Auditable {
 	private String descripcion;
     
     @Column(name="TBJ_CUBRE_SEGURO")
-    private Boolean cubreSeguro;
+    private Boolean cubreSeguro = false;
     
     @Column(name="TBJ_CIA_ASEGURADORA")
     private String ciaAseguradora;  

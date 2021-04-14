@@ -82,7 +82,7 @@ public class MSVAgruparActivosRestringido extends AbstractMSVActualizador implem
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, COL_ID_ACTIVO_AUX)));
 				idList.add(activo.getId());
 			}
-			activoAdapter.actualizarEstadoPublicacionActivo(idList, true);
+			activoAdapter.actualizarEstadoPublicacionActivo(idList, false);
 			transactionManager.commit(transaction);
 		}catch(Exception e){
 			transactionManager.rollback(transaction);

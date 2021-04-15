@@ -62,6 +62,13 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 		},
 		{
 			name: 'tipoCuotaComunidad'
+		},{
+			name:'activoObraNuevaComercializacion'
+		},
+		{
+			name: 'activoObraNuevaComercializacionFecha',
+			type:'date',
+			dateFormat: 'c'
 		}
     ],
     

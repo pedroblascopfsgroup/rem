@@ -26,6 +26,8 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private Date fechaFinCorrectivoSareb;
 	private String tipoCuotaComunidad;
 
+	private String activoObraNuevaComercializacion;
+	private Date activoObraNuevaComercializacionFecha;
 
 
 	public String getId() {
@@ -173,5 +175,21 @@ public class DtoComercialActivo extends DtoTabActivo{
 	}
 	
 	
+
+	public String getActivoObraNuevaComercializacion() {
+		return activoObraNuevaComercializacion;
+	}
+
+	public void setActivoObraNuevaComercializacion(String activoObraNuevaComercializacion) {
+		this.activoObraNuevaComercializacion = activoObraNuevaComercializacion;
+	}
+
+	public Date getActivoObraNuevaComercializacionFecha() {
+		return activoObraNuevaComercializacionFecha;
+	}
+
+	public void setActivoObraNuevaComercializacionFecha(Date activoObraNuevaComercializacionFecha) {
+		this.activoObraNuevaComercializacionFecha = activoObraNuevaComercializacionFecha;
+	}
 
 }

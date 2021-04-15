@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Luis Caballero
---## FECHA_CREACION=20160927
+--## FECHA_CREACION=201601027
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-891

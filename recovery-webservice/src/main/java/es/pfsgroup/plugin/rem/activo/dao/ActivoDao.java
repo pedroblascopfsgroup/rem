@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.activo.dao;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -401,4 +402,10 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	boolean isPublicadoVentaByFechaValoracion(Long idActivo, Date fechaValoracion);
 	public Page getBusquedaPublicacionGrid(DtoPublicacionGridFilter dto);
+
+	/*public Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo);*/
+
+	List<Long> getIdsAuxiliarCierreOficinaBankias();
+
+	Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo, String username);
 }

@@ -1,6 +1,9 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.ui.ModelMap;
@@ -9,6 +12,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorReducido;
@@ -47,6 +51,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
+import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaDto;
+import net.sf.json.JSONObject;
 
 
 public interface GenericApi {
@@ -355,5 +361,14 @@ public interface GenericApi {
 	
 	/*@BusinessOperationDefinition("genericManager.getComboTipoTrabajoFiltered")
 	public List<DDTipoTrabajo> getComboTipoTrabajoFiltered(String idActivo);*/
+
+	public boolean traspasoCierreOficinaBankia(List<CierreOficinaBankiaDto> listCierreOficinaBankiaDto, JSONObject jsonFields,
+			ArrayList<Map<String, Object>> listaRespuesta) throws Exception;
+
+
+	HashMap<String, String> llamarSPCambioOficinaBankia(CierreOficinaBankiaDto bankiaDto, Usuario usuario)
+			throws Exception;
+	
+	public void actualizaHonorariosUvem (List<Long> listaIdsAuxiliar);
 
 }

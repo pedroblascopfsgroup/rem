@@ -1443,7 +1443,7 @@ public interface ParticularValidatorApi {
 
 	Boolean situacionComercialPublicadoAlquiler(String activo);
 
-	Boolean activoNoPrincipalEnAgrupacionRestringida(String numActivo);
+	Boolean activoPrincipalEnAgrupacionRestringida(String numActivo);
 	
 	Boolean activoPerteneceAgrupacion(String numActivo);
 	

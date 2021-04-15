@@ -161,5 +161,13 @@ public class DDCartera implements Auditable, Dictionary {
 		}
 		return isCarteraCajamar;
 	}
+	
+	public static boolean isCarteraBBVA(DDCartera cartera) {
+		boolean isCarteraBBVA = false;
+		if(cartera != null && (CODIGO_CARTERA_BBVA.equals(cartera.getCodigo()))) {
+			isCarteraBBVA = true;
+		}
+		return isCarteraBBVA;
+	}
 
 }

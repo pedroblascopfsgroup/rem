@@ -50,11 +50,6 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 
 		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 		
-		if(!fichaActivo && perimetroActivo.getCheckGestorComercial() != null && perimetroActivo.getCheckGestorComercial() && perimetroActivo.getExcluirValidaciones() != null
-			 && DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones())) {
-			return mapaErrores;
-		}
-
 		mapaErrores = visibilidadGestionComercialValidator.validarPerimetroActivo(activo, dtoCheckGestorComercial, dtoExcluirValidaciones, fichaActivo);
 		
 		List<String> listaErrores = mapaErrores.get(activo.getNumActivo());
@@ -65,15 +60,20 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 		}
 
 		if(!fichaActivo) {
-			perimetroActivo.setCheckGestorComercial(!tieneErrores);
-			perimetroActivo.setFechaGestionComercial(new Date());
+			if(tieneErrores && perimetroActivo.getExcluirValidaciones() == null || !DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones())) {
+				perimetroActivo.setCheckGestorComercial(false);	
+				perimetroActivo.setFechaGestionComercial(new Date());
+			}
 			if(!tieneErrores) {
+				perimetroActivo.setCheckGestorComercial(true);	
+				perimetroActivo.setFechaGestionComercial(new Date());
 				perimetroActivo.setExcluirValidaciones((DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO));
 				perimetroActivo.setMotivoGestionComercial(null);
+				
+				genericDao.update(PerimetroActivo.class,perimetroActivo);
 			}
-			genericDao.update(PerimetroActivo.class, perimetroActivo);
-
 		}
+		
 	
 		
 		return mapaErrores;

@@ -166,22 +166,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean activoNoPrincipalEnAgrupacionRestringida(String numActivo) {
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
-				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
-				+ "			    ACT_AGR_AGRUPACION agr, "
-				+ "			    ACT_ACTIVO act, "
-				+ "			    DD_TAG_TIPO_AGRUPACION tipoAgr "
-				+ "			  WHERE aga.AGR_ID = agr.AGR_ID "
-				+ "			    AND act.act_id   = aga.act_id "
-				+ "			    AND tipoAgr.DD_TAG_ID = agr.DD_TAG_ID "
-				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
-				+ "			    AND tipoAgr.DD_TAG_CODIGO = '02' "
-				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  < SYSDATE)"
-				+"              AND aga.AGA_PRINCIPAL = 0"
-				+ "			    AND aga.BORRADO  = 0 "
-				+ "			    AND agr.BORRADO  = 0 "
-				+ "			    AND act.BORRADO  = 0 ");
+	public Boolean activoPrincipalEnAgrupacionRestringida(String numActivo) {
+		String resultado = rawDao.getExecuteSQL("SELECT count(1)      \n" + 
+				"FROM REM01.ACT_AGA_AGRUPACION_ACTIVO aga\n" + 
+				"JOIN REM01.ACT_AGR_AGRUPACION agr on aga.agr_id = agr.agr_id and agr.borrado = 0\n" + 
+				"join REM01.DD_TAG_TIPO_AGRUPACION tagg on agr.dd_tag_id = tagg.dd_tag_id\n" + 
+				"where tagg.dd_Tag_codigo =  '02' and aga.borrado = 0  and AGR.agr_act_principal = (SELECT ACT_ID FROM REM01.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = "+ numActivo +" ) " + 
+				"and (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  < SYSDATE) and rownum = 1");
 		return "1".equals(resultado);
 	}
 

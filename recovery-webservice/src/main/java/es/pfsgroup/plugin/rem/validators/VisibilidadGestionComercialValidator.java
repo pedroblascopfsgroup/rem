@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -54,6 +55,8 @@ public class VisibilidadGestionComercialValidator {
 	public static final String VALID_SUBFASE_PUBLICACION= "La subfase de publicación del activo no permite la modificación del check Visibilidad Gestion Comercial ";
 	public static final String VALID_DESMARCAR_SIN_ERRORES= "Se cumplen todas las condiciones para que estén marcados.";
 
+	public static final String[] SOCIEDADES_PARTICIPADAS = {Ecoarenys, JaleProcam, PromocionesMiesdelValle};
+	
 	@Autowired
 	private GenericABMDao genericDao;
 	
@@ -107,6 +110,9 @@ public class VisibilidadGestionComercialValidator {
 			
 			if (!excluirValidaciones) {
 				
+				
+				if()
+				
 				for (ActivoOferta actOfr : listaActivoOferta) {
 					Oferta oferta = actOfr.getPrimaryKey().getOferta();
 					if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())) {
@@ -144,6 +150,13 @@ public class VisibilidadGestionComercialValidator {
 						&& perimetroActivo.getCheckGestorComercial() != null && perimetroActivo.getCheckGestorComercial()) {
 							erroresActivo.add(VALID_ACTIVO_GESTION);
 						}
+					}else if(DDCartera.isCarteraBBVA(activoActual.getCartera())) {
+						if(!DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta())
+						&& !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler())&& 
+						activoPropietario != null && activoPropietario.getPropietario() !=null && 
+						Arrays.asList(SOCIEDADES_PARTICIPADAS).contains(activoPropietario.getPropietario().getDocIdentificativo())){
+							erroresActivo.add(VALID_ACTIVO_PROPIETARIO_SOCIEDAD);
+						}
 					}else if(!DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta())
 						&& !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler())) {
 						erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
@@ -163,20 +176,6 @@ public class VisibilidadGestionComercialValidator {
 					&& !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler()) && activoActual.getVpo() == 1) {
 						erroresActivo.add(VALID_ACTIVO_NO_VPO);
 					
-				}
-
-				// Validación que comprueba si el propietario tiene sociedad participada
-				if (activoActual.getCartera() != null && (DDCartera.CODIGO_CARTERA_BBVA.equals(activoActual.getCartera().getCodigo()))) {
-					if (activoPropietario != null && activoPropietario.getPropietario() != null && activoPropietario.getPropietario().getDocIdentificativo() != null) {
-						if (activoPublicacion != null && activoPublicacion.getEstadoPublicacionAlquiler().getCodigo() != null
-							&& (DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())
-							|| DDEstadoPublicacionVenta.CODIGO_NO_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo()))) {
-							if (Ecoarenys.equals(activoPropietario.getPropietario().getDocIdentificativo()) || JaleProcam.equals(activoPropietario.getPropietario().getDocIdentificativo())
-							|| PromocionesMiesdelValle.equals(activoPropietario.getPropietario().getDocIdentificativo())) {
-								erroresActivo.add(VALID_ACTIVO_PROPIETARIO_SOCIEDAD);
-							}
-						}
-					}
 				}
 
 				// Validación que comprueba si el activo tiene cargas

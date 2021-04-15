@@ -148,11 +148,13 @@ public class UrsusManager implements UrsusApi{
 								genericDao.createFilter(FilterType.EQUALS, "numeroClienteUrsusBh", dto.getNumeroClienteUrsus()));
 						if(ursus != null) {
 							beanUtilNotNull.copyProperties(ursus, dto);
+							ursus.setNumeroClienteUrsus(null);
 							genericDao.update(ClienteUrsus.class, ursus);
 						}else {
 							ursus = new ClienteUrsus();			
 							beanUtilNotNull.copyProperties(ursus, dto);
 							ursus.setNumeroClienteUrsusBh(dto.getNumeroClienteUrsus());
+							ursus.setNumeroClienteUrsus(null);
 							genericDao.save(ClienteUrsus.class, ursus);
 						}
 						idsUrsus.add(dto.getNumeroClienteUrsus());

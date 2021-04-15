@@ -184,6 +184,7 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 		DDTipoTituloActivo tipoTitulo = subTipoTitulo.getTipoTituloActivo();
 		DDSubcartera subcartera = (DDSubcartera) diccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, dtoAATP.getCodSubCartera());
 		DDCartera cartera = subcartera.getCartera();
+		DDSinSiNo siNoObraNueva = (DDSinSiNo)diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
 		Activo activo = new Activo();
 		
 		beanUtilNotNull.copyProperty(activo, "numActivo", dtoAATP.getNumActivoHaya());
@@ -202,6 +203,7 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 				utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, dtoAATP.getDestinoComercialCodigo()));
 		beanUtilNotNull.copyProperty(activo, "tipoAlquiler", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class, dtoAATP.getTipoAlquilerCodigo()));
 		beanUtilNotNull.copyProperty(activo, "tipoComercializar", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class, dtoAATP.getTipoDeComercializacion()));
+		activo.setTieneObraNuevaAEfectosComercializacion(siNoObraNueva);
 		
 		activo = genericDao.save(Activo.class, activo);
 		return activo;

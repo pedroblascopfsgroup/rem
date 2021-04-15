@@ -319,6 +319,12 @@ public class StockDto implements WebcomRESTDto{
 	private DateDataType spsFechaDesinstalaVigilancia;
 	
 	
+	@WebcomRequired
+	private LongDataType onvComercializacion;
+	
+	@WebcomRequired
+	private StringDataType onvComercializacionFecha;
+	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -1047,5 +1053,18 @@ public class StockDto implements WebcomRESTDto{
 	public void setSpsFechaDesinstalaVigilancia(DateDataType spsFechaDesinstalaVigilancia) {
 		this.spsFechaDesinstalaVigilancia = spsFechaDesinstalaVigilancia;
 	}
+	public LongDataType getOnvComercializacion() {
+		return onvComercializacion;
+	}
+	public void setOnvComercializacion(LongDataType onvComercializacion) {
+		this.onvComercializacion = onvComercializacion;
+	}
+	public StringDataType getOnvComercializacionFecha() {
+		return onvComercializacionFecha;
+	}
+	public void setOnvComercializacionFecha(StringDataType onvComercializacionFecha) {
+		this.onvComercializacionFecha = onvComercializacionFecha;
+	}
+
 	
 }

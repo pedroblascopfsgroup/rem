@@ -415,6 +415,8 @@ public interface ParticularValidatorApi {
 
 	boolean isMismoEpuActivoPrincipalAgrupacion(String numActivo, String numAgrupacion);
 	
+	boolean isMismoTcoActivoPrincipalAgrupacion(String numActivo, String numAgrupacion);
+	
 	boolean isMismoEpuActivoPrincipalExcel(String numActivo, String numActivoPrincipalExcel);
 
 	String idAgrupacionDelActivoPrincipal(String numActivo);
@@ -1347,7 +1349,11 @@ public interface ParticularValidatorApi {
 	boolean existeTipoRetencion(String tipoRetencion);
 	
 	boolean existeLineaEnGasto(String idLinea, String numGasto);
+	
+	public Boolean existePorcentajeConstruccion(String porcentajeConstruccion);
 
+	Boolean existeActivoConONMarcadoSi(String columnaActivo);
+	
 	boolean conEstadoGasto(String idGasto,String codigoEstado);
 
 	String devolverEstadoGasto(String idGasto);
@@ -1404,6 +1410,12 @@ public interface ParticularValidatorApi {
 	List<String> getIdPrefacturasByNumAlbaran(String numAlbaran);
 	
     Boolean getGastoSuplidoConFactura(String idGastoAfectado);
+
+	Boolean estadoPrevioTrabajoFinalizado(String celdaTrabajo);
+
+	Boolean existeCodProveedorRem(String codProveedorREM);
+
+	boolean gastoSarebAnyadeRefacturable(String numGasto);
 
 
 }

@@ -9,19 +9,19 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
     viewModel: {
         type: 'trabajodetalle'
     },
-    requires: ['HreRem.model.FichaTrabajo','HreRem.view.trabajos.detalle.ActivosAgrupacionTrabajoList','HreRem.view.trabajos.detalle.VentanaTarifasTrabajo','HreRem.view.trabajos.detalle.listaActivosAgrupacionGrid'],
+    requires: ['HreRem.model.FichaTrabajo','HreRem.view.trabajos.detalle.ActivosAgrupacionTrabajoList',
+				'HreRem.view.trabajos.detalle.VentanaTarifasTrabajo','HreRem.view.trabajos.detalle.listaActivosAgrupacionGrid','HreRem.model.TarifasGridModel', 'HreRem.view.common.ComboBoxFieldBaseDD'],
     
 	listeners: {
 
 		boxready: function(window) {
-			
 			var me = this;
 			
 			me.lookupReference('checkMultiActivo').fireEvent('change');
 			
 			Ext.Array.each(window.down('form').query('field[isReadOnlyEdit]'),
 				function (field, index) 
-					{ 								
+					{ 							
 						field.fireEvent('edit');
 						if(index == 0) field.focus();
 					}
@@ -55,9 +55,12 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
     trabajoDesdeActivo: false,
 	
     initComponent: function() {
-    	
     	var me = this;
-    	
+    	var emptyStoreTarifas = new Ext.data.ArrayStore({
+	        model: 'HreRem.model.TarifasGridModel',
+	        idIndex: 0,
+	        autoLoad: false
+	    });
     	var disableCampoTomaPosesion = me.lookupController().checkDisableCampoTomaPosesion();
 
     	me.setTitle(HreRem.i18n("title.peticion.trabajo.nuevo"));
@@ -71,7 +74,8 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 	    				xtype: 'formBase', 
 	    				collapsed: false,
 	   			 		scrollable	: 'y',
-	    				cls:'',	    				
+	    				cls:'',
+						reference: 'formBaseCrearTrabajo',
 					    recordName: "trabajo",
 						recordClass: "HreRem.model.FichaTrabajo",
 					    
@@ -90,8 +94,10 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 												collapsible: false,
 												border:0,
 												colspan:2,
-												defaultType: 'textfieldbase',
-												
+												defaultType: 'textfieldbase',												
+										    	defaults: {
+										    		addUxReadOnlyEditFieldPlugin: false
+										    	},
 												items :
 													[
 													 {
@@ -101,6 +107,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 													        reference:'gestorActivo',
 															colspan: 3,
 															padding:'2 2 2 2',
+															addUxReadOnlyEditFieldPlugin: true,
 													        bind: 
 													        	{
 													            	value: me.gestorActivo
@@ -113,6 +120,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															minValue: $AC.getCurrentDate(),
 															maxValue: null,
 															value:  $AC.getCurrentDate(),
+															addUxReadOnlyEditFieldPlugin: true,
 															colspan: 3,
 															allowBlank: false
 														},
@@ -157,29 +165,38 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															allowBlank: false
 												        },
 									    				{ 
-												        	xtype: 'comboboxfieldbase',
+												        	xtype: 'comboboxfieldbasedd',
 												        	fieldLabel: HreRem.i18n('fieldlabel.proveedor'),
 															flex: 		1,
 															colspan: 3,
 															reference: 'comboProveedorGestionEconomica2',
 															chainedReference: 'proveedorContactoCombo2',
-											            	listeners: {
-											            		select: 'onChangeProveedorCombo'
+											            	listConfig: {
+																loadingHeight: 200,
+											            		loadingText: 'Buscando proveedores...'
 											            	},
 															disabled: true,
 											            	displayField: 'nombreComercial',
 								    						valueField: 'idProveedor',
-								    						filtradoEspecial: true,
-								    						allowBlank: false
+															allowBlank: false,
+															filtradoEspecial2: true,
+							    						    listeners: {
+																select: 'onChangeProveedorCombo'							    						     	
+							    						    }
 												        },
 												        { 
 															xtype: 'comboboxfieldbase',
 												        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.contacto'),
 												        	reference: 'proveedorContactoCombo2',
+															listConfig: {
+																loadingHeight: 200,
+											            		loadingText: 'Buscando proveedores contacto...',
+																emptyText: 'No se han encontrado proveedores contacto'
+											            	},					
 															flex: 		1,
 															colspan: 3,
 															disabled: true,
-											            	displayField: 'nombre',
+											            	displayField: 'fullName',
 								    						valueField: 'id',
 								    						allowBlank: false
 												        }
@@ -192,6 +209,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 													defaultType: 'textfieldbase',
 													border:0,
 													colspan:1,
+											    	defaults: {
+											    		addUxReadOnlyEditFieldPlugin: false
+											    	},
 													items :
 														[
 															{
@@ -246,6 +266,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 													defaultType: 'textfieldbase',
 													colspan:3,
 													border:0,
+											    	defaults: {
+											    		addUxReadOnlyEditFieldPlugin: false
+											    	},
 													items :
 														[
 													        {
@@ -278,6 +301,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 													defaultType: 'textfieldbase',
 													colspan:3,
 													border:0,
+													defaults: {
+											    		addUxReadOnlyEditFieldPlugin: false
+											    	},
 													items :
 														[
 				        									{ 
@@ -368,6 +394,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 												title: HreRem.i18n('title.publicaciones.activos.grid'),
 												defaultType: 'textfieldbase',
 												colspan:3,
+												defaults: {
+											    	addUxReadOnlyEditFieldPlugin: false
+											    },
 												items :
 													[
 														{
@@ -394,9 +423,10 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 														    xtype: 'gridBase',
 															cls	: 'panel-base shadow-panel',
 															reference: 'listaActivosSubidaRef',
+															loadAfterBind: false,
 															colspan:3,
 															bind: {
-				        	   									store: '{listaActivosSubida}'														
+				        	   									store: '{listaActivosSubida}'
 															},
 															columns: [
 				        	   									{
@@ -485,9 +515,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 																reference: 'gridListaTarifas',
 																topBar: true,
 																colspan:2,
-																bind: {
-																	store: '{comboGridTarifa}'
-																},
+																store: emptyStoreTarifas,
 																columns: [
 														  				{
 															            	text	 : HreRem.i18n('header.codigo.tarifa'),
@@ -517,10 +545,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															            xtype: 'pagingtoolbar',
 															            dock: 'bottom',
 															            displayInfo: true,
-															            bind: 
-															            {
-															                //store: '{storeAgrupacionesActivo}'
-															            }
+															            store: emptyStoreTarifas
 															        }
 														    	],
 														    onClickAdd: function (btn) {
@@ -674,7 +699,6 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
     },
     
     resetWindow: function() {
-
     	var me = this,    	
     	form = me.down('formBase');     	
 

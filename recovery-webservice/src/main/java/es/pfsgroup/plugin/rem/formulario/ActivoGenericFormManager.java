@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.formulario;
 
+import java.io.Serializable;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,12 +13,14 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.BPMContants;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaValorDao;
@@ -24,6 +28,7 @@ import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.web.genericForm.DtoGenericForm;
 import es.capgemini.pfs.web.genericForm.GenericForm;
@@ -31,6 +36,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 //import es.pfsgroup.plugin.rem.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -185,7 +191,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
         return form;
     }
     @Transactional
-    public void validateAndSaveValues(DtoGenericForm dto) {
+    public void validateAndSaveValues(DtoGenericForm dto) throws Exception {
     	TareaExterna tarea = dto.getForm().getTareaExterna();
     	String validacion = validacionPreviaDeLaTarea(tarea);	
     	if(Checks.esNulo(validacion)){
@@ -202,62 +208,69 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
      * @param dto dto con los datos que se guardan.
      */
     @Transactional
-    public void saveValues(DtoGenericForm dto) {
+    @SuppressWarnings("unchecked")
+    public void saveValues(DtoGenericForm dto) throws Exception{
         String[] valores = dto.getValues();
         TareaExterna tarea = dto.getForm().getTareaExterna();
-
-        for (int i = 0; i < valores.length; i++) {
-            GenericFormItem item = dto.getForm().getItems().get(i);
-            TareaExternaValor valor = new TareaExternaValor();
-            valor.setTareaExterna(tarea);
-            valor.setNombre(item.getNombre());
-            
-            if(item.getNombre().equals("comite")) {
-            	TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tarea.getId());
-            	if(DDCartera.CODIGO_CARTERA_BANKIA.equals(tareaActivo.getActivo().getCartera().getCodigo())) {
-	        		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id",
-	        				tareaActivo.getTramite().getTrabajo().getId());
-	        		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroTrabajo);
-	            	
-	            	String codigoComite = null;
-					try {
-						codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					if(!Checks.esNulo(codigoComite)) {
-						if(expediente.getComiteSancion() == null || !expediente.getComiteSancion().getCodigo().equals(codigoComite)) {
-							DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
-							expediente.setComiteSancion(comite);
-							expediente.setComiteSuperior(comite);
+        try {
+	        if(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES.equals(tarea.getTareaProcedimiento().getCodigo())) {
+	        	Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+	        	tarea.getAuditoria().setBorrado(true);
+	        	tarea.getAuditoria().setFechaBorrar(new Date());
+	        	tarea.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+	        	tarea.getTareaPadre().getAuditoria().setBorrado(true);
+	        	tarea.getTareaPadre().getAuditoria().setFechaBorrar(new Date());
+	        	tarea.getTareaPadre().getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+	        	tarea.getTareaPadre().setFechaFin(new Date());
+	        	genericDao.update(TareaNotificacion.class, tarea.getTareaPadre());
+	        }
+	        
+	        for (int i = 0; i < valores.length; i++) {
+	            GenericFormItem item = dto.getForm().getItems().get(i);
+	            TareaExternaValor valor = new TareaExternaValor();
+	            valor.setTareaExterna(tarea);
+	            valor.setNombre(item.getNombre());
+	            
+	            if(item.getNombre().equals("comite")) {
+	            	TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tarea.getId());
+	            	if(DDCartera.CODIGO_CARTERA_BANKIA.equals(tareaActivo.getActivo().getCartera().getCodigo())) {
+		        		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id",
+		        				tareaActivo.getTramite().getTrabajo().getId());
+		        		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroTrabajo);
+		            	
+		            	String codigoComite = null;
+						try {
+							codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
-						valor.setValor(codigoComite);
-					}else {
-						valor.setValor(NO_APLICA);
-					}
-            	}else {
-                	valor.setValor(valores[i]);
-                }
-            }else {
-            	valor.setValor(valores[i]);
-            }
-            //listaValores.add(valor);
-            tareaExternaValorDao.saveOrUpdate(valor);
-
+						if(!Checks.esNulo(codigoComite)) {
+							if(expediente.getComiteSancion() == null || !expediente.getComiteSancion().getCodigo().equals(codigoComite)) {
+								DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
+								expediente.setComiteSancion(comite);
+								expediente.setComiteSuperior(comite);
+							}
+							valor.setValor(codigoComite);
+						}else {
+							valor.setValor(NO_APLICA);
+						}
+	            	}else {
+	                	valor.setValor(valores[i]);
+	                }
+	            }else {
+	            	valor.setValor(valores[i]);
+	            }
+	            //listaValores.add(valor);
+	            tareaExternaValorDao.saveOrUpdate(valor);
+	
+	        }
+	        HibernateUtils.flush();
+        }catch(ConstraintViolationException e) {
+        	throw new UserException("La tarea que está intentando avanzar ya se encuentra en proceso de avance. "
+        			+ "Por favor, refresque el trámite para comprobar si este proceso ha finalizado.");     	
         }
-
         //Le insertamos los valores del formulario al BPM en una variable de Thread para que pueda recuperarlos
         jbpmManager.signalToken(tarea.getTokenIdBpm(), BPMContants.TRANSICION_AVANZA_BPM);
-        if(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES.equals(tarea.getTareaProcedimiento().getCodigo())) {
-        	Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-        	tarea.getAuditoria().setBorrado(true);
-        	tarea.getAuditoria().setFechaBorrar(new Date());
-        	tarea.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
-        	tarea.getTareaPadre().getAuditoria().setBorrado(true);
-        	tarea.getTareaPadre().getAuditoria().setFechaBorrar(new Date());
-        	tarea.getTareaPadre().getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
-        	tarea.getTareaPadre().setFechaFin(new Date());
-        }
     }    
     
     /**

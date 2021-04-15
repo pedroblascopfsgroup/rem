@@ -30,8 +30,6 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_PLUSVALIA = "plusvalia";
     public static final String TAB_FASE_PUBLICACION = "fasepublicacionactivo";
     public static final String TAB_SANEAMIENTO = "saneamiento";
-    
-
 
     static {
     	Map<String, List<String>> pmap = new HashMap<String, List<String>>();
@@ -43,7 +41,7 @@ public class ActivoPropagacionFieldTabMap {
 	    			"subtipoActivoCodigo",
 	    			"estadoActivoCodigo",
 	    			"tipoTransmision",
-	    			
+    	    		"tipoSegmentoCodigo",
 	    			// identificación BBVA
 	    			"lineaFactura",
 	    			"idOrigenHre",
@@ -580,12 +578,21 @@ public class ActivoPropagacionFieldTabMap {
     				"observaciones"
 
     			));
-      	
+//      HREOS-13592 Se bloquea el evolutivo de ocultación de activos para la subida 	
+//    	pmap.put(TAB_FASE_PUBLICACION,
+//    			Arrays.asList(
+//    				"fasePublicacionCodigo",
+//    				"subfasePublicacion",
+//    				"subfasePublicacionCodigo",
+//    				"comentario"
+//    					
+//    			));
 
     	pmap.put(TAB_SANEAMIENTO,
     			Arrays.asList(
     				"fechaRevisionCarga",
     				"conCargas"
+
     			));
 
         map = Collections.unmodifiableMap(pmap);

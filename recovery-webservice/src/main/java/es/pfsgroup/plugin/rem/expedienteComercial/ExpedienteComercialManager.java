@@ -141,6 +141,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -625,7 +626,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Oferta ofertaPrincipal = null;
 		DDClaseOferta claseOferta = null;
 		Usuario usuarioModificador = genericAdapter.getUsuarioLogado();
-		
 		if(!Checks.esNulo(dto.getClaseOfertaCodigo())) {
 			Filter f = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
 			claseOferta = genericDao.get(DDClaseOferta.class, f);
@@ -1201,7 +1201,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if(gastos == null || gastos.isEmpty()) {
 					creaGastoExpediente(expedienteComercial, oferta, oferta.getActivoPrincipal());
 				} else {
-					actualizarGastosExpediente(expedienteComercial, oferta);
+					actualizarGastosExpediente(expedienteComercial, oferta,null);
 				}
 				
 				genericDao.save(Oferta.class, oferta);
@@ -1217,6 +1217,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(dto.getImporteOferta())) {
 			ofertaApi.resetPBC(expedienteComercial, false);
 		}
+
 		if(!Checks.esNulo(dto.getIdGestorComercialPrescriptor())) {
 			if(dto.getIdGestorComercialPrescriptor().equals(0l)) {
 				oferta.setGestorComercialPrescriptor(null);
@@ -1297,6 +1298,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		// el listado de activos.
 		// También se actualiza el importe de la reserva. Actualizar honorarios para el
 		// nuevo importe de contraoferta u oferta.
+
 		if (!Checks.esNulo(dto.getImporteOferta()) || !Checks.esNulo(dto.getImporteContraOferta())) {
 			this.updateParticipacionActivosOferta(oferta);
 			this.actualizarImporteReservaPorExpediente(expedienteComercial);
@@ -1305,7 +1307,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if ((!Checks.esNulo(dto.getNumVisita()) && ((!Checks.esNulo(visitaOferta) && Long.parseLong(dto.getNumVisita()) != visitaOferta.getNumVisitaRem()) || Checks.esNulo(visitaOferta)))
 				|| !Checks.esNulo(dto.getImporteOferta())) {
-			this.actualizarGastosExpediente(expedienteComercial, oferta);
+			this.actualizarGastosExpediente(expedienteComercial, oferta, null);
 		}
 		
 		if (dto.getImporteOferta() != null && DDCartera.CODIGO_CARTERA_BBVA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
@@ -1975,6 +1977,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setOfertaSingular(oferta.getOfertaSingular() ? "Si" : "No");
 		}
 		
+		if(!oferta.getOfrDocRespPrescriptor()) {
+			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_COMPRADORES);
+		}
+		
+		else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
+			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL);
+		}
+		
+		else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
+			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR);
+		}
+		
 		OfertaExclusionBulk ofertaExclusionBulk = genericDao.get(OfertaExclusionBulk.class, 
 				genericDao.createFilter(FilterType.EQUALS, "oferta", oferta),
 				genericDao.createFilter(FilterType.NULL, "fechaFin"));
@@ -2330,20 +2344,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public DtoPage getActivosExpedienteVista(Long idExpediente) {
-		List<VListadoActivosExpediente> listadoActivos;
-		List<VListadoActivosExpedienteBBVA> listadoActivosBbva;
-		
+		List<VListadoActivosExpedienteGrid> listadoActivosGrid;
+		List<VListadoActivosExpedienteBbvaGrid> listadoActivosBbvaGrid;
+		DtoPage dtoListActivosExpediente = null;
 		if (DDCartera.CODIGO_CARTERA_BBVA.equals(getCodigoCarteraExpediente(idExpediente))) {
-			listadoActivosBbva = genericDao.getList(VListadoActivosExpedienteBBVA.class,
+			listadoActivosBbvaGrid = genericDao.getList(VListadoActivosExpedienteBbvaGrid.class,
 					genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
 			
-			return new DtoPage(listadoActivosBbva, listadoActivosBbva.size());
+			dtoListActivosExpediente = new DtoPage(listadoActivosBbvaGrid, listadoActivosBbvaGrid.size());
 		} else {
-			listadoActivos = genericDao.getList(VListadoActivosExpediente.class,
+			listadoActivosGrid = genericDao.getList(VListadoActivosExpedienteGrid.class,
 				genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
+			dtoListActivosExpediente = new DtoPage(listadoActivosGrid, listadoActivosGrid.size()); 
 		}
-			
-		return new DtoPage(listadoActivos, listadoActivos.size());
+		return dtoListActivosExpediente;	 
 	}
 	
 	@Override
@@ -2358,7 +2372,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				for (ActivoOferta activosOferta : listaActivosOferta) {
 					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activosOferta.getPrimaryKey().getActivo().getId());
 					ActivoBbvaActivos activoBbva  = genericDao.get(ActivoBbvaActivos.class, filtroActivo);
-					if(activoBbva != null && DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {
+					if(activoBbva != null && activoBbva.getActivoEpa() != null && DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {
 						return true;
 					}
 				}
@@ -3098,6 +3112,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			if (!Checks.esNulo(condiciones.getRevisionMercadoMeses())) {
 				dto.setRevisionMercadoMeses(condiciones.getRevisionMercadoMeses());
+			}
+			if (!Checks.esNulo(condiciones.getTributosSobrePropiedad())) {
+				dto.setTributosSobrePropiedad(condiciones.getTributosSobrePropiedad());
 			}
 
 			List<HistoricoCondicionanteExpediente> listaHistorico = condiciones.getListHistoricoCondiciones();
@@ -4777,29 +4794,32 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
 		List<GastosExpediente> gastosExpediente = genericDao.getList(GastosExpediente.class, filtro);
 		List<GastosExpediente> honorarios = new ArrayList<GastosExpediente>();
-		
-		
-		for (GastosExpediente gastoExpediente : gastosExpediente) {
-			// Solo actualizar los importes finales si el gasto utiliza porcentajes sobre el
-			// importe de oferta o contra-oferta.
-			if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(gastoExpediente.getTipoCalculo().getCodigo())) {
-				Oferta oferta = gastoExpediente.getExpediente().getOferta();
-
-				Double calculoImporteC = gastoExpediente.getImporteCalculo();
-
-				Long idActivo = gastoExpediente.getActivo().getId();
-
-				for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
-					if (!Checks.esNulo(activoOferta.getImporteActivoOferta())) {
-						if (activoOferta.getPrimaryKey().getActivo().getId().equals(idActivo)) {
+		ExpedienteComercial eco = this.findOne(idExpediente);
+		if(eco != null) {
+			Oferta oferta = eco.getOferta();
+			boolean isAlquiler = DDTipoOferta.isTipoAlquiler(oferta.getTipoOferta());
+			if(oferta != null) {			
+				for (GastosExpediente gastoExpediente : gastosExpediente) {
+					if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(gastoExpediente.getTipoCalculo().getCodigo())) {
+						Double calculoImporteC = gastoExpediente.getImporteCalculo();
+						Long idActivo = gastoExpediente.getActivo().getId();
+						Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", idActivo);
+						Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "oferta", oferta.getId());
+						ActivoOferta activoOferta = genericDao.get(ActivoOferta.class, filtroActivo, filtroOferta);
+						if(activoOferta != null && activoOferta.getImporteActivoOferta() != null && calculoImporteC != null) {
 							Double honorario = (activoOferta.getImporteActivoOferta() * calculoImporteC / 100);
-							gastoExpediente.setImporteFinal(honorario);
+							// Si el honorario es menor de 100 € y es de tipo alquiler el valor final será, salvo si el importe es fijo, de 100 €. HREOS-5149
+							if (honorario < 100.00 && isAlquiler) {
+								gastoExpediente.setImporteFinal(100.00);
+							} else {
+								gastoExpediente.setImporteFinal(honorario);
+							}
 						}
+		
+						honorarios.add(gastoExpediente);
+						genericDao.save(GastosExpediente.class, gastoExpediente);
 					}
 				}
-
-				honorarios.add(gastoExpediente);
-				genericDao.save(GastosExpediente.class, gastoExpediente);
 			}
 		}
 		return honorarios;
@@ -4859,11 +4879,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		// Si el honorario es menor de 100 € el valor final será, salvo si el importe es
 		// fijo, de 100 €. HREOS-5149
-		if (dtoGastoExpediente.getHonorarios() < 100.00
-				&& (DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dtoGastoExpediente.getCodigoTipoCalculo()))) {
-			gastoExpediente.setImporteFinal(100.00);
-		} else {
-			gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
+		if(gastoExpediente.getExpediente() != null && gastoExpediente.getExpediente().getOferta() != null) {
+			Oferta oferta = gastoExpediente.getExpediente().getOferta();
+			
+			if (dtoGastoExpediente.getHonorarios() < 100.00 && DDTipoOferta.isTipoAlquiler(oferta.getTipoOferta())
+					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dtoGastoExpediente.getCodigoTipoCalculo())
+					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO.equals(dtoGastoExpediente.getCodigoTipoCalculo())) {
+				gastoExpediente.setImporteFinal(100.00);
+			} else {
+				gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
+			}
 		}
 
 		gastoExpediente.setObservaciones(dtoGastoExpediente.getObservaciones());
@@ -4912,7 +4937,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoEstado())));
 				}
 
-				if (Checks.esNulo(dto.getEstadoPbc()) || !Checks.esNulo(dto.getConflictoIntereses())
+				if (!Checks.esNulo(dto.getConflictoIntereses())
 						|| !Checks.esNulo(dto.getRiesgoReputacional())) {
 					ofertaApi.resetPBC(expedienteComercial, false);
 				}
@@ -4986,6 +5011,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 											DDEstadosReserva.class, DDEstadosReserva.CODIGO_RESUELTA_DEVUELTA));
 							expedienteComercial.getOferta().setEstadoOferta((DDEstadoOferta) utilDiccionarioApi
 									.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA));
+//							HREOS-13592 Se bloquea el evolutivo de ocultación de activos para la subida 							
+//							for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
+//								if (activoOferta != null && activoOferta.getPrimaryKey() != null 
+//										&& activoOferta.getPrimaryKey().getActivo() != null) {
+//									activoApi.devolucionFasePublicacionAnterior(activoOferta.getPrimaryKey().getActivo());
+//								}								
+//							}
 						}
 						// Descongelamos el resto de ofertas del activo.
 						ofertaApi.descongelarOfertas(expedienteComercial);
@@ -6276,13 +6308,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		gastoExpediente.setImporteCalculo(dto.getImporteCalculo());
 
-		// Si el honorario es menor de 100 € el valor final será, salvo si el importe es
-		// fijo, de 100 €. HREOS-5149
-		if (dto.getHonorarios() < 100.00
-				&& !(DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dto.getCodigoTipoCalculo()))) {
-			gastoExpediente.setImporteFinal(100.00);
-		} else {
-			gastoExpediente.setImporteFinal(dto.getHonorarios());
+		if(gastoExpediente.getExpediente() != null && gastoExpediente.getExpediente().getOferta() != null) {
+			Oferta oferta = gastoExpediente.getExpediente().getOferta();
+			
+			// Si el honorario es menor de 100 € el valor final será, salvo si el importe es
+			// fijo, de 100 €. HREOS-5149
+			if (dto.getHonorarios() < 100.00 && DDTipoOferta.isTipoAlquiler(oferta.getTipoOferta())
+					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dto.getCodigoTipoCalculo())
+					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO.equals(dto.getCodigoTipoCalculo())) {
+				gastoExpediente.setImporteFinal(100.00);
+			} else {
+				gastoExpediente.setImporteFinal(dto.getHonorarios());
+			}
 		}
 
 		gastoExpediente.setObservaciones(dto.getObservaciones());
@@ -7226,7 +7263,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			gastoExpediente.setImporteCalculo(dtoGastoExpediente.getImporteCalculo());
-			gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
+			// Si el honorario es menor de 100 € el valor final será, salvo si el importe es
+			// fijo, de 100 €. HREOS-5149
+			
+				
+			if (dtoGastoExpediente.getHonorarios() < 100.00 && DDTipoOferta.isTipoAlquiler(oferta.getTipoOferta())
+					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dtoGastoExpediente.getCodigoTipoCalculo())
+					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO.equals(dtoGastoExpediente.getCodigoTipoCalculo())) {
+				gastoExpediente.setImporteFinal(100.00);
+			} else {
+				gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
+			}
 			gastoExpediente.setImporteOriginal(dtoGastoExpediente.getImporteOriginal());
 			gastoExpediente.setExpediente(expediente);
 			gastoExpediente.setActivo(activo);
@@ -10746,8 +10793,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							diccionario = new DtoDiccionario();
 							Usuario gestorComercialPrescriptor = gestorActivoApi.getGestorByActivoYTipo(act,
 									GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-							diccionario.setDescripcion(gestorComercialPrescriptor.getApellidoNombre());
-							diccionario.setCodigo(gestorComercialPrescriptor.getId().toString());
+							if(gestorComercialPrescriptor != null) {
+								diccionario.setDescripcion(gestorComercialPrescriptor.getApellidoNombre());
+								diccionario.setCodigo(gestorComercialPrescriptor.getId().toString());
+							}
 							listado.add(diccionario);
 							return listado;
 						}
@@ -11094,10 +11143,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta)
+	public boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta, Activo activo)
 			throws IllegalAccessException, InvocationTargetException {
 		gastosExpedienteApi.deleteGastosExpediente(expedienteComercial.getId());
-		Activo activo = oferta.getActivoPrincipal();
+		
+		if (activo == null) {
+			activo = oferta.getActivoPrincipal();
+		}
+		 
 
 		List<DtoGastoExpediente> listDtoGastoExpediente = ofertaApi.calculaHonorario(oferta, activo);
 
@@ -11147,7 +11200,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			gastoExpediente.setImporteCalculo(dtoGastoExpediente.getImporteCalculo());
-			gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
+			// Si el honorario es menor de 100 € el valor final será, salvo si el importe es
+			// fijo, de 100 €. HREOS-5149
+			if (dtoGastoExpediente.getHonorarios() < 100.00 && DDTipoOferta.isTipoAlquiler(oferta.getTipoOferta())
+					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dtoGastoExpediente.getCodigoTipoCalculo())
+					&& !DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO.equals(dtoGastoExpediente.getCodigoTipoCalculo())) {
+				gastoExpediente.setImporteFinal(100.00);
+			} else {
+				gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
+			}
 			gastoExpediente.setImporteOriginal(dtoGastoExpediente.getImporteOriginal());
 			gastoExpediente.setExpediente(expedienteComercial);
 			gastoExpediente.setActivo(activo);
@@ -11641,6 +11702,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		bulkOfertaDao.update(blkOfr);
 		
 		return true;
+	}
+	
+	@Override
+	public String tipoTratamiento(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		
+		return expedienteComercial.getEstado().getCodigo();
 	}
 	
 }

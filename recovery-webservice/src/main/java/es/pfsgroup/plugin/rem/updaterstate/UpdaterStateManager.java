@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
@@ -240,12 +241,51 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		}
 		
 	}
-	
+	public HashMap<Activo, List<ActivoValoraciones>> obtenerValoracionesActivos(List<Activo> activosLista){
+		HashMap<Activo, List<ActivoValoraciones>> resultado = new HashMap<Activo, List<ActivoValoraciones>>();
+		Filter filtroActivoId = null, filtroValorNeto = null, filtroValorMinimo = null, filtroFSV = null, filtroVACBE = null, filtroPrecioTransferencia = null, filtroValorReferencia = null, filtroBorrado = null;	
+		ActivoValoraciones valorNeto = null, valorMinimo = null, fsv = null, vacbe = null, precioTransferencia = null, valorReferencia = null;
+		
+		for (Activo activo : activosLista){
+			filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			filtroValorNeto = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT);
+			filtroValorMinimo = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+			filtroFSV = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_FSV_VENTA);
+			filtroVACBE = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VACBE);
+			filtroPrecioTransferencia = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_PT);
+			filtroValorReferencia = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VALOR_REFERENCIA);
+			// En este punto se deberían obtener un solo objeto de cada tipo, pero por adecuarlo a problemas de datos se prepara para varios.
+			List<ActivoValoraciones> listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroValorNeto, filtroBorrado);
+			List<ActivoValoraciones> listaResultado = new ArrayList<ActivoValoraciones>();
+			valorNeto = Checks.estaVacio(listado) ? null : listado.get(0);
+			listaResultado.add(valorNeto);//index 0
+			listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroValorMinimo, filtroBorrado);
+			valorMinimo = Checks.estaVacio(listado) ? null : listado.get(0);
+			listaResultado.add(valorMinimo);//index 1
+			listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroFSV, filtroBorrado);
+			fsv = Checks.estaVacio(listado) ? null : listado.get(0);
+			listaResultado.add(fsv);//index 2
+			listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroVACBE, filtroBorrado);
+			vacbe = Checks.estaVacio(listado) ? null : listado.get(0);
+			listaResultado.add(vacbe);//index 3
+			listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroPrecioTransferencia, filtroBorrado);
+			precioTransferencia = Checks.estaVacio(listado) ? null : listado.get(0);
+			listaResultado.add(precioTransferencia);//index 4
+			listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroValorReferencia, filtroBorrado);
+			valorReferencia = Checks.estaVacio(listado) ? null : listado.get(0);
+			listaResultado.add(valorReferencia);//index 5
+			
+			resultado.put(activo, listaResultado);
+			
+		}
+		return resultado;
+	}
 	public String calcularParticipacionPorActivo(Activo activo_check){//
 		return "100";
 	}
 	
-	public Double calcularParticipacionPorActivo(String codigoTipoTrabajo, List<Activo> activosLista, Activo activo_check){
+	public Double calcularParticipacionPorActivo(String codigoTipoTrabajo, List<Activo> activosLista, Activo activo_check, HashMap<Activo, List<ActivoValoraciones>> valoraciones){
 		//Si algún parámetro es nulo, omitimos el procedimiento.
 		//Si todos los argumentos son null, se devuelve un 100% de participación.
 		if((activosLista == null || activosLista.isEmpty()) || codigoTipoTrabajo == null || activo_check == null){
@@ -255,10 +295,9 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		
 		try{
 			//Si el tipo de trabajo es OBTENCION_DOCUMENTAL o ACTUACION_TECNICA.
-			if ((DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(codigoTipoTrabajo)) || 
-					(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(codigoTipoTrabajo))) {
+			if (valoraciones != null && (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(codigoTipoTrabajo) || 
+					DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(codigoTipoTrabajo))) {
 
-				Filter filtroActivoId = null, filtroValorNeto = null, filtroValorMinimo = null, filtroFSV = null, filtroVACBE = null, filtroPrecioTransferencia = null, filtroValorReferencia = null, filtroBorrado = null;
 				ActivoValoraciones valorNeto = null, valorMinimo = null, fsv = null, vacbe = null, precioTransferencia = null, valorReferencia = null;		
 
 				String cartera = activo_check.getCartera().getCodigo(), reglaSeleccionada = null;
@@ -267,29 +306,19 @@ public class UpdaterStateManager implements UpdaterStateApi{
 				Double valorNeto_act = 0d, valorMinimo_act = 0d, fsv_act = 0d, vacbe_act = 0d, precioTransferencia_act = 0d, valorReferencia_act = 0d;
 
 				//Checkeamos la información de todos los activos en la lista.
-				for (Activo activo : activosLista){
-					filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-					filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-					filtroValorNeto = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT);
-					filtroValorMinimo = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
-					filtroFSV = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_FSV_VENTA);
-					filtroVACBE = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VACBE);
-					filtroPrecioTransferencia = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_PT);
-					filtroValorReferencia = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VALOR_REFERENCIA);
-
-					// En este punto se deberían obtener un solo objeto de cada tipo, pero por adecuarlo a problemas de datos se prepara para varios.
-					List<ActivoValoraciones> listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroValorNeto, filtroBorrado);
-					valorNeto = Checks.estaVacio(listado) ? null : listado.get(0);
-					listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroValorMinimo, filtroBorrado);
-					valorMinimo = Checks.estaVacio(listado) ? null : listado.get(0);
-					listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroFSV, filtroBorrado);
-					fsv = Checks.estaVacio(listado) ? null : listado.get(0);
-					listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroVACBE, filtroBorrado);
-					vacbe = Checks.estaVacio(listado) ? null : listado.get(0);
-					listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroPrecioTransferencia, filtroBorrado);
-					precioTransferencia = Checks.estaVacio(listado) ? null : listado.get(0);
-					listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroValorReferencia, filtroBorrado);
-					valorReferencia = Checks.estaVacio(listado) ? null : listado.get(0);
+				for (Activo activo : activosLista){					
+					
+					valorNeto = valoraciones.get(activo).get(0);
+					
+					valorMinimo = valoraciones.get(activo).get(1);
+					
+					fsv = valoraciones.get(activo).get(2);
+					
+					vacbe = valoraciones.get(activo).get(3);
+					
+					precioTransferencia = valoraciones.get(activo).get(4);
+					
+					valorReferencia = valoraciones.get(activo).get(5);
 
 					//Identificamos que comunes valores podemos utilizar.
 					if(valorNeto == null){
@@ -481,8 +510,14 @@ public class UpdaterStateManager implements UpdaterStateApi{
 			Double participacion = null;
 			Integer participacionTotalPorCien = 10000;
 			Integer participacionPorCien = 0;
+			HashMap<Activo, List<ActivoValoraciones>> valoraciones = null;
+			//Si el tipo de trabajo es OBTENCION_DOCUMENTAL o ACTUACION_TECNICA.
+			if ((DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(codigoTipoTrabajo)) || 
+					(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(codigoTipoTrabajo))) {
+				valoraciones = obtenerValoracionesActivos(activosLista);
+			}
 			for(ActivoTrabajo activoTrabajo : activosTrabajoLista){
-				participacion = calcularParticipacionPorActivo(codigoTipoTrabajo, activosLista, activoTrabajo.getActivo());
+				participacion = calcularParticipacionPorActivo(codigoTipoTrabajo, activosLista, activoTrabajo.getActivo(), valoraciones);
 
 				if(participacion == null){
 					participacion = (100d / activosLista.size());
@@ -497,11 +532,11 @@ public class UpdaterStateManager implements UpdaterStateApi{
 
 			}
 			if(participacionTotalPorCien != 0) {
-				for(ActivoTrabajo activoTrabajo : activosTrabajoLista){
-					activoTrabajo.setParticipacion(activoTrabajo.getParticipacion()+(1/100f));					
-					genericDao.update(ActivoTrabajo.class, activoTrabajo);
+				while(participacionTotalPorCien != 0) {
 					participacionTotalPorCien--;
-					if(participacionTotalPorCien == 0) break;
+					activosTrabajoLista.get(participacionTotalPorCien).setParticipacion(
+							activosTrabajoLista.get(participacionTotalPorCien).getParticipacion()+(1/100f));
+					genericDao.update(ActivoTrabajo.class, activosTrabajoLista.get(participacionTotalPorCien));
 				}
 			}
 
@@ -515,94 +550,44 @@ public class UpdaterStateManager implements UpdaterStateApi{
 
 		if ((DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(codigoTipoTrabajo)) || 
 				(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(codigoTipoTrabajo))) {
-
-			Filter filtroActivoId = null, filtroValorNeto = null, filtroValorMinimo = null, filtroFSV = null, filtroVACBE = null, filtroPrecioTransferencia = null, filtroValorReferencia = null, filtroBorrado = null;
-			ActivoValoraciones valorNeto = null, valorMinimo = null, fsv = null, vacbe = null, precioTransferencia = null, valorReferencia = null;		
-			Double valorNeto_act = 0d, valorMinimo_act = 0d, fsv_act = 0d, vacbe_act = 0d, precioTransferencia_act = 0d, valorReferencia_act = 0d;
-
+			
+			List<ActivoValoraciones> listado = null;
+			Double valorNeto, valorMinimo, fsv, vacbe, precioTransferencia, valorReferencia;		
 			//Checkeamos la información de todos los activos en la lista.
 			
-				filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-				filtroValorNeto = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT);
-				filtroValorMinimo = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
-				filtroFSV = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_FSV_VENTA);
-				filtroVACBE = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VACBE);
-				filtroPrecioTransferencia = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_PT);
-				filtroValorReferencia = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VALOR_REFERENCIA);
+			Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+            Filter filtroValorNeto = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT);
+            Filter filtroValorMinimo = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+            Filter filtroFSV = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_FSV_VENTA);
+            Filter filtroVACBE = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VACBE);
+            Filter filtroPrecioTransferencia = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_PT);
+            Filter filtroValorReferencia = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VALOR_REFERENCIA);
 
-				// En este punto se deberían obtener un solo objeto de cada tipo, pero por adecuarlo a problemas de datos se prepara para varios.
-				List<ActivoValoraciones> listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroValorNeto, filtroBorrado);
-				valorNeto = Checks.estaVacio(listado) ? null : listado.get(0);
-				listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroValorMinimo, filtroBorrado);
-				valorMinimo = Checks.estaVacio(listado) ? null : listado.get(0);
-				listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroFSV, filtroBorrado);
-				fsv = Checks.estaVacio(listado) ? null : listado.get(0);
-				listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroVACBE, filtroBorrado);
-				vacbe = Checks.estaVacio(listado) ? null : listado.get(0);
-				listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroPrecioTransferencia, filtroBorrado);
-				precioTransferencia = Checks.estaVacio(listado) ? null : listado.get(0);
-				listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroValorReferencia, filtroBorrado);
-				valorReferencia = Checks.estaVacio(listado) ? null : listado.get(0);
+			// En este punto se deberían obtener un solo objeto de cada tipo, pero por adecuarlo a problemas de datos se prepara para varios.
+			listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroValorNeto, filtroBorrado);
+			valorNeto = Checks.estaVacio(listado) ? null : listado.get(0).getImporte();
+			listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroValorMinimo, filtroBorrado);
+			valorMinimo = Checks.estaVacio(listado) ? null : listado.get(0).getImporte();
+			listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroFSV, filtroBorrado);
+			fsv = Checks.estaVacio(listado) ? null : listado.get(0).getImporte();
+			listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroVACBE, filtroBorrado);
+			vacbe = Checks.estaVacio(listado) ? null : listado.get(0).getImporte();
+			listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroPrecioTransferencia, filtroBorrado);
+			precioTransferencia = Checks.estaVacio(listado) ? null : listado.get(0).getImporte();
+			listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroValorReferencia, filtroBorrado);
+			valorReferencia = Checks.estaVacio(listado) ? null : listado.get(0).getImporte();
 
-				//Cuando se encuentre el activo que se va a checkear, se guarda su información para calcular luego la regla de tres.
-					if(valorNeto == null){
-						valorNeto_act = 0d;
-					}else{
-						valorNeto_act = valorNeto.getImporte();
-					}
-					if(valorMinimo == null){
-						valorMinimo_act = 0d;
-					}else{
-						valorMinimo_act = valorMinimo.getImporte();
-					}
-					if(fsv == null){
-						fsv_act = 0d;
-					}else{
-						fsv_act = fsv.getImporte();
-					}
-					if(vacbe == null){
-						vacbe_act = 0d;
-					}else{
-						vacbe_act = vacbe.getImporte();
-					}
-					if(precioTransferencia == null){
-						precioTransferencia_act = 0d;
-					}else{
-						precioTransferencia_act = precioTransferencia.getImporte();
-					}
-					if(valorReferencia == null){
-						valorReferencia_act = 0d;
-					}else{
-						valorReferencia_act = valorReferencia.getImporte();
-					}
-					
-					
-					if(!valorNeto_act.equals(0d)){
-						valor = valorNeto_act;
-					}
-					else if(!valorMinimo_act.equals(0d)){
-						valor = valorMinimo_act;
-					}
-					else if(!fsv_act.equals(0d)){
-						valor = fsv_act;
-					}
-					else if(!vacbe_act.equals(0d)){
-						valor = vacbe_act;
-					}
-					else if(!precioTransferencia_act.equals(0d)){
-						valor = precioTransferencia_act;
-					}
-					else if(!valorReferencia_act.equals(0d)){
-						valor = valorReferencia_act;
-					}else{
-						valor= 0d;
-					}
+			//Cuando se encuentre el activo que se va a checkear, se guarda su información para calcular luego la regla de tres.
+			valor = valorNeto == null || valorNeto == 0d ? 0d : valorNeto;
+			valor = valorMinimo == null || valorMinimo == 0d ? 0d : valorMinimo;
+			valor = fsv == null || fsv == 0d ? 0d : fsv;
+			valor = vacbe == null || vacbe == 0d ? 0d : vacbe;
+			valor = precioTransferencia == null || precioTransferencia == 0d ? 0d : precioTransferencia;
+			valor = valorReferencia == null || valorReferencia == 0d ? 0d : valorReferencia;
 			}
 		
 		return valor;
-		
-		
 	}
 
 }

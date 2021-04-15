@@ -1562,6 +1562,21 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		Activo activo = activoApi.get( gencatDto.getIdActivo() );
 		DDSancionGencat sancion = (DDSancionGencat) utilDiccionarioApi.dameValorDiccionarioByCod( DDSancionGencat.class , gencatDto.getSancion() );	
 		
+		ExpedienteComercial expediente = null;
+		
+		if (!Checks.estaVacio(activo.getOfertas())) {
+			for (ActivoOferta activoOferta : activo.getOfertas()) {
+				if (!Checks.esNulo(activoOferta.getPrimaryKey().getOferta()) && DDEstadoOferta.CODIGO_ACEPTADA
+						.equals(activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id",
+							activoOferta.getPrimaryKey().getOferta().getId());
+					expediente = genericDao.get(ExpedienteComercial.class, filtro);
+					
+					break;
+				}
+			}
+		}
+		
 		if(!Checks.esNulo(gencatDto.getIdActivo()))
 
 		{
@@ -1584,7 +1599,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 						
 				}
 				
-				notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo, sancion);
+				notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo, sancion, expediente);
 				bajaAgrupacionConActivosGenCat(activo, gencatDto);
 
 				return true;
@@ -1603,7 +1618,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 
 					comunicacionGencat.setActivo(activo);
 					comunicacionGencatDao.saveOrUpdate(comunicacionGencat);	
-					notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo, sancion);
+					notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo, sancion, expediente);
 					bajaAgrupacionConActivosGenCat(activo,gencatDto);
 
 					return true;
@@ -1817,6 +1832,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		nuevaOferta.setCanalPrescripcion(oferta.getCanalPrescripcion());
 		nuevaOferta.setPrescriptor(oferta.getPrescriptor());
 		nuevaOferta.setImporteOferta(oferta.getImporteOferta());
+		nuevaOferta.setOfrDocRespPrescriptor(oferta.getOfrDocRespPrescriptor());
 		// Activo/s
 		List<ActivoOferta> listaActOfr = ofertaApi.buildListaActivoOferta(cmg.getActivo(), null, nuevaOferta); 
 		Long idActivo = cmg.getActivo().getId();

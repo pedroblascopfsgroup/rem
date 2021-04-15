@@ -122,7 +122,7 @@ public interface GenericApi {
 	 * @return
 	 */
 	@BusinessOperationDefinition("genericManager.getComboTipoTrabajoCreaFiltered")
-	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered(String idActivo);
+	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered(String idActivo, String numTrabajo);
 	
 	/**
 	 * Devuelve los subtipos de trabajo del tipo que recibe
@@ -314,7 +314,7 @@ public interface GenericApi {
 
 	public DDSubestadoGestion getSubestadoGestion(Long idActivo);
 	
-	List<DDSubtipoActivo> getComboSubtipoActivoFiltered(String codTipoActivo);
+	List<DDSubtipoActivo> getComboSubtipoActivoFiltered(String codCartera, String codTipoActivo);
 	
 	List<DDComiteSancion> getComitesResolucionLiberbank(Long idExp)throws Exception;
 
@@ -358,6 +358,9 @@ public interface GenericApi {
 	public List<DtoPropietario> getcomboSociedadAnteriorBBVA();
 	
 	List<DDEstadoAdmision> getComboEstadoAdmisionFiltrado(Set<String> tipoEstadoAdmisionCodigo);
+	
+	/*@BusinessOperationDefinition("genericManager.getComboTipoTrabajoFiltered")
+	public List<DDTipoTrabajo> getComboTipoTrabajoFiltered(String idActivo);*/
 
 	public boolean traspasoCierreOficinaBankia(List<CierreOficinaBankiaDto> listCierreOficinaBankiaDto, JSONObject jsonFields,
 			ArrayList<Map<String, Object>> listaRespuesta) throws Exception;

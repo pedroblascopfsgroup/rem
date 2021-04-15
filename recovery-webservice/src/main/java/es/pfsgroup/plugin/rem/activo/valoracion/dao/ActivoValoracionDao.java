@@ -5,6 +5,7 @@ import java.util.List;
 
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
@@ -43,5 +44,5 @@ public interface ActivoValoracionDao extends AbstractDao<ActivoValoraciones, Lon
 	 */
 	Double getImporteValoracionRentaWebPorIdAgrupacion(Long idAgrupacion);
 
-	List<ActivoValoraciones> getListActivoValoracionesByIdActivos(List<Long> idActivos);
+	List<ActivoValoraciones> getListActivoValoracionesByIdActivo(Long idActivo);
 }

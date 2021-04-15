@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Beltrán
---## FECHA_CREACION=20200615
+--## AUTOR=Sergio Gomez
+--## FECHA_CREACION=20210312
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-10349
+--## INCIDENCIA_LINK=HREOS-13283
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las agrupaciones de Obra Nueva enviadas a webcom. HREOS-1551 - Se añaden agrupaciones Asistidas.
 --##           
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial RLB
 --##        0.2 Versión Roman Romanchuk
 --##        0.3: 20200610 Juan Beltrán. Optimización Vistas WEBCOM 
+--##        0.4: 20210312 Sergio Gomez. Relanzar en DESAMIG
 --##########################################
 --*/
 

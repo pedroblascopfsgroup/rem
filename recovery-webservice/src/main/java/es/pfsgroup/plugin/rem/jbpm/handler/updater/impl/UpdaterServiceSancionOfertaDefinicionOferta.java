@@ -110,8 +110,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 		String tipoTramite = tramite.getTipoTramite().getCodigo();
 
 		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(expediente)) {	
-			//Si tiene atribuciones y no es T017 podra entrar (aunque el comité de T017 no deberia entrar de por si)
-			if (ofertaApi.checkAtribuciones(tramite.getTrabajo()) && !T017.equals(tipoTramite)) {
+			//Si tiene atribuciones y no es T017 podra entrar (aunque el comité de T017 no deberia entrar de por si). Si es oferta express entra
+			if ((ofertaApi.checkAtribuciones(tramite.getTrabajo()) && !T017.equals(tipoTramite)) || (ofertaAceptada.getOfertaExpress() != null && ofertaAceptada.getOfertaExpress())) {
 				List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
 				for (ActivoOferta activoOferta : listActivosOferta) {
 					ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
@@ -150,6 +150,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 						gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);
 					}
 				}
+				
 				// Una vez aprobado el expediente, se congelan el resto de
 				// ofertas que no estén rechazadas (aceptadas y pendientes)
 				List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());

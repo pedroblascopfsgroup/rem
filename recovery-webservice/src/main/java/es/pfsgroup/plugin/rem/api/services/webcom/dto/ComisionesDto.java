@@ -13,9 +13,9 @@ public class ComisionesDto implements WebcomRESTDto {
 	private LongDataType idComisionRem;
 	@WebcomRequired
 	private LongDataType idActivoHaya;
-	@WebcomRequired
+	@WebcomRequired //No se puede quitar
 	private DateDataType fechaAccion;
-	@WebcomRequired
+	@WebcomRequired //No se puede quitar
 	private LongDataType idUsuarioRemAccion;
 	@WebcomRequired
 	private LongDataType idOfertaRem;
@@ -45,6 +45,7 @@ public class ComisionesDto implements WebcomRESTDto {
 	
 	private LongDataType baja;
 	
+	private StringDataType honorariosRatificados;
 	
 	public DateDataType getFechaAccion() {
 		return fechaAccion;
@@ -174,5 +175,12 @@ public class ComisionesDto implements WebcomRESTDto {
 		this.idActivoHaya = idActivoHaya;
 	}
 	
+	public StringDataType getHonorariosRatificados() {
+		return honorariosRatificados;
+	}
+
+	public void setHonorariosRatificados(StringDataType honorariosRatificados) {
+		this.honorariosRatificados = honorariosRatificados;
+	}
 
 }

@@ -182,6 +182,9 @@ public class DtoFichaTrabajo {
 
 	private String nombreExpediente;
 	
+
+	private Long trabajoDnd;
+
 	private String gestorActivo;
 	
 	private Boolean tieneTramiteCreado;
@@ -260,8 +263,9 @@ public class DtoFichaTrabajo {
 	private Long proveedorContact;
 	private String estadoDescripcionyFecha;
 	
-	
 	private String identificadorReamCodigo;
+	
+	private Boolean perteneceGastoOPrefactura;
 	
 	public Long getIdTrabajo() {
 		return idTrabajo;
@@ -963,6 +967,15 @@ public class DtoFichaTrabajo {
 		this.nombreExpediente = nombreExpediente;
 	}
 
+
+	public Long getTrabajoDnd() {
+		return trabajoDnd;
+	}
+
+	public void setTrabajoDnd(Long trabajoDnd) {
+		this.trabajoDnd = trabajoDnd;
+	}
+
 	public String getGestorActivo() {
 		return gestorActivo;
 	}
@@ -1336,5 +1349,12 @@ public class DtoFichaTrabajo {
 		this.identificadorReamCodigo = identificadorReamCodigo;
 	}
 	
+	public Boolean getPerteneceGastoOPrefactura() {
+		return perteneceGastoOPrefactura;
+	}
+	
+	public void setPerteneceGastoOPrefactura(Boolean perteneceGastoOPrefactura) {
+		this.perteneceGastoOPrefactura = perteneceGastoOPrefactura;
+	}
 	
 }

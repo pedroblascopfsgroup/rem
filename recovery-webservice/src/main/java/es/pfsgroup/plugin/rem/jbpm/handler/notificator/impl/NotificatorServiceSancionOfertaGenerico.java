@@ -84,6 +84,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private static final String GESTOR_BACKOFFICE = "gestor-backoffice";
 	private static final String GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO = "gestor-comercial-backoffice-inmobiliario";
 	private static final String GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS = "gestor-comercial-backoffice-inmobiliario-sustituto";
+	private static final String SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO = "supervisor-comercial-backoffice-inmobiliario";
+	private static final String SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS = "supervisor-comercial-backoffice-inmobiliario-sustituto";
 	
 	//Variables de buzones	
 	private static final String BUZON_REM = "buzonrem";
@@ -210,13 +212,13 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		if (!Checks.esNulo(oferta)) {
 			ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
 			Activo activo = oferta.getActivoPrincipal();
+			
 			if (permiteNotificarAprobacion && !Checks.esNulo(expediente)
 					&& (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
 							|| DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA.equals(expediente.getEstado().getCodigo())
 							|| (oferta.getOfertaExpress() && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())))) { // APROBACIÓN
-
 				destinatarios = getDestinatariosNotificacion(activo, oferta, expediente);
-
+				
 				if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
 					Usuario usuarioFicticioCajamar = usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR);
 					if (usuarioFicticioCajamar != null && usuarioFicticioCajamar.getEmail() != null) {
@@ -564,7 +566,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)
 				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)
 				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)
-				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)) {
+				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)
+				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)) {
 
 			clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial,
 					GESTOR_COMERCIAL_ACTIVO_SUS));
@@ -575,8 +578,12 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			}
 
 			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())
-					|| DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+					|| DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())) {
 				clavesGestores.addAll(Arrays.asList(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS));
+			}
+			if(DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())) {
+				clavesGestores.addAll(Arrays.asList(SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS));
 			}
 
 			if (formalizacion) {
@@ -849,6 +856,39 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 						}
 					}
 				}
+			} else if (SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO.equals(s)) {
+				Usuario gesBackInmobiliario = null;
+				if (loteComercial == null || loteComercial.getUsuarioGestorComercialBackOffice() == null) {
+					gesBackInmobiliario = gestorActivoApi.getGestorByActivoYTipo(activo, "HAYASBOINM");
+				} else {
+					gesBackInmobiliario = loteComercial.getUsuarioGestorComercialBackOffice();
+				}
+
+				if (!Checks.esNulo(gesBackInmobiliario)) {
+					addMail(s, gestores.put(s, extractEmail(gesBackInmobiliario)), gestores);
+				}
+			
+				Filter filterUsu = null;
+				
+				if(!Checks.esNulo(gesBackInmobiliario)) {
+					filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id",
+							gesBackInmobiliario.getId());
+					
+					List<GestorSustituto> sgsList = genericDao.getList(GestorSustituto.class, filterUsu);
+					if (!Checks.esNulo(sgsList)) {
+						for (GestorSustituto sgs : sgsList) {
+							if (!Checks.esNulo(sgs)) {
+								if (!Checks.esNulo(sgs.getFechaFin()) && sgs.getFechaFin().after(new Date())
+										&& !Checks.esNulo(sgs.getFechaInicio())
+										&& (sgs.getFechaInicio().before(new Date())
+												|| sgs.getFechaInicio().equals(new Date()))) {
+									addMail(SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS, extractEmail(sgs.getUsuarioGestorSustituto()),
+											gestores);
+								}
+							}
+						}
+					}
+				}
 			} else if (SUPERVISOR_COMERCIAL.equals(s)) {
 				Usuario sComercial = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente,
 						"SCOM");
@@ -909,9 +949,11 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)) {
 				cuerpo = cuerpo + " hasta la formalización de las arras/reserva";
 			}
-
-			cuerpo = cuerpo
-					+ ". Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización";
+			
+			if (!DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)) {
+				cuerpo = cuerpo
+						+ ". Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización";
+			}
 
 			if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera)) {
 				cuerpo = cuerpo + ", así como la Ficha cliente a cumplimentar</p>";
@@ -957,17 +999,35 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 						cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/"
 								+ reservationKey + "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
 					}
-				} else {
+				} else if (!DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)){
 					cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/"
 							+ reservationKey + "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
 				}
 
 			}
+			
+			if (DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera) && !tieneReserva) {
+				cuerpo = cuerpo + "<p> En los próximos días recibirá un e-mail con un enlace web en el que se le requerirá la información y documentación necesaria para la formalización de la operación, relativos a los siguientes puntos: </p>";
+			}
+			
+			if (DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera) && tieneReserva) {
+				cuerpo = cuerpo + "<p> En los próximos días recibirá un e-mail con un enlace web en el que se le requerirá la información y documentación necesaria para la reserva y formalización de la operación, relativos a los siguientes puntos: </p>";
+			}
+			
+			if (DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)) {
+				cuerpo = cuerpo + "<p> - Documentación identificativa de los compradores (DNI, NIE, CIF…)</p>"
+								+ "<p> - Origen de los fondos (por actividad, financiación bancaria o no bancaria, ahorros…)</p>"
+								+ "<p> - Forma de pago empleados en la compra.</p>"
+								+ "<p> En cualquier caso, se le asignará un gestor de formalización específico que le guiará durante todo el proceso de compra.</p>";
+			}
+			
 			if (DDCartera.CODIGO_CARTERA_SAREB.equals(codigoCartera)) {
 				cuerpo = cuerpo + "<p>A tal efecto le solicitamos a través de este documento que:</p>"
 						+ "<p>- Confirme los datos de la oferta remitidos informando de cualquier error que detecte en los mismos.</p>"
 						+ "<p>- Autorice a HAYA REAL ESTATE, S.A. para que a través de sus colaboradores pueda elevar en su nombre la documentación necesaria a la indicada herramienta ePBC.</p>";
 			}
+			
+			
 
 			cuerpo = cuerpo
 					+ "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
@@ -1020,7 +1080,6 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 							(gestorFormalizacion != null) ? gestorFormalizacion.getEmail() : STR_MISSING_VALUE);
 				}
 			}
-			
 
 			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
 			dtoSendNotificator.setTitulo(asunto);
@@ -1268,9 +1327,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			}
 			// ADJUNTOS SI ES BANKIA
 			else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)) {
-				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia_v10.docx");
+				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_CaixaBank_v10.docx");
 				if (f1 != null) {
-					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_Bankia.docx"));
+					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_CaixaBank.docx"));
 				}
 
 			}

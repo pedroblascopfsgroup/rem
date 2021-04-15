@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20200916
+--## FECHA_CREACION=20210209
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11680
@@ -12,6 +12,8 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - HREOS-11680 - JAD
 --##        0.1 Versión inicial - HREOS-11680 - Quitamos no definido
+--##        0.2 REMVIP-8799 - VRO - se cambia calculo para FECHA_DEP_JURIDICA
+--##        0.3 REMVIP-8858 - VRO - CORRECCION CALCULO SITUACION Contrato privado
 --##########################################
 --*/
 
@@ -185,6 +187,10 @@ BEGIN
                 /*when 
                         last_oferta.DD_EOF_CODIGO in (''01'') 
                     then ''Contrato privado''*/
+                 WHEN SCM.DD_SCM_CODIGO = ''03'' --	Disponible para la venta con oferta
+                        AND ((DIC_TIP_ENT_ACT.DD_TTA_CODIGO = ''01'' AND COALESCE(BIEADJ.BIE_ADJ_F_DECRETO_FIRME, NOADJ.ADN_FECHA_TITULO)  IS NULL)
+                    	OR (DIC_TIP_ENT_ACT.DD_TTA_CODIGO = ''02'' AND COALESCE(TIT.TIT_FECHA_INSC_REG,BIEADJ.BIE_ADJ_F_INSCRIP_TITULO) IS NULL))
+                    THEN ''Contrato privado''
                 when 
                         SCM.DD_SCM_CODIGO = ''06'' --	Disponible para la venta con oferta
                         -- AND last_oferta.DD_EOF_CODIGO is null
@@ -221,9 +227,6 @@ BEGIN
                         AND RES.RES_FECHA_FIRMA is null
                         AND ECO.ECO_ESTADO_PBC = 1
                     then ''Alquilado Reservado''*/
-                when 
-                        SCM.DD_SCM_CODIGO = ''03'' --	Disponible para la venta con oferta
-                    then ''Alquilado Reservado''
                 /* when 
                         SCM.DD_SCM_CODIGO = ''04'' --	Disponible para la venta con reserva
                         AND last_oferta.DD_EOF_CODIGO in (''01'') 
@@ -235,14 +238,14 @@ BEGIN
                         AND DD_ERE_ESTADOS_RESERVA.DD_ERE_CODIGO = ''02''
                         AND RES.RES_FECHA_FIRMA is not null
                         AND (ECO.ECO_ESTADO_PBC = 1 or ECO.ECO_ESTADO_PBC is null)   
-                    then ''Alquilado Contratado'' */
-                when 
-                        SCM.DD_SCM_CODIGO = ''04'' --	Disponible para la venta con reserva
-                    then ''Alquilado Contratado''    
-                when 
+                    then ''Alquilado Contratado'' */  
+                 when
+                        SCM.DD_SCM_CODIGO = ''12'' --	Disponible para venta y alquiler con oferta
+                    then ''''
+                when
                         SCM.DD_SCM_CODIGO = ''10'' --	Alquilado
                     then ''Alquilado''
-                else null
+                else ''Libre en venta''
             end SITUACION_COMERCIAL_BBVA
         from '||V_ESQUEMA||'.act_activo ACT
             JOIN '||V_ESQUEMA||'.ACT_BBVA_ACTIVOS BBVA ON BBVA.ACT_ID = ACT.ACT_ID
@@ -256,7 +259,12 @@ BEGIN
             left join '||V_ESQUEMA||'.COE_CONDICIONANTES_EXPEDIENTE ON COE_CONDICIONANTES_EXPEDIENTE.ECO_ID = ECO.ECO_ID   
             left join '||V_ESQUEMA||'.RES_RESERVAS RES ON RES.ECO_ID = ECO.ECO_ID
             left join '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA ON DD_ERE_ESTADOS_RESERVA.DD_ERE_ID = RES.DD_ERE_ID
-            left join '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO ON ACT_PAC_PERIMETRO_ACTIVO.ACT_ID = ACT.ACT_ID
+            left join '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO ON ACT_PAC_PERIMETRO_ACTIVO.ACT_ID = ACT.ACT_ID 
+            LEFT JOIN '||V_ESQUEMA||'.ACT_AJD_ADJJUDICIAL AJD ON AJD.ACT_ID = ACT.ACT_ID
+            LEFT JOIN '||V_ESQUEMA||'.DD_TTA_TIPO_TITULO_ACTIVO DIC_TIP_ENT_ACT ON ACT.DD_TTA_ID = DIC_TIP_ENT_ACT.DD_TTA_ID AND DIC_TIP_ENT_ACT.BORRADO = 0 
+            LEFT JOIN '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION BIEADJ ON BIEADJ.BIE_ADJ_ID=AJD.BIE_ADJ_ID AND BIEADJ.BORRADO=0 
+            LEFT JOIN '||V_ESQUEMA||'.ACT_ADN_ADJNOJUDICIAL NOADJ ON NOADJ.ACT_ID = ACT.ACT_ID AND NOADJ.BORRADO=0 
+            left JOIN '||V_ESQUEMA||'.ACT_TIT_TITULO TIT ON ACT.ACT_ID = TIT.ACT_ID
                 ';
 		
 

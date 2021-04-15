@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,12 +60,12 @@ import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
-import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -84,12 +85,14 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
+import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
@@ -123,6 +126,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String ERROR_PORCENTAJE_PARTICIPACION="msg.error.porcentaje.participacion";
 	private static final String CESION_USO_ERROR= "msg.error.activo.patrimonio.en.cesion.uso";
 	private static final String NO_GESTIONADO_POR_ADMISION = "msg.no.gestionado.admision";
+	private static final String PORCENTAJE_CONTRUCCION_FUERA_LIMITES = "msg.porcentaje.construccion.fuera.limites";
+	
+	private static String CODIGO_SUPER = "HAYASUPER";
+	private static String CODIGO_GESTOR_ACTIVO = "HAYAGESACT";
+
 	private static final String ID_HAYA_NO_EXISTE= "msg.error.activo.hre.no.existe";
 	private static final String ACTIVO_NO_BBVA = "msg.error.activo.hre.bbva.no.existe";
 	private static final String ACTIVO_VENDIDO_FUERA_DE_PERIMETRO_HAYA= "msg.error.activo.vendido.perimetro";
@@ -132,6 +140,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String ACTIVO_VENDIDO= "msg.error.activo.vendido";
 	private static final String ACTIVO_FUERA_DE_PERIMETRO_HAYA= "msg.error.activo.fuera.perimetro";
 	private static final String ACTIVO_NO_COINCIDE_CON_CERBERUS_BBVA= "msg.error.activo.no.bbva.divarian";
+	private static final String PERFIL_CHECKCOMERCIALIZAR = "CHECKCOMERCIALIZAR";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -223,14 +232,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 			if (activo.getLocalizacion().getLocalizacionBien() != null && activo.getLocalizacion().getLocalizacionBien().getTipoVia() != null) {
 				BeanUtils.copyProperty(activoDto, "tipoViaCodigo", activo.getLocalizacion().getLocalizacionBien().getTipoVia().getCodigo());
-			}
-			
-			if (activo.getLocalizacion().getLocalizacionBien() != null && activo.getLocalizacion().getLocalizacionBien().getTipoVia() != null) {
 				BeanUtils.copyProperty(activoDto, "tipoViaDescripcion", activo.getLocalizacion().getLocalizacionBien().getTipoVia().getDescripcion());
 			}
 			
 			if (activo.getLocalizacion().getLocalizacionBien() != null && activo.getLocalizacion().getLocalizacionBien().getPais() != null) {
 				BeanUtils.copyProperty(activoDto, "paisCodigo", activo.getLocalizacion().getLocalizacionBien().getPais().getCodigo());
+				BeanUtils.copyProperty(activoDto, "paisDescripcion", activo.getLocalizacion().getLocalizacionBien().getPais().getDescripcion());
 			}
 			if (activo.getLocalizacion().getLocalizacionBien() != null && activo.getLocalizacion().getLocalizacionBien().getLocalidad() != null) {
 				BeanUtils.copyProperty(activoDto, "municipioCodigo", activo.getLocalizacion().getLocalizacionBien().getLocalidad().getCodigo());
@@ -330,6 +337,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if (activo.getEstadoActivo() != null) {
 			BeanUtils.copyProperty(activoDto, "estadoActivoCodigo", activo.getEstadoActivo().getCodigo());
+			BeanUtils.copyProperty(activoDto, "estadoActivoDescripcion", activo.getEstadoActivo().getDescripcion());
 			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
 				
 				if(!Checks.esNulo(activo.getFechaUltCambioTipoActivo())) {
@@ -594,11 +602,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getEstadoExpIncorriente())) {
 			BeanUtils.copyProperty(activoDto, "estadoExpIncorrienteCodigo", activoBancario.getEstadoExpIncorriente().getCodigo());
+			BeanUtils.copyProperty(activoDto, "estadoExpIncorrienteDescripcion", activoBancario.getEstadoExpIncorriente().getDescripcion());
 		}
 
 		// En la sección de activo bancario pero no dependiente del mismo.
 		if(!Checks.esNulo(activo.getEntradaActivoBankia())) {
 			BeanUtils.copyProperty(activoDto, "entradaActivoBankiaCodigo", activo.getEntradaActivoBankia().getCodigo());
+			BeanUtils.copyProperty(activoDto, "entradaActivoBankiaDescripcion", activo.getEntradaActivoBankia().getDescripcion());
 		}
 
 		BeanUtils.copyProperty(activoDto, "integradoEnAgrupacionAsistida",activoApi.isIntegradoAgrupacionAsistida(activo));
@@ -632,7 +642,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 
 		if(!Checks.esNulo(activo.getTasacion()) && !activo.getTasacion().isEmpty()){
-			ActivoTasacion tasacionMasReciente = activo.getTasacion().get(0);
+			//ActivoTasacion tasacionMasReciente = activo.getTasacion().get(0);
+			ActivoTasacion tasacionMasReciente = activoApi.getTasacionMasReciente(activo);
 			BeanUtils.copyProperty(activoDto, "valorUltimaTasacion", tasacionMasReciente.getImporteTasacionFin());
 		}
 
@@ -735,7 +746,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		List<VAdmisionDocumentos> admisionDocumentos = adapter.getListAdmisionCheckDocumentos(activo.getId());
 		
 		for (VAdmisionDocumentos doc : admisionDocumentos) {
-			if ("CEE (Certificado de eficiencia energética)".equals(doc.getDescripcionTipoDoc()) && doc.getAplica().equals("1")) {
+			if ("CEE (Certificado de eficiencia energética)".equals(doc.getDescripcionTipoDoc()) 
+					&& doc.getAplica() != null && doc.getAplica().equals("1")) {
 				BeanUtils.copyProperty(activoDto, "tieneCEE", true);
 				break;
 			}
@@ -836,14 +848,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if(activo.getCesionSaneamiento() != null) {
 			BeanUtils.copyProperty(activoDto, "cesionSaneamientoCodigo", activo.getCesionSaneamiento().getCodigo());
+			BeanUtils.copyProperty(activoDto, "cesionSaneamientoDescripcion", activo.getCesionSaneamiento().getDescripcion());
 		}
 		
 		if(activo.getServicerActivo() != null) {
 			BeanUtils.copyProperty(activoDto, "servicerActivoCodigo", activo.getServicerActivo().getCodigo());
+			BeanUtils.copyProperty(activoDto, "servicerActivoDescripcion", activo.getServicerActivo().getDescripcion());
 		}
 			
 		if (!Checks.esNulo(activo.getSociedadDePagoAnterior())) {
 			BeanUtils.copyProperty(activoDto, "sociedadPagoAnterior", activo.getSociedadDePagoAnterior().getCodigo());
+			BeanUtils.copyProperty(activoDto, "sociedadPagoAnteriorDescripcion", activo.getSociedadDePagoAnterior().getDescripcion());
 		}
 		
 		if (activo.getCartera() != null
@@ -877,15 +892,22 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if(activo.getTipoSegmento() != null) {
 			activoDto.setTipoSegmentoCodigo(activo.getTipoSegmento().getCodigo());
+			activoDto.setTipoSegmentoDescripcion(activo.getTipoSegmento().getDescripcion());
 		}
 		
 		ActivoAdmisionRevisionTitulo actRevTitulo = genericDao.get(ActivoAdmisionRevisionTitulo.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-		DDEstadoRegistralActivo ddEstadoReg = new DDEstadoRegistralActivo();
 		boolean perimetroAdmision = false;
 		if(perimetroActivo.getAplicaAdmision() != null) {
 			perimetroAdmision = perimetroActivo.getAplicaAdmision();
 			activoDto.setPerimetroAdmision(perimetroAdmision);
 		}
+		
+		DDEstadoRegistralActivo ddEstadoReg = null;
+		if(perimetroAdmision && actRevTitulo != null && actRevTitulo.getTipoIncidenciaRegistral() != null) {
+			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getTipoIncidenciaRegistral().getDescripcion()));
+		} else if(perimetroAdmision && actRevTitulo != null && actRevTitulo.getSituacionConstructivaRegistral() != null) {
+			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getSituacionConstructivaRegistral().getDescripcion()));
+		} else if(activo.getEstadoRegistral() != null) {
 		if(perimetroAdmision && actRevTitulo != null) {
 			if(actRevTitulo.getTipoIncidenciaRegistral() != null) {
 				ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getTipoIncidenciaRegistral().getDescripcion()));
@@ -894,12 +916,34 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			
 			if(ddEstadoReg != null) {
-				activoDto.setEstadoRegistralCodigo(ddEstadoReg.getCodigo());	
+				activoDto.setEstadoRegistralCodigo(ddEstadoReg.getCodigo());
+				activoDto.setEstadoRegistralDescripcion(ddEstadoReg.getDescripcion());
 			}
 			
 		}else if(activo.getEstadoRegistral() != null){
 			activoDto.setEstadoRegistralCodigo(activo.getEstadoRegistral().getCodigo());
+			activoDto.setEstadoRegistralDescripcion(activo.getEstadoRegistral().getDescripcion());
 		}
+		}
+		if(ddEstadoReg != null) {
+			activoDto.setEstadoRegistralCodigo(ddEstadoReg.getCodigo());	
+		}
+		Double porcentajeContruccion = activo.getPorcentajeConstruccion();
+		activoDto.setPorcentajeConstruccion(porcentajeContruccion);
+		
+		
+		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
+		
+		List<Perfil> perfilesUser = usuarioLogado.getPerfiles();
+		
+		boolean puedeEditarPorcentaje = false;
+		
+		if(activoDto.getIsUA() != null && !activoDto.getIsUA() && perimetroActivo.getIncluidoEnPerimetro() == 1) {
+			activoDto.setIsEditablePorcentajeConstruccion(true);
+		}else {
+			activoDto.setIsEditablePorcentajeConstruccion(false);
+		}
+		
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
 		
@@ -975,6 +1019,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setEsEditableActivoEstadoRegistral(!perimetroAdmision);
 		}
 		
+		if(activo.getEstadoValidacionActivoDND()!=null) {
+			activoDto.setEstadoFisicoActivoDND(activo.getEstadoValidacionActivoDND().getCodigo());
+		}
+		
+
 		activoDto.setIsGrupoOficinaKAM(activoApi.isGrupoOficinaKAM());
 		if(activo.getTipoTransmision() != null) {
 			activoDto.setTipoTransmisionCodigo(activo.getTipoTransmision().getCodigo());
@@ -1076,8 +1125,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			beanUtilNotNull.copyProperties(activo.getLocalizacion(), dto);
 			beanUtilNotNull.copyProperties(activo.getLocalizacion().getLocalizacionBien(), dto);
 			
+			
 			activo.setLocalizacion(genericDao.save(ActivoLocalizacion.class, activo.getLocalizacion()));
-
+			
 			if (!Checks.esNulo(dto.getPaisCodigo())) {
 				DDCicCodigoIsoCirbeBKP pais = (DDCicCodigoIsoCirbeBKP) diccionarioApi.dameValorDiccionarioByCod(DDCicCodigoIsoCirbeBKP.class,  dto.getPaisCodigo());
 				activo.getLocalizacion().getLocalizacionBien().setPais(pais);
@@ -1143,6 +1193,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				activo.setNombreCarteraPerimetro(dto.getNombreCarteraPerimetro());
 			}
 			
+			if(!Checks.esNulo(dto.getPorcentajeConstruccion())) {
+				BigDecimal porcentajeDouble = new BigDecimal(dto.getPorcentajeConstruccion());
+				porcentajeDouble = porcentajeDouble.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+				activo.setPorcentajeConstruccion(porcentajeDouble.doubleValue());	 
+			}
 			activo.getLocalizacion().setLocalizacionBien(genericDao.save(NMBLocalizacionesBien.class, activo.getLocalizacion().getLocalizacionBien()));
 			
 			if (!Checks.esNulo(dto.getSociedadPagoAnterior())) {
@@ -1423,10 +1478,60 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 				activo.setFechaRevisionSelloCalidad(new Date());
 				activo.setSelloCalidad(true);
+//				HREOS-13592 Se bloquea el evolutivo de ocultación de activos para la subida 
+//				//HREOS-11733 Cambio en las fases de publicacion ( Se puede sacar a una funcion externa ) 
+//				Filter filtroFecha = genericDao.createFilter(FilterType.NULL, "fechaFin");
+//				Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+//				HistoricoFasePublicacionActivo histActivo = genericDao.get(HistoricoFasePublicacionActivo.class, filtroFecha,filtroActivoId);
+//				
+//				if(histActivo != null && histActivo.getFasePublicacion() != null && DDFasePublicacion.CODIGO_FASE_VI_CALIDAD_COMPROBADA.equals(histActivo.getFasePublicacion().getCodigo()) && 
+//						histActivo.getSubFasePublicacion() != null && !DDSubfasePublicacion.CODIGO_CALIDAD_COMPROBADA.equals(histActivo.getSubFasePublicacion().getCodigo())) {
+//					Filter filtroSubFase = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_CALIDAD_COMPROBADA);
+//					DDSubfasePublicacion subfase = genericDao.get(DDSubfasePublicacion.class, filtroSubFase);
+//					histActivo.setFechaFin(new Date());
+//					HistoricoFasePublicacionActivo histoNuevo = new HistoricoFasePublicacionActivo();
+//					genericDao.update(HistoricoFasePublicacionActivo.class, histActivo);
+//					
+//					try {
+//						BeanUtils.copyProperties(histoNuevo, histActivo);
+//						histoNuevo.setSubFasePublicacion(subfase);
+//						histoNuevo.setFechaFin(null);
+//						genericDao.save(HistoricoFasePublicacionActivo.class, histoNuevo);
+//					} catch (IllegalAccessException e) {
+//						e.printStackTrace();
+//					} catch (InvocationTargetException e) {
+//						e.printStackTrace();
+//					}
+//				}
 			}else if(!Checks.esNulo(dto.getSelloCalidad()) && !dto.getSelloCalidad()){
 				activo.setGestorSelloCalidad(null);
 				activo.setFechaRevisionSelloCalidad(null);
 				activo.setSelloCalidad(false);
+//				HREOS-13592 Se bloquea el evolutivo de ocultación de activos para la subida 
+//				//HREOS-11733 Cambio en las fases de publicacion
+//				Filter filtroFecha = genericDao.createFilter(FilterType.NULL, "fechaFin");
+//				Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+//				HistoricoFasePublicacionActivo histActivo = genericDao.get(HistoricoFasePublicacionActivo.class, filtroFecha,filtroActivoId);
+//				
+//				if(histActivo != null && histActivo.getFasePublicacion() != null && DDFasePublicacion.CODIGO_FASE_VI_CALIDAD_COMPROBADA.equals(histActivo.getFasePublicacion().getCodigo()) && 
+//						histActivo.getSubFasePublicacion() != null && DDSubfasePublicacion.CODIGO_CALIDAD_COMPROBADA.equals(histActivo.getSubFasePublicacion().getCodigo())) {
+//					Filter filtroSubFase = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_SIN_INCIDENCIAS);
+//					DDSubfasePublicacion subfase = genericDao.get(DDSubfasePublicacion.class, filtroSubFase);
+//					histActivo.setFechaFin(new Date());
+//					HistoricoFasePublicacionActivo histoNuevo = new HistoricoFasePublicacionActivo();
+//					genericDao.save(HistoricoFasePublicacionActivo.class, histActivo);
+//					
+//					try {
+//						BeanUtils.copyProperties(histoNuevo, histActivo);
+//						histoNuevo.setSubFasePublicacion(subfase);
+//						histoNuevo.setFechaFin(null);
+//						genericDao.save(HistoricoFasePublicacionActivo.class, histoNuevo);
+//					} catch (IllegalAccessException e) {
+//						e.printStackTrace();
+//					} catch (InvocationTargetException e) {
+//						e.printStackTrace();
+//					}
+//				}
 			}
 			
 			
@@ -1549,7 +1654,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				for (Oferta oferta : ofertas) {
 					ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
 					if(!Checks.esNulo(expedienteComercial)) {
-						expedienteComercialApi.actualizarGastosExpediente(expedienteComercial, oferta);
+						expedienteComercialApi.actualizarGastosExpediente(expedienteComercial, oferta, null);
 					}
 				}
 			}
@@ -1559,9 +1664,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if(dto.getPerimetroAdmision() != null) {
 				perimetroActivo.setAplicaAdmision(dto.getPerimetroAdmision());
 				perimetroActivo.setFechaAplicaAdmision(new Date());
-				perimetroActivo.setMotivoAplicaAdmision(dto.getMotivoPerimetroAdmision());
-				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
 			}
+			if(dto.getMotivoPerimetroAdmision() != null) {
+				perimetroActivo.setMotivoAplicaAdmision(dto.getMotivoPerimetroAdmision());
+			}
+			activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
+			
 			DDEstadoRegistralActivo ddEstadoReg = (DDEstadoRegistralActivo) diccionarioApi.dameValorDiccionarioByCod(DDEstadoRegistralActivo.class, dto.getEstadoRegistralCodigo());
 			if(ddEstadoReg != null) {
 				activo.setEstadoRegistral(ddEstadoReg);
@@ -1580,8 +1688,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}else {
 						throw new JsonViewerException("La Promoción con código \""+dto.getCodPromocionBbva()+"\" no existe.");
 					}
-				}else {
-					activoBbva.setCodPromocion(null);
 				}
 				//No comprobar los nulos, porque siempre se van a setear,
 				//controlado por sencha (onSaveFormularioCompleto de ActivoDetalleController.js)
@@ -1624,38 +1730,23 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 
 					if (dto.getEmpresa() != null) {
-						if("-1".equals(dto.getEmpresa()))
-							activoBbva.setEmpresa(null);
-						else
-							activoBbva.setEmpresa(dto.getEmpresa());
+						activoBbva.setEmpresa(dto.getEmpresa());
 					}
 
-					if (dto.getOficina() != null) {
-						if("-1".equals(dto.getOficina()))
-							activoBbva.setOficina(null);
-						else	
-							activoBbva.setOficina(dto.getOficina());
+					if (dto.getOficina() != null) {	
+						activoBbva.setOficina(dto.getOficina());
 					}
 
 					if (dto.getContrapartida() != null) {
-						if("-1".equals(dto.getContrapartida()))
-							activoBbva.setContrapartida(null);
-						else
-							activoBbva.setContrapartida(dto.getContrapartida());
+						activoBbva.setContrapartida(dto.getContrapartida());
 					}
 
 					if (dto.getFolio() != null) {
-						if("-1".equals(dto.getFolio()))
-							activoBbva.setFolio(null);
-						else
-							activoBbva.setFolio(dto.getFolio());
+						activoBbva.setFolio(dto.getFolio());
 					}
 
 					if (dto.getCdpen() != null) {
-						if(dto.getCdpen() == "-1")
-							activoBbva.setCdpen(null);
-						else
-							activoBbva.setCdpen(dto.getCdpen());
+						activoBbva.setCdpen(dto.getCdpen());
 					}
 
 					if (dto.getNumActivoBbva() != null) {
@@ -1684,14 +1775,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 							}else {
 								isCarteraBBVADivarian=false;
 							}
-							//isCarteraBBVADivarian = activoDao.isActivoBBVADivarian(activoOrigenHRE.getId());
+
 							isVendido = activoApi.isVendido(activoOrigenHRE.getId());
-							isFueraPerimetro = !activoApi.isActivoIncluidoEnPerimetro(activoOrigenHRE.getId());
-							
+							isFueraPerimetro = !activoApi.isActivoIncluidoEnPerimetro(activoOrigenHRE.getId());							
 						
 							boolean isOrigenHRE = !activoDao.existeactivoIdHAYA(dto.getIdOrigenHre()); 
 							isVendido = activoDao.activoEstadoVendido(dto.getIdOrigenHre()); 
-							boolean isCarteraBBVACERBERUS = !activoDao.activoPerteneceABBVAAndCERBERUS(dto.getIdOrigenHre()); 
 							isFueraPerimetro = activoDao.activoFueraPerimetroHAYA(dto.getIdOrigenHre()); 
 													
 							if(isOrigenHRE) {
@@ -1703,18 +1792,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 							}
 							if (!isVendido && !isFueraPerimetro) {
 								throw new JsonViewerException(messageServices.getMessage(ACTIVO_VENDIDO_FUERA_DE_PERIMETRO_HAYA));
-							}
-							
+							}							
 						
 							activoBbva.setIdOrigenHre(dto.getIdOrigenHre());
 							
-							if (activoOrigenHRE.getPropietarioPrincipal() != null) {
-								List<ActivoPropietarioActivo> actOriginal= activo.getPropietariosActivo();
-								if (!actOriginal.isEmpty()) {
-									ActivoPropietarioActivo actPropAct = actOriginal.get(0);
-									actPropAct.setPropietario(activoOrigenHRE.getPropietarioPrincipal());
-								}
-							}
+							activoBbva.setSociedadPagoAnterior(activoOrigenHRE.getPropietarioPrincipal());
 							
 							if(activoOrigenHRE.getTipoTitulo()!= null) {
 								activo.setTipoTitulo(activoOrigenHRE.getTipoTitulo());
@@ -1737,10 +1819,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 							throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_EXISTE));
 						}
 					}
-
-					
-					
-					
 				}else {
 					//throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_BBVA));
 				}
@@ -1947,12 +2025,20 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	}
 	private void isActivoInCesionUso(Activo activo) {
 		ActivoPatrimonio activoP = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
+		Boolean puedeModificar = false;
+		Usuario  usuario = genericAdapter.getUsuarioLogado();
+		List<Perfil> perfiles = usuario.getPerfiles();
+		for (Perfil perfil : perfiles) {
+			if(PERFIL_CHECKCOMERCIALIZAR.equalsIgnoreCase(perfil.getCodigo())){
+				puedeModificar = true;
+			}
+		}
 		if (activoP != null && activoP.getCesionUso() != null) {
 			DDCesionUso cesion =  activoP.getCesionUso();
 			List<String> types = new ArrayList<String>(
 					Arrays.asList(DDCesionUso.CARITAS, DDCesionUso.CESION_GENERALITAT_CX,
 							DDCesionUso.CESION_OTRAS_OPERACIONES, DDCesionUso.EN_TRAMITE_OTRAS_OPERACIONES));
-			if (types.contains(cesion.getCodigo())) {
+			if (types.contains(cesion.getCodigo()) && !puedeModificar) {
 				throw new JsonViewerException(messageServices.getMessage(CESION_USO_ERROR));
 			}
 			

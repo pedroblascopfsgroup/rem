@@ -28,68 +28,49 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
         	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
         	// Comprobamos si estamos editando para confirmar el cambio de pestaña
         	if (tabCurrent != null) {
-            	if (tabPanel.lookupController().getViewModel().get("editingFirstLevel")) {
+            	if (tabPanel.lookupController().getViewModel().get("editingFirstLevel") || tabPanel.lookupController().getViewModel().get("editing")
+					|| tabPanel.lookupController().getViewModel().get("editingRows")) {
             		Ext.Msg.show({
             			   title: HreRem.i18n('title.descartar.cambios'),
             			   msg: HreRem.i18n('msg.desea.descartar'),
             			   buttons: Ext.MessageBox.YESNO,
             			   fn: function(buttonId) {
             			        if (buttonId == 'yes') {
-            			        	var btn = tabPanel.down('button[itemId=botoncancelar]');
-            			        	Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
-            			        	tabPanel.getLayout().setActiveItem(tabNext);		            			        	
-						            // Si la pestaña necesita botones de edición
-
-				   					if(!tabNext.ocultarBotonesEdicion) {
-					            		tabPanel.evaluarBotonesEdicion(tabNext);
-				   					} else {
-				   						tabPanel.down("[itemId=botoneditar]").setVisible(false);
-				   					}
+									tabPanel.lookupController().getViewModel().set("editingFirstLevel", false);
+									tabPanel.lookupController().getViewModel().set("editing", false);
+									tabPanel.lookupController().getViewModel().set("editingRows", false);
+									tabPanel.lookupController().getViewModel().notify();
+									if(!tabPanel.lookupController().getViewModel().get("editingRows")){
+										var btn = tabPanel.down('button[itemId=botoncancelar]');
+	        			        		Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
+										tabPanel.setActiveTab(tabNext);									
+										
+							            // Si la pestaña necesita botones de edición
+	
+					   					if(!tabNext.ocultarBotonesEdicion) {
+						            		tabPanel.evaluarBotonesEdicion(tabNext);
+					   					} else {
+					   						tabPanel.down("[itemId=botoneditar]").setVisible(false);
+					   					}
+									}
             			        }
+								else if(!tabCurrent.ocultarBotonesEdicion) {
+				            		if(!tabPanel.lookupController().getViewModel().get("editingRows"))
+										tabPanel.evaluarBotonesEdicion(tabCurrent);
+								} else {
+									if(!tabPanel.lookupController().getViewModel().get("editingRows"))
+										tabPanel.down("[itemId=botoneditar]").setVisible(false);
+								}
             			   }
         			});
 
             		return false;
-            	}
+            	}				
 
-            	// Si la pestaña necesita botones de edición
-				if(!tabNext.ocultarBotonesEdicion) {
-            		tabPanel.evaluarBotonesEdicion(tabNext);
+				else if(!tabNext.ocultarBotonesEdicion) {
+					tabPanel.evaluarBotonesEdicion(tabNext);
 				} else {
-						tabPanel.down("[itemId=botoneditar]").setVisible(false);
-				}
-				
-				//EDITANDO SUBPESTAÑAS¿?
-				if(tabNext.xtype != 'comercialactivo'){
-					if (tabPanel.lookupController().getViewModel().get("editing")) {
-						Ext.Msg.show({
-							title: HreRem.i18n('title.descartar.cambios'),
-							msg: HreRem.i18n('msg.desea.descartar'),
-							buttons: Ext.MessageBox.YESNO,
-							fn: function(buttonId) {
-								if (buttonId == 'yes') {
-									var btn = tabPanel.getActiveTab().down('[itemId=botoncancelar]');
-									Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
-									tabPanel.getLayout().setActiveItem(tabNext);
-									if(Ext.isDefined(tabNext.getActiveTab)){
-										if(tabNext.getActiveTab().ocultarBotonesEdicion == false) {
-					   						tabNext.evaluarBotonesEdicion(tabNext.getActiveTab());
-					   					} else {
-					   						tabNext.getActiveTab().down("[itemId=botoneditar]").setVisible(false);
-						   				}
-	 
-						   				tabNext.getLayout().setActiveItem(tabNext.getActiveTab());
-					   				}
-								}
-							}
-						});
-						return false;
-					}
-					if(tabNext.ocultarBotonesEdicion == false) {
-   						tabNext.up("tabpanel").evaluarBotonesEdicion(tabNext);
-   					} else {
-   						tabNext.up("tabpanel").down("[itemId=botoneditar]").setVisible(false);
-   					}
+					tabPanel.down("[itemId=botoneditar]").setVisible(false);
 				}
             	return true;
         	}
@@ -148,44 +129,45 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 		}else{
 			editable = !$AU.userHasFunction('EDITAR_TAB_ACTIVO_COMERCIAL');
 		}
+	    
+	    
+	    if(!$AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])) {
 
-	    $AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'datosgeneralesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DATOS_GENERALES');
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'tramitesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_ACTUACIONES');
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'gestoresactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_GESTORES');
-    	if($AU.getUser().codigoCartera == CONST.CARTERA['BANKIA'] && me.lookupController().getViewModel().get('activo').get('isCarteraBankia')){
-			if($AU.userIsRol(CONST.PERFILES['USUARIO_CONSULTA']) || $AU.userHasFunction('TAB_ACTIVO_OBSERVACIONES')){
-				me.add({xtype: 'observacionesactivo', launch: CONST.OBSERVACIONES_TAB_LAUNCH['ACTIVO'], ocultarBotonesEdicion: true});
+		    $AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'datosgeneralesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DATOS_GENERALES');
+	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'tramitesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_ACTUACIONES');
+	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'gestoresactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_GESTORES');
+	    	if($AU.getUser().codigoCartera == CONST.CARTERA['BANKIA'] && me.lookupController().getViewModel().get('activo').get('isCarteraBankia')){
+				if($AU.userIsRol(CONST.PERFILES['USUARIO_CONSULTA']) || $AU.userHasFunction('TAB_ACTIVO_OBSERVACIONES')){
+					me.add({xtype: 'observacionesactivo', launch: CONST.OBSERVACIONES_TAB_LAUNCH['ACTIVO'], ocultarBotonesEdicion: true});
+				}
+			}else{
+				$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'observacionesactivo',launch: CONST.OBSERVACIONES_TAB_LAUNCH['ACTIVO'], ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_OBSERVACIONES');
 			}
-		}else{
-			$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'observacionesactivo',launch: CONST.OBSERVACIONES_TAB_LAUNCH['ACTIVO'], ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_OBSERVACIONES');
-		}
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'fotosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_FOTOS');
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'tabdocumentosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DOCUMENTOS');
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'agrupacionesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_AGRUPACIONES');
-    	// Si el activo esta en agrupacion asistida, se ocultan estas dos pestanyas
-    	//if(me.lookupController().getViewModel().get('activo').get('integradoEnAgrupacionAsistida')=="false") {
-    	//Se comenta el IF anterior para que se pueda mostrar el check de calidad
-    	var disabled = me.lookupController().getViewModel().get('activo.perimetroAdmision')==false;
+	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'fotosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_FOTOS');
+	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'tabdocumentosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DOCUMENTOS');
+	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'agrupacionesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_AGRUPACIONES');
+	    	// Si el activo esta en agrupacion asistida, se ocultan estas dos pestanyas
+	    	//if(me.lookupController().getViewModel().get('activo').get('integradoEnAgrupacionAsistida')=="false") {
+	    	//Se comenta el IF anterior para que se pueda mostrar el check de calidad
+	    	var disabled = me.lookupController().getViewModel().get('activo.perimetroAdmision')==false;
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'admisionactivo', ocultarBotonesEdicion: true,disabled:disabled})}, 'TAB_ACTIVO_ADMISION');
-    	
-	    //Si el usuario logeado es no es bbva, anyadir el tab activo gestion
-	    if($AU.getUser().codigoCartera != CONST.CARTERA['BBVA']) {
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'gestionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_GESTION');
-	    }		    
-    	//}
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'preciosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PRECIOS');
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'publicacionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PUBLICACION');
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'comercialactivo', ocultarBotonesEdicion: editable/*funPermEdition: ['EDITAR_TAB_ACTIVO_COMERCIAL']*/})}, 'TAB_ACTIVO_COMERCIAL');
-    	
-    	if ($AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK']) && me.lookupController().getViewModel().get('activo').get('isCarteraLiberbank')) {
-    		me.add({xtype: 'administracionactivo', ocultarBotonesEdicion: true});
-    	} else {
-    		$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'administracionactivo', ocultarBotonesEdicion: false})}, 'TAB_ACTIVO_ADMINISTRACION');
-    	}
-    			
-    	me.add({xtype: 'patrimonioactivo', ocultarBotonesEdicion: true});
-
-    	me.add({xtype: 'plusvaliaactivo', ocultarBotonesEdicion: !$AU.userHasFunction('EDITAR_TAB_ACTIVO_PLUSVALIA')});
+	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'preciosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PRECIOS');
+	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'publicacionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PUBLICACION');
+	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'comercialactivo', ocultarBotonesEdicion: editable/*funPermEdition: ['EDITAR_TAB_ACTIVO_COMERCIAL']*/})}, 'TAB_ACTIVO_COMERCIAL');
+	    	
+	    	if ($AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK']) && me.lookupController().getViewModel().get('activo').get('isCarteraLiberbank')) {
+	    		me.add({xtype: 'administracionactivo', ocultarBotonesEdicion: true});
+	    	} else {
+	    		$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'administracionactivo', ocultarBotonesEdicion: false})}, 'TAB_ACTIVO_ADMINISTRACION');
+	    	}
+	    			
+	    	me.add({xtype: 'patrimonioactivo', ocultarBotonesEdicion: true});
+	
+	    	me.add({xtype: 'plusvaliaactivo', ocultarBotonesEdicion: !$AU.userHasFunction('EDITAR_TAB_ACTIVO_PLUSVALIA')});
+	    }else{
+	    	me.tabsDeBBVA(me,editable); 
+	    }
 
     	
     	
@@ -193,7 +175,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     },
    
     evaluarBotonesEdicion: function(tab) {
-		var me = this;
+		var me = this;	
 		me.down("[itemId=botoneditar]").setVisible(false);
 		var editionEnabled = function() {
 			me.down("[itemId=botoneditar]").setVisible(true);
@@ -205,5 +187,14 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	} else {
     		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
     	}
+    },
+    
+    tabsDeBBVA: function(me, editable){
+    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'datosgeneralesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DATOS_GENERALES');
+    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'tabdocumentosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DOCUMENTOS');
+    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'agrupacionesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_AGRUPACIONES');
+    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'comercialactivo', ocultarBotonesEdicion: editable})}, 'TAB_ACTIVO_COMERCIAL');    			
+    	me.add({xtype: 'patrimonioactivo', ocultarBotonesEdicion: true});
+    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'preciosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PRECIOS');
     }
 });

@@ -446,7 +446,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
         var parametros = me.down("form").getValues();
         parametros.idTarea = me.idTarea;
-        
         var urlTipoTitulo =  $AC.getRemoteUrl('agenda/getTipoTituloActivoByIdTarea');
 		Ext.Ajax.request({
 			
@@ -470,8 +469,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             success: function(response, opts) {            	
                 //me.parent.fireEvent('aftersaveTarea', me.parent);
                 me.json = Ext.decode(response.responseText);
-
-                if (me.json.errorValidacionGuardado) {
+				if(me.json.errorTareaFinalizada){
+					me.getViewModel().set("errorValidacionGuardado", "La tarea ya ha sido finalizada");
+                    me.unmask();
+				}else if (me.json.errorValidacionGuardado) {
                     me.getViewModel().set("errorValidacionGuardado", me.json.errorValidacionGuardado);
                     me.unmask();
                 } else { 
@@ -2379,21 +2380,21 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	me.down('[name=ncontratoPrinex]').maxLength=9;
     	
     	me.setFechaActual(me.down('[name=fechaValidacion]'));
-    	
-    	me.down('[name=ncontratoPrinex]').addListener('change', function(){
-    		var ncontratoPrinex = me.down('[name=ncontratoPrinex]');
 
-    		if(ncontratoPrinex.value.length < 9){
-    			if(ncontratoPrinex.value.length == 4){
-        			ncontratoPrinex.setValue(ncontratoPrinex.value + '-'); 
-        		}
-    		}else{
-    			me.down('[name=ncontratoPrinex]').noObligatorio=true;
-    			me.campoNoObligatorio(me.down('[name=ncontratoPrinex]'));
-    		}
-
-    	});
-    	
+    	me.down('[name=ncontratoPrinex]').addListener('change', function(field, newValue, oldValue, eOpts){
+ 
+     		if(newValue.length >= 4 && newValue.length < 8
+				&& !newValue.includes("-")){
+     			field.setValue(newValue.substring(0,4)+ "-" + newValue.substring(4,8)); 
+         		
+     		}
+			
+			field.validate();
+     	});
+		me.down('[name=ncontratoPrinex]').validator = new Function("value",
+			"return value.match(/^[0-9]{4}-[0-9]{4}$/) ? true : 'Formato nº contrato: XXXX-XXXX donde X debe ser numérico'");
+		
+		me.down('[name=ncontratoPrinex]').validate();
     },
 
     T016_ProcesoAdecuacionValidacion: function() {

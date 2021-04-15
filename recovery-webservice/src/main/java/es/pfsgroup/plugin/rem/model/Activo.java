@@ -67,6 +67,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
+import es.pfsgroup.plugin.rem.model.dd.DDValidaEstadoActivo;
 
 /**
  * Modelo que gestiona los activos.
@@ -540,6 +541,21 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "DD_ERA_ID")
     private DDEstadoRegistralActivo estadoRegistral; 
     
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_VEA_ID")
+    private DDValidaEstadoActivo estadoValidacionActivoDND; 
+	
+    @Column(name = "ACT_PORCENTAJE_CONSTRUCCION")
+   	private Double porcentajeConstruccion;
+	   
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_OVN_COMERC")
+    private DDSinSiNo tieneObraNuevaAEfectosComercializacion;
+    
+    @Column(name = "ACT_OVN_COMERC_FECHA")
+	private Date obraNuevaAEfectosComercializacionFecha;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TTA_ID_BBVA")
     private DDTipoTituloActivo tipoTituloBbva;
@@ -2093,6 +2109,39 @@ public class Activo implements Serializable, Auditable {
 	
 	public DDTipoTituloActivo getTipoTituloBbva() {
 		return tipoTituloBbva;
+	}
+
+	public DDSinSiNo getTieneObraNuevaAEfectosComercializacion() {
+		return tieneObraNuevaAEfectosComercializacion;
+	}
+
+	public void setTieneObraNuevaAEfectosComercializacion(DDSinSiNo tieneObraNuevaAEfectosComercializacion) {
+		this.tieneObraNuevaAEfectosComercializacion = tieneObraNuevaAEfectosComercializacion;
+	}
+
+	public Date getObraNuevaAEfectosComercializacionFecha() {
+		return obraNuevaAEfectosComercializacionFecha;
+	}
+
+	public void setObraNuevaAEfectosComercializacionFecha(Date obraNuevaAEfectosComercializacionFecha) {
+		this.obraNuevaAEfectosComercializacionFecha = obraNuevaAEfectosComercializacionFecha;
+	}
+
+
+
+	public DDValidaEstadoActivo getEstadoValidacionActivoDND() {
+		return estadoValidacionActivoDND;
+	}
+
+	public void setEstadoValidacionActivoDND(DDValidaEstadoActivo estadoValidacionActivoDND) {
+		this.estadoValidacionActivoDND = estadoValidacionActivoDND;
+	}
+	public Double getPorcentajeConstruccion() {
+		return porcentajeConstruccion;
+	}
+
+	public void setPorcentajeConstruccion(Double porcentajeConstruccion) {
+		this.porcentajeConstruccion = porcentajeConstruccion;
 	}
 
 	public void setTipoTituloBbva(DDTipoTituloActivo tipoTituloBbva) {

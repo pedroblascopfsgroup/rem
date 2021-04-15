@@ -340,8 +340,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 		},
 
 		emisorSoloLectura : function(get) {
-			return $AU.userIsRol(CONST.PERFILES['PROVEEDOR'])
-					|| get('gasto.tieneGastosRefacturables');
+			if ($AU.userIsRol(CONST.PERFILES['PROVEEDOR']) || get('gasto.tieneGastosRefacturables')){
+				return true;
+			} else if (get('gasto.tieneTrabajos')){
+				return true;
+			} else {
+				return false;
+			}
 		},
 		
 		esLiberbank : function(get) {
@@ -783,7 +788,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 					idGasto : '{gasto.id}'
 				}
 			},
-			autoLoad: true
+			autoLoad: false
 		},
 		
 		comboTipoRetencion : {

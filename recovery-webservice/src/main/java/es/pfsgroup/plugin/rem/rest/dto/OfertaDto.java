@@ -10,6 +10,8 @@ import javax.validation.constraints.Size;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.IsNumber;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Lista;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -27,6 +29,8 @@ public class OfertaDto implements Serializable {
 	private Long idOfertaRem;
 	private Long idVisitaRem;
 	@NotNull(groups = { Insert.class })
+	@Lista(clase = ClienteComercial.class, message = "El idClienteRem no existe", groups = { Insert.class,
+			Update.class },foreingField="idClienteRem")
 	private Long idClienteRem;
 	private Long idActivoHaya;
 	@NotNull(groups = { Insert.class })
@@ -79,6 +83,9 @@ public class OfertaDto implements Serializable {
 	private Date fechaRecomendacionRc;
 	private String recomendacionDc;
 	private Date fechaRecomendacionDc;
+	private Boolean docResponsabilidadPrescriptor;
+	private String porcentajeDescuento;
+	private String justificacionOferta;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -327,5 +334,23 @@ public class OfertaDto implements Serializable {
 	}
 	public void setFechaRecomendacionDc(Date fechaRecomendacionDc) {
 		this.fechaRecomendacionDc = fechaRecomendacionDc;
+	}
+	public Boolean getDocResponsabilidadPrescriptor() {
+		return docResponsabilidadPrescriptor;
+	}
+	public void setDocResponsabilidadPrescriptor(Boolean docResponsabilidadPrescriptor) {
+		this.docResponsabilidadPrescriptor = docResponsabilidadPrescriptor;
+	}
+	public String getPorcentajeDescuento() {
+		return porcentajeDescuento;
+	}
+	public void setPorcentajeDescuento(String porcentajeDescuento) {
+		this.porcentajeDescuento = porcentajeDescuento;
+	}
+	public String getJustificacionOferta() {
+		return justificacionOferta;
+	}
+	public void setJustificacionOferta(String justificacionOferta) {
+		this.justificacionOferta = justificacionOferta;
 	}
 }

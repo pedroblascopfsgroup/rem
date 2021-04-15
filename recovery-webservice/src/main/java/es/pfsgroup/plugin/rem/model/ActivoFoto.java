@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -27,6 +26,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 
@@ -84,7 +84,7 @@ public class ActivoFoto implements Serializable, Auditable {
 	private ActivoAgrupacion agrupacion;
 
 	@Column(name = "SDV_ID")
-	private BigDecimal subdivision;
+	private Long subdivision;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ADJ_ID")
@@ -102,6 +102,10 @@ public class ActivoFoto implements Serializable, Auditable {
 
 	@Column(name = "FOT_DESCRIPCION")
 	private String descripcion;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_DFA_ID")
+	private DDDescripcionFotoActivo descripcionFoto;
 
 	@Column(name = "FOT_FECHA_DOCUMENTO")
 	private Date fechaDocumento;
@@ -206,11 +210,11 @@ public class ActivoFoto implements Serializable, Auditable {
 		this.agrupacion = agrupacion;
 	}
 
-	public BigDecimal getSubdivision() {
+	public Long getSubdivision() {
 		return subdivision;
 	}
 
-	public void setSubdivision(BigDecimal subdivision) {
+	public void setSubdivision(Long subdivision) {
 		this.subdivision = subdivision;
 	}
 
@@ -316,6 +320,14 @@ public class ActivoFoto implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public DDDescripcionFotoActivo getDescripcionFoto() {
+		return descripcionFoto;
+	}
+
+	public void setDescripcionFoto(DDDescripcionFotoActivo descripcionFoto) {
+		this.descripcionFoto = descripcionFoto;
 	}
 
 }

@@ -11,7 +11,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 	
 	recordClass: "HreRem.model.Activo",
     
-    requires: ['HreRem.model.Activo','HreRem.view.activos.detalle.HistoricoDestinoComercialActivo'],
+    requires: ['HreRem.model.Activo','HreRem.view.activos.detalle.HistoricoDestinoComercialActivo', 'HreRem.view.common.ComboBoxFieldBaseDD'],
     
     initComponent: function () {
 
@@ -110,66 +110,67 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									}
 								},
 								{
-						        	xtype: 'comboboxfieldbase',
+						        	xtype: 'comboboxfieldbasedd',
 						        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo'),
 									reference: 'tipoActivo',
 						        	chainedStore: 'comboSubtipoActivo',
-									chainedReference: 'subtipoActivoCombo',
+									chainedReference: 'subtipoActivoCombo',									
 						        	bind: {
 					            		store: '{comboTipoActivo}',
-					            		value: '{activo.tipoActivoCodigo}'
+					            		value: '{activo.tipoActivoCodigo}',
+										rawValue: '{activo.tipoActivoDescripcion}'
 					            	},
 		    						listeners: {
 					                	select: 'onChangeChainedCombo'
 					            	},
-					            	allowBlank: false,
-					            	style:'margin-left:10px'
+					            	allowBlank: false
 						        },
 						        {
-									xtype: 'comboboxfieldbase',
+									xtype: 'comboboxfieldbasedd',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
 						        	reference: 'subtipoActivoCombo',
 						        	bind: {
 					            		store: '{comboSubtipoActivo}',
 					            		value: '{activo.subtipoActivoCodigo}',
-					            		disabled: '{!activo.tipoActivoCodigo}'
+					            		disabled: '{!activo.tipoActivoCodigo}',
+										rawValue: '{activo.subtipoActivoDescripcion}'
 					            	},
-		    						allowBlank: false,
-					            	style:'margin-left:10px'
+		    						allowBlank: false
 						        },
 						        {
-									xtype: 'comboboxfieldbase',
+									xtype: 'comboboxfieldbasedd',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.activo.bde'),
 						        	reference: 'tipoActivoBde',
 						        	bind: {
 						        		readOnly : '{esUA}',
 					            		store: '{comboTipoActivoBde}',
 					            		value: '{activo.tipoActivoCodigoBde}',
-					            		hidden: '{!activo.isCarteraLiberbank}'
-					            	},
-					            	style:'margin-left:10px'
+					            		hidden: '{!activo.isCarteraLiberbank}',
+										rawValue: '{activo.tipoActivoDescripcionBde}'
+					            	}
 						        },
 						        {
-						        	xtype: 'comboboxfieldbase',
+						        	xtype: 'comboboxfieldbasedd',
 						        	fieldLabel: HreRem.i18n('fieldlabel.subtipo.activo.bde'),
 									reference: 'subtipoActivoComboBde',
 						        	bind: {
 						        		readOnly : '{esUA}',
 					            		store: '{comboSubtipoActivoBde}',
 					            		value: '{activo.subtipoActivoCodigoBde}',
-					            		hidden: '{!activo.isCarteraLiberbank}'
+					            		hidden: '{!activo.isCarteraLiberbank}',
+										rawValue: '{activo.subtipoActivoDescripcionBde}'
 					            	}
 						        },
 						        {
-				                	xtype: 'comboboxfieldbase',
+				                	xtype: 'comboboxfieldbasedd',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.uso.dominante'),
 						        	name: 'tipoUsoDestinoCodigo',
 				                	bind: {
 				                		readOnly : '{esUA}',
 					            		store: '{comboTipoUsoDestino}',
-					            		value: '{activo.tipoUsoDestinoCodigo}'
-					            	},
-					            	style:'margin-left:10px'
+					            		value: '{activo.tipoUsoDestinoCodigo}',
+										rawValue: '{activo.tipoUsoDestinoDescripcion}'
+					            	}
 				                },
 				                {
 				                	xtype: 'textfieldbase',
@@ -179,8 +180,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                		readOnly : '{esUA}',
 				                		value: '{activo.motivoActivo}'
 				                	},
-				                	maxLength: 50,
-				                	style:'margin-left:10px'
+				                	maxLength: 50
 				                },
 				                {
 				                	xtype: 'textfieldbase',
@@ -192,8 +192,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						        		hidden: '{!esUA}'
 						        	},
 						        	handler: 'checkVerificarPorcentajeParticipacion',
-				                	maxLength: 50,
-				                	style:'margin-left:10px'
+				                	maxLength: 50
 				                },
 				                
 								{
@@ -212,6 +211,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 													}
 									        }
 									},
+									padding: '0',
 						        	defaultType: 'textfieldbase',
 									rowspan: 1,
 									items: [
@@ -221,12 +221,14 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										},
 										
 								        {
-								        	xtype: 'comboboxfieldbase',
+								        	xtype: 'comboboxfieldbasedd',
 								        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
 								        	name: 'estadoActivoCodigo',
 								        	bind: {
+								        		readOnly : true,
 							            		store: '{comboEstadoActivo}',
-							            		value: '{activo.estadoActivoCodigo}'
+							            		value: '{activo.estadoActivoCodigo}',
+												rawValue: '{activo.estadoActivoDescripcion}'
 								        	}
 								        },
 						                {
@@ -239,21 +241,50 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						                		hidden: '{!activo.isCarteraBankia}',
 						                		readOnly: true
 						                	}
+						                },
+					   				 	{
+						                	xtype: 'comboboxfieldbasedd',
+						                	fieldLabel:  HreRem.i18n('fieldlabel.estado.registral'),
+						                	name: 'comboEstadoRegistral',
+						                	reference: 'comboEstadoRegistralRef',
+						                	bind: {
+							                	store: '{comboEstadoRegistral}',
+							                	value: '{activo.estadoRegistralCodigo}',
+							                	readOnly: '{!activo.esEditableActivoEstadoRegistral}',
+												rawValue: '{activo.estadoRegistralDescripcion}'
+						                	}
+						                },
+							            {
+						                	xtype: 'numberfieldbase',
+											symbol: HreRem.i18n("symbol.porcentaje"),
+						                	fieldLabel:  HreRem.i18n('fieldlabel.porcentaje.construccion'),
+						                	name: 'porcentajeConstruccion',
+						                	reference: 'porcentajeConstruccion',
+						                	maskRe: /[0-9.]/,
+						                	bind: {
+						                		readOnly: '{!editarPorcentajeConstruccion}',
+						                		value: '{activo.porcentajeConstruccion}'
+						                	},
+						                	validator: function(v) {
+				                            	if(!Ext.isEmpty(this.getValue()) && (this.getValue() < 0 || this.getValue() >  100 )){
+					                            	return false;
+				                            	}
+					                            return true;
+					                        }
 						                }
 									]
 								},
 								//PARA DIVARIAN
 						        {
-						        	xtype: 'comboboxfieldbase',
+						        	xtype: 'comboboxfieldbasedd',
 						        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
 						        	bind: { 
-						        		value:'{activo.sociedadPagoAnterior}',
+						        		value: '{activo.sociedadPagoAnterior}',
 						        		store: '{comboSituacionPagoAnterior}',
 						        		readOnly: '{!activo.isSubcarteraDivarian}',
-						        		hidden:'{!activo.isSubcarteraDivarian}'
-						        	},
-						        	displayField: 'descripcion',
-						        	style:'margin-left:10px'
+						        		hidden: '{!activo.isSubcarteraDivarian}',
+										rawValue: '{activo.sociedadPagoAnteriorDescripcion}'
+						        	}
 						        }
 								
 							]
@@ -272,47 +303,45 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                	bind:{
 				                		value: '{activo.descripcion}'
 				                	}
+				                }, 
+				                {
+				                	xtype: 'comboboxfieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo.DND'),
+				                	name: 'comboEstadoFisicoActivoDND',
+				                	reference: 'comboEstadoFisicoActivoDNDRef',
+				                	bind: {			                		
+				                		value: '{activo.estadoFisicoActivoDND}',
+				                		store: '{comboEstadoActivoDND}',
+				                		readOnly:true
+				                	}
 				                },   
 				                {
-									xtype:'comboboxfieldbase',
+									xtype:'comboboxfieldbasedd',
 									fieldLabel: HreRem.i18n('fieldlabel.activobbva.tipoTransmision'),
 									bind: {
 										readOnly : '{!isGestorAdmisionAndSuper}',
 										store: '{comboTipoTransmision}',
-										value: '{activo.tipoTransmisionCodigo}'
+										value: '{activo.tipoTransmisionCodigo}',
+										rawValue: '{activo.tipoTransmisionDescripcion}'
 									}
 								},
 								{
-									xtype:'comboboxfieldbase',
+									xtype:'comboboxfieldbasedd',
 									reference: 'tipoAltaRef',
 									fieldLabel: HreRem.i18n('fieldlabel.activobbva.tipoAlta'),									
 									bind: {
 										readOnly : '{!isGestorAdmisionAndSuperComboTipoAltaBlo}',										
 										store: '{comboBBVATipoAlta}',
 										hidden: '{!activo.isCarteraBbva}',
-										value: '{activo.tipoAltaCodigo}'
+										value: '{activo.tipoAltaCodigo}',
+										rawValue: '{activo.tipoAltaDescripcion}'
 									}/*,listeners:{
 										beforerender:'isGestorAdmisionAndSuperComboTipoAlta'
 									}*/
 									
-								},
+								},				                				                
 				                {
-				                	xtype: 'comboboxfieldbase',
-				                	fieldLabel:  HreRem.i18n('fieldlabel.estado.registral'),
-				                	name: 'comboEstadoRegistral',
-				                	eference: 'comboEstadoRegistralRef',
-				                	bind: {
-					                	store: '{comboEstadoRegistral}',
-					                	value: '{activo.estadoRegistralCodigo}',
-					                	readOnly: '{!activo.esEditableActivoEstadoRegistral}'
-				                	}
-				                },
-				                {
-				                	//Campo para dejar un espacio entre los campos por estetica.
-				                	readOnly: true
-				                },
-				                {
-				                	xtype: 'comboboxfieldbase',
+				                	xtype: 'comboboxfieldbasedd',
 				                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.segmento'),
 				                	name: 'combotipoSegmento',
 				                	reference: 'comboTipoSegmentoRef',
@@ -320,7 +349,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                		store: '{comboTipoSegmento}',
 				                		value: '{activo.tipoSegmentoCodigo}',
 				                		hidden: '{!mostrarCamposDivarianandBbva}',
-				                		readOnly : '{!editarSegmentoDivarianandBbva}'
+				                		readOnly : '{!editarSegmentoDivarianandBbva}',
+										rawValue: '{activo.tipoSegmentoDescripcion}'
 				                	}
 				                }
 				            ]
@@ -366,8 +396,19 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							            fn:'onClickActivoHRE'									       
 							        }
 								}
-							},
-							{
+							}, 
+			                {
+			                	xtype: 'comboboxfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.segmento'),
+			                	name: 'combotipoSegmento',
+			                	reference: 'comboTipoSegmentoRef',
+			                	bind: {
+			                		store: '{comboTipoSegmento}',
+			                		value: '{activo.tipoSegmentoCodigo}',
+			                		hidden: '{!activo.isSubcarteraDivarian}'
+			                	}
+			                },
+		                	{
 								xtype:'textfieldbase',
 								reference:'tfcodpromocionbbva',
 								fieldLabel: HreRem.i18n('fieldlabel.activobbva.codPromocionBbva'),
@@ -376,14 +417,15 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									value: '{activo.codPromocionBbva}'
 								}
 							}
-						],
+			 			                
+					],
 	                bind:{
 	                	hidden: '{!activo.isCarteraBbva}'
-	                }
+	                	}
 	                }
 				]
-				},				
-            	{    
+            },
+            {    
                 
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
@@ -392,24 +434,26 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					[
 						// fila 1
 						{							
-							xtype: 'comboboxfieldbase',
+							xtype: 'comboboxfieldbasedd',
 							fieldLabel:  HreRem.i18n('fieldlabel.tipo.via'),
 				        	bind: {
 			            		store: '{comboTipoVia}',
-			            		value: '{activo.tipoViaCodigo}'			            		
+			            		value: '{activo.tipoViaCodigo}',
+								rawValue: '{activo.tipoViaDescripcion}'
 			            	},
     						allowBlank: false
 						},
 						{
-							xtype: 'comboboxfieldbase',
+							xtype: 'comboboxfieldbasedd',
 							fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 							reference: 'provinciaCombo',
-							chainedStore: 'comboMunicipio',
+							chainedStore: 'comboMunicipioDatosBasicos',
 							chainedReference: 'municipioCombo',
 			            	bind: {
 			            		readOnly : '{esUA}',
 			            		store: '{comboProvincia}',
-			            	    value: '{activo.provinciaCodigo}'
+			            	    value: '{activo.provinciaCodigo}',
+								rawValue: '{activo.provinciaDescripcion}'
 			            	},
     						listeners: {
 								select: 'onChangeChainedCombo',
@@ -433,16 +477,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                	allowBlank: false
 		                },
 		                {
-							xtype: 'comboboxfieldbase',
+							xtype: 'comboboxfieldbasedd',
 							fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 							reference: 'municipioCombo',
 							chainedStore: 'comboInferiorMunicipio',
 							chainedReference: 'inferiorMunicipioCombo',
 			            	bind: {
 			            		readOnly : '{esUA}',
-			            		store: '{comboMunicipio}',
+			            		store: '{comboMunicipioDatosBasicos}',
 			            		value: '{activo.municipioCodigo}',
-			            		disabled: '{!activo.provinciaCodigo}'
+			            		disabled: '{!activo.provinciaDescripcion}',
+								rawValue: '{activo.municipioDescripcion}'
 			            	},
     						listeners: {
 								select: 'onChangeChainedCombo'
@@ -462,14 +507,15 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                	}
 		                },
 		                {
-							xtype: 'comboboxfieldbase',
+							xtype: 'comboboxfieldbasedd',
 							fieldLabel:  HreRem.i18n('fieldlabel.unidad.poblacional'),
 							reference: 'inferiorMunicipioCombo',
 			            	bind: {
 			            		readOnly : '{esUA}',
 			            		store: '{comboInferiorMunicipio}',
 			            		value: '{activo.inferiorMunicipioCodigo}',
-			            		disabled: '{!activo.municipioCodigo}'
+			            		disabled: '{!activo.municipioDescripcion}',
+								rawValue: '{activo.inferiorMunicipioDescripcion}'
 			            	},
 			            	tpl: Ext.create('Ext.XTemplate',
 			            		    '<tpl for=".">',
@@ -491,13 +537,14 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                }
 						},
 				        { 
-				        	xtype: 'comboboxfieldbase',
+				        	xtype: 'comboboxfieldbasedd',
 				        	fieldLabel:  HreRem.i18n('fieldlabel.comunidad.autonoma'),
 				        	forceSelection: true,
 				        	readOnly: true,
 				        	bind: {		
 				        		store: '{storeComunidadesAutonomas}',
-			            		value: '{activo.provinciaCodigo}'
+			            		value: '{activo.provinciaCodigo}',
+								rawValue: '{activo.provinciaDescripcion}'
 			            	},
 							valueField: 'id',
 							allowBlank: false
@@ -523,13 +570,14 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                	}
 		                },	               
 		                {
-							xtype: 'comboboxfieldbase',
+							xtype: 'comboboxfieldbasedd',
 							reference: 'pais',
 							fieldLabel: HreRem.i18n('fieldlabel.pais'),
 			            	bind: {
 			            		readOnly : '{esUA}',
 			            		store: '{comboCountries}',
-			            		value: '{activo.paisCodigo}'
+			            		value: '{activo.paisCodigo}',
+								rawValue: '{activo.paisDescripcion}'
 			            	},
     						colspan: 2,
     						allowBlank: false
@@ -558,12 +606,29 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		               
 					]               
           	},
+          	// Perimetros  BBVA-----------------------------------------------
+          	{    
+				xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				title: HreRem.i18n('title.perimetros'),
+				hidden:!$AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']),
+				items :[					
+					{
+						xtype: 'datefieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.perimetro.fecha.alta.activo'),
+						colspan: 2,
+						bind:		'{activo.fechaAltaActivoRem}',
+						readOnly	: true
+					}
+				]
+ 			},
           	// Perimetros -----------------------------------------------
             {    
                 
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.perimetros'),
+				hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']),
 				items :
 					[
 					{
@@ -590,7 +655,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						readOnly	: true,
 						listeners: {
 						   'render': function(panel) {
-						       if($AU.getUser().codigoCartera == CONST.CARTERA['BBVA']){
+						       if($AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])){
 						    	  this.colspan = 3;
 						       }
 						    }
@@ -602,7 +667,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						colspan: 2,
 						bind: {
 							value: '{activo.trabajosVivos}',
-							hidden: '{esUsuarioBBVA}'
+							hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])
 						},
 						readOnly	: true
 					},
@@ -777,12 +842,13 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								readOnly: true
 							},
 							{
-								xtype: 'comboboxfieldbase',
+								xtype: 'comboboxfieldbasedd',
 								reference: 'comboMotivoPerimetroComer',
 								bind: {
 									store: '{comboMotivoAplicaComercializarActivo}',
 									value: '{activo.motivoAplicaComercializarCodigo}',
-									visible: '{activo.aplicaComercializar}'
+									visible: '{activo.aplicaComercializar}',
+									rawValue: '{activo.motivoAplicaComercializarDescripcion}'
 								}
 							},
 							{
@@ -822,6 +888,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									value: '{activo.motivoAplicaFormalizar}'
 								}
 							},
+							
 							//Bloque Comercialización
 							{    
 								xtype:'fieldsettable',
@@ -835,22 +902,24 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								items :
 									[
 									{
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.comercializacion'),
 										bind: {
 											readOnly: '{esUA}',
 											store: '{comboTipoComercializarActivo}',
-											value: '{activo.tipoComercializarCodigo}'
+											value: '{activo.tipoComercializarCodigo}',
+											rawValue: '{activo.tipoComercializarDescripcion}'
 										}
 									},
 									{
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
 										bind: {
 											readOnly : '{!activo.esEditableDestinoComercial}',
 											disabled: '{activo.isPANoDadaDeBaja}',
 											store: '{comboTipoDestinoComercialCreaFiltered}',
-											value: '{activo.tipoComercializacionCodigo}'
+											value: '{activo.tipoComercializacionCodigo}',
+											rawValue: '{activo.tipoComercializacionDescripcion}'
 										}
 									},
 									{
@@ -864,22 +933,24 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										}
 									},
 									{
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.alquiler'),
 										readOnly: true,
 										bind: {
 											store: '{comboTipoAlquiler}',
 											disabled: '{!activo.isDestinoComercialAlquiler}',
-											value: '{activo.tipoAlquilerCodigo}'
+											value: '{activo.tipoAlquilerCodigo}',
+											rawValue: '{activo.tipoAlquilerDescripcion}'
 										}
 									},
 									{
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.equipo.gestion'),
 										bind: {
 											readOnly: '{!esSuperUsuario}',
 											store: '{comboEquipoGestion}',
-											value: '{activo.tipoEquipoGestionCodigo}'
+											value: '{activo.tipoEquipoGestionCodigo}',
+											rawValue: '{activo.tipoEquipoGestionDescripcion}'
 										}
 									}
 									]
@@ -906,12 +977,13 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										readOnly	: true
 									},
 									{
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.equipo.gestion'),
 										readOnly: true,
 										bind: {
 											store: '{comboEquipoGestion}',
-											value: '{activo.tipoEquipoGestionCodigo}'
+											value: '{activo.tipoEquipoGestionCodigo}',
+											rawValue: '{activo.tipoEquipoGestionDescripcion}'
 										}
 									}
 									]
@@ -956,7 +1028,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						items :
 							[
 							{
-								xtype:'comboboxfieldbase',
+								xtype:'comboboxfieldbasedd',
 								fieldLabel: HreRem.i18n('fieldlabel.bancario.clase'),
 								reference: 'claseActivoBancarioCombo',
 					        	chainedStore: 'comboSubtipoClaseActivoBancario',
@@ -964,7 +1036,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind: {
 									readOnly : '{esUA}',
 									store: '{comboClaseActivoBancario}',
-									value: '{activo.claseActivoCodigo}'
+									value: '{activo.claseActivoCodigo}',
+									rawValue: '{activo.claseActivoDescripcion}'
 								},
 	    						listeners: {
 				                	select: 'onChangeChainedCombo'
@@ -988,42 +1061,46 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								}
                             },
 							{
-								xtype:'comboboxfieldbase',
+								xtype:'comboboxfieldbasedd',
 								fieldLabel: HreRem.i18n('fieldlabel.bancario.subtipo'),
 								reference: 'subtipoClaseActivoBancarioCombo',
 								bind: {
 									readOnly : '{esUA}',
 									store: '{comboSubtipoClaseActivoBancario}',
 									value: '{activo.subtipoClaseActivoCodigo}',
-									disabled: '{!activo.claseActivoCodigo}'
+									disabled: '{!activo.claseActivoCodigo}',
+									rawValue: '{activo.subtipoClaseActivoDescripcion}'
 								}
 							},
 							{
-								xtype:'comboboxfieldbase',
+								xtype:'comboboxfieldbasedd',
 								fieldLabel: HreRem.i18n('fieldlabel.bancario.expediente.estado'),
 								bind: {
 									readOnly : '{esUA}',
 									store: '{comboEstadoExpRiesgoBancario}',
-									value: '{activo.estadoExpRiesgoCodigo}'
+									value: '{activo.estadoExpRiesgoCodigo}',
+									rawValue: '{activo.estadoExpRiesgoDescripcion}'
 								}
 							},
 							{
-								xtype:'comboboxfieldbase',
+								xtype:'comboboxfieldbasedd',
 								fieldLabel: HreRem.i18n('fieldlabel.bancario.incorriente.estado'),
 								bind: {
 									readOnly : '{esUA}',
 									store: '{comboEstadoExpIncorrienteBancario}',
-									value: '{activo.estadoExpIncorrienteCodigo}'
+									value: '{activo.estadoExpIncorrienteCodigo}',
+									rawValue: '{activo.estadoExpIncorrienteDescripcion}'
 								}
 							},
 							{
-								xtype:'comboboxfieldbase',
+								xtype:'comboboxfieldbasedd',
 								fieldLabel: HreRem.i18n('fieldlabel.bancario.entrada.activo.bankia.coenae'),
 								bind: {
 									readOnly : '{esUA}',
 									store: '{comboEntradaActivoBankia}',
 									hidden: '{!activo.isCarteraBankia}',
-									value: '{activo.entradaActivoBankiaCodigo}'
+									value: '{activo.entradaActivoBankiaCodigo}',
+									rawValue: '{activo.entradaActivoBankiaDescripcion}'
 								}
 							},
 							{
@@ -1084,7 +1161,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								items :
 									[
 									{
-										xtype:'numberfieldbase',
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.empresa'),
 										reference: 'activobbvaEmpresa',
 										bind: {
@@ -1092,15 +1169,11 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											value: '{activo.empresa}'
 										},
 										listeners: {
-						                	change:  'onActivoEpa',
-							            	update: function(){
-												if(Ext.isEmpty(this.getValue()))
-													this.setValue(-1);
-											}
+						                	change:  'onActivoEpa'
 						            	}
 									},
 									{
-										xtype:'numberfieldbase',
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.oficina'),
 										reference: 'activobbvaOficina',
 										bind: {
@@ -1108,15 +1181,11 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											value: '{activo.oficina}'
 										},
 										listeners: {
-						                	change:  'onActivoEpa',
-							            	update: function(){
-												if(Ext.isEmpty(this.getValue()))
-													this.setValue(-1);
-											}
+						                	change:  'onActivoEpa'
 						            	}
 									},
 									{
-										xtype:'numberfieldbase',
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.contrapartida'),
 										reference: 'activobbvaContrapartida',
 										bind: {
@@ -1124,15 +1193,11 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											value: '{activo.contrapartida}'
 										},
 										listeners: {
-						                	change:  'onActivoEpa',
-							            	update: function(){
-												if(Ext.isEmpty(this.getValue()))
-													this.setValue(-1);
-											}
+						                	change:  'onActivoEpa'
 						            	}
 									},
 									{
-										xtype:'numberfieldbase',
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.folio'),
 										reference: 'activobbvaFolio',
 										bind: {
@@ -1140,16 +1205,11 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											value: '{activo.folio}'
 										},
 										listeners: {
-						                	change:  'onActivoEpa',
-							            	update: function(){
-												if(Ext.isEmpty(this.getValue()))
-													this.setValue(-1);
-											}
+						                	change:  'onActivoEpa'
 						            	}
 									},
 									{
-										xtype:'textfield',
-										disabled: true,
+										xtype:'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.cdpen'),
 										reference: 'activobbvaCdpen',
 										bind: {
@@ -1157,11 +1217,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											value: '{activo.cdpen}'
 										},
 										listeners: {
-						                	change:  'onActivoEpa',
-							            	update: function(){
-												if(Ext.isEmpty(this.getValue()))
-													this.setValue(-1);
-											}
+						                	change:  'onActivoEpa'
 						            	}
 									}
 								]
@@ -1182,7 +1238,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						items :
 							[
 							{
-								xtype:'comboboxfieldbase',
+								xtype:'comboboxfieldbasedd',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.apple.servicer'),	
 								reference: 'comboPerimetroAppleServicer',
 								chainedStore: 'comboCesionSaneamiento',
@@ -1191,7 +1247,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									readOnly : !$AU.userIsRol("HAYASUPER"),
 									store: '{comboServicerActivo}',
 									value: '{activo.servicerActivoCodigo}',
-									hidden: '{!activo.isSubcarteraApple}'
+									hidden: '{!activo.isSubcarteraApple}',
+									rawValue: '{activo.servicerActivoDescripcion}'
 								},
 								publishes: 'value',									
 		    					listeners: {
@@ -1200,14 +1257,15 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 	    													
 							},
 							{
-								xtype:'comboboxfieldbase',
+								xtype:'comboboxfieldbasedd',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.apple.cesion'),
 								reference: 'comboPerimetroAppleCesion',
 								bind:{
 									readOnly : !$AU.userIsRol("HAYASUPER"),
 									store: '{comboCesionSaneamiento}',									
 									value: '{activo.cesionSaneamientoCodigo}',
-									hidden: '{!activo.isSubcarteraApple}' 
+									hidden: '{!activo.isSubcarteraApple}',
+									rawValue: '{activo.cesionSaneamientoDescripcion}'
 								}
 							},
 							{

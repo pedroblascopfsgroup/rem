@@ -284,7 +284,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	tab = null;
     	cfg.title = titulo;
     	tab = me.createTab (me.getActivosMain(), 'activo', "activosdetallemain",  id, cfg);
-    	Ext.suspendLayouts();
+    	//Ext.suspendLayouts();
     	tab.mask(HreRem.i18n("msg.mask.loading"));
     	me.setLogTime();
     	HreRem.model.Activo.load(id, {
@@ -309,7 +309,7 @@ Ext.define('HreRem.controller.ActivosController', {
 				    }
 				});
 				tab.unmask();
-		    	Ext.resumeLayouts(true);
+		    	//Ext.resumeLayouts(true);
 		    	
 				/* Selector de subPestanyas del Trabajo:
 		    	 * - Se hace la comprobacion aqui (ademas de dentro de la funcion), 
@@ -329,15 +329,18 @@ Ext.define('HreRem.controller.ActivosController', {
 		     	//me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.seleccionmasivo.SeleccionCambiosMasivo");
 		    },
 		    failure: function (a, operation) {
-		    	if(operation.getResponse().status === 408){
-		    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-		    	}else{
-		    		var response = Ext.decode(operation.getResponse().responseText);
-	 		    	me.fireEvent("errorToast", response.error);
-		    	}
-		    	//me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				if(!Ext.isEmpty(operation) && !Ext.isEmpty(operation.getResponse())){
+			    	if(operation.getResponse().status === 408){
+			    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    	}else{
+			    		var response = Ext.decode(operation.getResponse().responseText);
+		 		    	me.fireEvent("errorToast", response.error);
+			    	}
+				}else{
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				}
 				tab.unmask();
-				Ext.resumeLayouts(true);
+				//Ext.resumeLayouts(true);
 	       	}
 		});
 		
@@ -943,7 +946,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	cfg.title = titulo;
      	
     	var tab = me.createTab (me.getActivosMain(), 'tramite', "tramitesdetalle",  id, cfg);    	
-
+		tab.mask(HreRem.i18n('msg.mask.loading'));
     	me.setLogTime(); 
     	HreRem.model.Tramite.load(id, {
     		scope: this,
@@ -952,6 +955,7 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	me.setLogTime(); 
 		    	tab.getViewModel().set("tramite", tramite);
 		    	me.logTime("Fin Set values");
+				tab.unmask();
 		    },
 		    failure: function (a, operation) {
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
@@ -967,7 +971,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	cfg.title = titulo;
      	
     	var tab = me.createTab (me.getActivosMain(), 'tramite', "tramitesdetalle",  id, cfg);    	
-
+		tab.mask(HreRem.i18n('msg.mask.loading'));
     	me.setLogTime(); 
     	HreRem.model.Tramite.load(id, {
     		scope: this,
@@ -978,6 +982,7 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	//tab.configCmp(tramite);
 		    	me.logTime("Fin Set values");
 		    	me.idActivo = tramite.get("idActivo");
+				tab.unmask();
 		    },
 		    failure: function (a, operation) {
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

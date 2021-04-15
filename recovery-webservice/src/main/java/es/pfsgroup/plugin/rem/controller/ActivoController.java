@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +47,10 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -115,6 +121,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionDq;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
 import es.pfsgroup.plugin.rem.model.DtoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
@@ -142,13 +149,14 @@ import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
-import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VGridBusquedaActivos;
+import es.pfsgroup.plugin.rem.model.VGridBusquedaPublicaciones;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
@@ -230,6 +238,9 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@Autowired
 	private GridObservacionesFactory gridObservacionesFactory;
+	
+	@Resource
+	private Properties appProperties;
 
 	public ActivoApi getActivoApi() {
 		return activoApi;
@@ -1145,6 +1156,18 @@ public class ActivoController extends ParadiseJsonController {
 							}
 
 							BeanUtils.copyProperties(fotoDto, aListaActivoFoto);
+							
+							if(aListaActivoFoto.getActivo().getSubtipoActivo() != null) {
+								BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", aListaActivoFoto.getActivo().getSubtipoActivo().getCodigo());
+							}
+														
+							if(aListaActivoFoto.getDescripcionFoto() != null) {
+								BeanUtils.copyProperty(fotoDto, "codigoDescripcionFoto", aListaActivoFoto.getDescripcionFoto().getCodigo());
+								BeanUtils.copyProperty(fotoDto, "descripcion", aListaActivoFoto.getDescripcionFoto().getDescripcion());
+								if (aListaActivoFoto.getDescripcionFoto().getSubtipo() != null) {
+									BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", aListaActivoFoto.getDescripcionFoto().getSubtipo().getCodigo());
+								}
+							}
 
 							if (aListaActivoFoto.getPrincipal() != null && aListaActivoFoto.getPrincipal()) {
 								if (aListaActivoFoto.getInteriorExterior() != null) {
@@ -1801,34 +1824,62 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional()
 	public ModelAndView registrarExportacion(DtoActivoGridFilter dto, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		String intervaloTiempo = !Checks.esNulo(appProperties.getProperty("haya.tiempo.espera.export")) ? appProperties.getProperty("haya.tiempo.espera.export") : "300000";
 		ModelMap model = new ModelMap();		 
 		Boolean isSuperExport = false;
+		Boolean permitido = true;
+		String filtros = parameterParser(request.getParameterMap());
+		Usuario user = usuarioManager.getUsuarioLogado();
+		Long tiempoPermitido = System.currentTimeMillis() - Long.parseLong(intervaloTiempo);
+		String cuentaAtras = null;
 		try {
-			Usuario user = usuarioManager.getUsuarioLogado();
-			int count = ((Page)adapter.getBusquedaActivosGrid(dto, true)).getTotalCount();
-			AuditoriaExportaciones ae = new AuditoriaExportaciones();
-			ae.setBuscador(buscador);
-			ae.setFechaExportacion(new Date());
-			ae.setNumRegistros(Long.valueOf(count));
-			ae.setUsuario(user);
-			ae.setFiltros(parameterParser(request.getParameterMap()));
-			ae.setAccion(exportar);
-			genericDao.save(AuditoriaExportaciones.class, ae);
+			Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId());
+			Filter filtroConsulta = genericDao.createFilter(FilterType.EQUALS, "filtros", filtros);
+			Filter filtroAccion = genericDao.createFilter(FilterType.EQUALS, "accion", true);
+			Order orden = new Order(OrderType.DESC, "fechaExportacion");
+			List<AuditoriaExportaciones> listaExportaciones =  genericDao.getListOrdered(AuditoriaExportaciones.class, orden, filtroUsuario, filtroConsulta, filtroAccion);
 			
-			model.put(RESPONSE_SUCCESS_KEY, true);
-			model.put(RESPONSE_DATA_KEY, count);
-			for(Perfil pef : user.getPerfiles()) {
-				if(pef.getCodigo().equals("SUPEREXPORTACTAGR")) {
-					isSuperExport = true;
-					break;
-				}
+			if(listaExportaciones != null && !listaExportaciones.isEmpty()) {
+				Long ultimaExport = listaExportaciones.get(0).getFechaExportacion().getTime();
+				permitido = ultimaExport > tiempoPermitido ? false : true;
+
+				double entero = Math.floor((ultimaExport - tiempoPermitido)/60000);
+		        if (entero < 2) {
+		        	cuentaAtras = "un minuto";
+		        } else {
+		        	cuentaAtras = Double.toString(entero);
+		        	cuentaAtras = cuentaAtras.substring(0, 1) + " minutos";
+		        }
 			}
-			if(isSuperExport) {
-				model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.activos").getValor());
-				model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.activos").getValor());
-			}else {
-				model.put("limite", configManager.getConfigByKey("limite.exportar.excel.activos").getValor());
-				model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.activos").getValor());
+			
+			if(permitido) {
+				int count = ((Page)adapter.getBusquedaActivosGrid(dto, true)).getTotalCount();
+				AuditoriaExportaciones ae = new AuditoriaExportaciones();
+				ae.setBuscador(buscador);
+				ae.setFechaExportacion(new Date());
+				ae.setNumRegistros(Long.valueOf(count));
+				ae.setUsuario(user);
+				ae.setFiltros(filtros);
+				ae.setAccion(exportar);
+				genericDao.save(AuditoriaExportaciones.class, ae);
+				
+				model.put(RESPONSE_SUCCESS_KEY, true);
+				model.put(RESPONSE_DATA_KEY, count);
+				for(Perfil pef : user.getPerfiles()) {
+					if(pef.getCodigo().equals("SUPEREXPORTACTAGR")) {
+						isSuperExport = true;
+						break;
+					}
+				}
+				if(isSuperExport) {
+					model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.activos").getValor());
+					model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.activos").getValor());
+				}else {
+					model.put("limite", configManager.getConfigByKey("limite.exportar.excel.activos").getValor());
+					model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.activos").getValor());
+				}
+			} else {
+				model.put("msg", cuentaAtras);
 			}
 		}catch(Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
@@ -2010,58 +2061,94 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-
 	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getPublicacionGrid(DtoPublicacionGridFilter dto, ModelMap model) {
+		try {
+			Page page = activoApi.getPublicacionGrid(dto);
+			model.put(RESPONSE_DATA_KEY, page.getResults());
+			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("error en ActivoController::getPublicacionGrid", e);
+		}
+		return createModelAndViewJson(model);
+	}
+
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcelPublicaciones(DtoActivosPublicacion dtoActivosPublicacion, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		dtoActivosPublicacion.setStart(excelReportGeneratorApi.getStart());
-		dtoActivosPublicacion.setLimit(excelReportGeneratorApi.getLimit());
-
-		List<VBusquedaPublicacionActivo> listaPublicacionesActivos = (List<VBusquedaPublicacionActivo>) activoApi.getActivosPublicacion(dtoActivosPublicacion).getResults();
-
+	public void generateExcelPublicaciones(DtoPublicacionGridFilter dto, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		dto.setStart(excelReportGeneratorApi.getStart());
+		dto.setLimit(excelReportGeneratorApi.getLimit());
+		List<VGridBusquedaPublicaciones> listaPublicacionesActivos = (List<VGridBusquedaPublicaciones>) activoApi.getPublicacionGrid(dto).getResults();
 		ExcelReport report = new PublicacionExcelReport(listaPublicacionesActivos);
 		excelReportGeneratorApi.generateAndSend(report, response);
-	}
-	
+	}	
 	
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional()
-	public ModelAndView registrarExportacionPublicaciones(DtoActivosPublicacion dtoActivosPublicacion, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ModelMap model = new ModelMap();
-		Usuario user = null;
+	public ModelAndView registrarExportacionPublicaciones(DtoPublicacionGridFilter dto, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		String intervaloTiempo = !Checks.esNulo(appProperties.getProperty("haya.tiempo.espera.export")) ? appProperties.getProperty("haya.tiempo.espera.export") : "300000";
+		ModelMap model = new ModelMap();		 
 		Boolean isSuperExport = false;
+		Boolean permitido = true;
+		String filtros = parameterParser(request.getParameterMap());
+		Usuario user = usuarioManager.getUsuarioLogado();
+		Long tiempoPermitido = System.currentTimeMillis() - Long.parseLong(intervaloTiempo);
+		String cuentaAtras = null;
+
 		try {
-			int count = activoApi.getActivosPublicacion(dtoActivosPublicacion).getTotalCount();
-			user = usuarioManager.getUsuarioLogado();
-			AuditoriaExportaciones ae = new AuditoriaExportaciones();
-			ae.setBuscador(buscador);
-			ae.setFechaExportacion(new Date());
-			ae.setNumRegistros(Long.valueOf(count));
-			ae.setUsuario(user);
-			ae.setFiltros(parameterParser(request.getParameterMap()));
-			ae.setAccion(exportar);
-			genericDao.save(AuditoriaExportaciones.class, ae);
-			model.put(RESPONSE_SUCCESS_KEY, true);
-			model.put(RESPONSE_DATA_KEY, count);
-			for(Perfil pef : user.getPerfiles()) {
-				if(pef.getCodigo().equals("SUPEREXPORTPUBLI")) {
-					isSuperExport = true;
-					break;
-				}
+			Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId());
+			Filter filtroConsulta = genericDao.createFilter(FilterType.EQUALS, "filtros", filtros);
+			Filter filtroAccion = genericDao.createFilter(FilterType.EQUALS, "accion", true);
+			Order orden = new Order(OrderType.DESC, "fechaExportacion");
+			List<AuditoriaExportaciones> listaExportaciones =  genericDao.getListOrdered(AuditoriaExportaciones.class, orden, filtroUsuario, filtroConsulta, filtroAccion);
+			
+			if(listaExportaciones != null && !listaExportaciones.isEmpty()) {
+				Long ultimaExport = listaExportaciones.get(0).getFechaExportacion().getTime();
+				permitido = ultimaExport > tiempoPermitido ? false : true;
+
+				double entero = Math.floor((ultimaExport - tiempoPermitido)/60000);
+		        if (entero < 2) {
+		        	cuentaAtras = "un minuto";
+		        } else {
+		        	cuentaAtras = Double.toString(entero);
+		        	cuentaAtras = cuentaAtras.substring(0, 1) + " minutos";
+		        }
 			}
-			if(isSuperExport) {
-				model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.publicaciones").getValor());
-				model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.publicaciones").getValor());
-			}else {
-				model.put("limite", configManager.getConfigByKey("limite.exportar.excel.publicaciones").getValor());
-				model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.publicaciones").getValor());
+			if(permitido) {
+				int count = activoApi.getPublicacionGrid(dto).getTotalCount();
+				AuditoriaExportaciones ae = new AuditoriaExportaciones();
+				ae.setBuscador(buscador);
+				ae.setFechaExportacion(new Date());
+				ae.setNumRegistros(Long.valueOf(count));
+				ae.setUsuario(user);
+				ae.setFiltros(filtros);
+				ae.setAccion(exportar);
+				genericDao.save(AuditoriaExportaciones.class, ae);
+				model.put(RESPONSE_SUCCESS_KEY, true);
+				model.put(RESPONSE_DATA_KEY, count);
+				for(Perfil pef : user.getPerfiles()) {
+					if(pef.getCodigo().equals("SUPEREXPORTPUBLI")) {
+						isSuperExport = true;
+						break;
+					}
+				}
+				if(isSuperExport) {
+					model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.publicaciones").getValor());
+					model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.publicaciones").getValor());
+				}else {
+					model.put("limite", configManager.getConfigByKey("limite.exportar.excel.publicaciones").getValor());
+					model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.publicaciones").getValor());
+				}
+			} else {
+				model.put("msg", cuentaAtras);
 			}
 		}catch(Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("error en activoController", e);
 		}
-		return createModelAndViewJson(model);
-		
+		return createModelAndViewJson(model);		
 	}
 	
 	
@@ -3590,19 +3677,19 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveFasePublicacionActivo(DtoFasePublicacionActivo dto, ModelMap model) {
+	public ModelAndView saveFasePublicacionActivo(DtoFasePublicacionActivo dto, @RequestParam Long id, ModelMap model) {
 		try {
-			model.put(RESPONSE_SUCCESS_KEY, activoEstadoPublicacionApi.saveFasePublicacionActivo(dto));
+			dto.setIdActivo(id);
+			model.put(RESPONSE_DATA_KEY, activoEstadoPublicacionApi.saveFasePublicacionActivo(dto));
+			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (JsonViewerException jvex) {
-			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
-			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("success", false);
+			model.put("msgError", jvex.getMessage());
 		} catch (Exception e) {
-			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			logger.error("Error al guardar la fase de publicacion del activo", e);
 		} 
 		
 		return createModelAndViewJson(model);
@@ -3686,6 +3773,14 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCalidadDatoPublicacionActivo(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, activoEstadoPublicacionApi.getCalidadDatoPublicacionActivo(id));
+		model.put(RESPONSE_SUCCESS_KEY, true);
+		
+		return createModelAndViewJson(model);
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getReqFaseVenta(ModelMap model, Long id) {
 		
 		try {
@@ -3763,6 +3858,22 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveDatoRemCalidadDatoPublicacion(DtoDatosPublicacionDq dtoDq, ModelMap model) {
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, activoEstadoPublicacionApi.saveDatoRemCalidadDatoPublicacion(dtoDq.getActivosSeleccionados(), dtoDq.getDqFase4Descripcion(), dtoDq.isSoyRestringidaQuieroActualizar()));
+		} catch (JsonViewerException jvex) {
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		} catch (Exception e) {
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error al guardar Dato dQ", e);
+		} 
+		
+		return createModelAndViewJson(model);
+	}
+
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createSuministroActivo(DtoActivoSuministros dtoActivoSuministros,  ModelMap model) { 
 		
@@ -3863,7 +3974,7 @@ public class ActivoController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboTipoSegmento(String codSubcartera, WebDto webDto, ModelMap model) {
 		
 		model.put(RESPONSE_DATA_KEY, activoApi.getComboTipoSegmento(codSubcartera));
@@ -4114,6 +4225,34 @@ public class ActivoController extends ParadiseJsonController {
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("error en createDeudorAcreditado", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCalidadDelDatoFiltered(String id, ModelMap model) {
+		if (id != null) {
+			Long activoId = Long.parseLong(id);
+			try {
+				model.put(RESPONSE_DATA_KEY, activoEstadoPublicacionApi.getCalidadDatoPublicacionActivoGrid(activoId));
+				model.put(RESPONSE_SUCCESS_KEY, true);
+			} catch (Exception e) {
+				logger.error("error en activoController", e);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			}
+		}		
+		return createModelAndViewJson(model);	
+	}		
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getCheckGestionActivo(Long idActivo, ModelMap model){
+		try{
+			model.put(RESPONSE_DATA_KEY, activoDao.activocheckGestion(idActivo)); 
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
 		}
 
 		return createModelAndViewJson(model);

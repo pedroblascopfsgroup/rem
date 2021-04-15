@@ -19,16 +19,16 @@ import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 
 import javax.annotation.Resource;
-import java.sql.Timestamp;
 import java.util.*;
 
+@Transactional(readOnly = false)
 @Service("recoveryManager")
 public class RecoveryComunicacionManager extends BusinessOperationOverrider<RecoveryComunicacionApi> implements RecoveryComunicacionApi {
 
@@ -65,8 +65,10 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
         headers.put("Accept", "application/json");
         JSONObject jsonResp = new JSONObject();
         JSONObject jwtToken = null;
-        String usuario = "sdiaz";
-        String contrasenya = "1234";
+        String usuario = !Checks.esNulo(appProperties.getProperty("rest.client.autenticacion.usuario.recovery"))
+                ? appProperties.getProperty("rest.client.autenticacion.usuario.recovery") : "";
+        String contrasenya = !Checks.esNulo(appProperties.getProperty("rest.client.autenticacion.contrasenya.recovery"))
+                ? appProperties.getProperty("rest.client.autenticacion.contrasenya.recovery") : "";
         String schema = "HAYA06";
         String urlLogin = !Checks.esNulo(appProperties.getProperty("rest.client.autenticacion.recovery"))
                 ? appProperties.getProperty("rest.client.autenticacion.recovery") : "";
@@ -77,7 +79,7 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
         try {
             jwtToken = procesarPeticion(this.httpClientFacade, urlLogin, POST_METHOD, headers, jsonResp.toString(), 30, "UTF-8");
         } catch(Exception e) {
-            e.printStackTrace();
+            registrarLlamada(urlLogin, jsonResp.toString(), null, null, e.getMessage());
         }
         return jwtToken != null ? jwtToken.get("jwt").toString() : "";
     }
@@ -86,8 +88,10 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
         return httpClientFacade.processRequest(serviceUrl, sendMethod, headers, jsonString, responseTimeOut, charSet);
     }
 
-    public void datosCliente(Activo activo, ModelMap model) {
+    public void datosCliente(Long idActivo, ModelMap model) {
 
+    	Filter activoIdFilter = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, activoIdFilter);
         String urlEnvio = null;
         String json = null;
         JSONObject llamada = null;
@@ -113,15 +117,22 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
             listaCargas = this.cargasInfo(activo);
 
             model.put("numActivo", activo.getNumActivo());
-            if(activoAdjudicacionJudicial.getIdAsunto() != null){
-                model.put("idAsuntoRecovery", activoAdjudicacionJudicial.getIdAsunto());
+            if(activoAdjudicacionJudicial != null) {
+            	if(activoAdjudicacionJudicial.getIdAsunto() != null){
+                    model.put("idAsuntoRecovery", activoAdjudicacionJudicial.getIdAsunto());
+                }
             }
-            if(activoAdjudicacionNoJudicial.getIdAsuntoRecAlaska() != null){
-                model.put("idAsuntoRecovery", activoAdjudicacionNoJudicial.getIdAsuntoRecAlaska());
+           
+            if(activoAdjudicacionNoJudicial != null) {
+            	if(activoAdjudicacionNoJudicial.getIdAsuntoRecAlaska() != null){
+                    model.put("idAsuntoRecovery", activoAdjudicacionNoJudicial.getIdAsuntoRecAlaska());
+                }
             }
-            if(activoAdjudicacionNoJudicial.getIdAsuntoRecAlaska() == null && activoAdjudicacionJudicial.getIdAsunto() == null){
-                model.put("idAsuntoRecovery", null);
+            
+            if(!model.containsAttribute("idAsuntoRecovery")) {
+            	model.put("idAsuntoRecovery", null);
             }
+           
             model.put("codigoCartera", activo.getCartera().getCodigo());
             if(activo.getTitulo() != null){
                 if(activo.getTitulo().getEstado() != null){
@@ -181,22 +192,19 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
     		}
 
             ObjectMapper mapper = new ObjectMapper();
-            try {
-                json = mapper.writeValueAsString(model);
-                System.out.println("ResultingJSONstring = " + json);
-                urlEnvio = !Checks.esNulo(appProperties.getProperty("rest.client.convivencia.recovery"))
-                        ? appProperties.getProperty("rest.client.convivencia.recovery") : "";
+            
+            json = mapper.writeValueAsString(model);
+            System.out.println("ResultingJSONstring = " + json);
+            urlEnvio = !Checks.esNulo(appProperties.getProperty("rest.client.convivencia.recovery"))
+                    ? appProperties.getProperty("rest.client.convivencia.recovery") : "";
 
-                llamada = procesarPeticion(this.httpClientFacade, urlEnvio, POST_METHOD, headers, json, 30, "UTF-8");
+            llamada = procesarPeticion(this.httpClientFacade, urlEnvio, POST_METHOD, headers, json, 30, "UTF-8");
 
-                registrarLlamada(urlEnvio, json, llamada.getString("success"), llamada.getString("data"));
+            registrarLlamada(urlEnvio, json, llamada.getString("success"), llamada.getString("data"), null);
 
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
 
         } catch(Exception e) {
-            e.printStackTrace();
+            registrarLlamada(urlEnvio, json, null, null, e.getMessage());
         }
 
     }
@@ -214,8 +222,12 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
             map = new HashMap<String, Object>();
 
             map.put("idDefecto", calificaciones.getId());
-            map.put("estado", calificaciones.getEstadoMotivoCalificacionNegativa().getCodigo());
-            map.put("responsable", calificaciones.getResponsableSubsanar().getCodigo());
+            if(calificaciones.getEstadoMotivoCalificacionNegativa() != null) {
+            	map.put("estado", calificaciones.getEstadoMotivoCalificacionNegativa().getCodigo());
+            }
+            if(calificaciones.getResponsableSubsanar()!= null) {
+            	map.put("responsable", calificaciones.getResponsableSubsanar().getCodigo());
+            }
             if(calificaciones.getFechaSubsanacion() != null){
                 map.put("fechaSubsanacion", calificaciones.getFechaSubsanacion().getTime());
             }else{
@@ -257,9 +269,21 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
             map = new HashMap<String, Object>();
 
             map.put("idCarga", cargas.getId());
-            map.put("origenDato", cargas.getOrigenDato().getCodigo());
-            map.put("tipoCarga", cargas.getTipoCargaActivo().getCodigo());
-            map.put("subtipoCarga", cargas.getSubtipoCarga().getCodigo());
+            if(cargas.getOrigenDato() != null) {
+            	map.put("origenDato", cargas.getOrigenDato().getCodigo());
+            }else {
+            	map.put("origenDato", null);
+            }
+            if(cargas.getTipoCargaActivo()  != null) {
+            	map.put("tipoCarga", cargas.getTipoCargaActivo().getCodigo());
+            }else {
+            	map.put("tipoCarga", null);
+            }
+            if(cargas.getSubtipoCarga() != null) {
+            	map.put("subtipoCarga", cargas.getSubtipoCarga().getCodigo());
+            }else {
+            	map.put("subtipoCarga", null);
+            }
             if(cargas.getEstadoCarga()  != null){
                 map.put("estadoCarga", cargas.getEstadoCarga().getCodigo());
             }else{
@@ -270,9 +294,16 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
             }else{
                 map.put("subestadoCarga", null);
             }
-            map.put("titular", cargas.getCargaBien().getTitular());
-            map.put("importeEconomico", cargas.getCargaBien().getImporteEconomico());
-            map.put("importeRegistral", cargas.getCargaBien().getImporteRegistral());
+            if(cargas.getCargaBien() != null) {
+            	map.put("titular", cargas.getCargaBien().getTitular());
+            	map.put("importeEconomico", cargas.getCargaBien().getImporteEconomico());
+                map.put("importeRegistral", cargas.getCargaBien().getImporteRegistral());
+            }else {
+            	map.put("titular", null);
+            	map.put("importeEconomico", null);
+                map.put("importeRegistral", null);
+            }
+            
             map.put("cargasPropias", cargas.getCargasPropias());
 
             listaRespuesta.add(map);
@@ -283,21 +314,22 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
 
     }
 
-    private void registrarLlamada(String endPoint, String request, String result, String errorDesc) {
+    private void registrarLlamada(String endPoint, String request, String result, String errorDesc, String llamadaException) {
         RestLlamada registro = new RestLlamada();
-        registro.setMetodo("WEBSERVICE");
+        registro.setMetodo("POST");
         registro.setEndpoint(endPoint);
         registro.setRequest(request);
         logger.debug(request);
         logger.debug("-------------------");
         logger.debug(result);
-        if (!Checks.esNulo(errorDesc)) {
-            registro.setErrorDesc(errorDesc);
-        }
+        registro.setErrorDesc(errorDesc);
+    	registro.setException(llamadaException);
         try {
-            registro.setResponse(result);
-            llamadaDao.guardaRegistro(registro);
-            trustMe.registrarLlamadaServicioWeb(registro);
+        	
+        registro.setResponse(result);
+		llamadaDao.guardaRegistro(registro);
+		trustMe.registrarLlamadaServicioWeb(registro);
+    	
         } catch (Exception e) {
             logger.error("Error al trazar la llamada al WS", e);
         }

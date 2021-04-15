@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalleTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
+import es.pfsgroup.plugin.rem.model.Prefactura;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
@@ -60,6 +61,8 @@ import es.pfsgroup.plugin.rem.model.VParticipacionElementosLinea;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -71,6 +74,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
+import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
 
 @Service("gastoLineaDetalleManager")
@@ -111,6 +115,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	
 	@Autowired
 	private GastoDao gastoDao;
+	
+	@Autowired
+	private TrabajoDao trabajoDao;
 	
 	@Override 
 	public GastoLineaDetalle getLineaDetalleByIdLinea(Long idLinea) {
@@ -1707,7 +1714,15 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		String stringLinea = null;
 		for (Long trabajoLong : trabajos) {
 			Trabajo trabajo = trabajoApi.findOne(trabajoLong);
-			if(trabajo != null) {
+			if(trabajo != null) {		
+				
+				if(trabajo.getEstado() != null && DDEstadoTrabajo.ESTADO_VALIDADO.equals(trabajo.getEstado().getCodigo())) {
+					trabajo.setEstado((DDEstadoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoTrabajo.class,
+							DDEstadoTrabajo.CODIGO_ESTADO_PDT_CIERRE));
+					trabajo.setFechaCambioEstado(new Date());
+					trabajoDao.saveOrUpdate(trabajo);
+				}
+
 				stringLinea = getTipoLineaByTrabajo(trabajo);
 				if(stringLinea != null) {
 					List<String> lineaParte = Arrays.asList(stringLinea.split("-"));
@@ -1942,11 +1957,36 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 		Trabajo trabajo = trabajoApi.findOne(idTrabajo);
 		GastoProveedor gasto = gastoProveedorApi.findOne(idGasto);
+		Long prefactura = null;
 		if(trabajo == null || gasto == null) {
 			return false;
 		}
 		
-
+		if(trabajo.getEstado() != null && DDEstadoTrabajo.CODIGO_ESTADO_PDT_CIERRE.equals(trabajo.getEstado().getCodigo())) {
+			trabajo.setEstado((DDEstadoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoTrabajo.class,
+					DDEstadoTrabajo.ESTADO_VALIDADO));
+			trabajo.setFechaCambioEstado(new Date());
+		}
+		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+			prefactura = trabajo.getPrefactura().getId();
+			trabajo.setPrefactura(null);
+		}
+		trabajoDao.saveOrUpdate(trabajo);
+		
+		if (prefactura != null) {
+			Filter pfaId = genericDao.createFilter(FilterType.EQUALS, "prefactura.id", prefactura);
+			Filter auditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			List<Trabajo> numeroTrabajosPrefactura = genericDao.getList(Trabajo.class,pfaId, auditoria);
+			if(numeroTrabajosPrefactura == null || numeroTrabajosPrefactura.isEmpty()) {
+				Filter pfa = genericDao.createFilter(FilterType.EQUALS, "id", prefactura);
+				Prefactura pf = genericDao.get(Prefactura.class,pfa);
+				pf.getAuditoria().setBorrado(true);
+				pf.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+				pf.getAuditoria().setFechaBorrar(new Date());
+				genericDao.save(Prefactura.class, pf);
+			}
+		}
+				
 		Filter trabajoLineaFilter = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
 		List<GastoLineaDetalleTrabajo> gastoTrabajoList = genericDao.getList(GastoLineaDetalleTrabajo.class,trabajoLineaFilter);
 	
@@ -1967,6 +2007,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 							BigDecimal principalSujetoLinea = new BigDecimal(gastoLineaDetalle.getPrincipalSujeto());
 							BigDecimal importeTotalLinea = new BigDecimal(gastoLineaDetalle.getImporteTotal());
 							BigDecimal importeTotalTrabajo = null;
+							BigDecimal impuestoIndirectoCuota = new BigDecimal(gastoLineaDetalle.getImporteIndirectoCuota());
+							BigDecimal tipoImpositivoIndirecto = new BigDecimal(gastoLineaDetalle.getImporteIndirectoTipoImpositivo());		
 							
 							if(gasto.getDestinatarioGasto() !=  null && DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())
 									&& trabajo.getImportePresupuesto() != null) {
@@ -1977,8 +2019,13 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 							if(importeTotalTrabajo != null) {
 								principalSujetoLinea = principalSujetoLinea.subtract(importeTotalTrabajo);
 								gastoLineaDetalle.setPrincipalSujeto(principalSujetoLinea.doubleValue());
+
+								impuestoIndirectoCuota = impuestoIndirectoCuota.subtract(importeTotalTrabajo.multiply(tipoImpositivoIndirecto.divide(new BigDecimal(100)))); 
+								gastoLineaDetalle.setImporteIndirectoCuota(impuestoIndirectoCuota.doubleValue());
+								
 								importeTotalLinea = importeTotalLinea.subtract(importeTotalTrabajo);
-								gastoLineaDetalle.setPrincipalSujeto(importeTotalLinea.doubleValue());
+								importeTotalLinea = importeTotalLinea.subtract(importeTotalTrabajo.multiply(tipoImpositivoIndirecto.divide(new BigDecimal(100)))); 
+								gastoLineaDetalle.setImporteTotal(importeTotalLinea.doubleValue());
 							}
 							
 							genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);

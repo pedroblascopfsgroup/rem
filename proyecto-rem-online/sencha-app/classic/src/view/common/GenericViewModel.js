@@ -12,8 +12,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposVia'}
-				},
-				autoLoad: true
+				}
     		},
     		
     		comboTipoActivo: {
@@ -22,8 +21,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposActivo'}
-				},
-				autoLoad: true
+				}
     		},
     		
     		comboSubtipoActivo: {
@@ -32,8 +30,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
     				type: 'uxproxy',
     				remoteUrl: 'generic/getDiccionario',
     				extraParams: {diccionario: 'subtiposActivo'}
-    			},
-    			autoLoad: true
+    			}
     		},
     		
     		comboTipoActivoBde: {
@@ -42,8 +39,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposActivoBde'}
-				},
-				autoLoad: true
+				}
     		},
     		
     		comboSubtipoActivoBde: {
@@ -52,8 +48,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
     				type: 'uxproxy',
     				remoteUrl: 'generic/getDiccionario',
     				extraParams: {diccionario: 'subtiposActivoBde'}
-    			},
-    			autoLoad: true
+    			}
     		},
     		
     		comboEstadoActivo: {
@@ -62,7 +57,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'estadosActivo'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboSiNo: {
@@ -180,7 +175,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'estadosDivHorizontal'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboGradoPropiedad: {
@@ -237,7 +232,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'administracion'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboTipoUbicacion: {
@@ -246,7 +241,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'ubicacionActivo'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboEstadoConstruccion: {
@@ -255,7 +250,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'estadosConstruccion'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboEstadoConservacion: {
@@ -264,7 +259,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'estadosConservacion'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboUbicacionAparcamiento: {
@@ -273,7 +268,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'ubicacionesAparcamiento'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboTipoFachada: {
@@ -282,7 +277,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposFachada'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboTipoVivienda: {
@@ -291,7 +286,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposVivienda'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboTipoOrientacion: {
@@ -300,7 +295,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposOrientacion'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboTipoRenta: {
@@ -309,7 +304,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposRenta'}
-				}/*,autoLoad: true*/
+				}
     		},
     		
     		comboTipoCarga: {
@@ -428,8 +423,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 			        type: 'uxproxy',
 			        remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tipoAgrupacion'}
-		    	},
-		    	autoLoad: true
+		    	}
 	    	},
 			    	
     		comboTipoTrabajo: {
@@ -529,8 +523,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 			        type: 'uxproxy',
 			        remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'estadoGasto'}
-		    	},
-		    	autoLoad: true
+		    	}
 	    	},	    
     		
     		storeComboImpideVenta: {
@@ -540,107 +533,6 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 	    			remoteUrl: 'activo/getComboImpideVenta',
 	    			extraParams: {codEstadoCarga: '{comboestadocargaref.value}'}
     			}
-    		},
-    		comboTiposGastos: {
-		    	model: 'HreRem.model.ComboBase',
-		    	proxy: {
-			        type: 'uxproxy',
-			        remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'tiposGastos'}
-		    	}
-		    	
-	    	},
-    		comboEstadoGastos: {
-		    	model: 'HreRem.model.ComboBase',
-		    	proxy: {
-			        type: 'uxproxy',
-			        remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'estadoGasto'}
-		    	}
-		    	
-	    	},
-			
-    		comboTipoTransmision: {
-				model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'tipoTransmision'}
-				}/*,autoLoad: true*/
-    		},
-    		comboTipoAlta: {
-				model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'tipoAlta'}
-				}/*,autoLoad: true*/
-			},
-    		// Stores para el grid observaciones. Se crean 3 para solucionar problemas de instancia 
-    		/*
-
-    		 * Valor de la constante 
-    		  	OBSERVACIONES_TAB_LAUNCH: {
-				ACTIVO : 'activo',
-				SANEAMIENTO: 'saneamiento',
-				REVISION_TITULO: 'revisionTitulo'
-			}*/
-    		storeObservaciones_activo: {    
-    		 pageSize: $AC.getDefaultPageSize(),
-    		 model: 'HreRem.model.Observaciones',
-		     proxy: {
-		        type: 'uxproxy',
-		        remoteUrl: 'activo/getListObservaciones',
-		        extraParams: {} // Dynamic.
-	    	 },
-	    	 autoLoad: true
-    		},
-    		storeObservaciones_saneamiento: {    
-    		 pageSize: $AC.getDefaultPageSize(),
-    		 model: 'HreRem.model.Observaciones',
-		     proxy: {
-		        type: 'uxproxy',
-		        remoteUrl: 'activo/getListObservaciones',
-		        extraParams: {} // Dynamic.
-	    	 },
-	    	 autoLoad: true
-    		},
-    		storeObservaciones_revisionTitulo: {    
-    		 pageSize: $AC.getDefaultPageSize(),
-    		 model: 'HreRem.model.Observaciones',
-		     proxy: {
-		        type: 'uxproxy',
-		        remoteUrl: 'activo/getListObservaciones',
-		        extraParams: {} // Dynamic.
-	    	 },
-	    	 autoLoad: true
-    		},
-    		comboTipoTransmision: {
-    			model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'tipoTransmision'}
-				}/*,autoLoad: true*/
-    		},
-    		comboTipoAlta: {
-				model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'tipoAlta'}
-				}/*,autoLoad: true*/
-    		},
-    		//Admite mascota
-    		comboAdmiteMascota: {
-				model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'tiposAdmiteMascota'}
-				},
-    		autoLoad: true
     		}
-    		
      }    
 });

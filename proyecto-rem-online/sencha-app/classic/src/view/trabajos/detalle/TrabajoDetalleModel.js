@@ -41,6 +41,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    	 var isSupervisorActivo = $AU.userIsRol('HAYASUPER');
 		     var isGestorActivos = $AU.userIsRol('HAYAGESACT');
 		     var isProveedor = $AU.userIsRol('HAYAPROV');
+		     var perteneceGastoOPrefactura = get('trabajo.perteneceGastoOPrefactura');
+		     
+		     if (perteneceGastoOPrefactura == 'true') {
+		    	 return false;
+		     }
 
 		     return isSupervisorActivo || isGestorActivos || isProveedor;
 	    	 
@@ -61,15 +66,26 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    },
 	    
 	    editableTarificacionProveedor: function (get){
-	    	return true;
-	    	 
+	    	me = this;
+	    	var isProveedor = $AU.userIsRol('HAYAPROV');
+	    	
+	    	if (isProveedor && CONST.ESTADOS_TRABAJO["VALIDADO"] == me.get('trabajo.estadoCodigo')) {
+	    		return false;
+	    	} else {
+	    		return true;
+	    	}
 	    },
 	    
 	    disablePresupuesto: function (get) {
     		var isSupervisorActivo = $AU.userIsRol('HAYASUPER');
 		    var isGestorActivos = $AU.userIsRol('HAYAGESACT');
 		    var isProveedor = $AU.userIsRol('HAYAPROV');
-
+		    var perteneceGastoOPrefactura = get('trabajo.perteneceGastoOPrefactura');
+		     
+		    if (perteneceGastoOPrefactura == 'true') {
+		    	return false;
+		    }
+		    
 		    return isSupervisorActivo || isGestorActivos || isProveedor;
 	    },
 	    
@@ -92,7 +108,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    disablePorCierreEconomicoSuplidos: function(get) {
 	    	var fechaCierreEco = get('trabajo.fechaCierreEconomico');
 	    	var esSuperGestorActivos = $AU.userIsRol('SUPERGESTACT');
-	    	if (!Ext.isEmpty(fechaCierreEco) && !esSuperGestorActivos)
+		    var perteneceGastoOPrefactura = get('trabajo.perteneceGastoOPrefactura');
+		    
+	    	if ((!Ext.isEmpty(fechaCierreEco) && !esSuperGestorActivos) || perteneceGastoOPrefactura == 'true')
 	    		 return true;
 	    	 else
 	    		 return false;
@@ -157,7 +175,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     		activosTrabajo: {
     			pageSize: $AC.getDefaultPageSize(),
 				model: 'HreRem.model.ActivoTrabajo',
-				sumaParticipacion: '0',
 				proxy: {
 				    type: 'uxproxy',
 					remoteUrl: 'trabajo/getListActivos',
@@ -168,7 +185,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     	    	remoteFilter: true,
 				listeners: {
 					load: function(store, items, success, opts){
-						 store.sumaParticipacion = Ext.decode(opts._response.responseText).sumaParticipacion;
+						 store.participacion = Ext.decode(opts._response.responseText).participacion;
 					}
 				}
     		},
@@ -344,9 +361,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    		model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
-					remoteUrl: 'generic/getComboTipoTrabajoCreaFiltered',
+					remoteUrl: 'generic/getComboTipoTrabajoFiltered',
 					extraParams: {
-						idActivo: '{trabajo.idActivo}'
+						idActivo: '{trabajo.idActivo}',
+						numTrabajo: '{trabajo.numTrabajo}'
 					}
 				}
     		},
@@ -395,7 +413,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 					remoteUrl: 'trabajo/getComboProveedorFiltradoManual',
 					extraParams: {idTrabajo: '{trabajo.id}'}
 				},
-				autoLoad: true
+				autoLoad: false
 			},
 			
     		comboEstadoPresupuesto: {
@@ -412,17 +430,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			model:'HreRem.model.ActivoTrabajoSubida',
     			proxy: {
     				type: 'uxproxy',
-    				remoteUrl: 'trabajo/getListActivosByProceso',
-    				//actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+    				remoteUrl: 'trabajo/getListActivosByProceso',    				
     				extraParams: {idProceso: 'idProceso'}
     			},
-    			//session: true,
     	    	remoteSort: true,
     	    	remoteFilter: true,
-    	    	autoLoad:false/*,
-    	    	listeners : {
-    	            beforeload : 'paramLoading'
-    	        }*/
+    	    	listeners: {
+					load: 'getPlazoComiteProveedor'
+				}
     		},
     		
     		listaActivosAgrupacion: {
@@ -431,16 +446,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			proxy: {
     				type: 'uxproxy',
     				remoteUrl: 'trabajo/getListActivosByID',
-    				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
     				extraParams: {idActivo: '{idActivo}', idAgrupacion:'{idAgrupacion}'}
     			},
-    			//session: true,
     	    	remoteSort: true,
     	    	remoteFilter: true,
-    	    	autoLoad:true,
-    	    	listeners : {
-    	            beforeload : 'loadGridSegundo'
-    	        }
+    	    	autoLoad: true
     		},
     		
     		comboProveedorContacto : {
@@ -457,7 +467,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
-					remoteUrl: 'trabajo/getComboProveedorContacto',
+					remoteUrl: 'trabajo/getComboProveedorContactoLlaves',
 					extraParams: {idProveedor: '{trabajo.idProveedorLlave}'}
 				}, 
 				autoLoad: false
@@ -623,12 +633,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 					remoteUrl: 'trabajo/getComboAprobacionComite'
 				}
     		},
-    		comboGridTarifa: {    		
-				model: 'HreRem.model.TarifasGridModel',
-				proxy: {
-					type: 'uxproxy'
-				}
-    		},
     		storeAgendaTrabajo: {
 		    	model: 'HreRem.model.AgendaTrabajoModel',
 		    	proxy: {
@@ -657,8 +661,26 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'identificadorReam'}
+				},
+				listeners: {
+					load: function(store, records) {
+						store.insert(0, [{
+							descripcion: "--",
+							id: null
+						}]);
+					}
+				
 				}
-    		}
+    		},
+			comboEstadoGastos: {
+		    	model: 'HreRem.model.ComboBase',
+		    	proxy: {
+			        type: 'uxproxy',
+			        remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadoGasto'}
+		    	}
+		    	
+	    	}
     		
     }
 

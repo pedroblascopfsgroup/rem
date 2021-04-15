@@ -682,6 +682,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		 		return get('agrupacionficha.estadoAlquilerDescripcion');
 		 	}
 		 },
+		 getValueNumAgrupacion: function(get){
+			 if(get('esAgrupacionObraNueva') && get('agrupacionficha.numeroPublicados')>0){			 		
+			 		return '<a href="' + HreRem.i18n('fieldlabel.link.web.haya.on') + get('agrupacionficha.numAgrupRem')+
+			 		'?utm_source=rem&utm_medium=aplicacion&utm_campaign=agrupacion " target="_blank">' + get('agrupacionficha.numAgrupRem') + '</a>'
+			 	}else {
+			 		return get('agrupacionficha.numAgrupRem');
+			 	}
+		 },
 		 comercializableConstruccionPlano: function(get){
 			 return "true"===get('agrupacionficha.comercializableConsPlano');
 		 },
@@ -789,7 +797,22 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		        },
 		        extraParams: {id: '{agrupacionficha.id}', tipoFoto: '01'}
 		     }
-    	},    	
+    	}, 
+    	
+    	storeDescripcionFoto: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'descripcionesFoto'}
+			},
+			autoLoad: true,
+			remoteFilter: false,
+			filters: {
+    			property: 'codigoSubtipoActivo',
+    			value: '{fotoSelected.codigoSubtipoActivo}'  
+    		}
+    	},
 
 		storeActivos: {
 			 pageSize: $AC.getDefaultPageSize(),
@@ -826,10 +849,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	   	     pageSize: $AC.getDefaultPageSize(),
 			 model: 'HreRem.model.OfertasAgrupacion',
 			 sorters: [
-			 			{
-			        		property: 'estadoOferta',
-			        		direction: 'ASC'	
-			 			},
 			 			{
 			        		property: 'fechaCreacion',
 			        		direction: 'DESC'	
@@ -882,7 +901,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'agrupacion/getFotosSubdivisionById',
-		        extraParams: {id: '{subdivisionFoto.id}', agrId: '{subdivisionFoto.agrupacionId}'}
+		        extraParams: {id: '{subdivisionFoto.id}', agrId: '{subdivisionFoto.agrupacionId}', codigoSubtipoActivo: '{subdivisionFoto.codigoSubtipoActivo}'}
 		     }
     	},
     	
@@ -982,8 +1001,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoPersona'}
-			},
-			autoLoad: true
+			}
 	    },
 	    comboEstadoCivil: {
 			model: 'HreRem.model.ComboBase',
@@ -1134,7 +1152,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
          	 },
          	 groupField: 'descripcionTipo',
 		     remoteSort: true,
-         	 autoLoad: true
+         	 autoLoad: false
 		}
     }
 });

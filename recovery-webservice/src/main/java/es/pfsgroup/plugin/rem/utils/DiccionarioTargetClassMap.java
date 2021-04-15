@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.utils;
 
+import java.awt.dnd.DnDConstants;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -93,6 +94,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("valoracionTrabajo", DDTipoCalidad.class);
 		mapa.put("tiposDocumento", DDTipoDocumentoActivo.class);
 		mapa.put("tiposFoto", DDTipoFoto.class);
+		mapa.put("descripcionesFoto", DDDescripcionFotoActivo.class);
 		mapa.put("tiposTramite", TipoProcedimiento.class);
 		mapa.put("tiposCalculo", DDTipoCalculo.class);
 		mapa.put("tiposRecargo", DDTipoRecargoProveedor.class);
@@ -301,9 +303,11 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoGastoAsociado", DDTipoGastoAsociado.class);
 		mapa.put("tipoDocGastoAsociado", DDTipoDocumentoGastoAsociado.class);
 		mapa.put("motivoAmpliacionArras", DDMotivoAmpliacionArras.class);
+		mapa.put("estadoFisicoActivoDND", DDValidaEstadoActivo.class);
 		mapa.put("identificadorReam", DDIdentificadorReam.class);
 		mapa.put("tipoRetencion", DDTipoRetencion.class);
 		mapa.put("tiposAdmiteMascota", DDSiniSiNoIndiferente.class); 
+		mapa.put("tipoResponsable", DDResponsableDocumentacionCliente.class); 
 		
 		return Collections.unmodifiableMap(mapa);
 	}

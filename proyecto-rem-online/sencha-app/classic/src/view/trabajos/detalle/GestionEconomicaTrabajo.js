@@ -337,8 +337,8 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    					cls	: 'panel-base shadow-panel',
 			    					reference: 'gridpresupuestostrabajo',
 			    					bind: {
-			    						store: '{storePresupuestosTrabajo}'
-
+			    						store: '{storePresupuestosTrabajo}',
+			    						topBar: '{disableTopBarPresupuesto}'
 			    					},
 			    					
 			    					secFunToEdit: 'EDITAR_LIST_PRESUPUESTOS_TRABAJO',
@@ -379,6 +379,19 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    				        	renderer: function(value) {
 				            					return Ext.util.Format.currency(value)
 				            				},
+				            				bind: {
+												hidden: '{!mostrarTotalProveedor}'
+											},
+			    				        	flex: 1
+			    				        },
+			    				        {   text: HreRem.i18n('header.importe.cliente'),
+			    				        	dataIndex: 'importeCliente',
+			    				        	renderer: function(value) {
+				            					return Ext.util.Format.currency(value)
+				            				},
+				            				bind: {
+												hidden: '{!mostrarTotalCliente}'
+											},
 			    				        	flex: 1
 			    				        }
 			    				    ],

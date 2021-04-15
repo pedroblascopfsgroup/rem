@@ -32,6 +32,8 @@ public class DtoPresupuestosTrabajo extends WebDto {
 	
 	private Double importe;
 	
+	private Double importeCliente;
+	
 	private Date fecha;
 	
 	private Boolean repartirProporcional;
@@ -120,6 +122,14 @@ public class DtoPresupuestosTrabajo extends WebDto {
 
 	public void setImporte(Double importe) {
 		this.importe = importe;
+	}
+
+	public Double getImporteCliente() {
+		return importeCliente;
+	}
+
+	public void setImporteCliente(Double importeCliente) {
+		this.importeCliente = importeCliente;
 	}
 
 	public Date getFecha() {

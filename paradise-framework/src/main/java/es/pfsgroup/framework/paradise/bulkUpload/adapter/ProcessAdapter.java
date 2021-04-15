@@ -86,10 +86,18 @@ public class ProcessAdapter {
 		
 	}
 	
-	public Boolean subirFichero(WebFileItem fileItem) {
+	public Boolean subirFichero(WebFileItem fileItem) throws Exception {
+		Boolean resultado = false;
+		TransactionStatus transaction = null;
+		try{
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			resultado = fileUploadParadise.upload(fileItem);
+		}catch(Exception e){
+			transactionManager.rollback(transaction);
+			throw e;
+		}
 		
-		return fileUploadParadise.upload(fileItem);
-		
+		return resultado;		
 	}
 	
 	public Boolean validarMasivo(Long idProceso) throws Exception {
@@ -285,7 +293,8 @@ public class ProcessAdapter {
 			masivoDto.setId(procesomasivo.getId().toString());
 			masivoDto.setNombre(procesomasivo.getDescripcion());
 			if (procesomasivo.getEstadoProceso() != null) {
-				if (MSVDDEstadoProceso.CODIGO_VALIDADO.equals(procesomasivo.getEstadoProceso().getCodigo())) {
+				if (MSVDDEstadoProceso.CODIGO_VALIDADO.equals(procesomasivo.getEstadoProceso().getCodigo()) && 
+						!MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_LISTAACTIVOS.equals(procesomasivo.getTipoOperacion().getCodigo())) {
 					sePuedeProcesar = true;
 				} else if (!procesomasivo.getTipoOperacion().getResultado() && (MSVDDEstadoProceso.CODIGO_PROCESADO.equals(procesomasivo.getEstadoProceso().getCodigo()) || 
 						MSVDDEstadoProceso.CODIGO_PROCESADO_CON_ERRORES.equals(procesomasivo.getEstadoProceso().getCodigo()))) {

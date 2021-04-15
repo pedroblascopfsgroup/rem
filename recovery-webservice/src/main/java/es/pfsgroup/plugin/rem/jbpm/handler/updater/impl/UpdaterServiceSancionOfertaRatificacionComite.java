@@ -107,6 +107,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 		GestorEntidadDto ge = new GestorEntidadDto();		
 		if(!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			Activo activo = ofertaAceptada.getActivoPrincipal();
 
 			if(!Checks.esNulo(expediente)) {
 				

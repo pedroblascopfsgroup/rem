@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -72,6 +73,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
+import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.GastoAsociadoAdquisicion;
@@ -210,7 +212,7 @@ public interface ActivoApi {
 	Integer getMaxOrdenFotoById(Long id);
 
 	@BusinessOperationDefinition("activoManager.getMaxOrdenFotoByIdSubdivision")
-	Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, BigDecimal hashSdv);
+	Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, Long hashSdv);
 
 	/**
 	 * Obtiene el presupuesto de un activo para el ejercicio actual (no el ultimo ejercicio de tabla ejercicios, sino el del año actual)
@@ -1341,13 +1343,14 @@ public interface ActivoApi {
 
 	Boolean updateHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
 
+	public void devolucionFasePublicacionAnterior(Activo activo);
+
 	ActivoCrearPeticionTrabajoDto getActivoParaCrearPeticionTrabajobyId(Long activoId);
 
 	boolean estanTodosActivosVendidos(List<Activo> activos);
 
 	boolean estanTodosActivosAlquilados(List<Activo> activos);
-
-
+	
 	List<ReqFaseVentaDto> getReqFaseVenta(Long idActivo);
 
 	Boolean createReqFaseVenta(ReqFaseVentaDto reqFaseVentaDto) throws ParseException;
@@ -1443,5 +1446,9 @@ public interface ActivoApi {
 	boolean createCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto) throws JsonViewerException, Exception;
 	
 	boolean destroyCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
+	
+	public void updateHonorarios (Activo activo, List<ActivoOferta> listaActivoOfertas);
+	
 
+	public Page getPublicacionGrid(DtoPublicacionGridFilter dto);
 }

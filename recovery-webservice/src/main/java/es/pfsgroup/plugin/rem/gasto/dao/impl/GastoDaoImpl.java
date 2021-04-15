@@ -400,7 +400,19 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 		Page page = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
 		List<VGastosProvision> gastos = (List<VGastosProvision>) page.getResults();
-
+		dtoGastosFilter.setLimit(100000);
+		Page pageGastosAll = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
+		List<VGastosProvision> gastosAll = (List<VGastosProvision>) pageGastosAll.getResults();
+		Double importeTotalAgrupacion = new Double(0);
+		for (VGastosProvision gasto : gastosAll) {
+			if (gasto.getImporteTotal() != null && gasto.getEstadoGastoCodigo() != null
+					&& gasto.getEstadoGastoCodigo().equals(DDEstadoGasto.AUTORIZADO_ADMINISTRACION)) {
+				importeTotalAgrupacion += gasto.getImporteTotal();
+			}
+		}
+		for (VGastosProvision gasto : gastos) {
+			gasto.setImporteTotalAgrupacion(importeTotalAgrupacion);
+		}
 		return new DtoPage(gastos, page.getTotalCount());
 	}
 
@@ -459,7 +471,8 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 			existeGasto = true;
 			Session session = this.getSessionFactory().getCurrentSession();
 			Query query = session.createSQLQuery("UPDATE GRG_REFACTURACION_GASTOS SET BORRADO = 0,"
-					+ " USUARIOMODIFICAR = '"+ usuario + "', FECHAMODIFICAR = (TO_DATE('"+ sdf.format(new Date()) + "', 'dd/MM/yyyy hh:mi:ss')) WHERE GRG_ID = "+ gastoRefacturableBorradoString);
+					+ " USUARIOMODIFICAR = '"+ usuario + "', FECHAMODIFICAR = (TO_DATE('"+ sdf.format(new Date()) + "', 'dd/MM/yyyy hh:mi:ss')),"
+					+"USUARIOBORRAR = NULL, FECHABORRAR = NULL WHERE GRG_ID = "+ gastoRefacturableBorradoString);
 					
 			query.executeUpdate();
 		} else {
@@ -469,7 +482,8 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 				existeGasto = true;
 				Session session = this.getSessionFactory().getCurrentSession();
 				Query query = session.createSQLQuery("UPDATE GRG_REFACTURACION_GASTOS SET BORRADO = 0, "
-						+ " USUARIOMODIFICAR = '"+ usuario + "', FECHAMODIFICAR = (TO_DATE('"+ sdf.format(new Date()) + "', 'dd/MM/yyyy hh:mi:ss')), GRG_GPV_ID ="+idGastoPadre+" WHERE GRG_ID = "+ gastoRefacturableBorradoString);
+						+ " USUARIOMODIFICAR = '"+ usuario + "', FECHAMODIFICAR = (TO_DATE('"+ sdf.format(new Date()) + "', 'dd/MM/yyyy hh:mi:ss')),"
+						+" USUARIOBORRAR = NULL, FECHABORRAR = NULL, GRG_GPV_ID ="+idGastoPadre+" WHERE GRG_ID = "+ gastoRefacturableBorradoString);
 						
 				query.executeUpdate();
 			}

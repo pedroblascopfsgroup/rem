@@ -46,17 +46,21 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        	} 
 				        },
 				        {
-							xtype: 'comboboxfieldbase',
-							name: 'carteraCodigo',
+							xtype: 'comboboxfieldbasedd',
+							name: 'carteraCodigo',  
 			              	fieldLabel :  HreRem.i18n('fieldlabel.entidad.propietaria'),
 			              	reference: 'comboCarteraSearch',
 							bind: {
 								store: '{comboCartera}'
 							},
-			            	publishes: 'value'					
+							listeners : {
+			        			change: 'onChangeCartera'
+			        		},
+			            	publishes: 'value'
+							
 						},
 						{ 
-				        	xtype: 'comboboxfieldbase',
+				        	xtype: 'comboboxfieldbasedd',
 				        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
 				        	name: 'subcarteraCodigo',
 				        	reference: 'comboSubcarteraRef',
@@ -66,12 +70,16 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 			                    filters: {
 			                        property: 'carteraCodigo',
 			                        value: '{comboCarteraSearch.value}'
-			                    },
+								}
+			                },
 							listeners : {
-				        			change: 'onChangeSubcartera'
-				        		} 
-			            	}
-		    						
+				        			change: 'onChangeSubcartera',
+									select: 'onChangeChainedCombo'
+				        		},
+			            	publishes: 'value',
+							chainedStore: 'comboTipoSegmento',
+							chainedReference: 'tipoSegmentoRef',
+							forceSelection: true
 						}				      
 				    ]},
 				    {
@@ -80,14 +88,13 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 			    	},
 				    items:[
 				        { 
-				        	xtype: 'comboboxfieldbase',
+				        	xtype: 'comboboxfieldbasedd',
 				        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo'),
 				        	name: 'tipoActivoCodigo',
 				        	reference: 'comboFiltroTipoActivoSearch',
 				        	bind: {
 			            		store: '{comboFiltroTipoActivo}'
 			            	},
-				        	matchFieldWidth: false,
 				        	publishes: 'value',
 				        	chainedStore: 'comboFiltroSubtipoActivo',
 				        	chainedReference: 'comboFiltroSubtipoActivoSearch',
@@ -96,15 +103,14 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							}
 				        },
 				        { 
-				        	xtype: 'comboboxfieldbase',
+				        	xtype: 'comboboxfieldbasedd',
 				        	fieldLabel: HreRem.i18n('fieldlabel.subtipo.activo'),
 				        	name: 'subtipoActivoCodigo',
 				        	reference: 'comboFiltroSubtipoActivoSearch',
 				        	bind: {
 			            		store: '{comboFiltroSubtipoActivo}',
 			            		disabled: '{!comboFiltroTipoActivoSearch.value}'
-			            	},
-				        	matchFieldWidth: false
+			            	}
 				        },
 				        {
 							xtype : 'comboboxfieldbase',
@@ -127,7 +133,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 
 					        },
 					        { 
-					        	xtype: 'comboboxfieldbase',
+					        	xtype: 'comboboxfieldbasedd',
 						    	addUxReadOnlyEditFieldPlugin: false,
 					        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 					        	name: 'provinciaCodigo',
@@ -209,7 +215,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						                name: 'numActivoRecovery'
 									},
 									{
-							        	xtype: 'comboboxfieldbase',
+							        	xtype: 'comboboxfieldbasedd',
 							        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
 							        	labelWidth:	150,
 							        	name: 'estadoActivoCodigo',
@@ -218,7 +224,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            	}
 							        },
 									{
-							        	xtype: 'comboboxfieldbase',
+							        	xtype: 'comboboxfieldbasedd',
 							        	fieldLabel:  HreRem.i18n('fieldlabel.uso.dominante'),
 							        	labelWidth:	150,
 							        	name: 'tipoUsoDestinoCodigo',
@@ -227,7 +233,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            	}
 							        },
 							        {
-							        	xtype: 'comboboxfieldbase',
+							        	xtype: 'comboboxfieldbasedd',
 							        	fieldLabel:  HreRem.i18n('fieldlabel.clase.activo'),
 							        	labelWidth:	150,
 							        	name: 'claseActivoBancarioCodigo',
@@ -236,7 +242,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            	}
 							        },
 							        {
-							        	xtype: 'comboboxfieldbase',
+							        	xtype: 'comboboxfieldbasedd',
 							        	fieldLabel:  HreRem.i18n('fieldlabel.bancario.subclase'),
 							        	labelWidth:	150,
 							        	name: 'subClaseActivoBancarioCodigo',
@@ -275,7 +281,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							items :
 								[
 									{ 
-							        	xtype: 'comboboxfieldbase',
+							        	xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.tipo.via'),
 						            	name: 'tipoViaCodigo',
 							        	bind: {
@@ -292,7 +298,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						                name: 'codPostal'
 									},
 									{ 
-							        	xtype: 'comboboxfieldbase',
+							        	xtype: 'comboboxfieldbasedd',
 							        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 							        	name: 'provinciaAvanzadaCodigo',
 							        	bind: {
@@ -304,7 +310,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            	name: 'localidadAvanzadaDescripcion'
 									},
 									{
-							        	xtype: 'comboboxfieldbase',
+							        	xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.pais'),
 							        	name: 'paisCodigo',
 							        	bind: {
@@ -349,22 +355,20 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 					                name: 'idufir'
 								},
 						        {
-						        	xtype: 'comboboxfieldbase',
+						        	xtype: 'comboboxfieldbasedd',
 						        	fieldLabel: HreRem.i18n('fieldlabel.origen.del.activo'),
 						        	name: 'tipoTituloActivoCodigo',
 						        	bind: {
 						            	store: '{comboTipoTitulo}'
-						            },
-		    						matchFieldWidth: false
+						            }
 						        },
 						        {
-						        	xtype: 'comboboxfieldbase',
+						        	xtype: 'comboboxfieldbasedd',
 						        	fieldLabel: HreRem.i18n('fieldlabel.subtipo.titulo'),
 						        	name: 'subtipoTituloActivoCodigo',
 						        	bind: {
 						            	store: '{comboSubtiposTitulo}'
-						            },
-		    						matchFieldWidth: false
+						            }
 						        },
 						        { 
 						        	xtype: 'comboboxfieldbase',
@@ -402,21 +406,29 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							items :
 								[
 									{ 
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 										addUxReadOnlyEditFieldPlugin: false,
 										fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
 										name: 'carteraAvanzadaCodigo',
+										reference: 'carteraAvanzadaRef',
 										bind: {
 											store: '{comboEntidadPropietaria}'
-										}
+										},
+										publishes: 'value'
 									},
 									{
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 										addUxReadOnlyEditFieldPlugin: false,
 										fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
 										name: 'subcarteraAvanzadaCodigo',
+										reference: 'subcarteraAvanzadaRef',
 										bind: {
-											store: '{comboSubcartera}'
+											store: '{comboSubcartera}',
+											disabled: '{!carteraAvanzadaRef.selection}',
+											filters: {
+						                        property: 'carteraCodigo',
+						                        value: '{carteraAvanzadaRef.value}'
+						                    }
 										},
 										listeners : {
 				        					change: 'onChangeSubcartera'
@@ -458,7 +470,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            	}
 							        },
 							        { 
-							        	xtype: 'comboboxfieldbase',
+							        	xtype: 'comboboxfieldbasedd',
 							        	editable: false,
 										fieldLabel: HreRem.i18n('fieldlabel.con.titulo'),
 						            	name: 'conTituloCodigo',
@@ -495,7 +507,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            	}
 							        },
 							        {
-							        	xtype: 'comboboxfieldbase',
+							        	xtype: 'comboboxfieldbasedd',
 							        	editable: false,
 										fieldLabel: HreRem.i18n('fieldlabel.titulo.posesorio'),
 						            	name: 'tituloPosesorioCodigo',
@@ -523,7 +535,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							items :
 								[
 									{
-							        	xtype: 'comboboxfieldbase',
+							        	xtype: 'comboboxfieldbasedd',
 							        	fieldLabel: 'Tipo de gestor:',
 							        	bind: {
 						            		store: '{comboTipoGestorOfertas}'
@@ -542,7 +554,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 										}
 									},
 									{
-							        	xtype: 'comboboxfieldbase',
+							        	xtype: 'comboboxfieldbasedd',
 							        	fieldLabel: HreRem.i18n('header.gestor')+"\\"+HreRem.i18n('header.gestoria'),
 							        	reference: 'usuarioGestor',
 							        	name: 'usuarioGestor',
@@ -556,20 +568,20 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            	},
 						            	displayField: 'apellidoNombre',
 			    						valueField: 'id',
-										filtradoEspecial: true,
-			    						emptyText: 'Introduzca un usuario'
+			    						emptyText: 'Introduzca un usuario',
+										filtradoEspecial2: true
 								    },
 							    	{ 
-							    		xtype: 'comboboxfieldbase',
+							    		xtype: 'comboboxfieldbasedd',
 							    		fieldLabel: HreRem.i18n('fieldlabel.api.primario'),
 							    		name: 'apiPrimarioId',
 							    		valueField : 'id',
 										displayField : 'nombre',
-										filtradoEspecial: true,
 							    		emptyText: 'Introduzca nombre mediador',
 							    		bind: {
 							    			store: '{comboApiPrimario}'
-							    		}
+							    		},
+										filtradoEspecial2: true
 							    	}
 								]
 			            }
@@ -591,7 +603,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							items :
 								[
 									{ 
-							        	xtype: 'comboboxfieldbase',
+							        	xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.estado.comercial'),
 						            	name: 'situacionComercialCodigo',
 							        	bind: {
@@ -599,7 +611,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            	}
 							        },
 							        { 
-							        	xtype: 'comboboxfieldbase',
+							        	xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
 						            	name: 'tipoComercializacionCodigo',
 							        	bind: {
@@ -615,7 +627,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            	}
 							        },
 							        {
-							        	xtype: 'comboboxfieldbase',
+							        	xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('header.rating'),
 						            	name: 'flagRatingCodigo',
 							        	bind: {
@@ -631,7 +643,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            	}
 							        },
 							    	{ 
-							    		xtype: 'comboboxfieldbase',
+							    		xtype: 'comboboxfieldbasedd',
 							    		fieldLabel: HreRem.i18n('fieldlabel.estado.comunicacion.gencat'),
 							    		name: 'estadoComunicacionGencatCodigo',
 							    		bind: {
@@ -639,7 +651,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		}
 							    	},
 							    	{ 
-							    		xtype: 'comboboxfieldbase',
+							    		xtype: 'comboboxfieldbasedd',
 							    		fieldLabel: HreRem.i18n('fieldlabel.direccion.comercial'),
 							    		name: 'direccionComercialCodigo',
 							    		bind: {
@@ -647,11 +659,14 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		}
 							    	},
 							    	{ 
-							    		xtype: 'comboboxfieldbase',
+							    		xtype: 'comboboxfieldbasedd',
 							    		fieldLabel: HreRem.i18n('fieldlabel.tipo.segmento'),
 							    		name: 'tipoSegmentoCodigo',
-							    		reference: 'tipoSegmentoRef',
-							    		hidden: true
+							    		reference: 'tipoSegmentoRef',							    		
+										bind: {
+							    			store: '{comboTipoSegmento}',
+											hidden: '{!comboSubcarteraRef.selection}'
+							    		}
 							    	},
 							    	{ 
 							    		xtype: 'comboboxfieldbase',
@@ -664,7 +679,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		}
 							    	},
                                     {
-                                        xtype: 'comboboxfieldbase',
+                                        xtype: 'comboboxfieldbasedd',
                                         fieldLabel: HreRem.i18n('fieldlabel.tipo.equipo.gestion'),
                                         name: 'equipoGestion',
                                         reference: 'equipoGestionRef',

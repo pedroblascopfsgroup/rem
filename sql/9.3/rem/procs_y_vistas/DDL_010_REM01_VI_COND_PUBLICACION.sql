@@ -1,9 +1,9 @@
 --/*
 --##########################################
---## AUTOR=Adrian Daniel Casiean
---## FECHA_CREACION=20181205
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20210331
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
+--## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=SI
 --## Finalidad: DDL VISTA PARA SACAR LAS CONDICIONES
@@ -142,7 +142,16 @@ LEFT JOIN '|| V_ESQUEMA ||'.INFORME_APROBADO                      INF     ON INF
 LEFT JOIN '|| V_ESQUEMA ||'.CERTIFICADO_ENERGETICO                CEE     ON CEE.ACT_ID = ACT.ACT_ID';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_COND_PUBLICACION...Creada OK');
-  
+
+    EXCEPTION
+     
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+        
 END;
 /
 

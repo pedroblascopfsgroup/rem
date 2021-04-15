@@ -15,6 +15,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -67,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
@@ -79,12 +81,15 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
+import es.pfsgroup.plugin.rem.service.AltaActivoService;
 import es.pfsgroup.plugin.rem.service.AltaActivoThirdPartyService;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 
 @Component
@@ -109,6 +114,9 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 	
 	
 	
@@ -142,7 +150,11 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 			actSit.setActivo(activo);
 			actSit.setAccesoAntiocupa(0);
 			actSit.setAccesoTapiado(0);		
-			actSit.setOcupado(0);		
+			actSit.setOcupado(0);
+			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			String usuarioModificar = usu == null ? AltaActivoThirdPartyService.CODIGO_ALTA_ACTIVO_THIRD_PARTY : AltaActivoThirdPartyService.CODIGO_ALTA_ACTIVO_THIRD_PARTY + usu.getUsername();
+			actSit.setUsuarioModificarOcupado(usuarioModificar);
+			actSit.setFechaModificarOcupado(new Date());
 			actSit.setComboOtro(0);
 			actSit.setVersion(0L);
 			actSit.setAuditoria(auditoria);
@@ -279,6 +291,10 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		if (!Checks.esNulo(dtoAATP.getEsIntegradoDivHorizontalRegistro())){
 			beanUtilNotNull.copyProperty(activoInforRegistral, "divHorInscrito", dtoAATP.getEsIntegradoDivHorizontalRegistro().equalsIgnoreCase("si") ? 1 : 0);
 		}
+		
+//Para Esparta
+//		DDSinSiNo ddsino = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDSinSiNo.CODIGO_NO));
+//		activoInforRegistral.setTieneAnejosRegistrales(ddsino);
 		genericDao.save(ActivoInfoRegistral.class, activoInforRegistral);
 		
 		
@@ -343,17 +359,25 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 			info.setMediadorInforme(mediador);
 		}
 		beanUtilNotNull.copyProperty(info, "planta", dtoAATP.getNumPlantasVivienda());
-		genericDao.save(ActivoInfoComercial.class, info);
 		if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
+			info.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoInfoComercial.COD_VIVIENDA)));
+			genericDao.save(ActivoInfoComercial.class, info);
+			
 			ActivoVivienda vivienda = new ActivoVivienda();
 			vivienda.setNumPlantasInter(dtoAATP.getNumPlantasVivienda());
 			vivienda.setInformeComercial(info);
 			genericDao.save(ActivoVivienda.class, vivienda);
 		} else if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
+			info.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoInfoComercial.COD_LOCAL_COMERCIAL)));
+			genericDao.save(ActivoInfoComercial.class, info);
+			
 			ActivoLocalComercial localComercial = new ActivoLocalComercial();
 			localComercial.setInformeComercial(info);
 			genericDao.save(ActivoLocalComercial.class, localComercial);
 		} else if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
+			info.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoInfoComercial.COD_PLAZA_APARCAMIENTO)));
+			genericDao.save(ActivoInfoComercial.class, info);
+			
 			ActivoPlazaAparcamiento aparcamiento = new ActivoPlazaAparcamiento();
 			aparcamiento.setInformeComercial(info);
 			genericDao.save(ActivoPlazaAparcamiento.class, aparcamiento);

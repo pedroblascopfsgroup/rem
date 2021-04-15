@@ -22,7 +22,7 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 
     	me.items= [
 			{
-			    xtype		: 'gridBaseEditableRowSinEdicion',
+			    xtype		: 'gridBaseEditableRow',
 			    idPrincipal	: 'trabajo.id',
 			    reference: 'listadoActivosTrabajo',
 				cls	: 'panel-base shadow-panel',
@@ -46,6 +46,36 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 				            dock: 'bottom'
 				}],
 				listeners: {
+					beforeedit : function(editor, e) {
+						var me = this;
+						var columnas = me.getColumns();
+						var participacion;
+						for (var i = 0; i < columnas.length; i++) {
+							if (columnas[i].dataIndex == 'participacion') {
+								participacion = columnas[i];
+							}
+						}
+						
+				    	var edicion = (me.lookupController().getViewModel().get('trabajo.perteneceGastoOPrefactura') 
+				    			|| me.lookupController().getViewModel().get('trabajo.estadoTrabajoCodigo') == CONST.ESTADOS_TRABAJO["VALIDADO"]);
+				    	var columnaParticipacion = participacion.getEditor();
+				    	
+						if( !edicion ){
+							columnaParticipacion.setDisabled(false);
+						}else{
+							columnaParticipacion.setDisabled(true);
+						}
+					},
+					boxready: function() {
+						var me = this;
+						var sup = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+						var esGestorActivo = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+						var permitido = sup || esGestorActivo;
+						
+						if(!permitido) {
+							me.rowEditing.clearListeners();
+						}
+					},
 			        afterrender: function() {
 			            var mainMenu = this.headerCt.getMenu();
 	
@@ -118,7 +148,40 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 			            dataIndex: 'descripcionEstado',
 			            text: HreRem.i18n('header.estado'),
 			            flex: 1
-			        }      
+			        },
+			        {
+			            dataIndex: 'participacion',
+			            text: HreRem.i18n('header.porcentaje.participacion'),
+			            renderer: function(value) {
+							const formatter = new Intl.NumberFormat('es-ES', {
+		            		   minimumFractionDigits: 0,      
+		            		   maximumFractionDigits: 4
+		            		});
+				          return formatter.format(value) + "%";
+				        },
+						flex : 1,
+						editor: {
+							xtype: 'numberfield',
+							decimalPrecision: 4
+						},
+						summaryType: function(){
+							var store = this, participacion = store.participacion;
+							return participacion;
+						},
+			            summaryRenderer: function(value, summaryData, dataIndex) {
+			            	const formatter = new Intl.NumberFormat('es-ES', {
+			            		   minimumFractionDigits: 0,      
+			            		   maximumFractionDigits: 4
+			            		});
+			            	var value2 = formatter.format(value);
+			            	var msg = HreRem.i18n("fieldlabel.participacion.total") + " " + value2 + "%";
+			            	var style = "style= 'color: black'";
+			            	if(parseFloat(value).toFixed(4) != parseFloat('100.00')) {
+			            		style = "style= 'color: red'";
+			            	}			            	
+			            	return "<span "+style+ ">"+msg+"</span>";
+			            }
+			        }     
 			    ],
 
 			    dockedItems : [
@@ -164,10 +227,10 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
     	];
 
     	me.callParent();
-    },
-    
-    
-    
+    },    
+	
+	
+	
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;

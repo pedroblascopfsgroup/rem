@@ -9,7 +9,7 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.plugin.rem.restclient.registro.dao.RestLlamadaDao;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 
-@Repository
+@Repository("RestLlamadaDao")
 public class RestLlamadaDaoImpl extends AbstractEntityDao<RestLlamada, Long> implements RestLlamadaDao{
 	
 

@@ -1292,7 +1292,7 @@ public interface ExpedienteComercialApi {
 	
 	boolean checkExpedienteFechaCheque(Long idTramite);
 
-	boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta) throws IllegalAccessException, InvocationTargetException;
+	boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta, Activo activo) throws IllegalAccessException, InvocationTargetException;
 
 	List<GastosExpediente> getListaGastosExpedienteByIdExpediente(Long idExpediente);
 
@@ -1349,5 +1349,7 @@ public interface ExpedienteComercialApi {
 	boolean updateActivosAlquilados(DtoActivosAlquiladosGrid dto);
 
 	boolean sacarBulk(Long idExpediente);
+	
+	String tipoTratamiento(TareaExterna tareaExterna);
 
 }

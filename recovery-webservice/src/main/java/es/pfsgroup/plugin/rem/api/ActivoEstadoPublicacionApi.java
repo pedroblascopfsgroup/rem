@@ -168,7 +168,7 @@ public interface ActivoEstadoPublicacionApi {
 	 * restringida y actualizar el estado de publicación de todos los activos de la agrupación.
 	 * @return Devuelve True si la operación se ha llevado a cabo.
 	 */
-	Boolean actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(Long idActivo,boolean doFlush);
+	Boolean actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(List<Long> idsActivos,boolean doFlush);
 
 	/**
 	 * Este método obtiene la fecha de inicio del estado de publicación venta en el que se encuentra el activo.
@@ -210,4 +210,15 @@ public interface ActivoEstadoPublicacionApi {
 	 * @return List<DtoHistoricoFasesDePublicacion>
 	 */
 	List<DtoHistoricoFasesDePublicacion> getHistoricoFasesDePublicacionActivo(Long idActivo);
+	
+	/**
+	 * Este método obtiene los datos de la pestanya de calidad del dato de publicacion de un activo
+	 * @param idActivo
+	 * @return DtoFasePublicacionActivo
+	 */
+	DtoCalidadDatoPublicacionActivo getCalidadDatoPublicacionActivo(Long idActivo);
+	
+	Boolean saveDatoRemCalidadDatoPublicacion(List<Long> idList, String datoDq, boolean quieroActualizar);
+	
+	List <DtoCalidadDatoPublicacionGrid> getCalidadDatoPublicacionActivoGrid(Long idActivo);
 }

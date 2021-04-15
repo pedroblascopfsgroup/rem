@@ -33,14 +33,15 @@ import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
 import es.pfsgroup.plugin.rem.model.HistoricoRequisitosFaseVenta;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 
 public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
@@ -64,7 +65,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	Long getUltimoHistoricoPresupuesto(Long id);
 
-	Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, BigDecimal hashSdv);
+	Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, Long hashSdv);
 	
 	Page getListActivosPrecios(DtoActivoFilter dto);
 
@@ -99,6 +100,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	ActivoTasacion getActivoTasacion(Long id);
 
 	List<ActivoTasacion> getListActivoTasacionByIdActivo(Long idActivo);
+	
+	List<ActivoTasacion> getListActivoTasacionByIdActivoAsc(Long idActivo);
 
 	Page getActivosFromCrearTrabajo(List<String> listIdActivos, DtoTrabajoListActivos dto);
 	
@@ -114,7 +117,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
 	void actualizarRatingActivo(Long idActivo, String username);
 
-	List<VOfertasActivosAgrupacion> getListOfertasActivo(Long idActivo);
+	List<VGridOfertasActivosAgrupacionIncAnuladas> getListOfertasActivo(Long idActivo);
 
 	/**
 	 * Realiza una llamada al procedure CALCULO_SINGULAR_RETAIL_AUTO, el cual calcula el tipo comercializar que 
@@ -203,7 +206,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 */
 	void crearHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
 
-	List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo);
+	List<VGridOfertasActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo);
 
 	List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivo(Long idActivo);
 
@@ -362,6 +365,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public List<ActivoSuministros> getSuministrosByIdActivo(Long idActivo);
 
 	void actualizaDatoCDC(CalidadDatosConfig cdc, String valor, String identificador, String username);
+	
+	public String getUltimaFasePublicacion(Long id);
 
 	Long getComunidadAutonomaId(Activo activo);
 	
@@ -390,4 +395,17 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	List<Long> getIdsAuxiliarCierreOficinaBankias();
 
 	Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo, String username);
+	
+	public List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivo(Long idActivo);
+
+	boolean activocheckGestion(Long idActivo);
+
+	List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivoAndTipoPrecio(Long idActivo,String codigoTipoPrecio);
+
+	List<ActivoValoraciones> getListActivoValoracionesByIdActivoAndTipoPrecio(Long idActivo, String codigoTipoPrecio);
+
+	boolean isPublicadoVentaHistoricoByFechaValoracion(Long idActivo, Date fechaValoracion);
+
+	boolean isPublicadoVentaByFechaValoracion(Long idActivo, Date fechaValoracion);
+	public Page getBusquedaPublicacionGrid(DtoPublicacionGridFilter dto);
 }

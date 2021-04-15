@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.config.ConfigManager;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.UsuarioManager;
@@ -33,6 +34,10 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -41,6 +46,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.bulkAdvisoryNote.BulkAdvisoryNoteAdapter;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -57,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
@@ -95,6 +102,9 @@ public class AgendaController extends TareaController {
 
 	@Autowired
 	private UsuarioManager usuarioManager;
+	
+	@Autowired
+    private TareaActivoApi tareaActivoApi;
 	
 	@Autowired
 	private BulkAdvisoryNoteAdapter bulkAdvisoryNoteAdapter;
@@ -206,21 +216,26 @@ public class AgendaController extends TareaController {
 
 		boolean success = false;
 		try {
-			boolean esBulk = bulkAdvisoryNoteAdapter.ofertaEnBulkAN(request.getParameterMap());
-			boolean cumpleCondiciones = false;
-			
-			if(esBulk)
-				cumpleCondiciones = bulkAdvisoryNoteAdapter.validarTareasOfertasBulk(request.getParameterMap());
-			
-			if(!esBulk || (esBulk && cumpleCondiciones)) {
+			if(!adapter.estaTareaFinalizada(request.getParameterMap())) {
 				
-				success = adapter.save(request.getParameterMap());
+				boolean esBulk = bulkAdvisoryNoteAdapter.ofertaEnBulkAN(request.getParameterMap());
+				boolean cumpleCondiciones = false;
 				
-				if(esBulk && cumpleCondiciones) {
-					bulkAdvisoryNoteAdapter.avanzarTareasOfertasBulk(request.getParameterMap());
+				if(esBulk)
+					cumpleCondiciones = bulkAdvisoryNoteAdapter.validarTareasOfertasBulk(request.getParameterMap());
+				
+				if(!esBulk || (esBulk && cumpleCondiciones)) {
+					
+					success = adapter.save(request.getParameterMap());
+					
+					if(esBulk && cumpleCondiciones) {
+						bulkAdvisoryNoteAdapter.avanzarTareasOfertasBulk(request.getParameterMap());
+					}
+				}else {
+					throw new JsonViewerException("La oferta Bulk no cumple las condiciones para avanzar.");
 				}
 			}else {
-				throw new JsonViewerException("La oferta Bulk no cumple las condiciones para avanzar.");
+				model.put("errorTareaFinalizada", true);
 			}
 
 		} catch (InvalidDataAccessResourceUsageException e) {
@@ -337,34 +352,61 @@ public class AgendaController extends TareaController {
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional()
 	public ModelAndView registrarExportacion(DtoTareaFilter dtoTareaFilter, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ModelMap model = new ModelMap();
-		Usuario user = null;
+		String intervaloTiempo = !Checks.esNulo(appProperties.getProperty("haya.tiempo.espera.export")) ? appProperties.getProperty("haya.tiempo.espera.export") : "300000";
+		ModelMap model = new ModelMap();		 
 		Boolean isSuperExport = false;
+		Boolean permitido = true;
+		String filtros = parameterParser(request.getParameterMap());
+		Usuario user = usuarioManager.getUsuarioLogado();
+		Long tiempoPermitido = System.currentTimeMillis() - Long.parseLong(intervaloTiempo);
+		String cuentaAtras = null;
 		try {
-			int count = adapter.getListTareas(dtoTareaFilter).getTotalCount();
-			user = usuarioManager.getUsuarioLogado();
-			AuditoriaExportaciones ae = new AuditoriaExportaciones();
-			ae.setBuscador(buscador);
-			ae.setFechaExportacion(new Date());
-			ae.setNumRegistros(Long.valueOf(count));
-			ae.setUsuario(user);
-			ae.setFiltros(parameterParser(request.getParameterMap()));
-			ae.setAccion(exportar);
-			genericDao.save(AuditoriaExportaciones.class, ae);
-			model.put(RESPONSE_SUCCESS_KEY, true);
-			model.put(RESPONSE_DATA_KEY, count);
-			for(Perfil pef : user.getPerfiles()) {
-				if(pef.getCodigo().equals("SUPEREXPORTTARAVAL")) {
-					isSuperExport = true;
-					break;
-				}
+			Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId());
+			Filter filtroConsulta = genericDao.createFilter(FilterType.EQUALS, "filtros", filtros);
+			Filter filtroAccion = genericDao.createFilter(FilterType.EQUALS, "accion", true);
+			Order orden = new Order(OrderType.DESC, "fechaExportacion");
+			List<AuditoriaExportaciones> listaExportaciones =  genericDao.getListOrdered(AuditoriaExportaciones.class, orden, filtroUsuario, filtroConsulta, filtroAccion);
+			
+			if(listaExportaciones != null && !listaExportaciones.isEmpty()) {
+				Long ultimaExport = listaExportaciones.get(0).getFechaExportacion().getTime();
+				permitido = ultimaExport > tiempoPermitido ? false : true;
+
+				double entero = Math.floor((ultimaExport - tiempoPermitido)/60000);
+		        if (entero < 2) {
+		        	cuentaAtras = "un minuto";
+		        } else {
+		        	cuentaAtras = Double.toString(entero);
+		        	cuentaAtras = cuentaAtras.substring(0, 1) + " minutos";
+		        }
 			}
-			if(isSuperExport) {
-				model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.tareas").getValor());
-				model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.tareas").getValor());
-			}else {
-				model.put("limite", configManager.getConfigByKey("limite.exportar.excel.tareas").getValor());
-				model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.tareas").getValor());
+			
+			if(permitido) {			
+				int count = adapter.getListTareas(dtoTareaFilter).getTotalCount();
+				AuditoriaExportaciones ae = new AuditoriaExportaciones();
+				ae.setBuscador(buscador);
+				ae.setFechaExportacion(new Date());
+				ae.setNumRegistros(Long.valueOf(count));
+				ae.setUsuario(user);
+				ae.setFiltros(filtros);
+				ae.setAccion(exportar);
+				genericDao.save(AuditoriaExportaciones.class, ae);
+				model.put(RESPONSE_SUCCESS_KEY, true);
+				model.put(RESPONSE_DATA_KEY, count);
+				for(Perfil pef : user.getPerfiles()) {
+					if(pef.getCodigo().equals("SUPEREXPORTTARAVAL")) {
+						isSuperExport = true;
+						break;
+					}
+				}
+				if(isSuperExport) {
+					model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.tareas").getValor());
+					model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.tareas").getValor());
+				}else {
+					model.put("limite", configManager.getConfigByKey("limite.exportar.excel.tareas").getValor());
+					model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.tareas").getValor());
+				}
+			} else {
+				model.put("msg", cuentaAtras);
 			}
 		}catch(Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
@@ -493,6 +535,7 @@ public class AgendaController extends TareaController {
 		ExpedienteComercial eco = null;
 		List<ActivoTramite> listaTramites = null;
 		Boolean salto = false;
+		Boolean hayTarea = false;
 		WSDevolBankiaDto dto = null;
 		try {
 
@@ -518,6 +561,13 @@ public class AgendaController extends TareaController {
 						if (!Checks.esNulo(tarea) && ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION.equals(tarea.getTareaProcedimiento().getCodigo())) {
 							//Salto a tarea anterior y llamada a UVEM cosem1: 4
 							TareaExterna tareaSalto = activoTramiteApi.getTareaAnteriorByCodigoTarea(listaTramites.get(0).getId(), ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE);
+							Usuario usuario = usuarioManager.getUsuarioLogado();
+							
+							if (ComercialUserAssigantionService.CODIGO_T013_RESULTADO_PBC.equals(tareaSalto.getTareaProcedimiento().getCodigo()) && !tareaSalto.getAuditoria().isBorrado()) {	
+								tareaActivoApi.terminarTarea(tareaSalto, usuario);
+							}
+							
+							hayTarea = true;
 							salto = adapter.saltoTareaByCodigo(tarea.getId(), tareaSalto.getTareaProcedimiento().getCodigo());
 							if(salto){
 								//Se entiende que cuando salta a la tarea anterior a Resolución Expendiente, la reserva y el expediente han llegado en los siguientes estados
@@ -532,9 +582,9 @@ public class AgendaController extends TareaController {
 							}
 							break;
 						}
-						else{
-							throw new JsonViewerException("No se encuentra en la tarea para realizar esta acción");
-						}
+					}
+					if (!hayTarea) { 
+						throw new JsonViewerException("No se encuentra en la tarea para realizar esta acción");
 					}
 				}
 			}

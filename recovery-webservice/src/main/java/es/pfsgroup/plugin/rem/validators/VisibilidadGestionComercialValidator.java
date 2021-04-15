@@ -111,7 +111,7 @@ public class VisibilidadGestionComercialValidator {
 			if (!excluirValidaciones) {
 				
 				
-				if()
+
 				
 				for (ActivoOferta actOfr : listaActivoOferta) {
 					Oferta oferta = actOfr.getPrimaryKey().getOferta();

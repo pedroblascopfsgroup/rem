@@ -2188,7 +2188,52 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		return actAlquiladosList;
 	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo, String usuario) {
+		String procedureHQL = "BEGIN SP_CAMBIO_OFICINA_BANKIA(:vUsuario,:plOutput, :codProveedorAnterior, :codProveedorNuevo); END;";
+		int resultado = 0;
+		
+		try {
+			Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+			callProcedureSql.setParameter("vUsuario", usuario);
+			callProcedureSql.setParameter("plOutput", new String());
+			callProcedureSql.setParameter("codProveedorAnterior", codProveedorAnterior);
+			callProcedureSql.setParameter("codProveedorNuevo", codProveedorNuevo);			
+			
+			logger.error(callProcedureSql.getQueryString());
+			resultado = callProcedureSql.executeUpdate();
+
+			return resultado == 1;
+		} catch (Exception e) {
+			logger.error("Error en el SP_CAMBIO_OFICINA_BANKIA para el COD PROVEEDOR ANTERIOR "+codProveedorAnterior, e);			
+			return false;
+		}
+
+	}
 	
+	@Override
+	@Transactional
+	public List<Long> getIdsAuxiliarCierreOficinaBankias() {
+		List<Object> resultados = rawDao.getExecuteSQLList(
+				"		SELECT AUX.ECO_ID" + 
+				"		FROM AUX_CIERRE_OFICINAS_BANKIA AUX");
+		
+		List<Long> listaTareas = new ArrayList<Long>();
+
+		/*for(Object o: resultados){
+			listaTareas.add((Long) o);
+		}*/
+		
+		for(Object o: resultados){
+			String objetoString = o.toString();
+			listaTareas.add(Long.parseLong(objetoString));
+		}
+
+		return listaTareas;
+	}
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivo(Long idActivo) {
@@ -2259,50 +2304,4 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		return false;
 	}	
-
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo, String usuario) {
-		String procedureHQL = "BEGIN SP_CAMBIO_OFICINA_BANKIA(:vUsuario,:plOutput, :codProveedorAnterior, :codProveedorNuevo); END;";
-		int resultado = 0;
-		
-		try {
-			Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
-			callProcedureSql.setParameter("vUsuario", usuario);
-			callProcedureSql.setParameter("plOutput", new String());
-			callProcedureSql.setParameter("codProveedorAnterior", codProveedorAnterior);
-			callProcedureSql.setParameter("codProveedorNuevo", codProveedorNuevo);			
-			
-			logger.error(callProcedureSql.getQueryString());
-			resultado = callProcedureSql.executeUpdate();
-
-			return resultado == 1;
-		} catch (Exception e) {
-			logger.error("Error en el SP_CAMBIO_OFICINA_BANKIA para el COD PROVEEDOR ANTERIOR "+codProveedorAnterior, e);			
-			return false;
-		}
-
-	}
-	
-	@Override
-	@Transactional
-	public List<Long> getIdsAuxiliarCierreOficinaBankias() {
-		List<Object> resultados = rawDao.getExecuteSQLList(
-				"		SELECT AUX.ECO_ID" + 
-				"		FROM AUX_CIERRE_OFICINAS_BANKIA AUX");
-		
-		List<Long> listaTareas = new ArrayList<Long>();
-
-		/*for(Object o: resultados){
-			listaTareas.add((Long) o);
-		}*/
-		
-		for(Object o: resultados){
-			String objetoString = o.toString();
-			listaTareas.add(Long.parseLong(objetoString));
-		}
-
-		return listaTareas;
-	}
 }

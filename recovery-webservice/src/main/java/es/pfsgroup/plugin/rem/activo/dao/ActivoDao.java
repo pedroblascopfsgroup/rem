@@ -389,6 +389,12 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos);
 
 	public List<ActivosAlquilados> getListActivosAlquiladosByIdActivos(List<Long> idActivos);
+
+	/*public Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo);*/
+
+	List<Long> getIdsAuxiliarCierreOficinaBankias();
+
+	Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo, String username);
 	
 	public List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivo(Long idActivo);
 
@@ -402,10 +408,4 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	boolean isPublicadoVentaByFechaValoracion(Long idActivo, Date fechaValoracion);
 	public Page getBusquedaPublicacionGrid(DtoPublicacionGridFilter dto);
-
-	/*public Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo);*/
-
-	List<Long> getIdsAuxiliarCierreOficinaBankias();
-
-	Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo, String username);
 }

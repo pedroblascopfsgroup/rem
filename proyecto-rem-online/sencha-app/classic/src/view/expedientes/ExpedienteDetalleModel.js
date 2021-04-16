@@ -592,9 +592,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 			var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
 	 		var isBoarding = $AU.userIsRol(CONST.PERFILES['GESTBOARDING']);
-			if(CONST.CARTERA['CERBERUS'] == carteraCodigo){
-				return !isSuper;//CARTERAS NO BANCO
-			}
 	 		return !isSuper && !isBoarding;//CARTERAS BANCO
 	 	},
 	 	

@@ -2251,7 +2251,7 @@ public class ActivoAdapter {
 								expedienteComercial.getEstado().getDescripcion());
 						boolean isGestorBoarding = perteneceGrupoBoarding(genericAdapter.getUsuarioLogado());
 						boolean expedienteComercialNoAprobado = expedienteComercialNoAprobado(expedienteComercial.getEstado().getCodigo());
-						if(!DDCartera.CODIGO_CARTERA_CERBERUS.equals(tramite.getActivo().getCartera().getCodigo()) && isGestorBoarding && expedienteComercialNoAprobado) {
+						if(isGestorBoarding && expedienteComercialNoAprobado) {
 							dtoTramite.setOcultarBotonResolucion(true);
 						} else {
 							if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())) {
@@ -3194,11 +3194,7 @@ public class ActivoAdapter {
 			resultado = true;
 		}else{
 			if(listaIdActivo != null && !listaIdActivo.isEmpty()){
-				for(Long idActivo : listaIdActivo){
-					if(idActivo != null){
-						return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo,true);
-					}
-				}
+				return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(listaIdActivo,true);
 			}
 		}
 		return resultado;

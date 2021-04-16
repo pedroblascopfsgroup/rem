@@ -128,7 +128,6 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 							}
 							
 							if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null
-									&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())
 									&& gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
 								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 										.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");

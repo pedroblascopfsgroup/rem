@@ -466,6 +466,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 				}
 			}
 			activoAdapter.actualizarEstadoPublicacionActivoPerimetro(idList, idListSinVisibilidadComercial);
+			activoAdapter.actualizarEstadoPublicacionActivo(idList, false);
 			transactionManager.commit(transaction);
 		}catch(Exception e){
 			transactionManager.rollback(transaction);

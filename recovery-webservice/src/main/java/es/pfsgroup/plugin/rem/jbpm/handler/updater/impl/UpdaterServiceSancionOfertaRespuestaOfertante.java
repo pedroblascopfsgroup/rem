@@ -147,8 +147,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 								recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 
 								if(DDEstadosExpedienteComercial.APROBADO.equals(estado.getCodigo())) {
-									if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva())
-											&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())) {															
+									if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva())) {															
 										EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 												.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
 

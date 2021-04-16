@@ -1318,13 +1318,22 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 	@Override
 	@Transactional
-	public Boolean actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(Long idActivo,boolean doFlush) {
-		Activo activo = activoApi.get(idActivo);
-
-		if(activoApi.isActivoIntegradoAgrupacionRestringida(idActivo)) {
-			activoDao.publicarAgrupacionConHistorico(activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(idActivo).getAgrupacion().getId(), genericAdapter.getUsuarioLogado().getUsername(), null, doFlush);
-		} else {
-			activoDao.publicarActivoConHistorico(activo.getId(), genericAdapter.getUsuarioLogado().getUsername(), null, doFlush);
+	public Boolean actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(List<Long> idsActivos,boolean doFlush) {
+		List<Long> idsAgrupacionesRestringidas = new ArrayList<Long>();
+		for(Long idActivo : idsActivos) {
+			if(activoApi.get(idActivo) != null) {
+				if(activoApi.isActivoIntegradoAgrupacionRestringida(idActivo)) {
+					Long idAgrupacion = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(idActivo).getAgrupacion().getId();
+					if(!idsAgrupacionesRestringidas.contains(idAgrupacion)) {
+						idsAgrupacionesRestringidas.add(idAgrupacion);
+					}
+				}else {
+					activoDao.publicarActivoConHistorico(idActivo, genericAdapter.getUsuarioLogado().getUsername(), null, doFlush);
+				}
+			}
+		}
+		for(Long idAgrupacion : idsAgrupacionesRestringidas) {
+			activoDao.publicarAgrupacionConHistorico(idAgrupacion, genericAdapter.getUsuarioLogado().getUsername(), null, doFlush);
 		}
 
 		return true;

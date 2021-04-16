@@ -137,8 +137,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 										gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
 									}					
 								}
-								if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null
-										&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())) {															
+								if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {															
 									EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 											.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
 									

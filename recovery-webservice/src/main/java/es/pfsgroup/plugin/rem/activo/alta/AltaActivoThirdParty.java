@@ -538,8 +538,10 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				
 				//ActivoValoracion - Precio mínimo
 				ActivoValoraciones activoValoracionPrecioMinimo = new ActivoValoraciones();
-				activoValoracionPrecioMinimo.setFechaCarga(new Date());
-				activoValoracionPrecioMinimo.setFechaInicio(new Date());
+				if (dtoAATP.getPrecioMinimo() != null) {
+					activoValoracionPrecioMinimo.setFechaCarga(new Date());
+					activoValoracionPrecioMinimo.setFechaInicio(new Date());
+				}
 				activoValoracionPrecioMinimo.setActivo(activo);
 				activoValoracionPrecioMinimo.setTipoPrecio((DDTipoPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPrecio.class, DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO));
 				beanUtilNotNull.copyProperty(activoValoracionPrecioMinimo, "importe", dtoAATP.getPrecioMinimo());
@@ -549,8 +551,10 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				
 				//ActivoValoracion - Precio venta web
 				ActivoValoraciones activoValoracionPrecioVentaWeb = new ActivoValoraciones();
-				activoValoracionPrecioVentaWeb.setFechaCarga(new Date());
-				activoValoracionPrecioVentaWeb.setFechaInicio(new Date());
+				if (dtoAATP.getPrecioVentaWeb() != null) {
+					activoValoracionPrecioVentaWeb.setFechaCarga(new Date());
+					activoValoracionPrecioVentaWeb.setFechaInicio(new Date());
+				}
 				activoValoracionPrecioVentaWeb.setActivo(activo);
 				activoValoracionPrecioVentaWeb.setTipoPrecio((DDTipoPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPrecio.class, DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA));
 				beanUtilNotNull.copyProperty(activoValoracionPrecioVentaWeb, "importe", dtoAATP.getPrecioVentaWeb());

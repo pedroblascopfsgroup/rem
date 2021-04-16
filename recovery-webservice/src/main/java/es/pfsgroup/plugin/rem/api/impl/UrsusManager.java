@@ -164,13 +164,13 @@ public class UrsusManager implements UrsusApi{
 				
 			} catch (JsonViewerException e) {
 				map.put("success", false);
-				logger.error("error en expedienteComercialManager", e);
-				throw e;
+				map.put("error", e.getMessage());
+				logger.error("error en ursusManager", e);
 
 			} catch (Exception e) {
 				map.put("success", false);
-				logger.error("error en expedienteComercialManager", e);
-				throw e;
+				map.put("error", e.getMessage());
+				logger.error("error en ursusManager", e);
 			}
 			
 			map.put("success", true);

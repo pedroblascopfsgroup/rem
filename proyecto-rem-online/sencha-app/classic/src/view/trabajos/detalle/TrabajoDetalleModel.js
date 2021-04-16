@@ -458,7 +458,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'trabajo/getComboProveedorContacto',
-					extraParams: {idProveedor: '{gestionEconomica.idProveedor}'}
+					extraParams: {idProveedor: '{presupuesto.idProveedor}'}
 				}, 
 				autoLoad: false
     		},

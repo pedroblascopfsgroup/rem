@@ -499,7 +499,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							handler : 'onClickGeneraOfertarHojaExcel',
 							margin : '10 10 10 10'
 						},
-						//Pruebas del excel
+						//TODO: Pruebas del excel
 						/*{
 							xtype : 'button',
 							reference : 'btnGenerarFichaComercial',

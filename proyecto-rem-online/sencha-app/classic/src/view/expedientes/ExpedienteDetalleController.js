@@ -4983,9 +4983,11 @@ comprobarFormatoModificar: function() {
 	onClickGeneraFichaComercialHojaExcel: function(btn) {
 				var me = this, config = {};
 		
-				config.params = {};
-				config.params.idExpediente = me.getViewModel().get("expediente.id");
-				config.url= $AC.getRemoteUrl("ofertas/generateExcelBBVA");
+				config.params = {
+						"id" : [ me.getViewModel().get("expediente.numExpediente") ],
+						"reportCode" : 'FichaComercial'
+				};
+				config.url= $AC.getRemoteUrl("ofertas/generateReport");
 				
 				me.fireEvent("downloadFile", config);
 			},

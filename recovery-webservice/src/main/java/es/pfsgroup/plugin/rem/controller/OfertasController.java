@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.PathParam;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.http.client.HttpSimplePostRequest;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
@@ -76,6 +78,8 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaVivaRespuestaDto;
+import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorRequest;
+import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorResponse;
 import es.pfsgroup.plugin.rem.rest.dto.TareaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
@@ -975,5 +979,33 @@ public class OfertasController {
 		}
 		return createModelAndViewJson(model);
 	}
+	
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateReport(ReportGeneratorRequest request, HttpServletResponse response) throws IOException {
+
+		try {
+			 	Map<String, Object> params = new HashMap<String, Object>();
+			 	params.put("id", request.getListId());
+			 	params.put("reportCode", request.getReportCode());
+			 	// TODO: Gestionar en como obtener la dirección del Docker.
+			 	HttpSimplePostRequest httpPostClient = new HttpSimplePostRequest("http://192.168.80.3:9096/report/generate", params);
+			 	ReportGeneratorResponse report = httpPostClient.post(ReportGeneratorResponse.class);
+			 	String route = appProperties.getProperty("email.attachment.folder.src") + "/" + report.getNombre();
+			 	File file = new File(route);
+			 	FileUtils.writeByteArrayToFile(file, report.getResponse());
+			 	excelReportGeneratorApi.sendReport(file, response);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+ 
+		}
+	}
+	
+	
+	
+	
+	
+	
 	
 }

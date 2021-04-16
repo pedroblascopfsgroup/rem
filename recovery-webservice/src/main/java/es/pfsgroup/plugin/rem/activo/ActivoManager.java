@@ -7284,6 +7284,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							codEstadoPres = DDEstadoTitulo.ESTADO_EN_TRAMITACION;
 						} else if(DDEstadoPresentacion.INSCRITO.equals(histTraTit.getEstadoPresentacion().getCodigo())) {
 							codEstadoPres =	DDEstadoTitulo.ESTADO_INSCRITO;
+						} else if (DDEstadoPresentacion.NULO
+									.equals(histTraTit.getEstadoPresentacion().getCodigo())) {
+								codEstadoPres = DDEstadoTitulo.ESTADO_NULO;
+						} else if (DDEstadoPresentacion.INMATRICULADOS
+								.equals(histTraTit.getEstadoPresentacion().getCodigo())) {
+							codEstadoPres = DDEstadoTitulo.ESTADO_INMATRICULADOS;
+						} else if (DDEstadoPresentacion.IMPOSIBLE_INSCRIPCION
+								.equals(histTraTit.getEstadoPresentacion().getCodigo())) {
+							codEstadoPres = DDEstadoTitulo.ESTADO_IMPOSIBLE_INSCRIPCION;
+						} else if (DDEstadoPresentacion.DESCONOCIDO
+								.equals(histTraTit.getEstadoPresentacion().getCodigo())) {
+							codEstadoPres = DDEstadoTitulo.ESTADO_DESCONOCIDO;
 						}
 					}
 					DDEstadoTitulo estadoTitulo = (DDEstadoTitulo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoTitulo.class, codEstadoPres);

@@ -7218,17 +7218,27 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					noSubsanado = true;
 				}
 			}
+			if (noSubsanado && (newValue != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']
+			&& newValue !=  CONST.DD_ESP_ESTADO_PRESENTACION['NULO'] 
+			&& newValue !=  CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION'])) {
 
-			if (noSubsanado&& newValue != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']) {
 				me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko.calificado.negativamente"));
-				combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']); 
+				if(combo.getValue() == CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']){
+					combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']); 
+				}else if(combo.getValue() == CONST.DD_ESP_ESTADO_PRESENTACION['NULO']){
+					combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['NULO']); 
+				}else if(combo.getValue() == CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION']){
+					combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION']); 
+				}
 				return;
 			};
 		}
-		
 		gridCalifcacion.disableAddButton(true);
-		if (combo.getValue() == CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE'])
+		if (combo.getValue() == CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']
+		|| combo.getValue() ==  CONST.DD_ESP_ESTADO_PRESENTACION['NULO'] 
+		|| combo.getValue() ==  CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION']){
 			gridCalifcacion.disableAddButton(false);
+		}
 		switch (newValue) {
 
 			case CONST.DD_ESP_ESTADO_PRESENTACION['PRESENTACION_EN_REGISTRO'] :

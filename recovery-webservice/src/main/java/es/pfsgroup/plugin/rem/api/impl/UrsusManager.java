@@ -161,7 +161,7 @@ public class UrsusManager implements UrsusApi{
 					}
 					map.put("idsUrsusBh", idsUrsus);
 				}
-				
+			map.put("success", true);	
 			} catch (JsonViewerException e) {
 				map.put("success", false);
 				map.put("error", e.getMessage());
@@ -171,9 +171,8 @@ public class UrsusManager implements UrsusApi{
 				map.put("success", false);
 				map.put("error", e.getMessage());
 				logger.error("error en ursusManager", e);
-			}
+			}			
 			
-			map.put("success", true);
 			listaRespuesta.add(map);
 		}
 		return listaRespuesta;

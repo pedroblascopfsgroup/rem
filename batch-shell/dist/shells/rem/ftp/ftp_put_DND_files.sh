@@ -1,4 +1,4 @@
-cd ${DIR_SALIDA}
+cd ${DIR_SALIDA}/DND
 
 lftp -u pfs,SwQdLRyFE8A5 sftp://192.168.126.7 <<EOF
 cd /Archivos/REM/PFSToHaya/DND

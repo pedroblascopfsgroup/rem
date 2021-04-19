@@ -82,8 +82,6 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 	public static final String NIF_PROPIETARIO_IS_NULL = "El NIF de propietario no puede estar vacío.";
 	public static final String REFERENCIA_CATASTRAL_IS_NULL = "La referencia catastral no puede estar vacía.";
 	public static final String VPO_IS_NULL = "El VPO no puede estar vacío.";
-	public static final String PRECIO_MINIMO_IS_NULL = "El precio mínimo no puede estar vacío.";
-	public static final String PRECIO_VENTA_WEB_IS_NULL = "El precio de venta web no puede estar vacío.";
 	public static final String PRECIO_MINIMO_IS_NAN = "El importe indicado en precio mínimo no es un valor numérico correcto";
 	public static final String PRECIO_VENTA_WEB_IS_NAN = "El importe indicado en precio venta web no es un valor numérico correcto";
 	public static final String VALOR_TASACION_IS_NAN = "El importe indicado en el valor de tasación no es un valor numérico correcto";
@@ -321,8 +319,6 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(NIF_PROPIETARIO_IS_NULL, isColumnNullByRows(exc, COL_NUM.NIF_PROPIETARIO));
 			mapaErrores.put(REFERENCIA_CATASTRAL_IS_NULL, isColumnNullByRows(exc, COL_NUM.REF_CATASTRAL));
 			mapaErrores.put(VPO_IS_NULL, isColumnNullByRows(exc, COL_NUM.VPO));
-			mapaErrores.put(PRECIO_MINIMO_IS_NULL, isColumnNullByRows(exc, COL_NUM.PRECIO_MINIMO));
-			mapaErrores.put(PRECIO_VENTA_WEB_IS_NULL, isColumnNullByRows(exc, COL_NUM.PRECIO_VENTA_WEB));
 			mapaErrores.put(PRECIO_MINIMO_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.PRECIO_MINIMO));
 			mapaErrores.put(PRECIO_VENTA_WEB_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.PRECIO_VENTA_WEB));
 			mapaErrores.put(VALOR_TASACION_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.VALOR_TASACION));
@@ -420,7 +416,6 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 					|| !mapaErrores.get(NIF_PROPIETARIO_IS_NULL).isEmpty()
 					|| !mapaErrores.get(REFERENCIA_CATASTRAL_IS_NULL).isEmpty()
 					|| !mapaErrores.get(VPO_IS_NULL).isEmpty()
-					|| !mapaErrores.get(PRECIO_MINIMO_IS_NULL).isEmpty()
 					|| !mapaErrores.get(PRECIO_MINIMO_IS_NAN).isEmpty()
 					|| !mapaErrores.get(PRECIO_MINIMO_IS_ZERO).isEmpty()
 					|| !mapaErrores.get(GARAJE_ANEJO_NOT_BOOL).isEmpty()

@@ -320,7 +320,7 @@ public class StockDto implements WebcomRESTDto{
 	
 	
 	@WebcomRequired
-	private LongDataType onvComercializacion;
+	private BooleanDataType onvComercializacion;
 	
 	@WebcomRequired
 	private StringDataType onvComercializacionFecha;
@@ -1053,10 +1053,10 @@ public class StockDto implements WebcomRESTDto{
 	public void setSpsFechaDesinstalaVigilancia(DateDataType spsFechaDesinstalaVigilancia) {
 		this.spsFechaDesinstalaVigilancia = spsFechaDesinstalaVigilancia;
 	}
-	public LongDataType getOnvComercializacion() {
+	public BooleanDataType getOnvComercializacion() {
 		return onvComercializacion;
 	}
-	public void setOnvComercializacion(LongDataType onvComercializacion) {
+	public void setOnvComercializacion(BooleanDataType onvComercializacion) {
 		this.onvComercializacion = onvComercializacion;
 	}
 	public StringDataType getOnvComercializacionFecha() {

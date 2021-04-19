@@ -814,6 +814,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				listaActOfr = buildListaActivoOferta(null, agrup, oferta);			
 				oferta.setActivosOferta(listaActOfr);
 				oferta.setAgrupacion(agrup);
+				
+				activo = genericDao.get(Activo.class,
+						genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getActivosLote().get(0).getIdActivoHaya()));
 
 			} else if (!Checks.esNulo(ofertaDto.getIdActivoHaya())) {
 				ActivoAgrupacion agrupacion = null;

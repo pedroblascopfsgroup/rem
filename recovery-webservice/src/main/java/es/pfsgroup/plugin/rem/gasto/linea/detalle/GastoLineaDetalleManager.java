@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.ActivoGenerico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoSareb;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoTrabajoGastoImpuesto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
@@ -1842,12 +1843,14 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		BigDecimal provSuplidos = trabajoApi.getImporteTotalSuplidosByTrabajo(trabajo);
 		
 		
-		if(gasto.getDestinatarioGasto() !=  null && DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())
-			&& trabajo.getImportePresupuesto() != null) {
-			baseSujeta = new BigDecimal(trabajo.getImportePresupuesto());
-		}else if(trabajo.getImporteTotal() != null){
-			baseSujeta = new BigDecimal(trabajo.getImporteTotal());
-		}
+		if(gasto.getProveedor() !=  null && gasto.getProveedor().getDocIdentificativo() != null 
+				&& ActivoProveedor.DOCIDENTIF_HAYA.equals(gasto.getProveedor().getDocIdentificativo())
+				&& trabajo.getImporteTotal() != null) {			
+				baseSujeta = new BigDecimal(trabajo.getImporteTotal());
+				
+			}else if(trabajo.getImportePresupuesto() != null){
+				baseSujeta = new BigDecimal(trabajo.getImportePresupuesto());
+			}
 
 		if(lineaAnyadirTrabajo.getImporteTotal() != null) {
 			importeTotal = importeTotal.add(new BigDecimal(lineaAnyadirTrabajo.getImporteTotal()));
@@ -1883,14 +1886,16 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		gastoLineaDetalleNueva.setAuditoria(Auditoria.getNewInstance());
 		gastoLineaDetalleNueva.setGastoProveedor(gasto);
 		
-		if(gasto.getDestinatarioGasto() !=  null && DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())
-				&& trabajo.getImportePresupuesto() != null) {
-			gastoLineaDetalleNueva.setPrincipalSujeto(trabajo.getImportePresupuesto());
-		}else if(trabajo.getImporteTotal() != null){
-			gastoLineaDetalleNueva.setPrincipalSujeto(trabajo.getImporteTotal());
-		}else {
-			gastoLineaDetalleNueva.setPrincipalSujeto(0.0);
-		}
+		if(gasto.getProveedor() != null && gasto.getProveedor().getDocIdentificativo() != null 
+				&& ActivoProveedor.DOCIDENTIF_HAYA.equals(gasto.getProveedor().getDocIdentificativo())
+				&& trabajo.getImporteTotal() != null) {								
+				gastoLineaDetalleNueva.setPrincipalSujeto(trabajo.getImporteTotal());
+				
+			}else if(trabajo.getImportePresupuesto() != null){
+				gastoLineaDetalleNueva.setPrincipalSujeto(trabajo.getImportePresupuesto());
+			}else {
+				gastoLineaDetalleNueva.setPrincipalSujeto(0.0);
+			}
 		DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoGasto.class, lineaParte.get(0));
 		gastoLineaDetalleNueva.setSubtipoGasto(subtipoGasto);
 		BigDecimal cuota = new BigDecimal (0.0);
@@ -2025,12 +2030,15 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 							BigDecimal impuestoIndirectoCuota = new BigDecimal(gastoLineaDetalle.getImporteIndirectoCuota());
 							BigDecimal tipoImpositivoIndirecto = new BigDecimal(gastoLineaDetalle.getImporteIndirectoTipoImpositivo());		
 							
-							if(gasto.getDestinatarioGasto() !=  null && DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())
-									&& trabajo.getImportePresupuesto() != null) {
+							if(gasto.getProveedor() !=  null && gasto.getProveedor().getDocIdentificativo() != null 
+									&& ActivoProveedor.DOCIDENTIF_HAYA.equals(gasto.getProveedor().getDocIdentificativo())
+									&& trabajo.getImporteTotal() != null) {								
+									importeTotalTrabajo = new BigDecimal(trabajo.getImporteTotal());
+									
+								}else if(trabajo.getImportePresupuesto() != null){
 									importeTotalTrabajo = new BigDecimal(trabajo.getImportePresupuesto());
-							}else if(trabajo.getImporteTotal() != null){
-								importeTotalTrabajo = new BigDecimal(trabajo.getImporteTotal());
-							}
+								}
+							
 							if(importeTotalTrabajo != null) {
 								principalSujetoLinea = principalSujetoLinea.subtract(importeTotalTrabajo);
 								gastoLineaDetalle.setPrincipalSujeto(principalSujetoLinea.doubleValue());

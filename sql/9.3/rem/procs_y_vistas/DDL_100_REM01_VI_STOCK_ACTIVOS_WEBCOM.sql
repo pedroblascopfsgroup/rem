@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos Augusto
---## FECHA_CREACION=20201119
+--## FECHA_CREACION=20210413
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-11927
@@ -25,6 +25,7 @@
 --##		0.13 Version Juan Beltrán - - REMVIP-8168 - Añadir campos COD_TIPO_COMERCIALIZAR, COD_EQUIPO_GESTION, SCOM_NOMBRE, SCOM_TELEFONO y SCOM_EMAIL
 --##		0.14 Version Carlos Augusto -> HREOS-11927  -> Añadir Campos SPS_VIGILANCIA,SPS_ALARMA,SPS_INSTALA_ALARMA,SPS_DESINSTALA_ALARMA,SPS_INSTALA_VIGILANCIA y SPS_DESINSTALA_VIGILANCIA
 --##  		0.15 Versión Carlos Augusto -> HREOS-12201 - Añadir campos ONV_COMERCIALIZACION y ONV_COMERCIALIZACION_FECHA  
+--##  		0.15 Versión Carlos Santos Vílchez -> REMVIP-9478 - Poner campo ONV_COMERCIALIZACION como boolean  
 --##########################################
 --*/
 

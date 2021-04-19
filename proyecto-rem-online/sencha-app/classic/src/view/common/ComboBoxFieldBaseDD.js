@@ -143,9 +143,6 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 
 		setRawValue: function (value) {
 			var me = this;
-			if(me.getReference() == 'comboDDTipoSuministroRef'){
-				Ext.global.console.error(value);
-			}
 			if(value == null) value = '';
 			me.setValorMostrado(value);
 			me.callParent([value]);

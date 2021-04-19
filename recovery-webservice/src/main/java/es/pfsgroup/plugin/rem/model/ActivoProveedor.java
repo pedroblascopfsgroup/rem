@@ -56,7 +56,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class ActivoProveedor implements Serializable, Auditable {
-
+	public static final String DOCIDENTIF_HAYA = "A86744349";
 
 	/**
 	 * 

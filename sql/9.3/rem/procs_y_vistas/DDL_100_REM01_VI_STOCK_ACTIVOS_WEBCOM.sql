@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos Augusto
---## FECHA_CREACION=20201119
+--## FECHA_CREACION=20210413
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-8168
@@ -24,6 +24,7 @@
 --##		0.12 Version Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##		0.13 Version Juan Beltrán - - REMVIP-8168 - Añadir campos COD_TIPO_COMERCIALIZAR, COD_EQUIPO_GESTION, SCOM_NOMBRE, SCOM_TELEFONO y SCOM_EMAIL
 --##  		0.15 Versión Carlos Augusto -> HREOS-12201 - Añadir campos ONV_COMERCIALIZACION y ONV_COMERCIALIZACION_FECHA  
+--##  		0.15 Versión Carlos Santos Vílchez -> REMVIP-9478 - Poner campo ONV_COMERCIALIZACION como boolean  
 --##########################################
 --*/
 
@@ -292,7 +293,10 @@ BEGIN/*Versión 0.8*/
 		CAST(SCOM.NOMBRE AS VARCHAR2(60 CHAR)) 														AS SCOM_NOMBRE,
 		CAST(SCOM.USU_TELEFONO AS VARCHAR2(14 CHAR)) 												AS SCOM_TELEFONO,
 		CAST(SCOM.USU_MAIL AS VARCHAR2(60 CHAR)) 													AS SCOM_EMAIL,
-		CAST(ACT.ACT_OVN_COMERC AS NUMBER(16,0))													AS ONV_COMERCIALIZACION,
+		CASE WHEN (ACT.ACT_OVN_COMERC = 1) 
+			THEN CAST(1 AS NUMBER(1,0))
+			ELSE CAST(0 AS NUMBER(1,0))
+		END																					AS ONV_COMERCIALIZACION,
 		CASE WHEN (ACT.ACT_OVN_COMERC_FECHA IS NOT NULL) 
 			THEN CAST(TO_CHAR(ACT.ACT_OVN_COMERC_FECHA ,
 				''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2(50 CHAR))

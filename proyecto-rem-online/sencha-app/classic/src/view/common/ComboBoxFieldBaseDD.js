@@ -143,6 +143,9 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 
 		setRawValue: function (value) {
 			var me = this;
+			if(me.getReference() == 'tipoActivo'){
+				Ext.global.console.error(value);
+			}
 			if(value == null) value = '';
 			me.setValorMostrado(value);
 			me.callParent([value]);
@@ -174,7 +177,7 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 	     * Generates the string value to be displayed in the text field for the currently stored value
 	     */
 	    getDisplayValue: function(tplData) {
-	        tplData = tplData || this.valorMostrado || this.displayTplData;
+	        tplData = tplData || this.displayTplData;
 	        return this.getDisplayTpl().apply(tplData);
 	    },
 		/**

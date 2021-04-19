@@ -201,8 +201,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					            	},
 		    						listeners: {
 					                	select: 'onChangeChainedCombo'
-					            	},
-					            	style:'margin-left:10px'
+					            	}
 						        }, 
 						        {
 						        	xtype: 'comboboxfieldbase',
@@ -227,8 +226,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					            		disabled: '{!activo.tipoActivoCodigoOE}',
 					            		hidden: '{!activo.isCarteraSareb}', 
 					            		readOnly:'{!esSuperUsuarioCalidadDatoAndNoUA}'
-					            	},
-					            	style:'margin-left:10px'
+					            	}
 						        },
 						        {
 				                	xtype: 'comboboxfieldbasedd',

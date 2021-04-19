@@ -63,7 +63,17 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 						filtradoEspecial: true,
 						listeners: {
 		                	select: 'onChangeComboProveedorGE'
-		            	}
+		            	},
+						tpl: Ext.create('Ext.XTemplate',
+								'<tpl for=".">',
+									'<div class="x-boundlist-item">{codigo} - {nombre} - {descripcionTipoProveedor} - {estadoProveedorDescripcion}</div>',
+								'</tpl>'
+						),
+						displayTpl:  Ext.create('Ext.XTemplate',
+								'<tpl for=".">',
+									'{codigo} - {nombre} - {descripcionTipoProveedor} - {estadoProveedorDescripcion}',
+								'</tpl>'
+						)
 					},
 					{
 						fieldLabel: HreRem.i18n('fieldlabel.email.contacto'),

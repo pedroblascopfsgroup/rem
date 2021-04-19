@@ -89,16 +89,15 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 				});
 				
 			}
-
 			binding.syncing = (binding.syncing + 1) || 1;
 			this[binding._config.names.set](value);
 			--binding.syncing;
-	    	this.fireEvent("afterbind", this, value);
-
+			this.fireEvent("afterbind", this, value);
 			if(binding._config.names.set == 'setRawValue' && me.chainedReference != null
-				&& me.up('form') != null && me.up('form').down('[reference='+me.chainedReference+']') != null
-				&& me.up('form').down('[reference='+me.chainedReference+']').getStore() != null)
-				me.up('form').down('[reference='+me.chainedReference+']').getStore().removeAll();
+					&& me.up('form') != null && me.up('form').down('[reference='+me.chainedReference+']') != null
+					&& me.up('form').down('[reference='+me.chainedReference+']').getStore() != null)
+					me.up('form').down('[reference='+me.chainedReference+']').getStore().removeAll();
+			this.validate();			
 		},
 		
 		onTriggerClick: function() {
@@ -144,7 +143,10 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 
 		setRawValue: function (value) {
 			var me = this;
-			if(value == null) value = me.valorMostrado;
+			if(me.getReference() == 'comboDDTipoSuministroRef'){
+				Ext.global.console.error(value);
+			}
+			if(value == null) value = '';
 			me.setValorMostrado(value);
 			me.callParent([value]);
         },
@@ -156,6 +158,7 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 			if(me.displayEl != null)
 				me.displayEl.dom.innerText = value;
 			me.valorMostrado = value;
+			me.originalValue = value;
 			var dataObj = {},
 			record = null;
 			dataObj[me.valueField] = me.value;
@@ -169,7 +172,14 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 			me.value = null;
 			me.setRawValue('');
 		},
-		
+		 /**
+	     * @private
+	     * Generates the string value to be displayed in the text field for the currently stored value
+	     */
+	    getDisplayValue: function(tplData) {
+	        tplData = tplData || this.valorMostrado || this.displayTplData;
+	        return this.getDisplayTpl().apply(tplData);
+	    },
 		/**
 	     * Sets the specified value(s) into the field. For each value, if a record is found in the {@link #store} that
 	     * matches based on the {@link #valueField}, then that record's {@link #displayField} will be displayed in the
@@ -183,7 +193,9 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 	        var me = this;
 	        // Value needs matching and record(s) need selecting.
 	        if (value != null) {
-	            return me.doSetValue(value);
+	        	me = me.doSetValue(value);
+				me.validate();
+				return me;
 	        } else // Clearing is a special, simpler case.
 	        {	
 				if(me.getStore()!= null && me.getStore().isLoaded()){

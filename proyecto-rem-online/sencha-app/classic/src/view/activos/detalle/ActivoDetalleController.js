@@ -374,21 +374,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	
 	onTasacionListClick: function (grid, record) {
-		var me = this,
-		form = grid.up("form"),
-		model = Ext.create('HreRem.model.ActivoTasacion'),
-		idTasacion = record.get("id");
-		
-		var fieldset =  me.lookupReference('detalleTasacion');
-		fieldset.mask(HreRem.i18n("msg.mask.loading"));
-
-		model.setId(idTasacion);
-		model.load({
-					success : function(record) {
-						me.getViewModel().set("tasacion", record);
-						fieldset.unmask();
-					}
-				});
+		var me = this;
+		if(!me.getViewModel().get('editingRows') && me.getViewModel().get("tasacion") != record){
+			var fieldset =  me.lookupReference('detalleTasacion');
+			fieldset.mask(HreRem.i18n("msg.mask.loading"));
+			setTimeout(function(){
+					me.getViewModel().set("tasacion", record);
+					fieldset.unmask();
+				}, 100);			
+		}
 	},
 
 	onSaveFormularioCompleto : function(btn, form, restringida) {

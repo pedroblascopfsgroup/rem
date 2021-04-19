@@ -101,8 +101,10 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 				items :	[
 							{
 								xtype: 'gridBaseEditableRow',
+								reference: 'tasacionesactivogridref',
 								idPrincipal: 'activo.id',
 								topBar: true,
+								allowDeselect: false,
 								removeButton: false,
 			   					cls	: 'panel-base shadow-panel',
 			   					bind: {
@@ -123,26 +125,18 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 			   				        	flex:1 
 			   				        },
 			   				        {   text: HreRem.i18n('header.listado.tasacion.tipoTasacion'),
-			   				        	dataIndex: 'tipoTasacionCodigo',
+			   				        	dataIndex: 'tipoTasacionDescripcion',
 			   				        	editor: {
-			   				        		xtype:'comboboxfieldbase',
+			   				        		xtype:'comboboxfieldbasedd',
 			   				        		reference: 'comboTipoDescripcionCodigo',
 			   				        		bind:{
-			   				        			store: '{tipoTasacionStore}'
+			   				        			store: '{tipoTasacionStore}',
+												value: '{tasacionesactivogridref.selection.tipoTasacionCodigo}',
+												rawValue: '{tasacionesactivogridref.selection.tipoTasacionDescripcion}'
 			   				        		},
 			   								addUxReadOnlyEditFieldPlugin: false,
-			   								displayField: 'descripcion',
-			   		    					valueField: 'codigo',
 			   		    					allowBlank: false
-			   				        	},
-			   				        	renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-			   					            var foundedRecord = this.up('activosdetallemain').getViewModel().getStore('tipoTasacionStore').findRecord('codigo', value);
-			   					            var descripcion;
-			   					        	if(!Ext.isEmpty(foundedRecord)) {
-			   					        		descripcion = foundedRecord.getData().descripcion;
-			   					        	}
-			   					        	return descripcion;
-			   					        },
+			   				        	},			   				        	
 			   				        	flex:2
 			   				        },	
 			   				        {   
@@ -221,10 +215,10 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 			   				            }
 			   				        }
 			   				    ],
-			   				    listeners: [
-			   				        {rowclick: 'onTasacionListClick'}
-			   					    
-			   		    		]
+			   				    listeners: {
+									rowclick: 'onTasacionListClick',
+									editando: '{editingRows}'
+								}			   					    
 							}
 				
 				]

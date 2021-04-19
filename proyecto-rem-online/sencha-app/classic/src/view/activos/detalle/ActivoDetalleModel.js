@@ -2038,8 +2038,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tipoTasacion'}
-				},  		
-				autoLoad: true
+				}
 			},
 
     		storeTramites: {

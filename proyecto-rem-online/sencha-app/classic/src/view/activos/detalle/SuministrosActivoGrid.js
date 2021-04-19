@@ -5,6 +5,7 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 	controller: 'activodetalle',
 	topBar: true,
 	editable: true,
+	allowDeselect: false,
 	bind: {
 		store: '{storeSuministrosActivo}',
 		editando: '{editingRows}'

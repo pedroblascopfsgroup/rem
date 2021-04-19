@@ -6663,4 +6663,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}		
 				return ofertaDao.getBusquedaOfertasGrid(dto);
 	}
+	
+	@Override 
+	public List<Oferta> getListOtrasOfertasTramitadasActivo(Long idActivo){
+		return ofertaDao.getListOtrasOfertasTramitadasActivo(idActivo);
+	}
 }

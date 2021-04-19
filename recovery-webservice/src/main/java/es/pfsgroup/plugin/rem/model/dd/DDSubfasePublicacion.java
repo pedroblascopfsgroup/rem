@@ -139,20 +139,20 @@ public class DDSubfasePublicacion implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
-	public static boolean isHistoricoFasesExcPubEstrategiaCl(HistoricoFasePublicacionActivo hist) {
+	public static boolean isHistoricoFasesExcPubEstrategiaCl(DDSubfasePublicacion subfasePublicacion) {
 		boolean isExclPubEstrCl = false;
 		
-		if(hist.getSubFasePublicacion() != null && CODIGO_EXCLUIDO_PUBLICACION_ESTRATEGICA_DEL_CLIENTE.equals(hist.getSubFasePublicacion().getCodigo())) {
+		if(subfasePublicacion != null && CODIGO_EXCLUIDO_PUBLICACION_ESTRATEGICA_DEL_CLIENTE.equals(subfasePublicacion.getCodigo())) {
 			isExclPubEstrCl = true;
 		}
 		
 		return isExclPubEstrCl;
 	}
 	
-	public static boolean isHistoricoFasesReqLegAdm(HistoricoFasePublicacionActivo hist) {
+	public static boolean isHistoricoFasesReqLegAdm(DDSubfasePublicacion subfasePublicacion) {
 		boolean isReqLegAdm = false;
 		
-		if(hist.getSubFasePublicacion() != null && CODIGO_REQUERIMIENTO_LEGAL_O_ADMINISTRATIVO.equals(hist.getSubFasePublicacion().getCodigo())) {
+		if(subfasePublicacion != null && CODIGO_REQUERIMIENTO_LEGAL_O_ADMINISTRATIVO.equals(subfasePublicacion.getCodigo())) {
 			isReqLegAdm = true;
 		}
 		
@@ -160,10 +160,10 @@ public class DDSubfasePublicacion implements Auditable, Dictionary {
 	}
 
 	
-	public static boolean isHistoricoFasesSinValor(HistoricoFasePublicacionActivo hist) {
+	public static boolean isHistoricoFasesSinValor(DDSubfasePublicacion subfasePublicacion) {
 		boolean isSinValor = false;
 		
-		if(hist.getSubFasePublicacion() != null && CODIGO_SIN_VALOR.equals(hist.getSubFasePublicacion().getCodigo())) {
+		if(subfasePublicacion != null && CODIGO_SIN_VALOR.equals(subfasePublicacion.getCodigo())) {
 			isSinValor = true;
 		}
 		

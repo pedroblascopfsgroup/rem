@@ -126,11 +126,12 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			Integer tmpPerimetroMacc =  getCheckValue(exc.dameCelda(fila, 16));			
 			String admision = exc.dameCelda(fila, 17);
 			String motivoAdmision = exc.dameCelda(fila, 18);
-			String visibleGestionComercial = exc.dameCelda(fila,19);
-			String motivoGestionComercial = exc.dameCelda(fila,20);
-			String exclusionValidaciones = exc.dameCelda(fila,21);
-			String fechaCambio = exc.dameCelda(fila, 22);
-			String checkOnEfectosComercializacion = exc.dameCelda(fila, 23);
+			String checkOnEfectosComercializacion = exc.dameCelda(fila, 19);
+			String visibleGestionComercial = exc.dameCelda(fila,20);
+			String motivoGestionComercial = exc.dameCelda(fila,21);
+			String exclusionValidaciones = exc.dameCelda(fila,22);
+			String fechaCambio = exc.dameCelda(fila, 23);
+			
 			
 			Activo activo = activoApi.getByNumActivo(numActivo);
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
@@ -346,9 +347,11 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 				if(!Checks.esNulo(exclusionValidaciones)) {
 					DDSinSiNo validacion = getCheckValueToDDSinSiNo(exclusionValidaciones);
 					perimetroActivo.setExcluirValidaciones(validacion);
-					if(!Checks.esNulo(motivoGestionComercial) && validacion != null ) {
+					if(validacion != null ) {
 						if(DDSinSiNo.CODIGO_SI.equalsIgnoreCase(validacion.getCodigo())) {
-							perimetroActivo.setMotivoGestionComercial((DDMotivoGestionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, motivoGestionComercial));
+							if(!Checks.esNulo(motivoGestionComercial)) {
+								perimetroActivo.setMotivoGestionComercial((DDMotivoGestionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, motivoGestionComercial));
+							}
 						}else {
 							perimetroActivo.setMotivoGestionComercial(null);
 						}
@@ -469,8 +472,8 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 					idListSinVisibilidadComercial.add(activo.getId());
 				}
 			}
-			activoAdapter.actualizarEstadoPublicacionActivoPerimetro(idList, idListSinVisibilidadComercial);
-			activoAdapter.actualizarEstadoPublicacionActivo(idList, false);
+
+			activoAdapter.actualizarEstadoPublicacionSincronoPerimetro(idList, idListSinVisibilidadComercial);
 			transactionManager.commit(transaction);
 		}catch(Exception e){
 			transactionManager.rollback(transaction);

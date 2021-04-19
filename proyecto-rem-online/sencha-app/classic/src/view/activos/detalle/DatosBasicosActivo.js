@@ -192,29 +192,16 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									reference: 'tipoActivoOE',
 									chainedStore: 'comboSubtipoActivoOE',
 									chainedReference: 'subtipoActivoComboOE',
-									bind: {
-										store: '{comboTipoActivoOE}',
-										value: '{activo.tipoActivoCodigoOE}',
-										hidden: '{!activo.isCarteraSareb}', 
-										readOnly:'{!esSuperUsuarioCalidadDatoAndNoUA}'
-									},
-									listeners: {
-										select: 'onChangeChainedCombo'
-									},
-									style:'margin-left:10px'
-								},
-						        {
-									xtype: 'comboboxfieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
-						        	reference: 'subtipoActivoCombo',
 						        	bind: {
-					            		store: '{comboSubtipoActivo}',
-					            		value: '{activo.subtipoActivoCodigo}',
-					            		disabled: '{!activo.tipoActivoCodigo}'
+					            		store: '{comboTipoActivoOE}',
+					            		value: '{activo.tipoActivoCodigoOE}',
+					            		hidden: '{!activo.isCarteraSareb}', 
+					            		readOnly:'{!esSuperUsuarioCalidadDatoAndNoUA}'
 					            	},
-		    						allowBlank: false,
-					            	style:'margin-left:10px'
-						        },  
+		    						listeners: {
+					                	select: 'onChangeChainedCombo'
+					            	}
+						        }, 
 						        {
 						        	xtype: 'comboboxfieldbase',
 						        	xtype: 'comboboxfieldbasedd',
@@ -238,8 +225,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					            		disabled: '{!activo.tipoActivoCodigoOE}',
 					            		hidden: '{!activo.isCarteraSareb}', 
 					            		readOnly:'{!esSuperUsuarioCalidadDatoAndNoUA}'
-					            	},
-					            	style:'margin-left:10px'
+					            	}
 						        },
 						        {
 				                	xtype: 'comboboxfieldbasedd',

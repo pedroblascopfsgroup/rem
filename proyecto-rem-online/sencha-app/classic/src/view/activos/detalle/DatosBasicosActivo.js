@@ -203,19 +203,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					                	select: 'onChangeChainedCombo'
 					            	},
 					            	style:'margin-left:10px'
-						        },
-						        {
-									xtype: 'comboboxfieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
-						        	reference: 'subtipoActivoCombo',
-						        	bind: {
-					            		store: '{comboSubtipoActivo}',
-					            		value: '{activo.subtipoActivoCodigo}',
-					            		disabled: '{!activo.tipoActivoCodigo}'
-					            	},
-		    						allowBlank: false,
-					            	style:'margin-left:10px'
-						        },  
+						        }, 
 						        {
 						        	xtype: 'comboboxfieldbase',
 						        	xtype: 'comboboxfieldbasedd',

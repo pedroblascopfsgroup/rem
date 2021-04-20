@@ -143,9 +143,6 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 
 		setRawValue: function (value) {
 			var me = this;
-			if(me.getReference() == 'tipoActivo'){
-				Ext.global.console.error(value);
-			}
 			if(value == null) value = '';
 			me.setValorMostrado(value);
 			me.callParent([value]);
@@ -158,7 +155,6 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 			if(me.displayEl != null)
 				me.displayEl.dom.innerText = value;
 			me.valorMostrado = value;
-			me.originalValue = value;
 			var dataObj = {},
 			record = null;
 			dataObj[me.valueField] = me.value;
@@ -172,14 +168,6 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 			me.value = null;
 			me.setRawValue('');
 		},
-		 /**
-	     * @private
-	     * Generates the string value to be displayed in the text field for the currently stored value
-	     */
-	    getDisplayValue: function(tplData) {
-	        tplData = tplData || this.displayTplData;
-	        return this.getDisplayTpl().apply(tplData);
-	    },
 		/**
 	     * Sets the specified value(s) into the field. For each value, if a record is found in the {@link #store} that
 	     * matches based on the {@link #valueField}, then that record's {@link #displayField} will be displayed in the

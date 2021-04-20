@@ -999,10 +999,10 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				}
 			}
 		
-			if(dto.getFechaPosesion() != null) {
+			
 				activo.getAdjNoJudicial().setFechaPosesion(dto.getFechaPosesion());
 				activo.getSituacionPosesoria().setFechaTomaPosesion(dto.getFechaPosesion());
-			}
+			
 			
 		} catch (JsonViewerException jvex) {
 			throw jvex;

@@ -11,6 +11,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
@@ -47,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
+import es.pfsgroup.plugin.rem.utils.ImagenWebDto;
 
 
 public interface GenericApi {
@@ -352,6 +354,10 @@ public interface GenericApi {
 	public List<DtoPropietario> getcomboSociedadAnteriorBBVA();
 	
 	List<DDEstadoAdmision> getComboEstadoAdmisionFiltrado(Set<String> tipoEstadoAdmisionCodigo);
+
+	List<ImagenWebDto> getFichaComercialFotosActivo(Long id, String urlBase);
+	
+	List<ImagenWebDto> getFichaComercialFotosAgrupacion(Long id, String urlBase);
 	
 	/*@BusinessOperationDefinition("genericManager.getComboTipoTrabajoFiltered")
 	public List<DDTipoTrabajo> getComboTipoTrabajoFiltered(String idActivo);*/

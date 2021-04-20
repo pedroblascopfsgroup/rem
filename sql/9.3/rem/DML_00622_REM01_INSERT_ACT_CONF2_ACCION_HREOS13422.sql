@@ -1,10 +1,10 @@
--/*
+--/*
 --##########################################
---## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210316
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20210419
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13446
+--## INCIDENCIA_LINK=HREOS-13422
 --## PRODUCTO=NO
 --##
 --## Finalidad: Actualizar instrucciones
@@ -29,16 +29,34 @@ DECLARE
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-	  V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_CONF3_MAPEO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+	  V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_CONF2_ACCION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      T_TIPO_DATA('175','No mostrar precio Venta','ACT_APU_ACTIVO_PUBLICACION','APU_CHECK_OCULTAR_PRECIO_V','ACT_ID','LEFT JOIN (SELECT CASE WHEN AUX.VALOR_NUEVO = 1 THEN 1 WHEN AUX.VALOR_NUEVO = 0 THEN 0 END APU_CHECK_OCULTAR_PRECIO_V, AUX.ACT_NUM_ACTIVO FROM '||V_ESQUEMA||'.ESPARTA_EXCEL1 AUX WHERE AUX.CAMPO = ''''175'''') CRUCE ON CRUCE.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO')
+      T_TIPO_DATA('178','Incluido en Perímetro HRE','178','ACT_CND'),
+      T_TIPO_DATA('178','Incluido en Perímetro HRE','179','WRN_CND'),
+      T_TIPO_DATA('179','Check Gestión','180','ACT_CND'),
+      T_TIPO_DATA('179','Check Gestión','181','WRN_CND'),
+      T_TIPO_DATA('180','Motivo inclusión/exclusión Gestión','182','ACT_CND'),
+      T_TIPO_DATA('180','Motivo inclusión/exclusión Gestión','183','WRN_CND'),
+      T_TIPO_DATA('181','Check Publicación','184','ACT_CND'),
+      T_TIPO_DATA('181','Check Publicación','185','WRN_CND'),
+      T_TIPO_DATA('182','Motivo inclusión/exclusión Publicación','186','ACT_CND'),
+      T_TIPO_DATA('182','Motivo inclusión/exclusión Publicación','187','WRN_CND'),
+      T_TIPO_DATA('183','Check Comercialización','188','ACT_CND'),
+      T_TIPO_DATA('183','Check Comercialización','189','WRN_CND'),
+      T_TIPO_DATA('184','Motivo inclusión/exclusión Comercialización','190','ACT_CND'),
+      T_TIPO_DATA('184','Motivo inclusión/exclusión Comercialización','191','WRN_CND'),
+      T_TIPO_DATA('185','Check Formalización','192','ACT_CND'),
+      T_TIPO_DATA('185','Check Formalización','193','WRN_CND'),
+      T_TIPO_DATA('186','Motivo inclusión/exclusión Formalización','194','ACT_CND'),
+      T_TIPO_DATA('186','Motivo inclusión/exclusión Formalización','195','WRN_CND')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
+
     -- LOOP para insertar los valores --
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TEXT_TABLA);
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
@@ -46,35 +64,34 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
         --Comprobar el dato a insertar.
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
-					WHERE DD_CCS_ID = (SELECT DD_CCS_ID FROM '||V_ESQUEMA||'.DD_CCS_CAMPOS_CONV_SAREB WHERE DD_CCS_TABLA = '''||TRIM(V_TMP_TIPO_DATA(3))||''' AND DD_CCS_CAMPO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''
-          AND DD_COS_ID = (SELECT DD_COS_ID FROM '||V_ESQUEMA||'.DD_COS_CAMPOS_ORIGEN_CONV_SAREB WHERE BORRADO = 0 AND DD_COS_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''))
-          AND BORRADO = 0';
+					WHERE AC2_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''' AND BORRADO = 0';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         IF V_NUM_TABLAS = 1 THEN
-          DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(3))||''' y '''||TRIM(V_TMP_TIPO_DATA(4))||''' ya existe');
+          DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(3))||''' ya existe');
         ELSE
           IF TRIM(V_TMP_TIPO_DATA(3)) IS NOT NULL THEN
             V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
-              AC3_ID,
-              DD_CCS_ID,
-              AC3_TRANSFORMACION,
+              AC2_ID,
+              AC2_CODIGO,
+              DD_COS_ID,
+              DD_ACS_ID,
               VERSION,
               USUARIOCREAR,
               FECHACREAR,
               BORRADO
               ) VALUES (
               '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL,
-              (SELECT DD_CCS_ID FROM '||V_ESQUEMA||'.DD_CCS_CAMPOS_CONV_SAREB WHERE DD_CCS_TABLA = '''||TRIM(V_TMP_TIPO_DATA(3))||''' AND DD_CCS_CAMPO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''
-                AND DD_COS_ID = (SELECT DD_COS_ID FROM '||V_ESQUEMA||'.DD_COS_CAMPOS_ORIGEN_CONV_SAREB WHERE BORRADO = 0 AND DD_COS_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')),
-              '''||TRIM(V_TMP_TIPO_DATA(6))||''',
+              '''||TRIM(V_TMP_TIPO_DATA(3))||''',
+              (SELECT DD_COS_ID FROM '||V_ESQUEMA||'.DD_COS_CAMPOS_ORIGEN_CONV_SAREB WHERE DD_COS_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''),
+              (SELECT DD_ACS_ID FROM '||V_ESQUEMA||'.DD_ACS_ACCION_CONV_SAREB WHERE DD_ACS_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''),
               0,
-              ''HREOS-13446'',
+              ''HREOS-13422'',
               SYSDATE,
               0)';
             EXECUTE IMMEDIATE V_MSQL;
-            DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha insertado el valor '''||TRIM(V_TMP_TIPO_DATA(3))||''' y '''||TRIM(V_TMP_TIPO_DATA(4))||'''');
+            DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha insertado el valor '''||TRIM(V_TMP_TIPO_DATA(3))||'''');     
           ELSE 
-            DBMS_OUTPUT.PUT_LINE('[INFO]: No existe configuración para '''||TRIM(V_TMP_TIPO_DATA(1))||''' y '''||TRIM(V_TMP_TIPO_DATA(2))||'''');
+            DBMS_OUTPUT.PUT_LINE('[INFO]: No existe configuración para '''||TRIM(V_TMP_TIPO_DATA(2))||'''');
           END IF;
         END IF;
       END LOOP;

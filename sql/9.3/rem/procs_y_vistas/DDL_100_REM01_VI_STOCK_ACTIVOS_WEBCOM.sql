@@ -263,15 +263,15 @@ BEGIN/*Versión 0.8*/
         CASE WHEN (AGA_PA.DD_TAG_ID = (SELECT AGA_PA.DD_TAG_ID FROM REM01.DD_TAG_TIPO_AGRUPACION TAG WHERE TAG.DD_TAG_CODIGO = ''16'') AND AGA_PA.AGA_PRINCIPAL = 1)
             THEN CAST(NULL AS NUMBER(16,0))
             ELSE CAST(NVL2(PIVOT_UA.PROMOCION_ALQUILER_NUM_REM, SUBD_ACT.ID, NULL) AS NUMBER(16,0))        
-        END                                                                                AS CODIGO_CABECERA_PA,                                                    
+        END                                                                                			AS CODIGO_CABECERA_PA,                                                    
 
-        CAST(GMO.NOMBRE AS VARCHAR2(60 CHAR))                                               AS NOMBRE_GMO,
-        CAST(GMO.USU_TELEFONO AS VARCHAR2(14 CHAR))                                         AS TELEFONO_GMO,
-        CAST(GMO.USU_MAIL AS VARCHAR2(60 CHAR))                                             AS EMAIL_GMO,
+        CAST(GMO.NOMBRE AS VARCHAR2(60 CHAR))                                               		AS NOMBRE_GMO,
+        CAST(GMO.USU_TELEFONO AS VARCHAR2(14 CHAR))                                         		AS TELEFONO_GMO,
+        CAST(GMO.USU_MAIL AS VARCHAR2(60 CHAR))                                             		AS EMAIL_GMO,
         CASE WHEN (AGA_PA.DD_TAG_ID = (SELECT AGA_PA.DD_TAG_ID FROM REM01.DD_TAG_TIPO_AGRUPACION TAG WHERE TAG.DD_TAG_CODIGO = ''16'') AND AGA_PA.AGA_PRINCIPAL = 1)
             THEN CAST(1 AS NUMBER(1,0))
             ELSE CAST(0 AS NUMBER(1,0))
-        END                                                                                 AS INDICADOR_AM,
+        END                                                                                 		AS INDICADOR_AM,
         CASE WHEN (AGA_PA.DD_TAG_ID = (SELECT AGA_PA.DD_TAG_ID FROM REM01.DD_TAG_TIPO_AGRUPACION TAG WHERE TAG.DD_TAG_CODIGO = ''16'') AND AGA_PA.AGA_PRINCIPAL = 0)
             THEN CAST(ACT.ACT_NUM_ACTIVO AS NUMBER(32,0))
             ELSE CAST(NULL AS NUMBER(32,0))
@@ -279,8 +279,8 @@ BEGIN/*Versión 0.8*/
         CASE WHEN (AGA_PA.DD_TAG_ID = (SELECT AGA_PA.DD_TAG_ID FROM REM01.DD_TAG_TIPO_AGRUPACION TAG WHERE TAG.DD_TAG_CODIGO = ''16''))
             THEN CAST(AGA_PA.AGR_NUM_AGRUP_REM AS NUMBER(32,0))
             ELSE CAST(NULL AS NUMBER(32,0))
-        END                                                                                 AS ID_PA,
-        CAST(NVL2(PIVOT_UA.PROMOCION_ALQUILER_NUM_REM, SUBD_ACT.ID, NULL) AS NUMBER(32,0)) AS ID_SUBDIVISION_PA,
+        END                                                                                 		AS ID_PA,
+        CAST(NVL2(PIVOT_UA.PROMOCION_ALQUILER_NUM_REM, SUBD_ACT.ID, NULL) AS NUMBER(32,0)) 			AS ID_SUBDIVISION_PA,
 		CAST(PAC.PAC_CHECK_GESTION_COMERCIAL AS NUMBER(1,0))										AS CHECK_GESTION_COMERCIAL,
 		CASE WHEN PAC.PAC_EXCLUIR_VALIDACIONES = (SELECT DD_SIN_ID FROM REMMASTER.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'')
             THEN 1
@@ -293,7 +293,7 @@ BEGIN/*Versión 0.8*/
 		CASE WHEN LLV.LLV_COD_TENEDOR_POSEEDOR IS NOT NULL AND LLV.LLV_COD_TENEDOR_POSEEDOR NOT LIKE ''N/A'' AND LLV.LLV_COD_TENEDOR_NO_PVE IS NULL THEN CAST(PVE_LLV.PVE_COD_REM AS VARCHAR2(16 CHAR))
 		WHEN LLV.LLV_COD_TENEDOR_POSEEDOR IS NULL AND LLV.LLV_COD_TENEDOR_NO_PVE IS NOT NULL AND LLV.LLV_COD_TENEDOR_NO_PVE NOT LIKE ''N/A'' THEN NULL 
 		ELSE NULL 
-		END AS ARR_PROVEEDOR_LLAVES_REM_ID_PROVEEDOR_LLAVES_REM,
+		END 																						AS ARR_PROVEEDOR_LLAVES_REM_ID_PROVEEDOR_LLAVES_REM,
 		CAST(PVE_ESPEJO.PVE_COD_REM AS NUMBER(16,0))												AS ID_PROVEEDOR_ESPEJO_REM,
 		CAST(ACT.ACT_PERIMETRO_MACC AS NUMBER(1,0))                                                 AS PERIMETRO_MACC,
 		CAST(TCR.DD_TCR_CODIGO AS VARCHAR2(5 CHAR))	 												AS COD_TIPO_COMERCIALIZAR,

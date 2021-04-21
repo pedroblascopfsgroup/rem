@@ -85,6 +85,7 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PresupuestoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
@@ -282,6 +283,9 @@ public class ActivoAdapter {
 	
 	@Autowired
 	private ComisionamientoApi comisionamientoApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -3194,7 +3198,10 @@ public class ActivoAdapter {
 			resultado = true;
 		}else{
 			if(listaIdActivo != null && !listaIdActivo.isEmpty()){
-				return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(listaIdActivo,true);
+				boolean isOk = activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(listaIdActivo,true);
+				if(isOk) {
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivo);
+				}
 			}
 		}
 		return resultado;
@@ -4900,4 +4907,21 @@ public class ActivoAdapter {
 		
 		return true;
 	}
+	
+	@Transactional(readOnly = false)
+	public boolean actualizarEstadoPublicacionSincronoPerimetro(ArrayList<Long> listaIdActivo, ArrayList<Long> listaIdActivoSinVisibilidad){
+		boolean resultado = true;
+		
+		if(listaIdActivo != null && !listaIdActivo.isEmpty()){
+			return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(listaIdActivo,true);
+		}
+		if(listaIdActivoSinVisibilidad != null && !listaIdActivoSinVisibilidad.isEmpty()) {
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivoSinVisibilidad);
+		}
+		
+		return resultado;
+	}
+	
 }
+
+

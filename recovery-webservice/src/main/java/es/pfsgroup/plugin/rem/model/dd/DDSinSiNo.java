@@ -144,4 +144,16 @@ public class DDSinSiNo implements Auditable, Dictionary {
         }
     	return dicc;   	
     }
+    
+    public static String cambioBooleanToCodigoDiccionario(Boolean valor) {
+    	String codigoDiccionario = null;
+    	
+    	if(valor) {
+    		codigoDiccionario = CODIGO_SI;
+    	}else {
+    		codigoDiccionario = CODIGO_NO;
+    	}
+    	
+    	return codigoDiccionario;
+    }
 }

@@ -1222,48 +1222,25 @@ public class AgrupacionAdapter {
 	
 	}
 	
-	private boolean calculateEqualsPerimetros(PerimetroActivo perimetroActivoPrincipal,
-			PerimetroActivo perimetroActivoActual) {
-		boolean errorFlag = false;
-		
-		
-		if((perimetroActivoPrincipal.getCheckGestorComercial() != null && perimetroActivoActual.getCheckGestorComercial() == null) 
-				||(perimetroActivoPrincipal.getCheckGestorComercial() == null && perimetroActivoActual.getCheckGestorComercial() != null) ) {
-			errorFlag = true;
-		}else if(perimetroActivoPrincipal.getCheckGestorComercial() != null && perimetroActivoActual.getCheckGestorComercial() != null && !errorFlag) {
-			errorFlag = !(perimetroActivoPrincipal.getCheckGestorComercial() == perimetroActivoActual.getCheckGestorComercial());
-		}
-		
-		
-		DDSinSiNo excluirValidacionesPrincipal = perimetroActivoPrincipal.getExcluirValidaciones();
-		DDSinSiNo excluirValidacionesActual = perimetroActivoActual.getExcluirValidaciones();
-		if((excluirValidacionesPrincipal!= null && excluirValidacionesActual == null) 
-				||(excluirValidacionesPrincipal == null && excluirValidacionesActual != null) ) {
-			errorFlag = true;
-		}else if((excluirValidacionesPrincipal != null && excluirValidacionesActual != null)
-				&& (excluirValidacionesPrincipal.getCodigo() != null && excluirValidacionesActual.getCodigo() == null) 
-				||(excluirValidacionesPrincipal.getCodigo() == null && excluirValidacionesActual.getCodigo() != null)) {
-			errorFlag = true;
-		}else if(excluirValidacionesPrincipal != null && excluirValidacionesActual != null && 
-				excluirValidacionesPrincipal.getCodigo() != null && excluirValidacionesActual.getCodigo() != null && !errorFlag) {
-			errorFlag = !(excluirValidacionesPrincipal.getCodigo().equals(excluirValidacionesActual.getCodigo()));
-		}
-		
+	private boolean calculateEqualsPerimetros(PerimetroActivo perimetroActivoPrincipal, PerimetroActivo perimetroActivoActual) {
+		boolean errorFlag = false;	
+		Boolean excluirValidacionesPrincipal = DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivoPrincipal.getExcluirValidaciones());
+		Boolean excluirValidacionesActual = DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivoActual.getExcluirValidaciones());
 		DDMotivoGestionComercial motivoGestionPrincipal = perimetroActivoPrincipal.getMotivoGestionComercial();
 		DDMotivoGestionComercial motivoGestionActual = perimetroActivoActual.getMotivoGestionComercial();
-		if((motivoGestionPrincipal!= null && motivoGestionActual == null) 
-				||(motivoGestionPrincipal == null && motivoGestionActual != null) ) {
-			errorFlag = true;
-		}else if((motivoGestionPrincipal != null && motivoGestionActual != null)
-				&& ((motivoGestionPrincipal.getCodigo() != null && motivoGestionActual.getCodigo() == null) 
-				||(motivoGestionPrincipal.getCodigo() == null && motivoGestionActual.getCodigo() != null))) {
-			errorFlag = true;
-		}else if(motivoGestionPrincipal != null && motivoGestionActual != null && 
-				motivoGestionPrincipal.getCodigo() != null && motivoGestionActual.getCodigo() != null && !errorFlag) {
-			errorFlag = motivoGestionPrincipal.getCodigo().equals(motivoGestionActual.getCodigo());
-		}
-	
 		
+		errorFlag = !(perimetroActivoPrincipal.getCheckGestorComercial() == perimetroActivoActual.getCheckGestorComercial());
+		
+		if(!errorFlag) {
+			errorFlag = !excluirValidacionesPrincipal == excluirValidacionesActual;
+			if(!errorFlag) {
+				if((motivoGestionPrincipal == null && motivoGestionActual != null) || (motivoGestionPrincipal != null && motivoGestionActual == null)) {
+					errorFlag = true;
+				}else if(motivoGestionPrincipal != null && motivoGestionActual != null) {
+					errorFlag = !(motivoGestionPrincipal.getCodigo() == motivoGestionActual.getCodigo());
+				}
+			}
+		}
 		return errorFlag;
 	}
 
@@ -3480,22 +3457,17 @@ public class AgrupacionAdapter {
 						}
 					}
 					//HREOS-12346
+					
 					if(dto.getMarcaDeExcluido() != null || dto.getVisibleGestionComercial() != null) {
-						if(dto.getVisibleGestionComercial() == null || dto.getVisibleGestionComercial()){
-							Boolean excluirValidaciones = dto.getMarcaDeExcluido();
-							for (ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
-								if(excluirValidaciones == null && aga.getActivo() != null) {
-									PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(aga.getActivo().getId());
-									if(perimetroActivo != null) {
-										excluirValidaciones = DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones());
-									}
-									
-								}
-								Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(aga.getActivo(), null, excluirValidaciones ,true);
-								recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
-							}
+						Boolean excluirValidaciones = dto.getMarcaDeExcluido();
+						Boolean checkGestorComercial = dto.getVisibleGestionComercial();
+						for (ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
+							Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(aga.getActivo(), checkGestorComercial, excluirValidaciones ,true);
+							recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
+							
 						}
 					}
+				
 					saveActivosVisiblesGestionComercial(dto,id);
 
 					

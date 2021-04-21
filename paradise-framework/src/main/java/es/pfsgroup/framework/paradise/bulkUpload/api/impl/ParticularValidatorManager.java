@@ -166,22 +166,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean activoNoPrincipalEnAgrupacionRestringida(String numActivo) {
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
-				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
-				+ "			    ACT_AGR_AGRUPACION agr, "
-				+ "			    ACT_ACTIVO act, "
-				+ "			    DD_TAG_TIPO_AGRUPACION tipoAgr "
-				+ "			  WHERE aga.AGR_ID = agr.AGR_ID "
-				+ "			    AND act.act_id   = aga.act_id "
-				+ "			    AND tipoAgr.DD_TAG_ID = agr.DD_TAG_ID "
-				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
-				+ "			    AND tipoAgr.DD_TAG_CODIGO = '02' "
-				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  < SYSDATE)"
-				+"              AND aga.AGA_PRINCIPAL = 0"
-				+ "			    AND aga.BORRADO  = 0 "
-				+ "			    AND agr.BORRADO  = 0 "
-				+ "			    AND act.BORRADO  = 0 ");
+	public Boolean activoPrincipalEnAgrupacionRestringida(String numActivo) {
+		String resultado = rawDao.getExecuteSQL("SELECT count(1)      \n" + 
+				"FROM REM01.ACT_AGA_AGRUPACION_ACTIVO aga\n" + 
+				"JOIN REM01.ACT_AGR_AGRUPACION agr on aga.agr_id = agr.agr_id and agr.borrado = 0 \n" + 
+				"join REM01.DD_TAG_TIPO_AGRUPACION tagg on agr.dd_tag_id = tagg.dd_tag_id \n" + 
+				"where tagg.dd_Tag_codigo =  '02' and aga.borrado = 0  and AGR.agr_act_principal = (SELECT ACT_ID FROM REM01.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = "+ numActivo +" ) " + 
+				"and (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE) and rownum = 1");
 		return "1".equals(resultado);
 	}
 
@@ -5490,17 +5481,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean isCheckVisibleGestionComercial(String numActivo,Integer celdaVisibleGestionComercial) {
-		if(celdaVisibleGestionComercial == null || celdaVisibleGestionComercial == 2|| Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+	public Boolean isCheckVisibleGestionComercial(String numActivo) {
+		if( Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return false;
 		}
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT COUNT(1) FROM ACT_PAC_PERIMETRO_ACTIVO " 
-				+ "WHERE ACT_ID = (select act_id from act_activo where act_num_activo = '"+ numActivo+"' ) AND PAC_CHECK_GESTION_COMERCIAL = "+ celdaVisibleGestionComercial +""
+				+ "WHERE ACT_ID = (select act_id from act_activo where act_num_activo = '"+ numActivo+"' ) AND PAC_CHECK_GESTION_COMERCIAL = 1"
 				+ "AND BORRADO = 0"
 		);
 		
-		return "0".equals(resultado);
+		return !"0".equals(resultado);
 	}
 	
 	
@@ -6947,7 +6938,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" WHERE (ALQUILER.DD_EPA_CODIGO = '01' OR VENTA.DD_EPV_CODIGO = '01') " + 
 				" AND PRO.PRO_DOCIDENTIF IN ('B63442974','B11819935','B39488549','A83827907') " + 
 				" AND act.ACT_NUM_ACTIVO ='"+numActivo+"'");
-		return "0".equals(resultado);
+		return !"0".equals(resultado);
 	}
 	
 	@Override
@@ -7030,8 +7021,35 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"FROM ultimo u\n" + 
 				"JOIN  dd_sfp_subfase_publicacion sp ON u.DD_SFP_ID = sp.DD_SFP_ID AND sp.borrado = 0\n" + 
 				"WHERE sp.DD_SFP_CODIGO = '15' OR sp.DD_SFP_CODIGO = '14'  OR sp.DD_SFP_CODIGO = '12'"
-);
+			);
 		return "0".equals(resultado);
 	}
 
+	@Override
+	public boolean isConCargasOrCargasEsparta(String activo) {
+		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL ("SELECT count(1) FROM ACT_CRG_CARGAS crg \n" + 
+				"join act_activo act on act.act_id = crg.act_id\n" + 
+				"left join DD_ECG_ESTADO_CARGA ecg on crg.DD_ECG_ID = ecg.DD_ECG_ID \n" + 
+				"where crg.borrado = 0 and act.borrado = 0 and ecg.borrado = 0 and act.act_num_activo = "+ activo +" and \n" + 
+				"(crg.CRG_OCULTO_CARGA_MASIVA = 1 OR ecg.dd_ecg_codigo = '01' OR ecg.dd_ecg_codigo = '02')"
+			);
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public boolean aplicaComercializar(String activo) {
+		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL ("SELECT count(1) FROM act_pac_perimetro_activo pac\n" + 
+				"join act_activo act on act.act_id = pac.act_id\n" + 
+				"where act.act_num_activo = "+ activo +" and act.borrado = 0 and pac.borrado = 0 and pac.PAC_CHECK_COMERCIALIZAR = '1'"	
+			);
+		
+		return !"0".equals(resultado);
+	}
 }

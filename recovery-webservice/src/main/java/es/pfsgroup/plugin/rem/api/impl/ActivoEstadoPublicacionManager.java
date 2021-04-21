@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -187,6 +188,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	
 	@Autowired
 	private ActivoAgrupacionDao activoAgrupacionDao;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	@Override
 	public DtoDatosPublicacionActivo getDatosPublicacionActivo(Long idActivo) {
@@ -1490,7 +1494,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				if (!Checks.esNulo(dto.getSubfasePublicacionCodigo())) {
 					Filter filtroSubfaseNueva = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getSubfasePublicacionCodigo());
 					DDSubfasePublicacion subfasePublicacionNueva = genericDao.get(DDSubfasePublicacion.class, filtroSubfaseNueva);
-					nuevaFasePublicacionActivo.setSubFasePublicacion(subfasePublicacionNueva);
+					nuevaFasePublicacionActivo.setSubFasePublicacion(subfasePublicacionNueva);		
 				}
 				
 				if (!Checks.esNulo(dto.getComentario())) {
@@ -1499,6 +1503,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				
 				genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFasePublicacionActivo);
 				enviarCorreoFasePublicacion(dto);
+				if (!Checks.esNulo(dto.getSubfasePublicacionCodigo())) {
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, null, false);
+				}
 			} else {
 				throw new JsonViewerException("Esta transición no está permitida");
 			}

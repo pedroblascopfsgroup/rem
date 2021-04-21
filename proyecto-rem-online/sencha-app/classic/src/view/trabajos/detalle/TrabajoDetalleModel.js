@@ -430,7 +430,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			model:'HreRem.model.ActivoTrabajoSubida',
     			proxy: {
     				type: 'uxproxy',
-    				remoteUrl: 'trabajo/getListActivosByProceso',
+    				remoteUrl: 'trabajo/getListActivosByProceso',    				
     				extraParams: {idProceso: 'idProceso'}
     			},
     	    	remoteSort: true,

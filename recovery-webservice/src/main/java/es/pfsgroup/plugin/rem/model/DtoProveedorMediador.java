@@ -10,10 +10,6 @@ public class DtoProveedorMediador extends WebDto {
 
 	private Long idProveedor;
 	private String nombre;
-	private String nombreComercial;
-	private Long codigo;
-	private String estadoProveedorDescripcion;
-	private String descripcionTipoProveedor;
 	
 	public Long getId() {
 		return idProveedor;
@@ -26,30 +22,6 @@ public class DtoProveedorMediador extends WebDto {
 	}
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
-	}
-	public String getEstadoProveedorDescripcion() {
-		return estadoProveedorDescripcion;
-	}
-	public void setEstadoProveedorDescripcion(String estadoProveedorDescripcion) {
-		this.estadoProveedorDescripcion = estadoProveedorDescripcion;
-	}
-	public String getDescripcionTipoProveedor() {
-		return descripcionTipoProveedor;
-	}
-	public void setDescripcionTipoProveedor(String descripcionTipoProveedor) {
-		this.descripcionTipoProveedor = descripcionTipoProveedor;
-	}
-	public Long getCodigo() {
-		return codigo;
-	}
-	public void setCodigo(Long codigo) {
-		this.codigo = codigo;
-	}
-	public String getNombreComercial() {
-		return nombreComercial;
-	}
-	public void setNombreComercial(String nombreComercial) {
-		this.nombreComercial = nombreComercial;
 	}
 	
 }

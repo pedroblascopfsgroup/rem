@@ -315,7 +315,7 @@ public class TrabajoController extends ParadiseJsonController {
 			
 			Long idTrabajo = trabajoApi.create(dtoTrabajo);
 			if(new Long(-1L).equals(idTrabajo))
-				model.put("warn", "Proceso de creación trabajos en ejecución, espere uno o dos minutos y refresque los trabajos.");
+				model.put("warn", "Proceso de creación trabajos en ejecución, vaya al apartado de 'Carga Masiva' para ver si ha terminado.");
 			else
 				dtoTrabajo.setIdTrabajo(idTrabajo);
 			success = true;
@@ -1420,27 +1420,6 @@ public class TrabajoController extends ParadiseJsonController {
 	    if(mapAsString.length()>0)
 	    	mapAsString.append("}");
 	    return mapAsString.toString();
-	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView subeListaActivos(HttpServletRequest request, HttpServletResponse response){
-		ModelMap model = new ModelMap();
-		Page page = null;
-		try {
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
-			page = trabajoAdapter.getListActivosBySubidaExcel(fileItem);
-			if(!Checks.esNulo(page)) {
-				model.put("data", page.getResults());
-				model.put("totalCount", page.getTotalCount());
-				model.put("success", true);
-			}
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			model.put("success", false);
-		}
-
-		return createModelAndViewJson(model);
 	}
 		
 	@SuppressWarnings("unchecked")

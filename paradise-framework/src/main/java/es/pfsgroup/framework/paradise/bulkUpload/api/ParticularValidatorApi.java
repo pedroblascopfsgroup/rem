@@ -1463,4 +1463,8 @@ public interface ParticularValidatorApi {
 	boolean isConCargasOrCargasEsparta(String activo);
 
 	boolean aplicaComercializar(String activo);
+
+	Boolean isActivoAlquiladoSCM(String activo);
+
+	boolean isActivoPublicadoDependiendoSuTipoComercializacion(String activo);
 }

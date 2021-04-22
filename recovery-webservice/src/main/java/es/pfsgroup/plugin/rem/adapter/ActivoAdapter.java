@@ -3162,7 +3162,7 @@ public class ActivoAdapter {
 					}
 				} else {
 					this.updateGestoresTabActivoTransactional(dto, id);
-					if(!Checks.esNulo(dtofichacabecera.getCheckGestorComercial())){
+					if(!Checks.esNulo(dtofichacabecera.getCheckGestorComercial()) || !Checks.esNulo(dtofichacabecera.getExcluirValidacionesBool())){
 						ArrayList<Long> listaActivo = new ArrayList<Long>();
 						listaActivo.add(id);
 						this.actualizarEstadoPublicacionActivoPerimetro(listaActivo, new ArrayList<Long>());

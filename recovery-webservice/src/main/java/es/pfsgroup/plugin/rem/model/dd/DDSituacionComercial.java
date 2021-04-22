@@ -135,5 +135,15 @@ public class DDSituacionComercial implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+	
+	public static boolean isAlquilado(DDSituacionComercial situacionComercial) {
+		boolean isAlquilado = false;
+		
+		if(situacionComercial != null && CODIGO_ALQUILADO.equals(situacionComercial.getCodigo())) {
+			isAlquilado = true;
+		}
+		
+		return isAlquilado;
+	}
 
 }

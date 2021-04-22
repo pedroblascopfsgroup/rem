@@ -30,6 +30,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public static final String COD_MEDIADOR = "04";
 	public static final String COD_FUERZA_VENTA_DIRECTA="18";
 	
+	public static final String DD_TCO_VENTA = "01";
+	public static final String DD_TCO_ALQUILER="03";
+	public static final String DD_TCO_ALQUILER_VENTA="02";
+	
 	@Override
 	public String getOneNumActivoAgrupacionRaw(String numAgrupacion){
 		return rawDao.getExecuteSQL("SELECT TO_NUMBER(act.ACT_NUM_ACTIVO) "
@@ -7052,4 +7056,61 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean isActivoAlquiladoSCM(String activo) {
+		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT * FROM act_activo act \n" + 
+				"JOIN dd_scm_situacion_comercial scm on act.dd_scm_id = scm.dd_scm_id \n" + 
+				"WHERE act.act_num_activo = "+activo+" AND scm.dd_scm_codigo = '10'");
+		
+		return !"0".equals(resultado); 
+	}
+	
+	@Override
+	public boolean isActivoPublicadoDependiendoSuTipoComercializacion(String activo) {
+		String resultado = "0";
+		
+		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo)) {
+			return false;
+		}
+		
+		String tipoComercializacion = rawDao.getExecuteSQL("   SELECT tco.dd_tco_codigo FROM ACT_ACTIVO a \n" + 
+				"    JOIN DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = a.dd_tco_id and tco.borrado = 0\n" + 
+				"     WHERE a.act_id = "+activo+" AND a.borrado = 0");
+
+
+		
+		if(DD_TCO_VENTA.equals(tipoComercializacion)) {
+		 resultado = rawDao.getExecuteSQL(
+				"SELECT count(1) FROM ACT_ACTIVO a \n" + 
+				"    JOIN act_apu_activo_publicacion apu ON a.act_id = apu.act_id AND apu.borrado = 0 \n" + 
+				"    JOIN dd_epa_estado_pub_alquiler epa ON apu.DD_EPA_ID = epa.DD_EPA_ID AND epa.borrado = 0 \n" + 
+				"    JOIN dd_epv_estado_pub_venta epv ON apu.DD_EPV_ID = epv.DD_EPV_ID AND epv.borrado = 0\n" + 
+				"    WHERE a.act_id = "+activo+"  AND  epv.DD_EPV_CODIGO = '03' AND a.borrado = 0");
+		
+		}else if(DD_TCO_ALQUILER.equals(tipoComercializacion)) {
+		 resultado = rawDao.getExecuteSQL(
+				"SELECT count(1) FROM ACT_ACTIVO a \n" + 
+				"    JOIN act_apu_activo_publicacion apu ON a.act_id = apu.act_id AND apu.borrado = 0 \n" + 
+				"    JOIN dd_epa_estado_pub_alquiler epa ON apu.DD_EPA_ID = epa.DD_EPA_ID AND epa.borrado = 0 \n" + 
+				"    JOIN dd_epv_estado_pub_venta epv ON apu.DD_EPV_ID = epv.DD_EPV_ID AND epv.borrado = 0\n" + 
+				"    WHERE a.act_id = "+activo+"  AND  epv.DD_EPA_CODIGO = '03' AND a.borrado = 0");
+		
+		}else if(DD_TCO_ALQUILER_VENTA.equals(tipoComercializacion)) {
+		 resultado = rawDao.getExecuteSQL(
+				"SELECT count(1) FROM ACT_ACTIVO a \n" + 
+				"    JOIN act_apu_activo_publicacion apu ON a.act_id = apu.act_id AND apu.borrado = 0 \n" + 
+				"    JOIN dd_epa_estado_pub_alquiler epa ON apu.DD_EPA_ID = epa.DD_EPA_ID AND epa.borrado = 0 \n" + 
+				"    JOIN dd_epv_estado_pub_venta epv ON apu.DD_EPV_ID = epv.DD_EPV_ID AND epv.borrado = 0 \n" + 
+				"    WHERE a.act_id = "+activo+"  AND  (epa.DD_EPA_CODIGO = '03' OR epv.DD_EPV_CODIGO = '03') AND a.borrado = 0");
+		}
+		
+		return !"0".equals(resultado);
+	}
+
 }

@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -128,7 +129,11 @@ public class VisibilidadGestionComercialValidator {
 		List<String> erroresActivo = new ArrayList<String>();
 		
 		if(activoPublicacion != null) {
-			if(!DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta()) && !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler())) {
+			if((DDTipoComercializacion.isDestinoComercialVenta(activoActual.getTipoComercializacion()) && !DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta()))
+			|| (DDTipoComercializacion.isDestinoComercialSoloAlquiler(activoActual.getTipoComercializacion()) && !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler()))
+			|| (DDTipoComercializacion.isDestinoComercialAlquilerVenta(activoActual.getTipoComercializacion()) 
+				&& !DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta()) && !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler()))) {
+			
 				if(DDCartera.isCarteraBk(activoActual.getCartera()) || DDCartera.isCarteraSareb(activoActual.getCartera())) {
 					erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
 				}else if(DDCartera.isCarteraCajamar(activoActual.getCartera())) {
@@ -152,7 +157,7 @@ public class VisibilidadGestionComercialValidator {
 				if (perimetroActivo != null && perimetroActivo.getAplicaComercializar() != null && perimetroActivo.getAplicaComercializar() == 0) {
 					erroresActivo.add(VALID_ACTIVO_NO_COMERCIALIZABLE);
 				}
-				if (DDTipoAlquiler.isAlquilerFondoSocial(activoActual.getTipoAlquiler())) {
+				if (DDSituacionComercial.isAlquilado(activoActual.getSituacionComercial()) && DDTipoAlquiler.isAlquilerFondoSocial(activoActual.getTipoAlquiler())) {
 					erroresActivo.add(VALID_ACTIVO_ALQUILER_SOCIAL);
 				}
 				

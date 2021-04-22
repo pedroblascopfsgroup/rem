@@ -5263,7 +5263,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	checkActivosToPropagate : function(idActivo, form, tabData, restringida) {
 		var me = this, url2 = $AC.getRemoteUrl('activo/getIsActivoMatriz');
-		Ext.Ajax.request({
+		Ext.Ajax.request({			
 			url : url2,
 			method : 'POST',
 			params : {
@@ -5420,12 +5420,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 										
 											if(activosPropagables != null && isActivoMatriz != "true"){
 													if(activosPropagables.length > 0) {
+														var auxAllData = tabData.models[0].data;
 														tabPropagableData = me.createFormPropagableData(form, tabData);
 														if (!Ext.isEmpty(tabPropagableData)) {
 															// sacamos el activo actual del listado
 															var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
 															var tieneDatosPropagables = false;
-															/*if(!Ext.isEmpty(form)) {
+															if(!Ext.isEmpty(form)) {
 													    		
 													    		var fields = form.getForm().getFields();
 													    		fields.each(function(field) {
@@ -5443,15 +5444,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 													    				});
 													    			}
 													    		});
-													    	}*/
+													    	}
 															
-															//if(tieneDatosPropagables) {
-																// Abrimos la ventana de selección de activos
-																var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
-																	me.getView().add(ventanaOpcionesPropagacionCambios);
-																	me.getView().unmask();
-																	return false;
-															//}
 														}
 													}
 
@@ -5471,9 +5465,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 														}).show();
 														me.getView().add(ventanaOpcionesPropagacionCambios);
 														me.getView().unmask();
-														me.refrescarActivo(form.refreshAfterSave);
-														me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
-														me.actualizarGridHistoricoDestinoComercial(form);
+														return false;
 													}
 							
 													if(restringida == true){

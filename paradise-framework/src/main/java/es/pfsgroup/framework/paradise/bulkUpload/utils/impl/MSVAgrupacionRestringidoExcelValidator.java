@@ -557,8 +557,7 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 				if (!actPrincipal.isEmpty()) {				
 					if (particularValidator.getExcluirValidaciones(numActivo) != particularValidator.getExcluirValidaciones(actPrincipal)
 					|| !particularValidator.getCheckGestorComercial(numActivo).equals(particularValidator.getCheckGestorComercial(actPrincipal))
-					|| particularValidator.getExcluirValidaciones(actPrincipal) 
-					&& !particularValidator.getMotivoGestionComercial(numActivo).equals(particularValidator.getMotivoGestionComercial(actPrincipal))) {
+					|| !particularValidator.getMotivoGestionComercial(numActivo).equals(particularValidator.getMotivoGestionComercial(actPrincipal))) {
 						listaFilas.add(i);
 					}
 				}	

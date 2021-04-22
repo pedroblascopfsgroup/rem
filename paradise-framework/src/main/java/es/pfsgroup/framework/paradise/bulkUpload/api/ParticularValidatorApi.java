@@ -1370,8 +1370,6 @@ public interface ParticularValidatorApi {
 	Boolean resolucionComite(String celdaTrabajo);
 
 	Boolean existeCodigoMotivoAdmision(String codMotivo);
-	
-	Boolean isCheckVisibleGestionComercial(String numActivo,Integer celdaVisibleGestionComercial);
 
 	Boolean tieneFechaVentaExterna(String activo);
 
@@ -1444,7 +1442,7 @@ public interface ParticularValidatorApi {
 
 	Boolean situacionComercialPublicadoAlquiler(String activo);
 
-	Boolean activoNoPrincipalEnAgrupacionRestringida(String numActivo);
+	Boolean activoPrincipalEnAgrupacionRestringida(String numActivo);
 	
 	Boolean activoPerteneceAgrupacion(String numActivo);
 	
@@ -1457,4 +1455,12 @@ public interface ParticularValidatorApi {
 	Boolean isActivoSareb(String numActivo);
 
 	Boolean isActivoCajamar(String numActivo);
+
+	Boolean validacionSubfasePublicacion(String activo);
+
+	Boolean isCheckVisibleGestionComercial(String numActivo);
+
+	boolean isConCargasOrCargasEsparta(String activo);
+
+	boolean aplicaComercializar(String activo);
 }

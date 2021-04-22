@@ -139,14 +139,35 @@ public class DDSubfasePublicacion implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
-	public static boolean isHistoricoFasesExcPubEstrategiaCl(HistoricoFasePublicacionActivo hist) {
+	public static boolean isHistoricoFasesExcPubEstrategiaCl(DDSubfasePublicacion subfasePublicacion) {
 		boolean isExclPubEstrCl = false;
 		
-		if(hist.getSubFasePublicacion() != null && CODIGO_EXCLUIDO_PUBLICACION_ESTRATEGICA_DEL_CLIENTE.equals(hist.getSubFasePublicacion().getCodigo())) {
+		if(subfasePublicacion != null && CODIGO_EXCLUIDO_PUBLICACION_ESTRATEGICA_DEL_CLIENTE.equals(subfasePublicacion.getCodigo())) {
 			isExclPubEstrCl = true;
 		}
 		
 		return isExclPubEstrCl;
+	}
+	
+	public static boolean isHistoricoFasesReqLegAdm(DDSubfasePublicacion subfasePublicacion) {
+		boolean isReqLegAdm = false;
+		
+		if(subfasePublicacion != null && CODIGO_REQUERIMIENTO_LEGAL_O_ADMINISTRATIVO.equals(subfasePublicacion.getCodigo())) {
+			isReqLegAdm = true;
+		}
+		
+		return isReqLegAdm;
+	}
+
+	
+	public static boolean isHistoricoFasesSinValor(DDSubfasePublicacion subfasePublicacion) {
+		boolean isSinValor = false;
+		
+		if(subfasePublicacion != null && CODIGO_SIN_VALOR.equals(subfasePublicacion.getCodigo())) {
+			isSinValor = true;
+		}
+		
+		return isSinValor;
 	}
 
 }

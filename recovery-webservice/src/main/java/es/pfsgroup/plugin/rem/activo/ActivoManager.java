@@ -4017,6 +4017,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					guardadoAsincrono.start();
 				}
 			}
+			
+			if(dto.getFechaVenta() != null) {
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false);
+			}
+
 			if(dto.getActivoObraNuevaComercializacion()!=null ) {
 				DDSinSiNo siono = (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, dto.getActivoObraNuevaComercializacion());
 				if(siono!=null) {
@@ -4024,6 +4029,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					actualizarHonorarios = true;					
 				}
 				activo.setObraNuevaAEfectosComercializacionFecha(new Date());
+
 			}
 			
 			if(dto.getFechaVenta() != null) {
@@ -9037,9 +9043,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		} catch (Exception e) {
 			logger.error("Error en updateHonorarios", e);
 		}
-
-	}
-
-
-	
+	}	
 }
+

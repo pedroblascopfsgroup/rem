@@ -100,7 +100,6 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 							f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_SANCION_CES);
 						}
 	 					DDEstadosExpedienteComercial aprobado = genericDao.get(DDEstadosExpedienteComercial.class, f1);
-
 	 					expediente.setEstado(aprobado);	 					
 						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), aprobado);
 		

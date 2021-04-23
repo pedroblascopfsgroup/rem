@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20210422
+--## FECHA_CREACION=20210423
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO= 9.3
 --## INCIDENCIA_LINK=REMVIP-9459
@@ -38,15 +38,6 @@ DECLARE
 BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TABLA|| '********'); 
-
-	V_MSQL := 'SELECT COUNT(*) FROM all_tab_columns where owner = '''||V_ESQUEMA||''' and table_name = '''||V_TABLA||''' and column_name = ''CAG_USU_GRUPO_FORMALIZACION''';
-	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
-
-	IF V_NUM_TABLAS = 1 THEN
-		V_MSQL := 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA||'';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||' borrada.');
-	END IF;
 
 	V_MSQL := 'SELECT COUNT(*) FROM all_tab_columns where owner = '''||V_ESQUEMA||''' and table_name = '''||V_TABLA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;

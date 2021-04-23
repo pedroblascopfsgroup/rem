@@ -392,7 +392,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	/*public Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo);*/
 
-	List<Long> getIdsAuxiliarCierreOficinaBankias();
+	List<Long> getIdsAuxiliarCierreOficinaBankias(String codOficinaAnterior);
 
 	Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo, String username);
 	

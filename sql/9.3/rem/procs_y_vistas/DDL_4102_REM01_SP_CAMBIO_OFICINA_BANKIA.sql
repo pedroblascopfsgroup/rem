@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210414
+--## AUTOR=Sergio Gomez
+--## FECHA_CREACION=20210422
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13610
+--## INCIDENCIA_LINK=HREOS-13822
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que realiza el cambio de oficinas en Bankia
 --##           
@@ -14,6 +14,7 @@
 --##        0.2 Resolución de dudas, cambios - HREOS-13241
 --##        0.3 Cierre Oficinas Bankia. Traspaso de Negocio - HREOS-13610
 --##        0.4 Se trunca la tabla auxiliar al principio del proceso
+--##        0.5 Se quita el truncado de la tabla auxiliar -  HREOS-13822
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -41,10 +42,6 @@ CREATE OR REPLACE PROCEDURE SP_CAMBIO_OFICINA_BANKIA (
 BEGIN
         PL_OUTPUT := '[INICIO]'||CHR(10);
         
-        --------------------------------------------------------------------
-        ----------- TRUNCATE TABLA AUXILIAR --------------------------------
-        --------------------------------------------------------------------
-        #ESQUEMA#.OPERACION_DDL.DDL_TABLE('TRUNCATE', V_TEXT_TABLA_AUX);
     
         --------------------------------------------------------------------
         ----------- COMPROBACIONES PREVIAS --------------------------------
@@ -182,7 +179,7 @@ BEGIN
                     
                 PL_OUTPUT := PL_OUTPUT || '     RESPONSABLE CAMBIADO EN '||SQL%ROWCOUNT||' OFERTAS' || CHR(10) ;  
                 
-                V_MSQL := 'INSERT INTO '||V_TEXT_TABLA_AUX||' SELECT DISTINCT GEX.ECO_ID FROM 
+                V_MSQL := 'INSERT INTO '||V_TEXT_TABLA_AUX||' SELECT DISTINCT GEX.ECO_ID, '''||PVE_COD_API_PROVEEDOR_ANTIGUA||''', 0 FROM 
                         '||V_ESQUEMA||'.GEX_GASTOS_EXPEDIENTE GEX WHERE GEX.BORRADO = 0 AND GEX.GEX_PROVEEDOR = '||V_OFICINA_ANTIGUA;
 
                 EXECUTE IMMEDIATE V_MSQL;        

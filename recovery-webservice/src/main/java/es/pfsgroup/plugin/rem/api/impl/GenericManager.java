@@ -1638,7 +1638,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			}								
 	
 			
-			List<Long> listaIdsAuxiliar = activoDao.getIdsAuxiliarCierreOficinaBankias();
+			List<Long> listaIdsAuxiliar = activoDao.getIdsAuxiliarCierreOficinaBankias(bankiaDto.getCodProveedorAnterior());
 			
 			if (!listaIdsAuxiliar.isEmpty()) {
 				Thread hilo = new Thread(new EjecutarEnviarHonorariosUvemAsincrono(usuario.getUsername(), listaIdsAuxiliar));
@@ -1656,14 +1656,20 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	@Transactional
 	public void actualizaHonorariosUvem (List<Long> listaIdsAuxiliar) {
-		if (listaIdsAuxiliar != null && listaIdsAuxiliar.size() > 0) {
-			for (Long idExpediente : listaIdsAuxiliar) {
-				try {
-					expedienteComercialApi.enviarHonorariosUvem(idExpediente);
-				} catch (Exception e) {
-					e.printStackTrace();
+		try {
+			if (listaIdsAuxiliar != null && listaIdsAuxiliar.size() > 0) {
+				//PARA CAMBIAR EN LA TABLA AUXILIAR LOS REGISTROS A ENVIADOS
+				for (Long idExpediente : listaIdsAuxiliar) {				
+					expedienteComercialApi.getCierreOficinaBankiaById(idExpediente);
 				}
+				for (Long idExpediente : listaIdsAuxiliar) {
+					//PARA ENVIAR LOS HONORARIOS UNA VEZ CAMBIADOS
+					expedienteComercialApi.enviarHonorariosUvem(idExpediente);
+				}
+				
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	

@@ -1352,4 +1352,6 @@ public interface ExpedienteComercialApi {
 	
 	String tipoTratamiento(TareaExterna tareaExterna);
 
+	public void getCierreOficinaBankiaById(Long idExpediente);
+
 }

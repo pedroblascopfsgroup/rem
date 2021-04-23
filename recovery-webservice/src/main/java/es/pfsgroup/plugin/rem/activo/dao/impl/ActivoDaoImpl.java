@@ -2199,7 +2199,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			callProcedureSql.setParameter("codProveedorAnterior", codProveedorAnterior);
 			callProcedureSql.setParameter("codProveedorNuevo", codProveedorNuevo);			
 			
-			logger.error(callProcedureSql.getQueryString());
+			
 			resultado = callProcedureSql.executeUpdate();
 
 			return resultado == 1;
@@ -2212,10 +2212,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Override
 	@Transactional
-	public List<Long> getIdsAuxiliarCierreOficinaBankias() {
+	public List<Long> getIdsAuxiliarCierreOficinaBankias(String codOficinaAnterior) {
 		List<Object> resultados = rawDao.getExecuteSQLList(
 				"		SELECT AUX.ECO_ID" + 
-				"		FROM AUX_CIERRE_OFICINAS_BANKIA AUX");
+				"		FROM AUX_CIERRE_OFICINAS_BANKIA AUX" + 
+				"		WHERE AUX.OFICINA_ANTERIOR = "+ codOficinaAnterior + "AND AUX.ENVIADO = 0");
 		
 		List<Long> listaTareas = new ArrayList<Long>();
 

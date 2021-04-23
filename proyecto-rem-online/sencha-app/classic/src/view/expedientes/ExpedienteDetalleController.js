@@ -5004,10 +5004,10 @@ comprobarFormatoModificar: function() {
 		    icon: Ext.Msg.INFO,
 		    fn: function(btn) {
 		        if (btn === 'ok') {
-					var url = $AC.getRemoteUrl("ofertas/generarFichaComercial");
+					var url = $AC.getRemoteUrl("ofertas/enviarCorreoFichaComercial");
 					var parametros = {
-							idOferta: me.getViewModel().get("datosbasicosoferta.idOferta"),
-							idExpediente : me.getViewModel().data.expediente.id
+							id : [ me.getViewModel().get("expediente.numExpediente") ],
+							reportCode : 'FichaComercial'
 					};
 					
 					me.getView().mask(HreRem.i18n("msg.mask.loading"));

@@ -1656,20 +1656,16 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	@Transactional
 	public void actualizaHonorariosUvem (List<Long> listaIdsAuxiliar) {
-		try {
-			if (listaIdsAuxiliar != null && listaIdsAuxiliar.size() > 0) {
-				//PARA CAMBIAR EN LA TABLA AUXILIAR LOS REGISTROS A ENVIADOS
-				for (Long idExpediente : listaIdsAuxiliar) {				
-					expedienteComercialApi.getCierreOficinaBankiaById(idExpediente);
-				}
-				for (Long idExpediente : listaIdsAuxiliar) {
-					//PARA ENVIAR LOS HONORARIOS UNA VEZ CAMBIADOS
-					expedienteComercialApi.enviarHonorariosUvem(idExpediente);
-				}
-				
+		for (Long idExpediente : listaIdsAuxiliar) {
+				//PARA ENVIAR LOS HONORARIOS UNA VEZ CAMBIADOS
+			try {
+				expedienteComercialApi.enviarHonorariosUvem(idExpediente);
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			//PARA CAMBIAR EN LA TABLA AUXILIAR LOS REGISTROS A ENVIADOS
+			expedienteComercialApi.getCierreOficinaBankiaById(idExpediente);					
 		}
 	}
 	

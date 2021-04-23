@@ -246,29 +246,89 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		beanUtilNotNull.copyProperty(dto, "instLibArrendataria", getCode(revisionTitulo.getInstLibArrendataria()));
 		beanUtilNotNull.copyProperty(dto, "ratificacion", getCode(revisionTitulo.getRatificacion()));
 		beanUtilNotNull.copyProperty(dto, "situacionInicialInscripcion", getCode(revisionTitulo.getSituacionInicialInscripcion()));
+		if(revisionTitulo.getSituacionInicialInscripcion() != null) {
+			beanUtilNotNull.copyProperty(dto, "situacionInicialInscripcionDescripcion", revisionTitulo.getSituacionInicialInscripcion().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "posesoriaInicial", getCode(revisionTitulo.getPosesoriaInicial()));
+		if(revisionTitulo.getPosesoriaInicial() != null) {
+			beanUtilNotNull.copyProperty(dto, "posesoriaInicialDescripcion", revisionTitulo.getPosesoriaInicial().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "situacionInicialCargas", getCode(revisionTitulo.getSituacionInicialCargas()));
+		if(revisionTitulo.getSituacionInicialCargas() != null) {
+			beanUtilNotNull.copyProperty(dto, "situacionInicialCargasDescripcion", revisionTitulo.getSituacionInicialCargas().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "tipoTitularidad", getCode(revisionTitulo.getTipoTitularidad()));
+		if(revisionTitulo.getTipoTitularidad() != null) {
+			beanUtilNotNull.copyProperty(dto, "tipoTitularidadDescripcion", revisionTitulo.getTipoTitularidad().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "estadoAutorizaTransmision", getCode(revisionTitulo.getEstadoAutorizaTransmision()));
+		if(revisionTitulo.getEstadoAutorizaTransmision() != null) {
+			beanUtilNotNull.copyProperty(dto, "estadoAutorizaTransmisionDescripcion", revisionTitulo.getEstadoAutorizaTransmision().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "anotacionConcurso", getCode(revisionTitulo.getAnotacionConcurso()));
+		if(revisionTitulo.getAnotacionConcurso() != null) {
+			beanUtilNotNull.copyProperty(dto, "anotacionConcursoDescripcion", revisionTitulo.getAnotacionConcurso().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "estadoGestionCa", getCode(revisionTitulo.getEstadoGestionCa()));
+		if(revisionTitulo.getEstadoGestionCa() != null) {
+			beanUtilNotNull.copyProperty(dto, "estadoGestionCaDescripcion", revisionTitulo.getEstadoGestionCa().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "consFisica", getCode(revisionTitulo.getConsFisica()));
 		beanUtilNotNull.copyProperty(dto, "consJuridica", getCode(revisionTitulo.getConsJuridica()));
 		beanUtilNotNull.copyProperty(dto, "estadoCertificadoFinObra", getCode(revisionTitulo.getEstadoCertificadoFinObra()));
+		if(revisionTitulo.getEstadoCertificadoFinObra() != null) {
+			beanUtilNotNull.copyProperty(dto, "estadoCertificadoFinObraDescripcion", revisionTitulo.getEstadoCertificadoFinObra().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "estadoAfoActaFinObra", getCode(revisionTitulo.getEstadoAfoActaFinObra()));
+		if(revisionTitulo.getEstadoAfoActaFinObra() != null) {
+			beanUtilNotNull.copyProperty(dto, "estadoAfoActaFinObraDescripcion", revisionTitulo.getEstadoAfoActaFinObra().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "licenciaPrimeraOcupacion", getCode(revisionTitulo.getLicenciaPrimeraOcupacion()));
+		if(revisionTitulo.getLicenciaPrimeraOcupacion() != null) {
+			beanUtilNotNull.copyProperty(dto, "licenciaPrimeraOcupacionDescripcion", revisionTitulo.getLicenciaPrimeraOcupacion().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "boletines", getCode(revisionTitulo.getBoletines()));
+		if(revisionTitulo.getBoletines() != null) {
+			beanUtilNotNull.copyProperty(dto, "boletinesDescripcion", revisionTitulo.getBoletines().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "seguroDecenal", getCode(revisionTitulo.getSeguroDecenal()));
+		if(revisionTitulo.getSeguroDecenal() != null) {
+			beanUtilNotNull.copyProperty(dto, "seguroDecenalDescripcion", revisionTitulo.getSeguroDecenal().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "cedulaHabitabilidad", getCode(revisionTitulo.getCedulaHabitabilidad()));
+		if(revisionTitulo.getCedulaHabitabilidad() != null) {
+			beanUtilNotNull.copyProperty(dto, "cedulaHabitabilidadDescripcion", revisionTitulo.getCedulaHabitabilidad().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "tipoArrendamiento", getCode(revisionTitulo.getTipoArrendamiento()));
+		if(revisionTitulo.getTipoArrendamiento() != null) {
+			beanUtilNotNull.copyProperty(dto, "tipoArrendamientoDescripcion", revisionTitulo.getTipoArrendamiento().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "notificarArrendatarios", getCode(revisionTitulo.getNotificarArrendatarios()));
 		beanUtilNotNull.copyProperty(dto, "tipoExpediente", getCode(revisionTitulo.getTipoExpediente()));
+		if(revisionTitulo.getTipoExpediente() != null) {
+			beanUtilNotNull.copyProperty(dto, "tipoExpedienteDescripcion", revisionTitulo.getTipoExpediente().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "estadoGestionEa", getCode(revisionTitulo.getEstadoGestionEa()));
 		beanUtilNotNull.copyProperty(dto, "tipoIncidenciaRegistral", getCode(revisionTitulo.getTipoIncidenciaRegistral()));
+		if(revisionTitulo.getTipoIncidenciaRegistral() != null) {
+			beanUtilNotNull.copyProperty(dto, "tipoIncidenciaRegistralDescripcion", revisionTitulo.getTipoIncidenciaRegistral().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "estadoGestionCr", getCode(revisionTitulo.getEstadoGestionCr()));
+		if(revisionTitulo.getEstadoGestionCr() != null) {
+			beanUtilNotNull.copyProperty(dto, "estadoGestionCrDescripcion", revisionTitulo.getEstadoGestionCr().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "tipoOcupacionLegal", getCode(revisionTitulo.getTipoOcupacionLegal()));
+		if(revisionTitulo.getTipoOcupacionLegal() != null) {
+			beanUtilNotNull.copyProperty(dto, "tipoOcupacionLegalDescripcion", revisionTitulo.getTipoOcupacionLegal().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "estadoGestionIl", getCode(revisionTitulo.getEstadoGestionIl()));
+		if(revisionTitulo.getEstadoGestionIl() != null) {
+			beanUtilNotNull.copyProperty(dto, "estadoGestionIlDescripcion", revisionTitulo.getEstadoGestionIl().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "estadoGestionOt", getCode(revisionTitulo.getEstadoGestionOt()));
+		if(revisionTitulo.getEstadoGestionOt() != null) {
+			beanUtilNotNull.copyProperty(dto, "estadoGestionOtDescripcion", revisionTitulo.getEstadoGestionOt().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "fechaRevisionTitulo", revisionTitulo.getFechaRevisionTitulo());
 		beanUtilNotNull.copyProperty(dto, "fechaContratoAlquiler", revisionTitulo.getFechaContratoAlquiler());
 		beanUtilNotNull.copyProperty(dto, "porcentajePropiedad", revisionTitulo.getPorcentajePropiedad());
@@ -281,9 +341,21 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		beanUtilNotNull.copyProperty(dto, "deterioroGrave", revisionTitulo.getDeterioroGrave());
 		beanUtilNotNull.copyProperty(dto, "tipoIncidenciaOtros", revisionTitulo.getTipoIncidenciaOtros());
 		beanUtilNotNull.copyProperty(dto, "tipoTituloCodigo", getCode(activo.getTipoTitulo()));
+		if(activo.getTipoTitulo() != null) {
+			beanUtilNotNull.copyProperty(dto, "tipoTituloDescripcion", activo.getTipoTitulo().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "subtipoTituloCodigo", getCode(activo.getSubtipoTitulo()));
+		if(activo.getTipoTitulo() != null) {
+			beanUtilNotNull.copyProperty(dto, "tipoTituloDescripcion", activo.getTipoTitulo().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "situacionConstructivaRegistral", getCode(revisionTitulo.getSituacionConstructivaRegistral()));
+		if(revisionTitulo.getSituacionConstructivaRegistral() != null) {
+			beanUtilNotNull.copyProperty(dto, "situacionConstructivaRegistralDescripcion", revisionTitulo.getSituacionConstructivaRegistral().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "proteccionOficial", getCode(revisionTitulo.getProteccionOficial()));
+		if(revisionTitulo.getProteccionOficial() != null) {
+			beanUtilNotNull.copyProperty(dto, "proteccionOficialDescripcion", revisionTitulo.getProteccionOficial().getDescripcion());
+		}
 		beanUtilNotNull.copyProperty(dto, "tipoIncidencia", getCode(revisionTitulo.getTipoIncidencia()));
 		beanUtilNotNull.copyProperty(dto, "tipoTituloActivo", getCode(revisionTitulo.getTipoTituloActivo()));
 		beanUtilNotNull.copyProperty(dto, "subtipoTituloActivo", getCode(revisionTitulo.getSubtipoTituloActivo()));

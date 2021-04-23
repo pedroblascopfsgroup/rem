@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20210308
+--## FECHA_CREACION=20210323
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-12580
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --## 		0.2 Añadir condición - REMVIP-8892
 --## 		0.3 Añadir condición - REMVIP-9036
+--## 		0.4 Modificar condición - REMVIP-9566
 --#########################################
 --*/
 
@@ -75,8 +76,10 @@ BEGIN
 			INNER JOIN ' || V_ESQUEMA || '.dd_tga_tipos_gasto tga            		ON (stg.dd_tga_id = tga.dd_tga_id AND tga.borrado = 0)
           WHERE tbj.borrado = 0
           	and (
-                (NVL(TBJ.TBJ_IMPORTE_TOTAL, 0) <> 0
-                    AND NVL(TBJ.TBJ_IMPORTE_PRESUPUESTO, 0) <> 0)
+                ((NVL(TBJ.TBJ_IMPORTE_TOTAL, 0) <> 0
+                    AND NVL(TBJ.TBJ_IMPORTE_PRESUPUESTO, 0) <> 0) 
+					OR (NVL(TBJ.TBJ_IMPORTE_TOTAL, 0) = 0
+                    AND NVL(TBJ.TBJ_IMPORTE_PRESUPUESTO, 0) <> 0))
                 OR EXISTS (
                     SELECT 1
                     FROM (

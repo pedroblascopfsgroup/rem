@@ -138,6 +138,9 @@ public class OfertasController {
 	
 	@Resource
 	private Properties appProperties;
+	
+	private static final String CONSTANTE_GENERAR_EXCEL_REM_API_URL = "rest.client.generate.excel.url.base";
+	private static final String CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT = "rest.client.generate.excel.endpoint";
 			
 	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
 	
@@ -983,23 +986,28 @@ public class OfertasController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateReport(ReportGeneratorRequest request, HttpServletResponse response) throws IOException {
-
-		try {
-			 	Map<String, Object> params = new HashMap<String, Object>();
-			 	params.put("id", request.getListId());
-			 	params.put("reportCode", request.getReportCode());
-			 	// TODO: Gestionar en como obtener la dirección del Docker.
-			 	HttpSimplePostRequest httpPostClient = new HttpSimplePostRequest("http://192.168.80.3:9096/report/generate", params);
-			 	ReportGeneratorResponse report = httpPostClient.post(ReportGeneratorResponse.class);
-			 	String route = appProperties.getProperty("email.attachment.folder.src") + "/" + report.getNombre();
-			 	File file = new File(route);
-			 	FileUtils.writeByteArrayToFile(file, report.getResponse());
-			 	excelReportGeneratorApi.sendReport(file, response);
-
-		} catch (Exception e) {
-			e.printStackTrace();
- 
+		String urlGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_URL.concat(CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT));
+	 	ReportGeneratorResponse report = excelReportGeneratorApi.requestExcel(request, urlGenerateExcel);
+	 	excelReportGeneratorApi.downloadExcel(report, response);
+	 	
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView enviarCorreoFichaComercial(ReportGeneratorRequest reportGenerator,  HttpServletRequest request, HttpServletResponse response, ModelMap model) throws IOException {
+		String urlGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_URL.concat(CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT));
+		ReportGeneratorResponse report = excelReportGeneratorApi.requestExcel(reportGenerator, urlGenerateExcel);
+		String errorCode = excelReportGeneratorApi.sendExcelFichaComercial(reportGenerator.getListId().get(0), report, request);
+		
+		if(errorCode == null || errorCode.isEmpty()){
+			model.put("success", true);
 		}
+		else{
+			model.put("success", false);
+			model.put("errorCode", errorCode);
+		}
+		
+		return createModelAndViewJson(model);
 	}
 	
 	

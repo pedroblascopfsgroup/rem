@@ -1199,6 +1199,7 @@ public class AgrupacionAdapter {
 					BeanUtils.copyProperty(activoPublicacion, "checkOcultarPrecioAlquiler",
 							activoPublicacionPrincipal.getCheckOcultarPrecioAlquiler());
 					activoPublicacionDao.saveOrUpdate(activoPublicacion);
+					
 				} else {
 					throw new JsonViewerException(BusinessValidators.ERROR_ESTADO_PUBLICACION_NOT_EQUAL);
 				}
@@ -1224,12 +1225,20 @@ public class AgrupacionAdapter {
 	
 	private boolean calculateEqualsPerimetros(PerimetroActivo perimetroActivoPrincipal, PerimetroActivo perimetroActivoActual) {
 		boolean errorFlag = false;	
-		Boolean excluirValidacionesPrincipal = DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivoPrincipal.getExcluirValidaciones());
-		Boolean excluirValidacionesActual = DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivoActual.getExcluirValidaciones());
+		Boolean excluirValidacionesPrincipal = DDSinSiNo.cambioDiccionarioaBooleanoNativo(perimetroActivoPrincipal.getExcluirValidaciones());
+		Boolean excluirValidacionesActual = DDSinSiNo.cambioDiccionarioaBooleanoNativo(perimetroActivoActual.getExcluirValidaciones());
 		DDMotivoGestionComercial motivoGestionPrincipal = perimetroActivoPrincipal.getMotivoGestionComercial();
 		DDMotivoGestionComercial motivoGestionActual = perimetroActivoActual.getMotivoGestionComercial();
+		boolean perimetroActivoPrincipalBool = false;
+		boolean perimetroActualPrincipalBool = false;
+		if(perimetroActivoPrincipal.getCheckGestorComercial() != null) {
+			perimetroActivoPrincipalBool = perimetroActivoPrincipal.getCheckGestorComercial();
+		}
+		if(perimetroActivoActual.getCheckGestorComercial() != null) {
+			perimetroActualPrincipalBool = perimetroActivoActual.getCheckGestorComercial();
+		}
 		
-		errorFlag = !(perimetroActivoPrincipal.getCheckGestorComercial() == perimetroActivoActual.getCheckGestorComercial());
+		errorFlag = !(perimetroActivoPrincipalBool == perimetroActualPrincipalBool);
 		
 		if(!errorFlag) {
 			errorFlag = !excluirValidacionesPrincipal == excluirValidacionesActual;

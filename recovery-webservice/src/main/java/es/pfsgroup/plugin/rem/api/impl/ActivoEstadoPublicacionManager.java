@@ -751,7 +751,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	@Transactional
 	public Boolean actualizarDatosEstadoActualPublicaciones(DtoDatosPublicacionActivo dto, List<ActivoPublicacion> activosPublicacion) { //
 		try {
+			List<Long> listaIdActivos = new ArrayList<Long>();
 			for(ActivoPublicacion activoPublicacion : activosPublicacion) {
+				listaIdActivos.add(activoPublicacion.getActivo().getId());
 				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) {
 					beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionVenta", utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivosOcultacion.class,
 							dto.getMotivoOcultacionVentaCodigo()));
@@ -847,6 +849,43 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					beanUtilNotNull.copyProperty(activoPublicacion, "motivoPublicacionAlquiler", dto.getMotivoPublicacionAlquiler());
 				}
 				
+				if(!Checks.esNulo(dto.getFechaRevisionPublicacionesVenta())) {
+					activoPublicacion.setFechaRevisionPublicacionesVenta(dto.getFechaRevisionPublicacionesVenta());
+				}
+				
+				if(!Checks.esNulo(dto.getFechaRevisionPublicacionesAlquiler())) {
+					activoPublicacion.setFechaRevisionPublicacionesAlquiler(dto.getFechaRevisionPublicacionesAlquiler());
+				}
+				if (dto.getCanalDePublicacion() != null) {
+					DDPortal portal = genericDao.get(DDPortal.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCanalDePublicacion()));
+					activoPublicacion.setPortal(portal);
+				}
+				
+				DDEstadoPublicacionAlquiler estadoPublicacionAlquiler= null;
+				if(activoPublicacion.getCheckPublicarAlquiler() != null && activoPublicacion.getCheckPublicarAlquiler()) {
+					if(activoPublicacion.getCheckOcultarAlquiler() != null && activoPublicacion.getCheckOcultarAlquiler()) {
+						estadoPublicacionAlquiler = (DDEstadoPublicacionAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionAlquiler.class,  DDEstadoPublicacionAlquiler.CODIGO_OCULTO_ALQUILER);
+					} else {
+						estadoPublicacionAlquiler = (DDEstadoPublicacionAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionAlquiler.class,  DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER);
+					}				
+				}else {
+					estadoPublicacionAlquiler = (DDEstadoPublicacionAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionAlquiler.class,  DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER);
+				}
+				
+				DDEstadoPublicacionVenta estadoPublicacionVenta= null;
+				if(activoPublicacion.getCheckPublicarVenta() != null && activoPublicacion.getCheckPublicarVenta()) {
+					if(activoPublicacion.getCheckOcultarVenta() != null && activoPublicacion.getCheckOcultarVenta()) {
+						estadoPublicacionVenta = (DDEstadoPublicacionVenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionVenta.class,  DDEstadoPublicacionVenta.CODIGO_OCULTO_VENTA);
+					}else {
+						estadoPublicacionVenta = (DDEstadoPublicacionVenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionVenta.class,  DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA);
+					}
+				}else {
+					estadoPublicacionVenta = (DDEstadoPublicacionVenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionVenta.class,  DDEstadoPublicacionVenta.CODIGO_NO_PUBLICADO_VENTA);
+				}
+				
+				activoPublicacion.setEstadoPublicacionAlquiler(estadoPublicacionAlquiler);
+				activoPublicacion.setEstadoPublicacionVenta(estadoPublicacionVenta);
+				
 				activoPublicacionDao.save(activoPublicacion);
 				
 				if(Checks.esNulo(dto.getOcultarVenta()) && !Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) {
@@ -866,20 +905,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					activoPublicacionHistorico.setAuditoria(null);
 					activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
 				}
-				
-				if(!Checks.esNulo(dto.getFechaRevisionPublicacionesVenta())) {
-					activoPublicacion.setFechaRevisionPublicacionesVenta(dto.getFechaRevisionPublicacionesVenta());
-				}
-				
-				if(!Checks.esNulo(dto.getFechaRevisionPublicacionesAlquiler())) {
-					activoPublicacion.setFechaRevisionPublicacionesAlquiler(dto.getFechaRevisionPublicacionesAlquiler());
-				}
-				if (dto.getCanalDePublicacion() != null) {
-					DDPortal portal = genericDao.get(DDPortal.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCanalDePublicacion()));
-					activoPublicacion.setPortal(portal);
-				}
-
 			}
+			
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivos);
 		} catch (IllegalAccessException e) {
 			logger.error("Error al actualizar el estado actual de publicacion, error: ", e);
 			return false;

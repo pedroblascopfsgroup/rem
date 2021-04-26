@@ -57,9 +57,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	
 	onClickGasto: function(){
 		var me = this;
-		var numGasto = me.getViewModel().get('trabajo.gastoProveedor');
+		var numGasto = me.getViewModel().get('trabajo.numGasto');
 		if(!Ext.isEmpty(numGasto)){
-		  	var url= $AC.getRemoteUrl('gasto/getGastoExists');
+		  	var url= $AC.getRemoteUrl('gastosproveedor/getIdGasto');
         	var data;
     		Ext.Ajax.request({
     		     url: url,

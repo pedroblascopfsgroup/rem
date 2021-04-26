@@ -165,6 +165,21 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			 }
 			 
 			 if(activo.getSituacionPosesoria()!=null) {
+				 //TAPIADO
+				 if(activo.getSituacionPosesoria().getAccesoTapiado()!=null) {
+					 activoDto.setAccesoTapiado(activo.getSituacionPosesoria().getAccesoTapiado());
+				 }
+				 if(activo.getSituacionPosesoria().getFechaAccesoTapiado()!=null) {
+					 activoDto.setFechaAccesoTapiado(activo.getSituacionPosesoria().getFechaAccesoTapiado());
+				 }
+				 //ANTIOCUPA
+				 if(activo.getSituacionPosesoria().getAccesoAntiocupa()!=null) {
+					 activoDto.setAccesoAntiocupa(activo.getSituacionPosesoria().getAccesoAntiocupa());
+				 }
+				 if(activo.getSituacionPosesoria().getFechaAccesoAntiocupa()!=null) {
+					 activoDto.setFechaAccesoAntiocupa(activo.getSituacionPosesoria().getFechaAccesoAntiocupa());
+				 }
+				 
 				 //ALARMA
 				 if(activo.getSituacionPosesoria().getConAlarma()!=null) {
 					 activoDto.setTieneAlarma(activo.getSituacionPosesoria().getConAlarma());

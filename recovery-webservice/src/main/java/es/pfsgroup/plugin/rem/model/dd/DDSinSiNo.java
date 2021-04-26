@@ -156,4 +156,12 @@ public class DDSinSiNo implements Auditable, Dictionary {
     	
     	return codigoDiccionario;
     }
+    
+    public static boolean cambioDiccionarioaBooleanoNativo(DDSinSiNo diccionario) {
+        boolean dicc= false;
+        if(diccionario!=null && DDSinSiNo.CODIGO_SI.equals(diccionario.getCodigo())){
+        	dicc = true;
+        }
+    	return dicc;   	
+    }
 }

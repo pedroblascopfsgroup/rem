@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20210323
+--## FECHA_CREACION=20210426
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-12580
@@ -14,6 +14,7 @@
 --## 		0.2 Añadir condición - REMVIP-8892
 --## 		0.3 Añadir condición - REMVIP-9036
 --## 		0.4 Modificar condición - REMVIP-9566
+--## 		0.4 Modificar condición - REMVIP-9573
 --#########################################
 --*/
 
@@ -79,7 +80,9 @@ BEGIN
                 ((NVL(TBJ.TBJ_IMPORTE_TOTAL, 0) <> 0
                     AND NVL(TBJ.TBJ_IMPORTE_PRESUPUESTO, 0) <> 0) 
 					OR (NVL(TBJ.TBJ_IMPORTE_TOTAL, 0) = 0
-                    AND NVL(TBJ.TBJ_IMPORTE_PRESUPUESTO, 0) <> 0))
+                    AND NVL(TBJ.TBJ_IMPORTE_PRESUPUESTO, 0) <> 0)
+					OR (NVL(TBJ.TBJ_IMPORTE_TOTAL, 0) <> 0
+                    AND NVL(TBJ.TBJ_IMPORTE_PRESUPUESTO, 0) = 0))
                 OR EXISTS (
                     SELECT 1
                     FROM (

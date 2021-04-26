@@ -463,6 +463,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				autoLoad: false
     		},
     		
+    		comboProveedorContactoGE : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorContacto',
+					extraParams: {idProveedor: '{gestionEconomica.idProveedor}'}
+				}, 
+				autoLoad: false
+    		},
+    		
     		comboProveedorReceptor: {
     			model: 'HreRem.model.ComboBase',
 				proxy: {

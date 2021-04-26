@@ -11725,4 +11725,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return expedienteComercial.getEstado().getCodigo();
 	}
 	
+	
+	@Override
+	public void getCierreOficinaBankiaById(Long idExpediente) {
+
+		AuxiliarCierreOficinasBankia auxiliar = genericDao.get(AuxiliarCierreOficinasBankia.class,
+				genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
+		
+		if (auxiliar != null && auxiliar.isEnviado() == false) {
+			auxiliar.setEnviado(true);
+			
+			genericDao.update(AuxiliarCierreOficinasBankia.class, auxiliar);
+		}
+	}	
 }

@@ -2794,6 +2794,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 	}
+	
+	@Override
+	public Float getPorcentajeCompra(Long idExpediente) {
+		return expedienteComercialDao.getPorcentajeCompra(idExpediente);
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void decorarPagina(PageImpl pagina) throws VBusquedaCompradoresExpedienteDecoratorException {

@@ -906,6 +906,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		try {
 			Page page = expedienteComercialApi.getCompradoresByExpediente(idExpediente, dto);
+			Float participacion = expedienteComercialApi.getPorcentajeCompra(idExpediente);
+			model.put("porcentajeCompra", participacion);
 			model.put(RESPONSE_DATA_KEY, page.getResults());
 			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
 			model.put(RESPONSE_SUCCESS_KEY, true);

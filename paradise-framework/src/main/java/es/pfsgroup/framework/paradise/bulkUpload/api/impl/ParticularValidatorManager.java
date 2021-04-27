@@ -7087,7 +7087,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		String tipoComercializacion = rawDao.getExecuteSQL("   SELECT tco.dd_tco_codigo FROM ACT_ACTIVO a \n" + 
 				"    JOIN DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = a.dd_tco_id and tco.borrado = 0\n" + 
-				"     WHERE a.act_id = "+activo+" AND a.borrado = 0");
+				"     WHERE a.act_num_activo = "+activo+" AND a.borrado = 0");
 
 
 		
@@ -7097,7 +7097,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"    JOIN act_apu_activo_publicacion apu ON a.act_id = apu.act_id AND apu.borrado = 0 \n" + 
 				"    JOIN dd_epa_estado_pub_alquiler epa ON apu.DD_EPA_ID = epa.DD_EPA_ID AND epa.borrado = 0 \n" + 
 				"    JOIN dd_epv_estado_pub_venta epv ON apu.DD_EPV_ID = epv.DD_EPV_ID AND epv.borrado = 0\n" + 
-				"    WHERE a.act_id = "+activo+"  AND  epv.DD_EPV_CODIGO = '03' AND a.borrado = 0");
+				"    WHERE a.act_num_activo = "+activo+"  AND  epv.DD_EPV_CODIGO = '03' AND a.borrado = 0");
 		
 		}else if(DD_TCO_ALQUILER.equals(tipoComercializacion)) {
 		 resultado = rawDao.getExecuteSQL(
@@ -7105,7 +7105,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"    JOIN act_apu_activo_publicacion apu ON a.act_id = apu.act_id AND apu.borrado = 0 \n" + 
 				"    JOIN dd_epa_estado_pub_alquiler epa ON apu.DD_EPA_ID = epa.DD_EPA_ID AND epa.borrado = 0 \n" + 
 				"    JOIN dd_epv_estado_pub_venta epv ON apu.DD_EPV_ID = epv.DD_EPV_ID AND epv.borrado = 0\n" + 
-				"    WHERE a.act_id = "+activo+"  AND  epv.DD_EPA_CODIGO = '03' AND a.borrado = 0");
+				"    WHERE a.act_num_activo = "+activo+"  AND  epv.DD_EPA_CODIGO = '03' AND a.borrado = 0");
 		
 		}else if(DD_TCO_ALQUILER_VENTA.equals(tipoComercializacion)) {
 		 resultado = rawDao.getExecuteSQL(
@@ -7113,7 +7113,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"    JOIN act_apu_activo_publicacion apu ON a.act_id = apu.act_id AND apu.borrado = 0 \n" + 
 				"    JOIN dd_epa_estado_pub_alquiler epa ON apu.DD_EPA_ID = epa.DD_EPA_ID AND epa.borrado = 0 \n" + 
 				"    JOIN dd_epv_estado_pub_venta epv ON apu.DD_EPV_ID = epv.DD_EPV_ID AND epv.borrado = 0 \n" + 
-				"    WHERE a.act_id = "+activo+"  AND  (epa.DD_EPA_CODIGO = '03' OR epv.DD_EPV_CODIGO = '03') AND a.borrado = 0");
+				"    WHERE a.act_num_activo = "+activo+"  AND  (epa.DD_EPA_CODIGO = '03' OR epv.DD_EPV_CODIGO = '03') AND a.borrado = 0");
 		}
 		
 		return !"0".equals(resultado);

@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210330
+--## FECHA_CREACION=20210427
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13610
+--## INCIDENCIA_LINK=HREOS-13839
 --## PRODUCTO=NO
---## Finalidad:  Crear tabla auxiliar AUX_CIERRE_OFICINAS_BANKIA
+--## Finalidad:  Crear tabla auxiliar ENVIO_CIERRE_OFICINAS_BANKIA
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -33,7 +33,7 @@ DECLARE
     V_NUM_SEQ NUMBER(16); -- Vble. para validar la existencia de una secuencia.  
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_TEXT_TABLA VARCHAR2(1024 CHAR):= 'AUX_CIERRE_OFICINAS_BANKIA';
+    V_TEXT_TABLA VARCHAR2(1024 CHAR):= 'ENVIO_CIERRE_OFICINAS_BANKIA';
 
 BEGIN
 
@@ -50,7 +50,18 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 		(
-		    ECO_ID	NUMBER(16,0)
+            ENVIO_ID            NUMBER(16,0),
+		    ECO_ID	            NUMBER(16,0),
+            OFICINA_ANTERIOR    VARCHAR2(4 CHAR),
+            ENVIADO             NUMBER(1,0)             DEFAULT 0 NOT NULL ENABLE,
+            VERSION 			NUMBER(38,0) 			DEFAULT 0 NOT NULL ENABLE, 
+		    USUARIOCREAR 		VARCHAR2(50 CHAR) 		NOT NULL ENABLE, 
+		    FECHACREAR 			TIMESTAMP (6) 			NOT NULL ENABLE, 
+		    USUARIOMODIFICAR 	VARCHAR2(50 CHAR), 
+		    FECHAMODIFICAR 		TIMESTAMP (6), 
+		    USUARIOBORRAR 		VARCHAR2(50 CHAR), 
+		    FECHABORRAR 		TIMESTAMP (6), 
+		    BORRADO 			NUMBER(1,0) 			DEFAULT 0 NOT NULL ENABLE
 		)
 		';
 		EXECUTE IMMEDIATE V_MSQL;
@@ -66,7 +77,7 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
         END IF;
 
-        V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (ECO_ID))';
+        V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (ENVIO_ID))';
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK creada.');
 

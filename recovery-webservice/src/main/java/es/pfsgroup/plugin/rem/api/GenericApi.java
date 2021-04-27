@@ -371,4 +371,7 @@ public interface GenericApi {
 	
 	public void actualizaHonorariosUvem (List<Long> listaIdsAuxiliar);
 
+	HashMap<String, String> validateCierreOficinaPostRequestData(CierreOficinaBankiaDto cierreOfiDto)
+			throws Exception;
+
 }

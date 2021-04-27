@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
+import es.pfsgroup.plugin.rem.model.AuxiliarCierreOficinasBankiaMul;
 import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
@@ -392,7 +393,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	/*public Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo);*/
 
-	List<Long> getIdsAuxiliarCierreOficinaBankias(String codOficinaAnterior);
+	List<Long> getIdsAuxiliarCierreOficinaBankias();
 
 	Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo, String username);
 	
@@ -408,4 +409,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	boolean isPublicadoVentaByFechaValoracion(Long idActivo, Date fechaValoracion);
 	public Page getBusquedaPublicacionGrid(DtoPublicacionGridFilter dto);
+
+	List<AuxiliarCierreOficinasBankiaMul> getListAprAuxCierreBnK();
 }

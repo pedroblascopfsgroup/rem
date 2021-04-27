@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210422
+--## FECHA_CREACION=20210427
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13822
+--## INCIDENCIA_LINK=HREOS-13839
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que realiza el cambio de oficinas en Bankia
 --##           
@@ -15,6 +15,7 @@
 --##        0.3 Cierre Oficinas Bankia. Traspaso de Negocio - HREOS-13610
 --##        0.4 Se trunca la tabla auxiliar al principio del proceso
 --##        0.5 Se quita el truncado de la tabla auxiliar -  HREOS-13822
+--##        0.5 Se cambia el INSERT de la tabla auxiliar -  HREOS-13839
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -37,7 +38,7 @@ CREATE OR REPLACE PROCEDURE SP_CAMBIO_OFICINA_BANKIA (
     V_COUNT_OFICINA_NUEVA NUMBER(16);
     V_OFICINA_ANTIGUA NUMBER(16);
     V_OFICINA_NUEVA NUMBER(16);
-    V_TEXT_TABLA_AUX VARCHAR2(1024 CHAR):= 'AUX_CIERRE_OFICINAS_BANKIA';
+    V_TEXT_TABLA_AUX VARCHAR2(1024 CHAR):= 'ENVIO_CIERRE_OFICINAS_BANKIA';
 
 BEGIN
         PL_OUTPUT := '[INICIO]'||CHR(10);
@@ -179,8 +180,28 @@ BEGIN
                     
                 PL_OUTPUT := PL_OUTPUT || '     RESPONSABLE CAMBIADO EN '||SQL%ROWCOUNT||' OFERTAS' || CHR(10) ;  
                 
-                V_MSQL := 'INSERT INTO '||V_TEXT_TABLA_AUX||' SELECT DISTINCT GEX.ECO_ID, '''||PVE_COD_API_PROVEEDOR_ANTIGUA||''', 0 FROM 
-                        '||V_ESQUEMA||'.GEX_GASTOS_EXPEDIENTE GEX WHERE GEX.BORRADO = 0 AND GEX.GEX_PROVEEDOR = '||V_OFICINA_ANTIGUA;
+                V_MSQL := 'INSERT INTO '||V_TEXT_TABLA_AUX||' 
+                            (ENVIO_ID,
+                            ECO_ID,
+                            OFICINA_ANTERIOR,
+                            ENVIADO,
+                            VERSION,
+                            USUARIOCREAR,
+                            FECHACREAR,
+                            BORRADO)                         
+                         SELECT  '||V_ESQUEMA||'.S_'||V_TEXT_TABLA_AUX||'.NEXTVAL,
+                         GEX.ECO_ID,
+                         '''||PVE_COD_API_PROVEEDOR_ANTIGUA||''',
+                         0,
+                         0,
+                         '''||V_USUARIO||''',
+                         SYSDATE,                         
+                         0 
+                        FROM (SELECT AUX_GEX.ECO_ID, ROW_NUMBER() OVER (PARTITION BY AUX_GEX.ECO_ID ORDER BY AUX_GEX.GEX_ID desc) RN
+                                FROM '||V_ESQUEMA||'.GEX_GASTOS_EXPEDIENTE AUX_GEX 
+                                WHERE AUX_GEX.BORRADO = 0 
+                                AND AUX_GEX.GEX_PROVEEDOR = '||V_OFICINA_ANTIGUA||') GEX
+                        WHERE GEX.RN = 1';
 
                 EXECUTE IMMEDIATE V_MSQL;        
 

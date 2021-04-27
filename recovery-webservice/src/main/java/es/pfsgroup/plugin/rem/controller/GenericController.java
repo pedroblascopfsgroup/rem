@@ -779,7 +779,6 @@ public class GenericController extends ParadiseJsonController{
 				
 				boolean error = genericApi.traspasoCierreOficinaBankia(listCierreOficinaBankiaDto, jsonFields, listaRespuesta);
 				
-				//ofertaApi.saveOrUpdateOfertas(listaOfertaDto, jsonFields, listaRespuesta);
 
 				model.put("id", jsonFields.get("id"));
 				model.put("data", listaRespuesta);

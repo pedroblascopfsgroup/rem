@@ -57,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
+import es.pfsgroup.plugin.rem.model.AuxiliarCierreOficinasBankiaMul;
 import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
@@ -2212,11 +2213,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Override
 	@Transactional
-	public List<Long> getIdsAuxiliarCierreOficinaBankias(String codOficinaAnterior) {
+	public List<Long> getIdsAuxiliarCierreOficinaBankias() {
 		List<Object> resultados = rawDao.getExecuteSQLList(
 				"		SELECT AUX.ECO_ID" + 
-				"		FROM AUX_CIERRE_OFICINAS_BANKIA AUX" + 
-				"		WHERE AUX.OFICINA_ANTERIOR = "+ codOficinaAnterior + "AND AUX.ENVIADO = 0");
+				"		FROM ENVIO_CIERRE_OFICINAS_BANKIA AUX" + 
+				"		WHERE AUX.ENVIADO = 0");
 		
 		List<Long> listaTareas = new ArrayList<Long>();
 
@@ -2301,5 +2302,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		return false;
 		
+	}
+	
+	@Override
+	public List<AuxiliarCierreOficinasBankiaMul> getListAprAuxCierreBnK() {
+		//TODO aquí se recoge el objetoMapeado
+		return genericDao.getList(AuxiliarCierreOficinasBankiaMul.class);
 	}
 }

@@ -91,7 +91,7 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			        	labelWidth:	150,
 			        	width: 		480,
 			        	bind: {
-		            		store: '{comboProveedorContacto}',
+		            		store: '{comboProveedorContactoGE}',
 		            		value: '{gestionEconomica.idProveedorContacto}',
 		            		disabled: '{!gestionEconomica.idProveedor}'
 		            	},

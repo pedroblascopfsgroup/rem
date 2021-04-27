@@ -1206,7 +1206,12 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		for (String error : listaErrores) {
 			sb.append(error);
 		}
-		mapaErrores.put(sb.toString(), aux);
+		String key = sb.toString();
+		if(mapaErrores.containsKey(key)) {
+			mapaErrores.get(key).add(fila);
+		}else {
+			mapaErrores.put(key, aux);
+		}
 	}
 	
 	private void sacarTodosLosErroresJerarquicos(MSVHojaExcel exc, Map<String,List<Integer>> mapaErrores) {

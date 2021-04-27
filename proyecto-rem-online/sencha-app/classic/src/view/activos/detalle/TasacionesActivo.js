@@ -130,19 +130,19 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 			   				        		bind:{
 			   				        			store: '{tipoTasacionStore}'
 			   				        		},
-			   								addUxReadOnlyEditFieldPlugin: false,
-			   								displayField: 'descripcion',
-			   		    					valueField: 'codigo',
-			   		    					allowBlank: false
+											addUxReadOnlyEditFieldPlugin: false,
+			   		    					allowBlank: false,
+											displayField: 'descripcion',
+			   		    					valueField: 'codigo'
 			   				        	},
-			   				        	renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+										renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
 			   					            var foundedRecord = this.up('activosdetallemain').getViewModel().getStore('tipoTasacionStore').findRecord('codigo', value);
 			   					            var descripcion;
 			   					        	if(!Ext.isEmpty(foundedRecord)) {
 			   					        		descripcion = foundedRecord.getData().descripcion;
 			   					        	}
 			   					        	return descripcion;
-			   					        },
+			   					        },		   				        	
 			   				        	flex:2
 			   				        },	
 			   				        {   
@@ -221,10 +221,9 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 			   				            }
 			   				        }
 			   				    ],
-			   				    listeners: [
-			   				        {rowclick: 'onTasacionListClick'}
-			   					    
-			   		    		]
+			   				    listeners: {
+									rowclick: 'onTasacionListClick'
+								}			   					    
 							}
 				
 				]

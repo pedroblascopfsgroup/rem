@@ -6,8 +6,7 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 	topBar: true,
 	editable: true,
 	bind: {
-		store: '{storeSuministrosActivo}',
-		editando: '{editingRows}'
+		store: '{storeSuministrosActivo}'
 	},
 	listeners: {
 		boxready: function() {
@@ -19,7 +18,6 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 	
 	initComponent: function () {
 		var me = this;
-
 		me.columns = [
 			{
 				dataIndex: 'idSuministro',
@@ -31,63 +29,90 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 			},
 			{
 				text:HreRem.i18n('fieldlabel.suministros.tipoSuministro'),
-				dataIndex: 'tipoSuministroDescripcion',
+				dataIndex: 'tipoSuministro',
 				flex:0.5,
+				renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+					var foundedRecord = this.up('suministrosactivo').lookupController().getStore('comboDDTipoSuministro').findRecord('id', value);
+					var descripcion;
+					if(!Ext.isEmpty(foundedRecord)) {
+						descripcion = foundedRecord.getData().descripcion;
+					};
+					return descripcion;
+				},
 				editor: {
-					xtype: 'comboboxfieldbasedd',
-					addUxReadOnlyEditFieldPlugin: false,
-					reference: 'comboDDTipoSuministroRef',
+					xtype: 'combobox',
 					bind: {
-						store: '{comboDDTipoSuministro}',
-						value: '{suministrosactivogridref.selection.tipoSuministro}',
-						rawValue: '{suministrosactivogridref.selection.tipoSuministroDescripcion}'
+						store: '{comboDDTipoSuministro}'
 					},
-					allowBlank: false
+					allowBlank: false,
+					displayField: 'descripcion',
+					valueField: 'id'
 				}
 			},
 			{
 				text:HreRem.i18n('fieldlabel.suministros.subtipoSuministro'),
-				dataIndex: 'subtipoSuministroDescripcion',
+				dataIndex: 'subtipoSuministro',
 				flex:0.5,
+				renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+					var foundedRecord = this.up('suministrosactivo').lookupController().getStore('comboDDSubtipoSuministro').findRecord('id', value);
+					var descripcion;
+					if(!Ext.isEmpty(foundedRecord)) {
+						descripcion = foundedRecord.getData().descripcion;
+					};
+					return descripcion;
+				},
 				editor: {
-					xtype: 'comboboxfieldbasedd',
-					addUxReadOnlyEditFieldPlugin: false,
+					xtype: 'combobox',
 					bind: {
-						store: '{comboDDSubtipoSuministro}',
-						value: '{suministrosactivogridref.selection.subtipoSuministro}',
-						rawValue: '{suministrosactivogridref.selection.subtipoSuministroDescripcion}'
+						store: '{comboDDSubtipoSuministro}'
 					},
-					allowBlank: false
+					allowBlank: false,
+					displayField: 'descripcion',
+					valueField: 'id'
 				}
 			},
 			{
 				text:HreRem.i18n('fieldlabel.suministros.companiaSuministradora'),
-				dataIndex: 'companiaSuministroDescripcion',
+				dataIndex: 'companiaSuministro',
 				flex:0.5,
-				editor: {
-					xtype: 'comboboxfieldbasedd',
-					addUxReadOnlyEditFieldPlugin: false,
+				renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+					var foundedRecord = this.up('suministrosactivo').lookupController().getStore('comboDDCompaniaSuministradora').findRecord('id', value);
+					var nombre;
+					if(!Ext.isEmpty(foundedRecord)) {
+						nombre = foundedRecord.getData().nombre;
+					};
+					return nombre;
+				},
+			editor: {
+					xtype: 'combobox',
 					bind: {
-						store: '{comboDDCompaniaSuministradora}',
-						value: '{suministrosactivogridref.selection.companiaSuministro}',
-						rawValue: '{suministrosactivogridref.selection.companiaSuministroDescripcion}'
+						store: '{comboDDCompaniaSuministradora}'
 					},
-					allowBlank: false
+					allowBlank: false,
+					displayField: 'nombre',
+					valueField: 'id'
 				}
 			},
 			{
 				text:HreRem.i18n('fieldlabel.suministros.domiciliado'),
-				dataIndex: 'domiciliadoDescripcion',
+				dataIndex: 'domiciliado',
 				flex:0.5,
+				renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+					var foundedRecord = this.up('suministrosactivo').lookupController().getStore('comboDDDomiciliado').findRecord('id', value);
+					var descripcion;
+					if(!Ext.isEmpty(foundedRecord)) {
+						descripcion = foundedRecord.getData().descripcion;
+					};
+					return descripcion;
+				},
 				editor: {
-					xtype: 'comboboxfieldbasedd',
-					addUxReadOnlyEditFieldPlugin: false,
+					xtype: 'combobox',
 					bind: {
-						store: '{comboDDDomiciliado}',
-						value: '{suministrosactivogridref.selection.domiciliado}',
-						rawValue: '{suministrosactivogridref.selection.domiciliadoDescripcion}'
+						store: '{comboDDDomiciliado}'
 					},
-					allowBlank: false
+					allowBlank: false,
+					displayField: 'descripcion',
+					valueField: 'id'
 				}
 			},
 			{
@@ -110,23 +135,30 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 			},
 			{
 				text:HreRem.i18n('fieldlabel.suministros.periodicidad'),
-				dataIndex: 'periodicidadDescripcion',
+				dataIndex: 'periodicidad',
 				flex:0.5,
+				renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+					var foundedRecord = this.up('suministrosactivo').lookupController().getStore('comboDDPeriodicidad').findRecord('id', value);
+					var descripcion;
+					if(!Ext.isEmpty(foundedRecord)) {
+						descripcion = foundedRecord.getData().descripcion;
+					};
+					return descripcion;
+				},
 				editor: {
-					xtype: 'comboboxfieldbasedd',
-					addUxReadOnlyEditFieldPlugin: false,
+					xtype: 'combobox',
 					bind: {
-						store: '{comboDDPeriodicidad}',
-						value: '{suministrosactivogridref.selection.periodicidad}',
-						rawValue: '{suministrosactivogridref.selection.periodicidadDescripcion}'
+						store: '{comboDDPeriodicidad}'
 					},
-					allowBlank: true
+					allowBlank: true,
+					displayField: 'descripcion',
+					valueField: 'id'
 				}
 			},
 			{
 				text:HreRem.i18n('fieldlabel.suministros.fechaAltaSuministro'),
 				dataIndex: 'fechaAlta',
-				flex:0.5,
+				flex:0.5,				
 				formatter: 'date("d/m/Y")',
 				editor: {
 					xtype: 'datefield',
@@ -136,17 +168,24 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 			},
 			{
 				text:HreRem.i18n('fieldlabel.suministros.motivoAltaSuministro'),
-				dataIndex: 'motivoAltaDescripcion',
+				dataIndex: 'motivoAlta',
 				flex:0.5,
+				renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+					var foundedRecord = this.up('suministrosactivo').lookupController().getStore('comboDDMotivoAltaSuministro').findRecord('id', value);
+					var descripcion;
+					if(!Ext.isEmpty(foundedRecord)) {
+						descripcion = foundedRecord.getData().descripcion;
+					};
+					return descripcion;
+				},
 				editor: {
-					xtype: 'comboboxfieldbasedd',
-					addUxReadOnlyEditFieldPlugin: false,
+					xtype: 'combobox',
 					bind: {
-						store: '{comboDDMotivoAltaSuministro}',
-						value: '{suministrosactivogridref.selection.motivoAlta}',
-						rawValue: '{suministrosactivogridref.selection.motivoAltaDescripcion}'
+						store: '{comboDDMotivoAltaSuministro}'
 					},
-					allowBlank: false
+					allowBlank: false,
+					displayField: 'descripcion',
+					valueField: 'id'
 				}
 			},
 			{
@@ -161,34 +200,48 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 			},
 			{
 				text:HreRem.i18n('fieldlabel.suministros.motivoBajaSuministro'),
-				dataIndex: 'motivoBajaDescripcion',
+				dataIndex: 'motivoBaja',
 				flex:0.5,
+				renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+					var foundedRecord = this.up('suministrosactivo').lookupController().getStore('comboDDMotivoBajaSuministro').findRecord('id', value);
+					var descripcion;
+					if(!Ext.isEmpty(foundedRecord)) {
+						descripcion = foundedRecord.getData().descripcion;
+					};
+					return descripcion;
+				},
 				editor: {
-					xtype: 'comboboxfieldbasedd',
-					addUxReadOnlyEditFieldPlugin: false,
+					xtype: 'combobox',
 					bind: {
-						store: '{comboDDMotivoBajaSuministro}',
-						value: '{suministrosactivogridref.selection.motivoBaja}',
-						rawValue: '{suministrosactivogridref.selection.motivoBajaDescripcion}'
-					}
+						store: '{comboDDMotivoBajaSuministro}'
+					},
+					displayField: 'descripcion',
+					valueField: 'id'
 				}
 			},
 			{
 				name: 'suministroValidado',
 				reference: 'suministroValidado',
 				text:HreRem.i18n('fieldlabel.suministros.validado'),
-				dataIndex: 'validadoDescripcion',
+				dataIndex: 'validado',
 				flex:0.5,
+				renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+					var foundedRecord = this.up('suministrosactivo').lookupController().getStore('comboDDValidado').findRecord('id', value);
+					var descripcion;
+					if(!Ext.isEmpty(foundedRecord)) {
+						descripcion = foundedRecord.getData().descripcion;
+					};
+					return descripcion;
+				},
 				editor: {
-					xtype: 'comboboxfieldbasedd',
-					addUxReadOnlyEditFieldPlugin: false,
+					xtype: 'combobox',
 					bind: {
 						store: '{comboDDValidado}',
-						disabled: '{!editarCheckValidado}',
-						value: '{suministrosactivogridref.selection.validado}',
-						rawValue: '{suministrosactivogridref.selection.validadoDescripcion}'
+						disabled: '{!editarCheckValidado}'
 					},
-					allowBlank: true
+					allowBlank: true,
+					displayField: 'descripcion',
+					valueField: 'id'
 				}
 			}
 			

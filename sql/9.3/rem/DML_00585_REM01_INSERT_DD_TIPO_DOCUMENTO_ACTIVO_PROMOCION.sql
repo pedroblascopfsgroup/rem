@@ -62,8 +62,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                       DD_TPD_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
                       DD_TPD_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
                       DD_TPD_MATRICULA_GD = '''||TRIM(V_TMP_TIPO_DATA(4))||''',
-                      USUARIOMODIFICAR = '''||V_USUARIO||''',FECHAMODIFICAR = SYSDATE,
-                      DD_TPD_VISIBLE = 0
+                      USUARIOMODIFICAR = '''||V_USUARIO||''',FECHAMODIFICAR = SYSDATE
 					            WHERE DD_TPD_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
 
@@ -96,8 +95,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                       DD_TDP_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
                       DD_TDP_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
                       DD_TDP_MATRICULA_GD = '''||TRIM(V_TMP_TIPO_DATA(4))||''',
-                      USUARIOMODIFICAR = '''||V_USUARIO||''',FECHAMODIFICAR = SYSDATE,
-                      DD_TDP_VISIBLE = 0
+                      USUARIOMODIFICAR = '''||V_USUARIO||''',FECHAMODIFICAR = SYSDATE
 					            WHERE DD_TDP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
           EXECUTE IMMEDIATE V_MSQL;
 

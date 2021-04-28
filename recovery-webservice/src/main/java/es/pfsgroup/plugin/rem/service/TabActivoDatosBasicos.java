@@ -1056,6 +1056,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if(activo.getEstadoValidacionActivoDND()!=null) {
 			activoDto.setEstadoFisicoActivoDND(activo.getEstadoValidacionActivoDND().getCodigo());
+			activoDto.setEstadoFisicoActivoDNDDescripcion(activo.getEstadoValidacionActivoDND().getDescripcion());
 		}
 
 		activoDto.setIsGrupoOficinaKAM(activoApi.isGrupoOficinaKAM());

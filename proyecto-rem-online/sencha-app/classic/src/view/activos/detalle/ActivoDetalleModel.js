@@ -18,8 +18,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     	activo: null,
     	ofertaRecord: null,
     	activoCondicionantesDisponibilidad: null,
-    	editingFirstLevel: null,
-		editingRows: null
+    	editingFirstLevel: null
     },
 
     formulas: {
@@ -2049,7 +2048,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tipoTasacion'}
-				},  		
+				},
 				autoLoad: true
 			},
 
@@ -3178,7 +3177,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoSuministro'}
-			}
+			},
+			autoLoad: true
 		},
 		
 		comboDDSubtipoSuministro: {
@@ -3187,7 +3187,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'subtipoSuministro'}
-			}
+			},
+			autoLoad: true
 		},
 		
 		comboDDCompaniaSuministradora: {
@@ -3195,7 +3196,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboActivoProveedorSuministro'
-			}
+			},
+			autoLoad: true
 		},
 		
 		comboDDDomiciliado: {
@@ -3204,7 +3206,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'domiciliado'}
-			}
+			},
+			autoLoad: true
 		},
 		
 		comboDDPeriodicidad: {
@@ -3213,7 +3216,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'periodicidad'}
-			}
+			},
+			autoLoad: true
 		},
 		
 		comboDDMotivoAltaSuministro: {
@@ -3222,17 +3226,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'motivoAltaSuministro'}
-			}
+			},
+			autoLoad: true
 		},
 		
 		comboDDMotivoBajaSuministro: {
-			pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'motivoBajaSuministro'}
-			}
+			},
+			autoLoad: true
 		},
 		
 		comboEstadoAdmision: {//

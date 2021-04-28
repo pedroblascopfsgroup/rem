@@ -1467,4 +1467,6 @@ public interface ParticularValidatorApi {
 	Boolean isActivoAlquiladoSCM(String activo);
 
 	boolean isActivoPublicadoDependiendoSuTipoComercializacion(String activo);
+
+	boolean isActivoDestinoComercialSoloAlquiler(String activo);
 }

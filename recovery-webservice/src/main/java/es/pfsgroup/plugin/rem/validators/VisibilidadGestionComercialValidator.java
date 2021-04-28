@@ -129,8 +129,11 @@ public class VisibilidadGestionComercialValidator {
 		List<String> erroresActivo = new ArrayList<String>();
 		
 		if(activoPublicacion != null) {
-			if((DDTipoComercializacion.isDestinoComercialVenta(activoActual.getTipoComercializacion()) && !DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta()))
-			|| (DDTipoComercializacion.isDestinoComercialSoloAlquiler(activoActual.getTipoComercializacion()) && !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler()))
+			if(DDTipoComercializacion.isDestinoComercialSoloAlquiler(activoActual.getTipoComercializacion())){
+				if(!DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler())) {
+					erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
+				}
+			}else if((DDTipoComercializacion.isDestinoComercialVenta(activoActual.getTipoComercializacion()) && !DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta()))
 			|| (DDTipoComercializacion.isDestinoComercialAlquilerVenta(activoActual.getTipoComercializacion()) 
 				&& !DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta()) && !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler()))) {
 			
@@ -168,11 +171,6 @@ public class VisibilidadGestionComercialValidator {
 				|| DDSubfasePublicacion.isHistoricoFasesSinValor(fasePublicacionActivoVigente.getSubFasePublicacion()))) {
 					erroresActivo.add(VALID_SUBFASE_PUBLICACION);
 				}
-				
-				
-				if(activoCargasApi.esCargasOcultasCargaMasivaEsparta(activoActual.getId()) || activoCargasApi.esActivoConCargasNoCanceladas(activoActual.getId())) {
-					erroresActivo.add(VALID_ACTIVO_CON_CARGAS);
-				} 	
 				
 				String[] estadosExpedienteNoValidos = {DDEstadosExpedienteComercial.FIRMADO, DDEstadosExpedienteComercial.RESERVADO, DDEstadosExpedienteComercial.VENDIDO};
 				boolean falloExpediente = false;

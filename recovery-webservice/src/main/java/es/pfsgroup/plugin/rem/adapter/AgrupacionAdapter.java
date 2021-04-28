@@ -1143,16 +1143,7 @@ public class AgrupacionAdapter {
 				}
 			}
 		}
-		Activo activoP = agrupacion.getActivoPrincipal();
-		Filter filtroactivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-		Filter filtroprincipal = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoP.getId());
-		PerimetroActivo perimetroActivoActual = genericDao.get(PerimetroActivo.class, filtroactivo);
-		PerimetroActivo perimetroActivoPrincipal = genericDao.get(PerimetroActivo.class, filtroprincipal);
-		boolean errorFlag = calculateEqualsPerimetros(perimetroActivoPrincipal, perimetroActivoActual);
-				
-		if(errorFlag) {
-			throw new JsonViewerException("Los activos no tienen la misma situación para la visibilidad de gestión comercial");
-		}
+		
 		// En asistidas hay que hacer una serie de actualizaciones
 		// 'especiales'.
 		if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
@@ -1160,7 +1151,19 @@ public class AgrupacionAdapter {
 		}
 
 		if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-			
+			boolean errorFlag = false;
+			Activo activoP = agrupacion.getActivoPrincipal();
+			if(activoP != null) {
+				Filter filtroactivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				Filter filtroprincipal = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoP.getId());
+				PerimetroActivo perimetroActivoActual = genericDao.get(PerimetroActivo.class, filtroactivo);
+				PerimetroActivo perimetroActivoPrincipal = genericDao.get(PerimetroActivo.class, filtroprincipal);
+				errorFlag = calculateEqualsPerimetros(perimetroActivoPrincipal, perimetroActivoActual);
+						
+				if(errorFlag) {
+					throw new JsonViewerException("Los activos no tienen la misma situación para la visibilidad de gestión comercial");
+				}
+			}
 			if (particularValidator.isMismoTcoActivoPrincipalAgrupacion(String.valueOf(numActivo),
 					String.valueOf(agrupacion.getNumAgrupRem()))) {
 

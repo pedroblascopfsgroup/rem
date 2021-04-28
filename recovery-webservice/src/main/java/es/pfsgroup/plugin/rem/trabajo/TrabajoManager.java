@@ -3451,6 +3451,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			if (trabajo.getProveedorContacto().getProveedor() != null) {
 				dtoTrabajo.setIdProveedor(trabajo.getProveedorContacto().getProveedor().getId());
+				dtoTrabajo.setNombreProveedor(trabajo.getProveedorContacto().getProveedor().getNombre());
 				dtoTrabajo.setCodigoTipoProveedor(trabajo.getProveedorContacto().getProveedor().getTipoProveedor().getCodigo());
 			}
 			if (trabajo.getProveedorContacto().getUsuario() != null) {

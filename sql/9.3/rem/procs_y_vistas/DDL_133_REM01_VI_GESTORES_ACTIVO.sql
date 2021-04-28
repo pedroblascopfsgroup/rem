@@ -707,7 +707,7 @@ UNION ALL
 				OR  dist7.tipo_gestor = TGE.DD_TGE_CODIGO
 			)
             AND act.DD_TPA_ID != (SELECT /*+ ALL_ROWS */  DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = ''01'')
-            AND act.DD_EAC_ID IN (SELECT /*+ ALL_ROWS */  DD_EAC_ID FROM '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO WHERE DD_EAC_CODIGO IN (''09'', ''02'', ''06'', ''11'', ''10'', ''05'', ''08'', ''07''))
+            AND act.DD_EAC_ID IN (SELECT /*+ ALL_ROWS */  DD_EAC_ID FROM '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO WHERE DD_EAC_CODIGO IN (''09'', ''02'', ''06'', ''11'', ''10'', ''05'', ''08'', ''07'', ''03''))
     UNION ALL                    
 
 /* Gestor Formalización-Administración */

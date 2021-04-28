@@ -91,8 +91,6 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 	
 	confirmSaveTit: null,
 	
-	editando: null,
-	
 	initComponent: function() {
 		
 		
@@ -158,8 +156,6 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 
 	    me.addListener ('edit', function(editor, context, eOpts) {
 			me.editFuncion(editor, context);
-			if(me.getSelectionModel() != null) me.getSelectionModel().setLocked(false);
-			me.setEditando(false);
         });
         
         me.addListener ('beforeedit', function(editor) {
@@ -167,7 +163,6 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
         	if (editor.editing || (!editor.isNew && !me.editOnSelect)) {
         		return false;
         	}
-			me.setEditando(true);
         });
         	
         me.addListener('canceledit', function(editor){
@@ -178,39 +173,30 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
         		me.getStore().remove(me.getStore().getAt(me.editPosition));
         		editor.isNew = false;
         	}
-			if(me.getSelectionModel() != null) me.getSelectionModel().setLocked(false);
-			me.setEditando(false);
         });
         	
         me.addListener('selectionchange', function(grid, records) {
         	me.onGridBaseSelectionChange(grid, records);
         });
 
-	    me.addListener('rowdblclick', function(grid, record, tr, rowIndex){
-			if(me.getSelectionModel() != null && !me.getPlugin("rowEditingPlugin").editing){
-				if(me.getSelectionModel().isLocked()) me.getSelectionModel().setLocked(false);
-				me.getSelectionModel().deselectAll();
-				me.getSelectionModel().select(rowIndex);
-				me.lookupViewModel().notify();
-			}
+	    me.addListener('rowdblclick', function(){
+			me.getSelectionModel().deselectAll();			
         	if(me.editable) {
 	        	if(me.getPlugin("rowEditingPlugin").editing) {
 	        		me.disableAddButton(true);
 	        		me.disablePagingToolBar(true);
-					if(me.getSelectionModel() != null) me.getSelectionModel().setLocked(true);
-					me.setEditando(true);
 	        	}
         	}
         	me.disableRemoveButton(true);
 	     });
             
         me.addListener('containerclick', function(editor){
-        	if(me.allowDeselect && !me.getPlugin("rowEditingPlugin").editing)
+        	if(me.allowDeselect)
         		me.getSelectionModel().deselectAll();
         });
         	
-        me.addListener('afterbind', function(grid, value, oldValue, binding){
-    		if (me.loadAfterBind && binding._config.names.set == 'setStore') {
+        me.addListener('afterbind', function(grid){
+    		if (me.loadAfterBind) {
 				grid.getStore().load();
     		}
 		});	
@@ -272,7 +258,6 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
         me.disableAddButton(true);
         me.disablePagingToolBar(true);
         me.disableRemoveButton(true);
-		me.setEditando(true);
     },
     
     onDeleteClick: function(btn){
@@ -479,7 +464,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
                binding.syncing = (binding.syncing + 1) || 1;
                this[binding._config.names.set](value);
                --binding.syncing;
-               this.fireEvent("afterbind", this, value, oldValue, binding);               
+               this.fireEvent("afterbind", this);               
                }
    
    },
@@ -577,19 +562,6 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
    				botones.items[0].setDisabled(disabledAddBtn);
    			}
    		}
-   },
-	setEditando: function(value){
-		var me = this;
-		me.editando = value;
-		if(me.lookupViewModel() != null) me.lookupViewModel().set("editingRows", value);
-		if(!value){
-			if(me.getPlugin("rowEditingPlugin").editing)
-				me.rowEditing.cancelEdit();
-		}
-	},
-	getEditando: function(){
-		var me = this;
-		return me.editando;
-	}
+   }
    
 });

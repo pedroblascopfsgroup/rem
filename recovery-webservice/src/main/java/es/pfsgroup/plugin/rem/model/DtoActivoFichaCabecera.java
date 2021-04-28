@@ -328,6 +328,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean restringido;  
 	private Boolean esEditableActivoEstadoRegistral;
 	private String estadoFisicoActivoDND;
+	private String estadoFisicoActivoDNDDescripcion;
 	private Double porcentajeConstruccion;
 	private Boolean isEditablePorcentajeConstruccion;
 
@@ -2574,5 +2575,12 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.esActivoPrincipalAgrupacionRestringida = esActivoPrincipalAgrupacionRestringida;
 	}
 
+	public String getEstadoFisicoActivoDNDDescripcion() {
+		return estadoFisicoActivoDNDDescripcion;
+	}
+
+	public void setEstadoFisicoActivoDNDDescripcion(String estadoFisicoActivoDNDDescripcion) {
+		this.estadoFisicoActivoDNDDescripcion = estadoFisicoActivoDNDDescripcion;
+	}	
 	
 }

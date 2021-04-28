@@ -1319,7 +1319,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			}
 			// ADJUNTOS SI ES SAREB
 			else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) {
-				f1 = FileItemUtils.fromResource("docs/Instrucciones_de_reserva_v2.docx");
+				f1 = FileItemUtils.fromResource("docs/Instrucciones_de_reserva_v3.docx");
 				if (f1 != null) {
 					adjuntos.add(createAdjunto(f1, "Instrucciones_de_reserva.docx"));
 				}

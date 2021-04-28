@@ -182,7 +182,17 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															filtradoEspecial2: true,
 							    						    listeners: {
 																select: 'onChangeProveedorCombo'							    						     	
-							    						    }
+							    						    },
+															tpl: Ext.create('Ext.XTemplate',
+																	'<tpl for=".">',
+																		'<div class="x-boundlist-item">{codigo} - {nombre} - {descripcionTipoProveedor} - {estadoProveedorDescripcion}</div>',
+																	'</tpl>'
+															),
+															displayTpl:  Ext.create('Ext.XTemplate',
+																	'<tpl for=".">',
+																		'{codigo} - {nombre} - {descripcionTipoProveedor} - {estadoProveedorDescripcion}',
+																	'</tpl>'
+															)
 												        },
 												        { 
 															xtype: 'comboboxfieldbase',

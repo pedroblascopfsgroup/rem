@@ -42,6 +42,7 @@ public class ActivoPropagacionFieldTabMap {
 	    			"estadoActivoCodigo",
 	    			"tipoTransmision",
     	    		"tipoSegmentoCodigo",
+    	    		"porcentajeConstruccion",
 	    			// identificación BBVA
 	    			"lineaFactura",
 	    			"idOrigenHre",

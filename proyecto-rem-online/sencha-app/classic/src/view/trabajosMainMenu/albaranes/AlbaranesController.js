@@ -194,26 +194,21 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var v;
 		if(descripcion == "detalleAlbaranGrid"){
 			var valor = 0;
-			if(record.data.importeTotalClienteDetalle > 0){
-				valor = record.data.importeTotalClienteDetalle;
-			}else{
+			if(record.data.importeTotalDetalle != null && record.data.importeTotalDetalle != 0){
 				valor = record.data.importeTotalDetalle;
 			}
 			var totalPre = this.lookupReference('totalPrefactura');
 			v = parseFloat(valor).toFixed(2);
 			v = this.millaresConPuntos(v);
-			if(this.lookupReference('albaranGrid').selection.data.importeTotalCliente > 0){
-				this.data.acumulador = this.lookupReference('albaranGrid').selection.data.importeTotalCliente;
-			}else{
+			var importeTotal = this.lookupReference('albaranGrid').selection.data.importeTotal;
+			if(importeTotal != null && importeTotal != 0){
 				this.data.acumulador = this.lookupReference('albaranGrid').selection.data.importeTotal;
 			}
 			totalPre.setValue(v);
 		}
 		if(descripcion == "albaranGrid"){
 			var valorAlb = 0;
-			if(record.data.importeTotalCliente > 0){
-				valorAlb = record.data.importeTotalCliente;
-			}else{
+			if(record.data.importeTotal != null && record.data.importeTotal != 0){
 				valorAlb = record.data.importeTotal;
 			}
 			var totalAlb = this.lookupReference('totalAlbaran');
@@ -236,9 +231,9 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var pos = gridTrabajo.data.indexOf(rowTrabajo.data.numTrabajo);
 		if(checked){
 			valorAlb = parseFloat(totalAlb.getValue().replace(/[.]/g, '').replace(/[,]/g, '.')) + parseFloat(rowTrabajo.data.importeTotalPrefactura);
-			valorAlbC = parseFloat(totalAlb.getValue().replace(/[.]/g, '').replace(/[,]/g, '.')) + parseFloat(rowTrabajo.data.importeTotalClientePrefactura);
+			//valorAlbC = parseFloat(totalAlb.getValue().replace(/[.]/g, '').replace(/[,]/g, '.')) + parseFloat(rowTrabajo.data.importeTotalClientePrefactura);
 			valor = parseFloat(totalPre.getValue().replace(/[.]/g, '').replace(/[,]/g, '.')) + parseFloat(rowTrabajo.data.importeTotalPrefactura);
-			valorC = parseFloat(totalPre.getValue().replace(/[.]/g, '').replace(/[,]/g, '.')) + parseFloat(rowTrabajo.data.importeTotalClientePrefactura);
+			//valorC = parseFloat(totalPre.getValue().replace(/[.]/g, '').replace(/[,]/g, '.')) + parseFloat(rowTrabajo.data.importeTotalClientePrefactura);
 			rowTrabajo.data.checkIncluirTrabajo = true;
 			if( pos >= 0){
 				gridTrabajo.data.splice(pos,1);
@@ -247,26 +242,26 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 			me.lookupReference('detallePrefacturaGrid').getView().refresh();
 		}else{
 			valorAlb = parseFloat(totalAlb.getValue().replace(/[.]/g, '').replace(/[,]/g, '.')) - rowTrabajo.data.importeTotalPrefactura;
-			valorAlbC = parseFloat(totalAlb.getValue().replace(/[.]/g, '').replace(/[,]/g, '.')) - rowTrabajo.data.importeTotalClientePrefactura;
+			//valorAlbC = parseFloat(totalAlb.getValue().replace(/[.]/g, '').replace(/[,]/g, '.')) - rowTrabajo.data.importeTotalClientePrefactura;
 			valor = parseFloat(totalPre.getValue().replace(/[.]/g, '').replace(/[,]/g, '.')) - rowTrabajo.data.importeTotalPrefactura;
-			valorC = parseFloat(totalPre.getValue().replace(/[.]/g, '').replace(/[,]/g, '.')) - rowTrabajo.data.importeTotalClientePrefactura;
+			//valorC = parseFloat(totalPre.getValue().replace(/[.]/g, '').replace(/[,]/g, '.')) - rowTrabajo.data.importeTotalClientePrefactura;
 			rowTrabajo.data.checkIncluirTrabajo = false;
 			gridTrabajo.data.push(rowTrabajo.data.numTrabajo);
 			me.lookupReference('detallePrefacturaGrid').getStore().getData().items[rowIndex].data.checkIncluirTrabajo=false;
 			me.lookupReference('detallePrefacturaGrid').getView().refresh();
 		}
 		if(rowTrabajo.data.importeTotalPrefactura > 0 ){
-			totalAlb.setValue(me.millaresConPuntos(parseFloat(valorAlbC).toFixed(2)));
+			totalAlb.setValue(me.millaresConPuntos(parseFloat(valorAlb).toFixed(2)));
 			me.data.acumulador = parseFloat(valorAlb).toFixed(2);
-		}else{
+		}/*else{
 			totalAlb.setValue(me.millaresConPuntos(parseFloat(valorAlb).toFixed(2)));
 			me.data.acumulador = parseFloat(valorAlbC).toFixed(2);
-		}
+		}*/
 		if(rowTrabajo.data.importeTotalPrefactura > 0){
-			totalPre.setValue(me.millaresConPuntos(parseFloat(valorC).toFixed(2)));
-		}else{
 			totalPre.setValue(me.millaresConPuntos(parseFloat(valor).toFixed(2)));
-		}
+		}/*else{
+			totalPre.setValue(me.millaresConPuntos(parseFloat(valor).toFixed(2)));
+		}*/
 
 	},
 	

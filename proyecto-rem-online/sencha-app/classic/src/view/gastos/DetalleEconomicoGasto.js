@@ -192,7 +192,17 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											                	   value: '{detalleeconomico.baseRetG}',
 											                	   disabled: '{!detalleeconomico.retencionGarantiaAplica}'
 											                },
-											                readOnly:true
+											                listeners: {
+										                		edit: function(){
+										        					if(this.getValue()==0)
+										        						this.setValue('');
+										        				},
+																update: function(){
+																	if(Ext.isEmpty(this.getValue()))
+																		this.setValue(0);
+																},
+															    change: 'onChangeCuotaRetencionGarantia'	
+														    }	
 														},
 														{ 
 															xtype: 'numberfieldbase',

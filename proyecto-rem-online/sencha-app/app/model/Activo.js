@@ -1129,6 +1129,9 @@ Ext.define('HreRem.model.Activo', {
 			{
 				name:'estadoFisicoActivoDND'
 			},
+			{
+				name:'estadoFisicoActivoDNDDescripcion'
+			},
     		{
 				name: 'empresa'
     		},

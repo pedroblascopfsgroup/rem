@@ -2226,23 +2226,31 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var cuota = 0;
     	var tipoRetencion = me.lookupReference('comboTipoRetencionRef').getValue();
     	var despues = false;
+    	var baseField = me.lookupReference('baseIRPFRetG');
+    	var base = me.lookupReference('baseIRPFRetG').getValue();
+    	var esLiberbank = me.getViewModel().get('esLiberbank');
     	
     	if(CONST.TIPO_RETENCION['DESPUES'] == tipoRetencion ){
 	    	despues = true;
 	    }
-	    	
-    	if(checked){ 
-	    	if(!me.lookupReference('lineaDetalleGastoGrid').getStore().loading){
-	    		base = me.getImporteRetencionLineasDetalle(me, despues);
-	    	}else{
-	    		base = me.getViewModel().get('detalleeconomico.baseRetG');
-	    	}
+
+    	if(checked){     		
+    		if (!esLiberbank) {
+    			baseField.setReadOnly(true);
+    		}
+    		
+    		if (!esLiberbank || base == null) {
+    			if (!me.lookupReference('lineaDetalleGastoGrid').getStore().loading){
+    	    		base = me.getImporteRetencionLineasDetalle(me, despues);
+    	    	} else {
+    	    		base = me.getViewModel().get('detalleeconomico.baseRetG');
+    	    	}
+    		}
 	    
 	    	if(tipoImpositivo != null && base != null){
 	    		cuota = (tipoImpositivo * base)/100;
 	    	}
     	}
-    
 
     	me.lookupReference('baseIRPFRetG').setValue(base);
 		cuota = Number(Math.round(cuota + "e+" + 2)  + "e-" + 2);

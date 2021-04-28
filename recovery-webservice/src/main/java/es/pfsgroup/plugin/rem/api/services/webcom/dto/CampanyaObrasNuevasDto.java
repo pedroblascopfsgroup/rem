@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api.services.webcom.dto;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.BooleanDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
@@ -37,7 +38,11 @@ public class CampanyaObrasNuevasDto implements WebcomRESTDto{
 	//Petición HREOS-7226
 	private LongDataType agrExistePisoPiloto;
 	private LongDataType agrComercializableConsPlano;
-
+	
+	private LongDataType pisoPiloto;
+	private LongDataType agrVisitable;
+	private StringDataType agrEmpresaPromotora;
+	private StringDataType agrEmpresaComercializadora;
 	
 	public DateDataType getFechaAccion() {
 		return fechaAccion;
@@ -158,5 +163,29 @@ public class CampanyaObrasNuevasDto implements WebcomRESTDto{
 	}
 	public void setAgrComercializableConsPlano(LongDataType agrComercializableConsPlano) {
 		this.agrComercializableConsPlano = agrComercializableConsPlano;
+	}
+	public LongDataType getPisoPiloto() {
+		return pisoPiloto;
+	}
+	public void setPisoPiloto(LongDataType pisoPiloto) {
+		this.pisoPiloto = pisoPiloto;
+	}
+	public LongDataType getAgrVisitable() {
+		return agrVisitable;
+	}
+	public void setAgrVisitable(LongDataType agrVisitable) {
+		this.agrVisitable = agrVisitable;
+	}
+	public StringDataType getAgrEmpresaPromotora() {
+		return agrEmpresaPromotora;
+	}
+	public void setAgrEmpresaPromotora(StringDataType agrEmpresaPromotora) {
+		this.agrEmpresaPromotora = agrEmpresaPromotora;
+	}
+	public StringDataType getAgrEmpresaComercializadora() {
+		return agrEmpresaComercializadora;
+	}
+	public void setAgrEmpresaComercializadora(StringDataType agrEmpresaComercializadora) {
+		this.agrEmpresaComercializadora = agrEmpresaComercializadora;
 	}
 }

@@ -1273,17 +1273,23 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 						if(Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase()) || (excluirValidaciones != null && !excluirValidaciones)) {
 							
 							if(!particularValidator.isActivoPublicadoDependiendoSuTipoComercializacion(activo)) {
-								if(particularValidator.isActivoBankia(activo) || particularValidator.isActivoSareb(activo)) {
+								if(particularValidator.isActivoDestinoComercialSoloAlquiler(activo)) {
 									listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_ESTADO_PUBLICACION));
-									pararComprobaciones = true;	
-								}else if(particularValidator.activoBBVAPerteneceSociedadParticipada(activo)) {
-									listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_PROPIETARIO_SOCIEDAD));	
-								}else if(particularValidator.isActivoCajamar(activo)) {
-									if(particularValidator.isCheckVisibleGestionComercial(activo)) {
-										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_GESTION));
-									}
-									if(particularValidator.estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(activo)) {
-										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_NO_VPO));
+									pararComprobaciones = true;
+								}
+								if(!pararComprobaciones) {
+									if(particularValidator.isActivoBankia(activo) || particularValidator.isActivoSareb(activo)) {
+										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_ESTADO_PUBLICACION));
+										pararComprobaciones = true;	
+									}else if(particularValidator.activoBBVAPerteneceSociedadParticipada(activo)) {
+										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_PROPIETARIO_SOCIEDAD));
+									}else if(particularValidator.isActivoCajamar(activo)) {
+										if(particularValidator.isCheckVisibleGestionComercial(activo)) {
+											listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_GESTION));
+										}
+										if(particularValidator.estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(activo)) {
+											listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_NO_VPO));
+										}
 									}
 								}
 								if(!pararComprobaciones) {
@@ -1301,10 +1307,6 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 									
 									if(!particularValidator.validacionSubfasePublicacion(activo)) {
 										listaErroresParaMarcar.add(messageServices.getMessage(VALID_SUBFASE_PUBLICACION));
-									}
-									
-									if(particularValidator.isConCargasOrCargasEsparta(activo)) {
-										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_CON_CARGAS));
 									}
 									
 									if(particularValidator.estadoExpedienteComercial(activo)) {

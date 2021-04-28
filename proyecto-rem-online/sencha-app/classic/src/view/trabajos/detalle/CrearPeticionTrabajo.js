@@ -194,9 +194,12 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															),
 															validator: function(){
 																var me = this;
+																
 																if(me.up('window').codCartera == null 
-																	|| me.up('formBase').down('[reference=listaActivosSubidaRef]').getStore().getData() == null 
-    																|| me.up('formBase').down('[reference=listaActivosSubidaRef]').getStore().getData().length < 1){
+																	|| (me.up('formBase').down('[reference=listaActivosSubidaRef]').getStore().getData() == null 
+    																|| me.up('formBase').down('[reference=listaActivosSubidaRef]').getStore().getData().length < 1)
+																	&& (me.up('formBase').down('[reference=activosagrupaciontrabajo]').getStore().getData() == null 
+    																|| me.up('formBase').down('[reference=activosagrupaciontrabajo]').getStore().getData().length < 1)){
 																	return 'Es necesario cargar el listado de activos para poder seleccionar el proveedor del trabajo';
 																}
 																if(Ext.isEmpty(me.getValue())){

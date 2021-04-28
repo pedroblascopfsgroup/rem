@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.excel;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,9 +66,9 @@ public class ElementosLineasExcelReport extends AbstractExcelReport implements E
 				fila.add(elemento.getParticipacion().toString() + "%");
 			}
 			if(elemento.getImporteProporcinalSujeto() != null) {
-				BigDecimal elementoBigDecimal  = BigDecimal.valueOf(elemento.getImporteProporcinalSujeto());
-				elementoBigDecimal = elementoBigDecimal.round(new MathContext(4));
-				fila.add(elementoBigDecimal.toString());
+				double importeProporcionalSujeto = BigDecimal.valueOf(elemento.getImporteProporcinalSujeto()).setScale(2,RoundingMode.HALF_UP).doubleValue();
+				fila.add(String.valueOf(importeProporcionalSujeto));
+				
 			}
 			
 			valores.add(fila);

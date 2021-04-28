@@ -320,6 +320,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String subestadoAdmisionDescCabecera;
 	private Boolean esEditableActivoEstadoRegistral;
 	private String estadoFisicoActivoDND;
+	private String estadoFisicoActivoDNDDescripcion;
 	private Double porcentajeConstruccion;
 	private Boolean isEditablePorcentajeConstruccion;
 
@@ -2491,6 +2492,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setCdpen(String cdpen) {
 		this.cdpen = cdpen;
+	}
+
+	public String getEstadoFisicoActivoDNDDescripcion() {
+		return estadoFisicoActivoDNDDescripcion;
+	}
+
+	public void setEstadoFisicoActivoDNDDescripcion(String estadoFisicoActivoDNDDescripcion) {
+		this.estadoFisicoActivoDNDDescripcion = estadoFisicoActivoDNDDescripcion;
 	}	
 	
 }

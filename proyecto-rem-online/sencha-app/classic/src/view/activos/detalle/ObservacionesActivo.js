@@ -5,12 +5,13 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 	launch: null,
 	listeners: { 	
     	boxready: function (tabPanel) { 
+			var me = this;
     		tabPanel.evaluarEdicion();
+			me.doLoad(me);
     	}
     },
 
     initComponent: function () {
-    	
     	//Configuraci�n de la pesta�a
         var me = this;
         me.reference = "observacionesactivoref_"+me.launch;
@@ -18,6 +19,7 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 		me.store = Ext.create('Ext.data.Store', {
 		 pageSize: $AC.getDefaultPageSize(),
 		 model: 'HreRem.model.Observaciones',
+		 autoLoad: false,
 	     proxy: {
 	        type: 'uxproxy',
 	        remoteUrl: 'activo/getListObservaciones',
@@ -164,7 +166,7 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 			}
         ];
         me.items = items;
-     	me.doLoad(me);
+     	
     	me.callParent();
     },
 

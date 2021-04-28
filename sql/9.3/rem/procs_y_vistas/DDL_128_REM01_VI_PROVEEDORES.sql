@@ -1,17 +1,16 @@
 --/*
 --##########################################
---## AUTOR=Kevin Fernández
---## FECHA_CREACION=20170320
+--## AUTOR=IVAN REPISO
+--## FECHA_CREACION=20210419
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
+--## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad: DDL
---## Comentario: Se ha añadido la opción de mostrar si el proveedor está dado de baja.
---##            
+--## Finalidad: DDL          
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 REMVIP-9499 - IVAN REPISO - Se necesita el estado de proveedor y el codigo proveedor
 --##########################################
 --*/
 
@@ -56,6 +55,8 @@ BEGIN
 			PVE.PVE_ID,
 			PVE.PVE_NOMBRE,
 			PVE.PVE_NOMBRE_COMERCIAL,
+      PVE.PVE_COD_REM,
+      EPR.DD_EPR_DESCRIPCION,
 			TPR.DD_TPR_CODIGO,
 			TPR.DD_TPR_DESCRIPCION,
 			CRA.DD_CRA_CODIGO,
@@ -69,10 +70,27 @@ BEGIN
 		INNER JOIN ' || V_ESQUEMA || '.ACT_ETP_ENTIDAD_PROVEEDOR ETP ON PVE.PVE_ID = ETP.PVE_ID
 		INNER JOIN ' || V_ESQUEMA || '.DD_TPR_TIPO_PROVEEDOR TPR ON TPR.DD_TPR_ID = PVE.DD_TPR_ID AND TPR.BORRADO = 0
 		INNER JOIN ' || V_ESQUEMA || '.DD_CRA_CARTERA CRA ON ETP.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
+    INNER JOIN ' || V_ESQUEMA || '.DD_EPR_ESTADO_PROVEEDOR EPR ON EPR.DD_EPR_ID = PVE.DD_EPR_ID AND EPR.BORRADO = 0
 		WHERE PVE.BORRADO = 0';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_PROVEEDORES...Creada OK');
+
+  COMMIT;
   
+
+  EXCEPTION
+     WHEN OTHERS THEN 
+         DBMS_OUTPUT.PUT_LINE('KO!');
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.PUT_LINE(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
 END;
 /
 

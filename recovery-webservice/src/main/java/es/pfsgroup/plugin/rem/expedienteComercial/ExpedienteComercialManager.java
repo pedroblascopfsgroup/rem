@@ -1977,15 +1977,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setOfertaSingular(oferta.getOfertaSingular() ? "Si" : "No");
 		}
 		
+		Long codigoPrescriptor = new Long(2321);
+		
 		if(!oferta.getOfrDocRespPrescriptor()) {
 			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_COMPRADORES);
 		}
 		
-		else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
+		else if(oferta.getOfrDocRespPrescriptor() && !Checks.esNulo(oferta.getPrescriptor()) && codigoPrescriptor.equals(oferta.getPrescriptor().getCodigoProveedorRem())) {
 			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL);
 		}
 		
-		else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
+		else if(oferta.getOfrDocRespPrescriptor() && !Checks.esNulo(oferta.getPrescriptor()) && !codigoPrescriptor.equals(oferta.getPrescriptor().getCodigoProveedorRem())) {
 			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR);
 		}
 		

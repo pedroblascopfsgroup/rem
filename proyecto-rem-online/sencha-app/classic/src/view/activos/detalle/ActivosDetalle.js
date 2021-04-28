@@ -28,8 +28,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
         	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
         	// Comprobamos si estamos editando para confirmar el cambio de pestaña
         	if (tabCurrent != null) {
-            	if (tabPanel.lookupController().getViewModel().get("editingFirstLevel") || tabPanel.lookupController().getViewModel().get("editing")
-					|| tabPanel.lookupController().getViewModel().get("editingRows")) {
+            	if (tabPanel.lookupController().getViewModel().get("editingFirstLevel") || tabPanel.lookupController().getViewModel().get("editing")) {
             		Ext.Msg.show({
             			   title: HreRem.i18n('title.descartar.cambios'),
             			   msg: HreRem.i18n('msg.desea.descartar'),
@@ -37,29 +36,24 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
             			   fn: function(buttonId) {
             			        if (buttonId == 'yes') {
 									tabPanel.lookupController().getViewModel().set("editingFirstLevel", false);
-									tabPanel.lookupController().getViewModel().set("editing", false);
-									tabPanel.lookupController().getViewModel().set("editingRows", false);
+									tabPanel.lookupController().getViewModel().set("editing", false);									
 									tabPanel.lookupController().getViewModel().notify();
-									if(!tabPanel.lookupController().getViewModel().get("editingRows")){
-										var btn = tabPanel.down('button[itemId=botoncancelar]');
-	        			        		Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
-										tabPanel.setActiveTab(tabNext);									
-										
-							            // Si la pestaña necesita botones de edición
-	
-					   					if(!tabNext.ocultarBotonesEdicion) {
-						            		tabPanel.evaluarBotonesEdicion(tabNext);
-					   					} else {
-					   						tabPanel.down("[itemId=botoneditar]").setVisible(false);
-					   					}
-									}
+									var btn = tabPanel.down('button[itemId=botoncancelar]');
+        			        		Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
+									tabPanel.setActiveTab(tabNext);									
+									
+						            // Si la pestaña necesita botones de edición
+
+				   					if(!tabNext.ocultarBotonesEdicion) {
+					            		tabPanel.evaluarBotonesEdicion(tabNext);
+				   					} else {
+				   						tabPanel.down("[itemId=botoneditar]").setVisible(false);
+				   					}
             			        }
 								else if(!tabCurrent.ocultarBotonesEdicion) {
-				            		if(!tabPanel.lookupController().getViewModel().get("editingRows"))
-										tabPanel.evaluarBotonesEdicion(tabCurrent);
+				            		tabPanel.evaluarBotonesEdicion(tabCurrent);
 								} else {
-									if(!tabPanel.lookupController().getViewModel().get("editingRows"))
-										tabPanel.down("[itemId=botoneditar]").setVisible(false);
+									tabPanel.down("[itemId=botoneditar]").setVisible(false);
 								}
             			   }
         			});

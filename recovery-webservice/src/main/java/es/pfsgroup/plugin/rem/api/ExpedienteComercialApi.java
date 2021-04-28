@@ -1351,7 +1351,9 @@ public interface ExpedienteComercialApi {
 	boolean sacarBulk(Long idExpediente);
 	
 	String tipoTratamiento(TareaExterna tareaExterna);
-
+	
 	Float getPorcentajeCompra(Long idExpediente);
+	
+	public void getCierreOficinaBankiaById(Long idExpediente);
 
 }

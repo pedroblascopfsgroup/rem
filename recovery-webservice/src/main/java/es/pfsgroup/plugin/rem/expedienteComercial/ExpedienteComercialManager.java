@@ -11718,4 +11718,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return expedienteComercial.getEstado().getCodigo();
 	}
 	
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void getCierreOficinaBankiaById(Long idExpediente) {
+
+		EnvioCierreOficinasBankia auxiliar = genericDao.get(EnvioCierreOficinasBankia.class,
+				genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
+		
+		if (auxiliar != null && !auxiliar.getEnviado()) {
+			auxiliar.setEnviado(true);
+			Auditoria auditoria = auxiliar.getAuditoria();			
+			auditoria.setFechaModificar(new Date());
+			auditoria.setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+			auxiliar.setAuditoria(auditoria);	
+			
+			genericDao.update(EnvioCierreOficinasBankia.class, auxiliar);
+			
+		}
+	}	
 }

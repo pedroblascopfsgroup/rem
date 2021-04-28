@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.rest.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -133,6 +135,8 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	private String documentoGDPR;
 	@Size(max=5,groups = { Insert.class, Update.class })
 	private String nombreDocumentoGDPR;
+	@Size(max=250,groups = { Insert.class, Update.class })
+	private Date fechaAcepGdpr;
 	
 	public String getCodTipoDocumento() {
 		return codTipoDocumento;
@@ -391,6 +395,12 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	}
 	public void setNombreDocumentoGDPR(String nombreDocumentoGDPR) {
 		this.nombreDocumentoGDPR = nombreDocumentoGDPR;
+	}
+	public Date getFechaAcepGdpr() {
+		return fechaAcepGdpr;
+	}
+	public void setFechaAcepGdpr(Date fechaAcepGdpr) {
+		this.fechaAcepGdpr = fechaAcepGdpr;
 	}
 	
 	

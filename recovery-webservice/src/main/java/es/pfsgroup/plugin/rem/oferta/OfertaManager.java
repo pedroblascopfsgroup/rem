@@ -1194,8 +1194,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 				
-				if (ofertaDto.getFechaAceptacionGdpr() != null) {
-					titAdi.setFechaAcepGdpr(ofertaDto.getFechaAceptacionGdpr());
+				if (titDto.getFechaAcepGdpr() != null) {
+					titAdi.setFechaAcepGdpr(titDto.getFechaAcepGdpr());
+//					titAdi.setFechaAcepGdpr(ofertaDto.getFechaAcepGdpr());
 				}
 				
 

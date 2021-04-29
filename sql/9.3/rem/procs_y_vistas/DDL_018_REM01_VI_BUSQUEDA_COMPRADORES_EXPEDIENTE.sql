@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20210420
+--## AUTOR= Javier Esbri
+--## FECHA_CREACION=20210429
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13795
@@ -16,6 +16,7 @@
 --##		0.4 HREOS-5927  COM.PROBLEMAS_URSUS añadida
 --##		0.5 HREOS-12747 OFR_TIA_TITULARES_ADICIONALES añadir campo FECHA_ACEP_GDPR
 --##		0.6 HREOS-13795 Cambiado a left los titulares adicionales.
+--##		0.7 HREOS-13840 Cambiado a left los titulares adicionales añadiendo un borrado lógico a 0.
 --##########################################
 --*/
 		
@@ -110,7 +111,7 @@ BEGIN
 		LEFT JOIN '|| V_ESQUEMA ||'.DD_TGP_TIPO_GRADO_PROPIEDAD TGP ON CEX.DD_TGP_ID = TGP.DD_TGP_ID
     JOIN '|| V_ESQUEMA ||'.ECO_EXPEDIENTE_COMERCIAL ECO ON CEX.ECO_ID = ECO.ECO_ID
     JOIN '|| V_ESQUEMA ||'.OFR_OFERTAS OFR ON ECO.OFR_ID = OFR.OFR_ID
-    LEFT JOIN '|| V_ESQUEMA ||'.OFR_TIA_TITULARES_ADICIONALES TIA ON OFR.OFR_ID = TIA.OFR_ID';
+    LEFT JOIN '|| V_ESQUEMA ||'.OFR_TIA_TITULARES_ADICIONALES TIA ON OFR.OFR_ID = TIA.OFR_ID AND TIA.BORRADO = 0';
 		
 		
 

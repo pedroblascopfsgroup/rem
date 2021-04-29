@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=PIER GOTTA
---## FECHA_CREACION=20201230
+--## FECHA_CREACION=20210429
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-12615
@@ -34,6 +34,7 @@
 --##	0.21 HREOS-9330 Añadido Gestor cierre venta para activos Cerberus-Divarian y corrección duplicados
 --##	0.22 VRO REMVIP-6381 Se corrige el gestor GCONT añadido en la modificacion anterior
 --##	0.23 HREOS-12615 Nuevos tipos de gestor BBVA
+--##	0.24 REMVIP-9582 Añadir código EAC para Gestor edificación
 --##########################################
 --*/
 

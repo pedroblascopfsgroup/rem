@@ -580,7 +580,7 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     			name: 'sociedadPagoAnterior'
     		},
     		{
-    			name:'fechaPosesionNoJudicial',
+    			name: 'fechaPosesion',
     			convert: function(value) {
     				if (!Ext.isEmpty(value)) {
 						if  ((typeof value) == 'string') {

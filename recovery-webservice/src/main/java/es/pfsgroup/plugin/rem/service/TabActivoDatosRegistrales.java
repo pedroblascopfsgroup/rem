@@ -119,6 +119,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	private final String PERFIL_HAYAGESTADM = "HAYAGESTADM";
 	private final String PERFIL_HAYASUPADM = "HAYASUPADM";
 	private final String PERFIL_GESTOADM = "GESTOADM";
+	private final String PERFIL_HAYAGESACT = "HAYAGESACT";
 	private static final String MENSAJE_ERROR_SUPERFICIE_CONSTRUIDA  = "msg.error.superficie.construida.UAs";
 	private static final String MENSAJE_ERROR_SUPERFICIE_UTIL        = "msg.error.superficie.util.UAs";
 	private static final String MENSAJE_ERROR_SUPERFICIE_REPERCUSION = "msg.error.superficie.repercusion.UAs";
@@ -518,6 +519,10 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 						activoBbva.getSociedadPagoAnterior().getFullName() : null);
 			}
 			
+		}
+		
+		if(activo.getAdjNoJudicial() != null && activo.getAdjNoJudicial().getFechaPosesion() != null) {
+			activoDto.setFechaPosesion(activo.getAdjNoJudicial().getFechaPosesion());
 		}
 		
 		return activoDto;
@@ -1040,6 +1045,11 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					}
 				}
 			}
+		
+			
+				activo.getAdjNoJudicial().setFechaPosesion(dto.getFechaPosesion());
+				activo.getSituacionPosesoria().setFechaTomaPosesion(dto.getFechaPosesion());
+			
 			
 			if (dto.getFechaPosesionNoJudicial() != null) {
 				activo.getBien().getAdjudicacion().setFechaRealizacionPosesion(dto.getFechaPosesionNoJudicial());

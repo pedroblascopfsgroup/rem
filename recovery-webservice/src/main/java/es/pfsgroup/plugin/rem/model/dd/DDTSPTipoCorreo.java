@@ -31,7 +31,9 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTSPTipoCorreo implements Auditable, Dictionary {
 
-
+	 public static final String CODIGO_A = "01";
+	 public static final String CODIGO_B = "02";
+	 public static final String CODIGO_C = "03";
 	/**
 	 * 
 	 */

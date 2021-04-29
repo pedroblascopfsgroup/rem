@@ -11,6 +11,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoAgrupacion;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
+import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.AdjuntoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.AdjuntosPromocion;
 
@@ -87,6 +88,17 @@ public class DbDownloader implements Downloader {
 		fileItem.setFileName(adjuntoGasto.getNombreAdjuntoGastoAsociado());
 
 		return adjuntoGasto.getAdjunto().getFileItem();
+	}
+	
+	@Override
+	public FileItem getFileItemExpediente(Long id,String nombreDocumento) {
+		AdjuntoExpedienteComercial adjuntoExpedienteComercial = genericDao.get(AdjuntoExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+
+		FileItem fileItem = adjuntoExpedienteComercial.getAdjunto().getFileItem();
+		fileItem.setContentType(adjuntoExpedienteComercial.getContentType());
+		fileItem.setFileName(adjuntoExpedienteComercial.getNombre());
+
+		return adjuntoExpedienteComercial.getAdjunto().getFileItem();
 	}
 	
 }

@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -16,10 +15,11 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.activo.exception.PlusvaliaActivoException;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceContabilidadBbva;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -28,7 +28,6 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -47,6 +46,9 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private NotificatorServiceContabilidadBbva notificatorServiceContabilidadBbva;
 	
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDocumentosPostVenta.class);
@@ -128,6 +130,14 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 			for (Oferta oferta : listaOfertas) {
 				if (DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())) {
 					ofertaApi.rechazarOferta(oferta);
+				}
+			}
+			if (expediente.getOferta() != null &&
+					DDCartera.CODIGO_CARTERA_BBVA.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
+				try {
+					notificatorServiceContabilidadBbva.notificatorFinTareaConValores(expediente,false);
+				} catch (GestorDocumentalException e) {
+					e.printStackTrace();
 				}
 			}
 

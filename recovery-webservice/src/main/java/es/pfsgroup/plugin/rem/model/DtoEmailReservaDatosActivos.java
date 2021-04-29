@@ -21,6 +21,7 @@ public class DtoEmailReservaDatosActivos extends WebDto {
 	private String provincia;
 	private String municipio;
 	private String direccion;
+	private String tipoCorreo;
 	
 	public Long getId() {
 		return id;
@@ -69,6 +70,12 @@ public class DtoEmailReservaDatosActivos extends WebDto {
 	}
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
+	}
+	public String getTipoCorreo() {
+		return tipoCorreo;
+	}
+	public void setTipoCorreo(String tipoCorreo) {
+		this.tipoCorreo = tipoCorreo;
 	}
 	
 }

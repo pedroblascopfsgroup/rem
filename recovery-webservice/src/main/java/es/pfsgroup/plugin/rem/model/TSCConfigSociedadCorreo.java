@@ -29,7 +29,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTSPTipoCorreo;
  *
  */
 @Entity
-@Table(name = "ACT_PRO_PROPIETARIO", schema = "${entity.schema}")
+@Table(name = "TSC_CONFIG_SOCIEDAD_CORREO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class TSCConfigSociedadCorreo implements Serializable, Auditable {

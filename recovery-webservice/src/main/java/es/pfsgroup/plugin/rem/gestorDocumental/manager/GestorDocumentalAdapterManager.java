@@ -1661,5 +1661,10 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 		return fileItem;
 	}
+
+	@Override
+	public FileItem getFileItemExpediente(Long id, String nombreDocumento) {
+ 		return this.getFileItem(id, nombreDocumento);
+	}
 	
 }

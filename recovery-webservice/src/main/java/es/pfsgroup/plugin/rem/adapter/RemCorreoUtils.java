@@ -94,7 +94,7 @@ public class RemCorreoUtils {
 			if(!Checks.estaVacio(direccionesMailBcc)) {
 				for (String bcc : direccionesMailBcc) {
 					if (bcc != null && bcc.length() > 0 && !mailsBCCSinNull.contains(bcc)) {
-						mailsCCSinNull.add(bcc);
+						mailsBCCSinNull.add(bcc);
 					}
 				}
 			}

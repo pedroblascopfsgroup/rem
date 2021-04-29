@@ -53,7 +53,6 @@ import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlanDinVentas;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
-import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -511,7 +510,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		}
 		
 		if (activo.getBien() != null && activo.getBien().getAdjudicacion() != null && activo.getBien().getAdjudicacion().getFechaRealizacionPosesion() != null) {
-			activoDto.setFechaPosesionNoJudicial(activo.getBien().getAdjudicacion().getFechaRealizacionPosesion());
 			if (activoBbva != null && activoBbva.getSociedadPagoAnterior() != null) {
 				activoDto.setSociedadPagoAnterior(activoBbva.getSociedadPagoAnterior() != null ? 
 						activoBbva.getSociedadPagoAnterior().getDocIdentificativo() : null);
@@ -1047,13 +1045,8 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			}
 		
 			
-				activo.getAdjNoJudicial().setFechaPosesion(dto.getFechaPosesion());
-				activo.getSituacionPosesoria().setFechaTomaPosesion(dto.getFechaPosesion());
-			
-			
-			if (dto.getFechaPosesionNoJudicial() != null) {
-				activo.getBien().getAdjudicacion().setFechaRealizacionPosesion(dto.getFechaPosesionNoJudicial());
-			}
+			activo.getAdjNoJudicial().setFechaPosesion(dto.getFechaPosesion());
+			activo.getSituacionPosesoria().setFechaTomaPosesion(dto.getFechaPosesion());
 			
 		} catch (JsonViewerException jvex) {
 			throw jvex;

@@ -1610,6 +1610,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		},
 		
 		isSubcarteraCerberus: function(get) {
+	    	var codigoSubcartera = get('activo.subcarteraCodigo');
+	    	var isSareb = get('activo.isCarteraSareb');
+	    	if (CONST.SUBCARTERA['APPLEINMOBILIARIO'] === codigoSubcartera
+	    		|| CONST.SUBCARTERA['DIVARIANARROW'] === codigoSubcartera
+	    		|| CONST.SUBCARTERA['DIVARIANREMAINING'] === codigoSubcartera 
+	    		|| isSareb){
+	    	return true;
+	    	}
+	    	return false;
+	    },
+	    
+		isSubcarteraCerberusOrSareb: function(get) {
 	    	var codigoSubcartera = get('activo.subcarteraCodigo')
 	    	if (CONST.SUBCARTERA['APPLEINMOBILIARIO'] === codigoSubcartera
 	    		|| CONST.SUBCARTERA['DIVARIANARROW'] === codigoSubcartera

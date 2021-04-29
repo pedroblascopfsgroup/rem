@@ -1001,15 +1001,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 									readOnly : '{esUA}'
 								}
 
-							},
-                            {
-								xtype:'datefieldbase',
-								reference: 'fechaPosesionNoJudicial',
-								fieldLabel: HreRem.i18n('fieldlabel.fecha.posesion.no.judicial'),
-						 		bind: {
-						 			value: '{datosRegistrales.fechaPosesionNoJudicial}',
-						 			readOnly: '{datosRegistrales.unidadAlquilable}'
-						 		}
 							}
 						]
 

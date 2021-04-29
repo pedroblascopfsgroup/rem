@@ -976,6 +976,16 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
                                 	readOnly: '{datosRegistrales.unidadAlquilable}'
                                 }
                             },
+                            { 
+                            	xtype:'datefieldbase',
+						 		fieldLabel: HreRem.i18n('fieldlabel.adjudicacion.no.judicial.fecha.posesion'),
+						 		bind: {
+						 			value: '{datosRegistrales.fechaPosesion}',
+						 			readOnly: '{isGestorActivosAndSuper}',
+						 			hidden: '{!isSubcarteraCerberus}'
+						 		}
+
+							},
                             {
                                 fieldLabel: HreRem.i18n('fieldlabel.id.asunto.recovery'),
                                 bind: {
@@ -991,15 +1001,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 									readOnly : '{esUA}'
 								}
 
-							},
-                            {
-								xtype:'datefieldbase',
-								reference: 'fechaPosesionNoJudicial',
-								fieldLabel: HreRem.i18n('fieldlabel.fecha.posesion.no.judicial'),
-						 		bind: {
-						 			value: '{datosRegistrales.fechaPosesionNoJudicial}',
-						 			readOnly: '{datosRegistrales.unidadAlquilable}'
-						 		}
 							}
 						]
 

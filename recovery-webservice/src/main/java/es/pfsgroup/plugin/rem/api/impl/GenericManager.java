@@ -1646,8 +1646,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		List<Long> listaIdsAuxiliar = activoDao.getIdsAuxiliarCierreOficinaBankias();
 		
 		if (!listaIdsAuxiliar.isEmpty()) {
-			Thread hilo = new Thread(new EjecutarEnviarHonorariosUvemAsincrono(usuario.getUsername(), listaIdsAuxiliar));
-			hilo.start();
+			/*Thread hilo = new Thread(new EjecutarEnviarHonorariosUvemAsincrono(usuario.getUsername(), listaIdsAuxiliar));
+			hilo.start();*/
+			actualizaHonorariosUvem(listaIdsAuxiliar);
 		}
 				
 		return error;

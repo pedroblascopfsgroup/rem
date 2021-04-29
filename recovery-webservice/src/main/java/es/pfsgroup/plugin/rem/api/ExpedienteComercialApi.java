@@ -1356,4 +1356,12 @@ public interface ExpedienteComercialApi {
 	
 	public void getCierreOficinaBankiaById(Long idExpediente);
 
+	/**
+	 * Recalcula todos los honorarios
+	 *
+	 * @param idExpediente
+	 * @return void
+	 */
+	void recalcularHonorarios(Long idExpediente) throws Exception;
+
 }

@@ -11717,6 +11717,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		return expedienteComercial.getEstado().getCodigo();
 	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void recalcularHonorarios(Long idExpediente) throws Exception {
+		
+		Oferta oferta = ofertaApi.getOfertaByIdExpediente(idExpediente);
+		
+		ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
+		
+		Activo activo = oferta.getActivoPrincipal();
+		
+		this.actualizarGastosExpediente(expediente,oferta,activo);
+		
+	}
 	
 	
 	@Override

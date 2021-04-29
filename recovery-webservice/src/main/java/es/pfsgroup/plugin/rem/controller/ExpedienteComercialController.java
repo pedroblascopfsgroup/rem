@@ -2412,4 +2412,27 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView recalcularHonorarios(ModelMap model, Long idExpediente) {
+		try {
+			expedienteComercialApi.recalcularHonorarios(idExpediente);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (JsonViewerException e) {
+			model.put("error", true);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.warn("Error controlado en ExpedienteComercialController", e);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

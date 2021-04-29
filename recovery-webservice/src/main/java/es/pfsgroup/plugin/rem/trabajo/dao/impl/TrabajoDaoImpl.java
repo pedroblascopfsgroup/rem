@@ -275,7 +275,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.proveedor.id", filtro.getIdProveedor());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.tipoTarifa.codigo", filtro.getCodigoTarifaTrabajo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.tipoTarifa.descripcion", filtro.getDescripcionTarifaTrabajo());
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.subcartera.codigo", filtro.getSubcarteraCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.subcartera.codigo", filtro.getSubcarteraCodigo());
 		
 		for (Perfil prov : usuarioLogado.getPerfiles()) {
 			if(prov.getCodigo().equals(PERFIL_PROV)) {

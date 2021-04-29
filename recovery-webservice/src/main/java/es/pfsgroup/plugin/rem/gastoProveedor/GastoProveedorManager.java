@@ -4236,4 +4236,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return importeCuotaBig.doubleValue();
 	}
 	
+	@Override
+	public Long getIdByNumGasto(Long numGasto) {
+		Long idGasto = null;
+		try {
+			idGasto = Long.parseLong(rawDao.getExecuteSQL("SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = " + numGasto + " AND BORRADO = 0"));
+		} catch (Exception e) {
+				return null;
+		}			
+			return idGasto;
+	}
+	
 }

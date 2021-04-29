@@ -978,4 +978,9 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		}
 		return true;
 	}
+	
+	@Override
+	public Long getIdByNumAgrupacion(Long numAgrupacion) {
+	return activoAgrupacionDao.getIdByNumAgrupacion(numAgrupacion);
+	}
 }

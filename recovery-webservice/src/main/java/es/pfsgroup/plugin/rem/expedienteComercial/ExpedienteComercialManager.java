@@ -11729,15 +11729,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	
 	@Override
+	@Transactional(readOnly = false)
 	public void getCierreOficinaBankiaById(Long idExpediente) {
 
-		AuxiliarCierreOficinasBankia auxiliar = genericDao.get(AuxiliarCierreOficinasBankia.class,
+		EnvioCierreOficinasBankia auxiliar = genericDao.get(EnvioCierreOficinasBankia.class,
 				genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
 		
-		if (auxiliar != null && auxiliar.isEnviado() == false) {
+		if (auxiliar != null && !auxiliar.getEnviado()) {
 			auxiliar.setEnviado(true);
+			Auditoria auditoria = auxiliar.getAuditoria();			
+			auditoria.setFechaModificar(new Date());
+			auditoria.setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+			auxiliar.setAuditoria(auditoria);	
 			
-			genericDao.update(AuxiliarCierreOficinasBankia.class, auxiliar);
+			genericDao.update(EnvioCierreOficinasBankia.class, auxiliar);
+			
 		}
 	}	
 }

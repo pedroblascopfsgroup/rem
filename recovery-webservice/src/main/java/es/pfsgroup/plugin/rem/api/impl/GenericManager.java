@@ -71,6 +71,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
+import es.pfsgroup.plugin.rem.model.AuxiliarCierreOficinasBankiaMul;
 import es.pfsgroup.plugin.rem.model.CarteraCondicionesPrecios;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
@@ -129,6 +130,7 @@ import es.pfsgroup.plugin.rem.propietario.dao.ActivoPropietarioDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaDto;
+import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.thread.EjecutarEnviarHonorariosUvemAsincrono;
 import es.pfsgroup.plugin.rem.trabajo.dao.DDSubtipoTrabajoDao;
 import io.jsonwebtoken.JwtBuilder;
@@ -1608,9 +1610,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	public boolean traspasoCierreOficinaBankia(List<CierreOficinaBankiaDto>listCierreOficinaBankiaDto,JSONObject jsonFields, ArrayList<Map<String, Object>>listaRespuesta) 
 			throws Exception{
 		Map<String, Object> map = null;
-		CierreOficinaBankiaDto bankiaDto = null;
-		GastosExpediente gastoExpediente = null;
-		HashMap<String, String> errorsList = null;
+		CierreOficinaBankiaDto bankiaDto = null;		
+		HashMap<String, String> errorsList = new HashMap<String, String>();
 		Usuario usuario = adapter.getUsuarioLogado();
 		boolean error = false;
 		
@@ -1618,15 +1619,15 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		for (int i = 0; i < listCierreOficinaBankiaDto.size(); i++) {
 			map = new HashMap<String, Object>();
 			bankiaDto = listCierreOficinaBankiaDto.get(i);
+					
+			errorsList = llamarSPCambioOficinaBankia(bankiaDto, usuario);
 			
-			if (bankiaDto.getCodProveedorAnterior() != null && bankiaDto.getCodProveedorNuevo() != null) {
-				errorsList = llamarSPCambioOficinaBankia(bankiaDto, usuario);
-			}
 			
 			if (errorsList != null && !errorsList.isEmpty()) {
 				error = true;
 				map.put("codProveedorAnterior", bankiaDto.getCodProveedorAnterior());
 				map.put("codProveedorNuevo", bankiaDto.getCodProveedorNuevo());
+				map.put("masivo", bankiaDto.getMasivo().toString());
 				map.put("success", false);
 
 				map.put("invalidFields", errorsList);
@@ -1634,38 +1635,38 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			}else {				
 				map.put("codProveedorAnterior", bankiaDto.getCodProveedorAnterior());
 				map.put("codProveedorNuevo", bankiaDto.getCodProveedorNuevo());
+				map.put("masivo", bankiaDto.getMasivo().toString());
 				map.put("success", true);				
 			}								
-	
 			
-			List<Long> listaIdsAuxiliar = activoDao.getIdsAuxiliarCierreOficinaBankias(bankiaDto.getCodProveedorAnterior());
-			
-			if (!listaIdsAuxiliar.isEmpty()) {
-				Thread hilo = new Thread(new EjecutarEnviarHonorariosUvemAsincrono(usuario.getUsername(), listaIdsAuxiliar));
-				hilo.start();
-			}
-			
-			
+
 			listaRespuesta.add(map);
 			
+		}		
+		List<Long> listaIdsAuxiliar = activoDao.getIdsAuxiliarCierreOficinaBankias();
+		
+		if (!listaIdsAuxiliar.isEmpty()) {
+			/*Thread hilo = new Thread(new EjecutarEnviarHonorariosUvemAsincrono(usuario.getUsername(), listaIdsAuxiliar));
+			hilo.start();*/
+			actualizaHonorariosUvem(listaIdsAuxiliar);
 		}
+				
 		return error;
 		
 	}
 	
 	@Override
-	@Transactional
 	public void actualizaHonorariosUvem (List<Long> listaIdsAuxiliar) {
 		for (Long idExpediente : listaIdsAuxiliar) {
-				//PARA ENVIAR LOS HONORARIOS UNA VEZ CAMBIADOS
 			try {
+				//PARA ENVIAR LOS HONORARIOS UNA VEZ CAMBIADOS
 				expedienteComercialApi.enviarHonorariosUvem(idExpediente);
+				//PARA CAMBIAR EN LA TABLA AUXILIAR LOS REGISTROS A ENVIADOS
+				expedienteComercialApi.getCierreOficinaBankiaById(idExpediente);
 			} catch (Exception e) {
-				// TODO: handle exception
 				e.printStackTrace();
 			}
-			//PARA CAMBIAR EN LA TABLA AUXILIAR LOS REGISTROS A ENVIADOS
-			expedienteComercialApi.getCierreOficinaBankiaById(idExpediente);					
+					
 		}
 	}
 	
@@ -1676,18 +1677,112 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		HashMap<String, String> errorsList = null;
 		Boolean correcto = null;
 
-		errorsList = restApi.validateRequestObject(bankiaDto, TIPO_VALIDACION.INSERT);
 		
-		correcto = activoDao.cambiarSpOficinaBankia(bankiaDto.getCodProveedorAnterior(),bankiaDto.getCodProveedorNuevo(), usuario.getUsername());
+		errorsList = validateCierreOficinaPostRequestData(bankiaDto);
+		if (errorsList.isEmpty()) {
+			if (bankiaDto.getCodProveedorAnterior() != null && bankiaDto.getCodProveedorNuevo() != null 
+					&& (bankiaDto.getMasivo() != null && !bankiaDto.getMasivo())) {
+				
+				correcto = activoDao.cambiarSpOficinaBankia(bankiaDto.getCodProveedorAnterior(),
+						bankiaDto.getCodProveedorNuevo(), usuario.getUsername());
+				
+			}else if(bankiaDto.getCodProveedorAnterior() == null && bankiaDto.getCodProveedorNuevo() == null 
+					&& (bankiaDto.getMasivo() != null && bankiaDto.getMasivo())) {
+
+				List<AuxiliarCierreOficinasBankiaMul> listaMasivoAuxiliar = activoDao.getListAprAuxCierreBnK();
+
+				for (AuxiliarCierreOficinasBankiaMul auxiliar : listaMasivoAuxiliar) {
+					if (auxiliar.getOficinaSaliente() != null && auxiliar.getOficinaEntrante() != null) {
+						correcto = activoDao.cambiarSpOficinaBankia(auxiliar.getOficinaSaliente(),auxiliar.getOficinaEntrante(), usuario.getUsername());
+					}
+				}			
+			}else {
+				correcto = false;
+			}
+		}else {
+			correcto = false;
+		}
+				
 		
 		if (!correcto) {
-			errorsList.put("ERROR","Error en cambio oficina Bankia");
-			errorsList.put("codProveedorAnterior", bankiaDto.getCodProveedorNuevo());
-			errorsList.put("codProveedorNuevo", bankiaDto.getCodProveedorNuevo());
+			if (errorsList.get("ERROR") != null) {
+				errorsList.put("ERROR",errorsList.get("ERROR"));
+			}
+			
+			if (errorsList.get("codProveedorAnterior") != null) {
+				errorsList.put("codProveedorAnterior",errorsList.get("codProveedorAnterior"));
+			}
+			if (errorsList.get("codProveedorNuevo") != null) {
+				errorsList.put("codProveedorNuevo", errorsList.get("codProveedorNuevo"));
+			}
+			if (errorsList.get("masivo") != null) {
+				errorsList.put("masivo", errorsList.get("masivo"));
+			}
+			
+			
 		}
 
 		return errorsList;
 	}
 	
+	@Override
+	public HashMap<String, String> validateCierreOficinaPostRequestData(CierreOficinaBankiaDto cierreOfiDto)
+			throws Exception {
+		HashMap<String, String> errorsList = null;
+		
+		ActivoProveedor oficinaAnterior = null;
+		ActivoProveedor oficinaNueva = null;
+		
+		errorsList = restApi.validateRequestObject(cierreOfiDto, TIPO_VALIDACION.INSERT);
+		
+		if (cierreOfiDto.getCodProveedorAnterior() != null && cierreOfiDto.getCodProveedorNuevo() != null 
+				&& (cierreOfiDto.getMasivo() != null && !cierreOfiDto.getMasivo())) {
+			
+			DDTipoProveedor tipoProveedorBankia = genericDao.get(DDTipoProveedor.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_OFICINA_BANKIA));
+			
+			oficinaAnterior = genericDao.get(ActivoProveedor.class, 
+					genericDao.createFilter(FilterType.EQUALS, "codigoApiProveedor", cierreOfiDto.getCodProveedorAnterior()),
+					genericDao.createFilter(FilterType.EQUALS, "tipoProveedor", tipoProveedorBankia));
+			
+			oficinaNueva = genericDao.get(ActivoProveedor.class, 
+					genericDao.createFilter(FilterType.EQUALS, "codigoApiProveedor", cierreOfiDto.getCodProveedorNuevo()),
+					genericDao.createFilter(FilterType.EQUALS, "tipoProveedor", tipoProveedorBankia));
+			
+			if (oficinaAnterior == null) {
+				errorsList.put("ERROR", "Los valores de los proveedores no son correctos");
+				errorsList.put("codProveedorAnterior", RestApi.REST_MSG_UNKNOWN_KEY);
+			}			
+			if (oficinaNueva == null) {
+				errorsList.put("ERROR", "Los valores de los proveedores no son correctos");
+				errorsList.put("codProveedorNuevo", RestApi.REST_MSG_UNKNOWN_KEY);
+			}
+		} else if(cierreOfiDto.getCodProveedorAnterior() == null && cierreOfiDto.getCodProveedorNuevo() == null && 
+				(cierreOfiDto.getMasivo() != null && !cierreOfiDto.getMasivo())) {
+			
+			errorsList.put("ERROR", "Masivo no puede ser FALSE si los otros campos son NULL");
+			errorsList.put("masivo", RestApi.REST_MSG_UNKNOWN_KEY);
+		} else if (cierreOfiDto.getCodProveedorAnterior() != null && cierreOfiDto.getCodProveedorNuevo() != null 
+				&& (cierreOfiDto.getMasivo() == null)) {
+			
+			errorsList.put("ERROR", "Masivo no puede ser NULL");
+			errorsList.put("masivo", cierreOfiDto.getMasivo().toString());
+		} else if(cierreOfiDto.getCodProveedorAnterior() != null && cierreOfiDto.getCodProveedorNuevo() != null 
+				&& (cierreOfiDto.getMasivo() != null && cierreOfiDto.getMasivo())) {
+			
+			errorsList.put("ERROR", "Las oficinas tienen que ser nulas, si masivo es TRUE");
+			errorsList.put("codProveedorAnterior", RestApi.REST_MSG_UNKNOWN_KEY);
+			errorsList.put("codProveedorNuevo", RestApi.REST_MSG_UNKNOWN_KEY);
+			errorsList.put("masivo", RestApi.REST_MSG_UNKNOWN_KEY);
+		} else if(cierreOfiDto.getCodProveedorAnterior() == null && cierreOfiDto.getCodProveedorNuevo() == null 
+				&& cierreOfiDto.getMasivo() == null) {
+			errorsList.put("ERROR", "Los datos introducidos no son correctos");
+			errorsList.put("codProveedorAnterior", RestApi.REST_MSG_UNKNOWN_KEY);
+			errorsList.put("codProveedorNuevo", RestApi.REST_MSG_UNKNOWN_KEY);
+			errorsList.put("masivo", RestApi.REST_MSG_UNKNOWN_KEY);
+		}
+				
+		return errorsList;
+	}	
 
 }

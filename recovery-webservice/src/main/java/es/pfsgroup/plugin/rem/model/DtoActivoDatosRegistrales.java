@@ -156,7 +156,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String origenAnteriorActivoBbvaCodigo;
 	private String origenAnteriorActivoBbvaDescripcion;
 	private Long idAsuntoRecAlaska;
-	private Date fechaPosesionNoJudicial;
+	private Date fechaPosesion;
 	/*
 
     private NMBAdjudicacionBien adjudicacionBien;
@@ -827,13 +827,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	public void setIdProcesoOrigen(String idProcesoOrigen) {
 		this.idProcesoOrigen = idProcesoOrigen;
 	}
-	public Date getFechaPosesionNoJudicial() {
-		return fechaPosesionNoJudicial;
+	public Date getFechaPosesion() {
+		return fechaPosesion;
 	}
-	public void setFechaPosesionNoJudicial(Date fechaPosesionNoJudicial) {
-		this.fechaPosesionNoJudicial = fechaPosesionNoJudicial;
+	public void setFechaPosesion(Date fechaPosesion) {
+		this.fechaPosesion = fechaPosesion;
 	}
-
 	public String getPoblacionRegistroDescripcion() {
 		return poblacionRegistroDescripcion;
 	}

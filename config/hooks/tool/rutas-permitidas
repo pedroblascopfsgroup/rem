@@ -179,8 +179,10 @@ func-rem-dnd-F3|func-rem-dnd-suelos
 func-rem-dnd-suelos|func-rem-dnd-tutelas
 R-Okitsu|func-rem-alaska-F2
 rem_mirror|func-rem-alaska-F2
+rem_mirror|func-rem-desvincularFechaPosesion
 R-Fortune|R-Arrufatina
 func-rem-porcentajeConstruccion|R-Arrufatina
+func-rem-desvincularFechaPosesion|func-rem-espartaConvivencia
 func-rem-dnd-tutelas|R-Arrufatina
 func-rem-mejorasRendimiento-BuscadorAgrupaciones|func-rem-mejorasRendimiento
 rem_mirror|func-rem-mejorasRendimiento-F2

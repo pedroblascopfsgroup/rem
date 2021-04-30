@@ -1606,7 +1606,38 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		
 		btnNuevaPeticionTrabajoOculto: function(get) {
 			var isIncluidoEnPerimetro = get('activo.incluidoEnPerimetro');
-			return (isIncluidoEnPerimetro == false || $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']));
+			return (isIncluidoEnPerimetro == false || $AU.getUser().codigoCartera == CONST.CARTERA['BBVA']);
+		},
+		
+		isSubcarteraCerberus: function(get) {
+	    	var codigoSubcartera = get('activo.subcarteraCodigo');
+	    	var isSareb = get('activo.isCarteraSareb');
+	    	if (CONST.SUBCARTERA['APPLEINMOBILIARIO'] === codigoSubcartera
+	    		|| CONST.SUBCARTERA['DIVARIANARROW'] === codigoSubcartera
+	    		|| CONST.SUBCARTERA['DIVARIANREMAINING'] === codigoSubcartera 
+	    		|| isSareb){
+	    	return true;
+	    	}
+	    	return false;
+	    },
+	    
+		isSubcarteraCerberusOrSareb: function(get) {
+	    	var codigoSubcartera = get('activo.subcarteraCodigo')
+	    	if (CONST.SUBCARTERA['APPLEINMOBILIARIO'] === codigoSubcartera
+	    		|| CONST.SUBCARTERA['DIVARIANARROW'] === codigoSubcartera
+	    		|| CONST.SUBCARTERA['DIVARIANREMAINING'] === codigoSubcartera){
+	    	return true;
+	    	}
+	    	return false;
+	    },
+	    
+	    isGestorActivosAndSuper: function(get){
+			var usuarios = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+			var incluidoEnPerimetro = get('activo.incluidoEnPerimetro');
+			if(usuarios && incluidoEnPerimetro){			
+				return false;
+				}
+			return true;
 		},
 		
 		noEditableUASSoloSuper: function(get) {

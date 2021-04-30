@@ -2019,22 +2019,32 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(agrupacionLoteCom != null && agrupacionLoteCom.getUsuarioGestorComercialBackOffice() != null) {
 				dto.setCorreoGestorBackoffice(agrupacionLoteCom.getUsuarioGestorComercialBackOffice().getEmail());
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", agrupacionLoteCom.getUsuarioGestorComercialBackOffice().getId());
-				GestorSustituto sustituto = genericDao.get(GestorSustituto.class, filtro);
-				if (sustituto != null && System.currentTimeMillis() < sustituto.getFechaFin().getTime() 
-						&& System.currentTimeMillis() > sustituto.getFechaInicio().getTime()) {
-					dto.setCorreoGestorBackoffice(sustituto.getUsuarioGestorSustituto().getEmail());
-				}				
+				List<GestorSustituto> sustituto = genericDao.getList(GestorSustituto.class, filtro);
+				if (!sustituto.isEmpty()) {
+					 for (GestorSustituto gestorSustituto : sustituto) {
+						if(System.currentTimeMillis() < gestorSustituto.getFechaFin().getTime()
+								&& System.currentTimeMillis() > gestorSustituto.getFechaInicio().getTime()) {
+							dto.setCorreoGestorBackoffice(gestorSustituto.getUsuarioGestorSustituto().getEmail());
+							break;
+						}
+					}
+				}			
 			}
 		} else if(oferta.getActivoPrincipal() != null) {
 			Usuario usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			if(usuarioBackOffice != null && usuarioBackOffice.getEmail() != null) {
 				dto.setCorreoGestorBackoffice(usuarioBackOffice.getEmail());
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuarioBackOffice.getId());
-				GestorSustituto sustituto = genericDao.get(GestorSustituto.class, filtro);
-				if (sustituto != null && System.currentTimeMillis() < sustituto.getFechaFin().getTime() 
-						&& System.currentTimeMillis() > sustituto.getFechaInicio().getTime()) {
-					dto.setCorreoGestorBackoffice(sustituto.getUsuarioGestorSustituto().getEmail());
-				}	
+				List<GestorSustituto> sustituto = genericDao.getList(GestorSustituto.class, filtro);
+				if (!sustituto.isEmpty()) {
+					 for (GestorSustituto gestorSustituto : sustituto) {
+						if(System.currentTimeMillis() < gestorSustituto.getFechaFin().getTime()
+								&& System.currentTimeMillis() > gestorSustituto.getFechaInicio().getTime()) {
+							dto.setCorreoGestorBackoffice(gestorSustituto.getUsuarioGestorSustituto().getEmail());
+							break;
+						}
+					}
+				}
 			}
 		}
 		

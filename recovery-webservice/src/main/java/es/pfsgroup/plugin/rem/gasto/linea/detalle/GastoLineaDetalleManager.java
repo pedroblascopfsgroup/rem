@@ -1086,11 +1086,34 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			elementosLineaDetalleList = genericDao.getList(VElementosLineaDetalle.class, filter);
 			if(elementosLineaDetalleList.isEmpty()) {			
 				elementosLineaDetalleList.add(this.getLineaVacia(gastoLineaDetalle));
+			} else {
+				elementosLineaDetalleList = this.recalcularImporteProporcionalSujeto(elementosLineaDetalleList);
 			}
 		}
 		return elementosLineaDetalleList;		
 	}
 	
+	
+	private List<VElementosLineaDetalle> recalcularImporteProporcionalSujeto (List<VElementosLineaDetalle> elementos){
+		Double resto = 0d;
+		int cont = 0;
+		Integer importeProporcionalPorCien = 0;
+		
+		for (VElementosLineaDetalle elemento : elementos) {
+			cont++;
+			importeProporcionalPorCien = (int)(elemento.getImporteProporcinalSujeto() * 100);
+			resto += (elemento.getImporteProporcinalSujeto() * 100) - importeProporcionalPorCien;
+			if (resto >= 1d) {
+				importeProporcionalPorCien++;
+				resto--;
+			} else if (resto != 0 && cont == elementos.size()){
+				importeProporcionalPorCien++;
+			}
+			elemento.setImporteProporcinalSujeto(importeProporcionalPorCien/100d);
+		}
+		
+		return elementos;		
+	}
 	
 	
 	@Override

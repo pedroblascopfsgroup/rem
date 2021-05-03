@@ -145,14 +145,17 @@ public class TabActivoInformeComercial implements TabActivoService {
 
 				if (!Checks.esNulo(activo.getInfoComercial().getProvincia())) {
 					beanUtilNotNull.copyProperty(informeComercial, "provinciaCodigo", activo.getInfoComercial().getProvincia().getCodigo());
+					beanUtilNotNull.copyProperty(informeComercial, "provinciaDescripcion", activo.getInfoComercial().getProvincia().getDescripcion());
 				}
 
 				if (!Checks.esNulo(activo.getInfoComercial().getLocalidad())) {
 					beanUtilNotNull.copyProperty(informeComercial, "municipioCodigo", activo.getInfoComercial().getLocalidad().getCodigo());
+					beanUtilNotNull.copyProperty(informeComercial, "municipioDescripcion", activo.getInfoComercial().getLocalidad().getDescripcion());
 				}
 
 				if (!Checks.esNulo(activo.getInfoComercial().getTipoActivo())) {
 					beanUtilNotNull.copyProperty(informeComercial, "tipoActivoCodigo", activo.getInfoComercial().getTipoActivo().getCodigo());
+					beanUtilNotNull.copyProperty(informeComercial, "tipoActivoDescripcion", activo.getInfoComercial().getTipoActivo().getDescripcion());
 
 					// Segun el tipo de activo, recuperaremos unos u otros datos
 					this.getDatosByTipoActivo(activo, informeComercial);
@@ -160,10 +163,12 @@ public class TabActivoInformeComercial implements TabActivoService {
 
 				if (!Checks.esNulo(activo.getInfoComercial().getSubtipoActivo())) {
 					beanUtilNotNull.copyProperty(informeComercial, "subtipoActivoCodigo", activo.getInfoComercial().getSubtipoActivo().getCodigo());
+					beanUtilNotNull.copyProperty(informeComercial, "subtipoActivoDescripcion", activo.getInfoComercial().getSubtipoActivo().getDescripcion());
 				}
 
 				if (!Checks.esNulo(activo.getInfoComercial().getTipoVia())) {
 					beanUtilNotNull.copyProperty(informeComercial, "tipoViaCodigo", activo.getInfoComercial().getTipoVia().getCodigo());
+					beanUtilNotNull.copyProperty(informeComercial, "tipoViaDescripcion", activo.getInfoComercial().getTipoVia().getDescripcion());
 				}
 
 				beanUtilNotNull.copyProperty(informeComercial, "numeroVia", activo.getInfoComercial().getNumeroVia());
@@ -171,6 +176,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 
 				if (!Checks.esNulo(activo.getInfoComercial().getUnidadPoblacional())) {
 					beanUtilNotNull.copyProperty(informeComercial, "inferiorMunicipioCodigo", activo.getInfoComercial().getUnidadPoblacional().getCodigo());
+					beanUtilNotNull.copyProperty(informeComercial, "inferiorMunicipioDescripcion", activo.getInfoComercial().getUnidadPoblacional().getDescripcion());
 				}
 
 				if (!Checks.esNulo(activo.getInfoComercial().getUbicacionActivo())) {

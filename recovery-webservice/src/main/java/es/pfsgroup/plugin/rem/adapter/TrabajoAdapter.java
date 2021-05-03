@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -24,6 +25,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
@@ -490,6 +492,34 @@ public class TrabajoAdapter {
 			
 		}
 		
+		return null;
+	}
+
+	public Page getListActivosBySubidaExcel(WebFileItem fileItem) {
+		
+		List<String> listIdActivos = new ArrayList<String>();
+		MSVHojaExcel exc = excelParser.getExcel(fileItem.getFileItem().getFile());
+		DtoTrabajoListActivos webDto = new DtoTrabajoListActivos();
+		webDto.setLimit(99999);
+		try {
+			Integer numFilas = exc.getNumeroFilasByHoja(0, (MSVDDOperacionMasiva) genericDao.get(MSVDDOperacionMasiva.class, 
+					genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(fileItem.getParameter("idTipoOperacion")))));
+			for(int i = 1; i < numFilas; i++){ //Nos saltamos la línea del título	
+				listIdActivos.add(exc.dameCelda(i, 0));
+			}
+			
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(!Checks.estaVacio(listIdActivos))
+			return activoDao.getActivosFromCrearTrabajo(listIdActivos, webDto);
 		return null;
 	}
 

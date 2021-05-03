@@ -47,7 +47,7 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    
 				items: [
 					{ 
-						xtype: 'comboboxfieldbase',
+						xtype: 'comboboxfieldbasedd',
 						fieldLabel: HreRem.i18n('fieldlabel.nombre'),
 						labelWidth: 150,
 						width: 480,
@@ -56,7 +56,8 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 						bind: {
 							store: '{comboProveedorFiltradoManual}',
 							value: '{gestionEconomica.idProveedor}',
-							readOnly: '{!gestionEconomica.esProveedorEditable}'
+							readOnly: '{!gestionEconomica.esProveedorEditable}',
+							rawValue: '{gestionEconomica.nombreProveedor}'
 						},
 						displayField: 'nombreComercial',
 						valueField: 'idProveedor',

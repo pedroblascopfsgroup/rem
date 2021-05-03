@@ -152,7 +152,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoUvem", Long.valueOf(dto.getIdUvem()));
 
 		if (dto.getEstadoActivoCodigo() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
 
 		if (dto.getTipoViaCodigo() != null)
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoViaCodigo", dto.getTipoViaCodigo());
@@ -336,13 +336,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
 
    		if (dto.getEntidadPropietariaCodigo() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(), true);
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo());
 
    		if (dto.getTipoTituloActivoCodigo() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
 
    		if (dto.getSubtipoActivoCodigo() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.subtipoActivoCodigo", dto.getSubtipoActivoCodigo(), true);
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subtipoActivoCodigo", dto.getSubtipoActivoCodigo());
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.refCatastral", dto.getRefCatastral(), true);
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFinca(), true);
    		if (dto.getProvinciaCodigo() != null)
@@ -366,7 +366,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoUvem", Long.valueOf(dto.getIdUvem()));
 
    		if (dto.getEstadoActivoCodigo() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
 
    		if (dto.getTipoViaCodigo() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoViaCodigo", dto.getTipoViaCodigo());
@@ -608,7 +608,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 
 		if (dto.getEstadoActivoCodigo() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
 
 		if (!Checks.esNulo(dto.getConFsvVenta())) {
 			if (BooleanUtils.toBoolean(dto.getConFsvVenta())) {

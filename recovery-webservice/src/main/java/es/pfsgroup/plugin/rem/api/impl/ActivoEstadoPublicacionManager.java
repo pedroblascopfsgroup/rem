@@ -218,6 +218,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		DDAdecuacionAlquiler adecuacionAlquiler = activoPatrimonioDao.getAdecuacionAlquilerFromPatrimonioByIdActivo(idActivo);
 		if(!Checks.esNulo(adecuacionAlquiler)) {
 			dto.setAdecuacionAlquilerCodigo(adecuacionAlquiler.getCodigo());
+			dto.setAdecuacionAlquilerDescripcion(adecuacionAlquiler.getDescripcion());
 		}
 		
 		if(!Checks.esNulo(dto.getFechaRevisionPublicacionesVenta())) {
@@ -226,6 +227,18 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		
 		if(!Checks.esNulo(dto.getFechaRevisionPublicacionesAlquiler())) {
 			dto.setFechaRevisionPublicacionesAlquiler(dto.getFechaRevisionPublicacionesAlquiler());
+		}
+		
+		if(activoPublicacion.getMotivoOcultacionVenta() != null) {
+			dto.setMotivoOcultacionVentaDescripcion(activoPublicacion.getMotivoOcultacionVenta().getDescripcion());
+		}
+		
+		if(activoPublicacion.getMotivoOcultacionAlquiler() != null) {
+			dto.setMotivoOcultacionAlquilerDescripcion(activoPublicacion.getMotivoOcultacionAlquiler().getDescripcion());
+		}
+		
+		if(activoPublicacion.getPortal() != null) {
+			dto.setCanalDePublicacionDescripcion(activoPublicacion.getPortal().getDescripcion());
 		}
 		
 		dto.setTotalDiasPublicadoVenta(this.obtenerTotalDeDiasEnEstadoPublicadoVenta(idActivo));

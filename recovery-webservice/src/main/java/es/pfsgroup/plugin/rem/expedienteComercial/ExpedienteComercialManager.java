@@ -2798,6 +2798,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 	}
+	
+	@Override
+	public Float getPorcentajeCompra(Long idExpediente) {
+		return expedienteComercialDao.getPorcentajeCompra(idExpediente);
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void decorarPagina(PageImpl pagina) throws VBusquedaCompradoresExpedienteDecoratorException {
@@ -11725,6 +11730,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
 		
 		return expedienteComercial.getEstado().getCodigo();
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void recalcularHonorarios(Long idExpediente) throws Exception {
+		
+		Oferta oferta = ofertaApi.getOfertaByIdExpediente(idExpediente);
+		
+		ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
+		
+		Activo activo = oferta.getActivoPrincipal();
+		
+		this.actualizarGastosExpediente(expediente,oferta,activo);
+		
 	}
 	
 	

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos Augusto
---## FECHA_CREACION=20210413
+--## FECHA_CREACION=20210428
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-12135
@@ -23,9 +23,9 @@
 --##		0.11 Versión Adrián Molina -> REMVIP-7586 - Aumentar capacidad del campo codPedania
 --##		0.12 Version Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##		0.13 Version Juan Beltrán - - REMVIP-8168 - Añadir campos COD_TIPO_COMERCIALIZAR, COD_EQUIPO_GESTION, SCOM_NOMBRE, SCOM_TELEFONO y SCOM_EMAIL
---##  		0.14 Versión Carlos Augusto -> HREOS-12201 - Añadir campos ONV_COMERCIALIZACION y ONV_COMERCIALIZACION_FECHA  
---##        0.15 Version Jonathan Ovalle -> HREOS-12135 - Añadimos PAC_CHECK_GESTION_COMERCIAL,PAC_EXCLUIR_VALIDACIONES,PAC_FECHA_GESTION_COMERCIAL,PAC_MOTIVO_GESTION_COMERCIAL
---##  		0.16 Versión Carlos Santos Vílchez -> REMVIP-9478 - Poner campo ONV_COMERCIALIZACION como boolean  
+--##  		0.15 Versión Carlos Augusto -> HREOS-12201 - Añadir campos ONV_COMERCIALIZACION y ONV_COMERCIALIZACION_FECHA  
+--##  		0.15 Versión Carlos Santos Vílchez -> REMVIP-9478 - Poner campo ONV_COMERCIALIZACION como boolean  
+--##  		0.16 Versión IVAN REPISO -> REMVIP-9561 - Poner campo COD_DIR_COMERCIAL 
 --##########################################
 --*/
 
@@ -302,16 +302,8 @@ BEGIN/*Versión 0.8*/
 			THEN CAST(TO_CHAR(ACT.ACT_OVN_COMERC_FECHA ,
 				''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2(50 CHAR))
 			ELSE NULL
-		END 																				        AS ONV_COMERCIALIZACION_FECHA,
-		CAST(MGC.DD_MGC_CODIGO AS VARCHAR2(40 CHAR))												AS MOTIVO_GESTION_COMERCIAL,
-		CAST(PAC.PAC_CHECK_GESTION_COMERCIAL AS NUMBER(1,0))										AS CHECK_GESTION_COMERCIAL,
-		CASE WHEN PAC.PAC_EXCLUIR_VALIDACIONES = (SELECT DD_SIN_ID FROM '||V_ESQUEMA_M||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'')
-            THEN 1
-            ELSE 0
-        END                                                                                 		AS EXCLUIR_VALIDACIONES,
-		CAST(PAC.PAC_FECHA_GESTION_COMERCIAL AS DATE)												AS FECHA_GESTION_COMERCIAL
-		
-        
+		END 																				AS ONV_COMERCIALIZACION_FECHA,
+        CAST(TDC.DD_TDC_CODIGO AS VARCHAR2(5 CHAR))	 												AS COD_DIR_COMERCIAL
     	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 		INNER JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION LOC ON LOC.ACT_ID = ACT.ACT_ID
 		INNER JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BLOC ON BLOC.BIE_LOC_ID = LOC.BIE_LOC_ID
@@ -473,6 +465,7 @@ BEGIN/*Versión 0.8*/
 		LEFT JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE_LLV ON LLV.LLV_COD_TENEDOR_POSEEDOR = PVE_LLV.PVE_ID AND PVE_LLV.BORRADO = 0
 		LEFT JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
 		LEFT JOIN '||V_ESQUEMA||'.DD_MGC_MOTIVO_GEST_COMERCIAL MGC ON MGC.DD_MGC_ID = PAC.PAC_MOTIVO_GESTION_COMERCIAL AND PAC.BORRADO = 0
+		LEFT JOIN '||V_ESQUEMA||'.DD_TDC_TERRITORIOS_DIR_COM TDC ON TDC.DD_TDC_ID = ACT.DD_TDC_ID AND TDC.BORRADO = 0
 		where act.borrado = 0 and (hfp.borrado = 0 or hfp.borrado is null) and hfp.hfp_fecha_fin is null';
 	
 		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');

@@ -3070,7 +3070,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						
 						listActOfr = oferta.getActivosOferta();
 						for (ActivoOferta activoOferta : listActOfr) {
-							 activoOfr = activoAdapter.getActivoById(activoOferta.getActivoId());
+							 activoOfr = activoOferta.getPrimaryKey().getActivo();
 							 if(activoOfr != null) {
 								 if(activoOfr.getTieneObraNuevaAEfectosComercializacion() != null && DDSinSiNo.CODIGO_SI.equals(activoOfr.getTieneObraNuevaAEfectosComercializacion().getCodigo())) {
 									 importeObraNueva += activoOferta.getImporteActivoOferta();

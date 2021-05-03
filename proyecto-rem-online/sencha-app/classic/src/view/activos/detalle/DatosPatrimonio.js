@@ -57,13 +57,14 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 						    } 
 						},
 						{
-							xtype: 'comboboxfieldbase',
+							xtype: 'comboboxfieldbasedd',
 							fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.alquiler'),
 							reference: 'comboTipoAlquilerRef',
 							bind: {
 								store: '{comboTipoAlquiler}',
 								disabled: '{enableComboTipoAlquiler}',
-								value: '{patrimonio.tipoAlquilerCodigo}'
+								value: '{patrimonio.tipoAlquilerCodigo}',
+								rawValue: '{patrimonio.tipoAlquilerDescripcion}'
 							},
 							listeners: {
 								change: 'comboTipoAlquilerOnChange'
@@ -71,13 +72,14 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							
 						},
 						{
-							xtype: 'comboboxfieldbase',
+							xtype: 'comboboxfieldbasedd',
 							fieldLabel: HreRem.i18n('title.patrimonio.adecuacion'),
 							reference: 'comboAdecuacionRef',
 							bind: {
 								store: '{comboAdecuacionAlquiler}',
 								disabled: '{enableComboAdecuacion}',
-								value: '{patrimonio.codigoAdecuacion}'
+								value: '{patrimonio.codigoAdecuacion}',
+								rawValue: '{patrimonio.descripcionAdecuacion}'
 							},
 							colspan:1
 						}
@@ -108,23 +110,25 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 						    } 
 						},
 						{
-							xtype: 'comboboxfieldbase',
+							xtype: 'comboboxfieldbasedd',
 							fieldLabel: HreRem.i18n('combolabel.patrimonio.combo.tipo.inquilino'),
 							reference: 'comboTipoInquilinoRef',
 							bind: {
 								store: '{comboTipoInquilino}',
 								value: '{patrimonio.tipoInquilino}',
-								disabled: '{enableComboTipoInquilino}'
+								disabled: '{enableComboTipoInquilino}',
+								rawValue: '{patrimonio.tipoInquilinoDescripcion}'
 							}
 						},
 						{
-							xtype: 'comboboxfieldbase',
+							xtype: 'comboboxfieldbasedd',
 							fieldLabel: HreRem.i18n('combolabel.patrimonio.combo.estado.alquiler'),
 							reference: 'comboEstadoAlquilerRef',							
 							bind: {
 								store: '{comboEstadoAlquiler}',
 								value: '{patrimonio.estadoAlquiler}',
-								disabled: false
+								disabled: false,
+								rawValue: '{patrimonio.estadoAlquilerDescripcion}'
 							},
 							listeners: {
 								change:'esEditableChkYcombo'
@@ -164,7 +168,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							}
 						},		
 						{
-							xtype: 'comboboxfieldbase',
+							xtype: 'comboboxfieldbasedd',
 							fieldLabel: HreRem.i18n('combolabel.patrimonio.combo.cesion.de.uso'),
 							reference: 'cesionDeUsoRef',
 							colspan: 3,
@@ -172,7 +176,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 								readOnly: '{!isCesionUsoEditable}',
 								store: '{comboCesionUso}',
 								value: '{patrimonio.cesionUso}',
-								hidden: '{!patrimonio.isCarteraCerberusDivarianOBBVA}'
+								hidden: '{!patrimonio.isCarteraCerberusDivarianOBBVA}',
+								rawValue: '{patrimonio.cesionUsoDescripcion}'
 							},
 							listeners: {
 								change: 'comboCesionUsoOnChage'

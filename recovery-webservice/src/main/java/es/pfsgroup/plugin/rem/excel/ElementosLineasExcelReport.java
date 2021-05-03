@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.excel;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
@@ -43,10 +44,12 @@ public class ElementosLineasExcelReport extends AbstractExcelReport implements E
 
 	public List<List<String>> getData() {
 		List<List<String>> valores = new ArrayList<List<String>>();
+		double resto = 0d;
+		int cont = 0;
 		
 		for(VElementosLineaDetalle elemento: listaElementos){
 			List<String> fila = new ArrayList<String>();
-			
+			cont++;
 			if(elemento.getIdLinea() != null) {
 				fila.add(elemento.getIdLinea().toString());
 			}else {
@@ -65,14 +68,22 @@ public class ElementosLineasExcelReport extends AbstractExcelReport implements E
 				fila.add(elemento.getParticipacion().toString() + "%");
 			}
 			if(elemento.getImporteProporcinalSujeto() != null) {
-				BigDecimal elementoBigDecimal  = BigDecimal.valueOf(elemento.getImporteProporcinalSujeto());
-				elementoBigDecimal = elementoBigDecimal.round(new MathContext(4));
-				fila.add(elementoBigDecimal.toString());
+				
+				double importeProporcionalSujeto = elemento.getImporteProporcinalSujeto()*100;
+				int importeProporcionalSujeto2 = (int)(elemento.getImporteProporcinalSujeto()*100);
+				resto += importeProporcionalSujeto - importeProporcionalSujeto2;
+				
+				if (resto>=1) {
+					importeProporcionalSujeto2++;
+					resto--;
+				}else if (resto!=0 && cont==listaElementos.size()) {
+					importeProporcionalSujeto2++;
+				}
+				fila.add(String.valueOf(importeProporcionalSujeto2/100d));
 			}
 			
 			valores.add(fila);
 		}
-		
 		return valores;
 	}
 

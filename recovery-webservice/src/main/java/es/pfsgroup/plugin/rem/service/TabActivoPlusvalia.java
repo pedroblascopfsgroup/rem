@@ -101,6 +101,7 @@ public class TabActivoPlusvalia implements TabActivoService {
 			
 			if(!Checks.esNulo(activoPlusvalia.getEstadoGestion())) {
 				activoPlusvaliaDto.setEstadoGestion(activoPlusvalia.getEstadoGestion().getCodigo());
+				activoPlusvaliaDto.setEstadoGestionDescripcion(activoPlusvalia.getEstadoGestion().getDescripcion());
 			}
 			
 			if(!Checks.esNulo(activoPlusvalia.getNumExpediente())) {
@@ -109,6 +110,7 @@ public class TabActivoPlusvalia implements TabActivoService {
 			
 			if(!Checks.esNulo(activoPlusvalia.getMotivoExento())) {
 				activoPlusvaliaDto.setMotivoExento(activoPlusvalia.getMotivoExento().getCodigo());
+				activoPlusvaliaDto.setMotivoExentoDescripcion(activoPlusvalia.getMotivoExento().getDescripcion());
 			}
 			
 			if(!Checks.esNulo(activoPlusvalia.getResultadoSolicitud())) {

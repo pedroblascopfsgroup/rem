@@ -6,6 +6,16 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     disableValidation: true,
     reference: 'compradoresexpedienteref',
     scrollable	: 'y',
+    //refreshAfterSave: true,
+    listeners : {
+		//boxready : 'cargarTabData'
+	},
+	requires : [ 'HreRem.model.ExpedienteComercial'],	
+  
+    recordName: "expediente",
+
+	recordClass: "HreRem.model.ExpedienteComercial",
+  
   
 
     initComponent: function () {
@@ -461,7 +471,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 		var listadoCompradores = me.down("[reference=listadoCompradores]");
 		listadoCompradores.getStore().load();
 		
-//		me.lookupController().cargarTabData(me);
+		me.lookupController().cargarTabData(me);
 
     }
     

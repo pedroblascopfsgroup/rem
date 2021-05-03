@@ -247,6 +247,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		return genericDao.get(GastoProveedor.class, filtro );
 	}
+	
+	@Override
+	public Long getIdGasto(Long numGasto) {
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", numGasto);
+		
+		return genericDao.get(GastoProveedor.class, filtro ).getId();
+	}
 
 	@Override
 	public Object getTabGasto(Long id, String tab) throws Exception {

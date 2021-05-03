@@ -48,13 +48,14 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 					[
 					// Fila 0
 						{
-				        	xtype : 'comboboxfieldbase',
+				        	xtype : 'comboboxfieldbasedd',
 				        	fieldLabel: HreRem.i18n('header.situacion.comercial'),
 				        	reference: 'cbSituacionComercial',
 				        	readOnly: true,
 				        	bind : {
 							      store : '{comboSituacionComercial}',
-							      value : '{comercial.situacionComercialCodigo}'
+							      value : '{comercial.situacionComercialCodigo}',
+							      rawValue : '{comercial.situacionComercialDescripcion}'
 							}
 				        },
 				        {
@@ -145,13 +146,14 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 						   disabled: !isLogUsuGestComerSupComerSupAdmin
 						},
 						{ 
-							xtype: 'comboboxfieldbase',
+							xtype: 'comboboxfieldbasedd',
 							fieldLabel:	HreRem.i18n('fieldlabel.direccion.comercial'),
 							bind: {
 								allowBlank: '{!esSubcarteraAppleDivarian}',
 								readOnly: '{!editableCES}',
 								store: '{comboDireccionComercial}',
-								value: '{comercial.direccionComercial}'									
+								value: '{comercial.direccionComercial}',
+								rawValue: '{comercial.direccionComercialDescripcion}'							
 							}
 						},
 						{				        	
@@ -245,13 +247,14 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				title: HreRem.i18n('title.autorizacion.tramitacion.ofertas'),
 				items :
 					[{
-						xtype : 'comboboxfieldbase',
+						xtype : 'comboboxfieldbasedd',
 			        	fieldLabel: HreRem.i18n('fieldlabel.motivo.autorizacion'),
 			        	reference: 'motivoAutorizacionTramitacionCodigo',
 			        	editable: true,
 			        	bind : {
 						      store : '{comboMotivoAutorizacionTramitacion}',
-						      value : '{comercial.motivoAutorizacionTramitacionCodigo}'
+						      value : '{comercial.motivoAutorizacionTramitacionCodigo}',
+						      rawValue : '{comercial.motivoAutorizacionTramitacionDescripcion}'
 						      
 			        	}
 					},

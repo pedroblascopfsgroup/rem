@@ -10,6 +10,9 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 			name:'estadoTitulo'
 		},
 		{
+			name:'estadoTituloDescripcion'
+		},
+		{
 			name:'fechaEntregaGestoria',
 			convert: function(value) {
 				if (!Ext.isEmpty(value)) {
@@ -268,7 +271,13 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 			name:'estadoTituloAdicional'
 		},
 		{
+			name:'estadoTituloAdicionalDescripcion'
+		},
+		{
 			name:'tipoTituloAdicional'
+		},
+		{
+			name:'tipoTituloAdicionalDescripcion'
 		},
 		{
 			name:'fechaInscriptionRegistroAdicional',
@@ -320,6 +329,9 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 		},
 		{
 			name:'estadoVentaCodigo'
+		},
+		{
+			name:'estadoVentaDescripcion'
 		},
 		{
 			name:'fechaEnvioComunicacionOrganismo',

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.activo.dao;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
+import es.pfsgroup.plugin.rem.model.AuxiliarCierreOficinasBankiaMul;
 import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
@@ -393,6 +395,12 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos);
 
 	public List<ActivosAlquilados> getListActivosAlquiladosByIdActivos(List<Long> idActivos);
+
+	/*public Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo);*/
+
+	List<Long> getIdsAuxiliarCierreOficinaBankias();
+
+	Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo, String username);
 	
 	public List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivo(Long idActivo);
 
@@ -406,4 +414,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	boolean isPublicadoVentaByFechaValoracion(Long idActivo, Date fechaValoracion);
 	public Page getBusquedaPublicacionGrid(DtoPublicacionGridFilter dto);
+
+	List<AuxiliarCierreOficinasBankiaMul> getListAprAuxCierreBnK();
 }

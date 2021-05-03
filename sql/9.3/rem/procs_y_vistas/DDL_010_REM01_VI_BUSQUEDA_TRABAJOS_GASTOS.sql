@@ -14,7 +14,7 @@
 --## 		0.2 Añadir condición - REMVIP-8892
 --## 		0.3 Añadir condición - REMVIP-9036
 --## 		0.4 Modificar condición - REMVIP-9566
---## 		0.4 Modificar condición - REMVIP-9573
+--## 		0.5 Modificar condición - REMVIP-9573
 --#########################################
 --*/
 

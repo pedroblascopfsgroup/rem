@@ -58,7 +58,14 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 				type: 'uxproxy',
 				actionMethods: {read: 'POST'},
 				remoteUrl: 'gastosproveedor/searchProveedoresByNif'
-			}   	
+			},
+			listeners: {
+				load: function(store, records){
+					if(records.length == 0){
+						me.fireEvent("errorToast", "Proveedor no existe o se ha dado de baja");
+					} 
+				}
+			}
     	}); 
 
     	var storeDestinatarios = new Ext.data.Store({
@@ -131,11 +138,6 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 												        			field.up("form").down("[reference=comboProveedores]").reset();
 												        		}
 												        	
-												        	},
-												        	blur: function(field, e) {											        		
-												        		if(!Ext.isEmpty(field.getValue()) && field.enableKeyEvents === true) {
-												        			field.lookupController().buscarProveedor(field);
-												        		}
 												        	}
 												    },
 												    publishes: 'value'

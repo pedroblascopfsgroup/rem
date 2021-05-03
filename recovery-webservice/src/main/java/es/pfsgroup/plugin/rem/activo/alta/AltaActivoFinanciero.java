@@ -68,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -104,6 +105,9 @@ public class AltaActivoFinanciero implements AltaActivoService {
 
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -176,6 +180,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 
 	private Activo dtoToEntityActivo(DtoAltaActivoFinanciero dtoAAF) throws Exception {
 		Activo activo = new Activo();
+		DDSinSiNo siNoObraNueva = (DDSinSiNo)diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
 
 		beanUtilNotNull.copyProperty(activo, "numActivo", dtoAAF.getNumActivoHaya());
 		activo.setNumActivoRem(activoApi.getNextNumActivoRem());
@@ -205,6 +210,8 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		beanUtilNotNull.copyProperty(activo, "situacionComercial",
 				utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class, DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE));
 		beanUtilNotNull.copyProperty(activo, "tipoComercializar", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class, dtoAAF.getTipoDeComercializacion()));
+		activo.setTieneObraNuevaAEfectosComercializacion(siNoObraNueva);
+		
 		activo = genericDao.save(Activo.class, activo);
 		return activo;
 	}

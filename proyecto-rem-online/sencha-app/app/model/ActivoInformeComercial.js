@@ -28,6 +28,9 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
      		{
     			name:'tipoActivoCodigo'
     		},
+			{
+    			name:'tipoActivoDescripcion'
+    		},
     		{
     			name: 'isInformeGeneralVisible',
     			calculate: function(data) {    				
@@ -42,11 +45,17 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
      		{
     			name:'subtipoActivoCodigo'
     		},
+			{
+    			name:'subtipoActivoDescripcion'
+    		},
      		{
     			name:'estadoActivo'
     		},
      		{
     			name:'tipoViaCodigo'
+    		},
+			{
+    			name:'tipoViaDescripcion'
     		},
      		{
     			name:'nombreVia'
@@ -126,6 +135,9 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
     		},
     		{
     			name: 'inferiorMunicipioCodigo'
+    		},
+			{
+    			name: 'inferiorMunicipioDescripcion'
     		},
     		{
     			name: 'ubicacionActivoCodigo'
@@ -207,6 +219,18 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
 	    				}
     				}
     			}
+    		},
+    		{
+    			name: 'provinciaCodigo'
+    		},
+    		{
+    			name: 'provinciaDescripcion'
+    		},
+    		{
+    			name: 'municipioCodigo'
+    		},
+    		{
+    			name: 'municipioDescripcion'
     		}
     ],
 	proxy: {

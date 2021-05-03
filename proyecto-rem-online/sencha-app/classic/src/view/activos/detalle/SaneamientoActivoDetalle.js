@@ -82,12 +82,13 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 							items :
 								[
 									{ 
-							        	xtype: 'comboboxfieldbase',				        	
+							        	xtype: 'comboboxfieldbasedd',				        	
 								 		fieldLabel: HreRem.i18n('fieldlabel.situacion.titulo'),
 								 		readOnly: true,
 							        	bind: {
 						            		store: '{comboEstadoTitulo}',
-						            		value: '{saneamiento.estadoTitulo}'
+						            		value: '{saneamiento.estadoTitulo}',
+						            		rawValue: '{saneamiento.estadoTituloDescripcion}'
 
 						            	},
 
@@ -241,25 +242,27 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 							items :
 								[
 									{ 
-				        				xtype: 'comboboxfieldbase',				        	
+				        				xtype: 'comboboxfieldbasedd',				        	
 								 		fieldLabel: HreRem.i18n('fieldlabel.tipo.titulo.adicional'),
 								 		reference:'tipoTituloAdicional',
 								 		//readOnly: true,
 							        	bind: 
 							        		{
 					            			store: '{comboTipoTituloInfoRegistral}', //DD_TTA_TIPO_TITULO_ADICIONAL
-						            		value: '{saneamiento.tipoTituloAdicional}'						            		
+						            		value: '{saneamiento.tipoTituloAdicional}',
+						            		rawValue: '{saneamiento.tipoTituloAdicionalDescripcion}'					            		
             								}	            			
                         			},
 									{ 
-							        	xtype: 'comboboxfieldbase',				        	
+							        	xtype: 'comboboxfieldbasedd',				        	
 								 		fieldLabel: HreRem.i18n('fieldlabel.situacion.titulo.adicional'),
 								 		reference: 'situacionTituloAdicional',
 								 		readOnly: true,
 							        	bind: 
 							        		{
 						            		store: '{comboEstadoTitulo}', //DD_ETI_ESTADO_TITULO
-						            		value: '{saneamiento.estadoTituloAdicional}'
+						            		value: '{saneamiento.estadoTituloAdicional}',
+						            		rawValue: '{saneamiento.estadoTituloAdicionalDescripcion}'
 			
 				            				}
 			
@@ -537,11 +540,12 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 												title : HreRem.i18n("title.datos.proteccion"),
 												items : [
 													{
-														xtype : 'comboboxfieldbase',
+														xtype : 'comboboxfieldbasedd',
 													 	fieldLabel : HreRem.i18n('fieldlabel.regimen.proteccion'),
 													 	bind : {
 													 		store: '{comboTipoVpo}',
-								            				value: '{saneamiento.tipoVpoCodigo}'
+								            				value: '{saneamiento.tipoVpoCodigo}',
+								            				rawValue: '{saneamiento.tipoVpoCodigoDescripcion}'
 								            			}
 													},
 													{
@@ -781,11 +785,12 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 													title: HreRem.i18n("title.autorizacionComprador"),
 													items : [
 														{
-												        	xtype: 'comboboxfieldbase',
+												        	xtype: 'comboboxfieldbasedd',
 												        	fieldLabel:  HreRem.i18n('fieldlabel.estadoVenta'),
 												        	bind: {
 				            									store: '{comboEstadoVenta}',
-				            									value: '{saneamiento.estadoVentaCodigo}'
+				            									value: '{saneamiento.estadoVentaCodigo}',
+				            									rawValue: '{saneamiento.estadoVentaDescripcion}'
 												        	}
 												        },
 												        {

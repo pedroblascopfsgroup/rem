@@ -29,7 +29,7 @@ public class PerfilAdministracionDaoImpl extends AbstractEntityDao<VBusquedaPerf
 		HQLBuilder hb = new HQLBuilder(hql);
 
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "pef.perfilDescripcion", dto.getPerfilDescripcion(), true);
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "pef.perfilCodigo", dto.getPerfilCodigo(), true);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pef.perfilCodigo", dto.getPerfilCodigo());
 
 		if (!Checks.esNulo(dto.getFuncionDescripcionLarga())) {
 			boolean primero = true;

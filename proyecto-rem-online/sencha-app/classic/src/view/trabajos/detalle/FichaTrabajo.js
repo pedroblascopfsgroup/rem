@@ -124,7 +124,14 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	xtype: 'textfieldbase',
 				                	fieldLabel:  HreRem.i18n('title.general.gasto.numGasto'),
 				                	bind:		'{trabajo.numGasto}',
-				                	readOnly: true
+				                	readOnly: true,
+				                	cls: 'show-text-as-link',
+									listeners: {
+								        click: {
+								            element: 'el', 
+								            fn:'onClickGasto'									       
+								        }
+									}
 				                },
 							 	{
 				                	xtype: 'comboboxfieldbase',

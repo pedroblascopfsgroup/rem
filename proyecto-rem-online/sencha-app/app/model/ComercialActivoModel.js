@@ -10,6 +10,9 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 			name: 'situacionComercialCodigo'
 		},
 		{
+			name: 'situacionComercialDescripcion'
+		},
+		{
 			name: 'fechaVenta',
 			type:'date',
 			dateFormat: 'c'
@@ -35,12 +38,21 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 		{
 			name: 'tramitable',
 			type: 'boolean'
-		},{
+		},
+		{
 			name: 'motivoAutorizacionTramitacionCodigo'
-		},{
+		},
+		{
+			name: 'motivoAutorizacionTramitacionDescripcion'
+		},
+		{
 			name: 'observacionesAutoTram'
-		},{
+		},
+		{
 			name:'direccionComercial'
+		},
+		{
+			name:'direccionComercialDescripcion'
 		},
 		{
 			name: 'ventaSobrePlano',

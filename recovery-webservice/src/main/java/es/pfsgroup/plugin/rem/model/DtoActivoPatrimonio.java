@@ -24,10 +24,13 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	private Boolean chkPerimetroAlquiler;
 	private Boolean chkSubrogado;
 	private String tipoAlquilerCodigo;
+	private String tipoAlquilerDescripcion;
 	private String comboRentaAntigua;
 
 	private String tipoInquilino;
+	private String tipoInquilinoDescripcion;
 	private String estadoAlquiler;
+	private String estadoAlquilerDescripcion;
 	private int ocupacion;
 	private int conTitulo;
 	
@@ -37,6 +40,7 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	
 	private List<?> activosPropagables;
 	private String cesionUso;
+	private String cesionUsoDescripcion;
 	private String tramiteAlquilerSocial;
 	//Grid historico adecuaciones patrimonio activo
 	private Date fechaInicioAdecuacion;
@@ -56,11 +60,23 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	public void setTipoInquilino(String tipoInquilino) {
 		this.tipoInquilino = tipoInquilino;
 	}
+	public String getTipoInquilinoDescripcion() {
+		return tipoInquilinoDescripcion;
+	}
+	public void setTipoInquilinoDescripcion(String tipoInquilinoDescripcion) {
+		this.tipoInquilinoDescripcion = tipoInquilinoDescripcion;
+	}
 	public String getEstadoAlquiler() {
 		return estadoAlquiler;
 	}
 	public void setEstadoAlquiler(String estadoAlquiler) {
 		this.estadoAlquiler = estadoAlquiler;
+	}
+	public String getEstadoAlquilerDescripcion() {
+		return estadoAlquilerDescripcion;
+	}
+	public void setEstadoAlquilerDescripcion(String estadoAlquilerDescripcion) {
+		this.estadoAlquilerDescripcion = estadoAlquilerDescripcion;
 	}
 	public int getOcupacion() {
 		return ocupacion;
@@ -146,6 +162,12 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	public void setTipoAlquilerCodigo(String tipoAlquilerCodigo) {
 		this.tipoAlquilerCodigo = tipoAlquilerCodigo;
 	}
+	public String getTipoAlquilerDescripcion() {
+		return tipoAlquilerDescripcion;
+	}
+	public void setTipoAlquilerDescripcion(String tipoAlquilerDescripcion) {
+		this.tipoAlquilerDescripcion = tipoAlquilerDescripcion;
+	}
 	public String getComboRentaAntigua() {
 		return comboRentaAntigua;
 	}
@@ -163,6 +185,12 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	}
 	public void setCesionUso(String cesionUso) {
 		this.cesionUso = cesionUso;
+	}
+	public String getCesionUsoDescripcion() {
+		return cesionUsoDescripcion;
+	}
+	public void setCesionUsoDescripcion(String cesionUsoDescripcion) {
+		this.cesionUsoDescripcion = cesionUsoDescripcion;
 	}
 	public String getTramiteAlquilerSocial() {
 		return tramiteAlquilerSocial;

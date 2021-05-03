@@ -19,6 +19,9 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
             name: 'adecuacionAlquilerCodigo'
         },
 		{
+            name: 'adecuacionAlquilerDescripcion'
+        },
+		{
 			name:'totalDiasPublicadoVenta',
 			type: 'number'
 		},
@@ -54,6 +57,9 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
 			name:'motivoOcultacionVentaCodigo'
 		},
 		{
+			name:'motivoOcultacionVentaDescripcion'
+		},
+		{
 			name:'motivoOcultacionManualVenta'
 		},
 		{
@@ -74,6 +80,9 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
 		},
 		{
 			name:'motivoOcultacionAlquilerCodigo'
+		},
+		{
+			name:'motivoOcultacionAlquilerDescripcion'
 		},
 		{
 			name:'motivoOcultacionManualAlquiler'
@@ -189,6 +198,12 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
         	name:'fechaPrimeraPublicacionMay',
             type:'date',
             dateFormat: 'c'
+        },
+        {
+        	name:'canalDePublicacion'
+        },
+        {
+        	name:'canalDePublicacionDescripcion'
         }
         
 	],

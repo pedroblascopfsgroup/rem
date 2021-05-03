@@ -166,14 +166,8 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 								renderer: coloredRender,
 					            summaryType: 'sum',
 					            summaryRenderer: function(value, summaryData, dataIndex) {
-					            	var suma = 0;
-					            	var store = this.up('grid').store;
+					            	var suma = this.up('grid').store.porcentajeCompra;
 
-					            	for(var i=0; i< store.data.length; i++){
-					            		if(store.data.items[i].data.porcentajeCompra != null){
-					            			suma += parseFloat(store.data.items[i].data.porcentajeCompra);
-					            		}
-					            	}
 					            	suma = Ext.util.Format.number(suma, '0.00');
 					            	
 					            	var msg = msgPorcentajeTotal + " " + suma + "%";

@@ -80,6 +80,9 @@ public class VGridBusquedaTrabajos implements Serializable {
 	@Column(name = "SUBCARTERA_DESCRIPCION")
 	private String subcarteraDescripcion;
 	
+	@Column(name = "DD_IRE_CODIGO")
+	private String areaPeticionariaCodigo;
+	
 	@Column(name = "DD_IRE_DESCRIPCION")
 	private String areaPeticionaria;
 	

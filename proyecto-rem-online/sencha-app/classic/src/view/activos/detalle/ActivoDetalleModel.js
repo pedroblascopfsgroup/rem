@@ -2624,8 +2624,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'situacionComercial'}
-			},
-			autoLoad: true
+			}
 		},
 			
 			
@@ -3412,8 +3411,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'motivoExento'}
-			},
-			autoLoad: true
+			}
 		},
 		
 		storeSubtipologiaAgendaSaneamiento: {

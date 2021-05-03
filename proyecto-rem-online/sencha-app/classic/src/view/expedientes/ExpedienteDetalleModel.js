@@ -858,7 +858,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        type: 'uxproxy',
 		        remoteUrl: 'expedientecomercial/getCompradoresExpediente',
 		        extraParams: {idExpediente: '{expediente.id}'}
-	    	}
+	    	},
+	    	listeners: {
+				load: function(store, items, success, opts){
+					 store.porcentajeCompra = Ext.decode(opts._response.responseText).porcentajeCompra;
+				}
+			}
 		},
 		
 		comboTipoPersona : {

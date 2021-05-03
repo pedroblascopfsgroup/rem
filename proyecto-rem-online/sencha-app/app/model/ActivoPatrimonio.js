@@ -15,6 +15,9 @@ Ext.define('HreRem.model.ActivoPatrimonio', {
     		{
     			name:'tipoAlquilerCodigo'
     		},
+			{
+    			name:'tipoAlquilerDescripcion'
+    		},
     		{
     			name:'codigoAdecuacion'
     		},
@@ -30,8 +33,14 @@ Ext.define('HreRem.model.ActivoPatrimonio', {
 			{
     			name: 'tipoInquilino'
     		},
+			{
+    			name: 'tipoInquilinoDescripcion'
+    		},
     		{
     			name: 'estadoAlquiler'
+    		},
+			{
+    			name: 'estadoAlquilerDescripcion'
     		},
     		{
     			name: 'ocupacion'
@@ -49,8 +58,13 @@ Ext.define('HreRem.model.ActivoPatrimonio', {
     		{
     			name: 'isCarteraCerberusDivarianOBBVA',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'cesionUso'
+    		},
+    		{
+    			name: 'cesionUsoDescripcion'
     		}
-    		
     ],
     
 	proxy: {

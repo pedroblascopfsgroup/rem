@@ -5165,5 +5165,51 @@ comprobarFormatoModificar: function() {
 			     }
 			});	
 		}
+	},
+	
+	recalcularHonorarios : function(btn) {
+		var form = btn.up('formBase');
+		var me = this;
+		var url = $AC.getRemoteUrl('expedientecomercial/recalcularHonorarios');
+		me.getView().mask(HreRem.i18n("msg.mask.espere"));
+		
+		Ext.Ajax.request({
+			url: url,
+			
+		    params:  {
+		    	idExpediente : me.getViewModel().get("expediente.id")
+		    },
+		    
+		    success: function(response, opts) {
+		    	var data = {};
+		    	try {
+		    		data = Ext.decode(response.responseText);
+		    	}  catch (e){ };
+               
+		    	if(data.success === "true") {
+		    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					form.funcionRecargar();           	
+		    	}else {
+		    		if(data.errorUvem == "true"){
+		    			me.fireEvent("errorToast", data.msg);		
+		    		}
+		    		else{
+		    			Utils.defaultRequestFailure(response, opts);
+		    		}
+		    	}
+		     },
+
+		     failure: function(response, opts) {
+		    	 if(data.errorUvem == "true"){
+		    		 me.fireEvent("errorToast", data.msg);		
+		    	 } else {
+		    		 Utils.defaultRequestFailure(response, opts);
+		    	 }
+		     },
+
+		     callback: function() {
+		    	 me.getView().unmask();
+		     }
+		});		
 	}
 });

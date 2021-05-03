@@ -18,6 +18,9 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     		{
     			name:'tipoActivoCodigo'
     		},
+			{
+    			name:'tipoActivoDescripcion'
+    		},
     		{
     			name: 'isVivienda',
     			calculate: function(data) { 
@@ -785,6 +788,18 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     		},
     		{
     			name:'emailMediadorEspejo'
+    		},
+    	    {
+    			name:'subtipoActivoCodigo'
+    		},
+    		{
+    			name:'subtipoActivoDescripcion'
+    		},
+    	    {
+    			name:'tipoViaCodigo'
+    		},
+    		{
+    			name:'tipoViaDescripcion'
     		}
     ],
     

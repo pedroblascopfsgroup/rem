@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20210320
+--## FECHA_CREACION=20210430
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13283
@@ -13,6 +13,7 @@
 --## VERSIONES:
 --##        0.1 [HREOS-10172] Versión inicial (Creación de la vista)
 --##        0.2 [HREOS-13283] Relanzar la vista para vistaLigth
+--##		0.3 Area peticionaria codigo/descripcion
 --#########################################
 --*/
 
@@ -68,7 +69,8 @@ BEGIN
 			STR.DD_STR_DESCRIPCION 						AS SUBTIPO_TRABAJO_DESCRIPCION,
           	TBJ.TBJ_FECHA_SOLICITUD 					AS FECHA_SOLICITUD,
 			EST.DD_EST_CODIGO 									AS ESTADO_TRABAJO_CODIGO,
-			EST.DD_EST_DESCRIPCION 						AS ESTADO_TRABAJO_DESCRIPCION,	
+			EST.DD_EST_DESCRIPCION 						AS ESTADO_TRABAJO_DESCRIPCION,
+			IRE.DD_IRE_CODIGO,	
 			IRE.DD_IRE_DESCRIPCION,	
 			PVE.PVE_NOMBRE 										AS PROVEEDOR_NOMBRE,
 			NVL2 (SOLIC.USU_NOMBRE,

@@ -3839,8 +3839,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		try {
 			if (!Checks.esNulo(activo.getSituacionComercial())) {
-				beanUtilNotNull.copyProperty(dto, "situacionComercialCodigo",
-						activo.getSituacionComercial().getCodigo());
+				beanUtilNotNull.copyProperty(dto, "situacionComercialCodigo", activo.getSituacionComercial().getCodigo());
+				beanUtilNotNull.copyProperty(dto, "situacionComercialDescripcion", activo.getSituacionComercial().getDescripcion());
 			}
 
 			// Obtener oferta aceptada. Si tiene, establecer expediente
@@ -3921,11 +3921,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(activo.getActivoAutorizacionTramitacionOfertas())) {
 				beanUtilNotNull.copyProperty(dto, "motivoAutorizacionTramitacionCodigo", activo
 						.getActivoAutorizacionTramitacionOfertas().getMotivoAutorizacionTramitacion().getCodigo());
+				beanUtilNotNull.copyProperty(dto, "motivoAutorizacionTramitacionDescripcion", activo
+						.getActivoAutorizacionTramitacionOfertas().getMotivoAutorizacionTramitacion().getDescripcion());
 				beanUtilNotNull.copyProperty(dto, "observacionesAutoTram",
 						activo.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
 			}
 			if (!Checks.esNulo(activo.getTerritorio())) {
 				beanUtilNotNull.copyProperty(dto, "direccionComercial", activo.getTerritorio().getCodigo());
+				beanUtilNotNull.copyProperty(dto, "direccionComercialDescripcion", activo.getTerritorio().getDescripcion());
 
 			}
 

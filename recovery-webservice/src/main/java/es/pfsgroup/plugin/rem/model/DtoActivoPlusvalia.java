@@ -29,8 +29,10 @@ public class DtoActivoPlusvalia extends DtoTabActivo {
 	private String autoliquidacion;
 	private String observaciones;
 	private String estadoGestion;
+	private String estadoGestionDescripcion;
 	private String numExpediente;
 	private String motivoExento;
+	private String motivoExentoDescripcion;
 	private String resultadoSolicitud;
 	
 	public Long getIdPlusvalia() {
@@ -124,6 +126,12 @@ public class DtoActivoPlusvalia extends DtoTabActivo {
 	public void setEstadoGestion(String estadoGestion) {
 		this.estadoGestion = estadoGestion;
 	}
+	public String getEstadoGestionDescripcion() {
+		return estadoGestionDescripcion;
+	}
+	public void setEstadoGestionDescripcion(String estadoGestionDescripcion) {
+		this.estadoGestionDescripcion = estadoGestionDescripcion;
+	}
 	public String getNumExpediente() {
 		return numExpediente;
 	}
@@ -135,6 +143,12 @@ public class DtoActivoPlusvalia extends DtoTabActivo {
 	}
 	public void setMotivoExento(String motivoExento) {
 		this.motivoExento = motivoExento;
+	}
+	public String getMotivoExentoDescripcion() {
+		return motivoExentoDescripcion;
+	}
+	public void setMotivoExentoDescripcion(String motivoExentoDescripcion) {
+		this.motivoExentoDescripcion = motivoExentoDescripcion;
 	}
 	public String getResultadoSolicitud() {
 		return resultadoSolicitud;

@@ -9,6 +9,7 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	private String id; // ID de activo.
 	private String situacionComercialCodigo;
+	private String situacionComercialDescripcion;
 	private Date fechaVenta;
 	private Boolean expedienteComercialVivo;
 	private String observaciones;
@@ -17,8 +18,10 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private Boolean puja;
 	private Boolean tramitable;
 	private String motivoAutorizacionTramitacionCodigo;
+	private String motivoAutorizacionTramitacionDescripcion;
 	private String observacionesAutoTram;
 	private String direccionComercial;
+	private String direccionComercialDescripcion;
 	private Boolean ventaSobrePlano;
 	private Double importeComunidadMensualSareb;
 	private String siniestroSareb;
@@ -44,6 +47,14 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	public void setSituacionComercialCodigo(String situacionComercialCodigo) {
 		this.situacionComercialCodigo = situacionComercialCodigo;
+	}
+	
+	public String getSituacionComercialDescripcion() {
+		return situacionComercialDescripcion;
+	}
+
+	public void setSituacionComercialDescripcion(String situacionComercialDescripcion) {
+		this.situacionComercialDescripcion = situacionComercialDescripcion;
 	}
 
 	public Date getFechaVenta() {
@@ -101,6 +112,14 @@ public class DtoComercialActivo extends DtoTabActivo{
 	public void setMotivoAutorizacionTramitacionCodigo(String motivoAutorizacionTramitacionCodigo) {
 		this.motivoAutorizacionTramitacionCodigo = motivoAutorizacionTramitacionCodigo;
 	}
+	
+	public String getMotivoAutorizacionTramitacionDescripcion() {
+		return motivoAutorizacionTramitacionDescripcion;
+	}
+
+	public void setMotivoAutorizacionTramitacionDescripcion(String motivoAutorizacionTramitacionDescripcion) {
+		this.motivoAutorizacionTramitacionDescripcion = motivoAutorizacionTramitacionDescripcion;
+	}
 
 	public Boolean getTramitable() {
 		return tramitable;
@@ -124,6 +143,14 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	public void setDireccionComercial(String direccionComercial) {
 		this.direccionComercial = direccionComercial;
+	}
+	
+	public String getDireccionComercialDescripcion() {
+		return direccionComercialDescripcion;
+	}
+
+	public void setDireccionComercialDescripcion(String direccionComercialDescripcion) {
+		this.direccionComercialDescripcion = direccionComercialDescripcion;
 	}
 	
 	public Boolean getVentaSobrePlano() {

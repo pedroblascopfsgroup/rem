@@ -40,6 +40,14 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
             	xtype: 'fieldset',
             	title:  HreRem.i18n('title.horonarios'),
             	items : [
+					{
+						xtype : 'button',
+						reference : 'btnRecalcularHonorarios',
+						text : HreRem.i18n('btn.recalcular.honorarios'),
+						handler : 'recalcularHonorarios',
+						margin : '10 10 10 10',
+						hidden: true
+					},
             		{
 						xtype: 'button',
 						text: HreRem.i18n('btn.enviar.honorarios'),

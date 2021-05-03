@@ -15,8 +15,11 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	private Date fechaAutorizacionHasta;
 	private Date fechaRecepcionLlaves;
 	private String tipoActivoCodigo;
+	private String tipoActivoDescripcion;
 	private String subtipoActivoCodigo;
+	private String subtipoActivoDescripcion;
 	private String tipoViaCodigo;
+	private String tipoViaDescripcion;
 	private String nombreVia;
 	private String numeroVia;
 	private String escalera;
@@ -27,7 +30,9 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	private String zona;
 	private String distrito;
 	private String municipioCodigo;
+	private String municipioDescripcion;
 	private String provinciaCodigo;
+	private String provinciaDescripcion;
 	private String codigoPostal;
 	private int inscritaComunidad;
 	private Float cuotaOrientativaComunidad;
@@ -43,7 +48,9 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	private Date fechaEstimacionVenta;
 	private Date fechaEstimacionRenta;
 	private String inferiorMunicipioCodigo;
+	private String inferiorMunicipioDescripcion;
 	private String ubicacionActivoCodigo;
+	private String ubicacionActivoDescripcion;
 	private Integer numTerrazaCubierta;
 	private String descTerrazaCubierta;
 	private Integer numTerrazaDescubierta;
@@ -68,9 +75,6 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	private Date fechaRecepcionLlavesEspejo;
 	private String admiteMascotaCodigo;
 	
-	public String getInferiorMunicipioCodigo() {
-		return inferiorMunicipioCodigo;
-	}
 	public Date getFechaEstimacionVenta() {
 		return fechaEstimacionVenta;
 	}
@@ -89,8 +93,23 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	public void setUbicacionActivoCodigo(String ubicacionActivoCodigo) {
 		this.ubicacionActivoCodigo = ubicacionActivoCodigo;
 	}
+	public String getUbicacionActivoDescripcion() {
+		return ubicacionActivoDescripcion;
+	}
+	public void setUbicacionActivoDescripcion(String ubicacionActivoDescripcion) {
+		this.ubicacionActivoDescripcion = ubicacionActivoDescripcion;
+	}
+	public String getInferiorMunicipioCodigo() {
+		return inferiorMunicipioCodigo;
+	}
 	public void setInferiorMunicipioCodigo(String inferiorMunicipioCodigo) {
 		this.inferiorMunicipioCodigo = inferiorMunicipioCodigo;
+	}
+	public String getInferiorMunicipioDescripcion() {
+		return inferiorMunicipioDescripcion;
+	}
+	public void setInferiorMunicipioDescripcion(String inferiorMunicipioDescripcion) {
+		this.inferiorMunicipioDescripcion = inferiorMunicipioDescripcion;
 	}
 	public int getAutorizacionWeb() {
 		return autorizacionWeb;
@@ -116,17 +135,35 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	public void setTipoActivoCodigo(String tipoActivoCodigo) {
 		this.tipoActivoCodigo = tipoActivoCodigo;
 	}
+	public String getTipoActivoDescripcion() {
+		return tipoActivoDescripcion;
+	}
+	public void setTipoActivoDescripcion(String tipoActivoDescripcion) {
+		this.tipoActivoDescripcion = tipoActivoDescripcion;
+	}
 	public String getSubtipoActivoCodigo() {
 		return subtipoActivoCodigo;
 	}
 	public void setSubtipoActivoCodigo(String subtipoActivoCodigo) {
 		this.subtipoActivoCodigo = subtipoActivoCodigo;
 	}
+	public String getSubtipoActivoDescripcion() {
+		return subtipoActivoDescripcion;
+	}
+	public void setSubtipoActivoDescripcion(String subtipoActivoDescripcion) {
+		this.subtipoActivoDescripcion = subtipoActivoDescripcion;
+	}
 	public String getTipoViaCodigo() {
 		return tipoViaCodigo;
 	}
 	public void setTipoViaCodigo(String tipoViaCodigo) {
 		this.tipoViaCodigo = tipoViaCodigo;
+	}
+	public String getTipoViaDescripcion() {
+		return tipoViaDescripcion;
+	}
+	public void setTipoViaDescripcion(String tipoViaDescripcion) {
+		this.tipoViaDescripcion = tipoViaDescripcion;
 	}
 	public String getNombreVia() {
 		return nombreVia;
@@ -188,11 +225,23 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	public void setMunicipioCodigo(String municipioCodigo) {
 		this.municipioCodigo = municipioCodigo;
 	}
+	public String getMunicipioDescripcion() {
+		return municipioDescripcion;
+	}
+	public void setMunicipioDescripcion(String municipioDescripcion) {
+		this.municipioDescripcion = municipioDescripcion;
+	}
 	public String getProvinciaCodigo() {
 		return provinciaCodigo;
 	}
 	public void setProvinciaCodigo(String provinciaCodigo) {
 		this.provinciaCodigo = provinciaCodigo;
+	}
+	public String getProvinciaDescripcion() {
+		return provinciaDescripcion;
+	}
+	public void setProvinciaDescripcion(String provinciaDescripcion) {
+		this.provinciaDescripcion = provinciaDescripcion;
 	}
 	public String getCodigoPostal() {
 		return codigoPostal;

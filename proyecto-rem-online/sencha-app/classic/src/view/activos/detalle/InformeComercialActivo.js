@@ -276,31 +276,34 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										chainedReference: 'subtipoActivoComboAdmisionInforme',
 							        	bind: {
 						            		store: '{comboTipoActivo}',
-						            		value: '{activoInforme.tipoActivoCodigo}'
+						            		value: '{activoInforme.tipoActivoCodigo}',
+						            		rawValue: '{activoInforme.tipoActivoDescripcion}'
 						            	},
 			    						listeners: {
 						                	select: 'onChangeChainedCombo'
 						            	}
 							        },
 									{ 
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 							        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
 							        	reference: 'subtipoActivoComboAdmisionInforme',
 							        	bind: {
 						            		store: '{comboSubtipoActivoAdmisionIC}',
 						            		value: '{activoInforme.subtipoActivoCodigo}',
-						            		disabled: '{!activoInforme.tipoActivoCodigo}'
+						            		disabled: '{!activoInforme.tipoActivoCodigo}',
+						            		rawValue: '{activoInforme.subtipoActivoDescripcion}'
 						            	},
 						            	colspan: 2
 							        },
 								// Fila 1
 									{							
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 										fieldLabel:  HreRem.i18n('fieldlabel.tipo.via'),
 										reference: 'tipoViaAdmisionInforme',
 							        	bind: {
 						            		store: '{comboTipoVia}',
-						            		value: '{activoInforme.tipoViaCodigo}'			            		
+						            		value: '{activoInforme.tipoViaCodigo}'	,
+						            		rawValue: '{activoInforme.tipoViaDescripcion}'		            		
 						            	}
 									},
 									{ 
@@ -331,7 +334,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					                },
 					            // Fila 3
 									{
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 										reference: 'provinciaComboAdmisionInforme',
 										chainedStore: 'comboMunicipioAdmisionIC',
@@ -339,14 +342,15 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										readOnly: esUA,
 						            	bind: {
 						            		store: '{comboProvincia}',
-						            	    value: '{activoInforme.provinciaCodigo}'
+						            	    value: '{activoInforme.provinciaCodigo}',
+						            	    rawValue: '{activoInforme.provinciaDescripcion}'
 						            	},
 			    						listeners: {
 											select: 'onChangeChainedCombo'
 			    						}
 									},
 					                {
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 										chainedStore: 'comboInferiorMunicipioAdmisionIC',
 										chainedReference: 'poblacionalAdmisionInforme',
@@ -355,20 +359,22 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	bind: {
 						            		store: '{comboMunicipioAdmisionIC}',
 						            		value: '{activoInforme.municipioCodigo}',
-						            		disabled: '{!activoInforme.provinciaCodigo}'
+						            		disabled: '{!activoInforme.provinciaCodigo}',
+						            		rawValue: '{activoInforme.municipioDescripcion}'
 						            	},
 			    						listeners: {
 											select: 'onChangeChainedCombo'
 			    						}
 									},
 									{
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.unidad.poblacional'),
 										reference: 'poblacionalAdmisionInforme',													
 									    bind: {
 									    	store: '{comboInferiorMunicipioAdmisionIC}',
 									        value: '{activoInforme.inferiorMunicipioCodigo}',
-									        disabled: '{!activoInforme.municipioCodigo}'
+									        disabled: '{!activoInforme.municipioCodigo}',
+									        rawValue: '{activoInforme.inferiorMunicipioDescripcion}'
 									    }
 									},
 								// Fila 4
@@ -462,38 +468,41 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 								[
 								// Fila 0
 									{ 
-							        	xtype: 'comboboxfieldbase',
+							        	xtype: 'comboboxfieldbasedd',
 							        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo'),
 										reference: 'tipoActivoMediadorInforme',
 							        	chainedStore: 'comboSubtipoActivo',
 										chainedReference: 'subtipoActivoComboMediadorInforme',
 							        	bind: {
 						            		store: '{comboTipoActivo}',
-						            		value: '{infoComercial.tipoActivoCodigo}'
+						            		value: '{infoComercial.tipoActivoCodigo}',
+						            		rawValue: '{infoComercial.tipoActivoDescripcion}'
 						            	},
 			    						listeners: {
 						                	select: 'onChangeChainedCombo'
 						            	}
 							        },
 									{ 
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 							        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
 							        	reference: 'subtipoActivoComboMediadorInforme',
 							        	bind: {
 						            		store: '{comboSubtipoActivoMediadorIC}',
 						            		value: '{infoComercial.subtipoActivoCodigo}',
-						            		disabled: '{!infoComercial.tipoActivoCodigo}'
+						            		disabled: '{!infoComercial.tipoActivoCodigo}',
+						            		rawValue: '{infoComercial.subtipoActivoDescripcion}'
 						            	},
 						            	colspan: 2
 							        },
 								// Fila 1
 									{							
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 										fieldLabel:  HreRem.i18n('fieldlabel.tipo.via'),
 										reference: 'tipoViaMediadorInforme',
 							        	bind: {
 						            		store: '{comboTipoVia}',
-						            		value: '{infoComercial.tipoViaCodigo}'			            		
+						            		value: '{infoComercial.tipoViaCodigo}',
+						            		rawValue: '{infoComercial.tipoViaDescripcion}'	            		
 						            	}
 									},
 									{ 
@@ -524,7 +533,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					                },
 					            // Fila 3
 					                {
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 										reference: 'provinciaComboMediadorInforme',
 										chainedStore: 'comboMunicipioMediadorIC',
@@ -532,14 +541,15 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										readOnly: esUA,
 						            	bind: {
 						            		store: '{comboProvincia}',
-						            	    value: '{infoComercial.provinciaCodigo}'
+						            	    value: '{infoComercial.provinciaCodigo}',
+						            	    rawValue: '{infoComercial.provinciaDescripcion}'
 						            	},
 			    						listeners: {
 											select: 'onChangeChainedCombo'
 			    						}
 									},
 					                {
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 										reference: 'municipioComboMediadorInforme',
 										chainedStore: 'comboInferiorMunicipioMediadorIC',
@@ -548,7 +558,8 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	bind: {
 						            		store: '{comboMunicipioMediadorIC}',
 						            		value: '{infoComercial.municipioCodigo}',
-						            		disabled: '{!infoComercial.provinciaCodigo}'
+						            		disabled: '{!infoComercial.provinciaCodigo}',
+						            		rawValue: '{infoComercial.municipioDescripcion}'
 						            	},
 						            	listeners: {
 						            		select: 'onChangeChainedCombo',
@@ -556,13 +567,14 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						                }
 									},
 									{
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.unidad.poblacional'),
 										reference: 'poblacionalMediadorInforme',													
 									    bind: {
 									    	store: '{comboInferiorMunicipioMediadorIC}',
 									        value: '{infoComercial.inferiorMunicipioCodigo}',
-									        disabled: '{!infoComercial.municipioCodigo}'
+									        disabled: '{!infoComercial.municipioCodigo}',
+									        rawValue: '{infoComercial.inferiorMunicipioDescripcion}'
 									    }
 									},
 								// Fila 4
@@ -576,11 +588,12 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					                	maxLength: 5	                	
 									},
 									{
-										xtype: 'comboboxfieldbase',
+										xtype: 'comboboxfieldbasedd',
 							        	fieldLabel: HreRem.i18n('fieldlabel.ubicacion'),
 							        	bind: {
 						            		store: '{comboTipoUbicacion}',
-						            		value: '{infoComercial.ubicacionActivoCodigo}'
+						            		value: '{infoComercial.ubicacionActivoCodigo}',
+						            		rawValue: '{infoComercial.ubicacionActivoDescripcion}'
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo'
@@ -723,24 +736,26 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 									items :
 										[
 											{ 
-												xtype: 'comboboxfieldbase',
+												xtype: 'comboboxfieldbasedd',
 												editable: false,
 												fieldLabel: HreRem.i18n('fieldlabel.estado.conservacion.activo'),
 												bind: {
 													store: '{comboEstadoConservacion}',
-													value: '{infoComercial.estadoConservacionCodigo}'
+													value: '{infoComercial.estadoConservacionCodigo}',
+													rawValue: '{infoComercial.estadoConservacionDescripcion}'
 												},
 												displayField: 'descripcion',
 												valueField: 'codigo'
 											},
 											{ 
-									        	xtype: 'comboboxfieldbase',
+									        	xtype: 'comboboxfieldbasedd',
 									        	editable: false,
 									        	fieldLabel: HreRem.i18n('fieldlabel.estado.construccion.activo'),
 									        	bind: {
 								            		store: '{comboEstadoConstruccion}',
 								            		value: '{infoComercial.estadoConstruccionCodigo}',
-								    				hidden: '{infoComercial.isSuelo}'
+								    				hidden: '{infoComercial.isSuelo}',
+								            		rawValue: '{infoComercial.estadoConstruccionDescripcion}'
 								            	},
 								            	displayField: 'descripcion',
 					    						valueField: 'codigo'
@@ -770,12 +785,13 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 												vtype: 'anyo'
 											},
 											{ 
-												xtype: 'comboboxfieldbase',
+												xtype: 'comboboxfieldbasedd',
 												editable: false,
 												fieldLabel: HreRem.i18n('fieldlabel.estado.conservacion.edificio'),
 												bind: {
 													store: '{comboEstadoConservacion}',
-													value: '{infoComercial.estadoConservacionEdificioCodigo}'
+													value: '{infoComercial.estadoConservacionEdificioCodigo}',
+													rawValue: '{infoComercial.estadoConservacionEdificioDescripcion}'
 												}
 											},
 											{

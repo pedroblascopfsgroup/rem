@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200724
+--## AUTOR=Sergio Salt 
+--## FECHA_CREACION=20210421
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-10618
+--## INCIDENCIA_LINK=HREOS-13615
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##
@@ -59,7 +59,22 @@ BEGIN
 
 
 
- FROM (
+FROM (
+
+WITH GLDACT_AUX AS
+(SELECT GLDACT_AUX.GLD_ENT_ID ,
+GLDACT_AUX.GLD_ID, GLDACT_AUX.ENT_ID 
+FROM REM01.GLD_ENT GLDACT_AUX
+LEFT JOIN REM01.DD_ENT_ENTIDAD_GASTO ENT ON GLDACT_AUX.DD_ENT_ID = ENT.DD_ENT_ID 
+WHERE GLDACT_AUX.BORRADO = 0 AND ENT.DD_ENT_CODIGO = ''ACT''),
+
+AUX_NUM_GASTO 
+AS (SELECT GPV_NUM_GASTO_HAYA, sum (a.gpl_importe_gasto) AS SUMA
+				FROM REM01.GPL_GASTOS_PRINEX_LBK a
+				left join REM01.GPV_gastos_proveedor b
+					on a.GPV_ID = b.GPV_ID
+				where COALESCE(a.borrado, 0) = 0 and COALESCE(b.borrado, 0) = 0
+				group by GPV_NUM_GASTO_HAYA)
 
 SELECT
      CASE	WHEN PROP.PRO_CODIGO_UVEM = ''7043'' THEN ''1000''
@@ -186,22 +201,8 @@ SELECT
     , GPL.GPL_SCTA_GASTO							AS  SCTA_GASTO
     , GPL.GPL_REPERCUTIR							AS  REPERCUTIR
     , COALESCE(GPL.GPL_CONCEPTO_FAC,
-		CASE WHEN GDE.GDE_REPERCUTIBLE_INQUILINO = 1 THEN
-			CASE	WHEN STG.DD_STG_CODIGO=''08''       		 THEN ''BAS''
-					WHEN STG.DD_STG_CODIGO IN (''48'',''93'')       THEN ''COM''
-					WHEN STG.DD_STG_CODIGO=''62''      		 THEN ''ENG''
-					WHEN STG.DD_STG_CODIGO IN (''30'',''32'')       THEN ''GTC''
-					WHEN STG.DD_STG_CODIGO IN (''01'',''02'')   	 THEN ''IBI''
-					WHEN STG.DD_STG_CODIGO IN (''15'',''59'',''60'',''61'',''63'',''69'',''70'',''71'',''79'',''80'',''81
-						'',''82'',''86'',''94'',''03'',''04'',''05'',''06'',''07'',''11'',''12'',''13'',''14'',''16'',''17'',''18'',''19'',''20'',''21'',''22'',''23
-						'',''24'',''25'',''34'',''38'',''39'',''40'',''41'',''42'',''43'',''44'',''45'',''46'',''47'',''49'',''50'',''51'',''52'',''53'',''54'',''55
-						'',''56'',''57'',''58'',''64'',''65'',''66'',''67'',''68'',''72'',''73'',''74'',''75'',''76'',''77'',''78'',''83'',''84'',''85'',''87'',''88
-						'',''89'',''90'',''91'',''92'',''95'',''96'',''97'',''98'',''99'')      		 THEN ''OTR''
-					WHEN STG.DD_STG_CODIGO IN (''26'',''28'',''31'',''33'') THEN ''RTA''
-					WHEN STG.DD_STG_CODIGO IN (''26'',''28'',''31'',''33'') THEN ''RTA''
-					WHEN STG.DD_STG_CODIGO IN (''27'',''29'') THEN ''RTE''
-					WHEN STG.DD_STG_CODIGO IN (''09'',''10'',''35'',''36'',''37'') THEN ''SUM''
-			ELSE NULL END
+		CASE WHEN GDE.GDE_REPERCUTIBLE_INQUILINO = 1 
+        THEN stg.dd_stg_concepto_fac
          ELSE NULL END   )							AS  CONCEPTO_FAC
     , GPL.GPL_FECHA_FAC								AS 	FECHA_FAC
     , GPL.GPL_COD_COEF								AS  COD_COEF
@@ -215,16 +216,15 @@ SELECT
 FROM
 
     '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
-    
+
     INNER JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CART
         ON CART.DD_CRA_ID = ACT.DD_CRA_ID
             AND CART.DD_CRA_CODIGO = ''08''
-    
-    INNER JOIN (SELECT GLDACT_AUX.GLD_ENT_ID ,GLDACT_AUX.GLD_ID, GLDACT_AUX.ENT_ID FROM '|| V_ESQUEMA ||'.GLD_ENT GLDACT_AUX LEFT JOIN '|| V_ESQUEMA ||'.DD_ENT_ENTIDAD_GASTO ENT ON GLDACT_AUX.DD_ENT_ID = ENT.DD_ENT_ID WHERE GLDACT_AUX.BORRADO = 0 AND ENT.DD_ENT_CODIGO = ''ACT'') GLDACT
-        ON GLDACT.ENT_ID = ACT.ACT_ID
-    
+
+    INNER JOIN GLDACT_AUX GLDACT ON GLDACT.ENT_ID = ACT.ACT_ID
+
     INNER JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD
-        ON GLD.GLD_ID = GLDACT.GLD_ID        
+        ON GLD.GLD_ID = GLDACT.GLD_ID
 
     INNER JOIN '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV
         ON GLD.GPV_ID = GPV.GPV_ID
@@ -271,12 +271,7 @@ FROM
             ON ACT.ACT_ID = SPS.ACT_ID
                 AND COALESCE(SPS.BORRADO, 0) = 0
 
-	LEFT JOIN (SELECT GPV_NUM_GASTO_HAYA, sum (a.gpl_importe_gasto) AS SUMA
-				FROM '|| V_ESQUEMA ||'.GPL_GASTOS_PRINEX_LBK a
-				left join '|| V_ESQUEMA ||'.GPV_gastos_proveedor b
-					on a.GPV_ID = b.GPV_ID
-				where COALESCE(a.borrado, 0) = 0 and COALESCE(b.borrado, 0) = 0
-				group by GPV_NUM_GASTO_HAYA) AUX
+	 LEFT JOIN AUX_NUM_GASTO AUX
 			ON GPV.GPV_NUM_GASTO_HAYA = AUX.GPV_NUM_GASTO_HAYA
 
 		WHERE 1=1
@@ -415,22 +410,8 @@ FROM
 	, GPL.GPL_SCTA_GASTO							AS  SCTA_GASTO
 	, GPL.GPL_REPERCUTIR							AS  REPERCUTIR
 	, COALESCE(GPL.GPL_CONCEPTO_FAC,
-			CASE WHEN GDE.GDE_REPERCUTIBLE_INQUILINO = 1 THEN
-				CASE	WHEN STG.DD_STG_CODIGO=''08''       		 THEN ''BAS ''
-						WHEN STG.DD_STG_CODIGO IN (''48'',''93'')    THEN ''COM''
-						WHEN STG.DD_STG_CODIGO=''62''      		 THEN ''ENG''
-						WHEN STG.DD_STG_CODIGO IN (''30'',''32'')    THEN ''GTC''
-						WHEN STG.DD_STG_CODIGO IN (''01'',''02'')    THEN ''IBI''
-						WHEN STG.DD_STG_CODIGO IN (''15'',''59'',''60'',''61'',''63'',''69'',''70'',''71'',''79'',''80'',''81
-					      '',''82'',''86'',''94'',''03'',''04'',''05'',''06'',''07'',''11'',''12'',''13'',''14'',''16'',''17'',''18'',''19'',''20'',''21'',''22'',''23
-					      '',''24'',''25'',''34'',''38'',''39'',''40'',''41'',''42'',''43'',''44'',''45'',''46'',''47'',''49'',''50'',''51'',''52'',''53'',''54'',''55
-					      '',''56'',''57'',''58'',''64'',''65'',''66'',''67'',''68'',''72'',''73'',''74'',''75'',''76'',''77'',''78'',''83'',''84'',''85'',''87'',''88
-					      '',''89'',''90'',''91'',''92'',''95'',''96'',''97'',''98'',''99'') THEN ''OTR''
-					    WHEN STG.DD_STG_CODIGO IN (''26'',''28'',''31'',''33'') THEN ''RTA''
-					    WHEN STG.DD_STG_CODIGO IN (''26'',''28'',''31'',''33'') THEN ''RTA''
-					    WHEN STG.DD_STG_CODIGO IN (''27'',''29'')			THEN ''RTE''
-					    WHEN STG.DD_STG_CODIGO IN (''09'',''10'',''35'',''36'',''37'') THEN ''SUM''
-				ELSE NULL END
+			CASE WHEN GDE.GDE_REPERCUTIBLE_INQUILINO = 1 
+            THEN	stg.dd_stg_concepto_fac
 			ELSE NULL	END   )						AS  CONCEPTO_FAC
 	, GPL.GPL_FECHA_FAC								AS 	FECHA_FAC
     , GPL.GPL_COD_COEF								AS  COD_COEF
@@ -446,9 +427,9 @@ FROM
 		INNER JOIN '|| V_ESQUEMA ||'.GPL_GASTOS_PRINEX_LBK   GPL
 			ON GPV.GPV_ID = GPL.GPV_ID  AND GPL.ACT_ID IS NULL
 				AND COALESCE(GPL.BORRADO, 0) = 0
-                
+
         INNER JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD
-            ON GLD.GPV_ID = GPV.GPV_ID      
+            ON GLD.GPV_ID = GPV.GPV_ID
 
 		INNER JOIN '|| V_ESQUEMA ||'.ACT_PVE_PROVEEDOR PVE
 			ON PVE.PVE_ID = GPV.PVE_ID_EMISOR
@@ -487,19 +468,13 @@ FROM
             ON GPV.GPV_ID = GCONT.GPV_ID
                 AND COALESCE(GCONT.BORRADO, 0) = 0
 
-		 LEFT JOIN (SELECT GPV_NUM_GASTO_HAYA, sum (a.gpl_importe_gasto) AS SUMA
-				FROM '|| V_ESQUEMA ||'.GPL_GASTOS_PRINEX_LBK a
-				left join '|| V_ESQUEMA ||'.GPV_gastos_proveedor b
-					on a.GPV_ID = b.GPV_ID
-				where COALESCE(a.borrado, 0) = 0 and COALESCE(b.borrado, 0) = 0
-				group by GPV_NUM_GASTO_HAYA) AUX
+		 LEFT JOIN AUX_NUM_GASTO AUX
 			ON GPV.GPV_NUM_GASTO_HAYA = AUX.GPV_NUM_GASTO_HAYA
 
 
 		WHERE 1=1
-		AND GIC_FECHA_CONTABILIZACION IS NULL AND TGA.DD_TGA_CODIGO IN (''01'',''02'',''03'',''04'')
-
-      ) A';
+		AND GIC_FECHA_CONTABILIZACION IS NULL AND TGA.DD_TGA_CODIGO IN (''01'',''02'',''03'',''04''))
+';
 
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...Creada OK');

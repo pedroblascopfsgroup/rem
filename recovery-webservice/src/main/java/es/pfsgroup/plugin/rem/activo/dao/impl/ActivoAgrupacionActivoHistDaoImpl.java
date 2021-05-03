@@ -34,8 +34,8 @@ public class ActivoAgrupacionActivoHistDaoImpl extends AbstractEntityDao<ActivoA
 		
 		HQLBuilder hb = new HQLBuilder(" from ActivoAgrupacionActivoHistorico aah");
 		
-   	  	HQLBuilder.addFiltroLikeSiNotNull(hb, "aah.activo.id", idActivo, true);
-   	  	HQLBuilder.addFiltroLikeSiNotNull(hb, "aah.agrupacion.id", idAgrupacion, true);
+   	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aah.activo.id", idActivo);
+   	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aah.agrupacion.id", idAgrupacion);
    	  	hb.appendWhere("aah.fechaHasta is null");
 
 		return HibernateQueryUtils.uniqueResult(this, hb);

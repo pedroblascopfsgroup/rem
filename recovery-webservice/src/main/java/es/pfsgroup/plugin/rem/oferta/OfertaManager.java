@@ -210,6 +210,7 @@ import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ActivosLoteOfertaDto;
+import es.pfsgroup.plugin.rem.rest.dto.ComunicacionBoardingResponse;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
@@ -6431,7 +6432,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		
 		
-		if(!boardingComunicacionApi.comunicacionBoardingActivada()) {
+		if(!boardingComunicacionApi.modoRestClientBoardingActivado()) {
 			return null;
 		}
 		
@@ -6439,16 +6440,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Oferta oferta = tareaExternaToOferta(tareaExterna);
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 		
-		
+		ComunicacionBoardingResponse response = null;
 		
 		if (oferta != null && expedienteComercial != null && esOfertaValidaCFVByCarteraSubcartera(oferta) && (oferta.getOfertaEspecial() == null || !oferta.getOfertaEspecial())) {
 			if(checkAtribuciones(tareaExterna) && (CODIGO_T013_DEFINICION_OFERTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) ||
 					CODIGO_T017_DEFINICION_OFERTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()))) {
-				resultado = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap());
+				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 			} else if (!checkAtribuciones(tareaExterna) && (CODIGO_T013_RESOLUCION_COMITE.equals(tareaExterna.getTareaProcedimiento().getCodigo()) ||
 					CODIGO_T017_RESOLUCION_CES.equals(tareaExterna.getTareaProcedimiento().getCodigo()))) {
-				resultado = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap());
+				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 			}
+		}
+		
+		
+		if(response != null && !response.getSuccess() && boardingComunicacionApi.comunicacionBoardingActivada()) {
+			resultado = response.getMensaje() == null ? ComunicacionBoardingResponse.KO_ACTUALIZACION_OFERTA_BOARDING : response.getMensaje() ;
 		}
 		
 		return resultado;

@@ -1,8 +1,10 @@
 package es.pfsgroup.plugin.rem.boardingComunicacion;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
@@ -20,7 +22,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
 import es.pfsgroup.plugin.rem.model.PenParam;
-import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.rest.dto.ComunicacionBoardingResponse;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.registro.dao.RestLlamadaDao;
@@ -32,9 +34,11 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
 
     private final Log logger = LogFactory.getLog(getClass());
 
+    private int tokenRequestTimeElapsed = 0;
+    private static final int RESULTADO_OK =0;
+    private static final int RESULTADO_KO =1;
     private static final String POST_METHOD = "POST";
 	private static final String NULL_STRING = "null";
-	private static final String ERROR_ACTUALIZACION_OFERTA_BOARDING = "Error en el servicio de actualización de ofertas de Boarding.";
 	private static final String REST_CLIENT_ACTIVAR_BOARDING = "rest.client.activar.boarding";
 
     @Autowired
@@ -58,11 +62,14 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
         return null;
     }
 
-    public String obtenerToken() {
-    	
-        Map<String, String> headers = new HashMap<String, String>();
+    public String obtenerToken(int segundosTimeout) {
+        
+    	Map<String, String> headers = new HashMap<String, String>();
         headers.put("Content-Type", "application/json");
         headers.put("Accept", "application/json");
+        
+        // Asignamos la mitad del tiempo de lo que se le asigna a la peticion para conseguir el token
+        int timeoutToken = Math.round(segundosTimeout / 2);
         
         JSONObject jsonResp = new JSONObject();
         JSONObject jwtToken = null;
@@ -82,12 +89,17 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
         urlLoginBoarding.append("?email=").append(email);
         urlLoginBoarding.append("&password=").append(password);
 
+        long timeStart = System.currentTimeMillis();
         try {
-            jwtToken = procesarPeticion(this.httpClientFacade, urlLoginBoarding.toString(), POST_METHOD, headers, jsonResp.toString(), 30, "UTF-8");
+            jwtToken = procesarPeticion(this.httpClientFacade, urlLoginBoarding.toString(), POST_METHOD, headers, jsonResp.toString(), timeoutToken, "UTF-8");
         } catch(Exception e) {
             e.printStackTrace();
         }
+        long timeEnd = System.currentTimeMillis();
+        //tiempo que se tarda en conseguir el token (APROX)
+        tokenRequestTimeElapsed = Math.round(TimeUnit.MILLISECONDS.toSeconds(timeEnd - timeStart));
         return jwtToken != null ? jwtToken.get("token").toString() : "";
+        
     }
 
     private JSONObject procesarPeticion(HttpClientFacade httpClientFacade, String serviceUrl, String sendMethod, Map<String, String> headers, String jsonString, int responseTimeOut, String charSet) throws HttpClientException {
@@ -95,14 +107,13 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
     }
 
     @SuppressWarnings("unchecked")
-	public String actualizarOfertaBoarding(Long numExpediente, Long numOferta, ModelMap model) {
+	public ComunicacionBoardingResponse actualizarOfertaBoarding(Long numExpediente, Long numOferta, ModelMap model,int segundosTimeout) {
     	
-        String json = null;
-        JSONObject llamada = null;
-
-        try {
-            String token = obtenerToken();
-
+    		 
+    		String token = obtenerToken(segundosTimeout);
+    		//el tiempo de peticion es el que queda despues de conseguir el token (APROX), si el tiempo es igual o mayor se asigna 1 segundo 
+    		// para realizar la llamada y resgistrar en la RST error por authenticacion
+    		int timeOut = tokenRequestTimeElapsed >= segundosTimeout ? 1 : segundosTimeout - tokenRequestTimeElapsed;
             Map<String, String> headers = new HashMap<String, String>();
             headers.put("Content-Type", "application/json");
             headers.put("Authorization", token);
@@ -111,7 +122,14 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
             model.put("numOferta", numOferta);
 
             ObjectMapper mapper = new ObjectMapper();
-            json = mapper.writeValueAsString(model);
+            String json;
+			try {
+				json = mapper.writeValueAsString(model);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				json = "{}";
+			}
             
 			System.out.println("ResultingJSONstring = " + json);
 			
@@ -124,28 +142,28 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
 			urlUpdateOfertaBoarding.append(urlBase);
 			urlUpdateOfertaBoarding.append(urlUpdateOferta);
 
-			llamada = procesarPeticion(this.httpClientFacade, urlUpdateOfertaBoarding.toString(), POST_METHOD, headers, json.toString(), 30, "UTF-8");
+			JSONObject respuesta = null;
+			String ex = null;		
+	    	String mensaje = null;
+	    	boolean resultadoOK;
 			
-			String mensaje = null;
-			
-			if(llamada != null && llamada.getInt("resultado") == 1 && NULL_STRING.equals(llamada.getString("mensaje"))) {
-				mensaje = ERROR_ACTUALIZACION_OFERTA_BOARDING;
-			} else if(llamada != null && (llamada.getInt("resultado") == 1 || llamada.getInt("resultado") == 0) && !NULL_STRING.equals(llamada.getString("mensaje"))) {
-				mensaje = llamada.getString("mensaje");
+			try{			
+				respuesta = procesarPeticion(this.httpClientFacade, urlUpdateOfertaBoarding.toString(), POST_METHOD, headers, json, timeOut, "UTF-8");	
+				mensaje = !NULL_STRING.equals(respuesta.getString("mensaje")) ? respuesta.getString("mensaje") : null;
+				int resultado =  respuesta.optInt("resultado",RESULTADO_KO);
+				resultadoOK = resultado == RESULTADO_OK;
+			}catch (HttpClientException e1) {
+				e1.printStackTrace();
+				ex = e1.getMessage();
+				resultadoOK = false;
 			}
-
-			registrarLlamada(urlUpdateOfertaBoarding.toString(), json.toString(), llamada.toString(), mensaje);
-			
-			return mensaje;
-
-        } catch(Exception e) {
-            e.printStackTrace();
-            return ERROR_ACTUALIZACION_OFERTA_BOARDING;
-        }
+					
+			registrarLlamada(urlUpdateOfertaBoarding.toString(), json.toString(), respuesta != null ? respuesta.toString() : null, ex);
+			return new ComunicacionBoardingResponse(resultadoOK,mensaje);
 
     }
 
-    private void registrarLlamada(String endPoint, String request, String result, String errorDesc) {
+    private void registrarLlamada(String endPoint, String request, String result,String exception) {
         RestLlamada registro = new RestLlamada();
         registro.setMetodo("WEBSERVICE");
         registro.setEndpoint(endPoint);
@@ -153,9 +171,7 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
         logger.debug(request);
         logger.debug("-------------------");
         logger.debug(result);
-        if (!Checks.esNulo(errorDesc) && !NULL_STRING.equals(errorDesc)) {
-            registro.setErrorDesc(errorDesc);
-        }
+        registro.setException(exception);    
         try {
             registro.setResponse(result);
             llamadaDao.guardaRegistro(registro);
@@ -181,8 +197,8 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
 				genericDao.createFilter(FilterType.EQUALS, "param", "comunicacionBoardingActivada"));
 		
 		if (penParam == null) {
-			logger.debug("El parametro comunicacionBoardingActivada no se encuentra en la tabla PEN_PARAM Se procede a comprobar el parametro REST_CLIENT_ACTIVAR_BOARDING en devon.properties");
-			return modoRestClientBoardingActivado();
+			logger.debug("El parametro comunicacionBoardingActivada no se encuentra en la tabla PEN_PARAM");
+			return true;
 		}else {
 			return (Boolean.valueOf(penParam.getValor()) && modoRestClientBoardingActivado());
 		}

@@ -7080,7 +7080,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		
 		String tipoComercializacion = rawDao.getExecuteSQL("   SELECT tco.dd_tco_codigo FROM ACT_ACTIVO a \n" + 
-				"    JOIN DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = a.dd_tco_id and tco.borrado = 0\n" + 
+				"    JOIN ACT_APU_ACTIVO_PUBLICACION apu ON apu.act_id = a.act_id and apu.borrado = 0 \n" + 
+				"    JOIN DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = apu.dd_tco_id and tco.borrado = 0 \n" + 
 				"     WHERE a.act_num_activo = "+activo+" AND a.borrado = 0");
 
 
@@ -7118,7 +7119,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		
 		String resultado = rawDao.getExecuteSQL("   SELECT count(1) FROM ACT_ACTIVO a \n" + 
-				"    JOIN DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = a.dd_tco_id and tco.borrado = 0\n" + 
+				"    JOIN ACT_APU_ACTIVO_PUBLICACION apu ON apu.act_id = a.act_id and apu.borrado = 0 \n" + 
+				"    JOIN DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = apu.dd_tco_id and tco.borrado = 0\n" + 
 				"     WHERE a.act_num_activo = "+activo+" AND a.borrado = 0 and tco.dd_tco_codigo = '03'");
 		
 		return !"0".equals(resultado);

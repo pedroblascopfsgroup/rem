@@ -39,7 +39,7 @@ DECLARE
  TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('5163272','PP077','6312000'),
+        T_TIPO_DATA('271',null,'6312000'),
         T_TIPO_DATA('5163273','PP077','6312000'),
         T_TIPO_DATA('5163274','PP077','6312000'),
         T_TIPO_DATA('5163275','PP077','6312000'),
@@ -506,8 +506,8 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('[INFO]: LINEA DE DETALLE '''||V_TMP_TIPO_DATA(1)||''' ACTUALIZADA');
             
             V_MSQL :='UPDATE '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE SET 
-                    GLD_CPP_BASE = '||V_TMP_TIPO_DATA(2)||',
-                    GLD_CCC_BASE = '||V_TMP_TIPO_DATA(3)||',
+                    GLD_CPP_BASE = '''||V_TMP_TIPO_DATA(2)||''',
+                    GLD_CCC_BASE = '''||V_TMP_TIPO_DATA(3)||''',
                     USUARIOMODIFICAR = '''||V_USUARIO||''', 
                     FECHAMODIFICAR = SYSDATE 
                     WHERE GLD_ID = '''||V_TMP_TIPO_DATA(1)||''' ';

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210503
+--## FECHA_CREACION=20210504
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13845
@@ -150,22 +150,20 @@ DECLARE
       , T_TIPO_DATA('MOD_REM_LATITUD', 'Primera vez modificado en REM, deja de actualizarse', 'Si se han modificado los datos en REM, deja de actualizarse este campo con la información del Data Tape y permanece la de REM'
             ,'AND EXISTS (SELECT 1
                   FROM '||V_ESQUEMA||'.UCC_ULTIMO_CAMBIO_CONV_SAREB UCC 
-                  JOIN '||V_ESQUEMA||'.DD_COS_CAMPOS_ORIGEN_CONV_SAREB COS ON UCC.DD_COS_ID = COS.DD_COS_ID AND COS.BORRADO = 0
+                  JOIN '||V_ESQUEMA||'.DD_COS_CAMPOS_ORIGEN_CONV_SAREB COS ON UCC.DD_COS_ID = COS.DD_COS_ID AND COS.BORRADO = 0 AND COS.DD_COS_CODIGO = ''''060''''
                   JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION AUX_ACT ON UCC.ACT_ID = AUX_ACT.ACT_ID AND AUX_ACT.BORRADO = 0 
                   WHERE NVL(TO_NUMBER(REPLACE(UCC.VALOR, ''''.'''','''','''')),-1) != NVL(AUX_ACT.LOC_LATITUD, -1)
-                  AND COS.DD_COS_CODIGO = TMP.ORIGEN
-                  AND UCC.ACT_ID = ACT.ACT_ID)
+                  AND AUX_ACT.ACT_ID = ACT.ACT_ID)
                   AND TMP.ORIGEN = ''''060'''''
             ,''
             ,'0') 
       , T_TIPO_DATA('MOD_REM_LONGITUD', 'Primera vez modificado en REM, deja de actualizarse', 'Si se han modificado los datos en REM, deja de actualizarse este campo con la información del Data Tape y permanece la de REM'
             ,'AND EXISTS (SELECT 1
                   FROM '||V_ESQUEMA||'.UCC_ULTIMO_CAMBIO_CONV_SAREB UCC 
-                  JOIN '||V_ESQUEMA||'.DD_COS_CAMPOS_ORIGEN_CONV_SAREB COS ON UCC.DD_COS_ID = COS.DD_COS_ID AND COS.BORRADO = 0
+                  JOIN '||V_ESQUEMA||'.DD_COS_CAMPOS_ORIGEN_CONV_SAREB COS ON UCC.DD_COS_ID = COS.DD_COS_ID AND COS.BORRADO = 0 AND COS.DD_COS_CODIGO = ''''062''''
                   JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION AUX_ACT ON UCC.ACT_ID = AUX_ACT.ACT_ID AND AUX_ACT.BORRADO = 0 
                   WHERE NVL(TO_NUMBER(REPLACE(UCC.VALOR, ''''.'''','''','''')),-1) != NVL(AUX_ACT.LOC_LONGITUD, -1)
-                  AND COS.DD_COS_CODIGO = TMP.ORIGEN
-                  AND UCC.ACT_ID = ACT.ACT_ID)
+                  AND AUX_ACT.ACT_ID = ACT.ACT_ID)
                   AND TMP.ORIGEN = ''''062'''''
             ,''
             ,'0') 

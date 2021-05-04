@@ -5163,5 +5163,29 @@ comprobarFormatoModificar: function() {
 			     }
 			});	
 		}
-	}
+	},
+	contrasteListas: function(btn){
+		var me= this;
+		var url =  $AC.getRemoteUrl('expedientecomercial/contrasteListas');
+		var numOferta = me.getViewModel().data.datosbasicosoferta.getData().numOferta;
+		var idExpediente = me.getViewModel().get("expediente.id");
+		me.getView().mask(HreRem.i18n("msg.mask.espere"));
+		
+		Ext.Ajax.request({
+			     url: url,
+			     params:  {numOferta : numOferta , idExpediente: idExpediente},
+			     success: function(response, opts) {
+	                me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));           	
+			     },
+
+		        failure: function(response, opts) {
+						me.fireEvent("errorToast",data.msg);
+				},
+
+				callback : function() {
+					me.getView().unmask();
+					me.refrescarExpediente(true);
+				}
+			});
+		}
 });

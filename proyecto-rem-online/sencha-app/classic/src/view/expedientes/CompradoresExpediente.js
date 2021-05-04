@@ -76,6 +76,12 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					},
 					{
 						xtype: 'button',
+						text: HreRem.i18n('btn.contraste.listas'),
+						handler: 'contrasteListas',
+						margin: '10 5 5 10'
+					},
+					{
+						xtype: 'button',
 						text: HreRem.i18n('btn.validar.compradores'),
 						handler: 'validarCompradores',
 						margin: '10 5 5 10',

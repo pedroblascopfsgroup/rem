@@ -1352,5 +1352,6 @@ public interface ExpedienteComercialApi {
 
 	boolean compruebaEstadoNoSolicitadoPendiente(TareaExterna tareaExterna);
 	boolean compruebaEstadoPositivoRealDenegado(TareaExterna tareaExterna);
+	public boolean cambiarEstadoContrasteListasaPendiente(Long idExpediente);
 
 }

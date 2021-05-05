@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sento Visiedo Rubio
---## FECHA_CREACION=20210222
+--## FECHA_CREACION=20210505
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=1.2.0
 --## INCIDENCIA_LINK=HREOS-13135

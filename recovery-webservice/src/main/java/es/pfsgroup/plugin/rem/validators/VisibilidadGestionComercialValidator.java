@@ -55,6 +55,7 @@ public class VisibilidadGestionComercialValidator {
 	public static final String VALID_MOTIVO_EXCLUIDO= "Activo con Agrupación restringida no puede tener Motivo de excluido ";
 	public static final String VALID_SUBFASE_PUBLICACION= "La subfase de publicación del activo no permite la modificación del check Visibilidad Gestion Comercial ";
 	public static final String VALID_DESMARCAR_SIN_ERRORES= "Se cumplen todas las condiciones para que estén marcados.";
+	public static final String VALID_ACTIVO_TIPO_COMERCIALIZACION = "Activo no tiene tipo de comercialización";
 
 	public static final String[] SOCIEDADES_PARTICIPADAS = {Ecoarenys, JaleProcam, PromocionesMiesdelValle};
 	
@@ -129,12 +130,14 @@ public class VisibilidadGestionComercialValidator {
 		List<String> erroresActivo = new ArrayList<String>();
 		
 		if(activoPublicacion != null) {
-			if(DDTipoComercializacion.isDestinoComercialSoloAlquiler(activoActual.getTipoComercializacion())){
+			if(activoPublicacion.getTipoComercializacion() == null) {
+				erroresActivo.add(VALID_ACTIVO_TIPO_COMERCIALIZACION);
+			}else if(DDTipoComercializacion.isDestinoComercialSoloAlquiler(activoPublicacion.getTipoComercializacion())){
 				if(!DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler())) {
 					erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
 				}
-			}else if((DDTipoComercializacion.isDestinoComercialVenta(activoActual.getTipoComercializacion()) && !DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta()))
-			|| (DDTipoComercializacion.isDestinoComercialAlquilerVenta(activoActual.getTipoComercializacion()) 
+			}else if((DDTipoComercializacion.isDestinoComercialVenta(activoPublicacion.getTipoComercializacion()) && !DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta()))
+			|| (DDTipoComercializacion.isDestinoComercialAlquilerVenta(activoPublicacion.getTipoComercializacion()) 
 				&& !DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta()) && !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler()))) {
 			
 				if(DDCartera.isCarteraBk(activoActual.getCartera()) || DDCartera.isCarteraSareb(activoActual.getCartera())) {

@@ -53,7 +53,9 @@ public class EjecutarSPPublicacionAsincrono implements Runnable {
 				
 			}
 			if(listaIdActivoSinVisibilidad != null) {
-				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivoSinVisibilidad);
+				if(!listaIdActivoSinVisibilidad.isEmpty()) {
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivoSinVisibilidad);
+				}
 			}else {
 				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivo);
 			}

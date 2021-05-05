@@ -1301,6 +1301,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				}
 				
 				listaErroresCompleta.clear();
+				pararComprobaciones = false;
 			}
 
 		}catch (IllegalArgumentException e) {

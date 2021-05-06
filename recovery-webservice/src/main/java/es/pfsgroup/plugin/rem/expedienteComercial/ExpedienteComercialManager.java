@@ -124,6 +124,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
@@ -148,7 +149,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
@@ -2827,6 +2830,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private DtoCondiciones expedienteToDtoCondiciones(ExpedienteComercial expediente) {
 		DtoCondiciones dto = new DtoCondiciones();
 		CondicionanteExpediente condiciones = expediente.getCondicionante();
+		DatosInformeFiscal informeFiscal = genericDao.get(DatosInformeFiscal.class, 
+				genericDao.createFilter(FilterType.EQUALS,"oferta",expediente.getOferta()));
 
 		// Si el expediente pertenece a una agrupación miramos el activo principal
 		if (!Checks.esNulo(expediente.getOferta().getAgrupacion())) {
@@ -3117,6 +3122,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			if (!Checks.esNulo(condiciones.getTributosSobrePropiedad())) {
 				dto.setTributosSobrePropiedad(condiciones.getTributosSobrePropiedad());
+			}
+			if (informeFiscal != null) {
+				if (informeFiscal.getNecesidadIf() != null) {
+					dto.setNecesidadIf(informeFiscal.getNecesidadIf());
+				}
 			}
 
 			List<HistoricoCondicionanteExpediente> listaHistorico = condiciones.getListHistoricoCondiciones();

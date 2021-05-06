@@ -116,6 +116,7 @@ import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ConfiguracionComisionCostesActivo;
+import es.pfsgroup.plugin.rem.model.DatosInformeFiscal;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivosFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
@@ -6659,5 +6660,57 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}		
 				return ofertaDao.getBusquedaOfertasGrid(dto);
+	}
+	
+	
+	@Override
+	public boolean isIfNecesarioOferta(Oferta oferta) {
+		List<ActivoOferta> listaActivosOferta = oferta.getActivosOferta();
+		boolean ifNecesario = false;
+		for (ActivoOferta activoOferta : listaActivosOferta) {
+			Activo activo = activoOferta.getPrimaryKey().getActivo();
+			ifNecesario =activoApi.isIfNecesarioActivo(activo);
+			if (ifNecesario) {
+				break;				
+			}
+		}
+		if (!ifNecesario) {
+			ifNecesario = this.isIfNecesarioByComprador(oferta);
+		}
+		
+		return ifNecesario;
+	}
+	
+
+	
+	private boolean isIfNecesarioByComprador(Oferta oferta) {
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id" ,oferta.getId()));
+		boolean retorno = false;
+		if (expediente != null) {
+			List<CompradorExpediente> listaCompradores = expediente.getCompradores();
+			for (CompradorExpediente compradorExpediente : listaCompradores) {
+				Comprador comprador = genericDao.get(Comprador.class, genericDao.createFilter(FilterType.EQUALS, "id" ,compradorExpediente.getComprador()));
+				if (comprador != null) {
+					ClienteComercial clienteComercial = comprador.getClienteComercial();
+					if (clienteComercial != null) {
+						if (DDTiposPersona.isJuridico(clienteComercial.getTipoPersona())) {
+							retorno = true;
+							break;
+						}
+						//FALTA COMPROBACIÓN PERSONA FÍSICA
+					}
+				}
+			}
+		}
+		return retorno;
+	}
+	
+	@Override
+	public void rellenarIfNecesario(Oferta oferta) {
+		DatosInformeFiscal informeFiscal = genericDao.get(DatosInformeFiscal.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id" ,oferta.getId()));
+		if (informeFiscal != null) {
+			informeFiscal.setNecesidadIf(this.isIfNecesarioOferta(oferta));
+			genericDao.update(DatosInformeFiscal.class, informeFiscal);
+		}				
 	}
 }

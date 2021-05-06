@@ -26,7 +26,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 		var msgPorcentajeTotal = HreRem.i18n("fieldlabel.porcentaje.compra.total");
 		var msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.compra.total.error");
 	
-		me.setTitle(title);
+		
 		
 		if(me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
 			title = HreRem.i18n('title.inquilinos');
@@ -35,6 +35,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 			msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.alquiler.total.error");		
 		};
 
+		me.setTitle(title);
 		
 		var coloredRender = function (value, meta, record) {
     		var borrado = record.get('borrado');

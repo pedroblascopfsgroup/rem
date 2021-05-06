@@ -1515,19 +1515,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						}
 					}
 					
-//					if(!Checks.esNulo(dto.getCheckGestorComercial()) && !dto.getCheckGestorComercial()) {
-//						perimetroActivoUA.setCheckGestorComercial(false);
-//						perimetroActivoUA.setFechaGestionComercial(new Date());
-//						if(Checks.esNulo(dto.getMotivoGestionComercialCodigo())) {
-//							perimetroActivoUA.setMotivoGestionComercial(perimetroActivo.getMotivoGestionComercial());
-//							perimetroActivoUA.setExcluirValidaciones(perimetroActivo.getExcluirValidaciones());
-//						}else {
-//							DDMotivoGestionComercial gestionComercial = genericDao.get(DDMotivoGestionComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", dto.getMotivoGestionComercialCodigo()));
-//							perimetroActivoUA.setMotivoGestionComercial(gestionComercial);
-//							DDSinSiNo excluirValidaciones = dto.getExcluirValidacionesBool() ? (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI) : (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
-//							perimetroActivoUA.setExcluirValidaciones(excluirValidaciones);
-//						}
-//					}
+					if(!Checks.esNulo(dto.getCheckGestorComercial())) {
+						perimetroActivoUA.setCheckGestorComercial(perimetroActivo.getCheckGestorComercial());
+						perimetroActivoUA.setFechaGestionComercial(perimetroActivo.getFechaGestionComercial());
+						perimetroActivoUA.setMotivoGestionComercial(perimetroActivo.getMotivoGestionComercial());
+						perimetroActivoUA.setExcluirValidaciones(perimetroActivo.getExcluirValidaciones());
+						
+					}
 									
 					activoApi.saveOrUpdatePerimetroActivo(perimetroActivoUA);
 				}

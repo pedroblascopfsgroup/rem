@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=Carlos Augusto
+--## AUTOR=Daniel Gallego
 --## FECHA_CREACION=20210413
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
@@ -24,7 +24,8 @@
 --##		0.12 Version Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##		0.13 Version Juan Beltrán - - REMVIP-8168 - Añadir campos COD_TIPO_COMERCIALIZAR, COD_EQUIPO_GESTION, SCOM_NOMBRE, SCOM_TELEFONO y SCOM_EMAIL
 --##  		0.15 Versión Carlos Augusto -> HREOS-12201 - Añadir campos ONV_COMERCIALIZACION y ONV_COMERCIALIZACION_FECHA  
---##  		0.15 Versión Carlos Santos Vílchez -> REMVIP-9478 - Poner campo ONV_COMERCIALIZACION como boolean  
+--##  		0.15 Versión Carlos Santos Vílchez -> REMVIP-9478 - Poner campo ONV_COMERCIALIZACION como boolean 
+--##  		0.16 Versión Daniel Gallego -> HREOS-13455 - Añadir campo ACT_NECESIDAD_IF como boolean
 --##########################################
 --*/
 
@@ -301,7 +302,11 @@ BEGIN/*Versión 0.8*/
 			THEN CAST(TO_CHAR(ACT.ACT_OVN_COMERC_FECHA ,
 				''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2(50 CHAR))
 			ELSE NULL
-		END 																				AS ONV_COMERCIALIZACION_FECHA
+		END 																				AS ONV_COMERCIALIZACION_FECHA,
+		CASE WHEN (ACT.ACT_NECESIDAD_IF = 1) 
+			THEN CAST(1 AS NUMBER(1,0))
+			ELSE CAST(0 AS NUMBER(1,0))
+		END																					AS NECESIDAD_IF
     	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 		INNER JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION LOC ON LOC.ACT_ID = ACT.ACT_ID
 		INNER JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BLOC ON BLOC.BIE_LOC_ID = LOC.BIE_LOC_ID
@@ -460,8 +465,9 @@ BEGIN/*Versión 0.8*/
 		LEFT JOIN '||V_ESQUEMA||'.DD_SFP_SUBFASE_PUBLICACION SFP ON SFP.DD_SFP_ID = HFP.DD_SFP_ID  
 		LEFT JOIN '||V_ESQUEMA||'.ACT_LLV_LLAVE LLV ON LLV.ACT_ID = ACT.ACT_ID AND LLV.BORRADO = 0 AND (LLV.LLV_COD_TENEDOR_POSEEDOR IS NOT NULL AND LLV.LLV_COD_TENEDOR_POSEEDOR NOT LIKE ''N/A'' OR LLV.LLV_COD_TENEDOR_NO_PVE IS NOT NULL AND LLV.LLV_COD_TENEDOR_NO_PVE NOT LIKE ''N/A'')
 		LEFT JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE_LLV ON LLV.LLV_COD_TENEDOR_POSEEDOR = PVE_LLV.PVE_ID AND PVE_LLV.BORRADO = 0
-		where act.borrado = 0 and (hfp.borrado = 0 or hfp.borrado is null) and hfp.hfp_fecha_fin is null';
 
+		where act.borrado = 0 and (hfp.borrado = 0 or hfp.borrado is null) and hfp.hfp_fecha_fin is null';
+  
 		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');
 		
 		

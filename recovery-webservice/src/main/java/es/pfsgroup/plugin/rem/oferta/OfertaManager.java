@@ -175,6 +175,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenLaboral;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -6693,11 +6694,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (comprador != null) {
 					ClienteComercial clienteComercial = comprador.getClienteComercial();
 					if (clienteComercial != null) {
-						if (DDTiposPersona.isJuridico(clienteComercial.getTipoPersona())) {
+						if (DDTiposPersona.isJuridico(clienteComercial.getTipoPersona()) || 
+								(DDTiposPersona.isFisica(clienteComercial.getTipoPersona()) && DDRegimenLaboral.isAutonomo(clienteComercial.getRegimenLaboral()))) {
 							retorno = true;
 							break;
 						}
-						//FALTA COMPROBACIÓN PERSONA FÍSICA
 					}
 				}
 			}

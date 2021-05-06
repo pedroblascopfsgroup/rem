@@ -1100,16 +1100,29 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		Integer importeProporcionalPorCien = 0;
 		
 		for (VElementosLineaDetalle elemento : elementos) {
-			cont++;
-			importeProporcionalPorCien = (int)(elemento.getImporteProporcinalSujeto() * 100);
-			resto += (elemento.getImporteProporcinalSujeto() * 100) - importeProporcionalPorCien;
-			if (resto >= 1d) {
-				importeProporcionalPorCien++;
-				resto--;
-			} else if (resto != 0 && cont == elementos.size()){
-				importeProporcionalPorCien++;
+			if (elemento.getImporteTotalSujetoLinea() < 0) {
+				cont++;
+				importeProporcionalPorCien = (int)(elemento.getImporteProporcinalSujeto() * -100);
+				resto += (elemento.getImporteProporcinalSujeto() * -100) - importeProporcionalPorCien;
+				if (resto >= 1d) {
+					importeProporcionalPorCien++;
+					resto--;
+				} else if (resto != 0 && cont == elementos.size()){
+					importeProporcionalPorCien++;
+				}
+				elemento.setImporteProporcinalSujeto(importeProporcionalPorCien/-100d);
+			} else {
+				cont++;
+				importeProporcionalPorCien = (int)(elemento.getImporteProporcinalSujeto() * 100);
+				resto += (elemento.getImporteProporcinalSujeto() * 100) - importeProporcionalPorCien;
+				if (resto >= 1d) {
+					importeProporcionalPorCien++;
+					resto--;
+				} else if (resto != 0 && cont == elementos.size()){
+					importeProporcionalPorCien++;
+				}
+				elemento.setImporteProporcinalSujeto(importeProporcionalPorCien/100d);
 			}
-			elemento.setImporteProporcinalSujeto(importeProporcionalPorCien/100d);
 		}
 		
 		return elementos;		

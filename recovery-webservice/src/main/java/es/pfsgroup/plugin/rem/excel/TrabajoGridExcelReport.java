@@ -27,6 +27,8 @@ public class TrabajoGridExcelReport extends AbstractExcelReport implements Excel
 		listaCabeceras.add("Proveedor");
 		listaCabeceras.add("Fecha de petición");
 		listaCabeceras.add("Área peticionaria");
+		listaCabeceras.add("Fecha tope");
+		listaCabeceras.add("Importe de proveedor");
 		
 		return listaCabeceras;
 	}
@@ -48,6 +50,8 @@ public class TrabajoGridExcelReport extends AbstractExcelReport implements Excel
 			fila.add(trabajo.getProveedor());
 			fila.add(this.getDateStringValue(trabajo.getFechaSolicitud()));
 			fila.add(trabajo.getAreaPeticionaria());
+			fila.add(this.getDateStringValue(trabajo.getFechaTope()));
+			fila.add(String.valueOf(trabajo.getImporteProveedor()));
 				
 			valores.add(fila);
 		}

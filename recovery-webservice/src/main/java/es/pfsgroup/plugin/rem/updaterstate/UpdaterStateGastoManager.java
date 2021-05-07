@@ -86,7 +86,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	}
 	
 	@Override
-	public String validarCamposMinimos(GastoProveedor gasto) {
+	public String validarCamposMinimos(GastoProveedor gasto , Boolean origen) {
 		
 		if(gasto.getProvision() != null) {
 			logger.error("HAY PROVISION!");
@@ -214,12 +214,16 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				error = messageServices.getMessage(VALIDACION_PROPIETARIO);
 				return error;
 			}
-
-			for (GastoLineaDetalle gastoLineaDetalle : gastoListaDetalleList) {
-				if((gastoLineaDetalle.getGastoLineaEntidadList() == null && !gastoLineaDetalle.esAutorizadoSinActivos()) 
-					|| (gastoLineaDetalle.getGastoLineaEntidadList().isEmpty() && !gastoLineaDetalle.esAutorizadoSinActivos())) {
-					error = messageServices.getMessage(VALIDACION_ACTIVOS_ASIGNADOS); 
-					return error;
+			
+			if(origen != null) {
+				if(!origen) {
+					for (GastoLineaDetalle gastoLineaDetalle : gastoListaDetalleList) {
+						if((gastoLineaDetalle.getGastoLineaEntidadList() == null && !gastoLineaDetalle.esAutorizadoSinActivos()) 
+							|| (gastoLineaDetalle.getGastoLineaEntidadList().isEmpty() && !gastoLineaDetalle.esAutorizadoSinActivos())) {
+							error = messageServices.getMessage(VALIDACION_ACTIVOS_ASIGNADOS); 
+							return error;
+						}
+					}
 				}
 			}
 			
@@ -402,7 +406,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			
 		// Si el pago sigue retenido, ningún cambio en el gasto implica cambio de estado.
 			if(Checks.esNulo(gastoGestion.getMotivoRetencionPago())) {
-				String error = validarCamposMinimos(gasto);
+				String error = validarCamposMinimos(gasto,null);
 				if(Checks.esNulo(error)) {
 					return true;
 				}

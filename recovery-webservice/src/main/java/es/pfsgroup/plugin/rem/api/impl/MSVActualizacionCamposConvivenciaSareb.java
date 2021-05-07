@@ -14,7 +14,10 @@ import org.springframework.stereotype.Component;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
+import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -34,8 +37,10 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
+import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
@@ -53,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
@@ -79,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCuotaComunidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCorrectivoSareb;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -180,8 +187,36 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					String fechaString = sdfSal.format(fechaOri);
 					Date fechaAdj = sdfSal.parse(fechaString);
 					activoAdjJudicial.setFechaAdjudicacion(fechaAdj);	
+				}else if("145".equalsIgnoreCase(campo)) {
+					activoAdjJudicial.setNumAuto(exc.dameCelda(fila, VALOR_NUEVO));
+				}else if("146".equalsIgnoreCase(campo)) {
+					activoAdjJudicial.setProcurador(exc.dameCelda(fila, VALOR_NUEVO));
+				}else if("147".equalsIgnoreCase(campo)) {
+					activoAdjJudicial.setLetrado(exc.dameCelda(fila, VALOR_NUEVO));
+				}else if("148".equalsIgnoreCase(campo)) {
+					activoAdjJudicial.setIdAsunto(Long.parseLong(exc.dameCelda(fila, VALOR_NUEVO)));
+				}else if ("168".equalsIgnoreCase(campo)) {
+					TipoJuzgado juzgado = genericDao.get(TipoJuzgado.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					activoAdjJudicial.setJuzgado(juzgado);
+				}else if ("169".equalsIgnoreCase(campo)) {
+					TipoPlaza plaza = genericDao.get(TipoPlaza.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					activoAdjJudicial.setPlazaJuzgado(plaza);
 				}
 				genericDao.save(ActivoAdjudicacionJudicial.class, activoAdjJudicial);
+			}else if("ACT_ADN_ADJNOJUDICIAL".equalsIgnoreCase(convivencia.getTabla())){
+				ActivoAdjudicacionNoJudicial activoAdjNoJudicial = genericDao.get(ActivoAdjudicacionNoJudicial.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
+				if("156".equalsIgnoreCase(campo)) {
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fechaAdjNo = sdfSal.parse(fechaString);
+					activoAdjNoJudicial.setFechaTitulo(fechaAdjNo);	
+				}else if("021".equalsIgnoreCase(campo)) {
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
+					activoAdjNoJudicial.setFechaPosesion(fecha);
+				}
+				genericDao.save(ActivoAdjudicacionNoJudicial.class, activoAdjNoJudicial);
 			}else if("ACT_APU_ACTIVO_PUBLICACION".equalsIgnoreCase(convivencia.getTabla())) {
 				ActivoPublicacion activoPub = genericDao.get(ActivoPublicacion.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
 				if("085".equalsIgnoreCase(campo)) {
@@ -200,6 +235,11 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				if("140".equalsIgnoreCase(campo)) {
 					DDMotivoCalificacionNegativa motivo = genericDao.get(DDMotivoCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
 					activoCalNeg.setMotivoCalificacionNegativa(motivo);
+				}else if ("162".equalsIgnoreCase(campo)) {
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
+					activoCalNeg.setFechaSubsanacion(fecha);	
 				}
 				genericDao.save(ActivoCalificacionNegativa.class, activoCalNeg);
 			}else if("ACT_CRG_CARGAS".equalsIgnoreCase(convivencia.getTabla()) && Integer.parseInt(exc.dameCelda(fila, NUEVO)) == 0) {
@@ -331,6 +371,14 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				}else if ("176".equals(campo)) {
 					DDTipoCuotaComunidad tipoComunidad = genericDao.get(DDTipoCuotaComunidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
 					activoSareb.setTipoCuotaComunidad(tipoComunidad);
+				}else if("143".equalsIgnoreCase(campo)) {
+					DDTipoCorrectivoSareb tipoCorrectivo = genericDao.get(DDTipoCorrectivoSareb.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					activoSareb.setTipoCorrectivoSareb(tipoCorrectivo);
+				}else if("144".equalsIgnoreCase(campo)) {
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fechaFinCor = sdfSal.parse(fechaString);
+					activoSareb.setFechaFinCorrectivoSareb(fechaFinCor);
 				}
 				genericDao.save(ActivoSareb.class, activoSareb);
 			}else if("ACT_SPS_SIT_POSESORIA".equalsIgnoreCase(convivencia.getTabla())) {
@@ -403,6 +451,31 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					String fechaString = sdfSal.format(fechaOri);
 					Date fecha = sdfSal.parse(fechaString);
 					activoTitulo.setFechaInscripcionReg(fecha);
+				}else if ("157".equalsIgnoreCase(campo)) {
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
+					activoTitulo.setFechaEntregaGestoria(fecha);
+				}else if ("158".equalsIgnoreCase(campo)) {
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
+					activoTitulo.setFechaPresHacienda(fecha);
+				}else if ("159".equalsIgnoreCase(campo) || "163".equalsIgnoreCase(campo)) {
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
+					activoTitulo.setFechaPres2Registro(fecha);
+				}else if ("160".equalsIgnoreCase(campo)) {
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
+					activoTitulo.setFechaPres1Registro(fecha);
+				}else if ("161".equalsIgnoreCase(campo)) {
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
+					activoTitulo.setFechaRetiradaReg(fecha);
 				}
 				genericDao.save(ActivoTitulo.class, activoTitulo);
 			}else if("ACT_VAL_VALORACIONES".equalsIgnoreCase(convivencia.getTabla()) || "115".equalsIgnoreCase(campo)) {
@@ -499,6 +572,21 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					activoPerimetro.setMotivoAplicaFormalizar(descripMot);
 				}
 				genericDao.save(PerimetroActivo.class, activoPerimetro);
+			}else if("ACT_AHT_HIST_TRAM_TITULO".equalsIgnoreCase(convivencia.getTabla())){
+				HistoricoTramitacionTitulo historicoTramitacionTitulo = genericDao.get(HistoricoTramitacionTitulo.class, genericDao.createFilter(FilterType.EQUALS, "titulo.activo.numActivo", Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
+				if("164".equalsIgnoreCase(campo)) {
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fechaAdjNo = sdfSal.parse(fechaString);
+					historicoTramitacionTitulo.setFechaCalificacion(fechaAdjNo);	
+				}
+				genericDao.save(HistoricoTramitacionTitulo.class, historicoTramitacionTitulo);
+			}else if("ACT_ABA_ACTIVO_BANCARIO".equalsIgnoreCase(convivencia.getTabla())){
+				ActivoBancario activoBancario = genericDao.get(ActivoBancario.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
+				if("166".equalsIgnoreCase(campo)) {
+					activoBancario.setNumExpRiesgo(exc.dameCelda(fila, VALOR_NUEVO));
+				}
+				genericDao.save(ActivoBancario.class, activoBancario);
 			}else if("BIE_ADJ_ADJUDICACION".equalsIgnoreCase(convivencia.getTabla())) {
 				NMBAdjudicacionBien nmbAdj = genericDao.get(NMBAdjudicacionBien.class,genericDao.createFilter(FilterType.EQUALS, "bien",activo.getBien()));
 				if("026".equalsIgnoreCase(campo)) {
@@ -511,6 +599,40 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					String fechaString = sdfSal.format(fechaOri);
 					Date fecha = sdfSal.parse(fechaString);
 					nmbAdj.setFechaSenalamientoLanzamiento(fecha);
+				}else if("149".equalsIgnoreCase(campo)) {
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
+					nmbAdj.setFechaSolicitudMoratoria(fecha);
+				}else if("150".equalsIgnoreCase(campo)) {
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
+					nmbAdj.setFechaResolucionMoratoria(fecha);
+				}else if("151".equalsIgnoreCase(campo)) {
+					DDFavorable favorable = genericDao.get(DDFavorable.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					nmbAdj.setResolucionMoratoria(favorable);
+				}else if ("152".equalsIgnoreCase(campo)) {
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
+					nmbAdj.setFechaSenalamientoPosesion(fecha);
+				}else if ("153".equalsIgnoreCase(campo)) {
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
+					nmbAdj.setFechaRealizacionPosesion(fecha);
+				}else if ("154".equalsIgnoreCase(campo)) {
+					Boolean res = Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)) == 1 ? true : false;
+					nmbAdj.setLanzamientoNecesario(res);
+				}else if ("155".equalsIgnoreCase(campo)) {
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
+					nmbAdj.setFechaRealizacionLanzamiento(fecha);
+				}else if ("167".equalsIgnoreCase(campo)) {
+					BigDecimal bd = getBigDecimal(exc.dameCelda(fila, VALOR_NUEVO));
+					nmbAdj.setImporteAdjudicacion(bd);
 				}
 				genericDao.save(NMBAdjudicacionBien.class,nmbAdj);
 			}else if("BIE_CAR_CARGAS".equalsIgnoreCase(convivencia.getTabla()) && Integer.parseInt(exc.dameCelda(fila, NUEVO)) == 0) {
@@ -705,30 +827,30 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				if (tipoDocumento != null) {
 					DDTipoDocumentoActivo tipoDocumentoActivo = genericDao.get(DDTipoDocumentoActivo.class,genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
 					if (tipoDocumentoActivo != null) {
-						ActivoConfigDocumento configDocumento = genericDao.get(ActivoConfigDocumento.class,genericDao.createFilter(FilterType.EQUALS, "tipoActivo.codigo", activo.getTipoActivo().getCodigo())
+						List<ActivoConfigDocumento> configDocumento = genericDao.getList(ActivoConfigDocumento.class, genericDao.createFilter(FilterType.EQUALS, "tipoActivo.codigo", activo.getTipoActivo().getCodigo())
 								,genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo", tipoDocumentoActivo.getCodigo()));
 						if (configDocumento != null) {
 							ActivoAdmisionDocumento activoAdmisionDoc = genericDao.get(ActivoAdmisionDocumento.class,genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
-									,genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", configDocumento.getId()));
+									,genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", configDocumento.get(0).getId()));
 							if (activoAdmisionDoc == null) {
 								activoAdmisionDoc = new ActivoAdmisionDocumento();
 								activoAdmisionDoc.setActivo(activo);
-								activoAdmisionDoc.setConfigDocumento(configDocumento);
+								activoAdmisionDoc.setConfigDocumento(configDocumento.get(0));
 								DDEstadoDocumento estadoDocumento = genericDao.get(DDEstadoDocumento.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO));
 								activoAdmisionDoc.setEstadoDocumento(estadoDocumento);
 							}
 							if("082".equals(campo)) {
 								Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
 								String fechaString = sdfSal.format(fechaOri);
-								Date fechaObtener = sdfSal.parse(fechaString);
-								activoAdmisionDoc.setFechaObtencion(fechaObtener);
+								Date fechaCaducidad = sdfSal.parse(fechaString);
+								activoAdmisionDoc.setFechaCaducidad(fechaCaducidad);
 								DDEstadoDocumento estadoDocumento = genericDao.get(DDEstadoDocumento.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO));
 								activoAdmisionDoc.setEstadoDocumento(estadoDocumento);
 							}else if("095".equals(campo)) {
 								Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
 								String fechaString = sdfSal.format(fechaOri);
-								Date fechaObtener = sdfSal.parse(fechaString);
-								activoAdmisionDoc.setFechaObtencion(fechaObtener);
+								Date fechaCaducidad = sdfSal.parse(fechaString);
+								activoAdmisionDoc.setFechaCaducidad(fechaCaducidad);
 								DDEstadoDocumento estadoDocumento = genericDao.get(DDEstadoDocumento.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO));
 								activoAdmisionDoc.setEstadoDocumento(estadoDocumento);
 							} else if ("093".equals(campo)) {
@@ -738,7 +860,7 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 								Date fechaCfo = sdfSal.parse(fechaString);
 								infoRegistral.setFechaCfo(fechaCfo);
 								genericDao.save(ActivoInfoRegistral.class, infoRegistral);
-								activoAdmisionDoc.setFechaObtencion(fechaCfo);
+								activoAdmisionDoc.setFechaCaducidad(fechaCfo);
 								DDEstadoDocumento estadoDocumento = genericDao.get(DDEstadoDocumento.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO));
 								activoAdmisionDoc.setEstadoDocumento(estadoDocumento);
 							}else {

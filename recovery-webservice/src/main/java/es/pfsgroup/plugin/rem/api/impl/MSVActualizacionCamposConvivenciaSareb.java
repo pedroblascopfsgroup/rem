@@ -54,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDCamposConvivenciaSareb;
@@ -65,7 +66,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoInclusionExclusionPerimetro;
 import es.pfsgroup.plugin.rem.model.dd.DDPortal;
+import es.pfsgroup.plugin.rem.model.dd.DDSegmentoSareb;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -74,6 +78,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCuotaComunidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -156,6 +161,9 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				}else if("137".equals(campo) || "138".equals(campo) || "011".equals(campo)) {
 					DDEstadoActivo estadoActivo = genericDao.get(DDEstadoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
 					activo.setEstadoActivo(estadoActivo);
+				}else if ("173".equals(campo)) {
+					Boolean res = Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)) == 1 ? true : false;
+					activo.setTieneOkTecnico(res);
 				}
 				genericDao.save(Activo.class, activo);
 			}else if("ACT_AGR_AGRUPACION".equalsIgnoreCase(convivencia.getTabla())) {
@@ -179,6 +187,12 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				if("085".equalsIgnoreCase(campo)) {
 					DDPortal portal = genericDao.get(DDPortal.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
 					activoPub.setPortal(portal);
+				}else if ("175".equalsIgnoreCase(campo)) {
+					Boolean res = Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)) == 1 ? true : false;
+					activoPub.setCheckOcultarPrecioVenta(res);
+				}else if ("177".equals(campo)) {
+					Boolean res = Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)) == 1 ? true : false;
+					activoPub.setCheckSinPrecioVenta(res);
 				}
 				genericDao.save(ActivoPublicacion.class, activoPub);
 			}else if("ACT_CAN_CALIFICACION_NEG".equalsIgnoreCase(convivencia.getTabla())) {
@@ -308,6 +322,15 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				}else if("141".equalsIgnoreCase(campo)) {
 					DDSinSiNo res = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
 					activoSareb.setReoContabilizado(res);
+				}else if ("172".equalsIgnoreCase(campo)) {
+					DDSegmentoSareb segmento = genericDao.get(DDSegmentoSareb.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					activoSareb.setSegmentoSareb(segmento);
+				}else if ("174".equals(campo)) {
+					DDSinSiNo res = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					activoSareb.setGgaaSareb(res);
+				}else if ("176".equals(campo)) {
+					DDTipoCuotaComunidad tipoComunidad = genericDao.get(DDTipoCuotaComunidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					activoSareb.setTipoCuotaComunidad(tipoComunidad);
 				}
 				genericDao.save(ActivoSareb.class, activoSareb);
 			}else if("ACT_SPS_SIT_POSESORIA".equalsIgnoreCase(convivencia.getTabla())) {
@@ -440,6 +463,42 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					activoVal.setImporte(getDouble(exc.dameCelda(fila, VALOR_NUEVO)));
 				}
 				genericDao.save(ActivoValoraciones.class, activoVal);
+			}else if("ACT_PAC_PERIMETRO_ACTIVO".equalsIgnoreCase(convivencia.getTabla())) {
+				PerimetroActivo activoPerimetro = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
+				if("178".equalsIgnoreCase(campo)) {
+					activoPerimetro.setIncluidoEnPerimetro(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)));
+				}else if ("179".equals(campo)) {
+					activoPerimetro.setAplicaGestion(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)));
+				}else if ("180".equals(campo)) {
+					DDMotivoInclusionExclusionPerimetro motivoIncExcl = genericDao.get(DDMotivoInclusionExclusionPerimetro.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					String descripMot = motivoIncExcl.getDescripcion();
+					activoPerimetro.setMotivoAplicaGestion(descripMot);
+				}else if ("181".equals(campo)) {
+					Boolean res = Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)) == 1 ? true : false;
+					activoPerimetro.setAplicaPublicar(res);
+				}else if ("182".equals(campo)) {
+					DDMotivoInclusionExclusionPerimetro motivoIncExcl = genericDao.get(DDMotivoInclusionExclusionPerimetro.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					String descripMot = motivoIncExcl.getDescripcion();
+					activoPerimetro.setMotivoAplicaPublicar(descripMot);
+				}else if ("183".equals(campo)) {
+					activoPerimetro.setAplicaComercializar(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)));
+				}else if ("184".equals(campo)) {
+					if (activoPerimetro.getAplicaComercializar() == 1) {
+						DDMotivoComercializacion motivoComercializacion = genericDao.get(DDMotivoComercializacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+						activoPerimetro.setMotivoAplicaComercializar(motivoComercializacion);
+					} else {
+						DDMotivoInclusionExclusionPerimetro motivoIncExcl = genericDao.get(DDMotivoInclusionExclusionPerimetro.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+						String descripMot = motivoIncExcl.getDescripcion();
+						activoPerimetro.setMotivoNoAplicaComercializar(descripMot);
+					}
+				}else if ("185".equals(campo)) {
+					activoPerimetro.setAplicaFormalizar(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)));
+				}else if ("186".equals(campo)) {
+					DDMotivoInclusionExclusionPerimetro motivoIncExcl = genericDao.get(DDMotivoInclusionExclusionPerimetro.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					String descripMot = motivoIncExcl.getDescripcion();
+					activoPerimetro.setMotivoAplicaFormalizar(descripMot);
+				}
+				genericDao.save(PerimetroActivo.class, activoPerimetro);
 			}else if("BIE_ADJ_ADJUDICACION".equalsIgnoreCase(convivencia.getTabla())) {
 				NMBAdjudicacionBien nmbAdj = genericDao.get(NMBAdjudicacionBien.class,genericDao.createFilter(FilterType.EQUALS, "bien",activo.getBien()));
 				if("026".equalsIgnoreCase(campo)) {

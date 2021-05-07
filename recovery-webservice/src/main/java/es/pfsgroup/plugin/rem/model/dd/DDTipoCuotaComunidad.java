@@ -25,6 +25,15 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDTipoCuotaComunidad implements Auditable, Dictionary{
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final String CODIGO_ANUAL = "01";
+	public static final String CODIGO_BIMENSUAL = "02";
+	public static final String CODIGO_CUATRIMESTRAL = "03";
+	public static final String CODIGO_MENSUAL = "04";
+	public static final String CODIGO_POR_LIQUIDACION = "05";
+	public static final String CODIGO_SEMESTRAL = "06";
+	public static final String CODIGO_SIN_CUOTA_ORDINARIA = "07";
+	public static final String CODIGO_TRIMESTRAL = "08";
 
 	@Id
 	@Column(name = "DD_TCC_ID")

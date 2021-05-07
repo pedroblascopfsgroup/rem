@@ -35,13 +35,6 @@ DECLARE
     
 BEGIN	
 
---MODIFICAR PARTIDAS DE LOS GASTOS DE LA AUXILIAR Y MODIFICAR PARTIDAS
---DE FILTRO borrado = 0 and dd_tga_id = 5 and dd_stg_id in (26,27) and dd_tim_id = 1 and dd_Cra_id = 43 and dd_tbe_id is null and pro_id = 589
---CPP_PARTIDA_PRESUPUESTARIA = 004
---CPP_APARTADO = 05	
---CPP_CAPITULO = 15
---total 2244 filas
-
     DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 
     DBMS_OUTPUT.PUT_LINE('[INFO] MODIFICAMOS '||V_TEXT_TABLA||' ');

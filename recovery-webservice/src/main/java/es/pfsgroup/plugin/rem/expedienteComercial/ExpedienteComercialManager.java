@@ -11739,25 +11739,4 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return tipoEstado;
 	}
 
-
-
-	
-	@Transactional(readOnly = false)
-	public boolean cambiarEstadoContrasteListasaPendiente(Long idExpediente) {
-
-		List<CompradorExpediente> cexpediente = (List<CompradorExpediente>) genericDao.getList(CompradorExpediente.class, genericDao.createFilter(FilterType.EQUALS, "expediente", idExpediente));
-		DDEstadoContrasteListas estadoPendiente = genericDao.get(DDEstadoContrasteListas.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoContrasteListas.PENDIENTE));
-		if(estadoPendiente != null) {
-			for (CompradorExpediente compradorExpediente : cexpediente) {
-				Date fecha = new Date();
-				compradorExpediente.setEstadoContrasteListas(estadoPendiente);
-				compradorExpediente.setFechaContrasteListas(fecha);
-				genericDao.update(CompradorExpediente.class, compradorExpediente);
-			}
-			return true;
-		}
-			return false;
-		}
-
-	
 }

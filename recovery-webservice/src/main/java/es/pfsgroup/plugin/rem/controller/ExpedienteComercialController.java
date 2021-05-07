@@ -3,7 +3,9 @@ package es.pfsgroup.plugin.rem.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -37,6 +39,7 @@ import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.http.client.HttpSimpleGetRequest;
+import es.pfsgroup.framework.paradise.http.client.HttpSimplePostRequest;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
@@ -103,6 +106,7 @@ import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
+import net.minidev.json.JSONObject;
 
 @Controller
 public class ExpedienteComercialController extends ParadiseJsonController {
@@ -2419,12 +2423,17 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView contrasteListas(@RequestParam Long numOferta, Long idExpediente) {
-		ModelMap model = new ModelMap();
+	public ModelAndView contrasteListas(ModelMap model,@RequestParam Long numOferta, Long idExpediente) {
 		try {
-			boolean succes = expedienteComercialApi.cambiarEstadoContrasteListasaPendiente(idExpediente);
-			getExisteTareaWebServiceHaya(String.valueOf(numOferta));
-			model.put(RESPONSE_SUCCESS_KEY, succes);
+			String endpoint = expedienteAdapter.getContrasteListasREM3Endpoint();
+			if (!TareaAdapter.DEV.equals(endpoint)) {
+				Map<String, Object> params = new HashMap<String, Object>();
+				params.put("codigoOferta", numOferta);
+				params.put("idExpediente", idExpediente);
+				HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
+				JSONObject resp = request.post(JSONObject.class);
+				model.put(RESPONSE_SUCCESS_KEY, resp.get("success"));
+			}
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController::contrasteListas", e);
@@ -2433,15 +2442,4 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@Transactional(readOnly = false)
-	public Object getExisteTareaWebServiceHaya(String numOferta) {
-		String endpoint = expedienteAdapter.getExisteTareaHayaEndpoint();
-		if (TareaAdapter.DEV.equals(endpoint)) {
-			return TareaAdapter.DEV;
-		}else {
-			endpoint += numOferta;
-			HttpSimpleGetRequest request = new HttpSimpleGetRequest(endpoint);
-			return request.get();
-		}
-	}
 }

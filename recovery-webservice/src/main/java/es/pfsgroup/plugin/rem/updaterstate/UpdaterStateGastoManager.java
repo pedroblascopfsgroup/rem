@@ -99,7 +99,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		}
 		
 		String error = null;
-		
+		if(origen != null) {
+			if(origen) {
 		if(!Checks.esNulo(gasto)) {
 			List<GastoLineaDetalle> gastoListaDetalleList = gasto.getGastoLineaDetalleList();
 			
@@ -215,8 +216,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				return error;
 			}
 			
-			if(origen != null) {
-				if(!origen) {
+			
 					for (GastoLineaDetalle gastoLineaDetalle : gastoListaDetalleList) {
 						if((gastoLineaDetalle.getGastoLineaEntidadList() == null && !gastoLineaDetalle.esAutorizadoSinActivos()) 
 							|| (gastoLineaDetalle.getGastoLineaEntidadList().isEmpty() && !gastoLineaDetalle.esAutorizadoSinActivos())) {
@@ -224,16 +224,18 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 							return error;
 						}
 					}
-				}
-			}
+				
+			
 			
 			if(codEstadoProvision == null || !DDEstadoProvisionGastos.CODIGO_RECHAZADO_SUBSANABLE.equals(codEstadoProvision)) {
 				if(Checks.esNulo(gasto.getExisteDocumento()) || !BooleanUtils.toBoolean(gasto.getExisteDocumento())) {
 					error = messageServices.getMessage(VALIDACION_DOCUMENTO_ADJUNTO_GASTO);
 					return error;
+					}
+				}
+			
 				}
 			}
-			
 		}
 		return error;
 	}

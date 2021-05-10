@@ -57,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
@@ -832,6 +833,8 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		ActivoSituacionPosesoria actSitPosAM = activoMatriz.getSituacionPosesoria();
 		ActivoSituacionPosesoria actSitPosUA = new ActivoSituacionPosesoria();
 		
+		
+		
 		if(!Checks.esNulo(actSitPosAM)) {
 /*d*/		if (!Checks.esNulo(actSitPosAM.getTipoTituloPosesorio())) {
 				actSitPosUA.setTipoTituloPosesorio(actSitPosAM.getTipoTituloPosesorio());
@@ -887,6 +890,17 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			actSitPosUA.setAccesoTapiado(0);
 			actSitPosUA.setActivo(unidadAlquilable);
 			genericDao.save(ActivoSituacionPosesoria.class, actSitPosUA);
+			if(unidadAlquilable!=null && actSitPosUA!=null && usuarioLogado!=null) {
+				String cmasivaCodigo = this.getValidOperation();
+				Filter filterCMasiva = genericDao.createFilter(FilterType.EQUALS, "codigo", cmasivaCodigo);
+				MSVDDOperacionMasiva cMasiva = genericDao.get(MSVDDOperacionMasiva.class, filterCMasiva);
+				
+				if(cMasiva!=null && cMasiva.getDescripcion()!=null) {
+					HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(unidadAlquilable,actSitPosUA,usuarioLogado,HistoricoOcupadoTitulo.COD_CARGA_MASIVA,cMasiva.getDescripcion().toString());
+					genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);
+				}
+			
+			}
 			
 		}
 		

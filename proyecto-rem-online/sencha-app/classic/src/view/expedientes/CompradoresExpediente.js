@@ -86,6 +86,12 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					},
 					{
 						xtype: 'button',
+						text: HreRem.i18n('btn.contraste.listas'),
+						handler: 'contrasteListas',
+						margin: '10 5 5 10'
+					},
+					{
+						xtype: 'button',
 						text: HreRem.i18n('btn.validar.compradores'),
 						handler: 'validarCompradores',
 						margin: '10 5 5 10',
@@ -274,11 +280,50 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 
 							   text: HreRem.i18n('header.fecha.acep.gpdr'),
 							   dataIndex: 'fechaAcepGdpr',
+						   } ,
+						   {
+
+							   text: HreRem.i18n('header.estado.contraste'),
+							   dataIndex: 'descripcionEstadoECL',
+							   flex: 1,
+					           renderer: coloredRender
+					          
+						   } ,
+						   {
+						   
+						        xtype: 'actioncolumn',
+						        reference: 'tickEstadoContraste',
+						        width: 30,
+						        text: 'Estado Contraste',
+								hideable: false,
+								items: [
+								        	{
+								        		//NS NO solicitado  , PEND Pendietne , NEG Negativo , FP	Falso Positivo,PRA	Positivo real aprobado,PRD	Positivo real denegado
+									            getClass: function(v, meta, rec) {
+									                if (rec.get('codigoEstadoEcl') == CONST.ESTADO_CONT_LISTAS["NEGATIVO"] || rec.get('codigoEstadoEcl') == CONST.ESTADO_CONT_LISTAS["FALSO_POSITIVO"]) {
+									                    return 'app-tbfiedset-ico icono-cross-green';			         
+									                } else if(rec.get('codigoEstadoEcl') == CONST.ESTADO_CONT_LISTAS["POSITIVO_REAL_DENEGADO"]){
+									                    return 'app-tbfiedset-ico icono-cross-ko';
+									                }else if(rec.get('codigoEstadoEcl') == CONST.ESTADO_CONT_LISTAS["POSITIVO_REAL_APROBADO"]){
+									                	return 'app-tbfiedset-ico icono-cross-yellow';
+									                }else{
+									                	return '';
+									                }
+									                	
+									                
+									            }
+								        	}
+								 ]
+				    		},	 {
+
+							   text: HreRem.i18n('header.fecha.contraste'),
+							   dataIndex: 'fechaContraste',
+
 							   flex: 1,
 					           renderer: coloredRender,
 					           formatter: 'date("d/m/Y h:i")'
-					          
-						   }   
+						   }
+
 						  ],
 					    dockedItems : [
 					        {

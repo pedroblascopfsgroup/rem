@@ -368,6 +368,17 @@ white-space: normal !important;
   background-size: 15px;
 }
 
+.icono-cross-ko {
+	 background: url(images/sin_hacer.svg) center center no-repeat;
+}
+
+.icono-cross-green {
+	 background: url(images/sin_hacer_verde.png) center center no-repeat;
+}
+
+.icono-cross-yellow {
+	 background: url(images/sin_hacer_amarillo.png) center center no-repeat;
+}
 //------------------ PANEL BASE----------------------------
 
 .panel-base {  
@@ -1396,3 +1407,5 @@ fieldset.x-fieldset {
 div.x-fieldset-header-text {
 	position: static;
 }
+
+

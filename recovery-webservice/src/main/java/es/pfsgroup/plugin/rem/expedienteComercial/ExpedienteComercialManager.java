@@ -4406,6 +4406,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
 			comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
+			
+			if((DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA).equals(dto.getCodTipoPersona())) {
+				comprador.setApellidos(null);
+			}
 
 			if (!Checks.esNulo(dto.getEstadoCivilURSUS())) {
 				comprador.setEstadoCivilURSUS(Long.parseLong(dto.getEstadoCivilURSUS()));
@@ -4434,7 +4438,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				reiniciarPBC = true;
 			}
 
-			comprador.setApellidos(dto.getApellidos());
+			if((DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA).equals(dto.getCodTipoPersona())) {
+				comprador.setApellidos(null);
+			}else {
+				comprador.setApellidos(dto.getApellidos());
+			}
 
 			if (!Checks.esNulo(dto.getCodTipoDocumento())) {
 				DDTipoDocumento tipoDocumentoComprador = (DDTipoDocumento) utilDiccionarioApi

@@ -352,6 +352,10 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 		},
 		{
 			name: 'tributosSobrePropiedad'  
+		},
+		{
+			name: 'necesidadIf',
+			type: 'boolean'
 		}
 	    
     ],

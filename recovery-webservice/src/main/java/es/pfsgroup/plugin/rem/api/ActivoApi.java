@@ -1459,4 +1459,8 @@ public interface ActivoApi {
 	
 
 	public Page getPublicacionGrid(DtoPublicacionGridFilter dto);
+	
+	public boolean isIfNecesarioActivo(Activo activo);
+	
+	public void rellenarIfNecesario(Activo activo);
 }

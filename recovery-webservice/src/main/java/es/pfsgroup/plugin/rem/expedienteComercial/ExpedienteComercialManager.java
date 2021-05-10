@@ -2838,6 +2838,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private DtoCondiciones expedienteToDtoCondiciones(ExpedienteComercial expediente) {
 		DtoCondiciones dto = new DtoCondiciones();
 		CondicionanteExpediente condiciones = expediente.getCondicionante();
+		DatosInformeFiscal informeFiscal = genericDao.get(DatosInformeFiscal.class, 
+				genericDao.createFilter(FilterType.EQUALS,"oferta",expediente.getOferta()));
 
 		// Si el expediente pertenece a una agrupación miramos el activo principal
 		if (!Checks.esNulo(expediente.getOferta().getAgrupacion())) {
@@ -3128,6 +3130,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			if (!Checks.esNulo(condiciones.getTributosSobrePropiedad())) {
 				dto.setTributosSobrePropiedad(condiciones.getTributosSobrePropiedad());
+			}
+			if (informeFiscal != null) {
+				if (informeFiscal.getNecesidadIf() != null) {
+					dto.setNecesidadIf(informeFiscal.getNecesidadIf());
+				}
 			}
 
 			List<HistoricoCondicionanteExpediente> listaHistorico = condiciones.getListHistoricoCondiciones();

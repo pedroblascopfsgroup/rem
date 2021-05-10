@@ -181,6 +181,17 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        	 bind: {
 				        	 	value:'{comercial.activoObraNuevaComercializacionFecha}'
 				        	 }
+						},
+						{
+						   xtype: 'checkboxfieldbase',
+						   fieldLabel: HreRem.i18n('fieldlabel.necesidadIf'),
+						   reference: 'necesidadIfActivoRef',
+						   //allowBlank: false,
+						   bind : {
+					     		value: '{comercial.necesidadIfActivo}',
+					     		hidden: '{esCarteraSarebBbvaBankiaCajamarLiberbank}'
+						   }/*,
+						   hidden: '{!esCarteraSarebBbvaBankiaCajamarLiberbank}'*/
 						}
 						
 				]

@@ -71,6 +71,7 @@ public class DtoCondiciones extends WebDto {
 	private Boolean operacionExenta;
 	private Boolean inversionDeSujetoPasivo;
 	private Boolean tributosSobrePropiedad;
+	private Boolean necesidadIf;
 	
 	private Integer mesesFianza;
 	private Double importeFianza;
@@ -852,6 +853,14 @@ public class DtoCondiciones extends WebDto {
 
 	public void setTributosSobrePropiedad(Boolean tributosSobrePropiedad) {
 		this.tributosSobrePropiedad = tributosSobrePropiedad;
+	}
+
+	public Boolean getNecesidadIf() {
+		return necesidadIf;
+	}
+
+	public void setNecesidadIf(Boolean necesidadIf) {
+		this.necesidadIf = necesidadIf;
 	}
 
 	

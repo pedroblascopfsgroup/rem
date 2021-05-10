@@ -140,4 +140,20 @@ public class DDTiposPersona implements Dictionary,Auditable {
     public String toString() {
         return this.descripcion;
     }
+    
+    public static boolean isFisica(DDTiposPersona tipoPersona) {
+    	boolean tipoFisica= false;
+    	if (tipoPersona != null && CODIGO_TIPO_PERSONA_FISICA.equals(tipoPersona.getCodigo())) {
+			tipoFisica = true;
+		}
+		return tipoFisica;    	
+    }
+    
+    public static boolean isJuridico(DDTiposPersona tipoPersona) {
+    	boolean tipoJuridico= false;
+    	if (tipoPersona != null && CODIGO_TIPO_PERSONA_JURIDICA.equals(tipoPersona.getCodigo())) {
+    		tipoJuridico = true;
+		}
+		return tipoJuridico;    	
+    }
 }

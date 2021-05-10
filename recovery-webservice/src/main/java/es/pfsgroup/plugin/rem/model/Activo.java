@@ -565,6 +565,9 @@ public class Activo implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<GastoAsociadoAdquisicion> gastosAsociados;
     
+    @Column(name = "ACT_NECESIDAD_IF")
+    private Boolean necesidadIfActivo;
+    
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -2154,5 +2157,13 @@ public class Activo implements Serializable, Auditable {
 
 	public void setTipoTransmision(DDTipoTransmision tipoTransmision) {
 		this.tipoTransmision = tipoTransmision;
+	}
+
+	public Boolean getNecesidadIfActivo() {
+		return necesidadIfActivo;
+	}
+
+	public void setNecesidadIfActivo(Boolean necesidadIfActivo) {
+		this.necesidadIfActivo = necesidadIfActivo;
 	}
 }

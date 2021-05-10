@@ -191,6 +191,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloComplemento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -3950,6 +3951,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if(activo.getObraNuevaAEfectosComercializacionFecha()!=null) {
 				dto.setActivoObraNuevaComercializacionFecha(activo.getObraNuevaAEfectosComercializacionFecha());
 			}
+		}
+		
+		if (activo.getNecesidadIfActivo() != null) {
+			dto.setNecesidadIfActivo(activo.getNecesidadIfActivo());
 		}
 		return dto;
 	}
@@ -9004,6 +9009,31 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	@BusinessOperationDefinition("activoManager.getFileItemOfertante")
+	public FileItem getFileItemOfertante(DtoAdjunto dtoAdjunto, AdjuntoComprador adjuntoComprador) {
+		
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS,"activo.id", dtoAdjunto.getIdEntidad());
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado", false);
+		ActivoPlusvalia activoPlusvalia = genericDao.get(ActivoPlusvalia.class, filtroActivo, filtroBorrado);
+		AdjuntoPlusvalias adjunto = null;
+		FileItem fileItem = null;
+		
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			try {
+				fileItem = gestorDocumentalAdapterApi.getFileItem(dtoAdjunto.getId(),dtoAdjunto.getNombre());
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		} else {
+			adjunto = activoPlusvalia.getAdjunto(dtoAdjunto.getId());
+			fileItem = adjunto.getAdjunto().getFileItem();
+			fileItem.setContentType(adjunto.getContentType());
+			fileItem.setFileName(adjunto.getNombre());
+		}
+		return fileItem;
+	}
+	
+	@Override
 	public List<DtoHistoricoOcupadoTitulo> getListHistoricoOcupadoTitulo(Long id) {
 		List<DtoHistoricoOcupadoTitulo> listDto = new ArrayList<DtoHistoricoOcupadoTitulo>();
 		
@@ -9061,6 +9091,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return listDto;
 	}
 
+	@Override
 	public void updateHonorarios(Activo activo, List<ActivoOferta> listaActivoOfertas) {
 
 		try {
@@ -9097,7 +9128,72 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	}
 
+	@Override
+	public boolean isIfNecesarioActivo(Activo activo) {
+		boolean resultado = false;
+		if (this.isIfNecesarioActivoByCartera(activo) && activo.getTipoActivo() != null) {
+			String codTipoActivo = activo.getTipoActivo().getCodigo();
+			if (this.isIfNecesarioActivoByTipoActivo(activo, codTipoActivo)) {
+				resultado = true;
+			}else if(this.isIfNecesarioActivoByTipoActivoAndEstadoActivo(activo, codTipoActivo)) {
+				resultado = true;
+			}
+		}			
+		return resultado;	
+	}
+	
+	private boolean isIfNecesarioActivoByCartera(Activo activo) {
+		if (activo.getCartera() == null) {
+			return false;
+		}
+		String codigoCartera = activo.getCartera().getCodigo();
+		if (DDCartera.CODIGO_CARTERA_SAREB.equals(codigoCartera) 
+				|| (DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera))
+				|| (DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera))
+				|| (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera))
+				|| (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera))) {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isIfNecesarioActivoByTipoActivo(Activo activo, String codTipoActivo) {
+		if (activo.getSubtipoActivo() == null) {
+			return false;
+		}
+		String codSubtipoActivo = activo.getSubtipoActivo().getCodigo();
+		if (DDTipoActivo.COD_SUELO.equals(codTipoActivo) || (DDTipoActivo.COD_COMERCIAL.equals(codTipoActivo))
+			||	(DDTipoActivo.COD_INDUSTRIAL.equals(codTipoActivo)) || (DDTipoActivo.COD_EDIFICIO_COMPLETO.equals(codTipoActivo)
+			&& (DDSubtipoActivo.CODIGO_SUBTIPO_OFICINA_EDIFICIO_COMPLETO.equals(codSubtipoActivo)
+			|| DDSubtipoActivo.CODIGO_SUBTIPO_RESIDENCIAL_VIVIENDAS_LOCALES_TRASTEROS_GARAJES.equals(codSubtipoActivo)))) {
+			return true;
+		}
+		return false; 
+	}
+	
+	private boolean isIfNecesarioActivoByTipoActivoAndEstadoActivo(Activo activo, String codTipoActivo) {
+		if (activo.getEstadoActivo() == null) {
+			return false;
+		}
+		String codEstadoActivo = activo.getEstadoActivo().getCodigo();
+		if (DDTipoActivo.COD_VIVIENDA.equals(codTipoActivo)
+			&& (DDEstadoActivo.ESTADO_ACTIVO_TERMINADO.equals(codEstadoActivo)
+				||	DDEstadoActivo.ESTADO_ACTIVO_EN_CONSTRUCCION_PARADA.equals(codEstadoActivo))
+				||  DDEstadoActivo.ESTADO_ACTIVO_EN_CONSTRUCCION_EN_CURSO.equals(codEstadoActivo)	
+				||  DDEstadoActivo.ESTADO_ACTIVO_RUINA.equals(codEstadoActivo)) {
+			return true;
+		}
+		return false;
+	}
+	
 
+	
+	@Override
+	public void rellenarIfNecesario(Activo activo) {		
+		activo.setNecesidadIfActivo(this.isIfNecesarioActivo(activo));		
+		genericDao.update(Activo.class, activo);
+	}
+	
 	
 }
 

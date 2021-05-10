@@ -1628,6 +1628,30 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    }
 		    
 		    return false;
+		},
+		esCarteraSarebBbvaBankiaCajamarLiberbank : function(get){
+			var me = this;
+
+			var activo = null;
+			if (me.data.activo != null) {
+				activo = me.data.activo.getData();
+			}
+			
+			if (activo != null || activo != undefined) {
+				var esCarteraSareb = activo.isCarteraSareb;
+				var esCarteraBbva = activo.isCarteraBbva;
+				var esCarteraBankia = activo.isCarteraBankia;
+				var esCarteraCajamar = activo.isCarteraCajamar;
+				var esCarteraLiberbank = activo.isCarteraLiberbank;
+				
+				if (esCarteraSareb == true || esCarteraBbva == true || esCarteraBankia == true || esCarteraCajamar == true || esCarteraLiberbank == true) {
+					return false;
+				}else{
+					return true;
+				}
+			}else{
+				return true;
+			}
 		}
 	 },
     

@@ -616,6 +616,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	}else{
 	     		return false;
 	     	}
+
+		},esCarteraSarebBbvaBankiaCajamarLiberbank: function (get){
+			var carteraCodigo = get('expediente.entidadPropietariaCodigo');			
+			
+			if (CONST.CARTERA['BBVA'] == carteraCodigo || CONST.CARTERA['SAREB'] == carteraCodigo || CONST.CARTERA['BANKIA'] == carteraCodigo
+				|| CONST.CARTERA['CAJAMAR'] == carteraCodigo || CONST.CARTERA['LIBERBANK'] == carteraCodigo) {
+				return false;
+			}else{
+				return true;
+			}
 		},
 		
 		habilitarBotonValidar: function(get) {
@@ -656,7 +666,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     			return false;   			
     		}
     	}
-    	
 	 },
 	 
 

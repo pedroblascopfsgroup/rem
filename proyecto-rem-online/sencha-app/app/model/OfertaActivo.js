@@ -73,7 +73,12 @@ Ext.define('HreRem.model.OfertaActivo', {
     	},
     	{
     		name: 'gencat'
-    	}
+    	},
+		{
+			name:'fechaEntradaCRMSF',
+			type:'date',
+    		dateFormat: 'c'
+		}
 
     ],
     

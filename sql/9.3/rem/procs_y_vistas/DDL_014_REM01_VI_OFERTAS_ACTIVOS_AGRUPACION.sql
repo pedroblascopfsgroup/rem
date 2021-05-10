@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina Garrido
---## FECHA_CREACION=20191122
+--## AUTOR=Sergio Gomez
+--## FECHA_CREACION=20201216
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-5838
+--## INCIDENCIA_LINK=HREOS-12421
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -22,6 +22,7 @@
 --##		HREOS-5997 Correción GENCAT
 --##		REMVIP-4808 Corrección Rendimiento
 --##		REMVIP-5838 Arreglar filtro tipo comercialización
+--##		HREOS-12421 Añadir la columna FECHA_ENT_CRM_SF al grid
 --##########################################
 --*/
 
@@ -107,6 +108,7 @@ BEGIN
 				OFR.OFR_OFERTA_EXPRESS AS OFERTA_EXPRESS,
 				OFR.OFR_NECESITA_FINANCIACION AS NECESITA_FINANCIACION,
                 OFR.OFR_OBSERVACIONES AS OBSERVACIONES,
+				OFR.FECHA_ENT_CRM_SF,
 				DECODE(GEN.ACT_ID,NULL,0,1)  AS GENCAT
 		FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR
 		JOIN '|| V_ESQUEMA ||'.V_FIRST_ACTIVO_OFERTA VAO 				ON VAO.OFR_ID = OFR.OFR_ID

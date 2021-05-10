@@ -343,7 +343,9 @@ Ext.define('HreRem.ux.util.Constants', {
     	ACEPTADA : '01',
     	RECHAZADA: '02',
     	CONGELADA: '03',
-    	PENDIENTE: '04'
+    	PENDIENTE: '04',
+    	PDTE_CONSENTIMIENTO: '05',
+    	CADUCADA: '06'
     },
 
     ESTADOS_EXPEDIENTE: {
@@ -922,5 +924,13 @@ Ext.define('HreRem.ux.util.Constants', {
 	TIPO_RETENCION: {
 		ANTES : 'ANT',
 		DESPUES: 'DESP'
+	},
+	ESTADO_CONT_LISTAS:	{
+		NO_SOLICITADO:'NS',
+		PENDIENTE : 'PEND',
+		NEGATIVO : 'NEG',
+		FALSO_POSITIVO : 'FP',
+		POSITIVO_REAL_APROBADO :'PRA',
+		POSITIVO_REAL_DENEGADO : 'PRD'
 	}
 });

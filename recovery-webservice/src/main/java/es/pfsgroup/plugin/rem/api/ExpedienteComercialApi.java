@@ -1364,4 +1364,7 @@ public interface ExpedienteComercialApi {
 	 */
 	void recalcularHonorarios(Long idExpediente) throws Exception;
 
+	boolean compruebaEstadoNoSolicitadoPendiente(TareaExterna tareaExterna);
+	boolean compruebaEstadoPositivoRealDenegado(TareaExterna tareaExterna);
+
 }

@@ -25,6 +25,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoContrasteListas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosPbc;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
@@ -193,6 +194,12 @@ public class CompradorExpediente implements Serializable, Auditable {
     @Column(name="CEX_NUM_URSUS_CONYUGE_BH_REM")
     private Integer numUrsusConyugeBh;   
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ECL_ID")
+    private DDEstadoContrasteListas estadoContrasteListas;
+    
+    @Column(name="ECO_ECL_FECHA")
+    private Date fechaContrasteListas;
     
 	@Version   
 	private Long version;
@@ -650,6 +657,22 @@ public class CompradorExpediente implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 		
+	}
+
+	public DDEstadoContrasteListas getEstadoContrasteListas() {
+		return estadoContrasteListas;
+	}
+
+	public void setEstadoContrasteListas(DDEstadoContrasteListas estadoContrasteListas) {
+		this.estadoContrasteListas = estadoContrasteListas;
+	}
+
+	public Date getFechaContrasteListas() {
+		return fechaContrasteListas;
+	}
+
+	public void setFechaContrasteListas(Date fechaContrasteListas) {
+		this.fechaContrasteListas = fechaContrasteListas;
 	}
     
 	

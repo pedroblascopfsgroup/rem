@@ -234,7 +234,17 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 											value : '{condiciones.tributosSobrePropiedad}',
 											readOnly : '{!esOfertaVenta}'
 										}
-									}  
+									},
+									{
+									   xtype: 'checkboxfieldbase',
+									   fieldLabel: HreRem.i18n('fieldlabel.necesidadIf'),
+									   reference: 'necesidadIfExpedienteRef',
+									   //allowBlank: false,
+									   bind : {
+								     		value: '{condiciones.necesidadIf}',
+								     		hidden: '{esCarteraSarebBbvaBankiaCajamarLiberbank}'
+									   }
+									}
 								]
 							}
 						]

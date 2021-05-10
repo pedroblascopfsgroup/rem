@@ -84,6 +84,7 @@ import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.ExpedienteAdapter;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
@@ -124,6 +125,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoContrasteListas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
@@ -253,6 +255,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private final String PERFIL_PERFGCONTROLLER = "PERFGCONTROLLER";
 	private final String FUNCION_EDITAR_TAB_GESTION = "EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES";
 	
+
 	@Resource
 	private MessageService messageServices;
 
@@ -371,6 +374,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private GestorActivoApi gestorActivoManager;
+	
+	@Autowired
+	private ExpedienteAdapter expedienteAdapter;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -2832,6 +2838,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private DtoCondiciones expedienteToDtoCondiciones(ExpedienteComercial expediente) {
 		DtoCondiciones dto = new DtoCondiciones();
 		CondicionanteExpediente condiciones = expediente.getCondicionante();
+		DatosInformeFiscal informeFiscal = genericDao.get(DatosInformeFiscal.class, 
+				genericDao.createFilter(FilterType.EQUALS,"oferta",expediente.getOferta()));
 
 		// Si el expediente pertenece a una agrupación miramos el activo principal
 		if (!Checks.esNulo(expediente.getOferta().getAgrupacion())) {
@@ -3122,6 +3130,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			if (!Checks.esNulo(condiciones.getTributosSobrePropiedad())) {
 				dto.setTributosSobrePropiedad(condiciones.getTributosSobrePropiedad());
+			}
+			if (informeFiscal != null) {
+				if (informeFiscal.getNecesidadIf() != null) {
+					dto.setNecesidadIf(informeFiscal.getNecesidadIf());
+				}
 			}
 
 			List<HistoricoCondicionanteExpediente> listaHistorico = condiciones.getListHistoricoCondiciones();
@@ -4533,6 +4546,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					filtroExpedienteComercial);
 			CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtroComprador,
 					filtroExpComComprador);
+			DDEstadoContrasteListas estadoNoSolicitado = genericDao.get(DDEstadoContrasteListas.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoContrasteListas.NO_SOLICITADO));
 			boolean esNuevo = false;
 			if (Checks.esNulo(compradorExpediente)) {
 				compradorExpediente = new CompradorExpediente();
@@ -4696,11 +4710,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			} else if (!Checks.esNulo(comprador.getAdjunto())) {
 				compradorExpediente.setDocumentoAdjunto(comprador.getAdjunto());
 			}
+			if(dto.getApellidos()!=null || dto.getNumDocumento()!=null || dto.getNombreRazonSocial()!=null) {
+				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);		
+				compradorExpediente.setFechaContrasteListas(new Date());
+			}
 
 			if (esNuevo) {
 				genericDao.save(Comprador.class, comprador);
-				expedienteComercial.getCompradores().add(compradorExpediente);
+				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
+				compradorExpediente.setFechaContrasteListas(new Date());
+				expedienteComercial.getCompradores().add(compradorExpediente);						
 				genericDao.save(ExpedienteComercial.class, expedienteComercial);
+				genericDao.update(CompradorExpediente.class, compradorExpediente);		
+				
 			} else {
 				genericDao.save(Comprador.class, comprador);
 				genericDao.update(CompradorExpediente.class, compradorExpediente);
@@ -5188,6 +5210,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idExpediente);
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
 		CompradorExpediente compradorExpediente = new CompradorExpediente();
+		DDEstadoContrasteListas estadoNoSolicitado = genericDao.get(DDEstadoContrasteListas.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoContrasteListas.NO_SOLICITADO));
 		//compradorExpediente.setBorrado(false);
 
 		if (!Checks.esNulo(compradorBusqueda)) {
@@ -5261,7 +5284,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			if(!Checks.estaVacio(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.get(0).getIdPersonaHaya()))
 				compradorBusqueda.setIdPersonaHaya(tmpClienteGDPR.get(0).getIdPersonaHaya());
-
+			compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
+			compradorExpediente.setFechaContrasteListas(new Date());
 			expediente.getCompradores().add(compradorExpediente);
 
 			genericDao.save(ExpedienteComercial.class, expediente);
@@ -5482,8 +5506,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				Filter filtroAdjunto = genericDao.createFilter(FilterType.NOTNULL, "idAdjunto");
 				Filter filtroPersona = genericDao.createFilter(FilterType.NOTNULL, "idPersonaHaya");
 				List<TmpClienteGDPR> tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, 
-						genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()), filtroAdjunto, filtroPersona);
-				
+						genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()), filtroAdjunto, filtroPersona);				
 				if(tmpClienteGDPR.size() < 1) {
 					tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, 
 							genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()), filtroPersona);
@@ -5536,13 +5559,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(docAdjunto)) {
 					clienteCompradorGDPR.setAdjuntoComprador(docAdjunto);
 				}
+				
 				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
 
 				genericDao.save(Comprador.class, comprador);
+				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
+				compradorExpediente.setFechaContrasteListas(new Date());
 				expediente.getCompradores().add(compradorExpediente);
 
 				genericDao.save(ExpedienteComercial.class, expediente);
-
+				
 				ofertaApi.resetPBC(expediente, true);
 
 				if(!Checks.estaVacio(tmpClienteGDPR))
@@ -11710,7 +11736,41 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		return true;
 	}
+
 	
+	@Override
+	public boolean compruebaEstadoNoSolicitadoPendiente (TareaExterna tareaExterna){
+		boolean tipoEstado = false;
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		List <CompradorExpediente> cexpediente = expedienteComercial.getCompradores();
+			
+		for (CompradorExpediente compradorExpediente : cexpediente) {
+				
+			if(Checks.esNulo(compradorExpediente.getEstadoContrasteListas()) ||
+					DDEstadoContrasteListas.NO_SOLICITADO.equals(compradorExpediente.getEstadoContrasteListas().getCodigo()) || 
+					DDEstadoContrasteListas.PENDIENTE.equals(compradorExpediente.getEstadoContrasteListas().getCodigo()) ) {
+				tipoEstado = true;
+				break;
+			}
+		}
+		return tipoEstado;
+	}
+	@Override
+	public boolean compruebaEstadoPositivoRealDenegado (TareaExterna tareaExterna){
+		boolean tipoEstado = false;
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		List <CompradorExpediente> cexpediente = expedienteComercial.getCompradores();
+			
+		for (CompradorExpediente compradorExpediente : cexpediente) {
+			
+			if(!Checks.esNulo(compradorExpediente.getEstadoContrasteListas()) &&  DDEstadoContrasteListas.POSITIVO_REAL_DENEGADO.equals(compradorExpediente.getEstadoContrasteListas().getCodigo())) {
+				tipoEstado = true;
+				break;
+			}
+		}
+		return tipoEstado;
+	}
+
 	@Override
 	public String tipoTratamiento(TareaExterna tareaExterna) {
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
@@ -11751,4 +11811,5 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 		}
 	}	
+
 }

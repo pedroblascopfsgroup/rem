@@ -592,9 +592,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 			var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
 	 		var isBoarding = $AU.userIsRol(CONST.PERFILES['GESTBOARDING']);
-			if(CONST.CARTERA['CERBERUS'] == carteraCodigo){
-				return !isSuper;//CARTERAS NO BANCO
-			}
 	 		return !isSuper && !isBoarding;//CARTERAS BANCO
 	 	},
 	 	
@@ -619,7 +616,47 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	}else{
 	     		return false;
 	     	}
-		}
+		},
+		
+		habilitarBotonValidar: function(get) {
+			var estadoActual = get('expediente.codigoEstado');
+			
+			if(Ext.isEmpty(estadoActual)){
+				var expediente = this.getData().expediente;
+				if(!Ext.isEmpty(expediente.modified)){
+					estadoActual =expediente.modified.codigoEstado;
+				}
+			}
+			var estadosAntesAprobado = [CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'],CONST.ESTADOS_EXPEDIENTE['PTE_FIRMA'],CONST.ESTADOS_EXPEDIENTE['CONTRAOFERTADO'],
+				CONST.ESTADOS_EXPEDIENTE['PTE_RESOLUCION_CES'],CONST.ESTADOS_EXPEDIENTE['RPTA_OFERTANTE'],CONST.ESTADOS_EXPEDIENTE['PEN_RES_OFER_COM'],CONST.ESTADOS_EXPEDIENTE['PTE_RESOLUCION_CES']];
+			
+    		if(estadosAntesAprobado.includes(estadoActual)) {
+    			return true;   			
+    		} else {
+    			return false;   			
+    		}
+    	},
+    	
+    	habilitarBotonEnviar: function(get) {
+    		var estadoActual = get('expediente.codigoEstado');
+			
+			if(Ext.isEmpty(estadoActual)){
+				var expediente = this.getData().expediente;
+				if(!Ext.isEmpty(expediente.modified)){
+					estadoActual =expediente.modified.codigoEstado;
+				}
+			}
+			var estadosAntesAprobado = [CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'],CONST.ESTADOS_EXPEDIENTE['PTE_FIRMA'],CONST.ESTADOS_EXPEDIENTE['CONTRAOFERTADO'],
+				CONST.ESTADOS_EXPEDIENTE['PTE_RESOLUCION_CES'],CONST.ESTADOS_EXPEDIENTE['RPTA_OFERTANTE'],CONST.ESTADOS_EXPEDIENTE['PEN_RES_OFER_COM'],CONST.ESTADOS_EXPEDIENTE['PTE_RESOLUCION_CES']];
+			var estadosDespuesReservado = [CONST.ESTADOS_EXPEDIENTE['RESERVADO'],CONST.ESTADOS_EXPEDIENTE['PTE_PBC'],CONST.ESTADOS_EXPEDIENTE['PTE_CIERRE'], CONST.ESTADOS_EXPEDIENTE['PTE_POSICIONAMIENTO']];
+
+			if(estadosAntesAprobado.includes(estadoActual) || estadosDespuesReservado.includes(estadoActual)) {
+    			return true;   			
+    		} else {
+    			return false;   			
+    		}
+    	}
+    	
 	 },
 	 
 
@@ -861,7 +898,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        type: 'uxproxy',
 		        remoteUrl: 'expedientecomercial/getCompradoresExpediente',
 		        extraParams: {idExpediente: '{expediente.id}'}
-	    	}
+	    	},
+	    	listeners: {
+				load: function(store, items, success, opts){
+					 store.porcentajeCompra = Ext.decode(opts._response.responseText).porcentajeCompra;
+				}
+			}
 		},
 		
 		comboTipoPersona : {

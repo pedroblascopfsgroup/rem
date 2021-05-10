@@ -31,6 +31,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -116,10 +117,12 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 	@Autowired
 	private UsuarioManager usuarioApi;
-
 	
 	@Autowired
 	private ActivoAgrupacionFactoryApi activoAgrupacionFactoryApi;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -478,8 +481,12 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				activoFoto.setNombre(fileItem.getBasename());
 				
 				String descripcion = null;
-				String codigoSubtipoActivo = genericDao.get(VSubdivisionesAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", subdivisionId),
-										genericDao.createFilter(FilterType.EQUALS, "agrupacionId", agrupacionId)).getCodigoSubtipoActivo();
+				String codigoSubtipoActivo = null;
+				VSubdivisionesAgrupacion subdivision = genericDao.get(VSubdivisionesAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", subdivisionId),
+						genericDao.createFilter(FilterType.EQUALS, "agrupacionId", agrupacion.getId()));
+				if(subdivision != null) {
+					codigoSubtipoActivo = subdivision.getCodigoSubtipoActivo();
+				}
 				DDDescripcionFotoActivo descripcionFoto = null;
 
 				if (fileItem.getMetadata().containsKey("descripcion")) {
@@ -531,7 +538,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				genericDao.save(ActivoFoto.class, activoFoto);
 
 			} else {
-				throw new Exception("La foto esta asociada a una subdivision inexsitente");
+				logger.error("La foto esta asociada a una subdivision inexsitente");
 			}
 		} catch (Exception e) {
 			logger.error("Error guardando la foto de la subdivision", e);
@@ -856,6 +863,21 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		}
 		
 		return  listDtoTipoAgrupacion;
+	}
+	
+	@Override
+	public List<DDTipoAgrupacion> getComboTipoAgrupacionFiltro() {
+		List <DDTipoAgrupacion> listaDDTipoAgrupacion = genericDao.getList(DDTipoAgrupacion.class);		
+		for(Perfil p : genericAdapter.getUsuarioLogado().getPerfiles()) {
+			if(USUARIO_IT.equals(p.getCodigo()) || GESTOR_COMERCIAL_ALQUILER.equals(p.getCodigo()) || SUPERVISOR_COMERCIAL_ALQUILER.equals(p.getCodigo())) {
+				return  listaDDTipoAgrupacion;
+			}
+		}
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+		DDTipoAgrupacion promocionAlquiler = genericDao.get(DDTipoAgrupacion.class, filtro);	
+		listaDDTipoAgrupacion.remove(promocionAlquiler);
+		return  listaDDTipoAgrupacion;
 	}
 
 	@Override

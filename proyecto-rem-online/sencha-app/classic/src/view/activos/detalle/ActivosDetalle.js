@@ -36,7 +36,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
             			   fn: function(buttonId) {
             			        if (buttonId == 'yes') {
 									tabPanel.lookupController().getViewModel().set("editingFirstLevel", false);
-									tabPanel.lookupController().getViewModel().set("editing", false);
+									tabPanel.lookupController().getViewModel().set("editing", false);									
 									tabPanel.lookupController().getViewModel().notify();
 									var btn = tabPanel.down('button[itemId=botoncancelar]');
         			        		Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
@@ -189,5 +189,6 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'agrupacionesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_AGRUPACIONES');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'comercialactivo', ocultarBotonesEdicion: editable})}, 'TAB_ACTIVO_COMERCIAL');    			
     	me.add({xtype: 'patrimonioactivo', ocultarBotonesEdicion: true});
+    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'preciosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PRECIOS');
     }
 });

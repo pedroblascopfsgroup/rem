@@ -32,13 +32,16 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
@@ -97,7 +100,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	
 	
 	public DtoActivoSituacionPosesoria getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
-
+		
 		DtoActivoSituacionPosesoria activoDto = new DtoActivoSituacionPosesoria();
 		if (activo != null){
 			BeanUtils.copyProperty(activoDto, "necesarias", activo.getLlavesNecesarias());
@@ -126,6 +129,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			
 			if (!Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) {
 				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
+				BeanUtils.copyProperty(activoDto, "conTituloDescripcion", activo.getSituacionPosesoria().getConTitulo().getDescripcion());
 				
 				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
 					if(!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioTit())) {
@@ -144,14 +148,25 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 							activoDto.setDiasCambioPosesion(calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioPos()));
 						}
 					}					
-				} else {
-					if (!Checks.esNulo(activo.getSituacionPosesoria().getFechaRevisionEstado())
-							|| !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion())) {
+				} else if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
+						(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+						||DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
+						||DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())) &&
+						activo.getAdjNoJudicial() != null) {
+					if (activo.getAdjNoJudicial().getFechaPosesion() != null) {
 						BeanUtils.copyProperty(activoDto, "indicaPosesion", 1);
-					} else {
+					}else {
 						BeanUtils.copyProperty(activoDto, "indicaPosesion", 0);
+						}	
 					}
-				}
+					else{
+						if (!Checks.esNulo(activo.getSituacionPosesoria().getFechaRevisionEstado())
+								|| !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion())) {
+							BeanUtils.copyProperty(activoDto, "indicaPosesion", 1);
+						} else {
+							BeanUtils.copyProperty(activoDto, "indicaPosesion", 0);
+						}
+					}
 			}
 			
 			ActivoPatrimonio activoP = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
@@ -200,6 +215,10 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		
 		if(activo.getSituacionPosesoria().getSpsPosesionNeg() != null)
 			activoDto.setPosesionNegociada(activo.getSituacionPosesoria().getSpsPosesionNeg() ? "1" : "0");
+		
+		if (activo != null && activo.getId() != null ) {
+			activoDto.setPerteneceActivoREAM(activoDao.perteneceActivoREAM(activo.getId()));
+		}
 	
 		return activoDto;
 		
@@ -251,6 +270,13 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				(!Checks.esNulo(activoSituacionPosesoria.getOcupado()) && activoSituacionPosesoria.getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloNo.equals(dto.getConTitulo()))) {
 				activoApi.crearRegistroFaseHistorico(activo);
 			}		
+			
+			if (!Checks.esNulo(dto.getOcupado()) || !Checks.esNulo(dto.getConTitulo())) {
+					if(activo != null && activoSituacionPosesoria!=null && usu!=null) {
+						HistoricoOcupadoTitulo hist = new HistoricoOcupadoTitulo(activo,activoSituacionPosesoria,usu,HistoricoOcupadoTitulo.COD_SIT_POS,null);
+						genericDao.save(HistoricoOcupadoTitulo.class, hist);
+					}					
+			}	
 			
 			if (!Checks.esNulo(activoPatrimonio) && !Checks.esNulo(tipoEstadoAlquiler)) {
 				activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
@@ -401,7 +427,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		
 		if (activoDao.isUnidadAlquilable(activo.getId())) {
 			activoApi.cambiarSituacionComercialActivoMatriz(activo.getId());
-		}		
+		}
 	}
 	
 	public Integer calculodiasCambiosActivo(Date fechaIni){

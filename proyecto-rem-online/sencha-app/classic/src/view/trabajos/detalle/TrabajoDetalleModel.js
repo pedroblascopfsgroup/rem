@@ -41,6 +41,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    	 var isSupervisorActivo = $AU.userIsRol('HAYASUPER');
 		     var isGestorActivos = $AU.userIsRol('HAYAGESACT');
 		     var isProveedor = $AU.userIsRol('HAYAPROV');
+		     var perteneceGastoOPrefactura = get('trabajo.perteneceGastoOPrefactura');
+		     
+		     if (perteneceGastoOPrefactura == 'true') {
+		    	 return false;
+		     }
 
 		     return isSupervisorActivo || isGestorActivos || isProveedor;
 	    	 
@@ -75,7 +80,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     		var isSupervisorActivo = $AU.userIsRol('HAYASUPER');
 		    var isGestorActivos = $AU.userIsRol('HAYAGESACT');
 		    var isProveedor = $AU.userIsRol('HAYAPROV');
-
+		    var perteneceGastoOPrefactura = get('trabajo.perteneceGastoOPrefactura');
+		     
+		    if (perteneceGastoOPrefactura == 'true') {
+		    	return false;
+		    }
+		    
 		    return isSupervisorActivo || isGestorActivos || isProveedor;
 	    },
 	    
@@ -98,7 +108,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    disablePorCierreEconomicoSuplidos: function(get) {
 	    	var fechaCierreEco = get('trabajo.fechaCierreEconomico');
 	    	var esSuperGestorActivos = $AU.userIsRol('SUPERGESTACT');
-	    	if (!Ext.isEmpty(fechaCierreEco) && !esSuperGestorActivos)
+		    var perteneceGastoOPrefactura = get('trabajo.perteneceGastoOPrefactura');
+		    
+	    	if ((!Ext.isEmpty(fechaCierreEco) && !esSuperGestorActivos) || perteneceGastoOPrefactura == 'true')
 	    		 return true;
 	    	 else
 	    		 return false;
@@ -163,7 +175,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     		activosTrabajo: {
     			pageSize: $AC.getDefaultPageSize(),
 				model: 'HreRem.model.ActivoTrabajo',
-				sumaParticipacion: '0',
 				proxy: {
 				    type: 'uxproxy',
 					remoteUrl: 'trabajo/getListActivos',
@@ -174,7 +185,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     	    	remoteFilter: true,
 				listeners: {
 					load: function(store, items, success, opts){
-						 store.sumaParticipacion = Ext.decode(opts._response.responseText).sumaParticipacion;
+						 store.participacion = Ext.decode(opts._response.responseText).participacion;
 					}
 				}
     		},
@@ -419,12 +430,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			model:'HreRem.model.ActivoTrabajoSubida',
     			proxy: {
     				type: 'uxproxy',
-    				remoteUrl: 'trabajo/getListActivosByProceso',    				
+    				remoteUrl: 'trabajo/getListActivosByProceso',
     				extraParams: {idProceso: 'idProceso'}
     			},
     	    	remoteSort: true,
     	    	remoteFilter: true,
-    	    	autoLoad:false
+    	    	listeners: {
+					load: 'getPlazoComiteProveedor'
+				}
     		},
     		
     		listaActivosAgrupacion: {
@@ -441,6 +454,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     		},
     		
     		comboProveedorContacto : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorContacto',
+					extraParams: {idProveedor: '{presupuesto.idProveedor}'}
+				}, 
+				autoLoad: false
+    		},
+    		
+    		comboProveedorContactoGE : {
     			model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',

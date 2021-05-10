@@ -6,65 +6,151 @@ Ext.define('HreRem.model.AdmisionRevisionTitulo', {
 			idProperty : 'id',
 			fields : [{
 						name : 'idActivo'
-					}, {
-						name : 'revisado'
-					}, {
-						name : 'instLibArrendataria'
-					}, {
-						name : 'ratificacion'
-					}, {
-						name : 'situacionInicialInscripcion'
 					}, 
+					{
+						name : 'revisado'
+					}, 
+					{
+						name : 'instLibArrendataria'
+					}, 
+					{
+						name : 'ratificacion'
+					}, 
+					{
+						name : 'situacionInicialInscripcion'
+					},
+					{
+						name : 'situacionInicialInscripcionDescripcion'
+					},
 					{
 						name: 'posesoriaInicial'
 					},
 					{
-						name : 'posesoriaInicial'
-					}, {
+						name : 'posesoriaInicialDescripcion'
+					}, 
+					{
 						name : 'situacionInicialCargas'
-					}, {
+					}, 
+					{
+						name : 'situacionInicialCargasDescripcion'
+					},
+					{
 						name : 'tipoTitularidad'
-					}, {
+					}, 
+					{
+						name : 'tipoTitularidadDescripcion'
+					},
+					{
 						name : 'estadoAutorizaTransmision'
-					}, {
+					},
+					{
+						name : 'estadoAutorizaTransmisionDescripcion'
+					},
+					{
 						name : 'anotacionConcurso'
-					}, {
+					},
+					{
+						name : 'anotacionConcursoDescripcion'
+					},
+					{
 						name : 'estadoGestionCa'
-					}, {
+					},
+					{
+						name : 'estadoGestionCaDescripcion'
+					},
+					{
 						name : 'consFisica'
 					}, {
 						name : 'consJuridica'
-					}, {
+					}, 
+					{
 						name : 'estadoCertificadoFinObra'
-					}, {
+					},
+					{
+						name : 'estadoCertificadoFinObraDescripcion'
+					},
+					{
 						name : 'estadoAfoActaFinObra'
-					}, {
+					},
+					{
+						name : 'estadoAfoActaFinObraDescripcion'
+					},
+					{
 						name : 'licenciaPrimeraOcupacion'
-					}, {
+					},
+					{
+						name : 'licenciaPrimeraOcupacionDescripcion'
+					},
+					{
 						name : 'boletines'
-					}, {
+					},
+					{
+						name : 'boletinesDescripcion'
+					},
+					{
 						name : 'seguroDecenal'
-					}, {
+					},
+					{
+						name : 'seguroDecenalDescripcion'
+					},
+					{
 						name : 'cedulaHabitabilidad'
-					}, {
+					},
+					{
+						name : 'cedulaHabitabilidadDescripcion'
+					},
+					{
 						name : 'tipoArrendamiento'
-					}, {
+					},
+					{
+						name : 'tipoArrendamientoDescripcion'
+					},
+					{
 						name : 'notificarArrendatarios'
-					}, {
+					},
+					{
 						name : 'tipoExpediente'
-					}, {
+					},
+					{
+						name : 'tipoExpedienteDescripcion'
+					},
+					{
 						name : 'estadoGestionEa'
-					}, {
+					},
+					{
+						name : 'estadoGestionEaDescripcion'
+					},
+					{
 						name : 'tipoIncidenciaRegistral'
-					}, {
+					},
+					{
+						name : 'tipoIncidenciaRegistralDescripcion'
+					},
+					{
 						name : 'estadoGestionCr'
-					}, {
+					},
+					{
+						name : 'estadoGestionCrDescripcion'
+					},
+					{
 						name : 'tipoOcupacionLegal'
-					}, {
+					},
+					{
+						name : 'tipoOcupacionLegalDescripcion'
+					},
+					{
 						name : 'estadoGestionIl'
-					}, {
+					},
+					{
+						name : 'estadoGestionIlDescripcion'
+					},
+					{
 						name : 'estadoGestionOt'
-					}, {
+					},
+					{
+						name : 'estadoGestionOtDescripcion'
+					},
+					{
 						name : 'fechaRevisionTitulo',
 						type : 'date',
 						dateFormat : 'c'
@@ -100,6 +186,30 @@ Ext.define('HreRem.model.AdmisionRevisionTitulo', {
 					},
 					{
 						name : 'subtipoTituloActivoRef'
+					},
+					{
+						name : 'tipoTituloCodigo'
+					},
+					{
+						name : 'tipoTituloDescripcion'
+					},
+					{
+						name : 'subtipoTituloCodigo'
+					},
+					{
+						name : 'subtipoTituloDescripcion'
+					},
+					{
+						name : 'situacionConstructivaRegistral'
+					},
+					{
+						name : 'situacionConstructivaRegistralDescripcion'
+					},
+					{
+						name : 'proteccionOficial'
+					},
+					{
+						name : 'proteccionOficialDescripcion'
 					}
 
 			],

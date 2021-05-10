@@ -28,6 +28,12 @@ public class VProveedores implements Serializable {
 	@Column(name = "PVE_NOMBRE_COMERCIAL")
 	private String nombreComercial;
 	
+	@Column(name = "PVE_COD_REM")
+	private String codigo;
+	
+	@Column(name = "DD_EPR_DESCRIPCION")
+	private String estadoProveedorDescripcion;
+	
 	@Column(name = "DD_TPR_CODIGO")
 	private String codigoTipoProveedor;
 	
@@ -128,6 +134,22 @@ public class VProveedores implements Serializable {
 
 	public void setBaja(Integer baja) {
 		this.baja = baja;
+	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+
+	public String getEstadoProveedorDescripcion() {
+		return estadoProveedorDescripcion;
+	}
+
+	public void setEstadoProveedorDescripcion(String estadoProveedorDescripcion) {
+		this.estadoProveedorDescripcion = estadoProveedorDescripcion;
 	}
 
 }

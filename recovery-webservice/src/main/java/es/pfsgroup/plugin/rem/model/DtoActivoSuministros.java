@@ -22,7 +22,7 @@ public class DtoActivoSuministros extends DtoTabActivo {
 	private Long periodicidad;
 	private Date fechaAlta;
 	private Long motivoAlta;
-	private String fechaBaja;
+	private Date fechaBaja;
 	private Long motivoBaja;
 	private Long validado;
 	
@@ -92,10 +92,10 @@ public class DtoActivoSuministros extends DtoTabActivo {
 	public void setMotivoAlta(Long motivoAlta) {
 		this.motivoAlta = motivoAlta;
 	}
-	public String getFechaBaja() {
+	public Date getFechaBaja() {
 		return fechaBaja;
 	}
-	public void setFechaBaja(String fechaBaja) {
+	public void setFechaBaja(Date fechaBaja) {
 		this.fechaBaja = fechaBaja;
 	}
 	public Long getMotivoBaja() {
@@ -110,5 +110,4 @@ public class DtoActivoSuministros extends DtoTabActivo {
 	public void setValidado(Long validado) {
 		this.validado = validado;
 	}
-	
 }

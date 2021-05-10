@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -61,6 +62,7 @@ public class FotosController {
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		try {
 			WebHookRequest requestData = mapper.readValue(request.getBody(), WebHookRequest.class);
+			List<Long> idsError = new ArrayList<Long>();
 			// modificados o creados
 			if (requestData.getModified() != null) {
 				for (es.pfsgroup.plugin.rem.rest.dto.File file : requestData.getModified()) {
@@ -85,8 +87,8 @@ public class FotosController {
 					} else {
 						map.put("id", file.getId());
 						map.put("success", false);
-						map.put("invalidFields", errorsList);
-
+						map.put("error", errorsList);
+						idsError.add(file.getId());
 					}
 					listaRespuesta.add(map);
 
@@ -108,22 +110,39 @@ public class FotosController {
 					} else {
 						map.put("id", file.getId());
 						map.put("success", false);
-						map.put("invalidFields", errorsList);
-
+						map.put("error", errorsList);
+						idsError.add(file.getId());
 					}
 					listaRespuesta.add(map);
 				}
-			}
-			request.getPeticionRest().setResult("OK");
+			}			
 			model.put("id", null);
 			model.put("data", listaRespuesta);
-			model.put("error", "null");
+			String error = null;
+			if(idsError.isEmpty()) {
+				request.getPeticionRest().setResult("OK");
+				model.put("success", true);
+			}else if(idsError.size() == (requestData.getModified() != null ? requestData.getModified().size() : 0)
+					+ (requestData.getDeleted() != null ? requestData.getDeleted().size() : 0)) {
+				error = "[ERROR] Todas las fotos han fallado.";
+				model.put("success", false);
+			}else {
+				error = "[WARNING] Las fotos con id: ";
+				for(Long id : idsError)
+					error += id + ", ";
+				error = error.substring(0, error.length()-2);
+				error += " han fallado, el resto han ido bien.";
+				model.put("success", false);
+			}
+			request.getPeticionRest().setErrorDesc(error == null ? error : error.length() > 200 ? error.substring(0, 200) : error);
+			model.put("error", error == null ? "null" : error);
 		} catch (Exception e) {
 			request.getPeticionRest().setResult("ERROR");
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", null);
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+			model.put("success", false);
 			logger.error("Error fotos", e);
 		}
 		restApi.sendResponse(response, model, request);

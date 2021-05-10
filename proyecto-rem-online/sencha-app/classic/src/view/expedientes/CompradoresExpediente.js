@@ -6,24 +6,35 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     disableValidation: true,
     reference: 'compradoresexpedienteref',
     scrollable	: 'y',
+    //refreshAfterSave: true,
+    listeners : {
+		//boxready : 'cargarTabData'
+	},
+	requires : [ 'HreRem.model.ExpedienteComercial'],	
+  
+    recordName: "expediente",
+
+	recordClass: "HreRem.model.ExpedienteComercial",
+  
   
 
     initComponent: function () {
-		
 		var me = this;
 		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
 		var title = HreRem.i18n('title.compradores');
 		var titlePorcentaje = HreRem.i18n('header.procentaje.compra');
 		var msgPorcentajeTotal = HreRem.i18n("fieldlabel.porcentaje.compra.total");
 		var msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.compra.total.error");
-
+	
+		
+		
 		if(me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
 			title = HreRem.i18n('title.inquilinos');
 			titlePorcentaje = HreRem.i18n('header.procentaje.alquiler');
 			msgPorcentajeTotal = HreRem.i18n("fieldlabel.porcentaje.alquiler.total");
 			msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.alquiler.total.error");		
 		};
-		
+
 		me.setTitle(title);
 		
 		var coloredRender = function (value, meta, record) {
@@ -49,16 +60,14 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     	};
     	
     	var cartera= function(){
-    		if(me.lookupViewModel().get('expediente.entidadPropietariaDescripcion') == 'Bankia' && me.lookupViewModel().get('expediente.tipoExpedienteCodigo') != tipoExpedienteAlquiler){
+    		if(me.lookupViewModel().get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['BANKIA'] && me.lookupViewModel().get('expediente.tipoExpedienteCodigo') != tipoExpedienteAlquiler){
     			return false;
     		}else{
     			return true;
     		}
-    	};
-    	
+    	};  	
 
-		
-		
+	
         var items= [
 
 			{   
@@ -71,6 +80,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						handler: 'enviarTitularesUvem',
 						margin: '10 5 5 10',
 						bind: {
+							disabled:'{habilitarBotonEnviar}',
 							hidden: '{!esEditableCompradores}'
 						}
 					},
@@ -87,10 +97,11 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						margin: '10 5 5 10',
 						visible:true,
 						hidden: cartera(),
-				        hideable: !cartera()
-						/*bind: {
-							hidden: '{!esEditableCompradores}'
-						}*/
+				        hideable: !cartera(),
+						bind: {
+//							hidden: '{!esEditableCompradores}',
+							disabled: '{habilitarBotonValidar}'
+						}			        
 					},
                 	{
 					    xtype		: 'gridBase',
@@ -172,14 +183,8 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 								renderer: coloredRender,
 					            summaryType: 'sum',
 					            summaryRenderer: function(value, summaryData, dataIndex) {
-					            	var suma = 0;
-					            	var store = this.up('grid').store;
+					            	var suma = this.up('grid').store.porcentajeCompra;
 
-					            	for(var i=0; i< store.data.length; i++){
-					            		if(store.data.items[i].data.porcentajeCompra != null){
-					            			suma += parseFloat(store.data.items[i].data.porcentajeCompra);
-					            		}
-					            	}
 					            	suma = Ext.util.Format.number(suma, '0.00');
 					            	
 					            	var msg = msgPorcentajeTotal + " " + suma + "%";
@@ -515,7 +520,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 		var listadoCompradores = me.down("[reference=listadoCompradores]");
 		listadoCompradores.getStore().load();
 		
-//		me.lookupController().cargarTabData(me);
+		me.lookupController().cargarTabData(me);
 
     }
     

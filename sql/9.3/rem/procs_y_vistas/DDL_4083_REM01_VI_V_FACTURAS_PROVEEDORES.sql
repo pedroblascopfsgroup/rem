@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200724
+--## AUTOR=Sergio Gomez
+--## FECHA_CREACION=20210420
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-10618
+--## INCIDENCIA_LINK=HREOS-13563
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 20161006 Versión inicial
 --##        0.2 20200724 Adaptación de consulta al nuevo modelo de facturación
+--##        0.2 20210420 Quitar joins innecesarios
 --##########################################
 --*/
 
@@ -257,9 +258,6 @@ FROM
         ON GIC.GPV_ID = GPV.GPV_ID
             AND COALESCE(GIC.BORRADO, 0) = 0
 
-    LEFT JOIN '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA SPS
-            ON ACT.ACT_ID = SPS.ACT_ID
-                AND COALESCE(SPS.BORRADO, 0) = 0
 
 	LEFT JOIN (SELECT GPV_NUM_GASTO_HAYA, sum (a.gpl_importe_gasto) AS SUMA
 				FROM '|| V_ESQUEMA ||'.GPL_GASTOS_PRINEX_LBK a

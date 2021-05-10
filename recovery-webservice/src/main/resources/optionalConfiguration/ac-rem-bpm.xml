@@ -684,6 +684,10 @@
             def compruebaEstadoPositivoRealDenegado = {
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
 	           	return expedienteComercialManager.compruebaEstadoPositivoRealDenegado(tareaExterna);
+	        }
+            def tipoTratamiento = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.tipoTratamiento(tareaExterna);
             }
   			 ]]></value>
   		</list>

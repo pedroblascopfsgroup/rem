@@ -10,6 +10,7 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoHistorificadorCampos;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
+import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoGridFilter;
 
 public interface TrabajoDao extends AbstractDao<Trabajo, Long>{
 	
@@ -47,6 +48,8 @@ public interface TrabajoDao extends AbstractDao<Trabajo, Long>{
 	public Page findAllFilteredByProveedorContacto(DtoTrabajoFilter dto, Long idUsuario);
 
 	Page getActivoMatrizPresupuesto(DtoActivosTrabajoFilter dto);
+	
+	public Page getBusquedaTrabajosGrid(DtoTrabajoGridFilter dto, Long idUsuario);
 
 	public void flush();
 	
@@ -55,5 +58,11 @@ public interface TrabajoDao extends AbstractDao<Trabajo, Long>{
 	Page getHistTrabajo(Long filtro);
 
 	Page findAllFilteredHistoricoPeticion(DtoTrabajoFilter dto, Long idUsuario);
+
+	Page findAllFilteredIncluidoFactura(DtoTrabajoFilter dto, Long idUsuario);
+
+	Page findAllNoVista(DtoTrabajoFilter dto);
+
+	Page findAllFilteredByProveedorContactoNoVista(DtoTrabajoFilter dto, Long idUsuario);
 
 }

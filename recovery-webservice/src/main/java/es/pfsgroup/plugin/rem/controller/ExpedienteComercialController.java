@@ -916,6 +916,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		try {
 			Page page = expedienteComercialApi.getCompradoresByExpediente(idExpediente, dto);
+			Float participacion = expedienteComercialApi.getPorcentajeCompra(idExpediente);
+			model.put("porcentajeCompra", participacion);
 			model.put(RESPONSE_DATA_KEY, page.getResults());
 			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
 			model.put(RESPONSE_SUCCESS_KEY, true);
@@ -2441,5 +2443,28 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView recalcularHonorarios(ModelMap model, Long idExpediente) {
+		try {
+			expedienteComercialApi.recalcularHonorarios(idExpediente);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (JsonViewerException e) {
+			model.put("error", true);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.warn("Error controlado en ExpedienteComercialController", e);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
 }

@@ -326,42 +326,48 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		    	var count = Ext.decode(a.responseText).data;
 		    	var limite = Ext.decode(a.responseText).limite;
 		    	var limiteMax = Ext.decode(a.responseText).limiteMax;
-		    	if(count < limite){
-		    		config.params.exportar = true;
-		    		Ext.Ajax.request({			
-		   		     url: url,
-				     params: params,
-				     method: 'POST'
-				    ,success: function (a, operation, context) {
-				    	me.fireEvent("downloadFile", config);
-			    		view.unmask();
-		           },           
-		           failure: function (a, operation, context) {
-		           	  Ext.toast({
-						     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACI\u00d3N',
-						     width: 360,
-						     height: 100,
-						     align: 't'
-						 });
-		           	  view.unmask();
-		           }
-			     
-				});
-		    	}else {
-		    		var win = Ext.create('HreRem.view.common.WindowExportar', {
-		        		title: 'Exportar gastos',
-		        		height: 150,
-		        		width: 700,
-		        		modal: true,
-		        		config: config,
-		        		params: params,
-		        		url: url,
-		        		count: count,
-		        		limiteMax: limiteMax,
-		        		view: view,
-		        		renderTo: view.body		        		
-		        	});
-		        	win.show();
+		    	var msg = Ext.decode(a.responseText).msg;
+		    	if(!Ext.isEmpty(msg)){
+		    		me.fireEvent("errorToastLong", HreRem.i18n("msg.error.export") + msg);
+		    		view.unmask();
+		    	} else {
+			    	if(count < limite){
+			    		config.params.exportar = true;
+			    		Ext.Ajax.request({			
+			   		     url: url,
+					     params: params,
+					     method: 'POST'
+					    ,success: function (a, operation, context) {
+					    	me.fireEvent("downloadFile", config);
+				    		view.unmask();
+			           },           
+			           failure: function (a, operation, context) {
+			           	  Ext.toast({
+							     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACI\u00d3N',
+							     width: 360,
+							     height: 100,
+							     align: 't'
+							 });
+			           	  view.unmask();
+			           }
+				     
+					});
+			    	}else {
+			    		var win = Ext.create('HreRem.view.common.WindowExportar', {
+			        		title: 'Exportar gastos',
+			        		height: 150,
+			        		width: 700,
+			        		modal: true,
+			        		config: config,
+			        		params: params,
+			        		url: url,
+			        		count: count,
+			        		limiteMax: limiteMax,
+			        		view: view,
+			        		renderTo: view.body		        		
+			        	});
+			        	win.show();
+			    	}
 		    	}
            },           
            failure: function (a, operation, context) {
@@ -407,42 +413,48 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		    	var count = Ext.decode(a.responseText).data;
 		    	var limite = Ext.decode(a.responseText).limite;
 		    	var limiteMax = Ext.decode(a.responseText).limiteMax;
-		    	if(count < limite){
-		    		config.params.exportar = true;
-		    		Ext.Ajax.request({			
-		   		     url: url,
-				     params: params,
-				     method: 'POST'
-				    ,success: function (a, operation, context) {
-				    	me.fireEvent("downloadFile", config);
-			    		view.unmask();
-		           },           
-		           failure: function (a, operation, context) {
-		           	  Ext.toast({
-						     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACI\u00d3N',
-						     width: 360,
-						     height: 100,
-						     align: 't'
-						 });
-		           	  view.unmask();
-		           }
-			     
-				});
-		    	}else {
-		    		var win = Ext.create('HreRem.view.common.WindowExportar', {
-		        		title: 'Exportar agrupaciones gastos',
-		        		height: 150,
-		        		width: 700,
-		        		modal: true,
-		        		config: config,
-		        		params: params,
-		        		url: url,
-		        		count: count,
-		        		limiteMax: limiteMax,
-		        		view: view,
-		        		renderTo: view.body		        		
-		        	});
-		        	win.show();
+		    	var msg = Ext.decode(a.responseText).msg;
+		    	if(!Ext.isEmpty(msg)){
+		    		me.fireEvent("errorToast", HreRem.i18n("msg.error.adquisicion.noactivo") + msg);
+		    		view.unmask();
+		    	} else {
+			    	if(count < limite){
+			    		config.params.exportar = true;
+			    		Ext.Ajax.request({			
+			   		     url: url,
+					     params: params,
+					     method: 'POST'
+					    ,success: function (a, operation, context) {
+					    	me.fireEvent("downloadFile", config);
+				    		view.unmask();
+			           },           
+			           failure: function (a, operation, context) {
+			           	  Ext.toast({
+							     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACI\u00d3N',
+							     width: 360,
+							     height: 100,
+							     align: 't'
+							 });
+			           	  view.unmask();
+			           }
+				     
+					});
+			    	}else {
+			    		var win = Ext.create('HreRem.view.common.WindowExportar', {
+			        		title: 'Exportar agrupaciones gastos',
+			        		height: 150,
+			        		width: 700,
+			        		modal: true,
+			        		config: config,
+			        		params: params,
+			        		url: url,
+			        		count: count,
+			        		limiteMax: limiteMax,
+			        		view: view,
+			        		renderTo: view.body		        		
+			        	});
+			    		win.show();
+			    	}
 		    	}
            },           
            failure: function (a, operation, context) {
@@ -532,8 +544,17 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		var viewModel = me.getViewModel();
 		viewModel.set("provisionSeleccionada", record);
 		viewModel.notify();
-
+		
 		var grid = me.lookupReference('provisionesGastosList');
+		var displaySelection = grid.down('displayfield[itemId=displaySelection]');
+		var displayImporteTotalLabel = grid.down('displayfield[itemId=labelImporteTotal]');
+		var displayImporteTotal = grid.down('displayfield[itemId=displayImporteTotal]');
+		
+		grid.getSelectionModel().deselectAll();
+		displayImporteTotal.setHidden(true);
+		displayImporteTotalLabel.setHidden(true);
+		displaySelection.setValue("No seleccionados");
+
 		var store = grid.getStore();
 		grid.expand();
 		store.loadPage(1);

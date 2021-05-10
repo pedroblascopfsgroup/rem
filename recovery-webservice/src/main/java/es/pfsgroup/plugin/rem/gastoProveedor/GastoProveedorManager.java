@@ -246,6 +246,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		return genericDao.get(GastoProveedor.class, filtro );
 	}
+	
+	@Override
+	public Long getIdGasto(Long numGasto) {
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", numGasto);
+		
+		return genericDao.get(GastoProveedor.class, filtro ).getId();
+	}
 
 	@Override
 	public Object getTabGasto(Long id, String tab) throws Exception {
@@ -1531,7 +1539,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 				if (DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())
 						&& Checks.esNulo(activo.getNumInmovilizadoBnk())) {
-					throw new JsonViewerException("El activo carece de nº inmovilizado Bankia");
+					throw new JsonViewerException("El activo carece de nº inmovilizado CaixaBank");
 				}
 
 				if (!Checks.esNulo(gasto.getPropietario())) {

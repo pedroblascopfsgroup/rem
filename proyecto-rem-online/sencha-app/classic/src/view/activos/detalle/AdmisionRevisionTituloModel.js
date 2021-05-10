@@ -140,8 +140,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTituloModel', {
         		        type: 'uxproxy',
         		        remoteUrl: 'activo/getOrigenActivo',
         		        extraParams: {id: '{activo.id}'}
-    	    	},
-    	    	autoLoad: true
+    	    	}
 			},    		
 		comboSubtipoTitulo: {
 			model: 'HreRem.model.ComboBase',

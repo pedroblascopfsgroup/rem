@@ -32,7 +32,8 @@ DECLARE
     V_USUARIO VARCHAR2(100 CHAR):='REMVIP-9677'; --Vble. auxiliar para almacenar el usuario
     V_TABLA VARCHAR2(100 CHAR) :='GDE_GASTOS_DETALLE_ECONOMICO'; --Vble. auxiliar para almacenar la tabla a insertar
     
-    V_ID NUMBER(16); --Vble. Para almacenar el id del tramite a actualizar    
+    V_ID NUMBER(16); --Vble. Para almacenar el id del tramite a actualizar  
+    V_EGA_ID NUMBER(16);    
     V_COUNT_TOTAL NUMBER(16):=0; --Vble. Para contar el total de registros de la iteracion
 
  TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
@@ -1398,7 +1399,17 @@ BEGIN
         IF V_NUM_TABLAS = 1 THEN
 
             V_MSQL :='SELECT GPV_ID FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = '''||V_TMP_TIPO_DATA(1)||'''';
-            EXECUTE IMMEDIATE V_MSQL INTO V_ID;         
+            EXECUTE IMMEDIATE V_MSQL INTO V_ID;   
+
+            V_MSQL :='SELECT DD_EGA_ID FROM '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = ''05''';
+            EXECUTE IMMEDIATE V_MSQL INTO V_EGA_ID;         
+
+            V_MSQL :='UPDATE '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR SET
+                DD_EGA_ID = '||V_EGA_ID||',
+                USUARIOMODIFICAR = '''||V_USUARIO||''',
+                FECHAMODIFICAR = SYSDATE
+                WHERE GPV_ID = '||V_ID||'';
+            EXECUTE IMMEDIATE V_MSQL;
 
             V_MSQL :='UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET
                 GDE_IMPORTE_PAGADO = '||V_TMP_TIPO_DATA(3)||',

@@ -5175,7 +5175,11 @@ comprobarFormatoModificar: function() {
 			     url: url,
 			     params:  {numOferta : numOferta , idExpediente: idExpediente},
 			     success: function(response, opts) {
-	                me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));           	
+			    	 data = Ext.decode(response.responseText);
+			    	 if (data.success == 'true')
+			    		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			    	 else
+			    		 me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko"));
 			     },
 
 		        failure: function(response, opts) {

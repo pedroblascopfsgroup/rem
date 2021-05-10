@@ -1,0 +1,95 @@
+--/*
+--#########################################
+--## AUTOR=Dean Ibañez viño
+--## FECHA_CREACION=20210120
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-12847
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Merge de las tablas 'AUX_HREOS-12847'
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+	
+	V_TABLA VARCHAR2(30 CHAR) := 'ACT_ADN_ADJNOJUDICIAL'; -- Variable para tabla de salida para el borrado
+	V_TABLA_2 VARCHAR2(30 CHAR) := 'ACT_SPS_SIT_POSESORIA'; -- Variable para tabla de salida para el borrado	
+	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	ERR_NUM NUMBER;-- Numero de errores
+	ERR_MSG VARCHAR2(2048);-- Mensaje de error	
+	V_SQL VARCHAR2(4000 CHAR);--Sentencia a ejecutar	
+	PL_OUTPUT VARCHAR2(32000 CHAR);
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS_12847';
+	
+
+BEGIN
+
+	--Adapto los campos insertados en la temporal para luego volcarlos al tarifario
+	DBMS_OUTPUT.PUT_LINE('[INICIO]');	
+	
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] PREPARANDO LOS DATOS DE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
+
+	V_SQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1 USING (  
+			SELECT ACT.ACT_ID, AUX.FECHA_TITULO, AUX.FECHA_POSESION
+			FROM '||V_ESQUEMA||'.AUX_HREOS_12847 AUX
+			JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON AUX.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO
+			) T2
+		    ON (T1.ACT_ID = T2.ACT_ID)
+		    WHEN MATCHED THEN UPDATE SET
+			T1.ADN_FECHA_TITULO = T2.FECHA_TITULO,
+			T1.FECHA_POSESION = T2.FECHA_POSESION,
+			T1.USUARIOMODIFICAR = '''||V_USUARIO||''',
+			T1.FECHAMODIFICAR = SYSDATE
+				 ';
+					
+	DBMS_OUTPUT.PUT_LINE(V_SQL);
+	EXECUTE IMMEDIATE V_SQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han mergeado en total '||SQL%ROWCOUNT||' registros en la tabla '||V_TABLA);
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] PREPARANDO LOS DATOS DE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_2||'.');
+
+	V_SQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA_2||' T1 USING (  
+			SELECT ACT.ACT_ID, AUX.FECHA_TITULO, AUX.FECHA_POSESION
+			FROM '||V_ESQUEMA||'.AUX_HREOS_12847 AUX
+			JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON AUX.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO
+			) T2
+		    ON (T1.ACT_ID = T2.ACT_ID)
+		    WHEN MATCHED THEN UPDATE SET
+        		T1.SPS_FECHA_TITULO = T2.FECHA_TITULO,
+        		T1.SPS_FECHA_TOMA_POSESION = T2.FECHA_POSESION,
+			T1.USUARIOMODIFICAR = '''||V_USUARIO||''',
+			T1.FECHAMODIFICAR = SYSDATE
+				 ';
+					
+	DBMS_OUTPUT.PUT_LINE(V_SQL);
+	EXECUTE IMMEDIATE V_SQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han mergeado en total '||SQL%ROWCOUNT||' registros en la tabla '||V_TABLA_2);
+	
+	
+	COMMIT;
+	
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+EXCEPTION
+    WHEN OTHERS THEN
+      PL_OUTPUT := PL_OUTPUT ||'[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE)||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||'-----------------------------------------------------------'||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||SQLERRM||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||V_SQL||CHR(10);
+      DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+      ROLLBACK;
+      RAISE;
+END;
+/
+EXIT;

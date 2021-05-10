@@ -79,6 +79,9 @@ public class ActivoAdjudicacionNoJudicial implements Serializable, Auditable {
 	@Column(name = "ADN_ID_ASUNTO_REC")
 	private Long idAsuntoRecAlaska;
 	
+	@Column(name = "FECHA_POSESION")
+	private Date fechaPosesion;
+	
 	@Version   
 	private Long version;
 	
@@ -181,4 +184,14 @@ public class ActivoAdjudicacionNoJudicial implements Serializable, Auditable {
 	public void setIdAsuntoRecAlaska(Long idAsuntoRecAlaska) {
 		this.idAsuntoRecAlaska = idAsuntoRecAlaska;
 	}
+
+	public Date getFechaPosesion() {
+		return fechaPosesion;
+	}
+
+	public void setFechaPosesion(Date fechaPosesion) {
+		this.fechaPosesion = fechaPosesion;
+	}
+	
+	
 }

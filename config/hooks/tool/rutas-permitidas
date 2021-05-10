@@ -171,6 +171,16 @@ func-rem-dnd-F3|func-rem-dnd-suelos
 func-rem-dnd-suelos|func-rem-dnd-tutelas
 R-Okitsu|func-rem-alaska-F2
 rem_mirror|func-rem-alaska-F2
+rem_mirror|func-rem-ursusBankia
+rem_mirror|func-rem-desvincularFechaPosesion
+rem_mirror|func-rem-marcajeOcupadosSeguridad
+R-Fortune|R-Arrufatina
+func-rem-porcentajeConstruccion|R-Arrufatina
+func-rem-dnd-tutelas|R-Arrufatina
 func-rem-mejorasRendimiento-BuscadorAgrupaciones|func-rem-mejorasRendimiento
 rem_mirror|func-rem-mejorasRendimiento-F2
+func-rem-ursusBankia|R-Siccari
+func-rem-desvincularFechaPosesion|R-Siccari
+func-rem-marcajeOcupadosSeguridad|R-Siccari
 rem_mirror|func-rem-cierreOficinas
+

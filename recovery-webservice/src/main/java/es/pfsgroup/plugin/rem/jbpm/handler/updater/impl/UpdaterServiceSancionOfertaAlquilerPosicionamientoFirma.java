@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -117,6 +118,10 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 					situacionPosesoria.setUsuarioModificarConTitulo(usuarioModificar);
 					situacionPosesoria.setFechaModificarConTitulo(new Date());
 					
+					if(usu!=null) {			
+						HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,situacionPosesoria,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
+						genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+					}
 					try {
 						situacionPosesoria.setFechaTomaPosesion(ft.parse(valor.getValor()));
 					} catch (ParseException e) {
@@ -124,6 +129,7 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 						e.printStackTrace();
 					}
 					activo.setSituacionPosesoria(situacionPosesoria);
+					
 				}
 
 			}

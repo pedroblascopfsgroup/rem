@@ -998,5 +998,38 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		if (esBankia && problemasUrsus == "true" && !Ext.isEmpty(problemasUrsusComprador) && problemasUrsusComprador.toUpperCase()=="SI") {
 			me.getViewModel().set('textoAdvertenciaProblemasUrsus','Problemas URSUS');
 		}
+	},
+	
+	habilitarLupaClientes: function() {
+		var me = this, expediente = me.getView().up('wizardBase').expediente;
+		estadoExpediente = expediente.getData().codigoEstado;
+		var estados = [CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION']
+		, CONST.ESTADOS_EXPEDIENTE['PTE_FIRMA']
+		, CONST.ESTADOS_EXPEDIENTE['CONTRAOFERTADO']
+		, CONST.ESTADOS_EXPEDIENTE['PTE_RESOLUCION_CES']
+		, CONST.ESTADOS_EXPEDIENTE['RPTA_OFERTANTE']
+		, CONST.ESTADOS_EXPEDIENTE['PEN_RES_OFER_COM']
+		, CONST.ESTADOS_EXPEDIENTE['PTE_RESOLUCION_CES']];
+		
+		if(estados.includes(estadoExpediente)) {
+			return true;
+		} else {
+			return false;
+		}
+	},
+	
+	habilitarClienteUrsus: function() {
+		var me = this, expediente = me.getView().up('wizardBase').expediente;
+		estadoExpediente = expediente.getData().codigoEstado;
+		var estados = [CONST.ESTADOS_EXPEDIENTE['RESERVADO'],
+			CONST.ESTADOS_EXPEDIENTE['PTE_PBC']
+		, CONST.ESTADOS_EXPEDIENTE['PTE_CIERRE'],
+		CONST.ESTADOS_EXPEDIENTE['PTE_POSICIONAMIENTO']];
+		
+		if(me.habilitarLupaClientes() || estados.includes(estadoExpediente)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 });

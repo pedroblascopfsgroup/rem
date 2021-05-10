@@ -1,0 +1,87 @@
+--/*
+--##########################################
+--## AUTOR=IVAN REPISO
+--## FECHA_CREACION=20210322
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-9235
+--## PRODUCTO=NO
+--##
+--## Finalidad: Script modifica DEG_ID = 2
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar.
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema.
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master.
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_TEXT_TABLA VARCHAR2(27 CHAR) := 'PFA_PREFACTURA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_USU VARCHAR2(30 CHAR) := 'REMVIP-9235'; -- Vble. auxiliar para almacenar el nombre de usuario que modifica los registros.
+    
+BEGIN		
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO]');
+
+	V_MSQL:= 'MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1 USING (
+					SELECT PFA.PFA_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' PFA 
+					JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = PFA.PRO_ID AND PRO.BORRADO = 0
+					JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID AND CRA.BORRADO = 0 
+					WHERE PFA.BORRADO = 0 AND CRA.DD_CRA_CODIGO = ''03'' AND PFA.DD_DEG_ID = 1) T2
+				ON (T1.PFA_ID = T2.PFA_ID)
+				WHEN MATCHED THEN UPDATE SET
+				T1.DD_DEG_ID = 2,
+				T1.USUARIOMODIFICAR = '''||V_USU||''',
+				T1.FECHAMODIFICAR = SYSDATE';
+	EXECUTE IMMEDIATE V_MSQL;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] MODIFICADOS DD_DEG_ID = 2 EN '|| SQL%ROWCOUNT ||' PREFACTURAS DE '||V_TEXT_TABLA);
+
+	V_MSQL:= 'MERGE INTO '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR T1 USING (
+					SELECT GPV.GPV_ID FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
+					JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID AND PRO.BORRADO = 0
+					JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID AND CRA.BORRADO = 0 
+					JOIN '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO EGA ON EGA.DD_EGA_ID = GPV.DD_EGA_ID AND EGA.DD_EGA_ID IN (1,12)
+					JOIN '||V_ESQUEMA||'.'||V_TEXT_TABLA||' PFA ON PFA.PFA_ID = GPV.PFA_ID AND PFA.BORRADO = 0
+					WHERE GPV.BORRADO = 0 AND GPV.PFA_ID IS NOT NULL AND CRA.DD_CRA_CODIGO = ''03'' AND GPV.DD_DEG_ID = 1) T2
+				ON (T1.GPV_ID = T2.GPV_ID)
+				WHEN MATCHED THEN UPDATE SET
+				T1.BORRADO = 1,
+				T1.USUARIOBORRAR = '''||V_USU||''',
+				T1.FECHABORRAR = SYSDATE';
+	EXECUTE IMMEDIATE V_MSQL;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] BORRADOS '|| SQL%ROWCOUNT ||' GASTOS EN GPV_GASTOS_PROVEEDOR');
+
+	COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+
+EXCEPTION
+		WHEN OTHERS THEN
+			err_num := SQLCODE;
+			err_msg := SQLERRM;
+
+			DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+			DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+			DBMS_OUTPUT.put_line(err_msg);
+
+			ROLLBACK;
+			RAISE;          
+
+END;
+
+/
+
+EXIT

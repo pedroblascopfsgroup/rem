@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * Dto para los datos de publicación de los activos.
  */
-public class DtoDatosPublicacionActivo extends WebDto {
+public class DtoDatosPublicacionActivo extends DtoTabActivo {
 
 	private Long idActivo;
 	private String estadoPublicacionVenta;
@@ -15,6 +15,7 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private Double precioWebVenta;
 	private Double precioWebAlquiler;
 	private String adecuacionAlquilerCodigo;
+	private String adecuacionAlquilerDescripcion;
 	private Integer totalDiasPublicadoVenta;
 	private Integer totalDiasPublicadoAlquiler;
 	private Integer totalDiasPublicadoHistoricoVenta;
@@ -24,12 +25,14 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private Boolean publicarSinPrecioVenta;
 	private Boolean noMostrarPrecioVenta;
 	private String motivoOcultacionVentaCodigo;
+	private String motivoOcultacionVentaDescripcion;
 	private String motivoOcultacionManualVenta;
 	private Boolean publicarAlquiler;
 	private Boolean ocultarAlquiler;
 	private Boolean publicarSinPrecioAlquiler;
 	private Boolean noMostrarPrecioAlquiler;
 	private String motivoOcultacionAlquilerCodigo;
+	private String motivoOcultacionAlquilerDescripcion;
 	private String motivoOcultacionManualAlquiler;
 	private Boolean deshabilitarCheckPublicarVenta;
 	private Boolean deshabilitarCheckOcultarVenta;
@@ -57,6 +60,7 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private Date fechaRevisionPublicacionesVenta;
 	private Date fechaRevisionPublicacionesAlquiler;
 	private String canalDePublicacion;
+	private String canalDePublicacionDescripcion;
 	private Date fechaPrimeraPublicacionMin;
 	private Date fechaUltimaPublicacionMin;
 	private Date fechaPrimeraPublicacionMay;
@@ -150,6 +154,14 @@ public class DtoDatosPublicacionActivo extends WebDto {
 
 	public void setAdecuacionAlquilerCodigo(String adecuacionAlquilerCodigo) {
 		this.adecuacionAlquilerCodigo = adecuacionAlquilerCodigo;
+	}
+	
+	public String getAdecuacionAlquilerDescripcion() {
+		return adecuacionAlquilerDescripcion;
+	}
+
+	public void setAdecuacionAlquilerDescripcion(String adecuacionAlquilerDescripcion) {
+		this.adecuacionAlquilerDescripcion = adecuacionAlquilerDescripcion;
 	}
 
 	public Double getPrecioWebVenta() {
@@ -311,6 +323,14 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	public void setMotivoOcultacionVentaCodigo(String motivoOcultacionVentaCodigo) {
 		this.motivoOcultacionVentaCodigo = motivoOcultacionVentaCodigo;
 	}
+	
+	public String getMotivoOcultacionVentaDescripcion() {
+		return motivoOcultacionVentaDescripcion;
+	}
+
+	public void setMotivoOcultacionVentaDescripcion(String motivoOcultacionVentaDescripcion) {
+		this.motivoOcultacionVentaDescripcion = motivoOcultacionVentaDescripcion;
+	}
 
 	public String getMotivoOcultacionManualVenta() {
 		return motivoOcultacionManualVenta;
@@ -358,6 +378,14 @@ public class DtoDatosPublicacionActivo extends WebDto {
 
 	public void setMotivoOcultacionAlquilerCodigo(String motivoOcultacionAlquilerCodigo) {
 		this.motivoOcultacionAlquilerCodigo = motivoOcultacionAlquilerCodigo;
+	}
+	
+	public String getMotivoOcultacionAlquilerDescripcion() {
+		return motivoOcultacionAlquilerDescripcion;
+	}
+
+	public void setMotivoOcultacionAlquilerDescripcion(String motivoOcultacionAlquilerDescripcion) {
+		this.motivoOcultacionAlquilerDescripcion = motivoOcultacionAlquilerDescripcion;
 	}
 
 	public String getMotivoOcultacionManualAlquiler() {
@@ -477,6 +505,14 @@ public class DtoDatosPublicacionActivo extends WebDto {
 
 	public void setCanalDePublicacion(String canalDePublicacion) {
 		this.canalDePublicacion = canalDePublicacion;
+	}
+	
+	public String getCanalDePublicacionDescripcion() {
+		return canalDePublicacionDescripcion;
+	}
+
+	public void setCanalDePublicacionDescripcion(String canalDePublicacionDescripcion) {
+		this.canalDePublicacionDescripcion = canalDePublicacionDescripcion;
 	}
 	
 }

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=20201008
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20210326
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-10618
@@ -14,6 +14,7 @@
 --##        0.2 Añadido campo GGE.GGE_MOTIVO_RECHAZO_PROP para motivo de rechazo bankia - Victor Olivares - 20190304 - HREOS-5384
 --##        0.3 Añadido campo TBJ_GPV.TBJ_NUM_TRABAJO para filtrar busqueda por numTrabajo - HREOS-8159
 --##        0.4 Adaptación de consulta al nuevo modelo de facturación - Daniel Algaba - HREOS-10618
+--##        0.5 Optimización de la vista - HREOS-13460
 --##########################################
 --*/
 
@@ -51,7 +52,7 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.VI_BUSQUEDA_GASTOS_PROVEEDOR...');
   EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR 
 	AS
-		SELECT
+		SELECT /*+PARALLEL*/
 		    GPV.GPV_ID
 		    , GPV.GPV_NUM_GASTO_HAYA
 		    , GPV.PRG_ID

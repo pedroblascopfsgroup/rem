@@ -18,7 +18,6 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 	
 	initComponent: function () {
 		var me = this;
-		
 		me.columns = [
 			{
 				dataIndex: 'idSuministro',
@@ -45,9 +44,9 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 					bind: {
 						store: '{comboDDTipoSuministro}'
 					},
+					allowBlank: false,
 					displayField: 'descripcion',
-					valueField: 'id',
-					allowBlank: false
+					valueField: 'id'
 				}
 			},
 			{
@@ -67,9 +66,9 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 					bind: {
 						store: '{comboDDSubtipoSuministro}'
 					},
+					allowBlank: false,
 					displayField: 'descripcion',
-					valueField: 'id',
-					allowBlank: false
+					valueField: 'id'
 				}
 			},
 			{
@@ -84,14 +83,14 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 					};
 					return nombre;
 				},
-				editor: {
+			editor: {
 					xtype: 'combobox',
 					bind: {
 						store: '{comboDDCompaniaSuministradora}'
 					},
+					allowBlank: false,
 					displayField: 'nombre',
-					valueField: 'id',
-					allowBlank: false
+					valueField: 'id'
 				}
 			},
 			{
@@ -111,9 +110,9 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 					bind: {
 						store: '{comboDDDomiciliado}'
 					},
+					allowBlank: false,
 					displayField: 'descripcion',
-					valueField: 'id',
-					allowBlank: false
+					valueField: 'id'
 				}
 			},
 			{
@@ -151,15 +150,15 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 					bind: {
 						store: '{comboDDPeriodicidad}'
 					},
+					allowBlank: true,
 					displayField: 'descripcion',
-					valueField: 'id',
-					allowBlank: true
+					valueField: 'id'
 				}
 			},
 			{
 				text:HreRem.i18n('fieldlabel.suministros.fechaAltaSuministro'),
 				dataIndex: 'fechaAlta',
-				flex:0.5,
+				flex:0.5,				
 				formatter: 'date("d/m/Y")',
 				editor: {
 					xtype: 'datefield',
@@ -184,9 +183,9 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 					bind: {
 						store: '{comboDDMotivoAltaSuministro}'
 					},
+					allowBlank: false,
 					displayField: 'descripcion',
-					valueField: 'id',
-					allowBlank: false
+					valueField: 'id'
 				}
 			},
 			{
@@ -240,9 +239,9 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 						store: '{comboDDValidado}',
 						disabled: '{!editarCheckValidado}'
 					},
+					allowBlank: true,
 					displayField: 'descripcion',
-					valueField: 'id',
-					allowBlank: true
+					valueField: 'id'
 				}
 			}
 			

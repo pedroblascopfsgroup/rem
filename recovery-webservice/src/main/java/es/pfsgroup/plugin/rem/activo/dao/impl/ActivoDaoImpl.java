@@ -20,6 +20,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
@@ -52,11 +53,11 @@ import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
+import es.pfsgroup.plugin.rem.model.AuxiliarCierreOficinasBankiaMul;
 import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
@@ -67,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
@@ -76,13 +78,14 @@ import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.VPlusvalia;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.utils.MSVREMUtils;
@@ -149,7 +152,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoUvem", Long.valueOf(dto.getIdUvem()));
 
 		if (dto.getEstadoActivoCodigo() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
 
 		if (dto.getTipoViaCodigo() != null)
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoViaCodigo", dto.getTipoViaCodigo());
@@ -333,13 +336,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
 
    		if (dto.getEntidadPropietariaCodigo() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(), true);
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo());
 
    		if (dto.getTipoTituloActivoCodigo() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
 
    		if (dto.getSubtipoActivoCodigo() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.subtipoActivoCodigo", dto.getSubtipoActivoCodigo(), true);
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subtipoActivoCodigo", dto.getSubtipoActivoCodigo());
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.refCatastral", dto.getRefCatastral(), true);
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFinca(), true);
    		if (dto.getProvinciaCodigo() != null)
@@ -363,7 +366,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoUvem", Long.valueOf(dto.getIdUvem()));
 
    		if (dto.getEstadoActivoCodigo() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
 
    		if (dto.getTipoViaCodigo() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoViaCodigo", dto.getTipoViaCodigo());
@@ -601,7 +604,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 
 		if (dto.getEstadoActivoCodigo() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
 
 		if (!Checks.esNulo(dto.getConFsvVenta())) {
 			if (BooleanUtils.toBoolean(dto.getConFsvVenta())) {
@@ -773,6 +776,53 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.subFasePublicacionCodigo", dto.getSubfasePublicacionCodigo());
    		if (!Checks.esNulo(dto.getTipoComercializacionCodigo()))HQLBuilder.addFiltroWhereInSiNotNull(hb, "activopubli.tipoComercializacionCodigo", Arrays.asList(dto.getTipoComercializacionCodigo()));
 
+		return HibernateQueryUtils.page(this, hb, dto);
+	}
+	
+	@Override
+	public Page getBusquedaPublicacionGrid(DtoPublicacionGridFilter dto) {
+		HQLBuilder hb = new HQLBuilder(" from VGridBusquedaPublicaciones vgrid");
+
+		if (dto.getNumActivo() != null && StringUtils.isNumeric(dto.getNumActivo()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivo", Long.valueOf(dto.getNumActivo()));
+
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.estadoPublicacionVentaCodigo", dto.getEstadoPublicacionVentaCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.motivosOcultacionVentaCodigo", dto.getMotivosOcultacionVentaCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.estadoPublicacionAlquilerCodigo", dto.getEstadoPublicacionAlquilerCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.motivosOcultacionAlquilerCodigo", dto.getMotivosOcultacionAlquilerCodigo());
+
+		if (dto.getEstadoPublicacionVentaCodigo() != null && dto.getEstadoPublicacionAlquilerCodigo() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoComercializacionCodigo", DDTipoComercializacion.CODIGO_ALQUILER_VENTA);
+		} else if (dto.getEstadoPublicacionVentaCodigo() != null) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.tipoComercializacionCodigo", Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA));
+		} else if (dto.getEstadoPublicacionAlquilerCodigo() != null) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.tipoComercializacionCodigo", Arrays.asList(DDTipoComercializacion.CODIGOS_ALQUILER));
+		}
+
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoActivoCodigo", dto.getTipoActivoCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subtipoActivoCodigo", dto.getSubtipoActivoCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.fasePublicacionCodigo", dto.getFasePublicacionCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subfasePublicacionCodigo", dto.getSubfasePublicacionCodigo());
+
+		if (Boolean.TRUE.equals(dto.getCheckOkAdmision()) || Boolean.TRUE.equals(dto.getCheckOkVenta()) || Boolean.TRUE.equals(dto.getCheckOkAlquiler()))
+			HQLBuilder.addFiltroIgualQue(hb, "vgrid.admision", 1);
+		if (Boolean.TRUE.equals(dto.getCheckOkGestion()) || Boolean.TRUE.equals(dto.getCheckOkVenta()) || Boolean.TRUE.equals(dto.getCheckOkAlquiler()))
+			HQLBuilder.addFiltroIgualQue(hb, "vgrid.gestion", 1);		
+		if (Boolean.TRUE.equals(dto.getCheckOkInformeComercial()))
+			HQLBuilder.addFiltroIgualQue(hb, "vgrid.informeComercial", 1);
+		if (Boolean.TRUE.equals(dto.getCheckOkPrecio()))
+			HQLBuilder.addFiltroIgualQue(hb, "vgrid.precio", 1);		
+		if (Boolean.TRUE.equals(dto.getCheckOkVenta())) {		
+			hb.appendWhere(" (vgrid.adecuacionAlquilerCodigo = '02' OR vgrid.publicarSinPrecioVenta = 1) "
+					+ " AND NVL(vgrid.informeComercial, 0) = CASE WHEN vgrid.carteraCodigo IN ('01','08') THEN 1 ELSE NVL(vgrid.informeComercial, 0) END ");			
+		}
+		if (Boolean.TRUE.equals(dto.getCheckOkAlquiler())) {		
+			hb.appendWhere(" vgrid.tipoActivoCodigo = '02'"
+					+ " AND vgrid.adecuacionAlquilerCodigo = '01' OR vgrid.adecuacionAlquilerCodigo = '03' AND vgrid.adjuntoActivo = 1  AND (vgrid.conPrecioAlquiler = 1 OR vgrid.publicarSinPrecioAlquiler = 1) "
+					+ " AND NVL(vgrid.informeComercial, 0) = CASE WHEN vgrid.carteraCodigo IN ('01','08') THEN 1 ELSE NVL(vgrid.informeComercial, 0) END ");
+		}
 		return HibernateQueryUtils.page(this, hb, dto);
 	}
 
@@ -1024,9 +1074,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VOfertasActivosAgrupacion> getListOfertasActivo(Long idActivo) {
+	public List<VGridOfertasActivosAgrupacionIncAnuladas> getListOfertasActivo(Long idActivo) {
 
-		String hql = " from VOfertasActivosAgrupacion voa ";
+		String hql = " from VGridOfertasActivosAgrupacionIncAnuladas voa ";
 		String listaIdsOfertas = "";
 
 		HQLBuilder hb = new HQLBuilder(hql);
@@ -1046,16 +1096,16 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			hb.appendWhere(" voa.idOferta in (" + listaIdsOfertas + ") ");
 		}
 
-		return (List<VOfertasActivosAgrupacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString())
+		return (List<VGridOfertasActivosAgrupacionIncAnuladas>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString())
 				.list();
 
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo) {
+	public List<VGridOfertasActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo) {
 
-		String hql = " from VOfertasTramitadasPendientesActivosAgrupacion voa2 ";
+		String hql = " from VGridOfertasActivosAgrupacion voa2 ";
 		String listaIdsOfertas = "";
 
 		HQLBuilder hb = new HQLBuilder(hql);
@@ -1075,7 +1125,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			hb.appendWhere(" voa2.idOferta in (" + listaIdsOfertas + ") ");
 		}
 
-		return (List<VOfertasTramitadasPendientesActivosAgrupacion>) this.getSessionFactory().getCurrentSession()
+		return (List<VGridOfertasActivosAgrupacion>) this.getSessionFactory().getCurrentSession()
 				.createQuery(hb.toString()).list();
 
 	}
@@ -2081,6 +2131,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
+	public String getUltimaFasePublicacion(Long id) {
+		
+		String maxId = rawDao.getExecuteSQL("select max(hfp_id) from ACT_HFP_HIST_FASES_PUB where act_id = "+ id + " and hfp_fecha_fin is not null and borrado = 0");
+		return maxId;
+	}
+	
 	public Long getNextBbvaNumActivo() {
 		String sql = "SELECT S_BBVA_NUM_ACTIVO.NEXTVAL FROM DUAL ";
 		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())
@@ -2129,7 +2185,53 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		return actAlquiladosList;
 	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo, String usuario) {
+		String procedureHQL = "BEGIN SP_CAMBIO_OFICINA_BANKIA(:vUsuario,:plOutput, :codProveedorAnterior, :codProveedorNuevo); END;";
+		int resultado = 0;
+		
+		try {
+			Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+			callProcedureSql.setParameter("vUsuario", usuario);
+			callProcedureSql.setParameter("plOutput", new String());
+			callProcedureSql.setParameter("codProveedorAnterior", codProveedorAnterior);
+			callProcedureSql.setParameter("codProveedorNuevo", codProveedorNuevo);			
+			
+			
+			resultado = callProcedureSql.executeUpdate();
+
+			return resultado == 1;
+		} catch (Exception e) {
+			logger.error("Error en el SP_CAMBIO_OFICINA_BANKIA para el COD PROVEEDOR ANTERIOR "+codProveedorAnterior, e);			
+			return false;
+		}
+
+	}
 	
+	@Override
+	@Transactional
+	public List<Long> getIdsAuxiliarCierreOficinaBankias() {
+		List<Object> resultados = rawDao.getExecuteSQLList(
+				"		SELECT AUX.ECO_ID" + 
+				"		FROM ENVIO_CIERRE_OFICINAS_BANKIA AUX" + 
+				"		WHERE AUX.ENVIADO = 0");
+		
+		List<Long> listaTareas = new ArrayList<Long>();
+
+		/*for(Object o: resultados){
+			listaTareas.add((Long) o);
+		}*/
+		
+		for(Object o: resultados){
+			String objetoString = o.toString();
+			listaTareas.add(Long.parseLong(objetoString));
+		}
+
+		return listaTareas;
+	}
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivo(Long idActivo) {
@@ -2138,6 +2240,20 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return genericDao.getListOrdered(ActivoHistoricoValoraciones.class, order, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
 	}
 	
+
+	@Override
+	public boolean perteneceActivoREAM(Long idActivo) {
+		String sql = " SELECT count(1)      "
+			+			"				 FROM V_ACTIVOS_GESTIONADOS_REAM act    "
+			+			"				 WHERE act.act_id =       " + idActivo ;
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue() > 0;
+		}
+		return false;
+
+	}
+
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivoAndTipoPrecio(Long idActivo, String codigoTipoPrecio) {
@@ -2200,5 +2316,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		return false;
 		
+	}
+	
+	@Override
+	public List<AuxiliarCierreOficinasBankiaMul> getListAprAuxCierreBnK() {
+		//TODO aquí se recoge el objetoMapeado
+		return genericDao.getList(AuxiliarCierreOficinasBankiaMul.class);
 	}
 }

@@ -1699,6 +1699,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me= this;
 		var url =  $AC.getRemoteUrl('expedientecomercial/enviarTitularesUvem');
 		me.getView().mask(HreRem.i18n("msg.mask.espere"));
+
+		var permite = this.permiteContinuarPorEstadoExpediente(btn);
+		
+		if(!permite){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.estado.expediente.no.valido"));	
+			activeTab = btn.up('tabpanel').getActiveTab();
+			activeTab.funcionRecargar();
+			me.getView().unmask();
+			return permite;
+		}
 		
 		Ext.Ajax.request({
 			     url: url,
@@ -4407,14 +4417,21 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			
 	},
 	
-	validarCompradores: function() {
+	validarCompradores: function(btn) {
 	
 		var me = this;
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
-		//var gridCompradores = me.lookupReference('listadoCompradores');
-		//var longitudListaCompradores = gridCompradores.getView().getStore().getData().items.length;
-		//var problemasUrsus = gridCompradores.getView().getStore().getData().items[i].data.problemasUrsus;
-			
+		var permite = this.permiteContinuarPorEstadoExpediente(btn);
+		
+		if(!permite){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.estado.expediente.no.valido"));	
+			activeTab = btn.up('tabpanel').getActiveTab();
+			activeTab.funcionRecargar();
+			me.getView().unmask();
+			return permite;
+		}
+		
+
 		var url =$AC.getRemoteUrl('expedientecomercial/getComprobarCompradores');
 		Ext.Ajax.request({
 		     url: url,
@@ -5164,6 +5181,7 @@ comprobarFormatoModificar: function() {
 			});	
 		}
 	},
+
 	contrasteListas: function(btn){
 		var me= this;
 		var url =  $AC.getRemoteUrl('expedientecomercial/contrasteListas');
@@ -5172,20 +5190,91 @@ comprobarFormatoModificar: function() {
 		me.getView().mask(HreRem.i18n("msg.mask.espere"));
 		
 		Ext.Ajax.request({
-			     url: url,
-			     params:  {numOferta : numOferta , idExpediente: idExpediente},
-			     success: function(response, opts) {
-	                me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));           	
-			     },
+		     url: url,
+		     params:  {numOferta : numOferta , idExpediente: idExpediente},
+		     success: function(response, opts) {
+                me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));           	
+		     },
 
-		        failure: function(response, opts) {
-						me.fireEvent("errorToast",data.msg);
-				},
+	        failure: function(response, opts) {
+					me.fireEvent("errorToast",data.msg);
+			},
 
-				callback : function() {
-					me.getView().unmask();
-					me.refrescarExpediente(true);
-				}
-			});
+			callback : function() {
+				me.getView().unmask();
+				me.refrescarExpediente(true);
+			}
+		});
+	},
+	
+	recalcularHonorarios : function(btn) {
+		var form = btn.up('formBase');
+		var me = this;
+		var url = $AC.getRemoteUrl('expedientecomercial/recalcularHonorarios');
+		me.getView().mask(HreRem.i18n("msg.mask.espere"));
+		
+		Ext.Ajax.request({
+			url: url,
+			
+		    params:  {
+		    	idExpediente : me.getViewModel().get("expediente.id")
+		    },
+		    
+		    success: function(response, opts) {
+		    	var data = {};
+		    	try {
+		    		data = Ext.decode(response.responseText);
+		    	}  catch (e){ };
+               
+		    	if(data.success === "true") {
+		    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					form.funcionRecargar();           	
+		    	}else {
+		    		if(data.errorUvem == "true"){
+		    			me.fireEvent("errorToast", data.msg);		
+		    		}
+		    		else{
+		    			Utils.defaultRequestFailure(response, opts);
+		    		}
+		    	}
+		     },
+
+		     failure: function(response, opts) {
+		    	 if(data.errorUvem == "true"){
+		    		 me.fireEvent("errorToast", data.msg);		
+		    	 } else {
+		    		 Utils.defaultRequestFailure(response, opts);
+		    	 }
+		     },
+
+		     callback: function() {
+		    	 me.getView().unmask();
+		     }
+		});		
+	},
+	
+	permiteContinuarPorEstadoExpediente : function(btn){
+		var me = this;
+		
+		var estadoActual = me.getViewModel().getData().expediente.getData().codigoEstado;
+		var estadosAntesAprobado = [CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'],CONST.ESTADOS_EXPEDIENTE['PTE_FIRMA'],CONST.ESTADOS_EXPEDIENTE['CONTRAOFERTADO'],
+			CONST.ESTADOS_EXPEDIENTE['PTE_RESOLUCION_CES'],CONST.ESTADOS_EXPEDIENTE['RPTA_OFERTANTE'],CONST.ESTADOS_EXPEDIENTE['PEN_RES_OFER_COM'],CONST.ESTADOS_EXPEDIENTE['PTE_RESOLUCION_CES']];
+		var estadosDespuesReservado = [CONST.ESTADOS_EXPEDIENTE['RESERVADO'],CONST.ESTADOS_EXPEDIENTE['PTE_PBC'],CONST.ESTADOS_EXPEDIENTE['PTE_CIERRE'], CONST.ESTADOS_EXPEDIENTE['PTE_POSICIONAMIENTO']];
+
+		if("enviarTitularesUvem" === btn.handler){
+			if(estadosAntesAprobado.includes(estadoActual) || estadosDespuesReservado.includes(estadoActual)) {
+				return false;   			
+			} else {
+				return true;   			
+			}
+		}else if("validarCompradores" === btn.handler){
+			if(estadosAntesAprobado.includes(estadoActual)) {
+    			return false;   			
+    		} else {
+    			return true;   			
+    		}
 		}
+	
+	}
+
 });

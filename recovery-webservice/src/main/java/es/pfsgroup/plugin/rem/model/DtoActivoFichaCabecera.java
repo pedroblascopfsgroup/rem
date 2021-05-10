@@ -41,6 +41,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String provinciaCodigo;
 	private String provinciaDescripcion;
 	private String paisCodigo;
+	private String paisDescripcion;
 	private String tipoViaCodigo;
 	private String tipoViaDescripcion;
 	private String tipoActivoCodigo;
@@ -59,6 +60,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String subcarteraCodigo;
 	private String subcarteraDescripcion;
 	private String estadoActivoCodigo;
+	private String estadoActivoDescripcion;
 	private Integer divHorizontal;
 	private String tipoUsoDestinoCodigo;
 	private String tipoUsoDestinoDescripcion;
@@ -68,8 +70,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean tieneRegistroContrato;
 	private Integer diasCambioEstadoActivo;
 	private String tipoSegmentoCodigo;
+	private String tipoSegmentoDescripcion;
 	private String estadoRegistralCodigo;
-
+	private String estadoRegistralDescripcion;
+	
 	// Comunidad de propietarios
 	private String tipoCuotaCodigo;
 	private String direccionComunidad;
@@ -174,6 +178,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String estadoExpIncorrienteDescripcion;
 	private String productoDescripcion;
 	private String entradaActivoBankiaCodigo;
+	private String entradaActivoBankiaDescripcion;
 	
 	//Activo integrado en agrupación asistida
 	private Boolean integradoEnAgrupacionAsistida;
@@ -254,7 +259,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	// Datos Perimetro Apple
 	private String servicerActivoCodigo;
-	private String cesionSaneamientoCodigo;	
+	private String servicerActivoDescripcion;
+	private String cesionSaneamientoCodigo;
+	private String cesionSaneamientoDescripcion;
 	private Integer perimetroMacc;
 	private Integer perimetroCartera;
 	private String nombreCarteraPerimetro;;
@@ -311,7 +318,11 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String subestadoAdmisionCodCabecera;
 	private String estadoAdmisionDescCabecera;
 	private String subestadoAdmisionDescCabecera;
-	private Boolean esEditableActivoEstadoRegistral;  
+	private Boolean esEditableActivoEstadoRegistral;
+	private String estadoFisicoActivoDND;
+	private String estadoFisicoActivoDNDDescripcion;
+	private Double porcentajeConstruccion;
+	private Boolean isEditablePorcentajeConstruccion;
 
 	private Boolean activoChkPerimetroAlquiler;
 	private List<?> activosAgrupacionRestringida;
@@ -654,7 +665,15 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setEstadoActivoCodigo(String estadoActivoCodigo) {
 		this.estadoActivoCodigo = estadoActivoCodigo;
 	}
+	
+	public String getEstadoActivoDescripcion() {
+		return estadoActivoDescripcion;
+	}
 
+	public void setEstadoActivoDescripcion(String estadoActivoDescripcion) {
+		this.estadoActivoDescripcion = estadoActivoDescripcion;
+	}
+	
 	public Integer getDivHorizontal() {
 		return divHorizontal;
 	}
@@ -822,7 +841,15 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setPaisCodigo(String paisCodigo) {
 		this.paisCodigo = paisCodigo;
 	}
+	
+	public String getPaisDescripcion() {
+		return paisDescripcion;
+	}
 
+	public void setPaisDescripcion(String paisDescripcion) {
+		this.paisDescripcion = paisDescripcion;
+	}
+	
 	public String getLatitud() {
 		return latitud;
 	}
@@ -1609,6 +1636,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.entradaActivoBankiaCodigo = entradaActivoBankiaCodigo;
 	}
 
+	public String getEntradaActivoBankiaDescripcion() {
+		return entradaActivoBankiaDescripcion;
+	}
+
+	public void setEntradaActivoBankiaDescripcion(String entradaActivoBankiaDescripcion) {
+		this.entradaActivoBankiaDescripcion = entradaActivoBankiaDescripcion;
+	}
+	
 	public String getNumInmovilizadoBankia() {
 		return numInmovilizadoBankia;
 	}
@@ -1979,6 +2014,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setServicerActivoCodigo(String servicerActivoCodigo) {
 		this.servicerActivoCodigo = servicerActivoCodigo;
 	}
+	
+	public String getServicerActivoDescripcion() {
+		return servicerActivoDescripcion;
+	}
+
+	public void setServicerActivoDescripcion(String servicerActivoDescripcion) {
+		this.servicerActivoDescripcion = servicerActivoDescripcion;
+	}
 
 	public String getCesionSaneamientoCodigo() {
 		return cesionSaneamientoCodigo;
@@ -1986,6 +2029,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setCesionSaneamientoCodigo(String cesionSaneamientoCodigo) {
 		this.cesionSaneamientoCodigo = cesionSaneamientoCodigo;
+	}
+	
+	public String getCesionSaneamientoDescripcion() {
+		return cesionSaneamientoDescripcion;
+	}
+
+	public void setCesionSaneamientoDescripcion(String cesionSaneamientoDescripcion) {
+		this.cesionSaneamientoDescripcion = cesionSaneamientoDescripcion;
 	}
 
 	public Integer getPerimetroMacc() {
@@ -2113,6 +2164,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setTipoSegmentoCodigo(String tipoSegmentoCodigo) {
 		this.tipoSegmentoCodigo = tipoSegmentoCodigo;
+	}
+	
+	public String getTipoSegmentoDescripcion() {
+		return tipoSegmentoDescripcion;
+	}
+
+	public void setTipoSegmentoDescripcion(String tipoSegmentoDescripcion) {
+		this.tipoSegmentoDescripcion = tipoSegmentoDescripcion;
 	}
 
 	public Boolean getIsUA() {
@@ -2379,7 +2438,15 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setEstadoRegistralCodigo(String estadoRegistralCodigo) {
 		this.estadoRegistralCodigo = estadoRegistralCodigo;
 	}
+	
+	public String getEstadoRegistralDescripcion() {
+		return estadoRegistralDescripcion;
+	}
 
+	public void setEstadoRegistralDescripcion(String estadoRegistralDescripcion) {
+		this.estadoRegistralDescripcion = estadoRegistralDescripcion;
+	}
+	
 	public Boolean getEsEditableActivoEstadoRegistral() {
 		return esEditableActivoEstadoRegistral;
 	}
@@ -2388,6 +2455,29 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.esEditableActivoEstadoRegistral = esEditableActivoEstadoRegistral;
 	}
 
+	public String getEstadoFisicoActivoDND() {
+		return estadoFisicoActivoDND;
+	}
+
+	public void setEstadoFisicoActivoDND(String estadoFisicoActivoDND) {
+		this.estadoFisicoActivoDND = estadoFisicoActivoDND;
+	}
+
+	public Double getPorcentajeConstruccion() {
+		return porcentajeConstruccion;
+	}
+
+	public void setPorcentajeConstruccion(Double porcentajeConstruccion) {
+		this.porcentajeConstruccion = porcentajeConstruccion;
+	}
+
+	public Boolean getIsEditablePorcentajeConstruccion() {
+		return isEditablePorcentajeConstruccion;
+	}
+
+	public void setIsEditablePorcentajeConstruccion(Boolean isEditablePorcentajeConstruccion) {
+		this.isEditablePorcentajeConstruccion = isEditablePorcentajeConstruccion;
+	}
 	public String getCodPromocionBbva() {
 		return codPromocionBbva;
 	}
@@ -2402,6 +2492,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setCdpen(String cdpen) {
 		this.cdpen = cdpen;
+	}
+
+	public String getEstadoFisicoActivoDNDDescripcion() {
+		return estadoFisicoActivoDNDDescripcion;
+	}
+
+	public void setEstadoFisicoActivoDNDDescripcion(String estadoFisicoActivoDNDDescripcion) {
+		this.estadoFisicoActivoDNDDescripcion = estadoFisicoActivoDNDDescripcion;
 	}	
 	
 }

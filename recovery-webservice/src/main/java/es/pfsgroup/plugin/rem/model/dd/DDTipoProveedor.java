@@ -1,5 +1,9 @@
 package es.pfsgroup.plugin.rem.model.dd;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -21,6 +25,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 
 /**
  * Modelo que gestiona el diccionario de los tipos de proveedores de los activos
@@ -53,7 +58,10 @@ public class DDTipoProveedor implements Auditable, Dictionary {
 	public static final String COD_SALESFORCE = "33";
 	public static final String COD_OFICINA_LIBERBANK = "38";
 	public static final String COD_SUMINISTRO = "25";
+	
+	public static final List<String> CODIGOS_OFICINAS = new ArrayList<String>(Arrays.asList(COD_OFICINA_BANKIA, COD_OFICINA_CAJAMAR, COD_OFICINA_LIBERBANK));
 
+	public static final String COD_SUELOS_DND = "43";
 	@Id
 	@Column(name = "DD_TPR_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoProveedorGenerator")
@@ -149,6 +157,16 @@ public class DDTipoProveedor implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
+	public static boolean isTipoProveedorOficina(ActivoProveedor activoProveedor) {
+		boolean esTipoOficina = false;
+		
+		if(activoProveedor != null && activoProveedor.getTipoProveedor() != null) {
+			if(CODIGOS_OFICINAS.contains(activoProveedor.getTipoProveedor().getCodigo())) {
+				esTipoOficina = true;
+			}
+		}
+		return esTipoOficina;
+	}
 }
 
 

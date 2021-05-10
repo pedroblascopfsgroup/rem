@@ -6,7 +6,7 @@ Ext.define('HreRem.view.publicacion.PublicacionMain', {
     layout		: 'fit',
     requires	: ['HreRem.view.publicacion.PublicacionController', 'HreRem.view.publicacion.activos.ActivosPublicacionMain',
             	   'HreRem.view.publicacion.configuracion.ConfiguracionPublicacionMain', 'HreRem.view.publicacion.PublicacionModel',
-            	   'HreRem.model.BusquedaActivosPublicacion', 'HreRem.view.publicacion.activos.ActivosPublicacionList'],
+            	   'HreRem.view.publicacion.activos.ActivosPublicacionList'],
     controller	: 'publicaciones',
     viewModel	: {
         type: 'publicaciones'

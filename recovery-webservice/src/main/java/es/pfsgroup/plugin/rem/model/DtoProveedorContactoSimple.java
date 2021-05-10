@@ -34,7 +34,7 @@ public class DtoProveedorContactoSimple implements Comparable<DtoProveedorContac
 	private String loginUsuario;
 	private String codProvincia;
 	private Boolean usuarioGrupo;
-	
+	private String fullName;
 	
 	
 	public Long getId() {
@@ -178,6 +178,11 @@ public class DtoProveedorContactoSimple implements Comparable<DtoProveedorContac
 		}
 		return resultado;
 	}
-	
+	public String getFullName() {
+		return fullName;
+	}
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}	
 	
 }

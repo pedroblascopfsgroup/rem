@@ -21,6 +21,7 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	private Date fechaTomaPosesion;
 	private Integer ocupado;
 	private String conTitulo;
+	private String conTituloDescripcion;
 	private Integer riesgoOcupacion;
 	private Date fechaAccesoTapiado;
 	private Date fechaAccesoAntiocupa;
@@ -47,6 +48,7 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	private Date fechaRecepcionLlave;
 	private Date fechaPrimerAnillado;
 	private String posesionNegociada;
+	private Boolean perteneceActivoREAM;
 		
 	public String getTipoEstadoAlquiler() {
 		return tipoEstadoAlquiler;
@@ -239,6 +241,19 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	}
 	public void setPosesionNegociada(String posesionNegociada) {
 		this.posesionNegociada = posesionNegociada;
+	}
+	public Boolean getPerteneceActivoREAM() {
+		return perteneceActivoREAM;
+	}
+	public void setPerteneceActivoREAM(Boolean perteneceActivoREAM) {
+		this.perteneceActivoREAM = perteneceActivoREAM;
+	}
+	
+	public String getConTituloDescripcion() {
+		return conTituloDescripcion;
+	}
+	public void setConTituloDescripcion(String conTituloDescripcion) {
+		this.conTituloDescripcion = conTituloDescripcion;
 	}
 
 	

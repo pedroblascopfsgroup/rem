@@ -97,5 +97,7 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 	ExpedienteComercial getExpedienteComercialByNumExpediente(Long numeroExpediente);
 	
 	List<VListadoOfertasAgrupadasLbk> getListActivosOfertaPrincipal(Long numOferta);
+
+	Float getPorcentajeCompra(Long idExpediente);
 	
 }

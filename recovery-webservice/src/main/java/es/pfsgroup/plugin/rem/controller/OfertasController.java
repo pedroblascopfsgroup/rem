@@ -7,7 +7,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.PathParam;
@@ -24,8 +26,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.config.ConfigManager;
-import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
@@ -36,6 +38,8 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
@@ -46,15 +50,13 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
-import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
+import es.pfsgroup.plugin.rem.excel.OfertaGridExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoExcelFichaComercial;
-import es.pfsgroup.plugin.rem.model.DtoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
+import es.pfsgroup.plugin.rem.model.DtoOfertaGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
@@ -63,11 +65,11 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import es.pfsgroup.plugin.rem.model.VGridBusquedaOfertas;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -129,77 +131,45 @@ public class OfertasController {
 
 	@Autowired
 	private ConfigManager configManager;
+	
+	@Resource
+	private Properties appProperties;
 			
-	private static final String CLIENTE_HAYA = "HAYA";
 	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_DATA_KEY = "data";
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListOfertas(DtoOfertasFilter dtoOfertasFilter, ModelMap model) {
-		try {
-			dtoOfertasFilter.setSort("voferta.fechaCreacion");
-			dtoOfertasFilter.setDir("DESC");
-			
-			DtoPage page = ofertaApi.getListOfertasUsuario(dtoOfertasFilter);
-
-			model.put("data", page.getResults());
-			model.put("totalCount", page.getTotalCount());
-			model.put("success", true);
-
-		} catch (Exception e) {
-			logger.error("Error en ofertasController", e);
-			model.put("success", false);
-		}
-
-		return createModelAndViewJson(model);
-	}
+	private static final String RESPONSE_TOTALCOUNT_KEY = "totalCount";
+	private static final String RESPONSE_ERROR_KEY = "error";
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcel(DtoOfertasFilter dtoOfertasFilter, HttpServletRequest request, HttpServletResponse response) throws IOException {
-		dtoOfertasFilter.setStart(excelReportGeneratorApi.getStart());
-		dtoOfertasFilter.setLimit(excelReportGeneratorApi.getLimit());
+	public void generateExcel(DtoOfertaGridFilter dto, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		dto.setStart(excelReportGeneratorApi.getStart());
+		dto.setLimit(excelReportGeneratorApi.getLimit());
 		
-		String dtoCarteraCodigo = dtoOfertasFilter.getCarteraCodigo();
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		List<VOfertasActivosAgrupacion> listaOfertas = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasUsuario(dtoOfertasFilter).getResults();
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		List<VGridBusquedaOfertas> listaOfertas = (List<VGridBusquedaOfertas>) ofertaApi.getBusquedaOfertasGridUsuario(dto).getResults();
 		HashMap<Long,String> fechasReunionComite = new HashMap<Long, String>();
 		HashMap<Long,String> sancionadores = new HashMap<Long, String>();
+		boolean esCarteraLBK = false;
 		
-		if((!Checks.esNulo(usuarioCartera) && (DDCartera.CODIGO_CARTERA_LIBERBANK).equals(usuarioCartera.getCartera().getCodigo()))
-				|| (!Checks.esNulo(dtoCarteraCodigo) && (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(dtoCarteraCodigo)))){
-			for(VOfertasActivosAgrupacion oferta : listaOfertas){
-				List<Long> TareasExternasId = activoTareaExternaDao.getTareasExternasIdByOfertaId(oferta.getId());
+		if((usuarioCartera != null  && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(usuarioCartera.getCartera().getCodigo()))
+				|| DDCartera.CODIGO_CARTERA_LIBERBANK.equals(dto.getCarteraCodigo())){			
+			esCarteraLBK = true;
+			for(VGridBusquedaOfertas oferta : listaOfertas){
+				List<Long> tareasExternasId = activoTareaExternaDao.getTareasExternasIdByOfertaId(oferta.getId());
 				Filter filterTap01 = genericDao.createFilter(FilterType.EQUALS, "codigo", "T013_ResolucionComite");
 				Long idResolucionComite = genericDao.get(TareaProcedimiento.class, filterTap01).getId();
 				Filter filterTap02 = genericDao.createFilter(FilterType.EQUALS, "codigo", "T015_ResolucionExpediente");
 				Long idResolucionExpediente = genericDao.get(TareaProcedimiento.class, filterTap02).getId();
 				
-				//01->Venta, 02->Alquiler
-				if(("01").equals(oferta.getCodigoTipoOferta())){
-					for(Long tareaExternaId : TareasExternasId){
+				if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getCodigoTipoOferta()) || DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getCodigoTipoOferta())){
+					for(Long tareaExternaId : tareasExternasId){
 						TareaExterna tareaExterna = activoTareaExternaApi.get(tareaExternaId);
-						if((idResolucionComite).equals(tareaExterna.getTareaProcedimiento().getId())){
-							List<TareaExternaValor> valores = activoTareaExternaDao.getByTareaExterna(tareaExterna.getId());
-							for(TareaExternaValor valor : valores){
-								if(("fechaReunionComite").equals(valor.getNombre())){
-									fechasReunionComite.put(oferta.getId(), valor.getValor());
-								}
-								if(("comiteInternoSancionador").equals(valor.getNombre())){
-									sancionadores.put(oferta.getId(), valor.getValor());
-								}
-							}
-						}
-					}
-				}else if(("02").equals(oferta.getCodigoTipoOferta())){
-					for(Long tareaExternaId : TareasExternasId){
-						TareaExterna tareaExterna = activoTareaExternaApi.get(tareaExternaId);
-						if((idResolucionExpediente).equals(tareaExterna.getTareaProcedimiento().getId())){
+						if(idResolucionComite.equals(tareaExterna.getTareaProcedimiento().getId()) ||
+						   idResolucionExpediente.equals(tareaExterna.getTareaProcedimiento().getId())){
 							List<TareaExternaValor> valores = activoTareaExternaDao.getByTareaExterna(tareaExterna.getId());
 							for(TareaExternaValor valor : valores){
 								if(("fechaReunionComite").equals(valor.getNombre())){
@@ -214,46 +184,70 @@ public class OfertasController {
 				}
 			}
 		}
-		
-		new EmptyParamDetector().isEmpty(listaOfertas.size(), "ofertas",  usuarioManager.getUsuarioLogado().getUsername());
-		
-		ExcelReport report = new OfertasExcelReport(listaOfertas, dtoCarteraCodigo, usuarioCartera, fechasReunionComite, sancionadores);
 
+		new EmptyParamDetector().isEmpty(listaOfertas.size(), "ofertas",  usuarioManager.getUsuarioLogado().getUsername());		
+		ExcelReport report = new OfertaGridExcelReport(listaOfertas, esCarteraLBK, fechasReunionComite, sancionadores);
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}	
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional()
-	public ModelAndView registrarExportacion(DtoOfertasFilter dtoOfertasFilter, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView registrarExportacion(DtoOfertaGridFilter dto, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	String intervaloTiempo = !Checks.esNulo(appProperties.getProperty("haya.tiempo.espera.export")) ? appProperties.getProperty("haya.tiempo.espera.export") : "300000";
 		ModelMap model = new ModelMap();
-		Usuario user = null;
 		Boolean isSuperExport = false;
+		Boolean permitido = true;
+		String filtros = parameterParser(request.getParameterMap());
+		Usuario user = usuarioManager.getUsuarioLogado();
+		Long tiempoPermitido = System.currentTimeMillis() - Long.parseLong(intervaloTiempo);
+		String cuentaAtras = null;
 		try {
-			int count = ofertaApi.getListOfertasUsuario(dtoOfertasFilter).getTotalCount();
-			user = usuarioManager.getUsuarioLogado();
-			AuditoriaExportaciones ae = new AuditoriaExportaciones();
-			ae.setBuscador(buscador);
-			ae.setFechaExportacion(new Date());
-			ae.setNumRegistros(Long.valueOf(count));
-			ae.setUsuario(user);
-			ae.setFiltros(parameterParser(request.getParameterMap()));
-			ae.setAccion(exportar);
-			genericDao.save(AuditoriaExportaciones.class, ae);
-			model.put(RESPONSE_SUCCESS_KEY, true);
-			model.put(RESPONSE_DATA_KEY, count);
-			for(Perfil pef : user.getPerfiles()) {
-				if(pef.getCodigo().equals("SUPEREXPORTOFR")) {
-					isSuperExport = true;
-					break;
-				}
+			Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId());
+			Filter filtroConsulta = genericDao.createFilter(FilterType.EQUALS, "filtros", filtros);
+			Filter filtroAccion = genericDao.createFilter(FilterType.EQUALS, "accion", true);
+			Order orden = new Order(OrderType.DESC, "fechaExportacion");
+			List<AuditoriaExportaciones> listaExportaciones =  genericDao.getListOrdered(AuditoriaExportaciones.class, orden, filtroUsuario, filtroConsulta, filtroAccion);
+			
+			if(listaExportaciones != null && !listaExportaciones.isEmpty()) {
+				Long ultimaExport = listaExportaciones.get(0).getFechaExportacion().getTime();
+				permitido = ultimaExport > tiempoPermitido ? false : true;
+
+				double entero = Math.floor((ultimaExport - tiempoPermitido)/60000);
+		        if (entero < 2) {
+		        	cuentaAtras = "un minuto";
+		        } else {
+		        	cuentaAtras = Double.toString(entero);
+		        	cuentaAtras = cuentaAtras.substring(0, 1) + " minutos";
+		        }
 			}
-			if(isSuperExport) {
-				model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.ofertas").getValor());
-				model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.ofertas").getValor());
-			}else {
-				model.put("limite", configManager.getConfigByKey("limite.exportar.excel.ofertas").getValor());
-				model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.ofertas").getValor());
+			if(permitido) {
+				int count = ofertaApi.getBusquedaOfertasGridUsuario(dto).getTotalCount();
+				AuditoriaExportaciones ae = new AuditoriaExportaciones();
+				ae.setBuscador(buscador);
+				ae.setFechaExportacion(new Date());
+				ae.setNumRegistros(Long.valueOf(count));
+				ae.setUsuario(user);
+				ae.setFiltros(filtros);
+				ae.setAccion(exportar);
+				genericDao.save(AuditoriaExportaciones.class, ae);
+				model.put(RESPONSE_SUCCESS_KEY, true);
+				model.put(RESPONSE_DATA_KEY, count);
+				for(Perfil pef : user.getPerfiles()) {
+					if(pef.getCodigo().equals("SUPEREXPORTOFR")) {
+						isSuperExport = true;
+						break;
+					}
+				}
+				if(isSuperExport) {
+					model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.ofertas").getValor());
+					model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.ofertas").getValor());
+				}else {
+					model.put("limite", configManager.getConfigByKey("limite.exportar.excel.ofertas").getValor());
+					model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.ofertas").getValor());
+				}
+			} else {
+				model.put("msg", cuentaAtras);
 			}
 		}catch(Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
@@ -580,7 +574,7 @@ public class OfertasController {
 					
 					DtoPage page = ofertaApi.getListOfertasGestoria(filtro);
 					
-					VOfertasActivosAgrupacion voaa;
+					VGridOfertasActivosAgrupacionIncAnuladas voaa;
 					
 					
 					
@@ -589,7 +583,7 @@ public class OfertasController {
 					if(!Checks.esNulo(page) && !Checks.esNulo(page.getResults())) {
 						for (Object obj : page.getResults()) {
 							
-								voaa = (VOfertasActivosAgrupacion) obj;
+								voaa = (VGridOfertasActivosAgrupacionIncAnuladas) obj;
 								oferta = ofertaApi.getOfertaById(voaa.getId());
 								if(ofertaApi.estaViva(oferta)) {			
 									ofr = new OfertaVivaRespuestaDto();
@@ -963,6 +957,23 @@ public class OfertasController {
 
 		return createModelAndViewJson(model);
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getBusquedaOfertasGrid(DtoOfertaGridFilter dto, ModelMap model) {
+		try {
+			Page page = ofertaApi.getBusquedaOfertasGridUsuario(dto);
+			model.put(RESPONSE_DATA_KEY, page.getResults());
+			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
+			model.put(RESPONSE_SUCCESS_KEY, true);
+			
+		} catch (Exception e) {			
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			logger.error("Error en ofertasController", e);
+		}
+		return createModelAndViewJson(model);
 	}
 	
 }

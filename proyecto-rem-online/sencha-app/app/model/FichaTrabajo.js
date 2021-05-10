@@ -139,7 +139,27 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			type: 'boolean'
     		},
     		{
+    			name: 'nombreProyecto' 
+    		},
+    		{
+    			name: 'trabajoDnd'
+    		},
+    		{
+    			name: 'esTrabajoDND',
+    			calculate: function(data) {
+    				 return data.tipoTrabajoCodigo == CONST.TIPOS_TRABAJO['EDIFICACION'] || data.tipoTrabajoCodigo == CONST.TIPOS_TRABAJO['SUELO'];
+    			},
+    			depends: 'tipoTrabajoCodigo'
+    		},
+			{	
     			name: 'identificadorReamCodigo'
+    		},
+    		{
+    			name: 'tipoTrabajoCodigo'
+    		},
+    		{
+    			name: 'perteneceGastoOPrefactura',
+    			type: 'boolean'
     		}
     		
     ],

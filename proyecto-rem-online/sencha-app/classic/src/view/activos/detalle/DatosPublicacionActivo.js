@@ -298,25 +298,27 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												
 											},
 											{
-												xtype: 'comboboxfieldbase',
+												xtype: 'comboboxfieldbasedd',
 												fieldLabel: HreRem.i18n('title.publicaciones.historico.canal.de.publicacion'), 
 												reference: 'canalDePublicacion',
 												readOnly: true,
 												bind: {
 													store:'{comboCanalDePublicacion}',
-													value:'{datospublicacionactivo.canalDePublicacion}'
+													value:'{datospublicacionactivo.canalDePublicacion}',
+													rawValue:'{datospublicacionactivo.canalDePublicacionDescripcion}'
 												},
 												colspan: 1
 											},
 											{
-												xtype: 'comboboxfieldbase',
+												xtype: 'comboboxfieldbasedd',
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.motivos.ocultacion'),
 												reference: 'comboMotivoOcultacionVenta',
 												textareaRefChained: 'textareaMotivoOcultacionManualVenta',
 												disabled: true,
 												bind: {
 													store: '{comboMotivosOcultacionVenta}',
-													value: '{datospublicacionactivo.motivoOcultacionVentaCodigo}'
+													value: '{datospublicacionactivo.motivoOcultacionVentaCodigo}',
+													rawValue: '{datospublicacionactivo.motivoOcultacionVentaDescripcion}'
 												},
 												listeners: {
 													change: 'onChangeComboMotivoOcultacionVenta'
@@ -497,11 +499,12 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 	                                             readOnly: true
 	                                        },
 	                                        {
-	                                            xtype: 'comboboxfieldbase',
+	                                            xtype: 'comboboxfieldbasedd',
 	                                            fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.adecuacion'),
 	                                            bind: {
 	                                                store: '{comboAdecuacionAlquiler}',
-	                                                value: '{datospublicacionactivo.adecuacionAlquilerCodigo}'
+	                                                value: '{datospublicacionactivo.adecuacionAlquilerCodigo}',
+	                                                rawValue: '{datospublicacionactivo.adecuacionAlquilerDescripcion}'
 	                                            },
 	                                            readOnly: true,
 	                                            style:'margin-left:10px'
@@ -582,14 +585,15 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												colspan: 1
 											},
 											{
-									        	xtype: 'comboboxfieldbase',
+									        	xtype: 'comboboxfieldbasedd',
 									        	fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.motivos.ocultacion'),
 												reference: 'comboMotivoOcultacionAlquiler',
 												textareaRefChained: 'textareaMotivoOcultacionManualAlquiler',
 												disabled: true,
 												bind: {
 								            		store: '{comboMotivosOcultacionAlquiler}',
-								            		value: '{datospublicacionactivo.motivoOcultacionAlquilerCodigo}'
+								            		value: '{datospublicacionactivo.motivoOcultacionAlquilerCodigo}',
+								            		rawValue: '{datospublicacionactivo.motivoOcultacionAlquilerDescripcion}'
 								            	},
 												listeners: {
 													change: 'onChangeComboMotivoOcultacionAlquiler'

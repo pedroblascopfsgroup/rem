@@ -5,13 +5,13 @@ import java.util.List;
 
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 
 
-public interface VOfertaActivoDao extends AbstractDao<VOfertasActivosAgrupacion, Long>{
+public interface VOfertaActivoDao extends AbstractDao<VGridOfertasActivosAgrupacionIncAnuladas, Long>{
 	
 
-	public List<VOfertasActivosAgrupacion> getListOfertasFromView(DtoOfertasFilter dtoOfertasFilter);
+	public List<VGridOfertasActivosAgrupacionIncAnuladas> getListOfertasFromView(DtoOfertasFilter dtoOfertasFilter);
 
 
 }

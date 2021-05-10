@@ -124,7 +124,14 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	xtype: 'textfieldbase',
 				                	fieldLabel:  HreRem.i18n('title.general.gasto.numGasto'),
 				                	bind:		'{trabajo.numGasto}',
-				                	readOnly: true
+				                	readOnly: true,
+				                	cls: 'show-text-as-link',
+									listeners: {
+								        click: {
+								            element: 'el', 
+								            fn:'onClickGasto'									       
+								        }
+									}
 				                },
 							 	{
 				                	xtype: 'comboboxfieldbase',
@@ -192,8 +199,27 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									listeners:{
 										change: 'onChangeCheckAplicaComite'
 									}
-				                	
+									
+			                   	},
+						        {
+						        	xtype: 'displayfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.trabajo.dnd.id'),
+						        	bind: {
+						        		value: '{trabajo.trabajoDnd}',
+						        		hidden: '{!trabajo.esTrabajoDND}'
+						        	}
+						        	
+						        }
+							]
+		           },
+		           {
+						xtype:'fieldset',
+						layout: {
+					        type: 'hbox',
+					        align: 'stretch'
 				                },
+			                items :
+			                [
 				                {
 				                	xtype: 'comboboxfieldbase',
 				                	fieldLabel:  HreRem.i18n('fieldlabel.trabajo.area.peticionaria'),
@@ -205,7 +231,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	reference: 'comboIdentificadorReamRef',
 				                	readOnly: false
 				                }
-						]
+							]
             	 	},
         			{
 						xtype:'fieldsettable',

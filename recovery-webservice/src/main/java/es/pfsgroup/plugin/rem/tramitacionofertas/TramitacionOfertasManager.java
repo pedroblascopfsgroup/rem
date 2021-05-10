@@ -606,16 +606,24 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		if (cartera != null && importeOferta != null) {
 			// HREOS-2799
 			// Activos de Cajamar, debe haber reserva necesaria con un importe
-			// fijo de 1.000 euros y plazo 5 dias
+			// fijo de 2% o 100 euros y plazo 5 dias
 			// Activos de Cajamar, deben copiar las condiciones informadas del
 			// activo en las condiciones al comprador
 			if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(cartera.getCodigo())) {
 				condicionante.setSolicitaReserva(1);
-				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
-				condicionante.setTipoCalculoReserva(tipoCalculo);
-				condicionante.setPorcentajeReserva(new Double(3));
-				condicionante.setImporteReserva(importeOferta * (new Double(3) / 100));
+				Double importeReserva = importeOferta * (new Double(2) / 100);
+				if (importeReserva > 100) {
+					DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
+					condicionante.setTipoCalculoReserva(tipoCalculo);
+					condicionante.setPorcentajeReserva(new Double(2));
+					condicionante.setImporteReserva(importeReserva);
+				} else {
+					DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO);
+					condicionante.setTipoCalculoReserva(tipoCalculo);
+					condicionante.setImporteReserva(new Double(100));
+				}
 				condicionante.setPlazoFirmaReserva(5);
 			}
 			// HREOS-4450

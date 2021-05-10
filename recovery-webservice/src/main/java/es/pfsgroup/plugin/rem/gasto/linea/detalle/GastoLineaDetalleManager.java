@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.ActivoConfiguracionPtdasPrep;
 import es.pfsgroup.plugin.rem.model.ActivoGenerico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoTrabajoGastoImpuesto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
@@ -53,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalleTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
+import es.pfsgroup.plugin.rem.model.Prefactura;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
@@ -60,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.VParticipacionElementosLinea;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -1825,12 +1828,14 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		BigDecimal provSuplidos = trabajoApi.getImporteTotalSuplidosByTrabajo(trabajo);
 		
 		
-		if(gasto.getDestinatarioGasto() !=  null && DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())
-			&& trabajo.getImportePresupuesto() != null) {
-			baseSujeta = new BigDecimal(trabajo.getImportePresupuesto());
-		}else if(trabajo.getImporteTotal() != null){
-			baseSujeta = new BigDecimal(trabajo.getImporteTotal());
-		}
+		if(gasto.getProveedor() !=  null && gasto.getProveedor().getDocIdentificativo() != null 
+				&& ActivoProveedor.DOCIDENTIF_HAYA.equals(gasto.getProveedor().getDocIdentificativo())
+				&& trabajo.getImporteTotal() != null) {			
+				baseSujeta = new BigDecimal(trabajo.getImporteTotal());
+				
+			}else if(trabajo.getImportePresupuesto() != null){
+				baseSujeta = new BigDecimal(trabajo.getImportePresupuesto());
+			}
 
 		if(lineaAnyadirTrabajo.getImporteTotal() != null) {
 			importeTotal = importeTotal.add(new BigDecimal(lineaAnyadirTrabajo.getImporteTotal()));
@@ -1866,14 +1871,16 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		gastoLineaDetalleNueva.setAuditoria(Auditoria.getNewInstance());
 		gastoLineaDetalleNueva.setGastoProveedor(gasto);
 		
-		if(gasto.getDestinatarioGasto() !=  null && DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())
-				&& trabajo.getImportePresupuesto() != null) {
-			gastoLineaDetalleNueva.setPrincipalSujeto(trabajo.getImportePresupuesto());
-		}else if(trabajo.getImporteTotal() != null){
-			gastoLineaDetalleNueva.setPrincipalSujeto(trabajo.getImporteTotal());
-		}else {
-			gastoLineaDetalleNueva.setPrincipalSujeto(0.0);
-		}
+		if(gasto.getProveedor() != null && gasto.getProveedor().getDocIdentificativo() != null 
+				&& ActivoProveedor.DOCIDENTIF_HAYA.equals(gasto.getProveedor().getDocIdentificativo())
+				&& trabajo.getImporteTotal() != null) {								
+				gastoLineaDetalleNueva.setPrincipalSujeto(trabajo.getImporteTotal());
+				
+			}else if(trabajo.getImportePresupuesto() != null){
+				gastoLineaDetalleNueva.setPrincipalSujeto(trabajo.getImportePresupuesto());
+			}else {
+				gastoLineaDetalleNueva.setPrincipalSujeto(0.0);
+			}
 		DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoGasto.class, lineaParte.get(0));
 		gastoLineaDetalleNueva.setSubtipoGasto(subtipoGasto);
 		BigDecimal cuota = new BigDecimal (0.0);
@@ -1955,6 +1962,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 		Trabajo trabajo = trabajoApi.findOne(idTrabajo);
 		GastoProveedor gasto = gastoProveedorApi.findOne(idGasto);
+		Long prefactura = null;
 		if(trabajo == null || gasto == null) {
 			return false;
 		}
@@ -1963,9 +1971,27 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			trabajo.setEstado((DDEstadoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoTrabajo.class,
 					DDEstadoTrabajo.ESTADO_VALIDADO));
 			trabajo.setFechaCambioEstado(new Date());
-			trabajoDao.saveOrUpdate(trabajo);
 		}
+		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+			prefactura = trabajo.getPrefactura().getId();
+			trabajo.setPrefactura(null);
+		}
+		trabajoDao.saveOrUpdate(trabajo);
 		
+		if (prefactura != null) {
+			Filter pfaId = genericDao.createFilter(FilterType.EQUALS, "prefactura.id", prefactura);
+			Filter auditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			List<Trabajo> numeroTrabajosPrefactura = genericDao.getList(Trabajo.class,pfaId, auditoria);
+			if(numeroTrabajosPrefactura == null || numeroTrabajosPrefactura.isEmpty()) {
+				Filter pfa = genericDao.createFilter(FilterType.EQUALS, "id", prefactura);
+				Prefactura pf = genericDao.get(Prefactura.class,pfa);
+				pf.getAuditoria().setBorrado(true);
+				pf.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+				pf.getAuditoria().setFechaBorrar(new Date());
+				genericDao.save(Prefactura.class, pf);
+			}
+		}
+				
 		Filter trabajoLineaFilter = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
 		List<GastoLineaDetalleTrabajo> gastoTrabajoList = genericDao.getList(GastoLineaDetalleTrabajo.class,trabajoLineaFilter);
 	
@@ -1986,18 +2012,28 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 							BigDecimal principalSujetoLinea = new BigDecimal(gastoLineaDetalle.getPrincipalSujeto());
 							BigDecimal importeTotalLinea = new BigDecimal(gastoLineaDetalle.getImporteTotal());
 							BigDecimal importeTotalTrabajo = null;
+							BigDecimal impuestoIndirectoCuota = new BigDecimal(gastoLineaDetalle.getImporteIndirectoCuota());
+							BigDecimal tipoImpositivoIndirecto = new BigDecimal(gastoLineaDetalle.getImporteIndirectoTipoImpositivo());		
 							
-							if(gasto.getDestinatarioGasto() !=  null && DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())
-									&& trabajo.getImportePresupuesto() != null) {
+							if(gasto.getProveedor() !=  null && gasto.getProveedor().getDocIdentificativo() != null 
+									&& ActivoProveedor.DOCIDENTIF_HAYA.equals(gasto.getProveedor().getDocIdentificativo())
+									&& trabajo.getImporteTotal() != null) {								
+									importeTotalTrabajo = new BigDecimal(trabajo.getImporteTotal());
+									
+								}else if(trabajo.getImportePresupuesto() != null){
 									importeTotalTrabajo = new BigDecimal(trabajo.getImportePresupuesto());
-							}else if(trabajo.getImporteTotal() != null){
-								importeTotalTrabajo = new BigDecimal(trabajo.getImporteTotal());
-							}
+								}
+							
 							if(importeTotalTrabajo != null) {
 								principalSujetoLinea = principalSujetoLinea.subtract(importeTotalTrabajo);
 								gastoLineaDetalle.setPrincipalSujeto(principalSujetoLinea.doubleValue());
+
+								impuestoIndirectoCuota = impuestoIndirectoCuota.subtract(importeTotalTrabajo.multiply(tipoImpositivoIndirecto.divide(new BigDecimal(100)))); 
+								gastoLineaDetalle.setImporteIndirectoCuota(impuestoIndirectoCuota.doubleValue());
+								
 								importeTotalLinea = importeTotalLinea.subtract(importeTotalTrabajo);
-								gastoLineaDetalle.setPrincipalSujeto(importeTotalLinea.doubleValue());
+								importeTotalLinea = importeTotalLinea.subtract(importeTotalTrabajo.multiply(tipoImpositivoIndirecto.divide(new BigDecimal(100)))); 
+								gastoLineaDetalle.setImporteTotal(importeTotalLinea.doubleValue());
 							}
 							
 							genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);

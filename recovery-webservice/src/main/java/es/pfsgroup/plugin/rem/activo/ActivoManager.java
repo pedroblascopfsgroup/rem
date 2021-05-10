@@ -235,6 +235,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public static final String GRUPO_OFICIONA_KAM = "gruofikam";
 	private static final String DESC_SI = "Sí";
 	private static final String DESC_NO = "No";
+	private static final String DESC_NO_CON_INDICIOS = "No, con indicios";
 
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
@@ -4798,7 +4799,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			} else if (DDTipoTituloActivo.tipoTituloNoJudicial.equals(activo.getTipoTitulo().getCodigo())
 					&& !Checks.esNulo(activo.getAdjNoJudicial()) && !Checks.esNulo(activo.getSituacionPosesoria())) {
-				activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
+				if (activo.getAdjNoJudicial().getFechaPosesion() != null) {
+					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaPosesion());
+				} else {
+					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
+				} 
+				if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
+						(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+						||DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
+						||DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo()))){
+					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaPosesion());
+				}
+				
+				
+				
 
 			}
 		}
@@ -8992,6 +9006,63 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	public List<DtoHistoricoOcupadoTitulo> getListHistoricoOcupadoTitulo(Long id) {
+		List<DtoHistoricoOcupadoTitulo> listDto = new ArrayList<DtoHistoricoOcupadoTitulo>();
+		
+		if (id != null) {
+			
+			List<HistoricoOcupadoTitulo> act = genericDao.getList(HistoricoOcupadoTitulo.class,
+					genericDao.createFilter(FilterType.EQUALS, "activo.id", id));
+
+			if (act != null && !act.isEmpty()) {
+				for (HistoricoOcupadoTitulo hot : act) {
+					DtoHistoricoOcupadoTitulo dto = new DtoHistoricoOcupadoTitulo();
+
+					//dto.getId(id);
+					dto.setId(hot.getId());
+					
+					if (hot.getOcupado() != null) {
+						if(hot.getOcupado() == 0){
+							dto.setOcupado("No");
+						}else{
+							dto.setOcupado("Si");
+						}
+						
+					}
+					
+					if (hot.getConTitulo() != null) {
+						if (DDTipoTituloActivoTPA.tipoTituloSi.equals(hot.getConTitulo().getCodigo())){
+							dto.setConTitulo(DESC_SI);
+						}else if(DDTipoTituloActivoTPA.tipoTituloNo.equals(hot.getConTitulo().getCodigo())) {
+							dto.setConTitulo(DESC_NO);
+						}else if(DDTipoTituloActivoTPA.tipoTituloNoConIndicios.equals(hot.getConTitulo().getCodigo())) {
+							dto.setConTitulo(DESC_NO_CON_INDICIOS);
+						}						
+					}
+					
+					if (hot.getFechaHoraAlta() != null) {
+						dto.setFechaAlta(hot.getFechaHoraAlta());
+						dto.setHoraAlta(hot.getFechaHoraAlta().getHours()+":"+hot.getFechaHoraAlta().getMinutes());
+					}
+
+					if (hot.getUsuario() != null) {
+						dto.setUsuarioAlta(hot.getUsuario().getUsername());
+					}
+
+					if (hot.getLugarModificacion() != null) {
+						dto.setLugarModificacion(hot.getLugarModificacion());
+					}
+					
+					
+					listDto.add(dto);
+				}
+			}
+
+		}
+
+		return listDto;
+	}
+
 	public void updateHonorarios(Activo activo, List<ActivoOferta> listaActivoOfertas) {
 
 		try {

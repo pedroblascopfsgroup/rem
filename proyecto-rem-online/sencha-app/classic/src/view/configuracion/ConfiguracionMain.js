@@ -6,7 +6,7 @@ Ext.define('HreRem.view.configuracion.ConfiguracionMain', {
     layout		: 'fit',
     requires	: ['HreRem.view.configuracion.ConfiguracionController','HreRem.view.configuracion.ConfiguracionModel',
     				'HreRem.view.configuracion.administracion.ConfiguracionAdministracionMain',
-    				'HreRem.view.configuracion.mediadores.EvaluacionMediadores'],
+    				'HreRem.view.configuracion.mediadores.EvaluacionMediadores','HreRem.view.configuracion.mantenimiento.MantenimientosMain'],
     controller	: 'configuracion',
     viewModel	: {
         type: 'configuracion'
@@ -26,6 +26,7 @@ Ext.define('HreRem.view.configuracion.ConfiguracionMain', {
         var items = [];
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'configuracionadministracionmain', reference: 'configuracionAdministracionMain'})}, ['TAB_ADMINISTRACION_CONFIGURACION']);
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'evaluacionmediadores', reference: 'evaluacionMediadores'})}, ['TAB_MEDIADORES']);
+        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'mantenimientosmain', reference: 'mantenimientosmainref'})}, ['TAB_MEDIADORES']); //SE PONE LA MISMA TAB PORQUE NO TIENE NINFUNA FUNCIONALIDAD ESPECIAL
 
         me.addPlugin({ptype: 'lazyitems', items: items});
         me.callParent();

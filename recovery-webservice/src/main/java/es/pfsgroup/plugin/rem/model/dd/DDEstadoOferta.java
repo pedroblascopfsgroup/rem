@@ -34,6 +34,8 @@ public class DDEstadoOferta implements Auditable, Dictionary {
 	public static final String CODIGO_RECHAZADA= "02";
 	public static final String CODIGO_CONGELADA= "03";
 	public static final String CODIGO_PENDIENTE= "04";
+	public static final String CODIGO_PDTE_CONSENTIMIENTO= "05";
+	public static final String CODIGO_CADUCADA= "06";
 	
 	public static final String CODIGO_ANULADA_RC= "999";
 	

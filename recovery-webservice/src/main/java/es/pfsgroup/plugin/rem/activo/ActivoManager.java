@@ -9004,6 +9004,31 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	@BusinessOperationDefinition("activoManager.getFileItemOfertante")
+	public FileItem getFileItemOfertante(DtoAdjunto dtoAdjunto, AdjuntoComprador adjuntoComprador) {
+		
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS,"activo.id", dtoAdjunto.getIdEntidad());
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado", false);
+		ActivoPlusvalia activoPlusvalia = genericDao.get(ActivoPlusvalia.class, filtroActivo, filtroBorrado);
+		AdjuntoPlusvalias adjunto = null;
+		FileItem fileItem = null;
+		
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			try {
+				fileItem = gestorDocumentalAdapterApi.getFileItem(dtoAdjunto.getId(),dtoAdjunto.getNombre());
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		} else {
+			adjunto = activoPlusvalia.getAdjunto(dtoAdjunto.getId());
+			fileItem = adjunto.getAdjunto().getFileItem();
+			fileItem.setContentType(adjunto.getContentType());
+			fileItem.setFileName(adjunto.getNombre());
+		}
+		return fileItem;
+	}
+	
+	@Override
 	public List<DtoHistoricoOcupadoTitulo> getListHistoricoOcupadoTitulo(Long id) {
 		List<DtoHistoricoOcupadoTitulo> listDto = new ArrayList<DtoHistoricoOcupadoTitulo>();
 		
@@ -9061,6 +9086,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return listDto;
 	}
 
+	@Override
 	public void updateHonorarios(Activo activo, List<ActivoOferta> listaActivoOfertas) {
 
 		try {

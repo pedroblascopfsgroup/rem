@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.rest.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -125,6 +127,17 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	private String codPaisRepresentante;
 	@Size(max=5,groups = { Insert.class, Update.class })
 	private String codigoPostalRepresentante;
+	@Size(max=5,groups = { Insert.class, Update.class })
+	private String documentoIdentificativo;
+	@Size(max=5,groups = { Insert.class, Update.class })
+	private String nombreDocumentoIdentificativo;
+	@Size(max=5,groups = { Insert.class, Update.class })
+	private String documentoGDPR;
+	@Size(max=5,groups = { Insert.class, Update.class })
+	private String nombreDocumentoGDPR;
+	@Size(max=250,groups = { Insert.class, Update.class })
+	private Date fechaAcepGdpr;
+	
 	public String getCodTipoDocumento() {
 		return codTipoDocumento;
 	}
@@ -358,6 +371,36 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	}
 	public void setCodigoPostalRepresentante(String codigoPostalRepresentante) {
 		this.codigoPostalRepresentante = codigoPostalRepresentante;
+	}
+	public String getDocumentoIdentificativo() {
+		return documentoIdentificativo;
+	}
+	public void setDocumentoIdentificativo(String documentoIdentificativo) {
+		this.documentoIdentificativo = documentoIdentificativo;
+	}
+	public String getNombreDocumentoIdentificativo() {
+		return nombreDocumentoIdentificativo;
+	}
+	public void setNombreDocumentoIdentificativo(String nombreDocumentoIdentificativo) {
+		this.nombreDocumentoIdentificativo = nombreDocumentoIdentificativo;
+	}
+	public String getDocumentoGDPR() {
+		return documentoGDPR;
+	}
+	public void setDocumentoGDPR(String documentoGDPR) {
+		this.documentoGDPR = documentoGDPR;
+	}
+	public String getNombreDocumentoGDPR() {
+		return nombreDocumentoGDPR;
+	}
+	public void setNombreDocumentoGDPR(String nombreDocumentoGDPR) {
+		this.nombreDocumentoGDPR = nombreDocumentoGDPR;
+	}
+	public Date getFechaAcepGdpr() {
+		return fechaAcepGdpr;
+	}
+	public void setFechaAcepGdpr(Date fechaAcepGdpr) {
+		this.fechaAcepGdpr = fechaAcepGdpr;
 	}
 	
 	

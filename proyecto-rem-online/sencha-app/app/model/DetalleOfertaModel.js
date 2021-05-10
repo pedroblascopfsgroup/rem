@@ -38,6 +38,11 @@ Ext.define('HreRem.model.DetalleOfertaModel', {
 		},
 		{
 			name:'observaciones'
+		},
+		{
+			name:'fechaEntradaCRMSF',
+			type:'date',
+    		dateFormat: 'c'
 		}
     ],
 

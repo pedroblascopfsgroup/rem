@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -135,13 +136,16 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 			if(!Checks.esNulo(activoP.getTipoEstadoAlquiler())) {
 				activoPatrimonioDto.setEstadoAlquiler(activoP.getTipoEstadoAlquiler().getCodigo());
+				activoPatrimonioDto.setEstadoAlquilerDescripcion(activoP.getTipoEstadoAlquiler().getDescripcion());
 			}
 
 			if(!Checks.esNulo(activoP.getTipoInquilino())) {
 				activoPatrimonioDto.setTipoInquilino(activoP.getTipoInquilino().getCodigo());
+				activoPatrimonioDto.setTipoInquilinoDescripcion(activoP.getTipoInquilino().getDescripcion());
 			}
 						
 			activoPatrimonioDto.setCesionUso( Checks.esNulo(activoP.getCesionUso())  ? null :  activoP.getCesionUso().getCodigo());
+			activoPatrimonioDto.setCesionUsoDescripcion( Checks.esNulo(activoP.getCesionUso())  ? null :  activoP.getCesionUso().getDescripcion());
 			activoPatrimonioDto.setTramiteAlquilerSocial(Checks.esNulo(activoP.getTramiteAlquilerSocial()) ?  DDSinSiNo.CODIGO_NO: activoP.getTramiteAlquilerSocial().booleanValue() == true ? DDSinSiNo.CODIGO_SI: DDSinSiNo.CODIGO_NO);
 			
 		}
@@ -171,6 +175,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 			
 			if(!Checks.esNulo(activo.getTipoAlquiler())) {
 				activoPatrimonioDto.setTipoAlquilerCodigo(activo.getTipoAlquiler().getCodigo());
+				activoPatrimonioDto.setTipoAlquilerDescripcion(activo.getTipoAlquiler().getDescripcion());
 			}
 		}
 		
@@ -380,6 +385,11 @@ public class TabActivoPatrimonio implements TabActivoService {
 					activoSituacionPosesoria.setUsuarioModificarConTitulo(usu.getUsername());
 					activoSituacionPosesoria.setFechaModificarConTitulo(new Date());
 					
+					if(activo != null && activoSituacionPosesoria!=null &&  activoPatrimonio !=null && activoPatrimonio.getTipoEstadoAlquiler()!=null) {
+						HistoricoOcupadoTitulo hist = new HistoricoOcupadoTitulo(activo,activoSituacionPosesoria,usu,HistoricoOcupadoTitulo.COD_PATRIMONIO,activoPatrimonio.getTipoEstadoAlquiler().getDescripcion());
+						genericDao.save(HistoricoOcupadoTitulo.class, hist);
+					}
+					
 					
 				} else if(DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE.equals(activoPatrimonioDto.getEstadoAlquiler())) {
 	
@@ -396,6 +406,11 @@ public class TabActivoPatrimonio implements TabActivoService {
 					activoSituacionPosesoria.setFechaModificarConTitulo(new Date());
 					activoSituacionPosesoria.setFechaUltCambioTit(new Date());
 					activoPatrimonio.setTipoInquilino(null);
+					
+					if(activo != null && activoSituacionPosesoria!=null &&  activoPatrimonio !=null && activoPatrimonio.getTipoEstadoAlquiler()!=null) {
+						HistoricoOcupadoTitulo hist = new HistoricoOcupadoTitulo(activo,activoSituacionPosesoria,usu,HistoricoOcupadoTitulo.COD_PATRIMONIO,activoPatrimonio.getTipoEstadoAlquiler().getDescripcion());
+						genericDao.save(HistoricoOcupadoTitulo.class, hist);
+					}
 				}
 				
 				genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria);

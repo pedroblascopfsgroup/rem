@@ -742,9 +742,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 		esTipoEstadoAlquilerAlquilado: function(get){
 			var estadoAlquilerCodigo = get('situacionPosesoria.tipoEstadoAlquiler');
-			
-			return CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo 
+			var estadoReam = get('situacionPosesoria.perteneceActivoREAM');
+			if(estadoReam == true){
+				if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SEGURIDAD_REAM'])){
+					return false;
+				}
+				return true; 
+			}else{
+				return CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo
 				|| !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
+			}
+			
 		},
 		
 		disabledComboConTituloTPA: function(get){
@@ -1579,7 +1587,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		
 		btnNuevaPeticionTrabajoOculto: function(get) {
 			var isIncluidoEnPerimetro = get('activo.incluidoEnPerimetro');
-			return (isIncluidoEnPerimetro == false || $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']));
+			return (isIncluidoEnPerimetro == false || $AU.getUser().codigoCartera == CONST.CARTERA['BBVA']);
+		},
+		
+		isSubcarteraCerberus: function(get) {
+	    	var codigoSubcartera = get('activo.subcarteraCodigo')
+	    	if (CONST.SUBCARTERA['APPLEINMOBILIARIO'] === codigoSubcartera
+	    		|| CONST.SUBCARTERA['DIVARIANARROW'] === codigoSubcartera
+	    		|| CONST.SUBCARTERA['DIVARIANREMAINING'] === codigoSubcartera){
+	    	return true;
+	    	}
+	    	return false;
+	    },
+	    
+	    isGestorActivosAndSuper: function(get){
+			var usuarios = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+			var incluidoEnPerimetro = get('activo.incluidoEnPerimetro');
+			if(usuarios && incluidoEnPerimetro){			
+				return false;
+				}
+			return true;
 		},
 		
 		esEditablePorcentajeConstruccion: function(get){
@@ -2544,8 +2571,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'situacionComercial'}
-			},
-			autoLoad: true
+			}
 		},
 			
 			
@@ -3332,8 +3358,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'motivoExento'}
-			},
-			autoLoad: true
+			}
 		},
 		
 		storeSubtipologiaAgendaSaneamiento: {
@@ -3506,7 +3531,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposAdmiteMascota'}
 			}
-		}
+		},
+		storeSituacionOcupacional: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.SituacionOcupacionalGridModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getListHistoricoOcupadoTitulo',
+				extraParams: {id: '{activo.id}'}
+		   }
+	   }
 		
 	 }
 });

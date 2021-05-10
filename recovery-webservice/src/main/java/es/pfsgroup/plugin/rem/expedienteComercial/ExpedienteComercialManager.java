@@ -2797,6 +2797,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 	}
+	
+	@Override
+	public Float getPorcentajeCompra(Long idExpediente) {
+		return expedienteComercialDao.getPorcentajeCompra(idExpediente);
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void decorarPagina(PageImpl pagina) throws VBusquedaCompradoresExpedienteDecoratorException {
@@ -11722,5 +11727,38 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		return expedienteComercial.getEstado().getCodigo();
 	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void recalcularHonorarios(Long idExpediente) throws Exception {
+		
+		Oferta oferta = ofertaApi.getOfertaByIdExpediente(idExpediente);
+		
+		ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
+		
+		Activo activo = oferta.getActivoPrincipal();
+		
+		this.actualizarGastosExpediente(expediente,oferta,activo);
+		
+	}
 	
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void getCierreOficinaBankiaById(Long idExpediente) {
+
+		EnvioCierreOficinasBankia auxiliar = genericDao.get(EnvioCierreOficinasBankia.class,
+				genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
+		
+		if (auxiliar != null && !auxiliar.getEnviado()) {
+			auxiliar.setEnviado(true);
+			Auditoria auditoria = auxiliar.getAuditoria();			
+			auditoria.setFechaModificar(new Date());
+			auditoria.setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+			auxiliar.setAuditoria(auditoria);	
+			
+			genericDao.update(EnvioCierreOficinasBankia.class, auxiliar);
+			
+		}
+	}	
 }

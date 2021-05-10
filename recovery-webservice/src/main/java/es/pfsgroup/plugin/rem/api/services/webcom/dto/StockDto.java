@@ -305,7 +305,12 @@ public class StockDto implements WebcomRESTDto{
 	@WebcomRequired
 	private StringDataType onvComercializacionFecha;
 	
+
 	private BooleanDataType necesidadIf;
+
+	@WebcomRequired
+	private StringDataType codDirComercial;
+
 	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
@@ -1016,6 +1021,12 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setNecesidadIf(BooleanDataType necesidadIf) {
 		this.necesidadIf = necesidadIf;
+	}
+	public StringDataType getCodDirComercial() {
+		return codDirComercial;
+	}
+	public void setCodDirComercial(StringDataType codDirComercial) {
+		this.codDirComercial = codDirComercial;
 	}
 
 	

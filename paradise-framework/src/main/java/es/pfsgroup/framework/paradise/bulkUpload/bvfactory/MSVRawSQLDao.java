@@ -48,4 +48,6 @@ public interface MSVRawSQLDao {
 	 * @return
 	 */
 	List<Object> getExecuteSQLList(String sqlValidacion);
+	
+	void addParam(String key, Object value);
 }

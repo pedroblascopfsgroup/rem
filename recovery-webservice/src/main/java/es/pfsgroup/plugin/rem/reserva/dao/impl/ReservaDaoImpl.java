@@ -22,9 +22,10 @@ public class ReservaDaoImpl extends AbstractEntityDao<Reserva, Long> implements 
 	
 	@Override
 	public Date getFechaFirmaReservaByIdExpediente(Long idExpediente) {
-		String sql = "SELECT RES.RES_FECHA_FIRMA FROM REM01.RES_RESERVAS RES WHERE RES.ECO_ID = "+idExpediente 
+		String sql = "SELECT RES.RES_FECHA_FIRMA FROM REM01.RES_RESERVAS RES WHERE RES.ECO_ID = :idExpediente" 
 				+" AND RES.BORRADO = 0";
-		return ((Date) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult());
+		
+		return ((Date) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).setParameter("idExpediente", idExpediente).uniqueResult());
 	}
 
 

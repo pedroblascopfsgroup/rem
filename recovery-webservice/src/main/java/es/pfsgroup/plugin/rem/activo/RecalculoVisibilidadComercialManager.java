@@ -60,9 +60,10 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 		}
 
 		if(!fichaActivo) {
-			if(tieneErrores && perimetroActivo.getExcluirValidaciones() == null || !DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones())) {
+			if(tieneErrores && (perimetroActivo.getExcluirValidaciones() == null || !DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones()))) {
 				perimetroActivo.setCheckGestorComercial(false);	
 				perimetroActivo.setFechaGestionComercial(new Date());
+				genericDao.update(PerimetroActivo.class,perimetroActivo);
 			}
 			if(!tieneErrores) {
 				perimetroActivo.setCheckGestorComercial(true);	
@@ -101,18 +102,17 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 
 			if(tieneErrores && perimetroActivo.getExcluirValidaciones() == null || !DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones())) {
 				perimetroActivo.setCheckGestorComercial(false);	
-				perimetroActivo.setFechaGestionComercial(new Date());
-				
+				perimetroActivo.setFechaGestionComercial(new Date());	
+				genericDao.update(PerimetroActivo.class,perimetroActivo);
 			}
 			if(!tieneErrores) {
 				perimetroActivo.setCheckGestorComercial(true);	
 				perimetroActivo.setFechaGestionComercial(new Date());
 				perimetroActivo.setExcluirValidaciones(diccionarioNo);
 				perimetroActivo.setMotivoGestionComercial(null);
-				
 				genericDao.update(PerimetroActivo.class,perimetroActivo);
 			}
-			
+		
 		}
 		
 		return mapaErrores;

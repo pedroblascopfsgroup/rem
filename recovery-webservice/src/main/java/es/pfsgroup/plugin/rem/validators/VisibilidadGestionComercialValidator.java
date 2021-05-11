@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
@@ -56,6 +57,7 @@ public class VisibilidadGestionComercialValidator {
 	public static final String VALID_SUBFASE_PUBLICACION= "La subfase de publicación del activo no permite la modificación del check Visibilidad Gestion Comercial ";
 	public static final String VALID_DESMARCAR_SIN_ERRORES= "Se cumplen todas las condiciones para que estén marcados.";
 	public static final String VALID_ACTIVO_TIPO_COMERCIALIZACION = "Activo no tiene tipo de comercialización";
+	public static final String VALID_FASE_PUBLICACION= "La fase de publicación del activo no permite la modificación del check Visibilidad Gestion Comercial ";
 
 	public static final String[] SOCIEDADES_PARTICIPADAS = {Ecoarenys, JaleProcam, PromocionesMiesdelValle};
 	
@@ -173,6 +175,10 @@ public class VisibilidadGestionComercialValidator {
 				|| DDSubfasePublicacion.isHistoricoFasesReqLegAdm(fasePublicacionActivoVigente.getSubFasePublicacion()) 
 				|| DDSubfasePublicacion.isHistoricoFasesSinValor(fasePublicacionActivoVigente.getSubFasePublicacion()))) {
 					erroresActivo.add(VALID_SUBFASE_PUBLICACION);
+				}
+				
+				if(DDCartera.isCarteraCerberus(activoActual.getCartera()) && DDFasePublicacion.isFaseTres(fasePublicacionActivoVigente.getFasePublicacion())) {
+					erroresActivo.add(VALID_FASE_PUBLICACION);
 				}
 				
 				String[] estadosExpedienteNoValidos = {DDEstadosExpedienteComercial.FIRMADO, DDEstadosExpedienteComercial.RESERVADO, DDEstadosExpedienteComercial.VENDIDO};

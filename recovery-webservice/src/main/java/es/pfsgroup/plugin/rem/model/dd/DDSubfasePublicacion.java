@@ -169,5 +169,5 @@ public class DDSubfasePublicacion implements Auditable, Dictionary {
 		
 		return isSinValor;
 	}
-
+	
 }

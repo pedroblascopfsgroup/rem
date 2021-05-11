@@ -169,5 +169,13 @@ public class DDCartera implements Auditable, Dictionary {
 		}
 		return isCarteraBBVA;
 	}
+	
+	public static boolean isCarteraCerberus (DDCartera cartera) {
+		boolean isCarteraCerberus = false;
+		if(cartera != null && (CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo()))) {
+			isCarteraCerberus = true;
+		}
+		return isCarteraCerberus;
+	}
 
 }

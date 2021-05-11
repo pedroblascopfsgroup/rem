@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrian Molina
---## FECHA_CREACION=20210403
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20210511
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-8898
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-13938
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM - UVEM. Nuevas columnas. Anula DDL_99900087
 --##           
@@ -26,6 +26,7 @@
 --##    	0.14 Juan Beltrán  - REMVIP-7944 - Prevalece el valor del campo ACT_VPO si viene informado desde REM
 --##        0.15 Juan Alfonso  - REMVIP-8455 - Modificado titulo activo, si codigo entrada es 14 o 12 subtipo titulo activo: propio de origen funcional 13
 --##        0.16 Adrian Molina - REMVIP-8898 - Modificado inserción en la ADO para que tenga en cuenta los borrados de la CFD
+--##        0.17 Javier Esbri - HREOS-13938 - Cambiar el nombre del SP SP_UPA_UPDATE_ACTIVES_UVEM a SP_UPA_UPDATE_ACTIVES para el proyecto Hydra.
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -35,7 +36,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
 --0.9
-create or replace PROCEDURE SP_UPA_UPDATE_ACTIVES_UVEM (
+create or replace PROCEDURE SP_UPA_UPDATE_ACTIVES (
       V_USUARIO VARCHAR2 DEFAULT 'SP_UPA_UVEM',
       PL_OUTPUT       OUT VARCHAR2
 )
@@ -3322,6 +3323,6 @@ EXCEPTION
     ROLLBACK;
     RAISE;
 
-END SP_UPA_UPDATE_ACTIVES_UVEM;
+END SP_UPA_UPDATE_ACTIVES;
 /
 EXIT;

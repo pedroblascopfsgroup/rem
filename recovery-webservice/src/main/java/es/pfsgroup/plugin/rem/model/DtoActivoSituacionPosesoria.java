@@ -48,6 +48,12 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	private Date fechaRecepcionLlave;
 	private Date fechaPrimerAnillado;
 	private String posesionNegociada;
+	private Integer tieneAlarma;
+	private Date fechaInstalacionAlarma;
+	private Date fechaDesinstalacionAlarma;
+	private Integer tieneVigilancia;
+	private Date fechaInstalacionVigilancia;
+	private Date fechaDesinstalacionVigilancia;
 	private Boolean perteneceActivoREAM;
 		
 	public String getTipoEstadoAlquiler() {
@@ -241,6 +247,42 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	}
 	public void setPosesionNegociada(String posesionNegociada) {
 		this.posesionNegociada = posesionNegociada;
+	}
+	public Integer getTieneAlarma() {
+		return tieneAlarma;
+	}
+	public void setTieneAlarma(Integer tieneAlarma) {
+		this.tieneAlarma = tieneAlarma;
+	}
+	public Date getFechaInstalacionAlarma() {
+		return fechaInstalacionAlarma;
+	}
+	public void setFechaInstalacionAlarma(Date fechaInstalacionAlarma) {
+		this.fechaInstalacionAlarma = fechaInstalacionAlarma;
+	}
+	public Date getFechaDesinstalacionAlarma() {
+		return fechaDesinstalacionAlarma;
+	}
+	public void setFechaDesinstalacionAlarma(Date fechaDesinstalacionAlarma) {
+		this.fechaDesinstalacionAlarma = fechaDesinstalacionAlarma;
+	}
+	public Integer getTieneVigilancia() {
+		return tieneVigilancia;
+	}
+	public void setTieneVigilancia(Integer tieneVigilancia) {
+		this.tieneVigilancia = tieneVigilancia;
+	}
+	public Date getFechaInstalacionVigilancia() {
+		return fechaInstalacionVigilancia;
+	}
+	public void setFechaInstalacionVigilancia(Date fechaInstalacionVigilancia) {
+		this.fechaInstalacionVigilancia = fechaInstalacionVigilancia;
+	}
+	public Date getFechaDesinstalacionVigilancia() {
+		return fechaDesinstalacionVigilancia;
+	}
+	public void setFechaDesinstalacionVigilancia(Date fechaDesinstalacionVigilancia) {
+		this.fechaDesinstalacionVigilancia = fechaDesinstalacionVigilancia;
 	}
 	public Boolean getPerteneceActivoREAM() {
 		return perteneceActivoREAM;

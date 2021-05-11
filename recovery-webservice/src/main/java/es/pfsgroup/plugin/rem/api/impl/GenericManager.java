@@ -218,6 +218,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	private ActivoDao activoDao;
 
 
+
 	@Override
 	public String managerName() {
 		return "genericManager";
@@ -1327,7 +1328,17 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 						combo.add(tipoTituloNoConIndicios);
 					}
 				}					
-			} else {
+			}else if(activo.getSubcartera()!=null && (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+							||DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo()) ||
+									DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo()))) {
+				if(activo.getAdjNoJudicial() != null && activo.getAdjNoJudicial().getFechaPosesion()!=null) {
+					combo.add(tipoTituloNo);
+				}else {
+					combo.add(tipoTituloNoConIndicios);
+				}
+						
+				
+			}else {
 				if (!Checks.esNulo(activo.getSituacionPosesoria().getFechaRevisionEstado())
 						|| !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion())) {
 					combo.add(tipoTituloNo);

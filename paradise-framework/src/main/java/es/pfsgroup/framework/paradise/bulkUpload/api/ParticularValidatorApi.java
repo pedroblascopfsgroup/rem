@@ -1436,6 +1436,8 @@ public interface ParticularValidatorApi {
 	Boolean situacionComercialAlquilado(String activo);
 	Boolean estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(String numActivo);
 
+	Boolean isActivoGestionadoReam(String string);
+
 	Boolean existeCodProveedorRem(String codProveedorREM);
 
 	boolean gastoSarebAnyadeRefacturable(String numGasto);
@@ -1467,6 +1469,9 @@ public interface ParticularValidatorApi {
 	Boolean isActivoAlquiladoSCM(String activo);
 
 	boolean isActivoPublicadoDependiendoSuTipoComercializacion(String activo);
+	Boolean esSubCarterasCerberusAppleDivarian(String numActivo);
+
+
 
 	boolean isActivoDestinoComercialSoloAlquiler(String activo);
 }

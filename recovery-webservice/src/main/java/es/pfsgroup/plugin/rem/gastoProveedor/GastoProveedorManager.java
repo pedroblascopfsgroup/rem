@@ -2992,9 +2992,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoGestion.setUsuarioEstadoAutorizacionHaya(genericAdapter.getUsuarioLogado());
 		gastoGestion.setFechaEstadoAutorizacionHaya(new Date());
 		gastoGestion.setMotivoRechazoAutorizacionHaya(null);
+		gastoGestion.getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+		gastoGestion.getAuditoria().setFechaModificar(new Date());
 		gasto.setGastoGestion(gastoGestion);
 		updaterStateApi.updaterStates(gasto, DDEstadoGasto.AUTORIZADO_ADMINISTRACION);
 		gasto.setProvision(null);
+		gasto.getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+		gasto.getAuditoria().setFechaModificar(new Date());
 		genericDao.update(GastoProveedor.class, gasto);
 
 		return true;

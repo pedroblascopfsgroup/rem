@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210504
+--## FECHA_CREACION=20210511
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13845
@@ -44,7 +44,7 @@ DECLARE
                   JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO AUX_TPA ON AUX_ACT.DD_TPA_ID = AUX_TPA.DD_TPA_ID AND AUX_TPA.BORRADO = 0 
                   WHERE NVL(UCC.VALOR,-1) != NVL(AUX_TPA.DD_TPA_CODIGO,-1) 
                   AND COS.DD_COS_CODIGO = TMP.ORIGEN
-                  AND UCC.ACT_ID = ACT.ACT_ID) AND TMP.ORIGEN = ''''002'''''
+                  AND UCC.ACT_ID = ACT.ACT_ID)'
             ,''
             ,'0')   
       , T_TIPO_DATA('MOD_REM_SAC', 'Primera vez modificado en REM, deja de actualizarse', 'Si se han modificado los datos en REM, deja de actualizarse este campo con la información del Data Tape y permanece la de REM'
@@ -55,7 +55,7 @@ DECLARE
                   JOIN '||V_ESQUEMA||'.DD_SAC_SUBTIPO_ACTIVO AUX_SAC ON AUX_ACT.DD_SAC_ID = AUX_SAC.DD_SAC_ID AND AUX_SAC.BORRADO = 0 
                   WHERE NVL(UCC.VALOR,-1) != NVL(AUX_SAC.DD_SAC_CODIGO,-1) 
                   AND COS.DD_COS_CODIGO = TMP.ORIGEN
-                  AND UCC.ACT_ID = ACT.ACT_ID) AND TMP.ORIGEN = ''''004'''''
+                  AND UCC.ACT_ID = ACT.ACT_ID)'
             ,''
             ,'0')        
       , T_TIPO_DATA('MOD_REM_FEC_INSCRIP', 'Primera vez modificado en REM, deja de actualizarse', 'Si se han modificado los datos en REM, deja de actualizarse este campo con la información del Data Tape y permanece la de REM'
@@ -65,7 +65,7 @@ DECLARE
                   JOIN '||V_ESQUEMA||'.ACT_TIT_TITULO AUX_ACT ON UCC.ACT_ID = AUX_ACT.ACT_ID AND AUX_ACT.BORRADO = 0
                   WHERE UCC.VALOR IS NULL AND AUX_ACT.TIT_FECHA_INSC_REG IS NOT NULL OR UCC.VALOR IS NOT NULL AND AUX_ACT.TIT_FECHA_INSC_REG IS NULL OR TO_DATE(UCC.VALOR, ''''YYYY/MM/DD'''') != AUX_ACT.TIT_FECHA_INSC_REG
                   AND COS.DD_COS_CODIGO = TMP.ORIGEN
-                  AND UCC.ACT_ID = ACT.ACT_ID) AND TMP.ORIGEN = ''''018'''''
+                  AND UCC.ACT_ID = ACT.ACT_ID)'
             ,''
             ,'0') 
       , T_TIPO_DATA('MOD_REM_DD_TVI', 'Primera vez modificado en REM, deja de actualizarse', 'Si se han modificado los datos en REM, deja de actualizarse este campo con la información del Data Tape y permanece la de REM'
@@ -77,7 +77,7 @@ DECLARE
                   JOIN '||V_ESQUEMA_M||'.DD_TVI_TIPO_VIA AUX_TVI ON BIE_LOC.DD_TVI_ID = AUX_TVI.DD_TVI_ID AND AUX_TVI.BORRADO = 0
                   WHERE NVL(UCC.VALOR,-1) != NVL(AUX_TVI.DD_TVI_CODIGO,-1) 
                   AND COS.DD_COS_CODIGO = TMP.ORIGEN
-                  AND UCC.ACT_ID = ACT.ACT_ID) AND TMP.ORIGEN = ''''040'''''
+                  AND UCC.ACT_ID = ACT.ACT_ID)'
             ,''
             ,'0')             
       , T_TIPO_DATA('MOD_REM_NOMBRE_VIA', 'Primera vez modificado en REM, deja de actualizarse', 'Si se han modificado los datos en REM, deja de actualizarse este campo con la información del Data Tape y permanece la de REM'
@@ -88,7 +88,7 @@ DECLARE
                   JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BIE_LOC ON AUX_ACT.BIE_ID = BIE_LOC.BIE_ID AND BIE_LOC.BORRADO = 0
                   WHERE NVL(UCC.VALOR,-1) != NVL(BIE_LOC.BIE_LOC_NOMBRE_VIA,-1) 
                   AND COS.DD_COS_CODIGO = TMP.ORIGEN
-                  AND UCC.ACT_ID = ACT.ACT_ID) AND TMP.ORIGEN = ''''042'''''
+                  AND UCC.ACT_ID = ACT.ACT_ID)'
             ,''
             ,'0')    
       , T_TIPO_DATA('MOD_REM_NUM_DOMIC', 'Primera vez modificado en REM, deja de actualizarse', 'Si se han modificado los datos en REM, deja de actualizarse este campo con la información del Data Tape y permanece la de REM'
@@ -99,7 +99,7 @@ DECLARE
                   JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BIE_LOC ON AUX_ACT.BIE_ID = BIE_LOC.BIE_ID AND BIE_LOC.BORRADO = 0
                   WHERE NVL(UCC.VALOR,-1) != NVL(BIE_LOC.BIE_LOC_NUMERO_DOMICILIO,-1) 
                   AND COS.DD_COS_CODIGO = TMP.ORIGEN
-                  AND UCC.ACT_ID = ACT.ACT_ID) AND TMP.ORIGEN = ''''044'''''
+                  AND UCC.ACT_ID = ACT.ACT_ID)'
             ,''
             ,'0')     
       , T_TIPO_DATA('MOD_REM_PISO', 'Primera vez modificado en REM, deja de actualizarse', 'Si se han modificado los datos en REM, deja de actualizarse este campo con la información del Data Tape y permanece la de REM'
@@ -110,7 +110,7 @@ DECLARE
                   JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BIE_LOC ON AUX_ACT.BIE_ID = BIE_LOC.BIE_ID AND BIE_LOC.BORRADO = 0
                   WHERE NVL(UCC.VALOR,-1) != NVL(BIE_LOC.BIE_LOC_PISO,-1) 
                   AND COS.DD_COS_CODIGO = TMP.ORIGEN
-                  AND UCC.ACT_ID = ACT.ACT_ID) AND TMP.ORIGEN = ''''048'''''
+                  AND UCC.ACT_ID = ACT.ACT_ID)'
             ,''
             ,'0') 
       , T_TIPO_DATA('MOD_REM_PUERTA', 'Primera vez modificado en REM, deja de actualizarse', 'Si se han modificado los datos en REM, deja de actualizarse este campo con la información del Data Tape y permanece la de REM'
@@ -121,7 +121,7 @@ DECLARE
                   JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BIE_LOC ON AUX_ACT.BIE_ID = BIE_LOC.BIE_ID AND BIE_LOC.BORRADO = 0
                   WHERE NVL(UCC.VALOR,-1) != NVL(BIE_LOC.BIE_LOC_PUERTA,-1) 
                   AND COS.DD_COS_CODIGO = TMP.ORIGEN
-                  AND UCC.ACT_ID = ACT.ACT_ID) AND TMP.ORIGEN = ''''050'''''
+                  AND UCC.ACT_ID = ACT.ACT_ID)'
             ,''
             ,'0') 
       , T_TIPO_DATA('MOD_REM_MUNICIPIO', 'Primera vez modificado en REM, deja de actualizarse', 'Si se han modificado los datos en REM, deja de actualizarse este campo con la información del Data Tape y permanece la de REM'
@@ -133,7 +133,7 @@ DECLARE
                   JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD AUX_LOC ON BIE_LOC.DD_LOC_ID = AUX_LOC.DD_LOC_ID AND AUX_LOC.BORRADO = 0
                   WHERE NVL(UCC.VALOR,-1) != NVL(AUX_LOC.DD_LOC_CODIGO,-1) 
                   AND COS.DD_COS_CODIGO = TMP.ORIGEN
-                  AND UCC.ACT_ID = ACT.ACT_ID) AND TMP.ORIGEN = ''''054'''''
+                  AND UCC.ACT_ID = ACT.ACT_ID)'
             ,''
             ,'0') 
       , T_TIPO_DATA('MOD_REM_COD_POSTAL', 'Primera vez modificado en REM, deja de actualizarse', 'Si se han modificado los datos en REM, deja de actualizarse este campo con la información del Data Tape y permanece la de REM'
@@ -144,7 +144,7 @@ DECLARE
                   JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BIE_LOC ON AUX_ACT.BIE_ID = BIE_LOC.BIE_ID AND BIE_LOC.BORRADO = 0
                   WHERE NVL(UCC.VALOR,-1) != NVL(BIE_LOC.BIE_LOC_COD_POST,-1) 
                   AND COS.DD_COS_CODIGO = TMP.ORIGEN
-                  AND UCC.ACT_ID = ACT.ACT_ID) AND TMP.ORIGEN = ''''058'''''
+                  AND UCC.ACT_ID = ACT.ACT_ID)'
             ,''
             ,'0') 
       , T_TIPO_DATA('MOD_REM_LATITUD', 'Primera vez modificado en REM, deja de actualizarse', 'Si se han modificado los datos en REM, deja de actualizarse este campo con la información del Data Tape y permanece la de REM'
@@ -153,8 +153,7 @@ DECLARE
                   JOIN '||V_ESQUEMA||'.DD_COS_CAMPOS_ORIGEN_CONV_SAREB COS ON UCC.DD_COS_ID = COS.DD_COS_ID AND COS.BORRADO = 0 AND COS.DD_COS_CODIGO = ''''060''''
                   JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION AUX_ACT ON UCC.ACT_ID = AUX_ACT.ACT_ID AND AUX_ACT.BORRADO = 0 
                   WHERE NVL(TO_NUMBER(REPLACE(UCC.VALOR, ''''.'''','''','''')),-1) != NVL(AUX_ACT.LOC_LATITUD, -1)
-                  AND AUX_ACT.ACT_ID = ACT.ACT_ID)
-                  AND TMP.ORIGEN = ''''060'''''
+                  AND AUX_ACT.ACT_ID = ACT.ACT_ID)'
             ,''
             ,'0') 
       , T_TIPO_DATA('MOD_REM_LONGITUD', 'Primera vez modificado en REM, deja de actualizarse', 'Si se han modificado los datos en REM, deja de actualizarse este campo con la información del Data Tape y permanece la de REM'
@@ -163,8 +162,7 @@ DECLARE
                   JOIN '||V_ESQUEMA||'.DD_COS_CAMPOS_ORIGEN_CONV_SAREB COS ON UCC.DD_COS_ID = COS.DD_COS_ID AND COS.BORRADO = 0 AND COS.DD_COS_CODIGO = ''''062''''
                   JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION AUX_ACT ON UCC.ACT_ID = AUX_ACT.ACT_ID AND AUX_ACT.BORRADO = 0 
                   WHERE NVL(TO_NUMBER(REPLACE(UCC.VALOR, ''''.'''','''','''')),-1) != NVL(AUX_ACT.LOC_LONGITUD, -1)
-                  AND AUX_ACT.ACT_ID = ACT.ACT_ID)
-                  AND TMP.ORIGEN = ''''062'''''
+                  AND AUX_ACT.ACT_ID = ACT.ACT_ID)'
             ,''
             ,'0') 
       , T_TIPO_DATA('MOD_REM_PROVINCIA', 'Primera vez modificado en REM, deja de actualizarse', 'Si se han modificado los datos en REM, deja de actualizarse este campo con la información del Data Tape y permanece la de REM'
@@ -176,7 +174,7 @@ DECLARE
                   JOIN '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA AUX_PRV ON BIE_LOC.DD_PRV_ID = AUX_PRV.DD_PRV_ID AND AUX_PRV.BORRADO = 0
                   WHERE NVL(UCC.VALOR,-1) != NVL(AUX_PRV.DD_PRV_CODIGO,-1) 
                   AND COS.DD_COS_CODIGO = TMP.ORIGEN
-                  AND UCC.ACT_ID = ACT.ACT_ID) AND TMP.ORIGEN = ''''052'''''
+                  AND UCC.ACT_ID = ACT.ACT_ID)'
             ,''
             ,'0') 
       , T_TIPO_DATA('MOD_REM_ESCALERA', 'Primera vez modificado en REM, deja de actualizarse', 'Si se han modificado los datos en REM, deja de actualizarse este campo con la información del Data Tape y permanece la de REM'
@@ -187,7 +185,7 @@ DECLARE
                   JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BIE_LOC ON AUX_ACT.BIE_ID = BIE_LOC.BIE_ID AND BIE_LOC.BORRADO = 0
                   WHERE NVL(UCC.VALOR,-1) != NVL(BIE_LOC.BIE_LOC_ESCALERA,-1) 
                   AND COS.DD_COS_CODIGO = TMP.ORIGEN
-                  AND UCC.ACT_ID = ACT.ACT_ID) AND TMP.ORIGEN = ''''046'''''
+                  AND UCC.ACT_ID = ACT.ACT_ID)'
             ,''
             ,'0') 
     ); 

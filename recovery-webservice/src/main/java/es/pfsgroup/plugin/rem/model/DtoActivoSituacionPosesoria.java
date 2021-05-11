@@ -54,6 +54,7 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	private Integer tieneVigilancia;
 	private Date fechaInstalacionVigilancia;
 	private Date fechaDesinstalacionVigilancia;
+	private Boolean perteneceActivoREAM;
 		
 	public String getTipoEstadoAlquiler() {
 		return tipoEstadoAlquiler;
@@ -283,6 +284,13 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	public void setFechaDesinstalacionVigilancia(Date fechaDesinstalacionVigilancia) {
 		this.fechaDesinstalacionVigilancia = fechaDesinstalacionVigilancia;
 	}
+	public Boolean getPerteneceActivoREAM() {
+		return perteneceActivoREAM;
+	}
+	public void setPerteneceActivoREAM(Boolean perteneceActivoREAM) {
+		this.perteneceActivoREAM = perteneceActivoREAM;
+	}
+	
 	public String getConTituloDescripcion() {
 		return conTituloDescripcion;
 	}

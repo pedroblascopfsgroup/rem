@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDivHorizontal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
@@ -203,6 +204,17 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 		// lanzar el SP de publicaciones para el activo
 		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId(), false);
 
+		if(activo!=null && situacionPosesoria!=null && usu!=null) {
+			String cmasivaCodigo = this.getValidOperation();
+			Filter filterCMasiva = genericDao.createFilter(FilterType.EQUALS, "codigo", cmasivaCodigo);
+			MSVDDOperacionMasiva cMasiva = genericDao.get(MSVDDOperacionMasiva.class, filterCMasiva);
+			
+			if(cMasiva!=null && cMasiva.getDescripcion()!=null && (!celdaOcupado.isEmpty() || !celdaTitulo.isEmpty())) {
+				HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,situacionPosesoria,usu,HistoricoOcupadoTitulo.COD_CARGA_MASIVA,cMasiva.getDescripcion().toString());
+				genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);
+			}
+		
+		}
 		return new ResultadoProcesarFila();
 	}
 

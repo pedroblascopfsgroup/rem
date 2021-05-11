@@ -71,18 +71,7 @@ BEGIN
 			EXECUTE IMMEDIATE V_MSQL;
 			DBMS_OUTPUT.PUT_LINE('[INFO]  FK_TPA_DATOS_DQ... FK creada.');
 		END IF;
-
-		V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = ''FK_STA_DATOS_DQ''';
-		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-		IF V_NUM_TABLAS = 1 THEN
-            DBMS_OUTPUT.PUT_LINE('[NO Hacemos nada Existe FK]');
-        ELSE
-		-- Creamos FK constraint
-			V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT FK_STA_DATOS_DQ FOREIGN KEY (DD_STA_ID) REFERENCES '||V_ESQUEMA||'.DD_STA_SUBTIPO_TITULO_ACTIVO(DD_STA_ID)';
-			EXECUTE IMMEDIATE V_MSQL;
-			DBMS_OUTPUT.PUT_LINE('[INFO]  FK_STA_DATOS_DQ... FK creada.');
-		END IF;
-		
+	
 		V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = ''FK_TUD_DATOS_DQ''';
 		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
 		IF V_NUM_TABLAS = 1 THEN

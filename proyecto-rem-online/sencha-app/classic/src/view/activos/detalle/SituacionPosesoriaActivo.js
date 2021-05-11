@@ -23,7 +23,17 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
         me.setTitle(HreRem.i18n('title.situacion.posesoria.llaves'));
 
         var items= [
-
+        	{
+        		xtype: 'displayfieldbase',
+            	fieldStyle: 'color:#ff0000; padding-top: 2px; text-align:right; padding-right: 50px',
+            	width: '100%',
+            	reference:'literalOcupacional',
+            	value: HreRem.i18n('header.literal.situacion.ocupacional'),
+            	style: 'text-align:center',
+            	bind: {
+	        		hidden: '{!situacionPosesoria.perteneceActivoREAM}'
+	        	}
+        	},
 			{    
                 
 				xtype:'fieldsettable',
@@ -476,6 +486,18 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					
 					]
                 
+			},
+			{
+				xtype:'fieldsettable',
+				title:HreRem.i18n('title.situacion.ocupacional'),
+				reference: 'fieldSituacionOcupacionalGrid',
+				defaultType: 'textfieldbase',
+				items : [
+	                {
+	                    xtype:'situacionOcupacionalGrid',
+						colspan: 3
+	                }
+				]
             },
             {
 				xtype:'fieldsettable',

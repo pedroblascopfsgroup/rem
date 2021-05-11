@@ -2269,6 +2269,20 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return genericDao.getListOrdered(ActivoHistoricoValoraciones.class, order, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
 	}
 	
+
+	@Override
+	public boolean perteneceActivoREAM(Long idActivo) {
+		String sql = " SELECT count(1)      "
+			+			"				 FROM V_ACTIVOS_GESTIONADOS_REAM act    "
+			+			"				 WHERE act.act_id =       " + idActivo ;
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue() > 0;
+		}
+		return false;
+
+	}
+
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivoAndTipoPrecio(Long idActivo, String codigoTipoPrecio) {

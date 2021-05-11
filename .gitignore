@@ -100,3 +100,4 @@ SQLs-list.txt
 sql/SQLs-list.txt
 sql/.project
 
+.vscode/launch.json

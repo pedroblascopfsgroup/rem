@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -194,6 +195,12 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							situacionPosesoria.setFechaModificarOcupado(new Date());
 							situacionPosesoria.setUsuarioModificarConTitulo(usuarioModificar);
 							situacionPosesoria.setFechaModificarConTitulo(new Date());
+							
+							if(situacionPosesoria!=null && usu!=null) {			
+								HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,situacionPosesoria,usu,HistoricoOcupadoTitulo.COD_OFERTA_VENTA,null);
+								genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+							}
+
 
 						} else if (!Checks.esNulo(situacionPosesoria)
 								&& !Checks.esNulo(situacionPosesoria.getConTitulo())
@@ -209,9 +216,15 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							situacionPosesoria.setFechaModificarOcupado(new Date());
 							situacionPosesoria.setUsuarioModificarConTitulo(usuarioModificar);
 							situacionPosesoria.setFechaModificarConTitulo(new Date());
+							
+							if(situacionPosesoria!=null && usu!=null) {			
+								HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,situacionPosesoria,usu,HistoricoOcupadoTitulo.COD_OFERTA_VENTA,null);
+								genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+							}
+
 
 						}
-
+												
 						try {
 							situacionPosesoria.setFechaTomaPosesion(ft.parse(valor.getValor()));
 						} catch (ParseException e) {
@@ -245,6 +258,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 					expediente.setObsAsisPbc(valor.getValor());
 				}				
 			}
+			
 			boolean paseAVendido = false;
 			if (filtro != null) {
 				paseAVendido = DDEstadosExpedienteComercial.VENDIDO.equals(filtro.getPropertyValue());

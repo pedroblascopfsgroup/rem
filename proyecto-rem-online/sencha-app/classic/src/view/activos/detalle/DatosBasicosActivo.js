@@ -326,6 +326,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										rawValue: '{activo.tipoTransmisionDescripcion}'
 									}
 								},
+							 	{
+									xtype:'comboboxfieldbasedd',
+									fieldLabel: HreRem.i18n('fieldlabel.tipo.procedencia.producto'),
+									bind: {
+										readOnly : true,
+										hidden: '{!activo.isCarteraBankia}',
+										store: '{comboTipoProcedenciaProducto}',
+										value: '{activo.procedenciaProductoTransmisionCodigo}',
+										rawValue: '{activo.procedenciaProductoDescripcion}'
+									}
+								},
 								{
 									xtype:'comboboxfieldbasedd',
 									reference: 'tipoAltaRef',

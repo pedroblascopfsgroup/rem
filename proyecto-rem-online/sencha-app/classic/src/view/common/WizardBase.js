@@ -3,6 +3,7 @@ Ext.define('HreRem.view.common.WizardBase', {
 	xtype: 'wizardBase',
 	bodyPadding: '5',
 	layout: 'card',
+	visualizar: false,
 
 	listeners: {
 		boxready: function (window) {

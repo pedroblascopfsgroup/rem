@@ -7155,5 +7155,38 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "AND act.BORRADO = 0)");
 		return "1".equals(resultado);
 	}
+	
+	@Override
+	public Boolean isActivoCerberus(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM ACT_ACTIVO ACT "
+					+"		WHERE ACT.DD_CRA_ID IN (SELECT DD_CRA_ID FROM DD_CRA_CARTERA "
+					+"								WHERE DD_CRA_CODIGO IN ('07')"
+					+"								AND BORRADO = 0) "
+					+"		AND ACT.ACT_NUM_ACTIVO = "+ numActivo +"");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean tieneVigenteFasePublicacionIII(String activo) {
+		String resultado = rawDao.getExecuteSQL("WITH ultimo AS (SELECT hfp_id,dd_fsp_id\n" + 
+				"				FROM (SELECT hfp_id,dd_fsp_id\n" + 
+				"				FROM act_hfp_hist_fases_pub hfp\n" + 
+				"				JOIN ACT_ACTIVO a ON a.act_id = hfp.act_id AND hfp.borrado = 0 \n" + 
+				"				WHERE a.act_num_Activo = "+activo+" and  a.borrado = 0 \n" + 
+				"				ORDER BY hfp.hfp_id DESC)\n" + 
+				"				WHERE ROWNUM = 1)\n" + 
+				"				\n" + 
+				"				\n" + 
+				"				SELECT count(*)\n" + 
+				"				FROM ultimo u\n" + 
+				"				JOIN  DD_FSP_FASE_PUBLICACION sp ON u.DD_FSP_ID = sp.DD_FSP_ID AND sp.borrado = 0\n" + 
+				"				WHERE sp.DD_FSP_CODIGO = '05'");
+		return !"0".equals(resultado);
+	}
 }
 

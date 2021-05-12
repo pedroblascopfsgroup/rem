@@ -111,7 +111,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final String VALID_DESMARCAR_SIN_ERRORES= "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.desmarcar.sin.errores";
 	public static final String VALID_MOTIVO_GESTION_COMERCIAL = "msg.error.masivo.actializar.perimetro.activo.motivo.gestion.comercial.no.valido";
 	public static final String VALID_MOTIVO_GESTION_COMERCIAL_RELLENO = "msg.error.masivo.actializar.perimetro.activo.motivo.gestion.comercial.relleno.no.valido";
-	
+	public static final String VALID_FASE_PUBLICACION= "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.fase.publicado";
 
 	//Posición de los datos
 	private	static final int DATOS_PRIMERA_FILA = 1;
@@ -1252,6 +1252,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 										if(particularValidator.estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(activo)) {
 											listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_NO_VPO));
 										}
+									}else if(particularValidator.isActivoCerberus(activo) && particularValidator.tieneVigenteFasePublicacionIII(activo)) {
+										listaErroresParaMarcar.add(messageServices.getMessage(VALID_FASE_PUBLICACION));
 									}
 								}
 								if(!pararComprobaciones) {

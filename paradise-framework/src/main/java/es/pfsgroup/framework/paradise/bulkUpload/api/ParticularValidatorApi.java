@@ -1469,9 +1469,12 @@ public interface ParticularValidatorApi {
 	Boolean isActivoAlquiladoSCM(String activo);
 
 	boolean isActivoPublicadoDependiendoSuTipoComercializacion(String activo);
+	
 	Boolean esSubCarterasCerberusAppleDivarian(String numActivo);
 
-
-
 	boolean isActivoDestinoComercialSoloAlquiler(String activo);
+
+	Boolean isActivoCerberus(String numActivo);
+
+	Boolean tieneVigenteFasePublicacionIII(String activo);
 }

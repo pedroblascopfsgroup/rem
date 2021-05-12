@@ -82,6 +82,8 @@ public class ActivoLocalizacion implements Serializable, Auditable {
 
 	
 	
+	@Column(name = "LOC_DIRECCION_DOS")
+	private String direccionDos;
 
 	public Long getId() {
 		return id;
@@ -153,6 +155,14 @@ public class ActivoLocalizacion implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getDireccionDos() {
+		return direccionDos;
+	}
+
+	public void setDireccionDos(String direccionDos) {
+		this.direccionDos = direccionDos;
 	}  									
 	
 	

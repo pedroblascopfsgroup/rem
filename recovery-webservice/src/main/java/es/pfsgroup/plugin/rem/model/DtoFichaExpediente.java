@@ -155,6 +155,8 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private Boolean finalizadoCierreEconomico;
 	
+	private String codigoEstadoBc;
+	
 	public Long getId() {
 		return id;
 	}
@@ -786,6 +788,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setFinalizadoCierreEconomico(Boolean finalizadoCierreEconomico) {
 		this.finalizadoCierreEconomico = finalizadoCierreEconomico;
+	}
+
+	public String getCodigoEstadoBc() {
+		return codigoEstadoBc;
+	}
+
+	public void setCodigoEstadoBc(String codigoEstadoBc) {
+		this.codigoEstadoBc = codigoEstadoBc;
 	}
 	
 	

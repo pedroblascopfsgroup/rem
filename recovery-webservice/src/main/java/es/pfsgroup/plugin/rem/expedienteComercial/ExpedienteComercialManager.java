@@ -127,6 +127,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoContrasteListas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -1736,6 +1737,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 				
 				dto.setFinalizadoCierreEconomico(finalizadoCierreEconomico(expediente));
+			}
+			
+			if(expediente.getEstadoBc() != null) {
+				dto.setCodigoEstadoBc(expediente.getEstadoBc().getCodigo());
 			}
 		}
 		return dto;
@@ -5098,7 +5103,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					expedienteComercial.setComiteSancion((DDComiteSancion) utilDiccionarioApi
 							.dameValorDiccionarioByCod(DDComiteSancion.class, dto.getCodigoComiteSancionador()));
 				}
-
+				
+				if(dto.getCodigoEstadoBc() != null) {
+					expedienteComercial.setEstadoBc((DDEstadoExpedienteBc) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class, dto.getCodigoEstadoBc()));
+				}
+				
 				if (expedienteComercial.getId() != null) {
 					genericDao.update(ExpedienteComercial.class, expedienteComercial);
 

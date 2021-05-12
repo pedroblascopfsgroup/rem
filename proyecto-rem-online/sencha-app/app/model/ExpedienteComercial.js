@@ -220,9 +220,6 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name: 'definicionOfertaScoring',
        			type: 'boolean'
     		},
-       		{
-       			name: 'codigoEstado'
-    		},
     		{
     			name: 'subcarteraCodigo'
 			},
@@ -319,7 +316,10 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		{
     			name:'finalizadoCierreEconomico',
     			type: 'boolean'
-			}
+			},
+			{
+    			name: 'codigoEstadoBc'
+    		}
     ],
     formulas: {
     	esExpedienteBloqueado: function(get) {

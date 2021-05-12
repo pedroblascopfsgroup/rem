@@ -279,8 +279,8 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						   },{
 
 							   text: HreRem.i18n('header.fecha.acep.gpdr'),
-							   dataIndex: 'fechaAcepGdpr',
-						   } ,
+							   dataIndex: 'fechaAcepGdpr'
+						   },
 						   {
 
 							   text: HreRem.i18n('header.estado.contraste'),

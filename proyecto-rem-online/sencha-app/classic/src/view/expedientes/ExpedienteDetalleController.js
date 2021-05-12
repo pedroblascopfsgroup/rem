@@ -5190,12 +5190,15 @@ comprobarFormatoModificar: function() {
 		me.getView().mask(HreRem.i18n("msg.mask.espere"));
 		
 		Ext.Ajax.request({
-		     url: url,
-		     params:  {numOferta : numOferta , idExpediente: idExpediente},
-		     success: function(response, opts) {
-                me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));           	
-		     },
-
+			     url: url,
+			     params:  {numOferta : numOferta , idExpediente: idExpediente},
+			     success: function(response, opts) {
+			    	 data = Ext.decode(response.responseText);
+			    	 if (data.success == 'true')
+			    		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			    	 else
+			    		 me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko"));
+			     },
 	        failure: function(response, opts) {
 					me.fireEvent("errorToast",data.msg);
 			},

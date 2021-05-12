@@ -336,6 +336,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String procedenciaProductoCodigo;
 	
 	private String procedenciaProductoDescripcion;
+
+	private String direccionDos;
+
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -2520,6 +2523,13 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setProcedenciaProductoDescripcion(String procedenciaProductoDescripcion) {
 		this.procedenciaProductoDescripcion = procedenciaProductoDescripcion;
+	}
+	public String getDireccionDos() {
+		return direccionDos;
+	}
+
+	public void setDireccionDos(String direccionDos) {
+		this.direccionDos = direccionDos;
 	}	
 	
 }

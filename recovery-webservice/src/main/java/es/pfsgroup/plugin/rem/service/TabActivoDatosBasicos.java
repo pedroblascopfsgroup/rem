@@ -1083,6 +1083,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 			}			
 		}
+		if (activo != null && activo.getLocalizacion() != null && activo.getLocalizacion().getDireccionDos() != null) {
+			activoDto.setDireccionDos(activo.getLocalizacion().getDireccionDos());
+		}
 		
 		if (activo.getProcedenciaProducto() != null) {
 			activoDto.setProcedenciaProductoCodigo(activo.getProcedenciaProducto().getCodigo());
@@ -1827,6 +1830,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}else {
 					//throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_BBVA));
+				}
+			}
+			
+			if (dto.getDireccionDos() != null) {
+				ActivoLocalizacion actLocMod = activo.getLocalizacion();
+				
+				if (actLocMod != null) {
+					actLocMod.setDireccionDos(dto.getDireccionDos());
+					genericDao.update(ActivoLocalizacion.class, actLocMod);
+					
+					activo.setLocalizacion(actLocMod);
 				}
 			}
 		} catch(JsonViewerException jve) {

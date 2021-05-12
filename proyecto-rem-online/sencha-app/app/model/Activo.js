@@ -1133,6 +1133,9 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'procedenciaProductoDescripcion'
+			},
+			{
+				name: 'direccionDos'
 			}
     ],
     

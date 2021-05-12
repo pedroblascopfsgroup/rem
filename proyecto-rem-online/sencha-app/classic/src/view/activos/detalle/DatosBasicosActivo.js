@@ -467,7 +467,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.latitud'),
 							readOnly	: true,
 							bind:		'{activo.latitud}'
-		                },						
+		                },
 						// fila 2	
 						
 						{ 
@@ -503,9 +503,19 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                // fila 3               
 		                { 
 		                	fieldLabel: HreRem.i18n('fieldlabel.numero'),
+		                	colspan: 3,
 		                	bind:{
 		                		value: '{activo.numeroDomicilio}'
 		                	}
+		                },
+		                { 
+							fieldLabel: HreRem.i18n('fieldlabel.calle.dos'),
+							xtype: 'textfieldbase',
+							//colspan: 3,							
+							bind:{
+								hidden: '{!activo.isCarteraBankia}',
+								value:'{activo.direccionDos}'
+							}
 		                },
 		                {
 							xtype: 'comboboxfieldbasedd',

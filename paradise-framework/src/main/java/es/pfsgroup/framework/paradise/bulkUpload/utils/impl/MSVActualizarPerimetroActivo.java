@@ -156,9 +156,9 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
     private static final String [] listaValidosNegativos = {"N" ,"NO"};
 
     private static final String EDITAR_EXCLUIR_VALIDACIONES = "EDITAR_EXCLUIR_VALIDACIONES";
-
-  
- 
+    
+    private static final String[]listaCodigosNoValidosSubfasePublicacion = {"15", "14", "12"};
+    
     protected final Log logger = LogFactory.getLog(getClass());
     
     
@@ -1219,9 +1219,13 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		boolean pararComprobaciones = false;	
 		Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		boolean usuHasFunction = particularValidator.userHasFunction(EDITAR_EXCLUIR_VALIDACIONES,usu.getId());
-		
+		List<String> listaCodSubfase = new ArrayList<String>();
+		listaCodSubfase.addAll( Arrays.asList(listaCodigosNoValidosSubfasePublicacion));
+		//List<String> listaCodSubfase = Arrays.asList(listaCodigosNoValidosSubfasePublicacion);
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
+				listaCodSubfase.clear();
+				listaCodSubfase.addAll( Arrays.asList(listaCodigosNoValidosSubfasePublicacion));
 				try {
 					String visibleGestionComercial = exc.dameCelda(i,COL_NUM_VISIBLE_GESTION_COMERCIAL_SN);
 					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
@@ -1290,9 +1294,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 										if(particularValidator.estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(activo)) {
 											listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_NO_VPO));
 										}
-									}else if(particularValidator.isActivoCerberus(activo) && particularValidator.tieneVigenteFasePublicacionIII(activo)) {
-										listaErroresParaMarcar.add(messageServices.getMessage(VALID_FASE_PUBLICACION));
 									}
+									
 								}
 								if(!pararComprobaciones) {
 									if(!particularValidator.tieneFechaVentaExterna(activo)){
@@ -1307,12 +1310,24 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_ALQUILER_SOCIAL));
 									}
 									
-									if(!particularValidator.validacionSubfasePublicacion(activo)) {
-										listaErroresParaMarcar.add(messageServices.getMessage(VALID_SUBFASE_PUBLICACION));
+									boolean activoCerberus = particularValidator.isActivoCerberus(activo);
+									if(activoCerberus) {
+										listaCodSubfase.add("28");
+										if(!particularValidator.validacionSubfasePublicacion(activo, listaCodSubfase)) {
+											listaErroresParaMarcar.add(messageServices.getMessage(VALID_SUBFASE_PUBLICACION));
+										}
+									}else {
+										
+										if(!particularValidator.validacionSubfasePublicacion(activo, listaCodSubfase)) {
+											listaErroresParaMarcar.add(messageServices.getMessage(VALID_SUBFASE_PUBLICACION));
+										}
 									}
 									
 									if(particularValidator.estadoExpedienteComercial(activo)) {
 										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_VENDIDO_RESERVADO_FIRMADO));
+									}
+									if(activoCerberus && particularValidator.tieneVigenteFasePublicacionIII(activo)) {
+										listaErroresParaMarcar.add(messageServices.getMessage(VALID_FASE_PUBLICACION));
 									}
 								}
 							}

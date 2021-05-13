@@ -1457,7 +1457,7 @@ public interface ParticularValidatorApi {
 
 	Boolean isActivoCajamar(String numActivo);
 
-	Boolean validacionSubfasePublicacion(String activo);
+	//Boolean validacionSubfasePublicacion(String activo);
 
 	Boolean isCheckVisibleGestionComercial(String numActivo);
 
@@ -1476,4 +1476,6 @@ public interface ParticularValidatorApi {
 	Boolean isActivoCerberus(String numActivo);
 
 	Boolean tieneVigenteFasePublicacionIII(String activo);
+
+	Boolean validacionSubfasePublicacion(String activo, List<String> codigos);
 }

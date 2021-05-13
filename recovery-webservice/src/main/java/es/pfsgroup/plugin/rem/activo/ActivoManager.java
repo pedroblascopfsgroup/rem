@@ -4813,14 +4813,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			} else if (DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo())) {
 				ActivoAgrupacionActivo aga = activoDao.getActivoAgrupacionActivoPA(activo.getId());	
-				Long idAM = activoDao.getIdActivoMatriz(aga.getAgrupacion().getId());
-				Activo activoMatriz = get(idAM);
 				
-				if (!Checks.esNulo(activoMatriz.getSituacionPosesoria().getFechaTomaPosesion())) {
-					activo.getSituacionPosesoria().setFechaTomaPosesion(activoMatriz.getSituacionPosesoria().getFechaTomaPosesion());
+				if (!Checks.esNulo(aga)) {
+					Long idAM = activoDao.getIdActivoMatriz(aga.getAgrupacion().getId());
+					Activo activoMatriz = get(idAM);
+					
+					if (!Checks.esNulo(activoMatriz.getSituacionPosesoria().getFechaTomaPosesion())) {
+						activo.getSituacionPosesoria().setFechaTomaPosesion(activoMatriz.getSituacionPosesoria().getFechaTomaPosesion());
+					} else {
+						activo.getSituacionPosesoria().setFechaTomaPosesion(null);
+					}
 				} else {
 					activo.getSituacionPosesoria().setFechaTomaPosesion(null);
 				}
+				
 			}
 		}
 

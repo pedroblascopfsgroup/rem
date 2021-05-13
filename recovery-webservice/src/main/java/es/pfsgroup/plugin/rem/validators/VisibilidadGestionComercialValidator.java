@@ -175,6 +175,8 @@ public class VisibilidadGestionComercialValidator {
 				|| DDSubfasePublicacion.isHistoricoFasesReqLegAdm(fasePublicacionActivoVigente.getSubFasePublicacion()) 
 				|| DDSubfasePublicacion.isHistoricoFasesSinValor(fasePublicacionActivoVigente.getSubFasePublicacion()))) {
 					erroresActivo.add(VALID_SUBFASE_PUBLICACION);
+				}else if(DDCartera.isCarteraCerberus(activoActual.getCartera()) && DDSubfasePublicacion.isHistoricoFasesGestionApi(fasePublicacionActivoVigente.getSubFasePublicacion())) {
+					erroresActivo.add(VALID_SUBFASE_PUBLICACION);
 				}
 				
 				if(DDCartera.isCarteraCerberus(activoActual.getCartera()) && DDFasePublicacion.isFaseTres(fasePublicacionActivoVigente.getFasePublicacion())) {

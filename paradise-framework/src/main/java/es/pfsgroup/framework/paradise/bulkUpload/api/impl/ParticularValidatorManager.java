@@ -7026,9 +7026,19 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean validacionSubfasePublicacion (String activo) {
+	public Boolean validacionSubfasePublicacion (String activo, List<String> codigos) { 
 		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo))
 			return false;
+		
+		String where = "";
+		for (int i = 0; i < codigos.size(); i++) {
+			if(i != 0) {
+				where = where + "OR sp.DD_SFP_CODIGO = '"+codigos.get(i)+"' ";
+			}else {
+				where = where + "sp.DD_SFP_CODIGO = '"+codigos.get(i)+"' ";
+			}
+		}
+		
 		String resultado = rawDao.getExecuteSQL ("WITH ultimo AS (SELECT hfp_id,dd_sfp_id\n" + 
 				"FROM (SELECT hfp_id,dd_sfp_id\n" + 
 				"FROM act_hfp_hist_fases_pub hfp\n" + 
@@ -7040,8 +7050,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"\n" + 
 				"SELECT COUNT(1)\n" + 
 				"FROM ultimo u\n" + 
-				"JOIN  dd_sfp_subfase_publicacion sp ON u.DD_SFP_ID = sp.DD_SFP_ID AND sp.borrado = 0\n" + 
-				"WHERE sp.DD_SFP_CODIGO = '15' OR sp.DD_SFP_CODIGO = '14'  OR sp.DD_SFP_CODIGO = '12'"
+				"JOIN  dd_sfp_subfase_publicacion sp ON u.DD_SFP_ID = sp.DD_SFP_ID \n" + 
+				"WHERE sp.borrado = 0 AND( " + where + ")"
 			);
 		return "0".equals(resultado);
 	}

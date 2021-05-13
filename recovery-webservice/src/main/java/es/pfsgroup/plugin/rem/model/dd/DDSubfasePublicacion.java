@@ -56,6 +56,7 @@ public class DDSubfasePublicacion implements Auditable, Dictionary {
 	public static final String CODIGO_PENDIENTE_REPARACIONES = "24";
 	public static final String CODIGO_DEVUELTO = "25";
 	public static final String CODIGO_CLASIFICADO = "26";
+	public static final String CODIGO_GESTION_APIS = "28";
 
 
 	@Id
@@ -168,6 +169,16 @@ public class DDSubfasePublicacion implements Auditable, Dictionary {
 		}
 		
 		return isSinValor;
+	}
+	
+	public static boolean isHistoricoFasesGestionApi(DDSubfasePublicacion subfasePublicacion) {
+		boolean isGestionApi = false;
+		
+		if(subfasePublicacion != null && CODIGO_GESTION_APIS.equals(subfasePublicacion.getCodigo())) {
+			isGestionApi = true;
+		}
+		
+		return isGestionApi;
 	}
 	
 }

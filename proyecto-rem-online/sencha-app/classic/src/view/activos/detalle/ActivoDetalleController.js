@@ -3805,7 +3805,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var isCarteraSareb = me.getViewModel().get("activo.isCarteraSareb");
 		var isCarteraBankia = me.getViewModel().get("activo.isCarteraBankia");
 		if ((CONST.ORIGEN_DATO['REM'] === record.getData().origenDatoCodigo)
-				|| ((CONST.ORIGEN_DATO['RECOVERY'] === record.getData().origenDatoCodigo) && isCarteraSareb)) {
+				|| ((CONST.ORIGEN_DATO['RECOVERY'] === record.getData().origenDatoCodigo) && isCarteraSareb)
+				|| ((CONST.ORIGEN_DATO['PRISMA'] === record.getData().origenDatoCodigo) && isCarteraSareb)) {
 			Ext.create("HreRem.view.activos.detalle.CargaDetalle", {
 						carga : record,
 						parent : grid.up("form"),

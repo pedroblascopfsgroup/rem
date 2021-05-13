@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrian Molina
---## FECHA_CREACION=20210403
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20210513
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-8898
+--## INCIDENCIA_LINK=REMVIP-9708
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM - UVEM. Nuevas columnas. Anula DDL_99900087
 --##           
@@ -26,6 +26,7 @@
 --##    	0.14 Juan Beltrán  - REMVIP-7944 - Prevalece el valor del campo ACT_VPO si viene informado desde REM
 --##        0.15 Juan Alfonso  - REMVIP-8455 - Modificado titulo activo, si codigo entrada es 14 o 12 subtipo titulo activo: propio de origen funcional 13
 --##        0.16 Adrian Molina - REMVIP-8898 - Modificado inserción en la ADO para que tenga en cuenta los borrados de la CFD
+--##        0.17 Juan Alfonso - REMVIP-9708 - Cambio mapeo DD_ESP_ID en el merge que inserta en la ACT_AHT_HIST_TRAM_TITULO
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -1692,7 +1693,9 @@ BEGIN
                     MERGE INTO ACT_AHT_HIST_TRAM_TITULO AHT USING (
                       WITH TEMP AS (
                         SELECT DISTINCT
-                        ETI.DD_ETI_CODIGO AS SITUACION_TITULO, ETI.DD_ETI_ID SITUACION_TITULO_ID, APR_ID, REM
+                        DECODE(ETI.DD_ETI_CODIGO,''03'',''01'',ETI.DD_ETI_CODIGO) AS SITUACION_TITULO,
+                        DECODE(ETI.DD_ETI_CODIGO,''03'',(SELECT ETI2.DD_ETI_ID FROM REM01.DD_ETI_ESTADO_TITULO ETI2 WHERE ETI2.DD_ETI_CODIGO = ''01'' AND ETI2.BORRADO=0),ETI.DD_ETI_ID) AS SITUACION_TITULO_ID,                        
+                        APR_ID, REM
                         FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
                         LEFT JOIN '||V_ESQUEMA||'.DD_EQV_BANKIA_REM EQV
                             ON EQV.DD_NOMBRE_BANKIA = ''DD_SITUACION_TITULO''

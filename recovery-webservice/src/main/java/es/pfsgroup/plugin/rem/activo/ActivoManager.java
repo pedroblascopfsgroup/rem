@@ -4801,6 +4801,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					&& !Checks.esNulo(activo.getAdjNoJudicial()) && !Checks.esNulo(activo.getSituacionPosesoria())) {
 				if (activo.getAdjNoJudicial().getFechaPosesion() != null) {
 					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaPosesion());
+				} else if ((DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
+							(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+							||DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
+							||DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())))
+							&& activo.getAdjNoJudicial().getFechaPosesion() == null) {
+					activo.getSituacionPosesoria().setFechaTomaPosesion(null);
 				} else {
 					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
 				} 

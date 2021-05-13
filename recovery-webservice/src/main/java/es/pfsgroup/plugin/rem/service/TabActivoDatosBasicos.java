@@ -74,6 +74,7 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaActivo;
 import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCategoriaComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
@@ -603,6 +604,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getEstadoExpIncorriente())) {
 			BeanUtils.copyProperty(activoDto, "estadoExpIncorrienteCodigo", activoBancario.getEstadoExpIncorriente().getCodigo());
 			BeanUtils.copyProperty(activoDto, "estadoExpIncorrienteDescripcion", activoBancario.getEstadoExpIncorriente().getDescripcion());
+		}
+		
+		if (activoBancario != null && activoBancario.getCategoriaComercializacion() != null) {
+			activoDto.setCategoriaComercializacionCod(activoBancario.getCategoriaComercializacion().getCodigo());
+			activoDto.setCategoriaComercializacionDesc(activoBancario.getCategoriaComercializacion().getDescripcion());
 		}
 
 		// En la sección de activo bancario pero no dependiente del mismo.
@@ -1560,7 +1566,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				dto.getEstadoExpRiesgoDescripcion() != null || 
 				dto.getEstadoExpIncorrienteCodigo() != null || 
 				dto.getEstadoExpIncorrienteDescripcion() != null ||
-				dto.getProductoDescripcion() != null) 
+				dto.getProductoDescripcion() != null ||
+				dto.getCategoriaComercializacionCod() != null) 
 			{
 				
 				ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
@@ -1597,6 +1604,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				if(!Checks.esNulo(dto.getEstadoExpIncorrienteCodigo())) {
 					DDEstadoExpIncorrienteBancario estadoExpIncorriente = (DDEstadoExpIncorrienteBancario) diccionarioApi.dameValorDiccionarioByCod(DDEstadoExpIncorrienteBancario.class, dto.getEstadoExpIncorrienteCodigo());
 					activoBancario.setEstadoExpIncorriente(estadoExpIncorriente);
+				}
+				
+				if (dto.getCategoriaComercializacionCod() != null) {
+					DDCategoriaComercializacion categComerc = (DDCategoriaComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDCategoriaComercializacion.class, dto.getCategoriaComercializacionCod());
+					activoBancario.setCategoriaComercializacion(categComerc);
 				}
 				
 				activoApi.saveOrUpdateActivoBancario(activoBancario);

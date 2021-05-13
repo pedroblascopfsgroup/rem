@@ -339,6 +339,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	private String direccionDos;
 
+	private String categoriaComercializacionCod;
+	
+	private String categoriaComercializacionDesc;
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -2530,6 +2533,21 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setDireccionDos(String direccionDos) {
 		this.direccionDos = direccionDos;
+	}
+	public String getCategoriaComercializacionCod() {
+		return categoriaComercializacionCod;
+	}
+
+	public void setCategoriaComercializacionCod(String categoriaComercializacionCod) {
+		this.categoriaComercializacionCod = categoriaComercializacionCod;
+	}
+
+	public String getCategoriaComercializacionDesc() {
+		return categoriaComercializacionDesc;
+	}
+
+	public void setCategoriaComercializacionDesc(String categoriaComercializacionDesc) {
+		this.categoriaComercializacionDesc = categoriaComercializacionDesc;
 	}	
 	
 }

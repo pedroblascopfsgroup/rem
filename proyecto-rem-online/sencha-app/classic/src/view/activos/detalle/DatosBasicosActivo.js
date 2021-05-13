@@ -1105,6 +1105,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							},
 							{
 								xtype:'comboboxfieldbasedd',
+								fieldLabel: HreRem.i18n('fieldlabel.categoria.comercializacion'),
+								bind: {
+									//readOnly : '{esUA}',
+									hidden: '{!activo.isCarteraBankia}',
+									store: '{comboCategoriaComercializacion}',
+									value: '{activo.categoriaComercializacionCod}',
+									rawValue: '{activo.categoriaComercializacionDesc}'
+								}
+							},
+							{
+								xtype:'comboboxfieldbasedd',
 								fieldLabel: HreRem.i18n('fieldlabel.bancario.entrada.activo.bankia.coenae'),
 								bind: {
 									readOnly : '{esUA}',

@@ -1136,6 +1136,12 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'direccionDos'
+			},
+			{
+				name: 'categoriaComercializacionCod'
+			},
+			{
+				name: 'categoriaComercializacionDesc'
 			}
     ],
     

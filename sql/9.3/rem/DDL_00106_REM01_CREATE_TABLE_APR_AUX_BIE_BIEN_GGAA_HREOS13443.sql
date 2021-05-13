@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210315
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210513
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13443
+--## INCIDENCIA_LINK=HREOS-13988
 --## PRODUCTO=NO
 --## Finalidad: DDL Creación de la tabla APR_AUX_BIE_BIEN_GGAA
 --##           
@@ -57,7 +57,8 @@ BEGIN
 	EXECUTE IMMEDIATE '
 	CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||' (
 	BIE_ID NUMBER(16,0),  
-	GGAA NUMBER(1,0)
+	GGAA NUMBER(1,0),
+	CONTRATO VARCHAR2(100 CHAR)
 	)
 	'
 	;

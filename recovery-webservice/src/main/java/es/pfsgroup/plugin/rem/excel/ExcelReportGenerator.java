@@ -2854,6 +2854,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			//rellenamos la quinta hoja
 			
 			int currentRowComercial = 27;
+			int lastRow = mySheetAutorizacion.getLastRowNum();
 			for( DtoListFichaAutorizacion autorizacion : dtoExcelFichaComercial.getListaFichaAutorizacion()) {
 							
 				cellReference = new CellReference("B" + Integer.toString(currentRowComercial));
@@ -3005,7 +3006,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				
 				currentRowComercial++;
 
-				mySheetAutorizacion.shiftRows(currentRowComercial, mySheetAutorizacion.getLastRowNum() - 1, 1);
+				mySheetAutorizacion.shiftRows(currentRowComercial, lastRow - 1, 1);
 			}
 			
 			for (int x=1; x<35; x++) {

@@ -961,6 +961,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			} else {
 				oferta.setOfrDocRespPrescriptor(true);
 			}
+			
+			String codigo = null;
+			
+			if(!oferta.getOfrDocRespPrescriptor()) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
+			}
+			
+			if (codigo != null) {
+				DDResponsableDocumentacionCliente respCodCliente = genericDao.get(DDResponsableDocumentacionCliente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo));
+				oferta.setRespDocCliente(respCodCliente);
+			}
 
 			Long idOferta = this.saveOferta(oferta);
 			ofertaDao.flush();
@@ -1323,6 +1338,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dto.setTexto(ofertaDto.getJustificacionOferta());
 				
 				saveTextoOfertaWS(dto, oferta);
+				modificado = true;
+			}
+			
+			String codigo = null;
+			
+			if(!oferta.getOfrDocRespPrescriptor()) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
+			}
+			
+			if (codigo != null) {
+				DDResponsableDocumentacionCliente respCodCliente = genericDao.get(DDResponsableDocumentacionCliente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo));
+				oferta.setRespDocCliente(respCodCliente);
 				modificado = true;
 			}
 
@@ -6677,34 +6708,5 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public List<Oferta> getListOtrasOfertasTramitadasActivo(Long idActivo){
 		return ofertaDao.getListOtrasOfertasTramitadasActivo(idActivo);
 	}
-	
-	@Override
-	@Transactional(readOnly = false)
-	public String getTipoResponsableCodigo(Oferta oferta) {
-		
-		String codigo = null;
-		
-		if(!oferta.getOfrDocRespPrescriptor()) {
-			codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;
-		}
-		
-		else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
-			codigo = DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL;
-		}
-		
-		else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
-			codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
-		}
-		
-		if (codigo != null) {
-			DDResponsableDocumentacionCliente respCodCliente = genericDao.get(DDResponsableDocumentacionCliente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo));
-			oferta.setRespDocCliente(respCodCliente);
-		} else {
-			oferta.setRespDocCliente(null);
-		}
-		
-		ofertaDao.saveOrUpdate(oferta);
-		
-		return codigo;
-	}
+
 }

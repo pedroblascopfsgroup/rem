@@ -815,8 +815,5 @@ public interface OfertaApi {
 	List<Oferta> getListOtrasOfertasTramitadasActivo(Long idActivo);
 	
 	public ExpedienteComercial tareaExternaToExpediente(TareaExterna tareaExterna);
-	public String actualizarOfertaBoarding(TareaExterna tareaExterna);
-	
-	public String getTipoResponsableCodigo(Oferta oferta);
 
 }

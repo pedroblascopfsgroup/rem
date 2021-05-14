@@ -1980,8 +1980,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(oferta.getOfertaSingular() != null) {
 			dto.setOfertaSingular(oferta.getOfertaSingular() ? "Si" : "No");
 		}
-		
-		dto.setTipoResponsableCodigo(ofertaApi.getTipoResponsableCodigo(oferta));
+
+		if (oferta.getRespDocCliente() != null) {
+			dto.setTipoResponsableCodigo(oferta.getRespDocCliente().getCodigo());
+		}
+
 		
 		OfertaExclusionBulk ofertaExclusionBulk = genericDao.get(OfertaExclusionBulk.class, 
 				genericDao.createFilter(FilterType.EQUALS, "oferta", oferta),

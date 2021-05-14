@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.controller.OperacionVentaController;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -79,6 +80,8 @@ public class NotificatorServiceContabilidadBbva extends AbstractNotificatorServi
 			if(!mailsPara.isEmpty()) {
 			String correos = null;
 			String titulo = "";
+			OperacionVentaController op = new OperacionVentaController();
+			op.operacionVentaAdjunto(expediente.getNumExpediente());
 			
 			if(contratoReserva) {
 				titulo = "Reserva oferta " + expediente.getOferta().getNumOferta() + " - Importe reserva "+ dtoEmailReserva.getImporteReserva() +"";
@@ -87,8 +90,16 @@ public class NotificatorServiceContabilidadBbva extends AbstractNotificatorServi
 				titulo = "Venta oferta " + expediente.getOferta().getNumOferta() + " - Importe oferta "+ dtoEmailReserva.getImporteOferta() +"";
 				
 			}
-			
-			
+			adjuntos = rellenarDtoAdjuntoMailReserva(expediente,contratoReserva);
+			mails = rellenarCorreos(dtoEmailReserva);
+			for (String mailsSeparados : mails) {
+				String [] a = mailsSeparados.split("-");
+				if(a[1].equals("true")) {
+					mailsCC.add(a[0]);
+				}else {
+					mailsPara.add(a[0]);
+				}
+			}
 			mailsBCC.add(J_POYATOS_CORREO);
 			genericAdapter.sendMailCopiaOculta(mailsPara, mailsCC, titulo, generateBodyMailVenta(dtoEmailReserva), adjuntos, mailsBCC);
 			}
@@ -99,13 +110,11 @@ public class NotificatorServiceContabilidadBbva extends AbstractNotificatorServi
 		dtoEmailReserva.setNumeroOferta(expediente.getOferta().getNumOferta());
 		dtoEmailReserva.setImporteOferta(expediente.getOferta().getImporteOferta());
 		if(expediente.getReserva()!=null) {
-			dtoEmailReserva.setImporteReserva(expediente.getReserva().getImporteDevuelto());
-			if(contratoReserva) {
-				dtoEmailReserva.setFechaFirmaReserva(expediente.getReserva().getFechaFirma());
+		dtoEmailReserva.setImporteReserva(expediente.getReserva().getImporteDevuelto());
+		if(contratoReserva) {
+			dtoEmailReserva.setFechaFirmaReserva(expediente.getReserva().getFechaFirma());
 			}
 		}
-		
-		
 		
 		List<CompradorExpediente> compradoresExpediente = expediente.getCompradores();
 		if(compradoresExpediente != null) {
@@ -140,7 +149,9 @@ public class NotificatorServiceContabilidadBbva extends AbstractNotificatorServi
 				dto.setMunicipio(activo.getMunicipio());
 				dto.setDireccion(activo.getDireccion());
 				dto.setParticipacion(activosOferta.getPorcentajeParticipacion());
-				
+				if(activo.getPropietarioPrincipal().getdDTSPTipoCorreo() != null) {
+					dto.setTipoCorreo(activo.getPropietarioPrincipal().getdDTSPTipoCorreo().getCodigo());
+				}
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 				ActivoBbvaActivos activoBbvaActivos = genericDao.get(ActivoBbvaActivos.class, filtro);
 				if(activoBbvaActivos != null) {
@@ -198,9 +209,9 @@ public class NotificatorServiceContabilidadBbva extends AbstractNotificatorServi
 			subtipoDocumentoCodigo.add(DDSubtipoDocumentoExpediente.CODIGO_JUSTIFICANTE_RESERVA);
 		}else {
 			subtipoDocumentoCodigo.add(DDSubtipoDocumentoExpediente.CODIGO_ESCRITURA_COMPRAVENTA);
-			subtipoDocumentoCodigo.add(DDSubtipoDocumentoExpediente.CODIGO_JUSTIFICANTE_RESERVA);
+			subtipoDocumentoCodigo.add(DDSubtipoDocumentoExpediente.CODIGO_FICHA_ESCRITURA_INMUEBLE);
 			subtipoDocumentoCodigo.add(DDSubtipoDocumentoExpediente.CODIGO_JUSTIFICANTE_COMPRAVENTA);
-			subtipoDocumentoCodigo.add(DDSubtipoDocumentoExpediente.CODIGO_JUSTIFICANTE_RESERVA);
+			subtipoDocumentoCodigo.add(DDSubtipoDocumentoExpediente.CODIGO_COPIA_SIMPLE);
 		}
 		return subtipoDocumentoCodigo;
 	}

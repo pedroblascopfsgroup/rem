@@ -214,5 +214,105 @@ public class OperacionVentaController {
 				e.printStackTrace();
 			}
 		}
+		
+		@RequestMapping(method = RequestMethod.GET)
+		public void operacionVentaAdjunto(Long numExpediente) {
+			
+			ModelMap model = new ModelMap();
+			Map<String, Object> params = null;
+			List<Object> dataSource = null;			
+			File fileSalidaTemporal = null;
+			SecureRandom random = new SecureRandom();
+			
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(numExpediente);
+			
+			Oferta oferta = null;
+			Activo activo = null;
+			//Primero comprobar que existe OFERTA y ACTIVO
+			if (model.get("error")==null || model.get("error")=="") {				
+				if(!Checks.esNulo(expediente)){
+					oferta = expediente.getOferta();					
+					if (oferta==null) {
+					model.put("error", RestApi.REST_NO_RELATED_OFFER);
+					} else {
+					activo = oferta.getActivoPrincipal();
+					}
+					if (activo==null || oferta.getActivosOferta()==null) {
+						model.put("error", RestApi.REST_NO_RELATED_ASSET);				
+					}
+				}
+			}			
+			
+			//Generamos una lista de PDF por cada activoOferta
+			List<File> listaPdf = new ArrayList<File>();
+			
+			//PRIMERO GENERAMOS PDF CABECERA DE LA AGRUPACION (SI TIENE)
+			if (oferta!=null) { 
+				if (oferta.getActivosOferta().size()>1) {
+					if (model.get("error")==null || model.get("error")=="") {
+						params = paramReportsApi.paramsCabeceraHojaDatos(oferta.getActivosOferta().get(0), model);
+					}
+					if (model.get("error")==null || model.get("error")=="") {
+						dataSource = paramReportsApi.dataSourceHojaDatos(oferta.getActivosOferta().get(0), model);
+					}
+					//GENERACION DE LA CABECERA DEL DOCUMENTO EN PDF		
+					if (model.get("error")==null || model.get("error")=="") {
+						fileSalidaTemporal = paramReportsApi.getPDFFile(params, dataSource, templateOperacionVentaAgrupacion, model, numExpediente);
+						listaPdf.add(fileSalidaTemporal);
+					}
+				}			
+			
+				if (model.get("error")==null || model.get("error")=="") {
+					for(ActivoOferta activoOferta : oferta.getActivosOferta()) {				
+						//OBTENCION DE LOS DATOS PARA RELLENAR EL DOCUMENTO
+						if (model.get("error")==null || model.get("error")=="") {
+							params = paramReportsApi.paramsHojaDatos(activoOferta, model);
+						}
+						if (model.get("error")==null || model.get("error")=="") {
+							dataSource = paramReportsApi.dataSourceHojaDatos(activoOferta, model);
+						}
+						//GENERACION DEL DOCUMENTO EN PDF		
+						if (model.get("error")==null || model.get("error")=="") {
+							fileSalidaTemporal = paramReportsApi.getPDFFile(params, dataSource, templateOperacionVenta, model, numExpediente);
+							listaPdf.add(fileSalidaTemporal);
+						}										
+					}
+				}
+			}
+			
+			//AGRUPAR TODOS LOS PDF DE SALIDA EN UNO SOLO
+			File salida = null;
+			if (model.get("error")==null || model.get("error")=="") {
+				try {
+					salida = File.createTempFile(templateOperacionVentaShort, ".pdf");
+					FileUtilsREM.concatenatePdfs(listaPdf, salida);
+				} catch (IOException ex1) {
+					model.put("error", ex1.getLocalizedMessage());
+				} catch (DocumentException ex2) {
+					model.put("error", ex2.getLocalizedMessage());
+				}
+			}
+
+			//ENVIO DE LOS DATOS DEL DOCUMENTO AL CLIENTE
+			if (model.get("error")==null || model.get("error")=="") {
+				long n = random.nextLong();
+				if (n == Long.MIN_VALUE) {
+				    n = 0;      // corner case
+				} else {
+				    n = Math.abs(n);
+				}
+				String aleatorio = Long.toString(n);
+				if(aleatorio.length() > 5){
+					aleatorio = aleatorio.substring(0, 5);
+				}
+				String name ="Hoja_Datos_Exp_" + String.valueOf(numExpediente) +"_"+aleatorio +".pdf";
+				//excelReportGeneratorApi.sendReport(name,salida, response);
+			} 
+
+			//Si hay algún error se envía un JSON(model) con información.
+//			if (model.get("error")!=null && model.get("error")!="") {				
+//				restApi.sendResponse(response, model,request);
+//			}
+		}
 			
 }

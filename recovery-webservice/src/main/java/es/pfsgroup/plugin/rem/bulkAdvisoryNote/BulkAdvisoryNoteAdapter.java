@@ -410,8 +410,11 @@ public class BulkAdvisoryNoteAdapter {
 				ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTrabajo);
 				if (!Checks.esNulo(tramite)) {
 					Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "tramite.id", tramite.getId());
-					Filter filtroTarea = genericDao.createFilter(FilterType.EQUALS, "tarea", tareaProcedimiento.getDescripcion());
-					tarea = genericDao.get(TareaActivo.class, filtroTramite, filtroTarea);
+					Filter filtroTarea = genericDao.createFilter(FilterType.EQUALS, "tareaExterna.tareaProcedimiento.id", tareaProcedimiento.getId());
+					Filter filtroTareaFinalizada = genericDao.createFilter(FilterType.EQUALS, "tareaFinalizada", false);
+					List<TareaActivo> listado = genericDao.getList(TareaActivo.class, filtroTramite, filtroTarea, filtroTareaFinalizada);
+					if(listado != null && !listado.isEmpty())
+						tarea = listado.get(0);
 				}
 			}
 		}

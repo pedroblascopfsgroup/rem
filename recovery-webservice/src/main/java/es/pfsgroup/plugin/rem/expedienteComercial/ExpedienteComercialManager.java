@@ -2029,11 +2029,33 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			ActivoLoteComercial agrupacionLoteCom = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
 			if(agrupacionLoteCom != null && agrupacionLoteCom.getUsuarioGestorComercialBackOffice() != null) {
 				dto.setCorreoGestorBackoffice(agrupacionLoteCom.getUsuarioGestorComercialBackOffice().getEmail());
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", agrupacionLoteCom.getUsuarioGestorComercialBackOffice().getId());
+				List<GestorSustituto> sustituto = genericDao.getList(GestorSustituto.class, filtro);
+				if (!sustituto.isEmpty()) {
+					 for (GestorSustituto gestorSustituto : sustituto) {
+						if(System.currentTimeMillis() < gestorSustituto.getFechaFin().getTime()
+								&& System.currentTimeMillis() > gestorSustituto.getFechaInicio().getTime()) {
+							dto.setCorreoGestorBackoffice(gestorSustituto.getUsuarioGestorSustituto().getEmail());
+							break;
+						}
+					}
+				}			
 			}
 		} else if(oferta.getActivoPrincipal() != null) {
 			Usuario usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			if(usuarioBackOffice != null && usuarioBackOffice.getEmail() != null) {
 				dto.setCorreoGestorBackoffice(usuarioBackOffice.getEmail());
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuarioBackOffice.getId());
+				List<GestorSustituto> sustituto = genericDao.getList(GestorSustituto.class, filtro);
+				if (!sustituto.isEmpty()) {
+					 for (GestorSustituto gestorSustituto : sustituto) {
+						if(System.currentTimeMillis() < gestorSustituto.getFechaFin().getTime()
+								&& System.currentTimeMillis() > gestorSustituto.getFechaInicio().getTime()) {
+							dto.setCorreoGestorBackoffice(gestorSustituto.getUsuarioGestorSustituto().getEmail());
+							break;
+						}
+					}
+				}
 			}
 		}
 		
@@ -4402,6 +4424,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
 			comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
+			
+			if((DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA).equals(dto.getCodTipoPersona())) {
+				comprador.setApellidos(null);
+			}
 
 			if (!Checks.esNulo(dto.getEstadoCivilURSUS())) {
 				comprador.setEstadoCivilURSUS(Long.parseLong(dto.getEstadoCivilURSUS()));
@@ -4430,7 +4456,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				reiniciarPBC = true;
 			}
 
-			comprador.setApellidos(dto.getApellidos());
+			if((DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA).equals(dto.getCodTipoPersona())) {
+				comprador.setApellidos(null);
+			}else {
+				comprador.setApellidos(dto.getApellidos());
+			}
 
 			if (!Checks.esNulo(dto.getCodTipoDocumento())) {
 				DDTipoDocumento tipoDocumentoComprador = (DDTipoDocumento) utilDiccionarioApi

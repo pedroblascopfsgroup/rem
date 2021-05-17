@@ -1555,6 +1555,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			//Desactivamos la columna de validado en función del usuario:			
 			return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMINISTRACION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION']);
 		},
+		isGestorSeguridad:function(get){
+			return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['PERFIL_SEGURIDAD']);
+		},
 		
 	    esActivoMacc: function (get) {
 	    	

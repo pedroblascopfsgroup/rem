@@ -2992,9 +2992,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoGestion.setUsuarioEstadoAutorizacionHaya(genericAdapter.getUsuarioLogado());
 		gastoGestion.setFechaEstadoAutorizacionHaya(new Date());
 		gastoGestion.setMotivoRechazoAutorizacionHaya(null);
+		gastoGestion.getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+		gastoGestion.getAuditoria().setFechaModificar(new Date());
 		gasto.setGastoGestion(gastoGestion);
 		updaterStateApi.updaterStates(gasto, DDEstadoGasto.AUTORIZADO_ADMINISTRACION);
 		gasto.setProvision(null);
+		gasto.getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+		gasto.getAuditoria().setFechaModificar(new Date());
 		genericDao.update(GastoProveedor.class, gasto);
 
 		return true;
@@ -3682,15 +3686,19 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			GastoRefacturable gastoRefacturado = genericDao.get(GastoRefacturable.class, genericDao.createFilter(FilterType.EQUALS, "idGastoProveedorRefacturado", gasto.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 			if (!Checks.esNulo(cartera) 
-					&& (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()))) {
+					&& (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo())
+						|| DDCartera.CODIGO_CARTERA_BBVA.equals(cartera.getCodigo()))) {
 				if(DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())) {
 					if(!(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(estadoGasto)
 						||	DDEstadoGasto.AUTORIZADO_PROPIETARIO.equals(estadoGasto)
 						||	DDEstadoGasto.PAGADO.equals(estadoGasto)
 						||	DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(estadoGasto)  
-						||	DDEstadoGasto.CONTABILIZADO.equals(estadoGasto))
-						&& Checks.esNulo(gastoPadre) && Checks.esNulo(gastoRefacturado)) {
-						isPosibleRefacturable = true;
+						||	DDEstadoGasto.CONTABILIZADO.equals(estadoGasto))) {
+						
+						if(DDCartera.CODIGO_CARTERA_BBVA.equals(cartera.getCodigo()) 
+							|| (Checks.esNulo(gastoPadre) && Checks.esNulo(gastoRefacturado)))
+							isPosibleRefacturable = true;
+						
 					}
 				}
 			}

@@ -938,16 +938,15 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCompradorById(DtoModificarCompradores dto, ModelMap model) {
 		try {
+			DtoModificarCompradores comprador = null;
 			if (!Checks.esNulo(dto.getId())) {
 				VBusquedaDatosCompradorExpediente vistaConExp = expedienteComercialApi
 						.getDatosCompradorById(dto.getId(), dto.getIdExpedienteComercial());
 				if (!Checks.esNulo(vistaConExp)) {
-					DtoModificarCompradores comprador = expedienteComercialApi.vistaADtoModCompradores(vistaConExp);
+					comprador = expedienteComercialApi.vistaADtoModCompradores(vistaConExp);
 					if ("0".equals(comprador.getNumeroConyugeUrsus())) {
 						comprador.setNumeroConyugeUrsus(null);
 					}
-					model.put(RESPONSE_DATA_KEY, comprador);
-					model.put(RESPONSE_SUCCESS_KEY, true);
 					if (!Checks.esNulo(vistaConExp.getIdExpedienteComercial())) {
 						ofertaApi.llamadaMaestroPersonas(vistaConExp.getIdExpedienteComercial(),
 								OfertaApi.CLIENTE_HAYA);
@@ -959,9 +958,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 						if (!Checks.esNulo(dto.getIdExpedienteComercial())) {
 							vistaSinExp.setIdExpedienteComercial(dto.getIdExpedienteComercial());
 						}
-						DtoModificarCompradores comprador = expedienteComercialApi.vistaCrearComprador(vistaSinExp);
-						model.put(RESPONSE_DATA_KEY, comprador);
-						model.put(RESPONSE_SUCCESS_KEY, true);
+						comprador = expedienteComercialApi.vistaCrearComprador(vistaSinExp);
 					}
 				}
 			} else {
@@ -969,12 +966,16 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 				vistaSinComprador.setIdExpedienteComercial(dto.getIdExpedienteComercial());
 				vistaSinComprador.setNumDocumento(dto.getNumDocumento());
 				vistaSinComprador.setCodTipoDocumento(dto.getCodTipoDocumento());
-				DtoModificarCompradores comprador = expedienteComercialApi.vistaCrearComprador(vistaSinComprador);
+				comprador = expedienteComercialApi.vistaCrearComprador(vistaSinComprador);
 				comprador.setTransferenciasInternacionales(null);
-				model.put(RESPONSE_DATA_KEY, comprador);
-				model.put(RESPONSE_SUCCESS_KEY, true);
 
 			}
+			if (!dto.isVisualizar()) {
+				comprador.setNumeroClienteUrsus(null);
+				comprador.setNumeroClienteUrsusBh(null);
+			}
+			model.put(RESPONSE_DATA_KEY, comprador);
+			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController", e);

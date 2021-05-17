@@ -607,11 +607,26 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								value: '{activo.codPostal}',
 								readOnly : '{esUA}'
 							},
-							colspan: 2,
+							colspan: 3,
 							vtype: 'codigoPostal',
 							maskRe: /^\d*$/, 
 		                	maxLength: 5,
-							allowBlank: false		                	
+							allowBlank: false,
+							listeners:{
+								change: 'onChangeCodPostal'
+							}
+						},
+		                {
+							xtype:'comboboxfieldbasedd',
+							fieldLabel: HreRem.i18n('fieldlabel.distrito.caixa'),
+							reference: 'distritoCaixaRef',
+							bind: {
+								//readOnly : '{!isGestorAdmisionAndSuper}',
+								bind:{hidden: '{!activo.isCarteraBankia}'},
+								store: '{comboDistritoCodPostal}',
+								value: '{activo.tipoDistritoCodigoPostalCod}',
+								rawValue: '{activo.tipoDistritoCodigoPostalDesc}'
+							}
 						}
 												 
 		               

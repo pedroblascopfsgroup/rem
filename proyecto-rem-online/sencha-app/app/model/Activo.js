@@ -1142,6 +1142,12 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'categoriaComercializacionDesc'
+			},
+			{
+				name: 'tipoDistritoCodigoPostalCod'
+			},
+			{
+				name: 'tipoDistritoCodigoPostalDesc'
 			}
     ],
     

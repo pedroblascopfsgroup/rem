@@ -78,6 +78,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCategoriaComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDDistritoCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -253,6 +254,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "provinciaCodigo", activo.getLocalizacion().getLocalizacionBien().getProvincia().getCodigo());
 				BeanUtils.copyProperty(activoDto, "provinciaDescripcion", activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion());
 
+			}
+			
+			if (activo.getLocalizacion() != null && activo.getLocalizacion().getDistritoCaixa() != null) {
+				activoDto.setTipoDistritoCodigoPostalCod(activo.getLocalizacion().getDistritoCaixa().getCodigo());
+				activoDto.setTipoDistritoCodigoPostalDesc(activo.getLocalizacion().getDistritoCaixa().getDescripcion());
 			}
 			
 		}	 
@@ -1618,6 +1624,15 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if(!Checks.esNulo(dto.getEntradaActivoBankiaCodigo())) {
 				DDEntradaActivoBankia entradaActivoBankia = (DDEntradaActivoBankia) diccionarioApi.dameValorDiccionarioByCod(DDEntradaActivoBankia.class, dto.getEntradaActivoBankiaCodigo());
 				activo.setEntradaActivoBankia(entradaActivoBankia);
+			}
+			
+			if (dto.getTipoDistritoCodigoPostalCod() != null) {
+				DDDistritoCaixa distrito = (DDDistritoCaixa) diccionarioApi.dameValorDiccionarioByCod(DDDistritoCaixa.class, dto.getTipoDistritoCodigoPostalCod());
+				ActivoLocalizacion actLoc = activo.getLocalizacion();
+				if (actLoc != null) {
+					actLoc.setDistritoCaixa(distrito);
+					genericDao.save(ActivoLocalizacion.class, actLoc);
+				}
 			}
 			// -----
 			

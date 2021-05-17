@@ -343,6 +343,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private String categoriaComercializacionDesc;
 	
+	private String tipoDistritoCodigoPostalCod;
+	private String tipoDistritoCodigoPostalDesc;
+	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
 	}
@@ -2549,5 +2552,21 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setCategoriaComercializacionDesc(String categoriaComercializacionDesc) {
 		this.categoriaComercializacionDesc = categoriaComercializacionDesc;
 	}	
+
+	public String getTipoDistritoCodigoPostalCod() {
+		return tipoDistritoCodigoPostalCod;
+	}
+
+	public void setTipoDistritoCodigoPostalCod(String tipoDistritoCodigoPostalCod) {
+		this.tipoDistritoCodigoPostalCod = tipoDistritoCodigoPostalCod;
+	}
+
+	public String getTipoDistritoCodigoPostalDesc() {
+		return tipoDistritoCodigoPostalDesc;
+	}
+
+	public void setTipoDistritoCodigoPostalDesc(String tipoDistritoCodigoPostalDesc) {
+		this.tipoDistritoCodigoPostalDesc = tipoDistritoCodigoPostalDesc;
+	}
 	
 }

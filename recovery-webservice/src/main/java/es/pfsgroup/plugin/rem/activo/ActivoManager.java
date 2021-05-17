@@ -121,6 +121,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDDistritoCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
@@ -9024,6 +9025,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			logger.error("Error en updateHonorarios", e);
 		}
 
+	}
+	
+	@Override
+	public List<DDDistritoCaixa> getComboTipoDistritoByCodPostal(String codPostal) {		
+		List<DDDistritoCaixa> tiposDistritoCaixa = new ArrayList<DDDistritoCaixa>();		
+		List<CodigoPostalDistrito> listaAux = genericDao.getList(CodigoPostalDistrito.class, genericDao.createFilter(FilterType.EQUALS,"codigoPostal", codPostal));		
+		if (listaAux != null) {
+			for (CodigoPostalDistrito codigoPostalDistrito : listaAux) {				
+				if (codigoPostalDistrito.getDistritoCaixa() != null) {
+					tiposDistritoCaixa.add(codigoPostalDistrito.getDistritoCaixa());
+				}
+			}
+		}		
+		return tiposDistritoCaixa;
 	}
 
 

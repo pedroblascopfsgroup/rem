@@ -24,6 +24,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
+import es.pfsgroup.plugin.rem.model.dd.DDDistritoCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUbicacion;
 
 
@@ -84,6 +85,10 @@ public class ActivoLocalizacion implements Serializable, Auditable {
 	
 	@Column(name = "LOC_DIRECCION_DOS")
 	private String direccionDos;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_DIC_ID")
+	private DDDistritoCaixa distritoCaixa;
 
 	public Long getId() {
 		return id;
@@ -163,6 +168,14 @@ public class ActivoLocalizacion implements Serializable, Auditable {
 
 	public void setDireccionDos(String direccionDos) {
 		this.direccionDos = direccionDos;
+	}
+
+	public DDDistritoCaixa getDistritoCaixa() {
+		return distritoCaixa;
+	}
+
+	public void setDistritoCaixa(DDDistritoCaixa distritoCaixa) {
+		this.distritoCaixa = distritoCaixa;
 	}  									
 	
 	

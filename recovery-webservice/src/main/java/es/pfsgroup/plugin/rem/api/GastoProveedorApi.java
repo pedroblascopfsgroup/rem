@@ -431,6 +431,8 @@ public interface GastoProveedorApi {
 
 		Double recalcularCuotaRetencionGarantia(GastoDetalleEconomico detalleGasto, Double importeGarantiaBase);
 
+		public Long getIdGasto(Long numGasto);
+
 
 }
 

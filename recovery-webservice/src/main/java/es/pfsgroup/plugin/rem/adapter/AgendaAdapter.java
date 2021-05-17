@@ -80,6 +80,7 @@ import es.pfsgroup.plugin.rem.model.DtoTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -828,6 +829,7 @@ public class AgendaAdapter {
 				Trabajo trabajo = tramite.getTrabajo();
 				trabajo.setEstado(anulado);
 				genericDao.save(Trabajo.class, trabajo);
+				Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 				ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()));
 				if(! Checks.esNulo(eco)) {
 					eco.setEstado(anuladoExpedienteComercial);
@@ -857,6 +859,12 @@ public class AgendaAdapter {
 	    				activoSituacionPosesoria.setFechaModificarConTitulo(new Date());
 	    				activoSituacionPosesoria.setFechaUltCambioTit(new Date());
 	    				activo.setSituacionPosesoria(activoSituacionPosesoria);
+	    				
+	    				if(activo!=null && activoSituacionPosesoria!=null && usu!=null) {			
+	    					HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,activoSituacionPosesoria,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
+	    					genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+	    				}
+	    				
 	    			}
 	    			if (!Checks.esNulo(activoPatrimonio)) {
 	    				activoPatrimonio.setTipoEstadoAlquiler(estadoAlquiler);
@@ -887,6 +895,8 @@ public class AgendaAdapter {
 						}
 					}
 				}
+				
+				
 			}
 		}
 		return true;

@@ -335,6 +335,8 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 		if(!Checks.esNulo(dtoGastosFilter.getSort())) {
 			dtoGastosFilter.setSort("vgasto." + dtoGastosFilter.getSort());
+		} else {
+			dtoGastosFilter.setSort("vgasto.id");
 		}
 		
 		////////////////////////Num trabajo

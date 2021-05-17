@@ -131,6 +131,8 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_DATA_KEY = "data";
+	private static final String ERROR_GASTO_NOT_EXISTS = "No existe el gasto que esta buscando, pruebe con otro Nº de gasto";
+	private static final String ERROR_GENERICO = "La operación no se ha podido realizar";
 
 	/**
 	 * Método que recupera un conjunto de datos del gasto según su id 
@@ -168,6 +170,29 @@ public class GastosProveedorController extends ParadiseJsonController {
 	public ModelAndView findOne(Long id, ModelMap model){
 
 		model.put("data", gastoProveedorApi.findOne(id));
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getIdGasto(Long numGasto, ModelMap model){
+
+		try {
+			Long idGasto = gastoProveedorApi.getIdGasto(numGasto);
+
+			if(!Checks.esNulo(idGasto)) {
+				model.put("success", true);
+				model.put("data", idGasto);
+			}else {
+				model.put("success", false);
+				model.put("error", ERROR_GASTO_NOT_EXISTS);
+			}
+		} catch(Exception e) {
+			logger.error("error obteniendo el activo ",e);
+			model.put("success", false);
+			model.put("error", ERROR_GENERICO);
+		}
 		
 		return createModelAndViewJson(model);
 	}

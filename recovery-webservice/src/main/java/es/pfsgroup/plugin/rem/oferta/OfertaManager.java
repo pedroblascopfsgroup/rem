@@ -4953,8 +4953,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			if(oferta.getAgrupacion() != null) {
-				filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS ,"id", oferta.getAgrupacion().getId());
-				agrupacion = genericDao.get(ActivoAgrupacion.class,filtroAgrupacion);
+				filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS ,"agrupacion.id", oferta.getAgrupacion().getId());
+				agrupacion = oferta.getAgrupacion();
 				String direccion = "";
 				dtoFichaComercial.setNumOferta(oferta.getNumOferta());
 				

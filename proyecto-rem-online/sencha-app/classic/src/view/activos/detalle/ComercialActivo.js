@@ -188,10 +188,10 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 						   reference: 'necesidadIfActivoRef',
 						   //allowBlank: false,
 						   bind : {
-					     		value: '{comercial.necesidadIfActivo}',
-					     		hidden: '{esCarteraSarebBbvaBankiaCajamarLiberbank}'
-						   }/*,
-						   hidden: '{!esCarteraSarebBbvaBankiaCajamarLiberbank}'*/
+					     		value: '{comercial.necesidadIfActivo}'
+					     		//hidden: '{esCarteraSarebBbvaBankiaCajamarLiberbank}'
+						   },
+						   hidden: true
 						}
 						
 				]

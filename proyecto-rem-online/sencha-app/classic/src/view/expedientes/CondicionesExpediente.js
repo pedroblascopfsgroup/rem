@@ -241,9 +241,10 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									   reference: 'necesidadIfExpedienteRef',
 									   //allowBlank: false,
 									   bind : {
-								     		value: '{condiciones.necesidadIf}',
-								     		hidden: '{esCarteraSarebBbvaBankiaCajamarLiberbank}'
-									   }
+								     		value: '{condiciones.necesidadIf}'
+								     		//,hidden: '{esCarteraSarebBbvaBankiaCajamarLiberbank}'
+									   },
+									   hidden: true
 									}
 								]
 							}

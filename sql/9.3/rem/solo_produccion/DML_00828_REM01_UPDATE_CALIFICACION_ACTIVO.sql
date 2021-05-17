@@ -1,0 +1,112 @@
+--/*
+--######################################### 
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20210421
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-9431
+--## PRODUCTO=NO
+--##            
+--## INSTRUCCIONES:  ACTUALIZAR PROPIETARIOS GASTOS
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.     
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USUARIO VARCHAR2(100 CHAR):='REMVIP-9431'; --Vble. auxiliar para almacenar el usuario
+    V_TABLA VARCHAR2(100 CHAR) :='ACT_ADO_ADMISION_DOCUMENTO'; --Vble. auxiliar para almacenar la tabla a insertar    
+	
+    V_ID NUMBER(16); --Vble. Para almacenar el id del tramite a actualizar    
+    
+    V_COUNT NUMBER(16):=0; --Vble. Para contar cuantos registros se han actualizado correctamente
+    V_COUNT_TOTAL NUMBER(16):=0; --Vble. Para contar el total de registros de la iteracion
+    
+BEGIN	
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+ 
+    -- LOOP para insertar los valores en OFR_OFERTAS
+    DBMS_OUTPUT.PUT_LINE('[INFO]: ACTUALIZACION EN '||V_TABLA||' ');            
+
+        V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1 USING (
+                    SELECT DISTINCT AUX.CALIFICACION,TCE2.DD_TCE_ID,ADO.ADO_ID FROM '||V_ESQUEMA||'.AUX_REMVIP_9431 AUX
+                    JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO=AUX.ID_HAYA
+                    JOIN '||V_ESQUEMA||'.ACT_ADO_ADMISION_DOCUMENTO ADO ON ADO.ACT_ID=ACT.ACT_ID
+                    JOIN '||V_ESQUEMA||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON CFD.CFD_ID=ADO.CFD_ID
+                    JOIN '||V_ESQUEMA||'.DD_TPD_TIPO_DOCUMENTO TPD ON TPD.DD_TPD_ID=CFD.DD_TPD_ID
+                    JOIN '||V_ESQUEMA||'.DD_EDC_ESTADO_DOCUMENTO EDC ON EDC.DD_EDC_ID=ADO.DD_EDC_ID
+                    JOIN '||V_ESQUEMA||'.DD_TCE_TIPO_CALIF_ENERGETICA TCE ON TCE.DD_TCE_ID=ADO.DD_TCE_ID
+                    JOIN '||V_ESQUEMA||'.DD_TCE_TIPO_CALIF_ENERGETICA TCE2 ON TCE2.DD_TCE_DESCRIPCION=AUX.CALIFICACION
+                    WHERE ACT.BORRADO=0 AND ADO.BORRADO=0 AND CFD.BORRADO=0 AND TPD.BORRADO=0 AND EDC.BORRADO=0 AND TCE.BORRADO=0 AND TCE2.BORRADO=0
+                    AND TPD.DD_TPD_CODIGO IN (11,92) AND EDC.DD_EDC_CODIGO=01 AND AUX.CALIFICACION!=TCE.DD_TCE_DESCRIPCION
+                ) T2
+            ON (T1.ADO_ID = T2.ADO_ID)
+            WHEN MATCHED THEN UPDATE SET
+            DD_TCE_ID = T2.DD_TCE_ID,
+            USUARIOMODIFICAR = '''||V_USUARIO||''',
+            FECHAMODIFICAR = SYSDATE';
+        EXECUTE IMMEDIATE V_MSQL;
+
+        DBMS_OUTPUT.PUT_LINE('[INFO] MODIFICADA ETIQUETA DOCUMENTO DE '|| SQL%ROWCOUNT ||' ACTIVOS ');
+
+    V_MSQL := ('INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (ADO_ID, ACT_ID, CFD_ID, DD_EDC_ID, ADO_APLICA,ADO_FECHA_SOLICITUD,ADO_FECHA_EMISION,ADO_FECHA_OBTENCION,ADO_FECHA_ETIQUETA,ADO_FECHA_CALIFICACION,DD_TCE_ID, USUARIOCREAR, FECHACREAR, BORRADO)
+        SELECT '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL, AUX3.ACT_ID, AUX3.CFD_ID, AUX3.DD_EDC_ID, 1,SYSDATE,SYSDATE,SYSDATE,SYSDATE,SYSDATE,AUX3.DD_TCE_ID, '''||V_USUARIO||''', SYSDATE, 0
+        FROM (SELECT EDC.DD_EDC_ID, ACT.ACT_ID,AUX2.ID_HAYA,CFD.CFD_ID,TCE.DD_TCE_ID FROM(
+                SELECT DISTINCT AUX.ID_HAYA,AUX.CALIFICACION FROM '||V_ESQUEMA||'.AUX_REMVIP_9431 AUX
+                MINUS
+                SELECT DISTINCT AUX.ID_HAYA,AUX.CALIFICACION FROM '||V_ESQUEMA||'.AUX_REMVIP_9431 AUX
+                JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO=AUX.ID_HAYA
+                JOIN '||V_ESQUEMA||'.ACT_ADO_ADMISION_DOCUMENTO ADO ON ADO.ACT_ID=ACT.ACT_ID
+                JOIN '||V_ESQUEMA||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON CFD.CFD_ID=ADO.CFD_ID
+                JOIN '||V_ESQUEMA||'.DD_TPD_TIPO_DOCUMENTO TPD ON TPD.DD_TPD_ID=CFD.DD_TPD_ID
+                JOIN '||V_ESQUEMA||'.DD_EDC_ESTADO_DOCUMENTO EDC ON EDC.DD_EDC_ID=ADO.DD_EDC_ID
+                JOIN '||V_ESQUEMA||'.DD_TCE_TIPO_CALIF_ENERGETICA TCE ON TCE.DD_TCE_ID=ADO.DD_TCE_ID
+                WHERE ACT.BORRADO=0 AND ADO.BORRADO=0 AND TPD.DD_TPD_CODIGO IN (11,92) AND EDC.DD_EDC_CODIGO=01
+                )AUX2
+                JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO=AUX2.ID_HAYA
+                JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID=ACT.DD_TPA_ID
+                JOIN '||V_ESQUEMA||'.DD_TPD_TIPO_DOCUMENTO TPD ON TPD.DD_TPD_CODIGO=11
+                JOIN '||V_ESQUEMA||'.DD_EDC_ESTADO_DOCUMENTO EDC ON EDC.DD_EDC_CODIGO=01
+                JOIN '||V_ESQUEMA||'.DD_TCE_TIPO_CALIF_ENERGETICA TCE ON TCE.DD_TCE_DESCRIPCION=AUX2.CALIFICACION
+                JOIN '||V_ESQUEMA||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON CFD.DD_TPA_ID=TPA.DD_TPA_ID AND CFD.DD_TPD_ID=TPD.DD_TPD_ID AND CFD.CFD_OBLIGATORIO=1 AND ACT.DD_SAC_ID=CFD.DD_SAC_ID
+                WHERE CFD.BORRADO=0 AND TPA.BORRADO=0 AND TPD.BORRADO=0
+       ) AUX3');
+
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han insertado en total '||SQL%ROWCOUNT||' registros en la tabla '||V_TABLA);  
+
+    COMMIT;
+    
+    DBMS_OUTPUT.PUT_LINE('[FIN]');
+    
+    
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+/
+EXIT

@@ -132,7 +132,7 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 				            		store: '{filtroComboAreaPeticionaria}'
 				            	},
 				            	displayField: 'descripcion',
-								valueField: 'descripcion'
+								valueField: 'codigo'
 					        }
 					        
 					     ]

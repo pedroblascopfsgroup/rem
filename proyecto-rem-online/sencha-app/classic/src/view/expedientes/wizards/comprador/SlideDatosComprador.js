@@ -40,7 +40,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 				disabled: !Ext.isEmpty(me.up('wizardBase').idComprador) ? !this.lookupController().permitirEdicionDatos() : false
 			}
 		];
-
+		
 		me.items = [
 			{
 				xtype: 'label',
@@ -320,7 +320,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 								queryMode: 'local',
 								autoLoadOnValue: false,
 								loadOnBind: false,
-								allowBlank: true
+								allowBlank: true,
+								disabled: this.lookupController().habilitarClienteUrsus()
 							},
 							{
 								xtype: 'button',
@@ -329,7 +330,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 									hidden: '{!comprador.esCarteraBankia}'
 								},
 								reference: 'btnVerDatosClienteUrsus',
-								disabled: false,
+								disabled: this.lookupController().habilitarLupaClientes(),
 								cls: 'search-button-buscador',
 								iconCls: 'app-buscador-ico ico-search'
 							}
@@ -694,5 +695,4 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 		];
 		me.callParent();
 	}
-
 });

@@ -1854,7 +1854,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ${master.schema}.USU_USUARIOS WHERE"
-				+ "		 USU_USERNAME = '" + username + "'");
+				+ "		 USU_USERNAME = '" + username + "' AND BORRADO = 0");
 
 		return !"0".equals(resultado);
 	}

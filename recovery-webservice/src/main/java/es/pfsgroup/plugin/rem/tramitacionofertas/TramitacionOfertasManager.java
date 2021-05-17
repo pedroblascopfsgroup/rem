@@ -940,6 +940,14 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (!Checks.esNulo(cliente.getIdPersonaHaya())) {
 				compradorBusqueda.setIdPersonaHaya(new Long(cliente.getIdPersonaHaya()));
 			}
+			
+			if (!Checks.esNulo(compradorBusqueda.getIdCompradorUrsus())) {
+				compradorBusqueda.setIdCompradorUrsus(null);
+			}
+			
+			if (!Checks.esNulo(compradorBusqueda.getIdCompradorUrsusBh())) {
+				compradorBusqueda.setIdCompradorUrsusBh(null);
+			}
 
 			CompradorExpediente.CompradorExpedientePk pk = new CompradorExpediente.CompradorExpedientePk();
 			pk.setComprador(compradorBusqueda);
@@ -1056,6 +1064,14 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 					if (!Checks.esNulo(titularAdicional.getTipoPersona())) {
 						compradorBusquedaAdicional.setTipoPersona(titularAdicional.getTipoPersona());
+					}
+					
+					if (!Checks.esNulo(compradorBusquedaAdicional.getIdCompradorUrsus())) {
+						compradorBusquedaAdicional.setIdCompradorUrsus(null);
+					}
+					
+					if (!Checks.esNulo(compradorBusquedaAdicional.getIdCompradorUrsusBh())) {
+						compradorBusquedaAdicional.setIdCompradorUrsusBh(null);
 					}
 
 					// AGREGAR CHECKS DE TITULARES ADICIONALES

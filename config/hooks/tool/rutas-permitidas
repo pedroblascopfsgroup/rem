@@ -153,6 +153,7 @@ func-rem-dqFasesPublicacion|R-Fortune
 rem_mirror|func-rem-porcentajeConstruccion
 rem_mirror|func-rem-BBVA-F2
 func-rem-BBVA-F2|R-Ricalate-backup
+R-Okitsu|func-rem-marcadoresSeguridad
 R-Tomago|func-rem-facturacionModeloNuevo
 R-Ricalate-backup|func-rem-BBVA-F3
 func-rem-BBVA-F3|func-rem-BBVA-F4
@@ -171,6 +172,9 @@ func-rem-comisionamiento-F3|func-rem-obraNuevaComisionamiento
 R-Okitsu|func-rem-alaska-F2
 rem_mirror|func-rem-alaska-F2
 func-rem-obraNuevaComisionamiento|func-rem-comisionamiento-F3
+rem_mirror|func-rem-marcadoresSeguridad
+R-Okitsu|func-rem-alaska-F2
+rem_mirror|func-rem-alaska-F2
 func-rem-dnd-F3|func-rem-dnd-suelos
 func-rem-dnd-suelos|func-rem-dnd-tutelas
 R-Okitsu|func-rem-alaska-F2

@@ -70,6 +70,8 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		boolean lote = false;
 		boolean conTitulo = false;
 		boolean enPuja = false;
+		boolean conAlarma = false;
+		boolean conVigilancia = false;
 		
 		try {
 		//Avisos 1 y 2: Integrado en agrupación restringida / Integrado en obra nueva
@@ -83,6 +85,30 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		if (!Checks.esNulo(activo.getSituacionPosesoria())) {
+			conAlarma = activo.getSituacionPosesoria().getConAlarma() != null ? activo.getSituacionPosesoria().getConAlarma() == 1 : false;
+			conVigilancia = activo.getSituacionPosesoria().getConVigilancia() != null ? activo.getSituacionPosesoria().getConVigilancia() == 1 : false;
+		}
+			
+			
+		if (conAlarma) {	
+			DtoAviso dtoAviso = new DtoAviso();	
+			dtoAviso.setDescripcion("Activo asegurado con alarma");	
+			dtoAviso.setId(String.valueOf(id));			
+			listaAvisos.add(dtoAviso);
+		}
+					
+			
+		if (conVigilancia) {
+			DtoAviso dtoAviso = new DtoAviso();	
+			dtoAviso.setDescripcion("Activo asegurado con vigilancia");	
+			dtoAviso.setId(String.valueOf(id));			
+			listaAvisos.add(dtoAviso);
+		}
+		
+		
+		
 		
 		if(enPuja) {
 			DtoAviso dtoAviso = new DtoAviso();

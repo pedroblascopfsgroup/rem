@@ -177,6 +177,29 @@ public class GastosProveedorController extends ParadiseJsonController {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getIdGasto(Long numGasto, ModelMap model){
+
+		try {
+			Long idGasto = gastoProveedorApi.getIdGasto(numGasto);
+
+			if(!Checks.esNulo(idGasto)) {
+				model.put("success", true);
+				model.put("data", idGasto);
+			}else {
+				model.put("success", false);
+				model.put("error", ERROR_GASTO_NOT_EXISTS);
+			}
+		} catch(Exception e) {
+			logger.error("error obteniendo el activo ",e);
+			model.put("success", false);
+			model.put("error", ERROR_GENERICO);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListGastos(DtoGastosFilter dtoGastosFilter, ModelMap model) {
 		try {

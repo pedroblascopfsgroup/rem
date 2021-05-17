@@ -175,7 +175,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     		activosTrabajo: {
     			pageSize: $AC.getDefaultPageSize(),
 				model: 'HreRem.model.ActivoTrabajo',
-				sumaParticipacion: '0',
 				proxy: {
 				    type: 'uxproxy',
 					remoteUrl: 'trabajo/getListActivos',
@@ -186,7 +185,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     	    	remoteFilter: true,
 				listeners: {
 					load: function(store, items, success, opts){
-						 store.sumaParticipacion = Ext.decode(opts._response.responseText).sumaParticipacion;
+						 store.participacion = Ext.decode(opts._response.responseText).participacion;
 					}
 				}
     		},
@@ -431,7 +430,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			model:'HreRem.model.ActivoTrabajoSubida',
     			proxy: {
     				type: 'uxproxy',
-    				remoteUrl: 'trabajo/getListActivosByProceso',    				
+    				remoteUrl: 'trabajo/getListActivosByProceso',
     				extraParams: {idProceso: 'idProceso'}
     			},
     	    	remoteSort: true,
@@ -455,6 +454,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     		},
     		
     		comboProveedorContacto : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorContacto',
+					extraParams: {idProveedor: '{presupuesto.idProveedor}'}
+				}, 
+				autoLoad: false
+    		},
+    		
+    		comboProveedorContactoGE : {
     			model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',

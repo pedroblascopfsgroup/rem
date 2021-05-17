@@ -13,25 +13,13 @@ Ext.define('HreRem.model.SuministrosActivoModel', {
 			name : 'tipoSuministro'
 		},
 		{
-			name : 'tipoSuministroDescripcion'
-		},
-		{
 			name : 'subtipoSuministro'
-		},
-		{
-			name : 'subtipoSuministroDescripcion'
 		},
 		{
 			name : 'companiaSuministro'
 		},
 		{
-			name : 'companiaSuministroDescripcion'
-		},
-		{
 			name : 'domiciliado'
-		},
-		{
-			name : 'domiciliadoDescripcion'
 		},
 		{
 			name : 'numContrato'
@@ -43,18 +31,12 @@ Ext.define('HreRem.model.SuministrosActivoModel', {
 			name : 'periodicidad'
 		},
 		{
-			name : 'periodicidadDescripcion'
-		},
-		{
 			name: 'fechaAlta',
 			type : 'date',
 			dateFormat: 'c'
 		},
 		{
 			name : 'motivoAlta'
-		},
-		{
-			name : 'motivoAltaDescripcion'
 		},
 		{
 			name: 'fechaBaja',
@@ -65,13 +47,7 @@ Ext.define('HreRem.model.SuministrosActivoModel', {
 			name: 'motivoBaja'
 		},
 		{
-			name: 'motivoBajaDescripcion'
-		},
-		{
 			name: 'validado'
-		},
-		{
-			name: 'validadoDescripcion'
 		}
 	],
 

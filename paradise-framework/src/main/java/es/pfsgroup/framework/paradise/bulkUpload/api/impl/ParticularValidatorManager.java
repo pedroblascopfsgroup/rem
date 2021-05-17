@@ -1854,7 +1854,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ${master.schema}.USU_USUARIOS WHERE"
-				+ "		 USU_USERNAME = '" + username + "'");
+				+ "		 USU_USERNAME = '" + username + "' AND BORRADO = 0");
 
 		return !"0".equals(resultado);
 	}
@@ -6498,6 +6498,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean existeActivoConONMarcadoSi(String columnaActivo) {
+		if(Checks.esNulo(columnaActivo)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "		 FROM REM01.ACT_ACTIVO ACT  "
+				+ "      INNER JOIN REMMASTER.DD_SIN_SINO dd on act.act_ovn_comerc = dd.DD_SIN_ID"
+				+"		 WHERE dd.dd_sin_codigo='01' "
+				+ "		 AND act.act_num_activo = '" + columnaActivo + "'"
+				+ "		 AND act.BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	@Override
 	public Boolean existePorcentajeConstruccion(String porcentajeConstruccion){
 		if(Checks.esNulo(porcentajeConstruccion))
 			return false;
@@ -6677,6 +6692,29 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "AND GPV.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
+	@Override
+	public Boolean esSubCarterasCerberusAppleDivarian (String numActivo) {
+		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) return false;
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) " + 
+				"FROM act_activo act " + 
+				"INNER JOIN dd_scr_subcartera scr ON scr.dd_scr_id = act.dd_scr_id AND dd_scr_codigo IN ('138','151','152') " + 
+				"WHERE act.act_num_activo = " + numActivo + " AND act.borrado = 0"
+				);
+		return !"0".equals(resultado);
+	}
 
+	public Boolean isActivoGestionadoReam(String numActivo) {
+		if(Checks.esNulo(numActivo)){
+			return false;
+			}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "FROM V_ACTIVOS_GESTIONADOS_REAM ream WHERE "
+				+ "ream.ACT_ID IN "
+				+ "(SELECT act.act_id FROM act_activo act WHERE act.act_num_activo = '"+numActivo+"' "
+				+ "AND act.BORRADO = 0)");
+		return "1".equals(resultado);
+	}
 
 }

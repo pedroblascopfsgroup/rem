@@ -1352,6 +1352,8 @@ public interface ParticularValidatorApi {
 	
 	public Boolean existePorcentajeConstruccion(String porcentajeConstruccion);
 
+	Boolean existeActivoConONMarcadoSi(String columnaActivo);
+	
 	boolean conEstadoGasto(String idGasto,String codigoEstado);
 
 	String devolverEstadoGasto(String idGasto);
@@ -1411,9 +1413,14 @@ public interface ParticularValidatorApi {
 
 	Boolean estadoPrevioTrabajoFinalizado(String celdaTrabajo);
 
+	Boolean isActivoGestionadoReam(String string);
+
 	Boolean existeCodProveedorRem(String codProveedorREM);
 
 	boolean gastoSarebAnyadeRefacturable(String numGasto);
+
+	Boolean esSubCarterasCerberusAppleDivarian(String numActivo);
+
 
 
 }

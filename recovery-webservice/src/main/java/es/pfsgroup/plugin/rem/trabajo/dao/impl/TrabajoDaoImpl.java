@@ -275,7 +275,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.proveedor.id", filtro.getIdProveedor());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.tipoTarifa.codigo", filtro.getCodigoTarifaTrabajo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.tipoTarifa.descripcion", filtro.getDescripcionTarifaTrabajo());
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.subcartera.codigo", filtro.getSubcarteraCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.subcartera.codigo", filtro.getSubcarteraCodigo());
 		
 		for (Perfil prov : usuarioLogado.getPerfiles()) {
 			if(prov.getCodigo().equals(PERFIL_PROV)) {
@@ -405,7 +405,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.solicitante", dto.getSolicitante(), true);
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.proveedor", dto.getProveedor(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.areaPeticionaria", dto.getAreaPeticionaria());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.areaPeticionariaCodigo", dto.getAreaPeticionaria());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.responsableTrabajo", dto.getResponsableTrabajo(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.provinciaCodigo", dto.getProvinciaCodigo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.localidadDescripcion", dto.getLocalidadDescripcion(), true);
@@ -451,6 +451,10 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 			
 		} catch (ParseException e) {
 			logger.error(e.getMessage());
+		}
+		
+		if(Checks.esNulo(dto.getSort())) {
+			dto.setSort("id");
 		}
 		return HibernateQueryUtils.page(this, hb, dto);
 	}

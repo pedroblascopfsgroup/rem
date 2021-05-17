@@ -25,4 +25,6 @@ public interface ComisionamientoApi {
 
 	List<DtoPrescriptoresComision> getTiposDeComisionAccionGasto(Oferta oferta);
 
+	String calculaLeadOrigin(Oferta oferta);
+
 }

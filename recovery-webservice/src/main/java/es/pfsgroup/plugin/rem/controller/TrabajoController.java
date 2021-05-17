@@ -50,6 +50,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
@@ -162,6 +163,9 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@Autowired
 	private ActivoDao activoDao;
+	
+	@Autowired
+	private ActivoTrabajoDao activoTrabajoDao;
 	
 	@Autowired
 	private ActivoApi activoApi;
@@ -315,7 +319,7 @@ public class TrabajoController extends ParadiseJsonController {
 			
 			Long idTrabajo = trabajoApi.create(dtoTrabajo);
 			if(new Long(-1L).equals(idTrabajo))
-				model.put("warn", "Proceso de creación trabajos en ejecución, vaya al apartado de 'Carga Masiva' para ver si ha terminado.");
+				model.put("warn", "Proceso de creación trabajos en ejecución, espere uno o dos minutos y refresque los trabajos.");
 			else
 				dtoTrabajo.setIdTrabajo(idTrabajo);
 			success = true;
@@ -450,6 +454,9 @@ public class TrabajoController extends ParadiseJsonController {
 		ModelMap model = new ModelMap();
 		try {
 			Page page = trabajoApi.getListActivos(dto);
+			Trabajo tbj = genericDao.get(Trabajo.class, genericDao.createFilter(FilterType.EQUALS, "id",Long.parseLong(dto.getIdTrabajo())));
+			Float participacion = activoTrabajoDao.getImporteParticipacionTotal(tbj.getNumTrabajo());
+			model.put("participacion", participacion);
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
 		} catch (Exception e) {
@@ -1417,6 +1424,27 @@ public class TrabajoController extends ParadiseJsonController {
 	    if(mapAsString.length()>0)
 	    	mapAsString.append("}");
 	    return mapAsString.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView subeListaActivos(HttpServletRequest request, HttpServletResponse response){
+		ModelMap model = new ModelMap();
+		Page page = null;
+		try {
+			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			page = trabajoAdapter.getListActivosBySubidaExcel(fileItem);
+			if(!Checks.esNulo(page)) {
+				model.put("data", page.getResults());
+				model.put("totalCount", page.getTotalCount());
+				model.put("success", true);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
 	}
 		
 	@SuppressWarnings("unchecked")

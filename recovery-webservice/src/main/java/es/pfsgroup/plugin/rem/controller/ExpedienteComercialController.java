@@ -906,6 +906,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		try {
 			Page page = expedienteComercialApi.getCompradoresByExpediente(idExpediente, dto);
+			Float participacion = expedienteComercialApi.getPorcentajeCompra(idExpediente);
+			model.put("porcentajeCompra", participacion);
 			model.put(RESPONSE_DATA_KEY, page.getResults());
 			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
 			model.put(RESPONSE_SUCCESS_KEY, true);
@@ -926,16 +928,15 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCompradorById(DtoModificarCompradores dto, ModelMap model) {
 		try {
+			DtoModificarCompradores comprador = null;
 			if (!Checks.esNulo(dto.getId())) {
 				VBusquedaDatosCompradorExpediente vistaConExp = expedienteComercialApi
 						.getDatosCompradorById(dto.getId(), dto.getIdExpedienteComercial());
 				if (!Checks.esNulo(vistaConExp)) {
-					DtoModificarCompradores comprador = expedienteComercialApi.vistaADtoModCompradores(vistaConExp);
+					comprador = expedienteComercialApi.vistaADtoModCompradores(vistaConExp);
 					if ("0".equals(comprador.getNumeroConyugeUrsus())) {
 						comprador.setNumeroConyugeUrsus(null);
 					}
-					model.put(RESPONSE_DATA_KEY, comprador);
-					model.put(RESPONSE_SUCCESS_KEY, true);
 					if (!Checks.esNulo(vistaConExp.getIdExpedienteComercial())) {
 						ofertaApi.llamadaMaestroPersonas(vistaConExp.getIdExpedienteComercial(),
 								OfertaApi.CLIENTE_HAYA);
@@ -947,9 +948,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 						if (!Checks.esNulo(dto.getIdExpedienteComercial())) {
 							vistaSinExp.setIdExpedienteComercial(dto.getIdExpedienteComercial());
 						}
-						DtoModificarCompradores comprador = expedienteComercialApi.vistaCrearComprador(vistaSinExp);
-						model.put(RESPONSE_DATA_KEY, comprador);
-						model.put(RESPONSE_SUCCESS_KEY, true);
+						comprador = expedienteComercialApi.vistaCrearComprador(vistaSinExp);
 					}
 				}
 			} else {
@@ -957,12 +956,16 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 				vistaSinComprador.setIdExpedienteComercial(dto.getIdExpedienteComercial());
 				vistaSinComprador.setNumDocumento(dto.getNumDocumento());
 				vistaSinComprador.setCodTipoDocumento(dto.getCodTipoDocumento());
-				DtoModificarCompradores comprador = expedienteComercialApi.vistaCrearComprador(vistaSinComprador);
+				comprador = expedienteComercialApi.vistaCrearComprador(vistaSinComprador);
 				comprador.setTransferenciasInternacionales(null);
-				model.put(RESPONSE_DATA_KEY, comprador);
-				model.put(RESPONSE_SUCCESS_KEY, true);
 
 			}
+			if (!dto.isVisualizar()) {
+				comprador.setNumeroClienteUrsus(null);
+				comprador.setNumeroClienteUrsusBh(null);
+			}
+			model.put(RESPONSE_DATA_KEY, comprador);
+			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController", e);
@@ -2406,6 +2409,29 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController::sacarBulk", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView recalcularHonorarios(ModelMap model, Long idExpediente) {
+		try {
+			expedienteComercialApi.recalcularHonorarios(idExpediente);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (JsonViewerException e) {
+			model.put("error", true);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.warn("Error controlado en ExpedienteComercialController", e);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
 		}
 
 		return createModelAndViewJson(model);

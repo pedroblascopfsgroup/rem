@@ -305,14 +305,15 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                	}
 				                }, 
 				                {
-				                	xtype: 'comboboxfieldbase',
+				                	xtype: 'comboboxfieldbasedd',
 				                	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo.DND'),
 				                	name: 'comboEstadoFisicoActivoDND',
 				                	reference: 'comboEstadoFisicoActivoDNDRef',
 				                	bind: {			                		
 				                		value: '{activo.estadoFisicoActivoDND}',
 				                		store: '{comboEstadoActivoDND}',
-				                		readOnly:true
+				                		readOnly:true,
+										rawValue: '{activo.estadoFisicoActivoDNDDescripcion}'
 				                	}
 				                },   
 				                {
@@ -341,7 +342,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									
 								},				                				                
 				                {
-				                	xtype: 'comboboxfieldbase',
+				                	xtype: 'comboboxfieldbasedd',
 				                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.segmento'),
 				                	name: 'combotipoSegmento',
 				                	reference: 'comboTipoSegmentoRef',
@@ -397,17 +398,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							        }
 								}
 							}, 
-			                {
-			                	xtype: 'comboboxfieldbase',
-			                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.segmento'),
-			                	name: 'combotipoSegmento',
-			                	reference: 'comboTipoSegmentoRef',
-			                	bind: {
-			                		store: '{comboTipoSegmento}',
-			                		value: '{activo.tipoSegmentoCodigo}',
-			                		hidden: '{!activo.isSubcarteraDivarian}'
-			                	}
-			                },
 		                	{
 								xtype:'textfieldbase',
 								reference:'tfcodpromocionbbva',

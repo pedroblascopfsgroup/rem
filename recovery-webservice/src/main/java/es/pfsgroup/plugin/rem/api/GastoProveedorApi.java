@@ -434,6 +434,8 @@ public interface GastoProveedorApi {
 		Long getIdByNumGasto(Long numGasto);
 
 
+		public Long getIdGasto(Long numGasto);
+
 
 }
 

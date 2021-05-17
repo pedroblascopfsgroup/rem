@@ -451,6 +451,10 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		} catch (ParseException e) {
 			logger.error(e.getMessage());
 		}
+		
+		if(Checks.esNulo(dto.getSort())) {
+			dto.setSort("id");
+		}
 		return HibernateQueryUtils.page(this, hb, dto);
 	}
 

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Jonathan Ovalle
---## FECHA_CREACION=20210215
+--## AUTOR= Lara Pablo Flores
+--## FECHA_CREACION=20210511
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13127
@@ -38,12 +38,6 @@ DECLARE
 BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TABLA|| '********'); 
-
-	IF V_NUM_TABLAS = 1 THEN
-		V_MSQL := 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA||'';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||' borrada.');
-	END IF;
 
 	V_MSQL := 'SELECT COUNT(*) FROM all_tab_columns where owner = '''||V_ESQUEMA||''' and table_name = '''||V_TABLA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
@@ -97,19 +91,7 @@ BEGIN
 		REFERENCES '||V_ESQUEMA_M||'.USU_USUARIOS (USU_ID)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] HOT_USUARIO_ALTA_FK ... FK creada.');
-
-		-- Comprobamos si existe la secuencia
-		V_MSQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TABLA||''' and sequence_owner = '''||V_ESQUEMA||'''';
-			
-		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
-		
-		IF V_NUM_TABLAS = 0 THEN
-			-- Creamos sequence
-			V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TABLA||'';		
-			EXECUTE IMMEDIATE V_MSQL;		
-			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TABLA||'... Secuencia creada');
-		END IF;
-		
+	
 		-- Creamos el comentario de las columnas
 		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TABLA||' IS ''Tabla de activo historico ocupado titulo''';
 		EXECUTE IMMEDIATE V_MSQL;
@@ -176,6 +158,18 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna BORRADO creado.');
 	ELSE
 		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe.');	
+	END IF;
+	
+		-- Comprobamos si existe la secuencia
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TABLA||''' and sequence_owner = '''||V_ESQUEMA||'''';
+		
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 0 THEN
+		-- Creamos sequence
+		V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TABLA||'';		
+		EXECUTE IMMEDIATE V_MSQL;		
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TABLA||'... Secuencia creada');
 	END IF;
 
 	COMMIT;

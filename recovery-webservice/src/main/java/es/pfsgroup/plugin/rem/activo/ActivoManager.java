@@ -6993,8 +6993,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 				}
 				if (DDEstadoPresentacion.INSCRITO.equals(estadoPresentacion.getCodigo())
-						&& !Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
-					activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
+						&& (!Checks.esNulo(tramitacionDto.getFechaInscripcion()) || !Checks.esNulo(htt.getFechaInscripcion()))) {
+					if(!Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
+						activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
+					} else if (!Checks.esNulo(htt.getFechaInscripcion())){
+						activoTitulo.setFechaInscripcionReg(htt.getFechaInscripcion());
+					}
 					estadoTitulo = DDEstadoTitulo.ESTADO_INSCRITO;
 					htt.setFechaCalificacion(null);
 				}
@@ -7009,7 +7013,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 			if (!Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
 				beanUtilNotNull.copyProperty(htt, "fechaInscripcion", tramitacionDto.getFechaInscripcion());
-				activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 			}
 			if (!Checks.esNulo(tramitacionDto.getObservaciones())) {
 				beanUtilNotNull.copyProperty(htt, "observaciones", tramitacionDto.getObservaciones());

@@ -2,14 +2,18 @@ package es.pfsgroup.plugin.rem.security;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import javax.annotation.Resource;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
@@ -19,6 +23,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationCredentialsNotFoundException;
@@ -67,6 +72,9 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 	@Resource
 	private Properties appProperties;
 	
+	@Autowired
+	private ServletContext context;
+	
 	public static void main(String[] args) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		
 		if ((args == null) || (args.length <= 0)){
@@ -86,8 +94,10 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 		Assert.isInstanceOf(HayaWebAuthenticationDetails.class, authentication.getDetails(), "HayaAuthenticationProvider Only HayaWebAuthenticationDetails is supported");
 
 		HayaWebAuthenticationDetails authDetails = (HayaWebAuthenticationDetails) authentication.getDetails();
-				
+	    
 		logger.debug("0Auth2: code >" + authDetails.getCode() + "<");
+		
+		final String baseUrl = authDetails.getBaseUrl();
 		
 		// Determine username 
 		String username = "NONE_PROVIDED";
@@ -98,7 +108,11 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 		    HttpClient httpClient = new HttpClient();
 		    PostMethod postMethod = new PostMethod(appProperties.getProperty(AUTH2_SERVER_URL));
 		    postMethod.addParameter("client_id", appProperties.getProperty(AUTH2_SERVER_CLIENT_ID));
-		    postMethod.addParameter("redirect_uri", appProperties.getProperty(AUTH2_SERVER_REDIRECT_URI));
+		    if (baseUrl == null || "".equals(baseUrl)) {
+		    	postMethod.addParameter("redirect_uri", appProperties.getProperty(AUTH2_SERVER_REDIRECT_URI));
+		    } else {
+		    	postMethod.addParameter("redirect_uri", baseUrl);
+		    }
 		    postMethod.addParameter("resource", appProperties.getProperty(AUTH2_SERVER_RESOURCE));
 		    postMethod.addParameter("grant_type", appProperties.getProperty(AUTH2_SERVER_GRANT_TYPE));
 			postMethod.addParameter("client_secret", appProperties.getProperty(AUTH2_SERVER_CLIENT_SECRET));
@@ -125,11 +139,22 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 				
 				authDetails.setIdToken(idToken);
 				JWT jwt = JWTParser.parse(idToken);
-	            String upn = (String) jwt.getJWTClaimsSet().getClaims().get("upn");
+	            Map<String, Object> claims = jwt.getJWTClaimsSet().getClaims();
+				String upn = (String) claims.get("upn");
+				
 	            logger.debug("0Auth2: upn >" + upn + "<");
-	            
 	            username = upn.split("@")[0];
 	            logger.debug("0Auth2: username >" + username + "<");
+	            
+	            String perfilesrem = (String) claims.get("perfilrem");
+	            if (perfilesrem == null || "".contentEquals(perfilesrem)) {
+	            	perfilesrem = (String) claims.get("perfilprerem"); // Los perfiles en pre vienen en otra clave del mapa
+	            }
+	            logger.debug("0Auth2: perfilesrem >" + perfilesrem + "<");
+	            
+	            //TODO: Recuperar el valor del set de perfiles ADFS y actualizar las tablas de REM
+	            
+	            //TODO: Actualizar, si es necesario, los datos del usuario (nombre, apellidos, dirección de email)
 				
 			} catch (ParseException e) {
 				throw new AuthenticationCredentialsNotFoundException(messages.getMessage(AUTH2_ERROR_INVALID_TOKEN));

@@ -8,14 +8,16 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			model = Ext.create('HreRem.model.FichaComprador'),
 			idComprador = wizard.idComprador,
 			idExpediente = wizard.expediente.get('id'),
-			form = me.getView().getForm();
+			form = me.getView().getForm(),
+			visualizar = wizard.visualizar;
 
 		wizard.mask(HreRem.i18n('msg.mask.loading'));
 
 		model.setId(idComprador);
 		model.load({
 			params: {
-				idExpedienteComercial: idExpediente
+				idExpedienteComercial: idExpediente,
+				visualizar: visualizar
 			},
 			success: function(record) {
 				if (Ext.isEmpty(idComprador)) {

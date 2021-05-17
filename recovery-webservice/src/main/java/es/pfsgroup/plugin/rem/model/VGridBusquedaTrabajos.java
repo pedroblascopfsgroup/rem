@@ -92,6 +92,12 @@ public class VGridBusquedaTrabajos implements Serializable {
 	@Column(name = "TBJ_FECHA_CAMBIO_ESTADO")
 	private Date fechaCambioEstado;
 	
+	@Column(name = "TBJ_IMPORTE_PROVEEDOR")
+   	private Double importeProveedor;
+	
+	@Column(name="TBJ_FECHA_TOPE")
+    private Date fechaTope;
+	
 	public Long getId() {
 		return id;
 	}
@@ -290,6 +296,22 @@ public class VGridBusquedaTrabajos implements Serializable {
 
 	public void setFechaCambioEstado(Date fechaCambioEstado) {
 		this.fechaCambioEstado = fechaCambioEstado;
+	}
+
+	public Double getImporteProveedor() {
+		return importeProveedor;
+	}
+
+	public void setImporteProveedor(Double importeProveedor) {
+		this.importeProveedor = importeProveedor;
+	}
+
+	public Date getFechaTope() {
+		return fechaTope;
+	}
+
+	public void setFechaTope(Date fechaTope) {
+		this.fechaTope = fechaTope;
 	}
 	
 }

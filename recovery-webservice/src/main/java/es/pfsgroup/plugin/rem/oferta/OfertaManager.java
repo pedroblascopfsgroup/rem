@@ -3070,7 +3070,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						
 						listActOfr = oferta.getActivosOferta();
 						for (ActivoOferta activoOferta : listActOfr) {
-							 activoOfr = activoAdapter.getActivoById(activoOferta.getActivoId());
+							 activoOfr = activoOferta.getPrimaryKey().getActivo();
 							 if(activoOfr != null) {
 								 if(activoOfr.getTieneObraNuevaAEfectosComercializacion() != null && DDSinSiNo.CODIGO_SI.equals(activoOfr.getTieneObraNuevaAEfectosComercializacion().getCodigo())) {
 									 importeObraNueva += activoOferta.getImporteActivoOferta();
@@ -4953,8 +4953,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			if(oferta.getAgrupacion() != null) {
-				filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS ,"id", oferta.getAgrupacion().getId());
-				agrupacion = genericDao.get(ActivoAgrupacion.class,filtroAgrupacion);
+				filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS ,"agrupacion.id", oferta.getAgrupacion().getId());
+				agrupacion = oferta.getAgrupacion();
 				String direccion = "";
 				dtoFichaComercial.setNumOferta(oferta.getNumOferta());
 				

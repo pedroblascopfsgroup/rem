@@ -87,8 +87,8 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		}
 		
 		if (!Checks.esNulo(activo.getSituacionPosesoria())) {
-			conAlarma = activo.getSituacionPosesoria().getConAlarma() == 1 ;
-			conVigilancia = activo.getSituacionPosesoria().getConVigilancia() == 1;
+			conAlarma = activo.getSituacionPosesoria().getConAlarma() != null ? activo.getSituacionPosesoria().getConAlarma() == 1 : false;
+			conVigilancia = activo.getSituacionPosesoria().getConVigilancia() != null ? activo.getSituacionPosesoria().getConVigilancia() == 1 : false;
 		}
 			
 			

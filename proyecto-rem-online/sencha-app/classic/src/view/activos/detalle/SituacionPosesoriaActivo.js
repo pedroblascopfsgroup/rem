@@ -205,24 +205,27 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            	listeners: {
 					            		change: function(combo, value) {
 					            			var me = this;
+					            			var fechaInstalacion = me.up('formBase').down('[reference=datefielInstalaciondAlarma]').value;
+					            			
 					            			if(value=='1') {
 					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').allowBlank = false;
 					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').setDisabled(false);
 					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').validate();
-					            				
-					            				
+					            								      				
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').allowBlank = true;
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').setValue("");
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').setDisabled(true);
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').validate();
 					            				
 					            			} else {
-					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').allowBlank = false;
-					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').setDisabled(false);
-					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').validate();
-					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').setMinValue(me.up('formBase').down('[reference=datefielInstalaciondAlarma]').value);
+					            				if(fechaInstalacion != null || fechaInstalacion != undefined) {
+					            					me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').allowBlank = false;
+						            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').setDisabled(false);
+						            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').validate();
+						            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').setMinValue(me.up('formBase').down('[reference=datefielInstalaciondAlarma]').value);	
+					            				}
+					            				
 					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').allowBlank = true;
-					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').setValue("");
 					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').setDisabled(true);
 					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').validate();
 					            			}
@@ -264,6 +267,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            		,listeners: {
 					            		change: function(combo, value) {
 					            			var me = this;
+					            			var fechaInstalacion = me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').value;
+
 					            			if(value=='1') {
 					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').allowBlank = false;
 					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').setDisabled(false);
@@ -275,12 +280,14 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').validate();
 					            				
 					            			} else {
-					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').allowBlank = false;
-					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').setDisabled(false);
-					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').validate();
-					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').setMinValue(me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').value);
+					            				if(fechaInstalacion != null || fechaInstalacion != undefined) {
+					            					me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').allowBlank = false;
+						            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').setDisabled(false);
+						            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').validate();
+						            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').setMinValue(me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').value);						
+					            				}
+					            				
 					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').allowBlank = true;
-					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').setValue("");
 					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').setDisabled(true);
 					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').validate();
 					            			}

@@ -18,8 +18,16 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			idAgrupacion = null,
 			dniComprador = null,
 			codTipoDocumento = null,
+			viewPortWidth = Ext.Element.getViewportWidth(),
+			viewPortHeight = Ext.Element.getViewportHeight(),
 			idActivo;
 		me.firstExecution = true;
+		
+		
+		wizard.setWidth(viewPortWidth > 1370 ? viewPortWidth / 2 : viewPortWidth / 1.5);
+		wizard.setHeight(viewPortHeight > 500 ? 500 : viewPortHeight - 100);
+		wizard.setX(viewPortWidth / 2 - ((viewPortWidth > 1370 ? viewPortWidth / 2 : viewPortWidth /1.5) / 2));
+		wizard.setY(viewPortHeight / 2 - ((viewPortHeight > 500 ? 500 : viewPortHeight - 100) / 2));
 
 		if(!Ext.isEmpty(wizard.expediente)){
 			idExpediente = wizard.expediente.get('id');

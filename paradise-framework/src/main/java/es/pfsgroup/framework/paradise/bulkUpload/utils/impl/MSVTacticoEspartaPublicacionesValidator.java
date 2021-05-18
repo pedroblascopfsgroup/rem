@@ -21,8 +21,14 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
@@ -81,6 +87,8 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 	public static final String ESTADO_FISICO_DEL_ACTIVO_NO_EXISTE = "El código introducido en el campo 'Estado físico del activo' no existe.";
 	public static final String SITUACION_DEL_TITULO_NO_EXISTE = "El código introducido en el campo 'Situación del título' no existe.";
 	
+	private static final String NO_ES_USUARIO_VALIDO = "Activo gestionado por Seguridad REAM";
+	
 	public static final Integer COL_NUM_ACTIVO = 0;
 	public static final Integer COL_ESTADO_FISICO_DEL_ACTIVO = 1;
 	public static final Integer COL_ACTIVO_INSCRITO_DIVISION_HORIZONTAL = 2;
@@ -121,6 +129,9 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
 	
+	@Autowired
+	private GenericABMDao genericDao;
+	
 	@Resource
     MessageService messageServices;
 	
@@ -154,8 +165,8 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
 			mapaErrores.put(NUM_ACTIVO_NO_EXISTE, isNumActivoNotExistsRows(exc));
+			mapaErrores.put(NO_ES_USUARIO_VALIDO, isActivoGestionadoReam(exc));
 			mapaErrores.put(NUM_ACTIVO_NO_PERTENECE_A_SAREB, isActivoSareb(exc));
-			
 			
 			mapaErrores.put(FECHA_TAPIADO_ERROR, isFechaTapiadoValidator(exc, COL_FECHA_TAPIADO));
 			mapaErrores.put(FECHA_COLOCACION_PUERTA_ANTIOCUPA_ERROR, isFechaAntiocupaValidator(exc, COL_FECHA_COLOCACION_PUERTA_ANTIOCUPA));
@@ -214,6 +225,7 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 					|| !mapaErrores.get(FECHA_TAPIADO_DEBE_ESTAR_VACIO).isEmpty()
 					|| !mapaErrores.get(FECHA_COLOCACION_PUERTA_ANTIOCUPA_DEBE_ESTAR_VACIO).isEmpty()
 					|| !mapaErrores.get(TITULO_VACIO_SI_OCUPA_NO).isEmpty()
+					|| !mapaErrores.get(NO_ES_USUARIO_VALIDO).isEmpty() 
 
 					){
 				dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -752,6 +764,53 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
          }
          return listaFilas;   
     }
+	
+	private List<Integer> isActivoGestionadoReam(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_ACTIVO)) && particularValidator.isActivoGestionadoReam(exc.dameCelda(i, COL_NUM_ACTIVO)) 
+							&& (!Checks.esNulo(exc.dameCelda(i, COL_OCUPADO)) || !Checks.esNulo(exc.dameCelda(i, COL_CON_TITULO))) ) {
+						if (!isSuperSeguridadReam()) {
+							listaFilas.add(i);
+						}
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private boolean isSuperSeguridadReam() {
+		final String USUARIOSEGURIDADREAM = "SEGURIDAD_REAM";
+		final String USUARIOSUPER = "HAYASUPER";
+		Perfil perfilSeguridadReam = genericDao.get(Perfil.class, genericDao.createFilter(FilterType.EQUALS, "codigo", USUARIOSEGURIDADREAM));
+		Perfil perfilSuper = genericDao.get(Perfil.class, genericDao.createFilter(FilterType.EQUALS, "codigo", USUARIOSUPER));
+		
+		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		
+		ZonaUsuarioPerfil usuarioSeguridadReam  = genericDao.get(ZonaUsuarioPerfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario", usu),
+				genericDao.createFilter(FilterType.EQUALS, "perfil", perfilSeguridadReam),
+				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		ZonaUsuarioPerfil usuarioSuper = genericDao.get(ZonaUsuarioPerfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario", usu),
+				genericDao.createFilter(FilterType.EQUALS, "perfil", perfilSuper),
+				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+
+		return usuarioSuper != null || usuarioSeguridadReam != null;
+	}
 
 	@Override
 	public Integer getNumFilasHoja() {

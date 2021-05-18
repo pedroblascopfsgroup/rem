@@ -116,6 +116,12 @@ public class VExportTrabajosAlbaranes implements Serializable{
 	
 	@Column(name = "TBJ_IMPORTE_TOTAL")
 	private Double importeTotalClienteTrabajo;
+	
+	@Column(name = "DD_IRE_CODIGO")
+	private String areaPeticionariaCodigo;
+	
+	@Column(name = "DD_IRE_DESCRIPCION")
+	private String areaPeticionariaDescripcion;
 
 	public Long getId() {
 		return id;
@@ -387,6 +393,22 @@ public class VExportTrabajosAlbaranes implements Serializable{
 
 	public void setImporteTotalClienteTrabajo(Double importeTotalClienteTrabajo) {
 		this.importeTotalClienteTrabajo = importeTotalClienteTrabajo;
+	}
+
+	public String getAreaPeticionariaCodigo() {
+		return areaPeticionariaCodigo;
+	}
+
+	public void setAreaPeticionariaCodigo(String areaPeticionariaCodigo) {
+		this.areaPeticionariaCodigo = areaPeticionariaCodigo;
+	}
+
+	public String getAreaPeticionariaDescripcion() {
+		return areaPeticionariaDescripcion;
+	}
+
+	public void setAreaPeticionariaDescripcion(String areaPeticionariaDescripcion) {
+		this.areaPeticionariaDescripcion = areaPeticionariaDescripcion;
 	}
 
 }

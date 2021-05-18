@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=Javier Esbri
---## FECHA_CREACION=20210513
+--## FECHA_CREACION=20210517
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.3
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-13938
 --## PRODUCTO=NO
---## Finalidad: Actualizamos/Creamos columnas en ACT_ACTIVO_CAIXA
+--## Finalidad: Anyadir columnas ADM_MAX_PRECIO_MODULO_ALQUILER en ACT_ADM_INF_ADMINISTRATIVA
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -33,7 +33,8 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_ACTIVO_CAIXA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_ADM_INF_ADMINISTRATIVA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(256);
     
     
@@ -41,17 +42,18 @@ DECLARE
     TYPE T_ALTER IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
-    			-- NOMBRE CAMPO							TIPO CAMPO					DESCRIPCION												FK								TABLE_FK											Referencia
-    	T_ALTER(  'DD_PLN_ID',	'NUMBER (16,0)',	'Identificador único FK a DD_PLN_PLANTA_EDIFICIO',		'FK_DD_PLN_ID',		''||V_ESQUEMA||'.DD_PLN_PLANTA_EDIFICIO',		'DD_PLN_ID'),
-    	T_ALTER(  'DD_ESE_ID',	'NUMBER (16,0)',	'Identificador único FK a DD_ESE_ESCALERA_EDIFICIO',	'FK_DD_ESE_ID',		''||V_ESQUEMA||'.DD_ESE_ESCALERA_EDIFICIO',		'DD_ESE_ID')
+    			-- NOMBRE CAMPO							TIPO CAMPO		DESCRIPCION
+    	  T_ALTER('ADM_MAX_PRECIO_MODULO_ALQUILER', 'NUMBER(16,2)', 'Precio máximo módulo alquiler')
 	);
 	V_T_ALTER T_ALTER;
+	
 
     
 BEGIN
 
+
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas *********');
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas *************************************************');
 
 	
 	
@@ -64,29 +66,22 @@ BEGIN
 		-- Verificar si la columna ya existe. Si ya existe la columna, no se hace nada con esta (no tiene en cuenta si al existir los tipos coinciden)
 		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLS WHERE COLUMN_NAME = '''||V_T_ALTER(1)||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+		IF V_NUM_TABLAS = 0 THEN
+			--No existe la columna y la creamos
+			DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] -------------------------------------------');
+			V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' 
+					   ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||' )
+			';
 
-		IF V_NUM_TABLAS > 0 THEN
-			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_T_ALTER(1)||'... Ya existe. Se continua.');
-		ELSE
-			-- Se crea la columna y se le agrega un comentario.
-			EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||')';
-			EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_T_ALTER(1)||' IS '''||V_T_ALTER(3)||'''';
-			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_T_ALTER(1)||'... Creada');
-			
-			IF V_T_ALTER(4) = '0' THEN
-				DBMS_OUTPUT.PUT_LINE('No hay que crear fk');
-			ELSE
-				V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME= '''||V_T_ALTER(4)||''' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
-				EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
-				
-				IF V_NUM_TABLAS = 1 THEN
-					DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_T_ALTER(4)||'... Ya existe. No hacemos nada.');		
-				ELSE
-		            V_SQL :='ALTER TABLE '||V_TEXT_TABLA||' ADD CONSTRAINT '||V_T_ALTER(4)||' FOREIGN KEY ('||V_T_ALTER(1)||') REFERENCES '||V_T_ALTER(5)||' ('||V_T_ALTER(6)||')';
-		            DBMS_OUTPUT.PUT_LINE(V_SQL);
-		            EXECUTE IMMEDIATE V_SQL;
-		       END IF;
-		    END IF;
+			EXECUTE IMMEDIATE V_MSQL;
+			--DBMS_OUTPUT.PUT_LINE('[1] '||V_MSQL);
+			DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_ALTER(1)||' Columna INSERTADA en tabla, con tipo '||V_T_ALTER(2));
+
+			-- Creamos comentario	
+			V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_T_ALTER(1)||' IS '''||V_T_ALTER(3)||'''';		
+			EXECUTE IMMEDIATE V_MSQL;
+			--DBMS_OUTPUT.PUT_LINE('[2] '||V_MSQL);
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
 		END IF;
 
 	END LOOP;
@@ -109,4 +104,4 @@ END;
 
 /
 
-EXIT
+EXIT;

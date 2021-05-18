@@ -69,7 +69,13 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 	private String descripcion;
 	    
 	@Column(name = "DD_EEB_DESCRIPCION_LARGA")   
-	private String descripcionLarga;	    
+	private String descripcionLarga;
+
+	@Column(name = "DD_EEB_VENTA")
+	private Boolean esVenta;
+
+	@Column(name = "DD_EEB_ALQUILER")
+	private Boolean esAlquiler;
 
 	@Version   
 	private Long version;
@@ -123,6 +129,22 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Boolean getEsVenta() {
+		return esVenta;
+	}
+
+	public void setEsVenta(Boolean esVenta) {
+		this.esVenta = esVenta;
+	}
+
+	public Boolean getEsAlquiler() {
+		return esAlquiler;
+	}
+
+	public void setEsAlquiler(Boolean esAlquiler) {
+		this.esAlquiler = esAlquiler;
 	}
 
 }

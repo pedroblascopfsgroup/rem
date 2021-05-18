@@ -87,6 +87,7 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDDistritoCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
@@ -1451,4 +1452,6 @@ public interface ActivoApi {
 	
 
 	public Page getPublicacionGrid(DtoPublicacionGridFilter dto);
+	
+	public List<DDDistritoCaixa> getComboTipoDistritoByCodPostal(String codPostal);
 }

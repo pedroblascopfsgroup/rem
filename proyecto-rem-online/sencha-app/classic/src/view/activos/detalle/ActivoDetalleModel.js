@@ -3480,7 +3480,31 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposAdmiteMascota'}
 			}
+		},
+		comboTipoProcedenciaProducto: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoProcedenciaProducto'}
+			}
+		},
+		comboCategoriaComercializacion: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'categoriaComercializacion'}
+				}
+		},		
+		comboDistritoCodPostal: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getComboTipoDistritoByCodPostal',
+   				extraParams: {codPostal: '{activo.codPostal}'}
+			},
+			autoLoad: true
 		}
-		
 	 }
 });

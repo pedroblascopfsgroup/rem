@@ -307,7 +307,10 @@ public class DiccionarioTargetClassMap{
 		mapa.put("identificadorReam", DDIdentificadorReam.class);
 		mapa.put("tipoRetencion", DDTipoRetencion.class);
 		mapa.put("tiposAdmiteMascota", DDSiniSiNoIndiferente.class); 
-		mapa.put("tipoResponsable", DDResponsableDocumentacionCliente.class); 
+		mapa.put("tipoResponsable", DDResponsableDocumentacionCliente.class);
+		mapa.put("tipoProcedenciaProducto", DDProcedenciaProducto.class);
+		mapa.put("categoriaComercializacion", DDCategoriaComercializacion.class);
+		mapa.put("tipoListaEmisiones", DDListaEmisiones.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

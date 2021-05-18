@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
+import es.pfsgroup.plugin.rem.model.dd.DDProcedenciaProducto;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -564,6 +565,10 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "ACT_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<GastoAsociadoAdquisicion> gastosAsociados;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRP_ID")
+    private DDProcedenciaProducto procedenciaProducto; 
     
     // Getters del activo --------------------------------------------
     
@@ -2154,5 +2159,13 @@ public class Activo implements Serializable, Auditable {
 
 	public void setTipoTransmision(DDTipoTransmision tipoTransmision) {
 		this.tipoTransmision = tipoTransmision;
+	}
+
+	public DDProcedenciaProducto getProcedenciaProducto() {
+		return procedenciaProducto;
+	}
+
+	public void setProcedenciaProducto(DDProcedenciaProducto procedenciaProducto) {
+		this.procedenciaProducto = procedenciaProducto;
 	}
 }

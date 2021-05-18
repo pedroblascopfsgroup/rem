@@ -297,6 +297,44 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 								        		xtype: 'textfield'
 								        	}
 								        },
+								        //LISTA EMISIONES
+							        	{   
+								        	text: HreRem.i18n('admision.grid.header.letraEmisiones'),
+								        	dataIndex: 'letraEmisiones',
+								        	flex: 1.2,
+								            align: 'center',
+								            cls: 'grid-no-seleccionable-col',
+								            tdCls: 'grid-no-seleccionable-td',
+								            editor: {
+								        		xtype: 'combobox',
+								        		editable: false,
+								        		cls: 'grid-no-seleccionable-field-editor',
+								        		store: Ext.create('Ext.data.Store',{								        		
+								        			model: 'HreRem.model.ComboBase',
+													proxy: {
+														type: 'uxproxy',
+														remoteUrl: 'generic/getDiccionario',
+														extraParams: {diccionario: 'tipoListaEmisiones'}
+													},
+													autoLoad: true
+												}),								            	
+								            	displayField: 'descripcion',
+    											valueField: 'codigo'    											
+								        	},
+								        	renderer: function(value) {								        		
+								        		var me = this,
+								        		comboEditor = me.columns && me.columns[12].getEditor ? me.columns[12].getEditor() : me.getEditor ? me.getEditor():null;
+								        		if(!Ext.isEmpty(comboEditor)) {
+									        		store = comboEditor.getStore(),							        		
+									        		record = store.findRecord("codigo", value);
+									        		if(!Ext.isEmpty(record)) {								        			
+									        			return record.get("descripcion");								        		
+									        		} else {
+									        			comboEditor.setValue(value);								        			
+									        		}
+								        		}
+								        	}
+								        },
 								        {   
 								        	text: HreRem.i18n('admision.grid.header.emision'),
 								        	dataIndex: 'emision',

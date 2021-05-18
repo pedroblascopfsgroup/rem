@@ -97,7 +97,7 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 	    
 		logger.debug("0Auth2: code >" + authDetails.getCode() + "<");
 		
-		final String baseUrl = authDetails.getBaseUrl();
+		String baseUrl = authDetails.getBaseUrl();
 		
 		// Determine username 
 		String username = "NONE_PROVIDED";
@@ -111,6 +111,7 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 		    if (baseUrl == null || "".equals(baseUrl)) {
 		    	postMethod.addParameter("redirect_uri", appProperties.getProperty(AUTH2_SERVER_REDIRECT_URI));
 		    } else {
+		    	baseUrl = baseUrl.replaceFirst("http://", "https://");
 		    	postMethod.addParameter("redirect_uri", baseUrl);
 		    }
 		    postMethod.addParameter("resource", appProperties.getProperty(AUTH2_SERVER_RESOURCE));

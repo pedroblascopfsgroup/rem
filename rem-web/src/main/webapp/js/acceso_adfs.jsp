@@ -35,9 +35,8 @@
   } else {
 	  URL netUrl = new URL(baseUrl);
 	  String host  = netUrl.getAuthority();
-	  String protocol = netUrl.getProtocol();
+	  String protocol = "https";
 	  url=url.concat(protocol).concat("://").concat(host).concat("/pfs/j_spring_security_check");
-	  //http://localhost:8080/pfs/j_spring_security_check
   }
   url=url.concat("&response_mode=form_post&resource=".
 		  concat(properties.getProperty("haya.auth2.server.param.resource")));

@@ -23,6 +23,7 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -33,6 +34,7 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
@@ -191,6 +193,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
 	@Override
 	public DtoDatosPublicacionActivo getDatosPublicacionActivo(Long idActivo) {
@@ -1480,9 +1485,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	public Boolean saveFasePublicacionActivo(DtoFasePublicacionActivo dto){
 		HistoricoFasePublicacionActivo fasePublicacionActivoVigente = activoPublicacionDao.getFasePublicacionVigentePorIdActivo(dto.getIdActivo());
 		DDFasePublicacion fasePublicacion = new DDFasePublicacion();
+		List<Long> activosPropagados = new ArrayList<Long>();
 
-
-		
+	
 		if (!Checks.esNulo(dto.getFasePublicacionCodigo()) || !Checks.esNulo(dto.getSubfasePublicacionCodigo())) {
 			ActivoTransicionesFasesPublicacion transicion = null;
 			
@@ -1543,10 +1548,28 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				}
 				
 				genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFasePublicacionActivo);
-				enviarCorreoFasePublicacion(dto);
-				if (!Checks.esNulo(dto.getSubfasePublicacionCodigo())) {
-					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, null, false);
+				
+				
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, null, false);
+				
+				if(activoApi.isActivoPrincipalAgrupacionRestringida(dto.getIdActivo())){
+					ActivoAgrupacionActivo actAgr = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());
+					if(actAgr != null && actAgr.getAgrupacion() != null) {
+						List<ActivoAgrupacionActivo> activoAgrList = activoAgrupacionActivoDao.getListActivoAgrupacionActivoByAgrupacionID(actAgr.getAgrupacion().getId());
+						List<Activo> activos = new ArrayList<Activo>();
+						for (ActivoAgrupacionActivo activoAgr : activoAgrList) {
+							if (activoAgr.getActivo() != activo) {
+								activos.add(activoAgr.getActivo());
+							}
+						}
+						
+						String numAgr = actAgr.getAgrupacion().getNumAgrupRem().toString();
+						dto.setNumAgrupacionRestringida(numAgr);
+						activosPropagados = propagarFasesPublicacionYRecalcularPerimetroVisibilidad(nuevaFasePublicacionActivo, activos, numAgr);
+					}
 				}
+				
+				enviarCorreoFasePublicacion(dto, activosPropagados);
 			} else {
 				throw new JsonViewerException("Esta transición no está permitida");
 			}
@@ -1561,7 +1584,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		return true;
 	}
 
-	private void enviarCorreoFasePublicacion(DtoFasePublicacionActivo dto) {
+	private void enviarCorreoFasePublicacion(DtoFasePublicacionActivo dto, List<Long> activosPropagados) {
 		String fasePublicacionCod = dto.getFasePublicacionCodigo();
 		String subFasePublicacionCod = dto.getSubfasePublicacionCodigo();
 		Activo activo = activoApi.get(dto.getIdActivo());
@@ -1569,10 +1592,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		String cuerpo = "";
 		ArrayList<String> mailsPara = new ArrayList<String>();
 		ArrayList<String> mailsCC = new ArrayList<String>();
+		
 		if( !Checks.esNulo(activo)) {
 			if(DDFasePublicacion.CODIGO_FASE_0_CALIDAD_PENDIENTE.equals(fasePublicacionCod) && DDSubfasePublicacion.CODIGO_CALIDAD_PENDIENTE.equals(subFasePublicacionCod)) {
 				cuerpo = String.format("El activo "+activo.getNumActivo()+" ha entrado en la siguiente fase de publicación: Fase 0: Calidad pendiente.");
-				
 				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_PUBLICACION, mailsPara, mailsCC, false);
 				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, false);
 				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO, mailsPara, mailsCC, false);
@@ -1584,6 +1607,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				}
 			}
 			if(!Checks.estaVacio(mailsPara) || !Checks.estaVacio(mailsCC)) {
+				cuerpo = cuerpo + crearCuerpoCorreoPropagarFase(activosPropagados, dto.getNumAgrupacionRestringida());
 				notificationActivoManager.sendMailFasePublicacion(activo, asunto,cuerpo,mailsPara,mailsCC);
 			}			
 		}
@@ -3451,4 +3475,72 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		return listCalidadDatoPub;
 	}
 	
+	private List<Long> propagarFasesPublicacionYRecalcularPerimetroVisibilidad(HistoricoFasePublicacionActivo nuevaFasePublicacionActivo,  List<Activo> activos, String numAgr) {
+		
+		List<Long> numeroActivosApropagar = new ArrayList<Long>();
+		String numActivoPStr = nuevaFasePublicacionActivo.getActivo().getNumActivo().toString();
+		String comentario = this.crearComentarioPropagarFase(numActivoPStr, numAgr, nuevaFasePublicacionActivo.getComentario());
+		PerimetroActivo perimetroActivoP = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", nuevaFasePublicacionActivo.getActivo().getId()));
+		
+		for (Activo activo : activos) {
+			HistoricoFasePublicacionActivo faseActivoAgr = activoPublicacionDao.getFasePublicacionVigentePorIdActivo(activo.getId());
+			if(faseActivoAgr != null) {
+				faseActivoAgr.setFechaFin(new Date());
+				genericDao.save(HistoricoFasePublicacionActivo.class, faseActivoAgr);
+			}
+				
+			HistoricoFasePublicacionActivo nuevaFasePublicacionActivoR = new HistoricoFasePublicacionActivo();
+			
+			nuevaFasePublicacionActivoR.setActivo(activo);
+			nuevaFasePublicacionActivoR.setFechaInicio(nuevaFasePublicacionActivo.getFechaInicio());
+			nuevaFasePublicacionActivoR.setUsuario(nuevaFasePublicacionActivo.getUsuario());
+			nuevaFasePublicacionActivoR.setFasePublicacion(nuevaFasePublicacionActivo.getFasePublicacion());
+			nuevaFasePublicacionActivoR.setSubFasePublicacion(nuevaFasePublicacionActivo.getSubFasePublicacion());		
+			nuevaFasePublicacionActivoR.setComentario(comentario);
+			genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFasePublicacionActivoR);
+			
+			PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+			
+			perimetroActivo.setCheckGestorComercial( perimetroActivoP.getCheckGestorComercial());	
+			perimetroActivo.setFechaGestionComercial(perimetroActivoP.getFechaGestionComercial());
+			perimetroActivo.setExcluirValidaciones(perimetroActivoP.getExcluirValidaciones());
+			perimetroActivo.setMotivoGestionComercial(perimetroActivoP.getMotivoGestionComercial());
+			
+			genericDao.save(PerimetroActivo.class, perimetroActivo);
+			
+			numeroActivosApropagar.add(activo.getNumActivo());
+		}
+			
+		return numeroActivosApropagar;	
+	}
+	
+	private String crearComentarioPropagarFase(String numActPr, String numAgr, String comentarioP) {
+		StringBuilder sb =  new StringBuilder("Cambio realizado por la propagación de los cambios del activo ");
+		sb.append(numActPr);
+		sb.append(", activo principal de la agrupación restringida ");
+		sb.append(numAgr);
+		if(comentarioP != null && !comentarioP.isEmpty()) {
+			sb.append(": " + comentarioP);
+		}
+		
+		return sb.toString();
+	}
+	
+	private String crearCuerpoCorreoPropagarFase(List<Long> activosPropagados, String numAgrupacion) {
+		StringBuilder sb = new StringBuilder("");
+		
+		if(activosPropagados != null && activosPropagados.isEmpty()) {
+			sb.append("Este cambio se ha propagado a los siguientes activos:");
+			for (int i = 0; i<= activosPropagados.size(); i++) {
+				sb.append(activosPropagados.get(i).toString());
+				if(i != activosPropagados.size()-1) {
+					sb.append(", ");
+				}
+			}
+			sb.append(". Pertenecientes a la agrupación: ");
+			sb.append(numAgrupacion);
+		}
+		
+		return sb.toString();
+	}
 }

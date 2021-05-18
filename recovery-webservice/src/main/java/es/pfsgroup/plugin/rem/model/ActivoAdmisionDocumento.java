@@ -23,6 +23,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDListaEmisiones;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 
 
@@ -112,6 +113,10 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 
 	@Column(name = "REGISTRO")
 	private String registro;
+	
+	@ManyToOne
+    @JoinColumn(name = "DD_LEM_ID")
+    private DDListaEmisiones tipoListaEmisiones;
 		
 	@Version   
 	private Long version;
@@ -294,6 +299,14 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public DDListaEmisiones getTipoListaEmisiones() {
+		return tipoListaEmisiones;
+	}
+
+	public void setTipoListaEmisiones(DDListaEmisiones tipoListaEmisiones) {
+		this.tipoListaEmisiones = tipoListaEmisiones;
 	}
 
 	

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos Augusto
---## FECHA_CREACION=20201103
+--## FECHA_CREACION=20201104
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11912
@@ -44,17 +44,14 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION           
-    	T_ALTER(  'SPS_ALARMA',			'NUMBER(1,0)',			'Indicador de si el activo tiene Alarma o no'),
-		T_ALTER(  'SPS_FECHA_INSTALA_ALARMA',			'DATE',			'Fecha de instalación de la alarma'),
-		T_ALTER(  'SPS_FECHA_DESINSTALA_ALARMA',			'DATE',			'Fecha de desinstalación de la alarma'),
-		T_ALTER(  'SPS_VIGILANCIA',			'NUMBER(1,0)',			'Indicador de si el activo tiene Vigilancia o no'),
-		T_ALTER(  'SPS_FECHA_INSTALA_VIGILANCIA',			'DATE',			'Fecha de instalación de la Vigilancia'),
-		T_ALTER(  'SPS_FECHA_DESINSTALA_VIGILANCIA',			'DATE',			'Fecha de desinstalación de la Vigilancia')
+    	T_ALTER(  'SPS_ALARMA',			'NUMBER(1,0)',			'Indicador de si el activo tiene Alarma o no', 'DEFAULT 0'),
+		T_ALTER(  'SPS_FECHA_INSTALA_ALARMA',			'DATE',			'Fecha de instalación de la alarma', ''),
+		T_ALTER(  'SPS_FECHA_DESINSTALA_ALARMA',			'DATE',			'Fecha de desinstalación de la alarma', ''),
+		T_ALTER(  'SPS_VIGILANCIA',			'NUMBER(1,0)',			'Indicador de si el activo tiene Vigilancia o no', 'DEFAULT 0'),
+		T_ALTER(  'SPS_FECHA_INSTALA_VIGILANCIA',			'DATE',			'Fecha de instalación de la Vigilancia', ''),
+		T_ALTER(  'SPS_FECHA_DESINSTALA_VIGILANCIA',			'DATE',			'Fecha de desinstalación de la Vigilancia', '')
 		);
     V_T_ALTER T_ALTER;
-    
-	
-
 
 BEGIN
 	
@@ -75,7 +72,7 @@ BEGIN
 			--No existe la columna y la creamos
 			DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] -------------------------------------------');
 			V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' 
-					   ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||')
+					   ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||' '||V_T_ALTER(4)||')
 			';
 
 			EXECUTE IMMEDIATE V_MSQL;

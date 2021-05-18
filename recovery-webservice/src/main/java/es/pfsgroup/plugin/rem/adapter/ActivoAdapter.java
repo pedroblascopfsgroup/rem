@@ -111,6 +111,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
+import es.pfsgroup.plugin.rem.model.dd.DDListaEmisiones;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -2608,6 +2609,7 @@ public class ActivoAdapter {
 				activoAdmisionDocumento.setConsumo(null);
 				activoAdmisionDocumento.setEmision(null);
 				activoAdmisionDocumento.setRegistro(null);
+				activoAdmisionDocumento.setTipoListaEmisiones(null);
 
 			} else {
 
@@ -2678,6 +2680,11 @@ public class ActivoAdapter {
 					dtoAdmisionDocumento.getEmision());
 			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "registro",
 					dtoAdmisionDocumento.getRegistro());
+			if (dtoAdmisionDocumento.getLetraEmisiones() != null) {
+				DDListaEmisiones emision = (DDListaEmisiones) proxyFactory.proxy(UtilDiccionarioApi.class)
+						.dameValorDiccionarioByCod(DDListaEmisiones.class, dtoAdmisionDocumento.getLetraEmisiones());
+				activoAdmisionDocumento.setTipoListaEmisiones(emision);
+			}			
 			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en ActivoAdapter", e);

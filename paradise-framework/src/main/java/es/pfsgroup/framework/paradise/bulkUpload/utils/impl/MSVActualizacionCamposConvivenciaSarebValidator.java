@@ -325,7 +325,6 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 	            for(int i=1; i<this.numFilasHoja;i++){
 	                try {
 	                    if(!Checks.esNulo(exc.dameCelda(i, COL_CAMPO)) && !Checks.esNulo(exc.dameCelda(i, COL_VALOR_NUEVO))) 
-	                    		//&& (!Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) ? !(Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 1 || Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 0) : false))
 	                        codigoCampo = particularValidator.getCodigoTipoDato(exc.dameCelda(i, COL_CAMPO));
 	                    	if ("04".equals(codigoCampo)) {
 								if (!esNumerico(exc.dameCelda(i, COL_VALOR_NUEVO)))
@@ -352,7 +351,6 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 	            for(int i=1; i<this.numFilasHoja;i++){
 	                try {
 	                    if(!Checks.esNulo(exc.dameCelda(i, COL_CAMPO)) && !Checks.esNulo(exc.dameCelda(i, COL_VALOR_NUEVO))) 
-	                    		//&& (!Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) ? !(Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 1 || Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 0) : false))
 	                        codigoCampo = particularValidator.getCodigoTipoDato(exc.dameCelda(i, COL_CAMPO));
 	                    	if ("03".equals(codigoCampo)) {
 								if (!esDecimal(exc.dameCelda(i, COL_VALOR_NUEVO)))
@@ -379,14 +377,15 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 	            for(int i=1; i<this.numFilasHoja;i++){
 	                try {
 	                    if(!Checks.esNulo(exc.dameCelda(i, COL_CAMPO)) && !Checks.esNulo(exc.dameCelda(i, COL_VALOR_NUEVO))) 
-	                    		//&& (!Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) ? !(Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 1 || Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 0) : false))
 	                        codigoCampo = particularValidator.getCodigoTipoDato(exc.dameCelda(i, COL_CAMPO));
 	                    	if ("05".equals(codigoCampo)) {
-								if (!exc.dameCelda(i, COL_VALOR_NUEVO).matches("[0-9]+")) {
+	                    		if ("172".equals(exc.dameCelda(i, COL_CAMPO)) && !exc.dameCelda(i, COL_VALOR_NUEVO).matches("[A-P]\\d{2}")) {
+	                    			listaFilas.add(i);
+	                    		} else if (!"172".equals(exc.dameCelda(i, COL_CAMPO)) && !exc.dameCelda(i, COL_VALOR_NUEVO).matches("\\d{2,3}")) {
 									listaFilas.add(i);
-								}else if (!particularValidator.existeDiccionarioByTipoCampo(exc.dameCelda(i, COL_CAMPO), exc.dameCelda(i, COL_VALOR_NUEVO))) {
+								}/*else if (!particularValidator.existeDiccionarioByTipoCampo(exc.dameCelda(i, COL_CAMPO), exc.dameCelda(i, COL_VALOR_NUEVO))) {
 									listaFilas.add(i);
-								}
+								}*/
 							}
 	                } catch (ParseException e) {
 	                    listaFilas.add(i);
@@ -409,7 +408,6 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 	            for(int i=1; i<this.numFilasHoja;i++){
 	                try {
 	                    if(!Checks.esNulo(exc.dameCelda(i, COL_CAMPO)) && !Checks.esNulo(exc.dameCelda(i, COL_VALOR_NUEVO))) 
-	                    		//&& (!Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) ? !(Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 1 || Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 0) : false))
 	                        codigoCampo = particularValidator.getCodigoTipoDato(exc.dameCelda(i, COL_CAMPO));
 	                    	if ("01".equals(codigoCampo)) {
 								if (Integer.parseInt(exc.dameCelda(i, COL_VALOR_NUEVO)) != 1 && Integer.parseInt(exc.dameCelda(i, COL_VALOR_NUEVO)) != 0 ) 
@@ -438,7 +436,6 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 	            for(int i=1; i<this.numFilasHoja;i++){
 	                try {
 	                    if(!Checks.esNulo(exc.dameCelda(i, COL_CAMPO)) && !Checks.esNulo(exc.dameCelda(i, COL_VALOR_NUEVO))) 
-	                    		//&& (!Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) ? !(Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 1 || Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 0) : false))
 	                        codigoCampo = particularValidator.getCodigoTipoDato(exc.dameCelda(i, COL_CAMPO));
 	                    	if ("02".equals(codigoCampo)) {
 								if (!esFecha(exc.dameCelda(i, COL_VALOR_NUEVO)))

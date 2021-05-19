@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210503
+--## FECHA_CREACION=20210519
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13784
+--## INCIDENCIA_LINK=HREOS-13988
 --## PRODUCTO=NO
 --## Finalidad: Creación diccionario ESPARTA_EXCEL5
 --##           
@@ -60,6 +60,9 @@ BEGIN
 			, VALOR_ACTUAL               VARCHAR2(3500 CHAR)
 			, VALOR_NUEVO                VARCHAR2(3500 CHAR)
 			, DESCRIPCION                VARCHAR2(3500 CHAR)
+			, SUBTIPO_REGISTRO VARCHAR2(3500 CHAR)
+			, ID_REGISTRO NUMBER(16)
+        		, NUEVO NUMBER(1)
 			  )';        	
 
 		EXECUTE IMMEDIATE V_MSQL;

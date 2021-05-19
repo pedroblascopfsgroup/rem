@@ -145,6 +145,9 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
         {
         	name:  'perteneceActivoREAM',
         	type:'boolean'
+        },
+        {
+        	name: 'necesariaFuerzaPublica'
         }
         
     ],

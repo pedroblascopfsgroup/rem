@@ -3011,6 +3011,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        {"codigo":"1", "descripcion":"Si"}
 		    ]
 		},
+		comboSiNoFuerzaPublica: {
+			data : [
+		        {"codigo":"0", "descripcion":"No"},
+		        {"codigo":"1", "descripcion":"Si"}
+		    ]
+		},
 		
 		storeAdjuntosPlusvalias: {
 			 pageSize: $AC.getDefaultPageSize(),

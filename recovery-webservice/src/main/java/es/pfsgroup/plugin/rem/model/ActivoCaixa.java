@@ -78,6 +78,9 @@ public class ActivoCaixa implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_MNA_ID")
     private DDMotivoNecesidadArras motivoNecesidadArras;
+    
+	@Column(name = "CBX_NEC_FUERZA_PUBL")
+	private Boolean necesariaFuerzaPublica;
 	
 	@Version   
 	private Long version;
@@ -179,6 +182,14 @@ public class ActivoCaixa implements Serializable, Auditable {
 
 	public void setMotivoNecesidadArras(DDMotivoNecesidadArras motivoNecesidadArras) {
 		this.motivoNecesidadArras = motivoNecesidadArras;
+	}
+
+	public Boolean getNecesariaFuerzaPublica() {
+		return necesariaFuerzaPublica;
+	}
+
+	public void setNecesariaFuerzaPublica(Boolean necesariaFuerzaPublica) {
+		this.necesariaFuerzaPublica = necesariaFuerzaPublica;
 	}
 	
 }

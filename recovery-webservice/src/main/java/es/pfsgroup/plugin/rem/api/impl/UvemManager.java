@@ -1889,9 +1889,11 @@ public class UvemManager implements UvemManagerApi {
 		if (!Checks.esNulo(expediente.getFechaContabilizacionPropietario())) {
 			tieneFechaIngresoChequeVenta = true;
 		}
-		if (codigoTarea.equals(UpdaterServiceSancionOfertaInstruccionesReserva.CODIGO_T013_INSTRUCCIONES_RESERVA)) {
+		if (codigoTarea.equals(UpdaterServiceSancionOfertaInstruccionesReserva.CODIGO_T013_INSTRUCCIONES_RESERVA) 
+			|| codigoTarea.equals(UpdaterServiceSancionOfertaInstruccionesReserva.CODIGO_T017_INSTRUCCIONES_RESERVA)) {
 			esOffline = tieneFechaFirmaReserva || tieneFechaIngresoChequeVenta;
-		} else if (codigoTarea.equals(UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T013_RESULTADO_PBC)) {
+		} else if (codigoTarea.equals(UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T013_RESULTADO_PBC) || 
+				codigoTarea.equals(UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T017_PBC_VENTA)) {
 			esOffline = tieneFechaIngresoChequeVenta;
 		}
 		return esOffline;

@@ -5953,7 +5953,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	 * @throws Exception
 	 */
 	private char traducitTipoDoc(String codigoTipoDoc) throws Exception {
-		char result = ' ';
+		char result = ' ';  
 		if (codigoTipoDoc.equals("01")) {
 			result = '1';
 		} else if (codigoTipoDoc.equals("02")) {
@@ -9362,7 +9362,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public boolean checkDepositoDespublicacionSubido(TareaExterna tareaExterna) {
 
-		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna)) {
+		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna) || esBankia(tareaExterna)) {
 			return true;
 		}
 
@@ -9428,7 +9428,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public boolean checkDepositoRelleno(TareaExterna tareaExterna) {
 
-		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna)) {
+		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna) || esBankia(tareaExterna)) {
 			return true;
 		}
 
@@ -11851,4 +11851,31 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 	}	
 
+	@Override
+	public DtoListadoTramites ponerTareasCarteraCorrespondiente(DtoListadoTramites tramite, ExpedienteComercial expediente) {
+		if(expediente.getOferta().getActivoPrincipal() != null && expediente.getOferta().getActivoPrincipal().getCartera() !=  null) {
+			String tipoTramiteCartera = tramite.getNombre().replace("Cerberus", expediente.getOferta().getActivoPrincipal().getCartera().getDescripcion());
+			if(!Checks.esNulo(tramite.getTareas())) {
+				DtoListadoTareas[] tareas = tramite.getTareas();
+				for (DtoListadoTareas tarea : tareas) {
+					tarea.setNombre(tipoTramiteCartera);
+				}
+			}
+		}
+		
+		return tramite;
+	}
+	
+	@Override
+	public boolean esBankia(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		boolean esBankia = false;
+		if (!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta())) {
+			Activo activo = expedienteComercial.getOferta().getActivoPrincipal();
+			if (!Checks.esNulo(activo)) {
+				esBankia = DDCartera.isCarteraBk(activo.getCartera());
+			}
+		}
+		return esBankia;
+	}
 }

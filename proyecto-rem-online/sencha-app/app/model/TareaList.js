@@ -30,7 +30,10 @@ Ext.define('HreRem.model.TareaList', {
              'idGestor',
              'gestor',
              'subtipoTareaCodigoSubtarea',
-             'codigoTarea'
+             'codigoTarea',
+             {
+          		 name: 'nombre'
+             }
     ],
     
 	proxy: {

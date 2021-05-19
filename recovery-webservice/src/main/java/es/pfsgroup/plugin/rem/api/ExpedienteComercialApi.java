@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
+import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
@@ -1366,5 +1367,9 @@ public interface ExpedienteComercialApi {
 
 	boolean compruebaEstadoNoSolicitadoPendiente(TareaExterna tareaExterna);
 	boolean compruebaEstadoPositivoRealDenegado(TareaExterna tareaExterna);
+
+	DtoListadoTramites ponerTareasCarteraCorrespondiente(DtoListadoTramites tramite, ExpedienteComercial expediente);
+
+	boolean esBankia(TareaExterna tareaExterna);
 
 }

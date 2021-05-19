@@ -3023,6 +3023,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			boolean esApple = false;
 			boolean esDivarian = false;
 			boolean esBBVA = false;
+			boolean isBankia = false;
+			
 			if(expedienteComercial == null) {
 				expedienteComercial = expedienteComercialApi.findOneByTrabajo(trabajo);
 			}
@@ -3043,8 +3045,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					if (DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())) {
 						esBBVA = true;
 					}
+					if(DDCartera.isCarteraBk(activo.getCartera())) {
+						isBankia = true;
+					}
 					
-					if (!esApple && !esDivarian && !esBBVA) {
+					if (!esApple && !esDivarian && !esBBVA && !isBankia) {
 						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
 					}else {
 						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE);

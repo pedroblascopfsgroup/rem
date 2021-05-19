@@ -84,6 +84,7 @@ import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
+import es.pfsgroup.plugin.rem.model.DtoListadoTareas;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
@@ -104,6 +105,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 import net.minidev.json.JSONObject;
@@ -738,17 +740,17 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			HttpServletRequest request) {
 
 		ExpedienteComercial expediente = expedienteComercialApi.findOne(idExpediente);
-		List<DtoListadoTramites> tramites = trabajoAdapter
-				.getListadoTramitesTareasTrabajo(expediente.getTrabajo().getId(), webDto);
+		List<DtoListadoTramites> tramites = trabajoAdapter.getListadoTramitesTareasTrabajo(expediente.getTrabajo().getId(), webDto);
 
 		DtoListadoTramites tramite = new DtoListadoTramites();
 		if (!Checks.estaVacio(tramites)) {
 			tramite = tramites.get(0);
+			tramite = expedienteComercialApi.ponerTareasCarteraCorrespondiente(tramite, expediente);
 		}
-
+		
+	
 		model.put("tramite", tramite);
-		trustMe.registrarSuceso(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "tamitesTareas",
-				ACCION_CODIGO.CODIGO_VER);
+		trustMe.registrarSuceso(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "tamitesTareas", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}

@@ -7,6 +7,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -322,5 +323,9 @@ public interface ActivoTramiteApi {
 	 * @return Boolean
 	 */
 	Boolean esOfertaPrincipalSinDependientes(TareaExterna tareaExterna);
+
+	boolean isTramiteVenta(TipoProcedimiento procedimiento);
+
+	boolean isTramiteVentaApple(TipoProcedimiento procedimiento);
 }
 

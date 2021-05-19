@@ -445,10 +445,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	}
 	
 	@Override
-	public DtoLineaDetalleGasto calcularCuentasYPartidas(GastoProveedor gasto, Long idLineaDetalleGasto, String subtipoGastoCodigo) {
-
-
-		
+	public DtoLineaDetalleGasto calcularCuentasYPartidas(GastoProveedor gasto, Long idLineaDetalleGasto, String subtipoGastoCodigo, Trabajo trabajo) {
 		DtoLineaDetalleGasto dtoLineaDetalleGasto = new DtoLineaDetalleGasto();
 		
 		if(gasto == null || gasto.getPropietario() == null) {
@@ -549,24 +546,31 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					tipoActivoBDE = genericDao.createFilter(FilterType.EQUALS, "tipoActivoBDE.id", ddTipoBDE.getId());
 				}	
 			}
+			
+			if (Checks.esNulo(idLineaDetalleGasto) && !Checks.esNulo(trabajo) && !Checks.esNulo(trabajo.getActivosTrabajo().get(0).getActivo())) {
+				Long subcarteraId = trabajo.getActivosTrabajo().get(0).getActivo().getSubcartera().getId();
 				
+				if (!Checks.esNulo(subcarteraId)) {
+					filtroSubcartera= genericDao.createFilter(FilterType.EQUALS, "subCartera.id", subcarteraId);
+				}
+			} 
+			
 			List<ActivoConfiguracionPtdasPrep> partidaArrendadaList = null;
 			
 			partidaArrendadaList = genericDao.getList(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroPropietario,filtroCartera, filtroSubcartera, filtroCuentaArrendamiento, filtroRefacturablePP, planVisitasCpp,activableCpp,tipoComisionadoCpp, tipoActivoBDE, cppvendido);
-				
+			
 			List<ActivoConfiguracionPtdasPrep> partidaArrendadaFinales = elegirPartidasByPrincipales(partidaArrendadaList);
 			if(!partidaArrendadaFinales.isEmpty()){
 				for (ActivoConfiguracionPtdasPrep partidaArrendada : partidaArrendadaFinales) {
 					setPartidasPresupuestarias(dtoLineaDetalleGasto, partidaArrendada);
 				}
 			}
-
+			
 			List<ActivoConfiguracionCuentasContables> cuentaArrendadaList= null;
-	
+			
 			cuentaArrendadaList= genericDao.getList(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroPropietario,filtroCartera, filtroSubcartera,filtroCuentaArrendamiento, filtroRefacturableCC,planVisitasCcc,activableCcc,tipoComisionadoCcc, tipoActivoBDE, cccvendido);
 			
 			List<ActivoConfiguracionCuentasContables> cuentaArrendadaFinal = elegirCuentasByPrincipales(cuentaArrendadaList);
-
 			if(!cuentaArrendadaFinal.isEmpty()){			
 				for (ActivoConfiguracionCuentasContables cuentaArrendada : cuentaArrendadaFinal) {
 					setCuentasContables(dtoLineaDetalleGasto, cuentaArrendada);	
@@ -801,7 +805,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 		if(gastoLineaDetalleList != null && !gastoLineaDetalleList.isEmpty()) {
 			for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
-				DtoLineaDetalleGasto dto= calcularCuentasYPartidas(gastoProveedor, gastoLineaDetalle.getId(), gastoLineaDetalle.getSubtipoGasto().getCodigo());
+				DtoLineaDetalleGasto dto= calcularCuentasYPartidas(gastoProveedor, gastoLineaDetalle.getId(), gastoLineaDetalle.getSubtipoGasto().getCodigo(), null);
 				gastoLineaDetalle = setCuentasPartidasDtoToObject(gastoLineaDetalle, dto);
 				genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
 			
@@ -1291,7 +1295,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 			if(!DDEntidadGasto.CODIGO_ACTIVO_GENERICO.equals(dto.getTipoElemento()) && !DDEntidadGasto.CODIGO_SIN_ACTIVOS.equals(dto.getTipoElemento())) {
 				DtoLineaDetalleGasto dtoLineaDetalleGasto = 
-					this.calcularCuentasYPartidas(gastoLineaDetalle.getGastoProveedor(),dto.getIdLinea(), gastoLineaDetalle.getSubtipoGasto().getCodigo());
+					this.calcularCuentasYPartidas(gastoLineaDetalle.getGastoProveedor(),dto.getIdLinea(), gastoLineaDetalle.getSubtipoGasto().getCodigo(), null);
 					gastoLineaDetalle = this.updatearCuentasYPartidasVacias(dtoLineaDetalleGasto, gastoLineaDetalle);
 					genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);		
 			}
@@ -1942,7 +1946,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		BigDecimal importeTotal = (new BigDecimal (gastoLineaDetalleNueva.getPrincipalSujeto())).add(cuota);
 		importeTotal = importeTotal.add(provSuplidos);
 		gastoLineaDetalleNueva.setImporteTotal(importeTotal.doubleValue());
-		DtoLineaDetalleGasto dto = calcularCuentasYPartidas(gasto, null,lineaParte.get(0));
+		DtoLineaDetalleGasto dto = calcularCuentasYPartidas(gasto, null,lineaParte.get(0), trabajo);
 				
 		gastoLineaDetalleNueva = setCuentasPartidasDtoToObject(gastoLineaDetalleNueva, dto);
 		

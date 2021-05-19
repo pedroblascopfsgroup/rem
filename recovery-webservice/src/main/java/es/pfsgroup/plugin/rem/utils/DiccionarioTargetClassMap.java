@@ -311,6 +311,9 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoProcedenciaProducto", DDProcedenciaProducto.class);
 		mapa.put("categoriaComercializacion", DDCategoriaComercializacion.class);
 		mapa.put("tipoListaEmisiones", DDListaEmisiones.class);
+		mapa.put("motivoNecesidadArras", DDMotivoNecesidadArras.class);
+		
+
 		
 		return Collections.unmodifiableMap(mapa);
 	}

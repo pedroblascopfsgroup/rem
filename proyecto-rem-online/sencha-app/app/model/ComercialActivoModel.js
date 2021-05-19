@@ -64,6 +64,16 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 			name: 'activoObraNuevaComercializacionFecha',
 			type:'date',
 			dateFormat: 'c'
+		},
+		{
+			name: 'necesidadArras',
+			type: 'boolean'
+		},
+		{
+			name: 'motivoNecesidadArrasCod'
+		},
+		{
+			name: 'motivoNecesidadArrasDesc'
 		}
     ],
     

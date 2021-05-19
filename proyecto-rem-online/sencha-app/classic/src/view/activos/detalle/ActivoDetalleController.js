@@ -8521,5 +8521,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		distritoCaixa.getProxy().setExtraParams({'codPostal':newValue});
     		distritoCaixa.load();
     	}
+    },
+    isNotCarteraBankia: function(get){
+    	var me = this;
+
+    	var carteraBankia = me.getViewModel().getData().activo.getData().isCarteraBankia;
+    	var checkArras = me.lookupReference('checkNecesidadArrasRef');
+    	var motivoArras = me.lookupReference('motivoNecesidadRef');
+    	
+    	if (carteraBankia != null && carteraBankia == true && checkArras != null && motivoArras != null) {
+    		checkArras.setHidden(false);
+    		motivoArras.setHidden(false);
+    	}else{
+    		checkArras.setHidden(true);
+    		motivoArras.setHidden(true);
+    	}
     }
 });

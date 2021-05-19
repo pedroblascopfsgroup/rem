@@ -3952,6 +3952,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				dto.setActivoObraNuevaComercializacionFecha(activo.getObraNuevaAEfectosComercializacionFecha());
 			}
 		}
+		
+		if (activo != null) {
+			ActivoCaixa actCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+			
+			if (actCaixa != null) {
+				if (actCaixa.getNecesidadArras() != null) {
+					dto.setNecesidadArras(actCaixa.getNecesidadArras());
+				}
+				if (actCaixa.getNecesidadArras() != null 
+						&& Boolean.TRUE.equals(actCaixa.getNecesidadArras()) 
+						&& actCaixa.getMotivoNecesidadArras() != null) {
+					dto.setMotivoNecesidadArrasCod(actCaixa.getMotivoNecesidadArras().getCodigo());
+					dto.setMotivoNecesidadArrasDesc(actCaixa.getMotivoNecesidadArras().getDescripcion());
+				}
+			}
+		}
 		return dto;
 	}
 

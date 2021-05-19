@@ -44,6 +44,10 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				defaultType: 'textfieldbase',
 				collapsible: true,
 				reference: 'activoComercialBloqueRef',
+				listeners:
+				{
+					afterrender: 'isNotCarteraBankia'
+				},
 				items :
 					[
 					// Fila 0
@@ -178,11 +182,35 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        	fieldLabel: HreRem.i18n('fieldlabel.combo.obra.nueva.f.comercializacion'),
 				        	reference: 'activoObraNuevaComercializacionFecha',
 				        	readOnly:true,
+				        	colspan:2,
 				        	 bind: {
 				        	 	value:'{comercial.activoObraNuevaComercializacionFecha}'
 				        	 }
-						}
-						
+						},
+						{
+						   xtype: 'checkboxfieldbase',
+						   fieldLabel: HreRem.i18n('fieldlabel.necesidad.arras'),
+						   reference: 'checkNecesidadArrasRef',
+						   allowBlank: false,
+						   bind : {
+					     		value: '{comercial.necesidadArras}',
+					     		readOnly: true
+						   }						   
+						},
+						{ 
+							xtype: 'comboboxfieldbasedd',
+							fieldLabel:	HreRem.i18n('fieldlabel.motivo.necesidad.arras'),
+							reference: 'motivoNecesidadRef',
+							bind: {								
+								//readOnly: '{!editableCES}',
+								readOnly: true,
+								store: '{comboMotivoNecesidadArras}',
+								value: '{comercial.motivoNecesidadArrasCod}',
+								rawValue: '{comercial.motivoNecesidadArrasDesc}',
+								disabled: '{!comercial.necesidadArras}'/*,
+								hidden: 'isNotCarteraBankia'*/
+							}
+						}						
 				]
 			}, 
 			{

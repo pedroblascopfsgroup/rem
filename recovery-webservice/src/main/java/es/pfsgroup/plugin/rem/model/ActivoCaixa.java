@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEscaleraEdificio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialAlquilerCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialVentaCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTecnicoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoNecesidadArras;
 import es.pfsgroup.plugin.rem.model.dd.DDPlantaEdificio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUbicacion;
 
@@ -70,6 +71,16 @@ public class ActivoCaixa implements Serializable, Auditable {
     
     @Column(name = "FECHA_EAT_EST_TECNICO")
     private Date fechaEstadoTecnico;
+    
+    @Column(name = "CBX_NECESIDAD_ARRAS")
+    private Boolean necesidadArras;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MNA_ID")
+    private DDMotivoNecesidadArras motivoNecesidadArras;
+    
+	@Column(name = "CBX_NEC_FUERZA_PUBL")
+	private Boolean necesariaFuerzaPublica;
 	
 	@Version   
 	private Long version;
@@ -155,6 +166,30 @@ public class ActivoCaixa implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Boolean getNecesidadArras() {
+		return necesidadArras;
+	}
+
+	public void setNecesidadArras(Boolean necesidadArras) {
+		this.necesidadArras = necesidadArras;
+	}
+
+	public DDMotivoNecesidadArras getMotivoNecesidadArras() {
+		return motivoNecesidadArras;
+	}
+
+	public void setMotivoNecesidadArras(DDMotivoNecesidadArras motivoNecesidadArras) {
+		this.motivoNecesidadArras = motivoNecesidadArras;
+	}
+
+	public Boolean getNecesariaFuerzaPublica() {
+		return necesariaFuerzaPublica;
+	}
+
+	public void setNecesariaFuerzaPublica(Boolean necesariaFuerzaPublica) {
+		this.necesariaFuerzaPublica = necesariaFuerzaPublica;
 	}
 	
 }

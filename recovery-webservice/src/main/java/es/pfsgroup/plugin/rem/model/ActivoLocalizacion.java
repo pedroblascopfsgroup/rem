@@ -25,6 +25,8 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.model.dd.DDDistritoCaixa;
+import es.pfsgroup.plugin.rem.model.dd.DDEscaleraEdificio;
+import es.pfsgroup.plugin.rem.model.dd.DDPlantaEdificio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUbicacion;
 
 
@@ -72,8 +74,14 @@ public class ActivoLocalizacion implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TUB_ID")
 	private DDTipoUbicacion tipoUbicacion;
-
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PLN_ID")
+	private DDPlantaEdificio plantaEdificio;	
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ESE_ID")
+	private DDEscaleraEdificio escaleraEdificio;
 	
 	@Version   
 	private Long version;
@@ -176,7 +184,22 @@ public class ActivoLocalizacion implements Serializable, Auditable {
 
 	public void setDistritoCaixa(DDDistritoCaixa distritoCaixa) {
 		this.distritoCaixa = distritoCaixa;
-	}  									
+	}
 	
+	public DDPlantaEdificio getPlantaEdificio() {
+		return plantaEdificio;
+	}
+
+	public void setPlantaEdificio(DDPlantaEdificio plantaEdificio) {
+		this.plantaEdificio = plantaEdificio;
+	}
+
+	public DDEscaleraEdificio getEscaleraEdificio() {
+		return escaleraEdificio;
+	}
+
+	public void setEscaleraEdificio(DDEscaleraEdificio escaleraEdificio) {
+		this.escaleraEdificio = escaleraEdificio;
+	}  									
 	
 }

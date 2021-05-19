@@ -164,6 +164,83 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				            	value:'{comercial.ventaSobrePlano}',
 				            	readOnly: true  //'{!esAgrupacionObraNueva}'
 				           	}
+						},
+						{
+							xtype: 'currencyfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.importe.comunidad.mensual.sareb'),
+							reference: 'comunidadMensualSareb',
+							bind : {
+				        		value: '{comercial.importeComunidadMensualSareb}',
+				        		hidden: '{!isCarteraSareb}',
+				        		readOnly: '{!noEditableUASSoloSuper}'
+							}						
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.siniestro.sareb'),
+							reference: 'siniestroSarebRef',
+							bind : {
+				        		value: '{comercial.siniestroSareb}',
+				        		store: '{comboSinSino}',
+				        		hidden: '{!isCarteraSareb}',
+				        		readOnly: '{!noEditableUASSoloSuper}'
+							}						
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.tipo.correctivo.sareb'),
+							reference: 'tipoCorrectivoSarebRef',
+							bind : {
+				        		value: '{comercial.tipoCorrectivoSareb}',
+				        		store: '{comboDDTipoCorrectivoSareb}',
+				        		hidden: '{!isCarteraSareb}',
+				        		readOnly: '{!noEditableUASSoloSuper}'
+							}						
+						},
+						{
+							xtype: 'datefieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.fecha.fin.correctivo.sareb'),
+							reference: 'fechaFinCorrectivoSarebRef',
+							bind : {
+				        		value: '{comercial.fechaFinCorrectivoSareb}',
+				        		hidden: '{!isCarteraSareb}',
+				        		readOnly: '{!noEditableUASSoloSuper}'
+							}						
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.tipo.cuota.comunidad'),
+							reference: 'tipoCuotaComunidadRef',
+							bind : {
+				        		value: '{comercial.tipoCuotaComunidad}',
+				        		store: '{comboDDTipoCuotaComunidad}',
+				        		hidden: '{!isCarteraSareb}',
+				        		readOnly: '{!noEditableUASSoloSuper}'
+							}						
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.ggaa.sareb'),
+							reference: 'ggaaSarebRef',
+							bind : {
+				        		value: '{comercial.ggaaSareb}',
+				        		store: '{comboSinSino}',
+				        		hidden: '{!isCarteraSareb}',
+				        		//readOnly: '{!noEditableUASSoloSuper}',
+				        		readOnly: true,
+				        		editable: false
+							}						
+						},{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.segmentacion.sareb'),
+							reference: 'segmentacionSarebRef',
+							bind : {
+				        		value: '{comercial.segmentacionSareb}',
+				        		store: '{comboSegmetacionSareb}',
+				        		hidden: '{!isCarteraSareb}',
+				        		readOnly: true,
+				        		editable: false
+							}						
 						},{
 							xtype:'comboboxfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.combo.obra.nueva.comercializacion'),					

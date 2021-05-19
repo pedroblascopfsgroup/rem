@@ -570,7 +570,8 @@ Ext.define('HreRem.ux.util.Constants', {
 
     ORIGEN_DATO: {
         REM: '01',
-        RECOVERY: '02'
+        RECOVERY: '02',
+        PRISMA: '03'
     },
 
     MODO_PUBLICACION_ALQUILER: {

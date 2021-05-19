@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -168,6 +167,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCorrectivoSareb;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCuotaComunidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocPlusvalias;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -1660,9 +1661,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		ActivoInformeComercialHistoricoMediador historicoMediadorPrimero = new ActivoInformeComercialHistoricoMediador();
 		Activo activo = null;
 		Date fechaHoy = new Date();
-		DDTipoRolMediador tipoRol = genericDao.get(DDTipoRolMediador.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getRol()));
+		if(dto.getRol() == null) {
+			throw new JsonViewerException("No existe el rol.");
+		}
+		DDTipoRolMediador tipoRol = genericDao.get(DDTipoRolMediador.class,genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getRol()));
 
+		if(tipoRol == null) {
+			tipoRol = genericDao.get(DDTipoRolMediador.class,genericDao.createFilter(FilterType.EQUALS, "descripcion", dto.getRol()));
+		}
+		
+		if(tipoRol == null) {
+			throw new JsonViewerException("El tipo de rol no es válido.");
+		}
+		
 		if (!Checks.esNulo(dto.getIdActivo())) {
 			activo = activoDao.get(dto.getIdActivo());
 		}
@@ -1729,11 +1740,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			beanUtilNotNull.copyProperty(historicoMediador, "activo", activo);
 			historicoMediador.setTipoRolMediador(tipoRol);
 
-			if (!Checks.esNulo(dto.getMediador()) || !dto.getMediador().equals("")) { // si no se selecciona mediador en
+			if (!Checks.esNulo(dto.getMediador()) && !dto.getMediador().isEmpty()) { // si no se selecciona mediador en
 																						// el combo, se devuelve
 																						// mediador "", no null.
-				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
-						Long.parseLong(dto.getMediador()));
+				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",Long.parseLong(dto.getMediador()));
 				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, proveedorFiltro);
 
 				if (Checks.esNulo(proveedor)) {
@@ -3927,6 +3937,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(dto, "direccionComercialDescripcion", activo.getTerritorio().getDescripcion());
 
 			}
+			
+			if (activo.getNumActivo() != null) {
+				ActivoSareb activoSareb = genericDao.get(ActivoSareb.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activo.getNumActivo()));
+				if(activoSareb != null) {
+					dto.setImporteComunidadMensualSareb(activoSareb.getImporteComunidadMensualSareb());
+					if (activoSareb.getSiniestroSareb() != null) {
+						dto.setSiniestroSareb(activoSareb.getSiniestroSareb().getCodigo());
+					}
+					if(activoSareb.getTipoCorrectivoSareb() != null) {
+						dto.setTipoCorrectivoSareb(activoSareb.getTipoCorrectivoSareb().getCodigo());
+					}					
+					dto.setFechaFinCorrectivoSareb(activoSareb.getFechaFinCorrectivoSareb());
+					if(activoSareb.getTipoCuotaComunidad() != null) {
+						dto.setTipoCuotaComunidad(activoSareb.getTipoCuotaComunidad().getCodigo());
+					}
+					if (activoSareb.getGgaaSareb() != null) {
+						dto.setGgaaSareb(activoSareb.getGgaaSareb().getCodigo());
+					}
+					if (activoSareb.getSegmentoSareb() != null) {
+						dto.setSegmentacionSareb(activoSareb.getSegmentoSareb().getCodigo());
+					}
+				}
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -4016,6 +4049,36 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					guardadoAsincrono.start();
 				}
 			}
+			
+			if (activo.getNumActivo() != null) {
+				ActivoSareb activoSareb = genericDao.get(ActivoSareb.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activo.getNumActivo()));
+				if(activoSareb != null) {
+					if (dto.getImporteComunidadMensualSareb() != null) {
+						activoSareb.setImporteComunidadMensualSareb(dto.getImporteComunidadMensualSareb());
+					}
+					if(dto.getSiniestroSareb() != null) {
+						DDSinSiNo siniestro = (DDSinSiNo) utilDiccionarioApi
+								.dameValorDiccionarioByCod(DDSinSiNo.class, dto.getSiniestroSareb());
+						activoSareb.setSiniestroSareb(siniestro);
+					}
+					if(dto.getTipoCorrectivoSareb() != null) {
+						DDTipoCorrectivoSareb tipoCorrectivoSareb = (DDTipoCorrectivoSareb) utilDiccionarioApi
+								.dameValorDiccionarioByCod(DDTipoCorrectivoSareb.class, dto.getTipoCorrectivoSareb());
+						activoSareb.setTipoCorrectivoSareb(tipoCorrectivoSareb);
+					}
+					if(dto.getFechaFinCorrectivoSareb() != null) {
+						activoSareb.setFechaFinCorrectivoSareb(dto.getFechaFinCorrectivoSareb());
+					}
+					if(dto.getTipoCuotaComunidad() != null) {
+						DDTipoCuotaComunidad tipoCuotaComunidad = (DDTipoCuotaComunidad) utilDiccionarioApi
+								.dameValorDiccionarioByCod(DDTipoCuotaComunidad.class, dto.getTipoCuotaComunidad());
+						
+						activoSareb.setTipoCuotaComunidad(tipoCuotaComunidad);
+					}
+					genericDao.update(ActivoSareb.class, activoSareb);
+				}
+			}
+
 			if(dto.getActivoObraNuevaComercializacion()!=null ) {
 				DDSinSiNo siono = (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, dto.getActivoObraNuevaComercializacion());
 				if(siono!=null) {
@@ -4799,18 +4862,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			} else if (DDTipoTituloActivo.tipoTituloNoJudicial.equals(activo.getTipoTitulo().getCodigo())
 					&& !Checks.esNulo(activo.getAdjNoJudicial()) && !Checks.esNulo(activo.getSituacionPosesoria())) {
-				if (activo.getAdjNoJudicial().getFechaPosesion() != null) {
-					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaPosesion());
-				} else if ((DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
-							(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
-							||DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
-							||DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())))
-							&& activo.getAdjNoJudicial().getFechaPosesion() == null) {
-					activo.getSituacionPosesoria().setFechaTomaPosesion(null);
+				if ((DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
+						(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+						||DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
+						||DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())))
+						||DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+					if (activo.getAdjNoJudicial().getFechaPosesion() != null) {
+						activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaPosesion());
+					} else {
+						activo.getSituacionPosesoria().setFechaTomaPosesion(null);
+					}
 				} else {
 					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
-				} 
-
+				}
+				
 			} else if (DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo())) {
 				ActivoAgrupacionActivo aga = activoDao.getActivoAgrupacionActivoPA(activo.getId());	
 				

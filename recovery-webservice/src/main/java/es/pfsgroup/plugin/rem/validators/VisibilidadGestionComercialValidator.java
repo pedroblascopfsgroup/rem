@@ -217,16 +217,16 @@ public class VisibilidadGestionComercialValidator {
 	private void erroresParaDesMarcar(List<String> erroresActivo,Long idActivo, boolean checkGestorComercial, boolean ficha, boolean checkModificadoEnFicha){
 	
 		//Condiciones para desmarcar
-		if(!checkGestorComercial) {
-			if(erroresActivo.isEmpty() && ficha) {
+		if(!checkGestorComercial && ficha) {
+			if(erroresActivo.isEmpty()) {
 				erroresActivo.add(VALID_DESMARCAR_SIN_ERRORES);
-			}else if(ficha && !erroresActivo.isEmpty()) {
+			}else {
 				erroresActivo.clear();
 			}
-			if((ficha && checkModificadoEnFicha) || (!ficha)) {
+			if(checkModificadoEnFicha) {
 				List<Oferta> ofertasTramitadas = ofertaApi.getListOtrasOfertasTramitadasActivo(idActivo);
 				if(ofertasTramitadas != null && !ofertasTramitadas.isEmpty()) {
-						erroresActivo.add(VALID_ACTIVO_OFERTAS_PENDIENTES);
+					erroresActivo.add(VALID_ACTIVO_OFERTAS_PENDIENTES);
 				}
 			}
 		}

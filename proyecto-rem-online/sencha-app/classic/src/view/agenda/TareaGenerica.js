@@ -2475,12 +2475,35 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	var comboResolucion = me.down('[name=comboResolucion]');
     	var comboContraoferta = me.down('[name=numImporteContra]');
     	me.deshabilitarCampo(comboContraoferta);
-    	
-    	  if(CONST.CARTERA['BBVA']===me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera')){   		   		  
-    		  me.down('[name=comboResolucion]').setFieldLabel(HreRem.i18n('title.resolucion'));
-    		  me.down('[name=numImporteContra]').setFieldLabel(HreRem.i18n('fieldlabel.importe.contraoferta'));
-    		  me.down('[name=fechaRespuesta]').setFieldLabel(HreRem.i18n('fieldlabel.fecha.respuesta'));
-  	  }
+
+    	if(CONST.CARTERA['BBVA']===me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera')){   		   		  
+			me.down('[name=comboResolucion]').setFieldLabel(HreRem.i18n('title.resolucion'));
+			me.down('[name=numImporteContra]').setFieldLabel(HreRem.i18n('fieldlabel.importe.contraoferta'));
+			me.down('[name=fechaRespuesta]').setFieldLabel(HreRem.i18n('fieldlabel.fecha.respuesta'));
+  	  	}else if(CONST.CARTERA['BANKIA'] === me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera')){			
+			if(comboResolucion.getStore() != null && comboResolucion.getStore().isLoaded()){
+				var recordContraoferta = comboResolucion.getStore().find(comboResolucion.valueField, '03');
+				if(recordContraoferta != null)
+					comboResolucion.getStore().remove(recordContraoferta);
+				else{
+					comboResolucion.addListener('focus', function(){
+						if(comboResolucion.getStore() != null){
+							var recordContraoferta = comboResolucion.getStore().find(comboResolucion.valueField, '03');
+							if(recordContraoferta != null && recordContraoferta != -1)
+								comboResolucion.getStore().removeAt(recordContraoferta);
+						}				
+					});
+				}
+			}else{
+				comboResolucion.addListener('focus', function(){
+					if(comboResolucion.getStore() != null){
+						var recordContraoferta = comboResolucion.getStore().find(comboResolucion.valueField, '03');
+						if(recordContraoferta != null && recordContraoferta != -1)
+							comboResolucion.getStore().removeAt(recordContraoferta);
+					}				
+				});
+			}
+		}
         
     	comboResolucion.addListener('change', function(){
 	        if(comboResolucion.value == '03'){

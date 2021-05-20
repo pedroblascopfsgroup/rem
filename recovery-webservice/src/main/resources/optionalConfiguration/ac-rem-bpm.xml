@@ -353,6 +353,10 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.reservaFirmada(idTramite);
             }
+            def esMayorista = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.esMayorista(idTramite);
+            } 
             def comprobarActivoComercializable = {
             	def activoManager = ctx.getBean("activoManager");
             	return activoManager.comprobarActivoComercializable(idActivo);

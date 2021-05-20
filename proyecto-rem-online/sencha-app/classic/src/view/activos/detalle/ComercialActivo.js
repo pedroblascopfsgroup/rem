@@ -180,7 +180,7 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.siniestro.sareb'),
 							reference: 'siniestroSarebRef',
 							bind : {
-				        		store: '{comboSinSino}',
+				        		store: '{comboSiNoDict}',
 				        		hidden: '{!isCarteraSareb}',
 				        		readOnly: '{!noEditableUASSoloSuper}',
 				        		value: '{comercial.siniestroSareb}'
@@ -225,7 +225,7 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 							readOnly: true,
 			        		editable: false,
 							bind : {
-				        		store: '{comboSinSino}',
+				        		store: '{comboSiNoDict}',
 				        		hidden: '{!isCarteraSareb}',
 				        		value: '{comercial.ggaaSareb}'
 							}						

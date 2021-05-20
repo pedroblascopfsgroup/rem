@@ -1825,13 +1825,15 @@ Ext.define('Ext.form.field.ComboBox', {
         }
         // Clearing is a special, simpler case.
         else {
-            me.suspendEvent('select');
-            me.valueCollection.beginUpdate();
-            Ext.global.console.error("[Error] FieldLabel: " + me.fieldLabel + ", Reference: " + me.reference);
-            me.pickerSelectionModel.deselectAll();
-            me.valueCollection.endUpdate();
-            me.lastSelectedRecords = null;
-            me.resumeEvent('select');
+        	if(me.getStore()!= null && me.getStore().isLoaded()){
+	            me.suspendEvent('select');
+	            me.valueCollection.beginUpdate();
+	            Ext.global.console.error("[Error] FieldLabel: " + me.fieldLabel + ", Reference: " + me.reference);
+	            me.pickerSelectionModel.deselectAll();
+	            me.valueCollection.endUpdate();
+	            me.lastSelectedRecords = null;
+	            me.resumeEvent('select');
+        	}
         }
     },
 

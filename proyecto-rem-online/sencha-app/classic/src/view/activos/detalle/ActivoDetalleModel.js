@@ -1656,6 +1656,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return true;
 			}
 		}
+		
 	 },
     
 	 stores: {
@@ -3034,6 +3035,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        {"codigo":"1", "descripcion":"Si"}
 		    ]
 		},
+		comboSiNoFuerzaPublica: {
+			data : [
+		        {"codigo":"0", "descripcion":"No"},
+		        {"codigo":"1", "descripcion":"Si"}
+		    ]
+		},
 		
 		storeAdjuntosPlusvalias: {
 			 pageSize: $AC.getDefaultPageSize(),
@@ -3535,6 +3542,32 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'tiposAdmiteMascota'}
 			}
 		},
+		
+		comboTipoProcedenciaProducto: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoProcedenciaProducto'}
+			}
+		},
+		comboCategoriaComercializacion: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'categoriaComercializacion'}
+				}
+		},		
+		comboDistritoCodPostal: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getComboTipoDistritoByCodPostal',
+   				extraParams: {codPostal: '{activo.codPostal}'}
+			},
+			autoLoad: true
+		},
 		storeSituacionOcupacional: {
 			pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.SituacionOcupacionalGridModel',
@@ -3543,7 +3576,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getListHistoricoOcupadoTitulo',
 				extraParams: {id: '{activo.id}'}
 		   }
-	   }
-		
+	   },
+	   comboMotivoNecesidadArras: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoNecesidadArras'}
+			}
+		}
 	 }
 });

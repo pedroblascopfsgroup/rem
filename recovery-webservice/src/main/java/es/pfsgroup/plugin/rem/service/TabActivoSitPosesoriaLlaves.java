@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceDesbloqExpCambioSitJuridica;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
@@ -262,6 +263,15 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		if (activo != null && activo.getId() != null ) {
 			activoDto.setPerteneceActivoREAM(activoDao.perteneceActivoREAM(activo.getId()));
 		}
+		
+		if (activo != null) {
+			ActivoCaixa actCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+			if (actCaixa != null) {
+				if (actCaixa.getNecesariaFuerzaPublica() != null) {
+					activoDto.setNecesariaFuerzaPublica(actCaixa.getNecesariaFuerzaPublica() ? "1" : "0");
+				}
+			}
+		}
 	
 		return activoDto;
 		
@@ -463,6 +473,18 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				activo.setServicerActivo(servicerActivo);
 			}
 		}
+		if (activo != null) {
+			ActivoCaixa actCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+			if (actCaixa != null) {
+				if (dto.getNecesariaFuerzaPublica() != null && "0".equals(dto.getNecesariaFuerzaPublica())) {
+					actCaixa.setNecesariaFuerzaPublica(false);					
+				}else if(dto.getNecesariaFuerzaPublica() != null && "1".equals(dto.getNecesariaFuerzaPublica())) {
+					actCaixa.setNecesariaFuerzaPublica(true);
+				}
+				genericDao.save(ActivoCaixa.class, actCaixa);
+			}
+		}
+		
 		return activo;
 	}
 	

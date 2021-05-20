@@ -8549,6 +8549,32 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			grid.getStore().load();
 		}
 		
+    },
+    onChangeCodPostal: function(type,newValue,oldValue){
+    	var me = this;
+    	var distritoCaixaValue = me.lookupReference('distritoCaixaRef');
+    	distritoCaixaValue.value = "";
+    	var distritoCaixa = me.getViewModel().getData().comboDistritoCodPostal;
+    	
+    	if (distritoCaixa != null || distritoCaixa != undefined) {
+    		distritoCaixa.getProxy().setExtraParams({'codPostal':newValue});
+    		distritoCaixa.load();
+    	}
+    },
+    isNotCarteraBankia: function(get){
+    	var me = this;
+
+    	var carteraBankia = me.getViewModel().getData().activo.getData().isCarteraBankia;
+    	var checkArras = me.lookupReference('checkNecesidadArrasRef');
+    	var motivoArras = me.lookupReference('motivoNecesidadRef');
+    	
+    	if (carteraBankia != null && carteraBankia == true && checkArras != null && motivoArras != null) {
+    		checkArras.setHidden(false);
+    		motivoArras.setHidden(false);
+    	}else{
+    		checkArras.setHidden(true);
+    		motivoArras.setHidden(true);
+    	}
     }
 });
 

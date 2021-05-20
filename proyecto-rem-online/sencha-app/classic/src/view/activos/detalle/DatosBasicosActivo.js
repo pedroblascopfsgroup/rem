@@ -326,6 +326,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										rawValue: '{activo.tipoTransmisionDescripcion}'
 									}
 								},
+							 	{
+									xtype:'comboboxfieldbasedd',
+									fieldLabel: HreRem.i18n('fieldlabel.tipo.procedencia.producto'),
+									bind: {
+										readOnly : true,
+										hidden: '{!activo.isCarteraBankia}',
+										store: '{comboTipoProcedenciaProducto}',
+										value: '{activo.procedenciaProductoTransmisionCodigo}',
+										rawValue: '{activo.procedenciaProductoDescripcion}'
+									}
+								},
 								{
 									xtype:'comboboxfieldbasedd',
 									reference: 'tipoAltaRef',
@@ -456,7 +467,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.latitud'),
 							readOnly	: true,
 							bind:		'{activo.latitud}'
-		                },						
+		                },
 						// fila 2	
 						
 						{ 
@@ -492,9 +503,19 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                // fila 3               
 		                { 
 		                	fieldLabel: HreRem.i18n('fieldlabel.numero'),
+		                	colspan: 3,
 		                	bind:{
 		                		value: '{activo.numeroDomicilio}'
 		                	}
+		                },
+		                { 
+							fieldLabel: HreRem.i18n('fieldlabel.calle.dos'),
+							xtype: 'textfieldbase',
+							//colspan: 3,							
+							bind:{
+								hidden: '{!activo.isCarteraBankia}',
+								value:'{activo.direccionDos}'
+							}
 		                },
 		                {
 							xtype: 'comboboxfieldbasedd',
@@ -586,11 +607,26 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								value: '{activo.codPostal}',
 								readOnly : '{esUA}'
 							},
-							colspan: 2,
+							colspan: 3,
 							vtype: 'codigoPostal',
 							maskRe: /^\d*$/, 
 		                	maxLength: 5,
-							allowBlank: false		                	
+							allowBlank: false,
+							listeners:{
+								change: 'onChangeCodPostal'
+							}
+						},
+		                {
+							xtype:'comboboxfieldbasedd',
+							fieldLabel: HreRem.i18n('fieldlabel.distrito.caixa'),
+							reference: 'distritoCaixaRef',
+							bind: {
+								//readOnly : '{!isGestorAdmisionAndSuper}',
+								bind:{hidden: '{!activo.isCarteraBankia}'},
+								store: '{comboDistritoCodPostal}',
+								value: '{activo.tipoDistritoCodigoPostalCod}',
+								rawValue: '{activo.tipoDistritoCodigoPostalDesc}'
+							}
 						}
 												 
 		               
@@ -1080,6 +1116,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									store: '{comboEstadoExpIncorrienteBancario}',
 									value: '{activo.estadoExpIncorrienteCodigo}',
 									rawValue: '{activo.estadoExpIncorrienteDescripcion}'
+								}
+							},
+							{
+								xtype:'comboboxfieldbasedd',
+								fieldLabel: HreRem.i18n('fieldlabel.categoria.comercializacion'),
+								bind: {
+									//readOnly : '{esUA}',
+									hidden: '{!activo.isCarteraBankia}',
+									store: '{comboCategoriaComercializacion}',
+									value: '{activo.categoriaComercializacionCod}',
+									rawValue: '{activo.categoriaComercializacionDesc}'
 								}
 							},
 							{

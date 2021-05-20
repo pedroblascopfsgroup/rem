@@ -68,6 +68,16 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 		{
 			name: 'necesidadIfActivo',
 			type: 'boolean'
+		},
+		{
+			name: 'necesidadArras',
+			type: 'boolean'
+		},
+		{
+			name: 'motivoNecesidadArrasCod'
+		},
+		{
+			name: 'motivoNecesidadArrasDesc'
 		}
     ],
     

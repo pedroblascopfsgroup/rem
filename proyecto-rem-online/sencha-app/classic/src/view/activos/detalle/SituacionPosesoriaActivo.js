@@ -384,8 +384,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            		}
 			            	},
                             readOnly: true
-				        },
-				        
+				        },				        				        
 						{
 				        	xtype:'fieldset',
 				        	height: '80%',
@@ -443,6 +442,17 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 				        	bind: {
 				        		hidden: '{!activo.isCarteraBankia}',				   
 			            		value: '{situacionPosesoria.situacionJuridica}'
+			            	}
+				        },
+						{
+				        	xtype: 'comboboxfieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.necesidad.fuerza.publica'),
+				        	colspan:4,
+				        	readOnly: true,
+				        	bind: {
+			            		store: '{comboSiNoFuerzaPublica}', 
+			            		value: '{situacionPosesoria.necesariaFuerzaPublica}',
+			            		hidden: '{!activo.isCarteraBankia}'
 			            	}
 				        }
 					]

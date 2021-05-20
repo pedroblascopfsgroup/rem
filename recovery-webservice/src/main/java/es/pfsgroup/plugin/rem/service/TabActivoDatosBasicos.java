@@ -74,9 +74,11 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaActivo;
 import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCategoriaComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDDistritoCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -252,6 +254,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "provinciaCodigo", activo.getLocalizacion().getLocalizacionBien().getProvincia().getCodigo());
 				BeanUtils.copyProperty(activoDto, "provinciaDescripcion", activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion());
 
+			}
+			
+			if (activo.getLocalizacion() != null && activo.getLocalizacion().getDistritoCaixa() != null) {
+				activoDto.setTipoDistritoCodigoPostalCod(activo.getLocalizacion().getDistritoCaixa().getCodigo());
+				activoDto.setTipoDistritoCodigoPostalDesc(activo.getLocalizacion().getDistritoCaixa().getDescripcion());
 			}
 			
 		}	 
@@ -603,6 +610,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getEstadoExpIncorriente())) {
 			BeanUtils.copyProperty(activoDto, "estadoExpIncorrienteCodigo", activoBancario.getEstadoExpIncorriente().getCodigo());
 			BeanUtils.copyProperty(activoDto, "estadoExpIncorrienteDescripcion", activoBancario.getEstadoExpIncorriente().getDescripcion());
+		}
+		
+		if (activoBancario != null && activoBancario.getCategoriaComercializacion() != null) {
+			activoDto.setCategoriaComercializacionCod(activoBancario.getCategoriaComercializacion().getCodigo());
+			activoDto.setCategoriaComercializacionDesc(activoBancario.getCategoriaComercializacion().getDescripcion());
 		}
 
 		// En la sección de activo bancario pero no dependiente del mismo.
@@ -1083,6 +1095,14 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 			}			
 		}
+		if (activo != null && activo.getLocalizacion() != null && activo.getLocalizacion().getDireccionDos() != null) {
+			activoDto.setDireccionDos(activo.getLocalizacion().getDireccionDos());
+		}
+		
+		if (activo.getProcedenciaProducto() != null) {
+			activoDto.setProcedenciaProductoCodigo(activo.getProcedenciaProducto().getCodigo());
+			activoDto.setProcedenciaProductoDescripcion(activo.getProcedenciaProducto().getDescripcion());
+		}
 		
 		return activoDto;
 	}
@@ -1552,7 +1572,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				dto.getEstadoExpRiesgoDescripcion() != null || 
 				dto.getEstadoExpIncorrienteCodigo() != null || 
 				dto.getEstadoExpIncorrienteDescripcion() != null ||
-				dto.getProductoDescripcion() != null) 
+				dto.getProductoDescripcion() != null ||
+				dto.getCategoriaComercializacionCod() != null) 
 			{
 				
 				ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
@@ -1591,6 +1612,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					activoBancario.setEstadoExpIncorriente(estadoExpIncorriente);
 				}
 				
+				if (dto.getCategoriaComercializacionCod() != null) {
+					DDCategoriaComercializacion categComerc = (DDCategoriaComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDCategoriaComercializacion.class, dto.getCategoriaComercializacionCod());
+					activoBancario.setCategoriaComercializacion(categComerc);
+				}
+				
 				activoApi.saveOrUpdateActivoBancario(activoBancario);
 			
 			}
@@ -1598,6 +1624,15 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if(!Checks.esNulo(dto.getEntradaActivoBankiaCodigo())) {
 				DDEntradaActivoBankia entradaActivoBankia = (DDEntradaActivoBankia) diccionarioApi.dameValorDiccionarioByCod(DDEntradaActivoBankia.class, dto.getEntradaActivoBankiaCodigo());
 				activo.setEntradaActivoBankia(entradaActivoBankia);
+			}
+			
+			if (dto.getTipoDistritoCodigoPostalCod() != null) {
+				DDDistritoCaixa distrito = (DDDistritoCaixa) diccionarioApi.dameValorDiccionarioByCod(DDDistritoCaixa.class, dto.getTipoDistritoCodigoPostalCod());
+				ActivoLocalizacion actLoc = activo.getLocalizacion();
+				if (actLoc != null) {
+					actLoc.setDistritoCaixa(distrito);
+					genericDao.save(ActivoLocalizacion.class, actLoc);
+				}
 			}
 			// -----
 			
@@ -1822,6 +1857,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}else {
 					//throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_BBVA));
+				}
+			}
+			
+			if (dto.getDireccionDos() != null) {
+				ActivoLocalizacion actLocMod = activo.getLocalizacion();
+				
+				if (actLocMod != null) {
+					actLocMod.setDireccionDos(dto.getDireccionDos());
+					genericDao.update(ActivoLocalizacion.class, actLocMod);
+					
+					activo.setLocalizacion(actLocMod);
 				}
 			}
 		} catch(JsonViewerException jve) {

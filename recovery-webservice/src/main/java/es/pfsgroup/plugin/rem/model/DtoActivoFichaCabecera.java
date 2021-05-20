@@ -333,6 +333,19 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private String codPromocionBbva;
 	
+	private String procedenciaProductoCodigo;
+	
+	private String procedenciaProductoDescripcion;
+
+	private String direccionDos;
+
+	private String categoriaComercializacionCod;
+	
+	private String categoriaComercializacionDesc;
+	
+	private String tipoDistritoCodigoPostalCod;
+	private String tipoDistritoCodigoPostalDesc;
+	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
 	}
@@ -2500,6 +2513,60 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setEstadoFisicoActivoDNDDescripcion(String estadoFisicoActivoDNDDescripcion) {
 		this.estadoFisicoActivoDNDDescripcion = estadoFisicoActivoDNDDescripcion;
+	}
+
+	public String getProcedenciaProductoCodigo() {
+		return procedenciaProductoCodigo;
+	}
+
+	public void setProcedenciaProductoCodigo(String procedenciaProductoCodigo) {
+		this.procedenciaProductoCodigo = procedenciaProductoCodigo;
+	}
+
+	public String getProcedenciaProductoDescripcion() {
+		return procedenciaProductoDescripcion;
+	}
+
+	public void setProcedenciaProductoDescripcion(String procedenciaProductoDescripcion) {
+		this.procedenciaProductoDescripcion = procedenciaProductoDescripcion;
+	}
+	public String getDireccionDos() {
+		return direccionDos;
+	}
+
+	public void setDireccionDos(String direccionDos) {
+		this.direccionDos = direccionDos;
+	}
+	public String getCategoriaComercializacionCod() {
+		return categoriaComercializacionCod;
+	}
+
+	public void setCategoriaComercializacionCod(String categoriaComercializacionCod) {
+		this.categoriaComercializacionCod = categoriaComercializacionCod;
+	}
+
+	public String getCategoriaComercializacionDesc() {
+		return categoriaComercializacionDesc;
+	}
+
+	public void setCategoriaComercializacionDesc(String categoriaComercializacionDesc) {
+		this.categoriaComercializacionDesc = categoriaComercializacionDesc;
 	}	
+
+	public String getTipoDistritoCodigoPostalCod() {
+		return tipoDistritoCodigoPostalCod;
+	}
+
+	public void setTipoDistritoCodigoPostalCod(String tipoDistritoCodigoPostalCod) {
+		this.tipoDistritoCodigoPostalCod = tipoDistritoCodigoPostalCod;
+	}
+
+	public String getTipoDistritoCodigoPostalDesc() {
+		return tipoDistritoCodigoPostalDesc;
+	}
+
+	public void setTipoDistritoCodigoPostalDesc(String tipoDistritoCodigoPostalDesc) {
+		this.tipoDistritoCodigoPostalDesc = tipoDistritoCodigoPostalDesc;
+	}
 	
 }

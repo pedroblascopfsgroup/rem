@@ -4315,6 +4315,20 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboTipoDistritoByCodPostal(ModelMap model, String codPostal) {
+		
+		try {
+			//model.put(RESPONSE_DATA_KEY, activoApi.getComboTipoSegmento(codSubcartera));
+			model.put(RESPONSE_DATA_KEY, activoApi.getComboTipoDistritoByCodPostal(codPostal));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("Error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		return createModelAndViewJson(model);
+	}
 
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -4328,7 +4342,6 @@ public class ActivoController extends ParadiseJsonController {
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 
 		}
-
 		return createModelAndViewJson(model);
 	}
 }

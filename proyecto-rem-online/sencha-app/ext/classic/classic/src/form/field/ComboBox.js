@@ -1827,7 +1827,6 @@ Ext.define('Ext.form.field.ComboBox', {
         else {
             me.suspendEvent('select');
             me.valueCollection.beginUpdate();
-            Ext.global.console.error("error: "+me.fieldLabel);
             me.pickerSelectionModel.deselectAll();
             me.valueCollection.endUpdate();
             me.lastSelectedRecords = null;

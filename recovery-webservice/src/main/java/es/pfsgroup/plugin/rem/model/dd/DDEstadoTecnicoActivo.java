@@ -18,52 +18,40 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
-/**
- * Modelo que gestiona el diccionario de tipos de agrupacion
- * 
- * @author Anahuac de Vicente
- *
- */
+
 @Entity
-@Table(name = "DD_TAG_TIPO_AGRUPACION", schema = "${entity.schema}")
+@Table(name = "DD_EAT_EST_TECNICO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDTipoAgrupacion implements Auditable, Dictionary {
+public class DDEstadoTecnicoActivo implements Auditable, Dictionary {
 	
-	public static final String AGRUPACION_OBRA_NUEVA = "01";
-	public static final String AGRUPACION_RESTRINGIDA = "02";
-	public static final String AGRUPACION_PROYECTO = "04";
-	public static final String AGRUPACION_ASISTIDA = "13";
-	public static final String AGRUPACION_LOTE_COMERCIAL = "14";
-	public static final String AGRUPACION_LOTE_COMERCIAL_VENTA = AGRUPACION_LOTE_COMERCIAL;
-	public static final String AGRUPACION_LOTE_COMERCIAL_ALQUILER = "15";
-	public static final String AGRUPACION_COMERCIAL_ALQUILER = AGRUPACION_LOTE_COMERCIAL_ALQUILER;
-	public static final String AGRUPACION_PROMOCION_ALQUILER = "16";
-	public static final String AGRUPACION_PROMOCION_CONJUNTA_OB_REM = "17";
-	public static final String AGRUPACION_PROMOCION_CONJUNTA_VENTA = "18";
-	public static final String AGRUPACION_PROMOCION_CONJUNTA_ALQUILER = "19";
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4508981007991542156L;
+	public static final String CODIGO_PEND_ACT_TECNICA = "E01";
+	public static final String CODIGO_GEST_ENTRADA = "E02";
+	public static final String CODIGO_ENTRADA_INCI = "E03";
+	public static final String CODIGO_ENTRADA_FIN_ANUL = "E04";
+	public static final String CODIGO_INCI_TEC_EN_CURSO = "E05";
+	public static final String CODIGO_ACT_GRAN_ENVER_EN_CURSO = "E06";
+	public static final String CODIGO_MANT_ACT_FIN_ANUL = "E07";
+	public static final String CODIGO_DESA_EN_GESTION = "E08";
+	public static final String CODIGO_DESA_EN_TRAMIT_FIN = "E09";
+	
+	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_TAG_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoAgrupacionGenerator")
-	@SequenceGenerator(name = "DDTipoAgrupacionGenerator", sequenceName = "S_DD_TAG_TIPO_AGRUPACION")
+	@Column(name = "DD_EAT_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoTecnicoActivoGenerator")
+	@SequenceGenerator(name = "DDEstadoTecnicoActivoGenerator", sequenceName = "S_DD_EAT_EST_TECNICO")
 	private Long id;
 	 
-	@Column(name = "DD_TAG_CODIGO")   
+	@Column(name = "DD_EAT_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_TAG_DESCRIPCION")   
+	@Column(name = "DD_EAT_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_TAG_DESCRIPCION_LARGA")   
+	@Column(name = "DD_EAT_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
-	    
-	
 	    
 	@Version   
 	private Long version;
@@ -71,9 +59,6 @@ public class DDTipoAgrupacion implements Auditable, Dictionary {
 	@Embedded
 	private Auditoria auditoria;
 
-	 
-	 
-	 
 	public Long getId() {
 		return id;
 	}

@@ -82,6 +82,18 @@ public class ActivoCaixa implements Serializable, Auditable {
 	@Column(name = "CBX_NEC_FUERZA_PUBL")
 	private Boolean necesariaFuerzaPublica;
 	
+	@Column(name = "CBX_PRECIO_VENT_NEGO")
+    private Boolean precioVentaNegociable;
+	
+	@Column(name = "CBX_PRECIO_ALQU_NEGO")
+    private Boolean precioAlquilerNegociable;
+	
+	@Column(name = "CBX_CAMP_PRECIO_VENT_NEGO")
+    private Boolean campanyaPrecioVentaNegociable;
+	
+	@Column(name = "CBX_CAMP_PRECIO_ALQ_NEGO")
+    private Boolean campanyaPrecioAlquilerNegociable;
+	
 	@Version   
 	private Long version;
 	
@@ -190,6 +202,38 @@ public class ActivoCaixa implements Serializable, Auditable {
 
 	public void setNecesariaFuerzaPublica(Boolean necesariaFuerzaPublica) {
 		this.necesariaFuerzaPublica = necesariaFuerzaPublica;
+	}
+
+	public Boolean getPrecioVentaNegociable() {
+		return precioVentaNegociable;
+	}
+
+	public void setPrecioVentaNegociable(Boolean precioVentaNegociable) {
+		this.precioVentaNegociable = precioVentaNegociable;
+	}
+
+	public Boolean getPrecioAlquilerNegociable() {
+		return precioAlquilerNegociable;
+	}
+
+	public void setPrecioAlquilerNegociable(Boolean precioAlquilerNegociable) {
+		this.precioAlquilerNegociable = precioAlquilerNegociable;
+	}
+
+	public Boolean getCampanyaPrecioVentaNegociable() {
+		return campanyaPrecioVentaNegociable;
+	}
+
+	public void setCampanyaPrecioVentaNegociable(Boolean campanyaPrecioVentaNegociable) {
+		this.campanyaPrecioVentaNegociable = campanyaPrecioVentaNegociable;
+	}
+
+	public Boolean getCampanyaPrecioAlquilerNegociable() {
+		return campanyaPrecioAlquilerNegociable;
+	}
+
+	public void setCampanyaPrecioAlquilerNegociable(Boolean campanyaPrecioAlquilerNegociable) {
+		this.campanyaPrecioAlquilerNegociable = campanyaPrecioAlquilerNegociable;
 	}
 	
 }

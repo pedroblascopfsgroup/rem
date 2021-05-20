@@ -18,8 +18,10 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.recovery.api.UsuarioApi;
 
@@ -47,7 +49,7 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 		ActivoSituacionPosesoria sitpos = tramite.getActivo().getSituacionPosesoria();
 		Filter tituloActivo;
 		DDTipoTituloActivoTPA tipoTitulo;
-		
+		Activo activo = tramite.getActivo();
 		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		String usuarioModificar = usu == null ? CODIGO_T001_VERIFICAR_ESTADO_POSESORIO : CODIGO_T001_VERIFICAR_ESTADO_POSESORIO + " - " + usu.getUsername();
 		
@@ -84,7 +86,12 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 				sitpos.setFechaModificarConTitulo(new Date());
 				sitpos.setFechaUltCambioTit(new Date());
 		}
+		
 		genericDao.save(ActivoSituacionPosesoria.class, sitpos);
+		if(activo!=null && sitpos!=null && usu!=null) {			
+			HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,sitpos,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
+			genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+		}
 	}
 
 	public String[] getCodigoTarea() {

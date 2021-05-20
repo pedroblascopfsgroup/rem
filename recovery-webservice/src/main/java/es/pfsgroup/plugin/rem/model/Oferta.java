@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRiesgoOperacion;
 
 
 /**
@@ -321,6 +322,14 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name = "OFR_DOC_RESP_PRESCRIPTOR")
     private Boolean ofrDocRespPrescriptor;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_RIO_ID")
+	private DDTipoRiesgoOperacion tipoRiesgoOperacion;  
+	
+	@Column(name = "OFR_SOSPECHOSA")
+    private Boolean ofertaSospechosa;
+	
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -978,4 +987,21 @@ public class Oferta implements Serializable, Auditable {
 	public void setOfrDocRespPrescriptor(Boolean ofrDocRespPrescriptor) {
 		this.ofrDocRespPrescriptor = ofrDocRespPrescriptor;
 	}
+
+	public DDTipoRiesgoOperacion getTipoRiesgoOperacion() {
+		return tipoRiesgoOperacion;
+	}
+
+	public void setTipoRiesgoOperacion(DDTipoRiesgoOperacion tipoRiesgoOperacion) {
+		this.tipoRiesgoOperacion = tipoRiesgoOperacion;
+	}
+
+	public Boolean getOfertaSospechosa() {
+		return ofertaSospechosa;
+	}
+
+	public void setOfertaSospechosa(Boolean ofertaSospechosa) {
+		this.ofertaSospechosa = ofertaSospechosa;
+	}
+	
 }

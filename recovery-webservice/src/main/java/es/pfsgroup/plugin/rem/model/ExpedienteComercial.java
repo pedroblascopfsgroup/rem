@@ -37,6 +37,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionOferta;
@@ -285,6 +286,10 @@ public class ExpedienteComercial implements Serializable, Auditable {
  	
  	@Column(name="ECO_FECHA_GRAB_VENTA")
  	private Date fechaGrabacionVenta;
+ 	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_EEB_ID")
+	private DDEstadoExpedienteBc estadoBc;   
 
     @Version   
 	private Long version;
@@ -874,4 +879,13 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	public void setFechaGrabacionVenta(Date fechaGrabacionVenta) {
 		this.fechaGrabacionVenta = fechaGrabacionVenta;
 	}
+
+	public DDEstadoExpedienteBc getEstadoBc() {
+		return estadoBc;
+	}
+
+	public void setEstadoBc(DDEstadoExpedienteBc estadoBc) {
+		this.estadoBc = estadoBc;
+	}
+	
 }

@@ -227,7 +227,7 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 							bind : {
 				        		store: '{comboSinSino}',
 				        		hidden: '{!isCarteraSareb}',
-				        		value: '{comercial.ggaaSareb}',
+				        		value: '{comercial.ggaaSareb}'
 							}						
 						},{
 							xtype: 'comboboxfieldbase',

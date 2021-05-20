@@ -1306,7 +1306,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_NO_COMERCIALIZABLE));
 									}
 									
-									if(particularValidator.isActivoAlquiladoSCM(activo) && particularValidator.isActivoEnPerimetroAlquilerSocial(activo)) {
+									if(particularValidator.isActivoEnPerimetroAlquilerSocial(activo)) {
 										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_ALQUILER_SOCIAL));
 									}
 									

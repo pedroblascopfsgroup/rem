@@ -21,6 +21,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -912,5 +913,27 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 			return true;
 		}
 
+	}
+	
+	@Override 
+	public boolean isTramiteVenta(TipoProcedimiento procedimiento) {
+		boolean isTramiteVenta = false;
+		
+		if(procedimiento != null && CODIGO_TRAMITE_COMERCIAL_VENTA.equals(procedimiento.getCodigo())) {
+			isTramiteVenta = true;
+		}
+		
+		return isTramiteVenta;
+	}
+	
+	@Override 
+	public boolean isTramiteVentaApple(TipoProcedimiento procedimiento) {
+		boolean isTramiteVentaApple = false;
+		
+		if(procedimiento != null && CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE.equals(procedimiento.getCodigo())) {
+			isTramiteVentaApple = true;
+		}
+		
+		return isTramiteVentaApple;
 	}
 }

@@ -90,10 +90,10 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 	private Float superficieParcela;
 	
 	@Column(name = "REG_SUPERFICIE_BAJO_RASANTE")
-	private Float superficieBajoRasante;
+	private Double superficieBajoRasante;
 	
 	@Column(name = "REG_SUPERFICIE_SOBRE_RASANTE")
-	private Float superficieSobreRasante;
+	private Double superficieSobreRasante;
 	
 	@Column(name = "REG_DIV_HOR_INSCRITO")
 	private Integer divHorInscrito;
@@ -218,19 +218,19 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 		this.superficieParcela = superficieParcela;
 	}
 
-	public Float getSuperficieBajoRasante() {
+	public Double getSuperficieBajoRasante() {
 		return superficieBajoRasante;
 	}
 
-	public void setSuperficieBajoRasante(Float superficieBajoRasante) {
+	public void setSuperficieBajoRasante(Double superficieBajoRasante) {
 		this.superficieBajoRasante = superficieBajoRasante;
 	}
 
-	public Float getSuperficieSobreRasante() {
+	public Double getSuperficieSobreRasante() {
 		return superficieSobreRasante;
 	}
 
-	public void setSuperficieSobreRasante(Float superficieSobreRasante) {
+	public void setSuperficieSobreRasante(Double superficieSobreRasante) {
 		this.superficieSobreRasante = superficieSobreRasante;
 	}
 

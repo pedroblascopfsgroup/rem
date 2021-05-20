@@ -20,6 +20,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
@@ -59,6 +60,9 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
     
     @Autowired
 	private TareaActivoApi tareaActivoApi;
+    
+    @Autowired
+	private ActivoTramiteApi activoTramiteApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResultadoPBC.class);
 
@@ -180,12 +184,16 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 							genericDao.save(ExpedienteComercial.class, expediente);
 							
 							//LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
-							if(!Checks.estaVacio(valores)){
-								if(!Checks.esNulo(ofertaAceptada.getActivoPrincipal()) 
-										&& !uvemManagerApi.esTramiteOffline(UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T013_RESULTADO_PBC,expediente)
-										&& !Checks.esNulo(ofertaAceptada.getActivoPrincipal().getCartera())
-										&& ofertaAceptada.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA) && 
-										!DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())){
+							if(!Checks.estaVacio(valores) && activo != null){
+								String codigoTarea = null;
+								if(activoTramiteApi.isTramiteVenta(tramite.getTipoTramite())) {
+									codigoTarea = UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T013_RESULTADO_PBC;
+								}else if(activoTramiteApi.isTramiteVentaApple(tramite.getTipoTramite())) {
+									codigoTarea = UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T017_PBC_VENTA;
+								}
+								
+								if( codigoTarea != null && !uvemManagerApi.esTramiteOffline(codigoTarea,expediente) && DDCartera.isCarteraBk(activo.getCartera()) 
+									&& !DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())){
 									uvemManagerApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
 									
 								}

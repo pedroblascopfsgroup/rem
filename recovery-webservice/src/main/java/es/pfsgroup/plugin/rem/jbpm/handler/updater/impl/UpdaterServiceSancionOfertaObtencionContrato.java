@@ -167,7 +167,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	
 				activo = ofertaAceptada.getActivoPrincipal();
 				
-				if(!T017.equals(tramite.getTipoTramite().getCodigo()) || (T017.equals(tramite.getTipoTramite().getCodigo()) && proManzanaFinalizada)) {
+				if(!T017.equals(tramite.getTipoTramite().getCodigo()) || (T017.equals(tramite.getTipoTramite().getCodigo()) && (proManzanaFinalizada  || DDCartera.isCarteraBk(activo.getCartera())))) {
 					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
 				}else if(T017.equals(tramite.getTipoTramite().getCodigo())){
 					if(solicitaReserva && !Checks.esNulo(expediente.getReserva()) && !Checks.esNulo(expediente.getReserva().getEstadoReserva()) 

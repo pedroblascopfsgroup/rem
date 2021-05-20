@@ -14,6 +14,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
@@ -23,6 +24,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 
 @Component
@@ -39,6 +41,9 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
     
     @Autowired
     private UvemManagerApi uvemManagerApi;
+    
+    @Autowired
+  	private ActivoTramiteApi activoTramiteApi;
     
     private static final String FECHA_ENVIO = "fechaEnvio";
     private static final String TIPO_ARRAS = "tipoArras";
@@ -83,15 +88,23 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 			}
 			// LLamada servicio web Bankia para modificaciones según tipo
 			// propuesta (MOD3)
-			if (!Checks.estaVacio(valores) && !uvemManagerApi.esTramiteOffline(
-					UpdaterServiceSancionOfertaInstruccionesReserva.CODIGO_T013_INSTRUCCIONES_RESERVA, expediente)) {
-				if (!Checks.esNulo(ofertaAceptada.getActivoPrincipal())
-						&& !Checks.esNulo(ofertaAceptada.getActivoPrincipal().getCartera())
-						&& ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()
-								.equals(DDCartera.CODIGO_CARTERA_BANKIA)) {
+			
+			if(!Checks.estaVacio(valores) && ofertaAceptada.getActivoPrincipal() != null){
+				String codigoTarea = null;
+				if(activoTramiteApi.isTramiteVenta(tramite.getTipoTramite())) {
+					codigoTarea = UpdaterServiceSancionOfertaInstruccionesReserva.CODIGO_T013_INSTRUCCIONES_RESERVA;
+				}else if(activoTramiteApi.isTramiteVentaApple(tramite.getTipoTramite())) {
+					codigoTarea = UpdaterServiceSancionOfertaInstruccionesReserva.CODIGO_T017_INSTRUCCIONES_RESERVA;
+				}
+				
+				if( codigoTarea != null && !uvemManagerApi.esTramiteOffline(codigoTarea,expediente) && DDCartera.isCarteraBk(ofertaAceptada.getActivoPrincipal().getCartera()) 
+					&& !DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())){
 					uvemManagerApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
+					
 				}
 			}
+			
+			
 
 		}
 

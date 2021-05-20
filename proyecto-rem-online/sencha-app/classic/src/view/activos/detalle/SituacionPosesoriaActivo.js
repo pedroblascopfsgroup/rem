@@ -15,7 +15,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 	
 	recordClass: "HreRem.model.ActivoSituacionPosesoria",
 	
-    requires: ['HreRem.model.ActivoSituacionPosesoria', 'HreRem.model.OcupantesLegales', 'HreRem.view.activos.detalle.LlavesList', 'HreRem.view.activos.detalle.MovimientosLlaveList'],
+    requires: ['HreRem.model.ActivoSituacionPosesoria', 'HreRem.model.OcupantesLegales', 'HreRem.view.activos.detalle.LlavesList', 'HreRem.view.activos.detalle.MovimientosLlaveList', 
+    	'HreRem.model.SituacionOcupacionalGridModel'],
 	
     initComponent: function () {
         var me = this;

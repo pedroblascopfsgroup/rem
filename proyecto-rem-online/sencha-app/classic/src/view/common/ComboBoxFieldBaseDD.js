@@ -189,6 +189,7 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 				if(me.getStore()!= null && me.getStore().isLoaded()){
 		            me.suspendEvent('select');
 		            me.valueCollection.beginUpdate();
+		            Ext.global.console.error("error: "+me.fieldLabel);
 		            me.pickerSelectionModel.deselectAll();
 		            me.valueCollection.endUpdate();
 		            me.lastSelectedRecords = null;

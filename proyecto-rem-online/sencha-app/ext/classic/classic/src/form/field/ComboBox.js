@@ -1828,7 +1828,6 @@ Ext.define('Ext.form.field.ComboBox', {
         	if(me.getStore()!= null && me.getStore().isLoaded()){
 	            me.suspendEvent('select');
 	            me.valueCollection.beginUpdate();
-	            Ext.global.console.error("[Error] FieldLabel: " + me.fieldLabel + ", Reference: " + me.reference);
 	            me.pickerSelectionModel.deselectAll();
 	            me.valueCollection.endUpdate();
 	            me.lastSelectedRecords = null;
@@ -1848,7 +1847,6 @@ Ext.define('Ext.form.field.ComboBox', {
      */
     doSetValue: function(value /* private for use by addValue */, add) {
         var me = this;
-        Ext.global.console.error("[Error] FieldLabel: " + me.fieldLabel + ", Reference: " + me.reference);
             var store = me.getStore(),
             Model = store.getModel(),
             matchedRecords = [],

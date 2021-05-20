@@ -3176,8 +3176,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'DDSiNo'}
-			},
-			autoLoad: true
+			}
 		},
 
 		comboDireccionComercial: {

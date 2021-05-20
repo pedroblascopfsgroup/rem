@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20210514
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13993
+--## INCIDENCIA_LINK=HREOS-14035
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Script que añade los registros en la CPD_COD_POSTAL_DISTRITO

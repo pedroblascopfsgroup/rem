@@ -12,10 +12,17 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
@@ -33,6 +40,9 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 	
 	@Autowired
 	private ActivoDao activoDao;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 	
 
 	@Override
@@ -201,6 +211,23 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 		
 		if(!Checks.esNulo(activo.getValorLiquidez())) {
 			beanUtilNotNull.copyProperty(valoracionesDto, "liquidez", activo.getValorLiquidez());
+		}
+		
+		ActivoCaixa actCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		
+		if (actCaixa != null) {
+			if (actCaixa.getPrecioVentaNegociable() != null) {
+				valoracionesDto.setPrecioVentaNegociable(actCaixa.getPrecioVentaNegociable());
+			}
+			if (actCaixa.getPrecioAlquilerNegociable() != null) {
+				valoracionesDto.setPrecioAlquilerNegociable(actCaixa.getPrecioAlquilerNegociable());
+			}
+			if (actCaixa.getCampanyaPrecioAlquilerNegociable() != null) {
+				valoracionesDto.setCampanyaPrecioAlquilerNegociable(actCaixa.getCampanyaPrecioAlquilerNegociable());
+			}
+			if (actCaixa.getCampanyaPrecioVentaNegociable() != null) {
+				valoracionesDto.setCampanyaPrecioVentaNegociable(actCaixa.getCampanyaPrecioVentaNegociable());
+			}
 		}
 
 		return valoracionesDto;	

@@ -312,7 +312,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 				items :	[
 					{
 						xtype:'fieldset',
-						height: 200,
+						height: 240,
 						margin: '0 10 10 0',
 						layout: {
 					        type: 'table',
@@ -341,6 +341,34 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							   readOnly: true,
 							   fieldLabel: HreRem.i18n('fieldlabel.valor.asesoramiento.liquidativo'),
 							   bind:  '{valoraciones.valorAsesoramientoLiquidativo}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='03')
+							 },
+							 {
+							   xtype: 'checkboxfieldbase',
+							   readOnly: true,
+							   fieldLabel: HreRem.i18n('fieldlabel.precio.venta.negociable'),
+							   bind:  '{valoraciones.precioVentaNegociable}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='03')
+							 },
+							 {
+							   xtype: 'checkboxfieldbase',
+							   readOnly: true,
+							   fieldLabel: HreRem.i18n('fieldlabel.precio.alquiler.negociable'),
+							   bind:  '{valoraciones.precioAlquilerNegociable}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='03')
+							 },
+							 {
+							   xtype: 'checkboxfieldbase',
+							   readOnly: true,
+							   fieldLabel: HreRem.i18n('fieldlabel.campanya.precio.venta.negociable'),
+							   bind:  '{valoraciones.campanyaPrecioVentaNegociable}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='03')
+							 },
+ 							 {
+							   xtype: 'checkboxfieldbase',
+							   readOnly: true,
+							   fieldLabel: HreRem.i18n('fieldlabel.campanya.precio.alquiler.negociable'),
+							   bind:  '{valoraciones.campanyaPrecioAlquilerNegociable}',
 							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='03')
 							 },
 							 {
@@ -383,7 +411,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 					},
 					{
 						xtype:'fieldset',
-						height: 200,
+						height: 240,
 						margin: '0 10 10 0',
 						layout: {
 					        type: 'table',
@@ -448,7 +476,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 					},
 					{
 						xtype:'fieldset',
-						height: 200,
+						height: 240,
 						margin: '0 10 10 0',
 						layout: {
 					        type: 'table',

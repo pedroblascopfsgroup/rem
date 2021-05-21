@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210514
+--## FECHA_CREACION=20210524
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13942
@@ -35,7 +35,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'AUX_APR_BCR_STOCK_REJ'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'AUX_APR_BCR_CARGAS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_COMMENT_TABLE VARCHAR2(500 CHAR):= ''; -- Vble. para los comentarios de las tablas
 
 BEGIN
@@ -58,11 +58,19 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
     V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
     (
-           
-        ERRORCODE                   VARCHAR2(255 CHAR),
-        ERRORMESSAGE                VARCHAR2(512 CHAR),
-        ROWREJECTED                 VARCHAR2(2048 CHAR)
-        
+        COD_PARCERLA         VARCHAR2(16 CHAR),
+        IDENTIF_CARGA        VARCHAR2(16 CHAR),
+        TIPO_CARGA           VARCHAR2(16 CHAR),
+        INTERLOCUTOR         VARCHAR2(40 CHAR),
+        FEC_INI              VARCHAR2(8 CHAR),
+        CAPITAL_PENDIENTE    VARCHAR2(16 CHAR),
+        FEC_FIN              VARCHAR2(8 CHAR),
+        COD_ESTADO_CARGA     VARCHAR2(2 CHAR),
+        BORRADO              NUMBER(1,0) DEFAULT 0,
+        BIE_CAR_ID           NUMBER(16,0),
+        CRG_ID               NUMBER(16,0),
+        ACTUALIZA            NUMBER(1,0)
+
 
 
 
@@ -87,6 +95,15 @@ BEGIN
     
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
 
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.COD_PARCERLA IS '' Identificador en BC del OI''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.IDENTIF_CARGA IS '' Identificador en BC de la carga''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.TIPO_CARGA IS '' Tipo de carga''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.INTERLOCUTOR IS '' Descripción acreedor''';
+ 
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.CAPITAL_PENDIENTE IS '' Importe máximo de la carga''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_FIN IS '' Fecha presentacion can. en re''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.COD_ESTADO_CARGA IS '' Código estado de la carga''';
+    
    
 
 

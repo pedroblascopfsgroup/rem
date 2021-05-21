@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210514
+--## FECHA_CREACION=20210519
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13942
@@ -35,7 +35,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'AUX_APR_BCR_STOCK_REJ'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'AUX_APR_BCR_CARGAS_REJ'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_COMMENT_TABLE VARCHAR2(500 CHAR):= ''; -- Vble. para los comentarios de las tablas
 
 BEGIN
@@ -58,11 +58,10 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
     V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
     (
-           
-        ERRORCODE                   VARCHAR2(255 CHAR),
-        ERRORMESSAGE                VARCHAR2(512 CHAR),
-        ROWREJECTED                 VARCHAR2(2048 CHAR)
-        
+        ERRORCODE         VARCHAR2(255 CHAR),
+        ERRORMESSAGE        VARCHAR2(512 CHAR),
+        ROWREJECTED           VARCHAR2(2048 CHAR)
+
 
 
 

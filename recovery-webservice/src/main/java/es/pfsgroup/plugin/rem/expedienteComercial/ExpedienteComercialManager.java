@@ -8365,6 +8365,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return false;
 	}
 
+	public boolean esMayorista(Long idTramite) {
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		if (!Checks.esNulo(activoTramite)) {
+			Trabajo trabajo = activoTramite.getTrabajo();
+			if (!Checks.esNulo(trabajo)) {
+				ExpedienteComercial expediente = expedienteComercialDao
+						.getExpedienteComercialByTrabajo(trabajo.getId());
+				if (!Checks.esNulo(expediente)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public boolean checkActivoNoFormalizar(Long idTramite) {
 		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
 		if (!Checks.esNulo(activoTramite)) {

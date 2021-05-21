@@ -25,14 +25,15 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 		var titlePorcentaje = HreRem.i18n('header.procentaje.compra');
 		var msgPorcentajeTotal = HreRem.i18n("fieldlabel.porcentaje.compra.total");
 		var msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.compra.total.error");
-	
+		var isAlquiler = false;
 		
-		
+			
 		if(me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
 			title = HreRem.i18n('title.inquilinos');
 			titlePorcentaje = HreRem.i18n('header.procentaje.alquiler');
 			msgPorcentajeTotal = HreRem.i18n("fieldlabel.porcentaje.alquiler.total");
-			msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.alquiler.total.error");		
+			msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.alquiler.total.error");	
+			isAlquiler = true;
 		};
 
 		me.setTitle(title);
@@ -88,7 +89,10 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						xtype: 'button',
 						text: HreRem.i18n('btn.contraste.listas'),
 						handler: 'contrasteListas',
-						margin: '10 5 5 10'
+						margin: '10 5 5 10',
+						bind:{
+							hidden: isAlquiler
+						}
 					},
 					{
 						xtype: 'button',

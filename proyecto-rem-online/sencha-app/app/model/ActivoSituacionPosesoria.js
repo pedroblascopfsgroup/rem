@@ -148,6 +148,9 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
         },
         {
         	name: 'necesariaFuerzaPublica'
+        },
+        {
+        	name: 'entradaVoluntariaPosesion'
         }
         
     ],

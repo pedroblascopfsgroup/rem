@@ -452,6 +452,17 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            		store: '{comboSiNoFuerzaPublica}', 
 			            		value: '{situacionPosesoria.necesariaFuerzaPublica}',
 			            		hidden: '{!activo.isCarteraBankia}'
+				        	}
+						},
+				        {
+				        	xtype: 'comboboxfieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.entrada.voluntaria.posesion'),
+				        	colspan:4,
+				        	readOnly: true,
+				        	bind: {
+			            		store: '{comboSiNoEntradaVoluntariaPosesion}', 
+			            		value: '{situacionPosesoria.entradaVoluntariaPosesion}',
+			            		hidden: '{!activo.isCarteraBankia}'
 			            	}
 				        }
 					]

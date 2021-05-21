@@ -1148,6 +1148,24 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'tipoDistritoCodigoPostalDesc'
+			},
+			{
+    			name: 'plantaEdificioCodigo'
+    		},
+    		{
+    			name: 'plantaEdificioDescripcion'
+    		},
+			{
+    			name: 'escaleraEdificioCodigo'
+    		},
+    		{
+    			name: 'escaleraEdificioDescripcion'
+    		},
+			{
+				name: 'estadoComercialVentaCodigo'
+			},
+			{
+				name: 'estadoComercialAlquilerCodigo'
 			}
     ],
     

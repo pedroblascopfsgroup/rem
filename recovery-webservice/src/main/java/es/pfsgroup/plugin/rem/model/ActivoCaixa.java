@@ -94,6 +94,9 @@ public class ActivoCaixa implements Serializable, Auditable {
 	@Column(name = "CBX_CAMP_PRECIO_ALQ_NEGO")
     private Boolean campanyaPrecioAlquilerNegociable;
 	
+	@Column(name = "CBX_ENTRADA_VOLUN_POSES")
+	private Boolean entradaVoluntariaPosesion;
+	
 	@Version   
 	private Long version;
 	
@@ -234,6 +237,14 @@ public class ActivoCaixa implements Serializable, Auditable {
 
 	public void setCampanyaPrecioAlquilerNegociable(Boolean campanyaPrecioAlquilerNegociable) {
 		this.campanyaPrecioAlquilerNegociable = campanyaPrecioAlquilerNegociable;
+	}
+
+	public Boolean getEntradaVoluntariaPosesion() {
+		return entradaVoluntariaPosesion;
+	}
+
+	public void setEntradaVoluntariaPosesion(Boolean entradaVoluntariaPosesion) {
+		this.entradaVoluntariaPosesion = entradaVoluntariaPosesion;
 	}
 	
 }

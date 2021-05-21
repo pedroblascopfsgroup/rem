@@ -165,7 +165,7 @@ public class VisibilidadGestionComercialValidator {
 				if (perimetroActivo != null && perimetroActivo.getAplicaComercializar() != null && perimetroActivo.getAplicaComercializar() == 0) {
 					erroresActivo.add(VALID_ACTIVO_NO_COMERCIALIZABLE);
 				}
-				if (DDSituacionComercial.isAlquilado(activoActual.getSituacionComercial()) && DDTipoAlquiler.isAlquilerFondoSocial(activoActual.getTipoAlquiler())) {
+				if (DDTipoAlquiler.isAlquilerFondoSocial(activoActual.getTipoAlquiler())) {
 					erroresActivo.add(VALID_ACTIVO_ALQUILER_SOCIAL);
 				}
 				

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210519
+--## FECHA_CREACION=20210521
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13942
@@ -98,7 +98,7 @@ BEGIN
       EXECUTE IMMEDIATE V_MSQL;
    
    
-   ELSE
+   ELSIF  FLAG_INS_UPD = 0 THEN
 
       DBMS_OUTPUT.PUT_LINE('[INFO] SE VA A PROCEDER A ACTUALIZAR.');
 

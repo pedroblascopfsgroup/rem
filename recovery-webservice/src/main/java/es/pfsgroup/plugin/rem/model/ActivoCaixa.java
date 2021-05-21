@@ -92,6 +92,12 @@ public class ActivoCaixa implements Serializable, Auditable {
 	@Column(name = "CBX_ENTRADA_VOLUN_POSES")
 	private Boolean entradaVoluntariaPosesion;
 	
+    @Column(name = "CBX_FECHA_EST_TIT_ACT_INM")
+    private Date fechaEstadoTitularidadActivoInmobiliario;
+    
+    @Column(name = "CBX_FECHA_EST_POS_ACT_INM")
+    private Date fechaEstadoPosesorioActivoInmobiliario;
+	
 	@Version   
 	private Long version;
 	
@@ -240,6 +246,22 @@ public class ActivoCaixa implements Serializable, Auditable {
 
 	public void setEntradaVoluntariaPosesion(Boolean entradaVoluntariaPosesion) {
 		this.entradaVoluntariaPosesion = entradaVoluntariaPosesion;
+	}
+
+	public Date getFechaEstadoTitularidadActivoInmobiliario() {
+		return fechaEstadoTitularidadActivoInmobiliario;
+	}
+
+	public void setFechaEstadoTitularidadActivoInmobiliario(Date fechaEstadoTitularidadActivoInmobiliario) {
+		this.fechaEstadoTitularidadActivoInmobiliario = fechaEstadoTitularidadActivoInmobiliario;
+	}
+
+	public Date getFechaEstadoPosesorioActivoInmobiliario() {
+		return fechaEstadoPosesorioActivoInmobiliario;
+	}
+
+	public void setFechaEstadoPosesorioActivoInmobiliario(Date fechaEstadoPosesorioActivoInmobiliario) {
+		this.fechaEstadoPosesorioActivoInmobiliario = fechaEstadoPosesorioActivoInmobiliario;
 	}
 	
 }

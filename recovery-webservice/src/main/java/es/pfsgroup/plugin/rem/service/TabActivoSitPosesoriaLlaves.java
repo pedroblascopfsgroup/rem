@@ -33,7 +33,6 @@ import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
-import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
@@ -41,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTecnicoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
@@ -275,6 +275,20 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				}
 			}
 		}
+			
+		Filter filtroCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroCaixa);
+		
+		if (activoCaixa != null) {
+			if (activoCaixa.getEstadoTecnico() != null) {
+				activoDto.setEstadoTecnicoCodigo(activoCaixa.getEstadoTecnico().getCodigo());
+				activoDto.setEstadoTecnicoDescripcion(activoCaixa.getEstadoTecnico().getDescripcion());
+			}
+			
+			if (activoCaixa.getFechaEstadoTecnico() != null) {
+				activoDto.setFechaEstadoTecnico(activoCaixa.getFechaEstadoTecnico());
+			}
+		}
 	
 		return activoDto;
 		
@@ -476,6 +490,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				activo.setServicerActivo(servicerActivo);
 			}
 		}
+		
 		if (activo != null) {
 			ActivoCaixa actCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 			if (actCaixa != null) {
@@ -485,6 +500,25 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 					actCaixa.setNecesariaFuerzaPublica(true);
 				}
 				genericDao.save(ActivoCaixa.class, actCaixa);
+			}
+		}
+		
+		Filter filtroCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroCaixa);
+		
+		if (activoCaixa != null) {
+			if (dto.getEstadoTecnicoCodigo() != null) {
+				Filter filtroEstadoTecnico = genericDao.createFilter(FilterType.EQUALS, "codigo",
+						dto.getEstadoTecnicoCodigo());
+				DDEstadoTecnicoActivo estadoTecnico = genericDao.get(DDEstadoTecnicoActivo.class, filtroEstadoTecnico);
+				activoCaixa.setEstadoTecnico(estadoTecnico);
+				if (!dto.getEstadoTecnicoDescripcion().isEmpty() || !dto.getEstadoTecnicoDescripcion().equals("")) {
+					activoCaixa.setFechaEstadoTecnico(new Date());
+				} else {
+					activoCaixa.setFechaEstadoTecnico(null);
+				}
+			} else {
+				activoCaixa.setFechaEstadoTecnico(null);
 			}
 		}
 		

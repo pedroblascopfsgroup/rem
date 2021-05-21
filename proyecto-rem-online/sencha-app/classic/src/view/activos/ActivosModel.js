@@ -386,7 +386,7 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					proxy: {
 						type: 'uxproxy',
 						remoteUrl: 'generic/getDiccionario',
-						extraParams: {diccionario: 'estadoComercialVenta'}
+						extraParams: {diccionario: 'estadoComercialVenta'} 
 					}
 			},
 
@@ -395,7 +395,7 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					proxy: {
 						type: 'uxproxy',
 						remoteUrl: 'generic/getDiccionario',
-						extraParams: {diccionario: 'estadoComercialAlquiler'}
+						extraParams: {diccionario: 'estadoComercialAlquiler'} 
 					}
 			}
      }

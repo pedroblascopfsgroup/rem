@@ -315,9 +315,9 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoResponsable", DDResponsableDocumentacionCliente.class); 
 		mapa.put("plantaEdificio", DDPlantaEdificio.class); 
 		mapa.put("escaleraEdificio", DDEscaleraEdificio.class); 
-		mapa.put("estadoTecnico", DDEstadoTecnicoActivo.class); 
-		mapa.put("estadoComercialVenta", DDEstadoComercialVentaCaixa.class); 
-		mapa.put("estadoComercialAlquiler", DDEstadoComercialAlquilerCaixa.class); 
+		mapa.put("estadoTecnico", DDEstadoTecnicoActivo.class);  
+		mapa.put("estadoComercialVenta", DDEstadoComercialVentaCaixa.class);  
+		mapa.put("estadoComercialAlquiler", DDEstadoComercialAlquilerCaixa.class);  
 		
 		return Collections.unmodifiableMap(mapa);
 	}

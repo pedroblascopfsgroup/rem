@@ -74,6 +74,28 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 		},
 		{
 			name: 'motivoNecesidadArrasDesc'
+		},
+		{
+			name: 'estadoComercialVentaCodigo'
+		},
+		{
+			name: 'estadoComercialVentaDescripcion'
+		},
+		{
+			name: 'estadoComercialAlquilerCodigo'
+		},
+		{
+			name: 'estadoComercialAlquilerDescripcion'
+		},
+		{
+			name: 'fechaEstadoComercialVenta',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name: 'fechaEstadoComercialAlquiler',
+			type:'date',
+			dateFormat: 'c'
 		}
     ],
     

@@ -1162,10 +1162,10 @@ Ext.define('HreRem.model.Activo', {
     			name: 'escaleraEdificioDescripcion'
     		},
 			{
-				name: 'estadoComercialVentaCodigo'
+				name: 'estadoComercialVentaCodigo' 
 			},
 			{
-				name: 'estadoComercialAlquilerCodigo'
+				name: 'estadoComercialAlquilerCodigo' 
 			}
     ],
     

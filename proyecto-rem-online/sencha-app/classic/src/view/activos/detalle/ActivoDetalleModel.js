@@ -3549,7 +3549,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'estadoTecnico'}
+					extraParams: {diccionario: 'estadoTecnico'} 
 				}
 		},
 		

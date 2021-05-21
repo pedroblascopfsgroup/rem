@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -3928,7 +3927,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(dto, "direccionComercialDescripcion", activo.getTerritorio().getDescripcion());
 
 			}
-
+			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
 
@@ -3965,6 +3964,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						&& actCaixa.getMotivoNecesidadArras() != null) {
 					dto.setMotivoNecesidadArrasCod(actCaixa.getMotivoNecesidadArras().getCodigo());
 					dto.setMotivoNecesidadArrasDesc(actCaixa.getMotivoNecesidadArras().getDescripcion());
+				}
+				
+				if (actCaixa.getEstadoComercialVenta() != null) {
+					dto.setEstadoComercialVentaCodigo(actCaixa.getEstadoComercialVenta().getCodigo());
+					dto.setEstadoComercialVentaDescripcion(actCaixa.getEstadoComercialVenta().getDescripcion());
+				}
+				
+				if (actCaixa.getEstadoComercialAlquiler() != null) {
+					dto.setEstadoComercialAlquilerCodigo(actCaixa.getEstadoComercialAlquiler().getCodigo());
+					dto.setEstadoComercialAlquilerDescripcion(actCaixa.getEstadoComercialAlquiler().getDescripcion());
+				}
+				
+				if (actCaixa.getFechaEstadoComercialVenta() != null) {
+					dto.setFechaEstadoComercialVenta(actCaixa.getFechaEstadoComercialVenta());
+				}
+				
+				if (actCaixa.getFechaEstadoComercialAlquiler() != null) {
+					dto.setFechaEstadoComercialAlquiler(actCaixa.getFechaEstadoComercialAlquiler());
 				}
 			}
 		}

@@ -32,13 +32,16 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
@@ -97,7 +100,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	
 	
 	public DtoActivoSituacionPosesoria getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
-
+		
 		DtoActivoSituacionPosesoria activoDto = new DtoActivoSituacionPosesoria();
 		if (activo != null){
 			BeanUtils.copyProperty(activoDto, "necesarias", activo.getLlavesNecesarias());
@@ -145,14 +148,26 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 							activoDto.setDiasCambioPosesion(calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioPos()));
 						}
 					}					
-				} else {
-					if (!Checks.esNulo(activo.getSituacionPosesoria().getFechaRevisionEstado())
-							|| !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion())) {
+				} else if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
+						(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+						||DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
+						||DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo()))
+						||DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()) &&
+						activo.getAdjNoJudicial() != null) {
+					if (activo.getAdjNoJudicial().getFechaPosesion() != null) {
 						BeanUtils.copyProperty(activoDto, "indicaPosesion", 1);
-					} else {
+					}else {
 						BeanUtils.copyProperty(activoDto, "indicaPosesion", 0);
+						}	
 					}
-				}
+					else{
+						if (!Checks.esNulo(activo.getSituacionPosesoria().getFechaRevisionEstado())
+								|| !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion())) {
+							BeanUtils.copyProperty(activoDto, "indicaPosesion", 1);
+						} else {
+							BeanUtils.copyProperty(activoDto, "indicaPosesion", 0);
+						}
+					}
 			}
 			
 			ActivoPatrimonio activoP = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
@@ -162,6 +177,46 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 					 activoDto.setTipoEstadoAlquiler(activoP.getTipoEstadoAlquiler().getCodigo());
 					 
 				 }
+			 }
+			 
+			 if(activo.getSituacionPosesoria()!=null) {
+				 //TAPIADO
+				 if(activo.getSituacionPosesoria().getAccesoTapiado()!=null) {
+					 activoDto.setAccesoTapiado(activo.getSituacionPosesoria().getAccesoTapiado());
+				 }
+				 if(activo.getSituacionPosesoria().getFechaAccesoTapiado()!=null) {
+					 activoDto.setFechaAccesoTapiado(activo.getSituacionPosesoria().getFechaAccesoTapiado());
+				 }
+				 //ANTIOCUPA
+				 if(activo.getSituacionPosesoria().getAccesoAntiocupa()!=null) {
+					 activoDto.setAccesoAntiocupa(activo.getSituacionPosesoria().getAccesoAntiocupa());
+				 }
+				 if(activo.getSituacionPosesoria().getFechaAccesoAntiocupa()!=null) {
+					 activoDto.setFechaAccesoAntiocupa(activo.getSituacionPosesoria().getFechaAccesoAntiocupa());
+				 }
+				 
+				 //ALARMA
+				 if(activo.getSituacionPosesoria().getConAlarma()!=null) {
+					 activoDto.setTieneAlarma(activo.getSituacionPosesoria().getConAlarma());
+				 }
+				 if(activo.getSituacionPosesoria().getFechaInstalacionAlarma()!=null) {
+					 activoDto.setFechaInstalacionAlarma(activo.getSituacionPosesoria().getFechaInstalacionAlarma());
+				 }
+				 if(activo.getSituacionPosesoria().getFechaDesinstalacionAlarma()!=null) {
+					 activoDto.setFechaDesinstalacionAlarma(activo.getSituacionPosesoria().getFechaDesinstalacionAlarma());
+				 }				 
+				 //VIGILANCIA
+				 
+				 if(activo.getSituacionPosesoria().getConVigilancia()!=null) {
+					 activoDto.setTieneVigilancia(activo.getSituacionPosesoria().getConVigilancia());
+				 }
+				 if(activo.getSituacionPosesoria().getFechaInstalacionVigilancia()!=null) {
+					 activoDto.setFechaInstalacionVigilancia(activo.getSituacionPosesoria().getFechaInstalacionVigilancia());
+				 }
+				 if(activo.getSituacionPosesoria().getFechaDesinstalacionVigilancia()!=null) {
+					 activoDto.setFechaDesinstalacionVigilancia(activo.getSituacionPosesoria().getFechaDesinstalacionVigilancia());
+				 }
+				 
 			 }
 		}
 		
@@ -198,9 +253,16 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			// Buscamos los campos que pueden ser propagados para esta pestaña
 			activoDto.setCamposPropagables(TabActivoService.TAB_SIT_POSESORIA_LLAVES);
 		}
+		if(activo.getSituacionPosesoria()!=null && activo.getSituacionPosesoria().getSpsPosesionNeg()!=null) {		
+		activoDto.setPosesionNegociada(activo.getSituacionPosesoria().getSpsPosesionNeg() ? "1" : "0");
+		}
 		
 		if(activo.getSituacionPosesoria().getSpsPosesionNeg() != null)
 			activoDto.setPosesionNegociada(activo.getSituacionPosesoria().getSpsPosesionNeg() ? "1" : "0");
+		
+		if (activo != null && activo.getId() != null ) {
+			activoDto.setPerteneceActivoREAM(activoDao.perteneceActivoREAM(activo.getId()));
+		}
 	
 		return activoDto;
 		
@@ -252,6 +314,13 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				(!Checks.esNulo(activoSituacionPosesoria.getOcupado()) && activoSituacionPosesoria.getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloNo.equals(dto.getConTitulo()))) {
 				activoApi.crearRegistroFaseHistorico(activo);
 			}		
+			
+			if (!Checks.esNulo(dto.getOcupado()) || !Checks.esNulo(dto.getConTitulo())) {
+					if(activo != null && activoSituacionPosesoria!=null && usu!=null) {
+						HistoricoOcupadoTitulo hist = new HistoricoOcupadoTitulo(activo,activoSituacionPosesoria,usu,HistoricoOcupadoTitulo.COD_SIT_POS,null);
+						genericDao.save(HistoricoOcupadoTitulo.class, hist);
+					}					
+			}	
 			
 			if (!Checks.esNulo(activoPatrimonio) && !Checks.esNulo(tipoEstadoAlquiler)) {
 				activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
@@ -312,6 +381,40 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			if(dto.getPosesionNegociada() != null) {
 				activoSituacionPosesoria.setSpsPosesionNeg("1".equals(dto.getPosesionNegociada()));
 			}
+			
+			if(dto.getTieneAlarma()!=null) {
+				activoSituacionPosesoria.setConAlarma(dto.getTieneAlarma());					
+			}
+			if(dto.getFechaDesinstalacionAlarma()!=null) {
+				activoSituacionPosesoria.setFechaDesinstalacionAlarma(dto.getFechaDesinstalacionAlarma());
+			}
+			if(dto.getFechaInstalacionAlarma()!=null) {
+				activoSituacionPosesoria.setFechaInstalacionAlarma(dto.getFechaInstalacionAlarma());
+			}
+			if(dto.getTieneAlarma()!=null && activoSituacionPosesoria.getFechaDesinstalacionAlarma()!=null) {
+				if(dto.getTieneAlarma()==1) {
+					activoSituacionPosesoria.setConAlarma(dto.getTieneAlarma());
+					activoSituacionPosesoria.setFechaDesinstalacionAlarma(null);
+				}
+			}
+			
+			if(dto.getTieneVigilancia()!=null) {
+				activoSituacionPosesoria.setConVigilancia(dto.getTieneVigilancia());
+			}
+			if(dto.getFechaDesinstalacionVigilancia()!=null) {
+				activoSituacionPosesoria.setFechaDesinstalacionVigilancia(dto.getFechaDesinstalacionVigilancia());
+			}
+			if(dto.getFechaInstalacionVigilancia()!=null) {
+				activoSituacionPosesoria.setFechaInstalacionVigilancia(dto.getFechaInstalacionVigilancia());
+			}
+			
+			if(dto.getTieneVigilancia()!=null && activoSituacionPosesoria.getFechaDesinstalacionVigilancia()!=null) {
+				if(dto.getTieneVigilancia()==1) {
+					activoSituacionPosesoria.setConVigilancia(dto.getTieneVigilancia());
+					activoSituacionPosesoria.setFechaDesinstalacionVigilancia(null);
+				}
+			}
+			
 		}
 		
 		activo.setSituacionPosesoria(genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria));
@@ -402,7 +505,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		
 		if (activoDao.isUnidadAlquilable(activo.getId())) {
 			activoApi.cambiarSituacionComercialActivoMatriz(activo.getId());
-		}		
+		}
 	}
 	
 	public Integer calculodiasCambiosActivo(Date fechaIni){

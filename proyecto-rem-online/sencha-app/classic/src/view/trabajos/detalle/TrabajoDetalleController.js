@@ -1245,19 +1245,40 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		form = window.down("form"),
 		idTrabajo = window.idTrabajo;
 		form.getBindRecord().set("idTrabajo", idTrabajo);
+		data = form.getBindRecord();
 		
 		var grid = window.parent.down("[reference=gridpresupuestostrabajo]");
 		
-		var success = function(record, operation) {
+		if ((data.data.importeCliente != null && data.data.importeCliente >= data.data.importe) ||
+				(data.data.importeCliente == null && data.data.importe == null)){
+			me.successAndSave(window, form);
+		} else {
+			Ext.Msg.show({
+			    title: HreRem.i18n("msg.aviso.importe.cliente"),
+			    message: HreRem.i18n("msg.confirmacion.importe.cliente"), 
+			    buttons: Ext.Msg.OKCANCEL,
+			    icon: Ext.Msg.INFO,
+			    fn: function(btn) {
+			        if (btn === 'ok') {
+			        	me.successAndSave(window, form);
+			        }
+			    }
+			});  
+		
+		}    	
+    },
+    
+    successAndSave: function(window, form){
+    	me = this;
+    	
+    	var success = function(record, operation) {
 			me.getView().unmask();
 	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	    	window.parent.funcionRecargar();
 	    	window.hide();	    	
-    		
 		};
-
-		me.onSaveFormularioCompleto(form, success);	
-
+		
+		me.onSaveFormularioCompleto(form, success);
     	
     },
     
@@ -1266,21 +1287,28 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		window = btn.up("window"),
 		form = window.down("form"),
 		combo = me.lookupReference('labelEmailContacto');
+		data = form.getBindRecord();
 		
 		combo.validate();
 		form.recordName = "presupuesto";
 		form.recordClass = "HreRem.model.PresupuestosTrabajo";
 		
-		var success = function(record, operation) {
-			me.getView().unmask();
-	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	    	window.parent.funcionRecargar();
-	    	window.hide();
-
-		};
-
-		//En este caso, actualizar
-		me.onSaveFormularioCompleto(form, success);
+		if ((data.data.importeCliente != null && data.data.importeCliente >= data.data.importe) ||
+				(data.data.importeCliente == null && data.data.importe == null)){
+			me.successAndSave(window, form);
+		} else {
+			Ext.Msg.show({
+			    title: HreRem.i18n("msg.aviso.importe.cliente"),
+			    message: HreRem.i18n("msg.confirmacion.importe.cliente"),
+			    buttons: Ext.Msg.OKCANCEL,
+			    icon: Ext.Msg.INFO,
+			    fn: function(btn) {
+			        if (btn === 'ok') {
+						me.successAndSave(window, form);
+			        }
+			    }
+			}); 
+		}
     },
     
      onClickUploadListaActivos: function(btn) {

@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -90,10 +91,10 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 	private Float superficieParcela;
 	
 	@Column(name = "REG_SUPERFICIE_BAJO_RASANTE")
-	private Float superficieBajoRasante;
+	private Double superficieBajoRasante;
 	
 	@Column(name = "REG_SUPERFICIE_SOBRE_RASANTE")
-	private Float superficieSobreRasante;
+	private Double superficieSobreRasante;
 	
 	@Column(name = "REG_DIV_HOR_INSCRITO")
 	private Integer divHorInscrito;
@@ -108,11 +109,11 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 
 	@Column(name = "REG_FECHA_CFO")
 	private Date fechaCfo;
-	
-//Para Esparta
-//	@OneToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name = "TIENE_ANEJOS_REGISTRALES")
-//	private DDSinSiNo tieneAnejosRegistrales;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TIENE_ANEJOS_REGISTRALES")
+    private DDSinSiNo tieneAnejosRegistrales;
+
 
 	@Version   
 	private Long version;
@@ -218,19 +219,19 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 		this.superficieParcela = superficieParcela;
 	}
 
-	public Float getSuperficieBajoRasante() {
+	public Double getSuperficieBajoRasante() {
 		return superficieBajoRasante;
 	}
 
-	public void setSuperficieBajoRasante(Float superficieBajoRasante) {
+	public void setSuperficieBajoRasante(Double superficieBajoRasante) {
 		this.superficieBajoRasante = superficieBajoRasante;
 	}
 
-	public Float getSuperficieSobreRasante() {
+	public Double getSuperficieSobreRasante() {
 		return superficieSobreRasante;
 	}
 
-	public void setSuperficieSobreRasante(Float superficieSobreRasante) {
+	public void setSuperficieSobreRasante(Double superficieSobreRasante) {
 		this.superficieSobreRasante = superficieSobreRasante;
 	}
 
@@ -285,13 +286,12 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
-//	public DDSinSiNo getTieneAnejosRegistrales() {
-//		return tieneAnejosRegistrales;
-//	}
-//
-//	public void setTieneAnejosRegistrales(DDSinSiNo tieneAnejosRegistrales) {
-//		this.tieneAnejosRegistrales = tieneAnejosRegistrales;
-//	}
-	
+	public DDSinSiNo getTieneAnejosRegistrales() {
+		return tieneAnejosRegistrales;
+	}
+
+	public void setTieneAnejosRegistrales(DDSinSiNo tieneAnejosRegistrales) {
+		this.tieneAnejosRegistrales = tieneAnejosRegistrales;
+	}	
 	
 }

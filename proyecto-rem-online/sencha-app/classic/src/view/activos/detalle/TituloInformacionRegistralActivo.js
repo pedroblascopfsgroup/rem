@@ -166,11 +166,23 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		                },
 		                { 
 		                	fieldLabel: HreRem.i18n('fieldlabel.tomo'),
-		                	colspan: 2,
 		                	bind: {
 		                		value: '{datosRegistrales.tomo}',
 		                		readOnly: '{datosRegistrales.unidadAlquilable}'
 		                	}
+                        },
+		                { 
+                        	xtype: 'comboboxfieldbase',	
+		                	fieldLabel: HreRem.i18n('fieldlabel.tiene.anejos.registrales'),	        	
+				        	reference: 'comboTieneAnejosRegistralesRef',
+		                	bind: {
+		                		store: '{comboSiNoRem}',
+		                		value: '{datosRegistrales.tieneAnejosRegistralesInt}',
+		                		readOnly: '{!esSuperUsuario}',
+			            		hidden: '{!isCarteraSareb}'
+		                	},
+			            	displayField: 'descripcion',
+							valueField: 'codigo'
                         },
 		                { 
 					 		fieldLabel: HreRem.i18n('fieldlabel.libro'),
@@ -964,6 +976,16 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
                                 	readOnly: '{datosRegistrales.unidadAlquilable}'
                                 }
                             },
+                            { 
+                            	xtype:'datefieldbase',
+						 		fieldLabel: HreRem.i18n('fieldlabel.adjudicacion.no.judicial.fecha.posesion'),
+						 		bind: {
+						 			value: '{datosRegistrales.fechaPosesion}',
+						 			readOnly: '{isGestorActivosAndSuper}',
+						 			hidden: '{!isSubcarteraCerberus}'
+						 		}
+
+							},
                             {
                                 fieldLabel: HreRem.i18n('fieldlabel.id.asunto.recovery'),
                                 bind: {

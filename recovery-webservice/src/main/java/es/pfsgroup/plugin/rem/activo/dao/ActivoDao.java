@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
@@ -387,6 +388,11 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
 	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras);
 
+
+	public Long getCarga(String idBieCarRecovery);
+
+	public void actualizaBieCarIdRecovery(Long idBieCar, Long bieCarIdRecovery);
+
 	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos);
 
 	public List<ActivosAlquilados> getListActivosAlquiladosByIdActivos(List<Long> idActivos);
@@ -401,6 +407,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	boolean activocheckGestion(Long idActivo);
 
+	boolean perteneceActivoREAM(Long idActivo);
+
 	List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivoAndTipoPrecio(Long idActivo,String codigoTipoPrecio);
 
 	List<ActivoValoraciones> getListActivoValoracionesByIdActivoAndTipoPrecio(Long idActivo, String codigoTipoPrecio);
@@ -408,6 +416,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	boolean isPublicadoVentaHistoricoByFechaValoracion(Long idActivo, Date fechaValoracion);
 
 	boolean isPublicadoVentaByFechaValoracion(Long idActivo, Date fechaValoracion);
+
 	public Page getBusquedaPublicacionGrid(DtoPublicacionGridFilter dto);
 
 	List<AuxiliarCierreOficinasBankiaMul> getListAprAuxCierreBnK();

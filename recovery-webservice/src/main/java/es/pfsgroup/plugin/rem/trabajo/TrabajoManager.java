@@ -109,7 +109,9 @@ import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
+import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo.ActivoTrabajoPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -560,6 +562,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.comite.aprobado"));
 			}
 		}
+		
+		if(activo != null) {
+			if (!esActivoContabilizado(activo.getId()))
+				throw new JsonViewerException("No se puede validar un trabajo para un activo no contabilizado");
+		}
 
 		if (DDEstadoTrabajo.ESTADO_VALIDADO.equals(dtoTrabajo.getEstadoCodigo())) {
 			Float participacion = activoTrabajoDao.getImporteParticipacionTotal(trabajo.getNumTrabajo());
@@ -580,9 +587,21 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				dtoTrabajo.setEstadoCodigo(DDEstadoTrabajo.ESTADO_PAGADO);
 			}
 			
+			
+			
+			
+			
 			historificarCambiosFicha(dtoTrabajo, trabajo);
 			dtoToTrabajo(dtoTrabajo, trabajo);
 
+			
+			if(dtoTrabajo.getEstadoCodigo() != null && DDEstadoTrabajo.ESTADO_VALIDADO.equals(dtoTrabajo.getEstadoCodigo())) {
+				
+			}
+			
+			
+			
+			
 			if (tareaActivo != null) {
 				if(!Checks.esNulo(tareaActivo.getTareaExterna()) && !Checks.esNulo(tareaActivo.getTareaExterna().getTareaProcedimiento()) &&
 						!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo()) &&
@@ -595,6 +614,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					editarTramites(trabajo);
 				}
 			}
+			
+			
+			
 			if(trabajo.getEstado() != null) {
 				if(DDEstadoTrabajo.CODIGO_ESTADO_RECHAZADO.equals(trabajo.getEstado().getCodigo()) || DDEstadoTrabajo.ESTADO_RECHAZADO.equals(trabajo.getEstado().getCodigo())) {
 					EnviarCorreoTrabajos(trabajo, EMAIL_RECHAZADO);
@@ -6099,6 +6121,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	 	return esTramiteValido;
  	}
 	
+
+	public Boolean esActivoContabilizado(Long idActivo) {
+		
+		Filter filtroSareb = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		ActivoSareb activoSareb  = genericDao.get(ActivoSareb.class, filtroSareb);
+		
+		return !(activoSareb != null && activoSareb.getReoContabilizado() != null && activoSareb.getReoContabilizado().getCodigo().equals(DDSinSiNo.CODIGO_NO));
+			
+		
+		
+	}
+
+	@Override
 	public List<DtoProveedorFiltradoManual> getComboProveedorFiltradoManual(Long idTrabajo) throws Exception {
 		
 		List<DtoProveedorFiltradoManual> listaDtoProveedoresFiltradoManual = new ArrayList<DtoProveedorFiltradoManual>();
@@ -6889,4 +6924,5 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 	
 	
+
 }

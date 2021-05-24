@@ -573,6 +573,12 @@
 				def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.activoEnTramite(idActivo);
 			}
+			
+			def esActivoContabilizado = {
+				def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.esActivoContabilizado(idActivo);
+			}
+			
 			def checkContratoSubido = {
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkContratoSubido(tareaExterna);

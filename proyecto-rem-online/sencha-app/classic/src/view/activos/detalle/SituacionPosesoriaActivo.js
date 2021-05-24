@@ -350,7 +350,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							fieldLabel: HreRem.i18n('filedlabel.tiene.ok.tecnico'),
 							bind: {
 								value: '{situacionPosesoria.tieneOkTecnico}',
-								readOnly: '{!activo.aplicaGestion}'
+								readOnly: '{noEditableSareb}'
 							}
 						},
 		                {

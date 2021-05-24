@@ -602,6 +602,12 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
 			},
 			{
 				name: 'subtipoTituloDescripcion'
+			},
+			{
+				name: 'superficieBajoRasante'
+			},
+			{
+				name: 'superficieSobreRasante'
 			}
     ],
     

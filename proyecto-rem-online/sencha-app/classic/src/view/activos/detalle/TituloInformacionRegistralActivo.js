@@ -200,7 +200,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					
 						{
 				        	xtype:'fieldset',
-				        	height: 200,
+				        	height: 230,
 				        	margin: '0 10 10 0',
 				        	layout: {
 						        type: 'table',
@@ -236,6 +236,20 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								 		symbol: HreRem.i18n("symbol.m2"),
 								 		fieldLabel: HreRem.i18n('fieldlabel.parcela.no.ocupada.edificacion'),
 								 		bind: '{datosRegistrales.superficieParcela}'
+									},
+									{ 
+								 		xtype: 'numberfieldbase',
+								 		reference: 'superficieBajoRasanteRef',
+								 		symbol: HreRem.i18n("symbol.m2"),
+								 		fieldLabel: HreRem.i18n('fieldlabel.superficie.bajo.rasante'),								 		
+								 		bind: '{datosRegistrales.superficieBajoRasante}'
+									},
+									{ 
+								 		xtype: 'numberfieldbase',
+								 		reference: 'superficieSobreRasanteRef',
+								 		symbol: HreRem.i18n("symbol.m2"),
+								 		fieldLabel: HreRem.i18n('fieldlabel.superficie.sobre.rasante'),								 		
+								 		bind: '{datosRegistrales.superficieSobreRasante}'
 									}
 		
 								]
@@ -243,7 +257,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				        
 				        {
 				        	xtype:'fieldset',
-				        	height: 200,
+				        	height: 230,
 				        	margin: '0 10 10 0',
 				        	layout: {
 						        type: 'table',
@@ -296,7 +310,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				        {
 				        	xtype:'fieldset',
 				        	title: HreRem.i18n('fieldlabel.obra.nueva'),
-				        	height: 200,
+				        	height: 230,
 				        	margin: '0 0 10 0',
 				        	layout: {
 						        type: 'table',

@@ -90,10 +90,10 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 	private Float superficieParcela;
 	
 	@Column(name = "REG_SUPERFICIE_BAJO_RASANTE")
-	private Double superficieBajoRasante;
+	private Double superficieBajoRasante; 
 	
 	@Column(name = "REG_SUPERFICIE_SOBRE_RASANTE")
-	private Double superficieSobreRasante;
+	private Double superficieSobreRasante; 
 	
 	@Column(name = "REG_DIV_HOR_INSCRITO")
 	private Integer divHorInscrito;

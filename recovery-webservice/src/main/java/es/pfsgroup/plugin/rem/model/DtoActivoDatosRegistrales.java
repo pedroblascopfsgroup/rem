@@ -58,6 +58,8 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private Date fechaInscripcionReg;
 	private Date fechaRetiradaReg;
 	private Date fechaNotaSimple;
+	private Double superficieBajoRasante;
+	private Double superficieSobreRasante;
 	
 	// Mapeados a mano
 	private String estadoDivHorizontalCodigo;
@@ -911,4 +913,17 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	public void setTipoPlazaDescripcion(String tipoPlazaDescripcion) {
 		this.tipoPlazaDescripcion = tipoPlazaDescripcion;
 	}
+	public Double getSuperficieBajoRasante() {
+		return superficieBajoRasante;
+	}
+	public void setSuperficieBajoRasante(Double superficieBajoRasante) {
+		this.superficieBajoRasante = superficieBajoRasante;
+	}
+	public Double getSuperficieSobreRasante() {
+		return superficieSobreRasante;
+	}
+	public void setSuperficieSobreRasante(Double superficieSobreRasante) {
+		this.superficieSobreRasante = superficieSobreRasante;
+	}
+	
 }

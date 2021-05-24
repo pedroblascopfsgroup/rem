@@ -40,6 +40,7 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	private String refExpedienteInterno;
 	private String observacionesExpropiacion;
 	private String maxPrecioVenta;
+	private String maxPrecioModuloAlquiler;
 	private String observaciones;
 	
 	private Date vigencia;
@@ -355,4 +356,11 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	public void setTributacionAdqDescripcion(String tributacionAdqDescripcion) {
 		this.tributacionAdqDescripcion = tributacionAdqDescripcion;
 	}
+	public String getMaxPrecioModuloAlquiler() {
+		return maxPrecioModuloAlquiler;
+	}
+	public void setMaxPrecioModuloAlquiler(String maxPrecioModuloAlquiler) {
+		this.maxPrecioModuloAlquiler = maxPrecioModuloAlquiler;
+	}
+	
 }

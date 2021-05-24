@@ -151,7 +151,8 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				} else if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
 						(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
 						||DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
-						||DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())) &&
+						||DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo()))
+						||DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()) &&
 						activo.getAdjNoJudicial() != null) {
 					if (activo.getAdjNoJudicial().getFechaPosesion() != null) {
 						BeanUtils.copyProperty(activoDto, "indicaPosesion", 1);

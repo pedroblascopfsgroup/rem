@@ -2159,6 +2159,35 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 	}
 	
+
+	@Override 
+	public Long getCarga(String idBieCarRecovery) {
+		if(Checks.esNulo(idBieCarRecovery) || !StringUtils.isNumeric(idBieCarRecovery)) {
+			return null;
+		}	
+	    String resultado;
+	    resultado = rawDao.getExecuteSQL(" SELECT CRG.CRG_ID"
+	            +" FROM BIE_CAR_CARGAS BIE_CAR"
+	            +" JOIN ACT_CRG_CARGAS CRG ON CRG.BIE_CAR_ID = BIE_CAR.BIE_CAR_ID AND CRG.BORRADO = 0"
+	            +" WHERE BIE_CAR.BORRADO = 0"
+	            +" AND BIE_CAR.BIE_CAR_ID_RECOVERY = " + idBieCarRecovery);
+	                
+	    return resultado == null ? null : Long.parseLong(resultado);
+	}
+	
+	@Override
+	public void actualizaBieCarIdRecovery(Long idBieCar, Long bieCarIdRecovery) {
+		getHibernateTemplate().flush();		
+		Session session = this.getSessionFactory().getCurrentSession();
+		StringBuilder sb = new StringBuilder(				
+				"UPDATE BIE_CAR_CARGAS"
+				+ " SET BIE_CAR_ID_RECOVERY = " + bieCarIdRecovery
+				+ " WHERE BIE_CAR_ID = " + idBieCar
+				+ " AND BORRADO = 0"				
+			);
+		session.createSQLQuery(sb.toString()).executeUpdate();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos) {

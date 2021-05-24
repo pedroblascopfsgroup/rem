@@ -104,7 +104,19 @@ public class ActivoPropagacionUAsFieldTabMap {
     				"oficina",
     				"contrapartida",
     				"folio",
-    				"cdpen"
+    				"cdpen",
+    				
+    				//Esparta convivencia
+    				"tipoActivoCodigoOE",
+    				"subtipoActivoCodigoOE",
+    				"estadoAdecuacionSarebCodigo",
+    				"fechaFinPrevistaAdecuacion",
+    				"reoContabilizadoSap",
+    				"tipoViaCodigoOE",
+    				"nombreViaOE",
+    				"provinciaCodigoOE",
+    				"municipioCodigoOE",
+    				"codPostalOE"
     			));
 
 
@@ -128,7 +140,7 @@ public class ActivoPropagacionUAsFieldTabMap {
 					"numAnterior",
 					"localidadAnteriorCodigo",
 					"numFincaAnterior",
-					
+					"tieneAnejosRegistralesInt",
 
 
 					
@@ -197,7 +209,8 @@ public class ActivoPropagacionUAsFieldTabMap {
 					"codigoMotivoCalificacionNegativa",
 					"codigoEstadoMotivoCalificacionNegativa",
 					"idProcesoOrigen",
-					"sociedadDePagoAnterior"
+					"sociedadDePagoAnterior",
+					"fechaPosesionNoJudicial"
     			));
 
     	pmap.put(TAB_SIT_POSESORIA,
@@ -278,7 +291,14 @@ public class ActivoPropagacionUAsFieldTabMap {
     	pmap.put(TAB_COMERCIAL,
     			Arrays.asList(
 					//"id", // ID de activo.
-	    			"direccionComercial"
+	    			"direccionComercial",
+	    			"importeComunidadMensualSareb",
+	    			"siniestroSareb",
+	    			"tipoCorrectivoSareb",
+	    			"fechaFinCorrectivoSareb",
+	    			"tipoCuotaComunidad",
+	    			"ggaaSareb",
+	    			"segmentacionSareb"
     			));
 
 /*

@@ -345,6 +345,15 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		                	style:'margin-left:10px'
 		                },
 		                {
+
+							xtype: 'checkboxfieldbase',
+							fieldLabel: HreRem.i18n('filedlabel.tiene.ok.tecnico'),
+							bind: {
+								value: '{situacionPosesoria.tieneOkTecnico}',
+								readOnly: '{noEditableSareb}'
+							}
+						},
+		                {
 				        	xtype: 'comboboxfieldbase',
 				        	allowBlank: true,
 				        	reference: 'comboOcupadoRef',

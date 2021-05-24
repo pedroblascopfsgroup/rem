@@ -135,7 +135,52 @@ Ext.define('HreRem.model.Activo', {
     			depends: [ 'provinciaCodigo']
     		},
     		{
+    			name:'tipoViaCodigoOE'
+    		},
+    		{
+    			name:'tipoViaDescripcionOE'
+    		},
+    		{
+    			name:'escaleraOE'
+    		},
+    		{
+    			name:'puertaOE'
+    		},
+    		{
+    			name:'nombreViaOE'
+    		},
+    		{
+    			name:'pisoOE'
+    		},
+    		{
+    			name:'puertaOE' 
+    		},
+    		{
+    			name:'provinciaCodigoOE'
+    		},
+    		{
+    			name:'codPostalOE'
+    		},
+    		{
+    			name:'codPostalFormateadoOE',
+    			convert: function(value, record) {
+    				if (Ext.isEmpty(record.get('codPostalOE'))) {
+    					return "";
+    				} else {
+    					return '(' + record.get('codPostalOE') + ')';
+    				}
+    			},
+    			depends: 'codPostalOE'
+    		},
+    		{
+    			name:'numeroDomicilioOE',
+    			depends: [ 'provinciaCodigoOE']
+    		},
+    		{
     			name:'municipioCodigo'
+    		},
+    		{
+    			name:'municipioCodigoOE'
     		},
     		{
     			name:'paisCodigo'
@@ -200,6 +245,18 @@ Ext.define('HreRem.model.Activo', {
     			name:'tipoActivoDescripcion'
     		},
     		{
+    			name:'tipoActivoCodigoOE'
+    		}, 
+    		{
+    			name:'subtipoActivoCodigoOE'
+    		}, 
+    		{
+    			name:'subtipoActivoDescripcionOE'
+    		}, 
+    		{
+    			name:'tipoActivoDescripcionOE'
+    		},
+    		{
     			name:'tipoActivoCodigoBde'
     		}, 
     		{
@@ -222,6 +279,12 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name:'provinciaDescripcion'
+    		},
+    		{
+    			name:'municipioDescripcionOE'
+    		},
+    		{
+    			name:'provinciaDescripcionOE'
     		},
     		{
     			name:'estadoActivoCodigo'
@@ -328,6 +391,14 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name:'longitud',
+    			type: 'number'
+    		},
+    		{
+    			name:'latitudOE',
+    			type: 'number'
+    		},
+    		{
+    			name:'longitudOE',
     			type: 'number'
     		},
     		{
@@ -972,6 +1043,29 @@ Ext.define('HreRem.model.Activo', {
     			name: 'numActivoDivarian'
     		},
     		{
+    			name: 'activoEpa',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'reoContabilizadoSap',
+    			type: 'boolean'
+			},
+			{
+				name: 'fechaFinPrevistaAdecuacion',
+				type:'date',
+				dateFormat: 'c'
+			},
+    		{
+    			name:'estadoAdecuacionSarebCodigo'
+    		},
+    		{
+    			name:'estadoAdecuacionSarebDescripcion'
+    		},
+			{
+    			name: 'perimetroAdmision',
+    			type:'boolean'
+			},
+			{
     			name: 'activoEpa',
     			type: 'boolean'
     		},

@@ -713,6 +713,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 		// Factoria asignador gestores por tarea
     	UserAssigantionService userAssigantionService = userAssigantionServiceFactoryApi.getService(tareaProcedimiento.getCodigo());
 		Usuario supervisor = null;
+		Usuario gestor = null;
 
 		// Asignador de GESTOR por factoria - Gestores encontrados por tarea-Activo
 		Trabajo trabajo = tarea.getTramite().getTrabajo();
@@ -749,7 +750,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 						|| CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tareaExterna.getTareaProcedimiento().getCodigo())))
 				|| DDCartera.CODIGO_CARTERA_BBVA.equals(cartera.getCodigo()))){
 			supervisor = userAssigantionService.getSupervisor(tareaExterna);
-			Usuario gestor = userAssigantionService.getUser(tareaExterna); 
+			gestor = userAssigantionService.getUser(tareaExterna); 
 			
 			Boolean esTrabajoValido = trabajoApi.tipoTramiteValidoObtencionDocSolicitudDocumentoGestoria(tareaActivo.getTramite().getTrabajo());
 			
@@ -835,16 +836,18 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 			
 			if((DDCartera.CODIGO_CARTERA_BBVA.equals(cartera.getCodigo()) && 
 					ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE.equals(tareaExterna.getTareaProcedimiento().getCodigo())) || 
-					(!DDCartera.CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo()) && 
-							ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE.equals(tareaExterna.getTareaProcedimiento().getCodigo()))) {
+					(!DDCartera.CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo()) &&
+							ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE.equals(tareaExterna.getTareaProcedimiento().getCodigo())) &&
+					!DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(cartera.getCodigo())) {
 				if(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expedienteComercial.getEstado().getCodigo()) ||
 						DDEstadosExpedienteComercial.PTE_SANCION.equals(expedienteComercial.getEstado().getCodigo()) ||
 						DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES.equals(expedienteComercial.getEstado().getCodigo()) ||
 						DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo())){
-							tareaActivo.setUsuario(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
-						} else {
-							tareaActivo.setUsuario(usuarioManager.getByUsername("gruboarding"));
-						}
+					gestor = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+					if(!Checks.esNulo(gestor)) tareaActivo.setUsuario(gestor);
+				} else {
+					tareaActivo.setUsuario(usuarioManager.getByUsername("gruboarding"));
+				}
 			}
 		}
 		// Asignador de SUPERVISOR por factoria - Supervisores encontrados por tarea-Activo

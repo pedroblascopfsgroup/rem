@@ -57,7 +57,31 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 		{
 			name: 'ventaSobrePlano',
 			type: 'boolean'
-		},{
+		},
+		{
+			name: 'importeComunidadMensualSareb'
+		},
+		{
+			name: 'siniestroSareb'
+		},
+		{
+			name: 'tipoCorrectivoSareb'
+		},
+		{
+			name: 'fechaFinCorrectivoSareb',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name: 'tipoCuotaComunidad'
+		},
+		{
+			name: 'ggaaSareb'
+		},
+		{
+			name:'segmentacionSareb'
+		},
+		{
 			name:'activoObraNuevaComercializacion'
 		},
 		{
@@ -83,6 +107,7 @@ Ext.define('HreRem.model.ComercialActivoModel', {
     
 	proxy: {
 		type: 'uxproxy',
+		timeout: 60000,
 		remoteUrl : 'activo/getComercialActivo',
 		api: {
 			remoteUrl: 'activo/getComercialActivo',

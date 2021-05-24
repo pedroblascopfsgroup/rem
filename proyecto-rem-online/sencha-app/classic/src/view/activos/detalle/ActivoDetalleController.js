@@ -3836,7 +3836,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var isCarteraSareb = me.getViewModel().get("activo.isCarteraSareb");
 		var isCarteraBankia = me.getViewModel().get("activo.isCarteraBankia");
 		if ((CONST.ORIGEN_DATO['REM'] === record.getData().origenDatoCodigo)
-				|| ((CONST.ORIGEN_DATO['RECOVERY'] === record.getData().origenDatoCodigo) && isCarteraSareb)) {
+				|| ((CONST.ORIGEN_DATO['RECOVERY'] === record.getData().origenDatoCodigo) && isCarteraSareb)
+				|| ((CONST.ORIGEN_DATO['PRISMA'] === record.getData().origenDatoCodigo) && isCarteraSareb)) {
 			Ext.create("HreRem.view.activos.detalle.CargaDetalle", {
 						carga : record,
 						parent : grid.up("form"),
@@ -3945,7 +3946,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	onClickPropagationCalificacionNegativa : function(grid) {
-
 		var me = this, idActivo = me.getViewModel().get('activo').id, url = $AC
 				.getRemoteUrl('activo/getActivosPropagables'), form = grid
 				.up('form');
@@ -4420,7 +4420,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	saveActivo : function(jsonData, successFn) {
 		var me = this, url = $AC.getRemoteUrl('activo/saveActivo');
-
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 
 		successFn = successFn || Ext.emptyFn
@@ -4536,6 +4535,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						me.actualizarGridHistoricoDestinoComercial(formActivo);
 					}
 				};
+				if(window.tabData.id == window.activoActual.activoId){
+					window.tabData.models[0].data = window.allData;
+				}
 				me.saveActivo(window.tabData, successFn);
 
 			} else {
@@ -4564,41 +4566,31 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					window.destroy();
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 					me.getView().unmask();
-					me.getView().fireEvent("refreshComponentOnActivate",
-							"container[reference=tabBuscadorActivos]");
+					me.getView().fireEvent("refreshComponentOnActivate","container[reference=tabBuscadorActivos]");
 				};
-				me
-						.saveActivo(
-								me
-										.createTabDataHistoricoMediadores(activosSeleccionados),
-								successFn);
+
+				me.saveActivo(me.createTabDataHistoricoMediadores(activosSeleccionados),successFn);
 			} else if (targetGrid == 'condicionesespecificas') {
 
 				var successFn = function(record, operation) {
 					window.destroy();
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 					me.getView().unmask();
-					me.getView().fireEvent("refreshComponentOnActivate",
-							"container[reference=tabBuscadorActivos]");
+					me.getView().fireEvent("refreshComponentOnActivate","container[reference=tabBuscadorActivos]");
 				};
-				me.saveActivo(me.createTabDataCondicionesEspecificas(
-								activosSeleccionados, window.tabData),
-						successFn);
+				me.saveActivo(me.createTabDataCondicionesEspecificas(activosSeleccionados, window.tabData),successFn);
+				
 			} else if (targetGrid == 'calificacionNegativa') {
 				var successFn = function(record, operation) {
 					window.destroy();
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 					me.getView().unmask();
-					me.getView().fireEvent("refreshComponentOnActivate",
-							"container[reference=tabBuscadorActivos]");
+					me.getView().fireEvent("refreshComponentOnActivate","container[reference=tabBuscadorActivos]");
 				};
-				me.saveActivo(me.createTabDataCalificacionesNegativas(
-								activosSeleccionados, window.tabData),
-						successFn);
+				me.saveActivo(me.createTabDataCalificacionesNegativas(activosSeleccionados, window.tabData),successFn);
 			}
 		}
-		window.mask("Guardando activos 1 de "
-				+ (activosSeleccionados.length + 1));
+		window.mask("Guardando activos 1 de " + (activosSeleccionados.length + 1));
 	},
 
 	onClickCancelarPropagarCambios : function(btn) {
@@ -4688,6 +4680,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 			window.mask("Guardando activos " + numActivoActual + " de "
 					+ numTotalActivos);
+			
+			if(propagableData.id != window.activoActual.id){
+				propagableData.models[0].data = window.auxDataPropagable;
+			}
 			me.saveActivo(propagableData, successFn);
 
 		} else {
@@ -4733,15 +4729,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this, tabData = {};
 		tabData.id = me.getViewModel().get("activo.id");
 		tabData.models = [];
-
+		var rol = me.getView().down('[xtype=historicomediadorgrid]').selection.getData().rol;
+		var mediador = me.getView().down('[xtype=historicomediadorgrid]').selection.getData().codigo;
 		Ext.Array.each(listadoActivos, function(record, index) {
-					var model = {};
-					model.name = 'mediadoractivo';
-					model.type = 'activo';
-					model.data = {};
-					model.data.idActivo = record.data.activoId;
-					tabData.models.push(model);
-				});
+			var model = {};
+			model.name = 'mediadoractivo';
+			model.type = 'activo';
+			model.data = {};
+			model.data.idActivo = record.data.activoId;
+			model.data.rol = rol;
+			model.data.mediador = mediador;
+			tabData.models.push(model);
+		}); 
+		
 		return tabData;
 	},
 
@@ -5295,7 +5295,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	checkActivosToPropagate : function(idActivo, form, tabData, restringida) {
 		var me = this, url2 = $AC.getRemoteUrl('activo/getIsActivoMatriz');
-		Ext.Ajax.request({
+		Ext.Ajax.request({			
 			url : url2,
 			method : 'POST',
 			params : {
@@ -5313,6 +5313,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						var subTabActiva = tabActiva.getActiveTab(), subReferencia = subTabActiva.reference;
 					}
 				}
+
 				if(isActivoMatriz == "true" && !(referencia == 'publicacionactivoref'
 						&& subReferencia == 'datospublicacionactivoref')){
 					url3 =  $AC.getRemoteUrl('activo/propagarActivosMatriz');
@@ -5448,14 +5449,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 															.get('activo').data.activosPropagables = activosPropagables;
 												}
 											}
+										
 											if(activosPropagables != null && isActivoMatriz != "true"){
 													if(activosPropagables.length > 0) {
+														var auxAllData = tabData.models[0].data;
 														tabPropagableData = me.createFormPropagableData(form, tabData);
 														if (!Ext.isEmpty(tabPropagableData)) {
 															// sacamos el activo actual del listado
 															var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
 															var tieneDatosPropagables = false;
-															/*if(!Ext.isEmpty(form)) {
+															if(!Ext.isEmpty(form)) {
 													    		
 													    		var fields = form.getForm().getFields();
 													    		fields.each(function(field) {
@@ -5473,39 +5476,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 													    				});
 													    			}
 													    		});
-													    	}*/
+													    	}
 															
-															//if(tieneDatosPropagables) {
-																// Abrimos la ventana de selección de activos
-																var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
-																	me.getView().add(ventanaOpcionesPropagacionCambios);
-																	me.getView().unmask();
-																	return false;
-															//}
 														}
 													}
 
 													if (tieneDatosPropagables) {
 														// Abrimos la ventana de
 														// selección de activos
-														var ventanaOpcionesPropagacionCambios = Ext
-																.create(
-																		"HreRem.view.activos.detalle.OpcionesPropagacionCambios",
-																		{
-																			form : form,
-																			activoActual : activo,
-																			activos : activosPropagables,
-																			tabData : tabData,
-																			propagableData : tabPropagableData
-																		})
-																.show();
-														me
-																.getView()
-																.add(ventanaOpcionesPropagacionCambios);
+														var auxDataPropagable = tabData.models[0].data;
+														var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios",
+														{
+															form : form,
+															activoActual : activo,
+															activos : activosPropagables,
+															tabData : tabData,
+															propagableData : tabPropagableData,
+															allData:auxAllData,
+															auxDataPropagable:auxDataPropagable
+														}).show();
+														me.getView().add(ventanaOpcionesPropagacionCambios);
 														me.getView().unmask();
-														me.refrescarActivo(form.refreshAfterSave);
-														me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
-														me.actualizarGridHistoricoDestinoComercial(form);
+														return false;
 													}
 							
 													if(restringida == true){
@@ -5526,49 +5518,29 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 												}
 											}
 
-											var successFn = function(response,
-													eOpts) {
+											var successFn = function(response,eOpts) {
 
-												me.manageToastJsonResponse(me,
-														response.responseText);
+												me.manageToastJsonResponse(me,response.responseText);
 												me.getView().unmask();
-												me
-														.refrescarActivo(form.refreshAfterSave);
-												me
-														.getView()
-														.fireEvent(
-																"refreshComponentOnActivate",
-																"container[reference=tabBuscadorActivos]");
-												me
-														.actualizarGridHistoricoDestinoComercial(form);
+												me.refrescarActivo(form.refreshAfterSave);
+												me.getView().fireEvent("refreshComponentOnActivate","container[reference=tabBuscadorActivos]");
+												me.actualizarGridHistoricoDestinoComercial(form);
 											}
 
 											if (restringida == true) {
-												me.saveActivosAgrRestringida(
-														tabData, successFn);
+												me.saveActivosAgrRestringida(tabData, successFn);
 											} else {
-												me
-														.getView()
-														.fireEvent("No hay activos propagables");
-												me.saveActivo(tabData,
-														successFn);
+												me.getView().fireEvent("No hay activos propagables");
+												me.saveActivo(tabData,successFn);
 											}
 										} else {
-											var successFn = function(response,
-													eOpts) {
+											var successFn = function(response,eOpts) {
 
-												me.manageToastJsonResponse(me,
-														response.responseText);
+												me.manageToastJsonResponse(me,response.responseText);
 												me.getView().unmask();
-												me
-														.refrescarActivo(form.refreshAfterSave);
-												me
-														.getView()
-														.fireEvent(
-																"refreshComponentOnActivate",
-																"container[reference=tabBuscadorActivos]");
-												me
-														.actualizarGridHistoricoDestinoComercial(form);
+												me.refrescarActivo(form.refreshAfterSave);
+												me.getView().fireEvent("refreshComponentOnActivate","container[reference=tabBuscadorActivos]");
+												me.actualizarGridHistoricoDestinoComercial(form);
 											}
 											me.saveActivo(tabData, successFn);
 											me.getView().unmask();

@@ -60,6 +60,8 @@ import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
+import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
+import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
@@ -82,6 +84,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDDistritoCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdecucionSareb;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
@@ -959,6 +962,84 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
 		
+		Filter filtroActivoSareb = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoSareb activoSareb = genericDao.get(ActivoSareb.class, filtroActivoSareb);
+		
+		if (activoSareb != null ) {
+			if (activoSareb.getSubtipoActivoOE() != null) {
+				BeanUtils.copyProperty(activoDto, "tipoActivoCodigoOE", activoSareb.getTipoActivoOE().getCodigo());	
+				BeanUtils.copyProperty(activoDto, "tipoActivoDescripcionOE", activoSareb.getTipoActivoOE().getDescripcion());	
+			}
+			if (activoSareb.getSubtipoActivoOE() != null) {
+				BeanUtils.copyProperty(activoDto, "subtipoActivoCodigoOE", activoSareb.getSubtipoActivoOE().getCodigo());	
+				BeanUtils.copyProperty(activoDto, "subtipoActivoDescripcionOE", activoSareb.getSubtipoActivoOE().getDescripcion());	
+			}
+			if (activoSareb.getTipoViaOE() != null) {
+				BeanUtils.copyProperty(activoDto, "tipoViaCodigoOE", activoSareb.getTipoViaOE().getCodigo());	
+				BeanUtils.copyProperty(activoDto, "tipoViaDescripcionOE", activoSareb.getTipoViaOE().getDescripcion());
+			}
+			
+			if (activoSareb.getProvinciaOE() != null) {
+				BeanUtils.copyProperty(activoDto, "provinciaCodigoOE", activoSareb.getProvinciaOE().getCodigo());	
+				BeanUtils.copyProperty(activoDto, "provinciaDescripcionOE", activoSareb.getProvinciaOE().getDescripcion());
+			}
+			
+			if (activoSareb.getLocalidadOE() != null) {
+				BeanUtils.copyProperty(activoDto, "municipioCodigoOE", activoSareb.getLocalidadOE().getCodigo());	
+				BeanUtils.copyProperty(activoDto, "municipioDescripcionOE", activoSareb.getLocalidadOE().getDescripcion());
+			}
+			
+			if (activoSareb.getNombreViaOE() != null) {
+				BeanUtils.copyProperty(activoDto, "nombreViaOE", activoSareb.getNombreViaOE());
+			}
+			
+			if (activoSareb.getNumeroDomicilioOE() != null) {
+				BeanUtils.copyProperty(activoDto, "numeroDomicilioOE", activoSareb.getNumeroDomicilioOE());
+			}
+			
+			if (activoSareb.getEscaleraOE() != null) {
+				BeanUtils.copyProperty(activoDto, "escaleraOE", activoSareb.getEscaleraOE());
+			}
+			
+			if (activoSareb.getPisoOE() != null) {
+				BeanUtils.copyProperty(activoDto, "pisoOE", activoSareb.getPisoOE());
+			}
+			
+			if (activoSareb.getPuertaOE() != null) {
+				BeanUtils.copyProperty(activoDto, "puertaOE", activoSareb.getPuertaOE());
+			}
+			
+			if (activoSareb.getCodPostalOE() != null) {
+				BeanUtils.copyProperty(activoDto, "codPostalOE", activoSareb.getCodPostalOE());
+			}
+			
+			if (activoSareb.getLatitudOE() != null) {
+				BeanUtils.copyProperty(activoDto, "latitudOE", activoSareb.getLatitudOE());
+			}
+			
+			if (activoSareb.getLongitudOE() != null) {
+				BeanUtils.copyProperty(activoDto, "longitudOE", activoSareb.getLongitudOE());
+			}
+			
+			if (activoSareb.getFechaFinPrevistaAdecuacion() != null) {
+				BeanUtils.copyProperty(activoDto, "fechaFinPrevistaAdecuacion", activoSareb.getFechaFinPrevistaAdecuacion());
+			}
+			
+			if (activoSareb.getEstadoAdecuacionSareb() != null) {
+				BeanUtils.copyProperty(activoDto, "estadoAdecuacionSarebCodigo", activoSareb.getEstadoAdecuacionSareb().getCodigo());	
+				BeanUtils.copyProperty(activoDto, "estadoAdecuacionSarebDescripcion", activoSareb.getEstadoAdecuacionSareb().getDescripcion());
+			}
+			
+			if (activoSareb != null && activoSareb.getReoContabilizado() != null) {
+				if (DDSinSiNo.CODIGO_SI.equals(activoSareb.getReoContabilizado().getCodigo())) {
+					activoDto.setReoContabilizadoSap(true);
+				} else {
+					activoDto.setReoContabilizadoSap(false);
+				}
+			}
+		}
+		
+
 		if(perimetroActivo.getAplicaAdmision() != null) {
 			activoDto.setPerimetroAdmision(perimetroActivo.getAplicaAdmision());
 		}
@@ -1694,6 +1775,104 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 			}
+
+			
+			Filter filtroActivoSareb = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoSareb activoSareb = genericDao.get(ActivoSareb.class, filtroActivoSareb);
+			
+			if (activoSareb != null) {
+				if (dto.getTipoActivoCodigoOE() != null) {
+					DDTipoActivo tipoActivoOE = (DDTipoActivo) diccionarioApi.dameValorDiccionarioByCod(DDTipoActivo.class,  dto.getTipoActivoCodigoOE());
+					activoSareb.setTipoActivoOE(tipoActivoOE);
+				}
+				
+				if (dto.getSubtipoActivoCodigoOE() != null) {
+					DDSubtipoActivo subtipoActivoOE = (DDSubtipoActivo) diccionarioApi.dameValorDiccionarioByCod(DDSubtipoActivo.class,  dto.getSubtipoActivoCodigoOE());
+					activoSareb.setSubtipoActivoOE(subtipoActivoOE);
+				}
+				
+				if (dto.getTipoViaCodigoOE() != null) {
+					DDTipoVia tipoViaOE = (DDTipoVia) diccionarioApi.dameValorDiccionarioByCod(DDTipoVia.class,  dto.getTipoViaCodigoOE());
+					activoSareb.setTipoViaOE(tipoViaOE);
+				}
+				
+				if (dto.getProvinciaCodigoOE() != null) {
+					DDProvincia provinciaOE = (DDProvincia) diccionarioApi.dameValorDiccionarioByCod(DDProvincia.class,  dto.getProvinciaCodigoOE());
+					activoSareb.setProvinciaOE(provinciaOE);
+				}
+				
+				if (dto.getMunicipioCodigoOE() != null) {
+					Localidad localidadOE = (Localidad) diccionarioApi.dameValorDiccionarioByCod(Localidad.class,  dto.getMunicipioCodigoOE());
+					activoSareb.setLocalidadOE(localidadOE);
+				}
+				
+				if (dto.getNombreViaOE() != null) {
+					activoSareb.setNombreViaOE(dto.getNombreViaOE());
+				}
+				
+				if (dto.getNumeroDomicilioOE() != null) {
+					activoSareb.setNumeroDomicilioOE(dto.getNumeroDomicilioOE());
+				}
+				
+				if (dto.getEscaleraOE() != null) {
+					activoSareb.setEscaleraOE(dto.getEscaleraOE());
+				}
+				
+				if (dto.getPisoOE() != null) {
+					activoSareb.setPisoOE(dto.getPisoOE());
+				}
+				
+				if (dto.getPuertaOE() != null) {
+					activoSareb.setPuertaOE(dto.getPuertaOE());
+				}
+				
+				if (dto.getCodPostalOE() != null) {
+					activoSareb.setCodPostalOE(dto.getCodPostalOE());
+				}
+				
+				if (dto.getLatitudOE() != null) {
+					activoSareb.setLatitudOE(new BigDecimal(dto.getLatitudOE()));
+				}
+				
+				if (dto.getLongitudOE() != null) {
+					activoSareb.setLongitudOE(new BigDecimal(dto.getLongitud()));
+				}
+				
+				if (dto.getEstadoAdecuacionSarebCodigo() != null) {
+					DDEstadoAdecucionSareb estadoAdecuacionSareb = (DDEstadoAdecucionSareb) diccionarioApi.dameValorDiccionarioByCod(DDEstadoAdecucionSareb.class,  dto.getEstadoAdecuacionSarebCodigo());
+					activoSareb.setEstadoAdecuacionSareb(estadoAdecuacionSareb);
+				}
+				if (dto.getFechaFinPrevistaAdecuacion() != null) {
+					activoSareb.setFechaFinPrevistaAdecuacion(dto.getFechaFinPrevistaAdecuacion());
+				}
+				
+				if(dto.getReoContabilizadoSap() != null) {
+					if(activoSareb != null) {
+						if(dto.getReoContabilizadoSap() == true) {
+							Filter filtroSi = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
+							DDSinSiNo codigoSi = genericDao.get(DDSinSiNo.class, filtroSi);
+							activoSareb.setReoContabilizado(codigoSi);	
+							
+							PerimetroActivo perimetroActivoSAP = activoApi.getPerimetroByIdActivo(activoSareb.getActivo().getId());
+							if (perimetroActivoSAP != null) {
+								perimetroActivoSAP.setAplicaComercializar(1);
+								perimetroActivoSAP.setFechaAplicaComercializar(new Date());
+								perimetroActivoSAP.setAplicaFormalizar(1);
+								perimetroActivoSAP.setFechaAplicaFormalizar(new Date());
+								activoApi.saveOrUpdatePerimetroActivo(perimetroActivoSAP);
+								updaterState.updaterStateDisponibilidadComercial(activoSareb.getActivo());
+							}		
+						}else {
+							Filter filtroNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
+							DDSinSiNo codigoNo = genericDao.get(DDSinSiNo.class, filtroNo);
+							activoSareb.setReoContabilizado(codigoNo);
+						}
+					}
+				}				
+				
+				genericDao.update(ActivoSareb.class, activoSareb);
+			}
+
 
 			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 			

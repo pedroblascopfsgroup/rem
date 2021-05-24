@@ -303,19 +303,22 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoGastoAsociado", DDTipoGastoAsociado.class);
 		mapa.put("tipoDocGastoAsociado", DDTipoDocumentoGastoAsociado.class);
 		mapa.put("motivoAmpliacionArras", DDMotivoAmpliacionArras.class);
+		mapa.put("estadoAdecuacionSareb", DDEstadoAdecucionSareb.class);
 		mapa.put("estadoFisicoActivoDND", DDValidaEstadoActivo.class);
 		mapa.put("identificadorReam", DDIdentificadorReam.class);
 		mapa.put("tipoRetencion", DDTipoRetencion.class);
+		mapa.put("estadoAdecuacionSareb", DDEstadoAdecucionSareb.class);
 		mapa.put("tiposAdmiteMascota", DDSiniSiNoIndiferente.class); 
-		mapa.put("tipoResponsable", DDResponsableDocumentacionCliente.class); 
 		mapa.put("estadosExpedienteBc", DDEstadoExpedienteBc.class); 
 		mapa.put("tipoResponsable", DDResponsableDocumentacionCliente.class);
 		mapa.put("tipoProcedenciaProducto", DDProcedenciaProducto.class);
 		mapa.put("categoriaComercializacion", DDCategoriaComercializacion.class);
 		mapa.put("tipoListaEmisiones", DDListaEmisiones.class);
 		mapa.put("motivoNecesidadArras", DDMotivoNecesidadArras.class);
+		mapa.put("tipoCorrectivoSareb", DDTipoCorrectivoSareb.class); 
+		mapa.put("tipoCuotaComunidad", DDTipoCuotaComunidad.class);
+		mapa.put("segmentacionSareb", DDSegmentoSareb.class);
 		
-
 		return Collections.unmodifiableMap(mapa);
 	}
 	

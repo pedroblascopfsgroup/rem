@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20201109
+--## FECHA_CREACION=20210521
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-11966
+--## INCIDENCIA_LINK=HREOS-13988
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade CCCS_CONFIG_CORREO_CONV_SAREB
@@ -36,16 +36,52 @@ DECLARE
     V_ID_PVC NUMBER(16);
     V_ID_ETP NUMBER(16);
     V_BOOLEAN NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-11966';
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-13988';
     
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
 
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      T_TIPO_DATA('ACCS','daniel.algaba@pfsgroup.es'),
-      T_TIPO_DATA('RECS','daniel.algaba@pfsgroup.es'),
-      T_TIPO_DATA('ALCS','daniel.algaba@pfsgroup.es')
+      T_TIPO_DATA('ACCS','rchicharro@haya.es'),
+      T_TIPO_DATA('RECS','rchicharro@haya.es'),
+      T_TIPO_DATA('ALCS','rchicharro@haya.es'),
+      
+      T_TIPO_DATA('ACCS','saragon@haya.es'),
+      T_TIPO_DATA('RECS','saragon@haya.es'),
+      T_TIPO_DATA('ALCS','saragon@haya.es'),
+      
+      T_TIPO_DATA('ACCS','lmartinga@haya.es'),
+      T_TIPO_DATA('RECS','lmartinga@haya.es'),
+      T_TIPO_DATA('ALCS','lmartinga@haya.es'),
+      
+      T_TIPO_DATA('ACCS','mruiz@haya.es'),
+      T_TIPO_DATA('RECS','mruiz@haya.es'),
+      T_TIPO_DATA('ALCS','mruiz@haya.es'),
+      
+      T_TIPO_DATA('ACCS','osuarez@haya.es'),
+      T_TIPO_DATA('RECS','osuarez@haya.es'),
+      T_TIPO_DATA('ALCS','osuarez@haya.es'),
+      
+      T_TIPO_DATA('ACCS','agimenez@haya.es'),
+      T_TIPO_DATA('RECS','agimenez@haya.es'),
+      T_TIPO_DATA('ALCS','agimenez@haya.es'),
+      
+      T_TIPO_DATA('ACCS','mdevivero@haya.es'),
+      T_TIPO_DATA('RECS','mdevivero@haya.es'),
+      T_TIPO_DATA('ALCS','mdevivero@haya.es'),
+      
+      T_TIPO_DATA('ACCS','mtribaldos@haya.es'),
+      T_TIPO_DATA('RECS','mtribaldos@haya.es'),
+      T_TIPO_DATA('ALCS','mtribaldos@haya.es'),
+      
+      T_TIPO_DATA('ACCS','mramirezh@haya.es'),
+      T_TIPO_DATA('RECS','mramirezh@haya.es'),
+      T_TIPO_DATA('ALCS','mramirezh@haya.es'),
+      
+      T_TIPO_DATA('ACCS','backup.rem@pfsgroup.es'),
+      T_TIPO_DATA('RECS','backup.rem@pfsgroup.es'),
+      T_TIPO_DATA('ALCS','backup.rem@pfsgroup.es')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

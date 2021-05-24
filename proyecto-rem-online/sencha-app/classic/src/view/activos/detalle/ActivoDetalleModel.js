@@ -3176,8 +3176,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'DDSiNo'}
-			},
-			autoLoad: true
+			}
 		},
 
 		comboDireccionComercial: {
@@ -3599,8 +3598,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoCorrectivoSareb'}
-			},
-			autoLoad: true
+			}
 		},
 		comboDDTipoCuotaComunidad: {
 			model: 'HreRem.model.ComboBase',
@@ -3608,8 +3606,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoCuotaComunidad'}
-			},
-			autoLoad: true
+			}
 		},
 		comboSegmetacionSareb: {
 			model: 'HreRem.model.ComboBase',
@@ -3617,8 +3614,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'segmentacionSareb'}
-			},
-			autoLoad: true
+			}
 		},
 		storeSituacionOcupacional: {
 			pageSize: $AC.getDefaultPageSize(),

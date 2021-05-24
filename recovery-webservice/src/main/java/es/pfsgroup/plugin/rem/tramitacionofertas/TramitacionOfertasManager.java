@@ -104,6 +104,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
@@ -111,6 +112,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.oferta.OfertaManager;
@@ -946,6 +948,14 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (!Checks.esNulo(cliente.getIdPersonaHaya())) {
 				compradorBusqueda.setIdPersonaHaya(new Long(cliente.getIdPersonaHaya()));
 			}
+			
+			if (!Checks.esNulo(compradorBusqueda.getIdCompradorUrsus())) {
+				compradorBusqueda.setIdCompradorUrsus(null);
+			}
+			
+			if (!Checks.esNulo(compradorBusqueda.getIdCompradorUrsusBh())) {
+				compradorBusqueda.setIdCompradorUrsusBh(null);
+			}
 
 			CompradorExpediente.CompradorExpedientePk pk = new CompradorExpediente.CompradorExpedientePk();
 			pk.setComprador(compradorBusqueda);
@@ -1062,6 +1072,14 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 					if (!Checks.esNulo(titularAdicional.getTipoPersona())) {
 						compradorBusquedaAdicional.setTipoPersona(titularAdicional.getTipoPersona());
+					}
+					
+					if (!Checks.esNulo(compradorBusquedaAdicional.getIdCompradorUrsus())) {
+						compradorBusquedaAdicional.setIdCompradorUrsus(null);
+					}
+					
+					if (!Checks.esNulo(compradorBusquedaAdicional.getIdCompradorUrsusBh())) {
+						compradorBusquedaAdicional.setIdCompradorUrsusBh(null);
 					}
 
 					// AGREGAR CHECKS DE TITULARES ADICIONALES
@@ -1361,7 +1379,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL,
 					usuarioGestorComercial.getUsername(), dto);
 
-		if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+		if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
 			if (!Checks.esNulo(usuarioGestorReserva))
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_RESERVA_CAJAMAR,
 						usuarioGestorReserva.getUsername(), dto);
@@ -1377,6 +1395,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (!Checks.esNulo(usuarioSupervisorFormalizacion))
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION,
 						usuarioSupervisorFormalizacion.getUsername(), dto);
+			if (DDTipoTituloActivo.tipoTituloNoJudicial.equals(activo.getTipoTitulo().getCodigo()) && 
+					(DDSubtipoTituloActivo.subtipoNotarialCompra.equals(activo.getSubtipoTitulo().getCodigo()) ||
+					 DDSubtipoTituloActivo.subtipoNotarialDacion.equals(activo.getSubtipoTitulo().getCodigo()))) {				
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTORIA_ADMISION, 
+						"diagonal01", dto);
+			}
 		}
 		
 		if(activo != null) {

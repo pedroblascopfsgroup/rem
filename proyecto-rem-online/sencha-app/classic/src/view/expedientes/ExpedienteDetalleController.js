@@ -847,6 +847,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					],
 					title: wizardTitle,
 					expediente: expediente,
+					visualizar: true,
 					storeProblemasVenta: storeProblemasVenta,
 					idComprador: idCliente,
 					modoEdicion: edicion,

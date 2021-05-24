@@ -110,7 +110,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							        }
 							},
 				        	defaultType: 'textfieldbase',
-							rowspan: 3,
+							rowspan: 3,						
 							title: 'Accesibilidad',
 							items: [
 						        {
@@ -191,6 +191,132 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	bind: '{situacionPosesoria.fechaAccesoAntiocupa}',
 					            	labelWidth: 80,
 					            	width: 200
+						        },
+						        {
+						        	xtype: 'comboboxfieldbase',						        	
+						        	fieldLabel:  HreRem.i18n('fieldlabel.situacion.posesoria.accesibilidad.alarma'),
+						        	bind: {
+						        		readOnly: '{!isGestorSeguridad}',
+					            		store: '{comboSiNoRem}',
+					            		value: '{situacionPosesoria.tieneAlarma}'
+					            	},
+					            	labelWidth: 80,
+					            	width: 180,
+					            	listeners: {
+					            		change: function(combo, value) {
+					            			var me = this;
+					            			var fechaInstalacion = me.up('formBase').down('[reference=datefielInstalaciondAlarma]').value;
+					            			
+					            			if(value=='1') {
+					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').allowBlank = false;
+					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').setDisabled(false);
+					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').validate();
+					            								      				
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').setValue("");
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').setDisabled(true);
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').validate();
+					            				
+					            			} else {
+					            				if(fechaInstalacion != null || fechaInstalacion != undefined) {
+					            					me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').allowBlank = false;
+						            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').setDisabled(false);
+						            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').validate();
+						            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').setMinValue(me.up('formBase').down('[reference=datefielInstalaciondAlarma]').value);	
+					            				}
+					            				
+					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').setDisabled(true);
+					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').validate();
+					            			}
+					            		}
+					            	}
+						        	},{
+						        		xtype:'datefieldbase',
+							        	reference: 'datefielInstalaciondAlarma',
+							        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria.accesibilidad.fecha.instalacion.alarma'),
+							        	disabled:true,
+							        	bind: {
+								        	value:'{situacionPosesoria.fechaInstalacionAlarma}',
+								        	readOnly: '{!isGestorSeguridad}'
+							        	},
+						            	labelWidth: 80,
+						            	width: 200
+						        	},{
+						        		colspan:2,
+						        		xtype:'datefieldbase',
+							        	reference: 'datefielDesinstalaciondAlarma',
+							        	disabled:true,
+							        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria.accesibilidad.fecha.desinstalacion.alarma'),							        
+							        	bind:{
+							        		value: '{situacionPosesoria.fechaDesinstalacionAlarma}',
+							        		readOnly: '{!isGestorSeguridad}'
+							        	},
+						            	labelWidth: 80,
+						            	width: 200
+						        	},{
+						        	
+						        		xtype: 'comboboxfieldbase',						        	
+						        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria.accesibilidad.vigilancia'),
+					            	labelWidth: 80,
+					            	width: 180,
+						        	bind: {
+						        		readOnly: '{!isGestorSeguridad}',
+					            		store: '{comboSiNoRem}',
+					            		value: '{situacionPosesoria.tieneVigilancia}'
+					            		,listeners: {
+					            		change: function(combo, value) {
+					            			var me = this;
+					            			var fechaInstalacion = me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').value;
+
+					            			if(value=='1') {
+					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').allowBlank = false;
+					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').setDisabled(false);
+					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').validate();
+					            				
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').setValue("");
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').setDisabled(true);
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').validate();
+					            				
+					            			} else {
+					            				if(fechaInstalacion != null || fechaInstalacion != undefined) {
+					            					me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').allowBlank = false;
+						            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').setDisabled(false);
+						            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').validate();
+						            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').setMinValue(me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').value);						
+					            				}
+					            				
+					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').setDisabled(true);
+					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').validate();
+					            			}
+					            		}
+					            	}
+					            	}
+						       		},{
+						       			xtype:'datefieldbase',
+							        	reference: 'datefielInstalaciondVigilancia',
+							        	disabled:true,
+							        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria.accesibilidad.fecha.instalacion.vigilancia'),						        	
+							        	bind:{
+							        		value:'{situacionPosesoria.fechaInstalacionVigilancia}',
+							        		readOnly: '{!isGestorSeguridad}'
+							        	},							  
+						            	labelWidth: 80,
+						            	width: 200
+						        },{
+						        	colspan:2,
+						        	xtype:'datefieldbase',
+							        	reference: 'datefielDesinstalaciondVigilancia',
+							        	disabled:true,
+							        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria.accesibilidad.fecha.desinstalacion.vigilancia'),
+							        	bind: {
+							        		value:'{situacionPosesoria.fechaDesinstalacionVigilancia}',
+							        		readOnly: '{!isGestorSeguridad}'
+							        	},							      
+						            	labelWidth: 80,
+						            	width: 200
 						        }
 							]
 						},
@@ -223,7 +349,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							fieldLabel: HreRem.i18n('filedlabel.tiene.ok.tecnico'),
 							bind: {
 								value: '{situacionPosesoria.tieneOkTecnico}',
-								readOnly: '{!activo.aplicaGestion}'
+								readOnly: '{noEditableSareb}'
 							}
 						},
 		                {

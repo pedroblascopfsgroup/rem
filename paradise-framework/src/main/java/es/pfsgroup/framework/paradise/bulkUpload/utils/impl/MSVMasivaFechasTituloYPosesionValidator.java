@@ -160,7 +160,7 @@ public class MSVMasivaFechasTituloYPosesionValidator extends MSVExcelValidatorAb
 						mapaErrores.get(messageServices.getMessage(ACTIVO_NO_ADJUDICACION_NO_FAMILIAR)).add(fila);
 						esCorrecto = false;
 					}
-					if(fechaPos != null && !particularValidator.esSubCarterasCerberusAppleDivarian(numActivo)) {
+					if(fechaPos != null && !particularValidator.esSubCarterasCerberusAppleDivarian(numActivo) && !particularValidator.esActivoSareb(numActivo)) {
 						mapaErrores.get(messageServices.getMessage(FECHA_POSESION_SUBCARTERA_ERRONEA)).add(fila);
 						esCorrecto = false;
 					}

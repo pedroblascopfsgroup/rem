@@ -159,19 +159,95 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 						{				        	
 							xtype: 'comboboxfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.venta.sobre.plano'),
+							readOnly: true,
 					        bind: {
 				            	store: '{comboSiNoBoolean}',
-				            	value:'{comercial.ventaSobrePlano}',
-				            	readOnly: true  //'{!esAgrupacionObraNueva}'
+				            	value:'{comercial.ventaSobrePlano}'
 				           	}
+						},
+						{
+							xtype: 'currencyfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.importe.comunidad.mensual.sareb'),
+							reference: 'comunidadMensualSareb',
+							bind : {
+				        		hidden: '{!isCarteraSareb}',
+				        		readOnly: '{!noEditableUASSoloSuper}',
+				        		value: '{comercial.importeComunidadMensualSareb}'
+							}						
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.siniestro.sareb'),
+							reference: 'siniestroSarebRef',
+							bind : {
+				        		store: '{comboSiNoDict}',
+				        		hidden: '{!isCarteraSareb}',
+				        		readOnly: '{!noEditableUASSoloSuper}',
+				        		value: '{comercial.siniestroSareb}'
+							}						
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.tipo.correctivo.sareb'),
+							reference: 'tipoCorrectivoSarebRef',
+							bind : {
+				        		store: '{comboDDTipoCorrectivoSareb}',
+				        		hidden: '{!isCarteraSareb}',
+				        		readOnly: '{!noEditableUASSoloSuper}',
+				        		value: '{comercial.tipoCorrectivoSareb}'
+							}						
+						},
+						{
+							xtype: 'datefieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.fecha.fin.correctivo.sareb'),
+							reference: 'fechaFinCorrectivoSarebRef',
+							bind : {
+				        		hidden: '{!isCarteraSareb}',
+				        		readOnly: '{!noEditableUASSoloSuper}',
+				        		value: '{comercial.fechaFinCorrectivoSareb}'
+							}						
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.tipo.cuota.comunidad'),
+							reference: 'tipoCuotaComunidadRef',
+							bind : {
+				        		store: '{comboDDTipoCuotaComunidad}',
+				        		hidden: '{!isCarteraSareb}',
+				        		readOnly: '{!noEditableUASSoloSuper}',
+				        		value: '{comercial.tipoCuotaComunidad}'
+							}						
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.ggaa.sareb'),
+							reference: 'ggaaSarebRef',
+							readOnly: true,
+			        		editable: false,
+							bind : {
+				        		store: '{comboSiNoDict}',
+				        		hidden: '{!isCarteraSareb}',
+				        		value: '{comercial.ggaaSareb}'
+							}						
+						},{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.segmentacion.sareb'),
+							reference: 'segmentacionSarebRef',
+							readOnly: true,
+			        		editable: false,
+							bind : {
+				        		store: '{comboSegmetacionSareb}',
+				        		hidden: '{!isCarteraSareb}',
+				        		value: '{comercial.segmentacionSareb}'
+							}						
 						},{
 							xtype:'comboboxfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.combo.obra.nueva.comercializacion'),					
 							reference:'activoObraNuevaComercializacion',
 					        bind: {
 				            	store: '{comboSiNoDict}',
-				            	value:'{comercial.activoObraNuevaComercializacion}',
-				            	readOnly: '{!esPerfilSuperYSupercomercial}' 
+				            	readOnly: '{!esPerfilSuperYSupercomercial}',
+				            	value:'{comercial.activoObraNuevaComercializacion}'
 				           	}
 						},{
 							xtype: 'datefieldbase',
@@ -200,9 +276,8 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 			        	editable: true,
 			        	bind : {
 						      store : '{comboMotivoAutorizacionTramitacion}',
-						      value : '{comercial.motivoAutorizacionTramitacionCodigo}',
-						      rawValue : '{comercial.motivoAutorizacionTramitacionDescripcion}'
-						      
+						      rawValue : '{comercial.motivoAutorizacionTramitacionDescripcion}',
+						      value : '{comercial.motivoAutorizacionTramitacionCodigo}'
 			        	}
 					},
 					{

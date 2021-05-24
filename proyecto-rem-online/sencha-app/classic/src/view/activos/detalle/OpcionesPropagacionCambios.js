@@ -21,6 +21,10 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
     
     targetGrid: null,
     
+    allData:null,
+    
+    auxDataPropagable: null,
+    
     listeners: {
     	
 		show: function() {			

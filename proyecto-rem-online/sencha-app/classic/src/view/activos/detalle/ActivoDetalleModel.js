@@ -778,6 +778,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 return false;
 		 },
 		 
+		 isCarteraSareb: function(get){
+				 var isCarteraSareb = get('activo.isCarteraSareb');
+				 if(isCarteraSareb){
+					 return true;
+				 }
+				 return false;
+		 },
+		 
 		 isCarteraDivarian: function(get){
 			 var isDivarian = get('activo.isCarteraDivarian');
 			 if(isDivarian){
@@ -910,6 +918,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 	    esSuperUsuario: function(get){
 	    		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]);
+	    },
+	    
+	    esSuperUsuarioAndNoUA: function(get){
+	    	var UA = false;
+	    	if (get('activo.unidadAlquilable') != undefined) {
+	    		UA = get('activo.unidadAlquilable');
+	    	}
+    		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]) && !UA;
+	    },
+	    
+	    esSuperUsuarioCalidadDatoAndNoUA: function(get){
+	    	var UA = false;
+	    	if (get('activo.unidadAlquilable') != undefined) {
+	    		UA = get('activo.unidadAlquilable');
+	    	}
+    		return ($AU.userIsRol(CONST.PERFILES["HAYASUPER"]) || $AU.userIsRol(CONST.PERFILES["HAYASUPCAL"])) && !UA;
 	    },
 
     	esOtrosotivoAutorizacionTramitacion: function(get){
@@ -1594,6 +1618,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		},
 		
 		isSubcarteraCerberus: function(get) {
+	    	var codigoSubcartera = get('activo.subcarteraCodigo');
+	    	var isSareb = get('activo.isCarteraSareb');
+	    	if (CONST.SUBCARTERA['APPLEINMOBILIARIO'] === codigoSubcartera
+	    		|| CONST.SUBCARTERA['DIVARIANARROW'] === codigoSubcartera
+	    		|| CONST.SUBCARTERA['DIVARIANREMAINING'] === codigoSubcartera 
+	    		|| isSareb){
+	    	return true;
+	    	}
+	    	return false;
+	    },
+	    
+		isSubcarteraCerberusOrSareb: function(get) {
 	    	var codigoSubcartera = get('activo.subcarteraCodigo')
 	    	if (CONST.SUBCARTERA['APPLEINMOBILIARIO'] === codigoSubcartera
 	    		|| CONST.SUBCARTERA['DIVARIANARROW'] === codigoSubcartera
@@ -1612,6 +1648,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			return true;
 		},
 		
+		noEditableUASSoloSuper: function(get) {
+			var me = this; 
+			var esUA = false;
+			if(me.get('activo.unidadAlquilable') != undefined){
+				esUA = me.get('activo.unidadAlquilable');
+			}
+			
+			return esUA === false && $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+		},
+		
+		noEditableSareb: function(get) {
+			var me = this;
+			var isCarteraSareb = get('activo.isCarteraSareb');
+			
+			if(isCarteraSareb != true){
+				return false;
+			}
+			return true;
+		},
 		esEditablePorcentajeConstruccion: function(get){
 			 var isGestorActivos = $AU.userIsRol('HAYAGESACT');
 			 var isUnidadAlquilable = false;
@@ -1651,6 +1706,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboMunicipio',
 					extraParams: {codigoProvincia: '{activo.provinciaCodigo}'}
+				}
+    		},
+    		
+    		comboProvinciaOE: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'provincias'}
+				}   	
+	    	},
+	    	
+    		comboMunicipioOE: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboMunicipio',
+					extraParams: {codigoProvincia: '{activo.provinciaCodigoOE}'}
 				}
     		},
     		
@@ -2220,8 +2293,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {codCartera: '{activo.entidadPropietariaCodigo}',codTipoActivo: '{activo.tipoActivoCodigo}'}
 				}
     		},
-    		//
-	    	    		
+
+    		
+    		comboSubtipoActivoOE: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboSubtipoActivo',
+					extraParams: {codigoTipoActivo: '{activo.tipoActivoCodigoOE}'}
+				}
+    		},
+
     		comboSubtipoActivoAdmision: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -3094,8 +3176,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'DDSiNo'}
-			},
-			autoLoad: true
+			}
 		},
 
 		comboDireccionComercial: {
@@ -3509,6 +3590,30 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposAdmiteMascota'}
+			}
+		},		
+		comboDDTipoCorrectivoSareb: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoCorrectivoSareb'}
+			}
+		},
+		comboDDTipoCuotaComunidad: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoCuotaComunidad'}
+			}
+		},
+		comboSegmetacionSareb: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'segmentacionSareb'}
 			}
 		},
 		storeSituacionOcupacional: {

@@ -470,7 +470,8 @@ public class ActivoPropagacionFieldTabMap {
 					"codigoMotivoCalificacionNegativa",
 					"codigoEstadoMotivoCalificacionNegativa",
 					"idProcesoOrigen",
-					"sociedadDePagoAnterior"
+					"sociedadDePagoAnterior",
+					"fechaPosesionNoJudicial"
     			));
 
     	pmap.put(TAB_INFO_ADMINISTRATIVA,

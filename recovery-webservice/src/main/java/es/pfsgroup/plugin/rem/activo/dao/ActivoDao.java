@@ -388,6 +388,11 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
 	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras);
 
+
+	public Long getCarga(String idBieCarRecovery);
+
+	public void actualizaBieCarIdRecovery(Long idBieCar, Long bieCarIdRecovery);
+
 	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos);
 
 	public List<ActivosAlquilados> getListActivosAlquiladosByIdActivos(List<Long> idActivos);

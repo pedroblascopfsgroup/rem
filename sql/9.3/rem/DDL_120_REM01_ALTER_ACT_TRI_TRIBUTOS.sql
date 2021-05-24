@@ -1,74 +1,97 @@
 --/*
---##########################################
---## AUTOR=KEVIN HONORATO 
---## FECHA_CREACION=20201123
---## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12123
+--#########################################
+--## AUTOR=KEVIN HONORATO
+--## FECHA_CREACION=20201119
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=HREOS-12216
 --## PRODUCTO=NO
---## Finalidad: Añadir nueva columna NUM_EXPEDIENTE en la tabla ACT_TRI_TRIBUTOS.
---##           
---## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--##
+--## Finalidad: - Creación columna auxiliar para la inserción de datos.
+--##            - Vaciar el campo para su modificación.
+--##            - Guardar los datos en la columna auxiliar.
+--## 			- Modificar el campo.
+--##            - Devolver datos al campo modificado.
+--##            - Borrar columna auxiliar.
+--##
+--## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
---##########################################
+--##        0.1 Versión inicial HREOS-11024
+--##        0.2 Add columnas BBVA_COD_INMUEBLE, BBVA_BIEN_HOST, BBVA_BIEN_PRAR HREOS-11875
+--##        0.2 Modify columnas BBVA_ID_PROCESO_ORIGEN and BBVA_CDPEN HREOS-12216
+--#########################################
 --*/
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
-SET SERVEROUTPUT ON; 
+SET SERVEROUTPUT ON;
 SET DEFINE OFF;
-
 
 DECLARE
 
-    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
-    V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquema
-    V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master
-    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
-    V_NUM_SEQ NUMBER(16); -- Vble. para validar la existencia de una secuencia.  
-    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
-    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+V_MSQL VARCHAR2(32000 CHAR);
+V_ESQUEMA VARCHAR2(20 CHAR) := '#ESQUEMA#';
+V_ESQUEMA_M VARCHAR2(20 CHAR) := '#ESQUEMA_MASTER#';       
+V_TABLA VARCHAR2(40 CHAR) := 'ACT_TRI_TRIBUTOS';
+V_COLUMN_NAME VARCHAR2(50):= 'NUM_EXPEDIENTE';
+V_COLUMN_NAME_AUX VARCHAR2(50):= 'AUX_NUM_EXPEDIENTE'; 
+V_COMMENT_COLUMN VARCHAR2(500 CHAR):= 'Numero de expediente'; 
+V_COMMENT_COLUMN_AUX VARCHAR2(500 CHAR):= 'Columna auxiliar NUM_EXPEDIENTE'; 
+V_NUM_TABLAS NUMBER(16);
 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_TRI_TRIBUTOS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref
-    V_COLUMN_NAME VARCHAR2(50):= 'NUM_EXPEDIENTE'; -- Vble. para el nombre de las columnas.
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Numero de expediente.'; -- Vble. para los comentarios de las tablas
-    
 BEGIN
-	-- Comprobar si existe la columna NUM_EXPEDIENTE.
-	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME = '''||V_COLUMN_NAME||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+
+-- Comprobar si existe la columna NUM_EXPEDIENTE.
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME = '''||V_COLUMN_NAME||''' AND DATA_TYPE != ''VARCHAR2'' AND TABLE_NAME = '''||V_TABLA||''' AND OWNER = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 
 	IF V_NUM_TABLAS > 0 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_COLUMN_NAME||'... Ya existe. Se modifica.');
-        EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' MODIFY ('||V_COLUMN_NAME||' VARCHAR2(20 CHAR))';
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_COLUMN_NAME||' IS '''||V_COMMENT_TABLE||'''';
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_COLUMN_NAME||'... Modificada');
-	ELSE
-		-- Se crea la columna y se le agrega un comentario.
-		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ('||V_COLUMN_NAME||' VARCHAR2(20 CHAR))';
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_COLUMN_NAME||' IS '''||V_COMMENT_TABLE||'''';
-		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_COLUMN_NAME||'... Creada');
+
+		-- Creación columna auxiliar
+
+		 	DBMS_OUTPUT.PUT_LINE('[INICIO] ADD COLUMN AUX_NUM_EXPEDIENTE');
+
+		    EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD '||V_COLUMN_NAME_AUX||' VARCHAR2(20 CHAR)';    
+
+		    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.'||V_COLUMN_NAME_AUX||' IS '''||V_COMMENT_COLUMN_AUX||'''';	
+		    DBMS_OUTPUT.PUT_LINE('[INFO] COLUMNA '||V_COLUMN_NAME_AUX||' AÑADIDA');
+
+		-- Guardar los datos en la columna auxiliar
+
+			EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET '||V_COLUMN_NAME_AUX||' = '||V_COLUMN_NAME||'';
+			DBMS_OUTPUT.PUT_LINE('  [INFO] GUARDADAS '||SQL%ROWCOUNT||' FILAS EN '||V_COLUMN_NAME_AUX||''); 
+
+		-- Vaciar el campo para su modificación
+
+			EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET '||V_COLUMN_NAME||' = NULL';
+			DBMS_OUTPUT.PUT_LINE('[INFO] COLUMNA '||V_COLUMN_NAME_AUX||' VACIA');
+
+		-- Modificar el campo
+
+			EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' MODIFY ('||V_COLUMN_NAME||' VARCHAR2(20 CHAR))';
+			EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.'||V_COLUMN_NAME||' IS '''||V_COMMENT_COLUMN||'''';
+			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||'.'||V_COLUMN_NAME||'... MODIFICADA');
+
+		-- Devolver datos al campo modificado
+
+			EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET '||V_COLUMN_NAME||' = '||V_COLUMN_NAME_AUX||'';
+			DBMS_OUTPUT.PUT_LINE('[INFO] GUARDADAS '||SQL%ROWCOUNT||' FILAS EN '||V_COLUMN_NAME||''); 
+
+		-- Borrar columna auxiliar
+
+			EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' DROP COLUMN '||V_COLUMN_NAME_AUX||')'; --##        0.2 Add columnas BBVA_COD_INMUEBLE, BBVA_BIEN_HOST, BBVA_BIEN_PRAR HREOS-11875
+			DBMS_OUTPUT.PUT_LINE('[INFO] COLUMNA '||V_COLUMN_NAME_AUX||' BORRADA');
 	END IF;
-	
+
 	COMMIT;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Fin');
 
-	EXCEPTION
-	     WHEN OTHERS THEN
-	          err_num := SQLCODE;
-	          err_msg := SQLERRM;
-	
-	          DBMS_OUTPUT.PUT_LINE('KO no modificada');
-	          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
-	          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
-	          DBMS_OUTPUT.put_line(err_msg);
-	
-	          ROLLBACK;
-	          RAISE;          
-
+EXCEPTION
+    WHEN OTHERS THEN
+	DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+	DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+	DBMS_OUTPUT.put_line(SQLERRM);
+	ROLLBACK;
+	RAISE;
 END;
-
 /
-
-EXIT
+EXIT;

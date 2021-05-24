@@ -105,6 +105,9 @@ public class ActivoCargas implements Serializable, Auditable {
     @Column(name="CRG_OCULTO_CARGA_MASIVA")
     private Boolean ocultoPorMasivoEsparta;
     
+    @Column(name="CRG_RECOVERY_ID")
+    private Long cargaRecoveryId;
+    
 	@Version   
 	private Long version;
 	
@@ -246,6 +249,13 @@ public class ActivoCargas implements Serializable, Auditable {
 	public void setOcultoPorMasivoEsparta(Boolean ocultoPorMasivoEsparta) {
 		this.ocultoPorMasivoEsparta = ocultoPorMasivoEsparta;
 	}
-	
+
+	public Long getCargaRecoveryId() {
+		return cargaRecoveryId;
+	}
+
+	public void setCargaRecoveryId(Long cargaRecoveryId) {
+		this.cargaRecoveryId = cargaRecoveryId;
+	}
 	
 }

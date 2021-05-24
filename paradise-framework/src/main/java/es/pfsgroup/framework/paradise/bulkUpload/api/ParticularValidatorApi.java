@@ -1226,6 +1226,12 @@ public interface ParticularValidatorApi {
 	
 	String getValidacionCampoCDC(String codCampo);
 	
+	Boolean existeCampo(String numCampo);
+
+	Boolean perteneceADiccionarioSubtipoRegistro(String subtipo);
+
+	Boolean existeIdentificadorSubregistro(String subtipo, String identificador);
+
 	public boolean incluidoActivoIdOrigenBBVA (String numActivo);
 
 	Boolean estaPerimetroHaya(String activoId);
@@ -1294,9 +1300,7 @@ public interface ParticularValidatorApi {
 
 	Boolean existeEmisor(String emisorNIF);
 
-
 	Boolean relacionPoblacionLocalidad(String columnaPoblacion, String columnaMunicipio);
-
 
 	Boolean existeMunicipioByDescripcion(String columnaMunicipio);
 
@@ -1339,6 +1343,10 @@ public interface ParticularValidatorApi {
 	Boolean existePais(String pais);
 
 	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
+	
+	Boolean existeDiccionarioByTipoCampo(String codigoCampo, String valorCampo);
+	
+	String getCodigoTipoDato(String codigoCampo);
 
 	Boolean gastoRepetido(String factura, String fechaEmision, String nifEmisor, String nifPropietario);
 

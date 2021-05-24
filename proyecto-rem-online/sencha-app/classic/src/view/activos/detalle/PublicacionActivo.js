@@ -172,11 +172,14 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 		}
 		
     	var items = [];
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informecomercialactivo', ocultarBotonesEdicion: ocultarInformecomercialactivo})}, ['TAB_INFO_COMERCIAL_PUBLICACION']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datospublicacionactivo', ocultarBotonesEdicion: ocultarDatospublicacionactivo})}, ['TAB_DATOS_PUBLICACION']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fasepublicacionactivo', ocultarBotonesEdicion: ocultarDatosFasePublicacion})}, ['TAB_ACTIVO_PUBLICACION']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'calidaddatopublicacionactivo', ocultarBotonesEdicion: ocultarDatosFasePublicacion})}, ['TAB_ACTIVO_PUBLICACION']);
-
+    	if(!$AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])) {
+			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informecomercialactivo', ocultarBotonesEdicion: ocultarInformecomercialactivo})}, ['TAB_INFO_COMERCIAL_PUBLICACION']);
+			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datospublicacionactivo', ocultarBotonesEdicion: ocultarDatospublicacionactivo})}, ['TAB_DATOS_PUBLICACION']);
+			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fasepublicacionactivo', ocultarBotonesEdicion: ocultarDatosFasePublicacion})}, ['TAB_ACTIVO_PUBLICACION']);
+			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'calidaddatopublicacionactivo', ocultarBotonesEdicion: ocultarDatosFasePublicacion})}, ['TAB_ACTIVO_PUBLICACION']);
+    	}else{
+    		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datospublicacionactivo', ocultarBotonesEdicion: true})}, ['TAB_DATOS_PUBLICACION']);
+	    }
 		
 		me.addPlugin({ptype: 'lazyitems', items: items});
 		me.callParent();

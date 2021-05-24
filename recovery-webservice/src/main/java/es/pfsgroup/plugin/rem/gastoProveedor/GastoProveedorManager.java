@@ -71,6 +71,7 @@ import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoGenerico;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
@@ -1525,8 +1526,19 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (Checks.esNulo(activo)) {
 				throw new JsonViewerException("Este activo no existe");
 			}
+
+			
+			Filter filtroSareb = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", numActivo);
+			ActivoSareb activoSareb  = genericDao.get(ActivoSareb.class, filtroSareb);
+			
+			
+			if (activoSareb != null && activoSareb.getReoContabilizado() != null && activoSareb.getReoContabilizado().getCodigo().equals(DDSinSiNo.CODIGO_NO)) {
+				throw new JsonViewerException("No se puede generar un gasto para un activo no contabilizado");
+			}
+			
 			GastoLineaDetalleEntidad gastoActivo = null;
 			
+
 			Filter filtroA = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", numActivo);
 			Activo act = genericDao.get(Activo.class,filtroA);
 			if(!Checks.esNulo(act)) {
@@ -2992,9 +3004,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoGestion.setUsuarioEstadoAutorizacionHaya(genericAdapter.getUsuarioLogado());
 		gastoGestion.setFechaEstadoAutorizacionHaya(new Date());
 		gastoGestion.setMotivoRechazoAutorizacionHaya(null);
+		gastoGestion.getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+		gastoGestion.getAuditoria().setFechaModificar(new Date());
 		gasto.setGastoGestion(gastoGestion);
 		updaterStateApi.updaterStates(gasto, DDEstadoGasto.AUTORIZADO_ADMINISTRACION);
 		gasto.setProvision(null);
+		gasto.getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+		gasto.getAuditoria().setFechaModificar(new Date());
 		genericDao.update(GastoProveedor.class, gasto);
 
 		return true;
@@ -3682,15 +3698,19 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			GastoRefacturable gastoRefacturado = genericDao.get(GastoRefacturable.class, genericDao.createFilter(FilterType.EQUALS, "idGastoProveedorRefacturado", gasto.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 			if (!Checks.esNulo(cartera) 
-					&& (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()))) {
+					&& (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo())
+						|| DDCartera.CODIGO_CARTERA_BBVA.equals(cartera.getCodigo()))) {
 				if(DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())) {
 					if(!(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(estadoGasto)
 						||	DDEstadoGasto.AUTORIZADO_PROPIETARIO.equals(estadoGasto)
 						||	DDEstadoGasto.PAGADO.equals(estadoGasto)
 						||	DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(estadoGasto)  
-						||	DDEstadoGasto.CONTABILIZADO.equals(estadoGasto))
-						&& Checks.esNulo(gastoPadre) && Checks.esNulo(gastoRefacturado)) {
-						isPosibleRefacturable = true;
+						||	DDEstadoGasto.CONTABILIZADO.equals(estadoGasto))) {
+						
+						if(DDCartera.CODIGO_CARTERA_BBVA.equals(cartera.getCodigo()) 
+							|| (Checks.esNulo(gastoPadre) && Checks.esNulo(gastoRefacturado)))
+							isPosibleRefacturable = true;
+						
 					}
 				}
 			}

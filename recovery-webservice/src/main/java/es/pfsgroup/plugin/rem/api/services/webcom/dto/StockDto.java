@@ -310,6 +310,24 @@ public class StockDto implements WebcomRESTDto{
 	
 	@WebcomRequired
 	private StringDataType motivoGestionComercial;
+
+    @WebcomRequired
+    private BooleanDataType spsAlarma;
+
+	@WebcomRequired
+	private DateDataType spsFechaInstalaAlarma;
+	
+	@WebcomRequired
+	private DateDataType spsFechaDesinstalaAlarma;
+	
+	@WebcomRequired
+	private BooleanDataType spsVigilancia;
+	
+	@WebcomRequired
+	private DateDataType spsFechaInstalaVigilancia;
+	
+	@WebcomRequired
+	private DateDataType spsFechaDesinstalaVigilancia;
 	
 	@WebcomRequired
 	private BooleanDataType onvComercializacion;
@@ -1035,6 +1053,42 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setMotivoGestionComercial(StringDataType motivoGestionComercial) {
 		this.motivoGestionComercial = motivoGestionComercial;
+	}
+	public BooleanDataType getSpsAlarma() {
+		return spsAlarma;
+	}
+	public void setSpsAlarma(BooleanDataType spsAlarma) {
+		this.spsAlarma = spsAlarma;
+	}
+	public DateDataType getSpsFechaInstalaAlarma() {
+		return spsFechaInstalaAlarma;
+	}
+	public void setSpsFechaInstalaAlarma(DateDataType spsFechaInstalaAlarma) {
+		this.spsFechaInstalaAlarma = spsFechaInstalaAlarma;
+	}
+	public DateDataType getSpsFechaDesinstalaAlarma() {
+		return spsFechaDesinstalaAlarma;
+	}
+	public void setSpsFechaDesinstalaAlarma(DateDataType spsFechaDesinstalaAlarma) {
+		this.spsFechaDesinstalaAlarma = spsFechaDesinstalaAlarma;
+	}
+	public BooleanDataType getSpsVigilancia() {
+		return spsVigilancia;
+	}
+	public void setSpsVigilancia(BooleanDataType spsVigilancia) {
+		this.spsVigilancia = spsVigilancia;
+	}
+	public DateDataType getSpsFechaInstalaVigilancia() {
+		return spsFechaInstalaVigilancia;
+	}
+	public void setSpsFechaInstalaVigilancia(DateDataType spsFechaInstalaVigilancia) {
+		this.spsFechaInstalaVigilancia = spsFechaInstalaVigilancia;
+	}
+	public DateDataType getSpsFechaDesinstalaVigilancia() {
+		return spsFechaDesinstalaVigilancia;
+	}
+	public void setSpsFechaDesinstalaVigilancia(DateDataType spsFechaDesinstalaVigilancia) {
+		this.spsFechaDesinstalaVigilancia = spsFechaDesinstalaVigilancia;
 	}
 	public BooleanDataType getOnvComercializacion() {
 		return onvComercializacion;

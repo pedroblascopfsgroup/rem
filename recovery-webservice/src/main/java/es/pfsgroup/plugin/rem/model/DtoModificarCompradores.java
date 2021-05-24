@@ -161,8 +161,9 @@ public class DtoModificarCompradores{
 	
 	private String numeroClienteUrsusBhConyuge;
 	
+	private boolean visualizar;
 	
-
+	
 	public Long getId() {
 		return id;
 	}
@@ -784,6 +785,14 @@ public class DtoModificarCompradores{
 
 	public void setNumeroClienteUrsusBhConyuge(String numeroClienteUrsusBhConyuge) {
 		this.numeroClienteUrsusBhConyuge = numeroClienteUrsusBhConyuge;
+	}
+
+	public boolean isVisualizar() {
+		return visualizar;
+	}
+
+	public void setVisualizar(boolean visualizar) {
+		this.visualizar = visualizar;
 	}
 
 	

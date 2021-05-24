@@ -29,6 +29,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	public static final String COD_MEDIADOR = "04";
 	public static final String COD_FUERZA_VENTA_DIRECTA="18";
+	public static final String COD_DD_SRE_TASACION = "TASACION";
+	public static final String COD_DD_SRE_CARGA = "CARGA";
 	
 	public static final String DD_TCO_VENTA = "01";
 	public static final String DD_TCO_ALQUILER="03";
@@ -1870,7 +1872,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ${master.schema}.USU_USUARIOS WHERE"
-				+ "		 USU_USERNAME = '" + username + "'");
+				+ "		 USU_USERNAME = '" + username + "' AND BORRADO = 0");
 
 		return !"0".equals(resultado);
 	}
@@ -5639,15 +5641,12 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String queryForGetIds = "SELECT " + 
 				"TBJ.DD_TTR_ID,   " + 
 				"TBJ.DD_STR_ID,   " + 
-				"ACT.DD_CRA_ID,   " +
-				"ACT.DD_SCR_ID,   " +
-				"pvc.pve_id   " +
+				"ACT.DD_CRA_ID   " + 
 				"FROM ACT_TBJ_TRABAJO TBJ   " + 
 				"INNER JOIN ACT_TBJ ACTTBJ ON TBJ.TBJ_ID = ACTTBJ.TBJ_ID   " + 
 				"INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = ACTTBJ.ACT_ID   " + 
-				"INNER JOIN act_pvc_proveedor_contacto PVC on tbj.pvc_id = pvc.pvc_id " + 
-				"WHERE TBJ.TBJ_NUM_TRABAJO = " + numTrabajo + " "+
-				"GROUP BY TBJ.DD_TTR_ID, TBJ.DD_STR_ID, ACT.DD_CRA_ID, pvc.pve_id, act.dd_Scr_id";
+				"  WHERE TBJ.TBJ_NUM_TRABAJO = " + numTrabajo
+				+" GROUP BY TBJ.DD_TTR_ID, TBJ.DD_STR_ID, ACT.DD_CRA_ID";
 		Object [] resultSet = rawDao.getExecuteSQLArray(queryForGetIds);
 		
 		if ( resultSet != null ) {
@@ -5656,42 +5655,61 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			if ( tarifaId != null) {
 				 query = "SELECT COUNT(1) " + 
 							"FROM ACT_CFT_CONFIG_TARIFA CONFIG_TARIFA " + 
-							"WHERE DD_TTR_ID   = "   + resultSet[0]
-							+ " AND DD_STR_ID   = "    + resultSet[1]
-							+ " AND DD_CRA_ID   = "    + resultSet[2] 
-							+ " AND DD_SCR_ID   = "    + resultSet[3] 
-						    + " AND PVE_ID   = "    + resultSet[4] 
+							//"WHERE  DD_TTR_ID   = "   + resultSet[0]
+							"WHERE DD_CRA_ID   = "    + resultSet[2] 
 							+ " AND DD_TTF_ID   = "	  + tarifaId;
 					String resultado = rawDao.getExecuteSQL(query);
-					
-				if("0".equals(resultado)) {
-					 query = "SELECT COUNT(1) " + 
-								"FROM ACT_CFT_CONFIG_TARIFA CONFIG_TARIFA " + 
-								"WHERE DD_TTR_ID   = "   + resultSet[0]
-								+ " AND DD_STR_ID   = "    + resultSet[1]
-								+ " AND DD_CRA_ID   = "    + resultSet[2] 
-								+ " AND DD_SCR_ID   = "    + resultSet[3] 
-							    + " AND PVE_ID  IS  NULL" 
-								+ " AND DD_TTF_ID   = "	  + tarifaId;
-					 resultado = rawDao.getExecuteSQL(query);
-					 
-					 if("0".equals(resultado)) {
-						 query = "SELECT COUNT(1) " + 
-									"FROM ACT_CFT_CONFIG_TARIFA CONFIG_TARIFA " + 
-									"WHERE DD_TTR_ID   = "   + resultSet[0]
-									+ " AND DD_STR_ID   = "    + resultSet[1]
-									+ " AND DD_CRA_ID   = "    + resultSet[2] 
-									+ " AND DD_SCR_ID   IS NULL"  
-								    + " AND PVE_ID   IS NULL" 
-									+ " AND DD_TTF_ID   = "	  + tarifaId;
-						 resultado = rawDao.getExecuteSQL(query);
-					 }
-				}
 					return Boolean.TRUE.equals(!"0".equals(resultado));
 			}
 		}
 		return false;
 	}
+
+	@Override
+	public Boolean existeCampo(String numCampo){
+		if(Checks.esNulo(numCampo))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "FROM dd_cos_campos_origen_conv_sareb COS "
+				+ "WHERE COS.dd_cos_codigo = '" + numCampo + "' AND COS.BORRADO = 0"
+				);
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean perteneceADiccionarioSubtipoRegistro(String subtipo) {
+		if(Checks.esNulo(subtipo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM DD_SRE_SUBTIPO_REGISTRO_ESPARTA " 
+				+ "WHERE DD_SRE_CODIGO = '"+ subtipo +"' AND BORRADO = 0"
+		);
+		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeIdentificadorSubregistro(String subtipo, String identificador){
+		if(Checks.esNulo(subtipo) || Checks.esNulo(identificador) || !StringUtils.isNumeric(identificador)) {
+			return false;
+		}			
+		String resultado = "0";
+		
+		if (COD_DD_SRE_TASACION.equals(subtipo)) {
+			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+					+ "		 FROM ACT_TAS_TASACION WHERE"
+					+ "		 	TAS_ID_EXTERNO ="+identificador+" "
+					+ "		 	AND BORRADO = 0");
+		} else if (COD_DD_SRE_CARGA.equals(subtipo)) {
+			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+					+ "		 FROM BIE_CAR_CARGAS BIE_CAR "
+					+ "		 JOIN ACT_CRG_CARGAS CRG ON CRG.BIE_CAR_ID = BIE_CAR.BIE_CAR_ID AND CRG.BORRADO = 0"
+					+ "		 WHERE BIE_CAR.BORRADO = 0"
+					+ "		 	AND BIE_CAR.BIE_CAR_ID_RECOVERY ="+identificador);
+		}
+		return !"0".equals(resultado);
+	}	
 
 	@Override
 	public String getEstadoTrabajoByNumTrabajo(String numTrabajo) {
@@ -5924,6 +5942,58 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	@Override
+	public Boolean existeDiccionarioByTipoCampo(String codigoCampo, String valorCampo) {
+		String tabla = null;
+		String campo = null;
+		String resultado = "0";
+		
+		campo = rawDao.getExecuteSQL("SELECT CCS.DD_CCS_CAMPO "
+					+ "		 FROM DD_CCS_CAMPOS_CONV_SAREB CCS"
+					+ "      JOIN DD_COS_CAMPOS_ORIGEN_CONV_SAREB COS "
+					+ "      ON COS.DD_COS_ID = CCS.DD_COS_ID "
+					+ "      WHERE COS.DD_COS_CODIGO = '"+codigoCampo+"'"
+					+ "		 AND CCS.BORRADO = 0 AND ROWNUM <=1");
+		if (campo != null) 
+		tabla = rawDao.getExecuteSQL("SELECT CCS.DD_CCS_TABLA "
+					+ "		 FROM DD_CCS_CAMPOS_CONV_SAREB CCS"
+					+ "      JOIN DD_COS_CAMPOS_ORIGEN_CONV_SAREB COS "
+					+ "      ON COS.DD_COS_ID = CCS.DD_COS_ID "
+					+ "      WHERE COS.DD_COS_CODIGO = '"+codigoCampo+"'"
+					+ "		 AND CCS.BORRADO = 0 AND ROWNUM <=1");
+		
+		if (tabla != null)
+		resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+					+ "		 FROM "+ tabla +" WHERE"
+					+ "		 "+ campo +" = " + valorCampo + ""
+					+ "		 AND BORRADO = 0");
+			
+
+
+		return !"0".equals(resultado);
+		 
+	}
+	
+	@Override
+	public String getCodigoTipoDato(String codigoCampo) {
+		
+		
+		String resultado = rawDao.getExecuteSQL("SELECT CTD.DD_CTD_CODIGO "
+				+ "		 FROM DD_CTD_CAMPO_TIPO_DATO CTD"
+				+ "      JOIN DD_CCS_CAMPOS_CONV_SAREB CCS "
+				+ "      ON CTD.DD_CTD_ID  = CCS.DD_CTD_ID  "
+				+ "      JOIN DD_COS_CAMPOS_ORIGEN_CONV_SAREB COS "
+				+ "      ON COS.DD_COS_ID = CCS.DD_COS_ID "
+				+ "      WHERE COS.DD_COS_CODIGO = '"+codigoCampo+"'"
+				+ "		 AND CTD.BORRADO = 0 AND ROWNUM <=1" );
+
+
+		if (resultado == null)
+			resultado = "";
+	return resultado;
+		
+	}
+
 	@Override
 	public Boolean esGastoRefacturadoHijo(String numGasto) {
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
@@ -6495,6 +6565,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return resultado;
 	}
 	
+	@Override
 	public String devolverEstadoGastoApartirDePrefactura(String idPrefactura) {
 		if(Checks.esNulo(idPrefactura)) {
 			return null;
@@ -6510,6 +6581,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return res;
 	}
 	
+	@Override
 	public String devolverEstadoGastoApartirDeAlbaran(String idAlbaran) {
 		if(Checks.esNulo(idAlbaran)) {
 			return null;
@@ -6853,6 +6925,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return listaString;
 	}
 	
+	@Override
 	public Boolean getGastoSuplidoConFactura(String idGastoAfectado) {
 		if(Checks.esNulo(idGastoAfectado)){
 			return false;

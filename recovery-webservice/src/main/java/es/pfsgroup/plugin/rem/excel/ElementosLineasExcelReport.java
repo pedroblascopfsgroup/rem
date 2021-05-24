@@ -67,19 +67,36 @@ public class ElementosLineasExcelReport extends AbstractExcelReport implements E
 			if(elemento.getParticipacion() != null) {
 				fila.add(elemento.getParticipacion().toString() + "%");
 			}
-			if(elemento.getImporteProporcinalSujeto() != null) {
-				
-				double importeProporcionalSujeto = elemento.getImporteProporcinalSujeto()*100;
-				int importeProporcionalSujeto2 = (int)(elemento.getImporteProporcinalSujeto()*100);
-				resto += importeProporcionalSujeto - importeProporcionalSujeto2;
-				
-				if (resto>=1) {
-					importeProporcionalSujeto2++;
-					resto--;
-				}else if (resto!=0 && cont==listaElementos.size()) {
-					importeProporcionalSujeto2++;
+			if (elemento.getImporteTotalSujetoLinea() < 0) {
+				if(elemento.getImporteProporcinalSujeto() != null) {
+					
+					double importeProporcionalSujeto = elemento.getImporteProporcinalSujeto()*-100;
+					int importeProporcionalSujeto2 = (int)(elemento.getImporteProporcinalSujeto()*-100);
+					resto += importeProporcionalSujeto - importeProporcionalSujeto2;
+					
+					if (resto>=1) {
+						importeProporcionalSujeto2++;
+						resto--;
+					}else if (resto!=0 && cont==listaElementos.size()) {
+						importeProporcionalSujeto2++;
+					}
+					fila.add(String.valueOf(importeProporcionalSujeto2/-100d));
 				}
-				fila.add(String.valueOf(importeProporcionalSujeto2/100d));
+			} else {
+				if(elemento.getImporteProporcinalSujeto() != null) {
+					
+					double importeProporcionalSujeto = elemento.getImporteProporcinalSujeto()*100;
+					int importeProporcionalSujeto2 = (int)(elemento.getImporteProporcinalSujeto()*100);
+					resto += importeProporcionalSujeto - importeProporcionalSujeto2;
+					
+					if (resto>=1) {
+						importeProporcionalSujeto2++;
+						resto--;
+					}else if (resto!=0 && cont==listaElementos.size()) {
+						importeProporcionalSujeto2++;
+					}
+					fila.add(String.valueOf(importeProporcionalSujeto2/100d));
+				}
 			}
 			
 			valores.add(fila);

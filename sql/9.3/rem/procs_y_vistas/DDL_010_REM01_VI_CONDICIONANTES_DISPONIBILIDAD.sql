@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210325
+--## FECHA_CREACION=20210518
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-13460
@@ -34,6 +34,7 @@
 --##        0.21 Remus Ovidiu - REMVIP-5203 - Quitamos activos Bankia del calculo de posesion por fecha de posesion, ya que estos se calculan por situacion juridica
 --##        0.22 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --#         0.23 Sergio Gomez - - HREOS-13460 - Ajustes joins 
+--#	    0.24 Remus OVidiu - REMVIP-9765 - Añadido LEFT JOIN con la vista V_FECHA_POSESION_ACTIVO para el calculo correcto de la fecha de posesion
 --##########################################
 --*/
 
@@ -98,7 +99,7 @@ AS
      FROM (SELECT act.act_id,
 				CASE WHEN (sps1.dd_sij_id is not null and sij.DD_SIJ_INDICA_POSESION = 0) THEN 1
                 ELSE
-                    CASE WHEN (sps1.sps_fecha_toma_posesion IS NULL AND aba2.dd_cla_id = 2 and act.dd_cra_id <> 21) THEN 1
+                    CASE WHEN (FPOS.FECHA_POSESION IS NULL AND aba2.dd_cla_id = 2 and act.dd_cra_id <> 21) THEN 1
                     ELSE 0
 				END
                 END AS sin_toma_posesion_inicial,
@@ -124,7 +125,7 @@ AS
                 DECODE (ico.ico_posible_hacer_inf, 1, 0, 0, 1, 0) AS sin_acceso,
                 CASE WHEN (sps1.sps_ocupado = 1 AND (TPA.DD_TPA_CODIGO = ''02'' OR TPA.DD_TPA_CODIGO = ''03'')) THEN 1 ELSE 0 END AS ocupado_sintitulo,
                 CASE WHEN (sps1.sps_estado_portal_externo = 1) THEN 1 ELSE 0 END AS estado_portal_externo,  -- ESTADO PUBLICACION PORTALES EXTERNOS
-                CASE WHEN ( (sps1.sps_fecha_toma_posesion IS NULL AND aba2.dd_cla_id = 2)               -- SIN TOMA POSESION INICIAL
+                CASE WHEN ( (FPOS.FECHA_POSESION IS NULL AND aba2.dd_cla_id = 2)               -- SIN TOMA POSESION INICIAL
                            OR eac1.dd_eac_codigo=''05''                                                   -- RUINA
                            OR NVL2 (tit.act_id, 0, 1) = 1
                            OR NVL2 (eon.dd_eon_id, 1, 0) = 1
@@ -148,7 +149,7 @@ AS
 
 				  LEFT JOIN REM01.DD_CRA_CARTERA cra ON cra.dd_cra_id = act.dd_cra_id
 				  LEFT JOIN REM01.dd_eac_estado_activo eac1 ON eac1.dd_eac_id = act.dd_eac_id
-                  LEFT JOIN REM01.act_sps_sit_posesoria sps1 ON sps1.act_id = act.act_id
+                  		  LEFT JOIN REM01.act_sps_sit_posesoria sps1 ON sps1.act_id = act.act_id
 				  LEFT JOIN REM01.DD_TPA_TIPO_TITULO_ACT TPA ON TPA.DD_TPA_ID = SPS1.DD_TPA_ID
 				  LEFT JOIN REM01.DD_SIJ_SITUACION_JURIDICA sij on  sij.dd_sij_id =sps1.dd_sij_id
 				  LEFT JOIN (select  aga.act_id
@@ -175,7 +176,8 @@ AS
                   LEFT JOIN REM01.vi_activos_con_cargas vcg ON vcg.act_id = act.act_id
                   LEFT JOIN REM01.act_ico_info_comercial ico ON ico.act_id = act.act_id
                   LEFT JOIN REM01.vi_estado_actual_infmed vei ON vei.ico_id = ico.ico_id                                                                                          --SIN_INFORME_APROBADO
-            	  LEFT JOIN REM01.V_ACT_ESTADO_DISP vact on vact.act_id = act.act_id
+            	  LEFT JOIN REM01.V_ACT_ESTADO_DISP vact on vact.act_id = act.act_id 
+            	  LEFT JOIN REM01.V_FECHA_POSESION_ACTIVO FPOS ON FPOS.ACT_ID = ACT.ACT_ID
             WHERE act.borrado = 0)
           ';
 

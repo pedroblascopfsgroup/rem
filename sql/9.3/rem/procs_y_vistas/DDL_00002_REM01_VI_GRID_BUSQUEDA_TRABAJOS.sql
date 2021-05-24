@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20210430
+--## FECHA_CREACION=20210504
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13283
@@ -14,6 +14,7 @@
 --##        0.1 [HREOS-10172] Versión inicial (Creación de la vista)
 --##        0.2 [HREOS-13283] Relanzar la vista para vistaLigth
 --##		0.3 Area peticionaria codigo/descripcion
+--##		0.4 [REMVIP-9632] Fecha tope / importe proveedor
 --#########################################
 --*/
 
@@ -86,7 +87,9 @@ BEGIN
 			CRA.DD_CRA_CODIGO AS CARTERA_CODIGO,
 			SCR.DD_SCR_DESCRIPCION AS SUBCARTERA_DESCRIPCION,
 			SCR.DD_SCR_CODIGO AS SUBCARTERA_CODIGO,
-			TBJ.TBJ_FECHA_CAMBIO_ESTADO AS TBJ_FECHA_CAMBIO_ESTADO
+			TBJ.TBJ_FECHA_CAMBIO_ESTADO AS TBJ_FECHA_CAMBIO_ESTADO,
+			TBJ.TBJ_FECHA_TOPE AS TBJ_FECHA_TOPE,
+			TBJ.TBJ_IMPORTE_PRESUPUESTO AS TBJ_IMPORTE_PROVEEDOR
      	
      	FROM '|| V_ESQUEMA ||'.ACT_TBJ_TRABAJO TBJ			            
             INNER JOIN '|| V_ESQUEMA ||'.DD_TTR_TIPO_TRABAJO TTR							ON TTR.DD_TTR_ID = TBJ.DD_TTR_ID AND TTR.DD_TTR_FILTRAR IS NULL       

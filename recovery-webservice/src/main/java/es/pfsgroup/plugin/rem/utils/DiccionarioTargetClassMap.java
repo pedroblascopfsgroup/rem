@@ -315,6 +315,12 @@ public class DiccionarioTargetClassMap{
 		mapa.put("categoriaComercializacion", DDCategoriaComercializacion.class);
 		mapa.put("tipoListaEmisiones", DDListaEmisiones.class);
 		mapa.put("motivoNecesidadArras", DDMotivoNecesidadArras.class);
+		mapa.put("tipoResponsable", DDResponsableDocumentacionCliente.class); 
+		mapa.put("plantaEdificio", DDPlantaEdificio.class); 
+		mapa.put("escaleraEdificio", DDEscaleraEdificio.class); 
+		mapa.put("estadoTecnico", DDEstadoTecnicoActivo.class);  
+		mapa.put("estadoComercialVenta", DDEstadoComercialVentaCaixa.class);  
+		mapa.put("estadoComercialAlquiler", DDEstadoComercialAlquilerCaixa.class);  
 		mapa.put("tipoCorrectivoSareb", DDTipoCorrectivoSareb.class); 
 		mapa.put("tipoCuotaComunidad", DDTipoCuotaComunidad.class);
 		mapa.put("segmentacionSareb", DDSegmentoSareb.class);

@@ -346,6 +346,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		                	style:'margin-left:10px'
 		                },
 		                {
+
 							xtype: 'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('filedlabel.tiene.ok.tecnico'),
 							bind: {
@@ -453,7 +454,53 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            		store: '{comboSiNoFuerzaPublica}', 
 			            		value: '{situacionPosesoria.necesariaFuerzaPublica}',
 			            		hidden: '{!activo.isCarteraBankia}'
+				        	}
+						},
+				        {
+				        	xtype: 'comboboxfieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.entrada.voluntaria.posesion'),
+				        	colspan:4,
+				        	readOnly: true,
+				        	bind: {
+			            		store: '{comboSiNoEntradaVoluntariaPosesion}', 
+			            		value: '{situacionPosesoria.entradaVoluntariaPosesion}',
+			            		hidden: '{!activo.isCarteraBankia}'
 			            	}
+				        },
+		                {
+							xtype: 'checkboxfieldbase',
+							reference: 'okTecnicoRef',
+							fieldLabel: HreRem.i18n('filedlabel.tiene.ok.tecnico'),
+							bind: {
+								value: '{situacionPosesoria.tieneOkTecnico}',
+								readOnly: '{!activo.aplicaGestion}'
+							},
+    						listeners: {
+			                	change: 'editarComboEstadoTecnico'
+			            	}
+						},
+						{
+					        xtype: 'comboboxfieldbasedd',
+					        reference: 'comboEstadoTecnicoRef',
+							fieldLabel: HreRem.i18n('fieldlabel.estado.tecnico'),
+					        bind: {        
+					        	store : '{comboEstadoTecnico}',
+					        	disabled: '{!situacionPosesoria.tieneOkTecnico}',
+					        	hidden: '{!activo.isCarteraBankia}',
+				            	value: '{situacionPosesoria.estadoTecnicoCodigo}',
+								rawValue: '{situacionPosesoria.estadoTecnicoDescripcion}'
+					        }
+				        },
+				        { 
+							xtype:'datefieldbase', 
+							reference: 'fechaEstadoTecnicoRef',
+							allowBlank: true,
+							fieldLabel: HreRem.i18n('fieldlabel.fecha.estado.tecnico'),
+	                		readOnly: true,
+		                	bind:{
+		                		value: '{situacionPosesoria.fechaEstadoTecnico}',
+		                		hidden: '{!activo.isCarteraBankia}'
+		                	}
 				        }
 					]
                 

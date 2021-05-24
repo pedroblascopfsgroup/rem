@@ -346,6 +346,11 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 		{
 			name: 'puedeEditarCalificacionNegativaAdicional',
 			type: 'boolean'
+		},
+		{
+			name:'fechaEstadoTitularidadActivoInmobiliario',
+			type:'date',
+			dateFormat: 'c'
 		}
     ],
 

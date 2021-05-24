@@ -8520,7 +8520,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if (grid.getStore() != null) {
 			grid.getStore().load();
 		}
-		
     },
     onChangeCodPostal: function(type,newValue,oldValue){
     	var me = this;
@@ -8535,18 +8534,62 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     isNotCarteraBankia: function(get){
     	var me = this;
-
+    	
     	var carteraBankia = me.getViewModel().getData().activo.getData().isCarteraBankia;
     	var checkArras = me.lookupReference('checkNecesidadArrasRef');
     	var motivoArras = me.lookupReference('motivoNecesidadRef');
+    	var estadoComercialVenta = me.lookupReference('estadoComercialVentaRef');
+    	var estadoComercialAlquiler = me.lookupReference('estadoComercialAlquilerRef');
+    	var fechaComercialVenta = me.lookupReference('fechaEstadoComericalVentaRef');
+    	var fechaComercialAlquiler = me.lookupReference('fechaEstadoComericalAlquilerRef');
     	
-    	if (carteraBankia != null && carteraBankia == true && checkArras != null && motivoArras != null) {
-    		checkArras.setHidden(false);
-    		motivoArras.setHidden(false);
+    	if (carteraBankia != null && carteraBankia == true) {
+    		if (checkArras != null && motivoArras != null) {
+    			checkArras.setHidden(false);
+        		motivoArras.setHidden(false);
+			}
+    		if (estadoComercialVenta != null && estadoComercialAlquiler != null && fechaComercialVenta != null && fechaComercialAlquiler != null) {
+    			estadoComercialVenta.setHidden(false);
+    			estadoComercialAlquiler.setHidden(false);
+    			fechaComercialVenta.setHidden(false);
+    			fechaComercialAlquiler.setHidden(false);
+			}
+    		
     	}else{
     		checkArras.setHidden(true);
     		motivoArras.setHidden(true);
+    		estadoComercialVenta.setHidden(true);
+			estadoComercialAlquiler.setHidden(true);
+			fechaComercialVenta.setHidden(true);
+			fechaComercialAlquiler.setHidden(true);
     	}
-    }
+    },
+ 	
+ 	editarComboEstadoTecnico: function(get){
+ 		var me = this;
+ 		
+ 		var tieneOkTencnicoCheckeado = me.lookupReference('okTecnicoRef');
+ 		var estadoTecnico = me.lookupReference('comboEstadoTecnicoRef');
+ 		
+	    if(tieneOkTencnicoCheckeado.value == true || tieneOkTencnicoCheckeado.checked == true){
+	    	estadoTecnico.setDisabled(false);
+	    	estadoTecnico.disabled = false;
+	    }else {
+	    	estadoTecnico.setValue('');
+	    	estadoTecnico.setDisabled(true);
+	    	estadoTecnico.disabled = true;
+	    }
+	},
+	isNotCarteraBankiaSaneamiento: function(get){
+    	var me = this;
+    	var carteraBankia = me.getViewModel().getData().activo.getData().isCarteraBankia;
+    	var fechaEstadoTitularidad =me.lookupReference('fechaEstadoTitularidadRef');
+    	if (carteraBankia != null && carteraBankia == true) {
+    		fechaEstadoTitularidad.setHidden(false);
+    	} else {
+    		fechaEstadoTitularidad.setHidden(true);
+    	}
+	
+	}
 });
 

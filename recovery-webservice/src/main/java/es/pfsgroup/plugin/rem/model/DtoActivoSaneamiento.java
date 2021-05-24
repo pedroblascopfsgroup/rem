@@ -85,6 +85,9 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	private String estadoVentaDescripcion;
 	private Boolean puedeEditarCalificacionNegativaAdicional;
 	
+	private Date fechaEstadoTitularidadActivoInmobiliario;
+	
+	
 	public Long getIdActivo() {
 		return idActivo;
 	}
@@ -516,6 +519,12 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	}
 	public void setPuedeEditarCalificacionNegativaAdicional(Boolean puedeEditarCalificacionNegativaAdicional) {
 		this.puedeEditarCalificacionNegativaAdicional = puedeEditarCalificacionNegativaAdicional;
+	}
+	public Date getFechaEstadoTitularidadActivoInmobiliario() {
+		return fechaEstadoTitularidadActivoInmobiliario;
+	}
+	public void setFechaEstadoTitularidadActivoInmobiliario(Date fechaEstadoTitularidadActivoInmobiliario) {
+		this.fechaEstadoTitularidadActivoInmobiliario = fechaEstadoTitularidadActivoInmobiliario;
 	}
 	
 }

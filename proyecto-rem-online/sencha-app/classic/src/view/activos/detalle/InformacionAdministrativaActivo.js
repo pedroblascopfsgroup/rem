@@ -182,7 +182,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 				        			},
 				        	
 							defaultType: 'textfieldbase',
-							title: HreRem.i18n("title.requisitos.fase.venta"), // Requisitos para la fase de venta
+							title: HreRem.i18n("title.requisitos.fase.comercializacion"), // Requisitos para la fase de venta
 							items :
 								[
 									
@@ -212,6 +212,12 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 													xtype: 'currencyfieldbase',
 													fieldLabel: HreRem.i18n('fieldlabel.precio.maximo.venta.vpo'), 			// Precio m�ximo de venta
 					                				bind: '{infoAdministrativa.maxPrecioVenta}',
+					                				readOnly: true
+								                },
+								                { 
+													xtype: 'currencyfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.precio.maximo.modulo.alquiler'), 			// Precio m�ximo modulor alquiler
+					                				bind: '{infoAdministrativa.maxPrecioModuloAlquiler}',
 					                				readOnly: true
 								                },
 								                

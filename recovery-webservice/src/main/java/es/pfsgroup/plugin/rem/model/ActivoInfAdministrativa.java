@@ -182,8 +182,8 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
     @JoinColumn(name = "ADM_ESTADO_VENTA")
 	private DDEstadoVenta estadoVenta; 
 	
-	@Column(name = "ADM_MAX_PRECIO_MODULO_ALQUILER")
-	private Double maxPrecioModuloAlquiler;
+	@Column(name = "ADM_MAX_PRECIO_MODULO_ALQUILER") 
+	private Double maxPrecioModuloAlquiler; 
 	
 	@Version
 	private Long version;
@@ -548,13 +548,13 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
 		this.fechaComAdquision = fechaComAdquision;
 	}
 
-	public Double getMaxPrecioModuloAlquiler() {
-		return maxPrecioModuloAlquiler;
-	}
+	public Double getMaxPrecioModuloAlquiler() { 
+		return maxPrecioModuloAlquiler; 
+	} 
 
-	public void setMaxPrecioModuloAlquiler(Double maxPrecioModuloAlquiler) {
-		this.maxPrecioModuloAlquiler = maxPrecioModuloAlquiler;
-	}
+	public void setMaxPrecioModuloAlquiler(Double maxPrecioModuloAlquiler) { 
+		this.maxPrecioModuloAlquiler = maxPrecioModuloAlquiler; 
+	} 
 	
 }
 

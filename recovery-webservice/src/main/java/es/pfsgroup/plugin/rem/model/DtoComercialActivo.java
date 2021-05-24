@@ -37,7 +37,12 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private Boolean necesidadArras;
 	private String motivoNecesidadArrasCod;
 	private String motivoNecesidadArrasDesc;
-	
+	private String estadoComercialVentaCodigo;
+	private String estadoComercialVentaDescripcion;
+	private String estadoComercialAlquilerCodigo;
+	private String estadoComercialAlquilerDescripcion;
+	private Date fechaEstadoComercialVenta;
+	private Date fechaEstadoComercialAlquiler;
 
 
 	public String getId() {
@@ -272,6 +277,54 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	public void setMotivoNecesidadArrasDesc(String motivoNecesidadArrasDesc) {
 		this.motivoNecesidadArrasDesc = motivoNecesidadArrasDesc;
+	}
+	
+	public String getEstadoComercialVentaCodigo() {
+		return estadoComercialVentaCodigo;
+	}
+
+	public void setEstadoComercialVentaCodigo(String estadoComercialVentaCodigo) {
+		this.estadoComercialVentaCodigo = estadoComercialVentaCodigo;
+	}
+
+	public String getEstadoComercialVentaDescripcion() {
+		return estadoComercialVentaDescripcion;
+	}
+
+	public void setEstadoComercialVentaDescripcion(String estadoComercialVentaDescripcion) {
+		this.estadoComercialVentaDescripcion = estadoComercialVentaDescripcion;
+	}
+
+	public String getEstadoComercialAlquilerCodigo() {
+		return estadoComercialAlquilerCodigo;
+	}
+
+	public void setEstadoComercialAlquilerCodigo(String estadoComercialAlquilerCodigo) {
+		this.estadoComercialAlquilerCodigo = estadoComercialAlquilerCodigo;
+	}
+
+	public String getEstadoComercialAlquilerDescripcion() {
+		return estadoComercialAlquilerDescripcion;
+	}
+
+	public void setEstadoComercialAlquilerDescripcion(String estadoComercialAlquilerDescripcion) {
+		this.estadoComercialAlquilerDescripcion = estadoComercialAlquilerDescripcion;
+	}
+
+	public Date getFechaEstadoComercialVenta() {
+		return fechaEstadoComercialVenta;
+	}
+
+	public void setFechaEstadoComercialVenta(Date fechaEstadoComercialVenta) {
+		this.fechaEstadoComercialVenta = fechaEstadoComercialVenta;
+	}
+
+	public Date getFechaEstadoComercialAlquiler() {
+		return fechaEstadoComercialAlquiler;
+	}
+
+	public void setFechaEstadoComercialAlquiler(Date fechaEstadoComercialAlquiler) {
+		this.fechaEstadoComercialAlquiler = fechaEstadoComercialAlquiler;
 	}
 
 }

@@ -56,6 +56,10 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	private Date fechaDesinstalacionVigilancia;
 	private Boolean perteneceActivoREAM;
 	private String necesariaFuerzaPublica;
+	private String entradaVoluntariaPosesion;
+	private String estadoTecnicoCodigo;
+	private String estadoTecnicoDescripcion;
+	private Date fechaEstadoTecnico;
 		
 	public String getTipoEstadoAlquiler() {
 		return tipoEstadoAlquiler;
@@ -304,6 +308,29 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	public void setNecesariaFuerzaPublica(String necesariaFuerzaPublica) {
 		this.necesariaFuerzaPublica = necesariaFuerzaPublica;
 	}
-
+	public String getEntradaVoluntariaPosesion() {
+		return entradaVoluntariaPosesion;
+	}
+	public void setEntradaVoluntariaPosesion(String entradaVoluntariaPosesion) {
+		this.entradaVoluntariaPosesion = entradaVoluntariaPosesion;
+	}
+	public String getEstadoTecnicoCodigo() {
+		return estadoTecnicoCodigo;
+	}
+	public void setEstadoTecnicoCodigo(String estadoTecnicoCodigo) {
+		this.estadoTecnicoCodigo = estadoTecnicoCodigo;
+	}
+	public String getEstadoTecnicoDescripcion() {
+		return estadoTecnicoDescripcion;
+	}
+	public void setEstadoTecnicoDescripcion(String estadoTecnicoDescripcion) {
+		this.estadoTecnicoDescripcion = estadoTecnicoDescripcion;
+	}
+	public Date getFechaEstadoTecnico() {
+		return fechaEstadoTecnico;
+	}
+	public void setFechaEstadoTecnico(Date fechaEstadoTecnico) {
+		this.fechaEstadoTecnico = fechaEstadoTecnico;
+	}
 	
 }

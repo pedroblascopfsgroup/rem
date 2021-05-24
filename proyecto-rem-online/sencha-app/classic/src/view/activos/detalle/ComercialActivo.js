@@ -86,6 +86,56 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        
 					// Fila 1
 				        {
+				        	xtype : 'comboboxfieldbasedd',
+				        	fieldLabel: HreRem.i18n('header.estado.comercial.venta'),
+				        	reference: 'estadoComercialVentaRef',
+				        	readOnly: true,
+				        	bind : {
+							      store : '{comboEstadoComercialVenta}',
+							      value : '{comercial.estadoComercialVentaCodigo}',
+							      rawValue : '{comercial.estadoComercialVentaDescripcion}'
+							}
+//				        	,
+//							listeners:{
+//								afterrender: 'isNotCarteraBankia'
+//							}
+				        },
+				        {
+				        	xtype: 'datefieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.fecha.estado.comercial.venta'),
+				        	reference: 'fechaEstadoComericalVentaRef',
+				        	allowBlank: false,
+				        	readOnly: true,
+				        	bind : {
+				        		value: '{comercial.fechaEstadoComercialVenta}'
+				        	}
+						},
+				        {
+				        	xtype : 'comboboxfieldbasedd',
+				        	fieldLabel: HreRem.i18n('header.estado.comercial.alquiler'),
+				        	reference: 'estadoComercialAlquilerRef',
+				        	readOnly: true,
+				        	bind : {
+							      store : '{comboEstadoComercialAlquiler}',
+							      value : '{comercial.estadoComercialAlquilerCodigo}',
+							      rawValue : '{comercial.estadoComercialAlquilerDescripcion}'
+							}
+//							,
+//							listeners:{
+//								afterrender: 'isNotCarteraBankia'
+//							}
+				        },
+				        {
+				        	xtype: 'datefieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.fecha.estado.comercial.alquiler'),
+				        	reference: 'fechaEstadoComericalAlquilerRef',
+				        	allowBlank: false,
+				        	readOnly: true,
+				        	bind : {
+				        		value: '{comercial.fechaEstadoComercialAlquiler}'
+				        	}
+						},
+				        {
 						   xtype: 'checkboxfieldbase',
 						   fieldLabel: HreRem.i18n('fieldlabel.venta.externa'),
 						   reference: 'checkVentaExterna',

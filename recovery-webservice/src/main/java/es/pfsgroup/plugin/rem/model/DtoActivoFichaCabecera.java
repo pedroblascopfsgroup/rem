@@ -95,6 +95,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String tipoSegmentoDescripcion;
 	private String estadoRegistralCodigo;
 	private String estadoRegistralDescripcion;
+	private String plantaEdificioCodigo;
+	private String plantaEdificioDescripcion;
+	private String escaleraEdificioCodigo;
+	private String escaleraEdificioDescripcion;
 	
 	// Comunidad de propietarios
 	private String tipoCuotaCodigo;
@@ -2749,6 +2753,38 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setCategoriaComercializacionDesc(String categoriaComercializacionDesc) {
 		this.categoriaComercializacionDesc = categoriaComercializacionDesc;
+	}
+
+	public String getPlantaEdificioCodigo() {
+		return plantaEdificioCodigo;
+	}
+
+	public void setPlantaEdificioCodigo(String plantaEdificioCodigo) {
+		this.plantaEdificioCodigo = plantaEdificioCodigo;
+	}
+
+	public String getPlantaEdificioDescripcion() {
+		return plantaEdificioDescripcion;
+	}
+
+	public void setPlantaEdificioDescripcion(String plantaEdificioDescripcion) {
+		this.plantaEdificioDescripcion = plantaEdificioDescripcion;
+	}
+
+	public String getEscaleraEdificioCodigo() {
+		return escaleraEdificioCodigo;
+	}
+
+	public void setEscaleraEdificioCodigo(String escaleraEdificioCodigo) {
+		this.escaleraEdificioCodigo = escaleraEdificioCodigo;
+	}
+
+	public String getEscaleraEdificioDescripcion() {
+		return escaleraEdificioDescripcion;
+	}
+
+	public void setEscaleraEdificioDescripcion(String escaleraEdificioDescripcion) {
+		this.escaleraEdificioDescripcion = escaleraEdificioDescripcion;
 	}	
 
 	public String getTipoDistritoCodigoPostalCod() {

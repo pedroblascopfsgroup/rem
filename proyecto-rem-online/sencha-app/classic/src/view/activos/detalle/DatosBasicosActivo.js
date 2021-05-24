@@ -682,8 +682,21 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                {
 							fieldLabel:  HreRem.i18n('fieldlabel.escalera'),
 			                bind:{
-			                	value: '{activo.escalera}'
+			                	value: '{activo.escalera}',
+			                	hidden: '{activo.isCarteraBankia}'
 			                }
+						},
+						{
+							xtype: 'comboboxfieldbasedd',
+							reference: 'escaleraEdificioRef',
+							fieldLabel: HreRem.i18n('fieldlabel.escalera'),
+							name: 'escaleraEdificioCodigo',
+			            	bind: {
+			            		store: '{comboEscalera}',
+			            		hidden: '{!activo.isCarteraBankia}',
+			            		value: '{activo.escaleraEdificioCodigo}',
+								rawValue: '{activo.escaleraEdificioDescripcion}'
+			            	}
 						},
 		                { 
 		                	fieldLabel: HreRem.i18n('fieldlabel.numero.oe'),
@@ -732,9 +745,22 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
  						{ 
 		                	fieldLabel:  HreRem.i18n('fieldlabel.planta'),
 		                	bind:{
-		                		value: '{activo.piso}'
+		                		value: '{activo.piso}',
+		                		hidden: '{activo.isCarteraBankia}'
 		                	}
-		                },	            
+		                },
+						{
+							xtype: 'comboboxfieldbasedd',
+							reference: 'plantaEdificioRef',
+							fieldLabel: HreRem.i18n('fieldlabel.planta'),
+							name: 'plantaEdificioCodigo',
+			            	bind: {
+			            		store: '{comboPlanta}',
+			            		hidden: '{!activo.isCarteraBankia}',
+			            		value: '{activo.plantaEdificioCodigo}',
+								rawValue: '{activo.plantaEdificioDescripcion}'
+			            	}
+						},	               
 		                {
 							xtype: 'comboboxfieldbasedd',
 							reference: 'pais',
@@ -789,8 +815,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								store: '{comboDistritoCodPostal}',
 								value: '{activo.tipoDistritoCodigoPostalCod}',
 								rawValue: '{activo.tipoDistritoCodigoPostalDesc}'
-							},
-							allowBlank: false		                	
+							}	                	
 						},
 						{ 
 		                	fieldLabel:  HreRem.i18n('fieldlabel.puerta.oe'),

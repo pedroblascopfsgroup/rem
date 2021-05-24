@@ -83,6 +83,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDDistritoCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDEscaleraEdificio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdecucionSareb;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
@@ -93,6 +94,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDPlantaEdificio;
 import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -1174,7 +1176,22 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());				
 					}
 				}
-			}			
+			}	
+		}
+		
+		Filter filtroLoc = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoLocalizacion activoLoc = genericDao.get(ActivoLocalizacion.class, filtroLoc);
+		
+		if (activoLoc != null) {
+			if(activoLoc.getPlantaEdificio() != null) {
+				activoDto.setPlantaEdificioCodigo(activoLoc.getPlantaEdificio().getCodigo());
+				activoDto.setPlantaEdificioDescripcion(activoLoc.getPlantaEdificio().getDescripcion());
+			}
+			
+			if(activoLoc.getEscaleraEdificio() != null) {
+				activoDto.setEscaleraEdificioCodigo(activoLoc.getEscaleraEdificio().getCodigo());
+				activoDto.setEscaleraEdificioDescripcion(activoLoc.getEscaleraEdificio().getDescripcion());
+			}
 		}
 		if (activo != null && activo.getLocalizacion() != null && activo.getLocalizacion().getDireccionDos() != null) {
 			activoDto.setDireccionDos(activo.getLocalizacion().getDireccionDos());
@@ -2049,6 +2066,26 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					activo.setLocalizacion(actLocMod);
 				}
 			}
+			
+			Filter filtroLoc = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoLocalizacion activoLoc = genericDao.get(ActivoLocalizacion.class, filtroLoc);
+			
+			if (activoLoc != null) {
+				if (dto.getPlantaEdificioCodigo() != null) {
+					Filter filtroPlanta = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getPlantaEdificioCodigo());
+					DDPlantaEdificio planta = genericDao.get(DDPlantaEdificio.class, filtroPlanta);
+					activoLoc.setPlantaEdificio(planta);
+				}
+				
+				if (dto.getEscaleraEdificioCodigo() != null) {
+					Filter filtroEscalera = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getEscaleraEdificioCodigo());
+					DDEscaleraEdificio escalera = genericDao.get(DDEscaleraEdificio.class, filtroEscalera);
+					activoLoc.setEscaleraEdificio(escalera);
+				}
+			}
+			
 		} catch(JsonViewerException jve) {
 			throw jve;
 		} catch (IllegalAccessException e) {

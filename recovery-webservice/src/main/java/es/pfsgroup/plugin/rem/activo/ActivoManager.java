@@ -3962,7 +3962,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 			}
-
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
 
@@ -4004,6 +4003,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						&& actCaixa.getMotivoNecesidadArras() != null) {
 					dto.setMotivoNecesidadArrasCod(actCaixa.getMotivoNecesidadArras().getCodigo());
 					dto.setMotivoNecesidadArrasDesc(actCaixa.getMotivoNecesidadArras().getDescripcion());
+				}
+				
+				if (actCaixa.getEstadoComercialVenta() != null) {
+					dto.setEstadoComercialVentaCodigo(actCaixa.getEstadoComercialVenta().getCodigo());
+					dto.setEstadoComercialVentaDescripcion(actCaixa.getEstadoComercialVenta().getDescripcion());
+				}
+				
+				if (actCaixa.getEstadoComercialAlquiler() != null) {
+					dto.setEstadoComercialAlquilerCodigo(actCaixa.getEstadoComercialAlquiler().getCodigo());
+					dto.setEstadoComercialAlquilerDescripcion(actCaixa.getEstadoComercialAlquiler().getDescripcion());
+				}
+				
+				if (actCaixa.getFechaEstadoComercialVenta() != null) {
+					dto.setFechaEstadoComercialVenta(actCaixa.getFechaEstadoComercialVenta());
+				}
+				
+				if (actCaixa.getFechaEstadoComercialAlquiler() != null) {
+					dto.setFechaEstadoComercialAlquiler(actCaixa.getFechaEstadoComercialAlquiler());
 				}
 			}
 		}

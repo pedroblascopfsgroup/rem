@@ -521,6 +521,18 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		if(activo.getAdjNoJudicial() != null && activo.getAdjNoJudicial().getFechaPosesion() != null) {
 			activoDto.setFechaPosesion(activo.getAdjNoJudicial().getFechaPosesion());
 		}
+			
+		Filter filtroInfoRegistral = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoInfoRegistral activoInfoRegistral = genericDao.get(ActivoInfoRegistral.class, filtroInfoRegistral);
+		
+		if (activoInfoRegistral != null) {
+			if (activoInfoRegistral.getSuperficieBajoRasante() != null) {
+				activoDto.setSuperficieBajoRasante(activoInfoRegistral.getSuperficieBajoRasante());
+			}
+			if (activoInfoRegistral.getSuperficieSobreRasante() != null) {
+				activoDto.setSuperficieSobreRasante(activoInfoRegistral.getSuperficieSobreRasante());
+			}
+		}
 		
 		return activoDto;
 	}
@@ -1047,6 +1059,19 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				activo.getAdjNoJudicial().setFechaPosesion(dto.getFechaPosesion());
 				activo.getSituacionPosesoria().setFechaTomaPosesion(dto.getFechaPosesion());
 			}
+			
+			Filter filtroInfoRegistral = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoInfoRegistral activoInfoRegistral = genericDao.get(ActivoInfoRegistral.class, filtroInfoRegistral);
+			
+			if (activoInfoRegistral != null) {
+				if (dto.getSuperficieBajoRasante() != null) {
+					activoInfoRegistral.setSuperficieBajoRasante(dto.getSuperficieBajoRasante());
+				}
+				if (dto.getSuperficieSobreRasante() != null) {
+					activoInfoRegistral.setSuperficieSobreRasante(dto.getSuperficieSobreRasante());
+				}
+			}
+			
 			
 		} catch (JsonViewerException jvex) {
 			throw jvex;

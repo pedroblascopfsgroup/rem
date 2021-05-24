@@ -54,6 +54,18 @@
 		</filter>
 	</appender>
 	
+	 <!-- Incluido por PBO -->
+	<appender name="oauth2"
+                class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender">
+                <param name="file" value="{DEVON_HOME}/log/rem_oauth2.log" />
+                <param name="MaxFileSize" value="2MB" />
+                <param name="MaxBackupIndex" value="10" />
+                <layout class="org.apache.log4j.PatternLayout">
+                        <param name="ConversionPattern" value="%d %p [%c] - %m%n" />
+                </layout>
+        </appender>
+        <!-- Fin PBO -->
+	
 	<appender name="fileAdvancedLog"
 		class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender">
 		<param name="file" value="{DEVON_HOME}/log/rem_advanced.log" />
@@ -415,7 +427,12 @@
 		<appender-ref ref="logTrustWebService" />
 	</logger>
 
-
+	<!-- Introducido por PBO -->
+	<logger name="es.pfsgroup.plugin.rem.security.HayaAuthenticationProvider" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="oauth2" />
+	</logger>
+	<!-- Fin PBO -->
 
 	<!--Descomentar para Ver las SQL-->
 	<!-- >logger name="org.hibernate.SQL" additivity="false"> <level value="debug"/> 

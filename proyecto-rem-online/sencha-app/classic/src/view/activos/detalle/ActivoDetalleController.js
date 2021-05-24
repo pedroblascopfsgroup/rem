@@ -8568,5 +8568,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    	estadoTecnico.setDisabled(true);
 	    	estadoTecnico.disabled = true;
 	    }
+	},
+	isNotCarteraBankiaSaneamiento: function(get){
+    	var me = this;
+    	var carteraBankia = me.getViewModel().getData().activo.getData().isCarteraBankia;
+    	var fechaEstadoTitularidad =me.lookupReference('fechaEstadoTitularidadRef');
+    	if (carteraBankia != null && carteraBankia == true) {
+    		fechaEstadoTitularidad.setHidden(false);
+    	} else {
+    		fechaEstadoTitularidad.setHidden(true);
+    	}
+	
 	}
 });

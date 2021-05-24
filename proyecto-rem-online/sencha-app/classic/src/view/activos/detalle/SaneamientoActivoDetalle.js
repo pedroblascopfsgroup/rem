@@ -79,6 +79,9 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 							xtype:'fieldsettable',
 							defaultType: 'textfieldbase',
 							title: HreRem.i18n('title.tramitacion.titulo'),
+							listeners: {
+								afterrender: 'isNotCarteraBankiaSaneamiento'
+							},
 							items :
 								[
 									{ 
@@ -111,6 +114,16 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 								 		}
 
 									},
+									{
+										xtype:'datefieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.fecha.estado.titularidad.activo.inmobiliario'),
+										reference: 'fechaEstadoTitularidadRef',
+										colspan:4,
+								 		bind: {
+								 			value: '{saneamiento.fechaEstadoTitularidadActivoInmobiliario}',
+								 			readOnly: true
+								 		}
+			                       	},
 									{
 										xtype:'datefieldbase',
 								 		fieldLabel: HreRem.i18n('fieldlabel.fecha.presentacion.registro'),

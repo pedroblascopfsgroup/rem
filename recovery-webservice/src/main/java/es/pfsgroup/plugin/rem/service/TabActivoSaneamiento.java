@@ -392,7 +392,12 @@ public class TabActivoSaneamiento implements TabActivoService{
 		}else {
 			activoDto.setTieneTituloAdicional(0);
 		}
-			
+		
+		if (actTitulo != null) {
+			if (actTitulo.getFechaEstadoTitularidadActivoInmobiliario() != null) {
+				activoDto.setFechaEstadoTitularidadActivoInmobiliario(actTitulo.getFechaEstadoTitularidadActivoInmobiliario());
+			}
+		}
 				
 		 
 		return activoDto;

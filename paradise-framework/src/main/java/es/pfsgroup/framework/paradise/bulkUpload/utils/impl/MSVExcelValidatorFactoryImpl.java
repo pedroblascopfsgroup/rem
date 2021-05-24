@@ -223,6 +223,9 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVActualizarCalidadDatosExcelValidator calidadDatos;
 	
 	@Autowired
+	private MSVActualizacionCamposConvivenciaSarebValidator convivenciaSareb;
+	
+	@Autowired
 	private MSVMasivaModificacionLineasDetalleValidator modificacionLineasDetalle;
 
 	@Autowired
@@ -261,10 +264,8 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVMasivaFechasTituloYPosesionValidator fechaTituloYposesion;
 
-
 	@Autowired
 	private MSVValidatorCargaCamposAccesibilidad cargaCamposAccesibilidad;
-	
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -410,6 +411,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return estadosAdmision;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_MASIVO_CALIDAD_DATOS.equals(codTipoOperacion)) {
 			return calidadDatos;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZACION_CAMPOS_ESPARTAR_CONVIVENCIA_SAREB.equals(codTipoOperacion)) {
+			return convivenciaSareb;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_MODIFICACION_LINEAS_DE_DETALLE.equals(codTipoOperacion)) {
 			return modificacionLineasDetalle;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_UNICA_GASTOS.equals(codTipoOperacion)) {

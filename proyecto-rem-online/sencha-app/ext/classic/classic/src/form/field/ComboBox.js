@@ -1825,12 +1825,14 @@ Ext.define('Ext.form.field.ComboBox', {
         }
         // Clearing is a special, simpler case.
         else {
-            me.suspendEvent('select');
-            me.valueCollection.beginUpdate();
-            me.pickerSelectionModel.deselectAll();
-            me.valueCollection.endUpdate();
-            me.lastSelectedRecords = null;
-            me.resumeEvent('select');
+        	if(me.getStore()!= null && me.getStore().isLoaded()){
+	            me.suspendEvent('select');
+	            me.valueCollection.beginUpdate();
+	            me.pickerSelectionModel.deselectAll();
+	            me.valueCollection.endUpdate();
+	            me.lastSelectedRecords = null;
+	            me.resumeEvent('select');
+        	}
         }
     },
 
@@ -1844,8 +1846,8 @@ Ext.define('Ext.form.field.ComboBox', {
      * Sets or adds a value/values
      */
     doSetValue: function(value /* private for use by addValue */, add) {
-        var me = this,
-            store = me.getStore(),
+        var me = this;
+            var store = me.getStore(),
             Model = store.getModel(),
             matchedRecords = [],
             valueArray = [],

@@ -193,6 +193,9 @@ public class GastoProveedor implements Serializable, Auditable {
 	
 	@Column(name="GPV_NUMERO_FACTURA_PPAL")
 	private String numeroFacturaPrincipal;
+		
+	@Column(name="GPV_NUM_CONTR_ALQUILER")
+	private String numeroContratoAlquiler;
     
 	@Version   
 	private Long version;
@@ -539,5 +542,13 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setNumeroFacturaPrincipal(String numeroFacturaPrincipal) {
 		this.numeroFacturaPrincipal = numeroFacturaPrincipal;
+	}
+
+	public String getNumeroContratoAlquiler() {
+		return numeroContratoAlquiler;
+	}
+
+	public void setNumeroContratoAlquiler(String numeroContratoAlquiler) {
+		this.numeroContratoAlquiler = numeroContratoAlquiler;
 	}
 }

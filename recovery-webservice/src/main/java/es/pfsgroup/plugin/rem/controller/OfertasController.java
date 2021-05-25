@@ -986,17 +986,19 @@ public class OfertasController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateReport(ReportGeneratorRequest request, HttpServletResponse response) throws IOException {
-		String urlGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_URL.concat(CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT));
-	 	ReportGeneratorResponse report = excelReportGeneratorApi.requestExcel(request, urlGenerateExcel);
+		String urlBaseGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_URL);
+		String urlEndpointGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT);
+	 	ReportGeneratorResponse report = excelReportGeneratorApi.requestExcel(request, urlBaseGenerateExcel.concat(urlEndpointGenerateExcel));
 	 	excelReportGeneratorApi.downloadExcel(report, response);
 	 	
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView enviarCorreoFichaComercial(ReportGeneratorRequest reportGenerator,  HttpServletRequest request, HttpServletResponse response, ModelMap model) throws IOException {
-		String urlGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_URL.concat(CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT));
-		ReportGeneratorResponse report = excelReportGeneratorApi.requestExcel(reportGenerator, urlGenerateExcel);
+		String urlBaseGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_URL);
+		String urlEndpointGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT);
+		ReportGeneratorResponse report = excelReportGeneratorApi.requestExcel(reportGenerator, urlBaseGenerateExcel.concat(urlEndpointGenerateExcel));
 		String errorCode = excelReportGeneratorApi.sendExcelFichaComercial(reportGenerator.getListId().get(0), report, request);
 		
 		if(errorCode == null || errorCode.isEmpty()){

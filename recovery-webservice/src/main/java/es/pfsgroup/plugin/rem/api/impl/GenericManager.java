@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -1663,7 +1664,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		if (fotos != null && fotos.size() > 0) {
 			
 			InputStream in = null;
-			FileOutputStream fos = null;
+			ByteArrayOutputStream out = null;
 			ImagenWebDto image;
 			
 			List<ImagenWebDto> imagenes = new ArrayList<ImagenWebDto>();
@@ -1686,17 +1687,18 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			for (int i = 0 ; i < fotos.size() && i < 6; i++) {
 				
 				try {
-					File temp = new File("temp");
 					ActivoFoto foto = fotos.get(i);	
 					image = new ImagenWebDto();
-					in = new BufferedInputStream(new URL(urlBase.concat("fotos/download?idFoto=").concat(foto.getId().toString())).openStream());    
-					//Comprobar si lo que recibimos es una imagen
-					fos = new FileOutputStream(temp);
-					IOUtils.copy(in, fos);
-					if(ImageIO.read(FileUtils.openInputStream(temp)) == null) {
-						throw new RestClientException("Error al recuperar la imagen");
+					URL url = new URL(foto.getUrlThumbnail());
+					in = new BufferedInputStream(url.openStream());    
+					out = new ByteArrayOutputStream();
+					byte[] buf = new byte[1024];
+					int n = 0;
+					while (-1!=(n=in.read(buf)))
+					{
+					   out.write(buf, 0, n);
 					}
-					image.setImage(FileUtils.readFileToByteArray(temp));
+					image.setImage(out.toByteArray());
 					image.setImageName(foto.getNombre());
 					imagenes.add(image);
 					
@@ -1707,9 +1709,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 						if (in != null) {
 							in.close();
 						}
-						if (fos != null) {
-							fos.close();
-							fos.flush();
+						if (out != null) {
+							out.close();
 						}
 							
 					} catch (IOException e) {

@@ -2787,6 +2787,25 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			}
         })
 	},
+	
+	T017_AgendarFechaFirmaArrasValidacion: function() {
+		var me = this;
+		var fechaEnvio = me.down('[name=fechaEnvio]');
+		fechaEnvio.setValue($AC.getCurrentDate());
+		me.bloquearCampo(fechaEnvio);
+		me.campoObligatorio(fechaEnvio);
+		
+	},
+	
+	T017_ConfirmarFechaFirmaArrasValidacion: function() {
+		var me = this;
+		var fechaValidacionBc = me.down('[name=fechaValidacionBC]');
+		var comboValidacionBC = me.down('[name=comboValidacionBC]');
+		
+		//fechaValidacionBc.setReadOnly(true);
+		//comboValidacionBC.setReadOnly(true);
+	},
+	
     habilitarCampo: function(campo) {
         var me = this;
         campo.setDisabled(false);

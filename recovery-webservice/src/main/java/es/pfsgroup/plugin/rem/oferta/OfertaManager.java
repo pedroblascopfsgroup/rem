@@ -6879,4 +6879,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			genericDao.update(DatosInformeFiscal.class, informeFiscal);
 		}				
 	}
+	
+
+	
 }

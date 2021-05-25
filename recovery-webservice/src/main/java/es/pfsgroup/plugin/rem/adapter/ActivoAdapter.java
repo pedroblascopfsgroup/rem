@@ -3965,7 +3965,7 @@ public class ActivoAdapter {
 			oferta.setOfertasAgrupadas(ofertasAgrupadas);
 			
 			oferta.setOfertaExpress(false);
-			String origenLead = comisionamientoApi.calculaLeadOrigin(oferta,false);
+			String origenLead = comisionamientoApi.calculaLeadOrigin(oferta);
 			if(origenLead == null) {
 				origenLead = DDOrigenComprador.CODIGO_ORC_HRE;
 			}

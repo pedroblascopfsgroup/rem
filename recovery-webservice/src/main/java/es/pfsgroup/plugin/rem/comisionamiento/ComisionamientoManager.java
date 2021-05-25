@@ -75,7 +75,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 	}
 	
 	@Override
-	public List<DtoPrescriptoresComision> getTiposDeComisionAccionGasto(Oferta oferta,boolean reenvioPorMas180Dias){
+	public List<DtoPrescriptoresComision> getTiposDeComisionAccionGasto(Oferta oferta){
 		List<DtoPrescriptoresComision> listAcciones = new ArrayList<DtoPrescriptoresComision>();
 		
 		Visita visita = oferta.getVisita();
@@ -94,7 +94,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 				: visita.getProveedorVisita().getCodigoProveedorRem().toString(); 
 		offerPrescriber = (oferta.getPrescriptor().getCodigoProveedorRem().toString());
 		
-		String codLeadOrigin = calculaLeadOrigin(oferta,reenvioPorMas180Dias);
+		String codLeadOrigin = calculaLeadOrigin(oferta);
 		
 		DtoPrescriptoresComision dto = getNewDtoComision();
 		
@@ -132,18 +132,18 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		return dto;
 	}
 	@Override
-	public String calculaLeadOrigin(Oferta oferta,boolean reenvioPorMas180Dias) {
+	public String calculaLeadOrigin(Oferta oferta) {
 		
 		String codLeadOrigin = null;
 		
 		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getOrigenComprador())) {
-			if(reenvioPorMas180Dias  && DDOrigenComprador.CODIGO_ORC_HRE.equals(oferta.getOrigenComprador().getCodigo())) {
+			if( DDOrigenComprador.CODIGO_ORC_HRE.equals(oferta.getOrigenComprador().getCodigo())) {
 				codLeadOrigin = DDOrigenComprador.CODIGO_ORC_API_PROPIO;
 			}else {
 				codLeadOrigin = oferta.getOrigenComprador().getCodigo();
 			}
 		} else if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getVisita()) && !Checks.esNulo(oferta.getVisita().getOrigenComprador())) {
-			if(reenvioPorMas180Dias && DDOrigenComprador.CODIGO_ORC_HRE.equals(oferta.getVisita().getOrigenComprador().getCodigo())) {
+			if(DDOrigenComprador.CODIGO_ORC_HRE.equals(oferta.getVisita().getOrigenComprador().getCodigo())) {
 				codLeadOrigin = DDOrigenComprador.CODIGO_ORC_API_PROPIO;
 			}else {
 				codLeadOrigin = oferta.getVisita().getOrigenComprador().getCodigo();
@@ -167,9 +167,9 @@ public class ComisionamientoManager implements ComisionamientoApi {
 			dto.setPrescriptorCodRem(prescriptorOferta);
 			dto.setTipoAccion(DDAccionGastos.CODIGO_PRE_Y_COL);
 			
-			if(DDOrigenComprador.CODIGO_ORC_API_AJENO.equals(codLeadOrigin) && diferenciaFechaVisitaYAlta != null) {
+			if(DDOrigenComprador.CODIGO_ORC_API_AJENO.equals(codLeadOrigin)) {
 				
-				if(diferenciaFechaVisitaYAlta <= 90L && prescriptorOriLead != null) {
+				if(prescriptorOriLead != null) {
 					dto.setOrigenLead(codLeadOrigin);
 					
 					listAcciones.add(dto);
@@ -181,7 +181,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 					dto.setOrigenLead(codLeadOrigin);
 					listAcciones.add(dto);
 					
-				}else if(diferenciaFechaVisitaYAlta > 90L){
+				}else{
 					dto.setOrigenLead(DDOrigenComprador.CODIGO_ORC_API_PROPIO);
 					
 					listAcciones.add(dto);
@@ -214,9 +214,9 @@ public class ComisionamientoManager implements ComisionamientoApi {
 			
 			listAcciones.add(dto);
 			
-			if(DDOrigenComprador.CODIGO_ORC_API_AJENO.equals(codLeadOrigin) && diferenciaFechaVisitaYAlta != null) {
+			if(DDOrigenComprador.CODIGO_ORC_API_AJENO.equals(codLeadOrigin)) {
 				
-				if(diferenciaFechaVisitaYAlta <= 90L && prescriptorOriLead != null) {
+				if(prescriptorOriLead != null) {
 					
 					dto = getNewDtoComision();
 					
@@ -225,7 +225,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 					dto.setOrigenLead(codLeadOrigin);
 					
 					listAcciones.add(dto);
-				} else if(diferenciaFechaVisitaYAlta > 90L){
+				} else {
 					List<DtoPrescriptoresComision> listaSup = new ArrayList<DtoPrescriptoresComision>();
 					
 					for(DtoPrescriptoresComision dtoLista: listAcciones) {

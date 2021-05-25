@@ -3027,7 +3027,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		RespuestaComisionResultDto calculoComision = null;
 		
 		// TODO FIN PARTE CALCULO TIPO PRODUCTO
-		List<DtoPrescriptoresComision> listAccionesComision = comisionamientoApi.getTiposDeComisionAccionGasto(oferta,reenvioPorMas180Dias);
+		List<DtoPrescriptoresComision> listAccionesComision = comisionamientoApi.getTiposDeComisionAccionGasto(oferta);
 		
 		if(listAccionesComision != null) {
 			for(DtoPrescriptoresComision accionesComision: listAccionesComision) {

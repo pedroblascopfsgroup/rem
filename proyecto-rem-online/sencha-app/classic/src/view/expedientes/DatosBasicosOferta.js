@@ -533,6 +533,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							xtype : 'button',
 							reference : 'btngenerarfichacomercial',
 							bind : {
+								hidden : '{esTipoAlquiler}',
 								disabled : '{!habilitarBotonGenerarFicha}'
 							},
 							text : HreRem.i18n('btn.generar.ficha.comercial'),

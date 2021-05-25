@@ -3694,8 +3694,9 @@ public class ActivoAdapter {
 	@Transactional(readOnly = false)
 	public void cambiarResponsableTrabajosActivos(Activo activo) {
 		if (!Checks.esNulo(activo)) {
-			List<ActivoTrabajo> listaTrabajos = activo.getActivoTrabajos();					
-			Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());		
+			Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());	
+			Filter trabajoFilter = genericDao.createFilter(FilterType.EQUALS, "trabajo.auditoria.borrado", false);
+			List<ActivoTrabajo> listaTrabajos = genericDao.getList(ActivoTrabajo.class, activoFilter, trabajoFilter);
 			ActivoPublicacion actPublicacion = genericDao.get(ActivoPublicacion.class, activoFilter);			
 			if (DDTipoComercializacion.CODIGO_VENTA.equals(actPublicacion.getTipoComercializacion().getCodigo())) {
 				if (!Checks.estaVacio(listaTrabajos)) {

@@ -30,6 +30,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDTipoGasto implements Auditable, Dictionary {
 	
 	public static final String CODIGO_SERV_PROF_INDEPENDIENTES = "11";
+	public static final String CODIGO_ALQUILER = "19";
 
 	/**
 	 * 

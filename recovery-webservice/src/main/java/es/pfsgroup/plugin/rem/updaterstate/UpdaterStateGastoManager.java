@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -17,24 +18,32 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.GastoLineaDetalleDao;
+import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.impl.GastoLineaDetalleDaoImpl;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoSuplido;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProvisionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 
 @Service("updaterStateGastoManager")
 public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private GastoLineaDetalleDao gastoLineaDetalleDao;
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
@@ -57,6 +66,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	private static final String VALIDACION_SUPLIDOS_NIF_ESTADO_GASTO = "msg.validacion.gasto.suplidos.nif.estado.gasto";
 	private static final String VALIDACION_SUPLIDOS_ABONO_CUENTA = "msg.validacion.gasto.suplidos.abono.cuenta";
 	private static final String VALIDACION_SUPLIDOS_VINCULADOS_NULL = "msg.validacion.gasto.suplidos.no.vinculados";
+	private static final String VALIDACION_NUMERO_ALQUILER_ENTIDADES = "msg.error.validacion.numero.contrato.alquiler.caixa.activos";
 	
 	private static final String COD_DESTINATARIO_HAYA = "02";
 
@@ -229,7 +239,23 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 					return error;
 				}
 			}
-			
+			if (gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null) {
+				String codCartera = gasto.getPropietario().getCartera().getCodigo();
+				if (DDCartera.CODIGO_CARTERA_BANKIA.equals(codCartera)) {
+					if (gasto.getTipoGasto() != null) {
+						String codGasto = gasto.getTipoGasto().getCodigo();
+						if (DDTipoGasto.CODIGO_ALQUILER.equals(codGasto)) {
+							boolean resultado = gastoLineaDetalleDao.tieneListaEntidadesByGastoProveedorAndTipoEntidad(gasto, DDEntidadGasto.CODIGO_ACTIVO);
+							if ((gasto.getNumeroContratoAlquiler() == null || "".equals(gasto.getNumeroContratoAlquiler())) || !resultado) {
+								error = messageServices.getMessage(VALIDACION_NUMERO_ALQUILER_ENTIDADES); 
+								return error;
+							}
+							
+						}
+					}
+				}
+			}
+				
 		}
 		return error;
 	}

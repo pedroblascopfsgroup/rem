@@ -602,6 +602,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 			
 			dto.setFacturaPrincipalSuplido(gasto.getNumeroFacturaPrincipal());
+			
+			if (gasto.getNumeroContratoAlquiler() != null) {
+				dto.setNumeroContratoAlquiler(gasto.getNumeroContratoAlquiler());
+			}
 		}
 
 		return dto;
@@ -933,6 +937,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				
 				gastoProveedor.setNumeroFacturaPrincipal(null);
 			}
+		}
+		
+		if (dto.getNumeroContratoAlquiler() != null) {
+			gastoProveedor.setNumeroContratoAlquiler(dto.getNumeroContratoAlquiler());
 		}
 		
 		genericDao.update(GastoProveedor.class, gastoProveedor);

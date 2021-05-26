@@ -565,6 +565,10 @@ public class Activo implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<GastoAsociadoAdquisicion> gastosAsociados;
     
+    
+    @Column(name = "ACT_NUM_ACTIVO_CAIXA")
+    private String numActivoCaixa;
+    
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -2154,5 +2158,13 @@ public class Activo implements Serializable, Auditable {
 
 	public void setTipoTransmision(DDTipoTransmision tipoTransmision) {
 		this.tipoTransmision = tipoTransmision;
+	}
+
+	public String getNumActivoCaixa() {
+		return numActivoCaixa;
+	}
+
+	public void setNumActivoCaixa(String numActivoCaixa) {
+		this.numActivoCaixa = numActivoCaixa;
 	}
 }

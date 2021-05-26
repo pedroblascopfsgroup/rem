@@ -570,6 +570,9 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "DD_PRP_ID")
     private DDProcedenciaProducto procedenciaProducto; 
     
+    @Column(name = "ACT_NUM_ACTIVO_CAIXA")
+    private String numActivoCaixa;
+    
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -2167,5 +2170,13 @@ public class Activo implements Serializable, Auditable {
 
 	public void setProcedenciaProducto(DDProcedenciaProducto procedenciaProducto) {
 		this.procedenciaProducto = procedenciaProducto;
+	}
+	public String getNumActivoCaixa() {
+		return numActivoCaixa;
+	}
+
+	public void setNumActivoCaixa(String numActivoCaixa) {
+		this.numActivoCaixa = numActivoCaixa;
+
 	}
 }

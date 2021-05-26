@@ -42,6 +42,8 @@ import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
 import es.capgemini.devon.security.AuthenticationFilter;
 import es.capgemini.devon.security.SecurityUserInfo;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
+import es.pfsgroup.plugin.rem.security.jupiter.IntegracionJupiterApi;
 import net.sf.json.JSONObject;
 
 public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
@@ -75,6 +77,9 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 	@Autowired
 	private ServletContext context;
 	
+	@Autowired
+	private IntegracionJupiterApi integracionJupiterManager;
+
 	public static void main(String[] args) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		
 		if ((args == null) || (args.length <= 0)){
@@ -154,13 +159,21 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 	            logger.debug("0Auth2: perfilesrem >" + perfilesrem + "<");
 	            
 	            //TODO: Recuperar el valor del set de perfiles ADFS y actualizar las tablas de REM
+	            integracionJupiterManager.actualizarRolesDesdeJupiter(username, perfilesrem);
 	            
 	            //TODO: Actualizar, si es necesario, los datos del usuario (nombre, apellidos, dirección de email)
+	            String nombre = (String) claims.get("commonname"); 
+	            String apellidos = (String) claims.get("family_name"); 
+	            String email = (String) claims.get("email"); 
+	            integracionJupiterManager.actualizarInfoPersonal(username, nombre, apellidos, email);
 				
 			} catch (ParseException e) {
 				throw new AuthenticationCredentialsNotFoundException(messages.getMessage(AUTH2_ERROR_INVALID_TOKEN));
 			} catch (IOException e) {
 				throw new AuthenticationCredentialsNotFoundException(messages.getMessage(AUTH2_ERROR_BAD_CREDENTIALS));
+			} catch (Exception e) {
+				logger.error("Jupiter: problema al actualizar Roles de REM desde Jupiter " + e.getMessage()); 
+				e.printStackTrace();
 			}
 		}
 

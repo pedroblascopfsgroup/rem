@@ -989,7 +989,7 @@ public class Oferta implements Serializable, Auditable {
 	}
 
 	public void setRespDocCliente(DDResponsableDocumentacionCliente respDocCliente) {
-		respDocCliente = respDocCliente;
+		this.respDocCliente = respDocCliente;
 	}
 	
 }

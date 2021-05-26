@@ -63,11 +63,11 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		HQLBuilder hb = null;
 		
 		String from = "SELECT voferta FROM VGridOfertasActivosAgrupacionIncAnuladas voferta, GestorActivo ga INNER JOIN ga.activo INNER JOIN ga.tipoGestor";
-		String where ="voferta.idActivo = ga.activo.id AND ga.usuario.id = '" + dtoOfertasFilter.getGestoria() + "' AND voferta.numActivoAgrupacion = "
-				+ dtoOfertasFilter.getNumActivo();
 					
 		hb = new HQLBuilder(from);
-		hb.appendWhere(where);
+		hb.appendWhere("voferta.idActivo = ga.activo.id");
+		HQLBuilder.addFiltroIgualQue(hb, "ga.usuario.id", dtoOfertasFilter.getGestoria());
+		HQLBuilder.addFiltroIgualQue(hb, "voferta.numActivoAgrupacion", dtoOfertasFilter.getNumActivo());
 
 		Page page = HibernateQueryUtils.page(this, hb, dtoOfertasFilter);
 		List<VGridOfertasActivosAgrupacionIncAnuladas> ofertas;
@@ -137,10 +137,16 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 				"		INNER JOIN TEX_TAREA_EXTERNA TXT ON TXT.TAR_ID = TAR.TAR_ID" + 
 				"		INNER JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TXT.TAP_ID = TAP.TAP_ID" + 
 				"		INNER JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID" +  
-				"		WHERE TAP.TAP_CODIGO = '" + tarea + "'" + 
-				"		AND OFR.OFR_NUM_OFERTA = " + numOferta;
+				"		WHERE TAP.TAP_CODIGO = :tarea " + 
+				"		AND OFR.OFR_NUM_OFERTA = :numOferta";
 		
-		return !"0".equals(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult().toString());
+		Query callFunctionSql = this.getSessionFactory().getCurrentSession().createSQLQuery(sql.toString());
+
+		callFunctionSql.setParameter("tarea", tarea);
+		callFunctionSql.setParameter("numOferta", numOferta);
+
+		return !"0".equals(callFunctionSql.uniqueResult().toString()) ;
+		
 	}
 	
 	@Override
@@ -155,10 +161,15 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 				"		INNER JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TXT.TAP_ID = TAP.TAP_ID" + 
 				"		INNER JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID" + 
 				"		WHERE TAR.TAR_TAREA_FINALIZADA = 0" + 
-				"		AND TAP.TAP_CODIGO = '" + tarea + "'" + 
-				"		AND OFR.OFR_NUM_OFERTA = " + numOferta;
+				"		AND TAP.TAP_CODIGO = :tarea " + 
+				"		AND OFR.OFR_NUM_OFERTA = :numOferta";
 		
-		return !"0".equals(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult().toString());
+		Query callFunctionSql = this.getSessionFactory().getCurrentSession().createSQLQuery(sql.toString());
+
+		callFunctionSql.setParameter("tarea", tarea);
+		callFunctionSql.setParameter("numOferta", numOferta);
+
+		return !"0".equals(callFunctionSql.uniqueResult().toString()) ;
 	}
 	
 	@Override
@@ -173,15 +184,22 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 				"		INNER JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TXT.TAP_ID = TAP.TAP_ID" + 
 				"		INNER JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID" + 
 				"		WHERE TAR.TAR_TAREA_FINALIZADA = 1" + 
-				"		AND TAP.TAP_CODIGO = '" + tarea + "'" + 
-				"		AND OFR.OFR_NUM_OFERTA = " + numOferta;
+				"		AND TAP.TAP_CODIGO = :tarea " + 
+				"		AND OFR.OFR_NUM_OFERTA = :numOferta";
 		
-		return !"0".equals(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult().toString());
+		Query callFunctionSql = this.getSessionFactory().getCurrentSession().createSQLQuery(sql.toString());
+
+		callFunctionSql.setParameter("tarea", tarea);
+		callFunctionSql.setParameter("numOferta", numOferta);
+
+		return !"0".equals(callFunctionSql.uniqueResult().toString()) ;
 	}
 	
 	@Override
 	@Transactional
 	public List<String> getTareasActivas(String numOferta) {
+		
+		rawDao.addParam("numOferta", numOferta);
 		List<Object> resultados = rawDao.getExecuteSQLList(
 				"		SELECT TAP.TAP_CODIGO" + 
 				"		FROM ECO_EXPEDIENTE_COMERCIAL ECO" + 
@@ -192,7 +210,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 				"		INNER JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TXT.TAP_ID = TAP.TAP_ID" + 
 				"		INNER JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID" + 
 				"		WHERE TAR.TAR_TAREA_FINALIZADA = 0" + 
-				"		AND OFR.OFR_NUM_OFERTA = " +numOferta);
+				"		AND OFR.OFR_NUM_OFERTA = :numOferta");
 		
 		List<String> listaTareas = new ArrayList<String>();
 
@@ -288,7 +306,8 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	public Oferta getOfertaPrincipal(Long idferta) {
 
 		Oferta resultado = null;
-		HQLBuilder hql = new HQLBuilder("select oferAgruLbk.ofertaPrincipal from OfertasAgrupadasLbk oferAgruLbk join oferAgruLbk.ofertaDependiente depen where depen.id ="+idferta);
+		HQLBuilder hql = new HQLBuilder("select oferAgruLbk.ofertaPrincipal from OfertasAgrupadasLbk oferAgruLbk join oferAgruLbk.ofertaDependiente depen");
+		HQLBuilder.addFiltroIgualQue(hql, "depen.id", idferta);
 		try {
 			resultado = HibernateQueryUtils.uniqueResult(this, hql);
 		} catch (Exception e) {
@@ -306,9 +325,13 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 				,genericDao.createFilter(FilterType.EQUALS, "DD_EOF_CODIGO", DDEstadoOferta.CODIGO_RECHAZADA));
 		
 		if (!Checks.esNulo(idOferta) && !Checks.esNulo(idAgr)) {
-			hql.appendWhere(" id != " + idOferta
-					+ " and agrupacion.id = " + idAgr
-					+ " and estadoOferta.codigo != '" + estado.getCodigo() + "'");
+			
+			hql.appendWhere("id != :idOferta");
+			HQLBuilder.addFiltroIgualQue(hql, "agrupacion.id", idAgr);
+			hql.appendWhere("estadoOferta.codigo != :estadoCodigo");
+			hql.getParameters().put("idOferta", idOferta);
+			hql.getParameters().put("estadoCodigo", estado.getCodigo());
+			
 			try {
 				ofertasVivas = HibernateQueryUtils.list(this, hql);
 			} catch (Exception e) {
@@ -408,22 +431,28 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			}						
 
 		if (dto.getClaseActivoBancarioCodigo() != null)
-			hb.appendWhere(" exists (select 1 from ActivoBancario ab where ab.claseActivo.codigo = '" +	 dto.getClaseActivoBancarioCodigo() + "' and vgrid.idActivo = ab.activo.id) ");
-
+			hb.appendWhere(" exists (select 1 from ActivoBancario ab where ab.claseActivo.codigo = :claseActivoBancarioCodigo and vgrid.idActivo = ab.activo.id) ");
+			hb.getParameters().put("claseActivoBancarioCodigo", dto.getClaseActivoBancarioCodigo());
+		
 		if (dto.getTipoGestor() != null || dto.getUsuarioGestor() != null) {
 			StringBuilder sb = new StringBuilder(" exists (select 1 from GestorActivo ga where vgrid.idActivo = ga.activo.id ");
 			if (dto.getTipoGestor() != null)
-				sb.append(" and ga.tipoGestor.codigo = '" + dto.getTipoGestor() + "' ");
+				sb.append(" and ga.tipoGestor.codigo = :tipoGestor ");
+				hb.getParameters().put("tipoGestor", dto.getTipoGestor());
 			if (dto.getUsuarioGestor() != null)
-				sb.append(" and ga.usuario.id = " + dto.getUsuarioGestor());
+				sb.append(" and ga.usuario.id = :usuarioGestor" + dto.getUsuarioGestor());
+				hb.getParameters().put("usuarioGestor", dto.getUsuarioGestor());
 			sb.append(" ) ");
 			hb.appendWhere(sb.toString());
 		}
 		
 		if (dto.getGestoria() != null)
-			hb.appendWhere(" exists (select 1 from GestorExpedienteComercial gex where vgrid.idExpediente = gex.expedienteComercial.id and gex.usuario.id = " + dto.getGestoria() + " ) ");		
+			hb.appendWhere(" exists (select 1 from GestorExpedienteComercial gex where vgrid.idExpediente = gex.expedienteComercial.id and gex.usuario.id = :gestoria) ");
+			hb.getParameters().put("gestoria", dto.getGestoria());
+			
 		if (dto.getGestoriaBag() != null) 
-			hb.appendWhere(" exists (select 1 from VBusquedaActivosGestorias bag where bag.gestoria = " + dto.getGestoria() + " and vgrid.idActivo = bag.id) ");	
+			hb.appendWhere(" exists (select 1 from VBusquedaActivosGestorias bag where bag.gestoria = :gestoriaBag and vgrid.idActivo = bag.id) ");
+			hb.getParameters().put("gestoriaBag", dto.getGestoriaBag());
 		
 		if (dto.getCodigoEstadoOferta() != null)
 			this.addFiltroWhereInSiNotNullConStrings(hb, "vgrid.codigoEstadoOferta", Arrays.asList(dto.getCodigoEstadoOferta().split(",")));

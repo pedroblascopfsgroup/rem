@@ -1275,10 +1275,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	public VCondicionantesDisponibilidad getCondicionantesDisponibilidad(Long idActivo) {
+	public VEsCondicionado getCondicionantesDisponibilidad(Long idActivo) {
 		Filter idActivoFilter = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
-		return genericDao.get(VCondicionantesDisponibilidad.class, idActivoFilter);
+		return genericDao.get(VEsCondicionado.class, idActivoFilter);
 	}
+	
+	@Override
+	public VSinInformeAprobadoRem getSinInformeAprobadoREM(Long idActivo) {
+		Filter idActivoFilter = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
+		return genericDao.get(VSinInformeAprobadoRem.class, idActivoFilter);
+	}
+
 
 	@Override
 	@Transactional(readOnly = false)
@@ -5564,8 +5571,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (Checks.esNulo(idActivo))
 			return null;
 
-		List<Object> listaObj = rawDao.getExecuteSQLList("SELECT AGR_ID FROM ACT_AGA_AGRUPACION_ACTIVO WHERE ACT_ID = "
-				+ idActivo.toString() + "AND BORRADO = 0");
+		rawDao.addParam(  "idActivo", idActivo.toString());
+
+		List<Object> listaObj = rawDao.getExecuteSQLList("SELECT AGR_ID FROM ACT_AGA_AGRUPACION_ACTIVO WHERE ACT_ID = : idActivo AND BORRADO = 0");
 
 		List<Long> listaAgr = new ArrayList<Long>();
 

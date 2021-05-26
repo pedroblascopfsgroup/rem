@@ -1065,6 +1065,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Override
 	@Transactional(readOnly = false)
 	public boolean updateGastoByPrinexLBK(Long idGasto) {
+		rawDao.addParam(  "idGasto", idGasto);
 		Double gastoTotal = 0.0;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
 		GastoDetalleEconomico detalleGasto = genericDao.get(GastoDetalleEconomico.class, filtro);
@@ -1078,7 +1079,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 				if(!Checks.estaVacio(listGastoPrinex)) {					
 					
-					String result = rawDao.getExecuteSQL("SELECT SUM(GPL_IMPORTE_GASTO) FROM GPL_GASTOS_PRINEX_LBK WHERE GPV_ID = " + idGasto);	
+					String result = rawDao.getExecuteSQL("SELECT SUM(GPL_IMPORTE_GASTO) FROM GPL_GASTOS_PRINEX_LBK WHERE GPV_ID =  :idGasto ");	
 					gastoTotal = Double.valueOf(result);
 					for (GastoPrinex gastoPrinex : listGastoPrinex) {
 						if(!Checks.esNulo(gastoPrinex.getIdActivo())) {
@@ -4262,6 +4263,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		
 		return importeCuotaBig.doubleValue();
+	}
+	
+	@Override
+	public Long getIdByNumGasto(Long numGasto) {
+		Long idGasto = null;
+		try {
+			idGasto = Long.parseLong(rawDao.getExecuteSQL("SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = " + numGasto + " AND BORRADO = 0"));
+		} catch (Exception e) {
+				return null;
+		}			
+			return idGasto;
 	}
 	
 }

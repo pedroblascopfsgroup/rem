@@ -4605,9 +4605,9 @@ public class ActivoAdapter {
 	 */
 	private Boolean informeComercialAprobado(Activo activo) {
 		Boolean check = true;
-		VCondicionantesDisponibilidad vCondicionante = activoApi.getCondicionantesDisponibilidad(activo.getId());
-		if(!Checks.esNulo(vCondicionante)) {
-			if(vCondicionante.getSinInformeAprobadoREM()) {
+		VSinInformeAprobadoRem vSinInforme = activoApi.getSinInformeAprobadoREM(activo.getId());
+		if(!Checks.esNulo(vSinInforme)) {
+			if(vSinInforme.getSinInformeAprobadoREM()) {
 				check = false;
 			}
 		}

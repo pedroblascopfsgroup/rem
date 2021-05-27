@@ -74,11 +74,10 @@ public class GastoManager extends BusinessOperationOverrider<GastoApi> implement
 	public Long getGastoExists(Long numGasto) {
 
 		String idGasto = null;
-		rawDao.addParam(  "numGasto", numGasto);
 
 		try {
 				idGasto = rawDao.getExecuteSQL(
-						"SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = :numGasto AND BORRADO = 0");
+						"SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = " + numGasto + " AND BORRADO = 0");
 			
 			
 			return Long.parseLong(idGasto);

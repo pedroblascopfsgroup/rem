@@ -5571,9 +5571,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (Checks.esNulo(idActivo))
 			return null;
 
-		rawDao.addParam(  "idActivo", idActivo.toString());
-
-		List<Object> listaObj = rawDao.getExecuteSQLList("SELECT AGR_ID FROM ACT_AGA_AGRUPACION_ACTIVO WHERE ACT_ID = : idActivo AND BORRADO = 0");
+		List<Object> listaObj = rawDao.getExecuteSQLList("SELECT AGR_ID FROM ACT_AGA_AGRUPACION_ACTIVO WHERE ACT_ID = "
+				+ idActivo.toString() + "AND BORRADO = 0");
 
 		List<Long> listaAgr = new ArrayList<Long>();
 

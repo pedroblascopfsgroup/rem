@@ -5203,7 +5203,7 @@ comprobarFormatoModificar: function() {
 			    			 "message": null
 			    	 };
 			    	 
-			    	 if (data.success == true) {
+			    	 if ("true" == data.success) {
 			    		 statusMessage.status = "infoToast";
 			    		 statusMessage.message = HreRem.i18n("msg.operacion.ok");
 			    	 } else {

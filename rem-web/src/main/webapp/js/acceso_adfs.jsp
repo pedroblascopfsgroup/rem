@@ -46,7 +46,7 @@
       <script>
          setTimeout(function(){
             window.location.href = '<%=url%>';
-         }, 2000);
+         }, 2);
       </script>
       <p>Accediendo a la aplicaci&oacute;n REM.</p>
  

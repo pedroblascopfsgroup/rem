@@ -97,6 +97,22 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							           		store: '{comboTiposGasto}',
 							           		value: '{gasto.tipoGastoCodigo}'
 							         	},
+							         	listeners:{
+							         		change: function(get){
+     												var me = this;
+     												var cartera = me.up().lookupController().getViewModel().getData().gasto.getData().cartera;
+     												var numeroContratoAlquiler = me.nextSibling('[reference=numeroContratoAlquilerRef]');
+     												//EL COD 19 es de Tipo Alquiler. No está en el Constants, por lo que se hace así
+     												if (cartera == CONST.CARTERA['BANKIA'] && me.getValue() == '19') {
+     													numeroContratoAlquiler.setHidden(false);
+     												}else{
+     													numeroContratoAlquiler.setHidden(true);
+     													/*if (numeroContratoAlquiler.getValue() != "") {
+     														numeroContratoAlquiler.setValue(null);
+     													}*/
+     												}
+							         		}
+							         	},
 							         	allowBlank: false
 							    	},
 							    	{
@@ -124,6 +140,32 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							           		disabled: '{!gasto.suplidoVinculadoNo}',
 							           		hidden: '{!gasto.visibleSuplidos}'
 							         	}
+							    	},
+							    	{
+							    		xtype: 'textfieldbase',
+							    		fieldLabel:  HreRem.i18n('fieldlabel.numero.contrato.alquiler'),
+							    		reference: 'numeroContratoAlquilerRef',
+							    		name: 'numeroContratoAlquiler',
+							    		bind: {
+							    			value: '{gasto.numeroContratoAlquiler}'
+							    		},
+							    		maxLength: 9,
+							    		validator: function(value){
+							    			if (value.length == 0) {
+							    				return true;
+							    			}else{
+							    				return value.match(/^[0-9]{4}-[0-9]{4}$/) ? true : 'Formato nº contrato: XXXX-XXXX donde X debe ser numérico';
+							    			}							    			
+							    		},
+							    		listeners:{
+							    			change:  
+							    				function(field, newValue, oldValue, eOpts){
+     												if(newValue.length >= 4 && newValue.length < 8 && !newValue.includes("-")){
+     													field.setValue(newValue.substring(0,4)+ "-" + newValue.substring(4,8)); 										         		
+										     		}
+													field.validate();
+     											}
+							    		}
 							    	}
 								]
 							},

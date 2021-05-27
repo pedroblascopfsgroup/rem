@@ -139,4 +139,27 @@ public class GastoLineaDetalleDaoImpl extends AbstractEntityDao<GastoLineaDetall
 		}
 
 	}
+	@Override
+	public boolean tieneListaEntidadesByGastoProveedorAndTipoEntidad (GastoProveedor gpv, String codigoEntidadGasto){
+		boolean resultado = false;
+		List<String> arrayIdGLD = new ArrayList<String>();		
+		List<GastoLineaDetalle> gastoLineaDetalleList = gpv.getGastoLineaDetalleList();
+		if(gastoLineaDetalleList != null && !gastoLineaDetalleList.isEmpty()) {
+			for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
+				arrayIdGLD.add(gastoLineaDetalle.getId().toString());
+			}
+		}
+		
+		String[] listaIdGLD =  arrayIdGLD.toArray(new String[0]);
+		
+		String cod = "'"+codigoEntidadGasto+"'";
+		HQLBuilder hb = new HQLBuilder(" from GastoLineaDetalleEntidad gldEnt");
+		hb.appendWhereIN("gldEnt.gastoLineaDetalle.id", listaIdGLD);
+		hb.appendWhere("gldEnt.entidadGasto.codigo = "+ cod);
+		List<Object[]> resultadoLista = (List<Object[]>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		if (resultadoLista != null && !resultadoLista.isEmpty()) {
+			resultado = true;
+		}
+		return resultado;
+	}
 }

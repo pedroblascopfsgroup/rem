@@ -56,7 +56,7 @@ public class MSVPlantillaOperacionDaoImpl extends AbstractEntityDao<MSVPlantilla
 	
 		
 		HQLBuilder.addFiltroIgualQue(hb, "p.auditoria.borrado", false);
-		HQLBuilder.addFiltroIgualQue(hb, "p.tipoOperacion.id", idTipoOperacion);
+		HQLBuilder.addFiltroIgualQue(hb, "p.tipoOperacion", idTipoOperacion);
 		
 		MSVPlantillaOperacion msvPlantillaOperacion = HibernateQueryUtils.uniqueResult(this, hb);
 		

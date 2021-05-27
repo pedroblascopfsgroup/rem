@@ -427,37 +427,32 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		if(dto.getNumAgrupacion() == null
 				&& (dto.getAgrupacionesVinculadas() == null || Boolean.FALSE.equals(dto.getAgrupacionesVinculadas()))
 				&& (dto.getNumActivoUvem() != null || dto.getNumActivoSareb() != null || dto.getNumPrinex() != null || dto.getNumActivo() != null)){
-			HQLBuilder.addFiltroIsNull(hb, "vgrid.idAgrupacion");			
-		}						
+				HQLBuilder.addFiltroIsNull(hb, "vgrid.idAgrupacion");			
+			}						
 
-		if (dto.getClaseActivoBancarioCodigo() != null) {
+		if (dto.getClaseActivoBancarioCodigo() != null)
 			hb.appendWhere(" exists (select 1 from ActivoBancario ab where ab.claseActivo.codigo = :claseActivoBancarioCodigo and vgrid.idActivo = ab.activo.id) ");
 			hb.getParameters().put("claseActivoBancarioCodigo", dto.getClaseActivoBancarioCodigo());
-		}
 		
 		if (dto.getTipoGestor() != null || dto.getUsuarioGestor() != null) {
 			StringBuilder sb = new StringBuilder(" exists (select 1 from GestorActivo ga where vgrid.idActivo = ga.activo.id ");
-			if (dto.getTipoGestor() != null) {
+			if (dto.getTipoGestor() != null)
 				sb.append(" and ga.tipoGestor.codigo = :tipoGestor ");
 				hb.getParameters().put("tipoGestor", dto.getTipoGestor());
-			}
-			if (dto.getUsuarioGestor() != null) {
+			if (dto.getUsuarioGestor() != null)
 				sb.append(" and ga.usuario.id = :usuarioGestor" + dto.getUsuarioGestor());
 				hb.getParameters().put("usuarioGestor", dto.getUsuarioGestor());
-			}
 			sb.append(" ) ");
 			hb.appendWhere(sb.toString());
 		}
 		
-		if (dto.getGestoria() != null) {
+		if (dto.getGestoria() != null)
 			hb.appendWhere(" exists (select 1 from GestorExpedienteComercial gex where vgrid.idExpediente = gex.expedienteComercial.id and gex.usuario.id = :gestoria) ");
 			hb.getParameters().put("gestoria", dto.getGestoria());
-		}
 			
-		if (dto.getGestoriaBag() != null) {
+		if (dto.getGestoriaBag() != null) 
 			hb.appendWhere(" exists (select 1 from VBusquedaActivosGestorias bag where bag.gestoria = :gestoriaBag and vgrid.idActivo = bag.id) ");
 			hb.getParameters().put("gestoriaBag", dto.getGestoriaBag());
-		}
 		
 		if (dto.getCodigoEstadoOferta() != null)
 			this.addFiltroWhereInSiNotNullConStrings(hb, "vgrid.codigoEstadoOferta", Arrays.asList(dto.getCodigoEstadoOferta().split(",")));
@@ -467,7 +462,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 				this.addFiltroWhereInSiNotNullConStrings(hb, "vgrid.codigoEstadoExpediente", Arrays.asList(dto.getEstadoExpedienteVenta().split(",")));				
 			}else if (dto.getEstadoExpedienteAlquiler() != null) {
 				this.addFiltroWhereInSiNotNullConStrings(hb, "vgrid.codigoEstadoExpediente", Arrays.asList(dto.getEstadoExpedienteAlquiler().split(",")));
-			}
+				}
 		}			
 		
 		return HibernateQueryUtils.page(this, hb, dto);

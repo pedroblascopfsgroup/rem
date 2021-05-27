@@ -5195,10 +5195,25 @@ comprobarFormatoModificar: function() {
 			     params:  {numOferta : numOferta , idExpediente: idExpediente},
 			     success: function(response, opts) {
 			    	 data = Ext.decode(response.responseText);
-			    	 if (data.success == 'true')
-			    		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-			    	 else
-			    		 me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko"));
+			    	 if ( data.data )
+			    		 data = data.data;
+			    	 
+			    	 statusMessage = {
+			    			 "status" : null,
+			    			 "message": null
+			    	 };
+			    	 
+			    	 if (data.success == true) {
+			    		 statusMessage.status = "infoToast";
+			    		 statusMessage.message = HreRem.i18n("msg.operacion.ok");
+			    	 } else {
+			    		 statusMessage.status = "errorToast";
+			    		 statusMessage.message = data.descError 
+			    		 							&& data.descError.length > 0 ?
+			    		 									data.descError : HreRem.i18n("msg.operacion.ko");
+			    	 }
+			    	 
+			    	 me.fireEvent(statusMessage.status ,statusMessage.message);
 			     },
 	        failure: function(response, opts) {
 					me.fireEvent("errorToast",data.msg);

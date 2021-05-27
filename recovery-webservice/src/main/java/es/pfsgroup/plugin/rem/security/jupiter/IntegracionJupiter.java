@@ -12,15 +12,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.model.DDZona;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
-import es.pfsgroup.plugin.rem.security.HayaAuthenticationProvider;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 @Service("integracionJupiter")
 public class IntegracionJupiter implements IntegracionJupiterApi {
@@ -149,13 +153,32 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 	}
 
 	private void actualizarPerfiles(Usuario usuario, List<String> altasPerfiles, List<String> bajasPerfiles) {
-		// TODO Auto-generated method stub
 		
+		for (String codigoPerfil : altasPerfiles) {
+			ZonaUsuarioPerfil zpu = new ZonaUsuarioPerfil();
+			zpu.setUsuario(usuario);
+			Perfil perfil = genericDao.get(Perfil.class, 
+					genericDao.createFilter(FilterType.EQUALS, "codigo", codigoPerfil));
+			zpu.setPerfil(perfil);
+			DDZona zona = genericDao.get(DDZona.class, 
+					genericDao.createFilter(FilterType.EQUALS, "descripcion", "REM"));
+			zpu.setZona(zona);
+			zpu.setAuditoria(Auditoria.getNewInstance());
+			zpu.setVersion(0);
+			genericDao.save(ZonaUsuarioPerfil.class, zpu);
+			logger.info("Creando asociación perfil " + codigoPerfil + " - usuario " + usuario.getUsername());
+		}
+		
+		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
+		for (String codigoPerfil : bajasPerfiles) {
+			Filter filtroPerfil = genericDao.createFilter(FilterType.EQUALS, "perfil.codigo", codigoPerfil);
+			genericDao.delete(ZonaUsuarioPerfil.class, filtroUsuario, filtroPerfil);
+			logger.info("Eliminando asociación perfil " + codigoPerfil + " - usuario " + usuario.getUsername());
+		}
+
 	}
 
 	private void actualizarGrupos(Usuario usuario, List<String> altasGrupos, List<String> bajasGrupos) {
-
-		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
 
 		for (String codigoGrupo : altasGrupos) {
 			GrupoUsuario grupoNuevo = new GrupoUsuario();
@@ -164,24 +187,59 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 			grupoNuevo.setGrupo(grupo);
 			grupoNuevo.setUsuario(usuario);
 			genericDao.save(GrupoUsuario.class, grupoNuevo);
+			logger.info("Creando asociación grupo " + codigoGrupo + " - usuario " + usuario.getUsername());
 		}
 		
+		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
 		for (String codigoGrupo : bajasGrupos) {
 			Filter filtroGrupo = genericDao.createFilter(FilterType.EQUALS, "grupo.username", codigoGrupo);
 			genericDao.delete(GrupoUsuario.class, filtroUsuario, filtroGrupo);
-			logger.info("Eliminando grupo " + codigoGrupo + " asociado al usuario " + usuario.getUsername());
+			logger.info("Eliminando asociación grupo " + codigoGrupo + " - usuario " + usuario.getUsername());
 		}
 		
 	}
 
 	private void actualizarCarteras(Usuario usuario, List<String> altasCarteras, List<String> bajasCarteras) {
-		// TODO Auto-generated method stub
+
+		for (String codigoCartera : altasCarteras) {
+			UsuarioCartera usuarioCarteraNuevo = new UsuarioCartera();
+			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoCartera);
+			DDCartera cartera= genericDao.get(DDCartera.class, filtroCartera);
+			usuarioCarteraNuevo.setUsuario(usuario);
+			usuarioCarteraNuevo.setCartera(cartera);
+			genericDao.save(UsuarioCartera.class, usuarioCarteraNuevo);
+			logger.info("Creando asociación cartera " + codigoCartera + " - usuario " + usuario.getUsername());
+		}
+		
+		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
+		for (String codigoCartera : bajasCarteras) {
+			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", codigoCartera);
+			genericDao.delete(UsuarioCartera.class, filtroUsuario, filtroCartera);
+			logger.info("Eliminando asociación cartera " + codigoCartera + " - usuario " + usuario.getUsername());
+		}
 		
 	}
 
 	private void actualizarSubcarteras(Usuario usuario, List<String> altasSubcarteras, List<String> bajasSubcarteras) {
-		// TODO Auto-generated method stub
+
+		for (String codigoSubartera : altasSubcarteras) {
+			UsuarioCartera usuarioSubcarteraNuevo = new UsuarioCartera();
+			Filter filtroSubcartera = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoSubartera);
+			DDSubcartera subcartera= genericDao.get(DDSubcartera.class, filtroSubcartera);
+			usuarioSubcarteraNuevo.setUsuario(usuario);
+			usuarioSubcarteraNuevo.setCartera(subcartera.getCartera());
+			usuarioSubcarteraNuevo.setSubCartera(subcartera);
+			genericDao.save(UsuarioCartera.class, usuarioSubcarteraNuevo);
+			logger.info("Creando asociación subcartera " + codigoSubartera + " - usuario " + usuario.getUsername());
+		}
 		
+		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
+		for (String codigoSubcartera : bajasSubcarteras) {
+			Filter filtroSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", codigoSubcartera);
+			genericDao.delete(UsuarioCartera.class, filtroUsuario, filtroSubcartera);
+			logger.info("Eliminando asociación subcartera " + codigoSubcartera + " - usuario " + usuario.getUsername());
+		}
+				
 	}
 
 	private List<String> getCodigosCarterasREM(Usuario usuario) {

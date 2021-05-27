@@ -165,6 +165,12 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
     
     @Column(name = "TIA_CODPOSTAL_RTE")
     private String codPostalRepresentante;
+
+	@Column(name = "TIA_C4C_ID")
+	private Long idC4c;
+
+	@Column(name = "TIA_ID_PERSONA_HAYA")
+	private String idPersonaHaya;
     
     @Version   
 	private Long version;
@@ -462,5 +468,21 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 
 	public Long getVersion() {
 		return version;
+	}
+
+	public Long getIdC4c() {
+		return idC4c;
+	}
+
+	public void setIdC4c(Long idC4c) {
+		this.idC4c = idC4c;
+	}
+
+	public String getIdPersonaHaya() {
+		return idPersonaHaya;
+	}
+
+	public void setIdPersonaHaya(String idPersonaHaya) {
+		this.idPersonaHaya = idPersonaHaya;
 	}
 }

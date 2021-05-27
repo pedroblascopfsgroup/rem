@@ -566,13 +566,16 @@ public class Activo implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<GastoAsociadoAdquisicion> gastosAsociados;
     
-
     @Column(name = "ACT_NECESIDAD_IF")
     private Boolean necesidadIfActivo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_PRP_ID")
     private DDProcedenciaProducto procedenciaProducto; 
+
+    @Column(name = "ACT_NUM_ACTIVO_CAIXA")
+    private String numActivoCaixa;
+
 
     
     // Getters del activo --------------------------------------------
@@ -2181,5 +2184,13 @@ public class Activo implements Serializable, Auditable {
 
 	public void setProcedenciaProducto(DDProcedenciaProducto procedenciaProducto) {
 		this.procedenciaProducto = procedenciaProducto;
+	}
+	
+	public String getNumActivoCaixa() {
+		return numActivoCaixa;
+	}
+
+	public void setNumActivoCaixa(String numActivoCaixa) {
+		this.numActivoCaixa = numActivoCaixa;
 	}
 }

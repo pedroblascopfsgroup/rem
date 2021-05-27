@@ -149,13 +149,13 @@ BEGIN
 				EXECUTE IMMEDIATE V_MSQL;
 				
 			ELSIF V_TMP_TIPO_DATA(1) = 'T017_ConfirmarFechaFirmaArras' THEN
-				V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS
-	                VALUES (
-	                    '||V_ESQUEMA||'.S_TFI_TAREAS_FORM_ITEMS.NEXTVAL
-	                    ,(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||''')
-	                    ,  1, ''combobox'', ''comboConfirmado'' , ''Confirmar fecha firma arras'' , ''Debe indicar si la fecha firma arras está confirmada o no'' , ''false'' 
-	                    , null , ''DDSiNo''  , 0, ''HREOS-13991'', SYSDATE , null, null, null , null  , 0
-	                )';
+				--V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS
+	              --  VALUES (
+	                --    '||V_ESQUEMA||'.S_TFI_TAREAS_FORM_ITEMS.NEXTVAL
+	                  --  ,(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||''')
+	                   -- ,  1, ''combobox'', ''comboConfirmado'' , ''Confirmar fecha firma arras'' , ''Debe indicar si la fecha firma arras está confirmada o no'' , ''false'' 
+	                   -- , null , ''DDSiNo''  , 0, ''HREOS-13991'', SYSDATE , null, null, null , null  , 0
+	               -- )';
 				EXECUTE IMMEDIATE V_MSQL;
 				V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS
 	                VALUES (

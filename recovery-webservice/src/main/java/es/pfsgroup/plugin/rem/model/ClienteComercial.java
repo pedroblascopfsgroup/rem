@@ -221,6 +221,9 @@ public class ClienteComercial implements Serializable, Auditable {
     
     @Column(name = "CLC_CODIGO_POSTAL_RTE")
     private String codigoPostalRepresentante;
+
+	@Column(name = "CLC_C4C_ID")
+	private Long idC4c;
     
 	@Version   
 	private Long version;
@@ -639,5 +642,14 @@ public class ClienteComercial implements Serializable, Auditable {
 
 	public void setDocumentoConyuge(String documentoConyuge) {
 		this.documentoConyuge = documentoConyuge;
-	}   
+	}
+
+	public Long getIdC4c() {
+		return idC4c;
+	}
+
+	public void setIdC4c(Long idC4c) {
+		this.idC4c = idC4c;
+	}
+
 }

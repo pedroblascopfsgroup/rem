@@ -191,8 +191,10 @@ public class CompradorExpediente implements Serializable, Auditable {
     private Integer numUrsusConyuge;
     
     @Column(name="CEX_NUM_URSUS_CONYUGE_BH_REM")
-    private Integer numUrsusConyugeBh;   
+    private Integer numUrsusConyugeBh;
 
+	@Column(name = "CEX_C4C_ID")
+	private Long idC4c;
     
 	@Version   
 	private Long version;
@@ -650,6 +652,14 @@ public class CompradorExpediente implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 		
+	}
+
+	public Long getIdC4c() {
+		return idC4c;
+	}
+
+	public void setIdC4c(Long idC4c) {
+		this.idC4c = idC4c;
 	}
     
 	

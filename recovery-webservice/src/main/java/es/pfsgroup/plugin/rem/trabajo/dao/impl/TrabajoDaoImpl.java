@@ -344,11 +344,10 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	@Override
 	public Integer getMaxOrdenFotoById(Long id) {
 
-    	HQLBuilder hb = new HQLBuilder("select max(orden) from TrabajoFoto foto where foto.trabajo.id = :id");;
+    	HQLBuilder hb = new HQLBuilder("select max(orden) from TrabajoFoto foto where foto.trabajo.id = " + id);
     	try {
-    		Integer count = (Integer) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("id", id).uniqueResult();
     		//Integer cont = ((Integer) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
-    		return count;
+    		return ((Integer) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
     	} catch (Exception e) {
     		return 0;
     	}

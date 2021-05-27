@@ -30,19 +30,18 @@ public class ActivoTrabajoDaoImpl extends AbstractEntityDao<ActivoTrabajo, Long>
 
 	@Override
 	public Float getImporteParticipacionTotal(Long numTrabajo) {
+		Float resultadoTotal = null;
 
 		String sql = " SELECT SUM(ACT_TBJ_PARTICIPACION) FROM REM01.ACT_TBJ ATJ " +
 				" JOIN REM01.ACT_TBJ_TRABAJO TBJ ON ATJ.TBJ_ID = TBJ.TBJ_ID " +
-				" WHERE TBJ.TBJ_NUM_TRABAJO = :numTrabajo";
-	
-	
-		Query callFunctionSql = this.getSessionFactory().getCurrentSession().createSQLQuery(sql);
+				" WHERE TBJ.TBJ_NUM_TRABAJO = "+numTrabajo+"";
 
-		callFunctionSql.setParameter("numTrabajo", numTrabajo);
+		if (Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			resultadoTotal = 0f;
+		} else {
+			resultadoTotal = ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).floatValue();
+		}
 
-		
-		BigDecimal resultadoBigD = (BigDecimal)callFunctionSql.uniqueResult();
-		return resultadoBigD != null ? resultadoBigD.floatValue() : 0f;
-		
+		return resultadoTotal;
 	}
 }

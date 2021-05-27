@@ -24,6 +24,5 @@ public class DateFormat {
 		SimpleDateFormat frmt = new SimpleDateFormat(DATE_FORMAT);
 		return frmt.format(d);
 	}
-	
 
 }

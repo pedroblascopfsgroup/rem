@@ -65,10 +65,9 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 	@Override
 	public Boolean isUsuarioGestorExterno(Long idUsuario) {
 		
-		rawDao.addParam("usuId", idUsuario);
 		String resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ZON_PEF_USU zpu "
 				+ "	JOIN PEF_PERFILEs pef ON zpu.pef_id = pef.pef_id "
-				+ " WHERE zpu.borrado = 0 and zpu.usu_id = :usuId"
+				+ " WHERE zpu.borrado = 0 and zpu.usu_id = " + idUsuario
 				+ " AND pef.pef_codigo IN ('HAYAFSV','PERFGCCBANKIA','GESTOADM','GESTIAFORM','HAYAGESTADMT','GESTOCED','GESTOPLUS','GTOPOSTV','GESTOPDV','HAYAPROV','HAYACERTI','HAYACONSU')");
 		
 		if("0".equals(resultado)) {
@@ -81,7 +80,6 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 	@Override
 	public Boolean isUsuarioGestorExternoProveedor(Long idUsuario) {
 		
-		rawDao.addParam("usuId", idUsuario);
 		String resultado = rawDao.getExecuteSQL("select count(1) from  " + 
 				"remmaster.usu_usuarios usu " + 
 				"join ACT_PVC_PROVEEDOR_CONTACTO pvc on usu.usu_id=pvc.usu_id and pvc.borrado = 0" + 
@@ -90,7 +88,7 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 				"join zon_pef_usu zpu on zpu.usu_id=USU.USU_ID and zpu.borrado = 0 " + 
 				"join PEF_PERFILES pef on pef.pef_id=ZPU.PEF_ID and pef.borrado = 0 " + 
 				"WHERE pef.pef_codigo IN ('GESTOADM','GESTIAFORM','GESTOCED', 'HAYAGESTADMT', 'GESTOPLUS','GTOPOSTV','GESTOPDV','HAYAPROV','HAYACERTI') " + //tecnotramit y ogf
-				"and usu.usu_id = :usuId " +
+				"and usu.usu_id = " + idUsuario +
 				"AND PVE.PVE_DOCIDENTIF not in ('B65737322', 'B82802075')");
 		
 		if("0".equals(resultado)) {

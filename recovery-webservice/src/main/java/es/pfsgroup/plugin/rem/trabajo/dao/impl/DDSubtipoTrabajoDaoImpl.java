@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.HQLBuilder;
-import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.trabajo.dao.DDSubtipoTrabajoDao;
@@ -24,17 +23,15 @@ public class DDSubtipoTrabajoDaoImpl extends AbstractEntityDao<DDSubtipoTrabajo,
 	@Override
 	public List<DDSubtipoTrabajo> getSubtipoTrabajoconTarifaPlana(Long idCarteraActivo, Long idTipoTrabajo, Date fechaSolicitud) {
 
- 		String hql= "select sbtr from DDSubtipoTrabajo sbtr,HistoricoTarifaPlana htp ";
+ 		String hql= "select sbtr from DDSubtipoTrabajo sbtr,HistoricoTarifaPlana htp " + 
+				"where sbtr.id = htp.subtipoTrabajo.id and htp.esTarifaPlana = 1 " + 
+				"and htp.fechaInicioTarifaPlana <= TO_DATE(SYSDATE,'DD/MM/YY')  and (htp.fechaFinTarifaPlana >=TO_DATE(SYSDATE,'DD/MM/YY') or htp.fechaFinTarifaPlana is null) " + 
+				"and sbtr.tipoTrabajo.id = "+idTipoTrabajo+ " " +
+				"and htp.carteraTP = "+idCarteraActivo+ " ";
 		
 		HQLBuilder hb = new HQLBuilder(hql);
 		
-		hb.appendWhere("sbtr.id = htp.subtipoTrabajo.id and htp.esTarifaPlana = 1 and htp.fechaInicioTarifaPlana <= TO_DATE(SYSDATE,'DD/MM/YY')  and (htp.fechaFinTarifaPlana >=TO_DATE(SYSDATE,'DD/MM/YY') or htp.fechaFinTarifaPlana is null");
-		HQLBuilder.addFiltroIgualQue(hb, "sbtr.tipoTrabajo.id", idTipoTrabajo);
-		HQLBuilder.addFiltroIgualQue(hb, "htp.carteraTP", idCarteraActivo);
-		
-		return HibernateQueryUtils.list(this,hb);
-	
-	
+		return getHibernateTemplate().find(hb.toString());
 	}
 
 }

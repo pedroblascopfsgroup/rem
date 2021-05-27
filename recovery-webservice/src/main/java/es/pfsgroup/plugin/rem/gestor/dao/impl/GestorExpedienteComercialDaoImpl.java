@@ -69,10 +69,8 @@ public class GestorExpedienteComercialDaoImpl extends AbstractEntityDao<GestorEx
 		callProcedureSql.setParameter("P_ACT_ID", idActivo);
 		callProcedureSql.setParameter("P_OFR_ID", idOferta);
 		callProcedureSql.executeUpdate();
-		
-		String sql =  "SELECT USUARIO FROM TMP_ASIGNACION_USU_GFORM WHERE ACT_ID = :idActivo";
-		rawDao.addParam("idActivo", idActivo);
-		String resultado = rawDao.getExecuteSQL(sql);
+
+		String resultado = rawDao.getExecuteSQL("SELECT USUARIO FROM TMP_ASIGNACION_USU_GFORM WHERE ACT_ID = "+ idActivo);
 		Long id_usuario_gform = Long.valueOf(resultado);
 		if(!Checks.esNulo(id_usuario_gform)) {
 			return id_usuario_gform;

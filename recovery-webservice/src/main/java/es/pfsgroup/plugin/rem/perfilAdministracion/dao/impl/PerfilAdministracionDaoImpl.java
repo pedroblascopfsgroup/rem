@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
@@ -119,14 +118,9 @@ public class PerfilAdministracionDaoImpl extends AbstractEntityDao<VBusquedaPerf
 		HQLBuilder hb = new HQLBuilder("select distinct(doc.matricula) from DDTipoDocumentoEntidad doc, ConfiguracionOcultarPerfilDocumento conf, ZonaUsuarioPerfil zon, Usuario usu");
 		hb.appendWhere("doc.id = conf.tipoDocumentoEntidad.id");
 		hb.appendWhere("conf.perfil.id = zon.perfil.id");
-		hb.appendWhere("zon.usuario.id = usu.id and usu.username = :username");
-		hb.getParameters().put("username", username);
-		
-		 
-		Query query = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
-		HQLBuilder.parametrizaQuery(query, hb);
-		
-		List<String> list = query.list();
+		hb.appendWhere("zon.usuario.id = usu.id and usu.username = '" + username +"'");
+	
+		List<String> list = this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 		if(list != null && !list.isEmpty()) {
 			blackListMatriculas = list.toString();
 			blackListMatriculas = blackListMatriculas.replace("[", "");

@@ -182,16 +182,14 @@ public class ActivoTareaExternaDaoImpl extends AbstractEntityDao<TareaExterna, L
     @Override
     public List<Long> getTareasExternasIdByOfertaId(Long idOferta) {
     	
+    	String idOfertaStr = String.valueOf(idOferta);
     	
-    	
-    	rawDao.addParam("idOferta", idOferta);
-    	List<Object> objetosLista = 
-    			rawDao.getExecuteSQLList("SELECT TEX_ID "
+    	List<Object> objetosLista = rawDao.getExecuteSQLList("SELECT TEX_ID "
     			+ "FROM TEX_TAREA_EXTERNA TEX "
     			+ "JOIN TAC_TAREAS_ACTIVOS TAC ON TAC.TAR_ID = TEX.TAR_ID "
     			+ "JOIN ACT_TRA_TRAMITE TRA ON TRA.TRA_ID = TAC.TRA_ID "
     			+ "JOIN ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.TBJ_ID = TRA.TBJ_ID "
-    			+ "WHERE ECO.OFR_ID = :idOferta");
+    			+ "WHERE ECO.OFR_ID = "+idOfertaStr);
     	
     	List<Long> tareasExternasId = new ArrayList<Long>();
     	
@@ -211,18 +209,16 @@ public class ActivoTareaExternaDaoImpl extends AbstractEntityDao<TareaExterna, L
     @Override
     public List<Long> getTareasByIdOfertaCodigoTarea(Long idOferta,String codigoTareaProcedimiento) {
     	
-    	//String idOfertaStr = String.valueOf(idOferta);
+    	String idOfertaStr = String.valueOf(idOferta);
     	
-    	rawDao.addParam("idOferta", idOferta);
-    	rawDao.addParam("codigoTareaProcedimiento", codigoTareaProcedimiento);
     	List<Object> objetosLista = rawDao.getExecuteSQLList("SELECT TEX.TAR_ID "
     			+ "FROM TEX_TAREA_EXTERNA TEX "
     			+ "JOIN TAC_TAREAS_ACTIVOS TAC ON TAC.TAR_ID = TEX.TAR_ID "
     			+ "JOIN ACT_TRA_TRAMITE TRA ON TRA.TRA_ID = TAC.TRA_ID "
     			+ "JOIN ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.TBJ_ID = TRA.TBJ_ID "
     			+ "JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = TEX.TAP_ID "
-    			+ "WHERE ECO.OFR_ID = (SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA= :idOferta) "
-    			+ "AND UPPER(TAP.TAP_CODIGO) = UPPER (:codigoTareaProcedimiento)");
+    			+ "WHERE ECO.OFR_ID = (SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA= "+ idOfertaStr + ") "
+    			+ "AND UPPER(TAP.TAP_CODIGO) = UPPER ('"+ codigoTareaProcedimiento +"')");
     	
     	List<Long> tareasExternasId = new ArrayList<Long>();
     	
@@ -243,22 +239,20 @@ public class ActivoTareaExternaDaoImpl extends AbstractEntityDao<TareaExterna, L
     @Override
     public List<Long> getTareasBytbjNumTrabajoCodigoTarea(Long tbjNumTrabajo,String codigoTareaProcedimiento) {
     	
-    	//String idTrabajoStr = String.valueOf(tbjNumTrabajo);
+    	String idTrabajoStr = String.valueOf(tbjNumTrabajo);
     	
-    	rawDao.addParam("idTrabajo", tbjNumTrabajo);
-    	rawDao.addParam("codigoTareaProcedimiento", codigoTareaProcedimiento);
     	List<Object> objetosLista = rawDao.getExecuteSQLList("SELECT TEX.TAR_ID "
     			+ "FROM TEX_TAREA_EXTERNA TEX "
     			+ "JOIN TAC_TAREAS_ACTIVOS TAC ON TAC.TAR_ID = TEX.TAR_ID "
     			+ "JOIN ACT_TBJ_TRABAJO TBJ ON TBJ.ACT_ID = TAC.ACT_ID "
     			+ "JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = TEX.TAP_ID "
     			+ "JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TEX.TAR_ID = TAR.TAR_ID "
-    			+ "WHERE TBJ.TBJ_NUM_TRABAJO = :idTrabajo "
+    			+ "WHERE TBJ.TBJ_NUM_TRABAJO = "+ idTrabajoStr+" "
     			+ "AND TBJ.BORRADO = 0 "
     			+ "AND TAP.BORRADO = 0 "
     			+ "AND TAR.BORRADO = 0 "
     			+ "AND TAR.TAR_TAREA_FINALIZADA = 0 "
-    			+ "AND UPPER(TAP.TAP_CODIGO) = UPPER (:codigoTareaProcedimiento)");
+    			+ "AND UPPER(TAP.TAP_CODIGO) = UPPER ('"+ codigoTareaProcedimiento +"')");
     	
     	List<Long> tareasExternasId = new ArrayList<Long>();
     	

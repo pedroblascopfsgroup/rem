@@ -27,9 +27,10 @@ public class VListadoOfertasAgrupadasLbkDaoImpl extends AbstractEntityDao<VLista
 		String from = "SELECT new es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk("+
 				"vofertaagrupadas.numOfertaPrincipal,vofertaagrupadas.numOfertaDependiente,vofertaagrupadas.importeOfertaDependiente"+
 				") FROM VListadoOfertasAgrupadasLbk vofertaagrupadas ";
+		String where ="vofertaagrupadas.numOfertaPrincipal ="+dtoListadoOfertasAgrupadas.getNumOfertaPrincipal();
 					
 		hb = new HQLBuilder(from);
-		HQLBuilder.addFiltroIgualQue(hb, "vofertaagrupadas.numOfertaPrincipal", dtoListadoOfertasAgrupadas.getNumOfertaPrincipal());
+		hb.appendWhere(where);
 		hb.addGroupBy("vofertaagrupadas.numOfertaPrincipal,vofertaagrupadas.numOfertaDependiente,vofertaagrupadas.importeOfertaDependiente");
 		
 		Page page = HibernateQueryUtils.page(this, hb, dtoListadoOfertasAgrupadas);
@@ -46,9 +47,10 @@ public class VListadoOfertasAgrupadasLbkDaoImpl extends AbstractEntityDao<VLista
 HQLBuilder hb = null;
 		
 		String from = "SELECT vofertaagrupadas FROM VListadoOfertasAgrupadasLbk vofertaagrupadas ";
+		String where ="vofertaagrupadas.numOfertaPrincipal ="+dtoListadoOfertasAgrupadas.getNumOfertaPrincipal();
 					
 		hb = new HQLBuilder(from);
-		HQLBuilder.addFiltroIgualQue(hb, "vofertaagrupadas.numOfertaPrincipal", dtoListadoOfertasAgrupadas.getNumOfertaPrincipal());
+		hb.appendWhere(where);
 		
 		Page page = HibernateQueryUtils.page(this, hb, dtoListadoOfertasAgrupadas);
 		List<VListadoOfertasAgrupadasLbk> ofertas;

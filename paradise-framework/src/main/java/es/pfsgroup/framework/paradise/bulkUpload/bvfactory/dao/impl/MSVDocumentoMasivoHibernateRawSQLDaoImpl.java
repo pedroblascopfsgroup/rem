@@ -1,8 +1,6 @@
 package es.pfsgroup.framework.paradise.bulkUpload.bvfactory.dao.impl;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -25,28 +23,6 @@ public class MSVDocumentoMasivoHibernateRawSQLDaoImpl extends AbstractEntityDao<
 
 	@Autowired
 	private SessionFactoryFacade sesionFactoryFacade;
-	
-	private Map<String,Object> bindVariables;
-	
-	public void addParam(String key, Object value) {
-		
-		if(bindVariables == null) {
-			bindVariables = new HashMap<String, Object>();
-		}
-	
-		bindVariables.put(key, value); 
-		
-	}
-	
-	private Query parametize(Query query){
-		if (bindVariables != null && !bindVariables.isEmpty()){
-			for(Map.Entry<String, Object> entry : bindVariables.entrySet()) {
-			   query.setParameter(entry.getKey(), entry.getValue());
-			}
-			bindVariables = null;
-		}
-		return query;
-	}
 
 	@Override
 	public int getCount(String sqlQuery) {
@@ -56,7 +32,7 @@ public class MSVDocumentoMasivoHibernateRawSQLDaoImpl extends AbstractEntityDao<
 
 		Query query = this.sesionFactoryFacade.getSession(this).createSQLQuery(builder.toString().replaceAll("\\$\\{master.schema\\}", getMasterSchema()));
 
-		Object result = parametize(query).uniqueResult();
+		Object result = query.uniqueResult();
 
 		return Integer.parseInt(result.toString());
 	}
@@ -74,7 +50,7 @@ public class MSVDocumentoMasivoHibernateRawSQLDaoImpl extends AbstractEntityDao<
 
 		Query query = this.sesionFactoryFacade.getSession(this).createSQLQuery(sqlValidacion);
 
-		Object result = parametize(query).uniqueResult();
+		Object result = query.uniqueResult();
 
 		if(Checks.esNulo(result)) return null;
 
@@ -89,7 +65,7 @@ public class MSVDocumentoMasivoHibernateRawSQLDaoImpl extends AbstractEntityDao<
 
 		Query query = this.sesionFactoryFacade.getSession(this).createSQLQuery(sqlValidacion);
 
-		Object[] result = (Object[]) parametize(query).uniqueResult();
+		Object[] result = (Object[]) query.uniqueResult();
 
 		return result;
 	}
@@ -103,7 +79,7 @@ public class MSVDocumentoMasivoHibernateRawSQLDaoImpl extends AbstractEntityDao<
 
 		Query query = this.sesionFactoryFacade.getSession(this).createSQLQuery(sqlValidacion);
 
-		List<Object> result = (List<Object>) parametize(query).list();
+		List<Object> result = (List<Object>) query.list();
 
 		return result;
 	}

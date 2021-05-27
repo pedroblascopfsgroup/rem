@@ -1202,6 +1202,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setProcedenciaProductoDescripcion(activo.getProcedenciaProducto().getDescripcion());
 		}
 		
+		if (activo.getNumActivoCaixa() != null) {
+			activoDto.setNumActivoCaixa(activo.getNumActivoCaixa());
+		}
 		return activoDto;
 	}
 	

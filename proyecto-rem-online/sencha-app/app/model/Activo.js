@@ -1260,6 +1260,9 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'estadoComercialAlquilerCodigo' 
+			},
+			{
+				name: 'numActivoCaixa'
 			}
     ],
     

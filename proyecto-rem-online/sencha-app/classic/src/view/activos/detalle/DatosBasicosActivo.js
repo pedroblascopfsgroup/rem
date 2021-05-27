@@ -53,7 +53,18 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								{
 									xtype: 'displayfieldbase',
 									fieldLabel:  HreRem.i18n('fieldlabel.id.activo.uvem'),
-				                	bind:		'{activo.numActivoUvem}'
+				                	bind:{
+				                		value: '{activo.numActivoUvem}',
+				                		hidden: '{activo.isCarteraBankia}'
+				                	}
+				                },
+								{
+									xtype: 'displayfieldbase',
+									fieldLabel:  HreRem.i18n('fieldlabel.numero.activo.caixa'),
+				                	bind:{
+				                		value: '{activo.numActivoCaixa}',
+				                		hidden: '{!activo.isCarteraBankia}'
+				                	}
 				                },
 				                {
 				                	xtype: 'displayfieldbase',

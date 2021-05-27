@@ -263,7 +263,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		try {
 			HQLBuilder hb = new HQLBuilder(
 					"select agr.id from ActivoAgrupacion agr where agr.numAgrupRem = :numAgrupRem" + numAgrupRem + " ");
-			return (Long) this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString()).setParameter("numAgrupRem", numAgrupRem).uniqueResult();
+			return (Long) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("numAgrupRem", numAgrupRem).uniqueResult();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -279,7 +279,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 			hb.appendWhere("act.principal = 1");
 			hb.appendWhere("act.agrupacion.id = :agrupacionId");
 			
-			return (Long) this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString()).setParameter("agrupacionId", id).uniqueResult();
+			return (Long) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("agrupacionId", id).uniqueResult();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -297,7 +297,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 
 			HQLBuilder hb = new HQLBuilder("select count( distinct act.agrupacion.tipoAgrupacion.id ) from ActivoAgrupacionActivo act");
 			hb.appendWhere("act.activo.id in ( select distinct (agru.activo.id) from ActivoAgrupacionActivo agru where agru.agrupacion.id = :agrupacionId)");
-			Query q = this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString());
+			Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 			q.setParameter("agrupacionId", id);
 			return (Long) q.uniqueResult();
 
@@ -321,7 +321,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 					"from ActivoFoto foto where foto.tipoFoto.codigo = '01' AND foto.activo.id in "
 							+ " ( select distinct(agru.agrupacion.activoPrincipal) from ActivoAgrupacionActivo agru where agru.agrupacion.id = :agrupacionId) order by foto.activo.id desc ");
 
-			q = this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString());
+			q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 			q.setParameter("agrupacionId", id);
 			List<ActivoFoto> listaPrincipal = (List<ActivoFoto>) q.list();
 			
@@ -332,7 +332,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 							+ " ( select distinct(agru.activo.id) from ActivoAgrupacionActivo agru where agru.agrupacion.id = :agrupacionId"
 							+ " and agru.agrupacion.activoPrincipal != foto.activo.id) order by foto.activo.id desc ");
 
-			q = this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString());
+			q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 			q.setParameter("agrupacionId", id);
 			List<ActivoFoto> listaResto = (List<ActivoFoto>) q.list();
 
@@ -378,7 +378,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		try {
 			HQLBuilder hb = new HQLBuilder("select distinct actsub.idSubdivision from VActivosSubdivision actsub where actsub.activoId = :idActivo");
 			
-			Query q = this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString());
+			Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 			q.setParameter("idActivo", idActivo);
 
 			List<Long> lista = (List<Long>) q.list();
@@ -405,7 +405,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 			HQLBuilder hb = new HQLBuilder("select actsub.activoId from VActivosSubdivision actsub where actsub.idSubdivision = " + idSubdivision +
 											" and actsub.agrupacionId in (:idsAgr)");
 			
-			Query q = this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString());
+			Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 			
 			for (String s : (List<String>)Arrays.asList(idsAgrupacion.split(","))) {
 				try {
@@ -435,7 +435,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 
 			HQLBuilder hb = new HQLBuilder("from ActivoFoto foto where foto.subdivision = :subdivisionId and foto.agrupacion.id = :agrupacionId order by foto.orden");
 
-			Query q = this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString());
+			Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 			q.setParameter("subdivisionId", subdivision.getId());
 			q.setParameter("agrupacionId", subdivision.getAgrId());
 			
@@ -466,7 +466,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 						"from ActivoFoto foto where foto.agrupacion.id = :fotoAgrId and foto.subdivision is null");
 
 				
-				Query q = this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString());
+				Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 				q.setParameter("fotoAgrId", id);
 				
 				lista = (List<ActivoFoto>) q.list();
@@ -485,8 +485,8 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 				" from AgrupacionesVigencias vigencia where vigencia.agrupacion.id = :agrId");
 		hb.orderBy("vigencia.auditoria.fechaCrear", HQLBuilder.ORDER_DESC);
 
-		Query q = this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString());
-		q.setLong("agrId", agrupacionFilter.getAgrId());
+		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+		q.setParameter("agrId", agrupacionFilter.getAgrId());
 		
 		return (List<AgrupacionesVigencias>) q.list();
 
@@ -517,7 +517,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 					+ " and agrActivo.agrupacion.id != :agrId"
 					+ " and agrActivo.agrupacion.fechaFinVigencia >= sysdate and agrActivo.agrupacion.fechaBaja is null");
 			
-			Query q = this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString());
+			Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 			q.setParameterList("activoList", activosList);
 			q.setLong("agrId", agrupacion.getId());
 
@@ -538,7 +538,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		try {
 			HQLBuilder hb = new HQLBuilder("SELECT SUM(participacionUA) FROM ActivoAgrupacionActivo AGA WHERE AGA.agrupacion.id = :agrId AND AGA.principal = 0");
 			
-			Query q = this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString());
+			Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 			q.setLong("agrId", id);
 
 			List<Double> listPorcentajeUAs = (List<Double>) q.list();

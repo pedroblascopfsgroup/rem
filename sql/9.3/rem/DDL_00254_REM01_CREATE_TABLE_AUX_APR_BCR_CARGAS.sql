@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210524
+--## FECHA_CREACION=20210526
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13942
@@ -69,7 +69,7 @@ BEGIN
         BORRADO              NUMBER(1,0) DEFAULT 0,
         BIE_CAR_ID           NUMBER(16,0),
         CRG_ID               NUMBER(16,0),
-        ACTUALIZA            NUMBER(1,0)
+        ACTUALIZA            NUMBER(1,0) DEFAULT 0
 
 
 

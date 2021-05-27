@@ -575,8 +575,6 @@ public class Activo implements Serializable, Auditable {
 
     @Column(name = "ACT_NUM_ACTIVO_CAIXA")
     private String numActivoCaixa;
-
-
     
     // Getters del activo --------------------------------------------
     
@@ -2169,7 +2167,6 @@ public class Activo implements Serializable, Auditable {
 		this.tipoTransmision = tipoTransmision;
 	}
 
-
 	public Boolean getNecesidadIfActivo() {
 		return necesidadIfActivo;
 	}
@@ -2185,7 +2182,6 @@ public class Activo implements Serializable, Auditable {
 	public void setProcedenciaProducto(DDProcedenciaProducto procedenciaProducto) {
 		this.procedenciaProducto = procedenciaProducto;
 	}
-	
 	public String getNumActivoCaixa() {
 		return numActivoCaixa;
 	}

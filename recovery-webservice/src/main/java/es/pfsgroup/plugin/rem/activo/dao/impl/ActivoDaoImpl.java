@@ -433,7 +433,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public Integer isIntegradoAgrupacionRestringida(Long id, Usuario usuLogado) {
 		HQLBuilder hb = new HQLBuilder(isIntegradoQueryString);
 
-		 Query q = this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString());
+		 Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		 q.setParameter("actId", id);
 		 q.setParameter("codAgrupacion", DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
 		
@@ -444,7 +444,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public Integer isIntegradoAgrupacionComercial(Long idActivo) {
 		HQLBuilder hb = new HQLBuilder(isIntegradoQueryString);
 		
-		 Query q = this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString());
+		 Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		 q.setParameter("actId", idActivo);
 		 q.setParameter("codAgrupacion", DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL);
 
@@ -457,7 +457,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				"select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.agrupacion.activoPrincipal.id = :actId "
 				+ " and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion");
 
-		Query q = this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString());
+		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		 q.setParameter("actId", id);
 		 q.setParameter("codAgrupacion", DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
 		return ((Long) q.uniqueResult()).intValue();
@@ -469,7 +469,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				"select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = :actId"
 				+ " and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion");
 		
-		Query q = this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString());
+		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		 q.setParameter("actId", id);
 		 q.setParameter("codAgrupacion", DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
 
@@ -482,7 +482,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				"select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = :actId"
 				+ " and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion");
 
-		 Query q = this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString());
+		 Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		 q.setParameter("actId", id);
 		 q.setParameter("codAgrupacion", DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA);
 		
@@ -493,7 +493,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public Integer isIntegradoAgrupacionObraNueva(Long id, Usuario usuLogado) {
 		HQLBuilder hb = new HQLBuilder(isIntegradoQueryString);
 
-		Query q = this.getSessionFactory().getCurrentSession().createSQLQuery(hb.toString());
+		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		 q.setParameter("actId", id);
 		 q.setParameter("codAgrupacion", DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA);
 		return ((Long) q.uniqueResult()).intValue();

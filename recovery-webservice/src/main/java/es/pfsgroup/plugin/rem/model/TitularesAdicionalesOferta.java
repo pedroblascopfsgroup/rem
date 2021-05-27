@@ -168,6 +168,12 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
     
     @Column(name = "TIA_CODPOSTAL_RTE")
     private String codPostalRepresentante;
+
+	@Column(name = "TIA_C4C_ID")
+	private Long idC4c;
+
+	@Column(name = "TIA_ID_PERSONA_HAYA")
+	private String idPersonaHaya;
     
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "ADCOM_DOC_IDENT")
@@ -502,4 +508,19 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 		this.fechaAcepGdpr = fechaAcepGdpr;
 	}
 	
+	public Long getIdC4c() {
+		return idC4c;
+	}
+
+	public void setIdC4c(Long idC4c) {
+		this.idC4c = idC4c;
+	}
+
+	public String getIdPersonaHaya() {
+		return idPersonaHaya;
+	}
+
+	public void setIdPersonaHaya(String idPersonaHaya) {
+		this.idPersonaHaya = idPersonaHaya;
+	}
 }

@@ -567,6 +567,10 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "ACT_NECESIDAD_IF")
     private Boolean necesidadIfActivo;
+
+    @Column(name = "ACT_NUM_ACTIVO_CAIXA")
+    private String numActivoCaixa;
+
     
     // Getters del activo --------------------------------------------
     
@@ -2165,5 +2169,13 @@ public class Activo implements Serializable, Auditable {
 
 	public void setNecesidadIfActivo(Boolean necesidadIfActivo) {
 		this.necesidadIfActivo = necesidadIfActivo;
+	}
+	
+	public String getNumActivoCaixa() {
+		return numActivoCaixa;
+	}
+
+	public void setNumActivoCaixa(String numActivoCaixa) {
+		this.numActivoCaixa = numActivoCaixa;
 	}
 }

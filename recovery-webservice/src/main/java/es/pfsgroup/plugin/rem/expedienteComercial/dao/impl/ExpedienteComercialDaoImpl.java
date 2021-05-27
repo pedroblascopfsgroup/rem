@@ -29,7 +29,7 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 		if(activoBankia) {
 			HQLBuilder hql = new HQLBuilder("Select bce, bdc from VBusquedaCompradoresExpediente bce, VBusquedaDatosCompradorExpediente bdc");
 			hql.appendWhere("bce.idExpediente = bdc.idExpedienteComercial");
-			HQLBuilder.addFiltroIgualQue(hql, "bce.idExpediente", idExpediente.toString());
+			HQLBuilder.addFiltroIgualQue(hql, "bce.idExpediente", idExpediente);
 			hql.appendWhere("bce.id = bdc.id");
 			hql.orderBy("borrado", HQLBuilder.ORDER_ASC);
 			return HibernateQueryUtils.page(this, hql, webDto);

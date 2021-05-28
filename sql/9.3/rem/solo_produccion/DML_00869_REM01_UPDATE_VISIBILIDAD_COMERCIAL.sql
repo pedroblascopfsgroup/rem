@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20210603
+--## FECHA_CREACION=20210604
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14013
@@ -68,7 +68,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[Inserción de tabla auxiliar de agrupaciones]');
 	
 	V_MSQL:= 'insert into '||V_ESQUEMA||'.aux_vis_gestion_comercial_res AR (ar.act_id) 
-				select A.ACT_ID from '||V_ESQUEMA||'.act_activo a
+				select DISTINCT A.ACT_ID from '||V_ESQUEMA||'.act_activo a
 				join '||V_ESQUEMA||'.act_Aga_agrupacion_activo aga on a.act_id = aga.act_id and aga.borrado = 0
 				join '||V_ESQUEMA||'.act_agr_agrupacion agr on agr.agr_id = aga.agr_id and agr.borrado = 0
 				join '||V_ESQUEMA||'.dd_tag_tipo_agrupacion tagg on agr.dd_tag_id = tagg.dd_Tag_id and tagg.borrado = 0

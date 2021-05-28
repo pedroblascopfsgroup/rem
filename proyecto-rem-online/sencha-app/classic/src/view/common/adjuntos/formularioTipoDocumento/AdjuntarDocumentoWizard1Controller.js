@@ -30,8 +30,8 @@ Ext.define('HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocument
 			wizard = form.up('wizardBase');
 		var inside = false;
 		var comboTipoDocumento = me.lookupReference('tipoDocumentoNuevoComprador').value;
-		var tipoFormulario1 = ['14','89'];//AFO,CFO
-		var tipoFormulario2 = ['15','16','17','86','87','88','12','91'];//BOLETIN AGUA,LUZ,GAS,LPO,CDH
+		var tipoFormulario1 = ['137','14','89'];//AFO,CFO
+		var tipoFormulario2 = ['15','16','17','86','87','88','12','91','13','90'];//BOLETIN AGUA,LUZ,GAS,LPO,CDH
 		var tipoFormulario3 = ['11','24','25','84','85','118','160','158'];//CEE
 		var comboTipoFormulario = form.down('[reference = tipoDocumentoNuevoComprador]').value;
 		

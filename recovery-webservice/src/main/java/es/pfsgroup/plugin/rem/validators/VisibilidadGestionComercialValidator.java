@@ -146,9 +146,6 @@ public class VisibilidadGestionComercialValidator {
 					erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
 				}else if(DDCartera.isCarteraCajamar(activoActual.getCartera())) {
 					if(DDTipoComercializacion.isDestinoComercialSoloAlquiler(activoPublicacion.getTipoComercializacion())) {
-						if(perimetroActivo.getCheckGestorComercial() != null && perimetroActivo.getCheckGestorComercial()) {
-							erroresActivo.add(VALID_ACTIVO_GESTION);
-						}
 						if(activoActual.getVpo() == 1) {
 							erroresActivo.add(VALID_ACTIVO_NO_VPO);	
 						}

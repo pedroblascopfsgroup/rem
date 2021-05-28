@@ -200,7 +200,7 @@ public class CompradorExpediente implements Serializable, Auditable {
     
     @Column(name="ECO_ECL_FECHA")
     private Date fechaContrasteListas;
-    
+
 	@Column(name = "CEX_C4C_ID")
 	private Long idC4c;
     
@@ -658,10 +658,9 @@ public class CompradorExpediente implements Serializable, Auditable {
 
 	@Override
 	public void setAuditoria(Auditoria auditoria) {
-		this.auditoria = auditoria;
-		
+		this.auditoria = auditoria;	
 	}
-	
+
 	public DDEstadoContrasteListas getEstadoContrasteListas() {
 		return estadoContrasteListas;
 	}

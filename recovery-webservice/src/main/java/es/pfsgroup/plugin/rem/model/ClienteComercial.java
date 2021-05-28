@@ -656,7 +656,7 @@ public class ClienteComercial implements Serializable, Auditable {
 	public void setRegimenLaboral(DDRegimenLaboral regimenLaboral) {
 		this.regimenLaboral = regimenLaboral;
 	}   
-	
+
 	public Long getIdC4c() {
 		return idC4c;
 	}
@@ -664,4 +664,5 @@ public class ClienteComercial implements Serializable, Auditable {
 	public void setIdC4c(Long idC4c) {
 		this.idC4c = idC4c;
 	}
+
 }

@@ -43,10 +43,7 @@ public class ExpedienteAdapter {
 		String url = appProperties.getProperty(REM3_URL);  
 		String service = appProperties.getProperty(CONTRASTE_LISTAS_SERVICE);
 		if ( url == null ) {
-			// PONER URL DEL DOCKER
-			url = "http://192.168.80.4:9096";
-			service = "/contraste/listas";
-			return String.format("%s%s",url,service);
+			return null;
 		} else {
 			return String.format("%s%s",url,service);
 		}

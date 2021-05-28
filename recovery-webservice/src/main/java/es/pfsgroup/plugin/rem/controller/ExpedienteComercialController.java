@@ -130,6 +130,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	private static final String RESPONSE_ERROR_MESSAGE_KEY = "errorMessage";
 	private static final String RESPONSE_MESSAGE_KEY = "msg";
 	private static final String RESPONSE_TOTALCOUNT_KEY = "totalCount";
+	private static final String RESPONSE_ERROR_CONNECT = "No se puede conectar al servidor remoto en entornos previos";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -2431,13 +2432,19 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView contrasteListas(ModelMap model,@RequestParam Long numOferta, Long idExpediente) {
 		try {
 			String endpoint = expedienteAdapter.getContrasteListasREM3Endpoint();
-			if (!TareaAdapter.DEV.equals(endpoint)) {
+			if (!TareaAdapter.DEV.equals(endpoint) && endpoint != null) {
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("codigoOferta", numOferta);
 				params.put("idExpediente", idExpediente);
 				HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
 				JSONObject resp = request.post(JSONObject.class);
-				model.put(RESPONSE_SUCCESS_KEY, resp.get("success"));
+				model.put(RESPONSE_DATA_KEY, resp);
+			} else {
+				JSONObject resp = new JSONObject() {{
+					put("success", false);
+					put("descError", RESPONSE_ERROR_CONNECT);
+				}};
+				model.put(RESPONSE_DATA_KEY, resp);
 			}
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);

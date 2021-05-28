@@ -323,20 +323,16 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 			if (traduccion == null) {
 				logger.error("Error al traducir el código desde Júpiter: " + codigoJupiter + " no existe en el maestro de traducción.");
 			} else {
-				switch (traduccion.getTipoPerfil()) {
-				case PERFIL_ROL:
+				String tipoPerfil = traduccion.getTipoPerfil();
+				if (PERFIL_ROL.equals(tipoPerfil)) {
 					codigosPerfiles.add(traduccion.getCodigoREM());
-					break;
-				case GRUPO:
+				} else if (GRUPO.equals(tipoPerfil)) {
 					codigosGrupos.add(traduccion.getCodigoREM());
-					break;
-				case CARTERA:
+				} else if (CARTERA.equals(tipoPerfil)) {
 					codigosCarteras.add(traduccion.getCodigoREM());
-					break;
-				case SUBCARTERA:
+				} else if (SUBCARTERA.equals(tipoPerfil)) {
 					codigosSubcarteras.add(traduccion.getCodigoREM());
-					break;
-				default:
+				} else {
 					logger.error("Error al traducir el código desde Júpiter: " + codigoJupiter + " tiene un tipo de perfil no soportado " + traduccion.getTipoPerfil());
 				}
 			}

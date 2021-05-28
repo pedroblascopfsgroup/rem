@@ -39,6 +39,7 @@ import org.springframework.security.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
 
 import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import es.capgemini.devon.security.AuthenticationFilter;
 import es.capgemini.devon.security.SecurityUserInfo;
@@ -107,6 +108,7 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 		// Determine username 
 		String username = "NONE_PROVIDED";
 		String idToken = null;
+		String accessToken = null;
 				
 		if (authDetails.getCode() != null) {
 			
@@ -152,19 +154,26 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 	            username = upn.split("@")[0];
 	            logger.debug("0Auth2: username >" + username + "<");
 	            
-	            String perfilesrem = (String) claims.get("perfilrem");
+	            //Obtener el resto de los datos a partir del access_token
+	            accessToken = (String) response.get("access_token");
+	            JWTClaimsSet claimSetAccess = JWTParser.parse(accessToken).getJWTClaimsSet();
+	            
+	            String perfilesrem = claimSetAccess.getStringClaim("perfilrem");
 	            if (perfilesrem == null || "".contentEquals(perfilesrem)) {
-	            	perfilesrem = (String) claims.get("perfilprerem"); // Los perfiles en pre vienen en otra clave del mapa
+	            	perfilesrem = claimSetAccess.getStringClaim("perfilprerem"); // Los perfiles en pre vienen en otra clave del mapa
 	            }
 	            logger.debug("0Auth2: perfilesrem >" + perfilesrem + "<");
 	            
-	            //TODO: Recuperar el valor del set de perfiles ADFS y actualizar las tablas de REM
 	            integracionJupiterManager.actualizarRolesDesdeJupiter(username, perfilesrem);
+
+	            String nombre = claimSetAccess.getStringClaim.get("given_name"); 
+	            String apellidos = claimSetAccess.getStringClaim.get("family_name"); 
+	            String email = claimSetAccess.getStringClaim.get("email"); 
 	            
-	            //TODO: Actualizar, si es necesario, los datos del usuario (nombre, apellidos, dirección de email)
-	            String nombre = (String) claims.get("commonname"); 
-	            String apellidos = (String) claims.get("family_name"); 
-	            String email = (String) claims.get("email"); 
+	            logger.debug("0Auth2: nombre >" + nombre + "<");
+	            logger.debug("0Auth2: apellidos >" + apellidos + "<");
+	            logger.debug("0Auth2: email >" + email + "<");
+
 	            integracionJupiterManager.actualizarInfoPersonal(username, nombre, apellidos, email);
 				
 			} catch (ParseException e) {

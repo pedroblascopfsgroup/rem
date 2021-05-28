@@ -395,7 +395,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			Boolean pertenceAgrupacionRestringida = false;
 			for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
 				if(Checks.esNulo(agrupaciones.getAgrupacion().getFechaBaja())) {
-					if(!Checks.esNulo(agrupaciones.getAgrupacion().getTipoAgrupacion()) && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())){
+					if(!Checks.esNulo(agrupaciones.getAgrupacion().getTipoAgrupacion()) && (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())
+							|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())
+							|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())
+							|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo()))){
 						pertenceAgrupacionRestringida = true;
 						break;
 					}
@@ -406,7 +409,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
 				if(Checks.esNulo(agrupaciones.getAgrupacion().getFechaBaja())) {
 					if(!Checks.esNulo(agrupaciones.getAgrupacion().getTipoAgrupacion())
-							&& DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())
+							&& (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())
+									|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())
+									|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())
+									|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo()))
 							&& (Checks.esNulo(agrupaciones.getAgrupacion().getFechaFinVigencia())
 									|| (!Checks.esNulo(agrupaciones.getAgrupacion().getFechaFinVigencia())
 											&& (agrupaciones.getAgrupacion().getFechaFinVigencia().before(currentDate)

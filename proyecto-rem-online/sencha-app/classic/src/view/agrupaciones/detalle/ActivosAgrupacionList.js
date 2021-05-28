@@ -550,7 +550,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
     	var ua = false;
     	
     	
-    	if((tipoAgrupacion != CONST.TIPOS_AGRUPACION['RESTRINGIDA'])){
+    	if((tipoAgrupacion != CONST.TIPOS_AGRUPACION['RESTRINGIDA']) 
+    			|| (tipoAgrupacion != CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_OB_REM']) 
+    			|| (tipoAgrupacion != CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_VENTA']) 
+    			|| (tipoAgrupacion != CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_ALQUILER']) ){
     		sePuedeBorrar = true;
     	}else if(me.selection.data.activoPrincipal != 1){
     		sePuedeBorrar = true;

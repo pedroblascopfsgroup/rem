@@ -58,6 +58,8 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 	private static final String AGRUPACION_ACTIVO_SIN_INFORME_NI_PRECIO = "Existen activos que no tienen informe aprobado ni precio en la agrupación";
 	private static final String AGRUPACION_ACTIVO_SIN_PRECIO = "La agrupación no tiene precio";
 	private static final String CODIGO_TIPO_AGRUPACION_RESTRINGIDA = "02";
+	private static final String CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_OB_REM = "17";
+	private static final String CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_ALQUILER = "19";
 	private static final Integer NUMERO_HOJA_DATOS = 0;
 	
 	private	static final int FILA_CABECERA = 0;
@@ -306,7 +308,9 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if (!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
+				if (!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)
+						|| !particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
+						|| !particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)) {
 					if(particularValidator.isActivoNoPublicable(exc.dameCelda(i, 0)))
 						listaFilas.add(i);
 				}
@@ -326,7 +330,9 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if (!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
+				if (!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)
+						|| !particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
+						|| !particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)) {
 					if(particularValidator.isActivoDestinoComercialNoAlquiler(exc.dameCelda(i, 0)))
 						listaFilas.add(i);
 				}
@@ -346,7 +352,9 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if (!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
+				if (!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)
+						|| !particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
+						|| !particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)) {
 					if(particularValidator.isActivoSinInformeAprobado(exc.dameCelda(i, 0)) &&
 							!this.obtenerBooleanExcel(exc.dameCelda(i, 2)) && particularValidator.isActivoSinPrecioRentaWeb(exc.dameCelda(i, 0))) {
 						listaFilas.add(i);
@@ -395,7 +403,9 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 
 		try {
 			for(i = 1; i < this.numFilasHoja; i++) {
-				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_ACTIVO)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)
+				if ((particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_ACTIVO)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)
+						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_ACTIVO)), CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
+						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_ACTIVO)), CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_ALQUILER))
 					 && !particularValidator.esActivoPrincipalEnAgrupacion(Long.parseLong(exc.dameCelda(i, COL_ACTIVO)))){
 						listFilas.add(i);
 					}
@@ -414,7 +424,9 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
+				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)
+						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
+						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)) {
 					String idAgrupacion = particularValidator.idAgrupacionDelActivoPrincipal(exc.dameCelda(i, 0));
 					if(particularValidator.isActivoNoPublicableAgrupacion(idAgrupacion))
 						listaFilas.add(i);
@@ -435,7 +447,9 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
+				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)
+						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
+						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)) {
 					String idAgrupacion = particularValidator.idAgrupacionDelActivoPrincipal(exc.dameCelda(i, 0));
 					if(particularValidator.isActivoDestinoComercialNoAlquilerAgrupacion(idAgrupacion))
 						listaFilas.add(i);
@@ -456,7 +470,9 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
+				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)
+						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
+						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)) {
 					String idAgrupacion = particularValidator.idAgrupacionDelActivoPrincipal(exc.dameCelda(i, 0));
 					if(particularValidator.isActivoSinInformeAprobadoAgrupacion(idAgrupacion) && particularValidator.isActivoSinPrecioRentaWebAgrupacion(idAgrupacion) &&
 							!this.obtenerBooleanExcel(exc.dameCelda(i, 2))) {
@@ -478,7 +494,9 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
+				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)
+						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
+						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)) {
 					String idAgrupacion = particularValidator.idAgrupacionDelActivoPrincipal(exc.dameCelda(i, 0));
 					if(particularValidator.isActivoNoComercializableAgrupacion(idAgrupacion))
 						listaFilas.add(i);

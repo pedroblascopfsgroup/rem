@@ -90,7 +90,10 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	            {
 	            	name: 'isRestringida',
 	            	calculate: function(data) {
-	            		return data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['RESTRINGIDA'];
+	            		return data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['RESTRINGIDA']
+	            		|| data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_OB_REM']
+	            		|| data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_VENTA']
+	            		|| data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_ALQUILER'];
 	            	},
 	            	depends: 'tipoAgrupacionCodigo'
 	            },

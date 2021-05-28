@@ -10,7 +10,7 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 	refreshAfterSave: true,	
 	recordClass: "HreRem.model.GestionGasto",
     
-    requires: ['HreRem.model.GestionGasto'],
+    requires: ['HreRem.model.GestionGasto', 'HreRem.view.gastos.RechazosPropietarioGrid'],
     
     listeners: {
 		boxready:'cargarTabData',
@@ -264,7 +264,36 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 						
 						
 					]
-			}
+			},
+			{   
+				xtype:'fieldsettable',
+				title: HreRem.i18n('fieldlabel.motivo.rechazo'),
+				listeners:{
+					afterrender: function(get){
+						var me =this;
+						var grid = me.items.items[0];
+						var gestionMotivoRechazo = me.up().items.items[1].child("[reference='gestionMotivoRechazoPropietario']");
+						var cartera = me.up().lookupController().getViewModel().getData().gasto.getData().cartera;
+						
+						if (cartera != CONST.CARTERA['BANKIA']) {
+							me.setHidden(true);
+							grid.setHidden(true);
+							gestionMotivoRechazo.setHidden(false);
+						}else{
+							grid.setHidden(false);
+							me.setHidden(false);
+							gestionMotivoRechazo.setHidden(true);
+						}												
+					}
+				},
+				items :
+					[
+						{
+							xtype: 'rechazopropietariogrid',
+							reference : 'gestionRechazoPropGridRef'
+						}
+					]
+			}			
 
            
     	];
@@ -278,6 +307,9 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
     	var me = this; 
 		me.recargar = false;		
 		me.lookupController().cargarTabData(me);
+		Ext.Array.each(me.query('grid'), function(grid) {
+			grid.getStore().load();
+		});
     	
     }
 });

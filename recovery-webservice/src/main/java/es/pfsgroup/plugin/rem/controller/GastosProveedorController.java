@@ -74,6 +74,7 @@ import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.DtoRechazosPropietario;
 import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastosDiariosLBK;
@@ -1655,6 +1656,24 @@ public class GastosProveedorController extends ParadiseJsonController {
 		String validacion = gastoProveedorApi.validacionNifEmisorFactura(dto, idGasto);
 		
 		model.put("error", validacion);
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getRechazosPropietario(Long idGasto) {
+		ModelMap model = new ModelMap();
+		
+		try {
+			List<DtoRechazosPropietario> dtoRechazoPropietarioList = gastoProveedorApi.getRechazosPropietario(idGasto);
+			//List<DtoLineaDetalleGasto> dtoLineaDetalleGastoLista =gastoLineaDetalleApi.getGastoLineaDetalle(idGasto);
+			model.put("data", dtoRechazoPropietarioList);
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);		
+		}
 		
 		return createModelAndViewJson(model);
 	}

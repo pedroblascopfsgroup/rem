@@ -71,6 +71,7 @@ import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoGenerico;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoRechazoGasto;
 import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
@@ -87,6 +88,7 @@ import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.DtoRechazosPropietario;
 import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ErrorDiariosLbk;
@@ -4270,6 +4272,44 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		
 		return importeCuotaBig.doubleValue();
+	}
+	
+	@Override
+	public List<DtoRechazosPropietario> getRechazosPropietario(Long idGasto) throws Exception {
+		List<DtoRechazosPropietario> dtoLista = new ArrayList<DtoRechazosPropietario>();
+		List<ActivoRechazoGasto> listaRechazos = new ArrayList<ActivoRechazoGasto>();
+		GastoProveedor gasto = genericDao.get(GastoProveedor.class,genericDao.createFilter(FilterType.EQUALS, "id", idGasto));
+				
+		if (gasto != null) {			
+			listaRechazos = genericDao.getList(ActivoRechazoGasto.class,genericDao.createFilter(FilterType.EQUALS, "gasto.id", gasto.getId()));			
+			if (listaRechazos == null || listaRechazos.isEmpty()) {
+				return dtoLista;
+			}			
+			for (ActivoRechazoGasto activoRechazoGasto : listaRechazos) {
+				DtoRechazosPropietario dto = new DtoRechazosPropietario();
+				if (activoRechazoGasto.getId() != null) {
+					dto.setId(activoRechazoGasto.getId());
+				}
+				if (activoRechazoGasto.getErrores() != null) {
+					dto.setListadoErroresCod(activoRechazoGasto.getErrores().getCodigo());
+					dto.setListadoErroresDesc(activoRechazoGasto.getErrores().getTextoMensajeSAPBC());
+				}
+				if (activoRechazoGasto.getMensajeError() != null) {
+					dto.setMensajeError(activoRechazoGasto.getMensajeError());
+				}
+				if (activoRechazoGasto.getFechaProcesado() != null) {
+					dto.setFechaProcesado(activoRechazoGasto.getFechaProcesado());
+				}
+				if (gasto.getNumGastoHaya() != null) {
+					dto.setNumeroGasto(gasto.getNumGastoHaya());
+				}
+				if (gasto.getId() != null) {
+					dto.setIdGasto(gasto.getId());
+				}
+				dtoLista.add(dto);
+			}
+		}
+		return dtoLista;
 	}
 	
 }

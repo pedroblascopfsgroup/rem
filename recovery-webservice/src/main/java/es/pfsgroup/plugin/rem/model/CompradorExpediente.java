@@ -192,7 +192,7 @@ public class CompradorExpediente implements Serializable, Auditable {
     private Integer numUrsusConyuge;
     
     @Column(name="CEX_NUM_URSUS_CONYUGE_BH_REM")
-    private Integer numUrsusConyugeBh;   
+    private Integer numUrsusConyugeBh;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_ECL_ID")
@@ -200,6 +200,9 @@ public class CompradorExpediente implements Serializable, Auditable {
     
     @Column(name="ECO_ECL_FECHA")
     private Date fechaContrasteListas;
+
+	@Column(name = "CEX_C4C_ID")
+	private Long idC4c;
     
 	@Version   
 	private Long version;
@@ -655,8 +658,7 @@ public class CompradorExpediente implements Serializable, Auditable {
 
 	@Override
 	public void setAuditoria(Auditoria auditoria) {
-		this.auditoria = auditoria;
-		
+		this.auditoria = auditoria;	
 	}
 
 	public DDEstadoContrasteListas getEstadoContrasteListas() {
@@ -673,6 +675,14 @@ public class CompradorExpediente implements Serializable, Auditable {
 
 	public void setFechaContrasteListas(Date fechaContrasteListas) {
 		this.fechaContrasteListas = fechaContrasteListas;
+	}
+	
+	public Long getIdC4c() {
+		return idC4c;
+	}
+
+	public void setIdC4c(Long idC4c) {
+		this.idC4c = idC4c;
 	}
     
 	

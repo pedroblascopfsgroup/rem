@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20210512
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210531
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13942
+--## INCIDENCIA_LINK=HREOS-14162
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - HREOS-13942 - Santi Monzó
+--##        0.2 Versión inicial - HREOS-14162 - Alejandra García - Añadir campos
 --##########################################
 --*/
 
@@ -206,6 +207,15 @@ BEGIN
         PRECIO_CAMP_VENTA_NEGOCIABLE VARCHAR2(1 CHAR),
         DESC_COL_PRECIO_VENTA       VARCHAR2(60 CHAR),
         IMP_PRECIO_REF_ALQUI        VARCHAR2(10 CHAR),
+
+        FEC_INI_PRECIO_VENTA        VARCHAR2(8 CHAR),
+        FEC_FIN_PRECIO_VENTA        VARCHAR2(8 CHAR),
+        FEC_INI_PRECIO_ALQUILER     VARCHAR2(8 CHAR),
+        FEC_FIN_PRECIO_ALQUILER     VARCHAR2(8 CHAR),
+        FEC_INI_PRECIO_CAMP_VENTA   VARCHAR2(8 CHAR),
+        FEC_FIN_PRECIO_CAMP_VENTA   VARCHAR2(8 CHAR),
+        FEC_INI_PRECIO_CAMP_ALQUILER VARCHAR2(8 CHAR),
+        FEC_FIN_PRECIO_CAMP_ALQUILER VARCHAR2(8 CHAR),
 
         FEC_POSESION                VARCHAR2(8 CHAR),
         FEC_SEÑAL_LANZAMINETO       VARCHAR2(8 CHAR),

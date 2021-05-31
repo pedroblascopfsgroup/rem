@@ -1003,7 +1003,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 	},
 	
 	habilitarLupaClientes: function() {
-		var me = this, expediente = me.getView().up('wizardBase').expediente;
+		var me = this;
+		var wizard = me.getView().up('wizardBase');
+		var expediente = me.getView().up('wizardBase').expediente;
 		estadoExpediente = expediente.getData().codigoEstado;
 		var estados = [CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION']
 		, CONST.ESTADOS_EXPEDIENTE['PTE_FIRMA']
@@ -1012,8 +1014,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		, CONST.ESTADOS_EXPEDIENTE['RPTA_OFERTANTE']
 		, CONST.ESTADOS_EXPEDIENTE['PEN_RES_OFER_COM']
 		, CONST.ESTADOS_EXPEDIENTE['PTE_RESOLUCION_CES']];
+		var comprador = wizard.idComprador;
 		
-		if(estados.includes(estadoExpediente)) {
+		if((comprador == undefined || comprador == null) || estados.includes(estadoExpediente)) {
 			return true;
 		} else {
 			return false;
@@ -1021,14 +1024,17 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 	},
 	
 	habilitarClienteUrsus: function() {
-		var me = this, expediente = me.getView().up('wizardBase').expediente;
+		var me = this;
+		var wizard = me.getView().up('wizardBase');
+		var expediente = wizard.expediente;
 		estadoExpediente = expediente.getData().codigoEstado;
 		var estados = [CONST.ESTADOS_EXPEDIENTE['RESERVADO'],
 			CONST.ESTADOS_EXPEDIENTE['PTE_PBC']
 		, CONST.ESTADOS_EXPEDIENTE['PTE_CIERRE'],
 		CONST.ESTADOS_EXPEDIENTE['PTE_POSICIONAMIENTO']];
+		var comprador = wizard.idComprador;
 		
-		if(me.habilitarLupaClientes() || estados.includes(estadoExpediente)) {
+		if((comprador == undefined || comprador == null) || me.habilitarLupaClientes() || estados.includes(estadoExpediente)) {
 			return true;
 		} else {
 			return false;

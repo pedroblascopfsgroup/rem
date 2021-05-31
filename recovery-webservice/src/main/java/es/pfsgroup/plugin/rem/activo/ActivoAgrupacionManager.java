@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAfectosGencatAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
+import es.pfsgroup.plugin.rem.model.VEsCondicionado;
 import es.pfsgroup.plugin.rem.model.VListaActivosAgrupacionVSCondicionantes;
 import es.pfsgroup.plugin.rem.model.VSubdivisionesAgrupacion;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaAgrupacion;
@@ -981,5 +982,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			return false;
 		}
 		return true;
+	}
+	
+	@Override
+	public Long getIdByNumAgrupacion(Long numAgrupacion) {
+	return activoAgrupacionDao.getIdByNumAgrupacion(numAgrupacion);
 	}
 }

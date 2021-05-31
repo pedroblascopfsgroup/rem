@@ -43,10 +43,12 @@
   
 %>
 
-<%=url%><br/>
-<%--<%=request.getRequestURL().toString()--%>
-
-<%response.sendRedirect(url);%>
+      <script>
+         setTimeout(function(){
+            window.location.href = '<%=url%>';
+         }, 2);
+      </script>
+      <p>Accediendo a la aplicaci&oacute;n REM.</p>
  
 </body>
 </html>

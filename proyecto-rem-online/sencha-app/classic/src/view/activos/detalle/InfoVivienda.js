@@ -51,11 +51,12 @@ Ext.define('HreRem.view.activos.detalle.InfoVivienda', {
 								 		margin: '0 10 6 0',
 								 		items: [
 											{ 
-												xtype: 'comboboxfieldbase',
+												xtype: 'comboboxfieldbasedd',
 												fieldLabel: HreRem.i18n('fieldlabel.tipo.vivienda'),
 												bind: {
 													store: '{comboTipoVivienda}',
 													value: '{infoComercial.tipoViviendaCodigo}',
+												    rawValue : '{infoComercial.tipoViviendaDescripcion}',
 													readOnly: '{esActivoMacc}'
 												}
 											},  

@@ -21,6 +21,42 @@ Ext.define('HreRem.view.trabajos.TrabajosController', {
 			this.lookupReference('trabajoslist').getStore().loadPage(1);
         }
 	},
+	onSearchBusquedaDirectaTrabajo: function(btn) {
+		var me = this;
+		var numTrabajo = btn.up('trabajossearch').down('[name="numTrabajo"]').value;
+		var url= $AC.getRemoteUrl('trabajo/getTrabajoExists');
+		var data;
+		
+		if(numTrabajo != ""){
+			Ext.Ajax.request({
+					url: url,
+				params: {numTrabajo : numTrabajo},
+				success: function(response, opts) {
+					data = Ext.decode(response.responseText);
+					if(data.success == "true"){
+							var titulo = "Trabajo " + numTrabajo;
+							me.getView().fireEvent('abrirDetalleTrabajoDirecto', data.data, titulo);
+					}else{
+							me.fireEvent("errorToast", data.error);
+					}
+				},
+				failure: function(response) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				}
+			});    
+		}
+	 },
+	
+		onChangeNumTrabajo: function(me, oValue, nValue){
+			var numTrabajo = me.up('trabajossearch').down('[name="numTrabajo"]').value;
+			var btn = me.up('trabajossearch').down('[reference="btnTrabajo"]');
+
+			if(numTrabajo != ""){
+				btn.setDisabled(false);
+			}else{
+				btn.setDisabled(true);
+		    }
+		},
 	
 	
 	paramLoading: function(store, operation, opts) {

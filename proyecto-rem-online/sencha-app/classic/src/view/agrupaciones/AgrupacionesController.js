@@ -223,5 +223,44 @@ onChangeTipoAgrupacion: function(combo, records) {
 		comboTipoAlquiler.hide();
 		comboTipoAlquiler.clearValue();
 	}
-}
+},
+    onSearchBusquedaDirectaAgrupaciones: function(btn) {
+
+    	var me = this;
+    	var numAgrupacion = btn.up('agrupacionessearch').down('[name="numAgrupacionRem"]').value;
+   		var url= $AC.getRemoteUrl('agrupacion/getAgrupacionExists');
+    	var data;
+    			
+		if(numAgrupacion != ""){
+			Ext.Ajax.request({
+				url: url,
+			    params: {numAgrupacion : numAgrupacion},
+			    success: function(response, opts) {
+			    	data = Ext.decode(response.responseText);
+			    	if(data.success == "true"){
+			    		var titulo = "Agrupación " + numAgrupacion;
+			    		me.getView().fireEvent('abrirDetalleAgrupacionDirecto', data.data, titulo);
+			    	}else{
+			    		me.fireEvent("errorToast", data.error);
+			    	}
+			    		         
+			    },
+			    failure: function(response) {
+			    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    }
+			});    
+		}
+	
+    },
+	
+	onChangeNumAgrupacion: function(me, oValue, nValue){
+		var numAgrupacion = me.up('agrupacionessearch').down('[name="numAgrupacionRem"]').value;
+		var btn = me.up('agrupacionessearch').down('[reference="btnAgrupacion"]');
+		
+		if(numAgrupacion != ""){
+			btn.setDisabled(false);
+		}else{
+			btn.setDisabled(true);
+		}
+	}
 });

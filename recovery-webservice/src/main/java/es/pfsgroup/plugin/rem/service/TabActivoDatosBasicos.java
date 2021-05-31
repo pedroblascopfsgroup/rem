@@ -1862,7 +1862,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 				
 				if (dto.getMunicipioCodigoOE() != null) {
-					Localidad localidadOE = (Localidad) diccionarioApi.dameValorDiccionarioByCod(Localidad.class,  dto.getMunicipioCodigoOE());
+					Filter filtroCodigoLocalidad = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigoOE());
+ 					Localidad localidadOE = genericDao.get(Localidad.class, filtroCodigoLocalidad);
 					activoSareb.setLocalidadOE(localidadOE);
 				}
 				

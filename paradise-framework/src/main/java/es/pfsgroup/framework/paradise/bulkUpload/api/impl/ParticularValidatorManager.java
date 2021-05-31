@@ -245,6 +245,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean esActivoEnTramite(String numActivo){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_ACTIVO WHERE"
+				+ "		 	ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "		 	AND BORRADO = 0 AND ACT_EN_TRAMITE IS NOT NULL");
+		return !"0".equals(resultado);
+	}
 
 	@Override
 	public Boolean existeOferta(String numOferta){

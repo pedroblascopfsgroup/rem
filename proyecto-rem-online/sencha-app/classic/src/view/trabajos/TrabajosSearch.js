@@ -39,7 +39,10 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 		        				{ 
 					            	fieldLabel: HreRem.i18n('fieldlabel.numero.trabajo'),
 					            	name: 'numTrabajo',
-					            	width: 		230
+					            	width: 		230,
+					            		listeners : {
+					            			change: 'onChangeNumTrabajo'
+					            		}
 					            },
 					            { 
 					            	fieldLabel: HreRem.i18n('fieldlabel.numero.activo'),

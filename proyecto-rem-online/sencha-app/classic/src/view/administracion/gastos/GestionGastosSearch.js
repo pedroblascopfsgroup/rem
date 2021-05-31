@@ -61,7 +61,10 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 			    		items: [
 	    					{
 						    	fieldLabel: HreRem.i18n('fieldlabel.numero.gasto'),
-						        name: 'numGastoHaya'
+						        name: 'numGastoHaya',
+						        listeners : {
+							    	change: 'onChangeNumGasto'
+						        } 
 						    },
 						    {
 					        	xtype: 'comboboxfieldbase',

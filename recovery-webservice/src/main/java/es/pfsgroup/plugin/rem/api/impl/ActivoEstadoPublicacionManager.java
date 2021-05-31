@@ -82,6 +82,7 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VFechasPubCanales;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.VSinInformeAprobadoRem;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
@@ -497,9 +498,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	// Comprobación mínima.
 	private Boolean isInformeAprobado(Long idActivo) {
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
-		VCondicionantesDisponibilidad vcd = genericDao.get(VCondicionantesDisponibilidad.class, filter);
+		VSinInformeAprobadoRem vsi = genericDao.get(VSinInformeAprobadoRem.class, filter);
 
-		return !Checks.esNulo(vcd) && !vcd.getSinInformeAprobadoREM();
+		return !Checks.esNulo(vsi) && !vsi.getSinInformeAprobadoREM();
 	}
 
 	// Comprobación mínima.

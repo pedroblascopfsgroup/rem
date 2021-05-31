@@ -263,16 +263,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				expediente.setComiteSancion(comite);
 			}
 
-
-		}
-		try {
-			notificatorServiceContabilidadBbva.notificatorFinTareaConValores(expediente,true);
-		} catch (GestorDocumentalException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
+		}	
 	}
 
 	public String[] getCodigoTarea() {

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +58,8 @@ public class NotificatorServiceContabilidadBbva extends AbstractNotificatorServi
 	@Autowired
 	private ExpedienteComercialAdapter expedienteAdapter;
 	
-	
+	@Autowired
+	private OperacionVentaController operacionVentaController;
 	
 	public void notificatorFinTareaConValores(ExpedienteComercial expediente,boolean contratoReserva) throws GestorDocumentalException {
 		
@@ -67,7 +69,7 @@ public class NotificatorServiceContabilidadBbva extends AbstractNotificatorServi
 			List<String> mailsCC = new ArrayList<String>();
 			List<String> mailsBCC = new ArrayList<String>();
 			List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();
-			adjuntos = rellenarDtoAdjuntoMailReserva(expediente,contratoReserva);
+			adjuntos = rellenarDtoAdjuntoMailReserva(expediente,contratoReserva, true);
 			mails = rellenarCorreos(dtoEmailReserva);
 			for (String mailsSeparados : mails) {
 				String [] a = mailsSeparados.split("-");
@@ -78,30 +80,18 @@ public class NotificatorServiceContabilidadBbva extends AbstractNotificatorServi
 				}
 			}
 			if(!mailsPara.isEmpty()) {
-			String correos = null;
-			String titulo = "";
-			OperacionVentaController op = new OperacionVentaController();
-			op.operacionVentaAdjunto(expediente.getNumExpediente());
-			
-			if(contratoReserva) {
-				titulo = "Reserva oferta " + expediente.getOferta().getNumOferta() + " - Importe reserva "+ dtoEmailReserva.getImporteReserva() +"";
+				String correos = null;
+				String titulo = "";
 				
-			}else {
-				titulo = "Venta oferta " + expediente.getOferta().getNumOferta() + " - Importe oferta "+ dtoEmailReserva.getImporteOferta() +"";
-				
-			}
-			adjuntos = rellenarDtoAdjuntoMailReserva(expediente,contratoReserva);
-			mails = rellenarCorreos(dtoEmailReserva);
-			for (String mailsSeparados : mails) {
-				String [] a = mailsSeparados.split("-");
-				if(a[1].equals("true")) {
-					mailsCC.add(a[0]);
+				if(contratoReserva) {
+					titulo = "Reserva oferta " + expediente.getOferta().getNumOferta() + " - Importe reserva "+ dtoEmailReserva.getImporteReserva() +"";
+					
 				}else {
-					mailsPara.add(a[0]);
+					titulo = "Venta oferta " + expediente.getOferta().getNumOferta() + " - Importe oferta "+ dtoEmailReserva.getImporteOferta() +"";
+					
 				}
-			}
-			mailsBCC.add(J_POYATOS_CORREO);
-			genericAdapter.sendMailCopiaOculta(mailsPara, mailsCC, titulo, generateBodyMailVenta(dtoEmailReserva), adjuntos, mailsBCC);
+				mailsBCC.add(J_POYATOS_CORREO);
+				genericAdapter.sendMailCopiaOculta(mailsPara, mailsCC, titulo, generateBodyMailVenta(dtoEmailReserva), adjuntos, mailsBCC);
 			}
 		}
 	
@@ -171,7 +161,7 @@ public class NotificatorServiceContabilidadBbva extends AbstractNotificatorServi
 	}
 	
 	
-	public List<DtoAdjuntoMail> rellenarDtoAdjuntoMailReserva(ExpedienteComercial expediente, boolean contratoReserva) throws GestorDocumentalException{
+	public List<DtoAdjuntoMail> rellenarDtoAdjuntoMailReserva(ExpedienteComercial expediente, boolean contratoReserva, boolean generarHojaDatosFormalizacion) throws GestorDocumentalException{
 		List<DtoAdjuntoMail> listAdjuntoMails = new ArrayList<DtoAdjuntoMail>();
 		List<String> subtipoDocumentoCodigos = rellenarSubtipoDocumentoCodigo(contratoReserva);
 		
@@ -179,11 +169,23 @@ public class NotificatorServiceContabilidadBbva extends AbstractNotificatorServi
 			listAdjuntoMails.addAll(rellenarAdjuntosGD(subtipoDocumentoCodigos, expediente));
 		}else {
 			Order order = new Order(OrderType.DESC, "auditoria.fechaCrear");
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente", expediente);
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId());
 			for (String string : subtipoDocumentoCodigos) {
 				listAdjuntoMails.add(devolverAdjuntoMail(string,order,filtro));
 			}
 			
+		}
+
+		if(generarHojaDatosFormalizacion) {
+			File hojaDatosFormalizacion = operacionVentaController.generarPdfOperacionVentaByOfertaHre(expediente.getNumExpediente(), null);
+			FileItem hojaDatosFileItem = new FileItem(hojaDatosFormalizacion);
+			
+			
+			DtoAdjuntoMail hojaDatosAdj = new DtoAdjuntoMail();
+			
+			hojaDatosAdj.setNombre(hojaDatosFormalizacion.getName());
+			hojaDatosAdj.setAdjunto(new Adjunto(hojaDatosFileItem));			
+			listAdjuntoMails.add(hojaDatosAdj);
 		}
 		return listAdjuntoMails;
 		

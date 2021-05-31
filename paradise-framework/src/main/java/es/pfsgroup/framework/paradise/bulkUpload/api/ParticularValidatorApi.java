@@ -1429,6 +1429,8 @@ public interface ParticularValidatorApi {
 
 	Boolean esSubCarterasCerberusAppleDivarian(String numActivo);
 
+	Boolean esActivoEnTramite(String numActivo);
+
 
 
 }

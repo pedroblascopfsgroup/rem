@@ -20,6 +20,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
@@ -45,6 +46,9 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionDao;
+	
+	@Autowired
+	private MSVRawSQLDao rawDao;
 
 	@Override
 	public Page getListAgrupaciones(DtoAgrupacionFilter dto, Usuario usuLogado) {
@@ -578,6 +582,18 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 			}
 		
 		return HibernateQueryUtils.page(this, hb, dto);		
-	}							
+	}
+	
+	public Long getIdByNumAgrupacion(Long numAgrupacion) {
+				
+			Long idAgrupacion = null;
+				
+			try {
+			idAgrupacion = Long.parseLong(rawDao.getExecuteSQL("SELECT AGR_ID FROM ACT_AGR_AGRUPACION WHERE AGR_NUM_AGRUP_REM = " + numAgrupacion + " AND BORRADO = 0"));
+			} catch (Exception e) {
+				return null;
+			}
+			return idAgrupacion;
+		}
 
 }

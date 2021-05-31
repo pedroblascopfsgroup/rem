@@ -62,10 +62,10 @@ public class FechaArrasExpediente implements Serializable, Auditable {
     private Date fechaAviso;
     
     @Column(name = "FAE_COMENTARIOS_BC")
-    private String fechaComentariosBC;
+    private String comentariosBC;
     
     @Column(name = "FAE_OBSERVACIONES")
-    private String fechaObservaciones;
+    private String observaciones;
     
     @Version   
 	private Long version;
@@ -129,20 +129,20 @@ public class FechaArrasExpediente implements Serializable, Auditable {
 		this.fechaAviso = fechaAviso;
 	}
 
-	public String getFechaComentariosBC() {
-		return fechaComentariosBC;
+	public String getComentariosBC() {
+		return comentariosBC;
 	}
 
-	public void setFechaComentariosBC(String fechaComentariosBC) {
-		this.fechaComentariosBC = fechaComentariosBC;
+	public void setComentariosBC(String comentariosBC) {
+		this.comentariosBC = comentariosBC;
 	}
 
-	public String getFechaObservaciones() {
-		return fechaObservaciones;
+	public String getObservaciones() {
+		return observaciones;
 	}
 
-	public void setFechaObservaciones(String fechaObservaciones) {
-		this.fechaObservaciones = fechaObservaciones;
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
 	}
 
 	public Long getVersion() {

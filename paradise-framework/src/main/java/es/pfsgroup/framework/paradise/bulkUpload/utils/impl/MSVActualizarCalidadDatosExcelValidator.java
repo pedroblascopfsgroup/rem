@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -121,6 +122,8 @@ public class MSVActualizarCalidadDatosExcelValidator extends MSVExcelValidatorAb
 		ArrayList<Integer> errList = null;		
 		String celda, tipoCampo;
 		boolean valorOK = true;
+		Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+		
 		for (int columna = 0; columna < NUM_COLS; columna++) {
 			listasError.add(columna, new ArrayList<Integer>());
 		}		
@@ -145,7 +148,8 @@ public class MSVActualizarCalidadDatosExcelValidator extends MSVExcelValidatorAb
 						
 					case COL_VALOR:
 						valorOK = Checks.esNulo(celda) 	|| (tipoCampo != null && esValorCorrectoCDC(tipoCampo, celda)) 
-								&& (tipoCampo != null && comprobarCarteraYSubtipo(exc.dameCelda(fila, COL_CAMPO), exc.dameCelda(fila, COL_IDENTIFICADOR), celda));
+								&& (tipoCampo != null && comprobarCarteraYSubtipo(exc.dameCelda(fila, COL_CAMPO), exc.dameCelda(fila, COL_IDENTIFICADOR), celda) 
+								&& pattern.matcher(celda).matches());
 						break;						
 					}
 

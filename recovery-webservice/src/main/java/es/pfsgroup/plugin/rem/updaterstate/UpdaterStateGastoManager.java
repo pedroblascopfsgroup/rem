@@ -96,8 +96,9 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	}
 	
 	@Override
-	public String validarCamposMinimos(GastoProveedor gasto) {
-		
+	public String validarCamposMinimos(GastoProveedor gasto , Boolean origen) {
+		codEstadoProvision = null;
+		estadoProvision = null;
 		if(gasto.getProvision() != null) {
 			logger.error("HAY PROVISION!");
 			if(!Checks.esNulo(gasto.getProvision().getEstadoProvision())) {
@@ -109,7 +110,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		}
 		
 		String error = null;
-		
+		if(origen != null) {
+			if(origen) {
 		if(!Checks.esNulo(gasto)) {
 			List<GastoLineaDetalle> gastoListaDetalleList = gasto.getGastoLineaDetalleList();
 			
@@ -224,19 +226,23 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				error = messageServices.getMessage(VALIDACION_PROPIETARIO);
 				return error;
 			}
-
-			for (GastoLineaDetalle gastoLineaDetalle : gastoListaDetalleList) {
-				if((gastoLineaDetalle.getGastoLineaEntidadList() == null && !gastoLineaDetalle.esAutorizadoSinActivos()) 
-					|| (gastoLineaDetalle.getGastoLineaEntidadList().isEmpty() && !gastoLineaDetalle.esAutorizadoSinActivos())) {
-					error = messageServices.getMessage(VALIDACION_ACTIVOS_ASIGNADOS); 
-					return error;
-				}
-			}
+			
+			
+					for (GastoLineaDetalle gastoLineaDetalle : gastoListaDetalleList) {
+						if((gastoLineaDetalle.getGastoLineaEntidadList() == null && !gastoLineaDetalle.esAutorizadoSinActivos()) 
+							|| (gastoLineaDetalle.getGastoLineaEntidadList().isEmpty() && !gastoLineaDetalle.esAutorizadoSinActivos())) {
+							error = messageServices.getMessage(VALIDACION_ACTIVOS_ASIGNADOS); 
+							return error;
+						}
+					}
+				
+			
 			
 			if(codEstadoProvision == null || !DDEstadoProvisionGastos.CODIGO_RECHAZADO_SUBSANABLE.equals(codEstadoProvision)) {
 				if(Checks.esNulo(gasto.getExisteDocumento()) || !BooleanUtils.toBoolean(gasto.getExisteDocumento())) {
 					error = messageServices.getMessage(VALIDACION_DOCUMENTO_ADJUNTO_GASTO);
 					return error;
+					}
 				}
 			}
 			if (gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null) {
@@ -249,13 +255,12 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 							if ((gasto.getNumeroContratoAlquiler() == null || "".equals(gasto.getNumeroContratoAlquiler())) || !resultado) {
 								error = messageServices.getMessage(VALIDACION_NUMERO_ALQUILER_ENTIDADES); 
 								return error;
+								}
 							}
-							
 						}
 					}
 				}
 			}
-				
 		}
 		return error;
 	}
@@ -428,7 +433,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			
 		// Si el pago sigue retenido, ningún cambio en el gasto implica cambio de estado.
 			if(Checks.esNulo(gastoGestion.getMotivoRetencionPago())) {
-				String error = validarCamposMinimos(gasto);
+				String error = validarCamposMinimos(gasto,null);
 				if(Checks.esNulo(error)) {
 					return true;
 				}

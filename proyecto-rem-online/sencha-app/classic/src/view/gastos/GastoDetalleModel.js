@@ -801,6 +801,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				}
 			},
 			autoLoad: true
+		},
+		
+		storeRechazosPropietario : {
+			model : 'HreRem.model.RechazosPropietarioGridModel',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'gastosproveedor/getRechazosPropietario',				
+				extraParams : {
+					idGasto : '{gasto.id}'
+				}
+			}
 		}
 	}
 });

@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.DtoRechazosPropietario;
 import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
@@ -432,6 +433,8 @@ public interface GastoProveedorApi {
 		Double recalcularCuotaRetencionGarantia(GastoDetalleEconomico detalleGasto, Double importeGarantiaBase);
 
 		public Long getIdGasto(Long numGasto);
+
+		public List<DtoRechazosPropietario> getRechazosPropietario(Long idGasto) throws Exception;
 
 
 }

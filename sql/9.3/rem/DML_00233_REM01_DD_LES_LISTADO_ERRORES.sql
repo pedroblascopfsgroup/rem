@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=PIER GOTTA
---## FECHA_CREACION=20210526
+--## FECHA_CREACION=20210530
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-13884

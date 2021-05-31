@@ -1276,10 +1276,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	public VCondicionantesDisponibilidad getCondicionantesDisponibilidad(Long idActivo) {
+	public VEsCondicionado getCondicionantesDisponibilidad(Long idActivo) {
 		Filter idActivoFilter = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
-		return genericDao.get(VCondicionantesDisponibilidad.class, idActivoFilter);
+		return genericDao.get(VEsCondicionado.class, idActivoFilter);
 	}
+	
+	@Override
+	public VSinInformeAprobadoRem getSinInformeAprobadoREM(Long idActivo) {
+		Filter idActivoFilter = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
+		return genericDao.get(VSinInformeAprobadoRem.class, idActivoFilter);
+	}
+
 
 	@Override
 	@Transactional(readOnly = false)

@@ -199,6 +199,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
@@ -832,12 +833,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				activo = genericDao.get(Activo.class,
 						genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya()));
 				if (!Checks.esNulo(activo)) {
-
 					// Verificamos si el activo pertenece a una agrupación
 					// restringida
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+					ActivoAgrupacionActivo activoAgrupacion = genericDao.get(ActivoAgrupacionActivo.class, filtro);
 					DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
 					dtoAgrupActivo.setActId(activo.getId());
-					dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+					if (activoAgrupacion != null) {
+						if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+							dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+						} else if (DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM.equals(activoAgrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+							dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM);
+						} else if (DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER.equals(activoAgrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+							dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER);
+						} else if (DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA.equals(activoAgrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+							dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA);
+						}
+					}
 					listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
 					if (!Checks.esNulo(listaAgrups) && !listaAgrups.isEmpty()) {
 						ActivoAgrupacionActivo agrAct = listaAgrups.get(0);
@@ -5127,7 +5139,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				dtoFichaComercial.setNumAgrupacion(oferta.getAgrupacion().getNumAgrupRem());
 				
-				if(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+				if(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
+						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo())
+						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
+						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 	
 					if(agrupacion.getActivoPrincipal() != null) {
 						linkHaya = linkCabecera(agrupacion.getActivoPrincipal().getId());
@@ -6680,8 +6695,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					precioWebSeisMesesActivo = actVal.getImporte();
 				}
 				
-				if((agrupacion != null && agrupacion.getTipoAgrupacion() != null && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) || 
-						(agrupacion == null && oferta.getActivoPrincipal() != null)) {
+				if((agrupacion != null && agrupacion.getTipoAgrupacion() != null && (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
+						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo())
+						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
+						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo()))) 
+						|| (agrupacion == null && oferta.getActivoPrincipal() != null)) {
 					long diff = Math.abs(new Date().getTime() - actVal.getFechaInicio().getTime());
 					long diffDays = diff / (24 * 60 * 60 * 1000);
 					dtoFichaComercial.setDiasPVP(diffDays);
@@ -6724,8 +6742,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 				
-				if((agrupacion != null && agrupacion.getTipoAgrupacion() != null && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) || 
-						(agrupacion == null && oferta.getActivoPrincipal() != null)) {
+				if((agrupacion != null && agrupacion.getTipoAgrupacion() != null && (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
+						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo())
+						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
+						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo()))) 
+						|| (agrupacion == null && oferta.getActivoPrincipal() != null)) {
 					long diff = Math.abs(new Date().getTime() - actVal.getFechaInicio().getTime());
 					long diffDays = diff / (24 * 60 * 60 * 1000);
 					dtoFichaComercial.setDiasPVP(diffDays);

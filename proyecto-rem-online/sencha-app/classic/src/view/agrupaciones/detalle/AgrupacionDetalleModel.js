@@ -70,7 +70,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     esAgrupacionRestringida: function(get) {
 	    	 
 		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
-		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA'])) {
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']) 
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_OB_REM']) 
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_VENTA'])
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_ALQUILER'])) {
 		     		return true;
 		     	} else {
 		     		return false;
@@ -80,7 +83,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	    	 
 		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
 		     	var numActivos = get('agrupacionficha.numeroActivos');
-		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']) && numActivos > 0) {
+		     	if(((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA'])
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_OB_REM'])
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_VENTA'])
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_ALQUILER'])) && numActivos > 0) {
 		     		return true;
 		     	} else {
 		     		return false;
@@ -107,7 +113,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 
 			 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
 			 var incluyeDestinoComercialVenta = get('agrupacionficha.incluyeDestinoComercialVenta');
-		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']) && incluyeDestinoComercialVenta) {
+		     	if(((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']) 
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_OB_REM']) 
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_VENTA']) 
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_ALQUILER'])) && incluyeDestinoComercialVenta) {
 		     		return true;
 		     	} else {
 		     		return false;
@@ -118,7 +127,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 
 			 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
 			 var incluyeDestinoComercialAlquiler = get('agrupacionficha.incluyeDestinoComercialAlquiler');
-		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']) && incluyeDestinoComercialAlquiler) {
+		     	if(((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']) 
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_OB_REM']) 
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_VENTA']) 
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_ALQUILER'])) && incluyeDestinoComercialAlquiler) {
 		     		return true;
 		     	} else {
 		     		return false;
@@ -590,7 +602,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		},
 	     agrupacionRestringidaYPublicada: function(get) {
 	    	 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
-		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA'])) {
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']) 
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_OB_REM'])
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_VENTA'])
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_ALQUILER'])) {
 		     		 var estadoAlquilerCodigo = get('agrupacionficha.estadoAlquilerCodigo');
 					 var estadoVentaCodigo = get('agrupacionficha.estadoVentaCodigo');
 					 var incluyeDestinoComercialAlquiler = get('agrupacionficha.incluyeDestinoComercialAlquiler');
@@ -609,7 +624,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     },
 	     agrupacionRestringidaYPublicadaVenta: function(get) { 
 	    	 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
-		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA'])) {
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']) 
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_OB_REM'])
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_VENTA'])
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_ALQUILER'])) {
 					 var estadoVentaCodigo = get('agrupacionficha.estadoVentaCodigo');
 					 var incluyeDestinoComercialVenta = get('agrupacionficha.incluyeDestinoComercialVenta');
 					 
@@ -622,7 +640,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     },
 	     agrupacionRestringidaYPublicadaAlquiler: function(get) { 
 	    	 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
-		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA'])) {
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']) 
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_OB_REM'])
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_VENTA'])
+		     			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_ALQUILER'])) {
 		     		 var estadoAlquilerCodigo = get('agrupacionficha.estadoAlquilerCodigo');
 					 var incluyeDestinoComercialAlquiler = get('agrupacionficha.incluyeDestinoComercialAlquiler');
 					 

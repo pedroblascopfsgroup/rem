@@ -42,6 +42,8 @@ public class MSVDesocultacionVenta extends MSVExcelValidatorAbstract{
 	private static final String ACTIVO_OCULTO_MOTIVOS_AUTOMATICOS = "El activo esta oculto por motivos automáticos";
 	private static final String NO_ES_ACTIVO_PRINCIPAL = "El activo no es el activo principal de la agrupación restringida";
 	private static final String AGRUPACION_RESTRINGIDA = "02";
+	private static final String AGRUPACION_PROMOCION_CONJUNTA_OB_REM = "17";
+	private static final String AGRUPACION_PROMOCION_CONJUNTA_VENTA= "18";
 
 	private static final class COL_NUM {
 		static final int ID_ACTIVO_HAYA = 0;
@@ -340,7 +342,9 @@ public class MSVDesocultacionVenta extends MSVExcelValidatorAbstract{
 		int i = 0;
 		try{
 			for(i=1;i<this.numFilasHoja;i++){
-				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.ID_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
+				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.ID_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)
+						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.ID_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
+						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.ID_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_VENTA)){
 					if(!particularValidator.esActivoPrincipalEnAgrupacion(Long.parseLong(exc.dameCelda(i, COL_NUM.ID_ACTIVO_HAYA)))){
 						listaFilas.add(i);
 					}

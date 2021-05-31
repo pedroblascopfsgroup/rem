@@ -5064,21 +5064,35 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onChangeCheckboxOcultar : function(checkbox, isDirty) {
 		var me = this;
 		var combobox = me.lookupReference(checkbox.comboRefChained);
+		var checkboxThis = me.lookupReference(checkbox.reference).getReference();
 		var fechaVenta = me.lookupReference('fechaRevisionPublicacionesVenta');
-		var fechaAlquiler = me
-				.lookupReference('fechaRevisionPublicacionesAlquiler');
+		var fechaAlquiler = me.lookupReference('fechaRevisionPublicacionesAlquiler');
+		var textAreaVenta = me.lookupReference('textareaMotivoOcultacionManualVenta');
+		var textAreaAlquiler = me.lookupReference('textareaMotivoOcultacionManualAlquiler');
 
 		if (checkbox.getValue()) {
 			combobox.setDisabled(false);
 			combobox.setAllowBlank(false);
-			fechaVenta.setDisabled(false);
-			fechaAlquiler.setDisabled(false);
+			
+			if ('chkbxocultarventa' === checkboxThis) {
+				fechaVenta.setDisabled(false);
+			} else if ('chkbxocultaralquiler' === checkboxThis) {
+				fechaAlquiler.setDisabled(false);
+			}
 		} else {
 			combobox.setDisabled(true);
 			combobox.setAllowBlank(true);
-			fechaVenta.setDisabled(true);
-			fechaAlquiler.setDisabled(true);
 			combobox.clearValue();
+			
+			if ('chkbxocultarventa' === checkboxThis) {
+				textAreaVenta.setDisabled(true);
+				textAreaVenta.setValue('');
+				fechaVenta.setDisabled(true);
+			} else if ('chkbxocultaralquiler' === checkboxThis) {
+				textAreaAlquiler.setDisabled(true);
+				textAreaAlquiler.setValue('');
+				fechaAlquiler.setDisabled(true);
+			}
 		}
 
 		if (isDirty) {

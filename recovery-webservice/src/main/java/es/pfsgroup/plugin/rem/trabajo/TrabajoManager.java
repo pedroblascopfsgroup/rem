@@ -71,6 +71,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.http.client.HttpSimpleGetRequest;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -366,6 +367,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private TareaAdapter tareaAdapter;
+	
+	@Autowired
+	private MSVRawSQLDao rawDao;
 	
 	@Autowired
 	private ActivoTrabajoDao activoTrabajoDao;
@@ -6068,6 +6072,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public Long getIdByNumTrabajo(Long numTrabajo) {
+		Long idTrabajo = null;
+
+		try {
+		idTrabajo = Long.parseLong(rawDao.getExecuteSQL("SELECT TBJ_ID FROM ACT_TBJ_TRABAJO WHERE TBJ_NUM_TRABAJO = " + numTrabajo + " AND BORRADO = 0"));
+		} catch (Exception e) {
+			return null;
+		}
+		return idTrabajo;
 	}
 
 	public Boolean activoEnTramite(Long idActivo) {

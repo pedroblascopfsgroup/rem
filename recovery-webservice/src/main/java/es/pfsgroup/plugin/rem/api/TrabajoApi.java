@@ -864,6 +864,8 @@ public interface TrabajoApi {
 	boolean checkJaipur(Trabajo trabajo);
 
 	boolean checkGaleon(Trabajo trabajo);
+	
+	Long getIdByNumTrabajo(Long numTrabajo);
 
 	/**
 	 * @param tbjNumTrabajo

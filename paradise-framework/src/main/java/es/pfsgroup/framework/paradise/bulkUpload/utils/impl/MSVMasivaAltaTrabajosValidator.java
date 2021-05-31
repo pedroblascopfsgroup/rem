@@ -97,6 +97,7 @@ public class MSVMasivaAltaTrabajosValidator extends MSVExcelValidatorAbstract {
 	private final String ERROR_TARIFA_CARTERA_ACTIVO="msg.error.masivo.alta.trabajos.error.tarifa.cartera.activo";
 	private final String PROVEEDOR_EN_CARTERA_ACTIVO="msg.error.masiva.alta.trabajos.error.proveedor.cartera.activo";
 	private final String ERROR_IDTAREA_NO_EXISTE="msg.error.masivo.alta.trabajos.error.id.tarea.no.existe.webservice";
+	private final String ACTIVO_EN_TRAMITE="msg.error.masivo.alta.trabajos.error.activo.en.tramite";
 	
 	
 	//
@@ -291,6 +292,12 @@ public class MSVMasivaAltaTrabajosValidator extends MSVExcelValidatorAbstract {
 //					esCorrecto = false;
 //				}
 				//CAMPOS NO NULOS
+				if (!Checks.esNulo(idActivo) && !Checks.esNulo(tipoTrabajo) 
+						&& !tipTrabajoActTecnica.equals(tipoTrabajo) 
+						&& particularValidator.esActivoEnTramite(idActivo)) {
+					mapaErrores.get(messageServices.getMessage(ACTIVO_EN_TRAMITE)).add(fila);
+					esCorrecto = false;
+				}
 				if (!Checks.esNulo(idActivo) && !particularValidator.existeActivo(idActivo)) {
 					mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).add(fila);
 					esCorrecto = false;
@@ -567,6 +574,7 @@ public class MSVMasivaAltaTrabajosValidator extends MSVExcelValidatorAbstract {
 		mapaErrores.put(messageServices.getMessage(ERROR_TARIFA_CARTERA_ACTIVO), new ArrayList<Integer>());
 		mapaErrores.put(messageServices.getMessage(PROVEEDOR_EN_CARTERA_ACTIVO), new ArrayList<Integer>());		
 		mapaErrores.put(messageServices.getMessage(ERROR_IDTAREA_NO_EXISTE), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(ACTIVO_EN_TRAMITE), new ArrayList<Integer>());
 	}
 	
 

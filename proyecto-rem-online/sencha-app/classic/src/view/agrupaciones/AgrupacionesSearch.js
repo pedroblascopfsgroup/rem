@@ -40,7 +40,10 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesSearch', {
 			        			items: [
 			        				{ 
 						            	fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion'),
-						            	name: 'numAgrupacionRem'
+						            	name: 'numAgrupacionRem',
+						            	 listeners : {
+						            		change: 'onChangeNumAgrupacion'
+									    }    
 						            },
 						       		{ 
 							        	xtype: 'combo',

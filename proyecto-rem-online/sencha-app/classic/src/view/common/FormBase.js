@@ -152,19 +152,19 @@
     	}
     	
     	if (me.isSearchFormAgrupaciones) {
-
+    		    		
     		me.collapsible= true;
-    		me.collapsed= false;
+    		me.collapsed= false;    		
     		me.buttonAlign = 'left';
-    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel', disabled: !exportarAgrupaciones}];
-    	}
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.abrir.agrupacion'), handler: 'onSearchBusquedaDirectaAgrupaciones', reference: 'btnAgrupacion', disabled: true },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}];
+       	}
     	
     	if (me.isSearchFormTrabajos) {
 
     		me.collapsible= true;
     		me.collapsed= false;
     		me.buttonAlign = 'left';
-    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel', disabled: !exportarTrabajos}];
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.abrir.trabajo'), handler: 'onSearchBusquedaDirectaTrabajo', reference: 'btnTrabajo', disabled: true },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}];
     	}
     	
     	if (me.isSearchFormPublicacion) {
@@ -188,7 +188,7 @@
     		me.collapsible= true;
     		me.collapsed= false;
     		me.buttonAlign = 'left';
-    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.abrir.expediente'), handler: 'onSearchBusquedaDirectaExpediente', reference: 'btnExp', disabled: true, hidden: true},{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel', disabled: !exportarOfertas}, { text: HreRem.i18n('btn.ofertas.ces'), handler: 'onClickDescargarExcelOfertaCES', hidden: !($AU.userIsRol('HAYASUPER') || $AU.userIsRol('HAYAGESTPORTMAN') || $AU.userIsRol('HAYAGBOINM') || $AU.userIsRol('HAYAGRUPOCES')) }];
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.abrir.expediente'), handler: 'onSearchBusquedaDirectaExpediente', reference: 'btnExp', disabled: true},{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel', disabled: !exportarOfertas}, { text: HreRem.i18n('btn.ofertas.ces'), handler: 'onClickDescargarExcelOfertaCES', hidden: !($AU.userIsRol('HAYASUPER') || $AU.userIsRol('HAYAGESTPORTMAN') || $AU.userIsRol('HAYAGBOINM') || $AU.userIsRol('HAYAGRUPOCES')) }];
     	}
 
     	if (me.isSearchFormGastos) {
@@ -196,7 +196,7 @@
     		me.collapsible= true;
     		me.collapsed= false;
     		me.buttonAlign = 'left';
-    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onClickGastosSearch', reference: 'btnSearchGastos' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelGestionGastos', disabled: !exportarGastos}, {text: HreRem.i18n('fieldlabel.activo.administracion.extraer.facturas'), handler: 'onExportClickFacturas', hidden: !esEditable}, {text: HreRem.i18n('fieldlabel.activo.administracion.extraer.impuestos'), handler: 'onExportClickTasasImpuestos', hidden: !esEditable}];
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onClickGastosSearch', reference: 'btnSearchGastos' },{ text: HreRem.i18n('btn.abrir.gasto'), handler: 'onSearchBusquedaDirectaGasto', reference: 'btnGasto', disabled: true },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelGestionGastos', disabled: !exportarGastos}, {text: HreRem.i18n('fieldlabel.activo.administracion.extraer.facturas'), handler: 'onExportClickFacturas', hidden: !esEditable}, {text: HreRem.i18n('fieldlabel.activo.administracion.extraer.impuestos'), handler: 'onExportClickTasasImpuestos', hidden: !esEditable}];
     	}
 
     	if (me.isSearchFormProvisiones) {

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20210531
+--## FECHA_CREACION=20210532
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-9845
@@ -83,6 +83,7 @@ BEGIN
 														  combo_otro,
                                                           sin_informe_aprobado,
                                                           SIN_INFORME_APROBADO_REM,
+                                                          ES_CONDICIONADO,
                                                           revision,
                                                           procedimiento_judicial,
                                                           con_cargas,
@@ -95,7 +96,7 @@ BEGIN
                                                          )
 AS
    SELECT act_id, sin_toma_posesion_inicial, ocupado_contitulo, pendiente_inscripcion, proindiviso, tapiado, obranueva_sindeclarar, obranueva_enconstruccion, divhorizontal_noinscrita, ruina, vandalizado, otro, combo_otro,
-          sin_informe_aprobado,SIN_INFORME_APROBADO_REM, revision, procedimiento_judicial, con_cargas, sin_acceso, ocupado_sintitulo, estado_portal_externo,
+          sin_informe_aprobado,SIN_INFORME_APROBADO_REM,ES_CONDICIONADO, revision, procedimiento_judicial, con_cargas, sin_acceso, ocupado_sintitulo, estado_portal_externo,
           est_disp_com_codigo2,borrado
 
      FROM (SELECT act.act_id,
@@ -106,6 +107,7 @@ AS
 				END
                 END AS sin_toma_posesion_inicial,
                 INAP.SIN_INFORME_APROBADO_REM AS SIN_INFORME_APROBADO_REM,
+                ESCOND.ES_CONDICIONADO AS ES_CONDICIONADO,
                 CASE WHEN (sps1.sps_ocupado = 1 AND TPA.DD_TPA_CODIGO = ''01'' OR ua.act_id is not null) THEN 1 ELSE 0 END AS ocupado_contitulo,
                 NVL2 (tit.act_id, 0, 1) AS pendiente_inscripcion,
                 NVL2 (npa.act_id, 1, 0) AS proindiviso,
@@ -181,6 +183,7 @@ AS
             	  LEFT JOIN REM01.V_ACT_ESTADO_DISP vact on vact.act_id = act.act_id 
             	  LEFT JOIN REM01.V_FECHA_POSESION_ACTIVO FPOS ON FPOS.ACT_ID = ACT.ACT_ID
                   LEFT JOIN REM01.V_SIN_INFORME_APROBADO_REM INAP ON INAP.ACT_ID=ACT.ACT_ID
+                  LEFT JOIN REM01.V_ES_CONDICIONADO ESCOND ON ESCOND.ACT_ID=ACT.ACT_ID
             WHERE act.borrado = 0)
           ';
 

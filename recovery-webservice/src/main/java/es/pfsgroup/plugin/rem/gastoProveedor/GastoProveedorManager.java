@@ -2996,7 +2996,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE);
 
 		if (validarAutorizacion) {
-			String error = updaterStateApi.validarCamposMinimos(gasto);
+			String error = updaterStateApi.validarCamposMinimos(gasto,true);
 			
 			if(error == null && updaterStateApi.isGastoSuplido(gasto)) {
 				error = updaterStateApi.validarDatosPagoGastoPrincipal(gasto);
@@ -3210,7 +3210,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede rechazar: Hay que desvincularlo primero del gasto" + gastoPadre.getNumGastoHaya());
 		}
 		
-		String error = updaterStateApi.validarCamposMinimos(gasto);
+		String error = updaterStateApi.validarCamposMinimos(gasto,false);
 		if (!Checks.esNulo(error)) {
 			throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede rechazar: " + error);
 		}
@@ -3257,7 +3257,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if(!Checks.esNulo(gasto.getProvision()) && individual){
 				throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede rechazar individualmente: pertenece a una agrupación.");
 			}else{
-				String error = updaterStateApi.validarCamposMinimos(gasto);
+				String error = updaterStateApi.validarCamposMinimos(gasto,false);
 				if (!Checks.esNulo(error)) {
 					throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede rechazar: " + error);
 				}
@@ -3345,7 +3345,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		Pattern factPattern = Pattern.compile(".*-FACT-.*");
 		Pattern justPattern = Pattern.compile(".*-CERA-.*");
 
-		if (factPattern.matcher(matriculaTipoDoc).matches() && Checks.esNulo(updaterStateApi.validarCamposMinimos(gasto)) && DDEstadoGasto.INCOMPLETO.equals(codigoEstado)) {
+		if (factPattern.matcher(matriculaTipoDoc).matches() && Checks.esNulo(updaterStateApi.validarCamposMinimos(gasto,false)) && DDEstadoGasto.INCOMPLETO.equals(codigoEstado)) {
 			return DDEstadoGasto.PENDIENTE;
 
 		} else if (justPattern.matcher(matriculaTipoDoc).matches()
@@ -4310,6 +4310,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 		}
 		return dtoLista;
+	}
+	
+	public Long getIdByNumGasto(Long numGasto) {
+		Long idGasto = null;
+		try {
+			idGasto = Long.parseLong(rawDao.getExecuteSQL("SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = " + numGasto + " AND BORRADO = 0"));
+		} catch (Exception e) {
+				return null;
+		}			
+			return idGasto;
 	}
 	
 }

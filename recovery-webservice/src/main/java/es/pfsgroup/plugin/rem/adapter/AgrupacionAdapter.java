@@ -3667,6 +3667,9 @@ public class AgrupacionAdapter {
 					genericDao.createFilter(FilterType.EQUALS, "principal", 1));
 			
 			if(agaAM != null){
+				
+				activoApi.actualizarOfertasTrabajosVivos(agaAM.getActivo());
+				
 				PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class,
 						genericDao.createFilter(FilterType.EQUALS,"activo.id", agaAM.getActivo().getId()));
 				

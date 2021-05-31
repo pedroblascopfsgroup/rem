@@ -63,7 +63,8 @@ public class DDTipoAgrupacion implements Auditable, Dictionary {
 	@Column(name = "DD_TAG_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
 	    
-	
+	@Column(name = "DD_VISIBLE_CAMPO")   
+	private boolean campoVisible;
 	    
 	@Version   
 	private Long version;
@@ -123,4 +124,12 @@ public class DDTipoAgrupacion implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
+	public boolean isCampoVisible() {
+		return campoVisible;
+	}
+
+	public void setCampoVisible(boolean campoVisible) {
+		this.campoVisible = campoVisible;
+	}
+	
 }

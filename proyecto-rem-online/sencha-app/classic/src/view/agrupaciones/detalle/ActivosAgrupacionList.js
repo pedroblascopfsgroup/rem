@@ -117,7 +117,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		}
 
         // Botones genéricos de la barra del grid.
-        var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', bind: {hidden: '{esAgrupacionPromocionAlquiler}'}, handler: 'onAddClick', scope: this};
+        var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', bind: {hidden: '{esAgrupacionPromocionConjunta}'}, handler: 'onAddClick', scope: this};
 		var configRemoveBtn = {iconCls:'x-fa fa-minus', itemId:'removeButton',  handler: 'onDeleteClick', scope: this, disabled: true};
 		
 

@@ -611,6 +611,9 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
 			},
 			{
 				name: 'superficieSobreRasante'
+			},
+			{
+    			name:'superficieParcelaUtil'
 			}
     ],
     

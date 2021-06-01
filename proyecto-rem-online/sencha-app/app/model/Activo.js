@@ -1263,6 +1263,9 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'numActivoCaixa'
+			},
+			{
+				name: 'bloque'
 			}
     ],
     

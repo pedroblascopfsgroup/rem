@@ -373,6 +373,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String tipoDistritoCodigoPostalDesc;
 	private String numActivoCaixa;
 	
+	private String bloque;
+	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
 	}
@@ -2810,6 +2812,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setNumActivoCaixa(String numActivoCaixa) {
 		this.numActivoCaixa = numActivoCaixa;
+	}
+
+	public String getBloque() {
+		return bloque;
+	}
+
+	public void setBloque(String bloque) {
+		this.bloque = bloque;
 	}
 	
 }

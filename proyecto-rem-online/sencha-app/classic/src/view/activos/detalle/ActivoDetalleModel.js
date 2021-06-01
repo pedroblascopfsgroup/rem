@@ -1517,6 +1517,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 }
 			 return false;
 		 },
+		 isCarteraBankia: function(get){
+		 	var isBankia = get('activo.isCarteraBankia')
+		 	if (isBankia) {
+		 		return true;
+		 	}
+		 	return false;
+		 },
 
 		 mostrarCamposDivarianandBbva: function(get){
 			var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');			

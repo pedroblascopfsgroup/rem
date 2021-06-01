@@ -159,6 +159,8 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String origenAnteriorActivoBbvaDescripcion;
 	private Long idAsuntoRecAlaska;
 	private Date fechaPosesion;
+	
+	private String superficieParcelaUtil;
 	/*
 
     private NMBAdjudicacionBien adjudicacionBien;
@@ -930,6 +932,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setSuperficieSobreRasante(Double superficieSobreRasante) {
 		this.superficieSobreRasante = superficieSobreRasante;
+	}
+	public String getSuperficieParcelaUtil() {
+		return superficieParcelaUtil;
+	}
+	public void setSuperficieParcelaUtil(String superficieParcelaUtil) {
+		this.superficieParcelaUtil = superficieParcelaUtil;
 	}
 	
 }

@@ -212,7 +212,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					
 						{
 				        	xtype:'fieldset',
-				        	height: 230,
+				        	height: 260,
 				        	margin: '0 10 10 0',
 				        	layout: {
 						        type: 'table',
@@ -235,6 +235,16 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								 		symbol: HreRem.i18n("symbol.m2"),
 										fieldLabel: HreRem.i18n('fieldlabel.util'),
 		                				bind: '{datosRegistrales.superficieUtil}'
+					                },
+					                { 
+										xtype: 'numberfieldbase',
+										reference: 'superficieParcelaUtil',
+								 		symbol: HreRem.i18n("symbol.m2"),
+										fieldLabel: HreRem.i18n('fieldlabel.superficie.parcela.util'),
+		                				bind: {
+		                					value: '{datosRegistrales.superficieParcelaUtil}',
+		                					hidden: '{!isCarteraBankia}'
+		                					}
 					                },
 					                { 
 					                	xtype: 'numberfieldbase',
@@ -269,7 +279,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				        
 				        {
 				        	xtype:'fieldset',
-				        	height: 230,
+				        	height: 260,
 				        	margin: '0 10 10 0',
 				        	layout: {
 						        type: 'table',
@@ -322,7 +332,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				        {
 				        	xtype:'fieldset',
 				        	title: HreRem.i18n('fieldlabel.obra.nueva'),
-				        	height: 230,
+				        	height: 260,
 				        	margin: '0 0 10 0',
 				        	layout: {
 						        type: 'table',
@@ -1083,7 +1093,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    		provinciaRegistro = me.down("[reference=provinciaRegistro]"),
    		codigoProvinciaDomicilio = me.viewWithModel.getViewModel().get('activo.provinciaCodigo'),
    		idufir = me.down("[reference=idufir]"),
-   		superficieUtil = me.down("[reference=superficieUtil]"),
+   		superficieUtil = me.down("[reference=superficieUtil]"),   		
    		superficieConstruida = me.down("[reference=superficieConstruida]"),
    		superficieElementosComunes = me.down("[reference=superficieElementosComunes]"),
    		fechaTitulo = me.down("[reference=fechaTitulo]"),
@@ -1095,6 +1105,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    		fechaAutoAdjudicacion = me.down("[reference=fechaAutoAdjudicacion]");
 
    		motivoCalNegativa = me.down("[reference=itemselMotivo]");
+   		superficieParcelaUtil = me.down("[reference=superficieParcelaUtil]");
 
    		if(provinciaRegistro.getValue() != codigoProvinciaDomicilio) {
    			error = HreRem.i18n("txt.validacion.provincia.diferente.registro");
@@ -1113,7 +1124,11 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    		if(superficieUtil.getValue() > superficieConstruida.getValue()) {
    			error = HreRem.i18n("txt.validacion.suputil.mayor.supconstruida");
    			errores.push(error);
-   			superficieUtil.markInvalid(error); 		
+   			superficieUtil.markInvalid(error);
+   		}else if(superficieParcelaUtil.getValue() > superficieConstruida.getValue()){
+   			error = HreRem.i18n("txt.validacion.suputil.parcela.mayor.supconstruida");
+   			errores.push(error);
+   			superficieParcelaUtil.markInvalid(error);
 
    		} else if (superficieConstruida.getValue() > superficieElementosComunes.getValue() || superficieUtil.getValue() > superficieElementosComunes.getValue()) {
    			error = HreRem.i18n("txt.validacion.superficies.mayor.suplementoscomunes");

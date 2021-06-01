@@ -1203,6 +1203,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setDireccionDos(activo.getLocalizacion().getDireccionDos());
 		}
 		
+		if (activo != null && activo.getLocalizacion() != null && activo.getLocalizacion().getBloque() != null) {
+			activoDto.setBloque(activo.getLocalizacion().getBloque());
+		}
+		
 		if (activo.getProcedenciaProducto() != null) {
 			activoDto.setProcedenciaProductoCodigo(activo.getProcedenciaProducto().getCodigo());
 			activoDto.setProcedenciaProductoDescripcion(activo.getProcedenciaProducto().getDescripcion());
@@ -2066,16 +2070,22 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 			}
 			
-			if (dto.getDireccionDos() != null) {
-				ActivoLocalizacion actLocMod = activo.getLocalizacion();
+			
+			ActivoLocalizacion actLocMod = activo.getLocalizacion();
 				
-				if (actLocMod != null) {
+			if (actLocMod != null) {
+				if (dto.getDireccionDos() != null) {
 					actLocMod.setDireccionDos(dto.getDireccionDos());
-					genericDao.update(ActivoLocalizacion.class, actLocMod);
-					
-					activo.setLocalizacion(actLocMod);
 				}
+				if (dto.getBloque() != null) {
+					actLocMod.setBloque(dto.getBloque());
+				}
+					
+				genericDao.update(ActivoLocalizacion.class, actLocMod);
+					
+				activo.setLocalizacion(actLocMod);
 			}
+			
 			
 			Filter filtroLoc = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			ActivoLocalizacion activoLoc = genericDao.get(ActivoLocalizacion.class, filtroLoc);

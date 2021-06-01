@@ -666,6 +666,16 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								value:'{activo.direccionDos}'
 							}
 		                },
+		                { 
+							fieldLabel: HreRem.i18n('fieldlabel.activo.bloque'),
+							xtype: 'textfieldbase',
+							//colspan: 3,
+							maxLength: 10,
+							bind:{
+								hidden: '{!activo.isCarteraBankia}',
+								value:'{activo.bloque}'
+							}
+		                },
 		                {
 							xtype: 'comboboxfieldbasedd',
 							fieldLabel:  HreRem.i18n('fieldlabel.unidad.poblacional'),

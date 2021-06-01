@@ -778,7 +778,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		},
 	     
 	    esAgrupacionPromocionConjunta: function(get) {
-	    	debugger;
 	    	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo') ;
 	    	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER']) || (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_OB_REM']) 
 	    			|| (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_VENTA']) || (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_CONJUNTA_ALQUILER'])) {

@@ -26,8 +26,10 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
@@ -65,6 +67,7 @@ import es.pfsgroup.plugin.rem.model.VListaActivosAgrupacionVSCondicionantes;
 import es.pfsgroup.plugin.rem.model.VSubdivisionesAgrupacion;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -868,17 +871,24 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 	@Override
 	public List<DDTipoAgrupacion> getComboTipoAgrupacionFiltro() {
-		List <DDTipoAgrupacion> listaDDTipoAgrupacion = genericDao.getList(DDTipoAgrupacion.class);		
+		List <DDTipoAgrupacion> listaDDTipoAgrupacion = genericDao.getList(DDTipoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "campoVisible", true));
+		List <DDTipoAgrupacion> listaDDTipoAgr =  new ArrayList<DDTipoAgrupacion>();
 		for(Perfil p : genericAdapter.getUsuarioLogado().getPerfiles()) {
 			if(USUARIO_IT.equals(p.getCodigo()) || GESTOR_COMERCIAL_ALQUILER.equals(p.getCodigo()) || SUPERVISOR_COMERCIAL_ALQUILER.equals(p.getCodigo())) {
-				return  listaDDTipoAgrupacion;
+				for (DDTipoAgrupacion ddTipoAgrupacion : listaDDTipoAgrupacion) {
+					listaDDTipoAgr.add(ddTipoAgrupacion);
+				}
+				return  listaDDTipoAgr;
 			}
 		}
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
-		DDTipoAgrupacion promocionAlquiler = genericDao.get(DDTipoAgrupacion.class, filtro);	
-		listaDDTipoAgrupacion.remove(promocionAlquiler);
-		return  listaDDTipoAgrupacion;
+		DDTipoAgrupacion filtroAlquiler = genericDao.get(DDTipoAgrupacion.class, filtro);
+		for (DDTipoAgrupacion ddTipoAgrupacion : listaDDTipoAgrupacion) {
+			listaDDTipoAgr.add(ddTipoAgrupacion);
+		}
+		listaDDTipoAgr.remove(filtroAlquiler);
+		return  listaDDTipoAgr;
 	}
 
 	@Override

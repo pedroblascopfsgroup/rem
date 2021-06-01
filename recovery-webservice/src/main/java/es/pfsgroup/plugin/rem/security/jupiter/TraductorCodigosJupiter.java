@@ -21,7 +21,7 @@ public class TraductorCodigosJupiter {
 	
 	public Map<String, MapeoJupiterREM> getMap() {
 		
-		if (mapaCompleto != null) {
+		if (mapaCompleto == null) {
 			Order orden = new Order(OrderType.ASC,"codigoJupiter");
 			List<MapeoJupiterREM> lista = genericDao.getListOrdered(MapeoJupiterREM.class, orden);
 			mapaCompleto = new HashMap<String, MapeoJupiterREM>();

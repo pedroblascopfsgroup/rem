@@ -8,12 +8,15 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
@@ -37,15 +40,19 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 	private static final Log logger = LogFactory.getLog(IntegracionJupiter.class);
 	
 	@Autowired
-	private UsuarioApi usuarioManager;
-
+	private UsuarioDao usuarioDao;
+	
 	@Autowired
 	private GenericABMDao genericDao;
 
+	@Autowired 
+	private IntegracionJupiterDao integracionJupiterDao;
+	
 	@Autowired
 	private TraductorCodigosJupiter traductor;
 	
 	@Override
+	@Transactional(readOnly = false)
 	public void actualizarInfoPersonal(String username, String nombre, String apellidos, String email)
 			throws Exception {
 
@@ -54,10 +61,7 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 		Assert.notNull(username, "apellidos cannot be null");
 		Assert.notNull(username, "email cannot be null");
 		
-		//TODO: ¿es necesario el parámetro username?  --> Ver GenericManager
-		//Si getUsuarioLogado devuelve el usuario logado, ya no necesitamos el username
-		// En caso contrario, hay que recuperarlo de la BD
-		Usuario usuario = usuarioManager.getUsuarioLogado();
+		Usuario usuario = usuarioDao.getByUsername(username);
 		
 		String nombreREM = usuario.getNombre();
 		String apellidosREM = usuario.getApellidos();
@@ -65,7 +69,7 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 		
 		if (hayDiferenciasJupiterREM(nombre, apellidos, email, nombreREM, apellidosREM, emailREM)) {
 			logger.info("actualizarInfoPersonal: se han detectado diferencias entre los datos de Jupiter y REM");
-			actualizarUsuario(usuario, nombre, apellidos, email);
+			integracionJupiterDao.actualizarUsuario(usuario, nombre, apellidos, email);
 			logger.info("actualizarInfoPersonal: actualizados los datos de REM procedentes de Jupiter");
 		}
 		
@@ -76,37 +80,12 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 		return !(nombre.equalsIgnoreCase(nombreREM) && apellidos.equalsIgnoreCase(apellidosREM) && email.equalsIgnoreCase(emailREM));
 	}
 
-	private void actualizarUsuario(Usuario usuario, String nombre, String apellidos, String email) throws Exception {
-		
-		String ape1;
-		String ape2;
-		
-		usuario.setNombre(nombre);
-		if (apellidos.contains(" ")) {
-			ape1 = apellidos.split(" ")[0];
-			ape2 = apellidos.split(" ", 1)[1];
-		} else {
-			ape1 = apellidos;
-			ape2 = "";
-		}
-		usuario.setApellido1(ape1);
-		usuario.setApellido2(ape2);
-		usuario.setEmail(email);
-		
-		try {
-			genericDao.save(Usuario.class, usuario);
-		} catch (Exception e) {
-			System.out.println("Error al actualizar datos personales del usuario: " + e.getMessage());
-			throw new Exception("Error al actualizar datos personales del usuario: " + e.getMessage());
-		}
-		
-	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void actualizarRolesDesdeJupiter(String username, String listaRoles) throws Exception {
 
-		//TODO: ¿es necesario el parámetro username? --> Ver GenericManager
-		Usuario usuario = usuarioManager.getUsuarioLogado();
+		Usuario usuario = usuarioDao.getByUsername(username);
 		
 		List<String> listaCodigosJupiter = extraerListaCodigosJupiter(listaRoles);
 
@@ -121,8 +100,7 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 		traducirYSeparar(listaCodigosJupiter, mapaTraductor, codigosPerfilesJupiter, codigosGruposJupiter, codigosCarterasJupiter, codigosSubcarterasJupiter);
 		
 		//Obtener lista de perfiles REM
-		List<Perfil> listaPerfilesREM = usuario.getPerfiles();
-		List<String> codigosPerfilesREM = obtenerListaCodigosPerfilesREM(listaPerfilesREM);
+		List<String> codigosPerfilesREM = getPerfilesREM(username);
 
 		//Obtener listas de diferencias
 		List<String>  altasPerfiles = new ArrayList<String>();
@@ -144,102 +122,24 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 		List<String> codigosSubcarterasREM = getCodigosSubcarterasREM(usuario);
 		obtenerListaAltasBajas(codigosSubcarterasJupiter, codigosSubcarterasREM, altasSubcarteras, bajasSubcarteras );
 		
-		//Actyualizar según las diferencias encontradas
-		actualizarPerfiles(usuario, altasPerfiles, bajasPerfiles);
-		actualizarGrupos(usuario, altasGrupos, bajasGrupos);
-		actualizarCarteras(usuario, altasCarteras, bajasCarteras);
-		actualizarSubcarteras(usuario, altasSubcarteras, bajasSubcarteras);
+		//Actualizar según las diferencias encontradas
+		integracionJupiterDao.actualizarPerfiles(usuario, altasPerfiles, bajasPerfiles);
+		integracionJupiterDao.actualizarGrupos(usuario, altasGrupos, bajasGrupos);
+		integracionJupiterDao.actualizarCarteras(usuario, altasCarteras, bajasCarteras);
+		integracionJupiterDao.actualizarSubcarteras(usuario, altasSubcarteras, bajasSubcarteras);
 		
 	}
 
-	private void actualizarPerfiles(Usuario usuario, List<String> altasPerfiles, List<String> bajasPerfiles) {
+	private List<String> getPerfilesREM(String username) {
 		
-		for (String codigoPerfil : altasPerfiles) {
-			ZonaUsuarioPerfil zpu = new ZonaUsuarioPerfil();
-			zpu.setUsuario(usuario);
-			Perfil perfil = genericDao.get(Perfil.class, 
-					genericDao.createFilter(FilterType.EQUALS, "codigo", codigoPerfil));
-			zpu.setPerfil(perfil);
-			DDZona zona = genericDao.get(DDZona.class, 
-					genericDao.createFilter(FilterType.EQUALS, "descripcion", "REM"));
-			zpu.setZona(zona);
-			zpu.setAuditoria(Auditoria.getNewInstance());
-			zpu.setVersion(0);
-			genericDao.save(ZonaUsuarioPerfil.class, zpu);
-			logger.info("Creando asociación perfil " + codigoPerfil + " - usuario " + usuario.getUsername());
+		List<ZonaUsuarioPerfil> listaZonPefUsu = genericDao.getList(ZonaUsuarioPerfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario.username", username), 
+				genericDao.createFilter(FilterType.EQUALS, "zona.descripcion", "REM"));
+		List<String> listaCodigosPerfilREM = new ArrayList<String>();
+		for (ZonaUsuarioPerfil zpu : listaZonPefUsu) {
+			listaCodigosPerfilREM.add(zpu.getPerfil().getCodigo());
 		}
-		
-		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
-		for (String codigoPerfil : bajasPerfiles) {
-			Filter filtroPerfil = genericDao.createFilter(FilterType.EQUALS, "perfil.codigo", codigoPerfil);
-			genericDao.delete(ZonaUsuarioPerfil.class, filtroUsuario, filtroPerfil);
-			logger.info("Eliminando asociación perfil " + codigoPerfil + " - usuario " + usuario.getUsername());
-		}
-
-	}
-
-	private void actualizarGrupos(Usuario usuario, List<String> altasGrupos, List<String> bajasGrupos) {
-
-		for (String codigoGrupo : altasGrupos) {
-			GrupoUsuario grupoNuevo = new GrupoUsuario();
-			Filter filtroGrupo = genericDao.createFilter(FilterType.EQUALS, "grupo.username", codigoGrupo);
-			Usuario grupo = genericDao.get(Usuario.class, filtroGrupo);
-			grupoNuevo.setGrupo(grupo);
-			grupoNuevo.setUsuario(usuario);
-			genericDao.save(GrupoUsuario.class, grupoNuevo);
-			logger.info("Creando asociación grupo " + codigoGrupo + " - usuario " + usuario.getUsername());
-		}
-		
-		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
-		for (String codigoGrupo : bajasGrupos) {
-			Filter filtroGrupo = genericDao.createFilter(FilterType.EQUALS, "grupo.username", codigoGrupo);
-			genericDao.delete(GrupoUsuario.class, filtroUsuario, filtroGrupo);
-			logger.info("Eliminando asociación grupo " + codigoGrupo + " - usuario " + usuario.getUsername());
-		}
-		
-	}
-
-	private void actualizarCarteras(Usuario usuario, List<String> altasCarteras, List<String> bajasCarteras) {
-
-		for (String codigoCartera : altasCarteras) {
-			UsuarioCartera usuarioCarteraNuevo = new UsuarioCartera();
-			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoCartera);
-			DDCartera cartera= genericDao.get(DDCartera.class, filtroCartera);
-			usuarioCarteraNuevo.setUsuario(usuario);
-			usuarioCarteraNuevo.setCartera(cartera);
-			genericDao.save(UsuarioCartera.class, usuarioCarteraNuevo);
-			logger.info("Creando asociación cartera " + codigoCartera + " - usuario " + usuario.getUsername());
-		}
-		
-		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
-		for (String codigoCartera : bajasCarteras) {
-			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", codigoCartera);
-			genericDao.delete(UsuarioCartera.class, filtroUsuario, filtroCartera);
-			logger.info("Eliminando asociación cartera " + codigoCartera + " - usuario " + usuario.getUsername());
-		}
-		
-	}
-
-	private void actualizarSubcarteras(Usuario usuario, List<String> altasSubcarteras, List<String> bajasSubcarteras) {
-
-		for (String codigoSubartera : altasSubcarteras) {
-			UsuarioCartera usuarioSubcarteraNuevo = new UsuarioCartera();
-			Filter filtroSubcartera = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoSubartera);
-			DDSubcartera subcartera= genericDao.get(DDSubcartera.class, filtroSubcartera);
-			usuarioSubcarteraNuevo.setUsuario(usuario);
-			usuarioSubcarteraNuevo.setCartera(subcartera.getCartera());
-			usuarioSubcarteraNuevo.setSubCartera(subcartera);
-			genericDao.save(UsuarioCartera.class, usuarioSubcarteraNuevo);
-			logger.info("Creando asociación subcartera " + codigoSubartera + " - usuario " + usuario.getUsername());
-		}
-		
-		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
-		for (String codigoSubcartera : bajasSubcarteras) {
-			Filter filtroSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", codigoSubcartera);
-			genericDao.delete(UsuarioCartera.class, filtroUsuario, filtroSubcartera);
-			logger.info("Eliminando asociación subcartera " + codigoSubcartera + " - usuario " + usuario.getUsername());
-		}
-				
+		return listaCodigosPerfilREM;
 	}
 
 	private List<String> getCodigosCarterasREM(Usuario usuario) {
@@ -347,14 +247,6 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 		Collections.sort(listaJupiter);
 		return listaJupiter;
 
-	}
-
-	private List<String> obtenerListaCodigosPerfilesREM(List<Perfil> listaPerfilesREM) {
-		List<String> listaCodigos = new ArrayList<String>();
-		for (Perfil perfilREM : listaPerfilesREM) {
-			listaCodigos.add(perfilREM.getCodigo());
-		}
-		return listaCodigos;
 	}
 
 }

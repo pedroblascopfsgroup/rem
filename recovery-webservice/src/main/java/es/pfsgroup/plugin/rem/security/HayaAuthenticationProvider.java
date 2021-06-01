@@ -2,8 +2,6 @@ package es.pfsgroup.plugin.rem.security;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -12,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 
@@ -41,9 +40,9 @@ import org.springframework.util.Assert;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
+
 import es.capgemini.devon.security.AuthenticationFilter;
 import es.capgemini.devon.security.SecurityUserInfo;
-import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.security.jupiter.IntegracionJupiterApi;
 import net.sf.json.JSONObject;
 
@@ -74,9 +73,6 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 	
 	@Resource
 	private Properties appProperties;
-	
-	@Autowired
-	private ServletContext context;
 	
 	@Autowired
 	private IntegracionJupiterApi integracionJupiterManager;
@@ -158,6 +154,16 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 	            accessToken = (String) response.get("access_token");
 	            JWTClaimsSet claimSetAccess = JWTParser.parse(accessToken).getJWTClaimsSet();
 	            
+	            String nombre = claimSetAccess.getStringClaim("given_name"); 
+	            String apellidos = claimSetAccess.getStringClaim("family_name"); 
+	            String email = claimSetAccess.getStringClaim("email"); 
+	            
+	            logger.debug("0Auth2: nombre >" + nombre + "<");
+	            logger.debug("0Auth2: apellidos >" + apellidos + "<");
+	            logger.debug("0Auth2: email >" + email + "<");
+
+	            integracionJupiterManager.actualizarInfoPersonal(username, nombre, apellidos, email);
+
 	            String perfilesrem = claimSetAccess.getStringClaim("perfilrem");
 	            if (perfilesrem == null || "".contentEquals(perfilesrem)) {
 	            	perfilesrem = claimSetAccess.getStringClaim("perfilprerem"); // Los perfiles en pre vienen en otra clave del mapa
@@ -165,16 +171,6 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 	            logger.debug("0Auth2: perfilesrem >" + perfilesrem + "<");
 	            
 	            integracionJupiterManager.actualizarRolesDesdeJupiter(username, perfilesrem);
-
-	            String nombre = claimSetAccess.getStringClaim.get("given_name"); 
-	            String apellidos = claimSetAccess.getStringClaim.get("family_name"); 
-	            String email = claimSetAccess.getStringClaim.get("email"); 
-	            
-	            logger.debug("0Auth2: nombre >" + nombre + "<");
-	            logger.debug("0Auth2: apellidos >" + apellidos + "<");
-	            logger.debug("0Auth2: email >" + email + "<");
-
-	            integracionJupiterManager.actualizarInfoPersonal(username, nombre, apellidos, email);
 				
 			} catch (ParseException e) {
 				throw new AuthenticationCredentialsNotFoundException(messages.getMessage(AUTH2_ERROR_INVALID_TOKEN));

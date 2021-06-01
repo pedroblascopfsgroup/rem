@@ -43,7 +43,7 @@ public class MapeoJupiterREM  implements Serializable, Auditable {
 	@Id
     @Column(name = "MJR_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "MJRGenerator")
-    @SequenceGenerator(name = "MJRGeneratorGenerator", sequenceName = "S_MJR_MAPEO_JUPITER_REM")
+    @SequenceGenerator(name = "MJRGenerator", sequenceName = "S_MJR_MAPEO_JUPITER_REM")
     private Long id;
 	
     @Column(name="MJR_CODIGO_JUPITER")

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
@@ -34,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
@@ -1372,4 +1374,9 @@ public interface ExpedienteComercialApi {
 
 	boolean esBankia(TareaExterna tareaExterna);
 
+	DtoGridFechaArras getFechaUltimaPropuestaSinContestar(Long idExpediente);
+
+	DtoGridFechaArras getUltimaPropuestaEnviada(Long idExpediente);
+
+	void createOrUpdateUltimaPropuestaEnviada(Long idExpediente, DtoGridFechaArras dto);
 }

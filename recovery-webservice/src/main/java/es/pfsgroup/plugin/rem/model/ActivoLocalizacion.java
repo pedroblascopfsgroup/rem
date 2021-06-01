@@ -97,6 +97,9 @@ public class ActivoLocalizacion implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_DIC_ID")
 	private DDDistritoCaixa distritoCaixa;
+	
+	@Column(name = "LOC_BLOQUE")
+	private String bloque;
 
 	public Long getId() {
 		return id;
@@ -200,6 +203,14 @@ public class ActivoLocalizacion implements Serializable, Auditable {
 
 	public void setEscaleraEdificio(DDEscaleraEdificio escaleraEdificio) {
 		this.escaleraEdificio = escaleraEdificio;
+	}
+
+	public String getBloque() {
+		return bloque;
+	}
+
+	public void setBloque(String bloque) {
+		this.bloque = bloque;
 	}  									
 	
 }

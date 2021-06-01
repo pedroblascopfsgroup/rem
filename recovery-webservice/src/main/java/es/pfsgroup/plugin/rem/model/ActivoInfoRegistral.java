@@ -113,6 +113,9 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TIENE_ANEJOS_REGISTRALES")
     private DDSinSiNo tieneAnejosRegistrales;
+    
+    @Column(name = "REG_SUPERFICIE_PARCELA_UTIL")
+	private Float superficieParcelaUtil;
 
 
 	@Version   
@@ -292,6 +295,14 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 
 	public void setTieneAnejosRegistrales(DDSinSiNo tieneAnejosRegistrales) {
 		this.tieneAnejosRegistrales = tieneAnejosRegistrales;
+	}
+
+	public Float getSuperficieParcelaUtil() {
+		return superficieParcelaUtil;
+	}
+
+	public void setSuperficieParcelaUtil(Float superficieParcelaUtil) {
+		this.superficieParcelaUtil = superficieParcelaUtil;
 	}	
 	
 }

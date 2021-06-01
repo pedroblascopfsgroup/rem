@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210531
+--## FECHA_CREACION=20210601
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14162
@@ -400,6 +400,15 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PRECIO_CAMP_VENTA_NEGOCIABLE IS '' Flag precio campaña venta negociable''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.DESC_COL_PRECIO_VENTA IS '' Conjunto de descuentos colectivos que se pueden aplicar''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.IMP_PRECIO_REF_ALQUI IS '' Importe Clase de condición precio referencia alquiler''';
+
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_INI_PRECIO_VENTA IS '' Fecha inicio precio venta''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_FIN_PRECIO_VENTA IS '' Fecha fin precio venta''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_INI_PRECIO_ALQUILER IS '' Fecha inicio precio alquiler''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_FIN_PRECIO_ALQUILER IS '' Fecha fin precio alquiler''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_INI_PRECIO_CAMP_VENTA IS '' Fecha inicio precio campaña venta''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_FIN_PRECIO_CAMP_VENTA IS '' Fecha fin precio campaña venta''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_INI_PRECIO_CAMP_ALQUILER IS '' Fecha inicio precio campaña alquiler''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_FIN_PRECIO_CAMP_ALQUILER IS '' Fecha fin precio campaña alquiler''';
 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_POSESION IS '' Fecha realizada posesión''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_SEÑAL_LANZAMINETO IS '' Fecha señalado lanzamiento''';

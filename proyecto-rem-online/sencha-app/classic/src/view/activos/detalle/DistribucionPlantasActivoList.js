@@ -9,7 +9,7 @@ Ext.define('HreRem.view.activos.detalle.DistribucionPlantasActivoList', {
 	
 	features: [{
         ftype: 'grouping',
-        groupHeaderTpl: '{[values.rows[0].data.numPlanta == -1 ? "Planta " + values.rows[0].data.numPlanta : values.rows[0].data.numPlanta == 0 ? "Planta Baja" : values.rows[0].data.numPlanta + "&ordf; Planta"]} ({rows.length} estancia{[values.rows.length > 1 ? "s" : ""]})',
+        groupHeaderTpl: '{[(values.rows[0].data.numPlanta == undefined || values.rows[0].data.numPlanta == null) ? "Sin definir" : values.rows[0].data.numPlanta == -1 ? "Planta " + values.rows[0].data.numPlanta : values.rows[0].data.numPlanta == 0 ? "Planta Baja" : values.rows[0].data.numPlanta + "&ordf; Planta"]} ({rows.length} estancia{[values.rows.length > 1 ? "s" : ""]})',
         hideGroupedHeader: true,
         startCollapsed: true,
         enableGroupingMenu: false,

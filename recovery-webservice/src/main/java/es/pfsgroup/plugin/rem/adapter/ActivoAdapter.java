@@ -566,6 +566,7 @@ public class ActivoAdapter {
 
 				activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
 			}
+			if ("-999".equals(dtoDistribucion.getNumPlanta())) activoDistribucion.setNumPlanta(null);
 			activoDistribucion.setInfoComercial(infoComercial);
 			ActivoDistribucion distribucionNueva = genericDao.save(ActivoDistribucion.class, activoDistribucion);
 
@@ -995,6 +996,12 @@ public class ActivoAdapter {
 						
 					ActivoVivienda vivienda = genericDao.get(ActivoVivienda.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", activo.getInfoComercial().getId()));
 					if(vivienda != null){				
+						DtoNumPlantas dtoUndefined = new DtoNumPlantas();
+						dtoUndefined.setNumPlanta(-999L);
+						dtoUndefined.setDescripcionPlanta("Sin definir");
+						dtoUndefined.setIdActivo(idActivo);
+						listaPlantas.add(dtoUndefined);
+						
 						DtoNumPlantas dtoSotano = new DtoNumPlantas();
 						dtoSotano.setNumPlanta(-1L);
 						dtoSotano.setDescripcionPlanta("Planta -1");
@@ -1026,7 +1033,8 @@ public class ActivoAdapter {
 				ActivoDistribucion activoDistribucion = activo.getInfoComercial().getDistribucion().get(q);
 				Integer numPlantaDistro = activoDistribucion.getNumPlanta();
 
-				if ((numPlantaDistro + 1) == (numPlanta + 1)) {
+				if ((Checks.esNulo(numPlantaDistro) && numPlanta == -999) || 
+						(!Checks.esNulo(numPlantaDistro) && (numPlantaDistro + 1) == (numPlanta + 1))) {
 					listaDistribucionesExistentes.add(activoDistribucion.getTipoHabitaculo().getCodigo());
 				}
 			}

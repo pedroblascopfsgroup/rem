@@ -201,6 +201,19 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		        ]
 			},
 			{
+			    xtype: 'fieldset',
+                title:  HreRem.i18n('title.grid.fecha.arras'),
+                bind: {
+                	hidden: '{!esCarteraBankia}'	
+                },
+                items : [
+                    {
+                        xtype: 'fechaArrasGrid',
+                        reference: 'fechaArrasGridRef'
+                    }
+                ]
+			},
+			{
 				
             	xtype: 'fieldset',
             	title:  HreRem.i18n('title.historico.entregas.a.cuenta'),

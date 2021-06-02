@@ -197,6 +197,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	protected static final Log logger = LogFactory.getLog(ExpedienteComercialManager.class);
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	
+	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+	private static final String FECHA_1970 = "1970-01-01";
 
 	private static final String TANTEO_CONDICIONES_TRANSMISION = "msg.defecto.oferta.tanteo.condiciones.transmision";
 	private static final String VISITA_SIN_RELACION_OFERTA = "oferta.validacion.numVisita";
@@ -11895,8 +11898,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return esBankia;
 	}
 	
-
-	
 	@Override
 	public DtoGridFechaArras getFechaUltimaPropuestaSinContestar(Long idExpediente){
 		Filter filtroFechaRespuesta = genericDao.createFilter(FilterType.NULL, "fechaRespuestaBC");
@@ -11981,5 +11982,69 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return fechaArrasExpediente;
+	}
+
+	@Override
+	public List<DtoGridFechaArras> getFechaArras(Long idExpediente) throws IllegalAccessException, InvocationTargetException {
+		List<DtoGridFechaArras> listDto = new ArrayList<DtoGridFechaArras>();
+		List<FechaArrasExpediente> list = new ArrayList<FechaArrasExpediente>();
+		
+		list = genericDao.getList(FechaArrasExpediente.class, genericDao.createFilter(FilterType.EQUALS, "expedienteComercial.id", idExpediente));
+		
+		for(FechaArrasExpediente reg: list) {
+			DtoGridFechaArras dto = new DtoGridFechaArras();
+			
+			beanUtilNotNull.copyProperties(dto, reg);
+			dto.setFechaAlta(reg.getAuditoria().getFechaCrear());
+			dto.setFechaBC(reg.getFechaRespuestaBC());
+			
+			if(reg.getValidacionBC() != null) {
+				dto.setValidacionBC(reg.getValidacionBC().getDescripcion());
+			}
+			
+			listDto.add(dto);
+		}
+		
+		return listDto;
+	}
+
+	@Override
+	@Transactional
+	public Boolean saveFechaArras(DtoGridFechaArras dto) {
+		FechaArrasExpediente nuevaFecha = new FechaArrasExpediente();
+		
+		nuevaFecha.setFechaPropuesta(dto.getFechaPropuesta());
+		nuevaFecha.setObservaciones(dto.getObservaciones());
+		nuevaFecha.setExpedienteComercial(genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente())));
+		
+		nuevaFecha = genericDao.save(FechaArrasExpediente.class, nuevaFecha);
+		
+		return nuevaFecha != null;
+	}
+
+	@Override
+	@Transactional
+	public Boolean updateFechaArras(DtoGridFechaArras dto) throws IllegalAccessException, InvocationTargetException {
+		
+		if(dto != null) {
+			
+			FechaArrasExpediente fechaArras = genericDao.get(FechaArrasExpediente.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getId()));
+			
+			beanUtilNotNull.copyProperties(fechaArras, dto);
+			
+			if(dto.getFechaBC() != null) {
+				String fechaBC = ft.format(dto.getFechaBC());
+				
+				if(!FECHA_1970.equals(fechaBC)) {
+					fechaArras.setFechaRespuestaBC(dto.getFechaBC());
+				}
+			}
+			
+			genericDao.update(FechaArrasExpediente.class, fechaArras);
+			
+			return true;
+		}
+		
+		return false;
 	}
 }

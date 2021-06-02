@@ -17,7 +17,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,7 +37,6 @@ import es.pfsgroup.framework.paradise.agenda.adapter.TareaAdapter;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
-import es.pfsgroup.framework.paradise.http.client.HttpSimpleGetRequest;
 import es.pfsgroup.framework.paradise.http.client.HttpSimplePostRequest;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -81,10 +79,10 @@ import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
-import es.pfsgroup.plugin.rem.model.DtoListadoTareas;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
@@ -105,7 +103,6 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 import net.minidev.json.JSONObject;
@@ -2508,6 +2505,53 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			logger.error("Error en ExpedienteComercialController", e);
 		}
 
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getFechaArras(Long idExpediente) {
+
+		ModelMap model = new ModelMap();
+
+		try {
+			List<DtoGridFechaArras> list = expedienteComercialApi.getFechaArras(idExpediente);
+			model.put(RESPONSE_DATA_KEY, list);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (getGestorPrescriptor)", e);
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveFechaArras(DtoGridFechaArras dto) {
+
+		ModelMap model = new ModelMap();
+
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.saveFechaArras(dto));
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (getGestorPrescriptor)", e);
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateFechaArras(DtoGridFechaArras dto) {
+
+		ModelMap model = new ModelMap();
+
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.updateFechaArras(dto));
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (getGestorPrescriptor)", e);
+		}
 		return createModelAndViewJson(model);
 	}
 

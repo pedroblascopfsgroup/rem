@@ -1379,4 +1379,11 @@ public interface ExpedienteComercialApi {
 	DtoGridFechaArras getUltimaPropuestaEnviada(Long idExpediente);
 
 	void createOrUpdateUltimaPropuestaEnviada(Long idExpediente, DtoGridFechaArras dto);
+
+	List<DtoGridFechaArras> getFechaArras(Long idExpediente) throws IllegalAccessException, InvocationTargetException;
+
+	Boolean saveFechaArras(DtoGridFechaArras dto);
+
+	Boolean updateFechaArras(DtoGridFechaArras dto) throws IllegalAccessException, InvocationTargetException;
+
 }

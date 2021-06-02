@@ -1479,7 +1479,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'estadosExpedienteBc'}
 			}
-	    }
+	    },
+
+        storeFechaArras: {
+            pageSize: $AC.getDefaultPageSize(),
+            model: 'HreRem.model.FechaArrasModel',
+            proxy: {
+                type: 'uxproxy',
+                remoteUrl: 'expedientecomercial/getFechaArras',
+                extraParams: {idExpediente: '{expediente.id}'}
+            }
+        }
 		
     }
 });

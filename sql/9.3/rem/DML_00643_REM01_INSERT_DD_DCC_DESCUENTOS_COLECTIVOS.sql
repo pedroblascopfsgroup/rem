@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20210602
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14???
+--## INCIDENCIA_LINK=HREOS-14196
 --## PRODUCTO=NO
 --##
 --## Finalidad: Actualizar instrucciones
@@ -29,7 +29,7 @@ DECLARE
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_DSC_DESCUENTO_COLECTIVO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_DCC_DESCUENTOS_COLECTIVOS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
@@ -53,7 +53,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
         --Comprobar el dato a insertar.
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
-					WHERE DD_DSC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
+					WHERE DD_DCC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         IF V_NUM_TABLAS = 1 THEN
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe');
@@ -62,10 +62,10 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' no existe');
 
             V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
-              DD_DSC_ID,
-              DD_DSC_CODIGO,
-              DD_DSC_DESCRIPCION,
-              DD_DSC_DESCRIPCION_LARGA,
+              DD_DCC_ID,
+              DD_DCC_CODIGO,
+              DD_DCC_DESCRIPCION,
+              DD_DCC_DESCRIPCION_LARGA,
               VERSION,
               USUARIOCREAR,
               FECHACREAR,
@@ -76,7 +76,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               0,
-              ''HREOS-14???'',
+              ''HREOS-14196'',
               SYSDATE,
               0)';
             EXECUTE IMMEDIATE V_MSQL;

@@ -4,10 +4,10 @@
 --## FECHA_CREACION=20210602
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-8888
+--## INCIDENCIA_LINK=HREOS-14196
 --## PRODUCTO=NO
 --##
---## Finalidad: Crear la tabla DD_DSC_DESCUENTO_COLECTIVO
+--## Finalidad: Crear la tabla DD_DCC_DESCUENTOS_COLECTIVOS
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -26,9 +26,9 @@ DECLARE
     V_COUNT NUMBER(16); -- Vble. para contar.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_TABLA VARCHAR2(2400 CHAR) := 'DD_DSC_DESCUENTO_COLECTIVO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_CHARS VARCHAR2(6 CHAR) := 'DSC';
-	V_USUARIO VARCHAR2(32 CHAR) := 'HREOS-8888';
+    V_TABLA VARCHAR2(2400 CHAR) := 'DD_DCC_DESCUENTOS_COLECTIVOS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_CHARS VARCHAR2(6 CHAR) := 'DCC';
+	V_USUARIO VARCHAR2(32 CHAR) := 'HREOS-14196';
 	V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar 
 	V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Descuentos Colectivos Caixa'; -- Vble. para los comentarios de las tablas
     
@@ -72,7 +72,7 @@ DECLARE
 
 	-- Creamos primary key
 	DBMS_OUTPUT.PUT_LINE('[INFO] Creamos la PK');
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (DD_DSC_ID))';
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (DD_DCC_ID))';
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||'_PK creada.');
 

@@ -5428,8 +5428,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 											if (me.getViewModel().get('activo') != null) {
 												if (me.getViewModel()
 														.get('activo').data != null) {
-													me.getViewModel()
-															.get('activo').data.activosPropagables = activosPropagables;
+													me.getViewModel().get('activo').data.activosPropagables = activosPropagables;
 												}
 											}
 										
@@ -5482,23 +5481,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 														me.getView().unmask();
 														return false;
 													}
-							
-													if(restringida == true){
-														me.saveActivosAgrRestringida(tabData, successFn);
-
-													} else {
-														me.getView().fireEvent("No hay activos propagables");
-														me.saveActivo(tabData, successFn);
-													}
-											}else{
-												var successFn = function(response, eOpts) {
-													
-													me.manageToastJsonResponse(me, response.responseText);
-													me.getView().unmask();
-													me.refrescarActivo(form.refreshAfterSave);
-													me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
-													me.actualizarGridHistoricoDestinoComercial(form);
-												}
 											}
 
 											var successFn = function(response,eOpts) {
@@ -5531,34 +5513,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 									},
 									failure : function(record, operation) {
-										me
-												.fireEvent(
-														"errorToast",
-														HreRem
-																.i18n("msg.operacion.ko"));
+										me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 									}
 								});
 							} else {
 								var successFn = function(response, eOpts) {
-									me.manageToastJsonResponse(me,
-											response.responseText);
+									me.manageToastJsonResponse(me, response.responseText);
 									me.getView().unmask();
 									me.refrescarActivo(form.refreshAfterSave);
-									me
-											.getView()
-											.fireEvent(
-													"refreshComponentOnActivate",
-													"container[reference=tabBuscadorActivos]");
-									me
-											.actualizarGridHistoricoDestinoComercial(form);
+									me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+									me.actualizarGridHistoricoDestinoComercial(form);
 								}
 								me.saveActivo(tabData, successFn)
 							}
 
 						},
 						failure : function(record, operation) {
-							me.fireEvent("errorToast", HreRem
-											.i18n("msg.operacion.ko"));
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 						}
 					});
 				}

@@ -25,6 +25,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
 
 /**
  * Modelo que gestiona la informacion de un posicionamiento de un expediente
@@ -74,6 +75,19 @@ public class Posicionamiento implements Serializable, Auditable, Comparable<Posi
 	@Column(name = "LUGAR_FIRMA")
 	private String lugarFirma;
 
+	@Column(name = "POS_FECHA_ENVIO")
+	private Date fechaEnvioPos;
+		
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "POS_VALIDACION_BC")
+    private DDApruebaDeniega validacionBCPos;
+	
+	@Column(name = "POS_FECHA_VALIDACION_BC")
+	private Date fechaValidacionBCPos;
+
+	@Column(name = "POS_OBSERVACIONES_BC")
+	private String observacionesBcPos;
+	
 	@Version
 	private Long version;
 
@@ -172,4 +186,36 @@ public class Posicionamiento implements Serializable, Auditable, Comparable<Posi
 		this.lugarFirma = lugarFirma;
 	}
 
+	public Date getFechaEnvioPos() {
+		return fechaEnvioPos;
+	}
+
+	public void setFechaEnvioPos(Date fechaEnvioPos) {
+		this.fechaEnvioPos = fechaEnvioPos;
+	}
+
+	public DDApruebaDeniega getValidacionBCPos() {
+		return validacionBCPos;
+	}
+
+	public void setValidacionBCPos(DDApruebaDeniega validacionBCPos) {
+		this.validacionBCPos = validacionBCPos;
+	}
+
+	public Date getFechaValidacionBCPos() {
+		return fechaValidacionBCPos;
+	}
+
+	public void setFechaValidacionBCPos(Date fechaValidacionBCPos) {
+		this.fechaValidacionBCPos = fechaValidacionBCPos;
+	}
+
+	public String getObservacionesBcPos() {
+		return observacionesBcPos;
+	}
+
+	public void setObservacionesBcPos(String observacionesBcPos) {
+		this.observacionesBcPos = observacionesBcPos;
+	}
+	
 }

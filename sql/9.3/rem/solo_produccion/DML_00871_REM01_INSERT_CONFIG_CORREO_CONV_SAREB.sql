@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210601
+--## FECHA_CREACION=20210602
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14112
@@ -57,7 +57,15 @@ DECLARE
       
       T_TIPO_DATA('ACCS','ablanes@haya.es'),
       T_TIPO_DATA('RECS','ablanes@haya.es'),
-      T_TIPO_DATA('ALCS','ablanes@haya.es')
+      T_TIPO_DATA('ALCS','ablanes@haya.es'),
+      
+	T_TIPO_DATA('ACCS','vdelossantosc@bukitbpo.com'),
+	T_TIPO_DATA('RECS','vdelossantosc@bukitbpo.com'),
+	T_TIPO_DATA('ALCS','vdelossantosc@bukitbpo.com'),
+
+	T_TIPO_DATA('ACCS','cromanf@bukitbpo.com'),
+	T_TIPO_DATA('RECS','cromanf@bukitbpo.com'),
+	T_TIPO_DATA('ALCS','cromanf@bukitbpo.com')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

@@ -15,22 +15,32 @@ Ext.define('HreRem.view.gastos.RechazosPropietarioGrid', {
 		me.columns = [
             {
             	text	 : HreRem.i18n('fieldlabel.numero.gasto'),
-                flex	 : 1,
+                flex	 : 0.5,
                 dataIndex: 'numeroGasto'
-            }, 
+            },
+            {
+            	text	 : HreRem.i18n('fieldlabel.numero.linea'),
+                flex	 : 0.5,
+                dataIndex: 'numeroLinea'
+            },
+            {
+            	text	 : HreRem.i18n('fieldlabel.numero.activo'),
+                flex	 : 0.5,
+                dataIndex: 'numeroActivo'
+            },
 		    {               
                 text	 : HreRem.i18n('fieldlabel.motivo.rechazo'),
-                flex	 : 3,
+                flex	 : 2,
                 dataIndex: 'listadoErroresDesc'
             },
             {
                 text	 : HreRem.i18n('fieldlabel.mensaje.rechazo'),
-                flex	 : 1,
+                flex	 : 0.5,
                 dataIndex: 'mensajeError'
             },
             {
             	text	 : HreRem.i18n('fieldlabel.fecha.rechazo'),
-            	flex	 : 1,
+            	flex	 : 0.5,
             	formatter: 'date("d/m/Y")',
                 dataIndex: 'fechaProcesado'
             }		 

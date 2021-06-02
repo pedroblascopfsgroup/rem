@@ -61,6 +61,14 @@ public class ActivoRechazoGasto implements Serializable, Auditable {
 	
 	@Column(name = "FECHA_PROCESADO")
     private Date fechaProcesado;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ACT_ID")
+	private Activo activo;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "GLD_ID")
+	private GastoLineaDetalle gastoLineaDetalle;
 			
 	@Version   
 	private Long version;
@@ -122,6 +130,22 @@ public class ActivoRechazoGasto implements Serializable, Auditable {
 
 	public void setErrores(DDListadoErrores errores) {
 		this.errores = errores;
+	}
+
+	public Activo getActivo() {
+		return activo;
+	}
+
+	public void setActivo(Activo activo) {
+		this.activo = activo;
+	}
+
+	public GastoLineaDetalle getGastoLineaDetalle() {
+		return gastoLineaDetalle;
+	}
+
+	public void setGastoLineaDetalle(GastoLineaDetalle gastoLineaDetalle) {
+		this.gastoLineaDetalle = gastoLineaDetalle;
 	}
 
 	

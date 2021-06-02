@@ -88,7 +88,6 @@ import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.DtoRechazosPropietario;
 import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ErrorDiariosLbk;
@@ -117,6 +116,7 @@ import es.pfsgroup.plugin.rem.model.VDiarioCalculoLbk;
 import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
+import es.pfsgroup.plugin.rem.model.VGridMotivosRechazoGastoCaixa;
 import es.pfsgroup.plugin.rem.model.VImporteBrutoGastoLBK;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -4274,52 +4274,23 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return importeCuotaBig.doubleValue();
 	}
 	
-	@Override
-	public List<DtoRechazosPropietario> getRechazosPropietario(Long idGasto) throws Exception {
-		List<DtoRechazosPropietario> dtoLista = new ArrayList<DtoRechazosPropietario>();
-		List<ActivoRechazoGasto> listaRechazos = new ArrayList<ActivoRechazoGasto>();
-		GastoProveedor gasto = genericDao.get(GastoProveedor.class,genericDao.createFilter(FilterType.EQUALS, "id", idGasto));
-				
-		if (gasto != null) {			
-			listaRechazos = genericDao.getList(ActivoRechazoGasto.class,genericDao.createFilter(FilterType.EQUALS, "gasto.id", gasto.getId()));			
-			if (listaRechazos == null || listaRechazos.isEmpty()) {
-				return dtoLista;
-			}			
-			for (ActivoRechazoGasto activoRechazoGasto : listaRechazos) {
-				DtoRechazosPropietario dto = new DtoRechazosPropietario();
-				if (activoRechazoGasto.getId() != null) {
-					dto.setId(activoRechazoGasto.getId());
-				}
-				if (activoRechazoGasto.getErrores() != null) {
-					dto.setListadoErroresCod(activoRechazoGasto.getErrores().getCodigo());
-					dto.setListadoErroresDesc(activoRechazoGasto.getErrores().getTextoMensajeSAPBC());
-				}
-				if (activoRechazoGasto.getMensajeError() != null) {
-					dto.setMensajeError(activoRechazoGasto.getMensajeError());
-				}
-				if (activoRechazoGasto.getFechaProcesado() != null) {
-					dto.setFechaProcesado(activoRechazoGasto.getFechaProcesado());
-				}
-				if (gasto.getNumGastoHaya() != null) {
-					dto.setNumeroGasto(gasto.getNumGastoHaya());
-				}
-				if (gasto.getId() != null) {
-					dto.setIdGasto(gasto.getId());
-				}
-				dtoLista.add(dto);
-			}
-		}
-		return dtoLista;
-	}
 	
 	public Long getIdByNumGasto(Long numGasto) {
-		Long idGasto = null;
-		try {
-			idGasto = Long.parseLong(rawDao.getExecuteSQL("SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = " + numGasto + " AND BORRADO = 0"));
-		} catch (Exception e) {
-				return null;
-		}			
-			return idGasto;
+		Long idGasto = null;			
+		GastoProveedor gastoProv = gastoDao.getGastoPorNumeroGastoHaya(numGasto);
+		if (gastoProv != null) {
+			idGasto = gastoProv.getId();
+		}					
+		return idGasto;
 	}
 	
+	@Override
+	public List<VGridMotivosRechazoGastoCaixa> getMotivosRechazoGasto(Long idGasto) throws Exception {
+		
+		List<VGridMotivosRechazoGastoCaixa> listaMotivosRec = new ArrayList<VGridMotivosRechazoGastoCaixa>();
+		if (idGasto != null) {
+			listaMotivosRec = genericDao.getList(VGridMotivosRechazoGastoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "gastoId", idGasto));
+		}		
+		return listaMotivosRec;
+	}
 }

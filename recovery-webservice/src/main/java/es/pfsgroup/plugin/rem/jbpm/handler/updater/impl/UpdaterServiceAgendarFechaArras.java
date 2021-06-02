@@ -12,9 +12,14 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
 import es.pfsgroup.plugin.rem.model.Oferta;
 
 @Component
@@ -22,28 +27,35 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
 
 	private static final String CODIGO_T017_AGENDAR_FECHA_ARRAS = "T017_AgendarFechaFirmaArras";
 	private static final String COMBO_FECHA_ENVIO_PROPUESTA = "fechaEnvioPropuesta";
+	private static final String COMBO_FECHA_ENVIO = "fechaEnvio";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceAgendarFechaArras.class);
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
-		Date fechaArras = null;
+		DtoGridFechaArras dtoArras = new DtoGridFechaArras();
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		try {
 			if (ofertaAceptada != null) {
 				for(TareaExternaValor valor :  valores){
 					if(COMBO_FECHA_ENVIO_PROPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-						fechaArras = ft.parse(valor.getValor());
-						break;
+						dtoArras.setFechaPropuesta(ft.parse(valor.getValor()));
+					}
+					if(COMBO_FECHA_ENVIO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						dtoArras.setFechaEnvio(ft.parse(valor.getValor()));	
 					}
 				}
-				if(fechaArras != null) {
-				//TODO rellenarGrid
-				}
+
+				DtoExpedienteComercial dto = expedienteComercialApi.getExpedienteComercialByOferta(ofertaAceptada.getNumOferta());
+				expedienteComercialApi.createOrUpdateUltimaPropuestaEnviada(dto.getId(), dtoArras);			
+				
 			}
 		}catch(ParseException e) {
 			e.printStackTrace();

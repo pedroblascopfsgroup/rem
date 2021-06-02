@@ -2794,16 +2794,60 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		fechaEnvio.setValue($AC.getCurrentDate());
 		me.bloquearCampo(fechaEnvio);
 		me.campoObligatorio(fechaEnvio);
+		var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
+        var url =  $AC.getRemoteUrl('expedientecomercial/getUltimaFechaPropuesta');
+		Ext.Ajax.request({
+			url: url,
+			params: {idExpediente : idExp},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	
+		    	if(!Ext.isEmpty(dto.fechaPropuesta)){		
+		    		var fechaFirma = new Date(dto.fechaPropuesta);
+			    	var campoFirma = me.down('[name=fechaEnvioPropuesta]');
+			    	campoFirma.setValue(Ext.Date.format(fechaFirma, 'd/m/Y'));
+			    	me.bloquearCampo(campoFirma);
+					me.campoObligatorio(campoFirma);
+		    	}
+		    }
+		});
 	},
 	
 	T017_ConfirmarFechaFirmaArrasValidacion: function() {
 		var me = this;
 		var fechaValidacionBc = me.down('[name=fechaValidacionBC]');
 		var comboValidacionBC = me.down('[name=comboValidacionBC]');
+		var fechaPropuesta = me.down('[name=fechaPropuesta]');
+		var observacionesBC = me.down('[name=observacionesBC]');
 		
-		//fechaValidacionBc.setReadOnly(true);
-		//comboValidacionBC.setReadOnly(true);
+		
+		me.bloquearCampo(fechaPropuesta);
+		me.campoObligatorio(fechaPropuesta);
+		me.bloquearCampo(fechaValidacionBc);
+		me.campoObligatorio(fechaValidacionBc);
+		me.bloquearCampo(comboValidacionBC);
+		me.campoObligatorio(comboValidacionBC);
+		me.bloquearCampo(observacionesBC);
+
+		
+		var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+		var url =  $AC.getRemoteUrl('expedientecomercial/getConfirmacionBCFechaFirmaArras');
+		Ext.Ajax.request({
+			url: url,
+			params: {idExpediente : idExp},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto)){
+		    		fechaPropuesta.setValue(Ext.Date.format(new Date(dto.fechaPropuesta), 'd/m/Y'));
+		    		fechaValidacionBc.setValue(Ext.Date.format(new Date(dto.fechaBC), 'd/m/Y'));
+		    		comboValidacionBC.setValue(dto.validacionBC);
+		    		observacionesBC.setValue(dto.comentariosBC);
+		    	}
+		    }
+		});
 	},
 	
     habilitarCampo: function(campo) {

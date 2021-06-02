@@ -2476,5 +2476,39 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getUltimaFechaPropuesta(ModelMap model, Long idExpediente) {
+		try {
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getFechaUltimaPropuestaSinContestar(idExpediente));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getConfirmacionBCFechaFirmaArras(ModelMap model, Long idExpediente) {
+		try {
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getUltimaPropuestaEnviada(idExpediente));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
 
 }

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20210526
+--## FECHA_CREACION=20210531
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14115
@@ -44,10 +44,11 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     	T_TIPO_DATA('T017_ConfirmarFechaFirmaArras'		,'label', 		'0'		,'titulo'				,null		,null					,'<p style="margin-bottom: 10px"> Ha recibido respuesta del propietario. </p><p style="margin-bottom: 10px"> Si la respuesta ha sido positiva, al realizar esta tarea el proceso avanzará a "Instrucciones contrato reserva".</p><p style="margin-bottom: 10px"> Por el contrario, si la respuesta ha sido negativa, volverá a la tarea "Agendar fecha arras". </p>'),
-    	T_TIPO_DATA('T017_ConfirmarFechaFirmaArras'		,'datefield', 	'1'		,'fechaValidacionBC'	,'false'	,null					,'Fecha validación BC '),
-    	T_TIPO_DATA('T017_ConfirmarFechaFirmaArras'		,'combobox', 	'2'		,'comboValidacionBC'	,'false'	,'DDApruebaDeniega'		,'Validación BC'),
-    	T_TIPO_DATA('T017_ConfirmarFechaFirmaArras'		,'textarea', 	'3'		,'observacionesBC'		,'false'	,null					,'Observaciones BC'),
-    	T_TIPO_DATA('T017_ConfirmarFechaFirmaArras'		,'textarea', 	'4'		,'observaciones'		,null		,null					,'Observaciones')
+    	T_TIPO_DATA('T017_ConfirmarFechaFirmaArras'		,'datefield', 	'1'		,'fechaPropuesta'		,'false'	,null					,'Fecha propuesta'),
+    	T_TIPO_DATA('T017_ConfirmarFechaFirmaArras'		,'datefield', 	'2'		,'fechaValidacionBC'	,'false'	,null					,'Fecha validación BC '),
+    	T_TIPO_DATA('T017_ConfirmarFechaFirmaArras'		,'combobox', 	'3'		,'comboValidacionBC'	,'false'	,'DDApruebaDeniega'		,'Validación BC'),
+    	T_TIPO_DATA('T017_ConfirmarFechaFirmaArras'		,'textarea', 	'4'		,'observacionesBC'		,null		,null					,'Observaciones BC'),
+    	T_TIPO_DATA('T017_ConfirmarFechaFirmaArras'		,'textarea', 	'5'		,'observaciones'		,null		,null					,'Observaciones')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

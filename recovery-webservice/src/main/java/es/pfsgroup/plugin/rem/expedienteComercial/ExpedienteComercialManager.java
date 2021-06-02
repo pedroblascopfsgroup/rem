@@ -115,6 +115,7 @@ import es.pfsgroup.plugin.rem.model.BulkOferta.BulkOfertaPk;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
 import es.pfsgroup.plugin.rem.model.dd.DDAreaBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -5953,7 +5954,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	 * @throws Exception
 	 */
 	private char traducitTipoDoc(String codigoTipoDoc) throws Exception {
-		char result = ' ';  
+		char result = ' ';   
 		if (codigoTipoDoc.equals("01")) {
 			result = '1';
 		} else if (codigoTipoDoc.equals("02")) {
@@ -11892,5 +11893,93 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		return esBankia;
+	}
+	
+
+	
+	@Override
+	public DtoGridFechaArras getFechaUltimaPropuestaSinContestar(Long idExpediente){
+		Filter filtroFechaRespuesta = genericDao.createFilter(FilterType.NULL, "fechaRespuestaBC");
+		
+		FechaArrasExpediente fechaArrasExpediente =  this.getUltimaPropuesta(idExpediente, filtroFechaRespuesta);
+		return this.propuestaToDto(fechaArrasExpediente);
+	}
+	
+	
+	@Override
+	public DtoGridFechaArras getUltimaPropuestaEnviada(Long idExpediente) {	
+		FechaArrasExpediente fechaArrasExpediente =  this.getUltimaPropuesta(idExpediente, null);
+		return this.propuestaToDto(fechaArrasExpediente);
+	}
+	
+	private FechaArrasExpediente getUltimaPropuesta(Long idExpediente, Filter filter) {
+		FechaArrasExpediente fechaArrasExpediente = null;
+		List<FechaArrasExpediente> fechaArrasExpedienteList = null;
+		Order order = new Order(OrderType.DESC,"id");
+		Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "expedienteComercial.id", idExpediente);
+		if(filter == null) {
+			fechaArrasExpedienteList = genericDao.getListOrdered(FechaArrasExpediente.class, order, filtroExpediente);
+		}else {
+			fechaArrasExpedienteList = genericDao.getListOrdered(FechaArrasExpediente.class, order, filtroExpediente, filter);
+		}
+
+		if(fechaArrasExpedienteList != null && !fechaArrasExpedienteList.isEmpty()){
+			fechaArrasExpediente = fechaArrasExpedienteList.get(0);
+		}
+		return fechaArrasExpediente;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void createOrUpdateUltimaPropuestaEnviada(Long idExpediente, DtoGridFechaArras dto) {
+		Filter filtroFechaRespuesta = genericDao.createFilter(FilterType.NULL, "fechaRespuestaBC");
+		FechaArrasExpediente fechaArrasExpediente =  this.getUltimaPropuesta(idExpediente, filtroFechaRespuesta);
+		
+		if(fechaArrasExpediente == null) {
+			fechaArrasExpediente = new FechaArrasExpediente();
+			ExpedienteComercial eco = this.findOne(idExpediente);
+			fechaArrasExpediente.setExpedienteComercial(eco);
+		}
+
+		this.dtoToPropuesta(fechaArrasExpediente, dto);
+		
+		genericDao.save(FechaArrasExpediente.class, fechaArrasExpediente);
+
+	}
+	
+	private DtoGridFechaArras propuestaToDto(FechaArrasExpediente fechaArrasExpediente) {
+		DtoGridFechaArras dto = new DtoGridFechaArras();
+		if(fechaArrasExpediente != null){
+			dto.setFechaPropuesta(fechaArrasExpediente.getFechaPropuesta());
+			if(fechaArrasExpediente.getValidacionBC() != null) {
+				dto.setValidacionBC(fechaArrasExpediente.getValidacionBC().getCodigo());
+			}
+			dto.setFechaBC(fechaArrasExpediente.getFechaRespuestaBC());
+			dto.setComentariosBC(fechaArrasExpediente.getComentariosBC());
+		}
+		return dto;
+	}
+	
+	private FechaArrasExpediente dtoToPropuesta(FechaArrasExpediente fechaArrasExpediente, DtoGridFechaArras dto) {
+		
+		try {
+			beanUtilNotNull.copyProperty(fechaArrasExpediente, "fechaPropuesta", dto.getFechaPropuesta());
+			beanUtilNotNull.copyProperty(fechaArrasExpediente, "fechaRespuestaBC", dto.getFechaBC());
+			beanUtilNotNull.copyProperty(fechaArrasExpediente, "comentariosBC", dto.getComentariosBC());
+			beanUtilNotNull.copyProperty(fechaArrasExpediente, "fechaEnvio", dto.getFechaEnvio());
+			
+			if(dto.getValidacionBC() != null) {
+				DDApruebaDeniega dd = genericDao.get(DDApruebaDeniega.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getValidacionBC()));
+				if(dd != null) {
+					fechaArrasExpediente.setValidacionBC(dd);
+				}
+			}
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		
+		return fechaArrasExpediente;
 	}
 }

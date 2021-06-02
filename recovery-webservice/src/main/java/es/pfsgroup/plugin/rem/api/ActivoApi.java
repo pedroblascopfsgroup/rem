@@ -1458,7 +1458,6 @@ public interface ActivoApi {
 	List<DtoHistoricoOcupadoTitulo> getListHistoricoOcupadoTitulo(Long idActivo);
 
 	public void updateHonorarios (Activo activo, List<ActivoOferta> listaActivoOfertas);
-	
 
 	public Page getPublicacionGrid(DtoPublicacionGridFilter dto);
 	
@@ -1469,4 +1468,6 @@ public interface ActivoApi {
 	public List<DDDistritoCaixa> getComboTipoDistritoByCodPostal(String codPostal);
 
 	public VSinInformeAprobadoRem getSinInformeAprobadoREM(Long idActivo);
+
+
 }

@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=GUILLEM REY
+--## AUTOR= Lara Pablo
 --## FECHA_CREACION=20210517
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
@@ -36,7 +36,7 @@ DECLARE
         T_TIPO_DATA('T017_AgendarFechaFirmaArras', 'Agendar fecha firma arras', '', '', ''),
         T_TIPO_DATA('T017_ConfirmarFechaFirmaArras', 'Confirmación fecha firma arras', '', '', 'valores[''''T017_ConfirmarFechaFirmaArras''''][''''comboConfirmado''''] == DDSiNo.SI ? ''''Confirmado'''' : ''''noConfirmado'''''),
         T_TIPO_DATA('T017_AgendarPosicionamiento', 'Agendar posicionamiento', '', '', ''),
-        T_TIPO_DATA('T017_ConfirmarFechaEscritura', 'Confirmación fecha escritura', '!tieneTramiteGENCATVigenteByIdActivo() ? checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''''El activo est&aacute; vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'''' : ''''El activo tiene un tr&aacute;mite GENCAT en curso.''''', 
+        T_TIPO_DATA('T017_ConfirmarFechaEscritura', 'Confirmación fecha firma contrato', '!tieneTramiteGENCATVigenteByIdActivo() ? checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''''El activo est&aacute; vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'''' : ''''El activo tiene un tr&aacute;mite GENCAT en curso.''''', 
     				'checkExpedienteBloqueado() ? (valores[''''T017_ConfirmarFechaEscritura''''][''''comboConfirmado''''] == DDSiNo.SI ? (checkPosicionamiento() ? null : ''''El expediente debe tener alg&uacute;n posicionamiento'''') : null) : ''''El expediente no est&aacute; bloqueado''''', 
         			'valores[''''T017_ConfirmarFechaEscritura''''][''''comboConfirmado''''] == DDSiNo.SI ? ''''Confirmado'''' : ''''noConfirmado'''''),
         T_TIPO_DATA('T017_FirmaContrato', 'Firma contrato', '!tieneTramiteGENCATVigenteByIdActivo() ? checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''''El activo est&aacute; vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'''' : ''''El activo tiene un tr&aacute;mite GENCAT en curso.''''', 
@@ -156,7 +156,7 @@ BEGIN
 	                   -- ,  1, ''combobox'', ''comboConfirmado'' , ''Confirmar fecha firma arras'' , ''Debe indicar si la fecha firma arras está confirmada o no'' , ''false'' 
 	                   -- , null , ''DDSiNo''  , 0, ''HREOS-13991'', SYSDATE , null, null, null , null  , 0
 	               -- )';
-				EXECUTE IMMEDIATE V_MSQL;
+				--EXECUTE IMMEDIATE V_MSQL;
 				V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS
 	                VALUES (
 	                    '||V_ESQUEMA||'.S_TFI_TAREAS_FORM_ITEMS.NEXTVAL
@@ -167,14 +167,14 @@ BEGIN
 				EXECUTE IMMEDIATE V_MSQL;
 				
 			ELSIF V_TMP_TIPO_DATA(1) = 'T017_ConfirmarFechaEscritura' THEN
-				V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS
-	                VALUES (
-	                    '||V_ESQUEMA||'.S_TFI_TAREAS_FORM_ITEMS.NEXTVAL
-	                    ,(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||''')
-	                    ,  1, ''combobox'', ''comboConfirmado'' , ''Confirmar fecha firma arras'' , ''Debe indicar si la fecha firma escritura está confirmada o no'' , ''false'' 
-	                    , null , ''DDSiNo''  , 0, ''HREOS-13991'', SYSDATE , null, null, null , null  , 0
-	                )';
-				EXECUTE IMMEDIATE V_MSQL;
+				--V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS
+	           --     VALUES (
+	              --      '||V_ESQUEMA||'.S_TFI_TAREAS_FORM_ITEMS.NEXTVAL
+	             --       ,(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||''')
+	             --       ,  1, ''combobox'', ''comboConfirmado'' , ''Confirmar fecha firma arras'' , ''Debe indicar si la fecha firma escritura está confirmada o no'' , ''false'' 
+	             --      , null , ''DDSiNo''  , 0, ''HREOS-13991'', SYSDATE , null, null, null , null  , 0
+	            --    )';
+			--	EXECUTE IMMEDIATE V_MSQL;
 				V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS
 	                VALUES (
 	                    '||V_ESQUEMA||'.S_TFI_TAREAS_FORM_ITEMS.NEXTVAL

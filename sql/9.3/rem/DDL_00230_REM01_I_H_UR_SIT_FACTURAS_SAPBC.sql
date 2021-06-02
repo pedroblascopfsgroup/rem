@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=PIER GOTTA
---## FECHA_CREACION=20210520
+--## FECHA_CREACION=20210602
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-13884
@@ -42,13 +42,18 @@ BEGIN
 
 	EXECUTE IMMEDIATE 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'
                             (
-                             FAC_ID_REM                        VARCHAR2(20 CHAR)
+                            FAC_ID_REM                        VARCHAR2(20 CHAR)
                            , NUM_PROVISION_REM		 VARCHAR2(20 CHAR)
-                           , RETORNO_SAPBC                     NUMBER(3,0)
+                           , ID_ACTIVO 			 NUMBER(9, 0)
+                           , GRUPO_GASTO			 VARCHAR2(2 CHAR)
+                           , TIPO_ACCION			 VARCHAR2(2 CHAR)
+                           , SUBTIPO_ACCION			 VARCHAR2(2 CHAR)
+                           , RETORNO_SAPBC                     VARCHAR2(3 CHAR)
+                           , FECHA_ESTADO_SAPBC		 VARCHAR2(8 CHAR)
                            , TEXT_MENSAJE_SAPBC                VARCHAR2(73 CHAR)
                            , FECHA_PROCESADO			 DATE
                            , ID_ROW				 ROWID
-                           , FILLER                            VARCHAR2(184 CHAR)        
+                           , FILLER                            VARCHAR2(161 CHAR)        
                    	)';
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' CREADA');  

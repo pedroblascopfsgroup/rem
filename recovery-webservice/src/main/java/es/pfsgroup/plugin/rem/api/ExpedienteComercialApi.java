@@ -1386,4 +1386,12 @@ public interface ExpedienteComercialApi {
 
 	Boolean updateFechaArras(DtoGridFechaArras dto) throws IllegalAccessException, InvocationTargetException;
 
+	DtoPosicionamiento getUltimoPosicionamientoSinContestar(Long idExpediente);
+
+	DtoPosicionamiento getUltimoPosicionamientoEnviado(Long idExpediente);
+
+	void createOrUpdateUltimoPosicionamientoEnviado(Long idExpediente, DtoPosicionamiento dto);
+
+	boolean checkVueltaAtras(Long idTramite);
+
 }

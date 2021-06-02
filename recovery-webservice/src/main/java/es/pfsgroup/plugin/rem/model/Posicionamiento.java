@@ -74,7 +74,7 @@ public class Posicionamiento implements Serializable, Auditable, Comparable<Posi
 
 	@Column(name = "LUGAR_FIRMA")
 	private String lugarFirma;
-
+	
 	@Column(name = "POS_FECHA_ENVIO")
 	private Date fechaEnvioPos;
 		
@@ -217,5 +217,6 @@ public class Posicionamiento implements Serializable, Auditable, Comparable<Posi
 	public void setObservacionesBcPos(String observacionesBcPos) {
 		this.observacionesBcPos = observacionesBcPos;
 	}
+
 	
 }

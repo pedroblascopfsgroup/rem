@@ -74,7 +74,6 @@ import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.DtoRechazosPropietario;
 import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastosDiariosLBK;
@@ -84,6 +83,7 @@ import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
 import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
+import es.pfsgroup.plugin.rem.model.VGridMotivosRechazoGastoCaixa;
 import es.pfsgroup.plugin.rem.model.VParticipacionElementosLinea;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
@@ -1668,9 +1668,8 @@ public class GastosProveedorController extends ParadiseJsonController {
 		ModelMap model = new ModelMap();
 		
 		try {
-			List<DtoRechazosPropietario> dtoRechazoPropietarioList = gastoProveedorApi.getRechazosPropietario(idGasto);
-			//List<DtoLineaDetalleGasto> dtoLineaDetalleGastoLista =gastoLineaDetalleApi.getGastoLineaDetalle(idGasto);
-			model.put("data", dtoRechazoPropietarioList);
+			List<VGridMotivosRechazoGastoCaixa> motivosRechazoList = gastoProveedorApi.getMotivosRechazoGasto(idGasto);
+			model.put("data", motivosRechazoList);
 			model.put("success", true);			
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);

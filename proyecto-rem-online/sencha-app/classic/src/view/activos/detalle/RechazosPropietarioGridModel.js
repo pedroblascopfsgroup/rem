@@ -7,6 +7,9 @@ Ext.define('HreRem.model.RechazosPropietarioGridModel', {
 			name: 'id'
 		},
 		{
+			name: 'gastoId'
+		},
+		{
 			name: 'numeroGasto'
 		},
 		{
@@ -14,6 +17,18 @@ Ext.define('HreRem.model.RechazosPropietarioGridModel', {
 		},
 		{			
 			name: 'listadoErroresCod'
+		},
+		{
+			name: 'listadoErroresRetorno'
+		},
+		{
+			name: 'numeroLinea'
+		},
+		{
+			name: 'activoId'
+		},
+		{
+			name: 'numeroActivo'
 		},
 		{
 			name: 'mensajeError'

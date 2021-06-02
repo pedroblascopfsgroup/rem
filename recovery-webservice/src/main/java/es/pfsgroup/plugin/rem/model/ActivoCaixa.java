@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -24,14 +23,10 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
-import es.pfsgroup.plugin.rem.model.dd.DDEscaleraEdificio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialAlquilerCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialVentaCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTecnicoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoNecesidadArras;
-import es.pfsgroup.plugin.rem.model.dd.DDPlantaEdificio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoUbicacion;
 
 @Entity
 @Table(name = "ACT_ACTIVO_CAIXA", schema = "${entity.schema}")

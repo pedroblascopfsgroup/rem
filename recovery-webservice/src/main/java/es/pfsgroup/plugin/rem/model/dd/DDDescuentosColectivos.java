@@ -22,10 +22,10 @@ import es.capgemini.pfs.diccionarios.Dictionary;
  * 
  */
 @Entity
-@Table(name = "DD_DSC_DESCUENTO_COLECTIVO", schema = "${entity.schema}")
+@Table(name = "DD_DCC_DESCUENTOS_COLECTIVOS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDDescuentoColectivo implements Auditable, Dictionary {
+public class DDDescuentosColectivos implements Auditable, Dictionary {
 
 	/**
 	 * 
@@ -33,18 +33,18 @@ public class DDDescuentoColectivo implements Auditable, Dictionary {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_DSC_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDDescuentoColectivoGenerator")
-	@SequenceGenerator(name = "DDDescuentoColectivoGenerator", sequenceName = "S_DD_DSC_DESCUENTO_COLECTIVO")
+	@Column(name = "DD_DCC_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDDescuentosColectivosGenerator")
+	@SequenceGenerator(name = "DDDescuentosColectivosGenerator", sequenceName = "S_DD_DCC_DESCUENTOS_COLECTIVOS")
 	private Long id;
 	   
-	@Column(name = "DD_DSC_CODIGO")   
+	@Column(name = "DD_DCC_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_DSC_DESCRIPCION")   
+	@Column(name = "DD_DCC_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_DSC_DESCRIPCION_LARGA")   
+	@Column(name = "DD_DCC_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
 	    
 	@Version   

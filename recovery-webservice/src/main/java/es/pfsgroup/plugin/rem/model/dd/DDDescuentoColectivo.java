@@ -19,87 +19,72 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de paises
  * 
- * @author Luis Caballero
- *
  */
 @Entity
-@Table(name = "DD_PAI_PAISES", schema = "${entity.schema}")
+@Table(name = "DD_DSC_DESCUENTO_COLECTIVO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDPaises implements Auditable, Dictionary {
+public class DDDescuentoColectivo implements Auditable, Dictionary {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	public static final String CODIGO_PAIS_ESPANA  = "28";
-	public static final String CODIGO_PAIS_ESPANYA = "28";
-	public static final String CODIGO_PAIS_SPAIN   = "28";
 
 	@Id
-	@Column(name = "DD_PAI_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDPaisGenerator")
-	@SequenceGenerator(name = "DDPaisGenerator", sequenceName = "S_DD_PAI_PAISES")
+	@Column(name = "DD_DSC_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDDescuentoColectivoGenerator")
+	@SequenceGenerator(name = "DDDescuentoColectivoGenerator", sequenceName = "S_DD_DSC_DESCUENTO_COLECTIVO")
 	private Long id;
-	 
-	@Column(name = "DD_PAI_CODIGO")   
+	   
+	@Column(name = "DD_DSC_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_PAI_DESCRIPCION")   
+	@Column(name = "DD_DSC_DESCRIPCION")   
 	private String descripcion;
-    
-	@Column(name = "DD_PAI_DESCRIPCION_LARGA")   
-	private String descripcionLarga;
-	
-	@Column(name = "DD_PAI_COD_ISO")   
-	private String codigoISO;
 	    
-	
+	@Column(name = "DD_DSC_DESCRIPCION_LARGA")   
+	private String descripcionLarga;
 	    
 	@Version   
 	private Long version;
-
+	
 	@Embedded
 	private Auditoria auditoria;
 
 	 
-	 
-	 
 	public Long getId() {
 		return id;
 	}
-
+	
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
 	}
 	
 	public String getDescripcion() {
 		return descripcion;
 	}
-
+	
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-
+	
 	public String getDescripcionLarga() {
 		return descripcionLarga;
 	}
-
+	
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
 	}
-
+	
+	public String getCodigo() {
+		return codigo;
+	}
+	
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
 
 	public Long getVersion() {
 		return version;
@@ -115,14 +100,6 @@ public class DDPaises implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}
-
-	public String getCodigoISO() {
-		return codigoISO;
-	}
-
-	public void setCodigoISO(String codigoISO) {
-		this.codigoISO = codigoISO;
 	}
 
 }

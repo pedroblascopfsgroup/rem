@@ -87,7 +87,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	
 	@Override
 	public String validarCamposMinimos(GastoProveedor gasto , Boolean origen) {
-		
+		codEstadoProvision = null;
+		estadoProvision = null;
 		if(gasto.getProvision() != null) {
 			logger.error("HAY PROVISION!");
 			if(!Checks.esNulo(gasto.getProvision().getEstadoProvision())) {

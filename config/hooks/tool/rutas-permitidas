@@ -189,10 +189,11 @@ func-rem-desvincularFechaPosesion|func-rem-espartaConvivencia
 func-rem-dnd-tutelas|R-Arrufatina
 func-rem-mejorasRendimiento-BuscadorAgrupaciones|func-rem-mejorasRendimiento
 rem_mirror|func-rem-mejorasRendimiento-F2
+rem_mirror|func-rem-interfazPrinex
 rem_mirror|func-rem-mejorasRendimiento-F4
 func-rem-espartaConvivencia-F2-HREOS-13438-P|func-rem-espartaConvivencia-F2
 func-rem-ursusBankia|R-Siccari
 func-rem-desvincularFechaPosesion|R-Siccari
 func-rem-marcajeOcupadosSeguridad|R-Siccari
 rem_mirror|func-rem-cierreOficinas
-
+rem_mirror|func-rem-modeloHydra

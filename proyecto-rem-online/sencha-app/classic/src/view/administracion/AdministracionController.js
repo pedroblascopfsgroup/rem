@@ -972,6 +972,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 			Ext.Ajax.request({
 		    			
 			     url: url,
+			     method: 'POST',
 			     params: {idsGasto: idsGasto},
 			
 			     success: function(response, opts) {

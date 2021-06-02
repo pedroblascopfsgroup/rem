@@ -147,43 +147,46 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	cargarTabDataMultiple : function(form, index, models, nameModels) {
 
-		var me = this, id = me.getViewModel().get("activo.id");
+		if ("tasacionBankia" != nameModels[index] && "tasacion" != nameModels[index]) {
+			var me = this, id = me.getViewModel().get("activo.id");
+		
+			models[index].setId(id);
 
-		models[index].setId(id);
+			if (Ext.isDefined(models[index].getProxy().getApi().read)) {
+				// Si la API tiene metodo de lectura (read).
+				models[index].load({
+							success : function(record) {
+								if (!Ext.isEmpty(me.getViewModel())) {
+									me.getViewModel()
+											.set(nameModels[index], record);
+									index++;
 
-		if (Ext.isDefined(models[index].getProxy().getApi().read)) {
-			// Si la API tiene metodo de lectura (read).
-			models[index].load({
-						success : function(record) {
-							if (!Ext.isEmpty(me.getViewModel())) {
-								me.getViewModel()
-										.set(nameModels[index], record);
-								index++;
-
-								if (index < models.length) {
-									me.cargarTabDataMultiple(form, index,
-											models, nameModels);
-								} else {
-									form.unmask();
+									if (index < models.length) {
+										me.cargarTabDataMultiple(form, index,
+												models, nameModels);
+									} else {
+										form.unmask();
+									}
 								}
+							},
+							failure : function(a, operation) {
+								form.unmask();
 							}
-						},
-						failure : function(a, operation) {
-							form.unmask();
-						}
-					});
-		} else {
-			// Si la API no contiene metodo de lectura (read).
-			me.getViewModel().set(nameModels[index], models[index]);
-			index++;
-
-			if (index < models.length) {
-				me.cargarTabDataMultiple(form, index, models, nameModels);
+						});
 			} else {
-				form.unmask();
-			}
-		}
+				// Si la API no contiene metodo de lectura (read).
+				me.getViewModel().set(nameModels[index], models[index]);
+				index++;
 
+				if (index < models.length) {
+					me.cargarTabDataMultiple(form, index, models, nameModels);
+				} else {
+					form.unmask();
+				}
+			}
+		} else {
+			form.unmask();
+		}
 	},
 
 	cargarTabDataPresupuestoGrafico : function(form) {

@@ -1067,7 +1067,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    		errores = [],
    		error,   		
    		provinciaRegistro = me.down("[reference=provinciaRegistro]"),
-   		codigoProvinciaDomicilio = me.viewWithModel.getViewModel().get('activo.provinciaCodigo'),
+   		codigoProvinciaDomicilio = me.viewWithModel.getViewModel().get('activo.provinciaDescripcion'),
    		idufir = me.down("[reference=idufir]"),
    		superficieUtil = me.down("[reference=superficieUtil]"),
    		superficieConstruida = me.down("[reference=superficieConstruida]"),

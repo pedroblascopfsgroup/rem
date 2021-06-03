@@ -85,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VEsCondicionado;
+import es.pfsgroup.plugin.rem.model.VGridDescuentoColectivos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VSinInformeAprobadoRem;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
@@ -1468,6 +1469,8 @@ public interface ActivoApi {
 	public List<DDDistritoCaixa> getComboTipoDistritoByCodPostal(String codPostal);
 
 	public VSinInformeAprobadoRem getSinInformeAprobadoREM(Long idActivo);
+	
+	List<VGridDescuentoColectivos> getDescuentoColectivos(Long id) throws Exception;
 
 
 }

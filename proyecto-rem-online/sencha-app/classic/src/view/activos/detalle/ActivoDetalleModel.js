@@ -3748,6 +3748,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'estadoComercialAlquiler'}
 				}
-		}
+		},
+		
+		storeDescuentoColectivos: {
+      		 model: 'HreRem.model.DescuentoColectivosGridModel',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getDescuentoColectivos',
+		        extraParams: {id: '{activo.id}'}
+	    	 }
+   		}
 	 }
 });

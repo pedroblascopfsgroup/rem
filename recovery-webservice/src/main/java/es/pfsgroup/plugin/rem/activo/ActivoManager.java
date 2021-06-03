@@ -9331,7 +9331,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 	
-
+	public List<VGridDescuentoColectivos> getDescuentoColectivos(Long id) throws Exception{
+		
+		List<VGridDescuentoColectivos> descuentoColectivos = new ArrayList<VGridDescuentoColectivos>();
+		if (id != null) {
+			descuentoColectivos = genericDao.getList(VGridDescuentoColectivos.class, genericDao.createFilter(FilterType.EQUALS, "activoId", id));
+		}		
+		return descuentoColectivos;
+	}
 	
 	@Override
 	public void rellenarIfNecesario(Activo activo) {		

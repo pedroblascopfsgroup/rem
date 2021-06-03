@@ -1302,7 +1302,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				f2 = FileItemUtils.fromResource("docs/ficha_cliente.xlsx");
 				f3 = FileItemUtils.fromResource("docs/manif_titular_real.doc");
 				if (f1 != null) {
-					adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.pdf"));
+					adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.docx"));
 				}
 				if (f2 != null) {
 					adjuntos.add(createAdjunto(f2, "Ficha_cliente.xlsx"));

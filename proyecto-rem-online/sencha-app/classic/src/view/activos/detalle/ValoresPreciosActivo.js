@@ -13,7 +13,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
     
     refreshAfterSave: true,
     
-    requires: ['HreRem.model.ActivoValoraciones'],
+    requires: ['HreRem.model.ActivoValoraciones', 'HreRem.view.activos.DescuentoColectivosGrid'],
 
     recordName: "valoraciones",
 
@@ -279,6 +279,21 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 									
 								}
 						]
+					}
+				]
+            },
+            {
+            	xtype:'fieldsettable',
+				cls: 'fieldset-descuentos-vigentes',
+				title: HreRem.i18n('title.descuentos.vigentes'),
+				reference: 'descuentosVigentesRef',
+				listeners: {
+					afterrender: 'mostrarIsCarteraCaixa'
+				},
+				items :	[
+					{
+						xtype: 'descuentocolectivosgrid',
+						reference : 'descuentoColectivosGridRef'
 					}
 				]
             },

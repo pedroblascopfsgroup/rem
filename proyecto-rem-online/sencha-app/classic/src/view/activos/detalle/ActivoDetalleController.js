@@ -8565,5 +8565,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		fechaEstadoTitularidad.setHidden(true);
     	}
 	
-	}
+	},
+	
+	mostrarIsCarteraCaixa: function(get){
+    	var me = this;
+
+    	var carteraBankia = me.getViewModel().getData().activo.getData().isCarteraBankia;
+    	var descuentosVigentes = me.lookupReference('descuentosVigentesRef');
+    	
+    	if (carteraBankia != null && carteraBankia == true) {
+    		if (descuentosVigentes != null) {
+    			descuentosVigentes.setHidden(false);
+			}
+    		
+    	}else{
+    		descuentosVigentes.setHidden(true);
+    	}
+    }
 });

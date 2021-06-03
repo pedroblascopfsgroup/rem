@@ -160,6 +160,7 @@ import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VGridBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VGridBusquedaPublicaciones;
+import es.pfsgroup.plugin.rem.model.VGridDescuentoColectivos;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
@@ -4281,6 +4282,22 @@ public class ActivoController extends ParadiseJsonController {
 		try{
 
 			model.put(RESPONSE_DATA_KEY, activoApi.getListHistoricoOcupadoTitulo(id)); 
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDescuentoColectivos(Long id, ModelMap model){
+		try{
+			
+			List<VGridDescuentoColectivos> listSuccess = activoApi.getDescuentoColectivos(id);
+			model.put(RESPONSE_DATA_KEY, listSuccess);
+			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);

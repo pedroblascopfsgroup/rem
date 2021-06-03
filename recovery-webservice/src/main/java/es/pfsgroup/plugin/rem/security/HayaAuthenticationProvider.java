@@ -177,7 +177,7 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 			} catch (IOException e) {
 				throw new AuthenticationCredentialsNotFoundException(messages.getMessage(AUTH2_ERROR_BAD_CREDENTIALS));
 			} catch (Exception e) {
-				logger.error("Jupiter: problema al actualizar Roles de REM desde Jupiter " + e.getMessage()); 
+				logger.error("Jupiter: problema al actualizar los datos de usuario en REM desde Jupiter: " + e.getMessage()); 
 				e.printStackTrace();
 			}
 		}

@@ -63,6 +63,10 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 		
 		Usuario usuario = usuarioDao.getByUsername(username);
 		
+		if (usuario == null) {
+			throw new Exception("No existe en REM el usuario: " + username);
+		}
+		
 		String nombreREM = usuario.getNombre();
 		String apellidosREM = usuario.getApellidos();
 		String emailREM = usuario.getEmail();

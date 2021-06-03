@@ -2850,6 +2850,68 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		});
 	},
 	
+	T017_AgendarPosicionamientoValidacion: function() {
+		var me = this;
+		var fechaEnvio = me.down('[name=fechaEnvio]');
+		fechaEnvio.setValue($AC.getCurrentDate());
+		me.bloquearCampo(fechaEnvio);
+		me.campoObligatorio(fechaEnvio);
+		
+		var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+		
+        var url =  $AC.getRemoteUrl('expedientecomercial/getUltimoPosicionamientoSinContestar');
+		Ext.Ajax.request({
+			url: url,
+			params: {idExpediente : idExp},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto.fechaPosicionamiento)){		
+		    		var fechaPosicionamiento = new Date(dto.fechaPosicionamiento);
+			    	var campoPosicionamiento = me.down('[name=fechaPropuestaFC]');
+			    	campoPosicionamiento.setValue(Ext.Date.format(fechaPosicionamiento, 'd/m/Y'));
+			    	me.bloquearCampo(campoPosicionamiento);
+					me.campoObligatorio(campoPosicionamiento);
+		    	}
+		    }
+		});
+		
+	},
+	
+	T017_ConfirmarFechaEscrituraValidacion: function() {
+		var me = this;
+		var  fechaPropuesta = me.down('[name=fechaPropuesta]');
+		var comboValidacionBC = me.down('[name=comboValidacionBC]');
+		var  fechaValidacionBc = me.down('[name=fechaRespuesta]');
+		var observacionesBC = me.down('[name=observacionesBC]');
+		
+		me.bloquearCampo(fechaPropuesta);
+		me.campoObligatorio(fechaPropuesta);
+		me.bloquearCampo(fechaValidacionBc);
+		me.campoObligatorio(fechaValidacionBc);
+		me.bloquearCampo(comboValidacionBC);
+		me.campoObligatorio(comboValidacionBC);
+		me.bloquearCampo(observacionesBC);
+
+		
+		var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+		var url =  $AC.getRemoteUrl('expedientecomercial/getConfirmacionBCPosicionamiento');
+		Ext.Ajax.request({
+			url: url,
+			params: {idExpediente : idExp},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto)){
+		    		fechaPropuesta.setValue(Ext.Date.format(new Date(dto.fechaPosicionamiento), 'd/m/Y'));
+		    		fechaValidacionBc.setValue(Ext.Date.format(new Date(dto.fechaValidacionBCPos), 'd/m/Y'));
+		    		comboValidacionBC.setValue(dto.validacionBCPosi);
+		    		observacionesBC.setValue(dto.observacionesBcPos);
+		    	}
+		    }
+		});
+	},
+	
     habilitarCampo: function(campo) {
         var me = this;
         campo.setDisabled(false);

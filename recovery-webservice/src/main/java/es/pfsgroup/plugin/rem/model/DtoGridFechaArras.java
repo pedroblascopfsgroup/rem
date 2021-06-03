@@ -7,6 +7,7 @@ import es.capgemini.devon.dto.WebDto;
 public class DtoGridFechaArras extends WebDto {
 	
 	private Long id;
+	private Long idExpediente;
 	private Date fechaAlta;
     private Date fechaEnvio;
     private Date fechaPropuesta;
@@ -15,11 +16,18 @@ public class DtoGridFechaArras extends WebDto {
 	private Date fechaAviso;
 	private String comentariosBC;
 	private String observaciones;
+	
 	public Long getId() {
 		return id;
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+	public Long getIdExpediente() {
+		return idExpediente;
+	}
+	public void setIdExpediente(Long idExpediente) {
+		this.idExpediente = idExpediente;
 	}
 	public Date getFechaAlta() {
 		return fechaAlta;

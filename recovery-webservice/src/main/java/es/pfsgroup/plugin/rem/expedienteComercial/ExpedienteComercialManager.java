@@ -197,6 +197,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	protected static final Log logger = LogFactory.getLog(ExpedienteComercialManager.class);
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	
+	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+	private static final String FECHA_1970 = "1970-01-01";
 
 	private static final String TANTEO_CONDICIONES_TRANSMISION = "msg.defecto.oferta.tanteo.condiciones.transmision";
 	private static final String VISITA_SIN_RELACION_OFERTA = "oferta.validacion.numVisita";
@@ -3699,29 +3702,35 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	 */
 	private DtoPosicionamiento posicionamientoToDto(Posicionamiento posicionamiento) {
 		DtoPosicionamiento posicionamientoDto = new DtoPosicionamiento();
-
-		try {
-			beanUtilNotNull.copyProperties(posicionamientoDto, posicionamiento);
-			beanUtilNotNull.copyProperty(posicionamientoDto, "idPosicionamiento", posicionamiento.getId());
-			beanUtilNotNull.copyProperty(posicionamientoDto, "horaAviso", posicionamiento.getFechaAviso());
-			beanUtilNotNull.copyProperty(posicionamientoDto, "horaPosicionamiento",
-					posicionamiento.getFechaPosicionamiento());
-			beanUtilNotNull.copyProperty(posicionamientoDto, "fechaAlta",
-					posicionamiento.getAuditoria().getFechaCrear());
-			beanUtilNotNull.copyProperty(posicionamientoDto, "fechaFinPosicionamiento",
-					posicionamiento.getFechaFinPosicionamiento());
-
-			if (!Checks.esNulo(posicionamiento.getNotario()))
-				beanUtilNotNull.copyProperty(posicionamientoDto, "idProveedorNotario",
-						posicionamiento.getNotario().getId());
-
-		} catch (IllegalAccessException e) {
-			logger.error("error en expedienteComercialManager", e);
-
-		} catch (InvocationTargetException e) {
-			logger.error("error en expedienteComercialManager", e);
+		if(posicionamiento != null) { 
+			try {
+				beanUtilNotNull.copyProperties(posicionamientoDto, posicionamiento);
+				beanUtilNotNull.copyProperty(posicionamientoDto, "idPosicionamiento", posicionamiento.getId());
+				beanUtilNotNull.copyProperty(posicionamientoDto, "horaAviso", posicionamiento.getFechaAviso());
+				beanUtilNotNull.copyProperty(posicionamientoDto, "horaPosicionamiento",posicionamiento.getFechaPosicionamiento());
+				beanUtilNotNull.copyProperty(posicionamientoDto, "fechaAlta", posicionamiento.getAuditoria().getFechaCrear());
+				beanUtilNotNull.copyProperty(posicionamientoDto, "fechaFinPosicionamiento", posicionamiento.getFechaFinPosicionamiento());
+	
+				if (!Checks.esNulo(posicionamiento.getNotario())) {
+					beanUtilNotNull.copyProperty(posicionamientoDto, "idProveedorNotario", posicionamiento.getNotario().getId());
+				}
+	
+				if(posicionamiento.getValidacionBCPos() != null ) {
+					beanUtilNotNull.copyProperty(posicionamientoDto, "validacionBCPosi", posicionamiento.getValidacionBCPos().getCodigo());
+				}
+				
+				beanUtilNotNull.copyProperty(posicionamientoDto, "fechaEnvioPos", posicionamiento.getFechaEnvioPos());
+				beanUtilNotNull.copyProperty(posicionamientoDto, "fechaValidacionBCPos", posicionamiento.getFechaValidacionBCPos());
+				beanUtilNotNull.copyProperty(posicionamientoDto, "observacionesBcPo", posicionamiento.getObservacionesBcPos());
+				
+				
+			} catch (IllegalAccessException e) {
+				logger.error("error en expedienteComercialManager", e);
+	
+			} catch (InvocationTargetException e) {
+				logger.error("error en expedienteComercialManager", e);
+			}
 		}
-
 		return posicionamientoDto;
 	}
 
@@ -5954,7 +5963,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	 * @throws Exception
 	 */
 	private char traducitTipoDoc(String codigoTipoDoc) throws Exception {
-		char result = ' ';   
+		char result = ' ';
 		if (codigoTipoDoc.equals("01")) {
 			result = '1';
 		} else if (codigoTipoDoc.equals("02")) {
@@ -11895,8 +11904,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return esBankia;
 	}
 	
-
-	
 	@Override
 	public DtoGridFechaArras getFechaUltimaPropuestaSinContestar(Long idExpediente){
 		Filter filtroFechaRespuesta = genericDao.createFilter(FilterType.NULL, "fechaRespuestaBC");
@@ -11981,5 +11988,179 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return fechaArrasExpediente;
+	}
+
+
+	@Override
+	public List<DtoGridFechaArras> getFechaArras(Long idExpediente) throws IllegalAccessException, InvocationTargetException {
+		List<DtoGridFechaArras> listDto = new ArrayList<DtoGridFechaArras>();
+		List<FechaArrasExpediente> list = new ArrayList<FechaArrasExpediente>();
+		
+		list = genericDao.getList(FechaArrasExpediente.class, genericDao.createFilter(FilterType.EQUALS, "expedienteComercial.id", idExpediente));
+		
+		for(FechaArrasExpediente reg: list) {
+			DtoGridFechaArras dto = new DtoGridFechaArras();
+			
+			beanUtilNotNull.copyProperties(dto, reg);
+			dto.setFechaAlta(reg.getAuditoria().getFechaCrear());
+			dto.setFechaBC(reg.getFechaRespuestaBC());
+			
+			if(reg.getValidacionBC() != null) {
+				dto.setValidacionBC(reg.getValidacionBC().getDescripcion());
+			}
+			
+			listDto.add(dto);
+		}
+		
+		return listDto;
+	}
+
+	@Override
+	@Transactional
+	public Boolean saveFechaArras(DtoGridFechaArras dto) {
+		FechaArrasExpediente nuevaFecha = new FechaArrasExpediente();
+		
+		nuevaFecha.setFechaPropuesta(dto.getFechaPropuesta());
+		nuevaFecha.setObservaciones(dto.getObservaciones());
+		nuevaFecha.setExpedienteComercial(genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente())));
+		
+		nuevaFecha = genericDao.save(FechaArrasExpediente.class, nuevaFecha);
+		
+		return nuevaFecha != null;
+	}
+
+	@Override
+	@Transactional
+	public Boolean updateFechaArras(DtoGridFechaArras dto) throws IllegalAccessException, InvocationTargetException {
+		
+		if(dto != null) {
+			
+			FechaArrasExpediente fechaArras = genericDao.get(FechaArrasExpediente.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getId()));
+			
+			beanUtilNotNull.copyProperties(fechaArras, dto);
+			
+			if(dto.getFechaBC() != null) {
+				String fechaBC = ft.format(dto.getFechaBC());
+				
+				if(!FECHA_1970.equals(fechaBC)) {
+					fechaArras.setFechaRespuestaBC(dto.getFechaBC());
+				}
+			}
+			
+			genericDao.update(FechaArrasExpediente.class, fechaArras);
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
+	
+	
+	@Override
+	public DtoPosicionamiento getUltimoPosicionamientoSinContestar(Long idExpediente){
+		Filter filtroFechaRespuesta = genericDao.createFilter(FilterType.NULL, "fechaValidacionBCPos");
+		
+		Posicionamiento posicionamiento =  this.getUltimoPosicionamiento(idExpediente, filtroFechaRespuesta, true);
+		return this.posicionamientoToDto(posicionamiento);
+	}
+	
+	
+	@Override
+	public DtoPosicionamiento getUltimoPosicionamientoEnviado(Long idExpediente) {	
+		Posicionamiento posicionamiento =  this.getUltimoPosicionamiento(idExpediente, null, false);
+		return this.posicionamientoToDto(posicionamiento);
+	}
+	
+	private Posicionamiento getUltimoPosicionamiento(Long idExpediente, Filter filter, boolean noMostrarAnulados) {
+		Posicionamiento posicionamiento = null;
+		List<Posicionamiento> posicionamientosList = null;
+		Order order = new Order(OrderType.DESC,"id");
+		Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
+		if(filter == null) {
+			posicionamientosList = genericDao.getListOrdered(Posicionamiento.class, order, filtroExpediente);
+		}else if(noMostrarAnulados){
+			Filter filtroAnulados = genericDao.createFilter(FilterType.NULL, "fechaFinPosicionamiento");
+			posicionamientosList = genericDao.getListOrdered(Posicionamiento.class, order, filtroExpediente, filter, filtroAnulados);
+		}else{
+			posicionamientosList = genericDao.getListOrdered(Posicionamiento.class, order, filtroExpediente, filter);
+
+		}
+
+		if(posicionamientosList != null && !posicionamientosList.isEmpty()){
+			posicionamiento = posicionamientosList.get(0);
+		}
+		return posicionamiento;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void createOrUpdateUltimoPosicionamientoEnviado(Long idExpediente, DtoPosicionamiento dto) {
+		Filter filtroFechaRespuesta = genericDao.createFilter(FilterType.NULL, "fechaValidacionBCPos");
+		Posicionamiento posicionamiento =  this.getUltimoPosicionamiento(idExpediente, filtroFechaRespuesta, true);
+		
+		if(posicionamiento == null) {
+			posicionamiento = new Posicionamiento();
+			ExpedienteComercial eco = this.findOne(idExpediente);
+			posicionamiento.setExpediente(eco);
+		}
+
+		this.dtoToPosicionamiento(posicionamiento, dto);
+		
+		genericDao.save(Posicionamiento.class, posicionamiento);
+
+	}
+
+	
+	private Posicionamiento dtoToPosicionamiento (Posicionamiento posicionamiento, DtoPosicionamiento dto) {
+		
+		try {
+			beanUtilNotNull.copyProperty(posicionamiento, "fechaPosicionamiento", dto.getFechaPosicionamiento());
+			beanUtilNotNull.copyProperty(posicionamiento, "fechaRespuestaBC", dto.getFechaValidacionBCPos());
+			beanUtilNotNull.copyProperty(posicionamiento, "comentariosBC", dto.getObservacionesBcPos());
+			beanUtilNotNull.copyProperty(posicionamiento, "fechaEnvio", dto.getFechaEnvioPos());
+			
+			if(dto.getValidacionBCPosi() != null) {
+				DDApruebaDeniega dd = genericDao.get(DDApruebaDeniega.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getValidacionBCPosi()));
+				if(dd != null) {
+					posicionamiento.setValidacionBCPos(dd);
+				}
+			}
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		
+		return posicionamiento;
+	}
+	
+	@Override
+	public boolean checkVueltaAtras(Long idTramite) {
+		ExpedienteComercial eco = this.getExpedienteByIdTramite(idTramite);
+		boolean vueltaAtras = true;
+		if(eco != null) {
+			DtoPosicionamiento dto = getUltimoPosicionamientoEnviado(eco.getId());
+			if(dto != null && DDApruebaDeniega.getCodigoAprueba().equals(dto.getValidacionBCPosi())) {
+				vueltaAtras = false;
+			}
+		}
+
+		return vueltaAtras;
+	}
+	
+	private ExpedienteComercial getExpedienteByIdTramite(Long idTramite) {
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		ExpedienteComercial expediente = null;
+		if (!Checks.esNulo(activoTramite)) {
+			Trabajo trabajo = activoTramite.getTrabajo();
+
+			if (!Checks.esNulo(trabajo)) {
+				expediente = expedienteComercialDao.getExpedienteComercialByIdTrabajo(trabajo.getId());
+			}
+		}
+		
+		return expediente;
 	}
 }

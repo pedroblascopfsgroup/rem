@@ -698,6 +698,10 @@
             def tipoTratamiento = {
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.tipoTratamiento(tareaExterna);
+            }          
+             def checkVueltaAtras = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkVueltaAtras(idTramite);
             }
   			 ]]></value>
   		</list>

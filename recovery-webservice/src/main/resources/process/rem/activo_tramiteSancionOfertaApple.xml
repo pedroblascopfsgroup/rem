@@ -279,6 +279,7 @@
 	</state> <!--Transicion a decision T017_RecomendCESDecision -->
 	<decision name ="T017_ResolucionPROManzanaDecision" expression="#{T017_ResolucionPROManzanaDecision}">
         <transition to="join1" name="Acepta"></transition> <!--Nodo de union-->
+        <transition to="join2" name="ApruebaBC"></transition> <!--Nodo de union-->
         <transition to="T017_ResolucionExpediente" name="DeniegaConReserva"></transition>
 		<transition to="T017_ResolucionExpediente" name="DeniegaSinReservaONoExiste"></transition>
 	</decision> <!--Decision Resolucion Pro Manzana Resolucion Expediente / Resolucion Expediente / NODO DE UNION PREGUNTAR A SOLER -->

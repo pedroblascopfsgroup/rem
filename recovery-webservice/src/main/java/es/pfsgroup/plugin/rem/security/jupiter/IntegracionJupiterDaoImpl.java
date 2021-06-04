@@ -271,7 +271,7 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 	}
 	
 	private Filter obtenerFiltroCodigoSubcartera(String codigoSubcartera) {
-		return genericDao.createFilter(FilterType.EQUALS, CODIGO, codigoSubcartera);
+		return genericDao.createFilter(FilterType.EQUALS, DESCRIPCION, codigoSubcartera);
 	}
 	
 	private Filter obtenerFiltroUCACodigoSubcartera(String codigoSubcartera) {

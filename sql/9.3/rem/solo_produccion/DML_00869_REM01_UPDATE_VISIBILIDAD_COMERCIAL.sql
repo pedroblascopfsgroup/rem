@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20210604
+--## FECHA_CREACION=20210606
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14013
@@ -13,10 +13,13 @@
 --##        0.1 Versión inicial => Carga inicial del campo ACT_PAC_PERIMETRO_ACTIVO. 
 --##		- Cada merge es una de las condiciones que debe de cumplir. Primero se lanzan todas las condiciones para agrupaciones y después para activos.
 --##		- Tiene algunas reglas jerárquicas:
---##	 		- En caso de agrupaciones RESTRINGIDAS siempre el primer merge debe ser el de "publicados" el resto da igual el orden. El update al final.
---##	 		- En caso de activos siempre el primer merge debe ser el de "agrupaciones" seguido del de "publicados" el resto da igual el orden. El update al final.
+--##	 		- En caso de agrupaciones RESTRINGIDAS siempre el primer merge debe ser el de "aplicaComercial" seguido del de "publicado" el resto da igual el orden. El update al final.
+--##	 		- En caso de activos siempre el primer merge debe ser el de "agrupaciones" seguido del de "aplicaComercial" y de "publicado" el resto da igual el orden. El update al final.
+--##	 		- En caso de agrupaciones o activos, si se añadiese una nueva regla para marcar dependiendo de otro valor de forma directa: se debería de poner antes "publicados".
 --##	 		- En caso de agrupaciones o activos, si se añadiese una nueva regla para marcar como "SI": se debería de poner entre "publicados" y la primera que haya que setee a "0" el campo.
 --##	 		- En caso de agrupaciones o activos, si se añadiese una nueva regla para marcar como "NO": se debería de poner entre la primera que haya que setee a "0" el campo y el update final.
+--##        0.2 Versión inicial => Carga inicial del campo ACT_PAC_PERIMETRO_ACTIVO. 
+--##		- Añadida la regla jerárquica:  "Un activo que sea de la cartera sareb tendrá como estado de visibilidad comercial, su estado de comercialización"	
 --##
 --##########################################
 --*/
@@ -75,6 +78,22 @@ BEGIN
 				where tagg.dd_tag_codigo = ''02'' and a.borrado = 0  AND agr.agr_fecha_baja is null';
 	
 	DBMS_OUTPUT.PUT_LINE('- Actualizar de tabla auxiliar de agrupaciones');
+	
+	EXECUTE IMMEDIATE V_MSQL;
+	
+	-- Un activo que sea de la cartera sareb tendrá como estado de visibilidad comercial, su estado de comercialización
+	
+	V_MSQL:= 'MERGE INTO '||V_ESQUEMA||'.aux_vis_gestion_comercial_res AUX USING (
+			        SELECT a.act_id, pac.PAC_CHECK_COMERCIALIZAR FROM '||V_ESQUEMA||'.ACT_ACTIVO a 
+			        JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA cra on  a.dd_Cra_id = cra.dd_Cra_id AND cra.BORRADO = 0
+			        JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO pac on a.act_id = pac.act_id  and pac.borrado = 0
+			        WHERE cra.dd_Cra_codigo = ''02''   
+			    ) sarebComercializar
+			ON (aux.act_id = sarebComercializar.act_id)
+			WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = sarebComercializar.PAC_CHECK_COMERCIALIZAR
+			where CHECK_VISIBILIDAD is null';
+	
+	DBMS_OUTPUT.PUT_LINE('- sarebComercializar');
 	
 	EXECUTE IMMEDIATE V_MSQL;
 	
@@ -329,6 +348,20 @@ BEGIN
 	EXECUTE IMMEDIATE V_MSQL;
 	
 	-- A partir de aquí son las mismas restricciones que las de agrupaciones restringidas
+	
+		V_MSQL:= 'MERGE INTO '||V_ESQUEMA||'.aux_visibilidad_gestion_comercial AUX USING (
+			        SELECT a.act_id, pac.PAC_CHECK_COMERCIALIZAR FROM '||V_ESQUEMA||'.ACT_ACTIVO a 
+			        JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA cra on  a.dd_Cra_id = cra.dd_Cra_id AND cra.BORRADO = 0
+			        JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO pac on a.act_id = pac.act_id  and pac.borrado = 0
+			        WHERE cra.dd_Cra_codigo = ''02''   
+			    ) sarebComercializar
+			ON (aux.act_id = sarebComercializar.act_id)
+			WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = sarebComercializar.PAC_CHECK_COMERCIALIZAR
+			where CHECK_VISIBILIDAD is null';
+	
+	DBMS_OUTPUT.PUT_LINE('- sarebComercializar');
+	
+	EXECUTE IMMEDIATE V_MSQL;
 				
 	V_MSQL:= 'MERGE INTO '||V_ESQUEMA||'.aux_visibilidad_gestion_comercial AUX USING (
 			    SELECT A.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO a    
@@ -371,7 +404,7 @@ BEGIN
 			WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = 0
 			where CHECK_VISIBILIDAD is null';
 	
-	DBMS_OUTPUT.PUT_LINE('- sarebBk');
+	DBMS_OUTPUT.PUT_LINE('- Bk');
 	
 	EXECUTE IMMEDIATE V_MSQL;
 	

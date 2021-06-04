@@ -1275,14 +1275,17 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 							excluirValidaciones= particularValidator.getExcluirValidaciones(activo);
 						}
 						if(Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase()) || (excluirValidaciones != null && !excluirValidaciones)) {
-							
-							if(!particularValidator.isActivoPublicadoDependiendoSuTipoComercializacion(activo)) {
+							if(particularValidator.isActivoSareb(activo)) {
+								if(!particularValidator.aplicaComercializar(activo)) {
+									listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_NO_COMERCIALIZABLE));
+								}
+							}else if(!particularValidator.isActivoPublicadoDependiendoSuTipoComercializacion(activo)) {
 								if(particularValidator.isActivoDestinoComercialSoloAlquiler(activo)) {
 									listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_ESTADO_PUBLICACION));
 									pararComprobaciones = true;
 								}
 								if(!pararComprobaciones) {
-									if(particularValidator.isActivoBankia(activo) || particularValidator.isActivoSareb(activo)) {
+									if(particularValidator.isActivoBankia(activo)) {
 										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_ESTADO_PUBLICACION));
 										pararComprobaciones = true;	
 									}else if(particularValidator.activoBBVAPerteneceSociedadParticipada(activo)) {

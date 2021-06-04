@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Sergio Gómez
---## FECHA_CREACION=20210601
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20210604
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14165
+--## INCIDENCIA_LINK=HREOS-14219
 --## PRODUCTO=NO
 --## Finalidad: vista para sacar rechazos de un gasto
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Añadir nuevo campo TIPO_IMPORTE
 --##########################################
 --*/
 
@@ -64,7 +65,8 @@ BEGIN
     ACT.ACT_ID AS ACT_ID,
     act.ACT_NUM_ACTIVO AS NUM_ACTIVO,
     RGS.MENSAJE_ERROR AS MENSAJE_ERROR,
-    RGS.FECHA_PROCESADO AS FECHA_PROCESADO
+    RGS.FECHA_PROCESADO AS FECHA_PROCESADO,
+    RGS.TIPO_IMPORTE AS TIPO_IMPORTE
 
     FROM 
         '||V_ESQUEMA||'.ACT_RGS_RECHAZOS_GASTOS_SAPBC RGS

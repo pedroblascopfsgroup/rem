@@ -727,6 +727,11 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getcomboSociedadAnteriorBBVA() {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getcomboSociedadAnteriorBBVA()));	
 	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioEstadosOfertas(String cartera, String equipoGestion){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioEstadosOfertas(cartera, equipoGestion)));	
+	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

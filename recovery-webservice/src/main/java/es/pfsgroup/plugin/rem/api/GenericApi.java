@@ -374,4 +374,6 @@ public interface GenericApi {
 	HashMap<String, String> validateCierreOficinaPostRequestData(CierreOficinaBankiaDto cierreOfiDto)
 			throws Exception;
 
+	List getDiccionarioEstadosOfertas(String cartera, String equipoGestion);
+
 }

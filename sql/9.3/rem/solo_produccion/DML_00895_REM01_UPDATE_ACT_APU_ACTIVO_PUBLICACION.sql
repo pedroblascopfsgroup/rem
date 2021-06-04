@@ -40,7 +40,7 @@ DECLARE
             T_TIPO_DATA('7321900', '04', '1', '1'),
             T_TIPO_DATA('7304322', '04', '1', '1'),
             T_TIPO_DATA('7311336', '04', '1', '1'),
-            T_TIPO_DATA('7304378', '01', '0', '0'),
+            T_TIPO_DATA('7304378', '01', '0', '0')
 
     	); 
     	V_TMP_TIPO_DATA T_TIPO_DATA;

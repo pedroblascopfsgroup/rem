@@ -3717,6 +3717,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 				if(posicionamiento.getValidacionBCPos() != null ) {
 					beanUtilNotNull.copyProperty(posicionamientoDto, "validacionBCPosi", posicionamiento.getValidacionBCPos().getCodigo());
+					beanUtilNotNull.copyProperty(posicionamientoDto, "validacionBCPosiDesc", posicionamiento.getValidacionBCPos().getDescripcion());
 				}
 				
 				beanUtilNotNull.copyProperty(posicionamientoDto, "fechaEnvioPos", posicionamiento.getFechaEnvioPos());
@@ -3755,6 +3756,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			beanUtilNotNull.copyProperty(posicionamiento, "lugarFirma", dto.getLugarFirma());
+			if(dto.getObservacionesRem() != null) {
+				beanUtilNotNull.copyProperty(posicionamiento, "observacionesRem", dto.getObservacionesRem());
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en ExpedienteComercialManager", e);

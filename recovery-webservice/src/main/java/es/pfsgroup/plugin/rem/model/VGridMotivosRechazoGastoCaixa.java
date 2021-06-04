@@ -46,6 +46,9 @@ public class VGridMotivosRechazoGastoCaixa implements Serializable {
 
 	@Column(name = "FECHA_PROCESADO")
 	private Date fechaProcesado;
+	
+	@Column(name = "TIPO_IMPORTE")
+	private String tipoImporte;
 
 	public Long getId() {
 		return id;
@@ -134,8 +137,14 @@ public class VGridMotivosRechazoGastoCaixa implements Serializable {
 	public void setFechaProcesado(Date fechaProcesado) {
 		this.fechaProcesado = fechaProcesado;
 	}
-	
 
+	public String getTipoImporte() {
+		return tipoImporte;
+	}
+
+	public void setTipoImporte(String tipoImporte) {
+		this.tipoImporte = tipoImporte;
+	}
 	
 }
 

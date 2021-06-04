@@ -61,6 +61,9 @@ public class ActivoRechazoGasto implements Serializable, Auditable {
 	
 	@Column(name = "FECHA_PROCESADO")
     private Date fechaProcesado;
+	
+	@Column(name = "TIPO_IMPORTE")
+	private String tipoImporte;
 			
 	@Version   
 	private Long version;
@@ -122,6 +125,14 @@ public class ActivoRechazoGasto implements Serializable, Auditable {
 
 	public void setErrores(DDListadoErrores errores) {
 		this.errores = errores;
+	}
+
+	public String getTipoImporte() {
+		return tipoImporte;
+	}
+
+	public void setTipoImporte(String tipoImporte) {
+		this.tipoImporte = tipoImporte;
 	}
 
 	

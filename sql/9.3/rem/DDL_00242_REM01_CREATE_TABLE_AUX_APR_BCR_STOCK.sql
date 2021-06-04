@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20210601
+--## AUTOR=Santi Monzó
+--## FECHA_CREACION=20210610
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14162
+--## INCIDENCIA_LINK=HREOS-14199
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - HREOS-13942 - Santi Monzó
 --##        0.2 Versión inicial - HREOS-14162 - Alejandra García - Añadir campos
+--##        0.3  HREOS-14199 -  Santi Monzó - Añadir array ara que cree las 4 tablas, añadir campo FLAG_EN_REM en las BCR
 --##########################################
 --*/
 
@@ -38,26 +39,47 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'AUX_APR_BCR_STOCK'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_COMMENT_TABLE VARCHAR2(500 CHAR):= ''; -- Vble. para los comentarios de las tablas
+   
+
+
+  TYPE T_COL IS TABLE OF VARCHAR2(500 CHAR);
+  TYPE T_ARRAY_COL IS TABLE OF T_COL;
+  V_COL T_ARRAY_COL := T_ARRAY_COL(
+  	  T_COL('AUX_APR_BCR_STOCK',',FLAG_EN_REM NUMBER (1)'),
+      T_COL('AUX_APR_RBC_STOCK',''),
+      T_COL('AUX_APR_BCR_DELTA',',FLAG_EN_REM NUMBER (1)'),
+      T_COL('AUX_APR_RBC_DELTA','')
+	  
+   );  
+  V_TMP_COL T_COL;
+
+
+
+
 
 BEGIN
+
+    FOR I IN V_COL.FIRST .. V_COL.LAST
+    LOOP
+        V_TMP_COL := V_COL(I);
     
-    DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
-    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas');
+  --  DBMS_OUTPUT.PUT_LINE('********'||V_TMP_COL(1)||'********'); 
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TMP_COL(1)||'... Comprobaciones previas');
     
 
     -- Verificar si la tabla ya existe
-    V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+    V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TMP_COL(1)||''' and owner = '''||V_ESQUEMA||'''';
     EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS; 
     IF V_NUM_TABLAS = 1 THEN
-        DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Ya existe. Se borrará.');
-        EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' CASCADE CONSTRAINTS';
+        DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TMP_COL(1)||'... Ya existe. Se borrará.');
+        EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TMP_COL(1)||' CASCADE CONSTRAINTS';
         
     END IF;
 
     
     -- Creamos la tabla
-    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
-    V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
+    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TMP_COL(1)||'...');
+    V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TMP_COL(1)||'
     (
         NUM_IDENTIFICATIVO          VARCHAR2(8 CHAR),
         NUM_UNIDAD                  VARCHAR2(8 CHAR),
@@ -157,8 +179,9 @@ BEGIN
         CAT_COMERCIALIZACION        VARCHAR2(2 CHAR),
         TRIBUT_PROPUESTA_VENTA      VARCHAR2(2 CHAR),
         TRIBUT_PROPUESTA_CLI_EXT_IVA  VARCHAR2(2 CHAR),
+        CANAL_DISTRIBUCION_ALQ VARCHAR2(2 CHAR),
 
-        AÑO_CONCESION               VARCHAR2(4 CHAR),
+        ANYO_CONCESION               VARCHAR2(4 CHAR),
         FEC_FIN_CONCESION           VARCHAR2(8 CHAR),
         CALIFICACION_ENERGETICA     VARCHAR2(2 CHAR),
         CERTIFICADO_REGISTRADO      VARCHAR2(16 CHAR),
@@ -181,10 +204,10 @@ BEGIN
         SUP_REGISTRAL_UTIL          VARCHAR2(10 CHAR),
         SUP_TASACION_CONSTRUIDA     VARCHAR2(10 CHAR),
         NUM_HABITACIONES            VARCHAR2(10 CHAR),
-        NUM_BAÑOS                   VARCHAR2(10 CHAR),
+        NUM_BANYOS                   VARCHAR2(10 CHAR),
         NUM_TERRAZAS                VARCHAR2(10 CHAR),
-        AÑO_CONSTRUCCION            VARCHAR2(10 CHAR),
-        AÑO_ULTIMA_REFORMA          VARCHAR2(10 CHAR),
+        ANYO_CONSTRUCCION            VARCHAR2(10 CHAR),
+        ANYO_ULTIMA_REFORMA          VARCHAR2(10 CHAR),
         SUP_SOBRE_RASANTE           VARCHAR2(10 CHAR),
         SUP_BAJO_RASANTE            VARCHAR2(10 CHAR),
         NUM_APARACAMIENTOS          VARCHAR2(10 CHAR),
@@ -200,25 +223,27 @@ BEGIN
         IMP_PRECIO_ALQUI            VARCHAR2(10 CHAR),
         PRECIO_ALQUI_NEGOCIABLE     VARCHAR2(1 CHAR),
         DESC_COL_PRECIO_CAMP_ALQUI  VARCHAR2(60 CHAR),
+        
         IMP_PRECIO_CAMP_ALQUI       VARCHAR2(10 CHAR),
         PRECIO_CAMP_ALQUI_NEGOCIABLE VARCHAR2(1 CHAR),
         DESC_COL_PRECIO_CAMP_VENTA  VARCHAR2(60 CHAR),
         IMP_PRECIO_CAMP_VENTA       VARCHAR2(10 CHAR),
         PRECIO_CAMP_VENTA_NEGOCIABLE VARCHAR2(1 CHAR),
         DESC_COL_PRECIO_VENTA       VARCHAR2(60 CHAR),
+      
+        FEC_INICIO_PRECIO_VENTA VARCHAR2(8 CHAR),
+        FEC_FIN_PRECIO_VENTA    VARCHAR2(8 CHAR),
+        FEC_INICIO_PRECIO_ALQUI VARCHAR2(8 CHAR),
+        FEC_FIN_PRECIO_ALQUI    VARCHAR2(8 CHAR),
+        FEC_INICIO_PRECIO_CAMP_VENTA VARCHAR2(8 CHAR),
+        FEC_FIN_PRECIO_CAMP_VENTA VARCHAR2(8 CHAR),
+        FEC_INICIO_PRECIO_CAMP_ALQUI VARCHAR2(8 CHAR),
+        FEC_FIN_PRECIO_CAMP_ALQUI VARCHAR2(8 CHAR),
+
         IMP_PRECIO_REF_ALQUI        VARCHAR2(10 CHAR),
 
-        FEC_INI_PRECIO_VENTA        VARCHAR2(8 CHAR),
-        FEC_FIN_PRECIO_VENTA        VARCHAR2(8 CHAR),
-        FEC_INI_PRECIO_ALQUILER     VARCHAR2(8 CHAR),
-        FEC_FIN_PRECIO_ALQUILER     VARCHAR2(8 CHAR),
-        FEC_INI_PRECIO_CAMP_VENTA   VARCHAR2(8 CHAR),
-        FEC_FIN_PRECIO_CAMP_VENTA   VARCHAR2(8 CHAR),
-        FEC_INI_PRECIO_CAMP_ALQUILER VARCHAR2(8 CHAR),
-        FEC_FIN_PRECIO_CAMP_ALQUILER VARCHAR2(8 CHAR),
-
         FEC_POSESION                VARCHAR2(8 CHAR),
-        FEC_SEÑAL_LANZAMINETO       VARCHAR2(8 CHAR),
+        FEC_SENYAL_LANZAMIENTO      VARCHAR2(8 CHAR),
         FEC_LANZAMINETO             VARCHAR2(8 CHAR),
         AVISO_OCUP_SERVICER         VARCHAR2(8 CHAR),
         IND_FUERZA_PUBLICA          VARCHAR2(8 CHAR),
@@ -226,6 +251,7 @@ BEGIN
         FEC_RESOLUCION_MORA         VARCHAR2(8 CHAR),
         IND_ENTREGA_VOL_POSESI      VARCHAR2(8 CHAR)
 
+        '||V_TMP_COL(2)||'
 
 
         
@@ -237,188 +263,188 @@ BEGIN
     NOMONITORING
     ';
     EXECUTE IMMEDIATE V_MSQL;
-    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TMP_COL(1)||'... Tabla creada.');
     
 
     
     -- Creamos comentario   
-    V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';       
+    V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TMP_COL(1)||' IS '''||V_COMMENT_TABLE||'''';       
     EXECUTE IMMEDIATE V_MSQL;
-    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TMP_COL(1)||'... Comentario creado.');
     
     
-    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
+    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TMP_COL(1)||'... OK');
 
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.NUM_IDENTIFICATIVO IS '' Número identificativo del Preinmueble/Número identificativo del Inmueble
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUM_IDENTIFICATIVO IS '' Número identificativo del Preinmueble/Número identificativo del Inmueble
 /Número identificativo de la superficie inmobiliaria''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.NUM_UNIDAD IS '' Numero de la Unidad Inmobiliaria''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.CLASE_USO IS '' Clase de uso del Preinmueble.
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUM_UNIDAD IS '' Numero de la Unidad Inmobiliaria''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CLASE_USO IS '' Clase de uso del Preinmueble.
 /Clase de uso del Inmuebe.''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.NUM_INMUEBLE IS '' Número de inmueble en el sistema de HAYA''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.CUOTA IS '' Cuaota de propiedad''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.GRADO_PROPIEDAD IS '' Porcentaje de propiedad''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_VALIDO_DE IS '' Fecha desde de validez del Preinmueble / Inmueble''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_VALIDO_A IS '' Fecha hasta de validez del Preinmueble / Inmueble''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.STATUS_USUARIO IS '' Status usuario LVMS - Declaración de obra nueva''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.SITUACION_ALQUILER IS '' Si el activo tiene SI, se envía una X''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUM_INMUEBLE IS '' Número de inmueble en el sistema de HAYA''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CUOTA IS '' Cuaota de propiedad''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.GRADO_PROPIEDAD IS '' Porcentaje de propiedad''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_VALIDO_DE IS '' Fecha desde de validez del Preinmueble / Inmueble''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_VALIDO_A IS '' Fecha hasta de validez del Preinmueble / Inmueble''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.STATUS_USUARIO IS '' Status usuario LVMS - Declaración de obra nueva''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SITUACION_ALQUILER IS '' Si el activo tiene SI, se envía una X''';
 
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PRODUCTO IS '' Procedencia del producto''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PROCEDENCIA_PRODUCTO IS '' Indica si es crediticio o no crediticio''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.SOCIEDAD_ORIGEN IS '' Empresa origen''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.BANCO_ORIGEN IS '' Banco origen''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PRODUCTO IS '' Procedencia del producto''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PROCEDENCIA_PRODUCTO IS '' Indica si es crediticio o no crediticio''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SOCIEDAD_ORIGEN IS '' Empresa origen''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.BANCO_ORIGEN IS '' Banco origen''';
     
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FINCA IS '' FINCA''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.LIBRO IS '' LIBRO''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.TOMO IS '' TOMO''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FOLIO IS '' FOLIO''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.INSCRIPCION IS '' INSCRIPCION''';  
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.NUM_CARTILLA IS '' Número de cartilla evaluatoria que tiene el flag Activa''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FINCA IS '' FINCA''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.LIBRO IS '' LIBRO''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TOMO IS '' TOMO''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FOLIO IS '' FOLIO''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.INSCRIPCION IS '' INSCRIPCION''';  
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUM_CARTILLA IS '' Número de cartilla evaluatoria que tiene el flag Activa''';
    
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.VIVIENDA_HABITUAL IS '' Marca de si es residencia habitual en la concesión del prestamos''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_PRESENTACION_REGISTRO IS '' Fecha presentación en el registro''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_INSC_TITULO IS '' Fecha desde de los estados "Título inscrito" o "Título inscrito con cargas" de la sitaución Proceso judicial titularidad''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.VIVIENDA_HABITUAL IS '' Marca de si es residencia habitual en la concesión del prestamos''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_PRESENTACION_REGISTRO IS '' Fecha presentación en el registro''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_INSC_TITULO IS '' Fecha desde de los estados "Título inscrito" o "Título inscrito con cargas" de la sitaución Proceso judicial titularidad''';
     
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_TITULO_FIRME IS '' Fecha desde de los estados "Decreto firme", "Título" o "Título con defectos" de la sitaución Proceso judicial titularidad''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_TITULO_FIRME IS '' Fecha desde de los estados "Decreto firme", "Título" o "Título con defectos" de la sitaución Proceso judicial titularidad''';
 
 
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_PRESENTADO IS '' Fecha real del Estado "Presentado al registro subsanado" de la situación de titularidad''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.INDICADOR_LLAVES IS '' INDICADOR NECESARIO LLAVES''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_RECEP_LLAVES IS '' FECHA RECEPCION DE LLAVES EN 0''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.NUM_AUTOS_JUZGADO IS '' NUMERO DE AUTOS JUZGADO''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.TIPO_IMPUESTO_COMPRA IS '' TIPO IMPUESTO COMPRA''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.SUBTIPO_IMPUESTO_COMPRA IS '' SUBTIPO IMPUESTO COMPRA''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PORC_IMPUESTO_COMPRA IS '' PORCENTAJE IMPUESTO COMPRA''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.COD_TP_IVA_COMPRA IS '' Cód. TP IVA Compra''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.NUM_CARGAS IS '' Se deberá calcular si tiene cargas no canceladas. Si las tiene se envía S, y sino N''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.COD_GESTORIA IS '' Código interlocutor con rol Gestoría''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.COD_REGISTRO_PROPIEDAD IS '' Interlocutor TR0810 y dentro él, el campo XXXX''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.MUNI_REGISTRO_PROPIEDAD IS '' Municipio del interlocutor con rol Registro''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.COD_GESTORIA_ADMINIS IS '' Código intercolutor con rol Gestoría administrativa''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_PRESENTADO IS '' Fecha real del Estado "Presentado al registro subsanado" de la situación de titularidad''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.INDICADOR_LLAVES IS '' INDICADOR NECESARIO LLAVES''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_RECEP_LLAVES IS '' FECHA RECEPCION DE LLAVES EN 0''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUM_AUTOS_JUZGADO IS '' NUMERO DE AUTOS JUZGADO''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TIPO_IMPUESTO_COMPRA IS '' TIPO IMPUESTO COMPRA''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUBTIPO_IMPUESTO_COMPRA IS '' SUBTIPO IMPUESTO COMPRA''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PORC_IMPUESTO_COMPRA IS '' PORCENTAJE IMPUESTO COMPRA''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.COD_TP_IVA_COMPRA IS '' Cód. TP IVA Compra''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUM_CARGAS IS '' Se deberá calcular si tiene cargas no canceladas. Si las tiene se envía S, y sino N''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.COD_GESTORIA IS '' Código interlocutor con rol Gestoría''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.COD_REGISTRO_PROPIEDAD IS '' Interlocutor TR0810 y dentro él, el campo XXXX''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.MUNI_REGISTRO_PROPIEDAD IS '' Municipio del interlocutor con rol Registro''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.COD_GESTORIA_ADMINIS IS '' Código intercolutor con rol Gestoría administrativa''';
    
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.COMPLEMENTO IS '' Tipo de vía de la dirección''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.CALLE IS '' Dirección del OI. Se quiere poner el nombre "Vía"''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.NUMERO IS '' Número dentro de la calle''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.APARTADO IS '' Código postal''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.POBLACION IS '' Población en formato de 5 dígitos de INE''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.REGION IS '' Provincia con los dos primeros dígitos del Código postal''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PAIS IS '' País''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.CALLE2 IS '' Complemento de la calle, en el caso de que por ejemplo un inmueble esté haciendo esquina''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.DISTRITO IS '' Distrito. Usado en cuidades grandes como Madrid o Barcelona''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.ALA_EDIFICIO IS '' Escalera''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PLANTA IS '' Planta dentro del Edificio''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.NUM_UBICACION IS '' Número de la puerta dentro del Edificio''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.X_GOOGLE IS '' Coordenadas X en Google''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.Y_GOOGLE IS '' Coordenadas X en Google''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.SIGLA_EDIFICIO IS '' Bloque''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.COMPLEMENTO IS '' Tipo de vía de la dirección''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CALLE IS '' Dirección del OI. Se quiere poner el nombre "Vía"''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUMERO IS '' Número dentro de la calle''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.APARTADO IS '' Código postal''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.POBLACION IS '' Población en formato de 5 dígitos de INE''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.REGION IS '' Provincia con los dos primeros dígitos del Código postal''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PAIS IS '' País''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CALLE2 IS '' Complemento de la calle, en el caso de que por ejemplo un inmueble esté haciendo esquina''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.DISTRITO IS '' Distrito. Usado en cuidades grandes como Madrid o Barcelona''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ALA_EDIFICIO IS '' Escalera''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PLANTA IS '' Planta dentro del Edificio''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUM_UBICACION IS '' Número de la puerta dentro del Edificio''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.X_GOOGLE IS '' Coordenadas X en Google''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.Y_GOOGLE IS '' Coordenadas X en Google''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SIGLA_EDIFICIO IS '' Bloque''';
     
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.ESTADO_TITULARIDAD IS '' Estado de la titularidad del activo inmobiliario''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_ESTADO_TITULARIDAD IS '' Fecha del estado de la titularidad del activo inmobiliario''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.ESTADO_POSESORIO IS '' Estado posesorio del activo inmobiliario''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_ESTADO_POSESORIO IS '' Fecha del estado posesorio del activo inmobiliario''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.ESTADO_COMERCIAL_ALQUILER IS '' Estado comercial de alquiler del activo inmobiliario''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_ESTADO_COMERCIAL_ALQUILER IS '' Fecha del estado comercial de alquiler del activo inmobiliario''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.ESTADO_COMERCIAL_VENTA IS '' Estado comercial de venta del activo inmobiliario''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_ESTADO_COMERCIAL_VENTA IS '' Fecha del estado comercial de la venta del activo inmobiliario''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.ESTADO_TECNICO IS '' Estado técnico del activo inmobiliario''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_ESTADO_TECNICO IS '' Fecha del estado técnico del activo inmobiliario''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ESTADO_TITULARIDAD IS '' Estado de la titularidad del activo inmobiliario''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_ESTADO_TITULARIDAD IS '' Fecha del estado de la titularidad del activo inmobiliario''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ESTADO_POSESORIO IS '' Estado posesorio del activo inmobiliario''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_ESTADO_POSESORIO IS '' Fecha del estado posesorio del activo inmobiliario''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ESTADO_COMERCIAL_ALQUILER IS '' Estado comercial de alquiler del activo inmobiliario''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_ESTADO_COMERCIAL_ALQUILER IS '' Fecha del estado comercial de alquiler del activo inmobiliario''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ESTADO_COMERCIAL_VENTA IS '' Estado comercial de venta del activo inmobiliario''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_ESTADO_COMERCIAL_VENTA IS '' Fecha del estado comercial de la venta del activo inmobiliario''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ESTADO_TECNICO IS '' Estado técnico del activo inmobiliario''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_ESTADO_TECNICO IS '' Fecha del estado técnico del activo inmobiliario''';
 
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PROMO_CONJUNTA_OB_REM IS '' Código de promoción conjunta Ob-rem a la que pertenece el activo inmobiliario''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PROMO_CONJUNTA_VENTA IS '' Código de promoción conjunta venta a la que pertenece el activo inmobiliario''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PROMO_CONJUNTA_ALQUILER IS '' Código de promoción conjunta alquiler a la que pertenece el activo inmobiliario''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.ACTIVO_CARTERA_CONCENTRADA IS '' Flag Activo cartera concentrada.''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.ACTIVO_AAMM IS '' Flag Activo AAMM (Asset Management). Neceista una gestión/explitación''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.ACTIVO_PROMO_ESTRATEG IS '' Flag Activo promociones estratégicas''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.DESTINO_COMERCIAL IS '' Destino comercial del activo inmobiliario''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.CANAL_DISTRIBUCION IS '' Canal distribución''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.MOTIVO_NO_COMERCIAL IS '' Motivo no comercializable''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_INICIO_CONCURENCIA IS '' Fecha inicio concurrencia''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_FIN_CONCURENCIA IS '' Fecha fin concurrencia''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_VISITA_INMB_SERVICER IS '' Fecha visita del inmueble por parte del Servicer''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_PUBLICACION_SERVICER IS '' Fecha de publicación en el Servicer''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PUBLICABLE_PORT_PUBLI_VENTA IS '' Flag Publicable portal público venta''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PUBLICABLE_PORT_PUBLI_ALQUI IS '' Flag Publicable portal público alquiler''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PUBLICABLE_PORT_INVER_VENTA IS '' Flag Publicable portal inversor venta''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PUBLICABLE_PORT_INVER_ALQUI IS '' Flag Publicable portal inversor alquiler''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PUBLICABLE_PORT_API_VENTA IS '' Flag Publicable portal API venta''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PUBLICABLE_PORT_API_ALQUI IS '' Flag Publicable portal API alquiler''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.NECESIDAD_ARRAS IS '' Campo que indica si se cumplen o no las condiciones para necesidad de arras. Si es liquidable es que no necesita arras.''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.MOT_NECESIDAD_ARRAS IS '' Motivo a informar en el caso de que el campo Liquidez inmueble tenga el valor "Inmueble no líquido"''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.RENUNCIA_EXENSION IS '' Renuncia exención''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.CARTERA_VENTA_ACTIVOS IS '' Cartera venta activos''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.CARTERA_VENTA_CREDITOS IS '' Cartera venta créditos''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.CAT_COMERCIALIZACION IS '' Tipo de comercialización''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.TRIBUT_PROPUESTA_VENTA IS '' Tributación a la que se propone vender el inmueble''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.TRIBUT_PROPUESTA_CLI_EXT_IVA IS '' Tirbutación a la que se propone vender en caso de cliente exstenos de IVA''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PROMO_CONJUNTA_OB_REM IS '' Código de promoción conjunta Ob-rem a la que pertenece el activo inmobiliario''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PROMO_CONJUNTA_VENTA IS '' Código de promoción conjunta venta a la que pertenece el activo inmobiliario''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PROMO_CONJUNTA_ALQUILER IS '' Código de promoción conjunta alquiler a la que pertenece el activo inmobiliario''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ACTIVO_CARTERA_CONCENTRADA IS '' Flag Activo cartera concentrada.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ACTIVO_AAMM IS '' Flag Activo AAMM (Asset Management). Neceista una gestión/explitación''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ACTIVO_PROMO_ESTRATEG IS '' Flag Activo promociones estratégicas''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.DESTINO_COMERCIAL IS '' Destino comercial del activo inmobiliario''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CANAL_DISTRIBUCION IS '' Canal distribución''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.MOTIVO_NO_COMERCIAL IS '' Motivo no comercializable''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_INICIO_CONCURENCIA IS '' Fecha inicio concurrencia''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_FIN_CONCURENCIA IS '' Fecha fin concurrencia''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_VISITA_INMB_SERVICER IS '' Fecha visita del inmueble por parte del Servicer''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_PUBLICACION_SERVICER IS '' Fecha de publicación en el Servicer''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PUBLICABLE_PORT_PUBLI_VENTA IS '' Flag Publicable portal público venta''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PUBLICABLE_PORT_PUBLI_ALQUI IS '' Flag Publicable portal público alquiler''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PUBLICABLE_PORT_INVER_VENTA IS '' Flag Publicable portal inversor venta''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PUBLICABLE_PORT_INVER_ALQUI IS '' Flag Publicable portal inversor alquiler''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PUBLICABLE_PORT_API_VENTA IS '' Flag Publicable portal API venta''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PUBLICABLE_PORT_API_ALQUI IS '' Flag Publicable portal API alquiler''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NECESIDAD_ARRAS IS '' Campo que indica si se cumplen o no las condiciones para necesidad de arras. Si es liquidable es que no necesita arras.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.MOT_NECESIDAD_ARRAS IS '' Motivo a informar en el caso de que el campo Liquidez inmueble tenga el valor "Inmueble no líquido"''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.RENUNCIA_EXENSION IS '' Renuncia exención''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CARTERA_VENTA_ACTIVOS IS '' Cartera venta activos''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CARTERA_VENTA_CREDITOS IS '' Cartera venta créditos''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CAT_COMERCIALIZACION IS '' Tipo de comercialización''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TRIBUT_PROPUESTA_VENTA IS '' Tributación a la que se propone vender el inmueble''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TRIBUT_PROPUESTA_CLI_EXT_IVA IS '' Tirbutación a la que se propone vender en caso de cliente exstenos de IVA''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CANAL_DISTRIBUCION_ALQ IS '' Canal distribución alquiler''';
 
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.AÑO_CONCESION IS '' Año de concesión''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_FIN_CONCESION IS '' Fecha fin de conceción''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.CALIFICACION_ENERGETICA IS '' Calificación energética''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.CERTIFICADO_REGISTRADO IS '' Es un S/N para saber si se ha registrado el certificado donde toque en la comunidad''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_SOLICITUD IS '' Fecha solicitud certificado energético''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_FIN_VIGENCIA IS '' Fecha fin vigencia certificado energético''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.LISTA_EMISIONES IS '' Lista emisiones''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.VALORES_EMISIONES IS '' Valores emisiones''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.LISTA_ENERGIA IS '' Lista energía''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.VALOR_ENERGIA IS '' Valor energía''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.CEDULA_HABITABILIDAD IS '' Cédula habitabilidad''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PRECIO_MAX_MOD_VENTA IS '' Precio máximo módulo venta''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PRECIO_MAX_MOD_ALQUILER IS '' Precio máximo módulo alquiler''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.SITUACION_VPO IS '' Situación V.P.O''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.NECESARIA_AUTORI_TRANS IS '' Necesaria autorización transmisión''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.TANTEO_RETRACTO_TRANS IS '' Tanteo-Retracto en Transmisión''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ANYO_CONCESION IS '' Año de concesión''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_FIN_CONCESION IS '' Fecha fin de conceción''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CALIFICACION_ENERGETICA IS '' Calificación energética''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CERTIFICADO_REGISTRADO IS '' Es un S/N para saber si se ha registrado el certificado donde toque en la comunidad''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_SOLICITUD IS '' Fecha solicitud certificado energético''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_FIN_VIGENCIA IS '' Fecha fin vigencia certificado energético''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.LISTA_EMISIONES IS '' Lista emisiones''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.VALORES_EMISIONES IS '' Valores emisiones''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.LISTA_ENERGIA IS '' Lista energía''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.VALOR_ENERGIA IS '' Valor energía''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CEDULA_HABITABILIDAD IS '' Cédula habitabilidad''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PRECIO_MAX_MOD_VENTA IS '' Precio máximo módulo venta''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PRECIO_MAX_MOD_ALQUILER IS '' Precio máximo módulo alquiler''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SITUACION_VPO IS '' Situación V.P.O''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NECESARIA_AUTORI_TRANS IS '' Necesaria autorización transmisión''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TANTEO_RETRACTO_TRANS IS '' Tanteo-Retracto en Transmisión''';
     
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.SUP_TASACION_SOLAR IS '' Superficie tasación solar''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PORC_OBRA_EJECUTADA IS '' Porcentaje obra ejecutada''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.SUP_TASACION_UTIL IS '' Superficie tasación útil''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.SUP_REGISTRAL_UTIL IS '' Superficie registral útil''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.SUP_TASACION_CONSTRUIDA IS '' Superficie tasación construida''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.NUM_HABITACIONES IS '' Número de habitaciones. Daremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.NUM_BAÑOS IS '' Número de baños. Daremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.NUM_TERRAZAS IS '' Número de terrazas. Daremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.AÑO_CONSTRUCCION IS '' Año de construcción''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.AÑO_ULTIMA_REFORMA IS '' Año de última reforma. Daremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.SUP_SOBRE_RASANTE IS '' Superficie sobre rasante''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.SUP_BAJO_RASANTE IS '' Superficie bajo rasante''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.NUM_APARACAMIENTOS IS '' Número de aparcamientos. Daremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUP_TASACION_SOLAR IS '' Superficie tasación solar''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PORC_OBRA_EJECUTADA IS '' Porcentaje obra ejecutada''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUP_TASACION_UTIL IS '' Superficie tasación útil''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUP_REGISTRAL_UTIL IS '' Superficie registral útil''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUP_TASACION_CONSTRUIDA IS '' Superficie tasación construida''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUM_HABITACIONES IS '' Número de habitaciones. Daremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUM_BANYOS IS '' Número de baños. Daremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUM_TERRAZAS IS '' Número de terrazas. Daremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ANYO_CONSTRUCCION IS '' Año de construcción''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ANYO_ULTIMA_REFORMA IS '' Año de última reforma. Daremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUP_SOBRE_RASANTE IS '' Superficie sobre rasante''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUP_BAJO_RASANTE IS '' Superficie bajo rasante''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUM_APARACAMIENTOS IS '' Número de aparcamientos. Daremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
 
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.TIENE_ASCENSOR IS '' Marca de si tiene ascensor. PDaremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.TIENE_TRASTERO IS '' Marca de si tiene trastero. Daremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.INMUEBLE_VACACIONAL IS '' Marca de si es un inmueble vacacional.''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.EQUIPAMIENTO_015001 IS '' Marca de si tiene parking''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TIENE_ASCENSOR IS '' Marca de si tiene ascensor. PDaremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TIENE_TRASTERO IS '' Marca de si tiene trastero. Daremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.INMUEBLE_VACACIONAL IS '' Marca de si es un inmueble vacacional.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.EQUIPAMIENTO_015001 IS '' Marca de si tiene parking''';
 
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.IMP_PRECIO_VENTA IS '' Importe Clase de condición Precio de venta''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PRECIO_VENTA_NEGOCIABLE IS '' Flag precio venta negociable''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.DESC_COLEC_PRECIO_ALQUI IS '' Conjunto de descuentos colectivos que se pueden aplicar''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.IMP_PRECIO_ALQUI IS '' Importe Clase de condición Precio de alquiler''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PRECIO_ALQUI_NEGOCIABLE IS '' Flag precio alquiler negociable''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.DESC_COL_PRECIO_CAMP_ALQUI IS '' Conjunto de descuentos colectivos que se pueden aplicar''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.IMP_PRECIO_CAMP_ALQUI IS '' Importe Clase de condición precio campaña alquiler''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PRECIO_CAMP_ALQUI_NEGOCIABLE IS '' Flag precio campaña alquiler negociable''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.DESC_COL_PRECIO_CAMP_VENTA IS '' Conjunto de descuentos colectivos que se pueden aplicar''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.IMP_PRECIO_CAMP_VENTA IS '' Importe Clase de condición precio campaña venta''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PRECIO_CAMP_VENTA_NEGOCIABLE IS '' Flag precio campaña venta negociable''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.DESC_COL_PRECIO_VENTA IS '' Conjunto de descuentos colectivos que se pueden aplicar''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.IMP_PRECIO_REF_ALQUI IS '' Importe Clase de condición precio referencia alquiler''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IMP_PRECIO_VENTA IS '' Importe Clase de condición Precio de venta''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PRECIO_VENTA_NEGOCIABLE IS '' Flag precio venta negociable''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.DESC_COLEC_PRECIO_ALQUI IS '' Conjunto de descuentos colectivos que se pueden aplicar''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IMP_PRECIO_ALQUI IS '' Importe Clase de condición Precio de alquiler''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PRECIO_ALQUI_NEGOCIABLE IS '' Flag precio alquiler negociable''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.DESC_COL_PRECIO_CAMP_ALQUI IS '' Conjunto de descuentos colectivos que se pueden aplicar''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IMP_PRECIO_CAMP_ALQUI IS '' Importe Clase de condición precio campaña alquiler''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PRECIO_CAMP_ALQUI_NEGOCIABLE IS '' Flag precio campaña alquiler negociable''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.DESC_COL_PRECIO_CAMP_VENTA IS '' Conjunto de descuentos colectivos que se pueden aplicar''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IMP_PRECIO_CAMP_VENTA IS '' Importe Clase de condición precio campaña venta''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PRECIO_CAMP_VENTA_NEGOCIABLE IS '' Flag precio campaña venta negociable''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.DESC_COL_PRECIO_VENTA IS '' Conjunto de descuentos colectivos que se pueden aplicar''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_INICIO_PRECIO_VENTA IS '' Fecha inicio precio venta''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_FIN_PRECIO_VENTA IS '' Fecha fin precio venta''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_INICIO_PRECIO_ALQUI IS '' Fecha inicio precio alquiler''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_FIN_PRECIO_ALQUI IS '' Fecha fin precio alquiler''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_INICIO_PRECIO_CAMP_VENTA IS '' Fecha inicio precio campaña venta''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_FIN_PRECIO_CAMP_VENTA IS '' Fecha fin precio campaña venta''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_INICIO_PRECIO_CAMP_ALQUI IS '' Fecha inicio precio campaña alquiler''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_FIN_PRECIO_CAMP_ALQUI IS '' Fecha fin precio campaña alquiler''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IMP_PRECIO_REF_ALQUI IS '' Importe Clase de condición precio referencia alquiler''';
 
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_INI_PRECIO_VENTA IS '' Fecha inicio precio venta''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_FIN_PRECIO_VENTA IS '' Fecha fin precio venta''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_INI_PRECIO_ALQUILER IS '' Fecha inicio precio alquiler''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_FIN_PRECIO_ALQUILER IS '' Fecha fin precio alquiler''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_INI_PRECIO_CAMP_VENTA IS '' Fecha inicio precio campaña venta''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_FIN_PRECIO_CAMP_VENTA IS '' Fecha fin precio campaña venta''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_INI_PRECIO_CAMP_ALQUILER IS '' Fecha inicio precio campaña alquiler''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_FIN_PRECIO_CAMP_ALQUILER IS '' Fecha fin precio campaña alquiler''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_POSESION IS '' Fecha realizada posesión''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_SENYAL_LANZAMIENTO IS '' Fecha señalado lanzamiento''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_LANZAMINETO IS '' Fecha realizado lanzamiento''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.AVISO_OCUP_SERVICER IS '' Indicador ocupado''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IND_FUERZA_PUBLICA IS '' Ind. Necesaria Fuerza Pública''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IND_OCUPANTES_VIVIENDA IS '' Ind. Existencia Ocupantes Vivi''';
 
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_POSESION IS '' Fecha realizada posesión''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_SEÑAL_LANZAMINETO IS '' Fecha señalado lanzamiento''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_LANZAMINETO IS '' Fecha realizado lanzamiento''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.AVISO_OCUP_SERVICER IS '' Indicador ocupado''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.IND_FUERZA_PUBLICA IS '' Ind. Necesaria Fuerza Pública''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.IND_OCUPANTES_VIVIENDA IS '' Ind. Existencia Ocupantes Vivi''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IND_ENTREGA_VOL_POSESI IS '' Ind. Entrega Voluntaria Posesi (llaves)''';
 
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.IND_ENTREGA_VOL_POSESI IS '' Ind. Entrega Voluntaria Posesi (llaves)''';
-
-
+ END LOOP;
 
 COMMIT;
 

@@ -4877,76 +4877,76 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public void calcularFechaTomaPosesion(Activo activo) {
 
 		ActivoSituacionPosesoria situacionActual = activo.getSituacionPosesoria();
+		if (!DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
+			if (!Checks.esNulo(activo.getTipoTitulo())) {
+				if (DDTipoTituloActivo.tipoTituloJudicial.equals(activo.getTipoTitulo().getCodigo())) {
 
-		if (!Checks.esNulo(activo.getTipoTitulo())) {
-			if (DDTipoTituloActivo.tipoTituloJudicial.equals(activo.getTipoTitulo().getCodigo())) {
+					if (!Checks.esNulo(activo.getAdjJudicial())
+							&& !Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien())) {
+						if (!Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario())) {
+							if (activo.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario()) {
+								activo.getSituacionPosesoria().setFechaTomaPosesion(
+										activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionLanzamiento());
+							} else {
+								if (!Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion())) {
+									activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion());
+								} else {
+									activo.getSituacionPosesoria().setFechaTomaPosesion(null);
+								}
+							}
 
-				if (!Checks.esNulo(activo.getAdjJudicial())
-						&& !Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien())) {
-					if (!Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario())) {
-						if (activo.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario()) {
-							activo.getSituacionPosesoria().setFechaTomaPosesion(
-									activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionLanzamiento());
 						} else {
-							if (!Checks.esNulo(
-									activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion())) {
+							if (!Checks
+									.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion())) {
 								activo.getSituacionPosesoria().setFechaTomaPosesion(
 										activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion());
 							} else {
 								activo.getSituacionPosesoria().setFechaTomaPosesion(null);
 							}
 						}
+					}
 
-					} else {
-						if (!Checks
-								.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion())) {
-							activo.getSituacionPosesoria().setFechaTomaPosesion(
-									activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion());
+				} else if (DDTipoTituloActivo.tipoTituloNoJudicial.equals(activo.getTipoTitulo().getCodigo())
+						&& !Checks.esNulo(activo.getAdjNoJudicial()) && !Checks.esNulo(activo.getSituacionPosesoria())) {
+					if ((DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
+							(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+							||DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
+							||DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())))
+							||DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+						if (activo.getAdjNoJudicial().getFechaPosesion() != null) {
+							activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaPosesion());
 						} else {
 							activo.getSituacionPosesoria().setFechaTomaPosesion(null);
 						}
-					}
-				}
-
-			} else if (DDTipoTituloActivo.tipoTituloNoJudicial.equals(activo.getTipoTitulo().getCodigo())
-					&& !Checks.esNulo(activo.getAdjNoJudicial()) && !Checks.esNulo(activo.getSituacionPosesoria())) {
-				if ((DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
-						(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
-						||DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
-						||DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())))
-						||DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
-					if (activo.getAdjNoJudicial().getFechaPosesion() != null) {
-						activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaPosesion());
 					} else {
-						activo.getSituacionPosesoria().setFechaTomaPosesion(null);
+						activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
 					}
-				} else {
-					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
-				}
-				
-			} else if (DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo())) {
-				ActivoAgrupacionActivo aga = activoDao.getActivoAgrupacionActivoPA(activo.getId());	
-				
-				if (!Checks.esNulo(aga)) {
-					Long idAM = activoDao.getIdActivoMatriz(aga.getAgrupacion().getId());
-					Activo activoMatriz = get(idAM);
 					
-					if (!Checks.esNulo(activoMatriz.getSituacionPosesoria().getFechaTomaPosesion())) {
-						activo.getSituacionPosesoria().setFechaTomaPosesion(activoMatriz.getSituacionPosesoria().getFechaTomaPosesion());
+				} else if (DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo())) {
+					ActivoAgrupacionActivo aga = activoDao.getActivoAgrupacionActivoPA(activo.getId());	
+					
+					if (!Checks.esNulo(aga)) {
+						Long idAM = activoDao.getIdActivoMatriz(aga.getAgrupacion().getId());
+						Activo activoMatriz = get(idAM);
+						
+						if (!Checks.esNulo(activoMatriz.getSituacionPosesoria().getFechaTomaPosesion())) {
+							activo.getSituacionPosesoria().setFechaTomaPosesion(activoMatriz.getSituacionPosesoria().getFechaTomaPosesion());
+						} else {
+							activo.getSituacionPosesoria().setFechaTomaPosesion(null);
+						}
 					} else {
 						activo.getSituacionPosesoria().setFechaTomaPosesion(null);
 					}
-				} else {
-					activo.getSituacionPosesoria().setFechaTomaPosesion(null);
+					
 				}
-				
+			}
+
+			if ((Checks.esNulo(situacionActual) && !Checks.esNulo(activo.getSituacionPosesoria()))
+					|| !situacionActual.equals(activo.getSituacionPosesoria())) {
+				genericDao.save(ActivoSituacionPosesoria.class, activo.getSituacionPosesoria());
 			}
 		}
-
-		if ((Checks.esNulo(situacionActual) && !Checks.esNulo(activo.getSituacionPosesoria()))
-				|| !situacionActual.equals(activo.getSituacionPosesoria())) {
-			genericDao.save(ActivoSituacionPosesoria.class, activo.getSituacionPosesoria());
-		}
+		
 
 	}
 

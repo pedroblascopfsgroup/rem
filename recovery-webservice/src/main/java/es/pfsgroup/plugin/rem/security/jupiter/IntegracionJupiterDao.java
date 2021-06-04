@@ -14,6 +14,14 @@ public interface IntegracionJupiterDao {
 	
 	public void actualizarSubcarteras(Usuario usuario, List<String> altasSubcarteras, List<String> bajasSubcarteras);
 
-	void actualizarUsuario(Usuario usuario, String nombre, String apellidos, String email);
+	public void actualizarUsuario(Usuario usuario, String nombre, String apellidos, String email);
+	
+	public List<String> getCodigosCarterasREM(Usuario usuario);
+	
+	public List<String> getCodigosSubcarterasREM(Usuario usuario);
+	
+	public List<String> getCodigodGruposREM(Usuario usuario);
+	
+	public List<String> getPerfilesREM(String username);
 	
 }

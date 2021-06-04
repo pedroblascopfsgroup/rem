@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.security.jupiter;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,7 +25,6 @@ import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -53,28 +53,35 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public void actualizarInfoPersonal(String username, String nombre, String apellidos, String email)
-			throws Exception {
-
-		Assert.notNull(username, "username cannot be null");
-		Assert.notNull(username, "nombre cannot be null");
-		Assert.notNull(username, "apellidos cannot be null");
-		Assert.notNull(username, "email cannot be null");
+	public void actualizarInfoPersonal(String username, String nombre, String apellidos, String email) {
+		
+		Assert.notNull(username, "username no puede ser null");
+		Assert.notNull(username, "nombre no puede ser null");
+		Assert.notNull(username, "apellidos no puede ser null");
+		Assert.notNull(username, "email no puede ser null");
 		
 		Usuario usuario = usuarioDao.getByUsername(username);
 		
 		if (usuario == null) {
-			throw new Exception("No existe en REM el usuario: " + username);
-		}
-		
-		String nombreREM = usuario.getNombre();
-		String apellidosREM = usuario.getApellidos();
-		String emailREM = usuario.getEmail();
-		
-		if (hayDiferenciasJupiterREM(nombre, apellidos, email, nombreREM, apellidosREM, emailREM)) {
-			logger.info("actualizarInfoPersonal: se han detectado diferencias entre los datos de Jupiter y REM");
-			integracionJupiterDao.actualizarUsuario(usuario, nombre, apellidos, email);
-			logger.info("actualizarInfoPersonal: actualizados los datos de REM procedentes de Jupiter");
+			logger.error("No existe en REM el usuario: " + username);
+		} else {	
+			String nombreREM = usuario.getNombre();
+			String apellidosREM = usuario.getApellidos();
+			String emailREM = usuario.getEmail();		
+			try {
+				if (hayDiferenciasJupiterREM(nombre, apellidos, email, nombreREM, apellidosREM, emailREM)) {
+					logger.info("actualizarInfoPersonal: se han detectado diferencias entre los datos de Jupiter y REM");
+					integracionJupiterDao.actualizarUsuario(usuario, nombre, apellidos, email);
+					logger.info("actualizarInfoPersonal: actualizados los datos de REM procedentes de Jupiter");
+				}
+			} catch (Exception e) {
+				logger.error("Jupiter: problema al actualizar los datos personales del usuario en REM desde Jupiter: " + e.getMessage());
+				if (e instanceof SQLException) {
+					logger.error("Detalles del error: " + e.getCause());
+				} else {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 	}
@@ -87,101 +94,72 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public void actualizarRolesDesdeJupiter(String username, String listaRoles) throws Exception {
+	public void actualizarRolesDesdeJupiter(String username, String listaRoles) {
 
+		Assert.notNull(username, "username no puede ser null");
+		Assert.notNull(username, "listaRoles no puede ser null");
+		
 		Usuario usuario = usuarioDao.getByUsername(username);
 		
-		List<String> listaCodigosJupiter = extraerListaCodigosJupiter(listaRoles);
-
-		//Cargar maestro de mapeo Jupiter-REM
-		Map<String, MapeoJupiterREM> mapaTraductor = traductor.getMap();
+		if (usuario == null) {
+			logger.error("No existe en REM el usuario: " + username);
+		} else {
+			try {
+				List<String> listaCodigosJupiter = extraerListaCodigosJupiter(listaRoles);
 		
-		//Traducir y separar
-		List<String> codigosPerfilesJupiter = new ArrayList<String>();
-		List<String> codigosGruposJupiter = new ArrayList<String>();
-		List<String> codigosCarterasJupiter = new ArrayList<String>();
-		List<String> codigosSubcarterasJupiter = new ArrayList<String>();
-		traducirYSeparar(listaCodigosJupiter, mapaTraductor, codigosPerfilesJupiter, codigosGruposJupiter, codigosCarterasJupiter, codigosSubcarterasJupiter);
+				//Cargar maestro de mapeo Jupiter-REM
+				Map<String, MapeoJupiterREM> mapaTraductor = traductor.getMap();
+				
+				//Traducir y separar
+				List<String> codigosPerfilesJupiter = new ArrayList<String>();
+				List<String> codigosGruposJupiter = new ArrayList<String>();
+				List<String> codigosCarterasJupiter = new ArrayList<String>();
+				List<String> codigosSubcarterasJupiter = new ArrayList<String>();
+				traducirYSeparar(listaCodigosJupiter, mapaTraductor, codigosPerfilesJupiter, codigosGruposJupiter, codigosCarterasJupiter, codigosSubcarterasJupiter);
+				
+				//Obtener lista de perfiles REM
+				List<String> codigosPerfilesREM = integracionJupiterDao.getPerfilesREM(username);
 		
-		//Obtener lista de perfiles REM
-		List<String> codigosPerfilesREM = getPerfilesREM(username);
-
-		//Obtener listas de diferencias
-		List<String>  altasPerfiles = new ArrayList<String>();
-		List<String>  bajasPerfiles = new ArrayList<String>();
-		obtenerListaAltasBajas(codigosPerfilesJupiter, codigosPerfilesREM, altasPerfiles, bajasPerfiles );
-		
-		List<String>  altasGrupos = new ArrayList<String>();
-		List<String>  bajasGrupos = new ArrayList<String>();
-		List<String> codigosGruposREM = getCodigodGruposREM(usuario);
-		obtenerListaAltasBajas(codigosGruposJupiter, codigosGruposREM, altasGrupos, bajasGrupos );
-		
-		List<String>  altasCarteras = new ArrayList<String>();
-		List<String>  bajasCarteras = new ArrayList<String>();
-		List<String> codigosCarterasREM = getCodigosCarterasREM(usuario);
-		obtenerListaAltasBajas(codigosCarterasJupiter, codigosCarterasREM, altasCarteras, bajasCarteras );
-		
-		List<String>  altasSubcarteras = new ArrayList<String>();
-		List<String>  bajasSubcarteras = new ArrayList<String>();
-		List<String> codigosSubcarterasREM = getCodigosSubcarterasREM(usuario);
-		obtenerListaAltasBajas(codigosSubcarterasJupiter, codigosSubcarterasREM, altasSubcarteras, bajasSubcarteras );
-		
-		//Actualizar según las diferencias encontradas
-		integracionJupiterDao.actualizarPerfiles(usuario, altasPerfiles, bajasPerfiles);
-		integracionJupiterDao.actualizarGrupos(usuario, altasGrupos, bajasGrupos);
-		integracionJupiterDao.actualizarCarteras(usuario, altasCarteras, bajasCarteras);
-		integracionJupiterDao.actualizarSubcarteras(usuario, altasSubcarteras, bajasSubcarteras);
-		
-	}
-
-	private List<String> getPerfilesREM(String username) {
-		
-		List<ZonaUsuarioPerfil> listaZonPefUsu = genericDao.getList(ZonaUsuarioPerfil.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.username", username), 
-				genericDao.createFilter(FilterType.EQUALS, "zona.descripcion", "REM"));
-		List<String> listaCodigosPerfilREM = new ArrayList<String>();
-		for (ZonaUsuarioPerfil zpu : listaZonPefUsu) {
-			listaCodigosPerfilREM.add(zpu.getPerfil().getCodigo());
-		}
-		return listaCodigosPerfilREM;
-	}
-
-	private List<String> getCodigosCarterasREM(Usuario usuario) {
-		List<String> resultado = new ArrayList<String>();
-		Filter filtroUca = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
-
-		List<UsuarioCartera> uca = genericDao.getList(UsuarioCartera.class, filtroUca);
-		if (uca != null && !uca.isEmpty()) {
-			resultado.add(uca.get(0).getCartera().getCodigo());
-		}
-		return resultado;
-	}
-
-	private List<String> getCodigosSubcarterasREM(Usuario usuario) {
-		List<String> resultado = new ArrayList<String>();
-		Filter filtroUca = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
-
-		List<UsuarioCartera> uca = genericDao.getList(UsuarioCartera.class, filtroUca);
-		if (uca != null && !uca.isEmpty()) {
-			for (UsuarioCartera uc : uca) {
-				if (uc.getSubCartera() != null && !uc.getSubCartera().getAuditoria().isBorrado()) {
-					resultado.add(uc.getSubCartera().getCodigo());
+				//Obtener listas de diferencias
+				List<String>  altasPerfiles = new ArrayList<String>();
+				List<String>  bajasPerfiles = new ArrayList<String>();
+				obtenerListaAltasBajas(codigosPerfilesJupiter, codigosPerfilesREM, altasPerfiles, bajasPerfiles );
+				
+				List<String>  altasGrupos = new ArrayList<String>();
+				List<String>  bajasGrupos = new ArrayList<String>();
+				List<String> codigosGruposREM = integracionJupiterDao.getCodigodGruposREM(usuario);
+				obtenerListaAltasBajas(codigosGruposJupiter, codigosGruposREM, altasGrupos, bajasGrupos );
+				
+				List<String>  altasCarteras = new ArrayList<String>();
+				List<String>  bajasCarteras = new ArrayList<String>();
+				List<String> codigosCarterasREM = integracionJupiterDao.getCodigosCarterasREM(usuario);
+				obtenerListaAltasBajas(codigosCarterasJupiter, codigosCarterasREM, altasCarteras, bajasCarteras );
+				//Controlar que sólo pueda haber una cartera asociada al usuario
+				if (altasCarteras.size() > 1) {
+					List<String> altasCarterasNuevo = new ArrayList<String>();
+					altasCarterasNuevo.add(altasCarteras.get(0));
+					altasCarteras = altasCarterasNuevo;
+				}
+				
+				List<String>  altasSubcarteras = new ArrayList<String>();
+				List<String>  bajasSubcarteras = new ArrayList<String>();
+				List<String> codigosSubcarterasREM = integracionJupiterDao.getCodigosSubcarterasREM(usuario);
+				obtenerListaAltasBajas(codigosSubcarterasJupiter, codigosSubcarterasREM, altasSubcarteras, bajasSubcarteras );
+				
+				//Actualizar según las diferencias encontradas
+				integracionJupiterDao.actualizarPerfiles(usuario, altasPerfiles, bajasPerfiles);
+				integracionJupiterDao.actualizarGrupos(usuario, altasGrupos, bajasGrupos);
+				integracionJupiterDao.actualizarCarteras(usuario, altasCarteras, bajasCarteras);
+				integracionJupiterDao.actualizarSubcarteras(usuario, altasSubcarteras, bajasSubcarteras);
+			} catch (Exception e) {
+				logger.error("Jupiter: problema al actualizar los datos de perfiles, grupos y carteras del usuario en REM desde Jupiter: " + e.getMessage());
+				if (e instanceof SQLException) {
+					logger.error("Detalles del error: " + e.getCause());
+				} else {
+					e.printStackTrace();
 				}
 			}
 		}
-		return resultado;
-	}
-
-	private List<String> getCodigodGruposREM(Usuario usuario) {
-		List<String> resultado = new ArrayList<String>();
-
-		Filter filtroGru = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
-		List<GrupoUsuario> gruUsu = genericDao.getList(GrupoUsuario.class, filtroGru);	
-		for (GrupoUsuario grupo : gruUsu) {
-			resultado.add(grupo.getGrupo().getUsername());
-		}
-		return resultado;
-		
 	}
 
 	private void obtenerListaAltasBajas(List<String> codigosJupiter, List<String> codigosREM,

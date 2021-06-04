@@ -149,6 +149,9 @@ public class Comprador implements Serializable, Auditable {
     
     @Column(name="NOMBRE_CONYUGE_URSUS")
     private String nombreConyugeURSUS;
+    
+    @Column(name="COM_FECHA_NACIOCONST")
+    private Date fechaNacimientoConstitucion;
 
 	public Long getId() {
 		return id;
@@ -394,6 +397,14 @@ public class Comprador implements Serializable, Auditable {
 
 	public void setNombreConyugeURSUS(String nombreConyugeURSUS) {
 		this.nombreConyugeURSUS = nombreConyugeURSUS;
+	}
+
+	public Date getFechaNacimientoConstitucion() {
+		return fechaNacimientoConstitucion;
+	}
+
+	public void setFechaNacimientoConstitucion(Date fechaNacimientoConstitucion) {
+		this.fechaNacimientoConstitucion = fechaNacimientoConstitucion;
 	}
 	
 	

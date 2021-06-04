@@ -243,6 +243,8 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name = "CEX_NUM_URSUS_CONYUGE_BH_REM")
 	private String numeroClienteUrsusBhConyuge;
 	
+	@Column(name = "CEX_C4C_ID")
+	private String idBC4C;
 	
 
 	public Long getId() {
@@ -846,4 +848,14 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	public void setCexId(Long vcexId) {
 		this.vcexId = vcexId;
 	}
+
+	public String getIdBC4C() {
+		return idBC4C;
+	}
+
+	public void setIdBC4C(String idBC4C) {
+		this.idBC4C = idBC4C;
+	}
+	
+	
 }

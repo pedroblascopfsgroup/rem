@@ -37,6 +37,9 @@ Ext.define('HreRem.model.RechazosPropietarioGridModel', {
 			name:'fechaProcesado',
 			type:'date',
 			dateFormat: 'c'
+		},
+		{
+			name: 'tipoImporte'
 		}
 	],
 

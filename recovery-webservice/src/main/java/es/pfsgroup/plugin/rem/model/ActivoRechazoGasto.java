@@ -69,6 +69,9 @@ public class ActivoRechazoGasto implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GLD_ID")
 	private GastoLineaDetalle gastoLineaDetalle;
+	
+	@Column(name = "TIPO_IMPORTE")
+	private String tipoImporte;
 			
 	@Version   
 	private Long version;
@@ -146,6 +149,14 @@ public class ActivoRechazoGasto implements Serializable, Auditable {
 
 	public void setGastoLineaDetalle(GastoLineaDetalle gastoLineaDetalle) {
 		this.gastoLineaDetalle = gastoLineaDetalle;
+	}
+
+	public String getTipoImporte() {
+		return tipoImporte;
+	}
+
+	public void setTipoImporte(String tipoImporte) {
+		this.tipoImporte = tipoImporte;
 	}
 
 	

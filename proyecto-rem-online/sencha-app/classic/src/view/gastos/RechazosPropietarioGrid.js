@@ -43,6 +43,11 @@ Ext.define('HreRem.view.gastos.RechazosPropietarioGrid', {
             	flex	 : 0.5,
             	formatter: 'date("d/m/Y")',
                 dataIndex: 'fechaProcesado'
+            },
+            {
+                text	 : HreRem.i18n('fieldlabel.tipo.importe'),
+                flex	 : 0.5,
+                dataIndex: 'tipoImporte'
             }		 
 		];
 

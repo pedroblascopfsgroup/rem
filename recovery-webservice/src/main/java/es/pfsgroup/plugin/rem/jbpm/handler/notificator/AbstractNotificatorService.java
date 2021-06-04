@@ -676,7 +676,7 @@ public abstract class AbstractNotificatorService {
 
 	protected String generateBodyMailVenta(DtoEmailReserva dtoSendEmailReserva) {
 
-
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		String tablaCompradores = generarTablaComprador(dtoSendEmailReserva.getListaEmailReservaCompradores());
 		
 		String tablaDatosActivos = generarTablaDatosActivos(dtoSendEmailReserva.getLisDtoEmailReservaDatosActivos());
@@ -731,18 +731,18 @@ public abstract class AbstractNotificatorService {
 					+ "							</div>"
 					+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
 					+ "								  Fecha firma reserva: <strong>"
-					+ dtoSendEmailReserva.getFechaFirmaReserva() + "</strong>" + "							</div>"
+					+ dateFormat.format(dtoSendEmailReserva.getFechaFirmaReserva()) + "</strong>" + "							</div>"
 					+ "						</div>";
 		}
 		//Cambiar por fecha venta y añadir un boleano para saber cual utilizar fecha venta o fecha firma reserva segun el tipo de email
-		if (dtoSendEmailReserva.getFechaFirmaReserva() != null) {
+		if (dtoSendEmailReserva.getFechaVenta() != null) {
 			cuerpo = cuerpo + "						<div style='display: table-row;'>"
 					+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
 					+ "								<img src='" + this.getUrlImagenes() + "ico_direccion.png' />"
 					+ "							</div>"
 					+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
 					+ "								  Fecha venta: <strong>"
-					+ dtoSendEmailReserva.getFechaFirmaReserva() + "</strong>" + "							</div>"
+					+ dateFormat.format(dtoSendEmailReserva.getFechaVenta()) + "</strong>" + "							</div>"
 					+ "						</div>";
 		}
 
@@ -775,7 +775,7 @@ public abstract class AbstractNotificatorService {
 		for (DtoEmailReservaDatosCompradores compradores : listaEmailReservaCompradores) {
 			tablaCompradores = tablaCompradores + "<tr style='height: 20px;'>" 
 					+ "<th> "+ compradores.getNombreCompleto() + "</th>" 
-					+ "<th>" + compradores.getTipoDocumento() + "</th>"
+					+ "<th>" + compradores.getTipoDocumento() +": " + compradores.getDocumento() + "</th>"
 					+ "</tr>";
 		}
 		tablaCompradores = tablaCompradores + " </table>";

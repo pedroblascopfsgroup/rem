@@ -20,6 +20,7 @@ public class DtoEmailReserva extends WebDto {
 	private Double importeOferta;
 	private Double importeReserva;
 	private Date fechaFirmaReserva;
+	private Date fechaVenta;
 	private List <DtoEmailReservaDatosCompradores> listaEmailReservaCompradores;
 	private List <DtoEmailReservaDatosActivos> lisDtoEmailReservaDatosActivos;
 	
@@ -59,5 +60,11 @@ public class DtoEmailReserva extends WebDto {
 	}
 	public void setLisDtoEmailReservaDatosActivos(List<DtoEmailReservaDatosActivos> lisDtoEmailReservaDatosActivos) {
 		this.lisDtoEmailReservaDatosActivos = lisDtoEmailReservaDatosActivos;
+	}
+	public Date getFechaVenta() {
+		return fechaVenta;
+	}
+	public void setFechaVenta(Date fechaVenta) {
+		this.fechaVenta = fechaVenta;
 	}
 }

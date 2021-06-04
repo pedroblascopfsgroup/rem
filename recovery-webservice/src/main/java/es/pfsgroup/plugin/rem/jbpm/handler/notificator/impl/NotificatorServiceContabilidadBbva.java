@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoEmailReserva;
@@ -88,7 +91,6 @@ public class NotificatorServiceContabilidadBbva extends AbstractNotificatorServi
 					
 				}else {
 					titulo = "Venta oferta " + expediente.getOferta().getNumOferta() + " - Importe oferta "+ dtoEmailReserva.getImporteOferta() +"";
-					
 				}
 				mailsBCC.add(J_POYATOS_CORREO);
 				genericAdapter.sendMailCopiaOculta(mailsPara, mailsCC, titulo, generateBodyMailVenta(dtoEmailReserva), adjuntos, mailsBCC);
@@ -98,12 +100,14 @@ public class NotificatorServiceContabilidadBbva extends AbstractNotificatorServi
 	public DtoEmailReserva rellenarDtoEmailReserva(ExpedienteComercial expediente, boolean contratoReserva) {
 		DtoEmailReserva dtoEmailReserva = new DtoEmailReserva();
 		dtoEmailReserva.setNumeroOferta(expediente.getOferta().getNumOferta());
-		dtoEmailReserva.setImporteOferta(expediente.getOferta().getImporteOferta());
-		if(expediente.getReserva()!=null) {
-		dtoEmailReserva.setImporteReserva(expediente.getReserva().getImporteDevuelto());
-		if(contratoReserva) {
+		if(expediente.getReserva()!=null && contratoReserva) {
+			dtoEmailReserva.setImporteReserva(expediente.getCondicionante().getImporteReserva());
 			dtoEmailReserva.setFechaFirmaReserva(expediente.getReserva().getFechaFirma());
-			}
+		}
+		
+		if(!contratoReserva) {
+			dtoEmailReserva.setFechaVenta(expediente.getFechaVenta());
+			dtoEmailReserva.setImporteOferta(expediente.getOferta().getImporteOferta());
 		}
 		
 		List<CompradorExpediente> compradoresExpediente = expediente.getCompradores();
@@ -111,12 +115,13 @@ public class NotificatorServiceContabilidadBbva extends AbstractNotificatorServi
 			List<DtoEmailReservaDatosCompradores> listDtoEmailReservaDatosCompradores = new ArrayList<DtoEmailReservaDatosCompradores>();
 			for (CompradorExpediente datosCompradores : compradoresExpediente) {
 				DtoEmailReservaDatosCompradores dto = new DtoEmailReservaDatosCompradores();
-				dto.setNombreCompleto(datosCompradores.getNombreRepresentante()+datosCompradores.getApellidosRepresentante());
-				if(datosCompradores.getTipoDocumentoRepresentante() != null) {
-					dto.setTipoDocumento(datosCompradores.getTipoDocumentoRepresentante().getDescripcion());	
+				Comprador comprador = datosCompradores.getPrimaryKey().getComprador();
+				dto.setNombreCompleto(comprador.getNombre() + " " + comprador.getApellidos());
+				if(comprador.getTipoDocumento() != null) {
+					dto.setTipoDocumento(comprador.getTipoDocumento().getDescripcion());	
 				}
-				if(datosCompradores.getDocumentoRepresentante() != null) {
-					dto.setDocumento(datosCompradores.getDocumentoRepresentante());
+				if(comprador.getDocumento() != null) {
+					dto.setDocumento(comprador.getDocumento());
 				}
 				listDtoEmailReservaDatosCompradores.add(dto);
 			}
@@ -176,7 +181,7 @@ public class NotificatorServiceContabilidadBbva extends AbstractNotificatorServi
 			
 		}
 
-		if(generarHojaDatosFormalizacion) {
+		if(generarHojaDatosFormalizacion && !contratoReserva) {
 			File hojaDatosFormalizacion = operacionVentaController.generarPdfOperacionVentaByOfertaHre(expediente.getNumExpediente(), null);
 			FileItem hojaDatosFileItem = new FileItem(hojaDatosFormalizacion);
 			

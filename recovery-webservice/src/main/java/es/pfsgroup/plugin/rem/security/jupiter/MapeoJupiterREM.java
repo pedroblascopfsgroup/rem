@@ -32,7 +32,6 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 @Table(name = "MJR_MAPEO_JUPITER_REM", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
-@Inheritance(strategy=InheritanceType.JOINED)
 public class MapeoJupiterREM  implements Serializable, Auditable {
 
 	/**

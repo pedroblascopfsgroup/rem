@@ -72,7 +72,7 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 					logger.info("actualizarInfoPersonal: actualizados los datos de REM procedentes de Jupiter");
 				}
 			} catch (Exception e) {
-				logger.error("Jupiter: problema al actualizar los datos personales del usuario en REM desde Jupiter: " + e.getMessage() 
+				logger.error("IntegracionJupiter: problema al actualizar los datos personales del usuario en REM desde Jupiter: " + e.getMessage() 
 					+ " --- " + e.getCause());
 			}
 		}
@@ -95,57 +95,68 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 		Usuario usuario = usuarioDao.getByUsername(username);
 		
 		if (usuario == null) {
-			logger.error("No existe en REM el usuario: " + username);
+			logger.error("IntegracionJupiter: ENo existe en REM el usuario: " + username);
 		} else {
 			try {
 				List<String> listaCodigosJupiter = extraerListaCodigosJupiter(listaRoles);
 		
 				//Cargar maestro de mapeo Jupiter-REM
-				Map<String, MapeoJupiterREM> mapaTraductor = traductor.getMap();
-				
-				//Traducir y separar
-				List<String> codigosPerfilesJupiter = new ArrayList<String>();
-				List<String> codigosGruposJupiter = new ArrayList<String>();
-				List<String> codigosCarterasJupiter = new ArrayList<String>();
-				List<String> codigosSubcarterasJupiter = new ArrayList<String>();
-				traducirYSeparar(listaCodigosJupiter, mapaTraductor, codigosPerfilesJupiter, codigosGruposJupiter, codigosCarterasJupiter, codigosSubcarterasJupiter);
-				
-				//Obtener lista de perfiles REM
-				List<String> codigosPerfilesREM = integracionJupiterDao.getPerfilesREM(username);
-		
-				//Obtener listas de diferencias
-				List<String>  altasPerfiles = new ArrayList<String>();
-				List<String>  bajasPerfiles = new ArrayList<String>();
-				obtenerListaAltasBajas(codigosPerfilesJupiter, codigosPerfilesREM, altasPerfiles, bajasPerfiles );
-				
-				List<String>  altasGrupos = new ArrayList<String>();
-				List<String>  bajasGrupos = new ArrayList<String>();
-				List<String> codigosGruposREM = integracionJupiterDao.getCodigodGruposREM(usuario);
-				obtenerListaAltasBajas(codigosGruposJupiter, codigosGruposREM, altasGrupos, bajasGrupos );
-				
-				List<String>  altasCarteras = new ArrayList<String>();
-				List<String>  bajasCarteras = new ArrayList<String>();
-				List<String> codigosCarterasREM = integracionJupiterDao.getCodigosCarterasREM(usuario);
-				obtenerListaAltasBajas(codigosCarterasJupiter, codigosCarterasREM, altasCarteras, bajasCarteras );
-				//Controlar que sólo pueda haber una cartera asociada al usuario
-				if (altasCarteras.size() > 1) {
-					List<String> altasCarterasNuevo = new ArrayList<String>();
-					altasCarterasNuevo.add(altasCarteras.get(0));
-					altasCarteras = altasCarterasNuevo;
+				Map<String, MapeoJupiterREM> mapaTraductor = null;
+				try {
+					mapaTraductor = traductor.getMap();
+				} catch (Exception e) {
+					logger.error("IntegracionJupiter: Error al cargar el mapa de traducciones de codigos entre Jupiter y REM: " + e.getMessage() 
+						+ " --- " + e.getCause());
 				}
 				
-				List<String>  altasSubcarteras = new ArrayList<String>();
-				List<String>  bajasSubcarteras = new ArrayList<String>();
-				List<String> codigosSubcarterasREM = integracionJupiterDao.getCodigosSubcarterasREM(usuario);
-				obtenerListaAltasBajas(codigosSubcarterasJupiter, codigosSubcarterasREM, altasSubcarteras, bajasSubcarteras );
-				
-				//Actualizar según las diferencias encontradas
-				integracionJupiterDao.actualizarPerfiles(usuario, altasPerfiles, bajasPerfiles);
-				integracionJupiterDao.actualizarGrupos(usuario, altasGrupos, bajasGrupos);
-				integracionJupiterDao.actualizarCarteras(usuario, altasCarteras, bajasCarteras);
-				integracionJupiterDao.actualizarSubcarteras(usuario, altasSubcarteras, bajasSubcarteras);
+				if (mapaTraductor != null) {
+					//Traducir y separar
+					List<String> codigosPerfilesJupiter = new ArrayList<String>();
+					List<String> codigosGruposJupiter = new ArrayList<String>();
+					List<String> codigosCarterasJupiter = new ArrayList<String>();
+					List<String> codigosSubcarterasJupiter = new ArrayList<String>();
+					traducirYSeparar(listaCodigosJupiter, mapaTraductor, codigosPerfilesJupiter, codigosGruposJupiter, codigosCarterasJupiter, codigosSubcarterasJupiter);
+					
+					//Obtener lista de perfiles REM
+					List<String> codigosPerfilesREM = integracionJupiterDao.getPerfilesREM(username);
+			
+					//Obtener listas de diferencias
+					List<String>  altasPerfiles = new ArrayList<String>();
+					List<String>  bajasPerfiles = new ArrayList<String>();
+					obtenerListaAltasBajas(codigosPerfilesJupiter, codigosPerfilesREM, altasPerfiles, bajasPerfiles );
+					
+					List<String>  altasGrupos = new ArrayList<String>();
+					List<String>  bajasGrupos = new ArrayList<String>();
+					List<String> codigosGruposREM = integracionJupiterDao.getCodigodGruposREM(usuario);
+					obtenerListaAltasBajas(codigosGruposJupiter, codigosGruposREM, altasGrupos, bajasGrupos );
+					
+					List<String>  altasCarteras = new ArrayList<String>();
+					List<String>  bajasCarteras = new ArrayList<String>();
+					List<String> codigosCarterasREM = integracionJupiterDao.getCodigosCarterasREM(usuario);
+					obtenerListaAltasBajas(codigosCarterasJupiter, codigosCarterasREM, altasCarteras, bajasCarteras );
+					//Controlar que sólo pueda haber una cartera asociada al usuario
+					if (altasCarteras.size() > 1) {
+						List<String> altasCarterasNuevo = new ArrayList<String>();
+						altasCarterasNuevo.add(altasCarteras.get(0));
+						altasCarteras = altasCarterasNuevo;
+					}
+					
+					List<String>  altasSubcarteras = new ArrayList<String>();
+					List<String>  bajasSubcarteras = new ArrayList<String>();
+					List<String> codigosSubcarterasREM = integracionJupiterDao.getCodigosSubcarterasREM(usuario);
+					obtenerListaAltasBajas(codigosSubcarterasJupiter, codigosSubcarterasREM, altasSubcarteras, bajasSubcarteras );
+					
+					//Actualizar según las diferencias encontradas
+					integracionJupiterDao.actualizarPerfiles(usuario, altasPerfiles, bajasPerfiles);
+					integracionJupiterDao.actualizarGrupos(usuario, altasGrupos, bajasGrupos);
+					integracionJupiterDao.actualizarCarteras(usuario, altasCarteras, bajasCarteras);
+					//No puede haber subcarteras si hay alguna cartera
+					if (altasCarteras.size() == 0 || (altasSubcarteras.size() == 0 && bajasCarteras.size() > 0)) {
+						integracionJupiterDao.actualizarSubcarteras(usuario, altasSubcarteras, bajasSubcarteras);
+					}
+				}
 			} catch (Exception e) {
-				logger.error("Jupiter: problema al actualizar los datos personales del usuario en REM desde Jupiter: " + e.getMessage() 
+				logger.error("IntegracionJupiter: problema al actualizar los datos de perfiles del usuario en REM desde Jupiter: " + e.getMessage() 
 					+ " --- " + e.getCause());
 			}
 		}
@@ -192,7 +203,7 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 		for (String codigoJupiter : listaCodigosJupiter) {
 			MapeoJupiterREM traduccion = mapaTraductor.get(codigoJupiter);
 			if (traduccion == null) {
-				logger.error("Error al traducir el código desde Júpiter: " + codigoJupiter + " no existe en el maestro de traducción.");
+				logger.error("IntegracionJupiter: Error al traducir el código desde Júpiter: " + codigoJupiter + " no existe en el maestro de traducción.");
 			} else {
 				String tipoPerfil = traduccion.getTipoPerfil();
 				if (PERFIL_ROL.equals(tipoPerfil)) {
@@ -205,7 +216,7 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 					//El código de subcartera viene con el código de cartera por delante más un separador <espacio>/<espacio>. Hay que extraerlo.
 					codigosSubcarteras.add(extraerCodigoSubcartera(traduccion.getCodigoREM()));
 				} else {
-					logger.error("Error al traducir el código desde Júpiter: " + codigoJupiter + " tiene un tipo de perfil no soportado " + traduccion.getTipoPerfil());
+					logger.error("IntegracionJupiter: Error al traducir el código desde Júpiter: " + codigoJupiter + " tiene un tipo de perfil no soportado " + traduccion.getTipoPerfil());
 				}
 			}
 		}

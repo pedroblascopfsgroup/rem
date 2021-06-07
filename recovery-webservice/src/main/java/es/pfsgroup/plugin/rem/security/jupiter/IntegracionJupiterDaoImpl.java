@@ -48,40 +48,27 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 	@Override
 	public void actualizarPerfiles(Usuario usuario, List<String> altasPerfiles, List<String> bajasPerfiles) {
 		
-		Session session = getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		try {
-			DDZona zona = genericDao.get(DDZona.class, 
-					genericDao.createFilter(FilterType.EQUALS, DESCRIPCION, CODIGO_ZONA_REM));
-			for (String codigoPerfil : altasPerfiles) {
-				Perfil perfil = obtenerPerfil(codigoPerfil);
-				if (perfil != null) {
-					ZonaUsuarioPerfil zpu = new ZonaUsuarioPerfil();
-					zpu.setUsuario(usuario);
-					zpu.setPerfil(perfil);
-					zpu.setZona(zona);
-					zpu.setAuditoria(Auditoria.getNewInstance());
-					zpu.setVersion(0);
-					genericDao.save(ZonaUsuarioPerfil.class, zpu);
-					logger.debug("Creando asociacion perfil " + codigoPerfil + " - usuario " + usuario.getUsername());
-				} else {
-					logger.error("No existe el perfil " + codigoPerfil + " en REM: no se crea asociacion con el usuario " + usuario.getUsername());
-				}
+		DDZona zona = genericDao.get(DDZona.class, 
+				genericDao.createFilter(FilterType.EQUALS, DESCRIPCION, CODIGO_ZONA_REM));
+		for (String codigoPerfil : altasPerfiles) {
+			Perfil perfil = obtenerPerfil(codigoPerfil);
+			if (perfil != null) {
+				ZonaUsuarioPerfil zpu = new ZonaUsuarioPerfil();
+				zpu.setUsuario(usuario);
+				zpu.setPerfil(perfil);
+				zpu.setZona(zona);
+				zpu.setAuditoria(Auditoria.getNewInstance());
+				zpu.setVersion(0);
+				genericDao.save(ZonaUsuarioPerfil.class, zpu);
+				logger.debug("Creando asociacion perfil " + codigoPerfil + " - usuario " + usuario.getUsername());
+			} else {
+				logger.error("No existe el perfil " + codigoPerfil + " en REM: no se crea asociacion con el usuario " + usuario.getUsername());
 			}
-			Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, USUARIO_ID, usuario.getId());
-			for (String codigoPerfil : bajasPerfiles) {
-				genericDao.delete(ZonaUsuarioPerfil.class, filtroUsuario, obtenerFiltroZPUPerfil(codigoPerfil));
-				logger.debug("Eliminando asociacion perfil " + codigoPerfil + " - usuario " + usuario.getUsername());
-			}
-			tx.commit();
-		} catch (Exception e) {
-			logger.error("Error al persistir los cambios de perfil del usuario: ", e);
-			tx.rollback();
-		} finally {
-			if (session.isOpen()) {
-				session.flush();
-				session.close();
-			}
+		}
+		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, USUARIO_ID, usuario.getId());
+		for (String codigoPerfil : bajasPerfiles) {
+			genericDao.delete(ZonaUsuarioPerfil.class, filtroUsuario, obtenerFiltroZPUPerfil(codigoPerfil));
+			logger.debug("Eliminando asociacion perfil " + codigoPerfil + " - usuario " + usuario.getUsername());
 		}
 
 	}
@@ -89,37 +76,24 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 	@Override
 	public void actualizarGrupos(Usuario usuario, List<String> altasGrupos, List<String> bajasGrupos) {
 
-		Session session = getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		try {
-			for (String codigoGrupo : altasGrupos) {
-				Usuario grupo = obtenerGrupo(codigoGrupo);
-				if (grupo != null) {
-					GrupoUsuario nuevaRelGrupoUsuario = new GrupoUsuario();
-					nuevaRelGrupoUsuario.setGrupo(grupo);
-					nuevaRelGrupoUsuario.setUsuario(usuario);
-					nuevaRelGrupoUsuario.setAuditoria(Auditoria.getNewInstance());
-					nuevaRelGrupoUsuario.setVersion(0);
-					genericDao.save(GrupoUsuario.class, nuevaRelGrupoUsuario);
-					logger.debug("Creando asociacion grupo " + codigoGrupo + " - usuario " + usuario.getUsername());
-				} else {
-					logger.error("No existe el grupo " + codigoGrupo + " en REM: no se crea asociacion con el usuario " + usuario.getUsername());
-				}
-			}	
-			Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
-			for (String codigoGrupo : bajasGrupos) {
-				genericDao.delete(GrupoUsuario.class, filtroUsuario, obtenerFiltroGUGrupo(codigoGrupo));
-				logger.debug("Eliminando asociacion grupo " + codigoGrupo + " - usuario " + usuario.getUsername());
+		for (String codigoGrupo : altasGrupos) {
+			Usuario grupo = obtenerGrupo(codigoGrupo);
+			if (grupo != null) {
+				GrupoUsuario nuevaRelGrupoUsuario = new GrupoUsuario();
+				nuevaRelGrupoUsuario.setGrupo(grupo);
+				nuevaRelGrupoUsuario.setUsuario(usuario);
+				nuevaRelGrupoUsuario.setAuditoria(Auditoria.getNewInstance());
+				nuevaRelGrupoUsuario.setVersion(0);
+				genericDao.save(GrupoUsuario.class, nuevaRelGrupoUsuario);
+				logger.debug("Creando asociacion grupo " + codigoGrupo + " - usuario " + usuario.getUsername());
+			} else {
+				logger.error("No existe el grupo " + codigoGrupo + " en REM: no se crea asociacion con el usuario " + usuario.getUsername());
 			}
-			tx.commit();
-		} catch (Exception e) {
-			logger.error("Error al persistir los cambios de grupos del usuario: ", e);
-			tx.rollback();
-		} finally {
-			if (session.isOpen()) {
-				session.flush();
-				session.close();
-			}
+		}	
+		Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
+		for (String codigoGrupo : bajasGrupos) {
+			genericDao.delete(GrupoUsuario.class, filtroUsuario, obtenerFiltroGUGrupo(codigoGrupo));
+			logger.debug("Eliminando asociacion grupo " + codigoGrupo + " - usuario " + usuario.getUsername());
 		}
 		
 	}
@@ -127,35 +101,22 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 	@Override
 	public void actualizarCarteras(Usuario usuario, List<String> altasCarteras, List<String> bajasCarteras) {
 
-		Session session = getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		try {		
-			for (String codigoCartera : altasCarteras) {
-				DDCartera cartera = obtenerCartera(codigoCartera);
-				if (cartera != null) {
-					UsuarioCartera usuarioCarteraNuevo = new UsuarioCartera();
-					usuarioCarteraNuevo.setUsuario(usuario);
-					usuarioCarteraNuevo.setCartera(cartera);
-					genericDao.save(UsuarioCartera.class, usuarioCarteraNuevo);
-					logger.debug("Creando asociacion cartera " + codigoCartera + " - usuario " + usuario.getUsername());
-				} else {
-					logger.error("No existe la cartera " + codigoCartera + " en REM: no se crea asociacion con el usuario " + usuario.getUsername());
-				}
-			}		
-			Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
-			for (String codigoCartera : bajasCarteras) {
-				genericDao.delete(UsuarioCartera.class, filtroUsuario, obtenerFiltroUCACodigoCartera(codigoCartera));
-				logger.debug("Eliminando asociacion cartera " + codigoCartera + " - usuario " + usuario.getUsername());
+		for (String codigoCartera : altasCarteras) {
+			DDCartera cartera = obtenerCartera(codigoCartera);
+			if (cartera != null) {
+				UsuarioCartera usuarioCarteraNuevo = new UsuarioCartera();
+				usuarioCarteraNuevo.setUsuario(usuario);
+				usuarioCarteraNuevo.setCartera(cartera);
+				genericDao.save(UsuarioCartera.class, usuarioCarteraNuevo);
+				logger.debug("Creando asociacion cartera " + codigoCartera + " - usuario " + usuario.getUsername());
+			} else {
+				logger.error("No existe la cartera " + codigoCartera + " en REM: no se crea asociacion con el usuario " + usuario.getUsername());
 			}
-			tx.commit();
-		} catch (Exception e) {
-			logger.error("Error al persistir los cambios de carteras del usuario: ", e);
-			tx.rollback();
-		} finally {
-			if (session.isOpen()) {
-				session.flush();
-				session.close();
-			}
+		}		
+		Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
+		for (String codigoCartera : bajasCarteras) {
+			genericDao.delete(UsuarioCartera.class, filtroUsuario, obtenerFiltroUCACodigoCartera(codigoCartera));
+			logger.debug("Eliminando asociacion cartera " + codigoCartera + " - usuario " + usuario.getUsername());
 		}
 		
 	}
@@ -163,35 +124,27 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 	@Override
 	public void actualizarSubcarteras(Usuario usuario, List<String> altasSubcarteras, List<String> bajasSubcarteras) {
 
-		Session session = getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		try {
+		String username =  usuario.getUsername();
+		Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
+		for (String codigoSubcartera : bajasSubcarteras) {
+			genericDao.delete(UsuarioCartera.class, filtroUsuario, obtenerFiltroUCACodigoSubcartera(codigoSubcartera));
+			logger.debug("Eliminando asociacion subcartera " + codigoSubcartera + " - usuario " + username);
+		}
+		if (altasSubcarteras.size()>=1) {
+			genericDao.delete(UsuarioCartera.class, filtroUsuario);
+			logger.info("Vamos a crear asociación de subcarteras, eliminamos cartera previamente asociada al usuario " + username);
 			for (String codigoSubcartera : altasSubcarteras) {
-				DDSubcartera subcartera= genericDao.get(DDSubcartera.class, obtenerFiltroCodigoSubcartera(codigoSubcartera));
+				DDSubcartera subcartera = genericDao.get(DDSubcartera.class, obtenerFiltroCodigoSubcartera(codigoSubcartera));
 				if (subcartera != null) {
 					UsuarioCartera usuarioSubcarteraNuevo = new UsuarioCartera();
 					usuarioSubcarteraNuevo.setUsuario(usuario);
 					usuarioSubcarteraNuevo.setCartera(subcartera.getCartera());
 					usuarioSubcarteraNuevo.setSubCartera(subcartera);
 					genericDao.save(UsuarioCartera.class, usuarioSubcarteraNuevo);
-					logger.debug("Creando asociacion subcartera " + codigoSubcartera + " - usuario " + usuario.getUsername());
+					logger.debug("Creando asociacion subcartera " + codigoSubcartera + " - usuario " + username);
 				} else {
-					logger.error("No existe la subcartera " + codigoSubcartera + " en REM: no se crea asociacion con el usuario " + usuario.getUsername());
+					logger.error("No existe la subcartera " + codigoSubcartera + " en REM: no se crea asociacion con el usuario " + username);
 				}
-			}
-			Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
-			for (String codigoSubcartera : bajasSubcarteras) {
-				genericDao.delete(UsuarioCartera.class, filtroUsuario, obtenerFiltroUCACodigoSubcartera(codigoSubcartera));
-				logger.debug("Eliminando asociacion subcartera " + codigoSubcartera + " - usuario " + usuario.getUsername());
-			}
-			tx.commit();
-		} catch (Exception e) {
-			logger.error("Error al persistir los cambios de subcarteras del usuario: ", e);
-			tx.rollback();
-		} finally {
-			if (session.isOpen()) {
-				session.flush();
-				session.close();
 			}
 		}
 				
@@ -202,31 +155,18 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 		String ape1;
 		String ape2;
 		
-		Session session = getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		try {
-			usuario.setNombre(nombre);
-			if (apellidos.contains(" ")) {
-				ape1 = apellidos.split(" ")[0];
-				ape2 = apellidos.split(" ", 2)[1];
-			} else {
-				ape1 = apellidos;
-				ape2 = "";
-			}
-			usuario.setApellido1(ape1);
-			usuario.setApellido2(ape2);
-			usuario.setEmail(email);
-			genericDao.save(Usuario.class, usuario);
-			tx.commit();
-		} catch (Exception e) {
-			logger.error("Error al actualizar datos personales del usuario: " + e.getMessage());
-			tx.rollback();
-		} finally {
-			if (session.isOpen()) {
-				session.flush();
-				session.close();
-			}
+		usuario.setNombre(nombre);
+		if (apellidos.contains(" ")) {
+			ape1 = apellidos.split(" ")[0];
+			ape2 = apellidos.split(" ", 2)[1];
+		} else {
+			ape1 = apellidos;
+			ape2 = "";
 		}
+		usuario.setApellido1(ape1);
+		usuario.setApellido2(ape2);
+		usuario.setEmail(email);
+		genericDao.save(Usuario.class, usuario);
 		
 	}
 

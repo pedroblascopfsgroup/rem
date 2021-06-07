@@ -17,10 +17,9 @@ public class TraductorCodigosJupiter {
     @Autowired
     private GenericABMDao genericDao;
     
-	private Map<String, MapeoJupiterREM> mapaCompleto;
+	private Map<String, MapeoJupiterREM> mapaCompleto = null;
 	
 	public Map<String, MapeoJupiterREM> getMap() {
-		
 		if (mapaCompleto == null) {
 			Order orden = new Order(OrderType.ASC,"codigoJupiter");
 			List<MapeoJupiterREM> lista = genericDao.getListOrdered(MapeoJupiterREM.class, orden);
@@ -30,6 +29,5 @@ public class TraductorCodigosJupiter {
 			}
 		}
 		return mapaCompleto;
-		
 	}
 }

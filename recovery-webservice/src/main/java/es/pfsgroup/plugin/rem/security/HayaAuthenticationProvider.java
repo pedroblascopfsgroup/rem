@@ -97,7 +97,7 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 
 		HayaWebAuthenticationDetails authDetails = (HayaWebAuthenticationDetails) authentication.getDetails();
 	    
-		logger.debug("0Auth2: code >" + authDetails.getCode() + "<");
+		logger.info("OAuth2: code >" + authDetails.getCode() + "<");
 		
 		String baseUrl = authDetails.getBaseUrl();
 		
@@ -128,7 +128,7 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 
 			try {
 		    	int statusCode = httpClient.executeMethod(postMethod);
-		    	logger.debug("0Auth2: statusCode >" + statusCode + "<");
+		    	logger.info("OAuth2: statusCode >" + statusCode + "<");
 		    	
 		        if (statusCode != HttpStatus.SC_OK) {
 		        	throw new ParseException(messages.getMessage(AUTH2_ERROR_BAD_CREDENTIALS),0);
@@ -139,16 +139,16 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 		        JSONObject response = JSONObject.fromObject(stringBody);
 		    	
 				idToken = (String) response.get("id_token");
-				logger.debug("0Auth2: idToken >" + idToken + "<");
+				logger.info("OAuth2: idToken >" + idToken + "<");
 				
 				authDetails.setIdToken(idToken);
 				JWT jwt = JWTParser.parse(idToken);
 	            Map<String, Object> claims = jwt.getJWTClaimsSet().getClaims();
 				String upn = (String) claims.get("upn");
 				
-	            logger.debug("0Auth2: upn >" + upn + "<");
+	            logger.info("OAuth2: upn >" + upn + "<");
 	            username = upn.split("@")[0];
-	            logger.debug("0Auth2: username >" + username + "<");
+	            logger.debug("OAuth2: username >" + username + "<");
 	            
 	            //Obtener el resto de los datos a partir del access_token
 	            accessToken = (String) response.get("access_token");
@@ -158,9 +158,9 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 	            String apellidos = claimSetAccess.getStringClaim("family_name"); 
 	            String email = claimSetAccess.getStringClaim("email"); 
 	            
-	            logger.debug("0Auth2: nombre >" + nombre + "<");
-	            logger.debug("0Auth2: apellidos >" + apellidos + "<");
-	            logger.debug("0Auth2: email >" + email + "<");
+	            logger.debug("OAuth2: nombre >" + nombre + "<");
+	            logger.debug("OAuth2: apellidos >" + apellidos + "<");
+	            logger.debug("OAuth2: email >" + email + "<");
 
 	            integracionJupiterManager.actualizarInfoPersonal(username, nombre, apellidos, email);
 
@@ -168,7 +168,7 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 	            if (perfilesrem == null || "".contentEquals(perfilesrem)) {
 	            	perfilesrem = claimSetAccess.getStringClaim("perfilprerem"); // Los perfiles en pre vienen en otra clave del mapa
 	            }
-	            logger.debug("0Auth2: perfilesrem >" + perfilesrem + "<");
+	            logger.debug("OAuth2: perfilesrem >" + perfilesrem + "<");
 	            
 	            integracionJupiterManager.actualizarRolesDesdeJupiter(username, perfilesrem);
 				
@@ -177,8 +177,8 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 			} catch (IOException e) {
 				throw new AuthenticationCredentialsNotFoundException(messages.getMessage(AUTH2_ERROR_BAD_CREDENTIALS));
 			} catch (Exception e) {
-				logger.debug("0Auth2: " + e.getMessage());
-				//e.printStackTrace();
+				logger.debug("OAuth2: " + e.getMessage());
+				e.printStackTrace();
 			}
 		}
 

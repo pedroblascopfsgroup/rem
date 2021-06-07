@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -64,7 +63,6 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
-import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
@@ -136,7 +134,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
-import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -171,9 +168,6 @@ public class ActivoAdapter {
 	
 	@Autowired
 	private ActivoPatrimonioContratoDao actPatrimonioDao;
-
-	@Autowired
-	private coreextensionApi coreextensionApi;
 
 	@Autowired
 	private UpdaterStateApi updaterState;
@@ -276,9 +270,6 @@ public class ActivoAdapter {
 
 	@Autowired
 	private PresupuestoApi presupuestoManager;
-
-	@Autowired
-	private RecoveryComunicacionManager recoveryComunicacionManager;
 	
 	@Autowired
 	private ComisionamientoApi comisionamientoApi;
@@ -3632,7 +3623,7 @@ public class ActivoAdapter {
 	 */
 	private void cambiarTrabajosActivosAGestorActivo(Activo activo, String tipoGestorCodigo) {
 		if(GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES.equals(tipoGestorCodigo)) {
-			for(ActivoTrabajo activoTrabajo : activo.getActivoTrabajos()) {
+			for(ActivoTrabajo activoTrabajo : activoApi.getActivoTrabajos(activo.getId())) {
 				Usuario  usuGestor = activoTrabajo.getTrabajo().getUsuarioResponsableTrabajo();
 				String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
 
@@ -3652,7 +3643,7 @@ public class ActivoAdapter {
 				}
 			}
 		}else if(GestorActivoApi.CODIGO_GESTOR_SUELOS.equals(tipoGestorCodigo)) {
-			for(ActivoTrabajo activoTrabajo : activo.getActivoTrabajos()) {
+			for(ActivoTrabajo activoTrabajo : activoApi.getActivoTrabajos(activo.getId())) {
 				Usuario  usuGestor = activoTrabajo.getTrabajo().getUsuarioResponsableTrabajo();
 				String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
 
@@ -3672,7 +3663,7 @@ public class ActivoAdapter {
 				}
 			}
 		}else if(GestorActivoApi.CODIGO_GESTOR_ALQUILERES.equals(tipoGestorCodigo)) {
-			for(ActivoTrabajo activoTrabajo : activo.getActivoTrabajos()) {
+			for(ActivoTrabajo activoTrabajo : activoApi.getActivoTrabajos(activo.getId())) {
 				Usuario  usuGestor = activoTrabajo.getTrabajo().getUsuarioResponsableTrabajo();
 				String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
 

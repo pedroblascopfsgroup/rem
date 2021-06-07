@@ -4590,7 +4590,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this, grid = window.down("grid"), propagableData = window.propagableData, numTotalActivos = grid
 				.getSelectionModel().getSelection().length
 				+ 1, targetGrid = window.targetGrid, numActivoActual = numTotalActivos;
-		var contadorDatosRegistrales = 0;
+		var indiceDatosRegistrales = null;
 
 		if (activos.length > 0) {
 			var activo = activos.shift();
@@ -4599,27 +4599,31 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			if (activo.data.esUnidadAlquilable != undefined
 					&& activo.data.esUnidadAlquilable == true) {
 				for (var i = 0; i < propagableData.models.length; i++) {
-					if (propagableData.models[i].name == "datosregistrales")
-						contadorDatosRegistrales = i;
-				}
-				if (propagableData.models[contadorDatosRegistrales].data.numFinca != undefined) {
-					var stringnumFinca;
-					if (propagableData.models[contadorDatosRegistrales].data.numFinca
-							.includes('-')) {
-						var numeroguion = propagableData.models[contadorDatosRegistrales].data.numFinca
-								.indexOf("-")
-						stringnumFinca = propagableData.models[contadorDatosRegistrales].data.numFinca
-								.slice(0, numeroguion);
-					} else {
-						stringnumFinca = propagableData.models[contadorDatosRegistrales].data.numFinca;
+					if (propagableData.models[i].name == "datosregistrales"){
+						indiceDatosRegistrales = i;
+						break;
 					}
+				}
+				if(indiceDatosRegistrales != null){
+					if (propagableData.models[indiceDatosRegistrales].data.numFinca != undefined) {
+						var stringnumFinca;
+						if (propagableData.models[indiceDatosRegistrales].data.numFinca
+								.includes('-')) {
+							var numeroguion = propagableData.models[indiceDatosRegistrales].data.numFinca
+									.indexOf("-")
+							stringnumFinca = propagableData.models[indiceDatosRegistrales].data.numFinca
+									.slice(0, numeroguion);
+						} else {
+							stringnumFinca = propagableData.models[indiceDatosRegistrales].data.numFinca;
+						}
 
-					var guion = '-';
-					var stringnumUa = activos.length + 1;
-					stringnumUa = me.pad(stringnumUa, 4);
+						var guion = '-';
+						var stringnumUa = activos.length + 1;
+						stringnumUa = me.pad(stringnumUa, 4);
 
-					var res = stringnumFinca.concat(guion.concat(stringnumUa));
-					propagableData.models[contadorDatosRegistrales].data.numFinca = res;
+						var res = stringnumFinca.concat(guion.concat(stringnumUa));
+						propagableData.models[indiceDatosRegistrales].data.numFinca = res;
+					}
 				}
 				propagableData.id = activo.get("activoId");
 			} else if (Ext.isEmpty(targetGrid)) {

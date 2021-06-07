@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
@@ -89,6 +90,30 @@ public class TabActivoCondicionantesDisponibilidad implements TabActivoService {
 		}else {
 			// Buscamos los campos que pueden ser propagados para esta pestaña
 			activoCondicionantesDisponibilidadDto.setCamposPropagables(TabActivoService.TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD);
+		}
+		
+		ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		
+		if (activoCaixa != null) {
+			if (activoCaixa.getPublicacionPortalPublicoVenta() != null) {
+				activoCondicionantesDisponibilidadDto.setPublicacionPortalPublicoVenta(activoCaixa.getPublicacionPortalPublicoVenta());
+			}
+			if (activoCaixa.getPublicacionPortalPublicoAlquiler() != null) {
+				activoCondicionantesDisponibilidadDto.setPublicacionPortalPublicoAlquiler(activoCaixa.getPublicacionPortalPublicoAlquiler());
+			}
+			if (activoCaixa.getPublicacionPortalInversorVenta() != null) {
+				activoCondicionantesDisponibilidadDto.setPublicacionPortalInversorVenta(activoCaixa.getPublicacionPortalInversorVenta());
+			}
+			if (activoCaixa.getPublicacionPortalInversorAlquiler() != null) {
+				activoCondicionantesDisponibilidadDto.setPublicacionPortalInversorAlquiler(activoCaixa.getPublicacionPortalInversorAlquiler());
+			}
+			if (activoCaixa.getPublicacionPortalApiVenta() != null) {
+				activoCondicionantesDisponibilidadDto.setPublicacionPortalApiVenta(activoCaixa.getPublicacionPortalApiVenta());
+			}
+			if (activoCaixa.getPublicacionPortalApiAlquiler() != null) {
+				activoCondicionantesDisponibilidadDto.setPublicacionPortalApiAlquiler(activoCaixa.getPublicacionPortalApiAlquiler());
+			}
+			
 		}
 		
 		return activoCondicionantesDisponibilidadDto;

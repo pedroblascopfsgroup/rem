@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.List;
 
+import javax.persistence.Column;
+
 /**
  * Dto que gestiona la disponibilidad de la publicación de un activo.
  *
@@ -30,6 +32,14 @@ public class DtoCondicionantesDisponibilidad extends DtoTabActivo {
 	private Boolean isCondicionado;
 	private List<?> activosPropagables;
 	private Integer comboOtro;
+	
+	//Condiciones Disponibilidad Caixa
+    private Boolean publicacionPortalPublicoVenta;
+    private Boolean publicacionPortalPublicoAlquiler;
+    private Boolean publicacionPortalInversorVenta;
+    private Boolean publicacionPortalInversorAlquiler;
+    private Boolean publicacionPortalApiVenta;
+    private Boolean publicacionPortalApiAlquiler;
 
 	public String getIdActivo() {
 		return idActivo;
@@ -197,6 +207,54 @@ public class DtoCondicionantesDisponibilidad extends DtoTabActivo {
 
 	public void setComboOtro(Integer comboOtro) {
 		this.comboOtro = comboOtro;
+	}
+
+	public Boolean getPublicacionPortalPublicoVenta() {
+		return publicacionPortalPublicoVenta;
+	}
+
+	public void setPublicacionPortalPublicoVenta(Boolean publicacionPortalPublicoVenta) {
+		this.publicacionPortalPublicoVenta = publicacionPortalPublicoVenta;
+	}
+
+	public Boolean getPublicacionPortalPublicoAlquiler() {
+		return publicacionPortalPublicoAlquiler;
+	}
+
+	public void setPublicacionPortalPublicoAlquiler(Boolean publicacionPortalPublicoAlquiler) {
+		this.publicacionPortalPublicoAlquiler = publicacionPortalPublicoAlquiler;
+	}
+
+	public Boolean getPublicacionPortalInversorVenta() {
+		return publicacionPortalInversorVenta;
+	}
+
+	public void setPublicacionPortalInversorVenta(Boolean publicacionPortalInversorVenta) {
+		this.publicacionPortalInversorVenta = publicacionPortalInversorVenta;
+	}
+
+	public Boolean getPublicacionPortalInversorAlquiler() {
+		return publicacionPortalInversorAlquiler;
+	}
+
+	public void setPublicacionPortalInversorAlquiler(Boolean publicacionPortalInversorAlquiler) {
+		this.publicacionPortalInversorAlquiler = publicacionPortalInversorAlquiler;
+	}
+
+	public Boolean getPublicacionPortalApiVenta() {
+		return publicacionPortalApiVenta;
+	}
+
+	public void setPublicacionPortalApiVenta(Boolean publicacionPortalApiVenta) {
+		this.publicacionPortalApiVenta = publicacionPortalApiVenta;
+	}
+
+	public Boolean getPublicacionPortalApiAlquiler() {
+		return publicacionPortalApiAlquiler;
+	}
+
+	public void setPublicacionPortalApiAlquiler(Boolean publicacionPortalApiAlquiler) {
+		this.publicacionPortalApiAlquiler = publicacionPortalApiAlquiler;
 	}
 	
 	

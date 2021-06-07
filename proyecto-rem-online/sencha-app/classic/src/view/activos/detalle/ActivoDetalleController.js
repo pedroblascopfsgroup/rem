@@ -493,6 +493,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			if (tabData.models[0].name == "datospublicacion"
 					|| tabData.models[0].name == "activocargas"
 					|| tabData.models[0].name == "activocondicionantesdisponibilidad"
+					|| tabData.models[0].name == "activocondicionesdisponibilidadcaixa"
 					|| tabData.models[0].name == "activotrabajo"
 					|| tabData.models[0].name == "activotrabajosubida"
 					|| tabData.models[0].name == "activotramite"

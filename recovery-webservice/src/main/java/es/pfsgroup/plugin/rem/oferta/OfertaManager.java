@@ -1902,6 +1902,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return ofertaAceptada;
 	}
+	
+	@Override
+	public ExpedienteComercial tareaExternaToExpediente(TareaExterna tareaExterna) {
+		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
+		if (trabajo != null) {
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByTrabajo(trabajo);
+			if (expediente != null) {
+				return expediente;
+			}
+		}
+		return null;
+	}
 
 	@Override
 	public Oferta getOfertaAceptadaByActivo(Activo activo) {
@@ -2031,16 +2043,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Override
 	public boolean checkCompradores(TareaExterna tareaExterna) {
-		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
-		if (!Checks.esNulo(ofertaAceptada)) {
-			ExpedienteComercial expediente = expedienteComercialApi
-					.expedienteComercialPorOferta(ofertaAceptada.getId());
-			List<CompradorExpediente> listaCex = expediente.getCompradores();
-			Double total = new Double(0);
-			for (CompradorExpediente cex : listaCex) {
-				total += cex.getPorcionCompra();
-			}
-			return total.equals(new Double(100));
+		ExpedienteComercial expediente = tareaExternaToExpediente(tareaExterna);
+		if (expediente != null) {
+			return 100f == expedienteComercialApi.getPorcentajeCompra(expediente.getId());
 		}
 		return false;
 	}

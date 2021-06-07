@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
@@ -1458,5 +1459,5 @@ public interface ActivoApi {
 
 	public VSinInformeAprobadoRem getSinInformeAprobadoREM(Long idActivo);
 	
-	
+	public List<ActivoTrabajo> getActivoTrabajos(Long idActivo);
 }

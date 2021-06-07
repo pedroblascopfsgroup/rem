@@ -814,4 +814,6 @@ public interface OfertaApi {
 	
 	public Page getBusquedaOfertasGridUsuario(DtoOfertaGridFilter dto);
 
+	public ExpedienteComercial tareaExternaToExpediente(TareaExterna tareaExterna);
+
 }

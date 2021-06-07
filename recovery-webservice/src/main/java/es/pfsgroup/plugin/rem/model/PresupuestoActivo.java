@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -26,7 +25,6 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 
 
 
@@ -134,70 +132,6 @@ public class PresupuestoActivo implements Serializable, Auditable {
 			List<IncrementoPresupuesto> incrementoPresupuesto) {
 		this.incrementoPresupuesto = incrementoPresupuesto;
 	}
-
-
-	//BARRA ROJA
-	public Double getImporteDispuesto() {
-		try{
-			
-			Double total = Double.valueOf(0);
-			Activo activo = getActivo();
-			
-			if(activo != null){
-				if(activo.getActivoTrabajos() != null && activo.getActivoTrabajos().size()>0){
-					Iterator<ActivoTrabajo> it = activo.getActivoTrabajos().iterator();
-					while (it.hasNext()) {
-						ActivoTrabajo activoTrabajo = (ActivoTrabajo) it.next();
-						if(activoTrabajo.getTrabajo()!= null && activoTrabajo.getTrabajo().getEstado() != null){
-							if(activoTrabajo.getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_PAGADO)){
-								total += activoTrabajo.getTrabajo().getImporteTotal();
-							}
-						}
-					}		
-				}	
-			}
-			return total;
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return  Double.valueOf(0);
-		}	
-	}
-	
-	
-	//BARRA AMARILLA
-	public Double getImportePendientePago() {
-		try{
-			
-			Double total = Double.valueOf(0);
-			Activo activo = getActivo();
-			
-			if(activo != null){
-				if(activo.getActivoTrabajos() != null && activo.getActivoTrabajos().size()>0){
-					Iterator<ActivoTrabajo> it = activo.getActivoTrabajos().iterator();
-					while (it.hasNext()) {
-						ActivoTrabajo activoTrabajo = (ActivoTrabajo) it.next();
-						if(activoTrabajo.getPrimaryKey().getTrabajo()!= null && activoTrabajo.getTrabajo().getEstado() != null){
-							if(activoTrabajo.getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_EN_TRAMITE) ||
-								activoTrabajo.getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO) ||
-								activoTrabajo.getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_IMPOSIBLE_OBTENCION) ||
-								activoTrabajo.getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_FALLIDO) ||
-								activoTrabajo.getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA)){
-								total += activoTrabajo.getTrabajo().getImporteTotal();
-							}
-						}
-					}		
-				}	
-			}
-			return total;
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return  Double.valueOf(0);
-		}	
-	}
-	
-
 	
 	public Long getVersion() {
 		return version;

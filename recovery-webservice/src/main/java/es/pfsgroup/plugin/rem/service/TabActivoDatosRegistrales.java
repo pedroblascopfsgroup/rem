@@ -219,6 +219,8 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				if (!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien().getLocalidad())) {
 					BeanUtils.copyProperty(activoDto, "poblacionRegistro", activo.getInfoRegistral().getInfoRegistralBien().getLocalidad().getCodigo());
 					BeanUtils.copyProperty(activoDto, "poblacionRegistroDescripcion", activo.getInfoRegistral().getInfoRegistralBien().getLocalidad().getDescripcion());
+					BeanUtils.copyProperty(activoDto, "provinciaRegistro", activo.getInfoRegistral().getInfoRegistralBien().getLocalidad().getProvincia().getCodigo());
+					BeanUtils.copyProperty(activoDto, "provinciaRegistroDescripcion", activo.getInfoRegistral().getInfoRegistralBien().getLocalidad().getProvincia().getDescripcion());
 				}
 	
 				if (!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien().getProvincia())) {

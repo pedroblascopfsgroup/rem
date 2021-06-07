@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.activo;
 
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,7 +61,6 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAfectosGencatAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
-import es.pfsgroup.plugin.rem.model.VEsCondicionado;
 import es.pfsgroup.plugin.rem.model.VListaActivosAgrupacionVSCondicionantes;
 import es.pfsgroup.plugin.rem.model.VSubdivisionesAgrupacion;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaAgrupacion;

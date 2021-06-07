@@ -1693,8 +1693,62 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    }
 		    
 		    return false;
-		}
+		},
 		
+		getIconClsCondicionantesPortalPublicoVenta: function(get) {
+	    	var condicion = get('activoCondicionesDisponibilidadCaixa.publicacionPortalPublicoVenta');
+
+	        if(eval(condicion)) {
+	            return 'app-tbfiedset-ico icono-ok';
+	        } else {
+	            return 'app-tbfiedset-ico icono-ko';
+	        }
+		 },
+		 getIconClsCondicionantesPortalPublicoAlquiler: function(get) {
+	    	var condicion = get('activoCondicionesDisponibilidadCaixa.publicacionPortalPublicoAlquiler');
+
+	        if(eval(condicion)) {
+	            return 'app-tbfiedset-ico icono-ok';
+	        } else {
+	            return 'app-tbfiedset-ico icono-ko';
+	        }
+		 },
+		 getIconClsCondicionantesPublicacionPortalInversorVenta: function(get) {
+	    	var condicion = get('activoCondicionesDisponibilidadCaixa.publicacionPortalInversorVenta');
+
+	        if(eval(condicion)) {
+	            return 'app-tbfiedset-ico icono-ok';
+	        } else {
+	            return 'app-tbfiedset-ico icono-ko';
+	        }
+		 },
+		 getIconClsCondicionantesPublicacionPortalInversorAlquiler: function(get) {
+	    	var condicion = get('activoCondicionesDisponibilidadCaixa.publicacionPortalInversorAlquiler');
+
+	        if(eval(condicion)) {
+	            return 'app-tbfiedset-ico icono-ok';
+	        } else {
+	            return 'app-tbfiedset-ico icono-ko';
+	        }
+		 },
+		 getIconClsCondicionantesPublicacionPortalApiVenta: function(get) {
+	    	var condicion = get('activoCondicionesDisponibilidadCaixa.publicacionPortalApiVenta');
+
+	        if(eval(condicion)) {
+	            return 'app-tbfiedset-ico icono-ok';
+	        } else {
+	            return 'app-tbfiedset-ico icono-ko';
+	        }
+		 },
+ 		 getIconClsCondicionantesPublicacionPortalApiAlquiler: function(get) {
+	    	var condicion = get('activoCondicionesDisponibilidadCaixa.publicacionPortalApiAlquiler');
+
+	        if(eval(condicion)) {
+	            return 'app-tbfiedset-ico icono-ok';
+	        } else {
+	            return 'app-tbfiedset-ico icono-ko';
+	        }
+		 }
 	 },
     
 	 stores: {

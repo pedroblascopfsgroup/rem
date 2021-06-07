@@ -1252,16 +1252,16 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				GastoLineaDetalleEntidad gastoLineaDetalleEntidad = new GastoLineaDetalleEntidad();
 				gastoLineaDetalleEntidad.setGastoLineaDetalle(gastoLineaDetalle);
 				gastoLineaDetalleEntidad.setEntidadGasto(tipoElemento);		
-				Activo activo = activoDao.getActivoByNumActivo(Long.parseLong(dto.getIdElemento()));
-				ActivoSareb activoSareb = null;
-				
-				if (activo != null) {
-					Filter filtroSareb = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activo.getNumActivo());
-					activoSareb  = genericDao.get(ActivoSareb.class, filtroSareb);
-				}
 				
 				if(DDEntidadGasto.CODIGO_ACTIVO.equals(dto.getTipoElemento())) {
+					Activo activo = activoDao.getActivoByNumActivo(Long.parseLong(dto.getIdElemento()));
+					ActivoSareb activoSareb = null;
 					
+					if (!Checks.esNulo(activo)) {
+						Filter filtroSareb = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activo.getNumActivo());
+						activoSareb  = genericDao.get(ActivoSareb.class, filtroSareb);
+					}
+
 					if(activo == null) {
 						error = ERROR_NO_EXISTE_ACTIVO;
 						return error;

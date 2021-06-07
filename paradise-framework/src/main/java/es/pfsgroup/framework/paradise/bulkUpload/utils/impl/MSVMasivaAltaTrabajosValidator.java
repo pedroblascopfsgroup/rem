@@ -85,6 +85,7 @@ public class MSVMasivaAltaTrabajosValidator extends MSVExcelValidatorAbstract {
 	private final String ERROR_RESOLUCION_COMITE="msg.error.masivo.alta.trabajos.error.resolucion.comite";
 	private final String ERROR_FECHA_RESOLUCION_COMITE="msg.error.masivo.alta.trabajos.error.fecha.resolucion.comite";
 	private final String ERROR_FECHA_FORMATO_INCORRECTO="msg.error.masivo.alta.trabajos.error.fecha.formato.incorrecto";
+	private final String ERROR_FECHA_LIMITE_INCORRECTO="msg.error.masivo.alta.trabajos.error.fecha.limite.incorrecto";
 	private final String ERROR_HORA_FORMATO_INCORRECTO="msg.error.masivo.alta.trabajos.error.hora.formato.incorrecto";
 	private final String ERROR_ID_RESOLUCION_COMITE="msg.error.masivo.alta.trabajos.id.resolucion.comite";
 	private final String ERROR_COD_TARIFA="msg.error.masivo.alta.trabajos.error.cod.tarifa";
@@ -229,6 +230,12 @@ public class MSVMasivaAltaTrabajosValidator extends MSVExcelValidatorAbstract {
 
 		SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
+		Date fechaMax = new Date();
+		try {
+			fechaMax = ft.parse("31/12/2099");
+		} catch (java.text.ParseException e1) {
+			e1.printStackTrace();
+		}
 		boolean esCorrecto = true;
 
 		for (int fila = FILA_DATOS; fila < this.numFilasHoja; fila++) {
@@ -431,8 +438,17 @@ public class MSVMasivaAltaTrabajosValidator extends MSVExcelValidatorAbstract {
 				if (!Checks.esNulo(fechaTope)) {
 					try {
 						Date fechaTopeparse = ft.parse(fechaTope);
-					} catch (Exception e) {
+						if(fechaTopeparse.before(new Date()) || fechaTopeparse.after(fechaMax)){
+							mapaErrores.get(messageServices.getMessage(ERROR_FECHA_LIMITE_INCORRECTO)).add(fila);
+							esCorrecto = false;
+						}
+					} catch (java.text.ParseException e) {
 						mapaErrores.get(messageServices.getMessage(ERROR_FECHA_FORMATO_INCORRECTO)).add(fila);
+						esCorrecto = false;
+					} catch (Exception e) {
+						ArrayList<Integer> errores = new ArrayList<Integer>();
+						errores.add(fila);
+						mapaErrores.put(e.toString(), errores);
 						esCorrecto = false;
 					}
 				}								
@@ -575,6 +591,8 @@ public class MSVMasivaAltaTrabajosValidator extends MSVExcelValidatorAbstract {
 		mapaErrores.put(messageServices.getMessage(PROVEEDOR_EN_CARTERA_ACTIVO), new ArrayList<Integer>());		
 		mapaErrores.put(messageServices.getMessage(ERROR_IDTAREA_NO_EXISTE), new ArrayList<Integer>());
 		mapaErrores.put(messageServices.getMessage(ACTIVO_EN_TRAMITE), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(ERROR_FECHA_LIMITE_INCORRECTO), new ArrayList<Integer>());
+
 	}
 	
 

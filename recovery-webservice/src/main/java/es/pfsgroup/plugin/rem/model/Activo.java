@@ -1336,6 +1336,7 @@ public class Activo implements Serializable, Auditable {
 		this.observacion = observacion;
 	}
 
+	@Deprecated
 	public List<ActivoTrabajo> getActivoTrabajos() {
 		return activoTrabajos;
 	}

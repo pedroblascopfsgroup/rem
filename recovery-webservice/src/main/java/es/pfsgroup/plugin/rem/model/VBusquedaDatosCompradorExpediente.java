@@ -248,6 +248,7 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	
 	@Column(name = "COM_FECHA_NACIOCONST")
 	private Date fechaNacimientoConstitucion;
+
 	
 
 	public Long getId() {

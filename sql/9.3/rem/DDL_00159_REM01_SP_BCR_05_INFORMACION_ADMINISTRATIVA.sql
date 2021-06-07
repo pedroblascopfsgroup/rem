@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210609
+--## FECHA_CREACION=20210610
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14088
+--## INCIDENCIA_LINK=HREOS-14224
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -18,7 +18,8 @@ SET SERVEROUTPUT ON;
 SET DEFINE OFF;						
 
 CREATE OR REPLACE PROCEDURE SP_BCR_05_INFORMACION_ADMINISTRATIVA
-	(SALIDA OUT VARCHAR2, 
+	( FLAG_EN_REM IN NUMBER,
+   SALIDA OUT VARCHAR2, 
 	COD_RETORNO OUT NUMBER)
 
    AS
@@ -52,6 +53,7 @@ BEGIN
             
             FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux                             
             JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
+            WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
             
             ) us ON (us.ACT_ID = act1.ACT_ID )
                               when matched then update set

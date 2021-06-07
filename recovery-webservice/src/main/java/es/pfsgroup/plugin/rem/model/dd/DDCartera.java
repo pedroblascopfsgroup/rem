@@ -46,6 +46,7 @@ public class DDCartera implements Auditable, Dictionary {
 	public static final String CODIGO_CARTERA_JAIPUR = "09";
 	public static final String CODIGO_CARTERA_EGEO = "13";
 	public static final String CODIGO_CARTERA_BBVA = "16";
+	public static final String CODIGO_CAIXA = "03";
 		/**
 	 * 
 	 */

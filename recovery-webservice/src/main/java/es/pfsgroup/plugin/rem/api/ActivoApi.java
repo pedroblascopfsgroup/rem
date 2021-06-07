@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
@@ -1461,9 +1462,9 @@ public interface ActivoApi {
 	public void updateHonorarios (Activo activo, List<ActivoOferta> listaActivoOfertas);
 
 	public Page getPublicacionGrid(DtoPublicacionGridFilter dto);
-	
+
 	public boolean isIfNecesarioActivo(Activo activo);
-	
+
 	public void rellenarIfNecesario(Activo activo);
 
 	public List<DDDistritoCaixa> getComboTipoDistritoByCodPostal(String codPostal);
@@ -1473,4 +1474,5 @@ public interface ActivoApi {
 	List<VGridDescuentoColectivos> getDescuentoColectivos(Long id) throws Exception;
 
 
+	public List<ActivoTrabajo> getActivoTrabajos(Long idActivo);
 }

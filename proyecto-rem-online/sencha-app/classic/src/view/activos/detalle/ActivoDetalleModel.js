@@ -1718,7 +1718,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return true;
 			}
 		}
-		
 	 },
     
 	 stores: {
@@ -3130,14 +3129,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        {"codigo":"1", "descripcion":"Si"}
 		    ]
 		},
-		
+
 		comboSiNoEntradaVoluntariaPosesion: {
 			data : [
 		        {"codigo":"0", "descripcion":"No"},
 		        {"codigo":"1", "descripcion":"Si"}
 		    ]
 		},
-		
+
 		storeAdjuntosPlusvalias: {
 			 pageSize: $AC.getDefaultPageSize(),
 			 model: 'HreRem.model.AdjuntosPlusvalias',
@@ -3685,10 +3684,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'estadoTecnico'} 
+					extraParams: {diccionario: 'estadoTecnico'}
 				}
 		},
-		
+
 		comboTipoProcedenciaProducto: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -3704,7 +3703,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'categoriaComercializacion'}
 				}
-		},		
+		},
 		comboDistritoCodPostal: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -3749,7 +3748,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {diccionario: 'estadoComercialAlquiler'}
 				}
 		},
-		
+
 		storeDescuentoColectivos: {
       		 model: 'HreRem.model.DescuentoColectivosGridModel',
 		     proxy: {

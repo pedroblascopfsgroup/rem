@@ -815,4 +815,7 @@ public interface OfertaApi {
 	public boolean isIfNecesarioOferta(Oferta oferta);
 	
 	public void rellenarIfNecesario(Oferta oferta);
+
+	public ExpedienteComercial tareaExternaToExpediente(TareaExterna tareaExterna);
+
 }

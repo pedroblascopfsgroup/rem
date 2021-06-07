@@ -6217,12 +6217,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	public List<ActivoTrabajo> getActivoTrabajos(Long idActivo){
+		List<ActivoTrabajo> trabajosDelActivo = null;
+		trabajosDelActivo = genericDao.getList(ActivoTrabajo.class, 
+				genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo),
+				genericDao.createFilter(FilterType.EQUALS, "trabajo.auditoria.borrado", false));
+		if(trabajosDelActivo == null)
+			trabajosDelActivo = new ArrayList<ActivoTrabajo>();
+		return trabajosDelActivo;
+	}
+	
+	@Override
 	@Transactional(readOnly = false)
 	public void actualizarOfertasTrabajosVivos(Activo activo) {
 		Boolean tieneOfertasVivas = false;
 		Boolean tieneTrabajosVivos = false;
-		List<ActivoTrabajo> trabajosDelActivo = activo.getActivoTrabajos();
-
+		List<ActivoTrabajo> trabajosDelActivo = this.getActivoTrabajos(activo.getId());
 		tieneOfertasVivas = particularValidator
 				.existeActivoConOfertaVivaEstadoExpediente(Long.toString(activo.getNumActivo()));
 
@@ -6304,7 +6314,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						activoDao.getActivoById(activoDao.getIdActivoMatriz(agrupacionPa.getId())).getNumActivo()));
 			}
 			if (!tieneTrabajosVivos) {
-				List<ActivoTrabajo> trabajosDelActivoAM = activo.getActivoTrabajos();
+				List<ActivoTrabajo> trabajosDelActivoAM = this.getActivoTrabajos(activo.getId());
 				for (ActivoTrabajo activoTrabajoAM : trabajosDelActivoAM) {
 					if (!DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA
 							.equals(activoTrabajoAM.getTrabajo().getSubtipoTrabajo().getCodigo())

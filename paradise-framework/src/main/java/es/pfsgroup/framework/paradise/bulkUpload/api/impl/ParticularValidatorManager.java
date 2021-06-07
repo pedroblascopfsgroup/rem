@@ -5947,8 +5947,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM GRG_REFACTURACION_GASTOS "
-				+" WHERE GRG_GPV_ID = (SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = '"+numGasto+"') ");
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM GRG_REFACTURACION_GASTOS GRG "
+				+" JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GRG.GRG_GPV_ID AND GPV.BORRADO = 0 "
+				+" JOIN ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID AND PRO.BORRADO = 0 "
+				+" JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID AND CRA.BORRADO = 0 "
+				+" WHERE GPV.GPV_NUM_GASTO_HAYA = '"+numGasto+"' "
+				+" AND GRG.BORRADO = 0 AND CRA.DD_CRA_CODIGO = '02' "
+				);
 		
 		return !"0".equals(resultado);
 	}

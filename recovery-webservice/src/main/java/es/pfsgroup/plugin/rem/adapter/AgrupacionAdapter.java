@@ -4003,7 +4003,7 @@ public class AgrupacionAdapter {
 		if(!Checks.esNulo(agrupacion)){
 			listOfertasAgrupacion= agrupacion.getOfertas();
 			for(ActivoAgrupacionActivo activoAgrupacion: agrupacion.getActivos()){
-				listActivoTrabajo.addAll(activoAgrupacion.getActivo().getActivoTrabajos());
+				listActivoTrabajo.addAll(activoApi.getActivoTrabajos(activoAgrupacion.getActivo().getId()));
 			}			
 		}
 		

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20210528
+--## FECHA_CREACION=20210604
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14129
@@ -44,7 +44,8 @@ DECLARE
 		T_ALTER(  'POS_FECHA_ENVIO',							'DATE', 				'Fecha de envio a BC'),
 		T_ALTER(  'POS_VALIDACION_BC',							'NUMBER(1,0)',			'Respuesta validación bc'),
 		T_ALTER(  'POS_FECHA_VALIDACION_BC',					'DATE',					'Fecha respuesta validación bc'),
-		T_ALTER(  'POS_OBSERVACIONES_BC',						'VARCHAR2(150 CHAR)',	'Observaciones BC')
+		T_ALTER(  'POS_OBSERVACIONES_BC',						'VARCHAR2(150 CHAR)',	'Observaciones BC'),
+		T_ALTER(  'POS_OBSERVACIONES_REM',						'VARCHAR2(512 CHAR)',	'Observaciones REM')
      );
      V_T_ALTER T_ALTER;
 BEGIN

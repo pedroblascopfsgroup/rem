@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210609
+--## FECHA_CREACION=20210610
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14199
@@ -12,7 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - HREOS-13942 - Santi Monzó
 --##        0.2 Versión inicial - HREOS-14162 - Alejandra García - Añadir campos
---##        0.3  HREOS-14199 -  Santi Monzó - Añadir array ara que cree las 4 tablas
+--##        0.3  HREOS-14199 -  Santi Monzó - Añadir array ara que cree las 4 tablas, añadir campo FLAG_EN_REM en las BCR
 --##########################################
 --*/
 
@@ -39,16 +39,16 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'AUX_APR_BCR_STOCK'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_COMMENT_TABLE VARCHAR2(500 CHAR):= ''; -- Vble. para los comentarios de las tablas
-
+   
 
 
   TYPE T_COL IS TABLE OF VARCHAR2(500 CHAR);
   TYPE T_ARRAY_COL IS TABLE OF T_COL;
   V_COL T_ARRAY_COL := T_ARRAY_COL(
-  	  T_COL('AUX_APR_BCR_STOCK'),
-      T_COL('AUX_APR_RBC_STOCK'),
-      T_COL('AUX_APR_BCR_DELTA'),
-      T_COL('AUX_APR_RBC_DELTA')
+  	  T_COL('AUX_APR_BCR_STOCK',',FLAG_EN_REM NUMBER (1)'),
+      T_COL('AUX_APR_RBC_STOCK',''),
+      T_COL('AUX_APR_BCR_DELTA',',FLAG_EN_REM NUMBER (1)'),
+      T_COL('AUX_APR_RBC_DELTA','')
 	  
    );  
   V_TMP_COL T_COL;
@@ -251,6 +251,7 @@ BEGIN
         FEC_RESOLUCION_MORA         VARCHAR2(8 CHAR),
         IND_ENTREGA_VOL_POSESI      VARCHAR2(8 CHAR)
 
+        '||V_TMP_COL(2)||'
 
 
         

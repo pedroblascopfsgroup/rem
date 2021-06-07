@@ -88,6 +88,9 @@ public class Posicionamiento implements Serializable, Auditable, Comparable<Posi
 	@Column(name = "POS_OBSERVACIONES_BC")
 	private String observacionesBcPos;
 	
+	@Column(name = "POS_OBSERVACIONES_REM")
+	private String observacionesRem;
+	
 	@Version
 	private Long version;
 
@@ -216,6 +219,14 @@ public class Posicionamiento implements Serializable, Auditable, Comparable<Posi
 
 	public void setObservacionesBcPos(String observacionesBcPos) {
 		this.observacionesBcPos = observacionesBcPos;
+	}
+	
+	public String getObservacionesRem() {
+		return observacionesRem;
+	}
+
+	public void setObservacionesRem(String observacionesRem) {
+		this.observacionesRem = observacionesRem;
 	}
 	
 }

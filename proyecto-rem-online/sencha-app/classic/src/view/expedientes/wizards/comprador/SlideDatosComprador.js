@@ -291,6 +291,38 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 							change: 'comprobarObligatoriedadRte'
 						}
 					},
+					{ 
+			        	fieldLabel:  HreRem.i18n('fieldlabel.idBC'),
+			        	name: 'idBC4C',
+			        	reference: 'idBC4C',
+			        	padding: '5px',
+			        	readOnly: true,
+			        	bind: {
+			        		hidden: '{!comprador.esCarteraBankia}'
+			        	}
+			        },
+			        { 
+			        	xtype:'datefieldbase',
+			        	fieldLabel:  HreRem.i18n('fieldlabel.fechaNacimientoConstitucion'),
+			        	name: 'fechaNacimientoConstitucion',
+			        	reference: 'fechaNacimientoConstitucion',
+			        	padding: '5px',
+			        	maxValue: null,
+			        	bind: {
+			        		hidden: '{!comprador.esCarteraBankia}',
+			        		allowBlank: '{!comprador.esCarteraBankia}'
+			        	}
+			        },
+			        { 
+			        	fieldLabel:  HreRem.i18n('fieldlabel.formaJuridica'),
+			        	name: 'formaJuridica',
+			        	reference: 'formaJuridica',
+			        	padding: '5px',
+			        	readOnly: true,
+			        	bind: {
+			        		hidden: '{!comprador.esCarteraBankia}'
+			        	}
+			        },
 					{
 						xtype: 'container',
 						layout: {

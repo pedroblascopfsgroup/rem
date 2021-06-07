@@ -8,6 +8,7 @@ Ext.define('HreRem.view.expedientes.FechaArrasGrid', {
      idSecundaria: 'expediente.id',
      editOnSelect: true,
      removeButton: false,
+     requires : [ 'HreRem.model.FechaArrasModel'],	
      bind: {
          store: '{storeFechaArras}'
      },

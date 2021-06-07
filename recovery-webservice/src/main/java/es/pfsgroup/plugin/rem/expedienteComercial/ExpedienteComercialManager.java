@@ -4541,6 +4541,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				comprador.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
 			}
 			
+			if(!Checks.isFechaNula(dto.getFechaNacimientoConstitucion())){
+				comprador.setFechaNacimientoConstitucion(dto.getFechaNacimientoConstitucion());
+			}
+			
 			Filter filtroAdjunto = genericDao.createFilter(FilterType.NOTNULL, "idAdjunto");
 			List<TmpClienteGDPR> tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, 
 					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()), filtroAdjunto);
@@ -4763,6 +4767,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);		
 				compradorExpediente.setFechaContrasteListas(new Date());
 			}
+			
 
 			if (esNuevo) {
 				genericDao.save(Comprador.class, comprador);
@@ -8712,6 +8717,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			comprador.setTransferenciasInternacionales(vista.getTransferenciasInternacionales());
 			comprador.setEntidadPropietariaCodigo(cartera);
 			comprador.setEsCarteraBankia(DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera));
+			if(DDTiposDocumentos.NIF.equals(vista.getCodTipoDocumento())) {
+				comprador.setFormaJuridica(vista.getNumDocumento());
+			}
+			
 
 			if (comprador.getEsCarteraBankia()) {
 				if (comprador.getEsBH()) {

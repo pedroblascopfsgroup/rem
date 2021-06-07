@@ -163,6 +163,14 @@ public class DtoModificarCompradores{
 	
 	private boolean visualizar;
 	
+	private String idBC4C;
+
+	private Date fechaNacimientoConstitucion;
+
+	private String formaJuridica;
+
+	
+	
 	
 	public Long getId() {
 		return id;
@@ -795,6 +803,30 @@ public class DtoModificarCompradores{
 		this.visualizar = visualizar;
 	}
 
+	public String getIdBC4C() {
+		return idBC4C;
+	}
+
+	public void setIdBC4C(String idBC4C) {
+		this.idBC4C = idBC4C;
+	}
+
+	public Date getFechaNacimientoConstitucion() {
+		return fechaNacimientoConstitucion;
+	}
+
+	public void setFechaNacimientoConstitucion(Date fechaNacimientoConstitucion) {
+		this.fechaNacimientoConstitucion = fechaNacimientoConstitucion;
+	}
+
+	public String getFormaJuridica() {
+		return formaJuridica;
+	}
+
+	public void setFormaJuridica(String formaJuridica) {
+		this.formaJuridica = formaJuridica;
+	}
+	
 	
 
 }

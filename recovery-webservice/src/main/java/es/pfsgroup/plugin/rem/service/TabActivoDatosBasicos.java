@@ -906,35 +906,22 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		DDEstadoRegistralActivo ddEstadoReg = null;
-		if(perimetroAdmision && actRevTitulo != null && actRevTitulo.getTipoIncidenciaRegistral() != null) {
-			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getTipoIncidenciaRegistral().getDescripcion()));
-		} else if(perimetroAdmision && actRevTitulo != null && actRevTitulo.getSituacionConstructivaRegistral() != null) {
-			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getSituacionConstructivaRegistral().getDescripcion()));
-		} else if(activo.getEstadoRegistral() != null) {
-		if(perimetroAdmision && actRevTitulo != null) {
-			if(actRevTitulo.getTipoIncidenciaRegistral() != null) {
-				ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getTipoIncidenciaRegistral().getDescripcion()));
-			}else if(actRevTitulo.getSituacionConstructivaRegistral() != null) {
-				ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getSituacionConstructivaRegistral().getDescripcion()));
-			}
-			
-			if(ddEstadoReg != null) {
-				activoDto.setEstadoRegistralCodigo(ddEstadoReg.getCodigo());
-				activoDto.setEstadoRegistralDescripcion(ddEstadoReg.getDescripcion());
-			}
-			
-		}else if(activo.getEstadoRegistral() != null){
+		if (!Checks.esNulo(activo.getEstadoRegistral())) {
 			activoDto.setEstadoRegistralCodigo(activo.getEstadoRegistral().getCodigo());
 			activoDto.setEstadoRegistralDescripcion(activo.getEstadoRegistral().getDescripcion());
+		} else if (perimetroAdmision && actRevTitulo != null && actRevTitulo.getTipoIncidenciaRegistral() != null) {
+			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getTipoIncidenciaRegistral().getDescripcion()));
+		} else if (perimetroAdmision && actRevTitulo != null && actRevTitulo.getSituacionConstructivaRegistral() != null) {
+			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getSituacionConstructivaRegistral().getDescripcion()));
 		}
-		}
+		
 		if(ddEstadoReg != null) {
 			activoDto.setEstadoRegistralCodigo(ddEstadoReg.getCodigo());	
+			activoDto.setEstadoRegistralDescripcion(ddEstadoReg.getDescripcion());
 		}
+		
 		Double porcentajeContruccion = activo.getPorcentajeConstruccion();
 		activoDto.setPorcentajeConstruccion(porcentajeContruccion);
-		
-		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
 		
 		List<Perfil> perfilesUser = usuarioLogado.getPerfiles();
@@ -1068,37 +1055,25 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 
 		ActivoAdmisionRevisionTitulo activoAdmisionRevisionTitulo = genericDao.get(ActivoAdmisionRevisionTitulo.class, genericDao.createFilter(FilterType.EQUALS,  "activo.id", activo.getId()));
+		String codigoHayaSuper = "HAYASUPER";
+		String codigoGestorAdmision = "HAYAGESTADM";
+		List<Perfil> perfilesUsuarioLogado = usuarioLogado.getPerfiles();
+		boolean esUsuarioConPermisos = false;
+		boolean revision = false;
 		
-		if(activoAdmisionRevisionTitulo != null) {
-						
-
-			String codigoHayaSuper = "HAYASUPER";
-			String codigoGestorEdificacion = "GESTEDI";
-			
-			List<Perfil> perfilesUsuarioLogado = usuarioLogado.getPerfiles();
-			
-			boolean esUsuarioConPermisos = false;
-			boolean revision = false;
-			
-			if(activoAdmisionRevisionTitulo.getRevisado() != null) {
-				revision = DDSinSiNo.CODIGO_SI.equals(activoAdmisionRevisionTitulo.getRevisado().getCodigo());	
-			}
-			
-			for(Perfil pef : perfilesUsuarioLogado){
-				if(codigoHayaSuper.equals(pef.getCodigo()) || codigoGestorEdificacion.equals(pef.getCodigo())) {
-					esUsuarioConPermisos = true;
-					break;
-				}				
-			}
-			
-			
-			boolean puedeEditar = (esUsuarioConPermisos == true && (perimetroAdmision == false || (perimetroAdmision == true && revision == true)));
-	     
-			
-			activoDto.setEsEditableActivoEstadoRegistral(puedeEditar);
-		}else {
-			activoDto.setEsEditableActivoEstadoRegistral(!perimetroAdmision);
+		for(Perfil pef : perfilesUsuarioLogado){
+			if(codigoHayaSuper.equals(pef.getCodigo()) || codigoGestorAdmision.equals(pef.getCodigo())) {
+				esUsuarioConPermisos = true;
+				break;
+			}				
 		}
+			
+		if(!Checks.esNulo(activoAdmisionRevisionTitulo) && !Checks.esNulo(activoAdmisionRevisionTitulo.getRevisado())) {
+			revision = DDSinSiNo.CODIGO_SI.equals(activoAdmisionRevisionTitulo.getRevisado().getCodigo());	
+		}
+			
+		boolean puedeEditar = (esUsuarioConPermisos && (!perimetroAdmision || (perimetroAdmision && revision)));
+		activoDto.setEsEditableActivoEstadoRegistral(puedeEditar);
 		
 		if(activo.getEstadoValidacionActivoDND()!=null) {
 			activoDto.setEstadoFisicoActivoDND(activo.getEstadoValidacionActivoDND().getCodigo());

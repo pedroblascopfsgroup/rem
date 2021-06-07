@@ -16,6 +16,7 @@ public class DtoGridFechaArras extends WebDto {
 	private Date fechaAviso;
 	private String comentariosBC;
 	private String observaciones;
+	private String fechaPropuestaString;
 	
 	public Long getId() {
 		return id;
@@ -76,6 +77,12 @@ public class DtoGridFechaArras extends WebDto {
 	}
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
+	}
+	public String getFechaPropuestaString() {
+		return fechaPropuestaString;
+	}
+	public void setFechaPropuestaString(String fechaPropuestaString) {
+		this.fechaPropuestaString = fechaPropuestaString;
 	}
 	
 	

@@ -12030,10 +12030,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional
-	public Boolean saveFechaArras(DtoGridFechaArras dto) {
+	public Boolean saveFechaArras(DtoGridFechaArras dto) throws ParseException {
 		FechaArrasExpediente nuevaFecha = new FechaArrasExpediente();
 		
-		nuevaFecha.setFechaPropuesta(dto.getFechaPropuesta());
+		nuevaFecha.setFechaPropuesta(ft.parse(dto.getFechaPropuestaString()));
 		nuevaFecha.setObservaciones(dto.getObservaciones());
 		nuevaFecha.setExpedienteComercial(genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente())));
 		

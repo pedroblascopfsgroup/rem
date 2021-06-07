@@ -1461,9 +1461,9 @@ public interface ActivoApi {
 	public void updateHonorarios (Activo activo, List<ActivoOferta> listaActivoOfertas);
 
 	public Page getPublicacionGrid(DtoPublicacionGridFilter dto);
-	
+
 	public boolean isIfNecesarioActivo(Activo activo);
-	
+
 	public void rellenarIfNecesario(Activo activo);
 
 	public List<DDDistritoCaixa> getComboTipoDistritoByCodPostal(String codPostal);

@@ -145,7 +145,7 @@ Ext.define('HreRem.view.expedientes.FechaArrasGrid', {
 			
 			var reg = listaReg[0];
 			
-			if(me.comprobarFechaEnviada(reg)){
+			if(reg == null || me.comprobarFechaEnviada(reg)){
 				me.getStore().sorters.clear();
 	            me.editPosition = 0;
 	            rec.setId(null);

@@ -3717,6 +3717,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 				if(posicionamiento.getValidacionBCPos() != null ) {
 					beanUtilNotNull.copyProperty(posicionamientoDto, "validacionBCPosi", posicionamiento.getValidacionBCPos().getCodigo());
+					beanUtilNotNull.copyProperty(posicionamientoDto, "validacionBCPosiDesc", posicionamiento.getValidacionBCPos().getDescripcion());
 				}
 				
 				beanUtilNotNull.copyProperty(posicionamientoDto, "fechaEnvioPos", posicionamiento.getFechaEnvioPos());
@@ -3755,6 +3756,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			beanUtilNotNull.copyProperty(posicionamiento, "lugarFirma", dto.getLugarFirma());
+			if(dto.getObservacionesRem() != null) {
+				beanUtilNotNull.copyProperty(posicionamiento, "observacionesRem", dto.getObservacionesRem());
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en ExpedienteComercialManager", e);
@@ -4764,9 +4768,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				genericDao.save(Comprador.class, comprador);
 				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
 				compradorExpediente.setFechaContrasteListas(new Date());
-				expedienteComercial.getCompradores().add(compradorExpediente);						
+				expedienteComercial.getCompradores().add(compradorExpediente);
+				genericDao.update(CompradorExpediente.class, compradorExpediente);
 				genericDao.save(ExpedienteComercial.class, expedienteComercial);
-				genericDao.update(CompradorExpediente.class, compradorExpediente);		
 				
 			} else {
 				genericDao.save(Comprador.class, comprador);

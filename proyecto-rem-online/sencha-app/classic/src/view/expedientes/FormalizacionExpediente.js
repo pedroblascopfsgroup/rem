@@ -360,20 +360,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							rowclick : 'onRowClickPosicionamiento'
 						},
 						columns : [{
-									text : HreRem.i18n('fieldlabel.fecha.aviso'),
-									dataIndex : 'fechaAviso',
-									// formatter: 'date("d/m/Y")',
-									flex : 1,
-									editor : {
-										xtype : 'datefield',
-										reference : 'fechaAvisoRef',
-										listeners : {
-											change : 'changeFecha'
-										}
-									},
-									hidden : true,
-									renderer : dateColoredRender
-								}, {
 									text : HreRem.i18n('fieldlabel.hora.aviso'),
 									dataIndex : 'horaAviso',
 									// formatter: 'date("H:i")',
@@ -396,6 +382,12 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 								}, {
 									text : HreRem.i18n('fieldlabel.fecha.alta'),
 									dataIndex : 'fechaAlta',
+									// formatter: 'date("d/m/Y")',
+									flex : 1,
+									renderer : dateColoredRender
+								}, {
+									text: HreRem.i18n('title.column.fecha.envio'),
+     		            			dataIndex : 'fechaEnvioPos',
 									// formatter: 'date("d/m/Y")',
 									flex : 1,
 									renderer : dateColoredRender
@@ -491,10 +483,42 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 										}),
 										reference : 'notariaRef',
 										displayField : 'descripcion',
-										valueField : 'id'
+										valueField : 'id',
+										allowBlank : false
 									}
+								}, {   
+									text: HreRem.i18n('title.column.fecha.respuesta.bc'),
+			     		        	dataIndex: 'fechaValidacionBCPos',
+			     		        	//formatter: 'date("d/m/Y")',
+			     		        	flex: 1,
+									renderer : dateColoredRender
+			     				}, {
+			     					text: HreRem.i18n('title.column.validacion.bc'),
+			     		        	dataIndex: 'validacionBCPosiDesc',
+			     		        	flex: 1,
+									renderer : coloredRender
+			     				}, {
+									text : HreRem.i18n('fieldlabel.fecha.aviso'),
+									dataIndex : 'fechaAviso',
+									//formatter: 'date("d/m/Y")',
+									flex : 1,
+									renderer : dateColoredRender
 								}, {
-									text : HreRem
+			     					text: HreRem.i18n('title.column.comentarios.bc'),
+			     					dataIndex: 'observacionesBcPos',
+			     					flex: 1,
+									renderer : coloredRender
+			     				}, {
+			                        text: HreRem.i18n('fieldlabel.observaciones'),
+			                        dataIndex: 'observacionesRem',
+			                        editor: {
+			                            xtype: 'textarea',
+			                            cls: 'grid-no-seleccionable-field-editor'
+			                        },
+			                        flex: 2,
+									renderer : coloredRender
+			                    }, {
+												text : HreRem
 											.i18n('fieldlabel.motivo.aplazamiento'),
 									dataIndex : 'motivoAplazamiento',
 									flex : 1,
@@ -625,7 +649,58 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 															.i18n("msg.operacion.eliminar.posicionamiento.motivo"));
 								}
 							}
-						}
+						},
+						onAddClick: function(btn){
+
+				            var me = this;
+				            var rec = Ext.create(me.getStore().config.model);
+				            
+				            var listaReg = me.getStore().getData().items;
+				            listaReg.sort(function(a, b) {
+							  if (a.data.fechaAlta.getTime() > b.data.fechaAlta.getTime()) {
+							    return -1;
+							  }
+							  if (a.data.fechaAlta.getTime() < b.data.fechaAlta.getTime()) {
+							    return 1;
+							  }
+							  return 0;
+							});
+							
+							var reg = listaReg[0];
+							
+							if(reg == null || me.comprobarFechaEnviada(reg)){
+								me.getStore().sorters.clear();
+					            me.editPosition = 0;
+					            rec.setId(null);
+					            me.getStore().insert(me.editPosition, rec);
+					            me.rowEditing.isNew = true;
+					            me.rowEditing.startEdit(me.editPosition, 0);
+					            me.disableAddButton(true);
+					            me.disablePagingToolBar(true);
+					            me.disableRemoveButton(true);
+					
+					            //me.comprobarEdicionGrid();
+							}else{
+								me.fireEvent("errorToast", HreRem.i18n("msg.existe.fecha.validada"));
+							}
+				            
+				       },
+				       comprobarFechaEnviada: function(reg){
+				       	
+				       		if(reg.data != null){
+				       			if(reg.data.motivoAplazamiento != null){
+				       				return true;
+				       			}else if(reg.data.fechaEnvioPos == null){
+				       				return true;
+				       			}else if(reg.data.fechaEnvioPos != null && reg.data.validacionBCPosiDesc == 'Deniega'){
+				       				return true;
+				       			}else{
+				       				return false;
+				       			}
+				       		}
+				       		
+				       		return true;
+				       }
 					}, {
 						xtype : 'gridBase',
 						reference : 'listadoNotarios',

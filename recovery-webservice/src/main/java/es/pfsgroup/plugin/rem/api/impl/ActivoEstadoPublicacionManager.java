@@ -1445,7 +1445,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(readOnly = false)
 	public Boolean saveFasePublicacionActivo(DtoFasePublicacionActivo dto){
 		HistoricoFasePublicacionActivo fasePublicacionActivoVigente = activoPublicacionDao.getFasePublicacionVigentePorIdActivo(dto.getIdActivo());
 		DDFasePublicacion fasePublicacion = new DDFasePublicacion();

@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSiniSiNoIndiferente;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
@@ -1365,7 +1366,11 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						}
 						
 						//LOCAL COMERCIAL
-						if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {
+						if (DDTipoActivo.COD_COMERCIAL.equals(informe.getCodTipoActivo()) 
+								|| (!DDTipoActivo.COD_COMERCIAL.equals(informe.getCodTipoActivo())
+									&& !DDTipoActivo.COD_VIVIENDA.equals(informe.getCodTipoActivo())
+									&& !DDSubtipoActivo.COD_GARAJE.equals(informe.getCodSubtipoInmueble()) 
+									&& DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo()))) {
 							ActivoLocalComercial informeEntityLocal = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
 									informe.getIdActivoHaya(), ActivoLocalComercial.class, "informeComercial.activo.numActivo");
 							
@@ -1378,18 +1383,12 @@ public class InformeMediadorManager implements InformeMediadorApi {
 							entitys.add(informeEntity);
 							entitys.add(informeEntityLocal);
 							
-						//NULL
-						} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EN_COSTRUCCION)
-								|| informe.getCodTipoActivo().equals(DDTipoActivo.COD_INDUSTRIAL)
-								|| informe.getCodTipoActivo().equals(DDTipoActivo.COD_SUELO)
-								|| informe.getCodTipoActivo().equals(DDTipoActivo.COD_EDIFICIO_COMPLETO)) {							
-							
-							informeEntity.setTipoInfoComercial(null);
-							
-							entitys.add(informeEntity);
-							
 						//PLAZA APARCAMIENTO	
-						} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_OTROS)) {							
+						} else if (DDSubtipoActivo.COD_GARAJE.equals(informe.getCodSubtipoInmueble()) 
+								|| (!DDTipoActivo.COD_COMERCIAL.equals(informe.getCodTipoActivo())
+										&& !DDTipoActivo.COD_VIVIENDA.equals(informe.getCodTipoActivo())
+										&& !DDSubtipoActivo.COD_GARAJE.equals(informe.getCodSubtipoInmueble()) 
+										&& DDSubtipoActivo.COD_GARAJE.equals(activo.getSubtipoActivo().getCodigo()))) {							
 							ActivoPlazaAparcamiento informeEntityPlazaAp = (ActivoPlazaAparcamiento) dtoToEntity.obtenerObjetoEntity(
 									informe.getIdActivoHaya(), ActivoPlazaAparcamiento.class, "informeComercial.activo.numActivo");
 							
@@ -1403,7 +1402,11 @@ public class InformeMediadorManager implements InformeMediadorApi {
 							entitys.add(informeEntityPlazaAp);
 							
 						//VIVIENDA	
-						} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA)) {
+						} else if (DDTipoActivo.COD_VIVIENDA.equals(informe.getCodTipoActivo()) 
+								|| (!DDTipoActivo.COD_COMERCIAL.equals(informe.getCodTipoActivo())
+										&& !DDTipoActivo.COD_VIVIENDA.equals(informe.getCodTipoActivo())
+										&& !DDSubtipoActivo.COD_GARAJE.equals(informe.getCodSubtipoInmueble()) 
+										&& DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo()))) {
 							ActivoVivienda informeEntityVivienda = (ActivoVivienda) dtoToEntity.obtenerObjetoEntity(
 									informe.getIdActivoHaya(), ActivoVivienda.class, "informeComercial.activo.numActivo");
 							
@@ -1481,6 +1484,11 @@ public class InformeMediadorManager implements InformeMediadorApi {
 							entitys.add(instalacion);
 							entitys.add(zonaComun);
 							entitys.add(propActivo);
+							
+						//NULL
+						} else {							
+							informeEntity.setTipoInfoComercial(null);
+							entitys.add(informeEntity);							
 						}
 						
 						ActivoEdificio edificioEntity = null;

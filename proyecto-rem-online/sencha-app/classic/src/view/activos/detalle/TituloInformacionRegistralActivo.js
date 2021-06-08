@@ -3,7 +3,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
     xtype: 'tituloinformacionregistralactivo',
     cls	: 'panel-base shadow-panel',
     collapsed: false,
-    disableValidation: true,
+    disableValidation: false,
     reference: 'tituloinformacionregistralactivo',
     scrollable	: 'y',
     recargar: false,
@@ -1088,25 +1088,13 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    			provinciaRegistro.markInvalid(error); 
    		}
 
-
-   		/*if(motivoCalNegativa.getValue().length == 0) {
-   			error = HreRem.i18n("txt.validacion.motivo.obligatorio");
-   			errores.push(error);
-   			motivoCalNegativa.markInvalid(error);
-   		}*/
-
-
    		if(superficieUtil.getValue() > superficieConstruida.getValue()) {
    			error = HreRem.i18n("txt.validacion.suputil.mayor.supconstruida");
    			errores.push(error);
    			superficieUtil.markInvalid(error); 		
 
-   		} else if (superficieConstruida.getValue() > superficieElementosComunes.getValue() || superficieUtil.getValue() > superficieElementosComunes.getValue()) {
-   			error = HreRem.i18n("txt.validacion.superficies.mayor.suplementoscomunes");
-   			errores.push(error);
-   			superficieElementosComunes.markInvalid(error);
-   		}
-
+   		} 
+   		
    		if(fieldsetNoJudicial.isVisible()){
 	   		if(!Ext.isEmpty(fechaFirmezaTitulo.getValue()) && fechaFirmezaTitulo.getValue() < fechaTitulo.getValue()) {
 	   			error = HreRem.i18n("txt.validacion.fechafirmezatitulo.menor.fechatitulo");
@@ -1126,8 +1114,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 
    		me.addExternalErrors(errores);
    },
-   
-   
    
    funcionRecargar: function() {
 		var me = this; 

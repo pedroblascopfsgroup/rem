@@ -151,12 +151,11 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 					integracionJupiterDao.actualizarGrupos(usuario, altasGrupos, bajasGrupos);
 					integracionJupiterDao.actualizarCarteras(usuario, altasCarteras, bajasCarteras);
 					//No puede haber subcarteras si hay alguna cartera
-					if (altaCarteras.size() > 0) {
+					if (altasCarteras.size() > 0) {
 						integracionJupiterDao.eliminarSubcarteras(usuario);
-					} else if (altasCarteras.size() == 0 || (altasSubcarteras.size() == 0 && bajasCarteras.size() > 0)) {
-						integracionJupiterDao.actualizarSubcarteras(usuario, altasSubcarteras, bajasSubcarteras);
 					}
-						
+					if (altasCarteras.size() == 0 || (altasSubcarteras.size() == 0 && bajasCarteras.size() > 0)) {
+						integracionJupiterDao.actualizarSubcarteras(usuario, altasSubcarteras, bajasSubcarteras);
 					}
 				}
 			} catch (Exception e) {

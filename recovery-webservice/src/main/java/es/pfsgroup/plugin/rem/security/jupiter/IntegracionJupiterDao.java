@@ -23,5 +23,7 @@ public interface IntegracionJupiterDao {
 	public List<String> getCodigodGruposREM(Usuario usuario);
 	
 	public List<String> getPerfilesREM(String username);
+
+	public void eliminarSubcarteras(Usuario usuario);
 	
 }

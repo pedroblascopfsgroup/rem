@@ -1431,6 +1431,8 @@ public interface ParticularValidatorApi {
 
 	Boolean esActivoEnTramite(String numActivo);
 
+	Boolean esOfertaCaixa(String numOferta);
+
 
 
 }

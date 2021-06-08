@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm;
 
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,13 +37,20 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+
+	@Autowired
+	private CaixaBcRestClient caixaBcRestClient;
 	
 	@Autowired
 	private GenericABMDao genericDao;
 	
 	@Override
 	public String definicionOfertaT013(TareaExterna tareaExterna, String codigo, Map<String, Map<String,String>> valores) {
-		
+
+		if( !caixaBcRestClient.callReplicateClient(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta(),CaixaBcRestClient.COMPRADORES_DATA)){
+			return CaixaBcRestClient.ERROR_REPLICACION_BC;
+		}
+
 		//HREOS-2161
 		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
 		if (!trabajoApi.checkReservaNecesariaNotNull(tareaExterna) &&
@@ -84,9 +92,10 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 				return errores;
 			}
 		}
-		
+
+
 			return null;
-	
+
 	}
 	
 	@Override
@@ -96,6 +105,10 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 		if (trabajoApi.checkBankia(tareaExterna) || trabajoApi.checkLiberbank(tareaExterna)
 				|| trabajoApi.checkGiants(tareaExterna)) {
 			return ofertaApi.isValidateOfertasDependientes(tareaExterna, valores);
+		}
+
+		if( !caixaBcRestClient.callReplicateClient(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta(),CaixaBcRestClient.COMPRADORES_DATA)){
+			return CaixaBcRestClient.ERROR_REPLICACION_BC;
 		}
 		return activoTramiteApi.existeAdjuntoUGValidacion(tareaExterna, DDSubtipoDocumentoExpediente.CODIGO_APROBACION,"E");
 

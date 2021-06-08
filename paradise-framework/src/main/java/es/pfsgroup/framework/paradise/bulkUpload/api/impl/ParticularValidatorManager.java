@@ -6303,6 +6303,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "AND OFR.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
+
+	public Boolean esOfertaCaixa(String numOferta) {
+		if (Checks.esNulo(numOferta) || !StringUtils.isNumeric(numOferta)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM OFR_OFERTAS OFR "
+				+ "JOIN ACT_OFR AO ON AO.OFR_ID = OFR.OFR_ID "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AO.ACT_ID "
+				+ "JOIN DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID "
+				+ "WHERE OFR_NUM_OFERTA = "+numOferta+" "
+				+ "AND DD_CRA_CODIGO = '03' "
+				+ "AND OFR.BORRADO = 0");
+		return !"0".equals(resultado);
+	}
 	
 	@Override
 	public Boolean esOfertaVendida(String numOferta) {

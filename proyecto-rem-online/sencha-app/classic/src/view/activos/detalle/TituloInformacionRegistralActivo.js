@@ -1060,60 +1060,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
     	me.callParent();
 
 	},
-
-	getErrorsExtendedFormBase: function() {
-
-   		var me = this,
-   		errores = [],
-   		error,   		
-   		provinciaRegistro = me.down("[reference=provinciaRegistro]"),
-   		codigoProvinciaDomicilio = me.viewWithModel.getViewModel().get('activo.provinciaDescripcion'),
-   		idufir = me.down("[reference=idufir]"),
-   		superficieUtil = me.down("[reference=superficieUtil]"),
-   		superficieConstruida = me.down("[reference=superficieConstruida]"),
-   		superficieElementosComunes = me.down("[reference=superficieElementosComunes]"),
-   		fechaTitulo = me.down("[reference=fechaTitulo]"),
-   		fechaFirmezaTitulo = me.down("[reference=fechaFirmezaTitulo]"),
-   		fieldsetNoJudicial = me.down("[reference=noJudicial]"),
-   		fieldsetJudicial = me.down("[reference=judicial]"),
-   		fechaFirmezaAutoAdjudicacion = me.down("[reference=fechaFirmezaAutoAdjudicacion]"),
-   		fechaTomaPosesion = me.down("[reference=fechaTomaPosesionJudicial]"),
-   		fechaAutoAdjudicacion = me.down("[reference=fechaAutoAdjudicacion]");
-
-   		motivoCalNegativa = me.down("[reference=itemselMotivo]");
-
-   		if(provinciaRegistro.getValue() != codigoProvinciaDomicilio) {
-   			error = HreRem.i18n("txt.validacion.provincia.diferente.registro");
-   			errores.push(error);
-   			provinciaRegistro.markInvalid(error); 
-   		}
-
-   		if(superficieUtil.getValue() > superficieConstruida.getValue()) {
-   			error = HreRem.i18n("txt.validacion.suputil.mayor.supconstruida");
-   			errores.push(error);
-   			superficieUtil.markInvalid(error); 		
-
-   		} 
-   		
-   		if(fieldsetNoJudicial.isVisible()){
-	   		if(!Ext.isEmpty(fechaFirmezaTitulo.getValue()) && fechaFirmezaTitulo.getValue() < fechaTitulo.getValue()) {
-	   			error = HreRem.i18n("txt.validacion.fechafirmezatitulo.menor.fechatitulo");
-	   			errores.push(error);
-	   			fechaFirmezaTitulo.markInvalid(error);
-	   		}
-   		}
-
-   		if(fieldsetJudicial.isVisible()){
-   			if(!Ext.isEmpty(fechaFirmezaAutoAdjudicacion.getValue()) &&  fechaAutoAdjudicacion.getValue() > fechaFirmezaAutoAdjudicacion.getValue()) {
-   				error = HreRem.i18n("txt.validacion.fechaAutoAdjudicacion.mayor.fechaFirmezaAutoAdjudicacion");
-	   			errores.push(error);
-	   			fechaFirmezaAutoAdjudicacion.markInvalid(error);
-
-   			}
-   		}
-
-   		me.addExternalErrors(errores);
-   },
    
    funcionRecargar: function() {
 		var me = this; 

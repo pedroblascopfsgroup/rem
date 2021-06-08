@@ -38,7 +38,7 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 	private static final String CODIGO_USUARIO = "username";
 	private static final String GU_CODIGO_USUARIO = "grupo.username";
 	private static final String UCA_CODIGO = "cartera.codigo";
-	private static final String UCA_CODIGO_SUB = "subcartera.codigo";
+	private static final String UCA_CODIGO_SUB = "subCartera.codigo";
 
 	private static final Log logger = LogFactory.getLog(IntegracionJupiterDaoImpl.class);
 	
@@ -221,9 +221,10 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 	public List<String> getCodigosCarterasREM(Usuario usuario) {
 		List<String> resultado = new ArrayList<String>();
 		Filter filtroUca = genericDao.createFilter(FilterType.EQUALS, USUARIO_ID, usuario.getId());
-		List<UsuarioCartera> uca = genericDao.getList(UsuarioCartera.class, filtroUca);
+		List<UsuarioCartera> uca = genericDao.getList(UsuarioCartera.class, filtroUca, 
+				genericDao.createFilter(FilterType.NULL, "subCartera"));
 		if (uca != null && !uca.isEmpty()) {
-			resultado.add(uca.get(0).getCartera().getCodigo());
+			resultado.add(uca.get(0).getCartera().getDescripcion());
 		}
 		return resultado;
 	}
@@ -235,7 +236,7 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 		if (uca != null && !uca.isEmpty()) {
 			for (UsuarioCartera uc : uca) {
 				if (uc.getSubCartera() != null && !uc.getSubCartera().getAuditoria().isBorrado()) {
-					resultado.add(uc.getSubCartera().getCodigo());
+					resultado.add(uc.getSubCartera().getDescripcion());
 				}
 			}
 		}

@@ -203,7 +203,7 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 		for (String codigoJupiter : listaCodigosJupiter) {
 			MapeoJupiterREM traduccion = mapaTraductor.get(codigoJupiter);
 			if (traduccion == null) {
-				logger.error("IntegracionJupiter: Error al traducir el código desde Júpiter: " + codigoJupiter + " no existe en el maestro de traducción.");
+				logger.error("IntegracionJupiter: Error al traducir el codigo desde Jupiter: " + codigoJupiter + " no existe en el maestro de traduccion.");
 			} else {
 				String tipoPerfil = traduccion.getTipoPerfil();
 				if (PERFIL_ROL.equals(tipoPerfil)) {
@@ -216,7 +216,7 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 					//El código de subcartera viene con el código de cartera por delante más un separador <espacio>/<espacio>. Hay que extraerlo.
 					codigosSubcarteras.add(extraerCodigoSubcartera(traduccion.getCodigoREM()));
 				} else {
-					logger.error("IntegracionJupiter: Error al traducir el código desde Júpiter: " + codigoJupiter + " tiene un tipo de perfil no soportado " + traduccion.getTipoPerfil());
+					logger.error("IntegracionJupiter: Error al traducir el codigo desde Jupiter: " + codigoJupiter + " tiene un tipo de perfil no soportado " + traduccion.getTipoPerfil());
 				}
 			}
 		}

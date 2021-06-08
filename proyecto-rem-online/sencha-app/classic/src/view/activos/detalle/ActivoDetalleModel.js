@@ -1699,6 +1699,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    }
 		    
 		    return false;
+		},
+		
+		editableCheckComercializar: function(get){
+			var principalRestringida = get('activo.activoPrincipalRestringida');
+			var perteneceRestringida = get('activo.perteneceAgrupacionRestringidaVigente');
+			var isSareb = get('activo.isCarteraSareb');
+			var numActivo = get('activo.numActivo');
+			var readOnly = false;
+			if((perteneceRestringida && (principalRestringida != numActivo)) && isSareb){
+				readOnly = true;
+			}	
+			return readOnly;
 		}
 	 },
     

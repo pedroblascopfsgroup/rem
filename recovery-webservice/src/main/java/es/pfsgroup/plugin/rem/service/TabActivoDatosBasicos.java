@@ -1448,6 +1448,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					//Acciones al desmarcar check comercializar
 					if(!dto.getAplicaComercializar()) {
 						this.accionesDesmarcarComercializar(activo);
+					}else  if(DDCartera.isCarteraSareb(activo.getCartera())) {
+						this.accionesParaMarcarComercializar(activo);
 					}
 				}
 				if(!Checks.esNulo(dto.getAplicaFormalizar())) {
@@ -2164,7 +2166,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 
 		List<ActivoAgrupacionActivo> activoAgrupacionActivoList = activoAgrupacionActivo.getAgrupacion().getActivos();
-
+		Date fechaHoy = new Date();
 		for(ActivoAgrupacionActivo activos : activoAgrupacionActivoList) {
 			// No modificar el perímetro del activo de procedencia, su perimetro se actualiza en el método padre de la tab.
 			if(activos.getActivo().getId() == activo.getId()) {
@@ -2174,11 +2176,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activos.getActivo().getId());
 			if(perimetroActivo != null) {
 				perimetroActivo.setAplicaComercializar(0);
-				perimetroActivo.setFechaAplicaComercializar(new Date());
+				perimetroActivo.setFechaAplicaComercializar(fechaHoy);
 
 				perimetroActivo.setAplicaFormalizar(0);
-				perimetroActivo.setFechaAplicaFormalizar(new Date());
-
+				perimetroActivo.setFechaAplicaFormalizar(fechaHoy);
+				
+				if(DDCartera.isCarteraSareb(activo.getCartera())) {
+					perimetroActivo.setCheckGestorComercial(false);
+					perimetroActivo.setFechaGestionComercial(fechaHoy);
+				}
+				
 				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
 				updaterState.updaterStateDisponibilidadComercial(activos.getActivo());
 			}
@@ -2351,6 +2358,41 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 				genericDao.save(PerimetroActivo.class, perimetroActivo);
 			
+			}
+		}
+	}
+	
+	public void accionesParaMarcarComercializar (Activo act) {
+		if(!activoApi.isActivoPerteneceAgrupacionRestringida(act)) {
+			return;
+		}
+		
+		ActivoAgrupacionActivo aga = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(act.getId());
+		if(aga == null) {
+			return;
+		}
+		
+		ActivoAgrupacion agr = aga.getAgrupacion();
+		if(agr != null) {
+			List<Activo> activos = activoApi.getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(agr.getId(),act.getId());
+			if(!Checks.estaVacio(activos)) {
+				Date fechaHoy = new Date();
+				for (Activo activo : activos) {
+					PerimetroActivo perimetroActivo =  activoApi.getPerimetroByIdActivo(activo.getId());
+					if(perimetroActivo != null) {
+						perimetroActivo.setAplicaComercializar(1);
+						perimetroActivo.setFechaAplicaComercializar(fechaHoy);
+						
+						perimetroActivo.setCheckGestorComercial(true);
+						perimetroActivo.setFechaGestionComercial(fechaHoy);
+						
+						perimetroActivo.setExcluirValidaciones((DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO));
+						perimetroActivo.setMotivoGestionComercial(null);
+						
+						genericDao.update(PerimetroActivo.class,perimetroActivo);
+					}
+					
+				}
 			}
 		}
 	}

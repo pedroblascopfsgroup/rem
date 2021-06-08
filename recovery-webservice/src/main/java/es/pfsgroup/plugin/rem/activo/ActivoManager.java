@@ -9207,6 +9207,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		} catch (Exception e) {
 			logger.error("Error en updateHonorarios", e);
 		}
-	}	
+
+	}
+
+	
+	@Override
+	public List<Activo> getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(Long idAgrupacion, Long idActivoPrincipal){
+
+		List<Activo> activos = activoDao.getActivosNoPrincipalesAgrupacion(idAgrupacion, idActivoPrincipal);
+		
+		return activos;
+	}
+
 }
 

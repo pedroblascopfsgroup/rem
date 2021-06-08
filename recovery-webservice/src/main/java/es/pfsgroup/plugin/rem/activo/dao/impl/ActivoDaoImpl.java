@@ -2355,4 +2355,17 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		//TODO aquí se recoge el objetoMapeado
 		return genericDao.getList(AuxiliarCierreOficinasBankiaMul.class);
 	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activo> getActivosNoPrincipalesAgrupacion(Long agrId, Long idActivoPrincipal) {
+		HQLBuilder hb = new HQLBuilder("Select aga.activo from ActivoAgrupacionActivo aga");
+	
+		hb.appendWhere("aga.agrupacion.fechaBaja is null");
+		hb.appendWhere("aga.agrupacion.id ="+ agrId + " and aga.activo.id !=" +idActivoPrincipal + "");
+		
+		return this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+	}
 }

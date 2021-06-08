@@ -818,4 +818,6 @@ public interface OfertaApi {
 
 	public ExpedienteComercial tareaExternaToExpediente(TareaExterna tareaExterna);
 
+	boolean esMayorista(TareaExterna tareaExterna);
+
 }

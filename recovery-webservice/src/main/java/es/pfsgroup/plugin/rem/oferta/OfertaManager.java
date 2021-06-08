@@ -6885,6 +6885,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}				
 	}
 	
-
+	@Override
+	public boolean esMayorista(TareaExterna tareaExterna) {
+		Oferta oferta = tareaExternaToOferta(tareaExterna);
+		
+		if(oferta != null && oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getEquipoGestion() != null) {
+			return DDEquipoGestion.CODIGO_MAYORISTA.equals(oferta.getActivoPrincipal().getEquipoGestion().getCodigo());
+		}
+		
+		return true;
+	}
 	
 }

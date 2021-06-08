@@ -4743,7 +4743,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
 				compradorExpediente.setFechaContrasteListas(new Date());
 				expedienteComercial.getCompradores().add(compradorExpediente);
-				genericDao.update(CompradorExpediente.class, compradorExpediente);
 				genericDao.save(ExpedienteComercial.class, expedienteComercial);
 				
 			} else {

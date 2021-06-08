@@ -999,7 +999,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.comercial'),
 								reference: 'chkbxPerimetroComercializar',
 								bind: {
-									readOnly: '{activo.editableCheckComercializar}',
+									readOnly: '{editableCheckComercializar}',
 									value: '{activo.aplicaComercializar}'
 								},
 								listeners: {

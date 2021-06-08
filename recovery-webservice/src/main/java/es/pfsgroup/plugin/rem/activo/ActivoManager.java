@@ -9205,7 +9205,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	}
 
+	
+	@Override
+	public List<Activo> getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(Long idAgrupacion, Long idActivoPrincipal){
 
+		List<Activo> activos = activoDao.getActivosNoPrincipalesAgrupacion(idAgrupacion, idActivoPrincipal);
+		
+		return activos;
+	}
 	
 }
 

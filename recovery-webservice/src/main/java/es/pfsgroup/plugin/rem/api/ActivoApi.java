@@ -1460,4 +1460,6 @@ public interface ActivoApi {
 	public VSinInformeAprobadoRem getSinInformeAprobadoREM(Long idActivo);
 	
 	public List<ActivoTrabajo> getActivoTrabajos(Long idActivo);
+
+	List<Activo> getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(Long idAgrupacion, Long idActivoPrincipal);
 }

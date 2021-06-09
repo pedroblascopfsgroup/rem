@@ -171,7 +171,7 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 		hql.appendWhere("activo.id = " + idActivo);
 		hql.appendWhere("auditoria.borrado = 0");
 		hql.appendWhere("fechaFin is null or fechaFin >= sysdate");
-		hql.appendWhere("tipoPrecio.codigo = " + DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA);
+		hql.appendWhere("tipoPrecio.codigo = '" + DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA + "'");
 		ActivoValoraciones query = HibernateQueryUtils.uniqueResult(this, hql);
 		
 		if (query != null) {

@@ -34,8 +34,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      T_TIPO_DATA('DAA','De descuento aprobado alquiler','P','6'),
-      T_TIPO_DATA('DPA','De descuento publicado alquiler (web)','P','7')
+      T_TIPO_DATA('DAA','De descuento aprobado alquiler','6'),
+      T_TIPO_DATA('DPA','De descuento publicado alquiler (web)','7')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
@@ -61,7 +61,6 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               DD_TPC_CODIGO,
               DD_TPC_DESCRIPCION,
               DD_TPC_DESCRIPCION_LARGA,
-              DD_TPC_TIPO,
               DD_TPC_ORDEN,
               VERSION,
               USUARIOCREAR,
@@ -73,7 +72,6 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               '''||TRIM(V_TMP_TIPO_DATA(3))||''',
-              '''||TRIM(V_TMP_TIPO_DATA(4))||''',
               0,
               ''HREOS-14229'',
               SYSDATE,

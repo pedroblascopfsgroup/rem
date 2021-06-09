@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
@@ -194,13 +195,32 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 				perimetroActivo.setAplicaComercializar(tmpAplicaComercializar);
 				perimetroActivo.setFechaAplicaComercializar(new Date());
 			}
+			
+			
 
 			// Motivo para Si comercializar
-			if (!Checks.esNulo(tmpMotivoComercializacion))
-				perimetroActivo.setMotivoAplicaComercializar(
-						(DDMotivoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(
-								DDMotivoComercializacion.class, tmpMotivoComercializacion.substring(0, 2)));
-
+			DDMotivoComercializacion ddmc = null;
+			if (!Checks.esNulo(tmpMotivoComercializacion)) {
+				ddmc = (DDMotivoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoComercializacion.class, tmpMotivoComercializacion.substring(0, 2));
+				perimetroActivo.setMotivoAplicaComercializar(ddmc);
+			}
+			
+			if(!Checks.esNulo(exc.dameCelda(fila, 4)) && DDCartera.isCarteraSareb(activo.getCartera()) && activoAgrupacion != null 
+			&& DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())) {		
+				List<ActivoAgrupacionActivo> activos= activoAgrupacion.getAgrupacion().getActivos();
+				Date hoy =  new Date();
+				for (ActivoAgrupacionActivo activoAgrupacionActivo : activos) {
+					PerimetroActivo perimetroActivoAgrupacion = activoApi.getPerimetroByIdActivo(activoAgrupacionActivo.getActivo().getId());
+					perimetroActivoAgrupacion.setAplicaComercializar(tmpAplicaComercializar);
+					perimetroActivoAgrupacion.setFechaAplicaComercializar(hoy);
+					if(ddmc != null) {
+						perimetroActivoAgrupacion.setMotivoAplicaComercializar(ddmc);
+					}
+					activoApi.saveOrUpdatePerimetroActivo(perimetroActivoAgrupacion);
+				}
+			}
+			
+			
 			// Motivo para No comercializar
 			if (!Checks.esNulo(tmpMotivoNoComercializacion))
 				perimetroActivo.setMotivoNoAplicaComercializar(tmpMotivoNoComercializacion);
@@ -468,7 +488,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 				idList.add(activo.getId());
-				if(Checks.esNulo(exc.dameCelda(fila,19))) {
+				if(Checks.esNulo(exc.dameCelda(fila,19)) && Checks.esNulo(exc.dameCelda(fila,22))) {
 					idListSinVisibilidadComercial.add(activo.getId());
 				}
 			}

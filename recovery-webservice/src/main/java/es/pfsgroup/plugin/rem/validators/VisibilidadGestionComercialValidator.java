@@ -132,7 +132,11 @@ public class VisibilidadGestionComercialValidator {
 		List<String> erroresActivo = new ArrayList<String>();
 		
 		if(activoPublicacion != null) {
-			if(activoPublicacion.getTipoComercializacion() == null) {
+			if(DDCartera.isCarteraSareb(activoActual.getCartera())) {
+				if (perimetroActivo != null && perimetroActivo.getAplicaComercializar() != null && perimetroActivo.getAplicaComercializar() == 0) {
+					erroresActivo.add(VALID_ACTIVO_NO_COMERCIALIZABLE);
+				}
+			}else if(activoPublicacion.getTipoComercializacion() == null) {
 				erroresActivo.add(VALID_ACTIVO_TIPO_COMERCIALIZACION);
 			}else if(DDTipoComercializacion.isDestinoComercialSoloAlquiler(activoPublicacion.getTipoComercializacion())){
 				if(!DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler())) {
@@ -141,8 +145,7 @@ public class VisibilidadGestionComercialValidator {
 			}else if((DDTipoComercializacion.isDestinoComercialVenta(activoPublicacion.getTipoComercializacion()) && !DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta()))
 			|| (DDTipoComercializacion.isDestinoComercialAlquilerVenta(activoPublicacion.getTipoComercializacion()) 
 				&& !DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta()) && !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler()))) {
-			
-				if(DDCartera.isCarteraBk(activoActual.getCartera()) || DDCartera.isCarteraSareb(activoActual.getCartera())) {
+				if(DDCartera.isCarteraBk(activoActual.getCartera())) {
 					erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
 				}else if(DDCartera.isCarteraCajamar(activoActual.getCartera())) {
 					if(DDTipoComercializacion.isDestinoComercialSoloAlquiler(activoPublicacion.getTipoComercializacion())) {

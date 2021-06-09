@@ -328,6 +328,15 @@ public class StockDto implements WebcomRESTDto{
 	@WebcomRequired
 	private StringDataType codDirComercial;
 	
+	@WebcomRequired
+	private DoubleDataType importeCampanyaAlquiler;
+	
+	@WebcomRequired
+	private DateDataType fechaInicioCampanyaAlquiler;
+	
+	@WebcomRequired
+	private DateDataType fechaFinCampanyaAlquiler;
+	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -1073,6 +1082,24 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setCodDirComercial(StringDataType codDirComercial) {
 		this.codDirComercial = codDirComercial;
+	}
+	public DoubleDataType getImporteCampanyaAlquiler() {
+		return importeCampanyaAlquiler;
+	}
+	public void setImporteCampanyaAlquiler(DoubleDataType importeCampanyaAlquiler) {
+		this.importeCampanyaAlquiler = importeCampanyaAlquiler;
+	}
+	public DateDataType getFechaInicioCampanyaAlquiler() {
+		return fechaInicioCampanyaAlquiler;
+	}
+	public void setFechaInicioCampanyaAlquiler(DateDataType fechaInicioCampanyaAlquiler) {
+		this.fechaInicioCampanyaAlquiler = fechaInicioCampanyaAlquiler;
+	}
+	public DateDataType getFechaFinCampanyaAlquiler() {
+		return fechaFinCampanyaAlquiler;
+	}
+	public void setFechaFinCampanyaAlquiler(DateDataType fechaFinCampanyaAlquiler) {
+		this.fechaFinCampanyaAlquiler = fechaFinCampanyaAlquiler;
 	}
 
 	

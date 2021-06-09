@@ -251,6 +251,9 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(messageServices.getMessage(ON_EFECTOS_COMERCIALIZACION_ERROR), isBooleanValidator(exc, COL_NUM_CHECK_ON_EFECTOS_COMERCIALIZACION));
 				mapaErrores.put(messageServices.getMessage(ADMISION_ERROR), isBooleanValidator(exc, COL_NUM_ADMISION));	
 
+	
+				this.erroresComercializacion(exc,mapaErrores);
+
 				//ESTA DEBE SER LA ÚLTIMA SIEMPRE (sacarTodosLosErroresJerarquicos)
 				this.sacarTodosLosErroresJerarquicos(exc, mapaErrores);
 
@@ -1238,7 +1241,20 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 						}
 						if(Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase()) || (excluirValidaciones != null && !excluirValidaciones)) {
 							if(particularValidator.isActivoSareb(activo)) {
-								if(!particularValidator.aplicaComercializar(activo)) {
+								String comercializar = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN);
+								if(!Checks.esNulo(comercializar)) {
+									boolean comercializarBool = false;
+									boolean visibilidadBool = false;
+									if(Arrays.asList(listaValidosPositivos).contains(comercializar)) {
+										comercializarBool = true;
+									}
+									if(Arrays.asList(listaValidosPositivos).contains(visibleGestionComercial)) {
+										visibilidadBool = true;
+									}
+									if(comercializarBool != visibilidadBool) {
+										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_NO_COMERCIALIZABLE));
+									}
+								}else if(!particularValidator.aplicaComercializar(activo)) {
 									listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_NO_COMERCIALIZABLE));
 								}
 							}else if(!particularValidator.isActivoPublicadoDependiendoSuTipoComercializacion(activo)) {
@@ -1375,6 +1391,39 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		List<String> errorCatch = new ArrayList<String>();
 		errorCatch.add(error);
 		this.modificarMapaErrores(mapaErrores, 0, errorCatch);
+	}
+	
+	private void erroresComercializacion(MSVHojaExcel exc, Map<String,List<Integer>> mapaErrores) {
+		List<String> listaErroresCompleta = new ArrayList<String>(); 
+		
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
+					String comercializar = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN);
+					if(!Checks.esNulo(comercializar) && particularValidator.isActivoSareb(activo) && particularValidator.activoEnAgrupacionRestringida(Long.parseLong(activo)) 
+					&& !particularValidator.activoPrincipalEnAgrupacionRestringida(activo)) {
+						listaErroresCompleta.add(messageServices.getMessage(VALID_AGRUPACION_RESTRINGIDA));
+					}
+				}catch (ParseException e) {
+					listaErroresCompleta.add(e.getMessage());
+				}
+				
+				if(!listaErroresCompleta.isEmpty()) {
+					this.modificarMapaErrores(mapaErrores, i, listaErroresCompleta);
+				}
+				
+				listaErroresCompleta.clear();
+			}
+			
+		}catch (IllegalArgumentException e) {
+			this.sacarErroresCatchGenericos(e.getMessage(), mapaErrores);
+			e.printStackTrace();
+		} catch (IOException e) {
+			this.sacarErroresCatchGenericos(e.getMessage(), mapaErrores);
+			e.printStackTrace();
+		}
 	}
 	
 }		

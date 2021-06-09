@@ -8,8 +8,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -4903,17 +4905,37 @@ public class ActivoAdapter {
 	@Transactional(readOnly = false)
 	public boolean actualizarEstadoPublicacionSincronoPerimetro(ArrayList<Long> listaIdActivo, ArrayList<Long> listaIdActivoSinVisibilidad){
 		boolean resultado = true;
-		
+		Set<Long> activosSinRepetidos =  new HashSet<Long>(listaIdActivoSinVisibilidad); 
 		if(listaIdActivo != null && !listaIdActivo.isEmpty()){
-			return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(listaIdActivo,true);
+			resultado = activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(listaIdActivo,true);
 		}
-		if(listaIdActivoSinVisibilidad != null && !listaIdActivoSinVisibilidad.isEmpty()) {
-			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivoSinVisibilidad);
+		if(listaIdActivoSinVisibilidad != null && !listaIdActivoSinVisibilidad.isEmpty() && resultado) {
+			Set<Long> activosAdicionalesSinRepetidos = this.getActivosAdicionales(activosSinRepetidos); 
+			activosSinRepetidos.addAll(activosAdicionalesSinRepetidos);
+			List<Long> listaIdActivoSinVisibilidadSinRepetidos = new ArrayList<Long>(activosSinRepetidos);
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivoSinVisibilidadSinRepetidos);
 		}
 		
 		return resultado;
 	}
 	
+	private Set<Long> getActivosAdicionales(Set<Long> activosSinRepetidos){
+		Set<Long> activosAdicionalesSinRepetidos =  new HashSet<Long>();
+		for (Long activoId : activosSinRepetidos) {
+			Activo activo = activoDao.getActivoById(activoId);
+			if(activo != null) {
+				ActivoAgrupacionActivo aga = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());
+				if(aga != null && aga.getAgrupacion() != null) {
+					List<Activo> activos = activoApi.getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(aga.getAgrupacion().getId(),activo.getId());
+					for (Activo activoAgr : activos) {
+						activosAdicionalesSinRepetidos.add(activoAgr.getId());
+					}
+				}
+			}
+		}
+		
+		return activosAdicionalesSinRepetidos;
+	}
 }
 
 

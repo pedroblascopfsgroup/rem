@@ -145,7 +145,6 @@ public class VisibilidadGestionComercialValidator {
 			}else if((DDTipoComercializacion.isDestinoComercialVenta(activoPublicacion.getTipoComercializacion()) && !DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta()))
 			|| (DDTipoComercializacion.isDestinoComercialAlquilerVenta(activoPublicacion.getTipoComercializacion()) 
 				&& !DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta()) && !DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler()))) {
-			
 				if(DDCartera.isCarteraBk(activoActual.getCartera())) {
 					erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
 				}else if(DDCartera.isCarteraCajamar(activoActual.getCartera())) {

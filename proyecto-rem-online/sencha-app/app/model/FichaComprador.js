@@ -255,6 +255,9 @@ Ext.define('HreRem.model.FichaComprador', {
 		},
 		{
 			name:'nombreConyugeURSUS'
+		},
+		{
+			name:'codEstadoContraste'
 		}
 		
 		

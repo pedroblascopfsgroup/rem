@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20210611
+--## FECHA_CREACION=20210614
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14204
@@ -113,6 +113,10 @@ BEGIN
             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.RBC_ID IS ''Id de la tabla''';
             EXECUTE IMMEDIATE V_SQL;
             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.ECO_ID IS ''Id del expediente comercial asociado''';
+            EXECUTE IMMEDIATE V_SQL;
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.RBC_VALIDACION_BC IS ''Respuesta del ws de caixa en la tarea de resolución comité''';
+            EXECUTE IMMEDIATE V_SQL;
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.RBC_FECHA_RESP_BC IS ''Fecha de respuesta del ws de caixa en la tarea de resolución comité''';
             EXECUTE IMMEDIATE V_SQL;
             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.RBC_OBSERVACIONES_BC IS ''Observaciones del ws de caixa en la tarea de resolución comité''';
             EXECUTE IMMEDIATE V_SQL;

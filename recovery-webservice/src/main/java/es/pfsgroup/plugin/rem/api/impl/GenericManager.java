@@ -1802,18 +1802,14 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 	@Override
 	public List getDiccionarioEstadosOfertas(String cartera, String equipoGestion) {
-		
-		List<DDEstadoOferta> estadosOferta = genericDao.getList(DDEstadoOferta.class, 
-																genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-		
-		if(!DDCartera.CODIGO_CAIXA.equals(cartera) || DDEquipoGestion.CODIGO_MAYORISTA.equals(equipoGestion)) {
-			for(int i = estadosOferta.size() - 1; i >= 0; i--) {
-				if(estadosOferta.get(i).getCodigo().equals(DDEstadoOferta.CODIGO_PDTE_DEPOSITO)) {
-					estadosOferta.remove(i);
-				}
-			}
+
+		List<DDEstadoOferta> estadosOferta = genericDao.getList(DDEstadoOferta.class);
+
+		if(DDCartera.CODIGO_CAIXA.equals(cartera) && DDEquipoGestion.CODIGO_MAYORISTA.equals(equipoGestion)) {
+			estadosOferta.remove(genericDao.get(DDEstadoOferta.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO)));
 		}
-		
+
 		return estadosOferta;
 	}
 

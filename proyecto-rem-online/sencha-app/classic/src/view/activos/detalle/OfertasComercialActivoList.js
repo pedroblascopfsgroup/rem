@@ -25,6 +25,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     initComponent: function () {
         var me = this;
 
+        var activo = me.lookupController().getViewModel().get('activo').getData();
+
         me.columns= [
 		        {
 		        	dataIndex: 'numOferta',
@@ -118,12 +120,12 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 							proxy: {
 								type: 'uxproxy',
 								remoteUrl: 'generic/getDiccionarioEstadosOfertas',
-								extraParams: {cartera: '{activo.entidadPropietariaCodigo}',
-												equipoGestion: '{activo.tipoEquipoGestionCodigo}'}
+								extraParams: {cartera: activo.entidadPropietariaCodigo,
+												equipoGestion: activo.tipoEquipoGestionCodigo}
 							},
 							autoLoad: true,
 							bind: {
-								disabled: '{activo.aplicaComercializar}'
+								disabled: activo.aplicaComercializar
 							}
 						}),
 						displayField: 'descripcion',

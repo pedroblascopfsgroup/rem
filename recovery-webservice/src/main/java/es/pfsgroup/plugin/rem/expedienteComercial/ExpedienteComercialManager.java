@@ -9472,7 +9472,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public Long getIdByNumExpOrNumOfr(Long numBusqueda, String campo) {
 		rawDao.addParam(  "numBusqueda", numBusqueda);
-		rawDao.addParam(  "campo", campo);
 		Long idExpediente;
 
 		try {
@@ -9563,8 +9562,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public Long getNumExpByNumOfr(Long numBusqueda) {
+		rawDao.addParam(  "numOferta", numBusqueda);
 		long idOferta = Long.parseLong(rawDao.getExecuteSQL(
-				"SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA = " + numBusqueda + " AND BORRADO = 0"));
+				"SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA = :numOferta AND BORRADO = 0"));
 		rawDao.addParam(  "idOferta", idOferta);
 		return Long.parseLong(
 				rawDao.getExecuteSQL("SELECT ECO_NUM_EXPEDIENTE FROM ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = :idOferta AND BORRADO = 0"));

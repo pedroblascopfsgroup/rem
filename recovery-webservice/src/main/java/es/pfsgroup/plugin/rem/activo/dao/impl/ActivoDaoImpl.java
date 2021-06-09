@@ -111,6 +111,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	private static final String EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS ="activo.matriz.con.unidades.alquilables.ofertas.vivas";
 	private static final String EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS ="activo.unidad.alquilable.con.activo.matriz.ofertas.vivas";
 	private static final String isIntegradoQueryString ="select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.agrupacion.activoPrincipal.id = :actId and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion";
+	private static final String activoAgrupacionQueryString ="select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = :actId and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion";
 
 	@Override
 	public Object getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
@@ -453,9 +454,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public Integer isActivoPrincipalAgrupacionRestringida(Long id) {
-		HQLBuilder hb = new HQLBuilder(
-				"select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.agrupacion.activoPrincipal.id = :actId "
-				+ " and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion");
+		HQLBuilder hb = new HQLBuilder(isIntegradoQueryString);
 
 		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		 q.setParameter("actId", id);
@@ -465,9 +464,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoAgrRestringidaPorActivoID(Long id) {
-		HQLBuilder hb = new HQLBuilder(
-				"select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = :actId"
-				+ " and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion");
+		HQLBuilder hb = new HQLBuilder(activoAgrupacionQueryString);
 		
 		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		 q.setParameter("actId", id);
@@ -478,9 +475,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Override
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoObraNuevaPorActivoID(Long id) {
-		HQLBuilder hb = new HQLBuilder(
-				"select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = :actId"
-				+ " and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion");
+		HQLBuilder hb = new HQLBuilder(activoAgrupacionQueryString);
 
 		 Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		 q.setParameter("actId", id);

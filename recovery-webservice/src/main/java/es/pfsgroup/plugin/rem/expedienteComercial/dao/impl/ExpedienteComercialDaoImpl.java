@@ -45,9 +45,9 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 	@Override
 	public Float getPorcentajeCompra(Long idExpediente) {
 		int sumatorio = 0;
-		HQLBuilder hb = new HQLBuilder(" from VBusquedaCompradoresExpediente where idExpediente = " + idExpediente);
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaCompradoresExpediente where idExpediente = :idExpediente");
 
-		List<VBusquedaCompradoresExpediente> lista = this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		List<VBusquedaCompradoresExpediente> lista = this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("idExpediente", idExpediente).list();
 		
 		if (lista != null && !lista.isEmpty()) {
 			for (VBusquedaCompradoresExpediente item : lista) {

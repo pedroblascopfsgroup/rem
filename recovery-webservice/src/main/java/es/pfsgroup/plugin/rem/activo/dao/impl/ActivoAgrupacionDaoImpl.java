@@ -262,7 +262,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	public Long getAgrupacionIdByNumAgrupRem(Long numAgrupRem) {
 		try {
 			HQLBuilder hb = new HQLBuilder(
-					"select agr.id from ActivoAgrupacion agr where agr.numAgrupRem = :numAgrupRem" + numAgrupRem + " ");
+					"select agr.id from ActivoAgrupacion agr where agr.numAgrupRem = :numAgrupRem");
 			return (Long) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("numAgrupRem", numAgrupRem).uniqueResult();
 
 		} catch (Exception e) {
@@ -332,7 +332,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 							+ " ( select distinct(agru.activo.id) from ActivoAgrupacionActivo agru where agru.agrupacion.id = :agrupacionId"
 							+ " and agru.agrupacion.activoPrincipal != foto.activo.id) order by foto.activo.id desc ");
 
-			q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+			q = this.getSessionFactory().getCurrentSession().createQuery(hbDos.toString());
 			q.setParameter("agrupacionId", id);
 			List<ActivoFoto> listaResto = (List<ActivoFoto>) q.list();
 
@@ -402,7 +402,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		
 		try {
 
-			HQLBuilder hb = new HQLBuilder("select actsub.activoId from VActivosSubdivision actsub where actsub.idSubdivision = " + idSubdivision +
+			HQLBuilder hb = new HQLBuilder("select actsub.activoId from VActivosSubdivision actsub where actsub.idSubdivision = :idSubdivision" +
 											" and actsub.agrupacionId in (:idsAgr)");
 			
 			Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
@@ -415,6 +415,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 				}
 				
 			}
+			q.setParameter("idSubdivision", idSubdivision);
 			q.setParameterList("idsAgr",idsAgrupacionList);
 	
 			return (List<Long>) getHibernateTemplate().find(hb.toString());

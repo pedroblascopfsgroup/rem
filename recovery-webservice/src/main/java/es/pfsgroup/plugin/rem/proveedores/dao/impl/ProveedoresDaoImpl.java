@@ -252,9 +252,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 			hb.appendWhere("pvc.usuario.id in ( :usuarioIds )");
 		}
 		hb.appendWhere("ep.cartera.id = :idCartera");
-		
-		Query q =  this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
-		
+				
 		if(idUsuarios.size() > 0) {
 			hb.appendWhere("pvc.usuario.id in ( :usuarioIds )");
 		}
@@ -311,7 +309,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		hb.appendWhere("pve.id = pvc.proveedor.id");
 		hb.appendWhere("pvc.usuario.id = :idUsuario");
 
-		return (List<Long>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("username", idUsuario).list();
+		return (List<Long>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("idUsuario", idUsuario).list();
 	}
 	
 	@SuppressWarnings("unchecked")

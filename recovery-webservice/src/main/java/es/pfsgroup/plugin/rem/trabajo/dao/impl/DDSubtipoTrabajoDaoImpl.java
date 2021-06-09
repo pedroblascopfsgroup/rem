@@ -28,9 +28,9 @@ public class DDSubtipoTrabajoDaoImpl extends AbstractEntityDao<DDSubtipoTrabajo,
 		
 		HQLBuilder hb = new HQLBuilder(hql);
 		
-		hb.appendWhere("sbtr.id = htp.subtipoTrabajo.id and htp.esTarifaPlana = 1 and htp.fechaInicioTarifaPlana <= TO_DATE(SYSDATE,'DD/MM/YY')  and (htp.fechaFinTarifaPlana >=TO_DATE(SYSDATE,'DD/MM/YY') or htp.fechaFinTarifaPlana is null");
+		hb.appendWhere("sbtr.id = htp.subtipoTrabajo.id and htp.esTarifaPlana = 1 and htp.fechaInicioTarifaPlana <= TO_DATE(SYSDATE,'DD/MM/YY')  and (htp.fechaFinTarifaPlana >=TO_DATE(SYSDATE,'DD/MM/YY') or htp.fechaFinTarifaPlana is null)");
 		HQLBuilder.addFiltroIgualQue(hb, "sbtr.tipoTrabajo.id", idTipoTrabajo);
-		HQLBuilder.addFiltroIgualQue(hb, "htp.carteraTP", idCarteraActivo);
+		HQLBuilder.addFiltroIgualQue(hb, "htp.carteraTP.id", idCarteraActivo);
 		
 		return HibernateQueryUtils.list(this,hb);
 	

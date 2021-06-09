@@ -425,7 +425,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean isActivoPrePublicable(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
 		return isActivoGestionAdmision(numActivo) && isActivoUltimoInformeComercialAceptado(numActivo);
 	}
 
@@ -847,9 +846,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean esActivoEnOtraAgrupacionNoCompatible(Long numActivo, Long numAgrupacion, String codTiposAgrNoCompatibles) {
 		rawDao.addParam(  "numActivo", numActivo);
 		rawDao.addParam(  "numAgrupacion", numAgrupacion);
-		rawDao.addParam(  "codTiposAgrNoCompatibles", codTiposAgrNoCompatibles);
-
 		String cadenaCodigosSql = convertStringToGroupSql(codTiposAgrNoCompatibles);
+		rawDao.addParam(  "codTiposAgrNoCompatibles", cadenaCodigosSql);
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(aga.AGR_ID) "
 				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
@@ -860,7 +858,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			    AND act.act_id   = aga.act_id "
 				+ "			    AND act.ACT_NUM_ACTIVO = :numActivo "
 				+ "				AND agr.DD_TAG_ID = tag.DD_TAG_ID "
-				+ "			    AND tag.DD_TAG_CODIGO in ("+cadenaCodigosSql+") "
+				+ "			    AND tag.DD_TAG_CODIGO in (:codTiposAgrNoCompatibles) "
 				+ "			    AND agr.AGR_NUM_AGRUP_REM  <> :numAgrupacion "
 				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE)"
 				+ "			    AND aga.BORRADO  = 0 "
@@ -1526,7 +1524,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM DD_EAC_ESTADO_ACTIVO WHERE"
-				+ "		 DD_EAC_CODIGO = ' estFisicoCod '"
+				+ "		 DD_EAC_CODIGO = ' :estFisicoCod '"
 				+ " 	 AND BORRADO = 0");
 
 		return !"0".equals(resultado);

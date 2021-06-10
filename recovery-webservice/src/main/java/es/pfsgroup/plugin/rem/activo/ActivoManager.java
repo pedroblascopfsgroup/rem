@@ -9260,7 +9260,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return descuentoColectivos;
 	}
 
+	@Override
+	public List<VPreciosVigentesCaixa> getPreciosVigentesCaixaById(Long id) {
+		return activoAdapter.getPreciosVigentesCaixaById(id);
+	}
 
+//	@Override
+//	public List<VPreciosVigentesCaixa> getPreciosVigentesCaixaById(Long id) {
+//		
+//		List<VPreciosVigentesCaixa> preciosVigentesCaixa = new ArrayList<VPreciosVigentesCaixa>();
+//		if (id != null) {
+//			Order order = new Order(OrderType.ASC, "orden");
+//			preciosVigentesCaixa = genericDao.getListOrdered(VPreciosVigentesCaixa.class, order,genericDao.createFilter(FilterType.EQUALS, "idActivo", id.toString()));
+//		}		
+//		return preciosVigentesCaixa;
+//	}
 	
 }
 

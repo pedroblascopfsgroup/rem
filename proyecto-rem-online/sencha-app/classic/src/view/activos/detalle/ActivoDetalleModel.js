@@ -3787,6 +3787,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        remoteUrl: 'activo/getDescuentoColectivos',
 		        extraParams: {id: '{activo.id}'}
 	    	 }
-   		}
+   		},
+		
+		storePreciosVigentesCaixa: {
+   		 model: 'HreRem.model.PreciosVigentesCaixaGridModel',
+	     proxy: {
+	        type: 'uxproxy',
+	        remoteUrl: 'activo/getPreciosVigentesCaixaById',
+	        extraParams: {id: '{activo.id}'}
+    	 }
+		}
 	 }
 });

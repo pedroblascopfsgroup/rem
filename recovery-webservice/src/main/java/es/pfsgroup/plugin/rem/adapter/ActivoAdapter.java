@@ -4883,4 +4883,13 @@ public class ActivoAdapter {
 		return genericDao.getListOrdered(VPreciosVigentes.class, order, filtro, filtroFecha);
 
 	}
+	
+	public List<VPreciosVigentesCaixa> getPreciosVigentesCaixaById(Long idActivo) {
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivoCaixa", idActivo.toString());
+		Order order = new Order(OrderType.ASC, "ordenCaixa");
+
+		return genericDao.getListOrdered(VPreciosVigentesCaixa.class, order, filtro);
+
+	}
 }

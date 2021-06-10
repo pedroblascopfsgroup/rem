@@ -73,6 +73,7 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.VPreciosVigentesCaixa;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaActivo;
 import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -661,6 +662,25 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "valorNetoContable", listaPrecio.getImporte());
 			} else if (listaPrecio.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_COSTE_ADQUISICION)) {
 				BeanUtils.copyProperty(activoDto, "costeAdquisicion", listaPrecio.getImporte());
+			}
+		}
+		
+		if (DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
+			List<VPreciosVigentesCaixa> listaPreciosCaixa = activoApi.getPreciosVigentesCaixaById(activo.getId());
+			for (VPreciosVigentesCaixa vPreciosVigentesCaixa : listaPreciosCaixa) {
+				if (vPreciosVigentesCaixa.getCodigoTipoPrecioCaixa().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA)) {
+					BeanUtils.copyProperty(activoDto, "aprobadoVentaWeb", vPreciosVigentesCaixa.getImporteCaixa());
+				} else if (vPreciosVigentesCaixa.getCodigoTipoPrecioCaixa().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA)) {
+					BeanUtils.copyProperty(activoDto, "aprobadoRentaWeb", vPreciosVigentesCaixa.getImporteCaixa());
+				} else if (vPreciosVigentesCaixa.getCodigoTipoPrecioCaixa().equals(DDTipoPrecio.CODIGO_TPC_DESC_APROBADO)) {
+					BeanUtils.copyProperty(activoDto, "descuentoAprobado", vPreciosVigentesCaixa.getImporteCaixa());
+				} else if (vPreciosVigentesCaixa.getCodigoTipoPrecioCaixa().equals(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO)) {
+					BeanUtils.copyProperty(activoDto, "descuentoPublicado", vPreciosVigentesCaixa.getImporteCaixa());
+				} else if (vPreciosVigentesCaixa.getCodigoTipoPrecioCaixa().equals(DDTipoPrecio.CODIGO_TPC_DES_APR_ALQ)) {
+					BeanUtils.copyProperty(activoDto, "descuentoAprobadoAlquiler", vPreciosVigentesCaixa.getImporteCaixa());
+				} else if (vPreciosVigentesCaixa.getCodigoTipoPrecioCaixa().equals(DDTipoPrecio.CODIGO_TPC_DES_PUB_ALQ)) {
+					BeanUtils.copyProperty(activoDto, "descuentoPublicadoAlquiler", vPreciosVigentesCaixa.getImporteCaixa());
+				} 
 			}
 		}
 

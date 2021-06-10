@@ -221,6 +221,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String aprobadoRentaWeb;
 	private String descuentoAprobado;
 	private String descuentoPublicado;
+	private String descuentoAprobadoAlquiler;
+	private String descuentoPublicadoAlquiler;
 	private String valorNetoContable;
 	private String costeAdquisicion;
 	private String valorUltimaTasacion;
@@ -2789,7 +2791,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setEscaleraEdificioDescripcion(String escaleraEdificioDescripcion) {
 		this.escaleraEdificioDescripcion = escaleraEdificioDescripcion;
 	}	
-
+	
 	public String getTipoDistritoCodigoPostalCod() {
 		return tipoDistritoCodigoPostalCod;
 	}
@@ -2820,6 +2822,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setBloque(String bloque) {
 		this.bloque = bloque;
+	}
+
+	public String getDescuentoAprobadoAlquiler() {
+		return descuentoAprobadoAlquiler;
+	}
+
+	public void setDescuentoAprobadoAlquiler(String descuentoAprobadoAlquiler) {
+		this.descuentoAprobadoAlquiler = descuentoAprobadoAlquiler;
+	}
+
+	public String getDescuentoPublicadoAlquiler() {
+		return descuentoPublicadoAlquiler;
+	}
+
+	public void setDescuentoPublicadoAlquiler(String descuentoPublicadoAlquiler) {
+		this.descuentoPublicadoAlquiler = descuentoPublicadoAlquiler;
 	}
 	
 }

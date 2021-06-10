@@ -8551,14 +8551,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
     	var carteraBankia = me.getViewModel().getData().activo.getData().isCarteraBankia;
     	var descuentosVigentes = me.lookupReference('descuentosVigentesRef');
+    	var preciosVigentes = me.lookupReference('preciosVigentesRef');
+    	var preciosVigentesCaixa = me.lookupReference('preciosVigentesRefCaixa');
     	
     	if (carteraBankia != null && carteraBankia == true) {
-    		if (descuentosVigentes != null) {
-    			descuentosVigentes.setHidden(false);
-			}
-    		
+			descuentosVigentes.setHidden(false);
+			preciosVigentesCaixa.setHidden(false);
+			preciosVigentes.setHidden(true);
     	}else{
     		descuentosVigentes.setHidden(true);
+    		preciosVigentesCaixa.setHidden(true);
+    		preciosVigentes.setHidden(false);
     	}
     }
 });

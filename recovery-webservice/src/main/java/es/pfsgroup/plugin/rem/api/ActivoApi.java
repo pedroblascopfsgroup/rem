@@ -87,6 +87,7 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VEsCondicionado;
 import es.pfsgroup.plugin.rem.model.VGridDescuentoColectivos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.VPreciosVigentesCaixa;
 import es.pfsgroup.plugin.rem.model.VSinInformeAprobadoRem;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -1465,4 +1466,6 @@ public interface ActivoApi {
 	List<VGridDescuentoColectivos> getDescuentoColectivos(Long id) throws Exception;
 
 	public List<ActivoTrabajo> getActivoTrabajos(Long idActivo);
+	
+	List<VPreciosVigentesCaixa> getPreciosVigentesCaixaById(Long id);
 }

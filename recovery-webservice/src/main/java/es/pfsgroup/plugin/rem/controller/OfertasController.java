@@ -997,19 +997,24 @@ public class OfertasController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView enviarCorreoFichaComercial(ReportGeneratorRequest reportGenerator,  HttpServletRequest request, HttpServletResponse response, ModelMap model) throws IOException {
-		String urlBaseGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_URL);
-		String urlEndpointGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT);
-		ReportGeneratorResponse report = excelReportGeneratorApi.requestExcel(reportGenerator, urlBaseGenerateExcel.concat(urlEndpointGenerateExcel));
-		String errorCode = excelReportGeneratorApi.sendExcelFichaComercial(reportGenerator.getListId().get(0), report, request);
-		
-		if(errorCode == null || errorCode.isEmpty()){
-			model.put("success", true);
+		try {
+			String urlBaseGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_URL);
+			String urlEndpointGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT);
+			ReportGeneratorResponse report = excelReportGeneratorApi.requestExcel(reportGenerator, urlBaseGenerateExcel.concat(urlEndpointGenerateExcel));
+			String errorCode = excelReportGeneratorApi.sendExcelFichaComercial(reportGenerator.getListId().get(0), report, request);
+			
+			if(errorCode == null || errorCode.isEmpty()){
+				model.put(RESPONSE_SUCCESS_KEY, true);
+			}
+			else{
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_ERROR_KEY, errorCode);
+			}
+		} catch (Exception e) {			
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			logger.error("Error en ofertasController", e);
 		}
-		else{
-			model.put("success", false);
-			model.put("errorCode", errorCode);
-		}
-		
 		return createModelAndViewJson(model);
 	}
 	

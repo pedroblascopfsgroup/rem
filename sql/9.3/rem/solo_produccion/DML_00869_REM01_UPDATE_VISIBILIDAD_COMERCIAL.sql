@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo
---## FECHA_CREACION=20210606
+--## AUTOR= Sergio O	
+--## FECHA_CREACION=20210610
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14013
@@ -20,7 +20,8 @@
 --##	 		- En caso de agrupaciones o activos, si se añadiese una nueva regla para marcar como "NO": se debería de poner entre la primera que haya que setee a "0" el campo y el update final.
 --##        0.2 Versión inicial => Carga inicial del campo ACT_PAC_PERIMETRO_ACTIVO. 
 --##		- Añadida la regla jerárquica:  "Un activo que sea de la cartera sareb tendrá como estado de visibilidad comercial, su estado de comercialización"	
---##
+--##	    0.3 Arreglo: cuando comercializable = 0 -> Visible = 0, siempre y cuando esté publicado
+--##	
 --##########################################
 --*/
 
@@ -171,7 +172,7 @@ BEGIN
 			        SELECT a.act_id FROM '||V_ESQUEMA||'.ACT_ACTIVO a 
 			        JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA cra on  a.dd_Cra_id = cra.dd_Cra_id AND cra.BORRADO = 0
 			        JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO pac on a.act_id = pac.act_id  and pac.borrado = 0
-			        WHERE cra.dd_Cra_codigo = ''01''  AND pac.PAC_CHECK_COMERCIALIZAR = 1			        
+			        WHERE cra.dd_Cra_codigo = ''01''  AND pac.PAC_CHECK_COMERCIALIZAR = 0			        
 			    ) checkCajamar
 			ON (aux.act_id = checkCajamar.act_id)
 			WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = 0
@@ -186,7 +187,7 @@ BEGIN
 	V_MSQL:= 'MERGE INTO '||V_ESQUEMA||'.aux_vis_gestion_comercial_res AUX USING (
 			        SELECT a.act_id FROM '||V_ESQUEMA||'.ACT_ACTIVO a 
 			        JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO pac on a.act_id = pac.act_id  and pac.borrado = 0
-			        WHERE  (pac.PAC_CHECK_COMERCIALIZAR = 1 OR a.act_venta_externa_fecha is not null)    
+			        WHERE  (pac.PAC_CHECK_COMERCIALIZAR = 0 OR a.act_venta_externa_fecha is not null)    
 			    ) ventaExternaNoComercializable
 			ON (aux.act_id = ventaExternaNoComercializable.act_id)
 			WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = 0
@@ -427,7 +428,7 @@ BEGIN
 			        SELECT a.act_id FROM '||V_ESQUEMA||'.ACT_ACTIVO a 
 			        JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA cra on  a.dd_Cra_id = cra.dd_Cra_id AND cra.BORRADO = 0
 			        JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO pac on a.act_id = pac.act_id  and pac.borrado = 0
-			        WHERE cra.dd_Cra_codigo = ''01''  AND pac.PAC_CHECK_COMERCIALIZAR = 1    
+			        WHERE cra.dd_Cra_codigo = ''01''  AND pac.PAC_CHECK_COMERCIALIZAR = 0    
 			    ) checkCajamar
 			ON (aux.act_id = checkCajamar.act_id)
 			WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = 0
@@ -440,7 +441,7 @@ BEGIN
 	V_MSQL:= 'MERGE INTO '||V_ESQUEMA||'.aux_visibilidad_gestion_comercial AUX USING (
 			        SELECT a.act_id FROM '||V_ESQUEMA||'.ACT_ACTIVO a 
 			        JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO pac on a.act_id = pac.act_id  and pac.borrado = 0
-			        WHERE  (pac.PAC_CHECK_COMERCIALIZAR = 1 OR a.act_venta_externa_fecha is not null)      
+			        WHERE  (pac.PAC_CHECK_COMERCIALIZAR = 0 OR a.act_venta_externa_fecha is not null)      
 			    ) ventaExternaNoComercializable
 			ON (aux.act_id = ventaExternaNoComercializable.act_id)
 			WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = 0

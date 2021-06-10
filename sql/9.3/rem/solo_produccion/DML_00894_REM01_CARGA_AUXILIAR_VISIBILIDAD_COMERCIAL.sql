@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR= IVAN REPISO
---## FECHA_CREACION=20210609
+--## AUTOR= Sergio O
+--## FECHA_CREACION=20210610
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14296
@@ -12,7 +12,7 @@
 --## VERSIONES:
 --##        DML CREADO A PARTIR DEL DML_00869_REM01_UPDATE_VISIBILIDAD_COMERCIAL.sql
 --## 		SIN HACER EL MERGE FINAL EN LA PAC. TAMPOCO BORRA LAS TABLAS AUXILIARES
---##
+--##        0.1 Arreglo: cuando comercializable = 0 -> Visible = 0, siempre y cuando esté publicado
 --##########################################
 --*/
 
@@ -164,7 +164,7 @@ BEGIN
 			        SELECT a.act_id FROM '||V_ESQUEMA||'.ACT_ACTIVO a 
 			        JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA cra on  a.dd_Cra_id = cra.dd_Cra_id AND cra.BORRADO = 0
 			        JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO pac on a.act_id = pac.act_id  and pac.borrado = 0
-			        WHERE cra.dd_Cra_codigo = ''01''  AND pac.PAC_CHECK_COMERCIALIZAR = 1			        
+			        WHERE cra.dd_Cra_codigo = ''01''  AND pac.PAC_CHECK_COMERCIALIZAR = 0			        
 			    ) checkCajamar
 			ON (aux.act_id = checkCajamar.act_id)
 			WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = 0
@@ -179,7 +179,7 @@ BEGIN
 	V_MSQL:= 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA_AGRUPACIONES||' AUX USING (
 			        SELECT a.act_id FROM '||V_ESQUEMA||'.ACT_ACTIVO a 
 			        JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO pac on a.act_id = pac.act_id  and pac.borrado = 0
-			        WHERE  (pac.PAC_CHECK_COMERCIALIZAR = 1 OR a.act_venta_externa_fecha is not null)    
+			        WHERE  (pac.PAC_CHECK_COMERCIALIZAR = 0 OR a.act_venta_externa_fecha is not null)    
 			    ) ventaExternaNoComercializable
 			ON (aux.act_id = ventaExternaNoComercializable.act_id)
 			WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = 0
@@ -421,7 +421,7 @@ BEGIN
 			        SELECT a.act_id FROM '||V_ESQUEMA||'.ACT_ACTIVO a 
 			        JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA cra on  a.dd_Cra_id = cra.dd_Cra_id AND cra.BORRADO = 0
 			        JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO pac on a.act_id = pac.act_id  and pac.borrado = 0
-			        WHERE cra.dd_Cra_codigo = ''01''  AND pac.PAC_CHECK_COMERCIALIZAR = 1    
+			        WHERE cra.dd_Cra_codigo = ''01''  AND pac.PAC_CHECK_COMERCIALIZAR = 0    
 			    ) checkCajamar
 			ON (aux.act_id = checkCajamar.act_id)
 			WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = 0
@@ -434,7 +434,7 @@ BEGIN
 	V_MSQL:= 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA_ACTIVOS||' AUX USING (
 			        SELECT a.act_id FROM '||V_ESQUEMA||'.ACT_ACTIVO a 
 			        JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO pac on a.act_id = pac.act_id  and pac.borrado = 0
-			        WHERE  (pac.PAC_CHECK_COMERCIALIZAR = 1 OR a.act_venta_externa_fecha is not null)      
+			        WHERE  (pac.PAC_CHECK_COMERCIALIZAR = 0 OR a.act_venta_externa_fecha is not null)      
 			    ) ventaExternaNoComercializable
 			ON (aux.act_id = ventaExternaNoComercializable.act_id)
 			WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = 0

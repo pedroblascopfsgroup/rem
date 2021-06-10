@@ -180,20 +180,28 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 			hasWhere = true;
 		}
 		
-		//Subtipo de gasto
-		String fromSubtipoGasto = GastoActivosHqlHelper.getFromSTG(dtoGastosFilter);
-		if (!Checks.esNulo(fromSubtipoGasto)) {
-			from = from + fromSubtipoGasto;
-				where = where + GastoActivosHqlHelper.getWhereJoinSTG(dtoGastosFilter, hasWhere);
-				hasWhere = true;
+		//Subtipo de gasto y num trabajo
+		String fromStgOrTbj = GastoLineaDetalleHqlHelper.getFrom(dtoGastosFilter);
+		if (!Checks.esNulo(fromStgOrTbj)) {
+			from = from + fromStgOrTbj;
+			where = where + GastoLineaDetalleHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere);
+			hasWhere = true;
 		}
 		
-		//Estado autorización haya
-		String fromEstadoAutHaya = GastoActivosHqlHelper.getFromEAH(dtoGastosFilter);
-		if (!Checks.esNulo(fromEstadoAutHaya)) {
-			from = from + fromEstadoAutHaya;
-				where = where + GastoActivosHqlHelper.getWhereJoinEAH(dtoGastosFilter, hasWhere);
-				hasWhere = true;
+		//Estado de autorización haya y propietario
+		String fromEahOrEap = EstadosAutorizacionHqlHelper.getFrom(dtoGastosFilter);
+		if (!Checks.esNulo(fromEahOrEap)) {
+			from = from + fromEahOrEap;
+			where = where + EstadosAutorizacionHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere);
+			hasWhere = true;
+		}
+		
+		//Tipo y subtipo proveedor
+		String fromTprOrTep = TipoProveedorHqlHelper.getFrom(dtoGastosFilter);
+		if (!Checks.esNulo(fromTprOrTep)) {
+			from = from + fromTprOrTep;
+			where = where + TipoProveedorHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere);
+			hasWhere = true;
 		}
 
 		// Por si es necesario filtrar por datos de la provision de gastos
@@ -224,13 +232,25 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 			}
 		}
 		
-		if(dtoGastosFilter.getSubtipoGastoCodigo() != null) {
+		if (dtoGastosFilter.getEstadoAutorizacionHayaCodigo() != null)
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "estAutHaya.codigo", dtoGastosFilter.getEstadoAutorizacionHayaCodigo());
+		
+		if (dtoGastosFilter.getEstadoAutorizacionPropietarioCodigo() != null)
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "estAutProp.codigo", dtoGastosFilter.getEstadoAutorizacionPropietarioCodigo());
+		
+		if (dtoGastosFilter.getCodigoSubtipoProveedor() != null)
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tipoProv.codigo", dtoGastosFilter.getCodigoSubtipoProveedor());
+		if (dtoGastosFilter.getCodigoTipoProveedor() != null)
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tipoEntProv.codigo", dtoGastosFilter.getCodigoTipoProveedor());
+		
+		if(dtoGastosFilter.getSubtipoGastoCodigo() != null && !isGenerateExcel) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "subtipoGasto.codigo", dtoGastosFilter.getSubtipoGastoCodigo());
+		} else if (dtoGastosFilter.getSubtipoGastoCodigo() != null && isGenerateExcel) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.subtipoCodigo", dtoGastosFilter.getSubtipoGastoCodigo());
 		}
 		
-		if(dtoGastosFilter.getEstadoAutorizacionHayaCodigo() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "estadoAutorizacionHayaCodigo.codigo", dtoGastosFilter.getEstadoAutorizacionHayaCodigo());
-		}
+		if(dtoGastosFilter.getNumTrabajo() != null)
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "trabajo.numTrabajo", dtoGastosFilter.getNumTrabajo());
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcartera.codigo", dtoGastosFilter.getSubentidadPropietariaCodigo());
 	
@@ -239,26 +259,21 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 					Long.parseLong(dtoGastosFilter.getNumProvision()));
 		}
 
-		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.idProvision", dtoGastosFilter.getIdProvision());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.idProvision", dtoGastosFilter.getIdProvision());
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.entidadPropietariaCodigo",
 				dtoGastosFilter.getEntidadPropietariaCodigo());
-		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.codigoProveedorRem", dtoGastosFilter.getCodigoProveedorRem());
-		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.nifProveedor", dtoGastosFilter.getNifProveedor());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.codigoProveedorRem", dtoGastosFilter.getCodigoProveedorRem());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.nifProveedor", dtoGastosFilter.getNifProveedor());
 
 		//////////////////////// Por situación del gasto
 
-		/*HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.estadoAutorizacionHayaCodigo",
-				dtoGastosFilter.getEstadoAutorizacionHayaCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.estadoAutorizacionPropietarioCodigo",
-				dtoGastosFilter.getEstadoAutorizacionPropietarioCodigo());*/
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.estadoGastoCodigo", dtoGastosFilter.getEstadoGastoCodigo());
 
 		//////////////////////// Por gasto
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.numGastoHaya", dtoGastosFilter.getNumGastoHaya());
-		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.tipoCodigo", dtoGastosFilter.getTipoGastoCodigo());
-		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.subtipoCodigo", dtoGastosFilter.getSubtipoGastoCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.tipoCodigo", dtoGastosFilter.getTipoGastoCodigo());
 
 		if (!Checks.esNulo(dtoGastosFilter.getImpuestoIndirecto())) {
 			if (dtoGastosFilter.getImpuestoIndirecto() == 1) {
@@ -283,10 +298,10 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 			HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgasto.importeTotal", importeDesde, importeHasta);
 		}
-		/*if (!Checks.esNulo(dtoGastosFilter.getNumGastoGestoria())) {
+		if (!Checks.esNulo(dtoGastosFilter.getNumGastoGestoria())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.numGastoGestoria",
 					Long.parseLong(dtoGastosFilter.getNumGastoGestoria()));
-		}*/
+		}
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.idGestoria", dtoGastosFilter.getIdGestoria());
 
@@ -321,8 +336,8 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 				fechaAutorizacionHasta = calendar.getTime();
 			}
 
-			/*HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgasto.fechaAutorizacion", fechaAutorizacionDesde,
-					fechaAutorizacionHasta);*/
+			HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgasto.fechaAutorizacion", fechaAutorizacionDesde,
+					fechaAutorizacionHasta);
 
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -330,13 +345,13 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		if (!Checks.esNulo(dtoGastosFilter.getDestinatario())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.destinatarioCodigo", dtoGastosFilter.getDestinatario());
 		}
-		/*if (!Checks.esNulo(dtoGastosFilter.getCubreSeguro())) {
+		if (!Checks.esNulo(dtoGastosFilter.getCubreSeguro())) {
 			if ("1".equals(dtoGastosFilter.getCubreSeguro())) {
 				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.cubreSeguro", true);
 			} else if ("0".equals(dtoGastosFilter.getCubreSeguro())) {
 				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.cubreSeguro", false);
 			}
-		}*/
+		}
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.periodicidadCodigo", dtoGastosFilter.getPeriodicidad());
 
@@ -345,11 +360,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 				dtoGastosFilter.getDocIdentifPropietario());
 
 		//////////////////////// Por Proveedor
-
-		/*HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.tipoProveedorCodigo",
-				dtoGastosFilter.getCodigoSubtipoProveedor());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.tipoEntidadCodigo", dtoGastosFilter.getCodigoTipoProveedor());
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgasto.nombreProveedor", dtoGastosFilter.getNombreProveedor(), true);*/
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgasto.nombreProveedor", dtoGastosFilter.getNombreProveedor(), true);
 
 		//////////////////////// Motivos de Aviso
 		String motivosAvisoWhere = MotivosAvisoHqlHelper.getWhere(dtoGastosFilter);
@@ -363,9 +374,6 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 			dtoGastosFilter.setSort("vgasto.id");
 		}
 		
-		////////////////////////Num trabajo
-		
-		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.numTrabajo", dtoGastosFilter.getNumTrabajo());
 		return hb;
 
 	}

@@ -15,7 +15,7 @@ import es.pfsgroup.commons.utils.Checks;
 
 
 @Entity
-@Table(name = "VI_BUSQUEDA_GASTOS", schema = "${entity.schema}")//_PROVEEDOR
+@Table(name = "VI_BUSQUEDA_GASTOS_PROVEEDOR", schema = "${entity.schema}")
 public class VGastosProveedor implements Serializable {
 
 	/**
@@ -30,23 +30,14 @@ public class VGastosProveedor implements Serializable {
 	@Column(name = "GPV_REF_EMISOR")
 	private String numFactura;
 	
-	/*@Column(name = "DD_TGA_DESCRIPCION")
+	@Column(name = "DD_TGA_DESCRIPCION")
 	private String tipoDescripcion;
 	
 	@Column(name = "DD_TGA_CODIGO")
-	private String tipoCodigo;*/
-	
-	/*@Column(name = "DD_STG_DESCRIPCION")
-	private String subtipoDescripcion;
-	
-	@Column(name = "DD_STG_CODIGO")
-	private String subtipoCodigo;*/
+	private String tipoCodigo;
 	
 	@Column(name = "GPV_CONCEPTO")
 	private String concepto;
-	
-	/*@Column(name = "PVE_ID_EMISOR")
-	private String proveedor;*/
 	
 	@Column(name = "GPV_FECHA_EMISION")
 	private Date fechaEmision;
@@ -63,14 +54,8 @@ public class VGastosProveedor implements Serializable {
 	@Column(name = "DD_DEG_CODIGO")
 	private String destinatarioCodigo;
 	
-	/*@Column(name = "PVE_COD_UVEM")
-	private String codigoProveedor;
-	
 	@Column(name = "PVE_COD_REM")
 	private String codigoProveedorRem;
-	
-	@Column(name = "GDE_ID")
-	private Long idDetalleGasto;*/
 	
 	@Column(name = "GDE_IMPORTE_TOTAL")
 	private Double importeTotal;
@@ -84,20 +69,8 @@ public class VGastosProveedor implements Serializable {
 	@Column(name = "GPV_NUM_GASTO_HAYA")
 	private Long numGastoHaya;
 	
-	/*@Column(name="PRG_ID")
+	@Column(name="PRG_ID")
 	private Long idProvision;
-	
-	@Column(name = "DD_EAH_CODIGO")
-	private String estadoAutorizacionHayaCodigo;
-	
-	@Column(name = "DD_EAH_DESCRIPCION")
-	private String estadoAutorizacionHayaDescripcion;
-	
-	@Column(name = "DD_EAP_CODIGO")
-	private String estadoAutorizacionPropietarioCodigo;
-	
-	@Column(name = "DD_EAP_DESCRIPCION")
-	private String estadoAutorizacionPropietarioDescripcion;*/
 	
 	@Column(name = "DD_EGA_CODIGO")
 	private String estadoGastoCodigo;
@@ -105,7 +78,7 @@ public class VGastosProveedor implements Serializable {
 	@Column(name = "DD_EGA_DESCRIPCION")
 	private String estadoGastoDescripcion;
 	
-	/*@Column(name = "GPV_NUM_GASTO_GESTORIA")
+	@Column(name = "GPV_NUM_GASTO_GESTORIA")
 	private Long numGastoGestoria;
 	
 	@Column(name = "GPV_CUBRE_SEGURO")
@@ -114,26 +87,8 @@ public class VGastosProveedor implements Serializable {
 	@Column(name = "PVE_DOCIDENTIF")
 	private String nifProveedor;
 	
-	@Column(name = "DD_TPR_CODIGO")
-	private String tipoProveedorCodigo;
-	
-	@Column(name = "DD_TPR_DESCRIPCION")
-	private String tipoProveedorDescripcion;
-	
-	@Column(name = "DD_TEP_CODIGO")
-	private String tipoEntidadCodigo;
-	
-	@Column(name = "DD_TEP_DESCRIPCION")
-	private String tipoEntidadDescripcion;
-	
 	@Column(name = "PVE_NOMBRE")
 	private String nombreProveedor;
-	
-	@Column(name = "GGE_FECHA_ANULACION")
-	private Date fechaAnulacion;
-	
-	@Column(name = "GGE_FECHA_RP")
-	private Date fechaRetencion;*/
 	
 	@Column(name="DD_CRA_CODIGO")
 	private String entidadPropietariaCodigo;
@@ -147,9 +102,6 @@ public class VGastosProveedor implements Serializable {
 	@Column(name="PVE_NOMBRE_GESTORIA")
 	private String nombreGestoria;
 	
-	/*@Column(name="GPV_EXISTE_DOCUMENTO")
-	private Boolean existeDocumento;*/
-	
 	@Column(name="PRO_NOMBRE")
 	private String nombrePropietario;
 	
@@ -159,11 +111,8 @@ public class VGastosProveedor implements Serializable {
 	@Column(name="SUJETO_IMPUESTO_INDIRECTO")
 	private Boolean sujetoImpuestoIndirecto;
 	
-	/*@Column(name = "FECHA_AUTORIZACION")
+	@Column(name = "FECHA_AUTORIZACION")
 	private Date fechaAutorizacion;
-	
-	@Column(name = "GPV_ALERTAS")
-	private Boolean alertas;*/
 	
 	@Column(name="MOTIVO_RECHAZO")
 	private String motivoRechazo;
@@ -171,14 +120,20 @@ public class VGastosProveedor implements Serializable {
 	@Column(name="GGE_MOTIVO_RECHAZO_PROP")
 	private String motivoRechazoProp;
 	
-	/*@Column(name="TBJ_NUM_TRABAJO")
-	private Long numTrabajo;*/
+	@Column(name="DD_TPR_ID")
+	private String idTipoProv;
+
+	@Column(name="DD_EAH_ID")
+	private String idEstAutHaya;
 	
-	/*@Transient
+	@Column(name="DD_EAP_ID")
+	private String idEstAutProp;
+	
+	@Transient
 	private boolean esGastoAgrupado; 
 	
 	@Transient
-	private Double importeTotalAgrupacion;*/
+	private Double importeTotalAgrupacion;
 	
 
 	public String getId() {
@@ -205,21 +160,13 @@ public class VGastosProveedor implements Serializable {
 		this.concepto = concepto;
 	}
 
-	/*public String getProveedor() {
-		return proveedor;
-	}
-
-	public void setProveedor(String proveedor) {
-		this.proveedor = proveedor;
-	}
-
 	public String getNifProveedor() {
 		return nifProveedor;
 	}
 
 	public void setNifProveedor(String nifProveedor) {
 		this.nifProveedor = nifProveedor;
-	}*/
+	}
 
 	public Date getFechaEmision() {
 		return fechaEmision;
@@ -229,22 +176,6 @@ public class VGastosProveedor implements Serializable {
 		this.fechaEmision = fechaEmision;
 	}
 
-	/*public String getCodigoProveedor() {
-		return codigoProveedor;
-	}
-
-	public void setCodigoProveedor(String codigoProveedor) {
-		this.codigoProveedor = codigoProveedor;
-	}
-
-	public Long getIdDetalleGasto() {
-		return idDetalleGasto;
-	}
-
-	public void setIdDetalleGasto(Long idDetalleGasto) {
-		this.idDetalleGasto = idDetalleGasto;
-	}*/
-
 	public Double getImporteTotal() {
 		return importeTotal;
 	}
@@ -253,13 +184,13 @@ public class VGastosProveedor implements Serializable {
 		this.importeTotal = importeTotal;
 	}
 
-	/*public String getCodigoProveedorRem() {
+	public String getCodigoProveedorRem() {
 		return codigoProveedorRem;
 	}
 
 	public void setCodigoProveedorRem(String codigoProveedorRem) {
 		this.codigoProveedorRem = codigoProveedorRem;
-	}*/
+	}
 
 	public Date getFechaPago() {
 		return fechaPago;
@@ -285,7 +216,7 @@ public class VGastosProveedor implements Serializable {
 		this.numGastoHaya = numGastoHaya;
 	}
 
-	/*public Long getIdProvision() {
+	public Long getIdProvision() {
 		return idProvision;
 	}
 
@@ -308,22 +239,6 @@ public class VGastosProveedor implements Serializable {
 	public void setTipoCodigo(String tipoCodigo) {
 		this.tipoCodigo = tipoCodigo;
 	}
-
-	public String getSubtipoDescripcion() {
-		return subtipoDescripcion;
-	}
-
-	public void setSubtipoDescripcion(String subtipoDescripcion) {
-		this.subtipoDescripcion = subtipoDescripcion;
-	}
-
-	public String getSubtipoCodigo() {
-		return subtipoCodigo;
-	}
-
-	public void setSubtipoCodigo(String subtipoCodigo) {
-		this.subtipoCodigo = subtipoCodigo;
-	}*/
 
 	public String getPeriodicidadDescripcion() {
 		return periodicidadDescripcion;
@@ -357,41 +272,6 @@ public class VGastosProveedor implements Serializable {
 		this.destinatarioCodigo = destinatarioCodigo;
 	}
 
-	/*public String getEstadoAutorizacionHayaCodigo() {
-		return estadoAutorizacionHayaCodigo;
-	}
-
-	public void setEstadoAutorizacionHayaCodigo(String estadoAutorizacionHayaCodigo) {
-		this.estadoAutorizacionHayaCodigo = estadoAutorizacionHayaCodigo;
-	}
-
-	public String getEstadoAutorizacionHayaDescripcion() {
-		return estadoAutorizacionHayaDescripcion;
-	}
-
-	public void setEstadoAutorizacionHayaDescripcion(
-			String estadoAutorizacionHayaDescripcion) {
-		this.estadoAutorizacionHayaDescripcion = estadoAutorizacionHayaDescripcion;
-	}
-
-	public String getEstadoAutorizacionPropietarioCodigo() {
-		return estadoAutorizacionPropietarioCodigo;
-	}
-
-	public void setEstadoAutorizacionPropietarioCodigo(
-			String estadoAutorizacionPropietarioCodigo) {
-		this.estadoAutorizacionPropietarioCodigo = estadoAutorizacionPropietarioCodigo;
-	}
-
-	public String getEstadoAutorizacionPropietarioDescripcion() {
-		return estadoAutorizacionPropietarioDescripcion;
-	}
-
-	public void setEstadoAutorizacionPropietarioDescripcion(
-			String estadoAutorizacionPropietarioDescripcion) {
-		this.estadoAutorizacionPropietarioDescripcion = estadoAutorizacionPropietarioDescripcion;
-	}*/
-
 	public String getEstadoGastoCodigo() {
 		return estadoGastoCodigo;
 	}
@@ -408,7 +288,7 @@ public class VGastosProveedor implements Serializable {
 		this.estadoGastoDescripcion = estadoGastoDescripcion;
 	}
 
-	/*public Long getNumGastoGestoria() {
+	public Long getNumGastoGestoria() {
 		return numGastoGestoria;
 	}
 
@@ -424,38 +304,6 @@ public class VGastosProveedor implements Serializable {
 		this.cubreSeguro = cubreSeguro;
 	}
 
-	public String getTipoProveedorCodigo() {
-		return tipoProveedorCodigo;
-	}
-
-	public void setTipoProveedorCodigo(String tipoProveedorCodigo) {
-		this.tipoProveedorCodigo = tipoProveedorCodigo;
-	}
-
-	public String getTipoProveedorDescripcion() {
-		return tipoProveedorDescripcion;
-	}
-
-	public void setTipoProveedorDescripcion(String tipoProveedorDescripcion) {
-		this.tipoProveedorDescripcion = tipoProveedorDescripcion;
-	}
-
-	public String getTipoEntidadCodigo() {
-		return tipoEntidadCodigo;
-	}
-
-	public void setTipoEntidadCodigo(String tipoEntidadCodigo) {
-		this.tipoEntidadCodigo = tipoEntidadCodigo;
-	}
-
-	public String getTipoEntidadDescripcion() {
-		return tipoEntidadDescripcion;
-	}
-
-	public void setTipoEntidadDescripcion(String tipoEntidadDescripcion) {
-		this.tipoEntidadDescripcion = tipoEntidadDescripcion;
-	}
-
 	public String getNombreProveedor() {
 		return nombreProveedor;
 	}
@@ -463,22 +311,6 @@ public class VGastosProveedor implements Serializable {
 	public void setNombreProveedor(String nombreProveedor) {
 		this.nombreProveedor = nombreProveedor;
 	}
-
-	public Date getFechaAnulacion() {
-		return fechaAnulacion;
-	}
-
-	public void setFechaAnulacion(Date fechaAnulacion) {
-		this.fechaAnulacion = fechaAnulacion;
-	}
-
-	public Date getFechaRetencion() {
-		return fechaRetencion;
-	}
-
-	public void setFechaRetencion(Date fechaRetencion) {
-		this.fechaRetencion = fechaRetencion;
-	}*/
 
 	public String getEntidadPropietariaCodigo() {
 		return entidadPropietariaCodigo;
@@ -505,14 +337,6 @@ public class VGastosProveedor implements Serializable {
 		this.idGestoria = idGestoria;
 	}
 
-	/*public Boolean getExisteDocumento() {
-		return existeDocumento;
-	}
-
-	public void setExisteDocumento(Boolean existeDocumento) {
-		this.existeDocumento = existeDocumento;
-	}*/
-
 	public String getNombrePropietario() {
 		return nombrePropietario;
 	}
@@ -529,7 +353,7 @@ public class VGastosProveedor implements Serializable {
 		this.docIdentifPropietario = docIdentifPropietario;
 	}
 
-	/*public boolean getEsGastoAgrupado() {
+	public boolean getEsGastoAgrupado() {
 		return !Checks.esNulo(this.idProvision);
 	}
 
@@ -543,7 +367,7 @@ public class VGastosProveedor implements Serializable {
 
 	public void setImporteTotalAgrupacion(Double importeTotalAgrupacion) {
 		this.importeTotalAgrupacion = importeTotalAgrupacion;
-	}*/
+	}
 
 	public String getNombreGestoria() {
 		return nombreGestoria;
@@ -561,21 +385,13 @@ public class VGastosProveedor implements Serializable {
 		this.sujetoImpuestoIndirecto = sujetoImpuestoIndirecto;
 	}
 
-	/*public Date getFechaAutorizacion() {
+	public Date getFechaAutorizacion() {
 		return fechaAutorizacion;
 	}
 
 	public void setFechaAutorizacion(Date fechaAutorizacion) {
 		this.fechaAutorizacion = fechaAutorizacion;
 	}
-
-	public Boolean getAlertas() {
-		return alertas;
-	}
-
-	public void setAlertas(Boolean alertas) {
-		this.alertas = alertas;
-	}*/
 
 	public String getMotivoRechazo() {
 		return motivoRechazo;
@@ -592,13 +408,29 @@ public class VGastosProveedor implements Serializable {
 	public void setMotivoRechazoProp(String motivoRechazoProp) {
 		this.motivoRechazoProp = motivoRechazoProp;
 	}
-
-	/*public Long getNumTrabajo() {
-		return numTrabajo;
+	
+	public String getIdTipoProv() {
+		return idTipoProv;
 	}
 
-	public void setNumTrabajo(Long numTrabajo) {
-		this.numTrabajo = numTrabajo;
-	}*/
+	public void setIdTipoProv(String idTipoProv) {
+		this.idTipoProv = idTipoProv;
+	}
+
+	public String getIdEstAutHaya() {
+		return idEstAutHaya;
+	}
+
+	public void setIdEstAutHaya(String idEstAutHaya) {
+		this.idEstAutHaya = idEstAutHaya;
+	}
+
+	public String getIdEstAutProp() {
+		return idEstAutProp;
+	}
+
+	public void setIdEstAutProp(String idEstAutProp) {
+		this.idEstAutProp = idEstAutProp;
+	}
 	
 }

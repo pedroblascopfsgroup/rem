@@ -98,6 +98,7 @@ import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
@@ -371,6 +372,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private GestorActivoApi gestorActivoManager;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -4156,6 +4160,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			paseAVendido = DDEstadosExpedienteComercial.VENDIDO.equals(codEstadoExpedienteComercial);
 			if (!Checks.esNulo(expedienteComercial)) {
 				expedienteComercial.setEstado(estadoExpedienteComercial);
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
+
 			}
 
 		} else {
@@ -4974,8 +4980,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				beanUtilNotNull.copyProperties(expedienteComercial, dto);
 
 				if (!Checks.esNulo(dto.getCodigoEstado())) {
-					expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoEstado())));
+					DDEstadosExpedienteComercial estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoEstado()));
+					expedienteComercial.setEstado(estadoExpedienteComercial);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
+
 				}
 
 				if (!Checks.esNulo(dto.getConflictoIntereses())
@@ -5042,9 +5051,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 						if (dto.getEstadoDevolucionCodigo().equals(DDEstadoDevolucion.ESTADO_DEVUELTA)) {
 							if (Checks.esNulo(dto.getCodigoEstado())) {
-								expedienteComercial.setEstado((DDEstadosExpedienteComercial) utilDiccionarioApi
+								DDEstadosExpedienteComercial estadoExpedienteComercial = (DDEstadosExpedienteComercial) utilDiccionarioApi
 										.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class,
-												DDEstadosExpedienteComercial.ANULADO));
+												DDEstadosExpedienteComercial.ANULADO);
+								expedienteComercial.setEstado(estadoExpedienteComercial);
+								recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
+
 							}
 							expedienteComercial.setFechaVenta(null);
 							expedienteComercial.getReserva()
@@ -8462,6 +8474,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadosReserva.class, DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION);
 		expedienteComercial.setEstado(estadoExpedienteComercial);
+		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
 
 		if (!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getReserva())) {
 			Reserva reserva = expedienteComercial.getReserva();
@@ -8519,6 +8532,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadosReserva.class, DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO);
 		expedienteComercial.setEstado(estadoExpedienteComercial);
+		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
 
 		if (!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getReserva())) {
 			Reserva reserva = expedienteComercial.getReserva();

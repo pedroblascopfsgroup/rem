@@ -1376,6 +1376,16 @@ public interface ParticularValidatorApi {
 	
 	Boolean existeActivoConONMarcadoSi(String columnaActivo);
 
+	Boolean existeCodigoMotivoAdmision(String codMotivo);
+
+	Boolean tieneFechaVentaExterna(String activo);
+
+	Boolean activoNoComercializable(String activo);
+
+	Boolean maccConCargas(String activo);
+
+	Boolean estadoExpedienteComercial(String activo);
+	
 	Boolean checkComite(String celdaTrabajo);
 
 	Boolean tieneLlaves(String celdaTrabajo);
@@ -1405,6 +1415,14 @@ public interface ParticularValidatorApi {
 	Boolean datosRegistralesRepetidos(String refCatastral, String finca, String folio, String libro, String tomo, String numRegistro, String codigoLocalidad);
 
 	Boolean subtipoPerteneceTipoActivo(String subtipo, String tipo);
+	
+	String getNumActivoPrincipal(String numAgr);
+
+	boolean getExcluirValidaciones(String numActivo);
+
+	String getCheckGestorComercial(String numActivo);
+
+	String getMotivoGestionComercial(String numActivo);
 
 	Boolean existeAlbaran(String idAlbaran);
 	
@@ -1419,6 +1437,11 @@ public interface ParticularValidatorApi {
     Boolean getGastoSuplidoConFactura(String idGastoAfectado);
 
 	Boolean estadoPrevioTrabajoFinalizado(String celdaTrabajo);
+	
+	Boolean isActivoEnPerimetroAlquilerSocial(String numActivo);
+
+	Boolean situacionComercialAlquilado(String activo);
+	Boolean estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(String numActivo);
 
 	Boolean isActivoGestionadoReam(String string);
 
@@ -1426,10 +1449,43 @@ public interface ParticularValidatorApi {
 
 	boolean gastoSarebAnyadeRefacturable(String numGasto);
 
+	Boolean situacionComercialPublicadoAlquiler(String activo);
+
+	Boolean activoPrincipalEnAgrupacionRestringida(String numActivo);
+	
+	Boolean activoPerteneceAgrupacion(String numActivo);
+	
+	Boolean activoBBVAPerteneceSociedadParticipada (String numActivo);
+
+	Boolean situacionComercialPublicadoAlquilerOVenta(String activo);
+
+	boolean userHasFunction(String funcion, Long idUsuario);
+
+	Boolean isActivoSareb(String numActivo);
+
+	Boolean isActivoCajamar(String numActivo);
+
+	//Boolean validacionSubfasePublicacion(String activo);
+
+	Boolean isCheckVisibleGestionComercial(String numActivo);
+
+	boolean isConCargasOrCargasEsparta(String activo);
+
+	boolean aplicaComercializar(String activo);
+
+	Boolean isActivoAlquiladoSCM(String activo);
+
+	boolean isActivoPublicadoDependiendoSuTipoComercializacion(String activo);
+	
 	Boolean esSubCarterasCerberusAppleDivarian(String numActivo);
+
+	boolean isActivoDestinoComercialSoloAlquiler(String activo);
+
+	Boolean isActivoCerberus(String numActivo);
 
 	Boolean esActivoEnTramite(String numActivo);
 
+	Boolean tieneVigenteFasePublicacionIII(String activo);
 
-
+	Boolean validacionSubfasePublicacion(String activo, List<String> codigos);
 }

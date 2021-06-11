@@ -405,6 +405,50 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 				]
           },
           {
+          	  xtype			:'fieldsettable',
+          	  collapsible	: true,
+          	  defaultType	: 'textfieldbase',
+          	  title			: HreRem.i18n('title.datos.gestion.comercial'),
+          	  bind			: {
+          		  hidden: '{!esAgrupacionRestringida}'
+          	  },
+          	  items			: [
+    						{
+    							xtype:'checkboxfieldbase',
+    							fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.visibleGestionComercial'),
+    							reference: 'chkVisibleGestionComercial',
+    							bind: {
+    								value: '{agrupacionficha.visibleGestionComercial}',
+    			            		readOnly:'{esEditableExcluirValidaciones}'
+    							}
+    						},
+    						{
+    							xtype: 'comboboxfieldbase',
+    				        	fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.marcaDeExcluido'),
+    				        	reference: 'chkMarcaDeExcluido',
+    				        	bind: {	
+    			            		store: '{comboSiNoBoolean}',
+    			            		value: '{agrupacionficha.marcaDeExcluido}',
+    			              		readOnly:'{esEditableExcluirValidaciones}'
+    			            	}
+    						},
+    						{
+    							xtype		: 'comboboxfieldbase',
+    				        	fieldLabel	: HreRem.i18n('fieldlabel.perimetros.motivoDeExcluido'),
+    				        	reference	: 'cbMotivoDeExcluido',
+    				        	bind		: {
+    			            		store: '{comboMotivoDeExcluido}',
+    			            		value: '{agrupacionficha.motivoDeExcluidoCodigo}',
+    			            		disabled: '{!agrupacionficha.marcaDeExcluido}',
+    			              		readOnly:'{esEditableExcluirValidaciones}',
+    			              		allowBlank:'{!agrupacionficha.marcaDeExcluido}'
+    			            	}
+    						}
+    						
+    						
+    					]
+              	},
+          {
 				xtype: 'gridBase',
 				title: HreRem.i18n('title.historico.vigencias'),
 			    minHeight: 100,

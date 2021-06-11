@@ -539,7 +539,7 @@ public class Activo implements Serializable, Auditable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_ERA_ID")
-    private DDEstadoRegistralActivo estadoRegistral; 
+    private DDEstadoRegistralActivo estadoRegistral;
     
     
     @ManyToOne(fetch = FetchType.LAZY)
@@ -2128,8 +2128,6 @@ public class Activo implements Serializable, Auditable {
 	public void setObraNuevaAEfectosComercializacionFecha(Date obraNuevaAEfectosComercializacionFecha) {
 		this.obraNuevaAEfectosComercializacionFecha = obraNuevaAEfectosComercializacionFecha;
 	}
-
-
 
 	public DDValidaEstadoActivo getEstadoValidacionActivoDND() {
 		return estadoValidacionActivoDND;

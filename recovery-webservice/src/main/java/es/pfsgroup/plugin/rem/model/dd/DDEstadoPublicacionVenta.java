@@ -103,8 +103,20 @@ public class DDEstadoPublicacionVenta implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 	
-	public static boolean isNoPublicado(String codigo) {
-		return CODIGO_NO_PUBLICADO_VENTA.equals(codigo);
+	public static boolean isNoPublicadoVenta(DDEstadoPublicacionVenta estado) {
+		boolean isNoPublicado = false;
+		if(estado != null && CODIGO_NO_PUBLICADO_VENTA.equals(estado.getCodigo())) {
+			isNoPublicado = true;
+		}
+		return isNoPublicado;
+	}
+	
+	public static boolean isPublicadoVenta(DDEstadoPublicacionVenta estado) {
+		boolean isNoPublicado = false;
+		if(estado != null && CODIGO_PUBLICADO_VENTA.equals(estado.getCodigo())) {
+			isNoPublicado = true;
+		}
+		return isNoPublicado;
 	}
 	
 	

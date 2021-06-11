@@ -77,6 +77,7 @@ import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
@@ -384,6 +385,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private TareaActivoDao tareaActivoDao;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	@Override
 	public Oferta getOfertaById(Long id) {
@@ -1477,6 +1481,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi
 						.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.APROBADO);
 				expedienteComercial.setEstado(estadoExpCom);
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpCom);
+
 				expedienteComercial.setFechaSancion(new Date());
 				if(expedienteComercial.getCondicionante().getSolicitaReserva()!=null && 1 == expedienteComercial.getCondicionante().getSolicitaReserva()) {															
 					EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
@@ -6651,7 +6657,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			Activo activo = activoDao.getActivoById(idActivo);
 			if(activo != null && activo.getActivoPublicacion() != null && activo.getActivoPublicacion().getEstadoPublicacionVenta() != null) {
-				if(DDEstadoPublicacionVenta.isNoPublicado(activo.getActivoPublicacion().getEstadoPublicacionVenta().getCodigo())){
+				if(DDEstadoPublicacionVenta.isNoPublicadoVenta(activo.getActivoPublicacion().getEstadoPublicacionVenta())){
 					precioWebActualActivo = null;
 				}
 			}
@@ -6716,6 +6722,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}		
 				return ofertaDao.getBusquedaOfertasGrid(dto);
+	}
+	
+	@Override 
+	public List<Oferta> getListOtrasOfertasTramitadasActivo(Long idActivo){
+		return ofertaDao.getListOtrasOfertasTramitadasActivo(idActivo);
 	}
 }
 	

@@ -63,12 +63,24 @@ BEGIN
 			V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.MGD_MAPEO_GESTOR_DOC WHERE DD_CRA_ID = 
 						(SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||(V_TMP_FUNCION(1))||''') 
 							AND DD_SCR_ID = 
-								(SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = '''||(V_TMP_FUNCION(2))||''')';
+								(SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = '''||(V_TMP_FUNCION(2))||''')
+                                AND BORRADO = 0';
 			EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 			
 			-- Si existe la FUNCION
 			IF V_NUM_TABLAS > 0 THEN	  
-				DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.MGD_MAPEO_GESTOR_DOC...no se modifica nada.');
+				DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.MGD_MAPEO_GESTOR_DOC...SE ACTUALIZAN.');
+                
+                V_MSQL:= 'UPDATE '||V_ESQUEMA||'.MGD_MAPEO_GESTOR_DOC SET 
+					CLIENTE_WS = '''||(V_TMP_FUNCION(4)) ||''',
+                    CLIENTE_GD = '''||(V_TMP_FUNCION(3)) ||''',
+					USUARIOMODIFICAR = '''||V_USUARIO||''',
+					FECHAMODIFICAR = SYSDATE
+					WHERE DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||V_TMP_FUNCION(1)||''') 
+                    AND DD_SCR_ID = (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = '''||V_TMP_FUNCION(2)||''')
+                    AND BORRADO = 0 ';
+	            EXECUTE IMMEDIATE V_MSQL;
+                DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.MGD_MAPEO_GESTOR_DOC modificado correctamente. '''||V_TMP_FUNCION(1)||''' - '''||V_TMP_FUNCION(2)||''' - '''||V_TMP_FUNCION(3)||''' - '''||V_TMP_FUNCION(4)||''' ');
 				
 			ELSE
 
@@ -80,7 +92,7 @@ BEGIN
 					(V_TMP_FUNCION(3)) ||''','''||V_USUARIO||''', SYSDATE, 0, '''||(V_TMP_FUNCION(4)) ||''' FROM DUAL';
 		    	
 				EXECUTE IMMEDIATE V_MSQL;
-				DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.MGD_MAPEO_GESTOR_DOC insertados correctamente.');
+				DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.MGD_MAPEO_GESTOR_DOC insertados correctamente. '''||V_TMP_FUNCION(1)||''' - '''||V_TMP_FUNCION(2)||''' - '''||V_TMP_FUNCION(3)||''' - '''||V_TMP_FUNCION(4)||''' ');
 				
 		    END IF;	
       END LOOP;

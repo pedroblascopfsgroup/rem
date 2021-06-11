@@ -105,6 +105,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
@@ -165,6 +166,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgendaSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
@@ -373,8 +375,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private GestorActivoManager gestorActivoManager;
 
 	@Autowired
-	UsuarioManager usuarioManager;
-
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+    private UsuarioManager usuarioManager;
+	
 	@Autowired
 	private EXTGrupoUsuariosDao extGrupoUsuariosDao;
 
@@ -4098,6 +4103,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			}
 			
+			if(dto.getFechaVenta() != null) {
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false);
+			}
 			if (activo.getNumActivo() != null) {
 				ActivoSareb activoSareb = genericDao.get(ActivoSareb.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activo.getNumActivo()));
 				if(activoSareb != null) {
@@ -4134,8 +4142,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					actualizarHonorarios = true;					
 				}
 				activo.setObraNuevaAEfectosComercializacionFecha(new Date());
-				
+
 			}
+			
+			if(dto.getFechaVenta() != null) {
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false);
+			}
+		
 			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -5657,10 +5670,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (activo != null) {
 			for (ActivoAgrupacionActivo activoAgrupacionActivo : activo.getAgrupaciones()) {
 				if (activoAgrupacionActivo.getAgrupacion() != null
-						&& (isActivoAgrupacionTipo(activoAgrupacionActivo, DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-								|| isActivoAgrupacionTipo(activoAgrupacionActivo, DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM) 
-								|| isActivoAgrupacionTipo(activoAgrupacionActivo, DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER) 
-								|| isActivoAgrupacionTipo(activoAgrupacionActivo, DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA))) {
+						&& (isActivoAgrupacionTipo(activoAgrupacionActivo, DDTipoAgrupacion.AGRUPACION_RESTRINGIDA))) {
 					DtoAgrupacionFilter filter = new DtoAgrupacionFilter();
 					filter.setLimit(1000);
 					filter.setStart(0);
@@ -7483,10 +7493,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		for (ActivoAgrupacionActivo agrupacion : activo.getAgrupaciones()) {
 			if (Checks.esNulo(agrupacion.getAgrupacion().getFechaBaja())) {
 				if (!Checks.esNulo(agrupacion.getAgrupacion().getTipoAgrupacion())
-						&& (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo()) 
-							|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM.equals(agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo()) 
-							|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER.equals(agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())
-							|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA.equals(agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo()))) {
+						&& DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())) {
 					return true;
 				}
 			}
@@ -9355,7 +9362,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		activo.setNecesidadIfActivo(this.isIfNecesarioActivo(activo));		
 		genericDao.update(Activo.class, activo);
 	}
+
+	@Override
+	public List<VPreciosVigentesCaixa> getPreciosVigentesCaixaById(Long id) {
+		return activoAdapter.getPreciosVigentesCaixaById(id);
+	}
 	
-	
+	@Override
+	public List<Activo> getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(Long idAgrupacion, Long idActivoPrincipal){
+
+		List<Activo> activos = activoDao.getActivosNoPrincipalesAgrupacion(idAgrupacion, idActivoPrincipal);
+		
+		return activos;
+	}
+
 }
 

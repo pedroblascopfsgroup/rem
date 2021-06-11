@@ -29,10 +29,7 @@ public class AgrupacionAvisoRestringidaObraNueva implements AgrupacionAvisadorAp
 		DtoAviso dtoAviso = new DtoAviso();
 		boolean continuar = true;
 		if (!Checks.esNulo(agrupacion.getTipoAgrupacion()) 
-				&& (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
-				|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo())
-				|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
-				|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo()))) {
+				&& DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 
 			// Obtener los activos de la agrupación restringida.
 			for(ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {

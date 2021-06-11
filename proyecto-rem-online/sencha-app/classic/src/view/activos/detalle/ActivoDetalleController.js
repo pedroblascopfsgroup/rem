@@ -8488,22 +8488,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onChangeDebeComprobarNIF: function(combo,newValue,oldValue,eOpts){
 			this.comprobarNIF(combo);
 	},
-	
     
-    mostrarObservacionesGrid: function(event, target, options) {   	
-    	var me = this;
-    	var observacionesAdmision = target.data.observacionesEvolucion;
-  	
-    	me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.CrearEvolucionObservaciones", {
-            observacionesAdmision: observacionesAdmision
-        });
-        
+    onChkbxExclValPerimetroChange: function(chkbx){
+		var me = this;
+		var excluido = chkbx.getValue();
+		var comboMotivoGestionComercial = me.lookupReference('comboMotivoGestionComercial');
+		disabled = excluido == 0;
+		
+		comboMotivoGestionComercial.setDisabled(disabled);
+    	
+    	if(disabled){
+    		comboMotivoGestionComercial.editable = false;
+    	}else{
+    		comboMotivoGestionComercial.editable = true;
+    	}
     },
-    
-    onClickCerrarObservacionesEvolucion: function(btn) {
-    	var me = this;
-    	btn.up('window').hide();
-    },
+
     cargarStoreCalidadDatoFasesGrid: function(grid){
     	var me = this;    	
 		
@@ -8590,14 +8590,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
     	var carteraBankia = me.getViewModel().getData().activo.getData().isCarteraBankia;
     	var descuentosVigentes = me.lookupReference('descuentosVigentesRef');
+    	var preciosVigentes = me.lookupReference('preciosVigentesRef');
+    	var preciosVigentesCaixa = me.lookupReference('preciosVigentesRefCaixa');
     	
     	if (carteraBankia != null && carteraBankia == true) {
-    		if (descuentosVigentes != null) {
-    			descuentosVigentes.setHidden(false);
-			}
-    		
+			descuentosVigentes.setHidden(false);
+			preciosVigentesCaixa.setHidden(false);
+			preciosVigentes.setHidden(true);
     	}else{
     		descuentosVigentes.setHidden(true);
+    		preciosVigentesCaixa.setHidden(true);
+    		preciosVigentes.setHidden(false);
     	}
     }
 });

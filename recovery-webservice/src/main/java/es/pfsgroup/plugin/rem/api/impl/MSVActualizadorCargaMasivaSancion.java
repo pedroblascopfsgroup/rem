@@ -291,10 +291,7 @@ public class MSVActualizadorCargaMasivaSancion extends AbstractMSVActualizador i
 				DDTipoAgrupacion tipoAgrupacion = agrupacion.getAgrupacion().getTipoAgrupacion();
 				String codigo = tipoAgrupacion.getCodigo();
 
-				if (codigo.equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-						|| codigo.equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-						|| codigo.equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)
-						|| codigo.equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA)) {
+				if (codigo.equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 
 					try {
 						ActivoAgrupacion activoAgrupacion = agrupacion.getAgrupacion();

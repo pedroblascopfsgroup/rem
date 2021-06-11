@@ -25,6 +25,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -61,6 +62,9 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
     
     @Autowired
     private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionTanteo.class);
 
@@ -141,6 +145,8 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 						}
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+						
 						if(DDEstadosExpedienteComercial.ANULADO.equals(estado.getCodigo())){
 							expediente.setFechaVenta(null);
 						}else if(DDEstadosExpedienteComercial.APROBADO.equals(estado.getCodigo())) {

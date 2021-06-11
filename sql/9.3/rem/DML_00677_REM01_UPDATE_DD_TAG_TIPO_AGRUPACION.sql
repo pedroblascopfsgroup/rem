@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Javier Esbri
---## FECHA_CREACION=20210531
+--## FECHA_CREACION=20210611
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14028
+--## INCIDENCIA_LINK=HREOS-14298
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Update campos Promoción conjunta Ob-rem, Promoción conjunta venta, Promoción conjunta alquiler de la DD_TAG_TIPO_AGRUPACION
@@ -28,14 +28,14 @@ DECLARE
   V_COUNT_UPDATE NUMBER(16):= 0; -- Vble. para contar updates
   ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
   ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-  V_USUARIO VARCHAR2(32 CHAR):= 'HREOS-14028';
+  V_USUARIO VARCHAR2(32 CHAR):= 'HREOS-14298';
 
 BEGIN
 
   V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET 
           USUARIOMODIFICAR = '''||V_USUARIO||'''
         , FECHAMODIFICAR = SYSDATE
-        , DD_VISIBLE_CAMPO = ''0''
+        , BORRADO = ''1''
         WHERE DD_TAG_CODIGO IN (''17'',''18'',''19'') 
         AND BORRADO = 0
         ';

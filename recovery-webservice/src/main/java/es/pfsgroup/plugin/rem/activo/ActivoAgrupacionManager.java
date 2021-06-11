@@ -869,24 +869,17 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 	@Override
 	public List<DDTipoAgrupacion> getComboTipoAgrupacionFiltro() {
-		List <DDTipoAgrupacion> listaDDTipoAgrupacion = genericDao.getList(DDTipoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "campoVisible", true));
-		List <DDTipoAgrupacion> listaDDTipoAgr =  new ArrayList<DDTipoAgrupacion>();
+		List <DDTipoAgrupacion> listaDDTipoAgrupacion = genericDao.getList(DDTipoAgrupacion.class);
 		for(Perfil p : genericAdapter.getUsuarioLogado().getPerfiles()) {
 			if(USUARIO_IT.equals(p.getCodigo()) || GESTOR_COMERCIAL_ALQUILER.equals(p.getCodigo()) || SUPERVISOR_COMERCIAL_ALQUILER.equals(p.getCodigo())) {
-				for (DDTipoAgrupacion ddTipoAgrupacion : listaDDTipoAgrupacion) {
-					listaDDTipoAgr.add(ddTipoAgrupacion);
-				}
-				return  listaDDTipoAgr;
+				return  listaDDTipoAgrupacion;
 			}
 		}
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
-		DDTipoAgrupacion filtroAlquiler = genericDao.get(DDTipoAgrupacion.class, filtro);
-		for (DDTipoAgrupacion ddTipoAgrupacion : listaDDTipoAgrupacion) {
-			listaDDTipoAgr.add(ddTipoAgrupacion);
-		}
-		listaDDTipoAgr.remove(filtroAlquiler);
-		return  listaDDTipoAgr;
+		DDTipoAgrupacion promocionAlquiler = genericDao.get(DDTipoAgrupacion.class, filtro);	
+		listaDDTipoAgrupacion.remove(promocionAlquiler);
+		return  listaDDTipoAgrupacion;
 	}
 
 	@Override

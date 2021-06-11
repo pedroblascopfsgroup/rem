@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -63,6 +64,9 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
     
     @Autowired
 	private ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResultadoPBC.class);
 
@@ -100,6 +104,8 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
 								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 								expediente.setEstado(estado);
+								recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 								expediente.setFechaVenta(null);
 								expediente.setFechaAnulacion(new Date());
 								//Finaliza el trámite
@@ -171,6 +177,8 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 									Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 									DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 									expediente.setEstado(estado);
+									recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 									Oferta oferta = expediente.getOferta();
 									List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 									for (Oferta ofertaAux : listaOfertas) {

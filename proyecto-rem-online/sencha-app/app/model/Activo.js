@@ -1200,6 +1200,26 @@ Ext.define('HreRem.model.Activo', {
     			type: 'boolean'	 			
 			},
 			{
+				name:'excluirValidacionesBool', 
+    			type: 'boolean'	 			
+			},
+			{
+	 			name: 'fechaGestionComercial',
+				type:'date',
+				dateFormat: 'c'
+			},
+			{
+	 			name: 'motivoGestionComercialDescripcion'
+			},
+			{
+	 			name: 'motivoGestionComercialCodigo' 
+			},
+			{
+	 			name: 'checkGestorComercial',
+	 			type: 'boolean'
+
+			},
+			{
 	 			name: 'porcentajeConstruccion',
 	 			type: 'float'
 			},
@@ -1210,6 +1230,9 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'codPromocionBbva'
     		},
+			{
+				name: 'codSubfasePublicacion'
+			},
 			{
 				name: 'tipoComercializarCodigo'
 			},
@@ -1266,6 +1289,10 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'bloque'
+			},
+			{
+				name:'esActivoPrincipalAgrupacionRestringida',
+				type: 'boolean'
 			}
     ],
     

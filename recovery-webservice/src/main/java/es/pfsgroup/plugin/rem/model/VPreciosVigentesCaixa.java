@@ -21,148 +21,146 @@ public class VPreciosVigentesCaixa implements Serializable {
 
 	@Id
 	@Column(name = "ID")  
-	private String id;	
+	private String idCaixa;	
 	
 	@Column(name = "VAL_ID")  
-	private String idPrecioVigente;
+	private String idPrecioVigenteCaixa;
 	
 	@Column(name = "ACT_ID")  
-	private String idActivo;
+	private String idActivoCaixa;
 	
 	@Column(name = "DD_TPC_DESCRIPCION")
-	private String descripcionTipoPrecio;
+	private String descripcionTipoPrecioCaixa;
 	
 	@Column(name = "DD_TPC_CODIGO")
-	private String codigoTipoPrecio;
+	private String codigoTipoPrecioCaixa;
 	
 	@Column(name="DD_TPC_ORDEN")
-	private Integer orden;
+	private Integer ordenCaixa;
 
 	@Column(name = "VAL_IMPORTE")
-	private Double importe;
+	private Double importeCaixa;
 	
 	@Column(name = "VAL_FECHA_APROBACION")
-	private Date fechaAprobacion;
+	private Date fechaAprobacionCaixa;
 	
 	@Column(name = "VAL_FECHA_CARGA")
-	private Date fechaCarga;
+	private Date fechaCargaCaixa;
 	
 	@Column(name = "VAL_FECHA_INICIO")
-	private Date fechaInicio;
+	private Date fechaInicioCaixa;
 	
 	@Column(name = "VAL_FECHA_FIN")
-	private Date fechaFin;
+	private Date fechaFinCaixa;
 	
 	@Column(name = "GESTOR_PRECIOS")
-	private String gestor;
+	private String gestorCaixa;
 	
 	@Column(name = "VAL_OBSERVACIONES")
-	private String observaciones;
-	
-	
-	public String getId() {
-		return id;
+	private String observacionesCaixa;
+
+	public String getIdCaixa() {
+		return idCaixa;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setIdCaixa(String idCaixa) {
+		this.idCaixa = idCaixa;
 	}
 
-	public String getIdPrecioVigente() {
-		return idPrecioVigente;
+	public String getIdPrecioVigenteCaixa() {
+		return idPrecioVigenteCaixa;
 	}
 
-	public void setIdPrecioVigente(String idPrecioVigente) {
-		this.idPrecioVigente = idPrecioVigente;
+	public void setIdPrecioVigenteCaixa(String idPrecioVigenteCaixa) {
+		this.idPrecioVigenteCaixa = idPrecioVigenteCaixa;
 	}
 
-	public String getIdActivo() {
-		return idActivo;
+	public String getIdActivoCaixa() {
+		return idActivoCaixa;
 	}
 
-	public void setIdActivo(String idActivo) {
-		this.idActivo = idActivo;
-	}
-	
-	public String getDescripcionTipoPrecio() {
-		return descripcionTipoPrecio;
+	public void setIdActivoCaixa(String idActivoCaixa) {
+		this.idActivoCaixa = idActivoCaixa;
 	}
 
-	public void setDescripcionTipoPrecio(String descripcionTipoPrecio) {
-		this.descripcionTipoPrecio = descripcionTipoPrecio;
+	public String getDescripcionTipoPrecioCaixa() {
+		return descripcionTipoPrecioCaixa;
 	}
 
-	public String getCodigoTipoPrecio() {
-		return codigoTipoPrecio;
+	public void setDescripcionTipoPrecioCaixa(String descripcionTipoPrecioCaixa) {
+		this.descripcionTipoPrecioCaixa = descripcionTipoPrecioCaixa;
 	}
 
-	public void setCodigoTipoPrecio(String codigoTipoPrecio) {
-		this.codigoTipoPrecio = codigoTipoPrecio;
+	public String getCodigoTipoPrecioCaixa() {
+		return codigoTipoPrecioCaixa;
 	}
 
-	public Integer getOrden() {
-		return orden;
+	public void setCodigoTipoPrecioCaixa(String codigoTipoPrecioCaixa) {
+		this.codigoTipoPrecioCaixa = codigoTipoPrecioCaixa;
 	}
 
-	public void setOrden(Integer orden) {
-		this.orden = orden;
+	public Integer getOrdenCaixa() {
+		return ordenCaixa;
 	}
 
-	public Double getImporte() {
-		return importe;
+	public void setOrdenCaixa(Integer ordenCaixa) {
+		this.ordenCaixa = ordenCaixa;
 	}
 
-	public void setImporte(Double importe) {
-		this.importe = importe;
+	public Double getImporteCaixa() {
+		return importeCaixa;
 	}
 
-	public Date getFechaAprobacion() {
-		return fechaAprobacion;
+	public void setImporteCaixa(Double importeCaixa) {
+		this.importeCaixa = importeCaixa;
 	}
 
-	public void setFechaAprobacion(Date fechaAprobacion) {
-		this.fechaAprobacion = fechaAprobacion;
+	public Date getFechaAprobacionCaixa() {
+		return fechaAprobacionCaixa;
 	}
 
-	public Date getFechaCarga() {
-		return fechaCarga;
+	public void setFechaAprobacionCaixa(Date fechaAprobacionCaixa) {
+		this.fechaAprobacionCaixa = fechaAprobacionCaixa;
 	}
 
-	public void setFechaCarga(Date fechaCarga) {
-		this.fechaCarga = fechaCarga;
+	public Date getFechaCargaCaixa() {
+		return fechaCargaCaixa;
 	}
 
-	public Date getFechaInicio() {
-		return fechaInicio;
+	public void setFechaCargaCaixa(Date fechaCargaCaixa) {
+		this.fechaCargaCaixa = fechaCargaCaixa;
 	}
 
-	public void setFechaInicio(Date fechaInicio) {
-		this.fechaInicio = fechaInicio;
+	public Date getFechaInicioCaixa() {
+		return fechaInicioCaixa;
 	}
 
-	public Date getFechaFin() {
-		return fechaFin;
+	public void setFechaInicioCaixa(Date fechaInicioCaixa) {
+		this.fechaInicioCaixa = fechaInicioCaixa;
 	}
 
-	public void setFechaFin(Date fechaFin) {
-		this.fechaFin = fechaFin;
+	public Date getFechaFinCaixa() {
+		return fechaFinCaixa;
 	}
 
-	public String getGestor() {
-		return gestor;
+	public void setFechaFinCaixa(Date fechaFinCaixa) {
+		this.fechaFinCaixa = fechaFinCaixa;
 	}
 
-	public void setGestor(String gestor) {
-		this.gestor = gestor;
+	public String getGestorCaixa() {
+		return gestorCaixa;
 	}
 
-	public String getObservaciones() {
-		return observaciones;
+	public void setGestorCaixa(String gestorCaixa) {
+		this.gestorCaixa = gestorCaixa;
 	}
 
-	public void setObservaciones(String observaciones) {
-		this.observaciones = observaciones;
+	public String getObservacionesCaixa() {
+		return observacionesCaixa;
 	}
-	
+
+	public void setObservacionesCaixa(String observacionesCaixa) {
+		this.observacionesCaixa = observacionesCaixa;
+	}
 
 }

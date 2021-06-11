@@ -21,6 +21,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
+import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 
 /**
  * Modelo que gestiona los activos.
@@ -47,7 +48,7 @@ public class RespuestaComiteBC implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RBC_VALIDACION_BC")
-    private DDApruebaDeniega validacionBcRBC;
+    private DDResolucionComite validacionBcRBC;
      
     @Column(name = "RBC_FECHA_RESP_BC")
     private Date fechaRespuestaBcRBC;
@@ -78,11 +79,11 @@ public class RespuestaComiteBC implements Serializable, Auditable {
 		this.expedienteComercial = expedienteComercial;
 	}
 
-	public DDApruebaDeniega getValidacionBcRBC() {
+	public DDResolucionComite getValidacionBcRBC() {
 		return validacionBcRBC;
 	}
 
-	public void setValidacionBcRBC(DDApruebaDeniega validacionBcRBC) {
+	public void setValidacionBcRBC(DDResolucionComite validacionBcRBC) {
 		this.validacionBcRBC = validacionBcRBC;
 	}
 

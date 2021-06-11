@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -66,6 +67,9 @@ public class UpdaterTransitionService {
 
 	@Autowired
 	private GestorExpedienteComercialApi gestorExpedienteComercialApi;
+
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 	
 	
 	public void updateFrom(DtoSaltoTarea dto) throws Exception {
@@ -221,6 +225,9 @@ public class UpdaterTransitionService {
 		Reserva reserva = expediente.getReserva();
 		
 		expediente.setEstado(estado);
+		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
+
 		if(DDEstadosExpedienteComercial.APROBADO.equals(estado.getCodigo()) 
 				&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
 			if(expediente.getCondicionante().getSolicitaReserva()!=null && 1 == expediente.getCondicionante().getSolicitaReserva()) {															
@@ -271,6 +278,8 @@ public class UpdaterTransitionService {
 		estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 		
 		expediente.setEstado(estado);
+		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 		if (expediente.getEstado() != null
 				&& DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
 				&& activoTramite.getActivo() != null) {

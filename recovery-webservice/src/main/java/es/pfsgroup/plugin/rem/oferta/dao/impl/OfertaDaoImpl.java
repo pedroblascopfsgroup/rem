@@ -472,4 +472,23 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		
 		return HibernateQueryUtils.page(this, hb, dto);
 	}
+	
+	
+	@Override
+	public List<Oferta> getListOtrasOfertasTramitadasActivo(Long idActivo) {
+		List<Oferta> ofertasTramitadas = new ArrayList<Oferta>();
+		HQLBuilder hql = new HQLBuilder("from Oferta o");
+		
+		if (!Checks.esNulo(idActivo)) {
+			hql.appendWhere(" exists (select 1 from  ActivoOferta ao where ao.oferta = o.id and ao.activo = " + idActivo +  ")");	
+			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "o.estadoOferta.codigo", DDEstadoOferta.CODIGO_ACEPTADA);
+			
+			try {
+				ofertasTramitadas = HibernateQueryUtils.list(this, hql);
+			} catch (Exception e) {
+				logger.error("error obtienendo las ofertas tramitadas",e);
+			}
+		}
+		return ofertasTramitadas;
+	}
 }

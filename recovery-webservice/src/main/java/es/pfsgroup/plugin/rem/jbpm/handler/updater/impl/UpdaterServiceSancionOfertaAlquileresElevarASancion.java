@@ -18,6 +18,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -39,6 +40,9 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
         
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresElevarASancion.class);
 			
@@ -66,10 +70,14 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 					DDEstadosExpedienteComercial estadoExpComercial =  (DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(
 							DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.PTE_SANCION_COMITE);
 					expedienteComercial.setEstado(estadoExpComercial);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpComercial);
+
 				}else if(DDResolucionOferta.CODIGO_ANULAR.equals(valor.getValor())) {
 					DDEstadosExpedienteComercial estadoExpComercial =  (DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(
 							DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.ANULADO);
 					expedienteComercial.setEstado(estadoExpComercial);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpComercial);
+
 					DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(
 							DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA);
 					oferta.setEstadoOferta(estadoOferta);

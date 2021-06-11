@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -53,6 +54,9 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 	
 	@Autowired
 	private OfertaDao ofertaDao;
@@ -96,9 +100,11 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 							f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_SANCION_CES);
 						}
 	 					DDEstadosExpedienteComercial aprobado = genericDao.get(DDEstadosExpedienteComercial.class, f1);
-	 					expediente.setEstado(aprobado);
-	 					
-	 					if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva())) {														
+	 					expediente.setEstado(aprobado);	 					
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), aprobado);
+		
+	 					if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva())
+	 							&& !DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())) {														
 							EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 									.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
 
@@ -111,11 +117,14 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
 							}
 						}
+
 	 				}else if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 	 					ofertaApi.rechazarOferta(ofertaAceptada);
 	 					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES);
 	 					DDEstadosExpedienteComercial denegado = genericDao.get(DDEstadosExpedienteComercial.class, f1);
 	 					expediente.setEstado(denegado);
+	 					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), denegado);
+
 	 					Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 	 					tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
 	 					genericDao.save(ActivoTramite.class, tramite);
@@ -123,6 +132,8 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	 					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_SANCION_CES);
 	 					DDEstadosExpedienteComercial contraoferta = genericDao.get(DDEstadosExpedienteComercial.class, f1);
 	 					expediente.setEstado(contraoferta);
+	 					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), contraoferta);
+
 	 				}
 	 			}else if(IMPORTE_CONTRAOFERTA_OFERTANTE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 	 				String doubleValue = valor.getValor();

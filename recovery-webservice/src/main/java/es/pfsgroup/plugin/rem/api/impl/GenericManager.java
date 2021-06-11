@@ -207,16 +207,15 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Autowired 
 	private ActivoPropietarioDao activoPropietarioDao;
+	
+	@Autowired 
+	private PerfilApi perfilApi;
 		
 	@Autowired
 	private RestApi restApi;
 	
 	@Autowired 
 	private ActivoDao activoDao;
-	
-
-	@Autowired 
-	private PerfilApi perfilApi;
 
 
 

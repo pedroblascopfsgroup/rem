@@ -1648,6 +1648,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			return true;
 		},
 		
+		esEditableExcluirValidaciones: function(get){
+
+			var tieneFuncion = $AU.userHasFunction('EDITAR_EXCLUIR_VALIDACIONES');
+			var perteneceAgrupacionRestringida = get('activo.pertenceAgrupacionRestringida');
+			
+			if (perteneceAgrupacionRestringida || !tieneFuncion){
+				return true;
+			}			
+			
+			return false;
+		}, 
+
 		noEditableUASSoloSuper: function(get) {
 			var me = this; 
 			var esUA = false;
@@ -1667,6 +1679,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 			return true;
 		},
+		
 		esEditablePorcentajeConstruccion: function(get){
 			 var isGestorActivos = $AU.userIsRol('HAYAGESACT');
 			 var isUnidadAlquilable = false;
@@ -1686,6 +1699,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    }
 		    
 		    return false;
+		},
+		
+		editableCheckComercializar: function(get){
+			var principalRestringida = get('activo.activoPrincipalRestringida');
+			var perteneceRestringida = get('activo.perteneceAgrupacionRestringidaVigente');
+			var isSareb = get('activo.isCarteraSareb');
+			var numActivo = get('activo.numActivo');
+			var readOnly = false;
+			if((perteneceRestringida && (principalRestringida != numActivo)) && isSareb){
+				readOnly = true;
+			}	
+			return readOnly;
 		}
 	 },
     
@@ -3530,6 +3555,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {id: '{activo.id}'}
 			},
 			autoLoad: true
+		},
+		
+		comboMotivoGestionComercialActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoGestionComercial'}
+			}
 		},
 		// Stores para el grid observaciones. Se crean 3 para solucionar problemas de instancia 
 		/*

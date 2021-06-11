@@ -326,7 +326,15 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 							   flex: 1,
 					           renderer: coloredRender,
 					           formatter: 'date("d/m/Y h:i")'
-						   }
+						   },
+						   {
+
+							   text: HreRem.i18n('header.estado.bc'),
+							   dataIndex: 'estadoBc',
+							   flex: 1,
+					           renderer: coloredRender
+					          
+						   } 
 
 						  ],
 					    dockedItems : [

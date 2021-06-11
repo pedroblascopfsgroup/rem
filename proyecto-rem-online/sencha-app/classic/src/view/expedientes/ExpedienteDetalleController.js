@@ -1904,12 +1904,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
 
 		if(editor.isNew) {
-			me.lookupReference('fechaAvisoRef').setValue();
 			me.lookupReference('fechaPosicionamientoRef').setValue();
 			me.lookupReference('horaAvisoRef').setValue();
 			me.lookupReference('horaPosicionamientoRef').setValue();
 		}
-		me.changeFecha(me.lookupReference('fechaAvisoRef'));
 		me.changeFecha(me.lookupReference('fechaPosicionamientoRef'));
 		me.changeHora(me.lookupReference('horaAvisoRef'));
 		me.changeHora(me.lookupReference('horaPosicionamientoRef'));
@@ -1939,12 +1937,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
 		
 		if(editor.isNew) {
-			me.lookupReference('fechaAvisoRef').setValue();
 			me.lookupReference('fechaPosicionamientoRef').setValue();
 			me.lookupReference('horaAvisoRef').setValue();
 			me.lookupReference('horaPosicionamientoRef').setValue();
 		}
-		me.changeFecha(me.lookupReference('fechaAvisoRef'));
 		me.changeFecha(me.lookupReference('fechaPosicionamientoRef'));
 		me.changeHora(me.lookupReference('horaAvisoRef'));
 		me.changeHora(me.lookupReference('horaPosicionamientoRef'));

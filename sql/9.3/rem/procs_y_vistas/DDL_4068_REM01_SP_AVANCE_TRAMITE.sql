@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20191213
+--## FECHA_CREACION=20210406
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.14
 --## INCIDENCIA_LINK=REMVIP-5828
@@ -14,6 +14,7 @@
 --##        0.1 Versión inicial
 --##	    0.2 Se modifican los merges para que se puedan crear tareas en trámites relacionados con agrupaciones
 --##	    0.3 Se modifica para avanzar tareas de trámite comercial de Apple ( T017.. )
+--##        0.4 REMVIP-9773 - IVAN REPISO - ADAPTAR ASIGNACIÓN GFORM COMO REMVIP-8239
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -480,16 +481,19 @@ BEGIN
       V_UPDATE := 0;
       V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP T1
         USING (
-            SELECT DISTINCT MIG.OFR_ID, GEE.USU_ID
+            SELECT DISTINCT MIG.OFR_ID
             FROM '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP MIG
-            JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN ( ''T017_PBCReserva'' )
+            JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN ( ''T017_PBCReserva'' , ''T017_PBCVenta'' , ''T013_ResultadoPBC'')
             JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = MIG.OFR_ID
             JOIN '||V_ESQUEMA||'.GCO_GESTOR_ADD_ECO GCO ON GCO.ECO_ID = ECO.ECO_ID
             JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GCO.GEE_ID
-            JOIN REMMASTER.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_ID = GEE.DD_TGE_ID AND TGE.DD_TGE_CODIGO = ''GFORM'') T2
+            JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = MIG.ACT_ID AND ACT.BORRADO = 0
+            JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND CRA.BORRADO = 0
+            JOIN REMMASTER.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_ID = GEE.DD_TGE_ID AND TGE.DD_TGE_CODIGO = ''GFORM''
+            WHERE CRA.DD_CRA_CODIGO IN (''01'',''02'',''03'',''07'',''08'',''16'')) T2
         ON (T1.OFR_ID = T2.OFR_ID)
         WHEN MATCHED THEN UPDATE SET
-            T1.USU_ID = T2.USU_ID';
+            T1.USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE USU_USERNAME = ''gestform'')';
       EXECUTE IMMEDIATE V_MSQL;
       V_UPDATE := SQL%ROWCOUNT;
 

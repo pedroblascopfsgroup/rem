@@ -246,6 +246,10 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name = "CEX_C4C_ID")
 	private String idBC4C;
 	
+	@Column(name = "COM_FECHA_NACIOCONST")
+	private Date fechaNacimientoConstitucion;
+
+	
 
 	public Long getId() {
 		return id;
@@ -855,6 +859,14 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setIdBC4C(String idBC4C) {
 		this.idBC4C = idBC4C;
+	}
+
+	public Date getFechaNacimientoConstitucion() {
+		return fechaNacimientoConstitucion;
+	}
+
+	public void setFechaNacimientoConstitucion(Date fechaNacimientoConstitucion) {
+		this.fechaNacimientoConstitucion = fechaNacimientoConstitucion;
 	}
 	
 	

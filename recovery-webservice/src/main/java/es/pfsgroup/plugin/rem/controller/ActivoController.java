@@ -22,6 +22,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -239,6 +241,9 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@Autowired
 	private GridObservacionesFactory gridObservacionesFactory;
+
+	@Autowired
+	private CaixaBcRestClient caixaBcRestClient;
 	
 	@Resource
 	private Properties appProperties;
@@ -2182,7 +2187,11 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			//solo son venta directa desde masivo
 			dtoOferta.setVentaDirecta(false);
-			boolean success = !Checks.esNulo(adapter.createOfertaActivo(dtoOferta));
+			Oferta oferta = adapter.createOfertaActivo(dtoOferta);
+			boolean success = oferta != null;
+			if (oferta.getEstadoOferta()!= null && DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()))
+			caixaBcRestClient.callReplicateClient(oferta.getNumOferta(),CaixaBcRestClient.CLIENTE_TITULARES_DATA);
+
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {

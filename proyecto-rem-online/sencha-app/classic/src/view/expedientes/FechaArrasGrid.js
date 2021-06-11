@@ -8,6 +8,7 @@ Ext.define('HreRem.view.expedientes.FechaArrasGrid', {
      idSecundaria: 'expediente.id',
      editOnSelect: true,
      removeButton: false,
+     requires : [ 'HreRem.model.FechaArrasModel'],	
      bind: {
          store: '{storeFechaArras}'
      },
@@ -145,7 +146,7 @@ Ext.define('HreRem.view.expedientes.FechaArrasGrid', {
 			
 			var reg = listaReg[0];
 			
-			if(me.comprobarFechaEnviada(reg)){
+			if(reg == null || me.comprobarFechaEnviada(reg)){
 				me.getStore().sorters.clear();
 	            me.editPosition = 0;
 	            rec.setId(null);
@@ -187,12 +188,19 @@ Ext.define('HreRem.view.expedientes.FechaArrasGrid', {
             me.mask(HreRem.i18n("msg.mask.espere"));
 
             if (me.isValidRecord(context.record)) {
+            	
+            	var date = context.record.data.fechaPropuesta
+            	
+            	var day = date.getDate();
+            	var month = date.getMonth() +1;
+            	var year = date.getFullYear();
 	            
 	            context.record.save({
 	
 	                   params: {
 	                       id: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal),
-	                       idExpediente: Ext.isEmpty(me.idSecundaria) ? "" : me.lookupController().getViewModel().data.expediente.id
+	                       idExpediente: Ext.isEmpty(me.idSecundaria) ? "" : me.lookupController().getViewModel().data.expediente.id,
+	                       fechaPropuestaString: year + '-' + month + '-' + day
 	                       },
 	                   success: function (a, operation, c) {
 	                       if (context.store.load) {

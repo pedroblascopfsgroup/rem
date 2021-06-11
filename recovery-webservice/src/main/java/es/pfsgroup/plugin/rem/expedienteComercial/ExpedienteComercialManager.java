@@ -3717,6 +3717,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 				if(posicionamiento.getValidacionBCPos() != null ) {
 					beanUtilNotNull.copyProperty(posicionamientoDto, "validacionBCPosi", posicionamiento.getValidacionBCPos().getCodigo());
+					beanUtilNotNull.copyProperty(posicionamientoDto, "validacionBCPosiDesc", posicionamiento.getValidacionBCPos().getDescripcion());
 				}
 				
 				beanUtilNotNull.copyProperty(posicionamientoDto, "fechaEnvioPos", posicionamiento.getFechaEnvioPos());
@@ -3755,6 +3756,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			beanUtilNotNull.copyProperty(posicionamiento, "lugarFirma", dto.getLugarFirma());
+			if(dto.getObservacionesRem() != null) {
+				beanUtilNotNull.copyProperty(posicionamiento, "observacionesRem", dto.getObservacionesRem());
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en ExpedienteComercialManager", e);
@@ -4537,6 +4541,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				comprador.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
 			}
 			
+			if(!Checks.isFechaNula(dto.getFechaNacimientoConstitucion())){
+				comprador.setFechaNacimientoConstitucion(dto.getFechaNacimientoConstitucion());
+			}
+			
 			Filter filtroAdjunto = genericDao.createFilter(FilterType.NOTNULL, "idAdjunto");
 			List<TmpClienteGDPR> tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, 
 					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()), filtroAdjunto);
@@ -4759,14 +4767,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);		
 				compradorExpediente.setFechaContrasteListas(new Date());
 			}
+			
 
 			if (esNuevo) {
 				genericDao.save(Comprador.class, comprador);
 				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
 				compradorExpediente.setFechaContrasteListas(new Date());
-				expedienteComercial.getCompradores().add(compradorExpediente);						
+				expedienteComercial.getCompradores().add(compradorExpediente);
+				genericDao.update(CompradorExpediente.class, compradorExpediente);
 				genericDao.save(ExpedienteComercial.class, expedienteComercial);
-				genericDao.update(CompradorExpediente.class, compradorExpediente);		
 				
 			} else {
 				genericDao.save(Comprador.class, comprador);
@@ -8708,6 +8717,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			comprador.setTransferenciasInternacionales(vista.getTransferenciasInternacionales());
 			comprador.setEntidadPropietariaCodigo(cartera);
 			comprador.setEsCarteraBankia(DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera));
+			if(DDTiposDocumentos.NIF.equals(vista.getCodTipoDocumento())) {
+				comprador.setFormaJuridica(vista.getNumDocumento());
+			}
+			
 
 			if (comprador.getEsCarteraBankia()) {
 				if (comprador.getEsBH()) {
@@ -12017,10 +12030,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional
-	public Boolean saveFechaArras(DtoGridFechaArras dto) {
+	public Boolean saveFechaArras(DtoGridFechaArras dto) throws ParseException {
 		FechaArrasExpediente nuevaFecha = new FechaArrasExpediente();
 		
-		nuevaFecha.setFechaPropuesta(dto.getFechaPropuesta());
+		nuevaFecha.setFechaPropuesta(ft.parse(dto.getFechaPropuestaString()));
 		nuevaFecha.setObservaciones(dto.getObservaciones());
 		nuevaFecha.setExpedienteComercial(genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente())));
 		

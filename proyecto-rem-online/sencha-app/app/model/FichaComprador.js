@@ -255,6 +255,17 @@ Ext.define('HreRem.model.FichaComprador', {
 		},
 		{
 			name:'nombreConyugeURSUS'
+		},
+		{
+			name:'idBC4C'
+		},
+		{
+			name:'fechaNacimientoConstitucion',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name:'formaJuridica' 
 		}
 		
 		

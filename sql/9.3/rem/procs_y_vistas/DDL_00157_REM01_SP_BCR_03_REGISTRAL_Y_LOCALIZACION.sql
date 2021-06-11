@@ -63,7 +63,7 @@ BEGIN
                   LEFT JOIN REMMASTER.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = EQV.DD_CODIGO_REM AND LOC.BORRADO = 0
                   WHERE APR.FLAG_EN_REM = '||FLAG_EN_REM||'
                   ) AUX
-                  ON (BDR.BIE_DREG_ID = AUX.BIE_DREG_ID AND BDR.BOORRADO = 0)
+                  ON (BDR.BIE_DREG_ID = AUX.BIE_DREG_ID AND BDR.BORRADO = 0)
                   WHEN MATCHED THEN
                   UPDATE SET 
                   BDR.BIE_DREG_NUM_FINCA = AUX.BIE_DREG_NUM_FINCA
@@ -187,7 +187,7 @@ BEGIN
                   LEFT JOIN REMMASTER.DD_CIC_CODIGO_ISO_CIRBE CIC ON CIC.DD_CIC_CODIGO = EQV.DD_CODIGO_REM AND CIC.BORRADO = 0
                   WHERE APR.FLAG_EN_REM = '||FLAG_EN_REM||'
                   ) AUX
-                  ON (BIE_LOC.BIE_LOC_ID = AUX.BIE_LOC_ID AND BIE_LOC.BOORRADO = 0)
+                  ON (BIE_LOC.BIE_LOC_ID = AUX.BIE_LOC_ID AND BIE_LOC.BORRADO = 0)
                   WHEN MATCHED THEN
                   UPDATE SET 
                   BIE_LOC.DD_TVI_ID = AUX.DD_TVI_ID

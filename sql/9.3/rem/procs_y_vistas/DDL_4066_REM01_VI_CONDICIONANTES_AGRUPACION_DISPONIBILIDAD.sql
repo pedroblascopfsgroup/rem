@@ -12,7 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Cambio para agrupación restringida(HREOS-6318) -JSL
---##		    0.3 Juan Bautista Alfonso [REMVIP-9845] Modificacion para nuevas vistas V_COND_DISPONIBILIDAD
+--##        0.3 Juan Bautista Alfonso [REMVIP-9845] Modificacion para nuevas vistas V_COND_DISPONIBILIDAD
 --##########################################
 --*/
 
@@ -24,6 +24,8 @@ SET SERVEROUTPUT ON;
 DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
     V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
+    err_num NUMBER; -- Vble. número de errores
+    err_msg VARCHAR2(2048); -- Mensaje de error
     V_MSQL VARCHAR2(4000 CHAR);
 
     CUENTA NUMBER;

@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.activo.exception.PlusvaliaActivoException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -47,6 +48,9 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 	
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDocumentosPostVenta.class);
@@ -101,6 +105,8 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 			}
 			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 			expediente.setEstado(estado);
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 			expedienteComercialApi.update(expediente, pasaAVendido);
 
 			for (ActivoOferta activoOferta : ofertaAceptada.getActivosOferta()) {

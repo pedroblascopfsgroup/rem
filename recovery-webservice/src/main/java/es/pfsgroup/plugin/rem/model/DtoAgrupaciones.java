@@ -82,6 +82,11 @@ public class DtoAgrupaciones extends WebDto {
 	private Boolean ventaSobrePlano;
 	private Boolean esGestorComercialEnActivo;
 	private String codigoOnSareb;
+	
+	private Boolean visibleGestionComercial;
+	private Boolean marcaDeExcluido;
+	private String motivoDeExcluidoCodigo;
+	private Integer sumatorio;
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -513,4 +518,30 @@ public class DtoAgrupaciones extends WebDto {
 	public void setCodigoOnSareb(String codigoOnSareb) {
 		this.codigoOnSareb = codigoOnSareb;
 	}
+	public Boolean getVisibleGestionComercial() {
+		return visibleGestionComercial;
+	}
+	public void setVisibleGestionComercial(Boolean visibleGestionComercial) {
+		this.visibleGestionComercial = visibleGestionComercial;
+	}
+	public String getMotivoDeExcluidoCodigo() {
+		return motivoDeExcluidoCodigo;
+	}
+	public void setMotivoDeExcluidoCodigo(String motivoDeExcluidoCodigo) {
+		this.motivoDeExcluidoCodigo = motivoDeExcluidoCodigo;
+	}
+	public Integer getSumatorio() {
+		return sumatorio;
+	}
+	public void setSumatorio(Integer sumatorio) {
+		this.sumatorio = sumatorio;
+	}
+	public Boolean getMarcaDeExcluido() {
+		return marcaDeExcluido;
+	}
+	public void setMarcaDeExcluido(Boolean marcaDeExcluido) {
+		this.marcaDeExcluido = marcaDeExcluido;
+	}
+	
+	
 }

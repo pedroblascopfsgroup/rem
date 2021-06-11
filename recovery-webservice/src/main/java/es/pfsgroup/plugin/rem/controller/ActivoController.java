@@ -4312,20 +4312,4 @@ public class ActivoController extends ParadiseJsonController {
 
 		return new ModelAndView("jsonView", model);
 	}
-	
-//	@RequestMapping(method = RequestMethod.GET)
-//	public ModelAndView getPreciosVigentesCaixaById(Long id, ModelMap model) {
-//		
-//		try {
-//			
-//			List<VPreciosVigentesCaixa> listSuccess = activoApi.getPreciosVigentesCaixaById(id);
-//			model.put(RESPONSE_DATA_KEY, listSuccess);
-//			model.put(RESPONSE_SUCCESS_KEY, true);
-//		} catch (Exception e) {
-//			logger.error("error en activoController", e);
-//			model.put(RESPONSE_SUCCESS_KEY, false);
-//			model.put(RESPONSE_ERROR_KEY, e.getMessage());
-//		}
-//		return createModelAndViewJson(model);
-//	}
 }

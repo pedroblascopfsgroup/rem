@@ -8,8 +8,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -83,6 +85,7 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PresupuestoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
@@ -274,6 +277,9 @@ public class ActivoAdapter {
 	
 	@Autowired
 	private ComisionamientoApi comisionamientoApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -3156,7 +3162,13 @@ public class ActivoAdapter {
 					}
 				} else {
 					this.updateGestoresTabActivoTransactional(dto, id);
-					this.actualizarEstadoPublicacionActivo(id);
+					if(!Checks.esNulo(dtofichacabecera.getCheckGestorComercial()) || !Checks.esNulo(dtofichacabecera.getExcluirValidacionesBool())){
+						ArrayList<Long> listaActivo = new ArrayList<Long>();
+						listaActivo.add(id);
+						this.actualizarEstadoPublicacionActivoPerimetro(listaActivo, new ArrayList<Long>());
+					}else {
+						this.actualizarEstadoPublicacionActivo(id);
+					}
 				}
 			}
 
@@ -3186,7 +3198,10 @@ public class ActivoAdapter {
 			resultado = true;
 		}else{
 			if(listaIdActivo != null && !listaIdActivo.isEmpty()){
-				return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(listaIdActivo,true);
+				boolean isOk = activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(listaIdActivo,true);
+				if(isOk) {
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivo);
+				}
 			}
 		}
 		return resultado;
@@ -4890,6 +4905,52 @@ public class ActivoAdapter {
 		Order order = new Order(OrderType.ASC, "ordenCaixa");
 
 		return genericDao.getListOrdered(VPreciosVigentesCaixa.class, order, filtro);
+	}
 
+	@Transactional(readOnly = false)
+	public boolean actualizarEstadoPublicacionActivoPerimetro(ArrayList<Long> listaIdActivo, ArrayList<Long> listaIdActivoSinVisibilidad){
+
+		activoDao.hibernateFlush();
+		Thread hilo = new Thread(new EjecutarSPPublicacionAsincrono(genericAdapter.getUsuarioLogado().getUsername(), listaIdActivo, listaIdActivoSinVisibilidad));
+		hilo.start();
+		
+		return true;
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean actualizarEstadoPublicacionSincronoPerimetro(ArrayList<Long> listaIdActivo, ArrayList<Long> listaIdActivoSinVisibilidad){
+		boolean resultado = true;
+		Set<Long> activosSinRepetidos =  new HashSet<Long>(listaIdActivoSinVisibilidad); 
+		if(listaIdActivo != null && !listaIdActivo.isEmpty()){
+			resultado = activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(listaIdActivo,true);
+		}
+		if(listaIdActivoSinVisibilidad != null && !listaIdActivoSinVisibilidad.isEmpty() && resultado) {
+			Set<Long> activosAdicionalesSinRepetidos = this.getActivosAdicionales(activosSinRepetidos); 
+			activosSinRepetidos.addAll(activosAdicionalesSinRepetidos);
+			List<Long> listaIdActivoSinVisibilidadSinRepetidos = new ArrayList<Long>(activosSinRepetidos);
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivoSinVisibilidadSinRepetidos);
+		}
+		
+		return resultado;
+	}
+	
+	private Set<Long> getActivosAdicionales(Set<Long> activosSinRepetidos){
+		Set<Long> activosAdicionalesSinRepetidos =  new HashSet<Long>();
+		for (Long activoId : activosSinRepetidos) {
+			Activo activo = activoDao.getActivoById(activoId);
+			if(activo != null) {
+				ActivoAgrupacionActivo aga = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());
+				if(aga != null && aga.getAgrupacion() != null) {
+					List<Activo> activos = activoApi.getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(aga.getAgrupacion().getId(),activo.getId());
+					for (Activo activoAgr : activos) {
+						activosAdicionalesSinRepetidos.add(activoAgr.getId());
+					}
+				}
+			}
+		}
+		
+		return activosAdicionalesSinRepetidos;
 	}
 }
+
+

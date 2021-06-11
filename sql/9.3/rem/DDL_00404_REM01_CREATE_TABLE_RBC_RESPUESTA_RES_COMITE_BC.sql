@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20210614
+--## FECHA_CREACION=20210615
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14204
@@ -43,8 +43,8 @@ DECLARE
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
                 --NOMBRE FK                         CAMPO FK                		TABLA DESTINO FK                                 CAMPO DESTINO FK
-        T_FK(   'FK_RBC_ECO_ID',                        'ECO_ID',             		V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL',                'ECO_ID'),
-        T_FK(   'FK_RBC_DD_APD',                   		'RBC_VALIDACION_BC',        V_ESQUEMA||'.DD_APD_APRUEBA_DENIEGA',                'DD_APD_ID')
+        T_FK(   'FK_RBC_ECO_ID',                        'ECO_ID',             		V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL',             'ECO_ID'),
+        T_FK(   'FK_RBC_DD_RCO',                   		'RBC_VALIDACION_BC',        V_ESQUEMA||'.DD_RCO_RESOL_COMITE',                	'DD_RCO_ID')
 
     );
     V_T_FK T_FK;

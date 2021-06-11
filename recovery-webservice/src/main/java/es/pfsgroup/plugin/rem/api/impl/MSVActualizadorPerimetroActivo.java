@@ -3,9 +3,11 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -34,14 +36,18 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
@@ -58,6 +64,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
     private static final Integer CHECK_NO_CAMBIAR = -1;
     private static final String[] listaValidosPositivos = { "S", "SI" };
 	private static final String[] listaValidosNegativos = { "N", "NO" };
+	private static final String VALOR_NO = "2";
 
     @Autowired
     private ActivoAdapter activoAdapter;
@@ -82,9 +89,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 	
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
-	
-	@Autowired
-	private ActivoAgendaEvolucionDao activoAgendaEvolucionDao;
+
 
 	@Override
 	public String getValidOperation() {
@@ -121,15 +126,22 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			String admision = exc.dameCelda(fila, 17);
 			String motivoAdmision = exc.dameCelda(fila, 18);
 			String checkOnEfectosComercializacion = exc.dameCelda(fila, 19);
+			String visibleGestionComercial = exc.dameCelda(fila,20);
+			String motivoGestionComercial = exc.dameCelda(fila,21);
+			String exclusionValidaciones = exc.dameCelda(fila,22);
+			String fechaCambio = exc.dameCelda(fila, 23);
+
 			
 			Activo activo = activoApi.getByNumActivo(numActivo);
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
+			ActivoAgrupacionActivo activoAgrupacion = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());
 
 			
 			// Evalua si ha encontrado un registro de perimetro para el activo
 			// dado.
 			// En caso de que no exista, crea uno nuevo relacionado sin datos
 			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+			boolean propagarRestringida = false;
 			
 			// Perimetro Macc---------------------------
 			if (CHECK_NO_CAMBIAR.equals(tmpPerimetroMacc) 
@@ -181,13 +193,32 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 				perimetroActivo.setAplicaComercializar(tmpAplicaComercializar);
 				perimetroActivo.setFechaAplicaComercializar(new Date());
 			}
+			
+			
 
 			// Motivo para Si comercializar
-			if (!Checks.esNulo(tmpMotivoComercializacion))
-				perimetroActivo.setMotivoAplicaComercializar(
-						(DDMotivoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(
-								DDMotivoComercializacion.class, tmpMotivoComercializacion.substring(0, 2)));
-
+			DDMotivoComercializacion ddmc = null;
+			if (!Checks.esNulo(tmpMotivoComercializacion)) {
+				ddmc = (DDMotivoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoComercializacion.class, tmpMotivoComercializacion.substring(0, 2));
+				perimetroActivo.setMotivoAplicaComercializar(ddmc);
+			}
+			
+			if(!Checks.esNulo(exc.dameCelda(fila, 4)) && DDCartera.isCarteraSareb(activo.getCartera()) && activoAgrupacion != null 
+			&& DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())) {		
+				List<ActivoAgrupacionActivo> activos= activoAgrupacion.getAgrupacion().getActivos();
+				Date hoy =  new Date();
+				for (ActivoAgrupacionActivo activoAgrupacionActivo : activos) {
+					PerimetroActivo perimetroActivoAgrupacion = activoApi.getPerimetroByIdActivo(activoAgrupacionActivo.getActivo().getId());
+					perimetroActivoAgrupacion.setAplicaComercializar(tmpAplicaComercializar);
+					perimetroActivoAgrupacion.setFechaAplicaComercializar(hoy);
+					if(ddmc != null) {
+						perimetroActivoAgrupacion.setMotivoAplicaComercializar(ddmc);
+					}
+					activoApi.saveOrUpdatePerimetroActivo(perimetroActivoAgrupacion);
+				}
+			}
+			
+			
 			// Motivo para No comercializar
 			if (!Checks.esNulo(tmpMotivoNoComercializacion))
 				perimetroActivo.setMotivoNoAplicaComercializar(tmpMotivoNoComercializacion);
@@ -270,6 +301,84 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 				// Comprobamos si es necesario actualizar el estado de
 				// publicación del activo.
 			}
+			
+			
+			if(activoAgrupacion != null && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())
+					&& (!Checks.esNulo(visibleGestionComercial) || !Checks.esNulo(exclusionValidaciones))) {
+				
+				Boolean checkGestorComercialAg = null;
+				Date fecha = new Date();
+				DDSinSiNo validacion = null;
+				DDMotivoGestionComercial motivo = null;
+				if(!Checks.esNulo(visibleGestionComercial)) {
+					if(Arrays.asList(listaValidosPositivos).contains(visibleGestionComercial.toUpperCase())) {
+						checkGestorComercialAg = true;
+					}else {
+						checkGestorComercialAg = false;
+					}
+					
+					if(!Checks.esNulo(fechaCambio)) {
+						SimpleDateFormat sdfSal = new SimpleDateFormat("dd/MM/yyyy"); 
+						fecha = sdfSal.parse(fechaCambio);
+					}
+				}
+						
+				if(!Checks.esNulo(exclusionValidaciones)) {
+					validacion = getCheckValueToDDSinSiNo(exclusionValidaciones);
+					if(!Checks.esNulo(motivoGestionComercial) && validacion != null && DDSinSiNo.CODIGO_SI.equalsIgnoreCase(validacion.getCodigo())) {
+						motivo = (DDMotivoGestionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, motivoGestionComercial);
+					}
+				}
+					
+				List<ActivoAgrupacionActivo> activos= activoAgrupacion.getAgrupacion().getActivos();
+				
+				for (ActivoAgrupacionActivo activoAgrupacionActivo : activos) {
+					PerimetroActivo perimetroActivoAgrupacion = activoApi.getPerimetroByIdActivo(activoAgrupacionActivo.getActivo().getId());
+					if(checkGestorComercialAg != null) {
+						perimetroActivoAgrupacion.setCheckGestorComercial(checkGestorComercialAg);
+						perimetroActivoAgrupacion.setFechaGestionComercial(fecha);
+					}
+					if(!Checks.esNulo(exclusionValidaciones)) {
+						perimetroActivoAgrupacion.setExcluirValidaciones(validacion);
+						perimetroActivoAgrupacion.setMotivoGestionComercial(motivo);
+					}
+						
+					activoApi.saveOrUpdatePerimetroActivo(perimetroActivoAgrupacion);
+				}
+					
+
+			}else if(!Checks.esNulo(visibleGestionComercial) || !Checks.esNulo(exclusionValidaciones)){
+				if(!Checks.esNulo(visibleGestionComercial)) {
+					if(Arrays.asList(listaValidosPositivos).contains(visibleGestionComercial.toUpperCase())) {
+						perimetroActivo.setCheckGestorComercial(true);
+					}else {
+						perimetroActivo.setCheckGestorComercial(false);
+					}
+					Date fecha = new Date();
+					if(!Checks.esNulo(fechaCambio)) {
+						SimpleDateFormat sdfSal = new SimpleDateFormat("dd/MM/yyyy"); 
+						fecha = sdfSal.parse(fechaCambio);
+					}
+					perimetroActivo.setFechaGestionComercial(fecha);
+				}
+						
+				if(!Checks.esNulo(exclusionValidaciones)) {
+					DDSinSiNo validacion = getCheckValueToDDSinSiNo(exclusionValidaciones);
+					perimetroActivo.setExcluirValidaciones(validacion);
+					if(validacion != null ) {
+						if(DDSinSiNo.CODIGO_SI.equalsIgnoreCase(validacion.getCodigo())) {
+							if(!Checks.esNulo(motivoGestionComercial)) {
+								perimetroActivo.setMotivoGestionComercial((DDMotivoGestionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, motivoGestionComercial));
+							}
+						}else {
+							perimetroActivo.setMotivoGestionComercial(null);
+						}
+					}
+					if(DDSinSiNo.CODIGO_NO.equals(validacion.getCodigo())) {
+						perimetroActivo.setMotivoGestionComercial(null);
+					}
+				}
+			}
 
 			// Aplica Formalizar ---------------------------
 			if (!CHECK_NO_CAMBIAR.equals(tmpAplicaFormalizar)) {
@@ -333,19 +442,16 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			}
 			
 			if(checkOnEfectosComercializacion!=null && !checkOnEfectosComercializacion.isEmpty()) {
-				DDSinSiNo diccionarioSi =  (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(
-						DDSinSiNo.class, DDSinSiNo.CODIGO_SI);
-				DDSinSiNo diccionarioNo =  (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(
-						DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
-				
-				
-					if(Arrays.asList(listaValidosPositivos).contains(checkOnEfectosComercializacion.toUpperCase())) {
-						activo.setTieneObraNuevaAEfectosComercializacion(diccionarioSi);					
-					}else if(Arrays.asList(listaValidosNegativos).contains(checkOnEfectosComercializacion.toUpperCase())){
-						activo.setTieneObraNuevaAEfectosComercializacion(diccionarioNo);
-					}
-					activo.setObraNuevaAEfectosComercializacionFecha(new Date());
-				
+			    DDSinSiNo diccionario =  null;
+	    
+			    if(Arrays.asList(listaValidosPositivos).contains(checkOnEfectosComercializacion.toUpperCase())) {
+			    	diccionario = (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI);
+			        activo.setTieneObraNuevaAEfectosComercializacion(diccionario);					
+			    }else if(Arrays.asList(listaValidosNegativos).contains(checkOnEfectosComercializacion.toUpperCase())){
+			    	diccionario = (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod( DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
+			        activo.setTieneObraNuevaAEfectosComercializacion(diccionario);
+			    }
+			    activo.setObraNuevaAEfectosComercializacionFecha(new Date());
 			}
 
 			activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
@@ -375,12 +481,16 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		Integer numFilas = exc.getNumeroFilas();
 		ArrayList<Long> idList = new ArrayList<Long>();
+		ArrayList<Long> idListSinVisibilidadComercial = new ArrayList<Long>();
 		try{
 			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 				idList.add(activo.getId());
+				if(Checks.esNulo(exc.dameCelda(fila,19)) && Checks.esNulo(exc.dameCelda(fila,22))) {
+					idListSinVisibilidadComercial.add(activo.getId());
+				}
 			}
-			activoAdapter.actualizarEstadoPublicacionActivo(idList, false);
+			activoAdapter.actualizarEstadoPublicacionSincronoPerimetro(idList, idListSinVisibilidadComercial);
 			transactionManager.commit(transaction);
 		}catch(Exception e){
 			transactionManager.rollback(transaction);
@@ -432,11 +542,28 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			perimetro.setAplicaTramiteAdmision(CHECK_VALOR_NO);
 			perimetro.setFechaAplicaTramiteAdmision(new Date());
 		}
+		if(!perimetro.getCheckGestorComercial()) {
+			perimetro.setCheckGestorComercial(false);
+			perimetro.setFechaGestionComercial(new Date());
+		}
 		if(perimetro.getAplicaPublicar()) {
 			perimetro.setAplicaPublicar(BooleanUtils.toBooleanObject(CHECK_VALOR_NO));
 			perimetro.setFechaAplicaTramiteAdmision(new Date());
 		}
 	}
 
+	private DDSinSiNo getCheckValueToDDSinSiNo(String cellValue){
+		DDSinSiNo diccionario = null;
+		if(!Checks.esNulo(cellValue)){
+			if(Arrays.asList(listaValidosPositivos).contains(cellValue.toUpperCase())) {		
+				diccionario =  (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI);
+			}else if(Arrays.asList(listaValidosNegativos).contains(cellValue.toUpperCase())) {
+				diccionario = (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
+			}
+		}
+
+		return diccionario;
+		
+	}
 
 }

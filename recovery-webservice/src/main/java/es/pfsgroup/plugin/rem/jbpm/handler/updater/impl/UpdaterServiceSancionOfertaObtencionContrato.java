@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -65,6 +66,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	private ActivoAdapter activoAdapter;
 	
 	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 	private ApiProxyFactory proxyFactory;
 
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
@@ -181,6 +183,8 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				if(!Checks.esNulo(filtro)) {
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					expediente.setEstado(estado);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 				}
 	
 				// actualizamos el estado de la reserva a firmada

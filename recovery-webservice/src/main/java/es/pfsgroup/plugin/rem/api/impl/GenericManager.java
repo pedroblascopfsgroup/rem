@@ -240,12 +240,12 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Autowired 
 	private ActivoPropietarioDao activoPropietarioDao;
-		
-	@Autowired
-	private RestApi restApi;
 	
 	@Autowired 
 	private PerfilApi perfilApi;
+		
+	@Autowired
+	private RestApi restApi;
 
 
 

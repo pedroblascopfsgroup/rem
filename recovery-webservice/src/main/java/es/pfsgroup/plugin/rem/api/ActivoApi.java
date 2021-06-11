@@ -1454,10 +1454,11 @@ public interface ActivoApi {
 	List<DtoHistoricoOcupadoTitulo> getListHistoricoOcupadoTitulo(Long idActivo);
 	public void updateHonorarios (Activo activo, List<ActivoOferta> listaActivoOfertas);
 	
-
 	public Page getPublicacionGrid(DtoPublicacionGridFilter dto);
 
 	public VSinInformeAprobadoRem getSinInformeAprobadoREM(Long idActivo);
 	
 	public List<ActivoTrabajo> getActivoTrabajos(Long idActivo);
+
+	List<Activo> getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(Long idAgrupacion, Long idActivoPrincipal);
 }

@@ -462,8 +462,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				"select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = "
 						+ id + " and act.agrupacion.tipoAgrupacion.codigo = "
 						+ DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
-
-		return ((ActivoAgrupacionActivo) getHibernateTemplate().find(hb.toString()).get(0));
+		List <ActivoAgrupacionActivo> activoAgrupacionlist = (List<ActivoAgrupacionActivo>) getHibernateTemplate().find(hb.toString());
+		
+		if (activoAgrupacionlist != null && !activoAgrupacionlist.isEmpty()) {
+			return activoAgrupacionlist.get(0);
+		}
+		return null;
 	}
 	
 	@Override
@@ -2317,7 +2321,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		if(estadoPublicacionList != null && !estadoPublicacionList.isEmpty()) {
 			DDEstadoPublicacionVenta estadoPublicacion = genericDao.get(DDEstadoPublicacionVenta.class, genericDao.createFilter(FilterType.EQUALS, "id", estadoPublicacionList.get(0)));
 			if(estadoPublicacion != null) {
-				return !DDEstadoPublicacionVenta.isNoPublicado(estadoPublicacion.getCodigo());
+				return !DDEstadoPublicacionVenta.isNoPublicadoVenta(estadoPublicacion);
 			}
 		}
 		
@@ -2339,17 +2343,29 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		if(estadoPublicacionList != null && !estadoPublicacionList.isEmpty()) {
 			DDEstadoPublicacionVenta estadoPublicacion = genericDao.get(DDEstadoPublicacionVenta.class, genericDao.createFilter(FilterType.EQUALS, "id", estadoPublicacionList.get(0)));
 			if(estadoPublicacion != null) {
-				return !DDEstadoPublicacionVenta.isNoPublicado(estadoPublicacion.getCodigo());
+				return !DDEstadoPublicacionVenta.isNoPublicadoVenta(estadoPublicacion);
 			}
 		}
 		
-		return false;
-		
+		return false;		
 	}
 	
 	@Override
 	public List<AuxiliarCierreOficinasBankiaMul> getListAprAuxCierreBnK() {
 		//TODO aquí se recoge el objetoMapeado
 		return genericDao.getList(AuxiliarCierreOficinasBankiaMul.class);
+	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activo> getActivosNoPrincipalesAgrupacion(Long agrId, Long idActivoPrincipal) {
+		HQLBuilder hb = new HQLBuilder("Select aga.activo from ActivoAgrupacionActivo aga");
+	
+		hb.appendWhere("aga.agrupacion.fechaBaja is null");
+		hb.appendWhere("aga.agrupacion.id ="+ agrId + " and aga.activo.id !=" +idActivoPrincipal + "");
+		
+		return this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 	}
 }

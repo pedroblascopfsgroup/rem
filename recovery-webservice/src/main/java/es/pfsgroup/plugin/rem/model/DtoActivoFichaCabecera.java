@@ -30,30 +30,52 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String portal;
 	private String escalera;
 	private String puerta;
+	private String codPostalOE;
+	private String escaleraOE;
+	private String puertaOE;
 	private String barrio;
 	private String piso;
+	private String pisoOE;
 	private String numeroDomicilio;
 	private String nombreVia;
 	private String municipioCodigo;
+	private String numeroDomicilioOE;
+	private String nombreViaOE;
+	private String municipioCodigoOE;
 	private String inferiorMunicipioCodigo;
 	private String inferiorMunicipioDescripcion;
 	private String municipioDescripcion;
 	private String provinciaCodigo;
 	private String provinciaDescripcion;
+	private String municipioDescripcionOE;
+	private String provinciaCodigoOE;
+	private String provinciaDescripcionOE;
 	private String paisCodigo;
 	private String paisDescripcion;
 	private String tipoViaCodigo;
 	private String tipoViaDescripcion;
+	private String tipoViaCodigoOE;
+	private String tipoViaDescripcionOE;
 	private String tipoActivoCodigo;
 	private String subtipoActivoCodigo;
 	private String tipoActivoDescripcion;
 	private String subtipoActivoDescripcion;
+	private String tipoActivoCodigoOE;
+	private String subtipoActivoCodigoOE;
+	private String tipoActivoDescripcionOE;
+	private String subtipoActivoDescripcionOE;
 	private String tipoActivoCodigoBde;
 	private String subtipoActivoCodigoBde;
 	private String tipoActivoDescripcionBde;
 	private String subtipoActivoDescripcionBde;
 	private String latitud;
 	private String longitud;
+	private String latitudOE;
+	private String longitudOE;
+	private Boolean reoContabilizadoSap;
+	private Date fechaFinPrevistaAdecuacion;
+	private String estadoAdecuacionSarebCodigo;
+	private String estadoAdecuacionSarebDescripcion;
 	private String entidadPropietaria;
 	private String entidadPropietariaCodigo;
 	private String entidadPropietariaDescripcion;
@@ -318,8 +340,17 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String subestadoAdmisionCodCabecera;
 	private String estadoAdmisionDescCabecera;
 	private String subestadoAdmisionDescCabecera;
+	
+	//Visible Gestion comercial
+	private Boolean excluirValidacionesBool;
+	private Date fechaGestionComercial;
+	private Boolean checkGestorComercial;
+	private String motivoGestionComercialCodigo;
+	private String motivoGestionComercialDescripcion;
+	private Boolean restringido;  
 	private Boolean esEditableActivoEstadoRegistral;
 	private String estadoFisicoActivoDND;
+	private String estadoFisicoActivoDNDDescripcion;
 	private Double porcentajeConstruccion;
 	private Boolean isEditablePorcentajeConstruccion;
 
@@ -331,6 +362,11 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Long activoPrincipalRestringida;
 	
 	private String codPromocionBbva;
+	
+	private String codSubfasePublicacion;
+	
+	private Boolean esActivoPrincipalAgrupacionRestringida;
+	
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -2309,6 +2345,158 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.isGrupoOficinaKAM = isGrupoOficinaKAM;
 	}
 
+	public String getTipoActivoCodigoOE() {
+		return tipoActivoCodigoOE;
+	}
+
+	public void setTipoActivoCodigoOE(String tipoActivoCodigoOE) {
+		this.tipoActivoCodigoOE = tipoActivoCodigoOE;
+	}
+
+	public String getSubtipoActivoCodigoOE() {
+		return subtipoActivoCodigoOE;
+	}
+
+	public void setSubtipoActivoCodigoOE(String subtipoActivoCodigoOE) {
+		this.subtipoActivoCodigoOE = subtipoActivoCodigoOE;
+	}
+
+	public String getTipoActivoDescripcionOE() {
+		return tipoActivoDescripcionOE;
+	}
+
+	public void setTipoActivoDescripcionOE(String tipoActivoDescripcionOE) {
+		this.tipoActivoDescripcionOE = tipoActivoDescripcionOE;
+	}
+
+	public String getSubtipoActivoDescripcionOE() {
+		return subtipoActivoDescripcionOE;
+	}
+
+	public void setSubtipoActivoDescripcionOE(String subtipoActivoDescripcionOE) {
+		this.subtipoActivoDescripcionOE = subtipoActivoDescripcionOE;
+	}
+
+	public String getCodPostalOE() {
+		return codPostalOE;
+	}
+
+	public void setCodPostalOE(String codPostalOE) {
+		this.codPostalOE = codPostalOE;
+	}
+
+	public String getEscaleraOE() {
+		return escaleraOE;
+	}
+
+	public void setEscaleraOE(String escaleraOE) {
+		this.escaleraOE = escaleraOE;
+	}
+
+	public String getPuertaOE() {
+		return puertaOE;
+	}
+
+	public void setPuertaOE(String puertaOE) {
+		this.puertaOE = puertaOE;
+	}
+
+	public String getPisoOE() {
+		return pisoOE;
+	}
+
+	public void setPisoOE(String pisoOE) {
+		this.pisoOE = pisoOE;
+	}
+
+	public String getNumeroDomicilioOE() {
+		return numeroDomicilioOE;
+	}
+
+	public void setNumeroDomicilioOE(String numeroDomicilioOE) {
+		this.numeroDomicilioOE = numeroDomicilioOE;
+	}
+
+	public String getNombreViaOE() {
+		return nombreViaOE;
+	}
+
+	public void setNombreViaOE(String nombreViaOE) {
+		this.nombreViaOE = nombreViaOE;
+	}
+
+	public String getMunicipioCodigoOE() {
+		return municipioCodigoOE;
+	}
+
+	public void setMunicipioCodigoOE(String municipioCodigoOE) {
+		this.municipioCodigoOE = municipioCodigoOE;
+	}
+
+	public String getMunicipioDescripcionOE() {
+		return municipioDescripcionOE;
+	}
+
+	public void setMunicipioDescripcionOE(String municipioDescripcionOE) {
+		this.municipioDescripcionOE = municipioDescripcionOE;
+	}
+
+	public String getProvinciaCodigoOE() {
+		return provinciaCodigoOE;
+	}
+
+	public void setProvinciaCodigoOE(String provinciaCodigoOE) {
+		this.provinciaCodigoOE = provinciaCodigoOE;
+	}
+
+	public String getProvinciaDescripcionOE() {
+		return provinciaDescripcionOE;
+	}
+
+	public void setProvinciaDescripcionOE(String provinciaDescripcionOE) {
+		this.provinciaDescripcionOE = provinciaDescripcionOE;
+	}
+
+	public String getTipoViaCodigoOE() {
+		return tipoViaCodigoOE;
+	}
+
+	public void setTipoViaCodigoOE(String tipoViaCodigoOE) {
+		this.tipoViaCodigoOE = tipoViaCodigoOE;
+	}
+
+	public String getTipoViaDescripcionOE() {
+		return tipoViaDescripcionOE;
+	}
+
+	public void setTipoViaDescripcionOE(String tipoViaDescripcionOE) {
+		this.tipoViaDescripcionOE = tipoViaDescripcionOE;
+	}
+
+	public String getLatitudOE() {
+		return latitudOE;
+	}
+
+	public void setLatitudOE(String latitudOE) {
+		this.latitudOE = latitudOE;
+	}
+
+	public String getLongitudOE() {
+		return longitudOE;
+	}
+
+	public void setLongitudOE(String longitudOE) {
+		this.longitudOE = longitudOE;
+	}
+
+	public Boolean getReoContabilizadoSap() {
+		return reoContabilizadoSap;
+	}
+
+	public void setReoContabilizadoSap(Boolean reoContabilizadoSap) {
+		this.reoContabilizadoSap = reoContabilizadoSap;
+	}
+	
 	public Boolean getPerimetroAdmision() {
 		return perimetroAdmision;
 	}
@@ -2454,6 +2642,87 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.esEditableActivoEstadoRegistral = esEditableActivoEstadoRegistral;
 	}
 
+	public Boolean getExcluirValidacionesBool() {
+		return excluirValidacionesBool;
+	}
+
+	public void setExcluirValidacionesBool(Boolean excluirValidacionesBool) {
+		this.excluirValidacionesBool = excluirValidacionesBool;
+	}
+
+	public Date getFechaGestionComercial() {
+		return fechaGestionComercial;
+	}
+
+	public void setFechaGestionComercial(Date fechaGestionComercial) {
+		this.fechaGestionComercial = fechaGestionComercial;
+	}
+
+
+	public String getMotivoGestionComercialCodigo() {
+		return motivoGestionComercialCodigo;
+	}
+
+	public void setMotivoGestionComercialCodigo(String motivoGestionComercialCodigo) {
+		this.motivoGestionComercialCodigo = motivoGestionComercialCodigo;
+	}
+
+	public String getMotivoGestionComercialDescripcion() {
+		return motivoGestionComercialDescripcion;
+	}
+
+	public void setMotivoGestionComercialDescripcion(String motivoGestionComercialDescripcion) {
+		this.motivoGestionComercialDescripcion = motivoGestionComercialDescripcion;
+	}
+
+	public Boolean getCheckGestorComercial() {
+		return checkGestorComercial;
+	}
+
+	public void setCheckGestorComercial(Boolean checkGestorComercial) {
+		this.checkGestorComercial = checkGestorComercial;
+	}
+
+	public Boolean getRestringido() {
+		return restringido;
+	}
+
+	public void setRestringido(Boolean restringido) {
+		this.restringido = restringido;
+	}
+
+	public String getCodSubfasePublicacion() {
+		return codSubfasePublicacion;
+	}
+
+	public void setCodSubfasePublicacion(String codSubfasePublicacion) {
+		this.codSubfasePublicacion = codSubfasePublicacion;
+	}
+	
+	public Date getFechaFinPrevistaAdecuacion() {
+		return fechaFinPrevistaAdecuacion;
+	}
+
+	public void setFechaFinPrevistaAdecuacion(Date fechaFinPrevistaAdecuacion) {
+		this.fechaFinPrevistaAdecuacion = fechaFinPrevistaAdecuacion;
+	}
+
+	public String getEstadoAdecuacionSarebCodigo() {
+		return estadoAdecuacionSarebCodigo;
+	}
+
+	public void setEstadoAdecuacionSarebCodigo(String estadoAdecuacionSarebCodigo) {
+		this.estadoAdecuacionSarebCodigo = estadoAdecuacionSarebCodigo;
+	}
+
+	public String getEstadoAdecuacionSarebDescripcion() {
+		return estadoAdecuacionSarebDescripcion;
+	}
+
+	public void setEstadoAdecuacionSarebDescripcion(String estadoAdecuacionSarebDescripcion) {
+		this.estadoAdecuacionSarebDescripcion = estadoAdecuacionSarebDescripcion;
+	}
+
 	public String getEstadoFisicoActivoDND() {
 		return estadoFisicoActivoDND;
 	}
@@ -2477,6 +2746,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setIsEditablePorcentajeConstruccion(Boolean isEditablePorcentajeConstruccion) {
 		this.isEditablePorcentajeConstruccion = isEditablePorcentajeConstruccion;
 	}
+
 	public String getCodPromocionBbva() {
 		return codPromocionBbva;
 	}
@@ -2491,6 +2761,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setCdpen(String cdpen) {
 		this.cdpen = cdpen;
+	}
+
+	public Boolean getEsActivoPrincipalAgrupacionRestringida() {
+		return esActivoPrincipalAgrupacionRestringida;
+	}
+
+	public void setEsActivoPrincipalAgrupacionRestringida(Boolean esActivoPrincipalAgrupacionRestringida) {
+		this.esActivoPrincipalAgrupacionRestringida = esActivoPrincipalAgrupacionRestringida;
+	}
+
+	public String getEstadoFisicoActivoDNDDescripcion() {
+		return estadoFisicoActivoDNDDescripcion;
+	}
+
+	public void setEstadoFisicoActivoDNDDescripcion(String estadoFisicoActivoDNDDescripcion) {
+		this.estadoFisicoActivoDNDDescripcion = estadoFisicoActivoDNDDescripcion;
 	}	
-	
+
 }

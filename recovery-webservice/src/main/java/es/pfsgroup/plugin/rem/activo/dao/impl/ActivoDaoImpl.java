@@ -20,6 +20,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
@@ -52,11 +53,11 @@ import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
+import es.pfsgroup.plugin.rem.model.AuxiliarCierreOficinasBankiaMul;
 import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
@@ -77,8 +78,8 @@ import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.VPlusvalia;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
@@ -151,7 +152,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoUvem", Long.valueOf(dto.getIdUvem()));
 
 		if (dto.getEstadoActivoCodigo() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
 
 		if (dto.getTipoViaCodigo() != null)
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoViaCodigo", dto.getTipoViaCodigo());
@@ -335,13 +336,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
 
    		if (dto.getEntidadPropietariaCodigo() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(), true);
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo());
 
    		if (dto.getTipoTituloActivoCodigo() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
 
    		if (dto.getSubtipoActivoCodigo() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.subtipoActivoCodigo", dto.getSubtipoActivoCodigo(), true);
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subtipoActivoCodigo", dto.getSubtipoActivoCodigo());
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.refCatastral", dto.getRefCatastral(), true);
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFinca(), true);
    		if (dto.getProvinciaCodigo() != null)
@@ -365,7 +366,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoUvem", Long.valueOf(dto.getIdUvem()));
 
    		if (dto.getEstadoActivoCodigo() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
 
    		if (dto.getTipoViaCodigo() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoViaCodigo", dto.getTipoViaCodigo());
@@ -461,8 +462,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				"select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = "
 						+ id + " and act.agrupacion.tipoAgrupacion.codigo = "
 						+ DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
-
-		return ((ActivoAgrupacionActivo) getHibernateTemplate().find(hb.toString()).get(0));
+		List <ActivoAgrupacionActivo> activoAgrupacionlist = (List<ActivoAgrupacionActivo>) getHibernateTemplate().find(hb.toString());
+		
+		if (activoAgrupacionlist != null && !activoAgrupacionlist.isEmpty()) {
+			return activoAgrupacionlist.get(0);
+		}
+		return null;
 	}
 	
 	@Override
@@ -603,7 +608,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 
 		if (dto.getEstadoActivoCodigo() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
 
 		if (!Checks.esNulo(dto.getConFsvVenta())) {
 			if (BooleanUtils.toBoolean(dto.getConFsvVenta())) {
@@ -1073,9 +1078,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VOfertasActivosAgrupacion> getListOfertasActivo(Long idActivo) {
+	public List<VGridOfertasActivosAgrupacionIncAnuladas> getListOfertasActivo(Long idActivo) {
 
-		String hql = " from VOfertasActivosAgrupacion voa ";
+		String hql = " from VGridOfertasActivosAgrupacionIncAnuladas voa ";
 		String listaIdsOfertas = "";
 
 		HQLBuilder hb = new HQLBuilder(hql);
@@ -1095,16 +1100,16 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			hb.appendWhere(" voa.idOferta in (" + listaIdsOfertas + ") ");
 		}
 
-		return (List<VOfertasActivosAgrupacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString())
+		return (List<VGridOfertasActivosAgrupacionIncAnuladas>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString())
 				.list();
 
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo) {
+	public List<VGridOfertasActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo) {
 
-		String hql = " from VOfertasTramitadasPendientesActivosAgrupacion voa2 ";
+		String hql = " from VGridOfertasActivosAgrupacion voa2 ";
 		String listaIdsOfertas = "";
 
 		HQLBuilder hb = new HQLBuilder(hql);
@@ -1124,7 +1129,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			hb.appendWhere(" voa2.idOferta in (" + listaIdsOfertas + ") ");
 		}
 
-		return (List<VOfertasTramitadasPendientesActivosAgrupacion>) this.getSessionFactory().getCurrentSession()
+		return (List<VGridOfertasActivosAgrupacion>) this.getSessionFactory().getCurrentSession()
 				.createQuery(hb.toString()).list();
 
 	}
@@ -2158,6 +2163,35 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 	}
 	
+
+	@Override 
+	public Long getCarga(String idBieCarRecovery) {
+		if(Checks.esNulo(idBieCarRecovery) || !StringUtils.isNumeric(idBieCarRecovery)) {
+			return null;
+		}	
+	    String resultado;
+	    resultado = rawDao.getExecuteSQL(" SELECT CRG.CRG_ID"
+	            +" FROM BIE_CAR_CARGAS BIE_CAR"
+	            +" JOIN ACT_CRG_CARGAS CRG ON CRG.BIE_CAR_ID = BIE_CAR.BIE_CAR_ID AND CRG.BORRADO = 0"
+	            +" WHERE BIE_CAR.BORRADO = 0"
+	            +" AND BIE_CAR.BIE_CAR_ID_RECOVERY = " + idBieCarRecovery);
+	                
+	    return resultado == null ? null : Long.parseLong(resultado);
+	}
+	
+	@Override
+	public void actualizaBieCarIdRecovery(Long idBieCar, Long bieCarIdRecovery) {
+		getHibernateTemplate().flush();		
+		Session session = this.getSessionFactory().getCurrentSession();
+		StringBuilder sb = new StringBuilder(				
+				"UPDATE BIE_CAR_CARGAS"
+				+ " SET BIE_CAR_ID_RECOVERY = " + bieCarIdRecovery
+				+ " WHERE BIE_CAR_ID = " + idBieCar
+				+ " AND BORRADO = 0"				
+			);
+		session.createSQLQuery(sb.toString()).executeUpdate();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos) {
@@ -2184,7 +2218,53 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		return actAlquiladosList;
 	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Boolean cambiarSpOficinaBankia(String codProveedorAnterior, String codProveedorNuevo, String usuario) {
+		String procedureHQL = "BEGIN SP_CAMBIO_OFICINA_BANKIA(:vUsuario,:plOutput, :codProveedorAnterior, :codProveedorNuevo); END;";
+		int resultado = 0;
+		
+		try {
+			Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+			callProcedureSql.setParameter("vUsuario", usuario);
+			callProcedureSql.setParameter("plOutput", new String());
+			callProcedureSql.setParameter("codProveedorAnterior", codProveedorAnterior);
+			callProcedureSql.setParameter("codProveedorNuevo", codProveedorNuevo);			
+			
+			
+			resultado = callProcedureSql.executeUpdate();
+
+			return resultado == 1;
+		} catch (Exception e) {
+			logger.error("Error en el SP_CAMBIO_OFICINA_BANKIA para el COD PROVEEDOR ANTERIOR "+codProveedorAnterior, e);			
+			return false;
+		}
+
+	}
 	
+	@Override
+	@Transactional
+	public List<Long> getIdsAuxiliarCierreOficinaBankias() {
+		List<Object> resultados = rawDao.getExecuteSQLList(
+				"		SELECT AUX.ECO_ID" + 
+				"		FROM ENVIO_CIERRE_OFICINAS_BANKIA AUX" + 
+				"		WHERE AUX.ENVIADO = 0");
+		
+		List<Long> listaTareas = new ArrayList<Long>();
+
+		/*for(Object o: resultados){
+			listaTareas.add((Long) o);
+		}*/
+		
+		for(Object o: resultados){
+			String objetoString = o.toString();
+			listaTareas.add(Long.parseLong(objetoString));
+		}
+
+		return listaTareas;
+	}
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivo(Long idActivo) {
@@ -2193,6 +2273,20 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return genericDao.getListOrdered(ActivoHistoricoValoraciones.class, order, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
 	}
 	
+
+	@Override
+	public boolean perteneceActivoREAM(Long idActivo) {
+		String sql = " SELECT count(1)      "
+			+			"				 FROM V_ACTIVOS_GESTIONADOS_REAM act    "
+			+			"				 WHERE act.act_id =       " + idActivo ;
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue() > 0;
+		}
+		return false;
+
+	}
+
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ActivoHistoricoValoraciones> getListActivoHistoricoValoracionesByIdActivoAndTipoPrecio(Long idActivo, String codigoTipoPrecio) {
@@ -2227,7 +2321,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		if(estadoPublicacionList != null && !estadoPublicacionList.isEmpty()) {
 			DDEstadoPublicacionVenta estadoPublicacion = genericDao.get(DDEstadoPublicacionVenta.class, genericDao.createFilter(FilterType.EQUALS, "id", estadoPublicacionList.get(0)));
 			if(estadoPublicacion != null) {
-				return !DDEstadoPublicacionVenta.isNoPublicado(estadoPublicacion.getCodigo());
+				return !DDEstadoPublicacionVenta.isNoPublicadoVenta(estadoPublicacion);
 			}
 		}
 		
@@ -2249,11 +2343,29 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		if(estadoPublicacionList != null && !estadoPublicacionList.isEmpty()) {
 			DDEstadoPublicacionVenta estadoPublicacion = genericDao.get(DDEstadoPublicacionVenta.class, genericDao.createFilter(FilterType.EQUALS, "id", estadoPublicacionList.get(0)));
 			if(estadoPublicacion != null) {
-				return !DDEstadoPublicacionVenta.isNoPublicado(estadoPublicacion.getCodigo());
+				return !DDEstadoPublicacionVenta.isNoPublicadoVenta(estadoPublicacion);
 			}
 		}
 		
-		return false;
+		return false;		
+	}
+	
+	@Override
+	public List<AuxiliarCierreOficinasBankiaMul> getListAprAuxCierreBnK() {
+		//TODO aquí se recoge el objetoMapeado
+		return genericDao.getList(AuxiliarCierreOficinasBankiaMul.class);
+	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activo> getActivosNoPrincipalesAgrupacion(Long agrId, Long idActivoPrincipal) {
+		HQLBuilder hb = new HQLBuilder("Select aga.activo from ActivoAgrupacionActivo aga");
+	
+		hb.appendWhere("aga.agrupacion.fechaBaja is null");
+		hb.appendWhere("aga.agrupacion.id ="+ agrId + " and aga.activo.id !=" +idActivoPrincipal + "");
 		
+		return this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 	}
 }

@@ -63,32 +63,33 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				beanUtilNotNull.copyProperty(activoDto,"entornoComunicaciones",activo.getInfoComercial().getEdificio().getEntornoComunicacion());
 			}
 			
-			if (!Checks.esNulo(activo.getInfoComercial().getUbicacionActivo())) {
-				BeanUtils.copyProperty(activoDto, "ubicacionActivoCodigo", activo.getInfoComercial().getUbicacionActivo());
-			}
-			
 			if (!Checks.esNulo(activo.getInfoComercial().getTipoInfoComercial())) {
 				BeanUtils.copyProperty(activoDto, "tipoInfoComercialCodigo", activo.getInfoComercial().getTipoInfoComercial().getCodigo());
 			}
 			
 			if (!Checks.esNulo(activo.getInfoComercial().getUbicacionActivo())) {
 				BeanUtils.copyProperty(activoDto, "ubicacionActivoCodigo", activo.getInfoComercial().getUbicacionActivo().getCodigo());
+				BeanUtils.copyProperty(activoDto, "ubicacionActivoDescripcion", activo.getInfoComercial().getUbicacionActivo().getDescripcion());
 			}
 		
 			if (!Checks.esNulo(activo.getInfoComercial().getEstadoConstruccion())) {
 				BeanUtils.copyProperty(activoDto, "estadoConstruccionCodigo", activo.getInfoComercial().getEstadoConstruccion().getCodigo());
+				BeanUtils.copyProperty(activoDto, "estadoConstruccionDescripcion", activo.getInfoComercial().getEstadoConstruccion().getDescripcion());
 			}
 			
 			if (!Checks.esNulo(activo.getInfoComercial().getEstadoConservacion())) {
 				BeanUtils.copyProperty(activoDto, "estadoConservacionCodigo", activo.getInfoComercial().getEstadoConservacion().getCodigo());
+				BeanUtils.copyProperty(activoDto, "estadoConservacionDescripcion", activo.getInfoComercial().getEstadoConservacion().getDescripcion());
 			}
 			
 			if (!Checks.esNulo(activo.getInfoComercial().getEdificio()) && !Checks.esNulo(activo.getInfoComercial().getEdificio().getEstadoConservacionEdificio())) {
 				BeanUtils.copyProperty(activoDto, "estadoConservacionEdificioCodigo", activo.getInfoComercial().getEdificio().getEstadoConservacionEdificio().getCodigo());
+				BeanUtils.copyProperty(activoDto, "estadoConservacionEdificioDescripcion", activo.getInfoComercial().getEdificio().getEstadoConservacionEdificio().getDescripcion());
 			}
 			
 			if (!Checks.esNulo(activo.getInfoComercial().getEdificio()) && !Checks.esNulo(activo.getInfoComercial().getEdificio().getTipoFachada())) {
 				BeanUtils.copyProperty(activoDto, "tipoFachadaCodigo", activo.getInfoComercial().getEdificio().getTipoFachada().getCodigo());
+				BeanUtils.copyProperty(activoDto, "tipoFachadaDescripcion", activo.getInfoComercial().getEdificio().getTipoFachada().getDescripcion());
 			}
 			
 			if (!Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
@@ -116,6 +117,7 @@ public class TabActivoInformacionComercial implements TabActivoService {
 
 					if (!Checks.esNulo(vivTemp.getTipoVivienda())) {
 						BeanUtils.copyProperty(activoDto, "tipoViviendaCodigo", vivTemp.getTipoVivienda().getCodigo());
+						BeanUtils.copyProperty(activoDto, "tipoViviendaDescripcion", vivTemp.getTipoVivienda().getDescripcion());
 					}
 					
 					if (!Checks.esNulo(vivTemp.getTipoOrientacion())) {
@@ -174,6 +176,12 @@ public class TabActivoInformacionComercial implements TabActivoService {
 		
 		if (!Checks.esNulo(activo.getTipoActivo())) {
 			BeanUtils.copyProperty(activoDto, "tipoActivoCodigo", activo.getTipoActivo().getCodigo());
+			BeanUtils.copyProperty(activoDto, "tipoActivoDescripcion", activo.getTipoActivo().getDescripcion());
+		}
+		
+		if (!Checks.esNulo(activo.getSubtipoActivo())) {
+			BeanUtils.copyProperty(activoDto, "subtipoActivoCodigo", activo.getSubtipoActivo().getCodigo());
+			BeanUtils.copyProperty(activoDto, "subtipoActivoDescripcion", activo.getSubtipoActivo().getDescripcion());
 		}
 		
 		return activoDto;	

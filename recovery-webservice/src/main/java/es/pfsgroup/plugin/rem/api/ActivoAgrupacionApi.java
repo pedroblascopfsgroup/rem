@@ -181,5 +181,7 @@ public interface ActivoAgrupacionApi {
 	 * @return Devuelve tipos de agrupacion según el perfil de usuario
 	 */
 	List<DDTipoAgrupacion> getComboTipoAgrupacionFiltro();
+	
+	Long getIdByNumAgrupacion(Long numAgrupacion);
 
 }

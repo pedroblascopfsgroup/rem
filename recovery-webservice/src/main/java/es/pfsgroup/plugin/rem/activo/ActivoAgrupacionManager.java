@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.activo;
 
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -481,8 +480,12 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				activoFoto.setNombre(fileItem.getBasename());
 				
 				String descripcion = null;
-				String codigoSubtipoActivo = genericDao.get(VSubdivisionesAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", subdivisionId),
-										genericDao.createFilter(FilterType.EQUALS, "agrupacionId", agrupacionId)).getCodigoSubtipoActivo();
+				String codigoSubtipoActivo = null;
+				VSubdivisionesAgrupacion subdivision = genericDao.get(VSubdivisionesAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", subdivisionId),
+						genericDao.createFilter(FilterType.EQUALS, "agrupacionId", agrupacion.getId()));
+				if(subdivision != null) {
+					codigoSubtipoActivo = subdivision.getCodigoSubtipoActivo();
+				}
 				DDDescripcionFotoActivo descripcionFoto = null;
 
 				if (fileItem.getMetadata().containsKey("descripcion")) {
@@ -534,7 +537,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				genericDao.save(ActivoFoto.class, activoFoto);
 
 			} else {
-				throw new Exception("La foto esta asociada a una subdivision inexsitente");
+				logger.error("La foto esta asociada a una subdivision inexsitente");
 			}
 		} catch (Exception e) {
 			logger.error("Error guardando la foto de la subdivision", e);
@@ -977,5 +980,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			return false;
 		}
 		return true;
+	}
+	
+	@Override
+	public Long getIdByNumAgrupacion(Long numAgrupacion) {
+	return activoAgrupacionDao.getIdByNumAgrupacion(numAgrupacion);
 	}
 }

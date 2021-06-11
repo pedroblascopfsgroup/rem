@@ -315,12 +315,30 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	            },
                 {
                 	name: 'codigoOnSareb'
+                },
+                {
+                	name: 'motivoDeExcluidoCodigo'
+                },
+                {
+    	 			name: 'visibleGestionComercial',
+    	 			type: 'boolean'
+
+    			},
+    			{
+    	 			name: 'marcaDeExcluido',
+    	 			type: 'boolean'
+    			},
+    			{
+                	name: 'motivoDeExcluidoDescripcion'
+                },
+    			{
+                	name: 'sumatorio'
                 }
     ],
     
 	proxy: {
 		type: 'uxproxy',
-		timeout: 60000,
+		timeout: 180000,
 		api: {
             read: 'agrupacion/getAgrupacionById',
             create: 'agrupacion/saveAgrupacion',

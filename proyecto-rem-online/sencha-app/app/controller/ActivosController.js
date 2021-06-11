@@ -105,7 +105,8 @@ Ext.define('HreRem.controller.ActivosController', {
     	'agrupacionesmain' : {
     		
     		abrirDetalleAgrupacion : 'abrirDetalleAgrupacion',
-		    abrirDetalleActivo : 'abrirDetalleActivo'
+		    abrirDetalleActivo : 'abrirDetalleActivo',
+		    abrirDetalleAgrupacionDirecto: 'abrirDetalleAgrupacionDirecto'
 		    
     	},
     	
@@ -128,7 +129,8 @@ Ext.define('HreRem.controller.ActivosController', {
 			abrirDetalleActivo: function(idActivo) {
 				var me = this;
     			me.abrirDetalleActivoById(idActivo);      
-			}
+			},
+			abrirDetalleTrabajoDirecto: 'abrirDetalleTrabajoDirecto'
     	},
     	
     	'trabajosdetalle' : {
@@ -214,7 +216,8 @@ Ext.define('HreRem.controller.ActivosController', {
     		abrirDetallePerfil: 'abrirDetallePerfil'
     	},
     	'administraciongastosmain': {
-    		abrirDetalleGasto: 'abrirDetalleGasto'
+    		abrirDetalleGasto: 'abrirDetalleGasto',
+    		abrirDetalleGastoDirecto: 'abrirDetalleGastoDirecto'
     	},
     	'gestionplusvalia': {
     		abrirDetallePlusvalia: 'abrirDetallePlusvalia'
@@ -284,7 +287,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	tab = null;
     	cfg.title = titulo;
     	tab = me.createTab (me.getActivosMain(), 'activo', "activosdetallemain",  id, cfg);
-    	Ext.suspendLayouts();
+    	//Ext.suspendLayouts();
     	tab.mask(HreRem.i18n("msg.mask.loading"));
     	me.setLogTime();
     	HreRem.model.Activo.load(id, {
@@ -309,7 +312,7 @@ Ext.define('HreRem.controller.ActivosController', {
 				    }
 				});
 				tab.unmask();
-		    	Ext.resumeLayouts(true);
+		    	//Ext.resumeLayouts(true);
 		    	
 				/* Selector de subPestanyas del Trabajo:
 		    	 * - Se hace la comprobacion aqui (ademas de dentro de la funcion), 
@@ -340,7 +343,7 @@ Ext.define('HreRem.controller.ActivosController', {
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				}
 				tab.unmask();
-				Ext.resumeLayouts(true);
+				//Ext.resumeLayouts(true);
 	       	}
 		});
 		
@@ -428,6 +431,14 @@ Ext.define('HreRem.controller.ActivosController', {
     	me.abrirDetalleAgrupacionById(id, titulo);    	
     	
     },
+    abrirDetalleAgrupacionDirecto: function(id, titulo) {
+    	   	 
+    	var me = this;
+    	me.redirectTo('activos', true);   		
+    	
+    	me.abrirDetalleAgrupacionById(id, titulo);    	
+        	
+     },
     
     abrirDetalleAgrupacionById: function(id, titulo) {
     	var me = this,    	
@@ -623,6 +634,11 @@ Ext.define('HreRem.controller.ActivosController', {
 		me.redirectTo('activos', true);    	
     	me.abrirDetalleTrabajoById(id, titulo, refLinks);    	
     	
+    },
+    abrirDetalleTrabajoDirecto: function(id, titulo) {
+    	var me = this;
+    	me.redirectTo('activos', true);    	
+    	me.abrirDetalleTrabajoById(id, titulo);    	
     },
     
     abrirDetalleTrabajoById: function(id, titulo, refLinks) {
@@ -1168,6 +1184,13 @@ Ext.define('HreRem.controller.ActivosController', {
 		me.redirectTo('activos', true);    	
     	me.abrirDetalleGastoById(id, titulo, refLinks);    	
     	
+    },
+    abrirDetalleGastoDirecto: function(id, titulo) {
+    	var me = this;
+    	
+		me.redirectTo('activos', true);    	
+    	me.abrirDetalleGastoById(id, titulo);    	
+    	    	
     },
     
     abrirDetallePlusvalia: function(record) {

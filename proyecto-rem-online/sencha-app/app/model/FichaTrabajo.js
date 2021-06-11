@@ -156,6 +156,10 @@ Ext.define('HreRem.model.FichaTrabajo', {
     		},
     		{
     			name: 'tipoTrabajoCodigo'
+    		},
+    		{
+    			name: 'perteneceGastoOPrefactura',
+    			type: 'boolean'
     		}
     		
     ],

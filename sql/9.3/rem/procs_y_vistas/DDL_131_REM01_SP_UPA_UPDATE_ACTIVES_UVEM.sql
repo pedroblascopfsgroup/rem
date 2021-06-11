@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrian Molina
---## FECHA_CREACION=20210403
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20210514
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-8898
+--## INCIDENCIA_LINK=REMVIP-9708
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM - UVEM. Nuevas columnas. Anula DDL_99900087
 --##           
@@ -26,6 +26,7 @@
 --##    	0.14 Juan Beltrán  - REMVIP-7944 - Prevalece el valor del campo ACT_VPO si viene informado desde REM
 --##        0.15 Juan Alfonso  - REMVIP-8455 - Modificado titulo activo, si codigo entrada es 14 o 12 subtipo titulo activo: propio de origen funcional 13
 --##        0.16 Adrian Molina - REMVIP-8898 - Modificado inserción en la ADO para que tenga en cuenta los borrados de la CFD
+--##        0.17 Juan Alfonso - REMVIP-9708 - Realizar comprobacion de nulos al insertar en la ACT_AHT_HIST_TRAM_TITULO
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -1688,11 +1689,12 @@ BEGIN
 --T_TIPO_TABLA10('FEC_SEGUNDA_PRESEN_REG','TIT_FECHA_PRESENT2_REG'),
 --T_TIPO_TABLA10('FEC_INSCRIPCION_TITULO','TIT_FECHA_INSC_REG')
 --[9.1]--ACT_AHT_HIST_TRAM_TITULO
-          V_SQL := '
+          V_SQL := '          	
                     MERGE INTO ACT_AHT_HIST_TRAM_TITULO AHT USING (
+                    SELECT AUX2.AHT_ID,AUX2.TIT_ID, AUX2.AHT_FECHA_PRES_REGISTRO, AUX2.AHT_FECHA_CALIFICACION, AUX2.AHT_FECHA_INSCRIPCION, AUX2.DD_ESP_ID FROM (
                       WITH TEMP AS (
                         SELECT DISTINCT
-                        ETI.DD_ETI_CODIGO AS SITUACION_TITULO, ETI.DD_ETI_ID SITUACION_TITULO_ID, APR_ID, REM
+			 ETI.DD_ETI_CODIGO AS SITUACION_TITULO, ETI.DD_ETI_ID SITUACION_TITULO_ID, APR_ID, REM
                         FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
                         LEFT JOIN '||V_ESQUEMA||'.DD_EQV_BANKIA_REM EQV
                             ON EQV.DD_NOMBRE_BANKIA = ''DD_SITUACION_TITULO''
@@ -1790,6 +1792,7 @@ BEGIN
                       )
                       AND DISTINTOS.ORDEN = 1
                       AND ACT.BORRADO = 0
+                    ) AUX2 WHERE AUX2.DD_ESP_ID IS NOT NULL
                     ) AUX 
                     ON (AHT.AHT_ID = AUX.AHT_ID)
                     WHEN MATCHED THEN UPDATE SET

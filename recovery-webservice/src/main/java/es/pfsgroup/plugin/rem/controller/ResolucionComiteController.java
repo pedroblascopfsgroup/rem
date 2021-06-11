@@ -269,7 +269,7 @@ public class ResolucionComiteController {
 									DDEstadoDevolucion.ESTADO_DEVUELTA);
 							expedienteComercialApi.updateEstadosResolucionDevolucion(eco, resolucionComiteDto);
 							usu = gestorActivoApi.getGestorComercialActual(ofr.getActivoPrincipal(), "GCOM");
-							mensajeDevolucion = "El comité sancionador de bankia ha resuelto la resolución "
+							mensajeDevolucion = "El comité sancionador de CaixaBank ha resuelto la resolución "
 									+ resol.getEstadoResolucion().getDescripcion()
 									+ " devuelta con el importe de la reserva del expediente " + eco.getNumExpediente()
 									+ ".\n";
@@ -279,7 +279,7 @@ public class ResolucionComiteController {
 									DDEstadoDevolucion.ESTADO_NO_PROCEDE);
 							expedienteComercialApi.updateEstadosResolucionNoDevolucion(eco, resolucionComiteDto);
 							usu = gestorActivoApi.getGestorComercialActual(ofr.getActivoPrincipal(), "GCOM");
-							mensajeDevolucion = "El comité sancionador de bankia ha resuelto la resolución "
+							mensajeDevolucion = "El comité sancionador de Caixabank ha resuelto la resolución "
 									+ resol.getEstadoResolucion().getDescripcion()
 									+ " retenida con el importe de la reserva del expediente " + eco.getNumExpediente()
 									+ ".\n";

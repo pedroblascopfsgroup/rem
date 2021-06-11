@@ -569,6 +569,12 @@
 				def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.activoEnTramite(idActivo);
 			}
+			
+			def esActivoContabilizado = {
+				def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.esActivoContabilizado(idActivo);
+			}
+			
 			def checkContratoSubido = {
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkContratoSubido(tareaExterna);
@@ -676,6 +682,10 @@
             def esBBVA = {
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.esBBVA(tareaExterna);
+            }
+            def tipoTratamiento = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.tipoTratamiento(tareaExterna);
             }
   			 ]]></value>
   		</list>

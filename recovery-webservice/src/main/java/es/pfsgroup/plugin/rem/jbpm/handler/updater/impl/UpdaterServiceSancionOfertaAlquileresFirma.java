@@ -10,26 +10,31 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
+import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -58,7 +63,13 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
     private ActivoApi activoApi;
     
     @Autowired
+    private ApiProxyFactory proxyFactory;
+    
+    @Autowired
     private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresFirma.class);
     
@@ -74,6 +85,8 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 		DDEstadosExpedienteComercial estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_CIERRE));
 		Activo activo =tramite.getActivo();
 		Oferta oferta = expedienteComercial.getOferta();
+		ActivoSituacionPosesoria sitpos = tramite.getActivo().getSituacionPosesoria();
+		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		List<ActivoAgrupacionActivo> agrupacionesActivo = activo.getAgrupaciones();
 		for(ActivoAgrupacionActivo activoAgrupacionActivo : agrupacionesActivo){
 			if(!Checks.esNulo(activoAgrupacionActivo.getAgrupacion()) && !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())){
@@ -88,21 +101,12 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 		}
 		DDSituacionComercial situacionComercial = (DDSituacionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class, DDSituacionComercial.CODIGO_ALQUILADO);
 		DDTipoTituloActivoTPA tipoTituloActivoTPA = (DDTipoTituloActivoTPA) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloSi);
+			
 		
-		if (!Checks.esNulo(situacionComercial)) {
-			activo.setSituacionComercial(situacionComercial);
-		}
-		
-		if (!Checks.esNulo(activo.getSituacionPosesoria())) {
-			activo.getSituacionPosesoria().setOcupado(1);
-			if(!Checks.esNulo(tipoTituloActivoTPA)) {
-				activo.getSituacionPosesoria().setConTitulo(tipoTituloActivoTPA);
-			}
-			activo.getSituacionPosesoria().setFechaUltCambioTit(new Date());
-		}
 		
 		expedienteComercial.setEstado(estadoExpedienteComercial);
-		
+		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
+
 		for(TareaExternaValor valor :  valores){
 			
 			if(FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -133,6 +137,22 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 							activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
 						}
 					}
+					if (!Checks.esNulo(situacionComercial)) {
+						activo.setSituacionComercial(situacionComercial);
+					}
+					
+					if (!Checks.esNulo(activo.getSituacionPosesoria())) {
+						activo.getSituacionPosesoria().setOcupado(1);
+						if(!Checks.esNulo(tipoTituloActivoTPA)) {
+							activo.getSituacionPosesoria().setConTitulo(tipoTituloActivoTPA);
+						}
+						activo.getSituacionPosesoria().setFechaUltCambioTit(new Date());
+					}
+					if(sitpos!=null && usu!=null) {			
+						HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,sitpos,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
+						genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+					}
+					
 					activoDao.validateAgrupacion(expedienteComercial.getId());
 					genericDao.save(ActivoPatrimonio.class, activoPatrimonio);
 				}

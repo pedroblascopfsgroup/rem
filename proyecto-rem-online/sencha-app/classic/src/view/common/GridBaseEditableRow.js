@@ -180,7 +180,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
         });
 
 	    me.addListener('rowdblclick', function(){
-        	me.getSelectionModel().deselectAll();
+			me.getSelectionModel().deselectAll();			
         	if(me.editable) {
 	        	if(me.getPlugin("rowEditingPlugin").editing) {
 	        		me.disableAddButton(true);
@@ -195,7 +195,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
         		me.getSelectionModel().deselectAll();
         });
         	
-        me.addListener('afterbind', function(grid) {
+        me.addListener('afterbind', function(grid){
     		if (me.loadAfterBind) {
 				grid.getStore().load();
     		}
@@ -258,7 +258,6 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
         me.disableAddButton(true);
         me.disablePagingToolBar(true);
         me.disableRemoveButton(true);
-
     },
     
     onDeleteClick: function(btn){
@@ -465,8 +464,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
                binding.syncing = (binding.syncing + 1) || 1;
                this[binding._config.names.set](value);
                --binding.syncing;
-               this.fireEvent("afterbind", this);
-               
+               this.fireEvent("afterbind", this);               
                }
    
    },

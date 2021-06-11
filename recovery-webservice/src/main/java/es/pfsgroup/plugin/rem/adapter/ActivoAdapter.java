@@ -8,13 +8,13 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
-import es.pfsgroup.plugin.rem.service.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.dto.WebDto;
@@ -56,7 +57,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
-import es.pfsgroup.framework.paradise.action.utils.BeanUtilsActionsExceptions;
 import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -65,7 +65,6 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
-import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
@@ -86,9 +85,11 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PresupuestoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
+import es.pfsgroup.plugin.rem.comisionamiento.ComisionamientoApi;
 import es.pfsgroup.plugin.rem.exception.RemUserException;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
@@ -126,7 +127,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
@@ -144,12 +144,17 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
+import es.pfsgroup.plugin.rem.service.TabActivoCargas;
+import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
+import es.pfsgroup.plugin.rem.service.TabActivoDatosRegistrales;
+import es.pfsgroup.plugin.rem.service.TabActivoSaneamiento;
+import es.pfsgroup.plugin.rem.service.TabActivoService;
+import es.pfsgroup.plugin.rem.service.TabActivoSitPosesoriaLlaves;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.EjecutarSPPublicacionAsincrono;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
-import org.springframework.ui.ModelMap;
 
 @Service
 public class ActivoAdapter {
@@ -166,9 +171,6 @@ public class ActivoAdapter {
 	
 	@Autowired
 	private ActivoPatrimonioContratoDao actPatrimonioDao;
-
-	@Autowired
-	private coreextensionApi coreextensionApi;
 
 	@Autowired
 	private UpdaterStateApi updaterState;
@@ -271,9 +273,12 @@ public class ActivoAdapter {
 
 	@Autowired
 	private PresupuestoApi presupuestoManager;
-
+	
 	@Autowired
-	private RecoveryComunicacionManager recoveryComunicacionManager;
+	private ComisionamientoApi comisionamientoApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -1153,54 +1158,12 @@ public class ActivoAdapter {
 		}
 	}
 
-	public List<DtoAgrupacionesActivo> getListAgrupacionesActivoById(Long id) {
+	public List<VBusquedaAgrupacionByActivo> getListAgrupacionesActivoById(Long id) {
 
-		Activo activo = activoApi.get(id);
-
-		List<VCalculosActivoAgrupacion> agrupacionesActivo = getCalculoActivoAgrupacion(id);
-
-		List<DtoAgrupacionesActivo> listaDtoAgrupaciones = new ArrayList<DtoAgrupacionesActivo>();
-
-		if (!Checks.esNulo(agrupacionesActivo) && !Checks.estaVacio(agrupacionesActivo)) {
-
-			for (VCalculosActivoAgrupacion calcAgrupacion: agrupacionesActivo) {
-				DtoAgrupacionesActivo dtoActivoAgrupaciones = new DtoAgrupacionesActivo();
-				try {
-
-					ActivoAgrupacionActivo agrupacion = genericDao.get(ActivoAgrupacionActivo.class,
-							genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", calcAgrupacion.getIdAgrupacion()),
-							genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-
-					BeanUtils.copyProperties(dtoActivoAgrupaciones, agrupacion);
-					BeanUtils.copyProperties(dtoActivoAgrupaciones, agrupacion.getAgrupacion());
-
-					BeanUtils.copyProperty(dtoActivoAgrupaciones, "fechaInclusion",
-							agrupacion.getFechaInclusion());
-					BeanUtils.copyProperty(dtoActivoAgrupaciones, "tipoAgrupacionDescripcion",
-							agrupacion.getAgrupacion().getTipoAgrupacion().getDescripcion());
-					BeanUtils.copyProperty(dtoActivoAgrupaciones, "tipoAgrupacionCodigo",
-							agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo());
-					BeanUtils.copyProperty(dtoActivoAgrupaciones, "idAgrupacion",
-							agrupacion.getAgrupacion().getId());
-					BeanUtils.copyProperty(dtoActivoAgrupaciones, "numActivos",
-							calcAgrupacion.getNumActivos());
-					BeanUtils.copyProperty(dtoActivoAgrupaciones, "numActivosPublicados",
-							calcAgrupacion.getNumActivosPublicados());
-
-				} catch (IllegalAccessException e) {
-					logger.error("Error en ActivoAdapter", e);
-				} catch (InvocationTargetException e) {
-					logger.error("Error en ActivoAdapter", e);
-				} catch (Exception e) {
-					logger.error("Error en ActivoAdapter, ", e);
-				}
-				listaDtoAgrupaciones.add(dtoActivoAgrupaciones);
-
-			}
-		}
-
-		return listaDtoAgrupaciones;
-
+		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", id );
+		List<VBusquedaAgrupacionByActivo> agrupacionesActivo = genericDao.getList(VBusquedaAgrupacionByActivo.class, filtroIdActivo);
+		
+		return agrupacionesActivo;
 	}
 
 	public List<VCalculosActivoAgrupacion> getCalculoActivoAgrupacion(Long idActivo){
@@ -2285,7 +2248,7 @@ public class ActivoAdapter {
 								expedienteComercial.getEstado().getDescripcion());
 						boolean isGestorBoarding = perteneceGrupoBoarding(genericAdapter.getUsuarioLogado());
 						boolean expedienteComercialNoAprobado = expedienteComercialNoAprobado(expedienteComercial.getEstado().getCodigo());
-						if(!DDCartera.CODIGO_CARTERA_CERBERUS.equals(tramite.getActivo().getCartera().getCodigo()) && isGestorBoarding && expedienteComercialNoAprobado) {
+						if(isGestorBoarding && expedienteComercialNoAprobado) {
 							dtoTramite.setOcultarBotonResolucion(true);
 						} else {
 							if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())) {
@@ -2594,13 +2557,13 @@ public class ActivoAdapter {
 
 	}
 
-	public List<VOfertasActivosAgrupacion> getListOfertasActivos(Long idActivo) {
+	public List<VGridOfertasActivosAgrupacionIncAnuladas> getListOfertasActivos(Long idActivo) {
 
 		return activoDao.getListOfertasActivo(idActivo);
 
 	}
 	
-	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasVendidasActivos(Long idActivo) {
+	public List<VGridOfertasActivosAgrupacion> getListOfertasTramitadasVendidasActivos(Long idActivo) {
 
 		return activoDao.getListOfertasTramitadasPendientesActivo(idActivo);
 
@@ -2752,12 +2715,12 @@ public class ActivoAdapter {
 						adj.setDescripcionTipo(tipoDoc.getDescripcion());
 					}
 				}
-				
 			}
 
 		} else {
 			listaAdjuntos = getAdjuntosActivo(id, listaAdjuntos);
 		}
+		
 		return listaAdjuntos;
 	}
 
@@ -2772,9 +2735,12 @@ public class ActivoAdapter {
 			dto.setIdEntidad(activo.getId());
 			dto.setDescripcionTipo(adjunto.getTipoDocumentoActivo().getDescripcion());
 			dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
+			dto.setMatricula(adjunto.getTipoDocumentoActivo().getMatricula());
+			dto.setFechaDocumento(adjunto.getFechaDocumento());
 
 			listaAdjuntos.add(dto);
 		}
+		
 		return listaAdjuntos;
 	}
 
@@ -3189,7 +3155,13 @@ public class ActivoAdapter {
 					}
 				} else {
 					this.updateGestoresTabActivoTransactional(dto, id);
-					this.actualizarEstadoPublicacionActivo(id);
+					if(!Checks.esNulo(dtofichacabecera.getCheckGestorComercial()) || !Checks.esNulo(dtofichacabecera.getExcluirValidacionesBool())){
+						ArrayList<Long> listaActivo = new ArrayList<Long>();
+						listaActivo.add(id);
+						this.actualizarEstadoPublicacionActivoPerimetro(listaActivo, new ArrayList<Long>());
+					}else {
+						this.actualizarEstadoPublicacionActivo(id);
+					}
 				}
 			}
 
@@ -3219,10 +3191,9 @@ public class ActivoAdapter {
 			resultado = true;
 		}else{
 			if(listaIdActivo != null && !listaIdActivo.isEmpty()){
-				for(Long idActivo : listaIdActivo){
-					if(idActivo != null){
-						return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo,true);
-					}
+				boolean isOk = activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(listaIdActivo,true);
+				if(isOk) {
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivo);
 				}
 			}
 		}
@@ -3659,7 +3630,7 @@ public class ActivoAdapter {
 	 */
 	private void cambiarTrabajosActivosAGestorActivo(Activo activo, String tipoGestorCodigo) {
 		if(GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES.equals(tipoGestorCodigo)) {
-			for(ActivoTrabajo activoTrabajo : activo.getActivoTrabajos()) {
+			for(ActivoTrabajo activoTrabajo : activoApi.getActivoTrabajos(activo.getId())) {
 				Usuario  usuGestor = activoTrabajo.getTrabajo().getUsuarioResponsableTrabajo();
 				String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
 
@@ -3679,7 +3650,7 @@ public class ActivoAdapter {
 				}
 			}
 		}else if(GestorActivoApi.CODIGO_GESTOR_SUELOS.equals(tipoGestorCodigo)) {
-			for(ActivoTrabajo activoTrabajo : activo.getActivoTrabajos()) {
+			for(ActivoTrabajo activoTrabajo : activoApi.getActivoTrabajos(activo.getId())) {
 				Usuario  usuGestor = activoTrabajo.getTrabajo().getUsuarioResponsableTrabajo();
 				String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
 
@@ -3699,7 +3670,7 @@ public class ActivoAdapter {
 				}
 			}
 		}else if(GestorActivoApi.CODIGO_GESTOR_ALQUILERES.equals(tipoGestorCodigo)) {
-			for(ActivoTrabajo activoTrabajo : activo.getActivoTrabajos()) {
+			for(ActivoTrabajo activoTrabajo : activoApi.getActivoTrabajos(activo.getId())) {
 				Usuario  usuGestor = activoTrabajo.getTrabajo().getUsuarioResponsableTrabajo();
 				String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
 
@@ -3729,8 +3700,9 @@ public class ActivoAdapter {
 	@Transactional(readOnly = false)
 	public void cambiarResponsableTrabajosActivos(Activo activo) {
 		if (!Checks.esNulo(activo)) {
-			List<ActivoTrabajo> listaTrabajos = activo.getActivoTrabajos();					
-			Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());		
+			Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());	
+			Filter trabajoFilter = genericDao.createFilter(FilterType.EQUALS, "trabajo.auditoria.borrado", false);
+			List<ActivoTrabajo> listaTrabajos = genericDao.getList(ActivoTrabajo.class, activoFilter, trabajoFilter);
 			ActivoPublicacion actPublicacion = genericDao.get(ActivoPublicacion.class, activoFilter);			
 			if (DDTipoComercializacion.CODIGO_VENTA.equals(actPublicacion.getTipoComercializacion().getCodigo())) {
 				if (!Checks.estaVacio(listaTrabajos)) {
@@ -4000,9 +3972,11 @@ public class ActivoAdapter {
 			oferta.setOfertasAgrupadas(ofertasAgrupadas);
 			
 			oferta.setOfertaExpress(false);
-			
-			DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,
-					"codigo", DDOrigenComprador.CODIGO_ORC_HRE));
+			String origenLead = comisionamientoApi.calculaLeadOrigin(oferta);
+			if(origenLead == null) {
+				origenLead = DDOrigenComprador.CODIGO_ORC_HRE;
+			}
+			DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS, "codigo", origenLead));
 			oferta.setOrigenComprador(origenComprador);
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
 			
@@ -4637,9 +4611,9 @@ public class ActivoAdapter {
 	 */
 	private Boolean informeComercialAprobado(Activo activo) {
 		Boolean check = true;
-		VCondicionantesDisponibilidad vCondicionante = activoApi.getCondicionantesDisponibilidad(activo.getId());
-		if(!Checks.esNulo(vCondicionante)) {
-			if(vCondicionante.getSinInformeAprobadoREM()) {
+		VSinInformeAprobadoRem vSinInforme = activoApi.getSinInformeAprobadoREM(activo.getId());
+		if(!Checks.esNulo(vSinInforme)) {
+			if(vSinInforme.getSinInformeAprobadoREM()) {
 				check = false;
 			}
 		}
@@ -4917,4 +4891,51 @@ public class ActivoAdapter {
 		return genericDao.getListOrdered(VPreciosVigentes.class, order, filtro, filtroFecha);
 
 	}
+	
+	@Transactional(readOnly = false)
+	public boolean actualizarEstadoPublicacionActivoPerimetro(ArrayList<Long> listaIdActivo, ArrayList<Long> listaIdActivoSinVisibilidad){
+
+		activoDao.hibernateFlush();
+		Thread hilo = new Thread(new EjecutarSPPublicacionAsincrono(genericAdapter.getUsuarioLogado().getUsername(), listaIdActivo, listaIdActivoSinVisibilidad));
+		hilo.start();
+		
+		return true;
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean actualizarEstadoPublicacionSincronoPerimetro(ArrayList<Long> listaIdActivo, ArrayList<Long> listaIdActivoSinVisibilidad){
+		boolean resultado = true;
+		Set<Long> activosSinRepetidos =  new HashSet<Long>(listaIdActivoSinVisibilidad); 
+		if(listaIdActivo != null && !listaIdActivo.isEmpty()){
+			resultado = activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(listaIdActivo,true);
+		}
+		if(listaIdActivoSinVisibilidad != null && !listaIdActivoSinVisibilidad.isEmpty() && resultado) {
+			Set<Long> activosAdicionalesSinRepetidos = this.getActivosAdicionales(activosSinRepetidos); 
+			activosSinRepetidos.addAll(activosAdicionalesSinRepetidos);
+			List<Long> listaIdActivoSinVisibilidadSinRepetidos = new ArrayList<Long>(activosSinRepetidos);
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivoSinVisibilidadSinRepetidos);
+		}
+		
+		return resultado;
+	}
+	
+	private Set<Long> getActivosAdicionales(Set<Long> activosSinRepetidos){
+		Set<Long> activosAdicionalesSinRepetidos =  new HashSet<Long>();
+		for (Long activoId : activosSinRepetidos) {
+			Activo activo = activoDao.getActivoById(activoId);
+			if(activo != null) {
+				ActivoAgrupacionActivo aga = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());
+				if(aga != null && aga.getAgrupacion() != null) {
+					List<Activo> activos = activoApi.getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(aga.getAgrupacion().getId(),activo.getId());
+					for (Activo activoAgr : activos) {
+						activosAdicionalesSinRepetidos.add(activoAgr.getId());
+					}
+				}
+			}
+		}
+		
+		return activosAdicionalesSinRepetidos;
+	}
 }
+
+

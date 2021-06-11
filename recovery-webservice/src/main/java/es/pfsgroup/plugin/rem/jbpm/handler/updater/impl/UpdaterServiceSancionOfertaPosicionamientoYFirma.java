@@ -26,12 +26,14 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -61,7 +63,11 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
 	private ApiProxyFactory proxyFactory;
+
 
 	@Resource
 	private MessageService messageServices;
@@ -141,6 +147,8 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class,
 								filtro);
 						expediente.setEstado(estado);
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 						expediente.setFechaGrabacionVenta(new Date());
 					} else {
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
@@ -148,6 +156,8 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class,
 								filtro);
 						expediente.setEstado(estado);
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 						expediente.setFechaVenta(null);
 					}
 				}
@@ -194,6 +204,12 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							situacionPosesoria.setFechaModificarOcupado(new Date());
 							situacionPosesoria.setUsuarioModificarConTitulo(usuarioModificar);
 							situacionPosesoria.setFechaModificarConTitulo(new Date());
+							
+							if(situacionPosesoria!=null && usu!=null) {			
+								HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,situacionPosesoria,usu,HistoricoOcupadoTitulo.COD_OFERTA_VENTA,null);
+								genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+							}
+
 
 						} else if (!Checks.esNulo(situacionPosesoria)
 								&& !Checks.esNulo(situacionPosesoria.getConTitulo())
@@ -209,9 +225,15 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							situacionPosesoria.setFechaModificarOcupado(new Date());
 							situacionPosesoria.setUsuarioModificarConTitulo(usuarioModificar);
 							situacionPosesoria.setFechaModificarConTitulo(new Date());
+							
+							if(situacionPosesoria!=null && usu!=null) {			
+								HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,situacionPosesoria,usu,HistoricoOcupadoTitulo.COD_OFERTA_VENTA,null);
+								genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+							}
+
 
 						}
-
+												
 						try {
 							situacionPosesoria.setFechaTomaPosesion(ft.parse(valor.getValor()));
 						} catch (ParseException e) {
@@ -245,6 +267,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 					expediente.setObsAsisPbc(valor.getValor());
 				}				
 			}
+			
 			boolean paseAVendido = false;
 			if (filtro != null) {
 				paseAVendido = DDEstadosExpedienteComercial.VENDIDO.equals(filtro.getPropertyValue());

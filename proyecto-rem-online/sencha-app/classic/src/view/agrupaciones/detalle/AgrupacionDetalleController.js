@@ -892,7 +892,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		var cartera = me.view.up().lookupController().getViewModel().get('agrupacionficha.cartera');
 		var codSucursal = '';
 		var nombreSucursal = '';
-		if(cartera == 'Bankia'){
+		if(cartera == 'CaixaBank'){
 			codSucursal = '2038' + field.getValue();
 			nombreSucursal = ' (Oficina Bankia)';
 		}else if(cartera == 'Cajamar'){
@@ -1363,6 +1363,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 			me.getView().lookupReference('autorizacionTramOfertasAgrupacion').setHidden(true);
 		}
 	},
+
+	
     checkVisibilityOfBtnCrearTrabajo: function () {
        var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
        var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);

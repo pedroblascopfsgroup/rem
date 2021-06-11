@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.expedienteComercial.dao.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -16,6 +17,7 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.VBusquedaCompradoresExpediente;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 
 @Repository("ExpedienteComercialDao")
@@ -36,6 +38,24 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 			return HibernateQueryUtils.page(this, hql, webDto);
 		}
 
+	}
+	
+	@Override
+	public Float getPorcentajeCompra(Long idExpediente) {
+		int sumatorio = 0;
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaCompradoresExpediente where idExpediente = " + idExpediente);
+
+		List<VBusquedaCompradoresExpediente> lista = this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		
+		if (lista != null && !lista.isEmpty()) {
+			for (VBusquedaCompradoresExpediente item : lista) {
+				if (item.getPorcentajeCompra() != null) {
+					sumatorio += Float.parseFloat(item.getPorcentajeCompra())*100;
+				}
+			}
+		}
+		
+		return sumatorio/100f;
 	}
 
 	@Override

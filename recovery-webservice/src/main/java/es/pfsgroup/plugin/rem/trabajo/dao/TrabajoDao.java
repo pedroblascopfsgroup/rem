@@ -59,4 +59,10 @@ public interface TrabajoDao extends AbstractDao<Trabajo, Long>{
 
 	Page findAllFilteredHistoricoPeticion(DtoTrabajoFilter dto, Long idUsuario);
 
+	Page findAllFilteredIncluidoFactura(DtoTrabajoFilter dto, Long idUsuario);
+
+	Page findAllNoVista(DtoTrabajoFilter dto);
+
+	Page findAllFilteredByProveedorContactoNoVista(DtoTrabajoFilter dto, Long idUsuario);
+
 }

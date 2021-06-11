@@ -88,6 +88,10 @@ public class DtoTrabajoFilter extends WebDto {
 	private String responsableTrabajo;
 	
 	private Boolean esHistoricoPeticionActivo;
+	
+	private Boolean isOrigenActuacionesTecnicas;
+	
+	private Boolean esIncluidoFacturaGastos;
 
 	public String getIdTrabajo() {
 		return idTrabajo;
@@ -368,5 +372,23 @@ public class DtoTrabajoFilter extends WebDto {
 	public void setEsHistoricoPeticionActivo(Boolean esHistoricoPeticionActivo) {
 		this.esHistoricoPeticionActivo = esHistoricoPeticionActivo;
 	}
+
+	public Boolean getIsOrigenActuacionesTecnicas() {
+		return isOrigenActuacionesTecnicas;
+	}
+
+	public void setIsOrigenActuacionesTecnicas(Boolean isOrigenActuacionesTecnicas) {
+		this.isOrigenActuacionesTecnicas = isOrigenActuacionesTecnicas;
+	}
+
+	public Boolean getEsIncluidoFacturaGastos() {
+		return esIncluidoFacturaGastos;
+	}
+
+	public void setEsIncluidoFacturaGastos(Boolean esIncluidoFacturaGastos) {
+		this.esIncluidoFacturaGastos = esIncluidoFacturaGastos;
+	}
+	
+	
 
 }

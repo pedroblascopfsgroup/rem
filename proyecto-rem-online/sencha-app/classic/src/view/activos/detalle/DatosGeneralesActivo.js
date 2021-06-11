@@ -37,7 +37,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
             			   buttons: Ext.MessageBox.YESNO,
             			   fn: function(buttonId) {
             			        if (buttonId == 'yes') {
-            			        	var btn = tabPanel.down('button[itemId=botoncancelar]');
+									var btn = tabPanel.down('button[itemId=botoncancelar]');
             			        	Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
             			        	tabPanel.getLayout().setActiveItem(tabNext);
             			        	// Si la pestaña necesita botones de edición

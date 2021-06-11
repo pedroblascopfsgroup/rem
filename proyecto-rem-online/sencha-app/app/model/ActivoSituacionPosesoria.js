@@ -28,16 +28,10 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
             name:'accesoAntiocupa'
         },
         {
-            name:'conTitulo'/*,
-            convert: function(v, model){
-               
-            	var ocupado = model.get('ocupado');
-            	if(model.get('ocupado')=='0'){
-                    return null;
-                }else{
-                    return v;
-                }
-            } */
+            name:'conTitulo'
+        },
+        {
+            name:'conTituloDescripcion'
         },
         {
             name:'riesgoOcupacion'
@@ -125,8 +119,32 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
         {
         	name:  'diasTapiado'
         },
-        	{
+        {
         	name: 'posesionNegociada'
+        },{
+        	name:'tieneAlarma'
+        },{
+        	name:'fechaInstalacionAlarma',
+            type:'date',
+            dateFormat: 'c'
+        },{
+        	name:'fechaDesinstalacionAlarma',
+            type:'date',
+            dateFormat: 'c'
+        },{
+        	name:'tieneVigilancia'
+        },{
+        	name:'fechaInstalacionVigilancia',
+            type:'date',
+            dateFormat: 'c'
+        },{
+        	name:'fechaDesinstalacionVigilancia',
+            type:'date',
+            dateFormat: 'c'
+        },
+        {
+        	name:  'perteneceActivoREAM',
+        	type:'boolean'
         }
         
     ],

@@ -42,6 +42,7 @@ public class ActivoPropagacionFieldTabMap {
 	    			"estadoActivoCodigo",
 	    			"tipoTransmision",
     	    		"tipoSegmentoCodigo",
+    	    		"porcentajeConstruccion",
 	    			// identificación BBVA
 	    			"lineaFactura",
 	    			"idOrigenHre",
@@ -69,7 +70,7 @@ public class ActivoPropagacionFieldTabMap {
 	    			"aplicaGestion",
 	    			"aplicaPublicar",
 	    			"aplicaFormalizar",
-	    			"aplicaComercializar",
+    			
 
 	    			// comercializacion
     				"tipoComercializarCodigo",
@@ -469,7 +470,8 @@ public class ActivoPropagacionFieldTabMap {
 					"codigoMotivoCalificacionNegativa",
 					"codigoEstadoMotivoCalificacionNegativa",
 					"idProcesoOrigen",
-					"sociedadDePagoAnterior"
+					"sociedadDePagoAnterior",
+					"fechaPosesionNoJudicial"
     			));
 
     	pmap.put(TAB_INFO_ADMINISTRATIVA,

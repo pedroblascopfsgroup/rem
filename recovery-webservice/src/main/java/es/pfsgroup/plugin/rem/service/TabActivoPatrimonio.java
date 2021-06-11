@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -27,6 +28,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -36,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -57,6 +60,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 	private static final String ES_ACTIVO_CON_CHECK_PUBLICAR_COMERCIALIZAR_FORMALIZAR_ERROR = "msg.error.activo.cesion.uso.con.checks.publicar.comercializar.formalizar";
 	private static final String ES_ACTIVO_ALQUILADO_ERROR = "msg.error.es.activo.alquilado";
 	private static final String ES_ACTIVO_CON_OFERTAS_VIVAS_ERROR="msg.error.es.activo.con.ofertas.vivas";
+	private static final String PERFIL_CHECKCOMERCIALIZAR = "CHECKCOMERCIALIZAR";
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -89,6 +93,9 @@ public class TabActivoPatrimonio implements TabActivoService {
 	@Autowired
 	private ParticularValidatorApi particularValidator;
 
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
 	@Override
 	public String[] getKeys() {
 		return this.getCodigoTab();
@@ -129,13 +136,16 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 			if(!Checks.esNulo(activoP.getTipoEstadoAlquiler())) {
 				activoPatrimonioDto.setEstadoAlquiler(activoP.getTipoEstadoAlquiler().getCodigo());
+				activoPatrimonioDto.setEstadoAlquilerDescripcion(activoP.getTipoEstadoAlquiler().getDescripcion());
 			}
 
 			if(!Checks.esNulo(activoP.getTipoInquilino())) {
 				activoPatrimonioDto.setTipoInquilino(activoP.getTipoInquilino().getCodigo());
+				activoPatrimonioDto.setTipoInquilinoDescripcion(activoP.getTipoInquilino().getDescripcion());
 			}
 						
 			activoPatrimonioDto.setCesionUso( Checks.esNulo(activoP.getCesionUso())  ? null :  activoP.getCesionUso().getCodigo());
+			activoPatrimonioDto.setCesionUsoDescripcion( Checks.esNulo(activoP.getCesionUso())  ? null :  activoP.getCesionUso().getDescripcion());
 			activoPatrimonioDto.setTramiteAlquilerSocial(Checks.esNulo(activoP.getTramiteAlquilerSocial()) ?  DDSinSiNo.CODIGO_NO: activoP.getTramiteAlquilerSocial().booleanValue() == true ? DDSinSiNo.CODIGO_SI: DDSinSiNo.CODIGO_NO);
 			
 		}
@@ -165,6 +175,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 			
 			if(!Checks.esNulo(activo.getTipoAlquiler())) {
 				activoPatrimonioDto.setTipoAlquilerCodigo(activo.getTipoAlquiler().getCodigo());
+				activoPatrimonioDto.setTipoAlquilerDescripcion(activo.getTipoAlquiler().getDescripcion());
 			}
 		}
 		
@@ -374,6 +385,11 @@ public class TabActivoPatrimonio implements TabActivoService {
 					activoSituacionPosesoria.setUsuarioModificarConTitulo(usu.getUsername());
 					activoSituacionPosesoria.setFechaModificarConTitulo(new Date());
 					
+					if(activo != null && activoSituacionPosesoria!=null &&  activoPatrimonio !=null && activoPatrimonio.getTipoEstadoAlquiler()!=null) {
+						HistoricoOcupadoTitulo hist = new HistoricoOcupadoTitulo(activo,activoSituacionPosesoria,usu,HistoricoOcupadoTitulo.COD_PATRIMONIO,activoPatrimonio.getTipoEstadoAlquiler().getDescripcion());
+						genericDao.save(HistoricoOcupadoTitulo.class, hist);
+					}
+					
 					
 				} else if(DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE.equals(activoPatrimonioDto.getEstadoAlquiler())) {
 	
@@ -390,6 +406,11 @@ public class TabActivoPatrimonio implements TabActivoService {
 					activoSituacionPosesoria.setFechaModificarConTitulo(new Date());
 					activoSituacionPosesoria.setFechaUltCambioTit(new Date());
 					activoPatrimonio.setTipoInquilino(null);
+					
+					if(activo != null && activoSituacionPosesoria!=null &&  activoPatrimonio !=null && activoPatrimonio.getTipoEstadoAlquiler()!=null) {
+						HistoricoOcupadoTitulo hist = new HistoricoOcupadoTitulo(activo,activoSituacionPosesoria,usu,HistoricoOcupadoTitulo.COD_PATRIMONIO,activoPatrimonio.getTipoEstadoAlquiler().getDescripcion());
+						genericDao.save(HistoricoOcupadoTitulo.class, hist);
+					}
 				}
 				
 				genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria);
@@ -443,9 +464,17 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 	private void isActivoConPublicarComercializarFormalizar(Activo activo) {
 		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
-		if ((perimetroActivo.getAplicaPublicar() != null&& perimetroActivo.getAplicaPublicar())
+		Boolean puedeModificar = false;
+		Usuario  usuario = genericAdapter.getUsuarioLogado();
+		List<Perfil> perfiles = usuario.getPerfiles();
+		for (Perfil perfil : perfiles) {
+			if(PERFIL_CHECKCOMERCIALIZAR.equalsIgnoreCase(perfil.getCodigo())){
+				puedeModificar = true;
+			}
+		}
+		if (((perimetroActivo.getAplicaPublicar() != null&& perimetroActivo.getAplicaPublicar())
 			||(perimetroActivo.getAplicaComercializar() != null && perimetroActivo.getAplicaComercializar() == 1)
-			||(perimetroActivo.getAplicaFormalizar() != null && perimetroActivo.getAplicaFormalizar() == 1)) {
+			||(perimetroActivo.getAplicaFormalizar() != null && perimetroActivo.getAplicaFormalizar() == 1)) && !puedeModificar) {
 			throw new JsonViewerException(messageServices.getMessage(ES_ACTIVO_CON_CHECK_PUBLICAR_COMERCIALIZAR_FORMALIZAR_ERROR));
 		}
 		

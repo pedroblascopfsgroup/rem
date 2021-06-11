@@ -94,8 +94,10 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 												collapsible: false,
 												border:0,
 												colspan:2,
-												defaultType: 'textfieldbase',
-												
+												defaultType: 'textfieldbase',												
+										    	defaults: {
+										    		addUxReadOnlyEditFieldPlugin: false
+										    	},
 												items :
 													[
 													 {
@@ -105,6 +107,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 													        reference:'gestorActivo',
 															colspan: 3,
 															padding:'2 2 2 2',
+															addUxReadOnlyEditFieldPlugin: true,
 													        bind: 
 													        	{
 													            	value: me.gestorActivo
@@ -117,6 +120,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															minValue: $AC.getCurrentDate(),
 															maxValue: null,
 															value:  $AC.getCurrentDate(),
+															addUxReadOnlyEditFieldPlugin: true,
 															colspan: 3,
 															allowBlank: false
 														},
@@ -161,7 +165,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															allowBlank: false
 												        },
 									    				{ 
-												        	xtype: 'comboboxfieldbase',
+												        	xtype: 'comboboxfieldbasedd',
 												        	fieldLabel: HreRem.i18n('fieldlabel.proveedor'),
 															flex: 		1,
 															colspan: 3,
@@ -174,27 +178,35 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															disabled: true,
 											            	displayField: 'nombreComercial',
 								    						valueField: 'idProveedor',
-															allowBlank: false,
-															forceSelection: false,
-															editable: true,
-															minChars: 0,
-								    						enableKeyEvents:true,
+															filtradoEspecial2: true,
 							    						    listeners: {
-																select: 'onChangeProveedorCombo',
-							    						     	'keyup': function() {
-																	if(this.getStore().isLoaded()){
-																		this.queryMode='local';
-																		this.mode='local';
-																	}
-							    						    	   this.getStore().clearFilter();
-							    						    	   this.getStore().filter({
-							    						        	    property: 'nombreComercial',
-							    						        	    value: this.getRawValue(),
-							    						        	    anyMatch: true,
-							    						        	    caseSensitive: false
-							    						        	});
-							    						     	}
-							    						    }
+																select: 'onChangeProveedorCombo'							    						     	
+							    						    },
+															tpl: Ext.create('Ext.XTemplate',
+																	'<tpl for=".">',
+																		'<div class="x-boundlist-item">{codigo} - {nombre} - {descripcionTipoProveedor} - {estadoProveedorDescripcion}</div>',
+																	'</tpl>'
+															),
+															displayTpl:  Ext.create('Ext.XTemplate',
+																	'<tpl for=".">',
+																		'{codigo} - {nombre} - {descripcionTipoProveedor} - {estadoProveedorDescripcion}',
+																	'</tpl>'
+															),
+															validator: function(){
+																var me = this;
+																
+																if(me.up('window').codCartera == null 
+																	|| (me.up('formBase').down('[reference=listaActivosSubidaRef]').getStore().getData() == null 
+    																|| me.up('formBase').down('[reference=listaActivosSubidaRef]').getStore().getData().length < 1)
+																	&& (me.up('formBase').down('[reference=activosagrupaciontrabajo]').getStore().getData() == null 
+    																|| me.up('formBase').down('[reference=activosagrupaciontrabajo]').getStore().getData().length < 1)){
+																	return 'Es necesario cargar el listado de activos para poder seleccionar el proveedor del trabajo';
+																}
+																if(Ext.isEmpty(me.getValue())){
+																	return 'Este campo es obligatorio';
+																}
+																return true;
+															}
 												        },
 												        { 
 															xtype: 'comboboxfieldbase',
@@ -208,7 +220,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															flex: 		1,
 															colspan: 3,
 															disabled: true,
-											            	displayField: 'nombre',
+											            	displayField: 'fullName',
 								    						valueField: 'id',
 								    						allowBlank: false
 												        }
@@ -221,6 +233,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 													defaultType: 'textfieldbase',
 													border:0,
 													colspan:1,
+											    	defaults: {
+											    		addUxReadOnlyEditFieldPlugin: false
+											    	},
 													items :
 														[
 															{
@@ -275,6 +290,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 													defaultType: 'textfieldbase',
 													colspan:3,
 													border:0,
+											    	defaults: {
+											    		addUxReadOnlyEditFieldPlugin: false
+											    	},
 													items :
 														[
 													        {
@@ -307,6 +325,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 													defaultType: 'textfieldbase',
 													colspan:3,
 													border:0,
+													defaults: {
+											    		addUxReadOnlyEditFieldPlugin: false
+											    	},
 													items :
 														[
 				        									{ 
@@ -347,7 +368,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 									        	        {
 									        	            xtype: 'formBase',
 								        	              	cls:'',
-								        	   				url: $AC.getRemoteUrl('process/subeListaActivos'),		
+								        	   				url: $AC.getRemoteUrl('trabajo/subeListaActivos'),		
 								        	   				buttons: [{	
 								        	   				 	       itemId: 'btnSubirFichero', 
 								        	   						   text: 'Subir fichero',
@@ -397,6 +418,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 												title: HreRem.i18n('title.publicaciones.activos.grid'),
 												defaultType: 'textfieldbase',
 												colspan:3,
+												defaults: {
+											    	addUxReadOnlyEditFieldPlugin: false
+											    },
 												items :
 													[
 														{

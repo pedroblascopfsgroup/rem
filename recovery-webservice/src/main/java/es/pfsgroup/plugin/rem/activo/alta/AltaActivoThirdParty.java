@@ -61,6 +61,7 @@ import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.DtoAltaActivoThirdParty;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -161,6 +162,11 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 			
 			genericDao.save(ActivoSituacionPosesoria.class, actSit);
 			
+			if(activo!=null && actSit!=null && usu!=null) {			
+				HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,actSit,usu,HistoricoOcupadoTitulo.COD_ALTA_ACTIVO,null);
+				genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+		}
+			
 			ActivoTitulo actTit = new ActivoTitulo();
 			actTit.setActivo(activo);
 			actTit.setVersion(0L);
@@ -184,6 +190,7 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 		DDTipoTituloActivo tipoTitulo = subTipoTitulo.getTipoTituloActivo();
 		DDSubcartera subcartera = (DDSubcartera) diccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, dtoAATP.getCodSubCartera());
 		DDCartera cartera = subcartera.getCartera();
+		DDSinSiNo siNoObraNueva = (DDSinSiNo)diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
 		Activo activo = new Activo();
 		
 		beanUtilNotNull.copyProperty(activo, "numActivo", dtoAATP.getNumActivoHaya());
@@ -202,6 +209,7 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 				utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, dtoAATP.getDestinoComercialCodigo()));
 		beanUtilNotNull.copyProperty(activo, "tipoAlquiler", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class, dtoAATP.getTipoAlquilerCodigo()));
 		beanUtilNotNull.copyProperty(activo, "tipoComercializar", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class, dtoAATP.getTipoDeComercializacion()));
+		activo.setTieneObraNuevaAEfectosComercializacion(siNoObraNueva);
 		
 		activo = genericDao.save(Activo.class, activo);
 		return activo;
@@ -277,9 +285,6 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		
 		nmbInfRegistralBien = genericDao.save(NMBInformacionRegistralBien.class, nmbInfRegistralBien);
 		
-		
-		
-		
 		ActivoInfoRegistral activoInforRegistral = new ActivoInfoRegistral();
 		activoInforRegistral.setInfoRegistralBien(nmbInfRegistralBien);
 		activoInforRegistral.setActivo(activo);
@@ -292,12 +297,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 			beanUtilNotNull.copyProperty(activoInforRegistral, "divHorInscrito", dtoAATP.getEsIntegradoDivHorizontalRegistro().equalsIgnoreCase("si") ? 1 : 0);
 		}
 		
-//Para Esparta
-//		DDSinSiNo ddsino = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDSinSiNo.CODIGO_NO));
-//		activoInforRegistral.setTieneAnejosRegistrales(ddsino);
+		DDSinSiNo noTiene = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDSinSiNo.CODIGO_NO));
+		activoInforRegistral.setTieneAnejosRegistrales(noTiene);
 		genericDao.save(ActivoInfoRegistral.class, activoInforRegistral);
-		
-		
 		
 		//ActivoPropietarioActivo
 		ActivoPropietario activoPropietario = genericDao.get(ActivoPropietario.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo",dtoAATP.getNifPropietario()));
@@ -536,8 +538,10 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				
 				//ActivoValoracion - Precio mínimo
 				ActivoValoraciones activoValoracionPrecioMinimo = new ActivoValoraciones();
-				activoValoracionPrecioMinimo.setFechaCarga(new Date());
-				activoValoracionPrecioMinimo.setFechaInicio(new Date());
+				if (dtoAATP.getPrecioMinimo() != null) {
+					activoValoracionPrecioMinimo.setFechaCarga(new Date());
+					activoValoracionPrecioMinimo.setFechaInicio(new Date());
+				}
 				activoValoracionPrecioMinimo.setActivo(activo);
 				activoValoracionPrecioMinimo.setTipoPrecio((DDTipoPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPrecio.class, DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO));
 				beanUtilNotNull.copyProperty(activoValoracionPrecioMinimo, "importe", dtoAATP.getPrecioMinimo());
@@ -547,8 +551,10 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				
 				//ActivoValoracion - Precio venta web
 				ActivoValoraciones activoValoracionPrecioVentaWeb = new ActivoValoraciones();
-				activoValoracionPrecioVentaWeb.setFechaCarga(new Date());
-				activoValoracionPrecioVentaWeb.setFechaInicio(new Date());
+				if (dtoAATP.getPrecioVentaWeb() != null) {
+					activoValoracionPrecioVentaWeb.setFechaCarga(new Date());
+					activoValoracionPrecioVentaWeb.setFechaInicio(new Date());
+				}
 				activoValoracionPrecioVentaWeb.setActivo(activo);
 				activoValoracionPrecioVentaWeb.setTipoPrecio((DDTipoPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPrecio.class, DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA));
 				beanUtilNotNull.copyProperty(activoValoracionPrecioVentaWeb, "importe", dtoAATP.getPrecioVentaWeb());

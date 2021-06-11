@@ -544,8 +544,17 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		var viewModel = me.getViewModel();
 		viewModel.set("provisionSeleccionada", record);
 		viewModel.notify();
-
+		
 		var grid = me.lookupReference('provisionesGastosList');
+		var displaySelection = grid.down('displayfield[itemId=displaySelection]');
+		var displayImporteTotalLabel = grid.down('displayfield[itemId=labelImporteTotal]');
+		var displayImporteTotal = grid.down('displayfield[itemId=displayImporteTotal]');
+		
+		grid.getSelectionModel().deselectAll();
+		displayImporteTotal.setHidden(true);
+		displayImporteTotalLabel.setHidden(true);
+		displaySelection.setValue("No seleccionados");
+
 		var store = grid.getStore();
 		grid.expand();
 		store.loadPage(1);
@@ -963,6 +972,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 			Ext.Ajax.request({
 		    			
 			     url: url,
+			     method: 'POST',
 			     params: {idsGasto: idsGasto},
 			
 			     success: function(response, opts) {
@@ -1595,6 +1605,45 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		var me = this;
 		var window = btn.up("window");
 		window.hide();
-    }
+    },
+    onSearchBusquedaDirectaGasto: function(btn) {
+    	
+    		var me = this;
+    		var numGastoHaya = btn.up('gestiongastossearch').down('[name="numGastoHaya"]').value;
+    		var url= $AC.getRemoteUrl('gastosproveedor/getGastoExists');
+    		var data;
+    			
+    		if(numGastoHaya != ""){
+    			Ext.Ajax.request({
+    				url: url,
+    			    params: {numGastoHaya : numGastoHaya},
+    			    success: function(response, opts) {
+    			    	data = Ext.decode(response.responseText);
+    			    	if(data.success == "true"){
+    			    		var titulo = "Gasto " + numGastoHaya;
+    			    		me.getView().fireEvent('abrirDetalleGastoDirecto', data.data, titulo);
+    			    	}else{
+    			    		me.fireEvent("errorToast", data.error);
+    			    	}
+    				    		         
+    			    },
+    			    failure: function(response) {
+    			    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    			    }
+    			});    
+    		}
+    			
+    	},
+    		
+    	onChangeNumGasto: function(me, oValue, nValue){
+    		var numGastoHaya = me.up('gestiongastossearch').down('[name="numGastoHaya"]').value;
+    		var btn = me.up('gestiongastossearch').down('[reference="btnGasto"]');
+    			
+    		if(numGastoHaya != ""){
+    			btn.setDisabled(false);
+    		}else{
+    			btn.setDisabled(true);
+    		}
+    	}
 	
 });

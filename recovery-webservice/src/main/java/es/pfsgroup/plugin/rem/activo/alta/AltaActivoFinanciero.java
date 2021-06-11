@@ -19,6 +19,7 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
@@ -58,6 +59,7 @@ import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.DtoAltaActivoFinanciero;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -66,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -102,6 +105,9 @@ public class AltaActivoFinanciero implements AltaActivoService {
 
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -159,6 +165,12 @@ public class AltaActivoFinanciero implements AltaActivoService {
 			actTit.setVersion(new Long(0));
 			actTit.setAuditoria(auditoria);			
 			genericDao.save(ActivoTitulo.class, actTit);
+			
+			if(activo!=null && actSit!=null && usu!=null) {			
+					HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,actSit,usu,HistoricoOcupadoTitulo.COD_ALTA_ACTIVO,null);
+					genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+			}
+			
 		} else {
 			return false;
 		}
@@ -168,6 +180,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 
 	private Activo dtoToEntityActivo(DtoAltaActivoFinanciero dtoAAF) throws Exception {
 		Activo activo = new Activo();
+		DDSinSiNo siNoObraNueva = (DDSinSiNo)diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
 
 		beanUtilNotNull.copyProperty(activo, "numActivo", dtoAAF.getNumActivoHaya());
 		activo.setNumActivoRem(activoApi.getNextNumActivoRem());
@@ -197,6 +210,8 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		beanUtilNotNull.copyProperty(activo, "situacionComercial",
 				utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class, DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE));
 		beanUtilNotNull.copyProperty(activo, "tipoComercializar", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class, dtoAAF.getTipoDeComercializacion()));
+		activo.setTieneObraNuevaAEfectosComercializacion(siNoObraNueva);
+		
 		activo = genericDao.save(Activo.class, activo);
 		return activo;
 	}
@@ -300,6 +315,9 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		if (!Checks.esNulo(dtoAAF.getEsIntegradoDivHorizontalRegistro())) {
 			beanUtilNotNull.copyProperty(activoInfoRegistral, "divHorInscrito", dtoAAF.getEsIntegradoDivHorizontalRegistro() ? 1 : 0);
 		}
+		
+		DDSinSiNo noTiene = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDSinSiNo.CODIGO_NO));
+		activoInfoRegistral.setTieneAnejosRegistrales(noTiene);
 		genericDao.save(ActivoInfoRegistral.class, activoInfoRegistral);
 
 		// ActivoPropietarioActivo.

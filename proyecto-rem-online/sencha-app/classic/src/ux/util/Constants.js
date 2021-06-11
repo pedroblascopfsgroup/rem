@@ -200,7 +200,7 @@ Ext.define('HreRem.ux.util.Constants', {
     NOMBRE_CARTERA:	{
     	'01': 'CAJAMAR',
     	'02': 'SAREB',
-    	'03': 'BANKIA',
+    	'03': 'CAIXABANK',
     	'04': 'TERCEROS',
     	'06': 'HYT',
     	'07': 'CERBERUS',
@@ -224,7 +224,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	LIBERBANK:'LIBERBANK',
     	GALEON:'GALEON',
     	ZEUS :'ZEUS',
-    	BBVA :'BBVA'
+    	BBVA :'BBVA',
+		CAIXABANK : 'CAIXABANK'
     },
 
     SUBCARTERA: {
@@ -279,7 +280,8 @@ Ext.define('HreRem.ux.util.Constants', {
     IMAGENES_CARTERA: {
     	CAJAMAR: 'logo_cajamar.svg',
     	SAREB: 'logo_sareb.svg',
-    	BANKIA: 'logo_bankia.svg'
+    	BANKIA: 'logo_bankia.svg',
+		CAIXABANK: 'logo_bankia.svg'
     },
 
     PERFILES: {
@@ -320,9 +322,14 @@ Ext.define('HreRem.ux.util.Constants', {
 		GESTOR_PUBLICACION:'HAYAGESTPUBL',
 		SUPERVISOR_ADMISION:'HAYASUPADM',
 		SUPER_EDITA_COMPRADOR: 'SUPEREDITACOMPRADOR',
+		SUPERCOMERCIAL:'SUPERCOMERCIAL',
 		GESTOR_ALQUILER_HPM: 'GESTALQ',
+		SUPERVISOR_ADMISION: 'HAYASUPADM',
+		PERFIL_SEGURIDAD:'PERFSEGURIDAD',
 		GESTBOARDING: 'PERFGBOARDING',
-		CARTERA_BBVA: 'CARTERA_BBVA'
+		CARTERA_BBVA: 'CARTERA_BBVA',
+		SUPERCOMERCIAL:'SUPERCOMERCIAL',
+		SEGURIDAD_REAM: 'SEGURIDAD_REAM'
     },
 
     TIPOS_OFERTA: {
@@ -358,6 +365,11 @@ Ext.define('HreRem.ux.util.Constants', {
     	PTE_DOBLE_FIRMA: '13',
     	RPTA_OFERTANTE: '14',
     	EN_DEVOLUCION: '16',
+    	PTE_PBC: '24',
+    	PTE_POSICIONAMIENTO: '25',
+    	PTE_FIRMA: '27',
+    	PTE_CIERRE: '28',
+    	PTE_RESOLUCION_CES: '34',
     	AP_CES_PTE_MAN: '36',
     	CONT_CES: '38',
     	RES_PTE_MAN: '39',
@@ -559,7 +571,8 @@ Ext.define('HreRem.ux.util.Constants', {
 
     ORIGEN_DATO: {
         REM: '01',
-        RECOVERY: '02'
+        RECOVERY: '02',
+        PRISMA: '03'
     },
 
     MODO_PUBLICACION_ALQUILER: {
@@ -913,5 +926,8 @@ Ext.define('HreRem.ux.util.Constants', {
 	TIPO_RETENCION: {
 		ANTES : 'ANT',
 		DESPUES: 'DESP'
+	},
+	SUBFASES_PUBLICACION: {
+		COD_EXCLUIDO_CLIENTE : '14'
 	}
 });

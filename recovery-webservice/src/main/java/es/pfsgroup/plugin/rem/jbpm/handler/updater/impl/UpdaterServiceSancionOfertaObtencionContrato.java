@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceContabilidadBbva;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -66,6 +67,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	@Autowired
 	private ActivoAdapter activoAdapter;
 	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
@@ -186,6 +190,8 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				if(!Checks.esNulo(filtro)) {
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					expediente.setEstado(estado);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 				}
 	
 				// actualizamos el estado de la reserva a firmada

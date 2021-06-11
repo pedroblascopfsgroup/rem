@@ -282,13 +282,13 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				}
 				//ADJUNTOS SI ES SAREB
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) {
-					f1 = FileItemUtils.fromResource("docs/instrucciones_de_reserva.docx");
+					f1 = FileItemUtils.fromResource("docs/instrucciones_de_reserva_v3.docx");
 					adjuntos.add(createAdjunto(f1, "Instrucciones_de_reserva.docx"));
 				}
 				//ADJUNTOS SI ES BANKIA
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
-					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia_v7.docx");
-					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_Bankia.docx"));
+					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_CaixaBank_v7.docx");
+					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_CaixaBank.docx"));
 				}
 				//ADJUNTOS SI ES TANGO
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)){

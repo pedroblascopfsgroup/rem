@@ -298,6 +298,45 @@ public class StockDto implements WebcomRESTDto{
 	private StringDataType codTipoComercializar;
 	
 	private StringDataType codEquipoGestion;
+
+	@WebcomRequired
+	private BooleanDataType checkGestionComercial;
+	
+	@WebcomRequired
+	private BooleanDataType excluirValidaciones;
+	
+	@WebcomRequired
+	private DateDataType fechaGestionComercial;
+	
+	@WebcomRequired
+	private StringDataType motivoGestionComercial;
+
+    @WebcomRequired
+    private BooleanDataType spsAlarma;
+
+	@WebcomRequired
+	private DateDataType spsFechaInstalaAlarma;
+	
+	@WebcomRequired
+	private DateDataType spsFechaDesinstalaAlarma;
+	
+	@WebcomRequired
+	private BooleanDataType spsVigilancia;
+	
+	@WebcomRequired
+	private DateDataType spsFechaInstalaVigilancia;
+	
+	@WebcomRequired
+	private DateDataType spsFechaDesinstalaVigilancia;
+	
+	@WebcomRequired
+	private BooleanDataType onvComercializacion;
+	
+	@WebcomRequired
+	private StringDataType onvComercializacionFecha;
+	
+	@WebcomRequired
+	private StringDataType codDirComercial;
 	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
@@ -991,5 +1030,82 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodEquipoGestion(StringDataType codEquipoGestion) {
 		this.codEquipoGestion = codEquipoGestion;
 	}
-	
+	public BooleanDataType getCheckGestionComercial() {
+		return checkGestionComercial;
+	}
+	public void setCheckGestionComercial(BooleanDataType checkGestionComercial) {
+		this.checkGestionComercial = checkGestionComercial;
+	}
+	public BooleanDataType getExcluirValidaciones() {
+		return excluirValidaciones;
+	}
+	public void setExcluirValidaciones(BooleanDataType excluirValidaciones) {
+		this.excluirValidaciones = excluirValidaciones;
+	}
+	public DateDataType getFechaGestionComercial() {
+		return fechaGestionComercial;
+	}
+	public void setFechaGestionComercial(DateDataType fechaGestionComercial) {
+		this.fechaGestionComercial = fechaGestionComercial;
+	}
+	public StringDataType getMotivoGestionComercial() {
+		return motivoGestionComercial;
+	}
+	public void setMotivoGestionComercial(StringDataType motivoGestionComercial) {
+		this.motivoGestionComercial = motivoGestionComercial;
+	}
+	public BooleanDataType getSpsAlarma() {
+		return spsAlarma;
+	}
+	public void setSpsAlarma(BooleanDataType spsAlarma) {
+		this.spsAlarma = spsAlarma;
+	}
+	public DateDataType getSpsFechaInstalaAlarma() {
+		return spsFechaInstalaAlarma;
+	}
+	public void setSpsFechaInstalaAlarma(DateDataType spsFechaInstalaAlarma) {
+		this.spsFechaInstalaAlarma = spsFechaInstalaAlarma;
+	}
+	public DateDataType getSpsFechaDesinstalaAlarma() {
+		return spsFechaDesinstalaAlarma;
+	}
+	public void setSpsFechaDesinstalaAlarma(DateDataType spsFechaDesinstalaAlarma) {
+		this.spsFechaDesinstalaAlarma = spsFechaDesinstalaAlarma;
+	}
+	public BooleanDataType getSpsVigilancia() {
+		return spsVigilancia;
+	}
+	public void setSpsVigilancia(BooleanDataType spsVigilancia) {
+		this.spsVigilancia = spsVigilancia;
+	}
+	public DateDataType getSpsFechaInstalaVigilancia() {
+		return spsFechaInstalaVigilancia;
+	}
+	public void setSpsFechaInstalaVigilancia(DateDataType spsFechaInstalaVigilancia) {
+		this.spsFechaInstalaVigilancia = spsFechaInstalaVigilancia;
+	}
+	public DateDataType getSpsFechaDesinstalaVigilancia() {
+		return spsFechaDesinstalaVigilancia;
+	}
+	public void setSpsFechaDesinstalaVigilancia(DateDataType spsFechaDesinstalaVigilancia) {
+		this.spsFechaDesinstalaVigilancia = spsFechaDesinstalaVigilancia;
+	}
+	public BooleanDataType getOnvComercializacion() {
+		return onvComercializacion;
+	}
+	public void setOnvComercializacion(BooleanDataType onvComercializacion) {
+		this.onvComercializacion = onvComercializacion;
+	}
+	public StringDataType getOnvComercializacionFecha() {
+		return onvComercializacionFecha;
+	}
+	public void setOnvComercializacionFecha(StringDataType onvComercializacionFecha) {
+		this.onvComercializacionFecha = onvComercializacionFecha;
+	}	
+	public StringDataType getCodDirComercial() {
+		return codDirComercial;
+	}
+	public void setCodDirComercial(StringDataType codDirComercial) {
+		this.codDirComercial = codDirComercial;
+	}
 }

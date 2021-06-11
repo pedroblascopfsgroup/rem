@@ -47,7 +47,7 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    
 				items: [
 					{ 
-						xtype: 'comboboxfieldbase',
+						xtype: 'comboboxfieldbasedd',
 						fieldLabel: HreRem.i18n('fieldlabel.nombre'),
 						labelWidth: 150,
 						width: 480,
@@ -56,14 +56,25 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 						bind: {
 							store: '{comboProveedorFiltradoManual}',
 							value: '{gestionEconomica.idProveedor}',
-							readOnly: '{!gestionEconomica.esProveedorEditable}'
+							readOnly: '{!gestionEconomica.esProveedorEditable}',
+							rawValue: '{gestionEconomica.nombreProveedor}'
 						},
 						displayField: 'nombreComercial',
 						valueField: 'idProveedor',
 						filtradoEspecial: true,
 						listeners: {
 		                	select: 'onChangeComboProveedorGE'
-		            	}
+		            	},
+						tpl: Ext.create('Ext.XTemplate',
+								'<tpl for=".">',
+									'<div class="x-boundlist-item">{codigo} - {nombre} - {descripcionTipoProveedor} - {estadoProveedorDescripcion}</div>',
+								'</tpl>'
+						),
+						displayTpl:  Ext.create('Ext.XTemplate',
+								'<tpl for=".">',
+									'{codigo} - {nombre} - {descripcionTipoProveedor} - {estadoProveedorDescripcion}',
+								'</tpl>'
+						)
 					},
 					{
 						fieldLabel: HreRem.i18n('fieldlabel.email.contacto'),
@@ -81,7 +92,7 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			        	labelWidth:	150,
 			        	width: 		480,
 			        	bind: {
-		            		store: '{comboProveedorContacto}',
+		            		store: '{comboProveedorContactoGE}',
 		            		value: '{gestionEconomica.idProveedorContacto}',
 		            		disabled: '{!gestionEconomica.idProveedor}'
 		            	},
@@ -337,8 +348,8 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    					cls	: 'panel-base shadow-panel',
 			    					reference: 'gridpresupuestostrabajo',
 			    					bind: {
-			    						store: '{storePresupuestosTrabajo}'
-
+			    						store: '{storePresupuestosTrabajo}',
+			    						topBar: '{disableTopBarPresupuesto}'
 			    					},
 			    					
 			    					secFunToEdit: 'EDITAR_LIST_PRESUPUESTOS_TRABAJO',

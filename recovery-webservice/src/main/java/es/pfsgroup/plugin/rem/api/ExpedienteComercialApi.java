@@ -1292,7 +1292,7 @@ public interface ExpedienteComercialApi {
 	
 	boolean checkExpedienteFechaCheque(Long idTramite);
 
-	boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta) throws IllegalAccessException, InvocationTargetException;
+	boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta, Activo activo) throws IllegalAccessException, InvocationTargetException;
 
 	List<GastosExpediente> getListaGastosExpedienteByIdExpediente(Long idExpediente);
 
@@ -1349,5 +1349,19 @@ public interface ExpedienteComercialApi {
 	boolean updateActivosAlquilados(DtoActivosAlquiladosGrid dto);
 
 	boolean sacarBulk(Long idExpediente);
+	
+	String tipoTratamiento(TareaExterna tareaExterna);
+	
+	Float getPorcentajeCompra(Long idExpediente);
+	
+	public void getCierreOficinaBankiaById(Long idExpediente);
+
+	/**
+	 * Recalcula todos los honorarios
+	 *
+	 * @param idExpediente
+	 * @return void
+	 */
+	void recalcularHonorarios(Long idExpediente) throws Exception;
 
 }

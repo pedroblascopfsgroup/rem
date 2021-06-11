@@ -12,10 +12,10 @@ import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 
 public interface ResolucionComiteApi {
 
-	public static final String NOTIF_RESOL_COMITE_TITEL_MSG = "Resolución comité Bankia sobre la oferta número ";
-	public static final String NOTIF_ANUL_RESOL_COMITE_TITEL_MSG = "Anulación resolución comité Bankia sobre la oferta número ";
-	public static final String NOTIF_RESOL_COMITE_BODY_INITMSG = "El comité decisor de Bankia, ha tomado una resolución sobre una oferta de un activo.";
-	public static final String NOTIF_ANUL_RESOL_COMITE_BODY_INITMSG = "El comité decisor de Bankia, ha anulado una resolución sobre una oferta de un activo.";
+	public static final String NOTIF_RESOL_COMITE_TITEL_MSG = "Resolución comité CaixaBank sobre la oferta número ";
+	public static final String NOTIF_ANUL_RESOL_COMITE_TITEL_MSG = "Anulación resolución comité CaixaBank sobre la oferta número ";
+	public static final String NOTIF_RESOL_COMITE_BODY_INITMSG = "El comité decisor de CaixaBank, ha tomado una resolución sobre una oferta de un activo.";
+	public static final String NOTIF_ANUL_RESOL_COMITE_BODY_INITMSG = "El comité decisor de CaixaBank, ha anulado una resolución sobre una oferta de un activo.";
 	public static final String NOTIF_RESOL_COMITE_BODY_ENDMSG = "Por favor, acceda a la agenda para finalizar la tarea pendiente. Gracias";
 	public static final String NOTIF_ANUL_RESOL_COMITE_BODY_ENDMSG = "Por favor, anule el expediente comercial. Gracias";
 

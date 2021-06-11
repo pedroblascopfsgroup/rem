@@ -999,7 +999,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.comercial'),
 								reference: 'chkbxPerimetroComercializar',
 								bind: {
-									readOnly: '{activo.editableCheckComercializar}',
+									readOnly: '{editableCheckComercializar}',
 									value: '{activo.aplicaComercializar}'
 								},
 								listeners: {
@@ -1059,6 +1059,56 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									value: '{activo.motivoAplicaFormalizar}'
 								}
 							},
+							//Fila Condiciones de inclusión en perímetro Haya						
+							
+							//Fila gestión comercial
+							{
+								xtype:'checkboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.gestion.comercial'),
+								reference: 'checkGestionComercial',
+								bind: {
+									value: '{activo.checkGestorComercial}',
+									readOnly: '{esEditableExcluirValidaciones}'
+								}
+							},
+							{
+								xtype: 'datefieldbase',
+								bind:		'{activo.fechaGestionComercial}',
+								reference: 'datefieldFechaGestionComercial',
+								readOnly: '{esEditableExcluirValidaciones}'
+							},
+							
+							{
+								xtype:'checkboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.excluir.validaciones'),
+								reference: 'checkExclusionGestionComercial',
+								bind: {
+									value: '{activo.excluirValidacionesBool}', 
+									readOnly: '{esEditableExcluirValidaciones}'
+								},
+								listeners: {
+									change: 'onChkbxExclValPerimetroChange'
+								}
+							},
+							{
+								xtype: 'textfieldbase',
+								readOnly : true,
+								colspan: 2
+							},
+							
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetros.motivoDeExcluido'),
+								reference: 'comboMotivoGestionComercial',
+								bind: {
+									store: '{comboMotivoGestionComercialActivo}',
+									value: '{activo.motivoGestionComercialCodigo}',
+									readOnly: '{esEditableExcluirValidaciones}',
+									allowBlank:'{!activo.excluirValidacionesBool}',
+									disabled:'{!activo.excluirValidacionesBool}'
+								}
+							},
+
 							
 							//Bloque Comercialización
 							{    
@@ -1126,6 +1176,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									}
 									]
 							},
+						
 							//Bloque Comercialización
 							{    
 								xtype:'fieldsettable',

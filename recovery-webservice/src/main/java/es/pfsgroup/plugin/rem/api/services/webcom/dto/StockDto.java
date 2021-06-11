@@ -299,6 +299,17 @@ public class StockDto implements WebcomRESTDto{
 	
 	private StringDataType codEquipoGestion;
 
+	@WebcomRequired
+	private BooleanDataType checkGestionComercial;
+	
+	@WebcomRequired
+	private BooleanDataType excluirValidaciones;
+	
+	@WebcomRequired
+	private DateDataType fechaGestionComercial;
+	
+	@WebcomRequired
+	private StringDataType motivoGestionComercial;
 
     @WebcomRequired
     private BooleanDataType spsAlarma;
@@ -317,7 +328,6 @@ public class StockDto implements WebcomRESTDto{
 	
 	@WebcomRequired
 	private DateDataType spsFechaDesinstalaVigilancia;
-	
 	
 	@WebcomRequired
 	private BooleanDataType onvComercializacion;
@@ -1020,6 +1030,30 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodEquipoGestion(StringDataType codEquipoGestion) {
 		this.codEquipoGestion = codEquipoGestion;
 	}
+	public BooleanDataType getCheckGestionComercial() {
+		return checkGestionComercial;
+	}
+	public void setCheckGestionComercial(BooleanDataType checkGestionComercial) {
+		this.checkGestionComercial = checkGestionComercial;
+	}
+	public BooleanDataType getExcluirValidaciones() {
+		return excluirValidaciones;
+	}
+	public void setExcluirValidaciones(BooleanDataType excluirValidaciones) {
+		this.excluirValidaciones = excluirValidaciones;
+	}
+	public DateDataType getFechaGestionComercial() {
+		return fechaGestionComercial;
+	}
+	public void setFechaGestionComercial(DateDataType fechaGestionComercial) {
+		this.fechaGestionComercial = fechaGestionComercial;
+	}
+	public StringDataType getMotivoGestionComercial() {
+		return motivoGestionComercial;
+	}
+	public void setMotivoGestionComercial(StringDataType motivoGestionComercial) {
+		this.motivoGestionComercial = motivoGestionComercial;
+	}
 	public BooleanDataType getSpsAlarma() {
 		return spsAlarma;
 	}
@@ -1067,13 +1101,11 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setOnvComercializacionFecha(StringDataType onvComercializacionFecha) {
 		this.onvComercializacionFecha = onvComercializacionFecha;
-	}
+	}	
 	public StringDataType getCodDirComercial() {
 		return codDirComercial;
 	}
 	public void setCodDirComercial(StringDataType codDirComercial) {
 		this.codDirComercial = codDirComercial;
 	}
-
-	
 }

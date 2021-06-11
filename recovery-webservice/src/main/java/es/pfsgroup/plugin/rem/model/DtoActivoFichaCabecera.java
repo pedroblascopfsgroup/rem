@@ -340,6 +340,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String subestadoAdmisionCodCabecera;
 	private String estadoAdmisionDescCabecera;
 	private String subestadoAdmisionDescCabecera;
+	
+	//Visible Gestion comercial
+	private Boolean excluirValidacionesBool;
+	private Date fechaGestionComercial;
+	private Boolean checkGestorComercial;
+	private String motivoGestionComercialCodigo;
+	private String motivoGestionComercialDescripcion;
+	private Boolean restringido;  
 	private Boolean esEditableActivoEstadoRegistral;
 	private String estadoFisicoActivoDND;
 	private String estadoFisicoActivoDNDDescripcion;
@@ -354,6 +362,11 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Long activoPrincipalRestringida;
 	
 	private String codPromocionBbva;
+	
+	private String codSubfasePublicacion;
+	
+	private Boolean esActivoPrincipalAgrupacionRestringida;
+	
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -2629,6 +2642,63 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.esEditableActivoEstadoRegistral = esEditableActivoEstadoRegistral;
 	}
 
+	public Boolean getExcluirValidacionesBool() {
+		return excluirValidacionesBool;
+	}
+
+	public void setExcluirValidacionesBool(Boolean excluirValidacionesBool) {
+		this.excluirValidacionesBool = excluirValidacionesBool;
+	}
+
+	public Date getFechaGestionComercial() {
+		return fechaGestionComercial;
+	}
+
+	public void setFechaGestionComercial(Date fechaGestionComercial) {
+		this.fechaGestionComercial = fechaGestionComercial;
+	}
+
+
+	public String getMotivoGestionComercialCodigo() {
+		return motivoGestionComercialCodigo;
+	}
+
+	public void setMotivoGestionComercialCodigo(String motivoGestionComercialCodigo) {
+		this.motivoGestionComercialCodigo = motivoGestionComercialCodigo;
+	}
+
+	public String getMotivoGestionComercialDescripcion() {
+		return motivoGestionComercialDescripcion;
+	}
+
+	public void setMotivoGestionComercialDescripcion(String motivoGestionComercialDescripcion) {
+		this.motivoGestionComercialDescripcion = motivoGestionComercialDescripcion;
+	}
+
+	public Boolean getCheckGestorComercial() {
+		return checkGestorComercial;
+	}
+
+	public void setCheckGestorComercial(Boolean checkGestorComercial) {
+		this.checkGestorComercial = checkGestorComercial;
+	}
+
+	public Boolean getRestringido() {
+		return restringido;
+	}
+
+	public void setRestringido(Boolean restringido) {
+		this.restringido = restringido;
+	}
+
+	public String getCodSubfasePublicacion() {
+		return codSubfasePublicacion;
+	}
+
+	public void setCodSubfasePublicacion(String codSubfasePublicacion) {
+		this.codSubfasePublicacion = codSubfasePublicacion;
+	}
+	
 	public Date getFechaFinPrevistaAdecuacion() {
 		return fechaFinPrevistaAdecuacion;
 	}
@@ -2676,6 +2746,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setIsEditablePorcentajeConstruccion(Boolean isEditablePorcentajeConstruccion) {
 		this.isEditablePorcentajeConstruccion = isEditablePorcentajeConstruccion;
 	}
+
 	public String getCodPromocionBbva() {
 		return codPromocionBbva;
 	}
@@ -2690,6 +2761,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setCdpen(String cdpen) {
 		this.cdpen = cdpen;
+	}
+
+	public Boolean getEsActivoPrincipalAgrupacionRestringida() {
+		return esActivoPrincipalAgrupacionRestringida;
+	}
+
+	public void setEsActivoPrincipalAgrupacionRestringida(Boolean esActivoPrincipalAgrupacionRestringida) {
+		this.esActivoPrincipalAgrupacionRestringida = esActivoPrincipalAgrupacionRestringida;
 	}
 
 	public String getEstadoFisicoActivoDNDDescripcion() {

@@ -51,8 +51,6 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 	private static final String AGRUPACION_ACTIVO_OCULTO = "Hay activos que están ocultos";
 	private static final String NO_ES_ACTIVO_PRINCIPAL = "El activo no es el activo principal de la agrupación restringida";
 	private static final String AGRUPACION_RESTRINGIDA = "02";
-	private static final String AGRUPACION_PROMOCION_CONJUNTA_OB_REM = "17";
-	private static final String AGRUPACION_PROMOCION_CONJUNTA_VENTA= "18";
 
 	private static final Integer MAX_CHAR_TEXTO_LIBRE = 250;
 
@@ -286,9 +284,7 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if(!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)
-						|| !particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-						|| !particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_VENTA)){
+				if(!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
 					if(particularValidator.isActivoNoComercializable(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))){
 						listaFilas.add(i);
 					}
@@ -309,9 +305,7 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if(!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)
-						|| !particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-						|| !particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_VENTA)){
+				if(!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
 					if(particularValidator.destinoFinalNoVenta(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))) listaFilas.add(i);
 				}
 			}
@@ -346,9 +340,7 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja; i++){
-				if(!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)
-						|| !particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-						|| !particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_VENTA)){
+				if(!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
 					if(particularValidator.isActivoNoPublicable(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))){
 						listaFilas.add(i);
 					}
@@ -368,9 +360,7 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		int i = 0;
 		try{
 			for(i=1;i<this.numFilasHoja;i++){
-				if(!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)
-						|| !particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-						|| !particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_VENTA)){
+				if(!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
 					if(particularValidator.activoOcultoVenta(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))){
 						listaFilas.add(i);
 					}
@@ -411,9 +401,7 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
 				String numAgrupacion = particularValidator.idAgrupacionDelActivoPrincipal(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
-				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)
-						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_VENTA)){
+				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
 					if(particularValidator.isActivoNoComercializableAgrupacion(numAgrupacion)){
 						listaFilas.add(i);
 					}
@@ -435,9 +423,7 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
 				String numAgrupacion = particularValidator.idAgrupacionDelActivoPrincipal(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
-				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)
-						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_VENTA)){
+				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
 					if(particularValidator.isActivoDestinoComercialNoVentaAgrupacion(numAgrupacion)) listaFilas.add(i);
 				}
 			}
@@ -457,9 +443,7 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		try{
 			for(i=1; i<this.numFilasHoja; i++){
 				String numAgrupacion = particularValidator.idAgrupacionDelActivoPrincipal(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
-				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)
-						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_VENTA)){
+				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
 					if(particularValidator.isActivoNoPublicableAgrupacion(numAgrupacion)){
 						listaFilas.add(i);
 					}
@@ -480,9 +464,7 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		try{
 			for(i=1;i<this.numFilasHoja;i++){
 				String numAgrupacion = particularValidator.idAgrupacionDelActivoPrincipal(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
-				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)
-						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_VENTA)){
+				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
 					if(!particularValidator.activosNoOcultosVentaAgrupacion(numAgrupacion)){
 						listaFilas.add(i);
 					}
@@ -503,12 +485,8 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		int i = 0;
 		try{
 			for(i=1;i<this.numFilasHoja;i++){
-				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)
-						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-						|| particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_VENTA)){
-					if(!particularValidator.esActivoPrincipalEnAgrupacion(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)
-							|| !particularValidator.esActivoPrincipalEnAgrupacion(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-							|| !particularValidator.esActivoPrincipalEnAgrupacion(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_PROMOCION_CONJUNTA_VENTA)){
+				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
+					if(!particularValidator.esActivoPrincipalEnAgrupacion(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
 						listaFilas.add(i);
 					}
 				}

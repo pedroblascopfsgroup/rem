@@ -507,10 +507,7 @@ public class AgrupacionAdapter {
 					}
 					dtoAgrupacion.setEsGestorComercialEnActivo(esGestorComercial(agrupacion));
 					// SI ES TIPO RESTRINGIDA
-				} else if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {	
+				} else if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {	
 					ActivoRestringida agrupacionTemp = (ActivoRestringida) agrupacion;
 
 					BeanUtils.copyProperties(dtoAgrupacion, agrupacionTemp);
@@ -649,10 +646,7 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "incluidoEnPerimetro", perimetroActivo.getIncluidoEnPerimetro() == 1);
 					}
 
-					if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-							|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-							|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)
-							|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA)) {
+					if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 						boolean esMismoDestinoComercial = false;
 						esMismoDestinoComercial = activoAgrupacionActivoDao.isTipoComercializacionesAgrupaciones(agrupacion.getId());						
 
@@ -1319,10 +1313,7 @@ public class AgrupacionAdapter {
 						&& !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())) {
 
 					// Solo tratar con agrupaciones del tipo 'restringida'.
-					if (activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-							|| activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-							|| activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)
-							|| activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA)) {
+					if (activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 					
 						// Solo tratar con agrupaciones que no tengan informada 'fecha baja'.
 						if(Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getFechaBaja()) && 
@@ -1417,10 +1408,7 @@ public class AgrupacionAdapter {
 				throw new JsonViewerException(BusinessValidators.ERROR_CARTERA_NULL);
 
 		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA)) {
+				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
 
 			if (Checks.estaVacio(activo.getPropietariosActivo()))
 				throw new JsonViewerException(BusinessValidators.ERROR_PROPIETARIO_NULL);
@@ -1439,10 +1427,7 @@ public class AgrupacionAdapter {
 			obraNueva.setCodigoPostal(pobl.getCodPostal());
 			return obraNueva;
 
-		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA)) {
+		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 			ActivoRestringida restringida = (ActivoRestringida) agrupacion;
 			restringida.setLocalidad(pobl.getLocalidad());
 			restringida.setProvincia(pobl.getProvincia());
@@ -1488,10 +1473,7 @@ public class AgrupacionAdapter {
 
 			// Si es RESTRINGIDA
 			if (agrupacion.getTipoAgrupacion() != null
-					&& (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-					|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-					|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)
-					|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA))) {
+					&& (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA))) {
 
 				ActivoRestringida restringida = (ActivoRestringida) agrupacion;
 				restringida.setActivoPrincipal(activo);
@@ -1640,10 +1622,7 @@ public class AgrupacionAdapter {
 		int numActivos = activoAgrupacionActivoApi
 				.numActivosPorActivoAgrupacion(activoAgrupacionActivo.getAgrupacion().getId());
 
-		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA)) {
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 
 			if (numActivos == 0) {
 				throw new JsonViewerException("No hay ningún activo asociado a esta agrupación.");
@@ -1676,13 +1655,7 @@ public class AgrupacionAdapter {
 						// Para las agrupaciones de tipo restringido donde se
 						// encuentre el activo.
 						if (activoAgrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo()
-								.equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-								|| activoAgrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo()
-								.equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-								|| activoAgrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo()
-								.equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)
-								|| activoAgrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo()
-								.equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA)) {
+								.equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 							incluidoAgrupacionRestringida = true;
 							// Obtener una lista de activos por la agrupación.
 							List<ActivoAgrupacionActivo> activosPorAgrupacionRestringida = activoAgrupaciones
@@ -2092,10 +2065,7 @@ public class AgrupacionAdapter {
 
 				genericDao.deleteById(ActivoObraNueva.class, Long.valueOf(dtoAgrupacion.getId()));
 
-			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-					|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-					|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)
-					|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA)) {
+			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 
 				genericDao.deleteById(ActivoRestringida.class, Long.valueOf(dtoAgrupacion.getId()));
 
@@ -2176,10 +2146,7 @@ public class AgrupacionAdapter {
 		List<VBusquedaVisitasDetalle> visitasDetalles = new ArrayList<VBusquedaVisitasDetalle>();
 		List<VBusquedaVisitasDetalle> visitasDetallesTemporal = new ArrayList<VBusquedaVisitasDetalle>();
 
-		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA)) {
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 
 			Activo activoPrincipal = agrupacion.getActivoPrincipal();
 			if (activoPrincipal != null && activoPrincipal.getVisitas() != null) {
@@ -2374,10 +2341,7 @@ public class AgrupacionAdapter {
 			genericDao.save(ClienteComercial.class, clienteComercial);
 
 			Oferta oferta = new Oferta();
-			if(TIPO_AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
-					|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-					|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)
-					|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA)){
+			if(TIPO_AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())){
 				oferta.setOrigen(OfertaApi.ORIGEN_REM);
 			}
 
@@ -2479,10 +2443,7 @@ public class AgrupacionAdapter {
 
 			notificationOfertaManager.sendNotification(oferta);
 			
-			if(TIPO_AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
-					|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-					|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)
-					|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA)){
+			if(TIPO_AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())){
 				Activo activoPrincipal = agrupacion.getActivoPrincipal();
 				PerimetroActivo perActivo = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", activoPrincipal.getId()), genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado", false));
 				if(!Checks.esNulo(perActivo.getAplicaFormalizar())){
@@ -2771,10 +2732,7 @@ public class AgrupacionAdapter {
 													for (ActivoAgrupacionActivo activoAgrupacionActivo : listaAgrupaciones) {
 														if(Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getFechaBaja())){
 														
-															if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())
-																	|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())
-																	|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())
-																	|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+															if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
 																throw new JsonViewerException("El activo pertenece a una agrupación restringida");
 															} else if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
 																throw new JsonViewerException("El activo pertenece a un lote comercial de venta");
@@ -3338,10 +3296,7 @@ public class AgrupacionAdapter {
 		}
 
 		// Si es de tipo 'Restringida'.
-		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA)) {
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 
 			ActivoRestringida restringida = (ActivoRestringida) agrupacion;
 
@@ -3885,10 +3840,7 @@ public class AgrupacionAdapter {
 	private String getEstadoNuevaOferta(ActivoAgrupacion agrupacion) {
 		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
 
-		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA)) {
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 			List<Long> activosID = new ArrayList<Long>();
 			for (ActivoAgrupacionActivo activosAgrupacion : agrupacion.getActivos()) {
 				activosID.add(activosAgrupacion.getActivo().getId());
@@ -4248,10 +4200,7 @@ public class AgrupacionAdapter {
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
 		if (DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 			genericDao.deleteById(ActivoObraNueva.class, id);
-		} else if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
-				|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo())
-				|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
-				|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+		} else if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 			genericDao.deleteById(ActivoRestringida.class, id);
 		} else if (DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 			genericDao.deleteById(ActivoProyecto.class, id);

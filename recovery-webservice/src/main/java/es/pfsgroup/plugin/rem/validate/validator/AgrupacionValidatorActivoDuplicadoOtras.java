@@ -20,7 +20,7 @@ public class AgrupacionValidatorActivoDuplicadoOtras extends AgrupacionValidator
 
 	@Override
 	public String[] getCodigoTipoAgrupacion() {
-		return new String[]{DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA, DDTipoAgrupacion.AGRUPACION_RESTRINGIDA, DDTipoAgrupacion.AGRUPACION_ASISTIDA, DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL, DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER, DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM, DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER, DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA};
+		return new String[]{DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA, DDTipoAgrupacion.AGRUPACION_RESTRINGIDA, DDTipoAgrupacion.AGRUPACION_ASISTIDA, DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL, DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER};
 	}
 
 	@Override

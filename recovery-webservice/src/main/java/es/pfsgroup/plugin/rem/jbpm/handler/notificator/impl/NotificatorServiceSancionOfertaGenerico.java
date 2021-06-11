@@ -653,10 +653,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 							"La agrupación no tiene tipo [" + oferta.getAgrupacion().getClass().getSimpleName()
 									+ ", id=" + oferta.getAgrupacion().getId() + "]");
 				}
-				if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(tipo.getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM.equals(tipo.getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER.equals(tipo.getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA.equals(tipo.getCodigo())) {
+				if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(tipo.getCodigo())) {
 					return GESTOR_COMERCIAL_LOTE_RESTRINGIDO;
 				} else if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(tipo.getCodigo())) {
 					return GESTOR_COMERCIAL_LOTE_COMERCIAL;

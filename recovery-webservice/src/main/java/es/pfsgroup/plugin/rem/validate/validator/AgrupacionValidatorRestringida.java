@@ -46,7 +46,7 @@ public class AgrupacionValidatorRestringida extends AgrupacionValidatorCommonImp
 
 	@Override
 	public String[] getCodigoTipoAgrupacion() {		
-		return new String[]{DDTipoAgrupacion.AGRUPACION_RESTRINGIDA, DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM, DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER, DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA};
+		return new String[]{DDTipoAgrupacion.AGRUPACION_RESTRINGIDA};
 	}
 
 	// TODO refactorizar este validador, creando validadores independientes hasta que se pueda eliminar 
@@ -59,10 +59,7 @@ public class AgrupacionValidatorRestringida extends AgrupacionValidatorCommonImp
 		if(!Checks.estaVacio(ofertasActivo)) {
 			for(ActivoOferta ofertaActivo : ofertasActivo) {
 				if(!Checks.esNulo(ofertaActivo)) {
-					if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-							|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM)
-							|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER)
-							|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA)) {
+					if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 						incluidoAgrupacionRestringida = true;
 						Oferta oferta = ofertaActivo.getPrimaryKey().getOferta();
 						if(!Checks.esNulo(oferta.getEstadoOferta())){

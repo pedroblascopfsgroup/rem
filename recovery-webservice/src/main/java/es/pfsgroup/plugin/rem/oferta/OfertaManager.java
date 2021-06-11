@@ -836,12 +836,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if (activoAgrupacion != null) {
 						if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())) {
 							dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
-						} else if (DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM.equals(activoAgrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())) {
-							dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM);
-						} else if (DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER.equals(activoAgrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())) {
-							dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER);
-						} else if (DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA.equals(activoAgrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())) {
-							dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA);
 						}
 					}
 					listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
@@ -4977,10 +4971,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				dtoFichaComercial.setNumAgrupacion(oferta.getAgrupacion().getNumAgrupRem());
 				
-				if(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+				if(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 	
 					if(agrupacion.getActivoPrincipal() != null) {
 						linkHaya = linkCabecera(agrupacion.getActivoPrincipal().getId());
@@ -6533,10 +6524,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					precioWebSeisMesesActivo = actVal.getImporte();
 				}
 				
-				if((agrupacion != null && agrupacion.getTipoAgrupacion() != null && (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo()))) 
+				if((agrupacion != null && agrupacion.getTipoAgrupacion() != null && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) 
 						|| (agrupacion == null && oferta.getActivoPrincipal() != null)) {
 					long diff = Math.abs(new Date().getTime() - actVal.getFechaInicio().getTime());
 					long diffDays = diff / (24 * 60 * 60 * 1000);
@@ -6580,10 +6568,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 				
-				if((agrupacion != null && agrupacion.getTipoAgrupacion() != null && (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_PROMOCION_CONJUNTA_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo()))) 
+				if((agrupacion != null && agrupacion.getTipoAgrupacion() != null && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) 
 						|| (agrupacion == null && oferta.getActivoPrincipal() != null)) {
 					long diff = Math.abs(new Date().getTime() - actVal.getFechaInicio().getTime());
 					long diffDays = diff / (24 * 60 * 60 * 1000);

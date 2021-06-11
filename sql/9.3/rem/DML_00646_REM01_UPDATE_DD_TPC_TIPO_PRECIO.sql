@@ -1,13 +1,13 @@
 --/*
 --#########################################
 --## AUTOR=Javier Esbri
---## FECHA_CREACION=20210531
+--## FECHA_CREACION=20210607
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14028
+--## INCIDENCIA_LINK=HREOS-14229
 --## PRODUCTO=NO
 --## 
---## Finalidad: Update campos Promoción conjunta Ob-rem, Promoción conjunta venta, Promoción conjunta alquiler de la DD_TAG_TIPO_AGRUPACION
+--## Finalidad: Update campo De descuento publicado (web)
 --##            
 --## INSTRUCCIONES:  
 --## VERSIONES:
@@ -23,24 +23,35 @@ DECLARE
   V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar         
   V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
   V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
-  V_TABLA VARCHAR2(50 CHAR):= 'DD_TAG_TIPO_AGRUPACION';
+  V_TABLA VARCHAR2(50 CHAR):= 'DD_TPC_TIPO_PRECIO';
   V_COUNT NUMBER(16); -- Vble. para contar.
   V_COUNT_UPDATE NUMBER(16):= 0; -- Vble. para contar updates
   ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
   ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-  V_USUARIO VARCHAR2(32 CHAR):= 'HREOS-14028';
+  V_USUARIO VARCHAR2(32 CHAR):= 'HREOS-14229';
 
 BEGIN
 
   V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET 
           USUARIOMODIFICAR = '''||V_USUARIO||'''
         , FECHAMODIFICAR = SYSDATE
-        , DD_VISIBLE_CAMPO = ''0''
-        WHERE DD_TAG_CODIGO IN (''17'',''18'',''19'') 
+        , DD_TPC_ORDEN = ''5''
+        , DD_TPC_DESCRIPCION = ''De descuento publicado venta (web)''
+        , DD_TPC_DESCRIPCION_LARGA = ''De descuento publicado venta (web)''
+        WHERE DD_TPC_CODIGO IN (''13'') 
         AND BORRADO = 0
         ';
   EXECUTE IMMEDIATE V_SQL;
- 
+
+  V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET 
+          USUARIOMODIFICAR = '''||V_USUARIO||'''
+        , FECHAMODIFICAR = SYSDATE
+        , DD_TPC_DESCRIPCION = ''De descuento aprobado venta''
+        , DD_TPC_DESCRIPCION_LARGA = ''De descuento aprobado venta''
+        WHERE DD_TPC_CODIGO IN (''07'') 
+        AND BORRADO = 0
+        ';
+  EXECUTE IMMEDIATE V_SQL; 
     
   COMMIT;    
 

@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20170322
+--## AUTOR=Sergio Gomez
+--## FECHA_CREACION=20210609
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1787
+--## INCIDENCIA_LINK=HREOS-14272
 --## PRODUCTO=NO
 --## Finalidad: Vista Materializada exclusiva para Stock que contiene la relación de activos con precios AprobadoVenta, AprobadoRenta y DescuentoWeb
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Sergio Gomez - HREOS-14272 Anyadir DPA al filtro por el TPC.DD_TPC_CODIGO
 --##########################################
 --*/
 
@@ -60,7 +61,7 @@ BEGIN
 			SELECT * FROM (
 				SELECT VAL.ACT_ID, TPC.DD_TPC_CODIGO, VAL.VAL_FECHA_INICIO, VAL.VAL_FECHA_FIN, VAL.VAL_IMPORTE			
 				FROM '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL
-		        JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO TPC ON (VAL.DD_TPC_ID = TPC.DD_TPC_ID AND TPC.DD_TPC_CODIGO IN (''02'',''03'', ''13''))
+		        JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO TPC ON (VAL.DD_TPC_ID = TPC.DD_TPC_ID AND TPC.DD_TPC_CODIGO IN (''02'',''03'', ''13'', ''DPA''))
 		        WHERE VAL.BORRADO = 0
 			) 
 		)
@@ -73,7 +74,10 @@ BEGIN
 		APROBADO_RENTA_WEB,
 		DESCUENTO_PUBLICADO_F_INI,
 		DESCUENTO_PUBLICADO_F_FIN,
-		DESCUENTO_PUBLICADO	 
+		DESCUENTO_PUBLICADO,
+		DESCUENTO_PUBLICADO_ALQUILER_F_INI,
+		DESCUENTO_PUBLICADO_ALQUILER_F_FIN,
+		DESCUENTO_PUBLICADO_ALQUILER
 		FROM PIVOT_DATA
 		PIVOT (
 			MAX(VAL_FECHA_INICIO) AS F_INI,
@@ -81,7 +85,8 @@ BEGIN
 			MAX(VAL_IMPORTE) FOR DD_TPC_CODIGO IN (	
 				''02'' AS "APROBADO_VENTA_WEB",
 				''03'' AS "APROBADO_RENTA_WEB",
-				''13'' AS "DESCUENTO_PUBLICADO"
+				''13'' AS "DESCUENTO_PUBLICADO",
+				''DPA'' AS "DESCUENTO_PUBLICADO_ALQUILER"
 			)
 		)';
 				

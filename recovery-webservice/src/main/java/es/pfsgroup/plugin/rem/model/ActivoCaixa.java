@@ -97,6 +97,24 @@ public class ActivoCaixa implements Serializable, Auditable {
     
     @Column(name = "CBX_FECHA_EST_POS_ACT_INM")
     private Date fechaEstadoPosesorioActivoInmobiliario;
+    
+    @Column(name = "CBX_PUBL_PORT_PUBL_VENTA")
+    private Boolean publicacionPortalPublicoVenta;
+    
+    @Column(name = "CBX_PUBL_PORT_PUBL_ALQUILER")
+    private Boolean publicacionPortalPublicoAlquiler;
+    
+    @Column(name = "CBX_PUBL_PORT_INV_VENTA")
+    private Boolean publicacionPortalInversorVenta;
+    
+    @Column(name = "CBX_PUBL_PORT_INV_ALQUILER")
+    private Boolean publicacionPortalInversorAlquiler;
+    
+    @Column(name = "CBX_PUBL_PORT_API_VENTA")
+    private Boolean publicacionPortalApiVenta;
+    
+    @Column(name = "CBX_PUBL_PORT_API_ALQUILER")
+    private Boolean publicacionPortalApiAlquiler;
 	
 	@Version   
 	private Long version;
@@ -262,6 +280,54 @@ public class ActivoCaixa implements Serializable, Auditable {
 
 	public void setFechaEstadoPosesorioActivoInmobiliario(Date fechaEstadoPosesorioActivoInmobiliario) {
 		this.fechaEstadoPosesorioActivoInmobiliario = fechaEstadoPosesorioActivoInmobiliario;
+	}
+
+	public Boolean getPublicacionPortalPublicoVenta() {
+		return publicacionPortalPublicoVenta;
+	}
+
+	public void setPublicacionPortalPublicoVenta(Boolean publicacionPortalPublicoVenta) {
+		this.publicacionPortalPublicoVenta = publicacionPortalPublicoVenta;
+	}
+
+	public Boolean getPublicacionPortalPublicoAlquiler() {
+		return publicacionPortalPublicoAlquiler;
+	}
+
+	public void setPublicacionPortalPublicoAlquiler(Boolean publicacionPortalPublicoAlquiler) {
+		this.publicacionPortalPublicoAlquiler = publicacionPortalPublicoAlquiler;
+	}
+
+	public Boolean getPublicacionPortalInversorVenta() {
+		return publicacionPortalInversorVenta;
+	}
+
+	public void setPublicacionPortalInversorVenta(Boolean publicacionPortalInversorVenta) {
+		this.publicacionPortalInversorVenta = publicacionPortalInversorVenta;
+	}
+
+	public Boolean getPublicacionPortalInversorAlquiler() {
+		return publicacionPortalInversorAlquiler;
+	}
+
+	public void setPublicacionPortalInversorAlquiler(Boolean publicacionPortalInversorAlquiler) {
+		this.publicacionPortalInversorAlquiler = publicacionPortalInversorAlquiler;
+	}
+
+	public Boolean getPublicacionPortalApiVenta() {
+		return publicacionPortalApiVenta;
+	}
+
+	public void setPublicacionPortalApiVenta(Boolean publicacionPortalApiVenta) {
+		this.publicacionPortalApiVenta = publicacionPortalApiVenta;
+	}
+
+	public Boolean getPublicacionPortalApiAlquiler() {
+		return publicacionPortalApiAlquiler;
+	}
+
+	public void setPublicacionPortalApiAlquiler(Boolean publicacionPortalApiAlquiler) {
+		this.publicacionPortalApiAlquiler = publicacionPortalApiAlquiler;
 	}
 	
 }

@@ -203,3 +203,11 @@ rem_mirror|func-rem-cierreOficinas
 func-rem-cierreOficinas|R-Ambersweet
 func-rem-reglasComercialización|R-Ambersweet
 rem_mirror|func-rem-modeloHydra
+func-rem-modeloHydra|func-rem-comercialHydra
+func-rem-confirmacionTitulares|func-rem-comercialHydra
+func-rem-contrasteDeListas|func-rem-comercialHydra
+func-rem-modeloHydra|func-rem-stockHydra 
+func-rem-modeloHydra|func-rem-facturacionHydra
+func-rem-facturacionHydra|R-Hydra
+func-rem-stockHydra|R-Hydra
+func-rem-comercialHydra|R-Hydra

@@ -147,6 +147,7 @@ R-Entrefina|R-Okitsu
 R-Cadenera|R-Ricalate
 version-2.21.5-rem|version-2.22.1-rem
 rem_mirror|func-rem-obraNuevaComisionamiento
+rem_mirror|func-rem-reglasComercializacion
 rem_mirror|func-rem-ocultacionActivosPrublicacion
 func-rem-ocultacionActivosPrublicacion|R-Fortune
 rem_mirror|func-rem-dqFasesPublicacion
@@ -170,6 +171,8 @@ rem_mirror|R-Cadenera
 version-2.21.5-rem|version-2.22.1-rem
 func-rem-marcadoresSeguridad|func-rem-espartaConvivencia
 R-Tomago|func-rem-facturacionModeloNuevo
+func-rem-obraNuevaComisionamiento|R-Ambersweet
+func-rem-reglasComercializacion|R-Ambersweet
 rem_mirror|func-rem-gestorBoarding
 rem_mirror|func-rem-marcadoresSeguridad
 R-Okitsu|func-rem-alaska-F2
@@ -198,6 +201,8 @@ func-rem-desvincularFechaPosesion|R-Siccari
 rem_mirror|parche-espartaConvivencia
 func-rem-marcajeOcupadosSeguridad|R-Siccari
 rem_mirror|func-rem-cierreOficinas
+func-rem-cierreOficinas|R-Ambersweet
+func-rem-reglasComercialización|R-Ambersweet
 rem_mirror|func-rem-modeloHydra
 func-rem-modeloHydra|func-rem-comercialHydra
 

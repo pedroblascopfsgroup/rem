@@ -812,10 +812,13 @@ public interface OfertaApi {
 	
 	public Page getBusquedaOfertasGridUsuario(DtoOfertaGridFilter dto);
 
+
 	public boolean isIfNecesarioOferta(Oferta oferta);
 	
 	public void rellenarIfNecesario(Oferta oferta);
 
+	List<Oferta> getListOtrasOfertasTramitadasActivo(Long idActivo);
+	
 	public ExpedienteComercial tareaExternaToExpediente(TareaExterna tareaExterna);
 
 	boolean esMayorista(TareaExterna tareaExterna);

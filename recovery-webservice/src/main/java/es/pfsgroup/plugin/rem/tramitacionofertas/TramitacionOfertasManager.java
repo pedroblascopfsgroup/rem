@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
@@ -216,6 +217,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	
 	@Autowired
 	private OfertasAgrupadasLbkDao ofertasAgrupadasLbkDao;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	@Override
 	@Transactional(readOnly = false)
@@ -580,6 +584,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class,
 						DDEstadosExpedienteComercial.EN_TRAMITACION);
 		nuevoExpediente.setEstado(estadoExpediente);
+		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(nuevoExpediente.getOferta(), estadoExpediente);
+
 		nuevoExpediente.setNumExpediente(activoDao.getNextNumExpedienteComercial());
 		nuevoExpediente.setTrabajo(trabajo);
 		

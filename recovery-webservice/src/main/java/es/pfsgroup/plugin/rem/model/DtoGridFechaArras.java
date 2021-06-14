@@ -6,6 +6,10 @@ import es.capgemini.devon.dto.WebDto;
 
 public class DtoGridFechaArras extends WebDto {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Long id;
 	private Long idExpediente;
 	private Date fechaAlta;

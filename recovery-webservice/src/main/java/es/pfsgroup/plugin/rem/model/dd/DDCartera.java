@@ -178,4 +178,5 @@ public class DDCartera implements Auditable, Dictionary {
 		}
 		return isCarteraCerberus;
 	}
+
 }

@@ -1039,5 +1039,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		} else {
 			return false;
 		}
+	},
+	
+	verCampoEstadoContraste: function(){
+		if ($AU.userIsRol('HAYASUPER')) {
+			return false;
+		}else{
+			return true;
+		}
 	}
 });

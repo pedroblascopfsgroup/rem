@@ -819,4 +819,7 @@ public interface OfertaApi {
 	List<Oferta> getListOtrasOfertasTramitadasActivo(Long idActivo);
 	
 	public ExpedienteComercial tareaExternaToExpediente(TareaExterna tareaExterna);
+
+	boolean esMayorista(TareaExterna tareaExterna);
+
 }

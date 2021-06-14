@@ -929,7 +929,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		ANTES : 'ANT',
 		DESPUES: 'DESP'
 	},
-	
+
 	ESTADO_CONT_LISTAS:	{
 		NO_SOLICITADO:'NS',
 		PENDIENTE : 'PEND',

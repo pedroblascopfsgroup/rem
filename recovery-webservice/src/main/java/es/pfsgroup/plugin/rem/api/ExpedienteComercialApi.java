@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -1382,7 +1383,7 @@ public interface ExpedienteComercialApi {
 
 	List<DtoGridFechaArras> getFechaArras(Long idExpediente) throws IllegalAccessException, InvocationTargetException;
 
-	Boolean saveFechaArras(DtoGridFechaArras dto);
+	Boolean saveFechaArras(DtoGridFechaArras dto) throws ParseException;
 
 	Boolean updateFechaArras(DtoGridFechaArras dto) throws IllegalAccessException, InvocationTargetException;
 

@@ -312,6 +312,10 @@
             	def ofertaManager = ctx.getBean("ofertaManager");
             	return ofertaManager.checkAtribuciones(tareaExterna);
             }
+            def esMayorista = {
+            	def ofertaManager = ctx.getBean("ofertaManager");
+            	return ofertaManager.esMayorista(tareaExterna);
+            }
             def checkReserva = {
             	def ofertaManager = ctx.getBean("ofertaManager");
             	return ofertaManager.checkReserva(tareaExterna);
@@ -353,10 +357,6 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.reservaFirmada(idTramite);
             }
-            def esMayorista = {
-            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
-            	return expedienteComercialManager.esMayorista(idTramite);
-            } 
             def comprobarActivoComercializable = {
             	def activoManager = ctx.getBean("activoManager");
             	return activoManager.comprobarActivoComercializable(idActivo);

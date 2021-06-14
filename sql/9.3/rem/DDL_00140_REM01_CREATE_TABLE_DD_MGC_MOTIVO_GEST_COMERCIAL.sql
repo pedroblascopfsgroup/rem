@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Vicente Visiedo Rubio
---## FECHA_CREACION=20201116
+--## FECHA_CREACION=20201117
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-12064

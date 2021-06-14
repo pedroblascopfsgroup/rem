@@ -1121,6 +1121,7 @@ public class StockDto implements WebcomRESTDto{
 	public void setNecesidadIf(BooleanDataType necesidadIf) {
 		this.necesidadIf = necesidadIf;
 	}	
+
 	public StringDataType getCodDirComercial() {
 		return codDirComercial;
 	}
@@ -1145,4 +1146,5 @@ public class StockDto implements WebcomRESTDto{
 	public void setFechaFinCampanyaAlquiler(DateDataType fechaFinCampanyaAlquiler) {
 		this.fechaFinCampanyaAlquiler = fechaFinCampanyaAlquiler;
 	}
+
 }

@@ -620,7 +620,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 													
 												},
                                                 listeners: {
-                                                     dirtychange: 'onChangeCheckboxPublicarAlquiler'
+                                                     dirtychange: 'onChangeCheckboxPublicarAlquiler'/*
+                                                     change: 'onChangePublicarCaixa'*/
                                                 },
                                                 style:'margin-left:10px'
 											},

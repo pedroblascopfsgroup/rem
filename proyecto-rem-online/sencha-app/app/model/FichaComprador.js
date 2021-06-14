@@ -266,6 +266,9 @@ Ext.define('HreRem.model.FichaComprador', {
 		},
 		{
 			name:'formaJuridica' 
+		},
+		{
+			name:'codEstadoContraste'
 		}
 		
 		

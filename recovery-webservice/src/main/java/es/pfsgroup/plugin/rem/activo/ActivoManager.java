@@ -105,6 +105,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
@@ -164,6 +165,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgendaSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
@@ -372,8 +374,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private GestorActivoManager gestorActivoManager;
 
 	@Autowired
-	UsuarioManager usuarioManager;
-
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+    private UsuarioManager usuarioManager;
+	
 	@Autowired
 	private EXTGrupoUsuariosDao extGrupoUsuariosDao;
 
@@ -4062,6 +4067,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			}
 			
+			if(dto.getFechaVenta() != null) {
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false);
+			}
 			if (activo.getNumActivo() != null) {
 				ActivoSareb activoSareb = genericDao.get(ActivoSareb.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activo.getNumActivo()));
 				if(activoSareb != null) {
@@ -4098,8 +4106,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					actualizarHonorarios = true;					
 				}
 				activo.setObraNuevaAEfectosComercializacionFecha(new Date());
-				
+
 			}
+			
+			if(dto.getFechaVenta() != null) {
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false);
+			}
+		
 			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -9295,5 +9308,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	
+
+	@Override
+	public List<Activo> getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(Long idAgrupacion, Long idActivoPrincipal){
+
+		List<Activo> activos = activoDao.getActivosNoPrincipalesAgrupacion(idAgrupacion, idActivoPrincipal);
+		
+		return activos;
+	}
+
 }
 

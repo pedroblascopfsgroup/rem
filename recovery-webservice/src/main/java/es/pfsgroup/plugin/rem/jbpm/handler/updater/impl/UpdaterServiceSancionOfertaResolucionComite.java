@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -74,6 +75,9 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	
 	@Autowired
 	private UsuarioApi usuarioApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionComite.class);
 	 
@@ -206,6 +210,8 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 	
 					}
 					if (IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {

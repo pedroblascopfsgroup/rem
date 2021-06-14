@@ -52,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
@@ -1394,5 +1395,7 @@ public interface ExpedienteComercialApi {
 	void createOrUpdateUltimoPosicionamientoEnviado(Long idExpediente, DtoPosicionamiento dto);
 
 	boolean checkVueltaAtras(Long idTramite);
+
+	DtoRespuestaBCGenerica getUltimaResolucionComiteBC(Long idExpediente);
 
 }

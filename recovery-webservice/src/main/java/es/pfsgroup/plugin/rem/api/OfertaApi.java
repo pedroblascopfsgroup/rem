@@ -820,4 +820,5 @@ public interface OfertaApi {
 
 	boolean esMayorista(TareaExterna tareaExterna);
 
+    Boolean actualizaEstadoOferta(Long idOferta, String codigoEstado);
 }

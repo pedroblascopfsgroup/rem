@@ -6008,7 +6008,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	 * @throws Exception
 	 */
 	private char traducitTipoDoc(String codigoTipoDoc) throws Exception {
-		char result = ' ';
+		char result = ' '; 
 		if (codigoTipoDoc.equals("01")) {
 			result = '1';
 		} else if (codigoTipoDoc.equals("02")) {
@@ -12213,5 +12213,35 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return expediente;
+	}
+	
+	@Override
+	public DtoRespuestaBCGenerica getUltimaResolucionComiteBC(Long idExpediente) {	
+		DtoRespuestaBCGenerica dto = new DtoRespuestaBCGenerica();
+		Order order = new Order(OrderType.DESC,"id");
+		Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "expedienteComercial.id", idExpediente);
+		List<RespuestaComiteBC> respuestComiteBc =  genericDao.getListOrdered(RespuestaComiteBC.class, order, filtroExpediente);
+		if(respuestComiteBc != null && !respuestComiteBc.isEmpty()) {
+			dto = this.respuestaComiteToDtoRespuestaBCGen(respuestComiteBc.get(0));
+		}
+		return dto;
+	}
+	
+	private DtoRespuestaBCGenerica respuestaComiteToDtoRespuestaBCGen (RespuestaComiteBC respuesta) {
+		DtoRespuestaBCGenerica dto = new DtoRespuestaBCGenerica();
+		if(respuesta != null) {
+			dto.setId(respuesta.getId());
+			dto.setFechaRespuestaBC(respuesta.getFechaRespuestaBcRBC());
+			dto.setObservacionesBC(respuesta.getObservacionesBcRBC());
+			if(respuesta.getExpedienteComercial() != null) {
+				dto.setIdExpediente(respuesta.getExpedienteComercial().getId());
+			}
+			if(respuesta.getValidacionBcRBC() != null) {
+				dto.setRespuestaBC(respuesta.getValidacionBcRBC().getCodigo());
+			}
+			
+		}
+		
+		return dto;
 	}
 }

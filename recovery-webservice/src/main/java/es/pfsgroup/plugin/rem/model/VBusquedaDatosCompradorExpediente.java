@@ -249,6 +249,12 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name = "COM_FECHA_NACIOCONST")
 	private Date fechaNacimientoConstitucion;
 
+	@Column(name = "COD_ESTADO_CONTRASTE")
+	private String codEstadoContraste;
+	
+	@Column(name = "DESC_ESTADO_CONTRASTE")
+	private String descripcionEstadoContraste;
+	
 	
 
 	public Long getId() {
@@ -843,6 +849,22 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setNumeroClienteUrsusBhConyuge(String numeroClienteUrsusBhConyuge) {
 		this.numeroClienteUrsusBhConyuge = numeroClienteUrsusBhConyuge;
+	}
+	
+	public String getCodEstadoContraste() {
+		return codEstadoContraste;
+	}
+
+	public void setCodEstadoContraste(String codEstadoContraste) {
+		this.codEstadoContraste = codEstadoContraste;
+	}
+
+	public String getDescripcionEstadoContraste() {
+		return descripcionEstadoContraste;
+	}
+
+	public void setDescripcionEstadoContraste(String descripcionEstadoContraste) {
+		this.descripcionEstadoContraste = descripcionEstadoContraste;
 	}
 
 	public Long getVcexId() {

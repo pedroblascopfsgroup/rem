@@ -533,7 +533,17 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						bind: {
 							store: '{comboSiNoRem}'
 						}
-					}
+					},
+			        {
+			        	xtype: 'comboboxfieldbase',
+			        	fieldLabel:  HreRem.i18n('fieldlabel.estado.contraste'),
+			        	reference: 'estadoContraste',
+			        	hidden: this.lookupController().verCampoEstadoContraste(),
+			        	name: 'codEstadoContraste',
+			        	bind: {
+			        		store: '{comboEstadoContraste}'
+		            	}
+			        }
 				]
 			},
 			{

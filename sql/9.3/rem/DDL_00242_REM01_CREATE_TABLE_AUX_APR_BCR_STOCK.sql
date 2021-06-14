@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20210610
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210611
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14199
+--## INCIDENCIA_LINK=HREOS-14271
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial - HREOS-13942 - Santi Monzó
 --##        0.2 Versión inicial - HREOS-14162 - Alejandra García - Añadir campos
 --##        0.3  HREOS-14199 -  Santi Monzó - Añadir array ara que cree las 4 tablas, añadir campo FLAG_EN_REM en las BCR
+--##        0.4  HREOS-14271 -  Alejandra García - Añadir campo PROMO_COMERCIAL y aumentar tamaño a X_GOOGLE e Y_GOOGLE
 --##########################################
 --*/
 
@@ -137,8 +138,8 @@ BEGIN
         ALA_EDIFICIO                VARCHAR2(2 CHAR),
         PLANTA                      VARCHAR2(3 CHAR),
         NUM_UBICACION               VARCHAR2(5 CHAR),
-        X_GOOGLE                    VARCHAR2(10 CHAR),
-        Y_GOOGLE                    VARCHAR2(10 CHAR),
+        X_GOOGLE                    VARCHAR2(23 CHAR),
+        Y_GOOGLE                    VARCHAR2(23 CHAR),
         SIGLA_EDIFICIO              VARCHAR2(20 CHAR),
 
         ESTADO_TITULARIDAD          VARCHAR2(3 CHAR),
@@ -249,7 +250,8 @@ BEGIN
         IND_FUERZA_PUBLICA          VARCHAR2(8 CHAR),
         IND_OCUPANTES_VIVIENDA      VARCHAR2(8 CHAR),
         FEC_RESOLUCION_MORA         VARCHAR2(8 CHAR),
-        IND_ENTREGA_VOL_POSESI      VARCHAR2(8 CHAR)
+        IND_ENTREGA_VOL_POSESI      VARCHAR2(8 CHAR),
+        PROMO_COMERCIAL             VARCHAR2(8 CHAR)
 
         '||V_TMP_COL(2)||'
 
@@ -443,6 +445,8 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IND_OCUPANTES_VIVIENDA IS '' Ind. Existencia Ocupantes Vivi''';
 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IND_ENTREGA_VOL_POSESI IS '' Ind. Entrega Voluntaria Posesi (llaves)''';
+
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PROMO_COMERCIAL IS '' Promoción comercial''';
 
  END LOOP;
 

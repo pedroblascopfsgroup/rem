@@ -8563,5 +8563,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		preciosVigentesCaixa.setHidden(true);
     		preciosVigentes.setHidden(false);
     	}
-    }
+    }/*,
+    onChangePublicarCaixa: function(get){
+    	var me = this;    	
+    	var carteraCaixa;
+    }*/
 });

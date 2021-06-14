@@ -1052,7 +1052,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.publicacion'),
 								reference: 'chkbxPerimetroPublicar',
 								bind: {
-									readOnly: '{activo.editableCheckPublicacion}',
+									readOnly: '{esSuperUsuarioCaixa}', //TODO
 									value: '{activo.aplicaPublicar}'
 								},
 								listeners: {
@@ -1082,7 +1082,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.comercial'),
 								reference: 'chkbxPerimetroComercializar',
 								bind: {
-									readOnly: '{editableCheckComercializar}',
+									readOnly: '{esSuperUsuarioCaixa}', //TODO
 									value: '{activo.aplicaComercializar}'
 								},
 								listeners: {
@@ -1123,7 +1123,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								reference: 'chkbxPerimetroFormalizar',
 								bind: {
 									value: '{activo.aplicaFormalizar}',
-									readOnly: '{activo.checkFormalizarReadOnly}'
+									readOnly: '{esSuperUsuarioCaixa}'
+									//readOnly: '{activo.checkFormalizarReadOnly}'
 								},
 								listeners: {
 									change: 'onChkbxPerimetroChange'

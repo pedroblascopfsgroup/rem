@@ -1773,7 +1773,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				readOnly = true;
 			}	
 			return readOnly;
-		}
+		},
+		 esSuperUsuarioCaixa: function(get){
+		 	var isBankia = get('activo.isCarteraBankia');
+	    	if (isBankia) {
+	    		if ($AU.userIsRol(CONST.PERFILES["HAYASUPER"])) {
+	    			return false;
+	    		}else{
+	    			return true;	
+	    		}
+	    	}else{
+	    		return false;
+	    	}
+    		return false;
+	    }
 	 },
     
 	 stores: {

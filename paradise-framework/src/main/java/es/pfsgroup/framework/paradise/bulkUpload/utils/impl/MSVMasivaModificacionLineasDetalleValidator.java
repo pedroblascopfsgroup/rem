@@ -40,7 +40,6 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	
 	private static final String GASTO_NO_EXISTE = "El gasto no existe";
 	private static final String ACTIVO_NO_EXISTE = "El activo no existe";
-	private static final String BANKIA_MAS_DE_UNA_LINEA = "La cartera CaixaBank no puede tener más de una línea";
 	private static final String ACCION_BORRAR_ID_LINEA_REQUERIDO = "El id de línea es requerido si el tipo de acción es 'Borrar'";
 	private static final String ID_LINEA_EXISTE = "El id de línea no existe";
 	private static final String SUBTIPO_DIFERENTE_GASTO = "El subtipo es de un tipo diferente del gasto";
@@ -176,7 +175,6 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
 			mapaErrores.put(GASTO_NO_EXISTE, isGastoNotExistsRows(exc));
 			mapaErrores.put(ACTIVO_NO_EXISTE, isExisteActivo(exc));
-			mapaErrores.put(BANKIA_MAS_DE_UNA_LINEA, bankiaMasDeUnaLinea(exc));
 			mapaErrores.put(ACCION_BORRAR_ID_LINEA_REQUERIDO, isAccionBorradoConIdLineaInformado(exc));
 			mapaErrores.put(ID_LINEA_EXISTE, existIdLinea(exc));
 			mapaErrores.put(SUBTIPO_GASTO_NO_EXISTE, subtipoGastoNoExiste(exc));
@@ -225,7 +223,6 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 			
 			if (!mapaErrores.get(GASTO_NO_EXISTE).isEmpty() 
 					|| !mapaErrores.get(ACTIVO_NO_EXISTE).isEmpty()
-					|| !mapaErrores.get(BANKIA_MAS_DE_UNA_LINEA).isEmpty()
 					|| !mapaErrores.get(SUBTIPO_DIFERENTE_GASTO).isEmpty()
 					|| !mapaErrores.get(YA_EXISTE_UN_SUBTIPO_TIPO_IMPOSITIVO_TIPO_IMPUESTO).isEmpty()
 					|| !mapaErrores.get(SUMA_100).isEmpty()

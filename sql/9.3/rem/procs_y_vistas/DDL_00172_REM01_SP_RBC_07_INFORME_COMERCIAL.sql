@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210603
+--## FECHA_CREACION=20210614
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14222
@@ -10,7 +10,8 @@
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-14222] - Alejandra García
+--##        0.2 Cambio de numeración del SP y modificación de los checks de 1 y 0 a S y N respectivamente - [HREOS-14222] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -40,7 +41,7 @@ CREATE OR REPLACE PROCEDURE SP_RBC_07_INFORME_COMERCIAL
 
 BEGIN
 
---1º Merge tabla ACT_TIT_TITULO
+--1º Merge tabla AUX_APR_RBC_STOCK
    DBMS_OUTPUT.PUT_LINE('[INFO] 1 MERGE A LA TABLA AUX_APR_RBC_STOCK.');
 
     V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.AUX_APR_RBC_STOCK AUX
@@ -52,7 +53,7 @@ BEGIN
                         ,DIS.ICO_ID AS ICO_ID
                         ,TPH.DD_TPH_CODIGO AS DD_TPH_CODIGO
                     FROM '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION DIS
-                    JOIN '|| V_ESQUEMA ||'.DD_TPH_TIPO_HABITACULO TPH ON TPH.DD_TPH_ID=DIS.DD_TPH_ID
+                    JOIN '|| V_ESQUEMA ||'.DD_TPH_TIPO_HABITACULO TPH ON TPH.DD_TPH_ID=DIS.DD_TPH_ID AND TPH.BORRADO=0
                         WHERE DIS.BORRADO=0                
            )
            SELECT 
@@ -61,20 +62,20 @@ BEGIN
                 ,ICO.ICO_ANO_REHABILITACION AS ANYO_ULTIMA_REFORMA
                 ,ACT.ACT_NUM_ACTIVO_CAIXA AS NUM_IDENTIFICATIVO                
                 ,CASE
-                    WHEN EDIF.EDI_ASCENSOR >0 THEN ''1''
-                    ELSE ''0''
+                    WHEN EDIF.EDI_ASCENSOR >0 THEN ''S''
+                    ELSE ''N''
                  END AS TIENE_ASCENSOR                
                 ,DIST1.DIS_CANTIDAD AS NUM_HABITACIONES
                 ,DIST2.DIS_CANTIDAD AS NUM_BANYOS
                 ,DIST3.DIS_CANTIDAD AS NUM_TERRAZAS
                 ,DIST4.DIS_CANTIDAD AS NUM_APARACAMIENTOS
                 ,CASE
-                    WHEN DIST5.DIS_CANTIDAD>0 THEN ''1''
-                    ELSE ''0''
+                    WHEN DIST5.DIS_CANTIDAD>0 THEN ''S''
+                    ELSE ''N''
                  END AS TIENE_TRASTERO
                 ,CASE
-                    WHEN DIST4.DIS_CANTIDAD>0 THEN ''1''
-                    ELSE ''0''
+                    WHEN DIST4.DIS_CANTIDAD>0 THEN ''S''
+                    ELSE ''N''
                  END AS EQUIPAMIENTO_015001                
             FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
             JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID=ICO.ACT_ID AND ICO.BORRADO=0

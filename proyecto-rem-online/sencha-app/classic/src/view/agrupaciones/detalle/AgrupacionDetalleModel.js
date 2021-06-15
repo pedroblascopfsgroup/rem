@@ -758,7 +758,25 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		esEditableExcluirValidaciones: function(get){
 			var perfiles = $AU.userHasFunction('EDITAR_EXCLUIR_VALIDACIONES');
 			return !perfiles;
-		}
+		},
+	     
+	     esAgrupacionCaixa: function(get) {
+	    	var me = this;
+	    	var tipoCartera = get('agrupacionficha.codigoCartera');
+	    	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+	    	
+    		if(tipoCartera == CONST.CARTERA['BANKIA']
+    			&& (tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA'] 
+    			|| tipoAgrupacion == CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER'] 
+    			|| tipoAgrupacion == CONST.TIPOS_AGRUPACION['COMERCIAL_VENTA'])) {
+		    		return true;
+	    	}
+	    	return false;
+	     },
+	     
+	     esAgrupacionCaixaOrPromocionAlquiler: function(get) {
+				return get('esAgrupacionCaixa') || get('esAgrupacionPromocionAlquiler'); 
+	     }
     },
 				
     stores: {

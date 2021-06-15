@@ -989,7 +989,8 @@ public class OfertasController {
 		String urlBaseGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_URL);
 		String urlEndpointGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT);
 	 	ReportGeneratorResponse report = excelReportGeneratorApi.requestExcel(request, urlBaseGenerateExcel.concat(urlEndpointGenerateExcel));
-	 	excelReportGeneratorApi.downloadExcel(report, response);
+	 	if(report != null)
+	 		excelReportGeneratorApi.downloadExcel(report, response);
 	 	
 	}
 	

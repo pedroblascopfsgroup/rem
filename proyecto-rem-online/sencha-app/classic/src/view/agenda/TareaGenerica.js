@@ -2475,11 +2475,11 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	var comboResolucion = me.down('[name=comboResolucion]');
     	var comboContraoferta = me.down('[name=numImporteContra]');
     	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+    	var necesidadArras = me.down('[name=necesidadArras]');
     	me.deshabilitarCampo(comboContraoferta);
-    	
     	var observacionesBC = me.down('[name=observacionesBC]');
   	  	me.ocultarCampo(observacionesBC);
-
+  	  	me.ocultarCampo(necesidadArras);
     	
     	if(CONST.CARTERA['BBVA']===codigoCartera){   		   		  
 			me.down('[name=comboResolucion]').setFieldLabel(HreRem.i18n('title.resolucion'));
@@ -2490,12 +2490,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
   	  		var fechaRespuesta = me.down('[name=fechaRespuesta]');
   	  		comboResolucion.setFieldLabel(HreRem.i18n('fieldlabel.respuesta.BC'))
 			fechaRespuesta.setFieldLabel(HreRem.i18n('fieldlabel.fecha.respuesta.BC'));
+  	  		me.desocultarCampo(necesidadArras)
   	  		me.desocultarCampo(observacionesBC);
 	  	  	me.ocultarCampo(comboContraoferta);
 	        me.campoNoObligatorio(comboContraoferta);
 	        comboResolucion.setReadOnly(true);
 	        fechaRespuesta.setReadOnly(true);
 	        observacionesBC.setReadOnly(true);
+	        necesidadArras.setReadOnly(true);
 	        	        
 	        var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 			var url =  $AC.getRemoteUrl('expedientecomercial/getUltimaResolucionComiteBC');
@@ -2506,6 +2508,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			    	var data = Ext.decode(response.responseText);
 			    	var dto = data.data;
 			    	if(!Ext.isEmpty(dto)){
+			    		necesidadArras.setValue(dto.necesidadArrasActivo);
 			    		fechaRespuesta.setValue(Ext.Date.format(new Date(dto.fechaRespuestaBC), 'd/m/Y'));
 			    		comboResolucion.setValue(dto.respuestaBC);
 			    		observacionesBC.setValue(dto.observacionesBC);

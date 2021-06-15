@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20210611
+--## FECHA_CREACION=20210613
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14204
@@ -43,8 +43,9 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('T017_ResolucionCES'		,'textarea', 	'4'		,'observacionesBC'		,null	,'Observaciones BC'),
-    	T_TIPO_DATA('T017_ResolucionCES'		,'textarea', 	'5'		,'observaciones'		,null	,'Observaciones')
+    	T_TIPO_DATA('T017_ResolucionCES'		,'combobox', 	'4'		,'necesidadArras'		,null 	,'DDSiNo'	,'Necesidad de arras'),
+    	T_TIPO_DATA('T017_ResolucionCES'		,'textarea', 	'5'		,'observacionesBC'		,null	,null		,'Observaciones BC'),
+    	T_TIPO_DATA('T017_ResolucionCES'		,'textarea', 	'6'		,'observaciones'		,null	,null		,'Observaciones')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
@@ -72,9 +73,10 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
        	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
                     'SET '||V_TEXT_CHARS||'_TIPO = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
 					', '||V_TEXT_CHARS||'_NOMBRE = '''||TRIM(V_TMP_TIPO_DATA(4))||''''||
-					', '||V_TEXT_CHARS||'_LABEL = '''||TRIM(V_TMP_TIPO_DATA(6))||''''||
+					', '||V_TEXT_CHARS||'_LABEL = '''||TRIM(V_TMP_TIPO_DATA(7))||''''||
 					', '||V_TEXT_CHARS||'_ORDEN = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
 					', '||V_TEXT_CHARS||'_VALIDACION = '''||TRIM(V_TMP_TIPO_DATA(5))||''''||
+					', '||V_TEXT_CHARS||'_BUSINESS_OPERATION = '''||TRIM(V_TMP_TIPO_DATA(6))||''''||
 					', USUARIOMODIFICAR = '''||V_USUARIO||''' , FECHAMODIFICAR = SYSDATE, BORRADO = 0 '||
 					'WHERE '||V_TEXT_CHARS||'_NOMBRE = '''||TRIM(V_TMP_TIPO_DATA(4))||''' AND TAP_ID = '||V_TAP_ID||'';
           EXECUTE IMMEDIATE V_MSQL;
@@ -87,8 +89,8 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
           V_MSQL := 'SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;
           V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (' ||
-                      ''||V_TEXT_CHARS||'_ID, TAP_ID, '||V_TEXT_CHARS||'_ORDEN, '||V_TEXT_CHARS||'_TIPO, '||V_TEXT_CHARS||'_NOMBRE, '||V_TEXT_CHARS||'_LABEL, '||V_TEXT_CHARS||'_VALIDACION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                      'SELECT '|| V_ID || ', '||V_TAP_ID||', '''||V_TMP_TIPO_DATA(3)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''', '''||TRIM(V_TMP_TIPO_DATA(6))||''', '''||TRIM(V_TMP_TIPO_DATA(5))||''', 0, '''||V_USUARIO||''',SYSDATE,0 '||
+                      ''||V_TEXT_CHARS||'_ID, TAP_ID, '||V_TEXT_CHARS||'_ORDEN, '||V_TEXT_CHARS||'_TIPO, '||V_TEXT_CHARS||'_NOMBRE, '||V_TEXT_CHARS||'_LABEL, '||V_TEXT_CHARS||'_VALIDACION, '||V_TEXT_CHARS||'_BUSINESS_OPERATION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+                      'SELECT '|| V_ID || ', '||V_TAP_ID||', '''||V_TMP_TIPO_DATA(3)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''', '''||TRIM(V_TMP_TIPO_DATA(7))||''', '''||TRIM(V_TMP_TIPO_DATA(5))||''', '''||TRIM(V_TMP_TIPO_DATA(6))||''', 0, '''||V_USUARIO||''',SYSDATE,0 '||
 					  ' FROM DUAL';
           DBMS_OUTPUT.PUT_LINE(V_MSQL);
           EXECUTE IMMEDIATE V_MSQL;

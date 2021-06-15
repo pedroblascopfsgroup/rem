@@ -15,6 +15,7 @@ public class DtoRespuestaBCGenerica extends WebDto {
 	private String respuestaBC;
     private Date fechaRespuestaBC;
 	private String observacionesBC;
+	private String necesidadArrasActivo;
 	
 	public Long getId() {
 		return id;
@@ -45,6 +46,12 @@ public class DtoRespuestaBCGenerica extends WebDto {
 	}
 	public void setObservacionesBC(String observacionesBC) {
 		this.observacionesBC = observacionesBC;
+	}
+	public String getNecesidadArrasActivo() {
+		return necesidadArrasActivo;
+	}
+	public void setNecesidadArrasActivo(String necesidadArrasActivo) {
+		this.necesidadArrasActivo = necesidadArrasActivo;
 	}
 	
 	

@@ -6008,7 +6008,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	 * @throws Exception
 	 */
 	private char traducitTipoDoc(String codigoTipoDoc) throws Exception {
-		char result = ' '; 
+		char result = ' ';  
 		if (codigoTipoDoc.equals("01")) {
 			result = '1';
 		} else if (codigoTipoDoc.equals("02")) {
@@ -12223,6 +12223,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		List<RespuestaComiteBC> respuestComiteBc =  genericDao.getListOrdered(RespuestaComiteBC.class, order, filtroExpediente);
 		if(respuestComiteBc != null && !respuestComiteBc.isEmpty()) {
 			dto = this.respuestaComiteToDtoRespuestaBCGen(respuestComiteBc.get(0));
+			dto.setNecesidadArrasActivo(this.getCodigoNecesitaArras(idExpediente));
+			
 		}
 		return dto;
 	}
@@ -12243,5 +12245,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return dto;
+	}
+	
+	private String getCodigoNecesitaArras(Long idExpediente) {
+		String necesitaArrasCod = null;
+		
+		Oferta oferta = ofertaApi.getOfertaByIdExpediente(idExpediente);
+		if(oferta != null){
+			Activo activo = oferta.getActivoPrincipal();
+			if(activo != null) {
+				ActivoCaixa cb = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+				if(cb != null && cb.getNecesidadArras() != null) {
+					String codigo = DDSinSiNo.cambioBooleanToCodigoDiccionario(cb.getNecesidadArras());
+					DDSinSiNo sino = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo));
+					necesitaArrasCod = sino.getCodigo();
+				}
+			}		
+		}
+		
+		return necesitaArrasCod;
 	}
 }

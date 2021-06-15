@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20210609
+--## AUTOR= Lara Pablo
+--## FECHA_CREACION=20210616
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-9917
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=14249
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -19,6 +19,7 @@
 --##		0.6.1 Versión - REMVIP-7528 - Guillem Rey - columna id no debe ser null
 --##		0.7 Versión - HREOS-14126 	- Lara Pablo - Añadidas columnas CEX_C4C_ID y COM_FECHA_NACIOCONST
 --##		0.8 Version - REMVIP-9917 - Adrián Molina - Añadir columna
+--##		0.9 Versión - HREOS-14249 	- Lara Pablo - Añadidas columnas COM_FORMA_JURIDICA
 --##########################################
 --*/
 
@@ -140,8 +141,8 @@ BEGIN
 			CEX.CEX_C4C_ID,
 			COM.COM_FECHA_NACIOCONST,
 			ECL.DD_ECL_CODIGO AS COD_ESTADO_CONTRASTE,
-			ECL.DD_ECL_DESCRIPCION AS DESC_ESTADO_CONTRASTE
-			
+			ECL.DD_ECL_DESCRIPCION AS DESC_ESTADO_CONTRASTE,
+			COM.COM_FORMA_JURIDICA
 
 		FROM REM01.COM_COMPRADOR COM
 	      	LEFT JOIN '|| V_ESQUEMA ||'.CEX_COMPRADOR_EXPEDIENTE CEX ON CEX.COM_ID = COM.COM_ID

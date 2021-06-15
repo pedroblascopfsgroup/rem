@@ -500,14 +500,14 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							margin : '10 10 10 10'
 						},
 						//TODO: Pruebas del excel
-						{
+						/*{
 							xtype : 'button',
 							reference : 'btnGenerarFichaComercial', 
 							rowspan : 2,
 							text : 'superboton',
 							handler : 'onClickGeneraFichaComercialHojaExcel',
 							margin : '10 10 10 10'
-						},
+						},*/
 						{
 							xtype : 'button',
 							reference : 'btnSendAprobacion',

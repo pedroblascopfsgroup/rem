@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210609
+--## FECHA_CREACION=20210616
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14292
@@ -47,6 +47,7 @@ BEGIN
                   USING (
                   SELECT 
                   ACT.ACT_NUM_ACTIVO_CAIXA NUM_IDENTIFICATIVO
+                  , ACT.ACT_NUM_ACTIVO NUM_INMUEBLE
                   , EQV_TVI.DD_CODIGO_CAIXA COMPLEMENTO
                   , BIE_LOC.BIE_LOC_NOMBRE_VIA CALLE
                   , BIE_LOC.BIE_LOC_NUMERO_DOMICILIO NUMERO
@@ -85,7 +86,7 @@ BEGIN
                   AND CRA.DD_CRA_CODIGO = ''03''
                   AND PAC.PAC_INCLUIDO = 1
                   ) AUX
-                  ON (APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
+                  ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE)
                   WHEN MATCHED THEN
                   UPDATE SET 
                   APR.COMPLEMENTO = AUX.COMPLEMENTO
@@ -106,6 +107,7 @@ BEGIN
                   WHEN NOT MATCHED THEN
                   INSERT 
                   (NUM_IDENTIFICATIVO
+                  , NUM_INMUEBLE
                   , COMPLEMENTO
                   , CALLE
                   , NUMERO
@@ -123,6 +125,7 @@ BEGIN
                   , SIGLA_EDIFICIO)
                   VALUES 
                   (AUX.NUM_IDENTIFICATIVO
+                  , AUX.NUM_INMUEBLE
                   , AUX.COMPLEMENTO
                   , AUX.CALLE
                   , AUX.NUMERO
@@ -149,6 +152,7 @@ BEGIN
                   USING (
                   SELECT 
                   ACT.ACT_NUM_ACTIVO_CAIXA NUM_IDENTIFICATIVO
+                  , ACT.ACT_NUM_ACTIVO NUM_INMUEBLE
                   , ACT_REG.REG_SUPERFICIE_PARCELA SUP_TASACION_SOLAR
                   , ACT_REG.REG_SUPERFICIE_PARCELA_UTIL SUP_TASACION_UTIL
                   , ACT_REG.REG_SUPERFICIE_UTIL SUP_REGISTRAL_UTIL
@@ -164,7 +168,7 @@ BEGIN
                   AND CRA.DD_CRA_CODIGO = ''03''
                   AND PAC.PAC_INCLUIDO = 1
                   ) AUX
-                  ON (APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
+                  ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE)
                   WHEN MATCHED THEN
                   UPDATE SET 
                   APR.SUP_TASACION_SOLAR = AUX.SUP_TASACION_SOLAR
@@ -176,6 +180,7 @@ BEGIN
                   WHEN NOT MATCHED THEN
                   INSERT 
                   (NUM_IDENTIFICATIVO
+                  , NUM_INMUEBLE
                   , SUP_TASACION_SOLAR
                   , SUP_TASACION_UTIL
                   , SUP_REGISTRAL_UTIL
@@ -184,6 +189,7 @@ BEGIN
                   , SUP_BAJO_RASANTE)
                   VALUES 
                   (AUX.NUM_IDENTIFICATIVO
+                  , AUX.NUM_INMUEBLE
                   , AUX.SUP_TASACION_SOLAR
                   , AUX.SUP_TASACION_UTIL
                   , AUX.SUP_REGISTRAL_UTIL
@@ -201,6 +207,7 @@ BEGIN
                   USING (
                   SELECT 
                   ACT.ACT_NUM_ACTIVO_CAIXA NUM_IDENTIFICATIVO
+                  , ACT.ACT_NUM_ACTIVO NUM_INMUEBLE
                   , CAT.CAT_REF_CATASTRAL NUM_CARTILLA
                   FROM (SELECT AUX_CAT.ACT_ID, AUX_CAT.CAT_REF_CATASTRAL, ROW_NUMBER() OVER (PARTITION BY AUX_CAT.ACT_ID ORDER BY AUX_CAT.CAT_ID DESC) RN 
                   FROM '|| V_ESQUEMA ||'.ACT_CAT_CATASTRO AUX_CAT 
@@ -213,16 +220,18 @@ BEGIN
                   AND CRA.DD_CRA_CODIGO = ''03''
                   AND PAC.PAC_INCLUIDO = 1
                   ) AUX
-                  ON (APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
+                  ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE)
                   WHEN MATCHED THEN
                   UPDATE SET 
                   APR.NUM_CARTILLA = AUX.NUM_CARTILLA
                   WHEN NOT MATCHED THEN
                   INSERT 
                   (NUM_IDENTIFICATIVO
+                  , NUM_INMUEBLE
                   , NUM_CARTILLA)
                   VALUES 
                   (AUX.NUM_IDENTIFICATIVO
+                  , AUX.NUM_INMUEBLE
                   , AUX.NUM_CARTILLA)';
    
       EXECUTE IMMEDIATE V_MSQL;

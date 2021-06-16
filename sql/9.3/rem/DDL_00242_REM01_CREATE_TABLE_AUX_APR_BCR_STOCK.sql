@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210611
+--## FECHA_CREACION=20210615
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14271
+--## INCIDENCIA_LINK=HREOS-14344
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -14,6 +14,7 @@
 --##        0.2 Versión inicial - HREOS-14162 - Alejandra García - Añadir campos
 --##        0.3  HREOS-14199 -  Santi Monzó - Añadir array ara que cree las 4 tablas, añadir campo FLAG_EN_REM en las BCR
 --##        0.4  HREOS-14271 -  Alejandra García - Añadir campo PROMO_COMERCIAL y aumentar tamaño a X_GOOGLE e Y_GOOGLE
+--##        0.5  HREOS-14344 -  Alejandra García - Añadir campo SOCIEDAD_PATRIOMONIAL
 --##########################################
 --*/
 
@@ -92,6 +93,7 @@ BEGIN
         FEC_VALIDO_A                VARCHAR2(8 CHAR),
         STATUS_USUARIO              VARCHAR2(4 CHAR),
         SITUACION_ALQUILER          VARCHAR2(1 CHAR),
+        SOCIEDAD_PATRIMONIAL        VARCHAR2(4 CHAR),
 
         PRODUCTO                    VARCHAR2(2 CHAR),
         PROCEDENCIA_PRODUCTO        VARCHAR2(2 CHAR),
@@ -289,6 +291,7 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_VALIDO_A IS '' Fecha hasta de validez del Preinmueble / Inmueble''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.STATUS_USUARIO IS '' Status usuario LVMS - Declaración de obra nueva''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SITUACION_ALQUILER IS '' Si el activo tiene SI, se envía una X''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SOCIEDAD_PATRIMONIAL IS '' Sociedad propietaria del Inmueble''';
 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PRODUCTO IS '' Procedencia del producto''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PROCEDENCIA_PRODUCTO IS '' Indica si es crediticio o no crediticio''';

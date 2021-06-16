@@ -99,8 +99,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -1796,5 +1798,18 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				
 		return errorsList;
 	}	
+	
+	@Override
+	public List getDiccionarioEstadosOfertas(String cartera, String equipoGestion) {
+
+		List<DDEstadoOferta> estadosOferta = genericDao.getList(DDEstadoOferta.class);
+
+		if(DDCartera.CODIGO_CAIXA.equals(cartera) && DDEquipoGestion.CODIGO_MAYORISTA.equals(equipoGestion)) {
+			estadosOferta.remove(genericDao.get(DDEstadoOferta.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO)));
+		}
+
+		return estadosOferta;
+	}
 
 }

@@ -975,5 +975,19 @@ public class OfertasController {
 		}
 		return createModelAndViewJson(model);
 	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView actualizaEstadoOferta(Long idOferta, String codigoEstado, ModelMap model) {
+		try {
+			Boolean actualizado = ofertaApi.actualizaEstadoOferta(idOferta, codigoEstado);
+			model.put(RESPONSE_SUCCESS_KEY, actualizado);
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			logger.error("Error en ofertasController", e);
+		}
+		return createModelAndViewJson(model);
+	}
 	
 }

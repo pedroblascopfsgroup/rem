@@ -207,9 +207,9 @@ rem_mirror|func-rem-modeloHydra
 func-rem-modeloHydra|func-rem-comercialHydra
 func-rem-confirmacionTitulares|func-rem-comercialHydra
 func-rem-contrasteDeListas|func-rem-comercialHydra
-func-rem-comercialHydra|R-Hydra
 func-rem-modeloHydra|func-rem-stockHydra 
 func-rem-modeloHydra|func-rem-facturacionHydra
 func-rem-facturacionHydra|R-Hydra
 func-rem-stockHydra|R-Hydra
 func-rem-comercialHydra|R-Hydra
+

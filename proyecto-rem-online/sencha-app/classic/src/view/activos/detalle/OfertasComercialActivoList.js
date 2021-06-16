@@ -25,6 +25,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     initComponent: function () {
         var me = this;
 
+        var activo = me.lookupController().getViewModel().get('activo').getData();
+
         me.columns= [
 		        {
 		        	dataIndex: 'numOferta',
@@ -117,12 +119,13 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 							model: 'HreRem.model.ComboBase',
 							proxy: {
 								type: 'uxproxy',
-								remoteUrl: 'generic/getDiccionario',
-								extraParams: {diccionario: 'estadosOfertas'}
+								remoteUrl: 'generic/getDiccionarioEstadosOfertas',
+								extraParams: {cartera: activo.entidadPropietariaCodigo,
+												equipoGestion: activo.tipoEquipoGestionCodigo}
 							},
 							autoLoad: true,
 							bind: {
-								disabled: '{activo.aplicaComercializar}'
+								disabled: activo.aplicaComercializar
 							}
 						}),
 						displayField: 'descripcion',
@@ -293,7 +296,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	},
 	
 	editFuncion: function(editor, context){
-		
+
 		var me= this;
 		var estado = context.record.get("codigoEstadoOferta");
 		var gencat = context.record.get("gencat");
@@ -380,6 +383,19 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				me.onCambioARechazoOfertaList(me, context.record);
 			} else if (CONST.ESTADOS_OFERTA['CADUCADA'] == estado){
 				me.onCambioARechazoOfertaList(me, context.record);
+			} else if(CONST.ESTADOS_OFERTA['PENDIENTE'] == estado && $AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+			    var idOferta = context.record.get('idOferta');
+			    var url = $AC.getRemoteUrl('ofertas/actualizaEstadoOferta');
+                Ext.Ajax.request({
+                    url: url,
+                	params: {idOferta: idOferta, codigoEstado: estado},
+                	success: function(response, opts){
+                	    me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                	},
+                    callback: function(record, operation) {
+                        me.getStore().load();
+                    }
+                });
 			} else {
 				me.saveFn(editor, me, context);
 			}
@@ -429,6 +445,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		
 		var me = this;
 		var hayOfertaAceptada=false;
+		var codigoEstadoAnterior;
+
 		for (i=0; !hayOfertaAceptada && i<me.getStore().getData().items.length;i++){
 			
 			if(me.getStore().getData().items[i].data.idOferta != record.data.idOferta){
@@ -440,6 +458,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 					|| CONST.ESTADOS_EXPEDIENTE['RES_PTE_MAN'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['AP_PTE_MAN'] == codigoEstadoExpediente
 					|| CONST.ESTADOS_EXPEDIENTE['AP_CES_PTE_MAN'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['CONT_CES'] == codigoEstadoExpediente;
 				hayOfertaAceptada = CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoOferta && expedienteBlocked;
+			}else{
+			    codigoEstadoAnterior = me.getStore().getData().items[i].modified.codigoEstadoOferta;
 			}
 		}
 		
@@ -461,7 +481,14 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.aceptar.rechazar"));
 			return false;
 		}
-		
+
+		//Si no está en estado "Pendiente", no se puede tramitar
+		if(codigoEstadoAnterior != null && CONST.ESTADOS_OFERTA['PENDIENTE'] != codigoEstadoAnterior
+		    && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
+		    me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.tramitar.oferta.no.pendiente"));
+            return false;
+		}
+
 		//HREOS-2814 Validacion si estado oferta = rechazada, tipo y motivo obligatorios.
 		if(CONST.ESTADOS_OFERTA['RECHAZADA'] == codigoEstadoNuevo){
 			if (record.data.tipoRechazoCodigo == null || record.data.motivoRechazoCodigo == null){

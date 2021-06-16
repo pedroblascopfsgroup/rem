@@ -1128,6 +1128,7 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodDirComercial(StringDataType codDirComercial) {
 		this.codDirComercial = codDirComercial;
 	}
+
 	public DoubleDataType getImporteCampanyaAlquiler() {
 		return importeCampanyaAlquiler;
 	}
@@ -1146,5 +1147,4 @@ public class StockDto implements WebcomRESTDto{
 	public void setFechaFinCampanyaAlquiler(DateDataType fechaFinCampanyaAlquiler) {
 		this.fechaFinCampanyaAlquiler = fechaFinCampanyaAlquiler;
 	}
-
 }

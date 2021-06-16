@@ -103,6 +103,7 @@ import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
@@ -4305,6 +4306,12 @@ public class ActivoAdapter {
 
 	private String getEstadoNuevaOferta(Activo activo) {
 		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
+
+		if(DDCartera.CODIGO_CAIXA.equals(activo.getCartera().getCodigo()) &&
+				DDEquipoGestion.CODIGO_MINORISTA.equals(activo.getEquipoGestion().getCodigo())){
+			codigoEstado = DDEstadoOferta.CODIGO_PDTE_DEPOSITO;
+		}
+
 		if (activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(activo.getId())
 				|| ofertaApi.isActivoConOfertaYExpedienteBlocked(activo)) { 
 			codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;

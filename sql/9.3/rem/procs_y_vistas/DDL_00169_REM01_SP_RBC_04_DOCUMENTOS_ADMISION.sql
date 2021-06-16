@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210609
+--## FECHA_CREACION=20210616
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14226
@@ -82,7 +82,7 @@ BEGIN
                   )
                   SELECT 
                   DISTINCT ACT.ACT_NUM_ACTIVO_CAIXA NUM_IDENTIFICATIVO
-                  , ACT.ACT_NUM_ACTIVO
+                  , ACT.ACT_NUM_ACTIVO NUM_INMUEBLE
                   , EQV_TCE.DD_CODIGO_CAIXA CALIFICACION_ENERGETICA
                   , CEE.REGISTRO CERTIFICADO_REGISTRADO
                   , CEE.ADO_FECHA_SOLICITUD FEC_SOLICITUD
@@ -103,7 +103,7 @@ BEGIN
                   AND CRA.DD_CRA_CODIGO = ''03''
                   AND PAC.PAC_INCLUIDO = 1
                   ) AUX
-                  ON (APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
+                  ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE)
                   WHEN MATCHED THEN
                   UPDATE SET 
                   APR.CALIFICACION_ENERGETICA = AUX.CALIFICACION_ENERGETICA
@@ -118,6 +118,7 @@ BEGIN
                   WHEN NOT MATCHED THEN
                   INSERT 
                   (NUM_IDENTIFICATIVO
+                  , NUM_INMUEBLE
                   , CALIFICACION_ENERGETICA
                   , CERTIFICADO_REGISTRADO
                   , FEC_SOLICITUD
@@ -129,6 +130,7 @@ BEGIN
                   , CEDULA_HABITABILIDAD)
                   VALUES 
                   (AUX.NUM_IDENTIFICATIVO
+                  , AUX.NUM_INMUEBLE
                   , AUX.CALIFICACION_ENERGETICA
                   , AUX.CERTIFICADO_REGISTRADO
                   , AUX.FEC_SOLICITUD

@@ -161,6 +161,11 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private Date fechaPosesion;
 	
 	private String superficieParcelaUtil;
+	
+	private String sociedadOrigenCodigo;
+	private String sociedadOrigenDescripcion;
+	private String bancoOrigenCodigo;
+	private String bancoOrigenDescripcion;
 	/*
 
     private NMBAdjudicacionBien adjudicacionBien;
@@ -938,6 +943,30 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setSuperficieParcelaUtil(String superficieParcelaUtil) {
 		this.superficieParcelaUtil = superficieParcelaUtil;
+	}
+	public String getSociedadOrigenCodigo() {
+		return sociedadOrigenCodigo;
+	}
+	public void setSociedadOrigenCodigo(String sociedadOrigenCodigo) {
+		this.sociedadOrigenCodigo = sociedadOrigenCodigo;
+	}
+	public String getSociedadOrigenDescripcion() {
+		return sociedadOrigenDescripcion;
+	}
+	public void setSociedadOrigenDescripcion(String sociedadOrigenDescripcion) {
+		this.sociedadOrigenDescripcion = sociedadOrigenDescripcion;
+	}
+	public String getBancoOrigenCodigo() {
+		return bancoOrigenCodigo;
+	}
+	public void setBancoOrigenCodigo(String bancoOrigenCodigo) {
+		this.bancoOrigenCodigo = bancoOrigenCodigo;
+	}
+	public String getBancoOrigenDescripcion() {
+		return bancoOrigenDescripcion;
+	}
+	public void setBancoOrigenDescripcion(String bancoOrigenDescripcion) {
+		this.bancoOrigenDescripcion = bancoOrigenDescripcion;
 	}
 	
 }

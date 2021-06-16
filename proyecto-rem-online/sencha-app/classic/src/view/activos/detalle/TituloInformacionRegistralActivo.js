@@ -465,6 +465,33 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			        		value:'{datosRegistrales.sociedadPagoAnterior}',
 							rawValue:'{datosRegistrales.sociedadPagoAnteriorDescripcion}'
 			        	}
+			        },
+			      //ESTOS COMBOS APARECEN PARA LOS ACTIVOS DE CAIXA
+					{
+			        	xtype: 'comboboxfieldbasedd',
+			        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.origen'),
+			        	reference:'sociedadOrigenRef',
+			        	
+			        	bind: {			        		
+			        		store: '{comboSociedadOrigenCaixa}',
+			        		hidden: '{!isCarteraBankia}',
+			        		readOnly: true,
+			        		value:'{datosRegistrales.sociedadOrigenCodigo}',
+							rawValue:'{datosRegistrales.sociedadOrigenDescripcion}'
+			        	}
+			        },
+					{
+			        	xtype: 'comboboxfieldbasedd',
+			        	fieldLabel: HreRem.i18n('fieldlabel.banco.origen'),
+			        	reference:'sociedadOrigenRef',
+			        	
+			        	bind: {			        		
+			        		store: '{comboBancoOrigenCaixa}',
+			        		hidden: '{!isCarteraBankia}',
+			        		readOnly: true,
+			        		value:'{datosRegistrales.bancoOrigenCodigo}',
+							rawValue:'{datosRegistrales.bancoOrigenDescripcion}'
+			        	}
 			        }
 				]},
 			        {

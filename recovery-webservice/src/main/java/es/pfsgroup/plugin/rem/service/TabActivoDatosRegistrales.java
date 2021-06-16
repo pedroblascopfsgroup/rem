@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -62,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDBancoOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
@@ -73,8 +75,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
+import es.pfsgroup.plugin.rem.model.dd.DDPlantaEdificio;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSociedadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
@@ -542,6 +546,20 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			}
 			if (activoInfoRegistral.getSuperficieSobreRasante() != null) {
 				activoDto.setSuperficieSobreRasante(activoInfoRegistral.getSuperficieSobreRasante());
+			}
+		}
+		
+		Filter filtroActivoCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroActivoCaixa);
+		
+		if (activoCaixa != null) {
+			if (activoCaixa.getSociedadOrigen() != null) {
+				activoDto.setSociedadOrigenCodigo(activoCaixa.getSociedadOrigen().getCodigo());
+				activoDto.setSociedadOrigenDescripcion(activoCaixa.getSociedadOrigen().getDescripcion());
+			}
+			if (activoCaixa.getBancoOrigen() != null) {
+				activoDto.setBancoOrigenCodigo(activoCaixa.getBancoOrigen().getCodigo());
+				activoDto.setBancoOrigenDescripcion(activoCaixa.getBancoOrigen().getDescripcion());
 			}
 		}
 		
@@ -1080,6 +1098,24 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				}
 				if (dto.getSuperficieSobreRasante() != null) {
 					activoInfoRegistral.setSuperficieSobreRasante(dto.getSuperficieSobreRasante());
+				}
+			}
+			
+			Filter filtroActivoCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroActivoCaixa);
+			
+			if (activoCaixa != null) {
+				if (dto.getSociedadOrigenCodigo() != null) {
+					Filter filtroSociedadOrigen = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getSociedadOrigenCodigo());
+					DDSociedadOrigen sociedadOrigen = genericDao.get(DDSociedadOrigen.class, filtroSociedadOrigen);
+					activoCaixa.setSociedadOrigen(sociedadOrigen);
+				}
+				if (dto.getBancoOrigenCodigo() != null) {
+					Filter filtroBancoOrigen = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getBancoOrigenCodigo());
+					DDBancoOrigen bancoOrigen = genericDao.get(DDBancoOrigen.class, filtroBancoOrigen);
+					activoCaixa.setBancoOrigen(bancoOrigen);
 				}
 			}
 			

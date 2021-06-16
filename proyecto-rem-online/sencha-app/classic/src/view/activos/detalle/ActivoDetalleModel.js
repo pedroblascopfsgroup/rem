@@ -3868,6 +3868,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	        remoteUrl: 'activo/getPreciosVigentesCaixaById',
 	        extraParams: {id: '{activo.id}'}
     	 }
+		},
+		
+		comboSociedadOrigenCaixa: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'sociedadOrigenCaixa'}
+			}
+		},
+		
+		comboBancoOrigenCaixa: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'bancoOrigenCaixa'}
+			}
 		}
 	 }
 });

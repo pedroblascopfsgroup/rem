@@ -8525,38 +8525,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		distritoCaixa.load();
     	}
     },
-    isNotCarteraBankia: function(get){
-    	var me = this;
-    	
-    	var carteraBankia = me.getViewModel().getData().activo.getData().isCarteraBankia;
-    	var checkArras = me.lookupReference('checkNecesidadArrasRef');
-    	var motivoArras = me.lookupReference('motivoNecesidadRef');
-    	var estadoComercialVenta = me.lookupReference('estadoComercialVentaRef');
-    	var estadoComercialAlquiler = me.lookupReference('estadoComercialAlquilerRef');
-    	var fechaComercialVenta = me.lookupReference('fechaEstadoComericalVentaRef');
-    	var fechaComercialAlquiler = me.lookupReference('fechaEstadoComericalAlquilerRef');
-    	
-    	if (carteraBankia != null && carteraBankia == true) {
-    		if (checkArras != null && motivoArras != null) {
-    			checkArras.setHidden(false);
-        		motivoArras.setHidden(false);
-			}
-    		if (estadoComercialVenta != null && estadoComercialAlquiler != null && fechaComercialVenta != null && fechaComercialAlquiler != null) {
-    			estadoComercialVenta.setHidden(false);
-    			estadoComercialAlquiler.setHidden(false);
-    			fechaComercialVenta.setHidden(false);
-    			fechaComercialAlquiler.setHidden(false);
-			}
-    		
-    	}else{
-    		checkArras.setHidden(true);
-    		motivoArras.setHidden(true);
-    		estadoComercialVenta.setHidden(true);
-			estadoComercialAlquiler.setHidden(true);
-			fechaComercialVenta.setHidden(true);
-			fechaComercialAlquiler.setHidden(true);
-    	}
-    },
+
  	
  	editarComboEstadoTecnico: function(get){
  		var me = this;

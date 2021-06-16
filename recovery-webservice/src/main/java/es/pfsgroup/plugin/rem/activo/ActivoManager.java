@@ -4033,6 +4033,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (actCaixa.getFechaEstadoComercialAlquiler() != null) {
 					dto.setFechaEstadoComercialAlquiler(actCaixa.getFechaEstadoComercialAlquiler());
 				}
+				
+				if(actCaixa.getCanalDistribucionVenta() != null) {
+					dto.setCanalPublicacionVentaCodigo(actCaixa.getCanalDistribucionVenta().getCodigo());
+				}
+				if(actCaixa.getCanalDistribucionAlquiler() != null) {
+					dto.setCanalPublicacionAlquilerCodigo(actCaixa.getCanalDistribucionAlquiler().getCodigo());
+				}
 			}
 		}
 		

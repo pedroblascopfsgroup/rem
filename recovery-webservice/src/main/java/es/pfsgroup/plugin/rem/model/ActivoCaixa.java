@@ -23,10 +23,12 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDBancoOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialAlquilerCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialVentaCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTecnicoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoNecesidadArras;
+import es.pfsgroup.plugin.rem.model.dd.DDSociedadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 
 @Entity
@@ -125,6 +127,13 @@ public class ActivoCaixa implements Serializable, Auditable {
     @JoinColumn(name = "CBX_CANAL_DIST_ALQUILER")
     private DDTipoComercializar canalDistribucionAlquiler;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SOR_ID")
+    private DDSociedadOrigen sociedadOrigen;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_BOR_ID")
+    private DDBancoOrigen bancoOrigen;
 	
 	@Version   
 	private Long version;
@@ -354,6 +363,22 @@ public class ActivoCaixa implements Serializable, Auditable {
 
 	public void setCanalDistribucionAlquiler(DDTipoComercializar canalDistribucionAlquiler) {
 		this.canalDistribucionAlquiler = canalDistribucionAlquiler;
+	}
+
+	public DDSociedadOrigen getSociedadOrigen() {
+		return sociedadOrigen;
+	}
+
+	public void setSociedadOrigen(DDSociedadOrigen sociedadOrigen) {
+		this.sociedadOrigen = sociedadOrigen;
+	}
+
+	public DDBancoOrigen getBancoOrigen() {
+		return bancoOrigen;
+	}
+
+	public void setBancoOrigen(DDBancoOrigen bancoOrigen) {
+		this.bancoOrigen = bancoOrigen;
 	}
 	
 }

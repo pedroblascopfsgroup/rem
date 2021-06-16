@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210615
+--## FECHA_CREACION=20210616
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14325
@@ -66,6 +66,7 @@ BEGIN
                      )
                      SELECT 
                      ACT.ACT_NUM_ACTIVO_CAIXA NUM_IDENTIFICATIVO
+                     , ACT.ACT_NUM_ACTIVO NUM_INMUEBLE
                      , CASE   WHEN VNT.ACT_ID IS NOT NULL AND ALQ.ACT_ID IS NOT NULL AND VNT.APU_FECHA_INI_VENTA < ALQ.APU_FECHA_INI_ALQUILER THEN VNT.APU_FECHA_INI_VENTA 
                               WHEN VNT.ACT_ID IS NOT NULL AND ALQ.ACT_ID IS NOT NULL AND VNT.APU_FECHA_INI_VENTA > ALQ.APU_FECHA_INI_ALQUILER THEN ALQ.APU_FECHA_INI_ALQUILER 
                               WHEN VNT.ACT_ID IS NOT NULL THEN VNT.APU_FECHA_INI_VENTA 
@@ -80,16 +81,18 @@ BEGIN
                      AND CRA.DD_CRA_CODIGO = ''03''
                      AND PAC.PAC_INCLUIDO = 1
                   ) AUX
-                  ON (APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
+                  ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE)
                   WHEN MATCHED THEN
                   UPDATE SET 
                   APR.FEC_PUBLICACION_SERVICER = AUX.FEC_PUBLICACION_SERVICER
                   WHEN NOT MATCHED THEN
                   INSERT 
                   (NUM_IDENTIFICATIVO
+                  , NUM_INMUEBLE
                   , FEC_PUBLICACION_SERVICER)
                   VALUES 
                   (AUX.NUM_IDENTIFICATIVO
+                  , AUX.NUM_INMUEBLE
                   , AUX.FEC_PUBLICACION_SERVICER)';
    
       EXECUTE IMMEDIATE V_MSQL;

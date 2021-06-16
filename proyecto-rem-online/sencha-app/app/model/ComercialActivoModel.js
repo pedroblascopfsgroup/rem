@@ -120,6 +120,12 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 			name: 'fechaEstadoComercialAlquiler',
 			type:'date',
 			dateFormat: 'c'
+		},
+		{
+			name: 'canalPublicacionVentaCodigo'
+		},
+		{
+			name: 'canalPublicacionAlquilerCodigo'
 		}
     ],
     

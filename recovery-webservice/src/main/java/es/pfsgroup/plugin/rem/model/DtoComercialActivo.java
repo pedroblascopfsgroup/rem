@@ -41,7 +41,9 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private String estadoComercialAlquilerCodigo;
 	private String estadoComercialAlquilerDescripcion;
 	private Date fechaEstadoComercialVenta;
-	private Date fechaEstadoComercialAlquiler;
+	private Date fechaEstadoComercialAlquiler;	
+	private String canalPublicacionVentaCodigo;
+	private String canalPublicacionAlquilerCodigo;
 
 
 	public String getId() {
@@ -318,4 +320,21 @@ public class DtoComercialActivo extends DtoTabActivo{
 		this.fechaEstadoComercialAlquiler = fechaEstadoComercialAlquiler;
 	}
 
+	public String getCanalPublicacionVentaCodigo() {
+		return canalPublicacionVentaCodigo;
+	}
+
+	public void setCanalPublicacionVentaCodigo(String canalPublicacionVentaCodigo) {
+		this.canalPublicacionVentaCodigo = canalPublicacionVentaCodigo;
+	}
+
+	public String getCanalPublicacionAlquilerCodigo() {
+		return canalPublicacionAlquilerCodigo;
+	}
+
+	public void setCanalPublicacionAlquilerCodigo(String canalPublicacionAlquilerCodigo) {
+		this.canalPublicacionAlquilerCodigo = canalPublicacionAlquilerCodigo;
+	}
+
+	
 }

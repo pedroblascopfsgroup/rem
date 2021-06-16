@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210615
+--## FECHA_CREACION=20210616
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14327
@@ -55,6 +55,7 @@ BEGIN
                      )
                      SELECT 
                      ACT.ACT_NUM_ACTIVO_CAIXA NUM_IDENTIFICATIVO
+                     , ACT.ACT_NUM_ACTIVO NUM_INMUEBLE
                      , CASE WHEN M.ACT_ID IS NOT NULL THEN ''S'' ELSE ''N'' END SITUACION_ALQUILER
                      FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
                      JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
@@ -63,16 +64,18 @@ BEGIN
                      WHERE CRA.DD_CRA_CODIGO = ''03''
                      AND PAC.PAC_INCLUIDO = 1
                   ) AUX
-                  ON (APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
+                  ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE)
                   WHEN MATCHED THEN
                   UPDATE SET 
                      APR.SITUACION_ALQUILER = AUX.SITUACION_ALQUILER
                   WHEN NOT MATCHED THEN
                   INSERT 
                      (NUM_IDENTIFICATIVO
+                     , NUM_INMUEBLE
                      , SITUACION_ALQUILER)
                      VALUES 
                      (AUX.NUM_IDENTIFICATIVO
+                     , AUX.NUM_INMUEBLE
                      , AUX.SITUACION_ALQUILER)';
    
       EXECUTE IMMEDIATE V_MSQL;

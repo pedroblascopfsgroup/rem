@@ -3477,17 +3477,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						&& nifPropietario != null && this.gastoMismoPropietario(nifPropietario, gastoProveedorRefacturable)
 						&& gastoProveedorRefacturable.getPropietario().getCartera() != null) {
 					
-						if(DDCartera.CODIGO_CARTERA_BANKIA.equals(gastoProveedorRefacturable.getPropietario().getCartera().getCodigo())) {
-							
-							String mismosDatosAux = gastoLineaDetalleApi.devolverSubGastoImpuestImpositivo(gastoLineaDetalleApi.devolverLineaBk(gastoProveedorRefacturable));
-							if(mismosDatos == null) {
-								mismosDatos = mismosDatosAux;
-							}	
-							if(!mismosDatos.equals(mismosDatosAux)) {
-								listaGastosFinales.clear();
-								break;
-							}
-						}
+
+
 						listaGastosFinales.add(vGastosRefacturado.getNumGastoHaya());
 					}	
 				}

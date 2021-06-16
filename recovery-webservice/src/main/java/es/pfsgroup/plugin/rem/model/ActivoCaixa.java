@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialAlquilerCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialVentaCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTecnicoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoNecesidadArras;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 
 @Entity
 @Table(name = "ACT_ACTIVO_CAIXA", schema = "${entity.schema}")
@@ -115,6 +116,15 @@ public class ActivoCaixa implements Serializable, Auditable {
     
     @Column(name = "CBX_PUBL_PORT_API_ALQUILER")
     private Boolean publicacionPortalApiAlquiler;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CBX_CANAL_DIST_VENTA")
+    private DDTipoComercializar canalDistribucionVenta;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CBX_CANAL_DIST_ALQUILER")
+    private DDTipoComercializar canalDistribucionAlquiler;
+    
 	
 	@Version   
 	private Long version;
@@ -328,6 +338,22 @@ public class ActivoCaixa implements Serializable, Auditable {
 
 	public void setPublicacionPortalApiAlquiler(Boolean publicacionPortalApiAlquiler) {
 		this.publicacionPortalApiAlquiler = publicacionPortalApiAlquiler;
+	}
+
+	public DDTipoComercializar getCanalDistribucionVenta() {
+		return canalDistribucionVenta;
+	}
+
+	public void setCanalDistribucionVenta(DDTipoComercializar canalDistribucionVenta) {
+		this.canalDistribucionVenta = canalDistribucionVenta;
+	}
+
+	public DDTipoComercializar getCanalDistribucionAlquiler() {
+		return canalDistribucionAlquiler;
+	}
+
+	public void setCanalDistribucionAlquiler(DDTipoComercializar canalDistribucionAlquiler) {
+		this.canalDistribucionAlquiler = canalDistribucionAlquiler;
 	}
 	
 }

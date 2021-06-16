@@ -152,6 +152,10 @@ public class Comprador implements Serializable, Auditable {
     
     @Column(name="COM_FECHA_NACIOCONST")
     private Date fechaNacimientoConstitucion;
+    
+    @Column(name="COM_FORMA_JURIDICA")
+    private String formaJuridica;
+
 
 	public Long getId() {
 		return id;
@@ -405,6 +409,14 @@ public class Comprador implements Serializable, Auditable {
 
 	public void setFechaNacimientoConstitucion(Date fechaNacimientoConstitucion) {
 		this.fechaNacimientoConstitucion = fechaNacimientoConstitucion;
+	}
+
+	public String getFormaJuridica() {
+		return formaJuridica;
+	}
+
+	public void setFormaJuridica(String formaJuridica) {
+		this.formaJuridica = formaJuridica;
 	}
 	
 	

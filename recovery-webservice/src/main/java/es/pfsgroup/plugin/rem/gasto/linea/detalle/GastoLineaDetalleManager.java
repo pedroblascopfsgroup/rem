@@ -146,11 +146,6 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		}
 		
 		
-		if(gasto.getCartera() != null && DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getCartera().getCodigo())) {
-			GastoLineaDetalle gld = gastoLineaDetalleLista.get(0);
-			gastoLineaDetalleLista.clear();
-			gastoLineaDetalleLista.add(gld);
-		}
 		
 		for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleLista) {
 			DtoLineaDetalleGasto dto = new DtoLineaDetalleGasto();
@@ -1817,10 +1812,6 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 						}
 						
 						if(lineaAnyadirTrabajo == null) {
-							if(gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null
-							&& DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())) {
-								return false;
-							}
 							GastoLineaDetalle gastoLineaDetalleNueva = crearGastoLineaDetalleParaTrabajos(gasto, trabajo,lineaParte);
 							if(gastoLineaDetalleNueva.getSubtipoGasto() != null && gastoLineaDetalleNueva.getGastoProveedor() != null) {
 								genericDao.save(GastoLineaDetalle.class, gastoLineaDetalleNueva);

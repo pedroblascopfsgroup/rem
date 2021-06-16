@@ -1980,20 +1980,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(oferta.getOfertaSingular() != null) {
 			dto.setOfertaSingular(oferta.getOfertaSingular() ? "Si" : "No");
 		}
-		
-		Long codigoPrescriptor = new Long(2321);
-		
-		if(!oferta.getOfrDocRespPrescriptor()) {
-			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_COMPRADORES);
+
+		if (oferta.getRespDocCliente() != null) {
+			dto.setTipoResponsableCodigo(oferta.getRespDocCliente().getCodigo());
 		}
-		
-		else if(oferta.getOfrDocRespPrescriptor() && !Checks.esNulo(oferta.getPrescriptor()) && codigoPrescriptor.equals(oferta.getPrescriptor().getCodigoProveedorRem())) {
-			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL);
-		}
-		
-		else if(oferta.getOfrDocRespPrescriptor() && !Checks.esNulo(oferta.getPrescriptor()) && !codigoPrescriptor.equals(oferta.getPrescriptor().getCodigoProveedorRem())) {
-			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR);
-		}
+
 		
 		OfertaExclusionBulk ofertaExclusionBulk = genericDao.get(OfertaExclusionBulk.class, 
 				genericDao.createFilter(FilterType.EQUALS, "oferta", oferta),

@@ -324,6 +324,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoCorrectivoSareb", DDTipoCorrectivoSareb.class); 
 		mapa.put("tipoCuotaComunidad", DDTipoCuotaComunidad.class);
 		mapa.put("segmentacionSareb", DDSegmentoSareb.class);
+		mapa.put("sociedadOrigenCaixa", DDSociedadOrigen.class);  
+		mapa.put("bancoOrigenCaixa", DDBancoOrigen.class);  
 		
 		return Collections.unmodifiableMap(mapa);
 	}

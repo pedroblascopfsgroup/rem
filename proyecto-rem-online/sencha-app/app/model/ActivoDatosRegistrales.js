@@ -614,6 +614,18 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
 			},
 			{
     			name:'superficieParcelaUtil'
+			},
+			{
+    			name:'sociedadOrigenCodigo'
+			},
+			{
+    			name:'sociedadOrigenDescripcion'
+			},
+			{
+    			name:'bancoOrigenCodigo'
+			},
+			{
+    			name:'bancoOrigenDescripcion'
 			}
     ],
     

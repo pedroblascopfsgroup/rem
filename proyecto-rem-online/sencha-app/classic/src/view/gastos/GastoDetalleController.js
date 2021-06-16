@@ -1959,17 +1959,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var window = btn.up('[reference=ventanaCrearLineaDetalleGasto]');
 		var form = window.down('[reference=crearLineaDetalleGastoForm]');	
 		
-		if(window.parent.getStore().data != undefined && 
-			window.parent.lookupController().getViewModel().getData() != undefined &&
-			window.parent.lookupController().getViewModel().getData().esCarteraBakia &&
-			window.parent.getStore().data.length > 0){
-			
-			if(window.idLineaDetalleGasto == null){
-				me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.anyadir.gasto.linea.detalle.bk"));
-				return;
-			}
-			
-		}
+
+		
 		
 		var tipoImpositivo = form.getForm().findField('tipoImpositivo').getValue();
 		var tipoImpuesto = form.getForm().findField('tipoImpuesto').getValue();

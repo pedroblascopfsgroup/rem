@@ -2661,7 +2661,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					&& !Checks.esNulo(adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula())) {
 				Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
 				activoAdapter.uploadDocumento(fileItem, activo,
-						adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula());
+						adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula(), null);
 				// HREOS-5392
 				// Se comprueba que el documento que sube es el de deposito despublicacion
 				// activo

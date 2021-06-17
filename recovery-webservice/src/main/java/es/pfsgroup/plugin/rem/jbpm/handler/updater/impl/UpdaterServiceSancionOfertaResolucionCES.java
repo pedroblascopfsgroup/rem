@@ -111,7 +111,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 					}
 					if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						Filter filtro = null;
-						if(DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())) {
+						if(DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo()) || DDCartera.isCarteraBk(activo.getCartera())) {
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 						}else {
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA);
@@ -123,7 +123,11 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 							List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 							for (Oferta oferta : listaOfertas) {
 								if (!oferta.getId().equals(ofertaAceptada.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
-									ofertaApi.congelarOferta(oferta);
+									if(DDCartera.isCarteraBk(activo.getCartera())) {
+										ofertaApi.finalizarOferta(oferta);
+									}else {
+										ofertaApi.congelarOferta(oferta);
+									}
 								}
 							}
 							

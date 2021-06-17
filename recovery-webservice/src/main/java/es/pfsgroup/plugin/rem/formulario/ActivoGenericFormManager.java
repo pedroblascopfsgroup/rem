@@ -732,7 +732,8 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				if (!Checks.esNulo(expediente)){
             					if(trabajoApi.checkFormalizacion(tareaExterna) && !expedienteComercialApi.esOmega(tareaExterna)){
             						String codigoComite = null;
-			            			if(trabajoApi.checkBankia(tareaExterna)){
+			            			if(trabajoApi.checkBankia(tareaExterna) &&
+											!"T017".equals(tareaActivoApi.getByIdTareaExterna(tareaExterna.getId()).getTramite().getTipoTramite().getCodigo())){
 										try {
 											if(!expediente.getOferta().getVentaDirecta()){
 												codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());

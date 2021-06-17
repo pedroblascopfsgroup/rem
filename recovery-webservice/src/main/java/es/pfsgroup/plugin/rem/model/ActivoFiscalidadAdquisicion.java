@@ -57,10 +57,9 @@ public class ActivoFiscalidadAdquisicion implements Serializable, Auditable {
     
     @Column(name = "FAD_COD_TP_IVA_COMPRA")
     private String codigoTpIvaCompra;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
+        
     @Column(name = "FAD_RENUNCIA_EXENCION")
-    private DDSinSiNo renunciaExencionCompra;
+    private Boolean renunciaExencionCompra;
 	
 	@Version   
 	private Long version;
@@ -124,11 +123,11 @@ public class ActivoFiscalidadAdquisicion implements Serializable, Auditable {
 		this.codigoTpIvaCompra = codigoTpIvaCompra;
 	}
 
-	public DDSinSiNo getRenunciaExencionCompra() {
+	public Boolean getRenunciaExencionCompra() {
 		return renunciaExencionCompra;
 	}
 
-	public void setRenunciaExencionCompra(DDSinSiNo renunciaExencionCompra) {
+	public void setRenunciaExencionCompra(Boolean renunciaExencionCompra) {
 		this.renunciaExencionCompra = renunciaExencionCompra;
 	}
 

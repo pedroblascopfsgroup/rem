@@ -258,7 +258,19 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		viewPortHeight = Ext.Element.getViewportHeight();
 
 		var noContieneTipoAlquiler = false;
-
+		
+		if(activo.get('isCarteraBankia')){
+			var items = this.getStore().getData().items;
+			for( var i = 0; i < items.length; i++){
+				var estadoExpediente = items[0].getData('codigoEstadoExpediente');
+				if(CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'] != estadoExpediente && CONST.ESTADOS_EXPEDIENTE['PENDIENTE_SANCION'] != estadoExpediente
+					&& CONST.ESTADOS_EXPEDIENTE['ANULADO'] != estadoExpediente && CONST.ESTADOS_EXPEDIENTE['DENEGADO'] != estadoExpediente){
+					me.fireEvent("errorToast", HreRem.i18n("msg.crear.oferta.estado.error"));
+					return;
+				}
+			}
+		}
+		
 		if (activo.get('incluyeDestinoComercialAlquiler')) {
 			var codigoTipoAlquiler = activo.get('tipoAlquilerCodigo');
 			if (codigoTipoAlquiler == null || codigoTipoAlquiler == '' || codigoTipoAlquiler == '05') {

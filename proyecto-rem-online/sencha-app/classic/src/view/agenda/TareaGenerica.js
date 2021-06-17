@@ -2444,7 +2444,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var comiteSuperior = me.down('[name=comiteSuperior]');
 		var comite = me.down('[name=comite]');
 		if(CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.desocultarCampo(comiteSuperior);
+			me.ocultarCampo(comiteSuperior);
+			me.ocultarCampo(comite);
+			me.campoNoObligatorio(comiteSuperior);
+			me.campoNoObligatorio(comite);
 		}else{
 			me.ocultarCampo(comiteSuperior);
 		}

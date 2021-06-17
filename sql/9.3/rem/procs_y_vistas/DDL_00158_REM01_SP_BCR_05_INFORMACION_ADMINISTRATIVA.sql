@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20210610
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210617
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14224
+--## INCIDENCIA_LINK=HREOS-14344
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-14224] - Santi Monzó
+--##        0.2 Revisión - [HREOS-14344] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -48,9 +49,14 @@ BEGIN
             act2.ACT_ID as ACT_ID,          
             aux.PRECIO_MAX_MOD_VENTA as ADM_MAX_PRECIO_VENTA,
             aux.PRECIO_MAX_MOD_ALQUILER as ADM_MAX_PRECIO_MODULO_ALQUILER,
-            aux.NECESARIA_AUTORI_TRANS as ADM_OBLIG_AUT_ADM_VENTA,
-            aux.TANTEO_RETRACTO_TRANS as ADM_RENUNCIA_TANTEO_RETRAC
-            
+            CASE 
+               WHEN aux.NECESARIA_AUTORI_TRANS IN (''S'',''1'') THEN 1
+               WHEN aux.NECESARIA_AUTORI_TRANS IN (''N'',''0'') THEN 0
+            END AS ADM_OBLIG_AUT_ADM_VENTA,
+            CASE 
+               WHEN aux.TANTEO_RETRACTO_TRANS IN (''S'',''1'') THEN 1
+               WHEN aux.TANTEO_RETRACTO_TRANS IN (''N'',''0'') THEN 0
+            END AS ADM_RENUNCIA_TANTEO_RETRAC            
             FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux                             
             JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
             WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'

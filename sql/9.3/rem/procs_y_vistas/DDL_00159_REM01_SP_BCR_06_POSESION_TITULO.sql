@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210604
+--## FECHA_CREACION=20210617
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14163
+--## INCIDENCIA_LINK=HREOS-14344
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - HREOS-14163 - Alejandra García (20210603)
 --##        0.2 Cambiar FLAG_INS_UPD por FLAG_EN_REM y añadirlo como condición en cada merge  - HREOS-14163 - Alejandra García (20210604)
+--##        0.3 Revisión - [HREOS-14344] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -47,11 +48,11 @@ BEGIN
     V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_TIT_TITULO ACT
 	USING (				
            SELECT 
-                 AUX.FEC_PRESENTACION_REGISTRO AS TIT_FECHA_PRESENT1_REG
-                ,AUX.FEC_INSC_TITULO AS TIT_FECHA_INSC_REG
-                ,AUX.FEC_PRESENTADO AS TIT_FECHA_PRESENT2_REG
+                 TO_DATE(AUX.FEC_PRESENTACION_REGISTRO,''yyyymmdd'') AS TIT_FECHA_PRESENT1_REG
+                ,TO_DATE(AUX.FEC_INSC_TITULO,''yyyymmdd'') AS TIT_FECHA_INSC_REG
+                ,TO_DATE(AUX.FEC_PRESENTADO,''yyyymmdd'') AS TIT_FECHA_PRESENT2_REG
                 ,ETI.DD_ETI_ID AS DD_ETI_ID 
-                ,AUX.FEC_ESTADO_TITULARIDAD AS FECHA_EST_TIT_ACT_INM
+                ,TO_DATE(AUX.FEC_ESTADO_TITULARIDAD,''yyyymmdd'') AS FECHA_EST_TIT_ACT_INM
                 ,ACT2.ACT_ID AS ACT_ID 
             FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
             JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO AND ACT2.BORRADO=0
@@ -102,9 +103,9 @@ BEGIN
    V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA ACT
       USING (				
             SELECT 
-                   AUX.FEC_VALIDO_DE AS SPS_FECHA_TOMA_POSESION 
+                   TO_DATE(AUX.FEC_VALIDO_DE,''yyyymmdd'') AS SPS_FECHA_TOMA_POSESION 
                   ,TPO.DD_TPO_ID AS  DD_TPO_ID
-                  ,AUX.FEC_ESTADO_POSESORIO AS SPS_FECHA_REVISION_ESTADO
+                  ,TO_DATE(AUX.FEC_ESTADO_POSESORIO,''yyyymmdd'') AS SPS_FECHA_REVISION_ESTADO
                   ,CASE 
                      WHEN AUX.IND_OCUPANTES_VIVIENDA IN (''S'',''1'') THEN 1
                      WHEN AUX.IND_OCUPANTES_VIVIENDA IN (''N'',''0'') THEN 0
@@ -157,11 +158,11 @@ DBMS_OUTPUT.PUT_LINE('[INFO] 3 MERGE A LA TABLA ACT_PAC_PERIMETRO_ACTIVO, PARA D
 V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
 	USING (				
            SELECT 
-                  AUX.FEC_VALIDO_A AS PAC_FECHA_GESTIONAR
-                 ,AUX.FEC_VALIDO_A AS PAC_FECHA_COMERCIALIZAR
-                 ,AUX.FEC_VALIDO_A AS PAC_FECHA_FORMALIZAR
-                 ,AUX.FEC_VALIDO_A AS PAC_FECHA_PUBLICAR
-                 ,AUX.FEC_VALIDO_A AS PAC_FECHA_ADMISION
+                  TO_DATE(AUX.FEC_VALIDO_A,''yyyymmdd'') AS PAC_FECHA_GESTIONAR
+                 ,TO_DATE(AUX.FEC_VALIDO_A,''yyyymmdd'') AS PAC_FECHA_COMERCIALIZAR
+                 ,TO_DATE(AUX.FEC_VALIDO_A,''yyyymmdd'') AS PAC_FECHA_FORMALIZAR
+                 ,TO_DATE(AUX.FEC_VALIDO_A,''yyyymmdd'') AS PAC_FECHA_PUBLICAR
+                 ,TO_DATE(AUX.FEC_VALIDO_A,''yyyymmdd'') AS PAC_FECHA_ADMISION
                  ,ACT2.ACT_ID AS ACT_ID
             FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
             JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO AND ACT2.BORRADO=0
@@ -275,7 +276,8 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
             JOIN ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT2.BORRADO=0
             LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''GRADO_PROPIEDAD''  AND eqv1.DD_CODIGO_CAIXA = aux.GRADO_PROPIEDAD and eqv1.BORRADO=0
             LEFT JOIN '|| V_ESQUEMA ||'.DD_TGP_TIPO_GRADO_PROPIEDAD TGP ON TGP.DD_TGP_CODIGO = eqv1.DD_CODIGO_REM
-            JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv2 ON eqv2.DD_NOMBRE_CAIXA = ''SOCIEDAD_ORIGEN''  AND eqv2.DD_CODIGO_CAIXA = aux.SOCIEDAD_ORIGEN and eqv2.BORRADO=0
+            JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv2 ON eqv2.DD_NOMBRE_CAIXA = ''SOCIEDAD_PATRIMONIAL''  AND eqv2.DD_CODIGO_CAIXA = aux.SOCIEDAD_PATRIMONIAL 
+                                                            AND EQV2.DD_NOMBRE_REM=''ACT_PRO_PROPIETARIO'' and eqv2.BORRADO=0
             JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PROP ON PROP.PRO_DOCIDENTIF=eqv2.DD_CODIGO_REM
             WHERE AUX.FLAG_EN_REM='|| FLAG_EN_REM||'
             ) US ON (US.ACT_ID = ACT.ACT_ID AND ACT.BORRADO=0)
@@ -302,6 +304,110 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                     ,SYSDATE
                 )
 ';
+   EXECUTE IMMEDIATE V_MSQL;
+
+   V_NUM_FILAS := sql%rowcount;
+   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
+    commit;
+
+--5º Merge tabla ACT_PAC_PROPIETARIO_ACTIVO
+
+   DBMS_OUTPUT.PUT_LINE('[INFO] 6 MERGE A LA TABLA ACT_ACTIVO_CAIXA.');
+
+   V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO_CAIXA ACT
+               USING (				
+                     SELECT 
+                            SOR.DD_SOR_ID AS DD_SOR_ID
+                           ,BOR.DD_BOR_ID AS DD_BOR_ID
+                           ,ACT2.ACT_ID AS ACT_ID
+                        FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+                        JOIN ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT2.BORRADO=0
+                        LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv2 ON eqv2.DD_NOMBRE_CAIXA = ''SOCIEDAD_ORIGEN''  AND eqv2.DD_CODIGO_CAIXA = aux.SOCIEDAD_ORIGEN and eqv2.BORRADO=0
+                        LEFT JOIN '|| V_ESQUEMA ||'.DD_SOR_SOCIEDAD_ORIGEN SOR ON SOR.DD_SOR_CODIGO=eqv2.DD_CODIGO_REM
+                        LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''BANCO_ORIGEN''  AND eqv1.DD_CODIGO_CAIXA = aux.BANCO_ORIGEN and eqv1.BORRADO=0
+                        LEFT JOIN '|| V_ESQUEMA ||'.DD_BOR_BANCO_ORIGEN BOR ON BOR.DD_BOR_CODIGO = eqv1.DD_CODIGO_REM
+                        WHERE AUX.FLAG_EN_REM='|| FLAG_EN_REM||'
+                        ) US ON (US.ACT_ID = ACT.ACT_ID AND ACT.BORRADO=0)
+                        WHEN MATCHED THEN UPDATE SET
+                            ACT.DD_SOR_ID=US.DD_SOR_ID
+                           ,ACT.DD_BOR_ID=US.DD_BOR_ID
+                           ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
+                           ,ACT.FECHAMODIFICAR = SYSDATE
+                        WHEN NOT MATCHED THEN INSERT (
+                            CBX_ID
+                           ,ACT_ID
+                           ,DD_SOR_ID
+                           ,DD_BOR_ID
+                           ,USUARIOCREAR  
+                           ,FECHACREAR             
+                           )VALUES(
+                              '|| V_ESQUEMA ||'.S_ACT_ACTIVO_CAIXA.NEXTVAL
+                              ,US.ACT_ID
+                              ,US.DD_SOR_ID
+                              ,US.DD_BOR_ID
+                              ,''STOCK_BC''
+                              ,SYSDATE
+                           )
+   ';
+   EXECUTE IMMEDIATE V_MSQL;
+
+   V_NUM_FILAS := sql%rowcount;
+   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
+    commit;
+
+--6º Merge tabla ACT_FAD_FISCALIDAD_ADQUISICION
+
+   DBMS_OUTPUT.PUT_LINE('[INFO] 7 MERGE A LA TABLA ACT_FAD_FISCALIDAD_ADQUISICION.');
+
+   V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_FAD_FISCALIDAD_ADQUISICION ACT
+               USING (		
+
+                     SELECT
+                         AUX.NUM_IDENTIFICATIVO AS ACT_NUM_ACTIVO_CAIXA
+                        ,ACT2.ACT_ID AS ACT_ID   
+                        ,TIC.DD_TIC_ID AS DD_TIC_ID
+                        ,SIC.DD_SIC_ID AS DD_SIC_ID
+                        ,TO_NUMBER(AUX.PORC_IMPUESTO_COMPRA)/100 AS FAD_PORCENTAJE_IMPUESTO_COMPRA 
+                        ,AUX.COD_TP_IVA_COMPRA AS FAD_COD_TP_IVA_COMPRA 
+                        ,AUX.RENUNCIA_EXENSION AS FAD_RENUNCIA_EXENCION     
+                     FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX                             
+                     JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO AND ACT2.BORRADO=0
+                     LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''TIPO_IMPUESTO_COMPRA''  AND eqv1.DD_CODIGO_CAIXA = aux.TIPO_IMPUESTO_COMPRA AND EQV1.BORRADO=0
+                     LEFT JOIN '|| V_ESQUEMA ||'.DD_TIC_TIPO_IMPUESTO_COMPRA TIC ON TIC.DD_TIC_CODIGO = eqv1.DD_CODIGO_REM
+                     LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''SUBTIPO_IMPUESTO_COMPRA''  AND eqv1.DD_CODIGO_CAIXA = aux.SUBTIPO_IMPUESTO_COMPRA AND EQV1.BORRADO=0
+                     LEFT JOIN '|| V_ESQUEMA ||'.DD_SIC_SUBTIPO_IMPUESTO_COMPRA SIC ON SIC.DD_SIC_CODIGO = eqv1.DD_CODIGO_REM
+                     WHERE AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'        
+                     ) US ON (US.ACT_ID = ACT.ACT_ID )
+                     WHEN MATCHED THEN UPDATE SET
+                         ACT.DD_TIC_ID=US.DD_TIC_ID
+                        ,ACT.DD_SIC_ID=US.DD_SIC_ID
+                        ,ACT.FAD_PORCENTAJE_IMPUESTO_COMPRA=US.FAD_PORCENTAJE_IMPUESTO_COMPRA
+                        ,ACT.FAD_COD_TP_IVA_COMPRA=US.FAD_COD_TP_IVA_COMPRA
+                        ,ACT.FAD_RENUNCIA_EXENCION=US.FAD_RENUNCIA_EXENCION
+                        ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
+                        ,ACT.FECHAMODIFICAR = SYSDATE
+                        WHEN NOT MATCHED THEN INSERT  (
+                                  FAD_ID                                   
+                                 ,ACT_ID
+                                 ,DD_TIC_ID
+                                 ,DD_SIC_ID
+                                 ,FAD_PORCENTAJE_IMPUESTO_COMPRA
+                                 ,FAD_COD_TP_IVA_COMPRA
+                                 ,FAD_RENUNCIA_EXENCION                    
+                                 ,USUARIOCREAR
+                                 ,FECHACREAR
+                           )VALUES ( 
+                                  '|| V_ESQUEMA ||'.S_ACT_FAD_FISCALIDAD_ADQUISICION.NEXTVAL
+                                 ,US.ACT_ID                                        
+                                 ,US.DD_TIC_ID
+                                 ,US.DD_SIC_ID
+                                 ,US.FAD_PORCENTAJE_IMPUESTO_COMPRA
+                                 ,US.FAD_COD_TP_IVA_COMPRA
+                                 ,US.FAD_RENUNCIA_EXENCION
+                                 ,''STOCK_BC''
+                                 ,SYSDATE
+                           )
+   ';
    EXECUTE IMMEDIATE V_MSQL;
 
    V_NUM_FILAS := sql%rowcount;

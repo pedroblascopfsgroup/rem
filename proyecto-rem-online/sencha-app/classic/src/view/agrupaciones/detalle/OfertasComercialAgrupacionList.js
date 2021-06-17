@@ -209,8 +209,8 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		if(CONST.CARTERA['BANKIA'] === codigoCartera){
 			var itemsStore = this.getStore().getData().items;
 			for( var i = 0; i < itemsStore.length; i++){
-				var estadoExpediente = itemsStore[0].getData('codigoEstadoExpediente');
-				if(CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'] != estadoExpediente && CONST.ESTADOS_EXPEDIENTE['PENDIENTE_SANCION'] != estadoExpediente
+				var estadoExpediente = itemsStore[i].getData().codigoEstadoExpediente;
+				if(!Ext.isEmpty(me.estadoExpediente) && CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'] != estadoExpediente && CONST.ESTADOS_EXPEDIENTE['PENDIENTE_SANCION'] != estadoExpediente
 					&& CONST.ESTADOS_EXPEDIENTE['ANULADO'] != estadoExpediente && CONST.ESTADOS_EXPEDIENTE['DENEGADO'] != estadoExpediente){
 					me.fireEvent("errorToast", HreRem.i18n("msg.crear.oferta.estado.error"));
 					return;

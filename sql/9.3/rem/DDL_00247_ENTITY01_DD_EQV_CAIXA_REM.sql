@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210514
+--## FECHA_CREACION=20210616
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13942
+--## INCIDENCIA_LINK=HREOS-14344
 --## PRODUCTO=NO
 --## Finalidad: Creacion tabla DD_EQV_CAIXA_REM, que establece la equivalencia entre diccionarios CAIXA y REM.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-13942] - Santi Monzó
+--##        0.2 Modificación de la PK y del UNIQUE INDEX - [HREOS-14344] - Alejandra García
 --##########################################
 --*/
 
@@ -83,13 +84,13 @@ BEGIN
 	
 
 	-- Creamos indice	
-	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_NOMBRE_CAIXA,DD_CODIGO_CAIXA) TABLESPACE '||V_TABLESPACE_IDX;			
+	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_NOMBRE_CAIXA,DD_CODIGO_CAIXA,DD_NOMBRE_REM,DD_CODIGO_REM) TABLESPACE '||V_TABLESPACE_IDX;			
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');
 	
 	
 	-- Creamos primary key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_NOMBRE_CAIXA,DD_CODIGO_CAIXA) USING INDEX)';
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_NOMBRE_CAIXA,DD_CODIGO_CAIXA,DD_NOMBRE_REM,DD_CODIGO_REM) USING INDEX)';
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
 

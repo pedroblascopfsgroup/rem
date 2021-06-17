@@ -182,7 +182,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 
 				// Se comprueba si cada activo tiene KO de admisión o de gestión
 				// y se envía una notificación
-				if(!expediente.getComiteSancion().getCodigo().equals(DDComiteSancion.CODIGO_APPLE_CERBERUS)){
+				if(expediente.getComiteSancion() != null &&
+						!DDComiteSancion.CODIGO_APPLE_CERBERUS.equals(expediente.getComiteSancion().getCodigo())){
 
 					notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
 				}

@@ -2501,7 +2501,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	        fechaRespuesta.setReadOnly(true);
 	        observacionesBC.setReadOnly(true);
 	        necesidadArras.setReadOnly(true);
-	        	        
+
 	        var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 			var url =  $AC.getRemoteUrl('expedientecomercial/getUltimaResolucionComiteBC');
 			Ext.Ajax.request({
@@ -2512,9 +2512,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			    	var dto = data.data;
 			    	if(!Ext.isEmpty(dto)){
 			    		necesidadArras.setValue(dto.necesidadArrasActivo);
-			    		fechaRespuesta.setValue(Ext.Date.format(new Date(dto.fechaRespuestaBC), 'd/m/Y'));
-			    		comboResolucion.setValue(dto.respuestaBC);
-			    		observacionesBC.setValue(dto.observacionesBC);
 			    	}
 			    }
 			});

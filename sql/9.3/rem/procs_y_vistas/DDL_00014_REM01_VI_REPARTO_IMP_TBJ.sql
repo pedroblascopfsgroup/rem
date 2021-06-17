@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20210611
+--## FECHA_CREACION=20210617
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8708
@@ -63,11 +63,8 @@ BEGIN
 	           GLD.GPV_ID
 	         , GLD.GLD_ID
 	         , TBJ.TBJ_ID
-	         , CASE TBJ.TBJ_IMPORTE_PRESUPUESTO 
-			 		WHEN 0 
-						THEN 0 
-					ELSE (TBJ.TBJ_IMPORTE_PRESUPUESTO + NVL(SUP.IMPORTE_PROV_SUPL, 0)) / SUM(TBJ.TBJ_IMPORTE_PRESUPUESTO + NVL(SUP.IMPORTE_PROV_SUPL, 0))
-	                                           OVER(PARTITION BY GLD.GLD_ID) END AS PART_TBJ_LIN_PVE
+	         , (TBJ.TBJ_IMPORTE_PRESUPUESTO + NVL(SUP.IMPORTE_PROV_SUPL, 0)) / SUM(TBJ.TBJ_IMPORTE_PRESUPUESTO + NVL(SUP.IMPORTE_PROV_SUPL, 0))
+	                                           OVER(PARTITION BY GLD.GLD_ID) PART_TBJ_LIN_PVE
 	         , CASE TBJ.TBJ_IMPORTE_TOTAL 
 			 		WHEN 0 
 						THEN 0 
@@ -82,13 +79,8 @@ BEGIN
 	        LEFT JOIN SUPLIDOS SUP ON SUP.TBJ_ID = TBJ.TBJ_ID
 	    WHERE
 	          (
-	            (
-	                NVL(TBJ.TBJ_IMPORTE_PRESUPUESTO, 0) <> 0
-	                OR NVL(TBJ.TBJ_IMPORTE_TOTAL, 0) <> 0
-	            )
-	            OR (
-	                NVL(SUP.IMPORTE_PROV_SUPL, 0) <> 0
-	            )
+	            NVL(TBJ.TBJ_IMPORTE_PRESUPUESTO, 0) <> 0 
+				OR NVL(SUP.IMPORTE_PROV_SUPL, 0) <> 0
 	         )
 	          AND GTB.BORRADO = 0
 	), PRINCIPAL AS (

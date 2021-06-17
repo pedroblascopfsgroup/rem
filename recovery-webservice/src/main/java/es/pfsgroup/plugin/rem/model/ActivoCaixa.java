@@ -24,12 +24,16 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDBancoOrigen;
+import es.pfsgroup.plugin.rem.model.dd.DDCarteraVentaActivos;
+import es.pfsgroup.plugin.rem.model.dd.DDCarteraVentaCreditos;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialAlquilerCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialVentaCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTecnicoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoNecesidadArras;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTributacionPropuestaClienteExentoIva;
+import es.pfsgroup.plugin.rem.model.dd.DDTributacionPropuestaVenta;
 
 @Entity
 @Table(name = "ACT_ACTIVO_CAIXA", schema = "${entity.schema}")
@@ -134,6 +138,44 @@ public class ActivoCaixa implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_BOR_ID")
     private DDBancoOrigen bancoOrigen;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPE_ID")
+    private DDTributacionPropuestaClienteExentoIva tributacionPropuestaClienteExentoIva;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CVC_ID")
+    private DDCarteraVentaCreditos carteraVentaCreditos;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CVA_ID")
+    private DDCarteraVentaActivos carteraVentaActivos;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPV_ID")
+    private DDTributacionPropuestaVenta tributacionPropuestaVenta;
+    
+	@Column(name = "CBX_CARTERA_CONCENTRADA")
+	private Boolean carteraConcentrada;
+	
+	@Column(name = "CBX_ACTIVO_AAMM")
+	private Boolean activoAAMM;
+	
+	@Column(name = "CBX_ACTIVO_PROM_ESTR")
+	private Boolean activoPromocionesEstrategicas;
+	
+	@Column(name = "CBX_FEC_INI_CONCU")
+    private Date fechaInicioConcurrencia;
+	
+	@Column(name = "CBX_FEC_FIN_CONCU")
+    private Date fechaFinConcurrencia;
+	
+	@Column(name = "CBX_ANYO_CONCES")
+	private Integer anyoConcesion;
+	
+	@Column(name = "CBX_FEC_FIN_CONCES")
+    private Date fechaFinConcesion;
+	
 	
 	@Version   
 	private Long version;
@@ -379,6 +421,95 @@ public class ActivoCaixa implements Serializable, Auditable {
 
 	public void setBancoOrigen(DDBancoOrigen bancoOrigen) {
 		this.bancoOrigen = bancoOrigen;
+	}
+
+	public DDTributacionPropuestaClienteExentoIva getTributacionPropuestaClienteExentoIva() {
+		return tributacionPropuestaClienteExentoIva;
+	}
+
+	public void setTributacionPropuestaClienteExentoIva(
+			DDTributacionPropuestaClienteExentoIva tributacionPropuestaClienteExentoIva) {
+		this.tributacionPropuestaClienteExentoIva = tributacionPropuestaClienteExentoIva;
+	}
+
+	public DDCarteraVentaCreditos getCarteraVentaCreditos() {
+		return carteraVentaCreditos;
+	}
+
+	public void setCarteraVentaCreditos(DDCarteraVentaCreditos carteraVentaCreditos) {
+		this.carteraVentaCreditos = carteraVentaCreditos;
+	}
+
+	public DDCarteraVentaActivos getCarteraVentaActivos() {
+		return carteraVentaActivos;
+	}
+
+	public void setCarteraVentaActivos(DDCarteraVentaActivos carteraVentaActivos) {
+		this.carteraVentaActivos = carteraVentaActivos;
+	}
+
+	public DDTributacionPropuestaVenta getTributacionPropuestaVenta() {
+		return tributacionPropuestaVenta;
+	}
+
+	public void setTributacionPropuestaVenta(DDTributacionPropuestaVenta tributacionPropuestaVenta) {
+		this.tributacionPropuestaVenta = tributacionPropuestaVenta;
+	}
+
+	public Boolean getCarteraConcentrada() {
+		return carteraConcentrada;
+	}
+
+	public void setCarteraConcentrada(Boolean carteraConcentrada) {
+		this.carteraConcentrada = carteraConcentrada;
+	}
+
+	public Boolean getActivoAAMM() {
+		return activoAAMM;
+	}
+
+	public void setActivoAAMM(Boolean activoAAMM) {
+		this.activoAAMM = activoAAMM;
+	}
+
+	public Boolean getActivoPromocionesEstrategicas() {
+		return activoPromocionesEstrategicas;
+	}
+
+	public void setActivoPromocionesEstrategicas(Boolean activoPromocionesEstrategicas) {
+		this.activoPromocionesEstrategicas = activoPromocionesEstrategicas;
+	}
+
+	public Date getFechaInicioConcurrencia() {
+		return fechaInicioConcurrencia;
+	}
+
+	public void setFechaInicioConcurrencia(Date fechaInicioConcurrencia) {
+		this.fechaInicioConcurrencia = fechaInicioConcurrencia;
+	}
+
+	public Date getFechaFinConcurrencia() {
+		return fechaFinConcurrencia;
+	}
+
+	public void setFechaFinConcurrencia(Date fechaFinConcurrencia) {
+		this.fechaFinConcurrencia = fechaFinConcurrencia;
+	}
+
+	public Integer getAnyoConcesion() {
+		return anyoConcesion;
+	}
+
+	public void setAnyoConcesion(Integer anyoConcesion) {
+		this.anyoConcesion = anyoConcesion;
+	}
+
+	public Date getFechaFinConcesion() {
+		return fechaFinConcesion;
+	}
+
+	public void setFechaFinConcesion(Date fechaFinConcesion) {
+		this.fechaFinConcesion = fechaFinConcesion;
 	}
 	
 }

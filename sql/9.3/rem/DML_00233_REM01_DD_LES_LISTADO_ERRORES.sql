@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=PIER GOTTA
---## FECHA_CREACION=20210602
+--## FECHA_CREACION=202106016
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-13884
+--## INCIDENCIA_LINK=HREOS-14300
 --## PRODUCTO=NO
 --##
 --## Finalidad: Insert en tabla DD_LES_LISTADO_ERRORES_SAP.
@@ -48,7 +48,9 @@ DECLARE
 	T_TIPO_DATA('03','000','Gasto contabilizado.','04','03','07'),
 	T_TIPO_DATA('04','701','Gasto rechazado, requiere gestión por parte de Haya (vendrá acompañado de algún texto que clarifique el problema).','08','01','04'),
 	T_TIPO_DATA('05','600','Gasto Ok, pero error en otro gasto de provisión.','03','03','01'),
-	T_TIPO_DATA('06','800','Gasto pagado','05','03','07')
+	T_TIPO_DATA('06','800','Gasto pagado','05','03','07'),
+	T_TIPO_DATA('07','801','Gasto retrocedido y vuelto a pagar.','05','03','07'),
+	T_TIPO_DATA('08','802','Anulación pago.','04','03','07')
 
 
     ); 

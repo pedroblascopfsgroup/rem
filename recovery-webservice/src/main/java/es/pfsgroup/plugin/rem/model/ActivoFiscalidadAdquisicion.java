@@ -22,6 +22,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoImpuestoCompra;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoImpuestoCompra;
 
@@ -57,8 +58,9 @@ public class ActivoFiscalidadAdquisicion implements Serializable, Auditable {
     @Column(name = "FAD_COD_TP_IVA_COMPRA")
     private String codigoTpIvaCompra;
     
+    @ManyToOne(fetch = FetchType.LAZY)
     @Column(name = "FAD_RENUNCIA_EXENCION")
-    private Boolean renunciaExencionCompra;
+    private DDSinSiNo renunciaExencionCompra;
 	
 	@Version   
 	private Long version;
@@ -122,11 +124,11 @@ public class ActivoFiscalidadAdquisicion implements Serializable, Auditable {
 		this.codigoTpIvaCompra = codigoTpIvaCompra;
 	}
 
-	public Boolean getRenunciaExencionCompra() {
+	public DDSinSiNo getRenunciaExencionCompra() {
 		return renunciaExencionCompra;
 	}
 
-	public void setRenunciaExencionCompra(Boolean renunciaExencionCompra) {
+	public void setRenunciaExencionCompra(DDSinSiNo renunciaExencionCompra) {
 		this.renunciaExencionCompra = renunciaExencionCompra;
 	}
 

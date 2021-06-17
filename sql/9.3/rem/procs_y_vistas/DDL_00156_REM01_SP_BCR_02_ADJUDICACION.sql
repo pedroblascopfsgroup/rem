@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210601
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210617
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14197
+--## INCIDENCIA_LINK=HREOS-14344
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-14197] - Daniel Algaba
+--##        0.2  Revisión - [HREOS-14344] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -48,11 +49,11 @@ BEGIN
                   SELECT 
                   BIE_ADJ.BIE_ADJ_ID
                   , BIE.BIE_ID
-                  , APR.FEC_TITULO_FIRME BIE_ADJ_F_DECRETO_FIRME
-                  , APR.FEC_SEÑAL_LANZAMINETO BIE_ADJ_F_SEN_LANZAMIENTO
-                  , APR.FEC_LANZAMINETO BIE_ADJ_F_REA_LANZAMIENTO
-                  , APR.FEC_RESOLUCION_MORA BIE_ADJ_F_RES_MORATORIA
-                  , APR.FEC_POSESION BIE_ADJ_F_REA_POSESION
+                  , TO_DATE(APR.FEC_TITULO_FIRME,''yyyymmdd'') BIE_ADJ_F_DECRETO_FIRME
+                  , TO_DATE(APR.FEC_SENYAL_LANZAMIENTO,''yyyymmdd'') BIE_ADJ_F_SEN_LANZAMIENTO
+                  , TO_DATE(APR.FEC_LANZAMINETO,''yyyymmdd'') BIE_ADJ_F_REA_LANZAMIENTO
+                  , TO_DATE(APR.FEC_RESOLUCION_MORA,''yyyymmdd'') BIE_ADJ_F_RES_MORATORIA
+                  , TO_DATE(APR.FEC_POSESION,''yyyymmdd'') BIE_ADJ_F_REA_POSESION
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_BIEN BIE ON ACT.BIE_ID = BIE.BIE_ID AND BIE.BORRADO = 0
@@ -102,7 +103,7 @@ BEGIN
                   SELECT 
                   BIE_ADJ.BIE_ADJ_ID
                   , ACT.ACT_ID
-                  , APR.FEC_ADJUDICACION AJD_FECHA_ADJUDICACION
+                  , TO_DATE(APR.FEC_ADJUDICACION,''yyyymmdd'') AJD_FECHA_ADJUDICACION
                   , APR.NUM_AUTOS_JUZGADO AJD_NUM_AUTO
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
@@ -146,7 +147,7 @@ BEGIN
                   SELECT 
                   ACT.ACT_ID
                   , APR.IMPORTE_CESION ADN_VALOR_ADQUISICION
-                  , APR.FEC_CESION_REMATE ADN_FECHA_TITULO
+                  , TO_DATE(APR.FEC_CESION_REMATE,''yyyymmdd'') ADN_FECHA_TITULO
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_BIEN BIE ON ACT.BIE_ID = BIE.BIE_ID AND BIE.BORRADO = 0

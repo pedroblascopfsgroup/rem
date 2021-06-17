@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210614
+--## FECHA_CREACION=20210617
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14222
+--## INCIDENCIA_LINK=HREOS-14344
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-14222] - Alejandra García
 --##        0.2 Cambio de numeración del SP y modificación de los checks de 1 y 0 a S y N respectivamente - [HREOS-14222] - Alejandra García
+--##        0.3 Revisión - [HREOS-14344] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -57,10 +58,11 @@ BEGIN
                         WHERE DIS.BORRADO=0                
            )
            SELECT 
-                 ICO.ICO_FECHA_ULTIMA_VISITA AS FEC_VISITA_INMB_SERVICER
+                 TO_CHAR(ICO.ICO_FECHA_ULTIMA_VISITA,''YYYYMMDD'') AS FEC_VISITA_INMB_SERVICER
                 ,ICO.ICO_ANO_CONSTRUCCION AS ANYO_CONSTRUCCION
                 ,ICO.ICO_ANO_REHABILITACION AS ANYO_ULTIMA_REFORMA
-                ,ACT.ACT_NUM_ACTIVO_CAIXA AS NUM_IDENTIFICATIVO                
+                ,ACT.ACT_NUM_ACTIVO_CAIXA AS NUM_IDENTIFICATIVO      
+                ,ACT.ACT_NUM_ACTIVO AS NUM_INMUEBLE               
                 ,CASE
                     WHEN EDIF.EDI_ASCENSOR >0 THEN ''S''
                     ELSE ''N''
@@ -85,8 +87,9 @@ BEGIN
             LEFT JOIN DISTRIBUCION DIST3 ON DIST3.ICO_ID=ICO.ICO_ID AND DIST3.DD_TPH_CODIGO IN (''15'',''16'')
             LEFT JOIN DISTRIBUCION DIST4 ON DIST4.ICO_ID=ICO.ICO_ID AND DIST4.DD_TPH_CODIGO=''12''
             LEFT JOIN DISTRIBUCION DIST5 ON DIST5.ICO_ID=ICO.ICO_ID AND DIST5.DD_TPH_CODIGO=''11''
-            
-            ) US ON (US.NUM_IDENTIFICATIVO=AUX.NUM_IDENTIFICATIVO)
+            JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID=ACT.DD_CRA_ID AND CRA.DD_CRA_CODIGO=''03''
+            JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID=ACT.ACT_ID AND PAC.PAC_INCLUIDO=''1''
+            ) US ON (US.NUM_INMUEBLE=AUX.NUM_INMUEBLE)
             WHEN MATCHED THEN UPDATE SET
                  AUX.FEC_VISITA_INMB_SERVICER=US.FEC_VISITA_INMB_SERVICER
                 ,AUX.ANYO_CONSTRUCCION=US.ANYO_CONSTRUCCION
@@ -99,10 +102,11 @@ BEGIN
                 ,AUX.TIENE_TRASTERO=US.TIENE_TRASTERO
                 ,AUX.EQUIPAMIENTO_015001=US.EQUIPAMIENTO_015001   
             WHEN NOT MATCHED THEN INSERT (
-                 FEC_VISITA_INMB_SERVICER
+                 NUM_IDENTIFICATIVO
+                ,NUM_INMUEBLE
+                ,FEC_VISITA_INMB_SERVICER
                 ,ANYO_CONSTRUCCION
                 ,ANYO_ULTIMA_REFORMA
-                ,NUM_IDENTIFICATIVO
                 ,TIENE_ASCENSOR
                 ,NUM_HABITACIONES
                 ,NUM_BANYOS
@@ -111,10 +115,11 @@ BEGIN
                 ,TIENE_TRASTERO
                 ,EQUIPAMIENTO_015001    
                 )VALUES(
-                     US.FEC_VISITA_INMB_SERVICER
+                     US.NUM_IDENTIFICATIVO
+                    ,US.NUM_INMUEBLE
+                    ,US.FEC_VISITA_INMB_SERVICER
                     ,US.ANYO_CONSTRUCCION
                     ,US.ANYO_ULTIMA_REFORMA
-                    ,US.NUM_IDENTIFICATIVO
                     ,US.TIENE_ASCENSOR
                     ,US.NUM_HABITACIONES
                     ,US.NUM_BANYOS

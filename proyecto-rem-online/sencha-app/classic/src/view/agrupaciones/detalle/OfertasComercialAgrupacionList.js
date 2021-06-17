@@ -190,6 +190,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		var numActivos,
 		viewPortWidth = Ext.Element.getViewportWidth(),
 		viewPortHeight = Ext.Element.getViewportHeight();
+		var codigoCartera = me.lookupController().getViewModel().getData().agrupacionficha.getData().codigoCartera;
 
 		for(var i=0;i<=items.length;i++){
 			if(items[i].getXType()=='fichaagrupacion'){
@@ -199,6 +200,23 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 				numActivos= record.get('numeroActivos');
 				break;
 			}
+		}
+		
+		if(!me.getStore().isLoaded()){
+			me.fireEvent("errorToast", HreRem.i18n("msg.cargar.ofertas.error"));
+			return;
+		}
+		if(CONST.CARTERA['BANKIA'] === codigoCartera){
+			var itemsStore = this.getStore().getData().items;
+			for( var i = 0; i < itemsStore.length; i++){
+				var estadoExpediente = itemsStore[0].getData('codigoEstadoExpediente');
+				if(CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'] != estadoExpediente && CONST.ESTADOS_EXPEDIENTE['PENDIENTE_SANCION'] != estadoExpediente
+					&& CONST.ESTADOS_EXPEDIENTE['ANULADO'] != estadoExpediente && CONST.ESTADOS_EXPEDIENTE['DENEGADO'] != estadoExpediente){
+					me.fireEvent("errorToast", HreRem.i18n("msg.crear.oferta.estado.error"));
+					return;
+				}
+			}
+			
 		}
 			
 		if (numActivos == null || numActivos == '' || numActivos == '0') {

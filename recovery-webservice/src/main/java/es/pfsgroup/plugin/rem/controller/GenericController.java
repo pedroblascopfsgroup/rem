@@ -153,7 +153,7 @@ public class GenericController extends ParadiseJsonController{
 				//si es un ñapa... lo se. Si el flag visible es 1, son docs del activo, sino, son del trabajo
 				for (Dictionary ddTipoDocumentoActivo : result) {
 					if(entidad == null || entidad.equals(GenericController.DICCIONARIO_TIPO_DOCUMENTO_ENTIDAD_ACTIVO)){
-						if(((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getVisible()){
+						if(((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getVisible() && ((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getMatricula() != null){
 							out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
 						}						
 					}else{

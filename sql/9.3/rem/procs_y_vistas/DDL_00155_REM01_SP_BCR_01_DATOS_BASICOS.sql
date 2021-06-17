@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20210604
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210617
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14088
+--## INCIDENCIA_LINK=HREOS-14344
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-14088] - Santi Monzó 
+--##        0.2 Se ha modificado la equivalencia del campo ACT_ACTIVO.DD_SCR_ID  y Revisión- [HREOS-14344] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -92,7 +93,8 @@ BEGIN
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''PRODUCTO''  AND eqv1.DD_CODIGO_CAIXA = aux.PRODUCTO AND EQV1.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_STA_SUBTIPO_TITULO_ACTIVO STA ON STA.DD_STA_CODIGO = eqv1.DD_CODIGO_REM
-                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv2 ON eqv2.DD_NOMBRE_CAIXA = ''SOCIEDAD_ORIGEN''  AND eqv2.DD_CODIGO_CAIXA = aux.SOCIEDAD_ORIGEN AND EQV2.BORRADO=0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv2 ON eqv2.DD_NOMBRE_CAIXA = ''SOCIEDAD_PATRIMONIAL''  AND eqv2.DD_CODIGO_CAIXA = aux.SOCIEDAD_PATRIMONIAL 
+                                                            AND EQV2.DD_NOMBRE_REM=''DD_SCR_SUBCARTERA'' and eqv2.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_SCR_SUBCARTERA scr ON scr.DD_SCR_CODIGO = eqv2.DD_CODIGO_REM
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv3 ON eqv3.DD_NOMBRE_CAIXA = ''BANCO_ORIGEN''  AND eqv3.DD_CODIGO_CAIXA = aux.BANCO_ORIGEN AND EQV3.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_SPG_SOCIEDAD_PAGO_ANTERIOR spg ON spg.DD_SPG_CODIGO = eqv3.DD_CODIGO_REM  
@@ -173,15 +175,36 @@ BEGIN
                eca.DD_ECA_ID as DD_ECA_ID,
                TO_DATE(aux.FEC_ESTADO_COMERCIAL_ALQUILER,''yyyymmdd'') as FECHA_ECA_EST_COM_ALQUILER,
                ecv.DD_ECV_ID as DD_ECV_ID,
-               aux.FEC_ESTADO_COMERCIAL_VENTA as FECHA_ECV_EST_COM_VENTA,
-               aux.NECESIDAD_ARRAS as CBX_NECESIDAD_ARRAS,
+               TO_DATE(aux.FEC_ESTADO_COMERCIAL_VENTA,''yyyymmdd'') as FECHA_ECV_EST_COM_VENTA,
+               CASE
+                  WHEN aux.NECESIDAD_ARRAS IN (''S'',''1'') THEN 1
+                  WHEN aux.NECESIDAD_ARRAS IN (''N'',''0'') THEN 0
+               END as CBX_NECESIDAD_ARRAS,
                mna.DD_MNA_ID as DD_MNA_ID,
-               aux.PRECIO_VENTA_NEGOCIABLE as CBX_PRECIO_VENT_NEGO,
-               aux.PRECIO_ALQUI_NEGOCIABLE as CBX_PRECIO_ALQU_NEGO,
-               aux.PRECIO_CAMP_ALQUI_NEGOCIABLE as CBX_CAMP_PRECIO_ALQ_NEGO,
-               aux.PRECIO_CAMP_VENTA_NEGOCIABLE as CBX_CAMP_PRECIO_VENT_NEGO,
-               aux.IND_FUERZA_PUBLICA as CBX_NEC_FUERZA_PUBL,
-               aux.IND_ENTREGA_VOL_POSESI as CBX_ENTRADA_VOLUN_POSES
+               CASE
+                  WHEN aux.PRECIO_VENTA_NEGOCIABLE IN (''S'',''1'') THEN 1
+                  WHEN aux.PRECIO_VENTA_NEGOCIABLE IN (''N'',''0'') THEN 0
+               END as CBX_PRECIO_VENT_NEGO,
+               CASE
+                  WHEN aux.PRECIO_ALQUI_NEGOCIABLE IN (''S'',''1'') THEN 1
+                  WHEN aux.PRECIO_ALQUI_NEGOCIABLE IN (''N'',''0'') THEN 0
+               END as CBX_PRECIO_ALQU_NEGO,
+               CASE
+                  WHEN aux.PRECIO_CAMP_ALQUI_NEGOCIABLE IN (''S'',''1'') THEN 1
+                  WHEN aux.PRECIO_CAMP_ALQUI_NEGOCIABLE IN (''N'',''0'') THEN 0
+               END as CBX_CAMP_PRECIO_ALQ_NEGO,
+               CASE
+                  WHEN aux.PRECIO_CAMP_VENTA_NEGOCIABLE IN (''S'',''1'') THEN 1
+                  WHEN aux.PRECIO_CAMP_VENTA_NEGOCIABLE IN (''N'',''0'') THEN 0
+               END as CBX_CAMP_PRECIO_VENT_NEGO,
+               CASE
+                  WHEN aux.IND_FUERZA_PUBLICA IN (''S'',''1'') THEN 1
+                  WHEN aux.IND_FUERZA_PUBLICA IN (''N'',''0'') THEN 0
+               END as CBX_NEC_FUERZA_PUBL,
+               CASE
+                  WHEN aux.IND_ENTREGA_VOL_POSESI IN (''S'',''1'') THEN 1
+                  WHEN aux.IND_ENTREGA_VOL_POSESI IN (''N'',''0'') THEN 0
+               END as CBX_ENTRADA_VOLUN_POSES
                FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                         
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''ESTADO_COMERCIAL_ALQUILER''  AND eqv1.DD_CODIGO_CAIXA = aux.ESTADO_COMERCIAL_ALQUILER AND EQV1.BORRADO=0

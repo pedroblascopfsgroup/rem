@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210616
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210617
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14226
+--## INCIDENCIA_LINK=HREOS-14344
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-14226] - Daniel Algaba 
+--##        0.2 Revisión - [HREOS-14344] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -85,8 +86,8 @@ BEGIN
                   , ACT.ACT_NUM_ACTIVO NUM_INMUEBLE
                   , EQV_TCE.DD_CODIGO_CAIXA CALIFICACION_ENERGETICA
                   , CEE.REGISTRO CERTIFICADO_REGISTRADO
-                  , CEE.ADO_FECHA_SOLICITUD FEC_SOLICITUD
-                  , CEE.ADO_FECHA_CADUCIDAD FEC_FIN_VIGENCIA
+                  , TO_CHAR(CEE.ADO_FECHA_SOLICITUD,''YYYYMMDD'') FEC_SOLICITUD
+                  , TO_CHAR(CEE.ADO_FECHA_CADUCIDAD,''YYYYMMDD'') FEC_FIN_VIGENCIA
                   , EQV_LEM.DD_CODIGO_CAIXA LISTA_EMISIONES
                   , CEE.EMISION VALORES_EMISIONES
                   , CEE.LETRA_CONSUMO LISTA_ENERGIA

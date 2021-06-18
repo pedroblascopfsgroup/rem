@@ -179,7 +179,8 @@ BEGIN
     ROLLBACK;
     RAISE;     
     
-END;/
+END;
+/
 
 EXIT;
 

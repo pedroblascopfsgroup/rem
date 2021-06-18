@@ -115,6 +115,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
@@ -3987,6 +3988,21 @@ public class ActivoAdapter {
 				oferta.setOfrDocRespPrescriptor(true);
 			} else {
 				oferta.setOfrDocRespPrescriptor(dto.getOfrDocRespPrescriptor());
+			}
+			
+			String codigo = null;
+			
+			if(!oferta.getOfrDocRespPrescriptor()) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
+			}
+			
+			if (codigo != null) {
+				DDResponsableDocumentacionCliente respCodCliente = genericDao.get(DDResponsableDocumentacionCliente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo));
+				oferta.setRespDocCliente(respCodCliente);
 			}
 			
 			ofertaCreada = genericDao.save(Oferta.class, oferta);

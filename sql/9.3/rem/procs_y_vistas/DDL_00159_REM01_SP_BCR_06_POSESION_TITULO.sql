@@ -363,13 +363,16 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                USING (		
 
                      SELECT
-                         AUX.NUM_IDENTIFICATIVO AS ACT_NUM_ACTIVO_CAIXA
+                        AUX.NUM_IDENTIFICATIVO AS ACT_NUM_ACTIVO_CAIXA
                         ,ACT2.ACT_ID AS ACT_ID   
                         ,TIC.DD_TIC_ID AS DD_TIC_ID
                         ,SIC.DD_SIC_ID AS DD_SIC_ID
                         ,TO_NUMBER(AUX.PORC_IMPUESTO_COMPRA)/100 AS FAD_PORCENTAJE_IMPUESTO_COMPRA 
                         ,AUX.COD_TP_IVA_COMPRA AS FAD_COD_TP_IVA_COMPRA 
-                        ,AUX.RENUNCIA_EXENSION AS FAD_RENUNCIA_EXENCION     
+                        ,CASE
+                           WHEN AUX.RENUNCIA_EXENSION =''S'' THEN 1
+                           WHEN AUX.RENUNCIA_EXENSION =''N'' THEN 0
+                         END AS FAD_RENUNCIA_EXENCION     
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX                             
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO AND ACT2.BORRADO=0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''TIPO_IMPUESTO_COMPRA''  AND eqv1.DD_CODIGO_CAIXA = aux.TIPO_IMPUESTO_COMPRA AND EQV1.BORRADO=0

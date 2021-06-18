@@ -12058,6 +12058,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			if(reg.getValidacionBC() != null) {
 				dto.setValidacionBC(reg.getValidacionBC().getDescripcion());
+			}else {
+				dto.setValidacionBC("Pte respuesta");
 			}
 			
 			listDto.add(dto);

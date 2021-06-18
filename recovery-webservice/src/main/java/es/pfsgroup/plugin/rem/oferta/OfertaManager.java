@@ -5469,8 +5469,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						gastosPendientes = getGastosPendientes(act);
 						activosFichaComercial.setGastosPendientes(gastosPendientes);
 						gastosPendientesTotal += gastosPendientes;
-						costesLegales = getGastosLegalesByTipo(importeOfertaParticipacion, act);
-						activosFichaComercial.setCostesLegales(costesLegales);
 						costesLegalesTotal += costesLegales;
 						comisionHaya = getComisionHayaByTipo(importeOfertaParticipacion, act);
 						activosFichaComercial.setComisionHaya(comisionHaya);
@@ -5784,7 +5782,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					gastosPendientes = getGastosPendientes(oferta.getActivoPrincipal());
 					activosFichaComercial.setGastosPendientes(gastosPendientes);
 					gastosPendientesTotal += gastosPendientes;
-					costesLegales = getGastosLegalesByTipo(importeOfertaNeta, oferta.getActivoPrincipal());
 					activosFichaComercial.setCostesLegales(costesLegales);
 					costesLegalesTotal += costesLegales;
 					comisionHaya = getComisionHayaByTipo(importeOfertaNeta, oferta.getActivoPrincipal());
@@ -6330,26 +6327,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return meses;
 	}
 
-	private Double getGastosLegalesByTipo (Double importe, Activo act) {
-		
-		DDTipoCostes tipoCostes;
-		Double gastosLegales = 0.0;
-		Filter filterSubActivoTipo = genericDao.createFilter(FilterType.EQUALS, "subtipoActivo.id", act.getSubtipoActivo().getId());
-		
-		ConfiguracionComisionCostesActivo cfgComisionCostes = genericDao.get(ConfiguracionComisionCostesActivo.class, filterSubActivoTipo);
-		
-		if (cfgComisionCostes != null  &&  importe > 0.0) {
-			
-			tipoCostes = cfgComisionCostes.getTipoCostes();
-			
-			if (tipoCostes != null ) {
-				gastosLegales = (importe * tipoCostes.getPorcentaje()) / 100;
-			}
-			
-		}
-		
-		return gastosLegales;
-	}
 	private Double getComisionHayaByTipo(Double importe, Activo act) {
 		
 		DDTipoComision tipoComision;

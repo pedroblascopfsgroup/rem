@@ -3861,6 +3861,39 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'bancoOrigenCaixa'}
 			}
-		}
+		},
+		
+		comboTributPropClienteExentoIva: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tributacionPropClienteExentoIva'}
+			}
+	   },
+	   comboTributacionPropuestaVenta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tributacionPropVenta'}
+			}
+	   },
+	   comboCarteraVentaCreditos: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'carteraVentaCreditos'}
+			}
+	   },
+	   comboCarteraVentaActivos: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'carteraVentaActivos'}
+			}
+	   }
 	 }
 });

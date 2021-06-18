@@ -195,6 +195,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloComplemento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
+import es.pfsgroup.plugin.rem.model.dd.DDTributacionPropuestaClienteExentoIva;
+import es.pfsgroup.plugin.rem.model.dd.DDTributacionPropuestaVenta;
 import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -4035,6 +4037,37 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(actCaixa.getCanalDistribucionAlquiler() != null) {
 					dto.setCanalPublicacionAlquilerCodigo(actCaixa.getCanalDistribucionAlquiler().getCodigo());
 				}
+				if (actCaixa.getTributacionPropuestaClienteExentoIva() != null) {
+					dto.setTributacionPropuestaClienteExentoIvaCod(actCaixa.getTributacionPropuestaClienteExentoIva().getCodigo());
+					dto.setTributacionPropuestaClienteExentoIvaDesc(actCaixa.getTributacionPropuestaClienteExentoIva().getDescripcion());
+				}
+				if (actCaixa.getCarteraVentaCreditos() != null) {
+					dto.setCarteraVentaCreditosCod(actCaixa.getCarteraVentaCreditos().getCodigo());
+					dto.setCarteraVentaCreditosDesc(actCaixa.getCarteraVentaCreditos().getDescripcion());
+				}
+				if (actCaixa.getCarteraVentaActivos() != null) {
+					dto.setCarteraVentaActivosCod(actCaixa.getCarteraVentaActivos().getCodigo());
+					dto.setCarteraVentaActivosDesc(actCaixa.getCarteraVentaActivos().getDescripcion());
+				}
+				if (actCaixa.getTributacionPropuestaVenta() != null) {
+					dto.setTributacionPropuestaVentaCod(actCaixa.getTributacionPropuestaVenta().getCodigo());
+					dto.setTributacionPropuestaVentaDesc(actCaixa.getTributacionPropuestaVenta().getDescripcion());
+				}
+				if (actCaixa.getCarteraConcentrada() != null) {
+					dto.setCarteraConcentrada(actCaixa.getCarteraConcentrada());
+				}
+				if (actCaixa.getActivoAAMM() != null) {
+					dto.setActivoAAMM(actCaixa.getActivoAAMM());
+				}
+				if (actCaixa.getActivoPromocionesEstrategicas() != null) {
+					dto.setActivoPromocionesEstrategicas(actCaixa.getActivoPromocionesEstrategicas());
+				}
+				if (actCaixa.getFechaInicioConcurrencia() != null) {
+					dto.setFechaInicioConcurrencia(actCaixa.getFechaInicioConcurrencia());
+				}
+				if (actCaixa.getFechaFinConcurrencia() != null) {
+					dto.setFechaFinConcurrencia(actCaixa.getFechaFinConcurrencia());
+				}
 			}
 		}
 		return dto;
@@ -4147,6 +4180,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 			if(dto.getFechaVenta() != null) {
 				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false);
+			}
+			
+			ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+			if (activoCaixa != null) {
+				if (dto.getTributacionPropuestaClienteExentoIvaCod() != null) {
+					DDTributacionPropuestaClienteExentoIva tipoTributPropClExcIva = (DDTributacionPropuestaClienteExentoIva) utilDiccionarioApi.dameValorDiccionarioByCod(DDTributacionPropuestaClienteExentoIva.class, dto.getTributacionPropuestaClienteExentoIvaCod());
+					activoCaixa.setTributacionPropuestaClienteExentoIva(tipoTributPropClExcIva);					
+				}
+				if (dto.getTributacionPropuestaVentaCod() != null) {
+					DDTributacionPropuestaVenta tipoTributPropVenta = (DDTributacionPropuestaVenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTributacionPropuestaVenta.class, dto.getTributacionPropuestaVentaCod());
+					activoCaixa.setTributacionPropuestaVenta(tipoTributPropVenta);
+				}
+				genericDao.update(ActivoCaixa.class, activoCaixa);
 			}
 		
 			

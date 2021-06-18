@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210616
+--## FECHA_CREACION=20210618
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14327
+--## INCIDENCIA_LINK=HREOS-14366
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 ACT_EN_TRAMITE = 0  - [HREOS-14366] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -61,8 +62,10 @@ BEGIN
                      JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
                      JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
                      LEFT JOIN MATRIZ M ON ACT.ACT_ID = M.ACT_ID
-                     WHERE CRA.DD_CRA_CODIGO = ''03''
+                     WHERE ACT.BORRADO = 0
+                     AND CRA.DD_CRA_CODIGO = ''03''
                      AND PAC.PAC_INCLUIDO = 1
+                     AND ACT.ACT_EN_TRAMITE = 0
                   ) AUX
                   ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE)
                   WHEN MATCHED THEN

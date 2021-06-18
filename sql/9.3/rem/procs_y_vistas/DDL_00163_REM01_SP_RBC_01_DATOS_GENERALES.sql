@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20210622
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210618
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14318
+--## INCIDENCIA_LINK=HREOS-14366
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 ACT_EN_TRAMITE = 0 - [HREOS-14366] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -70,6 +71,7 @@ BEGIN
                   AND act.BORRADO=0
                   AND pac.PAC_INCLUIDO=1
                   AND pac.BORRADO=0
+                  AND ACT.ACT_EN_TRAMITE = 0
                                        
                                  ) us ON ((us.NUM_INMUEBLE = aux.NUM_INMUEBLE) AND (us.NUM_IDENTIFICATIVO = aux.NUM_IDENTIFICATIVO) )
                                  when matched then update set

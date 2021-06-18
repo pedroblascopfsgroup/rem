@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20210617
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210618
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14292
+--## INCIDENCIA_LINK=HREOS-14366
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-14292] - Daniel Algaba
 --##        0.2 Revisión - [HREOS-14344] - Alejandra García
+--##        0.3 Formatos númericos en ACT_EN_TRAMITE = 0 - [HREOS-14366] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -61,8 +62,8 @@ BEGIN
                   , EQV_ESE.DD_CODIGO_CAIXA ALA_EDIFICIO
                   , EQV_PLN.DD_CODIGO_CAIXA PLANTA
                   , BIE_LOC.BIE_LOC_PORTAL NUM_UBICACION
-                  , ACT_LOC.LOC_LONGITUD X_GOOGLE
-                  , ACT_LOC.LOC_LATITUD Y_GOOGLE
+                  , REPLACE(ACT_LOC.LOC_LONGITUD, '','',''.'') X_GOOGLE
+                  , REPLACE(ACT_LOC.LOC_LATITUD, '','',''.'') Y_GOOGLE
                   , ACT_LOC.LOC_BLOQUE SIGLA_EDIFICIO
                   FROM '|| V_ESQUEMA ||'.BIE_LOCALIZACION BIE_LOC
                   JOIN '|| V_ESQUEMA ||'.ACT_LOC_LOCALIZACION ACT_LOC ON BIE_LOC.BIE_LOC_ID = ACT_LOC.BIE_LOC_ID AND ACT_LOC.BORRADO = 0
@@ -86,6 +87,7 @@ BEGIN
                   WHERE BIE_LOC.BORRADO = 0
                   AND CRA.DD_CRA_CODIGO = ''03''
                   AND PAC.PAC_INCLUIDO = 1
+                  AND ACT.ACT_EN_TRAMITE = 0
                   ) AUX
                   ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE)
                   WHEN MATCHED THEN
@@ -154,12 +156,12 @@ BEGIN
                   SELECT 
                   ACT.ACT_NUM_ACTIVO_CAIXA NUM_IDENTIFICATIVO
                   , ACT.ACT_NUM_ACTIVO NUM_INMUEBLE
-                  , ACT_REG.REG_SUPERFICIE_PARCELA SUP_TASACION_SOLAR
-                  , ACT_REG.REG_SUPERFICIE_PARCELA_UTIL SUP_TASACION_UTIL
-                  , ACT_REG.REG_SUPERFICIE_UTIL SUP_REGISTRAL_UTIL
-                  , BIE_REG.BIE_DREG_SUPERFICIE_CONSTRUIDA SUP_TASACION_CONSTRUIDA
-                  , ACT_REG.REG_SUPERFICIE_SOBRE_RASANTE SUP_SOBRE_RASANTE
-                  , ACT_REG.REG_SUPERFICIE_BAJO_RASANTE SUP_BAJO_RASANTE
+                  , ACT_REG.REG_SUPERFICIE_PARCELA * 100 SUP_TASACION_SOLAR
+                  , ACT_REG.REG_SUPERFICIE_PARCELA_UTIL * 100 SUP_TASACION_UTIL
+                  , ACT_REG.REG_SUPERFICIE_UTIL * 100 SUP_REGISTRAL_UTIL
+                  , BIE_REG.BIE_DREG_SUPERFICIE_CONSTRUIDA * 100 SUP_TASACION_CONSTRUIDA
+                  , ACT_REG.REG_SUPERFICIE_SOBRE_RASANTE * 100 SUP_SOBRE_RASANTE
+                  , ACT_REG.REG_SUPERFICIE_BAJO_RASANTE * 100 SUP_BAJO_RASANTE
                   FROM '|| V_ESQUEMA ||'.BIE_DATOS_REGISTRALES BIE_REG
                   JOIN '|| V_ESQUEMA ||'.ACT_REG_INFO_REGISTRAL ACT_REG ON BIE_REG.BIE_DREG_ID = ACT_REG.BIE_DREG_ID AND ACT_REG.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ACT_REG.ACT_ID AND ACT.BORRADO = 0
@@ -168,6 +170,7 @@ BEGIN
                   WHERE BIE_REG.BORRADO = 0
                   AND CRA.DD_CRA_CODIGO = ''03''
                   AND PAC.PAC_INCLUIDO = 1
+                  AND ACT.ACT_EN_TRAMITE = 0
                   ) AUX
                   ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE)
                   WHEN MATCHED THEN
@@ -220,6 +223,7 @@ BEGIN
                   WHERE CAT.RN = 1
                   AND CRA.DD_CRA_CODIGO = ''03''
                   AND PAC.PAC_INCLUIDO = 1
+                  AND ACT.ACT_EN_TRAMITE = 0
                   ) AUX
                   ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE)
                   WHEN MATCHED THEN

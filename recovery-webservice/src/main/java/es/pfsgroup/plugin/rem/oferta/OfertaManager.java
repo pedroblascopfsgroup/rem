@@ -17,9 +17,11 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -372,6 +374,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private CaixaBcRestClient caixaBcRestClient;
+
+	@Autowired
+	private HibernateUtils hibernateUtils;
 	
 	
 
@@ -815,6 +820,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ClienteComercial cliente = genericDao.get(ClienteComercial.class,
 						genericDao.createFilter(FilterType.EQUALS, "idClienteRem", ofertaDto.getIdClienteRem()),webcomIdNotNull);
 				if (!Checks.esNulo(cliente)) {
+					llamadaMaestroPersonasRestSync(cliente.getDocumento(),OfertaApi.ORIGEN_REM);
 					oferta.setCliente(cliente);
 				}
 			}
@@ -1211,6 +1217,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 				listaTit.add(titAdi);
 				genericDao.save(TitularesAdicionalesOferta.class, titAdi);
+				llamadaMaestroPersonasTitularesRestSync(titAdi.getDocumento(),OfertaApi.ORIGEN_REM);
 			}
 		}
 		
@@ -6950,6 +6957,27 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		return false;
+	}
+
+	private void llamadaMaestroPersonasTitularesRestSync(String numDocCliente, String cartera) {
+
+		MaestroDePersonas maestroDePersonas= null;
+		try {
+			maestroDePersonas = new MaestroDePersonas(numDocCliente, restApi.REST_LOGGED_USER_USERNAME,cartera).clienteToTitularTransform();
+			maestroDePersonas.setSession(hibernateUtils.getSessionFactory().getCurrentSession());
+			maestroDePersonas.run();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			logger.error("No se puede usar este metodo a partir de este constructor");
+		}
+	}
+
+	private void llamadaMaestroPersonasRestSync(String numDocCliente, String cartera) {
+
+		MaestroDePersonas maestroDePersonas = new MaestroDePersonas(numDocCliente, restApi.REST_LOGGED_USER_USERNAME, cartera);
+		maestroDePersonas.setSession(hibernateUtils.getSessionFactory().getCurrentSession());
+		maestroDePersonas.run();
+
 	}
 
 }

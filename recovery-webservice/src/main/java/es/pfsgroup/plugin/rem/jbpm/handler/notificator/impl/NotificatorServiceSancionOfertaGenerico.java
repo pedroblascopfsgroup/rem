@@ -1293,7 +1293,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		if (adjuntaInstrucciones) {
 			// ADJUNTOS SI ES CAJAMAR
 			if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
-				if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getCanalPrescripcion()) && DDCanalPrescripcion.COD_OFICINA_CAJAMAR.equals(oferta.getCanalPrescripcion().getCodigo())) {
+				if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getPrescriptor()) && DDTipoProveedor.COD_OFICINA_CAJAMAR.equals(oferta.getPrescriptor().getTipoProveedor().getCodigo())) {
 					f1 = FileItemUtils.fromResource("docs/Instrucciones_Reserva_Formalizacion_Cajamar_Oficinas.docx");
 				} else {
 					f1 = FileItemUtils.fromResource("docs/Instrucciones_Reserva_Formalizacion_Cajamar_Apis.docx");

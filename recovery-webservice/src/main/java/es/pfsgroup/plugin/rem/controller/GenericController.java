@@ -44,6 +44,7 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.TipoDocumentoSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
@@ -137,25 +138,30 @@ public class GenericController extends ParadiseJsonController{
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getDiccionarioTiposDocumento(String diccionario, String entidad) {	
+	public ModelAndView getDiccionarioTiposDocumento(String diccionario, String entidad , String subtipoTrabajo) {	
 
 		if (GenericController.DICCIONARIO_TIPO_DOCUMENTO.equals(diccionario)) {
+			
 			List<Dictionary> result = adapter.getDiccionario(diccionario);
 
 			List<DDTipoDocumentoActivoDto> out = new ArrayList<DDTipoDocumentoActivoDto>();
 
-			//si es un ñapa... lo se. Si el flag visible es 1, son docs del activo, sino, son del trabajo
-			for (Dictionary ddTipoDocumentoActivo : result) {
-				if(entidad == null || entidad.equals(GenericController.DICCIONARIO_TIPO_DOCUMENTO_ENTIDAD_ACTIVO)){
-					if(((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getVisible()){
-						out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
-					}						
-				}else{
-					if(!((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getVisible()){
-						out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
-					}						
+			if(subtipoTrabajo != null) {
+				out = genericApi.getDiccionarioTiposDocumentoBySubtipoTrabajo(subtipoTrabajo,entidad);
+			}
+			if(out.isEmpty()) {
+				//si es un ñapa... lo se. Si el flag visible es 1, son docs del activo, sino, son del trabajo
+				for (Dictionary ddTipoDocumentoActivo : result) {
+					if(entidad == null || entidad.equals(GenericController.DICCIONARIO_TIPO_DOCUMENTO_ENTIDAD_ACTIVO)){
+						if(((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getVisible() && ((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getMatricula() != null){
+							out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
+						}						
+					}else{
+						if(!((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getVisible()){
+							out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
+						}						
+					}
 				}
-				
 			}
 
 			return createModelAndViewJson(new ModelMap("data", out));	

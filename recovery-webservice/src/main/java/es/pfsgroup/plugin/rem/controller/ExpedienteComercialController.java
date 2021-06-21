@@ -1812,7 +1812,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public void getExcelActivosExpediente(Long idExpediente, HttpServletRequest request, HttpServletResponse response) {
 		try {
-			DtoPage dto = expedienteComercialApi.getActivosExpediente(idExpediente);
+			DtoPage dto = expedienteComercialApi.getActivosExpedienteExcel(idExpediente, true);
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(idExpediente);
 			List<DtoActivosExpediente> dtosActivos = (List<DtoActivosExpediente>) dto.getResults();
 
@@ -1828,7 +1828,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public void getExcelPlantillaDistribucionPrecios(Long idExpediente, HttpServletRequest request,
 			HttpServletResponse response) {
 		try {
-			DtoPage dto = expedienteComercialApi.getActivosExpediente(idExpediente);
+			DtoPage dto = expedienteComercialApi.getActivosExpedienteExcel(idExpediente, false);
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(idExpediente);
 			List<DtoActivosExpediente> dtosActivos = (List<DtoActivosExpediente>) dto.getResults();
 

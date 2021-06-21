@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20180918
+--## FECHA_CREACION=20210609
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1849
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 REMVIP-9909 - Carlos Santos Vílchez
 --##########################################
 --*/
 
@@ -52,8 +53,14 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_ACTIVO_OFERTA_IMPORTE...');
   EXECUTE IMMEDIATE 'CREATE VIEW '|| V_ESQUEMA ||'.V_ACTIVO_OFERTA_IMPORTE
       AS
-      SELECT ACT_ID, OFR_ID, ACT_OFR_IMPORTE, OFR_ACT_PORCEN_PARTICIPACION, ACT_ID||OFR_ID AS ID_VISTA
-      FROM  '|| V_ESQUEMA ||'.ACT_OFR';
+      SELECT ACT.ACT_ID,
+      AFR.OFR_ID, 
+      AFR.ACT_OFR_IMPORTE, 
+      AFR.OFR_ACT_PORCEN_PARTICIPACION, 
+      ACT.ACT_NUM_ACTIVO,
+      AFR.ACT_ID||AFR.OFR_ID AS ID_VISTA
+      FROM '|| V_ESQUEMA ||'.ACT_OFR AFR
+      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON AFR.ACT_ID = ACT.ACT_ID';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_ACTIVO_OFERTA_IMPORTE...Creada OK');
 

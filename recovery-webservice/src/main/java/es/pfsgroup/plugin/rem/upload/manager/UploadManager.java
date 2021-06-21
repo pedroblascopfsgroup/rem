@@ -119,7 +119,7 @@ public class UploadManager extends BusinessOperationOverrider<UploadApi> impleme
 				descError = "No se ha encontrado asociada ninguna matricula al tipo de documento  [ " + webFileItem.getParameter("tipo") + " ]";
 			}else{
 				if (gestorDocumentalAdapterApi.modoRestClientActivado()){
-					Long idDocRestClient = gestorDocumentalAdapterApi.upload(activo, webFileItem, "dgutierrez", tipoDocumento.getMatricula());
+					Long idDocRestClient = gestorDocumentalAdapterApi.upload(activo, webFileItem, "dgutierrez", tipoDocumento.getMatricula(), null);
 					descError = activoApi.uploadDocumento(webFileItem, idDocRestClient, activo, tipoDocumento.getMatricula());
 				}else {
 					activoApi.uploadDocumento(webFileItem, null, activo, tipoDocumento.getMatricula());

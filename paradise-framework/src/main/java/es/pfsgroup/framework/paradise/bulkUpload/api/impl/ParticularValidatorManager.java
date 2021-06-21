@@ -270,7 +270,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_ACTIVO WHERE"
 				+ "		 	ACT_NUM_ACTIVO ="+numActivo+" "
-				+ "		 	AND BORRADO = 0 AND ACT_EN_TRAMITE IS NOT NULL");
+				+ "		 	AND BORRADO = 0 AND ACT_EN_TRAMITE = 1");
 		return !"0".equals(resultado);
 	}
 

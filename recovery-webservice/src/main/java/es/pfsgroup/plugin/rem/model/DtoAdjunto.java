@@ -54,6 +54,18 @@ public class DtoAdjunto implements Serializable, Comparable<DtoAdjunto>{
 	private String subcartera;
 	
 	private Date fechaDocumentoCategoria;
+	
+	private String aplica;
+	
+	private String fechaEmision;
+	
+	private String fechaCaducidad;
+	
+	private Boolean fechaObtencion;
+	
+	private String fechaEtiqueta;
+	
+	private String registro;
 
 	public Long getId() {
 		return id;
@@ -237,4 +249,54 @@ public class DtoAdjunto implements Serializable, Comparable<DtoAdjunto>{
 		}
 		return o.getCreateDate().compareTo(this.createDate);
 	}
+
+	public String getAplica() {
+		return aplica;
+	}
+
+	public void setAplica(String aplica) {
+		this.aplica = aplica;
+	}
+
+	public String getFechaEmision() {
+		return fechaEmision;
+	}
+
+	public void setFechaEmision(String fechaEmision) {
+		this.fechaEmision = fechaEmision;
+	}
+
+	public String getFechaCaducidad() {
+		return fechaCaducidad;
+	}
+
+	public void setFechaCaducidad(String fechaCaducidad) {
+		this.fechaCaducidad = fechaCaducidad;
+	}
+
+	public Boolean getFechaObtencion() {
+		return fechaObtencion;
+	}
+
+	public void setFechaObtencion(Boolean fechaObtencion) {
+		this.fechaObtencion = fechaObtencion;
+	}
+
+	public String getFechaEtiqueta() {
+		return fechaEtiqueta;
+	}
+
+	public void setFechaEtiqueta(String fechaEtiqueta) {
+		this.fechaEtiqueta = fechaEtiqueta;
+	}
+
+	public String getRegistro() {
+		return registro;
+	}
+
+	public void setRegistro(String registro) {
+		this.registro = registro;
+	}
+	
+	
 }

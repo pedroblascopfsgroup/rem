@@ -56,7 +56,8 @@ public class MSVActualizarCalidadDatosExcelValidator extends MSVExcelValidatorAb
 	private final String CODIGO_HOSTELERO = "41";
 	private final String CODIGO_SUELO_URBANO_NO_CONSOLIDADO = "42";
 	
-	
+	private final String CODIGO_ANYADIR_A_PROMOCION = "29";
+	private final String CODIGO_ELIMINAR_DE_PROMOCION = "30";
 
 	@Resource
 	private MessageService messageServices;
@@ -122,7 +123,6 @@ public class MSVActualizarCalidadDatosExcelValidator extends MSVExcelValidatorAb
 		ArrayList<Integer> errList = null;		
 		String celda, tipoCampo;
 		boolean valorOK = true;
-		Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 		
 		for (int columna = 0; columna < NUM_COLS; columna++) {
 			listasError.add(columna, new ArrayList<Integer>());
@@ -149,7 +149,7 @@ public class MSVActualizarCalidadDatosExcelValidator extends MSVExcelValidatorAb
 					case COL_VALOR:
 						valorOK = Checks.esNulo(celda) 	|| (tipoCampo != null && esValorCorrectoCDC(tipoCampo, celda)) 
 								&& (tipoCampo != null && comprobarCarteraYSubtipo(exc.dameCelda(fila, COL_CAMPO), exc.dameCelda(fila, COL_IDENTIFICADOR), celda) 
-								&& pattern.matcher(celda).matches());
+								&& comprobarEsPromocion(exc.dameCelda(fila, COL_CAMPO), celda));
 						break;						
 					}
 
@@ -202,6 +202,17 @@ public class MSVActualizarCalidadDatosExcelValidator extends MSVExcelValidatorAb
 			}
 		}
 		return esCorrecto;
+	}
+	
+	private boolean comprobarEsPromocion(String codigoCampo, String celda) {
+		Boolean esCorrecto = true;
+		Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+		
+		if ((CODIGO_ANYADIR_A_PROMOCION.equals(codigoCampo) || CODIGO_ELIMINAR_DE_PROMOCION.equals(codigoCampo)) && !pattern.matcher(celda).matches()) {
+			return !esCorrecto;
+		} else {
+			return esCorrecto;
+		}
 	}
 
 	@Override

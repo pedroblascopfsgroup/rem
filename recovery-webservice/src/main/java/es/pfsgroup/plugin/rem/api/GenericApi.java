@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoUsuarios;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
+import es.pfsgroup.plugin.rem.model.TipoDocumentoSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
@@ -53,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.utils.ImagenWebDto;
+import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaDto;
 import net.sf.json.JSONObject;
 
@@ -364,6 +366,8 @@ public interface GenericApi {
 	List<ImagenWebDto> getFichaComercialFotosActivo(Long id, String urlBase);
 	
 	List<ImagenWebDto> getFichaComercialFotosAgrupacion(Long id, String urlBase);
+	
+	List<DDTipoDocumentoActivoDto> getDiccionarioTiposDocumentoBySubtipoTrabajo(String subtipoTrabajo,String entidad);
 	
 	/*@BusinessOperationDefinition("genericManager.getComboTipoTrabajoFiltered")
 	public List<DDTipoTrabajo> getComboTipoTrabajoFiltered(String idActivo);*/

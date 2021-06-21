@@ -71,7 +71,6 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public static final String DENEGADA_OFERTA_CES = "37";
 	public static final String CONTRAOFERTADO_CES = "38";
 	public static final String RESERVADO_PTE_PRO_MANZANA = "39";
-	public static final String APROBADO_PTE_PRO_MANZANA = "40";
 	public static final String DENEGADO_PRO_MANZANA = "41";
 	public static final String CONTRAOFERTA_DENEGADA = "29";
 	public static final String PTE_CONTRASTE_LISTAS = "42";

@@ -1,17 +1,18 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20210617
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210618
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14344
+--## INCIDENCIA_LINK=HREOS-14366
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial - [HREOS-14226] - Daniel Algaba 
+--##        0.1 Versión inicial - [HREOS-14292] - Daniel Algaba
 --##        0.2 Revisión - [HREOS-14344] - Alejandra García
+--##        0.3 Formatos númericos en ACT_EN_TRAMITE = 0 - [HREOS-14366] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -89,9 +90,9 @@ BEGIN
                   , TO_CHAR(CEE.ADO_FECHA_SOLICITUD,''YYYYMMDD'') FEC_SOLICITUD
                   , TO_CHAR(CEE.ADO_FECHA_CADUCIDAD,''YYYYMMDD'') FEC_FIN_VIGENCIA
                   , EQV_LEM.DD_CODIGO_CAIXA LISTA_EMISIONES
-                  , CEE.EMISION VALORES_EMISIONES
+                  , CEE.EMISION * 100 VALORES_EMISIONES
                   , CEE.LETRA_CONSUMO LISTA_ENERGIA
-                  , CEE.CONSUMO VALOR_ENERGIA
+                  , CEE.CONSUMO * 100 VALOR_ENERGIA
                   , NVL2(CEH.ADO_ID, ''S'', ''N'') CEDULA_HABITABILIDAD
                   FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
                   JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
@@ -103,6 +104,7 @@ BEGIN
                   WHERE ACT.BORRADO = 0
                   AND CRA.DD_CRA_CODIGO = ''03''
                   AND PAC.PAC_INCLUIDO = 1
+                  AND ACT.ACT_EN_TRAMITE = 0
                   ) AUX
                   ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE)
                   WHEN MATCHED THEN

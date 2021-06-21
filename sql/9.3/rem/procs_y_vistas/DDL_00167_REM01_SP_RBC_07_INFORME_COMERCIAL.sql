@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20210617
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210618
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14344
+--## INCIDENCIA_LINK=HREOS-14366
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial - [HREOS-14222] - Alejandra García
 --##        0.2 Cambio de numeración del SP y modificación de los checks de 1 y 0 a S y N respectivamente - [HREOS-14222] - Alejandra García
 --##        0.3 Revisión - [HREOS-14344] - Alejandra García
+--##        0.4 Formatos númericos en ACT_EN_TRAMITE = 0  - [HREOS-14366] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -59,18 +60,18 @@ BEGIN
            )
            SELECT 
                  TO_CHAR(ICO.ICO_FECHA_ULTIMA_VISITA,''YYYYMMDD'') AS FEC_VISITA_INMB_SERVICER
-                ,ICO.ICO_ANO_CONSTRUCCION AS ANYO_CONSTRUCCION
-                ,ICO.ICO_ANO_REHABILITACION AS ANYO_ULTIMA_REFORMA
+                ,ICO.ICO_ANO_CONSTRUCCION * 100 AS ANYO_CONSTRUCCION
+                ,ICO.ICO_ANO_REHABILITACION * 100 AS ANYO_ULTIMA_REFORMA
                 ,ACT.ACT_NUM_ACTIVO_CAIXA AS NUM_IDENTIFICATIVO      
                 ,ACT.ACT_NUM_ACTIVO AS NUM_INMUEBLE               
                 ,CASE
                     WHEN EDIF.EDI_ASCENSOR >0 THEN ''S''
                     ELSE ''N''
                  END AS TIENE_ASCENSOR                
-                ,DIST1.DIS_CANTIDAD AS NUM_HABITACIONES
-                ,DIST2.DIS_CANTIDAD AS NUM_BANYOS
-                ,DIST3.DIS_CANTIDAD AS NUM_TERRAZAS
-                ,DIST4.DIS_CANTIDAD AS NUM_APARACAMIENTOS
+                ,DIST1.DIS_CANTIDAD * 100 AS NUM_HABITACIONES
+                ,DIST2.DIS_CANTIDAD * 100 AS NUM_BANYOS
+                ,DIST3.DIS_CANTIDAD * 100 AS NUM_TERRAZAS
+                ,DIST4.DIS_CANTIDAD * 100 AS NUM_APARACAMIENTOS
                 ,CASE
                     WHEN DIST5.DIS_CANTIDAD>0 THEN ''S''
                     ELSE ''N''
@@ -88,7 +89,9 @@ BEGIN
             LEFT JOIN DISTRIBUCION DIST4 ON DIST4.ICO_ID=ICO.ICO_ID AND DIST4.DD_TPH_CODIGO=''12''
             LEFT JOIN DISTRIBUCION DIST5 ON DIST5.ICO_ID=ICO.ICO_ID AND DIST5.DD_TPH_CODIGO=''11''
             JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID=ACT.DD_CRA_ID AND CRA.DD_CRA_CODIGO=''03''
-            JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID=ACT.ACT_ID AND PAC.PAC_INCLUIDO=''1''
+            JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID=ACT.ACT_ID AND PAC.PAC_INCLUIDO = 1
+            WHERE ACT.BORRADO = 0
+            AND ACT.ACT_EN_TRAMITE = 0
             ) US ON (US.NUM_INMUEBLE=AUX.NUM_INMUEBLE)
             WHEN MATCHED THEN UPDATE SET
                  AUX.FEC_VISITA_INMB_SERVICER=US.FEC_VISITA_INMB_SERVICER

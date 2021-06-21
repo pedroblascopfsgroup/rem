@@ -16,8 +16,11 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -176,6 +179,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenLaboral;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -368,6 +372,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private CaixaBcRestClient caixaBcRestClient;
+
+	@Autowired
+	private HibernateUtils hibernateUtils;
 	
 	
 
@@ -811,6 +818,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ClienteComercial cliente = genericDao.get(ClienteComercial.class,
 						genericDao.createFilter(FilterType.EQUALS, "idClienteRem", ofertaDto.getIdClienteRem()),webcomIdNotNull);
 				if (!Checks.esNulo(cliente)) {
+					llamadaMaestroPersonasRestSync(cliente.getDocumento(),OfertaApi.ORIGEN_REM);
 					oferta.setCliente(cliente);
 				}
 			}
@@ -969,6 +977,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setOfrDocRespPrescriptor(ofertaDto.getDocResponsabilidadPrescriptor());
 			} else {
 				oferta.setOfrDocRespPrescriptor(true);
+			}
+			
+			String codigo = null;
+			
+			if(!oferta.getOfrDocRespPrescriptor()) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
+			}
+			
+			if (codigo != null) {
+				DDResponsableDocumentacionCliente respCodCliente = genericDao.get(DDResponsableDocumentacionCliente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo));
+				oferta.setRespDocCliente(respCodCliente);
 			}
 
 			Long idOferta = this.saveOferta(oferta);
@@ -1212,6 +1235,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 				listaTit.add(titAdi);
 				genericDao.save(TitularesAdicionalesOferta.class, titAdi);
+				llamadaMaestroPersonasTitularesRestSync(titAdi.getDocumento(),OfertaApi.ORIGEN_REM);
 			}
 		}
 		
@@ -1437,6 +1461,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dto.setTexto(ofertaDto.getJustificacionOferta());
 				
 				saveTextoOfertaWS(dto, oferta);
+				modificado = true;
+			}
+			
+			String codigo = null;
+			
+			if(!oferta.getOfrDocRespPrescriptor()) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
+			}
+			
+			if (codigo != null) {
+				DDResponsableDocumentacionCliente respCodCliente = genericDao.get(DDResponsableDocumentacionCliente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo));
+				oferta.setRespDocCliente(respCodCliente);
 				modificado = true;
 			}
 
@@ -6951,6 +6991,27 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		return false;
+	}
+
+	private void llamadaMaestroPersonasTitularesRestSync(String numDocCliente, String cartera) {
+
+		MaestroDePersonas maestroDePersonas= null;
+		try {
+			maestroDePersonas = new MaestroDePersonas(numDocCliente, restApi.REST_LOGGED_USER_USERNAME,cartera).clienteToTitularTransform();
+			maestroDePersonas.setSession(hibernateUtils.getSessionFactory().getCurrentSession());
+			maestroDePersonas.run();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			logger.error("No se puede usar este metodo a partir de este constructor");
+		}
+	}
+
+	private void llamadaMaestroPersonasRestSync(String numDocCliente, String cartera) {
+
+		MaestroDePersonas maestroDePersonas = new MaestroDePersonas(numDocCliente, restApi.REST_LOGGED_USER_USERNAME, cartera);
+		maestroDePersonas.setSession(hibernateUtils.getSessionFactory().getCurrentSession());
+		maestroDePersonas.run();
+
 	}
 
 }

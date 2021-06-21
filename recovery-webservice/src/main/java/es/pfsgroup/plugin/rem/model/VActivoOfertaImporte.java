@@ -37,6 +37,9 @@ public class VActivoOfertaImporte implements Serializable{
 	
 	 @Column(name="OFR_ACT_PORCEN_PARTICIPACION")
 	 private Double porcentajeParticipacion;
+	 
+	@Column(name = "ACT_NUM_ACTIVO")
+	 private Long numActivo;
 
 	 public Long getActivo() {
 			return activo;
@@ -44,6 +47,14 @@ public class VActivoOfertaImporte implements Serializable{
 	
 	public void setActivo(Long activo) {
 		this.activo = activo;
+	}
+	
+	public Long getNumActivo() {
+		return numActivo;
+	}
+	
+	public void setNumActivo(Long numActivo) {
+		this.numActivo = numActivo;
 	}
 
 	public Long getOferta() {

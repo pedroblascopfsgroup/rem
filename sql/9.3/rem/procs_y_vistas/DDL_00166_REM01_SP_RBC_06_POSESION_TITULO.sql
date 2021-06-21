@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20210617
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210618
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14344
+--## INCIDENCIA_LINK=HREOS-14366
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial [HREOS-14319] y revisión [HREOS-14344]
+--##        0.2 Formatos númericos en ACT_EN_TRAMITE = 0 - [HREOS-14366] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -48,7 +49,7 @@ BEGIN
                     SELECT
                          ACT.ACT_NUM_ACTIVO_CAIXA AS NUM_IDENTIFICATIVO      
                         ,ACT.ACT_NUM_ACTIVO AS NUM_INMUEBLE                        
-                        ,PAC.PAC_PORC_PROPIEDAD AS CUOTA
+                        ,PAC.PAC_PORC_PROPIEDAD * 100 AS CUOTA
                         ,TGP.DD_TGP_ID AS GRADO_PROPIEDAD
                         ,CASE
                             WHEN SPS.SPS_OCUPADO=1 AND TPA.DD_TPA_CODIGO IN (''02'',''03'') THEN ''S''
@@ -61,8 +62,9 @@ BEGIN
                     JOIN '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA SPS ON ACT.ACT_ID=SPS.ACT_ID AND SPS.BORRADO=0
                     JOIN '|| V_ESQUEMA ||'.DD_TPA_TIPO_TITULO_ACT TPA ON SPS.DD_TPA_ID=TPA.DD_TPA_ID AND TPA.BORRADO=0
                     JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID=ACT.DD_CRA_ID AND CRA.DD_CRA_CODIGO=''03''
-                    JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID=ACT.ACT_ID AND PAC.PAC_INCLUIDO=''1''
-                    WHERE PAC.BORRADO=0            
+                    JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID=ACT.ACT_ID AND PAC.PAC_INCLUIDO = 1
+                    WHERE PAC.BORRADO=0       
+                    AND ACT.ACT_EN_TRAMITE = 0     
             ) US ON (US.NUM_INMUEBLE=AUX.NUM_INMUEBLE)
                 WHEN MATCHED THEN UPDATE SET
                      AUX.CUOTA=US.CUOTA

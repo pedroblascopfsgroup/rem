@@ -319,5 +319,4 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 	public void setNoValidado(Boolean noValidado) {
 		this.noValidado = noValidado;
 	}
-	
 }

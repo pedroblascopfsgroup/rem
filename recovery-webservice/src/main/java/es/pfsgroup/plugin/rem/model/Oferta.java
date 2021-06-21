@@ -1019,6 +1019,7 @@ public class Oferta implements Serializable, Auditable {
 	public void setOfertaSospechosa(Boolean ofertaSospechosa) {
 		this.ofertaSospechosa = ofertaSospechosa;
 	}
+
 	public DDResponsableDocumentacionCliente getRespDocCliente() {
 		return respDocCliente;
 	}

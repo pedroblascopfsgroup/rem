@@ -1786,6 +1786,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    		return false;
 	    	}
     		return false;
+	    },
+	    esEditableUsuariosCaixa: function(get){
+	    	var me = this;
+	    	var isBankia = get('saneamiento.isCarteraBankia');
+	    	if (!isBankia && ($AU.userIsRol(CONST.PERFILES["GESTOR_ADMISION"]) || $AU.userIsRol(CONST.PERFILES["GESTORIA_ADMISION"])
+	    			|| $AU.userIsRol(CONST.PERFILES["SUPERVISOR_ADMISION"]) || $AU.userIsRol(CONST.PERFILES["HAYASUPER"]))) {
+				return false;
+			} else {
+		    	return true;
+			}
 	    }
 	 },
     

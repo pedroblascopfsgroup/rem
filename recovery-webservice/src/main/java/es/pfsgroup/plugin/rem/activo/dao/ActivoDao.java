@@ -422,4 +422,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	List<AuxiliarCierreOficinasBankiaMul> getListAprAuxCierreBnK();
 
 	List<Activo> getActivosNoPrincipalesAgrupacion(Long idAgr, Long idActivoPrincipal);
+
+	boolean isCarteraCaixa(Long idActivo);
+
+	boolean isCarteraCaixa(Activo activo);
 }

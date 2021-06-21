@@ -330,7 +330,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tributacionPropVenta", DDTributacionPropuestaVenta.class);
 		mapa.put("carteraVentaCreditos", DDCarteraVentaCreditos.class);
 		mapa.put("carteraVentaActivos", DDCarteraVentaActivos.class);
-		
+		mapa.put("tipoImpuestoCompra", DDTipoImpuestoCompra.class);  
+		mapa.put("subtipoImpuestoCompra", DDSubtipoImpuestoCompra.class);  
 		
 		return Collections.unmodifiableMap(mapa);
 	}

@@ -2368,4 +2368,19 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		return this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 	}
+	
+	@Override
+	public boolean isCarteraCaixa(Long idActivo) {
+		if (idActivo != null) {
+			Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
+			return isCarteraCaixa(activo);
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isCarteraCaixa(Activo activo) {
+		return (activo != null && activo.getCartera() != null)
+				&& DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo());
+	}
 }

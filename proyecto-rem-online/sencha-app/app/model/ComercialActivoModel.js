@@ -130,6 +130,52 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 		},
 		{
 			name: 'canalPublicacionAlquilerCodigo'
+		},
+		{
+			name: 'tributacionPropuestaClienteExentoIvaCod'
+		},
+		{
+			name: 'tributacionPropuestaClienteExentoIvaDesc'
+		},
+		{
+			name: 'carteraVentaCreditosCod'
+		},
+		{
+			name: 'carteraVentaCreditosDesc'
+		},
+		{
+			name: 'carteraVentaActivosCod'
+		},
+		{
+			name: 'carteraVentaActivosDesc'
+		},
+		{
+			name: 'tributacionPropuestaVentaCod'
+		},
+		{
+			name: 'tributacionPropuestaVentaDesc'
+		},
+		{
+			name: 'carteraConcentrada',
+			type: 'boolean'
+		},
+		{
+			name: 'activoAAMM',
+			type: 'boolean'
+		},
+		{
+			name: 'activoPromocionesEstrategicas',
+			type: 'boolean'
+		},
+		{
+			name: 'fechaInicioConcurrencia',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name: 'fechaFinConcurrencia',
+			type:'date',
+			dateFormat: 'c'
 		}
     ],
     

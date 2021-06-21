@@ -1182,7 +1182,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 
    		me.addExternalErrors(errores);
    },
-
    
    funcionRecargar: function() {
 		var me = this; 

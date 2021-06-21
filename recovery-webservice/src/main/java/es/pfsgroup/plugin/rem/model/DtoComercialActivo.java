@@ -45,7 +45,19 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private Date fechaEstadoComercialAlquiler;	
 	private String canalPublicacionVentaCodigo;
 	private String canalPublicacionAlquilerCodigo;
-
+    private String tributacionPropuestaClienteExentoIvaCod;
+    private String tributacionPropuestaClienteExentoIvaDesc;
+    private String carteraVentaCreditosCod;
+    private String carteraVentaCreditosDesc;
+    private String carteraVentaActivosCod;
+    private String carteraVentaActivosDesc;
+    private String tributacionPropuestaVentaCod;
+    private String tributacionPropuestaVentaDesc;
+	private Boolean carteraConcentrada;
+	private Boolean activoAAMM;
+	private Boolean activoPromocionesEstrategicas;
+    private Date fechaInicioConcurrencia;
+    private Date fechaFinConcurrencia;		
 
 	public String getId() {
 		return id;
@@ -343,6 +355,110 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	public void setCanalPublicacionAlquilerCodigo(String canalPublicacionAlquilerCodigo) {
 		this.canalPublicacionAlquilerCodigo = canalPublicacionAlquilerCodigo;
+	}
+
+	public String getTributacionPropuestaClienteExentoIvaCod() {
+		return tributacionPropuestaClienteExentoIvaCod;
+	}
+
+	public void setTributacionPropuestaClienteExentoIvaCod(String tributacionPropuestaClienteExentoIvaCod) {
+		this.tributacionPropuestaClienteExentoIvaCod = tributacionPropuestaClienteExentoIvaCod;
+	}
+
+	public String getTributacionPropuestaClienteExentoIvaDesc() {
+		return tributacionPropuestaClienteExentoIvaDesc;
+	}
+
+	public void setTributacionPropuestaClienteExentoIvaDesc(String tributacionPropuestaClienteExentoIvaDesc) {
+		this.tributacionPropuestaClienteExentoIvaDesc = tributacionPropuestaClienteExentoIvaDesc;
+	}
+
+	public String getCarteraVentaCreditosCod() {
+		return carteraVentaCreditosCod;
+	}
+
+	public void setCarteraVentaCreditosCod(String carteraVentaCreditosCod) {
+		this.carteraVentaCreditosCod = carteraVentaCreditosCod;
+	}
+
+	public String getCarteraVentaCreditosDesc() {
+		return carteraVentaCreditosDesc;
+	}
+
+	public void setCarteraVentaCreditosDesc(String carteraVentaCreditosDesc) {
+		this.carteraVentaCreditosDesc = carteraVentaCreditosDesc;
+	}
+
+	public String getCarteraVentaActivosCod() {
+		return carteraVentaActivosCod;
+	}
+
+	public void setCarteraVentaActivosCod(String carteraVentaActivosCod) {
+		this.carteraVentaActivosCod = carteraVentaActivosCod;
+	}
+
+	public String getCarteraVentaActivosDesc() {
+		return carteraVentaActivosDesc;
+	}
+
+	public void setCarteraVentaActivosDesc(String carteraVentaActivosDesc) {
+		this.carteraVentaActivosDesc = carteraVentaActivosDesc;
+	}
+
+	public String getTributacionPropuestaVentaCod() {
+		return tributacionPropuestaVentaCod;
+	}
+
+	public void setTributacionPropuestaVentaCod(String tributacionPropuestaVentaCod) {
+		this.tributacionPropuestaVentaCod = tributacionPropuestaVentaCod;
+	}
+
+	public String getTributacionPropuestaVentaDesc() {
+		return tributacionPropuestaVentaDesc;
+	}
+
+	public void setTributacionPropuestaVentaDesc(String tributacionPropuestaVentaDesc) {
+		this.tributacionPropuestaVentaDesc = tributacionPropuestaVentaDesc;
+	}
+
+	public Boolean getCarteraConcentrada() {
+		return carteraConcentrada;
+	}
+
+	public void setCarteraConcentrada(Boolean carteraConcentrada) {
+		this.carteraConcentrada = carteraConcentrada;
+	}
+
+	public Boolean getActivoAAMM() {
+		return activoAAMM;
+	}
+
+	public void setActivoAAMM(Boolean activoAAMM) {
+		this.activoAAMM = activoAAMM;
+	}
+
+	public Boolean getActivoPromocionesEstrategicas() {
+		return activoPromocionesEstrategicas;
+	}
+
+	public void setActivoPromocionesEstrategicas(Boolean activoPromocionesEstrategicas) {
+		this.activoPromocionesEstrategicas = activoPromocionesEstrategicas;
+	}
+
+	public Date getFechaInicioConcurrencia() {
+		return fechaInicioConcurrencia;
+	}
+
+	public void setFechaInicioConcurrencia(Date fechaInicioConcurrencia) {
+		this.fechaInicioConcurrencia = fechaInicioConcurrencia;
+	}
+
+	public Date getFechaFinConcurrencia() {
+		return fechaFinConcurrencia;
+	}
+
+	public void setFechaFinConcurrencia(Date fechaFinConcurrencia) {
+		this.fechaFinConcurrencia = fechaFinConcurrencia;
 	}
 
 	

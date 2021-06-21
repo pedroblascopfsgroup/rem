@@ -60,6 +60,7 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	private String observacionesExpropiacion;
 	private String maxPrecioVenta;
 	private String observaciones;
+	private Boolean isCarteraBankia;
 	
 	// ADMISION/SANEAMIENTO/TRAMITACION TITULO ADICIONAL
 	private Integer tieneTituloAdicional; 
@@ -86,6 +87,14 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	private Boolean puedeEditarCalificacionNegativaAdicional;
 	
 	private Date fechaEstadoTitularidadActivoInmobiliario;
+	
+	private String tipoImpuestoCompraCodigo;
+	private String tipoImpuestoCompraDescripcion;
+	private String subtipoImpuestoCompraCodigo;
+	private String subtipoImpuestoCompraDescripcion;
+	private Double porcentajeImpuestoCompra;
+	private String codigoTpIvaCompra;
+	private String renunciaExencionCompra;
 	
 	
 	public Long getIdActivo() {
@@ -525,6 +534,54 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	}
 	public void setFechaEstadoTitularidadActivoInmobiliario(Date fechaEstadoTitularidadActivoInmobiliario) {
 		this.fechaEstadoTitularidadActivoInmobiliario = fechaEstadoTitularidadActivoInmobiliario;
+	}
+	public String getTipoImpuestoCompraCodigo() {
+		return tipoImpuestoCompraCodigo;
+	}
+	public void setTipoImpuestoCompraCodigo(String tipoImpuestoCompraCodigo) {
+		this.tipoImpuestoCompraCodigo = tipoImpuestoCompraCodigo;
+	}
+	public String getTipoImpuestoCompraDescripcion() {
+		return tipoImpuestoCompraDescripcion;
+	}
+	public void setTipoImpuestoCompraDescripcion(String tipoImpuestoCompraDescripcion) {
+		this.tipoImpuestoCompraDescripcion = tipoImpuestoCompraDescripcion;
+	}
+	public String getSubtipoImpuestoCompraCodigo() {
+		return subtipoImpuestoCompraCodigo;
+	}
+	public void setSubtipoImpuestoCompraCodigo(String subtipoImpuestoCompraCodigo) {
+		this.subtipoImpuestoCompraCodigo = subtipoImpuestoCompraCodigo;
+	}
+	public String getSubtipoImpuestoCompraDescripcion() {
+		return subtipoImpuestoCompraDescripcion;
+	}
+	public void setSubtipoImpuestoCompraDescripcion(String subtipoImpuestoCompraDescripcion) {
+		this.subtipoImpuestoCompraDescripcion = subtipoImpuestoCompraDescripcion;
+	}
+	public Double getPorcentajeImpuestoCompra() {
+		return porcentajeImpuestoCompra;
+	}
+	public void setPorcentajeImpuestoCompra(Double porcentajeImpuestoCompra) {
+		this.porcentajeImpuestoCompra = porcentajeImpuestoCompra;
+	}
+	public String getCodigoTpIvaCompra() {
+		return codigoTpIvaCompra;
+	}
+	public void setCodigoTpIvaCompra(String codigoTpIvaCompra) {
+		this.codigoTpIvaCompra = codigoTpIvaCompra;
+	}
+	public String getRenunciaExencionCompra() {
+		return renunciaExencionCompra;
+	}
+	public void setRenunciaExencionCompra(String renunciaExencionCompra) {
+		this.renunciaExencionCompra = renunciaExencionCompra;
+	}
+	public Boolean getIsCarteraBankia() {
+		return isCarteraBankia;
+	}
+	public void setIsCarteraBankia(Boolean isCarteraBankia) {
+		this.isCarteraBankia = isCarteraBankia;
 	}
 	
 }

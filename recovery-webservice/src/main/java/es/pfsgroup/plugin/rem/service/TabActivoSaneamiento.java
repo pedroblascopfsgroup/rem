@@ -21,10 +21,10 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoHistoricoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoFiscalidadAdquisicion;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoTituloAdicional;
 import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
@@ -43,6 +44,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoImpuestoCompra;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoImpuestoCompra;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloAdicional;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
@@ -398,6 +401,35 @@ public class TabActivoSaneamiento implements TabActivoService{
 				activoDto.setFechaEstadoTitularidadActivoInmobiliario(actTitulo.getFechaEstadoTitularidadActivoInmobiliario());
 			}
 		}
+		
+		Filter filtroActivoFiscalidad = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoFiscalidadAdquisicion activoFiscalidad = genericDao.get(ActivoFiscalidadAdquisicion.class, filtroActivoFiscalidad);
+		
+		if (activoFiscalidad != null) {
+			if (activoFiscalidad.getTipoImpuestoCompra() != null) {
+				activoDto.setTipoImpuestoCompraCodigo(activoFiscalidad.getTipoImpuestoCompra().getCodigo());
+				activoDto.setTipoImpuestoCompraDescripcion(activoFiscalidad.getTipoImpuestoCompra().getDescripcion());
+			}
+			if (activoFiscalidad.getSubtipoImpuestoCompra() != null) {
+				activoDto.setSubtipoImpuestoCompraCodigo(activoFiscalidad.getSubtipoImpuestoCompra().getCodigo());
+				activoDto.setSubtipoImpuestoCompraDescripcion(activoFiscalidad.getSubtipoImpuestoCompra().getDescripcion());
+			}
+			if (activoFiscalidad.getPorcentajeImpuestoCompra() != null) {
+				activoDto.setPorcentajeImpuestoCompra(activoFiscalidad.getPorcentajeImpuestoCompra());
+			}
+			if (activoFiscalidad.getCodigoTpIvaCompra() != null) {
+				activoDto.setCodigoTpIvaCompra(activoFiscalidad.getCodigoTpIvaCompra());
+			}
+			if (activoFiscalidad.getRenunciaExencionCompra() != null) {
+				activoDto.setRenunciaExencionCompra(activoFiscalidad.getRenunciaExencionCompra() ? "1" : "0");
+			}
+		}
+		
+		if(activoDao.isCarteraCaixa(activo.getId())){
+			activoDto.setIsCarteraBankia(true);
+		}else {
+			activoDto.setIsCarteraBankia(false);
+		}
 				
 		 
 		return activoDto;
@@ -413,6 +445,8 @@ public class TabActivoSaneamiento implements TabActivoService{
 			ActivoTitulo  actTitulo = genericDao.get(ActivoTitulo.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));
 
 			ActivoTituloAdicional actTituloAdicional = genericDao.get(ActivoTituloAdicional.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+
+			ActivoFiscalidadAdquisicion activoFiscalidad = genericDao.get(ActivoFiscalidadAdquisicion.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 
 			if(actTitulo == null) {
 				actTitulo = new ActivoTitulo();
@@ -493,8 +527,32 @@ public class TabActivoSaneamiento implements TabActivoService{
 			
 			genericDao.save(ActivoTituloAdicional.class, actTituloAdicional);
 			
-			
-			
+			if (activoFiscalidad != null) {
+				if (activoDto.getTipoImpuestoCompraCodigo() != null) {
+					Filter filtroTipoImpuestoCompra = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							activoDto.getTipoImpuestoCompraCodigo());
+					DDTipoImpuestoCompra tipoImpuestoCompra = genericDao.get(DDTipoImpuestoCompra.class, filtroTipoImpuestoCompra);
+					activoFiscalidad.setTipoImpuestoCompra(tipoImpuestoCompra);
+				}
+				if (activoDto.getSubtipoImpuestoCompraCodigo() != null) {
+					Filter filtrosubtipoImpuestoCompra = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							activoDto.getSubtipoImpuestoCompraCodigo());
+					DDSubtipoImpuestoCompra subtipoImpuestoCompra = genericDao.get(DDSubtipoImpuestoCompra.class, filtrosubtipoImpuestoCompra);
+					activoFiscalidad.setSubtipoImpuestoCompra(subtipoImpuestoCompra);
+				}
+				if (activoDto.getPorcentajeImpuestoCompra() != null) {
+					activoFiscalidad.setPorcentajeImpuestoCompra(activoDto.getPorcentajeImpuestoCompra());
+				}
+				if (activoDto.getCodigoTpIvaCompra() != null) {
+					activoFiscalidad.setCodigoTpIvaCompra(activoDto.getCodigoTpIvaCompra());
+				}
+				if (activoDto.getRenunciaExencionCompra() != null && "0".equals(activoDto.getRenunciaExencionCompra())) {
+					activoFiscalidad.setRenunciaExencionCompra(false);
+				} else if (activoDto.getRenunciaExencionCompra() != null && "1".equals(activoDto.getRenunciaExencionCompra())) {
+					activoFiscalidad.setRenunciaExencionCompra(true);
+				}
+				genericDao.save(ActivoFiscalidadAdquisicion.class, activoFiscalidad);
+			}
 			
 		}
 

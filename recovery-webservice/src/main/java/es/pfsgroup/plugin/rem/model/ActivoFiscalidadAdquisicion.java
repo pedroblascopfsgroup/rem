@@ -22,7 +22,6 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoImpuestoCompra;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoImpuestoCompra;
 
@@ -57,7 +56,7 @@ public class ActivoFiscalidadAdquisicion implements Serializable, Auditable {
     
     @Column(name = "FAD_COD_TP_IVA_COMPRA")
     private String codigoTpIvaCompra;
-        
+    
     @Column(name = "FAD_RENUNCIA_EXENCION")
     private Boolean renunciaExencionCompra;
 	

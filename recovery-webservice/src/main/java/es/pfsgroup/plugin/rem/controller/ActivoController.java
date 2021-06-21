@@ -153,6 +153,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
+import es.pfsgroup.plugin.rem.model.DtoSubirDocumento;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -1496,12 +1497,12 @@ public class ActivoController extends ParadiseJsonController {
 
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView upload(HttpServletRequest request) {
+	public ModelAndView upload(HttpServletRequest request, DtoSubirDocumento dto) {
 		ModelMap model = new ModelMap();
 
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
-			adapter.upload(webFileItem);
+			adapter.upload(webFileItem, null);
 			model.put(RESPONSE_SUCCESS_KEY, true);			
 		} catch (GestorDocumentalException e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20190621
+--## FECHA_CREACION=20210607
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6164
+--## INCIDENCIA_LINK=REMVIP-9845
 --## PRODUCTO=NO
 --## Finalidad: Stored Procedure que actualiza la situacion comercial VACIA de los activos en REM.
 --##           
@@ -12,7 +12,8 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - HREOS-3404 - Guillem Rey
 --##        0.2 Segunda version - HREOS-3523 - Vicente Martinez
---##		0.3 Tercera verison - HREOS-6164 - Guillermo Llidó
+--##		    0.3 Tercera verison - HREOS-6164 - Guillermo Llidó
+--##		    0.4 Juan Bautista Alfonso [REMVIP-9845] Modificacion para nuevas vistas V_COND_DISPONIBILIDAD
 --##########################################
 --*/
 
@@ -235,7 +236,7 @@ BEGIN
         FROM '||V_ESQUEMA||'.'||TABLA_ACTIVO||' ACT
         INNER JOIN '||V_ESQUEMA||'.'||TABLA_APOYO||' TMP
         ON TMP.ACT_ID = ACT.ACT_ID
-        INNER JOIN '||V_ESQUEMA||'.V_COND_DISPONIBILIDAD VISTA
+        INNER JOIN '||V_ESQUEMA||'.V_ES_CONDICIONADO VISTA
         ON VISTA.ACT_ID = ACT.ACT_ID
         WHERE VISTA.ES_CONDICIONADO = 1
         and act.borrado = 0

@@ -64,6 +64,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DtoMetadatosEspecificos;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
@@ -114,6 +115,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
@@ -2627,6 +2629,7 @@ public class ActivoAdapter {
 			} catch (Exception e) {
 				throw new RemUserException("user.exception.tipodoc.incorrecto", messageServices);
 			}
+			activoAdmisionDocumento.setNoValidado(true);
 			activoAdmisionDocumento.setConfigDocumento(tipodoc);
 
 			rellenaCheckingDocumentoAdmision(activoAdmisionDocumento, dtoAdmisionDocumento);
@@ -2744,7 +2747,7 @@ public class ActivoAdapter {
 		return listaAdjuntos;
 	}
 
-	public String uploadDocumento(WebFileItem webFileItem, Activo activoEntrada, String matricula) throws Exception {
+	public String uploadDocumento(WebFileItem webFileItem, Activo activoEntrada, String matricula, DtoMetadatosEspecificos dtoMetadatos) throws Exception {
 		if(webFileItem == null) return null; //No seguimos
 		
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
@@ -2765,8 +2768,7 @@ public class ActivoAdapter {
 		tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);
 		
 		if(tipoDocumento != null && gestorDocumentalActivado)
-			idDocRestClient = gestorDocumentalAdapterApi.upload(activoEntrada, webFileItem,
-					username, tipoDocumento.getMatricula());
+			idDocRestClient = gestorDocumentalAdapterApi.upload(activoEntrada, webFileItem, username, tipoDocumento.getMatricula(), dtoMetadatos);
 		
 		if (gestorDocumentalActivado) {
 			activoApi.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
@@ -2784,8 +2786,8 @@ public class ActivoAdapter {
 		return null;
 	}
 
-	public String upload(WebFileItem webFileItem) throws Exception {
-		return uploadDocumento(webFileItem, null, null);
+	public String upload(WebFileItem webFileItem, DtoMetadatosEspecificos dto) throws Exception {
+		return uploadDocumento(webFileItem, null, null, dto);
 	}
 	
 	public void uploadFactura(WebFileItem webFileItem) throws Exception {
@@ -2804,7 +2806,7 @@ public class ActivoAdapter {
 		tipoDocGastoAsociado = genericDao.get(DDTipoDocumentoGastoAsociado.class, filtro);
 		if(tipoDocGastoAsociado != null) {
 			if(gestorDocumentalActivado) {
-				idDocRestClient = gestorDocumentalAdapterApi.upload(gas.getActivo(), webFileItem, username, tipoDocGastoAsociado.getMatricula());
+				idDocRestClient = gestorDocumentalAdapterApi.upload(gas.getActivo(), webFileItem, username, tipoDocGastoAsociado.getMatricula(), null);
 				activoApi.uploadFactura(webFileItem, idDocRestClient, gas, tipoDocGastoAsociado);
 			}else {
 				activoApi.uploadFactura(webFileItem, null, gas, tipoDocGastoAsociado);
@@ -3986,6 +3988,21 @@ public class ActivoAdapter {
 				oferta.setOfrDocRespPrescriptor(true);
 			} else {
 				oferta.setOfrDocRespPrescriptor(dto.getOfrDocRespPrescriptor());
+			}
+			
+			String codigo = null;
+			
+			if(!oferta.getOfrDocRespPrescriptor()) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
+			}
+			
+			if (codigo != null) {
+				DDResponsableDocumentacionCliente respCodCliente = genericDao.get(DDResponsableDocumentacionCliente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo));
+				oferta.setRespDocCliente(respCodCliente);
 			}
 			
 			ofertaCreada = genericDao.save(Oferta.class, oferta);

@@ -290,6 +290,12 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EEB_ID")
 	private DDEstadoExpedienteBc estadoBc;   
+    
+    @Column(name="ECO_ESTADO_ARRAS")
+	private Integer estadoPbcArras;
+    
+    @Column(name="ECO_ESTADO_CN")
+	private Integer estadoPbcCn;
 
     @Version   
 	private Long version;
@@ -886,6 +892,22 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setEstadoBc(DDEstadoExpedienteBc estadoBc) {
 		this.estadoBc = estadoBc;
+	}
+
+	public Integer getEstadoPbcArras() {
+		return estadoPbcArras;
+	}
+
+	public void setEstadoPbcArras(Integer estadoPbcArras) {
+		this.estadoPbcArras = estadoPbcArras;
+	}
+
+	public Integer getEstadoPbcCn() {
+		return estadoPbcCn;
+	}
+
+	public void setEstadoPbcCn(Integer estadoPbcCn) {
+		this.estadoPbcCn = estadoPbcCn;
 	}
 	
 }

@@ -29,8 +29,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
-import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
 
@@ -155,6 +154,17 @@ public class Comprador implements Serializable, Auditable {
     
     @Column(name="COM_FORMA_JURIDICA")
     private String formaJuridica;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_LOC_NAC_ID")
+	private Localidad localidadNacimientoComprador;
+    
+    @Column(name="COM_PRP")
+    private Boolean compradorPrp;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_NAC_ID")
+	private DDPaises paisNacimientoComprador;
 
 
 	public Long getId() {
@@ -418,7 +428,29 @@ public class Comprador implements Serializable, Auditable {
 	public void setFormaJuridica(String formaJuridica) {
 		this.formaJuridica = formaJuridica;
 	}
-	
-	
+
+	public Localidad getLocalidadNacimientoComprador() {
+		return localidadNacimientoComprador;
+	}
+
+	public void setLocalidadNacimientoComprador(Localidad localidadNacimientoComprador) {
+		this.localidadNacimientoComprador = localidadNacimientoComprador;
+	}
+
+	public Boolean getCompradorPrp() {
+		return compradorPrp;
+	}
+
+	public void setCompradorPrp(Boolean compradorPrp) {
+		this.compradorPrp = compradorPrp;
+	}
+
+	public DDPaises getPaisNacimientoComprador() {
+		return paisNacimientoComprador;
+	}
+
+	public void setPaisNacimientoComprador(DDPaises paisNacimientoComprador) {
+		this.paisNacimientoComprador = paisNacimientoComprador;
+	}
 	
 }

@@ -20,6 +20,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 
@@ -68,7 +69,9 @@ public class ActivoConfigDocumento implements Serializable, Auditable {
 	@Column(name = "CFD_APLICA_CALIFICACION")
 	private Boolean aplicaCalificacion;
 	
-
+	@ManyToOne
+	@JoinColumn(name = "DD_SAC_ID")
+	private DDSubtipoActivo subtipoActivo;
 	
 	@Version   
 	private Long version;

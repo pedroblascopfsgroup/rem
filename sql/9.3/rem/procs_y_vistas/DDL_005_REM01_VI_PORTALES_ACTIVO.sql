@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Adrián Molina
---## FECHA_CREACION=20200526
+--## FECHA_CREACION=20210607
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-7233
+--## INCIDENCIA_LINK=REMVIP-9845
 --## PRODUCTO=NO
 --## Finalidad: vista para portales de activos
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Añadir filtro agrupación dada de baja
+--##		    0.3 Juan Bautista Alfonso [REMVIP-9845] Modificacion para nuevas vistas V_COND_DISPONIBILIDAD
 --##########################################
 --*/
 
@@ -69,7 +70,7 @@ BEGIN
             AND VANDALIZADO = 0
             AND COMBO_OTRO = 0
             AND SIN_INFORME_APROBADO = 0
-            AND SIN_INFORME_APROBADO_REM = 0
+            AND SININF.SIN_INFORME_APROBADO_REM = 0
             AND CON_CARGAS = 0
             AND SIN_ACCESO = 0
             AND OCUPADO_SINTITULO = 0
@@ -86,7 +87,7 @@ BEGIN
             AND VANDALIZADO = 0
             AND COMBO_OTRO = 0
             AND SIN_INFORME_APROBADO = 0
-            AND SIN_INFORME_APROBADO_REM = 0
+            AND SININF.SIN_INFORME_APROBADO_REM = 0
             AND SIN_ACCESO = 0
             AND ESTADO_PORTAL_EXTERNO = 0
             AND (COND.PENDIENTE_INSCRIPCION = 0 OR CNP.CNP_PENDIENTE_INSCRIPCION = 1 AND COND.PENDIENTE_INSCRIPCION = 1)
@@ -99,6 +100,7 @@ BEGIN
     FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
     INNER JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID AND APU.BORRADO = 0
     INNER JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD COND ON COND.ACT_ID = ACT.ACT_ID AND COND.BORRADO = 0
+	  INNER JOIN '|| V_ESQUEMA ||'.V_SIN_INFORME_APROBADO_REM SININF ON SININF.ACT_ID = ACT.ACT_ID
     LEFT JOIN '|| V_ESQUEMA ||'.ACT_CNP_CONFIG_PORTAL CNP ON ACT.DD_CRA_ID = CNP.DD_CRA_ID AND CNP.BORRADO = 0
     LEFT JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = APU.DD_EPV_ID AND EPV.BORRADO = 0
     WHERE

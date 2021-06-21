@@ -1986,20 +1986,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(oferta.getOfertaSingular() != null) {
 			dto.setOfertaSingular(oferta.getOfertaSingular() ? "Si" : "No");
 		}
-		
-		Long codigoPrescriptor = new Long(2321);
-		
-		if(!oferta.getOfrDocRespPrescriptor()) {
-			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_COMPRADORES);
+
+		if (oferta.getRespDocCliente() != null) {
+			dto.setTipoResponsableCodigo(oferta.getRespDocCliente().getCodigo());
 		}
-		
-		else if(oferta.getOfrDocRespPrescriptor() && !Checks.esNulo(oferta.getPrescriptor()) && codigoPrescriptor.equals(oferta.getPrescriptor().getCodigoProveedorRem())) {
-			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL);
-		}
-		
-		else if(oferta.getOfrDocRespPrescriptor() && !Checks.esNulo(oferta.getPrescriptor()) && !codigoPrescriptor.equals(oferta.getPrescriptor().getCodigoProveedorRem())) {
-			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR);
-		}
+
 		
 		OfertaExclusionBulk ofertaExclusionBulk = genericDao.get(OfertaExclusionBulk.class, 
 				genericDao.createFilter(FilterType.EQUALS, "oferta", oferta),
@@ -2278,67 +2269,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			DtoActivosExpediente dtoActivo = activosToDto(activo, activoPorcentajeParti, activoPrecioAprobado,
 					activoPrecioMinimo, activoImporteParticipacion);
 
-			// calculamos los pilotos de tanteos,condiciones y bloqueos
-			DtoInformeJuridico dtoInfoJuridico = this.getFechaEmisionInfJuridico(idExpediente, dtoActivo.getIdActivo());
-			if (dtoInfoJuridico == null || dtoInfoJuridico.getFechaEmision() == null) {
-				dtoActivo.setBloqueos(2);// pendiente
-
-			} else {
-				if (dtoInfoJuridico.getResultadoBloqueo() != null
-						&& dtoInfoJuridico.getResultadoBloqueo().equals(InformeJuridico.RESULTADO_FAVORABLE)) {
-					dtoActivo.setBloqueos(1);
-				} else {
-					dtoActivo.setBloqueos(0);
-				}
-			}
-
-			DtoCondicionesActivoExpediente condiciones = this.getCondicionesActivoExpediete(idExpediente,
-					dtoActivo.getIdActivo());
-			if (condiciones.getSituacionPosesoriaCodigo() != null
-					&& condiciones.getSituacionPosesoriaCodigoInformada() != null
-					&& condiciones.getSituacionPosesoriaCodigo()
-							.equals(condiciones.getSituacionPosesoriaCodigoInformada())
-					&& condiciones.getPosesionInicial() != null && condiciones.getPosesionInicialInformada() != null
-					&& condiciones.getPosesionInicial().equals(condiciones.getPosesionInicialInformada())
-					&& condiciones.getEstadoTitulo() != null && condiciones.getEstadoTituloInformada() != null
-					&& condiciones.getEstadoTitulo().equals(condiciones.getEstadoTituloInformada())) {
-				dtoActivo.setCondiciones(1);
-			} else {
-				dtoActivo.setCondiciones(0);
-			}
-
-			CondicionanteExpediente condicionantes = expediente.getCondicionante();
-			if (condicionantes != null) {
-				if (condicionantes.getSujetoTanteoRetracto() != null && 0 == condicionantes.getSujetoTanteoRetracto()) {
-					dtoActivo.setTanteos(3);
-
-				} else {
-					dtoActivo.setTanteos(3);
-					List<TanteoActivoExpediente> tanteosExpediente = expediente.getTanteoActivoExpediente();
-					int contTanteosActivo = 0;
-					int contTanteosActivoRenunciado = 0;
-					for (TanteoActivoExpediente tanteo : tanteosExpediente) {
-						if (tanteo.getActivo().getId().equals(activo.getId())) {
-							contTanteosActivo++;
-							if (tanteo.getResultadoTanteo() != null) {
-								if (tanteo.getResultadoTanteo().getCodigo().equals(DDResultadoTanteo.CODIGO_EJERCIDO)) {
-									dtoActivo.setTanteos(2);
-									break;
-								} else if (DDResultadoTanteo.CODIGO_RENUNCIADO
-										.equals(tanteo.getResultadoTanteo().getCodigo())) {
-									contTanteosActivoRenunciado++;
-								}
-							} else {
-								dtoActivo.setTanteos(0);
-							}
-						}
-					}
-
-					if (contTanteosActivo > 0 && contTanteosActivo == contTanteosActivoRenunciado) {
-						dtoActivo.setTanteos(1);
-					}
-				}
-			}
+			this.pilotosToDto(dtoActivo, expediente);
 
 			if (!Checks.esNulo(activo.getLocalizacion().getLocalizacionBien().getPuerta())) {
 				dtoActivo.setPuerta(activo.getLocalizacion().getLocalizacionBien().getPuerta());
@@ -2371,6 +2302,31 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			activos.add(dtoActivo);
 
+		}
+
+		return new DtoPage(activos, activos.size());
+	}
+	
+	@Override
+	public DtoPage getActivosExpedienteExcel(Long idExpediente, Boolean esExcelActivos) {
+		ExpedienteComercial expediente = findOne(idExpediente);
+		List<DtoActivosExpediente> activos = new ArrayList<DtoActivosExpediente>();
+		
+		Filter oferta = genericDao.createFilter(FilterType.EQUALS, "oferta", expediente.getOferta().getId());
+		List<VActivoOfertaImporte> activosExpediente = genericDao.getList(VActivoOfertaImporte.class, oferta);
+
+		for (VActivoOfertaImporte activo : activosExpediente) {
+			DtoActivosExpediente dtoActivo = new DtoActivosExpediente();
+			dtoActivo.setIdActivo(activo.getActivo());
+			dtoActivo.setNumActivo(activo.getNumActivo());
+
+			if (esExcelActivos) {
+				this.pilotosToDto(dtoActivo, expediente);
+			} else {
+				dtoActivo.setImporteParticipacion(activo.getImporteActivoOferta());
+			}
+			
+			activos.add(dtoActivo);
 		}
 
 		return new DtoPage(activos, activos.size());
@@ -2495,6 +2451,72 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return dtoActivo;
+	}
+	
+	private DtoActivosExpediente pilotosToDto(DtoActivosExpediente dtoActivo, ExpedienteComercial expediente) {
+		DtoInformeJuridico dtoInfoJuridico = this.getFechaEmisionInfJuridico(expediente.getId(), dtoActivo.getIdActivo());
+		if (dtoInfoJuridico == null || dtoInfoJuridico.getFechaEmision() == null) {
+			dtoActivo.setBloqueos(2);// pendiente
+
+		} else {
+			if (dtoInfoJuridico.getResultadoBloqueo() != null
+					&& dtoInfoJuridico.getResultadoBloqueo().equals(InformeJuridico.RESULTADO_FAVORABLE)) {
+				dtoActivo.setBloqueos(1);
+			} else {
+				dtoActivo.setBloqueos(0);
+			}
+		}
+
+		DtoCondicionesActivoExpediente condiciones = this.getCondicionesActivoExpediete(expediente.getId(),
+				dtoActivo.getIdActivo());
+		if (condiciones.getSituacionPosesoriaCodigo() != null
+				&& condiciones.getSituacionPosesoriaCodigoInformada() != null
+				&& condiciones.getSituacionPosesoriaCodigo()
+						.equals(condiciones.getSituacionPosesoriaCodigoInformada())
+				&& condiciones.getPosesionInicial() != null && condiciones.getPosesionInicialInformada() != null
+				&& condiciones.getPosesionInicial().equals(condiciones.getPosesionInicialInformada())
+				&& condiciones.getEstadoTitulo() != null && condiciones.getEstadoTituloInformada() != null
+				&& condiciones.getEstadoTitulo().equals(condiciones.getEstadoTituloInformada())) {
+			dtoActivo.setCondiciones(1);
+		} else {
+			dtoActivo.setCondiciones(0);
+		}
+
+		CondicionanteExpediente condicionantes = expediente.getCondicionante();
+		if (condicionantes != null) {
+			if (condicionantes.getSujetoTanteoRetracto() != null && 0 == condicionantes.getSujetoTanteoRetracto()) {
+				dtoActivo.setTanteos(3);
+
+			} else {
+				dtoActivo.setTanteos(3);
+				List<TanteoActivoExpediente> tanteosExpediente = expediente.getTanteoActivoExpediente();
+				int contTanteosActivo = 0;
+				int contTanteosActivoRenunciado = 0;
+				for (TanteoActivoExpediente tanteo : tanteosExpediente) {
+					if (tanteo.getActivo().getId().equals(dtoActivo.getIdActivo())) {
+						contTanteosActivo++;
+						if (tanteo.getResultadoTanteo() != null) {
+							if (tanteo.getResultadoTanteo().getCodigo().equals(DDResultadoTanteo.CODIGO_EJERCIDO)) {
+								dtoActivo.setTanteos(2);
+								break;
+							} else if (DDResultadoTanteo.CODIGO_RENUNCIADO
+									.equals(tanteo.getResultadoTanteo().getCodigo())) {
+								contTanteosActivoRenunciado++;
+							}
+						} else {
+							dtoActivo.setTanteos(0);
+						}
+					}
+				}
+
+				if (contTanteosActivo > 0 && contTanteosActivo == contTanteosActivoRenunciado) {
+					dtoActivo.setTanteos(1);
+				}
+			}
+		}
+		
+		return dtoActivo;
+		
 	}
 
 	public FileItem getFileItemAdjunto(DtoAdjuntoExpediente dtoAdjunto) {
@@ -2645,7 +2667,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					&& !Checks.esNulo(adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula())) {
 				Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
 				activoAdapter.uploadDocumento(fileItem, activo,
-						adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula());
+						adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula(), null);
 				// HREOS-5392
 				// Se comprueba que el documento que sube es el de deposito despublicacion
 				// activo

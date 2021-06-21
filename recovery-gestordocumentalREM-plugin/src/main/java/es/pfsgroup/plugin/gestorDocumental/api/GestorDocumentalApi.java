@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDo
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
 
 public interface GestorDocumentalApi {
+	
 
 	/**
 	 * Permite obtener un listado de documentos dentro de un expediente (con o sin relaciones)

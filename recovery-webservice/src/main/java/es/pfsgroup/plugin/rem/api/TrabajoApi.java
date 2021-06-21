@@ -936,9 +936,10 @@ public interface TrabajoApi {
 
 	public BigDecimal getImporteTotalSuplidosByTrabajo(Trabajo trabajo);
 
+	boolean activoTieneTrabajoValidadoByTipoDocumento(Long idActivo, String tipoDocumento);
+
 	public List<DtoProveedorContactoSimple> getComboProveedorContactoLlaves(Long idProveedor) throws Exception;
-	
-	
+
 	/**
 	 * Devuelve un objeto Page con los trabajos que se cargarán en el grid
 	 * @param dto

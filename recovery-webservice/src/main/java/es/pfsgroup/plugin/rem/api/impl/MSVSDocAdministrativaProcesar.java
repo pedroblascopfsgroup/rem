@@ -101,8 +101,9 @@ public class MSVSDocAdministrativaProcesar extends AbstractMSVActualizador imple
 		
 		// Config Documento
 		Filter filtroTPD = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.id", tipoDocumentoActivo.getId());
-		Filter filtroTPA = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.id", activo.getTipoActivo().getId());		
-		ActivoConfigDocumento activoConfigDocumento = genericDao.get(ActivoConfigDocumento.class, filtroTPD, filtroTPA);		
+		Filter filtroTPA = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.id", activo.getTipoActivo().getId());	
+		Filter filtroSAC = genericDao.createFilter(FilterType.EQUALS, "subtipoActivo.id", activo.getSubtipoActivo().getId());	
+		ActivoConfigDocumento activoConfigDocumento = genericDao.get(ActivoConfigDocumento.class, filtroTPD, filtroTPA, filtroSAC);		
 		
 		if(Checks.esNulo(activoConfigDocumento)) {
 			activoConfigDocumento = new ActivoConfigDocumento();
@@ -122,6 +123,7 @@ public class MSVSDocAdministrativaProcesar extends AbstractMSVActualizador imple
 			ado = new ActivoAdmisionDocumento();
 			ado.setActivo(activo);
 			ado.setConfigDocumento(activoConfigDocumento);
+			ado.setNoValidado(true);
 			ado.setAuditoria(Auditoria.getNewInstance());			
 		}
 		

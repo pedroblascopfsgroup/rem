@@ -595,12 +595,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	 		return !isSuper && !isBoarding;//CARTERAS BANCO
 	 	},
 	 	
-	 	habilitarBotonGenerarFicha: function(get){;
+	 	habilitarBotonGenerarFicha: function(get){
 			 var me = this;
 			 var codExpediente = get('expediente.codigoEstado');
 			 	if (CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'] == codExpediente
 			 		|| CONST.ESTADOS_EXPEDIENTE['PENDIENTE_SANCION'] == codExpediente
-			 		|| CONST.ESTADOS_EXPEDIENTE['PEN_RES_OFER_COM'] == codExpediente) {
+			 		|| CONST.ESTADOS_EXPEDIENTE['PEN_RES_OFER_COM'] == codExpediente
+			 		|| CONST.ESTADOS_EXPEDIENTE['PTE_DE_SANCION_COMITE'] == codExpediente
+			 		|| CONST.ESTADOS_EXPEDIENTE['PTE_SANCION_COMITE'] == codExpediente
+			 		|| CONST.ESTADOS_EXPEDIENTE['CONTRAOFERTADO'] == codExpediente
+			 		|| CONST.ESTADOS_EXPEDIENTE['RPTA_OFERTANTE'] == codExpediente
+			 		|| CONST.ESTADOS_EXPEDIENTE['PTE_RESOLUCION_COMITE'] == codExpediente
+			 		|| CONST.ESTADOS_EXPEDIENTE['CONT_CES'] == codExpediente) {
 			 		
 			 		return true;
 			 	}else{

@@ -1759,9 +1759,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 					if(lista != null && !lista.isEmpty()) {
 						actConfDoc = lista.get(0);
 					}
-					List<ActivoConfigDocumento> actConfDocList = genericDao.getListOrdered(ActivoConfigDocumento.class, order,filtroDocumento,filtrotipoActivo);
-					if(actConfDocList != null && !actConfDocList.isEmpty()) {
-						actConfDoc = actConfDocList.get(0);
+					if(actConfDoc != null) {
 						Filter filtroActConfDoc = genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", actConfDoc.getId());
 						List<ActivoAdmisionDocumento> activoAdmisionDocumentoList = genericDao.getListOrdered(ActivoAdmisionDocumento.class,order, filtroActivo, filtroActConfDoc);
 						if(activoAdmisionDocumentoList != null && !activoAdmisionDocumentoList.isEmpty()) {

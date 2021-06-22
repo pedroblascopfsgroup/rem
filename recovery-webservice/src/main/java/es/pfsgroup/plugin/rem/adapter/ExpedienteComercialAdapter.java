@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import javax.annotation.Resource;
 
@@ -15,6 +16,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.exception.UserException;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -30,6 +33,8 @@ import es.pfsgroup.plugin.rem.bulkAdvisoryNote.dao.BulkOfertaDao;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.AdjuntoExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.DDSubtipoDocumentoExpedienteDao;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
@@ -53,6 +58,7 @@ public class ExpedienteComercialAdapter {
 	private static final String CREANDO_CONTENEDOR = "Creando contenedor...";
 	private static final String EXCEPTION_UPLOAD_DOCUMENTO_BULK = "Error, existen ofertas sin tramitar en el Bulk";
 	private static final String ERROR_SUBIDA_DOCUMENTO_GD = "Error en la subida del documento al Gestor Documental";
+	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	//private static final String GESTOR_GD_EXTERNO = "Gestor externo";
 
 	@Autowired
@@ -81,6 +87,12 @@ public class ExpedienteComercialAdapter {
 	
 	@Autowired
 	private BulkOfertaDao bulkOfertaDao;
+	
+	@Resource
+	private Properties appProperties;
+	
+	@Autowired
+	private DownloaderFactoryApi downloaderFactoryApi;
 	
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -467,6 +479,12 @@ public class ExpedienteComercialAdapter {
 	
 	public List<VListadoOfertasAgrupadasLbk> getListActivosAgrupacionById(Long idOferta){
 		return expedienteComercialApi.getListActivosAgrupacionById(idOferta);
+	}
+	
+	public FileItem downloadExpediente(Long id,String nombreDocumento) throws UserException,Exception {
+		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
+		Downloader dl = downloaderFactoryApi.getDownloader(key);
+		return dl.getFileItemExpediente(id,nombreDocumento);
 	}
 	
 }

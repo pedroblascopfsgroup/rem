@@ -68,12 +68,13 @@ public class RemCorreoUtils {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	public void enviarCorreoConAdjuntos(String emailFrom, List<String> mailsPara, List<String> direccionesMailCc,
-			String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) {
+			String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list, List<String> direccionesMailBcc) {
 
 		CorreoSaliente traza = obtenerTrazaCorreoSaliente(emailFrom, mailsPara, direccionesMailCc, asuntoMail,
-				cuerpoEmail, list);
+				cuerpoEmail, list,direccionesMailBcc);
 		ArrayList<String> mailsParaSinNull = new ArrayList<String>();
-		ArrayList<String> mailsCCSinNull = new ArrayList<String>(); 
+		ArrayList<String> mailsCCSinNull = new ArrayList<String>();
+		ArrayList<String> mailsBCCSinNull = new ArrayList<String>(); 
 
 		try {
 			emailFrom = emailFrom(emailFrom);
@@ -87,6 +88,13 @@ public class RemCorreoUtils {
 				for (String cc : direccionesMailCc) {
 					if (cc != null && cc.length() > 0 && !mailsCCSinNull.contains(cc)) {
 						mailsCCSinNull.add(cc);
+					}
+				}
+			}
+			if(!Checks.estaVacio(direccionesMailBcc)) {
+				for (String bcc : direccionesMailBcc) {
+					if (bcc != null && bcc.length() > 0 && !mailsBCCSinNull.contains(bcc)) {
+						mailsBCCSinNull.add(bcc);
 					}
 				}
 			}
@@ -104,7 +112,7 @@ public class RemCorreoUtils {
 
 			MimeMessage message = new MimeMessage(session);
 
-			prepararDestinatarios(message, mailsParaSinNull, mailsCCSinNull);
+			prepararDestinatarios(message, mailsParaSinNull, mailsCCSinNull, mailsBCCSinNull);
 
 			message.setSubject(asuntoMail);
 
@@ -150,7 +158,7 @@ public class RemCorreoUtils {
 	}
 
 	private CorreoSaliente obtenerTrazaCorreoSaliente(String emailFrom, List<String> mailsPara,
-			List<String> direccionesMailCc, String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) {
+			List<String> direccionesMailCc, String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list,List<String> direccionesMailBcc) {
 		CorreoSaliente traza = new CorreoSaliente();
 		traza.setAsunto(asuntoMail);
 		traza.setCuerpo(cuerpoEmail);
@@ -173,6 +181,17 @@ public class RemCorreoUtils {
 							paraAcumulado = paraAcumulado.concat(",");
 						}
 						paraAcumulado = paraAcumulado.concat("(CC:)").concat(para);
+						i++;
+					}
+				}
+			}
+			if (!Checks.estaVacio(direccionesMailBcc)) {
+				for (String para : direccionesMailBcc) {
+					if (para != null && para.length() > 0) {
+						if (i > 0) {
+							paraAcumulado = paraAcumulado.concat(",");
+						}
+						paraAcumulado = paraAcumulado.concat("(BCC:)").concat(para);
 						i++;
 					}
 				}
@@ -212,7 +231,7 @@ public class RemCorreoUtils {
 		envioCorreoGenerico(message, t, usuario, pass);
 	}
 
-	private void prepararDestinatarios(MimeMessage message, List<String> mailsPara, List<String> direccionesMailCc)
+	private void prepararDestinatarios(MimeMessage message, List<String> mailsPara, List<String> direccionesMailCc, List<String> direccionesMailBcc)
 			throws AddressException, MessagingException {
 		for (String emailPara : mailsPara) {
 			if (emailPara != null && !emailPara.isEmpty()) {
@@ -230,6 +249,18 @@ public class RemCorreoUtils {
 					emailCC = emailCC.trim();
 					if (validarCorreo(emailCC)) {
 						message.addRecipient(Message.RecipientType.CC, new InternetAddress(emailCC));
+					}
+				}
+
+			}
+		}
+		
+		if (direccionesMailBcc != null && direccionesMailBcc.size() > 0) {
+			for (String emailBCC : direccionesMailBcc) {
+				if (!Checks.esNulo(emailBCC)) {
+					emailBCC = emailBCC.trim();
+					if (validarCorreo(emailBCC)) {
+						message.addRecipient(Message.RecipientType.BCC, new InternetAddress(emailBCC));
 					}
 				}
 

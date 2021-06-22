@@ -19,6 +19,7 @@ public class EnvioCorreoAsync implements Runnable {
 	private String cuerpo;
 	private List<DtoAdjuntoMail> adjuntos;
 	private String userName = null;
+	private List<String> mailsBCC;
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -38,7 +39,19 @@ public class EnvioCorreoAsync implements Runnable {
 		this.asunto = asunto;
 		this.cuerpo = cuerpo;
 		this.adjuntos = adjuntos;
-		this.userName = userName;		
+		this.userName = userName;
+	}
+	
+	public EnvioCorreoAsync(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo,
+			List<DtoAdjuntoMail> adjuntos,String userName, List<String> mailsBCC ) {
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+		this.mailsPara = mailsPara;
+		this.mailsCC = mailsCC;
+		this.asunto = asunto;
+		this.cuerpo = cuerpo;
+		this.adjuntos = adjuntos;
+		this.userName = userName;
+		this.mailsBCC = mailsBCC;
 	}
 
 	@Override
@@ -48,7 +61,7 @@ public class EnvioCorreoAsync implements Runnable {
 		} catch (Exception e) {
 			logger.error("error iniciandoi sesión en el hilo de los correos", e);
 		}
-		remCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
+		remCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos,mailsBCC);
 	}
 
 }

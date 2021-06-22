@@ -457,12 +457,16 @@ public class OperacionVentaManager implements ParamReportsApi{
 			}
 
 			if(Checks.esNulo(activo)){
-				model.put("error", RestApi.REST_NO_RELATED_ASSET);
+				if(model != null) {
+					model.put("error", RestApi.REST_NO_RELATED_ASSET);
+				}
 				throw new Exception(RestApi.REST_NO_RELATED_ASSET);
 			}
 			
 			if(Checks.esNulo(oferta)){
-				model.put("error", RestApi.REST_NO_RELATED_OFFER);
+				if(model != null) {
+					model.put("error", RestApi.REST_NO_RELATED_OFFER);
+				}
 				throw new Exception(RestApi.REST_NO_RELATED_OFFER);
 			}
 
@@ -470,13 +474,17 @@ public class OperacionVentaManager implements ParamReportsApi{
 			expediente = (ExpedienteComercial) genericDao.get(ExpedienteComercial.class, filtro);
 
 			if (expediente==null) {
-				model.put("error", RestApi.REST_NO_RELATED_EXPEDIENT);
+				if(model != null) {
+					model.put("error", RestApi.REST_NO_RELATED_EXPEDIENT);
+				}
 				throw new Exception(RestApi.REST_NO_RELATED_EXPEDIENT);					
 			}
 			
 			CondicionanteExpediente condExp = expediente.getCondicionante();
 			if (condExp==null) {
-				model.put("error", RestApi.REST_NO_RELATED_COND_EXPEDIENT);
+				if(model != null) {
+					model.put("error", RestApi.REST_NO_RELATED_COND_EXPEDIENT);
+				}
 				throw new Exception(RestApi.REST_NO_RELATED_COND_EXPEDIENT);					
 			}
 			

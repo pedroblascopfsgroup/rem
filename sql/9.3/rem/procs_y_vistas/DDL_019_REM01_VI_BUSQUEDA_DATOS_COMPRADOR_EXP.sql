@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo
---## FECHA_CREACION=20210615
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20210622
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=14249
+--## INCIDENCIA_LINK=14391
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -19,6 +19,7 @@
 --##		0.6.1 Versión - REMVIP-7528 - Guillem Rey - columna id no debe ser null
 --##		0.7 Versión - HREOS-14126 	- Lara Pablo - Añadidas columnas CEX_C4C_ID y COM_FECHA_NACIOCONST
 --##		0.8 Versión - HREOS-14249 	- Lara Pablo - Añadidas columnas COM_FORMA_JURIDICA
+--##		0.9 Versión - HREOS-14391 	- Javier Esbri - Añadidas columnas CEX_FECHA_NACIMIENTO_REPR, CEX_LOC_NAC_REPR, DD_PAI_NAC_REPR_ID, CEX_USUFRUCTUARIO, DD_LOC_NAC_ID, COM_PRP, COM_FECHA_NACIMIENTO
 --##########################################
 --*/
 
@@ -139,7 +140,14 @@ BEGIN
 			CEX.CEX_NUM_URSUS_CONYUGE_BH_REM,
 			CEX.CEX_C4C_ID,
 			COM.COM_FECHA_NACIOCONST,
-			COM.COM_FORMA_JURIDICA
+			COM.COM_FORMA_JURIDICA,
+			CEX.CEX_FECHA_NACIMIENTO_REPR,
+			CEX.CEX_LOC_NAC_REPR,
+			CEX.DD_PAI_NAC_REPR_ID,
+			CEX.CEX_USUFRUCTUARIO,
+			COM.COM_FECHA_NACIMIENTO,
+			COM.DD_LOC_NAC_ID,
+			COM.COM_PRP
 
 		FROM REM01.COM_COMPRADOR COM
 	      	LEFT JOIN '|| V_ESQUEMA ||'.CEX_COMPRADOR_EXPEDIENTE CEX ON CEX.COM_ID = COM.COM_ID

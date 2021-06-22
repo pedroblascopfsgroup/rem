@@ -319,6 +319,22 @@ Ext.define('HreRem.model.ExpedienteComercial', {
 			},
 			{
     			name: 'codigoEstadoBc'
+    		},
+    		{
+    			name: 'estadoPbcCn'
+    		},
+    		{
+    			name: 'estadoPbcArras'
+    		},
+    		{
+    			name: 'fechaReservaDeposito',
+				type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'fechaContabilizacion',
+				type:'date',
+    			dateFormat: 'c'
     		}
     ],
     formulas: {

@@ -201,6 +201,16 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	bind:		'{expediente.fechaAltaOferta}'
 	                	//,readOnly: true
 	                },
+	                { 	//PARA CAIXA
+	                	xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
+						fieldLabel: HreRem.i18n('fieldlabel.fecha.reserva'),
+						reference: 'fechaReservaRef',
+	                	bind:		{
+	                		value: '{expediente.fechaReservaDeposito}',
+	                		hidden: '{!esBankia}'
+	                	}
+	                },
 	                {
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
@@ -213,7 +223,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('fieldlabel.fecha.reserva'),
 	                	bind:		{
-	                		value: '{expediente.fechaReserva}'
+	                		value: '{expediente.fechaReserva}',
+	                		hidden: '{esBankia}'
 	                	},
 	                	listeners: {
 							render: 'tareaDefinicionDeOferta'
@@ -236,6 +247,17 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	bind:		'{expediente.fechaSancion}'
 	                	//,readOnly: true
 	                },
+	                {   //PAra Caixa
+	                	xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
+	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.reserva.arras'),
+	                	colspan: 2,
+	                	bind: {
+	                		value: '{expediente.fechaReserva}',
+	                		hidden: '{!esBankia}'
+	                	}
+	                },
+	                
 	                { 
 						xtype: 'datefieldbase',
 						formatter: 'date("d/m/Y")',
@@ -273,6 +295,16 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                		value: '{expediente.fechaContabilizacionReserva}',
 	                		readOnly: '{fechaContabilizacionReservaReadOnly}',
 	                		hidden: '{!esOfertaVentaEsCajamar}'
+	                	}		
+	                },
+	                //PARA CAIXA
+	                {
+	                	xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
+	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.contabilizacion'),
+	                	bind: {
+	                		value: '{expediente.fechaContabilizacion}',
+	                		hidden: '{!esBankia}'
 	                	}		
 	                },
 	            	{ 
@@ -429,6 +461,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 		                {
 		                	xtype: 'comboboxfieldbase',
 							reference: 'comboRiesgoReputacional',
+							colspan:2,
 		                	fieldLabel:  HreRem.i18n('fieldlabel.riesgo.reputacional'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
@@ -438,6 +471,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						{
 		                	xtype: 'comboboxfieldbase',
 							reference: 'comboEstadoPBCreserva',
+							colspan:2,
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc.reserva'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
@@ -446,9 +480,28 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 			            	}
 		                },
 		                {
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc.cn'),
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+		                		store: '{comboAceptadoRechazado}',
+		                		hidden: '{!esBankia}',
+		                		value: '{expediente.estadoPbcCn}'
+		                	}
+		                },
+		                {
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc.arras'),
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+		                		store: '{comboAceptadoRechazado}',
+		                		hidden: '{!esBankia}',
+		                		value: '{expediente.estadoPbcArras}'
+		                	}
+		                },
+		                {
 		                	xtype: 'comboboxfieldbase',
 							reference: 'comboEstadoPbc',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc'),
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc.venta'),
+		                	
 				        	bind: {
 			            		store: '{comboAceptadoRechazado}',
 								value: '{expediente.estadoPbc}'

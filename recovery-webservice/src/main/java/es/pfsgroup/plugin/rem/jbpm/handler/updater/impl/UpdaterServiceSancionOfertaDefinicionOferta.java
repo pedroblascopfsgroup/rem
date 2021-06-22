@@ -171,12 +171,13 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				// Una vez aprobado el expediente, se congelan el resto de
 				// ofertas que no estén rechazadas (aceptadas y pendientes)
 				List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-				for (Oferta oferta : listaOfertas) {
-					if (!oferta.getId().equals(ofertaAceptada.getId())
-							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo()) 
-							&& ((!ofertaApi.isOfertaPrincipal(oferta) && !ofertaApi.isOfertaDependiente(oferta)) 
-						|| (DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL.equals(ofertaAceptada.getClaseOferta().getCodigo())))) {
-						ofertaApi.congelarOferta(oferta);
+				for (Oferta oferta : listaOfertas) { 
+					if(oferta.getActivoPrincipal() != null && !DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
+						if (!oferta.getId().equals(ofertaAceptada.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo()) 
+								&& ((!ofertaApi.isOfertaPrincipal(oferta) && !ofertaApi.isOfertaDependiente(oferta)) 
+							|| (DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL.equals(ofertaAceptada.getClaseOferta().getCodigo())))) {
+							ofertaApi.congelarOferta(oferta);
+						}
 					}
 				}
 

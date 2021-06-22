@@ -157,6 +157,15 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private String codigoEstadoBc;
 	
+	private Integer estadoPbcCn;
+	
+	private Integer estadoPbcArras;
+	
+	private Date fechaContabilizacion;
+	
+	private Date fechaReservaDeposito;
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -796,6 +805,38 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setCodigoEstadoBc(String codigoEstadoBc) {
 		this.codigoEstadoBc = codigoEstadoBc;
+	}
+
+	public Integer getEstadoPbcCn() {
+		return estadoPbcCn;
+	}
+
+	public void setEstadoPbcCn(Integer estadoPbcCn) {
+		this.estadoPbcCn = estadoPbcCn;
+	}
+
+	public Integer getEstadoPbcArras() {
+		return estadoPbcArras;
+	}
+
+	public void setEstadoPbcArras(Integer estadoPbcArras) {
+		this.estadoPbcArras = estadoPbcArras;
+	}
+
+	public Date getFechaContabilizacion() {
+		return fechaContabilizacion;
+	}
+
+	public void setFechaContabilizacion(Date fechaContabilizacion) {
+		this.fechaContabilizacion = fechaContabilizacion;
+	}
+
+	public Date getFechaReservaDeposito() {
+		return fechaReservaDeposito;
+	}
+
+	public void setFechaReservaDeposito(Date fechaReservaDeposito) {
+		this.fechaReservaDeposito = fechaReservaDeposito;
 	}
 	
 	

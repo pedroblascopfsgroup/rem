@@ -216,7 +216,7 @@ public class CompradorExpediente implements Serializable, Auditable {
     private DDPaises paisNacimientoRepresentante;
     
     @Column(name="CEX_USUFRUCTUARIO")
-    private Boolean usufructario;
+    private Boolean usufructuario;
     
 	@Version   
 	private Long version;
@@ -723,12 +723,12 @@ public class CompradorExpediente implements Serializable, Auditable {
 		this.paisNacimientoRepresentante = paisNacimientoRepresentante;
 	}
 
-	public Boolean getUsufructario() {
-		return usufructario;
+	public Boolean getUsufructuario() {
+		return usufructuario;
 	}
 
-	public void setUsufructario(Boolean usufructario) {
-		this.usufructario = usufructario;
+	public void setUsufructuario(Boolean usufructuario) {
+		this.usufructuario = usufructuario;
 	}
    
 }

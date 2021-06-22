@@ -133,7 +133,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' CREADA');  
 	
 
-		/***** APR_AUX_I_RU_FACT_CON_PROV *****/
+		/***** AUX_I_RU_FACT_PROV_BFA *****/
 	
 	V_TABLA := 'AUX_I_RU_FACT_PROV_BFA';
 	

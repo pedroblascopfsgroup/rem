@@ -6,7 +6,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloAdicionalGrid'
 	editOnSelect: true,
 	disabledDeleteBtn: false,
 	sortableColumns: false,
-	requires	: ['HreRem.model.HistoricoTramitacionTituloAdicionalModel'],//
+	requires	: ['HreRem.model.HistoricoTramitacionTituloAdicionalModel'],// 'HreRem.model.DDEstadoPresentacion'],//
     bind: {
         store: '{storeHistoricoTramitacionTituloAdicional}' //
     },
@@ -96,12 +96,11 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloAdicionalGrid'
 						xtype: 'combobox',
 						allowBlank: false,
 						store: new Ext.data.Store({
-							model: 'HreRem.model.ComboBase',
-							proxy: {
-								type: 'uxproxy',
-								remoteUrl: 'generic/getDiccionario',
-								extraParams: {diccionario: 'EstadoPresentacion'}
-							},
+							model: 'DDEstadoPresentacion',
+					    	proxy: {
+						        type: 'uxproxy',
+								remoteUrl: 'activo/getEstadosPresentacionAdicional'
+					    	},
 							autoLoad: true
 						}),
 						displayField: 'descripcion',

@@ -4257,4 +4257,9 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getEstadosPresentacionAdicional() {	
+		return createModelAndViewJson(new ModelMap("data", adapter.getEstadosPresentacionAdicional()));
+	}
 }

@@ -36,6 +36,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
@@ -107,6 +108,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -4883,5 +4885,14 @@ public class ActivoAdapter {
 
 		return genericDao.getListOrdered(VPreciosVigentes.class, order, filtro, filtroFecha);
 
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<Dictionary> getEstadosPresentacionAdicional(){
+		List lista = new ArrayList();	
+		lista.add(utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPresentacion.class, DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE));	
+		lista.add(utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPresentacion.class, DDEstadoPresentacion.INSCRITO));	
+		lista.add(utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPresentacion.class, DDEstadoPresentacion.PRESENTACION_EN_REGISTRO));	
+		return lista;
 	}
 }

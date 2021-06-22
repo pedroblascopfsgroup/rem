@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210621
+--## FECHA_CREACION=20210622
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14368
@@ -15,6 +15,7 @@
 --##        0.3 Revisión - [HREOS-14344] - Alejandra García
 --##        0.4 Formatos númericos en ACT_EN_TRAMITE = 0  - [HREOS-14366] - Daniel Algaba
 --##        0.5 Cambiamos años  - [HREOS-14368] - Daniel Algaba
+--##        0.6 Metemos NUM_IDENTFICATIVO como campos de cruce - [HREOS-14368] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -133,7 +134,8 @@ BEGIN
             JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID=ACT.ACT_ID AND PAC.PAC_INCLUIDO = 1
             WHERE ACT.BORRADO = 0
             AND ACT.ACT_EN_TRAMITE = 0
-            ) US ON (US.NUM_INMUEBLE=AUX.NUM_INMUEBLE)
+            AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
+            ) US ON (US.NUM_INMUEBLE=AUX.NUM_INMUEBLE AND US.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
             WHEN MATCHED THEN UPDATE SET
                  AUX.FEC_VISITA_INMB_SERVICER=US.FEC_VISITA_INMB_SERVICER
                 ,AUX.ANYO_CONSTRUCCION=US.ANYO_CONSTRUCCION

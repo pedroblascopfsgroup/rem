@@ -205,7 +205,7 @@ public class CompradorExpediente implements Serializable, Auditable {
 	private Long idC4c;
 	
     @Column(name="CEX_FECHA_NACIMIENTO_REPR")
-    private Date fechanNacimientoRepresentante;
+    private Date fechaNacimientoRepresentante;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CEX_LOC_NAC_REPR")
@@ -699,12 +699,12 @@ public class CompradorExpediente implements Serializable, Auditable {
 		this.idC4c = idC4c;
 	}
 
-	public Date getFechanNacimientoRepresentante() {
-		return fechanNacimientoRepresentante;
+	public Date getFechaNacimientoRepresentante() {
+		return fechaNacimientoRepresentante;
 	}
 
-	public void setFechanNacimientoRepresentante(Date fechanNacimientoRepresentante) {
-		this.fechanNacimientoRepresentante = fechanNacimientoRepresentante;
+	public void setFechaNacimientoRepresentante(Date fechaNacimientoRepresentante) {
+		this.fechaNacimientoRepresentante = fechaNacimientoRepresentante;
 	}
 
 	public Localidad getLocalidadNacimientoRepresentante() {

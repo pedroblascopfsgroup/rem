@@ -1753,7 +1753,12 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", activo.getId());
 					Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo", tipoDoc.getTipoDocumento().getCodigo());
 					Filter filtrotipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.id",activo.getTipoActivo().getId());
-					ActivoConfigDocumento actConfDoc = genericDao.get(ActivoConfigDocumento.class, filtroDocumento,filtrotipoActivo);
+					Filter filtroSubtipoActivo = genericDao.createFilter(FilterType.EQUALS, "subtipoActivo.id",activo.getSubtipoActivo().getId());
+					List<ActivoConfigDocumento> lista = genericDao.getList(ActivoConfigDocumento.class, filtroDocumento, filtrotipoActivo, filtroSubtipoActivo);
+					ActivoConfigDocumento actConfDoc = null;
+					if(lista != null && !lista.isEmpty()) {
+						actConfDoc = lista.get(0);
+					}
 					List<ActivoConfigDocumento> actConfDocList = genericDao.getListOrdered(ActivoConfigDocumento.class, order,filtroDocumento,filtrotipoActivo);
 					if(actConfDocList != null && !actConfDocList.isEmpty()) {
 						actConfDoc = actConfDocList.get(0);

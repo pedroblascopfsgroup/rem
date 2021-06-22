@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial - HREOS-14163 - Alejandra García (20210603)
 --##        0.2 Cambiar FLAG_INS_UPD por FLAG_EN_REM y añadirlo como condición en cada merge  - HREOS-14163 - Alejandra García (20210604)
 --##        0.3 Revisión - [HREOS-14344] - Alejandra García
+--##	    0.4 Añadir merges PAC_PERIMETRO - Pier GOtta
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -354,6 +355,170 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
    V_NUM_FILAS := sql%rowcount;
    DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
     commit;
+    
+   IF FLAG_EN_REM = 1 THEN
+   
+   V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
+                	 USING (				
+                     	 SELECT ACT.ACT_ID AS ACT_ID
+                        FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+                        JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
+                        WHERE ACT.ACT_EN_TRAMITE = 1 AND AUX.FLAG_FICHEROS = ''I'' AND (AUX.FEC_VALIDO_A IS NULL OR TO_DATE(AUX.FEC_VALIDO_A, ''dd/mm/yy'') > TO_DATE(SYSDATE, ''dd/mm/yy'') AND ACT.BORRADO=0 
+                        ) 
+                        )US ON (US.ACT_ID = PAC.ACT_ID)
+                        WHEN MATCHED THEN UPDATE SET
+		         PAC.PAC_CHECK_GESTIONAR=1
+		        ,PAC.PAC_CHECK_COMERCIALIZAR=1
+		        ,PAC.PAC_CHECK_FORMALIZAR=1
+		        ,PAC.PAC_CHECK_PUBLICAR=1
+		        ,PAC.PAC_CHECK_ADMISION=1
+                	,PAC.USUARIOMODIFICAR = ''STOCK_BC''
+                	,PAC.FECHAMODIFICAR = SYSDATE';
+                
+   EXECUTE IMMEDIATE V_MSQL;
+   
+   V_NUM_FILAS := sql%rowcount;
+   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
+
+                        
+    V_MSQL :=           'MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+                        USING (				
+                        SELECT ACT.ACT_ID AS ACT_ID
+                        FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+                        JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
+                        WHERE ACT.ACT_EN_TRAMITE = 1 AND AUX.FLAG_FICHEROS = ''I'' AND (AUX.FEC_VALIDO_A IS NULL OR TO_DATE(AUX.FEC_VALIDO_A, ''dd/mm/yy'') > TO_DATE(SYSDATE, ''dd/mm/yy'') AND ACT.BORRADO=0
+                        )
+                        )US ON (US.ACT_ID = ACT.ACT_ID)
+                        WHEN MATCHED THEN UPDATE SET
+                        ACT_EN_TRAMITE = 0
+                       ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
+                       ,ACT.FECHAMODIFICAR = SYSDATE';
+                       
+   EXECUTE IMMEDIATE V_MSQL;
+   
+   V_NUM_FILAS := sql%rowcount;
+   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
+    commit;
+    
+   V_MSQL :=            'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
+                        USING (				
+                        SELECT ACT.ACT_ID AS ACT_ID
+                        FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+                        JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
+                        WHERE ACT.ACT_EN_TRAMITE = 0 AND AUX.FLAG_FICHEROS = ''P'' AND (AUX.FEC_VALIDO_A IS NULL OR TO_DATE(AUX.FEC_VALIDO_A, ''dd/mm/yy'') > TO_DATE(SYSDATE, ''dd/mm/yy'')
+                        )
+                        ) US ON (US.ACT_ID = PAC.ACT_ID)
+                        WHEN MATCHED THEN UPDATE SET
+                        PAC.PAC_CHECK_COMERCIALIZAR=0
+                        ,PAC.PAC_CHECK_FORMALIZAR=0
+                        ,PAC.PAC_CHECK_PUBLICAR=0
+                        ,PAC.PAC_CHECK_ADMISION=0
+                        ,PAC.USUARIOMODIFICAR = ''STOCK_BC''
+                        ,PAC.FECHAMODIFICAR = SYSDATE';
+                        
+   EXECUTE IMMEDIATE V_MSQL;
+   
+   V_NUM_FILAS := sql%rowcount;
+   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
+                        
+   V_MSQL :=            'MERGE INTO REM01.ACT_ACTIVO ACT
+                        USING (				
+                        SELECT ACT.ACT_ID AS ACT_ID
+                        FROM REM01.AUX_APR_BCR_STOCK AUX
+                        JOIN REM01.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
+                        WHERE ACT.ACT_EN_TRAMITE = 0 AND AUX.FLAG_FICHEROS = ''P'' AND (AUX.FEC_VALIDO_A IS NULL OR TO_DATE(AUX.FEC_VALIDO_A, ''dd/mm/yy'') > TO_DATE(SYSDATE, ''dd/mm/yy'')
+                        )
+                        ) US ON (US.ACT_ID = ACT.ACT_ID)
+                        WHEN MATCHED THEN UPDATE SET
+                         ACT_EN_TRAMITE = 1
+                        ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
+                        ,ACT.FECHAMODIFICAR = SYSDATE';
+                        
+   EXECUTE IMMEDIATE V_MSQL;
+   
+   V_NUM_FILAS := sql%rowcount;
+   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
+    commit;
+   
+   ELSIF  FLAG_EN_REM = 0 THEN
+   
+   V_MSQL :=  		 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
+               	 USING (				
+                        SELECT ACT.ACT_ID AS ACT_ID
+                        FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+                        JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
+                        WHERE AUX.FLAG_EN_REM=0 AND AUX.FLAG_FICHEROS = ''P'' 
+                        ) US ON (US.ACT_ID = PAC.ACT_ID)
+                        WHEN MATCHED THEN UPDATE SET
+                        PAC.PAC_INCLUIDO=1
+                        ,PAC.PAC_CHECK_GESTIONAR=1
+                        ,PAC.USUARIOMODIFICAR = ''STOCK_BC''
+                        ,PAC.FECHAMODIFICAR = SYSDATE';
+ 
+   EXECUTE IMMEDIATE V_MSQL;
+   
+   V_NUM_FILAS := sql%rowcount;
+   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
+                        
+   V_MSQL :=            'MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+               	 USING (				
+                     	 SELECT ACT.ACT_ID AS ACT_ID
+                        FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+                        JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
+                        WHERE AUX.FLAG_EN_REM=0 AND AUX.FLAG_FICHEROS = ''P''
+                        ) US ON (US.ACT_ID = ACT.ACT_ID)
+                        WHEN MATCHED THEN UPDATE SET
+		         ACT.ACT_EN_TRAMITE = 1
+                        ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
+                        ,ACT.FECHAMODIFICAR = SYSDATE';
+                       
+   EXECUTE IMMEDIATE V_MSQL;
+   
+   V_NUM_FILAS := sql%rowcount;
+   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
+    commit;
+
+    V_MSQL :=           'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
+                        USING (				
+                        SELECT ACT.ACT_ID AS ACT_ID
+                        FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+                        JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
+                        WHERE AUX.FLAG_FICHEROS = ''I'' AND AUX.FLAG_EN_REM = 0
+                        ) US ON (US.ACT_ID = PAC.ACT_ID)
+                        WHEN MATCHED THEN UPDATE SET
+                        PAC.PAC_CHECK_GESTIONAR=1
+                        ,PAC.PAC_CHECK_COMERCIALIZAR=1
+                        ,PAC.PAC_CHECK_FORMALIZAR=1
+                        ,PAC.PAC_CHECK_PUBLICAR=1
+                        ,PAC.PAC_CHECK_ADMISION=1
+                        ,PAC.USUARIOMODIFICAR = ''STOCK_BC''
+                        ,PAC.FECHAMODIFICAR = SYSDATE';
+                       
+   EXECUTE IMMEDIATE V_MSQL;
+   
+   V_NUM_FILAS := sql%rowcount;
+   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
+                        
+   V_MSQL :=            'MERGE INTO REM01.ACT_ACTIVO ACT
+                        USING (				
+                        SELECT ACT.ACT_ID AS ACT_ID
+                        FROM REM01.AUX_APR_BCR_STOCK AUX
+                        JOIN REM01.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
+                        WHERE AUX.FLAG_FICHEROS = ''I'' AND AUX.FLAG_EN_REM = 0
+                        ) US ON (US.ACT_ID = ACT.ACT_ID)
+                        WHEN MATCHED THEN UPDATE SET
+                         ACT_EN_TRAMITE = 0
+                        ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
+                        ,ACT.FECHAMODIFICAR = SYSDATE';
+                       
+   EXECUTE IMMEDIATE V_MSQL;
+   
+   V_NUM_FILAS := sql%rowcount;
+   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
+    commit;
+   
+   END IF;
+
 
 --6º Merge tabla ACT_FAD_FISCALIDAD_ADQUISICION
 

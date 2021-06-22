@@ -429,6 +429,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 		                {
 		                	xtype: 'comboboxfieldbase',
 							reference: 'comboRiesgoReputacional',
+							colspan:2,
 		                	fieldLabel:  HreRem.i18n('fieldlabel.riesgo.reputacional'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
@@ -438,6 +439,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						{
 		                	xtype: 'comboboxfieldbase',
 							reference: 'comboEstadoPBCreserva',
+							colspan:2,
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc.reserva'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
@@ -446,9 +448,28 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 			            	}
 		                },
 		                {
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc.cn'),
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+		                		store: '{comboAceptadoRechazado}',
+		                		hidden: '{!esBankia}',
+		                		value: '{expediente.estadoPbcCn}'
+		                	}
+		                },
+		                {
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc.arras'),
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+		                		store: '{comboAceptadoRechazado}',
+		                		hidden: '{!esBankia}',
+		                		value: '{expediente.estadoPbcArras}'
+		                	}
+		                },
+		                {
 		                	xtype: 'comboboxfieldbase',
 							reference: 'comboEstadoPbc',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc'),
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc.venta'),
+		                	
 				        	bind: {
 			            		store: '{comboAceptadoRechazado}',
 								value: '{expediente.estadoPbc}'

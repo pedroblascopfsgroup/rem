@@ -1750,6 +1750,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(expediente.getEstadoBc() != null) {
 				dto.setCodigoEstadoBc(expediente.getEstadoBc().getCodigo());
 			}
+			
+			if (expediente.getEstadoPbcArras() != null) {
+				dto.setEstadoPbcArras(expediente.getEstadoPbcArras());
+			}
+			
+			if (expediente.getEstadoPbcCn() != null) {
+				dto.setEstadoPbcCn(expediente.getEstadoPbcCn());
+			}
 		}
 		return dto;
 	}
@@ -5196,6 +5204,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					expedienteComercial.setEstadoBc((DDEstadoExpedienteBc) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class, dto.getCodigoEstadoBc()));
 				}
 				
+				if (dto.getEstadoPbcArras() != null) {
+					expedienteComercial.setEstadoPbcArras(dto.getEstadoPbcArras());
+				}
+				if (dto.getEstadoPbcCn() != null) {
+					expedienteComercial.setEstadoPbcCn(dto.getEstadoPbcCn());
+				}
 				if (expedienteComercial.getId() != null) {
 					genericDao.update(ExpedienteComercial.class, expedienteComercial);
 

@@ -157,6 +157,11 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private String codigoEstadoBc;
 	
+	private Integer estadoPbcCn;
+	
+	private Integer estadoPbcArras;
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -796,6 +801,22 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setCodigoEstadoBc(String codigoEstadoBc) {
 		this.codigoEstadoBc = codigoEstadoBc;
+	}
+
+	public Integer getEstadoPbcCn() {
+		return estadoPbcCn;
+	}
+
+	public void setEstadoPbcCn(Integer estadoPbcCn) {
+		this.estadoPbcCn = estadoPbcCn;
+	}
+
+	public Integer getEstadoPbcArras() {
+		return estadoPbcArras;
+	}
+
+	public void setEstadoPbcArras(Integer estadoPbcArras) {
+		this.estadoPbcArras = estadoPbcArras;
 	}
 	
 	

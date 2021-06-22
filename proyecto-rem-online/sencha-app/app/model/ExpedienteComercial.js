@@ -319,6 +319,12 @@ Ext.define('HreRem.model.ExpedienteComercial', {
 			},
 			{
     			name: 'codigoEstadoBc'
+    		},
+    		{
+    			name: 'estadoPbcCn'
+    		},
+    		{
+    			name: 'estadoPbcArras'
     		}
     ],
     formulas: {

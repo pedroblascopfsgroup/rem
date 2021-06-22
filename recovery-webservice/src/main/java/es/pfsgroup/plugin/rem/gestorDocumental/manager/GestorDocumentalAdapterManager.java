@@ -1753,10 +1753,13 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", activo.getId());
 					Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo", tipoDoc.getTipoDocumento().getCodigo());
 					Filter filtrotipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.id",activo.getTipoActivo().getId());
-					ActivoConfigDocumento actConfDoc = genericDao.get(ActivoConfigDocumento.class, filtroDocumento,filtrotipoActivo);
-					List<ActivoConfigDocumento> actConfDocList = genericDao.getListOrdered(ActivoConfigDocumento.class, order,filtroDocumento,filtrotipoActivo);
-					if(actConfDocList != null && !actConfDocList.isEmpty()) {
-						actConfDoc = actConfDocList.get(0);
+					Filter filtroSubtipoActivo = genericDao.createFilter(FilterType.EQUALS, "subtipoActivo.id",activo.getSubtipoActivo().getId());
+					List<ActivoConfigDocumento> lista = genericDao.getList(ActivoConfigDocumento.class, filtroDocumento, filtrotipoActivo, filtroSubtipoActivo);
+					ActivoConfigDocumento actConfDoc = null;
+					if(lista != null && !lista.isEmpty()) {
+						actConfDoc = lista.get(0);
+					}
+					if(actConfDoc != null) {
 						Filter filtroActConfDoc = genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", actConfDoc.getId());
 						List<ActivoAdmisionDocumento> activoAdmisionDocumentoList = genericDao.getListOrdered(ActivoAdmisionDocumento.class,order, filtroActivo, filtroActConfDoc);
 						if(activoAdmisionDocumentoList != null && !activoAdmisionDocumentoList.isEmpty()) {

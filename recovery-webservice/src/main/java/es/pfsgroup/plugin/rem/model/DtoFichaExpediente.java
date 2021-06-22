@@ -161,6 +161,10 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private Integer estadoPbcArras;
 	
+	private Date fechaContabilizacion;
+	
+	private Date fechaReservaDeposito;
+	
 	
 	public Long getId() {
 		return id;
@@ -817,6 +821,22 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setEstadoPbcArras(Integer estadoPbcArras) {
 		this.estadoPbcArras = estadoPbcArras;
+	}
+
+	public Date getFechaContabilizacion() {
+		return fechaContabilizacion;
+	}
+
+	public void setFechaContabilizacion(Date fechaContabilizacion) {
+		this.fechaContabilizacion = fechaContabilizacion;
+	}
+
+	public Date getFechaReservaDeposito() {
+		return fechaReservaDeposito;
+	}
+
+	public void setFechaReservaDeposito(Date fechaReservaDeposito) {
+		this.fechaReservaDeposito = fechaReservaDeposito;
 	}
 	
 	

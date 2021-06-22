@@ -923,5 +923,15 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	public void setFechaContabilizacion(Date fechaContabilizacion) {
 		this.fechaContabilizacion = fechaContabilizacion;
 	}
+
+	public Date getFechaReservaDeposito() {
+		return fechaReservaDeposito;
+	}
+
+	public void setFechaReservaDeposito(Date fechaReservaDeposito) {
+		this.fechaReservaDeposito = fechaReservaDeposito;
+	}
+	
+	
 	
 }

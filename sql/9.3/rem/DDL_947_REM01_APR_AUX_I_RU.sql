@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210622
+--## FECHA_CREACION=20210623
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMNIVDOS-5257
@@ -108,7 +108,7 @@ BEGIN
                             ( 
                                  FAC_ID_REM                       VARCHAR2(20 CHAR)
                                , FAC_TIPO_REG                     NUMBER(1)
-                               , NUM_ORDEN                        NUMBER(3)
+                               , NUM_ORDEN                        NUMBER(9)
                                , ID_ACTIVO_ESPECIAL               NUMBER(9)
                                , COD_GRUPO_GASTO                  NUMBER(2)
                                , COD_TIPO_ACCION                  NUMBER(2)

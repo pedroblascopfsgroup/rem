@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210617
+--## FECHA_CREACION=2021062
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14241
@@ -103,7 +103,8 @@ BEGIN
                         JOIN '||V_ESQUEMA||'.DD_TOF_TIPOS_OFERTA TOF ON OFR.DD_TOF_ID=TOF.DD_TOF_ID
                         JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID=ACT.ACT_ID
                         JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID=APU.DD_TCO_ID
-                        )WHERE DESTINO_ACTUAL=''1'' AND AUX.FLAG_EN_REM='|| FLAG_EN_REM||'
+                        WHERE AUX.FLAG_EN_REM='|| FLAG_EN_REM||'
+                        )WHERE DESTINO_ACTUAL=''1'' 
                                   
                      ';
 

@@ -273,6 +273,7 @@ BEGIN
                   INSERT 
                   (LOC_ID
                   , ACT_ID
+                  , BIE_LOC_ID
                   , LOC_DIRECCION_DOS
                   , DD_DIC_ID
                   , DD_ESE_ID
@@ -285,6 +286,7 @@ BEGIN
                   VALUES 
                   ('|| V_ESQUEMA ||'.S_ACT_LOC_LOCALIZACION.nextval
                   , AUX.ACT_ID
+                  , AUX.BIE_LOC_ID
                   , AUX.LOC_DIRECCION_DOS
                   , AUX.DD_DIC_ID
                   , AUX.DD_ESE_ID

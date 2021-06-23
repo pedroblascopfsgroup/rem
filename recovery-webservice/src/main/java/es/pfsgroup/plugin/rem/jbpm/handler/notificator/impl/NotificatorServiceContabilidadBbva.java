@@ -100,14 +100,14 @@ public class NotificatorServiceContabilidadBbva extends AbstractNotificatorServi
 	public DtoEmailReserva rellenarDtoEmailReserva(ExpedienteComercial expediente, boolean contratoReserva) {
 		DtoEmailReserva dtoEmailReserva = new DtoEmailReserva();
 		dtoEmailReserva.setNumeroOferta(expediente.getOferta().getNumOferta());
+		dtoEmailReserva.setImporteReserva(expediente.getCondicionante().getImporteReserva());
+		dtoEmailReserva.setImporteOferta(expediente.getOferta().getImporteOferta());
 		if(expediente.getReserva()!=null && contratoReserva) {
-			dtoEmailReserva.setImporteReserva(expediente.getCondicionante().getImporteReserva());
 			dtoEmailReserva.setFechaFirmaReserva(expediente.getReserva().getFechaFirma());
 		}
 		
 		if(!contratoReserva) {
 			dtoEmailReserva.setFechaVenta(expediente.getFechaVenta());
-			dtoEmailReserva.setImporteOferta(expediente.getOferta().getImporteOferta());
 		}
 		
 		List<CompradorExpediente> compradoresExpediente = expediente.getCompradores();

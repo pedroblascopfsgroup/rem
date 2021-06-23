@@ -746,7 +746,8 @@ public abstract class AbstractNotificatorService {
 					+ "						</div>";
 		}
 
-		cuerpo = cuerpo + "				<div style='display: inline-block; width: 140px; vertical-align: top'>"
+		cuerpo = cuerpo + "					</div>" + "				</div>"
+				+ "				<div style='display: inline-block; width: 140px; vertical-align: top'>"
 				+ "					<img src='" + this.getUrlImagenes() + "logo_haya.png' "
 				+ "						style='display: block; margin: 30px auto' /> " + "					<img src='"
 				+ this.getUrlImagenes() + "logo_rem.png' "

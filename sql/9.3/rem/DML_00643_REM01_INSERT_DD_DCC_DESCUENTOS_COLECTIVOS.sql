@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Javier Esbri
---## FECHA_CREACION=20210602
+--## FECHA_CREACION=20210623
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14196
@@ -34,13 +34,13 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      T_TIPO_DATA('1','Empleado Caixa'),
-      T_TIPO_DATA('2','Family'),
-      T_TIPO_DATA('3','Club Ahora'),
-      T_TIPO_DATA('4','Accionista CaixaBank'),
-      T_TIPO_DATA('5','ImaginBank'),
-      T_TIPO_DATA('6','Emprendedores'),
-      T_TIPO_DATA('7','Banca Prem./Personal')
+      T_TIPO_DATA('001','Empleado Caixa'),
+      T_TIPO_DATA('002','Family'),
+      T_TIPO_DATA('003','Club Ahora'),
+      T_TIPO_DATA('004','Accionista CaixaBank'),
+      T_TIPO_DATA('005','ImaginBank'),
+      T_TIPO_DATA('006','Emprendedores'),
+      T_TIPO_DATA('007','Banca Prem./Personal')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

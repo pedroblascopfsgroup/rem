@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210624
+--## FECHA_CREACION=20210625
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-10039
@@ -78,11 +78,6 @@ DECLARE
 	
 	END IF;
 
-	-- Creamos primary key
-	DBMS_OUTPUT.PUT_LINE('[INFO] Creamos la PK');
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (DD_MTC_ID))';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||'_PK creada.');
 
 	-- Comprobamos sequence
 	DBMS_OUTPUT.PUT_LINE('[INFO] Creamos la secuencia');

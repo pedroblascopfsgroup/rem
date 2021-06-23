@@ -97,6 +97,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 				remoteUrl: 'expedientecomercial/buscarProblemasVentaClienteUrsus',
 				extraParams: {numeroUrsus: '', idExpediente: '{comprador.idExpedienteComercial}'}
 			}
+		},
+		comboMunicipioSinFiltro: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipioSinFiltro'
+			}
 		}
 	}
 });

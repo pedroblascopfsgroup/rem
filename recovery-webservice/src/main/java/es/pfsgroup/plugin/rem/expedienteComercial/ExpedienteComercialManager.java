@@ -4816,6 +4816,54 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				DDEstadoContrasteListas estadoContraste = genericDao.get(DDEstadoContrasteListas.class, estadoContrasteFilter);
 				compradorExpediente.setEstadoContrasteListas(estadoContraste);
 			}
+			
+			if (dto.getUsufructuario() != null && "0".equals(dto.getUsufructuario().toString())) {
+				compradorExpediente.setUsufructuario(false);
+			} else if (dto.getUsufructuario() != null && "1".equals(dto.getUsufructuario().toString())) {
+				compradorExpediente.setUsufructuario(true);
+			}
+			
+			if (!Checks.esNulo(dto.getLocalidadNacimientoRepresentanteCodigo())) {
+				Filter filtroLocalidad = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getLocalidadNacimientoRepresentanteCodigo());
+				Localidad localidad = genericDao.get(Localidad.class, filtroLocalidad);
+				compradorExpediente.setLocalidadNacimientoRepresentante(localidad);
+			} else {
+				compradorExpediente.setLocalidadNacimientoRepresentante(null);
+			}
+			
+			if (dto.getFechaNacimientoRepresentante() != null) {
+				compradorExpediente.setFechaNacimientoRepresentante(new Date());
+			} else {
+				compradorExpediente.setFechaNacimientoRepresentante(null);
+			}
+			
+			if (!Checks.esNulo(dto.getPaisNacimientoRepresentanteCodigo())) {
+				Filter filtroPaisRepresentante = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getPaisNacimientoRepresentanteCodigo());
+				DDPaises paisRepresentante = genericDao.get(DDPaises.class, filtroPaisRepresentante);
+				compradorExpediente.setPaisNacimientoRepresentante(paisRepresentante);
+			} else {
+				compradorExpediente.setPaisNacimientoRepresentante(null);
+			}
+			
+			if (!Checks.esNulo(dto.getLocalidadNacimientoCompradorCodigo())) {
+				Filter filtroLocalidad = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getLocalidadNacimientoCompradorCodigo());
+				Localidad localidad = genericDao.get(Localidad.class, filtroLocalidad);
+				comprador.setLocalidadNacimientoComprador(localidad);
+			} else {
+				comprador.setLocalidad(null);
+			}
+			
+			if (dto.getFechaNacimientoComprador() != null) {
+				comprador.setFechaNacimientoComprador(new Date());
+			} else {
+				comprador.setFechaNacimientoComprador(null);
+			}
+			
+			if (dto.getCompradorPrp() != null && "0".equals(dto.getCompradorPrp().toString())) {
+				comprador.setCompradorPrp(false);
+			} else if (dto.getCompradorPrp() != null && "1".equals(dto.getCompradorPrp().toString())) {
+				comprador.setCompradorPrp(true);
+			}
 
 			if (esNuevo) {
 				genericDao.save(Comprador.class, comprador);

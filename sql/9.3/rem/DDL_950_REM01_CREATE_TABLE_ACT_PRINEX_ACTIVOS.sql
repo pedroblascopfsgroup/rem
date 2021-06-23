@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210625
+--## FECHA_CREACION=20210626
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-10039
@@ -30,6 +30,8 @@ DECLARE
     V_TABLA VARCHAR2(150 CHAR):= 'ACT_PRINEX_ACTIVOS'; -- Vble. con el nombre de la tabla.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_ESQUEMA_3 VARCHAR2(20 CHAR) := 'REM_QUERY';
+	  V_ESQUEMA_4 VARCHAR2(20 CHAR) := 'PFSREM';
 
 BEGIN
 
@@ -104,11 +106,38 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.BORRADO IS ''Indicador de borrado''';
   
     DBMS_OUTPUT.PUT_LINE('Creados los comentarios en TABLA '|| V_ESQUEMA ||'.'||V_TABLA||'... OK');
+
+
+  
+
+
+
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[INFO] COMMIT');
     END IF;
 
-     
+     IF V_ESQUEMA_M != V_ESQUEMA THEN
+
+	EXECUTE IMMEDIATE 'GRANT ALL ON "'||V_ESQUEMA||'"."'||V_TABLA||'" TO "'||V_ESQUEMA_M||'" WITH GRANT OPTION';
+	DBMS_OUTPUT.PUT_LINE('[INFO] PERMISOS SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||' OTORGADOS A '||V_ESQUEMA_M||''); 
+
+END IF;
+
+IF V_ESQUEMA_3 != V_ESQUEMA THEN
+
+	EXECUTE IMMEDIATE 'GRANT ALL ON "'||V_ESQUEMA||'"."'||V_TABLA||'" TO "'||V_ESQUEMA_3||'" WITH GRANT OPTION';
+	DBMS_OUTPUT.PUT_LINE('[INFO] PERMISOS SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||' OTORGADOS A '||V_ESQUEMA_3||''); 
+
+END IF;
+
+IF V_ESQUEMA_4 != V_ESQUEMA THEN
+	
+	EXECUTE IMMEDIATE 'GRANT ALL ON "'||V_ESQUEMA||'"."'||V_TABLA||'" TO "'||V_ESQUEMA_4||'" WITH GRANT OPTION';
+	DBMS_OUTPUT.PUT_LINE('[INFO] PERMISOS SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||' OTORGADOS A '||V_ESQUEMA_4||''); 
+
+END IF;
+
+  COMMIT;   
     
     
 EXCEPTION

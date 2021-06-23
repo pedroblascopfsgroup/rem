@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20210615
+--## AUTOR=Santi Monzó
+--## FECHA_CREACION=20210624
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-9902
+--## INCIDENCIA_LINK=REMVIP-10039
 --## PRODUCTO=NO
---## Finalidad: DDL Creación de la tabla DPA_DATOS_PRINEX_ACTIVO
+--## Finalidad: DDL Creación de la tabla ACT_PRINEX_ACTIVOS
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -27,13 +27,13 @@ DECLARE
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
-    V_TABLA VARCHAR2(150 CHAR):= 'DPA_DATOS_PRINEX_ACTIVO'; -- Vble. con el nombre de la tabla.
+    V_TABLA VARCHAR2(150 CHAR):= 'ACT_PRINEX_ACTIVOS'; -- Vble. con el nombre de la tabla.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
 BEGIN
 
-    -- ******** ACT_BBVA_ACTIVOS *******
+    -- ******** ACT_PRINEX_ACTIVOS *******
     DBMS_OUTPUT.PUT_LINE('******** '||V_TABLA||' ********'); 
     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||'... Comprobaciones previas'); 
     
@@ -67,10 +67,9 @@ BEGIN
     	 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||' (
 				  DPA_ID                     	NUMBER(16,0)        NOT NULL
 				 ,ACT_ID                     	NUMBER(16,0)        NOT NULL
-				 ,DPA_DISP_ADMINISTRATIVO       NUMBER(1,0)      
-				 ,DPA_DISP_TECNICO              NUMBER(1,0)
-				 ,DPA_MOTIVO_TECNICO            VARCHAR2(50 CHAR) 
-			 	 ,DPA_COSTE_ADQUISICION     	NUMBER(16,2)
+				 ,DD_DIA_ID                  NUMBER(16,0)      
+				 ,DD_DIT_ID                   NUMBER(16,0)
+				 ,DD_MTC_ID                   NUMBER(16,0) 			 	 
 				 ,VERSION                       NUMBER(38,0)         DEFAULT 0
 				 ,USUARIOCREAR                  VARCHAR2(50 CHAR) 
 				 ,FECHACREAR                    TIMESTAMP(6)        DEFAULT SYSTIMESTAMP
@@ -80,7 +79,10 @@ BEGIN
 				 ,FECHABORRAR                   TIMESTAMP(6)
 				 ,BORRADO                       NUMBER(1,0)         DEFAULT 0
 				 ,CONSTRAINT PK_DPA_ID PRIMARY KEY(DPA_ID)
-				 ,CONSTRAINT FK_DPA_ACT_ID FOREIGN KEY (ACT_ID) REFERENCES '||V_ESQUEMA||'.ACT_ACTIVO (ACT_ID)				
+				 ,CONSTRAINT FK_DPA_ACT_ID FOREIGN KEY (ACT_ID) REFERENCES '||V_ESQUEMA||'.ACT_ACTIVO (ACT_ID)	
+         ,CONSTRAINT FK_DPA_DD_DIA_ID FOREIGN KEY (DD_DIA_ID) REFERENCES '||V_ESQUEMA||'.DD_DIA_DISP_ADMINISTRATIVO (DD_DIA_ID)
+         ,CONSTRAINT FK_DPA_DD_DIT_ID FOREIGN KEY (DD_DIT_ID) REFERENCES '||V_ESQUEMA||'.DD_DIT_DISP_TECNICO (DD_DIT_ID)
+         ,CONSTRAINT FK_DPA_DD_MTC_ID FOREIGN KEY (DD_MTC_ID) REFERENCES '||V_ESQUEMA||'.DD_MTC_MOTIVO_TECNICO (DD_MTC_ID)			
 			  )';         	
 
 		EXECUTE IMMEDIATE V_MSQL;
@@ -89,10 +91,9 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON TABLE  ' || V_ESQUEMA || '.'||V_TABLA||' IS ''Tabla para datos prinex''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.DPA_ID IS ''Identificador de tabla''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.ACT_ID IS ''Id Activo FK a ACT_ACTIVO''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.DPA_DISP_ADMINISTRATIVO IS ''Disponibilidad administrativa del activo''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.DPA_DISP_TECNICO IS ''Disponibilidad tecnica del activo'''; 
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.DPA_MOTIVO_TECNICO IS ''Motivo tecnico del activo''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.DPA_COSTE_ADQUISICION IS ''Coste de adquisicion del activo''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.DD_DIA_ID IS ''Id Disponibilidad administrativa del activo''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.DD_DIT_ID IS ''Id Disponibilidad tecnica del activo'''; 
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.DD_MTC_ID IS ''Id Motivo tecnico del activo''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.VERSION IS ''Indica la versión del registro''';  
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.USUARIOCREAR IS ''Indica el usuario que creó el registro''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.FECHACREAR IS ''Indica la fecha en la que se creó el registro''';

@@ -801,8 +801,13 @@ public class OfertasController {
 			logger.error("Error avance tarea ", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", id);
-			model.put("error",error);
-			model.put("descError", errorDesc);
+			if(error == null || errorDesc == null) {
+				model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+				model.put("descError", e.getMessage());
+			}else {
+				model.put("error",error);
+				model.put("descError", errorDesc);
+			}
 			model.put("success", false);
 		}
 

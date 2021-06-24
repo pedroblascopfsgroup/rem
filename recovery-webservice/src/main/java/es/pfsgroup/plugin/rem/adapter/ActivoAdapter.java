@@ -93,6 +93,7 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.comisionamiento.ComisionamientoApi;
 import es.pfsgroup.plugin.rem.exception.RemUserException;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
@@ -282,6 +283,9 @@ public class ActivoAdapter {
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+	private ExpedienteComercialDao expedienteComercialDao;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -2111,7 +2115,7 @@ public class ActivoAdapter {
 		ActivoTramite tramite = activoTramiteApi.get(idTramite);
 		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
 		List<TareaProcedimiento> listaTareas = activoTramiteApi.getTareasActivasByIdTramite(idTramite);
-		
+
 		try {
 			beanUtilNotNull.copyProperty(dtoTramite, "idTramite", tramite.getId());
 			beanUtilNotNull.copyProperty(dtoTramite, "idTipoTramite", tramite.getTipoTramite().getId());
@@ -2294,6 +2298,19 @@ public class ActivoAdapter {
 						estaEnTareaReserva = true;
 					}
 				}
+			}
+			Trabajo tbj = tramite.getTrabajo();
+			if(tbj != null) {
+				ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdTrabajo(tbj.getId());
+				if(expediente != null ) {
+					if(expediente.getEstadoBc() != null) {
+						beanUtilNotNull.copyProperty(dtoTramite, "codigoEstadoExpedienteBC", expediente.getEstadoBc().getCodigo());
+					}
+					if(expediente.getEstado() != null) {
+						beanUtilNotNull.copyProperty(dtoTramite, "codigoEstadoExpediente", expediente.getEstado().getCodigo());
+					}
+				}
+
 			}
 			String codigoGestor = gestorActivoApi.getCodigoGestorPorUsuario(usuarioManager.getUsuarioLogado().getId());
 			Boolean esGestorAutorizado = !codigoGestor.contains("GBOAR");

@@ -103,6 +103,10 @@ public class DtoTramite extends WebDto {
 	
 	private String codigoEstadoExpedienteComercial;
 	
+	private String codigoEstadoExpediente;
+	
+	private String codigoEstadoExpedienteBC;
+	
 	
 	
 	public Long getIdTramite() {
@@ -472,4 +476,22 @@ public class DtoTramite extends WebDto {
 	public void setCodigoEstadoExpedienteComercial(String codigoEstadoExpedienteComercial) {
 		this.codigoEstadoExpedienteComercial = codigoEstadoExpedienteComercial;
 	}
+
+	public String getCodigoEstadoExpediente() {
+		return codigoEstadoExpediente;
+	}
+
+	public void setCodigoEstadoExpediente(String codigoEstadoExpediente) {
+		this.codigoEstadoExpediente = codigoEstadoExpediente;
+	}
+
+	public String getCodigoEstadoExpedienteBC() {
+		return codigoEstadoExpedienteBC;
+	}
+
+	public void setCodigoEstadoExpedienteBC(String codigoEstadoExpedienteBC) {
+		this.codigoEstadoExpedienteBC = codigoEstadoExpedienteBC;
+	}
+	
+	
 }

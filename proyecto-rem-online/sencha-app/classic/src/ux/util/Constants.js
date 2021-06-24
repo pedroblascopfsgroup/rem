@@ -941,5 +941,8 @@ Ext.define('HreRem.ux.util.Constants', {
 
 	SUBFASES_PUBLICACION: {
 		COD_EXCLUIDO_CLIENTE : '14'
-	}
+	},
+	 ESTADOS_EXPEDIENTE_BC: {
+	    	PT_SCORING: '007'
+	 }
 });

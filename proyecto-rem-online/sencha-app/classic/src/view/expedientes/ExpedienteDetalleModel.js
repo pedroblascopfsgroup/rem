@@ -560,6 +560,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	}
 	     	return false;
 	     },
+ 		esOfertaVentaEsCaixa: function(get){
+			var me= this;
+			var tipoOferta= get('expediente.tipoExpedienteDescripcion');
+			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+
+	     	if(tipoOferta=='Venta' && carteraCodigo==CONST.CARTERA['BANKIA']){
+	     		return true;
+	     	}
+	     	return false;
+	     },
 	     
 	 	
 	 	mostrarPrescriptorCajamar: function(get){

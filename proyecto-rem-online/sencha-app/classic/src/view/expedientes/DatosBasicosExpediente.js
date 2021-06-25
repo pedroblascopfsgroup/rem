@@ -208,7 +208,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						reference: 'fechaReservaRef',
 	                	bind:		{
 	                		value: '{expediente.fechaReservaDeposito}',
-	                		hidden: '{!esBankia}'
+	                		hidden: '{!esOfertaVentaEsCaixa}',
+	                		readOnly: true
 	                	}
 	                },
 	                {
@@ -254,7 +255,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	colspan: 2,
 	                	bind: {
 	                		value: '{expediente.fechaReserva}',
-	                		hidden: '{!esBankia}'
+	                		hidden: '{!esOfertaVentaEsCaixa}',
+	                		readOnly: true
 	                	}
 	                },
 	                
@@ -304,7 +306,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.contabilizacion'),
 	                	bind: {
 	                		value: '{expediente.fechaContabilizacion}',
-	                		hidden: '{!esBankia}'
+	                		hidden: '{!esOfertaVentaEsCaixa}',
+	                		readOnly: true
 	                	}		
 	                },
 	            	{ 

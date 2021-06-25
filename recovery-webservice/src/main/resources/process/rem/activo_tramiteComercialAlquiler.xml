@@ -124,6 +124,7 @@
 		<transition to="T015_ResolucionExpediente" name="Elevar"></transition>
 		<transition to="T015_VerificarScoring" name="irScoringBC"></transition>
         <transition to="T015_SolicitarGarantiasAdicionales" name="solicitarGarantiasBC"></transition>
+        <transition to="T015_AceptacionCliente" name="ContraofertarBC"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</decision>
 	

@@ -7,7 +7,8 @@ public interface TramiteAlquilerApi {
 	boolean esDespuesElevar(Long idTramite);
 
 	boolean haPasadoScoringBC(Long idTramite);
-
+	
+	String tipoTratamientoAlquiler(Long idTramite);
 	
 	
 }

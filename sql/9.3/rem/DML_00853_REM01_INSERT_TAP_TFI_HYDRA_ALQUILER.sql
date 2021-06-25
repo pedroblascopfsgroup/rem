@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20210706
+--## FECHA_CREACION=20210709
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14397
@@ -41,11 +41,15 @@ DECLARE
 	   	T_TIPO_DATA('T015_AgendarFechaFirma', 'Agendar fecha firma',  '', '', 'valores[''''T015_AgendarFechaFirma''''][''''comboResultado''''] == ''''02'''' ? ''''OK''''  : ''''Anular''''', 'true'),
 	   	
 	   	T_TIPO_DATA('T015_ElevarASancion', 'Elevar a sanción',  '', ''
-	   		, 'checkBankia() ? haPasadoScoring() ? ''''solicitarGarantiasBC'''' : ''''irScoringBC'''' : valores[''''T015_ElevarASancion''''][''''resolucionOferta''''] == ''''01''''  ? ''''Elevar''''  : ''''Anular''''  '
+	   		, 'checkBankia() ? valores[''''T015_ElevarASancion''''][''''resolucionOferta''''] == ''''03''''  ? ''''ContraofertarBC''''  :  valores[''''T015_ElevarASancion''''][''''resolucionOferta''''] == ''''02'''' ? ''''Anular'''': haPasadoScoring() ? ''''solicitarGarantiasBC''''  : ''''irScoringBC'''' : valores[''''T015_ElevarASancion''''][''''resolucionOferta''''] == ''''01''''  ? ''''Elevar''''  : ''''Anular''''  '
 			, 'false'),
 		
 		T_TIPO_DATA('T015_VerificarScoring', 'Verificar scoring',  '', ''
    		, 'valores[''''T015_VerificarScoring''''][''''resultadoScoring''''] == ''''02'''' ? ''''Rechazado'''' : checkBankia() ? esDespuesElevar() ? valores[''''T015_VerificarScoring''''][''''resultadoScoring''''] == ''''01''''  ? ''''aprobadoBC'''' : ''''conDudasBC'''' : ''''Aprobado'''' : ''''Aprobado'''' '
+		, 'false'),
+		
+		T_TIPO_DATA('T015_AceptacionCliente', 'Aceptación cliente',  '', ''
+   		, 'valores[''''T015_AceptacionCliente''''][''''aceptacionContraoferta''''] == ''''02''''  ? ''''No'''' : tipoTratamientoAlquiler() '
 		, 'false')
     ); 
     

@@ -715,6 +715,10 @@
             	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
             	return tramiteAlquilerManager.haPasadoScoringBC(idTramite);
             }
+             def tipoTratamientoAlquiler = {
+            	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+            	return tramiteAlquilerManager.tipoTratamientoAlquiler(idTramite);
+            }
   			 ]]></value>
   		</list>
   	</property>

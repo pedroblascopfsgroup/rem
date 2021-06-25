@@ -6,14 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTratamiento;
 
 @Service("tramiteAlquilerManager")
 public class TramiteAlquilerManager implements TramiteAlquilerApi {
@@ -21,6 +24,9 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	private static final String T015_VerificarScoring = "T015_VerificarScoring";
 	private static final String T015_ElevarASancion = "T015_ElevarASancion";
 	private static final String T015_ScoringBC = "T015_ScoringBC";
+	private static final String T015_DefinicionOferta = "T015_DefinicionOferta";
+	
+	private static final String CAMPO_DEF_OFERTA_TIPOTRATAMIENTO = "tipoTratamiento";
 	
 	@Autowired
 	private OfertaApi ofertaApi;
@@ -29,6 +35,9 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Autowired ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private ActivoTareaExternaApi activoTareaExternaApi;
 	
 	@Override
 	public boolean haPasadoScoring(Long idTramite) {
@@ -69,4 +78,40 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		return haPasadoScoringBC;
 	}
 	
+	@Override
+	public String tipoTratamientoAlquiler(Long idTramite) {
+		
+		String valorTipoTratamiento = null;
+		TareaExterna definicionOferta = null;
+		List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaByIdTramite(idTramite);
+		for (TareaExterna tarea : listaTareas) {
+			if(T015_DefinicionOferta.equals(tarea.getTareaProcedimiento().getCodigo())) {
+				definicionOferta = tarea;
+				break;
+			}
+		}
+		if(definicionOferta != null) {
+			List<TareaExternaValor> valores = definicionOferta.getValores();
+			for (TareaExternaValor valor : valores) {
+				if(CAMPO_DEF_OFERTA_TIPOTRATAMIENTO.equals(valor.getNombre())){
+					valorTipoTratamiento = valor.getValor();
+					break;
+				}
+			}
+		}
+		return this.devolverSaltoTipoTratamiento(valorTipoTratamiento);
+	}
+	
+	private String devolverSaltoTipoTratamiento(String tipoTratamiento) {
+		String salto = "No";
+		if(DDTipoTratamiento.TIPO_TRATAMIENTO_NINGUNA.contentEquals(tipoTratamiento)) {
+			salto = "SiNnguna";
+		}else if(DDTipoTratamiento.TIPO_TRATAMIENTO_SCORING.contentEquals(tipoTratamiento)) {
+			salto = "SiScoring";
+		}else if(DDTipoTratamiento.TIPO_TRATAMIENTO_SEGURO_DE_RENTAS.contentEquals(tipoTratamiento)) {
+			salto = "SiSeguroRentas";
+		}
+		
+		return salto;
+	}
 }

@@ -77,6 +77,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
     public static final String CODIGO_T017_PBC_VENTA = "T017_PBCVenta";
     private static final String CODIGO_ANULACION_IRREGULARIDADES = "601";
     private static final String CODIGO_SUBCARTERA_OMEGA = "65";
+    public static final String CODIGO_T017 = "T017";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -124,18 +125,20 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 									logger.error("Error descongelando ofertas.", e);
 								}
 
-								if (DDCartera.CODIGO_CARTERA_BANKIA
-										.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
-										&& !uvemManagerApi.esTramiteOffline(UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T013_RESULTADO_PBC,expediente)) {
+								if (DDCartera.isCarteraBk(ofertaAceptada.getActivoPrincipal().getCartera())
+										&& !CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())){									
+									if(!uvemManagerApi.esTramiteOffline(UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T013_RESULTADO_PBC,expediente)) {
 									// Notificar del rechazo de la oferta a
 									// Bankia.
-									try {
-										uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(),
-												UvemManagerApi.MOTIVO_ANULACION_OFERTA.PBC_DENEGADO);
-									} catch (Exception e) {
-										logger.error("Error al invocar el servicio de anular oferta de Uvem.", e);
-										throw new UserException(e.getMessage());
+										try {
+											uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(),
+													UvemManagerApi.MOTIVO_ANULACION_OFERTA.PBC_DENEGADO);
+										} catch (Exception e) {
+											logger.error("Error al invocar el servicio de anular oferta de Uvem.", e);
+											throw new UserException(e.getMessage());
+										}
 									}
+									
 								}
 								
 							}
@@ -201,7 +204,8 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 								}
 								
 								if( codigoTarea != null && !uvemManagerApi.esTramiteOffline(codigoTarea,expediente) && DDCartera.isCarteraBk(activo.getCartera()) 
-									&& !DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())){
+									&& !DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
+									&& !CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())){
 									uvemManagerApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
 									
 								}

@@ -72,8 +72,12 @@ BEGIN
 								,FEC_ALTA_ACTIVO		
 								,VERSION				
 								,USUARIOCREAR		
-								,FECHACREAR				
-								,BORRADO
+								,FECHACREAR			
+								,USUARIOMODIFICAR	
+								,FECHAMODIFICAR		
+								,USUARIOBORRAR		
+								,FECHABORRAR			
+								,BORRADO				
 							FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||'';             
 			EXECUTE IMMEDIATE V_MSQL;
 

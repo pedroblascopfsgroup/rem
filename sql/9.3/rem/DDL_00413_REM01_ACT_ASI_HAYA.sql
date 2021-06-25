@@ -137,8 +137,12 @@ BEGIN
 								,FEC_ALTA_ACTIVO		
 								,VERSION				
 								,USUARIOCREAR		
-								,FECHACREAR				
-								,BORRADO
+								,FECHACREAR	
+								,USUARIOMODIFICAR	
+								,FECHAMODIFICAR		
+								,USUARIOBORRAR		
+								,FECHABORRAR			
+								,BORRADO	
 							  )
 							SELECT 
 								 BK.ACT_NUM_ACTIVO_UVEM
@@ -146,10 +150,14 @@ BEGIN
 								,BK.ACT_NUM_ACTIVO
 								,BK.FEC_ASIGNACION
 								,BK.FEC_ALTA_ACTIVO
-								,0
-								,''HREOS-14371''
-								,SYSDATE
-								,0
+								,BK.VERSION				
+								,BK.USUARIOCREAR		
+								,BK.FECHACREAR	
+								,BK.USUARIOMODIFICAR	
+								,BK.FECHAMODIFICAR		
+								,BK.USUARIOBORRAR		
+								,BK.FECHABORRAR			
+								,BK.BORRADO
 							 FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_BACKUP BK';
 		    	
 	EXECUTE IMMEDIATE V_MSQL;

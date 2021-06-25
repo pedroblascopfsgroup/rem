@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210618
+--## FECHA_CREACION=20210622
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14366
+--## INCIDENCIA_LINK=HREOS-14368
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial - [HREOS-14222] - Alejandra García
 --##        0.2 Cambio de numeración del SP y modificación de los checks de 1 y 0 a S y N respectivamente - [HREOS-14222] - Alejandra García
 --##        0.3 Formatos númericos en ACT_EN_TRAMITE = 0  - [HREOS-14366] - Daniel Algaba
+--##        0.4 Metemos NUM_IDENTFICATIVO como campos de cruce - [HREOS-14368] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -55,7 +56,7 @@ BEGIN
 		    JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID
 		    WHERE TPC.DD_TPC_CODIGO = ''12'' AND ACT.BORRADO = 0 AND CRA.DD_CRA_CODIGO = ''03'' AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL AND PAC.PAC_INCLUIDO = 1
             AND ACT.ACT_EN_TRAMITE = 0
-		) US ON (US.NUM_INMUEBLE=AUX.NUM_INMUEBLE)
+		) US ON (US.NUM_INMUEBLE=AUX.NUM_INMUEBLE  AND US.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
 		WHEN MATCHED THEN UPDATE SET
 		AUX.IMP_PRECIO_REF_ALQUI = US.VAL_IMPORTE * 100
                   WHEN NOT MATCHED THEN INSERT

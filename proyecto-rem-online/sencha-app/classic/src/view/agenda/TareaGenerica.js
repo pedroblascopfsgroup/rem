@@ -1951,12 +1951,32 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     
     T015_VerificarScoringValidacion: function(){
     	var me = this;
+    	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+    	var codigoEstadoBC = me.up('tramitesdetalle').getViewModel().get('tramite.codigoEstadoExpedienteBC');
+
     	me.campoObligatorio(me.down('[name=resultadoScoring]'));
     	me.deshabilitarCampo(me.down('[name=nMeses]'));
     	me.deshabilitarCampo(me.down('[name=importeDeposito]'));
     	me.deshabilitarCampo(me.down('[name=nombreFS]'));
     	me.deshabilitarCampo(me.down('[name=documento]'));
-    	
+
+    	var scoring = me.down('[name=resultadoScoring]');
+    	var storeScoring = scoring.getStore();
+    			storeScoring.addListener('load', function(store, records, successful, operation, eOpts){
+    			var dataScoring = store.getData().items; 
+    			if(CONST.CARTERA['BANKIA'] != codigoCartera || CONST.ESTADOS_EXPEDIENTE_BC['PT_SCORING'] != codigoEstadoBC){
+    				var indexConDudas;
+    				for( var i = 0 ; i < dataScoring.length; i++) { 
+    					if(dataScoring[i].getData().codigo == '03'){  
+    						indexConDudas = i; 
+    						break;
+    					}
+    				}
+    				store.splice(indexConDudas, 1);
+    			}
+    		});
+    		
+    		
     	me.down('[name=tipoImpuesto]').noObligatorio=true;
     	
     	me.down('[name=resultadoScoring]').addListener('change', function() {
@@ -2239,12 +2259,27 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     T015_ElevarASancionValidacion: function(){
     	var me = this;
     	var idActivo= me.idActivo;
+    	var resolucionOferta = me.down('[name=resolucionOferta]');
+    	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 
-    	me.campoObligatorio(me.down('[name=resolucionOferta]'));
-    	
     	me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
 		me.deshabilitarCampo(me.down('[name=comite]'));
 		me.deshabilitarCampo(me.down('[name=fechaElevacion]'));
+
+    	var resolucionOferta = resolucionOferta.getStore();
+    	resolucionOferta.addListener('load', function(store, records, successful, operation, eOpts){
+			var data = store.getData().items; 
+			if(CONST.CARTERA['BANKIA'] != codigoCartera){
+				var indexContraoferta;
+				for( var i = 0 ; i < data.length; i++) { 
+					if(data[i].getData().codigo == '03'){  
+						indexContraoferta = i; 
+						break;
+					}
+				}
+				store.splice(indexContraoferta, 1);
+			}
+		});
 		
 		me.down('[name=refCircuitoCliente]').maxLength=20;
 		
@@ -2283,12 +2318,26 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     			me.campoObligatorio(me.down('[name=fechaElevacion]'));
 
     			me.setFechaActual(me.down('[name=fechaElevacion]'));
-    		}else{
+    		}else if(resolucionOferta.value == '02'){
     			
     			me.down('[name=motivoAnulacion]').noObligatorio=false;
     			me.down('[name=fechaElevacion]').noObligatorio=true;
     			
     			me.habilitarCampo(me.down('[name=motivoAnulacion]'));
+            	me.deshabilitarCampo(me.down('[name=fechaElevacion]'));
+            	me.deshabilitarCampo(me.down('[name=comite]'));
+            	
+            	me.borrarCampo(me.down('[name=comite]'));
+            	me.borrarCampo(me.down('[name=fechaElevacion]'));
+            	
+            	me.campoObligatorio(me.down('[name=motivoAnulacion]'));
+            	me.campoNoObligatorio(me.down('[name=fechaElevacion]'));
+    			
+    		}else{
+    			me.down('[name=motivoAnulacion]').noObligatorio=true;
+    			me.down('[name=fechaElevacion]').noObligatorio=true;
+    			
+    			me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
             	me.deshabilitarCampo(me.down('[name=fechaElevacion]'));
             	me.deshabilitarCampo(me.down('[name=comite]'));
             	

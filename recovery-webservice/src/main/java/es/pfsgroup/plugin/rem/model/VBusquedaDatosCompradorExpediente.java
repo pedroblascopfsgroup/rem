@@ -258,6 +258,36 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	
 	@Column(name="COM_FORMA_JURIDICA")
     private String formaJuridica;
+	
+	@Column(name="CEX_FECHA_NACIMIENTO_REPR")
+    private Date fechaNacimientoRepresentante;
+	
+	@Column(name="DD_LOC_CODIGO_CEX")
+    private String localidadNacimientoRepresentanteCodigo;
+	
+	@Column(name="DD_LOC_DESCRIPCION_CEX")
+    private String localidadNacimientoRepresentanteDescripcion;
+	
+	@Column(name="DD_PAI_CODIGO_CEX")
+    private String paisNacimientoRepresentanteCodigo;
+	
+	@Column(name="DD_PAI_DESCRIPCION_CEX")
+    private String paisNacimientoRepresentanteDescripcion;
+	
+	@Column(name="CEX_USUFRUCTUARIO")
+    private Integer usufructuario;
+	
+	@Column(name="COM_FECHA_NACIMIENTO")
+    private Date fechaNacimientoComprador;
+	
+	@Column(name="DD_LOC_CODIGO_COM")
+    private String localidadNacimientoCompradorCodigo;
+	
+	@Column(name="DD_LOC_DESCRIPCION_COM")
+    private String localidadNacimientoCompradorDescripcion;
+	
+	@Column(name="COM_PRP")
+    private Integer compradorPrp;
 
 	public Long getId() {
 		return id;
@@ -899,5 +929,85 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setFormaJuridica(String formaJuridica) {
 		this.formaJuridica = formaJuridica;
+	}
+
+	public Date getFechaNacimientoRepresentante() {
+		return fechaNacimientoRepresentante;
+	}
+
+	public void setFechaNacimientoRepresentante(Date fechaNacimientoRepresentante) {
+		this.fechaNacimientoRepresentante = fechaNacimientoRepresentante;
+	}
+
+	public Integer getUsufructuario() {
+		return usufructuario;
+	}
+
+	public void setUsufructuario(Integer usufructuario) {
+		this.usufructuario = usufructuario;
+	}
+
+	public Date getFechaNacimientoComprador() {
+		return fechaNacimientoComprador;
+	}
+
+	public void setFechaNacimientoComprador(Date fechaNacimientoComprador) {
+		this.fechaNacimientoComprador = fechaNacimientoComprador;
+	}
+
+	public Integer getCompradorPrp() {
+		return compradorPrp;
+	}
+
+	public void setCompradorPrp(Integer compradorPrp) {
+		this.compradorPrp = compradorPrp;
+	}
+
+	public String getLocalidadNacimientoRepresentanteCodigo() {
+		return localidadNacimientoRepresentanteCodigo;
+	}
+
+	public void setLocalidadNacimientoRepresentanteCodigo(String localidadNacimientoRepresentanteCodigo) {
+		this.localidadNacimientoRepresentanteCodigo = localidadNacimientoRepresentanteCodigo;
+	}
+
+	public String getLocalidadNacimientoRepresentanteDescripcion() {
+		return localidadNacimientoRepresentanteDescripcion;
+	}
+
+	public void setLocalidadNacimientoRepresentanteDescripcion(String localidadNacimientoRepresentanteDescripcion) {
+		this.localidadNacimientoRepresentanteDescripcion = localidadNacimientoRepresentanteDescripcion;
+	}
+
+	public String getPaisNacimientoRepresentanteCodigo() {
+		return paisNacimientoRepresentanteCodigo;
+	}
+
+	public void setPaisNacimientoRepresentanteCodigo(String paisNacimientoRepresentanteCodigo) {
+		this.paisNacimientoRepresentanteCodigo = paisNacimientoRepresentanteCodigo;
+	}
+
+	public String getPaisNacimientoRepresentanteDescripcion() {
+		return paisNacimientoRepresentanteDescripcion;
+	}
+
+	public void setPaisNacimientoRepresentanteDescripcion(String paisNacimientoRepresentanteDescripcion) {
+		this.paisNacimientoRepresentanteDescripcion = paisNacimientoRepresentanteDescripcion;
+	}
+
+	public String getLocalidadNacimientoCompradorCodigo() {
+		return localidadNacimientoCompradorCodigo;
+	}
+
+	public void setLocalidadNacimientoCompradorCodigo(String localidadNacimientoCompradorCodigo) {
+		this.localidadNacimientoCompradorCodigo = localidadNacimientoCompradorCodigo;
+	}
+
+	public String getLocalidadNacimientoCompradorDescripcion() {
+		return localidadNacimientoCompradorDescripcion;
+	}
+
+	public void setLocalidadNacimientoCompradorDescripcion(String localidadNacimientoCompradorDescripcion) {
+		this.localidadNacimientoCompradorDescripcion = localidadNacimientoCompradorDescripcion;
 	}	
 }

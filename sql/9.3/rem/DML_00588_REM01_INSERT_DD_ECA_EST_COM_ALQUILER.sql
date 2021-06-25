@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20210512
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210624
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO= 9.3
---## INCIDENCIA_LINK=HREOS-13938
+--## INCIDENCIA_LINK=HREOS-14428
 --## PRODUCTO=NO
 --##
 --## Finalidad:            
 --## INSTRUCCIONES: 
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-13938] - Javier Esbri
+--##        0.2 Añadir A entre la A y el número y añadir el registro AA6 - [HREOS-14428] - Alejandra García
 --##########################################
 --*/
 
@@ -34,7 +35,7 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-13938';
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-14428';
 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_ECA_EST_COM_ALQUILER'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     
@@ -43,11 +44,12 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     -- PARTIDA_PRESUPUESTARIA   DD_TGA_CODIGO  DD_TIM_CODIGO   DD_SCR_CODIGO
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('A01','No en proceso comercial','No en proceso comercial'),
-		T_TIPO_DATA('A02','Retirado de la comercialización','Retirado de la comercialización'),
-		T_TIPO_DATA('A03','En trámite alquiler','En trámite alquiler'),
-		T_TIPO_DATA('A04','Vertical','Vertical'),
-		T_TIPO_DATA('A05','Alquilado','Alquilado')
+        T_TIPO_DATA('AA1','No en proceso comercial','No en proceso comercial'),
+		T_TIPO_DATA('AA2','Retirado de la comercialización','Retirado de la comercialización'),
+		T_TIPO_DATA('AA3','En trámite alquiler','En trámite alquiler'),
+		T_TIPO_DATA('AA4','Vertical','Vertical'),
+		T_TIPO_DATA('AA5','Alquilado','Alquilado'),
+		T_TIPO_DATA('AA6','Alquilado en trámite de renovación','Alquilado en trámite de renovación')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

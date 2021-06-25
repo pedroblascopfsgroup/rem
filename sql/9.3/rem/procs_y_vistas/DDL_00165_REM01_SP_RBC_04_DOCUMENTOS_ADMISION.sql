@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210621
+--## FECHA_CREACION=20210622
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14368
@@ -14,6 +14,7 @@
 --##        0.2 Revisión - [HREOS-14344] - Alejandra García
 --##        0.3 Formatos númericos en ACT_EN_TRAMITE = 0 - [HREOS-14366] - Daniel Algaba
 --##        0.4 Cambio de cálculos - [HREOS-14368] - Daniel Algaba
+--##        0.5 Metemos NUM_IDENTFICATIVO como campos de cruce - [HREOS-14368] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -135,8 +136,9 @@ BEGIN
                      AND CRA.DD_CRA_CODIGO = ''03''
                      AND PAC.PAC_INCLUIDO = 1
                      AND ACT.ACT_EN_TRAMITE = 0
+                     AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
                   ) AUX
-                  ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE)
+                  ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE AND APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN
                   UPDATE SET 
                   APR.CALIFICACION_ENERGETICA = AUX.CALIFICACION_ENERGETICA

@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210511
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210624
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO= 9.3
---## INCIDENCIA_LINK=HREOS-88888
+--## INCIDENCIA_LINK=HREOS-14428
 --## PRODUCTO=NO
 --##
 --## Finalidad:    Insercción de datos en el DD_CTC_CATEG_COMERCIALIZ        
 --## INSTRUCCIONES: 
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-88888] - Sergio Gomez
+--##        0.2 Quitar 0 de la izquierda - [HREOS-14428] - Alejandra García
 --##########################################
 --*/
 
@@ -34,7 +35,7 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-88888';
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-14428';
 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_CTC_CATEG_COMERCIALIZ'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     
@@ -43,10 +44,10 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     -- PARTIDA_PRESUPUESTARIA   DD_TGA_CODIGO  DD_TIM_CODIGO   DD_SCR_CODIGO
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01','En rentabilidad','En rentabilidad'),
-		T_TIPO_DATA('02','Terciario sin posesión','Terciario sin posesión'),
-        T_TIPO_DATA('03','Terciario sin posesión moroso','Terciario sin posesión moroso'),
-        T_TIPO_DATA('04','Terciario sin posesión vencido','Terciario sin posesión vencido')
+        T_TIPO_DATA('1','En rentabilidad','En rentabilidad'),
+		T_TIPO_DATA('2','Terciario sin posesión','Terciario sin posesión'),
+        T_TIPO_DATA('3','Terciario sin posesión moroso','Terciario sin posesión moroso'),
+        T_TIPO_DATA('4','Terciario sin posesión vencido','Terciario sin posesión vencido')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

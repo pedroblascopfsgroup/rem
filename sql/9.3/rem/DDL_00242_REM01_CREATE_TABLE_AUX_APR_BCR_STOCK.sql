@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210615
+--## FECHA_CREACION=20210623
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14344
+--## INCIDENCIA_LINK=HREOS-14370
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -15,6 +15,7 @@
 --##        0.3  HREOS-14199 -  Santi Monzó - Añadir array ara que cree las 4 tablas, añadir campo FLAG_EN_REM en las BCR
 --##        0.4  HREOS-14271 -  Alejandra García - Añadir campo PROMO_COMERCIAL y aumentar tamaño a X_GOOGLE e Y_GOOGLE
 --##        0.5  HREOS-14344 -  Alejandra García - Añadir campo SOCIEDAD_PATRIOMONIAL
+--##        0.6  HREOS-14370 -  Alejandra García - Añadir campo FLAG_FICHEROS
 --##########################################
 --*/
 
@@ -47,10 +48,10 @@ DECLARE
   TYPE T_COL IS TABLE OF VARCHAR2(500 CHAR);
   TYPE T_ARRAY_COL IS TABLE OF T_COL;
   V_COL T_ARRAY_COL := T_ARRAY_COL(
-  	  T_COL('AUX_APR_BCR_STOCK',',FLAG_EN_REM NUMBER (1)'),
-      T_COL('AUX_APR_RBC_STOCK',''),
-      T_COL('AUX_APR_BCR_DELTA',',FLAG_EN_REM NUMBER (1)'),
-      T_COL('AUX_APR_RBC_DELTA','')
+  	  T_COL('AUX_APR_BCR_STOCK',',FLAG_EN_REM NUMBER (1)',',FLAG_FICHEROS VARCHAR2(1 CHAR)'),
+      T_COL('AUX_APR_RBC_STOCK','',''),
+      T_COL('AUX_APR_BCR_DELTA',',FLAG_EN_REM NUMBER (1)',''),
+      T_COL('AUX_APR_RBC_DELTA','','')
 	  
    );  
   V_TMP_COL T_COL;
@@ -183,8 +184,9 @@ BEGIN
         TRIBUT_PROPUESTA_VENTA      VARCHAR2(2 CHAR),
         TRIBUT_PROPUESTA_CLI_EXT_IVA  VARCHAR2(2 CHAR),
         CANAL_DISTRIBUCION_ALQ VARCHAR2(2 CHAR),
+        PROMO_COMERCIAL             VARCHAR2(8 CHAR),
 
-        ANYO_CONCESION               VARCHAR2(4 CHAR),
+        ANYO_CONCESION              VARCHAR2(4 CHAR),
         FEC_FIN_CONCESION           VARCHAR2(8 CHAR),
         CALIFICACION_ENERGETICA     VARCHAR2(2 CHAR),
         CERTIFICADO_REGISTRADO      VARCHAR2(16 CHAR),
@@ -207,10 +209,10 @@ BEGIN
         SUP_REGISTRAL_UTIL          VARCHAR2(10 CHAR),
         SUP_TASACION_CONSTRUIDA     VARCHAR2(10 CHAR),
         NUM_HABITACIONES            VARCHAR2(10 CHAR),
-        NUM_BANYOS                   VARCHAR2(10 CHAR),
+        NUM_BANYOS                  VARCHAR2(10 CHAR),
         NUM_TERRAZAS                VARCHAR2(10 CHAR),
-        ANYO_CONSTRUCCION            VARCHAR2(10 CHAR),
-        ANYO_ULTIMA_REFORMA          VARCHAR2(10 CHAR),
+        ANYO_CONSTRUCCION           VARCHAR2(4 CHAR),
+        ANYO_ULTIMA_REFORMA         VARCHAR2(4 CHAR),
         SUP_SOBRE_RASANTE           VARCHAR2(10 CHAR),
         SUP_BAJO_RASANTE            VARCHAR2(10 CHAR),
         NUM_APARACAMIENTOS          VARCHAR2(10 CHAR),
@@ -233,7 +235,7 @@ BEGIN
         IMP_PRECIO_CAMP_VENTA       VARCHAR2(10 CHAR),
         PRECIO_CAMP_VENTA_NEGOCIABLE VARCHAR2(1 CHAR),
         DESC_COL_PRECIO_VENTA       VARCHAR2(60 CHAR),
-      
+        IMP_PRECIO_REF_ALQUI        VARCHAR2(10 CHAR),     
         FEC_INICIO_PRECIO_VENTA VARCHAR2(8 CHAR),
         FEC_FIN_PRECIO_VENTA    VARCHAR2(8 CHAR),
         FEC_INICIO_PRECIO_ALQUI VARCHAR2(8 CHAR),
@@ -243,19 +245,18 @@ BEGIN
         FEC_INICIO_PRECIO_CAMP_ALQUI VARCHAR2(8 CHAR),
         FEC_FIN_PRECIO_CAMP_ALQUI VARCHAR2(8 CHAR),
 
-        IMP_PRECIO_REF_ALQUI        VARCHAR2(10 CHAR),
-
         FEC_POSESION                VARCHAR2(8 CHAR),
         FEC_SENYAL_LANZAMIENTO      VARCHAR2(8 CHAR),
         FEC_LANZAMINETO             VARCHAR2(8 CHAR),
-        AVISO_OCUP_SERVICER         VARCHAR2(8 CHAR),
-        IND_FUERZA_PUBLICA          VARCHAR2(8 CHAR),
-        IND_OCUPANTES_VIVIENDA      VARCHAR2(8 CHAR),
+        AVISO_OCUP_SERVICER         VARCHAR2(1 CHAR),
+        IND_FUERZA_PUBLICA          VARCHAR2(1 CHAR),
+        IND_OCUPANTES_VIVIENDA      VARCHAR2(1 CHAR),
         FEC_RESOLUCION_MORA         VARCHAR2(8 CHAR),
-        IND_ENTREGA_VOL_POSESI      VARCHAR2(8 CHAR),
-        PROMO_COMERCIAL             VARCHAR2(8 CHAR)
+        IND_ENTREGA_VOL_POSESI      VARCHAR2(1 CHAR)
 
         '||V_TMP_COL(2)||'
+
+        '||V_TMP_COL(3)||'
 
 
         
@@ -381,6 +382,7 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TRIBUT_PROPUESTA_VENTA IS '' Tributación a la que se propone vender el inmueble''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TRIBUT_PROPUESTA_CLI_EXT_IVA IS '' Tirbutación a la que se propone vender en caso de cliente exstenos de IVA''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CANAL_DISTRIBUCION_ALQ IS '' Canal distribución alquiler''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PROMO_COMERCIAL IS '' Promoción comercial''';
 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ANYO_CONCESION IS '' Año de concesión''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_FIN_CONCESION IS '' Fecha fin de conceción''';
@@ -430,6 +432,7 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IMP_PRECIO_CAMP_VENTA IS '' Importe Clase de condición precio campaña venta''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PRECIO_CAMP_VENTA_NEGOCIABLE IS '' Flag precio campaña venta negociable''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.DESC_COL_PRECIO_VENTA IS '' Conjunto de descuentos colectivos que se pueden aplicar''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IMP_PRECIO_REF_ALQUI IS '' Importe Clase de condición precio referencia alquiler''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_INICIO_PRECIO_VENTA IS '' Fecha inicio precio venta''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_FIN_PRECIO_VENTA IS '' Fecha fin precio venta''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_INICIO_PRECIO_ALQUI IS '' Fecha inicio precio alquiler''';
@@ -438,7 +441,6 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_FIN_PRECIO_CAMP_VENTA IS '' Fecha fin precio campaña venta''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_INICIO_PRECIO_CAMP_ALQUI IS '' Fecha inicio precio campaña alquiler''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_FIN_PRECIO_CAMP_ALQUI IS '' Fecha fin precio campaña alquiler''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IMP_PRECIO_REF_ALQUI IS '' Importe Clase de condición precio referencia alquiler''';
 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_POSESION IS '' Fecha realizada posesión''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_SENYAL_LANZAMIENTO IS '' Fecha señalado lanzamiento''';
@@ -449,7 +451,6 @@ BEGIN
 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IND_ENTREGA_VOL_POSESI IS '' Ind. Entrega Voluntaria Posesi (llaves)''';
 
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PROMO_COMERCIAL IS '' Promoción comercial''';
 
  END LOOP;
 

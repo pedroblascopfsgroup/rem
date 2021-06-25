@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20210623
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210624
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14196
+--## INCIDENCIA_LINK=HREOS-14428
 --## PRODUCTO=NO
 --##
 --## Finalidad: Actualizar instrucciones
 --## INSTRUCCIONES: 
 --## VERSIONES:
---##        0.1 Version inicial
+--##        0.1 Version inicial - [HREOS-14196] - Javier Esbri
+--##        0.2 Añadir dos 0 a la izquierda del número - [HREOS-14428] - Alejandra García
 --##########################################
 --*/
 
@@ -76,7 +77,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               0,
-              ''HREOS-14196'',
+              ''HREOS-14428'',
               SYSDATE,
               0)';
             EXECUTE IMMEDIATE V_MSQL;

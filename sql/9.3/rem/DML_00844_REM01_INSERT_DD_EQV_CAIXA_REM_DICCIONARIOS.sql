@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210623
+--## FECHA_CREACION=20210625
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14428
@@ -253,8 +253,8 @@ DECLARE
         T_TIPO_DATA('MOTIVO_NO_COMERCIAL','17','Inmueble no vvda utilizado como vvda','DD_MEC_MOTIVO_EXCLU_CAIXA','17'),
         T_TIPO_DATA('MOTIVO_NO_COMERCIAL','18','Inmueble es una zona común','DD_MEC_MOTIVO_EXCLU_CAIXA','18'),
       --País
-        T_TIPO_DATA('PAIS','AD','Andorra','DD_CIC_CODIGO_ISO_CIRBE','43'),
-        T_TIPO_DATA('PAIS','ES','España','DD_CIC_CODIGO_ISO_CIRBE','11'),
+        T_TIPO_DATA('PAIS','AD','Andorra','DD_CIC_CODIGO_ISO_CIRBE','043'),
+        T_TIPO_DATA('PAIS','ES','España','DD_CIC_CODIGO_ISO_CIRBE','011'),
       --Planta
         T_TIPO_DATA('PLANTA','010','10ª Planta','DD_PLN_PLANTA_EDIFICIO','010'),
         T_TIPO_DATA('PLANTA','011','11ª Planta','DD_PLN_PLANTA_EDIFICIO','011'),

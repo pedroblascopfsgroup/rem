@@ -49,6 +49,7 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
     private static final String TIPO_ARRAS = "tipoArras";
    	public static final String CODIGO_T013_INSTRUCCIONES_RESERVA = "T013_InstruccionesReserva";
    	public static final String CODIGO_T017_INSTRUCCIONES_RESERVA = "T017_InstruccionesReserva";
+   	public static final String CODIGO_T017 = "T017";
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaInstruccionesReserva.class);
@@ -97,9 +98,12 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 					codigoTarea = UpdaterServiceSancionOfertaInstruccionesReserva.CODIGO_T017_INSTRUCCIONES_RESERVA;
 				}
 				
-				if( codigoTarea != null && !uvemManagerApi.esTramiteOffline(codigoTarea,expediente) && DDCartera.isCarteraBk(ofertaAceptada.getActivoPrincipal().getCartera()) 
-					&& !DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())){
-					uvemManagerApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
+				if( codigoTarea != null && DDCartera.isCarteraBk(ofertaAceptada.getActivoPrincipal().getCartera()) 
+					&& !DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
+					&& !CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())){
+					if (!uvemManagerApi.esTramiteOffline(codigoTarea,expediente)) {
+						uvemManagerApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
+					}					
 					
 				}
 			}

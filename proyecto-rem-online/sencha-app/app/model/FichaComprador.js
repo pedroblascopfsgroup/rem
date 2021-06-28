@@ -269,6 +269,40 @@ Ext.define('HreRem.model.FichaComprador', {
 		},
 		{
 			name:'codEstadoContraste'
+		},
+		{
+			name:'usufructuario'
+		},
+		{
+			name: 'fechaNacimientoComprador',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name: 'localidadNacimientoCompradorCodigo'
+		},
+		{
+			name: 'localidadNacimientoCompradorDescripcion'
+		},
+		{
+			name: 'compradorPrp'
+		},
+		{
+			name: 'fechaNacimientoRepresentante',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name: 'localidadNacimientoRepresentanteCodigo'
+		},
+		{
+			name: 'localidadNacimientoRepresentanteDescripcion'
+		},
+		{
+			name: 'paisNacimientoRepresentanteCodigo'
+		},
+		{
+			name: 'paisNacimientoRepresentanteDescripcion'
 		}
 		
 		

@@ -12,6 +12,7 @@ import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ import java.util.List;
 public class NotificatorServiceSancionRatificacionComiteCES extends NotificatorServiceSancionOfertaGenerico implements NotificatorService {
 
     private static final String CODIGO_T017_RATIFICACION_COMITE_CES = "T017_RatificacionComiteCES";
+    private static final String MENSAJE_BC = "Para el Número del inmueble BC: ";
+	private static final String CODIGO_TRAMITE_T017 = "T017";
 
     @Autowired
     private GenericAdapter genericAdapter;
@@ -174,6 +177,7 @@ public class NotificatorServiceSancionRatificacionComiteCES extends NotificatorS
                     .replace("#numoferta", oferta.getNumOferta().toString());
 
             dtoSendNotificator.setTitulo("Notificación REM");
+            contenido = tieneNumeroInmuebleBC(contenido, tramite);
             genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
         }
     }
@@ -216,5 +220,14 @@ public class NotificatorServiceSancionRatificacionComiteCES extends NotificatorS
 
         return mailsPara;
     }
+    
+    private String tieneNumeroInmuebleBC(String cuerpo, ActivoTramite tramite) {
+		if (CODIGO_TRAMITE_T017.equals(tramite.getTipoTramite().getCodigo()) 
+			&& DDCartera.isCarteraBk(tramite.getActivo().getCartera())
+			&& !Checks.esNulo(tramite.getActivo().getNumActivoCaixa())) {
+			cuerpo = MENSAJE_BC + tramite.getActivo().getNumActivoCaixa() + ",\n" + cuerpo;
+		}
+		return cuerpo;
+	}
 }
 

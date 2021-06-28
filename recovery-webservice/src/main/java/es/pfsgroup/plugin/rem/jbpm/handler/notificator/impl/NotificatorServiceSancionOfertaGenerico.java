@@ -106,6 +106,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private static final String CODIGO_T017_RECOMENDACION_CES = "T017_RecomendCES";
 	private static final String CODIGO_T017_RESOLUCION_PRO_MANZANA = "T017_ResolucionPROManzana";
 
+	private static final String MENSAJE_BC = "Para el Número del inmueble BC: ";
+	private static final String CODIGO_TRAMITE_T017 = "T017";
 	@Resource
 	private Properties appProperties;
 
@@ -451,6 +453,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		asunto = "Notificación de reserva de la oferta " + oferta.getNumOferta();
 		
 		cuerpo = "La oferta " + oferta.getNumOferta() + " ha sido reservada a fecha de " + formato.format(fechaFirma);
+		
+		cuerpo = tieneNumeroInmuebleBC(cuerpo, tramite);
 		
 		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
 		dtoSendNotificator.setTitulo(asunto);
@@ -1082,6 +1086,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				}
 			}
 
+			cuerpo = tieneNumeroInmuebleBC(cuerpo, tramite);
+
 			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
 			dtoSendNotificator.setTitulo(asunto);
 
@@ -1119,6 +1125,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			cuerpo = cuerpo
 					+ "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 
+			cuerpo = tieneNumeroInmuebleBC(cuerpo, tramite);
+			
 			if(oferta != null) {
 				DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
 				dtoSendNotificator.setTitulo(asunto);
@@ -1172,6 +1180,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		String cuerpo = "La oferta #" + oferta.getNumOferta() + " presentada por el activo #" + activo.getNumActivo()
 				+ numAgrupacion + " ha sido rechazada.";
 
+		cuerpo = tieneNumeroInmuebleBC(cuerpo, tramite);
+
 		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
 		dtoSendNotificator.setTitulo(asunto);
 
@@ -1192,6 +1202,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		asunto = "La oferta " + oferta.getNumOferta() + " ha llegado a la tarea " + tareaAPasar;
 		
 		cuerpo = asunto + " en REM.";
+
+		cuerpo = tieneNumeroInmuebleBC(cuerpo, tramite);
 		
 		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
 		dtoSendNotificator.setTitulo(asunto);
@@ -1480,10 +1492,21 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
 		dtoSendNotificator.setTitulo(asunto);
 
+		cuerpo = tieneNumeroInmuebleBC(cuerpo, tramite);
+		
 		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
 
 		return cuerpoCorreo;
 
+	}
+	
+	private String tieneNumeroInmuebleBC(String cuerpo, ActivoTramite tramite) {
+		if (CODIGO_TRAMITE_T017.equals(tramite.getTipoTramite().getCodigo()) 
+			&& DDCartera.isCarteraBk(tramite.getActivo().getCartera())
+			&& !Checks.esNulo(tramite.getActivo().getNumActivoCaixa())) {
+			cuerpo = MENSAJE_BC + tramite.getActivo().getNumActivoCaixa() + ",\n" + cuerpo;
+		}
+		return cuerpo;
 	}
 
 }

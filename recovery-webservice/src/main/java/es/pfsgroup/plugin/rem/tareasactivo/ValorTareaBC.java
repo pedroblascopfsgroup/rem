@@ -1,0 +1,117 @@
+
+
+package es.pfsgroup.plugin.rem.tareasactivo;
+
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Version;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
+
+import es.capgemini.pfs.auditoria.Auditable;
+import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+
+
+@Entity
+@Table(name = "TEB_TAREA_BC_VALOR", schema = "${entity.schema}")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Where(clause=Auditoria.UNDELETED_RESTICTION)
+public class ValorTareaBC implements Auditable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	
+	@Id
+	@Column(name = "TEB_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "ValorTareaBCGenerator")
+	@SequenceGenerator(name = "ValorTareaBCGenerator", sequenceName = "S_TEB_TAREA_BC_VALOR")
+	private Long id;
+	      
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TEX_ID")
+	private TareaExterna tareaExterna;
+	 
+	@Column(name = "TEB_NOMBRE")   
+	private String campo;
+	    
+	@Column(name = "TEB_VALOR")   
+	private String valor;
+	      
+	@Version   
+	private Long version;
+
+	@Embedded
+	private Auditoria auditoria;
+	
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public TareaExterna getTareaExterna() {
+		return tareaExterna;
+	}
+
+	public void setTareaExterna(TareaExterna tareaExterna) {
+		this.tareaExterna = tareaExterna;
+	}
+
+	public String getCampo() {
+		return campo;
+	}
+
+	public void setCampo(String campo) {
+		this.campo = campo;
+	}
+
+	public String getValor() {
+		return valor;
+	}
+
+	public void setValor(String valor) {
+		this.valor = valor;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+}
+
+
+

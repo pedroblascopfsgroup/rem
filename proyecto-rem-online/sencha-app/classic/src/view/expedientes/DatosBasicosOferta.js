@@ -276,7 +276,9 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						xtype : 'fieldsettable',
 						width: '100%',
 						margin: '0 10 10 0',
-						bind : { title : '{expediente.tituloCarteraLiberbankVenta}'},
+						bind : { title : '{expediente.tituloCarteraLiberbankVenta}',
+								 hidden: '{expediente.esBankia}'
+							},
 						layout: {
 							type: 'table',
 							columns: 1

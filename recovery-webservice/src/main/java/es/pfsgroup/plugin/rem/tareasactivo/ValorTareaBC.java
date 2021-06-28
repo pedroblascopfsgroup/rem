@@ -1,6 +1,6 @@
 
 
-package es.pfsgroup.plugin.rem.model.dd;
+package es.pfsgroup.plugin.rem.tareasactivo;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -18,49 +18,43 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 
-/**
- * Modelo que gestiona el diccionario de tipos de calculo
- */
+
 @Entity
-@Table(name = "DD_MDE_MOTIVO_DESBLOQUEO", schema = "${entity.schema}")
+@Table(name = "TEB_TAREA_BC_VALOR", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDMotivosDesbloqueo implements Auditable, Dictionary {
+public class ValorTareaBC implements Auditable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public static final String DESBLOQUEO_SCREENING = "DBLOQS";
 	
 	@Id
-	@Column(name = "DD_MDE_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivosDesbloqueoGenerator")
-	@SequenceGenerator(name = "DDMotivosDesbloqueoGenerator", sequenceName = "S_DD_MDE_MOTIVO_DESBLOQUEO")
+	@Column(name = "TEB_IDrt")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "ValorTareaBCGenerator")
+	@SequenceGenerator(name = "ValorTareaBCGenerator", sequenceName = "S_TEB_TAREA_BC_VALOR")
 	private Long id;
 	    
-	@Column(name = "DD_MDE_CODIGO")   
-	private String codigo;
+	@Column(name = "TEX_ID")   
+	private TareaExterna tareaExterna;
 	 
-	@Column(name = "DD_MDE_DESCRIPCION")   
-	private String descripcion;
+	@Column(name = "TEB_NOMBRE")   
+	private String campo;
 	    
-	@Column(name = "DD_MDE_DESCRIPCION_LARGA")   
-	private String descripcionLarga;
-	    
-	
-	    
+	@Column(name = "TEB_VALOR")   
+	private String valor;
+	      
 	@Version   
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
+	
 
-	
-	
 	public Long getId() {
 		return id;
 	}
@@ -69,28 +63,28 @@ public class DDMotivosDesbloqueo implements Auditable, Dictionary {
 		this.id = id;
 	}
 
-	public String getDescripcion() {
-		return descripcion;
+	public TareaExterna getTareaExterna() {
+		return tareaExterna;
 	}
 
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
+	public void setTareaExterna(TareaExterna tareaExterna) {
+		this.tareaExterna = tareaExterna;
 	}
 
-	public String getDescripcionLarga() {
-		return descripcionLarga;
+	public String getCampo() {
+		return campo;
 	}
 
-	public void setDescripcionLarga(String descripcionLarga) {
-		this.descripcionLarga = descripcionLarga;
+	public void setCampo(String campo) {
+		this.campo = campo;
 	}
 
-	public String getCodigo() {
-		return codigo;
+	public String getValor() {
+		return valor;
 	}
 
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
+	public void setValor(String valor) {
+		this.valor = valor;
 	}
 
 	public Long getVersion() {
@@ -108,6 +102,13 @@ public class DDMotivosDesbloqueo implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	
+	
 
 }
 

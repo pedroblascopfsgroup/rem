@@ -4832,7 +4832,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			
 			if (dto.getFechaNacimientoRepresentante() != null) {
-				compradorExpediente.setFechaNacimientoRepresentante(new Date());
+				compradorExpediente.setFechaNacimientoRepresentante(dto.getFechaNacimientoRepresentante());
 			} else {
 				compradorExpediente.setFechaNacimientoRepresentante(null);
 			}
@@ -4854,7 +4854,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			
 			if (dto.getFechaNacimientoComprador() != null) {
-				comprador.setFechaNacimientoComprador(new Date());
+				comprador.setFechaNacimientoComprador(dto.getFechaNacimientoComprador());
 			} else {
 				comprador.setFechaNacimientoComprador(null);
 			}

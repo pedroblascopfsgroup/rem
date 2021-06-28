@@ -226,6 +226,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 			        	name: 'fechaNacimientoComprador',
 			        	reference: 'fechaNacimientoCompradorRef',
 			        	padding: '5px',
+			        	maxValue: null,
 			        	bind: {
 			        		hidden: '{!comprador.esCarteraBankia}'
 			        	}
@@ -713,6 +714,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 			        	name: 'fechaNacimientoRepresentante',
 			        	reference: 'fechaNacimientoCompradorRef',
 			        	padding: '5px',
+			        	maxValue: null,
 			        	bind: {
 			        		hidden: '{!comprador.esCarteraBankia}'
 			        	}

@@ -47,7 +47,7 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 		int sumatorio = 0;
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaCompradoresExpediente where idExpediente = :idExpediente");
 
-		List<VBusquedaCompradoresExpediente> lista = this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("idExpediente", idExpediente).list();
+		List<VBusquedaCompradoresExpediente> lista = this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("idExpediente", idExpediente.toString()).list();
 		
 		if (lista != null && !lista.isEmpty()) {
 			for (VBusquedaCompradoresExpediente item : lista) {

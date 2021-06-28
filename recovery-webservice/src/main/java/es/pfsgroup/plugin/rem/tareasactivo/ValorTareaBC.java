@@ -5,9 +5,12 @@ package es.pfsgroup.plugin.rem.tareasactivo;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -34,12 +37,13 @@ public class ValorTareaBC implements Auditable {
 	
 	
 	@Id
-	@Column(name = "TEB_IDrt")
+	@Column(name = "TEB_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "ValorTareaBCGenerator")
 	@SequenceGenerator(name = "ValorTareaBCGenerator", sequenceName = "S_TEB_TAREA_BC_VALOR")
 	private Long id;
-	    
-	@Column(name = "TEX_ID")   
+	      
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TEX_ID")
 	private TareaExterna tareaExterna;
 	 
 	@Column(name = "TEB_NOMBRE")   
@@ -106,9 +110,6 @@ public class ValorTareaBC implements Auditable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-
-	
-	
 
 }
 

@@ -608,7 +608,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 				defaults: {
 					addUxReadOnlyEditFieldPlugin: false
 				},
-				hidden: !this.lookupController().esBankia() || this.lookupController().esBankiaAlquiler(),
+//				hidden: !this.lookupController().esBankia() || this.lookupController().esBankiaAlquiler(),
+				hidden: true,
 				items: [{							
 							xtype: 'comboboxfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.estado.civil'),

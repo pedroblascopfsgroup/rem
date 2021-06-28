@@ -91,6 +91,7 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 
 							expediente.setFechaVenta(null);
 							expediente.setEstadoPbcR(0);
+							expediente.setEstadoPbcArras(0);
 							expediente.setFechaAnulacion(new Date());
 
 							genericDao.save(ExpedienteComercial.class, expediente);
@@ -165,6 +166,7 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 								}
 							}
 							expediente.setEstadoPbcR(1);
+							expediente.setEstadoPbcArras(1);
 							genericDao.save(ExpedienteComercial.class, expediente);
 
 						}

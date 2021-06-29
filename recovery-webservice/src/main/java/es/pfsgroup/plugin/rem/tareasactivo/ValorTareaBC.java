@@ -2,6 +2,8 @@
 
 package es.pfsgroup.plugin.rem.tareasactivo;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -28,7 +30,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 @Table(name = "TEB_TAREA_BC_VALOR", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class ValorTareaBC implements Auditable {
+public class ValorTareaBC implements Serializable, Auditable {
 
 	/**
 	 * 

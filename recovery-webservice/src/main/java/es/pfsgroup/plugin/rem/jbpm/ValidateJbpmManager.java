@@ -47,7 +47,9 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 	@Override
 	public String definicionOfertaT013(TareaExterna tareaExterna, String codigo, Map<String, Map<String,String>> valores) {
 
-		if( !caixaBcRestClient.callReplicateClient(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta(),CaixaBcRestClient.COMPRADORES_DATA)){
+		Boolean resultado = null;
+		resultado = !caixaBcRestClient.callReplicateClient(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta(),CaixaBcRestClient.COMPRADORES_DATA);
+		if(resultado == null || !resultado){
 			return CaixaBcRestClient.ERROR_REPLICACION_BC;
 		}
 

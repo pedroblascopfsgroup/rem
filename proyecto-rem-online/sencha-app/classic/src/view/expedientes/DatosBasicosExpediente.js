@@ -26,6 +26,14 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				title: HreRem.i18n('title.expediente.ficha.objeto'), 
 				items :
 					[
+						{
+		                	xtype: 'button' ,
+		                	handler: 'pruebaBloqueo'
+		                },	
+		                {
+		                	xtype: 'button' ,
+		                	handler: 'pruebadesbloqueo'
+		                },	
 		                {
 		                	xtype: 'displayfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.num.expediente'),

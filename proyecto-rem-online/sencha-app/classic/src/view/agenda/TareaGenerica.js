@@ -348,6 +348,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
                         xtype: 'fieldset',
                         collapsible: false,
+                        reference: 'cuerpo', 
                         //defaultType : 'textfield',
                         layout: {
                             type: 'table',
@@ -2977,6 +2978,45 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		    	}
 		    }
 		});
+	},
+	
+	T017_BloqueoScreeningValidacion: function(){
+		var me = this;
+		
+		var idTarea = me.idTarea;
+		var motivoBloqueado = me.down('[name=motivoBloqueado]');
+		var motivoDesbloqueado = me.down('[name=motivoDesbloqueado]');
+		var observacionesBloqueado = me.down('[name=observacionesBloqueado]');
+		var observacionesDesbloqueado = me.down('[name=observacionesDesbloqueado]');
+		var comboResultado = me.down('[name=comboResultado]');
+		
+		motivoBloqueado.setReadOnly(true);
+		motivoDesbloqueado.setReadOnly(true);
+		observacionesBloqueado.setReadOnly(true);
+		observacionesDesbloqueado.setReadOnly(true);
+		comboResultado.setReadOnly(true);
+		
+		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueoScreening');
+		Ext.Ajax.request({
+			url: url,
+			params: {idTarea : idTarea},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	
+		    	if(!Ext.isEmpty(dto)){
+		    		motivoBloqueado.setValue(dto.motivoBloqueado);
+		    		motivoDesbloqueado.setValue(dto.motivoDesbloqueado);
+		    		observacionesBloqueado.setValue(dto.observacionesBloqueado);
+		    		observacionesDesbloqueado.setValue(dto.observacionesDesbloqueado);
+		    		comboResultado.setValue(dto.comboResultado);
+		    		
+		    	}
+		    }
+		});
+		
+	
+		
 	},
 	
     habilitarCampo: function(campo) {

@@ -82,6 +82,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public static final String CODIGO_T017_RESOLUCION_DIVARIAN = "T017_ResolucionDivarian";
 	public static final String CODIGO_T017_RESOLUCION_ARROW = "T017_ResolucionArrow";
 	
+	public static final String CODIGO_T017_BLOQUEOSCREENING = "T017_BloqueoScreening";
+	
 	private static final Integer CODIGO_SI = 1;
 	
 	public static final String USUARIO_GESTOR_FORMALIZACION = "gestform";

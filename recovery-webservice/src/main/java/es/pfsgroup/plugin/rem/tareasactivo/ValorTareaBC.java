@@ -2,7 +2,11 @@
 
 package es.pfsgroup.plugin.rem.tareasactivo;
 
+
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -24,6 +28,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 
 
 @Entity
@@ -36,6 +41,21 @@ public class ValorTareaBC implements Serializable, Auditable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+
+	/**
+	 * 
+	 */
+	
+
+	static class BloqueoScreening {
+		private String motivoBloqueado;
+		private String motivoDesbloqueado;
+		private String observacionesBloqueado;
+		private String observacionesDesbloqueado;
+		private String comboResultado;
+	}
+	
 	
 	
 	@Id
@@ -109,10 +129,23 @@ public class ValorTareaBC implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
 
+	public static final List<String> getCampoByTarea(String codTarea){
+		List<String> listaCampos = new ArrayList<String>();
+		Field[] campos = null;
+		if(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING.equals(codTarea)) {
+			campos =  BloqueoScreening.class.getDeclaredFields();
+		}
+		
+		if(campos !=null) {
+			for (Field field : campos) {
+				field.setAccessible(true);
+				String nombre = field.getName();
+				listaCampos.add(nombre);
+			}
+		}
+		return listaCampos;
+	}
 }
 
 

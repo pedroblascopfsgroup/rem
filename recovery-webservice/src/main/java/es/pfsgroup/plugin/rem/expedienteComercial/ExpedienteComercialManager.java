@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.expedienteComercial;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -47,6 +48,7 @@ import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -141,12 +143,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAmpliacionArras;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
-import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -190,6 +192,7 @@ import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
+import es.pfsgroup.plugin.rem.tareasactivo.ValorTareaBC;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 @Service("expedienteComercialManager")
@@ -8303,44 +8306,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	@Transactional(readOnly = false)
 	public void bloquearExpediente(Long idExpediente) {
-		ExpedienteComercial expediente = this.findOne(idExpediente);
-		expediente.setBloqueado(1);
-
-		genericDao.update(ExpedienteComercial.class, expediente);
-
 		try {
-			// notificamos por correo a los interesados
-			Posicionamiento posicionamiento = expediente.getUltimoPosicionamiento();
-			ArrayList<String> mailsPara = this.obtnerEmailsBloqueoExpediente(expediente);
-			String asunto = "Bloqueo del expediente comercial ".concat(String.valueOf(expediente.getNumExpediente()));
-			String cuerpo = "El expediente ".concat(String.valueOf(expediente.getNumExpediente()))
-					+ " con el Nº de Oferta ".concat(String.valueOf(expediente.getOferta().getNumOferta()))
-					+ " y el Nº de Activo "
-							.concat(String.valueOf(expediente.getOferta().getActivoPrincipal().getNumActivo()))
-					+ " se ha posicionado correctamente para su firma el" + " día #Fecha_posicionamiento a las "
-					+ "#Hora_posicionamiento en la notaría #Notaria";
-
-			if (posicionamiento != null) {
-				DateFormat dfDia = new SimpleDateFormat("dd/MM/yyyy");
-				DateFormat dfHora = new SimpleDateFormat("HH:mm");
-
-				if (posicionamiento.getFechaPosicionamiento() != null) {
-					String fechaPos = dfDia.format(posicionamiento.getFechaPosicionamiento());
-					cuerpo = cuerpo.replace("#Fecha_posicionamiento", fechaPos);
-					String horaPos = dfHora.format(posicionamiento.getFechaPosicionamiento());
-					cuerpo = cuerpo.replace("#Hora_posicionamiento", horaPos);
-				}
-
-				if (posicionamiento.getNotario() != null) {
-					cuerpo = cuerpo.replace("#Notaria", posicionamiento.getNotario().getNombre());
-
-					if (posicionamiento.getNotario().getDireccion() != null) {
-						cuerpo = cuerpo.concat(", situado en ").concat(posicionamiento.getNotario().getDireccion());
-					}
-				}
-			}
-
-			genericAdapter.sendMail(mailsPara, new ArrayList<String>(), asunto, cuerpo);
+			ExpedienteComercial expediente = this.findOne(idExpediente);
+			
+			this.guardarBloqueoExpediente(expediente);
+			this.sendMailBloqueoExpediente(expediente);
 
 		} catch (Exception e) {
 			logger.error("No se ha podido notificar por correo el bloqueo del expediente", e);
@@ -8362,47 +8332,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public void desbloquearExpediente(Long idExpediente, String motivoCodigo, String motivoDescLibre) {
-		ExpedienteComercial expediente = this.findOne(idExpediente);
-		DDMotivosDesbloqueo motivoDesbloqueo = null;
+	public void desbloquearExpediente(Long idExpediente, String motivoCodigo, String motivoDescLibre) {	
+		try {
+			ExpedienteComercial expediente = this.findOne(idExpediente);
+			this.guardarDesbloqueoExpediente(expediente, motivoCodigo, motivoDescLibre);
 
-		if (!Checks.esNulo(expediente)) {
-			expediente.setBloqueado(0);
+			this.sendMailDesbloqueoExpediente(expediente);
 
-			if (!Checks.esNulo(motivoCodigo)) {
-				motivoDesbloqueo = genericDao.get(DDMotivosDesbloqueo.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", motivoCodigo));
-
-				if (!Checks.esNulo(motivoDesbloqueo)) {
-					expediente.setMotivoDesbloqueo(motivoDesbloqueo);
-				}
-			}
-
-			expediente.setMotivoDesbloqueoDescLibre(motivoDescLibre);
-			genericDao.update(ExpedienteComercial.class, expediente);
-
-			try {
-				if ((motivoDescLibre == null || motivoDescLibre.isEmpty()) && motivoDesbloqueo != null) {
-					motivoDescLibre = motivoDesbloqueo.getDescripcionLarga();
-				}
-
-				// notificamos por correo a los interesados
-				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-				ArrayList<String> mailsPara = this.obtnerEmailsBloqueoExpediente(expediente);
-				String asunto = "Desbloqueo del expediente comercial "
-						.concat(String.valueOf(expediente.getNumExpediente()));
-				String cuerpo = "El expediente ".concat(String.valueOf(expediente.getNumExpediente()))
-						+ " se ha desbloqueado por el usuario #Usuario_logado por motivo: #Motivo";
-
-				cuerpo = cuerpo.replace("#Usuario_logado", usuarioLogado.getApellidoNombre());
-				cuerpo = cuerpo.replace("#Motivo", motivoDescLibre);
-				genericAdapter.sendMail(mailsPara, new ArrayList<String>(), asunto, cuerpo);
-
-			} catch (Exception e) {
-				logger.error("No se ha podido notificar por correo el desbloqueo del expediente", e);
-			}
+		} catch (Exception e) {
+			logger.error("No se ha podido notificar por correo el desbloqueo del expediente", e);
 		}
 	}
+	
 
 	/**
 	 * Este método obtiene la dirección de email de diferentes figuras del
@@ -12362,5 +12303,211 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return necesitaArrasCod;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void tareasScreening(DtoScreening dto) throws IllegalArgumentException, IllegalAccessException {
+		Oferta o = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferta());
+		ExpedienteComercial expedienteComercial =  expedienteComercialDao.getExpedienteComercialByIdOferta(o.getId());
+		dto.setNumExpedienteComercial(expedienteComercial.getNumExpediente());
+		dto.setComboResultado(DDSinSiNo.cambioBooleanToCodigoDiccionario(dto.isBloqueo()));
+		if(dto.isBloqueo() && !dto.isTareaActiva()) {
+			this.guardarBloqueoExpediente(expedienteComercial);
+			TareaExterna tarea = this.crearTareaScreening(dto, expedienteComercial);
+			if(tarea != null) {
+				if(Checks.esNulo(dto.getMotivoBloqueado())) {
+					dto.setMotivoBloqueado(DDMotivoBloqueo.BLOQUEO_SCREENING);
+				}
+				this.setValoresTEB(dto, tarea, dto.getCodigoTarea());
+			}
+		}else if(!dto.isBloqueo() && dto.isTareaActiva()){
+			if(Checks.esNulo(dto.getMotivoDesbloqueado())) {
+				dto.setMotivoDesbloqueado(DDMotivosDesbloqueo.DESBLOQUEO_SCREENING);
+			}
+			this.guardarDesbloqueoExpediente(expedienteComercial, dto.getMotivoDesbloqueado(), null);
+		}
+
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);
+	}
+
+	@Override
+	public DtoScreening dataToDtoScreening(Long numOferta, String motivo, String observaciones, boolean bloqueo) {
+		DtoScreening dto = new DtoScreening();
+		dto.setNumOferta(numOferta);
+		dto.setMotivoBloqueado(motivo);
+		dto.setObservacionesBloqueado(observaciones);
+		dto.setBloqueo(bloqueo);
+		if(bloqueo) {
+			dto.setCodigoTarea(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
+		}
+		return dto;
+	}
+	
+	@Transactional(readOnly = false)
+	private TareaExterna crearTareaScreening(DtoScreening dto, ExpedienteComercial expedienteComercial) {
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		TareaExterna tareaNueva = null;
+		ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajoT017(expedienteComercial.getTrabajo().getId());
+		
+		dto.setUsuarioLogado(usuarioLogado.getUsername());
+		tramiteDao.creaTareas(dto);
+		TareaNotificacion tarNot = null;
+		List<TareaExterna> tareasActivas2 = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
+		for (TareaExterna tarea : tareasActivas2) {
+			if (dto.getCodigoTarea().equals(tarea.getTareaProcedimiento().getCodigo())) {
+				tareaNueva = tarea;
+				tarNot = tarea.getTareaPadre();
+				if (!Checks.esNulo(tarNot)) {
+					TareaActivo tac = genericDao.get(TareaActivo.class, genericDao.createFilter(FilterType.EQUALS, "id", tarNot.getId()));
+					if(Checks.esNulo(tac)) {
+						tac = new TareaActivo();
+						tac.setActivo(tramite.getActivo());
+						tac.setId(tarNot.getId());
+						tac.setTramite(tramite);
+						tac.setAuditoria(Auditoria.getNewInstance());
+					}
+						tac.setUsuario(usuarioLogado);
+					genericDao.save(TareaActivo.class, tac);
+				}
+				break;
+			}
+		}
+		
+		return tareaNueva;
+	}
+	
+	private void sendMailBloqueoExpediente(ExpedienteComercial expediente) {
+		Posicionamiento posicionamiento = expediente.getUltimoPosicionamiento();
+		ArrayList<String> mailsPara = this.obtnerEmailsBloqueoExpediente(expediente);
+		String asunto = "Bloqueo del expediente comercial ".concat(String.valueOf(expediente.getNumExpediente()));
+		String cuerpo = "El expediente ".concat(String.valueOf(expediente.getNumExpediente()))
+				+ " con el Nº de Oferta ".concat(String.valueOf(expediente.getOferta().getNumOferta()))
+				+ " y el Nº de Activo ".concat(String.valueOf(expediente.getOferta().getActivoPrincipal().getNumActivo()))
+				+ " se ha posicionado correctamente para su firma el" + " día #Fecha_posicionamiento a las "
+				+ "#Hora_posicionamiento en la notaría #Notaria";
+
+		if (posicionamiento != null) {
+			DateFormat dfDia = new SimpleDateFormat("dd/MM/yyyy");
+			DateFormat dfHora = new SimpleDateFormat("HH:mm");
+
+			if (posicionamiento.getFechaPosicionamiento() != null) {
+				String fechaPos = dfDia.format(posicionamiento.getFechaPosicionamiento());
+				cuerpo = cuerpo.replace("#Fecha_posicionamiento", fechaPos);
+				String horaPos = dfHora.format(posicionamiento.getFechaPosicionamiento());
+				cuerpo = cuerpo.replace("#Hora_posicionamiento", horaPos);
+			}
+
+			if (posicionamiento.getNotario() != null) {
+				cuerpo = cuerpo.replace("#Notaria", posicionamiento.getNotario().getNombre());
+
+				if (posicionamiento.getNotario().getDireccion() != null) {
+					cuerpo = cuerpo.concat(", situado en ").concat(posicionamiento.getNotario().getDireccion());
+				}
+			}
+		}
+
+		genericAdapter.sendMail(mailsPara, new ArrayList<String>(), asunto, cuerpo);
+	}
+	
+	
+	@Transactional(readOnly = false)
+	private void guardarBloqueoExpediente(ExpedienteComercial expediente) {
+		expediente.setBloqueado(1);
+		genericDao.update(ExpedienteComercial.class, expediente);
+	}
+	
+	private void sendMailDesbloqueoExpediente(ExpedienteComercial expediente) {
+		String motivoDescLibre = "";
+		
+		if(expediente.getMotivoDesbloqueoDescLibre() == null && expediente.getMotivoDesbloqueo() != null) {
+			motivoDescLibre = expediente.getMotivoDesbloqueo().getDescripcionLarga();
+		}
+
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		ArrayList<String> mailsPara = this.obtnerEmailsBloqueoExpediente(expediente);
+		String asunto = "Desbloqueo del expediente comercial ".concat(String.valueOf(expediente.getNumExpediente()));
+		String cuerpo = "El expediente ".concat(String.valueOf(expediente.getNumExpediente())) + " se ha desbloqueado por el usuario #Usuario_logado por motivo: #Motivo";
+
+		cuerpo = cuerpo.replace("#Usuario_logado", usuarioLogado.getApellidoNombre());
+		cuerpo = cuerpo.replace("#Motivo", motivoDescLibre);
+		genericAdapter.sendMail(mailsPara, new ArrayList<String>(), asunto, cuerpo);
+	}
+	
+	@Transactional(readOnly = false)
+	private void guardarDesbloqueoExpediente(ExpedienteComercial expediente, String motivoCodigo, String motivoDescLibre) {
+
+		DDMotivosDesbloqueo motivoDesbloqueo = null;
+		expediente.setBloqueado(0);
+
+		if (!Checks.esNulo(motivoCodigo)) {
+			motivoDesbloqueo = genericDao.get(DDMotivosDesbloqueo.class,genericDao.createFilter(FilterType.EQUALS, "codigo", motivoCodigo));
+			expediente.setMotivoDesbloqueo(motivoDesbloqueo);
+		}
+
+		expediente.setMotivoDesbloqueoDescLibre(motivoDescLibre);
+		genericDao.update(ExpedienteComercial.class, expediente);
+	}
+
+	@Transactional(readOnly = false)
+	public void setValoresTEB(WebDto dto, TareaExterna tarea, String codigoTarea) throws IllegalArgumentException, IllegalAccessException {
+		List<String> camposGuardar = ValorTareaBC.getCampoByTarea(codigoTarea);
+
+		Filter filtroIdTarea = genericDao.createFilter(FilterType.EQUALS, "tareaExterna.id", tarea.getId());
+		Field[] fs =  dto.getClass().getDeclaredFields();
+		for (Field field : fs) {
+			field.setAccessible(true);
+			String campo = field.getName();
+			if(camposGuardar.contains(campo)) {
+				String valor = this.getValorFromField((Object) field.get(dto));
+				Filter filtroNombreCampo = genericDao.createFilter(FilterType.EQUALS, "campo", campo);
+				ValorTareaBC val = genericDao.get(ValorTareaBC.class, filtroIdTarea, filtroNombreCampo );
+				if(val == null && valor != null) {
+					val = new ValorTareaBC();
+					val.setTareaExterna(tarea);
+					val.setCampo(campo);
+					val.setAuditoria(Auditoria.getNewInstance());
+				}
+				if(valor != null) {
+					val.setValor(valor);
+				}
+				genericDao.save(ValorTareaBC.class, val);
+			}
+		}
+	}
+
+	private String getValorFromField(Object object) {
+		String field = null;
+		
+		if (object instanceof String){
+			field = object.toString();
+		}else if(object instanceof Date){
+			Date d  = (Date) object;
+			field = ft.format(d);
+		}else  {
+			field = String.valueOf(object);
+		}
+		
+		return field;
+	}
+	
+	@Override
+	public WebDto devolverValoresTEB(Long idTarea, String codigoTarea) throws IllegalAccessException, InvocationTargetException {
+		WebDto dto = null;
+		TareaNotificacion tar = genericDao.get(TareaNotificacion.class,  genericDao.createFilter(FilterType.EQUALS, "id", idTarea));
+		if(tar != null && tar.getTareaExterna() != null) {
+			
+			List<ValorTareaBC> valores = genericDao.getList(ValorTareaBC.class,  genericDao.createFilter(FilterType.EQUALS, "tareaExterna.id", tar.getTareaExterna().getId()));	
+			if(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING.equals(codigoTarea)) {
+				dto = new DtoScreening();
+			}
+			if(valores != null) {
+				for (ValorTareaBC valorTareaBC : valores) {
+					beanUtilNotNull.copyProperty(dto, valorTareaBC.getCampo(), valorTareaBC.getValor());
+				}
+			}
+		}
+		
+		return dto;
 	}
 }

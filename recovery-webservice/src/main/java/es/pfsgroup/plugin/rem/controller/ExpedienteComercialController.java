@@ -57,6 +57,7 @@ import es.pfsgroup.plugin.rem.excel.PlantillaDistribucionPrecios;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
@@ -92,6 +93,7 @@ import es.pfsgroup.plugin.rem.model.DtoOrigenLead;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoScreening;
 import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
@@ -103,6 +105,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 import net.minidev.json.JSONObject;
@@ -2594,6 +2597,41 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView getUltimaResolucionComiteBC(ModelMap model, Long idExpediente) {
 		try {
 			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getUltimaResolucionComiteBC(idExpediente));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView bloqueoScreening(ModelMap model,Long numOferta, String motivo, String observaciones) {
+		try {
+			expedienteComercialApi.tareasScreening(expedienteComercialApi.dataToDtoScreening( numOferta,  motivo,  observaciones, true));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getValoresTareaBloqueoScreening(ModelMap model, Long idTarea) {
+		try {
+			DtoScreening dto = (DtoScreening) expedienteComercialApi.devolverValoresTEB(idTarea, ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
+			model.put(RESPONSE_DATA_KEY, dto);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {

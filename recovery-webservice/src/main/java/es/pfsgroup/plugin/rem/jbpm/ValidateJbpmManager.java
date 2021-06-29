@@ -49,7 +49,7 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 
 		Boolean resultado = null;
 		resultado = caixaBcRestClient.callReplicateClient(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta(),CaixaBcRestClient.COMPRADORES_DATA);
-		if(resultado){
+		if(!resultado){
 			return CaixaBcRestClient.ERROR_REPLICACION_BC;
 		}
 

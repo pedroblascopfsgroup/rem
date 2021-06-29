@@ -901,7 +901,10 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						{
 							xtype: 'datefieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.contabilizacion'),
-							bind: '{resolucion.fechaContabilizacion}',
+							bind : {
+								value: '{resolucion.fechaContabilizacion}',
+								visible: '{expediente.isCarteraBankia}'
+							},
 							formatter: 'date("d/m/Y")',
 							readOnly: true
 						}]

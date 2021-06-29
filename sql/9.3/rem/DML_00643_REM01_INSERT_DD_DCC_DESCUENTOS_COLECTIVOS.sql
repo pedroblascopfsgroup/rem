@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20210602
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210624
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14196
+--## INCIDENCIA_LINK=HREOS-14428
 --## PRODUCTO=NO
 --##
 --## Finalidad: Actualizar instrucciones
 --## INSTRUCCIONES: 
 --## VERSIONES:
---##        0.1 Version inicial
+--##        0.1 Version inicial - [HREOS-14196] - Javier Esbri
+--##        0.2 Añadir dos 0 a la izquierda del número - [HREOS-14428] - Alejandra García
 --##########################################
 --*/
 
@@ -34,13 +35,13 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      T_TIPO_DATA('1','Empleado Caixa'),
-      T_TIPO_DATA('2','Family'),
-      T_TIPO_DATA('3','Club Ahora'),
-      T_TIPO_DATA('4','Accionista CaixaBank'),
-      T_TIPO_DATA('5','ImaginBank'),
-      T_TIPO_DATA('6','Emprendedores'),
-      T_TIPO_DATA('7','Banca Prem./Personal')
+      T_TIPO_DATA('001','Empleado Caixa'),
+      T_TIPO_DATA('002','Family'),
+      T_TIPO_DATA('003','Club Ahora'),
+      T_TIPO_DATA('004','Accionista CaixaBank'),
+      T_TIPO_DATA('005','ImaginBank'),
+      T_TIPO_DATA('006','Emprendedores'),
+      T_TIPO_DATA('007','Banca Prem./Personal')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
@@ -76,7 +77,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               0,
-              ''HREOS-14196'',
+              ''HREOS-14428'',
               SYSDATE,
               0)';
             EXECUTE IMMEDIATE V_MSQL;

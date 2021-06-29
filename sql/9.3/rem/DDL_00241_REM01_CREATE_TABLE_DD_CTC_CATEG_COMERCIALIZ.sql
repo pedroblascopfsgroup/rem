@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210512
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210624
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-88888
+--## INCIDENCIA_LINK=HREOS-14428
 --## PRODUCTO=NO
 --##
 --## Finalidad: Crear diccionario DD_CTC_CAT_COMERCIALIZACION           
 --## INSTRUCCIONES: 
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-88888] - Sergio Gomez
+--##        0.2 Modificación lógica - [HREOS-14428] - Alejandra García
 --##########################################
 --*/
 
@@ -39,11 +40,17 @@ BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TABLA|| '********'); 
 
-	V_MSQL := 'SELECT COUNT(*) FROM all_tab_columns where owner = '''||V_ESQUEMA||''' and table_name = '''||V_TABLA||'''';
+	V_MSQL := 'SELECT COUNT(*) FROM ALL_TABLES where owner = '''||V_ESQUEMA||''' and table_name = '''||V_TABLA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 
-	IF V_NUM_TABLAS = 0 THEN
-		-- Creamos la tabla
+	IF V_NUM_TABLAS = 1 THEN
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Ya existe. Se borrará.');
+		EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA||' CASCADE CONSTRAINTS';
+		
+	END IF;
+
+	-- Creamos la tabla
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TABLA||'...');
 		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TABLA||'
 		(
@@ -128,9 +135,6 @@ BEGIN
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.BORRADO IS ''Indicador de borrado.''';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna BORRADO creado.');
-	ELSE
-		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe.');	
-	END IF;
 
 	COMMIT;
 

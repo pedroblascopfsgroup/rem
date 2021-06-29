@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210618
+--## FECHA_CREACION=20210622
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14366
+--## INCIDENCIA_LINK=HREOS-14368
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -13,6 +13,8 @@
 --##        0.1 Versión inicial - [HREOS-14292] - Daniel Algaba
 --##        0.2 Revisión - [HREOS-14344] - Alejandra García
 --##        0.3 Formatos númericos en ACT_EN_TRAMITE = 0 - [HREOS-14366] - Daniel Algaba
+--##        0.4 Cortamos cadenas - [HREOS-14368] - Daniel Algaba
+--##        0.5 Metemos NUM_IDENTFICATIVO como campos de cruce - [HREOS-14368] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -51,8 +53,8 @@ BEGIN
                   ACT.ACT_NUM_ACTIVO_CAIXA NUM_IDENTIFICATIVO
                   , ACT.ACT_NUM_ACTIVO NUM_INMUEBLE
                   , EQV_TVI.DD_CODIGO_CAIXA COMPLEMENTO
-                  , BIE_LOC.BIE_LOC_NOMBRE_VIA CALLE
-                  , BIE_LOC.BIE_LOC_NUMERO_DOMICILIO NUMERO
+                  , SUBSTR(BIE_LOC.BIE_LOC_NOMBRE_VIA, 0, 60) CALLE
+                  , SUBSTR(BIE_LOC.BIE_LOC_NUMERO_DOMICILIO, 0, 10) NUMERO
                   , BIE_LOC.BIE_LOC_COD_POST APARTADO
                   , EQV_LOC.DD_CODIGO_CAIXA POBLACION
                   , EQV_PRV.DD_CODIGO_CAIXA REGION
@@ -88,8 +90,9 @@ BEGIN
                   AND CRA.DD_CRA_CODIGO = ''03''
                   AND PAC.PAC_INCLUIDO = 1
                   AND ACT.ACT_EN_TRAMITE = 0
+                  AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
                   ) AUX
-                  ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE)
+                  ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE AND APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN
                   UPDATE SET 
                   APR.COMPLEMENTO = AUX.COMPLEMENTO
@@ -156,7 +159,7 @@ BEGIN
                   SELECT 
                   ACT.ACT_NUM_ACTIVO_CAIXA NUM_IDENTIFICATIVO
                   , ACT.ACT_NUM_ACTIVO NUM_INMUEBLE
-                  , ACT_REG.REG_SUPERFICIE_PARCELA * 100 SUP_TASACION_SOLAR
+                  , SUBSTR(ACT_REG.REG_SUPERFICIE_PARCELA * 100, 0, 10) SUP_TASACION_SOLAR
                   , ACT_REG.REG_SUPERFICIE_PARCELA_UTIL * 100 SUP_TASACION_UTIL
                   , ACT_REG.REG_SUPERFICIE_UTIL * 100 SUP_REGISTRAL_UTIL
                   , BIE_REG.BIE_DREG_SUPERFICIE_CONSTRUIDA * 100 SUP_TASACION_CONSTRUIDA
@@ -171,8 +174,9 @@ BEGIN
                   AND CRA.DD_CRA_CODIGO = ''03''
                   AND PAC.PAC_INCLUIDO = 1
                   AND ACT.ACT_EN_TRAMITE = 0
+                  AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
                   ) AUX
-                  ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE)
+                  ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE AND APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN
                   UPDATE SET 
                   APR.SUP_TASACION_SOLAR = AUX.SUP_TASACION_SOLAR
@@ -224,8 +228,9 @@ BEGIN
                   AND CRA.DD_CRA_CODIGO = ''03''
                   AND PAC.PAC_INCLUIDO = 1
                   AND ACT.ACT_EN_TRAMITE = 0
+                  AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
                   ) AUX
-                  ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE)
+                  ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE AND APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN
                   UPDATE SET 
                   APR.NUM_CARTILLA = AUX.NUM_CARTILLA

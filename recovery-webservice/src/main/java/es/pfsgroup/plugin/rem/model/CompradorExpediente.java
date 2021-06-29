@@ -195,6 +195,20 @@ public class CompradorExpediente implements Serializable, Auditable {
 
 	@Column(name = "CEX_C4C_ID")
 	private Long idC4c;
+	
+    @Column(name="CEX_FECHA_NACIMIENTO_REPR")
+    private Date fechaNacimientoRepresentante;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CEX_LOC_NAC_REPR")
+    private Localidad localidadNacimientoRepresentante;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_NAC_REPR_ID")
+    private DDPaises paisNacimientoRepresentante;
+    
+    @Column(name="CEX_USUFRUCTUARIO")
+    private Boolean usufructuario;
     
 	@Version   
 	private Long version;
@@ -661,7 +675,37 @@ public class CompradorExpediente implements Serializable, Auditable {
 	public void setIdC4c(Long idC4c) {
 		this.idC4c = idC4c;
 	}
-    
-	
+
+	public Date getFechaNacimientoRepresentante() {
+		return fechaNacimientoRepresentante;
+	}
+
+	public void setFechaNacimientoRepresentante(Date fechaNacimientoRepresentante) {
+		this.fechaNacimientoRepresentante = fechaNacimientoRepresentante;
+	}
+
+	public Localidad getLocalidadNacimientoRepresentante() {
+		return localidadNacimientoRepresentante;
+	}
+
+	public void setLocalidadNacimientoRepresentante(Localidad localidadNacimientoRepresentante) {
+		this.localidadNacimientoRepresentante = localidadNacimientoRepresentante;
+	}
+
+	public DDPaises getPaisNacimientoRepresentante() {
+		return paisNacimientoRepresentante;
+	}
+
+	public void setPaisNacimientoRepresentante(DDPaises paisNacimientoRepresentante) {
+		this.paisNacimientoRepresentante = paisNacimientoRepresentante;
+	}
+
+	public Boolean getUsufructuario() {
+		return usufructuario;
+	}
+
+	public void setUsufructuario(Boolean usufructuario) {
+		this.usufructuario = usufructuario;
+	}
    
 }

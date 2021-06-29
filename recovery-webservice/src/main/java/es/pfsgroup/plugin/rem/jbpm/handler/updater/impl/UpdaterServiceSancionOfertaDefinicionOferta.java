@@ -135,14 +135,10 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 					}
 				}
 				expediente.setFechaSancion(new Date());
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
-						DDEstadosExpedienteComercial.APROBADO);
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 				expediente.setEstado(estado);
 				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
-
-
-				}
 
 				
 				if(expediente.getCondicionante().getSolicitaReserva()!=null 
@@ -273,13 +269,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				expediente.setComiteSuperior(comite);
 				expediente.setComiteSancion(comite);
 			}
-
-
-		}
-
-		
-		
-	
+		}		
+	}
 
 	public String[] getCodigoTarea() {
 		return new String[] { CODIGO_T013_DEFINICION_OFERTA , CODIGO_T017_DEFINICION_OFERTA };

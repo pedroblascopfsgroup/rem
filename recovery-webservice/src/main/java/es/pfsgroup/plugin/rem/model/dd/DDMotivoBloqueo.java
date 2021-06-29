@@ -20,14 +20,12 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
-/**
- * Modelo que gestiona el diccionario de tipos de calculo
- */
+
 @Entity
-@Table(name = "DD_MDE_MOTIVO_DESBLOQUEO", schema = "${entity.schema}")
+@Table(name = "DD_MBQ_MOTIVO_BLOQUEO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDMotivosDesbloqueo implements Auditable, Dictionary {
+public class DDMotivoBloqueo implements Auditable, Dictionary {
 
 	/**
 	 * 
@@ -37,18 +35,18 @@ public class DDMotivosDesbloqueo implements Auditable, Dictionary {
 	public static final String DESBLOQUEO_SCREENING = "DBLOQS";
 	
 	@Id
-	@Column(name = "DD_MDE_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivosDesbloqueoGenerator")
-	@SequenceGenerator(name = "DDMotivosDesbloqueoGenerator", sequenceName = "S_DD_MDE_MOTIVO_DESBLOQUEO")
+	@Column(name = "DD_MBQ_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivoBloqueoGenerator")
+	@SequenceGenerator(name = "DDMotivoBloqueoGenerator", sequenceName = "S_DD_MBQ_MOTIVO_BLOQUEO")
 	private Long id;
 	    
-	@Column(name = "DD_MDE_CODIGO")   
+	@Column(name = "DD_MBQ_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_MDE_DESCRIPCION")   
+	@Column(name = "DD_MBQ_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_MDE_DESCRIPCION_LARGA")   
+	@Column(name = "DD_MBQ_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
 	    
 	

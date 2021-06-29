@@ -1,5 +1,3 @@
-
-
 package es.pfsgroup.plugin.rem.model.dd;
 
 import javax.persistence.Column;
@@ -20,53 +18,54 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
-/**
- * Modelo que gestiona el diccionario de tipos de calculo
- */
+
 @Entity
-@Table(name = "DD_MDE_MOTIVO_DESBLOQUEO", schema = "${entity.schema}")
+@Table(name = "DD_RSB_RESULTADO_SCORING", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDMotivosDesbloqueo implements Auditable, Dictionary {
-
-	/**
-	 * 
-	 */
+public class DDResultadoScoring implements Auditable, Dictionary{
+	
+	public final static String RESULTADO_APROBADO = "01";
+	public final static String RESULTADO_RECHAZADO = "02";
+	public final static String RESULTADO_DUDAS = "03";
+	
 	private static final long serialVersionUID = 1L;
-	
-	public static final String DESBLOQUEO_SCREENING = "DBLOQS";
-	
+
 	@Id
-	@Column(name = "DD_MDE_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivosDesbloqueoGenerator")
-	@SequenceGenerator(name = "DDMotivosDesbloqueoGenerator", sequenceName = "S_DD_MDE_MOTIVO_DESBLOQUEO")
+	@Column(name = "DD_RSB_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDResultadoScoringGenerator")
+	@SequenceGenerator(name = "DDResultadoScoringGenerator", sequenceName = "S_DD_RSB_RESULTADO_SCORING")
 	private Long id;
 	    
-	@Column(name = "DD_MDE_CODIGO")   
+	@Column(name = "DD_RSB_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_MDE_DESCRIPCION")   
+	@Column(name = "DD_RSB_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_MDE_DESCRIPCION_LARGA")   
-	private String descripcionLarga;
-	    
-	
-	    
+	@Column(name = "DD_RSB_DESCRIPCION_LARGA")   
+	private String descripcionLarga;	    
+
 	@Version   
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
 
-	
-	
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 
 	public String getDescripcion() {
@@ -85,14 +84,6 @@ public class DDMotivosDesbloqueo implements Auditable, Dictionary {
 		this.descripcionLarga = descripcionLarga;
 	}
 
-	public String getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
-
 	public Long getVersion() {
 		return version;
 	}
@@ -108,8 +99,7 @@ public class DDMotivosDesbloqueo implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+	
+	
 
 }
-
-
-

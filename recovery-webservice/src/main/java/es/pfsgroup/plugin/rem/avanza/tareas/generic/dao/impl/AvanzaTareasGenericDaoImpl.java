@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.avanza.tareas.generic.dao.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,10 @@ public class AvanzaTareasGenericDaoImpl extends AbstractEntityDao<TareaExterna, 
 	
 	@Override
 	public boolean validaCamposTarea(String tapCodigo, Map<String, String[]> valores) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("tapCodigo", tapCodigo);
+		
+		rawDao.addParams(params);
 		String sql = " SELECT DISTINCT LISTAGG(querys, ' and ') WITHIN GROUP (ORDER BY TCC_INSTANCIA) over (partition by TCC_INSTANCIA) TCC_INSTANCIA "+
 				" FROM ( "+
 				" SELECT "+
@@ -32,7 +37,6 @@ public class AvanzaTareasGenericDaoImpl extends AbstractEntityDao<TareaExterna, 
 					" INNER JOIN TAP_TAREA_PROCEDIMIENTO tap ON tap.TAP_ID = tcc.TAP_ID "+
 					" WHERE tap.TAP_CODIGO = :tapCodigo"
 					+ ")";
-		rawDao.addParam("tapCodigo", tapCodigo);
 		
 		List<Object> validaciones = rawDao.getExecuteSQLList(sql);
 		

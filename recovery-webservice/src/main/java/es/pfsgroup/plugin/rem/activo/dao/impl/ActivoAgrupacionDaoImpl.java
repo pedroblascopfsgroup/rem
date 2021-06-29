@@ -418,7 +418,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 			q.setParameter("idSubdivision", idSubdivision);
 			q.setParameterList("idsAgr",idsAgrupacionList);
 	
-			return (List<Long>) getHibernateTemplate().find(hb.toString());
+			return (List<Long>) q.list();
 		
 		} catch (Exception e) {
 			e.printStackTrace();

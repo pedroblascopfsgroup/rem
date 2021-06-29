@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.gestor.dao.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +66,10 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 	
 	@Override
 	public Boolean isUsuarioGestorExterno(Long idUsuario) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("usuId", idUsuario);
 		
-		rawDao.addParam("usuId", idUsuario);
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ZON_PEF_USU zpu "
 				+ "	JOIN PEF_PERFILEs pef ON zpu.pef_id = pef.pef_id "
 				+ " WHERE zpu.borrado = 0 and zpu.usu_id = :usuId"
@@ -80,8 +84,10 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 	
 	@Override
 	public Boolean isUsuarioGestorExternoProveedor(Long idUsuario) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("usuId", idUsuario);
 		
-		rawDao.addParam("usuId", idUsuario);
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("select count(1) from  " + 
 				"remmaster.usu_usuarios usu " + 
 				"join ACT_PVC_PROVEEDOR_CONTACTO pvc on usu.usu_id=pvc.usu_id and pvc.borrado = 0" + 

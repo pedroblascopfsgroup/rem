@@ -1,6 +1,7 @@
 package es.pfsgroup.framework.paradise.bulkUpload.bvfactory;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Este es un DAO que nos permite realizar consultas lanzando SQL's a pelo
@@ -49,5 +50,5 @@ public interface MSVRawSQLDao {
 	 */
 	List<Object> getExecuteSQLList(String sqlValidacion);
 	
-	void addParam(String key, Object value);
+	void addParams(Map<String,Object> hashMap);
 }

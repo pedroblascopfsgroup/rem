@@ -28,14 +28,8 @@ public class MSVDocumentoMasivoHibernateRawSQLDaoImpl extends AbstractEntityDao<
 	
 	private Map<String,Object> bindVariables;
 	
-	public void addParam(String key, Object value) {
-		
-		if(bindVariables == null) {
-			bindVariables = new HashMap<String, Object>();
-		}
-	
-		bindVariables.put(key, value); 
-		
+	public void addParams(Map<String,Object> hashMap) {
+		bindVariables = hashMap;
 	}
 	
 	private Query parametize(Query query){

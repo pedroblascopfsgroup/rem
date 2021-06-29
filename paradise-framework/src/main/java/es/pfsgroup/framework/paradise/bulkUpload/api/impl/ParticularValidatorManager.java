@@ -6,8 +6,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.Checksum;
 
 import org.apache.commons.lang.StringUtils;
@@ -38,7 +40,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public String getOneNumActivoAgrupacionRaw(String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		
+		rawDao.addParams(params);
 		return rawDao.getExecuteSQL("SELECT TO_NUMBER(act.ACT_NUM_ACTIVO) "
 				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
 				+ "			    ACT_AGR_AGRUPACION agr, "
@@ -53,7 +58,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public String getCarteraLocationByNumAgr (String numAgr) {
-		rawDao.addParam(  "numAgr", numAgr);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgr", numAgr);
+		
+		rawDao.addParams(params);
 		String tagId = rawDao.getExecuteSQL("SELECT DD_TAG_ID "
 				+ "		  FROM ACT_AGR_AGRUPACION WHERE"
 				+ " 		AGR_NUM_AGRUP_REM = :numAgr"
@@ -91,7 +99,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public String getCarteraLocationByNumAct (String numActive) {
-		rawDao.addParam(  "numActive", numActive);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActive", numActive);
+		
+		rawDao.addParams(params);
 		return rawDao.getExecuteSQL("SELECT ACT.DD_CRA_ID||'-'||DD_PRV_ID||'-'||DD_LOC_ID||'-'||BIE_LOC_COD_POST "
 							+ "		  FROM ACT_ACTIVO ACT, BIE_LOCALIZACION BIE WHERE"
 							+ " 		ACT.ACT_NUM_ACTIVO = :numActive "
@@ -102,7 +113,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public String getCarteraLocationTipPatrimByNumAct (String numActive) {
-		rawDao.addParam(  "numActive", numActive);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActive", numActive);
+		
+		rawDao.addParams(params);
 		return rawDao.getExecuteSQL("SELECT ACT.DD_CRA_ID||'-'||DD_PRV_ID||'-'||DD_LOC_ID||'-'||BIE_LOC_COD_POST||'-PROPIETARIO-'||PAC.PRO_ID "
 							+ "		  FROM ACT_ACTIVO ACT, BIE_LOCALIZACION BIE, ACT_PAC_PROPIETARIO_ACTIVO PAC WHERE"
 							+ " 		ACT.ACT_NUM_ACTIVO = :numActive "
@@ -115,7 +129,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esMismaCarteraLocationByNumAgrupRem (String numAgrupRem){
-		rawDao.addParam(  "numAgrupRem", numAgrupRem);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupRem", numAgrupRem);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.ACT_ID) "
 							+ "		  FROM ACT_AGA_AGRUPACION_ACTIVO aga, ACT_AGR_AGRUPACION agr, ACT_ACTIVO act, BIE_LOCALIZACION loc "
 							+ "		  WHERE  "
@@ -129,8 +146,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public String existeActivoEnAgrupacion(Long idActivo, Long idAgrupacion) {
-		rawDao.addParam(  "idActivo", idActivo);
-		rawDao.addParam(  "idAgrupacion", idAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idActivo", idActivo);
+		params.put("idAgrupacion", idAgrupacion);
+		
+		rawDao.addParams(params);
 		return rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		  FROM ACT_AGA_AGRUPACION_ACTIVO WHERE"
 				+ " 		ACT_ID = :idActivo "
@@ -145,8 +165,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esActivoPrincipalEnAgrupacion(Long numActivo, String tipoAgr) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "tipoAgr", tipoAgr);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("tipoAgr", tipoAgr);
+		
+		rawDao.addParams(params);
 		String sql = "SELECT COUNT(AGR.AGR_ID) "
 				+ "           FROM ACT_AGR_AGRUPACION AGR, ACT_ACTIVO ACT "
 				+ "           WHERE ACT.ACT_ID  = AGR.AGR_ACT_PRINCIPAL " 
@@ -162,7 +185,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean activoEnAgrupacionRestringida(Long numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(aga.AGR_ID) "
 				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
 				+ "			    ACT_AGR_AGRUPACION agr, "
@@ -183,19 +209,26 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean activoPrincipalEnAgrupacionRestringida(String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT count(1)      \n" + 
 				"FROM REM01.ACT_AGA_AGRUPACION_ACTIVO aga\n" + 
 				"JOIN REM01.ACT_AGR_AGRUPACION agr on aga.agr_id = agr.agr_id and agr.borrado = 0 \n" + 
 				"join REM01.DD_TAG_TIPO_AGRUPACION tagg on agr.dd_tag_id = tagg.dd_tag_id \n" + 
-				"where tagg.dd_Tag_codigo =  '02' and aga.borrado = 0  and AGR.agr_act_principal = (SELECT ACT_ID FROM REM01.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = "+ numActivo +" ) " + 
+				"where tagg.dd_Tag_codigo =  '02' and aga.borrado = 0  and AGR.agr_act_principal = (SELECT ACT_ID FROM REM01.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = :numActivo ) " + 
 				"and (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE) and rownum = 1");
 		return "1".equals(resultado);
 	}
 
 	@Override
 	public Boolean esActivoEnAgrupacion(Long numActivo, Long numAgrupacion) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("numAgrupacion", numAgrupacion);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(AGA.AGR_ID) "
 				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO AGA, "
 				+ "			    ACT_AGR_AGRUPACION AGR, "
@@ -213,8 +246,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivoEnAgrupacionPorTipo(Long numActivo, String codTipoAgrupacion) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "codTipoAgrupacion", codTipoAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("codTipoAgrupacion", codTipoAgrupacion);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(aga.AGR_ID) "
 				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
 				+ "			    ACT_AGR_AGRUPACION agr, "
@@ -234,8 +270,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivoEnOtraAgrupacion(Long numActivo, Long numAgrupacion) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("numAgrupacion", numAgrupacion);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(aga.AGR_ID) "
 				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
 				+ "			    ACT_AGR_AGRUPACION agr, "
@@ -253,7 +292,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeActivo(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -267,16 +309,24 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean esActivoEnTramite(String numActivo){
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
 			return false;
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_ACTIVO WHERE"
-				+ "		 	ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "		 	ACT_NUM_ACTIVO = :numActivo "
 				+ "		 	AND BORRADO = 0 AND ACT_EN_TRAMITE = 1");
 		return !"0".equals(resultado);
 	}
 
 	@Override
 	public Boolean existeOferta(String numOferta){
-		rawDao.addParam(  "numOferta", numOferta);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numOferta", numOferta);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM OFR_OFERTAS WHERE "
 				+ "OFR_NUM_OFERTA = :numOferta "
@@ -286,7 +336,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isOfferOfGiants(String numOferta){
-		rawDao.addParam(  "numOferta", numOferta);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numOferta", numOferta);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM OFR_OFERTAS OFR "
 				+ "JOIN ACT_OFR AO ON AO.OFR_ID = OFR.OFR_ID "
@@ -300,7 +353,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esOfertaPendienteDeSancion(String numOferta){
-		rawDao.addParam(  "numOferta", numOferta);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numOferta", numOferta);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM ECO_EXPEDIENTE_COMERCIAL ECO "
 				+ "JOIN OFR_OFERTAS OFR ON ECO.OFR_ID = OFR.OFR_ID "
@@ -314,7 +370,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isAgrupacionOfGiants(String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM ACT_AGR_AGRUPACION AGR "
 				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGR.AGR_ACT_PRINCIPAL "
@@ -327,7 +386,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoOfGiants(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM ACT_ACTIVO ACT "
 				+ "JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID "
@@ -339,9 +401,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoVendido(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
 			return false;
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_ACTIVO ACT "
 				+ " INNER JOIN DD_SCM_SITUACION_COMERCIAL SCM ON ACT.DD_SCM_ID = SCM.DD_SCM_ID"
@@ -354,9 +420,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existePlusvalia(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
 			return false;
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM EPV_ECO_PLUSVALIAVENTA EPV"
 				+ " INNER JOIN ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.ECO_ID = EPV.ECO_ID"
@@ -376,9 +446,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeCatastro(String catastro){
-		rawDao.addParam(  "catastro", catastro);
 		if(Checks.esNulo(catastro) || !StringUtils.isAlphanumeric(catastro))
 			return false;
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("catastro", catastro);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_CAT_CATASTRO WHERE"
 				+ "		 	CAT_REF_CATASTRAL =':catastro' "
@@ -388,10 +462,14 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeActivoEnPropietarios(String numActivo, String idPropietarios){
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "idPropietarios", idPropietarios);
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) && Checks.esNulo(idPropietarios) || !StringUtils.isAlphanumeric(idPropietarios))
 			return false;
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("idPropietarios", idPropietarios);
+		
+		rawDao.addParams(params);
 		String cpr_id = rawDao.getExecuteSQL("SELECT CPR_ID "
 				+ "		 FROM ACT_ACTIVO WHERE"
 				+ "		 	ACT_NUM_ACTIVO = :numActivo "
@@ -402,10 +480,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeComunidadPropietarios(String idPropietarios){
-		rawDao.addParam(  "idPropietarios", idPropietarios);
 		if(Checks.esNulo(idPropietarios) || !StringUtils.isAlphanumeric(idPropietarios))
 			return false;
-
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idPropietarios", idPropietarios);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_CPR_COM_PROPIETARIOS WHERE"
 				+ "		 CPR_NIF = ':idPropietarios' "
@@ -415,10 +496,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeEstadoLoc(String codEstadoLoc){
-		rawDao.addParam(  "codEstadoLoc", codEstadoLoc);
 		if(Checks.esNulo(codEstadoLoc) || !StringUtils.isAlphanumeric(codEstadoLoc))
 			return false;
 
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codEstadoLoc", codEstadoLoc);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM DD_ELO_ESTADO_LOCALIZACION WHERE"
 				+ "		 DD_ELO_CODIGO =':codEstadoLoc' "
@@ -428,10 +512,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeSubestadoGestion(String codSubestadoGestion){
-		rawDao.addParam(  "codSubestadoGestion", codSubestadoGestion);
 		if(Checks.esNulo(codSubestadoGestion))
 			return false;
 
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codSubestadoGestion", codSubestadoGestion);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM DD_SEG_SUBESTADO_GESTION WHERE"
 				+ "		 DD_SEG_CODIGO =':codSubestadoGestion' "
@@ -445,7 +532,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	private Boolean isActivoGestionAdmision(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "		 FROM ACT_ACTIVO WHERE "
 				+ "			ACT_ADMISION = 1 "
@@ -456,7 +546,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	private Boolean isActivoUltimoInformeComercialAceptado(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("select count(1) from ( "
 				+ "		 	  select dd_aic_codigo from ( "
 				+ "		 	    select aic.dd_aic_codigo "
@@ -480,7 +573,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean estadoNoPublicadoOrNull(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO WHERE"
 				+ "			ACT_NUM_ACTIVO = :numActivo "
@@ -494,7 +590,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean estadoOcultaractivo(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO WHERE"
 				+ "			ACT_NUM_ACTIVO = :numActivo "
@@ -507,7 +606,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean estadoDesocultaractivo(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO WHERE"
 				+ "			ACT_NUM_ACTIVO = :numActivo "
@@ -520,7 +622,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean estadoOcultarprecio(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO WHERE"
 				+ "			ACT_NUM_ACTIVO = :numActivo "
@@ -533,7 +638,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean estadoDesocultarprecio(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO WHERE"
 				+ "			ACT_NUM_ACTIVO = :numActivo "
@@ -546,7 +654,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean estadoDespublicar(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		//Despublicar Forzado solo admite activos en estado publicado (ordinario)
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO WHERE"
@@ -560,7 +671,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean estadosValidosDespublicarForzado(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO WHERE"
 				+ "			ACT_NUM_ACTIVO = :numActivo "
@@ -572,7 +686,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public Boolean estadosValidosDesDespublicarForzado(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO WHERE"
 				+ "			ACT_NUM_ACTIVO = :numActivo "
@@ -590,7 +707,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeBloqueoPreciosActivo(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO WHERE"
 				+ "			ACT_NUM_ACTIVO = :numActivo "
@@ -601,7 +721,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeOfertaAprobadaActivo(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO ACT, ACT_OFR AO, OFR_OFERTAS OFR, DD_EOF_ESTADOS_OFERTA ESO WHERE"
 				+ "         AO.ACT_ID = ACT.ACT_ID"
@@ -617,7 +740,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivoConVentaOferta(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
 				+ "			FROM DD_SCM_SITUACION_COMERCIAL scm, "
 				+ "			  ACT_ACTIVO act "
@@ -630,7 +756,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivoVendido(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
 				+ "			FROM DD_SCM_SITUACION_COMERCIAL scm, "
 				+ "			  ACT_ACTIVO act "
@@ -643,7 +772,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivoIncluidoPerimetro(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT act.ACT_ID "
 				+ "		FROM ACT_ACTIVO act "	
 				+ "		LEFT JOIN ACT_PAC_PERIMETRO_ACTIVO pac "
@@ -656,7 +788,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivoAsistido (String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "		FROM ACT_ACTIVO act "
 				+ "		INNER JOIN DD_SCR_SUBCARTERA scr "
@@ -679,7 +814,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esAgrupacionConBaja (String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "		FROM ACT_AGR_AGRUPACION agr "
 				+ "		WHERE "
@@ -690,7 +828,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivosMismaLocalizacion (String inSqlNumActivosRem){
-		rawDao.addParam(  "inSqlNumActivosRem", inSqlNumActivosRem);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("inSqlNumActivosRem", inSqlNumActivosRem);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(COUNT(1)) "
 				+ "			  FROM ACT_ACTIVO act, BIE_LOCALIZACION loc "
 				+ "			WHERE act.BIE_ID = loc.BIE_ID "
@@ -703,7 +844,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivosMismoPropietario (String inSqlNumActivosRem){
-		rawDao.addParam(  "inSqlNumActivosRem", inSqlNumActivosRem);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("inSqlNumActivosRem", inSqlNumActivosRem);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(COUNT(1)) "
 				+ "			    FROM ACT_PAC_PROPIETARIO_ACTIVO pac, "
 				+ "			      ACT_ACTIVO act "
@@ -717,14 +861,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivosMismaCartera (String inSqlNumActivosRem, String agrupacion){
-		rawDao.addParam(  "inSqlNumActivosRem", inSqlNumActivosRem);
-		rawDao.addParam(  "agrupacion", agrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("agrupacion", agrupacion);
 
 		String[] lista = inSqlNumActivosRem.split(",");
 		List<String> listaActivosAAnyadir = new ArrayList<String>();
 
 		Collections.addAll(listaActivosAAnyadir, lista);
 
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT DISTINCT act.dd_cra_id"
 				+" FROM ACT_AGR_AGRUPACION aaa"
 				+" JOIN ACT_AGA_AGRUPACION_ACTIVO aga ON aaa.AGR_ID = aga.AGR_ID AND aaa.AGR_NUM_AGRUP_REM = :agrupacion "
@@ -775,9 +920,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivosOfertasAceptadas (String inSqlNumActivosRem, String numAgrupRem){
-		rawDao.addParam(  "inSqlNumActivosRem", inSqlNumActivosRem);
-		rawDao.addParam(  "numAgrupRem", numAgrupRem);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("inSqlNumActivosRem", inSqlNumActivosRem);
+		params.put("numAgrupRem", numAgrupRem);
 
+		rawDao.addParams(params);
 		String sql =
 				"SELECT "
 				+ "  ( "
@@ -841,11 +988,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivoConPropietario (String sqlNumActivoRem){
-		rawDao.addParam(  "sqlNumActivoRem", sqlNumActivoRem);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("sqlNumActivoRem", sqlNumActivoRem);
 
 		if(Checks.esNulo(sqlNumActivoRem))
 			return false;
 
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "			    FROM ACT_PAC_PROPIETARIO_ACTIVO pac, "
 				+ "			      ACT_ACTIVO act "
@@ -860,11 +1009,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivoEnOtraAgrupacionNoCompatible(Long numActivo, Long numAgrupacion, String codTiposAgrNoCompatibles) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("numAgrupacion", numAgrupacion);
 		String cadenaCodigosSql = convertStringToGroupSql(codTiposAgrNoCompatibles);
-		rawDao.addParam(  "codTiposAgrNoCompatibles", cadenaCodigosSql);
+		params.put("codTiposAgrNoCompatibles", cadenaCodigosSql);
 
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(aga.AGR_ID) "
 				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
 				+ "			    ACT_AGR_AGRUPACION agr, "
@@ -899,7 +1050,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivoFinanciero(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "		FROM ACT_ABA_ACTIVO_BANCARIO aba "
 				+ "		INNER JOIN DD_CLA_CLASE_ACTIVO cla "
@@ -913,7 +1067,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esPropuestaYaCargada(Long numPropuesta) {
-		rawDao.addParam(  "numPropuesta", numPropuesta);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numPropuesta", numPropuesta);
+		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "		FROM PRP_PROPUESTAS_PRECIOS prp "
 				+ "		INNER JOIN DD_EPP_ESTADO_PROP_PRECIO epp "
@@ -927,7 +1084,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoNoComercializable(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -944,7 +1104,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean destinoFinalNoVenta(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
@@ -962,7 +1125,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean destinoFinalNoAlquiler(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
@@ -980,7 +1146,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean activoNoPublicado(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
@@ -995,7 +1164,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean activoOcultoVenta(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numActivo)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
@@ -1009,7 +1181,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean activoOcultoAlquiler(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numActivo)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
@@ -1023,7 +1198,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean motivoNotExistsByCod(String codigoMotivo){
-		rawDao.addParam(  "codigoMotivo", codigoMotivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoMotivo", codigoMotivo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(codigoMotivo)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
@@ -1036,7 +1214,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoNoPublicable(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -1052,7 +1233,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoDestinoComercialNoVenta(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -1068,7 +1252,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoDestinoComercialNoAlquiler(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -1084,7 +1271,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoSinPrecioVentaWeb(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -1100,7 +1290,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoSinPrecioRentaWeb(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -1116,7 +1309,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoSinInformeAprobado(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -1132,7 +1328,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public List<BigDecimal> getImportesActualesActivo(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		Object[] resultados = rawDao.getExecuteSQLArray(
 				"		SELECT (SELECT VAL_IMPORTE FROM V_PRECIOS_VIGENTES"
 				+ "		WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = '02')"
@@ -1162,7 +1361,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public List<Date> getFechasImportesActualesActivo(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		Object[] resultados = rawDao.getExecuteSQLArray(
 			"	SELECT "
 			+ "		(SELECT VAL_FECHA_APROBACION FROM V_PRECIOS_VIGENTES" 
@@ -1227,8 +1429,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeActivoEnPropuesta(String numActivo, String numPropuesta) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "numPropuesta", numPropuesta);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("numPropuesta", numPropuesta);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo) || Checks.esNulo(numPropuesta))
 			return false;
 
@@ -1244,9 +1449,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public BigDecimal getPrecioMinimoAutorizadoActualActivo(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
 		BigDecimal resultado = null;
 
+		rawDao.addParams(params);
 		Object[] resultados = rawDao.getExecuteSQLArray(
 				"		SELECT (SELECT VAL_IMPORTE FROM V_PRECIOS_VIGENTES"
 				+ "		WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = '04')"
@@ -1262,7 +1469,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeActivoConOfertaViva(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -1277,7 +1487,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	@Override
 	public Boolean existeActivoConOfertaVivaEstadoExpediente(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -1307,7 +1520,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeActivoConExpedienteComercialVivo(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -1332,7 +1548,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeSociedadAcreedora(String sociedadAcreedoraNIF) {
-		rawDao.addParam(  "sociedadAcreedoraNIF", sociedadAcreedoraNIF);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("sociedadAcreedoraNIF", sociedadAcreedoraNIF);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(sociedadAcreedoraNIF)) {
 			return false;
 		}
@@ -1347,7 +1566,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existePropietario(String propietarioNIF) {
-		rawDao.addParam(  "propietarioNIF", propietarioNIF);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("propietarioNIF", propietarioNIF);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(propietarioNIF)) {
 			return false;
 		}
@@ -1362,7 +1584,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeProveedorMediadorByNIF(String proveedorMediadorNIF) {
-		rawDao.addParam(  "proveedorMediadorNIF", proveedorMediadorNIF);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("proveedorMediadorNIF", proveedorMediadorNIF);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(proveedorMediadorNIF)) {
 			return true;
 		}
@@ -1378,7 +1603,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF) {
-		rawDao.addParam(  "proveedorMediadorNIF", proveedorMediadorNIF);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("proveedorMediadorNIF", proveedorMediadorNIF);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(proveedorMediadorNIF)) {
 			return true;
 		}
@@ -1395,7 +1623,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeCalifEnergeticaByDesc(String califEnergeticaDesc) {
-		rawDao.addParam(  "califEnergeticaDesc", califEnergeticaDesc);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("califEnergeticaDesc", califEnergeticaDesc);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(califEnergeticaDesc)) {
 			return true;
 		}
@@ -1410,7 +1641,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeGradoPropiedadByCod(String gradPropiedadCod) {
-		rawDao.addParam(  "gradPropiedadCod", gradPropiedadCod);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("gradPropiedadCod", gradPropiedadCod);
+		rawDao.addParams(params);
 
 		if(Checks.esNulo(gradPropiedadCod)) {
 			return true;
@@ -1426,7 +1659,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeDestComercialByCod(String destComercialCod) {
-		rawDao.addParam(  "destComercialCod", destComercialCod);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("destComercialCod", destComercialCod);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(destComercialCod)) {
 			return false;
 		}
@@ -1441,7 +1677,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeTipoAlquilerByCod(String tipoAlquilerCod) {
-		rawDao.addParam(  "tipoAlquilerCod", tipoAlquilerCod);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("tipoAlquilerCod", tipoAlquilerCod);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(tipoAlquilerCod)) {
 			return true;
 		}
@@ -1456,7 +1695,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeTipoViaByCod(String tipoViaCod) {
-		rawDao.addParam(  "tipoViaCod", tipoViaCod);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("tipoViaCod", tipoViaCod);
+		rawDao.addParams(params);
 
 		if(Checks.esNulo(tipoViaCod)) {
 			return false;
@@ -1472,7 +1713,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeSubtipoTituloByCod(String subtipoTituloCod) {
-		rawDao.addParam(  "subtipoTituloCod", subtipoTituloCod);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("subtipoTituloCod", subtipoTituloCod);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(subtipoTituloCod)) {
 			return false;
 		}
@@ -1487,7 +1731,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeUsoDominanteByCod(String usoDominanteCod) {
-		rawDao.addParam(  "usoDominanteCod", usoDominanteCod);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("usoDominanteCod", usoDominanteCod);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(usoDominanteCod)) {
 			return false;
 		}
@@ -1502,7 +1749,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeEstadoExpRiesgoByCod(String estadoExpRiesgoCod) {
-		rawDao.addParam(  "estadoExpRiesgoCod", estadoExpRiesgoCod);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("estadoExpRiesgoCod", estadoExpRiesgoCod);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(estadoExpRiesgoCod)) {
 			return true;
 		}
@@ -1517,7 +1767,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeProvinciaByCod(String provCod) {
-		rawDao.addParam(  "provCod", provCod);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("provCod", provCod);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(provCod)) {
 			return false;
 		}
@@ -1532,7 +1785,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeEstadoFisicoByCod(String estFisicoCod) {
-		rawDao.addParam(  "estFisicoCod", estFisicoCod);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("estFisicoCod", estFisicoCod);
+		rawDao.addParams(params);
 
 		if(Checks.esNulo(estFisicoCod)) {
 			return false;
@@ -1548,7 +1803,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeClaseActivoByDesc(String claseActivoDesc) {
-		rawDao.addParam(  "claseActivoDesc", claseActivoDesc);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("claseActivoDesc", claseActivoDesc);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(claseActivoDesc)) {
 			return false;
 		}
@@ -1563,7 +1821,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean destComercialContieneAlquiler(String destComercialCod) {
-		rawDao.addParam(  "destComercialCod", destComercialCod);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("destComercialCod", destComercialCod);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(destComercialCod)) {
 			return false;
 		}
@@ -1578,7 +1839,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public boolean existeSubCarteraByCod(String codSubCartera){
-		rawDao.addParam(  "codSubCartera", codSubCartera);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codSubCartera", codSubCartera);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(codSubCartera)){
 			return false;
 		}
@@ -1592,7 +1856,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public boolean existeTipoActivoByCod(String codTipoActivo){
-		rawDao.addParam(  "codTipoActivo", codTipoActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codTipoActivo", codTipoActivo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(codTipoActivo)){
 			return false;
 		}
@@ -1606,7 +1873,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public boolean existeSubtipoActivoByCod(String codSubtipoActivo){
-		rawDao.addParam(  "codSubtipoActivo", codSubtipoActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codSubtipoActivo", codSubtipoActivo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(codSubtipoActivo)){
 			return false;
 		}
@@ -1620,7 +1890,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public boolean existeGestorComercialByUsername(String gestorUsername){
-		rawDao.addParam(  "gestorUsername", gestorUsername);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("gestorUsername", gestorUsername);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(gestorUsername)){
 			return false;
 		}
@@ -1634,7 +1907,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public boolean existeSupervisorComercialByUsername(String supervisorUsername){
-		rawDao.addParam(  "supervisorUsername", supervisorUsername);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("supervisorUsername", supervisorUsername);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(supervisorUsername)){
 			return false;
 		}
@@ -1647,7 +1923,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public boolean existeGestorFormalizacionByUsername(String gestorUsername){
-		rawDao.addParam(  "gestorUsername", gestorUsername);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("gestorUsername", gestorUsername);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(gestorUsername)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = ':gestorUsername')"
@@ -1657,7 +1936,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public boolean existeSupervisorFormalizacionByUsername(String supervisorUsername){
-		rawDao.addParam(  "supervisorUsername", supervisorUsername);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("supervisorUsername", supervisorUsername);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(supervisorUsername)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = ':supervisorUsername')"
@@ -1667,7 +1949,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public boolean existeGestorAdmisionByUsername(String gestorUsername){
-		rawDao.addParam(  "gestorUsername", gestorUsername);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("gestorUsername", gestorUsername);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(gestorUsername)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME =':gestorUsername ')"
@@ -1677,7 +1962,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public boolean existeGestorActivosByUsername(String gestorUsername){
-		rawDao.addParam(  "gestorUsername", gestorUsername);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("gestorUsername", gestorUsername);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(gestorUsername)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = ':gestorUsername')"
@@ -1688,7 +1976,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public boolean existeGestoriaDeFormalizacionByUsername(String username){
-		rawDao.addParam(  "username", username);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("username", username);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(username)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = ':username')"
@@ -1699,7 +1990,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeProvinciaByCodigo(String codigoProvincia) {
-		rawDao.addParam(  "codigoProvincia", codigoProvincia);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoProvincia", codigoProvincia);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codigoProvincia)) {
 			return false;
 		}
@@ -1714,7 +2008,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeMunicipioByCodigo(String codigoMunicipio) {
-		rawDao.addParam(  "codigoMunicipio", codigoMunicipio);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoMunicipio", codigoMunicipio);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codigoMunicipio)) {
 			return false;
 		}
@@ -1728,8 +2025,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio) {
-		rawDao.addParam(  "codProvincia", codProvincia);
-		rawDao.addParam(  "codigoMunicipio", codigoMunicipio);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codProvincia", codProvincia);
+		params.put("codigoMunicipio", codigoMunicipio);
+		rawDao.addParams(params);
+		
 		if(codigoMunicipio == null || codProvincia == null) {
 			return false;
 		}
@@ -1745,7 +2045,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeUnidadInferiorMunicipioByCodigo(String codigoUnidadInferiorMunicipio) {
-		rawDao.addParam(  "codigoUnidadInferiorMunicipio", codigoUnidadInferiorMunicipio);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoUnidadInferiorMunicipio", codigoUnidadInferiorMunicipio);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codigoUnidadInferiorMunicipio)) {
 			return false;
 		}
@@ -1760,9 +2063,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeGasto(String numGasto){
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR WHERE"
 				+ "		 	GPV_NUM_GASTO_HAYA = ':numGasto' "
@@ -1772,9 +2079,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean gastoTieneLineaDetalle(String numGasto){
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM gld_gastos_linea_detalle "
 				+ "where BORRADO = 0 AND  gpv_id = (SELECT gpv_id FROM "
 				+ "gpv_gastos_proveedor where "
@@ -1784,11 +2095,14 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean subtipoGastoCorrespondeGasto(String numGasto,String subtipoGasto){
-		rawDao.addParam(  "numGasto", numGasto);
-		rawDao.addParam(  "subtipoGasto", subtipoGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		params.put("subtipoGasto", subtipoGasto);
+		rawDao.addParams(params);
 
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto) || Checks.esNulo(subtipoGasto) || !StringUtils.isNumeric(subtipoGasto))
 			return false;
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM gpv_gastos_proveedor "
 				+" where gpv_num_gasto_haya = ':numGasto' and "
 				+" dd_tga_id = (select dd_tga_id from dd_stg_subtipos_gasto where dd_stg_codigo = ':subtipoGasto')");
@@ -1797,10 +2111,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean lineaSubtipoDeGastoRepetida(String numGasto,String subtipoGasto, String tipoImpositivo, String tipoImpuesto){
-		rawDao.addParam(  "numGasto", numGasto);
-		rawDao.addParam(  "subtipoGasto", subtipoGasto);
-		rawDao.addParam(  "tipoImpositivo", tipoImpositivo);
-		rawDao.addParam(  "tipoImpuesto", tipoImpuesto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		params.put("subtipoGasto", subtipoGasto);
+		params.put("tipoImpositivo", tipoImpositivo);
+		params.put("tipoImpuesto", tipoImpuesto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto) || Checks.esNulo(subtipoGasto))
 			return false;
 		String query = "SELECT COUNT(*) FROM gld_gastos_linea_detalle where " + 
@@ -1826,7 +2143,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esGastoDeLiberbank(String numGasto){
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -1841,8 +2161,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean tienenRelacionActivoGasto(String numActivo, String numGasto){
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto) || Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM GLD_ENT ENT"
@@ -1856,7 +2179,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public List<Long> getRelacionGastoActivo(String numGasto){
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return new ArrayList<Long>();
 		List<Object> listaObj = rawDao.getExecuteSQLList("SELECT DISTINCT ACT.ACT_NUM_ACTIVO FROM ACT_ACTIVO ACT "
@@ -1875,7 +2201,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean propietarioGastoConDocumento(String numGasto){
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -1890,8 +2219,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean propietarioGastoIgualActivo(String numActivo, String numGasto){
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		String resultadoGasto = rawDao.getExecuteSQL("SELECT actpro.PRO_DOCIDENTIF "
@@ -1914,8 +2246,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean activoNoAsignado(String numActivo, String numGasto){
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if((Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) || (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto)))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -1933,7 +2268,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isGastoNoAutorizado(String numGasto){
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -1947,7 +2285,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isGastoNoAsociadoTrabajo(String numGasto){
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -1961,7 +2302,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isGastoPermiteAnyadirActivo(String numGasto){
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -1974,7 +2318,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeExpedienteComercial(String numExpediente){
-		rawDao.addParam(  "numExpediente", numExpediente);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -1986,7 +2333,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeAgrupacion(String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -1999,7 +2349,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeAgrupacionPA(String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -2011,7 +2364,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeTipoGestor(String codigoTipoGestor){
-		rawDao.addParam(  "codigoTipoGestor", codigoTipoGestor);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoTipoGestor", codigoTipoGestor);
+		rawDao.addParams(params);
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ${master.schema}.DD_TGE_TIPO_GESTOR WHERE"
@@ -2022,7 +2377,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeUsuario(String username){
-		rawDao.addParam(  "username", username);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("username", username);
+		rawDao.addParams(params);
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ${master.schema}.USU_USUARIOS WHERE"
 				+ "		 USU_USERNAME = ' :username ' AND BORRADO = 0");
@@ -2032,8 +2390,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean usuarioEsTipoGestor(String username, String codigoTipoGestor){
-		rawDao.addParam(  "username", username);
-		rawDao.addParam(  "codigoTipoGestor", codigoTipoGestor);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("username", username);
+		params.put("codigoTipoGestor", codigoTipoGestor);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(username) || Checks.esNulo(codigoTipoGestor))
 			return false;
 
@@ -2059,14 +2420,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 
 		if(!Checks.esNulo(numActivo)){
-			rawDao.addParam(  "numActivo", numActivo);
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("numActivo", numActivo);
+			rawDao.addParams(params);
 			query= "SELECT DISTINCT(act.DD_CRA_ID) "
 				+ "		 FROM ACT_ACTIVO act ";
 			query= query.concat(" WHERE act.ACT_NUM_ACTIVO = :numActivo ");
 			cartera= rawDao.getExecuteSQL(query);
 		}
 		else if(!Checks.esNulo(numAgrupacion)){
-			rawDao.addParam(  "numAgrupacion", numAgrupacion);
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("numAgrupacion", numAgrupacion);
+			rawDao.addParams(params);
 			query= "SELECT DISTINCT(act.DD_CRA_ID) "
 				+ "		 FROM ACT_AGR_AGRUPACION agr ";
 			query= query.concat(" WHERE agr.AGR_NUM_AGRUP_REM = :numAgrupacion ");
@@ -2074,7 +2439,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 
 		else if(!Checks.esNulo(numExpediente)){
-			rawDao.addParam(  "numExpediente", numExpediente);
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("numExpediente", numExpediente);
+			rawDao.addParams(params);
 			cartera= rawDao.getExecuteSQL("SELECT DISTINCT(act.DD_CRA_ID) "
 					+ "		 FROM ECO_EXPEDIENTE_COMERCIAL eco "
 					+ "			INNER JOIN OFR_OFERTAS ofr on eco.OFR_ID = ofr.OFR_ID "
@@ -2085,7 +2452,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 
 		if(!Checks.esNulo(cartera)){
-			rawDao.addParam(  "codigoGestor", codigoGestor);
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("codigoGestor", codigoGestor);
+			rawDao.addParams(params);
 			query= ("SELECT COUNT(*) "
 					+ "		 FROM DD_GCM_GESTOR_CARGA_MASIVA gcm "
 					+ "			INNER JOIN ${master.schema}.DD_TGE_TIPO_GESTOR tge on gcm.DD_GCM_CODIGO = tge.DD_TGE_CODIGO "
@@ -2115,8 +2484,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean isFechaTraspasoPosteriorAFechaDevengo(String numActivo, String numGasto) {
 		String resultado;
 		String enAgrupacion;
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
 
 		if(Checks.esNulo(numActivo) || Checks.esNulo(numGasto))
 			return false;
@@ -2162,8 +2533,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean distintosTiposImpuesto(String numActivo, String numAgrupacion) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		Boolean agrCanarias = false;
 		Boolean actCanarias = false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_AGR_AGRUPACION AGR " +
@@ -2192,8 +2566,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public boolean comprobarDistintoPropietario(String numActivo, String numAgrupacion) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
 		String agrPro;
 		String actPro;
 
@@ -2222,12 +2598,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public boolean comprobarDistintoPropietarioListaActivos(String[] activos) {
-		rawDao.addParam(  "activos", activos[0]);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("activos", activos[0]);
+		rawDao.addParams(params);
+		
 		String actPro = rawDao.getExecuteSQL("SELECT PRO_ID FROM ACT_PAC_PROPIETARIO_ACTIVO PAC "
 				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID AND ACT_NUM_ACTIVO = :activos ");
 
 		for (int i = 1; i < activos.length; i++) {
-			rawDao.addParam(  "activos", activos[i]);
+			params = new HashMap<String, Object>();
+			params.put("activos", activos[i]);
+			rawDao.addParams(params);
 			String actAComparar = rawDao.getExecuteSQL("SELECT PRO_ID FROM ACT_PAC_PROPIETARIO_ACTIVO PAC "
 					+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID AND ACT_NUM_ACTIVO = :activos ");
 			if (!actPro.equals(actAComparar)) return true;
@@ -2238,7 +2619,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public boolean activoConOfertasTramitadas(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		String actofr = rawDao.getExecuteSQL("    SELECT COUNT(aof1.act_id) "
 				+ "    FROM OFR_OFERTAS ofr1 "
 				+ "    INNER JOIN ACT_OFR aof1 on ofr1.ofr_id = aof1.ofr_id "
@@ -2254,8 +2638,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public boolean isMismoTipoComercializacionActivoPrincipalAgrupacion(String numActivo, String numAgrupacion) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
 
 		String activoTCO = rawDao.getExecuteSQL("SELECT COUNT(1) "
 		        + "        FROM ACT_APU_ACTIVO_PUBLICACION APU "
@@ -2271,8 +2657,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public boolean isMismoTipoComercializacionActivoPrincipalExcel(String numActivo, String numActivoPrincipalExcel) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "numActivoPrincipalExcel", numActivoPrincipalExcel);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("numActivoPrincipalExcel", numActivoPrincipalExcel);
+		rawDao.addParams(params);
+		
 		String activoTCO = rawDao.getExecuteSQL("SELECT COUNT(1) "
 		        + "        FROM ACT_APU_ACTIVO_PUBLICACION APU "
 				+ "        JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = APU.ACT_ID "
@@ -2286,8 +2675,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public boolean isMismoEpuActivoPrincipalAgrupacion(String numActivo, String numAgrupacion) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		String activoEPU = rawDao.getExecuteSQL("SELECT COUNT(1) "
 		        + "        FROM ACT_ACTIVO ACT "
 				+ "        JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID "
@@ -2323,8 +2715,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public boolean isMismoTcoActivoPrincipalAgrupacion(String numActivo, String numAgrupacion) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		String activoTCO = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_ACTIVO ACT "
 				+"					JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID "
 				+"					WHERE ACT.ACT_NUM_ACTIVO = :numActivo"
@@ -2339,8 +2734,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public boolean isMismoEpuActivoPrincipalExcel(String numActivo, String numActivoPrincipalExcel) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "numActivoPrincipalExcel", numActivoPrincipalExcel);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("numActivoPrincipalExcel", numActivoPrincipalExcel);
+		rawDao.addParams(params);
+		
 		String activoEPU = rawDao.getExecuteSQL("SELECT COUNT(1) "
 		        + "        FROM ACT_ACTIVO ACT "
 				+ "        JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID "
@@ -2373,7 +2771,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public String idAgrupacionDelActivoPrincipal(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
 
 		return rawDao.getExecuteSQL("SELECT AGA.AGR_ID"
 				+ "		  FROM ACT_ACTIVO ACT"
@@ -2387,7 +2787,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivoVendidoAgrupacion(String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numAgrupacion))
 			return false;
 
@@ -2402,8 +2805,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esPerfilErroneo(String codPerfil, String codUsuario){
-		rawDao.addParam(  "codPerfil", codPerfil);
-		rawDao.addParam(  "codUsuario", codUsuario);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codPerfil", codPerfil);
+		params.put("codUsuario", codUsuario);
+		rawDao.addParams(params);
+		
 	    if(Checks.esNulo(codPerfil) || Checks.esNulo(codUsuario))
 	        return false;
 	    
@@ -2419,7 +2825,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
     }
 	@Override
 	public Boolean isActivoNoComercializableAgrupacion(String numAgrupacion) {
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numAgrupacion))
 			return false;
 
@@ -2434,7 +2843,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoNoPublicableAgrupacion(String numAgrupacion) {
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numAgrupacion))
 			return false;
 
@@ -2449,7 +2861,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoDestinoComercialNoVentaAgrupacion(String numAgrupacion) {
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numAgrupacion))
 			return false;
 
@@ -2465,7 +2880,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoSinPrecioVentaWebAgrupacion(String numAgrupacion) {
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numAgrupacion))
 			return false;
 
@@ -2489,7 +2907,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoSinInformeAprobadoAgrupacion(String numAgrupacion) {
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numAgrupacion))
 			return false;
 
@@ -2505,7 +2926,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoDestinoComercialNoAlquilerAgrupacion(String numAgrupacion) {
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numAgrupacion))
 			return false;
 
@@ -2520,7 +2944,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public Boolean activosNoOcultosVentaAgrupacion(String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numAgrupacion)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
@@ -2535,7 +2962,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean activosNoOcultosAlquilerAgrupacion(String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numAgrupacion)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
@@ -2550,7 +2980,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoSinPrecioRentaWebAgrupacion(String numAgrupacion) {
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numAgrupacion))
 			return false;
 
@@ -2574,7 +3007,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoOcultoVenta(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo)){
 			return false;
 		}
@@ -2591,7 +3027,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoNoPublicadoVenta(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -2607,7 +3046,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoOcultoAlquiler(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -2623,7 +3065,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoNoPublicadoAlquiler(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -2639,7 +3084,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public boolean existeComiteSancionador(String codComite){
-		rawDao.addParam(  "codComite", codComite);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codComite", codComite);
+		rawDao.addParams(params);
+		
 		String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
 				+ "		FROM DD_COS_COMITES_SANCION cos			"
 				+ "     WHERE cos.BORRADO = 0					"
@@ -2651,7 +3099,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public boolean existeTipoimpuesto(String codTipoImpuesto){
-		rawDao.addParam(  "codTipoImpuesto", codTipoImpuesto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codTipoImpuesto", codTipoImpuesto);
+		rawDao.addParams(params);
+		
 		String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
 				+ "     FROM DD_TIT_TIPOS_IMPUESTO tit			"
 				+ "		WHERE tit.BORRADO = 0					"
@@ -2662,7 +3113,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	@Override
 	public boolean isProveedorSuministroVigente( String codRem ) {
-		rawDao.addParam(  "codRem", codRem);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codRem", codRem);
+		rawDao.addParams(params);
+		
 		String sql = null;
 		if ( codRem != null && codRem.length() > 0) {
 			sql = "select count(1) from act_pve_proveedor pve "
@@ -2680,7 +3134,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public boolean existeCodigoPrescriptor(String codPrescriptor){
 		boolean resultado = false;
-		rawDao.addParam(  "codPrescriptor", codPrescriptor);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codPrescriptor", codPrescriptor);
+		rawDao.addParams(params);
+		
 		if(codPrescriptor != null && !codPrescriptor.isEmpty()){
 			String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
 					+ "     FROM ACT_PVE_PROVEEDOR act			"
@@ -2696,7 +3153,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public boolean existeTipoDocumentoByCod(String codDocumento){
 		boolean resultado = false;
-		rawDao.addParam(  "codDocumento", codDocumento);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codDocumento", codDocumento);
+		rawDao.addParams(params);
+		
 		if(codDocumento != null && !codDocumento.isEmpty()){
 			String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
 					+ "		FROM DD_TDI_TIPO_DOCUMENTO_ID tdi		"
@@ -2713,7 +3173,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeAgrupacionByDescripcion(String descripcionAgrupacion){
-		rawDao.addParam(  "descripcionAgrupacion", descripcionAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("descripcionAgrupacion", descripcionAgrupacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(descripcionAgrupacion))
 			return false;
 
@@ -2728,7 +3191,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public String getSubcartera(String numActivo) {
 		String resultado = "";
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(numActivo != null && !numActivo.isEmpty()){
 			 resultado = rawDao.getExecuteSQL("SELECT scr.DD_SCR_CODIGO "
 					+ "		FROM ACT_ACTIVO act "
@@ -2742,7 +3208,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean agrupacionEstaVacia(String numAgrupacion) {
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_AGR_AGRUPACION AGR " +
 				"JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID " +
 				"WHERE AGR.AGR_NUM_AGRUP_REM = :numAgrupacion ");
@@ -2753,7 +3222,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean distintosTiposImpuestoAgrupacionVacia(List<String> listaActivos) {
 		boolean actCanarias;
-		rawDao.addParam(  "listaActivos", listaActivos.get(0));
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("listaActivos", listaActivos.get(0));
+		rawDao.addParams(params);
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_ACTIVO ACT "
 				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID "
@@ -2784,8 +3255,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean subcarteraPerteneceCartera(String subcartera, String cartera){
-		rawDao.addParam(  "subcartera", subcartera);
-		rawDao.addParam(  "cartera", cartera);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("subcartera", subcartera);
+		params.put("cartera", cartera);
+		rawDao.addParams(params);
+		
 		if(!Checks.esNulo(cartera) && !Checks.esNulo(subcartera)){
 			String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM DD_SCR_SUBCARTERA SCR "
 					+ "JOIN DD_CRA_CARTERA CRA ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.DD_CRA_CODIGO = ':cartera' "
@@ -2799,8 +3273,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean subtipoPerteneceTipoTitulo(String subtipo, String tipoTitulo){
-		rawDao.addParam(  "subtipo", subtipo);
-		rawDao.addParam(  "tipoTitulo", tipoTitulo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("subtipo", subtipo);
+		params.put("tipoTitulo", tipoTitulo);
+		rawDao.addParams(params);
+		
 		String resultado;
 
 		if(!Checks.esNulo(tipoTitulo) && !Checks.esNulo(subtipo)){
@@ -2817,8 +3294,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esParGastoActivo(String numGasto, String numActivo){
-		rawDao.addParam(  "numGasto", numGasto);
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(!StringUtils.isNumeric(numGasto) || !StringUtils.isNumeric(numActivo))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM GLD_ENT ENT"
@@ -2832,7 +3312,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean agrupacionEsProyecto(String numAgrupacion) {
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
 			return false;
 
@@ -2847,14 +3330,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existePromocion(String promocion){
-		rawDao.addParam(  "promocion", promocion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("promocion", promocion);
+		rawDao.addParams(params);
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_ACTIVO "
 				+ "WHERE ACT_COD_PROMOCION_PRINEX = ':promocion'");
 		return !"0".equals(resultado);
 	}
 
 	public Boolean mediadorExisteVigente(String codMediador){
-		rawDao.addParam(  "codMediador", codMediador);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codMediador", codMediador);
+		rawDao.addParams(params);
+		
 		if(!Checks.esNulo(codMediador)){
 			String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_PVE_PROVEEDOR "
 					+ " WHERE PVE_COD_REM =  :codMediador  AND BORRADO = 0");
@@ -2873,7 +3362,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
     public Boolean activoTienePRV(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
     	String resultado = "0";
 		if(numActivo != null && !numActivo.isEmpty()){
 	    	 resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_ACTIVO ACT "
@@ -2894,7 +3386,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
     public Boolean activoTieneLOC(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
     	String resultado = "0";
 		if(numActivo != null && !numActivo.isEmpty()){
 			 resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_ACTIVO ACT "
@@ -2915,8 +3410,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esMismaProvincia(Long numActivo, Long numAgrupacion) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
 
 		String prv_activo = rawDao.getExecuteSQL("SELECT PRV.DD_PRV_ID FROM ACT_ACTIVO ACT "
 				+ " JOIN BIE_BIEN BIE "
@@ -2952,7 +3449,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	 */
 	@Override
 	public Boolean activoConDestinoComercialVenta(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(!Checks.esNulo(numActivo)){
 			String resultado = rawDao.getExecuteSQL("select TCO.DD_TCO_CODIGO from ACT_ACTIVO act "
 					 + " INNER JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID "
@@ -2972,7 +3472,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	 */
 	@Override
 	public Boolean activoConDestinoComercialAlquiler(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(!Checks.esNulo(numActivo)){
 			String resultado = rawDao.getExecuteSQL("select TCO.DD_TCO_CODIGO from ACT_ACTIVO act "
 					 + " INNER JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID "
@@ -2987,7 +3490,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivoAlquilado(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
 				+ "			FROM ACT_PTA_PATRIMONIO_ACTIVO pta, "
@@ -3004,7 +3509,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esAgrupacionTipoAlquiler(String numAgrupacion) {
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
 			return false;
 
@@ -3019,8 +3527,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean mismoTipoAlquilerActivoAgrupacion(String numAgrupacion, String numActivo) {
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
 		
 		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
 			return false;
@@ -3052,7 +3562,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esAgrupacionTipoComercialVenta(String numAgrupacion) {
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
 			return false;
 
@@ -3066,7 +3579,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public String getCodigoSubcarteraAgrupacion(String numAgrupacion) {
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		String resultado = "";
 		if(numAgrupacion != null && !numAgrupacion.isEmpty()){
 			 resultado = rawDao.getExecuteSQL("SELECT scr.DD_SCR_CODIGO " +
@@ -3081,8 +3597,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esMismaLocalidad(Long numActivo, Long numAgrupacion) {
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
 
 		String loc_activo = rawDao.getExecuteSQL("SELECT LOC.DD_LOC_ID FROM ACT_ACTIVO ACT "
 				+ " JOIN BIE_BIEN BIE "
@@ -3112,7 +3630,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public Boolean existeActivoConOfertaVentaViva(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -3132,7 +3653,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public Boolean existeActivoConOfertaAlquilerViva(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -3153,7 +3677,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean activoEnAgrupacionComercialViva(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
 
 		String resultado = rawDao.getExecuteSQL("select count(agr.AGR_ID) from ACT_AGR_AGRUPACION agr " +
 				" inner join DD_TAG_TIPO_AGRUPACION tag on tag.DD_TAG_ID = agr.DD_TAG_ID and (tag.DD_TAG_CODIGO = '14' or tag.DD_TAG_CODIGO = '15') " +
@@ -3170,7 +3696,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public String getCodigoDestinoComercialByNumActivo(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
 
 		if(Checks.esNulo(numActivo))
 			return null;
@@ -3182,7 +3710,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoPublicadoVenta(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -3198,7 +3729,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoOcultoVentaPorMotivosManuales(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -3214,7 +3748,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoPublicadoAlquiler(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -3230,7 +3767,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoOcultoAlquilerPorMotivosManuales(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -3247,7 +3787,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivoConComunicacionComunicada(Long numActivoHaya) {
-		rawDao.addParam(  "numActivoHaya", numActivoHaya);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivoHaya", numActivoHaya);
+		rawDao.addParams(params);
+		
 		String resultado = "0";
 		if(numActivoHaya != null) {
 			 resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_CMG_COMUNICACION_GENCAT com " +
@@ -3261,7 +3804,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public Boolean esActivoConComunicacionViva(Long numActivoHaya) {
-		rawDao.addParam(  "numActivoHaya", numActivoHaya);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivoHaya", numActivoHaya);
+		rawDao.addParams(params);
+		
 		String resultado = "0";
 		if(numActivoHaya != null) {
 			resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_CMG_COMUNICACION_GENCAT com " +
@@ -3274,7 +3820,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public Boolean esActivoSinComunicacionViva(Long numActivoHaya) {
-		rawDao.addParam(  "numActivoHaya", numActivoHaya);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivoHaya", numActivoHaya);
+		rawDao.addParams(params);
 
 		String resultado = "0";
 		if(numActivoHaya != null) {
@@ -3288,7 +3836,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public Boolean esActivoConMultiplesComunicacionesVivas(Long numActivoHaya) {
-		rawDao.addParam(  "numActivoHaya", numActivoHaya);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivoHaya", numActivoHaya);
+		rawDao.addParams(params);
 
 		String resultado = "0";
 		if(numActivoHaya != null) {
@@ -3346,7 +3896,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public boolean esActivoConComunicacionReclamada(Long numActivoHaya) {
-		rawDao.addParam(  "numActivoHaya", numActivoHaya);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivoHaya", numActivoHaya);
+		rawDao.addParams(params);
 
 		String resultado = "0";
 		if(numActivoHaya != null) {
@@ -3363,7 +3915,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivoConComunicacionGenerada(Long numActivoHaya) {
-		rawDao.addParam(  "numActivoHaya", numActivoHaya);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivoHaya", numActivoHaya);
+		rawDao.addParams(params);
 
 		String resultado = "0";
 		if(numActivoHaya != null) {
@@ -3379,7 +3933,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public boolean esActivoConAdecuacionFinalizada(Long numActivoHaya) {
-		rawDao.addParam(  "numActivoHaya", numActivoHaya);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivoHaya", numActivoHaya);
+		rawDao.addParams(params);
 		String resultado = "0";
 		if(numActivoHaya != null) {
 			 resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " +
@@ -3400,7 +3956,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isAgrupacionSinActivoPrincipal(String mumAgrupacionRem) {
-		rawDao.addParam(  "mumAgrupacionRem", mumAgrupacionRem);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("mumAgrupacionRem", mumAgrupacionRem);
+		rawDao.addParams(params);
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
 				+ "			FROM ACT_AGR_AGRUPACION agr "
 				+ "			WHERE agr.AGR_NUM_AGRUP_REM =  :mumAgrupacionRem"
@@ -3410,7 +3969,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public Boolean isActivoFinanciero(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -3426,7 +3988,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoIncluidoPerimetroAlquiler(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 			String resultado = rawDao.getExecuteSQL( "SELECT COUNT(1)"
 				+"			FROM ACT_PTA_PATRIMONIO_ACTIVO acpt"
                 +"			INNER JOIN ACT_ACTIVO act ON act.ACT_ID = acpt.ACT_ID AND act.ACT_NUM_ACTIVO = :numActivo  "
@@ -3438,7 +4003,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esAgrupacionVigente(String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_AGR_AGRUPACION WHERE "
 				+ "		 	AGR_NUM_AGRUP_REM = :numAgrupacion "
@@ -3449,7 +4017,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	@Override
 	public Boolean existeCodImpuesto(String idImpuesto){
-		rawDao.addParam(  "idImpuesto", idImpuesto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idImpuesto", idImpuesto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(idImpuesto) || !StringUtils.isNumeric(idImpuesto))
 			return false;
 
@@ -3462,7 +4033,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean tieneActivoMatriz(String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM ACT_AGR_AGRUPACION AGR "
 				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID "
@@ -3475,7 +4049,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoMatriz(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM ACT_AGR_AGRUPACION AGR "
 				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID "
@@ -3490,7 +4067,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isUA(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM ACT_AGR_AGRUPACION AGR "
 				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID "
@@ -3506,7 +4086,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public String getGestorComercialAlquilerByAgrupacion(String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		String username = rawDao.getExecuteSQL("SELECT USU.USU_USERNAME "
 				+ "FROM GAC_GESTOR_ADD_ACTIVO GAC "
 				+ "JOIN GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GAC.GEE_ID "
@@ -3524,7 +4107,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public String getSupervisorComercialAlquilerByAgrupacion(String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		String username = rawDao.getExecuteSQL("SELECT USU.USU_USERNAME "
 				+ "FROM GAC_GESTOR_ADD_ACTIVO GAC "
 				+ "JOIN GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GAC.GEE_ID "
@@ -3542,7 +4128,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public String getSuperficieConstruidaActivoMatrizByAgrupacion(String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		String superficie =rawDao.getExecuteSQL("SELECT BDR.BIE_DREG_SUPERFICIE_CONSTRUIDA "
 				+ "FROM BIE_DATOS_REGISTRALES BDR "
 				+ "JOIN ACT_ACTIVO ACT ON BDR.BIE_ID = ACT.BIE_ID "
@@ -3556,7 +4145,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public String getSuperficieConstruidaPromocionAlquilerByAgrupacion(String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		String superficie =rawDao.getExecuteSQL("SELECT SUM(BDR.BIE_DREG_SUPERFICIE_CONSTRUIDA) "
 				+ "FROM BIE_DATOS_REGISTRALES BDR "
 				+ "JOIN ACT_ACTIVO ACT ON BDR.BIE_ID = ACT.BIE_ID "
@@ -3570,7 +4162,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public String getSuperficieUtilActivoMatrizByAgrupacion(String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		String superficie =rawDao.getExecuteSQL("SELECT REG.REG_SUPERFICIE_UTIL "
 				+ "FROM ACT_REG_INFO_REGISTRAL REG "
 				+ "JOIN ACT_ACTIVO ACT ON REG.ACT_ID = ACT.ACT_ID "
@@ -3584,7 +4179,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public String getSuperficieUtilPromocionAlquilerByAgrupacion(String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		String superficie =rawDao.getExecuteSQL("SELECT SUM(REG.REG_SUPERFICIE_UTIL) "
 				+ "FROM ACT_REG_INFO_REGISTRAL REG "
 				+ "JOIN ACT_ACTIVO ACT ON REG.ACT_ID = ACT.ACT_ID "
@@ -3598,7 +4196,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public String getProcentajeTotalActualPromocionAlquiler(String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		String porcentaje =rawDao.getExecuteSQL("SELECT SUM(ACT_AGA_PARTICIPACION_UA) "
 				+ "FROM ACT_AGA_AGRUPACION_ACTIVO AGA "
 				+ "JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID "
@@ -3611,7 +4212,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existePeriodicidad(String codPeriodicidad) {
-		rawDao.addParam(  "codPeriodicidad", codPeriodicidad);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codPeriodicidad", codPeriodicidad);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codPeriodicidad))
 			return true;
 
@@ -3624,7 +4228,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeCalculo(String codCalculo) {
-		rawDao.addParam(  "codCalculo", codCalculo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codCalculo", codCalculo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codCalculo))
 			return true;
 
@@ -3638,7 +4245,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeTrabajo(String numTrabajo) {
-		rawDao.addParam(  "numTrabajo", numTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numTrabajo", numTrabajo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numTrabajo))
 			return false;
 
@@ -3653,7 +4263,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean estadoPrevioTrabajo(String celdaTrabajo) {
-		rawDao.addParam(  "celdaTrabajo", celdaTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("celdaTrabajo", celdaTrabajo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(celdaTrabajo))
 			return false;
 
@@ -3668,7 +4281,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean estadoPrevioTrabajoFinalizado(String celdaTrabajo) {
-		rawDao.addParam(  "celdaTrabajo", celdaTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("celdaTrabajo", celdaTrabajo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(celdaTrabajo))
 			return false;
 
@@ -3683,7 +4299,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean fechaEjecucionCumplimentada(String celdaTrabajo) {
-		rawDao.addParam(  "celdaTrabajo", celdaTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("celdaTrabajo", celdaTrabajo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(celdaTrabajo))
 			return false;
 
@@ -3698,7 +4317,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean resolucionComite(String celdaTrabajo) {
-		rawDao.addParam(  "celdaTrabajo", celdaTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("celdaTrabajo", celdaTrabajo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(celdaTrabajo))
 			return false;
 
@@ -3713,7 +4335,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean checkComite(String celdaTrabajo) {
-		rawDao.addParam(  "celdaTrabajo", celdaTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("celdaTrabajo", celdaTrabajo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(celdaTrabajo))
 			return false;
 
@@ -3728,7 +4353,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean tieneLlaves(String celdaTrabajo) {
-		rawDao.addParam(  "celdaTrabajo", celdaTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("celdaTrabajo", celdaTrabajo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(celdaTrabajo))
 			return false;
 
@@ -3743,7 +4371,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean checkLlaves(String celdaTrabajo) {
-		rawDao.addParam(  "celdaTrabajo", celdaTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("celdaTrabajo", celdaTrabajo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(celdaTrabajo))
 			return false;
 
@@ -3757,7 +4388,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean checkProveedoresLlaves(String celdaTrabajo) {
-		rawDao.addParam(  "celdaTrabajo", celdaTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("celdaTrabajo", celdaTrabajo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(celdaTrabajo))
 			return false;
 
@@ -3771,7 +4405,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeSubtrabajo(String codSubtrabajo) {
-		rawDao.addParam(  "codSubtrabajo", codSubtrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codSubtrabajo", codSubtrabajo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codSubtrabajo))
 			return true;
 
@@ -3785,7 +4422,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeGastoTrabajo(String numTrabajo) {
-		rawDao.addParam(  "numTrabajo", numTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numTrabajo", numTrabajo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numTrabajo))
 			return true;
 
@@ -3804,7 +4444,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isActivoNotBankiaLiberbank(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -3820,7 +4463,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean isActivoBankia(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -3835,7 +4481,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public Boolean validadorTipoOferta(Long numExpediente) {
-		rawDao.addParam(  "numExpediente", numExpediente);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente))
 			return true;
 
@@ -3852,7 +4501,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esUnidadAlquilable(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return false;
 		}
@@ -3867,7 +4519,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean validadorTipoCartera(Long numExpediente) {
-		rawDao.addParam(  "numExpediente", numExpediente);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente))
 			return true;
 
@@ -3888,7 +4543,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean validadorCarteraBankia(Long numExpediente) {
-		rawDao.addParam(  "numExpediente", numExpediente);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente))
 			return true;
 
@@ -3909,7 +4567,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean validadorCarteraLiberbank(Long numExpediente) {
-		rawDao.addParam(  "numExpediente", numExpediente);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente))
 			return true;
 
@@ -3934,7 +4595,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean validadorEstadoOfertaTramitada(Long numExpediente) {
-		rawDao.addParam(  "numExpediente", numExpediente);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente))
 			return true;
 
@@ -3951,7 +4615,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean validadorEstadoExpedienteSolicitado(Long numExpediente) {
-		rawDao.addParam(  "numExpediente", numExpediente);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente))
 			return true;
 
@@ -3967,8 +4634,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean validadorFechaMayorIgualFechaAltaOferta(Long numExpediente, String fecha) {
-		rawDao.addParam(  "numExpediente", numExpediente);
-		rawDao.addParam(  "fecha", fecha);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		params.put("fecha", fecha);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente))
 			return true;
 
@@ -3983,8 +4653,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean validadorFechaMayorIgualFechaSancion(Long numExpediente, String fecha) {
-		rawDao.addParam(  "numExpediente", numExpediente);
-		rawDao.addParam(  "fecha", fecha);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		params.put("fecha", fecha);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente))
 			return true;
 
@@ -3998,8 +4671,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean validadorFechaMayorIgualFechaAceptacion(Long numExpediente, String fecha) {
-		rawDao.addParam(  "numExpediente", numExpediente);
-		rawDao.addParam(  "fecha", fecha);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		params.put("fecha", fecha);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente))
 			return true;
 
@@ -4013,8 +4689,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean validadorFechaMayorIgualFechaReserva(Long numExpediente, String fecha) {
-		rawDao.addParam(  "numExpediente", numExpediente);
-		rawDao.addParam(  "fecha", fecha);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		params.put("fecha", fecha);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente))
 			return true;
 
@@ -4038,8 +4717,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean validadorFechaMayorIgualFechaVenta(Long numExpediente, String fecha) {
-		rawDao.addParam(  "numExpediente", numExpediente);
-		rawDao.addParam(  "fecha", fecha);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		params.put("fecha", fecha);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente))
 			return true;
 
@@ -4053,7 +4735,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public List<BigDecimal> activosEnAgrupacion(String numOferta){
-		rawDao.addParam(  "numOferta", numOferta);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numOferta", numOferta);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numOferta))
 			return null;
 		List<BigDecimal> numActius = new ArrayList<BigDecimal>();
@@ -4072,8 +4757,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 
 	public Boolean compararNumeroFilasTrabajo(String numTrabajo, int numeroFilas) {
-		rawDao.addParam(  "numTrabajo", numTrabajo);
-		rawDao.addParam(  "numeroFilas", numeroFilas);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numTrabajo", numTrabajo);
+		params.put("numeroFilas", numeroFilas);
+		rawDao.addParams(params);
 
 		if(Checks.esNulo(numTrabajo))
 			return true;
@@ -4092,7 +4779,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeTipoTarifa(String tipoTarifa) {
-		rawDao.addParam(  "tipoTarifa", tipoTarifa);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("tipoTarifa", tipoTarifa);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(tipoTarifa))
 			return true;
 
@@ -4107,8 +4797,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean tipoTarifaValido(String tipoTarifa, String numTrabajo) {
-		rawDao.addParam(  "tipoTarifa", tipoTarifa);
-		rawDao.addParam(  "numTrabajo", numTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("tipoTarifa", tipoTarifa);
+		params.put("numTrabajo", numTrabajo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(tipoTarifa))
 			return true;
 
@@ -4130,7 +4823,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeEntidadFinanciera(String entidadFinanciera){
-		rawDao.addParam(  "entidadFinanciera", entidadFinanciera);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("entidadFinanciera", entidadFinanciera);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(entidadFinanciera))
 			return true;
 		if(!Checks.esNulo(entidadFinanciera) && !StringUtils.isNumeric(entidadFinanciera))
@@ -4144,7 +4840,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeTipoDeFinanciacion(String tipoFinanciacion){
-		rawDao.addParam(  "tipoFinanciacion", tipoFinanciacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("tipoFinanciacion", tipoFinanciacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(tipoFinanciacion))
 			return true;
 		if(!Checks.esNulo(tipoFinanciacion) && !StringUtils.isNumeric(tipoFinanciacion))
@@ -4159,7 +4858,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean perteneceOfertaVenta(String numExpedienteComercial){
-		rawDao.addParam(  "numExpedienteComercial", numExpedienteComercial);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpedienteComercial", numExpedienteComercial);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpedienteComercial) || !StringUtils.isNumeric(numExpedienteComercial))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ECO_EXPEDIENTE_COMERCIAL ECO" +
@@ -4172,7 +4874,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean activosVendidos(String numExpedienteComercial){
-		rawDao.addParam(  "numExpedienteComercial", numExpedienteComercial);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpedienteComercial", numExpedienteComercial);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpedienteComercial) || !StringUtils.isNumeric(numExpedienteComercial))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ECO_EXPEDIENTE_COMERCIAL ECO " +
@@ -4184,7 +4889,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public Boolean perteneceDDEstadoActivo(String codigoEstadoActivo) {
-		rawDao.addParam(  "codigoEstadoActivo", codigoEstadoActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoEstadoActivo", codigoEstadoActivo);
+		rawDao.addParams(params);
+		
 		if(!Checks.esNulo(codigoEstadoActivo)) {
 			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 					+ "FROM DD_EAC_ESTADO_ACTIVO "
@@ -4197,7 +4905,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean perteneceDDTipoTituloTPA(String codigoTituloTPA) {
-		rawDao.addParam(  "codigoTituloTPA", codigoTituloTPA);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoTituloTPA", codigoTituloTPA);
+		rawDao.addParams(params);
+		
 		if (!Checks.esNulo(codigoTituloTPA)) {
 			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 					+ "FROM DD_TPA_TIPO_TITULO_ACT "
@@ -4210,7 +4921,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeActivoAsociado(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo)) {
 			return false;
 		}
@@ -4225,7 +4939,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeActivoPlusvalia(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo)) {
 			return false;
 		}
@@ -4238,7 +4955,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivoUA(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return false;
 		}
@@ -4253,7 +4973,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esAccionValido(String codAccion) {
-		rawDao.addParam(  "codAccion", codAccion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codAccion", codAccion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codAccion)) {
 			return false;
 		}
@@ -4266,8 +4989,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isTotalOfertaDistintoSumaActivos(Double importe, String numExpedienteComercial ) {
-		rawDao.addParam(  "importe", importe);
-		rawDao.addParam(  "numExpedienteComercial", numExpedienteComercial);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("importe", importe);
+		params.put("numExpedienteComercial", numExpedienteComercial);
+		rawDao.addParams(params);
+		
 		if (!Checks.esNulo(numExpedienteComercial) && !Checks.esNulo(importe)) {
 			String resultado = rawDao.getExecuteSQL("SELECT COUNT (*) "
 					+ "				FROM ECO_EXPEDIENTE_COMERCIAL EXP " 
@@ -4283,7 +5009,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isNullImporteActivos(String numExpedienteComercial) {
-		rawDao.addParam(  "numExpedienteComercial", numExpedienteComercial);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpedienteComercial", numExpedienteComercial);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numExpedienteComercial)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT	COUNT(*) "  
 				+ "		FROM ECO_EXPEDIENTE_COMERCIAL EXP "  
@@ -4301,8 +5030,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean isAllActivosEnOferta(String numExpedienteComercial, Hashtable <String, Integer> activos) {
-		rawDao.addParam(  "numExpedienteComercial", numExpedienteComercial);
-		rawDao.addParam(  "activos", activos);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpedienteComercial", numExpedienteComercial);
+		rawDao.addParams(params);
 
 		if (Checks.esNulo(numExpedienteComercial) || Checks.estaVacio(activos)) return false; 
 		String sql = "	SELECT COUNT(*) "
@@ -4329,7 +5059,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	public Boolean esResultadoValido(String codResultado) {
-		rawDao.addParam(  "codResultado", codResultado);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codResultado", codResultado);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codResultado)) {
 			return true;
 		}
@@ -4341,7 +5074,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	public Boolean esMotivoExento(String codResultado) {
-		rawDao.addParam(  "codResultado", codResultado);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codResultado", codResultado);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codResultado)) {
 			return false;
 		}
@@ -4353,7 +5089,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	public Boolean esTipoTributoValido(String codTipoTributo) {
-		rawDao.addParam(  "codTipoTributo", codTipoTributo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codTipoTributo", codTipoTributo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codTipoTributo)) {
 			return false;
 		}
@@ -4367,7 +5106,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esSolicitudValido(String codSolicitud){
-		rawDao.addParam(  "codSolicitud", codSolicitud);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codSolicitud", codSolicitud);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codSolicitud)) {
 			return false;
 		}
@@ -4380,10 +5122,12 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud, String idTributo){
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "fechaRecurso", fechaRecurso);
-		rawDao.addParam(  "tipoSolicitud", tipoSolicitud);
-		rawDao.addParam(  "idTributo", idTributo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("fechaRecurso", fechaRecurso);
+		params.put("tipoSolicitud", tipoSolicitud);
+		params.put("idTributo", idTributo);
+		rawDao.addParams(params);
 
 		if(Checks.esNulo(numActivo) || Checks.esNulo(tipoSolicitud) || !StringUtils.isNumeric(idTributo)) {
 			return false;
@@ -4406,10 +5150,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud, String idTributo){
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "fechaRecurso", fechaRecurso);
-		rawDao.addParam(  "tipoSolicitud", tipoSolicitud);
-		rawDao.addParam(  "idTributo", idTributo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("fechaRecurso", fechaRecurso);
+		params.put("tipoSolicitud", tipoSolicitud);
+		params.put("idTributo", idTributo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) || Checks.esNulo(tipoSolicitud) || !StringUtils.isNumeric(tipoSolicitud) || !StringUtils.isNumeric(idTributo)) {
 			return null;
 		}
@@ -4430,8 +5177,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esNumHayaVinculado(Long numGasto, String numActivo){
-		rawDao.addParam(  "numGasto", numGasto);
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
 
 		if(Checks.esNulo(numActivo)) {
 			return false;
@@ -4452,7 +5201,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esnNumExpedienteValido(Long expComercial){
-		rawDao.addParam(  "expComercial", expComercial);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("expComercial", expComercial);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(expComercial)) {
 			return false;
 		}
@@ -4468,8 +5220,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeJunta(String numActivo,  String fechaJunta) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "fechaJunta", fechaJunta);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("fechaJunta", fechaJunta);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo)) {
 			return false;
 		}
@@ -4486,7 +5241,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeCodJGOJE(String codJunta) {
-		rawDao.addParam(  "codJunta", codJunta);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codJunta", codJunta);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codJunta) || !StringUtils.isNumeric(codJunta)) {
 			return false;
 		}
@@ -4501,7 +5259,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean conTituloOcupadoSi(String codigoTituloTPA) {
-		rawDao.addParam(  "codigoTituloTPA", codigoTituloTPA);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoTituloTPA", codigoTituloTPA);
+		rawDao.addParams(params);
+		
 		if (!Checks.esNulo(codigoTituloTPA)) {
 			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 					+ "FROM DD_TPA_TIPO_TITULO_ACT "
@@ -4515,7 +5276,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean tipoDeElemento(String tipoElemento) {
-		rawDao.addParam(  "tipoElemento", tipoElemento);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("tipoElemento", tipoElemento);
+		rawDao.addParams(params);
+		
 		if (!Checks.esNulo(tipoElemento)) {
 			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) from DD_ENT_ENTIDAD_GASTO  " + 
 					"WHERE DD_ENT_CODIGO =" + 
@@ -4528,7 +5292,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean conPosesion(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return false;
 		}
@@ -4543,7 +5310,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean perteneceDDEstadoDivHorizontal(String codigoEstadoDivHorizontal) {
-		rawDao.addParam(  "codigoEstadoDivHorizontal", codigoEstadoDivHorizontal);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoEstadoDivHorizontal", codigoEstadoDivHorizontal);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codigoEstadoDivHorizontal)) {
 			return false;
 		}
@@ -4556,7 +5326,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean perteneceDDServicerActivo(String codigoServicer) {
-		rawDao.addParam(  "codigoServicer", codigoServicer);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoServicer", codigoServicer);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codigoServicer)) {
 			return false;
 		}					
@@ -4569,7 +5342,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean perteneceDDCesionComercial(String codigoCesion) {
-		rawDao.addParam(  "codigoCesion", codigoCesion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoCesion", codigoCesion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codigoCesion)) {
 			return false;
 		}					
@@ -4582,7 +5358,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean perteneceDDClasificacionApple(String codigoValorOrdinario) {
-		rawDao.addParam(  "codigoValorOrdinario", codigoValorOrdinario);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoValorOrdinario", codigoValorOrdinario);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codigoValorOrdinario)) {
 			return false;
 		}					
@@ -4594,7 +5373,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean noExisteEstado(String numEstado) {
-		rawDao.addParam(  "numEstado", numEstado);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numEstado", numEstado);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numEstado)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_EDC_ESTADO_DOCUMENTO "
 				+"			WHERE DD_EDC_CODIGO = ' :numEstado '");
@@ -4603,7 +5385,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esActivoProductoTerminado(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numActivo)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_ACTIVO ACT "
 				+"			JOIN DD_EAC_ESTADO_ACTIVO EAC ON ACT.DD_EAC_ID = EAC.DD_EAC_ID"
@@ -4613,8 +5398,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public String getActivoJunta(String numActivo,  String fechaJunta) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "fechaJunta", fechaJunta);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("fechaJunta", fechaJunta);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo)) {
 			return "";
 		}
@@ -4630,7 +5418,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivoApple(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return false;
 		}			
@@ -4643,7 +5434,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public Boolean esGastoRefacturado(String numGasto) {
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		
@@ -4657,7 +5451,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public Boolean existeGastoRefacturable(String numGasto) {
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		
@@ -4675,7 +5472,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esGastoRefacturable(String numGasto) {
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		
@@ -4689,7 +5489,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public boolean gastoSarebAnyadeRefacturable(String numGasto) {
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		boolean enc=true;
 		
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
@@ -4721,7 +5524,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean perteneceGastoBankiaSareb(String numGasto) {
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		
@@ -4739,7 +5545,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esGastoEmisorHaya(String numGasto) {
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		
@@ -4756,7 +5565,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esGastoDestinatarioHaya(String numGasto) {
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		
@@ -4772,7 +5584,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esGastoDestinatarioPropietario(String numGasto) {
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		
@@ -4788,8 +5603,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esGastoMismaCartera(String numGasto, String numOtroGasto) {
-		rawDao.addParam(  "numGasto", numGasto);
-		rawDao.addParam(  "numOtroGasto", numOtroGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		params.put("numOtroGasto", numOtroGasto);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto) || Checks.esNulo(numOtroGasto)
 				|| !StringUtils.isNumeric(numOtroGasto))
 			return false;
@@ -4811,8 +5629,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean mismaCarteraLineaDetalleGasto(String numGasto, String numElemento) {
-		rawDao.addParam(  "numGasto", numGasto);
-		rawDao.addParam(  "numElemento", numElemento);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		params.put("numElemento", numElemento);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numGasto) || !StringUtils.isAlphanumeric(numGasto))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT count(1) "
@@ -4825,7 +5646,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean participaciones(String numGasto) {
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numGasto) || !StringUtils.isAlphanumeric(numGasto))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT sum (gld_participacion_gasto) participaciones FROM GLD_ENT where gld_id in" + 
@@ -4844,7 +5668,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeFasePublicacion(String fasePublicacion) {
-		rawDao.addParam(  "numGasto", fasePublicacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", fasePublicacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(fasePublicacion) || !StringUtils.isAlphanumeric(fasePublicacion))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -4856,7 +5683,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean activoEnAgrupacionProyecto(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(AGR.AGR_ID) FROM ACT_AGR_AGRUPACION AGR " +
 				" INNER JOIN DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.DD_TAG_CODIGO = '04' " +
 				" INNER JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID " +
@@ -4872,7 +5702,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeTipoDoc(String codTipoDoc) {
-		rawDao.addParam(  "codTipoDoc", codTipoDoc);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codTipoDoc", codTipoDoc);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(codTipoDoc)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TPD_TIPO_DOCUMENTO "
 				+" WHERE DD_TPD_CODIGO = ':codTipoDoc'"
@@ -4882,7 +5715,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeSubfasePublicacion(String subfasePublicacion) {
-		rawDao.addParam(  "subfasePublicacion", subfasePublicacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("subfasePublicacion", subfasePublicacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(subfasePublicacion) || !StringUtils.isAlphanumeric(subfasePublicacion))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -4893,8 +5729,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	@Override
 	public Boolean perteneceSubfaseAFasePublicacion(String codSubFasePublicacion, String codFasePublicacion) {
-		rawDao.addParam(  "codSubFasePublicacion", codSubFasePublicacion);
-		rawDao.addParam(  "codFasePublicacion", codFasePublicacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codSubFasePublicacion", codSubFasePublicacion);
+		params.put("codFasePublicacion", codFasePublicacion);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(codSubFasePublicacion) || Checks.esNulo(codFasePublicacion)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_FSP_FASE_PUBLICACION FSP "
 				+ " JOIN DD_SFP_SUBFASE_PUBLICACION SFP ON SFP.DD_FSP_ID = FSP.DD_FSP_ID"
@@ -4905,7 +5744,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	@Override
 	public Boolean existeEstadoDocumento(String codEstadoDoc) {
-		rawDao.addParam(  "codEstadoDoc", codEstadoDoc);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codEstadoDoc", codEstadoDoc);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(codEstadoDoc)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_EDC_ESTADO_DOCUMENTO "
 				+ " WHERE DD_EDC_CODIGO = ':codEstadoDoc'");
@@ -4914,7 +5756,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeCalificacionEnergetica(String codCE) {
-		rawDao.addParam(  "codCE", codCE);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codCE", codCE);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(codCE)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TCE_TIPO_CALIF_ENERGETICA "
 				+ " WHERE DD_TCE_CODIGO = ':codCE'");
@@ -4923,7 +5768,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esDocumentoCEE(String codDocumento) {
-		rawDao.addParam(  "codDocumento", codDocumento);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codDocumento", codDocumento);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(codDocumento)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TPD_TIPO_DOCUMENTO "
 				+ " WHERE DD_TPD_CODIGO =  ':codDocumento'"
@@ -4933,7 +5781,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Long obtenerNumAgrupacionRestringidaPorNumActivo(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return null;
 		}
@@ -4957,7 +5808,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esAgrupacionAlquilerConPrecio(String numAgrupacion){
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion)) {
 			return false;
 		}
@@ -4988,7 +5842,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public String getCodigoMediadorPrimarioByActivo(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		String resultado = "";
 		if(!Checks.esNulo(numActivo)){
 			 resultado = rawDao.getExecuteSQL("SELECT pve.PVE_COD_REM " +
@@ -5002,7 +5859,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public String getCodigoMediadorEspejoByActivo(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		String resultado = "";
 		if(!Checks.esNulo(numActivo)){
 			 resultado = rawDao.getExecuteSQL("SELECT pve.PVE_COD_REM " +
@@ -5016,7 +5876,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esTipoMediadorCorrecto(String codMediador) {
-		rawDao.addParam(  "codMediador", codMediador);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codMediador", codMediador);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(codMediador)) {
 			return false;
 		}
@@ -5030,8 +5893,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	public Boolean activoConRelacionExpedienteComercial(String numExpediente, String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "numExpediente", numExpediente);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("numExpediente", numExpediente);
+		rawDao.addParams(params);
 
 		if(Checks.esNulo(numExpediente))
 			return false;
@@ -5049,7 +5914,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public Boolean existeActivoNoBankia(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return false;
 		}
@@ -5066,7 +5934,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esExpedienteVenta(String numExpediente) {
-		rawDao.addParam(  "numExpediente", numExpediente);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente))
 			return false;
 
@@ -5083,7 +5954,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
     @Override
     public Boolean isProveedorUnsuscribed(String pveCodRem) {
-		rawDao.addParam(  "pveCodRem", pveCodRem);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("pveCodRem", pveCodRem);
+		rawDao.addParams(params);
 
             if(Checks.esNulo(pveCodRem)) {
                     return false;
@@ -5101,7 +5974,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
     @Override
     public Boolean existeProveedorByCodRem(String pveCodRem) {
-		rawDao.addParam(  "pveCodRem", pveCodRem);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("pveCodRem", pveCodRem);
+		rawDao.addParams(params);
+		
             if(Checks.esNulo(pveCodRem)) {
                     return false;
             }
@@ -5116,7 +5992,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esExpedienteValidoAprobado(String numExpediente) {
-		rawDao.addParam(  "numExpediente", numExpediente);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
 			return false;
 
@@ -5134,7 +6013,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	//---------------------------------------------------------------------
 	@Override
 	public Boolean esExpedienteValidoFirmado(String numExpediente) {
-		rawDao.addParam(  "numExpediente", numExpediente);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
 			return false;
 
@@ -5149,7 +6031,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	@Override
 	public Boolean esExpedienteValidoReservado(String numExpediente) {
-		rawDao.addParam(  "numExpediente", numExpediente);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
 			return false;
 
@@ -5164,7 +6049,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public Boolean existeActivoTitulo(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return false;
 		}
@@ -5179,7 +6067,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 		
 	public Boolean esActivoBankia(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return false;
 		}
@@ -5195,7 +6086,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeEstadoTitulo(String situacionTitulo) {
-		rawDao.addParam(  "situacionTitulo", situacionTitulo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("situacionTitulo", situacionTitulo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(situacionTitulo) || !StringUtils.isAlphanumeric(situacionTitulo)) {
 			return false;
 		}
@@ -5209,7 +6103,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public Boolean existeEntidadHipotecaria(String codigo) {
-		rawDao.addParam(  "codigo", codigo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigo", codigo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(codigo)) {
 			return false;
 		}
@@ -5221,7 +6118,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	public Boolean existeTipoJuzgado(String codigo) {
-		rawDao.addParam(  "codigo", codigo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigo", codigo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(codigo)) {
 			return false;
 		}
@@ -5234,7 +6134,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existePoblacionJuzgado(String codigo) {
-		rawDao.addParam(  "codigo", codigo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigo", codigo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(codigo)) {
 			return false;
 		}
@@ -5247,8 +6150,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean verificaTipoDeAdjudicacion(String idActivo, String tipoAdjudicacion) {
-		rawDao.addParam(  "idActivo", idActivo);
-		rawDao.addParam(  "tipoAdjudicacion", tipoAdjudicacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idActivo", idActivo);
+		params.put("tipoAdjudicacion", tipoAdjudicacion);
+		rawDao.addParams(params);
 
 		if (Checks.esNulo(idActivo) || Checks.esNulo(tipoAdjudicacion)) {
 			return false;
@@ -5265,7 +6170,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esAccionValidaInscripciones(String codAccion) {
-		rawDao.addParam(  "codAccion", codAccion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codAccion", codAccion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codAccion) || !StringUtils.isNumeric(codAccion)) {
 			return false;
 		}
@@ -5279,7 +6187,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeTramiteTrabajo(String numTrabajo) {
-		rawDao.addParam(  "numTrabajo", numTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numTrabajo", numTrabajo);
+		rawDao.addParams(params);
+		
 	    if (Boolean.TRUE.equals(Checks.esNulo(numTrabajo))) return false;
 	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 	            + "    FROM ACT_TBJ_TRABAJO TBJ " 
@@ -5294,7 +6205,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
     public Boolean existenTareasEnTrabajo(String numTrabajo) {
-		rawDao.addParam(  "numTrabajo", numTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numTrabajo", numTrabajo);
+		rawDao.addParams(params);
+		
         if (Boolean.TRUE.equals(Checks.esNulo(numTrabajo))) return false;
         String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " 
                 + "     FROM ACT_TBJ_TRABAJO TBJ " 
@@ -5310,7 +6224,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esExpedienteValidoVendido(String numExpediente) {
-		rawDao.addParam(  "numExpediente", numExpediente);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
 			return false;
 
@@ -5326,7 +6243,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esExpedienteValidoAnulado(String numExpediente) {
-		rawDao.addParam(  "numExpediente", numExpediente);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numExpediente", numExpediente);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
 			return false;
 
@@ -5342,19 +6262,25 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean estadoExpedienteComercial(String activo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("activo", activo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT count(1) FROM eco_expediente_comercial where ofr_id in (SELECT ofr_id FROM ofr_ofertas where "
 				+"		ofr_id in (SELECT ofr_id FROM act_ofr where act_id in (SELECT act_id from act_activo where "
-				+"		act_num_activo = '"+activo+"'))) and eco_expediente_comercial.dd_eec_id in (SELECT ddexp.DD_eec_id from dd_eec_est_exp_comercial ddexp WHERE ddexp.dd_eec_codigo  in ('03','06','08')) ");
+				+"		act_num_activo = :activo))) and eco_expediente_comercial.dd_eec_id in (SELECT ddexp.DD_eec_id from dd_eec_est_exp_comercial ddexp WHERE ddexp.dd_eec_codigo  in ('03','06','08')) ");
 
 		return "1".equals(resultado);
 	}
 	
 	@Override
 	public Boolean coincideTipoJuzgadoPoblacionJuzgado(String codigoTipoJuzgado, String codigoPoblacionJuzgado) {
-		rawDao.addParam(  "codigoTipoJuzgado", codigoTipoJuzgado);
-		rawDao.addParam(  "codigoPoblacionJuzgado", codigoPoblacionJuzgado);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoTipoJuzgado", codigoTipoJuzgado);
+		params.put("codigoPoblacionJuzgado", codigoPoblacionJuzgado);
+		rawDao.addParams(params);
 
 		if(Checks.esNulo(codigoTipoJuzgado) || Checks.esNulo(codigoPoblacionJuzgado))
 			return false;
@@ -5370,7 +6296,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean direccionComercialExiste(String direccionComercial){
-		rawDao.addParam(  "direccionComercial", direccionComercial);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("direccionComercial", direccionComercial);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(direccionComercial))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -5381,7 +6310,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean isActivoEnCesionDeUso( String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
 
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT count(1) " + 
@@ -5396,7 +6327,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean isActivoEnAlquilerSocial( String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		String resultado = rawDao.getExecuteSQL(
 				"  SELECT count(1)   "
 				+" FROM ACT_PTA_PATRIMONIO_ACTIVO pta     " 
@@ -5408,7 +6342,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
     public Boolean isProveedorInTipologias( String proveedor, String[] tipologias) {
-		rawDao.addParam(  "proveedor", proveedor);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("proveedor", proveedor);
+		rawDao.addParams(params);
 
         if (tipologias.length<1 || Checks.esNulo(proveedor)) return false;
         String tips= null;
@@ -5425,8 +6361,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean isUserGestorType(String user, String codGestor) {
-		rawDao.addParam(  "user", user);
-		rawDao.addParam(  "codGestor", codGestor);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("user", user);
+		params.put("codGestor", codGestor);
+		rawDao.addParams(params);
+		
 	    if (Checks.esNulo(user) || Checks.esNulo(codGestor)) return false;
 	    String resultado;
 
@@ -5444,7 +6383,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esTareaCompletadaTarificadaNoTarificada(String codTrabajo) {
-		rawDao.addParam(  "codTrabajo", codTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codTrabajo", codTrabajo);
+		rawDao.addParams(params);
+		
 	    if (Checks.esNulo(codTrabajo)) return false;
 	    String resultado;
 	    resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
@@ -5464,7 +6406,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esTrabajoMultiactivo(String codTrabajo) {
-		rawDao.addParam(  "codTrabajo", codTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codTrabajo", codTrabajo);
+		rawDao.addParams(params);
 
 	    if (Checks.esNulo(codTrabajo)) return false;
 	    String resultado;
@@ -5496,7 +6440,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esSegmentoValido(String codSegmento) {
-		rawDao.addParam(  "codSegmento", codSegmento);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codSegmento", codSegmento);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(codSegmento)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM DD_TS_TIPO_SEGMENTO "
 				+ "WHERE DD_TS_CODIGO = ':codSegmento' AND BORRADO = 0");
@@ -5505,8 +6452,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean perteneceSegmentoCraScr(String codSegmento , String numActivo) {
-		rawDao.addParam(  "codSegmento", codSegmento);
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codSegmento", codSegmento);
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(codSegmento) || Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) return false;
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT COUNT(1) " +
@@ -5521,7 +6471,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esSubcarteraDivarian(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) return false;
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT COUNT(1) " + 
@@ -5534,7 +6487,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esSubcarteraApple(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) return false;
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT COUNT(1) " + 
@@ -5547,8 +6503,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean aCambiadoDestinoComercial(String numActivo, String destinoComercial) {
-		rawDao.addParam(  "numActivo", numActivo);
-		rawDao.addParam(  "destinoComercial", destinoComercial);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		params.put("destinoComercial", destinoComercial);
+		rawDao.addParams(params);
+		
 		if((Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) 
 				&& (Checks.esNulo(destinoComercial) || !!StringUtils.isNumeric(destinoComercial))
 		  ) return false;
@@ -5565,7 +6524,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeCodigoPeticion(String codPeticion) {
-		rawDao.addParam(  "codPeticion", codPeticion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codPeticion", codPeticion);
+		rawDao.addParams(params);
 		
 		 if(codPeticion == null || codPeticion.isEmpty())
 			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
@@ -5651,8 +6612,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeCodigoPeticionActivo(String codPeticion, String numActivo) {
-		rawDao.addParam(  "codPeticion", codPeticion);
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codPeticion", codPeticion);
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
 
 		 if(codPeticion == null || codPeticion.isEmpty())
 			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
@@ -5673,8 +6636,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	 @Override
 	 public Boolean esPeticionEditable(String codPeticion, String numActivo) {
-			rawDao.addParam(  "codPeticion", codPeticion);
-			rawDao.addParam(  "numActivo", numActivo);
+		 Map<String, Object> params = new HashMap<String, Object>();
+		 params.put("codPeticion", codPeticion);
+		 params.put("numActivo", numActivo);
+		 rawDao.addParams(params);
+		 
 		 Boolean resultado = false;
 
 		 if(codPeticion == null || codPeticion.isEmpty())
@@ -5696,7 +6662,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeTipoPeticion(String codTpoPeticion) {
-		rawDao.addParam(  "codTpoPeticion", codTpoPeticion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codTpoPeticion", codTpoPeticion);
+		rawDao.addParams(params);
+		
 		 if((codTpoPeticion == null ||  Boolean.FALSE.equals(StringUtils.isNumeric(codTpoPeticion))))
 			 return false;
 			
@@ -5708,8 +6677,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public boolean existeContactoProveedorTipoUsuario(String usrContacto, String codProveedor) {
-		rawDao.addParam(  "usrContacto", usrContacto);
-		rawDao.addParam(  "codProveedor", codProveedor);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("usrContacto", usrContacto);
+		params.put("codProveedor", codProveedor);
+		rawDao.addParams(params);
+		
 		String resultado = rawDao.getExecuteSQL("SELECT  COUNT(1) FROM ACT_PVC_PROVEEDOR_CONTACTO pvc " + 
 				"JOIN ACT_PVE_PROVEEDOR pve ON pve.PVE_ID = pvc.PVE_ID AND PVE_COD_REM =':codProveedor' AND pve.BORRADO = 0" +
 				"JOIN REMMASTER.USU_USUARIOS usu ON usu.USU_ID = pvc.USU_ID AND usu.USU_USERNAME =':usrContacto' AND usu.BORRADO = 0");
@@ -5719,7 +6691,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeSituacionTitulo(String codigoSituacionTitulo) {
-		rawDao.addParam(  "codigoSituacionTitulo", codigoSituacionTitulo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoSituacionTitulo", codigoSituacionTitulo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codigoSituacionTitulo) || !StringUtils.isAlphanumeric(codigoSituacionTitulo)) {
 			return false;
 		}
@@ -5732,7 +6707,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	public Boolean esActivoSareb(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return false;
 		}
@@ -5749,7 +6727,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean perteneceADiccionarioConTitulo(String conTitulo) {
-		rawDao.addParam(  "conTitulo", conTitulo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("conTitulo", conTitulo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(conTitulo) || !StringUtils.isAlphanumeric(conTitulo)) {
 			return false;
 		}
@@ -5763,7 +6744,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean perteneceADiccionarioEquipoGestion(String codEquipoGestion) {
-		rawDao.addParam(  "codEquipoGestion", codEquipoGestion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codEquipoGestion", codEquipoGestion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codEquipoGestion) || !StringUtils.isAlphanumeric(codEquipoGestion)) {
 			return false;
 		}
@@ -5778,7 +6762,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esActivoBBVA(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return false;
 		}
@@ -5795,7 +6782,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
     public Boolean existeTipoSuministroByCod(String codigo) {
-		rawDao.addParam(  "codigo", codigo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigo", codigo);
+		rawDao.addParams(params);
+		
             if(Checks.esNulo(codigo)) {
                     return false;
             }
@@ -5810,7 +6800,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
     
 	@Override
     public Boolean existeSubtipoSuministroByCod(String codigo) {
-		rawDao.addParam(  "codigo", codigo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigo", codigo);
+		rawDao.addParams(params);
+		
         if(Checks.esNulo(codigo)) {
                 return false;
         }
@@ -5825,7 +6818,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
     
 	@Override
     public Boolean existePeriodicidadByCod(String codigo) {
-		rawDao.addParam(  "codigo", codigo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigo", codigo);
+		rawDao.addParams(params);
+		
         if(Checks.esNulo(codigo)) {
                 return false;
         }
@@ -5840,7 +6836,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
     
 	@Override
     public Boolean existeMotivoAltaSuministroByCod(String codigo) {
-		rawDao.addParam(  "codigo", codigo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigo", codigo);
+		rawDao.addParams(params);
+		
         if(Checks.esNulo(codigo)) {
                 return false;
         }
@@ -5855,7 +6854,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
     
 	@Override
     public Boolean existeMotivoBajaSuministroByCod(String codigo) {
-		rawDao.addParam(  "codigo", codigo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigo", codigo);
+		rawDao.addParams(params);
+		
         if(Checks.esNulo(codigo)) {
                 return false;
         }
@@ -5870,8 +6872,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
     public Boolean esMismoTipoGestorActivo(String codigo, String numActivo) {
-		rawDao.addParam(  "codigo", codigo);
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigo", codigo);
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) || Checks.esNulo(codigo)) {
 			return false;
 		}
@@ -5889,7 +6894,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
     }
 
 	public Boolean esActivoIncluidoPerimetroAdmision(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(numActivo == null) {
 			return false;
 		}
@@ -5906,7 +6914,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean estadoAdmisionValido(String codEstadoAdmision) {
-		rawDao.addParam(  "codEstadoAdmision", codEstadoAdmision);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codEstadoAdmision", codEstadoAdmision);
+		rawDao.addParams(params);
+		
 		if(codEstadoAdmision == null) {
 			return false;
 		}
@@ -5921,12 +6932,16 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean isCheckVisibleGestionComercial(String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if( Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return false;
 		}
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT COUNT(1) FROM ACT_PAC_PERIMETRO_ACTIVO " 
-				+ "WHERE ACT_ID = (select act_id from act_activo where act_num_activo = '"+ numActivo+"' ) AND PAC_CHECK_GESTION_COMERCIAL = 1"
+				+ "WHERE ACT_ID = (select act_id from act_activo where act_num_activo = ':numActivo' ) AND PAC_CHECK_GESTION_COMERCIAL = 1"
 				+ "AND BORRADO = 0"
 		);
 		
@@ -5936,7 +6951,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean subestadoAdmisionValido(String codSubestadoAdmision) {
-		rawDao.addParam(  "codSubestadoAdmision", codSubestadoAdmision);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codSubestadoAdmision", codSubestadoAdmision);
+		rawDao.addParams(params);
+		
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT COUNT(1) FROM DD_SAA_SUBESTADO_ACT_ADMISION " 
 				+ "WHERE DD_SAA_CODIGO = ':codSubestadoAdmision' "
@@ -5949,7 +6967,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean estadoConSubestadosAdmisionValido(String codEstadoAdmision) {
-		rawDao.addParam(  "codEstadoAdmision", codEstadoAdmision);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codEstadoAdmision", codEstadoAdmision);
+		rawDao.addParams(params);
+		
 		if(codEstadoAdmision == null) {
 			return false;
 		}
@@ -5966,8 +6987,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean relacionEstadoSubestadoAdmisionValido(String codEstadoAdmision, String codSubestadoAdmision) {
-		rawDao.addParam(  "codEstadoAdmision", codEstadoAdmision);
-		rawDao.addParam(  "codSubestadoAdmision", codSubestadoAdmision);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codEstadoAdmision", codEstadoAdmision);
+		params.put("codSubestadoAdmision", codSubestadoAdmision);
+		rawDao.addParams(params);
+		
 		if(codEstadoAdmision == null) {
 			return false;
 		}
@@ -5989,7 +7013,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 	@Override
 	public String getValidacionCampoCDC(String codCampo) {
-		rawDao.addParam(  "codCampo", codCampo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codCampo", codCampo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codCampo) || !StringUtils.isNumeric(codCampo)) {
 			return null;
 		}
@@ -6000,7 +7027,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public boolean incluidoActivoIdOrigenBBVA (String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if (numActivo == null || !StringUtils.isNumeric(numActivo)) {
 			return false;
 		}
@@ -6012,8 +7042,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean relacionPoblacionLocalidad(String columnaPoblacion, String columnaMunicipio) {
-		rawDao.addParam(  "columnaPoblacion", columnaPoblacion);
-		rawDao.addParam(  "columnaMunicipio", columnaMunicipio);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("columnaPoblacion", columnaPoblacion);
+		params.put("columnaMunicipio", columnaMunicipio);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(columnaPoblacion) || Checks.esNulo(columnaMunicipio) ) {
 			return false;
 		}
@@ -6033,7 +7066,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeMunicipioByDescripcion(String codigoMunicipio) {
-		rawDao.addParam(  "codigoMunicipio", codigoMunicipio);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoMunicipio", codigoMunicipio);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codigoMunicipio)) {
 			return false;
 		}
@@ -6049,15 +7085,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existePais(String pais) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("pais", pais);
+		rawDao.addParams(params);
+		
 		if(pais == null || pais.isEmpty()) return null;
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM DD_PAI_PAISES WHERE DD_PAI_CODIGO = '"+pais+"'");
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM DD_PAI_PAISES WHERE DD_PAI_CODIGO = ':pais' ");
 		return "1".equals(resultado);
 	}
 
 	@Override
 	public boolean existeMismoProveedorContactoInformado(String codProveedor, String numTrabajo) {
-		rawDao.addParam(  "codProveedor", codProveedor);
-		rawDao.addParam(  "numTrabajo", numTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codProveedor", codProveedor);
+		params.put("numTrabajo", numTrabajo);
+		rawDao.addParams(params);
 
 		String resultado = null;
 		String query = "SELECT COUNT(1) FROM ACT_TBJ_TRABAJO TBJ  "
@@ -6072,7 +7114,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public boolean existeProveedor(String codProveedor) {
-		rawDao.addParam(  "codProveedor", codProveedor);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codProveedor", codProveedor);
+		rawDao.addParams(params);
+		
 		String resultado = null;
 		String query = "SELECT COUNT(1) FROM ACT_PVE_PROVEEDOR WHERE PVE_COD_REM = codProveedor ";
 		
@@ -6084,8 +7129,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public boolean isTipoTarifaValidoEnConfiguracion(String codigoTarifa, String numTrabajo) {
-		rawDao.addParam(  "codigoTarifa", codigoTarifa);
-		rawDao.addParam(  "numTrabajo", numTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numTrabajo", numTrabajo);
+		rawDao.addParams(params);
+		
 		String queryForGetIds = "SELECT " + 
 				"TBJ.DD_TTR_ID,   " + 
 				"TBJ.DD_STR_ID,   " + 
@@ -6098,6 +7145,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		Object [] resultSet = rawDao.getExecuteSQLArray(queryForGetIds);
 		
 		if ( resultSet != null ) {
+			params = new HashMap<String, Object>();
+			params.put("codigoTarifa", codigoTarifa);
+			rawDao.addParams(params);
+			
 			String query = "SELECT DD_TTF_ID FROM DD_TTF_TIPO_TARIFA WHERE DD_TTF_CODIGO = ':codigoTarifa '";
 			String tarifaId = rawDao.getExecuteSQL(query);
 			if ( tarifaId != null) {
@@ -6115,7 +7166,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeCampo(String numCampo){
-		rawDao.addParam(  "numCampo", numCampo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numCampo", numCampo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numCampo))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
@@ -6127,7 +7181,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean perteneceADiccionarioSubtipoRegistro(String subtipo) {
-		rawDao.addParam(  "subtipo", subtipo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("subtipo", subtipo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(subtipo)) {
 			return false;
 		}
@@ -6141,8 +7198,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeIdentificadorSubregistro(String subtipo, String identificador){
-		rawDao.addParam(  "subtipo", subtipo);
-		rawDao.addParam(  "identificador", identificador);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("subtipo", subtipo);
+		params.put("identificador", identificador);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(subtipo) || Checks.esNulo(identificador) || !StringUtils.isNumeric(identificador)) {
 			return false;
 		}			
@@ -6165,7 +7225,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public String getEstadoTrabajoByNumTrabajo(String numTrabajo) {
-		rawDao.addParam(  "numTrabajo", numTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numTrabajo", numTrabajo);
+		rawDao.addParams(params);
+		
 		return rawDao.getExecuteSQL("SELECT DD_EST_CODIGO  " 
 								+"  FROM ACT_TBJ_TRABAJO TBJ " 
 								+"  INNER JOIN DD_EST_ESTADO_TRABAJO ESTADO ON ESTADO.DD_EST_ID = TBJ.DD_EST_ID " 
@@ -6174,7 +7237,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeSubtipoGasto(String codSubtipoGasto) {
-		rawDao.addParam(  "codSubtipoGasto", codSubtipoGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codSubtipoGasto", codSubtipoGasto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codSubtipoGasto))
 			return true;
 
@@ -6188,7 +7254,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean perteneceGastoBankia(String numGasto) {
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		
@@ -6207,7 +7276,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esTipoRegimenProteccion(String codCampo) {
-		rawDao.addParam(  "codCampo", codCampo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codCampo", codCampo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codCampo) || !StringUtils.isAlphanumeric(codCampo)) {
 			return false;
 		}
@@ -6222,7 +7294,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esTipoAltaBBVAMenosAltaAutamatica(String codCampo) {
-		rawDao.addParam(  "codCampo", codCampo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codCampo", codCampo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codCampo) || !StringUtils.isAlphanumeric(codCampo)) {
 			return false;
 		}
@@ -6236,7 +7311,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean agrupacionSinActivos(String numAgrupacion) {
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
 			return false;
 		
@@ -6249,8 +7327,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esGastoYAgrupacionMismoPropietarioByNumGasto(String numAgrupacion, String numGastoHaya) {
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
-		rawDao.addParam(  "numGastoHaya", numGastoHaya);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGastoHaya", numGastoHaya);
+		rawDao.addParams(params);
 
 		if (Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion) || Checks.esNulo(numGastoHaya) || !StringUtils.isNumeric(numGastoHaya))
 			return false;
@@ -6258,6 +7337,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String carteraGasto = rawDao.getExecuteSQL("SELECT APRO.PRO_ID FROM ACT_PRO_PROPIETARIO APRO " + 
 				"         JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.PRO_ID = APRO.PRO_ID " + 
 				"         WHERE GPV.GPV_NUM_GASTO_HAYA = ':numGastoHaya ' AND GPV.BORRADO = 0 AND APRO.BORRADO = 0 ");
+		
+		params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
 					
 			String carteraAgrupacion = null;
 			String masDeUnaCartera = rawDao.getExecuteSQL("SELECT count(*) FROM (SELECT DISTINCT PACT.PRO_ID   " + 
@@ -6294,9 +7377,12 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esGastoYActivoMismoPropietarioByNumGasto(String numElemento, String numGastoHaya, String tipoElemento) {
-		rawDao.addParam(  "numElemento", numElemento);
-		rawDao.addParam(  "numGastoHaya", numGastoHaya);
-		rawDao.addParam(  "tipoElemento", tipoElemento);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numElemento", numElemento);
+		params.put("numGastoHaya", numGastoHaya);
+		params.put("tipoElemento", tipoElemento);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numElemento) || !StringUtils.isNumeric(numElemento) || Checks.esNulo(numGastoHaya) || !StringUtils.isNumeric(numGastoHaya))
 			return false;
 		
@@ -6346,7 +7432,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public boolean existeTipoDeGastoAsociadoCMGA (String codTipoGasto) {
-		rawDao.addParam(  "codTipoGasto", codTipoGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codTipoGasto", codTipoGasto);
+		rawDao.addParams(params);
+		
 		if (codTipoGasto == null || !StringUtils.isAlphanumeric(codTipoGasto)) {
 			return false;
 		}
@@ -6362,7 +7451,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esTipoDeTransmisionBBVA(String codCampo) {
-		rawDao.addParam(  "codCampo", codCampo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codCampo", codCampo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codCampo) || !StringUtils.isAlphanumeric(codCampo)) {
 			return false;
 		}
@@ -6376,7 +7468,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeEntidadGasto(String entidad) {
-		rawDao.addParam(  "entidad", entidad);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("entidad", entidad);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(entidad))
 			return false;
 		
@@ -6387,7 +7482,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esTipoDeTituloBBVA(String codCampo) {
-		rawDao.addParam(  "codCampo", codCampo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codCampo", codCampo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codCampo) || !StringUtils.isAlphanumeric(codCampo)) {
 			return false;
 		}
@@ -6401,7 +7499,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esGastoRefacturadoPadre(String numGasto) {
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		
@@ -6418,8 +7519,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeDiccionarioByTipoCampo(String codigoCampo, String valorCampo) {
-		rawDao.addParam(  "codigoCampo", codigoCampo);
-		rawDao.addParam(  "valorCampo", valorCampo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoCampo", codigoCampo);
+		params.put("valorCampo", valorCampo);
+		rawDao.addParams(params);
 		String tabla = null;
 		String campo = null;
 		String resultado = "0";
@@ -6452,7 +7555,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public String getCodigoTipoDato(String codigoCampo) {
-		rawDao.addParam(  "codigoCampo", codigoCampo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoCampo", codigoCampo);
+		rawDao.addParams(params);
 		
 		String resultado = rawDao.getExecuteSQL("SELECT CTD.DD_CTD_CODIGO "
 				+ "		 FROM DD_CTD_CAMPO_TIPO_DATO CTD"
@@ -6472,7 +7577,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esGastoRefacturadoHijo(String numGasto) {
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		
@@ -6485,7 +7593,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean estaPerimetroHaya(String activoId) {
-		rawDao.addParam(  "activoId", activoId);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("activoId", activoId);
+		rawDao.addParams(params);
+		
 		if (activoId == null || !StringUtils.isNumeric(activoId)) {
 			return false;
 		}
@@ -6500,7 +7611,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeActivoPorId(String activoId) {
-		rawDao.addParam(  "activoId", activoId);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("activoId", activoId);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(activoId) || !StringUtils.isNumeric(activoId))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -6512,7 +7626,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean gastoEstadoIncompletoPendienteAutorizado(String numGasto) {
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		
@@ -6524,7 +7641,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
     public Boolean existeTipoGastoByCod(String codigo) {
-		rawDao.addParam(  "codigo", codigo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigo", codigo);
+		rawDao.addParams(params);
+		
 	    if(Checks.esNulo(codigo)) {
             return false;
 	    }
@@ -6539,7 +7659,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
     public Boolean existeDestinatarioByCod(String codigo) {
-		rawDao.addParam(  "codigo", codigo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigo", codigo);
+		rawDao.addParams(params);
+		
 	    if(Checks.esNulo(codigo)) {
             return false;
 	    }
@@ -6554,7 +7677,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
     public Boolean existeTipoOperacionGastoByCod(String codigo) {
-		rawDao.addParam(  "codigo", codigo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigo", codigo);
+		rawDao.addParams(params);
+		
 	    if(Checks.esNulo(codigo)) {
             return false;
 	    }
@@ -6569,7 +7695,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
     public Boolean existeTipoRecargoByCod(String codigo) {
-		rawDao.addParam(  "codigo", codigo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigo", codigo);
+		rawDao.addParams(params);
+		
 	    if(Checks.esNulo(codigo)) {
             return false;
 	    }
@@ -6584,7 +7713,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
     public Boolean existeTipoElementoByCod(String codigo) {
-		rawDao.addParam(  "codigo", codigo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigo", codigo);
+		rawDao.addParams(params);
+		
 	    if(Checks.esNulo(codigo)) {
             return false;
 	    }
@@ -6599,8 +7731,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
     public Boolean subtipoPerteneceATipoGasto(String tipoGasto, String subtipoGasto) {
-		rawDao.addParam(  "tipoGasto", tipoGasto);
-		rawDao.addParam(  "subtipoGasto", subtipoGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("tipoGasto", tipoGasto);
+		params.put("subtipoGasto", subtipoGasto);
+		rawDao.addParams(params);
 
 	    if(Checks.esNulo(tipoGasto) && Checks.esNulo(subtipoGasto)) {
             return false;
@@ -6616,8 +7750,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
     public Boolean esPropietarioDeCarteraByCodigo(String docIdentificadorPropietario, String cartera) {
-		rawDao.addParam(  "docIdentificadorPropietario", docIdentificadorPropietario);
-		rawDao.addParam(  "cartera", cartera);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("docIdentificadorPropietario", docIdentificadorPropietario);
+		params.put("cartera", cartera);
+		rawDao.addParams(params);
+		
 	    if(Checks.esNulo(docIdentificadorPropietario) && Checks.esNulo(cartera)) {
             return false;
 	    }
@@ -6632,9 +7769,12 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
     public Boolean esGastoYActivoMismoPropietario(String docIdentificadorPropietario, String numElemento, String tipoElemento) {
-		rawDao.addParam(  "docIdentificadorPropietario", docIdentificadorPropietario);
-		rawDao.addParam(  "numElemento", numElemento);
-		rawDao.addParam(  "tipoElemento", tipoElemento);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("docIdentificadorPropietario", docIdentificadorPropietario);
+		params.put("numElemento", numElemento);
+		params.put("tipoElemento", tipoElemento);
+		rawDao.addParams(params);
+		
 	    if(Checks.esNulo(docIdentificadorPropietario) && Checks.esNulo(numElemento) && Checks.esNulo(tipoElemento)) {
             return false;
 	    }
@@ -6684,8 +7824,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
     public Boolean esGastoYAgrupacionMismoPropietario(String docIdentificadorPropietario, String numAgrupacion) {
-		rawDao.addParam(  "docIdentificadorPropietario", docIdentificadorPropietario);
-		rawDao.addParam(  "numAgrupacion", numAgrupacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("docIdentificadorPropietario", docIdentificadorPropietario);
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
+		
 	    if(Checks.esNulo(docIdentificadorPropietario) && Checks.esNulo(numAgrupacion)) {
             return false;
 	    }
@@ -6730,7 +7873,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeEmisor(String emisorNIF) {
-		rawDao.addParam(  "emisorNIF", emisorNIF);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("emisorNIF", emisorNIF);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(emisorNIF)) {
 			return false;
 		}
@@ -6744,7 +7890,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeCodProveedorRem(String codProveedorREM) {
-		rawDao.addParam(  "codProveedorREM", codProveedorREM);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codProveedorREM", codProveedorREM);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codProveedorREM) || !StringUtils.isNumeric(codProveedorREM)) {
 			return false;
 		}
@@ -6757,7 +7906,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	@Override
 	public Boolean existePoblacionByDescripcion(String codigoPoblacion) {
-		rawDao.addParam(  "codigoPoblacion", codigoPoblacion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoPoblacion", codigoPoblacion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codigoPoblacion)) {
 			return false;
 		}
@@ -6772,7 +7924,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean estaPerimetroAdmision(String activoId) {
-		rawDao.addParam(  "activoId", activoId);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("activoId", activoId);
+		rawDao.addParams(params);
+		
 		if (activoId == null || !StringUtils.isNumeric(activoId)) {
 			return false;
 		}
@@ -6787,7 +7942,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean comprobarCodigoTipoTitulo(String codTipoTitulo) {
-		rawDao.addParam(  "codTipoTitulo", codTipoTitulo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codTipoTitulo", codTipoTitulo);
+		rawDao.addParams(params);
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM DD_TTC_TIPO_TITULO_COMPLEM WHERE"
 				+ "		 	DD_TTC_CODIGO = ':codTipoTitulo ' "
@@ -6800,7 +7958,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeActivoParaCMBBVA(String codCampo) {
-		rawDao.addParam(  "codCampo", codCampo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codCampo", codCampo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codCampo) || !StringUtils.isNumeric(codCampo)) {
 			return false;
 		}
@@ -6814,7 +7975,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean activoesDeCarteraCerberusBbvaCMBBVA(String codCampo) {
-		rawDao.addParam(  "codCampo", codCampo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codCampo", codCampo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codCampo) || !StringUtils.isNumeric(codCampo)) {
 			return false;
 		}
@@ -6829,7 +7993,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esActivoVendidoParaCMBBVA(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return false;
 		}
@@ -6847,7 +8014,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esActivoIncluidoPerimetroParaCMBBVA(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return false;
 		}
@@ -6863,7 +8033,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esActivoRepetidoNumActivoBBVA(String numActivo){
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return false;
 		}
@@ -6877,7 +8050,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean codigoComercializacionIncorrecto(String codCampo) {
-		rawDao.addParam(  "codCampo", codCampo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codCampo", codCampo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(codCampo) || !StringUtils.isAlphanumeric(codCampo)) {
 			return false;
 		}
@@ -6890,7 +8066,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esOfertaBBVA(String numOferta) {
-		rawDao.addParam(  "numOferta", numOferta);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numOferta", numOferta);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numOferta) || !StringUtils.isNumeric(numOferta)) {
 			return false;
 		}
@@ -6907,7 +8086,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esOfertaVendida(String numOferta) {
-		rawDao.addParam(  "numOferta", numOferta);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numOferta", numOferta);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numOferta) || !StringUtils.isNumeric(numOferta)) {
 			return false;
 		}
@@ -6923,7 +8105,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esOfertaAnulada(String numOferta) {
-		rawDao.addParam(  "numOferta", numOferta);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numOferta", numOferta);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numOferta) || !StringUtils.isNumeric(numOferta)) {
 			return false;
 		}
@@ -6938,7 +8123,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esOfertaErronea(String numOferta) {
-		rawDao.addParam(  "numOferta", numOferta);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numOferta", numOferta);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numOferta) || !StringUtils.isNumeric(numOferta)) {
 			return false;
 		}
@@ -6955,8 +8143,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeGastoConElIdLinea(String idGasto, String idLinea) {
-		rawDao.addParam(  "idGasto", idGasto);
-		rawDao.addParam(  "idLinea", idLinea);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idGasto", idGasto);
+		params.put("idLinea", idLinea);
+		rawDao.addParams(params);
+		
 		String resultado = rawDao.getExecuteSQL("SELECT count(1) " + 
 				" FROM gld_gastos_linea_detalle linea " + 
 				" JOIN gpv_gastos_proveedor gasto ON gasto.gpv_id = linea.gpv_id AND GASTO.GPV_NUM_GASTO_HAYA = :idGasto "+ 
@@ -6970,11 +8161,12 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean gastoRepetido(String factura, String fechaEmision, String nifEmisor, String nifPropietario) {
 		String resultado = "0";
-		rawDao.addParam(  "factura", factura);
-		rawDao.addParam(  "fechaEmision", fechaEmision);
-		rawDao.addParam(  "nifEmisor", nifEmisor);
-		rawDao.addParam(  "nifPropietario", nifPropietario);
-
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("factura", factura);
+		params.put("fechaEmision", fechaEmision);
+		params.put("nifEmisor", nifEmisor);
+		params.put("nifPropietario", nifPropietario);
+		rawDao.addParams(params);
 	
 			if(factura == null || fechaEmision == null || nifEmisor == null || nifPropietario == null) {
 				return false;
@@ -6995,7 +8187,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeTrabajoByCodigo(String codTrabajo) {
-		rawDao.addParam(  "codTrabajo", codTrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codTrabajo", codTrabajo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(codTrabajo)) {
 			return false;
 		}
@@ -7011,7 +8206,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existePromocionBBVA(String promocion){
-		rawDao.addParam(  "promocion", promocion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("promocion", promocion);
+		rawDao.addParams(params);
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_BBVA_ACTIVOS "
 				+ "WHERE bbva_cod_promocion = ':promocion'");
 
@@ -7020,8 +8218,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean propietarioPerteneceCartera(String docIdent , List<String> listaCodigoCarteras) {
-		rawDao.addParam(  "docIdent", docIdent);
-		rawDao.addParam(  "listaCodigoCarteras", listaCodigoCarteras);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("docIdent", docIdent);
+		params.put("listaCodigoCarteras", listaCodigoCarteras);
+		rawDao.addParams(params);
+		
 		if(Checks.estaVacio(listaCodigoCarteras) || Checks.esNulo(docIdent)) {
 			return false;
 		}
@@ -7044,8 +8245,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public boolean conEstadoGasto(String idGasto,String codigoEstado) {
-		rawDao.addParam(  "idGasto", idGasto);
-		rawDao.addParam(  "codigoEstado", codigoEstado);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idGasto", idGasto);
+		params.put("codigoEstado", codigoEstado);
+		rawDao.addParams(params);
 
 		if(Checks.esNulo(idGasto) || Checks.esNulo(codigoEstado) || !StringUtils.isNumeric(idGasto) ) {
 			return false;
@@ -7061,7 +8264,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public String getDocIdentfPropietarioByNumGasto(String numGasto) {
-		rawDao.addParam(  "numGasto", numGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numGasto)) {
 			return null;
 		}
@@ -7078,7 +8284,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public String devolverEstadoGasto(String idGasto) {
-		rawDao.addParam(  "idGasto", idGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idGasto", idGasto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(idGasto)) {
 			return null;
 		}
@@ -7093,7 +8302,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public String devolverEstadoGastoApartirDePrefactura(String idPrefactura) {
-		rawDao.addParam(  "idPrefactura", idPrefactura);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idPrefactura", idPrefactura);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(idPrefactura)) {
 			return null;
 		}
@@ -7110,7 +8322,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public String devolverEstadoGastoApartirDeAlbaran(String idAlbaran) {
-		rawDao.addParam(  "idAlbaran", idAlbaran);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idAlbaran", idAlbaran);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(idAlbaran)) {
 			return null;
 		}
@@ -7128,7 +8343,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public boolean existeTipoRetencion(String tipoRetencion){
-		rawDao.addParam(  "tipoRetencion", tipoRetencion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("tipoRetencion", tipoRetencion);
+		rawDao.addParams(params);
+		
 		String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
 				+ "     FROM DD_TRE_TIPO_RETENCION tit			"
 				+ "		WHERE tit.BORRADO = 0					"
@@ -7140,9 +8358,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public boolean existeLineaEnGasto(String idLinea, String numGasto){
-		rawDao.addParam(  "idLinea", idLinea);
-		rawDao.addParam(  "numGasto", numGasto);
-
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idLinea", idLinea);
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
 		
 		String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
 				+ "     FROM gld_gastos_linea_detalle GLD			"
@@ -7156,7 +8375,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public boolean tieneGastoFechaContabilizado(String idGasto) {
-		rawDao.addParam(  "idGasto", idGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idGasto", idGasto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(idGasto)) {
 			return false;
 		}
@@ -7171,7 +8393,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public boolean tieneGastoFechaPagado(String idGasto) {
-		rawDao.addParam(  "idGasto", idGasto);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idGasto", idGasto);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(idGasto)) {
 			return false;
 		}
@@ -7187,7 +8412,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public String sacarCodigoSubtipoActivo(String descripcion) {
-		rawDao.addParam(  "descripcion", descripcion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("descripcion", descripcion);
+		rawDao.addParams(params);
 
 		if (descripcion == null) {
 			return null;
@@ -7202,7 +8429,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override	
 	public Boolean existeSubtrabajoByCodigo(String codSubtrabajo) {
-		rawDao.addParam(  "codSubtrabajo", codSubtrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codSubtrabajo", codSubtrabajo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(codSubtrabajo)) {
 			return false;
 		}
@@ -7217,7 +8447,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeActivoConONMarcadoSi(String columnaActivo) {
-		rawDao.addParam(  "columnaActivo", columnaActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("columnaActivo", columnaActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(columnaActivo)) {
 			return false;
 		}
@@ -7234,7 +8467,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existePorcentajeConstruccion(String porcentajeConstruccion){
-		rawDao.addParam(  "porcentajeConstruccion", porcentajeConstruccion);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("porcentajeConstruccion", porcentajeConstruccion);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(porcentajeConstruccion))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
@@ -7246,8 +8482,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esSubtrabajoByCodTrabajoByCodSubtrabajo(String codTrabajo, String codSubtrabajo) {
-		rawDao.addParam(  "codTrabajo", codTrabajo);
-		rawDao.addParam(  "codSubtrabajo", codSubtrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codTrabajo", codTrabajo);
+		params.put("codSubtrabajo", codSubtrabajo);
+		rawDao.addParams(params);
 		
 		if (Checks.esNulo(codSubtrabajo) || Checks.esNulo(codTrabajo)) {
 			return false;
@@ -7266,18 +8504,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean existeProveedorAndProveedorContacto(String codProveedor, String proveedorContacto) {
 		if (Checks.esNulo(codProveedor) || Checks.esNulo(proveedorContacto)) {
-			rawDao.addParam(  "codProveedor", codProveedor);
-			rawDao.addParam(  "proveedorContacto", proveedorContacto);
-
-			
 			return false;
 		}
 		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codProveedor", Long.parseLong(codProveedor));
+		params.put("proveedorContacto", proveedorContacto);
+		rawDao.addParams(params);
+		
 		try {
-			Long codProveedorParse = Long.parseLong(codProveedor);
 			String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " 
 				+ "FROM ACT_PVC_PROVEEDOR_CONTACTO PVC " 
-				+ "JOIN ACT_PVE_PROVEEDOR PVE ON pve.pve_id = pvc.pve_id AND pve.pve_cod_rem = "+codProveedorParse+" " 
+				+ "JOIN ACT_PVE_PROVEEDOR PVE ON pve.pve_id = pvc.pve_id AND pve.pve_cod_rem = :codProveedor " 
 				+ "JOIN ${master.schema}.USU_USUARIOS USU ON pvc.usu_id = USU.USU_ID AND usu.usu_username = ':proveedorContacto'");
 
 			return !"0".equals(resultado);
@@ -7289,7 +8527,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	@Override
 	public Boolean esSubtipoTrabajoTomaPosesionPaquete(String subtrabajo) {
-		rawDao.addParam(  "subtrabajo", subtrabajo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("subtrabajo", subtrabajo);
+		rawDao.addParams(params);
+		
 		if (subtrabajo == null) {
 			return false;
 		}
@@ -7304,35 +8545,37 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	@Override
 	public Boolean esTarifaEnCarteradelActivo(String codTarifa, String idActivo) {
-		rawDao.addParam(  "codTarifa", codTarifa);
-		rawDao.addParam(  "idActivo", idActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codTarifa", codTarifa);
+		params.put("idActivo", idActivo);
+		rawDao.addParams(params);
 
 		if (codTarifa == null || idActivo == null) {
 			return false;
 		}
-		Long numActivo = Long.parseLong(idActivo);
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " 
 				+ " FROM ACT_CFT_CONFIG_TARIFA CFT " 
 				+ " JOIN DD_TTF_TIPO_TARIFA TTF ON CFT.DD_TTF_ID = TTF.DD_TTF_ID AND ttf.dd_ttf_codigo ='codTarifa'" 
-				+ " JOIN ACT_ACTIVO ACT ON ACT.DD_CRA_ID = CFT.DD_CRA_ID AND act.act_num_activo = "+numActivo+" ");
+				+ " JOIN ACT_ACTIVO ACT ON ACT.DD_CRA_ID = CFT.DD_CRA_ID AND act.act_num_activo = :idActivo ");
 
 		return !"0".equals(resultado);
 	}
 	@Override
 	public Boolean existeProveedorEnCarteraActivo(String proveedor, String idActivo) {
-		rawDao.addParam(  "proveedor", proveedor);
-		rawDao.addParam(  "idActivo", idActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("proveedor", proveedor);
+		params.put("idActivo", idActivo);
+		rawDao.addParams(params);
+		
 		if (proveedor == null || idActivo != null) {
 			return false;
 		}
-		Long numProveedor = Long.parseLong(proveedor);
-		Long numActivo= Long.parseLong(idActivo);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " 
 				+ " FROM ACT_ETP_ENTIDAD_PROVEEDOR ETP " 
 				+ " JOIN ACT_ACTIVO ACT ON act.dd_cra_id = etp.dd_cra_id " 
-				+ " JOIN ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = ETP.PVE_ID AND act.act_num_activo = "+numActivo+" " 
-				+ " WHERE pve.pve_cod_rem = "+numProveedor+"");
+				+ " JOIN ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = ETP.PVE_ID AND act.act_num_activo = :idActivo " 
+				+ " WHERE pve.pve_cod_rem = :proveedor ");
 
 		return "0".equals(resultado);
 	}
@@ -7340,13 +8583,16 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean datosRegistralesRepetidos(String refCatastral,String finca, String folio, String libro, String tomo,  String numRegistro, String codigoLocalidad){
-		rawDao.addParam(  "refCatastral", refCatastral);
-		rawDao.addParam(  "finca", finca);
-		rawDao.addParam(  "folio", folio);
-		rawDao.addParam(  "libro", libro);
-		rawDao.addParam(  "tomo", tomo);
-		rawDao.addParam(  "numRegistro", numRegistro);
-		rawDao.addParam(  "codigoLocalidad", codigoLocalidad);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("refCatastral", refCatastral);
+		params.put("finca", finca);
+		params.put("folio", folio);
+		params.put("libro", libro);
+		params.put("tomo", tomo);
+		params.put("numRegistro", numRegistro);
+		params.put("codigoLocalidad", codigoLocalidad);
+		rawDao.addParams(params);
+		
 		String resultado;
 		if(Checks.esNulo(refCatastral)) {
 			resultado = rawDao.getExecuteSQL("SELECT count(1) FROM act_activo act "  
@@ -7367,8 +8613,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean subtipoPerteneceTipoActivo(String subtipo, String tipo){
-		rawDao.addParam(  "subtipo", subtipo);
-		rawDao.addParam(  "tipo", tipo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("subtipo", subtipo);
+		params.put("tipo", tipo);
+		rawDao.addParams(params);
 
 		String resultado;
 
@@ -7385,11 +8633,14 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	public String getNumActivoPrincipal(String numAgr) {
 		String resultado = null;
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgr", numAgr);
+		rawDao.addParams(params);
 		
 		if(numAgr != null && !numAgr.isEmpty())
 		resultado = rawDao.getExecuteSQL("SELECT ACT_NUM_ACTIVO FROM ACT_ACTIVO ACT "
 				+ "JOIN ACT_AGR_AGRUPACION AGR ON AGR_ACT_PRINCIPAL = ACT_ID "
-				+ "WHERE AGR_NUM_AGRUP_REM = "+ numAgr +" AND AGR.BORRADO = 0");
+				+ "WHERE AGR_NUM_AGRUP_REM = :numAgr AND AGR.BORRADO = 0");
 		
 		
 		if(resultado == null)
@@ -7399,13 +8650,16 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	public boolean getExcluirValidaciones(String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
 		String resultado = null;
 		
 		if(numActivo != null && !numActivo.isEmpty())
 		resultado = rawDao.getExecuteSQL("SELECT DD_SIN_CODIGO FROM ACT_PAC_PERIMETRO_ACTIVO PAC "
 				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID "
 				+ "JOIN ${master.schema}.DD_SIN_SINO DD ON DD.DD_SIN_ID = PAC.PAC_EXCLUIR_VALIDACIONES "
-				+ "WHERE ACT_NUM_ACTIVO = "+ numActivo +" AND PAC.BORRADO = 0");
+				+ "WHERE ACT_NUM_ACTIVO = :numActivo AND PAC.BORRADO = 0");
 		
 		if(resultado == null || DDSiNo.NO.equals(resultado) ) {
 			return false;
@@ -7416,13 +8670,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	public String getCheckGestorComercial(String numActivo) {
-		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
 		String resultado = null;
 		
 		if(numActivo != null && !numActivo.isEmpty())
 		resultado = rawDao.getExecuteSQL("SELECT PAC_CHECK_GESTION_COMERCIAL FROM ACT_PAC_PERIMETRO_ACTIVO PAC "
 				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID "
-				+ "WHERE ACT_NUM_ACTIVO = "+ numActivo +" AND PAC.BORRADO = 0");
+				+ "WHERE ACT_NUM_ACTIVO = :numActivo AND PAC.BORRADO = 0");
 		
 		if(resultado == null)
 			return "0";
@@ -7431,12 +8687,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	public String getMotivoGestionComercial(String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
 		String resultado = null;
 		
 		if(numActivo != null && !numActivo.isEmpty())
 		resultado = rawDao.getExecuteSQL("SELECT PAC_MOTIVO_GESTION_COMERCIAL FROM ACT_PAC_PERIMETRO_ACTIVO PAC "
 				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID "
-				+ "WHERE ACT_NUM_ACTIVO = "+ numActivo +" AND PAC.BORRADO = 0");
+				+ "WHERE ACT_NUM_ACTIVO = :numActivo AND PAC.BORRADO = 0");
 		
 		if(resultado == null)
 			return "";
@@ -7448,7 +8707,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeAlbaran(String idAlbaran) {
-		rawDao.addParam(  "idAlbaran", idAlbaran);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idAlbaran", idAlbaran);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(idAlbaran) || !StringUtils.isNumeric(idAlbaran))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -7460,7 +8722,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existePrefactura(String idPrefactura) {
-		rawDao.addParam(  "idPrefactura", idPrefactura);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idPrefactura", idPrefactura);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(idPrefactura) || !StringUtils.isNumeric(idPrefactura))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -7472,7 +8737,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public List<String> getIdPrefacturasByNumAlbaran(String numAlbaran) {
-		rawDao.addParam(  "numAlbaran", numAlbaran);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAlbaran", numAlbaran);
+		rawDao.addParams(params);
+		
 		List<Object> resultados = rawDao.getExecuteSQLList("SELECT PFA.PFA_NUM_PREFACTURA FROM ALB_ALBARAN ALB "
 				+ "JOIN PFA_PREFACTURA PFA ON PFA.ALB_ID = ALB.ALB_ID "
 				+ "WHERE ALB.ALB_NUM_ALBARAN = ':numAlbaran' "
@@ -7489,7 +8757,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean getGastoSuplidoConFactura(String idGastoAfectado) {
-		rawDao.addParam(  "idGastoAfectado", idGastoAfectado);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idGastoAfectado", idGastoAfectado);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(idGastoAfectado)){
 			return false;
 			}
@@ -7504,7 +8775,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	@Override
 	public Boolean esSubCarterasCerberusAppleDivarian (String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) return false;
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT COUNT(1) " + 
@@ -7517,13 +8791,16 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	
 	public Boolean isActivoEnPerimetroAlquilerSocial(String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
 		
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT count(1)   " + 
 				"				 FROM ACT_PTA_PATRIMONIO_ACTIVO pta    " + 
 				"				INNER JOIN ACT_ACTIVO act ON act.ACT_ID = pta.ACT_ID " + 
 				"                INNER JOIN DD_TAL_TIPO_ALQUILER dd ON  dd.dd_tal_id = act.dd_tal_id " + 
-				"				WHERE act.act_num_activo = '"+numActivo+"' " + 
+				"				WHERE act.act_num_activo = ':numActivo' " + 
 				"                AND dd.dd_tal_codigo = '03' " + 
 				"                AND ACT.borrado = 0 " + 
 				"                AND pta.borrado = 0");
@@ -7532,12 +8809,16 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean situacionComercialPublicadoAlquiler(String activo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("activo", activo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_ACTIVO a "
 				+ "JOIN act_apu_activo_publicacion apu ON a.act_id = apu.act_id AND apu.borrado = 0 "
 				+ "JOIN dd_epa_estado_pub_alquiler epa ON apu.DD_EPA_ID = epa.DD_EPA_ID AND epa.borrado = 0 "
-				+ "WHERE a.ACT_NUM_ACTIVO = '"+ activo +"' AND epa.DD_EPA_CODIGO = '03' AND a.borrado = 0 ");
+				+ "WHERE a.ACT_NUM_ACTIVO = ':activo' AND epa.DD_EPA_CODIGO = '03' AND a.borrado = 0 ");
 
 
 		return "1".equals(resultado);
@@ -7545,6 +8826,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 
 	public Boolean estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT (1) FROM ACT_ACTIVO ACT " + 
@@ -7552,7 +8837,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" INNER JOIN DD_EPA_ESTADO_PUB_ALQUILER  est on est.dd_epa_id = apu.dd_epa_id " + 
 				" INNER JOIN dd_cra_cartera car on car.dd_cra_id = act.dd_cra_id " +
 				" INNER JOIN dd_tco_tipo_comercializacion tpo on tpo.dd_tco_id = apu.dd_tco_id" +
-				" WHERE act.act_num_activo = '"+numActivo+"'" + 
+				" WHERE act.act_num_activo = ':numActivo'" + 
 				" and est.dd_epa_codigo <> '03' " +
 				" and car.dd_cra_codigo = '01' " +
 				" and act.act_vpo = '0' " + 
@@ -7569,13 +8854,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	public Boolean activoPerteneceAgrupacion (String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
 			return false;
 		String resultado = rawDao.getExecuteSQL (" SELECT COUNT(1) FROM  REM01.ACT_AGA_AGRUPACION_ACTIVO aga, "+ 
 			    " REM01.ACT_AGR_AGRUPACION agr, "+
 			    " REM01.ACT_ACTIVO act WHERE aga.AGR_ID = agr.AGR_ID "+
 				   " AND act.act_id  = aga.act_id " +
-                   " AND act.ACT_NUM_ACTIVO = '"+numActivo+"'" + 
+                   " AND act.ACT_NUM_ACTIVO = ':numActivo'" + 
                    " AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE) "+
                    " AND aga.BORRADO  = 0 "+
                    " AND agr.BORRADO  = 0 "+
@@ -7584,6 +8873,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	public Boolean activoBBVAPerteneceSociedadParticipada (String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
 			return false;
 		String resultado = rawDao.getExecuteSQL ("SELECT COUNT(1) FROM REM01.ACT_ACTIVO act " + 
@@ -7595,7 +8888,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" JOIN REM01.DD_CRA_CARTERA cra ON act.DD_CRA_ID = cra.DD_CRA_ID and cra.dd_cra_codigo = '16' " + 
 				" WHERE (ALQUILER.DD_EPA_CODIGO = '01' OR VENTA.DD_EPV_CODIGO = '01') " + 
 				" AND PRO.PRO_DOCIDENTIF IN ('B63442974','B11819935','B39488549','A83827907') " + 
-				" AND act.ACT_NUM_ACTIVO ='"+numActivo+"'");
+				" AND act.ACT_NUM_ACTIVO =':numActivo'");
 		return !"0".equals(resultado);
 	}
 	
@@ -7664,6 +8957,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean validacionSubfasePublicacion (String activo, List<String> codigos) { 
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("activo", activo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo))
 			return false;
 		
@@ -7680,7 +8977,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"FROM (SELECT hfp_id,dd_sfp_id\n" + 
 				"FROM act_hfp_hist_fases_pub hfp\n" + 
 				"JOIN ACT_ACTIVO a ON a.act_id = hfp.act_id AND hfp.borrado = 0 \n" + 
-				"WHERE  a.ACT_NUM_ACTIVO = "+ activo +" AND a.borrado = 0 \n" + 
+				"WHERE  a.ACT_NUM_ACTIVO = :activo AND a.borrado = 0 \n" + 
 				"ORDER BY hfp.hfp_id DESC)\n" + 
 				"WHERE ROWNUM = 1)\n" + 
 				"\n" + 
@@ -7695,13 +8992,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public boolean isConCargasOrCargasEsparta(String activo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("activo", activo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo)) {
 			return false;
 		}
 		String resultado = rawDao.getExecuteSQL ("SELECT count(1) FROM ACT_CRG_CARGAS crg \n" + 
 				"join act_activo act on act.act_id = crg.act_id\n" + 
 				"left join DD_ECG_ESTADO_CARGA ecg on crg.DD_ECG_ID = ecg.DD_ECG_ID \n" + 
-				"where crg.borrado = 0 and act.borrado = 0 and ecg.borrado = 0 and act.act_num_activo = "+ activo +" and \n" + 
+				"where crg.borrado = 0 and act.borrado = 0 and ecg.borrado = 0 and act.act_num_activo = :activo and \n" + 
 				"(crg.CRG_OCULTO_CARGA_MASIVA = 1 OR ecg.dd_ecg_codigo = '01' OR ecg.dd_ecg_codigo = '02')"
 			);
 		return !"0".equals(resultado);
@@ -7709,13 +9010,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public boolean aplicaComercializar(String activo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("activo", activo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo)) {
 			return false;
 		}
 		
 		String resultado = rawDao.getExecuteSQL ("SELECT count(1) FROM act_pac_perimetro_activo pac\n" + 
 				"join act_activo act on act.act_id = pac.act_id\n" + 
-				"where act.act_num_activo = "+ activo +" and act.borrado = 0 and pac.borrado = 0 and pac.PAC_CHECK_COMERCIALIZAR = '1'"	
+				"where act.act_num_activo = :activo and act.borrado = 0 and pac.borrado = 0 and pac.PAC_CHECK_COMERCIALIZAR = '1'"	
 			);
 		
 		return !"0".equals(resultado);
@@ -7723,6 +9028,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean isActivoAlquiladoSCM(String activo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("activo", activo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo)) {
 			return false;
 		}
@@ -7730,13 +9039,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT * FROM act_activo act \n" + 
 				"JOIN dd_scm_situacion_comercial scm on act.dd_scm_id = scm.dd_scm_id \n" + 
-				"WHERE act.act_num_activo = "+activo+" AND scm.dd_scm_codigo = '10'");
+				"WHERE act.act_num_activo = :activo AND scm.dd_scm_codigo = '10'");
 		
 		return !"0".equals(resultado); 
 	}
 	
 	@Override
 	public boolean isActivoPublicadoDependiendoSuTipoComercializacion(String activo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("activo", activo);
+		rawDao.addParams(params);
+		
 		String resultado = "0";
 		
 		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo)) {
@@ -7746,7 +9059,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String tipoComercializacion = rawDao.getExecuteSQL("   SELECT tco.dd_tco_codigo FROM ACT_ACTIVO a \n" + 
 				"    JOIN ACT_APU_ACTIVO_PUBLICACION apu ON apu.act_id = a.act_id and apu.borrado = 0 \n" + 
 				"    JOIN DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = apu.dd_tco_id and tco.borrado = 0 \n" + 
-				"     WHERE a.act_num_activo = "+activo+" AND a.borrado = 0");
+				"     WHERE a.act_num_activo = :activo AND a.borrado = 0");
 
 
 		
@@ -7755,14 +9068,14 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"SELECT count(1) FROM ACT_ACTIVO a \n" + 
 				"    JOIN act_apu_activo_publicacion apu ON a.act_id = apu.act_id AND apu.borrado = 0 \n" + 
 				"    JOIN dd_epv_estado_pub_venta epv ON apu.DD_EPV_ID = epv.DD_EPV_ID AND epv.borrado = 0\n" + 
-				"    WHERE a.act_num_activo = "+activo+"  AND  epv.DD_EPV_CODIGO = '03' AND a.borrado = 0");
+				"    WHERE a.act_num_activo = :activo  AND  epv.DD_EPV_CODIGO = '03' AND a.borrado = 0");
 		
 		}else if(DD_TCO_ALQUILER.equals(tipoComercializacion)) {
 		 resultado = rawDao.getExecuteSQL(
 				"SELECT count(1) FROM ACT_ACTIVO a \n" + 
 				"    JOIN act_apu_activo_publicacion apu ON a.act_id = apu.act_id AND apu.borrado = 0 \n" + 
 				"    JOIN dd_epa_estado_pub_alquiler epa ON apu.DD_EPA_ID = epa.DD_EPA_ID AND epa.borrado = 0 \n" + 
-				"    WHERE a.act_num_activo = "+activo+"  AND  epa.DD_EPA_CODIGO = '03' AND a.borrado = 0");
+				"    WHERE a.act_num_activo = :activo  AND  epa.DD_EPA_CODIGO = '03' AND a.borrado = 0");
 		
 		}else if(DD_TCO_ALQUILER_VENTA.equals(tipoComercializacion)) {
 		 resultado = rawDao.getExecuteSQL(
@@ -7770,7 +9083,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"    JOIN act_apu_activo_publicacion apu ON a.act_id = apu.act_id AND apu.borrado = 0 \n" + 
 				"    JOIN dd_epa_estado_pub_alquiler epa ON apu.DD_EPA_ID = epa.DD_EPA_ID AND epa.borrado = 0 \n" + 
 				"    JOIN dd_epv_estado_pub_venta epv ON apu.DD_EPV_ID = epv.DD_EPV_ID AND epv.borrado = 0 \n" + 
-				"    WHERE a.act_num_activo = "+activo+"  AND  (epa.DD_EPA_CODIGO = '03' OR epv.DD_EPV_CODIGO = '03') AND a.borrado = 0");
+				"    WHERE a.act_num_activo = :activo  AND  (epa.DD_EPA_CODIGO = '03' OR epv.DD_EPV_CODIGO = '03') AND a.borrado = 0");
 		}
 		
 		return !"0".equals(resultado);
@@ -7778,6 +9091,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public boolean isActivoDestinoComercialSoloAlquiler(String activo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("activo", activo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo)) {
 			return false;
 		}
@@ -7785,13 +9102,16 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("   SELECT count(1) FROM ACT_ACTIVO a \n" + 
 				"    JOIN ACT_APU_ACTIVO_PUBLICACION apu ON apu.act_id = a.act_id and apu.borrado = 0 \n" + 
 				"    JOIN DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = apu.dd_tco_id and tco.borrado = 0\n" + 
-				"     WHERE a.act_num_activo = "+activo+" AND a.borrado = 0 and tco.dd_tco_codigo = '03'");
+				"     WHERE a.act_num_activo = :activo AND a.borrado = 0 and tco.dd_tco_codigo = '03'");
 		
 		return !"0".equals(resultado);
 	}
 
 	public Boolean isActivoGestionadoReam(String numActivo) {
-		rawDao.addParam(  "numActivo", numActivo);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo)){
 			return false;
 			}
@@ -7806,6 +9126,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean isActivoCerberus(String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
 		if(Checks.esNulo(numActivo))
 			return false;
 
@@ -7814,18 +9138,22 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+"		WHERE ACT.DD_CRA_ID IN (SELECT DD_CRA_ID FROM DD_CRA_CARTERA "
 					+"								WHERE DD_CRA_CODIGO IN ('07')"
 					+"								AND BORRADO = 0) "
-					+"		AND ACT.ACT_NUM_ACTIVO = "+ numActivo +"");
+					+"		AND ACT.ACT_NUM_ACTIVO = :numActivo ");
 
 		return !"0".equals(resultado);
 	}
 	
 	@Override
 	public Boolean tieneVigenteFasePublicacionIII(String activo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("activo", activo);
+		rawDao.addParams(params);
+		
 		String resultado = rawDao.getExecuteSQL("WITH ultimo AS (SELECT hfp_id,dd_fsp_id\n" + 
 				"				FROM (SELECT hfp_id,dd_fsp_id\n" + 
 				"				FROM act_hfp_hist_fases_pub hfp\n" + 
 				"				JOIN ACT_ACTIVO a ON a.act_id = hfp.act_id AND hfp.borrado = 0 \n" + 
-				"				WHERE a.act_num_Activo = "+activo+" and  a.borrado = 0 \n" + 
+				"				WHERE a.act_num_Activo = :activo and  a.borrado = 0 \n" + 
 				"				ORDER BY hfp.hfp_id DESC)\n" + 
 				"				WHERE ROWNUM = 1)\n" + 
 				"				\n" + 

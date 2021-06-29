@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210618
+--## FECHA_CREACION=20210622
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14366
+--## INCIDENCIA_LINK=HREOS-14368
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -14,6 +14,8 @@
 --##        0.2 Cambio de numeración del SP y modificación de los checks de 1 y 0 a S y N respectivamente - [HREOS-14222] - Alejandra García
 --##        0.3 Revisión - [HREOS-14344] - Alejandra García
 --##        0.4 Formatos númericos en ACT_EN_TRAMITE = 0  - [HREOS-14366] - Daniel Algaba
+--##        0.5 Cambiamos años  - [HREOS-14368] - Daniel Algaba
+--##        0.6 Metemos NUM_IDENTFICATIVO como campos de cruce - [HREOS-14368] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -57,11 +59,51 @@ BEGIN
                     FROM '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION DIS
                     JOIN '|| V_ESQUEMA ||'.DD_TPH_TIPO_HABITACULO TPH ON TPH.DD_TPH_ID=DIS.DD_TPH_ID AND TPH.BORRADO=0
                         WHERE DIS.BORRADO=0                
+           ), TERRAZAS AS (
+                    SELECT
+                         SUM(DIS.DIS_CANTIDAD) AS DIS_CANTIDAD
+                        ,DIS.ICO_ID AS ICO_ID
+                    FROM '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION DIS
+                    JOIN '|| V_ESQUEMA ||'.DD_TPH_TIPO_HABITACULO TPH ON TPH.DD_TPH_ID=DIS.DD_TPH_ID AND TPH.BORRADO=0
+                        WHERE DIS.BORRADO=0  AND TPH.DD_TPH_CODIGO IN (''15'',''16'')
+                        GROUP BY DIS.ICO_ID
+           ), HABITACIONES AS (
+                    SELECT
+                         SUM(DIS.DIS_CANTIDAD) AS DIS_CANTIDAD
+                        ,DIS.ICO_ID AS ICO_ID
+                    FROM '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION DIS
+                    JOIN '|| V_ESQUEMA ||'.DD_TPH_TIPO_HABITACULO TPH ON TPH.DD_TPH_ID=DIS.DD_TPH_ID AND TPH.BORRADO=0
+                        WHERE DIS.BORRADO=0  AND TPH.DD_TPH_CODIGO IN (''01'')
+                        GROUP BY DIS.ICO_ID
+           ), NUM_BANYOS AS (
+                    SELECT
+                         SUM(DIS.DIS_CANTIDAD) AS DIS_CANTIDAD
+                        ,DIS.ICO_ID AS ICO_ID
+                    FROM '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION DIS
+                    JOIN '|| V_ESQUEMA ||'.DD_TPH_TIPO_HABITACULO TPH ON TPH.DD_TPH_ID=DIS.DD_TPH_ID AND TPH.BORRADO=0
+                        WHERE DIS.BORRADO=0  AND TPH.DD_TPH_CODIGO IN (''02'')
+                        GROUP BY DIS.ICO_ID
+           ), TRASTEROS AS (
+                    SELECT
+                         SUM(DIS.DIS_CANTIDAD) AS DIS_CANTIDAD
+                        ,DIS.ICO_ID AS ICO_ID
+                    FROM '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION DIS
+                    JOIN '|| V_ESQUEMA ||'.DD_TPH_TIPO_HABITACULO TPH ON TPH.DD_TPH_ID=DIS.DD_TPH_ID AND TPH.BORRADO=0
+                        WHERE DIS.BORRADO=0  AND TPH.DD_TPH_CODIGO IN (''12'')
+                        GROUP BY DIS.ICO_ID
+           ), APARCAMIENTOS AS (
+                    SELECT
+                         SUM(DIS.DIS_CANTIDAD) AS DIS_CANTIDAD
+                        ,DIS.ICO_ID AS ICO_ID
+                    FROM '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION DIS
+                    JOIN '|| V_ESQUEMA ||'.DD_TPH_TIPO_HABITACULO TPH ON TPH.DD_TPH_ID=DIS.DD_TPH_ID AND TPH.BORRADO=0
+                        WHERE DIS.BORRADO=0  AND TPH.DD_TPH_CODIGO IN (''11'')
+                        GROUP BY DIS.ICO_ID
            )
-           SELECT 
+           SELECT
                  TO_CHAR(ICO.ICO_FECHA_ULTIMA_VISITA,''YYYYMMDD'') AS FEC_VISITA_INMB_SERVICER
-                ,ICO.ICO_ANO_CONSTRUCCION * 100 AS ANYO_CONSTRUCCION
-                ,ICO.ICO_ANO_REHABILITACION * 100 AS ANYO_ULTIMA_REFORMA
+                ,ICO.ICO_ANO_CONSTRUCCION AS ANYO_CONSTRUCCION
+                ,ICO.ICO_ANO_REHABILITACION AS ANYO_ULTIMA_REFORMA
                 ,ACT.ACT_NUM_ACTIVO_CAIXA AS NUM_IDENTIFICATIVO      
                 ,ACT.ACT_NUM_ACTIVO AS NUM_INMUEBLE               
                 ,CASE
@@ -83,16 +125,17 @@ BEGIN
             FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
             JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID=ICO.ACT_ID AND ICO.BORRADO=0
             JOIN '|| V_ESQUEMA ||'.ACT_EDI_EDIFICIO EDIF ON EDIF.ICO_ID=ICO.ICO_ID AND EDIF.BORRADO=0    
-            LEFT JOIN DISTRIBUCION DIST1 ON DIST1.ICO_ID=ICO.ICO_ID AND DIST1.DD_TPH_CODIGO=''01''
-            LEFT JOIN DISTRIBUCION DIST2 ON DIST2.ICO_ID=ICO.ICO_ID AND DIST2.DD_TPH_CODIGO=''02''
-            LEFT JOIN DISTRIBUCION DIST3 ON DIST3.ICO_ID=ICO.ICO_ID AND DIST3.DD_TPH_CODIGO IN (''15'',''16'')
-            LEFT JOIN DISTRIBUCION DIST4 ON DIST4.ICO_ID=ICO.ICO_ID AND DIST4.DD_TPH_CODIGO=''12''
-            LEFT JOIN DISTRIBUCION DIST5 ON DIST5.ICO_ID=ICO.ICO_ID AND DIST5.DD_TPH_CODIGO=''11''
+            LEFT JOIN HABITACIONES DIST1 ON DIST1.ICO_ID=ICO.ICO_ID
+            LEFT JOIN NUM_BANYOS DIST2 ON DIST2.ICO_ID=ICO.ICO_ID
+            LEFT JOIN TERRAZAS DIST3 ON DIST3.ICO_ID=ICO.ICO_ID 
+            LEFT JOIN TRASTEROS DIST4 ON DIST4.ICO_ID=ICO.ICO_ID
+            LEFT JOIN APARCAMIENTOS DIST5 ON DIST5.ICO_ID=ICO.ICO_ID
             JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID=ACT.DD_CRA_ID AND CRA.DD_CRA_CODIGO=''03''
             JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID=ACT.ACT_ID AND PAC.PAC_INCLUIDO = 1
             WHERE ACT.BORRADO = 0
             AND ACT.ACT_EN_TRAMITE = 0
-            ) US ON (US.NUM_INMUEBLE=AUX.NUM_INMUEBLE)
+            AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
+            ) US ON (US.NUM_INMUEBLE=AUX.NUM_INMUEBLE AND US.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
             WHEN MATCHED THEN UPDATE SET
                  AUX.FEC_VISITA_INMB_SERVICER=US.FEC_VISITA_INMB_SERVICER
                 ,AUX.ANYO_CONSTRUCCION=US.ANYO_CONSTRUCCION

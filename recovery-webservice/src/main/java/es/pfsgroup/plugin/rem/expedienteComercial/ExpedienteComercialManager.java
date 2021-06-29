@@ -3911,7 +3911,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		formalizacionDto.setGeneracionHojaDatos(permitirGenerarHoja);
-
+		
+		if (expediente.getFechaContabilizacion() != null) {
+			formalizacionDto.setFechaContabilizacion(expediente.getFechaContabilizacion());
+		}
+		
 		return formalizacionDto;
 	}
 

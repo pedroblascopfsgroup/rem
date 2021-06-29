@@ -69,7 +69,12 @@ Ext.define('HreRem.model.ExpedienteFormalizacionResolucion', {
     	    	name: 'generacionHojaDatos',
     	    	type: 'boolean',
     	    	defaultValue: false
-    	    }
+    	    },
+    	    {
+    			name:'fechaContabilizacion',
+    			type:'date',
+    			dateFormat: 'c'
+    		}
     ],
     
 	proxy: {

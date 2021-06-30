@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.boardingComunicacion;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -78,10 +77,12 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
                 ? appProperties.getProperty("rest.client.autenticacion.email.boarding") : "";
         String password = !Checks.esNulo(appProperties.getProperty("rest.client.autenticacion.password.boarding"))
                 ? appProperties.getProperty("rest.client.autenticacion.password.boarding") : "";
-        String urlBase = !Checks.esNulo(appProperties.getProperty("rest.client.url.base.boarding"))
-                ? appProperties.getProperty("rest.client.url.base.boarding") : "";
-        String urlLogin = !Checks.esNulo(appProperties.getProperty("rest.client.autenticacion.boarding"))
-                ? appProperties.getProperty("rest.client.autenticacion.boarding") : "";
+        // Cambiamos las URLs de CFV por las de REM3 por los problemas con el TLS y las versiones de Java. 
+        // Asi se crea una pasarela para consumir el servicio que pasa por REM3 (REM-API).
+        String urlBase = !Checks.esNulo(appProperties.getProperty("rem3.base.url"))
+                ? appProperties.getProperty("rem3.base.url") : "";
+        String urlLogin = !Checks.esNulo(appProperties.getProperty("rest.client.autenticacion.boarding.rem3"))
+                ? appProperties.getProperty("rest.client.autenticacion.boarding.rem3") : "";
         
         StringBuilder urlLoginBoarding = new StringBuilder();
         urlLoginBoarding.append(urlBase);
@@ -98,7 +99,15 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
         long timeEnd = System.currentTimeMillis();
         //tiempo que se tarda en conseguir el token (APROX)
         tokenRequestTimeElapsed = Math.round(TimeUnit.MILLISECONDS.toSeconds(timeEnd - timeStart));
-        return jwtToken != null ? jwtToken.get("token").toString() : "";
+        
+        String token = jwtToken != null ? jwtToken.get("token").toString() : "";
+        if (token != null && !token.isEmpty()) {
+        	logger.debug("[OBTENCION TOKEN] TOKEN CFV OK");
+        } else {
+        	logger.error("[OBTENCION TOKEN] TOKEN CFV VACIO");
+        }
+        
+        return token;
         
     }
 
@@ -130,13 +139,13 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
 				e.printStackTrace();
 				json = "{}";
 			}
-            
-			System.out.println("ResultingJSONstring = " + json);
 			
-			String urlBase = !Checks.esNulo(appProperties.getProperty("rest.client.url.base.boarding"))
-			        ? appProperties.getProperty("rest.client.url.base.boarding") : "";
-			String urlUpdateOferta = !Checks.esNulo(appProperties.getProperty("rest.client.actualizar.ofertas.boarding"))
-			        ? appProperties.getProperty("rest.client.actualizar.ofertas.boarding") : "";
+	        // Cambiamos las URLs de CFV por las de REM3 por los problemas con el TLS y las versiones de Java. 
+	        // Asi se crea una pasarela para consumir el servicio que pasa por REM3 (REM-API).
+			String urlBase = !Checks.esNulo(appProperties.getProperty("rem3.base.url"))
+			        ? appProperties.getProperty("rem3.base.url") : "";
+			String urlUpdateOferta = !Checks.esNulo(appProperties.getProperty("rest.client.actualizar.ofertas.boarding.rem3"))
+			        ? appProperties.getProperty("rest.client.actualizar.ofertas.boarding.rem3") : "";
 			
 			StringBuilder urlUpdateOfertaBoarding = new StringBuilder();
 			urlUpdateOfertaBoarding.append(urlBase);
@@ -146,6 +155,8 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
 			String ex = null;		
 	    	String mensaje = null;
 	    	boolean resultadoOK;
+	    	
+	        logger.debug("[ACTUALIZACION OFERTA] BODY: "+json.toString());
 			
 			try{			
 				respuesta = procesarPeticion(this.httpClientFacade, urlUpdateOfertaBoarding.toString(), POST_METHOD, headers, json, timeOut, "UTF-8");	
@@ -157,6 +168,16 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
 				ex = e1.getMessage();
 				resultadoOK = false;
 			}
+			
+			if (resultadoOK == true) {
+				logger.debug("[ACTUALIZACION OFERTA] MENSAJE: "+ mensaje);
+				logger.debug("[ACTUALIZACION OFERTA] RESULTADO: "+ resultadoOK);
+			} else {
+				logger.error("[ACTUALIZACION OFERTA] BODY: "+json.toString());
+				logger.error("[ACTUALIZACION OFERTA] MENSAJE: "+ mensaje);
+				logger.error("[ACTUALIZACION OFERTA] RESULTADO: "+ resultadoOK);
+			}
+			
 					
 			registrarLlamada(urlUpdateOfertaBoarding.toString(), json.toString(), respuesta != null ? respuesta.toString() : null, ex);
 			return new ComunicacionBoardingResponse(resultadoOK,mensaje);

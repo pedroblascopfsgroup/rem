@@ -1,8 +1,10 @@
 package es.pfsgroup.plugin.rem.tareasactivo.dao.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -182,9 +184,11 @@ public class ActivoTareaExternaDaoImpl extends AbstractEntityDao<TareaExterna, L
     @Override
     public List<Long> getTareasExternasIdByOfertaId(Long idOferta) {
     	
+    	Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idOferta", idOferta);
+		
+		rawDao.addParams(params);
     	
-    	
-    	rawDao.addParam("idOferta", idOferta);
     	List<Object> objetosLista = 
     			rawDao.getExecuteSQLList("SELECT TEX_ID "
     			+ "FROM TEX_TAREA_EXTERNA TEX "
@@ -213,8 +217,12 @@ public class ActivoTareaExternaDaoImpl extends AbstractEntityDao<TareaExterna, L
     	
     	//String idOfertaStr = String.valueOf(idOferta);
     	
-    	rawDao.addParam("idOferta", idOferta);
-    	rawDao.addParam("codigoTareaProcedimiento", codigoTareaProcedimiento);
+    	Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idOferta", idOferta);
+		params.put("codigoTareaProcedimiento", codigoTareaProcedimiento);
+		
+		rawDao.addParams(params);
+
     	List<Object> objetosLista = rawDao.getExecuteSQLList("SELECT TEX.TAR_ID "
     			+ "FROM TEX_TAREA_EXTERNA TEX "
     			+ "JOIN TAC_TAREAS_ACTIVOS TAC ON TAC.TAR_ID = TEX.TAR_ID "
@@ -245,8 +253,12 @@ public class ActivoTareaExternaDaoImpl extends AbstractEntityDao<TareaExterna, L
     	
     	//String idTrabajoStr = String.valueOf(tbjNumTrabajo);
     	
-    	rawDao.addParam("idTrabajo", tbjNumTrabajo);
-    	rawDao.addParam("codigoTareaProcedimiento", codigoTareaProcedimiento);
+    	Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idTrabajo", tbjNumTrabajo);
+		params.put("codigoTareaProcedimiento", codigoTareaProcedimiento);
+		
+		rawDao.addParams(params);
+		
     	List<Object> objetosLista = rawDao.getExecuteSQLList("SELECT TEX.TAR_ID "
     			+ "FROM TEX_TAREA_EXTERNA TEX "
     			+ "JOIN TAC_TAREAS_ACTIVOS TAC ON TAC.TAR_ID = TEX.TAR_ID "

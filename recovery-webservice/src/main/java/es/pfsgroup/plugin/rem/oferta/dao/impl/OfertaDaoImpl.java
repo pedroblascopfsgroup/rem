@@ -5,7 +5,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
@@ -199,7 +201,11 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	@Transactional
 	public List<String> getTareasActivas(String numOferta) {
 		
-		rawDao.addParam("numOferta", numOferta);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numOferta", numOferta);
+		
+		rawDao.addParams(params);
+		
 		List<Object> resultados = rawDao.getExecuteSQLList(
 				"		SELECT TAP.TAP_CODIGO" + 
 				"		FROM ECO_EXPEDIENTE_COMERCIAL ECO" + 

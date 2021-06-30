@@ -5583,8 +5583,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public List<Long> getIdAgrupacionesActivo(Long idActivo) {
 		if (Checks.esNulo(idActivo))
 			return null;
-
-		rawDao.addParam(  "idActivo", idActivo.toString());
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idActivo", idActivo.toString());
+		
+		rawDao.addParams(params);
 
 		List<Object> listaObj = rawDao.getExecuteSQLList("SELECT AGR_ID FROM ACT_AGA_AGRUPACION_ACTIVO WHERE ACT_ID = :idActivo AND BORRADO = 0");
 

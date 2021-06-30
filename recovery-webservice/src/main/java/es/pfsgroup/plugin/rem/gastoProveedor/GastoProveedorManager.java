@@ -1065,7 +1065,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Override
 	@Transactional(readOnly = false)
 	public boolean updateGastoByPrinexLBK(Long idGasto) {
-		rawDao.addParam(  "idGasto", idGasto);
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idGasto", idGasto);
+		
+		rawDao.addParams(params);
+
 		Double gastoTotal = 0.0;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
 		GastoDetalleEconomico detalleGasto = genericDao.get(GastoDetalleEconomico.class, filtro);

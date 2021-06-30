@@ -554,7 +554,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 										}
 									},
 									{
-							        	xtype: 'comboboxfieldbasedd',
+							        	xtype: 'comboboxfieldbase',
 							        	fieldLabel: HreRem.i18n('header.gestor')+"\\"+HreRem.i18n('header.gestoria'),
 							        	reference: 'usuarioGestor',
 							        	name: 'usuarioGestor',
@@ -564,12 +564,11 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            		disabled: '{!tipoGestor.selection}'
 						            		//value: $AU.getUser().userId,
 						            		//readOnly: $AU.userTipoGestor()=="GIAFORM"
-						            			
 						            	},
 						            	displayField: 'apellidoNombre',
 			    						valueField: 'id',
 			    						emptyText: 'Introduzca un usuario',
-										filtradoEspecial2: true
+										filtradoEspecial: true
 								    },
 							    	{ 
 							    		xtype: 'comboboxfieldbasedd',

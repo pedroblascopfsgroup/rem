@@ -554,7 +554,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 										}
 									},
 									{
-							        	xtype: 'comboboxfieldbase',
+							        	xtype: 'comboboxfieldbasedd',
 							        	fieldLabel: HreRem.i18n('header.gestor')+"\\"+HreRem.i18n('header.gestoria'),
 							        	reference: 'usuarioGestor',
 							        	name: 'usuarioGestor',
@@ -568,7 +568,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            	displayField: 'apellidoNombre',
 			    						valueField: 'id',
 			    						emptyText: 'Introduzca un usuario',
-										filtradoEspecial: true
+										filtradoEspecial2: true
 								    },
 							    	{ 
 							    		xtype: 'comboboxfieldbasedd',

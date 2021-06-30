@@ -3658,7 +3658,31 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getListHistoricoOcupadoTitulo',
 				extraParams: {id: '{activo.id}'}
 		   }
-	   }
+	   },
+	   comboDisponibleAdministrativo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'disponibleAdministrativo'}
+			}
+		},
+		comboDisponibleTecnico: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'disponibleTecnico'}
+			}
+		},
+		comboMotivoTecnico: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoTecnico'}
+			}
+		}
 		
 	 }
 });

@@ -6275,7 +6275,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeCodProveedorRem(String codProveedorREM) {
-		if(Checks.esNulo(codProveedorREM) || !StringUtils.isNumeric(codProveedorREM)) {
+		if(Checks.esNulo(codProveedorREM) || !StringUtils.isNumericSpace(codProveedorREM)) {
 			return false;
 		}
 
@@ -6285,6 +6285,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
+	
 	@Override
 	public Boolean existePoblacionByDescripcion(String codigoPoblacion) {
 		if(Checks.esNulo(codigoPoblacion)) {

@@ -360,6 +360,17 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 			        	}
 			        },
 					{
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.prp'),
+						reference: 'compradorPrpRef',
+						name: 'compradorPrp',
+						padding: '5px',
+						bind: {
+							store: '{comboSiNoRem}',
+							hidden: '{!comprador.esCarteraBankia}'
+						}
+					},
+					{
 						xtype: 'container',
 						layout: {
 							type: 'table',
@@ -376,7 +387,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 								name: 'seleccionClienteUrsus',
 								bind: {
 									store: '{comboClienteUrsus}',
-									hidden: '{!comprador.esCarteraBankia}'
+									hidden: true
 								},
 								listeners: {
 									change: 'establecerNumClienteURSUS',
@@ -395,7 +406,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 								xtype: 'button',
 								handler: 'onClickVerDetalleClienteUrsus',
 								bind: {
-									hidden: '{!comprador.esCarteraBankia}'
+									hidden: true
 								},
 								reference: 'btnVerDatosClienteUrsus',
 								disabled: this.lookupController().habilitarLupaClientes(),
@@ -411,7 +422,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'numeroClienteUrsus',
 						padding: '5px',
 						bind: {
-							hidden: '{!comprador.mostrarUrsus}',
+							hidden: true,
 							readOnly: true
 						},
 						editable: true
@@ -423,21 +434,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'numeroClienteUrsusBh',
 						padding: '5px',
 						bind: {
-							hidden: '{!comprador.mostrarUrsusBh}',
+							hidden: true,
 							readOnly: true
 						},
 						editable: true
-					},
-					{
-						xtype: 'comboboxfieldbase',
-						fieldLabel: HreRem.i18n('fieldlabel.prp'),
-						reference: 'compradorPrpRef',
-						name: 'compradorPrp',
-						padding: '5px',
-						bind: {
-							store: '{comboSiNoRem}',
-							hidden: '{!comprador.esCarteraBankia}'
-						}
 					}
 				]
 			},
@@ -523,7 +523,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						padding: '5px',
 						bind: {
 							store: '{comboClienteUrsusConyuge}',
-							hidden: !this.lookupController().esBankia()
+							hidden: true
+//							hidden: !this.lookupController().esBankia()
 						},
 						listeners: {
 							change: 'establecerNumClienteURSUSConyuge',
@@ -543,7 +544,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						reference: 'numeroClienteUrsusRefConyuge',
 						name: 'numeroClienteUrsusConyuge',
 						padding: '5px',
-						hidden: this.lookupController().esBankiaBH()|| !this.lookupController().esBankia(),
+						hidden: true,
+//						hidden: this.lookupController().esBankiaBH()|| !this.lookupController().esBankia(),
 						editable: false
 					},
 					{
@@ -552,7 +554,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						reference: 'numeroClienteUrsusBhRefConyuge',
 						name: 'numeroClienteUrsusBhConyuge',
 						padding: '5px',
-						hidden: !this.lookupController().esBankiaBH()|| !this.lookupController().esBankia(),
+						hidden: true,
+//						hidden: !this.lookupController().esBankiaBH()|| !this.lookupController().esBankia(),
 						editable: false
 					},
 					{
@@ -769,7 +772,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						fieldLabel: HreRem.i18n('fieldlabel.municipio.nacimiento'),
 						reference: 'localidadNacimientoRepresentanteCodigo',
 						name: 'localidadNacimientoRepresentanteCodigo',
-						allowBlank: false,
 						padding: '5px',
 						bind: {
 							store: '{comboMunicipioSinFiltro}',
@@ -810,7 +812,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						fieldLabel: HreRem.i18n('fieldlabel.pais.nacimiento'),
 						reference: 'paisNacimientoRepresentanteCodigo',
 						name: 'paisNacimientoRepresentanteCodigo',
-						allowBlank: false,
 						padding: '5px',
 						bind: {
 							store: '{comboPaises}',

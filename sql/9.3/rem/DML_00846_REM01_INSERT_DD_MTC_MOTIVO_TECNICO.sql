@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210623
+--## FECHA_CREACION=20210630
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-10039
@@ -47,7 +47,12 @@ DECLARE
     T_TIPO_DATA('03','Venta Cartera','Venta Cartera'),
     T_TIPO_DATA('04','Decisión interna Cajamar','Decisión interna Cajamar'),
     T_TIPO_DATA('09','Firma contrato exclusividad','Firma contrato exclusividad'),
-    T_TIPO_DATA('17','Pendiente precio','Pendiente precio')
+    T_TIPO_DATA('17','Pendiente precio','Pendiente precio'),
+    T_TIPO_DATA('18','Disconformidad Dispo. Técnico','Disconformidad Dispo. Técnico'),
+    T_TIPO_DATA('19','Cartera Tango','Cartera Tango'),
+    T_TIPO_DATA('20','Cartera Tango II','Cartera Tango II'),
+    T_TIPO_DATA('90','-','-')
+
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

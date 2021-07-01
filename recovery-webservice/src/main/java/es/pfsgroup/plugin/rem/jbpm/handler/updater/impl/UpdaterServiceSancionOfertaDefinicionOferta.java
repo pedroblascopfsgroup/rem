@@ -149,9 +149,6 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				expediente.setEstado(estado);
 				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 
-
-				}
-
 				
 				if(expediente.getCondicionante().getSolicitaReserva()!=null 
 						&& RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {
@@ -283,13 +280,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				expediente.setComiteSuperior(comite);
 				expediente.setComiteSancion(comite);
 			}
-
-
-		}
-
-		
-		
-	
+		}		
+	}
 
 	public String[] getCodigoTarea() {
 		return new String[] { CODIGO_T013_DEFINICION_OFERTA , CODIGO_T017_DEFINICION_OFERTA };

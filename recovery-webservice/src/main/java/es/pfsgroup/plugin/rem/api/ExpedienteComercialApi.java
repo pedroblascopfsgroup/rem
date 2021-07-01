@@ -1406,10 +1406,14 @@ public interface ExpedienteComercialApi {
 
 	DtoRespuestaBCGenerica getUltimaResolucionComiteBC(Long idExpediente);
 
-	void tareasScreening(DtoScreening dto) throws IllegalArgumentException, IllegalAccessException;
-
-	DtoScreening dataToDtoScreening(Long numOferta, String motivo, String observaciones, boolean bloqueo);
-
 	WebDto devolverValoresTEB(Long idTarea, String codigoTarea) throws IllegalAccessException, InvocationTargetException;
+
+	void tareaBloqueoScreening(DtoScreening dto) throws IllegalArgumentException, IllegalAccessException;
+
+	void tareaDesbloqueoScreening(DtoScreening dto) throws IllegalArgumentException, IllegalAccessException, Exception;
+
+	DtoScreening dataToDtoScreeningBloqueo(Long numOferta, String motivo, String observaciones);
+
+	DtoScreening dataToDtoScreeningDesBloqueo(Long numOferta, String motivo, String observaciones);
 
 }

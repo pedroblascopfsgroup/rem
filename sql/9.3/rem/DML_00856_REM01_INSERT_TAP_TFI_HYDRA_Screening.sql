@@ -121,14 +121,7 @@ BEGIN
 	                , null , ''DDSiNo''  , 0, ''HREOS-14376'', SYSDATE , null, null, null , null  , 0
 	            )';
 			EXECUTE IMMEDIATE V_MSQL;
-			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS
-                VALUES (
-                    '||V_ESQUEMA||'.S_TFI_TAREAS_FORM_ITEMS.NEXTVAL
-                    ,(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||''')
-                    ,  2, ''textarea'', ''observaciones'' , ''Observaciones'' , null , null 
-                    , null , null  , 0, ''HREOS-14376'', SYSDATE , null, null, null , null  , 0
-                )';
-			EXECUTE IMMEDIATE V_MSQL;
+		
 				
 	    	DBMS_OUTPUT.PUT_LINE('INSERCION EN [TFI_TAREAS_FORM_ITEMS] CORRECTA');
 	    	

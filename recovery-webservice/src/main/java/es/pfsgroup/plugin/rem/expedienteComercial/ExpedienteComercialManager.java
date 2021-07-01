@@ -86,6 +86,7 @@ import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteAdapter;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -129,6 +130,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoContrasteListas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
@@ -390,6 +392,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
+	@Autowired
+	private AgendaAdapter agendaAdapter;
+	
 	@Override
 	public ExpedienteComercial findOne(Long id) {
 		return expedienteComercialDao.get(id);
@@ -12307,40 +12312,79 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Override
 	@Transactional(readOnly = false)
-	public void tareasScreening(DtoScreening dto) throws IllegalArgumentException, IllegalAccessException {
+	public void tareaBloqueoScreening(DtoScreening dto) throws IllegalArgumentException, IllegalAccessException {
 		Oferta o = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferta());
 		ExpedienteComercial expedienteComercial =  expedienteComercialDao.getExpedienteComercialByIdOferta(o.getId());
+		TareaExterna tarea = null;
 		dto.setNumExpedienteComercial(expedienteComercial.getNumExpediente());
-		dto.setComboResultado(DDSinSiNo.cambioBooleanToCodigoDiccionario(dto.isBloqueo()));
-		if(dto.isBloqueo() && !dto.isTareaActiva()) {
+		dto.setComboResultado(DDSinSiNo.CODIGO_SI);
+		
+		if(!dto.isTareaActiva()) {
 			this.guardarBloqueoExpediente(expedienteComercial);
-			TareaExterna tarea = this.crearTareaScreening(dto, expedienteComercial);
-			if(tarea != null) {
-				if(Checks.esNulo(dto.getMotivoBloqueado())) {
-					dto.setMotivoBloqueado(DDMotivoBloqueo.BLOQUEO_SCREENING);
-				}
-				this.setValoresTEB(dto, tarea, dto.getCodigoTarea());
+			tarea = this.crearTareaScreening(dto, expedienteComercial);
+			if(Checks.esNulo(dto.getMotivoBloqueado())) {
+				dto.setMotivoBloqueado(DDMotivoBloqueo.BLOQUEO_SCREENING);
 			}
-		}else if(!dto.isBloqueo() && dto.isTareaActiva()){
+		}
+
+		if(tarea != null) {
+			this.setValoresTEB(dto, tarea, dto.getCodigoTarea());
+
+		}
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void tareaDesbloqueoScreening(DtoScreening dto) throws Exception {
+		Oferta o = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferta());
+		ExpedienteComercial expedienteComercial =  expedienteComercialDao.getExpedienteComercialByIdOferta(o.getId());
+		TareaExterna tarea = null;
+		dto.setNumExpedienteComercial(expedienteComercial.getNumExpediente());
+		dto.setComboResultado(DDSinSiNo.CODIGO_NO);
+		if(dto.isTareaActiva()){
 			if(Checks.esNulo(dto.getMotivoDesbloqueado())) {
 				dto.setMotivoDesbloqueado(DDMotivosDesbloqueo.DESBLOQUEO_SCREENING);
 			}
-			this.guardarDesbloqueoExpediente(expedienteComercial, dto.getMotivoDesbloqueado(), null);
+	
+			ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajoT017(expedienteComercial.getTrabajo().getId());
+			if(tramite != null) {
+				tarea = activoTramiteApi.getTareaActivaByCodigoAndTramite(tramite.getId(), ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
+				this.guardarDesbloqueoExpediente(expedienteComercial, dto.getMotivoDesbloqueado(), null);
+				
+				if(tarea != null) {
+					this.setValoresTEB(dto, tarea, dto.getCodigoTarea());
+					if(tarea.getTareaPadre() != null) {
+						this.avanzarTareaScreening(tarea.getId(), tarea.getTareaPadre().getId());
+					}
+				}		
+			}
+			this.actualizarEstadoBCInterlocutores(expedienteComercial);
+			genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		}
-
-		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 	}
 
 	@Override
-	public DtoScreening dataToDtoScreening(Long numOferta, String motivo, String observaciones, boolean bloqueo) {
+	public DtoScreening dataToDtoScreeningBloqueo(Long numOferta, String motivo, String observaciones) {
 		DtoScreening dto = new DtoScreening();
 		dto.setNumOferta(numOferta);
 		dto.setMotivoBloqueado(motivo);
 		dto.setObservacionesBloqueado(observaciones);
-		dto.setBloqueo(bloqueo);
-		if(bloqueo) {
-			dto.setCodigoTarea(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
-		}
+		dto.setTareaActiva(false);
+		dto.setCodigoTarea(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
+
+		return dto;
+	}
+	
+	@Override
+	public DtoScreening dataToDtoScreeningDesBloqueo(Long numOferta, String motivo, String observaciones) {
+		DtoScreening dto = new DtoScreening();
+		dto.setNumOferta(numOferta);
+		dto.setMotivoDesbloqueado(motivo);
+		dto.setObservacionesDesbloqueado(observaciones);
+		dto.setCodigoTarea(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
+		dto.setTareaActiva(true);
+
 		return dto;
 	}
 	
@@ -12462,30 +12506,33 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				String valor = this.getValorFromField((Object) field.get(dto));
 				Filter filtroNombreCampo = genericDao.createFilter(FilterType.EQUALS, "campo", campo);
 				ValorTareaBC val = genericDao.get(ValorTareaBC.class, filtroIdTarea, filtroNombreCampo );
-				if(val == null && valor != null) {
+				
+				if(val == null) {
 					val = new ValorTareaBC();
 					val.setTareaExterna(tarea);
 					val.setCampo(campo);
 					val.setAuditoria(Auditoria.getNewInstance());
 				}
-				if(valor != null) {
+				if(!Checks.esNulo(valor)) {
 					val.setValor(valor);
 				}
 				genericDao.save(ValorTareaBC.class, val);
+				
 			}
 		}
 	}
 
 	private String getValorFromField(Object object) {
 		String field = null;
-		
-		if (object instanceof String){
-			field = object.toString();
-		}else if(object instanceof Date){
-			Date d  = (Date) object;
-			field = ft.format(d);
-		}else  {
-			field = String.valueOf(object);
+		if (object != null) {
+			if (object instanceof String){
+				field = object.toString();
+			}else if(object instanceof Date){
+				Date d  = (Date) object;
+				field = ft.format(d);
+			}else  {
+				field = String.valueOf(object);
+			}
 		}
 		
 		return field;
@@ -12509,5 +12556,34 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return dto;
+	}
+	
+	
+	private void avanzarTareaScreening(Long idTareaExterna, Long idTareaNotificacion) throws Exception {
+		Map<String, String[]> valoresTarea = new HashMap<String, String[]>();
+		List<ValorTareaBC> valores = genericDao.getList(ValorTareaBC.class,  genericDao.createFilter(FilterType.EQUALS, "tareaExterna.id", idTareaExterna));	
+		if(valores != null && !valores.isEmpty()) {
+			valoresTarea.put("idTarea", new String[] { idTareaNotificacion.toString() });
+			for (ValorTareaBC valorTareaBC : valores) {
+				valoresTarea.put(valorTareaBC.getCampo(), new String[] { valorTareaBC.getValor() });
+			}
+		}
+		
+		agendaAdapter.save(valoresTarea);
+	}
+	
+	@Transactional(readOnly = false)
+	private void actualizarEstadoBCInterlocutores(ExpedienteComercial eco) {
+		List<InterlocutorExpediente> interlocutores = genericDao.getList(InterlocutorExpediente.class,  genericDao.createFilter(FilterType.EQUALS, "expedienteComercial.id", eco.getId()));
+		DDEstadoComunicacionC4C estadoValidado = (DDEstadoComunicacionC4C) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoComunicacionC4C.class, DDEstadoComunicacionC4C.C4C_VALIDADO);
+		if(interlocutores != null && !interlocutores.isEmpty()) {
+			for (InterlocutorExpediente interlocutorExpediente : interlocutores) {
+				if(interlocutorExpediente.getInterlocutorPBCCaixa() != null && interlocutorExpediente.getInterlocutorPBCCaixa().getInfoAdicionalPersona() != null) {
+					InfoAdicionalPersona ipa = interlocutorExpediente.getInterlocutorPBCCaixa().getInfoAdicionalPersona();
+					ipa.setEstadoComunicacionC4C(estadoValidado);
+					genericDao.save(InfoAdicionalPersona.class, ipa);	
+				}
+			}
+		}
 	}
 }

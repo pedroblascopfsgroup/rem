@@ -2609,11 +2609,13 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView bloqueoScreening(ModelMap model,Long numOferta, String motivo, String observaciones) {
+	public ModelAndView getValoresTareaBloqueoScreening(ModelMap model, Long idTarea) {
 		try {
-			expedienteComercialApi.tareasScreening(expedienteComercialApi.dataToDtoScreening( numOferta,  motivo,  observaciones, true));
+			DtoScreening dto = (DtoScreening) expedienteComercialApi.devolverValoresTEB(idTarea, ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
+			model.put(RESPONSE_DATA_KEY, dto);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {
@@ -2628,10 +2630,30 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getValoresTareaBloqueoScreening(ModelMap model, Long idTarea) {
+	public ModelAndView bloqueoScreening(ModelMap model,Long numOferta, String motivo, String observaciones) {
 		try {
-			DtoScreening dto = (DtoScreening) expedienteComercialApi.devolverValoresTEB(idTarea, ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
-			model.put(RESPONSE_DATA_KEY, dto);
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", numOferta);
+			Oferta oferta = genericDao.get(Oferta.class, filtro);
+			expedienteComercialApi.tareaBloqueoScreening(expedienteComercialApi.dataToDtoScreeningBloqueo(  oferta.getNumOferta(),  motivo,  observaciones));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView desBloqueoScreening(ModelMap model,Long numOferta, String motivo, String observaciones) {
+		try {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", numOferta);
+			Oferta oferta = genericDao.get(Oferta.class, filtro);
+			expedienteComercialApi.tareaDesbloqueoScreening(expedienteComercialApi.dataToDtoScreeningDesBloqueo( oferta.getNumOferta(),  motivo,  observaciones));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {

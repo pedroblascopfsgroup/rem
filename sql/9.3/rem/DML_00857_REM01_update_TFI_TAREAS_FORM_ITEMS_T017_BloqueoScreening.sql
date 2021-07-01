@@ -50,9 +50,7 @@ DECLARE
     	T_TIPO_DATA('T017_BloqueoScreening'		,'combobox', 	'4'		,'motivoDesbloqueado'					,'false' 	,'DDMotivosDesbloqueo'	,'Motivo desbloqueo'),
     	
     	T_TIPO_DATA('T017_BloqueoScreening'		,'textarea', 	'5'		,'observacionesBloqueado'				,null 		,null					,'Observaciones bloqueo'),
-    	T_TIPO_DATA('T017_BloqueoScreening'		,'textarea', 	'6'		,'observacionesDesbloqueado'			,null 		,null					,'Observaciones desbloqueo'),	
-    	
-    	T_TIPO_DATA('T017_BloqueoScreening'		,'textarea', 	'7'		,'observaciones'						,null 		,null					,'Observaciones')
+    	T_TIPO_DATA('T017_BloqueoScreening'		,'textarea', 	'6'		,'observacionesDesbloqueado'			,null 		,null					,'Observaciones desbloqueo')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

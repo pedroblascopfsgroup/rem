@@ -16,6 +16,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoScreening;
 
 /**
  * Clase de acceso a datos de los trámites de Activo.
@@ -138,6 +139,33 @@ public class ActivoTramiteDaoImpl extends AbstractEntityDao<ActivoTramite, Long>
 		int resultado = callProcedureSql.executeUpdate();
 		
 		return resultado == 1;
+	}
+	
+	@Override
+	public Boolean creaTareas(DtoScreening dto){
+		String procedureHQL = "BEGIN SP_CREAR_TAREA(:usernameParam, :expedienteParam, :tareaDestinoParam, null, null, :salida);  END;";
+
+
+		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+		callProcedureSql.setParameter("usernameParam", dto.getUsuarioLogado());
+		callProcedureSql.setParameter("expedienteParam", dto.getNumExpedienteComercial());
+		callProcedureSql.setParameter("tareaDestinoParam", dto.getCodigoTarea());
+		callProcedureSql.setParameter("salida", new String());
+
+		int resultado = callProcedureSql.executeUpdate();
+		
+		return resultado == 1;
+	}
+	
+	@Override
+	public ActivoTramite getTramiteComercialVigenteByTrabajoT017 (Long idTrabajo){
+		HQLBuilder hb = new HQLBuilder(" from ActivoTramite tra");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.trabajo.id", idTrabajo);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.tipoTramite.codigo", "T017");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.estadoTramite.codigo", JBPMActivoTramiteManager.ESTADO_PROCEDIMIENTO_EN_TRAMITE);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.auditoria.borrado", false);
+		
+		return HibernateQueryUtils.uniqueResult(this, hb);
 	}
 	
 }

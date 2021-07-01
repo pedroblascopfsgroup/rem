@@ -5290,5 +5290,40 @@ comprobarFormatoModificar: function() {
     		}
 		}
 	
+	},
+	//TODO estas dos funciones están para hacer pruebas ya que estas acciones se llamarán por ws. 
+	pruebaBloqueo: function(btn) {
+		var me = this;
+		var url =  $AC.getRemoteUrl('expedientecomercial/bloqueoScreening');
+		var numOferta = me.getView().getViewModel().getData().expediente.getData().idOferta;
+		var motivo = "";
+		var observaciones = "mundo";
+		Ext.Ajax.request({
+		     url: url,
+		     method: 'POST',
+			     params: {numOferta: numOferta, motivo: motivo, observaciones:observaciones},
+			     success: function(response, opts) {
+			     },
+			    failure: function (a, operation) {
+			    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			 	}
+		});
+	},
+	pruebaDesBloqueo: function(btn) {
+		var me = this;
+		var url =  $AC.getRemoteUrl('expedientecomercial/desBloqueoScreening');
+		var numOferta = me.getView().getViewModel().getData().expediente.getData().idOferta;
+		var motivo = "";
+		var observaciones = "mundo";
+		Ext.Ajax.request({
+		     url: url,
+		     method: 'POST',
+			     params: {numOferta: numOferta, motivo: motivo, observaciones:observaciones},
+			     success: function(response, opts) {
+			     },
+			    failure: function (a, operation) {
+			    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			 	}
+		});
 	}
 });

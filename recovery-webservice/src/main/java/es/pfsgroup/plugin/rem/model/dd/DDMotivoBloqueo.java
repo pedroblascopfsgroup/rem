@@ -32,7 +32,7 @@ public class DDMotivoBloqueo implements Auditable, Dictionary {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public static final String DESBLOQUEO_SCREENING = "DBLOQS";
+	public static final String BLOQUEO_SCREENING = "BLOQS";
 	
 	@Id
 	@Column(name = "DD_MBQ_ID")

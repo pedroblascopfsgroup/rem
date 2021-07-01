@@ -117,7 +117,7 @@ BEGIN
 
                 --Actualizamos el estado de publicación
                 V_MSQL:= 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET
-                DD_EPV_ID = (SELECT DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA WHERE DD_EPV_CODIGO = ''04''),
+                DD_EPV_ID = (SELECT DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA WHERE DD_EPV_CODIGO = ''03''),
                 APU_CHECK_PUBLICAR_V = 1,
                 APU_CHECK_OCULTAR_V = 0,
                 DD_MTO_V_ID = NULL,

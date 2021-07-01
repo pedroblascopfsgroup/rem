@@ -359,11 +359,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 		
 		condicionesSolicitudPagoUrgente : function(get) {
 			var me = this;
-			var cartera = me.getData().gasto.get('cartera');
-			var user = $AU.userIsRol("HAYASUPER") || $AU.userIsRol("HAYASADM");
 			
-			if(CONST.CARTERA['BBVA'] == cartera && user){
-				return true;
+			if (me.getData().gasto != null && me.getData().gasto.get('cartera') != null) {
+				var cartera = me.getData().gasto.get('cartera');
+				var user = $AU.userIsRol("HAYASUPER") || $AU.userIsRol("HAYASADM");
+				
+				if(CONST.CARTERA['BBVA'] == cartera && user){
+					return true;
+				} else {
+					return false;
+				}
 			} else {
 				return false;
 			}

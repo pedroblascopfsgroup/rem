@@ -27,7 +27,7 @@ DECLARE
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master 
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-10000';
+    V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-10084';
 
     V_ID NUMBER(16); -- Vble. para el id del activo
     V_ESTA_PUBLICADO NUMBER(16);

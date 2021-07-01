@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20210617
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210701
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14344
+--## INCIDENCIA_LINK=HREOS-14442
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-14088] - Santi Monzó 
 --##        0.2 Se ha modificado la equivalencia del campo ACT_ACTIVO.DD_SCR_ID  y Revisión- [HREOS-14344] - Alejandra García
+--##        0.3 Inclusión de cambios en modelo Fase 1 - [HREOS-14344] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -56,7 +57,7 @@ BEGIN
                      FROM(
                      SELECT DISTINCT 
                               BIE_NUMERO_ACTIVO,
-                              ''STOCK'' AS USUARIOCREAR,
+                              ''STOCK_BC'' AS USUARIOCREAR,
                               sysdate AS FECHACREAR
                               FROM (SELECT
                                  aux.NUM_IDENTIFICATIVO as BIE_NUMERO_ACTIVO
@@ -75,8 +76,7 @@ BEGIN
 				using (				
                            
                   SELECT       
-                  aux.NUM_IDENTIFICATIVO as ACT_NUM_ACTIVO,
-                  aux.NUM_IDENTIFICATIVO as ACT_NUM_ACTIVO_REM,
+                  aux.NUM_INMUEBLE as ACT_NUM_ACTIVO,
                   aux.NUM_IDENTIFICATIVO as ACT_NUM_ACTIVO_CAIXA,
                   SAC.DD_SAC_ID AS DD_SAC_ID,
                   STA.DD_TTA_ID AS DD_TTA_ID,
@@ -84,13 +84,15 @@ BEGIN
                   prp.DD_PRP_ID as DD_PRP_ID,
                   tud.DD_TUD_ID as DD_TUD_ID,
                   tcr.DD_TCR_ID as DD_TCR_ID,
-                  aux.PORC_OBRA_EJECUTADA as ACT_PORCENTAJE_CONSTRUCCION,
+                  aux.PORC_OBRA_EJECUTADA/100 as ACT_PORCENTAJE_CONSTRUCCION,
                   SCR.DD_SCR_ID AS DD_SCR_ID, 
                   SCR.DD_CRA_ID AS DD_CRA_ID, 
                   SPG.DD_SPG_ID AS DD_SPG_ID,
-                  bie.BIE_ID AS BIE_ID
-
+                  bie.BIE_ID AS BIE_ID,
+                  act.act_id as act_id
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
+                  JOIN '|| V_ESQUEMA ||'.BIE_BIEN bie ON bie.BIE_NUMERO_ACTIVO = aux.NUM_IDENTIFICATIVO
+                  LEFT JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = bie.BIE_NUMERO_ACTIVO AND ACT.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''PRODUCTO''  AND eqv1.DD_CODIGO_CAIXA = aux.PRODUCTO AND EQV1.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_STA_SUBTIPO_TITULO_ACTIVO STA ON STA.DD_STA_CODIGO = eqv1.DD_CODIGO_REM
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv2 ON eqv2.DD_NOMBRE_CAIXA = ''SOCIEDAD_PATRIMONIAL''  AND eqv2.DD_CODIGO_CAIXA = aux.SOCIEDAD_PATRIMONIAL 
@@ -106,10 +108,9 @@ BEGIN
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO tud ON tud.DD_TUD_CODIGO = eqv6.DD_CODIGO_REM         
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv7 ON eqv7.DD_NOMBRE_CAIXA = ''CANAL_DISTRIBUCION''  AND eqv7.DD_CODIGO_CAIXA = aux.CANAL_DISTRIBUCION AND EQV7.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR tcr ON tcr.DD_TCR_CODIGO = eqv7.DD_CODIGO_REM
-                  JOIN '|| V_ESQUEMA ||'.BIE_BIEN bie ON bie.BIE_NUMERO_ACTIVO = aux.NUM_IDENTIFICATIVO
                   WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                                        
-                                 ) us ON (us.ACT_NUM_ACTIVO_CAIXA = act.ACT_NUM_ACTIVO_CAIXA AND act.BORRADO=0)
+                                 ) us ON (us.act_id = act.act_id)
                                  when matched then update set
                                     act.DD_SAC_ID = us.DD_SAC_ID 
                                     ,act.DD_TTA_ID = us.DD_TTA_ID  
@@ -121,13 +122,12 @@ BEGIN
                                     ,act.DD_SCR_ID = us.DD_SCR_ID
                                     ,act.DD_CRA_ID = us.DD_CRA_ID
                                     ,act.DD_SPG_ID = us.DD_SPG_ID
-                                    ,act.USUARIOMODIFICAR = ''STOCK''
+                                    ,act.USUARIOMODIFICAR = ''STOCK_BC''
                                     ,act.FECHAMODIFICAR = sysdate
                                        
                                  WHEN NOT MATCHED THEN
                                  INSERT  (ACT_ID, 
                                           ACT_NUM_ACTIVO,
-                                          ACT_NUM_ACTIVO_REM,
                                           ACT_NUM_ACTIVO_CAIXA,                                       
                                           DD_SAC_ID,
                                           DD_TTA_ID,
@@ -145,7 +145,7 @@ BEGIN
                                           )
                                  VALUES ('|| V_ESQUEMA ||'.S_ACT_ACTIVO.NEXTVAL,
                                           us.ACT_NUM_ACTIVO,
-                                          us.ACT_NUM_ACTIVO_REM,
+                                          '|| V_ESQUEMA ||'.S_ACT_NUM_ACTIVO_REM.NEXTVAL,
                                           us.ACT_NUM_ACTIVO_CAIXA,
                                           us.DD_SAC_ID,
                                           us.DD_TTA_ID,
@@ -158,7 +158,7 @@ BEGIN
                                           us.DD_CRA_ID,
                                           us.DD_SPG_ID,
                                           us.BIE_ID,
-                                          ''STOCK'',
+                                          ''STOCK_BC'',
                                           sysdate)';
 
    EXECUTE IMMEDIATE V_MSQL;
@@ -204,19 +204,20 @@ BEGIN
                CASE
                   WHEN aux.IND_ENTREGA_VOL_POSESI IN (''S'',''1'') THEN 1
                   WHEN aux.IND_ENTREGA_VOL_POSESI IN (''N'',''0'') THEN 0
-               END as CBX_ENTRADA_VOLUN_POSES
+               END as CBX_ENTRADA_VOLUN_POSES,
+               CAIXA.CBX_ID
                FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
-                        
+               JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND ACT2.BORRADO = 0  
+               LEFT JOIN  '|| V_ESQUEMA ||'.ACT_ACTIVO_CAIXA CAIXA ON ACT2.ACT_ID=CAIXA.ACT_ID AND CAIXA.BORRADO=0
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''ESTADO_COMERCIAL_ALQUILER''  AND eqv1.DD_CODIGO_CAIXA = aux.ESTADO_COMERCIAL_ALQUILER AND EQV1.BORRADO=0
                LEFT JOIN '|| V_ESQUEMA ||'.DD_ECA_EST_COM_ALQUILER eca ON eca.DD_ECA_CODIGO = eqv1.DD_CODIGO_REM         
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv2 ON eqv2.DD_NOMBRE_CAIXA = ''ESTADO_COMERCIAL_VENTA''  AND eqv2.DD_CODIGO_CAIXA = aux.ESTADO_COMERCIAL_VENTA AND EQV2.BORRADO=0
                LEFT JOIN '|| V_ESQUEMA ||'.DD_ECV_EST_COM_VENTA ecv ON ecv.DD_ECV_CODIGO = eqv2.DD_CODIGO_REM        
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv3 ON eqv3.DD_NOMBRE_CAIXA = ''MOT_NECESIDAD_ARRAS''  AND eqv3.DD_CODIGO_CAIXA = aux.MOT_NECESIDAD_ARRAS AND EQV3.BORRADO=0
                LEFT JOIN '|| V_ESQUEMA ||'.DD_MNA_MOT_NECESIDAD_ARRAS mna ON mna.DD_MNA_CODIGO = eqv3.DD_CODIGO_REM        
-               JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
                WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                
-               ) us ON (us.ACT_ID = act1.ACT_ID )
+               ) us ON (us.CBX_ID = act1.CBX_ID )
                                  when matched then update set
                               act1.DD_ECA_ID = us.DD_ECA_ID 
                               ,act1.FECHA_ECA_EST_COM_ALQUILER = us.FECHA_ECA_EST_COM_ALQUILER                              
@@ -230,7 +231,7 @@ BEGIN
                               ,act1.CBX_CAMP_PRECIO_VENT_NEGO = us.CBX_CAMP_PRECIO_VENT_NEGO 
                               ,act1.CBX_NEC_FUERZA_PUBL = us.CBX_NEC_FUERZA_PUBL 
                               ,act1.CBX_ENTRADA_VOLUN_POSES = us.CBX_ENTRADA_VOLUN_POSES                                                                                                                        
-                              ,act1.USUARIOMODIFICAR = ''STOCK''
+                              ,act1.USUARIOMODIFICAR = ''STOCK_BC''
                               ,act1.FECHAMODIFICAR = sysdate
                               
                               WHEN NOT MATCHED THEN
@@ -265,7 +266,7 @@ BEGIN
                                           us.CBX_CAMP_PRECIO_VENT_NEGO,
                                           us.CBX_NEC_FUERZA_PUBL,
                                           us.CBX_ENTRADA_VOLUN_POSES,  
-                                          ''STOCK'',
+                                          ''STOCK_BC'',
                                           sysdate)';
 
    EXECUTE IMMEDIATE V_MSQL;
@@ -290,7 +291,7 @@ BEGIN
                ) us ON (us.ACT_ID = act1.ACT_ID )
                                  when matched then update set
                               act1.DD_CTC_ID = us.DD_CTC_ID                                                                                                                                             
-                              ,act1.USUARIOMODIFICAR = ''STOCK''
+                              ,act1.USUARIOMODIFICAR = ''STOCK_BC''
                               ,act1.FECHAMODIFICAR = sysdate
                               
                               WHEN NOT MATCHED THEN
@@ -305,7 +306,7 @@ BEGIN
                                           us.ACT_ID,
                                           (SELECT DD_CLA_ID FROM DD_CLA_CLASE_ACTIVO WHERE DD_CLA_CODIGO=''02''),
                                           us.DD_CTC_ID,                                                           
-                                          ''STOCK'',
+                                          ''STOCK_BC'',
                                           sysdate)';
 
    EXECUTE IMMEDIATE V_MSQL;

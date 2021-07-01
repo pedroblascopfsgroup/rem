@@ -1,6 +1,7 @@
 Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacion', {
     extend		: 'Ext.panel.Panel',
     xtype		: 'ofertascomercialagrupacion',
+    reference	: 'ofertascomercialagrupacionref',
     requires	: ['HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList'],
     scrollable	: 'y',
     layout: {

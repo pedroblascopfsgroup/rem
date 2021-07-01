@@ -327,5 +327,7 @@ public interface ActivoTramiteApi {
 	boolean isTramiteVenta(TipoProcedimiento procedimiento);
 
 	boolean isTramiteVentaApple(TipoProcedimiento procedimiento);
+
+	TareaExterna getTareaActivaByCodigoAndTramite(Long idTramite, String codigoTarea);
 }
 

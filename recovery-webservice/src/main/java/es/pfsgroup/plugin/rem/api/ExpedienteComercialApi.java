@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
+import es.pfsgroup.plugin.rem.model.DtoScreening;
 import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
@@ -1404,5 +1405,15 @@ public interface ExpedienteComercialApi {
 	boolean checkVueltaAtras(Long idTramite);
 
 	DtoRespuestaBCGenerica getUltimaResolucionComiteBC(Long idExpediente);
+
+	WebDto devolverValoresTEB(Long idTarea, String codigoTarea) throws IllegalAccessException, InvocationTargetException;
+
+	void tareaBloqueoScreening(DtoScreening dto) throws IllegalArgumentException, IllegalAccessException;
+
+	void tareaDesbloqueoScreening(DtoScreening dto) throws IllegalArgumentException, IllegalAccessException, Exception;
+
+	DtoScreening dataToDtoScreeningBloqueo(Long numOferta, String motivo, String observaciones);
+
+	DtoScreening dataToDtoScreeningDesBloqueo(Long numOferta, String motivo, String observaciones);
 
 }

@@ -936,4 +936,23 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		
 		return isTramiteVentaApple;
 	}
+	
+	@Override
+	public TareaExterna getTareaActivaByCodigoAndTramite(Long idTramite, String codigoTarea) {
+		TareaActivo tarAct = null;
+		TareaExterna tareaExterna = null;
+		
+		List<TareaActivo>  listaTareas = tareaActivoApi.getTareasActivoByIdTramite(idTramite);
+		if(!Checks.esNulo(listaTareas)){
+			for(int i=0; i<listaTareas.size(); i++){
+				tarAct = listaTareas.get(i);
+				if(Checks.esNulo(tarAct.getFechaFin()) && tarAct.getTareaExterna() != null && tarAct.getTareaExterna().getTareaProcedimiento() != null
+					&& codigoTarea.equals(tarAct.getTareaExterna().getTareaProcedimiento().getCodigo())){
+					tareaExterna = tarAct.getTareaExterna();
+				}
+			}
+		}
+
+		return tareaExterna;
+	}
 }

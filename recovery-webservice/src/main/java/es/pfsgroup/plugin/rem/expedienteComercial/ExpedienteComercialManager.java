@@ -12364,7 +12364,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 				}		
 			}
-			this.actualizarEstadoBCInterlocutores(expedienteComercial);
+			DDEstadoComunicacionC4C estadoValidado = (DDEstadoComunicacionC4C) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoComunicacionC4C.class, DDEstadoComunicacionC4C.C4C_VALIDADO);
+			this.actualizarEstadoBCInterlocutores(expedienteComercial, estadoValidado);
+			this.actualizarEstadoBCCompradores(expedienteComercial, estadoValidado);
 			genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		}
 	}
@@ -12578,16 +12580,30 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 	
 	@Transactional(readOnly = false)
-	private void actualizarEstadoBCInterlocutores(ExpedienteComercial eco) {
+	private void actualizarEstadoBCInterlocutores(ExpedienteComercial eco, DDEstadoComunicacionC4C estado) {
 		List<InterlocutorExpediente> interlocutores = genericDao.getList(InterlocutorExpediente.class,  genericDao.createFilter(FilterType.EQUALS, "expedienteComercial.id", eco.getId()));
-		DDEstadoComunicacionC4C estadoValidado = (DDEstadoComunicacionC4C) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoComunicacionC4C.class, DDEstadoComunicacionC4C.C4C_VALIDADO);
 		if(interlocutores != null && !interlocutores.isEmpty()) {
 			for (InterlocutorExpediente interlocutorExpediente : interlocutores) {
 				if(interlocutorExpediente.getInterlocutorPBCCaixa() != null && interlocutorExpediente.getInterlocutorPBCCaixa().getInfoAdicionalPersona() != null) {
 					InfoAdicionalPersona ipa = interlocutorExpediente.getInterlocutorPBCCaixa().getInfoAdicionalPersona();
-					ipa.setEstadoComunicacionC4C(estadoValidado);
+					ipa.setEstadoComunicacionC4C(estado);
 					genericDao.save(InfoAdicionalPersona.class, ipa);	
 				}
+			}
+		}
+	}
+	
+	@Transactional(readOnly = false)
+	private void actualizarEstadoBCCompradores(ExpedienteComercial eco, DDEstadoComunicacionC4C estado ) {
+		List<CompradorExpediente> compradoresExpediente = genericDao.getList(CompradorExpediente.class,  genericDao.createFilter(FilterType.EQUALS, "expedienteComercial.id", eco.getId()));
+		if(compradoresExpediente != null && !compradoresExpediente.isEmpty()) {
+			for (CompradorExpediente compradorExpediente : compradoresExpediente) {
+				Comprador comprador = genericDao.get(Comprador.class,  genericDao.createFilter(FilterType.EQUALS, "id", compradorExpediente.getComprador()));
+				if(comprador != null && comprador.getInfoAdicionalPersona() != null) {
+					InfoAdicionalPersona ipa = comprador.getInfoAdicionalPersona();
+					ipa.setEstadoComunicacionC4C(estado);
+					genericDao.save(InfoAdicionalPersona.class, ipa);	
+				}	
 			}
 		}
 	}

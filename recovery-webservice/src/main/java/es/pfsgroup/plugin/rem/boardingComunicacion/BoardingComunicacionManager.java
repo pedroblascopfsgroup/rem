@@ -81,8 +81,8 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
         // Asi se crea una pasarela para consumir el servicio que pasa por REM3 (REM-API).
         String urlBase = !Checks.esNulo(appProperties.getProperty("rem3.base.url"))
                 ? appProperties.getProperty("rem3.base.url") : "";
-        String urlLogin = !Checks.esNulo(appProperties.getProperty("rest.client.autenticacion.boarding.rem3"))
-                ? appProperties.getProperty("rest.client.autenticacion.boarding.rem3") : "";
+        String urlLogin = !Checks.esNulo(appProperties.getProperty("rem3.autenticacion.cfv"))
+                ? appProperties.getProperty("rem3.autenticacion.cfv") : "";
         
         StringBuilder urlLoginBoarding = new StringBuilder();
         urlLoginBoarding.append(urlBase);
@@ -144,8 +144,8 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
 	        // Asi se crea una pasarela para consumir el servicio que pasa por REM3 (REM-API).
 			String urlBase = !Checks.esNulo(appProperties.getProperty("rem3.base.url"))
 			        ? appProperties.getProperty("rem3.base.url") : "";
-			String urlUpdateOferta = !Checks.esNulo(appProperties.getProperty("rest.client.actualizar.ofertas.boarding.rem3"))
-			        ? appProperties.getProperty("rest.client.actualizar.ofertas.boarding.rem3") : "";
+			String urlUpdateOferta = !Checks.esNulo(appProperties.getProperty("rem3.actualizar.ofertas.cfv"))
+			        ? appProperties.getProperty("rem3.actualizar.ofertas.cfv") : "";
 			
 			StringBuilder urlUpdateOfertaBoarding = new StringBuilder();
 			urlUpdateOfertaBoarding.append(urlBase);

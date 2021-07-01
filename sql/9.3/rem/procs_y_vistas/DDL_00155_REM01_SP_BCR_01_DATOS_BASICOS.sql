@@ -128,6 +128,7 @@ BEGIN
                                  WHEN NOT MATCHED THEN
                                  INSERT  (ACT_ID, 
                                           ACT_NUM_ACTIVO,
+                                          ACT_NUM_ACTIVO_REM,
                                           ACT_NUM_ACTIVO_CAIXA,                                       
                                           DD_SAC_ID,
                                           DD_TTA_ID,

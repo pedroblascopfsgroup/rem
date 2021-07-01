@@ -65,6 +65,9 @@ public class ActivoPrinexActivos implements Serializable, Auditable {
 	@JoinColumn(name = "DD_MTC_ID")
   	private DDMotivoTecnico motivoTecnico;
     
+    @Column(name = "PRINEX_COSTE_ADQUISICION")
+    private Float costeAdquisicion;
+    
 	@Version   
 	private Long version;
 	
@@ -126,6 +129,14 @@ public class ActivoPrinexActivos implements Serializable, Auditable {
 
 	public void setVersion(Long version) {
 		this.version = version;
+	}
+
+	public Float getCosteAdquisicion() {
+		return costeAdquisicion;
+	}
+
+	public void setCosteAdquisicion(Float costeAdquisicion) {
+		this.costeAdquisicion = costeAdquisicion;
 	}
 	
 }

@@ -177,7 +177,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "           AND AGR.BORRADO  = 0 AND AGR.AGR_FECHA_BAJA IS NULL"
 				+ "           AND ACT.BORRADO  = 0";
 		if(tipoAgr != null) {
-			sql += " AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = ':tipoAgr')";
+			sql += " AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = :tipoAgr)";
 		}
 		String resultado = rawDao.getExecuteSQL(sql);
 		return !"0".equals(resultado);
@@ -259,7 +259,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			  WHERE aga.AGR_ID = agr.AGR_ID "
 				+ "			    AND agr.dd_tag_id = tag.dd_tag_id "
 				+ "			    AND act.act_id   = aga.act_id "
-				+ "			    AND tag.dd_tag_codigo = ':codTipoAgrupacion' "
+				+ "			    AND tag.dd_tag_codigo = :codTipoAgrupacion "
 				+ "			    AND act.ACT_NUM_ACTIVO = :numActivo "
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND agr.BORRADO  = 0 "
@@ -455,7 +455,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_CAT_CATASTRO WHERE"
-				+ "		 	CAT_REF_CATASTRAL =':catastro' "
+				+ "		 	CAT_REF_CATASTRAL =:catastro "
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
@@ -489,7 +489,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_CPR_COM_PROPIETARIOS WHERE"
-				+ "		 CPR_NIF = ':idPropietarios' "
+				+ "		 CPR_NIF = :idPropietarios "
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
@@ -505,7 +505,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM DD_ELO_ESTADO_LOCALIZACION WHERE"
-				+ "		 DD_ELO_CODIGO =':codEstadoLoc' "
+				+ "		 DD_ELO_CODIGO = :codEstadoLoc "
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
@@ -521,7 +521,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM DD_SEG_SUBESTADO_GESTION WHERE"
-				+ "		 DD_SEG_CODIGO =':codSubestadoGestion' "
+				+ "		 DD_SEG_CODIGO = :codSubestadoGestion "
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
@@ -1060,7 +1060,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		ON cla.DD_CLA_ID = aba.DD_CLA_ID "
 				+ "		WHERE "
 				+ "		cla.DD_CLA_CODIGO ='01' "
-				+ "		AND aba.ACT_ID = (select act_id from act_activo where act_num_activo = ':numActivo') ");
+				+ "		AND aba.ACT_ID = (select act_id from act_activo where act_num_activo = :numActivo) ");
 
 		return !"0".equals(resultado);
 	}
@@ -1206,7 +1206,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "				FROM DD_MTO_MOTIVOS_OCULTACION mto "
-				+ "				WHERE mto.DD_MTO_CODIGO = ':codigoMotivo' "
+				+ "				WHERE mto.DD_MTO_CODIGO = :codigoMotivo "
 				+ "				AND mto.BORRADO = 0");
 
 		return "0".equals(resultado);
@@ -1558,7 +1558,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_PDV_PLAN_DIN_VENTAS WHERE"
-				+ "		 	PDV_ACREEDOR_NIF = ':sociedadAcreedoraNIF' "
+				+ "		 	PDV_ACREEDOR_NIF = :sociedadAcreedoraNIF "
 				+ "		 	AND BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -1576,7 +1576,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_PRO_PROPIETARIO WHERE"
-				+ "		 	PRO_DOCIDENTIF = ':propietarioNIF' "
+				+ "		 	PRO_DOCIDENTIF = :propietarioNIF "
 				+ "		 	AND BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -1594,7 +1594,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_PVE_PROVEEDOR WHERE"
-				+ "		 PVE_DOCIDENTIF = ':proveedorMediadorNIF'"
+				+ "		 PVE_DOCIDENTIF = :proveedorMediadorNIF"
 				+ " 	 AND DD_TPR_ID = (SELECT DD_TPR_ID FROM DD_TPR_TIPO_PROVEEDOR WHERE DD_TPR_CODIGO = '04')" // Mediador-Colaborador-API.
 				+ "		 AND BORRADO = 0");
 
@@ -1633,7 +1633,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM DD_TCE_TIPO_CALIF_ENERGETICA WHERE"
-				+ "		 DD_TCE_DESCRIPCION = ':califEnergeticaDesc'"
+				+ "		 DD_TCE_DESCRIPCION = :califEnergeticaDesc"
 				+ " 	 AND BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -1669,7 +1669,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM DD_TCO_TIPO_COMERCIALIZACION WHERE"
-				+ "		 DD_TCO_CODIGO = ':destComercialCod'"
+				+ "		 DD_TCO_CODIGO = :destComercialCod"
 				+ " 	 AND BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -1687,7 +1687,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM DD_TAL_TIPO_ALQUILER WHERE"
-				+ "		 DD_TAL_CODIGO = ':tipoAlquilerCod '"
+				+ "		 DD_TAL_CODIGO = :tipoAlquilerCod "
 				+ " 	 AND BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -1705,7 +1705,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ${master.schema}.DD_TVI_TIPO_VIA WHERE"
-				+ "		 DD_TVI_CODIGO = ':tipoViaCod '"
+				+ "		 DD_TVI_CODIGO = :tipoViaCod "
 				+ " 	 AND BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -1723,7 +1723,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM DD_STA_SUBTIPO_TITULO_ACTIVO WHERE"
-				+ "		 DD_STA_CODIGO = ' :subtipoTituloCod '"
+				+ "		 DD_STA_CODIGO =  :subtipoTituloCod "
 				+ " 	 AND BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -1741,7 +1741,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM DD_TUD_TIPO_USO_DESTINO WHERE"
-				+ "		 DD_TUD_CODIGO = ':usoDominanteCod '"
+				+ "		 DD_TUD_CODIGO = :usoDominanteCod "
 				+ " 	 AND BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -1759,7 +1759,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM DD_EER_EST_EXP_RIESGO WHERE"
-				+ "		 DD_EER_CODIGO = ' :estadoExpRiesgoCod '"
+				+ "		 DD_EER_CODIGO =  :estadoExpRiesgoCod "
 				+ " 	 AND BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -1777,7 +1777,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ${master.schema}.DD_PRV_PROVINCIA WHERE"
-				+ "		 DD_PRV_CODIGO = ':provCod'"
+				+ "		 DD_PRV_CODIGO = :provCod"
 				+ " 	 AND BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -1795,7 +1795,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM DD_EAC_ESTADO_ACTIVO WHERE"
-				+ "		 DD_EAC_CODIGO = ' :estFisicoCod '"
+				+ "		 DD_EAC_CODIGO =  :estFisicoCod "
 				+ " 	 AND BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -1866,7 +1866,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+"		FROM DD_TPA_TIPO_ACTIVO WHERE"
-				+"		DD_TPA_CODIGO = ':codTipoActivo '"
+				+"		DD_TPA_CODIGO = :codTipoActivo "
 				+"		AND BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -1883,7 +1883,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+"		FROM DD_SAC_SUBTIPO_ACTIVO WHERE"
-				+"		DD_SAC_CODIGO = ':codSubtipoActivo '"
+				+"		DD_SAC_CODIGO = :codSubtipoActivo "
 				+"		AND BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -1900,7 +1900,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
 				+"	FROM ZON_PEF_USU WHERE"
-				+" 	USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = ':gestorUsername ')"
+				+" 	USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = :gestorUsername )"
 				+"  AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_CODIGO = 'HAYAGESTCOM')");
 
 		return !"0".equals(resultado);
@@ -1916,7 +1916,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
 				+"	FROM ZON_PEF_USU WHERE"
-				+"	USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = ':supervisorUsername')"
+				+"	USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = :supervisorUsername)"
 				+"	AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_CODIGO = 'HAYASUPCOM')");
 
 		return !"0".equals(resultado);
@@ -1929,7 +1929,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		if(Checks.esNulo(gestorUsername)) return false;
 
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = ':gestorUsername')"
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = :gestorUsername)"
 				+" AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_CODIGO = 'HAYAGESTFORM')");
 
 		return !"0".equals(resultado);
@@ -1942,7 +1942,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		if(Checks.esNulo(supervisorUsername)) return false;
 
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = ':supervisorUsername')"
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = :supervisorUsername)"
 				+" AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_CODIGO = 'HAYASUPFORM')");
 
 		return !"0".equals(resultado);
@@ -1955,7 +1955,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		if(Checks.esNulo(gestorUsername)) return false;
 
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME =':gestorUsername ')"
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = :gestorUsername )"
 				+" AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_CODIGO = 'HAYAGESTADM')");
 
 		return !"0".equals(resultado);
@@ -1968,7 +1968,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		if(Checks.esNulo(gestorUsername)) return false;
 
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = ':gestorUsername')"
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = :gestorUsername)"
 				+" AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_CODIGO = 'HAYAGESACT')");
 
 		return !"0".equals(resultado);
@@ -1982,7 +1982,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		if(Checks.esNulo(username)) return false;
 
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = ':username')"
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = :username)"
 				+" AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_CODIGO = 'GESTIAFORM')");
 
 		return !"0".equals(resultado);
@@ -2000,7 +2000,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ${master.schema}.DD_PRV_PROVINCIA WHERE"
-				+ "		 DD_PRV_CODIGO = ':codigoProvincia '"
+				+ "		 DD_PRV_CODIGO = :codigoProvincia "
 				+ "		 AND BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -2018,7 +2018,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ${master.schema}.DD_LOC_LOCALIDAD WHERE"
-				+ "		 DD_LOC_CODIGO = ':codigoMunicipio '");
+				+ "		 DD_LOC_CODIGO = :codigoMunicipio ");
 
 		return !"0".equals(resultado);
 	}
@@ -2037,8 +2037,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ${master.schema}.DD_LOC_LOCALIDAD LOC"
 				+ "		 INNER JOIN ${master.schema}.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = LOC.DD_PRV_ID"
-				+ "		 WHERE PRV.DD_PRV_CODIGO = ':codProvincia' AND"
-				+ "		 LOC.DD_LOC_CODIGO = ':codigoMunicipio'");
+				+ "		 WHERE PRV.DD_PRV_CODIGO = :codProvincia AND"
+				+ "		 LOC.DD_LOC_CODIGO = :codigoMunicipio");
 
 		return !"0".equals(resultado);
 	}
@@ -2072,7 +2072,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR WHERE"
-				+ "		 	GPV_NUM_GASTO_HAYA = ':numGasto' "
+				+ "		 	GPV_NUM_GASTO_HAYA = :numGasto "
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
@@ -2089,7 +2089,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM gld_gastos_linea_detalle "
 				+ "where BORRADO = 0 AND  gpv_id = (SELECT gpv_id FROM "
 				+ "gpv_gastos_proveedor where "
-				+ "gpv_num_gasto_haya = ':numGasto ')");
+				+ "gpv_num_gasto_haya = :numGasto )");
 		return !"0".equals(resultado);
 	}
 	
@@ -2104,8 +2104,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM gpv_gastos_proveedor "
-				+" where gpv_num_gasto_haya = ':numGasto' and "
-				+" dd_tga_id = (select dd_tga_id from dd_stg_subtipos_gasto where dd_stg_codigo = ':subtipoGasto')");
+				+" where gpv_num_gasto_haya = :numGasto and "
+				+" dd_tga_id = (select dd_tga_id from dd_stg_subtipos_gasto where dd_stg_codigo = :subtipoGasto)");
 		return !"0".equals(resultado);
 	}
 	
@@ -2121,18 +2121,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto) || Checks.esNulo(subtipoGasto))
 			return false;
 		String query = "SELECT COUNT(*) FROM gld_gastos_linea_detalle where " + 
-				"gpv_id in (select gpv_id from gpv_gastos_proveedor where gpv_num_gasto_haya = ':numGasto ' and borrado = 0) and " +
+				"gpv_id in (select gpv_id from gpv_gastos_proveedor where gpv_num_gasto_haya = :numGasto  and borrado = 0) and " +
 				"DD_STG_ID in (select dd_stg_id from dd_stg_subtipos_gasto where dd_stg_codigo like ':subtipoGasto ' and borrado = 0)  and " +
 				"BORRADO = 0 and ";
 				if(Checks.esNulo(tipoImpositivo)) {
 					query = query + "GLD_IMP_IND_TIPO_IMPOSITIVO is null and ";
 				}else {
-					query = query + "GLD_IMP_IND_TIPO_IMPOSITIVO = ':tipoImpositivo' and ";
+					query = query + "GLD_IMP_IND_TIPO_IMPOSITIVO = :tipoImpositivo and ";
 				}
 				if(Checks.esNulo(tipoImpuesto)) {
 					query = query + "dd_tit_id is null";
 				}else {
-					query = query + "dd_tit_id in (select dd_tit_id from dd_tit_tipos_impuesto where dd_tit_codigo = ':tipoImpuesto' and borrado = 0) ";
+					query = query + "dd_tit_id in (select dd_tit_id from dd_tit_tipos_impuesto where dd_tit_codigo = :tipoImpuesto and borrado = 0) ";
 				}
 				
 		
@@ -2153,7 +2153,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV "
 				+ "      JOIN ACT_PRO_PROPIETARIO PRO ON GPV.PRO_ID = PRO.PRO_ID "
 				+ "      JOIN DD_CRA_CARTERA CRA ON PRO.DD_CRA_ID = CRA.DD_CRA_ID "
-				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = ':numGasto ' "
+				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto  "
 				+ "         AND CRA.DD_CRA_CODIGO = '08' "
 				+ "		 	AND GPV.BORRADO = 0");
 		return !"0".equals(resultado);
@@ -2171,9 +2171,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM GLD_ENT ENT"
 				+ " INNER JOIN GLD_TBJ TBJ ON TBJ.GLD_ID = ENT.GLD_ID"
 				+ "	INNER JOIN GLD_GASTOS_LINEA_DETALLE GLD ON TBJ.GLD_ID = GLD.GLD_ID"
-				+ "	WHERE GLD.GPV_ID = (SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = ':numGasto')"
+				+ "	WHERE GLD.GPV_ID = (SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = :numGasto)"
 				+ " AND ENT.ENT_ID = (SELECT DD_ENT_ID FROM DD_ENT_ENTIDAD_GASTO WHERE DD_ENT_CODIGO ='ACT')"
-				+ "	AND ENT.DD_ENT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = ':numActivo')");
+				+ "	AND ENT.DD_ENT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = :numActivo)");
 		return !"0".equals(resultado);
 	}
 
@@ -2370,7 +2370,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ${master.schema}.DD_TGE_TIPO_GESTOR WHERE"
-				+ "		 DD_TGE_CODIGO = ':codigoTipoGestor '");
+				+ "		 DD_TGE_CODIGO = :codigoTipoGestor ");
 
 		return !"0".equals(resultado);
 	}
@@ -2383,7 +2383,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ${master.schema}.USU_USUARIOS WHERE"
-				+ "		 USU_USERNAME = ' :username ' AND BORRADO = 0");
+				+ "		 USU_USERNAME =  :username  AND BORRADO = 0");
 
 		return !"0".equals(resultado);
 	}
@@ -2405,7 +2405,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			INNER JOIN DES_DESPACHO_EXTERNO des on tde.DD_TDE_ID = des.DD_TDE_ID "
 				+ "			INNER JOIN USD_USUARIOS_DESPACHOS usd on usd.DES_ID = des.DES_ID "
 				+ "			INNER JOIN REMMASTER.USU_USUARIOS usu on usd.USU_ID = usu.USU_ID "
-				+ "			WHERE tge.DD_TGE_CODIGO =':codigoTipoGestor' AND usu.USU_USERNAME =':username'");
+				+ "			WHERE tge.DD_TGE_CODIGO = :codigoTipoGestor AND usu.USU_USERNAME = :username");
 		return !"0".equals(resultado);
 
 
@@ -2459,7 +2459,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+ "		 FROM DD_GCM_GESTOR_CARGA_MASIVA gcm "
 					+ "			INNER JOIN ${master.schema}.DD_TGE_TIPO_GESTOR tge on gcm.DD_GCM_CODIGO = tge.DD_TGE_CODIGO "
 					+ "			INNER JOIN DD_CRA_CARTERA cra on gcm.DD_CRA_ID = cra.DD_CRA_ID "
-					+ "			WHERE gcm.DD_GCM_CODIGO =':codigoGestor' "
+					+ "			WHERE gcm.DD_GCM_CODIGO = :codigoGestor "
 					+ "		 	AND cra.DD_CRA_ID = "+cartera+" "
 					+ "			AND gcm.BORRADO = 0");
 
@@ -2495,15 +2495,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		else {
 			enAgrupacion = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_ACTIVO ACT "
 						+ "						JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID "
-						+ "						WHERE ACT_NUM_ACTIVO = ':numActivo'");
+						+ "						WHERE ACT_NUM_ACTIVO = :numActivo");
 		}
 
 		//El activo NO pertenece a una agrupacion
 		if("0".equals(enAgrupacion)){
 
 			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM GPV_GASTOS_PROVEEDOR GPV "
-							+ "						JOIN ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = ':numActivo' "
-							+ "						WHERE GPV.GPV_NUM_GASTO_HAYA = ':numGasto' "
+							+ "						JOIN ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = :numActivo "
+							+ "						WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
 							+ "						AND GPV.GPV_FECHA_EMISION < ACT.ACT_VENTA_EXTERNA_FECHA "
 							+ "						AND ACT.DD_SCR_ID IN (SELECT DD_SCR_ID FROM DD_SCR_SUBCARTERA WHERE "
 							+ "							DD_CRA_ID = (SELECT DD_CRA_ID FROM DD_CRA_CARTERA WHERE DD_CRA_CODIGO = 3)"
@@ -2514,11 +2514,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		else {
 
 			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM GPV_GASTOS_PROVEEDOR GPV "
-							+ "						JOIN ACT_ACTIVO ACT ON ACT_NUM_ACTIVO = ':numActivo' "
+							+ "						JOIN ACT_ACTIVO ACT ON ACT_NUM_ACTIVO = :numActivo "
 							+ "						JOIN ACT_AGA_AGRUPACION_ACTIVO ACT_AGA ON ACT_AGA.ACT_ID = ACT.ACT_ID "
 							+ "						JOIN OFR_OFERTAS OFR ON OFR.AGR_ID = ACT_AGA.AGR_ID "
 							+ "						JOIN ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID "
-							+ "						WHERE GPV.GPV_NUM_GASTO_HAYA = ':numGasto' "
+							+ "						WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
 							+ "						AND GPV.GPV_FECHA_EMISION < ECO.ECO_FECHA_VENTA "
 							+ "						AND ACT.DD_SCR_ID IN (SELECT DD_SCR_ID FROM DD_SCR_SUBCARTERA WHERE "
 							+ "							DD_CRA_ID = (SELECT DD_CRA_ID FROM DD_CRA_CARTERA WHERE DD_CRA_CODIGO = 3)"
@@ -2817,8 +2817,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	            +"         FROM REMMASTER.USU_USUARIOS U"  
 	            +"         JOIN ZON_PEF_USU Z ON Z.USU_ID =  U.USU_ID" 
 	            +"         JOIN PEF_PERFILES P ON P.PEF_ID = Z.PEF_ID"  
-	            +"         WHERE LOWER(P.PEF_CODIGO) = LOWER(':codPerfil')"  
-	            +"         AND LOWER(U.USU_USERNAME) = LOWER(':codUsuario')"
+	            +"         WHERE LOWER(P.PEF_CODIGO) = LOWER(:codPerfil)"  
+	            +"         AND LOWER(U.USU_USERNAME) = LOWER(:codUsuario)"
 	            +"         AND P.BORRADO = 0 AND U.BORRADO = 0");
 	    
         return "0".equals(resultado);
@@ -3091,7 +3091,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
 				+ "		FROM DD_COS_COMITES_SANCION cos			"
 				+ "     WHERE cos.BORRADO = 0					"
-				+ "		AND cos.DD_COS_CODIGO = ':codComite'   "
+				+ "		AND cos.DD_COS_CODIGO = :codComite   "
 				);
 
 		return !res.equals("0");
@@ -3106,7 +3106,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
 				+ "     FROM DD_TIT_TIPOS_IMPUESTO tit			"
 				+ "		WHERE tit.BORRADO = 0					"
-				+ "		AND tit.DD_TIT_CODIGO = ':codTipoImpuesto' "
+				+ "		AND tit.DD_TIT_CODIGO = :codTipoImpuesto "
 				);
 
 		return !res.equals("0");
@@ -3142,7 +3142,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
 					+ "     FROM ACT_PVE_PROVEEDOR act			"
 					+ "		WHERE act.BORRADO = 0					"
-					+ "		AND act.PVE_COD_REM = ':codPrescriptor' "
+					+ "		AND act.PVE_COD_REM = :codPrescriptor "
 					);
 			resultado = !res.equals("0");
 		}
@@ -3161,7 +3161,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
 					+ "		FROM DD_TDI_TIPO_DOCUMENTO_ID tdi		"
 					+ "		WHERE tdi.BORRADO = 0					"
-					+ "		AND tdi.DD_TDI_CODIGO = ':codDocumento' "
+					+ "		AND tdi.DD_TDI_CODIGO = :codDocumento "
 					);
 
 			resultado = !res.equals("0");
@@ -3182,7 +3182,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_AGR_AGRUPACION WHERE"
-				+ "		 	AGR_DESCRIPCION =':descripcionAgrupacion' "
+				+ "		 	AGR_DESCRIPCION = :descripcionAgrupacion "
 				+ "		 	AND BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -3262,8 +3262,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		if(!Checks.esNulo(cartera) && !Checks.esNulo(subcartera)){
 			String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM DD_SCR_SUBCARTERA SCR "
-					+ "JOIN DD_CRA_CARTERA CRA ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.DD_CRA_CODIGO = ':cartera' "
-					+ "WHERE DD_SCR_CODIGO = ':subcartera' ");
+					+ "JOIN DD_CRA_CARTERA CRA ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.DD_CRA_CODIGO = :cartera "
+					+ "WHERE DD_SCR_CODIGO = :subcartera ");
 
 			return (Integer.valueOf(resultado) > 0);
 		}
@@ -3283,8 +3283,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(!Checks.esNulo(tipoTitulo) && !Checks.esNulo(subtipo)){
 			
 			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM DD_STA_SUBTIPO_TITULO_ACTIVO STA "
-				+ "JOIN DD_TTA_TIPO_TITULO_ACTIVO TTA ON STA.DD_TTA_ID = TTA.DD_TTA_ID AND TTA.DD_TTA_CODIGO = ':tipoTitulo' "
-				+ "WHERE STA.DD_STA_CODIGO = ':subtipo'");
+				+ "JOIN DD_TTA_TIPO_TITULO_ACTIVO TTA ON STA.DD_TTA_ID = TTA.DD_TTA_ID AND TTA.DD_TTA_CODIGO = :tipoTitulo "
+				+ "WHERE STA.DD_STA_CODIGO = :subtipo");
 
 			return (Integer.valueOf(resultado) > 0);
 		}
@@ -3304,9 +3304,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM GLD_ENT ENT"
 				+ " INNER JOIN GLD_TBJ TBJ ON TBJ.GLD_ID = ENT.GLD_ID" 
 				+ " INNER JOIN GLD_GASTOS_LINEA_DETALLE GLD ON TBJ.GLD_ID = GLD.GLD_ID" 
-				+ "	WHERE GLD.GPV_ID = (SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = ':numGasto')"
+				+ "	WHERE GLD.GPV_ID = (SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = :numGasto)"
 				+ " AND ENT.DD_ENT_ID = (SELECT DD_ENT_ID FROM DD_ENT_ENTIDAD_GASTO WHERE DD_ENT_CODIGO ='ACT') "
-				+ "	AND ENT.ENT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = ':numActivo')");
+				+ "	AND ENT.ENT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = :numActivo)");
 		return !"0".equals(resultado);
 	}
 
@@ -3335,7 +3335,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		rawDao.addParams(params);
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_ACTIVO "
-				+ "WHERE ACT_COD_PROMOCION_PRINEX = ':promocion'");
+				+ "WHERE ACT_COD_PROMOCION_PRINEX = :promocion");
 		return !"0".equals(resultado);
 	}
 
@@ -3518,7 +3518,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_AGR_AGRUPACION agr " +
 				" INNER JOIN DD_TAG_TIPO_AGRUPACION tipo ON tipo.DD_TAG_ID = agr.DD_TAG_ID AND DD_TAG_CODIGO = '15'" +
-				" WHERE agr.AGR_NUM_AGRUP_REM = ':numAgrupacion '" +
+				" WHERE agr.AGR_NUM_AGRUP_REM = :numAgrupacion " +
 				" AND agr.BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -3535,10 +3535,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
 			return false;
 
-		String tipoAlquilerAgrupacion = rawDao.getExecuteSQL("SELECT DD_TAL_ID FROM ACT_AGR_AGRUPACION agr WHERE agr.AGR_NUM_AGRUP_REM = ':numAgrupacion'" +
+		String tipoAlquilerAgrupacion = rawDao.getExecuteSQL("SELECT DD_TAL_ID FROM ACT_AGR_AGRUPACION agr WHERE agr.AGR_NUM_AGRUP_REM = :numAgrupacion" +
 				" AND agr.BORRADO = 0");
 
-		String tipoAlquilerActivo = rawDao.getExecuteSQL("SELECT DD_TAL_ID FROM ACT_ACTIVO act WHERE act.ACT_NUM_ACTIVO = ' :numActivo '" +
+		String tipoAlquilerActivo = rawDao.getExecuteSQL("SELECT DD_TAL_ID FROM ACT_ACTIVO act WHERE act.ACT_NUM_ACTIVO =  :numActivo " +
 				" AND act.BORRADO = 0");
 
 		if (!Checks.esNulo(tipoAlquilerAgrupacion) && !tipoAlquilerAgrupacion.equals("")) {
@@ -3571,7 +3571,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_AGR_AGRUPACION agr " +
 				" INNER JOIN DD_TAG_TIPO_AGRUPACION tipo ON tipo.DD_TAG_ID = agr.DD_TAG_ID AND DD_TAG_CODIGO = '14'" +
-				" WHERE agr.AGR_NUM_AGRUP_REM = ':numAgrupacion '" +
+				" WHERE agr.AGR_NUM_AGRUP_REM = :numAgrupacion " +
 				" AND agr.BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -3587,7 +3587,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(numAgrupacion != null && !numAgrupacion.isEmpty()){
 			 resultado = rawDao.getExecuteSQL("SELECT scr.DD_SCR_CODIGO " +
 			 		" FROM ACT_ACTIVO act  " +
-			 		" INNER JOIN ACT_AGR_AGRUPACION agr ON agr.AGR_NUM_AGRUP_REM = ' :numAgrupacion '" +
+			 		" INNER JOIN ACT_AGR_AGRUPACION agr ON agr.AGR_NUM_AGRUP_REM =  :numAgrupacion " +
 			 		" INNER JOIN ACT_AGA_AGRUPACION_ACTIVO aga ON agr.AGR_ID = aga.AGR_ID AND aga.AGA_PRINCIPAL = 1 " +
 			 		" INNER JOIN DD_SCR_SUBCARTERA scr ON act.DD_SCR_ID = scr.DD_SCR_ID  " +
 			 		" WHERE act.ACT_ID = aga.ACT_ID");
@@ -3794,7 +3794,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = "0";
 		if(numActivoHaya != null) {
 			 resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_CMG_COMUNICACION_GENCAT com " +
-			 		" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = ':numActivoHaya') " +
+			 		" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = :numActivoHaya) " +
 			 		" AND com.DD_ECG_ID = ( " +
 			 		" SELECT DD_ECG_ID FROM DD_ECG_ESTADO_COM_GENCAT WHERE DD_ECG_CODIGO = 'COMUNICADO')");
 		}
@@ -3811,7 +3811,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = "0";
 		if(numActivoHaya != null) {
 			resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_CMG_COMUNICACION_GENCAT com " +
-			 		" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = ':numActivoHaya') " +
+			 		" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = :numActivoHaya) " +
 			 		" AND com.DD_ECG_ID IN ( SELECT DD_ECG_ID FROM DD_ECG_ESTADO_COM_GENCAT WHERE DD_ECG_CODIGO IN ('CREADO','COMUNICADO'))");
 		}
 
@@ -3827,7 +3827,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = "0";
 		if(numActivoHaya != null) {
 			resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_CMG_COMUNICACION_GENCAT com " +
-			 		" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = ':numActivoHaya') " +
+			 		" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = :numActivoHaya) " +
 			 		" AND com.DD_ECG_ID NOT IN ( SELECT DD_ECG_ID FROM DD_ECG_ESTADO_COM_GENCAT WHERE DD_ECG_CODIGO IN ('CREADO','COMUNICADO'))");
 		}
 
@@ -3843,7 +3843,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = "0";
 		if(numActivoHaya != null) {
 			resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_CMG_COMUNICACION_GENCAT com " +
-			 		" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = ':numActivoHaya') " +
+			 		" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = :numActivoHaya) " +
 			 		" AND com.DD_ECG_ID IN ( SELECT DD_ECG_ID FROM DD_ECG_ESTADO_COM_GENCAT WHERE DD_ECG_CODIGO IN ('CREADO','COMUNICADO'))");
 		}
 
@@ -3924,7 +3924,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			 resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_CMG_COMUNICACION_GENCAT cmg " +
 			 		" JOIN   ACT_ADG_ADECUACION_GENCAT adg on cmg.cmg_id = adg.cmg_id" +
 			 		" JOIN ACT_ACTIVO act on act.act_id = cmg.act_id"+
-			 		" WHERE ACT_NUM_ACTIVO = ':numActivoHaya' AND adg.BORRADO = 0");
+			 		" WHERE ACT_NUM_ACTIVO = :numActivoHaya AND adg.BORRADO = 0");
 		}
 
 		return !"0".equals(resultado);
@@ -3947,7 +3947,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			 		"JOIN TAC_TAREAS_ACTIVOS TAC ON TRA.TRA_ID = TAC.TRA_ID " +
 			 		"JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TAC.TAR_ID = TAR.TAR_ID " +
 			 		"JOIN TEX_TAREA_EXTERNA TEX ON TEX.TAR_ID = TAR.TAR_ID " +
-			 		"WHERE ACT.ACT_NUM_ACTIVO=':numActivoHaya ' AND TAR.TAR_TAREA_FINALIZADA= 1");
+			 		"WHERE ACT.ACT_NUM_ACTIVO= :numActivoHaya  AND TAR.TAR_TAREA_FINALIZADA= 1");
 		}
 
 		return !"0".equals(resultado);
@@ -4026,7 +4026,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM DD_STG_SUBTIPOS_GASTO WHERE"
-				+ "		 DD_STG_CODIGO =':idImpuesto'"
+				+ "		 DD_STG_CODIGO = :idImpuesto"
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
@@ -4221,7 +4221,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+"		FROM DD_TPE_TIPOS_PERIOCIDAD"
-				+"		WHERE DD_TPE_CODIGO = ':codPeriodicidad'"
+				+"		WHERE DD_TPE_CODIGO = :codPeriodicidad"
 				+"		AND BORRADO= 0");
 		return !"0".equals(resultado);
 	}
@@ -4237,7 +4237,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+"		FROM DD_CAI_CALCULO_IMPUESTO"
-				+"		WHERE DD_CAI_CODIGO = ':codCalculo'"
+				+"		WHERE DD_CAI_CODIGO = :codCalculo"
 				+"		AND BORRADO= 0");
 
 		return !"0".equals(resultado);
@@ -4512,7 +4512,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "FROM ACT_ACTIVO ACT "
 				+ "LEFT JOIN DD_TTA_TIPO_TITULO_ACTIVO TTA ON TTA.DD_TTA_ID = ACT.DD_TTA_ID "
 				+ "WHERE TTA.DD_TTA_CODIGO = '05' "
-				+ "AND ACT.ACT_NUM_ACTIVO = ':numActivo '");
+				+ "AND ACT.ACT_NUM_ACTIVO = :numActivo ");
 
 		return !"0".equals(resultado);		
 	}
@@ -4664,7 +4664,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
 				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = :numExpediente AND ECO.BORRADO = 0"
-				+"		AND nvl(ECO.ECO_FECHA_SANCION, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE(':fecha ','dd/MM/yy')+1");
+				+"		AND nvl(ECO.ECO_FECHA_SANCION, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE(:fecha ,'dd/MM/yy')+1");
 
 		return !"1".equals(resultado);
 	}
@@ -4682,7 +4682,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
 				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = :numExpediente AND ECO.BORRADO = 0"
-				+"		AND nvl(ECO.ECO_FECHA_ALTA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE(':fecha','dd/MM/yy')+1");
+				+"		AND nvl(ECO.ECO_FECHA_ALTA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE(:fecha,'dd/MM/yy')+1");
 
 		return !"1".equals(resultado);
 	}
@@ -4811,7 +4811,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+"		FROM ACT_TBJ_TRABAJO TBJ"
 				+"		INNER JOIN ACT_TCT_TRABAJO_CFGTARIFA TCT ON TCT.TBJ_ID=TBJ.TBJ_ID AND TCT.BORRADO=0"
 				+"		INNER JOIN ACT_CFT_CONFIG_TARIFA CFT ON CFT.CFT_ID=TCT.CFT_ID AND CFT.BORRADO=0"
-				+"		INNER JOIN REM01.DD_TTF_TIPO_TARIFA TTF ON TTF.DD_TTF_ID=CFT.DD_TTF_ID AND TTF.BORRADO=0 AND TTF.DD_TTF_CODIGO = "+ "':tipoTarifa'"
+				+"		INNER JOIN REM01.DD_TTF_TIPO_TARIFA TTF ON TTF.DD_TTF_ID=CFT.DD_TTF_ID AND TTF.BORRADO=0 AND TTF.DD_TTF_CODIGO = :tipoTarifa"
 				+"		WHERE TBJ.TBJ_NUM_TRABAJO= :numTrabajo "
 				+"		GROUP BY TTF.DD_TTF_CODIGO)  IS NULL THEN 0"
 				+"		ELSE 1"
@@ -4833,7 +4833,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT (*) "
 				+ "FROM DD_ETF_ENTIDAD_FINANCIERA DDETF WHERE "
-				+ "DDETF.DD_ETF_CODIGO = ':entidadFinanciera ' "
+				+ "DDETF.DD_ETF_CODIGO = :entidadFinanciera  "
 				+" AND DDETF.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
@@ -4966,7 +4966,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "FROM ACT_ACTIVO ACT "
 				+ "LEFT JOIN DD_TTA_TIPO_TITULO_ACTIVO TTA ON TTA.DD_TTA_ID = ACT.DD_TTA_ID "
 				+ "WHERE TTA.DD_TTA_CODIGO = '05' "
-				+ "AND ACT.ACT_NUM_ACTIVO = ':numActivo '");
+				+ "AND ACT.ACT_NUM_ACTIVO = :numActivo ");
 
 		return !"0".equals(resultado);
 	}
@@ -4982,7 +4982,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM DD_ACM_ACCION_MASIVA ACM "
-				+ "WHERE ACM.DD_ACM_CODIGO =' :codAccion '");
+				+ "WHERE ACM.DD_ACM_CODIGO = :codAccion ");
 
 		return !"0".equals(resultado);
 	}
@@ -5043,7 +5043,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+"			ON AXO.OFR_ID = OFR.OFR_ID "
 					+"			JOIN ACT_ACTIVO ACT "
 					+"			ON AXO.ACT_ID = ACT.ACT_ID "
-					+"			WHERE EXP.ECO_NUM_EXPEDIENTE=':numExpedienteComercial '"
+					+"			WHERE EXP.ECO_NUM_EXPEDIENTE= :numExpedienteComercial "
 					+"			AND OFR.BORRADO = 0 ";
 		String resultado = rawDao.getExecuteSQL(sql);
 		Enumeration <String> claves = activos.keys();
@@ -5068,7 +5068,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM DD_RES_RESULTADO_SOLICITUD RES "
-				+ "WHERE RES.DD_RES_CODIGO =' :codResultado '");
+				+ "WHERE RES.DD_RES_CODIGO = :codResultado ");
 
 		return !"0".equals(resultado);
 	}
@@ -5098,7 +5098,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM DD_TPT_TIPO_TRIBUTO TPT "
-				+ "WHERE TPT.DD_TPT_CODIGO = ':codTipoTributo '");
+				+ "WHERE TPT.DD_TPT_CODIGO = :codTipoTributo ");
 
 		return !"0".equals(resultado);
 	}
@@ -5115,7 +5115,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM DD_TST_TIPO_SOLICITUD_TRIB TST "
-				+ "WHERE TST.DD_TST_CODIGO =':codSolicitud'");
+				+ "WHERE TST.DD_TST_CODIGO = :codSolicitud");
 
 		return !"0".equals(resultado);
 	}
@@ -5138,11 +5138,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "FROM ACT_TRI_TRIBUTOS TRI "
 				+ "JOIN DD_TST_TIPO_SOLICITUD_TRIB TST ON TST.DD_TST_ID = TRI.DD_TST_ID "
 				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = TRI.ACT_ID "
-				+ "WHERE TST.DD_TST_CODIGO = ' :tipoSolicitud  ' "
+				+ "WHERE TST.DD_TST_CODIGO =  :tipoSolicitud   "
 				+ "AND TRI.BORRADO = 0 "
-				+ "AND ACT.ACT_NUM_ACTIVO = ' :numActivo' "
+				+ "AND ACT.ACT_NUM_ACTIVO =  :numActivo "
 				+ "AND TRI.ACT_TRI_FECHA_PRESENTACION_RECURSO = TO_DATE(' :fechaRecurso','dd/MM/yy') "
-				+ "AND TRI.ACT_NUM_TRIBUTO = ':idTributo' "
+				+ "AND TRI.ACT_NUM_TRIBUTO = :idTributo "
 				);
 
 		return !"0".equals(resultado);
@@ -5166,11 +5166,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "FROM ACT_TRI_TRIBUTOS TRI "
 				+ "JOIN DD_TST_TIPO_SOLICITUD_TRIB TST ON TST.DD_TST_ID = TRI.DD_TST_ID "
 				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = TRI.ACT_ID "
-				+ "WHERE TST.DD_TST_CODIGO = ' :tipoSolicitud ' "
+				+ "WHERE TST.DD_TST_CODIGO =  :tipoSolicitud  "
 				+ "AND TRI.BORRADO = 0 "
-				+ "AND ACT.ACT_NUM_ACTIVO = ' :numActivo ' "
+				+ "AND ACT.ACT_NUM_ACTIVO =  :numActivo  "
 				+ "AND TRI.ACT_TRI_FECHA_PRESENTACION_RECURSO = TO_DATE(' :fechaRecurso ','dd/MM/yy') "
-				+ "AND TRI.ACT_NUM_TRIBUTO = ' :idTributo ' "
+				+ "AND TRI.ACT_NUM_TRIBUTO =  :idTributo  "
 				);
 
 	}
@@ -5193,7 +5193,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = ENT.ENT_ID "
 				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
 				+ " AND ENT.DD_ENT_ID = (SELECT DD_ENT_ID FROM DD_ENT_ENTIDAD_GASTO WHERE DD_ENT_CODIGO ='ACT') "
-				+ " AND ACT.ACT_NUM_ACTIVO = ' :numActivo '"
+				+ " AND ACT.ACT_NUM_ACTIVO =  :numActivo "
 				);
 
 		return !"0".equals(resultado);
@@ -5211,7 +5211,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM ECO_EXPEDIENTE_COMERCIAL EX "
 				+ "JOIN ACT_TRI_TRIBUTOS TRI ON TRI.ECO_ID = EX.ECO_ID "
-				+ "WHERE TRI.ECO_ID = ' :expComercial '"
+				+ "WHERE TRI.ECO_ID =  :expComercial "
 				);
 
 		return !"0".equals(resultado);
@@ -5232,8 +5232,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_JCM_JUNTA_COM_PROPIETARIOS pls " +
 				"JOIN ACT_ACTIVO act ON pls.act_id = act.act_id " +
 				"WHERE pls.borrado = 0 " +
-				"AND act.ACT_NUM_ACTIVO = ':numActivo' " +
-				"AND TRUNC(pls.JCM_FECHA_JUNTA) = TRUNC(TO_DATE(':fechaJunta','dd/MM/yy'))");
+				"AND act.ACT_NUM_ACTIVO = :numActivo " +
+				"AND TRUNC(pls.JCM_FECHA_JUNTA) = TRUNC(TO_DATE(:fechaJunta,'dd/MM/yy'))");
 
 		return !"0".equals(resultado);
 
@@ -5250,7 +5250,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM DD_JCP_JUNTA_COMUNIDADES WHERE"
-				+ "		 DD_JCP_CODIGO =' :codJunta '"
+				+ "		 DD_JCP_CODIGO = :codJunta "
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
@@ -5267,7 +5267,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 					+ "FROM DD_TPA_TIPO_TITULO_ACT "
 					+ "WHERE DD_TPA_CODIGO IN ('01','02','03') "
-					+ "AND DD_TPA_CODIGO =' :codigoTituloTPA '");
+					+ "AND DD_TPA_CODIGO = :codigoTituloTPA ");
 
 			return !"0".equals(resultado);
 		}
@@ -5282,8 +5282,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		if (!Checks.esNulo(tipoElemento)) {
 			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) from DD_ENT_ENTIDAD_GASTO  " + 
-					"WHERE DD_ENT_CODIGO =" + 
-					"' :tipoElemento '");
+					"WHERE DD_ENT_CODIGO = :tipoElemento ");
 
 			return !"0".equals(resultado);
 		}
@@ -5303,7 +5302,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "FROM ACT_SPS_SIT_POSESORIA SPS "
 				+ "JOIN ACT_ACTIVO ACT ON SPS.ACT_ID = ACT.ACT_ID "
 				+ "WHERE SPS_FECHA_TOMA_POSESION IS NOT NULL "
-				+ "AND ACT.ACT_NUM_ACTIVO = ' :numActivo'");
+				+ "AND ACT.ACT_NUM_ACTIVO =  :numActivo");
 
 		return !"0".equals(resultado);
 	}
@@ -5319,7 +5318,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 			String resultado = rawDao.getExecuteSQL("SELECT Count(*) "
 					+ "FROM DD_EDH_ESTADO_DIV_HORIZONTAL "
-					+ "WHERE DD_EDH_CODIGO =' :codigoEstadoDivHorizontal '");
+					+ "WHERE DD_EDH_CODIGO = :codigoEstadoDivHorizontal ");
 
 			return !"0".equals(resultado);
 	}
@@ -5335,7 +5334,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}					
 			String resultado = rawDao.getExecuteSQL("SELECT Count(*) " 
 					+ "FROM DD_SRA_SERVICER_ACTIVO "
-					+ "WHERE DD_SRA_CODIGO =' :codigoServicer '");
+					+ "WHERE DD_SRA_CODIGO = :codigoServicer ");
 
 			return !"0".equals(resultado);		
 	}
@@ -5351,7 +5350,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}					
 			String resultado = rawDao.getExecuteSQL("SELECT Count(*) " 
 					+ "FROM DD_CMS_CESION_COM_SANEAMIENTO "
-					+ "WHERE DD_CMS_CODIGO =' :codigoCesion '");
+					+ "WHERE DD_CMS_CODIGO = :codigoCesion ");
 
 			return !"0".equals(resultado);		
 	}
@@ -5367,7 +5366,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}					
 			String resultado = rawDao.getExecuteSQL("SELECT Count(*) " 
 					+ "FROM DD_CAP_CLASIFICACION_APPLE "
-					+ "WHERE DD_CAP_CODIGO =' :codigoValorOrdinario '");
+					+ "WHERE DD_CAP_CODIGO = :codigoValorOrdinario ");
 			return !"0".equals(resultado);	
 	}
 	
@@ -5379,7 +5378,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		if (Checks.esNulo(numEstado)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_EDC_ESTADO_DOCUMENTO "
-				+"			WHERE DD_EDC_CODIGO = ' :numEstado '");
+				+"			WHERE DD_EDC_CODIGO =  :numEstado ");
 		return "0".equals(resultado);
 	}
 	
@@ -5410,8 +5409,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT pls.JCM_ID FROM ACT_JCM_JUNTA_COM_PROPIETARIOS pls " + 
 				"JOIN ACT_ACTIVO act ON pls.act_id = act.act_id " + 
 				"WHERE pls.borrado = 0 " + 
-				"AND act.ACT_NUM_ACTIVO = ':numActivo' " + 
-				"AND TRUNC(pls.JCM_FECHA_JUNTA) = TRUNC(TO_DATE(':fechaJunta','dd/MM/yy'))");
+				"AND act.ACT_NUM_ACTIVO = :numActivo " + 
+				"AND TRUNC(pls.JCM_FECHA_JUNTA) = TRUNC(TO_DATE(:fechaJunta,'dd/MM/yy'))");
 
 		return resultado;
 	}
@@ -5445,7 +5444,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				.getExecuteSQL("SELECT GDE.GDE_GASTO_REFACTURABLE " 
 						+ "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "
 						+ "LEFT JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
-						+ "WHERE GPV.GPV_NUM_GASTO_HAYA =' :numGasto '");
+						+ "WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto ");
 
 		return "1".equals(resultado);
 	}
@@ -5462,7 +5461,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				.getExecuteSQL("SELECT COUNT(*) " 
 						+ "FROM GRG_REFACTURACION_GASTOS GRG "
 						+ "LEFT JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GRG.GRG_GPV_ID_REFACTURADO "
-						+ "WHERE GPV.GPV_NUM_GASTO_HAYA =':numGasto ' AND GRG.BORRADO = 0");
+						+ "WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto  AND GRG.BORRADO = 0");
 
 		return "1".equals(resultado);
 	}
@@ -5482,7 +5481,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao
 				.getExecuteSQL("SELECT COUNT(*) " 
 						+ "FROM VGR_GASTOS_REFACTURABLES VGR "						
-						+ "WHERE VGR.NUM_GASTO_HAYA = ':numGasto '");
+						+ "WHERE VGR.NUM_GASTO_HAYA = :numGasto ");
 
 		return !"0".equals(resultado);
 	}
@@ -5505,14 +5504,14 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 						+ "JOIN ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID " 
 						+ "JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID " 
 						+ "WHERE CRA.DD_CRA_CODIGO = 02 AND GLD.BORRADO = 0 AND GPV.BORRADO = 0 " 
-						+ "AND GPV.GPV_NUM_GASTO_HAYA =':numGasto'");
+						+ "AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
 		
 		String resultado2 = rawDao
 				.getExecuteSQL("SELECT COUNT(*) " 						
 						+ "FROM GPV_GASTOS_PROVEEDOR GPV "
 						+ "JOIN GRG_REFACTURACION_GASTOS GRG ON GRG.GRG_GPV_ID = GPV.GPV_ID "						
 						+ "WHERE GPV.BORRADO = 0 AND GRG.BORRADO = 0 " 
-						+ "AND GPV.GPV_NUM_GASTO_HAYA =':numGasto'");
+						+ "AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
 
 		if (Integer.parseInt(resultado)>=1 && Integer.parseInt(resultado2)<=0) {
 			enc=false;
@@ -5538,7 +5537,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 						+ "JOIN ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID " 
 						+ "JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID " 
 						+ "WHERE CRA.DD_CRA_CODIGO IN (02,03) " 
-						+ "AND GPV.GPV_NUM_GASTO_HAYA =' :numGasto '");
+						+ "AND GPV.GPV_NUM_GASTO_HAYA = :numGasto ");
 
 		return !"0".equals(resultado);
 	}
@@ -5558,7 +5557,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 						+ "JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
 						+ "JOIN ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = GPV.PVE_ID_EMISOR "
 						+ "WHERE PVE.PVE_DOCIDENTIF IN ('A86744349') "
-						+ "AND GPV.GPV_NUM_GASTO_HAYA = ':numGasto'");
+						+ "AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
 
 		return !"0".equals(resultado);
 	}
@@ -5577,7 +5576,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 						+ "FROM GPV_GASTOS_PROVEEDOR GPV "
 						+ "JOIN DD_DEG_DESTINATARIOS_GASTO DEG ON GPV.DD_DEG_ID = DEG.DD_DEG_ID "						
 						+ "WHERE DEG.DD_DEG_CODIGO IN ('02') "
-						+ "AND GPV.GPV_NUM_GASTO_HAYA = ':numGasto '");						
+						+ "AND GPV.GPV_NUM_GASTO_HAYA = :numGasto ");						
 
 		return !"0".equals(resultado);
 	}
@@ -5596,7 +5595,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 						+ "FROM GPV_GASTOS_PROVEEDOR GPV "
 						+ "JOIN DD_DEG_DESTINATARIOS_GASTO DEG ON GPV.DD_DEG_ID = DEG.DD_DEG_ID "						
 						+ "WHERE DEG.DD_DEG_CODIGO IN ('01') "
-						+ "AND GPV.GPV_NUM_GASTO_HAYA = ':numGasto'");						
+						+ "AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");						
 
 		return !"0".equals(resultado);
 	}
@@ -5616,13 +5615,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				.getExecuteSQL("SELECT COUNT(*) " + "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "
 				+ "INNER JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
 				+ "INNER JOIN ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID "
-				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = ':numGasto '" 
+				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto " 
 				+ "AND PRO.PRO_DOCIDENTIF = " 
 				+ "(SELECT PRO.PRO_DOCIDENTIF "
 				+ "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "
 				+ "INNER JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
 				+ "INNER JOIN ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID "
-				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = ':numOtroGasto ')");
+				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = :numOtroGasto )");
 
 		return !"0".equals(resultado);
 	}
@@ -5640,7 +5639,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ " FROM gpv_gastos_proveedor gpv "
 				+ " join act_pro_propietario pro on gpv.pro_id = pro.pro_id "
 				+ " join act_activo act on pro.dd_cra_id = act.dd_cra_id "
-				+ " where gpv.gpv_num_gasto_haya = ':numGasto'");
+				+ " where gpv.gpv_num_gasto_haya = :numGasto");
 		return !"0".equals(resultado);
 	}
 	
@@ -5654,7 +5653,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT sum (gld_participacion_gasto) participaciones FROM GLD_ENT where gld_id in" + 
 				"(select gld_id from gld_gastos_linea_detalle where gpv_id = " + 
-				"(select gpv_id from gpv_gastos_proveedor where gpv_num_gasto_haya = ':numGasto '))");
+				"(select gpv_id from gpv_gastos_proveedor where gpv_num_gasto_haya = :numGasto ))");
 		if(resultado != null) {
 			if(Integer.parseInt(resultado)>=100) {
 				return false;
@@ -5676,7 +5675,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM DD_FSP_FASE_PUBLICACION WHERE"
-				+ "		 	DD_FSP_CODIGO =':fasePublicacion ' "
+				+ "		 	DD_FSP_CODIGO = :fasePublicacion  "
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
@@ -5708,7 +5707,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		if (Checks.esNulo(codTipoDoc)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TPD_TIPO_DOCUMENTO "
-				+" WHERE DD_TPD_CODIGO = ':codTipoDoc'"
+				+" WHERE DD_TPD_CODIGO = :codTipoDoc"
 				+ " AND DD_TPD_CODIGO IN('02','04','05','06','07','08','09','10','11','12','13','14','15','16','17','19','24','25','26','27','52','71','72','104','106','119')");
 		return !"0".equals(resultado);
 	}
@@ -5723,7 +5722,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "	     FROM DD_SFP_SUBFASE_PUBLICACION WHERE"
-				+ "	     DD_SFP_CODIGO =':subfasePublicacion' "
+				+ "	     DD_SFP_CODIGO = :subfasePublicacion "
 				+ "      AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
@@ -5737,8 +5736,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if (Checks.esNulo(codSubFasePublicacion) || Checks.esNulo(codFasePublicacion)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_FSP_FASE_PUBLICACION FSP "
 				+ " JOIN DD_SFP_SUBFASE_PUBLICACION SFP ON SFP.DD_FSP_ID = FSP.DD_FSP_ID"
-				+ " WHERE FSP.DD_FSP_CODIGO = ':codFasePublicacion ' "
-				+ " AND SFP.DD_SFP_CODIGO = ':codSubFasePublicacion'"
+				+ " WHERE FSP.DD_FSP_CODIGO = :codFasePublicacion  "
+				+ " AND SFP.DD_SFP_CODIGO = :codSubFasePublicacion"
 				+ " AND FSP.BORRADO = 0 AND SFP.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
@@ -5750,7 +5749,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		if (Checks.esNulo(codEstadoDoc)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_EDC_ESTADO_DOCUMENTO "
-				+ " WHERE DD_EDC_CODIGO = ':codEstadoDoc'");
+				+ " WHERE DD_EDC_CODIGO = :codEstadoDoc");
 		return !"0".equals(resultado);
 	}
 	
@@ -5762,7 +5761,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		if (Checks.esNulo(codCE)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TCE_TIPO_CALIF_ENERGETICA "
-				+ " WHERE DD_TCE_CODIGO = ':codCE'");
+				+ " WHERE DD_TCE_CODIGO = :codCE");
 		return !"0".equals(resultado);
 	}
 
@@ -5774,7 +5773,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		if (Checks.esNulo(codDocumento)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TPD_TIPO_DOCUMENTO "
-				+ " WHERE DD_TPD_CODIGO =  ':codDocumento'"
+				+ " WHERE DD_TPD_CODIGO =  :codDocumento"
 				+ " AND DD_TPD_CODIGO IN ('25')");
 		return !"0".equals(resultado);
 	}
@@ -5964,7 +5963,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
             String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
                             + "              FROM ACT_PVE_PROVEEDOR WHERE"
-                            + "              PVE_COD_REM = ':pveCodRem '"
+                            + "              PVE_COD_REM = :pveCodRem "
                             + "              AND PVE_FECHA_BAJA IS NOT NULL"
                             + "              AND BORRADO = 0"
                             );
@@ -5984,7 +5983,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
             String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
                             + "              FROM ACT_PVE_PROVEEDOR WHERE"
-                            + "              PVE_COD_REM = ' :pveCodRem '"
+                            + "              PVE_COD_REM =  :pveCodRem "
                             + "      AND BORRADO = 0"
                             );
             return !"0".equals(resultado);
@@ -6095,7 +6094,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT COUNT(*) FROM DD_ETI_ESTADO_TITULO " 
-				+ "WHERE DD_ETI_CODIGO = ':situacionTitulo' "
+				+ "WHERE DD_ETI_CODIGO = :situacionTitulo "
 				+ "AND DD_ETI_CODIGO IN ('01', '02', '06')"
 		);
 		
@@ -6112,7 +6111,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 					+"		FROM DD_EEJ_ENTIDAD_EJECUTANTE "
-					+"		WHERE DD_EEJ_CODIGO = ' :codigo '");
+					+"		WHERE DD_EEJ_CODIGO =  :codigo ");
 
 		return !"0".equals(resultado);
 	}
@@ -6127,7 +6126,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 					+"		FROM DD_JUZ_JUZGADOS_PLAZA "
-					+"		WHERE DD_JUZ_CODIGO = ' :codigo '");
+					+"		WHERE DD_JUZ_CODIGO =  :codigo ");
 
 		return !"0".equals(resultado);
 	}
@@ -6143,7 +6142,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 					+"		FROM DD_PLA_PLAZAS "
-					+"		WHERE DD_PLA_CODIGO = ':codigo'");
+					+"		WHERE DD_PLA_CODIGO = :codigo");
 		
 		return !"0".equals(resultado);
 	}
@@ -6163,7 +6162,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+"		FROM ACT_ACTIVO "
 					+"		WHERE ACT_NUM_ACTIVO =  :idActivo AND DD_TTA_ID = (SELECT DD_TTA_ID "
 					+"                                                       FROM DD_TTA_TIPO_TITULO_ACTIVO "
-					+"                                                       WHERE DD_TTA_CODIGO = ':tipoAdjudicacion ')");
+					+"                                                       WHERE DD_TTA_CODIGO = :tipoAdjudicacion )");
 
 		return !"0".equals(resultado);
 	}
@@ -6179,7 +6178,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM DD_ACM_ACCION_MASIVA ACM "
-				+ "WHERE ACM.DD_ACM_CODIGO =' :codAccion'"
+				+ "WHERE ACM.DD_ACM_CODIGO = :codAccion"
 				+ "AND ACM.DD_ACM_CODIGO NOT IN('02')");
 
 		return !"0".equals(resultado);
@@ -6288,8 +6287,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+"		FROM DD_JUZ_JUZGADOS_PLAZA JUZ"
 				+"		JOIN DD_PLA_PLAZAS PLA ON PLA.DD_PLA_ID = JUZ.DD_PLA_ID"
-				+"		WHERE JUZ.DD_JUZ_CODIGO = ':codigoTipoJuzgado '"
-				+"		AND PLA.DD_PLA_CODIGO = ':codigoPoblacionJuzgado'");
+				+"		WHERE JUZ.DD_JUZ_CODIGO = :codigoTipoJuzgado "
+				+"		AND PLA.DD_PLA_CODIGO = :codigoPoblacionJuzgado");
 
 		return "1".equals(resultado);
 	}
@@ -6304,7 +6303,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM DD_TDC_TERRITORIOS_DIR_COM "
-				+ "		WHERE DD_TDC_CODIGO = ' :direccionComercial'");
+				+ "		WHERE DD_TDC_CODIGO =  :direccionComercial");
 		return !"0".equals(resultado);
 	}
 	

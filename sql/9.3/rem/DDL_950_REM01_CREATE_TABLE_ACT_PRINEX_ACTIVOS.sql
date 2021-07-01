@@ -72,6 +72,7 @@ BEGIN
 				 ,DD_DIA_ID                  NUMBER(16,0)      
 				 ,DD_DIT_ID                   NUMBER(16,0)
 				 ,DD_MTC_ID                   NUMBER(16,0) 			 	 
+				 ,PRINEX_COSTE_ADQUISICION		NUMBER(16,2)
 				 ,VERSION                       NUMBER(38,0)         DEFAULT 0
 				 ,USUARIOCREAR                  VARCHAR2(50 CHAR) 
 				 ,FECHACREAR                    TIMESTAMP(6)        DEFAULT SYSTIMESTAMP

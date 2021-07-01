@@ -897,6 +897,16 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							fieldLabel : HreRem
 									.i18n('fieldlabel.formalizacion.numero.protocolo'),
 							bind : '{resolucion.numProtocolo}'
+						},
+						{
+							xtype: 'datefieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.fecha.contabilizacion'),
+							bind : {
+								value: '{resolucion.fechaContabilizacion}',
+								visible: '{expediente.isCarteraBankia}'
+							},
+							formatter: 'date("d/m/Y")',
+							readOnly: true
 						}]
 					}]
 				}, {

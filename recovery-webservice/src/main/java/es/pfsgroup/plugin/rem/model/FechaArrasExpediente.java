@@ -21,6 +21,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 
 /**
  * Modelo que gestiona los activos.
@@ -54,9 +55,6 @@ public class FechaArrasExpediente implements Serializable, Auditable {
     @Column(name = "FAE_FECHA_RESPUESTA_BC")
     private Date fechaRespuestaBC;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FAE_VALIDACION_BC")
-    private DDApruebaDeniega validacionBC;
     
     @Column(name = "FAE_FECHA_AVISO")
     private Date fechaAviso;
@@ -66,6 +64,10 @@ public class FechaArrasExpediente implements Serializable, Auditable {
     
     @Column(name = "FAE_OBSERVACIONES")
     private String observaciones;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MEB_ID")
+    private DDMotivosEstadoBC validacionBC;
     
     @Version   
 	private Long version;
@@ -113,13 +115,7 @@ public class FechaArrasExpediente implements Serializable, Auditable {
 		this.fechaRespuestaBC = fechaRespuestaBC;
 	}
 
-	public DDApruebaDeniega getValidacionBC() {
-		return validacionBC;
-	}
 
-	public void setValidacionBC(DDApruebaDeniega validacionBC) {
-		this.validacionBC = validacionBC;
-	}
 
 	public Date getFechaAviso() {
 		return fechaAviso;
@@ -159,6 +155,14 @@ public class FechaArrasExpediente implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public DDMotivosEstadoBC getValidacionBC() {
+		return validacionBC;
+	}
+
+	public void setValidacionBC(DDMotivosEstadoBC validacionBC) {
+		this.validacionBC = validacionBC;
 	}
 	
 	

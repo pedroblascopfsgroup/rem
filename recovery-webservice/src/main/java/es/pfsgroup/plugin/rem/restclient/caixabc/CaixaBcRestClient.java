@@ -57,7 +57,7 @@ public class CaixaBcRestClient {
                 logger.error("Error en " + this.getClass().toString(), e);
             }
 
-            return resp;
+            return resp != null ? resp : true;
 
     }
 

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210625
+--## FECHA_CREACION=20210701
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14428
@@ -193,15 +193,15 @@ DECLARE
         T_TIPO_DATA('ESTADO_COMERCIAL_VENTA','V03','En trámite de venta','DD_ECV_EST_COM_VENTA','V03'),
         T_TIPO_DATA('ESTADO_COMERCIAL_VENTA','V04','Venta realizada','DD_ECV_EST_COM_VENTA','V04'),
       --Estado técnico
-        T_TIPO_DATA('ESTADO_TECNICO','E01','Pendiente actuación técnica','DD_EAT_ID','E01'),
-        T_TIPO_DATA('ESTADO_TECNICO','E02','En Gestión entrada','DD_EAT_ID','E02'),
-        T_TIPO_DATA('ESTADO_TECNICO','E03','Entrada Incidentada','DD_EAT_ID','E03'),
-        T_TIPO_DATA('ESTADO_TECNICO','E04','Entrada finalizada/anulada','DD_EAT_ID','E04'),
-        T_TIPO_DATA('ESTADO_TECNICO','E05','Incidencia Técnica en curso','DD_EAT_ID','E05'),
-        T_TIPO_DATA('ESTADO_TECNICO','E06','Actuación gran envergadura en curso','DD_EAT_ID','E06'),
-        T_TIPO_DATA('ESTADO_TECNICO','E07','Mantenimiento/actuación finalizada/anulada','DD_EAT_ID','E07'),
-        T_TIPO_DATA('ESTADO_TECNICO','E08','Desarrollo en gestión','DD_EAT_ID','E08'),
-        T_TIPO_DATA('ESTADO_TECNICO','E09','Desarrollo en tramitación final/finalizado','DD_EAT_ID','E09'),
+        T_TIPO_DATA('ESTADO_TECNICO','E01','Pendiente actuación técnica','DD_EAT_EST_TECNICO','E01'),
+        T_TIPO_DATA('ESTADO_TECNICO','E02','En Gestión entrada','DD_EAT_EST_TECNICO','E02'),
+        T_TIPO_DATA('ESTADO_TECNICO','E03','Entrada Incidentada','DD_EAT_EST_TECNICO','E03'),
+        T_TIPO_DATA('ESTADO_TECNICO','E04','Entrada finalizada/anulada','DD_EAT_EST_TECNICO','E04'),
+        T_TIPO_DATA('ESTADO_TECNICO','E05','Incidencia Técnica en curso','DD_EAT_EST_TECNICO','E05'),
+        T_TIPO_DATA('ESTADO_TECNICO','E06','Actuación gran envergadura en curso','DD_EAT_EST_TECNICO','E06'),
+        T_TIPO_DATA('ESTADO_TECNICO','E07','Mantenimiento/actuación finalizada/anulada','DD_EAT_EST_TECNICO','E07'),
+        T_TIPO_DATA('ESTADO_TECNICO','E08','Desarrollo en gestión','DD_EAT_EST_TECNICO','E08'),
+        T_TIPO_DATA('ESTADO_TECNICO','E09','Desarrollo en tramitación final/finalizado','DD_EAT_EST_TECNICO','E09'),
       --Grado propiedad
         T_TIPO_DATA('GRADO_PROPIEDAD','1', 'Pleno dominio','DD_TGP_TIPO_GRADO_PROPIEDAD','01'),
         T_TIPO_DATA('GRADO_PROPIEDAD','2', 'Nuda Propiedad','DD_TGP_TIPO_GRADO_PROPIEDAD','02'),

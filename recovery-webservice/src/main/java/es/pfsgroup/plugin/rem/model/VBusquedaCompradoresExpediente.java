@@ -5,10 +5,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -125,6 +122,13 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 	
 	@Column(name = "FECHA_ACEP_GDPR")
 	private String fechaAcepGdpr;
+	
+	@Column(name = "DD_ECC_CODIGO")
+	private String estadoComunicacionCompradorBCCodigo;
+	
+	@Column(name = "DD_ECC_DESCRIPCION")
+	private String estadoComunicacionCompradorBCDescripcion;
+	
 	
     
 	public String getId() {
@@ -405,6 +409,22 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 
 	public void setFechaContraste(String fechaContraste) {
 		this.fechaContraste = fechaContraste;
+	}
+
+	public String getEstadoComunicacionCompradorBCCodigo() {
+		return estadoComunicacionCompradorBCCodigo;
+	}
+
+	public void setEstadoComunicacionCompradorBCCodigo(String estadoComunicacionCompradorBCCodigo) {
+		this.estadoComunicacionCompradorBCCodigo = estadoComunicacionCompradorBCCodigo;
+	}
+
+	public String getEstadoComunicacionCompradorBCDescripcion() {
+		return estadoComunicacionCompradorBCDescripcion;
+	}
+
+	public void setEstadoComunicacionCompradorBCDescripcion(String estadoComunicacionCompradorBCDescripcion) {
+		this.estadoComunicacionCompradorBCDescripcion = estadoComunicacionCompradorBCDescripcion;
 	}
 
 }

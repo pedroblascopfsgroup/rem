@@ -330,7 +330,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						   {
 
 							   text: HreRem.i18n('header.estado.bc'),
-							   dataIndex: 'estadoBc',
+							   dataIndex: 'estadoComunicacionCompradorBCDescripcion',
 							   flex: 1,
 					           renderer: coloredRender
 					          

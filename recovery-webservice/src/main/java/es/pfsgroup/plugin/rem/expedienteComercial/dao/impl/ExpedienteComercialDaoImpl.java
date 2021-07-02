@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.expedienteComercial.dao.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -168,6 +169,13 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 
 		return (List<VListadoOfertasAgrupadasLbk>)  this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 
+	}
+	
+	@Override
+	public Date getFechaContabilizacionByIdExpediente(Long idExpediente) {
+		String sql = "SELECT ECO.ECO_FECHA_CONTAB FROM REM01.ECO_EXPEDIENTE_COMERCIAL ECO WHERE ECO.ECO_ID = "+idExpediente 
+				+" AND ECO.BORRADO = 0";
+		return ((Date) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult());
 	}
 	
 }

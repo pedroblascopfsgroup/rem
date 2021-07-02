@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210630
+--## FECHA_CREACION=20210702
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-10039
@@ -41,17 +41,29 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-	T_TIPO_DATA('00','Camb.masivo incoher est.comerc','Camb.masivo incoher est.comerc'),
-    T_TIPO_DATA('01','Reserva previa','Reserva previa'),
-	T_TIPO_DATA('02','Prev. pase a funcional','Prev. pase a funcional'),
-    T_TIPO_DATA('03','Venta Cartera','Venta Cartera'),
-    T_TIPO_DATA('04','Decisión interna Cajamar','Decisión interna Cajamar'),
-    T_TIPO_DATA('09','Firma contrato exclusividad','Firma contrato exclusividad'),
-    T_TIPO_DATA('17','Pendiente precio','Pendiente precio'),
-    T_TIPO_DATA('18','Disconformidad Dispo. Técnico','Disconformidad Dispo. Técnico'),
-    T_TIPO_DATA('19','Cartera Tango','Cartera Tango'),
-    T_TIPO_DATA('20','Cartera Tango II','Cartera Tango II'),
-    T_TIPO_DATA('90','-','-')
+	  T_TIPO_DATA('00','Camb.masivo incoher est.comerc','Camb.masivo incoher est.comerc'),
+    T_TIPO_DATA('01','Detenida','Detenida'),
+	  T_TIPO_DATA('02','Obras en ejecución','Obras en ejecución'),
+    T_TIPO_DATA('03','Pdte. de autorizar inversión','Pdte. de autorizar inversión'),
+    T_TIPO_DATA('04','Pdte de revisión técnica','Pdte de revisión técnica'),
+    T_TIPO_DATA('05','Se advierte ocupación','Se advierte ocupación'),
+    T_TIPO_DATA('06','Revisado','Revisado'),
+    T_TIPO_DATA('07','Acceso no posible','Acceso no posible'),
+    T_TIPO_DATA('08','Sin Actuación Proind o Usufruct','Sin Actuación Proind o Usufruct'),
+    T_TIPO_DATA('09','No requiere actuación previa','No requiere actuación previa'),
+    T_TIPO_DATA('11','Obras en ejecución','Obras en ejecución'),
+    T_TIPO_DATA('12','En proceso de licitación','En proceso de licitación'),
+    T_TIPO_DATA('13','En revisión para alquiler','En revisión para alquiler'),
+    T_TIPO_DATA('14','Expediente detenido','Expediente detenido'),
+    T_TIPO_DATA('15','Sin interés promotor','Sin interés promotor'),
+    T_TIPO_DATA('16','Sin actuación posible','Sin actuación posible'),
+    T_TIPO_DATA('17','Revisión Básico','Revisión Básico'),
+    T_TIPO_DATA('19','Otros','Otros'),
+    T_TIPO_DATA('20','En desarrollo para Alquiler','En desarrollo para Alquiler'),
+    T_TIPO_DATA('21','Terminado para Alquiler','Terminado para Alquiler'),
+    T_TIPO_DATA('22','En Estudio','En Estudio'),
+    T_TIPO_DATA('23','En Catalogación','En Catalogación'),
+    T_TIPO_DATA('99','-','-')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

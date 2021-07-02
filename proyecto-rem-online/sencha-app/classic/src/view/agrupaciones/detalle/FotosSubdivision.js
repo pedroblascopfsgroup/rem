@@ -160,9 +160,25 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
 		                },
 		                { 
 		                	name: 'orden',
+		                	xtype: 'numberfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.orden.publicacion.web'),
 		                	bind:		'{orden}',
-		                	xtype: 'displayfieldbase'
+		                	minValue: 0,
+		                	maxValue: 500,
+		                	listeners: {
+		    		            change: function(field, value) {
+		    		            	if(Ext.isNumeric(value)){
+		    		            		if(value > 500){
+		    		            			me.form.markInvalid();
+		    		            			field.setValue(500);
+		    		            		}else{
+		    		            			field.setValue(value);
+		    		            		}
+		    		            	}else{
+		    		            		me.form.markInvalid();
+		    		            	}
+		    		            }
+		    		        }
 		                },
 		                { 
 		                	name: 'principal',

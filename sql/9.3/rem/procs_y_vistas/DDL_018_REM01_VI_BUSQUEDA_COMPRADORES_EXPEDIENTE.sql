@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Lara Pablo Flores
---## FECHA_CREACION=20210701
+--## FECHA_CREACION=20210702
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14394

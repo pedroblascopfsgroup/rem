@@ -69,6 +69,9 @@ public class FechaArrasExpediente implements Serializable, Auditable {
     @JoinColumn(name = "DD_MEB_ID")
     private DDMotivosEstadoBC validacionBC;
     
+    @Column(name = "FAE_MOTIVO_ANULACION")
+    private String motivoAnulacion;
+    
     @Version   
 	private Long version;
 
@@ -163,6 +166,14 @@ public class FechaArrasExpediente implements Serializable, Auditable {
 
 	public void setValidacionBC(DDMotivosEstadoBC validacionBC) {
 		this.validacionBC = validacionBC;
+	}
+
+	public String getMotivoAnulacion() {
+		return motivoAnulacion;
+	}
+
+	public void setMotivoAnulacion(String motivoAnulacion) {
+		this.motivoAnulacion = motivoAnulacion;
 	}
 	
 	

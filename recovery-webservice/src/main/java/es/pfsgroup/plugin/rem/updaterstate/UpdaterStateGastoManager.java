@@ -433,7 +433,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			
 		// Si el pago sigue retenido, ningún cambio en el gasto implica cambio de estado.
 			if(Checks.esNulo(gastoGestion.getMotivoRetencionPago())) {
-				String error = validarCamposMinimos(gasto,null);
+				String error = validarCamposMinimos(gasto,true);
 				if(Checks.esNulo(error)) {
 					return true;
 				}

@@ -214,7 +214,7 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 					if (Checks.esNulo(exc.dameCelda(fila, COL_COD_PROVEEDOR_REM))) {
 						emisor = genericDao.getList(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", exc.dameCelda(fila, COL_NIF_EMISOR)));
 					} else {
-						emisor = genericDao.getList(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.parseLong(exc.dameCelda(fila, COL_COD_PROVEEDOR_REM))));
+						emisor = genericDao.getList(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.parseLong(exc.dameCelda(fila, COL_COD_PROVEEDOR_REM).trim())));
 					}
 					
 					if(!Checks.esNulo(emisor) && !emisor.isEmpty()) {

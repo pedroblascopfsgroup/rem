@@ -166,7 +166,16 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 													field.validate();
      											}
 							    		}
-							    	}
+							    	},
+									{		                
+									    xtype: 'checkboxfieldbase',
+									    fieldLabel:  HreRem.i18n('fieldlabel.gasto.solicitud.pago.urgente'),
+					            		reference: 'solicitudPagoUrgente',
+									    bind: {
+								        	value: '{gasto.solicitudPagoUrgente}',
+								        	hidden: '{!condicionesSolicitudPagoUrgente}'
+					            		}
+									}
 								]
 							},
 							{

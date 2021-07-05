@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=Cristian Montoya
---## FECHA_CREACION=20210511
+--## FECHA_CREACION=20210705
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13978
+--## INCIDENCIA_LINK=HREOS-14437
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en DD_RIO_RIESGO_OPERACION los datos añadidos en T_ARRAY_DATA
+--## Finalidad: Script que añade en DD_FOP_FINALIDAD_OPERACION los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -32,19 +32,19 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-13978';
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-14437';
 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_RIO_RIESGO_OPERACION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_FOP_FINALIDAD_OPERACION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     -- PARTIDA_PRESUPUESTARIA   DD_TGA_CODIGO  DD_TIM_CODIGO   DD_SCR_CODIGO
-    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01','Alto','Alto'),
-		T_TIPO_DATA('02','Medio','Medio'),
-		T_TIPO_DATA('03','Bajo','Bajo')
-		); 
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(T_TIPO_DATA('R', '10', '1ª Residencia','1ª Residencia'),
+		T_TIPO_DATA('V', '20', '2ª Residencia','2ª Residencia'),
+		T_TIPO_DATA('I', '30', 'Inversión','Inversión'),
+		T_TIPO_DATA('A', '40', 'Finalidad comercial','Finalidad comercial'),
+		T_TIPO_DATA('O', '50', 'Otros', 'Otros')); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
 BEGIN	
@@ -58,9 +58,10 @@ BEGIN
 			V_TMP_TIPO_DATA := V_TIPO_DATA(I);
 			   
 			V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE
-				DD_RIO_CODIGO = '''||V_TMP_TIPO_DATA(1)||'''
-				AND DD_RIO_DESCRIPCION = '''||V_TMP_TIPO_DATA(2)||'''
-				AND DD_RIO_DESCRIPCION_LARGA = '''||V_TMP_TIPO_DATA(3)||'''';
+				DD_FOP_CODIGO_PBC = '''||V_TMP_TIPO_DATA(1)||'''
+				AND DD_FOP_CODIGO_BC = '''||V_TMP_TIPO_DATA(2)||'''
+				AND DD_FOP_DESCRIPCION = '''||V_TMP_TIPO_DATA(3)||'''
+				AND DD_FOP_DESCRIPCION_LARGA = '''||V_TMP_TIPO_DATA(4)||'''';
 
 			EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 			IF V_NUM_TABLAS = 1 THEN
@@ -68,10 +69,10 @@ BEGIN
 			ELSE
 				DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
 				V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' (
-					DD_RIO_ID,DD_RIO_CODIGO, DD_RIO_DESCRIPCION,DD_RIO_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) VALUES(
+					DD_FOP_ID,DD_FOP_CODIGO_PBC,DD_FOP_CODIGO_BC, DD_FOP_DESCRIPCION,DD_FOP_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) VALUES(
 					'|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'.NEXTVAL
-					,'''||V_TMP_TIPO_DATA(1)||''','''||V_TMP_TIPO_DATA(2)||'''
-					,'''||V_TMP_TIPO_DATA(3)||''',0,'''||V_ITEM||''',SYSDATE,0)';
+					,'''||V_TMP_TIPO_DATA(1)||''','''||V_TMP_TIPO_DATA(2)||''','''||V_TMP_TIPO_DATA(3)||'''
+					,'''||V_TMP_TIPO_DATA(4)||''',0,'''||V_ITEM||''',SYSDATE,0)';
 				EXECUTE IMMEDIATE V_MSQL;
 				DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
 			END IF;

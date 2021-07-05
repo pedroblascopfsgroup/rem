@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Cristian Montoya
---## FECHA_CREACION=20210511
+--## FECHA_CREACION=2021075
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO= 9.3
---## INCIDENCIA_LINK=HREOS-13978
+--## INCIDENCIA_LINK=HREOS-14437
 --## PRODUCTO=NO
 --##
 --## Finalidad:            
@@ -33,7 +33,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TABLA VARCHAR2(2400 CHAR) := 'DD_RIO_RIESGO_OPERACION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TABLA VARCHAR2(2400 CHAR) := 'DD_FOP_FINALIDAD_OPERACION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 
 BEGIN
 
@@ -47,10 +47,11 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TABLA||'...');
 		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TABLA||'
 		(
-			DD_RIO_ID           			NUMBER(16, 0) NOT NULL,
-            DD_RIO_CODIGO               	VARCHAR2(20 CHAR),
-            DD_RIO_DESCRIPCION          	VARCHAR2(100 CHAR),
-            DD_RIO_DESCRIPCION_LARGA        VARCHAR2(100 CHAR),
+			DD_FOP_ID           			NUMBER(16, 0) NOT NULL,
+            DD_FOP_CODIGO_PBC               VARCHAR2(20 CHAR),
+            DD_FOP_CODIGO_BC               	VARCHAR2(20 CHAR),
+            DD_FOP_DESCRIPCION          	VARCHAR2(100 CHAR),
+            DD_FOP_DESCRIPCION_LARGA        VARCHAR2(100 CHAR),
 			VERSION 						NUMBER(38,0) DEFAULT 0 NOT NULL ENABLE, 
 			USUARIOCREAR 					VARCHAR2(50 CHAR) NOT NULL ENABLE, 
 			FECHACREAR 						TIMESTAMP (6) NOT NULL ENABLE, 
@@ -64,7 +65,7 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... Tabla creada.');
 
 		-- Creamos primary key
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (DD_RIO_ID))';
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (DD_FOP_ID))';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'_PK... PK creada.');
 
@@ -81,21 +82,25 @@ BEGIN
 		END IF;
 		
 		-- Creamos el comentario de las columnas
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_RIO_ID IS ''Código identificador único''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_FOP_ID IS ''Código identificador único''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_RIO_ID creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_FOP_ID creado.');
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_RIO_CODIGO IS ''Código tipo riesgo operacion''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_FOP_CODIGO_PBC IS ''Código PBC finalidad operación''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_RIO_CODIGO creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_FOP_CODIGO_PBC creado.');
 
-        V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_RIO_DESCRIPCION IS ''Descripción tipo riesgo operacion''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_FOP_CODIGO_BC IS ''Código BC finalidad operación''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_RIO_DESCRIPCION creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_FOP_CODIGO_BC creado.');
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_RIO_DESCRIPCION_LARGA IS ''Descripción larga tipo riesgo operacion''';
+        V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_FOP_DESCRIPCION IS ''Descripción finalidad operación''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_RIO_DESCRIPCION_LARGA creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_FOP_DESCRIPCION creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_FOP_DESCRIPCION_LARGA IS ''Descripción larga finalidad operación''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_FOP_DESCRIPCION_LARGA creado.');
 
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.VERSION IS ''Indica la versión del registro.''';
 		EXECUTE IMMEDIATE V_MSQL;

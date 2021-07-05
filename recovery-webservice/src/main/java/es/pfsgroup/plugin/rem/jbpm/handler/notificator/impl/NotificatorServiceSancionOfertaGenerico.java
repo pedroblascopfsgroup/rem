@@ -1503,7 +1503,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	}
 	
 	private String tieneNumeroInmuebleBC(String cuerpo, ActivoTramite tramite) {
-		if (CODIGO_TRAMITE_T017.equals(tramite.getTipoTramite().getCodigo()) 
+		if ((tramite.getTipoTramite() == null || CODIGO_TRAMITE_T017.equals(tramite.getTipoTramite().getCodigo())) 
 			&& DDCartera.isCarteraBk(tramite.getActivo().getCartera())
 			&& !Checks.esNulo(tramite.getActivo().getNumActivoCaixa())) {
 			cuerpo = MENSAJE_BC + tramite.getActivo().getNumActivoCaixa() + ",\n" + cuerpo;

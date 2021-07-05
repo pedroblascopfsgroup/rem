@@ -602,6 +602,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 			
 			dto.setFacturaPrincipalSuplido(gasto.getNumeroFacturaPrincipal());
+			
+			if (!Checks.esNulo(gasto.getSolicitudPagoUrgente())) {
+				if (gasto.getSolicitudPagoUrgente() == 1) {
+					dto.setSolicitudPagoUrgente(true);
+				} else {
+					dto.setSolicitudPagoUrgente(false);
+				}
+			}
 		}
 
 		return dto;
@@ -932,6 +940,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				gastoDao.deleteGastoSuplido(gastoSuplido.getId());
 				
 				gastoProveedor.setNumeroFacturaPrincipal(null);
+			}
+		}
+		
+		if (!Checks.esNulo(dto.getSolicitudPagoUrgente())) {
+			if (dto.getSolicitudPagoUrgente()) {
+				gastoProveedor.setSolicitudPagoUrgente(1);
+			} else {
+				gastoProveedor.setSolicitudPagoUrgente(0);
 			}
 		}
 		

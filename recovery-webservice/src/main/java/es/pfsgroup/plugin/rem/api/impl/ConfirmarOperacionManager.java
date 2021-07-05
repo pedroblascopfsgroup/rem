@@ -210,7 +210,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 			throw new Exception("Error al actualizar el estado del expediente comercial.");
 		}
 		expedienteComercial.setEstado(estadoExpCom);
-		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpCom);
+		//recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpCom);
 
 		if (!expedienteComercialApi.update(expedienteComercial,false)) {
 			throw new Exception("Error al actualizar el expediente comercial.");
@@ -282,7 +282,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		if (!Checks.esNulo(expedienteComercial.getFechaVenta())){
 			DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.VENDIDO);
 			expedienteComercial.setEstado(estadoExpCom);
-			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpCom);
+			//recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpCom);
 
 			pasaAVendido = true;
 		}
@@ -366,7 +366,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		
 		expedienteComercial.setFechaVenta(null);
 		expedienteComercial.setEstado(estadoExpCom);
-		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpCom);
+		//recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpCom);
 
 		// Descongela el resto de ofertas del activo
 		ofertaApi.descongelarOfertas(expedienteComercial);
@@ -527,7 +527,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 			throw new Exception("Error al actualizar el estado del expediente comercial.");
 		}
 		expedienteComercial.setEstado(estadoExpCom);
-		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpCom);
+		//recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpCom);
 
 		if(DDEstadosExpedienteComercial.APROBADO.equals(estadoExpCom.getCodigo())) {
 			if(expedienteComercial.getCondicionante().getSolicitaReserva()!=null && 1 == expedienteComercial.getCondicionante().getSolicitaReserva()) {															
@@ -614,7 +614,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		if (Checks.esNulo(expedienteComercial.getFechaVenta())){
 			DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.FIRMADO);
 			expedienteComercial.setEstado(estadoExpCom);
-			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpCom);
+			//recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpCom);
 
 		}
 		
@@ -722,7 +722,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 			throw new Exception("Error al actualizar el estado del expediente comercial.");
 		}
 		expedienteComercial.setEstado(estadoExpCom);
-		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpCom);
+		//recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpCom);
 
 		// Congela el resto de ofertas del activo
 		ofertaApi.congelarOfertasPendientes(expedienteComercial);

@@ -2360,6 +2360,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				//+ "      AND DD_TAG_ID = (SELECT DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = '16')");
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean agrupacionActiva(String numAgrupacion){
+		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_AGR_AGRUPACION "
+				+ "		 WHERE AGR_NUM_AGRUP_REM =" + numAgrupacion
+				+ "      AND AGR_FECHA_BAJA IS NULL");
+		return !"0".equals(resultado);
+	}
 
 	@Override
 	public Boolean existeAgrupacionPA(String numAgrupacion){
@@ -7944,6 +7955,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
+	
 	@Override
 	public Boolean existePoblacionByDescripcion(String codigoPoblacion) {
 		Map<String, Object> params = new HashMap<String, Object>();

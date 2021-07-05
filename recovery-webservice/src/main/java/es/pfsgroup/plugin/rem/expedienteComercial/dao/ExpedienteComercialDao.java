@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.expedienteComercial.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
@@ -99,5 +100,7 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 	List<VListadoOfertasAgrupadasLbk> getListActivosOfertaPrincipal(Long numOferta);
 
 	Float getPorcentajeCompra(Long idExpediente);
+
+	public Date getFechaContabilizacionByIdExpediente(Long idExpediente);
 	
 }

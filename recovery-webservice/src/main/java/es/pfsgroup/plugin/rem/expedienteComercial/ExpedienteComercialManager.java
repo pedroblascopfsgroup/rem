@@ -52,6 +52,7 @@ import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
@@ -111,6 +112,7 @@ import es.pfsgroup.plugin.rem.bulkAdvisoryNote.dao.BulkOfertaDao;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.controller.ExpedienteComercialController;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.impl.ExpedienteComercialDaoImpl;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaResolucionExpediente;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
@@ -12595,7 +12597,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Transactional(readOnly = false)
 	private void actualizarEstadoBCCompradores(ExpedienteComercial eco, DDEstadoComunicacionC4C estado ) {
-		List<CompradorExpediente> compradoresExpediente = genericDao.getList(CompradorExpediente.class,  genericDao.createFilter(FilterType.EQUALS, "expedienteComercial.id", eco.getId()));
+		List<CompradorExpediente> compradoresExpediente = genericDao.getList(CompradorExpediente.class,  genericDao.createFilter(FilterType.EQUALS, "expediente", eco.getId()));
 		if(compradoresExpediente != null && !compradoresExpediente.isEmpty()) {
 			for (CompradorExpediente compradorExpediente : compradoresExpediente) {
 				Comprador comprador = genericDao.get(Comprador.class,  genericDao.createFilter(FilterType.EQUALS, "id", compradorExpediente.getComprador()));
@@ -12606,5 +12608,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}	
 			}
 		}
+	}
+		
+	public Date getFechaContabilizacion(Long idExpediente) {
+		return expedienteComercialDao.getFechaContabilizacionByIdExpediente(idExpediente);
 	}
 }

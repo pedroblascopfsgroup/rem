@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
+import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
@@ -1412,8 +1413,10 @@ public interface ExpedienteComercialApi {
 
 	void tareaDesbloqueoScreening(DtoScreening dto) throws IllegalArgumentException, IllegalAccessException, Exception;
 
-	DtoScreening dataToDtoScreeningBloqueo(Long numOferta, String motivo, String observaciones);
+	public DtoScreening dataToDtoScreeningBloqueo(Long numOferta, String motivo, String observaciones);
 
-	DtoScreening dataToDtoScreeningDesBloqueo(Long numOferta, String motivo, String observaciones);
+	public DtoScreening dataToDtoScreeningDesBloqueo(Long numOferta, String motivo, String observaciones);
+	
+	public Date getFechaContabilizacion(Long idExpediente);
 
 }

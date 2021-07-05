@@ -39,6 +39,7 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.http.client.HttpSimplePostRequest;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewer;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteAdapter;
@@ -2607,6 +2608,13 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		}
 
 		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getFechaContabilizacion(ModelMap model, Long idExpediente) {
+		model.put("fechaContabilizacion", expedienteComercialApi.getFechaContabilizacion(idExpediente));
+		return JsonViewer.createModelAndViewJson(model);
 	}
 
 	

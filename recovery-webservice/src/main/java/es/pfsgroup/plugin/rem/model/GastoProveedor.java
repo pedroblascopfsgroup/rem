@@ -196,7 +196,7 @@ public class GastoProveedor implements Serializable, Auditable {
 		
 	@Column(name="GPV_NUM_CONTR_ALQUILER")
 	private String numeroContratoAlquiler;
-	
+
 	@Column(name="GPV_SOLICITUD_PAGO_URGENTE")
 	private Integer solicitudPagoUrgente;
     

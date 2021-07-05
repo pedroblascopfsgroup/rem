@@ -5041,6 +5041,10 @@ comprobarFormatoModificar: function() {
 			    	        	me.getView().unmask();
 			    	        	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 							 }
+			    	     },
+			    	     failure: function (a, operation) {
+			    	    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    	    	 me.getView().unmask();
 			    	     }
 			    	 });
 		        }

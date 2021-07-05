@@ -3,6 +3,7 @@ package es.pfsgroup.framework.paradise.bulkUpload.api;
 import java.util.List;
 
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.DtoMSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoAltaProceso;
@@ -91,4 +92,13 @@ public interface MSVProcesoApi {
 	public MSVDDOperacionMasiva getOperacionMasiva(Long idTipoOperacion);
 
 	String getUsername();
+	
+	/**
+	 * Comprueba si un usuario tiene un perfil determinado.
+	 * @param código de perfil.
+	 * @param u usuario
+	 * @return
+	 */
+	public Boolean tienePerfilPorCodigo(String pefCodigo, Usuario usuario);
+	
 }

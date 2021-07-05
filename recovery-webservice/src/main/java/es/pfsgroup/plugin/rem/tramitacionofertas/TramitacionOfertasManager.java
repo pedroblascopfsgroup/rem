@@ -387,7 +387,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			ActivoValoraciones precio = null;
 			Filter filtroTof = null;
 			Filter filtroMin = null;
-			Filter fechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
 			String msg;
 
 			if (esAlquiler) {
@@ -406,14 +405,17 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
 			}
 
-			precios = genericDao.getList(ActivoValoraciones.class, filtroActivo, filtroTof, fechaFin);
+			precios = genericDao.getList(ActivoValoraciones.class, filtroActivo, filtroTof);
 			
 			if (precios != null && !precios.isEmpty())
 				precio = precios.get(0);
 
 			if (activo.getCartera() != null
 					&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {
-				if (Checks.esNulo(precio) || (!Checks.esNulo(precio) && Checks.esNulo(precio.getImporte()))) {
+				Date fechaHoy = new Date();
+				
+				if (Checks.esNulo(precio) || (!Checks.esNulo(precio) && (Checks.esNulo(precio.getImporte())
+						|| (!Checks.esNulo(precio.getFechaFin()) && precio.getFechaFin().before(fechaHoy))))) {
 					if (numActivo != null) {
 						msg = "Activo " + numActivo + " sin precio";
 					} else {

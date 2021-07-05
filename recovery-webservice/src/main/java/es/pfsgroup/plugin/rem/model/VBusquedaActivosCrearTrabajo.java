@@ -55,6 +55,9 @@ public class VBusquedaActivosCrearTrabajo implements Serializable {
 	
 	@Column(name="CODIGO_CARTERA")
 	private String codigoCartera;
+	
+	@Column(name="ACT_EN_TRAMITE")
+	private Boolean activoTramite;
 
 	public String getPropietarioId() {
 		return propietarioId;
@@ -158,6 +161,14 @@ public class VBusquedaActivosCrearTrabajo implements Serializable {
 
 	public void setCodigoCartera(String codigoCartera) {
 		this.codigoCartera = codigoCartera;
+	}
+
+	public Boolean getActivoTramite() {
+		return activoTramite;
+	}
+
+	public void setActivoTramite(Boolean activoTramite) {
+		this.activoTramite = activoTramite;
 	}
 	
 	

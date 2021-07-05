@@ -564,7 +564,6 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            		disabled: '{!tipoGestor.selection}'
 						            		//value: $AU.getUser().userId,
 						            		//readOnly: $AU.userTipoGestor()=="GIAFORM"
-						            			
 						            	},
 						            	displayField: 'apellidoNombre',
 			    						valueField: 'id',

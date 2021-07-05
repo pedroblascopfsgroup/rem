@@ -53,7 +53,9 @@ BEGIN
                     WHERE ECO.BORRADO = 0 AND TAR.TAR_TAREA_FINALIZADA = 0
                     AND TAP.TAP_CODIGO IN (''T013_InstruccionesReserva'',''T013_ObtencionContratoReserva'',''T013_DefinicionOferta'',''T013_FirmaPropietario'',
                     ''T013_PendienteDevolucion'',''T013_RatificacionComite'',''T013_ResolucionComite'',''T013_ResolucionExpediente'',''T013_RespuestaBankiaAnulacionDevolucion'',
-                    ''T013_RespuestaBankiaDevolucion'',''T013_RespuestaOfertante'',''T013_ValidacionClientes'')
+                    ''T013_RespuestaBankiaDevolucion'',''T013_RespuestaOfertante'',''T013_ValidacionClientes'',''T017_DefinicionOferta'',''T017_AnalisisPM'',''T017_ResolucionCES'',''T017_RatificacionComiteCES'',
+                    ''T017_RespuestaOfertanteCES'',''T017_AdvisoryNote'',''T017_PBCReserva'',''T017_PBCVenta'',''T017_RecomendCES'',''T017_ResolucionPROManzana'',''T017_ResolucionExpediente'',''T017_InstruccionesReserva'',''T017_ObtencionContratoReserva'',
+                    ''T017_PosicionamientoYFirma'',''T017_DocsPosVenta'',''T017_CierreEconomico'',''T017_ResolucionDivarian'',''T017_ResolucionArrow'')
                     AND CRA.DD_CRA_CODIGO in (''01'',''02'',''03'',''08'',''16'') AND EEC.DD_EEC_CODIGO != ''02'' AND EEC.DD_EEC_CODIGO != ''08'' AND EOF.DD_EOF_CODIGO != ''02''
                 ) AUX ON (TAC.TAR_ID = AUX.TAR_ID)
                 WHEN MATCHED THEN UPDATE SET 

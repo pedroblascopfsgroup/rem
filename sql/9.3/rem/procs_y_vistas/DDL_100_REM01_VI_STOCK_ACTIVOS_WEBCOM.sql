@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo
---## FECHA_CREACION=20210615
+--## AUTOR=Carlos Augusto
+--## FECHA_CREACION=20210701
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-14272
@@ -32,7 +32,6 @@
 --##  		0.16 Versión IVAN REPISO -> REMVIP-9561 - Poner campo COD_DIR_COMERCIAL 
 --##  		0.17 Versión Sergio Gomez -> HREOS-14272 - Poner campos DESCUENTO_PUBLICADO_ALQUILER_F_INI, DESCUENTO_PUBLICADO_ALQUILER_F_FIN, DESCUENTO_PUBLICADO_ALQUILER 
 --##		0.18 Versión Lara Pablo -> Arreglo merge
---
 --##########################################
 --*/
 

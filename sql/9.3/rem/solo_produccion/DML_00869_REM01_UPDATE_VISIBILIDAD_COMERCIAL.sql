@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Sergio O	
---## FECHA_CREACION=20210610
+--## FECHA_CREACION=20210701
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14013
@@ -521,8 +521,10 @@ BEGIN
 	--####################		INSERCIÓN DEL PERÍMETRO			###################### 	
 	
 	V_MSQL:= 'MERGE INTO '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO pac USING (
-		        SELECT act_id, CHECK_VISIBILIDAD from '||V_ESQUEMA||'.aux_visibilidad_gestion_comercial
-		        
+		        SELECT aux1.act_id, aux1.CHECK_VISIBILIDAD 
+                from rem01.aux_visibilidad_gestion_comercial aux1 
+                inner join rem01.ACT_PAC_PERIMETRO_ACTIVO pac on pac.act_id = aux1.act_id 
+                where pac.PAC_CHECK_GESTION_COMERCIAL <> aux1.CHECK_VISIBILIDAD
 		    ) aux
 		ON (pac.act_id = aux.act_id)
 		WHEN MATCHED THEN UPDATE SET 

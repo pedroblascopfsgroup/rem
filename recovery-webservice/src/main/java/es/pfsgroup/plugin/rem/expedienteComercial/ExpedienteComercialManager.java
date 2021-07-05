@@ -12597,7 +12597,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Transactional(readOnly = false)
 	private void actualizarEstadoBCCompradores(ExpedienteComercial eco, DDEstadoComunicacionC4C estado ) {
-		List<CompradorExpediente> compradoresExpediente = genericDao.getList(CompradorExpediente.class,  genericDao.createFilter(FilterType.EQUALS, "expedienteComercial.id", eco.getId()));
+		List<CompradorExpediente> compradoresExpediente = genericDao.getList(CompradorExpediente.class,  genericDao.createFilter(FilterType.EQUALS, "expediente", eco.getId()));
 		if(compradoresExpediente != null && !compradoresExpediente.isEmpty()) {
 			for (CompradorExpediente compradorExpediente : compradoresExpediente) {
 				Comprador comprador = genericDao.get(Comprador.class,  genericDao.createFilter(FilterType.EQUALS, "id", compradorExpediente.getComprador()));

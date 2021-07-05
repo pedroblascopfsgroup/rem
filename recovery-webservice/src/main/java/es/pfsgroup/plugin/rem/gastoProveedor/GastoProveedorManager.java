@@ -608,6 +608,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (gasto.getNumeroContratoAlquiler() != null) {
 				dto.setNumeroContratoAlquiler(gasto.getNumeroContratoAlquiler());
 			}
+			
+			if (!Checks.esNulo(gasto.getSolicitudPagoUrgente())) {
+				if (gasto.getSolicitudPagoUrgente() == 1) {
+					dto.setSolicitudPagoUrgente(true);
+				} else {
+					dto.setSolicitudPagoUrgente(false);
+				}
+			}
 		}
 
 		return dto;
@@ -943,6 +951,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		if (dto.getNumeroContratoAlquiler() != null) {
 			gastoProveedor.setNumeroContratoAlquiler(dto.getNumeroContratoAlquiler());
+		}
+		
+		if (!Checks.esNulo(dto.getSolicitudPagoUrgente())) {
+			if (dto.getSolicitudPagoUrgente()) {
+				gastoProveedor.setSolicitudPagoUrgente(1);
+			} else {
+				gastoProveedor.setSolicitudPagoUrgente(0);
+			}
 		}
 		
 		genericDao.update(GastoProveedor.class, gastoProveedor);

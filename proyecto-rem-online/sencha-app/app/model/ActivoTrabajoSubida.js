@@ -36,6 +36,10 @@ Ext.define('HreRem.model.ActivoTrabajoSubida', {
 			{
 				name : 'activoEnPropuestaEnTramitacion',
 				type: 'boolean'
+			},
+			{
+				name : 'activoTramite',
+				type: 'boolean'
 			}
 //    		,
 //    		{

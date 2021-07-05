@@ -20,6 +20,8 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
@@ -79,6 +81,9 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
+	
+	@Autowired
+	private UsuarioApi usuarioApi;
 	
 	@Resource
     MessageService messageServices;
@@ -526,25 +531,32 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 	//vendido
 	private List<Integer> esExpedienteValidoVendido(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-
-		try {
-			for (int i = 1; i < this.numFilasHoja; i++) {
-				try {
-					if (!Checks.esNulo(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE))
-							&& particularValidator.esExpedienteValidoVendido(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE))) {
+		
+		Usuario usuario = usuarioApi.getUsuarioLogado();
+		Boolean esGestorFormalizacion = msvProcesoApi.tienePerfilPorCodigo("HAYAGESTFORM", usuario);
+		Boolean esGestorFormalizacionDos = msvProcesoApi.tienePerfilPorCodigo("GFORM", usuario);
+		
+		if (!esGestorFormalizacion && !esGestorFormalizacionDos) {
+			try {
+				for (int i = 1; i < this.numFilasHoja; i++) {
+					try {
+						if (!Checks.esNulo(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE))
+								&& particularValidator.esExpedienteValidoVendido(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE))) {
+							listaFilas.add(i);
+						}
+					} catch (ParseException e) {
 						listaFilas.add(i);
 					}
-				} catch (ParseException e) {
-					listaFilas.add(i);
 				}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
 			}
-		} catch (IllegalArgumentException e) {
-			listaFilas.add(0);
-			e.printStackTrace();
-		} catch (IOException e) {
-			listaFilas.add(0);
-			e.printStackTrace();
-		}
+		} 
+		
 		return listaFilas;
 	}
 	

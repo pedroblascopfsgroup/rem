@@ -331,6 +331,8 @@ public interface ParticularValidatorApi {
 
 	Boolean existeAgrupacion(String numAgrupacion);
 	
+	Boolean agrupacionActiva(String numAgrupacion);
+	
 	Boolean existeAgrupacionPA(String numAgrupacion);
 
 	Boolean existeTipoGestor(String tipoGestor);

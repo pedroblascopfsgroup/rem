@@ -1627,7 +1627,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (estadoOferta != null) {
 						if (oferta.getEstadoOferta() == null && (DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta)
 								|| (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta)
-								&& caixaBcRestClient.callReplicateClient(oferta.getNumOferta(),CaixaBcRestClient.CLIENTE_TITULARES_DATA)))) {
+								&& caixaBcRestClient.callReplicateClient(oferta.getNumOferta(),CaixaBcRestClient.CLIENTE_TITULARES_DATA)
+								&& caixaBcRestClient.callReplicateOferta(oferta.getNumOferta())))) {
 							oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
 							
 							if (DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta)) {

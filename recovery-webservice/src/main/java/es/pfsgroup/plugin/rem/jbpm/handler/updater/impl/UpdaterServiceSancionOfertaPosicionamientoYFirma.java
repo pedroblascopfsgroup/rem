@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.recovery.api.UsuarioApi;
@@ -136,10 +137,17 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 						}
 
 						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-
+						Filter filtroMotivo;
+						
 						// Rechazamos el resto de ofertas
 						for (Oferta oferta : listaOfertas) {
 							if (DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())) {
+								filtroMotivo = genericDao.createFilter(FilterType.EQUALS, "codigo",
+										DDMotivoRechazoOferta.CODIGO_ACTIVO_VENDIDO);
+								DDMotivoRechazoOferta motivo = genericDao.get(DDMotivoRechazoOferta.class,
+										filtroMotivo);
+								
+								oferta.setMotivoRechazo(motivo);
 								ofertaApi.rechazarOferta(oferta);
 							}
 						}

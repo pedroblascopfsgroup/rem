@@ -114,6 +114,13 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 	@Column(name = "CEX_NUM_URSUS_CONYUGE_BH_REM")
 	private String numeroClienteUrsusBhConyuge;
 	
+	@Column(name = "DD_ECC_CODIGO")
+	private String estadoComunicacionCompradorBCCodigo;
+	
+	@Column(name = "DD_ECC_DESCRIPCION")
+	private String estadoComunicacionCompradorBCDescripcion;
+	
+	
     
 	public String getId() {
 		return id;
@@ -361,6 +368,22 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 
 	public void setNumeroClienteUrsusBhConyuge(String numeroClienteUrsusBhConyuge) {
 		this.numeroClienteUrsusBhConyuge = numeroClienteUrsusBhConyuge;
+	}
+
+	public String getEstadoComunicacionCompradorBCCodigo() {
+		return estadoComunicacionCompradorBCCodigo;
+	}
+
+	public void setEstadoComunicacionCompradorBCCodigo(String estadoComunicacionCompradorBCCodigo) {
+		this.estadoComunicacionCompradorBCCodigo = estadoComunicacionCompradorBCCodigo;
+	}
+
+	public String getEstadoComunicacionCompradorBCDescripcion() {
+		return estadoComunicacionCompradorBCDescripcion;
+	}
+
+	public void setEstadoComunicacionCompradorBCDescripcion(String estadoComunicacionCompradorBCDescripcion) {
+		this.estadoComunicacionCompradorBCDescripcion = estadoComunicacionCompradorBCDescripcion;
 	}
 	
 	

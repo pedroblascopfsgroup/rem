@@ -3600,7 +3600,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private String crearCuerpoCorreoPropagarFase(List<Long> activosPropagados, String numAgrupacion) {
 		StringBuilder sb = new StringBuilder("");
 		
-		if(activosPropagados != null && activosPropagados.isEmpty()) {
+		if(activosPropagados != null && !activosPropagados.isEmpty()) {
 			sb.append("Este cambio se ha propagado a los siguientes activos:");
 			for (int i = 0; i<= activosPropagados.size(); i++) {
 				sb.append(activosPropagados.get(i).toString());

@@ -196,6 +196,9 @@ public class GastoProveedor implements Serializable, Auditable {
 		
 	@Column(name="GPV_NUM_CONTR_ALQUILER")
 	private String numeroContratoAlquiler;
+	
+	@Column(name="GPV_SOLICITUD_PAGO_URGENTE")
+	private Integer solicitudPagoUrgente;
     
 	@Version   
 	private Long version;
@@ -550,5 +553,13 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setNumeroContratoAlquiler(String numeroContratoAlquiler) {
 		this.numeroContratoAlquiler = numeroContratoAlquiler;
+	}
+	
+	public Integer getSolicitudPagoUrgente() {
+		return solicitudPagoUrgente;
+	}
+
+	public void setSolicitudPagoUrgente(Integer solicitudPagoUrgente) {
+		this.solicitudPagoUrgente = solicitudPagoUrgente;
 	}
 }

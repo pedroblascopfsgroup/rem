@@ -2058,7 +2058,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public boolean checkCompradores(TareaExterna tareaExterna) {
 		ExpedienteComercial expediente = tareaExternaToExpediente(tareaExterna);
 		if (expediente != null) {
-			return 100f == expedienteComercialApi.getPorcentajeCompra(expediente.getId());
+			return Float.valueOf(100f).equals(expedienteComercialApi.getPorcentajeCompra(expediente.getId()));
 		}
 		return false;
 	}

@@ -169,6 +169,7 @@
            <value>es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionReserva</value>
            <value>es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva</value>
            <value>es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega</value>
+           <value>es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC</value>
     </list>
     </property>
     </bean>

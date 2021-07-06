@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo
---## FECHA_CREACION=20210531
+--## AUTOR=Sergio Gomez
+--## FECHA_CREACION=20210706
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14115
+--## INCIDENCIA_LINK=HREOS-14522
 --## PRODUCTO=NO
 --##
 --## Finalidad:
@@ -46,7 +46,7 @@ DECLARE
     	T_TIPO_DATA('T017_ConfirmarFechaFirmaArras'		,'label', 		'0'		,'titulo'				,null		,null					,'<p style="margin-bottom: 10px"> Ha recibido respuesta del propietario. </p><p style="margin-bottom: 10px"> Si la respuesta ha sido positiva, al realizar esta tarea el proceso avanzará a "Instrucciones contrato reserva".</p><p style="margin-bottom: 10px"> Por el contrario, si la respuesta ha sido negativa, volverá a la tarea "Agendar fecha arras". </p>'),
     	T_TIPO_DATA('T017_ConfirmarFechaFirmaArras'		,'datefield', 	'1'		,'fechaPropuesta'		,'false'	,null					,'Fecha propuesta'),
     	T_TIPO_DATA('T017_ConfirmarFechaFirmaArras'		,'datefield', 	'2'		,'fechaValidacionBC'	,'false'	,null					,'Fecha validación BC '),
-    	T_TIPO_DATA('T017_ConfirmarFechaFirmaArras'		,'combobox', 	'3'		,'comboValidacionBC'	,'false'	,'DDApruebaDeniega'		,'Validación BC'),
+    	T_TIPO_DATA('T017_ConfirmarFechaFirmaArras'		,'combobox', 	'3'		,'comboValidacionBC'	,'false'	,'DDMotivosEstadoBC'		,'Validación BC'),
     	T_TIPO_DATA('T017_ConfirmarFechaFirmaArras'		,'textarea', 	'4'		,'observacionesBC'		,null		,null					,'Observaciones BC'),
     	T_TIPO_DATA('T017_ConfirmarFechaFirmaArras'		,'textarea', 	'5'		,'observaciones'		,null		,null					,'Observaciones')
     ); 

@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.DtoActivosAlquiladosGrid;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.FechaArrasExpediente;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
@@ -1419,4 +1420,10 @@ public interface ExpedienteComercialApi {
 	
 	public Date getFechaContabilizacion(Long idExpediente);
 
+	
+	public void createOrUpdateUltimaPropuesta(Long idExpediente, DtoGridFechaArras dto);
+	
+	public boolean checkAprobadoRechazadoBC(TareaExterna tareaExterna);
+	
+	
 }

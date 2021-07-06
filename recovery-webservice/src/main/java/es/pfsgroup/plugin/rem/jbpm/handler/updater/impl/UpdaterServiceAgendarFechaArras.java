@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 
 @Component
 public class UpdaterServiceAgendarFechaArras implements UpdaterService {
@@ -54,6 +55,7 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 				}
 
 				DtoExpedienteComercial dto = expedienteComercialApi.getExpedienteComercialByOferta(ofertaAceptada.getNumOferta());
+				dtoArras.setValidacionBC(DDMotivosEstadoBC.CODIGO_PDTE_VALIDACION);
 				expedienteComercialApi.createOrUpdateUltimaPropuestaEnviada(dto.getId(), dtoArras);			
 				
 			}

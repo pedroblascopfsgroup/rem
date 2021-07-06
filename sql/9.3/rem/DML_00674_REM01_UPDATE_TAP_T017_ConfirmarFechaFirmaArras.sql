@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo
---## FECHA_CREACION=20210602
+--## AUTOR=Sergio Gomez
+--## FECHA_CREACION=20210706
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14115
+--## INCIDENCIA_LINK=HREOS-14522
 --## PRODUCTO=NO
 --##
 --## Finalidad:
@@ -41,8 +41,9 @@ BEGIN
 
     --DBMS_OUTPUT.PUT_LINE('COMENZANDO EL PROCESO DE ACTUALIZACIÓN');
     EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET 
-		TAP_SCRIPT_DECISION = '' valores[''''T017_ConfirmarFechaFirmaArras''''][''''comboValidacionBC''''] == DDApruebaDeniega.CODIGO_APRUEBA ? ''''Confirmado'''' : ''''noConfirmado'''' ''
-		, USUARIOMODIFICAR = ''HREOS-14115''
+		TAP_SCRIPT_DECISION = '' valores[''''T017_ConfirmarFechaFirmaArras''''][''''comboValidacionBC''''] == DDMotivosEstadoBC.CODIGO_APROBADA_BC ? ''''Confirmado'''' : ''''noConfirmado'''' ''
+        , TAP_SCRIPT_VALIDACION = '' (checkBankia() == true && checkExpedienteBloqueado() == true) ? '''' El expediente est&aacute; bloqueado '''' : checkAprobadoRechazadoBC() ? null : ''''El estado de Validaci&oacute;n BC de la fecha arras tiene que ser Aceptado o Rechazado''''  ''
+		, USUARIOMODIFICAR = ''HREOS-14522''
 		, FECHAMODIFICAR = SYSDATE 
 		WHERE TAP_CODIGO = ''T017_ConfirmarFechaFirmaArras''';
 

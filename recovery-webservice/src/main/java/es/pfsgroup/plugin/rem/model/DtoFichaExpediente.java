@@ -124,6 +124,7 @@ public class DtoFichaExpediente extends WebDto {
 	private Boolean ocultarPestTanteoRetracto;
 	
 	private String estadoReserva;
+	private String estadoReservaCod;
 	private String codDevolucionReserva;
 	
 	private Boolean bloqueado;
@@ -837,6 +838,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setFechaReservaDeposito(Date fechaReservaDeposito) {
 		this.fechaReservaDeposito = fechaReservaDeposito;
+	}
+
+	public String getEstadoReservaCod() {
+		return estadoReservaCod;
+	}
+
+	public void setEstadoReservaCod(String estadoReservaCod) {
+		this.estadoReservaCod = estadoReservaCod;
 	}
 	
 	

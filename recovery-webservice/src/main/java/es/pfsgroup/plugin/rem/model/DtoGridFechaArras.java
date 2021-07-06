@@ -21,6 +21,8 @@ public class DtoGridFechaArras extends WebDto {
 	private String comentariosBC;
 	private String observaciones;
 	private String fechaPropuestaString;
+	private String motivoAnulacion;
+	private String validacionBCcodigo;
 	
 	public Long getId() {
 		return id;
@@ -87,6 +89,18 @@ public class DtoGridFechaArras extends WebDto {
 	}
 	public void setFechaPropuestaString(String fechaPropuestaString) {
 		this.fechaPropuestaString = fechaPropuestaString;
+	}
+	public String getMotivoAnulacion() {
+		return motivoAnulacion;
+	}
+	public void setMotivoAnulacion(String motivoAnulacion) {
+		this.motivoAnulacion = motivoAnulacion;
+	}
+	public String getValidacionBCcodigo() {
+		return validacionBCcodigo;
+	}
+	public void setValidacionBCcodigo(String validacionBCcodigo) {
+		this.validacionBCcodigo = validacionBCcodigo;
 	}
 	
 	

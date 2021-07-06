@@ -1560,6 +1560,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 					if (!Checks.esNulo(reserva.getEstadoReserva())) {
 						dto.setEstadoReserva(reserva.getEstadoReserva().getDescripcion());
+						dto.setEstadoReservaCod(reserva.getEstadoReserva().getCodigo());
 					}
 				}
 
@@ -12030,6 +12031,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			fechaArrasExpedienteList = genericDao.getListOrdered(FechaArrasExpediente.class, order, filtroExpediente, filter);
 		}
 
+		fechaArrasExpedienteList = this.listFechaArrasFiltradaSinAnulados(fechaArrasExpedienteList);
 		if(fechaArrasExpedienteList != null && !fechaArrasExpedienteList.isEmpty()){
 			fechaArrasExpediente = fechaArrasExpedienteList.get(0);
 		}
@@ -12042,16 +12044,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Filter filtroFechaRespuesta = genericDao.createFilter(FilterType.NULL, "fechaRespuestaBC");
 		FechaArrasExpediente fechaArrasExpediente =  this.getUltimaPropuesta(idExpediente, filtroFechaRespuesta);
 		
-		if(fechaArrasExpediente == null) {
-			fechaArrasExpediente = new FechaArrasExpediente();
-			ExpedienteComercial eco = this.findOne(idExpediente);
-			fechaArrasExpediente.setExpedienteComercial(eco);
-		}
-
-		this.dtoToPropuesta(fechaArrasExpediente, dto);
-		
-		genericDao.save(FechaArrasExpediente.class, fechaArrasExpediente);
-
+		this.createOrUpdatePropuesta(fechaArrasExpediente,dto,idExpediente);
 	}
 	
 	private DtoGridFechaArras propuestaToDto(FechaArrasExpediente fechaArrasExpediente) {
@@ -12062,6 +12055,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setValidacionBC(fechaArrasExpediente.getValidacionBC().getCodigo());
 			}
 			dto.setFechaBC(fechaArrasExpediente.getFechaRespuestaBC());
+			dto.setComentariosBC(fechaArrasExpediente.getComentariosBC());
+			dto.setMotivoAnulacion(fechaArrasExpediente.getMotivoAnulacion());
 			dto.setComentariosBC(fechaArrasExpediente.getComentariosBC());
 		}
 		return dto;
@@ -12095,8 +12090,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public List<DtoGridFechaArras> getFechaArras(Long idExpediente) throws IllegalAccessException, InvocationTargetException {
 		List<DtoGridFechaArras> listDto = new ArrayList<DtoGridFechaArras>();
 		List<FechaArrasExpediente> list = new ArrayList<FechaArrasExpediente>();
+		Order order = new Order(OrderType.DESC,"id");
+		//list = genericDao.getList(FechaArrasExpediente.class, genericDao.createFilter(FilterType.EQUALS, "expedienteComercial.id", idExpediente));
+		list = genericDao.getListOrdered(FechaArrasExpediente.class, order, genericDao.createFilter(FilterType.EQUALS, "expedienteComercial.id", idExpediente));
 		
-		list = genericDao.getList(FechaArrasExpediente.class, genericDao.createFilter(FilterType.EQUALS, "expedienteComercial.id", idExpediente));
 		
 		for(FechaArrasExpediente reg: list) {
 			DtoGridFechaArras dto = new DtoGridFechaArras();
@@ -12104,9 +12101,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			beanUtilNotNull.copyProperties(dto, reg);
 			dto.setFechaAlta(reg.getAuditoria().getFechaCrear());
 			dto.setFechaBC(reg.getFechaRespuestaBC());
-			
+			dto.setMotivoAnulacion(reg.getMotivoAnulacion());
 			if(reg.getValidacionBC() != null) {
 				dto.setValidacionBC(reg.getValidacionBC().getDescripcion());
+				dto.setValidacionBCcodigo(reg.getValidacionBC().getCodigo());
 			}else {
 				dto.setValidacionBC("Pte respuesta");
 			}
@@ -12125,6 +12123,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		nuevaFecha.setFechaPropuesta(ft.parse(dto.getFechaPropuestaString()));
 		nuevaFecha.setObservaciones(dto.getObservaciones());
 		nuevaFecha.setExpedienteComercial(genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente())));
+		DDMotivosEstadoBC validacionBC = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivosEstadoBC.CODIGO_NO_ENVIADA));
+		nuevaFecha.setValidacionBC(validacionBC);
+		if (dto.getMotivoAnulacion() != null) {
+			nuevaFecha.setMotivoAnulacion(dto.getMotivoAnulacion());
+		}
 		
 		nuevaFecha = genericDao.save(FechaArrasExpediente.class, nuevaFecha);
 		
@@ -12139,7 +12142,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			FechaArrasExpediente fechaArras = genericDao.get(FechaArrasExpediente.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getId()));
 			
-			beanUtilNotNull.copyProperties(fechaArras, dto);
 			
 			if(dto.getFechaBC() != null) {
 				String fechaBC = ft.format(dto.getFechaBC());
@@ -12147,6 +12149,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if(!FECHA_1970.equals(fechaBC)) {
 					fechaArras.setFechaRespuestaBC(dto.getFechaBC());
 				}
+			}
+			if (dto.getObservaciones() != null) {
+				fechaArras.setObservaciones(dto.getObservaciones());
+			}
+			if (dto.getMotivoAnulacion() != null) {
+				if (DDMotivosEstadoBC.CODIGO_NO_ENVIADA.equals(fechaArras.getValidacionBC().getCodigo())) {
+					DDMotivosEstadoBC motivo = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivosEstadoBC.CODIGO_ANULADA));
+					fechaArras.setValidacionBC(motivo);					
+				}
+				if (DDMotivosEstadoBC.CODIGO_APROBADA_BC.equals(fechaArras.getValidacionBC().getCodigo())) {
+					DDMotivosEstadoBC motivo = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivosEstadoBC.CODIGO_APLAZADA));
+					fechaArras.setValidacionBC(motivo);
+				}
+				fechaArras.setMotivoAnulacion(dto.getMotivoAnulacion());
 			}
 			
 			genericDao.update(FechaArrasExpediente.class, fechaArras);
@@ -12612,5 +12628,49 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 	public Date getFechaContabilizacion(Long idExpediente) {
 		return expedienteComercialDao.getFechaContabilizacionByIdExpediente(idExpediente);
+	}
+	
+	@Transactional(readOnly = false)
+	private void createOrUpdatePropuesta(FechaArrasExpediente fae, DtoGridFechaArras dto, Long idExpediente) {
+		if(fae == null) {
+			fae = new FechaArrasExpediente();
+			ExpedienteComercial eco = this.findOne(idExpediente);
+			fae.setExpedienteComercial(eco);
+			
+		}
+		this.dtoToPropuesta(fae, dto);
+		
+		genericDao.save(FechaArrasExpediente.class, fae);
+
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void createOrUpdateUltimaPropuesta(Long idExpediente, DtoGridFechaArras dto) {
+		FechaArrasExpediente fechaArrasExpediente =  this.getUltimaPropuesta(idExpediente,null);
+		
+		this.createOrUpdatePropuesta(fechaArrasExpediente,dto,idExpediente);
+	}
+	
+	private List<FechaArrasExpediente> listFechaArrasFiltradaSinAnulados(List<FechaArrasExpediente> listaFechaArrasExp){
+		List<FechaArrasExpediente> listaAux = new ArrayList<FechaArrasExpediente>();
+		for (FechaArrasExpediente fechaArrasExp : listaFechaArrasExp) {
+			if (!DDMotivosEstadoBC.isAnulado(fechaArrasExp.getValidacionBC())) {
+				listaAux.add(fechaArrasExp);
+			}
+		}
+		return listaAux;
+	}
+	@Override
+	public boolean checkAprobadoRechazadoBC(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		if (expedienteComercial != null) {
+			FechaArrasExpediente fechaArrasExpediente =  this.getUltimaPropuesta(expedienteComercial.getId(),null);
+			if (fechaArrasExpediente != null 
+					&& (DDMotivosEstadoBC.isAprobado(fechaArrasExpediente.getValidacionBC()) || DDMotivosEstadoBC.isRechazado(fechaArrasExpediente.getValidacionBC()))) {
+				return true;
+			}				
+		}
+		return false;
 	}
 }

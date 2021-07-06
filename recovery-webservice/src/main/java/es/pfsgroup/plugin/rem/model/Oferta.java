@@ -326,6 +326,9 @@ public class Oferta implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_RDC_ID")
     private DDResponsableDocumentacionCliente respDocCliente;
+	
+	@Column(name="OFR_FECHA_OFERTA_PENDIENTE")
+	private Date fechaOfertaPendiente;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -990,6 +993,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setRespDocCliente(DDResponsableDocumentacionCliente respDocCliente) {
 		this.respDocCliente = respDocCliente;
+	}
+
+	public Date getFechaOfertaPendiente() {
+		return fechaOfertaPendiente;
+	}
+
+	public void setFechaOfertaPendiente(Date fechaOfertaPendiente) {
+		this.fechaOfertaPendiente = fechaOfertaPendiente;
 	}
 	
 }

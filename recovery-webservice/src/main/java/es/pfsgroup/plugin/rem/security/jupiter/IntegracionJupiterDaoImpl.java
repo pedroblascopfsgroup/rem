@@ -58,6 +58,9 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 				zpu.setVersion(0);
 				genericDao.save(ZonaUsuarioPerfil.class, zpu);
 				logger.debug("Creando asociacion perfil " + codigoPerfil + " - usuario " + usuario.getUsername());
+				if (esPerfilAsociadoADespacho(codigoPerfil)) {
+					asociarUsuarioADespacho(usuario, codigoPerfil);
+				}
 			} else {
 				logger.error("No existe el perfil " + codigoPerfil + " en REM: no se crea asociacion con el usuario " + usuario.getUsername());
 			}
@@ -66,7 +69,25 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 		for (String codigoPerfil : bajasPerfiles) {
 			genericDao.delete(ZonaUsuarioPerfil.class, filtroUsuario, obtenerFiltroZPUPerfil(codigoPerfil));
 			logger.debug("Eliminando asociacion perfil " + codigoPerfil + " - usuario " + usuario.getUsername());
+			if (esPerfilAsociadoADespacho(codigoPerfil)) {
+				desasociarUsuarioADespacho(usuario, codigoPerfil);
+			}
 		}
+	}
+
+	private boolean esPerfilAsociadoADespacho(String codigo) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	private void asociarUsuarioADespacho(Usuario usuario, String codigo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void desasociarUsuarioADespacho(Usuario usuario, String codigoPerfil) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -142,6 +163,26 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 	public void eliminarSubcarteras(Usuario usuario) {
 		Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
 		eliminarSubcarterasFiltro(filtroUsuario, usuario.getUsername());
+	}
+	
+	@Override
+	public Usuario crearUsuario(String username, String nombre, String apellidos, String email) {
+		Usuario usuario = new Usuario();
+		String ape1;
+		String ape2;
+		usuario.setNombre(nombre);
+		if (apellidos.contains(" ")) {
+			ape1 = apellidos.split(" ")[0];
+			ape2 = apellidos.split(" ", 2)[1];
+		} else {
+			ape1 = apellidos;
+			ape2 = "";
+		}
+		usuario.setApellido1(ape1);
+		usuario.setApellido2(ape2);
+		usuario.setEmail(email);
+		genericDao.save(Usuario.class, usuario);
+		return usuario;
 	}
 	
 	@Override

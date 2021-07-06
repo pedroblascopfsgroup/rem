@@ -60,7 +60,12 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 		Usuario usuario = usuarioDao.getByUsername(username);
 		
 		if (usuario == null) {
-			logger.error("No existe en REM el usuario: " + username);
+			logger.info("No existe en REM el usuario: " + username + ". Procedemos a su creación.");
+			try {
+				usuario = integracionJupiterDao.crearUsuario(username, nombre, apellidos, email);
+			} catch (Exception e) {
+				logger.error("IntegracionJupiter: problema al crear el usuario en REM desde Jupiter: " + e.getMessage()	+ " --- " + e.getCause());
+			}
 		} else {	
 			String nombreREM = usuario.getNombre();
 			String apellidosREM = usuario.getApellidos();

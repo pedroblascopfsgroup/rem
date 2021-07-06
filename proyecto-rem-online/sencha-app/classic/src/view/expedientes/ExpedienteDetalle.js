@@ -118,7 +118,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'ofertaexpediente', ocultarBotonesEdicion: true})}, ['TAB_OFERTA_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'condicionesexpediente', funPermEdition: ['EDITAR_TAB_CONDICIONES_EXPEDIENTES']})}, ['TAB_CONDICIONES_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activosexpediente', ocultarBotonesEdicion: true})}, ['TAB_ACTIVOS_COMERCIALIZABLES_EXPEDIENTES']);
-	        
+
 	        if(me.lookupController().getViewModel().get('expediente').get('isSubcarteraApple')){
 	        	if ($AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_BO_INM']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_COMERCIAL_BO_INM']) || $AU.userIsRol(CONST.PERFILES['GESTBOARDING'])
 	        			|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_FORM'])|| $AU.userIsRol(CONST.PERFILES['SUPERVISOR_FORM'])) {
@@ -126,7 +126,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        	} else {
 	        		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'reservaexpediente', ocultarBotonesEdicion: true})}, ['TAB_RESERVA_EXPEDIENTES']);
 	        	}
-	        } else {
+	        } else if(me.lookupController().getViewModel().get('expediente').get('esBankia')){ 
+	    		var dataExpediente = me.lookupController().getView().getViewModel().getData().expediente.getData();
+	        	var editarReserva = true;
+	        	if(dataExpediente.solicitaReserva === "0" || !dataExpediente.tieneReserva){
+	        		editarReserva = false;
+	    		}
+	    		if(!editarReserva || dataExpediente.tipoExpedienteCodigo === CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"]){
+					editarReserva = false;
+	    		}
+	        	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'reservaexpediente', ocultarBotonesEdicion: !editarReserva , funPermEdition: ['EDITAR_TAB_RESERVA_EXPEDIENTES']})}, ['TAB_RESERVA_EXPEDIENTES']);
+			}else{
 	        	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'reservaexpediente', bind: {disabled: '{esExpedienteSinReservaOdeTipoAlquiler}'}, funPermEdition: ['EDITAR_TAB_RESERVA_EXPEDIENTES']})}, ['TAB_RESERVA_EXPEDIENTES']);
 	        }
 	        

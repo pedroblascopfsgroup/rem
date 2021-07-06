@@ -827,14 +827,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivosMismaLocalizacion (String inSqlNumActivosRem){
-		Map<String, Object> params = new HashMap<String, Object>();
-			params.put("inSqlNumActivosRem", inSqlNumActivosRem);		
-		
-		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(COUNT(1)) "
 				+ "			  FROM ACT_ACTIVO act, BIE_LOCALIZACION loc "
 				+ "			WHERE act.BIE_ID = loc.BIE_ID "
-				+ "			  AND act.ACT_NUM_ACTIVO IN (:inSqlNumActivosRem) "
+				+ "			  AND act.ACT_NUM_ACTIVO IN ("+inSqlNumActivosRem+") "
 				+ "			  AND act.BORRADO = 0 "
 				+ "			  AND loc.BORRADO = 0 "
 				+ "			GROUP BY act.DD_CRA_ID, loc.DD_PRV_ID, loc.DD_LOC_ID, loc.BIE_LOC_COD_POST");
@@ -843,15 +839,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivosMismoPropietario (String inSqlNumActivosRem){
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("inSqlNumActivosRem", inSqlNumActivosRem);
-		
-		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(COUNT(1)) "
 				+ "			    FROM ACT_PAC_PROPIETARIO_ACTIVO pac, "
 				+ "			      ACT_ACTIVO act "
 				+ "			    WHERE act.act_id       = pac.act_id "
-				+ "			      AND act.ACT_NUM_ACTIVO IN (:inSqlNumActivosRem) "
+				+ "			      AND act.ACT_NUM_ACTIVO IN ("+inSqlNumActivosRem+") "
 				+ "			      AND pac.BORRADO  = 0 "
 				+ "			      AND act.BORRADO  = 0 "
 				+ "			    GROUP BY pac.PRO_ID ");
@@ -931,11 +923,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esActivosOfertasAceptadas (String inSqlNumActivosRem, String numAgrupRem){
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("inSqlNumActivosRem", inSqlNumActivosRem);
-		params.put("numAgrupRem", numAgrupRem);
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("numAgrupRem", numAgrupRem);
 
-		rawDao.addParams(params);
+		rawDao.addParams(param);
 		String sql =
 				"SELECT "
 				+ "  ( "
@@ -946,7 +937,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "    INNER JOIN DD_EOF_ESTADOS_OFERTA eof1 on ofr1.dd_eof_id = eof1.dd_eof_id "
 				+ "    WHERE "
 				+ "      eof1.dd_eof_codigo = '01' " // --Oferta Aceptada (en activos)
-				+ "      AND act1.act_num_activo in (:inSqlNumActivosRem) "
+				+ "      AND act1.act_num_activo in (" +inSqlNumActivosRem + ") "
 				+ "      AND ofr1.borrado = 0 "
 				+ "  )  + "
 				+ "  ( "
@@ -985,7 +976,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "    INNER JOIN DD_EOF_ESTADOS_OFERTA eof1 on ofr1.dd_eof_id = eof1.dd_eof_id "
 				+ "    WHERE "
 				+ "      eof1.dd_eof_codigo = '01' " // --Oferta Aceptada (en otras agrupaciones de los activos)
-				+ "      AND act1.act_num_activo in (:inSqlNumActivosRem) "
+				+ "      AND act1.act_num_activo in ("+inSqlNumActivosRem+") "
 				+ "      AND ofr1.borrado = 0 "
 				+ "      AND aga1.borrado = 0 "
 				+ "      AND agr1.borrado = 0 "
@@ -1024,7 +1015,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		params.put("numActivo", numActivo);
 		params.put("numAgrupacion", numAgrupacion);
 		String cadenaCodigosSql = convertStringToGroupSql(codTiposAgrNoCompatibles);
-		params.put("codTiposAgrNoCompatibles", cadenaCodigosSql);
 
 		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(aga.AGR_ID) "
@@ -1036,7 +1026,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			    AND act.act_id   = aga.act_id "
 				+ "			    AND act.ACT_NUM_ACTIVO = :numActivo "
 				+ "				AND agr.DD_TAG_ID = tag.DD_TAG_ID "
-				+ "			    AND tag.DD_TAG_CODIGO in (:codTiposAgrNoCompatibles) "
+				+ "			    AND tag.DD_TAG_CODIGO in ("+cadenaCodigosSql+") "
 				+ "			    AND agr.AGR_NUM_AGRUP_REM  <> :numAgrupacion "
 				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE)"
 				+ "			    AND aga.BORRADO  = 0 "
@@ -2363,11 +2353,14 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean agrupacionActiva(String numAgrupacion){
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		rawDao.addParams(params);
 		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_AGR_AGRUPACION "
-				+ "		 WHERE AGR_NUM_AGRUP_REM =" + numAgrupacion
+				+ "		 WHERE AGR_NUM_AGRUP_REM = :numAgrupacion"
 				+ "      AND AGR_FECHA_BAJA IS NULL");
 		return !"0".equals(resultado);
 	}
@@ -2441,11 +2434,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado= "0";
 		String cartera=null;
 		String query;
-
+		Map<String, Object> params = new HashMap<String, Object>();
 
 
 		if(!Checks.esNulo(numActivo)){
-			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("numActivo", numActivo);
 			rawDao.addParams(params);
 			query= "SELECT DISTINCT(act.DD_CRA_ID) "
@@ -2454,7 +2446,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			cartera= rawDao.getExecuteSQL(query);
 		}
 		else if(!Checks.esNulo(numAgrupacion)){
-			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("numAgrupacion", numAgrupacion);
 			rawDao.addParams(params);
 			query= "SELECT DISTINCT(act.DD_CRA_ID) "
@@ -2464,7 +2455,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 
 		else if(!Checks.esNulo(numExpediente)){
-			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("numExpediente", numExpediente);
 			rawDao.addParams(params);
 			cartera= rawDao.getExecuteSQL("SELECT DISTINCT(act.DD_CRA_ID) "
@@ -2477,15 +2467,16 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 
 		if(!Checks.esNulo(cartera)){
-			Map<String, Object> params = new HashMap<String, Object>();
+			params = new HashMap<String, Object>();
 			params.put("codigoGestor", codigoGestor);
+			params.put("cartera", cartera);
 			rawDao.addParams(params);
 			query= ("SELECT COUNT(*) "
 					+ "		 FROM DD_GCM_GESTOR_CARGA_MASIVA gcm "
 					+ "			INNER JOIN ${master.schema}.DD_TGE_TIPO_GESTOR tge on gcm.DD_GCM_CODIGO = tge.DD_TGE_CODIGO "
 					+ "			INNER JOIN DD_CRA_CARTERA cra on gcm.DD_CRA_ID = cra.DD_CRA_ID "
 					+ "			WHERE gcm.DD_GCM_CODIGO = :codigoGestor "
-					+ "		 	AND cra.DD_CRA_ID = "+cartera+" "
+					+ "		 	AND cra.DD_CRA_ID = :cartera "
 					+ "			AND gcm.BORRADO = 0");
 
 			if(!Checks.esNulo(numActivo)){
@@ -6589,6 +6580,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeCodigoMotivoAdmision(String codMotivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codMotivo", codMotivo);
+		rawDao.addParams(params);
 		
 		 if(codMotivo == null || codMotivo.isEmpty())
 			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
@@ -6599,13 +6593,16 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT COUNT(1) "+ 
 				"FROM DD_MGC_MOTIVO_GEST_COMERCIAL MGC"+ 
-				" WHERE MGC.DD_MGC_CODIGO = '" + codMotivo +
-				"' AND MGC.borrado = 0");
+				" WHERE MGC.DD_MGC_CODIGO = :codMotivo" +
+				" AND MGC.borrado = 0");
 		return "1".equals(resultado);
 	}
 	
 	@Override
 	public Boolean tieneFechaVentaExterna(String activo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("activo", activo);
+		rawDao.addParams(params);
 		
 		 if(activo == null || activo.isEmpty())
 			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
@@ -6616,13 +6613,16 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT COUNT(1) "+ 
 				"FROM act_activo act"+ 
-				" WHERE act.act_num_activo = '" + activo +
-				"' AND act.act_venta_externa_fecha is null AND act.borrado = 0");
+				" WHERE act.act_num_activo = :activo " +
+				" AND act.act_venta_externa_fecha is null AND act.borrado = 0");
 		return "1".equals(resultado);
 	}
 	
 	@Override
 	public Boolean activoNoComercializable(String activo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("activo", activo);
+		rawDao.addParams(params);
 		
 		 if(activo == null || activo.isEmpty())
 			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
@@ -6634,12 +6634,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"SELECT COUNT(1) "+ 
 				"FROM act_pac_perimetro_activo pac"+ 
 				" WHERE pac.pac_check_formalizar = '1'"+
-				" AND pac.act_id = (select act_id from act_activo where act_num_activo = '"+activo+"') AND pac.borrado = 0");
+				" AND pac.act_id = (select act_id from act_activo where act_num_activo = :activo) AND pac.borrado = 0");
 		return "1".equals(resultado);
 	}
 	
 	@Override
 	public Boolean maccConCargas(String activo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("activo", activo);
+		rawDao.addParams(params);
 		
 		 if(activo == null || activo.isEmpty())
 			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
@@ -6650,7 +6653,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT COUNT(1) "+ 
 				"FROM act_activo act"+ 
-				" WHERE act.act_num_activo ='"+activo+"'"+
+				" WHERE act.act_num_activo = :activo"+
 				" AND act.act_con_cargas = '01'  AND act.borrado = 0");
 		return "1".equals(resultado);
 	}

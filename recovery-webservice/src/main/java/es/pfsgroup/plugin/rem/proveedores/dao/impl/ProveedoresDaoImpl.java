@@ -206,7 +206,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		
 		if(codigosTipoProveedores != null) {
-			q.setParameterList(":codigosTipoProveedores", Arrays.asList(codigosTipoProveedores.split(",")));
+			q.setParameterList("codigosTipoProveedores", Arrays.asList(codigosTipoProveedores.split(",")));
 		}
 		
 		return (List<VProveedores>) q.list();

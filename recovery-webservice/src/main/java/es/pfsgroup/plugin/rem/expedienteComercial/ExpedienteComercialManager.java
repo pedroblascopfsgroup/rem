@@ -9571,7 +9571,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						activo.getSituacionPosesoria().getConTitulo().getCodigo());
 			}
 
-			if (!Checks.esNulo(activoDto) && activoDto.getConTitulo().equals("0")) {
+			if (!Checks.esNulo(activoDto) && activoDto.getConTituloCodigo().equals("0")) {
 				ocupado = false;
 			}
 

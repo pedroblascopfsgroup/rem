@@ -5724,8 +5724,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		ActivoSituacionPosesoria posesoria = activo.getSituacionPosesoria();
 		Integer ocupado;
 		String conTitulo = "";
-		if (activoDto.getConTitulo() != null) {
-			conTitulo = activoDto.getConTitulo();
+		DDTipoTituloActivoTPA tituloActivoTPA = null;
+		
+		if(activoDto.getConTituloCodigo() != null) {
+			Filter tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", activoDto.getConTituloCodigo());
+			tituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
+		}
+		
+		if (tituloActivoTPA != null) {
+			conTitulo = tituloActivoTPA.getCodigo();
+		}else {
+			conTitulo = posesoria.getConTitulo().getCodigo();
 		}
 		if (activoDto.getOcupado() != null) {
 			ocupado = activoDto.getOcupado();

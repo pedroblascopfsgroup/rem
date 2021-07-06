@@ -48,7 +48,9 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 	public String definicionOfertaT013(TareaExterna tareaExterna, String codigo, Map<String, Map<String,String>> valores) {
 
 		Boolean resultado = null;
-		resultado = caixaBcRestClient.callReplicateClient(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta(),CaixaBcRestClient.COMPRADORES_DATA);
+		resultado = caixaBcRestClient.callReplicateClient(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta(),CaixaBcRestClient.COMPRADORES_DATA)
+					&& caixaBcRestClient.callReplicateOferta(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta());
+				
 		if(!resultado){
 			return CaixaBcRestClient.ERROR_REPLICACION_BC;
 		}
@@ -110,7 +112,8 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 			return ofertaApi.isValidateOfertasDependientes(tareaExterna, valores);
 		}
 
-		if( !caixaBcRestClient.callReplicateClient(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta(),CaixaBcRestClient.COMPRADORES_DATA)){
+		if(!caixaBcRestClient.callReplicateClient(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta(),CaixaBcRestClient.COMPRADORES_DATA)
+				&& !caixaBcRestClient.callReplicateOferta(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta())){
 			return CaixaBcRestClient.ERROR_REPLICACION_BC;
 		}
 		return activoTramiteApi.existeAdjuntoUGValidacion(tareaExterna, DDSubtipoDocumentoExpediente.CODIGO_APROBACION,"E");

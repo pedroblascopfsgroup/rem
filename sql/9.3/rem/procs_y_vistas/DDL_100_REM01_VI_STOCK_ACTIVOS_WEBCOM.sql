@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=Carlos Augusto
+--## AUTOR=Sergio Gomez
 --## FECHA_CREACION=20210701
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2

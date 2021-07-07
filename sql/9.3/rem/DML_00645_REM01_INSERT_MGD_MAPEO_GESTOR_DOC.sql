@@ -47,7 +47,7 @@ DECLARE
       T_FUNCION('11', '67', 'Bankia Leaseback', 'BANKIA LEASEBACK'),
       T_FUNCION('11', '29', 'Particulares', 'PARTICULARES'),
       T_FUNCION('11', '65', 'Promontoria Omega', 'PROMONTORIA OMEGA'),
-      T_FUNCION('11', '65', 'Mapfre', 'MAPFRE'),
+      T_FUNCION('11', '66', 'Mapfre', 'MAPFRE'),
       T_FUNCION('11', '139', 'Yubai', 'YUBAI'),
       T_FUNCION('11', '140', 'Caser', 'CASER')
     );          

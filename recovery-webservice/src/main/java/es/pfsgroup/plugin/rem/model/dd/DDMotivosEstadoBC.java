@@ -135,5 +135,23 @@ public class DDMotivosEstadoBC implements Auditable, Dictionary {
 		
 		return isRechazado;
 	}
+	
+	public static boolean isNoEnviada(DDMotivosEstadoBC motivoEstadoBC) {
+		boolean is = false;
+		if(motivoEstadoBC != null && (CODIGO_NO_ENVIADA.equals(motivoEstadoBC.getCodigo()))) {
+			is = true;
+		}
+		
+		return is;
+	}
+	
+	public static boolean isAprobada(DDMotivosEstadoBC motivoEstadoBC) {
+		boolean is = false;
+		if(motivoEstadoBC != null && (CODIGO_APROBADA_BC.equals(motivoEstadoBC.getCodigo()))) {
+			is = true;
+		}
+		
+		return is;
+	}
 
 }

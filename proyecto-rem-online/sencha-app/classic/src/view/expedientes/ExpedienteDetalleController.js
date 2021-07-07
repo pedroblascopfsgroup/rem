@@ -1901,11 +1901,28 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	comprobarCamposFechas: function(editor, gridNfo) {
 		var me = this;
-
+		
+		var estadoExpediente = me.getView().getViewModel().getData().expediente.getData().codigoEstado;
+		var bloqueado = me.getView().getViewModel().getData().expediente.getData().bloqueado;
+		var estadosNoAnyadir = [CONST.ESTADOS_EXPEDIENTE['VENDIDO'],CONST.ESTADOS_EXPEDIENTE['FIRMADO']];
+		
+		if(estadosNoAnyadir.includes(estadoExpediente) || bloqueado || gridNfo.rowIdx != 0) {
+			return false;
+		}
+		
+		var estadoValidacionBC = gridNfo.record.data.validacionBCPosi;
+	
+		if (estadoValidacionBC == CONST.ESTADO_VALIDACION_BC['CODIGO_NO_ENVIADA'] || estadoValidacionBC == CONST.ESTADO_VALIDACION_BC['CODIGO_APROBADA_BC']){								
+			me.lookupReference('motivoAplazamientoRef').setDisabled(false);
+		}else{    			
+			me.lookupReference('motivoAplazamientoRef').setDisabled(true);
+		}
+		
 		if(editor.isNew) {
 			me.lookupReference('fechaPosicionamientoRef').setValue();
 			me.lookupReference('horaAvisoRef').setValue();
 			me.lookupReference('horaPosicionamientoRef').setValue();
+			me.lookupReference('motivoAplazamientoRef').setDisabled(true);
 		}
 		me.changeFecha(me.lookupReference('fechaPosicionamientoRef'));
 		me.changeHora(me.lookupReference('horaAvisoRef'));
@@ -1913,7 +1930,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		
 		me.lookupReference('fechaPosicionamientoRef').setDisabled(false);
 		me.lookupReference('horaPosicionamientoRef').setDisabled(false);
-		me.lookupReference('motivoAplazamientoRef').setDisabled(true);
 	},
 
 	comprobarCamposFechasAlquiler: function(editor, gridNfo) {

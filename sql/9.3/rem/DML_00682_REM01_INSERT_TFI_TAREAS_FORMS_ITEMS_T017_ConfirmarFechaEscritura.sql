@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210629
+--## AUTOR= Lara Pablo Flores
+--## FECHA_CREACION=20210707
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14115
+--## INCIDENCIA_LINK=HREOS-14497
 --## PRODUCTO=NO
 --##
 --## Finalidad:
@@ -39,13 +39,13 @@ DECLARE
     V_ENTIDAD_ID NUMBER(16);
 	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'TFI_TAREAS_FORM_ITEMS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'TFI'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
-	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-14115';
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-14497';
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     	T_TIPO_DATA('T017_ConfirmarFechaEscritura'		,'label', 		'0'		,'titulo'				,null		,null					,'<p style="margin-bottom: 10px">Ha recibido respuesta del propietario.</p><p style="margin-bottom: 10px">Si la respuesta ha sido positiva, para finalizar esta tarea será necesario que bloquee el expediente desde la pestaña "Posicionamiento". Esto hará que avance a "Firma contrato".</p><p style="margin-bottom: 10px">Por el contrario, si la respuesta ha sido negativa, volverá a la tarea "Agendar fecha firma contrato".</p>'),
     	T_TIPO_DATA('T017_ConfirmarFechaEscritura'		,'datefield', 	'1'		,'fechaPropuesta'		,'false'	,null					,'Fecha propuesta'),
-    	T_TIPO_DATA('T017_ConfirmarFechaEscritura'		,'combobox', 	'2'		,'comboValidacionBC'	,'false'	,'DDApruebaDeniega'		,'Validación BC'),
+    	T_TIPO_DATA('T017_ConfirmarFechaEscritura'		,'combobox', 	'2'		,'comboValidacionBC'	,'false'	,'DDMotivosEstadoBC'	,'Validación BC'),
     	T_TIPO_DATA('T017_ConfirmarFechaEscritura'		,'datefield', 	'3'		,'fechaRespuesta'	    ,'false'	,null           		,'Fecha respuesta BC'),
     	T_TIPO_DATA('T017_ConfirmarFechaEscritura'		,'textarea', 	'4'		,'observacionesBC'		,null		,null					,'Observaciones BC'),
         T_TIPO_DATA('T017_ConfirmarFechaEscritura'		,'textarea', 	'5'		,'observaciones'		,null		,null					,'Observaciones')

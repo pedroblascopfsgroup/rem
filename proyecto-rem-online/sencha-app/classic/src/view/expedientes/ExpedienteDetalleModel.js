@@ -676,6 +676,19 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     		} else {
     			return false;   			
     		}
+    	},
+    	
+    	puedeAnyadirRegistrosPosicionamiento: function(get){
+    		var estadoExpediente = get('expediente.codigoEstado');
+    		var estadosNoAnyadir = [CONST.ESTADOS_EXPEDIENTE['VENDIDO'],CONST.ESTADOS_EXPEDIENTE['FIRMADO']];
+    		var bloqueado = get('esExpedienteBloqueado');
+    		var puedeEditar = false;
+    		
+    		if(!estadosNoAnyadir.includes(estadoExpediente) && !bloqueado) {
+    			puedeEditar = true;
+    		}
+    		
+    		return puedeEditar;
     	}
 	 },
 	 

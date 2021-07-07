@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20210617
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210706
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14344
+--## INCIDENCIA_LINK=HREOS-14533
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -13,7 +13,8 @@
 --##        0.1 Versión inicial - HREOS-14163 - Alejandra García (20210603)
 --##        0.2 Cambiar FLAG_INS_UPD por FLAG_EN_REM y añadirlo como condición en cada merge  - HREOS-14163 - Alejandra García (20210604)
 --##        0.3 Revisión - [HREOS-14344] - Alejandra García
---##	    0.4 Añadir merges PAC_PERIMETRO - Pier GOtta
+--##	      0.4 Añadir merges PAC_PERIMETRO - Pier GOtta
+--##	      0.5 Quitar SUBTIPO_IMPUESTO_COMPRA, PORC_IMPUESTO_COMPRA, COD_TP_IVA_COMPRA y RENUNCIA_EXENSION - HREOS-14533
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -530,48 +531,27 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                      SELECT
                         AUX.NUM_IDENTIFICATIVO AS ACT_NUM_ACTIVO_CAIXA
                         ,ACT2.ACT_ID AS ACT_ID   
-                        ,TIC.DD_TIC_ID AS DD_TIC_ID
-                        ,SIC.DD_SIC_ID AS DD_SIC_ID
-                        ,TO_NUMBER(AUX.PORC_IMPUESTO_COMPRA)/100 AS FAD_PORCENTAJE_IMPUESTO_COMPRA 
-                        ,AUX.COD_TP_IVA_COMPRA AS FAD_COD_TP_IVA_COMPRA 
-                        ,CASE
-                           WHEN AUX.RENUNCIA_EXENSION =''S'' THEN 1
-                           WHEN AUX.RENUNCIA_EXENSION =''N'' THEN 0
-                         END AS FAD_RENUNCIA_EXENCION     
+                        ,TIC.DD_TIC_ID AS DD_TIC_ID  
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX                             
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO AND ACT2.BORRADO=0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''TIPO_IMPUESTO_COMPRA''  AND eqv1.DD_CODIGO_CAIXA = aux.TIPO_IMPUESTO_COMPRA AND EQV1.BORRADO=0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_TIC_TIPO_IMPUESTO_COMPRA TIC ON TIC.DD_TIC_CODIGO = eqv1.DD_CODIGO_REM
-                     LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''SUBTIPO_IMPUESTO_COMPRA''  AND eqv1.DD_CODIGO_CAIXA = aux.SUBTIPO_IMPUESTO_COMPRA AND EQV1.BORRADO=0
-                     LEFT JOIN '|| V_ESQUEMA ||'.DD_SIC_SUBTIPO_IMPUESTO_COMPRA SIC ON SIC.DD_SIC_CODIGO = eqv1.DD_CODIGO_REM
                      WHERE AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'        
                      ) US ON (US.ACT_ID = ACT.ACT_ID )
                      WHEN MATCHED THEN UPDATE SET
                          ACT.DD_TIC_ID=US.DD_TIC_ID
-                        ,ACT.DD_SIC_ID=US.DD_SIC_ID
-                        ,ACT.FAD_PORCENTAJE_IMPUESTO_COMPRA=US.FAD_PORCENTAJE_IMPUESTO_COMPRA
-                        ,ACT.FAD_COD_TP_IVA_COMPRA=US.FAD_COD_TP_IVA_COMPRA
-                        ,ACT.FAD_RENUNCIA_EXENCION=US.FAD_RENUNCIA_EXENCION
                         ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
                         ,ACT.FECHAMODIFICAR = SYSDATE
                         WHEN NOT MATCHED THEN INSERT  (
                                   FAD_ID                                   
                                  ,ACT_ID
-                                 ,DD_TIC_ID
-                                 ,DD_SIC_ID
-                                 ,FAD_PORCENTAJE_IMPUESTO_COMPRA
-                                 ,FAD_COD_TP_IVA_COMPRA
-                                 ,FAD_RENUNCIA_EXENCION                    
+                                 ,DD_TIC_ID                
                                  ,USUARIOCREAR
                                  ,FECHACREAR
                            )VALUES ( 
                                   '|| V_ESQUEMA ||'.S_ACT_FAD_FISCALIDAD_ADQUISICION.NEXTVAL
                                  ,US.ACT_ID                                        
                                  ,US.DD_TIC_ID
-                                 ,US.DD_SIC_ID
-                                 ,US.FAD_PORCENTAJE_IMPUESTO_COMPRA
-                                 ,US.FAD_COD_TP_IVA_COMPRA
-                                 ,US.FAD_RENUNCIA_EXENCION
                                  ,''STOCK_BC''
                                  ,SYSDATE
                            )

@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20170322
+--## FECHA_CREACION=20210707
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1787
+--## INCIDENCIA_LINK=HREOS-14530
 --## PRODUCTO=NO
---## Finalidad: Vista Materializada exclusiva para Stock que contiene la relación de activos con precios AprobadoVenta, AprobadoRenta y DescuentoWeb
+--## Finalidad: Vista Materializada exclusiva para Stock que contiene la relación de activos con precios AprobadoVenta, AprobadoRenta, DescuentoWeb y MinimoAutorizado
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 [HREOS-14530] - Añadimos precio: MINIMO AUTORIZADO
 --##########################################
 --*/
 
@@ -30,7 +31,7 @@ DECLARE
     V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
     V_TABLESPACE_IDX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Tablespace de Indices
     V_TEXT_VISTA VARCHAR2(2400 CHAR) := 'VI_STOCK_PIVOT_PRECIOS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Vista Materializada exclusiva para Stock que contiene la relación de activos con precios AprobadoVenta, AprobadoRenta y DescuentoWeb'; -- Vble. para los comentarios de las tablas
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Vista Materializada exclusiva para Stock que contiene la relación de activos con precios AprobadoVenta, AprobadoRenta, DescuentoWeb y MinimoAutorizado'; -- Vble. para los comentarios de las tablas
     
     
     V_MSQL VARCHAR2(4000 CHAR); 
@@ -60,7 +61,7 @@ BEGIN
 			SELECT * FROM (
 				SELECT VAL.ACT_ID, TPC.DD_TPC_CODIGO, VAL.VAL_FECHA_INICIO, VAL.VAL_FECHA_FIN, VAL.VAL_IMPORTE			
 				FROM '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL
-		        JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO TPC ON (VAL.DD_TPC_ID = TPC.DD_TPC_ID AND TPC.DD_TPC_CODIGO IN (''02'',''03'', ''13''))
+		        JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO TPC ON (VAL.DD_TPC_ID = TPC.DD_TPC_ID AND TPC.DD_TPC_CODIGO IN (''02'',''03'', ''04'', ''13''))
 		        WHERE VAL.BORRADO = 0
 			) 
 		)
@@ -73,7 +74,8 @@ BEGIN
 		APROBADO_RENTA_WEB,
 		DESCUENTO_PUBLICADO_F_INI,
 		DESCUENTO_PUBLICADO_F_FIN,
-		DESCUENTO_PUBLICADO	 
+		DESCUENTO_PUBLICADO,
+		MINIMO_AUTORIZADO	 
 		FROM PIVOT_DATA
 		PIVOT (
 			MAX(VAL_FECHA_INICIO) AS F_INI,
@@ -81,6 +83,7 @@ BEGIN
 			MAX(VAL_IMPORTE) FOR DD_TPC_CODIGO IN (	
 				''02'' AS "APROBADO_VENTA_WEB",
 				''03'' AS "APROBADO_RENTA_WEB",
+				''04'' AS "MINIMO_AUTORIZADO",
 				''13'' AS "DESCUENTO_PUBLICADO"
 			)
 		)';

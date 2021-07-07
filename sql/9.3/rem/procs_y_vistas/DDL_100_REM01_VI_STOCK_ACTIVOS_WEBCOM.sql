@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Carlos Augusto
---## FECHA_CREACION=20210701
+--## FECHA_CREACION=20210707
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-12135
+--## INCIDENCIA_LINK=HREOS-14530
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom.
 --##           
@@ -28,6 +28,7 @@
 --##  		0.15 Versión Carlos Augusto -> HREOS-12201 - Añadir campos ONV_COMERCIALIZACION y ONV_COMERCIALIZACION_FECHA  
 --##  		0.15 Versión Carlos Santos Vílchez -> REMVIP-9478 - Poner campo ONV_COMERCIALIZACION como boolean  
 --##  		0.16 Versión IVAN REPISO -> REMVIP-9561 - Poner campo COD_DIR_COMERCIAL 
+--##  		0.17 [HREOS-14530] - Añadimos precio: MINIMO AUTORIZADO
 --##########################################
 --*/
 
@@ -221,6 +222,7 @@ BEGIN/*Versión 0.8*/
 			ELSE NULL
 		END 																				AS FECHA_VALOR_APROBADO_VENTA,	
 		CAST(VANT.APROBADO_VENTA_WEB AS NUMBER(16,2))										AS ANTERIOR_VALOR_APROBADO_VENTA,
+		CAST(VAL1.MINIMO_AUTORIZADO AS NUMBER(16,2)) 										AS MINIMO_AUTORIZADO,
 		CAST(PIVOT_AGR.ASISTIDA_NUM_REM AS NUMBER(16,0))	                                AS ID_ASISTIDA,
  		CAST(NVL2(PIVOT_AGR.ASISTIDA_NUM_REM, SUBD_ACT.ID, NULL) AS NUMBER(16,0))			AS CODIGO_CABECERA_ASISTIDA,
   		CAST(TO_CHAR(NVL(ACT.FECHAMODIFICAR, ACT.FECHACREAR), 

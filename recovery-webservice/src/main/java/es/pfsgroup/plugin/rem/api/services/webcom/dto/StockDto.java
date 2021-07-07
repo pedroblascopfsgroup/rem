@@ -209,6 +209,10 @@ public class StockDto implements WebcomRESTDto{
 	@DecimalDataTypeFormat(decimals=2)
 	private DoubleDataType anteriorValorAprobadoVenta;
 	
+	@WebcomRequired
+	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType minimoAutorizado;
+	
 	private LongDataType idAsistida;
 	
 	private LongDataType codigoCabeceraAsistida;
@@ -827,6 +831,12 @@ public class StockDto implements WebcomRESTDto{
 	public void setAnteriorValorAprobadoVenta(
 			DoubleDataType anteriorValorAprobadoVenta) {
 		this.anteriorValorAprobadoVenta = anteriorValorAprobadoVenta;
+	}
+	public DoubleDataType getMinimoAutorizado() {
+		return minimoAutorizado;
+	}
+	public void setMinimoAutorizado(DoubleDataType minimoAutorizado) {
+		this.minimoAutorizado = minimoAutorizado;
 	}
 	public LongDataType getIdAsistida() {
 		return idAsistida;

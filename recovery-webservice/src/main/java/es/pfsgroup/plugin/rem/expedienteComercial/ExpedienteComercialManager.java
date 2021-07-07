@@ -650,6 +650,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoCodigo());
 			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
 			oferta.setEstadoOferta(estado);
+			if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 
+					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estado.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 			if (DDEstadoOferta.CODIGO_RECHAZADA.equals(dto.getEstadoCodigo())) {
 				Activo act=expedienteComercial.getOferta().getActivoPrincipal();
 				List<ActivoOferta> ofertasActivo=act.getOfertas();
@@ -663,6 +665,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 									DDEstadoOferta.CODIGO_PENDIENTE);
 							DDEstadoOferta est = genericDao.get(DDEstadoOferta.class, fil);
 							o.setEstadoOferta(est);
+							if (Checks.esNulo(o.getFechaOfertaPendiente())) o.setFechaOfertaPendiente(new Date());
 							genericDao.save(Oferta.class, o);
 						}
 					}
@@ -1799,6 +1802,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		dto.setFechaNotificacion(oferta.getFechaNotificacion());
 		dto.setFechaAlta(oferta.getFechaAlta());
+		dto.setFechaOfertaPendiente(oferta.getFechaOfertaPendiente());
 
 		if (oferta.getEstadoOferta() != null) {
 			dto.setEstadoDescripcion(oferta.getEstadoOferta().getDescripcion());

@@ -112,6 +112,14 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					},
 					{bind : {hidden : '{!esTipoAlquiler}'}},
 					{
+						xtype : 'datefieldbase',
+						formatter : 'date("d/m/Y")',
+						colspan: 3,
+						fieldLabel : HreRem.i18n('fieldlabel.fecha.oferta.pendiente'),
+						readOnly : true,
+						bind : '{datosbasicosoferta.fechaOfertaPendiente}'
+					},
+					{
 						xtype : 'fieldsettable',
 						defaultType : 'displayfieldbase',
 						title : 'Bulk Advisory Note',

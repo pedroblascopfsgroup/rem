@@ -130,6 +130,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private Boolean tareaAutorizacionPropiedadFinalizada;
 	
 	private String tipoResponsableCodigo;
+	
+	private Date fechaOfertaPendiente;
 
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
@@ -587,6 +589,14 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setTipoResponsableCodigo(String tipoResponsableCodigo) {
 		this.tipoResponsableCodigo = tipoResponsableCodigo;
+	}
+
+	public Date getFechaOfertaPendiente() {
+		return fechaOfertaPendiente;
+	}
+
+	public void setFechaOfertaPendiente(Date fechaOfertaPendiente) {
+		this.fechaOfertaPendiente = fechaOfertaPendiente;
 	}
 	
 }

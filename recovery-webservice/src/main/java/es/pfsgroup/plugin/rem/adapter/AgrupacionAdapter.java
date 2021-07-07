@@ -1608,6 +1608,8 @@ public class AgrupacionAdapter {
 													.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 															genericDao.createFilter(FilterType.EQUALS, "codigo",
 																	DDEstadoOferta.CODIGO_PENDIENTE)));
+											if (!Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getFechaOfertaPendiente())) 
+												ofertaActivo.getPrimaryKey().getOferta().setFechaOfertaPendiente(new Date());
 											genericDao.save(Oferta.class, ofertaActivo.getPrimaryKey().getOferta());
 										}
 									}
@@ -1766,6 +1768,7 @@ public class AgrupacionAdapter {
 													.dameValorDiccionarioByCod(DDEstadoOferta.class,
 															DDEstadoOferta.CODIGO_PENDIENTE);
 											oferta.setEstadoOferta(estadoOferta);
+											if (Checks.esNulo(oferta.getFechaOfertaPendiente())) oferta.setFechaOfertaPendiente(new Date());
 										}
 									}
 								}
@@ -1802,6 +1805,8 @@ public class AgrupacionAdapter {
 										.dameValorDiccionarioByCod(DDEstadoOferta.class,
 												DDEstadoOferta.CODIGO_PENDIENTE);
 								ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta(estadoOferta);
+								if (Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getFechaOfertaPendiente())) 
+									ofertaActivo.getPrimaryKey().getOferta().setFechaOfertaPendiente(new Date());
 							}
 						}
 					}
@@ -2441,6 +2446,8 @@ public class AgrupacionAdapter {
 			   
 			}
 			oferta.setEstadoOferta(estadoOferta);
+			if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 
+					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
 

@@ -893,6 +893,7 @@ public class AgendaAdapter {
 									oferta.setEstadoOferta(tramitada);	
 								}else {
 									oferta.setEstadoOferta(pendiente);
+									if (Checks.esNulo(oferta.getFechaOfertaPendiente())) oferta.setFechaOfertaPendiente(new Date());
 								}
 								genericDao.save(Oferta.class, oferta);
 								

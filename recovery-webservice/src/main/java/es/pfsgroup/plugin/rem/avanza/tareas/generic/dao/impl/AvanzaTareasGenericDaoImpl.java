@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.avanza.tareas.generic.dao.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,19 +20,25 @@ public class AvanzaTareasGenericDaoImpl extends AbstractEntityDao<TareaExterna, 
 	
 	@Override
 	public boolean validaCamposTarea(String tapCodigo, Map<String, String[]> valores) {
-		List<Object> validaciones = rawDao.getExecuteSQLList(" SELECT DISTINCT LISTAGG(querys, ' and ') WITHIN GROUP (ORDER BY TCC_INSTANCIA) over (partition by TCC_INSTANCIA) TCC_INSTANCIA "+
-															" FROM ( "+
-															" SELECT "+
-																" CASE "+
-																"     WHEN TCC_ACCION = 'IN' THEN tfi.TFI_NOMBRE||' '||TCC_ACCION||' ('||TCC_VALOR||')' "+
-																"     WHEN TCC_ACCION = '=' THEN tfi.TFI_NOMBRE||' '||TCC_ACCION||' '||TCC_VALOR "+
-																"    ELSE tfi.TFI_NOMBRE||' '||TCC_ACCION "+
-																" END AS querys, TCC_INSTANCIA "+
-																" FROM TCC_TAREA_CONFIG_CAMPOS tcc "+
-																" INNER JOIN TFI_TAREAS_FORM_ITEMS tfi ON tfi.TFI_ID = tcc.TFI_ID "+
-																" INNER JOIN TAP_TAREA_PROCEDIMIENTO tap ON tap.TAP_ID = tcc.TAP_ID "+
-																" WHERE tap.TAP_CODIGO = '"+tapCodigo+"'"
-															+ ")");
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("tapCodigo", tapCodigo);
+		
+		rawDao.addParams(params);
+		String sql = " SELECT DISTINCT LISTAGG(querys, ' and ') WITHIN GROUP (ORDER BY TCC_INSTANCIA) over (partition by TCC_INSTANCIA) TCC_INSTANCIA "+
+				" FROM ( "+
+				" SELECT "+
+					" CASE "+
+					"     WHEN TCC_ACCION = 'IN' THEN tfi.TFI_NOMBRE||' '||TCC_ACCION||' ('||TCC_VALOR||')' "+
+					"     WHEN TCC_ACCION = '=' THEN tfi.TFI_NOMBRE||' '||TCC_ACCION||' '||TCC_VALOR "+
+					"    ELSE tfi.TFI_NOMBRE||' '||TCC_ACCION "+
+					" END AS querys, TCC_INSTANCIA "+
+					" FROM TCC_TAREA_CONFIG_CAMPOS tcc "+	
+					" INNER JOIN TFI_TAREAS_FORM_ITEMS tfi ON tfi.TFI_ID = tcc.TFI_ID "+
+					" INNER JOIN TAP_TAREA_PROCEDIMIENTO tap ON tap.TAP_ID = tcc.TAP_ID "+
+					" WHERE tap.TAP_CODIGO = :tapCodigo"
+					+ ")";
+		
+		List<Object> validaciones = rawDao.getExecuteSQLList(sql);
 		
 		if(validaciones.size() > 0){
 			String finalValidacionQuery = " SELECT * FROM DUAL WHERE ";

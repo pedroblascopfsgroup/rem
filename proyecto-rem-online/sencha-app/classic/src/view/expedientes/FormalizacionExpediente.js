@@ -348,14 +348,14 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						title : HreRem.i18n('title.posicionamiento'),
 						secFunToEdit: 'EDITAR_GRID_POS_FIRMA_FORMALIZACION_EXPEDIENTE',
 						reference : 'listadoposicionamiento',
-						idPrincipal : 'expediente.id',
+						idPrincipal : 'expediente.id', 
 						topBar : true,
 						bind : {
-							store : '{storePosicionamientos}',
-							topBar : '{!esExpedienteBloqueado}'
+							store : '{storePosicionamientos}', 
+							topBar : '{puedeAnyadirRegistrosPosicionamiento}'
 						},
 						listeners : {
-							rowdblclick : 'comprobacionesDobleClick',
+							//rowdblclick : 'comprobacionesDobleClick',
 							beforeedit : 'comprobarCamposFechas',
 							rowclick : 'onRowClickPosicionamiento'
 						},
@@ -431,37 +431,20 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									flex : 1,
 									renderer : function(value, meta, record) {
 										var me = this;
-										if (Ext.isEmpty(value)
-												&& meta.record
-														.get('fechaFinPosicionamiento')) {
+										if (Ext.isEmpty(value)&& meta.record.get('fechaFinPosicionamiento')) {
 											return '<span style="color: #DF0101;">-</span>';
-										} else if (Ext.isEmpty(value)
-												&& !meta.record
-														.get('fechaFinPosicionamiento')) {
+										} else if (Ext.isEmpty(value)&& !meta.record.get('fechaFinPosicionamiento')) {
 											return '-';
 										} else {
-											var comboEditor = me.columns
-													&& me
-															.down('gridcolumn[dataIndex=idProveedorNotario]').getEditor
-													? me
-															.down('gridcolumn[dataIndex=idProveedorNotario]')
-															.getEditor()
-													: me.getEditor ? me
-															.getEditor() : null;
+											var comboEditor = me.columns && me.down('gridcolumn[dataIndex=idProveedorNotario]').getEditor ? me.down('gridcolumn[dataIndex=idProveedorNotario]').getEditor()
+													: me.getEditor ? me.getEditor() : null;
 											if (!Ext.isEmpty(comboEditor)) {
-												var store = comboEditor
-														.getStore(), record = store
-														.findRecord("id", value);
+												var store = comboEditor.getStore(), record = store.findRecord("id", value);
 												if (!Ext.isEmpty(record)) {
-													if (meta.record
-															.get('fechaFinPosicionamiento')) {
-														return '<span style="color: #DF0101;">'
-																+ record
-																		.get("descripcion")
-																+ '</span>';
+													if (meta.record.get('fechaFinPosicionamiento')) {
+														return '<span style="color: #DF0101;">'+ record.get("descripcion") + '</span>';
 													} else {
-														return record
-																.get("descripcion");
+														return record.get("descripcion");
 													}
 												} else {
 													comboEditor.setValue(value);
@@ -518,8 +501,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 			                        flex: 2,
 									renderer : coloredRender
 			                    }, {
-												text : HreRem
-											.i18n('fieldlabel.motivo.aplazamiento'),
+									text : HreRem.i18n('fieldlabel.motivo.aplazamiento'),
 									dataIndex : 'motivoAplazamiento',
 									flex : 1,
 									editor : {
@@ -565,109 +547,70 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 
 						saveSuccessFn : function() {
 							var me = this;
-							me
-									.up('form')
-									.down('gridBase[reference=listadoNotarios]')
-									.getStore().load();
+							me.up('form').down('gridBase[reference=listadoNotarios]').getStore().load();
 						},
 
 						deleteSuccessFn : function() {
 							var me = this;
-							me
-									.up('form')
-									.down('gridBase[reference=listadoNotarios]')
-									.getStore().load();
+							me.up('form').down('gridBase[reference=listadoNotarios]').getStore().load();
 						},
 						onDeleteClick : function(btn) {
-							var me = this, seleccionados = btn.up('grid')
-									.getSelection(), gridStore = btn.up('grid')
-									.getStore();
+							var me = this, seleccionados = btn.up('grid').getSelection(), gridStore = btn.up('grid').getStore();
 
-							if (Ext.isArray(seleccionados)
-									&& seleccionados.length != 0) {
-
-								if (!Ext.isEmpty(me.selection
-										.get('motivoAplazamiento'))) {
+							if (Ext.isArray(seleccionados) && seleccionados.length != 0) {
+								if (!Ext.isEmpty(me.selection .get('motivoAplazamiento'))) {
 									Ext.Msg.show({
-										title : HreRem
-												.i18n("title.ventana.eliminar.posicionamiento"),
-										message : HreRem
-												.i18n("text.ventana.eliminar.posicionamiento"),
+										title : HreRem.i18n("title.ventana.eliminar.posicionamiento"),
+										message : HreRem.i18n("text.ventana.eliminar.posicionamiento"),
 										buttons : Ext.Msg.YESNO,
 										icon : Ext.Msg.QUESTION,
 										fn : function(btn) {
 											if (btn === 'yes') {
-
 												me.selection.erase({
 													params : {
 														id : me.selection.data.id
 													},
-													success : function(a,
-															operation, c) {
-														me
-																.fireEvent(
-																		"infoToast",
-																		HreRem
-																				.i18n("msg.operacion.ok"));
+													success : function(a,operation, c) {
+														me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 														me.deleteSuccessFn();
 														me.getStore().reload();
 													},
 
-													failure : function(a,
-															operation) {
+													failure : function(a,operation) {
 														var data = {};
 														try {
-															data = Ext
-																	.decode(operation._response.responseText);
-														} catch (e) {
-														};
-														if (!Ext
-																.isEmpty(data.msg)) {
-															me
-																	.fireEvent(
-																			"errorToast",
-																			data.msg);
+															data = Ext.decode(operation._response.responseText);
+														} catch (e) {};
+														if (!Ext.isEmpty(data.msg)) {
+															me.fireEvent("errorToast",data.msg);
 														} else {
-															me
-																	.fireEvent(
-																			"errorToast",
-																			HreRem
-																					.i18n("msg.operacion.ko"));
+															me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 														}
 														me.deleteSuccessFn()
 													}
 												});
-
 											}
 										}
 									});
 								} else {
-									me
-											.fireEvent(
-													"errorToast",
-													HreRem
-															.i18n("msg.operacion.eliminar.posicionamiento.motivo"));
+									me.fireEvent("errorToast", HreRem.i18n("msg.operacion.eliminar.posicionamiento.motivo"));
 								}
 							}
 						},
 						onAddClick: function(btn){
-
 				            var me = this;
 				            var rec = Ext.create(me.getStore().config.model);
 				            
 				            var listaReg = me.getStore().getData().items;
-				            listaReg.sort(function(a, b) {
-							  if (a.data.fechaAlta.getTime() > b.data.fechaAlta.getTime()) {
-							    return -1;
-							  }
-							  if (a.data.fechaAlta.getTime() < b.data.fechaAlta.getTime()) {
-							    return 1;
-							  }
-							  return 0;
-							});
-							
-							var reg = listaReg[0];
-							
+				            var reg = listaReg[0];
+				            var validacionBCcodigo = reg.getData().validacionBCPosi;
+				            var estadosAnyadir = [CONST.ESTADO_VALIDACION_BC['CODIGO_ANULADA'] ,CONST.ESTADO_VALIDACION_BC['CODIGO_APLAZADA'], CONST.ESTADO_VALIDACION_BC['CODIGO_RECHAZADA_BC']];
+				            if (!estadosAnyadir.includes(validacionBCcodigo)) {
+								me.fireEvent("errorToast", HreRem.i18n("msg.fallo.insertar.registro.fae"));
+								return;
+							}
+				            
+				            
 							if(reg == null || me.comprobarFechaEnviada(reg)){
 								me.getStore().sorters.clear();
 					            me.editPosition = 0;

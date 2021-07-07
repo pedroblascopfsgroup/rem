@@ -13,6 +13,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -1424,6 +1425,12 @@ public interface ExpedienteComercialApi {
 	public void createOrUpdateUltimaPropuesta(Long idExpediente, DtoGridFechaArras dto);
 	
 	public boolean checkAprobadoRechazadoBC(TareaExterna tareaExterna);
+
+	boolean checkAprobadoRechazadoBCPosicionamiento(TareaExterna tareaExterna);
+
+	ExpedienteComercial getExpedienteByIdTramite(Long idTramite);
+
+	Posicionamiento getUltimoPosicionamiento(Long idExpediente, Filter filter, boolean noMostrarAnulados);
 	
 	
 }

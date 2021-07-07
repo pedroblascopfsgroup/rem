@@ -3825,6 +3825,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			posicionamiento.setNotario(notario);
 		}
 
+		if(dto.getValidacionBCPosi() != null) {
+			DDMotivosEstadoBC dd = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getValidacionBCPosi()));
+			if(dd != null) {
+				posicionamiento.setValidacionBCPos(dd);
+			}
+		}
 		posicionamiento.setMotivoAplazamiento(dto.getMotivoAplazamiento());
 
 		return posicionamiento;
@@ -6155,8 +6161,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expediente = findOne(idEntidad);
 		Posicionamiento posicionamiento = new Posicionamiento();
 		List<Posicionamiento> lista = expediente.getPosicionamientos();
-
+		dto.setValidacionBCPosi(DDMotivosEstadoBC.CODIGO_NO_ENVIADA);
 		if (lista.isEmpty()) {
+			
 			posicionamiento = dtoToPosicionamiento(dto, posicionamiento);
 			posicionamiento.setExpediente(expediente);
 
@@ -6166,13 +6173,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		} else {
 			boolean hayPosicionamientoVigente = false;
-
+			boolean isCarteraBK = false;
+			if(!Checks.esNulo(expediente.getOferta()) && !Checks.esNulo(expediente.getOferta().getActivoPrincipal())) {
+				isCarteraBK = DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera());
+			}
 			for (Posicionamiento p : lista) {
 				if (Checks.esNulo(p.getFechaFinPosicionamiento()) && Checks.esNulo(p.getMotivoAplazamiento())) {
 					hayPosicionamientoVigente = true;
+					if(isCarteraBK && DDMotivosEstadoBC.isRechazado(p.getValidacionBCPos())) {
+						hayPosicionamientoVigente = false;
+					}
+					
+					if(hayPosicionamientoVigente) {
+						 break;
+					}
 				}
 			}
-
+			
 			if (!hayPosicionamientoVigente) {
 				posicionamiento = dtoToPosicionamiento(dto, posicionamiento);
 				posicionamiento.setExpediente(expediente);
@@ -6191,11 +6208,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public boolean savePosicionamiento(DtoPosicionamiento dto) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdPosicionamiento());
 		Posicionamiento posicionamiento = genericDao.get(Posicionamiento.class, filtro);
-		posicionamiento = dtoToPosicionamiento(dto, posicionamiento);
-
-		if (!Checks.esNulo(posicionamiento.getMotivoAplazamiento())) {
-			posicionamiento.setFechaFinPosicionamiento(new Date());
+		if(posicionamiento == null) {
+			return false;
 		}
+		
+		if(!Checks.esNulo(dto.getMotivoAplazamiento())){
+			posicionamiento.setFechaFinPosicionamiento(new Date());
+			if(DDMotivosEstadoBC.isNoEnviada(posicionamiento.getValidacionBCPos())) {
+				dto.setValidacionBCPosi(DDMotivosEstadoBC.CODIGO_ANULADA);
+			}else if(DDMotivosEstadoBC.isAprobada(posicionamiento.getValidacionBCPos())){
+				dto.setValidacionBCPosi(DDMotivosEstadoBC.CODIGO_APLAZADA);
+			}
+		}
+				
+		posicionamiento = dtoToPosicionamiento(dto, posicionamiento);
 
 		genericDao.update(Posicionamiento.class, posicionamiento);
 
@@ -12191,7 +12217,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return this.posicionamientoToDto(posicionamiento);
 	}
 	
-	private Posicionamiento getUltimoPosicionamiento(Long idExpediente, Filter filter, boolean noMostrarAnulados) {
+	@Override
+	public Posicionamiento getUltimoPosicionamiento(Long idExpediente, Filter filter, boolean noMostrarAnulados) {
 		Posicionamiento posicionamiento = null;
 		List<Posicionamiento> posicionamientosList = null;
 		Order order = new Order(OrderType.DESC,"id");
@@ -12223,7 +12250,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			ExpedienteComercial eco = this.findOne(idExpediente);
 			posicionamiento.setExpediente(eco);
 		}
-
+		
 		this.dtoToPosicionamiento(posicionamiento, dto);
 		
 		genericDao.save(Posicionamiento.class, posicionamiento);
@@ -12268,7 +12295,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return vueltaAtras;
 	}
 	
-	private ExpedienteComercial getExpedienteByIdTramite(Long idTramite) {
+	@Override
+	public ExpedienteComercial getExpedienteByIdTramite(Long idTramite) {
 		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
 		ExpedienteComercial expediente = null;
 		if (!Checks.esNulo(activoTramite)) {
@@ -12666,11 +12694,30 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
 		if (expedienteComercial != null) {
 			FechaArrasExpediente fechaArrasExpediente =  this.getUltimaPropuesta(expedienteComercial.getId(),null);
-			if (fechaArrasExpediente != null 
-					&& (DDMotivosEstadoBC.isAprobado(fechaArrasExpediente.getValidacionBC()) || DDMotivosEstadoBC.isRechazado(fechaArrasExpediente.getValidacionBC()))) {
+			if (fechaArrasExpediente != null && isAprobadoRechazadoBC(fechaArrasExpediente.getValidacionBC())){
 				return true;
 			}				
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean checkAprobadoRechazadoBCPosicionamiento(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		if (expedienteComercial != null) {
+			Posicionamiento posicionamiento =  this.getUltimoPosicionamiento(expedienteComercial.getId(), null, false);
+			if (posicionamiento != null && isAprobadoRechazadoBC(posicionamiento.getValidacionBCPos())) {
+				return true;
+			}				
+		}
+		return false;
+	}
+	
+	private boolean isAprobadoRechazadoBC(DDMotivosEstadoBC estado) {
+		boolean is = false;
+		if(DDMotivosEstadoBC.isAprobado(estado) || DDMotivosEstadoBC.isRechazado(estado)) {
+			is = true;
+		}
+		return is;
 	}
 }

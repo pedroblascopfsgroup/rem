@@ -723,6 +723,10 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkAprobadoRechazadoBC(tareaExterna);
             }
+            def checkAprobadoRechazadoBCPosicionamiento = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkAprobadoRechazadoBCPosicionamiento(tareaExterna);
+            }
   			 ]]></value>
   		</list>
   	</property>

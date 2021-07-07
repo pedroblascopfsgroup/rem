@@ -108,5 +108,32 @@ public class DDMotivosEstadoBC implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+	
+	public static boolean isAnulado(DDMotivosEstadoBC motivoEstadoBC) {
+		boolean isAnulado = false;
+		if(motivoEstadoBC != null && (CODIGO_ANULADA.equals(motivoEstadoBC.getCodigo()))) {
+			isAnulado = true;
+		}
+		
+		return isAnulado;
+	}
+	
+	public static boolean isAprobado(DDMotivosEstadoBC motivoEstadoBC) {
+		boolean isAprobado = false;
+		if(motivoEstadoBC != null && (CODIGO_APROBADA_BC.equals(motivoEstadoBC.getCodigo()))) {
+			isAprobado = true;
+		}
+		
+		return isAprobado;
+	}
+	
+	public static boolean isRechazado(DDMotivosEstadoBC motivoEstadoBC) {
+		boolean isRechazado = false;
+		if(motivoEstadoBC != null && (CODIGO_RECHAZADA_BC.equals(motivoEstadoBC.getCodigo()))) {
+			isRechazado = true;
+		}
+		
+		return isRechazado;
+	}
 
 }

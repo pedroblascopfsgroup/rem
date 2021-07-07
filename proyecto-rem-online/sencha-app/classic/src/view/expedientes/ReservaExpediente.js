@@ -8,15 +8,20 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 	records: ['expediente','reserva'],	
 	recordsClass: ['HreRem.model.ExpedienteComercial','HreRem.model.Reserva'],    
     requires: ['HreRem.model.ExpedienteComercial','HreRem.model.Reserva'],
+
     
     listeners: {
 			boxready:'cargarTabData'
 	},
     
     initComponent: function () {
-
         var me = this;
 		me.setTitle(HreRem.i18n('title.reserva'));
+		var dataExpediente = me.lookupController().getView().getViewModel().getData().expediente.getData();
+		var tieneReserva = true;
+		var esBk = dataExpediente.esBankia;
+		var botonesEdicion = me.up().down("[itemId=botoneditar]");
+		
         var items= [
 
 			{   

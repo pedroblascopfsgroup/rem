@@ -719,6 +719,10 @@
             	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
             	return tramiteAlquilerManager.tipoTratamientoAlquiler(idTramite);
             }
+             def checkAprobadoRechazadoBC = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkAprobadoRechazadoBC(tareaExterna);
+            }
   			 ]]></value>
   		</list>
   	</property>
@@ -740,6 +744,7 @@
 		      <value>es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante</value>
 		      <value>es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva</value>
 		      <value>es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega</value>
+		      <value>es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC</value>
         </list>
     </property>
    </bean>

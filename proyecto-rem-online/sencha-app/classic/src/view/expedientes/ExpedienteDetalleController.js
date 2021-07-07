@@ -1454,7 +1454,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			me.lookupReference('tipoCalculo').setDisabled(true);		
 			me.lookupReference('tipoCalculo').setValue(null);
 		}
-
 	},
 	
 	onClickBotonCerrarComprador: function(btn){
@@ -5325,5 +5324,18 @@ comprobarFormatoModificar: function() {
 			    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 			 	}
 		});
+	},
+	
+	evaluarBotonesEditarReserva: function(combo, value){
+		var me = this;
+		var tabReserva = me.getView().down('[reference=reservaExpediente]');
+		if(me.viewModel.get('esCarteraBankia')){
+			if(value === "1"){
+				tabReserva.ocultarBotonesEdicion=false; 
+			}else{
+				tabReserva.ocultarBotonesEdicion=true;
+			}
+		}
+		
 	}
 });

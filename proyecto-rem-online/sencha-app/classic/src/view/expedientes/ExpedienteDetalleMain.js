@@ -38,11 +38,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
 		var bloqueado;
 		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
 		var tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"];
+		var isBK = me.lookupController().getViewModel().get('expediente').get('esBankia');
 		
     	reservaDisabled = !me.getViewModel().get('expediente.tieneReserva') || me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler;
 		reservaDisabled = Ext.isDefined(reservaDisabled)? reservaDisabled : true;
 		bloqueado = me.getViewModel().get('expediente.bloqueado');
-    	me.down('reservaexpediente').setDisabled(reservaDisabled);
+		if(!isBK){
+    		me.down('reservaexpediente').setDisabled(reservaDisabled);
+		}
+		
 		if(me.down('expedientedetalle').getActiveTab().getConfig().reference != "ofertaexpedienteref"){
 			me.down('expedientedetalle').bloquearExpediente(me.down('datosbasicosexpediente'),bloqueado);
 		}else{

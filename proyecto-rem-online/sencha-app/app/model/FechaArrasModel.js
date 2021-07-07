@@ -30,6 +30,9 @@ Ext.define('HreRem.model.FechaArrasModel', {
     			name: 'validacionBC'
     		},
     		{
+    			name: 'validacionBCcodigo'
+    		},
+    		{
     		    name: 'fechaAviso',
     		    type: 'date',
     		    dateFormat: 'c'
@@ -39,6 +42,9 @@ Ext.define('HreRem.model.FechaArrasModel', {
     		},
             {
                 name: 'observaciones'
+            },
+            {
+            	name: 'motivoAnulacion'
             }
     ],
     

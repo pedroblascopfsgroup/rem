@@ -8,15 +8,44 @@ Ext.define('HreRem.view.expedientes.FechaArrasGrid', {
      idSecundaria: 'expediente.id',
      editOnSelect: true,
      removeButton: false,
-     requires : [ 'HreRem.model.FechaArrasModel'],	
+     requires : [ 'HreRem.model.FechaArrasModel'],
+     recordName: "fechaArras",
      bind: {
          store: '{storeFechaArras}'
+     },
+     listeners: {
+     	beforeedit: function(editor,e){
+     		var me = this;
+     		var codEstadoReserva = me.lookupController().getViewModel().getData().expediente.getData().estadoReservaCod;
+     		var codValidacionBC = me.lookupController().getViewModel().getData().storeFechaArras.getData().items[0].getData().validacionBCcodigo;
+			var record = e.record;
+			var columnas = me.getColumns();
+			var motivoAnulacion;
+     		
+     		for (var i = 0; i <= columnas.length; i++) {
+				if (columnas[i].dataIndex == 'motivoAnulacion') {
+					motivoAnulacion = columnas[i];
+					break;
+				}
+			}
+     		var columnaMotivoAnulacion = motivoAnulacion.getEditor();
+     		
+     		if (codValidacionBC != null && (codValidacionBC == CONST.ESTADO_VALIDACION_BC['CODIGO_NO_ENVIADA'] || codValidacionBC == CONST.ESTADO_VALIDACION_BC['CODIGO_APROBADA_BC'])) {								
+				columnaMotivoAnulacion.setDisabled(false);
+    		}else{    			
+    			columnaMotivoAnulacion.setDisabled(true);
+    		}
+     		
+     		return e.rowIdx == 0 && codEstadoReserva == CONST.ESTADOS_RESERVA['CODIGO_PENDIENTE_FIRMA'];
+     	}
      },
 
       initComponent: function () {
 
           	var me = this;
-
+          	var codEstadoReserva = me.lookupController().getViewModel().getData().expediente.getData().estadoReservaCod;
+         	me.topBar = codEstadoReserva == CONST.ESTADOS_RESERVA['CODIGO_PENDIENTE_FIRMA'];
+         	
           	me.deleteSuccessFn = function(){
          		this.getStore().load()
          		this.setSelection(0);
@@ -25,20 +54,7 @@ Ext.define('HreRem.view.expedientes.FechaArrasGrid', {
           	me.deleteFailureFn = function(){
          		this.getStore().load()
          	},
-
-         	/*var coloredRender = function(value, meta, record) {
-                var borrado = record.get('fechaFinPosicionamiento');
-                if (value) {
-                    if (borrado) {
-                        return '<span style="color: #DF0101;">' + value + '</span>';
-                    } else {
-                        return value;
-                    }
-                } else {
-                    return '-';
-                }
-            };*/
-
+         	
      		me.columns = [
      				{
      					text: 'Id',
@@ -97,21 +113,18 @@ Ext.define('HreRem.view.expedientes.FechaArrasGrid', {
                             cls: 'grid-no-seleccionable-field-editor'
                         },
                         flex: 2
+                    },
+                    {
+                        text: HreRem.i18n('fieldlabel.posicionamiento.motivo'),
+                        dataIndex: 'motivoAnulacion',
+                        reference: 'motivoAnulacionRef',
+                        editor: {
+                            xtype: 'textarea'
+                        },                        
+                        flex: 2
                     }
      		    ];
-/*
-     		    me.dockedItems = [
-     		        {
-     		            xtype: 'pagingtoolbar',
-     		            dock: 'bottom',
-     		            itemId: 'fechaArrasPaginationToolbar',
-     		            inputItemWidth: 60,
-     		            displayInfo: true,
-     		            bind: {
-     		                store: '{storeFechaArras}'
-     		            }
-     		        }
-     		    ];*/
+
 
      		    me.saveSuccessFn = function() {
      		    	var me = this;
@@ -132,19 +145,15 @@ Ext.define('HreRem.view.expedientes.FechaArrasGrid', {
 
             var me = this;
             var rec = Ext.create(me.getStore().config.model);
-            
+            var codEstadoReserva = me.lookupController().getViewModel().getData().expediente.getData().estadoReservaCod;
             var listaReg = me.getStore().getData().items;
-            listaReg.sort(function(a, b) {
-			  if (a.data.fechaAlta.getTime() > b.data.fechaAlta.getTime()) {
-			    return -1;
-			  }
-			  if (a.data.fechaAlta.getTime() < b.data.fechaAlta.getTime()) {
-			    return 1;
-			  }
-			  return 0;
-			});
 			
 			var reg = listaReg[0];
+			
+			if (!me.comprobarEstadoValidacionAndEstadoExpediente(reg,codEstadoReserva)) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.fallo.insertar.registro.fae"));
+				return;
+			}
 			
 			if(reg == null || me.comprobarFechaEnviada(reg)){
 				me.getStore().sorters.clear();
@@ -234,5 +243,13 @@ Ext.define('HreRem.view.expedientes.FechaArrasGrid', {
 	            editor.isNew = false;
             }
 
+       },
+       comprobarEstadoValidacionAndEstadoExpediente: function(registroCero,codEstadoReserva){
+       	var me = this;       	
+       	var validacionBCcodigo = registroCero.getData().validacionBCcodigo; 
+       	return codEstadoReserva == CONST.ESTADOS_RESERVA['CODIGO_PENDIENTE_FIRMA'] 
+       		&& (validacionBCcodigo == CONST.ESTADO_VALIDACION_BC['CODIGO_ANULADA'] 
+       			|| validacionBCcodigo == CONST.ESTADO_VALIDACION_BC['CODIGO_APLAZADA']
+       			|| validacionBCcodigo == CONST.ESTADO_VALIDACION_BC['CODIGO_RECHAZADA_BC']);
        }
 });

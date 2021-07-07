@@ -12240,7 +12240,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			beanUtilNotNull.copyProperty(posicionamiento, "fechaEnvio", dto.getFechaEnvioPos());
 			
 			if(dto.getValidacionBCPosi() != null) {
-				DDApruebaDeniega dd = genericDao.get(DDApruebaDeniega.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getValidacionBCPosi()));
+				DDMotivosEstadoBC dd = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getValidacionBCPosi()));
 				if(dd != null) {
 					posicionamiento.setValidacionBCPos(dd);
 				}

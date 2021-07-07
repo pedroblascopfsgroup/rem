@@ -60,7 +60,7 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 				zpu.setVersion(0);
 				genericDao.save(ZonaUsuarioPerfil.class, zpu);
 				logger.debug("Creando asociacion perfil " + codigoPerfil + " - usuario " + usuario.getUsername());
-				MapeoPerfilDespacho mpd = obtenerMapeoPerfilDespacho(codigoPerfil); 
+				MapeoPerfilDespacho mpd = obtenerMapeoPerfilDespachoAlta(codigoPerfil); 
 				if (mpd != null) {
 					asociarUsuarioADespacho(usuario, mpd);
 				}
@@ -72,16 +72,17 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 		for (String codigoPerfil : bajasPerfiles) {
 			genericDao.delete(ZonaUsuarioPerfil.class, filtroUsuario, obtenerFiltroZPUPerfil(codigoPerfil));
 			logger.debug("Eliminando asociacion perfil " + codigoPerfil + " - usuario " + usuario.getUsername());
-			MapeoPerfilDespacho mpd = obtenerMapeoPerfilDespacho(codigoPerfil); 
+			List<MapeoPerfilDespacho> listMpd = obtenerMapeoPerfilDespachoBaja(codigoPerfil); 
 			if (mpd != null) {
-				desasociarUsuarioADespacho(usuario, mpd);
+				desasociarUsuarioADespacho(usuario, listMpd);
 			}
 		}
 	}
 
-	private MapeoPerfilDespacho obtenerMapeoPerfilDespacho(String codigo) {
-		Filter filtroCodigoPerfil = genericDao.createFilter(FilterType.EQUALS, "codigoPerfil", codigo);
-		return genericDao.get(MapeoPerfilDespacho.class, filtroCodigoPerfil);
+	private MapeoPerfilDespacho obtenerMapeoPerfilDespachoAlta(String codigo) {
+		return genericDao.get(MapeoPerfilDespacho.class, 
+				genericDao.createFilter(FilterType.EQUALS, "codigoPerfil", codigo),
+				genericDao.createFilter(FilterType.EQUALS, "manual", false));
 	}
 
 	private void asociarUsuarioADespacho(Usuario usuario, MapeoPerfilDespacho mapeo) {
@@ -100,15 +101,37 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 			gd.setAuditoria(Auditoria.getNewInstance());
 			logger.debug("Creando asociacion despacho " + codigoDespacho + " (por perfil " + mapeo.getCodigoPerfil() + " - usuario " + usuario.getUsername());
 			String codigoGrupo = mapeo.getCodigoGrupo();
-			if (codigoGrupo != null && !"".equals(codigoGrupo) && !mapeo.isManual()) {
+			if (codigoGrupo != null && !"".equals(codigoGrupo)) {
 				altaGrupo(usuario, codigoGrupo);
 			}
 		}
 		
 	}
 
-	private void desasociarUsuarioADespacho(Usuario usuario, MapeoPerfilDespacho mapeo) {
-		// TODO Auto-generated method stub
+	private List<MapeoPerfilDespacho> obtenerMapeoPerfilDespachoBaja(String codigo) {
+		return genericDao.getList(MapeoPerfilDespacho.class, 
+				genericDao.createFilter(FilterType.EQUALS, "codigoPerfil", codigo));
+	}
+
+	private void desasociarUsuarioADespacho(Usuario usuario, List<MapeoPerfilDespacho> listaMapeo) {
+		
+		Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
+		for (MapeoPerfilDespacho mapeo : listaMapeo) {
+			String codigoDespacho = mapeo.getCodigoDespacho();
+			DespachoExterno despacho = genericDao.get(DespachoExterno.class, genericDao.createFilter(FilterType.EQUALS, "despacho",codigoDespacho));
+			if (despacho == null) {
+				logger.error("No existe el despacho " + codigoDespacho + " en REM: no se deshace asociacion con el usuario " + usuario.getUsername());
+			} else {
+				genericDao.delete(GestorDespacho.class, 
+					genericDao.createFilter(FilterType.EQUALS, "usuario", usuario),
+					genericDao.createFilter(FilterType.EQUALS, "despachoExterno.codigo", mapeo.getCodigoDespacho()));
+				logger.debug("Deshaciendo asociacion grupo " + mapeo.getCodigoDespacho() + " - usuario " + usuario.getUsername());
+				String codigoGrupo = mapeo.getCodigoGrupo();
+				if (codigoGrupo != null && !"".equals(codigoGrupo)) {
+					bajaGrupo(filtroUsuario, usuario.getUsername(), codigoGrupo);
+				}
+			}
+		}
 		
 	}
 
@@ -127,6 +150,11 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 		}
 	}
 	
+	private void bajaGrupo(Filter filtroUsuario, String username, String codigoGrupo) {
+		genericDao.delete(GrupoUsuario.class, filtroUsuario, obtenerFiltroGUGrupo(codigoGrupo));
+		logger.debug("Eliminando asociacion grupo " + codigoGrupo + " - usuario " + username);
+	}
+	
 	@Override
 	public void actualizarGrupos(Usuario usuario, List<String> altasGrupos, List<String> bajasGrupos) {
 		for (String codigoGrupo : altasGrupos) {
@@ -134,8 +162,7 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 		}	
 		Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
 		for (String codigoGrupo : bajasGrupos) {
-			genericDao.delete(GrupoUsuario.class, filtroUsuario, obtenerFiltroGUGrupo(codigoGrupo));
-			logger.debug("Eliminando asociacion grupo " + codigoGrupo + " - usuario " + usuario.getUsername());
+			bajaGrupo(filtroUsuario, usuario.getUsername(), codigoGrupo);
 		}
 	}
 

@@ -49,7 +49,7 @@ DECLARE
       T_FUNCION('11', '65', 'Promontoria Omega', 'PROMONTORIA OMEGA'),
       T_FUNCION('11', '65', 'Mapfre', 'MAPFRE'),
       T_FUNCION('11', '139', 'Yubai', 'YUBAI'),
-      _FUNCION('11', '140', 'Caser', 'CASER')
+      T_FUNCION('11', '140', 'Caser', 'CASER')
     );          
     V_TMP_FUNCION T_FUNCION;
                 

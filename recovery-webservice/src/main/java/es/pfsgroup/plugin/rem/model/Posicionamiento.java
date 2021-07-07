@@ -25,7 +25,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 
 /**
  * Modelo que gestiona la informacion de un posicionamiento de un expediente
@@ -80,7 +80,7 @@ public class Posicionamiento implements Serializable, Auditable, Comparable<Posi
 		
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "POS_VALIDACION_BC")
-    private DDApruebaDeniega validacionBCPos;
+    private DDMotivosEstadoBC validacionBCPos;
 	
 	@Column(name = "POS_FECHA_VALIDACION_BC")
 	private Date fechaValidacionBCPos;
@@ -197,11 +197,11 @@ public class Posicionamiento implements Serializable, Auditable, Comparable<Posi
 		this.fechaEnvioPos = fechaEnvioPos;
 	}
 
-	public DDApruebaDeniega getValidacionBCPos() {
+	public DDMotivosEstadoBC getValidacionBCPos() {
 		return validacionBCPos;
 	}
 
-	public void setValidacionBCPos(DDApruebaDeniega validacionBCPos) {
+	public void setValidacionBCPos(DDMotivosEstadoBC validacionBCPos) {
 		this.validacionBCPos = validacionBCPos;
 	}
 

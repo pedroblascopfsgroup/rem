@@ -266,6 +266,13 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	DtoPage getActivosExpediente(Long idExpediente);
+	
+	/**
+	 * Método que recupera los activos del expediente comercial para adjuntar en Excel
+	 *
+	 * @return
+	 */
+	DtoPage getActivosExpedienteExcel(Long idExpediente, Boolean esExcelActivos);
 
 	/**
 	 * Método que recupera los tipos de documento del expediente comercial

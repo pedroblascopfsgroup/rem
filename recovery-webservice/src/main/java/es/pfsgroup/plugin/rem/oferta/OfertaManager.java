@@ -179,6 +179,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -973,6 +974,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			} else {
 				oferta.setOfrDocRespPrescriptor(true);
 			}
+			
+			String codigo = null;
+			
+			if(!oferta.getOfrDocRespPrescriptor()) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
+			}
+			
+			if (codigo != null) {
+				DDResponsableDocumentacionCliente respCodCliente = genericDao.get(DDResponsableDocumentacionCliente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo));
+				oferta.setRespDocCliente(respCodCliente);
+			}
 
 			Long idOferta = this.saveOferta(oferta);
 			ofertaDao.flush();
@@ -1335,6 +1351,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dto.setTexto(ofertaDto.getJustificacionOferta());
 				
 				saveTextoOfertaWS(dto, oferta);
+				modificado = true;
+			}
+			
+			String codigo = null;
+			
+			if(!oferta.getOfrDocRespPrescriptor()) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
+			}
+			
+			if (codigo != null) {
+				DDResponsableDocumentacionCliente respCodCliente = genericDao.get(DDResponsableDocumentacionCliente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo));
+				oferta.setRespDocCliente(respCodCliente);
 				modificado = true;
 			}
 
@@ -2033,7 +2065,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public boolean checkCompradores(TareaExterna tareaExterna) {
 		ExpedienteComercial expediente = tareaExternaToExpediente(tareaExterna);
 		if (expediente != null) {
-			return 100f == expedienteComercialApi.getPorcentajeCompra(expediente.getId());
+			return Float.valueOf(100f).equals(expedienteComercialApi.getPorcentajeCompra(expediente.getId()));
 		}
 		return false;
 	}

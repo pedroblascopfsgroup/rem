@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.exception.UserException;
@@ -28,6 +29,8 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalExpedientesApi;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.BajaDocumentoDto;
@@ -36,6 +39,7 @@ import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearDocumentoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CredencialesUsuarioDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DocumentosExpedienteDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DtoMetadatosEspecificos;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.RecoveryToGestorDocAssembler;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearActuacionTecnicaDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearEntidadCompradorDto;
@@ -66,14 +70,17 @@ import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecover
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoTributo;
+import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProyecto;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
 import es.pfsgroup.plugin.rem.model.AdjuntoGastoAsociado;
@@ -89,12 +96,15 @@ import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.MapeoGestorDocumental;
 import es.pfsgroup.plugin.rem.model.MapeoPropietarioGestorDocumental;
 import es.pfsgroup.plugin.rem.model.RelacionHistoricoComunicacion;
+import es.pfsgroup.plugin.rem.model.TipoDocumentoSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
@@ -112,6 +122,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	private static final String GESTOR_DOCUMENTAL = "GESTOR_DOC";
 	private static final String CLIENTE_HRE = "Haya Real Estate";
 	private static final String CODIGO_ESTADO_UA = "10";
+	SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy");
 
 	@Resource
 	private Properties appProperties;
@@ -145,6 +156,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
     @Autowired
     private ActivoTributoApi activoTributoApi;
+    
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
 
 	@Autowired
 	private PerfilAdministracionDao perfilAdministracionDao;
@@ -177,6 +191,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(activo.getNumActivo().toString(), getTipoExpediente(activo), codigoEstado);
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
 		docExpDto.setBlacklistmatriculas(perfilAdministracionDao.getBlackListMatriculasByUsuario(userLogin.getUsername()));
+		docExpDto.setMetadatatdn1(true);
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
 	  /*if (!Checks.esNulo(respuesta.getDocumentos())) {
@@ -205,6 +220,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 				trabajo.getNumTrabajo().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, GestorDocumentalConstants.CODIGO_CLASE_ACTUACION_TECNICA);
 		Usuario userLogin = genericAdapter.getUsuarioLogado();
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
+		docExpDto.setMetadatatdn1(true);
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
 		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
@@ -269,7 +285,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	}
 
 	@Override
-	public Long upload(Activo activo, WebFileItem webFileItem, String userLogin, String matricula) throws Exception {
+	public Long upload(Activo activo, WebFileItem webFileItem, String userLogin, String matricula, DtoMetadatosEspecificos dtoMetadatos) throws Exception, GestorDocumentalException{
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		String codigoEstado = Checks.esNulo(activo.getEstadoActivo()) ? null : activo.getEstadoActivo().getCodigo();
 
@@ -286,7 +302,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(activo.getNumActivo().toString(), getTipoExpediente(activo), codigoEstado);
-		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
+		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDtoConFormulario(webFileItem, userLogin, matricula, dtoMetadatos);
 		RespuestaCrearDocumento respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
 
 		return new Long(respuestaCrearDocumento.getIdDocumento());
@@ -1660,6 +1676,103 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			fileItem = this.getFileItem(adjunto.getIdentificadorGestorDocumental(), nombreDocumento);
 		}
 		return fileItem;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void guardarFormularioSubidaDocumento(Long idEntidad, String tipoDocumento, boolean tbjValidado, DtoMetadatosEspecificos dto) throws ParseException{
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", idEntidad);
+		Activo activo = genericDao.get(Activo.class, filtroActivo);
+		Order order = new Order(OrderType.DESC, "id");
+		ActivoAdmisionDocumento activoAdmisionDocumento = null;
+		ActivoConfigDocumento actConfDoc = null;
+		
+		DDTipoDocumentoActivo tipoDocDiccionario = (DDTipoDocumentoActivo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumentoActivo.class, tipoDocumento);
+		Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.id", tipoDocDiccionario.getId());
+		Filter filtrotipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.id",activo.getTipoActivo().getId());
+		List<ActivoConfigDocumento> actConfDocList = genericDao.getListOrdered(ActivoConfigDocumento.class, order,filtroDocumento,filtrotipoActivo);
+		if(actConfDocList != null && !actConfDocList.isEmpty()) {
+			actConfDoc = actConfDocList.get(0);
+			Filter filtroActConfDoc = genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", actConfDoc.getId());
+			List<ActivoAdmisionDocumento> activoAdmisionDocumentoList = genericDao.getListOrdered(ActivoAdmisionDocumento.class,order, filtroActivo, filtroActConfDoc);
+			
+		if(activoAdmisionDocumentoList != null && !activoAdmisionDocumentoList.isEmpty()) {
+			activoAdmisionDocumento = activoAdmisionDocumentoList.get(0);
+			
+		}else {
+			activoAdmisionDocumento = new ActivoAdmisionDocumento();
+			activoAdmisionDocumento.setActivo(activo);
+			activoAdmisionDocumento.setConfigDocumento(actConfDoc);
+		}
+		if(dto.getFechaObtencion() != null) {
+			activoAdmisionDocumento.setFechaObtencion(parser.parse(dto.getFechaCaducidad()));
+		}
+		if(dto.getFechaCaducidad() != null) {
+			activoAdmisionDocumento.setFechaCaducidad(parser.parse(dto.getFechaCaducidad()));
+		}
+		if(dto.getFechaEmision() != null) {
+			activoAdmisionDocumento.setFechaEmision(parser.parse(dto.getFechaEmision()));
+		}
+		if(dto.getFechaEtiqueta() != null) {
+			activoAdmisionDocumento.setFechaEtiqueta(parser.parse(dto.getFechaEtiqueta()));
+		}
+		
+		if("SI".equalsIgnoreCase(dto.getAplica())) {
+			activoAdmisionDocumento.setAplica(true);
+		}else {
+			activoAdmisionDocumento.setAplica(false);
+		}
+		
+		activoAdmisionDocumento.setRegistro(dto.getRegistro());
+		activoAdmisionDocumento.setNoValidado(tbjValidado);
+
+		genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
+		}
+		return;
+	
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void actualizarAdmisionValidado(Trabajo tbj) throws ParseException{
+		Order order = new Order(OrderType.DESC, "id");
+		ActivoAdmisionDocumento activoAdmisionDocumento = null;
+		Filter filterSubTipoTrabajo= genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.id", tbj.getSubtipoTrabajo().getId());
+		List<TipoDocumentoSubtipoTrabajo> tipoDocList = genericDao.getList(TipoDocumentoSubtipoTrabajo.class, filterSubTipoTrabajo);
+
+		List<ActivoTrabajo> activos = tbj.getActivosTrabajo();
+		
+		if(tipoDocList == null || activos == null || activos.isEmpty() || tipoDocList.isEmpty() ) {
+			return;
+		}
+		
+		for (TipoDocumentoSubtipoTrabajo tipoDoc : tipoDocList) {
+			if(tipoDoc.getTipoDocumento() != null) {
+				for (ActivoTrabajo activoTrabajo : activos) {
+					Activo activo = activoTrabajo.getActivo();
+					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", activo.getId());
+					Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo", tipoDoc.getTipoDocumento().getCodigo());
+					Filter filtrotipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.id",activo.getTipoActivo().getId());
+					Filter filtroSubtipoActivo = genericDao.createFilter(FilterType.EQUALS, "subtipoActivo.id",activo.getSubtipoActivo().getId());
+					List<ActivoConfigDocumento> lista = genericDao.getList(ActivoConfigDocumento.class, filtroDocumento, filtrotipoActivo, filtroSubtipoActivo);
+					ActivoConfigDocumento actConfDoc = null;
+					if(lista != null && !lista.isEmpty()) {
+						actConfDoc = lista.get(0);
+					}
+					if(actConfDoc != null) {
+						Filter filtroActConfDoc = genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", actConfDoc.getId());
+						List<ActivoAdmisionDocumento> activoAdmisionDocumentoList = genericDao.getListOrdered(ActivoAdmisionDocumento.class,order, filtroActivo, filtroActConfDoc);
+						if(activoAdmisionDocumentoList != null && !activoAdmisionDocumentoList.isEmpty()) {
+							activoAdmisionDocumento = activoAdmisionDocumentoList.get(0);
+						}
+						if(activoAdmisionDocumento != null) {
+							activoAdmisionDocumento.setNoValidado(false);
+							genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
+						}
+					}
+				}	
+			}
+		}		
 	}
 	
 }

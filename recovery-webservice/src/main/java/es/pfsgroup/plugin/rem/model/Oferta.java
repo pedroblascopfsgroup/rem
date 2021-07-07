@@ -37,6 +37,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
+import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -335,6 +336,10 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name = "OFR_DOC_RESP_PRESCRIPTOR")
     private Boolean ofrDocRespPrescriptor;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_RDC_ID")
+    private DDResponsableDocumentacionCliente respDocCliente;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -1028,4 +1033,12 @@ public class Oferta implements Serializable, Auditable {
 	public void setVentaSobrePlano(Boolean ventaSobrePlano) {
 		this.ventaSobrePlano = ventaSobrePlano;
 	}
+	public DDResponsableDocumentacionCliente getRespDocCliente() {
+		return respDocCliente;
+	}
+
+	public void setRespDocCliente(DDResponsableDocumentacionCliente respDocCliente) {
+		this.respDocCliente = respDocCliente;
+	}
+	
 }

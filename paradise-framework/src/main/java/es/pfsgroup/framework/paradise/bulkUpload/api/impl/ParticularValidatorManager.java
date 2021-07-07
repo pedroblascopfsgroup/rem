@@ -253,7 +253,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_ACTIVO WHERE"
 				+ "		 	ACT_NUM_ACTIVO ="+numActivo+" "
-				+ "		 	AND BORRADO = 0 AND ACT_EN_TRAMITE IS NOT NULL");
+				+ "		 	AND BORRADO = 0 AND ACT_EN_TRAMITE = 1");
 		return !"0".equals(resultado);
 	}
 
@@ -1854,6 +1854,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 WHERE AGR_NUM_AGRUP_REM =" + numAgrupacion
 				+ "      AND BORRADO = 0");
 				//+ "      AND DD_TAG_ID = (SELECT DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = '16')");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean agrupacionActiva(String numAgrupacion){
+		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_AGR_AGRUPACION "
+				+ "		 WHERE AGR_NUM_AGRUP_REM =" + numAgrupacion
+				+ "      AND AGR_FECHA_BAJA IS NULL");
 		return !"0".equals(resultado);
 	}
 
@@ -6264,7 +6275,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeCodProveedorRem(String codProveedorREM) {
-		if(Checks.esNulo(codProveedorREM) || !StringUtils.isNumeric(codProveedorREM)) {
+		if(Checks.esNulo(codProveedorREM) || !StringUtils.isNumericSpace(codProveedorREM)) {
 			return false;
 		}
 
@@ -6274,6 +6285,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
+	
 	@Override
 	public Boolean existePoblacionByDescripcion(String codigoPoblacion) {
 		if(Checks.esNulo(codigoPoblacion)) {

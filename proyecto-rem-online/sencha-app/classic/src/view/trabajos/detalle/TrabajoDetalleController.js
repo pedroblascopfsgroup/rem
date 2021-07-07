@@ -133,7 +133,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		
 		if (!Ext.isEmpty(me.lookupReference("listaActivosSubidaRef")) && 
 			!Ext.isEmpty(me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion"))  ){
-			
 			me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(false);
 		}
 
@@ -226,6 +225,17 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			me.onAfterLoadProveedor();
 	    }
     },
+	
+	validaGrid: function(){
+		var me = this;
+		var comboTipoTrabajo = me.lookupReference('tipoTrabajo');
+		
+		if (me.getView().idActivo != null || me.getView().idAgrupacion != null){
+			comboTipoTrabajo.enable();			
+		}else{
+			comboTipoTrabajo.disable();			
+		}
+	},
 	
 	onChangeSubtipoTrabajoCombo: function(combo) {
 		var me = this;
@@ -774,11 +784,28 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	},
 	
 	abrirFormularioAdjuntarDocumentos: function(grid) {
-		
 		var me = this,
 		idTrabajo = me.getViewModel().get("trabajo.id");
 		tipoTrabajoCodigo = me.getViewModel().get("trabajo.tipoTrabajoCodigo");
-		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumento", {entidad: 'trabajo', idEntidad: idTrabajo, tipoTrabajoCodigo: tipoTrabajoCodigo, parent: grid}).show();
+		var viewPortWidth = Ext.Element.getViewportWidth();
+	    var viewPortHeight = Ext.Element.getViewportHeight();
+		var wizard = Ext.create('HreRem.view.common.WizardBase',
+				{
+					slides: [
+						'adjuntardocumentowizard1',
+						'adjuntardocumentowizard2'
+					],
+					title: 'Adjuntar Documento',
+					padre : me,
+					idEntidad: idTrabajo,
+					entidad:'trabajo', 
+					modoEdicion: true,
+					width: viewPortWidth > 1370 ? viewPortWidth / 2.5 : viewPortWidth / 3.5,
+					height: viewPortHeight > 500 ? 350 : viewPortHeight - 100,
+					x: viewPortWidth / 2 - ((viewPortWidth > 1370 ? viewPortWidth / 2 : viewPortWidth /1.5) / 2),
+	    			y: viewPortHeight / 2 - ((viewPortHeight > 500 ? 500 : viewPortHeight - 100) / 2)
+				}
+			).show();
 
 	},
 	
@@ -1315,6 +1342,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
        	var me = this,
        	form = me.getView().lookupReference("formSubirListaActivos");
        	var params = form.getValues(false,false,false,true);
+		var enTramite = false;
        	params.idTipoOperacion = "141";
        	if(form.isValid()){
 			me.getView().lookupReference('listaActivosSubidaRef').mask(HreRem.i18n('msg.mask.loading'));
@@ -1334,6 +1362,28 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 					window.lookupReference('listaActivosSubidaRef').setStore(storeActivos);    
     	   			//Si carga correctametne desde listado, ya no sera obligatorio insertar archivo
     	   			window.lookupReference('filefieldActivosRef').allowBlank=true;
+					var comboTipoTrabajo = me.lookupReference('tipoTrabajo');					
+										
+					if(!Ext.isEmpty(storeActivos) && storeActivos.data.length != 0){
+						comboTipoTrabajo.enable();
+						comboTipoTrabajo.setReadOnly(false);						
+						Ext.Array.each(storeActivos.getData().items, function(record){
+							if(record.data.activoTramite){
+								comboTipoTrabajo.getStore().getProxy().extraParams.idActivo=record.data.idActivo;
+								enTramite = true;							
+							}
+						});
+						comboTipoTrabajo.validate();
+					}else{
+						comboTipoTrabajo.enable();
+						comboTipoTrabajo.setReadOnly(true);
+						comboTipoTrabajo.validate();
+					}	
+					
+					if (!Ext.isEmpty(me.getView().lookupReference("listaActivosSubidaRef")) && 
+						!Ext.isEmpty(me.getView().lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoTramite")) && enTramite ){						
+						me.getView().lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoTramite").setHidden(false);
+					}			
 					if(window.lookupReference('subtipoTrabajoCombo').getValue() != null){
 						me.onChangeSubtipoTrabajoCombo(window.lookupReference('subtipoTrabajoCombo'));
 					}

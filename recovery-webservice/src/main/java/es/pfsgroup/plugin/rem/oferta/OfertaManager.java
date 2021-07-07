@@ -97,6 +97,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
@@ -6965,11 +6966,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public boolean esMayorista(TareaExterna tareaExterna) {
 		Oferta oferta = tareaExternaToOferta(tareaExterna);
 		
-		if(oferta != null && oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getEquipoGestion() != null) {
-			return DDEquipoGestion.CODIGO_MAYORISTA.equals(oferta.getActivoPrincipal().getEquipoGestion().getCodigo());
+		if(oferta != null && oferta.getActivoPrincipal() != null) {
+			ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id" ,oferta.getActivoPrincipal().getId()));
+			if (activoCaixa != null && activoCaixa.getCanalDistribucionVenta() != null && activoCaixa.getCanalDistribucionVenta().getCodigo() != null) {
+				return DDTipoComercializar.CODIGO_SINGULAR.equals(activoCaixa.getCanalDistribucionVenta().getCodigo());
+			}
 		}
 		
-		return true;
+		return false;
 	}
 
 	@Override

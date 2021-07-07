@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,17 +49,6 @@ import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateOfertaApi;
@@ -300,6 +290,10 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						expediente.setFechaAnulacion(new Date());
 						mandaCorreo=true;
 					}
+
+					DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
+					expediente.setEstadoBc(estadoExpedienteBc);
 					
 					// --- INICIO --- HREOS-5052 ---
 					// Si un expediente esta bloqueado por Gencat(lo sabemos mirando si tiene comuncacionesGencat)

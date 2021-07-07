@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +42,6 @@ import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.UploadApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
-import es.pfsgroup.plugin.rem.model.AuthenticationData;
-import es.pfsgroup.plugin.rem.model.DtoMenuItem;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.TipoDocumentoSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
@@ -84,6 +81,9 @@ public class GenericController extends ParadiseJsonController{
 	
 	@Autowired
 	private UploadApi uploadApi;
+
+	@Autowired
+	private AccionesCaixaController accionesCaixaController;
 	
 
 	
@@ -819,6 +819,15 @@ public class GenericController extends ParadiseJsonController{
 		}
 
 		restApi.sendResponse(response, model, request);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/generic/accionComercialCaixa")
+	public void accionComercialCaixa(ModelMap model, RestRequestWrapper request, HttpServletResponse response){
+
+		ModelMap modelMap = accionesCaixaController.accionComercialCaixa(model, request, response);
+
+		restApi.sendResponse(response, modelMap, request);
+
 	}
  }
 

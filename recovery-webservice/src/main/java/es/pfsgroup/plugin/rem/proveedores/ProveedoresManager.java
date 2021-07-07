@@ -1331,14 +1331,6 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				beanUtilNotNull.copyProperty(dtoProveedor, "estadoProveedorDescripcion", proveedor.getEstadoProveedor().getDescripcion());
 			}
 			beanUtilNotNull.copyProperty(dtoProveedor, "fechaBaja", proveedor.getFechaBaja());
-			beanUtilNotNull.copyProperty(dtoProveedor, "direccion", proveedor.getDireccion());
-			if (!Checks.esNulo(proveedor.getProvincia())) {
-				beanUtilNotNull.copyProperty(dtoProveedor, "provincia", proveedor.getProvincia().getDescripcion());
-			}
-			if (!Checks.esNulo(proveedor.getLocalidad())) {
-				beanUtilNotNull.copyProperty(dtoProveedor, "localidad", proveedor.getLocalidad().getDescripcion());
-			}
-			beanUtilNotNull.copyProperty(dtoProveedor, "codigoPostal", proveedor.getCodigoPostal());
 			
 		} catch (IllegalAccessException e) {
 			logger.error(e.getMessage());

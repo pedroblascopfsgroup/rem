@@ -875,12 +875,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			// Comprobar si el proveedor está dado de baja para notificarlo.
 			var combo = window.lookupReference('comboProveedores');
 			var fechaBaja = combo.getSelection().getData().fechaBaja;
-			if ((combo.getSelection().getData().direccion === null || combo.getSelection().getData().direccion === undefined) ||
-				(combo.getSelection().getData().provincia === null || combo.getSelection().getData().provincia === undefined) ||
-				(combo.getSelection().getData().localidad === null || combo.getSelection().getData().localidad === undefined) ||
-				(combo.getSelection().getData().codigoPostal === null || combo.getSelection().getData().codigoPostal === undefined)) {
-				me.fireEvent("errorToast", HreRem.i18n("msg.form.gasto.proveedor.sin.direccion"));
-			} else if(!Ext.isEmpty(fechaBaja)) {
+			if(!Ext.isEmpty(fechaBaja)) {
 				Ext.Msg.show({
 					   title: HreRem.i18n('title.mensaje.confirmacion'),
 					   msg: HreRem.i18n('msg.desea.crear.proveedor.baja'),

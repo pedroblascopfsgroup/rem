@@ -58,17 +58,24 @@ public class DtoActivoProveedor extends WebDto {
 	// Control PBC.
 	private Date fechaProceso;
 	private String resultadoBlanqueoCodigo;
-
-	private String telefono;
+	
 	private String direccion;
+	
+	private String telefono;
+	
 	private String provincia;
-	private String localidad;
-	private Integer codigoPostal;
+	
 	private String email;
+	
 	private String subtipoProveedorDescripcion;
+	
 	private String codProveedorUvem;
+	
 	private String codigoApiProveedor;
+	
 	private Long idMediadorRelacionado;
+	
+	
 	
 	public Date getFechaUltimaActualizacion() {
 		return fechaUltimaActualizacion;
@@ -285,18 +292,6 @@ public class DtoActivoProveedor extends WebDto {
 	}
 	public void setProvincia(String provincia) {
 		this.provincia = provincia;
-	}
-	public String getLocalidad() {
-		return localidad;
-	}
-	public void setLocalidad(String localidad) {
-		this.localidad = localidad;
-	}
-	public Integer getCodigoPostal() {
-		return codigoPostal;
-	}
-	public void setCodigoPostal(Integer codigoPostal) {
-		this.codigoPostal = codigoPostal;
 	}
 	public String getEmail() {
 		return email;

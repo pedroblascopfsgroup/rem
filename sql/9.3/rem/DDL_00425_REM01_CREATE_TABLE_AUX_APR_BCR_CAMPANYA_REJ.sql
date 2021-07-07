@@ -10,8 +10,7 @@
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial - PIER GOTTA - [HREOS-14503]
---##        0.2 Modificar el campo FECHA_ALTA de VARCHAR2(8 CHAR) a DATE - Alejandra García - [HREOS-14507]
+--##        0.1 Versión inicial
 --##########################################
 --*/
 
@@ -36,7 +35,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'AUX_APR_BCR_CAMPANYA_AGRUP'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'AUX_APR_BCR_CAMPANYA_REJ'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_COMMENT_TABLE VARCHAR2(500 CHAR):= ''; -- Vble. para los comentarios de las tablas
 
 BEGIN
@@ -60,16 +59,10 @@ BEGIN
     V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
     (
            
-        ID_AGRUPADOR                     VARCHAR2(8 CHAR),
-        NOMBRE               		     VARCHAR2(100 CHAR),
-        FECHA_ALTA                  	 DATE,
-        TIPOLOGIA		 	             VARCHAR2(10 CHAR),
-        FECHA_INICIO_CAMPANA		     DATE,
-        FECHA_FIN_PREVISTA		         DATE,
-        FECHA_FIN_REAL			         DATE,
-        TIEMPO_COSECHA			         NUMBER(3,0),
-        CAMPANA_BDC			             VARCHAR2(1 CHAR),
-        NO_ANALIZAR			             VARCHAR2(1 CHAR)
+        ERRORCODE                   VARCHAR2(255 CHAR),
+        ERRORMESSAGE                VARCHAR2(512 CHAR),
+        ROWREJECTED                 VARCHAR2(2048 CHAR),
+        FICHERO                     VARCHAR2(30 CHAR)
         
 
 
@@ -88,34 +81,9 @@ BEGIN
 
     
     -- Creamos comentario   
-    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_APR_BCR_CAMPANYA_AGRUP.ID_AGRUPADOR IS ''Código del agrupador''';       
+    V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';       
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
-    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_APR_BCR_CAMPANYA_AGRUP.NOMBRE IS ''Nombre del agrupador''';       
-    EXECUTE IMMEDIATE V_MSQL;
-    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
-    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_APR_BCR_CAMPANYA_AGRUP.FECHA_ALTA IS ''Fecha de alta''';       
-    EXECUTE IMMEDIATE V_MSQL;
-    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
-    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_APR_BCR_CAMPANYA_AGRUP.TIPOLOGIA IS ''Tipología de la Campaña''';       
-    EXECUTE IMMEDIATE V_MSQL;
-    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
-    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_APR_BCR_CAMPANYA_AGRUP.FECHA_INICIO_CAMPANA IS ''Fecha inicio prevista''';       
-    EXECUTE IMMEDIATE V_MSQL;
-    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
-    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_APR_BCR_CAMPANYA_AGRUP.FECHA_FIN_PREVISTA IS ''Fecha fin prevista''';       
-    EXECUTE IMMEDIATE V_MSQL;
-    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
-    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_APR_BCR_CAMPANYA_AGRUP.FECHA_FIN_REAL IS ''Fecha fin real''';       
-    EXECUTE IMMEDIATE V_MSQL;
-    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
-    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_APR_BCR_CAMPANYA_AGRUP.TIEMPO_COSECHA IS ''Tiempo cosecha''';       
-    EXECUTE IMMEDIATE V_MSQL;
-    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
-    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_APR_BCR_CAMPANYA_AGRUP.CAMPANA_BDC IS ''Tipo de campaña''';       
-    EXECUTE IMMEDIATE V_MSQL;
-    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
-    
     
     
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');

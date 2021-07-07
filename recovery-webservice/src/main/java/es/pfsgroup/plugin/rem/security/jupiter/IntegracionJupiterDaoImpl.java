@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
@@ -58,8 +60,9 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 				zpu.setVersion(0);
 				genericDao.save(ZonaUsuarioPerfil.class, zpu);
 				logger.debug("Creando asociacion perfil " + codigoPerfil + " - usuario " + usuario.getUsername());
-				if (esPerfilAsociadoADespacho(codigoPerfil)) {
-					asociarUsuarioADespacho(usuario, codigoPerfil);
+				MapeoPerfilDespacho mpd = obtenerMapeoPerfilDespacho(codigoPerfil); 
+				if (mpd != null) {
+					asociarUsuarioADespacho(usuario, mpd);
 				}
 			} else {
 				logger.error("No existe el perfil " + codigoPerfil + " en REM: no se crea asociacion con el usuario " + usuario.getUsername());
@@ -69,42 +72,65 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 		for (String codigoPerfil : bajasPerfiles) {
 			genericDao.delete(ZonaUsuarioPerfil.class, filtroUsuario, obtenerFiltroZPUPerfil(codigoPerfil));
 			logger.debug("Eliminando asociacion perfil " + codigoPerfil + " - usuario " + usuario.getUsername());
-			if (esPerfilAsociadoADespacho(codigoPerfil)) {
-				desasociarUsuarioADespacho(usuario, codigoPerfil);
+			MapeoPerfilDespacho mpd = obtenerMapeoPerfilDespacho(codigoPerfil); 
+			if (mpd != null) {
+				desasociarUsuarioADespacho(usuario, mpd);
 			}
 		}
 	}
 
-	private boolean esPerfilAsociadoADespacho(String codigo) {
-		// TODO Auto-generated method stub
-		return false;
+	private MapeoPerfilDespacho obtenerMapeoPerfilDespacho(String codigo) {
+		Filter filtroCodigoPerfil = genericDao.createFilter(FilterType.EQUALS, "codigoPerfil", codigo);
+		return genericDao.get(MapeoPerfilDespacho.class, filtroCodigoPerfil);
 	}
 
-	private void asociarUsuarioADespacho(Usuario usuario, String codigo) {
+	private void asociarUsuarioADespacho(Usuario usuario, MapeoPerfilDespacho mapeo) {
+		
+		String codigoDespacho = mapeo.getCodigoDespacho();
+		DespachoExterno despacho = genericDao.get(DespachoExterno.class, genericDao.createFilter(FilterType.EQUALS, "despacho",codigoDespacho));
+		if (despacho == null) {
+			logger.error("No existe el despacho " + codigoDespacho + " en REM: no se crea asociacion con el usuario " + usuario.getUsername());
+		} else {
+			GestorDespacho gd = new GestorDespacho();
+			gd.setUsuario(usuario);
+			gd.setDespachoExterno(despacho);
+			gd.setSupervisor(false);
+			gd.setGestorPorDefecto(false);
+			gd.setVersion(0);
+			gd.setAuditoria(Auditoria.getNewInstance());
+			logger.debug("Creando asociacion despacho " + codigoDespacho + " (por perfil " + mapeo.getCodigoPerfil() + " - usuario " + usuario.getUsername());
+			String codigoGrupo = mapeo.getCodigoGrupo();
+			if (codigoGrupo != null && !"".equals(codigoGrupo) && !mapeo.isManual()) {
+				altaGrupo(usuario, codigoGrupo);
+			}
+		}
+		
+	}
+
+	private void desasociarUsuarioADespacho(Usuario usuario, MapeoPerfilDespacho mapeo) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void desasociarUsuarioADespacho(Usuario usuario, String codigoPerfil) {
-		// TODO Auto-generated method stub
-		
+	private void altaGrupo(Usuario usuario, String codigoGrupo) {
+		Usuario grupo = obtenerGrupo(codigoGrupo);
+		if (grupo != null) {
+			GrupoUsuario nuevaRelGrupoUsuario = new GrupoUsuario();
+			nuevaRelGrupoUsuario.setGrupo(grupo);
+			nuevaRelGrupoUsuario.setUsuario(usuario);
+			nuevaRelGrupoUsuario.setAuditoria(Auditoria.getNewInstance());
+			nuevaRelGrupoUsuario.setVersion(0);
+			genericDao.save(GrupoUsuario.class, nuevaRelGrupoUsuario);
+			logger.debug("Creando asociacion grupo " + grupo.getUsername() + " - usuario " + usuario.getUsername());
+		} else {
+			logger.error("No existe el grupo " + codigoGrupo + " en REM: no se crea asociacion con el usuario " + usuario.getUsername());
+		}
 	}
-
+	
 	@Override
 	public void actualizarGrupos(Usuario usuario, List<String> altasGrupos, List<String> bajasGrupos) {
 		for (String codigoGrupo : altasGrupos) {
-			Usuario grupo = obtenerGrupo(codigoGrupo);
-			if (grupo != null) {
-				GrupoUsuario nuevaRelGrupoUsuario = new GrupoUsuario();
-				nuevaRelGrupoUsuario.setGrupo(grupo);
-				nuevaRelGrupoUsuario.setUsuario(usuario);
-				nuevaRelGrupoUsuario.setAuditoria(Auditoria.getNewInstance());
-				nuevaRelGrupoUsuario.setVersion(0);
-				genericDao.save(GrupoUsuario.class, nuevaRelGrupoUsuario);
-				logger.debug("Creando asociacion grupo " + codigoGrupo + " - usuario " + usuario.getUsername());
-			} else {
-				logger.error("No existe el grupo " + codigoGrupo + " en REM: no se crea asociacion con el usuario " + usuario.getUsername());
-			}
+			altaGrupo(usuario, codigoGrupo);
 		}	
 		Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
 		for (String codigoGrupo : bajasGrupos) {

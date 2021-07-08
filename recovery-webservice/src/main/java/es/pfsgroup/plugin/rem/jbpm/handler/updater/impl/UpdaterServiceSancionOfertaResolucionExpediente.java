@@ -117,6 +117,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
     public static final String MOTIVO_ANULACION_RESERVA = "comboMotivoAnulacionReserva";
     private static final String CODIGO_T013_RESOLUCION_EXPEDIENTE = "T013_ResolucionExpediente";
     private static final String CODIGO_T017_RESOLUCION_EXPEDIENTE = "T017_ResolucionExpediente";
+    private static final String CODIGO_T017 = "T017";
     private static final String CHECK_ANULAR_Y_CLONAR = "clonarYAnular";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -210,7 +211,8 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						expediente.setPeticionarioAnulacion(peticionario);
 
 						if(!tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) &&
-								!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoOriginal) && checkFormalizar) {
+								!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoOriginal) && checkFormalizar && 
+								CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())) {
 							// Notificar del rechazo de la oferta a Bankia.
 							try {
 								uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionOfertaPorCodigoMotivoAnulacion(valor.getValor()));
@@ -241,7 +243,8 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				WSDevolBankiaDto dto = null;
 				
 				if(DDDevolucionReserva.CODIGO_NO.equals(valorComboProcede)){
-					if(tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) && Checks.esNulo(expediente.getCorrecw())){
+					if(tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) && Checks.esNulo(expediente.getCorrecw())
+							&& CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())){
 						try {
 							 dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
 									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
@@ -252,7 +255,8 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 					}
 				}
 				else{
-					if(tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) && Checks.esNulo(expediente.getCorrecw())){
+					if(tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) && Checks.esNulo(expediente.getCorrecw())
+							&& CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())){
 						try {
 							dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
 									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);

@@ -439,6 +439,81 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 				            }
 				        })
 				    },
+				    T017_DefinicionOfertaValidacion: function() {		
+						var me = this;
+						var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+						var comiteSuperior = me.down('[name=comiteSuperior]');
+						var comite = me.down('[name=comite]');
+						if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+							me.ocultarCampo(comiteSuperior);
+							me.ocultarCampo(comite);
+							me.campoNoObligatorio(comiteSuperior);
+							me.campoNoObligatorio(comite);
+						}else{
+							me.ocultarCampo(comiteSuperior);
+						}
+					},
+				    T017_ResolucionCESValidacion: function(){
+				    	var me = this;
+				    	var comboResolucion = me.down('[name=comboResolucion]');
+				    	var comboContraoferta = me.down('[name=numImporteContra]');
+				    	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+				    	var necesidadArras = me.down('[name=necesidadArras]');
+				    	me.deshabilitarCampo(comboContraoferta);
+				    	var observacionesBC = me.down('[name=observacionesBC]');
+				  	  	me.ocultarCampo(observacionesBC);
+				  	  	me.ocultarCampo(necesidadArras);
+				    	
+				  	  	if(CONST.CARTERA['BBVA']===codigoCartera){   		   		  
+							me.down('[name=comboResolucion]').setFieldLabel(HreRem.i18n('title.resolucion'));
+							me.down('[name=numImporteContra]').setFieldLabel(HreRem.i18n('fieldlabel.importe.contraoferta'));
+							me.down('[name=fechaRespuesta]').setFieldLabel(HreRem.i18n('fieldlabel.fecha.respuesta'));
+				  	  	}else if(CONST.CARTERA['BANKIA'] === codigoCartera){	
+				  	  		var comboResolucion = me.down('[name=comboResolucion]');
+				  	  		var fechaRespuesta = me.down('[name=fechaRespuesta]');
+				  	  		comboResolucion.setFieldLabel(HreRem.i18n('fieldlabel.respuesta.BC'))
+							fechaRespuesta.setFieldLabel(HreRem.i18n('fieldlabel.fecha.respuesta.BC'));
+				  	  		me.desocultarCampo(necesidadArras)
+				  	  		me.desocultarCampo(observacionesBC);
+					  	  	me.ocultarCampo(comboContraoferta);
+					        me.campoNoObligatorio(comboContraoferta);
+					        comboResolucion.setReadOnly(true);
+					        fechaRespuesta.setReadOnly(true);
+					        observacionesBC.setReadOnly(true);
+					        necesidadArras.setReadOnly(true);
+					        	        
+					        var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+							var url =  $AC.getRemoteUrl('expedientecomercial/getUltimaResolucionComiteBC');
+							Ext.Ajax.request({
+								url: url,
+								params: {idExpediente : idExp},
+							    success: function(response, opts) {
+							    	var data = Ext.decode(response.responseText);
+							    	var dto = data.data;
+							    	if(!Ext.isEmpty(dto)){
+							    		necesidadArras.setValue(dto.necesidadArrasActivo);
+							    		fechaRespuesta.setValue(Ext.Date.format(new Date(dto.fechaRespuestaBC), 'd/m/Y'));
+							    		comboResolucion.setValue(dto.respuestaBC);
+							    		observacionesBC.setValue(dto.observacionesBC);
+							    	}
+							    }
+							});
+						}
+						if(CONST.CARTERA['BANKIA'] !== codigoCartera) {
+				    	comboResolucion.addListener('change', function(){
+					        if(comboResolucion.value == '03'){
+					        	me.habilitarCampo(comboContraoferta);
+					        	comboContraoferta.allowBlank = false;
+					        	comboContraoferta.validate();
+					        }else{
+					        	me.deshabilitarCampo(comboContraoferta);
+					        	comboContraoferta.reset();
+					        	comboContraoferta.allowBlank = true;
+					        	comboContraoferta.validate();
+					        }
+				        });
+				      }
+				    },
 					
 					ocultarCampo: function(campo) {
 				        var me = this;

@@ -377,26 +377,6 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 										}
 									},
 									{
-										xtype: 'comboboxfieldbase',
-										fieldLabel:	HreRem.i18n('fieldlabel.cartera.venta.creditos'), 
-										reference: 'carteraVentaCreditosRef',
-										readOnly: true,
-										bind: {
-											store: '{comboCarteraVentaCreditos}',
-											value: '{comercial.carteraVentaCreditosCod}'
-										}
-									},
-									{
-										xtype: 'comboboxfieldbase',
-										fieldLabel:	HreRem.i18n('fieldlabel.cartera.venta.activos'),
-										reference: 'carteraVentaActivosRef',
-										readOnly: true,
-										bind: {
-											store: '{comboCarteraVentaActivos}',
-											value: '{comercial.carteraVentaActivosCod}'
-										}
-									},
-									{
 									   xtype: 'checkboxfieldbase',
 									   fieldLabel: HreRem.i18n('fieldlabel.cartera.concentrada'),
 									   reference: 'carteraConcentradaRef',

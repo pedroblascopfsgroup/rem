@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
-import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
 
 public class DtoComercialActivo extends DtoTabActivo{
 
@@ -46,10 +45,6 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private String canalPublicacionAlquilerCodigo;
     private String tributacionPropuestaClienteExentoIvaCod;
     private String tributacionPropuestaClienteExentoIvaDesc;
-    private String carteraVentaCreditosCod;
-    private String carteraVentaCreditosDesc;
-    private String carteraVentaActivosCod;
-    private String carteraVentaActivosDesc;
     private String tributacionPropuestaVentaCod;
     private String tributacionPropuestaVentaDesc;
 	private Boolean carteraConcentrada;
@@ -362,38 +357,6 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	public void setTributacionPropuestaClienteExentoIvaDesc(String tributacionPropuestaClienteExentoIvaDesc) {
 		this.tributacionPropuestaClienteExentoIvaDesc = tributacionPropuestaClienteExentoIvaDesc;
-	}
-
-	public String getCarteraVentaCreditosCod() {
-		return carteraVentaCreditosCod;
-	}
-
-	public void setCarteraVentaCreditosCod(String carteraVentaCreditosCod) {
-		this.carteraVentaCreditosCod = carteraVentaCreditosCod;
-	}
-
-	public String getCarteraVentaCreditosDesc() {
-		return carteraVentaCreditosDesc;
-	}
-
-	public void setCarteraVentaCreditosDesc(String carteraVentaCreditosDesc) {
-		this.carteraVentaCreditosDesc = carteraVentaCreditosDesc;
-	}
-
-	public String getCarteraVentaActivosCod() {
-		return carteraVentaActivosCod;
-	}
-
-	public void setCarteraVentaActivosCod(String carteraVentaActivosCod) {
-		this.carteraVentaActivosCod = carteraVentaActivosCod;
-	}
-
-	public String getCarteraVentaActivosDesc() {
-		return carteraVentaActivosDesc;
-	}
-
-	public void setCarteraVentaActivosDesc(String carteraVentaActivosDesc) {
-		this.carteraVentaActivosDesc = carteraVentaActivosDesc;
 	}
 
 	public String getTributacionPropuestaVentaCod() {

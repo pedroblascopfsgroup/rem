@@ -166,7 +166,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgendaSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
@@ -4040,14 +4039,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (actCaixa.getTributacionPropuestaClienteExentoIva() != null) {
 					dto.setTributacionPropuestaClienteExentoIvaCod(actCaixa.getTributacionPropuestaClienteExentoIva().getCodigo());
 					dto.setTributacionPropuestaClienteExentoIvaDesc(actCaixa.getTributacionPropuestaClienteExentoIva().getDescripcion());
-				}
-				if (actCaixa.getCarteraVentaCreditos() != null) {
-					dto.setCarteraVentaCreditosCod(actCaixa.getCarteraVentaCreditos().getCodigo());
-					dto.setCarteraVentaCreditosDesc(actCaixa.getCarteraVentaCreditos().getDescripcion());
-				}
-				if (actCaixa.getCarteraVentaActivos() != null) {
-					dto.setCarteraVentaActivosCod(actCaixa.getCarteraVentaActivos().getCodigo());
-					dto.setCarteraVentaActivosDesc(actCaixa.getCarteraVentaActivos().getDescripcion());
 				}
 				if (actCaixa.getTributacionPropuestaVenta() != null) {
 					dto.setTributacionPropuestaVentaCod(actCaixa.getTributacionPropuestaVenta().getCodigo());

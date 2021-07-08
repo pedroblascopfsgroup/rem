@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210707
+--## FECHA_CREACION=20210708
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14526
@@ -35,7 +35,7 @@ DECLARE
 
     V_DATA T_ARRAY_DATA := T_ARRAY_DATA(
       --     DD_EOF_CODIGO  DD_EOF_DESCRIPCION  DD_EOF_DESCRIPCION_LARGA
-      T_DATA('05',         'Oferta pendiente Titulares Secundarios',         'Oferta pendiente Titulares Secundarios')
+      T_DATA('05',         'Pdte. Titulares Secundarios',         'Pdte. Titulares Secundarios')
     );
     V_TMP_DATA T_DATA;
 

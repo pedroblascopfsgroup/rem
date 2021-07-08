@@ -73,7 +73,7 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 			genericDao.delete(ZonaUsuarioPerfil.class, filtroUsuario, obtenerFiltroZPUPerfil(codigoPerfil));
 			logger.debug("Eliminando asociacion perfil " + codigoPerfil + " - usuario " + usuario.getUsername());
 			List<MapeoPerfilDespacho> listMpd = obtenerMapeoPerfilDespachoBaja(codigoPerfil); 
-			if (mpd != null) {
+			if (listMpd != null && listMpd.size()>0) {
 				desasociarUsuarioADespacho(usuario, listMpd);
 			}
 		}

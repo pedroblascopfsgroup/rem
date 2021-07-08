@@ -5,10 +5,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -114,11 +111,11 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 	@Column(name = "CEX_NUM_URSUS_CONYUGE_BH_REM")
 	private String numeroClienteUrsusBhConyuge;
 	
-	@Column(name = "DD_ECC_CODIGO")
-	private String estadoComunicacionCompradorBCCodigo;
+	@Column(name = "ESTADO_CODIGO")
+	private String estadoComunicacionBCCodigo;
 	
-	@Column(name = "DD_ECC_DESCRIPCION")
-	private String estadoComunicacionCompradorBCDescripcion;
+	@Column(name = "ESTADO_DESCRIPCION")
+	private String estadoComunicacionBCDescripcion;
 	
 	
     
@@ -370,22 +367,21 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 		this.numeroClienteUrsusBhConyuge = numeroClienteUrsusBhConyuge;
 	}
 
-	public String getEstadoComunicacionCompradorBCCodigo() {
-		return estadoComunicacionCompradorBCCodigo;
+	public String getEstadoComunicacionBCCodigo() {
+		return estadoComunicacionBCCodigo;
 	}
 
-	public void setEstadoComunicacionCompradorBCCodigo(String estadoComunicacionCompradorBCCodigo) {
-		this.estadoComunicacionCompradorBCCodigo = estadoComunicacionCompradorBCCodigo;
+	public void setEstadoComunicacionBCCodigo(String estadoComunicacionBCCodigo) {
+		this.estadoComunicacionBCCodigo = estadoComunicacionBCCodigo;
 	}
 
-	public String getEstadoComunicacionCompradorBCDescripcion() {
-		return estadoComunicacionCompradorBCDescripcion;
+	public String getEstadoComunicacionBCDescripcion() {
+		return estadoComunicacionBCDescripcion;
 	}
 
-	public void setEstadoComunicacionCompradorBCDescripcion(String estadoComunicacionCompradorBCDescripcion) {
-		this.estadoComunicacionCompradorBCDescripcion = estadoComunicacionCompradorBCDescripcion;
+	public void setEstadoComunicacionBCDescripcion(String estadoComunicacionBCDescripcion) {
+		this.estadoComunicacionBCDescripcion = estadoComunicacionBCDescripcion;
 	}
-	
-	
+
 	
 }

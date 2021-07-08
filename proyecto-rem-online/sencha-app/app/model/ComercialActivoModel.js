@@ -138,18 +138,6 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 			name: 'tributacionPropuestaClienteExentoIvaDesc'
 		},
 		{
-			name: 'carteraVentaCreditosCod'
-		},
-		{
-			name: 'carteraVentaCreditosDesc'
-		},
-		{
-			name: 'carteraVentaActivosCod'
-		},
-		{
-			name: 'carteraVentaActivosDesc'
-		},
-		{
 			name: 'tributacionPropuestaVentaCod'
 		},
 		{

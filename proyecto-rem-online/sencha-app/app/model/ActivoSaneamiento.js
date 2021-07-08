@@ -353,27 +353,6 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 			dateFormat: 'c'
 		},
 		{
-			name: 'tipoImpuestoCompraCodigo'
-		},
-		{
-			name: 'tipoImpuestoCompraDescripcion'
-		},
-		{
-			name: 'subtipoImpuestoCompraCodigo'
-		},
-		{
-			name: 'subtipoImpuestoCompraDescripcion'
-		},
-		{
-			name: 'porcentajeImpuestoCompra'
-		},
-		{
-			name: 'codigoTpIvaCompra'
-		},
-		{
-			name: 'renunciaExencionCompra'
-		},
-		{
 			name:'isCarteraBankia',
 			type: 'boolean'
 		}

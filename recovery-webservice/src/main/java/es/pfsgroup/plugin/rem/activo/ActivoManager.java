@@ -4046,14 +4046,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					dto.setTributacionPropuestaClienteExentoIvaCod(actCaixa.getTributacionPropuestaClienteExentoIva().getCodigo());
 					dto.setTributacionPropuestaClienteExentoIvaDesc(actCaixa.getTributacionPropuestaClienteExentoIva().getDescripcion());
 				}
-				if (actCaixa.getCarteraVentaCreditos() != null) {
-					dto.setCarteraVentaCreditosCod(actCaixa.getCarteraVentaCreditos().getCodigo());
-					dto.setCarteraVentaCreditosDesc(actCaixa.getCarteraVentaCreditos().getDescripcion());
-				}
-				if (actCaixa.getCarteraVentaActivos() != null) {
-					dto.setCarteraVentaActivosCod(actCaixa.getCarteraVentaActivos().getCodigo());
-					dto.setCarteraVentaActivosDesc(actCaixa.getCarteraVentaActivos().getDescripcion());
-				}
 				if (actCaixa.getTributacionPropuestaVenta() != null) {
 					dto.setTributacionPropuestaVentaCod(actCaixa.getTributacionPropuestaVenta().getCodigo());
 					dto.setTributacionPropuestaVentaDesc(actCaixa.getTributacionPropuestaVenta().getDescripcion());

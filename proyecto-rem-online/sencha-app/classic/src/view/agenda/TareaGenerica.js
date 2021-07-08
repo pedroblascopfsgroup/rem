@@ -2547,10 +2547,28 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
   	  		me.desocultarCampo(observacionesBC);
 	  	  	me.ocultarCampo(comboContraoferta);
 	        me.campoNoObligatorio(comboContraoferta);
-	        comboResolucion.setReadOnly(true);
-	        fechaRespuesta.setReadOnly(true);
+	        if(!$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+	    		comboResolucion.setReadOnly(true);
+	        	fechaRespuesta.setReadOnly(true);
+	    	}
+	        comboResolucion.setReadOnly(false);
+        	fechaRespuesta.setReadOnly(false);
+        	
 	        observacionesBC.setReadOnly(true);
-	        necesidadArras.setReadOnly(true);
+	        necesidadArras.setReadOnly(true); 
+	        
+	        var comboResolucionStore = comboResolucion.getStore();
+	        comboResolucionStore.addListener('load', function(store, records, successful, operation, eOpts){
+			var dataScoring = store.getData().items; 
+				var indexConDudas;
+				for( var i = 0 ; i < dataScoring.length; i++) { 
+					if(dataScoring[i].getData().codigo == '03'){  
+						indexConDudas = i; 
+						break;
+					}
+				}
+				store.splice(indexConDudas, 1);			
+		});
 	        	        
 	        var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 			var url =  $AC.getRemoteUrl('expedientecomercial/getUltimaResolucionComiteBC');

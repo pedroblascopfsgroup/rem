@@ -603,12 +603,14 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 				            
 				            var listaReg = me.getStore().getData().items;
 				            var reg = listaReg[0];
-				            var validacionBCcodigo = reg.getData().validacionBCPosi;
-				            var estadosAnyadir = [CONST.ESTADO_VALIDACION_BC['CODIGO_ANULADA'] ,CONST.ESTADO_VALIDACION_BC['CODIGO_APLAZADA'], CONST.ESTADO_VALIDACION_BC['CODIGO_RECHAZADA_BC']];
-				            if (!estadosAnyadir.includes(validacionBCcodigo)) {
-								me.fireEvent("errorToast", HreRem.i18n("msg.fallo.insertar.registro.fae"));
-								return;
-							}
+				            if(!Ext.isEmpty(reg)){
+					            var validacionBCcodigo = reg.getData().validacionBCPosi;
+					            var estadosAnyadir = [CONST.ESTADO_VALIDACION_BC['CODIGO_ANULADA'] ,CONST.ESTADO_VALIDACION_BC['CODIGO_APLAZADA'], CONST.ESTADO_VALIDACION_BC['CODIGO_RECHAZADA_BC']];
+					            if (!estadosAnyadir.includes(validacionBCcodigo)) {
+									me.fireEvent("errorToast", HreRem.i18n("msg.fallo.insertar.registro.fae"));
+									return;
+								}
+				            }
 				            
 				            
 							if(reg == null || me.comprobarFechaEnviada(reg)){

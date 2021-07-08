@@ -411,7 +411,6 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 		this.fechaContraste = fechaContraste;
 	}
 
-
 	public String getEstadoComunicacionBCCodigo() {
 		return estadoComunicacionBCCodigo;
 	}
@@ -427,6 +426,5 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 	public void setEstadoComunicacionBCDescripcion(String estadoComunicacionBCDescripcion) {
 		this.estadoComunicacionBCDescripcion = estadoComunicacionBCDescripcion;
 	}
-
 
 }

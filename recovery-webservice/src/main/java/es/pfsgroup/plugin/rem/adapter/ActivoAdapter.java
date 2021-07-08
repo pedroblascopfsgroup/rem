@@ -4349,10 +4349,10 @@ public class ActivoAdapter {
 	private String getEstadoNuevaOferta(Activo activo) {
 		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
 
-		if(DDCartera.CODIGO_CAIXA.equals(activo.getCartera().getCodigo()) &&
-				DDEquipoGestion.CODIGO_MINORISTA.equals(activo.getEquipoGestion().getCodigo())){
-			codigoEstado = DDEstadoOferta.CODIGO_PDTE_DEPOSITO;
-		}
+//		if(DDCartera.CODIGO_CAIXA.equals(activo.getCartera().getCodigo()) &&
+//				DDEquipoGestion.CODIGO_MINORISTA.equals(activo.getEquipoGestion().getCodigo())){
+//			codigoEstado = DDEstadoOferta.CODIGO_PDTE_DEPOSITO;
+//		}
 
 		if (activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(activo.getId())
 				|| ofertaApi.isActivoConOfertaYExpedienteBlocked(activo)) { 

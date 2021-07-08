@@ -1829,16 +1829,28 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	}	
 	
 	@Override
-	public List getDiccionarioEstadosOfertas(String cartera, String equipoGestion) {
+	public List<DDEstadoOferta> getDiccionarioEstadosOfertas(String cartera, String equipoGestion) {
 
 		List<DDEstadoOferta> estadosOferta = genericDao.getList(DDEstadoOferta.class);
-
-		if(DDCartera.CODIGO_CAIXA.equals(cartera) && DDEquipoGestion.CODIGO_MAYORISTA.equals(equipoGestion)) {
-			estadosOferta.remove(genericDao.get(DDEstadoOferta.class,
-					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO)));
+		List<DDEstadoOferta> listaDDEstadoOferta =  new ArrayList<DDEstadoOferta>();
+		
+		if (DDCartera.CODIGO_CAIXA.equals(cartera)) {
+			Filter filtroCongelada = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
+			Filter filtroPdteDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO);
+			for (DDEstadoOferta ddEstadoOferta : estadosOferta) {
+				listaDDEstadoOferta.add(ddEstadoOferta);
+				if (DDEstadoOferta.CODIGO_CONGELADA.equals(ddEstadoOferta.getCodigo())) {
+					listaDDEstadoOferta.remove(genericDao.get(DDEstadoOferta.class, filtroCongelada));
+				}
+				if (DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(ddEstadoOferta.getCodigo())) {
+					listaDDEstadoOferta.remove(genericDao.get(DDEstadoOferta.class, filtroPdteDeposito));
+				}
+			}
+		} else {
+			listaDDEstadoOferta.addAll(estadosOferta);
 		}
 
-		return estadosOferta;
+		return listaDDEstadoOferta;
 	}
 
 }

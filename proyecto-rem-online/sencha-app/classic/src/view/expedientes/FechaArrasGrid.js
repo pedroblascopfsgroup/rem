@@ -150,9 +150,11 @@ Ext.define('HreRem.view.expedientes.FechaArrasGrid', {
 			
 			var reg = listaReg[0];
 			
-			if (!me.comprobarEstadoValidacionAndEstadoExpediente(reg,codEstadoReserva)) {
-				me.fireEvent("errorToast", HreRem.i18n("msg.fallo.insertar.registro.fae"));
-				return;
+			if(!Ext.isEmpty(reg)){
+				if (!me.comprobarEstadoValidacionAndEstadoExpediente(reg,codEstadoReserva)) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.fallo.insertar.registro.fae"));
+					return;
+				}
 			}
 			
 			if(reg == null || me.comprobarFechaEnviada(reg)){

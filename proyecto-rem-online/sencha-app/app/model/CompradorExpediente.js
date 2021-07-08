@@ -116,10 +116,10 @@ Ext.define('HreRem.model.CompradorExpediente', {
 				name:'codigoEstadoEcl'
 			},
 			{
-				name:'estadoComunicacionCompradorBCCodigo'
+				name:'estadoComunicacionBCCodigo'
 			},
 			{
-				name:'estadoComunicacionCompradorBCDescripcion'
+				name:'estadoComunicacionBCDescripcion'
 			}
     ],
     

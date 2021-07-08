@@ -562,31 +562,6 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'estadoAdecuacionSareb'}
 				}
-    		},
-    		
-    		comboTipoImpuestoCompra: {
-				model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'tipoImpuestoCompra'}
-				}/*,autoLoad: true*/
-    		},
-    		
-    		comboSubtipoImpuestoCompra: {
-				model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'subtipoImpuestoCompra'}
-				}/*,autoLoad: true*/
-    		},
-	    	
-	   		comboSiNoRenunciaExencion: {
-    			data : [
-			        {"codigo":"1", "descripcion":"Si"},
-			        {"codigo":"0", "descripcion":"No"}
-			    ]
     		}
      }    
 });

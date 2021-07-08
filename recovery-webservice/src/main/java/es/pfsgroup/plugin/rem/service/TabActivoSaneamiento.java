@@ -405,26 +405,6 @@ public class TabActivoSaneamiento implements TabActivoService{
 		Filter filtroActivoFiscalidad = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		ActivoFiscalidadAdquisicion activoFiscalidad = genericDao.get(ActivoFiscalidadAdquisicion.class, filtroActivoFiscalidad);
 		
-		if (activoFiscalidad != null) {
-			if (activoFiscalidad.getTipoImpuestoCompra() != null) {
-				activoDto.setTipoImpuestoCompraCodigo(activoFiscalidad.getTipoImpuestoCompra().getCodigo());
-				activoDto.setTipoImpuestoCompraDescripcion(activoFiscalidad.getTipoImpuestoCompra().getDescripcion());
-			}
-			if (activoFiscalidad.getSubtipoImpuestoCompra() != null) {
-				activoDto.setSubtipoImpuestoCompraCodigo(activoFiscalidad.getSubtipoImpuestoCompra().getCodigo());
-				activoDto.setSubtipoImpuestoCompraDescripcion(activoFiscalidad.getSubtipoImpuestoCompra().getDescripcion());
-			}
-			if (activoFiscalidad.getPorcentajeImpuestoCompra() != null) {
-				activoDto.setPorcentajeImpuestoCompra(activoFiscalidad.getPorcentajeImpuestoCompra());
-			}
-			if (activoFiscalidad.getCodigoTpIvaCompra() != null) {
-				activoDto.setCodigoTpIvaCompra(activoFiscalidad.getCodigoTpIvaCompra());
-			}
-			if (activoFiscalidad.getRenunciaExencionCompra() != null) {
-				activoDto.setRenunciaExencionCompra(activoFiscalidad.getRenunciaExencionCompra() ? "1" : "0");
-			}
-		}
-		
 		if(activoDao.isCarteraCaixa(activo.getId())){
 			activoDto.setIsCarteraBankia(true);
 		}else {
@@ -526,33 +506,6 @@ public class TabActivoSaneamiento implements TabActivoService{
 			}
 			
 			genericDao.save(ActivoTituloAdicional.class, actTituloAdicional);
-			
-			if (activoFiscalidad != null) {
-				if (activoDto.getTipoImpuestoCompraCodigo() != null) {
-					Filter filtroTipoImpuestoCompra = genericDao.createFilter(FilterType.EQUALS, "codigo",
-							activoDto.getTipoImpuestoCompraCodigo());
-					DDTipoImpuestoCompra tipoImpuestoCompra = genericDao.get(DDTipoImpuestoCompra.class, filtroTipoImpuestoCompra);
-					activoFiscalidad.setTipoImpuestoCompra(tipoImpuestoCompra);
-				}
-				if (activoDto.getSubtipoImpuestoCompraCodigo() != null) {
-					Filter filtrosubtipoImpuestoCompra = genericDao.createFilter(FilterType.EQUALS, "codigo",
-							activoDto.getSubtipoImpuestoCompraCodigo());
-					DDSubtipoImpuestoCompra subtipoImpuestoCompra = genericDao.get(DDSubtipoImpuestoCompra.class, filtrosubtipoImpuestoCompra);
-					activoFiscalidad.setSubtipoImpuestoCompra(subtipoImpuestoCompra);
-				}
-				if (activoDto.getPorcentajeImpuestoCompra() != null) {
-					activoFiscalidad.setPorcentajeImpuestoCompra(activoDto.getPorcentajeImpuestoCompra());
-				}
-				if (activoDto.getCodigoTpIvaCompra() != null) {
-					activoFiscalidad.setCodigoTpIvaCompra(activoDto.getCodigoTpIvaCompra());
-				}
-				if (activoDto.getRenunciaExencionCompra() != null && "0".equals(activoDto.getRenunciaExencionCompra())) {
-					activoFiscalidad.setRenunciaExencionCompra(false);
-				} else if (activoDto.getRenunciaExencionCompra() != null && "1".equals(activoDto.getRenunciaExencionCompra())) {
-					activoFiscalidad.setRenunciaExencionCompra(true);
-				}
-				genericDao.save(ActivoFiscalidadAdquisicion.class, activoFiscalidad);
-			}
 			
 		}
 

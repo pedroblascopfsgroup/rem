@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -17,14 +16,11 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.GastoLineaDetalleDao;
-import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.impl.GastoLineaDetalleDaoImpl;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
-import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoSuplido;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -183,23 +179,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			
 			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera()) && !Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
 				String codigoCartera = gasto.getPropietario().getCartera().getCodigo();
-				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)) {
-					if(gasto.getGestoria() == null) {
-						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-							if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCccBase().isEmpty()) {
-								error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_Y_PARTIDAS);
-								return error;
-							}
-						}
-					}else {
-						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-							if(gastodetalleLinea.getCppBase() == null  || gastodetalleLinea.getCppBase().isEmpty()) {
-								error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA);
-								return error;
-							}
-						}
-					}
-				}else if(DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)){
+				if(DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)){
 						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 							if(gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCccBase().isEmpty()) {
 								error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
@@ -214,13 +194,13 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 							return error;
 						}
 					}
-				}else{
+				}else if (!DDCartera.isCarteraBk(gasto.getPropietario().getCartera())){
 					for(GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 						if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase().isEmpty()) {
 							error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_Y_PARTIDAS); 
 							return error;
 						}
-					}
+					}	
 				}
 			}else {
 				error = messageServices.getMessage(VALIDACION_PROPIETARIO);

@@ -288,12 +288,7 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	
 	@Column(name="COM_PRP")
     private Integer compradorPrp;
-	
-	@Column(name="DD_ECC_CODIGO")
-    private String codigoEstadoCompradorBC;
-	
-	@Column(name="DD_ECC_DESCRIPCION")
-    private String descripcionEstadoCompradorBC;
+
 
 	public Long getId() {
 		return id;

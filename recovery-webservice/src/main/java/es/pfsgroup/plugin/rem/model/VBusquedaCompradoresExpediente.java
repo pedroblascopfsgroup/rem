@@ -123,11 +123,11 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 	@Column(name = "FECHA_ACEP_GDPR")
 	private String fechaAcepGdpr;
 	
-	@Column(name = "DD_ECC_CODIGO")
-	private String estadoComunicacionCompradorBCCodigo;
+	@Column(name = "ESTADO_CODIGO")
+	private String estadoComunicacionBCCodigo;
 	
-	@Column(name = "DD_ECC_DESCRIPCION")
-	private String estadoComunicacionCompradorBCDescripcion;
+	@Column(name = "ESTADO_DESCRIPCION")
+	private String estadoComunicacionBCDescripcion;
 	
 	
     
@@ -411,20 +411,22 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 		this.fechaContraste = fechaContraste;
 	}
 
-	public String getEstadoComunicacionCompradorBCCodigo() {
-		return estadoComunicacionCompradorBCCodigo;
+
+	public String getEstadoComunicacionBCCodigo() {
+		return estadoComunicacionBCCodigo;
 	}
 
-	public void setEstadoComunicacionCompradorBCCodigo(String estadoComunicacionCompradorBCCodigo) {
-		this.estadoComunicacionCompradorBCCodigo = estadoComunicacionCompradorBCCodigo;
+	public void setEstadoComunicacionBCCodigo(String estadoComunicacionBCCodigo) {
+		this.estadoComunicacionBCCodigo = estadoComunicacionBCCodigo;
 	}
 
-	public String getEstadoComunicacionCompradorBCDescripcion() {
-		return estadoComunicacionCompradorBCDescripcion;
+	public String getEstadoComunicacionBCDescripcion() {
+		return estadoComunicacionBCDescripcion;
 	}
 
-	public void setEstadoComunicacionCompradorBCDescripcion(String estadoComunicacionCompradorBCDescripcion) {
-		this.estadoComunicacionCompradorBCDescripcion = estadoComunicacionCompradorBCDescripcion;
+	public void setEstadoComunicacionBCDescripcion(String estadoComunicacionBCDescripcion) {
+		this.estadoComunicacionBCDescripcion = estadoComunicacionBCDescripcion;
 	}
+
 
 }

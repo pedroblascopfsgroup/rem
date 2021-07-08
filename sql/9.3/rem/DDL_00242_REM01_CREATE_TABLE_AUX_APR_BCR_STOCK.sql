@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20210623
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210707
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14370
+--## INCIDENCIA_LINK=HREOS-14533
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -16,6 +16,7 @@
 --##        0.4  HREOS-14271 -  Alejandra García - Añadir campo PROMO_COMERCIAL y aumentar tamaño a X_GOOGLE e Y_GOOGLE
 --##        0.5  HREOS-14344 -  Alejandra García - Añadir campo SOCIEDAD_PATRIOMONIAL
 --##        0.6  HREOS-14370 -  Alejandra García - Añadir campo FLAG_FICHEROS
+--##        0.7  HREOS-14533 -  Daniel Algaba - Se cambia la longitud de los campos COD_GESTORIA y COD_REGISTRO_PROPIEDAD
 --##########################################
 --*/
 
@@ -124,8 +125,8 @@ BEGIN
         PORC_IMPUESTO_COMPRA        VARCHAR2(11 CHAR),
         COD_TP_IVA_COMPRA           VARCHAR2(2 CHAR),
         NUM_CARGAS                  VARCHAR2(1 CHAR),
-        COD_GESTORIA                VARCHAR2(16 CHAR),
-        COD_REGISTRO_PROPIEDAD      VARCHAR2(16 CHAR),
+        COD_GESTORIA                VARCHAR2(40 CHAR),
+        COD_REGISTRO_PROPIEDAD      VARCHAR2(40 CHAR),
         MUNI_REGISTRO_PROPIEDAD     VARCHAR2(5 CHAR),
         COD_GESTORIA_ADMINIS        VARCHAR2(16 CHAR),
 

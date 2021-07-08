@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=PIER GOTTA
---## FECHA_CREACION=20210702
+--## FECHA_CREACION=20210705
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14503
+--## INCIDENCIA_LINK=HREOS-14507
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - PIER GOTTA - [HREOS-14503]
+--##        0.2 Modificar el campo PRECIO_CAMPAÑA por PRECIO_CAMPANYA - Alejandra García - [HREOS-14507]
 --##########################################
 --*/
 
@@ -62,9 +63,9 @@ BEGIN
         ID_FASE                   VARCHAR2(8 CHAR),
         REFERENCIA                VARCHAR2(8 CHAR),
         SOCIEDAD                  VARCHAR2(4 CHAR),
-        TIPO_ENTIDAD		   VARCHAR2(1 CHAR),
-        PRECIO_CAMPAÑA		   NUMBER(17,2),
-        PRECIO_ANTERIOR	   NUMBER(17,2)
+        TIPO_ENTIDAD		      VARCHAR2(1 CHAR),
+        PRECIO_CAMPANYA		      NUMBER(17,2),
+        PRECIO_ANTERIOR	          NUMBER(17,2)
         
 
 
@@ -95,7 +96,7 @@ BEGIN
     V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_APR_BCR_CAMPANYA_PERIM.TIPO_ENTIDAD IS ''Código de la fase''';       
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
-    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_APR_BCR_CAMPANYA_PERIM.PRECIO_CAMPAÑA IS ''Precio en campaña''';       
+    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_APR_BCR_CAMPANYA_PERIM.PRECIO_CAMPANYA IS ''Precio en campaña''';       
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
     V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_APR_BCR_CAMPANYA_PERIM.PRECIO_ANTERIOR IS ''Precio anterior al precio de campaña''';       

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210707
+--## FECHA_CREACION=20210708
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14531
@@ -35,7 +35,7 @@ DECLARE
 
     V_DATA T_ARRAY_DATA := T_ARRAY_DATA(
       --     DD_MRO_CODIGO  DD_MRO_DESCRIPCION  DD_MRO_DESCRIPCION_LARGA
-      T_DATA('916',         'Rechazada Pendiente Recomendación interna',         'Rechazada Pendiente Recomendación interna')
+      T_DATA('916',         'RECHAZADA PENDIENTE RECOMENDACIÓN INTERNA',         'RECHAZADA PENDIENTE RECOMENDACIÓN INTERNA')
     );
     V_TMP_DATA T_DATA;
 

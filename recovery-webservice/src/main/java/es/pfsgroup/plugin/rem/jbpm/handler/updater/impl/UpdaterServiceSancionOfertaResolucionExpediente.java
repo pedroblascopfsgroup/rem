@@ -212,7 +212,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
 						if(!tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) &&
 								!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoOriginal) && checkFormalizar && 
-								CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())) {
+								!CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())) {
 							// Notificar del rechazo de la oferta a Bankia.
 							try {
 								uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionOfertaPorCodigoMotivoAnulacion(valor.getValor()));
@@ -244,7 +244,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				
 				if(DDDevolucionReserva.CODIGO_NO.equals(valorComboProcede)){
 					if(tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) && Checks.esNulo(expediente.getCorrecw())
-							&& CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())){
+							&& !CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())){
 						try {
 							 dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
 									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
@@ -256,7 +256,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				}
 				else{
 					if(tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) && Checks.esNulo(expediente.getCorrecw())
-							&& CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())){
+							&& !CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())){
 						try {
 							dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
 									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20210707
+--## FECHA_CREACION=20210708
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14492
@@ -32,7 +32,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 		    T_TIPO_DATA('T017_DefinicionOferta'	, '(checkBankia() == true && checkExpedienteBloqueado() == true) ? '''' El expediente est&aacute; bloqueado '''' : (checkBankia() == true  || checkReservaInformada() == true) ? checkImporteParticipacion() ? checkCamposComprador()  ? checkCompradores()  ? checkVendido() ? ''''El activo est&aacute; vendido'''' : checkComercializable()  ? null  : ''''El activo debe ser comercializable''''  : ''''Los compradores deben sumar el 100%''''  : ''''Es necesario cumplimentar todos los campos obligatorios de los compradores para avanzar la tarea.''''  : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente''''  : ''''En la reserva del expediente se debe marcar si es necesaria o no para poder avanzar.''''  '),
-		    T_TIPO_DATA('T017_ResolucionCES'	, '(checkBankia() == true && checkExpedienteBloqueado() == true) ? '''' El expediente est&aacute; bloqueado '''' : checkReservaInformada() == false ? ''''Es necesario cumplimentar todos los campos obligatorios de los compradores para avanzar la tarea.'''' : checkImporteParticipacion()  ? (checkCompradores() ? (checkVendido()  ? ''''El activo est&aacute; vendido''''  : (checkComercializable() ? (checkPoliticaCorporativa()  ?  null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.''''): ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente''''   ')     
+		    T_TIPO_DATA('T017_ResolucionCES'	, '(checkBankia() == true && checkExpedienteBloqueado() == true) ? '''' El expediente est&aacute; bloqueado '''' : checkReservaInformada() == false ? ''''En la reserva del expediente se debe marcar si es necesaria o no para poder avanzar.'''' : checkImporteParticipacion()  ? (checkCompradores() ? (checkVendido()  ? ''''El activo est&aacute; vendido''''  : (checkComercializable() ? (checkPoliticaCorporativa()  ?  null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.''''): ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente''''   ')     
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -70,6 +71,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.service.AltaActivoService;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -121,6 +123,9 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 
 	@Autowired
 	private GestorDocumentalAdapterManager gdAdapterManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 	
 	
 	List<Activo> listaActivos = null;
@@ -925,7 +930,8 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		transactionManager.commit(transaction);
 
 		if(unidadAlquilable != null){
-			alaskaComunicacionManager.datosCliente(unidadAlquilable, new ModelMap());
+			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(unidadAlquilable.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+			llamadaAsincrona.start();
 		}
 
 		return new ResultadoProcesarFila();

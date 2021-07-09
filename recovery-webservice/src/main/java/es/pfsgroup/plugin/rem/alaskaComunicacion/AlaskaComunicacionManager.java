@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.rem.alaskaComunicacion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.AlaskaComunicacionApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.ExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
@@ -59,11 +61,13 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         return null;
     }
 
-    public void datosCliente(Activo activo, ModelMap model) {
+    public void datosCliente(Long idActivo, ModelMap model) {
 
         String urlEnvio = null;
         String json = null;
         JSONObject llamada = null;
+        Filter activoIdFilter = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, activoIdFilter);
         ActivoTitulo actTitulo = genericDao.get(ActivoTitulo.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"activo.id", activo.getId()));
         ExpedienteComercial expediente = expedienteComercialManager.getExpedientePorActivo(activo);
         ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "activo.id", activo.getId()));
@@ -230,20 +234,17 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
             model.put("notas1", "");
             model.put("notas2", "");
 
-            try {
-                json = mapper.writeValueAsString(model);
-                System.out.println("ResultingJSONstring = " + json);
+
+            json = mapper.writeValueAsString(model);
+            System.out.println("ResultingJSONstring = " + json);
 //                urlEnvio = !Checks.esNulo(appProperties.getProperty("rest.client.convivencia.recovery"))
 //                        ? appProperties.getProperty("rest.client.convivencia.recovery") : "";
-                urlEnvio = "https://desfenix.haya.es:8080";
+            urlEnvio = "https://desfenix.haya.es:8080";
 
-                llamada = procesarPeticion(this.httpClientFacade, urlEnvio, POST_METHOD, headers, json, 30, "UTF-8");
+            llamada = procesarPeticion(this.httpClientFacade, urlEnvio, POST_METHOD, headers, json, 30, "UTF-8");
 
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
 
-            registrarLlamada(urlEnvio, json, llamada.getString("success"), llamada.getString("data"));
+            registrarLlamada(urlEnvio, json, llamada.getString("success"), llamada.getString("data"), null);
 
         } catch (Exception e) {
             logger.error("error en RecoveryController", e);
@@ -371,21 +372,22 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         }
     }
 
-    private void registrarLlamada(String endPoint, String request, String result, String errorDesc) {
+    private void registrarLlamada(String endPoint, String request, String result, String errorDesc, String llamadaException) {
         RestLlamada registro = new RestLlamada();
-        registro.setMetodo("WEBSERVICE");
+        registro.setMetodo("POST");
         registro.setEndpoint(endPoint);
         registro.setRequest(request);
         logger.debug(request);
         logger.debug("-------------------");
         logger.debug(result);
-        if (!Checks.esNulo(errorDesc)) {
-            registro.setErrorDesc(errorDesc);
-        }
+        registro.setErrorDesc(errorDesc);
+    	registro.setException(llamadaException);
         try {
-            registro.setResponse(result);
-            llamadaDao.guardaRegistro(registro);
-            trustMe.registrarLlamadaServicioWeb(registro);
+        	
+        registro.setResponse(result);
+		llamadaDao.guardaRegistro(registro);
+		trustMe.registrarLlamadaServicioWeb(registro);
+    	
         } catch (Exception e) {
             logger.error("Error al trazar la llamada al WS", e);
         }

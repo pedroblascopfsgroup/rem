@@ -6,6 +6,7 @@ import java.util.Date;
 
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 
 import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
@@ -17,6 +18,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -53,6 +55,9 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 
 	@Autowired
 	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -186,7 +191,8 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 		transactionManager.commit(transaction);
 
 		if(activo != null){
-			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+			llamadaAsincrona.start();
 		}
 
 		return new ResultadoProcesarFila();

@@ -7,10 +7,14 @@ import java.util.List;
 
 import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -80,6 +84,9 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 
 	@Autowired
 	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -190,7 +197,8 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 		transactionManager.commit(transaction);
 
 		if(activo != null){
-			alaskaComunicacionManager.datosCliente(activo, new ModelMap());
+			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+			llamadaAsincrona.start();
 		}
 		
 	}

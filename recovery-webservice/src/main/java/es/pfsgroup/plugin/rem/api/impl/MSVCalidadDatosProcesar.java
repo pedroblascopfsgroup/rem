@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -39,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -81,6 +83,9 @@ public class MSVCalidadDatosProcesar extends AbstractMSVActualizador implements 
 
 	@Autowired
 	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -215,7 +220,8 @@ public class MSVCalidadDatosProcesar extends AbstractMSVActualizador implements 
 		transactionManager.commit(transaction);
 
 		if(act != null){
-			alaskaComunicacionManager.datosCliente(act, new ModelMap());
+			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(act.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+			llamadaAsincrona.start();
 		}
 		
 		return new ResultadoProcesarFila();

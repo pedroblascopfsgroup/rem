@@ -9,16 +9,16 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
-public class ConvivenciaRecovery implements Runnable{
+public class ConvivenciaAlaska implements Runnable{
 	
 	@Autowired
 	private RestApi restApi;
 
 	@Autowired
-	private RecoveryComunicacionManager recoveryComunicacionManager;
+	private AlaskaComunicacionManager alaskaComunicacionManager;
 	
 	
 	@Resource(name = "entityTransactionManager")
@@ -29,7 +29,7 @@ public class ConvivenciaRecovery implements Runnable{
 	private ModelMap model = null;
 	private String userName = null;
 	
-	public ConvivenciaRecovery(Long idActivo, ModelMap model, String userName) {
+	public ConvivenciaAlaska(Long idActivo, ModelMap model, String userName) {
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		this.idActivo = idActivo;
 		this.model = model;
@@ -41,10 +41,10 @@ public class ConvivenciaRecovery implements Runnable{
 		
 		try {
 			restApi.doSessionConfig(this.userName);
-			recoveryComunicacionManager.datosCliente(this.idActivo, this.model);
+			alaskaComunicacionManager.datosCliente(this.idActivo, this.model);
 			
 		} catch (Exception e) {
-			logger.error("error en la convivencia REM-RCV", e);
+			logger.error("error en la convivencia REM-REM3 para Alaska", e);
 		}
 		
 	}

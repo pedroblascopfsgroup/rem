@@ -1,5 +1,8 @@
 package es.pfsgroup.plugin.rem.gasto;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,10 +77,15 @@ public class GastoManager extends BusinessOperationOverrider<GastoApi> implement
 	public Long getGastoExists(Long numGasto) {
 
 		String idGasto = null;
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		
+		rawDao.addParams(params);
 
 		try {
 				idGasto = rawDao.getExecuteSQL(
-						"SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = " + numGasto + " AND BORRADO = 0");
+						"SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = :numGasto AND BORRADO = 0");
 			
 			
 			return Long.parseLong(idGasto);

@@ -2812,7 +2812,7 @@ public class ActivoAdapter {
 			DtoActivoSituacionPosesoria dto = new DtoActivoSituacionPosesoria();
 			BeanUtils.copyProperties(dto, activoEntrada.getSituacionPosesoria());
 			if (activoEntrada.getSituacionPosesoria().getConTitulo() != null)
-				dto.setConTitulo(activoEntrada.getSituacionPosesoria().getConTitulo().getCodigo());
+				dto.setConTituloCodigo(activoEntrada.getSituacionPosesoria().getConTitulo().getCodigo());
 			if(tipoDocumento.getCodigo().equals(DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION))
 				activoApi.compruebaParaEnviarEmailAvisoOcupacion(dto, activoEntrada.getId());
 		}

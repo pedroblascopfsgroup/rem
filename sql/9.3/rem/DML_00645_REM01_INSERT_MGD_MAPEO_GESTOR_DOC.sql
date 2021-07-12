@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20210611
+--## FECHA_CREACION=20210707
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-9953
@@ -37,16 +37,19 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(1500);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('16', '155', 'BBVA', 'BBVA'),
-	  T_FUNCION('16', '154', 'BBVA', 'BBVA'),
-      T_FUNCION('16', '153', 'BBVA', 'BBVA'),
-      T_FUNCION('16', '156', 'BBVA', 'BBVA'),
-      T_FUNCION('16', '157', 'BBVA', 'BBVA'),
-      T_FUNCION('16', '158', 'BBVA', 'BBVA'),
-      T_FUNCION('11', '68', 'Third Parties', 'THIRD PARTIES'),
-      T_FUNCION('11', '67', 'Third Parties', 'THIRD PARTIES'),
-      T_FUNCION('11', '29', 'Third Parties', 'THIRD PARTIES'),
-      T_FUNCION('11', '65', 'Third Parties', 'THIRD PARTIES')
+	  T_FUNCION('16', '155', 'Bbva', 'BBVA'),
+	  T_FUNCION('16', '154', 'Bbva', 'BBVA'),
+      T_FUNCION('16', '153', 'Bbva', 'BBVA'),
+      T_FUNCION('16', '156', 'Bbva', 'BBVA'),
+      T_FUNCION('16', '157', 'Bbva', 'BBVA'),
+      T_FUNCION('16', '158', 'Bbva', 'BBVA'),
+      T_FUNCION('11', '68', 'One to One', 'ONE TO ONE'),
+      T_FUNCION('11', '67', 'Bankia Leaseback', 'BANKIA LEASEBACK'),
+      T_FUNCION('11', '29', 'Particulares', 'PARTICULARES'),
+      T_FUNCION('11', '65', 'Promontoria Omega', 'PROMONTORIA OMEGA'),
+      T_FUNCION('11', '66', 'Mapfre', 'MAPFRE'),
+      T_FUNCION('11', '139', 'Yubai', 'YUBAI'),
+      T_FUNCION('11', '140', 'Caser', 'CASER')
     );          
     V_TMP_FUNCION T_FUNCION;
                 

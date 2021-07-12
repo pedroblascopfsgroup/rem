@@ -762,7 +762,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						agrupacionAdapter.createActivoAgrupacion(ofertaDto.getActivosLote().get(i).getIdActivoHaya(), agrup.getId(), i+1, false);
 					} catch (Exception e) {
 						logger.error("Error en ofertaManager", e);
-						errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
+						errorsList.put("activosLote", "idActivoHaya = " + ofertaDto.getActivosLote().get(i).getIdActivoHaya() + " -> " + RestApi.REST_MSG_UNKNOWN_KEY);
+						errorsList.put("errorDesc", e.getMessage());
 						return errorsList;
 					}
 				}
@@ -2052,7 +2053,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public boolean checkCompradores(TareaExterna tareaExterna) {
 		ExpedienteComercial expediente = tareaExternaToExpediente(tareaExterna);
 		if (expediente != null) {
-			return 100f == expedienteComercialApi.getPorcentajeCompra(expediente.getId());
+			return Float.valueOf(100f).equals(expedienteComercialApi.getPorcentajeCompra(expediente.getId()));
 		}
 		return false;
 	}

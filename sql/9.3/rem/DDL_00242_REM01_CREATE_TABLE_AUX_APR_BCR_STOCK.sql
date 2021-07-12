@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210707
+--## FECHA_CREACION=20210709
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14533
+--## INCIDENCIA_LINK=HREOS-14545
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -17,6 +17,8 @@
 --##        0.5  HREOS-14344 -  Alejandra García - Añadir campo SOCIEDAD_PATRIOMONIAL
 --##        0.6  HREOS-14370 -  Alejandra García - Añadir campo FLAG_FICHEROS
 --##        0.7  HREOS-14533 -  Daniel Algaba - Se cambia la longitud de los campos COD_GESTORIA y COD_REGISTRO_PROPIEDAD
+--##        0.7  HREOS-14545 -  Daniel Algaba - Se cambia la longitud de los campos COD_GESTORIA y COD_GESTORIA_ADMINIS
+--##        0.8  HREOS-14545 -  Daniel Algaba - Se hace un repaso completo, se añaden campos y se cambian algunas longitudes
 --##########################################
 --*/
 
@@ -96,11 +98,13 @@ BEGIN
         STATUS_USUARIO              VARCHAR2(4 CHAR),
         SITUACION_ALQUILER          VARCHAR2(1 CHAR),
         SOCIEDAD_PATRIMONIAL        VARCHAR2(4 CHAR),
+        SUBTIPO_VIVIENDA            VARCHAR2(6 CHAR),
+        SUBTIPO_SUELO               VARCHAR2(3 CHAR),
 
         PRODUCTO                    VARCHAR2(2 CHAR),
         PROCEDENCIA_PRODUCTO        VARCHAR2(2 CHAR),
         SOCIEDAD_ORIGEN             VARCHAR2(4 CHAR),
-        BANCO_ORIGEN                VARCHAR2(4 CHAR),
+        BANCO_ORIGEN                VARCHAR2(3 CHAR),
 
         FINCA                       VARCHAR2(10 CHAR),
         LIBRO                       VARCHAR2(4 CHAR),
@@ -125,10 +129,10 @@ BEGIN
         PORC_IMPUESTO_COMPRA        VARCHAR2(11 CHAR),
         COD_TP_IVA_COMPRA           VARCHAR2(2 CHAR),
         NUM_CARGAS                  VARCHAR2(1 CHAR),
-        COD_GESTORIA                VARCHAR2(40 CHAR),
-        COD_REGISTRO_PROPIEDAD      VARCHAR2(40 CHAR),
-        MUNI_REGISTRO_PROPIEDAD     VARCHAR2(5 CHAR),
-        COD_GESTORIA_ADMINIS        VARCHAR2(16 CHAR),
+        COD_GESTORIA                VARCHAR2(9 CHAR),
+        NOMBRE_REGISTRO_PROPIEDAD   VARCHAR2(40 CHAR),
+        NUMERO_REGISTRO_PROPIEDAD   VARCHAR2(40 CHAR),
+        COD_GESTORIA_ADMINIS        VARCHAR2(9 CHAR),
 
         COMPLEMENTO                 VARCHAR2(10 CHAR),
         CALLE                       VARCHAR2(60 CHAR),
@@ -151,7 +155,7 @@ BEGIN
         ESTADO_POSESORIO            VARCHAR2(3 CHAR),
         FEC_ESTADO_POSESORIO        VARCHAR2(8 CHAR),
         ESTADO_COMERCIAL_ALQUILER   VARCHAR2(3 CHAR),
-        FEC_ESTADO_COMERCIAL_ALQUILER  VARCHAR2(8),
+        FEC_ESTADO_COMERCIAL_ALQUILER  VARCHAR2(8 CHAR),
         ESTADO_COMERCIAL_VENTA      VARCHAR2(3 CHAR),
         FEC_ESTADO_COMERCIAL_VENTA  VARCHAR2(8 CHAR),
         ESTADO_TECNICO              VARCHAR2(3 CHAR),
@@ -164,7 +168,7 @@ BEGIN
         ACTIVO_AAMM                 VARCHAR2(1 CHAR),
         ACTIVO_PROMO_ESTRATEG       VARCHAR2(1 CHAR),
         DESTINO_COMERCIAL           VARCHAR2(2 CHAR),
-        CANAL_DISTRIBUCION          VARCHAR2(2 CHAR),
+        CANAL_DISTRIBUCION_VENTA    VARCHAR2(2 CHAR),
         MOTIVO_NO_COMERCIAL         VARCHAR2(2 CHAR),
         FEC_INICIO_CONCURENCIA      VARCHAR2(8 CHAR),
         FEC_FIN_CONCURENCIA         VARCHAR2(8 CHAR),
@@ -190,7 +194,7 @@ BEGIN
         ANYO_CONCESION              VARCHAR2(4 CHAR),
         FEC_FIN_CONCESION           VARCHAR2(8 CHAR),
         CALIFICACION_ENERGETICA     VARCHAR2(2 CHAR),
-        CERTIFICADO_REGISTRADO      VARCHAR2(16 CHAR),
+        CERTIFICADO_REGISTRADO      VARCHAR2(1 CHAR),
         FEC_SOLICITUD               VARCHAR2(8 CHAR),
         FEC_FIN_VIGENCIA            VARCHAR2(8 CHAR),
         LISTA_EMISIONES             VARCHAR2(2 CHAR),
@@ -229,7 +233,6 @@ BEGIN
         IMP_PRECIO_ALQUI            VARCHAR2(10 CHAR),
         PRECIO_ALQUI_NEGOCIABLE     VARCHAR2(1 CHAR),
         DESC_COL_PRECIO_CAMP_ALQUI  VARCHAR2(60 CHAR),
-        
         IMP_PRECIO_CAMP_ALQUI       VARCHAR2(10 CHAR),
         PRECIO_CAMP_ALQUI_NEGOCIABLE VARCHAR2(1 CHAR),
         DESC_COL_PRECIO_CAMP_VENTA  VARCHAR2(60 CHAR),
@@ -248,7 +251,7 @@ BEGIN
 
         FEC_POSESION                VARCHAR2(8 CHAR),
         FEC_SENYAL_LANZAMIENTO      VARCHAR2(8 CHAR),
-        FEC_LANZAMINETO             VARCHAR2(8 CHAR),
+        FEC_LANZAMIENTO             VARCHAR2(8 CHAR),
         AVISO_OCUP_SERVICER         VARCHAR2(1 CHAR),
         IND_FUERZA_PUBLICA          VARCHAR2(1 CHAR),
         IND_OCUPANTES_VIVIENDA      VARCHAR2(1 CHAR),
@@ -294,6 +297,8 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.STATUS_USUARIO IS '' Status usuario LVMS - Declaración de obra nueva''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SITUACION_ALQUILER IS '' Si el activo tiene SI, se envía una X''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SOCIEDAD_PATRIMONIAL IS '' Sociedad propietaria del Inmueble''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUBTIPO_VIVIENDA IS '' Subtipo de activo de vivienda''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUBTIPO_SUELO IS '' Subtipo de activo de suelo''';
 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PRODUCTO IS '' Procedencia del producto''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PROCEDENCIA_PRODUCTO IS '' Indica si es crediticio o no crediticio''';
@@ -324,8 +329,8 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.COD_TP_IVA_COMPRA IS '' Cód. TP IVA Compra''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUM_CARGAS IS '' Se deberá calcular si tiene cargas no canceladas. Si las tiene se envía S, y sino N''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.COD_GESTORIA IS '' Código interlocutor con rol Gestoría''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.COD_REGISTRO_PROPIEDAD IS '' Interlocutor TR0810 y dentro él, el campo XXXX''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.MUNI_REGISTRO_PROPIEDAD IS '' Municipio del interlocutor con rol Registro''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NOMBRE_REGISTRO_PROPIEDAD IS '' Nombre del registro de la propiedad (municipio)''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUMERO_REGISTRO_PROPIEDAD IS '' Número del registro de la propiedad''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.COD_GESTORIA_ADMINIS IS '' Código intercolutor con rol Gestoría administrativa''';
    
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.COMPLEMENTO IS '' Tipo de vía de la dirección''';
@@ -362,7 +367,7 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ACTIVO_AAMM IS '' Flag Activo AAMM (Asset Management). Neceista una gestión/explitación''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ACTIVO_PROMO_ESTRATEG IS '' Flag Activo promociones estratégicas''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.DESTINO_COMERCIAL IS '' Destino comercial del activo inmobiliario''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CANAL_DISTRIBUCION IS '' Canal distribución''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CANAL_DISTRIBUCION_VENTA IS '' Canal distribución venta''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.MOTIVO_NO_COMERCIAL IS '' Motivo no comercializable''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_INICIO_CONCURENCIA IS '' Fecha inicio concurrencia''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_FIN_CONCURENCIA IS '' Fecha fin concurrencia''';
@@ -445,11 +450,11 @@ BEGIN
 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_POSESION IS '' Fecha realizada posesión''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_SENYAL_LANZAMIENTO IS '' Fecha señalado lanzamiento''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_LANZAMINETO IS '' Fecha realizado lanzamiento''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_LANZAMIENTO IS '' Fecha realizado lanzamiento''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.AVISO_OCUP_SERVICER IS '' Indicador ocupado''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IND_FUERZA_PUBLICA IS '' Ind. Necesaria Fuerza Pública''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IND_OCUPANTES_VIVIENDA IS '' Ind. Existencia Ocupantes Vivi''';
-
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_RESOLUCION_MORA IS '' Fecha Resolución Moratoria''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IND_ENTREGA_VOL_POSESI IS '' Ind. Entrega Voluntaria Posesi (llaves)''';
 
 

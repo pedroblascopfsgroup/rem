@@ -43,11 +43,11 @@ DECLARE
 
 	V_COLUMNS_MATRIX MATRIX_TABLE := MATRIX_TABLE(
 	--				    NOMBRE				TIPO COLUMNA		                COMENTARIO
-		ARRAY_TABLE('MPD_CODIGO_PERFIL', 	'VARCHAR2(5 CHAR) NOT NULL',        'Código Perfil'),
+		ARRAY_TABLE('MPD_CODIGO_PERFIL', 	'VARCHAR2(25 CHAR) NOT NULL',       'Código Perfil'),
         ARRAY_TABLE('MPD_CODIGO_DESPACHO', 	'VARCHAR2(50 CHAR) NULL',           'Código Despacho'),
         ARRAY_TABLE('MPD_CODIGO_GRUPO',    	'VARCHAR2(50 CHAR) NULL',           'Código Grupo'),
-        ARRAY_TABLE('MPD_NOTAS', 	        'VARCHAR2(200 CHAR) NULL',          'Notas'),
-        ARRAY_TABLE('MJR_MANUAL',	 	    'NUMBER(1,0) NULL DEFAULT 0',       'Gestión manual')
+        ARRAY_TABLE('MPD_MANUAL',	 	    'NUMBER(1,0) NULL',			        'Gestión manual'),
+        ARRAY_TABLE('MPD_NOTAS', 	        'VARCHAR2(200 CHAR) NULL',          'Notas')
 	);
 
 	V_FK_MATRIX MATRIX_TABLE := MATRIX_TABLE(

@@ -817,9 +817,24 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							formatter : 'date("d/m/Y")',
 							fieldLabel : HreRem
 									.i18n('fieldlabel.formalizacion.fecha.venta'),
-							bind : '{resolucion.fechaVenta}'
+							bind :{
+								value:'{resolucion.fechaVenta}',
+								hidden: '{esBankia}'
+							}
 
-						}, {
+						},
+						{
+							xtype : 'datefieldbase',
+							readOnly: 'true',
+							formatter : 'date("d/m/Y")',
+							fieldLabel : HreRem.i18n('fieldlabel.formalizacion.fecha.venta'),
+							bind : {
+								value:'{resolucion.fechaFirmaContrato}',
+								hidden: '{!esBankia}'
+							}
+
+						},
+						{
 							xtype : 'button',
 							reference : 'btnGenerarFacturaVenta',
 							text : HreRem.i18n('btn.generar.factura.venta'),
@@ -841,14 +856,28 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							readOnly: 'true',
 							fieldLabel : HreRem
 									.i18n('fieldlabel.formalizacion.numero.protocolo'),
-							bind : '{resolucion.numProtocolo}'
+							bind :{
+								value:'{resolucion.numProtocolo}',
+								hidden: '{esBankia}'
+							}
+						},
+						{
+							xtype : 'textfieldbase',
+							readOnly: 'true',
+							fieldLabel : HreRem.i18n('fieldlabel.formalizacion.numero.protocolo'),
+							bind :{
+								value: '{resolucion.numeroProtocoloCaixa}',
+								readOnly: true,
+								hidden: '{!esBankia}'
+							}
 						},
 						{
 							xtype: 'datefieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.contabilizacion'),
 							bind : {
 								value: '{resolucion.fechaContabilizacion}',
-								visible: '{expediente.isCarteraBankia}'
+								visible: '{expediente.isCarteraBankia}',
+								hidden: '{esBankia}'
 							},
 							formatter: 'date("d/m/Y")',
 							readOnly: true

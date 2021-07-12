@@ -335,6 +335,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name: 'fechaContabilizacion',
 				type:'date',
     			dateFormat: 'c'
+    		},
+    		{
+    			name: 'fechaFirmaContrato',
+				type:'date',
+    			dateFormat: 'c'
     		}
     ],
     formulas: {

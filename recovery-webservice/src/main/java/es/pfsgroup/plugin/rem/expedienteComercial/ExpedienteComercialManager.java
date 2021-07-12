@@ -1776,6 +1776,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (expediente.getFechaContabilizacion() != null) {
 				dto.setFechaContabilizacion(expediente.getFechaContabilizacion());
 			}
+			
+			if (!Checks.esNulo(expediente.getFechaFirmaContrato())) {
+				dto.setFechaFirmaContrato(expediente.getFechaFirmaContrato());
+			}
 		}
 		return dto;
 	}
@@ -3932,6 +3936,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if (expediente.getFechaContabilizacion() != null) {
 			formalizacionDto.setFechaContabilizacion(expediente.getFechaContabilizacion());
+		}
+		
+		if (!Checks.esNulo(expediente.getFechaFirmaContrato())) {
+			formalizacionDto.setFechaFirmaContrato(expediente.getFechaFirmaContrato());
+		}
+		
+		if (!Checks.esNulo(expediente.getNumeroProtocolo())) {
+			formalizacionDto.setNumeroProtocoloCaixa(expediente.getNumeroProtocolo());
 		}
 		
 		return formalizacionDto;

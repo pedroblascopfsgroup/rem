@@ -302,6 +302,12 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @Column(name="ECO_FECHA_CONTAB")
 	private Date fechaContabilizacion;
+    
+    @Column(name="ECO_FECHA_FIRMA_CONT")
+   	private Date fechaFirmaContrato;
+    
+    @Column(name="ECO_NUM_PROTOCOLO")
+    private String numeroProtocolo;
 
     @Version   
 	private Long version;
@@ -930,6 +936,22 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setFechaReservaDeposito(Date fechaReservaDeposito) {
 		this.fechaReservaDeposito = fechaReservaDeposito;
+	}
+
+	public Date getFechaFirmaContrato() {
+		return fechaFirmaContrato;
+	}
+
+	public void setFechaFirmaContrato(Date fechaFirmaContrato) {
+		this.fechaFirmaContrato = fechaFirmaContrato;
+	}
+
+	public String getNumeroProtocolo() {
+		return numeroProtocolo;
+	}
+
+	public void setNumeroProtocolo(String numeroProtocolo) {
+		this.numeroProtocolo = numeroProtocolo;
 	}
 	
 	

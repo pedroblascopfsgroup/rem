@@ -74,6 +74,14 @@ Ext.define('HreRem.model.ExpedienteFormalizacionResolucion', {
     			name:'fechaContabilizacion',
     			type:'date',
     			dateFormat: 'c'
+    		},
+    	    {
+    			name:'fechaFirmaContrato',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'numeroProtocoloCaixa'
     		}
     ],
     

@@ -20,6 +20,7 @@ public class HQLBuilder {
 
 	public static final String ORDER_ASC = "asc";
 	public static final String ORDER_DESC = "desc";
+	public static final boolean QUIERE_OR_TRUE = true;
 
 	public static class Parametros {
 		@SuppressWarnings("unchecked")
@@ -98,6 +99,48 @@ public class HQLBuilder {
 		}
 	}
 	
+	/**
+	 * Ayuda a crear una cláusula WHERE campo >= valor en dónde valor se
+	 * referencia a través de un parámetro con nombre. <strong>sólo en el caso
+	 * que el valor no sea null</strong>
+	 * 
+	 * @param hqlBuilder
+	 *            Constructor de la sentencia
+	 * @param nombreCampo
+	 *            Nombre del campo
+	 * @param valor
+	 *            valor del parámetro
+	 */
+	public static void addFiltroIgualOMayorQueSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo, final Object valor) {
+		if (!Checks.esNulo(valor)) {
+			final String nombreParametro = nombraParametro(nombreCampo);
+			hqlBuilder.appendWhere(nombreCampo.concat(" >= :").concat(nombreParametro));
+			hqlBuilder.getParametros().putObject(nombreParametro, valor);
+		}
+	}
+	
+	/**
+	 * Ayuda a crear una cláusula WHERE campo <= valor en dónde valor se
+	 * referencia a través de un parámetro con nombre. <strong>sólo en el caso
+	 * que el valor no sea null</strong>
+	 * 
+	 * @param hqlBuilder
+	 *            Constructor de la sentencia
+	 * @param nombreCampo
+	 *            Nombre del campo
+	 * @param valor
+	 *            valor del parámetro
+	 */
+	public static void addFiltroIgualOMenorQueSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo, final Object valor) {
+		if (!Checks.esNulo(valor)) {
+			final String nombreParametro = nombraParametro(nombreCampo);
+			hqlBuilder.appendWhere(nombreCampo.concat(" <= :").concat(nombreParametro));
+			hqlBuilder.getParametros().putObject(nombreParametro, valor);
+		}
+	}
+	
+	
+	
 
 	/**
 	 * Ayuda a crear una cláusula WHERE campo = valor en dónde valor se
@@ -124,6 +167,8 @@ public class HQLBuilder {
 		hqlBuilder.getParametros().putObject(nombreParametro, valor);
 
 	}
+	
+	
 
 	/**
 	 * Ayuda a crear una cláusula WHERE campo between valormin and valormax. Hay
@@ -543,6 +588,10 @@ public class HQLBuilder {
 			throw new IllegalArgumentException(sentido.concat(": opción no aceptada para el sentido de la ordenación"));
 		}
 	}
+	
+	public void orderByMultiple(final String campos) {
+			this.order.append(" order by ").append(campos);
+		}
 
 	/**
 	 * Este método permite cambiar la cláusula FROM

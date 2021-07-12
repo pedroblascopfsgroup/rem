@@ -812,4 +812,8 @@ public interface OfertaApi {
 	
 	public Page getBusquedaOfertasGridUsuario(DtoOfertaGridFilter dto);
 
+	List<Oferta> getListOtrasOfertasTramitadasActivo(Long idActivo);
+	
+	public ExpedienteComercial tareaExternaToExpediente(TareaExterna tareaExterna);
+
 }

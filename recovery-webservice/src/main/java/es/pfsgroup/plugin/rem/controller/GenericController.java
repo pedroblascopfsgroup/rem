@@ -29,6 +29,7 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.diccionarios.Dictionary;
@@ -43,12 +44,15 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.TipoDocumentoSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaDto;
+import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.DocumentoDto;
 import es.pfsgroup.plugin.rem.rest.dto.DocumentoRequestDto;
@@ -134,25 +138,30 @@ public class GenericController extends ParadiseJsonController{
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getDiccionarioTiposDocumento(String diccionario, String entidad) {	
+	public ModelAndView getDiccionarioTiposDocumento(String diccionario, String entidad , String subtipoTrabajo) {	
 
 		if (GenericController.DICCIONARIO_TIPO_DOCUMENTO.equals(diccionario)) {
+			
 			List<Dictionary> result = adapter.getDiccionario(diccionario);
 
 			List<DDTipoDocumentoActivoDto> out = new ArrayList<DDTipoDocumentoActivoDto>();
 
-			//si es un ñapa... lo se. Si el flag visible es 1, son docs del activo, sino, son del trabajo
-			for (Dictionary ddTipoDocumentoActivo : result) {
-				if(entidad == null || entidad.equals(GenericController.DICCIONARIO_TIPO_DOCUMENTO_ENTIDAD_ACTIVO)){
-					if(((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getVisible()){
-						out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
-					}						
-				}else{
-					if(!((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getVisible()){
-						out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
-					}						
+			if(subtipoTrabajo != null) {
+				out = genericApi.getDiccionarioTiposDocumentoBySubtipoTrabajo(subtipoTrabajo,entidad);
+			}
+			if(out.isEmpty()) {
+				//si es un ñapa... lo se. Si el flag visible es 1, son docs del activo, sino, son del trabajo
+				for (Dictionary ddTipoDocumentoActivo : result) {
+					if(entidad == null || entidad.equals(GenericController.DICCIONARIO_TIPO_DOCUMENTO_ENTIDAD_ACTIVO)){
+						if(((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getVisible() && ((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getMatricula() != null){
+							out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
+						}						
+					}else{
+						if(!((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getVisible()){
+							out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
+						}						
+					}
 				}
-				
 			}
 
 			return createModelAndViewJson(new ModelMap("data", out));	
@@ -741,6 +750,70 @@ public class GenericController extends ParadiseJsonController{
 		
 
 		return new ModelAndView("jsonView", model);
+	}
+	
+	/**
+	 * traspasar la actividad de una oficina de Bankia 
+	 * a otra cuando se produce el cierre de alguna oficina 
+	 * Ejem: IP:8080/pfs/rest/cierreOficinas
+	 * HEADERS: Content-Type - application/json signature - sdgsdgsdgsdg
+	 * 
+	 * BODY: {"id":"111111114111","data": [{
+	 * "codProveedorAnterior": "1000", "codProveedorNuevo": "1"]}
+	 * 
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST, value = "/generic/cierreOficinas")
+	public void cierreOficinasBankia(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+		CierreOficinaBankiaRequestDto jsonData = null;
+		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		JSONObject jsonFields = null;
+		List<CierreOficinaBankiaDto> listCierreOficinaBankiaDto = null;
+		
+		try {
+			jsonFields = request.getJsonObject();
+			jsonData = (CierreOficinaBankiaRequestDto) request.getRequestData(CierreOficinaBankiaRequestDto.class);
+			listCierreOficinaBankiaDto = jsonData.getData();
+			
+			if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+
+			} else {
+				
+				boolean error = genericApi.traspasoCierreOficinaBankia(listCierreOficinaBankiaDto, jsonFields, listaRespuesta);
+				
+
+				model.put("id", jsonFields.get("id"));
+				model.put("data", listaRespuesta);
+				if (error) {
+					model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+				}else {
+					model.put("error", "null");
+				}
+				
+			}
+			
+		} catch (UserException e) {
+			if (jsonFields!=null) {
+				model.put("id", jsonFields.get("id"));
+			}
+			model.put("data", listaRespuesta);
+			model.put("error", "null");
+			
+		} catch (Exception e) {
+			logger.error("Error cierre oficinas", e);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
+			if (jsonFields!=null) {
+				model.put("id", jsonFields.get("id"));			
+			}
+			model.put("data", listaRespuesta);
+			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+		}
+
+		restApi.sendResponse(response, model, request);
 	}
  }
 

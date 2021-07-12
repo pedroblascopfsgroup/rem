@@ -32,6 +32,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private Integer divHorInscrito;
 	private Integer divHorizontal;
 	private Integer numDepartamento;
+	private Integer tieneAnejosRegistralesInt;
 	// FIXME STRING PARA BORRAR FECHAS
 	private Date fechaCfo;
 	private Integer gestionHre;
@@ -155,6 +156,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String origenAnteriorActivoBbvaCodigo;
 	private String origenAnteriorActivoBbvaDescripcion;
 	private Long idAsuntoRecAlaska;
+	private Date fechaPosesion;
 	/*
 
     private NMBAdjudicacionBien adjudicacionBien;
@@ -792,6 +794,13 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	public void setFechaTituloAnterior(Date fechaTituloAnterior) {
 		this.fechaTituloAnterior = fechaTituloAnterior;
 	}
+	public Integer getTieneAnejosRegistralesInt() {
+		return tieneAnejosRegistralesInt;
+	}
+	public void setTieneAnejosRegistralesInt(Integer tieneAnejosRegistralesInt) {
+		this.tieneAnejosRegistralesInt = tieneAnejosRegistralesInt;
+	}
+	
 	public String getSociedadPagoAnterior() {
 		return sociedadPagoAnterior;
 	}
@@ -817,6 +826,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setIdProcesoOrigen(String idProcesoOrigen) {
 		this.idProcesoOrigen = idProcesoOrigen;
+	}
+	public Date getFechaPosesion() {
+		return fechaPosesion;
+	}
+	public void setFechaPosesion(Date fechaPosesion) {
+		this.fechaPosesion = fechaPosesion;
 	}
 	public String getPoblacionRegistroDescripcion() {
 		return poblacionRegistroDescripcion;

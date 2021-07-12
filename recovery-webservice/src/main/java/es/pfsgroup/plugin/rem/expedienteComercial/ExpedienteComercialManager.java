@@ -98,6 +98,7 @@ import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
@@ -371,6 +372,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private GestorActivoApi gestorActivoManager;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -1976,18 +1980,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(oferta.getOfertaSingular() != null) {
 			dto.setOfertaSingular(oferta.getOfertaSingular() ? "Si" : "No");
 		}
-		
-		if(!oferta.getOfrDocRespPrescriptor()) {
-			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_COMPRADORES);
+
+		if (oferta.getRespDocCliente() != null) {
+			dto.setTipoResponsableCodigo(oferta.getRespDocCliente().getCodigo());
 		}
-		
-		else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
-			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL);
-		}
-		
-		else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
-			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR);
-		}
+
 		
 		OfertaExclusionBulk ofertaExclusionBulk = genericDao.get(OfertaExclusionBulk.class, 
 				genericDao.createFilter(FilterType.EQUALS, "oferta", oferta),
@@ -2016,11 +2013,33 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			ActivoLoteComercial agrupacionLoteCom = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
 			if(agrupacionLoteCom != null && agrupacionLoteCom.getUsuarioGestorComercialBackOffice() != null) {
 				dto.setCorreoGestorBackoffice(agrupacionLoteCom.getUsuarioGestorComercialBackOffice().getEmail());
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", agrupacionLoteCom.getUsuarioGestorComercialBackOffice().getId());
+				List<GestorSustituto> sustituto = genericDao.getList(GestorSustituto.class, filtro);
+				if (!sustituto.isEmpty()) {
+					 for (GestorSustituto gestorSustituto : sustituto) {
+						if(System.currentTimeMillis() < gestorSustituto.getFechaFin().getTime()
+								&& System.currentTimeMillis() > gestorSustituto.getFechaInicio().getTime()) {
+							dto.setCorreoGestorBackoffice(gestorSustituto.getUsuarioGestorSustituto().getEmail());
+							break;
+						}
+					}
+				}			
 			}
 		} else if(oferta.getActivoPrincipal() != null) {
 			Usuario usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			if(usuarioBackOffice != null && usuarioBackOffice.getEmail() != null) {
 				dto.setCorreoGestorBackoffice(usuarioBackOffice.getEmail());
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuarioBackOffice.getId());
+				List<GestorSustituto> sustituto = genericDao.getList(GestorSustituto.class, filtro);
+				if (!sustituto.isEmpty()) {
+					 for (GestorSustituto gestorSustituto : sustituto) {
+						if(System.currentTimeMillis() < gestorSustituto.getFechaFin().getTime()
+								&& System.currentTimeMillis() > gestorSustituto.getFechaInicio().getTime()) {
+							dto.setCorreoGestorBackoffice(gestorSustituto.getUsuarioGestorSustituto().getEmail());
+							break;
+						}
+					}
+				}
 			}
 		}
 		
@@ -2244,67 +2263,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			DtoActivosExpediente dtoActivo = activosToDto(activo, activoPorcentajeParti, activoPrecioAprobado,
 					activoPrecioMinimo, activoImporteParticipacion);
 
-			// calculamos los pilotos de tanteos,condiciones y bloqueos
-			DtoInformeJuridico dtoInfoJuridico = this.getFechaEmisionInfJuridico(idExpediente, dtoActivo.getIdActivo());
-			if (dtoInfoJuridico == null || dtoInfoJuridico.getFechaEmision() == null) {
-				dtoActivo.setBloqueos(2);// pendiente
-
-			} else {
-				if (dtoInfoJuridico.getResultadoBloqueo() != null
-						&& dtoInfoJuridico.getResultadoBloqueo().equals(InformeJuridico.RESULTADO_FAVORABLE)) {
-					dtoActivo.setBloqueos(1);
-				} else {
-					dtoActivo.setBloqueos(0);
-				}
-			}
-
-			DtoCondicionesActivoExpediente condiciones = this.getCondicionesActivoExpediete(idExpediente,
-					dtoActivo.getIdActivo());
-			if (condiciones.getSituacionPosesoriaCodigo() != null
-					&& condiciones.getSituacionPosesoriaCodigoInformada() != null
-					&& condiciones.getSituacionPosesoriaCodigo()
-							.equals(condiciones.getSituacionPosesoriaCodigoInformada())
-					&& condiciones.getPosesionInicial() != null && condiciones.getPosesionInicialInformada() != null
-					&& condiciones.getPosesionInicial().equals(condiciones.getPosesionInicialInformada())
-					&& condiciones.getEstadoTitulo() != null && condiciones.getEstadoTituloInformada() != null
-					&& condiciones.getEstadoTitulo().equals(condiciones.getEstadoTituloInformada())) {
-				dtoActivo.setCondiciones(1);
-			} else {
-				dtoActivo.setCondiciones(0);
-			}
-
-			CondicionanteExpediente condicionantes = expediente.getCondicionante();
-			if (condicionantes != null) {
-				if (condicionantes.getSujetoTanteoRetracto() != null && 0 == condicionantes.getSujetoTanteoRetracto()) {
-					dtoActivo.setTanteos(3);
-
-				} else {
-					dtoActivo.setTanteos(3);
-					List<TanteoActivoExpediente> tanteosExpediente = expediente.getTanteoActivoExpediente();
-					int contTanteosActivo = 0;
-					int contTanteosActivoRenunciado = 0;
-					for (TanteoActivoExpediente tanteo : tanteosExpediente) {
-						if (tanteo.getActivo().getId().equals(activo.getId())) {
-							contTanteosActivo++;
-							if (tanteo.getResultadoTanteo() != null) {
-								if (tanteo.getResultadoTanteo().getCodigo().equals(DDResultadoTanteo.CODIGO_EJERCIDO)) {
-									dtoActivo.setTanteos(2);
-									break;
-								} else if (DDResultadoTanteo.CODIGO_RENUNCIADO
-										.equals(tanteo.getResultadoTanteo().getCodigo())) {
-									contTanteosActivoRenunciado++;
-								}
-							} else {
-								dtoActivo.setTanteos(0);
-							}
-						}
-					}
-
-					if (contTanteosActivo > 0 && contTanteosActivo == contTanteosActivoRenunciado) {
-						dtoActivo.setTanteos(1);
-					}
-				}
-			}
+			this.pilotosToDto(dtoActivo, expediente);
 
 			if (!Checks.esNulo(activo.getLocalizacion().getLocalizacionBien().getPuerta())) {
 				dtoActivo.setPuerta(activo.getLocalizacion().getLocalizacionBien().getPuerta());
@@ -2337,6 +2296,31 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			activos.add(dtoActivo);
 
+		}
+
+		return new DtoPage(activos, activos.size());
+	}
+	
+	@Override
+	public DtoPage getActivosExpedienteExcel(Long idExpediente, Boolean esExcelActivos) {
+		ExpedienteComercial expediente = findOne(idExpediente);
+		List<DtoActivosExpediente> activos = new ArrayList<DtoActivosExpediente>();
+		
+		Filter oferta = genericDao.createFilter(FilterType.EQUALS, "oferta", expediente.getOferta().getId());
+		List<VActivoOfertaImporte> activosExpediente = genericDao.getList(VActivoOfertaImporte.class, oferta);
+
+		for (VActivoOfertaImporte activo : activosExpediente) {
+			DtoActivosExpediente dtoActivo = new DtoActivosExpediente();
+			dtoActivo.setIdActivo(activo.getActivo());
+			dtoActivo.setNumActivo(activo.getNumActivo());
+
+			if (esExcelActivos) {
+				this.pilotosToDto(dtoActivo, expediente);
+			} else {
+				dtoActivo.setImporteParticipacion(activo.getImporteActivoOferta());
+			}
+			
+			activos.add(dtoActivo);
 		}
 
 		return new DtoPage(activos, activos.size());
@@ -2461,6 +2445,72 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return dtoActivo;
+	}
+	
+	private DtoActivosExpediente pilotosToDto(DtoActivosExpediente dtoActivo, ExpedienteComercial expediente) {
+		DtoInformeJuridico dtoInfoJuridico = this.getFechaEmisionInfJuridico(expediente.getId(), dtoActivo.getIdActivo());
+		if (dtoInfoJuridico == null || dtoInfoJuridico.getFechaEmision() == null) {
+			dtoActivo.setBloqueos(2);// pendiente
+
+		} else {
+			if (dtoInfoJuridico.getResultadoBloqueo() != null
+					&& dtoInfoJuridico.getResultadoBloqueo().equals(InformeJuridico.RESULTADO_FAVORABLE)) {
+				dtoActivo.setBloqueos(1);
+			} else {
+				dtoActivo.setBloqueos(0);
+			}
+		}
+
+		DtoCondicionesActivoExpediente condiciones = this.getCondicionesActivoExpediete(expediente.getId(),
+				dtoActivo.getIdActivo());
+		if (condiciones.getSituacionPosesoriaCodigo() != null
+				&& condiciones.getSituacionPosesoriaCodigoInformada() != null
+				&& condiciones.getSituacionPosesoriaCodigo()
+						.equals(condiciones.getSituacionPosesoriaCodigoInformada())
+				&& condiciones.getPosesionInicial() != null && condiciones.getPosesionInicialInformada() != null
+				&& condiciones.getPosesionInicial().equals(condiciones.getPosesionInicialInformada())
+				&& condiciones.getEstadoTitulo() != null && condiciones.getEstadoTituloInformada() != null
+				&& condiciones.getEstadoTitulo().equals(condiciones.getEstadoTituloInformada())) {
+			dtoActivo.setCondiciones(1);
+		} else {
+			dtoActivo.setCondiciones(0);
+		}
+
+		CondicionanteExpediente condicionantes = expediente.getCondicionante();
+		if (condicionantes != null) {
+			if (condicionantes.getSujetoTanteoRetracto() != null && 0 == condicionantes.getSujetoTanteoRetracto()) {
+				dtoActivo.setTanteos(3);
+
+			} else {
+				dtoActivo.setTanteos(3);
+				List<TanteoActivoExpediente> tanteosExpediente = expediente.getTanteoActivoExpediente();
+				int contTanteosActivo = 0;
+				int contTanteosActivoRenunciado = 0;
+				for (TanteoActivoExpediente tanteo : tanteosExpediente) {
+					if (tanteo.getActivo().getId().equals(dtoActivo.getIdActivo())) {
+						contTanteosActivo++;
+						if (tanteo.getResultadoTanteo() != null) {
+							if (tanteo.getResultadoTanteo().getCodigo().equals(DDResultadoTanteo.CODIGO_EJERCIDO)) {
+								dtoActivo.setTanteos(2);
+								break;
+							} else if (DDResultadoTanteo.CODIGO_RENUNCIADO
+									.equals(tanteo.getResultadoTanteo().getCodigo())) {
+								contTanteosActivoRenunciado++;
+							}
+						} else {
+							dtoActivo.setTanteos(0);
+						}
+					}
+				}
+
+				if (contTanteosActivo > 0 && contTanteosActivo == contTanteosActivoRenunciado) {
+					dtoActivo.setTanteos(1);
+				}
+			}
+		}
+		
+		return dtoActivo;
+		
 	}
 
 	public FileItem getFileItemAdjunto(DtoAdjuntoExpediente dtoAdjunto) {
@@ -2611,7 +2661,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					&& !Checks.esNulo(adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula())) {
 				Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
 				activoAdapter.uploadDocumento(fileItem, activo,
-						adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula());
+						adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula(), null);
 				// HREOS-5392
 				// Se comprueba que el documento que sube es el de deposito despublicacion
 				// activo
@@ -2791,6 +2841,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			return expedienteComercialDao.getCompradoresByExpediente(idExpediente, dto, false);
 		}
 
+	}
+	
+	@Override
+	public Float getPorcentajeCompra(Long idExpediente) {
+		return expedienteComercialDao.getPorcentajeCompra(idExpediente);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -4123,6 +4178,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			paseAVendido = DDEstadosExpedienteComercial.VENDIDO.equals(codEstadoExpedienteComercial);
 			if (!Checks.esNulo(expedienteComercial)) {
 				expedienteComercial.setEstado(estadoExpedienteComercial);
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
+
 			}
 
 		} else {
@@ -4377,6 +4434,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
 			comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
+			
+			if((DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA).equals(dto.getCodTipoPersona())) {
+				comprador.setApellidos(null);
+			}
 
 			if (!Checks.esNulo(dto.getEstadoCivilURSUS())) {
 				comprador.setEstadoCivilURSUS(Long.parseLong(dto.getEstadoCivilURSUS()));
@@ -4405,7 +4466,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				reiniciarPBC = true;
 			}
 
-			comprador.setApellidos(dto.getApellidos());
+			if((DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA).equals(dto.getCodTipoPersona())) {
+				comprador.setApellidos(null);
+			}else {
+				comprador.setApellidos(dto.getApellidos());
+			}
 
 			if (!Checks.esNulo(dto.getCodTipoDocumento())) {
 				DDTipoDocumento tipoDocumentoComprador = (DDTipoDocumento) utilDiccionarioApi
@@ -4933,8 +4998,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				beanUtilNotNull.copyProperties(expedienteComercial, dto);
 
 				if (!Checks.esNulo(dto.getCodigoEstado())) {
-					expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoEstado())));
+					DDEstadosExpedienteComercial estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoEstado()));
+					expedienteComercial.setEstado(estadoExpedienteComercial);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
+
 				}
 
 				if (!Checks.esNulo(dto.getConflictoIntereses())
@@ -5001,9 +5069,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 						if (dto.getEstadoDevolucionCodigo().equals(DDEstadoDevolucion.ESTADO_DEVUELTA)) {
 							if (Checks.esNulo(dto.getCodigoEstado())) {
-								expedienteComercial.setEstado((DDEstadosExpedienteComercial) utilDiccionarioApi
+								DDEstadosExpedienteComercial estadoExpedienteComercial = (DDEstadosExpedienteComercial) utilDiccionarioApi
 										.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class,
-												DDEstadosExpedienteComercial.ANULADO));
+												DDEstadosExpedienteComercial.ANULADO);
+								expedienteComercial.setEstado(estadoExpedienteComercial);
+								recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
+
 							}
 							expedienteComercial.setFechaVenta(null);
 							expedienteComercial.getReserva()
@@ -8421,6 +8492,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadosReserva.class, DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION);
 		expedienteComercial.setEstado(estadoExpedienteComercial);
+		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
 
 		if (!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getReserva())) {
 			Reserva reserva = expedienteComercial.getReserva();
@@ -8478,6 +8550,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadosReserva.class, DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO);
 		expedienteComercial.setEstado(estadoExpedienteComercial);
+		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
 
 		if (!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getReserva())) {
 			Reserva reserva = expedienteComercial.getReserva();
@@ -9434,20 +9507,29 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public Long getIdByNumExpOrNumOfr(Long numBusqueda, String campo) {
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numBusqueda", numBusqueda);
+		
+		rawDao.addParams(params);
 
 		Long idExpediente;
 
 		try {
 			if (ExpedienteComercialController.CAMPO_EXPEDIENTE.equals(campo)) {
 				idExpediente = Long.parseLong(
-						rawDao.getExecuteSQL("SELECT ECO_ID FROM ECO_EXPEDIENTE_COMERCIAL WHERE ECO_NUM_EXPEDIENTE ="
-								+ numBusqueda + " AND BORRADO = 0"));
+						rawDao.getExecuteSQL("SELECT ECO_ID FROM ECO_EXPEDIENTE_COMERCIAL WHERE ECO_NUM_EXPEDIENTE = :numBusqueda  AND BORRADO = 0"));
 			} else {
 				Long idOferta = Long.parseLong(rawDao.getExecuteSQL(
-						"SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA = " + numBusqueda + " AND BORRADO = 0"));
-
+						"SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA = :numBusqueda AND BORRADO = 0"));
+				
+				params = new HashMap<String, Object>();
+				params.put("idOferta", idOferta);
+				
+				rawDao.addParams(params);
+				
 				idExpediente = Long.parseLong(rawDao.getExecuteSQL(
-						"SELECT ECO_ID FROM ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = " + idOferta + " AND BORRADO = 0"));
+						"SELECT ECO_ID FROM ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = :idOferta AND BORRADO = 0"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -9498,7 +9580,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						activo.getSituacionPosesoria().getConTitulo().getCodigo());
 			}
 
-			if (!Checks.esNulo(activoDto) && activoDto.getConTitulo().equals("0")) {
+			if (!Checks.esNulo(activoDto) && activoDto.getConTituloCodigo().equals("0")) {
 				ocupado = false;
 			}
 
@@ -9524,12 +9606,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public Long getNumExpByNumOfr(Long numBusqueda) {
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numOferta", numBusqueda);
+		
+		rawDao.addParams(params);
+		
 		long idOferta = Long.parseLong(rawDao.getExecuteSQL(
-				"SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA = " + numBusqueda + " AND BORRADO = 0"));
+				"SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA = :numOferta AND BORRADO = 0"));
+		
+		params = new HashMap<String, Object>();
+		params.put("idOferta", idOferta);
+		
+		rawDao.addParams(params);
 
 		return Long.parseLong(
-				rawDao.getExecuteSQL("SELECT ECO_NUM_EXPEDIENTE FROM ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = "
-						+ idOferta + " AND BORRADO = 0"));
+				rawDao.getExecuteSQL("SELECT ECO_NUM_EXPEDIENTE FROM ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = :idOferta AND BORRADO = 0"));
 	}
 
 	@Override
@@ -11710,5 +11802,38 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		return expedienteComercial.getEstado().getCodigo();
 	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void recalcularHonorarios(Long idExpediente) throws Exception {
+		
+		Oferta oferta = ofertaApi.getOfertaByIdExpediente(idExpediente);
+		
+		ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
+		
+		Activo activo = oferta.getActivoPrincipal();
+		
+		this.actualizarGastosExpediente(expediente,oferta,activo);
+		
+	}
 	
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void getCierreOficinaBankiaById(Long idExpediente) {
+
+		EnvioCierreOficinasBankia auxiliar = genericDao.get(EnvioCierreOficinasBankia.class,
+				genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
+		
+		if (auxiliar != null && !auxiliar.getEnviado()) {
+			auxiliar.setEnviado(true);
+			Auditoria auditoria = auxiliar.getAuditoria();			
+			auditoria.setFechaModificar(new Date());
+			auditoria.setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+			auxiliar.setAuditoria(auditoria);	
+			
+			genericDao.update(EnvioCierreOficinasBankia.class, auxiliar);
+			
+		}
+	}	
 }

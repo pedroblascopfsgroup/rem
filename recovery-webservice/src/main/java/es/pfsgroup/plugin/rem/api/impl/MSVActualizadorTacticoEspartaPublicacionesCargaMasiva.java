@@ -25,12 +25,14 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
@@ -72,6 +74,11 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 		
 	@Autowired
 	private TareaActivoDao tareaActivoDao;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+
+
 	
 	@Override
 	public String getValidOperation() {
@@ -151,6 +158,7 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 		
 		if(!exc.dameCelda(fila, VPO).isEmpty()) {
 			activo.setVpo(traducirSiNo(exc.dameCelda(fila, VPO)));
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false);
 		}
 		if(!exc.dameCelda(fila, CON_CARGAS).isEmpty()) {
 
@@ -186,7 +194,9 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 		
 		String usuario = usuarioApi.getUsuarioLogado().getUsername();
 		
-		actualizaSituacionPosesoria(exc, fila, sitPosesoria);
+		actualizaSituacionPosesoria(exc, fila, sitPosesoria, activo);
+		
+		
 		
 		if(activoTitulo != null) {
 			
@@ -238,7 +248,8 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 		}
 	}
 	
-	public void actualizaSituacionPosesoria (MSVHojaExcel exc, int fila, ActivoSituacionPosesoria sitPosesoria) throws IOException, ParseException {
+	public void actualizaSituacionPosesoria (MSVHojaExcel exc, int fila, ActivoSituacionPosesoria sitPosesoria,Activo activo) throws IOException, ParseException {
+		
 		
 		if(sitPosesoria != null ) {
 			Usuario usu = usuarioApi.getUsuarioLogado();
@@ -279,8 +290,19 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 					sitPosesoria.setFechaAccesoAntiocupa(fechaPuertaAntiocupa);
 				}
 			}
-				
+							
 			genericDao.update(ActivoSituacionPosesoria.class, sitPosesoria);
+			if(activo!=null && sitPosesoria!=null && usu!=null && (!exc.dameCelda(fila, OCUPADO).isEmpty() || !exc.dameCelda(fila, CON_TITULO).isEmpty())) {
+				String cmasivaCodigo = this.getValidOperation();
+				Filter filterCMasiva = genericDao.createFilter(FilterType.EQUALS, "codigo", cmasivaCodigo);
+				MSVDDOperacionMasiva cMasiva = genericDao.get(MSVDDOperacionMasiva.class, filterCMasiva);
+				
+				if(cMasiva!=null && cMasiva.getDescripcion()!=null) {
+					HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,sitPosesoria,usu,HistoricoOcupadoTitulo.COD_CARGA_MASIVA,cMasiva.getDescripcion().toString());
+					genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);
+				}
+			
+			}
 		}
 	}
 	

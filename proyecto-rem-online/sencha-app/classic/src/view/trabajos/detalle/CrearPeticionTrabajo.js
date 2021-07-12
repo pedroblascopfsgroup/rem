@@ -18,7 +18,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 			var me = this;
 			
 			me.lookupReference('checkMultiActivo').fireEvent('change');
-			
+			me.lookupController().validaGrid();
 			Ext.Array.each(window.down('form').query('field[isReadOnlyEdit]'),
 				function (field, index) 
 					{ 							
@@ -131,6 +131,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															reference: 'tipoTrabajo',
 												        	chainedStore: 'comboSubtipoTrabajo',
 															chainedReference: 'subtipoTrabajoCombo',
+															disabled: true,
 															colspan: 3,
 												        	bind: 
 												        		{
@@ -142,7 +143,18 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 											                		select: 'onChangeChainedCombo'
 											                		
 											            		},
-											            	allowBlank: false
+											            	allowBlank: false,
+															validator: function(){
+																var me = this;
+																
+																if((me.up('formBase').down('[reference=listaActivosSubidaRef]').getStore().getData() == null 
+    																|| me.up('formBase').down('[reference=listaActivosSubidaRef]').getStore().getData().length < 1)
+																	&& (me.up('formBase').down('[reference=activosagrupaciontrabajo]').getStore().getData() == null 
+    																|| me.up('formBase').down('[reference=activosagrupaciontrabajo]').getStore().getData().length < 1)){
+																	return 'Es necesario cargar el listado de activos para poder seleccionar el tipo de trabajo';
+																}																
+																return true;
+															}
 												        },
 												        { 
 															xtype: 'comboboxfieldbase',
@@ -178,11 +190,35 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															disabled: true,
 											            	displayField: 'nombreComercial',
 								    						valueField: 'idProveedor',
-															allowBlank: false,
 															filtradoEspecial2: true,
 							    						    listeners: {
 																select: 'onChangeProveedorCombo'							    						     	
-							    						    }
+							    						    },
+															tpl: Ext.create('Ext.XTemplate',
+																	'<tpl for=".">',
+																		'<div class="x-boundlist-item">{codigo} - {nombre} - {descripcionTipoProveedor} - {estadoProveedorDescripcion}</div>',
+																	'</tpl>'
+															),
+															displayTpl:  Ext.create('Ext.XTemplate',
+																	'<tpl for=".">',
+																		'{codigo} - {nombre} - {descripcionTipoProveedor} - {estadoProveedorDescripcion}',
+																	'</tpl>'
+															),
+															validator: function(){
+																var me = this;
+																
+																if(me.up('window').codCartera == null 
+																	|| (me.up('formBase').down('[reference=listaActivosSubidaRef]').getStore().getData() == null 
+    																|| me.up('formBase').down('[reference=listaActivosSubidaRef]').getStore().getData().length < 1)
+																	&& (me.up('formBase').down('[reference=activosagrupaciontrabajo]').getStore().getData() == null 
+    																|| me.up('formBase').down('[reference=activosagrupaciontrabajo]').getStore().getData().length < 1)){
+																	return 'Es necesario cargar el listado de activos para poder seleccionar el proveedor del trabajo';
+																}
+																if(Ext.isEmpty(me.getValue())){
+																	return 'Este campo es obligatorio';
+																}
+																return true;
+															}
 												        },
 												        { 
 															xtype: 'comboboxfieldbase',
@@ -344,7 +380,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 									        	        {
 									        	            xtype: 'formBase',
 								        	              	cls:'',
-								        	   				url: $AC.getRemoteUrl('process/subeListaActivos'),		
+								        	   				url: $AC.getRemoteUrl('trabajo/subeListaActivos'),		
 								        	   				buttons: [{	
 								        	   				 	       itemId: 'btnSubirFichero', 
 								        	   						   text: 'Subir fichero',
@@ -467,6 +503,13 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 														        {
 														        	dataIndex: 'activoEnPropuestaEnTramitacion',
 														        	text: HreRem.i18n("header.incluido.en.propuesta.tramite"),
+														        	hidden: true,
+														        	renderer: Utils.rendererBooleanToSiNo,
+														        	flex: 1
+														        },
+														        {
+														        	dataIndex: 'activoTramite',
+														        	text: HreRem.i18n("header.en.tramite"),
 														        	hidden: true,
 														        	renderer: Utils.rendererBooleanToSiNo,
 														        	flex: 1
@@ -709,7 +752,6 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
     	me.getViewModel().set('idAgrupacion', me.idAgrupacion);
 		//PARA CARGAR EL GESTOR DEL ACTIVO AL ABRIR LA VENTANA, DENTRO DE LA FICHA DEL ACTIVO
     	me.lookupReference('gestorActivo').setValue(me.gestorActivo);
-    	
     	if(me.idActivo != null){
     		var grid = me.lookupReference('activosagrupaciontrabajo');
     		grid.getStore().load();

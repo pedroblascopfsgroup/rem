@@ -8,8 +8,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
     		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
     		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo',
-    		'HreRem.model.ComercialActivoModel', 'HreRem.view.trabajos.detalle.CrearPeticionTrabajo','HreRem.view.activos.detalle.CrearEvolucionObservaciones',
-			'HreRem.view.activos.detalle.SuministrosActivo', 'HreRem.view.activos.detalle.SaneamientoActivoDetalle',
+    		'HreRem.model.ComercialActivoModel', 'HreRem.view.activos.detalle.CrearEvolucionObservaciones', 'HreRem.view.activos.detalle.SuministrosActivo',
+    		'HreRem.view.common.adjuntos.formularioTipoDocumento.WizardAdjuntarDocumentoModel','HreRem.view.common.WizardBase',
+    		'HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocumentoWizard1','HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocumentoWizard2',
+    		'HreRem.view.activos.detalle.SuministrosActivo', 'HreRem.view.trabajos.detalle.CrearPeticionTrabajo','HreRem.view.activos.detalle.SaneamientoActivoDetalle',
 			'HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq'],
 
     control: {
@@ -147,43 +149,46 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	cargarTabDataMultiple : function(form, index, models, nameModels) {
 
-		var me = this, id = me.getViewModel().get("activo.id");
+		if ("tasacionBankia" != nameModels[index] && "tasacion" != nameModels[index]) {
+			var me = this, id = me.getViewModel().get("activo.id");
+		
+			models[index].setId(id);
 
-		models[index].setId(id);
+			if (Ext.isDefined(models[index].getProxy().getApi().read)) {
+				// Si la API tiene metodo de lectura (read).
+				models[index].load({
+							success : function(record) {
+								if (!Ext.isEmpty(me.getViewModel())) {
+									me.getViewModel()
+											.set(nameModels[index], record);
+									index++;
 
-		if (Ext.isDefined(models[index].getProxy().getApi().read)) {
-			// Si la API tiene metodo de lectura (read).
-			models[index].load({
-						success : function(record) {
-							if (!Ext.isEmpty(me.getViewModel())) {
-								me.getViewModel()
-										.set(nameModels[index], record);
-								index++;
-
-								if (index < models.length) {
-									me.cargarTabDataMultiple(form, index,
-											models, nameModels);
-								} else {
-									form.unmask();
+									if (index < models.length) {
+										me.cargarTabDataMultiple(form, index,
+												models, nameModels);
+									} else {
+										form.unmask();
+									}
 								}
+							},
+							failure : function(a, operation) {
+								form.unmask();
 							}
-						},
-						failure : function(a, operation) {
-							form.unmask();
-						}
-					});
-		} else {
-			// Si la API no contiene metodo de lectura (read).
-			me.getViewModel().set(nameModels[index], models[index]);
-			index++;
-
-			if (index < models.length) {
-				me.cargarTabDataMultiple(form, index, models, nameModels);
+						});
 			} else {
-				form.unmask();
-			}
-		}
+				// Si la API no contiene metodo de lectura (read).
+				me.getViewModel().set(nameModels[index], models[index]);
+				index++;
 
+				if (index < models.length) {
+					me.cargarTabDataMultiple(form, index, models, nameModels);
+				} else {
+					form.unmask();
+				}
+			}
+		} else {
+			form.unmask();
+		}
 	},
 
 	cargarTabDataPresupuestoGrafico : function(form) {
@@ -1686,14 +1691,29 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	},
 
-	abrirFormularioAdjuntarDocumentos : function(grid) {
+	abrirFormularioAdjuntarDocumentos : function(grid,record) {
 
-		var me = this, idActivo = me.getViewModel().get("activo.id");
-		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumento", {
-					entidad : 'activo',
-					idEntidad : idActivo,
-					parent : grid
-				}).show();
+		var me = this;
+		var idActivo = me.getViewModel().get("activo.id");
+		var viewPortWidth = Ext.Element.getViewportWidth();
+	    var viewPortHeight = Ext.Element.getViewportHeight();
+		var wizard = Ext.create('HreRem.view.common.WizardBase',
+				{
+					slides: [
+						'adjuntardocumentowizard1',
+						'adjuntardocumentowizard2'
+					],
+					title: 'Adjuntar Documento',
+					padre : me,
+					idEntidad: idActivo,
+					entidad:'activo',
+					modoEdicion: true,
+					width: viewPortWidth > 1370 ? viewPortWidth / 2.5 : viewPortWidth / 3.5,
+					height: viewPortHeight > 500 ? 350 : viewPortHeight - 100,
+					x: viewPortWidth / 2 - ((viewPortWidth > 1370 ? viewPortWidth / 2 : viewPortWidth /1.5) / 2),
+	    			y: viewPortHeight / 2 - ((viewPortHeight > 500 ? 500 : viewPortHeight - 100) / 2)
+				}
+			).show();
 
 	},
 
@@ -3805,7 +3825,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var isCarteraSareb = me.getViewModel().get("activo.isCarteraSareb");
 		var isCarteraBankia = me.getViewModel().get("activo.isCarteraBankia");
 		if ((CONST.ORIGEN_DATO['REM'] === record.getData().origenDatoCodigo)
-				|| ((CONST.ORIGEN_DATO['RECOVERY'] === record.getData().origenDatoCodigo) && isCarteraSareb)) {
+				|| ((CONST.ORIGEN_DATO['RECOVERY'] === record.getData().origenDatoCodigo) && isCarteraSareb)
+				|| ((CONST.ORIGEN_DATO['PRISMA'] === record.getData().origenDatoCodigo) && isCarteraSareb)) {
 			Ext.create("HreRem.view.activos.detalle.CargaDetalle", {
 						carga : record,
 						parent : grid.up("form"),
@@ -3914,7 +3935,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	onClickPropagationCalificacionNegativa : function(grid) {
-
 		var me = this, idActivo = me.getViewModel().get('activo').id, url = $AC
 				.getRemoteUrl('activo/getActivosPropagables'), form = grid
 				.up('form');
@@ -4389,7 +4409,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	saveActivo : function(jsonData, successFn) {
 		var me = this, url = $AC.getRemoteUrl('activo/saveActivo');
-
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 
 		successFn = successFn || Ext.emptyFn
@@ -4505,6 +4524,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						me.actualizarGridHistoricoDestinoComercial(formActivo);
 					}
 				};
+				if(window.tabData.id == window.activoActual.activoId){
+					window.tabData.models[0].data = window.allData;
+				}
 				me.saveActivo(window.tabData, successFn);
 
 			} else {
@@ -4533,41 +4555,31 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					window.destroy();
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 					me.getView().unmask();
-					me.getView().fireEvent("refreshComponentOnActivate",
-							"container[reference=tabBuscadorActivos]");
+					me.getView().fireEvent("refreshComponentOnActivate","container[reference=tabBuscadorActivos]");
 				};
-				me
-						.saveActivo(
-								me
-										.createTabDataHistoricoMediadores(activosSeleccionados),
-								successFn);
+
+				me.saveActivo(me.createTabDataHistoricoMediadores(activosSeleccionados),successFn);
 			} else if (targetGrid == 'condicionesespecificas') {
 
 				var successFn = function(record, operation) {
 					window.destroy();
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 					me.getView().unmask();
-					me.getView().fireEvent("refreshComponentOnActivate",
-							"container[reference=tabBuscadorActivos]");
+					me.getView().fireEvent("refreshComponentOnActivate","container[reference=tabBuscadorActivos]");
 				};
-				me.saveActivo(me.createTabDataCondicionesEspecificas(
-								activosSeleccionados, window.tabData),
-						successFn);
+				me.saveActivo(me.createTabDataCondicionesEspecificas(activosSeleccionados, window.tabData),successFn);
+				
 			} else if (targetGrid == 'calificacionNegativa') {
 				var successFn = function(record, operation) {
 					window.destroy();
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 					me.getView().unmask();
-					me.getView().fireEvent("refreshComponentOnActivate",
-							"container[reference=tabBuscadorActivos]");
+					me.getView().fireEvent("refreshComponentOnActivate","container[reference=tabBuscadorActivos]");
 				};
-				me.saveActivo(me.createTabDataCalificacionesNegativas(
-								activosSeleccionados, window.tabData),
-						successFn);
+				me.saveActivo(me.createTabDataCalificacionesNegativas(activosSeleccionados, window.tabData),successFn);
 			}
 		}
-		window.mask("Guardando activos 1 de "
-				+ (activosSeleccionados.length + 1));
+		window.mask("Guardando activos 1 de " + (activosSeleccionados.length + 1));
 	},
 
 	onClickCancelarPropagarCambios : function(btn) {
@@ -4595,7 +4607,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this, grid = window.down("grid"), propagableData = window.propagableData, numTotalActivos = grid
 				.getSelectionModel().getSelection().length
 				+ 1, targetGrid = window.targetGrid, numActivoActual = numTotalActivos;
-		var contadorDatosRegistrales = 0;
+		var indiceDatosRegistrales = null;
 
 		if (activos.length > 0) {
 			var activo = activos.shift();
@@ -4604,27 +4616,31 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			if (activo.data.esUnidadAlquilable != undefined
 					&& activo.data.esUnidadAlquilable == true) {
 				for (var i = 0; i < propagableData.models.length; i++) {
-					if (propagableData.models[i].name == "datosregistrales")
-						contadorDatosRegistrales = i;
-				}
-				if (propagableData.models[contadorDatosRegistrales].data.numFinca != undefined) {
-					var stringnumFinca;
-					if (propagableData.models[contadorDatosRegistrales].data.numFinca
-							.includes('-')) {
-						var numeroguion = propagableData.models[contadorDatosRegistrales].data.numFinca
-								.indexOf("-")
-						stringnumFinca = propagableData.models[contadorDatosRegistrales].data.numFinca
-								.slice(0, numeroguion);
-					} else {
-						stringnumFinca = propagableData.models[contadorDatosRegistrales].data.numFinca;
+					if (propagableData.models[i].name == "datosregistrales"){
+						indiceDatosRegistrales = i;
+						break;
 					}
+				}
+				if(indiceDatosRegistrales != null){
+					if (propagableData.models[indiceDatosRegistrales].data.numFinca != undefined) {
+						var stringnumFinca;
+						if (propagableData.models[indiceDatosRegistrales].data.numFinca
+								.includes('-')) {
+							var numeroguion = propagableData.models[indiceDatosRegistrales].data.numFinca
+									.indexOf("-")
+							stringnumFinca = propagableData.models[indiceDatosRegistrales].data.numFinca
+									.slice(0, numeroguion);
+						} else {
+							stringnumFinca = propagableData.models[indiceDatosRegistrales].data.numFinca;
+						}
 
-					var guion = '-';
-					var stringnumUa = activos.length + 1;
-					stringnumUa = me.pad(stringnumUa, 4);
+						var guion = '-';
+						var stringnumUa = activos.length + 1;
+						stringnumUa = me.pad(stringnumUa, 4);
 
-					var res = stringnumFinca.concat(guion.concat(stringnumUa));
-					propagableData.models[contadorDatosRegistrales].data.numFinca = res;
+						var res = stringnumFinca.concat(guion.concat(stringnumUa));
+						propagableData.models[indiceDatosRegistrales].data.numFinca = res;
+					}
 				}
 				propagableData.id = activo.get("activoId");
 			} else if (Ext.isEmpty(targetGrid)) {
@@ -4657,6 +4673,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 			window.mask("Guardando activos " + numActivoActual + " de "
 					+ numTotalActivos);
+			
+			if(propagableData.id != window.activoActual.id){
+				propagableData.models[0].data = window.auxDataPropagable;
+			}
 			me.saveActivo(propagableData, successFn);
 
 		} else {
@@ -4702,15 +4722,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this, tabData = {};
 		tabData.id = me.getViewModel().get("activo.id");
 		tabData.models = [];
-
+		var rol = me.getView().down('[xtype=historicomediadorgrid]').selection.getData().rol;
+		var mediador = me.getView().down('[xtype=historicomediadorgrid]').selection.getData().codigo;
 		Ext.Array.each(listadoActivos, function(record, index) {
-					var model = {};
-					model.name = 'mediadoractivo';
-					model.type = 'activo';
-					model.data = {};
-					model.data.idActivo = record.data.activoId;
-					tabData.models.push(model);
-				});
+			var model = {};
+			model.name = 'mediadoractivo';
+			model.type = 'activo';
+			model.data = {};
+			model.data.idActivo = record.data.activoId;
+			model.data.rol = rol;
+			model.data.mediador = mediador;
+			tabData.models.push(model);
+		}); 
+		
 		return tabData;
 	},
 
@@ -5047,21 +5071,35 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onChangeCheckboxOcultar : function(checkbox, isDirty) {
 		var me = this;
 		var combobox = me.lookupReference(checkbox.comboRefChained);
+		var checkboxThis = me.lookupReference(checkbox.reference).getReference();
 		var fechaVenta = me.lookupReference('fechaRevisionPublicacionesVenta');
-		var fechaAlquiler = me
-				.lookupReference('fechaRevisionPublicacionesAlquiler');
+		var fechaAlquiler = me.lookupReference('fechaRevisionPublicacionesAlquiler');
+		var textAreaVenta = me.lookupReference('textareaMotivoOcultacionManualVenta');
+		var textAreaAlquiler = me.lookupReference('textareaMotivoOcultacionManualAlquiler');
 
 		if (checkbox.getValue()) {
 			combobox.setDisabled(false);
 			combobox.setAllowBlank(false);
-			fechaVenta.setDisabled(false);
-			fechaAlquiler.setDisabled(false);
+			
+			if ('chkbxocultarventa' === checkboxThis) {
+				fechaVenta.setDisabled(false);
+			} else if ('chkbxocultaralquiler' === checkboxThis) {
+				fechaAlquiler.setDisabled(false);
+			}
 		} else {
 			combobox.setDisabled(true);
 			combobox.setAllowBlank(true);
-			fechaVenta.setDisabled(true);
-			fechaAlquiler.setDisabled(true);
 			combobox.clearValue();
+			
+			if ('chkbxocultarventa' === checkboxThis) {
+				textAreaVenta.setDisabled(true);
+				textAreaVenta.setValue('');
+				fechaVenta.setDisabled(true);
+			} else if ('chkbxocultaralquiler' === checkboxThis) {
+				textAreaAlquiler.setDisabled(true);
+				textAreaAlquiler.setValue('');
+				fechaAlquiler.setDisabled(true);
+			}
 		}
 
 		if (isDirty) {
@@ -5264,7 +5302,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	checkActivosToPropagate : function(idActivo, form, tabData, restringida) {
 		var me = this, url2 = $AC.getRemoteUrl('activo/getIsActivoMatriz');
-		Ext.Ajax.request({
+		Ext.Ajax.request({			
 			url : url2,
 			method : 'POST',
 			params : {
@@ -5282,6 +5320,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						var subTabActiva = tabActiva.getActiveTab(), subReferencia = subTabActiva.reference;
 					}
 				}
+
 				if(isActivoMatriz == "true" && !(referencia == 'publicacionactivoref'
 						&& subReferencia == 'datospublicacionactivoref')){
 					url3 =  $AC.getRemoteUrl('activo/propagarActivosMatriz');
@@ -5413,18 +5452,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 											if (me.getViewModel().get('activo') != null) {
 												if (me.getViewModel()
 														.get('activo').data != null) {
-													me.getViewModel()
-															.get('activo').data.activosPropagables = activosPropagables;
+													me.getViewModel().get('activo').data.activosPropagables = activosPropagables;
 												}
 											}
+										
 											if(activosPropagables != null && isActivoMatriz != "true"){
 													if(activosPropagables.length > 0) {
+														var auxAllData = tabData.models[0].data;
 														tabPropagableData = me.createFormPropagableData(form, tabData);
 														if (!Ext.isEmpty(tabPropagableData)) {
 															// sacamos el activo actual del listado
 															var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
 															var tieneDatosPropagables = false;
-															/*if(!Ext.isEmpty(form)) {
+															if(!Ext.isEmpty(form)) {
 													    		
 													    		var fields = form.getForm().getFields();
 													    		fields.each(function(field) {
@@ -5442,102 +5482,54 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 													    				});
 													    			}
 													    		});
-													    	}*/
+													    	}
 															
-															//if(tieneDatosPropagables) {
-																// Abrimos la ventana de selección de activos
-																var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
-																	me.getView().add(ventanaOpcionesPropagacionCambios);
-																	me.getView().unmask();
-																	return false;
-															//}
 														}
 													}
 
 													if (tieneDatosPropagables) {
 														// Abrimos la ventana de
 														// selección de activos
-														var ventanaOpcionesPropagacionCambios = Ext
-																.create(
-																		"HreRem.view.activos.detalle.OpcionesPropagacionCambios",
-																		{
-																			form : form,
-																			activoActual : activo,
-																			activos : activosPropagables,
-																			tabData : tabData,
-																			propagableData : tabPropagableData
-																		})
-																.show();
-														me
-																.getView()
-																.add(ventanaOpcionesPropagacionCambios);
+														var auxDataPropagable = tabData.models[0].data;
+														var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios",
+														{
+															form : form,
+															activoActual : activo,
+															activos : activosPropagables,
+															tabData : tabData,
+															propagableData : tabPropagableData,
+															allData:auxAllData,
+															auxDataPropagable:auxDataPropagable
+														}).show();
+														me.getView().add(ventanaOpcionesPropagacionCambios);
 														me.getView().unmask();
-														me.refrescarActivo(form.refreshAfterSave);
-														me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
-														me.actualizarGridHistoricoDestinoComercial(form);
+														return false;
 													}
-							
-													if(restringida == true){
-														me.saveActivosAgrRestringida(tabData, successFn);
-
-													} else {
-														me.getView().fireEvent("No hay activos propagables");
-														me.saveActivo(tabData, successFn);
-													}
-											}else{
-												var successFn = function(response, eOpts) {
-													
-													me.manageToastJsonResponse(me, response.responseText);
-													me.getView().unmask();
-													me.refrescarActivo(form.refreshAfterSave);
-													me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
-													me.actualizarGridHistoricoDestinoComercial(form);
-												}
 											}
 
-											var successFn = function(response,
-													eOpts) {
+											var successFn = function(response,eOpts) {
 
-												me.manageToastJsonResponse(me,
-														response.responseText);
+												me.manageToastJsonResponse(me,response.responseText);
 												me.getView().unmask();
-												me
-														.refrescarActivo(form.refreshAfterSave);
-												me
-														.getView()
-														.fireEvent(
-																"refreshComponentOnActivate",
-																"container[reference=tabBuscadorActivos]");
-												me
-														.actualizarGridHistoricoDestinoComercial(form);
+												me.refrescarActivo(form.refreshAfterSave);
+												me.getView().fireEvent("refreshComponentOnActivate","container[reference=tabBuscadorActivos]");
+												me.actualizarGridHistoricoDestinoComercial(form);
 											}
 
 											if (restringida == true) {
-												me.saveActivosAgrRestringida(
-														tabData, successFn);
+												me.saveActivosAgrRestringida(tabData, successFn);
 											} else {
-												me
-														.getView()
-														.fireEvent("No hay activos propagables");
-												me.saveActivo(tabData,
-														successFn);
+												me.getView().fireEvent("No hay activos propagables");
+												me.saveActivo(tabData,successFn);
 											}
 										} else {
-											var successFn = function(response,
-													eOpts) {
+											var successFn = function(response,eOpts) {
 
-												me.manageToastJsonResponse(me,
-														response.responseText);
+												me.manageToastJsonResponse(me,response.responseText);
 												me.getView().unmask();
-												me
-														.refrescarActivo(form.refreshAfterSave);
-												me
-														.getView()
-														.fireEvent(
-																"refreshComponentOnActivate",
-																"container[reference=tabBuscadorActivos]");
-												me
-														.actualizarGridHistoricoDestinoComercial(form);
+												me.refrescarActivo(form.refreshAfterSave);
+												me.getView().fireEvent("refreshComponentOnActivate","container[reference=tabBuscadorActivos]");
+												me.actualizarGridHistoricoDestinoComercial(form);
 											}
 											me.saveActivo(tabData, successFn);
 											me.getView().unmask();
@@ -5545,34 +5537,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 									},
 									failure : function(record, operation) {
-										me
-												.fireEvent(
-														"errorToast",
-														HreRem
-																.i18n("msg.operacion.ko"));
+										me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 									}
 								});
 							} else {
 								var successFn = function(response, eOpts) {
-									me.manageToastJsonResponse(me,
-											response.responseText);
+									me.manageToastJsonResponse(me, response.responseText);
 									me.getView().unmask();
 									me.refrescarActivo(form.refreshAfterSave);
-									me
-											.getView()
-											.fireEvent(
-													"refreshComponentOnActivate",
-													"container[reference=tabBuscadorActivos]");
-									me
-											.actualizarGridHistoricoDestinoComercial(form);
+									me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+									me.actualizarGridHistoricoDestinoComercial(form);
 								}
 								me.saveActivo(tabData, successFn)
 							}
 
 						},
 						failure : function(record, operation) {
-							me.fireEvent("errorToast", HreRem
-											.i18n("msg.operacion.ko"));
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 						}
 					});
 				}
@@ -8537,22 +8518,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onChangeDebeComprobarNIF: function(combo,newValue,oldValue,eOpts){
 			this.comprobarNIF(combo);
 	},
-	
     
-    mostrarObservacionesGrid: function(event, target, options) {   	
-    	var me = this;
-    	var observacionesAdmision = target.data.observacionesEvolucion;
-  	
-    	me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.CrearEvolucionObservaciones", {
-            observacionesAdmision: observacionesAdmision
-        });
-        
+    onChkbxExclValPerimetroChange: function(chkbx){
+		var me = this;
+		var excluido = chkbx.getValue();
+		var comboMotivoGestionComercial = me.lookupReference('comboMotivoGestionComercial');
+		disabled = excluido == 0;
+		
+		comboMotivoGestionComercial.setDisabled(disabled);
+    	
+    	if(disabled){
+    		comboMotivoGestionComercial.editable = false;
+    	}else{
+    		comboMotivoGestionComercial.editable = true;
+    	}
     },
-    
-    onClickCerrarObservacionesEvolucion: function(btn) {
-    	var me = this;
-    	btn.up('window').hide();
-    },
+
     cargarStoreCalidadDatoFasesGrid: function(grid){
     	var me = this;    	
 		

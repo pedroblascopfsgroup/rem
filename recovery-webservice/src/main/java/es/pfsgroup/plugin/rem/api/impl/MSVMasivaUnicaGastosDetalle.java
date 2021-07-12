@@ -214,7 +214,7 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 					if (Checks.esNulo(exc.dameCelda(fila, COL_COD_PROVEEDOR_REM))) {
 						emisor = genericDao.getList(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", exc.dameCelda(fila, COL_NIF_EMISOR)));
 					} else {
-						emisor = genericDao.getList(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.parseLong(exc.dameCelda(fila, COL_COD_PROVEEDOR_REM))));
+						emisor = genericDao.getList(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.parseLong(exc.dameCelda(fila, COL_COD_PROVEEDOR_REM).trim())));
 					}
 					
 					if(!Checks.esNulo(emisor) && !emisor.isEmpty()) {
@@ -680,7 +680,7 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 					if(gastoLineaDetalleList != null && !gastoLineaDetalleList.isEmpty()) {
 						for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
 							String subtipoGastoCodigo = gastoLineaDetalle.getSubtipoGasto().getCodigo();
-							DtoLineaDetalleGasto dtoLinea = gastoLineaDetalleApi.calcularCuentasYPartidas(gastoLineaDetalle.getGastoProveedor(), gastoLineaDetalle.getId(), subtipoGastoCodigo);	
+							DtoLineaDetalleGasto dtoLinea = gastoLineaDetalleApi.calcularCuentasYPartidas(gastoLineaDetalle.getGastoProveedor(), gastoLineaDetalle.getId(), subtipoGastoCodigo, null);	
 							gastoLineaDetalle = gastoLineaDetalleApi.setCuentasPartidasDtoToObject( gastoLineaDetalle, dtoLinea);
 							GastoLineaDetalle updateLinea = HibernateUtils.merge(gastoLineaDetalle);
 							genericDao.update(GastoLineaDetalle.class, updateLinea);

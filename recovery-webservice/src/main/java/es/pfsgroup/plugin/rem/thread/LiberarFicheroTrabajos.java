@@ -16,14 +16,12 @@ import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 
 
 public class LiberarFicheroTrabajos implements Runnable {
+	
 	@Autowired
 	private RestApi restApi;
 
 	@Autowired
 	private TrabajoManager trabajoManager;
-	
-	@Autowired
-	private ProcessAdapter processAdapter;
 	
 	@Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
@@ -44,11 +42,8 @@ public class LiberarFicheroTrabajos implements Runnable {
 		try {
 			restApi.doSessionConfig(this.user.getUsername());
 			trabajoManager.doCreacionTrabajosAsync(this.dtoTrabajo, this.user);
-			processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
 			
 		} catch (Exception e) {
-			processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), false);
-			processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
 			logger.error("error procesando trabajos excel", e);
 		}
 

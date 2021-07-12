@@ -15,6 +15,7 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	private Long tipoVpoId;
 	private String tipoVpoDescripcion;
 	private String estadoTitulo;
+	private String estadoTituloDescripcion;
 	private Date fechaEntregaGestoria;
 	private Date fechaPresHacienda;
 	private Date fechaEnvioAuto;
@@ -63,7 +64,9 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	// ADMISION/SANEAMIENTO/TRAMITACION TITULO ADICIONAL
 	private Integer tieneTituloAdicional; 
 	private String tipoTituloAdicional;
+	private String tipoTituloAdicionalDescripcion;
 	private String estadoTituloAdicional;
+	private String estadoTituloAdicionalDescripcion;
 	private Date fechaInscriptionRegistroAdicional;
 	private Date fechaEntregaTituloGestAdicional;
 	private Date fechaRetiradaDefinitivaRegAdicional;
@@ -79,6 +82,7 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	private Date fechaEnvioComunicacionOrganismo;
 	private Date fechaRecepcionRespuestaOrganismo;
 	private String estadoVentaCodigo;
+	private String estadoVentaDescripcion;
 	private Boolean puedeEditarCalificacionNegativaAdicional;
 	
 	public Long getIdActivo() {
@@ -122,6 +126,12 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	}
 	public void setEstadoTitulo(String estadoTitulo) {
 		this.estadoTitulo = estadoTitulo;
+	}
+	public String getEstadoTituloDescripcion() {
+		return estadoTituloDescripcion;
+	}
+	public void setEstadoTituloDescripcion(String estadoTituloDescripcion) {
+		this.estadoTituloDescripcion = estadoTituloDescripcion;
 	}
 	public Date getFechaEntregaGestoria() {
 		return fechaEntregaGestoria;
@@ -399,11 +409,23 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	public void setTipoTituloAdicional(String tipoTituloAdicional) {
 		this.tipoTituloAdicional = tipoTituloAdicional;
 	}
+	public String getTipoTituloAdicionalDescripcion() {
+		return tipoTituloAdicionalDescripcion;
+	}
+	public void setTipoTituloAdicionalDescripcion(String tipoTituloAdicionalDescripcion) {
+		this.tipoTituloAdicionalDescripcion = tipoTituloAdicionalDescripcion;
+	}
 	public String getEstadoTituloAdicional() {
 		return estadoTituloAdicional;
 	}
 	public void setEstadoTituloAdicional(String estadoTituloAdicional) {
 		this.estadoTituloAdicional = estadoTituloAdicional;
+	}
+	public String getEstadoTituloAdicionalDescripcion() {
+		return estadoTituloAdicionalDescripcion;
+	}
+	public void setEstadoTituloAdicionalDescripcion(String estadoTituloAdicionalDescripcion) {
+		this.estadoTituloAdicionalDescripcion = estadoTituloAdicionalDescripcion;
 	}
 	public Date getFechaInscriptionRegistroAdicional() {
 		return fechaInscriptionRegistroAdicional;
@@ -482,6 +504,12 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	}
 	public void setEstadoVentaCodigo(String estadoVentaCodigo) {
 		this.estadoVentaCodigo = estadoVentaCodigo;
+	}
+	public String getEstadoVentaDescripcion() {
+		return estadoVentaDescripcion;
+	}
+	public void setEstadoVentaDescripcion(String estadoVentaDescripcion) {
+		this.estadoVentaDescripcion = estadoVentaDescripcion;
 	}
 	public Boolean getPuedeEditarCalificacionNegativaAdicional() {
 		return puedeEditarCalificacionNegativaAdicional;

@@ -117,6 +117,7 @@ public class TabActivoInformacionComercial implements TabActivoService {
 
 					if (!Checks.esNulo(vivTemp.getTipoVivienda())) {
 						BeanUtils.copyProperty(activoDto, "tipoViviendaCodigo", vivTemp.getTipoVivienda().getCodigo());
+						BeanUtils.copyProperty(activoDto, "tipoViviendaDescripcion", vivTemp.getTipoVivienda().getDescripcion());
 					}
 					
 					if (!Checks.esNulo(vivTemp.getTipoOrientacion())) {
@@ -175,6 +176,12 @@ public class TabActivoInformacionComercial implements TabActivoService {
 		
 		if (!Checks.esNulo(activo.getTipoActivo())) {
 			BeanUtils.copyProperty(activoDto, "tipoActivoCodigo", activo.getTipoActivo().getCodigo());
+			BeanUtils.copyProperty(activoDto, "tipoActivoDescripcion", activo.getTipoActivo().getDescripcion());
+		}
+		
+		if (!Checks.esNulo(activo.getSubtipoActivo())) {
+			BeanUtils.copyProperty(activoDto, "subtipoActivoCodigo", activo.getSubtipoActivo().getCodigo());
+			BeanUtils.copyProperty(activoDto, "subtipoActivoDescripcion", activo.getSubtipoActivo().getDescripcion());
 		}
 		
 		return activoDto;	

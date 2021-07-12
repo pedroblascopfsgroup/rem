@@ -196,6 +196,10 @@ public class TrabajoController extends ParadiseJsonController {
 	private static final String ERROR_GD_NO_EXISTE_CONTENEDOR = "No existe contenedor para este trabajo. Se creará uno nuevo.";
 	private static final String COMBO_MODIFICACION_NO = "02";
 	private static final String DOC_FINALIZACION_TRABAJO = "Para la finalizacion es necesario adjuntar: ";
+	
+	public static final String ERROR_TRABAJO_NOT_EXISTS = "No existe el trabajo que esta buscando, pruebe con otro Nº de Trabajo";
+	public static final String ERROR_TRABAJO_NO_NUMERICO = "El campo introducido es de carácter numérico";
+	public static final String ERROR_GENERICO = "La operación no se ha podido realizar";
 
 		
 	/**
@@ -315,7 +319,7 @@ public class TrabajoController extends ParadiseJsonController {
 			
 			Long idTrabajo = trabajoApi.create(dtoTrabajo);
 			if(new Long(-1L).equals(idTrabajo))
-				model.put("warn", "Proceso de creación trabajos en ejecución, vaya al apartado de 'Carga Masiva' para ver si ha terminado.");
+				model.put("warn", "Proceso de creación trabajos en ejecución, espere uno o dos minutos y refresque los trabajos.");
 			else
 				dtoTrabajo.setIdTrabajo(idTrabajo);
 			success = true;
@@ -1421,6 +1425,27 @@ public class TrabajoController extends ParadiseJsonController {
 	    	mapAsString.append("}");
 	    return mapAsString.toString();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView subeListaActivos(HttpServletRequest request, HttpServletResponse response){
+		ModelMap model = new ModelMap();
+		Page page = null;
+		try {
+			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			page = trabajoAdapter.getListActivosBySubidaExcel(fileItem);
+			if(!Checks.esNulo(page)) {
+				model.put("data", page.getResults());
+				model.put("totalCount", page.getTotalCount());
+				model.put("success", true);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 		
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -2212,6 +2237,32 @@ public class TrabajoController extends ParadiseJsonController {
 		model.put(RESPONSE_DATA_KEY, trabajoApi.getComboAreaPeticionaria());
 
 		return new ModelAndView("jsonView", model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getTrabajoExists(String numTrabajo, ModelMap model) {
+
+		try {
+			Long idTrabajo = trabajoApi.getIdByNumTrabajo(Long.parseLong(numTrabajo));
+			
+			if(!Checks.esNulo(idTrabajo)) {
+				model.put("success", true);
+				model.put("data", idTrabajo);
+			}else {
+				model.put("success", false);
+				model.put("error", ERROR_TRABAJO_NOT_EXISTS);
+			}
+		} catch (NumberFormatException e) {
+			model.put("success", false);
+			model.put("error", ERROR_TRABAJO_NO_NUMERICO);
+		} catch(Exception e) {
+			logger.error("error obteniendo el activo ",e);
+			model.put("success", false);
+			model.put("error", ERROR_GENERICO);
+		}
+		
+		return createModelAndViewJson(model);
 	}
 
 }

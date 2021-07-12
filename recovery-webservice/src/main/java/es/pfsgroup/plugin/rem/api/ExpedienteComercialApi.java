@@ -266,6 +266,13 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	DtoPage getActivosExpediente(Long idExpediente);
+	
+	/**
+	 * Método que recupera los activos del expediente comercial para adjuntar en Excel
+	 *
+	 * @return
+	 */
+	DtoPage getActivosExpedienteExcel(Long idExpediente, Boolean esExcelActivos);
 
 	/**
 	 * Método que recupera los tipos de documento del expediente comercial
@@ -1351,5 +1358,17 @@ public interface ExpedienteComercialApi {
 	boolean sacarBulk(Long idExpediente);
 	
 	String tipoTratamiento(TareaExterna tareaExterna);
+	
+	Float getPorcentajeCompra(Long idExpediente);
+	
+	public void getCierreOficinaBankiaById(Long idExpediente);
+
+	/**
+	 * Recalcula todos los honorarios
+	 *
+	 * @param idExpediente
+	 * @return void
+	 */
+	void recalcularHonorarios(Long idExpediente) throws Exception;
 
 }

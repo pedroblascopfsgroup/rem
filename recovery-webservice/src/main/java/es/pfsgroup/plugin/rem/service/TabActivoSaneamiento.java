@@ -179,6 +179,7 @@ public class TabActivoSaneamiento implements TabActivoService{
 				if (activo.getTitulo().getEstado() != null) {
 					if (activo.getTitulo().getEstado() != null) {
 						BeanUtils.copyProperty(activoDto, "estadoTitulo", activo.getTitulo().getEstado().getCodigo());
+						BeanUtils.copyProperty(activoDto, "estadoTituloDescripcion", activo.getTitulo().getEstado().getDescripcion());
 					}
 				}
 			}
@@ -318,6 +319,7 @@ public class TabActivoSaneamiento implements TabActivoService{
 			}
 			if(activo.getInfoAdministrativa().getEstadoVenta() != null) {
 				activoDto.setEstadoVentaCodigo(activo.getInfoAdministrativa().getEstadoVenta().getCodigo());
+				activoDto.setEstadoVentaDescripcion(activo.getInfoAdministrativa().getEstadoVenta().getDescripcion());
 			}
 			try {
 				List<ReqFaseVentaDto> requisitosVenta = activoApi.getReqFaseVenta(activo.getId());
@@ -351,9 +353,11 @@ public class TabActivoSaneamiento implements TabActivoService{
 			
 			if (actTituloAdicional.getEstadoTitulo() != null) {
 				activoDto.setEstadoTituloAdicional(actTituloAdicional.getEstadoTitulo().getCodigo());
+				activoDto.setEstadoTituloAdicionalDescripcion(actTituloAdicional.getEstadoTitulo().getDescripcion());
 			}
 			if (actTituloAdicional.getTipoTitulo() != null) {
 				activoDto.setTipoTituloAdicional(actTituloAdicional.getTipoTitulo().getCodigo());
+				activoDto.setTipoTituloAdicionalDescripcion(actTituloAdicional.getTipoTitulo().getDescripcion());
 			}
 			if (actTituloAdicional.getFechaInscripcionReg() != null) {
 				activoDto.setFechaInscriptionRegistroAdicional(actTituloAdicional.getFechaInscripcionReg());

@@ -24,12 +24,14 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -53,6 +55,9 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
     
     @Autowired
 	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
     
     @Autowired
     private ApiProxyFactory proxyFactory;
@@ -113,6 +118,10 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 					situacionPosesoria.setUsuarioModificarConTitulo(usuarioModificar);
 					situacionPosesoria.setFechaModificarConTitulo(new Date());
 					
+					if(usu!=null) {			
+						HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,situacionPosesoria,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
+						genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+					}
 					try {
 						situacionPosesoria.setFechaTomaPosesion(ft.parse(valor.getValor()));
 					} catch (ParseException e) {
@@ -120,6 +129,7 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 						e.printStackTrace();
 					}
 					activo.setSituacionPosesoria(situacionPosesoria);
+					
 				}
 
 			}
@@ -153,7 +163,8 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 	
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expedienteComercial.setEstado(estado);
-						
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estado);
+
 						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 						
 						//Rechazamos el resto de ofertas
@@ -171,6 +182,8 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 	
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expedienteComercial.setEstado(estado);
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estado);
+
 						expedienteComercial.setFechaVenta(null);
 						
 						//Finaliza el trámite

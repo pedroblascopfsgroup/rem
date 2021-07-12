@@ -12,7 +12,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.runtime.directive.Foreach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,6 +41,7 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceDesbloqExpCambioSitJuridica;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
@@ -54,14 +54,13 @@ import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlanDinVentas;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
-import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoTramitacionTitulo;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -75,7 +74,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
-import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
@@ -114,6 +113,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
 	@Resource
 	private MessageService messageServices;
 	
@@ -121,6 +123,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	private final String PERFIL_HAYAGESTADM = "HAYAGESTADM";
 	private final String PERFIL_HAYASUPADM = "HAYASUPADM";
 	private final String PERFIL_GESTOADM = "GESTOADM";
+	private final String PERFIL_HAYAGESACT = "HAYAGESACT";
 	private static final String MENSAJE_ERROR_SUPERFICIE_CONSTRUIDA  = "msg.error.superficie.construida.UAs";
 	private static final String MENSAJE_ERROR_SUPERFICIE_UTIL        = "msg.error.superficie.util.UAs";
 	private static final String MENSAJE_ERROR_SUPERFICIE_REPERCUSION = "msg.error.superficie.repercusion.UAs";
@@ -220,6 +223,8 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				if (!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien().getLocalidad())) {
 					BeanUtils.copyProperty(activoDto, "poblacionRegistro", activo.getInfoRegistral().getInfoRegistralBien().getLocalidad().getCodigo());
 					BeanUtils.copyProperty(activoDto, "poblacionRegistroDescripcion", activo.getInfoRegistral().getInfoRegistralBien().getLocalidad().getDescripcion());
+					BeanUtils.copyProperty(activoDto, "provinciaRegistro", activo.getInfoRegistral().getInfoRegistralBien().getLocalidad().getProvincia().getCodigo());
+					BeanUtils.copyProperty(activoDto, "provinciaRegistroDescripcion", activo.getInfoRegistral().getInfoRegistralBien().getLocalidad().getProvincia().getDescripcion());
 				}
 	
 				if (!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien().getProvincia())) {
@@ -473,6 +478,17 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "estadoAdjudicacionCodigo", activoMatriz.getAdjJudicial().getEstadoAdjudicacion().getCodigo());
 				BeanUtils.copyProperty(activoDto, "estadoAdjudicacionDescripcion", activoMatriz.getAdjJudicial().getEstadoAdjudicacion().getDescripcion());
 			}
+
+		}	
+		
+		if(activo.getInfoRegistral() != null && activo.getInfoRegistral().getTieneAnejosRegistrales() != null){
+			DDSinSiNo tiene = activo.getInfoRegistral().getTieneAnejosRegistrales();
+			if (DDSinSiNo.CODIGO_SI.equals(tiene.getCodigo())) {
+				activoDto.setTieneAnejosRegistralesInt(1);
+			} else {
+				activoDto.setTieneAnejosRegistralesInt(0);
+			}
+
 		}
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
@@ -480,10 +496,37 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		
 		if(activoBbva != null) {
 			activoDto.setIdProcesoOrigen(activoBbva.getIdProcesoOrigen());
-			activoDto.setSociedadPagoAnterior(activoBbva.getSociedadPagoAnterior() != null ? 
-					activoBbva.getSociedadPagoAnterior().getDocIdentificativo() : null);
-			activoDto.setSociedadPagoAnteriorDescripcion(activoBbva.getSociedadPagoAnterior() != null ? 
-					activoBbva.getSociedadPagoAnterior().getFullName() : null);
+			
+		}
+		
+		
+		
+		if (!Checks.esNulo(activo.getPropietarioPrincipal()) && activoBbva != null) {
+			if (activoBbva != null && activoBbva.getIdOrigenHre() != null) {
+				Activo activoPadre = activoApi.getByNumActivo(activoBbva.getIdOrigenHre());
+				if (activoPadre != null 
+						&& !(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activoPadre.getCartera().getCodigo()) 
+								&& (DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activoPadre.getSubcartera().getCodigo()) 
+										|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activoPadre.getSubcartera().getCodigo())))) {
+					activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());
+				}
+			}else if(activoBbva != null && activo.getPropietarioPrincipal() != null && activo.getPropietarioPrincipal().getDocIdentificativo() != null) {
+				activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());
+			}
+		}
+		
+		if (activo.getBien() != null && activo.getBien().getAdjudicacion() != null && activo.getBien().getAdjudicacion().getFechaRealizacionPosesion() != null) {
+			if (activoBbva != null && activoBbva.getSociedadPagoAnterior() != null) {
+				activoDto.setSociedadPagoAnterior(activoBbva.getSociedadPagoAnterior() != null ? 
+						activoBbva.getSociedadPagoAnterior().getDocIdentificativo() : null);
+				activoDto.setSociedadPagoAnteriorDescripcion(activoBbva.getSociedadPagoAnterior() != null ? 
+						activoBbva.getSociedadPagoAnterior().getFullName() : null);
+			}
+			
+		}
+		
+		if(activo.getAdjNoJudicial() != null && activo.getAdjNoJudicial().getFechaPosesion() != null) {
+			activoDto.setFechaPosesion(activo.getAdjNoJudicial().getFechaPosesion());
 		}
 		
 		return activoDto;
@@ -603,6 +646,19 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					activo.getInfoRegistral().getInfoRegistralBien().setProvincia(provincia);
 				}
 				
+			}
+			
+			if(dto.getTieneAnejosRegistralesInt() != null){
+				String anejos = null;
+				if (dto.getTieneAnejosRegistralesInt() == 1) {
+					anejos = DDSinSiNo.CODIGO_SI;
+				} else {
+					anejos = DDSinSiNo.CODIGO_NO;
+				}
+				
+				Filter filtroAjeos = genericDao.createFilter(FilterType.EQUALS, "codigo", anejos);
+				DDSinSiNo tieneAnejos = genericDao.get(DDSinSiNo.class, filtroAjeos);
+				activo.getInfoRegistral().setTieneAnejosRegistrales(tieneAnejos);
 			}
 			
 			activo.getInfoRegistral().setInfoRegistralBien((genericDao.save(NMBInformacionRegistralBien.class, activo.getInfoRegistral().getInfoRegistralBien())));
@@ -992,6 +1048,11 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 						activoBbva.setSociedadPagoAnterior(propietario);
 					}
 				}
+			}
+
+			if (!Checks.esNulo(dto.getFechaPosesion())) {
+				activo.getAdjNoJudicial().setFechaPosesion(dto.getFechaPosesion());
+				activo.getSituacionPosesoria().setFechaTomaPosesion(dto.getFechaPosesion());
 			}
 			
 		} catch (JsonViewerException jvex) {

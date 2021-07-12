@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20210201
+--## FECHA_CREACION=20210611
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8708
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 REMVIP-9941 - Carlos Santos Vílchez
 --##########################################
 --*/
 
@@ -62,10 +63,16 @@ BEGIN
 	           GLD.GPV_ID
 	         , GLD.GLD_ID
 	         , TBJ.TBJ_ID
-	         , (TBJ.TBJ_IMPORTE_PRESUPUESTO + NVL(SUP.IMPORTE_PROV_SUPL, 0)) / SUM(TBJ.TBJ_IMPORTE_PRESUPUESTO + NVL(SUP.IMPORTE_PROV_SUPL, 0))
-	                                           OVER(PARTITION BY GLD.GLD_ID)       PART_TBJ_LIN_PVE
-	         , (TBJ.TBJ_IMPORTE_TOTAL + NVL(SUP.IMPORTE_PROV_SUPL, 0)) / SUM(TBJ.TBJ_IMPORTE_TOTAL + NVL(SUP.IMPORTE_PROV_SUPL, 0))
-	                                     OVER(PARTITION BY GLD.GLD_ID)       PART_TBJ_LIN_CLI
+	         , CASE TBJ.TBJ_IMPORTE_PRESUPUESTO 
+			 		WHEN 0 
+						THEN 0 
+					ELSE (TBJ.TBJ_IMPORTE_PRESUPUESTO + NVL(SUP.IMPORTE_PROV_SUPL, 0)) / SUM(TBJ.TBJ_IMPORTE_PRESUPUESTO + NVL(SUP.IMPORTE_PROV_SUPL, 0))
+	                                           OVER(PARTITION BY GLD.GLD_ID) END AS PART_TBJ_LIN_PVE
+	         , CASE TBJ.TBJ_IMPORTE_TOTAL 
+			 		WHEN 0 
+						THEN 0 
+					ELSE (TBJ.TBJ_IMPORTE_TOTAL + NVL(SUP.IMPORTE_PROV_SUPL, 0)) / SUM(TBJ.TBJ_IMPORTE_TOTAL + NVL(SUP.IMPORTE_PROV_SUPL, 0))
+	                                     OVER(PARTITION BY GLD.GLD_ID) END AS PART_TBJ_LIN_CLI
 	     FROM
 	            '|| V_ESQUEMA ||'.GLD_TBJ GTB
 	         JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE    GLD ON GLD.GLD_ID = GTB.GLD_ID
@@ -77,7 +84,7 @@ BEGIN
 	          (
 	            (
 	                NVL(TBJ.TBJ_IMPORTE_PRESUPUESTO, 0) <> 0
-	                AND NVL(TBJ.TBJ_IMPORTE_TOTAL, 0) <> 0
+	                OR NVL(TBJ.TBJ_IMPORTE_TOTAL, 0) <> 0
 	            )
 	            OR (
 	                NVL(SUP.IMPORTE_PROV_SUPL, 0) <> 0

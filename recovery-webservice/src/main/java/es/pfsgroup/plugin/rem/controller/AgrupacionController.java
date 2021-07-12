@@ -88,6 +88,12 @@ public class AgrupacionController extends ParadiseJsonController {
 	private static final String RESPONSE_DATA_KEY = "data";
 	private static final String RESPONSE_TOTALCOUNT_KEY = "totalCount";	
 	
+	public static final String ERROR_AGRUPACION_NOT_EXISTS = "No existe la agrupación que esta buscando, pruebe con otro Nº de Agrupación";
+	public static final String ERROR_AGRUPACION_NO_NUMERICA = "El campo introducido es de carácter numérico";
+	public static final String ERROR_GENERICO = "La operación no se ha podido realizar";
+	 
+
+	
 	@Autowired
 	private AgrupacionAdapter adapter;
 
@@ -1286,6 +1292,32 @@ public class AgrupacionController extends ParadiseJsonController {
 			}
 		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getAgrupacionExists(String numAgrupacion, ModelMap model) {
+
+		try {
+			Long idAgrupacion = activoAgrupacionApi.getIdByNumAgrupacion(Long.parseLong(numAgrupacion));
+			
+			if(!Checks.esNulo(idAgrupacion)) {
+				model.put("success", true);
+				model.put("data", idAgrupacion);
+			}else {
+				model.put("success", false);
+				model.put("error", ERROR_AGRUPACION_NOT_EXISTS);
+		}
+		} catch (NumberFormatException e) {
+			model.put("success", false);
+			model.put("error", ERROR_AGRUPACION_NO_NUMERICA);
+		} catch(Exception e) {
+			logger.error("error obteniendo el activo ",e);
+			model.put("success", false);
+			model.put("error", ERROR_GENERICO);
+		}
+		
 		return createModelAndViewJson(model);
 	}
 }

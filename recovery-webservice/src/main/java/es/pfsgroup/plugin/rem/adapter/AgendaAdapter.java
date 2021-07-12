@@ -61,6 +61,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.avanza.tareas.generic.dao.AvanzaTareasGenericDao;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
@@ -80,6 +81,7 @@ import es.pfsgroup.plugin.rem.model.DtoTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -167,6 +169,9 @@ public class AgendaAdapter {
 	
 	@Autowired
 	private ActivoPatrimonioDao patrimonioDao;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	public Page getListTareas(DtoTareaFilter dtoTareaFiltro){
 		DtoTarea dto = new DtoTarea();
@@ -828,9 +833,11 @@ public class AgendaAdapter {
 				Trabajo trabajo = tramite.getTrabajo();
 				trabajo.setEstado(anulado);
 				genericDao.save(Trabajo.class, trabajo);
+				Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 				ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()));
 				if(! Checks.esNulo(eco)) {
 					eco.setEstado(anuladoExpedienteComercial);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(eco.getOferta(), anuladoExpedienteComercial);
 					Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();					
 					eco.setPeticionarioAnulacion(usuarioLogado.getUsername());
 					eco.setFechaAnulacion(new Date());
@@ -857,6 +864,12 @@ public class AgendaAdapter {
 	    				activoSituacionPosesoria.setFechaModificarConTitulo(new Date());
 	    				activoSituacionPosesoria.setFechaUltCambioTit(new Date());
 	    				activo.setSituacionPosesoria(activoSituacionPosesoria);
+	    				
+	    				if(activo!=null && activoSituacionPosesoria!=null && usu!=null) {			
+	    					HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,activoSituacionPosesoria,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
+	    					genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+	    				}
+	    				
 	    			}
 	    			if (!Checks.esNulo(activoPatrimonio)) {
 	    				activoPatrimonio.setTipoEstadoAlquiler(estadoAlquiler);
@@ -887,6 +900,8 @@ public class AgendaAdapter {
 						}
 					}
 				}
+				
+				
 			}
 		}
 		return true;

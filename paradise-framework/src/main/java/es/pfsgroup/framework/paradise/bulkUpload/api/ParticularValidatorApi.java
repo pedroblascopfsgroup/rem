@@ -331,6 +331,8 @@ public interface ParticularValidatorApi {
 
 	Boolean existeAgrupacion(String numAgrupacion);
 	
+	Boolean agrupacionActiva(String numAgrupacion);
+	
 	Boolean existeAgrupacionPA(String numAgrupacion);
 
 	Boolean existeTipoGestor(String tipoGestor);
@@ -1226,6 +1228,12 @@ public interface ParticularValidatorApi {
 	
 	String getValidacionCampoCDC(String codCampo);
 	
+	Boolean existeCampo(String numCampo);
+
+	Boolean perteneceADiccionarioSubtipoRegistro(String subtipo);
+
+	Boolean existeIdentificadorSubregistro(String subtipo, String identificador);
+
 	public boolean incluidoActivoIdOrigenBBVA (String numActivo);
 
 	Boolean estaPerimetroHaya(String activoId);
@@ -1294,9 +1302,7 @@ public interface ParticularValidatorApi {
 
 	Boolean existeEmisor(String emisorNIF);
 
-
 	Boolean relacionPoblacionLocalidad(String columnaPoblacion, String columnaMunicipio);
-
 
 	Boolean existeMunicipioByDescripcion(String columnaMunicipio);
 
@@ -1339,6 +1345,10 @@ public interface ParticularValidatorApi {
 	Boolean existePais(String pais);
 
 	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
+	
+	Boolean existeDiccionarioByTipoCampo(String codigoCampo, String valorCampo);
+	
+	String getCodigoTipoDato(String codigoCampo);
 
 	Boolean gastoRepetido(String factura, String fechaEmision, String nifEmisor, String nifPropietario);
 
@@ -1369,6 +1379,16 @@ public interface ParticularValidatorApi {
 
 	Boolean resolucionComite(String celdaTrabajo);
 
+	Boolean existeCodigoMotivoAdmision(String codMotivo);
+
+	Boolean tieneFechaVentaExterna(String activo);
+
+	Boolean activoNoComercializable(String activo);
+
+	Boolean maccConCargas(String activo);
+
+	Boolean estadoExpedienteComercial(String activo);
+	
 	Boolean checkComite(String celdaTrabajo);
 
 	Boolean tieneLlaves(String celdaTrabajo);
@@ -1398,6 +1418,14 @@ public interface ParticularValidatorApi {
 	Boolean datosRegistralesRepetidos(String refCatastral, String finca, String folio, String libro, String tomo, String numRegistro, String codigoLocalidad);
 
 	Boolean subtipoPerteneceTipoActivo(String subtipo, String tipo);
+	
+	String getNumActivoPrincipal(String numAgr);
+
+	boolean getExcluirValidaciones(String numActivo);
+
+	String getCheckGestorComercial(String numActivo);
+
+	String getMotivoGestionComercial(String numActivo);
 
 	Boolean existeAlbaran(String idAlbaran);
 	
@@ -1412,10 +1440,55 @@ public interface ParticularValidatorApi {
     Boolean getGastoSuplidoConFactura(String idGastoAfectado);
 
 	Boolean estadoPrevioTrabajoFinalizado(String celdaTrabajo);
+	
+	Boolean isActivoEnPerimetroAlquilerSocial(String numActivo);
+
+	Boolean situacionComercialAlquilado(String activo);
+	Boolean estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(String numActivo);
+
+	Boolean isActivoGestionadoReam(String string);
 
 	Boolean existeCodProveedorRem(String codProveedorREM);
 
 	boolean gastoSarebAnyadeRefacturable(String numGasto);
 
+	Boolean situacionComercialPublicadoAlquiler(String activo);
 
+	Boolean activoPrincipalEnAgrupacionRestringida(String numActivo);
+	
+	Boolean activoPerteneceAgrupacion(String numActivo);
+	
+	Boolean activoBBVAPerteneceSociedadParticipada (String numActivo);
+
+	Boolean situacionComercialPublicadoAlquilerOVenta(String activo);
+
+	boolean userHasFunction(String funcion, Long idUsuario);
+
+	Boolean isActivoSareb(String numActivo);
+
+	Boolean isActivoCajamar(String numActivo);
+
+	//Boolean validacionSubfasePublicacion(String activo);
+
+	Boolean isCheckVisibleGestionComercial(String numActivo);
+
+	boolean isConCargasOrCargasEsparta(String activo);
+
+	boolean aplicaComercializar(String activo);
+
+	Boolean isActivoAlquiladoSCM(String activo);
+
+	boolean isActivoPublicadoDependiendoSuTipoComercializacion(String activo);
+	
+	Boolean esSubCarterasCerberusAppleDivarian(String numActivo);
+
+	boolean isActivoDestinoComercialSoloAlquiler(String activo);
+
+	Boolean isActivoCerberus(String numActivo);
+
+	Boolean esActivoEnTramite(String numActivo);
+
+	Boolean tieneVigenteFasePublicacionIII(String activo);
+
+	Boolean validacionSubfasePublicacion(String activo, List<String> codigos);
 }

@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.activo;
 
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -350,12 +349,9 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 					}
 				}
 				if (orden == null && agrupacionId != null) {
-					
 					orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId) + 1;
-
-				}else {
-					orden = 0;
 				}
+				
 				activoFoto.setOrden(orden);
 				genericDao.save(ActivoFoto.class, activoFoto);
 
@@ -527,14 +523,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 					}
 				}
 				if (orden == null && agrupacionId != null) {
-					
 					orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId) + 1;
-
-				}else {
-					orden = 0;
 				}
+				
 				activoFoto.setOrden(orden);
-
 				genericDao.save(ActivoFoto.class, activoFoto);
 
 			} else {
@@ -981,5 +973,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			return false;
 		}
 		return true;
+	}
+	
+	@Override
+	public Long getIdByNumAgrupacion(Long numAgrupacion) {
+	return activoAgrupacionDao.getIdByNumAgrupacion(numAgrupacion);
 	}
 }

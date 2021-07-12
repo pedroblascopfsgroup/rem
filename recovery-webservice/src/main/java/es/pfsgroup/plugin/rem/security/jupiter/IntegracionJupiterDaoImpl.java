@@ -124,7 +124,7 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 			} else {
 				genericDao.delete(GestorDespacho.class, 
 					genericDao.createFilter(FilterType.EQUALS, "usuario", usuario),
-					genericDao.createFilter(FilterType.EQUALS, "despachoExterno.codigo", mapeo.getCodigoDespacho()));
+					genericDao.createFilter(FilterType.EQUALS, "despachoExterno.despacho", mapeo.getCodigoDespacho()));
 				logger.debug("Deshaciendo asociacion grupo " + mapeo.getCodigoDespacho() + " - usuario " + usuario.getUsername());
 				String codigoGrupo = mapeo.getCodigoGrupo();
 				if (codigoGrupo != null && !"".equals(codigoGrupo)) {

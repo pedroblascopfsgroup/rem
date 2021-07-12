@@ -5,7 +5,9 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -69,8 +71,15 @@ public class GestorExpedienteComercialDaoImpl extends AbstractEntityDao<GestorEx
 		callProcedureSql.setParameter("P_ACT_ID", idActivo);
 		callProcedureSql.setParameter("P_OFR_ID", idOferta);
 		callProcedureSql.executeUpdate();
+		
+		String sql =  "SELECT USUARIO FROM TMP_ASIGNACION_USU_GFORM WHERE ACT_ID = :idActivo";
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idActivo", idActivo);
+		
+		rawDao.addParams(params);
 
-		String resultado = rawDao.getExecuteSQL("SELECT USUARIO FROM TMP_ASIGNACION_USU_GFORM WHERE ACT_ID = "+ idActivo);
+		String resultado = rawDao.getExecuteSQL(sql);
 		Long id_usuario_gform = Long.valueOf(resultado);
 		if(!Checks.esNulo(id_usuario_gform)) {
 			return id_usuario_gform;

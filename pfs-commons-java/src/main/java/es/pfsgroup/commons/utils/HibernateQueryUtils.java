@@ -33,7 +33,7 @@ public class HibernateQueryUtils {
 	public static <T extends Serializable, K extends Serializable> T uniqueResult(AbstractHibernateDao<T, K> dao, HQLBuilder hqlbuilder) {
 		Query q = dao.getSessionFactory().getCurrentSession().createQuery(hqlbuilder.toString());
 		HQLBuilder.parametrizaQuery(q, hqlbuilder);
-		return (T) q.uniqueResult();
+		return (T) q.uniqueResult(); 
 	}
 
 	/**

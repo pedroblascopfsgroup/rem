@@ -110,6 +110,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	private static final String EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS ="activo.matriz.con.unidades.alquilables.ofertas.vivas";
 	private static final String EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS ="activo.unidad.alquilable.con.activo.matriz.ofertas.vivas";
+	private static final String isIntegradoQueryString ="select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = :actId and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion";
+	private static final String isPrincipalQueryString ="select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.agrupacion.activoPrincipal.id = :actId and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion";
+	private static final String activoAgrupacionQueryString ="select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = :actId and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion";
 
 	@Override
 	public Object getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
@@ -251,11 +254,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				dto.getEstadoComunicacionGencatCodigo());
 		
 		if (dto.getUsuarioGestoria()) {
-			hb.appendWhere(" act.id = bag.id and bag.gestoria = " + dto.getGestoria());
+			hb.appendWhere(" act.id = bag.id");
+			HQLBuilder.addFiltroIgualQue(hb, "bag.gestoria", dto.getGestoria());
 		}
 		
 		if(!Checks.esNulo(dto.getNumAgrupacion())) {
-			hb.appendWhere(" exists (select 1 from ActivoAgrupacionActivo aga where aga.agrupacion.numAgrupRem = " + dto.getNumAgrupacion() + " and act.id = aga.activo.id)");
+			hb.appendWhere(" exists (select 1 from ActivoAgrupacionActivo aga where aga.agrupacion.numAgrupRem = :numAgrupacion and act.id = aga.activo.id)");
+			hb.getParameters().put("numAgrupacion", dto.getNumAgrupacion());
 		}
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoDivarian", dto.getNumActivoDivarian());
@@ -428,32 +433,34 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public Integer isIntegradoAgrupacionRestringida(Long id, Usuario usuLogado) {
-		HQLBuilder hb = new HQLBuilder(
-				"select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = "
-						+ id + " and act.agrupacion.tipoAgrupacion.codigo = "
-						+ DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+		HQLBuilder hb = new HQLBuilder(isIntegradoQueryString);
 
-		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+		 Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+		 q.setParameter("actId", id);
+		 q.setParameter("codAgrupacion", DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+		
+		return ((Long) q.uniqueResult()).intValue();
 	}
 
 	@Override
 	public Integer isIntegradoAgrupacionComercial(Long idActivo) {
-		HQLBuilder hb = new HQLBuilder(
-				"select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = "
-						+ idActivo + " and act.agrupacion.tipoAgrupacion.codigo = "
-						+ DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL);
+		HQLBuilder hb = new HQLBuilder(isIntegradoQueryString);
+		
+		 Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+		 q.setParameter("actId", idActivo);
+		 q.setParameter("codAgrupacion", DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL);
 
-		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+		return ((Long) q.uniqueResult()).intValue();
 	}
 
 	@Override
 	public Integer isActivoPrincipalAgrupacionRestringida(Long id) {
-		HQLBuilder hb = new HQLBuilder(
-				"select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.agrupacion.activoPrincipal.id = "
-						+ id + " and act.agrupacion.tipoAgrupacion.codigo = "
-						+ DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+		HQLBuilder hb = new HQLBuilder(isPrincipalQueryString);
 
-		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+		 q.setParameter("actId", id);
+		 q.setParameter("codAgrupacion", DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+		return ((Long) q.uniqueResult()).intValue();
 	}
 
 	@Override
@@ -472,21 +479,23 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Override
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoObraNuevaPorActivoID(Long id) {
-		HQLBuilder hb = new HQLBuilder(
-				"select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = "
-						+ id + " and act.agrupacion.tipoAgrupacion.codigo = "
-						+ DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA);
+		HQLBuilder hb = new HQLBuilder(activoAgrupacionQueryString);
 
-		return ((ActivoAgrupacionActivo) getHibernateTemplate().find(hb.toString()).get(0));
+		 Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+		 q.setParameter("actId", id);
+		 q.setParameter("codAgrupacion", DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA);
+		
+		return ((ActivoAgrupacionActivo) q.uniqueResult());
 	}
 
 	@Override
 	public Integer isIntegradoAgrupacionObraNueva(Long id, Usuario usuLogado) {
-		HQLBuilder hb = new HQLBuilder(
-				"select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = "
-						+ id + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA);
+		HQLBuilder hb = new HQLBuilder(isIntegradoQueryString);
 
-		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+		 q.setParameter("actId", id);
+		 q.setParameter("codAgrupacion", DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA);
+		return ((Long) q.uniqueResult()).intValue();
 
 	}
 

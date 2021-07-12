@@ -298,10 +298,10 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				activoSituacionPosesoria.setFechaModificarConTitulo(new Date());
 				activoSituacionPosesoria.setFechaUltCambioTit(new Date());
 				tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE));
-			} else  if (!Checks.esNulo(dto.getConTitulo())) {
+			} else  if (!Checks.esNulo(dto.getConTituloCodigo())) {
 				activoSituacionPosesoria.setUsuarioModificarConTitulo(usu.getUsername());
 				activoSituacionPosesoria.setFechaModificarConTitulo(new Date());
-				Filter tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getConTitulo());
+				Filter tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getConTituloCodigo());
 				DDTipoTituloActivoTPA tituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
 				activoSituacionPosesoria.setConTitulo(tituloActivoTPA);
 				activoSituacionPosesoria.setFechaUltCambioTit(new Date());
@@ -310,12 +310,12 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				}
 			}
 			
-			if ((!Checks.esNulo(dto.getOcupado()) && dto.getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloNo.equals(dto.getConTitulo())) ||
-				(!Checks.esNulo(activoSituacionPosesoria.getOcupado()) && activoSituacionPosesoria.getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloNo.equals(dto.getConTitulo()))) {
+			if ((!Checks.esNulo(dto.getOcupado()) && dto.getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloNo.equals(dto.getConTituloCodigo())) ||
+				(!Checks.esNulo(activoSituacionPosesoria.getOcupado()) && activoSituacionPosesoria.getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloNo.equals(dto.getConTituloCodigo()))) {
 				activoApi.crearRegistroFaseHistorico(activo);
 			}		
 			
-			if (!Checks.esNulo(dto.getOcupado()) || !Checks.esNulo(dto.getConTitulo())) {
+			if (!Checks.esNulo(dto.getOcupado()) || !Checks.esNulo(dto.getConTituloCodigo())) {
 					if(activo != null && activoSituacionPosesoria!=null && usu!=null) {
 						HistoricoOcupadoTitulo hist = new HistoricoOcupadoTitulo(activo,activoSituacionPosesoria,usu,HistoricoOcupadoTitulo.COD_SIT_POS,null);
 						genericDao.save(HistoricoOcupadoTitulo.class, hist);
@@ -475,7 +475,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 
 		// Si ha cambiado la situacion juridica
 		if (!Checks.esNulo(dtoSitPos.getFechaTomaPosesion()) 
-					|| (!Checks.esNulo(dtoSitPos.getConTitulo()) &&	DDTipoTituloActivoTPA.tipoTituloSi.equals(dtoSitPos.getConTitulo()))) {
+					|| (!Checks.esNulo(dtoSitPos.getConTituloCodigo()) &&	DDTipoTituloActivoTPA.tipoTituloSi.equals(dtoSitPos.getConTituloCodigo()))) {
 		
 			for(ActivoOferta oferta : ofertas){
 				// Si tiene expediente 

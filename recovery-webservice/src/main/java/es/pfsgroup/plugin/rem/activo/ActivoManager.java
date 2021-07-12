@@ -674,7 +674,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		historicoValoracion.setTipoPrecio(activoValoracion.getTipoPrecio());
 		historicoValoracion.setImporte(activoValoracion.getImporte());
 		historicoValoracion.setFechaInicio(activoValoracion.getFechaInicio());
-		historicoValoracion.setFechaFin(activoValoracion.getFechaFin());
+		historicoValoracion.setFechaFin(
+				(!Checks.esNulo(activoValoracion.getFechaFin()) ? activoValoracion.getFechaFin() : new Date()));
 		historicoValoracion.setFechaAprobacion(activoValoracion.getFechaAprobacion());
 		historicoValoracion.setFechaCarga(
 				(!Checks.esNulo(activoValoracion.getFechaCarga()) ? activoValoracion.getFechaCarga() : new Date()));

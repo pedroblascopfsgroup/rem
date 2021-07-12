@@ -29,8 +29,10 @@ DECLARE
     V_USUARIO VARCHAR2(100 CHAR):='REMVIP-10026'; --Vble. auxiliar para almacenar el usuario
     V_TABLA VARCHAR2(100 CHAR) :='PRO_SCR'; --Vble. auxiliar para almacenar la tabla a insertar
 
-    V_ID_PROPIETARIO NUMBER(16); 
-    V_ID_SUBCARTERA NUMBER(16); 
+    V_ID_PROPIETARIO NUMBER(16) := NULL; 
+    V_ID_SUBCARTERA NUMBER(16) :=  NULL; 
+    V_COUNT_PROPIETARIO NUMBER(16);
+    V_COUNT_SUBCARTERA NUMBER(16);
 
     V_COUNT NUMBER(16):=0; --Vble. para contar registros correctos
     V_COUNT_TOTAL NUMBER(16):=0; --Vble para contar registros totales
@@ -85,41 +87,66 @@ BEGIN
 
 
         --Obtenemos el id del PROPIETARIO
-        V_MSQL := 'SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO WHERE PRO_DOCIDENTIF = '''||V_TMP_TIPO_DATA(1)||''' 
+        V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO WHERE PRO_DOCIDENTIF = '''||V_TMP_TIPO_DATA(1)||''' 
 					AND BORRADO = 0';
-        EXECUTE IMMEDIATE V_MSQL INTO V_ID_PROPIETARIO;
+        EXECUTE IMMEDIATE V_MSQL INTO V_COUNT_PROPIETARIO;
+        
+        IF V_COUNT_PROPIETARIO > 0 THEN
+	        V_MSQL := 'SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO WHERE PRO_DOCIDENTIF = '''||V_TMP_TIPO_DATA(1)||''' 
+						AND BORRADO = 0';
+	        EXECUTE IMMEDIATE V_MSQL INTO V_ID_PROPIETARIO;
+	    ELSE
+	    	V_ID_PROPIETARIO := NULL;
+	    
+        END IF;
         
         --Obtenemos el id de la subcartera
-        V_MSQL := 'SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = '''||V_TMP_TIPO_DATA(2)||''' 
+        V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = '''||V_TMP_TIPO_DATA(2)||''' 
 					AND BORRADO = 0';
-        EXECUTE IMMEDIATE V_MSQL INTO V_ID_SUBCARTERA;
+        EXECUTE IMMEDIATE V_MSQL INTO V_COUNT_SUBCARTERA;
+        
+        IF V_COUNT_SUBCARTERA > 0 THEN
+	        V_MSQL := 'SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = '''||V_TMP_TIPO_DATA(2)||''' 
+						AND BORRADO = 0';
+	        EXECUTE IMMEDIATE V_MSQL INTO V_ID_SUBCARTERA;
+	    ELSE
+	    	V_ID_SUBCARTERA := NULL;
+	    END IF;
+
+        IF V_ID_PROPIETARIO IS NOT NULL AND V_ID_SUBCARTERA IS NOT NULL THEN
 
         --Comprobar el dato a insertar.
         V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' 
 					WHERE PRO_ID = '||V_ID_PROPIETARIO||' 
           			AND DD_SCR_ID = '||V_ID_SUBCARTERA||'';
         EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
-        IF V_NUM_TABLAS = 1 THEN
+        IF V_NUM_TABLAS > 0 THEN
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||'''.'''||TRIM(V_TMP_TIPO_DATA(2))||''' ya existe');
         ELSE
 
-        --Insertamos el registro
-        V_MSQL :='INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (PRO_ID, DD_SCR_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) 
-                    VALUES (
-                    '||V_ID_PROPIETARIO||',
-					'||V_ID_SUBCARTERA||',
-					0,
-                    '''||V_USUARIO||''',
-                    SYSDATE,
-					0)';
-					
-		
-                    
-        EXECUTE IMMEDIATE V_MSQL;
-
-
-        V_COUNT:=V_COUNT+1;   
+	        --Insertamos el registro
+	        V_MSQL :='INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (PRO_ID, DD_SCR_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) 
+	                    VALUES (
+	                    '||V_ID_PROPIETARIO||',
+						'||V_ID_SUBCARTERA||',
+						0,
+	                    '''||V_USUARIO||''',
+	                    SYSDATE,
+						0)';
+						
+			
+	                    
+	        EXECUTE IMMEDIATE V_MSQL;
+	
+	
+	        V_COUNT:=V_COUNT+1; 
+	        
+	    END IF;
         
+	    ELSE
+	    
+	    DBMS_OUTPUT.PUT_LINE('[INFO]: El propietario con identificacion: '''||TRIM(V_TMP_TIPO_DATA(1))||''' o la cartera con el codigo: '''||TRIM(V_TMP_TIPO_DATA(2))||''' no existen');
+	    
         END IF;
 
     END LOOP;

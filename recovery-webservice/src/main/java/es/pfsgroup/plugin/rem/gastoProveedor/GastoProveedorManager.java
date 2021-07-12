@@ -1081,6 +1081,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Override
 	@Transactional(readOnly = false)
 	public boolean updateGastoByPrinexLBK(Long idGasto) {
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idGasto", idGasto);
+		
+		rawDao.addParams(params);
+
 		Double gastoTotal = 0.0;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
 		GastoDetalleEconomico detalleGasto = genericDao.get(GastoDetalleEconomico.class, filtro);
@@ -1094,7 +1100,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 				if(!Checks.estaVacio(listGastoPrinex)) {					
 					
-					String result = rawDao.getExecuteSQL("SELECT SUM(GPL_IMPORTE_GASTO) FROM GPL_GASTOS_PRINEX_LBK WHERE GPV_ID = " + idGasto);	
+					String result = rawDao.getExecuteSQL("SELECT SUM(GPL_IMPORTE_GASTO) FROM GPL_GASTOS_PRINEX_LBK WHERE GPV_ID =  :idGasto ");	
 					gastoTotal = Double.valueOf(result);
 					for (GastoPrinex gastoPrinex : listGastoPrinex) {
 						if(!Checks.esNulo(gastoPrinex.getIdActivo())) {

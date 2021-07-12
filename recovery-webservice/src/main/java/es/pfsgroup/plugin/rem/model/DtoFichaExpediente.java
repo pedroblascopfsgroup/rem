@@ -166,6 +166,8 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private Date fechaReservaDeposito;
 	
+	private Date fechaFirmaContrato;
+	
 	
 	public Long getId() {
 		return id;
@@ -846,6 +848,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setEstadoReservaCod(String estadoReservaCod) {
 		this.estadoReservaCod = estadoReservaCod;
+	}
+
+	public Date getFechaFirmaContrato() {
+		return fechaFirmaContrato;
+	}
+
+	public void setFechaFirmaContrato(Date fechaFirmaContrato) {
+		this.fechaFirmaContrato = fechaFirmaContrato;
 	}
 	
 	

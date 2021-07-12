@@ -499,12 +499,8 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T017_FirmaContratoDecision" name="avanzaBPM"></transition>
+		<transition to="T017_DocsPosVenta" name="avanzaBPM"></transition>
 	</state>
-	<decision name ="T017_FirmaContratoDecision" expression="#{T017_FirmaContratoDecision}">
-        <transition to="T017_DocsPosVenta" name="Firmado"></transition>
-		<transition to="T017_ResolucionExpediente" name="NoFirmado"></transition>
-	</decision>
 	
     <state name="T017_PosicionamientoYFirma">
 		<event type="node-enter">

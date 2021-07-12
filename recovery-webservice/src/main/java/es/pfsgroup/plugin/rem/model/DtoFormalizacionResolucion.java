@@ -39,6 +39,9 @@ public class DtoFormalizacionResolucion extends WebDto {
 	private Boolean generacionHojaDatos;
 	private Date fechaContabilizacion;
 	
+	private Date fechaFirmaContrato;
+	private String numeroProtocoloCaixa;
+	
 	
 	public Long getIdFormalizacion() {
 		return idFormalizacion;
@@ -141,6 +144,18 @@ public class DtoFormalizacionResolucion extends WebDto {
 	}
 	public void setFechaContabilizacion(Date fechaContabilizacion) {
 		this.fechaContabilizacion = fechaContabilizacion;
+	}
+	public Date getFechaFirmaContrato() {
+		return fechaFirmaContrato;
+	}
+	public void setFechaFirmaContrato(Date fechaFirmaContrato) {
+		this.fechaFirmaContrato = fechaFirmaContrato;
+	}
+	public String getNumeroProtocoloCaixa() {
+		return numeroProtocoloCaixa;
+	}
+	public void setNumeroProtocoloCaixa(String numeroProtocoloCaixa) {
+		this.numeroProtocoloCaixa = numeroProtocoloCaixa;
 	}
 	
 }

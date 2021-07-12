@@ -9658,20 +9658,29 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public Long getIdByNumExpOrNumOfr(Long numBusqueda, String campo) {
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numBusqueda", numBusqueda);
+		
+		rawDao.addParams(params);
 
 		Long idExpediente;
 
 		try {
 			if (ExpedienteComercialController.CAMPO_EXPEDIENTE.equals(campo)) {
 				idExpediente = Long.parseLong(
-						rawDao.getExecuteSQL("SELECT ECO_ID FROM ECO_EXPEDIENTE_COMERCIAL WHERE ECO_NUM_EXPEDIENTE ="
-								+ numBusqueda + " AND BORRADO = 0"));
+						rawDao.getExecuteSQL("SELECT ECO_ID FROM ECO_EXPEDIENTE_COMERCIAL WHERE ECO_NUM_EXPEDIENTE = :numBusqueda  AND BORRADO = 0"));
 			} else {
 				Long idOferta = Long.parseLong(rawDao.getExecuteSQL(
-						"SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA = " + numBusqueda + " AND BORRADO = 0"));
-
+						"SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA = :numBusqueda AND BORRADO = 0"));
+				
+				params = new HashMap<String, Object>();
+				params.put("idOferta", idOferta);
+				
+				rawDao.addParams(params);
+				
 				idExpediente = Long.parseLong(rawDao.getExecuteSQL(
-						"SELECT ECO_ID FROM ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = " + idOferta + " AND BORRADO = 0"));
+						"SELECT ECO_ID FROM ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = :idOferta AND BORRADO = 0"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -9722,7 +9731,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						activo.getSituacionPosesoria().getConTitulo().getCodigo());
 			}
 
-			if (!Checks.esNulo(activoDto) && activoDto.getConTitulo().equals("0")) {
+			if (!Checks.esNulo(activoDto) && activoDto.getConTituloCodigo().equals("0")) {
 				ocupado = false;
 			}
 
@@ -9748,12 +9757,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public Long getNumExpByNumOfr(Long numBusqueda) {
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numOferta", numBusqueda);
+		
+		rawDao.addParams(params);
+		
 		long idOferta = Long.parseLong(rawDao.getExecuteSQL(
-				"SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA = " + numBusqueda + " AND BORRADO = 0"));
+				"SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA = :numOferta AND BORRADO = 0"));
+		
+		params = new HashMap<String, Object>();
+		params.put("idOferta", idOferta);
+		
+		rawDao.addParams(params);
 
 		return Long.parseLong(
-				rawDao.getExecuteSQL("SELECT ECO_NUM_EXPEDIENTE FROM ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = "
-						+ idOferta + " AND BORRADO = 0"));
+				rawDao.getExecuteSQL("SELECT ECO_NUM_EXPEDIENTE FROM ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = :idOferta AND BORRADO = 0"));
 	}
 
 	@Override

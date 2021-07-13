@@ -53,7 +53,38 @@ Ext.define('HreRem.view.expedientes.FechaArrasGrid', {
 
           	me.deleteFailureFn = function(){
          		this.getStore().load()
-         	},
+         	}
+ 			var coloredRender = function(value, meta, record) {
+				var codigo = record.get('validacionBCcodigo');
+				
+				if (!value) {
+					value = '-';
+				}
+
+				if (CONST.ESTADOS_RESERVA['CODIGO_PENDIENTE_FIRMA'] && (codigo == CONST.ESTADO_VALIDACION_BC['CODIGO_ANULADA'] 
+						|| codigo == CONST.ESTADO_VALIDACION_BC['CODIGO_APLAZADA']
+       					|| codigo == CONST.ESTADO_VALIDACION_BC['CODIGO_RECHAZADA_BC'])) {
+						return '<span style="color: #DF0101;">' + value + '</span>';
+				}
+				else{
+					return value;
+				}				
+			};
+		
+			var dateColoredRender = function(value, meta, record) {
+				var valor = dateRenderer(value);
+				return coloredRender(valor, meta, record);
+			};
+		
+			var dateRenderer = function(value, rec) {
+				if (!Ext.isEmpty(value)) {
+					var newDate = new Date(value);
+					var formattedDate = Ext.Date.format(newDate, 'd/m/Y');
+					return formattedDate;
+				} else {
+					return value;
+				}
+			};
          	
      		me.columns = [
      				{
@@ -65,45 +96,52 @@ Ext.define('HreRem.view.expedientes.FechaArrasGrid', {
                     {
                         text: HreRem.i18n('header.fecha.alta'),
                         dataIndex: 'fechaAlta',
-                        formatter: 'date("d/m/Y")',
-                        flex: 1
+                        //formatter: 'date("d/m/Y")',
+                        flex: 1,
+     		        	renderer : dateColoredRender
                     },
                     {
      		            text: HreRem.i18n('title.column.fecha.envio'),
      		            dataIndex: 'fechaEnvio',
-     		            formatter: 'date("d/m/Y")',
-     		            flex: 1
+     		            //formatter: 'date("d/m/Y")',
+     		            flex: 1,
+     		        	renderer : dateColoredRender
      				},
      				{   text: HreRem.i18n('title.column.fecha.propuesta'),
      					dataIndex: 'fechaPropuesta',
      					reference: 'fechaPropuestaRef',
-     		        	formatter: 'date("d/m/Y")',
+     		        	//formatter: 'date("d/m/Y")',
      		        	editor: {
      		        		xtype: 'datefield',
      		        		allowBlank: true,
      		        		cls: 'grid-no-seleccionable-field-editor'
      		        	},
-     		        	flex: 1
+     		        	flex: 1,
+     		        	renderer : dateColoredRender
      				},
      				{   text: HreRem.i18n('title.column.fecha.respuesta.bc'),
      		        	dataIndex: 'fechaBC',
-     		        	formatter: 'date("d/m/Y")',
-     		        	flex: 1
+     		        	//formatter: 'date("d/m/Y")',
+     		        	flex: 1,
+     		        	renderer : dateColoredRender
      				},
      				{   text: HreRem.i18n('title.column.validacion.bc'),
      		        	dataIndex: 'validacionBC',
-     		        	flex: 1
+     		        	flex: 1,
+     		        	renderer : coloredRender
      				},
      				{
                         text: HreRem.i18n('fieldlabel.fecha.aviso'),
                         dataIndex: 'fechaAviso',
-                        formatter: 'date("d/m/Y")',
-                        flex: 1
+                        //formatter: 'date("d/m/Y")',
+                        flex: 1,
+     		        	renderer : dateColoredRender
                     },
      				{
      					text: HreRem.i18n('title.column.comentarios.bc'),
      					dataIndex: 'comentariosBC',
-     					flex: 1
+     					flex: 1,
+     		        	renderer : coloredRender
      				},
                     {
                         text: HreRem.i18n('fieldlabel.observaciones'),
@@ -112,7 +150,8 @@ Ext.define('HreRem.view.expedientes.FechaArrasGrid', {
                             xtype: 'textarea',
                             cls: 'grid-no-seleccionable-field-editor'
                         },
-                        flex: 2
+                        flex: 2,
+     		        	renderer : coloredRender
                     },
                     {
                         text: HreRem.i18n('fieldlabel.posicionamiento.motivo'),
@@ -121,7 +160,8 @@ Ext.define('HreRem.view.expedientes.FechaArrasGrid', {
                         editor: {
                             xtype: 'textarea'
                         },                        
-                        flex: 2
+                        flex: 2,
+     		        	renderer : coloredRender
                     }
      		    ];
 

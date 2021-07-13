@@ -257,6 +257,22 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        	 bind: {
 				        	 	value:'{comercial.activoObraNuevaComercializacionFecha}'
 				        	 }
+						},{
+				        	xtype: 'displayfieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.campanya.venta'),
+				        	reference: 'campanyaVentaRef',
+				        	bind : {
+				        		value: '{comercial.campanyaVenta}',
+				        		hidden: '{!isCarteraBankia}'
+				        	}
+						},{
+				        	xtype: 'displayfieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.campanya.alquiler'),
+				        	reference: 'campanyaAlquilerRef',
+				        	bind : {
+				        		value: '{comercial.campanyaAlquiler}',
+				        		hidden: '{!isCarteraBankia}'
+				        	}
 						}
 						
 				]

@@ -793,6 +793,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 }
 			 return false;
 		 },
+		 
+		 isCarteraBankia: function(get){
+				 var isCarteraBankia = get('activo.isCarteraBankia');
+				 if(isCarteraBankia){
+					 return true;
+				 }
+				 return false;
+		 },
 		 getTiposOfertasUAs: function (get) {
 			var unidadAlquilable = get('activo.unidadAlquilable');
 		 	tiposDeOferta = new Ext.data.Store({

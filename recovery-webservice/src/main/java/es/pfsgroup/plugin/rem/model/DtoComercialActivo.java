@@ -32,7 +32,10 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private String segmentacionSareb;
 
 	private String activoObraNuevaComercializacion;
-	private Date activoObraNuevaComercializacionFecha;
+	private Date activoObraNuevaComercializacionFecha;	
+
+	private String campanyaVenta;
+	private String campanyaAlquiler;
 
 
 	public String getId() {
@@ -235,6 +238,22 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	public void setActivoObraNuevaComercializacionFecha(Date activoObraNuevaComercializacionFecha) {
 		this.activoObraNuevaComercializacionFecha = activoObraNuevaComercializacionFecha;
+	}
+
+	public String getCampanyaVenta() {
+		return campanyaVenta;
+	}
+
+	public void setCampanyaVenta(String campanyaVenta) {
+		this.campanyaVenta = campanyaVenta;
+	}
+
+	public String getCampanyaAlquiler() {
+		return campanyaAlquiler;
+	}
+
+	public void setCampanyaAlquiler(String campanyaAlquiler) {
+		this.campanyaAlquiler = campanyaAlquiler;
 	}
 
 }

@@ -496,7 +496,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			} else if(!Checks.esNulo(recoRC)){
 				fecha = sdf.format(recoRC).toString();
 			}
-			texto.setFecha(!Checks.esNulo(textoOferta.getFecha()) ? textoOferta.getFecha().toString() : fecha);
+			texto.setFecha(!Checks.esNulo(textoOferta.getFecha()) ? sdf.format(textoOferta.getFecha()).toString() : fecha);
 				
 			textos.add(texto);
 			// Solamente habrá un tipo de texto por oferta, de esta manera conseguimos tener
@@ -553,6 +553,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		ExpedienteComercial expedienteComercial = findOne(idEntidad);
 		Oferta oferta = expedienteComercial.getOferta();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); 
+		Date fecha = null;
+		
+		try {
+			fecha = sdf.parse(dto.getFecha());
+		} catch (ParseException e) {
+			logger.error(e.getMessage());
+		}
 
 		if (dto.getId() < 0) {
 			// Estamos creando un texto que no existía.
@@ -565,12 +573,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCampoCodigo());
 			DDTiposTextoOferta tipoTexto = genericDao.get(DDTiposTextoOferta.class, filtro);
 			textoOferta.setTipoTexto(tipoTexto);
+			textoOferta.setFecha(fecha);
 
 		} else {
 			// Modificamos un texto existente
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getId());
 			textoOferta = genericDao.get(TextosOferta.class, filtro);
 			textoOferta.setTexto(dto.getTexto());
+			textoOferta.setFecha(fecha);
 		}
 
 		genericDao.save(TextosOferta.class, textoOferta);

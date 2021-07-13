@@ -992,6 +992,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dto.setCampoCodigo("05");
 				dto.setCampoDescripcion("Recomendación RC");
 				dto.setTexto(ofertaDto.getRecomendacionRc());
+				dto.setFecha(ofertaDto.getFechaRecomendacionRc().toString());
 				
 				saveTextoOfertaWS(dto, oferta);
 			}
@@ -1000,6 +1001,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dto.setCampoCodigo("06");
 				dto.setCampoDescripcion("Recomendación DC");
 				dto.setTexto(ofertaDto.getRecomendacionDc());
+				dto.setFecha(ofertaDto.getFechaRecomendacionDc().toString());
 				
 				saveTextoOfertaWS(dto, oferta);
 			}
@@ -1310,6 +1312,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dto.setCampoCodigo("05");
 				dto.setCampoDescripcion("Recomendación RC");
 				dto.setTexto(ofertaDto.getRecomendacionRc());
+				dto.setFecha(ofertaDto.getFechaRecomendacionRc().toString());
 				
 				saveTextoOfertaWS(dto, oferta);
 				modificado = true;
@@ -1319,6 +1322,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dto.setCampoCodigo("06");
 				dto.setCampoDescripcion("Recomendación DC");
 				dto.setTexto(ofertaDto.getRecomendacionDc());
+				dto.setFecha(ofertaDto.getFechaRecomendacionDc().toString());
 				
 				saveTextoOfertaWS(dto, oferta);
 				modificado = true;
@@ -6456,6 +6460,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
 		Filter filtroTipoTexto;
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); 
+		Date recoDC = null, recoRC = null;
+
+		try {
+			recoDC = dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_DC) ? sdf.parse(dto.getFecha()) : null;
+			recoRC = dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC) ? sdf.parse(dto.getFecha()) : null;
+		} catch (ParseException e) {
+			logger.error(e.getMessage());
+		}
 		
 		if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_DESCUENTO)) {
 			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_DESCUENTO);
@@ -6482,10 +6495,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCampoCodigo());
 			DDTiposTextoOferta tipoTexto = genericDao.get(DDTiposTextoOferta.class, filtro);
 			textoOferta.setTipoTexto(tipoTexto);
+			if (!Checks.esNulo(recoDC)) {
+				textoOferta.setFecha(recoDC);
+			} else if(!Checks.esNulo(recoRC)){
+				textoOferta.setFecha(recoRC);
+			}
 
 		} else {
 			// Modificamos un texto existente
 			textoOferta.setTexto(dto.getTexto());
+			if (!Checks.esNulo(recoDC)) {
+				textoOferta.setFecha(recoDC);
+			} else if(!Checks.esNulo(recoRC)){
+				textoOferta.setFecha(recoRC);
+			}
 		}
 
 		genericDao.save(TextosOferta.class, textoOferta);

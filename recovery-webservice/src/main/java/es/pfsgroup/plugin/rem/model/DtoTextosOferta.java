@@ -18,6 +18,7 @@ public class DtoTextosOferta extends WebDto{
 	private String campoCodigo;
 	private String campoDescripcion;
 	private String texto;
+	private String fecha;
 	
 	
 	public Long getId() {
@@ -44,6 +45,12 @@ public class DtoTextosOferta extends WebDto{
 	}
 	public void setTexto(String texto) {
 		this.texto = texto;
+	}
+	public String getFecha() {
+		return fecha;
+	}
+	public void setFecha(String fecha) {
+		this.fecha = fecha;
 	}
 	
 	

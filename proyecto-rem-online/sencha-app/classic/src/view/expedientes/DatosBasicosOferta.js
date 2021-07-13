@@ -576,6 +576,10 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									editor : {
 										xtype : 'textarea'
 									}
+								},	{
+									text : HreRem.i18n('header.fecha'),
+									dataIndex : 'fecha',
+									flex : 1
 								}]
 					}]
 		}

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -60,6 +61,9 @@ public class TextosOferta implements Serializable, Auditable {
     
     @Column(name="TXO_TEXTO")
     private String texto;
+    
+    @Column(name="TXO_FECHA")
+    private Date fecha;
      
 	@Version   
 	private Long version;
@@ -116,6 +120,14 @@ public class TextosOferta implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Date getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
 	}
     
     

@@ -470,6 +470,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Oferta oferta = expediente.getOferta();
 		List<Dictionary> tiposTexto = genericAdapter.getDiccionario("tiposTextoOferta");
 		Long idOferta = null;
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 		if (!Checks.esNulo(oferta)) {
 			idOferta = oferta.getId();
@@ -485,6 +486,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			texto.setCampoDescripcion(textoOferta.getTipoTexto().getDescripcion());
 			texto.setCampoCodigo(textoOferta.getTipoTexto().getCodigo());
 			texto.setTexto(textoOferta.getTexto());
+			
+			Date recoDC = textoOferta.getTipoTexto().getCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_DC) ? oferta.getOfrFechaRecomendacionDc(): null;
+			Date recoRC = textoOferta.getTipoTexto().getCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC) ? oferta.getOfrFechaRecomendacionRc() : null;
+			
+			String fecha = "-";
+			if (!Checks.esNulo(recoDC)) {
+				fecha = sdf.format(recoDC).toString();
+			} else if(!Checks.esNulo(recoRC)){
+				fecha = sdf.format(recoRC).toString();
+			}
+			texto.setFecha(!Checks.esNulo(textoOferta.getFecha()) ? textoOferta.getFecha().toString() : fecha);
+				
 			textos.add(texto);
 			// Solamente habrá un tipo de texto por oferta, de esta manera conseguimos tener
 			// en la lista todos los tipos, tengan valor o no.
@@ -498,6 +511,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			texto.setId(contador--);
 			texto.setCampoDescripcion(tipoTextoOferta.getDescripcion());
 			texto.setCampoCodigo(tipoTextoOferta.getCodigo());
+			texto.setFecha("-");
 			textos.add(texto);
 		}
 

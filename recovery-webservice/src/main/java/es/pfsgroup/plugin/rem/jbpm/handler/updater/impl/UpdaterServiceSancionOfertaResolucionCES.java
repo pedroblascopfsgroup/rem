@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -141,7 +142,12 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 								ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());	
 								ge.setIdTipoGestor(tipoGestorComercial.getId());
 								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);
-							}	
+							}
+							
+							if(DDCartera.isCarteraBk(activo.getCartera())) {
+								DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA));
+								expediente.setEstadoBc(estadoBc);
+							}
 														
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
@@ -169,9 +175,15 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 								ofertaAceptada.setMotivoRechazo(motivoRechazo);
 								genericDao.save(Oferta.class, ofertaAceptada);
 								
+								if(DDCartera.isCarteraBk(activo.getCartera())) {
+									DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
+									expediente.setEstadoBc(estadoBc);
+								}
 								
 								try {
-									ofertaApi.descongelarOfertas(expediente);
+									if(!DDCartera.isCarteraBk(activo.getCartera())) {
+										ofertaApi.descongelarOfertas(expediente);
+									}
 									ofertaApi.finalizarOferta(ofertaAceptada);
 								} catch (Exception e) {
 									logger.error("Error descongelando ofertas.", e);

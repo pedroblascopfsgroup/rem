@@ -18,6 +18,7 @@ import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -57,6 +58,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	private static final String BUZON_OFR_APPLE = "buzonofrapple";
 	private static final String STR_MISSING_VALUE = "---";
 	public static final String[] DESTINATARIOS_CORREO_APROBACION = {"GESTCOMALQ", "SUPCOMALQ", "SCOM", "GCOM"};
+	
+	private static final String MENSAJE_BC = "Para el número del inmueble BC: ";
+	private static final String CODIGO_TRAMITE_T015 = "T015";
 		
 	private List<String> mailsPara 	= new ArrayList<String>();
 	private List<String> mailsCC 	= new ArrayList<String>();
@@ -411,6 +415,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		ActivoTramite tramite = new ActivoTramite();
 		tramite.setActivo(activo);
 		
+		Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoTramite activoTramite = genericDao.get(ActivoTramite.class, filtroTramite);
+		
 		String codigoCartera = null;
 		if (!Checks.esNulo(tramite.getActivo()) && !Checks.esNulo(tramite.getActivo().getCartera())) {
 			codigoCartera = tramite.getActivo().getCartera().getCodigo();			
@@ -429,9 +436,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)) {
 				cuerpo = cuerpo + " hasta la formalización de las arras/reserva";
 			}
+			cuerpo = tieneNumeroInmuebleBC(cuerpo, activoTramite);
 			cuerpo = cuerpo + ".</p>";
 			cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
-	
 			Usuario gestorComercial = null;
 			
 			if (!Checks.esNulo(oferta.getAgrupacion())
@@ -693,6 +700,13 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		return errorCode;
 	}
 	
-	
+	private String tieneNumeroInmuebleBC(String cuerpo, ActivoTramite tramite) {
+		if ((tramite.getTipoTramite() == null || CODIGO_TRAMITE_T015.equals(tramite.getTipoTramite().getCodigo())) 
+			&& DDCartera.isCarteraBk(tramite.getActivo().getCartera())
+			&& !Checks.esNulo(tramite.getActivo().getNumActivoCaixa())) {
+			cuerpo = MENSAJE_BC + tramite.getActivo().getNumActivoCaixa() + ",\n" + cuerpo;
+		}
+		return cuerpo;
+	}
 	
 }

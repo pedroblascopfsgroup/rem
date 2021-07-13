@@ -264,6 +264,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String T013_CIERRE_ECONOMICO = "T013_CierreEconomico";
 	private static final String T017_CIERRE_ECONOMICO = "T017_CierreEconomico";
 	private static final String T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
+	
+	private static final String MENSAJE_BC = "Para el número del inmueble BC: ";
+	private static final String CODIGO_TRAMITE_T015 = "T015";
 
 	private final String PERFIL_HAYASUPER = "HAYASUPER";
 	private final String PERFIL_PERFGCONTROLLER = "PERFGCONTROLLER";
@@ -9161,6 +9164,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		boolean resultado = false;
 		ExpedienteComercial expediente = this.findOne(idExpediente);
 		Activo activo = expediente.getOferta().getActivoPrincipal();
+		
+		Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTramite);
 
 		try {
 			ArrayList<String> mailsParaEnviarAsegurador = this.obtenerEmailsParaEnviarAsegurador(expediente);
@@ -9169,6 +9175,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					+ activo.getNumActivo() + "."
 					+ "<br><br> Adjunto copia del contrato suscrito para el alta para la gestión del alta en cobertura de la póliza de seguro de rentas."
 					+ "<br><br> Rogamos confirmación del alta.";
+			
+			cuerpo = tieneNumeroInmuebleBC(cuerpo, tramite);
 
 			Adjunto adjuntoMail = null;
 			String nombreDocumento = null;
@@ -9257,6 +9265,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		boolean resultado = false;
 		ExpedienteComercial expediente = this.findOne(idExpediente);
 		Activo activo = expediente.getOferta().getActivoPrincipal();
+		
+		Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTramite);
 
 		if (Checks.esNulo(posicionamiento)) {
 			posicionamiento = expediente.getUltimoPosicionamiento();
@@ -9284,6 +9295,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 										? activo.getInfoComercial().getMediadorInforme().getNombre()
 										: STR_MISSING_VALUE)
 						+ "<br><br> Rogamos se gestione el envío de llaves para dicha operación.";
+				
+				cuerpo = tieneNumeroInmuebleBC(cuerpo, tramite);
 
 				genericAdapter.sendMail(mailsParaEnviarAsegurador, new ArrayList<String>(), asunto, cuerpo);
 				resultado = true;
@@ -9403,6 +9416,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		boolean resultado = false;
 		ExpedienteComercial expediente = this.findOne(idExpediente);
 		Activo activo = expediente.getOferta().getActivoPrincipal();
+		
+		Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTramite);
 
 		if (Checks.esNulo(posicionamiento)) {
 			posicionamiento = expediente.getUltimoPosicionamiento();
@@ -9421,6 +9437,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						+ activo.getNumActivo() + ", y confirmamos posicionamiento de firma el día "
 						+ fechaFirmaContrato + "." + "<br><br> Se gestiona el envío de llaves por nuestra parte."
 						+ "<br><br> Rogamos se gestione la coordinación de la firma con el cliente en los términos aprobados.";
+				
+				cuerpo = tieneNumeroInmuebleBC(cuerpo, tramite);
 
 				genericAdapter.sendMail(mailsParaEnviar, new ArrayList<String>(), asunto, cuerpo);
 				resultado = true;
@@ -12750,5 +12768,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			is = true;
 		}
 		return is;
+	}
+	
+	private String tieneNumeroInmuebleBC(String cuerpo, ActivoTramite tramite) {
+		if ((tramite.getTipoTramite() == null || CODIGO_TRAMITE_T015.equals(tramite.getTipoTramite().getCodigo())) 
+			&& DDCartera.isCarteraBk(tramite.getActivo().getCartera())
+			&& !Checks.esNulo(tramite.getActivo().getNumActivoCaixa())) {
+			cuerpo = MENSAJE_BC + tramite.getActivo().getNumActivoCaixa() + ",\n" + cuerpo;
+		}
+		return cuerpo;
 	}
 }

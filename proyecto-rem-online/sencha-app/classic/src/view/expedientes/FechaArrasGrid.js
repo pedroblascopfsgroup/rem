@@ -147,7 +147,6 @@ Ext.define('HreRem.view.expedientes.FechaArrasGrid', {
             var rec = Ext.create(me.getStore().config.model);
             var codEstadoReserva = me.lookupController().getViewModel().getData().expediente.getData().estadoReservaCod;
             var listaReg = me.getStore().getData().items;
-			
 			var reg = listaReg[0];
 			
 			if(!Ext.isEmpty(reg)){
@@ -157,21 +156,16 @@ Ext.define('HreRem.view.expedientes.FechaArrasGrid', {
 				}
 			}
 			
-			if(reg == null || me.comprobarFechaEnviada(reg)){
-				me.getStore().sorters.clear();
-	            me.editPosition = 0;
-	            rec.setId(null);
-	            me.getStore().insert(me.editPosition, rec);
-	            me.rowEditing.isNew = true;
-	            me.rowEditing.startEdit(me.editPosition, 0);
-	            me.disableAddButton(true);
-	            me.disablePagingToolBar(true);
-	            me.disableRemoveButton(true);
+			me.getStore().sorters.clear();
+            me.editPosition = 0;
+            rec.setId(null);
+            me.getStore().insert(me.editPosition, rec);
+            me.rowEditing.isNew = true;
+	        me.rowEditing.startEdit(me.editPosition, 0);
+            me.disableAddButton(true);
+            me.disablePagingToolBar(true);
+            me.disableRemoveButton(true);
 	
-	            me.comprobarEdicionGrid();
-			}else{
-				me.fireEvent("errorToast", HreRem.i18n("msg.existe.fecha.validada"));
-			}
             
        },
        

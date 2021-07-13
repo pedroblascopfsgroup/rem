@@ -42,7 +42,6 @@ DECLARE
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO									TIPO CAMPO		 			COMENTARIO8
 		T_ALTER(  'POS_FECHA_ENVIO',							'DATE', 				'Fecha de envio a BC'),
-		T_ALTER(  'POS_VALIDACION_BC',							'NUMBER(1,0)',			'Respuesta validación bc'),
 		T_ALTER(  'POS_FECHA_VALIDACION_BC',					'DATE',					'Fecha respuesta validación bc'),
 		T_ALTER(  'POS_OBSERVACIONES_BC',						'VARCHAR2(150 CHAR)',	'Observaciones BC'),
 		T_ALTER(  'POS_OBSERVACIONES_REM',						'VARCHAR2(512 CHAR)',	'Observaciones REM')

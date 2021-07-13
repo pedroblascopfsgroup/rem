@@ -77,6 +77,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
 
 @Service("gastoLineaDetalleManager")
@@ -116,6 +117,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private UpdaterStateGastoApi updaterStateApi;
 	
 	@Autowired
 	private GastoDao gastoDao;
@@ -421,6 +425,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo())) {
 			actualizarDiariosLbk(gasto.getId());
 		}
+		
+		updaterStateApi.updaterStates(gasto, null);
 	
 		
 		return true;
@@ -1299,7 +1305,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				gastoLineaDetalleEntidad.setAuditoria(Auditoria.getNewInstance());
 				gastoLineaDetalleEntidad.setParticipacionGasto(participacion.doubleValue());
 				genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
-				
+				gastoLineaDetalle.getGastoLineaEntidadList().add(gastoLineaDetalleEntidad);
 
 			}
 		
@@ -1315,7 +1321,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			{
 				actualizarDiariosLbk(gasto.getId());
 			}
-			
+			updaterStateApi.updaterStates(gasto, null);
 			return error;
 		}
 		
@@ -1360,7 +1366,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	@Transactional(readOnly = false)
 	public boolean desasociarElementosAgastos(Long idElemento){
 		GastoLineaDetalleEntidad gastoLineaDetalleEntidad = getLineaDetalleEntidadByIdLineaEntidad(idElemento);
-	
+		
 		if(gastoLineaDetalleEntidad != null && gastoLineaDetalleEntidad.getGastoLineaDetalle()  != null
 		&& gastoLineaDetalleEntidad.getGastoLineaDetalle().getGastoProveedor() != null) {			
 			GastoLineaDetalle gastoLineaDetalle = gastoLineaDetalleEntidad.getGastoLineaDetalle();
@@ -1382,6 +1388,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo())) {
 						actualizarDiariosLbk(gasto.getId());
 				}
+				updaterStateApi.updaterStates(gasto, null);
 			}
 		
 		}
@@ -1437,7 +1444,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo())) {
 			actualizarDiariosLbk(gasto.getId());
 		}
-
+		updaterStateApi.updaterStates(gasto, null);
 		return true;
 	}
 

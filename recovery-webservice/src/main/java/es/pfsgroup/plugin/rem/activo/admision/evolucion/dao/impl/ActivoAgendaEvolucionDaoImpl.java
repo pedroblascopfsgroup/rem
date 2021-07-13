@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.rem.activo.admision.evolucion.dao.ActivoAgendaEvolucionDao;
 import es.pfsgroup.plugin.rem.model.ActivoAgendaEvolucion;
 
@@ -17,10 +18,12 @@ public class ActivoAgendaEvolucionDaoImpl extends AbstractEntityDao<ActivoAgenda
 	public List<ActivoAgendaEvolucion> getListAgendaEvolucionByIdActivo(Long id) {
 
 		HQLBuilder hb = new HQLBuilder(" from ActivoAgendaEvolucion aae");
-		hb.appendWhere(" aae.activo.id= " + id);
-		hb.orderBy("aae.fechaAgendaEv", "desc");
+		hb.orderBy("aae.fechaAgendaEv", HQLBuilder.ORDER_DESC);
 		
-		return (List<ActivoAgendaEvolucion>) getHibernateTemplate().find(hb.toString());
+		HQLBuilder.addFiltroIgualQue(hb, "aae.activo.id", id);
+		
+		return HibernateQueryUtils.list(this, hb);
 	}
 
 }
+	

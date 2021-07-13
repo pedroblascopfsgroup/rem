@@ -24,8 +24,6 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDBancoOrigen;
-import es.pfsgroup.plugin.rem.model.dd.DDCarteraVentaActivos;
-import es.pfsgroup.plugin.rem.model.dd.DDCarteraVentaCreditos;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialAlquilerCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialVentaCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTecnicoActivo;
@@ -142,14 +140,6 @@ public class ActivoCaixa implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPE_ID")
     private DDTributacionPropuestaClienteExentoIva tributacionPropuestaClienteExentoIva;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_CVC_ID")
-    private DDCarteraVentaCreditos carteraVentaCreditos;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_CVA_ID")
-    private DDCarteraVentaActivos carteraVentaActivos;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPV_ID")
@@ -430,22 +420,6 @@ public class ActivoCaixa implements Serializable, Auditable {
 	public void setTributacionPropuestaClienteExentoIva(
 			DDTributacionPropuestaClienteExentoIva tributacionPropuestaClienteExentoIva) {
 		this.tributacionPropuestaClienteExentoIva = tributacionPropuestaClienteExentoIva;
-	}
-
-	public DDCarteraVentaCreditos getCarteraVentaCreditos() {
-		return carteraVentaCreditos;
-	}
-
-	public void setCarteraVentaCreditos(DDCarteraVentaCreditos carteraVentaCreditos) {
-		this.carteraVentaCreditos = carteraVentaCreditos;
-	}
-
-	public DDCarteraVentaActivos getCarteraVentaActivos() {
-		return carteraVentaActivos;
-	}
-
-	public void setCarteraVentaActivos(DDCarteraVentaActivos carteraVentaActivos) {
-		this.carteraVentaActivos = carteraVentaActivos;
 	}
 
 	public DDTributacionPropuestaVenta getTributacionPropuestaVenta() {

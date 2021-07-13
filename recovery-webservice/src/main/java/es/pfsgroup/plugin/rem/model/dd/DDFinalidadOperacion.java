@@ -1,16 +1,13 @@
-package es.pfsgroup.plugin.rem.model.dd;
 
-import java.io.Serializable;
+
+package es.pfsgroup.plugin.rem.model.dd;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -23,41 +20,50 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
-
+/**
+ * Modelo que gestiona el diccionario de tipos de medios de pago
+ */
 @Entity
-@Table(name = "DD_CVC_CARTERA_VENTA_CREDITOS", schema = "${entity.schema}")
+@Table(name = "DD_FOP_FINALIDAD_OPERACION", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDCarteraVentaCreditos implements Auditable, Serializable {
+public class DDFinalidadOperacion implements Auditable {
+
+	public static final String CODIGO_PBC_PRIMERA_RESIDENCIA = "R";
+	public static final String CODIGO_PBC_SEGUNDA_RESIDENCIA = "V";
+	public static final String CODIGO_PBC_INVERSION = "I";
+	public static final String CODIGO_PBC_FINALIDAD_COMERCIAL = "A";
+	public static final String CODIGO_PBC_OTROS = "O";
+	public static final String CODIGO_BC_PRIMERA_RESIDENCIA = "10";
+	public static final String CODIGO_BC_SEGUNDA_RESIDENCIA = "20";
+	public static final String CODIGO_BC_INVERSION = "30";
+	public static final String CODIGO_BC_FINALIDAD_COMERCIAL = "40";
+	public static final String CODIGO_BC_OTROS = "50";
 	
-		
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
-	
-	public static final String CODIGO_EARTH="1";
-	public static final String CODIGO_FIRE="2";
-	public static final String CODIGO_NEWTON="3";
-	public static final String CODIGO_MATCH="4";
-	public static final String CODIGO_MARSHMELLO="5";
-	public static final String CODIGO_JETS="6";
-	public static final String CODIGO_SKY="7";
-	public static final String CODIGO_TIZONA="8";
-	public static final String CODIGO_ELYSIUM="9";
-	public static final String CODIGO_GIANTS="10";
 
 	@Id
-	@Column(name = "DD_CVC_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDCarteraVentaCreditosGenerator")
-	@SequenceGenerator(name = "DDCarteraVentaCreditosGenerator", sequenceName = "S_DD_CVC_CARTERA_VENTA_CREDITOS")
+	@Column(name = "DD_FOP_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDFinalidadOperacionGenerator")
+	@SequenceGenerator(name = "DDFinalidadOperacionGenerator", sequenceName = "S_DD_FOP_FINALIDAD_OPERACION")
 	private Long id;
+    
+	@Column(name = "DD_FOP_CODIGO_PBC")   
+	private String codigoPbc;
+	
+	@Column(name = "DD_FOP_CODIGO_BC")   
+	private String codigoBc;
 	 
-	@Column(name = "DD_CVC_CODIGO")   
-	private String codigo;
-	 
-	@Column(name = "DD_CVC_DESCRIPCION")   
+	@Column(name = "DD_FOP_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_CVC_DESCRIPCION_LARGA")   
+	@Column(name = "DD_FOP_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
+	    
+	
 	    
 	@Version   
 	private Long version;
@@ -65,6 +71,8 @@ public class DDCarteraVentaCreditos implements Auditable, Serializable {
 	@Embedded
 	private Auditoria auditoria;
 
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -73,14 +81,6 @@ public class DDCarteraVentaCreditos implements Auditable, Serializable {
 		this.id = id;
 	}
 
-	public String getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
-	
 	public String getDescripcion() {
 		return descripcion;
 	}
@@ -97,7 +97,6 @@ public class DDCarteraVentaCreditos implements Auditable, Serializable {
 		this.descripcionLarga = descripcionLarga;
 	}
 
-
 	public Long getVersion() {
 		return version;
 	}
@@ -112,5 +111,25 @@ public class DDCarteraVentaCreditos implements Auditable, Serializable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}	
+	}
+
+	public String getCodigoPbc() {
+		return codigoPbc;
+	}
+
+	public void setCodigoPbc(String codigoPbc) {
+		this.codigoPbc = codigoPbc;
+	}
+
+	public String getCodigoBc() {
+		return codigoBc;
+	}
+
+	public void setCodigoBc(String codigoBc) {
+		this.codigoBc = codigoBc;
+	}
+
 }
+
+
+

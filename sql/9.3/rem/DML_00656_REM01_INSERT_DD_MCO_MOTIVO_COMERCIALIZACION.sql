@@ -1,56 +1,43 @@
 --/*
 --##########################################
---## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210617
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20210706
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14380
+--## INCIDENCIA_LINK=REMVIP-10112
 --## PRODUCTO=NO
 --##
---## Finalidad: DML add valores al diccionario DD_CVC_CARTERA_VENTA_CREDITOS
---##           
---## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## Finalidad: INSERTAR DD_MCO_MOTIVO_COMERCIALIZACION
+--## INSTRUCCIONES: 
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Version inicial
 --##########################################
 --*/
 
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
+
 DECLARE
-	V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
-    V_NUM_REGISTROS NUMBER(16); -- Vble. para validar la existencia de un registro.
-    V_TEXT_TABLA VARCHAR2(30):= 'DD_CVC_CARTERA_VENTA_CREDITOS'; -- Vble. del nombre de la tabla
-    V_ID NUMBER(16); -- Vble.auxiliar para sacar un ID.
-    V_ID2 NUMBER(16); -- Vble.auxiliar para sacar un ID.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_MCO_MOTIVO_COMERCIALIZACION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_USUARIO VARCHAR2(250 CHAR) := 'REMVIP-10112';
 
-    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-                --CODIGO    DESCRIPCION
-	    T_TIPO_DATA('1',	'Earth'),
-        T_TIPO_DATA('2',	'Fire'),
-        T_TIPO_DATA('3',	'Newton'),
-        T_TIPO_DATA('4',	'Match'),
-        T_TIPO_DATA('5',	'Marshmello'),
-        T_TIPO_DATA('6',	'Jets'),
-        T_TIPO_DATA('7',	'Sky'),
-        T_TIPO_DATA('8',	'Tizona'),
-        T_TIPO_DATA('9',	'Elysium'),
-        T_TIPO_DATA('10',	'Giants')
-
-		); 
+      T_TIPO_DATA('44','20-No Publicación. Venta tras aprobacion - ROFO V','44')
+    ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
-
 BEGIN
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
@@ -61,7 +48,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
         --Comprobar el dato a insertar.
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
-					WHERE DD_CVC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
+					WHERE DD_MCO_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         IF V_NUM_TABLAS = 1 THEN
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe');
@@ -70,21 +57,23 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' no existe');
 
             V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
-              DD_CVC_ID,
-              DD_CVC_CODIGO,
-              DD_CVC_DESCRIPCION,
-              DD_CVC_DESCRIPCION_LARGA,
+              DD_MCO_ID,
+              DD_MCO_CODIGO,
+              DD_MCO_DESCRIPCION,
+              DD_MCO_DESCRIPCION_LARGA,
+              DD_MPT_ID,
               VERSION,
               USUARIOCREAR,
               FECHACREAR,
               BORRADO
               ) VALUES (
-               '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL,
+               '||V_ESQUEMA||'.S_DD_MCO_MOT_COMERCIALIZACION.NEXTVAL,
               '''||TRIM(V_TMP_TIPO_DATA(1))||''',
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
+              (SELECT DD_MPT_ID FROM DD_MPT_MTV_IN_EX_PERIMETRO WHERE DD_MPT_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''' AND BORRADO = 0),
               0,
-              ''HREOS-14380'',
+              '''||V_USUARIO||''',
               SYSDATE,
               0)';
             EXECUTE IMMEDIATE V_MSQL;

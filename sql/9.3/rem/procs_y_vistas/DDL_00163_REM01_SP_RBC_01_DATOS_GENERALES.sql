@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210618
+--## FECHA_CREACION=20210706
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14366
+--## INCIDENCIA_LINK=HREOS-14533
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 ACT_EN_TRAMITE = 0 - [HREOS-14366] - Daniel Algaba
+--##        0.2 Quitamos INDICADOR_LLAVES y FEC_RECEP_LLAVES - [HREOS-14533] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -53,12 +54,7 @@ BEGIN
                   CASE                  
                   WHEN (SELECT DD_SIN_CODIGO FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_ID=act.ACT_OVN_COMERC) = ''01'' THEN ''S''
                   ELSE ''N''
-                  END as STATUS_USUARIO,         
-                  CASE                  
-                  WHEN act.ACT_LLAVES_NECESARIAS = 1 THEN ''S''
-                  ELSE ''N''
-                  END as INDICADOR_LLAVES,                                     
-                  TO_CHAR(act.ACT_LLAVES_FECHA_RECEP,''YYYYMMDD'') as FEC_RECEP_LLAVES,               
+                  END as STATUS_USUARIO,             
                   CASE                  
                   WHEN (SELECT DD_TUD_CODIGO FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_ID=act.DD_TUD_ID) = ''06'' THEN ''N''
                   ELSE ''S''
@@ -77,8 +73,6 @@ BEGIN
                                  when matched then update set
                                     
                                     aux.STATUS_USUARIO = us.STATUS_USUARIO  
-                                    ,aux.INDICADOR_LLAVES = us.INDICADOR_LLAVES
-                                    ,aux.FEC_RECEP_LLAVES = us.FEC_RECEP_LLAVES
                                     ,aux.INMUEBLE_VACACIONAL = us.INMUEBLE_VACACIONAL                                  
                                     
                                        
@@ -86,17 +80,13 @@ BEGIN
                                  INSERT  (
                                           NUM_INMUEBLE,
                                           NUM_IDENTIFICATIVO,                                                                          
-                                          STATUS_USUARIO,
-                                          INDICADOR_LLAVES,
-                                          FEC_RECEP_LLAVES,                                         
+                                          STATUS_USUARIO,                                       
                                           INMUEBLE_VACACIONAL
                                           )
                                  VALUES (
                                           us.NUM_INMUEBLE,
                                           us.NUM_IDENTIFICATIVO,                                       
-                                          us.STATUS_USUARIO,
-                                          us.INDICADOR_LLAVES,
-                                          us.FEC_RECEP_LLAVES,                                       
+                                          us.STATUS_USUARIO,                                      
                                           us.INMUEBLE_VACACIONAL)';
 
    EXECUTE IMMEDIATE V_MSQL;

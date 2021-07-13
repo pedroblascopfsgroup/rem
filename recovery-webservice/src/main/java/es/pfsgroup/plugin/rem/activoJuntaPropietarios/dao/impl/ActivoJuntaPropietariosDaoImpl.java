@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.activoJuntaPropietarios.dao.impl;
 
+
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormatter;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -27,32 +30,30 @@ public class ActivoJuntaPropietariosDaoImpl extends AbstractEntityDao<ActivoJunt
 
 	private HQLBuilder rellenarFiltrosBusquedaJuntas(DtoActivoJuntaPropietarios dtoActivoJuntaPropietarios) {
 		
+		HQLBuilder hb = null;
 		Long numActivo = dtoActivoJuntaPropietarios.getNumActivo();
 		String codProveedor = dtoActivoJuntaPropietarios.getCodProveedor();
 		String fechaDesde = dtoActivoJuntaPropietarios.getFechaDesde();
-		String fechaHasta = dtoActivoJuntaPropietarios.getFechaHasta();		
+		String fechaHasta = dtoActivoJuntaPropietarios.getFechaHasta();
+		Date fechaDesdeDate = DateFormatter.toDate(fechaDesde, "dd/MM/yy");
+		Date fechaHastaDate = DateFormatter.toDate(fechaHasta, "dd/MM/yy");
 				
-		String select = "select vjunta ";
-		String from = "from VActivoJuntaPropietarios vjunta";
 
-		String where = "";		
-		HQLBuilder hb = null;
+		hb = new HQLBuilder("select vjunta from VActivoJuntaPropietarios vjunta" );		
 
-		hb = new HQLBuilder(select + from + where);		
+		HQLBuilder.addFiltroIgualQue(hb, "vjunta.numActivo", numActivo);
+		HQLBuilder.addFiltroIgualQue(hb, "vjunta.codProveedor", codProveedor);
+		if(fechaDesdeDate != null && fechaHastaDate != null) {
+			hb.appendWhere("vjunta.fechaJunta >= :fechaDesdeDate",HQLBuilder.QUIERE_OR_TRUE);
+			hb.appendWhere("vjunta.fechaJunta <= :fechaHastaDate");
+			hb.getParameters().put("fechaDesdeDate", fechaDesdeDate);
+			hb.getParameters().put("fechaHastaDate", fechaHastaDate);
+		}else {
+			HQLBuilder.addFiltroIgualOMayorQueSiNotNull(hb, "vjunta.fechaJunta", fechaDesdeDate);
+			HQLBuilder.addFiltroIgualOMenorQueSiNotNull(hb, "vjunta.fechaJunta", fechaHastaDate);
+		}
 
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vjunta.numActivo", numActivo);
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vjunta.codProveedor", codProveedor);
-		
-		if(!Checks.esNulo(fechaDesde) && !Checks.esNulo(fechaHasta) ) {
-		hb.appendWhere(" vjunta.fechaJunta  >=  TO_DATE('" + fechaDesde + "','dd/MM/yy') AND vjunta.fechaJunta  <= TO_DATE('" + fechaHasta +"','dd/MM/yy')");
-		}else {			
-			if( !Checks.esNulo(fechaDesde)) {
-				hb.appendWhere( " vjunta.fechaJunta  >=  TO_DATE('" + fechaDesde + "','dd/MM/yy')");
-			}
-			if(!Checks.esNulo(fechaHasta)) {
-				hb.appendWhere( " vjunta.fechaJunta  <= TO_DATE('" + fechaHasta +"','dd/MM/yy')");
-			}
-		}		
+				
 		return hb;
 	}
 

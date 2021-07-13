@@ -102,9 +102,12 @@ public class TareaActivoDaoImpl extends AbstractEntityDao<TareaActivo, Long> imp
 				+ " JOIN TAC_TAREAS_ACTIVOS TAC ON TAR.TAR_ID = TAC.TAR_ID"
 				+ " JOIN ACT_ACTIVO ACT ON TAC.ACT_ID = ACT.ACT_ID"
 				+ " JOIN DD_TPO_TIPO_PROCEDIMIENTO TPO ON TPO.DD_TPO_ID = TAP.DD_TPO_ID"
-				+ " WHERE TPO.DD_TPO_CODIGO = '" + codigoTipoTramite + "'"
-				+ " AND ACT.ACT_ID = " + idActivo + " AND TAR.BORRADO = 0"
+				+ " WHERE TPO.DD_TPO_CODIGO = :codigoTipoTramite"
+				+ " AND ACT.ACT_ID = :idActivo AND TAR.BORRADO = 0"
 				+ " AND TAR.TAR_TAREA_FINALIZADA = 0)");
+		
+		query.setParameter("codigoTipoTramite", codigoTipoTramite);
+		query.setParameter("idActivo", idActivo);
 
 		query.executeUpdate();
 	}

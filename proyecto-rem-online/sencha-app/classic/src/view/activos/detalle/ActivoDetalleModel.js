@@ -3126,11 +3126,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		
 		
    		comboDDTipoTituloActivoTPA: {
-			model: 'HreRem.model.ComboBase',
+			model: 'HreRem.model.DDBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getComboTipoTituloActivoTPA',
-   				extraParams: {numActivo: '{activo.numActivo}'}
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoTituloActivoTPA'}
 			}
 		},
 		

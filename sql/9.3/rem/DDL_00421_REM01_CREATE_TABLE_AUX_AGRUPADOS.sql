@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=PIER GOTTA
---## FECHA_CREACION=20210702
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210705
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14503
+--## INCIDENCIA_LINK=HREOS-14507
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - PIER GOTTA - [HREOS-14503]
+--##        0.2 Modificar el campo FECHA_ALTA de VARCHAR2(8 CHAR) a DATE - Alejandra García - [HREOS-14507]
 --##########################################
 --*/
 
@@ -60,15 +61,15 @@ BEGIN
     (
            
         ID_AGRUPADOR                     VARCHAR2(8 CHAR),
-        NOMBRE               		   VARCHAR2(100 CHAR),
-        FECHA_ALTA                  	   VARCHAR2(8 CHAR),
-        TIPOLOGIA		 	   VARCHAR2(10 CHAR),
-        FECHA_INICIO_CAMPANA		   DATE,
-        FECHA_FIN_PREVISTA		   DATE,
-        FECHA_FIN_REAL			   DATE,
-        TIEMPO_COSECHA			   NUMBER(3,0),
-        CAMPANA_BDC			   VARCHAR2(1 CHAR),
-        NO_ANALIZAR			   VARCHAR2(1 CHAR)
+        NOMBRE               		     VARCHAR2(100 CHAR),
+        FECHA_ALTA                  	 DATE,
+        TIPOLOGIA		 	             VARCHAR2(10 CHAR),
+        FECHA_INICIO_CAMPANA		     DATE,
+        FECHA_FIN_PREVISTA		         DATE,
+        FECHA_FIN_REAL			         DATE,
+        TIEMPO_COSECHA			         NUMBER(3,0),
+        CAMPANA_BDC			             VARCHAR2(1 CHAR),
+        NO_ANALIZAR			             VARCHAR2(1 CHAR)
         
 
 

@@ -39,10 +39,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoRiesgoOperacion;
 
 
 /**
@@ -325,8 +325,8 @@ public class Oferta implements Serializable, Auditable {
     private Boolean ofrDocRespPrescriptor;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_RIO_ID")
-	private DDTipoRiesgoOperacion tipoRiesgoOperacion;  
+    @JoinColumn(name = "DD_ROP_ID")
+	private DDRiesgoOperacion tipoRiesgoOperacion;  
 	
 	@Column(name = "OFR_SOSPECHOSA")
     private Boolean ofertaSospechosa;
@@ -992,14 +992,6 @@ public class Oferta implements Serializable, Auditable {
 		this.ofrDocRespPrescriptor = ofrDocRespPrescriptor;
 	}
 
-	public DDTipoRiesgoOperacion getTipoRiesgoOperacion() {
-		return tipoRiesgoOperacion;
-	}
-
-	public void setTipoRiesgoOperacion(DDTipoRiesgoOperacion tipoRiesgoOperacion) {
-		this.tipoRiesgoOperacion = tipoRiesgoOperacion;
-	}
-
 	public Boolean getOfertaSospechosa() {
 		return ofertaSospechosa;
 	}
@@ -1014,6 +1006,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setRespDocCliente(DDResponsableDocumentacionCliente respDocCliente) {
 		this.respDocCliente = respDocCliente;
+	}
+
+	public DDRiesgoOperacion getTipoRiesgoOperacion() {
+		return tipoRiesgoOperacion;
+	}
+
+	public void setTipoRiesgoOperacion(DDRiesgoOperacion tipoRiesgoOperacion) {
+		this.tipoRiesgoOperacion = tipoRiesgoOperacion;
 	}
 	
 }

@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210626
+--## FECHA_CREACION=20210706
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14198
+--## INCIDENCIA_LINK=HREOS-14533
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Añadimos provincia de registro - HREOS-14533
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -55,6 +56,7 @@ BEGIN
                   , APR.INSCRIPCION BIE_DREG_INSCRIPCION
                   , APR.COD_REGISTRO_PROPIEDAD BIE_DREG_NUM_REGISTRO
                   , LOC.DD_LOC_ID DD_LOC_ID
+                  , LOC.DD_PRV_ID DD_PRV_ID
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_BIEN BIE ON ACT.BIE_ID = BIE.BIE_ID AND BIE.BORRADO = 0
@@ -73,6 +75,7 @@ BEGIN
                   , BDR.BIE_DREG_INSCRIPCION = AUX.BIE_DREG_INSCRIPCION
                   , BDR.BIE_DREG_NUM_REGISTRO = AUX.BIE_DREG_NUM_REGISTRO
                   , BDR.DD_LOC_ID = AUX.DD_LOC_ID
+                  , BDR.DD_PRV_ID = AUX.DD_PRV_ID
                   , BDR.USUARIOMODIFICAR = ''STOCK_BC''
                   , BDR.FECHAMODIFICAR = SYSDATE
                   WHEN NOT MATCHED THEN
@@ -86,6 +89,7 @@ BEGIN
                   , BIE_DREG_INSCRIPCION
                   , BIE_DREG_NUM_REGISTRO
                   , DD_LOC_ID
+                  , DD_PRV_ID
                   , USUARIOCREAR
                   , FECHACREAR)
                   VALUES 
@@ -98,6 +102,7 @@ BEGIN
                   , AUX.BIE_DREG_INSCRIPCION
                   , AUX.BIE_DREG_NUM_REGISTRO
                   , AUX.DD_LOC_ID
+                  , AUX.DD_PRV_ID
                   , ''STOCK_BC''
                   , SYSDATE)';
    

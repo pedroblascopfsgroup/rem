@@ -326,7 +326,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	},
 	
 	editFuncion: function(editor, context){
-
 		var me= this;
 		var estado = context.record.get("codigoEstadoOferta");
 		var gencat = context.record.get("gencat");
@@ -367,7 +366,23 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			
 		}
 		
-		if(CONST.ESTADOS_OFERTA['ACEPTADA'] === estado){	
+		if(CONST.ESTADOS_OFERTA['ACEPTADA'] === estado){
+			if (activo.get('entidadPropietariaCodigo')==CONST.CARTERA['BANKIA']){
+				var codigoTipoOferta = context.record.get('codigoTipoOferta');
+				if(CONST.TIPOS_OFERTA["VENTA"] === codigoTipoOferta){
+					if(Ext.isEmpty(me.lookupController().getViewModel().get('canalVentaBC').selection)){
+						me.fireEvent("errorToast", HreRem.i18n("msg.cambio.canal.venta.bc"));
+						 me.getStore().load();
+						return;
+					}
+				}else if(CONST.TIPOS_OFERTA["ALQUILER"] === codigoTipoOferta){
+					if(Ext.isEmpty(me.lookupController().getViewModel().get('canalAlquilerBC').selection)){
+						me.fireEvent("errorToast", HreRem.i18n("msg.cambio.canal.alquiler.bc"));
+						 me.getStore().load();
+						return;
+					}
+				}
+			}
 			var url = $AC.getRemoteUrl('ofertas/isActivoEnDND');
 				Ext.Ajax.request({
 		    		url: url,

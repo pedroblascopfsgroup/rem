@@ -3975,6 +3975,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 			}
+			
+			VHistCampanyaCaixa histCampanyaCaixa = genericDao.get(VHistCampanyaCaixa.class, 
+					genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId()));
+			
+			if (histCampanyaCaixa != null) {
+				if (histCampanyaCaixa.getIdCampanyaVenta() != null) {
+					dto.setCampanyaVenta(histCampanyaCaixa.getIdCampanyaVenta());
+				}
+				if (histCampanyaCaixa.getIdCampanyaAlquiler() != null) {
+					dto.setCampanyaAlquiler(histCampanyaCaixa.getIdCampanyaAlquiler());
+				}				
+			}
+
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
 

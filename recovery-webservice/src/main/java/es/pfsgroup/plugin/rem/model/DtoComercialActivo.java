@@ -54,6 +54,10 @@ public class DtoComercialActivo extends DtoTabActivo{
     private Date fechaInicioConcurrencia;
     private Date fechaFinConcurrencia;		
 
+	private String campanyaVenta;
+	private String campanyaAlquiler;
+
+
 	public String getId() {
 		return id;
 	}
@@ -256,7 +260,6 @@ public class DtoComercialActivo extends DtoTabActivo{
 		this.activoObraNuevaComercializacionFecha = activoObraNuevaComercializacionFecha;
 	}
 
-
 	public Boolean getNecesidadIfActivo() {
 		return necesidadIfActivo;
 	}
@@ -424,5 +427,20 @@ public class DtoComercialActivo extends DtoTabActivo{
 		this.fechaFinConcurrencia = fechaFinConcurrencia;
 	}
 
-	
+	public String getCampanyaVenta() {
+		return campanyaVenta;
+	}
+
+	public void setCampanyaVenta(String campanyaVenta) {
+		this.campanyaVenta = campanyaVenta;
+	}
+
+	public String getCampanyaAlquiler() {
+		return campanyaAlquiler;
+	}
+
+	public void setCampanyaAlquiler(String campanyaAlquiler) {
+		this.campanyaAlquiler = campanyaAlquiler;
+	}
+
 }

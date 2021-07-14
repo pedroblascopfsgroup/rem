@@ -78,6 +78,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
+import es.pfsgroup.plugin.rem.model.DtoTestigosOpcionales;
 import es.pfsgroup.plugin.rem.model.GastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -1461,4 +1462,6 @@ public interface ActivoApi {
 	public List<ActivoTrabajo> getActivoTrabajos(Long idActivo);
 
 	List<Activo> getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(Long idAgrupacion, Long idActivoPrincipal);
+
+	List<DtoTestigosOpcionales> getTestigosOpcionales(Long id);
 }

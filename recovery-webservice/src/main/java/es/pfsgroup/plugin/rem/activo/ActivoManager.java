@@ -9231,6 +9231,43 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return activos;
 	}
+	
+	@Override
+	public List<DtoTestigosOpcionales> getTestigosOpcionales(Long idActivo) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		ActivoInfoComercial infoComercial = genericDao.get(ActivoInfoComercial.class, filtro);
+		List<DtoTestigosOpcionales> listaDtoTestigosOpcionales = new ArrayList<DtoTestigosOpcionales>();
+		
+		if (!Checks.esNulo(infoComercial)) {
+			filtro = genericDao.createFilter(FilterType.EQUALS, "infoComercial", infoComercial);
+			List<InformeTestigosOpcionales> listaTestigosOpcionales = genericDao.getList(InformeTestigosOpcionales.class, filtro);
+
+			for (InformeTestigosOpcionales lista : listaTestigosOpcionales) {
+				DtoTestigosOpcionales dtoTestigosOpc = new DtoTestigosOpcionales();
+				try {
+					beanUtilNotNull.copyProperties(dtoTestigosOpc, lista);
+					beanUtilNotNull.copyProperty(dtoTestigosOpc, "id", lista.getId());
+					if (!Checks.esNulo(lista.getFuenteTestigos())) {
+						beanUtilNotNull.copyProperty(dtoTestigosOpc, "fuenteTestigos",
+								lista.getFuenteTestigos().getDescripcion());
+					}
+					if (!Checks.esNulo(lista.getTipoActivo())) {
+						beanUtilNotNull.copyProperty(dtoTestigosOpc, "tipoActivo",
+								lista.getTipoActivo().getDescripcion());
+					}	
+				} catch (IllegalAccessException e) {
+					logger.error("Error en activoManager", e);
+	
+				} catch (InvocationTargetException e) {
+					logger.error("Error en activoManager", e);
+				}
+	
+				listaDtoTestigosOpcionales.add(dtoTestigosOpc);
+			}
+		}
+
+		return listaDtoTestigosOpcionales;
+	}
 
 }
 

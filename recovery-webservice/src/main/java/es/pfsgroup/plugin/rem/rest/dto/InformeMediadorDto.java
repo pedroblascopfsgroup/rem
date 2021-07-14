@@ -920,6 +920,9 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "admiteMascotaOtrasCaracteristicas", classObj = DDSiniSiNoIndiferente.class)
 	private String codTipoAdmiteMascota;
 	
+	@EntityDefinition(procesar = false)
+	private List<TestigosOpcionalesDto> testigos;
+	
 	public Long getIdInformeMediadorWebcom() {
 		return idInformeMediadorWebcom;
 	}
@@ -3067,6 +3070,14 @@ public class InformeMediadorDto implements Serializable {
 
 	public void setCodTipoAdmiteMascota(String codTipoAdmiteMascota) {
 		this.codTipoAdmiteMascota = codTipoAdmiteMascota;
+	}
+
+	public List<TestigosOpcionalesDto> getTestigos() {
+		return testigos;
+	}
+
+	public void setTestigos(List<TestigosOpcionalesDto> testigos) {
+		this.testigos = testigos;
 	}
 
 }

@@ -44,8 +44,10 @@ import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.ActivoZonaComun;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
+import es.pfsgroup.plugin.rem.model.InformeTestigosOpcionales;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDFuenteTestigos;
 import es.pfsgroup.plugin.rem.model.dd.DDSiniSiNoIndiferente;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -58,6 +60,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.rest.dto.PlantaDto;
+import es.pfsgroup.plugin.rem.rest.dto.TestigosOpcionalesDto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import net.sf.json.JSONObject;
 
@@ -1331,6 +1334,15 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						autorizacionWebProveedor = true;
 				}
 			}
+			if (informe.getTestigos() != null) {
+				int count = 0;
+				for (int pos = 0; pos < informe.getTestigos().size() && count == 0; pos++) {
+					if (Checks.esNulo(informe.getTestigos().get(pos).getId())){
+						errorsList.put("testigos.id", RestApi.REST_MSG_MISSING_REQUIRED);
+						count = 1;
+					}
+				}
+			}
 			
 			if (errorsList.size() == 0) {
 				boolean tieneInformeComercialAceptado = false;
@@ -1528,6 +1540,73 @@ public class InformeMediadorManager implements InformeMediadorApi {
 									genericDao.save(ActivoDistribucion.class, activoDistribucion);
 								}
 
+							}
+						}
+						
+						// Si viene información de los testigos lo guardamos
+						List<TestigosOpcionalesDto> testigos = informe.getTestigos();
+						if (!Checks.esNulo(testigos) && !Checks.estaVacio(testigos)) {
+							if (!Checks.esNulo(informeEntity)){
+								for (TestigosOpcionalesDto testigo : testigos) {
+									if (!Checks.esNulo(testigo.getId())) {
+										Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "idTestigoSF", testigo.getId());
+										Filter filtroIco = genericDao.createFilter(FilterType.EQUALS, "infoComercial.id", informeEntity.getId());
+										InformeTestigosOpcionales infoTestOpc = null;
+										infoTestOpc = genericDao.get(InformeTestigosOpcionales.class, filtroId, filtroIco);
+										
+										if (!Checks.esNulo(infoTestOpc)){
+											infoTestOpc.setInformesMediadores(testigo.getInformeMediadores());
+											infoTestOpc.setLink(testigo.getLink());
+											infoTestOpc.setNombre(testigo.getNombre());
+											infoTestOpc.setDireccion(testigo.getDireccion());
+											infoTestOpc.setPrecio(testigo.getPrecio());
+											infoTestOpc.setSuperficie(testigo.getSuperficie());
+											infoTestOpc.setPrecioMercado(testigo.getPrecioMercado());
+											
+											DDFuenteTestigos fuenteTestigos = null;
+											if (testigo.getFuente() != null && !testigo.getFuente().isEmpty()) {
+												fuenteTestigos = genericDao.get(DDFuenteTestigos.class, genericDao.createFilter(
+														FilterType.EQUALS, "codigo", testigo.getFuente()));
+											}
+											infoTestOpc.setFuenteTestigos(fuenteTestigos);
+											
+											DDTipoActivo tipoActivo = null;
+											if (testigo.getTipologia() != null && !testigo.getTipologia().isEmpty()) {
+												tipoActivo = genericDao.get(DDTipoActivo.class, genericDao.createFilter(
+														FilterType.EQUALS, "codigo", testigo.getTipologia()));
+											}
+											infoTestOpc.setTipoActivo(tipoActivo);
+										} else {
+											infoTestOpc = new InformeTestigosOpcionales();
+											infoTestOpc.setInfoComercial(informeEntity);
+											infoTestOpc.setIdTestigoSF(testigo.getId());
+											infoTestOpc.setInformesMediadores(testigo.getInformeMediadores());
+											infoTestOpc.setLink(testigo.getLink());
+											infoTestOpc.setNombre(testigo.getNombre());
+											infoTestOpc.setDireccion(testigo.getDireccion());
+											infoTestOpc.setPrecio(testigo.getPrecio());
+											infoTestOpc.setSuperficie(testigo.getSuperficie());
+											infoTestOpc.setPrecioMercado(testigo.getPrecioMercado());
+											
+											DDFuenteTestigos fuenteTestigos = null;
+											if (testigo.getFuente() != null && !testigo.getFuente().isEmpty()) {
+												fuenteTestigos = genericDao.get(DDFuenteTestigos.class, genericDao.createFilter(
+														FilterType.EQUALS, "codigo", testigo.getFuente()));
+											}
+											infoTestOpc.setFuenteTestigos(fuenteTestigos);
+											
+											DDTipoActivo tipoActivo = null;
+											if (testigo.getTipologia() != null && !testigo.getTipologia().isEmpty()) {
+												tipoActivo = genericDao.get(DDTipoActivo.class, genericDao.createFilter(
+														FilterType.EQUALS, "codigo", testigo.getTipologia()));
+											}
+											infoTestOpc.setTipoActivo(tipoActivo);
+										}
+										
+										genericDao.save(InformeTestigosOpcionales.class, infoTestOpc);
+									}
+	
+								}
 							}
 						}
 					}

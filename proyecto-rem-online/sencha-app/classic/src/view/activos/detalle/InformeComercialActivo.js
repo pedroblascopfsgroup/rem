@@ -13,7 +13,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
     'HreRem.view.activos.detalle.InfoLocalComercial', 'HreRem.view.activos.detalle.InfoPlazaAparcamiento', 'HreRem.view.activos.detalle.InfoVivienda',
     'HreRem.view.activos.detalle.HistoricoEstadosInformeComercial', 'HreRem.model.InformeComercial', 'HreRem.view.activos.detalle.HistoricoMediadorGrid',
     'HreRem.view.activos.detalle.PropuestaActivosVinculadosList', 'HreRem.view.activos.detalle.InfoIndustrialYSuelo','HreRem.view.activos.detalle.InfoEdificioCompleto',
-    'HreRem.view.activos.detalle.InfoVarios','HreRem.view.activos.detalle.DistribucionPlantasActivoList'],
+    'HreRem.view.activos.detalle.InfoVarios','HreRem.view.activos.detalle.DistribucionPlantasActivoList', 'HreRem.view.activos.detalle.TestigosOpcionalesGrid'],
     
     listeners: {
     	boxready: function() { // Anyadir seccion por tipo de activo.
@@ -985,7 +985,18 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							]
 						}
 				]
-            }
+            },
+            
+            //Testigos Opcionales
+			{
+				xtype:'fieldsettable',
+				title:HreRem.i18n('fieldlabel.testigos.opcionales'),
+				defaultType: 'textfieldbase',
+				items :
+					[
+						{xtype: "testigosopcionalesgrid", reference: "testigosopcionalesgrid"}
+					]
+			}
 		];
 
    	 	me.callParent();

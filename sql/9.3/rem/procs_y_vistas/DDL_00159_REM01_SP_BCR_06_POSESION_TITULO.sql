@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210708
+--## FECHA_CREACION=20210714
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14545
@@ -16,6 +16,7 @@
 --##	      0.4 Añadir merges PAC_PERIMETRO - Pier GOtta
 --##	      0.5 Quitar SUBTIPO_IMPUESTO_COMPRA, PORC_IMPUESTO_COMPRA, COD_TP_IVA_COMPRA y RENUNCIA_EXENSION - HREOS-14533
 --##	      0.6 Quitar IND_OCUPANTES_VIVIENDA - HREOS-14545
+--##	      0.7 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos. También se ha añadido el Año de concesión y la Fecha de finalización de concesión del activo - HREOS-14545
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -46,7 +47,12 @@ CREATE OR REPLACE PROCEDURE SP_BCR_06_POSESION_TITULO
 BEGIN
 
 --1º Merge tabla ACT_TIT_TITULO
-   DBMS_OUTPUT.PUT_LINE('[INFO] 1 MERGE A LA TABLA ACT_TIT_TITULO.');
+
+   SALIDA := '[INICIO]'||CHR(10);
+
+   SALIDA := SALIDA || '[INFO] SE VA A PROCEDER A ACTUALIZAR/INSERTAR CAMPOS DE POSESIÓN Y TÍTULO.'|| CHR(10);
+
+   SALIDA := SALIDA || '   [INFO] 1 - ACT_TIT_TITULO'||CHR(10);
 
     V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_TIT_TITULO ACT
 	USING (				
@@ -96,12 +102,10 @@ BEGIN
    EXECUTE IMMEDIATE V_MSQL;
    
 
-   V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
-    commit;
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
 
 --2º Merge tabla ACT_SPS_SIT_POSESORIA
-   DBMS_OUTPUT.PUT_LINE('[INFO] 2 MERGE A LA TABLA ACT_SPS_SIT_POSESORIA.');
+   SALIDA := SALIDA || '   [INFO] 2 - ACT_SPS_SIT_POSESORIA'||CHR(10);
 
    V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA ACT
       USING (				
@@ -142,14 +146,12 @@ BEGIN
    ';
    EXECUTE IMMEDIATE V_MSQL;
 
-   V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
-    commit;
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
 
 --3º Merge tabla ACT_PAC_PERIMETRO_ACTIVO
 
 --Para dar de baja el activo
-DBMS_OUTPUT.PUT_LINE('[INFO] 3 MERGE A LA TABLA ACT_PAC_PERIMETRO_ACTIVO, PARA DAR DE BAJA EL ACTIVO.');
+   SALIDA := SALIDA || '   [INFO] 3 - ACT_PAC_PERIMETRO_ACTIVO, PARA DAR DE BAJA EL ACTIVO'||CHR(10);
 
 V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
 	USING (				
@@ -215,12 +217,10 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
 ';
    EXECUTE IMMEDIATE V_MSQL;
 
-   V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
-    commit;
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
 
 --Cuando está campo motivo no comercial (Código motivo no comercialización)
-DBMS_OUTPUT.PUT_LINE('[INFO] 4 MERGE A LA TABLA ACT_PAC_PERIMETRO_ACTIVO, CUANDO HAY CAMPO MOTIVO_NO_COMERCIAL.');
+   SALIDA := SALIDA || '   [INFO] 4 - ACT_PAC_PERIMETRO_ACTIVO, CUANDO HAY CAMPO MOTIVO_NO_COMERCIAL'||CHR(10);
 
 V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
 	USING (				
@@ -253,13 +253,11 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
 ';
    EXECUTE IMMEDIATE V_MSQL;
 
-   V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
-    commit;
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
  
 --4º Merge tabla ACT_PAC_PROPIETARIO_ACTIVO
 
-   DBMS_OUTPUT.PUT_LINE('[INFO] 5 MERGE A LA TABLA ACT_PAC_PROPIETARIO_ACTIVO.');
+   SALIDA := SALIDA || '   [INFO] 5 - ACT_PAC_PROPIETARIO_ACTIVO'||CHR(10);
 
    V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT
 	USING (				
@@ -268,6 +266,9 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                  ,TGP.DD_TGP_ID AS DD_TGP_ID
                  ,ACT2.ACT_ID AS ACT_ID
                  ,PROP.PRO_ID AS PRO_ID
+                 , AUX.ANYO_CONCESION PAC_ANYO_CONCES
+                 , AUX.FEC_FIN_CONCESION PAC_FEC_FIN_CONCES
+                 , PAC.PAC_ID
             FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
             JOIN ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT2.BORRADO=0
             LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''GRADO_PROPIEDAD''  AND eqv1.DD_CODIGO_CAIXA = aux.GRADO_PROPIEDAD and eqv1.BORRADO=0
@@ -275,13 +276,16 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
             JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv2 ON eqv2.DD_NOMBRE_CAIXA = ''SOCIEDAD_PATRIMONIAL''  AND eqv2.DD_CODIGO_CAIXA = aux.SOCIEDAD_PATRIMONIAL 
                                                             AND EQV2.DD_NOMBRE_REM=''ACT_PRO_PROPIETARIO'' and eqv2.BORRADO=0
             JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PROP ON PROP.PRO_DOCIDENTIF=eqv2.DD_CODIGO_REM
+            LEFT JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO PAC ON ACT2.ACT_ID = PAC.ACT_ID AND PROP.PRO_ID = PAC.PRO_ID AND PAC.BORRADO = 0
             WHERE AUX.FLAG_EN_REM='|| FLAG_EN_REM||'
-            ) US ON (US.ACT_ID = ACT.ACT_ID AND ACT.BORRADO=0)
+            ) US ON (US.PAC_ID = ACT.PAC_ID)
             WHEN MATCHED THEN UPDATE SET
                  ACT.PAC_PORC_PROPIEDAD=US.PAC_PORC_PROPIEDAD
                 ,ACT.DD_TGP_ID=US.DD_TGP_ID
                 ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
                 ,ACT.FECHAMODIFICAR = SYSDATE
+                , ACT.PAC_ANYO_CONCES = US.PAC_ANYO_CONCES
+                , ACT.PAC_FEC_FIN_CONCES = US.PAC_FEC_FIN_CONCES
             WHEN NOT MATCHED THEN INSERT (
                  PAC_ID
                 ,PRO_ID
@@ -289,7 +293,9 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                 ,DD_TGP_ID
                 ,ACT_ID
                 ,USUARIOCREAR  
-                ,FECHACREAR             
+                ,FECHACREAR
+                , PAC_ANYO_CONCES
+                , PAC_FEC_FIN_CONCES             
                 )VALUES(
                      '|| V_ESQUEMA ||'.S_ACT_PAC_PROPIETARIO_ACTIVO.NEXTVAL
                     ,US.PRO_ID
@@ -298,17 +304,15 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                     ,US.ACT_ID
                     ,''STOCK_BC''
                     ,SYSDATE
+                    , US.PAC_ANYO_CONCES
+                    , US.PAC_FEC_FIN_CONCES
                 )
 ';
    EXECUTE IMMEDIATE V_MSQL;
 
-   V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
-    commit;
-
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
 --5º Merge tabla ACT_PAC_PROPIETARIO_ACTIVO
-
-   DBMS_OUTPUT.PUT_LINE('[INFO] 6 MERGE A LA TABLA ACT_ACTIVO_CAIXA.');
+   SALIDA := SALIDA || '   [INFO] 6 - ACT_ACTIVO_CAIXA'||CHR(10);
 
    V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO_CAIXA ACT
                USING (				
@@ -349,12 +353,11 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
    ';
    EXECUTE IMMEDIATE V_MSQL;
 
-   V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
-    commit;
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
     
    IF FLAG_EN_REM = 1 THEN
-   
+   SALIDA := SALIDA || '   [INFO] 7 - PASAMOS NUEVOS ACTIVOS A FORMALIZADOS'||CHR(10);
+   SALIDA := SALIDA || '      [INFO] 1 - ACT_PAC_PERIMETRO_ACTIVO'||CHR(10);
    V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
                 	 USING (				
                      	 SELECT ACT.ACT_ID AS ACT_ID
@@ -374,10 +377,9 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                 
    EXECUTE IMMEDIATE V_MSQL;
    
-   V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
+   SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
 
-                        
+   SALIDA := SALIDA || '      [INFO] 2 - ACT_ACTIVO'||CHR(10);                        
     V_MSQL :=           'MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
                         USING (				
                         SELECT ACT.ACT_ID AS ACT_ID
@@ -393,10 +395,11 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                        
    EXECUTE IMMEDIATE V_MSQL;
    
-   V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
-    commit;
-    
+   SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
+   SALIDA := SALIDA || '   [INFO] 8 - PASAMOS NUEVOS ACTIVOS A EN TRÁMITE'||CHR(10);
+
+   SALIDA := SALIDA || '      [INFO] 1 - ACT_PAC_PERIMETRO_ACTIVO'||CHR(10);    
    V_MSQL :=            'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
                         USING (				
                         SELECT ACT.ACT_ID AS ACT_ID
@@ -415,8 +418,9 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                         
    EXECUTE IMMEDIATE V_MSQL;
    
-   V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
+   SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
+   SALIDA := SALIDA || '      [INFO] 2 - ACT_ACTIVO'||CHR(10);  
                         
    V_MSQL :=            'MERGE INTO REM01.ACT_ACTIVO ACT
                         USING (				
@@ -433,12 +437,13 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                         
    EXECUTE IMMEDIATE V_MSQL;
    
-   V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
-    commit;
+   SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
    
    ELSIF  FLAG_EN_REM = 0 THEN
    
+   SALIDA := SALIDA || '   [INFO] 9 - ACTUALIZAMOS ACTIVOS A EN TRÁMITE'||CHR(10);
+
+   SALIDA := SALIDA || '      [INFO] 1 - ACT_PAC_PERIMETRO_ACTIVO'||CHR(10);
    V_MSQL :=  		 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
                	 USING (				
                         SELECT ACT.ACT_ID AS ACT_ID
@@ -454,9 +459,10 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
  
    EXECUTE IMMEDIATE V_MSQL;
    
-   V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
+   SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
                         
+   SALIDA := SALIDA || '      [INFO] 2 - ACT_ACTIVO'||CHR(10);
+                           
    V_MSQL :=            'MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
                	 USING (				
                      	 SELECT ACT.ACT_ID AS ACT_ID
@@ -471,9 +477,11 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                        
    EXECUTE IMMEDIATE V_MSQL;
    
-   V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
-    commit;
+   SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
+   SALIDA := SALIDA || '   [INFO] 10 - ACTUALIZAMOS ACTIVOS A FORMALIZADOS'||CHR(10);
+
+   SALIDA := SALIDA || '      [INFO] 1 - ACT_PAC_PERIMETRO_ACTIVO'||CHR(10);
 
     V_MSQL :=           'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
                         USING (				
@@ -493,8 +501,9 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                        
    EXECUTE IMMEDIATE V_MSQL;
    
-   V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
+   SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
+   SALIDA := SALIDA || '      [INFO] 2 - ACT_PAC_PERIMETRO_ACTIVO'||CHR(10);
                         
    V_MSQL :=            'MERGE INTO REM01.ACT_ACTIVO ACT
                         USING (				
@@ -510,16 +519,13 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                        
    EXECUTE IMMEDIATE V_MSQL;
    
-   V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
-    commit;
+   SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
    
    END IF;
 
 
 --6º Merge tabla ACT_FAD_FISCALIDAD_ADQUISICION
-
-   DBMS_OUTPUT.PUT_LINE('[INFO] 7 MERGE A LA TABLA ACT_FAD_FISCALIDAD_ADQUISICION.');
+   SALIDA := SALIDA || '   [INFO] 11 - ACT_FAD_FISCALIDAD_ADQUISICION'||CHR(10);
 
    V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_FAD_FISCALIDAD_ADQUISICION ACT
                USING (		
@@ -554,10 +560,7 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
    ';
    EXECUTE IMMEDIATE V_MSQL;
 
-   V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
-    commit;
-
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
 
 COMMIT;
 

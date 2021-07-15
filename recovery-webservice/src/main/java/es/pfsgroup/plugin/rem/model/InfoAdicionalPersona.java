@@ -65,6 +65,13 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
 	@JoinColumn(name = "DD_ECC_ID")
 	private DDEstadoComunicacionC4C estadoComunicacionC4C;
 
+	@Column(name = "IAP_MODIFICA_PBC")
+	private Boolean modificaPBC;
+
+	@Column(name = "IAP_PRP")
+	private Boolean prp;
+
+
 	@Embedded
 	private Auditoria auditoria;
 
@@ -142,6 +149,22 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
 
 	public void setEstadoComunicacionC4C(DDEstadoComunicacionC4C estadoComunicacionC4C) {
 		this.estadoComunicacionC4C = estadoComunicacionC4C;
+	}
+
+	public Boolean getModificaPBC() {
+		return modificaPBC;
+	}
+
+	public void setModificaPBC(Boolean modificaPBC) {
+		this.modificaPBC = modificaPBC;
+	}
+
+	public Boolean getPrp() {
+		return prp;
+	}
+
+	public void setPrp(Boolean prp) {
+		this.prp = prp;
 	}
 
 	public Long getVersion() {

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210622
+--## FECHA_CREACION=20210715
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14368
+--## INCIDENCIA_LINK=HREOS-14545
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -16,6 +16,7 @@
 --##        0.4 Formatos númericos en ACT_EN_TRAMITE = 0  - [HREOS-14366] - Daniel Algaba
 --##        0.5 Cambiamos años  - [HREOS-14368] - Daniel Algaba
 --##        0.6 Metemos NUM_IDENTFICATIVO como campos de cruce - [HREOS-14368] - Daniel Algaba
+--##	    0.7 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - HREOS-14545
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -46,7 +47,11 @@ CREATE OR REPLACE PROCEDURE SP_RBC_07_INFORME_COMERCIAL
 BEGIN
 
 --1º Merge tabla AUX_APR_RBC_STOCK
-   DBMS_OUTPUT.PUT_LINE('[INFO] 1 MERGE A LA TABLA AUX_APR_RBC_STOCK.');
+    SALIDA := '[INICIO]'||CHR(10);
+
+    SALIDA := SALIDA || '[INFO] SE VA A PROCEDER A EXTRAER INFORME COMERCIAL'|| CHR(10);
+
+    SALIDA := SALIDA || '   [INFO] 1 - EXTRACCIÓN ACT_ICO_INFO_COMERCIAL, ACT_DIS_DISTRIBUCION y ACT_EDI_EDIFICIO'||CHR(10);
 
     V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.AUX_APR_RBC_STOCK AUX
 	USING (			
@@ -177,11 +182,7 @@ BEGIN
    ';
    EXECUTE IMMEDIATE V_MSQL;
    
-
-   V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
-    commit;
-
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
 
 
 COMMIT;

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20210617
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210714
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14344
+--## INCIDENCIA_LINK=HREOS-14545
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-14197] - Daniel Algaba
 --##        0.2  Revisión - [HREOS-14344] - Alejandra García
+--##        0.3 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - [HREOS-14545] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -51,7 +52,7 @@ BEGIN
                   , BIE.BIE_ID
                   , TO_DATE(APR.FEC_TITULO_FIRME,''yyyymmdd'') BIE_ADJ_F_DECRETO_FIRME
                   , TO_DATE(APR.FEC_SENYAL_LANZAMIENTO,''yyyymmdd'') BIE_ADJ_F_SEN_LANZAMIENTO
-                  , TO_DATE(APR.FEC_LANZAMINETO,''yyyymmdd'') BIE_ADJ_F_REA_LANZAMIENTO
+                  , TO_DATE(APR.FEC_LANZAMIENTO,''yyyymmdd'') BIE_ADJ_F_REA_LANZAMIENTO
                   , TO_DATE(APR.FEC_RESOLUCION_MORA,''yyyymmdd'') BIE_ADJ_F_RES_MORATORIA
                   , TO_DATE(APR.FEC_POSESION,''yyyymmdd'') BIE_ADJ_F_REA_POSESION
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
@@ -60,7 +61,7 @@ BEGIN
                   LEFT JOIN '|| V_ESQUEMA ||'.BIE_ADJ_ADJUDICACION BIE_ADJ ON BIE_ADJ.BIE_ID = BIE.BIE_ID AND BIE_ADJ.BORRADO = 0
                   WHERE APR.FLAG_EN_REM = '||FLAG_EN_REM||'
                   ) AUX
-                  ON (ADJ.BIE_ADJ_ID = AUX.BIE_ADJ_ID AND ADJ.BORRADO = 0)
+                  ON (ADJ.BIE_ADJ_ID = AUX.BIE_ADJ_ID)
                   WHEN MATCHED THEN
                   UPDATE SET 
                   ADJ.BIE_ADJ_F_DECRETO_FIRME = AUX.BIE_ADJ_F_DECRETO_FIRME
@@ -105,13 +106,17 @@ BEGIN
                   , ACT.ACT_ID
                   , TO_DATE(APR.FEC_ADJUDICACION,''yyyymmdd'') AJD_FECHA_ADJUDICACION
                   , APR.NUM_AUTOS_JUZGADO AJD_NUM_AUTO
+                  , AJD.AJD_ID
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
+                  JOIN '|| V_ESQUEMA ||'.DD_TTA_TIPO_TITULO_ACTIVO TTA ON TTA.DD_TTA_ID = ACT.DD_TTA_ID AND TTA.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_BIEN BIE ON ACT.BIE_ID = BIE.BIE_ID AND BIE.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_ADJ_ADJUDICACION BIE_ADJ ON BIE_ADJ.BIE_ID = BIE.BIE_ID AND BIE_ADJ.BORRADO = 0
-                  WHERE APR.FLAG_EN_REM = '||FLAG_EN_REM||'
+                  LEFT JOIN '|| V_ESQUEMA ||'.ACT_AJD_ADJJUDICIAL AJD ON BIE_ADJ.BIE_ADJ_ID = AJD.BIE_ADJ_ID AND AJD.BORRADO = 0
+                  WHERE TTA.DD_TTA_CODIGO = ''01''
+                  AND APR.FLAG_EN_REM = '||FLAG_EN_REM||'
                   ) AUX
-                  ON (AJD.ACT_ID = AUX.ACT_ID AND AJD.BORRADO = 0)
+                  ON (AJD.AJD_ID = AUX.AJD_ID)
                   WHEN MATCHED THEN
                   UPDATE SET 
                   AJD.AJD_FECHA_ADJUDICACION = AUX.AJD_FECHA_ADJUDICACION
@@ -148,12 +153,16 @@ BEGIN
                   ACT.ACT_ID
                   , APR.IMPORTE_CESION ADN_VALOR_ADQUISICION
                   , TO_DATE(APR.FEC_CESION_REMATE,''yyyymmdd'') ADN_FECHA_TITULO
+                  , ADN.ADN_ID
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
+                  JOIN '|| V_ESQUEMA ||'.DD_TTA_TIPO_TITULO_ACTIVO TTA ON TTA.DD_TTA_ID = ACT.DD_TTA_ID AND TTA.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_BIEN BIE ON ACT.BIE_ID = BIE.BIE_ID AND BIE.BORRADO = 0
-                  WHERE APR.FLAG_EN_REM = '||FLAG_EN_REM||'
+                  LEFT JOIN '|| V_ESQUEMA ||'.ACT_ADN_ADJNOJUDICIAL ADN ON ADN.ACT_ID = ACT.ACT_ID AND ADN.BORRADO = 0
+                  WHERE TTA.DD_TTA_CODIGO = ''02''
+                  AND APR.FLAG_EN_REM = '||FLAG_EN_REM||'
                   ) AUX
-                  ON (ADN.ACT_ID = AUX.ACT_ID AND ADN.BORRADO = 0)
+                  ON (ADN.ADN_ID = AUX.ADN_ID)
                   WHEN MATCHED THEN
                   UPDATE SET 
                   ADN.ADN_VALOR_ADQUISICION = AUX.ADN_VALOR_ADQUISICION

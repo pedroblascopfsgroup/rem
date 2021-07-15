@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
-import es.pfsgroup.plugin.rem.model.DtoAccionAprobacionCaixa;
-import es.pfsgroup.plugin.rem.model.DtoAccionRechazoCaixa;
+import es.pfsgroup.plugin.rem.model.*;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface AccionesCaixaApi {
@@ -11,4 +10,16 @@ public interface AccionesCaixaApi {
     void accionRechazo(DtoAccionRechazoCaixa dto) throws Exception;
 
     void accionRechazoAvanzaRE(DtoAccionRechazoCaixa dto) throws Exception;
+
+    void accionResultadoRiesgo(DtoAccionResultadoRiesgoCaixa dto);
+
+    void accionArrasAprobadas(DtoOnlyExpedienteYOfertaCaixa dto);
+
+    void accionIngresoFinalAprobado(DtoOnlyExpedienteYOfertaCaixa dto);
+
+    void accionFirmaArrasAprobadas(DtoFirmaArrasAprobadasCaixa dto) throws Exception;
+
+    void accionFirmaContratoAprobada(DtoFirmaContratoAprobadaCaixa dto) throws Exception;
+
+    void accionVentaContabilizada(DtoOnlyExpedienteYOfertaCaixa dto);
 }

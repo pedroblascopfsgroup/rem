@@ -143,6 +143,11 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 									DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO.equals(expediente.getReserva().getEstadoReserva().getCodigo()) || 
 									DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION.equals(expediente.getReserva().getEstadoReserva().getCodigo()));
 				}
+
+				DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
+				expediente.setEstadoBc(estadoExpedienteBc);
+
 				for(TareaExternaValor valor :  valores) {
 					if(CHECK_ANULAR_Y_CLONAR.equals(valor.getNombre())) {
 						clonarYAnular = !Checks.esNulo(valor.getValor()) && valor.getValor().equals("on");
@@ -290,10 +295,6 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						expediente.setFechaAnulacion(new Date());
 						mandaCorreo=true;
 					}
-
-					DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
-					expediente.setEstadoBc(estadoExpedienteBc);
 					
 					// --- INICIO --- HREOS-5052 ---
 					// Si un expediente esta bloqueado por Gencat(lo sabemos mirando si tiene comuncacionesGencat)

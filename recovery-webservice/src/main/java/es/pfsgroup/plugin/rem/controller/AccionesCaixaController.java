@@ -3,10 +3,9 @@ package es.pfsgroup.plugin.rem.controller;
 import es.capgemini.devon.exception.UserException;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
-import es.pfsgroup.plugin.rem.model.DtoAccionRechazoCaixa;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.rest.dto.AccionesCaixaDtoData;
 import es.pfsgroup.plugin.rem.rest.dto.AccionesCaixaRequestDto;
-import es.pfsgroup.plugin.rem.model.DtoAccionAprobacionCaixa;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import net.sf.json.JSONObject;
@@ -27,6 +26,12 @@ public class AccionesCaixaController extends ParadiseJsonController {
     public static final String ACCION_APROBACION = "001";
     public static final String ACCION_RECHAZO = "002";
     public static final String ACCION_RECHAZO_AVANZA_RE = "002B";
+    public static final String ACCION_RESULTADO_RIESGO = "004";
+    public static final String ACCION_ARRAS_APROBADAS = "005";
+    public static final String ACCION_INGRESO_FINAL_APR = "008";
+    public static final String ACCION_FIRMA_ARRAS_APR = "013";
+    public static final String ACCION_FIRMA_CONTRATO_APR = "015";
+    public static final String ACCION_VENTA_CONTABILIZADA = "023";
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -101,6 +106,84 @@ public class AccionesCaixaController extends ParadiseJsonController {
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionRechazoAvanzaRE(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionResultadoRiesgo(DtoAccionResultadoRiesgoCaixa dto){
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionResultadoRiesgo(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionArrasAprobadas(DtoOnlyExpedienteYOfertaCaixa dto){
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionArrasAprobadas(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionIngresoFinalAprobado(DtoOnlyExpedienteYOfertaCaixa dto){
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionIngresoFinalAprobado(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionFirmaArrasAprobadas(DtoFirmaArrasAprobadasCaixa dto){
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionFirmaArrasAprobadas(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionFirmaContratoAprobada(DtoFirmaContratoAprobadaCaixa dto){
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionFirmaContratoAprobada(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionVentaContabilizada(DtoOnlyExpedienteYOfertaCaixa dto){
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionVentaContabilizada(dto);
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();

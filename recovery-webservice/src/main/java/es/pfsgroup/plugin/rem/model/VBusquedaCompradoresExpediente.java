@@ -123,11 +123,11 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 	@Column(name = "FECHA_ACEP_GDPR")
 	private String fechaAcepGdpr;
 	
-	@Column(name = "DD_ECC_CODIGO")
-	private String estadoComunicacionCompradorBCCodigo;
+	//@Column(name = "DD_ECC_CODIGO")
+	//private String estadoComunicacionCompradorBCCodigo;
 	
-	@Column(name = "DD_ECC_DESCRIPCION")
-	private String estadoComunicacionCompradorBCDescripcion;
+	//@Column(name = "DD_ECC_DESCRIPCION")
+	//private String estadoComunicacionCompradorBCDescripcion;
 	
 	
     
@@ -411,7 +411,7 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 		this.fechaContraste = fechaContraste;
 	}
 
-	public String getEstadoComunicacionCompradorBCCodigo() {
+	/*public String getEstadoComunicacionCompradorBCCodigo() {
 		return estadoComunicacionCompradorBCCodigo;
 	}
 
@@ -425,6 +425,6 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 
 	public void setEstadoComunicacionCompradorBCDescripcion(String estadoComunicacionCompradorBCDescripcion) {
 		this.estadoComunicacionCompradorBCDescripcion = estadoComunicacionCompradorBCDescripcion;
-	}
+	}*/
 
 }

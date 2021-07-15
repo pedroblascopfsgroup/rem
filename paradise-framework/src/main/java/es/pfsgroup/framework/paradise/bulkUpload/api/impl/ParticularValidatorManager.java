@@ -7293,7 +7293,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+"		FROM DD_STG_SUBTIPOS_GASTO"
-				+"		WHERE DD_STG_CODIGO = :codSubtipoGasto'"
+				+"		WHERE DD_STG_CODIGO = :codSubtipoGasto"
 				+"		AND BORRADO= 0");
 
 		return !"0".equals(resultado);
@@ -7461,7 +7461,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				")\n" + 
 				"SELECT COUNT(1) \n" + 
 				"FROM REM01.GPV_GASTOS_PROVEEDOR GPV\n" + 
-				"WHERE GPV.GPV_NUM_GASTO_HAYA = :numGastoHaya:\n" + 
+				"WHERE GPV.GPV_NUM_GASTO_HAYA = :numGastoHaya\n" + 
 				"    AND GPV.BORRADO = 0\n" + 
 				"    AND (\n" + 
 				"        EXISTS (\n" + 

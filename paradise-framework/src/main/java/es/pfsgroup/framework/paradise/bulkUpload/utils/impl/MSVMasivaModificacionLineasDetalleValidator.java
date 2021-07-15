@@ -1299,62 +1299,60 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
    
    private List<Integer> activoRepetidoBankia(MSVHojaExcel exc){
        List<Integer> listaFilas = new ArrayList<Integer>();
+       
+       Map<String, List<String>> mapaListas = new HashMap<String, List<String>>();
+       List<String> listRetorno = null;
+       
+       String activoTipo=",vacio";
+       String tipoElemento = null;
+       String activo = null;
+       String subtipoGasto = null;
+       String tipoImpositivo=null;
+       String tipoImpuesto=null;
+       String gasto = null;
+       List<String> listaAux = Arrays.asList(listaCampoAccionBorrar);
+       try {
+    	   for (int i = 1; i < this.numFilasHoja; i++) {
+        	   try {
+    	    	   if (!listaAux.contains(exc.dameCelda(i, COL_ACCION_LINEA_DETALLE).toUpperCase())) {
+    	    		   	listRetorno = new ArrayList<String>();
+    		    		subtipoGasto = exc.dameCelda(i, COL_SUBTIPO_GASTO);
+    		        	tipoImpositivo = exc.dameCelda(i, COL_TIPO_IMPOSITIVO);
+    		        	tipoImpuesto = exc.dameCelda(i, COL_TIPO_IMPUESTO);
+    		        	gasto = exc.dameCelda(i, COL_ID_GASTO);
+    		    		tipoElemento = exc.dameCelda(i, COL_TIPO_ELEMENTO);
+    		    		activo = exc.dameCelda(i, COL_ID_ELEMENTO);
+    		        	
+    		    		String retorno = gastoSubtipoImpuestoImpositivo(subtipoGasto, tipoImpositivo, tipoImpuesto, gasto);
+    		    		
+    		    		if(!Checks.esNulo(tipoElemento) && !Checks.esNulo(activo)) {
+    		    			activoTipo = "," + tipoElemento + "-" + activo;
+    		    			listRetorno.add(activoTipo);
+    		    		}
+    		    		
+    		    		if (!mapaListas.containsKey(retorno)) {
+    		    			mapaListas.put(retorno, listRetorno);
+    					}else {
+    						List<String> listValores = mapaListas.get(retorno);
+    						if (!listValores.contains(activoTipo)) {
+    							mapaListas.get(retorno).add(activoTipo);
+    						}else {
+    							listaFilas.add(i);					
+    						}
+    					}
+    				}
+        	   } catch (ParseException e) {
+                   listaFilas.add(i);
+               }
+           }
+       } catch (IllegalArgumentException e) {
+           listaFilas.add(0);
+           e.printStackTrace();
+       } catch (IOException e) {
+           listaFilas.add(0);
+           e.printStackTrace();
+       }
 
-        try{
-            for(int i=1; i<this.numFilasHoja;i++){
-                try {
-                	boolean tieneBorrar = false;
-                	boolean addError = false;
-                	String tipoAccion = exc.dameCelda(i, COL_ACCION_LINEA_DETALLE);
-                    if(!Checks.esNulo(exc.dameCelda(i, COL_ID_GASTO)) && Boolean.TRUE.equals(particularValidator.perteneceGastoBankia(exc.dameCelda(i, COL_ID_GASTO)))) {
-                    	if(!Checks.esNulo(tipoAccion) && Arrays.asList(listaCampoAccionAnyadir).contains(tipoAccion.toUpperCase())) {
-                        	for(int x = 1; x<i;x++) {
-                        		if(exc.dameCelda(x, COL_ID_GASTO).equals(exc.dameCelda(i, COL_ID_GASTO)) && 
-                        		Arrays.asList(listaCampoAccionAnyadir).contains(exc.dameCelda(x, COL_ACCION_LINEA_DETALLE).toUpperCase()) &&
-                        		exc.dameCelda(x, COL_SUBTIPO_GASTO).equals(exc.dameCelda(i, COL_SUBTIPO_GASTO)) &&
-                        		exc.dameCelda(x, COL_TIPO_IMPUESTO).equals(exc.dameCelda(i, COL_TIPO_IMPUESTO)) &&
-                        		exc.dameCelda(x, COL_TIPO_IMPOSITIVO).equals(exc.dameCelda(i, COL_TIPO_IMPOSITIVO)) &&
-                        		exc.dameCelda(x, COL_TIPO_ELEMENTO).equals(exc.dameCelda(i, COL_TIPO_ELEMENTO)) &&
-                        		exc.dameCelda(x, COL_ID_ELEMENTO).equals(exc.dameCelda(i, COL_ID_ELEMENTO))
-                        		) {
-                        			listaFilas.add(i);
-                        			addError = true;
-                        			break;
-                        		}
-                        	}
-                    	if(Boolean.TRUE.equals(particularValidator.gastoTieneLineaDetalle(exc.dameCelda(i, COL_ID_GASTO))) && !addError) {
-                    		for(int x = 1; x<i;x++) {
-                        		if(exc.dameCelda(x, COL_ID_GASTO).equals(exc.dameCelda(i, COL_ID_GASTO)) && 
-                        		Arrays.asList(listaCampoAccionAnyadir).contains(exc.dameCelda(x, COL_ACCION_LINEA_DETALLE).toUpperCase()) &&
-                        		exc.dameCelda(x, COL_SUBTIPO_GASTO).equals(exc.dameCelda(i, COL_SUBTIPO_GASTO)) &&
-                        		exc.dameCelda(x, COL_TIPO_IMPUESTO).equals(exc.dameCelda(i, COL_TIPO_IMPUESTO)) &&
-                        		exc.dameCelda(x, COL_TIPO_IMPOSITIVO).equals(exc.dameCelda(i, COL_TIPO_IMPOSITIVO)) &&
-                        		exc.dameCelda(x, COL_TIPO_ELEMENTO).equals(exc.dameCelda(i, COL_TIPO_ELEMENTO)) &&
-                        		exc.dameCelda(x, COL_ID_ELEMENTO).equals(exc.dameCelda(i, COL_ID_ELEMENTO))
-                        		) {
-                        			tieneBorrar = true;
-                        			break;
-                        		}
-                        	}
-                    		if(!tieneBorrar) {
-                    			listaFilas.add(i);
-                    		}
-                    	}
-                      }
-                    }
-                    	
-                        
-                } catch (ParseException e) {
-                    listaFilas.add(i);
-                }
-            }
-            } catch (IllegalArgumentException e) {
-                listaFilas.add(0);
-                e.printStackTrace();
-            } catch (IOException e) {
-                listaFilas.add(0);
-                e.printStackTrace();
-            }
         return listaFilas;   
    }
 

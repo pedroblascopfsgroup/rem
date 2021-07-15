@@ -164,4 +164,15 @@ public class DDSinSiNo implements Auditable, Dictionary {
         }
     	return dicc;   	
     }
+    
+    public static Boolean cambioStringtoBooleano(String codigo) {
+        Boolean dicc= null;
+
+    	if(DDSinSiNo.CODIGO_NO.equals(codigo)) {
+    		dicc= false;
+    	}else if(DDSinSiNo.CODIGO_SI.equals(codigo)){
+    		dicc = true;
+    	}
+    	return dicc;   	
+    }
 }

@@ -9,6 +9,8 @@ public interface TramiteAlquilerApi {
 	boolean haPasadoScoringBC(Long idTramite);
 	
 	String tipoTratamientoAlquiler(Long idTramite);
+
+	boolean haPasadoSeguroDeRentas(Long idTramite);
 	
 	
 }

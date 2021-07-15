@@ -3068,6 +3068,58 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		
 	},
 	
+	T015_SolicitarGarantiasAdicionalesValidacion: function(){
+		var me = this;
+		var idTarea = me.idTarea;
+		var idTramite = me.up('tramitesdetalle').getViewModel().get('tramite.idTramite');
+		var comboRespuesta = me.down('[name=comboResultado]');
+		var comboRespuestaComprador = me.down('[name=respuestaComprador]');
+		var haPasadoSeguroRentas = false;
+		
+		comboRespuestaComprador.setDisabled(true);
+
+		var url =  $AC.getRemoteUrl('expedientecomercial/haPasadoSeguroRentas');
+		Ext.Ajax.request({
+			url: url,
+			params: {idTarea : idTramite},
+		    success: function(response, opts) {
+				comboRespuesta.addListener('change', function() {
+					var data = Ext.decode(response.responseText);
+					haPasadoSeguroRentas = data.data;
+					if(CONST.COMBO_SIN_SINO['SI'] == comboRespuesta.getValue()){
+						comboRespuestaComprador.setDisabled(false);
+						if(haPasadoSeguroRentas === "true"){
+							comboRespuestaComprador.setValue(CONST.RESPUESTA_COMPRADOR['CODIGO_SEGURO_RENTAS']);
+							me.bloquearCampo(comboRespuestaComprador);
+						}else{
+							me.desbloquearCampo(comboRespuestaComprador);
+							me.campoObligatorio(comboRespuestaComprador);
+							
+							var comboRespuestaCompradorStore = comboRespuestaComprador.getStore();
+							var itemsStore = comboRespuestaCompradorStore.getData().items; 
+							var indexEliminar;
+							for( var i = 0 ; i < itemsStore.length; i++) { 
+								if(itemsStore[i].getData().codigo == CONST.RESPUESTA_COMPRADOR['CODIGO_SEGURO_RENTAS']){  
+									indexEliminar = i; 
+									break;
+								}
+							}
+							if(!Ext.isEmpty(indexEliminar)){
+								comboRespuestaCompradorStore.splice(indexEliminar, 1);
+							}
+							
+						}
+					}else if(CONST.COMBO_SIN_SINO['NO'] == comboRespuesta.getValue()){
+						comboRespuestaComprador.clearValue();
+						comboRespuestaComprador.setDisabled(true);
+						me.campoNoObligatorio(comboRespuestaComprador);
+						comboRespuestaComprador.validate();
+					}		
+				});	
+		    }
+		});	 		
+	},
+	
     habilitarCampo: function(campo) {
         var me = this;
         campo.setDisabled(false);

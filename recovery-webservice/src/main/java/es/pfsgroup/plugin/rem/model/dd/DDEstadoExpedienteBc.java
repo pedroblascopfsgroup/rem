@@ -53,6 +53,9 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 	public static final String CODIGO_VENTA_FORMALIZADA = "021";
 	public static final String CODIGO_COMPROMISO_CANCELADO = "022";
 	public static final String CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC = "023";
+	public static final String CODIGO_SCORING_APROBADO = "029";
+	
+	public static final String CODIGO_PTE_ENVIO = "034";
 	
 	private static final long serialVersionUID = 1L;
 

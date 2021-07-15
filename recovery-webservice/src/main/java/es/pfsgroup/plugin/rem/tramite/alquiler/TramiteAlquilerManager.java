@@ -25,6 +25,7 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	private static final String T015_ElevarASancion = "T015_ElevarASancion";
 	private static final String T015_ScoringBC = "T015_ScoringBC";
 	private static final String T015_DefinicionOferta = "T015_DefinicionOferta";
+	private static final String T015_VerificarSeguroRentas = "T015_VerificarSeguroRentas";
 	
 	private static final String CAMPO_DEF_OFERTA_TIPOTRATAMIENTO = "tipoTratamiento";
 	
@@ -34,7 +35,8 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 	
-	@Autowired ActivoTramiteApi activoTramiteApi;
+	@Autowired 
+	private ActivoTramiteApi activoTramiteApi;
 	
 	@Autowired
 	private ActivoTareaExternaApi activoTareaExternaApi;
@@ -113,5 +115,19 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		}
 		
 		return salto;
+	}
+	
+	@Override
+	public boolean haPasadoSeguroDeRentas(Long idTramite) {
+		boolean haPasado = false;
+		List<TareaProcedimiento> tareas = activoTramiteApi.getTareasByIdTramite(idTramite);
+		for (TareaProcedimiento tareaProcedimiento : tareas) {
+			if(T015_VerificarSeguroRentas.equals(tareaProcedimiento.getCodigo())) {
+				haPasado = true;
+				break;
+			}
+		}
+
+		return haPasado;
 	}
 }

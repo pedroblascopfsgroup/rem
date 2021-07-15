@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GdprApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.excel.ActivosExpedienteExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -177,6 +178,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@Autowired
 	private ExpedienteAdapter expedienteAdapter;
+	
+	@Autowired
+	private TramiteAlquilerApi tramiteAlquilerApi;
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -2662,6 +2666,23 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", numOferta);
 			Oferta oferta = genericDao.get(Oferta.class, filtro);
 			expedienteComercialApi.tareaDesbloqueoScreening(expedienteComercialApi.dataToDtoScreeningDesBloqueo( oferta.getNumOferta(),  motivo,  observaciones));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView haPasadoSeguroRentas(ModelMap model,Long idTarea) {
+		try {
+			model.put(RESPONSE_DATA_KEY, tramiteAlquilerApi.haPasadoSeguroDeRentas(idTarea));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {

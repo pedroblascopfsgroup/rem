@@ -176,7 +176,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 								genericDao.save(Oferta.class, ofertaAceptada);
 								
 								if(DDCartera.isCarteraBk(activo.getCartera())) {
-									DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
+									DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
 									expediente.setEstadoBc(estadoBc);
 								}
 								

@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20210715
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14584
+--## INCIDENCIA_LINK=HREOS-14635
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_EEB_ESTADO_EXPEDIENTE_BC los datos añadidos en T_ARRAY_DATA
@@ -32,7 +32,7 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-14584';
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-14635';
 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_EEC_EST_EXP_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     

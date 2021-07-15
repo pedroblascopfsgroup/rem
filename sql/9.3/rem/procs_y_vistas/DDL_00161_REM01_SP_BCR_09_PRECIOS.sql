@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20210617
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210714
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14270
+--## INCIDENCIA_LINK=HREOS-14545
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - HREOS-14270
+--##	      0.2 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - HREOS-14545
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -37,8 +38,11 @@ CREATE OR REPLACE PROCEDURE SP_BCR_09_PRECIOS
 
 BEGIN
 
+      SALIDA := '[INICIO]'||CHR(10);
 
-      DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZAR FECHA FIN EN ACT_VAL_VALORACIONES.');
+      SALIDA := SALIDA || '[INFO] SE VA A PROCEDER A ACTUALIZAR/INSERTAR PRECIOS.'|| CHR(10);
+
+      SALIDA := SALIDA || '   [INFO] 1 - FECHA FIN EN ACT_VAL_VALORACIONES'||CHR(10);
 
        V_MSQL := '   MERGE INTO '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES act1
 				using (		
@@ -102,11 +106,13 @@ BEGIN
                                 WHEN ((us.VAL_IMPORTE <> act1.VAL_IMPORTE OR TO_DATE(us.VAL_FECHA_INICIO,''YYYYMMDD'') <> act1.VAL_FECHA_INICIO)AND us.VAL_FECHA_INICIO IS NOT NULL ) THEN TO_DATE(us.VAL_FECHA_INICIO,''YYYYMMDD'') 
                                 WHEN((us.VAL_IMPORTE <> act1.VAL_IMPORTE OR TO_DATE(us.VAL_FECHA_INICIO,''YYYYMMDD'') <> act1.VAL_FECHA_INICIO)AND us.VAL_FECHA_INICIO IS  NULL ) THEN  TO_DATE(SYSDATE,''DD/MM/YYYY'')
                             END)
-                            ,act1.USUARIOMODIFICAR = ''STOCK''
+                            ,act1.USUARIOMODIFICAR = ''STOCK_BC''
                             ,act1.FECHAMODIFICAR = sysdate';
  EXECUTE IMMEDIATE V_MSQL;
-   
-   DBMS_OUTPUT.PUT_LINE('[INFO] INSERTAR EN ACT_VAL_VALORACIONES VALORACIONES QUE EXISTEN.');
+
+      SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
+      SALIDA := SALIDA || '   [INFO] 2 - INSERTAR EN ACT_VAL_VALORACIONES VALORACIONES QUE EXISTEN'||CHR(10);
 
       V_MSQL := '  INSERT INTO '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES (VAL_ID,
                      ACT_ID,
@@ -135,7 +141,7 @@ BEGIN
                      IMP_PRECIO_VENTA as VAL_IMPORTE,
                      NVL(TO_DATE(FEC_INICIO_PRECIO_VENTA,''YYYYMMDD''),TO_CHAR(SYSDATE,''DD/MM/YYYY'') )  as VAL_FECHA_INICIO,
                      TO_DATE(FEC_FIN_PRECIO_VENTA,''YYYYMMDD'') as VAL_FECHA_FIN,
-                     ''STOCK'' as USUARIOCREAR,
+                     ''STOCK_BC'' as USUARIOCREAR,
                      SYSDATE as FECHACREAR                  
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
@@ -155,7 +161,7 @@ BEGIN
                      IMP_PRECIO_ALQUI as VAL_IMPORTE,
                      NVL(TO_DATE(FEC_INICIO_PRECIO_ALQUI,''YYYYMMDD''),TO_CHAR(SYSDATE,''DD/MM/YYYY'') )  as VAL_FECHA_INICIO,
                      TO_DATE(FEC_FIN_PRECIO_ALQUI,''YYYYMMDD'') as VAL_FECHA_FIN,
-                     ''STOCK'' as USUARIOCREAR,
+                     ''STOCK_BC'' as USUARIOCREAR,
                      SYSDATE as FECHACREAR
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
@@ -174,7 +180,7 @@ BEGIN
                      IMP_PRECIO_CAMP_VENTA as VAL_IMPORTE,
                      NVL(TO_DATE(FEC_INICIO_PRECIO_CAMP_VENTA,''YYYYMMDD''),TO_CHAR(SYSDATE,''DD/MM/YYYY'') )  as VAL_FECHA_INICIO,
                      TO_DATE(FEC_FIN_PRECIO_CAMP_VENTA,''YYYYMMDD'') as VAL_FECHA_FIN,
-                     ''STOCK'' as USUARIOCREAR,
+                     ''STOCK_BC'' as USUARIOCREAR,
                      SYSDATE as FECHACREAR
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
@@ -193,7 +199,7 @@ BEGIN
                      IMP_PRECIO_CAMP_ALQUI as VAL_IMPORTE,
                      NVL(TO_DATE(FEC_INICIO_PRECIO_CAMP_ALQUI,''YYYYMMDD''),TO_CHAR(SYSDATE,''DD/MM/YYYY'') )  as VAL_FECHA_INICIO,
                      TO_DATE(FEC_FIN_PRECIO_CAMP_ALQUI,''YYYYMMDD'') as VAL_FECHA_FIN,
-                     ''STOCK'' as USUARIOCREAR,
+                     ''STOCK_BC'' as USUARIOCREAR,
                      SYSDATE as FECHACREAR
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
@@ -205,7 +211,9 @@ BEGIN
                      )a';
  EXECUTE IMMEDIATE V_MSQL;
 
- DBMS_OUTPUT.PUT_LINE('[INFO] INSERTAR EN ACT_VAL_VALORACIONES VALORACIONES QUE NO EXISTEN.');
+      SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
+      SALIDA := SALIDA || '   [INFO] 3 - INSERTAR EN ACT_VAL_VALORACIONES VALORACIONES QUE NO EXISTEN'||CHR(10);
 
       V_MSQL := '  INSERT INTO '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES (VAL_ID,
                      ACT_ID,
@@ -233,7 +241,7 @@ BEGIN
                      IMP_PRECIO_VENTA as VAL_IMPORTE,
                      NVL(TO_DATE(FEC_INICIO_PRECIO_VENTA,''YYYYMMDD''),TO_CHAR(SYSDATE,''DD/MM/YYYY'') )  as VAL_FECHA_INICIO,
                      TO_DATE(FEC_FIN_PRECIO_VENTA,''YYYYMMDD'') as VAL_FECHA_FIN,
-                     ''STOCK'' as USUARIOCREAR,
+                     ''STOCK_BC'' as USUARIOCREAR,
                      SYSDATE as FECHACREAR
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
@@ -251,7 +259,7 @@ BEGIN
                      IMP_PRECIO_ALQUI as VAL_IMPORTE,
                      NVL(TO_DATE(FEC_INICIO_PRECIO_ALQUI,''YYYYMMDD''),TO_CHAR(SYSDATE,''DD/MM/YYYY'') )  as VAL_FECHA_INICIO,
                      TO_DATE(FEC_FIN_PRECIO_ALQUI,''YYYYMMDD'') as VAL_FECHA_FIN,
-                     ''STOCK'' as USUARIOCREAR,
+                     ''STOCK_BC'' as USUARIOCREAR,
                      SYSDATE as FECHACREAR
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
@@ -269,7 +277,7 @@ BEGIN
                      IMP_PRECIO_CAMP_ALQUI as VAL_IMPORTE,
                      NVL(TO_DATE(FEC_INICIO_PRECIO_CAMP_ALQUI,''YYYYMMDD''),TO_CHAR(SYSDATE,''DD/MM/YYYY'') )  as VAL_FECHA_INICIO,
                      TO_DATE(FEC_FIN_PRECIO_CAMP_ALQUI,''YYYYMMDD'') as VAL_FECHA_FIN,
-                     ''STOCK'' as USUARIOCREAR,
+                     ''STOCK_BC'' as USUARIOCREAR,
                      SYSDATE as FECHACREAR
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
@@ -287,7 +295,7 @@ BEGIN
                      IMP_PRECIO_CAMP_VENTA as VAL_IMPORTE,
                      NVL(TO_DATE(FEC_INICIO_PRECIO_CAMP_VENTA,''YYYYMMDD''),TO_CHAR(SYSDATE,''DD/MM/YYYY'') )  as VAL_FECHA_INICIO,
                      TO_DATE(FEC_FIN_PRECIO_CAMP_VENTA,''YYYYMMDD'') as VAL_FECHA_FIN,
-                     ''STOCK'' as USUARIOCREAR,
+                     ''STOCK_BC'' as USUARIOCREAR,
                      SYSDATE as FECHACREAR
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
@@ -299,7 +307,9 @@ BEGIN
                      ) a';
  EXECUTE IMMEDIATE V_MSQL;
 
-  DBMS_OUTPUT.PUT_LINE('[INFO] INSERTAR EN ACT_DCC_DESCUENTO_COLECTIVOS DESCUENTOS QUE LLEGAN Y NO EXISTEN.');
+      SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
+      SALIDA := SALIDA || '   [INFO] 4 - INSERTAR EN ACT_DCC_DESCUENTO_COLECTIVOS DESCUENTOS QUE LLEGAN Y NO EXISTEN'||CHR(10);
 
       V_MSQL := '  INSERT INTO '|| V_ESQUEMA ||'.ACT_DCC_DESCUENTO_COLECTIVOS (ADC_ID,
                      ACT_ID,
@@ -315,7 +325,7 @@ BEGIN
                      act1.ACT_ID as ACT_ID,
                      regexp_substr(DESC_COL_PRECIO_VENTA,''[^-]+'',1,LEVEL) AS DESCUENTO,
                      (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''02'') as DD_TPC_ID,
-                     ''STOCK'' as USUARIOCREAR,
+                     ''STOCK_BC'' as USUARIOCREAR,
                      SYSDATE as FECHACREAR
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act1 ON act1.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act1.BORRADO=0  AND aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
@@ -327,7 +337,7 @@ BEGIN
                      act1.ACT_ID as ACT_ID,
                      regexp_substr(DESC_COLEC_PRECIO_ALQUI,''[^-]+'',1,LEVEL) AS DESCUENTO,
                      (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''03'') as DD_TPC_ID,
-                     ''STOCK'' as USUARIOCREAR,
+                     ''STOCK_BC'' as USUARIOCREAR,
                      SYSDATE as FECHACREAR
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act1 ON act1.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act1.BORRADO=0  AND aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
@@ -339,7 +349,7 @@ BEGIN
                      act1.ACT_ID as ACT_ID,
                      regexp_substr(DESC_COL_PRECIO_CAMP_VENTA,''[^-]+'',1,LEVEL) AS DESCUENTO,
                      (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''07'') as DD_TPC_ID,
-                     ''STOCK'' as USUARIOCREAR,
+                     ''STOCK_BC'' as USUARIOCREAR,
                      SYSDATE as FECHACREAR
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act1 ON act1.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act1.BORRADO=0  AND aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
@@ -351,7 +361,7 @@ BEGIN
                      act1.ACT_ID as ACT_ID,
                      regexp_substr(DESC_COL_PRECIO_CAMP_ALQUI,''[^-]+'',1,LEVEL) AS DESCUENTO,
                      (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''DAA'') as DD_TPC_ID,
-                     ''STOCK'' as USUARIOCREAR,
+                     ''STOCK_BC'' as USUARIOCREAR,
                      SYSDATE as FECHACREAR
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act1 ON act1.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act1.BORRADO=0  AND aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
@@ -374,7 +384,9 @@ BEGIN
                                                    )';
  EXECUTE IMMEDIATE V_MSQL;
 
-   DBMS_OUTPUT.PUT_LINE('[INFO] BORRADO LOGICO EN ACT_DCC_DESCUENTO_COLECTIVOS DESCUENTOS QUE EXISTEN Y YA NO LLEGAN.');
+      SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
+      SALIDA := SALIDA || '   [INFO] 4 - BORRADO LOGICO EN ACT_DCC_DESCUENTO_COLECTIVOS DESCUENTOS QUE EXISTEN Y YA NO LLEGAN'||CHR(10);
 
       V_MSQL := '  MERGE INTO '|| V_ESQUEMA ||'.ACT_DCC_DESCUENTO_COLECTIVOS act3
 				using (
@@ -387,7 +399,7 @@ BEGIN
                   act1.ACT_ID as ACT_ID,
                   regexp_substr(DESC_COL_PRECIO_VENTA,''[^-]+'',1,LEVEL) AS DESCUENTO,
                   (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''02'') as DD_TPC_ID,
-                  ''STOCK'' as USUARIOCREAR,
+                  ''STOCK_BC'' as USUARIOCREAR,
                   SYSDATE as FECHACREAR
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act1 ON act1.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act1.BORRADO=0  AND aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
@@ -400,7 +412,7 @@ BEGIN
                   act1.ACT_ID as ACT_ID,
                   regexp_substr(DESC_COLEC_PRECIO_ALQUI,''[^-]+'',1,LEVEL) AS DESCUENTO,
                   (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''03'') as DD_TPC_ID,
-                  ''STOCK'' as USUARIOCREAR,
+                  ''STOCK_BC'' as USUARIOCREAR,
                   SYSDATE as FECHACREAR
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act1 ON act1.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act1.BORRADO=0 AND aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
@@ -413,7 +425,7 @@ BEGIN
                   act1.ACT_ID as ACT_ID,
                   regexp_substr(DESC_COL_PRECIO_CAMP_VENTA,''[^-]+'',1,LEVEL) AS DESCUENTO,
                   (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''07'') as DD_TPC_ID,
-                  ''STOCK'' as USUARIOCREAR,
+                  ''STOCK_BC'' as USUARIOCREAR,
                   SYSDATE as FECHACREAR
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act1 ON act1.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act1.BORRADO=0  AND aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
@@ -426,7 +438,7 @@ BEGIN
                   act1.ACT_ID as ACT_ID,
                   regexp_substr(DESC_COL_PRECIO_CAMP_ALQUI,''[^-]+'',1,LEVEL) AS DESCUENTO,
                   (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''DAA'') as DD_TPC_ID,
-                  ''STOCK'' as USUARIOCREAR,
+                  ''STOCK_BC'' as USUARIOCREAR,
                   SYSDATE as FECHACREAR
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act1 ON act1.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act1.BORRADO=0  AND aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
@@ -450,9 +462,11 @@ BEGIN
                                  ) us ON (us.ACT_ID = act3.ACT_ID AND us.DD_DCC_ID = act3.DD_DCC_ID AND us.DD_TPC_ID = act3.DD_TPC_ID)
                                           WHEN MATCHED THEN UPDATE SET
                                           act3.BORRADO = 1,
-                                          act3.USUARIOBORRAR = ''STOCK'',
+                                          act3.USUARIOBORRAR = ''STOCK_BC'',
                                           act3.FECHABORRAR = sysdate';
  EXECUTE IMMEDIATE V_MSQL;
+
+      SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
 
 
 COMMIT;

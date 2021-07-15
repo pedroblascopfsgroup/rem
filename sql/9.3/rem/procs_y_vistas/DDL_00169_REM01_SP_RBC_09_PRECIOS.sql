@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210622
+--## FECHA_CREACION=20210715
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14368
+--## INCIDENCIA_LINK=HREOS-14545
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -14,6 +14,7 @@
 --##        0.2 Cambio de numeración del SP y modificación de los checks de 1 y 0 a S y N respectivamente - [HREOS-14222] - Alejandra García
 --##        0.3 Formatos númericos en ACT_EN_TRAMITE = 0  - [HREOS-14366] - Daniel Algaba
 --##        0.4 Metemos NUM_IDENTFICATIVO como campos de cruce - [HREOS-14368] - Daniel Algaba
+--##	      0.5 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - HREOS-14545
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -44,7 +45,11 @@ CREATE OR REPLACE PROCEDURE SP_RBC_09_PRECIOS
 BEGIN
 
 --1º Merge tabla AUX_APR_RBC_STOCK
-   DBMS_OUTPUT.PUT_LINE('[INFO] 1 MERGE A LA TABLA AUX_APR_RBC_STOCK.');
+    SALIDA := '[INICIO]'||CHR(10);
+
+    SALIDA := SALIDA || '[INFO] SE VA A PROCEDER A EXTRAER LOS DATOS BÁSICOS'|| CHR(10);
+
+    SALIDA := SALIDA || '   [INFO] 1 - EXTRACCIÓN ACT_VAL_VALORACIONES'||CHR(10);
 
     V_MSQL := 'MERGE INTO REM01.AUX_APR_RBC_STOCK AUX
 		USING (
@@ -74,12 +79,7 @@ BEGIN
    ';
    EXECUTE IMMEDIATE V_MSQL;
    
-
-   V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
-    commit;
-
-
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
 
 COMMIT;
 

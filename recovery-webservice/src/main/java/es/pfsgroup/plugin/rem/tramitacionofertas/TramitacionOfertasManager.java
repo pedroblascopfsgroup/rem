@@ -247,6 +247,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		Trabajo trabajo = null;
 		Boolean esAcepta = false;
 
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
 		Boolean esAlquiler = DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo());
@@ -275,12 +277,14 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		if (!resultado) {
 			resultado = this.persistOferta(oferta);
 		}
+		transactionManager.commit(transaction);
+		transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		if (esAcepta) {
 			String usuarioLogado = genericAdapter.getUsuarioLogado().getUsername();
 			ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class,
 					genericDao.createFilter(FilterType.EQUALS, "oferta", oferta));
-			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 			if (asincrono) {
+				activoDao.hibernateFlush();
 				Thread creacionAsincrona = new Thread(new TramitacionOfertasAsync(activo.getId(), esAcepta,
 						trabajo.getId(), oferta.getId(), expedienteComercial.getId(), usuarioLogado));
 
@@ -288,6 +292,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			} else {
 				doTramitacion(activo, oferta, trabajo.getId(), expedienteComercial);
 			}
+			transactionManager.commit(transaction);
 		}
 
 		return resultado;
@@ -1967,6 +1972,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		expedienteComercial.setFormalizacion(this.crearFormalizacion(expedienteComercial));
 		
 		activoManager.actualizarOfertasTrabajosVivos(activo.getId());
+		
+		ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 		return activoTramite;
 	}
 
@@ -2012,7 +2019,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (idActivo != null) {
 				activoManager.actualizarOfertasTrabajosVivos(idActivo);
 			}
-		
+			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			transactionManager.rollback(transaction);

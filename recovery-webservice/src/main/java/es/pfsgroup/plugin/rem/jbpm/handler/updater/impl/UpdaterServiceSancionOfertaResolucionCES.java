@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,7 +133,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 									}
 								}
 							}
-							
+
 							if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null
 									&& gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
 								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
@@ -143,7 +145,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 								ge.setIdTipoGestor(tipoGestorComercial.getId());
 								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);
 							}
-							
+
 							if(DDCartera.isCarteraBk(activo.getCartera())) {
 								DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA));
 								expediente.setEstadoBc(estadoBc);
@@ -179,7 +181,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 									DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
 									expediente.setEstadoBc(estadoBc);
 								}
-								
+
 								try {
 									if(!DDCartera.isCarteraBk(activo.getCartera())) {
 										ofertaApi.descongelarOfertas(expediente);

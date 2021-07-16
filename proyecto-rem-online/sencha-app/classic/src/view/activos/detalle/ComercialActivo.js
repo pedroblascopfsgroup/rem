@@ -445,6 +445,16 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 							        	bind : {
 							        		value: '{comercial.campanyaAlquiler}'
 							        	}
+									},
+									{
+										xtype : 'comboboxfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.empleado.familiar.caixa'),
+										reference: 'empleadoFamiliarCaixaRef',
+										bind : {
+											store : '{comboSiNoEmpleadoFamiliarCaixa}',
+											value : '{comercial.empleadoFamiliarCaixa}',
+											readOnly: true
+					                    }
 									}
 									
 								]

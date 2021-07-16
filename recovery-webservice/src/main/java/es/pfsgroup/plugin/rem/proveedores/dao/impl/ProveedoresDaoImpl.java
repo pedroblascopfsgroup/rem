@@ -379,7 +379,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		HQLBuilder hb = new HQLBuilder("select pve.id from ActivoProveedor pve, ActivoProveedorContacto pvc ");
 
 		hb.appendWhere("pve.id = pvc.proveedor.id");
-		hb.appendWhere("pvc.usuario.id = :idUsuario" + idUsuario);
+		hb.appendWhere("pvc.usuario.id = :idUsuario");
 
 		List<Long> listaProveedores = (List<Long>) this.getSessionFactory().getCurrentSession()
 				.createQuery(hb.toString()).setParameter("idUsuario", idUsuario).list();

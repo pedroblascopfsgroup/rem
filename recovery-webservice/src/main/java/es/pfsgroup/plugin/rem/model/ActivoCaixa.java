@@ -166,6 +166,8 @@ public class ActivoCaixa implements Serializable, Auditable {
 	@Column(name = "CBX_FEC_FIN_CONCES")
     private Date fechaFinConcesion;
 	
+	@Column(name = "CBX_EMPL_FAML")
+	private Boolean empleadoFamiliarCaixa;
 	
 	@Version   
 	private Long version;
@@ -484,6 +486,14 @@ public class ActivoCaixa implements Serializable, Auditable {
 
 	public void setFechaFinConcesion(Date fechaFinConcesion) {
 		this.fechaFinConcesion = fechaFinConcesion;
+	}
+
+	public Boolean getEmpleadoFamiliarCaixa() {
+		return empleadoFamiliarCaixa;
+	}
+
+	public void setEmpleadoFamiliarCaixa(Boolean empleadoFamiliarCaixa) {
+		this.empleadoFamiliarCaixa = empleadoFamiliarCaixa;
 	}
 	
 }

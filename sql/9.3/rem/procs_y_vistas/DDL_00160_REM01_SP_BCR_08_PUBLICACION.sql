@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=2021062
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210714
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14241
+--## INCIDENCIA_LINK=HREOS-14545
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - HREOS-14241
+--##	    0.2 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - HREOS-14545
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -52,6 +53,10 @@ BEGIN
 ------------------------------------------------------------------------------------------------
 --1º Insertar los activos que cambien de destino comercial en la temporal.
 
+   SALIDA := '[INICIO]'||CHR(10);
+
+   SALIDA := SALIDA || '[INFO] SE VA A PROCEDER A ACTUALIZAR/INSERTAR CAMPOS REFERENTES A LA PUBLICACIÓN DEL ACTIVO.'|| CHR(10);
+
     V_TABLA:='TMP_ACT_DESTINO_COMERCIAL';
     --Comprobamos el dato a insertar
       V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA||''' AND OWNER = '''||V_ESQUEMA||''''; 
@@ -59,20 +64,20 @@ BEGIN
       
       --Si  no existe la tabla
       IF V_NUM_TABLAS < 1 THEN	
-      
-        DBMS_OUTPUT.PUT_LINE('[INFO]: TABLA '''||V_TABLA||''' NO EXISTE');
+
+        SALIDA := SALIDA || '[INFO]: TABLA '''||V_TABLA||''' NO EXISTE'|| CHR(10);
         
       --Si existe la tabla, lo insertamos   
       ELSE
         
             --Insertar registro en tabla.
-            DBMS_OUTPUT.put_line('[INFO] TRUNCAMOS '||V_TABLA||'  [INFO]');
+            SALIDA := SALIDA || '[INFO] TRUNCAMOS '||V_TABLA||'  [INFO]'|| CHR(10);
 
             #ESQUEMA#.OPERACION_DDL.DDL_Table('TRUNCATE',V_TABLA);
 
             V_NUM_FILAS := sql%rowcount;
 
-            DBMS_OUTPUT.put_line('[INFO]  INSERTAMOS EN '||V_TABLA||'  [INFO]');
+            SALIDA := SALIDA || '[INFO]  INSERTAMOS EN '||V_TABLA||'  [INFO]'|| CHR(10);
 
               V_MSQL := 'INSERT  INTO '||V_ESQUEMA||'.'||V_TABLA||' (
                             ACT_ID
@@ -112,13 +117,12 @@ BEGIN
 
               V_NUM_FILAS := sql%rowcount;
 
-            DBMS_OUTPUT.put_line('[INFO] SE HAN INSERTADO ' || V_NUM_FILAS ||' REGISTROS EN '||V_TABLA||'  [INFO]');
-            COMMIT;
+            SALIDA := SALIDA || '[INFO] SE HAN INSERTADO ' || V_NUM_FILAS ||' REGISTROS EN '||V_TABLA||'  [INFO]'|| CHR(10);
         END IF;
 
 
 --2º Borramos la segunda tabla temporal que se ha creado para almacenar los activos que se van a borrar de la TMP_ACT_DESTINO_COMERCIAL
-        DBMS_OUTPUT.put_line('[INFO] TRUNCAMOS TMP_DEST_COMERCIAL_REJECT  [INFO]');
+        SALIDA := SALIDA || '[INFO] TRUNCAMOS TMP_DEST_COMERCIAL_REJECT  [INFO]'|| CHR(10);
 
         #ESQUEMA#.OPERACION_DDL.DDL_Table('TRUNCATE','TMP_DEST_COMERCIAL_REJECT');
 
@@ -166,8 +170,7 @@ BEGIN
    EXECUTE IMMEDIATE V_MSQL;
 
    V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS') ;
-    commit;
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS'|| CHR(10);
 
 --4º SEGUNDO insert a TMP_DEST_COMERCIAL_REJECT
     V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_DEST_COMERCIAL_REJECT TREJ(--Vemos si todos los activos de una misma agrupación (02) tienen el mismo destino comercial
@@ -206,8 +209,7 @@ BEGIN
    EXECUTE IMMEDIATE V_MSQL;
 
    V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS') ;
-    commit;
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS'|| CHR(10);
 
 
 --5º TERCER insert a TMP_DEST_COMERCIAL_REJECT
@@ -249,8 +251,7 @@ BEGIN
    EXECUTE IMMEDIATE V_MSQL;
 
    V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS') ;
-    commit;
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS'|| CHR(10);
 
 --6º Delete de los activos insertados en TMP_DEST_COMERCIAL_REJECT en la tabla TMP_ACT_DESTINO_COMERCIAL
     V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP 
@@ -264,8 +265,7 @@ BEGIN
    EXECUTE IMMEDIATE V_MSQL;
 
    V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FILAS BORRADAS') ;
-    commit;
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS BORRADAS'|| CHR(10);
 
 --7º Insert de los activos borrados a la tabla AUX_APR_BCR_STOCK_REJ de errores
     V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_APR_BCR_STOCK_REJ REJ(
@@ -283,8 +283,7 @@ BEGIN
    EXECUTE IMMEDIATE V_MSQL;
 
    V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS') ;
-    commit;
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS'|| CHR(10);
 
 
 
@@ -306,8 +305,7 @@ BEGIN
    EXECUTE IMMEDIATE V_MSQL;
 
    V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FILAS MODIFICADAS') ;
-    commit;
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS MODIFICADAS'|| CHR(10);
 
 --Insertamos tanto si es el primer registro del activo como si ya tenía, puesto que el punto anterior se le ha puesto fecha de fin al existente
     V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.HDC_HIST_DESTINO_COMERCIAL HIST(
@@ -337,8 +335,7 @@ BEGIN
    EXECUTE IMMEDIATE V_MSQL;
 
    V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS') ;
-    commit;  
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS'|| CHR(10);
 
 --9º Se cambia el destino comercial
     V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION ACT
@@ -360,15 +357,14 @@ BEGIN
    EXECUTE IMMEDIATE V_MSQL;
 
    V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FILAS MODIFICADAS') ;
-    commit;  
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS MODIFICADAS'|| CHR(10); 
 
 
 
 --10º Llamar al SP para cada activo guardado en la tabla temporal
 --Ejecutamos el Sp por cada activo de la tabla temporal
 
-DBMS_OUTPUT.PUT_LINE('##INICIO: SP_CAMBIO_ESTADO_PUBLICACION ') ;
+SALIDA := SALIDA || '##INICIO: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
 
     FOR I IN ACTIVOS LOOP
         ACT_ID:=I.ACT_ID;
@@ -378,7 +374,7 @@ DBMS_OUTPUT.PUT_LINE('##INICIO: SP_CAMBIO_ESTADO_PUBLICACION ') ;
         EXIT WHEN ACTIVOS%NOTFOUND;
     END LOOP;
 
-DBMS_OUTPUT.PUT_LINE('##FIN: SP_CAMBIO_ESTADO_PUBLICACION ') ;
+SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
 
 
 
@@ -386,7 +382,7 @@ DBMS_OUTPUT.PUT_LINE('##FIN: SP_CAMBIO_ESTADO_PUBLICACION ') ;
 ------------------------------Lógica para el canal de publicación-------------------------------
 ------------------------------------------------------------------------------------------------
 --1º Merge tabla ACT_ACTIVO_CAIXA
-   DBMS_OUTPUT.PUT_LINE('[INFO] 1 MERGE A LA TABLA ACT_ACTIVO_CAIXA.');
+   SALIDA := SALIDA || '[INFO] 1 MERGE A LA TABLA ACT_ACTIVO_CAIXA.'|| CHR(10);
 
     V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO_CAIXA ACT
 	            USING (				
@@ -463,8 +459,7 @@ DBMS_OUTPUT.PUT_LINE('##FIN: SP_CAMBIO_ESTADO_PUBLICACION ') ;
    
 
    V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' FUSIONADAS') ;
-    commit;
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FUSIONADAS'|| CHR(10);
 
 --2º Validaciones en función de los destinos comerciales e indicadores
 
@@ -506,8 +501,7 @@ DBMS_OUTPUT.PUT_LINE('##FIN: SP_CAMBIO_ESTADO_PUBLICACION ') ;
    
 
    V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' MODIFICADAS') ;
-    commit;
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FUSIONADAS'|| CHR(10);
 
 
 
@@ -573,8 +567,7 @@ DBMS_OUTPUT.PUT_LINE('##FIN: SP_CAMBIO_ESTADO_PUBLICACION ') ;
    
 
    V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' MODIFICADAS') ;
-    commit;
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FUSIONADAS'|| CHR(10);
 
 
 ------------------------------------------------------------------------------------------------
@@ -615,8 +608,7 @@ DBMS_OUTPUT.PUT_LINE('##FIN: SP_CAMBIO_ESTADO_PUBLICACION ') ;
    
 
    V_NUM_FILAS := sql%rowcount;
-   DBMS_OUTPUT.PUT_LINE('##INFO: ' || V_NUM_FILAS ||' MODIFICADAS') ;
-    commit;
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' MODIFICADAS'|| CHR(10);
 
 
 

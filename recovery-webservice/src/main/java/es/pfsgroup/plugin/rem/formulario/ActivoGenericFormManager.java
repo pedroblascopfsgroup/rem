@@ -242,7 +242,8 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 		            	String codigoComite = null;
 						try {
 							if (DDCartera.CODIGO_CARTERA_BANKIA.equals(tareaActivo.getActivo().getCartera().getCodigo()) 
-									&& !"T017".equals(tareaActivoApi.getByIdTareaExterna(tarea.getId()).getTramite().getTipoTramite().getCodigo())) {
+									&& !"T017".equals(tareaActivoApi.getByIdTareaExterna(tarea.getId()).getTramite().getTipoTramite().getCodigo())
+									&& !"T015".equals(tareaActivoApi.getByIdTareaExterna(tarea.getId()).getTramite().getTipoTramite().getCodigo())) {
 								codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
 							}							
 						} catch (Exception e) {

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210512
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210716
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-88888
+--## INCIDENCIA_LINK=HREOS-14545
 --## PRODUCTO=NO
 --##
 --## Finalidad:        Anyadir columna y FK    
@@ -31,7 +31,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_ABA_ACTIVO_BANCARIO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_ACTIVO_CAIXA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TABLA_FK VARCHAR2(2400 CHAR) := 'DD_CTC_CATEG_COMERCIALIZ';  
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(256);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
@@ -60,11 +60,11 @@ BEGIN
         -- Si existe la columna cambiamos/establecemos solo la FK
           IF V_NUM_TABLAS = 1 THEN
               DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||TRIM(V_TMP_TIPO_DATA(1))||'''... Ya existe, la modificamos');
-              V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' DROP CONSTRAINT FK_ABA_DD_CTC_ID';
+              V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' DROP CONSTRAINT FK_DD_CTC_ID';
               EXECUTE IMMEDIATE V_MSQL;
               DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... FK Dropeada');
               
-              V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ABA_DD_CTC_ID FOREIGN KEY (DD_CTC_ID) REFERENCES '||V_ESQUEMA||'.DD_CTC_CATEG_COMERCIALIZ (DD_CTC_ID) ON DELETE SET NULL)';
+              V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_DD_CTC_ID FOREIGN KEY (DD_CTC_ID) REFERENCES '||V_ESQUEMA||'.DD_CTC_CATEG_COMERCIALIZ (DD_CTC_ID) ON DELETE SET NULL)';
               EXECUTE IMMEDIATE V_MSQL;
               DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... FK Modificada');
           
@@ -74,7 +74,7 @@ BEGIN
               EXECUTE IMMEDIATE V_MSQL;
               DBMS_OUTPUT.PUT_LINE('[INFO] Columna '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... Creada');
 
-              V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ABA_DD_CTC_ID FOREIGN KEY (DD_CTC_ID) REFERENCES '||V_ESQUEMA||'.DD_CTC_CATEG_COMERCIALIZ (DD_CTC_ID) ON DELETE SET NULL)';
+              V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_DD_CTC_ID FOREIGN KEY (DD_CTC_ID) REFERENCES '||V_ESQUEMA||'.DD_CTC_CATEG_COMERCIALIZ (DD_CTC_ID) ON DELETE SET NULL)';
               EXECUTE IMMEDIATE V_MSQL;
               DBMS_OUTPUT.PUT_LINE('[INFO] Constraint Creada');     
 

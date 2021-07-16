@@ -28,7 +28,11 @@ public class AccionesCaixaController extends ParadiseJsonController {
     public static final String ACCION_RECHAZO_AVANZA_RE = "002B";
     public static final String ACCION_RESULTADO_RIESGO = "004";
     public static final String ACCION_ARRAS_APROBADAS = "005";
+    public static final String ACCION_ARRAS_RECHAZADAS = "006";
+    public static final String ACCION_ARRAS_PDTE_DOCUMENTACION = "007";
     public static final String ACCION_INGRESO_FINAL_APR = "008";
+    public static final String ACCION_INGRESO_FINAL_RECHAZADO = "009";
+    public static final String ACCION_INGRESO_FINAL_PDTE_DOC = "010";
     public static final String ACCION_FIRMA_ARRAS_APR = "013";
     public static final String ACCION_FIRMA_CONTRATO_APR = "015";
     public static final String ACCION_VENTA_CONTABILIZADA = "023";
@@ -193,4 +197,54 @@ public class AccionesCaixaController extends ParadiseJsonController {
         return createModelAndViewJson(model);
     }
 
+    public ModelAndView accionArrasRechazadas(DtoOnlyExpedienteYOfertaCaixa dto) {
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionArrasRechazadas(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionArrasPteDoc(DtoOnlyExpedienteYOfertaCaixa dto) {
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionArrasPteDoc(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionIngresoFinalRechazado(DtoOnlyExpedienteYOfertaCaixa dto) {ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionIngresoFinalRechazado(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionIngresoFinalPdteDoc(DtoOnlyExpedienteYOfertaCaixa dto) {
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionIngresoFinalPdteDoc(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
 }

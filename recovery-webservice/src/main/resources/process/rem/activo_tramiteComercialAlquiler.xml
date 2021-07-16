@@ -342,7 +342,7 @@
     </state>
     
     <decision name ="T015_ScoringBCDecision" expression="#{T015_ScoringBCDecision}">
-		<transition to="Fin" name="Anulada"></transition>
+		<transition to="Fin" name="Anular"></transition>
 		<transition to="T015_SolicitarGarantiasAdicionales" name="OK"></transition>
 		<transition to="Fin" name="Fin"></transition>
     </decision>
@@ -371,7 +371,7 @@
     </state>
     
     <decision name ="T015_SancionBCDecision" expression="#{T015_SancionBCDecision}">
-		<transition to="Fin" name="Anulada"></transition>
+		<transition to="Fin" name="Anular"></transition>
 		<transition to="T015_PBC" name="OK"></transition>
 		<transition to="Fin" name="Fin"></transition>
     </decision>

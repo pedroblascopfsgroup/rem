@@ -22,4 +22,12 @@ public interface AccionesCaixaApi {
     void accionFirmaContratoAprobada(DtoFirmaContratoAprobadaCaixa dto) throws Exception;
 
     void accionVentaContabilizada(DtoOnlyExpedienteYOfertaCaixa dto);
+
+    void accionArrasRechazadas(DtoOnlyExpedienteYOfertaCaixa dto);
+
+    void accionArrasPteDoc(DtoOnlyExpedienteYOfertaCaixa dto);
+
+    void accionIngresoFinalRechazado(DtoOnlyExpedienteYOfertaCaixa dto);
+
+    void accionIngresoFinalPdteDoc(DtoOnlyExpedienteYOfertaCaixa dto);
 }

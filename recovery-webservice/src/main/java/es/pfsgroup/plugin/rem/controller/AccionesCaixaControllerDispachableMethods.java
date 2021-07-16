@@ -212,6 +212,90 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
+        dispachableMethods.put(AccionesCaixaController.ACCION_ARRAS_RECHAZADAS, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteYOfertaCaixa>() {
+            @Override
+            public Class<DtoOnlyExpedienteYOfertaCaixa> getArgumentType() {
+                return DtoOnlyExpedienteYOfertaCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoOnlyExpedienteYOfertaCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionArrasRechazadas(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_ARRAS_PDTE_DOCUMENTACION, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteYOfertaCaixa>() {
+            @Override
+            public Class<DtoOnlyExpedienteYOfertaCaixa> getArgumentType() {
+                return DtoOnlyExpedienteYOfertaCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoOnlyExpedienteYOfertaCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionArrasPteDoc(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_INGRESO_FINAL_RECHAZADO, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteYOfertaCaixa>() {
+            @Override
+            public Class<DtoOnlyExpedienteYOfertaCaixa> getArgumentType() {
+                return DtoOnlyExpedienteYOfertaCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoOnlyExpedienteYOfertaCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionIngresoFinalRechazado(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_INGRESO_FINAL_PDTE_DOC, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteYOfertaCaixa>() {
+            @Override
+            public Class<DtoOnlyExpedienteYOfertaCaixa> getArgumentType() {
+                return DtoOnlyExpedienteYOfertaCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoOnlyExpedienteYOfertaCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionIngresoFinalPdteDoc(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
     }
 
     private AccionesCaixaController controller;

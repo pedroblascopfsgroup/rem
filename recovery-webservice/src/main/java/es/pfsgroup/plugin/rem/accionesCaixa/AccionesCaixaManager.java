@@ -223,4 +223,52 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
         genericDao.save(ExpedienteComercial.class, expediente);
     }
+
+    @Override
+    @Transactional
+    public void accionArrasRechazadas(DtoOnlyExpedienteYOfertaCaixa dto) {
+        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+
+        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
+                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO));
+        expediente.setEstadoBc(estadoExpedienteBc);
+
+        genericDao.save(ExpedienteComercial.class, expediente);
+    }
+
+    @Override
+    @Transactional
+    public void accionArrasPteDoc(DtoOnlyExpedienteYOfertaCaixa dto) {
+        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+
+        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
+                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_ARRAS_PTE_DOCUMENTACION));
+        expediente.setEstadoBc(estadoExpedienteBc);
+
+        genericDao.save(ExpedienteComercial.class, expediente);
+    }
+
+    @Override
+    @Transactional
+    public void accionIngresoFinalRechazado(DtoOnlyExpedienteYOfertaCaixa dto) {
+        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+
+        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
+                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
+        expediente.setEstadoBc(estadoExpedienteBc);
+
+        genericDao.save(ExpedienteComercial.class, expediente);
+    }
+
+    @Override
+    @Transactional
+    public void accionIngresoFinalPdteDoc(DtoOnlyExpedienteYOfertaCaixa dto) {
+        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+
+        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
+                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
+        expediente.setEstadoBc(estadoExpedienteBc);
+
+        genericDao.save(ExpedienteComercial.class, expediente);
+    }
 }

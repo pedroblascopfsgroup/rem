@@ -7293,7 +7293,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+"		FROM DD_STG_SUBTIPOS_GASTO"
-				+"		WHERE DD_STG_CODIGO = :codSubtipoGasto'"
+				+"		WHERE DD_STG_CODIGO = :codSubtipoGasto"
 				+"		AND BORRADO= 0");
 
 		return !"0".equals(resultado);
@@ -7434,45 +7434,45 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if (Checks.esNulo(numElemento) || !StringUtils.isNumeric(numElemento) || Checks.esNulo(numGastoHaya) || !StringUtils.isNumeric(numGastoHaya))
 			return false;
 		
-		String resultado = rawDao.getExecuteSQL("WITH GENERICO AS (\n" + 
-				"    SELECT COUNT(1) ES_GEN\n" + 
-				"    FROM REM01.DD_ENT_ENTIDAD_GASTO\n" + 
-				"    WHERE DD_ENT_CODIGO = 'GEN'\n" + 
-				"        AND 'GEN' = :tipoElemento\n" + 
-				"), ACTIVO AS (\n" + 
-				"    SELECT COUNT(1) ES_ACT\n" + 
-				"    FROM REM01.DD_ENT_ENTIDAD_GASTO\n" + 
-				"    WHERE DD_ENT_CODIGO = 'ACT'\n" + 
-				"        AND 'ACT' = :tipoElemento\n" + 
-				"), PAC AS (\n" + 
-				"    SELECT PAC.PRO_ID\n" + 
-				"    FROM REM01.ACT_ACTIVO ACT\n" + 
-				"    JOIN REM01.ACT_PAC_PROPIETARIO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID\n" + 
-				"        AND PAC.BORRADO = 0\n" + 
-				"    JOIN ACTIVO ON ACTIVO.ES_ACT = 1\n" + 
-				"    WHERE ACT.BORRADO = 0\n" + 
-				"        AND ACT.ACT_NUM_ACTIVO = :numElemento\n" + 
-				"), AGS AS (\n" + 
-				"    SELECT AGS.PRO_ID\n" + 
-				"    FROM REM01.ACT_AGS_ACTIVO_GENERICO_STG AGS\n" + 
-				"    JOIN GENERICO ON GENERICO.ES_GEN = 1\n" + 
-				"    WHERE AGS.BORRADO = 0\n" + 
-				"        AND AGS.AGS_ACTIVO_GENERICO = :numElemento\n" + 
-				")\n" + 
+		String resultado = rawDao.getExecuteSQL("WITH GENERICO AS ( \n" + 
+				"    SELECT COUNT(1) ES_GEN \n" + 
+				"    FROM REM01.DD_ENT_ENTIDAD_GASTO \n" + 
+				"    WHERE DD_ENT_CODIGO = 'GEN' \n" + 
+				"        AND 'GEN' = :tipoElemento \n" + 
+				"), ACTIVO AS ( \n" + 
+				"    SELECT COUNT(1) ES_ACT \n" + 
+				"    FROM REM01.DD_ENT_ENTIDAD_GASTO \n" + 
+				"    WHERE DD_ENT_CODIGO = 'ACT' \n" + 
+				"        AND 'ACT' = :tipoElemento \n" + 
+				"), PAC AS ( \n" + 
+				"    SELECT PAC.PRO_ID \n" + 
+				"    FROM REM01.ACT_ACTIVO ACT \n" + 
+				"    JOIN REM01.ACT_PAC_PROPIETARIO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID \n" + 
+				"        AND PAC.BORRADO = 0 \n" + 
+				"    JOIN ACTIVO ON ACTIVO.ES_ACT = 1 \n" + 
+				"    WHERE ACT.BORRADO = 0 \n" + 
+				"        AND ACT.ACT_NUM_ACTIVO = :numElemento \n" + 
+				"), AGS AS ( \n" + 
+				"    SELECT AGS.PRO_ID \n" + 
+				"    FROM REM01.ACT_AGS_ACTIVO_GENERICO_STG AGS \n" + 
+				"    JOIN GENERICO ON GENERICO.ES_GEN = 1 \n" + 
+				"    WHERE AGS.BORRADO = 0 \n" + 
+				"        AND AGS.AGS_ACTIVO_GENERICO = :numElemento \n" + 
+				") \n" + 
 				"SELECT COUNT(1) \n" + 
-				"FROM REM01.GPV_GASTOS_PROVEEDOR GPV\n" + 
-				"WHERE GPV.GPV_NUM_GASTO_HAYA = :numGastoHaya:\n" + 
-				"    AND GPV.BORRADO = 0\n" + 
-				"    AND (\n" + 
-				"        EXISTS (\n" + 
-				"        SELECT 1\n" + 
-				"        FROM PAC\n" + 
-				"        WHERE PAC.PRO_ID = GPV.PRO_ID\n" + 
-				"        ) OR EXISTS (\n" + 
-				"        SELECT 1\n" + 
-				"        FROM AGS\n" + 
-				"        WHERE AGS.PRO_ID = GPV.PRO_ID\n" + 
-				"        )\n" + 
+				"FROM REM01.GPV_GASTOS_PROVEEDOR GPV \n" + 
+				"WHERE GPV.GPV_NUM_GASTO_HAYA = :numGastoHaya \n" + 
+				"    AND GPV.BORRADO = 0 \n" + 
+				"    AND ( \n" + 
+				"        EXISTS ( \n" + 
+				"        SELECT 1 \n" + 
+				"        FROM PAC \n" + 
+				"        WHERE PAC.PRO_ID = GPV.PRO_ID \n" + 
+				"        ) OR EXISTS ( \n" + 
+				"        SELECT 1 \n" + 
+				"        FROM AGS \n" + 
+				"        WHERE AGS.PRO_ID = GPV.PRO_ID \n" + 
+				"        ) \n" + 
 				"    )");
 
 		return !"0".equals(resultado);
@@ -7830,44 +7830,44 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
             return false;
 	    }
 	    
-	    String resultado = rawDao.getExecuteSQL("WITH GENERICO AS (\n" + 
-	    		"    SELECT COUNT(1) ES_GEN\n" + 
-	    		"    FROM REM01.DD_ENT_ENTIDAD_GASTO\n" + 
-	    		"    WHERE DD_ENT_CODIGO = 'GEN'\n" + 
+	    String resultado = rawDao.getExecuteSQL("WITH GENERICO AS ( \n" + 
+	    		"    SELECT COUNT(1) ES_GEN \n" + 
+	    		"    FROM REM01.DD_ENT_ENTIDAD_GASTO \n" + 
+	    		"    WHERE DD_ENT_CODIGO = 'GEN' \n" + 
 	    		"        AND 'GEN' = :tipoElemento \n" + 
-	    		"), ACTIVO AS (\n" + 
-	    		"    SELECT COUNT(1) ES_ACT\n" + 
-	    		"    FROM REM01.DD_ENT_ENTIDAD_GASTO\n" + 
-	    		"    WHERE DD_ENT_CODIGO = 'ACT'\n" + 
+	    		"), ACTIVO AS ( \n" + 
+	    		"    SELECT COUNT(1) ES_ACT \n" + 
+	    		"    FROM REM01.DD_ENT_ENTIDAD_GASTO \n" + 
+	    		"    WHERE DD_ENT_CODIGO = 'ACT' \n" + 
 	    		"        AND 'ACT' = :tipoElemento \n" + 
-	    		"), PAC AS (\n" + 
-	    		"    SELECT PAC.PRO_ID\n" + 
-	    		"    FROM REM01.ACT_ACTIVO ACT\n" + 
-	    		"    JOIN REM01.ACT_PAC_PROPIETARIO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID\n" + 
-	    		"        AND PAC.BORRADO = 0\n" + 
-	    		"    JOIN ACTIVO ON ACTIVO.ES_ACT = 1\n" + 
-	    		"    WHERE ACT.BORRADO = 0\n" + 
-	    		"        AND ACT.ACT_NUM_ACTIVO = :numElemento\n" + 
-	    		"), AGS AS (\n" + 
+	    		"), PAC AS ( \n" + 
+	    		"    SELECT PAC.PRO_ID \n" + 
+	    		"    FROM REM01.ACT_ACTIVO ACT \n" + 
+	    		"    JOIN REM01.ACT_PAC_PROPIETARIO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID \n" + 
+	    		"        AND PAC.BORRADO = 0 \n" + 
+	    		"    JOIN ACTIVO ON ACTIVO.ES_ACT = 1 \n" + 
+	    		"    WHERE ACT.BORRADO = 0 \n" + 
+	    		"        AND ACT.ACT_NUM_ACTIVO = :numElemento \n" + 
+	    		"), AGS AS ( \n" + 
 	    		"    SELECT AGS.PRO_ID\n" + 
-	    		"    FROM REM01.ACT_AGS_ACTIVO_GENERICO_STG AGS\n" + 
-	    		"    JOIN GENERICO ON GENERICO.ES_GEN = 1\n" + 
-	    		"    WHERE AGS.BORRADO = 0\n" + 
-	    		"        AND AGS.AGS_ACTIVO_GENERICO = :numElemento\n" + 
-	    		")\n" + 
-	    		"SELECT COUNT(DISTINCT PRO.PRO_ID)\n" + 
-	    		"FROM REM01.ACT_PRO_PROPIETARIO PRO\n" + 
-	    		"WHERE PRO.BORRADO = 0\n" + 
+	    		"    FROM REM01.ACT_AGS_ACTIVO_GENERICO_STG AGS \n" + 
+	    		"    JOIN GENERICO ON GENERICO.ES_GEN = 1 \n" + 
+	    		"    WHERE AGS.BORRADO = 0 \n" + 
+	    		"        AND AGS.AGS_ACTIVO_GENERICO = :numElemento \n" + 
+	    		") \n" + 
+	    		"SELECT COUNT(DISTINCT PRO.PRO_ID) \n" + 
+	    		"FROM REM01.ACT_PRO_PROPIETARIO PRO \n" + 
+	    		"WHERE PRO.BORRADO = 0 \n" + 
 	    		"    AND PRO.PRO_DOCIDENTIF = :docIdentificadorPropietario \n" + 
-	    		"    AND (EXISTS (\n" + 
-	    		"        SELECT 1\n" + 
+	    		"    AND (EXISTS ( \n" + 
+	    		"        SELECT 1 \n" + 
 	    		"        FROM PAC \n" + 
-	    		"        WHERE PAC.PRO_ID = PRO.PRO_ID\n" + 
-	    		"        ) OR EXISTS (\n" + 
-	    		"        SELECT 1\n" + 
+	    		"        WHERE PAC.PRO_ID = PRO.PRO_ID \n" + 
+	    		"        ) OR EXISTS ( \n" + 
+	    		"        SELECT 1 \n" + 
 	    		"        FROM AGS \n" + 
-	    		"        WHERE AGS.PRO_ID = PRO.PRO_ID\n" + 
-	    		"        )\n" + 
+	    		"        WHERE AGS.PRO_ID = PRO.PRO_ID \n" + 
+	    		"        ) \n" + 
 	    		"    )");
 	    
 	    return !"0".equals(resultado);

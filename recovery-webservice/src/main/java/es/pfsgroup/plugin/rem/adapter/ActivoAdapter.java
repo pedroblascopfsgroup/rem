@@ -75,8 +75,8 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioContratoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
-import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -259,7 +259,7 @@ public class ActivoAdapter {
 	private TrabajoDao trabajoDao;
 
 	@Autowired
-	private ActivoPatrimonioDaoImpl activoPatrimonio;
+	private ActivoPatrimonioDao activoPatrimonio;
 
 	@Autowired
 	private GestorExpedienteComercialDao gestorExpedienteComercialDao;
@@ -3173,7 +3173,7 @@ public class ActivoAdapter {
 	
 	@Transactional(readOnly = false)
 	public boolean actualizarEstadoPublicacionActivo(Long idActivo) {
-		return actualizarEstadoPublicacionActivo(idActivo, true);
+		return actualizarEstadoPublicacionActivo(idActivo, false);
 	}
 	
 	@Transactional(readOnly = false)

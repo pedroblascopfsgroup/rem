@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210706
+--## FECHA_CREACION=20210713
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14533
+--## INCIDENCIA_LINK=HREOS-14545
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Añadimos provincia de registro - HREOS-14533
+--##        0.3 Añadimos nombre y número de registro de la propiedad - HREOS-14545
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -54,15 +55,10 @@ BEGIN
                   , APR.TOMO BIE_DREG_TOMO
                   , APR.FOLIO BIE_DREG_FOLIO
                   , APR.INSCRIPCION BIE_DREG_INSCRIPCION
-                  , APR.COD_REGISTRO_PROPIEDAD BIE_DREG_NUM_REGISTRO
-                  , LOC.DD_LOC_ID DD_LOC_ID
-                  , LOC.DD_PRV_ID DD_PRV_ID
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_BIEN BIE ON ACT.BIE_ID = BIE.BIE_ID AND BIE.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.BIE_DATOS_REGISTRALES BDR ON BDR.BIE_ID = BIE.BIE_ID AND BDR.BORRADO = 0
-                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV ON EQV.DD_NOMBRE_CAIXA = ''MUNI_REGISTRO_PROPIEDAD'' AND EQV.DD_CODIGO_CAIXA = APR.MUNI_REGISTRO_PROPIEDAD AND EQV.BORRADO = 0
-                  LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = EQV.DD_CODIGO_REM AND LOC.BORRADO = 0
                   WHERE APR.FLAG_EN_REM = '||FLAG_EN_REM||'
                   ) AUX
                   ON (BDR.BIE_DREG_ID = AUX.BIE_DREG_ID AND BDR.BORRADO = 0)
@@ -73,9 +69,6 @@ BEGIN
                   , BDR.BIE_DREG_TOMO = AUX.BIE_DREG_TOMO
                   , BDR.BIE_DREG_FOLIO = AUX.BIE_DREG_FOLIO
                   , BDR.BIE_DREG_INSCRIPCION = AUX.BIE_DREG_INSCRIPCION
-                  , BDR.BIE_DREG_NUM_REGISTRO = AUX.BIE_DREG_NUM_REGISTRO
-                  , BDR.DD_LOC_ID = AUX.DD_LOC_ID
-                  , BDR.DD_PRV_ID = AUX.DD_PRV_ID
                   , BDR.USUARIOMODIFICAR = ''STOCK_BC''
                   , BDR.FECHAMODIFICAR = SYSDATE
                   WHEN NOT MATCHED THEN
@@ -87,9 +80,6 @@ BEGIN
                   , BIE_DREG_TOMO
                   , BIE_DREG_FOLIO
                   , BIE_DREG_INSCRIPCION
-                  , BIE_DREG_NUM_REGISTRO
-                  , DD_LOC_ID
-                  , DD_PRV_ID
                   , USUARIOCREAR
                   , FECHACREAR)
                   VALUES 
@@ -100,9 +90,6 @@ BEGIN
                   , AUX.BIE_DREG_TOMO
                   , AUX.BIE_DREG_FOLIO
                   , AUX.BIE_DREG_INSCRIPCION
-                  , AUX.BIE_DREG_NUM_REGISTRO
-                  , AUX.DD_LOC_ID
-                  , AUX.DD_PRV_ID
                   , ''STOCK_BC''
                   , SYSDATE)';
    
@@ -112,26 +99,44 @@ BEGIN
 
       SALIDA := SALIDA || '   [INFO] 2 - ACT_REG_INFO_REGISTRAL'|| CHR(10);
 
-      V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.ACT_REG_INFO_REGISTRAL REG
-                  (
-                  REG_ID
-                  , ACT_ID
-                  , BIE_DREG_ID
-                  , USUARIOCREAR
-                  , FECHACREAR
-                  )
-                  SELECT 
-                  '|| V_ESQUEMA ||'.S_ACT_REG_INFO_REGISTRAL.nextval REG_ID
-                  , ACT.ACT_ID 
+      V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_REG_INFO_REGISTRAL REG
+                  USING (
+                  SELECT
+                  ACT.ACT_ID 
                   , BDR.BIE_DREG_ID
-                  , ''STOCK_BC''
-                  , SYSDATE
+                  , APR.NOMBRE_REGISTRO_PROPIEDAD REG_NOMBRE_REGISTRO
+                  , APR.NUMERO_REGISTRO_PROPIEDAD REG_NUMERO_REGISTRO
+                  , REG.REG_ID
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_BIEN BIE ON ACT.BIE_ID = BIE.BIE_ID AND BIE.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_DATOS_REGISTRALES BDR ON BDR.BIE_ID = BIE.BIE_ID AND BDR.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.ACT_REG_INFO_REGISTRAL REG ON REG.ACT_ID = ACT.ACT_ID AND REG.BORRADO = 0
-                  WHERE REG.REG_ID IS NULL AND APR.FLAG_EN_REM = '||FLAG_EN_REM||'';
+                  WHERE APR.FLAG_EN_REM = '||FLAG_EN_REM||'
+                  ) AUX
+                  ON (REG.REG_ID = AUX.REG_ID)
+                  WHEN MATCHED THEN
+                  UPDATE SET 
+                  REG.REG_NOMBRE_REGISTRO = AUX.REG_NOMBRE_REGISTRO
+                  , REG.REG_NUMERO_REGISTRO = AUX.REG_NUMERO_REGISTRO
+                  , USUARIOMODIFICAR = ''STOCK_BC''
+                  , FECHAMODIFICAR = SYSDATE
+                  WHEN NOT MATCHED THEN
+                  INSERT (REG_ID
+                     , ACT_ID
+                     , BIE_DREG_ID
+                     , REG_NOMBRE_REGISTRO
+                     , REG_NUMERO_REGISTRO
+                     , USUARIOCREAR
+                     , FECHACREAR)
+                      VALUES 
+                     ('|| V_ESQUEMA ||'.S_ACT_REG_INFO_REGISTRAL.nextval
+                     , AUX.ACT_ID
+                     , AUX.BIE_DREG_ID
+                     , AUX.REG_NOMBRE_REGISTRO
+                     , AUX.REG_NUMERO_REGISTRO
+                     , ''STOCK_BC''
+                     , SYSDATE)';
    
       EXECUTE IMMEDIATE V_MSQL;
 
@@ -249,8 +254,8 @@ BEGIN
                   , DIC.DD_DIC_ID DD_DIC_ID
                   , ESE.DD_ESE_ID DD_ESE_ID
                   , PLN.DD_PLN_ID DD_PLN_ID
-                  , TO_NUMBER(APR.X_GOOGLE) LOC_LONGITUD
-                  , TO_NUMBER(APR.Y_GOOGLE) LOC_LATITUD
+                  , REPLACE(APR.X_GOOGLE, ''.'','','') LOC_LONGITUD
+                  , REPLACE(APR.Y_GOOGLE, ''.'','','') LOC_LATITUD
                   , APR.SIGLA_EDIFICIO LOC_BLOQUE
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
@@ -265,7 +270,7 @@ BEGIN
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_PLN_PLANTA_EDIFICIO PLN ON PLN.DD_PLN_CODIGO = EQV.DD_CODIGO_REM AND PLN.BORRADO = 0
                   WHERE APR.FLAG_EN_REM = '||FLAG_EN_REM||'
                   ) AUX
-                  ON (ACT_LOC.LOC_ID = AUX.LOC_ID AND ACT_LOC.BORRADO = 0)
+                  ON (ACT_LOC.LOC_ID = AUX.LOC_ID)
                   WHEN MATCHED THEN
                   UPDATE SET 
                   ACT_LOC.LOC_DIRECCION_DOS = AUX.LOC_DIRECCION_DOS

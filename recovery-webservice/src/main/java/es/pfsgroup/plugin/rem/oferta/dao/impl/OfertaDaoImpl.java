@@ -448,8 +448,8 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 				hb.getParameters().put("tipoGestor", dto.getTipoGestor());
 			}
 			if (dto.getUsuarioGestor() != null) {
-				sb.append(" and ga.usuario.id = :usuarioGestor" + dto.getUsuarioGestor());
-				hb.getParameters().put("usuarioGestor", dto.getUsuarioGestor());
+				sb.append(" and ga.usuario.id = :usuarioGestor ");
+				hb.getParameters().put("usuarioGestor", Long.valueOf(dto.getUsuarioGestor()));
 			}
 			sb.append(" ) ");
 			hb.appendWhere(sb.toString());
@@ -457,7 +457,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		
 		if (dto.getGestoria() != null) {
 			hb.appendWhere(" exists (select 1 from GestorExpedienteComercial gex where vgrid.idExpediente = gex.expedienteComercial.id and gex.usuario.id = :gestoria) ");
-			hb.getParameters().put("gestoria", dto.getGestoria());
+			hb.getParameters().put("gestoria", Long.valueOf(dto.getGestoria()));
 		}
 			
 		if (dto.getGestoriaBag() != null) {

@@ -20,8 +20,8 @@ SET DEFINE OFF;
 
 DECLARE
 	
-	V_TABLA_TMP VARCHAR2(30 CHAR) := 'APR_AUX_HREOS_14471'; -- Variable para tabla de salida para el borrado	
-	V_TABLA VARCHAR2(30 CHAR) := 'ACT_ACTIVO'; -- Variable para tabla de salida para el borrado	
+	V_TABLA_TMP VARCHAR2(30 CHAR) := 'ACT_ACTIVO'; -- Variable para tabla de salida para el borrado	
+	V_TABLA VARCHAR2(30 CHAR) := 'ACT_ACTIVO_CAIXA'; -- Variable para tabla de salida para el borrado	
 	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
 	V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
 	ERR_NUM NUMBER;-- Numero de errores
@@ -33,22 +33,27 @@ DECLARE
 BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('[INICIO]'||CHR(10));
-	DBMS_OUTPUT.PUT_LINE('[INFO] FUSIONANDO LOS DATOS DE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_TMP||' EN LA TABLA '||V_TABLA||'');
+	DBMS_OUTPUT.PUT_LINE('[INFO] INICIALIZAMOS LOS ACTIVOS QUE NO EXISTAN EN '||V_ESQUEMA||'.'||V_TABLA||'');
 
-	V_SQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1
-		USING (
-			SELECT ACT.ACT_ID, TMP.ID_CAIXA
-			FROM '||V_ESQUEMA||'.'||V_TABLA_TMP||' TMP
-			JOIN '||V_ESQUEMA||'.'||V_TABLA||' ACT ON ACT.ACT_NUM_ACTIVO = TMP.ID_HAYA
-		) T2
-		ON (T1.ACT_ID = T2.ACT_ID)
-		WHEN MATCHED THEN
-			UPDATE SET T1.ACT_NUM_ACTIVO_CAIXA = T2.ID_CAIXA
-				, T1.USUARIOMODIFICAR = '''||V_USUARIO||'''
-				, T1.FECHAMODIFICAR = SYSDATE';
+	V_SQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||'
+			(
+				CBX_ID
+				, ACT_ID
+				, USUARIOCREAR
+				, FECHACREAR
+			) 
+				SELECT 
+				'||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL
+				, ACT.ACT_ID
+				, '''||V_USUARIO||''' USUARIOCREAR
+				, SYSDATE FECHACREAR
+				FROM '||V_ESQUEMA||'.'||V_TABLA_TMP||' ACT 
+				WHERE ACT.BORRADO = 0
+				AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
+				AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.'||V_TABLA||' CX WHERE CX.BORRADO = 0 AND CX.ACT_ID = ACT.ACT_ID)';
 	DBMS_OUTPUT.PUT_LINE(V_SQL);
 	EXECUTE IMMEDIATE V_SQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Se han fusionado un total de '||SQL%ROWCOUNT||' filas de la tabla '||V_TABLA);
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han insertado un total de '||SQL%ROWCOUNT||' filas de la tabla '||V_TABLA);
 
 	COMMIT;
 	

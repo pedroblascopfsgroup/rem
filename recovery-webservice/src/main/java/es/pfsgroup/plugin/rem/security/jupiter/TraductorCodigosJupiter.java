@@ -30,4 +30,17 @@ public class TraductorCodigosJupiter {
 		}
 		return mapaCompleto;
 	}
+
+	public Map<String, MapeoJupiterREM> getMapaInicial() {
+		Map<String, MapeoJupiterREM> mapaInicial = new HashMap<String, MapeoJupiterREM>();
+		String claveJupiter = "005"; 
+		String claveREM = "HAYACONSU";
+		String perfilRol = "perfil-rol";
+		MapeoJupiterREM mjr = new MapeoJupiterREM();
+		mjr.setCodigoJupiter(claveJupiter);
+		mjr.setCodigoREM(claveREM);
+		mjr.setTipoPerfil(perfilRol);
+		mapaInicial.put(claveJupiter, mjr);
+		return mapaInicial;
+	}
 }

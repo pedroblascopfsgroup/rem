@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -115,6 +116,7 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 				} catch (Exception e) {
 					logger.error("IntegracionJupiter: Error al cargar el mapa de traducciones de codigos entre Jupiter y REM: " + e.getMessage() 
 						+ " --- " + e.getCause());
+					mapaTraductor = traductor.getMapaInicial();
 				}
 				
 				if (mapaTraductor != null) {
@@ -199,13 +201,14 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 			List<String> codigosSubcarteras) {
 		
 		for (String codigoJupiter : listaCodigosJupiter) {
-			MapeoJupiterREM traduccion = mapaTraductor.get(codigoJupiter);
+			String codigoJupiterCorregido = corregirCodigoJupiter(codigoJupiter);
+			MapeoJupiterREM traduccion = mapaTraductor.get(codigoJupiterCorregido);
 			if (traduccion == null) {
 				logger.error("IntegracionJupiter: Error al traducir el codigo desde Jupiter: " + codigoJupiter + " no existe en el maestro de traduccion.");
 			} else {
 				String tipoPerfil = traduccion.getTipoPerfil();
 				if (PERFIL_ROL.equals(tipoPerfil)) {
-					codigosPerfiles.add(traduccion.getCodigoREM());
+  					codigosPerfiles.add(traduccion.getCodigoREM());
 				} else if (GRUPO.equals(tipoPerfil)) {
 					codigosGrupos.add(traduccion.getCodigoREM());
 				} else if (CARTERA.equals(tipoPerfil)) {
@@ -219,6 +222,20 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 			}
 		}
 		
+	}
+
+	private String corregirCodigoJupiter(String codigoJupiter) {
+		//Los códigos de perfil vienen de Jupiter a veces sin formateo de relleno a ceros por la izquierda
+		try {  
+			Long numero = Long.parseLong(codigoJupiter);
+			if (numero < 999) {
+				return String.format("%03d" , numero);
+			} else {
+				return codigoJupiter;
+			}
+		} catch(NumberFormatException e){  
+			return codigoJupiter;  
+		}
 	}
 
 	private String extraerCodigoSubcartera(String codigoSubcarteraREM) {

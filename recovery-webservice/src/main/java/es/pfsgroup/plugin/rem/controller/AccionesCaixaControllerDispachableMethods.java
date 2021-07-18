@@ -296,6 +296,69 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
+        dispachableMethods.put(AccionesCaixaController.ACCION_RECHAZO_SCREENING, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionRechazoCaixa>() {
+            @Override
+            public Class<DtoAccionRechazoCaixa> getArgumentType() {
+                return DtoAccionRechazoCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoAccionRechazoCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionRechazo(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_BLOQUEO_SCREENING, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoScreening>() {
+            @Override
+            public Class<DtoScreening> getArgumentType() {
+                return DtoScreening.class;
+            }
+
+            @Override
+            public Boolean execute(DtoScreening dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionBloqueoScreening(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_DESBLOQUEO_SCREENING, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoScreening>() {
+            @Override
+            public Class<DtoScreening> getArgumentType() {
+                return DtoScreening.class;
+            }
+
+            @Override
+            public Boolean execute(DtoScreening dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionDesbloqueoScreening(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
     }
 
     private AccionesCaixaController controller;

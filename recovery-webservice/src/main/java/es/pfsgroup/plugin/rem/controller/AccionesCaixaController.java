@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.controller;
 import es.capgemini.devon.exception.UserException;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.rest.dto.AccionesCaixaDtoData;
 import es.pfsgroup.plugin.rem.rest.dto.AccionesCaixaRequestDto;
@@ -36,11 +37,17 @@ public class AccionesCaixaController extends ParadiseJsonController {
     public static final String ACCION_FIRMA_ARRAS_APR = "013";
     public static final String ACCION_FIRMA_CONTRATO_APR = "015";
     public static final String ACCION_VENTA_CONTABILIZADA = "023";
+    public static final String ACCION_RECHAZO_SCREENING = "036";
+    public static final String ACCION_BLOQUEO_SCREENING = "011";
+    public static final String ACCION_DESBLOQUEO_SCREENING = "012";
 
     private final Log logger = LogFactory.getLog(getClass());
 
     @Autowired
     public AccionesCaixaApi accionesCaixaApi;
+
+    @Autowired
+    private ExpedienteComercialApi expedienteComercialApi;
 
     public ModelMap accionComercialCaixa(ModelMap model, RestRequestWrapper request, HttpServletResponse response){
 
@@ -223,7 +230,8 @@ public class AccionesCaixaController extends ParadiseJsonController {
         return createModelAndViewJson(model);
     }
 
-    public ModelAndView accionIngresoFinalRechazado(DtoOnlyExpedienteYOfertaCaixa dto) {ModelMap model = new ModelMap();
+    public ModelAndView accionIngresoFinalRechazado(DtoOnlyExpedienteYOfertaCaixa dto) {
+        ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionIngresoFinalRechazado(dto);
             model.put("success", true);
@@ -239,6 +247,33 @@ public class AccionesCaixaController extends ParadiseJsonController {
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionIngresoFinalPdteDoc(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionBloqueoScreening(DtoScreening dto) {
+        ModelMap model = new ModelMap();
+        try {
+            expedienteComercialApi.tareaBloqueoScreening(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+
+    }
+
+    public ModelAndView accionDesbloqueoScreening(DtoScreening dto) {
+        ModelMap model = new ModelMap();
+        try {
+            expedienteComercialApi.tareaDesbloqueoScreening(dto);
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();

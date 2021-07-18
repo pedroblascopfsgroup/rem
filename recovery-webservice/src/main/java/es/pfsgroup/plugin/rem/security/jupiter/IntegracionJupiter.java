@@ -53,9 +53,12 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 	public void actualizarInfoPersonal(String username, String nombre, String apellidos, String email) {
 		
 		Assert.notNull(username, "username no puede ser null");
-		Assert.notNull(username, "nombre no puede ser null");
-		Assert.notNull(username, "apellidos no puede ser null");
-		Assert.notNull(username, "email no puede ser null");
+		Assert.notNull(nombre, "nombre no puede ser null");
+		Assert.notNull(email, "apellidos no puede ser null");
+		
+		if (apellidos == null) {
+			apellidos = "";
+		}
 		
 		Usuario usuario = usuarioDao.getByUsername(username);
 		

@@ -1,12 +1,18 @@
 package es.pfsgroup.plugin.rem.security.jupiter;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
@@ -16,6 +22,7 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -23,6 +30,9 @@ import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDaoError;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.FieldInfo;
 
 @Repository("IntegracionJupiterDao")
 public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM, Long> implements IntegracionJupiterDao {
@@ -218,37 +228,72 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 		eliminarSubcarterasFiltro(filtroUsuario, usuario.getUsername());
 	}
 	
-	@Override
-	public Usuario crearUsuario(String username, String nombre, String apellidos, String email) {
+	@Transactional(readOnly = false)
+	private Usuario crearUsuario2(String username, String nombre, String apellidos, String email) {
 		Usuario usuario = new Usuario();
-		String ape1;
-		String ape2;
-		usuario.setNombre(nombre);
-		if (apellidos.contains(" ")) {
-			ape1 = apellidos.split(" ")[0];
-			ape2 = apellidos.split(" ", 2)[1];
-		} else {
-			ape1 = apellidos;
-			ape2 = "";
+		usuario.setUsername(username);
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		try {
+			usuario.setFechaVigenciaPassword(sdf.parse("31-12-2099"));
+		} catch (ParseException e) {
+			logger.error("Error al asignar fecha de fin de vigencia de password");
 		}
-		usuario.setApellido1(ape1);
-		usuario.setApellido2(ape2);
-		usuario.setEmail(email);
-		genericDao.save(Usuario.class, usuario);
+		usuario.setAuditoria(Auditoria.getNewInstance());
+		usuario.setVersion(0);
+		usuario.setUsuarioGrupo(false);
+		actualizarUsuario(usuario, nombre, apellidos, email);
+		DDZona zona = genericDao.get(DDZona.class, 
+				genericDao.createFilter(FilterType.EQUALS, DESCRIPCION, CODIGO_ZONA_REM));
+		Perfil perfil = obtenerPerfil("HAYACONSU");
+		ZonaUsuarioPerfil zpu = new ZonaUsuarioPerfil();
+		zpu.setUsuario(usuario);
+		zpu.setPerfil(perfil);
+		zpu.setZona(zona);
+		zpu.setAuditoria(Auditoria.getNewInstance());
+		zpu.setVersion(0);
+		genericDao.save(ZonaUsuarioPerfil.class, zpu);		
 		return usuario;
 	}
+	
+	@Override
+	public Usuario crearUsuario(String username, String nombre, String apellidos, String email) {
+		
+		Session session = this.getSession();
+		
+		String queryInsert = "";
+		try {
+			String nomTabla="REMMASTER.USU_USUARIOS";
+			String columnas="USU_ID,ENTIDAD_ID,USU_USERNAME,USU_PASSWORD,USU_NOMBRE,USU_APELLIDO1,USU_APELLIDO2,USU_MAIL,USU_GRUPO,VERSION,USUARIOCREAR,FECHACREAR,BORRADO,USU_FECHA_VIGENCIA_PASS";
+			String valores="REMMASTER.S_USU_USUARIOS.NEXTVAL,1,'"+username+"','1234','"+nombre+"','"+
+					(apellidos!=null?apellidos:"")+"','','" + email + "',0,0,'JUPITER',SYSDATE,0,TO_DATE('31/12/2099','dd/mm/yyyy')";
+			queryInsert = "INSERT INTO " + nomTabla + " (" + columnas + ") VALUES (" + valores + ")";
+			SQLQuery query = session.createSQLQuery(queryInsert);
+			query.executeUpdate();
+		} catch (Exception e) {
+			logger.fatal("Error al crear usuario en BD. Realizando rollback de la transacción: " + queryInsert);
+		}
+		
+		Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", username));
+		return usuario;
+	}
+	
 	
 	@Override
 	public void actualizarUsuario(Usuario usuario, String nombre, String apellidos, String email) {
 		String ape1;
 		String ape2;
 		usuario.setNombre(nombre);
-		if (apellidos.contains(" ")) {
-			ape1 = apellidos.split(" ")[0];
-			ape2 = apellidos.split(" ", 2)[1];
-		} else {
-			ape1 = apellidos;
+		if (Checks.esNulo(apellidos)) {
+			ape1 = "";
 			ape2 = "";
+		} else {
+			if (apellidos.contains(" ")) {
+				ape1 = apellidos.split(" ")[0];
+				ape2 = apellidos.split(" ", 2)[1];
+			} else {
+				ape1 = apellidos;
+				ape2 = "";
+			}
 		}
 		usuario.setApellido1(ape1);
 		usuario.setApellido2(ape2);

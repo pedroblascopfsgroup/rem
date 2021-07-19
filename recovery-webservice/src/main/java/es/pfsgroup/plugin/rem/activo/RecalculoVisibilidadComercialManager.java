@@ -99,18 +99,21 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 		for (Activo activo : activos) {
 			Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroIdActivo);
+			
+			if(perimetroActivo != null) {
 
-			if(tieneErrores && perimetroActivo.getExcluirValidaciones() == null || !DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones())) {
-				perimetroActivo.setCheckGestorComercial(false);	
-				perimetroActivo.setFechaGestionComercial(new Date());	
-				genericDao.update(PerimetroActivo.class,perimetroActivo);
-			}
-			if(!tieneErrores) {
-				perimetroActivo.setCheckGestorComercial(true);	
-				perimetroActivo.setFechaGestionComercial(new Date());
-				perimetroActivo.setExcluirValidaciones(diccionarioNo);
-				perimetroActivo.setMotivoGestionComercial(null);
-				genericDao.update(PerimetroActivo.class,perimetroActivo);
+				if(tieneErrores && (perimetroActivo.getExcluirValidaciones() == null || !DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones()))) {
+					perimetroActivo.setCheckGestorComercial(false);	
+					perimetroActivo.setFechaGestionComercial(new Date());	
+					genericDao.update(PerimetroActivo.class,perimetroActivo);
+				}
+				if(!tieneErrores) {
+					perimetroActivo.setCheckGestorComercial(true);	
+					perimetroActivo.setFechaGestionComercial(new Date());
+					perimetroActivo.setExcluirValidaciones(diccionarioNo);
+					perimetroActivo.setMotivoGestionComercial(null);
+					genericDao.update(PerimetroActivo.class,perimetroActivo);
+				}
 			}
 		
 		}

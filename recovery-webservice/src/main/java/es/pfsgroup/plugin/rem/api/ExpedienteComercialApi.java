@@ -1370,5 +1370,6 @@ public interface ExpedienteComercialApi {
 	 * @return void
 	 */
 	void recalcularHonorarios(Long idExpediente) throws Exception;
-
+	
+	boolean doTramitacionAsincrona(Activo activo, Oferta oferta);
 }

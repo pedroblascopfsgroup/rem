@@ -2280,23 +2280,6 @@ public class AgrupacionAdapter {
 		return resultado;
 	}
 	
-	private boolean persistOferta(Oferta oferta) {
-		TransactionStatus transaction = null;
-		boolean resultado = false;
-		try {
-			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
-			genericDao.update(Oferta.class, oferta);
-			transactionManager.commit(transaction);
-			resultado = true;
-		} catch (Exception e) {
-			logger.error("Error en activoManager", e);
-			transactionManager.rollback(transaction);
-
-		}
-		return resultado;
-	}
-
 	@Transactional(readOnly = false)
 	public Oferta createOfertaAgrupacion(DtoOfertasFilter dto) throws Exception {
 

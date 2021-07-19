@@ -30,4 +30,22 @@ public interface AccionesCaixaApi {
     void accionIngresoFinalRechazado(DtoOnlyExpedienteYOfertaCaixa dto);
 
     void accionIngresoFinalPdteDoc(DtoOnlyExpedienteYOfertaCaixa dto);
+
+    void accionAprobarModTitulares(DtoOnlyExpedienteYOfertaCaixa dto);
+
+    void accionDevolverArras(DtoOnlyExpedienteYOfertaCaixa dto);
+
+    void accionIncautarArras(DtoOnlyExpedienteYOfertaCaixa dto);
+
+    void accionDevolverReserva(DtoOnlyExpedienteYOfertaCaixa dto);
+
+    void accionIncautarReserva(DtoOnlyExpedienteYOfertaCaixa dto);
+
+    void accionDevolArrasCont(DtoAccionRechazoCaixa dto);
+
+    void accionDevolReservaCont(DtoAccionRechazoCaixa dto);
+
+    void accionIncautacionArrasCont(DtoAccionRechazoCaixa dto);
+
+    void accionIncautacionReservaCont(DtoAccionRechazoCaixa dto);
 }

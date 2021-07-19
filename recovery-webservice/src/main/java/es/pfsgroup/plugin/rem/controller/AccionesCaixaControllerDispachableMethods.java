@@ -359,6 +359,191 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
+        dispachableMethods.put(AccionesCaixaController.ACCION_APROBAR_MOD_TITULARES, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteYOfertaCaixa>() {
+            @Override
+            public Class<DtoOnlyExpedienteYOfertaCaixa> getArgumentType() {
+                return DtoOnlyExpedienteYOfertaCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoOnlyExpedienteYOfertaCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionAprobarModTitulares(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_DEVOLVER_ARRAS, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteYOfertaCaixa>() {
+            @Override
+            public Class<DtoOnlyExpedienteYOfertaCaixa> getArgumentType() {
+                return DtoOnlyExpedienteYOfertaCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoOnlyExpedienteYOfertaCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionDevolverArras(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_INCAUTAR_ARRAS, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteYOfertaCaixa>() {
+            @Override
+            public Class<DtoOnlyExpedienteYOfertaCaixa> getArgumentType() {
+                return DtoOnlyExpedienteYOfertaCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoOnlyExpedienteYOfertaCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionIncautarArras(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_DEVOLVER_RESERVA, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteYOfertaCaixa>() {
+            @Override
+            public Class<DtoOnlyExpedienteYOfertaCaixa> getArgumentType() {
+                return DtoOnlyExpedienteYOfertaCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoOnlyExpedienteYOfertaCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionDevolverReserva(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_INCAUTAR_RESERVA, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteYOfertaCaixa>() {
+            @Override
+            public Class<DtoOnlyExpedienteYOfertaCaixa> getArgumentType() {
+                return DtoOnlyExpedienteYOfertaCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoOnlyExpedienteYOfertaCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionIncautarReserva(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_DEVOL_ARRAS_CONT, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionRechazoCaixa>() {
+            @Override
+            public Class<DtoAccionRechazoCaixa> getArgumentType() {
+                return DtoAccionRechazoCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoAccionRechazoCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionDevolArrasCont(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }  return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_DEVOL_RESERVA_CONT, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionRechazoCaixa>() {
+            @Override
+            public Class<DtoAccionRechazoCaixa> getArgumentType() {
+                return DtoAccionRechazoCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoAccionRechazoCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionDevolReservaCont(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }  return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_INCAUTACION_ARRAS_CONT, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionRechazoCaixa>() {
+            @Override
+            public Class<DtoAccionRechazoCaixa> getArgumentType() {
+                return DtoAccionRechazoCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoAccionRechazoCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionIncautacionArrasCont(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }  return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_INCAUTACION_RESERVA_CONT, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionRechazoCaixa>() {
+            @Override
+            public Class<DtoAccionRechazoCaixa> getArgumentType() {
+                return DtoAccionRechazoCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoAccionRechazoCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionIncautacionReservaCont(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }  return true;
+                }
+
+                return false;
+            }
+        });
+
     }
 
     private AccionesCaixaController controller;

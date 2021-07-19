@@ -1334,7 +1334,18 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						autorizacionWebProveedor = true;
 				}
 			}
-			if (informe.getTestigos() != null) {
+			HashMap<String, String> errorsListTestigo = null;
+			if (!Checks.esNulo(informe.getTestigos()) && !Checks.estaVacio(informe.getTestigos())) {
+				for (TestigosOpcionalesDto testigo : informe.getTestigos()) {
+					if (this.existeInformemediadorActivo(informe.getIdActivoHaya())) {
+						errorsListTestigo = restApi.validateRequestObject(testigo, TIPO_VALIDACION.UPDATE);
+					} else {
+						errorsListTestigo = restApi.validateRequestObject(testigo, TIPO_VALIDACION.INSERT);
+					}
+					errorsList.putAll(errorsListTestigo);
+				}
+			}
+			if (informe.getTestigos() != null && errorsListTestigo == null) {
 				int count = 0;
 				for (int pos = 0; pos < informe.getTestigos().size() && count == 0; pos++) {
 					if (Checks.esNulo(informe.getTestigos().get(pos).getId())){
@@ -1342,6 +1353,16 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						count = 1;
 					}
 				}
+			}
+			
+			if (informe.getCodSubtipoInmueble() != null) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodSubtipoInmueble());
+				DDSubtipoActivo subtipo = genericDao.get(DDSubtipoActivo.class, filtro);
+				if (!Checks.esNulo(subtipo)) {
+					boolean error = subtipo.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()) ? true : false;
+					if (!error) errorsList.put("tipo&subtipoActivo", RestApi.REST_MSG_NO_RELATED_AT);
+				}
+				
 			}
 			
 			if (errorsList.size() == 0) {
@@ -1369,7 +1390,19 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						nuevaFase.setSubFasePublicacion(genericDao.get(DDSubfasePublicacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_CLASIFICADO)));
 						nuevaFase.setFechaInicio(new Date());
 						
-						genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFase);					
+						genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFase);
+						
+						if (!Checks.esNulo(activo.getTipoActivo()) && !Checks.esNulo(activo.getSubtipoActivo())) {
+							if (!activo.getSubtipoActivo().getCodigo().equals(informe.getCodSubtipoInmueble())) {
+								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodSubtipoInmueble());
+								DDSubtipoActivo subtipo = genericDao.get(DDSubtipoActivo.class, filtro);
+								if (!Checks.esNulo(subtipo)) {
+									activo.setTipoActivo(subtipo.getTipoActivo());
+									activo.setSubtipoActivo(subtipo);
+									genericDao.save(Activo.class, activo);
+								}
+							}
+						}
 					
 						ArrayList<Serializable> entitys = new ArrayList<Serializable>();
 						

@@ -107,6 +107,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
@@ -2683,6 +2684,25 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView haPasadoSeguroRentas(ModelMap model,Long idTarea) {
 		try {
 			model.put(RESPONSE_DATA_KEY, tramiteAlquilerApi.haPasadoSeguroDeRentas(idTarea));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getEntidadFinancieraFiltro(ModelMap model, WebDto webDto) {
+		try {
+			List<DDEntidadFinanciera> lista = expedienteComercialApi.getListEntidadFinanciera();
+			model.put(RESPONSE_DATA_KEY, lista);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {

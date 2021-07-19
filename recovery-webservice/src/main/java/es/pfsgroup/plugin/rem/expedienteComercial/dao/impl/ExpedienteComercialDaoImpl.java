@@ -96,7 +96,7 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 			usuarioBorrar = "DEFAULT";
 		StringBuilder sb = new StringBuilder("update CompradorExpediente ce set ce.auditoria.borrado = 1, ce.porcionCompra= 0, ce.fechaBaja= SYSDATE,"
 				+ " ce.auditoria.usuarioBorrar = :usuarioBorrar, ce.auditoria.fechaBorrar = SYSDATE"
-				+ " where ce.primaryKey.comprador = :idComprador and ce.primaryKey.expediente= :idExpediente");
+				+ " where ce.primaryKey.comprador.id = :idComprador and ce.primaryKey.expediente.id = :idExpediente");
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).setParameter("usuarioBorrar", usuarioBorrar).setParameter("idComprador", idComprador).setParameter("idExpediente", idExpediente).executeUpdate();
 	}
 	

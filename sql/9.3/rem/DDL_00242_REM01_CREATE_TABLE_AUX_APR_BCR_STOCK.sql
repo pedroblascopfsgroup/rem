@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210709
+--## FECHA_CREACION=20210715
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14545
@@ -19,6 +19,7 @@
 --##        0.7  HREOS-14533 -  Daniel Algaba - Se cambia la longitud de los campos COD_GESTORIA y COD_REGISTRO_PROPIEDAD
 --##        0.7  HREOS-14545 -  Daniel Algaba - Se cambia la longitud de los campos COD_GESTORIA y COD_GESTORIA_ADMINIS
 --##        0.8  HREOS-14545 -  Daniel Algaba - Se hace un repaso completo, se añaden campos y se cambian algunas longitudes
+--##        0.8  HREOS-14545 -  Daniel Algaba - Se cambia la longitud de BANCO_ORIGEN A 4
 --##########################################
 --*/
 
@@ -104,7 +105,7 @@ BEGIN
         PRODUCTO                    VARCHAR2(2 CHAR),
         PROCEDENCIA_PRODUCTO        VARCHAR2(2 CHAR),
         SOCIEDAD_ORIGEN             VARCHAR2(4 CHAR),
-        BANCO_ORIGEN                VARCHAR2(3 CHAR),
+        BANCO_ORIGEN                VARCHAR2(4 CHAR),
 
         FINCA                       VARCHAR2(10 CHAR),
         LIBRO                       VARCHAR2(4 CHAR),

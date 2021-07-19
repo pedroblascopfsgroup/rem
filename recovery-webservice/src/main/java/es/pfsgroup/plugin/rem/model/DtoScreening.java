@@ -12,7 +12,7 @@ public class DtoScreening extends WebDto {
     private String codigoTarea ;
 	private String usuarioLogado;
 	private Long numExpedienteComercial;
-	private boolean isTareaActiva;
+	private Boolean isTareaActiva;
 	
 	private String motivoBloqueado;
 	private String motivoDesbloqueado;
@@ -54,11 +54,11 @@ public class DtoScreening extends WebDto {
 		this.numExpedienteComercial = numExpedienteComercial;
 	}
 
-	public boolean isTareaActiva() {
+	public Boolean getIsTareaActiva() {
 		return isTareaActiva;
 	}
 
-	public void setTareaActiva(boolean isTareaActiva) {
+	public void setIsTareaActiva(Boolean isTareaActiva) {
 		this.isTareaActiva = isTareaActiva;
 	}
 

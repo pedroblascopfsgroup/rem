@@ -12419,7 +12419,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		dto.setNumExpedienteComercial(expedienteComercial.getNumExpediente());
 		dto.setComboResultado(DDSinSiNo.CODIGO_SI);
 		
-		if(!dto.isTareaActiva()) {
+		if(!dto.getIsTareaActiva()) {
 			this.guardarBloqueoExpediente(expedienteComercial);
 			tarea = this.crearTareaScreening(dto, expedienteComercial);
 			if(Checks.esNulo(dto.getMotivoBloqueado())) {
@@ -12442,7 +12442,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		TareaExterna tarea = null;
 		dto.setNumExpedienteComercial(expedienteComercial.getNumExpediente());
 		dto.setComboResultado(DDSinSiNo.CODIGO_NO);
-		if(dto.isTareaActiva()){
+		if(dto.getIsTareaActiva()){
 			if(Checks.esNulo(dto.getMotivoDesbloqueado())) {
 				dto.setMotivoDesbloqueado(DDMotivosDesbloqueo.DESBLOQUEO_SCREENING);
 			}
@@ -12472,7 +12472,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		dto.setNumOferta(numOferta);
 		dto.setMotivoBloqueado(motivo);
 		dto.setObservacionesBloqueado(observaciones);
-		dto.setTareaActiva(false);
+		dto.setIsTareaActiva(false);
 		dto.setCodigoTarea(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
 
 		return dto;
@@ -12485,7 +12485,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		dto.setMotivoDesbloqueado(motivo);
 		dto.setObservacionesDesbloqueado(observaciones);
 		dto.setCodigoTarea(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
-		dto.setTareaActiva(true);
+		dto.setIsTareaActiva(true);
 
 		return dto;
 	}

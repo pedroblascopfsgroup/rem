@@ -86,6 +86,10 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@JoinColumn(name = "DD_TIC_ID")
 	private DDTipoInfoComercial tipoInfoComercial;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TIC_ID_ANTERIOR")
+	private DDTipoInfoComercial tipoInfoComercialAnterior;
+	
 	@ManyToOne
 	@JoinColumn(name = "ICO_MEDIADOR_ID")
 	private ActivoProveedor mediadorInforme;
@@ -437,6 +441,7 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	}
 
 	public void setTipoInfoComercial(DDTipoInfoComercial tipoInfoComercial) {
+		this.tipoInfoComercialAnterior = this.tipoInfoComercial;
 		this.tipoInfoComercial = tipoInfoComercial;
 	}
 
@@ -1039,6 +1044,14 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setAdmiteMascotaOtrasCaracteristicas(DDSiniSiNoIndiferente admiteMascotaOtrasCaracteristicas) {
 		this.admiteMascotaOtrasCaracteristicas = admiteMascotaOtrasCaracteristicas;
+	}
+
+	public DDTipoInfoComercial getTipoInfoComercialAnterior() {
+		return tipoInfoComercialAnterior;
+	}
+
+	public void setTipoInfoComercialAnterior(DDTipoInfoComercial tipoInfoComercialAnterior) {
+		this.tipoInfoComercialAnterior = tipoInfoComercialAnterior;
 	}
 	
 

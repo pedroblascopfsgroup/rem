@@ -1965,7 +1965,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	var storeScoring = scoring.getStore();
     			storeScoring.addListener('load', function(store, records, successful, operation, eOpts){
     			var dataScoring = store.getData().items; 
-    			if(CONST.CARTERA['BANKIA'] != codigoCartera || CONST.ESTADOS_EXPEDIENTE_BC['PT_SCORING'] != codigoEstadoBC){
+    			if(CONST.CARTERA['BANKIA'] != codigoCartera || (CONST.ESTADOS_EXPEDIENTE_BC['PT_SCORING'] != codigoEstadoBC && CONST.ESTADOS_EXPEDIENTE_BC['CONTRAOFERTADO'] != codigoEstadoBC)){
     				var indexConDudas;
     				for( var i = 0 ; i < dataScoring.length; i++) { 
     					if(dataScoring[i].getData().codigo == '03'){  
@@ -1982,7 +1982,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	
     	me.down('[name=resultadoScoring]').addListener('change', function() {
     		var resultadoScoring = me.down('[name=resultadoScoring]');
-    		if(resultadoScoring.value == '01'){
+    		if(resultadoScoring.value == '01' || resultadoScoring.value == '03'){
     			
     			me.down('[name=nMesesFianza]').noObligatorio=false;
     			me.down('[name=importeFianza]').noObligatorio=false;
@@ -2137,7 +2137,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	me.down('[name=resultadoRentas]').addListener('change', function() {
     		var resultadoRentas = me.down('[name=resultadoRentas]');
 
-    		if(resultadoRentas.value == '01'){
+    		if(resultadoRentas.value == '01' || resultadoRentas.value == '03'){
     			
     			me.down('[name=nMesesFianza]').noObligatorio=false;
     			me.down('[name=importeFianza]').noObligatorio=false;

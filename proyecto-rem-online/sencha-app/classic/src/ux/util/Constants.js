@@ -943,7 +943,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		COD_EXCLUIDO_CLIENTE : '14'
 	},
 	 ESTADOS_EXPEDIENTE_BC: {
-	    	PT_SCORING: '007'
+	    	PT_SCORING: '007',
+	    	CONTRAOFERTADO: '030'
 	 },
 	 ESTADO_VALIDACION_BC:{
 		CODIGO_NO_ENVIADA: '01',

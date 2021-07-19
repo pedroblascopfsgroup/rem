@@ -401,7 +401,12 @@ public class TabActivoInformeComercial implements TabActivoService {
 				actInfoComercial = activo.getInfoComercial();
 			}
 			if (!Checks.esNulo(actInfoComercial)) {
+											
 				beanUtilNotNull.copyProperties(actInfoComercial, activoInformeDto);
+				if(activoInformeDto.getDistribucionTxt()!=null) {
+					actInfoComercial.setInfoDistribucionInterior(activoInformeDto.getDistribucionTxt());	
+				}
+				
 				if(actInfoComercial.getId() != null) {
 					vivienda = genericDao.get(ActivoVivienda.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", actInfoComercial.getId()));
 					localComercial = genericDao.get(ActivoLocalComercial.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", actInfoComercial.getId()));

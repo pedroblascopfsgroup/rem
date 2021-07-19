@@ -26,7 +26,7 @@ DECLARE
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_USU VARCHAR2(30 CHAR) := 'HREOS-14546'; -- Vble. auxiliar para almacenar el nombre de usuario que modifica los registros.
+    V_USU VARCHAR2(30 CHAR) := 'PROC_GEN_GASTOS_AALBARANES'; -- Vble. auxiliar para almacenar el nombre de usuario que modifica los registros.
 
 BEGIN		
 

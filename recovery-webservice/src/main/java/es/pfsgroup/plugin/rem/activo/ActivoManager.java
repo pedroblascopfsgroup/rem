@@ -676,7 +676,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		historicoValoracion.setTipoPrecio(activoValoracion.getTipoPrecio());
 		historicoValoracion.setImporte(activoValoracion.getImporte());
 		historicoValoracion.setFechaInicio(activoValoracion.getFechaInicio());
-		historicoValoracion.setFechaFin(activoValoracion.getFechaFin());
+		historicoValoracion.setFechaFin(
+				(!Checks.esNulo(activoValoracion.getFechaFin()) ? activoValoracion.getFechaFin() : new Date()));
 		historicoValoracion.setFechaAprobacion(activoValoracion.getFechaAprobacion());
 		historicoValoracion.setFechaCarga(
 				(!Checks.esNulo(activoValoracion.getFechaCarga()) ? activoValoracion.getFechaCarga() : new Date()));
@@ -1648,8 +1649,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							historico.getMediadorInforme().getTelefono1());
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "email",
 							historico.getMediadorInforme().getEmail());
-					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "rol",
+					if(historico.getTipoRolMediador() != null) {
+						beanUtilNotNull.copyProperty(dtoHistoricoMediador, "rol",
 							historico.getTipoRolMediador().getDescripcion());
+					}
 				}
 				if (historico.getAuditoria() != null) {
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "responsableCambio",

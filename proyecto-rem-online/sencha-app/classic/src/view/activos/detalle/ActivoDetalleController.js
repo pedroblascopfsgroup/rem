@@ -5331,7 +5331,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		        		params: {idActivo: idActivo},
 	    		    		success: function(response, opts){	
 	    		    			var activosSeleccionados = Ext.decode(response.responseText).data.activosPropagables;
-	    		    			
 		    		    			if(me.getViewModel() != null){
 	    		    					if(me.getViewModel().get('activo') != null){
 	    		    						if(me.getViewModel().get('activo').data != null){
@@ -5407,7 +5406,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    										return false;
 		    								}
 		    		    				}
-		    	
+
+		    							me.getView().unmask();
+					
 	    								var successFn = function(response, eOpts) {
 		    		
 											me.manageToastJsonResponse(me, response.responseText);
@@ -5422,8 +5423,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    							} else {
 		    								me.getView().fireEvent("No hay activos propagables");
 		    								me.saveActivo(tabData, successFn);
-		    							}
-		    		    			me.getView().unmask();
+		    							}		    		    			
 		    		    		}		
 	    		    		},failure: function(record, operation) {
 	    		    			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
@@ -6083,7 +6083,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var chkPerimetroAlquiler = me.lookupReference('chkPerimetroAlquilerRef');
 		var subrogadoCheckbox = me.lookupReference('subrogadoCheckbox');
         var comboTipoInquilino = me.lookupReference('comboTipoInquilinoRef');
-        var  tipoComercializacion = me.getViewModel().get('activo.tipoComercializacionCodigo');
+        var tipoComercializacion = me.getViewModel().get('activo.tipoComercializacionCodigo');
         var comboValue = comboEstadoAlquiler.value;
         
         if(!Ext.isEmpty(comboEstadoAlquiler)){
@@ -6098,8 +6098,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             		chkPerimetroAlquiler.setValue(true);
             	}
 				subrogadoCheckbox.setValue(false);
+				comboTipoInquilino.setDisabled(true);
+				comboTipoInquilino.setValue(null);
             }else{
 				subrogadoCheckbox.setValue(false);
+				comboTipoInquilino.setDisabled(true);
+				comboTipoInquilino.setValue(null);
 			}
         }
     },

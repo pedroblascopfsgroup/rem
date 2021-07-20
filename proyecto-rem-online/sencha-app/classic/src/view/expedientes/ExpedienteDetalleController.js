@@ -1550,7 +1550,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onChangeComboEntidadFinanciera: function(combo, nValue, oValue, eOps) {
 		var me = this;
 		var esBankia = me.getViewModel().get("expediente.esBankia");
-		var valorComboEsBankia = CONST.COMBO_ENTIDAD_FINANCIERA['BANKIA'];			
+		var valorComboEsBankia = CONST.COMBO_ENTIDAD_FINANCIERA['BANKIA'];
+		var valorComboEsOtros = CONST.COMBO_ENTIDAD_FINANCIERA['OTRA_ENTIDAD'];
 		var disabled = nValue == 0;
     	    	  	
 		numExpedienteRiesgo = me.lookupReference('numExpedienteRiesgo');
@@ -1559,6 +1560,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		labelCapitalConcedido = me.lookupReference('capitalCondedidoRef');
 		labelNumeroExpediente = me.lookupReference('numeroExpedienteRef');
 		comboTipoFinanciacionRef = me.lookupReference('tipoFinanciacionRef');
+		otraEntidadFinanciera = me.lookupReference('otraEntidadFinancieraRef');
 
 		if (!(nValue == me.getViewModel().data.financiacion.data.entidadFinancieraCodigo)){
 			labelCapitalConcedido.setValue("");
@@ -1581,6 +1583,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     		comboEntidadFinancieraCodigo.setValue("");
     		labelNumeroExpediente.setValue("");
     		comboTipoFinanciacion.reset();
+    	}    	
+    	if (nValue == valorComboEsOtros) {
+    		otraEntidadFinanciera.setEditable(true);
+    		otraEntidadFinanciera.setDisabled(false);
+    		otraEntidadFinanciera.allowBlank = false;
+    	}else{
+    		otraEntidadFinanciera.setEditable(false);
+    		otraEntidadFinanciera.setDisabled(true);
+    		otraEntidadFinanciera.allowBlank = true;
+    		otraEntidadFinanciera.setValue("");
     	}
 	},
 	

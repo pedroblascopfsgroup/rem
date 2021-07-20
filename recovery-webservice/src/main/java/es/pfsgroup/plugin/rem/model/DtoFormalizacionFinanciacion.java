@@ -22,6 +22,7 @@ public class DtoFormalizacionFinanciacion extends WebDto {
 	private Date fechaInicioExpediente;
 	private String entidadFinancieraCodigo;
 	private Date fechaPosicionamientoPrevista;
+	private String otraEntidadFinanciera;
 
 	
 	
@@ -108,6 +109,12 @@ public class DtoFormalizacionFinanciacion extends WebDto {
 	}
 	public void setFechaPosicionamientoPrevista(Date fechaPosicionamientoPrevista) {
 		this.fechaPosicionamientoPrevista = fechaPosicionamientoPrevista;
+	}
+	public String getOtraEntidadFinanciera() {
+		return otraEntidadFinanciera;
+	}
+	public void setOtraEntidadFinanciera(String otraEntidadFinanciera) {
+		this.otraEntidadFinanciera = otraEntidadFinanciera;
 	}
 
 

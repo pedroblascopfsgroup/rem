@@ -654,7 +654,8 @@ Ext.define('HreRem.ux.util.Constants', {
 
  	},
  	COMBO_ENTIDAD_FINANCIERA:{
- 		BANKIA: '01'
+ 		BANKIA: '01',
+ 		OTRA_ENTIDAD: '07'
  	},
  	DD_ETI_ESTADO_TITULO :{
 		TRAMITACION: "01",

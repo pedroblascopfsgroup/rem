@@ -7210,11 +7210,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setFechaInicioExpediente(condiciones.getFechaInicioExpediente());
 				dto.setFechaInicioFinanciacion(condiciones.getFechaInicioFinanciacion());
 				dto.setFechaFinFinanciacion(condiciones.getFechaFinFinanciacion());
+				
+				if (condiciones.getOtraEntidadFinaciera() != null) {
+					dto.setOtraEntidadFinanciera(condiciones.getOtraEntidadFinaciera());
+				}
 
 			}
 			if (!Checks.esNulo(expediente.getFechaPosicionamientoPrevista())) {
 				dto.setFechaPosicionamientoPrevista(expediente.getFechaPosicionamientoPrevista());
-			}
+			}			
 		}
 
 		return dto;
@@ -7303,6 +7307,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				if (!Checks.esNulo(dto.getFechaFinFinanciacion())) {
 					condiciones.setFechaFinFinanciacion(dto.getFechaFinFinanciacion());
+				}
+				if (dto.getOtraEntidadFinanciera() != null) {
+					condiciones.setOtraEntidadFinaciera(dto.getOtraEntidadFinanciera());
 				}
 
 				genericDao.save(CondicionanteExpediente.class, condiciones);

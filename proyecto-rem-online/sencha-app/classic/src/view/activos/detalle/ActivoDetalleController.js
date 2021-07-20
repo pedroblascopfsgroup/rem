@@ -66,6 +66,38 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			updateOrdenFotos : 'updateOrdenFotosInterno'
 		},
 
+
+         'saneamientoactivo cargasactivogrid': {
+            abrirFormulario: 'abrirFormularioAnyadirCarga',
+         	onClickRemove: 'onClickRemoveCarga',
+         	onClickPropagation :  'onClickPropagation'
+         },
+         
+         'datospublicacionactivo historicocondicioneslist': {
+          	onClickPropagation :  'onClickPropagationHistoricoCondiciones'
+         },
+         
+         'tituloinformacionregistralactivo calificacionnegativagrid': {
+          	onClickPropagation: 'onClickPropagationCalificacionNegativa'
+          },
+          
+          'informecomercialactivo historicomediadorgrid': {
+           	onClickPropagation: 'onClickPropagationCalificacionNegativa'
+          },
+           
+           'adjuntosplusvalias gridBase': {
+               abrirFormulario: 'abrirFormularioAdjuntarDocumentosPlusvalia',
+               onClickRemove: 'borrarDocumentoAdjuntoPlusvalia', 
+               download: 'downloadDocumentoAdjuntoPlusvalia', 
+               afterupload: function(grid) {
+               	grid.getStore().load();
+               },
+               afterdelete: function(grid) {
+               	grid.getStore().load();
+               }
+           },
+          
+
 		'uxvalidargeolocalizacion' : {
 			actualizarCoordenadas : 'actualizarCoordenadas'
 		},
@@ -1914,7 +1946,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config.url = $AC.getWebPath() + "activo/bajarAdjuntoActivo."
 				+ $AC.getUrlPattern();
 		config.params = {};
-		config.params.id = record.get('id');
+		config.params.id=record.get('ofertaID');
 		config.params.idActivo = record.get("idActivo");
 		config.params.nombreDocumento = record.get("nombre").replace(/,/g, "");
 		me.fireEvent("downloadFile", config);
@@ -1922,11 +1954,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	downloadDocumentoAdjuntoPromocion : function(grid, record) {
 
-		var me = this, config = {};
-
-		config.url = $AC.getWebPath()
-				+ "promocion/bajarAdjuntoActivoPromocion."
-				+ $AC.getUrlPattern();
+		var me = this,
+		config = {};
+		
+		config.url=$AC.getWebPath()+"promocion/bajarAdjuntoActivoPromocion."+$AC.getUrlPattern();
 		config.params = {};
 		config.params.id = record.get('id');
 		config.params.idActivo = record.get("idActivo");
@@ -7403,13 +7434,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		me = this;
 		if (!Ext.isEmpty(record)) {
 			idOferta = record.data.idOferta;
-			if (idOferta
-					&& !Ext.isEmpty(me.view
-							.down('[reference=cloneExpedienteButton]'))) {
-				var hideButton = record.data.codigoEstadoOferta != CONST.ESTADOS_OFERTA['RECHAZADA'];
-				me.view.down('[reference=cloneExpedienteButton]')
-						.setDisabled(hideButton);
-			}
+			if (idOferta && !Ext.isEmpty(me.view.down('[reference=cloneExpedienteButton]'))) {
+				var hideButton = record.data.codigoEstadoOferta != CONST.ESTADOS_OFERTA['RECHAZADA'] && record.data.codigoEstadoOferta != CONST.ESTADOS_OFERTA['CADUCADA'];
+	    		me.view.down('[reference=cloneExpedienteButton]').setDisabled(hideButton); 
+			}	
 		}
 	},
 
@@ -8175,10 +8203,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var me = this;
     	btn.up('window').hide();
     },
-
-
-
-	onClickBotonAnyadirGastoAsociadoAdquisicion : function(btn) {
+       
+	downloadDocumentoAdjuntoOfertasController: function(grid, record, idDocumento) {
+		var me = this,
+		config = {};
+		
+		config.url=$AC.getWebPath()+"activo/baj" +
+				"arAdjuntoOfertante."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('ofertaID');
+		config.params.idDocumento=idDocumento;
+		if(idDocumento != null) {
+			me.fireEvent("downloadFile", config);
+		}
+    },
+    onClickBotonAnyadirGastoAsociadoAdquisicion : function(btn) {
 
 		var me = this;
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
@@ -8497,3 +8536,4 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
     }
 });
+

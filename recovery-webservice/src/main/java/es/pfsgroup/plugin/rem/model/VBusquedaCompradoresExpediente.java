@@ -114,6 +114,9 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 	@Column(name = "CEX_NUM_URSUS_CONYUGE_BH_REM")
 	private String numeroClienteUrsusBhConyuge;
 	
+	@Column(name = "FECHA_ACEP_GDPR")
+	private String fechaAcepGdpr;
+	
     
 	public String getId() {
 		return id;
@@ -362,7 +365,13 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 	public void setNumeroClienteUrsusBhConyuge(String numeroClienteUrsusBhConyuge) {
 		this.numeroClienteUrsusBhConyuge = numeroClienteUrsusBhConyuge;
 	}
-	
-	
-	
+
+	public String getFechaAcepGdpr() {
+		return fechaAcepGdpr;
+	}
+
+	public void setFechaAcepGdpr(String fechaAcepGdpr) {
+		this.fechaAcepGdpr = fechaAcepGdpr;
+	}
+
 }

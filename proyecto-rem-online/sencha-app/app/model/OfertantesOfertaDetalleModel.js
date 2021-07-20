@@ -29,6 +29,12 @@ Ext.define('HreRem.model.OfertantesOfertaDetalleModel', {
             },
             {
             	name: 'regimenMatrimonial'
+            },
+            {
+            	name: 'ADCOMIdDocumentoIdentificativo'
+            },
+            {
+            	name: 'ADCOMIdDocumentoGDPR'
             }
             
     ],

@@ -83,9 +83,14 @@ public class OfertaDto implements Serializable {
 	private Date fechaRecomendacionRc;
 	private String recomendacionDc;
 	private Date fechaRecomendacionDc;
+	private String documentoIdentificativo;
+	private String nombreDocumentoIdentificativo;
+	private String documentoGDPR;
+	private String nombreDocumentoGDPR;
 	private Boolean docResponsabilidadPrescriptor;
 	private String porcentajeDescuento;
 	private String justificacionOferta;
+	private Date fechaAcepGdpr;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -335,6 +340,31 @@ public class OfertaDto implements Serializable {
 	public void setFechaRecomendacionDc(Date fechaRecomendacionDc) {
 		this.fechaRecomendacionDc = fechaRecomendacionDc;
 	}
+
+	public String getDocumentoIdentificativo() {
+		return documentoIdentificativo;
+	}
+	public void setDocumentoIdentificativo(String documentoIdentificativo) {
+		this.documentoIdentificativo = documentoIdentificativo;
+	}
+	public String getNombreDocumentoIdentificativo() {
+		return nombreDocumentoIdentificativo;
+	}
+	public void setNombreDocumentoIdentificativo(String nombreDocumentoIdentificativo) {
+		this.nombreDocumentoIdentificativo = nombreDocumentoIdentificativo;
+	}
+	public String getDocumentoGDPR() {
+		return documentoGDPR;
+	}
+	public void setDocumentoGDPR(String documentoGDPR) {
+		this.documentoGDPR = documentoGDPR;
+	}
+	public String getNombreDocumentoGDPR() {
+		return nombreDocumentoGDPR;
+	}
+	public void setNombreDocumentoGDPR(String nombreDocumentoGDPR) {
+		this.nombreDocumentoGDPR = nombreDocumentoGDPR;
+	}
 	public Boolean getDocResponsabilidadPrescriptor() {
 		return docResponsabilidadPrescriptor;
 	}
@@ -353,4 +383,11 @@ public class OfertaDto implements Serializable {
 	public void setJustificacionOferta(String justificacionOferta) {
 		this.justificacionOferta = justificacionOferta;
 	}
+	public Date getFechaAcepGdpr() {
+		return fechaAcepGdpr;
+	}
+	public void setFechaAcepGdpr(Date fechaAcepGdpr) {
+		this.fechaAcepGdpr = fechaAcepGdpr;
+	}
+
 }

@@ -145,14 +145,20 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 					    }
 	                }
 						
-				}
+				},
+		        {
+		            dataIndex: 'fechaEntradaCRMSF',
+		            text: HreRem.i18n('header.oferta.fechaEntradaCRMSF'),
+		            formatter: 'date("d/m/Y")',
+		            flex: 1
+		        }
         ];
         
          me.addListener ('beforeedit', function(editor, context) {
          	
          	if(this.editOnSelect) {
 	            var estado = context.record.get("codigoEstadoOferta");  
-	            var allowEdit = estado != '01' && estado != '02';
+	            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06';
 	            this.editOnSelect = allowEdit;
          	}
             return this.editOnSelect;
@@ -305,12 +311,16 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			
 			//Si todos los estados de las Ofertas = Rechazada -> Se podran agregar activos a al agrupacion
 			// HREOS-2814 El cambio a anulada/denegada (rechazada) abre el formulario de motivos de rechazo
-			if(CONST.ESTADOS_OFERTA['RECHAZADA'] == estado) {
+			if(CONST.ESTADOS_OFERTA['RECHAZADA'] == estado || CONST.ESTADOS_OFERTA['CADUCADA']) {
 				if(!Ext.isEmpty(me.lookupController().lookupReference('listadoactivosagrupacion'))) {
 					var arrayOfertas = me.getView().getStore();
 					var mostrarTopBarListaActivos = true;
 					for(var i=0; i< arrayOfertas.count();i++) {
 						if(arrayOfertas.getAt(i).get('codigoEstadoOferta') != CONST.ESTADOS_OFERTA['RECHAZADA']) {
+							mostrarTopBarListaActivos = false;
+							break;	
+						}
+						if(arrayOfertas.getAt(i).get('codigoEstadoOferta') != CONST.ESTADOS_OFERTA['CADUCADA']) {
 							mostrarTopBarListaActivos = false;
 							break;	
 						}
@@ -393,13 +403,22 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		} else if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
 			return false;
-		} else if(!hayOfertaAceptada && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['ACEPTADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['CONGELADA'] != codigoEstadoNuevo){
+		} else if(!hayOfertaAceptada && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['ACEPTADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['CONGELADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.aceptar.rechazar"));
+			return false;
+		} else if (hayOfertaAceptada && CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo) {
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
 			return false;
 		}
 		
 		//HREOS-2814 Validacion si estado oferta = rechazada, tipo y motivo obligatorios.
 		if(CONST.ESTADOS_OFERTA['RECHAZADA'] == codigoEstadoNuevo){
+			if (record.data.tipoRechazoCodigo == null || record.data.motivoRechazoCodigo == null){
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.rechazar.motivos"));
+				return false;
+			}
+		}
+		if(CONST.ESTADOS_OFERTA['CADUCADA'] == codigoEstadoNuevo){
 			if (record.data.tipoRechazoCodigo == null || record.data.motivoRechazoCodigo == null){
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.rechazar.motivos"));
 				return false;
@@ -449,8 +468,8 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		var ofertasData = me.getNavigationModel().store.data.items;
 		var ofertaSeleccionadaData = selectionModel.getSelection()[0].data;
 
-		var sePuedeClonarExpediente = ofertaSeleccionadaData.codigoEstadoOferta == CONST.ESTADOS_OFERTA['RECHAZADA'];
-				
+		var sePuedeClonarExpediente = ofertaSeleccionadaData.codigoEstadoOferta == CONST.ESTADOS_OFERTA['RECHAZADA'] && ofertaSeleccionadaData.codigoEstadoOferta == CONST.ESTADOS_OFERTA['CADUCADA'];
+						
 		if (!sePuedeClonarExpediente) {
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.clonar.oferta.no.anulada"));
 			return false;

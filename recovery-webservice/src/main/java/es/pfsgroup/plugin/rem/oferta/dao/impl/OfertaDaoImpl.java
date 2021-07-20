@@ -46,7 +46,8 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	public static final String TIPO_FECHA_ALTA = "01";
 	public static final String TIPO_FECHA_FIRMA_RESERVA = "02";
 	public static final String TIPO_FECHA_POSICIONAMIENTO = "03";
-	public static final String TIPO_FECHA_OFR_PENDIENTE = "04";
+	public static final String TIPO_FECHA_ENTRADA_CRMSF = "04";
+	public static final String TIPO_FECHA_OFR_PENDIENTE = "05";
 	public static final String CODIGO_NUM_ACTIVO_UVEM= "NUM_UVEM";
 	public static final String CODIGO_NUM_ACTIVO_SAREB= "NUM_SAREB";
 	public static final String CODIGO_NUM_ACTIVO_PRINEX= "NUM_PRINEX";
@@ -59,6 +60,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	@Autowired
 	private GenericABMDao genericDao;
 	
+
 	//HREOS-6229
 	@SuppressWarnings("unchecked")
 	@Override

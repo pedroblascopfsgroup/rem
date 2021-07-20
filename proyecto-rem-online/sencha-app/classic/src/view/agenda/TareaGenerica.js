@@ -2266,6 +2266,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
 		me.deshabilitarCampo(me.down('[name=comite]'));
 		me.deshabilitarCampo(me.down('[name=fechaElevacion]'));
+		
+		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
+			me.ocultarCampo(me.down('[name=comite]'));
+			me.bloquearCampo(me.down('[name=fechaElevacion]'));
+			var fecha = new Date()
+			me.down('[name=fechaElevacion]').setValue(fecha);
+			
+		}
 
     	var resolucionOferta = resolucionOferta.getStore();
     	resolucionOferta.addListener('load', function(store, records, successful, operation, eOpts){
@@ -2347,7 +2355,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	
             	me.campoObligatorio(me.down('[name=motivoAnulacion]'));
             	me.campoNoObligatorio(me.down('[name=fechaElevacion]'));
-    			
     		}
     	});
     	

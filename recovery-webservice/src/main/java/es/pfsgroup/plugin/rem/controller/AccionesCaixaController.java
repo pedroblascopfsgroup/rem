@@ -26,7 +26,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
 
     public static final String ACCION_APROBACION = "001";
     public static final String ACCION_RECHAZO = "002";
-    public static final String ACCION_RECHAZO_AVANZA_RE = "002B";
+    public static final String ACCION_RECHAZO_AVANZA_RE = "000";
     public static final String ACCION_RESULTADO_RIESGO = "004";
     public static final String ACCION_ARRAS_APROBADAS = "005";
     public static final String ACCION_ARRAS_RECHAZADAS = "006";
@@ -40,6 +40,15 @@ public class AccionesCaixaController extends ParadiseJsonController {
     public static final String ACCION_RECHAZO_SCREENING = "036";
     public static final String ACCION_BLOQUEO_SCREENING = "011";
     public static final String ACCION_DESBLOQUEO_SCREENING = "012";
+    public static final String ACCION_APROBAR_MOD_TITULARES = "026";
+    public static final String ACCION_DEVOLVER_ARRAS = "027";
+    public static final String ACCION_INCAUTAR_ARRAS = "028";
+    public static final String ACCION_DEVOLVER_RESERVA = "029";
+    public static final String ACCION_INCAUTAR_RESERVA = "030";
+    public static final String ACCION_DEVOL_ARRAS_CONT = "032";
+    public static final String ACCION_DEVOL_RESERVA_CONT = "033";
+    public static final String ACCION_INCAUTACION_ARRAS_CONT = "034";
+    public static final String ACCION_INCAUTACION_RESERVA_CONT = "035";
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -274,6 +283,123 @@ public class AccionesCaixaController extends ParadiseJsonController {
         ModelMap model = new ModelMap();
         try {
             expedienteComercialApi.tareaDesbloqueoScreening(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionAprobarModTitulares(DtoOnlyExpedienteYOfertaCaixa dto) {
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionAprobarModTitulares(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionDevolverArras(DtoOnlyExpedienteYOfertaCaixa dto) {
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionDevolverArras(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionIncautarArras(DtoOnlyExpedienteYOfertaCaixa dto) {
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionIncautarArras(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionDevolverReserva(DtoOnlyExpedienteYOfertaCaixa dto) {
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionDevolverReserva(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionIncautarReserva(DtoOnlyExpedienteYOfertaCaixa dto) {
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionIncautarReserva(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionDevolArrasCont(DtoAccionRechazoCaixa dto) {
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionDevolArrasCont(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionDevolReservaCont(DtoAccionRechazoCaixa dto) {
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionDevolReservaCont(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionIncautacionArrasCont(DtoAccionRechazoCaixa dto) {
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionIncautacionArrasCont(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionIncautacionReservaCont(DtoAccionRechazoCaixa dto) {
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionIncautacionReservaCont(dto);
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();

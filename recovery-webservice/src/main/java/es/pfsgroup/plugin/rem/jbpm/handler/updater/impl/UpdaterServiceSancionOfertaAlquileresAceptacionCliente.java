@@ -24,6 +24,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
@@ -67,27 +68,28 @@ public class UpdaterServiceSancionOfertaAlquileresAceptacionCliente implements U
 				
 				if(DDSiNo.SI.equals(valor.getValor())) {
 					aceptacionContraoferta = true;
-										
-					for(TareaActivo tareaActivo : tramite.getTareas()) {
-						if("T015_VerificarScoring".equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
-							estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,
-									genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SCORING));
-							break;
-						} else if("T015_VerificarSeguroRentas".equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
-							estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,
-									genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SEGURO_RENTAS));
-							break;
-						} 
-					}
+					if(oferta != null && oferta.getActivoPrincipal() != null && !DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
 					
-					if(Checks.esNulo(estadoExpedienteComercial)) {
-						estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,
-								genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SANCION));
-					}					
-					
-					expedienteComercial.setEstado(estadoExpedienteComercial);
-					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
-
+						for(TareaActivo tareaActivo : tramite.getTareas()) {
+							if("T015_VerificarScoring".equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+								estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,
+										genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SCORING));
+								break;
+							} else if("T015_VerificarSeguroRentas".equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+								estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,
+										genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SEGURO_RENTAS));
+								break;
+							} 
+						}
+						
+						if(Checks.esNulo(estadoExpedienteComercial)) {
+							estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,
+									genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SANCION));
+						}					
+						
+						expedienteComercial.setEstado(estadoExpedienteComercial);
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
+					}	
 					List<ActivoOferta> activosOferta = oferta.getActivosOferta();
 					
 					Double importeContraoferta = oferta.getImporteContraOferta();

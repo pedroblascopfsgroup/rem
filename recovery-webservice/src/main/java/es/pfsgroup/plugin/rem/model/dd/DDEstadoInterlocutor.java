@@ -24,6 +24,8 @@ public class DDEstadoInterlocutor implements Auditable, Dictionary {
 	
 	private static final long serialVersionUID = 1L;
 
+	public static final String CODIGO_ACTIVO = "10";
+
 	@Id
 	@Column(name = "DD_EIC_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoInterlocutor")

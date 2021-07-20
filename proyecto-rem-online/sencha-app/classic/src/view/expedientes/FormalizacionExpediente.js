@@ -91,12 +91,11 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							change : 'onHaCambiadoSolicitaFinanciacion'
 						}
 					},
-					{
-						xtype : 'comboboxfieldbase',
-						fieldLabel : HreRem
-								.i18n('fieldlabel.new.entidad.financiera'),
+					{						
+						xtype: 'comboboxfieldbase',
+						fieldLabel : HreRem.i18n('fieldlabel.new.entidad.financiera'),
 						bind : {
-							store : '{comboEntidadFinanciera}',
+							store : '{comboEntidadFinancieraFiltro}',
 							value : '{financiacion.entidadFinancieraCodigo}'
 						},
 						listeners: {
@@ -105,8 +104,28 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						reference : 'comboEntidadFinancieraCodigo',
 						displayField : 'descripcion',
 						valueField : 'codigo',
+						editable		: true,
+						forceSelection	: false,
 						allowblank: false,
-						disabled : true
+						disabled : true,
+						mode: 'local',
+						queryMode: 'local',						
+						enableKeyEvents:true,
+					    listeners: {
+						     'keyup': function() {
+							    	   this.getStore().clearFilter();
+    						    	   this.getStore().filter({
+    						        	    	property: 'descripcion',
+    						        	    	value: this.getRawValue(),
+    						        	    	anyMatch: true,
+    						        	    	caseSensitive: false
+    						        		})
+    						     		},
+						     'beforequery': function(queryEvent) {
+    						           			queryEvent.combo.onLoad();
+    						     			}
+					    }
+					    
 					},
 					{
 						xtype : 'textfieldbase',

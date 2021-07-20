@@ -9,10 +9,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.controller.AgendaController;
 import es.pfsgroup.plugin.rem.expedienteComercial.ExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
-import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 @Service("accionesCaixaManager")
 public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCaixaApi> implements AccionesCaixaApi {
@@ -87,6 +85,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     }
 
     @Override
+    @Transactional
     public void accionRechazoAvanzaRE(DtoAccionRechazoCaixa dto) throws Exception {
         adapter.save(createRequestAccionRechazo(dto));
     }
@@ -270,5 +269,92 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
+    }
+
+    @Override
+    @Transactional
+    public void accionAprobarModTitulares(DtoOnlyExpedienteYOfertaCaixa dto) {
+        List<InterlocutorExpediente> iexList = genericDao.getList(InterlocutorExpediente.class,
+                genericDao.createFilter(FilterType.EQUALS, "expedienteComercial.id", dto.getIdExpediente()));
+
+        DDEstadoInterlocutor eic = genericDao.get(DDEstadoInterlocutor.class,
+                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInterlocutor.CODIGO_ACTIVO));
+
+        for(InterlocutorExpediente iex: iexList){
+            iex.setEstadoInterlocutor(eic);
+            genericDao.save(InterlocutorExpediente.class, iex);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void accionDevolverArras(DtoOnlyExpedienteYOfertaCaixa dto) {
+        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+
+        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
+                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
+        expediente.setEstadoBc(estadoExpedienteBc);
+
+        genericDao.save(ExpedienteComercial.class, expediente);
+    }
+
+    @Override
+    @Transactional
+    public void accionIncautarArras(DtoOnlyExpedienteYOfertaCaixa dto) {
+        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+
+        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
+                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
+        expediente.setEstadoBc(estadoExpedienteBc);
+
+        genericDao.save(ExpedienteComercial.class, expediente);
+    }
+
+    @Override
+    @Transactional
+    public void accionDevolverReserva(DtoOnlyExpedienteYOfertaCaixa dto) {
+        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+
+        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
+                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
+        expediente.setEstadoBc(estadoExpedienteBc);
+
+        genericDao.save(ExpedienteComercial.class, expediente);
+    }
+
+    @Override
+    @Transactional
+    public void accionIncautarReserva(DtoOnlyExpedienteYOfertaCaixa dto) {
+        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+
+        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
+                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
+        expediente.setEstadoBc(estadoExpedienteBc);
+
+        genericDao.save(ExpedienteComercial.class, expediente);
+    }
+
+    @Override
+    @Transactional
+    public void accionDevolArrasCont(DtoAccionRechazoCaixa dto) {
+        agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+    }
+
+    @Override
+    @Transactional
+    public void accionDevolReservaCont(DtoAccionRechazoCaixa dto) {
+        agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+    }
+
+    @Override
+    @Transactional
+    public void accionIncautacionArrasCont(DtoAccionRechazoCaixa dto) {
+        agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+    }
+
+    @Override
+    @Transactional
+    public void accionIncautacionReservaCont(DtoAccionRechazoCaixa dto) {
+        agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
     }
 }

@@ -12778,4 +12778,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return cuerpo;
 	}
+	
+	@Override
+	public List<DDEntidadFinanciera> getListEntidadFinanciera() {
+		List<DDEntidadFinanciera> entidadesFinancieras = genericDao.getList(DDEntidadFinanciera.class);
+		return entidadesFinancieras;
+	}
 }

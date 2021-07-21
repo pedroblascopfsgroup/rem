@@ -170,9 +170,6 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 		},
 		{
 			name:'campanyaAlquiler'
-		},
-		{
-			name: 'empleadoFamiliarCaixa'
 		}
     ],
     

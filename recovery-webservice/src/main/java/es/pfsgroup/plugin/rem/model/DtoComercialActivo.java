@@ -53,7 +53,6 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private Boolean activoPromocionesEstrategicas;
     private Date fechaInicioConcurrencia;
     private Date fechaFinConcurrencia;		
-    private String empleadoFamiliarCaixa;
 
 	private String campanyaVenta;
 	private String campanyaAlquiler;
@@ -444,12 +443,4 @@ public class DtoComercialActivo extends DtoTabActivo{
 		this.campanyaAlquiler = campanyaAlquiler;
 	}
 
-	public String getEmpleadoFamiliarCaixa() {
-		return empleadoFamiliarCaixa;
-	}
-
-	public void setEmpleadoFamiliarCaixa(String empleadoFamiliarCaixa) {
-		this.empleadoFamiliarCaixa = empleadoFamiliarCaixa;
-	}
-	
 }

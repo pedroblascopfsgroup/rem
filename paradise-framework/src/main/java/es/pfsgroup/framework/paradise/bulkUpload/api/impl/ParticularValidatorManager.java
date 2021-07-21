@@ -7375,7 +7375,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_AGR_AGRUPACION AGR "
 				+"JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID "
-				+ "WHERE AGR.AGR_NUM_AGRUP_REM = 'numAgrupacion '");
+				+ "WHERE AGR.AGR_NUM_AGRUP_REM = :numAgrupacion");
 		
 		return "0".equals(resultado);
 	}

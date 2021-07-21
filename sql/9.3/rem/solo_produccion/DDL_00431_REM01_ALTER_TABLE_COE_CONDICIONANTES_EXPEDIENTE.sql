@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210719
+--## FECHA_CREACION=20210720
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14651
 --## PRODUCTO=NO
 --##
---## Finalidad: Anyadir columnas a la ECO_EXPEDIENTE_COMERCIAL
+--## Finalidad: Anyadir columnas a la COE
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -34,14 +34,14 @@ DECLARE
 
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ECO_EXPEDIENTE_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'COE_CONDICIONANTES_EXPEDIENTE'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 
     /* -- ARRAY CON NUEVAS COLUMNAS */
     TYPE T_ALTER IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO									TIPO CAMPO		 			COMENTARIO8
-        T_ALTER(  'ECO_OTRA_ENT_FINANCIERA',				    'VARCHAR2(250 CHAR)',		'Otra entidad financiera')
+        T_ALTER(  'COE_OTRA_ENT_FINANCIERA',				    'VARCHAR2(250 CHAR)',		'Otra entidad financiera')
      );
      V_T_ALTER T_ALTER;
 BEGIN

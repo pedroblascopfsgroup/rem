@@ -420,16 +420,6 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 							        		readOnly: true,
 							        		value: '{comercial.fechaFinConcurrencia}'
 							        	}
-									},
-									{
-										xtype : 'comboboxfieldbase',
-										fieldLabel : HreRem.i18n('fieldlabel.empleado.familiar.caixa'),
-										reference: 'empleadoFamiliarCaixaRef',
-										bind : {
-											store : '{comboSiNoEmpleadoFamiliarCaixa}',
-											value : '{comercial.empleadoFamiliarCaixa}',
-											readOnly: true
-					                    }
 									}
 									
 								]

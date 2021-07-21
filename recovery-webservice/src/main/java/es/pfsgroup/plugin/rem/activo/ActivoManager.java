@@ -4062,9 +4062,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (actCaixa.getFechaFinConcurrencia() != null) {
 					dto.setFechaFinConcurrencia(actCaixa.getFechaFinConcurrencia());
 				}
-				if (actCaixa.getEmpleadoFamiliarCaixa() != null) {
-					dto.setEmpleadoFamiliarCaixa(actCaixa.getEmpleadoFamiliarCaixa() ? "1" : "0");
-				}
 			}
 		}
 		return dto;

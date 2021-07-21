@@ -3888,12 +3888,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tributacionPropVenta'}
 			}
-	   },
-	   comboSiNoEmpleadoFamiliarCaixa: {
-			data : [
-		        {"codigo":"1", "descripcion":"Si"},
-		        {"codigo":"0", "descripcion":"No"}
-		    ]  
 	   }
 	 }
 });

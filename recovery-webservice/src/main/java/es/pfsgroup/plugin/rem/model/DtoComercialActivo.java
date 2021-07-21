@@ -52,7 +52,6 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private Boolean activoPromocionesEstrategicas;
     private Date fechaInicioConcurrencia;
     private Date fechaFinConcurrencia;		
-    private String empleadoFamiliarCaixa;
 
 	public String getId() {
 		return id;
@@ -414,14 +413,5 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	public void setFechaFinConcurrencia(Date fechaFinConcurrencia) {
 		this.fechaFinConcurrencia = fechaFinConcurrencia;
-	}
-
-	public String getEmpleadoFamiliarCaixa() {
-		return empleadoFamiliarCaixa;
-	}
-
-	public void setEmpleadoFamiliarCaixa(String empleadoFamiliarCaixa) {
-		this.empleadoFamiliarCaixa = empleadoFamiliarCaixa;
-	}
-	
+	}	
 }

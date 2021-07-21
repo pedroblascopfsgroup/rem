@@ -52,7 +52,6 @@ import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
-import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
@@ -112,7 +111,6 @@ import es.pfsgroup.plugin.rem.bulkAdvisoryNote.dao.BulkOfertaDao;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.controller.ExpedienteComercialController;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
-import es.pfsgroup.plugin.rem.expedienteComercial.dao.impl.ExpedienteComercialDaoImpl;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaResolucionExpediente;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
@@ -7210,11 +7208,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setFechaInicioExpediente(condiciones.getFechaInicioExpediente());
 				dto.setFechaInicioFinanciacion(condiciones.getFechaInicioFinanciacion());
 				dto.setFechaFinFinanciacion(condiciones.getFechaFinFinanciacion());
+				
+				if (condiciones.getOtraEntidadFinaciera() != null) {
+					dto.setOtraEntidadFinanciera(condiciones.getOtraEntidadFinaciera());
+				}
 
 			}
 			if (!Checks.esNulo(expediente.getFechaPosicionamientoPrevista())) {
 				dto.setFechaPosicionamientoPrevista(expediente.getFechaPosicionamientoPrevista());
-			}
+			}			
 		}
 
 		return dto;
@@ -7303,6 +7305,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				if (!Checks.esNulo(dto.getFechaFinFinanciacion())) {
 					condiciones.setFechaFinFinanciacion(dto.getFechaFinFinanciacion());
+				}
+				if (dto.getOtraEntidadFinanciera() != null) {
+					condiciones.setOtraEntidadFinaciera(dto.getOtraEntidadFinanciera());
 				}
 
 				genericDao.save(CondicionanteExpediente.class, condiciones);
@@ -12701,10 +12706,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}	
 			}
 		}
-	}
-		
-	public Date getFechaContabilizacion(Long idExpediente) {
-		return expedienteComercialDao.getFechaContabilizacionByIdExpediente(idExpediente);
 	}
 	
 	@Transactional(readOnly = false)

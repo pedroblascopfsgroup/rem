@@ -312,7 +312,6 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Column(name="ECO_OTRA_ENT_FINANCIERA")
     private String otraEntidadFinanciera;
 
-
     @Version   
 	private Long version;
 
@@ -961,5 +960,10 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	public String getOtraEntidadFinanciera() {
 		return otraEntidadFinanciera;
 	}
+
+	public void setOtraEntidadFinanciera(String otraEntidadFinanciera) {
+		this.otraEntidadFinanciera = otraEntidadFinanciera;
+	}
+	
 
 }

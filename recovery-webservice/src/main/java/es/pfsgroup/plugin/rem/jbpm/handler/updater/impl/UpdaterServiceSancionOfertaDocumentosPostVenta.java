@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -56,7 +57,6 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDocumentosPostVenta.class);
 	private static final String FECHA_INGRESO = "fechaIngreso";
-	private static final String FECHA_CONTABILIZACION = "fechaContabilizacion";
 	private static final String CHECKBOX_VENTA_DIRECTA = "checkboxVentaDirecta";
 	private static final String CODIGO_T013_DOCUMENTOS_POST_VENTA = "T013_DocumentosPostVenta";
 	private static final String CODIGO_T017_DOCUMENTOS_POST_VENTA = "T017_DocsPosVenta";
@@ -82,29 +82,13 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 				}
 
 				genericDao.save(ExpedienteComercial.class, expediente);
-			} else if (CHECKBOX_VENTA_DIRECTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+			}
+
+			if (CHECKBOX_VENTA_DIRECTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				Oferta oferta = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 				Activo activo = oferta.getActivoPrincipal();
 				activo.setVentaDirectaBankia("true".equals(valor.getValor()) ? true : false);
 				genericDao.save(Activo.class, activo);
-				
-			} else if (FECHA_CONTABILIZACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())
-					&& CODIGO_T017_DOCUMENTOS_POST_VENTA.equals(valor.getTareaExterna().getTareaProcedimiento().getCodigo())) {
-				Oferta oferta = ofertaApi.trabajoToOferta(tramite.getTrabajo());
-				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
-				
-				if (DDCartera.CODIGO_CARTERA_BANKIA.equals(expediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
-						
-					try {
-						if (!Checks.esNulo(expediente)) {
-							expediente.setFechaContabilizacion(ft.parse(valor.getValor()));
-						}
-					} catch (ParseException e) {
-						logger.error(e);
-					}
-
-					genericDao.save(ExpedienteComercial.class, expediente);
-				}
 			}
 		}
 
@@ -118,7 +102,11 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 			if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(expediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
 			} else if (DDCartera.CODIGO_CARTERA_BANKIA.equals(expediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
-				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
+				if (expediente != null && expediente.getFechaContabilizacion() != null) {
+					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
+				} else {
+					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
+				}
 			} else {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
 				pasaAVendido = true;

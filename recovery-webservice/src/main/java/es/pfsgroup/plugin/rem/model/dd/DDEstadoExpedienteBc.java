@@ -64,6 +64,7 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 	public static final String CODIGO_PTE_SANCION_PATRIMONIO = "031";
 	public static final String CODIGO_PTE_CALCULO_RIESGO = "032";
 	public static final String CODIGO_SOLICITUD_MODIFICACION_VALORACION = "033";
+	public static final String CODIGO_PTE_AGENDAR_ARRAS = "035";	
 	private static final long serialVersionUID = 1L;
 
 	@Id

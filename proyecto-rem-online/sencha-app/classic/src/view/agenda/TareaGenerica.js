@@ -2266,6 +2266,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
 		me.deshabilitarCampo(me.down('[name=comite]'));
 		me.deshabilitarCampo(me.down('[name=fechaElevacion]'));
+		
+		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
+			me.ocultarCampo(me.down('[name=comite]'));
+			me.bloquearCampo(me.down('[name=fechaElevacion]'));
+			var fecha = new Date()
+			me.down('[name=fechaElevacion]').setValue(fecha);
+			
+		}
 
     	var resolucionOferta = resolucionOferta.getStore();
     	resolucionOferta.addListener('load', function(store, records, successful, operation, eOpts){
@@ -2347,7 +2355,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	
             	me.campoObligatorio(me.down('[name=motivoAnulacion]'));
             	me.campoNoObligatorio(me.down('[name=fechaElevacion]'));
-    			
     		}
     	});
     	
@@ -2836,30 +2843,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	T017_DocsPosVentaValidacion: function() {
 		var me = this;
 		var fechaIngreso = me.down('[name=fechaIngreso]');
-		var fechaContabilizacion = me.down('[name=fechaContabilizacion]');
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var codigoSubcartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoSubcartera');
-        var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		fechaIngreso.setMaxValue($AC.getCurrentDate());
 		
 		if(CONST.CARTERA['BANKIA'] == codigoCartera && CONST.SUBCARTERA['BH'] != codigoSubcartera){
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
 			me.campoObligatorio(me.down('[name=fechaIngreso]'));
-			
-	        var url =  $AC.getRemoteUrl('expedientecomercial/getFechaContabilizacion');
-	        
-			Ext.Ajax.request({
-				url: url,
-				params: {idExpediente : idExp},
-			    success: function(response, opts) {
-			    	var data = Ext.decode(response.responseText);
-			    	var fechaContabilizacion = new Date(data.fechaContabilizacion);
-			    	var campoContabilizacion = me.down('[name=fechaContabilizacion]').setValue(Ext.Date.format(fechaContabilizacion, 'd/m/Y'));
-			    	me.bloquearCampo(me.down('[name=fechaContabilizacion]'));
-			    	me.campoObligatorio(me.down('[name=fechaContabilizacion]'));
-			    }
-			});
 		}else if(!Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)) {
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 		}else if(CONST.CARTERA['SAREB'] == codigoCartera) {
@@ -2867,22 +2858,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		}else if(CONST.CARTERA['CAJAMAR'] == codigoCartera) {
         	me.down('[name=fechaIngreso]').allowBlank = false;
 		}else if(CONST.CARTERA['BANKIA'] == codigoCartera && CONST.SUBCARTERA['BH'] == codigoSubcartera) {
-        	me.down('[name=fechaIngreso]').allowBlank = false;
-        	me.down('[name=fechaContabilizacion]').allowBlank = false;
-        	
-        	var url =  $AC.getRemoteUrl('expedientecomercial/getFechaContabilizacion');
-	        
-			Ext.Ajax.request({
-				url: url,
-				params: {idExpediente : idExp},
-			    success: function(response, opts) {
-			    	var data = Ext.decode(response.responseText);
-			    	var fechaContabilizacion = new Date(data.fechaContabilizacion);
-			    	var campoContabilizacion = me.down('[name=fechaContabilizacion]').setValue(Ext.Date.format(fechaContabilizacion, 'd/m/Y'));
-			    	me.bloquearCampo(me.down('[name=fechaContabilizacion]'));
-			    	me.campoObligatorio(me.down('[name=fechaContabilizacion]'));
-			    }
-			});
+        	me.down('[name=fechaIngreso]').allowBlank = false;	
 		} else if(Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)) {
 			me.habilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.habilitarCampo(me.down('[name=fechaIngreso]'));

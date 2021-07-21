@@ -97,41 +97,36 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						bind : {
 							store : '{comboEntidadFinancieraFiltro}',
 							value : '{financiacion.entidadFinancieraCodigo}'
-						},
-						listeners: {
-							change: 'onChangeComboEntidadFinanciera'
-						},
+						},						
 						reference : 'comboEntidadFinancieraCodigo',
 						displayField : 'descripcion',
 						valueField : 'codigo',
-						editable		: true,
-						forceSelection	: false,
 						allowblank: false,
 						disabled : true,
-						mode: 'local',
-						queryMode: 'local',						
-						enableKeyEvents:true,
-					    listeners: {
-						     'keyup': function() {
-							    	   this.getStore().clearFilter();
-    						    	   this.getStore().filter({
-    						        	    	property: 'descripcion',
-    						        	    	value: this.getRawValue(),
-    						        	    	anyMatch: true,
-    						        	    	caseSensitive: false
-    						        		})
-    						     		},
-						     'beforequery': function(queryEvent) {
-    						           			queryEvent.combo.onLoad();
-    						     			}
-					    }
-					    
+						filtradoEspecial: true,
+					    listeners: {						     
+    						 change: 'onChangeComboEntidadFinanciera'    			
+					    }					    
+					},
+					{
+						xtype : 'textfieldbase',
+						fieldLabel : HreRem.i18n('fieldlabel.otra.entidad.financiera'),
+						bind : {
+							value:'{financiacion.otraEntidadFinanciera}',
+							hidden:'{!esBankia}'
+						},
+						reference : 'otraEntidadFinancieraRef',
+						editable: false,
+						disabled: true						
 					},
 					{
 						xtype : 'textfieldbase',
 						fieldLabel : HreRem
 								.i18n('fieldlabel.entidad.financiera'),
-						bind : '{financiacion.entidadFinanciacion}',
+						bind : {
+							value:'{financiacion.entidadFinanciacion}',
+							hidden:'{esBankia}'
+						},
 						reference : 'entidadFinanciacion',
 						readOnly : true,
 						allowblank: true

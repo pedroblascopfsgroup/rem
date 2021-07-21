@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20210601
+--## AUTOR=Cristian Montoya
+--## FECHA_CREACION=20210722
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14151
+--## INCIDENCIA_LINK=HREOS-14711
 --## PRODUCTO=NO
 --##
 --## Finalidad: Actualizar instrucciones
@@ -30,13 +30,18 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	V_ID NUMBER(16); -- Vble. auxiliar para almacenar temporalmente el numero de la sequencia.
-	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_TPD_TIPO_DOCUMENTO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-14151';    
+	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_TPC_TIPOS_PORCUENTA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-14711';    
+	V_ALIAS VARCHAR2(50 CHAR) := 'TPC';    
 
+	
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('137', 'AI-09-ACTT-19')
+    	T_TIPO_DATA('01', '10'),
+		T_TIPO_DATA('02', '20'),
+		T_TIPO_DATA('04', '10'),
+		T_TIPO_DATA('05', '20') 	
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
@@ -51,16 +56,16 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         
         --Comprobar el dato a insertar.
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
-					WHERE DD_TPD_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+					WHERE DD_'||V_ALIAS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
         IF V_NUM_TABLAS = 1 THEN
        	-- Si existe se actualiza.
         V_MSQL :=   'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
-                    SET DD_TPD_MATRICULA_GD = '''||TRIM(V_TMP_TIPO_DATA(2))||'''		    
+                    SET DD_'||V_ALIAS||'_CODIGO_C4C = '''||TRIM(V_TMP_TIPO_DATA(2))||'''		    
 		     		 ,USUARIOMODIFICAR = '''||V_USUARIO||'''
 				     ,FECHAMODIFICAR = SYSDATE
-                    WHERE DD_TPD_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+                    WHERE DD_'||V_ALIAS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha modificado el registro con codigo '''||TRIM(V_TMP_TIPO_DATA(1))||'''');
 

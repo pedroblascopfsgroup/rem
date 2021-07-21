@@ -23,6 +23,9 @@ import javax.persistence.*;
 public class DDVinculoCaixa implements Auditable, Dictionary {
 	
 	private static final long serialVersionUID = 1L;
+	
+	public static final String COD_EMPLEADO = "10";	
+	public static final String COD_FAMILIAR = "20";
 
 	@Id
 	@Column(name = "DD_VIC_ID")

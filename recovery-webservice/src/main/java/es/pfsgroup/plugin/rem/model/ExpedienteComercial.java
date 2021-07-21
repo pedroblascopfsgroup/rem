@@ -302,6 +302,7 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @Column(name="ECO_FECHA_CONTAB")
 	private Date fechaContabilizacion;
+    
 
     @Version   
 	private Long version;
@@ -923,5 +924,14 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	public void setFechaContabilizacion(Date fechaContabilizacion) {
 		this.fechaContabilizacion = fechaContabilizacion;
 	}
-	
+
+	public Date getFechaReservaDeposito() {
+		return fechaReservaDeposito;
+	}
+
+	public void setFechaReservaDeposito(Date fechaReservaDeposito) {
+		this.fechaReservaDeposito = fechaReservaDeposito;
+	}
+
+
 }

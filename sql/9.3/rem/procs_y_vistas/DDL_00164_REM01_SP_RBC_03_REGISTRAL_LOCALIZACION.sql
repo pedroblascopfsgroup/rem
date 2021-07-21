@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210622
+--## FECHA_CREACION=20210719
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14368
+--## INCIDENCIA_LINK=HREOS-14648
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -15,6 +15,7 @@
 --##        0.3 Formatos númericos en ACT_EN_TRAMITE = 0 - [HREOS-14366] - Daniel Algaba
 --##        0.4 Cortamos cadenas - [HREOS-14368] - Daniel Algaba
 --##        0.5 Metemos NUM_IDENTFICATIVO como campos de cruce - [HREOS-14368] - Daniel Algaba
+--##        0.6 Se corrige error encontrado en la EQV por varios tipos de vía apuntando a diferentes tipos de caixa - [HREOS-14648] -  Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -73,7 +74,8 @@ BEGIN
                   JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA_M ||'.DD_TVI_TIPO_VIA TVI ON TVI.DD_TVI_ID = BIE_LOC.DD_TVI_ID AND TVI.BORRADO = 0
-                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV_TVI ON EQV_TVI.DD_NOMBRE_CAIXA = ''COMPLEMENTO'' AND EQV_TVI.DD_CODIGO_REM = TVI.DD_TVI_CODIGO
+                  LEFT JOIN (SELECT EQV_TVI.DD_CODIGO_REM, EQV_TVI.DD_CODIGO_CAIXA, ROW_NUMBER() OVER (PARTITION BY EQV_TVI.DD_CODIGO_REM ORDER BY EQV_TVI.DD_CODIGO_CAIXA DESC) RN FROM '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV_TVI WHERE EQV_TVI.DD_NOMBRE_CAIXA = ''COMPLEMENTO'') 
+                     EQV_TVI ON EQV_TVI.RN = 1 AND EQV_TVI.DD_CODIGO_REM = TVI.DD_TVI_CODIGO
                   LEFT JOIN '|| V_ESQUEMA_M ||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_ID = BIE_LOC.DD_LOC_ID AND LOC.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV_LOC ON EQV_LOC.DD_NOMBRE_CAIXA = ''POBLACION'' AND EQV_LOC.DD_CODIGO_REM = LOC.DD_LOC_CODIGO
                   LEFT JOIN '|| V_ESQUEMA_M ||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = BIE_LOC.DD_PRV_ID AND PRV.BORRADO = 0

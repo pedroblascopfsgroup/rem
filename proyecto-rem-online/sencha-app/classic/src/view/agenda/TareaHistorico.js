@@ -514,7 +514,52 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 				        });
 				      }
 				    },
-					
+				    
+				    T015_VerificarScoringValidacion: function() {		
+				    	var me = this;
+				    	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+				    	if(CONST.CARTERA['BANKIA'] == codigoCartera){
+				    		me.ocultarCampo(me.down('[name=nMeses]'));
+				        	me.ocultarCampo(me.down('[name=importeDeposito]'));
+				        	me.ocultarCampo(me.down('[name=nombreFS]'));
+				        	me.ocultarCampo(me.down('[name=documento]'));
+				        	me.ocultarCampo(me.down('[name=deposito]'));
+				        	me.ocultarCampo(me.down('[name=porcentajeImpuesto]'));
+				        	me.ocultarCampo(me.down('[name=tipoImpuesto]'));
+				        	me.ocultarCampo(me.down('[name=fiadorSolidario]'));
+				        	me.ocultarCampo(me.down('[name=nMesesFianza]'));
+							me.ocultarCampo(me.down('[name=importeFianza]'));
+
+				    	}
+					},
+					T015_VerificarSeguroRentasValidacion: function() {		
+						var me = this;	
+						var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+				    	if(CONST.CARTERA['BANKIA'] == codigoCartera){
+				    		me.ocultarCampo(me.down('[name=tipoImpuesto]'));
+							me.ocultarCampo(me.down('[name=porcentajeImpuesto]'));
+				    		
+				    		me.ocultarCampo(me.down('[name=nMeses]'));
+				    		me.ocultarCampo(me.down('[name=importeDeposito]'));
+				    		me.ocultarCampo(me.down('[name=nombreFS]'));
+				    		me.ocultarCampo(me.down('[name=documento]'));
+				    		me.ocultarCampo(me.down('[name=nMesesFianza]'));
+				    		me.ocultarCampo(me.down('[name=importeFianza]'));
+				    		
+				    		me.ocultarCampo(me.down('[name=deposito]'));
+				        	me.ocultarCampo(me.down('[name=fiadorSolidario]'));
+				        	me.ocultarCampo(me.down('[name=tipoImpuesto]'));
+				        	me.ocultarCampo(me.down('[name=porcentajeImpuesto]'));
+
+				    	}
+					},
+					T015_ElevarASancionValidacion: function(){
+						var me = this;	
+						var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+						if(CONST.CARTERA['BANKIA'] == codigoCartera){
+							me.ocultarCampo(me.down('[name=comite]'));
+				    	}
+					},
 					ocultarCampo: function(campo) {
 				        var me = this;
 				        campo.setHidden(true);

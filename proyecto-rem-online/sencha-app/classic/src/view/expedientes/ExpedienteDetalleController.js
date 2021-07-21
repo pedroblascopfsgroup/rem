@@ -5022,7 +5022,7 @@ comprobarFormatoModificar: function() {
 		    icon: Ext.Msg.INFO,
 		    fn: function(btn) {
 		        if (btn === 'ok') {
-					var url = $AC.getRemoteUrl("ofertas/enviarCorreoFichaComercial");
+					var url = $AC.getRemoteUrl("ofertas/enviarCorreoFichaComercialThread");
 					var parametros = {
 							id : [ me.getViewModel().get("expediente.numExpediente") ],
 							reportCode : 'FichaComercial'
@@ -5031,6 +5031,7 @@ comprobarFormatoModificar: function() {
 					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 					Ext.Ajax.request({
 			    	     url: url,
+			    	     method: 'POST',
 			    	     params: parametros,
 			    	     success: function(response, opts) {
 			    	    	 if(Ext.decode(response.responseText).success == "false") {

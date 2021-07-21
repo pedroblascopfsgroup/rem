@@ -46,7 +46,7 @@ public interface ExcelReportGeneratorApi {
 
 	ReportGeneratorResponse requestExcel(ReportGeneratorRequest request, String url) throws IOException;
 
-	String sendExcelFichaComercial(Long numExpediente, ReportGeneratorResponse report, HttpServletRequest request) throws IOException;
+	String sendExcelFichaComercial(Long numExpediente, ReportGeneratorResponse report, String scheme, String serverName) throws IOException;
 
 
 }

@@ -13,9 +13,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +28,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
@@ -50,6 +57,7 @@ import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
+import es.pfsgroup.framework.paradise.http.client.HttpSimplePostRequest;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -211,6 +219,8 @@ import es.pfsgroup.plugin.rem.rest.dto.ActivosLoteOfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
+import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorRequest;
+import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorResponse;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
@@ -236,6 +246,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private static final String DD_TCR_CODIGO_OBRA_NUEVA = "03";
 	private static final String CODIGO_TIPO_GESTOR_COMERCIAL = "GCOM";
 
+	private static final String CONSTANTE_GENERAR_EXCEL_REM_API_URL = "rest.client.generate.excel.url.base";
+	private static final String CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT = "rest.client.generate.excel.endpoint";
+	
+	private static final String RESPONSE_SUCCESS_KEY = "success";	
+	private static final String RESPONSE_ERROR_KEY = "error";
+	
 	@Resource
 	MessageService messageServices;
 
@@ -368,7 +384,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Autowired
 	private ActivoCargasApi activoCargasApi;
 	
-	
+	@Resource
+	private Properties appProperties;
 
 	@Override
 	public String managerName() {
@@ -447,6 +464,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		return oferta;
+	}
+	
+	private ModelAndView createModelAndViewJson(ModelMap model) {
+
+		return new ModelAndView("jsonView", model);
 	}
 
 	@Override
@@ -6685,6 +6707,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override 
 	public List<Oferta> getListOtrasOfertasTramitadasActivo(Long idActivo){
 		return ofertaDao.getListOtrasOfertasTramitadasActivo(idActivo);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void enviarCorreoFichaComercial(List<Long> ids, String reportCode, String scheme, String serverName) throws IOException {
+		try {
+			String urlBaseGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_URL);
+			String urlEndpointGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT);
+			Map<String, Object> params = new HashMap<String, Object>();
+		 	params.put("id", ids);
+		 	params.put("reportCode", reportCode);
+		 	HttpSimplePostRequest httpPostClient = new HttpSimplePostRequest(urlBaseGenerateExcel.concat(urlEndpointGenerateExcel), params);
+			ReportGeneratorResponse report = httpPostClient.post(ReportGeneratorResponse.class);
+			String errorCode = excelReportGeneratorApi.sendExcelFichaComercial(ids.get(0), report, scheme, serverName);
+
+		} catch (Exception e) {			
+			logger.error("Error en ofertasController", e);
+		}
 	}
 
 }

@@ -52,6 +52,9 @@ public class DDEstadosReserva implements Auditable, Dictionary {
 	
 	@Column(name = "DD_ERE_CODIGO")   
 	private String codigo;
+	
+	@Column(name = "DD_ERE_CODIGO_C4C")   
+	private String codigoC4C;
 	 
 	@Column(name = "DD_ERE_DESCRIPCION")   
 	private String descripcion;
@@ -114,6 +117,14 @@ public class DDEstadosReserva implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getCodigoC4C() {
+		return codigoC4C;
+	}
+
+	public void setCodigoC4C(String codigoC4C) {
+		this.codigoC4C = codigoC4C;
 	}
 
 	 

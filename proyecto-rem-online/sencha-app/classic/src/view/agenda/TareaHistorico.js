@@ -560,6 +560,45 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 							me.ocultarCampo(me.down('[name=comite]'));
 				    	}
 					},
+				    T017_InstruccionesReservaValidacion: function() {		
+						var me = this;
+						var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+				
+						var comboResultado = me.down('[name=comboResultado]');
+						var motivoAplazamiento = me.down('[name=motivoAplazamiento]');		
+						var tipoArras = me.down('[name=tipoArras]');
+						var fechaEnvio = me.down('[name=fechaEnvio]');
+						
+						if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+							me.desocultarCampo(comboResultado);
+							me.desocultarCampo(motivoAplazamiento);														
+						}else{						
+							me.ocultarCampo(comboResultado);
+							me.ocultarCampo(motivoAplazamiento);
+						}
+					},
+					
+					T017_ObtencionContratoReservaValidacion: function() {		
+						var me = this;
+						var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+						
+						var comboResultado = me.down('[name=comboResultado]');
+						var motivoAplazamiento = me.down('[name=motivoAplazamiento]');
+						
+						var cartera = me.down('[name=cartera]');
+						var oficinaReserva = me.down('[name=oficinaReserva]');
+						
+						var fechaFirma = me.down('[name=fechaFirma]');
+						
+						if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+							me.desocultarCampo(comboResultado);
+							me.desocultarCampo(motivoAplazamiento);
+						}else{
+							me.ocultarCampo(comboResultado);							
+							me.ocultarCampo(motivoAplazamiento);
+						}
+					},
+
 					ocultarCampo: function(campo) {
 				        var me = this;
 				        campo.setHidden(true);

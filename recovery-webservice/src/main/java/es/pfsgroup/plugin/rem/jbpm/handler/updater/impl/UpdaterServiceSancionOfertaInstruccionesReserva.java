@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -21,10 +22,13 @@ import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.FechaArrasExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 
 @Component
@@ -47,6 +51,8 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
     
     private static final String FECHA_ENVIO = "fechaEnvio";
     private static final String TIPO_ARRAS = "tipoArras";
+    private static final String COMBO_RESULTADO = "comboResultado";
+    private static final String MOTIVO_APLAZAMIENTO = "motivoAplazamiento";
    	public static final String CODIGO_T013_INSTRUCCIONES_RESERVA = "T013_InstruccionesReserva";
    	public static final String CODIGO_T017_INSTRUCCIONES_RESERVA = "T017_InstruccionesReserva";
    	public static final String CODIGO_T017 = "T017";
@@ -59,6 +65,10 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		if(!Checks.esNulo(ofertaAceptada)){
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			FechaArrasExpediente fae = null;
+			DDEstadosExpedienteComercial estadoExp = null;
+			DDEstadoExpedienteBc estadoBc = null;
+				
 		
 			for(TareaExternaValor valor :  valores){
 	
@@ -85,6 +95,31 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 						genericDao.save(Reserva.class, reserva);
 					}
 				}
+				
+				if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+					if (DDSiNo.SI.equals(valor.getValor())) {						
+						estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS));
+						estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS));
+						expediente.setEstado(estadoExp);
+						expediente.setEstadoBc(estadoBc);
+					}
+				}
+				
+				if(MOTIVO_APLAZAMIENTO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+					Filter filter = null;
+					fae = expedienteComercialApi.getUltimaPropuesta(expediente.getId(),null);
+					if (fae != null) {
+						DDMotivosEstadoBC motivo = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivosEstadoBC.CODIGO_APLAZADA));
+						if (motivo != null) {
+							fae.setValidacionBC(motivo);
+						}
+						fae.setMotivoAnulacion(valor.getValor());
+						
+						genericDao.save(FechaArrasExpediente.class, fae);
+					}
+				}
+				
+				
 				genericDao.save(ExpedienteComercial.class, expediente);
 			}
 			// LLamada servicio web Bankia para modificaciones según tipo

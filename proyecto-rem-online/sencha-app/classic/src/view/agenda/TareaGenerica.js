@@ -3136,6 +3136,94 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		    }
 		});	 		
 	},
+	T017_InstruccionesReservaValidacion: function() {		
+		var me = this;
+		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+
+		var comboResultado = me.down('[name=comboResultado]');
+		var motivoAplazamiento = me.down('[name=motivoAplazamiento]');		
+		var tipoArras = me.down('[name=tipoArras]');
+		var fechaEnvio = me.down('[name=fechaEnvio]');
+		
+		if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+			me.habilitarCampo(comboResultado);
+			me.campoObligatorio(comboResultado);
+			me.habilitarCampo(motivoAplazamiento);
+			me.campoObligatorio(motivoAplazamiento);
+			
+	        me.down('[name=comboResultado]').addListener('change', function(combo) {
+	            if (combo.value == '01') { //SI
+	            	me.habilitarCampo(motivoAplazamiento);
+					me.campoObligatorio(motivoAplazamiento);
+					me.deshabilitarCampo(tipoArras);
+					me.borrarCampo(tipoArras);
+					me.deshabilitarCampo(fechaEnvio);
+					me.borrarCampo(fechaEnvio);
+
+	            } else { //NO
+					me.deshabilitarCampo(motivoAplazamiento);
+					me.borrarCampo(motivoAplazamiento);
+					me.habilitarCampo(tipoArras);
+					me.campoObligatorio(tipoArras);
+					me.habilitarCampo(fechaEnvio);
+					me.campoObligatorio(fechaEnvio);
+	            }
+        	});
+			
+		}else{
+			//SI NO ES CAIXA/BANKIA
+			me.deshabilitarCampo(comboResultado);
+			me.ocultarCampo(comboResultado);
+			me.deshabilitarCampo(motivoAplazamiento);
+			me.ocultarCampo(motivoAplazamiento);
+		}
+	},
+	
+	T017_ObtencionContratoReservaValidacion: function() {		
+		var me = this;
+		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+		
+		var comboResultado = me.down('[name=comboResultado]');
+		var motivoAplazamiento = me.down('[name=motivoAplazamiento]');
+		
+		var cartera = me.down('[name=cartera]');
+		var oficinaReserva = me.down('[name=oficinaReserva]');
+		
+		var fechaFirma = me.down('[name=fechaFirma]');
+		
+		if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+			me.habilitarCampo(comboResultado);
+			me.campoObligatorio(comboResultado);
+			me.habilitarCampo(motivoAplazamiento);
+			me.campoObligatorio(motivoAplazamiento);
+			
+	        me.down('[name=comboResultado]').addListener('change', function(combo) {
+	            if (combo.value == '01') { //SI
+	            	me.habilitarCampo(motivoAplazamiento);
+					me.campoObligatorio(motivoAplazamiento);
+					me.deshabilitarCampo(fechaFirma);
+					me.borrarCampo(fechaFirma);
+					me.deshabilitarCampo(cartera);
+					me.deshabilitarCampo(oficinaReserva);
+	            } else { //NO
+					me.deshabilitarCampo(motivoAplazamiento);
+					me.borrarCampo(motivoAplazamiento);
+					me.habilitarCampo(cartera);
+					me.campoNoObligatorio(cartera);					
+					me.habilitarCampo(cartera);
+					me.campoNoObligatorio(cartera);
+					me.habilitarCampo(fechaFirma);					
+	            }
+        	});
+			
+		}else{
+			//SI NO ES CAIXA/BANKIA
+			me.deshabilitarCampo(comboResultado);
+			me.ocultarCampo(comboResultado);
+			me.deshabilitarCampo(motivoAplazamiento);
+			me.ocultarCampo(motivoAplazamiento);
+		}
+	},
 	
     habilitarCampo: function(campo) {
         var me = this;

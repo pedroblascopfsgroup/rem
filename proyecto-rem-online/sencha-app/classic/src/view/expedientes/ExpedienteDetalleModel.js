@@ -1524,6 +1524,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
                 remoteUrl: 'expedientecomercial/getFechaArras',
                 extraParams: {idExpediente: '{expediente.id}'}
             }
-        }
+        },
+	    comboEmpleadoCaixa: {
+	    	data : [
+	    		{"codigo":"true", "descripcion":"Si"},
+	    		{"codigo":"false", "descripcion":"No"}
+	    		]  
+	    }
     }
 });

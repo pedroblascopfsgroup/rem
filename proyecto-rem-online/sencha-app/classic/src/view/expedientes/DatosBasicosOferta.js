@@ -110,7 +110,21 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							hidden : '{esTipoAlquiler}'
 						}
 					},
-					{bind : {hidden : '{!esTipoAlquiler}'}},
+					{
+						xtype : 'comboboxfieldbase',
+						fieldLabel : HreRem.i18n('fieldlabel.empleado.caixa'),
+						reference: 'empleadoCaixaRef',
+						colspan: 3,
+						bind : {
+							store : '{comboEmpleadoCaixa}',
+							value : '{datosbasicosoferta.isEmpleadoCaixa}',
+							hidden: '{!esBankia}',
+							readOnly: true
+						}
+					},
+					{
+						bind : {hidden : '{!esTipoAlquiler}'}
+					},
 					{
 						xtype : 'fieldsettable',
 						defaultType : 'displayfieldbase',

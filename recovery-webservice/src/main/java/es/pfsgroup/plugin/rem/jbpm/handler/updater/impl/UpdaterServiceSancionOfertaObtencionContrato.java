@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -33,9 +34,11 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 
 @Component
@@ -77,6 +80,8 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	private static final String CODIGO_T017_RESOLUCION_PRO_MANZANA = "T017_ResolucionPROManzana";	
 	
 	private static final String FECHA_FIRMA = "fechaFirma";
+	private static final String COMBO_RESULTADO = "comboResultado";
+    private static final String MOTIVO_APLAZAMIENTO = "motivoAplazamiento";
 	private static final String T017 = "T017";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -92,6 +97,12 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			Activo activo = null;
 			Boolean proManzanaFinalizada = null;
 			Boolean solicitaReserva = ofertaApi.checkReserva(ofertaAceptada);
+			
+			FechaArrasExpediente fae = null;
+			DDEstadosExpedienteComercial estadoExp = null;
+			DDEstadoExpedienteBc estadoBc = null;
+			boolean cambiarEstado = false;
+				
 			
 			if(ofertaApi.tieneTarea(tramite, CODIGO_T017_ADVISORY_NOTE) == 0 
 					&& ofertaApi.tieneTarea(tramite, CODIGO_T017_RECOMENDACION_ADVISORY) == 0 
@@ -114,6 +125,30 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}
+					}
+				}
+								
+				if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+					if (DDSiNo.SI.equals(valor.getValor())) {						
+						estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS));
+						estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS));
+						expediente.setEstado(estadoExp);
+						expediente.setEstadoBc(estadoBc);
+						cambiarEstado = true;
+					}
+				}
+				
+				if(MOTIVO_APLAZAMIENTO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+					Filter filter = null;
+					fae = expedienteComercialApi.getUltimaPropuesta(expediente.getId(),null);
+					if (fae != null) {
+						DDMotivosEstadoBC motivo = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivosEstadoBC.CODIGO_APLAZADA));
+						if (motivo != null) {
+							fae.setValidacionBC(motivo);
+						}
+						fae.setMotivoAnulacion(valor.getValor());
+						
+						genericDao.save(FechaArrasExpediente.class, fae);
 					}
 				}
 			}
@@ -180,7 +215,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA);
 					}				
 				}
-				if(!Checks.esNulo(filtro)) {
+				if(!Checks.esNulo(filtro) && !cambiarEstado) {
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					expediente.setEstado(estado);
 					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);

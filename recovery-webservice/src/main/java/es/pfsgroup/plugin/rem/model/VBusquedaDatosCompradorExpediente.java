@@ -289,6 +289,9 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name="COM_PRP")
     private Integer compradorPrp;
 
+	@Column(name="DD_VIC_CODIGO")
+    private String vinculoCaixaCodigo;
+	
 
 	public Long getId() {
 		return id;
@@ -1010,5 +1013,14 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setLocalidadNacimientoCompradorDescripcion(String localidadNacimientoCompradorDescripcion) {
 		this.localidadNacimientoCompradorDescripcion = localidadNacimientoCompradorDescripcion;
+	}
+
+	public String getVinculoCaixaCodigo() {
+		return vinculoCaixaCodigo;
+	}
+
+	public void setVinculoCaixaCodigo(String vinculoCaixaCodigo) {
+		this.vinculoCaixaCodigo = vinculoCaixaCodigo;
 	}	
+	
 }

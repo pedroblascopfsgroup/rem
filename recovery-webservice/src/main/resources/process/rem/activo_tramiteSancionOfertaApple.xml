@@ -375,8 +375,13 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T017_ObtencionContratoReserva" name="avanzaBPM"></transition>
-	</state> <!-- Transicion directa a Obtencion de contrato de reserva-->
+		<transition to="T017_InstruccionesReservaDecision" name="avanzaBPM"></transition>
+	</state> 			
+	<decision name ="T017_InstruccionesReservaDecision" expression="#{T017_InstruccionesReservaDecision}">
+        <transition to="T017_ObtencionContratoReserva" name="OK"></transition>
+		<transition to="T017_AgendarFechaFirmaArras" name="KO"></transition>
+	</decision>
+	
 	<state name="T017_ObtencionContratoReserva">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -396,8 +401,15 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T017_PBCVenta" name="avanzaBPM"></transition>
+		<transition to="T017_ObtencionContratoReservaDecision" name="avanzaBPM"></transition>
 	</state>
+	
+	<decision name ="T017_ObtencionContratoReservaDecision" expression="#{T017_ObtencionContratoReservaDecision}">
+        <transition to="T017_PBCVenta" name="OK"></transition>
+		<transition to="T017_AgendarFechaFirmaArras" name="KO"></transition>
+	</decision>
+	
+	
 	<state name="T017_PBCVenta">
 		<event type="node-enter">
 			<action name="miTarea"

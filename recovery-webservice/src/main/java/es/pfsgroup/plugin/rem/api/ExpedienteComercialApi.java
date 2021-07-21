@@ -1432,5 +1432,7 @@ public interface ExpedienteComercialApi {
 
 	List<DDEntidadFinanciera> getListEntidadFinanciera();
 	
+	public FechaArrasExpediente getUltimaPropuesta(Long idExpediente, Filter filter);
+	
 	
 }

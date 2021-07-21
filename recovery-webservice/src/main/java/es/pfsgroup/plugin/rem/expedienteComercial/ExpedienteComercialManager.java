@@ -12100,7 +12100,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return this.propuestaToDto(fechaArrasExpediente);
 	}
 	
-	private FechaArrasExpediente getUltimaPropuesta(Long idExpediente, Filter filter) {
+	@Override
+	public FechaArrasExpediente getUltimaPropuesta(Long idExpediente, Filter filter) {
 		FechaArrasExpediente fechaArrasExpediente = null;
 		List<FechaArrasExpediente> fechaArrasExpedienteList = null;
 		Order order = new Order(OrderType.DESC,"id");

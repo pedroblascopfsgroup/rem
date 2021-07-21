@@ -52,9 +52,12 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.http.client.HttpSimplePostRequest;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -98,6 +101,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	@Autowired
 	private NotificationOfertaManager notificationOferta;
 	
+	@Autowired
+	private GenericABMDao genericDao;
 	
 	@Resource
 	Properties appProperties;
@@ -7415,10 +7420,11 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	}
 
 	@Override
-	public String sendExcelFichaComercial(Long numExpediente, ReportGeneratorResponse report, HttpServletRequest request) throws IOException {
+	@Transactional
+	public String sendExcelFichaComercial(Long numExpediente, ReportGeneratorResponse report, String scheme, String serverName) throws IOException {
 		File file = getExcelFileByArrayByte(report.getResponse(), report.getNombre());
-		ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(numExpediente);
-		return notificationOferta.enviarMailFichaComercial(expediente.getOferta(), file.getName(), request);
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "numExpediente", numExpediente));
+		return notificationOferta.enviarMailFichaComercial(expediente.getOferta(), file.getName(), scheme, serverName);
 	}
 	
 	private File getExcelFileByArrayByte(byte[] bytes, String fileName) throws IOException {

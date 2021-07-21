@@ -626,10 +626,10 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	}
 	
 	
-	public String enviarMailFichaComercial(Oferta oferta, String nameFile, HttpServletRequest request ) {
-		String base = request.getScheme().concat("://").concat(request.getServerName());
-		if (useHttps() && HTTP.equals(request.getScheme())) {
-			base = HTTPS.concat("://").concat(request.getServerName());
+	public String enviarMailFichaComercial(Oferta oferta, String nameFile, String scheme, String serverName) {
+		String base = scheme.concat("://").concat(serverName);
+		if (useHttps() && HTTP.equals(scheme)) {
+			base = HTTPS.concat("://").concat(serverName);
 		}
 		limpiarMails();
 		String errorCode = "";

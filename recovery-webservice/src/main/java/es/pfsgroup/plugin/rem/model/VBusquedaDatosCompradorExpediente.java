@@ -270,8 +270,6 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name="CEX_USUFRUCTUARIO")
     private Integer usufructuario;
 	
-	@Column(name="COM_FECHA_NACIMIENTO")
-    private Date fechaNacimientoComprador;
 	
 	@Column(name="DD_LOC_CODIGO_COM")
     private String localidadNacimientoCompradorCodigo;
@@ -282,6 +280,9 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name="COM_PRP")
     private Integer compradorPrp;
 
+	@Column(name="DD_VIC_CODIGO")
+    private String vinculoCaixaCodigo;
+	
 
 	public Long getId() {
 		return id;
@@ -925,14 +926,6 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 		this.usufructuario = usufructuario;
 	}
 
-	public Date getFechaNacimientoComprador() {
-		return fechaNacimientoComprador;
-	}
-
-	public void setFechaNacimientoComprador(Date fechaNacimientoComprador) {
-		this.fechaNacimientoComprador = fechaNacimientoComprador;
-	}
-
 	public Integer getCompradorPrp() {
 		return compradorPrp;
 	}
@@ -987,5 +980,14 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setLocalidadNacimientoCompradorDescripcion(String localidadNacimientoCompradorDescripcion) {
 		this.localidadNacimientoCompradorDescripcion = localidadNacimientoCompradorDescripcion;
+	}
+
+	public String getVinculoCaixaCodigo() {
+		return vinculoCaixaCodigo;
+	}
+
+	public void setVinculoCaixaCodigo(String vinculoCaixaCodigo) {
+		this.vinculoCaixaCodigo = vinculoCaixaCodigo;
 	}	
+	
 }

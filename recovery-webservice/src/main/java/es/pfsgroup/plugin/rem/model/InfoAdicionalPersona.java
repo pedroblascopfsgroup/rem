@@ -70,6 +70,10 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
 
 	@Column(name = "IAP_PRP")
 	private Boolean prp;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_VIC_ID")
+	private DDVinculoCaixa vinculoCaixa;
 
 
 	@Embedded
@@ -183,6 +187,14 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
 	@Override
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public DDVinculoCaixa getVinculoCaixa() {
+		return vinculoCaixa;
+	}
+
+	public void setVinculoCaixa(DDVinculoCaixa vinculoCaixa) {
+		this.vinculoCaixa = vinculoCaixa;
 	}
 
 }

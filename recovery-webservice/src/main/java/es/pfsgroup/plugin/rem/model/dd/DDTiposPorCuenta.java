@@ -47,7 +47,10 @@ public class DDTiposPorCuenta implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_TPC_CODIGO")   
 	private String codigo;
-	 
+    
+	@Column(name = "DD_TPC_CODIGO_C4C")   
+	private String codigoC4C;
+		 
 	@Column(name = "DD_TPC_DESCRIPCION")   
 	private String descripcion;
 	    
@@ -108,4 +111,13 @@ public class DDTiposPorCuenta implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
+	public String getCodigoC4C() {
+		return codigoC4C;
+	}
+
+	public void setCodigoC4C(String codigoC4C) {
+		this.codigoC4C = codigoC4C;
+	}
+
+	
 }

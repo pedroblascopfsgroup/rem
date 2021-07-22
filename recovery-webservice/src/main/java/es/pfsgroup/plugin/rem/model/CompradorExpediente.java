@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDUsosActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 
 
 /**
@@ -209,6 +210,11 @@ public class CompradorExpediente implements Serializable, Auditable {
     
     @Column(name="CEX_USUFRUCTUARIO")
     private Boolean usufructuario;
+    
+    @ManyToOne
+	@JoinColumn(name = "IAP_REPR_ID")
+	private InfoAdicionalPersona infoAdicionalRepresentante;
+    
     
 	@Version   
 	private Long version;
@@ -706,6 +712,14 @@ public class CompradorExpediente implements Serializable, Auditable {
 
 	public void setUsufructuario(Boolean usufructuario) {
 		this.usufructuario = usufructuario;
+	}
+
+	public InfoAdicionalPersona getInfoAdicionalRepresentante() {
+		return infoAdicionalRepresentante;
+	}
+
+	public void setInfoAdicionalRepresentante(InfoAdicionalPersona infoAdicionalRepresentante) {
+		this.infoAdicionalRepresentante = infoAdicionalRepresentante;
 	}
    
 }

@@ -44,7 +44,7 @@ public class VGridBusquedaActivos implements Serializable {
 	private Long numActivoUvem;
 	
 	@Column(name = "NUM_ACTIVO_CAIXA")
-	private Long numActivoCaixa;
+	private String numActivoCaixa;
 	
 	@Column(name = "NUM_ACTIVO_DIVARIAN")
 	private String numActivoDivarian;
@@ -283,14 +283,6 @@ public class VGridBusquedaActivos implements Serializable {
 
 	public void setNumActivoUvem(Long numActivoUvem) {
 		this.numActivoUvem = numActivoUvem;
-	}
-	
-	public Long getNumActivoCaixa() {
-		return numActivoCaixa;
-	}
-
-	public void setNumActivoCaixa(Long numActivoCaixa) {
-		this.numActivoCaixa = numActivoCaixa;
 	}
 
 	public String getNumActivoDivarian() {
@@ -765,5 +757,12 @@ public class VGridBusquedaActivos implements Serializable {
 		this.codPromocionBbva = codPromocionBbva;
 	}
 
+	public String getNumActivoCaixa() {
+		return numActivoCaixa;
+	}
+
+	public void setNumActivoCaixa(String numActivoCaixa) {
+		this.numActivoCaixa = numActivoCaixa;
+	}
     
 }

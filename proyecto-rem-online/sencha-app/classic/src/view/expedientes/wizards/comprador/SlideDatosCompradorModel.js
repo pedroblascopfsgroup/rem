@@ -104,6 +104,15 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboMunicipioSinFiltro'
 			}
-		}
+		},
+		comboVinculoCaixa: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'vinculoCaixa'}
+			},
+			autoLoad: true   	
+	    }
 	}
 });

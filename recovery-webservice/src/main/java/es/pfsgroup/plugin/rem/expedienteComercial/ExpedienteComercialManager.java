@@ -4905,7 +4905,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			} else if (dto.getCompradorPrp() != null && "1".equals(dto.getCompradorPrp().toString())) {
 				comprador.setCompradorPrp(true);
 			}
-
+			
+			DDVinculoCaixa vinculoCaixa = null;
+			if(!Checks.esNulo(dto.getVinculoCaixaCodigo())) {
+					vinculoCaixa = genericDao.get(DDVinculoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getVinculoCaixaCodigo()));
+				
+			}
+			if(comprador.getInfoAdicionalPersona() != null) {
+				comprador.getInfoAdicionalPersona().setVinculoCaixa(vinculoCaixa);
+			}
 			if (esNuevo) {
 				genericDao.save(Comprador.class, comprador);
 				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
@@ -5791,6 +5799,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(docAdjunto)) {
 					clienteCompradorGDPR.setAdjuntoComprador(docAdjunto);
 				}
+				
+				
+				InfoAdicionalPersona iap = new InfoAdicionalPersona();
+				
+				iap.setAuditoria(Auditoria.getNewInstance());
+				iap.setIdPersonaHaya(comprador.getIdPersonaHaya().toString());
+				
+				if(!Checks.esNulo(dto.getVinculoCaixaCodigo())) {
+					iap.setVinculoCaixa(genericDao.get(DDVinculoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getVinculoCaixaCodigo())));
+				}
+				
+				
+				comprador.setInfoAdicionalPersona(iap);
+				
+				genericDao.save(InfoAdicionalPersona.class, iap);
 				
 				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
 

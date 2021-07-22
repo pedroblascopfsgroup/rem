@@ -4894,11 +4894,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				comprador.setLocalidad(null);
 			}
 			
-			if (dto.getFechaNacimientoComprador() != null) {
-				comprador.setFechaNacimientoComprador(dto.getFechaNacimientoComprador());
-			} else {
-				comprador.setFechaNacimientoComprador(null);
-			}
 			
 			if (dto.getCompradorPrp() != null && "0".equals(dto.getCompradorPrp().toString())) {
 				comprador.setCompradorPrp(false);

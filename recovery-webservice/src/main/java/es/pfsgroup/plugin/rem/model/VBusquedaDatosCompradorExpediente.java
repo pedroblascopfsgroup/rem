@@ -277,8 +277,6 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name="CEX_USUFRUCTUARIO")
     private Integer usufructuario;
 	
-	@Column(name="COM_FECHA_NACIMIENTO")
-    private Date fechaNacimientoComprador;
 	
 	@Column(name="DD_LOC_CODIGO_COM")
     private String localidadNacimientoCompradorCodigo;
@@ -949,14 +947,6 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setUsufructuario(Integer usufructuario) {
 		this.usufructuario = usufructuario;
-	}
-
-	public Date getFechaNacimientoComprador() {
-		return fechaNacimientoComprador;
-	}
-
-	public void setFechaNacimientoComprador(Date fechaNacimientoComprador) {
-		this.fechaNacimientoComprador = fechaNacimientoComprador;
 	}
 
 	public Integer getCompradorPrp() {

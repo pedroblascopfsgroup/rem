@@ -220,15 +220,16 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						padding: '5px',
 						allowBlank: false
 					},
-					{ 
+			        { 
 			        	xtype:'datefieldbase',
-			        	fieldLabel:  HreRem.i18n('fieldlabel.fechaNacimientoComprador'),
-			        	name: 'fechaNacimientoComprador',
-			        	reference: 'fechaNacimientoCompradorRef',
+			        	fieldLabel:  HreRem.i18n('fieldlabel.fechaNacimientoConstitucion'),
+			        	name: 'fechaNacimientoConstitucion',
+			        	reference: 'fechaNacimientoConstitucion',
 			        	padding: '5px',
 			        	maxValue: null,
 			        	bind: {
-			        		hidden: '{!comprador.esCarteraBankia}'
+			        		hidden: '{!comprador.esCarteraBankia}',
+			        		allowBlank: '{!comprador.esCarteraBankia}'
 			        	}
 			        },
 					{
@@ -335,18 +336,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 			        	readOnly: true,
 			        	bind: {
 			        		hidden: '{!comprador.esCarteraBankia}'
-			        	}
-			        },
-			        { 
-			        	xtype:'datefieldbase',
-			        	fieldLabel:  HreRem.i18n('fieldlabel.fechaNacimientoConstitucion'),
-			        	name: 'fechaNacimientoConstitucion',
-			        	reference: 'fechaNacimientoConstitucion',
-			        	padding: '5px',
-			        	maxValue: null,
-			        	bind: {
-			        		hidden: '{!comprador.esCarteraBankia}',
-			        		allowBlank: '{!comprador.esCarteraBankia}'
 			        	}
 			        },
 			        { 

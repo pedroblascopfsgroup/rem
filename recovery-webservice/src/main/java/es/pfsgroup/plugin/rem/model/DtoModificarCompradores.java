@@ -187,6 +187,7 @@ public class DtoModificarCompradores{
 	
 	private String localidadNacimientoCompradorDescripcion;
 	
+	private String vinculoCaixaCodigo;
 	
 	private Integer compradorPrp;
 	
@@ -924,5 +925,13 @@ public class DtoModificarCompradores{
 	public void setLocalidadNacimientoCompradorDescripcion(String localidadNacimientoCompradorDescripcion) {
 		this.localidadNacimientoCompradorDescripcion = localidadNacimientoCompradorDescripcion;
 	}
-	
+
+	public String getVinculoCaixaCodigo() {
+		return vinculoCaixaCodigo;
+	}
+
+	public void setVinculoCaixaCodigo(String vinculoCaixaCodigo) {
+		this.vinculoCaixaCodigo = vinculoCaixaCodigo;
+	}
+		
 }

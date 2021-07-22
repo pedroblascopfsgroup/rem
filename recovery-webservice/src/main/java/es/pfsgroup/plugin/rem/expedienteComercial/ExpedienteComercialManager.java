@@ -11,6 +11,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -180,6 +181,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.plusvalia.NotificationPlusvaliaManager;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
@@ -2087,6 +2089,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 				}
 			}
+		}
+		
+		if (oferta != null) {
+			dto.setIsEmpleadoCaixa(isEmpleadoCaixa(oferta));
 		}
 		
 		return dto;
@@ -4899,7 +4905,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			} else if (dto.getCompradorPrp() != null && "1".equals(dto.getCompradorPrp().toString())) {
 				comprador.setCompradorPrp(true);
 			}
-
+			
+			DDVinculoCaixa vinculoCaixa = null;
+			if(!Checks.esNulo(dto.getVinculoCaixaCodigo())) {
+					vinculoCaixa = genericDao.get(DDVinculoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getVinculoCaixaCodigo()));
+				
+			}
+			if(comprador.getInfoAdicionalPersona() != null) {
+				comprador.getInfoAdicionalPersona().setVinculoCaixa(vinculoCaixa);
+			}
 			if (esNuevo) {
 				genericDao.save(Comprador.class, comprador);
 				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
@@ -5785,6 +5799,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(docAdjunto)) {
 					clienteCompradorGDPR.setAdjuntoComprador(docAdjunto);
 				}
+				
+				
+				InfoAdicionalPersona iap = new InfoAdicionalPersona();
+				
+				iap.setAuditoria(Auditoria.getNewInstance());
+				iap.setIdPersonaHaya(comprador.getIdPersonaHaya().toString());
+				
+				if(!Checks.esNulo(dto.getVinculoCaixaCodigo())) {
+					iap.setVinculoCaixa(genericDao.get(DDVinculoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getVinculoCaixaCodigo())));
+				}
+				
+				
+				comprador.setInfoAdicionalPersona(iap);
+				
+				genericDao.save(InfoAdicionalPersona.class, iap);
 				
 				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
 
@@ -12785,5 +12814,26 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public List<DDEntidadFinanciera> getListEntidadFinanciera() {
 		List<DDEntidadFinanciera> entidadesFinancieras = genericDao.getList(DDEntidadFinanciera.class);
 		return entidadesFinancieras;
+	}
+	
+	public boolean isEmpleadoCaixa(Oferta oferta) {
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id" ,oferta.getId()));
+		boolean isEmpleadoCaixa = false;
+		if (expediente != null) {
+			List<CompradorExpediente> listaCompradores = expediente.getCompradores();
+			for (CompradorExpediente compradorExpediente : listaCompradores) {
+				Comprador comprador = genericDao.get(Comprador.class, genericDao.createFilter(FilterType.EQUALS, "id" ,compradorExpediente.getComprador()));
+				if (comprador != null) {
+					InfoAdicionalPersona informacionAdicional = comprador.getInfoAdicionalPersona();
+					if (informacionAdicional != null) {
+						if (informacionAdicional.getVinculoCaixa() != null) {
+							isEmpleadoCaixa = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		return isEmpleadoCaixa;
 	}
 }

@@ -371,6 +371,25 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						}
 					},
 					{
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.vinculo.caixa'),
+						reference: 'vinculoCaixaCodigo',
+						name: 'vinculoCaixaCodigo',
+						padding: '5px',
+						bind: {
+							store: '{comboVinculoCaixa}',
+							hidden: '{!comprador.esCarteraBankia}'
+						},
+						listeners:{
+							focus: function(){
+								var me = this;
+								if(!Ext.isEmpty(me.getStore())){
+									me.getStore().insert(0, [{codigo: null , descripcion: '-', id: 0}]);
+								}
+							}
+						}
+					},
+					{
 						xtype: 'container',
 						layout: {
 							type: 'table',

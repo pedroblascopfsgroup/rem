@@ -340,6 +340,10 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name: 'fechaFirmaContrato',
 				type:'date',
     			dateFormat: 'c'
+    		},
+    		{
+    			name: 'isEmpleadoCaixa',
+    			type: 'boolean'
     		}
     ],
     formulas: {

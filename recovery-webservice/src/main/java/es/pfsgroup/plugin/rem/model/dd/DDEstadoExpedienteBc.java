@@ -53,7 +53,6 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 	public static final String CODIGO_VENTA_FORMALIZADA = "021";
 	public static final String CODIGO_COMPROMISO_CANCELADO = "022";
 	public static final String CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC = "023";
-	public static final String CODIGO_PTE_ENVIO = "034";
 	public static final String CODIGO_ARRAS_PTE_DOCUMENTACION = "024";
 	public static final String CODIGO_ARRAS_APROBADAS = "025";
 	public static final String CODIGO_IMPORTE_FINAL_PTE_DOC = "026";
@@ -64,7 +63,10 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 	public static final String CODIGO_PTE_SANCION_PATRIMONIO = "031";
 	public static final String CODIGO_PTE_CALCULO_RIESGO = "032";
 	public static final String CODIGO_SOLICITUD_MODIFICACION_VALORACION = "033";
+	public static final String CODIGO_PTE_ENVIO = "034";
 	public static final String CODIGO_PTE_AGENDAR_ARRAS = "035";	
+	public static final String CODIGO_FIRMA_APROBADA = "036";
+	
 	private static final long serialVersionUID = 1L;
 
 	@Id

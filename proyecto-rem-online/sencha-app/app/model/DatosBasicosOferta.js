@@ -221,6 +221,10 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name:'tipoResponsableCodigo'
+    		},
+    		{
+    			name: 'isEmpleadoCaixa',
+    			type: 'boolean'
     		}
     ],
 

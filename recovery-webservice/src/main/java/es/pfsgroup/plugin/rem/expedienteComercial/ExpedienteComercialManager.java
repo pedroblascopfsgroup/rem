@@ -4432,9 +4432,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (!Checks.esNulo(comprador)) {
 			boolean reiniciarPBC = false;
-
-			comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
-			comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
+			
+			if(dto.getNumeroClienteUrsus() != null)
+				comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
+			
+			if(dto.getNumeroClienteUrsusBh() != null)
+				comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
 			
 			if((DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA).equals(dto.getCodTipoPersona())) {
 				comprador.setApellidos(null);

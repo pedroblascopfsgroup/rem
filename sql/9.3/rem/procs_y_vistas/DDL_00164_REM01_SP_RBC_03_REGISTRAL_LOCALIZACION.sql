@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210722
+--## FECHA_CREACION=20210723
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14648
@@ -64,7 +64,7 @@ BEGIN
                   , EQV_DIC.DD_CODIGO_CAIXA DISTRITO
                   , EQV_ESE.DD_CODIGO_CAIXA ALA_EDIFICIO
                   , EQV_PLN.DD_CODIGO_CAIXA PLANTA
-                  , BIE_LOC.BIE_LOC_PUERTA NUM_UBICACION
+                  , SUBSTR(BIE_LOC.BIE_LOC_PUERTA, 0, 5) NUM_UBICACION
                   , REPLACE(ACT_LOC.LOC_LONGITUD, '','',''.'') X_GOOGLE
                   , REPLACE(ACT_LOC.LOC_LATITUD, '','',''.'') Y_GOOGLE
                   , ACT_LOC.LOC_BLOQUE SIGLA_EDIFICIO

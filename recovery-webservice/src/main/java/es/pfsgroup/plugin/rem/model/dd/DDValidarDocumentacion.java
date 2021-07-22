@@ -18,35 +18,31 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
-/**
- * Modelo que gestiona el diccionario de los motivos de anulación de las ofertas.
- * 
- * @author Juanjo Arbona
- *
- */
+
 @Entity
-@Table(name = "DD_MAO_MOTIVO_ANULACION_OFR", schema = "${entity.schema}")
+@Table(name = "DD_VDO_VALIDAR_DOC", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDMotivoAnulacionOferta implements Auditable, Dictionary {
+public class DDValidarDocumentacion implements Auditable, Dictionary {
+	
+	public static final String CODIGO_DOCUMENTACION_VALIDADA= "01";
+	public static final String CODIGO_OFERTA_CADUCADA= "02";
 	
 	private static final long serialVersionUID = 1L;
-	
-	public static final String CODIGO_FALTA_DOC_PREVIA = "04";
 
 	@Id
-	@Column(name = "DD_MAO_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivosAnulacionOferta")
-	@SequenceGenerator(name = "DDMotivosAnulacionOferta", sequenceName = "S_DD_MAO_MOTIVO_ANULACION_OFR")
+	@Column(name = "DD_VDO_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDValidarDocumentacionGenerator")
+	@SequenceGenerator(name = "DDValidarDocumentacionGenerator", sequenceName = "S_DD_VDO_VALIDAR_DOC")
 	private Long id;
 	    
-	@Column(name = "DD_MAO_CODIGO")   
+	@Column(name = "DD_VDO_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_MAO_DESCRIPCION")   
+	@Column(name = "DD_VDO_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_MAO_DESCRIPCION_LARGA")   
+	@Column(name = "DD_VDO_DESCRIPCION_LARGA")   
 	private String descripcionLarga;	    
 
 	@Version   

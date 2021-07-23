@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210622
+--## AUTOR=DAP
+--## FECHA_CREACION=20210723
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14368
+--## INCIDENCIA_LINK=HREOS-XXXXX
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -15,11 +15,12 @@
 --##        0.3 Formatos númericos en ACT_EN_TRAMITE = 0 - [HREOS-14366] - Daniel Algaba
 --##        0.4 Cambio de cálculos - [HREOS-14368] - Daniel Algaba
 --##        0.5 Metemos NUM_IDENTFICATIVO como campos de cruce - [HREOS-14368] - Daniel Algaba
+--##        0.6 Añadimos Certificado sustitutivo y miramos vigencia de documentos
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
-SET DEFINE OFF;						
+SET DEFINE OFF;                  
 
 CREATE OR REPLACE PROCEDURE SP_RBC_04_DOCUMENTOS_ADMISION
    (     

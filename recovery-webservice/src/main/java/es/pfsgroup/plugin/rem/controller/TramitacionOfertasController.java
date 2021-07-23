@@ -48,6 +48,23 @@ public class TramitacionOfertasController extends ParadiseJsonController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView doTramitacionOferta(Long idOferta, Long idActivo, Long idAgrupacion, ModelMap model, HttpServletRequest request) {
+		try {
+			boolean success = tramitacionOfertasManager.doTramitacionOferta(idOferta, idActivo, idAgrupacion);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (JsonViewerException jvex) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_MESSAGE_KEY, jvex.getMessage());
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView checkProceso(Long idExpediente, ModelMap model, HttpServletRequest request) {
 		try {			
 			model.put(RESPONSE_SUCCESS_KEY, true);

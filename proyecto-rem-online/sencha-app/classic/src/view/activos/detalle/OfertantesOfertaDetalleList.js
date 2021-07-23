@@ -10,9 +10,9 @@ Ext.define('HreRem.view.activos.detalle.OfertantesOfertaDetalleList', {
     },
 
     initComponent: function () {
-
      	var me = this;
-
+     	var isCarteraBk = me.getController().getViewModel().get('activo').get('isCarteraBankia');
+     	
 		me.columns = [
 		        {
 		        	dataIndex: 'id',
@@ -126,6 +126,11 @@ Ext.define('HreRem.view.activos.detalle.OfertantesOfertaDetalleList', {
 			        	text: HreRem.i18n('fieldlabel.proveedores.id'),
 			        	flex:0.4,
 			        	hidden:true
+			        },{
+			        	dataIndex: 'vinculoCaixaDesc',
+			        	text: HreRem.i18n('fieldlabel.vinculo.caixa'),
+			        	flex:1,
+			        	hidden:!isCarteraBk
 			        }
 	    ];
 

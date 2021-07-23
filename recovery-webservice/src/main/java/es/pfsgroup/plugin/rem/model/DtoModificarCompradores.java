@@ -191,6 +191,8 @@ public class DtoModificarCompradores{
 	
 	private Integer compradorPrp;
 	
+	private String paisNacimientoCompradorCodigo;
+	
 	public Long getId() {
 		return id;
 	}
@@ -933,5 +935,13 @@ public class DtoModificarCompradores{
 	public void setVinculoCaixaCodigo(String vinculoCaixaCodigo) {
 		this.vinculoCaixaCodigo = vinculoCaixaCodigo;
 	}
-		
+
+	public String getPaisNacimientoCompradorCodigo() {
+		return paisNacimientoCompradorCodigo;
+	}
+
+	public void setPaisNacimientoCompradorCodigo(String paisNacimientoCompradorCodigo) {
+		this.paisNacimientoCompradorCodigo = paisNacimientoCompradorCodigo;
+	}
+	
 }

@@ -4901,6 +4901,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				comprador.setCompradorPrp(true);
 			}
 			
+			if(!Checks.esNulo(dto.getPaisNacimientoCompradorCodigo())) {
+				Filter filtroPais = genericDao.createFilter(FilterType.EQUALS, "codigo",dto.getPaisNacimientoCompradorCodigo());
+				DDPaises pais = genericDao.get(DDPaises.class, filtroPais);
+				comprador.setPaisNacimientoComprador(pais);		
+			}
+			
 			DDVinculoCaixa vinculoCaixa = null;
 			if(!Checks.esNulo(dto.getVinculoCaixaCodigo())) {
 					vinculoCaixa = genericDao.get(DDVinculoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getVinculoCaixaCodigo()));
@@ -5529,6 +5535,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setPaisNacimientoRepresentante(pais);
 			}
 			
+			if(compradorBusqueda.getInfoAdicionalPersona() != null) {
+				Filter filtroEstadoC4C = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO);
+				DDEstadoComunicacionC4C estadoComunicacionC4C = genericDao.get(DDEstadoComunicacionC4C.class, filtroEstadoC4C);
+				compradorBusqueda.getInfoAdicionalPersona().setEstadoComunicacionC4C(estadoComunicacionC4C);
+			}
+			
 			expediente.getCompradores().add(compradorExpediente);
 
 			genericDao.save(ExpedienteComercial.class, expediente);
@@ -5820,6 +5832,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					
 				}
 				
+				if(!Checks.esNulo(dto.getPaisNacimientoCompradorCodigo())) {
+					Filter filtroPais = genericDao.createFilter(FilterType.EQUALS, "codigo",dto.getPaisNacimientoCompradorCodigo());
+					DDPaises pais = genericDao.get(DDPaises.class, filtroPais);
+					comprador.setPaisNacimientoComprador(pais);
+					
+				}
+				
 				if(!Checks.esNulo(dto.getFechaNacimientoConstitucion())) {
 					comprador.setFechaNacimientoConstitucion(dto.getFechaNacimientoConstitucion());
 				}
@@ -5856,6 +5875,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					iap.setVinculoCaixa(genericDao.get(DDVinculoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getVinculoCaixaCodigo())));
 				}
 				
+			
+				Filter filtroEstadoC4C = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO);
+				DDEstadoComunicacionC4C estadoComunicacionC4C = genericDao.get(DDEstadoComunicacionC4C.class, filtroEstadoC4C);
+				iap.setEstadoComunicacionC4C(estadoComunicacionC4C);
+			
 				
 				comprador.setInfoAdicionalPersona(iap);
 				

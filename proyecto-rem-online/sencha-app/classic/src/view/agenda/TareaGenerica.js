@@ -3224,6 +3224,52 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.ocultarCampo(motivoAplazamiento);
 		}
 	},
+	T017_FirmaContratoValidacion: function() {
+		var me = this;
+		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+		
+		var comboResultado = me.down('[name=comboResultado]');
+		var motivoAplazamiento = me.down('[name=motivoAplazamiento]');
+		
+		var comboFirma = me.down('[name=comboFirma]');
+		var fechaFirma = me.down('[name=fechaFirma]');
+		var numeroProtocolo = me.down('[name=numeroProtocolo]');
+		
+		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
+			me.habilitarCampo(comboResultado);
+			me.campoObligatorio(comboResultado);
+			me.habilitarCampo(motivoAplazamiento);
+			me.campoObligatorio(motivoAplazamiento);
+			
+			me.down('[name=comboResultado]').addListener('change', function(combo) {
+				if (combo.value == '01') { //SI
+					me.habilitarCampo(motivoAplazamiento);
+					me.campoObligatorio(motivoAplazamiento);
+					me.deshabilitarCampo(comboFirma);
+					me.borrarCampo(comboFirma);
+					me.deshabilitarCampo(fechaFirma);
+					me.borrarCampo(fechaFirma);
+					me.deshabilitarCampo(numeroProtocolo);
+					me.borrarCampo(numeroProtocolo);
+				} else { //NO
+					me.deshabilitarCampo(motivoAplazamiento);
+					me.borrarCampo(motivoAplazamiento);
+					me.habilitarCampo(comboFirma);
+					me.campoNoObligatorio(comboFirma);					
+					me.habilitarCampo(fechaFirma);
+					me.campoNoObligatorio(fechaFirma);
+					me.habilitarCampo(numeroProtocolo);
+					me.campoNoObligatorio(numeroProtocolo);
+				}
+			});
+			
+		} else { //SI NO ES CAIXA/BANKIA
+			me.deshabilitarCampo(comboResultado);
+			me.ocultarCampo(comboResultado);
+			me.deshabilitarCampo(motivoAplazamiento);
+			me.ocultarCampo(motivoAplazamiento);
+		}
+	},
 	
     habilitarCampo: function(campo) {
         var me = this;

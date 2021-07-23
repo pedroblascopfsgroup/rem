@@ -598,6 +598,25 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 							me.ocultarCampo(motivoAplazamiento);
 						}
 					},
+					T017_FirmaContratoValidacion: function() {
+						var me = this;
+						var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+						
+						var comboResultado = me.down('[name=comboResultado]');
+						var motivoAplazamiento = me.down('[name=motivoAplazamiento]');
+						
+						var comboFirma = me.down('[name=comboFirma]');
+						var fechaFirma = me.down('[name=fechaFirma]');
+						var numeroProtocolo = me.down('[name=numeroProtocolo]');
+						
+						if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+							me.desocultarCampo(comboResultado);
+							me.desocultarCampo(motivoAplazamiento);
+						}else{
+							me.ocultarCampo(comboResultado);							
+							me.ocultarCampo(motivoAplazamiento);
+						}
+					},
 
 					ocultarCampo: function(campo) {
 				        var me = this;

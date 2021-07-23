@@ -144,8 +144,8 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Transactional
     @Override
-    public void accionFirmaArrasAprobadas(DtoFirmaArrasAprobadasCaixa dto) throws Exception {
-        adapter.save(createRequestAccionFirmaArrasAprobadas(dto));
+    public void accionFirmaArrasAprobadas(DtoFirmaArrasCaixa dto) throws Exception {
+        adapter.save(createRequestAccionFirmaArras(dto));
 
         ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
@@ -156,12 +156,13 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                 genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdFae()));
         DDMotivosEstadoBC motivoEstado = genericDao.get(DDMotivosEstadoBC.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivosEstadoBC.CODIGO_APROBADA_BC));
+        fae.setValidacionBC(motivoEstado);
 
         genericDao.save(FechaArrasExpediente.class, fae);
         genericDao.save(ExpedienteComercial.class, expediente);
     }
 
-    public Map<String, String[]> createRequestAccionFirmaArrasAprobadas(DtoFirmaArrasAprobadasCaixa dto) throws ParseException {
+    public Map<String, String[]> createRequestAccionFirmaArras(DtoFirmaArrasCaixa dto) throws ParseException {
         Map<String,String[]> map = new HashMap<String,String[]>();
 
         String[] idTarea = {dto.getIdTarea().toString()};
@@ -179,8 +180,8 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Transactional
     @Override
-    public void accionFirmaContratoAprobada(DtoFirmaContratoAprobadaCaixa dto) throws Exception {
-        adapter.save(createRequestAccionFirmaContratoAprobada(dto));
+    public void accionFirmaContratoAprobada(DtoFirmaContratoCaixa dto) throws Exception {
+        adapter.save(createRequestAccionFirmaContrato(dto));
 
         ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
@@ -189,7 +190,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         genericDao.save(ExpedienteComercial.class, expediente);
     }
 
-    public Map<String, String[]> createRequestAccionFirmaContratoAprobada(DtoFirmaContratoAprobadaCaixa dto) throws ParseException {
+    public Map<String, String[]> createRequestAccionFirmaContrato(DtoFirmaContratoCaixa dto) throws ParseException {
         Map<String,String[]> map = new HashMap<String,String[]>();
 
         String[] idTarea = {dto.getIdTarea().toString()};
@@ -356,5 +357,48 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Transactional
     public void accionIncautacionReservaCont(DtoAccionRechazoCaixa dto) {
         agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+    }
+
+    @Override
+    @Transactional
+    public void accionFirmaArrasRechazadas(DtoFirmaArrasCaixa dto) throws Exception {
+        adapter.save(createRequestAccionFirmaArras(dto));
+
+        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
+                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS));
+        expediente.setEstadoBc(estadoExpedienteBc);
+
+        genericDao.save(ExpedienteComercial.class, expediente);
+
+    }
+
+    @Override
+    @Transactional
+    public void accionFirmaContratoRechazada(DtoFirmaContratoCaixa dto) throws Exception {
+        adapter.save(createRequestAccionFirmaContrato(dto));
+
+        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
+                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO));
+        expediente.setEstadoBc(estadoExpedienteBc);
+        genericDao.save(ExpedienteComercial.class, expediente);
+
+    }
+
+    @Override
+    @Transactional
+    public void accionArrasContabilizadas(DtoExpedienteFechaYOfertaCaixa dto) throws ParseException {
+        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+
+        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
+                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_INGRESO_DE_ARRAS));
+        expediente.setEstadoBc(estadoExpedienteBc);
+
+        Reserva res = expediente.getReserva();
+        res.setFechaContArras(sdfEntrada.parse(dto.getFechaContArras()));
+
+        genericDao.save(Reserva.class, res);
+        genericDao.save(ExpedienteComercial.class, expediente);
     }
 }

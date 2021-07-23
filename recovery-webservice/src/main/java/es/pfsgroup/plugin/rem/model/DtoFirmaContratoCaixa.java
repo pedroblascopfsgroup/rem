@@ -4,21 +4,21 @@ import es.capgemini.devon.dto.WebDto;
 
 import java.util.Date;
 
-public class DtoFirmaArrasAprobadasCaixa extends WebDto{
+public class DtoFirmaContratoCaixa extends WebDto{
 
     private Long idTarea;
 
     private Long numOferta;
 
-    private String observacionesBC;
+    private Long idExpediente;
+
+    private String fechaRespuesta;
 
     private String fechaPropuesta;
 
     private String comboValidacionBC;
 
-    private Long idExpediente;
-
-    private Long idFae;
+    private String observacionesBC;
 
     public Long getIdTarea() {
         return idTarea;
@@ -36,12 +36,20 @@ public class DtoFirmaArrasAprobadasCaixa extends WebDto{
         this.numOferta = numOferta;
     }
 
-    public String getObservacionesBC() {
-        return observacionesBC;
+    public Long getIdExpediente() {
+        return idExpediente;
     }
 
-    public void setObservacionesBC(String observacionesBC) {
-        this.observacionesBC = observacionesBC;
+    public void setIdExpediente(Long idExpediente) {
+        this.idExpediente = idExpediente;
+    }
+
+    public String getFechaRespuesta() {
+        return fechaRespuesta;
+    }
+
+    public void setFechaRespuesta(String fechaRespuesta) {
+        this.fechaRespuesta = fechaRespuesta;
     }
 
     public String getFechaPropuesta() {
@@ -60,19 +68,11 @@ public class DtoFirmaArrasAprobadasCaixa extends WebDto{
         this.comboValidacionBC = comboValidacionBC;
     }
 
-    public Long getIdExpediente() {
-        return idExpediente;
+    public String getObservacionesBC() {
+        return observacionesBC;
     }
 
-    public void setIdExpediente(Long idExpediente) {
-        this.idExpediente = idExpediente;
-    }
-
-    public Long getIdFae() {
-        return idFae;
-    }
-
-    public void setIdFae(Long idFae) {
-        this.idFae = idFae;
+    public void setObservacionesBC(String observacionesBC) {
+        this.observacionesBC = observacionesBC;
     }
 }

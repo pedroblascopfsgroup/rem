@@ -128,7 +128,10 @@ public class Reserva implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_MAA_ID")
-	private DDMotivoAmpliacionArras motivoAmpliacionArras;    
+	private DDMotivoAmpliacionArras motivoAmpliacionArras;
+
+	@Column(name="RES_FECHA_CONT_ARRAS")
+	private Date fechaContArras;
     
     @Version   
 	private Long version;
@@ -328,6 +331,13 @@ public class Reserva implements Serializable, Auditable {
 
 	public void setMotivoAmpliacionArras(DDMotivoAmpliacionArras motivoAmpliacionArras) {
 		this.motivoAmpliacionArras = motivoAmpliacionArras;
-	} 
-   
+	}
+
+	public Date getFechaContArras() {
+		return fechaContArras;
+	}
+
+	public void setFechaContArras(Date fechaContArras) {
+		this.fechaContArras = fechaContArras;
+	}
 }

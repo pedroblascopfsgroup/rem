@@ -1,7 +1,8 @@
 package es.pfsgroup.plugin.rem.api;
 
 import es.pfsgroup.plugin.rem.model.*;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.text.ParseException;
 
 public interface AccionesCaixaApi {
 
@@ -17,9 +18,9 @@ public interface AccionesCaixaApi {
 
     void accionIngresoFinalAprobado(DtoOnlyExpedienteYOfertaCaixa dto);
 
-    void accionFirmaArrasAprobadas(DtoFirmaArrasAprobadasCaixa dto) throws Exception;
+    void accionFirmaArrasAprobadas(DtoFirmaArrasCaixa dto) throws Exception;
 
-    void accionFirmaContratoAprobada(DtoFirmaContratoAprobadaCaixa dto) throws Exception;
+    void accionFirmaContratoAprobada(DtoFirmaContratoCaixa dto) throws Exception;
 
     void accionVentaContabilizada(DtoOnlyExpedienteYOfertaCaixa dto);
 
@@ -48,4 +49,10 @@ public interface AccionesCaixaApi {
     void accionIncautacionArrasCont(DtoAccionRechazoCaixa dto);
 
     void accionIncautacionReservaCont(DtoAccionRechazoCaixa dto);
+
+    void accionFirmaArrasRechazadas(DtoFirmaArrasCaixa dto) throws ParseException, Exception;
+
+    void accionFirmaContratoRechazada(DtoFirmaContratoCaixa dto) throws Exception;
+
+    void accionArrasContabilizadas(DtoExpedienteFechaYOfertaCaixa dto) throws ParseException;
 }

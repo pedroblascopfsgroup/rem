@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
@@ -142,7 +143,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
-import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -186,6 +186,7 @@ import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
+import es.pfsgroup.plugin.rem.thread.TramitacionOfertasAsync;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 @Service("expedienteComercialManager")
@@ -4459,9 +4460,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (!Checks.esNulo(comprador)) {
 			boolean reiniciarPBC = false;
-
-			comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
-			comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
+			
+			if(dto.getNumeroClienteUrsus() != null)
+				comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
+			
+			if(dto.getNumeroClienteUrsusBh() != null)
+				comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
 			
 			if((DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA).equals(dto.getCodTipoPersona())) {
 				comprador.setApellidos(null);
@@ -11863,5 +11867,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			genericDao.update(EnvioCierreOficinasBankia.class, auxiliar);
 			
 		}
-	}	
+	}
+	
+	@Override
+	@Transactional
+	public boolean doTramitacionAsincrona(Activo activo, Oferta oferta) {
+		TransactionStatus transaction = null;
+		try {
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			String usuarioLogado = genericAdapter.getUsuarioLogado().getUsername();
+			ExpedienteComercial expediente = oferta.getExpedienteComercial();
+			
+			Thread creacionAsincrona = new Thread(new TramitacionOfertasAsync(activo.getId(), true,
+					expediente.getTrabajo().getId(), oferta.getId(), expediente.getId(), usuarioLogado));
+	
+			creacionAsincrona.start();
+			 		
+			transactionManager.commit(transaction);
+			return true;
+		}catch(Exception e) {
+			transactionManager.rollback(transaction);
+			return false;
+		}
+	}
 }

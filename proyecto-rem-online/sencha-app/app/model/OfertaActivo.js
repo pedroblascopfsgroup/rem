@@ -85,6 +85,7 @@ Ext.define('HreRem.model.OfertaActivo', {
     proxy: {
 		type: 'uxproxy',
 		writeAll: true,
+		timeout: 60000,
 		api: {
             update: 'tramitacionofertas/saveOferta'
         },

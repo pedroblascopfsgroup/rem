@@ -5,6 +5,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -20,6 +21,7 @@ public class ActivoPatrimonioDaoImpl extends AbstractEntityDao<ActivoPatrimonio,
 
 		
 	@Override
+	@Transactional
 	public ActivoPatrimonio getActivoPatrimonioByActivo(Long idActivo) {
 		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPatrimonio.class);
 		criteria.add(Restrictions.eq("activo.id", idActivo));

@@ -349,12 +349,9 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 					}
 				}
 				if (orden == null && agrupacionId != null) {
-					
 					orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId) + 1;
-
-				}else {
-					orden = 0;
 				}
+				
 				activoFoto.setOrden(orden);
 				genericDao.save(ActivoFoto.class, activoFoto);
 
@@ -526,14 +523,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 					}
 				}
 				if (orden == null && agrupacionId != null) {
-					
 					orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId) + 1;
-
-				}else {
-					orden = 0;
 				}
+				
 				activoFoto.setOrden(orden);
-
 				genericDao.save(ActivoFoto.class, activoFoto);
 
 			} else {

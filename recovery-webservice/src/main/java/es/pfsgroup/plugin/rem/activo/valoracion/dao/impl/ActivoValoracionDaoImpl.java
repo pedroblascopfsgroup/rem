@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -150,14 +151,17 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 				"				 				     LEFT JOIN OFERTA_TRAMITADA OFR ON OFR.ACT_ID = ACT.ACT_ID         " + 
 				"				 				     WHERE ACT.BORRADO = 0) ACT         " + 
 				"				 				 LEFT JOIN OFERTA_TRAMITADA OFR ON OFR.ACT_ID = ACT.ACT_ID         " + 
-				"				 				 WHERE ACT.ACT_ID = " +idActivo;
+				"				 				 WHERE ACT.ACT_ID = :idActivo";
 		
 					
+					
+					Query q = this.getSessionFactory().getCurrentSession().createSQLQuery(sql);
+					q.setParameter("idActivo", idActivo);
 					Double resultadoPrecioWeb;
-					if (Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+					if (Checks.esNulo(q.uniqueResult())) {
 						 resultadoPrecioWeb = 0.0;
 					} else { 
-						 resultadoPrecioWeb = ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).doubleValue();
+						 resultadoPrecioWeb = ((BigDecimal) q.uniqueResult()).doubleValue();
 					} 
 					return resultadoPrecioWeb;
 					
@@ -168,7 +172,7 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 		Double resultadoPrecioWeb = null; 
 		
 		HQLBuilder hql = new HQLBuilder("from ActivoValoraciones");
-		hql.appendWhere("activo.id = " + idActivo);
+		HQLBuilder.addFiltroIgualQue(hql, "activo.id", idActivo);
 		hql.appendWhere("auditoria.borrado = 0");
 		hql.appendWhere("fechaFin is null or fechaFin >= sysdate");
 		hql.appendWhere("tipoPrecio.codigo = " + DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA);
@@ -305,14 +309,17 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 				"				 				     LEFT JOIN OFERTA_TRAMITADA OFR ON OFR.ACT_ID = ACT.ACT_ID         " +
 				"				 				     WHERE ACT.BORRADO = 0) ACT         " +
 				"				 				 LEFT JOIN OFERTA_TRAMITADA OFR ON OFR.ACT_ID = ACT.ACT_ID         " +
-				"				 				 WHERE ACT.ACT_ID in (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = " +idAgrupacion+ "))" +
+				"				 				 WHERE ACT.ACT_ID in (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = :idAgrupacion))" +
 				"				 				 GROUP BY PRECIO_WEB" +
 				"								 HAVING (PRECIO_WEB = 0 OR PRECIO_WEB IS NULL)";
 
 
-		if (Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())
-				|| (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())
-					&& ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).doubleValue() == 0.0)) {
+		Query q = this.getSessionFactory().getCurrentSession().createSQLQuery(sql);
+		q.setParameter("idAgrupacion", idAgrupacion);
+		
+		if (Checks.esNulo(q.uniqueResult())
+				|| (!Checks.esNulo(q.uniqueResult())
+					&& ((BigDecimal) q.uniqueResult()).doubleValue() == 0.0)) {
 			sql = "SELECT SUM(PRECIO_WEB) FROM (WITH APROBADO_VENTA AS          " +
 					"				 				     (         " +
 					"				 				         SELECT ACT_ID, VAL_IMPORTE         " +
@@ -432,12 +439,15 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 					"				 				     LEFT JOIN OFERTA_TRAMITADA OFR ON OFR.ACT_ID = ACT.ACT_ID         " +
 					"				 				     WHERE ACT.BORRADO = 0) ACT         " +
 					"				 				 LEFT JOIN OFERTA_TRAMITADA OFR ON OFR.ACT_ID = ACT.ACT_ID         " +
-					"				 				 WHERE ACT.ACT_ID in (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = " +idAgrupacion+ "))";
+					"				 				 WHERE ACT.ACT_ID in (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = :idAgrupacion ))";
 
-			if (Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			 q = this.getSessionFactory().getCurrentSession().createSQLQuery(sql);
+			 q.setParameter("idAgrupacion", idAgrupacion);
+			
+			if (Checks.esNulo(q.uniqueResult())) {
 				resultadoPrecioWeb = 0.0;
 			} else {
-				resultadoPrecioWeb = ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).doubleValue();
+				resultadoPrecioWeb = ((BigDecimal) q.uniqueResult()).doubleValue();
 			}
 		} else{
 			resultadoPrecioWeb = 0.0;
@@ -452,21 +462,27 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 
 		String sql = " SELECT COUNT(1) FROM (SELECT VAL_IMPORTE FROM REM01.ACT_VAL_VALORACIONES           " +
 				" WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM REM01.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = "+DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA+" AND BORRADO = 0) " +
-				" AND ACT_ID IN (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = "+idAgrupacion+") AND BORRADO = 0) " +
+				" AND ACT_ID IN (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = :idAgrupacion) AND BORRADO = 0) " +
 				" GROUP BY VAL_IMPORTE " +
 				" HAVING (VAL_IMPORTE = 0 OR VAL_IMPORTE IS NULL) ";
 
-		if (Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())
-			|| (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())
-				&& ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).doubleValue() == 0.0)) {
+		 Query q = this.getSessionFactory().getCurrentSession().createSQLQuery(sql);
+		 q.setParameter("idAgrupacion", idAgrupacion);
+		
+		if (Checks.esNulo(q.uniqueResult())
+			|| (!Checks.esNulo(q.uniqueResult())
+				&& ((BigDecimal) q.uniqueResult()).doubleValue() == 0.0)) {
 			sql = " SELECT SUM(VAL_IMPORTE) FROM (SELECT VAL_IMPORTE FROM REM01.ACT_VAL_VALORACIONES           " +
 					" WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM REM01.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = "+DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA+") " +
-					" AND ACT_ID IN (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = "+idAgrupacion+") AND BORRADO = 0) ";
+					" AND ACT_ID IN (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = :idAgrupacion) AND BORRADO = 0) ";
 
-			if (Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			q = this.getSessionFactory().getCurrentSession().createSQLQuery(sql);
+			 q.setParameter("idAgrupacion", idAgrupacion);
+			
+			if (Checks.esNulo(q.uniqueResult())) {
 				resultadoPrecioWeb = 0.0;
 			} else {
-				resultadoPrecioWeb = ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).doubleValue();
+				resultadoPrecioWeb = ((BigDecimal) q.uniqueResult()).doubleValue();
 			}
 		}else{
 			resultadoPrecioWeb = 0.0;

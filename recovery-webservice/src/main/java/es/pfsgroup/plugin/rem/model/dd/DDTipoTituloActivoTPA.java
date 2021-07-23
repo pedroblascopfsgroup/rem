@@ -18,6 +18,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.diccionarios.Dictionary;
 
 
 /**
@@ -29,7 +30,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 @Table(name = "DD_TPA_TIPO_TITULO_ACT", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
-public class DDTipoTituloActivoTPA implements Serializable, Auditable {
+public class DDTipoTituloActivoTPA implements Serializable, Auditable, Dictionary {
 
 	/**
 	 * 

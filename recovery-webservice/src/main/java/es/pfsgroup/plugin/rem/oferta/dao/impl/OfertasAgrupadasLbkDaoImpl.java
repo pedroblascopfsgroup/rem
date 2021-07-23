@@ -25,7 +25,8 @@ public class OfertasAgrupadasLbkDaoImpl extends AbstractEntityDao<OfertasAgrupad
 	public Long getIdOfertaAgrupadaLBK(Long idOferta) {
 		
 		OfertasAgrupadasLbk resultado = null;
-		HQLBuilder hql = new HQLBuilder("select oferAgruLbk from OfertasAgrupadasLbk oferAgruLbk join oferAgruLbk.ofertaDependiente depen where depen.id ="+idOferta);
+		HQLBuilder hql = new HQLBuilder("select oferAgruLbk from OfertasAgrupadasLbk oferAgruLbk join oferAgruLbk.ofertaDependiente depen");
+		HQLBuilder.addFiltroIgualQue(hql, "depen.id", idOferta);
 		try {
 			resultado =  HibernateQueryUtils.uniqueResult(this, hql);
 		} catch (Exception e) {
@@ -57,10 +58,13 @@ public class OfertasAgrupadasLbkDaoImpl extends AbstractEntityDao<OfertasAgrupad
 		
 		try {
 			Long ogr_id = getIdOfertaAgrupadaLBK(dependienteId);
-			StringBuilder hqlUpdate = new StringBuilder("update OfertasAgrupadasLbk ogr set ogr.ofertaPrincipal.id ="+nuevoPrincipalId);	
-        	hqlUpdate.append(" where ogr.id ='"+ogr_id+"'");
+			StringBuilder hqlUpdate = new StringBuilder("update OfertasAgrupadasLbk ogr set ogr.ofertaPrincipal.id = :nuevoPrincipalId");	
+        	hqlUpdate.append(" where ogr.id = :ogrId");
 
             Query queryUpdate = this.getSessionFactory().getCurrentSession().createQuery(hqlUpdate.toString());
+            
+            queryUpdate.setParameter("nuevoPrincipalId", nuevoPrincipalId);
+            queryUpdate.setParameter("ogrId", ogr_id);
 
             queryUpdate.executeUpdate();
             

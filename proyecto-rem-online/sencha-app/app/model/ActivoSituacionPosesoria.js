@@ -28,7 +28,7 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
             name:'accesoAntiocupa'
         },
         {
-            name:'conTitulo'
+            name:'conTituloCodigo'
         },
         {
             name:'conTituloDescripcion'

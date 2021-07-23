@@ -247,16 +247,45 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			activo = activoAdapter.getActivoById(dto.getIdActivo());
 		}
 
-		return saveOferta(dto, activo, esAgrupacion, agrupacion, asincrono);
+		Oferta oferta = saveOferta(dto, activo, esAgrupacion, agrupacion, asincrono);
+		
+		if(oferta != null) 
+			return true;
+		else 
+			return false;
 	}
 
+	@Override
 	@Transactional(readOnly = false)
-	public boolean saveOferta(DtoOfertaActivo dto, Activo activo, Boolean esAgrupacion, ActivoAgrupacion agrupacion,
+	public boolean doTramitacionOferta(Long idOferta, Long idActivo, Long idAgrupacion) throws JsonViewerException, Exception, Error {
+		Activo activo = null;
+		ActivoAgrupacion agrupacion = null;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idOferta);
+		Oferta oferta = genericDao.get(Oferta.class, filtro);
+		if (idAgrupacion != null) {
+			agrupacion = genericDao.get(ActivoAgrupacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion));
+			activo = agrupacion.getActivoPrincipal() != null ? agrupacion.getActivoPrincipal()
+					: agrupacion.getActivos().get(0).getActivo();
+		} else {
+			activo = activoAdapter.getActivoById(idActivo);
+		}
+		
+		if(oferta != null) {
+			return expedienteComercialApi.doTramitacionAsincrona(activo, oferta);			
+		}
+		return false;		
+	}
+	
+	@Transactional(readOnly = false)
+	public Oferta saveOferta(DtoOfertaActivo dto, Activo activo, Boolean esAgrupacion, ActivoAgrupacion agrupacion,
 			Boolean asincrono) throws JsonViewerException, Exception {
 		boolean resultado = true;
-		Trabajo trabajo = null;
+		ExpedienteComercial expediente = null;
 		Boolean esAcepta = false;
 
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
 		Boolean esAlquiler = DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo());
@@ -272,8 +301,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		// expediente comercial
 
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
-			trabajo = doAceptaOferta(oferta, activo);
-			esAcepta = trabajo != null;
+			expediente = doAceptaOferta(oferta, activo);
+			esAcepta = expediente != null;
+			oferta.setExpedienteComercial(expediente);
 		}
 
 		// si la oferta ha sido rechazada guarda los motivos de rechazo y
@@ -283,24 +313,17 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 
 		if (!resultado) {
-			resultado = this.persistOferta(oferta);
+			resultado = ofertaApi.persistOferta(oferta);
+			
 		}
-		if (esAcepta) {
-			String usuarioLogado = genericAdapter.getUsuarioLogado().getUsername();
-			ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class,
-					genericDao.createFilter(FilterType.EQUALS, "oferta", oferta));
-			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
-			if (asincrono) {
-				Thread creacionAsincrona = new Thread(new TramitacionOfertasAsync(activo.getId(), esAcepta,
-						trabajo.getId(), oferta.getId(), expedienteComercial.getId(), usuarioLogado));
-
-				creacionAsincrona.start();
-			} else {
-				doTramitacion(activo, oferta, trabajo.getId(), expedienteComercial);
+		if(!asincrono && esAcepta) {
+			ActivoTramite tramite = doTramitacion(activo, expediente.getOferta(), expediente.getTrabajo().getId(), expediente);
+			if(tramite != null) {
+				return oferta;
 			}
 		}
-
-		return resultado;
+		transactionManager.commit(transaction);
+		return oferta;
 	}
 
 	private void validateSaveOferta(DtoOfertaActivo dto, Oferta oferta, DDEstadoOferta estadoOferta, Activo activo,
@@ -457,7 +480,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 	}
 
-	private Trabajo doAceptaOferta(Oferta oferta, Activo activo) throws Exception {
+	private ExpedienteComercial doAceptaOferta(Oferta oferta, Activo activo) throws Exception {
 		List<Activo> listaActivos = new ArrayList<Activo>();
 		for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 			listaActivos.add(activoOferta.getPrimaryKey().getActivo());
@@ -465,8 +488,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, getSubtipoTrabajoByOferta(oferta));
 		Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
-		crearExpediente(oferta, trabajo, null, activo);
-		return trabajo;
+		ExpedienteComercial expediente = crearExpediente(oferta, trabajo, null, activo);
+		return expediente;
 	}
 
 	private boolean doRechazaOferta(DtoOfertaActivo dto, Oferta oferta) {
@@ -499,24 +522,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 
 		notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
-		return resultado;
-	}
-
-	@Transactional(readOnly = false)
-	public boolean persistOferta(Oferta oferta) {
-		TransactionStatus transaction = null;
-		boolean resultado = false;
-		try {
-			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
-			genericDao.update(Oferta.class, oferta);
-			transactionManager.commit(transaction);
-			resultado = true;
-		} catch (Exception e) {
-			// logger.error("Error en tramitacionOfertasManager", e);
-			transactionManager.rollback(transaction);
-
-		}
 		return resultado;
 	}
 
@@ -1986,6 +1991,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		expedienteComercial.setFormalizacion(this.crearFormalizacion(expedienteComercial));
 		
 		activoManager.actualizarOfertasTrabajosVivos(activo.getId());
+		
+		ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 		return activoTramite;
 	}
 
@@ -2001,13 +2008,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		Activo activo = activoManager.get(idActivo);
 		Oferta oferta = ofertaApi.getOfertaById(idOferta);
-		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(idExpedienteComercial);
+		ExpedienteComercial expedienteComercial = oferta.getExpedienteComercial();
 
 		try {
-			trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
-			transactionManager.commit(transaction);
-			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
+			if(expedienteComercial == null) {
+				expedienteComercial = expedienteComercialApi.findOne(idExpedienteComercial);
+			}
 			expedienteComercial = this.crearCondicionanteYTanteo(activo, oferta, expedienteComercial);
 			expedienteComercial = this.crearExpedienteReserva(expedienteComercial);
 			expedienteComercialApi.crearCondicionesActivoExpediente(activo, expedienteComercial);
@@ -2026,12 +2032,17 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		
 			// Se debe establecer setFormalizacion al final del método. La vista comprobará que ha terminado el proceso mediante el registro creado de formalizacion
 			expedienteComercial.setFormalizacion(this.crearFormalizacion(expedienteComercial));
+			
+			//Creacion del tramite
+			trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 			transactionManager.commit(transaction);
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 			if (idActivo != null) {
 				activoManager.actualizarOfertasTrabajosVivos(idActivo);
 			}
-		
+			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
+			transactionManager.commit(transaction);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			transactionManager.rollback(transaction);

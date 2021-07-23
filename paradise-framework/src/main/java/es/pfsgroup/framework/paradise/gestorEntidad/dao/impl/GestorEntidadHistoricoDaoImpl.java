@@ -3,9 +3,12 @@ package es.pfsgroup.framework.paradise.gestorEntidad.dao.impl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.cfg.HbmBinder;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.framework.paradise.gestorEntidad.dao.GestorEntidadHistoricoDao;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
@@ -15,26 +18,24 @@ public class GestorEntidadHistoricoDaoImpl extends AbstractEntityDao<GestorEntid
 	@SuppressWarnings("unchecked")
 	public List<GestorEntidadHistorico> getListGestorActivoOrderedByEntidad(GestorEntidadDto dto) {
 
-		StringBuilder hqlList = new StringBuilder(" from GestorEntidadHistorico geh ");
-		hqlList.append(resuelveTipoEntidad(dto.getTipoEntidad(), dto.getIdEntidad()));
-		hqlList.append(" and geh.fechaHasta is null");
-		hqlList.append(" order by geh.tipoGestor.descripcion asc, geh.fechaDesde desc");
-		Query queryList = this.getSessionFactory().getCurrentSession().createQuery(hqlList.toString());
+		HQLBuilder hqlBuilder = new HQLBuilder("from GestorEntidadHistorico geh");
+		resuelveTipoEntidadconParam(dto.getTipoEntidad(), dto.getIdEntidad(), hqlBuilder);
+		HQLBuilder.addFiltroIsNull(hqlBuilder, "geh.fechaHasta");
+		hqlBuilder.orderByMultiple("geh.tipoGestor.descripcion asc, geh.fechaDesde desc");
 
+		return HibernateQueryUtils.list(this, hqlBuilder);
 		
-		return queryList.list();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<GestorEntidadHistorico> getListOrderedByEntidad(GestorEntidadDto dto) {
 
-		StringBuilder hqlList = new StringBuilder(" from GestorEntidadHistorico geh ");
-		hqlList.append(resuelveTipoEntidad(dto.getTipoEntidad(), dto.getIdEntidad()));
-		hqlList.append(" order by geh.tipoGestor.descripcion asc, geh.fechaDesde desc");
-		Query queryList = this.getSessionFactory().getCurrentSession().createQuery(hqlList.toString());
+		HQLBuilder hqlBuilder = new HQLBuilder("from GestorEntidadHistorico geh");
+		resuelveTipoEntidadconParam(dto.getTipoEntidad(), dto.getIdEntidad(), hqlBuilder);
+		hqlBuilder.orderByMultiple("geh.tipoGestor.descripcion asc, geh.fechaDesde desc");
 
+		return HibernateQueryUtils.list(this, hqlBuilder);
 		
-		return queryList.list();
 	}
 
 	private String resuelveTipoEntidad(String tipoEntidad, Long idEntidad) {
@@ -84,6 +85,25 @@ public class GestorEntidadHistoricoDaoImpl extends AbstractEntityDao<GestorEntid
         
         queryUpdate.executeUpdate();
 
+	}
+	
+	private void resuelveTipoEntidadconParam(String tipoEntidad, Long idEntidad,HQLBuilder hq) {
+		
+		if (GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE.equals(tipoEntidad)) {
+			HQLBuilder.addFiltroIgualQue(hq, "geh.expediente.id", idEntidad);
+		}
+
+		if (GestorEntidadDto.TIPO_ENTIDAD_ASUNTO.equals(tipoEntidad)) {
+			HQLBuilder.addFiltroIgualQue(hq, "geh.asunto.id", idEntidad);
+		}
+		
+		if (GestorEntidadDto.TIPO_ENTIDAD_ACTIVO.equals(tipoEntidad)) {
+			HQLBuilder.addFiltroIgualQue(hq, "geh.activo.id", idEntidad);
+		}
+		
+		if (GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL.equals(tipoEntidad)) {
+			HQLBuilder.addFiltroIgualQue(hq, "geh.expedienteComercial.id", idEntidad);
+		}
 	}
 
 }

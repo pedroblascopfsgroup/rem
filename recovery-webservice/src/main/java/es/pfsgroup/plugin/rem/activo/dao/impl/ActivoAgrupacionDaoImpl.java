@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.activo.dao.impl;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -9,9 +10,11 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
@@ -259,8 +262,8 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	public Long getAgrupacionIdByNumAgrupRem(Long numAgrupRem) {
 		try {
 			HQLBuilder hb = new HQLBuilder(
-					"select agr.id from ActivoAgrupacion agr where agr.numAgrupRem = " + numAgrupRem + " ");
-			return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
+					"select agr.id from ActivoAgrupacion agr where agr.numAgrupRem = :numAgrupRem");
+			return (Long) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("numAgrupRem", numAgrupRem).uniqueResult();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -272,9 +275,11 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	public Long haveActivoPrincipal(Long id) {
 
 		try {
-			HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.id = "
-					+ id + " and act.principal = " + 1);
-			return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
+			HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act");
+			hb.appendWhere("act.principal = 1");
+			hb.appendWhere("act.agrupacion.id = :agrupacionId");
+			
+			return (Long) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("agrupacionId", id).uniqueResult();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -283,16 +288,18 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 
 	}
 
+	;
+	
 	@Override
 	public Long haveActivoRestringidaAndObraNueva(Long id) {
 
 		try {
 
-			HQLBuilder hb = new HQLBuilder(
-					"select count( distinct act.agrupacion.tipoAgrupacion.id ) from ActivoAgrupacionActivo act where act.activo.id in "
-							+ " ( select distinct (agru.activo.id) from ActivoAgrupacionActivo agru where agru.agrupacion.id = "
-							+ id + ")");
-			return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
+			HQLBuilder hb = new HQLBuilder("select count( distinct act.agrupacion.tipoAgrupacion.id ) from ActivoAgrupacionActivo act");
+			hb.appendWhere("act.activo.id in ( select distinct (agru.activo.id) from ActivoAgrupacionActivo agru where agru.agrupacion.id = :agrupacionId)");
+			Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+			q.setParameter("agrupacionId", id);
+			return (Long) q.uniqueResult();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -306,22 +313,28 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	@Override
 	public List<ActivoFoto> getFotosActivosAgrupacionById(Long id) {
 
+		Query q = null;
+		
 		try {
 
 			HQLBuilder hb = new HQLBuilder(
 					"from ActivoFoto foto where foto.tipoFoto.codigo = '01' AND foto.activo.id in "
-							+ " ( select distinct(agru.agrupacion.activoPrincipal) from ActivoAgrupacionActivo agru where agru.agrupacion.id = "
-							+ id + ") order by foto.activo.id desc ");
+							+ " ( select distinct(agru.agrupacion.activoPrincipal) from ActivoAgrupacionActivo agru where agru.agrupacion.id = :agrupacionId) order by foto.activo.id desc ");
 
-			List<ActivoFoto> listaPrincipal = (List<ActivoFoto>) getHibernateTemplate().find(hb.toString());
+			q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+			q.setParameter("agrupacionId", id);
+			List<ActivoFoto> listaPrincipal = (List<ActivoFoto>) q.list();
+			
+			
 
 			HQLBuilder hbDos = new HQLBuilder(
 					"from ActivoFoto foto where foto.tipoFoto.codigo = '01' AND  foto.activo.id in "
-							+ " ( select distinct(agru.activo.id) from ActivoAgrupacionActivo agru where agru.agrupacion.id = "
-							+ id
+							+ " ( select distinct(agru.activo.id) from ActivoAgrupacionActivo agru where agru.agrupacion.id = :agrupacionId"
 							+ " and agru.agrupacion.activoPrincipal != foto.activo.id) order by foto.activo.id desc ");
 
-			List<ActivoFoto> listaResto = (List<ActivoFoto>) getHibernateTemplate().find(hbDos.toString());
+			q = this.getSessionFactory().getCurrentSession().createQuery(hbDos.toString());
+			q.setParameter("agrupacionId", id);
+			List<ActivoFoto> listaResto = (List<ActivoFoto>) q.list();
 
 			if (listaPrincipal != null && !listaPrincipal.isEmpty()) {
 				listaPrincipal.addAll(listaResto);
@@ -363,9 +376,12 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		Long idSubdivision = null;
 		
 		try {
-			HQLBuilder hb = new HQLBuilder("select distinct actsub.idSubdivision from VActivosSubdivision actsub where actsub.activoId = " + idActivo);
+			HQLBuilder hb = new HQLBuilder("select distinct actsub.idSubdivision from VActivosSubdivision actsub where actsub.activoId = :idActivo");
+			
+			Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+			q.setParameter("idActivo", idActivo);
 
-			List<Long> lista = (List<Long>) getHibernateTemplate().find(hb.toString());
+			List<Long> lista = (List<Long>) q.list();
 			
 			if (!Checks.estaVacio(lista)) {
 				idSubdivision = lista.get(0);
@@ -382,12 +398,27 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	@SuppressWarnings("unchecked")
 	public List<Long> getListIdActivoByIdSubdivisionAndIdsAgrupacion(Long idSubdivision, String idsAgrupacion) {
 
+		List<Long> idsAgrupacionList = new ArrayList<Long>();
+		
 		try {
 
-			HQLBuilder hb = new HQLBuilder("select actsub.activoId from VActivosSubdivision actsub where actsub.idSubdivision = " + idSubdivision +
-											" and actsub.agrupacionId in (" + idsAgrupacion + ")");
+			HQLBuilder hb = new HQLBuilder("select actsub.activoId from VActivosSubdivision actsub where actsub.idSubdivision = :idSubdivision" +
+											" and actsub.agrupacionId in (:idsAgr)");
+			
+			Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+			
+			for (String s : (List<String>)Arrays.asList(idsAgrupacion.split(","))) {
+				try {
+					idsAgrupacionList.add(Long.parseLong(s));
+				} catch (Exception e) {
+					logger.error(e);
+				}
+				
+			}
+			q.setParameter("idSubdivision", idSubdivision);
+			q.setParameterList("idsAgr",idsAgrupacionList);
 	
-			return (List<Long>) getHibernateTemplate().find(hb.toString());
+			return (List<Long>) q.list();
 		
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -403,10 +434,13 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 
 		try {
 
-			HQLBuilder hb = new HQLBuilder("from ActivoFoto foto where foto.subdivision = " + subdivision.getId()
-					+ " and foto.agrupacion.id = " + subdivision.getAgrId() + " order by foto.orden");
+			HQLBuilder hb = new HQLBuilder("from ActivoFoto foto where foto.subdivision = :subdivisionId and foto.agrupacion.id = :agrupacionId order by foto.orden");
 
-			lista = (List<ActivoFoto>) getHibernateTemplate().find(hb.toString());
+			Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+			q.setParameter("subdivisionId", subdivision.getId());
+			q.setParameter("agrupacionId", subdivision.getAgrId());
+			
+			lista = (List<ActivoFoto>) q.list();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -430,9 +464,13 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 				lista = am.getFotos();
 			} else {
 				HQLBuilder hb = new HQLBuilder(
-						"from ActivoFoto foto where foto.agrupacion.id = " + id + " and foto.subdivision is null");
+						"from ActivoFoto foto where foto.agrupacion.id = :fotoAgrId and foto.subdivision is null");
 
-				lista = (List<ActivoFoto>) getHibernateTemplate().find(hb.toString());
+				
+				Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+				q.setParameter("fotoAgrId", id);
+				
+				lista = (List<ActivoFoto>) q.list();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -445,10 +483,13 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	@Override
 	public List<AgrupacionesVigencias> getHistoricoVigenciasAgrupacionById(DtoVigenciaAgrupacion agrupacionFilter) {
 		HQLBuilder hb = new HQLBuilder(
-				" from AgrupacionesVigencias vigencia where vigencia.agrupacion.id = " + agrupacionFilter.getAgrId());
+				" from AgrupacionesVigencias vigencia where vigencia.agrupacion.id = :agrId");
 		hb.orderBy("vigencia.auditoria.fechaCrear", HQLBuilder.ORDER_DESC);
 
-		return (List<AgrupacionesVigencias>) getHibernateTemplate().find(hb.toString());
+		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+		q.setParameter("agrId", agrupacionFilter.getAgrId());
+		
+		return (List<AgrupacionesVigencias>) q.list();
 
 	}
 
@@ -457,33 +498,31 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	public Boolean estaActivoEnOtraAgrupacionVigente(ActivoAgrupacion agrupacion, Activo activo) {
 		String activos = "(";
 		Boolean resultado = false;
+		List<Long> activosList = new ArrayList<Long>();
 		int contActivos = 0;
 		// si pasamos el parametro activo buscamos solo en ese
 		if (activo != null) {
-			activos = activos.concat(activo.getId().toString());
-			contActivos++;
+			activosList.add(activo.getId());
 		} else {
 			if (agrupacion.getActivos() != null && agrupacion.getActivos().size() > 0) {
 				for (int i = 0; i < agrupacion.getActivos().size(); i++) {
 					Activo aux = agrupacion.getActivos().get(i).getActivo();
-					if (i > 0) {
-						activos = activos.concat(",");
-					}
-					activos = activos.concat(aux.getId().toString());
-					contActivos++;
+					activosList.add(aux.getId());
 				}
 			}
 		}
-		activos = activos.concat(")");
 
-		if (contActivos > 0) {
+		if (activosList.size() > 0) {
 			HQLBuilder hb = new HQLBuilder(
-					"from ActivoAgrupacionActivo agrActivo where agrActivo.auditoria.borrado != 1 and agrActivo.activo.id in "
-							+ activos + " and agrActivo.agrupacion.id != " + agrupacion.getId()
-							+ " and agrActivo.agrupacion.fechaFinVigencia >= sysdate and agrActivo.agrupacion.fechaBaja is null");
+					"from ActivoAgrupacionActivo agrActivo where agrActivo.auditoria.borrado != 1 and agrActivo.activo.id in (:activoList)"
+					+ " and agrActivo.agrupacion.id != :agrId"
+					+ " and agrActivo.agrupacion.fechaFinVigencia >= sysdate and agrActivo.agrupacion.fechaBaja is null");
+			
+			Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+			q.setParameterList("activoList", activosList);
+			q.setLong("agrId", agrupacion.getId());
 
-			List<ActivoAgrupacionActivo> agrActivoList = (List<ActivoAgrupacionActivo>) getHibernateTemplate()
-					.find(hb.toString());
+			List<ActivoAgrupacionActivo> agrActivoList = (List<ActivoAgrupacionActivo>) q.list();
 
 			if (agrActivoList != null && agrActivoList.size() > 0) {
 				resultado = true;
@@ -498,9 +537,12 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	public Double getPorcentajeParticipacionUATotalDeUnAMById(Long id) {
 		Double porcentajeUAs = 0.00;
 		try {
-			HQLBuilder hb = new HQLBuilder("SELECT SUM(participacionUA) FROM ActivoAgrupacionActivo AGA WHERE AGA.agrupacion.id = " + id + " AND AGA.principal = 0");
+			HQLBuilder hb = new HQLBuilder("SELECT SUM(participacionUA) FROM ActivoAgrupacionActivo AGA WHERE AGA.agrupacion.id = :agrId AND AGA.principal = 0");
+			
+			Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+			q.setLong("agrId", id);
 
-			List<Double> listPorcentajeUAs = (List<Double>) getHibernateTemplate().find(hb.toString());
+			List<Double> listPorcentajeUAs = (List<Double>) q.list();
 			
 			if (!Checks.estaVacio(listPorcentajeUAs)) {
 				porcentajeUAs = listPorcentajeUAs.get(0);
@@ -546,23 +588,37 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 				|| dto.getNumActUVEM() != null || dto.getNumActReco() != null) {			
 			StringBuilder sb = new StringBuilder(" exists (select 1 from ActivoAgrupacionActivo aga "
 					+ " where vgrid.id = aga.agrupacion.id ");
-			if(dto.getNumActHaya() != null && StringUtils.isNumeric(dto.getNumActHaya()))
-				sb.append(" and aga.activo.numActivo = " + dto.getNumActHaya());			
-			if(dto.getNumActPrinex() != null && StringUtils.isNumeric(dto.getNumActPrinex())) 
-				sb.append(" and aga.activo.idProp = " + dto.getNumActPrinex());			
-			if(dto.getNumActSareb() != null) 
-				sb.append(" and aga.activo.idSareb = '" + dto.getNumActSareb() + "' ");
-			if(dto.getNumActUVEM() != null && StringUtils.isNumeric(dto.getNumActUVEM())) 
-				sb.append(" and aga.activo.numActivoUvem = " + dto.getNumActUVEM());
-			if(dto.getNumActReco() != null && StringUtils.isNumeric(dto.getNumActReco())) 
-				sb.append(" and aga.activo.idRecovery = " + dto.getNumActReco());		
+			if(dto.getNumActHaya() != null && StringUtils.isNumeric(dto.getNumActHaya())) {
+				sb.append(" and aga.activo.numActivo = :numActHaya");
+			    hb.getParameters().put("numActHaya", dto.getNumActHaya());
+			}
+			if(dto.getNumActPrinex() != null && StringUtils.isNumeric(dto.getNumActPrinex())) {
+				sb.append(" and aga.activo.idProp = :numActPrinex");
+				hb.getParameters().put("numActPrinex", dto.getNumActPrinex());
+			}
+			if(dto.getNumActSareb() != null) {
+				sb.append(" and aga.activo.idSareb = :numActSareb");
+				hb.getParameters().put("numActSareb", dto.getNumActSareb());
+			}
+			if(dto.getNumActUVEM() != null && StringUtils.isNumeric(dto.getNumActUVEM())) {
+				sb.append(" and aga.activo.numActivoUvem = :numActUVEM");
+				hb.getParameters().put("numActUVEM", dto.getNumActUVEM());
+			}
+			if(dto.getNumActReco() != null && StringUtils.isNumeric(dto.getNumActReco())) {
+				sb.append(" and aga.activo.idRecovery = :numActReco");
+				hb.getParameters().put("numActReco", dto.getNumActReco());
+			}
 			sb.append("  ) ");
 			hb.appendWhere(sb.toString());
    		}
 		
-		if(dto.getNif() != null) 
-			hb.appendWhere(" exists (select 1 from ActivoPropietarioActivo apa where apa.propietario.docIdentificativo = '" + dto.getNif() + "' "
-					+ " and apa.activo.id IN (select actag.activo.id from ActivoAgrupacionActivo actag where vgrid.id = actag.agrupacion.id) ) ");		
+		if(dto.getNif() != null) {
+			hb.appendWhere(" exists (select 1 from ActivoPropietarioActivo apa where apa.propietario.docIdentificativo = :nif "
+					+ " and apa.activo.id IN (select actag.activo.id from ActivoAgrupacionActivo actag where vgrid.id = actag.agrupacion.id) ) ");
+			hb.getParameters().put("nif", dto.getNif());
+		}
+
+			
 		
 		try {				
 				Date fechaCreacionDesde = dto.getFechaCreacionDesde() != null ? DateFormat.toDate(dto.getFechaCreacionDesde()) : null;

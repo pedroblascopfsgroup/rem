@@ -690,7 +690,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		historicoValoracion.setTipoPrecio(activoValoracion.getTipoPrecio());
 		historicoValoracion.setImporte(activoValoracion.getImporte());
 		historicoValoracion.setFechaInicio(activoValoracion.getFechaInicio());
-		historicoValoracion.setFechaFin(activoValoracion.getFechaFin());
+		historicoValoracion.setFechaFin(
+				(!Checks.esNulo(activoValoracion.getFechaFin()) ? activoValoracion.getFechaFin() : new Date()));
 		historicoValoracion.setFechaAprobacion(activoValoracion.getFechaAprobacion());
 		historicoValoracion.setFechaCarga(
 				(!Checks.esNulo(activoValoracion.getFechaCarga()) ? activoValoracion.getFechaCarga() : new Date()));
@@ -1662,8 +1663,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							historico.getMediadorInforme().getTelefono1());
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "email",
 							historico.getMediadorInforme().getEmail());
-					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "rol",
+					if(historico.getTipoRolMediador() != null) {
+						beanUtilNotNull.copyProperty(dtoHistoricoMediador, "rol",
 							historico.getTipoRolMediador().getDescripcion());
+					}
 				}
 				if (historico.getAuditoria() != null) {
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "responsableCambio",
@@ -5618,9 +5621,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public List<Long> getIdAgrupacionesActivo(Long idActivo) {
 		if (Checks.esNulo(idActivo))
 			return null;
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idActivo", idActivo.toString());
+		
+		rawDao.addParams(params);
 
-		List<Object> listaObj = rawDao.getExecuteSQLList("SELECT AGR_ID FROM ACT_AGA_AGRUPACION_ACTIVO WHERE ACT_ID = "
-				+ idActivo.toString() + "AND BORRADO = 0");
+		List<Object> listaObj = rawDao.getExecuteSQLList("SELECT AGR_ID FROM ACT_AGA_AGRUPACION_ACTIVO WHERE ACT_ID = :idActivo AND BORRADO = 0");
 
 		List<Long> listaAgr = new ArrayList<Long>();
 
@@ -5759,8 +5766,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		ActivoSituacionPosesoria posesoria = activo.getSituacionPosesoria();
 		Integer ocupado;
 		String conTitulo = "";
-		if (activoDto.getConTitulo() != null) {
-			conTitulo = activoDto.getConTitulo();
+		DDTipoTituloActivoTPA tituloActivoTPA = null;
+		
+		if(activoDto.getConTituloCodigo() != null) {
+			Filter tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", activoDto.getConTituloCodigo());
+			tituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
+		}
+		
+		if (tituloActivoTPA != null) {
+			conTitulo = tituloActivoTPA.getCodigo();
+		}else {
+			conTitulo = posesoria.getConTitulo().getCodigo();
 		}
 		if (activoDto.getOcupado() != null) {
 			ocupado = activoDto.getOcupado();

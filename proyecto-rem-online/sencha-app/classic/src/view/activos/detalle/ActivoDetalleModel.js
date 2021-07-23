@@ -724,7 +724,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		enableComboTipoInquilino: function(get){
 			var comboEstadoAlquiler = get('patrimonio.estadoAlquiler');
 
-			return (Ext.isEmpty(comboEstadoAlquiler) && comboEstadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["LIBRE"]);
+			return (!Ext.isEmpty(comboEstadoAlquiler) && comboEstadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["LIBRE"]);
 		},
 		
 		enableSubrogado: function(get){
@@ -3041,11 +3041,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		
 		
    		comboDDTipoTituloActivoTPA: {
-			model: 'HreRem.model.ComboBase',
+			model: 'HreRem.model.DDBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getComboTipoTituloActivoTPA',
-   				extraParams: {numActivo: '{activo.numActivo}'}
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoTituloActivoTPA'}
 			}
 		},
 		

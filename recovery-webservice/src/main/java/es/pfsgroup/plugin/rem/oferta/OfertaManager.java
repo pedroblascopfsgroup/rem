@@ -24,7 +24,10 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
@@ -762,7 +765,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						agrupacionAdapter.createActivoAgrupacion(ofertaDto.getActivosLote().get(i).getIdActivoHaya(), agrup.getId(), i+1, false);
 					} catch (Exception e) {
 						logger.error("Error en ofertaManager", e);
-						errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
+						errorsList.put("activosLote", "idActivoHaya = " + ofertaDto.getActivosLote().get(i).getIdActivoHaya() + " -> " + RestApi.REST_MSG_UNKNOWN_KEY);
+						errorsList.put("errorDesc", e.getMessage());
 						return errorsList;
 					}
 				}
@@ -1062,6 +1066,25 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Transactional(readOnly = false)
 	public Long saveOferta(Oferta oferta){
 		return ofertaDao.save(oferta);
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean persistOferta(Oferta oferta){
+		TransactionStatus transaction = null;
+		boolean resultado = false;
+		try {
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			updateStateDispComercialActivosByOferta(oferta);
+			ofertaDao.saveOrUpdate(oferta);
+			transactionManager.commit(transaction);
+			resultado = true;
+		} catch (Exception e) {
+			// logger.error("Error en tramitacionOfertasManager", e);
+			transactionManager.rollback(transaction);
+
+		}
+		return resultado;
 	}
 
 	@Transactional(readOnly = false)

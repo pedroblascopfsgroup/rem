@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.gestor.dao.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,10 +66,13 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 	
 	@Override
 	public Boolean isUsuarioGestorExterno(Long idUsuario) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("usuId", idUsuario);
 		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ZON_PEF_USU zpu "
 				+ "	JOIN PEF_PERFILEs pef ON zpu.pef_id = pef.pef_id "
-				+ " WHERE zpu.borrado = 0 and zpu.usu_id = " + idUsuario
+				+ " WHERE zpu.borrado = 0 and zpu.usu_id = :usuId"
 				+ " AND pef.pef_codigo IN ('HAYAFSV','PERFGCCBANKIA','GESTOADM','GESTIAFORM','HAYAGESTADMT','GESTOCED','GESTOPLUS','GTOPOSTV','GESTOPDV','HAYAPROV','HAYACERTI','HAYACONSU')");
 		
 		if("0".equals(resultado)) {
@@ -79,7 +84,10 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 	
 	@Override
 	public Boolean isUsuarioGestorExternoProveedor(Long idUsuario) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("usuId", idUsuario);
 		
+		rawDao.addParams(params);
 		String resultado = rawDao.getExecuteSQL("select count(1) from  " + 
 				"remmaster.usu_usuarios usu " + 
 				"join ACT_PVC_PROVEEDOR_CONTACTO pvc on usu.usu_id=pvc.usu_id and pvc.borrado = 0" + 
@@ -88,7 +96,7 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 				"join zon_pef_usu zpu on zpu.usu_id=USU.USU_ID and zpu.borrado = 0 " + 
 				"join PEF_PERFILES pef on pef.pef_id=ZPU.PEF_ID and pef.borrado = 0 " + 
 				"WHERE pef.pef_codigo IN ('GESTOADM','GESTIAFORM','GESTOCED', 'HAYAGESTADMT', 'GESTOPLUS','GTOPOSTV','GESTOPDV','HAYAPROV','HAYACERTI') " + //tecnotramit y ogf
-				"and usu.usu_id = " + idUsuario +
+				"and usu.usu_id = :usuId " +
 				"AND PVE.PVE_DOCIDENTIF not in ('B65737322', 'B82802075')");
 		
 		if("0".equals(resultado)) {

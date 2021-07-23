@@ -49,6 +49,9 @@ public class AccionesCaixaController extends ParadiseJsonController {
     public static final String ACCION_DEVOL_RESERVA_CONT = "033";
     public static final String ACCION_INCAUTACION_ARRAS_CONT = "034";
     public static final String ACCION_INCAUTACION_RESERVA_CONT = "035";
+    public static final String ACCION_FIRMA_ARRAS_RECHAZADAS = "014";
+    public static final String ACCION_FIRMA_CONTRATO_RECHAZADO = "016";
+    public static final String ACCION_ARRAS_CONTABILIZADAS = "022";
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -174,7 +177,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         return createModelAndViewJson(model);
     }
 
-    public ModelAndView accionFirmaArrasAprobadas(DtoFirmaArrasAprobadasCaixa dto){
+    public ModelAndView accionFirmaArrasAprobadas(DtoFirmaArrasCaixa dto){
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionFirmaArrasAprobadas(dto);
@@ -187,7 +190,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         return createModelAndViewJson(model);
     }
 
-    public ModelAndView accionFirmaContratoAprobada(DtoFirmaContratoAprobadaCaixa dto){
+    public ModelAndView accionFirmaContratoAprobada(DtoFirmaContratoCaixa dto){
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionFirmaContratoAprobada(dto);
@@ -400,6 +403,45 @@ public class AccionesCaixaController extends ParadiseJsonController {
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionIncautacionReservaCont(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionFirmaArrasRechazadas(DtoFirmaArrasCaixa dto) {
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionFirmaArrasRechazadas(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionFirmaContratoRechazada(DtoFirmaContratoCaixa dto) {
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionFirmaContratoRechazada(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionArrasContabilizadas(DtoExpedienteFechaYOfertaCaixa dto) {
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionArrasContabilizadas(dto);
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();

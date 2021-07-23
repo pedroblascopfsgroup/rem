@@ -149,14 +149,14 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
-        dispachableMethods.put(AccionesCaixaController.ACCION_FIRMA_ARRAS_APR, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoFirmaArrasAprobadasCaixa>() {
+        dispachableMethods.put(AccionesCaixaController.ACCION_FIRMA_ARRAS_APR, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoFirmaArrasCaixa>() {
             @Override
-            public Class<DtoFirmaArrasAprobadasCaixa> getArgumentType() {
-                return DtoFirmaArrasAprobadasCaixa.class;
+            public Class<DtoFirmaArrasCaixa> getArgumentType() {
+                return DtoFirmaArrasCaixa.class;
             }
 
             @Override
-            public Boolean execute(DtoFirmaArrasAprobadasCaixa dto) {
+            public Boolean execute(DtoFirmaArrasCaixa dto) {
                 if (dto != null) {
                     ModelAndView mm = this.controller.accionFirmaArrasAprobadas(dto);
                     if ("false".equals(mm.getModel().get("success").toString())
@@ -170,14 +170,14 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
-        dispachableMethods.put(AccionesCaixaController.ACCION_FIRMA_CONTRATO_APR, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoFirmaContratoAprobadaCaixa>() {
+        dispachableMethods.put(AccionesCaixaController.ACCION_FIRMA_CONTRATO_APR, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoFirmaContratoCaixa>() {
             @Override
-            public Class<DtoFirmaContratoAprobadaCaixa> getArgumentType() {
-                return DtoFirmaContratoAprobadaCaixa.class;
+            public Class<DtoFirmaContratoCaixa> getArgumentType() {
+                return DtoFirmaContratoCaixa.class;
             }
 
             @Override
-            public Boolean execute(DtoFirmaContratoAprobadaCaixa dto) {
+            public Boolean execute(DtoFirmaContratoCaixa dto) {
                 if (dto != null) {
                     ModelAndView mm = this.controller.accionFirmaContratoAprobada(dto);
                     if ("false".equals(mm.getModel().get("success").toString())
@@ -538,6 +538,69 @@ class AccionesCaixaControllerDispachableMethods {
                             && !Checks.esNulo(mm.getModel().get("msgError"))) {
                         throw new JsonViewerException(mm.getModel().get("msgError").toString());
                     }  return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_FIRMA_ARRAS_RECHAZADAS, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoFirmaArrasCaixa>() {
+            @Override
+            public Class<DtoFirmaArrasCaixa> getArgumentType() {
+                return DtoFirmaArrasCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoFirmaArrasCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionFirmaArrasRechazadas(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_FIRMA_CONTRATO_RECHAZADO, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoFirmaContratoCaixa>() {
+            @Override
+            public Class<DtoFirmaContratoCaixa> getArgumentType() {
+                return DtoFirmaContratoCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoFirmaContratoCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionFirmaContratoRechazada(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_ARRAS_CONTABILIZADAS, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoExpedienteFechaYOfertaCaixa>() {
+            @Override
+            public Class<DtoExpedienteFechaYOfertaCaixa> getArgumentType() {
+                return DtoExpedienteFechaYOfertaCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoExpedienteFechaYOfertaCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionArrasContabilizadas(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
                 }
 
                 return false;

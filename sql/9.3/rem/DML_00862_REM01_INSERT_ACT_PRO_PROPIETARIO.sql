@@ -42,7 +42,7 @@ DECLARE
 
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('0001','CAIXABANK','A08663619','Calle Diagonal 621','08028','08019','03'),
-		T_TIPO_DATA('0015','LivingCenter, S.A.U','A58032244','Av. De Manoteras 20, Edificio París','08050','28079','03'),
+		T_TIPO_DATA('0015','LivingCenter Activos Inmobiliarios, SAU, S.A.U','A58032244','Av. De Manoteras 20, Edificio París','08050','28079','03'),
 		T_TIPO_DATA('3148','BANKIA HÁBITAT, S.L.U.','B46644290','Av. De Manoteras 20, Edificio París','08050','28079','03'),
 		T_TIPO_DATA('3149','EUROPEA DE TITULIZACIÓN, S.A., S.G.F.T.','A80514466','Jorge Juan 68','28009','28079','03'),
 		T_TIPO_DATA('3143','Titulización de Activos, Sociedad Gestora de Fondos de Titulización, S.A.','A80352750','Orense, 58','28020','28079','03')

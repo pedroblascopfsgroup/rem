@@ -145,6 +145,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -630,6 +631,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Visita visitaOferta = oferta.getVisita();
 		Oferta ofertaPrincipal = null;
 		DDClaseOferta claseOferta = null;
+		DDRiesgoOperacion riesgoOperacion = null;
 		Usuario usuarioModificador = genericAdapter.getUsuarioLogado();
 		if(!Checks.esNulo(dto.getClaseOfertaCodigo())) {
 			Filter f = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
@@ -645,6 +647,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if(ofertaPrincipal != null) {
 			compruebaEstadoAnyadirDependiente(ofertaPrincipal);
+		}
+		
+		if(!Checks.esNulo(dto.getVentaCarteraCfv())) {
+			oferta.setVentaCartera(dto.getVentaCarteraCfv());
+		}
+		
+		if(!Checks.esNulo(dto.getOfertaEspecial())) {
+			oferta.setOfertaEspecial(dto.getOfertaEspecial());
+		}
+		
+		if(!Checks.esNulo(dto.getVentaSobrePlano())) {
+			oferta.setVentaSobrePlano(dto.getVentaSobrePlano());
+		}
+		
+		if(!Checks.esNulo(dto.getRiesgoOperacionCodigo())) {
+			Filter r = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getRiesgoOperacionCodigo());
+			riesgoOperacion = genericDao.get(DDRiesgoOperacion.class, r);
+			
+			if(riesgoOperacion != null) {
+				oferta.setRiesgoOperacion(riesgoOperacion);
+			}
 		}
 
 		if (!Checks.esNulo(dto.getEstadoCodigo())) {
@@ -1859,6 +1882,26 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (oferta.getVentaDirecta() != null) {
 			dto.setVentaCartera(oferta.getVentaDirecta() ? "Si" : "No");
+		}
+		
+		if(oferta.getOfertaEspecial() != null) {
+			dto.setOfertaEspecial(oferta.getOfertaEspecial());
+		}
+		
+		if(oferta.getVentaSobrePlano() != null) {
+			dto.setVentaSobrePlano(oferta.getVentaSobrePlano());
+		}
+		
+		if(oferta.getVentaCartera() != null) {
+			dto.setVentaCarteraCfv(oferta.getVentaCartera());
+		}
+		
+		if(oferta.getRiesgoOperacion() != null) {
+			dto.setRiesgoOperacionCodigo(oferta.getRiesgoOperacion().getCodigo());
+		}
+		
+		if(oferta.getRiesgoOperacion() != null) {
+			dto.setRiesgoOperacionDescripcion(oferta.getRiesgoOperacion().getDescripcion());
 		}
 
 		// HREOS-4360

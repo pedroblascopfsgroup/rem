@@ -306,6 +306,9 @@ Ext.define('HreRem.model.FichaComprador', {
 		},
 		{
 			name: 'vinculoCaixaCodigo'
+		},
+		{
+			name:'paisNacimientoCompradorCodigo'
 		}
 		
 		

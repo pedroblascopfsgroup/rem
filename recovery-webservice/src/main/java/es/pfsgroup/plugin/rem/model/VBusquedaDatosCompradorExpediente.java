@@ -1013,6 +1013,14 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setVinculoCaixaCodigo(String vinculoCaixaCodigo) {
 		this.vinculoCaixaCodigo = vinculoCaixaCodigo;
+	}
+
+	public String getPaisNacimientoCompradorCodigo() {
+		return paisNacimientoCompradorCodigo;
+	}
+
+	public void setPaisNacimientoCompradorCodigo(String paisNacimientoCompradorCodigo) {
+		this.paisNacimientoCompradorCodigo = paisNacimientoCompradorCodigo;
 	}	
 	
 }

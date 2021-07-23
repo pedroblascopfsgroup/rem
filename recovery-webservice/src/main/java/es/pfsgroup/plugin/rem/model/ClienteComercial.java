@@ -14,6 +14,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -225,6 +226,10 @@ public class ClienteComercial implements Serializable, Auditable {
 
 	@Column(name = "CLC_C4C_ID")
 	private Long idC4c;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "IAP_ID")
+	private InfoAdicionalPersona infoAdicionalPersona;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_REL_ID")
@@ -663,6 +668,14 @@ public class ClienteComercial implements Serializable, Auditable {
 
 	public void setIdC4c(Long idC4c) {
 		this.idC4c = idC4c;
+	}
+
+	public InfoAdicionalPersona getInfoAdicionalPersona() {
+		return infoAdicionalPersona;
+	}
+
+	public void setInfoAdicionalPersona(InfoAdicionalPersona infoAdicionalPersona) {
+		this.infoAdicionalPersona = infoAdicionalPersona;
 	}
 
 }

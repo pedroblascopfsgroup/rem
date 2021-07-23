@@ -25,6 +25,7 @@ public class DDEstadoComunicacionC4C implements Auditable, Dictionary {
 	private static final long serialVersionUID = 1L;
 	
 	public static final String C4C_VALIDADO = "05";
+	public static final String C4C_NO_ENVIADO = "01";
 
 	@Id
 	@Column(name = "DD_ECC_ID")

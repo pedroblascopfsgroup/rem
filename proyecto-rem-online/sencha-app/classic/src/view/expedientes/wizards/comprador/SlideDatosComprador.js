@@ -328,6 +328,18 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 							change: 'comprobarObligatoriedadRte'
 						}
 					},
+					{
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.pais.nacimiento'),
+						name: 'paisNacimientoCompradorCodigo',
+						reference: 'paisNacimientoCompradorCodigoRef',
+						padding: '5px',
+						allowBlank: false,
+						bind: {
+							store: '{comboPaises}',
+							hidden: '{!comprador.esCarteraBankia}'
+						}
+					},
 					{ 
 			        	fieldLabel:  HreRem.i18n('fieldlabel.idBC'),
 			        	name: 'idBC4C',

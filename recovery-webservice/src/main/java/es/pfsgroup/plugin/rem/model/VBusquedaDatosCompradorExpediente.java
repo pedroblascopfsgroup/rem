@@ -283,6 +283,8 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name="DD_VIC_CODIGO")
     private String vinculoCaixaCodigo;
 	
+	@Column(name="DD_PAI_CODIGO_NAC_COM")
+    private String paisNacimientoCompradorCodigo;
 
 	public Long getId() {
 		return id;

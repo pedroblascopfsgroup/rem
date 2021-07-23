@@ -42,7 +42,7 @@ DECLARE
 
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('CBX','Caixabank','03'),
-		T_TIPO_DATA('LVC','LivingCenter','03')
+		T_TIPO_DATA('LVC','LivingCenter Activos Inmobiliarios, SAU','03')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

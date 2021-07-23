@@ -2891,6 +2891,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getCliente())) {
+				ClienteComercial cliente = oferta.getCliente();
 				DtoOfertantesOferta dto = new DtoOfertantesOferta();
 				Long idClienteComercial = oferta.getCliente().getId();
 				Filter filterClienteCGD = genericDao.createFilter(FilterType.EQUALS, "cliente.id", idClienteComercial);
@@ -2924,6 +2925,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					
 				}	
 				
+				if(cliente.getInfoAdicionalPersona() != null && cliente.getInfoAdicionalPersona().getVinculoCaixa() != null) {
+					dto.setVinculoCaixaDesc(cliente.getInfoAdicionalPersona().getVinculoCaixa().getDescripcion());
+				}
+				
 				listaOfertantes.add(dto);
 			}
 
@@ -2956,6 +2961,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						dto.setADCOMIdDocumentoGDPR(titularAdicional.getAdcomIdDocumentoGDPR().getId());
 					}
 					titularAdicional.getDocumento();
+
+					if(titularAdicional.getInfoAdicionalPersona() != null && titularAdicional.getInfoAdicionalPersona().getVinculoCaixa() != null) {
+						dto.setVinculoCaixaDesc(titularAdicional.getInfoAdicionalPersona().getVinculoCaixa().getDescripcion());
+					}
+					
 					listaOfertantes.add(dto);
 				}
 			}

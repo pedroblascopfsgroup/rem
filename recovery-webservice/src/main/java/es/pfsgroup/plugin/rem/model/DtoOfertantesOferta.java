@@ -16,6 +16,7 @@ public class DtoOfertantesOferta extends WebDto {
 	private String regimenMatrimonial;
 	private Long ADCOMIdDocumentoIdentificativo;
 	private Long ADCOMIdDocumentoGDPR;
+	private String vinculoCaixaDesc;
 
 
 
@@ -79,9 +80,11 @@ public class DtoOfertantesOferta extends WebDto {
 	public void setADCOMIdDocumentoGDPR(Long aDCOMIdDocumentoGDPR) {
 		ADCOMIdDocumentoGDPR = aDCOMIdDocumentoGDPR;
 	}
-
-
-
-
-
+	public String getVinculoCaixaDesc() {
+		return vinculoCaixaDesc;
+	}
+	public void setVinculoCaixaDesc(String vinculoCaixaDesc) {
+		this.vinculoCaixaDesc = vinculoCaixaDesc;
+	}
+	
 }

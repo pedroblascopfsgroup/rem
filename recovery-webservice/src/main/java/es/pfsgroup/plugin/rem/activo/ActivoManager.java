@@ -5740,9 +5740,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		if (tituloActivoTPA != null) {
 			conTitulo = tituloActivoTPA.getCodigo();
-		}else {
+		} else if (!Checks.esNulo(posesoria.getConTitulo())) {
 			conTitulo = posesoria.getConTitulo().getCodigo();
 		}
+		
 		if (activoDto.getOcupado() != null) {
 			ocupado = activoDto.getOcupado();
 		} else

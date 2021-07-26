@@ -12841,6 +12841,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return listaAux;
 	}
+	
 	@Override
 	public boolean checkAprobadoRechazadoBC(TareaExterna tareaExterna) {
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);

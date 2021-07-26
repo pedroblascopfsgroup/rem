@@ -84,6 +84,9 @@ Ext.define('HreRem.model.OfertaComercial', {
             },
             {
             	name:'numOferPrincipal'
+            },
+            {
+            	name:'vinculoCaixaCodigo'
             }
             
     ],

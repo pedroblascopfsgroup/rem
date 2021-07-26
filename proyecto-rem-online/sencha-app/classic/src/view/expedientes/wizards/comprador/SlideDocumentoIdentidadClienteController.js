@@ -130,6 +130,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		            				slideDatos.getForm().findField('email').setValue(comprador.email);
 		            				slideDatos.getForm().findField('email').setReadOnly(true);
 		            			}
+		            			if(!Ext.isEmpty(comprador.vinculoCaixaCodigo)){
+		            				slideDatos.getForm().findField('vinculoCaixa').setValue(comprador.vinculoCaixaCodigo);
+		            				slideDatos.getForm().findField('vinculoCaixa').setReadOnly(true);
+		            			}
 	
 		        			}
 		        			wizard.width= Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5;

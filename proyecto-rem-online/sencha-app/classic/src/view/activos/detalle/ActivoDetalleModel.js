@@ -3683,7 +3683,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getListHistoricoOcupadoTitulo',
 				extraParams: {id: '{activo.id}'}
 		   }
-	   }
+	   },
+	   comboVinculoCaixa: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'vinculoCaixa'}
+			},
+			autoLoad: true   	
+	    }
 		
 	 }
 });

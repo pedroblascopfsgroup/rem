@@ -34,6 +34,7 @@ public class DtoClienteComercial {
     private String tipoDocumentoRteCodigo;
     private String tipoDocumentoRteDescripcion;
     private String idPersonaHaya;
+    private String vinculoCaixaCodigo;
     
 	public Long getId() {
 		return id;
@@ -228,4 +229,11 @@ public class DtoClienteComercial {
 	public void setIdPersonaHaya(String idPersonaHaya) {
 		this.idPersonaHaya = idPersonaHaya;
 	}
+	public String getVinculoCaixaCodigo() {
+		return vinculoCaixaCodigo;
+	}
+	public void setVinculoCaixaCodigo(String vinculoCaixaCodigo) {
+		this.vinculoCaixaCodigo = vinculoCaixaCodigo;
+	}
+	
 }

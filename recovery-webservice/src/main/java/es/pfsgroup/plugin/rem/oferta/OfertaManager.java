@@ -4282,7 +4282,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			clienteCom = clienteGDPR.getCliente();
 
 			try {
-				if(!Checks.esNulo(clienteCom)) {
+				if(!Checks.esNulo(clienteCom)) { 
 					beanUtilNotNull.copyProperties(clienteCom,clienteComercialDto);
 					clienteComercialDto.setApellidosCliente(clienteCom.getApellidos());
 					clienteComercialDto.setNombreCliente(clienteCom.getNombre());
@@ -4313,6 +4313,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 					if(!Checks.esNulo(clienteCom.getDocumento())) {
 						clienteComercialDto.setDocumento(clienteCom.getDocumento());
+					}
+					if(clienteCom.getInfoAdicionalPersona() != null && clienteCom.getInfoAdicionalPersona().getVinculoCaixa() != null) {
+						clienteComercialDto.setVinculoCaixaCodigo(clienteCom.getInfoAdicionalPersona().getVinculoCaixa().getCodigo());
 					}
 				}
 

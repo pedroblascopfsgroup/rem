@@ -138,6 +138,11 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name = "PVE_ID_FDV")
 	private ActivoProveedor fdv;
 
+    @OneToOne(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "OFR_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private ExpedienteComercial expedienteComercial;
+    
     @OneToMany(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "OFR_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -1026,6 +1031,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setTipoRiesgoOperacion(DDRiesgoOperacion tipoRiesgoOperacion) {
 		this.tipoRiesgoOperacion = tipoRiesgoOperacion;
+	}
+	
+	public ExpedienteComercial getExpedienteComercial() {
+		return expedienteComercial;
+	}
+
+	public void setExpedienteComercial(ExpedienteComercial expedienteComercial) {
+		this.expedienteComercial = expedienteComercial;
 	}
 	
 }

@@ -423,7 +423,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
                     idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
                 },
                 success: function (a, operation, c) {
-					me.saveSuccessFn(operation);
+					me.saveSuccessFn(a, operation, c);
+					
 				},
                 
 				failure: function (a, operation) {
@@ -521,22 +522,41 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		
 		return true;			
 	},
-    saveSuccessFn: function (operation) {
-   		var me = this;
-        me.unmask();	
+    saveSuccessFn: function (oferta, operation, c) {
+   		var me = this;	
 
         try {
-    		var response = Ext.JSON.decode(operation.getResponse().responseText)
-    		
+    		var response = Ext.JSON.decode(operation.getResponse().responseText);
+			if(!Ext.isEmpty(response) && !Ext.isEmpty(response.advertencia)) {
+	    		me.fireEvent("warnToast", response.advertencia);
+	    	}else if(oferta.get('codigoEstadoOferta') == CONST.ESTADOS_OFERTA['ACEPTADA']){
+				me.mask(HreRem.i18n("msg.mask.espere"));
+	    		Ext.Ajax.request({
+					url : $AC.getRemoteUrl('tramitacionofertas/doTramitacionOferta'),
+					params : {
+						idOferta : oferta.id,
+						idActivo : oferta.get('idActivo')
+					},
+					method : 'POST',
+					success : function(response, opts) {
+						me.up('activosdetalle').lookupController().refrescarActivo(true);
+				        me.getStore().load();
+				        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					},
+					failure : function(record, operation) {
+						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					},
+					callback: function(){
+						me.unmask();
+					}
+				});
+			}else{
+				me.up('activosdetalle').lookupController().refrescarActivo(true);
+		        me.getStore().load();
+		        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			}
+			
     	}catch(err) {}
-    	
-        if(!Ext.isEmpty(response) && !Ext.isEmpty(response.advertencia)) {
-    		me.fireEvent("warnToast", response.advertencia);
-    	}else{
-    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-    	}
-        
-        me.up('activosdetalle').lookupController().refrescarActivo(true);
 		return true;
 	},
 	

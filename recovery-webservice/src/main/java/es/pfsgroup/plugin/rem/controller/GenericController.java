@@ -824,10 +824,12 @@ public class GenericController extends ParadiseJsonController{
 	@RequestMapping(method = RequestMethod.POST, value = "/generic/accionComercialCaixa")
 	public void accionComercialCaixa(ModelMap model, RestRequestWrapper request, HttpServletResponse response){
 
-		ModelMap modelMap = accionesCaixaController.accionComercialCaixa(model, request, response);
+		ModelMap modelMap = new ModelMap();
+
+		String respuesta = accionesCaixaController.accionComercialCaixa(model, request, response);
+		modelMap.put("error", respuesta);
 
 		restApi.sendResponse(response, modelMap, request);
-
 	}
  }
 

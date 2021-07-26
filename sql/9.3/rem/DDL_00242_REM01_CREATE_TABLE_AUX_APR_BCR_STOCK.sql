@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210715
+--## FECHA_CREACION=20210719
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14545
+--## INCIDENCIA_LINK=HREOS-14648
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -19,7 +19,8 @@
 --##        0.7  HREOS-14533 -  Daniel Algaba - Se cambia la longitud de los campos COD_GESTORIA y COD_REGISTRO_PROPIEDAD
 --##        0.7  HREOS-14545 -  Daniel Algaba - Se cambia la longitud de los campos COD_GESTORIA y COD_GESTORIA_ADMINIS
 --##        0.8  HREOS-14545 -  Daniel Algaba - Se hace un repaso completo, se añaden campos y se cambian algunas longitudes
---##        0.8  HREOS-14545 -  Daniel Algaba - Se cambia la longitud de BANCO_ORIGEN A 4
+--##        0.9  HREOS-14545 -  Daniel Algaba - Se cambia la longitud de BANCO_ORIGEN A 4
+--##        0.10  HREOS-14648 -  Daniel Algaba - Se cambia la longitud de CARTERA_VENTA_ACTIVOS y CARTERA_VENTA_CREDITOS A 4
 --##########################################
 --*/
 
@@ -184,8 +185,8 @@ BEGIN
         NECESIDAD_ARRAS             VARCHAR2(2 CHAR),
         MOT_NECESIDAD_ARRAS         VARCHAR2(2 CHAR),
         RENUNCIA_EXENSION           VARCHAR2(1 CHAR),
-        CARTERA_VENTA_ACTIVOS       VARCHAR2(2 CHAR),
-        CARTERA_VENTA_CREDITOS      VARCHAR2(2 CHAR),       
+        CARTERA_VENTA_ACTIVOS       VARCHAR2(4 CHAR),
+        CARTERA_VENTA_CREDITOS      VARCHAR2(4 CHAR),       
         CAT_COMERCIALIZACION        VARCHAR2(2 CHAR),
         TRIBUT_PROPUESTA_VENTA      VARCHAR2(2 CHAR),
         TRIBUT_PROPUESTA_CLI_EXT_IVA  VARCHAR2(2 CHAR),

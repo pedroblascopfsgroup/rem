@@ -155,9 +155,6 @@ public class Comprador implements Serializable, Auditable {
     @Column(name="COM_FORMA_JURIDICA")
     private String formaJuridica;
     
-    @Column(name="COM_FECHA_NACIMIENTO")
-    private Date fechaNacimientoComprador;
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_LOC_NAC_ID")
 	private Localidad localidadNacimientoComprador;
@@ -460,13 +457,6 @@ public class Comprador implements Serializable, Auditable {
 		this.paisNacimientoComprador = paisNacimientoComprador;
 	}
 
-	public Date getFechaNacimientoComprador() {
-		return fechaNacimientoComprador;
-	}
-
-	public void setFechaNacimientoComprador(Date fechaNacimientoComprador) {
-		this.fechaNacimientoComprador = fechaNacimientoComprador;
-	}
 
 	public InfoAdicionalPersona getInfoAdicionalPersona() {
 		return infoAdicionalPersona;

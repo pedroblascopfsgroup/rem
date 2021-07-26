@@ -339,7 +339,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
                     idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
                 },
                 success: function (a, operation, c) {																			
-					me.saveSuccessFn();
+					me.saveSuccessFn(a, operation, c);
 				},
                 
 				failure: function (a, operation) {
@@ -414,14 +414,35 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		return true;		
 	},
 	
-	saveSuccessFn: function () {
+	saveSuccessFn: function (oferta, operation, c) {
    		var me = this;
-
-   		me.lookupController().lookupReference('activosagrupacion').lookupController().refrescarAgrupacion(true);
-        me.unmask();
-        me.getStore().load();
-        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-       
+		if(oferta.get('codigoEstadoOferta') == CONST.ESTADOS_OFERTA['ACEPTADA']){
+			me.mask(HreRem.i18n("msg.mask.espere"));			
+			Ext.Ajax.request({
+				url : $AC.getRemoteUrl('tramitacionofertas/doTramitacionOferta'),
+				params : {
+					idOferta : oferta.id,
+					idAgrupacion : oferta.get('idAgrupacion')
+				},
+				method : 'POST',
+				success : function(response, opts) {
+					me.lookupController().lookupReference('activosagrupacion').lookupController().refrescarAgrupacion(true);
+			        me.getStore().load();
+			        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				},
+				failure : function(record, operation) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				},
+				callback: function(){
+					me.unmask();
+				}
+			});
+		}else{
+			me.lookupController().lookupReference('activosagrupacion').lookupController().refrescarAgrupacion(true);
+	        me.getStore().load();
+	        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		}
+   		
 		return true;
 	},
 	

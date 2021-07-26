@@ -332,6 +332,9 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @JoinColumn(name = "COE_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<HistoricoCondicionanteExpediente> listHistoricoCondiciones;
+    
+    @Column(name="COE_OTRA_ENT_FINANCIERA")
+    private String otraEntidadFinaciera;
 
 	@Version   
 	private Long version;
@@ -1040,6 +1043,14 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 
 	public void setTributosSobrePropiedad(Boolean tributosSobrePropiedad) {
 		this.tributosSobrePropiedad = tributosSobrePropiedad;
+	}
+
+	public String getOtraEntidadFinaciera() {
+		return otraEntidadFinaciera;
+	}
+
+	public void setOtraEntidadFinaciera(String otraEntidadFinaciera) {
+		this.otraEntidadFinaciera = otraEntidadFinaciera;
 	}
 
 }

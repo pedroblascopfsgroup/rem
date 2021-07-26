@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210714
+--## FECHA_CREACION=20210719
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14545
+--## INCIDENCIA_LINK=HREOS-14672
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -17,6 +17,7 @@
 --##	      0.5 Quitar SUBTIPO_IMPUESTO_COMPRA, PORC_IMPUESTO_COMPRA, COD_TP_IVA_COMPRA y RENUNCIA_EXENSION - HREOS-14533
 --##	      0.6 Quitar IND_OCUPANTES_VIVIENDA - HREOS-14545
 --##	      0.7 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos. También se ha añadido el Año de concesión y la Fecha de finalización de concesión del activo - HREOS-14545
+--##	      0.8 Campos fiscalidad - HREOS-14672
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -422,11 +423,11 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
 
    SALIDA := SALIDA || '      [INFO] 2 - ACT_ACTIVO'||CHR(10);  
                         
-   V_MSQL :=            'MERGE INTO REM01.ACT_ACTIVO ACT
+   V_MSQL :=            'MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
                         USING (				
                         SELECT ACT.ACT_ID AS ACT_ID
-                        FROM REM01.AUX_APR_BCR_STOCK AUX
-                        JOIN REM01.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
+                        FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+                        JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
                         WHERE ACT.ACT_EN_TRAMITE = 0 AND AUX.FLAG_FICHEROS = ''P'' AND (AUX.FEC_VALIDO_A IS NULL OR TO_DATE(AUX.FEC_VALIDO_A, ''dd/mm/yy'') > TO_DATE(SYSDATE, ''dd/mm/yy'')
                         )
                         ) US ON (US.ACT_ID = ACT.ACT_ID)
@@ -505,11 +506,11 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
 
    SALIDA := SALIDA || '      [INFO] 2 - ACT_PAC_PERIMETRO_ACTIVO'||CHR(10);
                         
-   V_MSQL :=            'MERGE INTO REM01.ACT_ACTIVO ACT
+   V_MSQL :=            'MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
                         USING (				
                         SELECT ACT.ACT_ID AS ACT_ID
-                        FROM REM01.AUX_APR_BCR_STOCK AUX
-                        JOIN REM01.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
+                        FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+                        JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
                         WHERE AUX.FLAG_FICHEROS = ''I'' AND AUX.FLAG_EN_REM = 0
                         ) US ON (US.ACT_ID = ACT.ACT_ID)
                         WHEN MATCHED THEN UPDATE SET
@@ -529,34 +530,94 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
 
    V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_FAD_FISCALIDAD_ADQUISICION ACT
                USING (		
-
-                     SELECT
-                        AUX.NUM_IDENTIFICATIVO AS ACT_NUM_ACTIVO_CAIXA
-                        ,ACT2.ACT_ID AS ACT_ID   
-                        ,TIC.DD_TIC_ID AS DD_TIC_ID  
-                     FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX                             
-                     JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO AND ACT2.BORRADO=0
-                     LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''TIPO_IMPUESTO_COMPRA''  AND eqv1.DD_CODIGO_CAIXA = aux.TIPO_IMPUESTO_COMPRA AND EQV1.BORRADO=0
-                     LEFT JOIN '|| V_ESQUEMA ||'.DD_TIC_TIPO_IMPUESTO_COMPRA TIC ON TIC.DD_TIC_CODIGO = eqv1.DD_CODIGO_REM
-                     WHERE AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'        
-                     ) US ON (US.ACT_ID = ACT.ACT_ID )
-                     WHEN MATCHED THEN UPDATE SET
-                         ACT.DD_TIC_ID=US.DD_TIC_ID
-                        ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
-                        ,ACT.FECHAMODIFICAR = SYSDATE
-                        WHEN NOT MATCHED THEN INSERT  (
-                                  FAD_ID                                   
-                                 ,ACT_ID
-                                 ,DD_TIC_ID                
-                                 ,USUARIOCREAR
-                                 ,FECHACREAR
-                           )VALUES ( 
-                                  '|| V_ESQUEMA ||'.S_ACT_FAD_FISCALIDAD_ADQUISICION.NEXTVAL
-                                 ,US.ACT_ID                                        
-                                 ,US.DD_TIC_ID
-                                 ,''STOCK_BC''
-                                 ,SYSDATE
-                           )
+                  WITH CODIGOS AS
+                  (SELECT 
+                        *
+                     FROM(
+                        SELECT 
+                           ''TIPO_IMPUESTO_COMPRA'' AS DD_NOMBRE_CAIXA  
+                           , DD_CODIGO_CAIXA
+                           , DD_NOMBRE_REM
+                           , DD_CODIGO_REM
+                        FROM '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM
+                        WHERE DD_NOMBRE_CAIXA = ''TIPO_IMPUESTO_COMPRA'' AND BORRADO = 0
+                     ) EQV
+                     PIVOT(
+                        MAX(DD_CODIGO_REM)
+                        FOR DD_NOMBRE_REM IN (''DD_TIC_TIPO_IMPUESTO_COMPRA'' AS DD_TIC_TIPO_IMPUESTO_COMPRA
+                                                , ''DD_POI_PORCENTAJE_IMPUESTO'' AS DD_POI_PORCENTAJE_IMPUESTO
+                                                , ''DD_SIN_SINO_DEDU'' AS FAD_DEDUCIBLE
+                                                , ''DD_SIN_SINO_BON'' AS FAD_BONIFICADO
+                                                , ''FAD_COD_TP_IVA_COMPRA'' AS FAD_COD_TP_IVA_COMPRA
+                                                , ''DD_SIN_SINO_EXE'' AS FAD_RENUNCIA_EXENCION )
+                        
+                     ) P   
+                  )	
+                  SELECT
+                     FAD.FAD_ID
+                     , ACT2.ACT_ID AS ACT_ID
+                     , TIC.DD_TIC_ID AS DD_TIC_ID
+                     , DEDUC.DD_SIN_ID AS FAD_DEDUCIBLE
+                     , CASE
+                           WHEN COD.DD_TIC_TIPO_IMPUESTO_COMPRA IS NOT NULL THEN (SELECT DD_TII_ID FROM '|| V_ESQUEMA ||'.DD_TII_TIPO_IMP_IVA_IGIC WHERE DD_TII_CODIGO = ''01'')
+                           ELSE NULL
+                        END AS DD_TII_ID
+                     , CASE
+                           WHEN COD.DD_TIC_TIPO_IMPUESTO_COMPRA IS NOT NULL THEN (SELECT DD_TIA_ID FROM '|| V_ESQUEMA ||'.DD_TIA_TIPO_IMP_AJD_ITP WHERE DD_TIA_CODIGO = ''01'')
+                           ELSE NULL
+                        END AS DD_TIA_ID
+                     , BON.DD_SIN_ID  AS FAD_BONIFICADO
+                     , POI.DD_POI_DESCRIPCION AS FAD_PORCENTAJE_IMPUESTO_COMPRA 
+                     , NULL AS FAD_COD_TP_IVA_COMPRA
+                     , EXE.DD_SIN_ID AS FAD_RENUNCIA_EXENCION
+                  FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX                             
+                  JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO AND ACT2.BORRADO = 0
+                  LEFT JOIN '|| V_ESQUEMA ||'.ACT_FAD_FISCALIDAD_ADQUISICION FAD ON FAD.ACT_ID = ACT2.ACT_ID AND FAD.BORRADO = 0
+                  LEFT JOIN CODIGOS COD ON COD.DD_CODIGO_CAIXA = AUX.TIPO_IMPUESTO_COMPRA
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_TIC_TIPO_IMPUESTO_COMPRA TIC ON TIC.DD_TIC_CODIGO = COD.DD_TIC_TIPO_IMPUESTO_COMPRA
+                  LEFT JOIN '|| V_ESQUEMA_M ||'.DD_SIN_SINO DEDUC ON DEDUC.DD_SIN_CODIGO = COD.FAD_DEDUCIBLE            
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_POI_PORCENTAJE_IMPUESTO POI ON POI.DD_POI_CODIGO = COD.DD_POI_PORCENTAJE_IMPUESTO
+                  LEFT JOIN '|| V_ESQUEMA_M ||'.DD_SIN_SINO BON ON BON.DD_SIN_CODIGO = COD.FAD_BONIFICADO
+                  LEFT JOIN '|| V_ESQUEMA_M ||'.DD_SIN_SINO EXE ON EXE.DD_SIN_CODIGO = COD.FAD_RENUNCIA_EXENCION
+                  WHERE AUX.FLAG_EN_REM = '|| FLAG_EN_REM||') AUX
+                  ON (ACT.FAD_ID = AUX.FAD_ID )
+                                    WHEN MATCHED THEN UPDATE SET
+                                       ACT.DD_TIC_ID = AUX.DD_TIC_ID
+                                       , ACT.FAD_DEDUCIBLE = AUX.FAD_DEDUCIBLE
+                                       , ACT.DD_TII_ID = AUX.DD_TII_ID
+                                       , ACT.DD_TIA_ID = AUX.DD_TIA_ID
+                                       , ACT.FAD_BONIFICADO = AUX.FAD_BONIFICADO
+                                       , ACT.FAD_PORCENTAJE_IMPUESTO_COMPRA = AUX.FAD_PORCENTAJE_IMPUESTO_COMPRA
+                                       , ACT.FAD_COD_TP_IVA_COMPRA = AUX.FAD_COD_TP_IVA_COMPRA
+                                       , ACT.FAD_RENUNCIA_EXENCION = AUX.FAD_RENUNCIA_EXENCION
+                                       , ACT.USUARIOMODIFICAR = ''STOCK_BC''
+                                       , ACT.FECHAMODIFICAR = SYSDATE
+                                       WHEN NOT MATCHED THEN INSERT  
+                                          (FAD_ID
+                                          , ACT_ID
+                                          , DD_TIC_ID
+                                          , FAD_DEDUCIBLE
+                                          , DD_TII_ID
+                                          , DD_TIA_ID
+                                          , FAD_BONIFICADO
+                                          , FAD_PORCENTAJE_IMPUESTO_COMPRA
+                                          , FAD_COD_TP_IVA_COMPRA
+                                          , FAD_RENUNCIA_EXENCION
+                                          , USUARIOCREAR
+                                          , FECHACREAR)
+                                          VALUES 
+                                          ('|| V_ESQUEMA ||'.S_ACT_FAD_FISCALIDAD_ADQUISICION.NEXTVAL
+                                          , AUX.ACT_ID                                        
+                                          , AUX.DD_TIC_ID
+                                          , AUX.FAD_DEDUCIBLE
+                                          , AUX.DD_TII_ID
+                                          , AUX.DD_TIA_ID
+                                          , AUX.FAD_BONIFICADO
+                                          , AUX.FAD_PORCENTAJE_IMPUESTO_COMPRA
+                                          , AUX.FAD_COD_TP_IVA_COMPRA
+                                          , AUX.FAD_RENUNCIA_EXENCION
+                                          , ''STOCK_BC''
+                                          , SYSDATE)
    ';
    EXECUTE IMMEDIATE V_MSQL;
 

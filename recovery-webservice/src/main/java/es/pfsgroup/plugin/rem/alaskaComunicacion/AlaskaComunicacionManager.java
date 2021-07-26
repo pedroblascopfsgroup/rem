@@ -240,10 +240,8 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
             json = mapper.writeValueAsString(model);
             System.out.println("ResultingJSONstring = " + json);
             
-  //          urlEnvio = !Checks.esNulo(appProperties.getProperty("rest.client.convivencia.alaska"))
-  //                  ? appProperties.getProperty("rest.client.convivencia.alaska") : "";
-
-            urlEnvio = "http://192.168.80.3:9090/convivenciaAlaska";
+            urlEnvio = !Checks.esNulo(appProperties.getProperty("rest.client.convivencia.alaska"))
+                    ? appProperties.getProperty("rest.client.convivencia.alaska") : "";
             	
             llamada = procesarPeticion(this.httpClientFacade, urlEnvio, POST_METHOD, headers, json, 30, "UTF-8");
 

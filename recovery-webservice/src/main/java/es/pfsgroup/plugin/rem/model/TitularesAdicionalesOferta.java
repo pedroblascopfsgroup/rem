@@ -171,6 +171,10 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 
 	@Column(name = "TIA_ID_PERSONA_HAYA")
 	private String idPersonaHaya;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "IAP_ID")
+	private InfoAdicionalPersona infoAdicionalPersona;
     
     @Version   
 	private Long version;
@@ -485,4 +489,13 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 	public void setIdPersonaHaya(String idPersonaHaya) {
 		this.idPersonaHaya = idPersonaHaya;
 	}
+
+	public InfoAdicionalPersona getInfoAdicionalPersona() {
+		return infoAdicionalPersona;
+	}
+
+	public void setInfoAdicionalPersona(InfoAdicionalPersona infoAdicionalPersona) {
+		this.infoAdicionalPersona = infoAdicionalPersona;
+	}
+	
 }

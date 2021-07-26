@@ -15,6 +15,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -286,6 +287,9 @@ public class ActivoAdapter {
 	
 	@Autowired
 	private ExpedienteComercialDao expedienteComercialDao;
+
+	@Autowired
+	private ParticularValidatorApi particularValidatorApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -4134,6 +4138,9 @@ public class ActivoAdapter {
 				notificationOfertaManager.sendNotification(oferta);
 			}
 
+			if (particularValidatorApi.esOfertaCaixa(ofertaCreada != null ? ofertaCreada.getNumOferta().toString() : null))
+			createOfertaCaixa(ofertaCreada);
+
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
 			return ofertaCreada;
@@ -4141,6 +4148,20 @@ public class ActivoAdapter {
 
 		return ofertaCreada;
 	}
+
+
+	@Transactional(readOnly = false)
+	public void createOfertaCaixa(final Oferta oferta) {
+
+			if(genericDao.get(OfertaCaixa.class,genericDao.createFilter(FilterType.EQUALS,"oferta.numOferta",oferta.getNumOferta())) != null){
+				return;
+			}else {
+				OfertaCaixa ofertaCaixa = new OfertaCaixa();
+				ofertaCaixa.setOferta(oferta);
+				genericDao.save(OfertaCaixa.class,ofertaCaixa);
+			}
+	}
+
 
 	@Transactional(readOnly = false)
 	public boolean saveLlave(DtoLlaves dto) {

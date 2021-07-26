@@ -977,22 +977,25 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				
 				activoPublicacionDao.save(activoPublicacion);
 				
-				if(Checks.esNulo(dto.getOcultarVenta()) && !Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) {
-					ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
-					BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
-					activoPublicacionHistorico.setFechaInicioVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
-					activoPublicacionHistorico.setFechaInicioAlquiler(null);
-					activoPublicacionHistorico.setAuditoria(null);
-					activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
-				}
-				
-				if(Checks.esNulo(dto.getOcultarAlquiler()) && !Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo())) {
-					ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
-					BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
-					activoPublicacionHistorico.setFechaInicioVenta(null);
-					activoPublicacionHistorico.setFechaInicioAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
-					activoPublicacionHistorico.setAuditoria(null);
-					activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
+				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo())) {
+					registrarHistoricoPublicacion(activoPublicacion, dto);
+					
+					if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) {
+						ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
+						BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
+						activoPublicacionHistorico.setFechaInicioVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
+						activoPublicacionHistorico.setFechaInicioAlquiler(null);
+						activoPublicacionHistorico.setAuditoria(null);
+						activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
+					}
+					if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo())) {
+						ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
+						BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
+						activoPublicacionHistorico.setFechaInicioVenta(null);
+						activoPublicacionHistorico.setFechaInicioAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
+						activoPublicacionHistorico.setAuditoria(null);
+						activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
+					}
 				}
 			}
 			

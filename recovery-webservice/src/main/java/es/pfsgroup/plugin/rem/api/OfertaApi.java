@@ -778,6 +778,7 @@ public interface OfertaApi {
 	
 	public Long saveOferta(Oferta oferta);
 
+	public boolean persistOferta(Oferta oferta);
 	/*
 	 * Este método comprueba si están todos los valores necesarios para los cálculos de liberbank.
 	 * Los valores necesarios para el calculo de comite Liberbank son:

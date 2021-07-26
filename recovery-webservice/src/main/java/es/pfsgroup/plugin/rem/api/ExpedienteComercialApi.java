@@ -1435,4 +1435,6 @@ public interface ExpedienteComercialApi {
 	public FechaArrasExpediente getUltimaPropuesta(Long idExpediente, Filter filter);
 	
 	boolean isEmpleadoCaixa(Oferta oferta);
+	
+	boolean doTramitacionAsincrona(Activo activo, Oferta oferta);
 }

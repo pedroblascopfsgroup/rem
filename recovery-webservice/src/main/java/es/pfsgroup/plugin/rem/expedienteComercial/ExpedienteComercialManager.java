@@ -11,7 +11,6 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -49,7 +48,6 @@ import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -198,6 +196,7 @@ import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.plugin.rem.tareasactivo.ValorTareaBC;
+import es.pfsgroup.plugin.rem.thread.TramitacionOfertasAsync;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 @Service("expedienteComercialManager")
@@ -4518,9 +4517,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (!Checks.esNulo(comprador)) {
 			boolean reiniciarPBC = false;
-
-			comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
-			comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
+			
+			if(dto.getNumeroClienteUrsus() != null)
+				comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
+			
+			if(dto.getNumeroClienteUrsusBh() != null)
+				comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
 			
 			if((DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA).equals(dto.getCodTipoPersona())) {
 				comprador.setApellidos(null);
@@ -12886,6 +12888,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return entidadesFinancieras;
 	}
 	
+	@Override
 	public boolean isEmpleadoCaixa(Oferta oferta) {
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id" ,oferta.getId()));
 		boolean isEmpleadoCaixa = false;
@@ -12905,5 +12908,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		return isEmpleadoCaixa;
+	}
+	
+	@Override
+	@Transactional
+	public boolean doTramitacionAsincrona(Activo activo, Oferta oferta) {
+		TransactionStatus transaction = null;
+		try {
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			String usuarioLogado = genericAdapter.getUsuarioLogado().getUsername();
+			ExpedienteComercial expediente = oferta.getExpedienteComercial();
+			
+			Thread creacionAsincrona = new Thread(new TramitacionOfertasAsync(activo.getId(), true,
+					expediente.getTrabajo().getId(), oferta.getId(), expediente.getId(), usuarioLogado));
+	
+			creacionAsincrona.start();
+			 		
+			transactionManager.commit(transaction);
+			return true;
+		}catch(Exception e) {
+			transactionManager.rollback(transaction);
+			return false;
+		}
 	}
 }

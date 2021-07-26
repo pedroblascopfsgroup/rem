@@ -781,7 +781,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		ON act.ACT_ID            = pac.ACT_ID "
 				+ "		WHERE "
 				+ "		(pac.PAC_INCLUIDO = 1 or pac.PAC_ID is null)"
-				+ "		AND act.ACT_NUM_ACTIVO = :numActivo ");
+				+ "		AND act.ACT_NUM_ACTIVO = :numActivo "
+				+ "		AND pac.BORRADO = 0 AND act.BORRADO = 0	");
 		return !Checks.esNulo(resultado);
 	}
 
@@ -1483,7 +1484,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ " 	JOIN OFR_OFERTAS OFR ON ACTOF.OFR_ID = OFR.OFR_ID "
 				+ " 	JOIN DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID "
 				+ "		WHERE ACT.ACT_NUM_ACTIVO =:numActivo "
-				+ " 	AND EOF.DD_EOF_CODIGO IN ('01','03','04')");
+				+ " 	AND EOF.DD_EOF_CODIGO IN ('01','03','04')"
+				+ "		AND ACT.BORRADO = 0 AND OFR.BORRADO = 0 AND EOF.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
 	@Override
@@ -1530,13 +1532,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String query = "SELECT COUNT(1) "
 				+ "	  	FROM VI_OFERTAS_ACTIVOS_AGRUPACION v "
-				+ " 	INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON v.ECO_ID = eco.ECO_ID "
-				+ " 	INNER JOIN OFR_OFERTAS ofr ON v.OFR_NUM_OFERTA = ofr.OFR_NUM_OFERTA "
-				+ "  	INNER JOIN ACT_TBJ_TRABAJO tbj ON eco.TBJ_ID = tbj.TBJ_ID "
-				+ "  	INNER JOIN ACT_TRA_TRAMITE tra ON tbj.TBJ_ID = tra.TBJ_ID "
-				+ "  	INNER JOIN TAC_TAREAS_ACTIVOS tac ON tra.TRA_ID = tac.TRA_ID "
-				+ "  	INNER JOIN TAR_TAREAS_NOTIFICACIONES tar ON tac.TAR_ID = TAR.TAR_ID "
-				+ "		INNER JOIN ACT_ACTIVO act ON act.ACT_ID = v.ACT_ID "
+				+ " 	INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON v.ECO_ID = eco.ECO_ID AND eco.BORRADO = 0 "
+				+ " 	INNER JOIN OFR_OFERTAS ofr ON v.OFR_NUM_OFERTA = ofr.OFR_NUM_OFERTA AND ofr.BORRADO = 0 "
+				+ "  	INNER JOIN ACT_TBJ_TRABAJO tbj ON eco.TBJ_ID = tbj.TBJ_ID AND tbj.BORRADO = 0 "
+				+ "  	INNER JOIN ACT_TRA_TRAMITE tra ON tbj.TBJ_ID = tra.TBJ_ID AND tra.BORRADO = 0 "
+				+ "  	INNER JOIN TAC_TAREAS_ACTIVOS tac ON tra.TRA_ID = tac.TRA_ID AND tac.BORRADO = 0 "
+				+ "  	INNER JOIN TAR_TAREAS_NOTIFICACIONES tar ON tac.TAR_ID = TAR.TAR_ID AND tar.BORRADO = 0 "
+				+ "		INNER JOIN ACT_ACTIVO act ON act.ACT_ID = v.ACT_ID AND act.BORRADO = 0 "
 				+ " 	WHERE act.ACT_NUM_ACTIVO = :numActivo "
 				+ "    	AND tar.TAR_FECHA_FIN IS NULL "
 				+ "    	AND ofr.DD_EOF_ID <> 2 "
@@ -3508,9 +3510,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		if(!Checks.esNulo(numActivo)){
 			String resultado = rawDao.getExecuteSQL("select TCO.DD_TCO_CODIGO from ACT_ACTIVO act "
-					 + " INNER JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID "
-					 + " INNER JOIN DD_TCO_TIPO_COMERCIALIZACION TCO ON APU.DD_TCO_ID = TCO.DD_TCO_ID "
-					 + " where act.ACT_NUM_ACTIVO = :numActivo ");
+					 + " INNER JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID AND APU.BORRADO = 0 "
+					 + " INNER JOIN DD_TCO_TIPO_COMERCIALIZACION TCO ON APU.DD_TCO_ID = TCO.DD_TCO_ID AND TCO.BORRADO = 0 "
+					 + " where act.ACT_NUM_ACTIVO = :numActivo AND act.BORRADO = 0 ");
 
 			return "03".equals(resultado);
 		}
@@ -3681,7 +3683,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ " 	JOIN DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID "
 				+ "		WHERE ACT.ACT_NUM_ACTIVO = :numActivo "
 				+ " 	AND EOF.DD_EOF_CODIGO IN ('01','03','04')"
-				+ "		AND TOF.DD_TOF_CODIGO = '01'");
+				+ "		AND TOF.DD_TOF_CODIGO = '01'"
+				+ "		AND ACT.BORRADO = 0 AND OFR.BORRADO = 0 "
+				+ "		AND TOF.BORRADO = 0 AND EOF.BORRADO = 0");
 
 
 		return !"0".equals(resultado);
@@ -3704,7 +3708,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ " 	JOIN DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID "
 				+ "		WHERE ACT.ACT_NUM_ACTIVO = :numActivo "
 				+ " 	AND EOF.DD_EOF_CODIGO IN ('01','03','04')"
-				+ "		AND TOF.DD_TOF_CODIGO = '02'");
+				+ "		AND TOF.DD_TOF_CODIGO = '02'"
+				+ "		AND ACT.BORRADO = 0 AND OFR.BORRADO = 0 "
+				+ "		AND TOF.BORRADO = 0 AND EOF.BORRADO = 0");
 
 
 		return !"0".equals(resultado);
@@ -3741,7 +3747,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return rawDao.getExecuteSQL("SELECT tco.DD_TCO_CODIGO FROM ACT_ACTIVO act "
 				+ " INNER JOIN DD_TCO_TIPO_COMERCIALIZACION tco ON act.DD_TCO_ID = tco.DD_TCO_ID "
-				+ " WHERE act.ACT_NUM_ACTIVO = :numActivo AND act.BORRADO = 0");
+				+ " WHERE act.ACT_NUM_ACTIVO = :numActivo AND act.BORRADO = 0 AND tco.BORRADO = 0");
 	}
 
 	@Override
@@ -4017,7 +4023,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			JOIN DD_TTA_TIPO_TITULO_ACTIVO TTA"
 				+ "			ON ACT.DD_TTA_ID = TTA.DD_TTA_ID"
 				+ "			WHERE TTA.DD_TTA_CODIGO IN ('03', '04')"
-				+ "			AND ACT.ACT_NUM_ACTIVO =  :numActivo  ");
+				+ "			AND ACT.ACT_NUM_ACTIVO =  :numActivo  "
+				+ "			AND ACT.BORRADO = 0 AND TTA.BORRADO = 0");
 
 		return !"0".equals(resultado);
 	}
@@ -4091,8 +4098,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM ACT_AGR_AGRUPACION AGR "
-				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID "
-				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID "
+				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID AND AGA.BORRADO = 0 "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID AND ACT.BORRADO = 0 "
 				+ "WHERE ACT.ACT_NUM_ACTIVO = :numActivo "
 				+ "AND AGR.BORRADO = 0 "
 				+ "AND AGR.AGR_FECHA_BAJA IS NULL "
@@ -4109,8 +4116,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM ACT_AGR_AGRUPACION AGR "
-				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID "
-				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID "
+				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID AND AGA.BORRADO = 0 "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID AND ACT.BORRADO = 0 "
 				+ "WHERE ACT.ACT_NUM_ACTIVO = :numActivo "
 				+ "AND AGR.BORRADO = 0"
 				+ "AND AGR.AGR_FECHA_BAJA IS NULL "
@@ -6356,7 +6363,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"JOIN DD_CDU_CESION_USO cdu ON pta.DD_CDU_ID = cdu.DD_CDU_ID " + 
 				"AND DD_CDU_CODIGO IN ('01','02','03','04') " + 
 				"JOIN ACT_ACTIVO act ON act.ACT_ID = pta.ACT_ID " + 
-				"AND act.ACT_NUM_ACTIVO = :numActivo "
+				"AND act.ACT_NUM_ACTIVO = :numActivo " +
+				"AND ACT.BORRADO = 0 AND pta.BORRADO = 0"
 				);
 		return !"0".equals(resultado);
 	}
@@ -7084,7 +7092,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_BBVA_ACTIVOS ABA " + 												 
-												"WHERE ABA.BBVA_ID_ORIGEN_HRE = :numActivo");
+												"WHERE ABA.BBVA_ID_ORIGEN_HRE = :numActivo AND ABA.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
 	
@@ -7367,7 +7375,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_AGR_AGRUPACION AGR "
 				+"JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID "
-				+ "WHERE AGR.AGR_NUM_AGRUP_REM = 'numAgrupacion '");
+				+ "WHERE AGR.AGR_NUM_AGRUP_REM = :numAgrupacion");
 		
 		return "0".equals(resultado);
 	}

@@ -24,6 +24,7 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 
 import javax.annotation.Resource;
@@ -61,6 +62,7 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         return null;
     }
 
+    @Transactional(readOnly = false)
     public void datosCliente(Long idActivo, ModelMap model) {
 
         String urlEnvio = null;
@@ -237,12 +239,13 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
 
             json = mapper.writeValueAsString(model);
             System.out.println("ResultingJSONstring = " + json);
-//                urlEnvio = !Checks.esNulo(appProperties.getProperty("rest.client.convivencia.recovery"))
-//                        ? appProperties.getProperty("rest.client.convivencia.recovery") : "";
-            urlEnvio = "https://desfenix.haya.es:8080";
+            
+  //          urlEnvio = !Checks.esNulo(appProperties.getProperty("rest.client.convivencia.alaska"))
+  //                  ? appProperties.getProperty("rest.client.convivencia.alaska") : "";
 
+            urlEnvio = "http://192.168.80.3:9090/convivenciaAlaska";
+            	
             llamada = procesarPeticion(this.httpClientFacade, urlEnvio, POST_METHOD, headers, json, 30, "UTF-8");
-
 
             registrarLlamada(urlEnvio, json, llamada.getString("success"), llamada.getString("data"), null);
 

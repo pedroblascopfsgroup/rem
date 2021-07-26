@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.ui.ModelMap;
 
@@ -72,6 +73,7 @@ public class MSVActualizacionSuperficiesProcesar extends AbstractMSVActualizador
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {
 
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());

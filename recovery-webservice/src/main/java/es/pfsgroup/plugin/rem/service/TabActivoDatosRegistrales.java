@@ -84,6 +84,7 @@ import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.ui.ModelMap;
 
@@ -1150,6 +1151,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		}
 	}
 	
+	@Transactional(readOnly = false)
 	public void comprobacionSuperficiePA(DtoActivoDatosRegistrales activoDto, Long id) {
 
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());

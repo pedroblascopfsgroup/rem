@@ -578,6 +578,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		return expedienteComercial;
 	}
 
+	@Transactional(readOnly = false)
 	private ExpedienteComercial crearExpedienteGuardado(Oferta oferta, Trabajo trabajo,
 			Oferta ofertaOriginalGencatEjerce, Activo activo) throws Exception {
 

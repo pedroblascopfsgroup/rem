@@ -44,6 +44,7 @@ import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.ui.ModelMap;
 
@@ -200,6 +201,7 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 		return activo;
 	}
 	
+	@Transactional(readOnly = false)
 	private void actualizaDependientesActivo(MSVHojaExcel exc, int fila, Activo activo) throws IOException, ParseException {
 
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -276,6 +278,7 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 		}
 	}
 	
+	@Transactional(readOnly = false)
 	public void actualizaSituacionPosesoria (MSVHojaExcel exc, int fila, ActivoSituacionPosesoria sitPosesoria,Activo activo) throws IOException, ParseException {
 
 

@@ -209,6 +209,7 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 	}
 
 	//crea un activo a partir del DtoAltaActivoThirdParty que recibe
+	@Transactional(readOnly = false)
 	private Activo dtoToEntityActivo(DtoAltaActivoThirdParty dtoAATP) throws Exception{
 
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -249,7 +250,7 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 		return activo;
 	}
 	
-	
+	@Transactional(readOnly = false)
 	private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) throws Exception {
 
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());

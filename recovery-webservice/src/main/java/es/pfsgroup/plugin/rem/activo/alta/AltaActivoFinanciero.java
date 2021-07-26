@@ -242,6 +242,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		return activo;
 	}
 
+	@Transactional(readOnly = false)
 	private void dtoToEntitiesOtras(DtoAltaActivoFinanciero dtoAAF, Activo activo) throws Exception {
 
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());

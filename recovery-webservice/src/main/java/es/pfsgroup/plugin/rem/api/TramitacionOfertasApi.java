@@ -29,4 +29,6 @@ public interface TramitacionOfertasApi {
 	public Boolean tieneFormalizacion(Long idExpediente);
 
 	String calcularComiteBBVA(Oferta oferta);
+
+	boolean doTramitacionOferta(Long idOferta, Long idActivo, Long idAgrupacion) throws JsonViewerException, Exception, Error;
 }

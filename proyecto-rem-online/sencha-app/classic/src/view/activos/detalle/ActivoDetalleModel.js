@@ -3706,11 +3706,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			autoLoad: true   	
 	   },
 	   
-	   comboEmpleadoCaixa: {
+	   comboSiNoBoolean: {
 	    	data : [
-	    		{"codigo":"10", "descripcion":"Si"},
-	    		{"codigo":"20", "descripcion":"Si"},
-	    		{"codigo":"null", "descripcion":"No"}
+	    		{"codigo":"true", "descripcion":"Si"},
+	    		{"codigo":"false", "descripcion":"No"}
 	    		]  
 	    }
 	 }

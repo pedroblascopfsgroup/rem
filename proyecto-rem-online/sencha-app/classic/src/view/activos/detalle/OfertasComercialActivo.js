@@ -206,7 +206,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 										fieldLabel : HreRem.i18n('fieldlabel.empleado.caixa'),
 										reference: 'empleadoCaixaRef',
 										bind : {
-											store : '{comboEmpleadoCaixa}',
+											store : '{comboSiNoBoolean}',
 											value : '{detalleOfertaModel.empleadoCaixa}',
 											hidden: '{!esBankia}'
 										},

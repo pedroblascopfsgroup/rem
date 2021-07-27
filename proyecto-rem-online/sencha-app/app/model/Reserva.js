@@ -52,7 +52,17 @@ Ext.define('HreRem.model.Reserva', {
     		name: 'fechaAmpliacionArras',
     		type : 'date',
 			dateFormat: 'c'
-    	}    	
+    	},
+    	{
+    		name: 'fechaPropuestaProrrogaArras',
+    		type : 'date',
+			dateFormat: 'c'
+    	},
+    	{
+    		name: 'fechaComunicacionCliente',
+    		type : 'date',
+			dateFormat: 'c'
+    	}  
     ],
 
     proxy: {

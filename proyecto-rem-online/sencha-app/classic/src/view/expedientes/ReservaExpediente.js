@@ -111,43 +111,8 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 	                		}
 		                },
 		                		                
-		                //BLOQUE ARRAS
-		                {
-		                	xtype:'datefieldbase',
-					        fieldLabel: HreRem.i18n('fieldlabel.fecha.vigencia.arras'),
-					        bind: {
-		                		value: '{reserva.fechaVigenciaArras}',
-		                		hidden:'{!esCarteraBankia}'
-					        }
-						},						
-						{
-							xtype:'datefieldbase',
-					        fieldLabel: HreRem.i18n('fieldlabel.fecha.ampliacion.arras'),
-					        bind: {
-		                		value: '{reserva.fechaAmpliacionArras}',
-		                		hidden:'{!esCarteraBankia}'
-					        }
-						},
-						{
-					        xtype: 'comboboxfieldbase',
-					        fieldLabel:  HreRem.i18n('fieldlabel.motivo.ampliacion.arras'),					        
-					        bind: {
-					        	store: '{comboMotivoAmpliacionArras}',
-								value: '{reserva.motivoAmpliacionArrasCodigo}',
-								hidden:'{!esCarteraBankia}'
-								}											                	
-					    },
-					    { 
-							xtype: 'textareafieldbase',
-							fieldLabel:  HreRem.i18n('fieldlabel.motivo.solicitud.ampliacion.arras'),						        	
-							bind: {
-								value: '{reserva.solicitudAmpliacionArras}',
-								hidden:'{!esCarteraBankia}'
-							},
-							maxLength: 200,
-							rowspan: 2,
-							height: 80
-						},
+		               
+		                
 						//FIN ARRAS		                
 		                
 		                {		                
@@ -216,6 +181,57 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 							//disabled: true,
 							readOnly: true,
 							allowBlank: true
+						},
+						{
+							xtype:'fieldsettable',
+							defaultType: 'displayfieldbase',				
+							title: HreRem.i18n('fieldlabel.prorroga.arras'),
+							colspan:3,
+							bind:{
+								hidden:'{!esCarteraBankia}'
+							},
+							items :[
+														
+								{
+									xtype:'datefieldbase',
+							        fieldLabel: HreRem.i18n('fieldlabel.prorroga.arras.propuesta'),
+							        bind: {
+				                		value: '{reserva.fechaPropuestaProrrogaArras}'
+							        }
+								},
+								{
+							        xtype: 'comboboxfieldbase',
+							        fieldLabel:  HreRem.i18n('fieldlabel.motivo.ampliacion.arras'),					        
+							        bind: {
+							        	store: '{comboMotivoAmpliacionArras}',
+										value: '{reserva.motivoAmpliacionArrasCodigo}'
+									}											                	
+							    },
+							    { 
+									xtype: 'textareafieldbase',
+									fieldLabel:  HreRem.i18n('fieldlabel.motivo.solicitud.ampliacion.arras'),						        	
+									bind: {
+										value: '{reserva.solicitudAmpliacionArras}'
+									},
+									maxLength: 200,
+									rowspan: 2,
+									height: 80
+								},
+								{
+				                	xtype:'datefieldbase',
+							        fieldLabel: HreRem.i18n('fieldlabel.fecha.comunicacion.a.cliente'),
+							        bind: {
+				                		value: '{reserva.fechaComunicacionCliente}'
+							        }
+								},
+								{
+				                	xtype:'datefieldbase',
+							        fieldLabel: HreRem.i18n('fieldlabel.fecha.vigencia.arras'),
+							        bind: {
+				                		value: '{reserva.fechaVigenciaArras}'
+							        }
+								}
+							]
 						}
 		                		               
 		        ]

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210721
+--## FECHA_CREACION=20210726
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14718
+--## INCIDENCIA_LINK=HREOS-14024
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_EQV_CAIXA_REM los datos añadidos en T_ARRAY_DATA para todos los diccionarios
@@ -336,15 +336,15 @@ DECLARE
         T_TIPO_DATA('PROCEDENCIA_PRODUCTO','1','Crediticio','DD_PRP_PROCEDENCIA_PRODUCTO','01'),
         T_TIPO_DATA('PROCEDENCIA_PRODUCTO','2','No crediticio','DD_PRP_PROCEDENCIA_PRODUCTO','02'),
       --Región
-        T_TIPO_DATA('REGION','1','Álava','DD_PRV_PROVINCIA','1'),
-        T_TIPO_DATA('REGION','2','Albacete','DD_PRV_PROVINCIA','2'),
-        T_TIPO_DATA('REGION','3','Alicante','DD_PRV_PROVINCIA','3'),
-        T_TIPO_DATA('REGION','4','Almería','DD_PRV_PROVINCIA','4'),
-        T_TIPO_DATA('REGION','5','Ávila','DD_PRV_PROVINCIA','5'),
-        T_TIPO_DATA('REGION','6','Badajoz','DD_PRV_PROVINCIA','6'),
-        T_TIPO_DATA('REGION','7','Baleares','DD_PRV_PROVINCIA','7'),
-        T_TIPO_DATA('REGION','8','Barcelona','DD_PRV_PROVINCIA','8'),
-        T_TIPO_DATA('REGION','9','Burgos','DD_PRV_PROVINCIA','9'),
+        T_TIPO_DATA('REGION','01','Álava','DD_PRV_PROVINCIA','1'),
+        T_TIPO_DATA('REGION','02','Albacete','DD_PRV_PROVINCIA','2'),
+        T_TIPO_DATA('REGION','03','Alicante','DD_PRV_PROVINCIA','3'),
+        T_TIPO_DATA('REGION','04','Almería','DD_PRV_PROVINCIA','4'),
+        T_TIPO_DATA('REGION','05','Ávila','DD_PRV_PROVINCIA','5'),
+        T_TIPO_DATA('REGION','06','Badajoz','DD_PRV_PROVINCIA','6'),
+        T_TIPO_DATA('REGION','07','Baleares','DD_PRV_PROVINCIA','7'),
+        T_TIPO_DATA('REGION','08','Barcelona','DD_PRV_PROVINCIA','8'),
+        T_TIPO_DATA('REGION','09','Burgos','DD_PRV_PROVINCIA','9'),
         T_TIPO_DATA('REGION','10','Cáceres','DD_PRV_PROVINCIA','10'),
         T_TIPO_DATA('REGION','11','Cádiz','DD_PRV_PROVINCIA','11'),
         T_TIPO_DATA('REGION','12','Castellón','DD_PRV_PROVINCIA','12'),

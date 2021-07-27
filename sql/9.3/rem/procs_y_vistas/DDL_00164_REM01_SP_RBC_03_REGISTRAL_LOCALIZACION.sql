@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210723
+--## FECHA_CREACION=20210726
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14648
+--## INCIDENCIA_LINK=HREOS-14024
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -16,6 +16,7 @@
 --##        0.4 Cortamos cadenas - [HREOS-14368] - Daniel Algaba
 --##        0.5 Metemos NUM_IDENTFICATIVO como campos de cruce - [HREOS-14368] - Daniel Algaba
 --##        0.6 Se corrige error encontrado en la EQV por varios tipos de vía apuntando a diferentes tipos de caixa - [HREOS-14648] -  Daniel Algaba
+--##        0.6 Se añade un leftpad al código postal, por si tuviese menos dígitos de los esperados - [HREOS-14024] -  Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -56,7 +57,7 @@ BEGIN
                   , EQV_TVI.DD_CODIGO_CAIXA COMPLEMENTO
                   , SUBSTR(BIE_LOC.BIE_LOC_NOMBRE_VIA, 0, 60) CALLE
                   , SUBSTR(BIE_LOC.BIE_LOC_NUMERO_DOMICILIO, 0, 10) NUMERO
-                  , BIE_LOC.BIE_LOC_COD_POST APARTADO
+                  , LPAD(BIE_LOC.BIE_LOC_COD_POST, 5, ''0'') APARTADO
                   , LOC.DD_LOC_CODIGO POBLACION
                   , EQV_PRV.DD_CODIGO_CAIXA REGION
                   , EQV_CIC.DD_CODIGO_CAIXA PAIS

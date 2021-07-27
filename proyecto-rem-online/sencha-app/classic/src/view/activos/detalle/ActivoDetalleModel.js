@@ -1831,7 +1831,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			} else {
 		    	return true;
 			}
-	    }
+	    },
 
 		
 		esBankia: function(get) {

@@ -18,7 +18,7 @@ public class DtoDetalleOferta {
 	private String necesitaFinanciacion;
 	private String observaciones;
 	private Date fechaEntradaCRMSF;
-	private String empleadoCaixa;
+	private Boolean empleadoCaixa;
 
 
 	public String getId() {
@@ -99,11 +99,12 @@ public class DtoDetalleOferta {
 	public void setFechaEntradaCRMSF(Date fechaEntradaCRMSF) {
 		this.fechaEntradaCRMSF = fechaEntradaCRMSF;
 	}
-	public String getEmpleadoCaixa() {
+	public Boolean getEmpleadoCaixa() {
 		return empleadoCaixa;
 	}
-	public void setEmpleadoCaixa(String empleadoCaixa) {
+	public void setEmpleadoCaixa(Boolean empleadoCaixa) {
 		this.empleadoCaixa = empleadoCaixa;
 	}
+
 	
 }

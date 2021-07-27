@@ -45,7 +45,8 @@ Ext.define('HreRem.model.DetalleOfertaModel', {
     		dateFormat: 'c'
 		},
 		{
-			name: 'empleadoCaixa'
+			name: 'empleadoCaixa',
+			type: 'boolean'
 		}
     ],
 

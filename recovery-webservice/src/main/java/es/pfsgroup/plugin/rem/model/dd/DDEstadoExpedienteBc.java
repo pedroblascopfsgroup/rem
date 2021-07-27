@@ -77,6 +77,9 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_EEB_CODIGO")   
 	private String codigo;
+    
+	@Column(name = "DD_EEB_CODIGO_C4C")   
+	private String codigoC4C;
 	 
 	@Column(name = "DD_EEB_DESCRIPCION")   
 	private String descripcion;
@@ -158,6 +161,14 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 
 	public void setEsAlquiler(Boolean esAlquiler) {
 		this.esAlquiler = esAlquiler;
+	}
+
+	public String getCodigoC4C() {
+		return codigoC4C;
+	}
+
+	public void setCodigoC4C(String codigoC4C) {
+		this.codigoC4C = codigoC4C;
 	}
 
 }

@@ -130,6 +130,12 @@ public class Reserva implements Serializable, Auditable {
     @JoinColumn(name = "DD_MAA_ID")
 	private DDMotivoAmpliacionArras motivoAmpliacionArras;    
     
+    @Column(name="RES_FECHA_PROR_PROP_ARRAS")
+    private Date fechaPropuestaProrrogaArras;
+    
+    @Column(name="RES_FECHA_COM_CLIENTE")
+    private Date fechaComunicacionCliente;
+    
     @Version   
 	private Long version;
 
@@ -328,6 +334,21 @@ public class Reserva implements Serializable, Auditable {
 
 	public void setMotivoAmpliacionArras(DDMotivoAmpliacionArras motivoAmpliacionArras) {
 		this.motivoAmpliacionArras = motivoAmpliacionArras;
+	}
+
+	public Date getFechaPropuestaProrrogaArras() {
+		return fechaPropuestaProrrogaArras;
+	}
+
+	public void setFechaPropuestaProrrogaArras(Date fechaPropuestaProrrogaArras) {
+		this.fechaPropuestaProrrogaArras = fechaPropuestaProrrogaArras;
+	}
+
+	public Date getFechaComunicacionCliente() {
+		return fechaComunicacionCliente;
+	}
+
+	public void setFechaComunicacionCliente(Date fechaComunicacionCliente) {
+		this.fechaComunicacionCliente = fechaComunicacionCliente;
 	} 
-   
 }

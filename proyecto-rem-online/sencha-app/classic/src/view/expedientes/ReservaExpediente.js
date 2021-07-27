@@ -16,11 +16,22 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
     
     initComponent: function () {
         var me = this;
-		me.setTitle(HreRem.i18n('title.reserva'));
+        
+		
 		var dataExpediente = me.lookupController().getView().getViewModel().getData().expediente.getData();
 		var tieneReserva = true;
 		var esBk = dataExpediente.esBankia;
 		var botonesEdicion = me.up().down("[itemId=botoneditar]");
+		var estadoArras;
+		
+		if(esBk){
+			estadoArras = 'fieldlabel.estado.arras';
+			me.setTitle(HreRem.i18n('title.arras'));
+		}else{
+			estadoArras = 'fieldlabel.estado.reserva';
+			me.setTitle(HreRem.i18n('title.reserva'));
+		}
+		
 		
         var items= [
 
@@ -77,7 +88,7 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 											value: '{reserva.estadoReservaCodigo}'
 										},
 										readOnly: !$AU.userIsRol("HAYASUPER"),
-					                	fieldLabel:  HreRem.i18n('fieldlabel.estado.reserva')
+					                	fieldLabel:  HreRem.i18n(estadoArras)
 					                },
 					                {
 					                	
@@ -164,7 +175,8 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 							maxLength: 4,
 							//disabled: true,
 							bind: {
-								value: '{reserva.codigoSucursal}'
+								value: '{reserva.codigoSucursal}',
+								hidden: '{esCarteraBankia}'
 							},
 							allowBlank: true,
 							triggers: {
@@ -197,7 +209,10 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 							xtype: 'textfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.sucursalreserva'),
 							name: 'nombreSucursal',
-							bind: '{reserva.sucursal}',
+							bind: {
+								value:'{reserva.sucursal}',
+								hidden: '{esCarteraBankia}'
+							},
 							//disabled: true,
 							readOnly: true,
 							allowBlank: true

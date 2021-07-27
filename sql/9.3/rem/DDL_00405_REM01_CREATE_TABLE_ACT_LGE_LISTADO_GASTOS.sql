@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=PIER GOTTA
---## FECHA_CREACION=20210607
+--## FECHA_CREACION=20210726
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=1.2.0
---## INCIDENCIA_LINK=HREOS-11214
+--## INCIDENCIA_LINK=HREOS-14759
 --## PRODUCTO=NO
 --## Finalidad: Creacion diccionario DD_EMI_ERROR_MAP_INMUEBLE
 --##           
@@ -59,7 +59,7 @@ BEGIN
                 FAC_ID_REM        			NUMBER(16)            NOT NULL,
                 NUM_LINEA        			NUMBER(16)            NOT NULL,
                 GLD_ID		   			NUMBER(16) 	     NOT NULL,
-                ACT_ID					NUMBER(16) 	     NOT NULL,
+                ACT_ID					NUMBER(16)  ,
                 VERSION 			        NUMBER(38,0) 		    DEFAULT 0 NOT NULL ENABLE, 
                 USUARIOCREAR 			    VARCHAR2(50 CHAR) 	    NOT NULL ENABLE, 
                 FECHACREAR 			        TIMESTAMP (6) 		    NOT NULL ENABLE, 

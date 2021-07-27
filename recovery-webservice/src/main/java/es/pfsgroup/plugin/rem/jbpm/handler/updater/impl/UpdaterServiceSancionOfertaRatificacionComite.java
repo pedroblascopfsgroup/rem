@@ -154,7 +154,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 							expediente.setEstado(estado);
 							recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
-
+							ofertaApi.actualizarOfertaBoarding(expediente.getOferta());
 
 							
 							

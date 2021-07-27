@@ -145,6 +145,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 								
 								expediente.setEstado(estado);
 								recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+								ofertaApi.actualizarOfertaBoarding(expediente.getOferta());
 
 								if(DDEstadosExpedienteComercial.APROBADO.equals(estado.getCodigo())) {
 									if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva())) {															

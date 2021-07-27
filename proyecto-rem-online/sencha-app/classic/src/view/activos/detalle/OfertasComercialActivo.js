@@ -200,6 +200,19 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 										},
 					    				readOnly: true,
 					    				width: 410
+					    			},
+					    			{
+					    				xtype : 'comboboxfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.empleado.caixa'),
+										reference: 'empleadoCaixaRef',
+										bind : {
+											store : '{comboEmpleadoCaixa}',
+											value : '{detalleOfertaModel.empleadoCaixa}',
+											hidden: '{!esBankia}'
+										},
+										readOnly: true,
+										width: 410,
+					    				colspan: 2
 					    			}
 					    			
 					    			

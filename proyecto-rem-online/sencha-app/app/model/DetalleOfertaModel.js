@@ -43,6 +43,9 @@ Ext.define('HreRem.model.DetalleOfertaModel', {
 			name:'fechaEntradaCRMSF',
 			type:'date',
     		dateFormat: 'c'
+		},
+		{
+			name: 'empleadoCaixa'
 		}
     ],
 

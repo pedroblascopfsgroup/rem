@@ -12,7 +12,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','HreRem.model.DocumentacionAdministrativa', 'HreRem.model.ActivoPatrimonio',
     'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel','HreRem.model.SuministrosActivoModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento',
 	'HreRem.model.ReqFaseVentaModel', 'HreRem.model.AgendaRevisionTituloGridModel', 'HreRem.model.SaneamientoAgenda', 'HreRem.model.CalificacionNegativaAdicionalModel',
-	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel','HreRem.model.SituacionOcupacionalGridModel'],
+	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel','HreRem.model.SituacionOcupacionalGridModel',
+	'HreRem.model.DetalleOfertaModel'],
 
     data: {
     	activo: null,
@@ -1736,6 +1737,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				readOnly = true;
 			}	
 			return readOnly;
+		},
+		
+		esBankia: function(get) {
+			var carteraCodigo = get('activo.entidadPropietariaCodigo');
+	     	
+	     	if(CONST.CARTERA['BANKIA'] == carteraCodigo){
+	     		return true;
+	     	}else{
+	     		return false;
+	     	}
 		}
 	 },
     
@@ -3684,6 +3695,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {id: '{activo.id}'}
 		   }
 	   },
+	   
 	   comboVinculoCaixa: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -3692,7 +3704,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'vinculoCaixa'}
 			},
 			autoLoad: true   	
+	   },
+	   
+	   comboEmpleadoCaixa: {
+	    	data : [
+	    		{"codigo":"10", "descripcion":"Si"},
+	    		{"codigo":"20", "descripcion":"Si"},
+	    		{"codigo":"null", "descripcion":"No"}
+	    		]  
 	    }
-		
 	 }
 });

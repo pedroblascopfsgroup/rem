@@ -335,6 +335,15 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     
     @Column(name="COE_OTRA_ENT_FINANCIERA")
     private String otraEntidadFinaciera;
+    
+    @Column(name="COE_FIANZA_EXONERADA")
+    private Boolean fianzaExonerada;
+    
+    @Column(name="COE_OBLIGADO_CUMPLIMIENTO")
+    private Double obligadoCumplimiento;
+    
+    @Column(name="COE_VENCIMIENTO_AVAL")
+    private Date fechaVencimientoAval;
 
 	@Version   
 	private Long version;
@@ -1052,5 +1061,30 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 	public void setOtraEntidadFinaciera(String otraEntidadFinaciera) {
 		this.otraEntidadFinaciera = otraEntidadFinaciera;
 	}
+
+	public Boolean getFianzaExonerada() {
+		return fianzaExonerada;
+	}
+
+	public void setFianzaExonerada(Boolean fianzaExonerada) {
+		this.fianzaExonerada = fianzaExonerada;
+	}
+
+	public Double getObligadoCumplimiento() {
+		return obligadoCumplimiento;
+	}
+
+	public void setObligadoCumplimiento(Double obligadoCumplimiento) {
+		this.obligadoCumplimiento = obligadoCumplimiento;
+	}
+
+	public Date getFechaVencimientoAval() {
+		return fechaVencimientoAval;
+	}
+
+	public void setFechaVencimientoAval(Date fechaVencimientoAval) {
+		this.fechaVencimientoAval = fechaVencimientoAval;
+	}
+	
 
 }

@@ -3861,7 +3861,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'vinculoCaixa'}
+				extraParams: {diccionario: 'motivoNecesidadArras'}
 			},
 			autoLoad: true   
 	   },
@@ -3871,7 +3871,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'motivoNecesidadArras'}
+				extraParams: {diccionario: 'vinculoCaixa'}
 			}
 	   },
 

@@ -3150,21 +3150,19 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.campoObligatorio(comboResultado);
 			me.habilitarCampo(motivoAplazamiento);
 			me.campoObligatorio(motivoAplazamiento);
+			tipoArras.setValue(CONST.TIPO_ARRAS['CODIGO_PENITENCIALES']);
+			me.bloquearCampo(tipoArras);
 			
 	        me.down('[name=comboResultado]').addListener('change', function(combo) {
 	            if (combo.value == '01') { //SI
 	            	me.habilitarCampo(motivoAplazamiento);
 					me.campoObligatorio(motivoAplazamiento);
-					me.deshabilitarCampo(tipoArras);
-					me.borrarCampo(tipoArras);
 					me.deshabilitarCampo(fechaEnvio);
 					me.borrarCampo(fechaEnvio);
 
 	            } else { //NO
 					me.deshabilitarCampo(motivoAplazamiento);
 					me.borrarCampo(motivoAplazamiento);
-					me.habilitarCampo(tipoArras);
-					me.campoObligatorio(tipoArras);
 					me.habilitarCampo(fechaEnvio);
 					me.campoObligatorio(fechaEnvio);
 	            }

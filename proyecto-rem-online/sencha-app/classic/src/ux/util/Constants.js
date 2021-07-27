@@ -970,5 +970,10 @@ Ext.define('HreRem.ux.util.Constants', {
  		CODIGO_AVAL:'AVA',
 		CODIGO_DEPOSITO: 'DEP',
 		CODIGO_SEGURO_RENTAS: 'SRT'
+	 },
+	 
+	 TIPO_ARRAS:{
+ 		CODIGO_PENITENCIALES:'01',
+		CODIGO_CONFIRMATORIAS: '02'
 	 }
 });

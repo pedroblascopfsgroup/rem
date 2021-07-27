@@ -689,7 +689,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     		}
     		
     		return puedeEditar;
-    	}
+    	},
+    	esCarteraGaleonOZeusOBk: function(get) {
+			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+			 return CONST.CARTERA['GALEON'] == carteraCodigo || CONST.CARTERA['ZEUS'] == carteraCodigo || CONST.CARTERA['BANKIA'] == carteraCodigo;
+		 }
 	 },
 	 
 

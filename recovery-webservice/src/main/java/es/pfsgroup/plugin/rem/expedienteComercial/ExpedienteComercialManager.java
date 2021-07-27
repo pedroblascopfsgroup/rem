@@ -3434,6 +3434,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				reserva.setExpediente(expediente);
 				reserva.setNumReserva(reservaDao.getNextNumReservaRem());
 				reserva.setAuditoria(Auditoria.getNewInstance());
+				
+				if(expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null && DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())) {
+					DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.PENITENCIALES);
+					reserva.setTipoArras(tipoArras);
+				}
 			}
 		}
 

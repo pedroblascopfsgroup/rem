@@ -148,6 +148,7 @@ import es.pfsgroup.plugin.rem.model.DtoVariablesCalculoComiteLBK;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
+import es.pfsgroup.plugin.rem.model.InfoAdicionalPersona;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
@@ -2898,6 +2899,26 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					dtoResponse.setFechaEntradaCRMSF(oferta.getFechaEntradaCRMSF());
 				}
 
+				if (oferta.getCliente() != null) {
+					ClienteComercial cliente = oferta.getCliente();
+					if(cliente != null && cliente.getInfoAdicionalPersona() != null && cliente.getInfoAdicionalPersona().getVinculoCaixa() != null) {
+						dtoResponse.setEmpleadoCaixa(cliente.getInfoAdicionalPersona().getVinculoCaixa().getCodigo());
+					}
+				}
+				
+				if (oferta.getTitularesAdicionales() != null) {
+					Filter filterTitularOfertaID = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+		 			List<TitularesAdicionalesOferta> titularesAdicionales = genericDao.getList(TitularesAdicionalesOferta.class, filterTitularOfertaID);
+		 			
+		 			if (titularesAdicionales != null) {
+						for (TitularesAdicionalesOferta titularesAdicionalesOferta : titularesAdicionales) {
+							if (titularesAdicionalesOferta.getInfoAdicionalPersona() != null 
+									&& titularesAdicionalesOferta.getInfoAdicionalPersona().getVinculoCaixa() != null) {
+								dtoResponse.setEmpleadoCaixa(titularesAdicionalesOferta.getInfoAdicionalPersona().getVinculoCaixa().getCodigo());
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -4284,7 +4305,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			clienteCom = clienteGDPR.getCliente();
 
 			try {
-				if(!Checks.esNulo(clienteCom)) {
+				if(!Checks.esNulo(clienteCom)) { 
 					beanUtilNotNull.copyProperties(clienteCom,clienteComercialDto);
 					clienteComercialDto.setApellidosCliente(clienteCom.getApellidos());
 					clienteComercialDto.setNombreCliente(clienteCom.getNombre());
@@ -4315,6 +4336,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 					if(!Checks.esNulo(clienteCom.getDocumento())) {
 						clienteComercialDto.setDocumento(clienteCom.getDocumento());
+					}
+					if(clienteCom.getInfoAdicionalPersona() != null && clienteCom.getInfoAdicionalPersona().getVinculoCaixa() != null) {
+						clienteComercialDto.setVinculoCaixaCodigo(clienteCom.getInfoAdicionalPersona().getVinculoCaixa().getCodigo());
 					}
 				}
 
@@ -7051,5 +7075,4 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		maestroDePersonas.run();
 
 	}
-
 }

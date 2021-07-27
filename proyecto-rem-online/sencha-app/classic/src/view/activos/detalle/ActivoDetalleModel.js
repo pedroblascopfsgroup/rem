@@ -12,7 +12,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','HreRem.model.DocumentacionAdministrativa', 'HreRem.model.ActivoPatrimonio',
     'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel','HreRem.model.SuministrosActivoModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento',
 	'HreRem.model.ReqFaseVentaModel', 'HreRem.model.AgendaRevisionTituloGridModel', 'HreRem.model.SaneamientoAgenda', 'HreRem.model.CalificacionNegativaAdicionalModel',
-	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel', 'HreRem.model.SituacionOcupacionalGridModel'],
+	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel','HreRem.model.SituacionOcupacionalGridModel',
+	'HreRem.model.DetalleOfertaModel'],
 
     data: {
     	activo: null,
@@ -1807,6 +1808,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}	
 			return readOnly;
 		},
+
 		 esSuperUsuarioCaixa: function(get){
 		 	var isBankia = get('activo.isCarteraBankia');
 	    	if (isBankia) {
@@ -1830,6 +1832,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    	return true;
 			}
 	    }
+
+		
+		esBankia: function(get) {
+			var carteraCodigo = get('activo.entidadPropietariaCodigo');
+	     	
+	     	if(CONST.CARTERA['BANKIA'] == carteraCodigo){
+	     		return true;
+	     	}else{
+	     		return false;
+	     	}
+		}
 	 },
     
 	 stores: {
@@ -3848,6 +3861,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'vinculoCaixa'}
+			},
+			autoLoad: true   
+	   },
+				
+	   comboVinculoCaixa: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'motivoNecesidadArras'}
 			}
 	   },
@@ -3921,6 +3944,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tributacionPropVenta'}
 			}
-	   }
+	   },
+	   
+	   comboEmpleadoCaixa: {
+	    	data : [
+	    		{"codigo":"10", "descripcion":"Si"},
+	    		{"codigo":"20", "descripcion":"Si"},
+	    		{"codigo":"null", "descripcion":"No"}
+	    		]  
+	    }
 	 }
 });

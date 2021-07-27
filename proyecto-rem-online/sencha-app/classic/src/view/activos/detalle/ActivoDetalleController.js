@@ -2502,7 +2502,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				razonSocialCliente : bindRecord.razonSocialCliente,
 				deDerechoTanteo : bindRecord.deDerechoTanteo,
 				claseOferta : bindRecord.claseOferta,
-				numOferPrincipal : bindRecord.numOferPrincipal
+				numOferPrincipal : bindRecord.numOferPrincipal,
+				vinculoCaixaCodigo : bindRecord.vinculoCaixaCodigo
 			});
 		} else {
 			model = Ext.create('HreRem.model.OfertaComercial', {
@@ -2525,7 +2526,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				razonSocialCliente : bindRecord.razonSocialCliente,
 				deDerechoTanteo : bindRecord.deDerechoTanteo,
 				claseOferta : bindRecord.claseOferta,
-				numOferPrincipal : bindRecord.numOferPrincipal
+				numOferPrincipal : bindRecord.numOferPrincipal,
+				vinculoCaixaCodigo : bindRecord.vinculoCaixaCodigo
 			});
 		}
 
@@ -5712,7 +5714,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					var ventanaWizard = null;
 					var carteraInternacional = datos.carteraInternacional;
 					var ventanaAnyadirOferta;
-
 					if (!Ext.isEmpty(btn.up('wizardaltaoferta'))) {
 
 						ventanaWizard = btn.up('wizardaltaoferta');

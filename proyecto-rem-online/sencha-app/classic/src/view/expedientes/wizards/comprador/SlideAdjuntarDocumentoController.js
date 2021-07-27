@@ -759,7 +759,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				deDerechoTanteo: bindRecord.dederechotanteo,
 				claseOferta: bindRecord.claseOferta,
 				numOferPrincipal: bindRecord.numOferPrincipal,
-				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal
+				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal,
+				vinculoCaixaCodigo: bindRecord.vinculoCaixaCodigo
 			});
 		}else{
 			model = Ext.create('HreRem.model.OfertaComercial', {
@@ -783,7 +784,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				deDerechoTanteo: bindRecord.dederechotanteo,
 				claseOferta: bindRecord.claseOferta,
 				numOferPrincipal: bindRecord.numOferPrincipal,
-				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal
+				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal,
+				vinculoCaixaCodigo: bindRecord.vinculoCaixaCodigo
 			});
 		}
 

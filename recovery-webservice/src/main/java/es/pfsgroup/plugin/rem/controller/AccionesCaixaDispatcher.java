@@ -40,6 +40,10 @@ public class AccionesCaixaDispatcher {
                 resultado = method.execute(createFromJson(method.getArgumentType(), model));
             }
 
+            if(!resultado){
+                throw new IllegalArgumentException("DTO incorrecto para la acción solicitada");
+            }
+
         } else {
             throw new IllegalArgumentException("missing properties in json ('accion' and 'dto' are requiered)");
         }

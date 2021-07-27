@@ -29,7 +29,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 
 	initComponent: function() {
 		var me = this;
-
+		var isBk = me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('isCarteraBankia');
 		me.buttons = [ { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickCancelar'},
 			{itemId: 'btnGuardar',
     		text: 'Crear',
@@ -361,6 +361,22 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 		            	    	bind:		'{oferta.intencionFinanciar}',
 					        	inputValue: true
 					        },
+					        {
+								xtype: 'comboboxfieldbase',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.vinculo.caixa'),
+					        	itemId: 'vinculoCaixa',
+					        	name: 'vinculoCaixa',
+					        	flex:	1,
+					        	span: 1,
+					        	bind: {
+				            		store: '{comboVinculoCaixa}',
+				            		value: '{oferta.vinculoCaixaCodigo}',
+				            		hidden: !isBk,
+				            		allowBlank: isBk
+				            	},
+				            	displayField: 'descripcion',
+	    						valueField: 'codigo'
+							},
 							{
 								xtype: 'comboboxfieldbase',
 								fieldLabel:  HreRem.i18n('fieldlabel.claseOferta'),
@@ -429,6 +445,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								},								
 					        	colspan: 2
 							}
+							
 						]
 				}
 		];

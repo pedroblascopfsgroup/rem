@@ -73,6 +73,7 @@ public class DtoOfertasFilter extends WebDto {
 	private Long numOferPrincipal;
 	private String direccionComercial;
 	private Date fechaAlta;
+
 	
 	//HREOS-6905
 	private String claseOferta;
@@ -91,6 +92,8 @@ public class DtoOfertasFilter extends WebDto {
 	
 	//REMVIP-8524
 	private Boolean ofrDocRespPrescriptor;
+	
+	private String vinculoCaixaCodigo;
 		
 	public Long getNumOferta() {
 		return numOferta;
@@ -522,5 +525,14 @@ public class DtoOfertasFilter extends WebDto {
 	public void setOfrDocRespPrescriptor(Boolean ofrDocRespPrescriptor) {
 		this.ofrDocRespPrescriptor = ofrDocRespPrescriptor;
 	}
+	
+	public String getVinculoCaixaCodigo() {
+		return vinculoCaixaCodigo;
+	}
+	public void setVinculoCaixaCodigo(String vinculoCaixaCodigo) {
+		this.vinculoCaixaCodigo = vinculoCaixaCodigo;
+	}
+	
+	
 	
 }

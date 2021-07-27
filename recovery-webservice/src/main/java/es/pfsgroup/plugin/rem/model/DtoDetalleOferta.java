@@ -18,6 +18,7 @@ public class DtoDetalleOferta {
 	private String necesitaFinanciacion;
 	private String observaciones;
 	private Date fechaEntradaCRMSF;
+	private String empleadoCaixa;
 
 
 	public String getId() {
@@ -97,6 +98,12 @@ public class DtoDetalleOferta {
 	}
 	public void setFechaEntradaCRMSF(Date fechaEntradaCRMSF) {
 		this.fechaEntradaCRMSF = fechaEntradaCRMSF;
+	}
+	public String getEmpleadoCaixa() {
+		return empleadoCaixa;
+	}
+	public void setEmpleadoCaixa(String empleadoCaixa) {
+		this.empleadoCaixa = empleadoCaixa;
 	}
 	
 }

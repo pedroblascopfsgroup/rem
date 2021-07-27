@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
+import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -824,4 +825,5 @@ public interface OfertaApi {
 	boolean esMayorista(TareaExterna tareaExterna);
 
     Boolean actualizaEstadoOferta(Long idOferta, String codigoEstado);
+    
 }

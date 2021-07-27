@@ -61,7 +61,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
 
-    public ModelMap accionComercialCaixa(ModelMap model, RestRequestWrapper request, HttpServletResponse response){
+    public String accionComercialCaixa(ModelMap model, RestRequestWrapper request, HttpServletResponse response){
 
         AccionesCaixaRequestDto jsonData = null;
         ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
@@ -82,20 +82,12 @@ public class AccionesCaixaController extends ParadiseJsonController {
             model.put("error", "null");
 
         } catch (UserException e) {
-            if (jsonFields!=null) {
-                model.put("id", jsonFields.get("id"));
-            }
-            model.put("error", "null");
+            return e.getMessage();
         } catch (Exception e) {
-            logger.error("Error en la acción", e);
-            request.getPeticionRest().setErrorDesc(e.getMessage());
-            if (jsonFields!=null) {
-                model.put("id", jsonFields.get("id"));
-            }
-            model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+            return e.getMessage();
         }
 
-        return model;
+        return null;
 
     }
 
@@ -107,6 +99,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -120,6 +113,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -133,6 +127,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -146,6 +141,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -159,6 +155,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -172,6 +169,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -185,6 +183,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -198,6 +197,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -211,6 +211,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -224,6 +225,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -237,6 +239,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -250,6 +253,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -263,6 +267,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -276,6 +281,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -290,6 +296,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -303,6 +310,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -316,6 +324,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -329,6 +338,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -342,6 +352,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -355,6 +366,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -368,6 +380,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -381,6 +394,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -394,6 +408,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -407,6 +422,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -420,6 +436,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -433,6 +450,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -446,6 +464,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);

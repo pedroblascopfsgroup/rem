@@ -59,6 +59,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -105,7 +106,6 @@ import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
@@ -116,8 +116,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDListaEmisiones;
-import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
-import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
@@ -289,6 +287,9 @@ public class ActivoAdapter {
 	
 	@Autowired
 	private ExpedienteComercialDao expedienteComercialDao;
+
+	@Autowired
+	private ParticularValidatorApi particularValidatorApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -4143,6 +4144,9 @@ public class ActivoAdapter {
 				notificationOfertaManager.sendNotification(oferta);
 			}
 
+			if (particularValidatorApi.esOfertaCaixa(ofertaCreada != null ? ofertaCreada.getNumOferta().toString() : null))
+			createOfertaCaixa(ofertaCreada);
+
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
 			return ofertaCreada;
@@ -4150,6 +4154,20 @@ public class ActivoAdapter {
 
 		return ofertaCreada;
 	}
+
+
+	@Transactional(readOnly = false)
+	public void createOfertaCaixa(final Oferta oferta) {
+
+			if(genericDao.get(OfertaCaixa.class,genericDao.createFilter(FilterType.EQUALS,"oferta.numOferta",oferta.getNumOferta())) != null){
+				return;
+			}else {
+				OfertaCaixa ofertaCaixa = new OfertaCaixa();
+				ofertaCaixa.setOferta(oferta);
+				genericDao.save(OfertaCaixa.class,ofertaCaixa);
+			}
+	}
+
 
 	@Transactional(readOnly = false)
 	public boolean saveLlave(DtoLlaves dto) {

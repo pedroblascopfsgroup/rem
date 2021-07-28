@@ -3209,13 +3209,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    ]
 		},
 		
-		comboSiNoEntradaVoluntariaPosesion: {
-			data : [
-		        {"codigo":"0", "descripcion":"No"},
-		        {"codigo":"1", "descripcion":"Si"}
-		    ]
-		},
-		
 		storeAdjuntosPlusvalias: {
 			 pageSize: $AC.getDefaultPageSize(),
 			 model: 'HreRem.model.AdjuntosPlusvalias',

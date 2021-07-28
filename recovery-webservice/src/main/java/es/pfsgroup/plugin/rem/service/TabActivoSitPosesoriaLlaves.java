@@ -271,9 +271,6 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				if (actCaixa.getNecesariaFuerzaPublica() != null) {
 					activoDto.setNecesariaFuerzaPublica(actCaixa.getNecesariaFuerzaPublica() ? "1" : "0");
 				}
-				if (actCaixa.getEntradaVoluntariaPosesion() != null) {
-					activoDto.setEntradaVoluntariaPosesion(actCaixa.getEntradaVoluntariaPosesion() ? "1" : "0");
-				}
 			}
 		}
 			

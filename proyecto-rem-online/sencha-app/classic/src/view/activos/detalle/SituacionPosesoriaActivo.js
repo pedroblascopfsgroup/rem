@@ -455,17 +455,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            		hidden: '{!activo.isCarteraBankia}'
 				        	}
 						},
-				        {
-				        	xtype: 'comboboxfieldbase',
-				        	fieldLabel: HreRem.i18n('fieldlabel.entrada.voluntaria.posesion'),
-				        	colspan:4,
-				        	readOnly: true,
-				        	bind: {
-			            		store: '{comboSiNoEntradaVoluntariaPosesion}', 
-			            		value: '{situacionPosesoria.entradaVoluntariaPosesion}',
-			            		hidden: '{!activo.isCarteraBankia}'
-			            	}
-				        },
 		                {
 							xtype: 'checkboxfieldbase',
 							reference: 'okTecnicoRef',

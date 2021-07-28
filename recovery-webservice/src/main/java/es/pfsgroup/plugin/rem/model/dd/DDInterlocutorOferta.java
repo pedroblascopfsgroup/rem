@@ -24,6 +24,44 @@ public class DDInterlocutorOferta implements Auditable, Dictionary {
 	
 	private static final long serialVersionUID = 1L;
 
+	public static final String CODIGO_ACCIONISTA = "Z55";
+	public static final String CODIGO_APODERADO_PROPIETARIO = "Z10";
+	public static final String CODIGO_GESTORIA_OFERTAS_VENTA = "Z41";
+	public static final String CODIGO_API_SOCIO_COMERCIAL = "29";
+	public static final String CODIGO_GESTORIA_FORMALIZACION_VENTAS = "Z42";
+	public static final String CODIGO_NOTARIO = "Z43";
+	public static final String CODIGO_ADMINISTRADOR_COMUNIDAD = "Z44";
+	public static final String CODIGO_GESTOR_INQUILINOS = "Z45";
+	public static final String CODIGO_PORTFOLIO_MANAGER = "Z46";
+	public static final String CODIGO_BROKER = "Z11";
+	public static final String CODIGO_CORREDURIA_DE_SEGUROS = "Z30";
+	public static final String CODIGO_GARANTE_BANCARIO_BANCO_PARA_AVAL = "Z24";
+	public static final String CODIGO_GARANTE_PUBLICO = "Z49";
+	public static final String CODIGO_GESTORIA_FIANZA = "Z50";
+	public static final String CODIGO_DEPOSITARIO_FIANZA = "Z31";
+	public static final String CODIGO_GARANTE_SOLIDARIO = "Z51";
+	public static final String CODIGO_SERVICER_VENTAS = "Z52";
+	public static final String CODIGO_GESTORIA_PLUSVALIA = "Z53";
+
+	public static final String CODIGO_C4C_ACCIONISTA = "Z55";
+	public static final String CODIGO_C4C_APODERADO_PROPIETARIO = "Z10";
+	public static final String CODIGO_C4C_GESTORIA_OFERTAS_VENTA = "Z41";
+	public static final String CODIGO_C4C_API_SOCIO_COMERCIAL = "29";
+	public static final String CODIGO_C4C_GESTORIA_FORMALIZACION_VENTAS = "Z42";
+	public static final String CODIGO_C4C_NOTARIO = "Z43";
+	public static final String CODIGO_C4C_ADMINISTRADOR_COMUNIDAD = "Z44";
+	public static final String CODIGO_C4C_GESTOR_INQUILINOS = "Z45";
+	public static final String CODIGO_C4C_PORTFOLIO_MANAGER = "Z46";
+	public static final String CODIGO_C4C_BROKER = "Z11";
+	public static final String CODIGO_C4C_CORREDURIA_DE_SEGUROS = "Z30";
+	public static final String CODIGO_C4C_GARANTE_BANCARIO_BANCO_PARA_AVAL = "Z24";
+	public static final String CODIGO_C4C_GARANTE_PUBLICO = "Z49";
+	public static final String CODIGO_C4C_GESTORIA_FIANZA = "Z50";
+	public static final String CODIGO_C4C_DEPOSITARIO_FIANZA = "Z31";
+	public static final String CODIGO_C4C_GARANTE_SOLIDARIO = "Z51";
+	public static final String CODIGO_C4C_SERVICER_VENTAS = "Z52";
+	public static final String CODIGO_C4C_GESTORIA_PLUSVALIA = "Z53";
+	
 	@Id
 	@Column(name = "DD_FIO_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDInterlocutorOferta")

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20210304
+--## AUTOR=IVAN REPISO
+--## FECHA_CREACION=20210728
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13251
+--## INCIDENCIA_LINK=HREOS-14760
 --## PRODUCTO=NO
 --## Finalidad:
 --## VERSIONES:
@@ -31,14 +31,14 @@ BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
-	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''T013_ResolucionComite''';
+	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''T013_RatificacionComite''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     IF V_NUM_TABLAS = 1 THEN
 		V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO
-						 SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T013_ResolucionComite''''][''''comboResolucion''''] != DDResolucionComite.CODIGO_APRUEBA ? valores[''''T013_ResolucionComite''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_CONTRAOFERTA ? checkBankia() || checkLiberbank() || checkGiants() ? null : existeAdjuntoUGValidacion("22","E") : null : resolucionComiteT013() == null ? actualizarOfertaBoarding() : resolucionComiteT013()''
-						 , USUARIOMODIFICAR = ''HREOS-13251''
+						 SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T013_RatificacionComite''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_APRUEBA ? ratificacionComiteT013() == null ? actualizarOfertaBoarding() : ratificacionComiteT013() : ratificacionComiteT013()''
+						 , USUARIOMODIFICAR = ''HREOS-14760''
 						 , FECHAMODIFICAR = SYSDATE
-						 WHERE TAP_CODIGO = ''T013_ResolucionComite''';
+						 WHERE TAP_CODIGO = ''T013_RatificacionComite''';
 		DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		EXECUTE IMMEDIATE V_MSQL;
 	END IF;

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20210304
+--## AUTOR=IVAN REPISO
+--## FECHA_CREACION=20210728
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13251
+--## INCIDENCIA_LINK=HREOS-14760
 --## PRODUCTO=NO
 --## Finalidad:
 --## VERSIONES:
@@ -31,14 +31,14 @@ BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
-	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''T017_DefinicionOferta''';
+	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''T017_ResolucionPROManzana''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     IF V_NUM_TABLAS = 1 THEN
 		V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO
-						 SET TAP_SCRIPT_VALIDACION_JBPM = ''checkReservaInformada() ? checkTipoImpuesto() ? checkDepositoDespublicacionSubido() ? checkDepositoRelleno() ? existeAdjuntoUGCarteraValidacion("36", "E", "01") == null ? valores[''''T017_DefinicionOferta''''][''''comboConflicto''''] == DDSiNo.SI || valores[''''T017_DefinicionOferta''''][''''comboRiesgo''''] == DDSiNo.SI ? ''''El estado de la responsabilidad corporativa no es el correcto para poder avanzar.'''' : definicionOfertaT013(valores[''''T017_DefinicionOferta''''][''''comiteSuperior'''']) == null ? actualizarOfertaBoarding() : definicionOfertaT013(valores[''''T017_DefinicionOferta''''][''''comiteSuperior'''']) : existeAdjuntoUGCarteraValidacion("36", "E", "01") == null ? actualizarOfertaBoarding() : existeAdjuntoUGCarteraValidacion("36", "E", "01") : ''''Es necesario rellenar el campo Dep&oacute;sito en la pesta&ntilde;a Condiciones.'''' : ''''Es necesario adjuntar sobre el Expediente Comercial, el documento Dep&oacute;sito para la despublicaci&oacute;n del activo.'''' : ''''En las condiciones del expediente, el tipo de impuesto debe estar informado para poder avanzar.'''' : ''''En la reserva del expediente se debe marcar si es necesaria o no para poder avanzar.''''''
-						 , USUARIOMODIFICAR = ''HREOS-13251''
+						 SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T017_ResolucionPROManzana''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? existeAdjuntoUGValidacion("68","E") == null ? actualizarOfertaBoarding() : existeAdjuntoUGValidacion("68","E") : null''
+						 , USUARIOMODIFICAR = ''HREOS-14760''
 						 , FECHAMODIFICAR = SYSDATE
-						 WHERE TAP_CODIGO = ''T017_DefinicionOferta''';
+						 WHERE TAP_CODIGO = ''T017_ResolucionPROManzana''';
 		DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		EXECUTE IMMEDIATE V_MSQL;
 	END IF;

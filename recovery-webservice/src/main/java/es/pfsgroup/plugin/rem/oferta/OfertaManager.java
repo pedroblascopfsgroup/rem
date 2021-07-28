@@ -154,6 +154,7 @@ import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.ProveedorGestorCajamar;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
@@ -246,6 +247,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private static final String CODIGO_T017_DEFINICION_OFERTA = "T017_DefinicionOferta";
 	private static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
 	private static final String CODIGO_T017_RESOLUCION_CES = "T017_ResolucionCES";
+	private static final String CODIGO_T013_RATIFICACION_COMITE = "T013_RatificacionComite";
+    private static final String CODIGO_T013_RESOLUCION_TANTEO = "T013_ResolucionTanteo";
+   	private static final String CODIGO_T013_RESPUESTA_OFERTANTE = "T013_RespuestaOfertante";
+   	private static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
+   	private static final String CODIGO_T017_PBC_VENTA = "T017_PBCVenta";
+   	private static final String CODIGO_T017_RATIFIACION_COMITE_CES = "T017_RatificacionComiteCES";
+   	private static final String CODIGO_T017_RESOLUCION_PRO_MANZANA = "T017_ResolucionPROManzana";
+   	private static final String CODIGO_T017_PBCRESERVA = "T017_PBCReserva";
+	private static final String CODIGO_T017_INSTRUCCIONES_RESERVA = "T017_InstruccionesReserva";
+	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
+
 
 	@Resource
 	MessageService messageServices;
@@ -6491,19 +6503,73 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			return null;
 		}
 		
-		String resultado = null;
 		Oferta oferta = tareaExternaToOferta(tareaExterna);
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
-		
+		Activo activo = oferta.getActivoPrincipal();
+		Reserva reserva = expedienteComercial.getReserva();
 		ComunicacionBoardingResponse response = null;
+		PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(oferta.getActivoPrincipal().getId());
+		
+		String resultado = null;
+		String codSubCartera = !Checks.esNulo(activo.getSubcartera()) ? activo.getSubcartera().getCodigo() : null;
+		
+		Boolean obtencionReservaFinalizada = false;
+		Boolean solicitaReserva = checkReserva(oferta);
+		
+		Filter filtroTbj = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", expedienteComercial.getTrabajo());
+		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTbj);
+		
+		if(solicitaReserva) {
+			if(tieneTarea(tramite, CODIGO_T017_PBCRESERVA) == 0 
+					&& tieneTarea(tramite, CODIGO_T017_INSTRUCCIONES_RESERVA) == 0 
+					&& tieneTarea(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA) == 0
+					&& tieneTarea(tramite, CODIGO_T017_PBC_VENTA) == 0) {
+				obtencionReservaFinalizada = true;
+			}else {				
+				obtencionReservaFinalizada = tieneTarea(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA) == 2;
+			}
+		}
 		
 		if (oferta != null && expedienteComercial != null && esOfertaValidaCFVByCarteraSubcartera(oferta) && (oferta.getOfertaEspecial() == null || !oferta.getOfertaEspecial())) {
-			if(checkAtribuciones(tareaExterna) && (CODIGO_T013_DEFINICION_OFERTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) ||
-					CODIGO_T017_DEFINICION_OFERTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()))) {
+			
+			if (CODIGO_T013_DEFINICION_OFERTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+					&& ((checkAtribuciones(oferta) && perimetro.getAplicaFormalizar() == 1) 
+							|| (oferta.getOfertaExpress() != null && oferta.getOfertaExpress()))) {
+				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
-			} else if (!checkAtribuciones(tareaExterna) && (CODIGO_T013_RESOLUCION_COMITE.equals(tareaExterna.getTareaProcedimiento().getCodigo()) ||
-					CODIGO_T017_RESOLUCION_CES.equals(tareaExterna.getTareaProcedimiento().getCodigo()))) {
+				
+			} else if (CODIGO_T013_RESOLUCION_COMITE.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+					|| CODIGO_T013_RATIFICACION_COMITE.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
+				
+			} else if (CODIGO_T017_RESOLUCION_CES.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+					|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(tareaExterna.getTareaProcedimiento().getCodigo())
+					&& DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())) {
+				
+				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
+				
+			} else if (CODIGO_T013_RESOLUCION_TANTEO.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+					&& ((!Checks.esNulo(reserva) && !DDEstadosReserva.CODIGO_FIRMADA.equals(reserva.getEstadoReserva().getCodigo())) || Checks.esNulo(reserva))) {
+				
+				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
+				
+			} else if (CODIGO_T013_RESPUESTA_OFERTANTE.equals(tareaExterna.getTareaProcedimiento().getCodigo())
+					&& !trabajoApi.checkBankia(expedienteComercial.getTrabajo())) {
+				
+				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
+				
+			} else if (CODIGO_T013_RESULTADO_PBC.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+					|| CODIGO_T017_PBC_VENTA.equals(tareaExterna.getTareaProcedimiento().getCodigo())
+					&& DDSubcartera.CODIGO_OMEGA.equals(codSubCartera)) {
+				
+				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
+				
+			} else if (CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+					&& !obtencionReservaFinalizada) {
+				
+				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
+				
 			}
 		}
 		

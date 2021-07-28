@@ -35,7 +35,7 @@ BEGIN
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     IF V_NUM_TABLAS = 1 THEN
 		V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO
-						 SET TAP_SCRIPT_VALIDACION_JBPM = ''actualizarOfertaBoarding()''
+						 SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T017_ResolucionCES''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_APRUEBA ? actualizarOfertaBoarding() : null''
 						 , USUARIOMODIFICAR = ''HREOS-13251''
 						 , FECHAMODIFICAR = SYSDATE
 						 WHERE TAP_CODIGO = ''T017_ResolucionCES''';

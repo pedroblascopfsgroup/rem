@@ -35,7 +35,7 @@ BEGIN
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     IF V_NUM_TABLAS = 1 THEN
 		V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO
-						 SET TAP_SCRIPT_VALIDACION_JBPM = ''existeAdjuntoUGValidacion("13,E") == "" ? valores[''''T013_ResolucionTanteo''''][''''comboEjerce''''] == DDSiNo.SI ? checkEjercidoTanteo() ? null : ''No existe ningún activo del expediente con tanteo Ejercido'' : checkRenunciaTanteo() ? actualizarOfertaBoarding() : ''Existe algún activo del expediente sin tanteo Renuncia'' : existeAdjuntoUGValidacion("13,E")''
+						 SET TAP_SCRIPT_VALIDACION_JBPM = ''existeAdjuntoUGValidacion("13,E") == "" ? valores[''''T013_ResolucionTanteo''''][''''comboEjerce''''] == DDSiNo.SI ? checkEjercidoTanteo() ? null : ''''No existe ningún activo del expediente con tanteo Ejercido'''' : checkRenunciaTanteo() ? actualizarOfertaBoarding() : ''''Existe algún activo del expediente sin tanteo Renuncia'''' : existeAdjuntoUGValidacion("13,E")''
 						 , USUARIOMODIFICAR = ''HREOS-14760''
 						 , FECHAMODIFICAR = SYSDATE
 						 WHERE TAP_CODIGO = ''T013_ResolucionTanteo''';

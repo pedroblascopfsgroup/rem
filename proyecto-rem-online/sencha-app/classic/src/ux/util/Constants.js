@@ -205,7 +205,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	'04': 'TERCEROS',
     	'06': 'HYT',
     	'07': 'CERBERUS',
-    	'08': 'LIBERBANK',
+    	'08': 'UNICAJA',
     	'10': 'TANGO',
     	'11': 'THIRDPARTIES',
     	'12': 'GIANTS',
@@ -226,7 +226,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	GALEON:'GALEON',
     	ZEUS :'ZEUS',
     	BBVA :'BBVA',
-		CAIXABANK : 'CAIXABANK'
+		CAIXABANK : 'CAIXABANK',
+		UNICAJA : 'UNICAJA'
     },
 
     SUBCARTERA: {
@@ -282,7 +283,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	CAJAMAR: 'logo_cajamar.svg',
     	SAREB: 'logo_sareb.svg',
     	BANKIA: 'logo_bankia.svg',
-		CAIXABANK: 'logo_bankia.svg'
+		CAIXABANK: 'logo_bankia.svg',
+		UNICAJA: 'logo_unicajaBanco.svg'
     },
 
     PERFILES: {

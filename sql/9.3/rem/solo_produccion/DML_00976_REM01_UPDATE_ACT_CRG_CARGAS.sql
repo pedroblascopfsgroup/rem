@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210801
+--## FECHA_CREACION=20210802
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-10232
@@ -108,6 +108,7 @@ BEGIN
                BIE_CAR_TITULAR = ''BBVA'',
                BIE_CAR_IMPORTE_REGISTRAL = 310400,
                BIE_CAR_FECHA_INSCRIPCION = TO_DATE(''05/11/2018'', ''DD/MM/YYYY''),
+               BIE_CAR_ECONOMICA = 0,
                USUARIOMODIFICAR = '''||V_USUARIO||''',
                FECHAMODIFICAR = SYSDATE               
                WHERE BIE_ID = '||BIE_ID||'';
@@ -135,7 +136,7 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('[INFO] NO EXISTE EL BIEN '''||BIE_ID||''' EN LA BIE_CAR_CARGAS, SE INSERTA');
 
              --Insertamos en BIE_CAR_CARGAS
-	        V_MSQL :='INSERT INTO '||V_ESQUEMA||'.BIE_CAR_CARGAS (BIE_ID, BIE_CAR_ID, DD_TPC_ID, BIE_CAR_TITULAR, BIE_CAR_IMPORTE_REGISTRAL, BIE_CAR_FECHA_INSCRIPCION, USUARIOCREAR, FECHACREAR) 
+	        V_MSQL :='INSERT INTO '||V_ESQUEMA||'.BIE_CAR_CARGAS (BIE_ID, BIE_CAR_ID, DD_TPC_ID, BIE_CAR_TITULAR, BIE_CAR_IMPORTE_REGISTRAL, BIE_CAR_FECHA_INSCRIPCION, BIE_CAR_ECONOMICA, USUARIOCREAR, FECHACREAR) 
 	                    VALUES (
 	                    (SELECT BIE_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_ID = '||V_ID||'),
 						 '||V_ESQUEMA||'.S_BIE_CAR_CARGAS.NEXTVAL,
@@ -143,6 +144,7 @@ BEGIN
                         ''BBVA'',
                         310400,
                         TO_DATE(''05/11/2018'', ''DD/MM/YYYY''),
+                        0,
 	                    '''||V_USUARIO||''',
 	                    SYSDATE
 						)';

@@ -6516,7 +6516,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Boolean obtencionReservaFinalizada = false;
 		Boolean solicitaReserva = checkReserva(oferta);
 		
-		Filter filtroTbj = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", expedienteComercial.getTrabajo());
+		Filter filtroTbj = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", expedienteComercial.getTrabajo().getId());
 		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTbj);
 		
 		if(solicitaReserva) {

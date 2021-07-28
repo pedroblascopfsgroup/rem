@@ -2179,6 +2179,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			dto.setCartera(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo());
+			
+			dto.setFechaPropuestaProrrogaArras(reserva.getFechaPropuestaProrrogaArras());
+			dto.setFechaComunicacionCliente(reserva.getFechaComunicacionCliente());
 		}
 
 		return dto;
@@ -3434,6 +3437,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				reserva.setExpediente(expediente);
 				reserva.setNumReserva(reservaDao.getNextNumReservaRem());
 				reserva.setAuditoria(Auditoria.getNewInstance());
+				
+				if(expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null && DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())) {
+					DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.PENITENCIALES);
+					reserva.setTipoArras(tipoArras);
+				}
 			}
 		}
 
@@ -4372,6 +4380,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(dto.getEstadoReservaCodigo())) {
 				reserva.setEstadoReserva(genericDao.get(DDEstadosReserva.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoReservaCodigo())));
+			}
+			
+			if(!Checks.isFechaNula(dto.getFechaPropuestaProrrogaArras())) {
+				reserva.setFechaPropuestaProrrogaArras(dto.getFechaPropuestaProrrogaArras());
+			}
+			if(!Checks.isFechaNula(dto.getFechaComunicacionCliente())) {
+				reserva.setFechaComunicacionCliente(dto.getFechaComunicacionCliente());
 			}
 
 			genericDao.save(Reserva.class, reserva);

@@ -174,7 +174,6 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 									DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 									expediente.setEstado(estado);
 									recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
-									ofertaApi.actualizarOfertaBoarding(expediente.getOferta());
 
 									Oferta oferta = expediente.getOferta();
 									List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());

@@ -23,6 +23,9 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
+import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -404,6 +407,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public ExpedienteComercial findOne(Long id) {
 		return expedienteComercialDao.get(id);
 	}
+
+	@Autowired
+	InterlocutorCaixaService interlocutorCaixaService;
+
+	@Autowired
+	ParticularValidatorApi particularValidatorApi;
 
 	@Override
 	public ExpedienteComercial findOneTransactional(Long id) {
@@ -4529,8 +4538,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public boolean saveFichaComprador(VBusquedaDatosCompradorExpediente dto) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getId());
 		Comprador comprador = genericDao.get(Comprador.class, filtro);
+		DtoInterlocutorBC oldDataComprador = new DtoInterlocutorBC();
+		DtoInterlocutorBC newDataComprador = new DtoInterlocutorBC();
 
 		if (!Checks.esNulo(comprador)) {
+
+			oldDataComprador.compradorToDto(comprador);
+
 			boolean reiniciarPBC = false;
 			
 			if(dto.getNumeroClienteUrsus() != null)
@@ -4712,6 +4726,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				esNuevo = true;
 
 			}
+
+			oldDataComprador.cexToDto(compradorExpediente);
 
 			if (!Checks.esNulo(dto.getPorcentajeCompra())) {
 				compradorExpediente.setPorcionCompra(dto.getPorcentajeCompra());
@@ -4947,6 +4963,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			if (reiniciarPBC) {
 				ofertaApi.resetPBC(expedienteComercial, false);
+			}
+
+			if (particularValidatorApi.esOfertaCaixa(expedienteComercial.getOferta().getNumOferta().toString())){
+				newDataComprador.compradorToDto(comprador);
+				newDataComprador.cexToDto(compradorExpediente);
+				interlocutorCaixaService.callReplicateClientAsync(oldDataComprador,newDataComprador,comprador,expedienteComercial.getOferta());
 			}
 
 		}

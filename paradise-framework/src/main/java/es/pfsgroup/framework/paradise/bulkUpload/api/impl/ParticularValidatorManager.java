@@ -8161,6 +8161,39 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "AND OFR.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
+
+	public boolean esClienteEnOfertaCaixa(String numCliente) {
+		if (Checks.esNulo(numCliente) || !StringUtils.isNumeric(numCliente)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM OFR_OFERTAS OFR "
+				+ "JOIN ACT_OFR AO ON AO.OFR_ID = OFR.OFR_ID "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AO.ACT_ID "
+				+ "JOIN DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID "
+				+ "WHERE DD_CRA_CODIGO = '03' "
+				+ "AND OFR.CLC_ID = "+numCliente+" "
+				+ "AND OFR.BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+
+	public boolean esProveedorOfertaCaixa(String idProveedor) {
+		if (Checks.esNulo(idProveedor) || !StringUtils.isNumeric(idProveedor)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("select COUNT(DISTINCT pve.pve_id) from ofr_ofertas OFR\n" +
+				"join eco_expediente_comercial ECO ON ofr.ofr_id = eco.ofr_id\n" +
+				"JOIN GCO_GESTOR_ADD_ECO GCO ON gco.eco_id = eco.eco_id\n" +
+				"JOIN GEE_GESTOR_ENTIDAD GEE ON gee.gee_id = gco.gee_id\n" +
+				"JOIN ACT_PVC_PROVEEDOR_CONTACTO PVC ON pvc.usu_id = gee.usu_id\n" +
+				"JOIN ACT_PVE_PROVEEDOR PVE ON pve.pve_id = pvc.pve_id\n" +
+				"JOIN ACT_OFR AO ON AO.OFR_ID = OFR.OFR_ID\n" +
+				"JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AO.ACT_ID\n" +
+				"JOIN DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID\n" +
+				"WHERE DD_CRA_CODIGO = '03'\n" +
+				"AND pve.pve_id = "+idProveedor+" ");
+		return !"0".equals(resultado);
+	}
 	
 	@Override
 	public Boolean esOfertaVendida(String numOferta) {

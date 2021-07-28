@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210713
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210728
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14545
+--## INCIDENCIA_LINK=HREOS-14745
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -15,6 +15,7 @@
 --##        0.3 Inclusión de cambios en modelo Fase 1 - [HREOS-14344] - Alejandra García
 --##        0.4 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - [HREOS-14545] - Daniel Algaba
 --##        0.5 Gestores de gestoría de admisión y administración - [HREOS-14545] - Daniel Algaba
+--##	      0.6 Campos IND_ENTREGA_VOL_POSESI - HREOS-14745 - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -232,10 +233,6 @@ BEGIN
                   WHEN aux.IND_FUERZA_PUBLICA IN (''S'',''1'') THEN 1
                   WHEN aux.IND_FUERZA_PUBLICA IN (''N'',''0'') THEN 0
                END as CBX_NEC_FUERZA_PUBL,
-               CASE
-                  WHEN aux.IND_ENTREGA_VOL_POSESI IN (''S'',''1'') THEN 1
-                  WHEN aux.IND_ENTREGA_VOL_POSESI IN (''N'',''0'') THEN 0
-               END as CBX_ENTRADA_VOLUN_POSES,
                CAIXA.CBX_ID
                FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND ACT2.BORRADO = 0  
@@ -265,8 +262,7 @@ BEGIN
                               ,act1.CBX_PRECIO_ALQU_NEGO = us.CBX_PRECIO_ALQU_NEGO 
                               ,act1.CBX_CAMP_PRECIO_ALQ_NEGO = us.CBX_CAMP_PRECIO_ALQ_NEGO 
                               ,act1.CBX_CAMP_PRECIO_VENT_NEGO = us.CBX_CAMP_PRECIO_VENT_NEGO 
-                              ,act1.CBX_NEC_FUERZA_PUBL = us.CBX_NEC_FUERZA_PUBL 
-                              ,act1.CBX_ENTRADA_VOLUN_POSES = us.CBX_ENTRADA_VOLUN_POSES                                                                                                                        
+                              ,act1.CBX_NEC_FUERZA_PUBL = us.CBX_NEC_FUERZA_PUBL                                                                                                                      
                               ,act1.USUARIOMODIFICAR = ''STOCK_BC''
                               ,act1.FECHAMODIFICAR = sysdate
                               
@@ -288,8 +284,7 @@ BEGIN
                                           CBX_PRECIO_ALQU_NEGO,
                                           CBX_CAMP_PRECIO_ALQ_NEGO,
                                           CBX_CAMP_PRECIO_VENT_NEGO,
-                                          CBX_NEC_FUERZA_PUBL,
-                                          CBX_ENTRADA_VOLUN_POSES,                                                                            
+                                          CBX_NEC_FUERZA_PUBL,                                                                      
                                           USUARIOCREAR,
                                           FECHACREAR
                                           )
@@ -311,7 +306,6 @@ BEGIN
                                           us.CBX_CAMP_PRECIO_ALQ_NEGO,
                                           us.CBX_CAMP_PRECIO_VENT_NEGO,
                                           us.CBX_NEC_FUERZA_PUBL,
-                                          us.CBX_ENTRADA_VOLUN_POSES,  
                                           ''STOCK_BC'',
                                           sysdate)';
 
@@ -772,6 +766,43 @@ BEGIN
    EXECUTE IMMEDIATE V_MSQL;
 
    SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
+   SALIDA := SALIDA || '   [INFO] 10 - INSERTAR/ACTUALIZAR EN ACT_SPS_SIT_POSESORIA'|| CHR(10);   
+
+       V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA act1
+				using (		
+               SELECT
+                  CASE
+                     WHEN aux.IND_ENTREGA_VOL_POSESI IN (''S'',''1'') THEN 1
+                     WHEN aux.IND_ENTREGA_VOL_POSESI IN (''N'',''0'') THEN 0
+                  END as SPS_POSESION_NEG,
+                  aux.NUM_IDENTIFICATIVO as ACT_NUM_ACTIVO_CAIXA,
+                  act2.ACT_ID as ACT_ID
+               FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
+               JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
+               WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
+               
+               ) us ON (us.ACT_ID = act1.ACT_ID )
+               when matched then update set  
+                   act1.SPS_POSESION_NEG=us.SPS_POSESION_NEG                                                                                                                                 
+                  ,act1.USUARIOMODIFICAR = ''STOCK_BC''
+                  ,act1.FECHAMODIFICAR = sysdate               
+               WHEN NOT MATCHED THEN
+                  INSERT  (SPS_ID,                                       
+                           ACT_ID,
+                           SPS_POSESION_NEG,                                                                                                                                           
+                           USUARIOCREAR,
+                           FECHACREAR
+                           )
+                  VALUES ('|| V_ESQUEMA ||'.S_ACT_SPS_SIT_POSESORIA.NEXTVAL,
+                           us.ACT_ID,
+                           us.SPS_POSESION_NEG,                                                        
+                           ''STOCK_BC'',
+                           sysdate)';
+
+   EXECUTE IMMEDIATE V_MSQL;
+
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);   
 COMMIT;
 
 EXCEPTION

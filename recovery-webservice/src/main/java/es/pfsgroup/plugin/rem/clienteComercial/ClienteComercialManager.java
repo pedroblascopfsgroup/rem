@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
+import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +28,6 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ClienteComercial;
-import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
-import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
@@ -51,6 +51,12 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 	@Autowired
 	private ClienteComercialDao clienteComercialDao;
+
+	@Autowired
+	private InterlocutorCaixaService interlocutorCaixaService;
+
+	@Autowired
+	private OfertaApi ofertaApi;
 	
 	@Override
 	public String managerName() {
@@ -368,11 +374,21 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		genericDao.save(ClienteGDPR.class, clienteGDPR);
 
+		ofertaApi.llamadaMaestroPersonas(cliente.getDocumento(), OfertaApi.CLIENTE_HAYA);
+
 
 	}
 
 	@Override
 	public void updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields) throws Exception{
+
+		boolean isRelevanteBC = interlocutorCaixaService.esClienteInvolucradoBC(cliente);
+		DtoInterlocutorBC oldData = new DtoInterlocutorBC();
+		DtoInterlocutorBC newData = new DtoInterlocutorBC();
+
+		if (isRelevanteBC){
+			oldData.clienteToDto(cliente);
+		}
 
 		if (((JSONObject) jsonFields).containsKey("idClienteWebcom")) {
 			cliente.setIdClienteWebcom(clienteDto.getIdClienteWebcom());
@@ -686,7 +702,13 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				}
 				
 				genericDao.save(ClienteGDPR.class, clienteGDPRNew);
+
 			}
+		}
+
+		if (isRelevanteBC){
+			newData.clienteToDto(cliente);
+			interlocutorCaixaService.callReplicateClientAsync(oldData,newData,cliente);
 		}
 
 	}

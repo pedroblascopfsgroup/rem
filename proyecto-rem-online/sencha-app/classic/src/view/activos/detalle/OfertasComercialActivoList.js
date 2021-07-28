@@ -356,13 +356,15 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 							   msg: msg,
 							   buttons: Ext.MessageBox.YESNO,
 							   fn: function(buttonId) {
-							        if (buttonId == 'yes') {
-							        	me.up('activosdetalle').lookupController().mostrarCrearOfertaTramitada(editor, me, context);
-							        	
-							        	// me.saveFn(editor, me, context);
+							        if (buttonId == 'yes' && context.record.get("descripcionTipoOferta") == CONST.TIPO_COMERCIALIZACION_ACTIVO['VENTA']) {
+										me.up('activosdetalle').lookupController().mostrarCrearOfertaTramitada(editor, me, context);
+										
+										// me.saveFn(editor, me, context);
+									} else if (buttonId == 'yes') {
+										me.saveFn(editor, me, context);
 									} else{
-							    		me.getStore().load(); 	
-							    	}
+										me.getStore().load(); 	
+									}
 								}
 							});		    			
 		    			

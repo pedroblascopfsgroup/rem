@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20210723
+--## FECHA_CREACION=20210727
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-14695
+--## INCIDENCIA_LINK=HREOS-14742
 --## PRODUCTO=NO
---## Finalidad: Ampliar la tabla RES_RESERVAS
+--## Finalidad: Ampliar la tabla OFR_OFERTAS_CAIXA
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -35,8 +35,8 @@ DECLARE
 
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'RES_RESERVAS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_CREAR_FK VARCHAR2(2 CHAR) := 'NO'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'OFR_OFERTAS_CAIXA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+	V_CREAR_FK VARCHAR2(2 CHAR) := 'SI'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
 
     
     /* -- ARRAY CON NUEVAS COLUMNAS */
@@ -44,7 +44,9 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	T_ALTER(  'RES_FECHA_CONT_ARRAS',			'DATE',			'Fecha de contabilizacion de las arras'	)
+    	T_ALTER(  'OFR_SANCION_PBC',				'NUMBER(16)',			'Campo que indica si la sanción PBC se aprueba o no'	),
+    	T_ALTER(  'OFR_FECHA_SANCION',				'DATE',					'Campo que indica la fecha de la sancion'	),
+    	T_ALTER(  'OFR_INFORME_PBC',				'VARCHAR(400 CHAR)',			'Campo en el que se guarda el informe de PBC'	)
 		);
     V_T_ALTER T_ALTER;
     
@@ -53,7 +55,7 @@ DECLARE
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
     			--NOMBRE FK 						CAMPO FK 				TABLA DESTINO FK 							CAMPO DESTINO FK
-    	T_FK(	'FK_ICO_PVE',			'ICO_MEDIADOR_ESPEJO_ID',		V_ESQUEMA||'.ACT_PVE_PROVEEDOR',				'PVE_ID')
+    	T_FK(	'FK_OFR_SAN_APD',				'OFR_SANCION_PBC',		V_ESQUEMA||'.DD_APD_APRUEBA_DENIEGA',				'DD_APD_ID')
     );
     V_T_FK T_FK;
 

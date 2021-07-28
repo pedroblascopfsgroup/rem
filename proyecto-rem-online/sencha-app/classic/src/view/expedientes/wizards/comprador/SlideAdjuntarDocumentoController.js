@@ -735,7 +735,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		model = null,
 		data = window.oferta.data,
 		ventanaDetalle = window.down('slidedatosoferta');
-
 		bindRecord = ventanaDetalle.getForm().getValues();
 		if(Ext.isDefined(data.idActivo)){
 			model = Ext.create('HreRem.model.OfertaComercialActivo', {
@@ -760,7 +759,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				claseOferta: bindRecord.claseOferta,
 				numOferPrincipal: bindRecord.numOferPrincipal,
 				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal,
-				vinculoCaixaCodigo: bindRecord.vinculoCaixaCodigo
+				vinculoCaixaCodigo: bindRecord.vinculoCaixa
 			});
 		}else{
 			model = Ext.create('HreRem.model.OfertaComercial', {
@@ -785,12 +784,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				claseOferta: bindRecord.claseOferta,
 				numOferPrincipal: bindRecord.numOferPrincipal,
 				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal,
-				vinculoCaixaCodigo: bindRecord.vinculoCaixaCodigo
+				vinculoCaixaCodigo: bindRecord.vinculoCaixa
 			});
 		}
-
+ 
 		me.getViewModel().set('oferta', model);
-
 		me.onSaveFormularioCompletoOferta(form, window);
 	}
 

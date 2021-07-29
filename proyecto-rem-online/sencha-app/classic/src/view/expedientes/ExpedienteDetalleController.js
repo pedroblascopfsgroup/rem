@@ -476,14 +476,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			    		
 			    	} else if (data.success == "false" && data.error == "false") {
 			    		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
-			    		activeTab.funcionRecargar();
 			    	} else if (data.success == "false" && data.error == "true") {
 			    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.oferta.inexistente"));
 					 	me.getView().unmask();		    		
 			    	}
 			    	} else {
 				        me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
-				        activeTab.funcionRecargar();
 				    }
 	            },
 	            

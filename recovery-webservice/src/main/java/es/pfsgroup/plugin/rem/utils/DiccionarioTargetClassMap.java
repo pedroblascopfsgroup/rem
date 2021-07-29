@@ -317,6 +317,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("segmentacionSareb", DDSegmentoSareb.class);
 		mapa.put("estadoContraste", DDEstadoContrasteListas.class);
 		mapa.put("vinculoCaixa", DDVinculoCaixa.class);
+		mapa.put("motivoRescisionArras", DDMotivoRescisionArras.class);
+		
 		
 		return Collections.unmodifiableMap(mapa);
 	}

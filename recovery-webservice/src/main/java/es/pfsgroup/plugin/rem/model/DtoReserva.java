@@ -63,6 +63,9 @@ public class DtoReserva extends WebDto {
 	
 	private Date fechaComunicacionCliente;
 	
+	private Date fechaComunicacionClienteRescision;
+	
+	private Date fechaFirmaRescision;
 	
 
 	public Double getDepositoReserva() {
@@ -255,5 +258,21 @@ public class DtoReserva extends WebDto {
 
 	public void setFechaComunicacionCliente(Date fechaComunicacionCliente) {
 		this.fechaComunicacionCliente = fechaComunicacionCliente;
+	}
+
+	public Date getFechaComunicacionClienteRescision() {
+		return fechaComunicacionClienteRescision;
+	}
+
+	public void setFechaComunicacionClienteRescision(Date fechaComunicacionClienteRescision) {
+		this.fechaComunicacionClienteRescision = fechaComunicacionClienteRescision;
+	}
+
+	public Date getFechaFirmaRescision() {
+		return fechaFirmaRescision;
+	}
+
+	public void setFechaFirmaRescision(Date fechaFirmaRescision) {
+		this.fechaFirmaRescision = fechaFirmaRescision;
 	}
 }

@@ -2191,6 +2191,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			dto.setFechaPropuestaProrrogaArras(reserva.getFechaPropuestaProrrogaArras());
 			dto.setFechaComunicacionCliente(reserva.getFechaComunicacionCliente());
+			dto.setFechaComunicacionClienteRescision(reserva.getFechaComunicacionClienteRescision());
+			dto.setFechaFirmaRescision(reserva.getFechaFirmaRescision());
 		}
 
 		return dto;
@@ -4397,7 +4399,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(!Checks.isFechaNula(dto.getFechaComunicacionCliente())) {
 				reserva.setFechaComunicacionCliente(dto.getFechaComunicacionCliente());
 			}
-
+			
+			if(!Checks.isFechaNula(dto.getFechaComunicacionClienteRescision())) {
+				reserva.setFechaComunicacionClienteRescision(dto.getFechaComunicacionClienteRescision());
+			}
+			if(!Checks.isFechaNula(dto.getFechaFirmaRescision())) {
+				reserva.setFechaFirmaRescision(dto.getFechaFirmaRescision());
+			}
+			
 			genericDao.save(Reserva.class, reserva);
 
 		} catch (IllegalAccessException e) {

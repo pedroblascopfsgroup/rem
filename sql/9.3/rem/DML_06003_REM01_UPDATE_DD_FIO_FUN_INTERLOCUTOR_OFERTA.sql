@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Cristian Montoya
---## FECHA_CREACION=20210728
+--## FECHA_CREACION=20210730
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-14769
@@ -36,24 +36,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
             -- CODIGO  			                DESCRIPCION                               DESCRIPCION_LARGA   
-        T_TIPO_DATA('Z55', 'Accionista'),
-		T_TIPO_DATA('Z10', 'Apoderado propietario'),
-		T_TIPO_DATA('Z41', 'Gestoría ofertas venta '),
-		T_TIPO_DATA('Z56', 'API (Socio Comercial)'),
-		T_TIPO_DATA('Z42', 'Gestoría formalización ventas '),
-		T_TIPO_DATA('Z43', 'Notario '),
-		T_TIPO_DATA('Z44', 'Administrador Comunidad'),
-		T_TIPO_DATA('Z45', 'Gestor inquilinos'),
-		T_TIPO_DATA('Z46', 'Portfolio Manager'),
-		T_TIPO_DATA('Z11', 'Broker'),
-		T_TIPO_DATA('Z30', 'Correduría de seguros'),
-		T_TIPO_DATA('Z24', 'Garante bancario (Banco para aval)'),
-		T_TIPO_DATA('Z49', 'Garante público'),
-		T_TIPO_DATA('Z50', 'Gestoría fianza'),
-		T_TIPO_DATA('Z31', 'Depositario fianza'),
-		T_TIPO_DATA('Z51', 'Garante solidario'),
-		T_TIPO_DATA('Z52', 'Servicer Ventas'),
-		T_TIPO_DATA('Z53', 'Gestoría Plusvalía')
+		T_TIPO_DATA('29', 'Z56', 'API (Socio Comercial)')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
    
@@ -69,7 +52,7 @@ BEGIN
       V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     	
       --Comprobamos el dato a insertar
-      V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_'||V_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+      V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_'||V_CHARS||'_CODIGO = '''||V_TMP_TIPO_DATA(1)||'''';
       EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
       
       --Si existe lo modificamos
@@ -79,7 +62,9 @@ BEGIN
         V_MSQL := '
           UPDATE '|| V_ESQUEMA ||'.'||V_TABLA||' 
           SET 
-            DD_'||V_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
+            DD_'||V_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
+            DD_'||V_CHARS||'_CODIGO_C4C = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
+            DD_'||V_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
             DD_'||V_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
 	    USUARIOMODIFICAR = '''||V_USUARIO||''',
             FECHAMODIFICAR = SYSDATE
@@ -99,10 +84,10 @@ BEGIN
 				VERSION, USUARIOCREAR, FECHACREAR)
           	SELECT 
 	            '|| V_ID || ',
-	            '''||V_TMP_TIPO_DATA(1)||''',
-	            '''||V_TMP_TIPO_DATA(1)||''',
 	            '''||V_TMP_TIPO_DATA(2)||''',
 	            '''||V_TMP_TIPO_DATA(2)||''',
+	            '''||V_TMP_TIPO_DATA(3)||''',
+	            '''||V_TMP_TIPO_DATA(3)||''',
 	            0, '''||V_USUARIO||''', SYSDATE FROM DUAL';
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');

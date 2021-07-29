@@ -5,6 +5,7 @@ import java.util.List;
 
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
@@ -31,4 +32,6 @@ public interface TramitacionOfertasApi {
 	String calcularComiteBBVA(Oferta oferta);
 
 	boolean doTramitacionOferta(Long idOferta, Long idActivo, Long idAgrupacion) throws JsonViewerException, Exception, Error;
+
+	CompradorExpediente setInterlocutorOferta(CompradorExpediente cex, boolean isPrincipal, Oferta oferta);
 }

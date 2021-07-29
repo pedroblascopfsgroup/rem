@@ -100,6 +100,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDInterlocutorOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -887,6 +888,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				compradorBusqueda = new Comprador();
 				compradorBusqueda.setClienteComercial(cliente);
 				compradorBusqueda.setDocumento(cliente.getDocumento());
+				compradorBusqueda.setInfoAdicionalPersona(cliente.getInfoAdicionalPersona());
 			}
 			if (!Checks.esNulo(cliente.getTipoPersona())
 					&& DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(cliente.getTipoPersona().getCodigo())) {
@@ -986,6 +988,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			compradorExpedienteNuevo.setCodigoPostalRepresentante(cliente.getCodigoPostalRepresentante());
 			compradorExpedienteNuevo.setEstadoContrasteListas(estadoNoSolicitado);
 			compradorExpedienteNuevo.setFechaContrasteListas(new Date());
+			
+			if(oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
+				this.setInterlocutorOferta(compradorExpedienteNuevo, true, oferta);
+			}
 
 			List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
 					genericDao.createFilter(FilterType.EQUALS, "numDocumento", cliente.getDocumento()),
@@ -1037,6 +1043,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					if (Checks.esNulo(compradorBusquedaAdicional)) {
 						compradorBusquedaAdicional = new Comprador();
 						compradorBusquedaAdicional.setDocumento(titularAdicional.getDocumento());
+						compradorBusquedaAdicional.setInfoAdicionalPersona(cliente.getInfoAdicionalPersona());
 					}
 
 					if (!Checks.esNulo(titularAdicional.getTipoPersona()) && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA
@@ -1135,7 +1142,11 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					compradorExpedienteAdicionalNuevo.setPaisRte(titularAdicional.getPaisRepresentante());
 					compradorExpedienteAdicionalNuevo
 							.setCodigoPostalRepresentante(titularAdicional.getCodPostalRepresentante());
-
+					
+					if(oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
+						this.setInterlocutorOferta(compradorExpedienteAdicionalNuevo, false, oferta);
+					}
+					
 					clienteGDPR = genericDao.getList(ClienteGDPR.class,
 							genericDao.createFilter(FilterType.EQUALS, "numDocumento", titularAdicional.getDocumento()),
 							genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo",
@@ -2103,4 +2114,35 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		genericDao.save(ActivosAlquilados.class, activoAlquilado);
 	}
 
+	@Override
+	public CompradorExpediente setInterlocutorOferta(CompradorExpediente cex, boolean isPrincipal, Oferta oferta) {
+		
+		String tipoInterlocutorC4C = null;
+		
+		if(isPrincipal) {
+			if(DDTipoOferta.isTipoVenta(oferta.getTipoOferta())) {
+				tipoInterlocutorC4C = DDInterlocutorOferta.CODIGO_COMPRADOR_PRINCIPAL;
+				if(cex.getUsufructuario() != null && cex.getUsufructuario()) {
+					tipoInterlocutorC4C = DDInterlocutorOferta.CODIGO_USUFRUCTUARIO;
+				}
+			}else {
+				tipoInterlocutorC4C = DDInterlocutorOferta.CODIGO_ARRENDATARIO_PRINCIPAL;
+			}
+		}else {
+			
+			if(DDTipoOferta.isTipoAlquiler(oferta.getTipoOferta())) {
+				tipoInterlocutorC4C = DDInterlocutorOferta.CODIGO_SUBARRENDATARIO;
+			}else {
+				tipoInterlocutorC4C = DDInterlocutorOferta.CODIGO_COMPRADOR_SECUNDARIO;
+			}
+		}
+				
+		DDInterlocutorOferta interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoInterlocutorC4C));
+		cex.setInterlocutorOferta(interlocutor);
+		
+		interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDInterlocutorOferta.CODIGO_TUTOR));
+		cex.setInterlocutorOfertaRepresentante(interlocutor);
+		
+		return cex;
+	}
 }

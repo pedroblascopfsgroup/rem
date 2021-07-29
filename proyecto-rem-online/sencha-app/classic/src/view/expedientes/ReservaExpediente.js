@@ -232,6 +232,40 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 							        }
 								}
 							]
+						},
+						{
+							xtype:'fieldsettable',
+							defaultType: 'displayfieldbase',				
+							title: HreRem.i18n('fieldlabel.rescision.arras'),
+							colspan:3,
+							bind:{
+								hidden:'{!esCarteraBankia}'
+							},
+							items :[
+														
+								{
+									xtype:'datefieldbase',
+							        fieldLabel: HreRem.i18n('fieldlabel.fecha.comunicacion.a.cliente'),
+							        bind: {
+				                		value: '{reserva.fechaComunicacionClienteRescision}'
+							        }
+								},
+								{
+							        xtype: 'datefieldbase',
+							        fieldLabel:  HreRem.i18n('fieldlabel.rescision.arras.fecha'),					        
+							        bind: {
+										value: '{reserva.fechaFirmaRescision}'
+									}											                	
+							    },
+							    {
+							        xtype: 'comboboxfieldbase',
+							        fieldLabel:  HreRem.i18n('fieldlabel.rescision.arras.motivo'),					        
+							        bind: {
+							        	store: '{comboMotivoRescisionArras}'
+									}											                	
+							    }
+							    
+							]
 						}
 		                		               
 		        ]

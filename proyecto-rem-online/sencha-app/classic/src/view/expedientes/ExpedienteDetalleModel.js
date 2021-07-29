@@ -1534,6 +1534,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    		{"codigo":"true", "descripcion":"Si"},
 	    		{"codigo":"false", "descripcion":"No"}
 	    		]  
+	    },
+	    comboMotivoRescisionArras: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoRescisionArras'}
+			}
 	    }
     }
 });

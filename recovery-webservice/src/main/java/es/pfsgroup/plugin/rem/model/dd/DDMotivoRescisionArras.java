@@ -1,50 +1,49 @@
 package es.pfsgroup.plugin.rem.model.dd;
 
-import es.capgemini.pfs.auditoria.Auditable;
-import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.diccionarios.Dictionary;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Version;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
+import es.capgemini.pfs.auditoria.Auditable;
+import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.diccionarios.Dictionary;
 
-/**
- * Modelo que gestiona el diccionario de EstadoComunicacionC4C
- *
- * 
- * @author Jesus Jativa
- *
- */
+
 @Entity
-@Table(name = "DD_ECC_ESTADO_COMUNICACION_C4C", schema = "${entity.schema}")
+@Table(name = "DD_MRA_MOTIVO_RESCISION_ARRAS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDEstadoComunicacionC4C implements Auditable, Dictionary {
+public class DDMotivoRescisionArras implements Auditable, Dictionary{
+	
 	
 	private static final long serialVersionUID = 1L;
-	
-	public static final String C4C_VALIDADO = "05";
-	public static final String C4C_NO_ENVIADO = "01";
-	public static final String C4C_PDTE_VALIDACION = "01";
-
 
 	@Id
-	@Column(name = "DD_ECC_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoComunicacionC4C")
-	@SequenceGenerator(name = "DDEstadoComunicacionC4C", sequenceName = "S_DD_ECC_ESTADO_COMUNICACION_C4C")
+	@Column(name = "DD_MRA_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivoRescisionArrasGenerator")
+	@SequenceGenerator(name = "DDMotivoRescisionArrasGenerator", sequenceName = "S_DD_MRA_MOTIVO_RESCISION_ARRAS")
 	private Long id;
-
-	@Column(name = "DD_ECC_CODIGO")
+	    
+	@Column(name = "DD_MRA_CODIGO")   
 	private String codigo;
-
-	@Column(name = "DD_ECC_DESCRIPCION")
+	 
+	@Column(name = "DD_MRA_DESCRIPCION")   
 	private String descripcion;
+	    
+	@Column(name = "DD_MRA_DESCRIPCION_LARGA")   
+	private String descripcionLarga;	    
 
-	@Column(name = "DD_ECC_DESCRIPCION_LARGA")
-	private String descripcionLarga;
-
-	@Version
+	@Version   
 	private Long version;
 
 	@Embedded
@@ -97,5 +96,7 @@ public class DDEstadoComunicacionC4C implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+	
+	
 
 }

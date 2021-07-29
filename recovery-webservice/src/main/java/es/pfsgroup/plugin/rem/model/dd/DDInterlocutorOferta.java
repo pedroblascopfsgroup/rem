@@ -27,7 +27,7 @@ public class DDInterlocutorOferta implements Auditable, Dictionary {
 	public static final String CODIGO_ACCIONISTA = "Z55";
 	public static final String CODIGO_APODERADO_PROPIETARIO = "Z10";
 	public static final String CODIGO_GESTORIA_OFERTAS_VENTA = "Z41";
-	public static final String CODIGO_API_SOCIO_COMERCIAL = "29";
+	public static final String CODIGO_API_SOCIO_COMERCIAL = "Z56";
 	public static final String CODIGO_GESTORIA_FORMALIZACION_VENTAS = "Z42";
 	public static final String CODIGO_NOTARIO = "Z43";
 	public static final String CODIGO_ADMINISTRADOR_COMUNIDAD = "Z44";
@@ -46,7 +46,7 @@ public class DDInterlocutorOferta implements Auditable, Dictionary {
 	public static final String CODIGO_C4C_ACCIONISTA = "Z55";
 	public static final String CODIGO_C4C_APODERADO_PROPIETARIO = "Z10";
 	public static final String CODIGO_C4C_GESTORIA_OFERTAS_VENTA = "Z41";
-	public static final String CODIGO_C4C_API_SOCIO_COMERCIAL = "29";
+	public static final String CODIGO_C4C_API_SOCIO_COMERCIAL = "Z56";
 	public static final String CODIGO_C4C_GESTORIA_FORMALIZACION_VENTAS = "Z42";
 	public static final String CODIGO_C4C_NOTARIO = "Z43";
 	public static final String CODIGO_C4C_ADMINISTRADOR_COMUNIDAD = "Z44";

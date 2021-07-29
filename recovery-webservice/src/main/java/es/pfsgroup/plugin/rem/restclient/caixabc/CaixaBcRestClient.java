@@ -30,8 +30,12 @@ public class CaixaBcRestClient {
     private static final String REPLICACION_OFERTAS_ENDPOINT = "rem3.endpoint.hydra.replicacion.ofertas";
     public static final String CLIENTE_TITULARES_DATA ="01";
     public static final String COMPRADORES_DATA ="02";
+    public static final String KEY_FASE_UPDATE = "UPDATE";
     public static final String ERROR_REPLICACION_BC = "Error en el servicio de replicacion de clientes de BC";
     public static final String IS_CLIENT_ACTIVE = "caixa.bc.restclient.active";
+    public static final String ID_CLIENTE = "idCliente";
+    public static final String ID_COMPRADOR = "idCompradorExpediente";
+    public static final String ID_PROVEEDOR = "idProveedor";
 
 
     public Boolean callReplicateClient(Long numOferta,String dataSourceCode){
@@ -60,6 +64,65 @@ public class CaixaBcRestClient {
             return resp != null ? resp : true;
 
     }
+
+    public Boolean callReplicateClientUpdate(Long id,String tipoID){
+        Boolean resp = false;
+
+        try {
+            if (this.isActive()){
+                String endpoint = getRem3Endpoint(REM3_URL,REPLICACION_CLIENTES_ENDPOINT);
+                if (endpoint != null) {
+                    Map<String, Object> params = new HashMap<String, Object>();
+                    if (ID_CLIENTE.equals(tipoID))
+                        params.put(ID_CLIENTE, id);
+                    else if (ID_PROVEEDOR.equals(tipoID))
+                        params.put(ID_PROVEEDOR, id);
+                    params.put("dataSourceCode", KEY_FASE_UPDATE);
+                    HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
+                    resp = request.post(Boolean.class);
+                } else {
+                    return false;
+                }
+            }else{
+                return true;
+            }
+
+        } catch (Exception e) {
+            logger.error("Error en " + this.getClass().toString(), e);
+        }
+
+        return resp != null ? resp : true;
+
+    }
+
+    public Boolean callReplicateClientUpdateComprador(Long id,Long numOferta){
+        Boolean resp = false;
+
+        try {
+            if (this.isActive()){
+                String endpoint = getRem3Endpoint(REM3_URL,REPLICACION_CLIENTES_ENDPOINT);
+                if (endpoint != null) {
+                    Map<String, Object> params = new HashMap<String, Object>();
+                        params.put(ID_COMPRADOR, id);
+                        params.put("numOferta", numOferta.toString());
+                    params.put("dataSourceCode", KEY_FASE_UPDATE);
+                    HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
+                    resp = request.post(Boolean.class);
+                } else {
+                    return false;
+                }
+            }else{
+                return true;
+            }
+
+        } catch (Exception e) {
+            logger.error("Error en " + this.getClass().toString(), e);
+        }
+
+        return resp != null ? resp : true;
+
+    }
+
     
     public Boolean callReplicateOferta(Long numOferta){
         Boolean resp = false;

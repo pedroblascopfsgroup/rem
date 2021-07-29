@@ -28,6 +28,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoOutputDto;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
@@ -61,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -106,6 +108,8 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
 	
 	@Autowired
 	private GestorDocumentalAdapterManager gdAdapterManager;
@@ -150,6 +154,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		}	
 		//-----Nueva Unidad alquilable (activo)
 		Activo unidadAlquilable = new Activo(); 
+		DDSinSiNo siNoObraNueva = (DDSinSiNo)diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
 		if (!Checks.esNulo(activoMatriz)) {    
 				
 			//Insercion de datos Basicos del Activo Matriz a la unidad alquilable
@@ -300,6 +305,8 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		}
 		
 		unidadAlquilable.setIsDnd(false);
+		
+		unidadAlquilable.setTieneObraNuevaAEfectosComercializacion(siNoObraNueva);
 		
 		genericDao.save(Activo.class, unidadAlquilable);
 		

@@ -227,6 +227,10 @@ public class CompradorExpediente implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "DD_FIO_ID")
 	private DDInterlocutorOferta interlocutorOferta;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_FIO_REPR_ID")
+	private DDInterlocutorOferta interlocutorOfertaRepresentante;
  
 	@Version   
 	private Long version;
@@ -755,6 +759,14 @@ public class CompradorExpediente implements Serializable, Auditable {
 
 	public void setInterlocutorOferta(DDInterlocutorOferta interlocutorOferta) {
 		this.interlocutorOferta = interlocutorOferta;
+	}
+
+	public DDInterlocutorOferta getInterlocutorOfertaRepresentante() {
+		return interlocutorOfertaRepresentante;
+	}
+
+	public void setInterlocutorOfertaRepresentante(DDInterlocutorOferta interlocutorOfertaRepresentante) {
+		this.interlocutorOfertaRepresentante = interlocutorOfertaRepresentante;
 	}
    
 }

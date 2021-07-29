@@ -62,7 +62,17 @@ Ext.define('HreRem.model.Reserva', {
     		name: 'fechaComunicacionCliente',
     		type : 'date',
 			dateFormat: 'c'
-    	}  
+    	},
+    	{
+    		name: 'fechaComunicacionClienteRescision',
+    		type : 'date',
+			dateFormat: 'c'
+    	},
+    	{
+    		name: 'fechaFirmaRescision',
+    		type : 'date',
+			dateFormat: 'c'
+    	} 
     ],
 
     proxy: {

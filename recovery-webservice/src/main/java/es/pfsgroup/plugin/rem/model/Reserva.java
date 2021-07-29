@@ -139,6 +139,12 @@ public class Reserva implements Serializable, Auditable {
     @Column(name="RES_FECHA_COM_CLIENTE")
     private Date fechaComunicacionCliente;
     
+    @Column(name="RES_FECHA_COM_CLIENTE_RESC")
+    private Date fechaComunicacionClienteRescision;
+    
+    @Column(name="RES_FECHA_RESCISION")
+    private Date fechaFirmaRescision;
+    
     @Version   
 	private Long version;
 
@@ -360,5 +366,22 @@ public class Reserva implements Serializable, Auditable {
 
 	public void setFechaComunicacionCliente(Date fechaComunicacionCliente) {
 		this.fechaComunicacionCliente = fechaComunicacionCliente;
+	}
+
+	public Date getFechaComunicacionClienteRescision() {
+		return fechaComunicacionClienteRescision;
+	}
+
+	public void setFechaComunicacionClienteRescision(Date fechaComunicacionClienteRescision) {
+		this.fechaComunicacionClienteRescision = fechaComunicacionClienteRescision;
+	}
+
+	public Date getFechaFirmaRescision() {
+		return fechaFirmaRescision;
+	}
+
+	public void setFechaFirmaRescision(Date fechaFirmaRescision) {
+		this.fechaFirmaRescision = fechaFirmaRescision;
 	} 
+
 }

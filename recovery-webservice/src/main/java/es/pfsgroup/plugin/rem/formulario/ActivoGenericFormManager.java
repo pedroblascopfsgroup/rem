@@ -274,7 +274,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
         	//Le insertamos los valores del formulario al BPM en una variable de Thread para que pueda recuperarlos
         	jbpmManager.signalToken(tarea.getTokenIdBpm(), BPMContants.TRANSICION_AVANZA_BPM);
         }catch(Exception e) {
-        	throw new UserException("Error avanzando la tarea: " + e.getMessage(), e);
+        	throw new UserException("Error avanzando la tarea: " + e.getMessage());
         }
     }    
     

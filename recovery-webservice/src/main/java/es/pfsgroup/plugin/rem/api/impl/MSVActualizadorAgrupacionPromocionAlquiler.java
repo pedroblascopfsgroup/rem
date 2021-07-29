@@ -154,7 +154,9 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		}	
 		//-----Nueva Unidad alquilable (activo)
 		Activo unidadAlquilable = new Activo(); 
-		DDSinSiNo siNoObraNueva = (DDSinSiNo)diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
+		DDSinSiNo ddNo = (DDSinSiNo)diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
+		//DDSinSiNo ddSi = (DDSinSiNo)diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI);//descomentar para usar
+		
 		if (!Checks.esNulo(activoMatriz)) {    
 				
 			//Insercion de datos Basicos del Activo Matriz a la unidad alquilable
@@ -306,7 +308,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		
 		unidadAlquilable.setIsDnd(false);
 		
-		unidadAlquilable.setTieneObraNuevaAEfectosComercializacion(siNoObraNueva);
+		unidadAlquilable.setTieneObraNuevaAEfectosComercializacion(ddNo);
 		
 		genericDao.save(Activo.class, unidadAlquilable);
 		
@@ -554,6 +556,10 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 					actInfoRegistral.setEstadoObraNueva(infoRegistralActivoMatriz.getEstadoObraNueva());
 				if (!Checks.esNulo(infoRegistralActivoMatriz.getFechaCfo()))
 					actInfoRegistral.setFechaCfo(infoRegistralActivoMatriz.getFechaCfo());
+				if (!Checks.esNulo(infoRegistralActivoMatriz.getTieneAnejosRegistrales()))
+					actInfoRegistral.setTieneAnejosRegistrales(infoRegistralActivoMatriz.getTieneAnejosRegistrales());
+				else 
+					actInfoRegistral.setTieneAnejosRegistrales(ddNo);
 				
 				actInfoRegistral.setAuditoria(auditoria);
 				float superficieA0 = 0;			//Se pone la superficie de  elementos comunes y la superficie de la parcela a 0 en la creación de las UAs
@@ -646,7 +652,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		unidadAlquilable.setFechaRevisionCarga(activoMatriz.getFechaRevisionCarga());
 		unidadAlquilable.setVpo(activoMatriz.getVpo());
 		unidadAlquilable.setTerritorio(activoMatriz.getTerritorio());
-
+		
 		//-----Insercion de gestores a la Unidad Alquilable
 		if (!Checks.esNulo(activoMatriz)) {
 			GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();

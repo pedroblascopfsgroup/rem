@@ -1323,25 +1323,33 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		ofertaGencat.setTiposPersona(oferta.getCliente().getTipoPersona());
 		ofertaGencat.setAuditoria(auditoria);
 		ofertaGencat.setVersion(0L);
-
-		if(activo.tieneCedulaHabitabilidad()) {
+		
+		ActivoAdmisionRevisionTitulo revisionTitulo = comunicacionGencat.getActivo().getAdmisionRevisionTitulo();
+		DDCedulaHabitabilidad cedula = (revisionTitulo != null) ? revisionTitulo.getCedulaHabitabilidad() : null;
+		if(revisionTitulo != null || cedula != null && cedula.getCodigo().equals(DDCedulaHabitabilidad.CODIGO_OBTENIDO)) {
 			adecuacionGencat.setNecesitaReforma(false);
 		}else {
 			adecuacionGencat.setNecesitaReforma(true);
-			Filter filtroBien = genericDao.createFilter(FilterType.EQUALS, "bien.numeroActivo", comunicacionGencat.getActivo().getNumActivo());
-			NMBInformacionRegistralBien informacionRegistralBien = genericDao.get(NMBInformacionRegistralBien.class, filtroBien);
+				
+			NMBInformacionRegistralBien informacionRegistralBien = comunicacionGencat.getActivo() != null && comunicacionGencat.getActivo().getBien() != null 
+					&& comunicacionGencat.getActivo().getBien().getInformacionRegistral() != null 
+					&& !comunicacionGencat.getActivo().getBien().getInformacionRegistral().isEmpty() ? 
+							comunicacionGencat.getActivo().getBien().getInformacionRegistral().get(0) : null;
 			
-			BigDecimal superficieConstruida = (informacionRegistralBien.getSuperficieConstruida() != null) ? informacionRegistralBien.getSuperficieConstruida() : new BigDecimal(0);
+			int importeReforma = 0;
 			
-			adecuacionGencat.setImporteReforma(superficieConstruida.multiply(new BigDecimal(PRECIO_REFORMA_ADECUACION)).setScale(2).doubleValue());
+			if(informacionRegistralBien != null) {
+				importeReforma = (int) (informacionRegistralBien.getSuperficieConstruida() != null ? 
+						informacionRegistralBien.getSuperficieConstruida().floatValue() * PRECIO_REFORMA_ADECUACION * 100 : 0);
+			}
+
+			adecuacionGencat.setImporteReforma(importeReforma/100d);
 		}
 		
 		// Creamos la nueva adecuación, habiendo creado previamente la comunicación
 		adecuacionGencat.setComunicacion(comunicacionGencat);
 		adecuacionGencat.setAuditoria(auditoria);
 		adecuacionGencat.setVersion(0L);
-		
-		
 
 		genericDao.save(ComunicacionGencat.class, comunicacionGencat);
 		genericDao.save(OfertaGencat.class, ofertaGencat);

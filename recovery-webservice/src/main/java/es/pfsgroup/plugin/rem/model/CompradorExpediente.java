@@ -737,5 +737,13 @@ public class CompradorExpediente implements Serializable, Auditable {
 	public void setInterlocutorOferta(DDInterlocutorOferta interlocutorOferta) {
 		this.interlocutorOferta = interlocutorOferta;
 	}
+
+	public DDInterlocutorOferta getInterlocutorOfertaRepresentante() {
+		return interlocutorOfertaRepresentante;
+	}
+
+	public void setInterlocutorOfertaRepresentante(DDInterlocutorOferta interlocutorOfertaRepresentante) {
+		this.interlocutorOfertaRepresentante = interlocutorOfertaRepresentante;
+	}
    
 }

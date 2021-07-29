@@ -219,6 +219,10 @@ public class CompradorExpediente implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "DD_FIO_ID")
 	private DDInterlocutorOferta interlocutorOferta;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_FIO_REPR_ID")
+	private DDInterlocutorOferta interlocutorOfertaRepresentante;
  
 	@Version   
 	private Long version;

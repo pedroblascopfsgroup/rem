@@ -42,6 +42,13 @@ public class DDInterlocutorOferta implements Auditable, Dictionary {
 	public static final String CODIGO_GARANTE_SOLIDARIO = "Z51";
 	public static final String CODIGO_SERVICER_VENTAS = "Z52";
 	public static final String CODIGO_GESTORIA_PLUSVALIA = "Z53";
+	
+	public static final String CODIGO_COMPRADOR_PRINCIPAL = "01";
+	public static final String CODIGO_ARRENDATARIO_PRINCIPAL = "08";
+	public static final String CODIGO_USUFRUCTUARIO = "07";
+	public static final String CODIGO_TUTOR = "06";
+	public static final String CODIGO_COMPRADOR_SECUNDARIO = "02";
+	public static final String CODIGO_SUBARRENDATARIO = "11";
 
 	public static final String CODIGO_C4C_ACCIONISTA = "Z55";
 	public static final String CODIGO_C4C_APODERADO_PROPIETARIO = "Z10";
@@ -61,6 +68,13 @@ public class DDInterlocutorOferta implements Auditable, Dictionary {
 	public static final String CODIGO_C4C_GARANTE_SOLIDARIO = "Z51";
 	public static final String CODIGO_C4C_SERVICER_VENTAS = "Z52";
 	public static final String CODIGO_C4C_GESTORIA_PLUSVALIA = "Z53";
+	public static final String CODIGO_C4C_COMPRADOR_PRINCIPAL = "1001";
+	public static final String CODIGO_C4C_USUFRUCTUARIO = "Z39";
+	public static final String CODIGO_C4C_TUTOR = "Z38";
+	public static final String CODIGO_C4C_COMPRADOR_SECUNDARIO = "Z34";
+	public static final String CODIGO_C4C_SUBARRENDATARIO = "Z47";
+
+
 	
 	@Id
 	@Column(name = "DD_FIO_ID")

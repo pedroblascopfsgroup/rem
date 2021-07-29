@@ -4733,6 +4733,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				pk.setExpediente(expedienteComercial);
 				compradorExpediente.setPrimaryKey(pk);
 				esNuevo = true;
+				
 
 			}
 
@@ -4958,6 +4959,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				comprador.getInfoAdicionalPersona().setVinculoCaixa(vinculoCaixa);
 			}
 			if (esNuevo) {
+				
+				Oferta oferta = expedienteComercial.getOferta();
+				if(oferta != null && oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
+					boolean isPrincipal = compradorExpediente.getTitularContratacion() == 1 ? true : false;
+					tramitacionOfertasManager.setInterlocutorOferta(compradorExpediente, isPrincipal, oferta);
+				}
+				
 				genericDao.save(Comprador.class, comprador);
 				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
 				compradorExpediente.setFechaContrasteListas(new Date());
@@ -4988,20 +4996,31 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	@Transactional(readOnly = false)
 	public boolean marcarCompradorPrincipal(Long idComprador, Long idExpedienteComercial) {
-		Filter filterLista = genericDao.createFilter(FilterType.EQUALS, "primaryKey.expediente.id",
-				idExpedienteComercial);
+		Filter filterLista = genericDao.createFilter(FilterType.EQUALS, "primaryKey.expediente.id",idExpedienteComercial);
 		List<CompradorExpediente> listaCompradores = genericDao.getList(CompradorExpediente.class, filterLista);
-
+		ExpedienteComercial expediente = findOne(idExpedienteComercial);
+		boolean isBk = false;
+		Oferta oferta = null;
+		if(expediente.getOferta() != null) {
+			oferta = expediente.getOferta();
+			if(oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())){
+				isBk = true;
+			}
+		}
+		
 		for (CompradorExpediente compradorExpediente : listaCompradores) {
 			if (idComprador.equals(compradorExpediente.getPrimaryKey().getComprador().getId())) {
 				compradorExpediente.setTitularContratacion(1);
-				genericDao.update(CompradorExpediente.class, compradorExpediente);
-
+				if(isBk) {
+					tramitacionOfertasManager.setInterlocutorOferta(compradorExpediente, true, oferta);
+				}
 			} else {
 				compradorExpediente.setTitularContratacion(0);
-				genericDao.update(CompradorExpediente.class, compradorExpediente);
-
+				if(isBk) {
+					tramitacionOfertasManager.setInterlocutorOferta(compradorExpediente, false, oferta);
+				}
 			}
+			genericDao.update(CompradorExpediente.class, compradorExpediente);
 		}
 
 		return true;
@@ -5589,6 +5608,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorBusqueda.getInfoAdicionalPersona().setEstadoComunicacionC4C(estadoComunicacionC4C);
 			}
 			
+			if(expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null && DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())) {
+				boolean isPrincipal = compradorExpediente.getTitularContratacion() == 1 ? true : false;
+				tramitacionOfertasManager.setInterlocutorOferta(compradorExpediente, isPrincipal, expediente.getOferta());
+			}
+			
+			
 			expediente.getCompradores().add(compradorExpediente);
 
 			genericDao.save(ExpedienteComercial.class, expediente);
@@ -5927,9 +5952,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				Filter filtroEstadoC4C = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO);
 				DDEstadoComunicacionC4C estadoComunicacionC4C = genericDao.get(DDEstadoComunicacionC4C.class, filtroEstadoC4C);
 				iap.setEstadoComunicacionC4C(estadoComunicacionC4C);
-			
-				
+					
 				comprador.setInfoAdicionalPersona(iap);
+				
+				if(expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null && DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())) {
+					boolean isPrincipal = compradorExpediente.getTitularContratacion() == 1 ? true : false;
+					tramitacionOfertasManager.setInterlocutorOferta(compradorExpediente, isPrincipal, expediente.getOferta());
+				}
+				
 				
 				genericDao.save(InfoAdicionalPersona.class, iap);
 				

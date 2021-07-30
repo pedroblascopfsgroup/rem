@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -41,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -84,7 +86,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 	
 	@Autowired
-	private ActivoTramiteApi activoTramiteApi;
+	private TareaActivoApi tareaActivoApi;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDefinicionOferta.class);
 
@@ -146,9 +148,9 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 				
 				if (ofertaAceptada.getOfertaExpress() != null && ofertaAceptada.getOfertaExpress()) {
-					List<TareaExterna> tareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
+					List<TareaActivo> tareas = tareaActivoApi.getTareasActivoByIdTramite(tramite.getId());
 					if (tareas != null && tareas.isEmpty())
-						ofertaApi.actualizarOfertaBoarding(tareas.get(0));
+						ofertaApi.actualizarOfertaBoarding(tareas.get(0).getTareaExterna());
 				}
 				
 				if(expediente.getCondicionante().getSolicitaReserva()!=null 

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jdt.internal.core.CreateFieldOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -147,11 +148,11 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				expediente.setEstado(estado);
 				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 				
-				if (ofertaAceptada.getOfertaExpress() != null && ofertaAceptada.getOfertaExpress()) {
+				/*if (ofertaAceptada.getOfertaExpress() != null && ofertaAceptada.getOfertaExpress()) {
 					List<TareaActivo> tareas = tareaActivoApi.getTareasActivoByIdTramite(tramite.getId());
-					if (tareas != null && tareas.isEmpty())
+					if (tareas != null && !tareas.isEmpty())
 						ofertaApi.actualizarOfertaBoarding(tareas.get(0).getTareaExterna());
-				}
+				}*/
 				
 				if(expediente.getCondicionante().getSolicitaReserva()!=null 
 						&& RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {

@@ -12340,6 +12340,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					fechaArrasExpediente.setValidacionBC(dd);
 				}
 			}
+			
+			if (dto.getMotivoAnulacion() != null) {
+				fechaArrasExpediente.setMotivoAnulacion(dto.getMotivoAnulacion());
+			}
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {

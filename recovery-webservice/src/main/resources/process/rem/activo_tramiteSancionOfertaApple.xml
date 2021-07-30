@@ -308,6 +308,7 @@
         <transition to="T017_InstruccionesReserva" name="Aprueba"></transition>
 		<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
 		<transition to="T017_AgendarFechaFirmaArras" name="ApruebaBC"></transition>
+		<transition to="T017_PBCVenta" name="KO"></transition>
 	</decision> <!--Decision PBCReserva : Resolucion Expediente / InstruccionesReserva -->
 	<state name="T017_AgendarFechaFirmaArras">
 		<event type="node-enter">
@@ -328,8 +329,12 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T017_ConfirmarFechaFirmaArras" name="avanzaBPM"></transition>
+		<transition to="T017_AgendarFechaFirmaArrasDecision" name="avanzaBPM"></transition>
 	</state>
+	<decision name ="T017_AgendarFechaFirmaArrasDecision" expression="#{T017_AgendarFechaFirmaArrasDecision}">
+		<transition to="T017_ConfirmarFechaFirmaArras" name="OK"></transition>
+		<transition to="T017_PBCVenta" name="KO"></transition>
+	</decision> <!--Decision T017_AgendarFechaFirmaArras -->
 	<state name="T017_ConfirmarFechaFirmaArras">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -354,6 +359,7 @@
 	<decision name ="T017_ConfirmarFechaFirmaArrasDecision" expression="#{T017_ConfirmarFechaFirmaArrasDecision}">
         <transition to="T017_InstruccionesReserva" name="Confirmado"></transition>
 		<transition to="T017_AgendarFechaFirmaArras" name="noConfirmado"></transition>
+		<transition to="T017_PBCVenta" name="KO"></transition>
 	</decision>
 	
 	<state name="T017_InstruccionesReserva">
@@ -378,8 +384,9 @@
 		<transition to="T017_InstruccionesReservaDecision" name="avanzaBPM"></transition>
 	</state> 			
 	<decision name ="T017_InstruccionesReservaDecision" expression="#{T017_InstruccionesReservaDecision}">
-        <transition to="T017_ObtencionContratoReserva" name="OK"></transition>
-		<transition to="T017_AgendarFechaFirmaArras" name="KO"></transition>
+        <transition to="T017_ObtencionContratoReserva" name="noConfirmado"></transition>
+		<transition to="T017_AgendarFechaFirmaArras" name="Confirmado"></transition>
+		<transition to="T017_PBCVenta" name="KO"></transition>
 	</decision>
 	
 	<state name="T017_ObtencionContratoReserva">
@@ -405,8 +412,9 @@
 	</state>
 	
 	<decision name ="T017_ObtencionContratoReservaDecision" expression="#{T017_ObtencionContratoReservaDecision}">
-        <transition to="T017_PBCVenta" name="OK"></transition>
-		<transition to="T017_AgendarFechaFirmaArras" name="KO"></transition>
+        <transition to="T017_PBCVenta" name="noConfirmado"></transition>
+		<transition to="T017_AgendarFechaFirmaArras" name="Confirmado"></transition>
+		<transition to="T017_PBCVenta" name="KO"></transition>
 	</decision>
 	
 	

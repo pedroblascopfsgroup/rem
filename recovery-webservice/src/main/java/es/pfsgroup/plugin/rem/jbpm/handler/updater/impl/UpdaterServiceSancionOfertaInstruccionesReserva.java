@@ -62,6 +62,7 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
+		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		if(!Checks.esNulo(ofertaAceptada)){
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -102,6 +103,7 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 						estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS));
 						expediente.setEstado(estadoExp);
 						expediente.setEstadoBc(estadoBc);
+						estadoBcModificado = true;
 					}
 				}
 				
@@ -143,7 +145,9 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 				}
 			}
 			
-			
+			if(estadoBcModificado) {
+				ofertaApi.replicateOfertaFlush(expediente.getOferta());
+			}
 
 		}
 

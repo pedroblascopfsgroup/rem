@@ -47,6 +47,7 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
+		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		Boolean haPasadoScoringBC = tramiteAlquilerApi.haPasadoScoringBC(tramite.getId());
 		String respuestaComprador = null;
@@ -79,6 +80,7 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 				if(estadoBcCodigo != null) {
 					DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBcCodigo));
 					expediente.setEstadoBc(estadoBc);
+					estadoBcModificado = true;
 				}
 				
 				if(estadoCodigo != null) {
@@ -86,6 +88,9 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 					expediente.setEstado(estado);
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);
+				if(estadoBcModificado) {
+					ofertaApi.replicateOfertaFlush(expediente.getOferta());
+				}
 			}
 
 		}

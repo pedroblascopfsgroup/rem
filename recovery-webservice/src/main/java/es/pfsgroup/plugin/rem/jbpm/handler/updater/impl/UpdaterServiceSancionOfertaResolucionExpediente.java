@@ -114,6 +114,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
+		boolean estadoBcModificado = false;
 		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		Boolean mandaCorreo = false;
@@ -148,6 +149,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
 				expediente.setEstadoBc(estadoExpedienteBc);
+				estadoBcModificado = true;
 
 				for(TareaExternaValor valor :  valores) {
 					if(CHECK_ANULAR_Y_CLONAR.equals(valor.getNombre())) {
@@ -417,6 +419,9 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				OfertasAgrupadasLbk agrupada = genericDao.get(OfertasAgrupadasLbk.class, genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente", ofertaAceptada));
 				genericDao.deleteById(OfertasAgrupadasLbk.class, agrupada.getId());
 				ofertaApi.calculoComiteLBK(agrupada.getOfertaPrincipal().getId(), null);
+			}
+			if(estadoBcModificado) {
+				ofertaApi.replicateOfertaFlush(expediente.getOferta());
 			}
 		}
 	}

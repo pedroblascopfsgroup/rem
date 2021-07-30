@@ -91,7 +91,8 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {		
+	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		Activo activo = ofertaAceptada.getActivoPrincipal();
 		GestorEntidadDto ge = new GestorEntidadDto();	
@@ -149,6 +150,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 							if(DDCartera.isCarteraBk(activo.getCartera())) {
 								DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA));
 								expediente.setEstadoBc(estadoBc);
+								estadoBcModificado = true;
 							}
 														
 						} else {
@@ -180,6 +182,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 								if(DDCartera.isCarteraBk(activo.getCartera())) {
 									DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
 									expediente.setEstadoBc(estadoBc);
+									estadoBcModificado = true;
 								}
 
 								try {
@@ -260,6 +263,9 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 				}
 				genericDao.save(Oferta.class, ofertaAceptada);
 				genericDao.save(ExpedienteComercial.class, expediente);
+				if(estadoBcModificado) {
+					ofertaApi.replicateOfertaFlush(expediente.getOferta());
+				}
 			}
 		}
 

@@ -2797,6 +2797,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		me.fireEvent("downloadFile", config);
 	},
+	onClickGenerarPdfPropuestaAprobacionOferta : function(btn) {
+		var me = this, config = {};
+
+		config.params = {};
+		config.params.numExpediente = me.getViewModel().get(
+				"expediente.numExpediente");
+		config.url = $AC
+				.getRemoteUrl("operacionventa/generarPdfPropuestaAprobacionOferta");
+
+		me.fireEvent("downloadFile", config);
+	},
 
 	onAgregarGestoresClick : function(btn) {
 

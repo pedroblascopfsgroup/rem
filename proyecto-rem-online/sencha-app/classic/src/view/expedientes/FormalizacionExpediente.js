@@ -857,6 +857,16 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							bind : {
 								visible : '{expediente.isCarteraBankia}'
 							}
+						},
+						{
+							xtype : 'button',
+							reference : 'btnGenerarPropuestaAprobacionOferta',
+							text : ('Prueba button'),//HreRem.i18n('btn.generar.factura.venta'),
+							handler : 'onClickGenerarPdfPropuestaAprobacionOferta',
+							margin : '10 10 10 10',
+							bind : {
+								visible : '{expediente.isCarteraBankia}'
+							}
 						}]
 					}, {
 						xtype : 'container',

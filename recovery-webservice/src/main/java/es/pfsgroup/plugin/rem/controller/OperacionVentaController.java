@@ -24,6 +24,7 @@ import com.itextpdf.text.DocumentException;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GenerarFacturaVentaActivosApi;
+import es.pfsgroup.plugin.rem.api.GenerarPdfAprobacionOfertasApi;
 import es.pfsgroup.plugin.rem.api.ParamReportsApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -54,6 +55,9 @@ public class OperacionVentaController {
 		
 		@Autowired
 		private GenerarFacturaVentaActivosApi facturaVentaApi;
+		
+		@Autowired
+		private GenerarPdfAprobacionOfertasApi pdfAprobacionOfertasApi;
 		
 		@Autowired
 		private ExcelReportGeneratorApi reportApi;
@@ -208,6 +212,20 @@ public class OperacionVentaController {
 			try {
 				
 				File file = facturaVentaApi.getFacturaVenta(expediente);
+				reportApi.sendReport(file, response);
+			
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}				
+		@RequestMapping(method = RequestMethod.GET)
+		public void generarPdfPropuestaAprobacionOferta(Long numExpediente, HttpServletRequest request, HttpServletResponse response) {
+			
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(numExpediente);
+			Oferta oferta = expediente.getOferta();
+			
+			try {
+				File file = pdfAprobacionOfertasApi.getDocumentoPropuestaVenta(oferta);
 				reportApi.sendReport(file, response);
 			
 			} catch (Exception e) {

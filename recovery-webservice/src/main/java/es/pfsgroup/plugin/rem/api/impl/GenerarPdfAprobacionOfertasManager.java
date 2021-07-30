@@ -1,0 +1,378 @@
+package es.pfsgroup.plugin.rem.api.impl;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.nio.file.Files;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import es.capgemini.devon.bo.BusinessOperationException;
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.message.MessageService;
+import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.plugin.rem.api.GenerarPdfAprobacionOfertasApi;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
+import es.pfsgroup.plugin.rem.model.ActivoDescuentoColectivos;
+import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.Comprador;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
+import es.pfsgroup.plugin.rem.model.DtoDataSource;
+import es.pfsgroup.plugin.rem.model.DtoDatosOfertaPdf;
+import es.pfsgroup.plugin.rem.model.DtoInfoActivoFacturaVenta;
+import es.pfsgroup.plugin.rem.model.DtoOfertaPdfPrincipal;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaCaixa;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoEntidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.service.GenerateJasperPdfServiceManager;
+import es.pfsgroup.plugin.rem.utils.FileUtilsREM;
+
+@Component
+public class GenerarPdfAprobacionOfertasManager extends GenerateJasperPdfServiceManager  implements GenerarPdfAprobacionOfertasApi {
+	
+	private static final String TITULO_PROPUESTA_OFERTA_VENTA = "msg.titulo.propuesta.oferta.venta";
+	
+	private static final String DOCUMENTO_PROPUESTA_VENTA_ACTIVO = "PropuestaAprobacionOferta";
+	private static final String SI = "SI";
+	private static final String NO = "NO";
+	
+	protected static final Log logger = LogFactory.getLog(GenerarPdfAprobacionOfertasManager.class);
+	
+	@Resource
+    MessageService messageServices;
+	
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	private SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
+
+	@Override
+	public File getDocumentoPropuestaVenta(Oferta oferta) throws Exception {
+
+		List<File> listaPdf = new ArrayList<File>();
+		File file = null;
+		Map<String, Object> params = paramsHojaDatos(oferta, null);
+		try {
+			file = this.getPDFFile(params, this.dataSourceListadoOfertasActivo(oferta), DOCUMENTO_PROPUESTA_VENTA_ACTIVO);
+			listaPdf.add(file);	
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			throw new Exception(e);
+		}
+
+		
+		
+		File salida = null;
+		try {
+			salida = File.createTempFile("propuestaAprobacionOferta", ".pdf");
+			FileUtilsREM.concatenatePdfs(listaPdf, salida);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			throw new Exception(e);
+		}
+		
+		
+		return salida;
+	}
+	
+	@Override
+	public Map<String, Object> paramsHojaDatos(Oferta oferta, CompradorExpediente compradorExp) throws Exception {		
+		Map<String, Object> mapaValores = new HashMap<String,Object>();
+		DtoOfertaPdfPrincipal dto = getDtoPdfPrincipalRelleno (oferta);
+		mapaValores.put("msgTitulo", messageServices.getMessage(TITULO_PROPUESTA_OFERTA_VENTA));
+		if (dto != null) {
+			mapaValores.put("fechaActual", FileUtilsREM.stringify(dto.getFechaActual()));
+			mapaValores.put("direccionInmueble", FileUtilsREM.stringify(dto.getDireccionInmueble()));
+			mapaValores.put("provinciaInmueble", FileUtilsREM.stringify(dto.getProvinciaInmueble()));
+			mapaValores.put("procedenciaInmueble", FileUtilsREM.stringify(dto.getProcedenciaInmueble()));			
+			mapaValores.put("poblacionInmueble", FileUtilsREM.stringify(dto.getPoblacionInmueble()));
+			mapaValores.put("sociedad", FileUtilsREM.stringify(dto.getSociedad()));
+			mapaValores.put("ur", FileUtilsREM.stringify(dto.getUr()));
+			mapaValores.put("fincaRegistral", FileUtilsREM.stringify(dto.getFincaRegistral()));
+			mapaValores.put("tipoInmueble", FileUtilsREM.stringify(dto.getTipoInmueble()));
+			mapaValores.put("situacionComercial", FileUtilsREM.stringify(dto.getSituacionComercial()));
+			mapaValores.put("situacionPosesoria", FileUtilsREM.stringify(dto.getSituacionPosesoria()));
+			mapaValores.put("situacionJuridica", FileUtilsREM.stringify(dto.getSituacionJuridica()));			
+			mapaValores.put("vpo", FileUtilsREM.stringify(!Checks.esNulo(dto.getVpo()) ? "Si" : "No"));
+			mapaValores.put("fechaDacionCesionAdj", FileUtilsREM.stringify(dto.getFechaDacionCesionAdj()));
+			mapaValores.put("importeDacionCesionAj", FileUtilsREM.stringify(dto.getImporteDacionCesionAj()));
+			mapaValores.put("valorContableBruto", FileUtilsREM.stringify(dto.getValorContableBruto()));
+			mapaValores.put("valorContableNeto", FileUtilsREM.stringify(dto.getValorContableNeto()));
+			mapaValores.put("importePrecioVenta", FileUtilsREM.stringify(dto.getImportePrecioVenta()));
+			mapaValores.put("importeValoracMercadoActual", FileUtilsREM.stringify(dto.getImporteValoracMercadoActual()));
+			mapaValores.put("importeValoracMercadoActualFecha", FileUtilsREM.stringify(dto.getImporteValoracMercadoActualFecha()));
+			mapaValores.put("importeValoracMercado", FileUtilsREM.stringify(dto.getImporteValoracMercado()));
+			mapaValores.put("importeValoracMercadoFecha", FileUtilsREM.stringify(dto.getImporteValoracMercadoFecha()));
+			mapaValores.put("importeValoracMercadoAntigua", FileUtilsREM.stringify(dto.getImporteValoracMercadoAntigua()));
+			mapaValores.put("importeValoracMercadoAntiguaFecha", FileUtilsREM.stringify(dto.getImporteValoracMercadoAntiguaFecha()));
+			mapaValores.put("canalesComercializacion", FileUtilsREM.stringify(dto.getCanalesComercializacion()));
+			mapaValores.put("interesados", FileUtilsREM.stringify(dto.getInteresados()));
+			mapaValores.put("numOferta", FileUtilsREM.stringify(dto.getNumOferta()));
+			mapaValores.put("importePropuesta", FileUtilsREM.stringify(dto.getImportePropuesta()));			
+			mapaValores.put("campanya", FileUtilsREM.stringify(dto.getCampanya()));
+			mapaValores.put("familiarCaixa", FileUtilsREM.stringify(dto.getFamiliarCaixa()));
+			mapaValores.put("multiestrella", FileUtilsREM.stringify(dto.getMultiestrella()));
+			mapaValores.put("antiguoDeudor", FileUtilsREM.stringify(dto.getAntiguoDeudor()));
+			mapaValores.put("compraApiFamiliar", FileUtilsREM.stringify(dto.getCompraApiFamiliar()));			
+			mapaValores.put("compradorUnoNif", FileUtilsREM.stringify(dto.getCompradorUnoNif()));
+			mapaValores.put("compradorUnoNombre", FileUtilsREM.stringify(dto.getCompradorUnoNombre()));
+			mapaValores.put("compradorDosNif", FileUtilsREM.stringify(dto.getCompradorDosNif()));
+			mapaValores.put("compradorDosNombre", FileUtilsREM.stringify(dto.getCompradorDosNombre()));
+			mapaValores.put("api", FileUtilsREM.stringify(dto.getApi()));
+			mapaValores.put("notificarFrob", FileUtilsREM.stringify(dto.getNotificarFrob()));					
+			mapaValores.put("notas", FileUtilsREM.stringify(dto.getNotas()));
+		}
+			
+		return mapaValores;
+	}
+
+	@Override
+		public DtoOfertaPdfPrincipal getDtoPdfPrincipalRelleno(Oferta oferta) {
+			DtoOfertaPdfPrincipal dtoAux = new DtoOfertaPdfPrincipal();
+		
+			Activo activo = oferta.getActivoPrincipal();
+			dtoAux.setFechaActual(new Date());
+			
+			dtoAux = rellenarDatosDtoByActivo(activo,dtoAux);
+			dtoAux = rellenarDatosDtoByOferta(oferta,dtoAux);
+			
+		
+			return dtoAux;
+		}
+	
+	private DtoOfertaPdfPrincipal rellenarDatosDtoByOferta(Oferta oferta, DtoOfertaPdfPrincipal dtoAux) {
+		if (oferta != null) {
+			if (oferta.getNumOferta() != null) {
+				dtoAux.setNumOferta(oferta.getNumOferta().toString());
+			}
+			if (oferta.getImporteOferta() != null) {
+				dtoAux.setImportePropuesta(oferta.getImporteOferta());
+			}
+			if (oferta.getCliente() != null && oferta.getCliente().getNombreCompleto() != null) {
+				dtoAux.setCompradorUnoNombre(oferta.getCliente().getNombreCompleto());
+			}
+			if (oferta.getCliente() != null && oferta.getCliente().getDocumento() != null) {
+				dtoAux.setCompradorUnoNif(oferta.getCliente().getDocumento());
+			}
+			ClienteComercial cliente = oferta.getCliente();
+			if (cliente != null) {
+				if (cliente.getInfoAdicionalPersona() != null && cliente.getInfoAdicionalPersona().getVinculoCaixa() != null) {
+					dtoAux.setFamiliarCaixa(true);
+				}else {
+					dtoAux.setFamiliarCaixa(false);
+				}
+			}
+		}
+		return dtoAux;
+	}
+
+	private DtoOfertaPdfPrincipal rellenarDatosDtoByActivo(Activo activo, DtoOfertaPdfPrincipal dtoAux) {
+		if (activo != null) {
+			if (activo.getDireccionCompleta() != null) {
+				dtoAux.setDireccionInmueble(activo.getDireccionCompleta());
+			}
+			if (activo.getBien() != null && activo.getBien().getLocalizaciones() != null && activo.getBien().getLocalizaciones().get(0).getProvincia() != null
+					&& activo.getBien().getLocalizaciones().get(0).getProvincia().getDescripcion() != null) {
+				dtoAux.setProvinciaInmueble(activo.getBien().getLocalizaciones().get(0).getProvincia().getDescripcion());
+			}
+			if (activo.getBien() != null && activo.getBien().getLocalizaciones() != null && activo.getBien().getLocalizaciones().get(0).getLocalidad() != null
+					&& activo.getBien().getLocalizaciones().get(0).getLocalidad().getDescripcion() != null) {
+				dtoAux.setPoblacionInmueble(activo.getBien().getLocalizaciones().get(0).getLocalidad().getDescripcion());
+			}
+			if (activo.getVpo() != null) {
+				dtoAux.setVpo(activo.getVpo().toString());
+			}
+			if (activo.getNumActivo() != null) {
+				dtoAux.setUr(activo.getNumActivo().toString());
+			}
+			if (activo.getSituacionComercial() != null) {
+				dtoAux.setSituacionComercial(activo.getSituacionComercial().getDescripcion());
+			}
+			if (activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getTipoTituloPosesorio() != null) {
+				dtoAux.setSituacionPosesoria(activo.getSituacionPosesoria().getTipoTituloPosesorio().getDescripcion());
+			}
+			/*if (activo.getTipoActivo() != null) {
+				dtoAux.setTipoInmueble(activo.getTipoActivo().getDescripcion());
+			}*/
+			if (activo.getSubtipoActivo() != null) {
+				dtoAux.setTipoInmueble(activo.getSubtipoActivo().getDescripcion());
+			}
+			if (activo.getTipoComercializacion() != null) {
+				dtoAux.setCanalesComercializacion(activo.getTipoComercializacion().getDescripcion());
+			}
+			ActivoCaixa cb = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+			if (cb != null) {
+				if (cb.getCampanyaPrecioAlquilerNegociable() != null || cb.getCampanyaPrecioVentaNegociable() != null) {
+					dtoAux.setCampanya(true);
+				}else {
+					dtoAux.setCampanya(false);
+				}
+			}
+			ActivoDescuentoColectivos adc = genericDao.get(ActivoDescuentoColectivos.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+			if (adc != null) {
+				if (adc.getDescuentosColectivos() != null) {
+					dtoAux.setMultiestrella(true);
+				}else {
+					dtoAux.setMultiestrella(false);
+				}
+			}
+			
+			//activo.getSituacionComercial().getDescripcion();
+			//activo.getSituacionPosesoria().getTipoTituloPosesorio().getDescripcion();				
+			//activo.getTipoBien().getDescripcion();
+			
+			
+		}
+		return dtoAux;
+	}
+
+	private List<Object> dataSourceListadoOfertasActivo(Oferta oferta) throws Exception {
+		
+		DtoDataSource dtoDataSource = new DtoDataSource();
+		Activo activo = oferta.getActivoPrincipal();
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId());
+		Order order = new Order(OrderType.DESC, "fechaCreacion");
+		
+		List<VGridOfertasActivosAgrupacionIncAnuladas> listaAof = genericDao.getListOrdered(VGridOfertasActivosAgrupacionIncAnuladas.class,order, filter);
+		List<Object> array = new ArrayList<Object>();
+		for (VGridOfertasActivosAgrupacionIncAnuladas iterator : listaAof) {
+			DtoDatosOfertaPdf dto = new DtoDatosOfertaPdf();
+			iterator.getIdOferta();
+			Oferta ofertaAux = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id", iterator.getIdOferta()));
+			dto.setNumOferta(ofertaAux.getNumOferta());
+			dto.setNombre(ofertaAux.getCliente().getNombreCompleto());
+			dto.setImporteOferta(ofertaAux.getImporteOferta());
+			dto.setFechaOferta(FileUtilsREM.stringify(ofertaAux.getFechaAlta()));
+			dto.setEstadoOferta(ofertaAux.getEstadoOferta().getDescripcion());
+			ClienteComercial cliente = ofertaAux.getCliente();
+			if (cliente != null) {
+				if (cliente.getInfoAdicionalPersona() != null && cliente.getInfoAdicionalPersona().getVinculoCaixa() != null) {
+					dto.setFamiliarCaixa(SI);
+				}else {
+					dto.setFamiliarCaixa(NO);
+				}
+			}else {
+				dto.setFamiliarCaixa(NO);
+			}		
+			
+			array.add(dto);
+		}
+		
+		dtoDataSource.setListaOferta(array);
+		List<Object> dataSource =  new ArrayList<Object>();
+		dataSource.add(dtoDataSource);
+		
+		return dataSource;
+	}
+	@Override
+	public WebFileItem getWebFileItemByFile (File file, Long numExpediente) { //ADAPTAR LO QUE SALE DE LA REQUEST PARA QUE LO COJA DEL FILE
+		Boolean crear = true;
+		//MultipartRequest multipartRequest = (MultipartRequest) request;
+        //MultipartFile multipartFile = multipartRequest.getFile("fileUpload");
+        WebFileItem webFileItem = new WebFileItem();
+        FileItem fileItem = null;
+				
+		
+		try {
+			if (file != null) {
+				//TODO creo que no necesido esto
+				FileOutputStream fos = new FileOutputStream(file); 
+				//BufferedWriter out = new BufferedWriter(new FileWriter(file));
+				fos.write(5436);				
+				fos.close();
+												
+				fileItem = new FileItem(file);				
+
+				//fileItem.setContentType(multipartFile.getContentType());
+				//fileItem.setLength(multipartFile.getSize());
+				//String fileName = new String(multipartFile.getOriginalFilename().getBytes("ISO-8859-15"), "UTF-8");
+				String fileName = file.getPath();
+				String fileNameFilter = fileName.substring(fileName.lastIndexOf('/')+1, fileName.length());
+				fileItem.setFileName(fileNameFilter);
+				//fileItem.setLength(5436);
+				//fileItem.setLength(file.getAbsoluteFile().length());
+				fileItem.setContentType("application/pdf");
+				
+				
+				//Con esto meto los parámetros
+				webFileItem.putParameter("tipo", DDTipoDocumentoExpediente.CODIGO_SANCION); //TODO
+				webFileItem.putParameter("subtipo", DDSubtipoDocumentoExpediente.CODIGO_FICHA_TECNICA); //TODO
+				webFileItem.putParameter("idEntidad", numExpediente.toString()); //TODO
+				webFileItem.putParameter("descripcion", ""); //TODO
+				webFileItem.putParameter("activos", ""); //TODO
+				
+			
+			//String rutaFichero = appProperties.getProperty("files.temporaryPath","/tmp")+"/"; 
+			/*if(!Checks.esNulo(multipartFile) && !Checks.esNulo(multipartFile.getOriginalFilename())) {
+				file = new File(rutaFichero+multipartFile.getOriginalFilename());
+				file.createNewFile(); 
+			    FileOutputStream fos = new FileOutputStream(file); 
+			    fos.write(multipartFile.getBytes());
+			    fos.close();
+			
+				fileItem = new FileItem(file); 
+				fileItem.setContentType(multipartFile.getContentType());
+				fileItem.setLength(multipartFile.getSize());
+				String fileName = new String(multipartFile.getOriginalFilename().getBytes("ISO-8859-15"), "UTF-8");
+				fileItem.setFileName(fileName);
+				
+				Enumeration<?> parameters = request.getParameterNames();		
+				
+				while (parameters.hasMoreElements()) {			
+					String key = (String) parameters.nextElement();
+		
+					webFileItem.putParameter(key, new String(request.getParameter(key).getBytes("ISO-8859-15"), "UTF-8"));
+				}*/
+			}else {
+				crear = false;
+			}
+		} catch (Exception e) {
+			throw new BusinessOperationException(e);
+		}
+		if(crear) {
+			webFileItem.setFileItem(fileItem);
+		}
+		return webFileItem;
+		//return null;
+	}
+	
+
+}

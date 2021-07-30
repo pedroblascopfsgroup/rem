@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14686
 --## PRODUCTO=NO
---## Finalidad: Tabla auxiliar guardar los activos que se vayan a borrar en la tabla temporal TMP_ACT_DESTINO_COMERCIAL
+--## Finalidad: Tabla auxiliar guardar los activos que cambien de destino comercial
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -33,7 +33,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TABLA VARCHAR2(2400 CHAR) := 'TMP_DEST_COMERCIAL_REJECT'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TABLA VARCHAR2(2400 CHAR) := 'TMP_AGR_DESTINO_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 
 BEGIN
 
@@ -54,8 +54,7 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TABLA||'...');
             V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TABLA||'
             (
-                ACT_ID  NUMBER(16,0)
-				, COD_RECHAZO VARCHAR(20 CHAR)
+                AGR_ID  NUMBER(16,0)
             )
             ';
             EXECUTE IMMEDIATE V_MSQL;

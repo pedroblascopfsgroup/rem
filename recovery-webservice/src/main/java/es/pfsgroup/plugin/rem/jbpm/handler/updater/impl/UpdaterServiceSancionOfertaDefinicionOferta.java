@@ -139,7 +139,10 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 				expediente.setEstado(estado);
 				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
-
+				
+				if (ofertaAceptada.getOfertaExpress() != null && ofertaAceptada.getOfertaExpress()) {
+					ofertaApi.actualizarOfertaBoarding(valores.get(0).getTareaExterna());
+				}
 				
 				if(expediente.getCondicionante().getSolicitaReserva()!=null 
 						&& RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -22,6 +23,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
@@ -80,6 +82,9 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDefinicionOferta.class);
 
@@ -141,7 +146,9 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 				
 				if (ofertaAceptada.getOfertaExpress() != null && ofertaAceptada.getOfertaExpress()) {
-					ofertaApi.actualizarOfertaBoarding(valores.get(0).getTareaExterna());
+					List<TareaExterna> tareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
+					if (tareas != null && tareas.isEmpty())
+						ofertaApi.actualizarOfertaBoarding(tareas.get(0));
 				}
 				
 				if(expediente.getCondicionante().getSolicitaReserva()!=null 

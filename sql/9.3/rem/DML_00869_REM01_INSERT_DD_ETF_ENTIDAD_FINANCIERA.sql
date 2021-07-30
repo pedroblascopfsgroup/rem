@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Lara Pablo
---## FECHA_CREACION=20210729
+--## FECHA_CREACION=20210730
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14778
@@ -227,7 +227,7 @@ DECLARE
 		T_TIPO_DATA('204','1575','Western Union International Bank GMBH, Sucursal en España'),
 		T_TIPO_DATA('205','229','WIZINK BANK, S.A..'),
 		T_TIPO_DATA('206','1560','Younited, Sucursal en España'),
-		T_TIPO_DATA('207','1','Otros + Tex')
+		T_TIPO_DATA('207','0001','Otros + Tex')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

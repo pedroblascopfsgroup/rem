@@ -4164,11 +4164,13 @@ public class ActivoAdapter {
 			if (particularValidatorApi.esOfertaCaixa(ofertaCreada != null ? ofertaCreada.getNumOferta().toString() : null))
 			createOfertaCaixa(ofertaCreada);
 
+			ofertaApi.replicateOfertaFlush(ofertaCreada);
+
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
 			return ofertaCreada;
 		}
-
+		
 		return ofertaCreada;
 	}
 
@@ -4181,6 +4183,7 @@ public class ActivoAdapter {
 			}else {
 				OfertaCaixa ofertaCaixa = new OfertaCaixa();
 				ofertaCaixa.setOferta(oferta);
+				oferta.setOfertaCaixa(ofertaCaixa);
 				genericDao.save(OfertaCaixa.class,ofertaCaixa);
 			}
 	}

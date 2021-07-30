@@ -5216,6 +5216,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	@Transactional(readOnly = false)
 	public boolean saveFichaExpediente(DtoFichaExpediente dto, Long idExpediente) {
+		boolean estadoBcModificado = false;
 		ExpedienteComercial expedienteComercial = findOne(idExpediente);
 		CompradorExpediente compradorExpediente = null;
 		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
@@ -5373,6 +5374,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				
 				if(dto.getCodigoEstadoBc() != null) {
 					expedienteComercial.setEstadoBc((DDEstadoExpedienteBc) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class, dto.getCodigoEstadoBc()));
+					estadoBcModificado = true;
 				}
 				
 				if (dto.getEstadoPbcArras() != null) {
@@ -5415,6 +5417,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 
+		if(estadoBcModificado) {
+			ofertaApi.replicateOfertaFlush(expedienteComercial.getOferta());
+		}
+		
 		return true;
 	}
 
@@ -12960,8 +12966,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 	
 	@Override
-	public List<DDEntidadFinanciera> getListEntidadFinanciera() {
-		List<DDEntidadFinanciera> entidadesFinancieras = genericDao.getList(DDEntidadFinanciera.class);
+	public List<DDEntidadFinanciera> getListEntidadFinanciera(Long idExpediente) {
+		
+		List<DDEntidadFinanciera> entidadesFinancieras;
+		ExpedienteComercial eco = this.findOne(idExpediente);
+		if(eco != null && eco.getOferta() != null && eco.getOferta().getActivoPrincipal() != null && DDCartera.isCarteraBk(eco.getOferta().getActivoPrincipal().getCartera())) {
+			entidadesFinancieras = genericDao.getList(DDEntidadFinanciera.class);
+		}else {
+			Filter filtro = genericDao.createFilter(FilterType.NULL, "codigoCaixa");
+			entidadesFinancieras = genericDao.getList(DDEntidadFinanciera.class, filtro);
+		}
+		
 		return entidadesFinancieras;
 	}
 	

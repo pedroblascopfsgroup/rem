@@ -2691,9 +2691,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getEntidadFinancieraFiltro(ModelMap model, WebDto webDto) {
+	public ModelAndView getEntidadFinancieraFiltro(ModelMap model, WebDto webDto, Long idExpediente) {
 		try {
-			List<DDEntidadFinanciera> lista = expedienteComercialApi.getListEntidadFinanciera();
+			List<DDEntidadFinanciera> lista = expedienteComercialApi.getListEntidadFinanciera(idExpediente);
 			model.put(RESPONSE_DATA_KEY, lista);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 

@@ -1429,12 +1429,12 @@ public interface ExpedienteComercialApi {
 	ExpedienteComercial getExpedienteByIdTramite(Long idTramite);
 
 	Posicionamiento getUltimoPosicionamiento(Long idExpediente, Filter filter, boolean noMostrarAnulados);
-
-	List<DDEntidadFinanciera> getListEntidadFinanciera();
 	
 	public FechaArrasExpediente getUltimaPropuesta(Long idExpediente, Filter filter);
 	
 	boolean isEmpleadoCaixa(Oferta oferta);
 	
 	boolean doTramitacionAsincrona(Activo activo, Oferta oferta);
+
+	List<DDEntidadFinanciera> getListEntidadFinanciera(Long idExpediente);
 }

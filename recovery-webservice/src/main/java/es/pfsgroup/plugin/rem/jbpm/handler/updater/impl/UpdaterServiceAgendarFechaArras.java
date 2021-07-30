@@ -69,6 +69,7 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 				DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_VALIDACION_DE_FIRMA_DE_ARRAS_POR_BC));
 				expediente.setEstadoBc(estadoBc);
 				genericDao.save(ExpedienteComercial.class, expediente);
+				ofertaApi.replicateOfertaFlush(expediente.getOferta());
 				
 			}
 		}catch(ParseException e) {

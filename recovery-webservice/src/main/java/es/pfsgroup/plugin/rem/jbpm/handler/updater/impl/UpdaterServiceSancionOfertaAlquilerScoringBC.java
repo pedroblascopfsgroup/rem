@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -72,6 +73,9 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+    
+    @Autowired
+    private OfertaApi ofertaApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerScoringBC.class);
     
@@ -83,6 +87,7 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
+		boolean estadoBcModificado = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		DDEstadosExpedienteComercial estadoExp = null;
 		DDEstadoExpedienteBc estadoBc = null;
@@ -101,7 +106,12 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 				}
 				expedienteComercial.setEstado(estadoExp);
 				expedienteComercial.setEstadoBc(estadoBc);
+				estadoBcModificado = true;
 				genericDao.save(ExpedienteComercial.class, expedienteComercial);			}			
+		}
+		
+		if(estadoBcModificado) {
+			ofertaApi.replicateOfertaFlush(expedienteComercial.getOferta());
 		}
 	}
 

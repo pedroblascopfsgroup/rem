@@ -58,6 +58,7 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
+		boolean estadoBcModificado = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		
 		DDEstadosExpedienteComercial estadoExp = null;
@@ -74,11 +75,16 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PTE_SANCION_PATRIMONIO));
 				}
 				expedienteComercial.setEstado(estadoExp);
-				expedienteComercial.setEstadoBc(estadoBc);									
+				expedienteComercial.setEstadoBc(estadoBc);		
+				estadoBcModificado = true;
 			}
 		}
 
 		expedienteComercialApi.update(expedienteComercial, false);
+		
+		if(estadoBcModificado) {
+			ofertaApi.replicateOfertaFlush(expedienteComercial.getOferta());
+		}
 	}
 
 	public String[] getCodigoTarea() {

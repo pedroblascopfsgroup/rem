@@ -150,6 +150,7 @@ import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.InfoAdicionalPersona;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaCaixa;
 import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
@@ -173,6 +174,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
@@ -380,7 +382,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private HibernateUtils hibernateUtils;
-	
 	
 
 	@Override
@@ -1078,8 +1079,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
-			}
-
+			}			
 		}
 
 		return errorsList;
@@ -1654,8 +1654,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (estadoOferta != null) {
 						if (oferta.getEstadoOferta() == null && (DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta)
 								|| (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta)
-								&& caixaBcRestClient.callReplicateClient(oferta.getNumOferta(),CaixaBcRestClient.CLIENTE_TITULARES_DATA)
-								&& caixaBcRestClient.callReplicateOferta(oferta.getNumOferta())))) {
+								&& caixaBcRestClient.callReplicateClient(oferta.getNumOferta(),CaixaBcRestClient.CLIENTE_TITULARES_DATA)))) {
 							oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
 							
 							if (DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta)) {
@@ -1966,25 +1965,25 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 									DDEstadoOferta.CODIGO_PENDIENTE);
 						}
-							estado = genericDao.get(DDEstadoOferta.class, filtro);
-							oferta.setEstadoOferta(estado);
-							updateStateDispComercialActivosByOferta(oferta);
-							genericDao.save(Oferta.class, oferta);
+						estado = genericDao.get(DDEstadoOferta.class, filtro);
+						oferta.setEstadoOferta(estado);
+						updateStateDispComercialActivosByOferta(oferta);
+						genericDao.save(Oferta.class, oferta);
 
-							if (!Checks.esNulo(exp) && !Checks.esNulo(exp.getTrabajo())) {
-								List<ActivoTramite> tramites = activoTramiteApi
-										.getTramitesActivoTrabajoList(exp.getTrabajo().getId());
-								if (!Checks.estaVacio(tramites)) {
-									//Set<TareaActivo> tareasTramite = tramites.get(0).getTareas();
-									List<TareaActivo> tareasTramite = tareaActivoDao.getTareasActivoTramiteBorrados(tramites.get(0).getId());
-									for (TareaActivo tarea : tareasTramite) {
-										// Si se ha borrado sin acabarse, al
-										// descongelar se vuelven a mostrar.
-										if (tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())) {
-											tarea.getAuditoria().setBorrado(false);
-										}
+						if (!Checks.esNulo(exp) && !Checks.esNulo(exp.getTrabajo())) {
+							List<ActivoTramite> tramites = activoTramiteApi
+									.getTramitesActivoTrabajoList(exp.getTrabajo().getId());
+							if (!Checks.estaVacio(tramites)) {
+								//Set<TareaActivo> tareasTramite = tramites.get(0).getTareas();
+								List<TareaActivo> tareasTramite = tareaActivoDao.getTareasActivoTramiteBorrados(tramites.get(0).getId());
+								for (TareaActivo tarea : tareasTramite) {
+									// Si se ha borrado sin acabarse, al
+									// descongelar se vuelven a mostrar.
+									if (tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())) {
+										tarea.getAuditoria().setBorrado(false);
 									}
 								}
+							}
 						}
 					}
 				}
@@ -7082,5 +7081,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		return isEmpleadoCaixa;
+	}
+	
+	@Override
+	public void replicateOfertaFlush(Oferta oferta) {
+		OfertaCaixa ofertaCaixa = oferta.getOfertaCaixa();
+		if(ofertaCaixa != null) {
+			expedienteComercialDao.flush();
+			ofertaCaixa.setEstadoComunicacionC4C((DDEstadoComunicacionC4C)utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoComunicacionC4C.class, DDEstadoComunicacionC4C.C4C_NO_ENVIADO));
+			
+			if(ofertaDao.replicateOfertaFlush(oferta.getNumOferta())) {
+				ofertaCaixa.setEstadoComunicacionC4C((DDEstadoComunicacionC4C)utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoComunicacionC4C.class, DDEstadoComunicacionC4C.C4C_PTE_VALIDACION));
+			}
+
+			genericDao.save(OfertaCaixa.class, ofertaCaixa);
+		}		
 	}
 }

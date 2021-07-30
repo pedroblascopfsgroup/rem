@@ -826,4 +826,6 @@ public interface OfertaApi {
 
     Boolean actualizaEstadoOferta(Long idOferta, String codigoEstado);
     
+	public void replicateOfertaFlush(Oferta oferta);
+
 }

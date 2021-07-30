@@ -89,6 +89,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaObtencionContrato.class);
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		if (ofertaAceptada != null) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -134,6 +135,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 						estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS));
 						expediente.setEstado(estadoExp);
 						expediente.setEstadoBc(estadoBc);
+						estadoBcModificado = true;
 						cambiarEstado = true;
 					}
 				}
@@ -280,6 +282,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				if (!Checks.esNulo(tramite.getActivo())) {
 					activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
 				}
+			}
+			if(estadoBcModificado) {
+				ofertaApi.replicateOfertaFlush(expediente.getOferta());
 			}
 		}
 	}

@@ -217,13 +217,13 @@ BEGIN
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv2 ON eqv2.DD_NOMBRE_CAIXA = ''ESTADO_COMERCIAL_VENTA''  AND eqv2.DD_CODIGO_CAIXA = aux.ESTADO_COMERCIAL_VENTA AND EQV2.BORRADO=0
                LEFT JOIN '|| V_ESQUEMA ||'.DD_ECV_EST_COM_VENTA ecv ON ecv.DD_ECV_CODIGO = eqv2.DD_CODIGO_REM        
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv3 ON eqv3.DD_NOMBRE_CAIXA = ''MOT_NECESIDAD_ARRAS''  AND eqv3.DD_CODIGO_CAIXA = aux.MOT_NECESIDAD_ARRAS AND EQV3.BORRADO=0
-               LEFT JOIN '|| V_ESQUEMA ||'.DD_MNA_MOT_NECESIDAD_ARRAS mna ON mna.DD_MNA_CODIGO = eqv3.DD_CODIGO_REM  
+               LEFT JOIN '|| V_ESQUEMA ||'.DD_MNA_MOT_NECESIDAD_ARRAS mna ON mna.DD_MNA_CODIGO = eqv3.DD_CODIGO_REM     
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv7 ON eqv7.DD_NOMBRE_CAIXA = ''CANAL_DISTRIBUCION_VENTA''  AND eqv7.DD_CODIGO_CAIXA = aux.CANAL_DISTRIBUCION_VENTA AND EQV7.BORRADO=0
                LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR tcr1 ON tcr1.DD_TCR_CODIGO = eqv7.DD_CODIGO_REM   
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv8 ON eqv8.DD_NOMBRE_CAIXA = ''CANAL_DISTRIBUCION_ALQUILER''  AND eqv8.DD_CODIGO_CAIXA = aux.CANAL_DISTRIBUCION_ALQ AND eqv8.BORRADO=0
                LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR tcr2 ON tcr2.DD_TCR_CODIGO = eqv8.DD_CODIGO_REM                 
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''CAT_COMERCIALIZACION''  AND eqv1.DD_CODIGO_CAIXA = aux.CAT_COMERCIALIZACION
-               LEFT JOIN '|| V_ESQUEMA ||'.DD_CTC_CATEG_COMERCIALIZ ctc ON ctc.DD_CTC_CODIGO = eqv1.DD_CODIGO_REM  
+               LEFT JOIN '|| V_ESQUEMA ||'.DD_CTC_CATEG_COMERCIALIZ ctc ON ctc.DD_CTC_CODIGO = eqv1.DD_CODIGO_REM     
                WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                
                ) us ON (us.CBX_ID = act1.CBX_ID )
@@ -238,11 +238,11 @@ BEGIN
                               ,act1.CBX_PRECIO_ALQU_NEGO = us.CBX_PRECIO_ALQU_NEGO 
                               ,act1.CBX_CAMP_PRECIO_ALQ_NEGO = us.CBX_CAMP_PRECIO_ALQ_NEGO 
                               ,act1.CBX_CAMP_PRECIO_VENT_NEGO = us.CBX_CAMP_PRECIO_VENT_NEGO 
-                              ,act1.CBX_NEC_FUERZA_PUBL = us.CBX_NEC_FUERZA_PUBL 
+                              ,act1.CBX_NEC_FUERZA_PUBL = us.CBX_NEC_FUERZA_PUBL
                               ,act1.DD_EAT_ID=us.DD_EAT_ID
                               ,act1.CBX_CANAL_DIST_VENTA= us.CBX_CANAL_DIST_VENTA
                               ,act1.CBX_CANAL_DIST_ALQUILER= us.CBX_CANAL_DIST_ALQUILER
-                              ,act1.DD_CTC_ID = us.DD_CTC_ID                                                                                                         
+                              ,act1.DD_CTC_ID = us.DD_CTC_ID                                                                                                                         
                               ,act1.USUARIOMODIFICAR = ''STOCK_BC''
                               ,act1.FECHAMODIFICAR = sysdate
                               
@@ -259,11 +259,11 @@ BEGIN
                                           CBX_PRECIO_ALQU_NEGO,
                                           CBX_CAMP_PRECIO_ALQ_NEGO,
                                           CBX_CAMP_PRECIO_VENT_NEGO,
-                                          CBX_NEC_FUERZA_PUBL,
+                                          CBX_NEC_FUERZA_PUBL,    
                                           DD_EAT_ID,  
                                           CBX_CANAL_DIST_VENTA,
                                           CBX_CANAL_DIST_ALQUILER,
-                                          DD_CTC_ID,                                                                       
+                                          DD_CTC_ID,                                                                        
                                           USUARIOCREAR,
                                           FECHACREAR
                                           )

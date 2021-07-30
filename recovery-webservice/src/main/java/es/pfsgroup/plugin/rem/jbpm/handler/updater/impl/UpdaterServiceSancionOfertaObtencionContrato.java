@@ -70,6 +70,8 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+    @Autowired
 	private ApiProxyFactory proxyFactory;
 
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
@@ -82,6 +84,8 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	private static final String FECHA_FIRMA = "fechaFirma";
 	private static final String COMBO_RESULTADO = "comboResultado";
     private static final String MOTIVO_APLAZAMIENTO = "motivoAplazamiento";
+    private static final String COMBO_QUITAR = "comboQuitar";
+    private static final String motivoAplazamiento = "Suspensión proceso arras";
 	private static final String T017 = "T017";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -91,6 +95,8 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		Usuario usuarioLogeado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		
 		if (ofertaAceptada != null) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			Integer diasVencimiento = expediente.getCondicionante().getPlazoFirmaReserva();
@@ -151,6 +157,41 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 						fae.setMotivoAnulacion(valor.getValor());
 						
 						genericDao.save(FechaArrasExpediente.class, fae);
+					}
+				}
+				
+				if (COMBO_QUITAR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					if (DDSiNo.SI.equals(valor.getValor())) {
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_PBC_VENTAS);
+						estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+						expediente.setEstado(estadoExp);
+						
+						Filter filtroBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA);
+						estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroBc);
+						expediente.setEstadoBc(estadoBc);
+						
+						genericDao.save(ExpedienteComercial.class, expediente);
+						
+						Filter filtroReserva = genericDao.createFilter(FilterType.EQUALS,  "expediente.id", expediente.getId());
+						Reserva reserva = genericDao.get(Reserva.class, filtroReserva);
+						
+						if (reserva != null) {
+							reserva.getAuditoria().setBorrado(true);
+							reserva.getAuditoria().setUsuarioBorrar(usuarioLogeado.getUsername());
+							reserva.getAuditoria().setFechaBorrar(new Date());
+						}
+						
+						genericDao.update(Reserva.class, reserva);
+
+						fae = expedienteComercialApi.getUltimaPropuesta(expediente.getId(), null);
+						if (fae != null) {
+							DDMotivosEstadoBC motivoBC = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivosEstadoBC.CODIGO_ANULADA));
+							fae.setValidacionBC(motivoBC);
+						}
+						fae.setMotivoAnulacion(motivoAplazamiento);
+						
+						genericDao.save(FechaArrasExpediente.class, fae);
+						
 					}
 				}
 			}

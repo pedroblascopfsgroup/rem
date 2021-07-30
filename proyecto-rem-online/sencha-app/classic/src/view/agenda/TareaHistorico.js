@@ -568,13 +568,16 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 						var motivoAplazamiento = me.down('[name=motivoAplazamiento]');		
 						var tipoArras = me.down('[name=tipoArras]');
 						var fechaEnvio = me.down('[name=fechaEnvio]');
+						var comboQuitar = me.down('[name=comboQuitar]');
 						
 						if(CONST.CARTERA['BANKIA'] == codigoCartera) {
 							me.desocultarCampo(comboResultado);
-							me.desocultarCampo(motivoAplazamiento);														
+							me.desocultarCampo(motivoAplazamiento);		
+							me.desocultarCampo(comboQuitar);	
 						}else{						
 							me.ocultarCampo(comboResultado);
 							me.ocultarCampo(motivoAplazamiento);
+							me.ocultarCampo(comboQuitar);
 						}
 					},
 					
@@ -590,12 +593,16 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 						
 						var fechaFirma = me.down('[name=fechaFirma]');
 						
+						var comboQuitar = me.down('[name=comboQuitar]');
+						
 						if(CONST.CARTERA['BANKIA'] == codigoCartera) {
 							me.desocultarCampo(comboResultado);
 							me.desocultarCampo(motivoAplazamiento);
+							me.desocultarCampo(comboQuitar);
 						}else{
 							me.ocultarCampo(comboResultado);							
 							me.ocultarCampo(motivoAplazamiento);
+							me.ocultarCampo(comboQuitar);
 						}
 					},
 					T017_FirmaContratoValidacion: function() {
@@ -615,6 +622,42 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 						}else{
 							me.ocultarCampo(comboResultado);							
 							me.ocultarCampo(motivoAplazamiento);
+						}
+					},
+					T017_PBCReservaValidacion: function() {
+						var me = this;
+						var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+						
+						var comboQuitar = me.down('[name=comboQuitar]');
+						
+						if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+							me.desocultarCampo(comboQuitar);
+						}else{
+							me.ocultarCampo(comboQuitar);
+						}
+					},
+					T017_AgendarFechaFirmaArrasValidacion: function() {
+						var me = this;
+						var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+						
+						var comboQuitar = me.down('[name=comboQuitar]');
+						
+						if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+							me.desocultarCampo(comboQuitar);
+						}else{
+							me.ocultarCampo(comboQuitar);
+						}
+					},
+					T017_ConfirmarFechaFirmaArrasValidacion: function() {
+						var me = this;
+						var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+						
+						var comboQuitar = me.down('[name=comboQuitar]');
+						
+						if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+							me.desocultarCampo(comboQuitar);
+						}else{
+							me.ocultarCampo(comboQuitar);
 						}
 					},
 

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -9,9 +10,12 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -49,10 +53,15 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
     @Autowired
   	private ActivoTramiteApi activoTramiteApi;
     
+    @Autowired
+	private ApiProxyFactory proxyFactory;
+    
     private static final String FECHA_ENVIO = "fechaEnvio";
     private static final String TIPO_ARRAS = "tipoArras";
     private static final String COMBO_RESULTADO = "comboResultado";
     private static final String MOTIVO_APLAZAMIENTO = "motivoAplazamiento";
+    private static final String COMBO_QUITAR = "comboQuitar";
+   	private static final String motivoAplazamiento = "Suspensión proceso arras";
    	public static final String CODIGO_T013_INSTRUCCIONES_RESERVA = "T013_InstruccionesReserva";
    	public static final String CODIGO_T017_INSTRUCCIONES_RESERVA = "T017_InstruccionesReserva";
    	public static final String CODIGO_T017 = "T017";
@@ -64,6 +73,8 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 		
 		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		Usuario usuarioLogeado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		
 		if(!Checks.esNulo(ofertaAceptada)){
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			FechaArrasExpediente fae = null;
@@ -121,6 +132,40 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 					}
 				}
 				
+				if (COMBO_QUITAR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					if (DDSiNo.SI.equals(valor.getValor())) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_PBC_VENTAS);
+						estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+						expediente.setEstado(estadoExp);
+						
+						Filter filtroBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA);
+						estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroBc);
+						expediente.setEstadoBc(estadoBc);
+						
+						genericDao.save(ExpedienteComercial.class, expediente);
+						
+						Filter filtroReserva = genericDao.createFilter(FilterType.EQUALS,  "expediente.id", expediente.getId());
+						Reserva reserva = genericDao.get(Reserva.class, filtroReserva);
+						
+						if (reserva != null) {
+							reserva.getAuditoria().setBorrado(true);
+							reserva.getAuditoria().setUsuarioBorrar(usuarioLogeado.getUsername());
+							reserva.getAuditoria().setFechaBorrar(new Date());
+						}
+						
+						genericDao.update(Reserva.class, reserva);
+						
+						fae = expedienteComercialApi.getUltimaPropuesta(expediente.getId(), null);
+						if (fae != null) {
+							DDMotivosEstadoBC motivoBC = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivosEstadoBC.CODIGO_ANULADA));
+							fae.setValidacionBC(motivoBC);
+						}
+						fae.setMotivoAnulacion(motivoAplazamiento);
+						
+						genericDao.save(FechaArrasExpediente.class, fae);
+						
+					}
+				}
 				
 				genericDao.save(ExpedienteComercial.class, expediente);
 			}

@@ -2778,6 +2778,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var codigoSubcartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoSubcartera');
         var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
         
+		var comboResultado = me.down('[name=comboResultado]');
+		var motivoAplazamiento = me.down('[name=motivoAplazamiento]');
+		var cartera = me.down('[name=cartera]');
+		var oficinaReserva = me.down('[name=oficinaReserva]');
+		var fechaFirma = me.down('[name=fechaFirma]');
+		var comboQuitar = me.down('[name=comboQuitar]');
+        
         var parametros = me.down("form").getValues();
         parametros.idExpediente = idExpediente;
         
@@ -2798,6 +2805,68 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     		me.down('[name=fechaFirma]').setReadOnly(true);
     		me.campoObligatorio(me.down('[name=fechaFirma]'));
     	}
+		
+		if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+			me.habilitarCampo(comboResultado);
+			me.campoObligatorio(comboResultado);
+			me.habilitarCampo(motivoAplazamiento);
+			me.campoObligatorio(motivoAplazamiento);
+			me.habilitarCampo(comboQuitar);
+			me.campoObligatorio(comboQuitar);
+			comboQuitar.setValue('02');
+			
+			
+	        me.down('[name=comboResultado]').addListener('change', function(combo) {
+	            if (combo.value == '01') { //SI
+	            	me.habilitarCampo(motivoAplazamiento);
+					me.campoObligatorio(motivoAplazamiento);
+					me.deshabilitarCampo(fechaFirma);
+					me.borrarCampo(fechaFirma);
+					me.deshabilitarCampo(cartera);
+					me.deshabilitarCampo(oficinaReserva);
+	            } else { //NO
+					me.deshabilitarCampo(motivoAplazamiento);
+					me.borrarCampo(motivoAplazamiento);
+					me.habilitarCampo(cartera);
+					me.campoNoObligatorio(cartera);					
+					me.habilitarCampo(cartera);
+					me.campoNoObligatorio(cartera);
+					me.habilitarCampo(fechaFirma);					
+	            }
+        	});
+	        
+	        me.down('[name=comboQuitar]').addListener('change', function(combo) {
+	            if (combo.value == '01') { //SI
+	            	me.deshabilitarCampo(comboResultado);
+					me.borrarCampo(comboResultado);
+					me.deshabilitarCampo(motivoAplazamiento);
+					me.borrarCampo(motivoAplazamiento);
+					me.deshabilitarCampo(cartera);
+					me.borrarCampo(cartera);
+					me.deshabilitarCampo(oficinaReserva);
+					me.borrarCampo(oficinaReserva);
+					me.deshabilitarCampo(fechaFirma);
+					me.borrarCampo(fechaFirma);
+	            } else { //NO
+					me.habilitarCampo(comboResultado);
+					me.campoObligatorio(comboResultado);
+					me.habilitarCampo(motivoAplazamiento);
+					me.campoNoObligatorio(motivoAplazamiento);					
+					me.habilitarCampo(cartera);
+					me.campoNoObligatorio(cartera);
+					me.habilitarCampo(oficinaReserva);
+					me.campoNoObligatorio(oficinaReserva);	
+					me.habilitarCampo(fechaFirma);					
+	            }
+        	});
+			
+		}else{
+			//SI NO ES CAIXA/BANKIA
+			me.deshabilitarCampo(comboResultado);
+			me.ocultarCampo(comboResultado);
+			me.deshabilitarCampo(motivoAplazamiento);
+			me.ocultarCampo(motivoAplazamiento);
+		}
     },
     T017_ResolucionExpedienteValidacion: function() {
         var me = this;
@@ -2929,6 +2998,11 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		me.bloquearCampo(fechaEnvio);
 		me.campoObligatorio(fechaEnvio);
 		var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+		
+		var fechaEnvio = me.down('[name=fechaEnvio]');
+		var fechaEnvioPropuesta = me.down('[name=fechaEnvioPropuesta]');
+		var comboQuitar = me.down('[name=comboQuitar]');
 		
         var url =  $AC.getRemoteUrl('expedientecomercial/getUltimaFechaPropuesta');
 		Ext.Ajax.request({
@@ -2947,6 +3021,29 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		    	}
 		    }
 		});
+		
+		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
+			me.habilitarCampo(comboQuitar);
+			me.campoNoObligatorio(comboQuitar);
+			comboQuitar.setValue('02');
+			
+			me.down('[name=comboQuitar]').addListener('change', function(combo) {
+				if (combo.value == '01') { //SI
+					me.deshabilitarCampo(fechaEnvio);
+					me.borrarCampo(fechaEnvio);
+					me.deshabilitarCampo(fechaEnvioPropuesta);
+					me.borrarCampo(fechaEnvioPropuesta);
+				} else { //NO
+					me.habilitarCampo(fechaEnvio);
+					me.campoObligatorio(fechaEnvio);
+					me.habilitarCampo(fechaEnvioPropuesta);
+					me.campoObligatorio(fechaEnvioPropuesta);
+				}
+			});
+		} else {
+			me.deshabilitarCampo(comboQuitar);
+			me.ocultarCampo(comboQuitar);
+		}
 	},
 	
 	T017_ConfirmarFechaFirmaArrasValidacion: function() {
@@ -2955,6 +3052,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var comboValidacionBC = me.down('[name=comboValidacionBC]');
 		var fechaPropuesta = me.down('[name=fechaPropuesta]');
 		var observacionesBC = me.down('[name=observacionesBC]');
+		var comboQuitar = me.down('[name=comboQuitar]');
+		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		
 		
 		me.bloquearCampo(fechaPropuesta);
@@ -2982,6 +3081,37 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		    	}
 		    }
 		});
+		
+		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
+			me.habilitarCampo(comboQuitar);
+			me.campoNoObligatorio(comboQuitar);
+			comboQuitar.setValue('02');
+			
+			me.down('[name=comboQuitar]').addListener('change', function(combo) {
+				if (combo.value == '01') { //SI
+					me.deshabilitarCampo(fechaValidacionBc);
+					me.borrarCampo(fechaValidacionBc);
+					me.deshabilitarCampo(comboValidacionBC);
+					me.borrarCampo(comboValidacionBC);
+					me.deshabilitarCampo(fechaPropuesta);
+					me.borrarCampo(fechaPropuesta);
+					me.deshabilitarCampo(observacionesBC);
+					me.borrarCampo(observacionesBC);
+				} else { //NO
+					me.habilitarCampo(fechaValidacionBc);
+					me.campoObligatorio(fechaValidacionBc);
+					me.habilitarCampo(comboValidacionBC);
+					me.campoObligatorio(comboValidacionBC);
+					me.habilitarCampo(fechaPropuesta);
+					me.campoObligatorio(fechaPropuesta);
+					me.habilitarCampo(observacionesBC);
+					me.campoNoObligatorio(observacionesBC);
+				}
+			});
+		} else {
+			me.deshabilitarCampo(comboQuitar);
+			me.ocultarCampo(comboQuitar);
+		}
 	},
 	
 	T017_AgendarPosicionamientoValidacion: function() {
@@ -3144,6 +3274,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var motivoAplazamiento = me.down('[name=motivoAplazamiento]');		
 		var tipoArras = me.down('[name=tipoArras]');
 		var fechaEnvio = me.down('[name=fechaEnvio]');
+		var comboQuitar = me.down('[name=comboQuitar]');
 		
 		if(CONST.CARTERA['BANKIA'] == codigoCartera) {
 			me.habilitarCampo(comboResultado);
@@ -3152,6 +3283,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.campoObligatorio(motivoAplazamiento);
 			tipoArras.setValue(CONST.TIPO_ARRAS['CODIGO_PENITENCIALES']);
 			me.bloquearCampo(tipoArras);
+			me.habilitarCampo(comboQuitar);
+			me.campoObligatorio(comboQuitar);
+			comboQuitar.setValue('02');
 			
 	        me.down('[name=comboResultado]').addListener('change', function(combo) {
 	            if (combo.value == '01') { //SI
@@ -3167,50 +3301,23 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 					me.campoObligatorio(fechaEnvio);
 	            }
         	});
-			
-		}else{
-			//SI NO ES CAIXA/BANKIA
-			me.deshabilitarCampo(comboResultado);
-			me.ocultarCampo(comboResultado);
-			me.deshabilitarCampo(motivoAplazamiento);
-			me.ocultarCampo(motivoAplazamiento);
-		}
-	},
-	
-	T017_ObtencionContratoReservaValidacion: function() {		
-		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-		
-		var comboResultado = me.down('[name=comboResultado]');
-		var motivoAplazamiento = me.down('[name=motivoAplazamiento]');
-		
-		var cartera = me.down('[name=cartera]');
-		var oficinaReserva = me.down('[name=oficinaReserva]');
-		
-		var fechaFirma = me.down('[name=fechaFirma]');
-		
-		if(CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(comboResultado);
-			me.campoObligatorio(comboResultado);
-			me.habilitarCampo(motivoAplazamiento);
-			me.campoObligatorio(motivoAplazamiento);
-			
-	        me.down('[name=comboResultado]').addListener('change', function(combo) {
+	        
+	        me.down('[name=comboQuitar]').addListener('change', function(combo) {
 	            if (combo.value == '01') { //SI
-	            	me.habilitarCampo(motivoAplazamiento);
-					me.campoObligatorio(motivoAplazamiento);
-					me.deshabilitarCampo(fechaFirma);
-					me.borrarCampo(fechaFirma);
-					me.deshabilitarCampo(cartera);
-					me.deshabilitarCampo(oficinaReserva);
-	            } else { //NO
-					me.deshabilitarCampo(motivoAplazamiento);
+	            	me.deshabilitarCampo(comboResultado);
+					me.borrarCampo(comboResultado);
+	            	me.deshabilitarCampo(motivoAplazamiento);
 					me.borrarCampo(motivoAplazamiento);
-					me.habilitarCampo(cartera);
-					me.campoNoObligatorio(cartera);					
-					me.habilitarCampo(cartera);
-					me.campoNoObligatorio(cartera);
-					me.habilitarCampo(fechaFirma);					
+					me.deshabilitarCampo(tipoArras);
+					me.borrarCampo(tipoArras);
+					me.deshabilitarCampo(fechaEnvio);
+					me.borrarCampo(fechaEnvio);
+
+	            } else { //NO
+					me.habilitarCampo(comboResultado);
+					me.habilitarCampo(motivoAplazamiento);
+					me.habilitarCampo(tipoArras);
+					me.habilitarCampo(fechaEnvio);
 	            }
         	});
 			
@@ -3267,6 +3374,33 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.deshabilitarCampo(motivoAplazamiento);
 			me.ocultarCampo(motivoAplazamiento);
 		}
+	},
+	T017_PBCReservaValidacion: function(){
+		var me = this;
+		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+		
+		var comboRespuesta = me.down('[name=comboRespuesta]');
+		var comboQuitar = me.down('[name=comboQuitar]');
+		
+		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
+			me.habilitarCampo(comboQuitar);
+			me.campoNoObligatorio(comboQuitar);
+			comboQuitar.setValue('02');
+			
+			me.down('[name=comboQuitar]').addListener('change', function(combo) {
+				if (combo.value == '01') { //SI
+					me.deshabilitarCampo(comboRespuesta);
+					me.borrarCampo(comboRespuesta);
+				} else { //NO
+					me.habilitarCampo(comboRespuesta);
+					me.campoObligatorio(comboRespuesta);
+				}
+			});
+		} else {
+			me.deshabilitarCampo(comboQuitar);
+			me.ocultarCampo(comboQuitar);
+		}
+		
 	},
 	
     habilitarCampo: function(campo) {

@@ -14,10 +14,10 @@
 --##        0.2 Se ha modificado la equivalencia del campo ACT_ACTIVO.DD_SCR_ID  y Revisión- [HREOS-14344] - Alejandra García
 --##        0.3 Inclusión de cambios en modelo Fase 1 - [HREOS-14442] - Daniel Algaba
 --##        0.4 Imcluir campo ESTADO_TECNICO - [HREOS-14545] - Alejandra García
---##        0.3 Inclusión de cambios en modelo Fase 1 - [HREOS-14344] - Alejandra García
---##        0.4 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - [HREOS-14545] - Daniel Algaba
---##        0.5 Gestores de gestoría de admisión y administración - [HREOS-14545] - Daniel Algaba
---##	      0.6 Campos IND_ENTREGA_VOL_POSESI - HREOS-14745 - Alejandra García
+--##        0.5 Inclusión de cambios en modelo Fase 1 - [HREOS-14344] - Alejandra García
+--##        0.6 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - [HREOS-14545] - Daniel Algaba
+--##        0.7 Gestores de gestoría de admisión y administración - [HREOS-14545] - Daniel Algaba
+--##	      0.8 Campos IND_ENTREGA_VOL_POSESI - HREOS-14745 - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -203,12 +203,7 @@ BEGIN
                   WHEN aux.IND_FUERZA_PUBLICA IN (''N'',''0'') THEN 0
                END as CBX_NEC_FUERZA_PUBL,
                CASE
-                  WHEN aux.IND_ENTREGA_VOL_POSESI IN (''S'',''1'') THEN 1
-                  WHEN aux.IND_ENTREGA_VOL_POSESI IN (''N'',''0'') THEN 0
-               END as CBX_ENTRADA_VOLUN_POSES,
-               CAIXA.CBX_ID,
-               CASE
-                  WHEN aux.FLAG_EN_REM=0 THEN (SELECT DD_EAT_ID FROM '|| V_ESQUEMA ||'.DD_EAT_EST_TECNICO WHERE DD_EAT_CODIGO=''E02'')
+                  WHEN aux.FLAG_EN_REM=0 THEN (SELECT DD_EAT_ID FROM '|| V_ESQUEMA ||'.DD_EAT_EST_TECNICO WHERE DD_EAT_CODIGO=''E01'')
                END AS DD_EAT_ID,
                tcr1.DD_TCR_ID as CBX_CANAL_DIST_VENTA,
                tcr2.DD_TCR_ID as CBX_CANAL_DIST_ALQUILER,
@@ -222,13 +217,13 @@ BEGIN
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv2 ON eqv2.DD_NOMBRE_CAIXA = ''ESTADO_COMERCIAL_VENTA''  AND eqv2.DD_CODIGO_CAIXA = aux.ESTADO_COMERCIAL_VENTA AND EQV2.BORRADO=0
                LEFT JOIN '|| V_ESQUEMA ||'.DD_ECV_EST_COM_VENTA ecv ON ecv.DD_ECV_CODIGO = eqv2.DD_CODIGO_REM        
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv3 ON eqv3.DD_NOMBRE_CAIXA = ''MOT_NECESIDAD_ARRAS''  AND eqv3.DD_CODIGO_CAIXA = aux.MOT_NECESIDAD_ARRAS AND EQV3.BORRADO=0
-               LEFT JOIN '|| V_ESQUEMA ||'.DD_MNA_MOT_NECESIDAD_ARRAS mna ON mna.DD_MNA_CODIGO = eqv3.DD_CODIGO_REM  
+               LEFT JOIN '|| V_ESQUEMA ||'.DD_MNA_MOT_NECESIDAD_ARRAS mna ON mna.DD_MNA_CODIGO = eqv3.DD_CODIGO_REM     
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv7 ON eqv7.DD_NOMBRE_CAIXA = ''CANAL_DISTRIBUCION_VENTA''  AND eqv7.DD_CODIGO_CAIXA = aux.CANAL_DISTRIBUCION_VENTA AND EQV7.BORRADO=0
                LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR tcr1 ON tcr1.DD_TCR_CODIGO = eqv7.DD_CODIGO_REM   
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv8 ON eqv8.DD_NOMBRE_CAIXA = ''CANAL_DISTRIBUCION_ALQUILER''  AND eqv8.DD_CODIGO_CAIXA = aux.CANAL_DISTRIBUCION_ALQ AND eqv8.BORRADO=0
                LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR tcr2 ON tcr2.DD_TCR_CODIGO = eqv8.DD_CODIGO_REM                 
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''CAT_COMERCIALIZACION''  AND eqv1.DD_CODIGO_CAIXA = aux.CAT_COMERCIALIZACION
-               LEFT JOIN '|| V_ESQUEMA ||'.DD_CTC_CATEG_COMERCIALIZ ctc ON ctc.DD_CTC_CODIGO = eqv1.DD_CODIGO_REM  
+               LEFT JOIN '|| V_ESQUEMA ||'.DD_CTC_CATEG_COMERCIALIZ ctc ON ctc.DD_CTC_CODIGO = eqv1.DD_CODIGO_REM     
                WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                
                ) us ON (us.CBX_ID = act1.CBX_ID )
@@ -243,13 +238,11 @@ BEGIN
                               ,act1.CBX_PRECIO_ALQU_NEGO = us.CBX_PRECIO_ALQU_NEGO 
                               ,act1.CBX_CAMP_PRECIO_ALQ_NEGO = us.CBX_CAMP_PRECIO_ALQ_NEGO 
                               ,act1.CBX_CAMP_PRECIO_VENT_NEGO = us.CBX_CAMP_PRECIO_VENT_NEGO 
-                              ,act1.CBX_NEC_FUERZA_PUBL = us.CBX_NEC_FUERZA_PUBL 
-                              ,act1.CBX_ENTRADA_VOLUN_POSES = us.CBX_ENTRADA_VOLUN_POSES
+                              ,act1.CBX_NEC_FUERZA_PUBL = us.CBX_NEC_FUERZA_PUBL
                               ,act1.DD_EAT_ID=us.DD_EAT_ID
                               ,act1.CBX_CANAL_DIST_VENTA= us.CBX_CANAL_DIST_VENTA
                               ,act1.CBX_CANAL_DIST_ALQUILER= us.CBX_CANAL_DIST_ALQUILER
-                              ,act1.DD_CTC_ID = us.DD_CTC_ID                                                                                                         
-                              ,act1.CBX_NEC_FUERZA_PUBL = us.CBX_NEC_FUERZA_PUBL                                                                                                                      
+                              ,act1.DD_CTC_ID = us.DD_CTC_ID                                                                                                                         
                               ,act1.USUARIOMODIFICAR = ''STOCK_BC''
                               ,act1.FECHAMODIFICAR = sysdate
                               
@@ -266,13 +259,11 @@ BEGIN
                                           CBX_PRECIO_ALQU_NEGO,
                                           CBX_CAMP_PRECIO_ALQ_NEGO,
                                           CBX_CAMP_PRECIO_VENT_NEGO,
-                                          CBX_NEC_FUERZA_PUBL,
-                                          CBX_ENTRADA_VOLUN_POSES,  
+                                          CBX_NEC_FUERZA_PUBL,    
                                           DD_EAT_ID,  
                                           CBX_CANAL_DIST_VENTA,
                                           CBX_CANAL_DIST_ALQUILER,
-                                          DD_CTC_ID,                                                                       
-                                          CBX_NEC_FUERZA_PUBL,                                                                      
+                                          DD_CTC_ID,                                                                        
                                           USUARIOCREAR,
                                           FECHACREAR
                                           )
@@ -289,7 +280,6 @@ BEGIN
                                           us.CBX_CAMP_PRECIO_ALQ_NEGO,
                                           us.CBX_CAMP_PRECIO_VENT_NEGO,
                                           us.CBX_NEC_FUERZA_PUBL,
-                                          us.CBX_ENTRADA_VOLUN_POSES, 
                                           us.DD_EAT_ID, 
                                           us.CBX_CANAL_DIST_VENTA,
                                           us.CBX_CANAL_DIST_ALQUILER,

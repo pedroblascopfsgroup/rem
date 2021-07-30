@@ -10,9 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -28,11 +31,15 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.FechaArrasExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
 
 @Component
@@ -51,6 +58,9 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 	private UtilDiccionarioApi utilDiccionarioApi;
 	
 	@Autowired
+	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
 	private NotificatorServiceSancionOfertaSoloRechazo notificatorRechazo;
 	
 	@Autowired
@@ -61,9 +71,11 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaPBCReserva.class);
 
 	private static final String COMBO_RESPUESTA = "comboRespuesta";
+	private static final String COMBO_QUITAR = "comboQuitar";
 	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	private static final String CODIGO_ANULACION_IRREGULARIDADES = "601";
 	private static final String CODIGO_SUBCARTERA_OMEGA = "65";
+	private static final String motivoAplazamiento = "Suspensión proceso arras";
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Override
@@ -71,9 +83,14 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		Activo activo = ofertaAceptada.getActivoPrincipal();
+		Usuario usuarioLogeado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
+			FechaArrasExpediente fae = null;
+			DDEstadosExpedienteComercial estadoExp = null;
+			DDEstadoExpedienteBc estadoBc = null;
 
 			if (!Checks.esNulo(expediente)) {
 
@@ -171,6 +188,30 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 
 						}
 					
+					}
+					if (COMBO_QUITAR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						if (DDSiNo.SI.equals(valor.getValor())) {
+							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_PBC_VENTAS);
+							estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+							expediente.setEstado(estadoExp);
+							
+							Filter filtroBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA);
+							estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroBc);
+							expediente.setEstadoBc(estadoBc);
+							
+							genericDao.save(ExpedienteComercial.class, expediente);
+							
+							Filter filtroReserva = genericDao.createFilter(FilterType.EQUALS,  "expediente.id", expediente.getId());
+							Reserva reserva = genericDao.get(Reserva.class, filtroReserva);
+							
+							if (reserva != null) {
+								reserva.getAuditoria().setBorrado(true);
+								reserva.getAuditoria().setUsuarioBorrar(usuarioLogeado.getUsername());
+								reserva.getAuditoria().setFechaBorrar(new Date());
+							}
+							
+							genericDao.update(Reserva.class, reserva);
+						}
 					}
 				}
 			}

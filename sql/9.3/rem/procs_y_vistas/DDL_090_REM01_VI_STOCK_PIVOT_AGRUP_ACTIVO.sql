@@ -1,17 +1,18 @@
 --/*
 --##########################################
---## AUTOR=rlb
---## FECHA_CREACION=20190613
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210720
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6082
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-14686
 --## PRODUCTO=NO
---## Finalidad: Vista Materializada exclusiva para Stock que contiene la relación de activos con agrupaciones ObrasNuevas, LotesRestringidos y Asistidas.
+--## Finalidad: Vista Materializada exclusiva para Stock que contiene la relación de activos con agrupaciones ObrasNuevas, LotesRestringidos, Asistidas, LotesRestringidosAlquiler y LotesRestringidosOBREM.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial ANAHUAC DE VICENTE
 --##		0.2 Versión Adrián Molina Garrido
+--##		0.3 Se añaden las nuevas agrupaciones Restringida Alquiler y Restringida OB-REM
 --##########################################
 --*/
 
@@ -31,14 +32,14 @@ DECLARE
     V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
     V_TABLESPACE_IDX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Tablespace de Indices
     V_TEXT_VISTA VARCHAR2(2400 CHAR) := 'VI_STOCK_PIVOT_AGRUP_ACTIVO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Vista Materializada exclusiva para Stock que contiene la relación de activos con agrupaciones ObrasNuevas, LotesRestringidos y Asistidas'; -- Vble. para los comentarios de las tablas
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Vista Materializada exclusiva para Stock que contiene la relación de activos con agrupaciones ObrasNuevas, LotesRestringidos, Asistidas, LotesRestringidosAlquiler y LotesRestringidosOBREM'; -- Vble. para los comentarios de las tablas
     
     
     V_MSQL VARCHAR2(4000 CHAR); 
 
     CUENTA NUMBER;
     
-BEGIN/*versión 0.2*/
+BEGIN/*versión 0.3*/
 
   SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = V_TEXT_VISTA AND OWNER=V_ESQUEMA AND OBJECT_TYPE='MATERIALIZED VIEW';  
   IF CUENTA>0 THEN
@@ -63,7 +64,11 @@ BEGIN/*versión 0.2*/
 		LOTE_NUM_REM, 
 		LOTE_PRINCIPAL, 
 		ASISTIDA_NUM_REM, 
-		ASISTIDA_PRINCIPAL
+		ASISTIDA_PRINCIPAL,
+    LOTE_ALQUILER_NUM_REM, 
+    LOTE_ALQUILER_PRINCIPAL, 
+    LOTE_OBREM_NUM_REM, 
+    LOTE_OBREM_PRINCIPAL
 		FROM (
 			SELECT AGR.AGR_NUM_AGRUP_REM,
 		      AGA.ACT_ID,
@@ -71,9 +76,9 @@ BEGIN/*versión 0.2*/
 		      DECODE (AGR.AGR_ACT_PRINCIPAL, AGA.ACT_ID, 1, 0) AS PRINCIPAL
 		    FROM '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR
 		    JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID
-		    JOIN DD_TAG_TIPO_AGRUPACION TAG ON (TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.DD_TAG_CODIGO IN (''01'',''02'',''13''))
+		    JOIN DD_TAG_TIPO_AGRUPACION TAG ON (TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.DD_TAG_CODIGO IN (''01'',''02'',''13'',''17'',''18''))
 		    WHERE AGR.BORRADO = 0 AND AGR.AGR_FECHA_BAJA IS NULL
-		) PIVOT (MAX(AGR_NUM_AGRUP_REM) AS NUM_REM, MAX(PRINCIPAL) AS PRINCIPAL FOR DD_TAG_CODIGO IN (''01'' OBRA_NUEVA,''02'' LOTE,''13'' ASISTIDA))';
+		) PIVOT (MAX(AGR_NUM_AGRUP_REM) AS NUM_REM, MAX(PRINCIPAL) AS PRINCIPAL FOR DD_TAG_CODIGO IN (''01'' OBRA_NUEVA,''02'' LOTE,''13'' ASISTIDA,''17'' LOTE_ALQUILER,''18'' LOTE_OBREM))';
 				
 
   	DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...Creada OK');

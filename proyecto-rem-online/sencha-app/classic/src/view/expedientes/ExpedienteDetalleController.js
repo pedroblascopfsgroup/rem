@@ -1551,7 +1551,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
 		var esBankia = me.getViewModel().get("expediente.esBankia");
 		var valorComboEsBankia = CONST.COMBO_ENTIDAD_FINANCIERA['BANKIA'];
-		var valorComboEsOtros = CONST.COMBO_ENTIDAD_FINANCIERA['OTRA_ENTIDAD'];
+		var valorComboEsOtros = CONST.COMBO_ENTIDAD_FINANCIERA['OTRA_ENTIDAD_CAIXA'];
 		var disabled = nValue == 0;
     	    	  	
 		numExpedienteRiesgo = me.lookupReference('numExpedienteRiesgo');

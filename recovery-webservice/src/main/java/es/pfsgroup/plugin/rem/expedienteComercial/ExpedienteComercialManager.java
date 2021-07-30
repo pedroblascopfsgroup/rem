@@ -12960,8 +12960,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 	
 	@Override
-	public List<DDEntidadFinanciera> getListEntidadFinanciera() {
-		List<DDEntidadFinanciera> entidadesFinancieras = genericDao.getList(DDEntidadFinanciera.class);
+	public List<DDEntidadFinanciera> getListEntidadFinanciera(Long idExpediente) {
+		
+		List<DDEntidadFinanciera> entidadesFinancieras;
+		ExpedienteComercial eco = this.findOne(idExpediente);
+		if(eco != null && eco.getOferta() != null && eco.getOferta().getActivoPrincipal() != null && DDCartera.isCarteraBk(eco.getOferta().getActivoPrincipal().getCartera())) {
+			entidadesFinancieras = genericDao.getList(DDEntidadFinanciera.class);
+		}else {
+			Filter filtro = genericDao.createFilter(FilterType.NULL, "codigoCaixa");
+			entidadesFinancieras = genericDao.getList(DDEntidadFinanciera.class, filtro);
+		}
+		
 		return entidadesFinancieras;
 	}
 	

@@ -85,6 +85,8 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	
 	public void flush();
 	
+	public Boolean replicateOfertaFlush(Long numOferta);
+	
 	public Oferta getOfertaPrincipal(Long numOferta);
 
 	/**

@@ -106,6 +106,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 		 * como fecha de sanción, en caso contrario, la fecha de sanción será la
 		 * de resolución del comité externo.
 		 */
+		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		ExpedienteComercial expediente = expedienteComercialApi
 				.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -144,6 +145,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 					Filter filtroEstadoBC = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PDTE_APROBACION_BC);
 					DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroEstadoBC);
 					expediente.setEstadoBc(estadoBc);
+					estadoBcModificado = true;
 				}
 				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 				expediente.setEstado(estado);
@@ -280,7 +282,11 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				expediente.setComiteSuperior(comite);
 				expediente.setComiteSancion(comite);
 			}
-		}		
+		}	
+		
+		if(estadoBcModificado) {
+			ofertaApi.replicateOfertaFlush(expediente.getOferta());
+		}
 	}
 
 	public String[] getCodigoTarea() {

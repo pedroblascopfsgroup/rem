@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 
 @Repository("OfertaDao")
 public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements OfertaDao {
@@ -58,6 +59,9 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private CaixaBcRestClient caixaBcRestClient;
 	
 
 	//HREOS-6229
@@ -498,5 +502,12 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			}
 		}
 		return ofertasTramitadas;
+	}
+
+	@Override
+	public Boolean replicateOfertaFlush(Long numOferta) {
+		flush();
+		return caixaBcRestClient.callReplicateOferta(numOferta);
+		
 	}
 }

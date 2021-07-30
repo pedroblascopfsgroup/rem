@@ -57,6 +57,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
+		boolean estadoBcModificado = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Oferta oferta = expedienteComercial.getOferta();
 		
@@ -73,6 +74,8 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 					Filter filtroBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PTE_ENVIO);
 					DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroBc);
 					expedienteComercial.setEstadoBc(estadoBc);
+
+					estadoBcModificado = true;
 					
 					genericDao.save(ExpedienteComercial.class, expedienteComercial);
 					
@@ -87,12 +90,18 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 					DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroBc);
 					expedienteComercial.setEstadoBc(estadoBc);
 					
+					estadoBcModificado = true;
+					
 					genericDao.save(ExpedienteComercial.class, expedienteComercial);
 				}
 			}
 		}
 		
 		expedienteComercialApi.update(expedienteComercial,false);
+		
+		if(estadoBcModificado) {
+			ofertaApi.replicateOfertaFlush(expedienteComercial.getOferta());
+		}
 	}
 
 	public String[] getCodigoTarea() {

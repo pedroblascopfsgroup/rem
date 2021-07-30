@@ -56,6 +56,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
+		boolean estadoBcModificado = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Oferta oferta = expedienteComercial.getOferta();
 		
@@ -74,10 +75,14 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 				}
 				expedienteComercial.setEstado(estadoExp);
 				expedienteComercial.setEstadoBc(estadoBc);
+				estadoBcModificado = true;
 			}
 		}
 
 		expedienteComercialApi.update(expedienteComercial,false);
+		if(estadoBcModificado) {
+			ofertaApi.replicateOfertaFlush(expedienteComercial.getOferta());
+		}
 	}
 
 	public String[] getCodigoTarea() {

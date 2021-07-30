@@ -376,6 +376,9 @@ public class Oferta implements Serializable, Auditable {
 	private DDClasificacionContratoAlquiler clasificacion;  
 	
 
+    @OneToOne(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private OfertaCaixa ofertaCaixa;   
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -1064,6 +1067,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setTipoRiesgoOperacion(DDRiesgoOperacion tipoRiesgoOperacion) {
 		this.tipoRiesgoOperacion = tipoRiesgoOperacion;
+	}
+
+	public OfertaCaixa getOfertaCaixa() {
+		return ofertaCaixa;
+	}
+
+	public void setOfertaCaixa(OfertaCaixa ofertaCaixa) {
+		this.ofertaCaixa = ofertaCaixa;
 	}
 	
 	public ExpedienteComercial getExpedienteComercial() {

@@ -1,18 +1,20 @@
 --/*
 --##########################################
---## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20210723
+--## AUTOR= Lara Pablo Flores
+--## FECHA_CREACION=20210727
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-14695
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-14739
 --## PRODUCTO=NO
---## Finalidad: Ampliar la tabla RES_RESERVAS
+--## Finalidad: Añadir campos a reserva
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
 --*/
+
+
 
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
@@ -36,26 +38,18 @@ DECLARE
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'RES_RESERVAS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_CREAR_FK VARCHAR2(2 CHAR) := 'NO'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
+	
 
     
     /* -- ARRAY CON NUEVAS COLUMNAS */
     TYPE T_ALTER IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
-    			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	T_ALTER(  'RES_FECHA_CONT_ARRAS',			'DATE',			'Fecha de contabilizacion de las arras'	)
+    			--   NOMBRE CAMPO						TIPO CAMPO			DESCRIPCION
+		T_ALTER('RES_FECHA_PROR_PROP_ARRAS',			'DATE',				'Fecha prórroga arras propuesta'),
+     	T_ALTER('RES_FECHA_COM_CLIENTE',				'DATE',				'Fecha comunicación cliente')
 		);
     V_T_ALTER T_ALTER;
-    
-	/* -- ARRAY CON NUEVAS FOREIGN KEYS */
-    TYPE T_FK IS TABLE OF VARCHAR2(4000);
-    TYPE T_ARRAY_FK IS TABLE OF T_FK;
-    V_FK T_ARRAY_FK := T_ARRAY_FK(
-    			--NOMBRE FK 						CAMPO FK 				TABLA DESTINO FK 							CAMPO DESTINO FK
-    	T_FK(	'FK_ICO_PVE',			'ICO_MEDIADOR_ESPEJO_ID',		V_ESQUEMA||'.ACT_PVE_PROVEEDOR',				'PVE_ID')
-    );
-    V_T_FK T_FK;
 
 
 BEGIN
@@ -93,47 +87,8 @@ BEGIN
 
 	END LOOP;
 
-
 	
-	-- Solo si esta activo el indicador de creacion FK, el script creara tambien las FK
-	IF V_CREAR_FK = 'SI' THEN
-
-		-- Bucle que CREA las FK de las nuevas columnas del INFORME COMERCIAL
-		FOR I IN V_FK.FIRST .. V_FK.LAST
-		LOOP
-
-			V_T_FK := V_FK(I);	
-
-			-- Verificar si la FK ya existe. Si ya existe la FK, no se hace nada.
-			V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = '''||V_T_FK(1)||'''';
-			EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-			IF V_NUM_TABLAS = 0 THEN
-				--No existe la FK y la creamos
-				DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_FK(1)||'] -------------------------------------------');
-				V_MSQL := '
-					ALTER TABLE '||V_TEXT_TABLA||'
-					ADD CONSTRAINT '||V_T_FK(1)||' FOREIGN KEY
-					(
-					  '||V_T_FK(2)||'
-					)
-					REFERENCES '||V_T_FK(3)||'
-					(
-					  '||V_T_FK(4)||' 
-					)
-					ON DELETE SET NULL ENABLE
-				';
-
-				EXECUTE IMMEDIATE V_MSQL;
-				--DBMS_OUTPUT.PUT_LINE('[3] '||V_MSQL);
-				DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_FK(1)||' creada en tabla: FK en columna '||V_T_FK(2)||' hacia '||V_T_FK(3)||'.'||V_T_FK(4)||'... OK');
-
-			END IF;
-
-		END LOOP;
-
-	END IF;
-	
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' AMPLIADA CON COLUMNAS NUEVAS Y FKs ... OK *************************************************');
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' AMPLIADA CON COLUMNAS NUEVAS... OK *************************************************');
 	COMMIT;
 	DBMS_OUTPUT.PUT_LINE('[INFO] COMMIT');
 	

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210719
+--## FECHA_CREACION=20210730
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14672
+--## INCIDENCIA_LINK=HREOS-14686
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -18,6 +18,7 @@
 --##	      0.6 Quitar IND_OCUPANTES_VIVIENDA - HREOS-14545
 --##	      0.7 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos. También se ha añadido el Año de concesión y la Fecha de finalización de concesión del activo - HREOS-14545
 --##	      0.8 Campos fiscalidad - HREOS-14672
+--##        0.9 Se inserta si un activo pasa a tener Fecha de inscripción de título o al contrario - [HREOS-14686] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -50,6 +51,46 @@ BEGIN
 --1º Merge tabla ACT_TIT_TITULO
 
    SALIDA := '[INICIO]'||CHR(10);
+
+   V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_ACT_SCM (
+                  ACT_ID
+                  , FECHA_CALCULO
+               )
+               SELECT
+                  DISTINCT ACT.ACT_ID
+                  , SYSDATE
+               FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK APR
+               JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
+               JOIN '||V_ESQUEMA||'.ACT_TIT_TITULO TIT ON ACT.ACT_ID = TIT.ACT_ID AND TIT.BORRADO = 0
+               WHERE (APR.FEC_INSC_TITULO IS NULL AND TIT.TIT_FECHA_INSC_REG IS NOT NULL
+               OR APR.FEC_INSC_TITULO IS NOT NULL AND TIT.TIT_FECHA_INSC_REG IS NULL 
+               OR TO_DATE(APR.FEC_INSC_TITULO,''yyyymmdd'') <> TIT.TIT_FECHA_INSC_REG)
+               AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_ACT_SCM SCM WHERE SCM.ACT_ID = ACT.ACT_ID)';
+
+   EXECUTE IMMEDIATE V_MSQL;
+
+   SALIDA := SALIDA || '[INFO] SE HAN INSERTADO '|| SQL%ROWCOUNT||' REGISTROS EN TMP_ACT_SCM CAMBIO DE FECHA INSCRIPCIÓN [INFO]'|| CHR(10);
+
+   V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_ACT_SCM (
+                  ACT_ID
+                  , FECHA_CALCULO
+               )
+               SELECT
+               DISTINCT ACT.ACT_ID
+               , SYSDATE
+               FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK APR
+               JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
+               JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS ON ACT.ACT_ID = SPS.ACT_ID AND SPS.BORRADO = 0
+               LEFT JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_TITULO_ACT TPA ON SPS.DD_TPA_ID = TPA.DD_TPA_ID AND TPA.BORRADO = 0
+               WHERE (APR.ESTADO_POSESORIO IN (''P01'', ''P06'') AND SPS.SPS_OCUPADO = 1
+               OR APR.ESTADO_POSESORIO IN (''P02'', ''P03'',''P04'') AND SPS.SPS_OCUPADO = 0
+               OR APR.ESTADO_POSESORIO IN (''P02'', ''P04'') AND NOT (SPS.SPS_OCUPADO = 1 AND TPA.DD_TPA_CODIGO = ''01'')
+               OR APR.ESTADO_POSESORIO = ''P03'' AND NOT (SPS.SPS_OCUPADO = 1 AND TPA.DD_TPA_CODIGO = ''02''))
+               AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_ACT_SCM SCM WHERE SCM.ACT_ID = ACT.ACT_ID)';
+
+   EXECUTE IMMEDIATE V_MSQL;
+
+   SALIDA := SALIDA || '[INFO] SE HAN INSERTADO '|| SQL%ROWCOUNT||' REGISTROS EN TMP_ACT_SCM POR CAMBIO DE ESTADO POSESORIO [INFO]'|| CHR(10);
 
    SALIDA := SALIDA || '[INFO] SE VA A PROCEDER A ACTUALIZAR/INSERTAR CAMPOS DE POSESIÓN Y TÍTULO.'|| CHR(10);
 

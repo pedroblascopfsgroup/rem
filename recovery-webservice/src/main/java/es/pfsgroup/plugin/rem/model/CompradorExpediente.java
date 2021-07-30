@@ -27,6 +27,7 @@ import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosPbc;
+import es.pfsgroup.plugin.rem.model.dd.DDInterlocutorOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
@@ -215,7 +216,14 @@ public class CompradorExpediente implements Serializable, Auditable {
 	@JoinColumn(name = "IAP_REPR_ID")
 	private InfoAdicionalPersona infoAdicionalRepresentante;
     
-    
+	@ManyToOne
+	@JoinColumn(name = "DD_FIO_ID")
+	private DDInterlocutorOferta interlocutorOferta;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_FIO_REPR_ID")
+	private DDInterlocutorOferta interlocutorOfertaRepresentante;
+ 
 	@Version   
 	private Long version;
 	
@@ -720,6 +728,22 @@ public class CompradorExpediente implements Serializable, Auditable {
 
 	public void setInfoAdicionalRepresentante(InfoAdicionalPersona infoAdicionalRepresentante) {
 		this.infoAdicionalRepresentante = infoAdicionalRepresentante;
+	}
+
+	public DDInterlocutorOferta getInterlocutorOferta() {
+		return interlocutorOferta;
+	}
+
+	public void setInterlocutorOferta(DDInterlocutorOferta interlocutorOferta) {
+		this.interlocutorOferta = interlocutorOferta;
+	}
+
+	public DDInterlocutorOferta getInterlocutorOfertaRepresentante() {
+		return interlocutorOfertaRepresentante;
+	}
+
+	public void setInterlocutorOfertaRepresentante(DDInterlocutorOferta interlocutorOfertaRepresentante) {
+		this.interlocutorOfertaRepresentante = interlocutorOfertaRepresentante;
 	}
    
 }

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210716
+--## FECHA_CREACION=20210728
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14545
+--## INCIDENCIA_LINK=HREOS-14745
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -14,6 +14,10 @@
 --##        0.2 Se ha modificado la equivalencia del campo ACT_ACTIVO.DD_SCR_ID  y Revisión- [HREOS-14344] - Alejandra García
 --##        0.3 Inclusión de cambios en modelo Fase 1 - [HREOS-14442] - Daniel Algaba
 --##        0.4 Imcluir campo ESTADO_TECNICO - [HREOS-14545] - Alejandra García
+--##        0.5 Inclusión de cambios en modelo Fase 1 - [HREOS-14344] - Alejandra García
+--##        0.6 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - [HREOS-14545] - Daniel Algaba
+--##        0.7 Gestores de gestoría de admisión y administración - [HREOS-14545] - Daniel Algaba
+--##	      0.8 Campos IND_ENTREGA_VOL_POSESI - HREOS-14745 - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -199,16 +203,12 @@ BEGIN
                   WHEN aux.IND_FUERZA_PUBLICA IN (''N'',''0'') THEN 0
                END as CBX_NEC_FUERZA_PUBL,
                CASE
-                  WHEN aux.IND_ENTREGA_VOL_POSESI IN (''S'',''1'') THEN 1
-                  WHEN aux.IND_ENTREGA_VOL_POSESI IN (''N'',''0'') THEN 0
-               END as CBX_ENTRADA_VOLUN_POSES,
-               CAIXA.CBX_ID,
-               CASE
-                  WHEN aux.FLAG_EN_REM=0 THEN (SELECT DD_EAT_ID FROM '|| V_ESQUEMA ||'.DD_EAT_EST_TECNICO WHERE DD_EAT_CODIGO=''E02'')
+                  WHEN aux.FLAG_EN_REM=0 THEN (SELECT DD_EAT_ID FROM '|| V_ESQUEMA ||'.DD_EAT_EST_TECNICO WHERE DD_EAT_CODIGO=''E01'')
                END AS DD_EAT_ID,
                tcr1.DD_TCR_ID as CBX_CANAL_DIST_VENTA,
                tcr2.DD_TCR_ID as CBX_CANAL_DIST_ALQUILER,
-               ctc.DD_CTC_ID as DD_CTC_ID
+               ctc.DD_CTC_ID as DD_CTC_ID,
+               CAIXA.CBX_ID
                FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND ACT2.BORRADO = 0  
                LEFT JOIN  '|| V_ESQUEMA ||'.ACT_ACTIVO_CAIXA CAIXA ON ACT2.ACT_ID=CAIXA.ACT_ID AND CAIXA.BORRADO=0
@@ -239,7 +239,6 @@ BEGIN
                               ,act1.CBX_CAMP_PRECIO_ALQ_NEGO = us.CBX_CAMP_PRECIO_ALQ_NEGO 
                               ,act1.CBX_CAMP_PRECIO_VENT_NEGO = us.CBX_CAMP_PRECIO_VENT_NEGO 
                               ,act1.CBX_NEC_FUERZA_PUBL = us.CBX_NEC_FUERZA_PUBL 
-                              ,act1.CBX_ENTRADA_VOLUN_POSES = us.CBX_ENTRADA_VOLUN_POSES
                               ,act1.DD_EAT_ID=us.DD_EAT_ID
                               ,act1.CBX_CANAL_DIST_VENTA= us.CBX_CANAL_DIST_VENTA
                               ,act1.CBX_CANAL_DIST_ALQUILER= us.CBX_CANAL_DIST_ALQUILER
@@ -261,7 +260,6 @@ BEGIN
                                           CBX_CAMP_PRECIO_ALQ_NEGO,
                                           CBX_CAMP_PRECIO_VENT_NEGO,
                                           CBX_NEC_FUERZA_PUBL,
-                                          CBX_ENTRADA_VOLUN_POSES,  
                                           DD_EAT_ID,  
                                           CBX_CANAL_DIST_VENTA,
                                           CBX_CANAL_DIST_ALQUILER,
@@ -282,7 +280,6 @@ BEGIN
                                           us.CBX_CAMP_PRECIO_ALQ_NEGO,
                                           us.CBX_CAMP_PRECIO_VENT_NEGO,
                                           us.CBX_NEC_FUERZA_PUBL,
-                                          us.CBX_ENTRADA_VOLUN_POSES, 
                                           us.DD_EAT_ID, 
                                           us.CBX_CANAL_DIST_VENTA,
                                           us.CBX_CANAL_DIST_ALQUILER,
@@ -322,6 +319,44 @@ BEGIN
    
  
 
+   SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
+   SALIDA := SALIDA || '   [INFO] 10 - INSERTAR/ACTUALIZAR EN ACT_SPS_SIT_POSESORIA'|| CHR(10);   
+
+       V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA act1
+				using (		
+               SELECT
+                  CASE
+                     WHEN aux.IND_ENTREGA_VOL_POSESI IN (''S'',''1'') THEN 1
+                     WHEN aux.IND_ENTREGA_VOL_POSESI IN (''N'',''0'') THEN 0
+                  END as SPS_POSESION_NEG,
+                  aux.NUM_IDENTIFICATIVO as ACT_NUM_ACTIVO_CAIXA,
+                  act2.ACT_ID as ACT_ID
+               FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
+               JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
+               WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
+               
+               ) us ON (us.ACT_ID = act1.ACT_ID )
+               when matched then update set  
+                   act1.SPS_POSESION_NEG=us.SPS_POSESION_NEG                                                                                                                                 
+                  ,act1.USUARIOMODIFICAR = ''STOCK_BC''
+                  ,act1.FECHAMODIFICAR = sysdate               
+               WHEN NOT MATCHED THEN
+                  INSERT  (SPS_ID,                                       
+                           ACT_ID,
+                           SPS_POSESION_NEG,                                                                                                                                           
+                           USUARIOCREAR,
+                           FECHACREAR
+                           )
+                  VALUES ('|| V_ESQUEMA ||'.S_ACT_SPS_SIT_POSESORIA.NEXTVAL,
+                           us.ACT_ID,
+                           us.SPS_POSESION_NEG,                                                        
+                           ''STOCK_BC'',
+                           sysdate)';
+
+   EXECUTE IMMEDIATE V_MSQL;
+
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);   
 COMMIT;
 
 EXCEPTION

@@ -141,6 +141,14 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                		hidden: '{!activo.isCarteraSareb}'
 				                	}
 				                
+				                },
+				                {
+				                	xtype: 'displayfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.agrupacion.obra.nueva.bc'),
+						        	bind:{	value: '{activo.unidadEconomicaCaixa}',
+						        			hidden: '{activo.dentroAgrupacionObraNuevaBC}',
+						        			readOnly: true
+						        	}
 				                }
 				                
 							]

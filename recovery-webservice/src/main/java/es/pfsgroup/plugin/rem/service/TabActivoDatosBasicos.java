@@ -58,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
@@ -1243,6 +1244,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			estaEnRestringida = Boolean.TRUE; 
 		}
 		activoDto.setEsActivoPrincipalAgrupacionRestringida(estaEnRestringida);
+		
+		Filter filtroActivoCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroActivoCaixa);
+		
+		if (activoCaixa != null && activoCaixa.getUnidadEconomicaCaixa() != null) {
+			activoDto.setUnidadEconomicaCaixa(activoCaixa.getUnidadEconomicaCaixa());
+		}
 		
 		return activoDto;
 	}

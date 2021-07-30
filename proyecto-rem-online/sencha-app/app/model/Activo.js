@@ -1293,6 +1293,20 @@ Ext.define('HreRem.model.Activo', {
 			{
 				name:'esActivoPrincipalAgrupacionRestringida',
 				type: 'boolean'
+			},
+			{
+				name:'unidadEconomicaCaixa'
+			},
+			{
+				name:'dentroAgrupacionObraNuevaBC',
+				calculate: function(data) {
+    				if (Ext.isEmpty(data.unidadEconomicaCaixa)) {
+    					return true;
+    				} else {
+    					return false;
+    				}
+				},
+				depends: 'unidadEconomicaCaixa'
 			}
     ],
     

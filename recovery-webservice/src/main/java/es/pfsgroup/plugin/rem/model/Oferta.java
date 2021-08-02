@@ -321,7 +321,6 @@ public class Oferta implements Serializable, Auditable {
     
 	@Column(name = "OFR_VENTA_SOBRE_PLANO")
     private Boolean ventaSobrePlano;
-	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_ROP_ID")
     private DDRiesgoOperacion riesgoOperacion;
@@ -346,8 +345,6 @@ public class Oferta implements Serializable, Auditable {
 
 	@Column(name = "OFR_DOC_RESP_PRESCRIPTOR")
     private Boolean ofrDocRespPrescriptor;
-	
-	
 	@Column(name = "OFR_SOSPECHOSA")
     private Boolean ofertaSospechosa;
 	

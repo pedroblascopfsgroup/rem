@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -27,6 +28,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.exception.UserException;
@@ -75,6 +77,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
@@ -152,6 +155,7 @@ import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.ProveedorGestorCajamar;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
@@ -212,6 +216,7 @@ import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ActivosLoteOfertaDto;
+import es.pfsgroup.plugin.rem.rest.dto.ComunicacionBoardingResponse;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
@@ -239,6 +244,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private static final String T017 = "T017";
 	private static final String DD_TCR_CODIGO_OBRA_NUEVA = "03";
 	private static final String CODIGO_TIPO_GESTOR_COMERCIAL = "GCOM";
+	private static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
+	private static final String CODIGO_T017_DEFINICION_OFERTA = "T017_DefinicionOferta";
+	private static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
+	private static final String CODIGO_T017_RESOLUCION_CES = "T017_ResolucionCES";
+	private static final String CODIGO_T013_RATIFICACION_COMITE = "T013_RatificacionComite";
+    private static final String CODIGO_T013_RESOLUCION_TANTEO = "T013_ResolucionTanteo";
+   	private static final String CODIGO_T013_RESPUESTA_OFERTANTE = "T013_RespuestaOfertante";
+   	private static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
+   	private static final String CODIGO_T017_PBC_VENTA = "T017_PBCVenta";
+   	private static final String CODIGO_T017_RATIFIACION_COMITE_CES = "T017_RatificacionComiteCES";
+   	private static final String CODIGO_T017_RESOLUCION_PRO_MANZANA = "T017_ResolucionPROManzana";
+   	private static final String CODIGO_T017_PBCRESERVA = "T017_PBCReserva";
+	private static final String CODIGO_T017_INSTRUCCIONES_RESERVA = "T017_InstruccionesReserva";
+	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
+
 
 	@Resource
 	MessageService messageServices;
@@ -372,6 +392,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Autowired
 	private ActivoCargasApi activoCargasApi;
 	
+	@Autowired
+	private BoardingComunicacionApi boardingComunicacionApi;
+	
+	@Resource
+    private Properties appProperties;	
 	
 
 	@Override
@@ -6500,7 +6525,94 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 			return gastoPendiente;
-	}	
+	}
+	
+	@Override
+	public String actualizarOfertaBoarding(TareaExterna tareaExterna) {
+		
+		
+		
+		if(!boardingComunicacionApi.modoRestClientBoardingActivado()) {
+			return null;
+		}
+		
+		Oferta oferta = tareaExternaToOferta(tareaExterna);
+		ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+		Activo activo = oferta.getActivoPrincipal();
+		Reserva reserva = expedienteComercial.getReserva();
+		ComunicacionBoardingResponse response = null;
+		PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(oferta.getActivoPrincipal().getId());
+		
+		String resultado = null;
+		String codSubCartera = !Checks.esNulo(activo.getSubcartera()) ? activo.getSubcartera().getCodigo() : null;
+		
+		Boolean obtencionReservaFinalizada = false;
+		Boolean solicitaReserva = checkReserva(oferta);
+		
+		Filter filtroTbj = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", expedienteComercial.getTrabajo().getId());
+		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTbj);
+		
+		if(solicitaReserva) {
+			if(tieneTarea(tramite, CODIGO_T017_PBCRESERVA) == 0 
+					&& tieneTarea(tramite, CODIGO_T017_INSTRUCCIONES_RESERVA) == 0 
+					&& tieneTarea(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA) == 0
+					&& tieneTarea(tramite, CODIGO_T017_PBC_VENTA) == 0) {
+				obtencionReservaFinalizada = true;
+			}else {				
+				obtencionReservaFinalizada = tieneTarea(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA) == 2;
+			}
+		}
+		
+		if (oferta != null && expedienteComercial != null && esOfertaValidaCFVByCarteraSubcartera(oferta) && (oferta.getOfertaEspecial() == null || !oferta.getOfertaEspecial())) {
+			
+			if (CODIGO_T013_DEFINICION_OFERTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+					&& ((checkAtribuciones(oferta) && perimetro.getAplicaFormalizar() == 1) 
+							|| (oferta.getOfertaExpress() != null && oferta.getOfertaExpress()))) {
+				
+				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
+				
+			} else if (CODIGO_T013_RESOLUCION_COMITE.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+					|| CODIGO_T013_RATIFICACION_COMITE.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+				
+				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
+				
+			} else if ((CODIGO_T017_RESOLUCION_CES.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+					|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(tareaExterna.getTareaProcedimiento().getCodigo())) 
+					&& DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())) {
+				
+				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
+				
+			} else if (CODIGO_T013_RESOLUCION_TANTEO.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+					&& ((!Checks.esNulo(reserva) && !DDEstadosReserva.CODIGO_FIRMADA.equals(reserva.getEstadoReserva().getCodigo())) || Checks.esNulo(reserva))) {
+				
+				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
+				
+			} else if (CODIGO_T013_RESPUESTA_OFERTANTE.equals(tareaExterna.getTareaProcedimiento().getCodigo())
+					&& !trabajoApi.checkBankia(expedienteComercial.getTrabajo())) {
+				
+				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
+				
+			} else if ((CODIGO_T013_RESULTADO_PBC.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+					|| CODIGO_T017_PBC_VENTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()))
+					&& DDSubcartera.CODIGO_OMEGA.equals(codSubCartera)) {
+				
+				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
+				
+			} else if (CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+					&& !obtencionReservaFinalizada) {
+				
+				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
+				
+			}
+		}
+		
+		
+		if(response != null && !response.getSuccess() && boardingComunicacionApi.comunicacionBoardingActivada()) {
+			resultado = response.getMensaje() == null ? ComunicacionBoardingResponse.KO_ACTUALIZACION_OFERTA_BOARDING : response.getMensaje() ;
+		}
+		
+		return resultado;
+	}
 	
 	public void saveTextoOfertaWS(DtoTextosOferta dto, Oferta oferta) throws UserException {
 		TextosOferta textoOferta;
@@ -6783,6 +6895,67 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public List<Oferta> getListOtrasOfertasTramitadasActivo(Long idActivo){
 		return ofertaDao.getListOtrasOfertasTramitadasActivo(idActivo);
 	}
+	
+	@Override
+	public boolean esOfertaValidaCFVByCarteraSubcartera(Oferta oferta) {
+		
+		 String codCartera = null;
+		 String codSubcartera = null;
+		 
+		 if (oferta != null && oferta.getActivoPrincipal() != null) {
+			 
+			if (oferta.getActivoPrincipal().getCartera() != null) 
+				codCartera = oferta.getActivoPrincipal().getCartera().getCodigo();
+			if	(oferta.getActivoPrincipal().getSubcartera() != null)
+				codSubcartera = oferta.getActivoPrincipal().getSubcartera().getCodigo();
+			
+		}
+		
+		
+		 if (codCartera != null && codSubcartera != null ) {
+			 
+			 if(codCartera.equals(DDCartera.CODIGO_CARTERA_BANKIA))
+				return (codSubcartera.equals(DDSubcartera.CODIGO_BAN_BK) || codSubcartera.equals(DDSubcartera.CODIGO_BAN_BH) 
+						|| codSubcartera.equals(DDSubcartera.CODIGO_BAN_BFA) || codSubcartera.equals(DDSubcartera.CODIGO_BANKIA_SAREB) || codSubcartera.equals(DDSubcartera.CODIGO_BAN_TITULIZADA));
+			 
+			 else if (codCartera.equals(DDCartera.CODIGO_CARTERA_CAJAMAR))
+				 return (codSubcartera.equals(DDSubcartera.CODIGO_CAJ_INMOBILIARIO));
+			
+			 else if (codCartera.equals(DDCartera.CODIGO_CARTERA_CERBERUS))
+				 return (codSubcartera.equals(DDSubcartera.CODIGO_AGORA_INMOBILIARIO) || codSubcartera.equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO) 
+							|| codSubcartera.equals(DDSubcartera.CODIGO_CERB_DIVARIAN) || codSubcartera.equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB) || codSubcartera.equals(DDSubcartera.CODIGO_CERB_INMOVILIARIO)
+							|| codSubcartera.equals(DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO) || codSubcartera.equals(DDSubcartera.CODIGO_ZEUS_INMOBILIARIO) || codSubcartera.equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB));
+				 
+		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_HYT))
+		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_HYT_INMOBILIARIO));
+		    	 
+		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_JAIPUR))
+		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO) || codSubcartera.equals(DDSubcartera.CODIGO_JAIPUR_JAIPUR));
+		    
+		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_LIBERBANK))
+		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_LBKN_CLM) || codSubcartera.equals(DDSubcartera.CODIGO_LBKN_BYP) 
+							|| codSubcartera.equals(DDSubcartera.CODIGO_LBKN_LIBERBANK) || codSubcartera.equals(DDSubcartera.CODIGO_LBKN_MOSCATA) || codSubcartera.equals(DDSubcartera.CODIGO_LBKN_RETAMAR)
+							|| codSubcartera.equals(DDSubcartera.CODIGO_LIBERBANK_INMOBILIARIO));
+		    			 
+		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_SAREB))
+		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_SAR_INMOBILIARIO));
+			 
+		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_BBVA))
+		    	 return true;
+		    				 
+		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_THIRD_PARTY))
+		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_THIRD_PARTIES_COMERCIAL_ING) || codSubcartera.equals(DDSubcartera.CODIGO_OMEGA));
+		    					 
+		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_SIN_DEFINIR))
+		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_SIN_DEFINIR_INMB));
+			 
+		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_OTRAS_CARTERAS))
+		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_OTRAS_CARTERAS_INMB));
 
+			 
+		 }
+	
+		return false;
+	}
 }
 	

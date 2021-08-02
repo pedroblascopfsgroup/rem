@@ -30,12 +30,14 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.DDTipoBien;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBDDOrigenBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
+import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClasificacionApple;
@@ -62,6 +64,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
@@ -565,6 +568,9 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "ACT_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<GastoAsociadoAdquisicion> gastosAsociados;
+    
+    @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private ActivoAdmisionRevisionTitulo admisionRevisionTitulo;
     
     // Getters del activo --------------------------------------------
     
@@ -1979,6 +1985,14 @@ public class Activo implements Serializable, Auditable {
       }
       return null;
   }
+  
+  public boolean tieneCedulaHabitabilidad() {
+	  for (ActivoAdmisionDocumento ado : admisionDocumento) {
+          if (DDTipoDocumentoActivo.CODIGO_CEDULA_HABITABILIDAD.equals(ado.getConfigDocumento().getTipoDocumentoActivo().getCodigo())
+        		  || DDTipoDocumentoActivo.CODIGO_CEDULA_HABITABILIDAD2.equals(ado.getConfigDocumento().getTipoDocumentoActivo().getCodigo())) { return true; }
+      }
+      return false;
+  }
    
   public void addAdjuntoProyecto(FileItem fileItem) {
 	   AdjuntosProyecto adjuntosProyecto = new AdjuntosProyecto(fileItem);
@@ -2155,4 +2169,15 @@ public class Activo implements Serializable, Auditable {
 	public void setTipoTransmision(DDTipoTransmision tipoTransmision) {
 		this.tipoTransmision = tipoTransmision;
 	}
+
+	public ActivoAdmisionRevisionTitulo getAdmisionRevisionTitulo() {
+		return admisionRevisionTitulo;
+	}
+
+	public void setAdmisionRevisionTitulo(ActivoAdmisionRevisionTitulo admisionRevisionTitulo) {
+		this.admisionRevisionTitulo = admisionRevisionTitulo;
+	}
+	
+	
+	
 }

@@ -763,11 +763,25 @@ public class OfertasController {
 				}else {
 					codTarea = jsonFields.get("codTarea").toString();
 					
+					
+					
+					
 					if(!ofertaDao.tieneTareaActiva(codTarea, ofrNumOferta)) 
 					{
-						error = RestApi.REST_MSG_VALIDACION_TAREA;
-						errorDesc = "La tarea " + codTarea + " no está activa en esta oferta.";
-						throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
+						if (ofertaDao.tieneTareaFinalizada(codTarea, ofrNumOferta)) {
+							
+							error = RestApi.REST_MSG_VALIDACION_TAREA;
+							errorDesc = "La tarea " + codTarea + " ya está avanzada en esta oferta.";
+							throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
+							
+						}else {
+							error = RestApi.REST_MSG_VALIDACION_TAREA;
+							errorDesc = "La tarea " + codTarea + " no está activa en esta oferta.";
+							throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
+						}
+						
+						
+						
 					}
 					
 					tareaId = ofertaApi.getIdTareaByNumOfertaAndCodTarea(Long.parseLong(ofrNumOferta.toString()), codTarea);
@@ -802,8 +816,13 @@ public class OfertasController {
 			logger.error("Error avance tarea ", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", id);
-			model.put("error",error);
-			model.put("descError", errorDesc);
+			if(error == null || errorDesc == null) {
+				model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+				model.put("descError", e.getMessage());
+			}else {
+				model.put("error",error);
+				model.put("descError", errorDesc);
+			}
 			model.put("success", false);
 		}
 

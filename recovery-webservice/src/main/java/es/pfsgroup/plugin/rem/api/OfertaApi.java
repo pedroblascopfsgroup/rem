@@ -819,4 +819,8 @@ public interface OfertaApi {
 	
 	public ExpedienteComercial tareaExternaToExpediente(TareaExterna tareaExterna);
 
+	public String actualizarOfertaBoarding(TareaExterna tareaExterna);
+
+	boolean esOfertaValidaCFVByCarteraSubcartera(Oferta oferta);
+
 }

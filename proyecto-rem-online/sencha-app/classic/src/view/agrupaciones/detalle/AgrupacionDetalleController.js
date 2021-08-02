@@ -1362,8 +1362,44 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		} else {
 			me.getView().lookupReference('autorizacionTramOfertasAgrupacion').setHidden(true);
 		}
+	},   
+    
+    mostrarCrearOfertaTramitada: function(editor, grid, context) {   	
+		var me = this;
+		
+		me.getView().fireEvent('openModalWindow', "HreRem.view.agrupaciones.detalle.TramitarOfertaAgrupacionWindow", {
+			editor: editor,
+			grid: grid,
+			context: context
+        });	    
 	},
+	
+	hideWindowCrearOferta: function(btn) {
+		var me = this;
+		var window = btn.up('window');
+	  	var idAgrupacion = me.getViewModel().get("agrupacionficha.id");
 
+		window.hide();
+		me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['AGRUPACION'], idAgrupacion);
+	}, 
+
+    onClickCrearOfertaTramitada: function (btn){
+ 		var me = this;
+ 		var ventanaCrearOferta = btn.up('[reference=crearofertawindowref]');
+ 		var editor = ventanaCrearOferta.editor;
+ 		var gridListadoOfertas = ventanaCrearOferta.grid;
+ 		var context = ventanaCrearOferta.context;
+ 		
+ 		context.record.data.ventaCartera = ventanaCrearOferta.down('[reference=checkVentaCartera]').value;
+ 		context.record.data.ofertaEspecial = ventanaCrearOferta.down('[reference=checkOfertaEspecial]').value;
+ 		context.record.data.ventaSobrePlano = ventanaCrearOferta.down('[reference=checkVentaSobrePlano]').value;
+ 		context.record.data.codRiesgoOperacion = ventanaCrearOferta.down('[reference=tipoRiesgoOperacionRef]').value;
+ 		
+ 		gridListadoOfertas.saveFn(editor, gridListadoOfertas, context);
+ 		
+ 		me.hideWindowCrearOferta(btn);
+ 		
+	},
 	
     checkVisibilityOfBtnCrearTrabajo: function () {
        var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);

@@ -25,6 +25,10 @@ public class DtoOfertaActivo extends WebDto {
 	private Boolean esAnulacion;
 	private Boolean gencat;
 	private Date fechaEntradaCRMSF;
+	private Boolean ventaCartera;
+	private Boolean ofertaEspecial;
+	private Boolean ventaSobrePlano;
+	private String codRiesgoOperacion;
 	
 	
 	public Long getIdOferta() {
@@ -87,5 +91,29 @@ public class DtoOfertaActivo extends WebDto {
 	}
 	public void setFechaEntradaCRMSF(Date fechaEntradaCRMSF) {
 		this.fechaEntradaCRMSF = fechaEntradaCRMSF;
+	}
+	public Boolean getVentaCartera() {
+		return ventaCartera;
+	}
+	public void setVentaCartera(Boolean ventaCartera) {
+		this.ventaCartera = ventaCartera;
+	}
+	public Boolean getOfertaEspecial() {
+		return ofertaEspecial;
+	}
+	public void setOfertaEspecial(Boolean ofertaEspecial) {
+		this.ofertaEspecial = ofertaEspecial;
+	}
+	public Boolean getVentaSobrePlano() {
+		return ventaSobrePlano;
+	}
+	public void setVentaSobrePlano(Boolean ventaSobrePlano) {
+		this.ventaSobrePlano = ventaSobrePlano;
+	}
+	public String getCodRiesgoOperacion() {
+		return codRiesgoOperacion;
+	}
+	public void setCodRiesgoOperacion(String codRiesgoOperacion) {
+		this.codRiesgoOperacion = codRiesgoOperacion;
 	}
 }

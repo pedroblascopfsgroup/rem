@@ -144,11 +144,10 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			        },
 		            flex: 1
 		        },
-		        /*{
-		            dataIndex: 'numExpediente',
-		            text: HreRem.i18n('header.oferta.expediente'),
-		            flex: 1
-		        },*/
+		        /*
+				 * { dataIndex: 'numExpediente', text:
+				 * HreRem.i18n('header.oferta.expediente'), flex: 1 },
+				 */
 		        {
 	    			xtype: 'actioncolumn',
 	    			text: HreRem.i18n('header.oferta.expediente'),
@@ -238,7 +237,10 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		        
 		];
 		
-		me.cloneExpedienteButton = true; // No modificar este, la logica de mostrar o no el bot�n est� en el metodo calcularMostrarBotonClonarExpediente
+		me.cloneExpedienteButton = true; // No modificar este, la logica de
+											// mostrar o no el bot�n est� en
+											// el metodo
+											// calcularMostrarBotonClonarExpediente
 		
         me.callParent(); 
         
@@ -263,7 +265,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			}
 		}
 
-		// Comprueba que exista un campo de tipo alquiler antes de anyadir  una oferta
+		// Comprueba que exista un campo de tipo alquiler antes de anyadir una
+		// oferta
 		if (!noContieneTipoAlquiler) {
 			var parent= me.up('ofertascomercialactivo'),
 			oferta = Ext.create('HreRem.model.OfertaComercialActivo', {idActivo: idActivo, numActivo: numActivo});
@@ -352,18 +355,24 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		    			}else if((data.isDND != undefined || data.isDND != null) && data.isDND === "true"){
 		    				msg = HreRem.i18n("msg.desea.aceptar.oferta.activos.dnd.sin.agrupacion") + HreRem.i18n("msg.desea.aceptar.oferta.esta.de.acuerdo");
 		    			}
-						Ext.Msg.show({
-						   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
-						   msg: msg,
-						   buttons: Ext.MessageBox.YESNO,
-						   fn: function(buttonId) {
-						        if (buttonId == 'yes') {
-						        	me.saveFn(editor, me, context);
-								} else{
-						    		me.getStore().load(); 	
-						    	}
-							}
-						});
+		    			
+		    			Ext.Msg.show({
+							   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
+							   msg: msg,
+							   buttons: Ext.MessageBox.YESNO,
+							   fn: function(buttonId) {
+							        if (buttonId == 'yes' && context.record.get("descripcionTipoOferta") == CONST.TIPO_COMERCIALIZACION_ACTIVO['VENTA']) {
+										me.up('activosdetalle').lookupController().mostrarCrearOfertaTramitada(editor, me, context);
+										
+										// me.saveFn(editor, me, context);
+									} else if (buttonId == 'yes') {
+										me.saveFn(editor, me, context);
+									} else{
+										me.getStore().load(); 	
+									}
+								}
+							});		    			
+		    			
 		    		},
 				 	failure: function(record, operation) {
 				 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
@@ -375,7 +384,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			
 	
 		} else {
-			// HREOS-2814 El cambio a anulada/denegada (rechazada) abre el formulario de motivos de rechazo
+			// HREOS-2814 El cambio a anulada/denegada (rechazada) abre el
+			// formulario de motivos de rechazo
 			if (CONST.ESTADOS_OFERTA['RECHAZADA'] == estado){
 				me.onCambioARechazoOfertaList(me, context.record);
 			} else if (CONST.ESTADOS_OFERTA['CADUCADA'] == estado){
@@ -422,7 +432,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     	var me = this;
     	var motivoForm = Ext.create("HreRem.view.activos.detalle.MotivoRechazoOfertaForm", {ofertaRecord: record, gridOfertas: grid});
     	motivoForm.show();
-//    	me.up('formBase').fireEvent('openModalWindow',"HreRem.view.activos.detalle.MotivoRechazoOfertaForm", {oferta: record.data});
+// me.up('formBase').fireEvent('openModalWindow',"HreRem.view.activos.detalle.MotivoRechazoOfertaForm",
+// {oferta: record.data});
   	    	
     },
     
@@ -463,7 +474,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			return false;
 		}
 		
-		//HREOS-2814 Validacion si estado oferta = rechazada, tipo y motivo obligatorios.
+		// HREOS-2814 Validacion si estado oferta = rechazada, tipo y motivo
+		// obligatorios.
 		if(CONST.ESTADOS_OFERTA['RECHAZADA'] == codigoEstadoNuevo){
 			if (record.data.tipoRechazoCodigo == null || record.data.motivoRechazoCodigo == null){
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.rechazar.motivos"));
@@ -543,10 +555,14 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		me.lookupController().cargarTabData(me);
    },
    
-   //HREOS-846 Si NO esta dentro del perimetro, ocultamos del grid las opciones de agregar/elminar y las acciones editables por fila
-   //HREOS-1001 Si está en el perimetro pero no es comercializable tampoco se puede editar
-   //HREOS-1971 Si el usuario no tiene la funcion de editar el listado tampoco se puede editar
-   //HREOS-4963 Si el activo es de alquiler o venta y no tiene tipo de alquiler asignado no se podra editar
+   // HREOS-846 Si NO esta dentro del perimetro, ocultamos del grid las
+	// opciones de agregar/elminar y las acciones editables por fila
+   // HREOS-1001 Si está en el perimetro pero no es comercializable tampoco se
+	// puede editar
+   // HREOS-1971 Si el usuario no tiene la funcion de editar el listado tampoco
+	// se puede editar
+   // HREOS-4963 Si el activo es de alquiler o venta y no tiene tipo de
+	// alquiler asignado no se podra editar
    evaluarEdicion: function() {
 
 		var me = this;
@@ -624,8 +640,14 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		mostrarCloneButtonExpediente = ($AU.userIsRol('HAYASUPER') || $AU.userIsRol('HAYAGESTCOM') || $AU.userIsRol('HAYAGBOINM')
 										&& (me.lookupController().getViewModel().data.activo.data.tipoComercializacionCodigo === CONST.TIPOS_COMERCIALIZACION['VENTA']
 											|| me.lookupController().getViewModel().data.activo.data.tipoComercializacionCodigo === CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])
-	        							/*&& (me.lookupController().getViewModel().get('activo').data.subcarteraCodigo === CONST.SUBCARTERA['APPLEINMOBILIARIO']
-	        								|| me.lookupController().getViewModel().get('activo').data.subcarteraCodigo === CONST.SUBCARTERA['DIVARIAN'])*/
+	        							/*
+										 * &&
+										 * (me.lookupController().getViewModel().get('activo').data.subcarteraCodigo
+										 * ===
+										 * CONST.SUBCARTERA['APPLEINMOBILIARIO'] ||
+										 * me.lookupController().getViewModel().get('activo').data.subcarteraCodigo
+										 * === CONST.SUBCARTERA['DIVARIAN'])
+										 */
 	    								);
 		me.mostrarBotonClonarExpediente(mostrarCloneButtonExpediente);
 	},

@@ -153,6 +153,7 @@ func-rem-ocultacionActivosPrublicacion|R-Fortune
 rem_mirror|func-rem-dqFasesPublicacion
 func-rem-dqFasesPublicacion|R-Fortune
 rem_mirror|func-rem-porcentajeConstruccion
+func-rem-BBVA-F3|func-rem-boardingIntegración
 rem_mirror|func-rem-BBVA-F2
 func-rem-BBVA-F2|R-Ricalate-backup
 R-Okitsu|func-rem-marcadoresSeguridad
@@ -206,3 +207,6 @@ func-rem-reglasComercialización|R-Ambersweet
 rem_mirror|func-rem-modeloHydra
 rem_mirror|func-rem-mejorasRendimiento-F5
 rem_mirror|func-rem-reincorporacionEstadoTitulo
+rem_mirror|func-rem-boardingOfertasCFV
+rem_mirror|func-rem-unicajaLBK
+func-rem-unicajaLBK|func-rem-boardingOfertasCFV

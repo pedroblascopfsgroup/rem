@@ -693,7 +693,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     	esCarteraGaleonOZeusOBk: function(get) {
 			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 			 return CONST.CARTERA['GALEON'] == carteraCodigo || CONST.CARTERA['ZEUS'] == carteraCodigo || CONST.CARTERA['BANKIA'] == carteraCodigo;
-		 }
+		},
+		readOnlyDatosCfv: function(get) {
+	     	var carteraCodigo = get('expediente.codigoEstado');
+	     	var ofertaEspecial = get('datosbasicosoferta.ofertaEspecial');
+	     	if(CONST.ESTADOS_EXPEDIENTE['APROBADO'] == carteraCodigo || CONST.ESTADOS_EXPEDIENTE['AP_CES_PTE_MAN'] == carteraCodigo
+	     			|| ofertaEspecial){
+	     		return true;
+	     	}
+	     	return false;
+	     }
 	 },
 	 
 
@@ -1543,6 +1552,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'motivoRescisionArras'}
 			}
-	    }
+	    },
+		comboRiesgoOperacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoRiesgoOperacion'}
+			}
+		}
+
     }
 });

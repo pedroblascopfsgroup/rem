@@ -52,65 +52,88 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 			},
 			
 			title : HreRem.i18n('title.detalle.oferta'),
-			items : [{
-						fieldLabel : HreRem.i18n('fieldlabel.num.oferta'),
-						bind : '{datosbasicosoferta.numOferta}'
-
-					}, {
-						xtype : 'comboboxfieldbase',
-						readOnly : true,
-						bind : {
-							store : '{comboTipoOferta}',
-							value : '{datosbasicosoferta.tipoOfertaCodigo}'
-						},
-						fieldLabel : HreRem.i18n('fieldlabel.tipo')
-					}, {
-						xtype : 'datefieldbase',
-						formatter : 'date("d/m/Y")',
-						fieldLabel : HreRem.i18n('fieldlabel.fecha.alta'),
-						bind : '{datosbasicosoferta.fechaAlta}'
-					}, {
-						xtype : 'comboboxfieldbase',
-						bind : {
-							store : '{comboEstadoOferta}',
-							value : '{datosbasicosoferta.estadoCodigo}'
-						},
-						readOnly : !$AU.userIsRol("HAYASUPER"),
-						fieldLabel : HreRem.i18n('fieldlabel.estado')
-					}, {
-						xtype : 'textfieldbase',
-						fieldLabel : HreRem.i18n('fieldlabel.prescriptor'),
-						bind : {
-							value : '{datosbasicosoferta.prescriptor}'
-						},
-						readOnly : true
-					}, {
-						xtype : 'textfieldbase',
-						fieldLabel : HreRem.i18n('fieldlabel.canal.prescripcion'),
-						bind : '{datosbasicosoferta.canalPrescripcionDescripcion}',
-						readOnly : true
-					}, {
-						xtype : 'currencyfieldbase',
-						fieldLabel : HreRem.i18n('fieldlabel.importe.inicial.oferta'),
-						bind : '{datosbasicosoferta.importeOferta}'
-					}, {
-						xtype : 'currencyfieldbase',
-						fieldLabel : HreRem
-								.i18n('fieldlabel.importe.contraoferta'),
-						bind : {
-							value : '{datosbasicosoferta.importeContraOferta}',
-							readOnly : '{esPerfilPMyCEs}'
-						}
-					}, {
-						xtype : 'textfieldbase',
-						fieldLabel : HreRem.i18n('fieldlabel.venta.cartera'),
-						bind : {
-							value : '{datosbasicosoferta.ventaCartera}',
-							readOnly : 'true',
-							hidden : '{esTipoAlquiler}'
-						}
-					},
+			items : [
+					
 					{
+					xtype : 'fieldsettable',
+					defaultType : 'displayfieldbase',
+					collapsible: false,
+					border: false,
+					colspan: 3,
+					layout: {
+				        type: 'table',
+				        columns: 3,
+				        tdAttrs: {
+				        	width: '33%',
+				        	style: 'vertical-align: top'
+				        },
+				        tableAttrs: {
+				            style: {
+				                width: '100%'
+								}
+				        }
+					},
+
+					items : [
+						{
+							fieldLabel : HreRem.i18n('fieldlabel.num.oferta'),
+							bind : '{datosbasicosoferta.numOferta}'
+	
+						}, {
+							xtype : 'comboboxfieldbase',
+							readOnly : true,
+							bind : {
+								store : '{comboTipoOferta}',
+								value : '{datosbasicosoferta.tipoOfertaCodigo}'
+							},
+							fieldLabel : HreRem.i18n('fieldlabel.tipo')
+						}, {
+							xtype : 'datefieldbase',
+							formatter : 'date("d/m/Y")',
+							fieldLabel : HreRem.i18n('fieldlabel.fecha.alta'),
+							bind : '{datosbasicosoferta.fechaAlta}'
+						}, {
+							xtype : 'comboboxfieldbase',
+							bind : {
+								store : '{comboEstadoOferta}',
+								value : '{datosbasicosoferta.estadoCodigo}'
+							},
+							readOnly : !$AU.userIsRol("HAYASUPER"),
+							fieldLabel : HreRem.i18n('fieldlabel.estado')
+						}, {
+							xtype : 'textfieldbase',
+							fieldLabel : HreRem.i18n('fieldlabel.prescriptor'),
+							bind : {
+								value : '{datosbasicosoferta.prescriptor}'
+							},
+							readOnly : true
+						}, {
+							xtype : 'textfieldbase',
+							fieldLabel : HreRem.i18n('fieldlabel.canal.prescripcion'),
+							bind : '{datosbasicosoferta.canalPrescripcionDescripcion}',
+							readOnly : true
+						}, {
+							xtype : 'currencyfieldbase',
+							fieldLabel : HreRem.i18n('fieldlabel.importe.inicial.oferta'),
+							bind : '{datosbasicosoferta.importeOferta}'
+						}, {
+							xtype : 'currencyfieldbase',
+							fieldLabel : HreRem
+									.i18n('fieldlabel.importe.contraoferta'),
+							bind : {
+								value : '{datosbasicosoferta.importeContraOferta}',
+								readOnly : '{esPerfilPMyCEs}'
+							}
+						}, {
+							xtype : 'textfieldbase',
+							fieldLabel : HreRem.i18n('fieldlabel.venta.cartera'),
+							bind : {
+								value : '{datosbasicosoferta.ventaCartera}',
+								readOnly : 'true',
+								hidden : '{esTipoAlquiler}'
+							}
+						},
+						{
 						xtype : 'comboboxfieldbase',
 						fieldLabel : HreRem.i18n('fieldlabel.empleado.caixa'),
 						reference: 'empleadoCaixaRef',
@@ -124,7 +147,8 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					},
 					{
 						bind : {hidden : '{!esTipoAlquiler}'}
-					},
+					}
+						]},
 					{
 						xtype : 'fieldsettable',
 						defaultType : 'displayfieldbase',
@@ -134,6 +158,19 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							hidden: '{!esCarteraAppleOrRemaining}'
 						},
 						colspan: 3,
+						layout: {
+					        type: 'table',
+					        columns: 3,
+					        tdAttrs: {
+					        	width: '33%',
+					        	style: 'vertical-align: top'
+					        },
+					        tableAttrs: {
+					            style: {
+					                width: '100%'
+									}
+					        }
+						},
 						items : [ 
 								{
 								xtype : 'comboboxfieldbase',
@@ -244,10 +281,25 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 		
 							}
 						]},
-						{
-						xtype : 'container',
-						layout : 'hbox',
+					{
+						xtype : 'fieldsettable',
+						defaultType : 'displayfieldbase',
+						collapsible: false,
+						border: false,
 						colspan: 3,
+						layout: {
+					        type: 'table',
+					        columns: 3,
+					        tdAttrs: {
+					        	width: '33%',
+					        	style: 'vertical-align: top'
+					        },
+					        tableAttrs: {
+					            style: {
+					                width: '100%'
+									}
+					        }
+						},
 						bind : {
 							hidden : '{!datosbasicosoferta.isCarteraLbkVenta}' 
 						},
@@ -281,23 +333,102 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 		                }]
 					},
 					{
-						xtype : 'container',
-						layout: 'vbox',
-						colspan: 1,	
-						width: '100%',
-						items: [
+						xtype : 'fieldsettable',
+						defaultType : 'displayfieldbase',
+						collapsible: false,
+						border: false,
+						colspan: 3,
+						layout: {
+					        type: 'table',
+					        columns: 3,
+					        tdAttrs: {
+					        	width: '33%',
+					        	style: 'vertical-align: top'
+					        },
+					        tableAttrs: {
+					            style: {
+					                width: '100%'
+									}
+					        }
+						},
+						items : [
+							{
+								xtype : 'checkboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.venta.cartera.cfv'),
+								bind : {
+									value : '{datosbasicosoferta.ventaCarteraCfv}',
+									readOnly : '{readOnlyDatosCfv}'
+								}
+							},{
+								xtype : 'checkboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.oferta.especial'),
+								bind : {
+									value : '{datosbasicosoferta.ofertaEspecial}',
+									readOnly : true
+								}
+							}, {
+								xtype : 'checkboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.venta.sobre.plano'),
+								bind : {
+									value : '{datosbasicosoferta.ventaSobrePlano}',
+									readOnly : '{readOnlyDatosCfv}'
+								}
+							}, {
+								xtype : 'comboboxfieldbasedd',
+								fieldLabel : HreRem.i18n('fieldlabel.riesgo.operacion'),
+								bind : {
+									store : '{comboRiesgoOperacion}',
+								    value : '{datosbasicosoferta.riesgoOperacionCodigo}',
+								    rawValue : '{datosbasicosoferta.riesgoOperacionDescripcion}',
+									readOnly : '{readOnlyDatosCfv}'
+								}
+							}
+						]
+					},
+					{
+					xtype : 'container',
+					layout: 'hbox',
+					colspan : 3,								
+					items : [
 					{
 						xtype : 'fieldsettable',
-						width: '100%',
+						collapsible: false,
+						border: false,
+						width: '33%',
 						margin: '0 10 10 0',
 						bind : { title : '{expediente.tituloCarteraLiberbankVenta}',
 								 hidden: '{expediente.esBankia}'
 							},
 						layout: {
-							type: 'table',
-							columns: 1
+					        type: 'table',
+					        columns: 1,
+					        tdAttrs: {
+					        	width: '100%'
+					        },
+					        tableAttrs: {
+					            style: {
+					                width: '100%'
+									}
+					        }
 						},
+						items : [
+					{
+						xtype : 'fieldsettable',
+						colspan: 1,
 						collapsible: false,
+						bind : { title : '{expediente.tituloCarteraLiberbankVenta}'},
+						layout: {
+					        type: 'table',
+					        columns: 1,
+					        tdAttrs: {
+					        	width: '100%'
+					        },
+					        tableAttrs: {
+					            style: {
+					                width: '100%'
+									}
+					        }
+						},
 						items : [
 							{
 									xtype: 'comboboxfieldbase',
@@ -395,7 +526,6 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								},
 								layout : 'hbox',
 								colspan: 1,
-								width: '100%',
 								items : [
 								 {
 									xtype : 'button',
@@ -414,12 +544,23 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 
 					},
 					{
-						xtype : 'fieldsettable',					
+						xtype : 'fieldsettable',	
+						colspan: 1,	
 						collapsible: false,
 						title : HreRem.i18n('title.visita'),
-						layout : {type : 'table', columns: 1},
-						width: '100%',
-						margin: '0 10 10 0',
+						layout: {
+					        type: 'table',
+					        columns: 1,
+					        tdAttrs: {
+					        	width: '100%'
+					        },
+					        tableAttrs: {
+					            style: {
+					                width: '100%'
+									}
+					        }
+						},
+						//margin: '0 10 10 0',
 						items : [{
 							xtype : 'comboboxfieldbase',
 							reference : 'comboEstadosVisita',
@@ -434,6 +575,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						}, {
 							xtype : 'container',
 							layout : 'hbox',
+							colspan: 1,
 							items : [{
 								xtype : 'button',
 								text : HreRem.i18n('fieldlabel.asignar.visita'),
@@ -455,11 +597,18 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					},  {
 						xtype : 'fieldsettable',
 						title : HreRem.i18n('title.comerical.oferta'),
-						colspan : 2,
+						width: '66%',
 						layout: {
-							type: 'table',
+					        type: 'table',
 					        columns: 2,
-					        tdAttrs: {width: '50%', style: 'vertical-align: top'}
+					        tdAttrs: {
+					        	width: '50%'
+					        },
+					        tableAttrs: {
+					            style: {
+					                width: '100%'
+									}
+					        }
 						},
 						
 						items : [{
@@ -499,7 +648,8 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						}
 
 						]
-					}, {
+					}]},
+					{
 						xtype : 'ofertasagrupadastabpanel',
 						colspan : 3
 					}, {

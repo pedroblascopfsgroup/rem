@@ -72,13 +72,29 @@ Ext.define('HreRem.model.OfertaActivo', {
     		name: 'ofertaExpress'
     	},
     	{
-    		name: 'gencat'
-    	},
-		{
 			name:'fechaEntradaCRMSF',
 			type:'date',
     		dateFormat: 'c'
-		}
+		},
+		{
+    		name: 'gencat',
+			type: 'boolean'
+    	},
+    	{
+    		name: 'ventaCartera',
+			type: 'boolean'
+    	},
+    	{
+    		name: 'ofertaEspecial',
+			type: 'boolean'
+    	},
+    	{
+    		name: 'ventaSobrePlano',
+			type: 'boolean'
+    	},
+    	{
+    		name: 'codRiesgoOperacion'
+    	}
 
     ],
     

@@ -71,17 +71,17 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	public static final String SUBTIPO_GASTO_CORRESPONDE_TIPO_GASTO= "El subtipo del gasto no corresponde con el tipo de gasto.";
 	public static final String SI_TIPO_ELEMENTO_ES_ACT_ID_ELEMENTO_EXISTE= "El tipo de elemento es 'Activo' pero el id del elemento no existe.";
 	public static final String IRPF_PORCENTAJE_VACIO= "Si el campo 'IRPF Base' está informado, 'IRPF Porcentaje' no puede estar vacío.";
-	public static final String LBK_CLAVE_SUBCLAVE_VACIO= "Si el gasto es de Liberbank y el campo 'Retención garantía Base' está informado, los campos 'IRPF Clave' y 'IRPF Subclave' no pueden estar vacíos.";
+	public static final String LBK_CLAVE_SUBCLAVE_VACIO= "Si el gasto es de Unicaja y el campo 'Retención garantía Base' está informado, los campos 'IRPF Clave' y 'IRPF Subclave' no pueden estar vacíos.";
 	public static final String PARTICIPACION_AL_CIEN_PORCIENTO= "Dentro de cada grupo la participación de cada elemento debe sumar un total de 100%.";
 	
 	public static final String C_PAGO_CONEXION_SOLO_BANKIA= "El campo 'Check pago a conexión' solo se puede rellenar si el gasto es de CaixaBank";
 	public static final String NUM_CONEXION_SOLO_BANKIA= "El campo 'Número de conexión' solo se puede rellenar si el gasto es de CaixaBank";
 	public static final String F_CONEXION_SOLO_BANKIA= "El campo 'Fecha de conexión' solo se puede rellenar si el gasto es de CaixaBank";
 	public static final String OFICINA_SOLO_BANKIA= "El campo 'Oficina' solo se puede rellenar si el gasto es de CaixaBank";
-	public static final String IRPF_CLAVE_SOLO_LBK= "El campo 'IRPF Clave' solo se puede rellenar si el gasto es de Liberbank";
-	public static final String IRPF_SUBCLAVE_SOLO_LBK= "El campo 'IRPF Subclave' solo se puede rellenar si el gasto es de Liberbank";
-	public static final String PLAN_VISITAS_SOLO_LBK= "El campo 'Plan visitas' solo se puede rellenar si el gasto es de Liberbank";
-	public static final String ACTIVABLE_SOLO_BBVA_LBK= "El campo 'Activable' solo se puede rellenar si el gasto es de BBVA o Liberbank";
+	public static final String IRPF_CLAVE_SOLO_LBK= "El campo 'IRPF Clave' solo se puede rellenar si el gasto es de Unicaja";
+	public static final String IRPF_SUBCLAVE_SOLO_LBK= "El campo 'IRPF Subclave' solo se puede rellenar si el gasto es de Unicaja";
+	public static final String PLAN_VISITAS_SOLO_LBK= "El campo 'Plan visitas' solo se puede rellenar si el gasto es de Unicaja";
+	public static final String ACTIVABLE_SOLO_BBVA_LBK= "El campo 'Activable' solo se puede rellenar si el gasto es de BBVA o Unicaja";
 	private static final String YA_EXISTE_UN_SUBTIPO_TIPO_IMPOSITIVO_TIPO_IMPUESTO = "Ya existe un gasto y una línea con el mismo subtipo de gasto, tipo impositivo, tipo impuesto y elemento";
 	private static final String ELEMENTO_SIN_PARTICIPACION = "El elemento no tiene participación";
 	private static final String PARTICIPACION_SIN_ELEMENTO = "La participación no tiene ningún elemento";

@@ -3951,6 +3951,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    		{"codigo":"true", "descripcion":"Si"},
 	    		{"codigo":"false", "descripcion":"No"}
 	    		]  
-	    }
+	    },
+		comboRiesgoOperacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoRiesgoOperacion'}
+			}
+		}
 	 }
 });

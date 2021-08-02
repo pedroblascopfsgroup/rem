@@ -1184,8 +1184,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				extraParams: {diccionario: 'motivoGestionComercial'}
 			},
 			autoLoad: true
-
+		},
+		comboRiesgoOperacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoRiesgoOperacion'}
+			},
+			autoLoad: false
 		}
-		
     }
 });

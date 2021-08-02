@@ -13,8 +13,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 	requires : ['HreRem.model.ExpedienteFormalizacionResolucion',
 			'HreRem.model.ExpedienteFinanciacion',
 			'HreRem.view.expedientes.BloqueosFormalizacionList',
-			'HreRem.model.BloqueosFormalizacionModel',
-			'HreRem.view.expedientes.Desbloquear'],
+			'HreRem.model.BloqueosFormalizacionModel'],
 	listeners : {
 		boxready : 'cargarTabData'
 	},
@@ -723,53 +722,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									flex : 1
 								}]
 					},
-							// GRID COMPARECIENTES EN NOMBRE DEL VENDEDOR
-							// {
-							// xtype : 'gridBaseEditableRow',
-							// title:
-							// HreRem.i18n('title.comparecientes.nombre.vendedor'),
-							// reference: 'listadocomparecientesnombrevendedor',
-							// cls : 'panel-base shadow-panel',
-							// topBar: true,
-							// requires:
-							// ['HreRem.view.expedientes.buscarCompareciente'],
-							// bind: {
-							// store: '{storeComparecientes}'
-							// },
-							//						
-							// columns: [
-							// { text:
-							// HreRem.i18n('fieldlabel.tipo.comparecencia'),
-							// dataIndex: 'tipoCompareciente',
-							// flex: 1
-							// },
-							// { text: HreRem.i18n('fieldlabel.nombre'),
-							// dataIndex: 'nombre',
-							// flex: 1
-							// },
-							// {
-							// text: HreRem.i18n('header.direccion'),
-							// dataIndex: 'direccion',
-							// flex: 1
-							// },
-							// {
-							// text: HreRem.i18n('fieldlabel.telefono'),
-							// dataIndex: 'telefono',
-							// flex: 1
-							// },
-							// {
-							// text: HreRem.i18n('fieldlabel.email'),
-							// dataIndex: 'email',
-							// flex: 1
-							// }
-							// ],
-							// onAddClick: function (btn) {
-							// var me = this;
-							// Ext.create('HreRem.view.expedientes.BuscarCompareciente',{}).show();
-							//							
-							// }
-							// },
-
 							{
 								xtype : 'button',
 								reference : 'btnGenerarHojaDatos',
@@ -779,24 +731,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 								text : HreRem.i18n('btn.generar.hoja.datos'),
 								handler : 'onClickGenerarHojaExcel',
 								margin : '10 10 10 10'
-							}, {
-								xtype : 'button',
-								reference : 'btnDesBloquearExpediente',
-								text : HreRem.i18n('title.bloquear.exp'),
-								handler : 'onClickBloquearExpediente',
-								margin : '10 10 10 10',
-								bind : {
-									disabled : '{expediente.bloqueado}'
-								}
-							}, {
-								xtype : 'button',
-								reference : 'btnBloquearExpediente',
-								text : HreRem.i18n('title.desbloquear.exp'),
-								handler : 'onClickDesbloquearExpediente',
-								margin : '10 10 10 10',
-								bind : {
-									disabled : '{!expediente.bloqueado}'
-								}
 							}, {
 								xtype : 'button',
 								reference : 'btnAdvisoryNoteExpediente',

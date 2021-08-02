@@ -153,6 +153,7 @@ func-rem-ocultacionActivosPrublicacion|R-Fortune
 rem_mirror|func-rem-dqFasesPublicacion
 func-rem-dqFasesPublicacion|R-Fortune
 rem_mirror|func-rem-porcentajeConstruccion
+func-rem-BBVA-F3|func-rem-boardingIntegración
 rem_mirror|func-rem-BBVA-F2
 func-rem-BBVA-F2|R-Ricalate-backup
 R-Okitsu|func-rem-marcadoresSeguridad
@@ -218,4 +219,6 @@ func-rem-modeloHydra|func-rem-campanyasHydra
 func-rem-campanyasHydra|R-Hydra
 rem_mirror|func-rem-mejorasRendimiento-F5
 func-rem-comercialHydra-HREOS-14553|func-rem-comercialHydra
-
+rem_mirror|func-rem-boardingOfertasCFV
+rem_mirror|func-rem-unicajaLBK
+func-rem-unicajaLBK|func-rem-boardingOfertasCFV

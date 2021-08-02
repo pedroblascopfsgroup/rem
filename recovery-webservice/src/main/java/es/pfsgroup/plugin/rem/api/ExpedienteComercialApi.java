@@ -62,7 +62,6 @@ import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
-import es.pfsgroup.plugin.rem.model.DtoActivosAlquiladosGrid;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.FechaArrasExpediente;
@@ -73,8 +72,8 @@ import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
-import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
+import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -944,47 +943,7 @@ public interface ExpedienteComercialApi {
 	 */
 	boolean guardarInformeJuridico(DtoInformeJuridico dto);
 
-	/**
-	 * Valida la posibilidad de bloquear un expediente comercial. Si no es posible devuelve codigo error. Si lo es cadena vacía
-	 *
-	 * @param idExpediente
-	 * @return
-	 */
-	String validaBloqueoExpediente(Long idExpediente);
-
-	/**
-	 * Bloquea el expediente comercial
-	 *
-	 * @param idExpediente
-	 * @return
-	 */
-	void bloquearExpediente(Long idExpediente);
-
-	/**
-	 * Valida la posibilidad de desbloquear un expediente comercial. Si no es posible devuelve codigo error. Si lo es cadena vacía
-	 *
-	 * @param idExpediente
-	 * @return
-	 */
-	String validaDesbloqueoExpediente(Long idExpediente);
-
-	/**
-	 * Desbloquea el expediente comercial
-	 *
-	 * @param idExpediente
-	 * @return
-	 */
-	void desbloquearExpediente(Long idExpediente, String motivoCodigo, String motivoDescLibre);
-
 	boolean updateBloqueoFormalizacion(DtoBloqueosFinalizacion dto);
-
-	/**
-	 * Devuelve true si el expediente está bloqueado y false en caso contrario
-	 *
-	 * @param idTramite
-	 * @return
-	 */
-	boolean checkExpedienteBloqueado(Long idTramite);
 
 	/**
 	 * Actualiza la Fecha vencimiento reserva con la Fecha resolucion + 40 días. Esto se hace en caso que algún activo esté sujeto a tanteo y todos los activos tengan resolución tanteo = Renunciado.
@@ -1437,4 +1396,5 @@ public interface ExpedienteComercialApi {
 	boolean doTramitacionAsincrona(Activo activo, Oferta oferta);
 
 	List<DDEntidadFinanciera> getListEntidadFinanciera(Long idExpediente);
+	
 }

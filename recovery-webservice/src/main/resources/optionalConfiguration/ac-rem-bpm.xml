@@ -349,10 +349,6 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkExpedienteFechaChequeLiberbank(idTramite);
             }
-            def checkExpedienteBloqueado = {
-            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
-            	return expedienteComercialManager.checkExpedienteBloqueado(idTramite);
-            }
             def reservaFirmada = {
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.reservaFirmada(idTramite);
@@ -727,6 +723,10 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkAprobadoRechazadoBCPosicionamiento(tareaExterna);
             }
+            def actualizarOfertaBoarding = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.actualizarOfertaBoarding(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

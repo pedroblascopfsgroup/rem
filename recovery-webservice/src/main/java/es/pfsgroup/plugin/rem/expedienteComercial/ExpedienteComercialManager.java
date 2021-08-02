@@ -156,6 +156,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -662,6 +663,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Visita visitaOferta = oferta.getVisita();
 		Oferta ofertaPrincipal = null;
 		DDClaseOferta claseOferta = null;
+		DDRiesgoOperacion riesgoOperacion = null;
 		Usuario usuarioModificador = genericAdapter.getUsuarioLogado();
 		if(!Checks.esNulo(dto.getClaseOfertaCodigo())) {
 			Filter f = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
@@ -677,6 +679,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if(ofertaPrincipal != null) {
 			compruebaEstadoAnyadirDependiente(ofertaPrincipal);
+		}
+		
+		if(!Checks.esNulo(dto.getVentaCarteraCfv())) {
+			oferta.setVentaCartera(dto.getVentaCarteraCfv());
+		}
+		
+		if(!Checks.esNulo(dto.getOfertaEspecial())) {
+			oferta.setOfertaEspecial(dto.getOfertaEspecial());
+		}
+		
+		if(!Checks.esNulo(dto.getVentaSobrePlano())) {
+			oferta.setVentaSobrePlano(dto.getVentaSobrePlano());
+		}
+		
+		if(!Checks.esNulo(dto.getRiesgoOperacionCodigo())) {
+			Filter r = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getRiesgoOperacionCodigo());
+			riesgoOperacion = genericDao.get(DDRiesgoOperacion.class, r);
+			
+			if(riesgoOperacion != null) {
+				oferta.setRiesgoOperacion(riesgoOperacion);
+			}
 		}
 
 		if (!Checks.esNulo(dto.getEstadoCodigo())) {
@@ -1914,6 +1937,26 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (oferta.getVentaDirecta() != null) {
 			dto.setVentaCartera(oferta.getVentaDirecta() ? "Si" : "No");
+		}
+		
+		if(oferta.getOfertaEspecial() != null) {
+			dto.setOfertaEspecial(oferta.getOfertaEspecial());
+		}
+		
+		if(oferta.getVentaSobrePlano() != null) {
+			dto.setVentaSobrePlano(oferta.getVentaSobrePlano());
+		}
+		
+		if(oferta.getVentaCartera() != null) {
+			dto.setVentaCarteraCfv(oferta.getVentaCartera());
+		}
+		
+		if(oferta.getRiesgoOperacion() != null) {
+			dto.setRiesgoOperacionCodigo(oferta.getRiesgoOperacion().getCodigo());
+		}
+		
+		if(oferta.getRiesgoOperacion() != null) {
+			dto.setRiesgoOperacionDescripcion(oferta.getRiesgoOperacion().getDescripcion());
 		}
 
 		// HREOS-4360
@@ -8448,7 +8491,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return true;
 	}
 
-	@Override
+	
 	@Transactional(readOnly = false)
 	public String validaBloqueoExpediente(Long idExpediente) {
 		String codigoError = "";
@@ -8545,7 +8588,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return codigoError;
 	}
 
-	@Override
+	
 	@Transactional(readOnly = false)
 	public void bloquearExpediente(Long idExpediente) {
 		try {
@@ -8559,7 +8602,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 	}
 
-	@Override
+	
 	public String validaDesbloqueoExpediente(Long idExpediente) {
 		String codigoError = "";
 		ExpedienteComercial expediente = this.findOne(idExpediente);
@@ -8572,7 +8615,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return codigoError;
 	}
 
-	@Override
+	
 	@Transactional(readOnly = false)
 	public void desbloquearExpediente(Long idExpediente, String motivoCodigo, String motivoDescLibre) {	
 		try {
@@ -8646,23 +8689,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return mailsParaEnviarComercializadora;
 
-	}
-
-	@Override
-	public boolean checkExpedienteBloqueado(Long idTramite) {
-		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
-
-		if (!Checks.esNulo(activoTramite)) {
-			Trabajo trabajo = activoTramite.getTrabajo();
-
-			if (!Checks.esNulo(trabajo)) {
-				ExpedienteComercial expediente = expedienteComercialDao
-						.getExpedienteComercialByIdTrabajo(trabajo.getId());
-				return (new Integer(1).equals(expediente.getBloqueado()));
-			}
-		}
-
-		return false;
 	}
 
 	@Override
@@ -13005,7 +13031,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return isEmpleadoCaixa;
 	}
-	
+
+
 	@Override
 	@Transactional
 	public boolean doTramitacionAsincrona(Activo activo, Oferta oferta) {

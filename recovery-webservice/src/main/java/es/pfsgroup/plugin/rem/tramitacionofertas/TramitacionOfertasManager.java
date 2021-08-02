@@ -18,6 +18,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -44,6 +45,7 @@ import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
@@ -102,6 +104,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDInterlocutorOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -222,6 +225,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
+	@Autowired
+	private BoardingComunicacionApi boardingComunicacionApi;
+
 	@Override
 	@Transactional(readOnly = false)
 	public boolean saveOferta(DtoOfertaActivo dto, Boolean esAgrupacion, Boolean asincrono)
@@ -293,6 +299,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		// expediente comercial
 
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
+			oferta = anyadirCamposOferta(oferta, dto);
 			expediente = doAceptaOferta(oferta, activo);
 			esAcepta = expediente != null;
 			oferta.setExpedienteComercial(expediente);
@@ -1988,6 +1995,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		
 		activoManager.actualizarOfertasTrabajosVivos(activo.getId());
 		
+		if(oferta != null && oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial() && ofertaManager.esOfertaValidaCFVByCarteraSubcartera(oferta)  && boardingComunicacionApi.modoRestClientBoardingActivado()) {
+			boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_1_MINUTO);
+		}
+		
 		ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 		return activoTramite;
 	}
@@ -2037,6 +2048,11 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (idActivo != null) {
 				activoManager.actualizarOfertasTrabajosVivos(idActivo);
 			}
+			
+			if(oferta != null && ofertaManager.esOfertaValidaCFVByCarteraSubcartera(oferta) && oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial() && boardingComunicacionApi.modoRestClientBoardingActivado()) {
+				boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_1_MINUTO);
+			}
+		
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 			transactionManager.commit(transaction);
 		} catch (Exception e) {
@@ -2112,6 +2128,24 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 		
 		genericDao.save(ActivosAlquilados.class, activoAlquilado);
+	}
+	
+
+
+	private Oferta anyadirCamposOferta(Oferta oferta, DtoOfertaActivo dto) {
+		
+		oferta.setOfertaEspecial(dto.getOfertaEspecial());
+		oferta.setVentaCartera(dto.getVentaCartera());
+		oferta.setVentaSobrePlano(dto.getVentaSobrePlano());
+		
+		if(dto.getCodRiesgoOperacion() != null){
+			DDRiesgoOperacion riesgoOperacion = genericDao.get(DDRiesgoOperacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodRiesgoOperacion()));
+			if(riesgoOperacion != null) {
+				oferta.setRiesgoOperacion(riesgoOperacion);
+			}
+		}
+		
+		return oferta;
 	}
 
 	@Override

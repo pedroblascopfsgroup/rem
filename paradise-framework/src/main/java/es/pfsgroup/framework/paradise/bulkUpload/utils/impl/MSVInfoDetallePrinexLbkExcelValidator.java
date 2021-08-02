@@ -46,7 +46,7 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 
 	public static final String GASTO_NOT_EXISTS = "El gasto no existe (campo GPV_NUM_GASTO_HAYA).";
 	public static final String GASTO_NULL = "El campo GPV_NUM_GASTO_HAYA no puede estar vacío";
-	public static final String GASTO_NOT_LIBERBANK = "El gasto no es de la cartera Liberbank";
+	public static final String GASTO_NOT_LIBERBANK = "El gasto no es de la cartera Unicaja";
 
 	public static final String FORMATO_FECHA_CONTABLE_INVALIDO = "El campo GPL_FECHA_CONTABLE tiene un formato incorrecto";
 	public static final String FORMATO_FECHA_FAC_INVALIDO = "El campo GPL_FECHA_FAC tiene un formato incorrecto";

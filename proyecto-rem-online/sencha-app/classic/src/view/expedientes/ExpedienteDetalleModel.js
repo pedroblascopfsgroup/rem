@@ -655,8 +655,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     		} else {
     			return false;   			
     		}
-    	}
+    	},
     	
+		readOnlyDatosCfv: function(get) {
+	     	var carteraCodigo = get('expediente.codigoEstado');
+	     	var ofertaEspecial = get('datosbasicosoferta.ofertaEspecial');
+	     	if(CONST.ESTADOS_EXPEDIENTE['APROBADO'] == carteraCodigo || CONST.ESTADOS_EXPEDIENTE['AP_CES_PTE_MAN'] == carteraCodigo
+	     			|| ofertaEspecial){
+	     		return true;
+	     	}
+	     	return false;
+	     }
 	 },
 	 
 
@@ -1462,7 +1471,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoResponsable'}
 			}
-	    }
+	    },
+
+		comboRiesgoOperacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoRiesgoOperacion'}
+			}
+		}
 		
     }
 });

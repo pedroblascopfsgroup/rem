@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20210723
+--## FECHA_CREACION=20210726
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-XXXXX
@@ -50,112 +50,112 @@ BEGIN
 
       V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.AUX_APR_RBC_STOCK APR
                   USING (
-                     WITH CEE AS(
-                        SELECT 
-                           ADO.ACT_ID
-                           , ADO.ADO_ID
-                           , ADO.CFD_ID
-                           , CFD.DD_TPA_ID
-                           , CFD.DD_SAC_ID
-                           , TCE.DD_TCE_CODIGO
-                           , LEM.DD_LEM_CODIGO
-                           , ADO.REGISTRO 
-                           , ADO.ADO_FECHA_SOLICITUD 
-                           , ADO.ADO_FECHA_CADUCIDAD 
-                           , ADO.EMISION 
-                           , ADO.LETRA_CONSUMO 
-                           , ADO.CONSUMO
-                           , EDC.DD_EDC_CODIGO
-                           , ROW_NUMBER() OVER (PARTITION BY ADO.ACT_ID, ADO.CFD_ID, CFD.DD_TPA_ID, CFD.DD_SAC_ID  ORDER BY ADO.ADO_ID) RN
-                        FROM '|| V_ESQUEMA ||'.ACT_ADO_ADMISION_DOCUMENTO ADO
-                        JOIN '|| V_ESQUEMA ||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON ADO.CFD_ID = CFD.CFD_ID AND CFD.BORRADO = 0
-                        JOIN '|| V_ESQUEMA ||'.DD_TPD_TIPO_DOCUMENTO TPD ON TPD.DD_TPD_ID = CFD.DD_TPD_ID AND TPD.BORRADO = 0
-                        LEFT JOIN '|| V_ESQUEMA ||'.DD_EDC_ESTADO_DOCUMENTO EDC ON ADO.DD_EDC_ID = EDC.DD_EDC_ID AND EDC.BORRADO = 0
-                        LEFT JOIN '|| V_ESQUEMA ||'.DD_TCE_TIPO_CALIF_ENERGETICA TCE ON ADO.DD_TCE_ID = TCE.DD_TCE_ID AND TCE.BORRADO = 0
-                        LEFT JOIN '|| V_ESQUEMA ||'.DD_LEM_LISTA_EMISIONES LEM ON ADO.DD_LEM_ID = LEM.DD_LEM_ID AND LEM.BORRADO = 0
-                        WHERE ADO.BORRADO = 0
-                           AND TPD.DD_TPD_CODIGO IN (''11'')
-                           AND SYSDATE BETWEEN NVL(ADO_FECHA_SOLICITUD, TO_DATE(''YYYYMMDD,19000101'')) AND NVL(ADO_FECHA_CADUCIDAD, TO_DATE(''YYYYMMDD,19000101''))
-                     ), CEH AS (
-                        SELECT 
+                  WITH CEE AS(
+                     SELECT
                         ADO.ACT_ID
                         , ADO.ADO_ID
                         , ADO.CFD_ID
                         , CFD.DD_TPA_ID
                         , CFD.DD_SAC_ID
-                        , EDC.DD_EDC_CODIGO
+                        , TCE.DD_TCE_CODIGO
+                        , LEM.DD_LEM_CODIGO
+                        , ADO.ADO_FECHA_SOLICITUD
+                        , ADO.ADO_FECHA_CADUCIDAD
+                        , ADO.EMISION
+                        , ADO.LETRA_CONSUMO
+                        , ADO.CONSUMO
+                        , NVL2(EDC.DD_EDC_CODIGO, ''S'', ''N'') REGISTRO
+                        , ROW_NUMBER() OVER (PARTITION BY ADO.ACT_ID, ADO.CFD_ID, CFD.DD_TPA_ID, CFD.DD_SAC_ID ORDER BY ADO.DD_EDC_ID NULLS LAST, ADO.ADO_ID DESC) RN
+                     FROM '||V_ESQUEMA||'.ACT_ADO_ADMISION_DOCUMENTO ADO
+                     JOIN '||V_ESQUEMA||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON ADO.CFD_ID = CFD.CFD_ID AND CFD.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.DD_TPD_TIPO_DOCUMENTO TPD ON TPD.DD_TPD_ID = CFD.DD_TPD_ID AND TPD.BORRADO = 0
+                     LEFT JOIN '||V_ESQUEMA||'.DD_EDC_ESTADO_DOCUMENTO EDC ON ADO.DD_EDC_ID = EDC.DD_EDC_ID AND EDC.BORRADO = 0
+                        AND EDC.DD_EDC_CODIGO = ''01''
+                     LEFT JOIN '||V_ESQUEMA||'.DD_TCE_TIPO_CALIF_ENERGETICA TCE ON ADO.DD_TCE_ID = TCE.DD_TCE_ID AND TCE.BORRADO = 0
+                     LEFT JOIN '||V_ESQUEMA||'.DD_LEM_LISTA_EMISIONES LEM ON ADO.DD_LEM_ID = LEM.DD_LEM_ID AND LEM.BORRADO = 0
+                     WHERE ADO.BORRADO = 0
+                        AND TPD.DD_TPD_CODIGO IN (''11'')
+                        AND SYSDATE BETWEEN NVL(ADO.ADO_FECHA_SOLICITUD, TO_DATE(''01/01/1900'',''DD/MM/YYYY'')) AND NVL(ADO.ADO_FECHA_CADUCIDAD, TO_DATE(''01/01/2099'',''DD/MM/YYYY''))
+                  ), CEH AS (
+                     SELECT
+                        ADO.ACT_ID
+                        , ADO.ADO_ID
+                        , ADO.CFD_ID
+                        , CFD.DD_TPA_ID
+                        , CFD.DD_SAC_ID
+                        , NVL(EDC.DD_EDC_CODIGO, ''00'') DD_EDC_CODIGO
                         , CFD.CFD_OBLIGATORIO
-                        , ROW_NUMBER() OVER (PARTITION BY ADO.ACT_ID, ADO.CFD_ID, CFD.DD_TPA_ID, CFD.DD_SAC_ID  ORDER BY ADO.ADO_ID DESC) RN
-                     FROM '|| V_ESQUEMA ||'.ACT_ADO_ADMISION_DOCUMENTO ADO
-                     JOIN '|| V_ESQUEMA ||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON ADO.CFD_ID = CFD.CFD_ID AND CFD.BORRADO = 0
-                     JOIN '|| V_ESQUEMA ||'.DD_TPD_TIPO_DOCUMENTO TPD ON TPD.DD_TPD_ID = CFD.DD_TPD_ID AND TPD.BORRADO = 0
-                     LEFT JOIN '|| V_ESQUEMA ||'.DD_EDC_ESTADO_DOCUMENTO EDC ON ADO.DD_EDC_ID = EDC.DD_EDC_ID AND EDC.BORRADO = 0
+                        , ROW_NUMBER() OVER (PARTITION BY ADO.ACT_ID, ADO.CFD_ID, CFD.DD_TPA_ID, CFD.DD_SAC_ID ORDER BY ADO.DD_EDC_ID NULLS LAST, ADO.ADO_ID DESC) RN
+                     FROM '||V_ESQUEMA||'.ACT_ADO_ADMISION_DOCUMENTO ADO
+                     JOIN '||V_ESQUEMA||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON ADO.CFD_ID = CFD.CFD_ID AND CFD.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.DD_TPD_TIPO_DOCUMENTO TPD ON TPD.DD_TPD_ID = CFD.DD_TPD_ID AND TPD.BORRADO = 0
+                     LEFT JOIN '||V_ESQUEMA||'.DD_EDC_ESTADO_DOCUMENTO EDC ON ADO.DD_EDC_ID = EDC.DD_EDC_ID AND EDC.BORRADO = 0
                      WHERE ADO.BORRADO = 0
                         AND TPD.DD_TPD_CODIGO = ''13''
-                        AND SYSDATE BETWEEN NVL(ADO_FECHA_SOLICITUD, TO_DATE(''YYYYMMDD,19000101'')) AND NVL(ADO_FECHA_CADUCIDAD, TO_DATE(''YYYYMMDD,20990101''))
-                     ), LPO AS (
-                        SELECT 
+                        AND SYSDATE BETWEEN NVL(ADO.ADO_FECHA_SOLICITUD, TO_DATE(''01/01/1900'',''DD/MM/YYYY'')) AND NVL(ADO.ADO_FECHA_CADUCIDAD, TO_DATE(''01/01/2099'',''DD/MM/YYYY''))
+                  ), LPO AS (
+                     SELECT
                         ADO.ACT_ID
                         , ADO.ADO_ID
                         , ADO.CFD_ID
                         , CFD.DD_TPA_ID
                         , CFD.DD_SAC_ID
-                        , EDC.DD_EDC_CODIGO
+                        , NVL(EDC.DD_EDC_CODIGO, ''00'') DD_EDC_CODIGO
                         , CFD.CFD_OBLIGATORIO
-                        , ROW_NUMBER() OVER (PARTITION BY ADO.ACT_ID, ADO.CFD_ID, CFD.DD_TPA_ID, CFD.DD_SAC_ID  ORDER BY ADO.ADO_ID DESC) RN
-                     FROM '|| V_ESQUEMA ||'.ACT_ADO_ADMISION_DOCUMENTO ADO
-                     JOIN '|| V_ESQUEMA ||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON ADO.CFD_ID = CFD.CFD_ID AND CFD.BORRADO = 0
-                     JOIN '|| V_ESQUEMA ||'.DD_TPD_TIPO_DOCUMENTO TPD ON TPD.DD_TPD_ID = CFD.DD_TPD_ID AND TPD.BORRADO = 0
-                     LEFT JOIN '|| V_ESQUEMA ||'.DD_EDC_ESTADO_DOCUMENTO EDC ON ADO.DD_EDC_ID = EDC.DD_EDC_ID AND EDC.BORRADO = 0
+                        , ROW_NUMBER() OVER (PARTITION BY ADO.ACT_ID, ADO.CFD_ID, CFD.DD_TPA_ID, CFD.DD_SAC_ID ORDER BY ADO.DD_EDC_ID NULLS LAST, ADO.ADO_ID DESC) RN
+                     FROM '||V_ESQUEMA||'.ACT_ADO_ADMISION_DOCUMENTO ADO
+                     JOIN '||V_ESQUEMA||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON ADO.CFD_ID = CFD.CFD_ID AND CFD.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.DD_TPD_TIPO_DOCUMENTO TPD ON TPD.DD_TPD_ID = CFD.DD_TPD_ID AND TPD.BORRADO = 0
+                     LEFT JOIN '||V_ESQUEMA||'.DD_EDC_ESTADO_DOCUMENTO EDC ON ADO.DD_EDC_ID = EDC.DD_EDC_ID AND EDC.BORRADO = 0
                      WHERE ADO.BORRADO = 0
-                     AND TPD.DD_TPD_CODIGO = ''12''
-                     AND SYSDATE BETWEEN NVL(ADO_FECHA_SOLICITUD, TO_DATE(''YYYYMMDD,19000101'')) AND NVL(ADO_FECHA_CADUCIDAD, TO_DATE(''YYYYMMDD,20990101''))
-                     ), ISU AS (
-                        SELECT 
+                        AND TPD.DD_TPD_CODIGO = ''12''
+                        AND SYSDATE BETWEEN NVL(ADO.ADO_FECHA_SOLICITUD, TO_DATE(''01/01/1900'',''DD/MM/YYYY'')) AND NVL(ADO.ADO_FECHA_CADUCIDAD, TO_DATE(''01/01/2099'',''DD/MM/YYYY''))
+                  ), ISU AS (
+                     SELECT
                         ADO.ACT_ID
                         , ADO.ADO_ID
                         , ADO.CFD_ID
                         , CFD.DD_TPA_ID
                         , CFD.DD_SAC_ID
-                        , EDC.DD_EDC_CODIGO
+                        , NVL(EDC.DD_EDC_CODIGO, ''00'') DD_EDC_CODIGO
                         , CFD.CFD_OBLIGATORIO
-                        , ROW_NUMBER() OVER (PARTITION BY ADO.ACT_ID, ADO.CFD_ID, CFD.DD_TPA_ID, CFD.DD_SAC_ID  ORDER BY ADO.ADO_ID DESC) RN
-                     FROM '|| V_ESQUEMA ||'.ACT_ADO_ADMISION_DOCUMENTO ADO
-                     JOIN '|| V_ESQUEMA ||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON ADO.CFD_ID = CFD.CFD_ID AND CFD.BORRADO = 0
-                     JOIN '|| V_ESQUEMA ||'.DD_TPD_TIPO_DOCUMENTO TPD ON TPD.DD_TPD_ID = CFD.DD_TPD_ID AND TPD.BORRADO = 0
-                     LEFT JOIN '|| V_ESQUEMA ||'.DD_EDC_ESTADO_DOCUMENTO EDC ON ADO.DD_EDC_ID = EDC.DD_EDC_ID AND EDC.BORRADO = 0
+                        , ROW_NUMBER() OVER (PARTITION BY ADO.ACT_ID, ADO.CFD_ID, CFD.DD_TPA_ID, CFD.DD_SAC_ID ORDER BY ADO.DD_EDC_ID NULLS LAST, ADO.ADO_ID DESC) RN
+                     FROM '||V_ESQUEMA||'.ACT_ADO_ADMISION_DOCUMENTO ADO
+                     JOIN '||V_ESQUEMA||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON ADO.CFD_ID = CFD.CFD_ID AND CFD.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.DD_TPD_TIPO_DOCUMENTO TPD ON TPD.DD_TPD_ID = CFD.DD_TPD_ID AND TPD.BORRADO = 0
+                     LEFT JOIN '||V_ESQUEMA||'.DD_EDC_ESTADO_DOCUMENTO EDC ON ADO.DD_EDC_ID = EDC.DD_EDC_ID AND EDC.BORRADO = 0
                      WHERE ADO.BORRADO = 0
-                        AND TPD.DD_TPD_CODIGO = ''27''
-                        AND SYSDATE BETWEEN NVL(ADO_FECHA_SOLICITUD, TO_DATE(''YYYYMMDD,19000101'')) AND NVL(ADO_FECHA_CADUCIDAD, TO_DATE(''YYYYMMDD,20990101''))
-                     )
-                     SELECT 
-                     DISTINCT ACT.ACT_NUM_ACTIVO_CAIXA NUM_IDENTIFICATIVO
-                        , ACT.ACT_NUM_ACTIVO NUM_INMUEBLE
-                        , EQV_TCE.DD_CODIGO_CAIXA CALIFICACION_ENERGETICA
-                        , CEE.REGISTRO CERTIFICADO_REGISTRADO
-                        , TO_CHAR(CEE.ADO_FECHA_SOLICITUD,''YYYYMMDD'') FEC_SOLICITUD
-                        , TO_CHAR(CEE.ADO_FECHA_CADUCIDAD,''YYYYMMDD'') FEC_FIN_VIGENCIA
-                        , EQV_LEM.DD_CODIGO_CAIXA LISTA_EMISIONES
-                        , CEE.EMISION * 100 VALORES_EMISIONES
-                        , CEE.LETRA_CONSUMO LISTA_ENERGIA
-                        , CEE.CONSUMO * 100 VALOR_ENERGIA
-                        , CASE 
-                           WHEN CEH.DD_EDC_CODIGO = ''01'' THEN 1 
-                           WHEN CEH.DD_EDC_CODIGO = ''02'' THEN 4
-                           WHEN CEH.DD_EDC_CODIGO NOT IN (''01'',''02'') AND LPO.DD_EDC_CODIGO = ''01'' THEN 3 
-                           WHEN CEH.DD_EDC_CODIGO NOT IN (''01'',''02'') AND CEH.CFD_OBLIGATORIO = 0 THEN 2
-                           WHEN ISU.DD_EDC_CODIGO = ''01'' THEN 5 
-                     END CEDULA_HABITABILIDAD
-                     FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
-                     JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
-                     JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
-                     LEFT JOIN CEE ON CEE.ACT_ID = ACT.ACT_ID AND CEE.DD_TPA_ID = ACT.DD_TPA_ID AND (CEE.DD_SAC_ID IS NULL OR CEE.DD_SAC_ID = ACT.DD_SAC_ID) AND CEE.RN = 1
-                     LEFT JOIN CEH ON CEH.ACT_ID = ACT.ACT_ID AND CEH.DD_TPA_ID = ACT.DD_TPA_ID AND (CEH.DD_SAC_ID IS NULL OR CEH.DD_SAC_ID = ACT.DD_SAC_ID) AND CEH.RN = 1 
-                     LEFT JOIN LPO ON LPO.ACT_ID = ACT.ACT_ID AND LPO.DD_TPA_ID = ACT.DD_TPA_ID AND (LPO.DD_SAC_ID IS NULL OR LPO.DD_SAC_ID = ACT.DD_SAC_ID) AND LPO.RN = 1 
-                     LEFT JOIN ISU ON ISU.ACT_ID = ACT.ACT_ID AND ISU.DD_TPA_ID = ACT.DD_TPA_ID AND (ISU.DD_SAC_ID IS NULL OR ISU.DD_SAC_ID = ACT.DD_SAC_ID) AND ISU.RN = 1 
-                     LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV_TCE ON EQV_TCE.DD_NOMBRE_CAIXA = ''CALIFICACION_ENERGETICA'' AND EQV_TCE.DD_CODIGO_REM = CEE.DD_TCE_CODIGO
-                     LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV_LEM ON EQV_LEM.DD_NOMBRE_CAIXA = ''LISTA_EMISIONES'' AND EQV_LEM.DD_CODIGO_REM = CEE.DD_LEM_CODIGO
-                     WHERE ACT.BORRADO = 0
+                        AND TPD.DD_TPD_CODIGO IN (''27'', ''121'')
+                        AND SYSDATE BETWEEN NVL(ADO.ADO_FECHA_SOLICITUD, TO_DATE(''01/01/1900'',''DD/MM/YYYY'')) AND NVL(ADO.ADO_FECHA_CADUCIDAD, TO_DATE(''01/01/2099'',''DD/MM/YYYY''))
+                  )
+                  SELECT DISTINCT 
+                     ACT.ACT_NUM_ACTIVO_CAIXA NUM_IDENTIFICATIVO
+                     , ACT.ACT_NUM_ACTIVO NUM_INMUEBLE
+                     , EQV_TCE.DD_CODIGO_CAIXA CALIFICACION_ENERGETICA
+                     , NVL(CEE.REGISTRO, ''N'') CERTIFICADO_REGISTRADO
+                     , TO_CHAR(CEE.ADO_FECHA_SOLICITUD,''YYYYMMDD'') FEC_SOLICITUD
+                     , TO_CHAR(CEE.ADO_FECHA_CADUCIDAD,''YYYYMMDD'') FEC_FIN_VIGENCIA
+                     , EQV_LEM.DD_CODIGO_CAIXA LISTA_EMISIONES
+                     , CEE.EMISION * 100 VALORES_EMISIONES
+                     , CEE.LETRA_CONSUMO LISTA_ENERGIA
+                     , CEE.CONSUMO * 100 VALOR_ENERGIA
+                     , CASE
+                        WHEN CEH.DD_EDC_CODIGO = ''01'' THEN 1
+                        WHEN CEH.DD_EDC_CODIGO = ''02'' THEN 4
+                        WHEN CEH.DD_EDC_CODIGO NOT IN (''01'', ''02'') AND LPO.DD_EDC_CODIGO = ''01'' THEN 3
+                        WHEN ISU.DD_EDC_CODIGO = ''01'' THEN 5
+                        WHEN CEH.DD_EDC_CODIGO NOT IN (''01'', ''02'') AND CEH.CFD_OBLIGATORIO = 0 THEN 2
+                        END CEDULA_HABITABILIDAD
+                  FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+                  JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
+                  JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
+                  LEFT JOIN CEE ON CEE.ACT_ID = ACT.ACT_ID AND CEE.DD_TPA_ID = ACT.DD_TPA_ID AND (CEE.DD_SAC_ID IS NULL OR CEE.DD_SAC_ID = ACT.DD_SAC_ID) AND CEE.RN = 1
+                  LEFT JOIN CEH ON CEH.ACT_ID = ACT.ACT_ID AND CEH.DD_TPA_ID = ACT.DD_TPA_ID AND (CEH.DD_SAC_ID IS NULL OR CEH.DD_SAC_ID = ACT.DD_SAC_ID) AND CEH.RN = 1
+                  LEFT JOIN LPO ON LPO.ACT_ID = ACT.ACT_ID AND LPO.DD_TPA_ID = ACT.DD_TPA_ID AND (LPO.DD_SAC_ID IS NULL OR LPO.DD_SAC_ID = ACT.DD_SAC_ID) AND LPO.RN = 1
+                  LEFT JOIN ISU ON ISU.ACT_ID = ACT.ACT_ID AND ISU.DD_TPA_ID = ACT.DD_TPA_ID AND (ISU.DD_SAC_ID IS NULL OR ISU.DD_SAC_ID = ACT.DD_SAC_ID) AND ISU.RN = 1
+                  LEFT JOIN '||V_ESQUEMA||'.DD_EQV_CAIXA_REM EQV_TCE ON EQV_TCE.DD_NOMBRE_CAIXA = ''CALIFICACION_ENERGETICA'' AND EQV_TCE.DD_CODIGO_REM = CEE.DD_TCE_CODIGO
+                  LEFT JOIN '||V_ESQUEMA||'.DD_EQV_CAIXA_REM EQV_LEM ON EQV_LEM.DD_NOMBRE_CAIXA = ''LISTA_EMISIONES'' AND EQV_LEM.DD_CODIGO_REM = CEE.DD_LEM_CODIGO
+                  WHERE ACT.BORRADO = 0
                      AND CRA.DD_CRA_CODIGO = ''03''
                      AND PAC.PAC_INCLUIDO = 1
                      AND ACT.ACT_EN_TRAMITE = 0

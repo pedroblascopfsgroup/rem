@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210714
+--## FECHA_CREACION=20210729
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14545
+--## INCIDENCIA_LINK=HREOS-14686
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - HREOS-14241
 --##	    0.2 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - HREOS-14545
+--##	    0.3 Cambios para el lanzamiento del SP de publicaciones y situación comercial - HREOS-14686
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -42,10 +43,16 @@ CREATE OR REPLACE PROCEDURE SP_BCR_08_PUBLICACION
    V_FECHA_FIN VARCHAR2(100 CHAR);
 
    CURSOR ACTIVOS IS 
-        SELECT ACT_ID 
+        SELECT DISTINCT ACT_ID 
         FROM #ESQUEMA#.TMP_ACT_DESTINO_COMERCIAL;
 
    ACT_ID NUMBER(16);
+
+    CURSOR AGRUPACIONES IS 
+        SELECT DISTINCT AGR_ID 
+        FROM #ESQUEMA#.TMP_AGR_DESTINO_COMERCIAL;
+
+   AGR_ID NUMBER(16);
 
 BEGIN
 ------------------------------------------------------------------------------------------------
@@ -75,15 +82,43 @@ BEGIN
 
             #ESQUEMA#.OPERACION_DDL.DDL_Table('TRUNCATE',V_TABLA);
 
+            SALIDA := SALIDA || '[INFO] TRUNCAMOS TMP_AGR_DESTINO_COMERCIAL  [INFO]'|| CHR(10);
+
+            #ESQUEMA#.OPERACION_DDL.DDL_Table('TRUNCATE','TMP_AGR_DESTINO_COMERCIAL');
+
+            V_MSQL := 'INSERT  INTO '||V_ESQUEMA||'.'||V_TABLA||' (
+                            ACT_ID
+                        )
+                        SELECT
+                            ACT.ACT_ID
+                        FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
+                        JOIN '||V_ESQUEMA||'.DD_EQV_CAIXA_REM EQV ON EQV.DD_NOMBRE_CAIXA=''DESTINO_COMERCIAL'' AND EQV.DD_CODIGO_CAIXA = AUX.DESTINO_COMERCIAL AND EQV.BORRADO=0
+                        JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO_NUEVO ON TCO_NUEVO.DD_TCO_CODIGO = EQV.DD_CODIGO_REM
+                        JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO AND ACT.BORRADO=0
+                        JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID=ACT.ACT_ID
+                        WHERE AUX.FLAG_EN_REM = '|| FLAG_EN_REM||'
+                        AND APU.DD_TCO_ID <> TCO_NUEVO.DD_TCO_ID';
+
+            EXECUTE IMMEDIATE V_MSQL;
+
             V_NUM_FILAS := sql%rowcount;
 
-            SALIDA := SALIDA || '[INFO]  INSERTAMOS EN '||V_TABLA||'  [INFO]'|| CHR(10);
+            SALIDA := SALIDA || '[INFO] SE HAN INSERTADO ' || V_NUM_FILAS ||' REGISTROS EN '||V_TABLA||' POR TENER UN DESTINO COMERCIAL DIFERENTE [INFO]'|| CHR(10);
 
-              V_MSQL := 'INSERT  INTO '||V_ESQUEMA||'.'||V_TABLA||' (
+--2º Borramos la segunda tabla temporal que se ha creado para almacenar los activos que se van a borrar de la TMP_ACT_DESTINO_COMERCIAL
+            SALIDA := SALIDA || '[INFO] TRUNCAMOS TMP_DEST_COMERCIAL_REJECT  [INFO]'|| CHR(10);
+
+            #ESQUEMA#.OPERACION_DDL.DDL_Table('TRUNCATE','TMP_DEST_COMERCIAL_REJECT');
+
+            SALIDA := SALIDA || '[INFO] INSERTAMOS EN TMP_DEST_COMERCIAL_REJECT  [INFO]'|| CHR(10);
+
+            V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_DEST_COMERCIAL_REJECT TREJ (
                             ACT_ID
+                            , COD_RECHAZO
                       )
                         SELECT DISTINCT
                             ACT_ID
+                            , ''01''
                         FROM(
                         SELECT 
                              ACTOFR.ACT_ID AS ACT_ID
@@ -109,7 +144,7 @@ BEGIN
                         JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID=ACT.ACT_ID
                         JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID=APU.DD_TCO_ID
                         WHERE AUX.FLAG_EN_REM='|| FLAG_EN_REM||'
-                        )WHERE DESTINO_ACTUAL=''1'' 
+                        )WHERE DESTINO_ACTUAL = ''0'' 
                                   
                      ';
 
@@ -117,67 +152,17 @@ BEGIN
 
               V_NUM_FILAS := sql%rowcount;
 
-            SALIDA := SALIDA || '[INFO] SE HAN INSERTADO ' || V_NUM_FILAS ||' REGISTROS EN '||V_TABLA||'  [INFO]'|| CHR(10);
+            SALIDA := SALIDA || '[INFO] SE HAN INSERTADO ' || V_NUM_FILAS ||' REGISTROS EN TMP_DEST_COMERCIAL_REJECT POR TENER OFERTAS EN VUELO [INFO]'|| CHR(10);
         END IF;
 
-
---2º Borramos la segunda tabla temporal que se ha creado para almacenar los activos que se van a borrar de la TMP_ACT_DESTINO_COMERCIAL
-        SALIDA := SALIDA || '[INFO] TRUNCAMOS TMP_DEST_COMERCIAL_REJECT  [INFO]'|| CHR(10);
-
-        #ESQUEMA#.OPERACION_DDL.DDL_Table('TRUNCATE','TMP_DEST_COMERCIAL_REJECT');
-
---3º PRIMER insert a TMP_DEST_COMERCIAL_REJECT
-    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_DEST_COMERCIAL_REJECT TREJ(--Ver si todos los activos que pertenecen a una agrupación de encuentran en la temporal
+--3º SEGUNDO insert a TMP_DEST_COMERCIAL_REJECT
+    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_DEST_COMERCIAL_REJECT TREJ(--Vemos si todos los activos de una misma agrupación (18) tienen el mismo destino comercial
                     ACT_ID
+                    , COD_RECHAZO
                 )
                 SELECT 
                     ACT_ID
-                FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
-                WHERE EXISTS(
-                        WITH AGRUPACION --Cuenta de activos por agrupaciónes existentes AGA, es decir, cuántos activos hay por agrupación (LOS QUE ESTÁN VIGENTES)
-                        AS(
-                            SELECT 
-                                COUNT(*) CUENTA_AGA
-                                ,AGA.AGR_ID AS AGR_ID
-                            FROM '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA 
-                            JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID=AGR.AGR_ID AND AGR.BORRADO=0 
-                            JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TIPO ON AGR.DD_TAG_ID=TIPO.DD_TAG_ID
-                            WHERE TIPO.DD_TAG_CODIGO IN (''02'',''14'',''15'')  AND AGA.BORRADO=0 AND SYSDATE BETWEEN COALESCE(AGR_INI_VIGENCIA,AGR_FECHA_ALTA,TO_DATE(''01/01/1999'',''DD/MM/YYYY'')) 
-                                                                                                                AND COALESCE(AGR_FECHA_BAJA,AGR_FIN_VIGENCIA,TO_DATE(''31/12/2099'',''DD/MM/YYYY'')) 
-                            GROUP BY AGA.AGR_ID
-                        ),
-                        TEMPORAL --Cuenta de activos por agrupaciones, de los activos insertados en la temporal
-                        AS(
-                            SELECT 
-                                COUNT(*) CUENTA_TMP
-                                ,AGR.AGR_ID  AS AGR_ID
-                            FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
-                            JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID=TMP.ACT_ID AND AGA.BORRADO=0
-                            JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID=AGR.AGR_ID AND AGR.BORRADO=0 
-                            JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TIPO ON AGR.DD_TAG_ID=TIPO.DD_TAG_ID
-                            WHERE TIPO.DD_TAG_CODIGO IN (''02'',''14'',''15'') AND SYSDATE BETWEEN COALESCE(AGR_INI_VIGENCIA,AGR_FECHA_ALTA,TO_DATE(''01/01/1999'',''DD/MM/YYYY'')) 
-                                                                                            AND COALESCE(AGR_FECHA_BAJA,AGR_FIN_VIGENCIA,TO_DATE(''31/12/2099'',''DD/MM/YYYY''))
-                            GROUP BY AGR.AGR_ID
-                        )
-                            SELECT --En el caso de que no coincidan esas cuentas se borra el activo de la temporal
-                                1
-                            FROM AGRUPACION AGRU
-                            JOIN TEMPORAL TEMP ON AGRU.AGR_ID=TEMP.AGR_ID
-                            JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID=TEMP.AGR_ID
-                            WHERE AGRU.CUENTA_AGA!=TEMP.CUENTA_TMP AND TMP.ACT_ID=AGA.ACT_ID
-                    )
-   ';
-   EXECUTE IMMEDIATE V_MSQL;
-
-   V_NUM_FILAS := sql%rowcount;
-   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS'|| CHR(10);
-
---4º SEGUNDO insert a TMP_DEST_COMERCIAL_REJECT
-    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_DEST_COMERCIAL_REJECT TREJ(--Vemos si todos los activos de una misma agrupación (02) tienen el mismo destino comercial
-                    ACT_ID
-                )
-                SELECT 
-                    ACT_ID
+                    , ''02''
                 FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
                 WHERE EXISTS(
                     WITH DESTINO
@@ -195,7 +180,7 @@ BEGIN
                             JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID=TMP.ACT_ID AND AGA.BORRADO=0
                             JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID=AGR.AGR_ID AND AGR.BORRADO=0 
                             JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TIPO ON AGR.DD_TAG_ID=TIPO.DD_TAG_ID
-                            WHERE TIPO.DD_TAG_CODIGO =''02'' AND SYSDATE BETWEEN COALESCE(AGR_INI_VIGENCIA,AGR_FECHA_ALTA,TO_DATE(''01/01/1999'',''DD/MM/YYYY'')) 
+                            WHERE TIPO.DD_TAG_CODIGO =''18'' AND SYSDATE BETWEEN COALESCE(AGR_INI_VIGENCIA,AGR_FECHA_ALTA,TO_DATE(''01/01/1999'',''DD/MM/YYYY'')) 
                                                                             AND COALESCE(AGR_FECHA_BAJA,AGR_FIN_VIGENCIA,TO_DATE(''31/12/2099'',''DD/MM/YYYY''))
                             GROUP BY AUX.DESTINO_COMERCIAL,AGR.AGR_ID
                         )GROUP BY AGR_ID HAVING COUNT(*)>1
@@ -209,15 +194,17 @@ BEGIN
    EXECUTE IMMEDIATE V_MSQL;
 
    V_NUM_FILAS := sql%rowcount;
-   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS'|| CHR(10);
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS POR TENER DESTINO COMERCIAL DIFERENTE EN UNA RESTRINGIDA OBREM'|| CHR(10);
 
 
---5º TERCER insert a TMP_DEST_COMERCIAL_REJECT
-    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_DEST_COMERCIAL_REJECT TREJ(--Vemos si todos los activos de comercial venta y comercial alquiler (14,15) tienen el mismo destino comercial
+--4º TERCER insert a TMP_DEST_COMERCIAL_REJECT
+    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_DEST_COMERCIAL_REJECT TREJ(--Vemos si todos los activos de restringida venta y restringida alquiler (02,17) tienen el mismo destino comercial
                     ACT_ID
+                    , COD_RECHAZO
                 )
                 SELECT 
                     ACT_ID
+                    , ''03''
                 FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
                 WHERE EXISTS(
                     WITH DESTINO
@@ -228,8 +215,8 @@ BEGIN
                                 SELECT
                                     AGR.AGR_ID AS AGR_ID
                                     ,CASE
-                                        WHEN AUX.DESTINO_COMERCIAL=''VT'' AND  TIPO.DD_TAG_CODIGO=''15'' THEN 0 --Si el destino comercial es venta (VT) y la agrupación es comercial alquiler (15) (NO PUEDE CAMBIAR EL DESTINO)
-                                        WHEN AUX.DESTINO_COMERCIAL=''RT'' AND  TIPO.DD_TAG_CODIGO=''14'' THEN 0 --Si el destino comercial es alquiler (RT) y la agrupación es comercial venta (14) (NO PUEDE CAMBIAR EL DESTINO)
+                                        WHEN AUX.DESTINO_COMERCIAL=''VT'' AND  TIPO.DD_TAG_CODIGO=''17'' THEN 0 --Si el destino comercial es venta (VT) y la agrupación es restringida alquiler (17) (NO PUEDE CAMBIAR EL DESTINO)
+                                        WHEN AUX.DESTINO_COMERCIAL=''RT'' AND  TIPO.DD_TAG_CODIGO=''02'' THEN 0 --Si el destino comercial es alquiler (RT) y la agrupación es restringida venta (02) (NO PUEDE CAMBIAR EL DESTINO)
                                         ELSE 1
                                     END AS CAMBIO
                                 FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
@@ -238,7 +225,7 @@ BEGIN
                                 JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID=TMP.ACT_ID AND AGA.BORRADO=0
                                 JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID=AGR.AGR_ID AND AGR.BORRADO=0 
                                 JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TIPO ON AGR.DD_TAG_ID=TIPO.DD_TAG_ID
-                                WHERE TIPO.DD_TAG_CODIGO IN (''14'',''15'') AND SYSDATE BETWEEN COALESCE(AGR_INI_VIGENCIA,AGR_FECHA_ALTA,TO_DATE(''01/01/1999'',''DD/MM/YYYY'')) 
+                                WHERE TIPO.DD_TAG_CODIGO IN (''02'',''17'') AND SYSDATE BETWEEN COALESCE(AGR_INI_VIGENCIA,AGR_FECHA_ALTA,TO_DATE(''01/01/1999'',''DD/MM/YYYY'')) 
                                                                                 AND COALESCE(AGR_FECHA_BAJA,AGR_FIN_VIGENCIA,TO_DATE(''31/12/2099'',''DD/MM/YYYY''))
                             )WHERE CAMBIO=0
                         )SELECT
@@ -251,9 +238,9 @@ BEGIN
    EXECUTE IMMEDIATE V_MSQL;
 
    V_NUM_FILAS := sql%rowcount;
-   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS'|| CHR(10);
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS POR CAMBIAR EL DESTINO COMERCIAL A UNO INCORRECTO ESTANDO EN ALGUNA AGRUPACIÓN RESTRINGIDA VENTA Y RESTRINGIDA ALQUILER'|| CHR(10);
 
---6º Delete de los activos insertados en TMP_DEST_COMERCIAL_REJECT en la tabla TMP_ACT_DESTINO_COMERCIAL
+--5º Delete de los activos insertados en TMP_DEST_COMERCIAL_REJECT en la tabla TMP_ACT_DESTINO_COMERCIAL
     V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP 
                 WHERE EXISTS(
                     SELECT 
@@ -265,29 +252,79 @@ BEGIN
    EXECUTE IMMEDIATE V_MSQL;
 
    V_NUM_FILAS := sql%rowcount;
-   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS BORRADAS'|| CHR(10);
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS BORRADAS POR ESTAR LOS ACTIVOS RECHAZADOS'|| CHR(10);
 
---7º Insert de los activos borrados a la tabla AUX_APR_BCR_STOCK_REJ de errores
+--6º Insert de los activos borrados a la tabla AUX_APR_BCR_STOCK_REJ de errores
     V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_APR_BCR_STOCK_REJ REJ(
                     ERRORCODE
                     ,ERRORMESSAGE
                     ,ROWREJECTED
                 )
                 SELECT 
-                    ''SP_08'' AS ERRORCODE
-                    ,''Rechazado intento de cambio de destino comercial por agrupación de tipos restringida, comercial venta y comercial alquiler.'' AS ERRORMESSAGE
-                    ,ACT.ACT_NUM_ACTIVO_CAIXA  AS ROWREJECTED
+                    ''SP_08-01'' AS ERRORCODE
+                    , ''Rechazado intento de cambio de destino comercial cuando el activo tiene una oferta en vuelo.'' AS ERRORMESSAGE
+                    , ACT.ACT_NUM_ACTIVO_CAIXA  AS ROWREJECTED
                 FROM '||V_ESQUEMA||'.TMP_DEST_COMERCIAL_REJECT TREJ
                 JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID=TREJ.ACT_ID AND ACT.BORRADO=0
+                WHERE TREJ.COD_RECHAZO = ''01''
+   ';
+   EXECUTE IMMEDIATE V_MSQL;
+
+    V_NUM_FILAS := sql%rowcount;
+    SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS EN AUX_APR_BCR_STOCK_REJ POR ACTIVO CON OFERTAS EN VUELO'|| CHR(10);
+
+    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_APR_BCR_STOCK_REJ REJ(
+                    ERRORCODE
+                    ,ERRORMESSAGE
+                    ,ROWREJECTED
+                )
+                SELECT 
+                    ''SP_08-02'' AS ERRORCODE
+                    , ''Rechazado intento de cambio de destino comercial por agrupación restringida obrem, todos deben tener el mismo destino.'' AS ERRORMESSAGE
+                    , ACT.ACT_NUM_ACTIVO_CAIXA  AS ROWREJECTED
+                FROM '||V_ESQUEMA||'.TMP_DEST_COMERCIAL_REJECT TREJ
+                JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID=TREJ.ACT_ID AND ACT.BORRADO=0
+                WHERE TREJ.COD_RECHAZO = ''02''
+   ';
+   EXECUTE IMMEDIATE V_MSQL;
+
+    V_NUM_FILAS := sql%rowcount;
+    SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS EN AUX_APR_BCR_STOCK_REJ POR ACTIVOS EN AGRUPACIÓN RESTRINGIDA OBREM CON DESTINOS DIFERENTES'|| CHR(10);
+
+    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_APR_BCR_STOCK_REJ REJ(
+                    ERRORCODE
+                    ,ERRORMESSAGE
+                    ,ROWREJECTED
+                )
+                SELECT 
+                    ''SP_08-03'' AS ERRORCODE
+                    , ''Rechazado intento de cambio de destino comercial por agrupación de tipos restringida venta y restringida alquiler.'' AS ERRORMESSAGE
+                    , ACT.ACT_NUM_ACTIVO_CAIXA  AS ROWREJECTED
+                FROM '||V_ESQUEMA||'.TMP_DEST_COMERCIAL_REJECT TREJ
+                JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID=TREJ.ACT_ID AND ACT.BORRADO=0
+                WHERE TREJ.COD_RECHAZO = ''03''
    ';
    EXECUTE IMMEDIATE V_MSQL;
 
    V_NUM_FILAS := sql%rowcount;
-   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS'|| CHR(10);
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS EN AUX_APR_BCR_STOCK_REJ POR CAMBIO DE DESTINO EN AGRUPACIONES RESTRINGIDA VENTA Y RESTRINGIDA ALQUILER'|| CHR(10);
 
+    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_AGR_DESTINO_COMERCIAL (
+                    AGR_ID
+                )
+                SELECT DISTINCT AGR.AGR_ID
+                FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
+                JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON TMP.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0
+                JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID AND AGR.BORRADO = 0 AND AGR.AGR_FECHA_BAJA IS NULL
+                JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 AND TAG.DD_TAG_CODIGO IN (''02'',''17'',''18'')';
 
+    EXECUTE IMMEDIATE V_MSQL;
 
---8º Actualización del histórico
+    V_NUM_FILAS := sql%rowcount;
+
+    SALIDA := SALIDA || '[INFO] SE HAN INSERTADO ' || V_NUM_FILAS ||' REGISTROS EN TMP_AGR_DESTINO_COMERCIAL POR ESTAR DENTRO DE UNA AGRUPACIÓN RESTRINGIDA [INFO]'|| CHR(10);
+
+--7º Actualización del histórico
 --Modificamos en el caso de que ya exista un registro en la histórica
     V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.HDC_HIST_DESTINO_COMERCIAL HIST
 	            USING (				
@@ -297,8 +334,8 @@ BEGIN
                 )US ON (US.ACT_ID = HIST.ACT_ID)
                 WHEN MATCHED THEN UPDATE SET
                      HIST.HDC_FECHA_FIN=SYSDATE
-                    ,HIST.HDC_GESTOR_ACTUALIZACION=''BATCH_USER''
-                    ,HIST.USUARIOMODIFICAR = ''BATCH_USER''
+                    ,HIST.HDC_GESTOR_ACTUALIZACION=''STOCK_BC''
+                    ,HIST.USUARIOMODIFICAR = ''STOCK_BC''
                     ,HIST.FECHAMODIFICAR = SYSDATE
                     WHERE HIST.HDC_FECHA_FIN IS NULL  AND HIST.BORRADO=0
    ';
@@ -323,8 +360,8 @@ BEGIN
                     ,TCO.DD_TCO_ID AS DD_TCO_ID
                     ,SYSDATE AS HDC_FECHA_INICIO
                     ,NULL AS HDC_FECHA_FIN
-                    ,''BATCH_USER'' AS HDC_GESTOR_ACTUALIZACION
-                    ,''BATCH_USER''AS USUARIOCREAR
+                    ,''STOCK_BC'' AS HDC_GESTOR_ACTUALIZACION
+                    ,''STOCK_BC''AS USUARIOCREAR
                     ,SYSDATE AS FECHACREAR    
                 FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
                 JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID=TMP.ACT_ID AND ACT.BORRADO=0
@@ -337,7 +374,7 @@ BEGIN
    V_NUM_FILAS := sql%rowcount;
    SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS INSERTADAS'|| CHR(10);
 
---9º Se cambia el destino comercial
+--8º Se cambia el destino comercial
     V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION ACT
 	            USING (				
                     SELECT 
@@ -358,24 +395,6 @@ BEGIN
 
    V_NUM_FILAS := sql%rowcount;
    SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FILAS MODIFICADAS'|| CHR(10); 
-
-
-
---10º Llamar al SP para cada activo guardado en la tabla temporal
---Ejecutamos el Sp por cada activo de la tabla temporal
-
-SALIDA := SALIDA || '##INICIO: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
-
-    FOR I IN ACTIVOS LOOP
-        ACT_ID:=I.ACT_ID;
-
-        SP_CAMBIO_ESTADO_PUBLICACION(ACT_ID);
-        
-        EXIT WHEN ACTIVOS%NOTFOUND;
-    END LOOP;
-
-SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
-
 
 
 ------------------------------------------------------------------------------------------------
@@ -493,7 +512,7 @@ SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
             ) US ON (US.ACT_ID = APU.ACT_ID)
             WHEN MATCHED THEN UPDATE SET
                  APU.DD_POR_ID=US.DD_POR_ID            
-                ,APU.USUARIOMODIFICAR = ''BATCH_USER''
+                ,APU.USUARIOMODIFICAR = ''STOCK_BC''
                 ,APU.FECHAMODIFICAR = SYSDATE
                 WHERE APU.BORRADO=0 AND NVL(APU.DD_POR_ID,0)!=NVL(US.DD_POR_ID,0)
    ';
@@ -507,7 +526,7 @@ SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
 
 
 ------------------------------------------------------------------------------------------------
-----------Lógica para el check de perímetro de comercialización, el de formalización------------
+----------Lógica para el check de perímetro de comercialización, publicación, visible gestión comercial y formalización------------
 ------------------------------------------------------------------------------------------------
 
 --1º Validaciones en función de los destinos comerciales e indicadores API
@@ -531,6 +550,38 @@ SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
                                 WHEN TCO.DD_TCO_CODIGO=''03'' AND CAI.CBX_PUBL_PORT_API_ALQUILER=0 THEN SYSDATE
                                 WHEN TCO.DD_TCO_CODIGO=''02'' AND (CAI.CBX_PUBL_PORT_API_VENTA=0 OR CAI.CBX_PUBL_PORT_API_ALQUILER=0) THEN SYSDATE
                             END AS PAC_FECHA_COMERCIALIZAR
+                            ,CASE                                                                  
+                                WHEN TCO.DD_TCO_CODIGO=''01'' AND CAI.CBX_PUBL_PORT_API_VENTA=1 THEN  1
+                                WHEN TCO.DD_TCO_CODIGO=''03'' AND CAI.CBX_PUBL_PORT_API_ALQUILER=1 THEN 1
+                                WHEN TCO.DD_TCO_CODIGO=''02'' AND (CAI.CBX_PUBL_PORT_API_VENTA=1 OR CAI.CBX_PUBL_PORT_API_ALQUILER=1) THEN 1
+                                WHEN TCO.DD_TCO_CODIGO=''01'' AND CAI.CBX_PUBL_PORT_API_VENTA=0 THEN  0
+                                WHEN TCO.DD_TCO_CODIGO=''03'' AND CAI.CBX_PUBL_PORT_API_ALQUILER=0 THEN 0
+                                WHEN TCO.DD_TCO_CODIGO=''02'' AND (CAI.CBX_PUBL_PORT_API_VENTA=0 OR CAI.CBX_PUBL_PORT_API_ALQUILER=0) THEN 0
+                            END AS PAC_CHECK_PUBLICAR
+                            ,CASE
+                                WHEN TCO.DD_TCO_CODIGO=''01'' AND CAI.CBX_PUBL_PORT_API_VENTA=1 THEN  SYSDATE
+                                WHEN TCO.DD_TCO_CODIGO=''03'' AND CAI.CBX_PUBL_PORT_API_ALQUILER=1 THEN SYSDATE
+                                WHEN TCO.DD_TCO_CODIGO=''02'' AND (CAI.CBX_PUBL_PORT_API_VENTA=1 OR CAI.CBX_PUBL_PORT_API_ALQUILER=1) THEN SYSDATE
+                                WHEN TCO.DD_TCO_CODIGO=''01'' AND CAI.CBX_PUBL_PORT_API_VENTA=0 THEN  SYSDATE
+                                WHEN TCO.DD_TCO_CODIGO=''03'' AND CAI.CBX_PUBL_PORT_API_ALQUILER=0 THEN SYSDATE
+                                WHEN TCO.DD_TCO_CODIGO=''02'' AND (CAI.CBX_PUBL_PORT_API_VENTA=0 OR CAI.CBX_PUBL_PORT_API_ALQUILER=0) THEN SYSDATE
+                            END AS PAC_FECHA_PUBLICAR
+                            ,CASE                                                                  
+                                WHEN TCO.DD_TCO_CODIGO=''01'' AND CAI.CBX_PUBL_PORT_API_VENTA=1 THEN  1
+                                WHEN TCO.DD_TCO_CODIGO=''03'' AND CAI.CBX_PUBL_PORT_API_ALQUILER=1 THEN 1
+                                WHEN TCO.DD_TCO_CODIGO=''02'' AND (CAI.CBX_PUBL_PORT_API_VENTA=1 OR CAI.CBX_PUBL_PORT_API_ALQUILER=1) THEN 1
+                                WHEN TCO.DD_TCO_CODIGO=''01'' AND CAI.CBX_PUBL_PORT_API_VENTA=0 THEN  0
+                                WHEN TCO.DD_TCO_CODIGO=''03'' AND CAI.CBX_PUBL_PORT_API_ALQUILER=0 THEN 0
+                                WHEN TCO.DD_TCO_CODIGO=''02'' AND (CAI.CBX_PUBL_PORT_API_VENTA=0 OR CAI.CBX_PUBL_PORT_API_ALQUILER=0) THEN 0
+                            END AS PAC_CHECK_GESTION_COMERCIAL
+                            ,CASE
+                                WHEN TCO.DD_TCO_CODIGO=''01'' AND CAI.CBX_PUBL_PORT_API_VENTA=1 THEN  SYSDATE
+                                WHEN TCO.DD_TCO_CODIGO=''03'' AND CAI.CBX_PUBL_PORT_API_ALQUILER=1 THEN SYSDATE
+                                WHEN TCO.DD_TCO_CODIGO=''02'' AND (CAI.CBX_PUBL_PORT_API_VENTA=1 OR CAI.CBX_PUBL_PORT_API_ALQUILER=1) THEN SYSDATE
+                                WHEN TCO.DD_TCO_CODIGO=''01'' AND CAI.CBX_PUBL_PORT_API_VENTA=0 THEN  SYSDATE
+                                WHEN TCO.DD_TCO_CODIGO=''03'' AND CAI.CBX_PUBL_PORT_API_ALQUILER=0 THEN SYSDATE
+                                WHEN TCO.DD_TCO_CODIGO=''02'' AND (CAI.CBX_PUBL_PORT_API_VENTA=0 OR CAI.CBX_PUBL_PORT_API_ALQUILER=0) THEN SYSDATE
+                            END AS PAC_FECHA_GESTION_COMERCIAL
                             ,CASE
                                 WHEN TCO.DD_TCO_CODIGO=''01'' AND CAI.CBX_PUBL_PORT_API_VENTA=1 THEN  1
                                 WHEN TCO.DD_TCO_CODIGO=''03'' AND CAI.CBX_PUBL_PORT_API_ALQUILER=1 THEN 1
@@ -558,9 +609,13 @@ SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
                             ,PAC.PAC_FECHA_COMERCIALIZAR=US.PAC_FECHA_COMERCIALIZAR
                             ,PAC.PAC_CHECK_FORMALIZAR=US.PAC_CHECK_FORMALIZAR
                             ,PAC.PAC_FECHA_FORMALIZAR=US.PAC_FECHA_FORMALIZAR
-                            ,PAC.USUARIOMODIFICAR = ''BATCH_USER''
+                            ,PAC.USUARIOMODIFICAR = ''STOCK_BC''
                             ,PAC.FECHAMODIFICAR = SYSDATE
-                            WHERE PAC.BORRADO=0 AND NVL(PAC.PAC_CHECK_COMERCIALIZAR,0)!=NVL(US.PAC_CHECK_COMERCIALIZAR,0) AND NVL(PAC.PAC_CHECK_FORMALIZAR,0)!=NVL(US.PAC_CHECK_FORMALIZAR,0)
+                            WHERE PAC.BORRADO=0 
+                            AND NVL(PAC.PAC_CHECK_COMERCIALIZAR,0)!=NVL(US.PAC_CHECK_COMERCIALIZAR,0) 
+                            AND NVL(PAC.PAC_CHECK_FORMALIZAR,0)!=NVL(US.PAC_CHECK_FORMALIZAR,0)
+                            AND NVL(PAC.PAC_CHECK_PUBLICAR,0)!=NVL(US.PAC_CHECK_PUBLICAR,0) 
+                            AND NVL(PAC.PAC_CHECK_GESTION_COMERCIAL,0)!=NVL(US.PAC_CHECK_GESTION_COMERCIAL,0)
 
    ';
    EXECUTE IMMEDIATE V_MSQL;
@@ -569,48 +624,96 @@ SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
    V_NUM_FILAS := sql%rowcount;
    SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FUSIONADAS'|| CHR(10);
 
+    V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP_DEL
+               WHERE TMP_DEL.ACT_ID IN (SELECT DISTINCT AGA.ACT_ID 
+                FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
+                JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON TMP.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0
+                JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID AND AGR.BORRADO = 0 AND AGR.AGR_FECHA_BAJA IS NULL
+                JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 AND TAG.DD_TAG_CODIGO IN (''02'',''17'',''18''))';
 
-------------------------------------------------------------------------------------------------
-----------------------------Lógica para el check de gestión comercial---------------------------
-------------------------------------------------------------------------------------------------
+    EXECUTE IMMEDIATE V_MSQL;
 
---1º Validaciones en función de los destinos comerciales e indicadores API
-    V_MSQL :=  'MERGE INTO '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC
-                USING (	
-                        SELECT
-                            TMP.ACT_ID AS ACT_ID
-                            ,CASE
-                                WHEN TCO.DD_TCO_CODIGO=''01'' AND DD_EPU_CODIGO=''01'' THEN 1
-                                WHEN TCO.DD_TCO_CODIGO=''03'' AND DD_EPU_CODIGO=''01'' THEN 1
-                                WHEN TCO.DD_TCO_CODIGO=''02'' AND DD_EPU_CODIGO=''01'' THEN 1
-                                ELSE 0
-                            END AS PAC_CHECK_GESTION_COMERCIAL 
-                            ,CASE
-                                WHEN TCO.DD_TCO_CODIGO=''01'' AND DD_EPU_CODIGO=''01'' THEN SYSDATE
-                                WHEN TCO.DD_TCO_CODIGO=''03'' AND DD_EPU_CODIGO=''01'' THEN SYSDATE
-                                WHEN TCO.DD_TCO_CODIGO=''02'' AND DD_EPU_CODIGO=''01'' THEN SYSDATE
-                                ELSE SYSDATE
-                            END AS PAC_FECHA_GESTION_COMERCIAL
-                        FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
-                        JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID=TMP.ACT_ID AND ACT.BORRADO=0
-                        JOIN '||V_ESQUEMA||'.DD_EPU_ESTADO_PUBLICACION EPU ON EPU.DD_EPU_ID=ACT.DD_EPU_ID
-                        JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID=APU.ACT_ID
-                        JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON APU.DD_TCO_ID=TCO.DD_TCO_ID
-                    ) US ON (US.ACT_ID = PAC.ACT_ID)
-                                WHEN MATCHED THEN UPDATE SET
-                                    PAC.PAC_CHECK_GESTION_COMERCIAL=US.PAC_CHECK_GESTION_COMERCIAL  
-                                    ,PAC.PAC_FECHA_GESTION_COMERCIAL=US.PAC_FECHA_GESTION_COMERCIAL
-                                    ,PAC.USUARIOMODIFICAR = ''BATCH_USER''
-                                    ,PAC.FECHAMODIFICAR = SYSDATE
-                                    WHERE PAC.BORRADO=0 AND NVL(PAC.PAC_CHECK_GESTION_COMERCIAL,0)!=NVL(US.PAC_CHECK_GESTION_COMERCIAL,0) 
-   ';
-   EXECUTE IMMEDIATE V_MSQL;
-   
+    V_NUM_FILAS := sql%rowcount;
 
-   V_NUM_FILAS := sql%rowcount;
-   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' MODIFICADAS'|| CHR(10);
+    SALIDA := SALIDA || '[INFO] SE HAN BORRADO ' || V_NUM_FILAS ||' REGISTROS EN TMP_ACT_DESTINO_COMERCIAL POR ESTAR DENTRO DE UNA AGRUPACIÓN RESTRINGIDA [INFO]'|| CHR(10);
 
+    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_AGR_DESTINO_COMERCIAL (
+                    AGR_ID
+                )
+                SELECT DISTINCT AGR.AGR_ID
+                FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
+                JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO AND ACT.BORRADO=0
+                JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0
+                JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID AND AGR.BORRADO = 0 AND AGR.AGR_FECHA_BAJA IS NULL
+                JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND AGR.BORRADO = 0 AND AGR.AGR_FECHA_BAJA IS NULL
+                JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 AND TAG.DD_TAG_CODIGO IN (''02'',''17'',''18'')
+                WHERE (TRUNC(PAC.FECHACREAR) = TRUNC(SYSDATE) AND PAC.USUARIOCREAR = ''STOCK_BC''
+                OR TRUNC(PAC.FECHAMODIFICAR) = TRUNC(SYSDATE) AND PAC.USUARIOMODIFICAR = ''STOCK_BC'')
+                AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_AGR_DESTINO_COMERCIAL TMP WHERE TMP.AGR_ID = AGR.AGR_ID)';
 
+    EXECUTE IMMEDIATE V_MSQL;
+
+    V_NUM_FILAS := sql%rowcount;
+
+    SALIDA := SALIDA || '[INFO] SE HAN INSERTADO ' || V_NUM_FILAS ||' REGISTROS EN TMP_AGR_DESTINO_COMERCIAL POR POR CAMBIOS DE PERÍMETRO [INFO]'|| CHR(10);
+
+    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_ACT_SCM (
+                    ACT_ID
+                    , FECHA_CALCULO
+                )
+                SELECT TMP.ACT_ID, SYSDATE
+                FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
+                WHERE NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_ACT_SCM SCM WHERE SCM.ACT_ID = TMP.ACT_ID)
+                UNION ALL
+                SELECT DISTINCT AGA.ACT_ID, SYSDATE
+                FROM '||V_ESQUEMA||'.TMP_AGR_DESTINO_COMERCIAL TMP
+                JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON TMP.AGR_ID = AGA.AGR_ID AND AGA.BORRADO = 0
+                WHERE NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_ACT_SCM SCM WHERE SCM.ACT_ID = AGA.ACT_ID)';
+
+    EXECUTE IMMEDIATE V_MSQL;
+
+    V_NUM_FILAS := sql%rowcount;
+
+    SALIDA := SALIDA || '[INFO] SE HAN INSERTADO ' || V_NUM_FILAS ||' REGISTROS EN TMP_ACT_SCM [INFO]'|| CHR(10);
+
+--9º Llamar al SP para cada activo guardado en la tabla temporal
+--Ejecutamos el Sp por cada activo de la tabla temporal
+
+    SALIDA := SALIDA || '##INICIO: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
+
+        FOR I IN ACTIVOS LOOP
+            ACT_ID:=I.ACT_ID;
+
+            SP_CAMBIO_ESTADO_PUBLICACION(ACT_ID);
+            
+            EXIT WHEN ACTIVOS%NOTFOUND;
+        END LOOP;
+
+    SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
+
+--10º Llamar al SP para cada activo guardado en la tabla temporal
+--Ejecutamos el Sp por cada activo de la tabla temporal
+
+    SALIDA := SALIDA || '##INICIO: SP_CAMBIO_ESTADO_PUBLI_AGR '|| CHR(10);
+
+        FOR I IN AGRUPACIONES LOOP
+            AGR_ID:=I.AGR_ID;
+
+            SP_CAMBIO_ESTADO_PUBLI_AGR(AGR_ID);
+            
+            EXIT WHEN AGRUPACIONES%NOTFOUND;
+        END LOOP;
+
+    SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLI_AGR '|| CHR(10);
+
+--11º Llamar al SP de SCM para cada activo guardado en la tabla temporal
+--Ejecutamos el Sp por cada activo de la tabla temporal
+
+    SALIDA := SALIDA || '##INICIO: SP_ASC_ACTUALIZA_SIT_COMERCIAL '|| CHR(10);
+
+    SP_ASC_ACTUALIZA_SIT_COMERCIAL(0,1,1);
+
+    SALIDA := SALIDA || '##FIN: SP_ASC_ACTUALIZA_SIT_COMERCIAL '|| CHR(10);
 
 COMMIT;
 

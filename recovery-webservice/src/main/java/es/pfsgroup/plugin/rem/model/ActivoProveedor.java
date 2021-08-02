@@ -243,6 +243,11 @@ public class ActivoProveedor implements Serializable, Auditable {
     @JoinColumn(name = "PVE_ID_MEDIADOR_REL")
     private ActivoProveedor mediadorRelacionado;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "IAP_ID")
+	private InfoAdicionalPersona infoAdicionalPersona;
+
+
 	@Version   
 	private Long version;
 	
@@ -709,6 +714,13 @@ public class ActivoProveedor implements Serializable, Auditable {
 
 	public void setMediadorRelacionado(ActivoProveedor mediadorRelacionado) {
 		this.mediadorRelacionado = mediadorRelacionado;
-	}	
-	
+	}
+
+	public InfoAdicionalPersona getInfoAdicionalPersona() {
+		return infoAdicionalPersona;
+	}
+
+	public void setInfoAdicionalPersona(InfoAdicionalPersona infoAdicionalPersona) {
+		this.infoAdicionalPersona = infoAdicionalPersona;
+	}
 }

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210421
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210720
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-13283
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-14686
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las agrupaciones de Obra Nueva enviadas a webcom. HREOS-1551 - Se añaden agrupaciones Asistidas.
 --##           
@@ -15,6 +15,7 @@
 --##        0.3: 20200610 Juan Beltrán. Optimización Vistas WEBCOM 
 --##        0.4: 20210312 Sergio Gomez. Relanzar en DESAMIG
 --##	    0.5: 20210421 Viorel Remus Ovidiu. Añadir campos PISO_PILOTO, AGR_VISITABLE, AGR_EMPRESA_PROMOTORA, AGR_EMPRESA_COMERCIALIZADORA
+--##	    0.6: 20210720 Daniel Algaba. Añadir nuevas agrupaciones Restringida Alquiler y Restringida OB-REM - HREOS-14686
 --##########################################
 --*/
 
@@ -42,7 +43,7 @@ DECLARE
 
     CUENTA NUMBER;
     
-BEGIN/*Versión 0.2*/
+BEGIN/*Versión 0.6*/
 	
 
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_VISTA|| '********'); 
@@ -161,7 +162,7 @@ BEGIN/*Versión 0.2*/
         	CAST(AGR.AGR_EMPRESA_PROMOTORA AS VARCHAR2(250 CHAR))                              	 AS AGR_EMPRESA_PROMOTORA,
         	CAST(AGR.AGR_EMPRESA_COMERCIALIZADORA AS VARCHAR2(250 CHAR))                       	 AS AGR_EMPRESA_COMERCIALIZADORA
 		FROM '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR
-		JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION DDTAG ON DDTAG.DD_TAG_ID = AGR.DD_TAG_ID AND DDTAG.DD_TAG_CODIGO IN (''01'', ''13'',''14'',''15'',''16'')  
+		JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION DDTAG ON DDTAG.DD_TAG_ID = AGR.DD_TAG_ID AND DDTAG.DD_TAG_CODIGO IN (''01'', ''13'',''14'',''15'',''16'',''17'',''18'')  
 		LEFT JOIN INFO_ACTIVO_AGRUPACION IAG ON IAG.AGR_ID = AGR.AGR_ID
 		LEFT JOIN DIRECCION_AGRUPA DIR ON DIR.AGR_ID = AGR.AGR_ID
 		LEFT JOIN (SELECT COUNT(*) CUENTA, AGR_ID

@@ -1518,7 +1518,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
 				ExpedienteComercial expedienteComercial = tramitacionOfertasManager.crearExpediente(oferta, trabajo, null, oferta.getActivoPrincipal());
 				ActivoTramite activoTramite = tramitacionOfertasManager.doTramitacion(oferta.getActivoPrincipal(), oferta, trabajo.getId(), expedienteComercial);
-
+				ofertaDao.flush();
+				
 				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
 
 				// Se copiará el valor del campo necesita financiación al campo

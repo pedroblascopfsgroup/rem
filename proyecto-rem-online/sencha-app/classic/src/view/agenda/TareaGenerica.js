@@ -1388,6 +1388,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var codigoSubcartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoSubcartera');
 		fechaIngreso.setMaxValue($AC.getCurrentDate());
+		me.down('[name=fechaIngreso]').allowBlank = false;
 		
 		if(CONST.CARTERA['BANKIA'] == codigoCartera && CONST.SUBCARTERA['BH'] != codigoSubcartera){
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
@@ -1408,7 +1409,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			if(CONST.CARTERA['LIBERBANK'] != codigoCartera && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)){
 				if (newValue) {
 	            	me.habilitarCampo(me.down('[name=fechaIngreso]'));
-	            	me.down('[name=fechaIngreso]').allowBlank = false;
 	            	me.down('[name=fechaIngreso]').validate();
 	            } else {
 	            	me.deshabilitarCampo(me.down('[name=fechaIngreso]'));

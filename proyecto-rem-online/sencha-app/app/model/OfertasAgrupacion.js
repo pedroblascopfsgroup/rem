@@ -64,7 +64,22 @@ Ext.define('HreRem.model.OfertasAgrupacion', {
 			name:'fechaEntradaCRMSF',
 			type:'date',
     		dateFormat: 'c'
-		}
+		},
+    	{
+    		name: 'ventaCartera',
+			type: 'boolean'
+    	},
+    	{
+    		name: 'ofertaEspecial',
+			type: 'boolean'
+    	},
+    	{
+    		name: 'ventaSobrePlano',
+			type: 'boolean'
+    	},
+    	{
+    		name: 'codRiesgoOperacion'
+    	}
     		
     ],
     

@@ -248,6 +248,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 							}							
 						} catch (Exception e) {
 							e.printStackTrace();
+							throw e;
 						}
 						if(!Checks.esNulo(codigoComite)) {
 							if(expediente.getComiteSancion() == null || !expediente.getComiteSancion().getCodigo().equals(codigoComite)) {
@@ -274,8 +275,12 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
         	throw new UserException("La tarea que está intentando avanzar ya se encuentra en proceso de avance. "
         			+ "Por favor, refresque el trámite para comprobar si este proceso ha finalizado.");     	
         }
-        //Le insertamos los valores del formulario al BPM en una variable de Thread para que pueda recuperarlos
-        jbpmManager.signalToken(tarea.getTokenIdBpm(), BPMContants.TRANSICION_AVANZA_BPM);
+        try {
+        	//Le insertamos los valores del formulario al BPM en una variable de Thread para que pueda recuperarlos
+        	jbpmManager.signalToken(tarea.getTokenIdBpm(), BPMContants.TRANSICION_AVANZA_BPM);
+        }catch(Exception e) {
+        	throw new UserException("Error avanzando la tarea: " + e.getMessage());
+        }
     }    
     
     /**
@@ -291,7 +296,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
     /** Ejecuta la validación definida en la tarea. El script debe devolver null para continuar, o un string indicando el error a mostrar
      * @param tareaExterna
      */
-    public String validacionPreviaDeLaTarea(TareaExterna tareaExterna) {
+    public String validacionPreviaDeLaTarea(TareaExterna tareaExterna) throws Exception{
         String script = tareaExterna.getTareaProcedimiento().getScriptValidacion();
 
         //script = "!isEmbargosConFechaSolicitud() ? 'Antes de realizar la tarea es necesario marcar los bienes con fecha de solicitud de embargo' : null";

@@ -147,8 +147,8 @@ public class NotificatorServicePBCResultado extends AbstractNotificatorService i
 			
 				if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(cartera.getCodigo())) {
 					
-					f1 = FileItemUtils.fromResource("docs/anexo_1_a_Formulario_personas_fisicas_liberbank.docx");
-					f2 = FileItemUtils.fromResource("docs/anexo_1_b_Formulario_personas_juridicas_liberbank.docx");
+					f1 = FileItemUtils.fromResource("docs/anexo_1_a_Formulario_personas_fisicas_unicaja.docx");
+					f2 = FileItemUtils.fromResource("docs/anexo_1_b_Formulario_personas_juridicas_unicaja.docx");
 					f3 = FileItemUtils.fromResource("docs/informacion_y_documentacion.docx");
 					
 					adjuntos.add(createAdjunto(f1, "Anexo_1_a_Formulario_personas_fisicas.docx"));

@@ -1750,55 +1750,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView bloqueoExpediente(ModelMap model, Long idExpediente) {
-		try {
-			String errorCode = expedienteComercialApi.validaBloqueoExpediente(idExpediente);
-
-			if (errorCode == null || errorCode.isEmpty()) {
-				expedienteComercialApi.bloquearExpediente(idExpediente);
-				model.put(RESPONSE_SUCCESS_KEY, true);
-
-			} else {
-				model.put(RESPONSE_SUCCESS_KEY, false);
-				model.put("errorCode", errorCode);
-			}
-
-		} catch (Exception e) {
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put("errorCode", "imposible.bloquear.general");
-			logger.error("Error en ExpedienteComercialController", e);
-		}
-
-		return createModelAndViewJson(model);
-	}
-
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView desbloqueoExpediente(ModelMap model, Long idExpediente, String motivoCodigo,
-			String motivoDescLibre) {
-		try {
-			String errorCode = expedienteComercialApi.validaDesbloqueoExpediente(idExpediente);
-
-			if (errorCode == null || errorCode.isEmpty()) {
-				expedienteComercialApi.desbloquearExpediente(idExpediente, motivoCodigo, motivoDescLibre);
-				model.put(RESPONSE_SUCCESS_KEY, true);
-
-			} else {
-				model.put(RESPONSE_SUCCESS_KEY, false);
-				model.put("errorCode", errorCode);
-			}
-
-		} catch (Exception e) {
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put("errorCode", "imposible.bloquear.general");
-			logger.error("Error en ExpedienteComercialController", e);
-		}
-
-		return createModelAndViewJson(model);
-	}
-
-	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public void getExcelActivosExpediente(Long idExpediente, HttpServletRequest request, HttpServletResponse response) {
 		try {

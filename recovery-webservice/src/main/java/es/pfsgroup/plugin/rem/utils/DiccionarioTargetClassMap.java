@@ -305,6 +305,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("motivoGestionComercial", DDMotivoGestionComercial.class);
 		mapa.put("estadoAdecuacionSareb", DDEstadoAdecucionSareb.class);
 		mapa.put("estadoFisicoActivoDND", DDValidaEstadoActivo.class);
+		mapa.put("tipoRiesgoOperacion", DDTipoRiesgoOperacion.class);
 		mapa.put("identificadorReam", DDIdentificadorReam.class);
 		mapa.put("tipoRetencion", DDTipoRetencion.class);
 		mapa.put("estadoAdecuacionSareb", DDEstadoAdecucionSareb.class);

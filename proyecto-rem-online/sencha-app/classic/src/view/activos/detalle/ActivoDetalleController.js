@@ -11,7 +11,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.model.ComercialActivoModel', 'HreRem.view.activos.detalle.CrearEvolucionObservaciones', 'HreRem.view.activos.detalle.SuministrosActivo',
     		'HreRem.view.common.adjuntos.formularioTipoDocumento.WizardAdjuntarDocumentoModel','HreRem.view.common.WizardBase',
     		'HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocumentoWizard1','HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocumentoWizard2',
-    		'HreRem.view.activos.detalle.SuministrosActivo', 'HreRem.view.trabajos.detalle.CrearPeticionTrabajo','HreRem.view.activos.detalle.SaneamientoActivoDetalle',
+    		'HreRem.view.trabajos.detalle.CrearPeticionTrabajo','HreRem.view.activos.detalle.SaneamientoActivoDetalle', 'HreRem.view.activos.detalle.TramitarOfertaActivoWindow',
 			'HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq'],
 
     control: {
@@ -8159,7 +8159,41 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onClickBotonCancelarVentanaGastoAsociado : function(btn) {
 		var me = this;
 		btn.up('window').hide();
+	}, 
+    
+    mostrarCrearOfertaTramitada: function(editor, grid, context) {   	
+		var me = this;
+		
+		me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.TramitarOfertaActivoWindow", {
+			editor: editor,
+			grid: grid,
+			context: context
+        });	    
 	},
+	
+	hideWindowCrearOferta: function(btn) {
+		var me = this;
+		me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);
+		btn.up('window').hide();
+	 }, 
+
+    onClickCrearOfertaTramitada: function (btn){
+ 		var me = this;
+ 		var ventanaCrearOferta = btn.up('[reference=crearofertawindowref]');
+ 		var editor = ventanaCrearOferta.editor;
+ 		var gridListadoOfertas = ventanaCrearOferta.grid;
+ 		var context = ventanaCrearOferta.context;
+ 		
+ 		context.record.data.ventaCartera = ventanaCrearOferta.down('[reference=checkVentaCartera]').value;
+ 		context.record.data.ofertaEspecial = ventanaCrearOferta.down('[reference=checkOfertaEspecial]').value;
+ 		context.record.data.ventaSobrePlano = ventanaCrearOferta.down('[reference=checkVentaSobrePlano]').value;
+ 		context.record.data.codRiesgoOperacion = ventanaCrearOferta.down('[reference=tipoRiesgoOperacionRef]').value;
+ 		
+ 		gridListadoOfertas.saveFn(editor, gridListadoOfertas, context);
+ 		
+ 		me.hideWindowCrearOferta(btn);
+ 		
+    },
 
     
     mostrarObservacionesGrid: function(event, target, options) {   	

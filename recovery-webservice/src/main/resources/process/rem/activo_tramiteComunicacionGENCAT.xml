@@ -3,30 +3,8 @@
 <process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="activo_tramiteComunicacionGENCAT">
 
 	<start-state name="inicio">
-		<transition to="T016_ProcesoAdecuacion"></transition>
+		<transition to="T016_ComunicarGENCAT"></transition>
 	</start-state>
-	
-	<state name="T016_ProcesoAdecuacion">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<transition to="T016_ComunicarGENCAT" name="avanzaBPM"></transition>
-	</state>
 	
 	<state name="T016_ComunicarGENCAT">
 		<event type="node-enter">

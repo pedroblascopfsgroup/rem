@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20210610
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210729
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14241
+--## INCIDENCIA_LINK=HREOS-14686
 --## PRODUCTO=NO
 --## Finalidad: Tabla auxiliar guardar los activos que se vayan a borrar en la tabla temporal TMP_ACT_DESTINO_COMERCIAL
 --##           
@@ -55,6 +55,7 @@ BEGIN
             V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TABLA||'
             (
                 ACT_ID  NUMBER(16,0)
+				, COD_RECHAZO VARCHAR(20 CHAR)
             )
             ';
             EXECUTE IMMEDIATE V_MSQL;

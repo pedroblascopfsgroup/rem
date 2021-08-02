@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20210722
+--## FECHA_CREACION=20210723
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-14695
@@ -44,7 +44,7 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	T_ALTER(  'RES_FECHA_CONT_ARRAS',			'NUMBER(16)',			'Fecha de contabilizacion de las arras'	)
+    	T_ALTER(  'RES_FECHA_CONT_ARRAS',			'DATE',			'Fecha de contabilizacion de las arras'	)
 		);
     V_T_ALTER T_ALTER;
     

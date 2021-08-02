@@ -191,6 +191,12 @@ DECLARE
         T_TIPO_DATA('ESTADO_TECNICO','E07','Mantenimiento/actuación finalizada/anulada','DD_EAT_EST_TECNICO','E07'),
         T_TIPO_DATA('ESTADO_TECNICO','E08','Desarrollo en gestión','DD_EAT_EST_TECNICO','E08'),
         T_TIPO_DATA('ESTADO_TECNICO','E09','Desarrollo en tramitación final/finalizado','DD_EAT_EST_TECNICO','E09'),
+      --Estado titularidad  
+        T_TIPO_DATA('ESTADO_TITULARIDAD','T01','Sin título','DD_ETI_ESTADO_TITULO','04'),
+        T_TIPO_DATA('ESTADO_TITULARIDAD','T02','Título no inscrito','DD_ETI_ESTADO_TITULO','01'),
+        T_TIPO_DATA('ESTADO_TITULARIDAD','T03','Título inscrito','DD_ETI_ESTADO_TITULO','02'),
+        T_TIPO_DATA('ESTADO_TITULARIDAD','T04','Título inscrito con cargas','DD_ETI_ESTADO_TITULO','02'),
+        T_TIPO_DATA('ESTADO_TITULARIDAD','T05','Incidencias título','DD_ETI_ESTADO_TITULO','06'),
       --Grado propiedad
         T_TIPO_DATA('GRADO_PROPIEDAD','1', 'Pleno dominio','DD_TGP_TIPO_GRADO_PROPIEDAD','01'),
         T_TIPO_DATA('GRADO_PROPIEDAD','2', 'Nuda Propiedad','DD_TGP_TIPO_GRADO_PROPIEDAD','02'),

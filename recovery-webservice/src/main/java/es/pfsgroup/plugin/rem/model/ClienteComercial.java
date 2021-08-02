@@ -229,6 +229,18 @@ public class ClienteComercial implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IAP_ID")
 	private InfoAdicionalPersona infoAdicionalPersona;
+
+	@Column(name = "CLC_FECHA_NACIMIENTO")
+	private Date fechaNacimiento;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_PAI_NAC_ID")
+	private DDPaises paisNacimiento;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_LOC_NAC_ID")
+	private Localidad localidadNacimiento;
+
     
 	@Version   
 	private Long version;
@@ -665,4 +677,27 @@ public class ClienteComercial implements Serializable, Auditable {
 		this.infoAdicionalPersona = infoAdicionalPersona;
 	}
 
+	public Date getFechaNacimiento() {
+		return fechaNacimiento;
+	}
+
+	public void setFechaNacimiento(Date fechaNacimiento) {
+		this.fechaNacimiento = fechaNacimiento;
+	}
+
+	public DDPaises getPaisNacimiento() {
+		return paisNacimiento;
+	}
+
+	public void setPaisNacimiento(DDPaises paisNacimiento) {
+		this.paisNacimiento = paisNacimiento;
+	}
+
+	public Localidad getLocalidadNacimiento() {
+		return localidadNacimiento;
+	}
+
+	public void setLocalidadNacimiento(Localidad localidadNacimiento) {
+		this.localidadNacimiento = localidadNacimiento;
+	}
 }

@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=RLB
---## FECHA_CREACION=20190613
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210720
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1551/HREOS-5221
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-14686
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las cabeceras de Obra Nueva enviadas a webcom. HREOS-1551 - Se añaden agrupaciones Asistidas.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##	    0.2: 20210720 Daniel Algaba. Añadir nuevas agrupaciones Restringida Alquiler y Restringida OB-REM - HREOS-14686
 --##########################################
 --*/
 
@@ -145,7 +146,7 @@ BEGIN
 		 	INNER JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = SUBD.ACT_ID
 		    INNER JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID
 		    INNER JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION DDTAG ON DDTAG.DD_TAG_ID = AGR.DD_TAG_ID
-		    WHERE (DDTAG.DD_TAG_CODIGO = ''01'' OR DDTAG.DD_TAG_CODIGO = ''13'' OR (DDTAG.DD_TAG_CODIGO = ''16'' AND AGA.AGA_PRINCIPAL = 0)) AND (AGA.BORRADO IS NULL OR AGA.BORRADO = 0) AND AGR.BORRADO = 0
+		    WHERE (DDTAG.DD_TAG_CODIGO IN (''01'',''13'',''17'',''18'') OR (DDTAG.DD_TAG_CODIGO = ''16'' AND AGA.AGA_PRINCIPAL = 0)) AND (AGA.BORRADO IS NULL OR AGA.BORRADO = 0) AND AGR.BORRADO = 0
 		) ACT_SD
 		GROUP BY ACT_SD.ID, ACT_SD.AGR_NUM_AGRUP_REM, ACT_SD.DD_TPA_CODIGO, ACT_SD.DD_SAC_CODIGO, 
 		ACT_SD.DESCRIPCION,ACT_SD.PLANTAS, ACT_SD.DORMITORIOS, ACT_SD.BANYOS, 

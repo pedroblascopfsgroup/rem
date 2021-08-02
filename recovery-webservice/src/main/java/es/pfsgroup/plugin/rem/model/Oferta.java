@@ -32,7 +32,9 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseContratoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDClasificacionContratoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -311,6 +313,19 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name="OFR_ID_REALIZA_ORI_LEAD")
 	private ActivoProveedor proveedorRealizadorRemOrigenLead;
 	
+	@Column(name = "OFR_OFERTA_ESPECIAL")
+    private Boolean ofertaEspecial;
+	
+	@Column(name = "OFR_VENTA_CARTERA")
+    private Boolean ventaCartera;
+    
+	@Column(name = "OFR_VENTA_SOBRE_PLANO")
+    private Boolean ventaSobrePlano;
+		
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_ROP_ID")
+    private DDRiesgoOperacion riesgoOperacion;
+	
 	@Column(name = "ID_OFERTA_ORIGEN")
     private Long idOfertaOrigen;
 	
@@ -328,17 +343,44 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name = "OFR_DOC_RESP_PRESCRIPTOR")
     private Boolean ofrDocRespPrescriptor;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_ROP_ID")
-	private DDRiesgoOperacion tipoRiesgoOperacion;  
-	
+		
 	@Column(name = "OFR_SOSPECHOSA")
     private Boolean ofertaSospechosa;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_RDC_ID")
     private DDResponsableDocumentacionCliente respDocCliente;
+	
+	@Column(name = "OFR_FECHA_APR_GARANTIAS_APORTADAS")
+    private Date fechaAprobacionGarantiasAportadas;
+	
+	@Column(name = "OFR_FECHA_PRIMER_VENCIMIENTO")
+    private Date fechaPrimerVencimiento;
+	
+
+	@Column(name = "OFR_FECHA_INICIO_CONTRATO")
+    private Date fechaInicioContrato;
+	
+	@Column(name = "OFR_FECHA_FIN_CONTRATO")
+    private Date fechaFinContrato;
+	
+	@Column(name = "OFR_ALQUILER_OPCION_COMPRA")
+    private Boolean opcionACompra;
+	
+	@Column(name = "OFR_VALOR_OPCION_COMPRA")
+    private Double valorCompra;
+	
+	@Column(name = "OFR_FECHA_VENC_OPCION_COMPRA")
+    private Date fechaVencimientoOpcionCompra;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CCA_ID")
+	private DDClaseContratoAlquiler claseContratoAlquiler;  
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CAL_ID")
+	private DDClasificacionContratoAlquiler clasificacion;  
+	
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -949,6 +991,14 @@ public class Oferta implements Serializable, Auditable {
 		this.proveedorRealizadorRemOrigenLead = proveedorRealizadorRemOrigenLead;
 	}
 	
+	public Boolean getOfertaEspecial() {
+		return ofertaEspecial;
+	}
+
+	public void setOfertaEspecial(Boolean ofertaEspecial) {
+		this.ofertaEspecial = ofertaEspecial;
+	}
+	
 	public Long getIdOfertaOrigen() {
 		return this.idOfertaOrigen;
 	}
@@ -1005,6 +1055,33 @@ public class Oferta implements Serializable, Auditable {
 		this.ofertaSospechosa = ofertaSospechosa;
 	}
 	
+	public Boolean getVentaCartera() {
+		return ventaCartera;
+	}
+
+	public void setVentaCartera(Boolean ventaCartera) {
+		this.ventaCartera = ventaCartera;
+	}
+
+	public DDRiesgoOperacion getRiesgoOperacion() {
+		return riesgoOperacion;
+	}
+
+	public void setRiesgoOperacion(DDRiesgoOperacion riesgoOperacion) {
+		this.riesgoOperacion = riesgoOperacion;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public Boolean getVentaSobrePlano() {
+		return ventaSobrePlano;
+	}
+
+	public void setVentaSobrePlano(Boolean ventaSobrePlano) {
+		this.ventaSobrePlano = ventaSobrePlano;
+	}
 	public DDResponsableDocumentacionCliente getRespDocCliente() {
 		return respDocCliente;
 	}
@@ -1013,13 +1090,7 @@ public class Oferta implements Serializable, Auditable {
 		this.respDocCliente = respDocCliente;
 	}
 
-	public DDRiesgoOperacion getTipoRiesgoOperacion() {
-		return tipoRiesgoOperacion;
-	}
 
-	public void setTipoRiesgoOperacion(DDRiesgoOperacion tipoRiesgoOperacion) {
-		this.tipoRiesgoOperacion = tipoRiesgoOperacion;
-	}
 	
 	public ExpedienteComercial getExpedienteComercial() {
 		return expedienteComercial;
@@ -1027,6 +1098,78 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setExpedienteComercial(ExpedienteComercial expedienteComercial) {
 		this.expedienteComercial = expedienteComercial;
+	}
+
+	public Date getFechaAprobacionGarantiasAportadas() {
+		return fechaAprobacionGarantiasAportadas;
+	}
+
+	public void setFechaAprobacionGarantiasAportadas(Date fechaAprobacionGarantiasAportadas) {
+		this.fechaAprobacionGarantiasAportadas = fechaAprobacionGarantiasAportadas;
+	}
+
+	public Date getFechaPrimerVencimiento() {
+		return fechaPrimerVencimiento;
+	}
+
+	public void setFechaPrimerVencimiento(Date fechaPrimerVencimiento) {
+		this.fechaPrimerVencimiento = fechaPrimerVencimiento;
+	}
+
+	public Date getFechaInicioContrato() {
+		return fechaInicioContrato;
+	}
+
+	public void setFechaInicioContrato(Date fechaInicioContrato) {
+		this.fechaInicioContrato = fechaInicioContrato;
+	}
+
+	public Date getFechaFinContrato() {
+		return fechaFinContrato;
+	}
+
+	public void setFechaFinContrato(Date fechaFinContrato) {
+		this.fechaFinContrato = fechaFinContrato;
+	}
+
+	public Boolean getOpcionACompra() {
+		return opcionACompra;
+	}
+
+	public void setOpcionACompra(Boolean opcionACompra) {
+		this.opcionACompra = opcionACompra;
+	}
+
+	public Double getValorCompra() {
+		return valorCompra;
+	}
+
+	public void setValorCompra(Double valorCompra) {
+		this.valorCompra = valorCompra;
+	}
+
+	public Date getFechaVencimientoOpcionCompra() {
+		return fechaVencimientoOpcionCompra;
+	}
+
+	public void setFechaVencimientoOpcionCompra(Date fechaVencimientoOpcionCompra) {
+		this.fechaVencimientoOpcionCompra = fechaVencimientoOpcionCompra;
+	}
+
+	public DDClaseContratoAlquiler getClaseContratoAlquiler() {
+		return claseContratoAlquiler;
+	}
+
+	public void setClaseContratoAlquiler(DDClaseContratoAlquiler claseContratoAlquiler) {
+		this.claseContratoAlquiler = claseContratoAlquiler;
+	}
+
+	public DDClasificacionContratoAlquiler getClasificacion() {
+		return clasificacion;
+	}
+
+	public void setClasificacion(DDClasificacionContratoAlquiler clasificacion) {
+		this.clasificacion = clasificacion;
 	}
 	
 }

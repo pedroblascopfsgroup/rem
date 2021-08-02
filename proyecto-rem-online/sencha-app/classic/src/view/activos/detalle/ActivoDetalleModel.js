@@ -3856,6 +3856,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {id: '{activo.id}'}
 		   }
 	   },
+
 	   comboMotivoNecesidadArras: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -3872,6 +3873,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'vinculoCaixa'}
+			}
+	   },
+	   
+	   comboRiesgoOperacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoRiesgoOperacion'}
 			}
 	   },
 

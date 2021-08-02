@@ -13031,7 +13031,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return isEmpleadoCaixa;
 	}
-	
+
+
 	@Override
 	@Transactional
 	public boolean doTramitacionAsincrona(Activo activo, Oferta oferta) {

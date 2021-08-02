@@ -118,7 +118,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    
 	    esVisibleFechaAutorizacionPropietario: function(get){
 	    	 me = this;
-			 if(get('trabajo.cartera')=='Liberbank' && CONST.TIPOS_TRABAJO["ACTUACION_TECNICA"] == me.get('trabajo.tipoTrabajoCodigo')) 
+			 if(get('trabajo.cartera')=='Unicaja' && CONST.TIPOS_TRABAJO["ACTUACION_TECNICA"] == me.get('trabajo.tipoTrabajoCodigo')) 
 				 return true;
 			 else 
 				 return false;

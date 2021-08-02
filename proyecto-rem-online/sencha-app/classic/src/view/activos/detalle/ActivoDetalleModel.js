@@ -3667,6 +3667,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'disponibleAdministrativo'}
 			}
 		},
+		comboRiesgoOperacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoRiesgoOperacion'}
+			}
+		},
 		comboDisponibleTecnico: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -3683,6 +3691,5 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'motivoTecnico'}
 			}
 		}
-		
 	 }
 });

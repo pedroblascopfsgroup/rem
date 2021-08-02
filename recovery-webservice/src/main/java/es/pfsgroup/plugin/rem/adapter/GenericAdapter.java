@@ -460,6 +460,9 @@ public class GenericAdapter {
 					dtoOfertaNueva.setIdAgrupacion(ofertaOrigen.getAgrupacion().getId());
 					dtoOfertaNueva.setIdUvem(ofertaOrigen.getIdUvem());
 				}
+				
+				dtoOfertaNueva.setClaseOferta(ofertaOrigen.getClaseOferta() != null ? ofertaOrigen.getClaseOferta().getCodigo() : null);
+				
 				if(!esAgrupacion) {
 					ofertaCreada = activoAdapter.createOfertaActivo(dtoOfertaNueva);
 				}

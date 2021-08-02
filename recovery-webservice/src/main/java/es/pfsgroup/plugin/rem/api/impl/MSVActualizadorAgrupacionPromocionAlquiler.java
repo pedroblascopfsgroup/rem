@@ -32,6 +32,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoOutputDto;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
@@ -65,6 +66,7 @@ import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -114,16 +116,18 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
-
+	
 	@Autowired
 	private AlaskaComunicacionManager alaskaComunicacionManager;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
 
+	
+	private UtilDiccionarioApi diccionarioApi;
+	
 	@Autowired
 	private GestorDocumentalAdapterManager gdAdapterManager;
-	
 	@Autowired
 	private UsuarioManager usuarioManager;
 	
@@ -169,6 +173,9 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		}	
 		//-----Nueva Unidad alquilable (activo)
 		Activo unidadAlquilable = new Activo(); 
+		DDSinSiNo ddNo = (DDSinSiNo)diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
+		//DDSinSiNo ddSi = (DDSinSiNo)diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI);//descomentar para usar
+		
 		if (!Checks.esNulo(activoMatriz)) {    
 				
 			//Insercion de datos Basicos del Activo Matriz a la unidad alquilable
@@ -319,6 +326,8 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		}
 		
 		unidadAlquilable.setIsDnd(false);
+		
+		unidadAlquilable.setTieneObraNuevaAEfectosComercializacion(ddNo);
 		
 		genericDao.save(Activo.class, unidadAlquilable);
 		
@@ -566,6 +575,10 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 					actInfoRegistral.setEstadoObraNueva(infoRegistralActivoMatriz.getEstadoObraNueva());
 				if (!Checks.esNulo(infoRegistralActivoMatriz.getFechaCfo()))
 					actInfoRegistral.setFechaCfo(infoRegistralActivoMatriz.getFechaCfo());
+				if (!Checks.esNulo(infoRegistralActivoMatriz.getTieneAnejosRegistrales()))
+					actInfoRegistral.setTieneAnejosRegistrales(infoRegistralActivoMatriz.getTieneAnejosRegistrales());
+				else 
+					actInfoRegistral.setTieneAnejosRegistrales(ddNo);
 				
 				actInfoRegistral.setAuditoria(auditoria);
 				float superficieA0 = 0;			//Se pone la superficie de  elementos comunes y la superficie de la parcela a 0 en la creación de las UAs
@@ -658,7 +671,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		unidadAlquilable.setFechaRevisionCarga(activoMatriz.getFechaRevisionCarga());
 		unidadAlquilable.setVpo(activoMatriz.getVpo());
 		unidadAlquilable.setTerritorio(activoMatriz.getTerritorio());
-
+		
 		//-----Insercion de gestores a la Unidad Alquilable
 		if (!Checks.esNulo(activoMatriz)) {
 			GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();

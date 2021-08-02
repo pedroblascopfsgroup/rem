@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.gencat;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ComunicacionGencatAdjuntoDao;
@@ -63,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdecuacionGencat;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
@@ -99,6 +102,8 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VExpPreBloqueoGencat;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.VisitaGencat;
+import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDCedulaHabitabilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
@@ -129,6 +134,8 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	private static final String ERROR_FALTA_EMAIL = "Email es un campo obligatorio.";
 	private static final String ERROR_FALTA_COMUNICACION = "El activo no tiene ninguna comunicación asociada.";
 	private static final String ERROR_YA_HAY_VISITA = "Ya se ha solicitado una visita previamente.";
+
+	private static final Float PRECIO_REFORMA_ADECUACION = 52.3f;
 	
 	@Autowired
 	private NotificacionesGencatManager notificacionesGencat;
@@ -1284,7 +1291,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		AdecuacionGencat adecuacionGencat = new AdecuacionGencat();
 		OfertaGencat ofertaGencat = new OfertaGencat();
 		Auditoria auditoria = new Auditoria();
-		
+		Activo activo = activoApi.get(idActivo);
 		
 		// Creamos el estado de la nueva comunicacion a CREADO
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
@@ -1298,7 +1305,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 
 		// Creamos la nueva comunicación
 		comunicacionGencat.setAuditoria(auditoria);
-		comunicacionGencat.setActivo(activoApi.get(idActivo));
+		comunicacionGencat.setActivo(activo);
 		comunicacionGencat.setComunicadoAnulacionAGencat(false);
 		comunicacionGencat.setEstadoComunicacion(estadoComunicacion);
 		comunicacionGencat.setFechaPreBloqueo(new Date());
@@ -1317,12 +1324,32 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		ofertaGencat.setAuditoria(auditoria);
 		ofertaGencat.setVersion(0L);
 		
+		ActivoAdmisionRevisionTitulo revisionTitulo = comunicacionGencat.getActivo().getAdmisionRevisionTitulo();
+		DDCedulaHabitabilidad cedula = (revisionTitulo != null) ? revisionTitulo.getCedulaHabitabilidad() : null;
+		if(revisionTitulo != null || cedula != null && cedula.getCodigo().equals(DDCedulaHabitabilidad.CODIGO_OBTENIDO)) {
+			adecuacionGencat.setNecesitaReforma(false);
+		}else {
+			adecuacionGencat.setNecesitaReforma(true);
+				
+			NMBInformacionRegistralBien informacionRegistralBien = comunicacionGencat.getActivo() != null && comunicacionGencat.getActivo().getBien() != null 
+					&& comunicacionGencat.getActivo().getBien().getInformacionRegistral() != null 
+					&& !comunicacionGencat.getActivo().getBien().getInformacionRegistral().isEmpty() ? 
+							comunicacionGencat.getActivo().getBien().getInformacionRegistral().get(0) : null;
+			
+			int importeReforma = 0;
+			
+			if(informacionRegistralBien != null) {
+				importeReforma = (int) (informacionRegistralBien.getSuperficieConstruida() != null ? 
+						informacionRegistralBien.getSuperficieConstruida().floatValue() * PRECIO_REFORMA_ADECUACION * 100 : 0);
+			}
+
+			adecuacionGencat.setImporteReforma(importeReforma/100d);
+		}
+		
 		// Creamos la nueva adecuación, habiendo creado previamente la comunicación
 		adecuacionGencat.setComunicacion(comunicacionGencat);
 		adecuacionGencat.setAuditoria(auditoria);
 		adecuacionGencat.setVersion(0L);
-		
-		
 
 		genericDao.save(ComunicacionGencat.class, comunicacionGencat);
 		genericDao.save(OfertaGencat.class, ofertaGencat);

@@ -420,7 +420,7 @@ public class AgendaAdapter {
 		return true;
 	}
 	
-	private String validaFormatosTFI(List<GenericFormItem> campos, Map<String, String[]> valores) {
+	private String validaFormatosTFI(List<GenericFormItem> campos, Map<String, String[]> valores) throws Exception{
 		String errores = "";
 		for (GenericFormItem tfi : campos) {
 			if(!Checks.esNulo(valores.get(tfi.getNombre()))) {
@@ -433,7 +433,7 @@ public class AgendaAdapter {
 								errores= errores + "El valor del diccionario "+tfi.getNombre()+" debe ser un 01 o 02. ";
 							}
 						}else if("DDMotivoAnulacionExpediente".equals(tfi.getValuesBusinessOperation())) {
-							Filter filtroCodigo = genericDao.createFilter(FilterType.EQUALS, "codigo", tfi.getValue());
+							Filter filtroCodigo = genericDao.createFilter(FilterType.EQUALS, "codigo", valor[0]);
 							Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 							DDMotivoAnulacionExpediente diccionario = genericDao.get(DDMotivoAnulacionExpediente.class, filtroCodigo, filtroBorrado);
 							if(Checks.esNulo(diccionario)) {
@@ -450,7 +450,7 @@ public class AgendaAdapter {
 							errores= errores + "El dato "+tfi.getLabel()+" no es una fecha correcta. ";
 						}
 						dateValor = valor[0];
-						if(hoyString.compareTo(dateValor) <= 0) {
+						if(hoyString.compareTo(dateValor) < 0) {
 							errores= errores + "La fecha "+tfi.getLabel()+" es mayor que hoy. ";
 						}
 					}else if("numberfield".equals(tfi.getType())) {

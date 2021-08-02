@@ -232,7 +232,25 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
 	    					return value;
 	    				}
     				}
-    			}
+				}
+			},
+			{
+    			name:'ofertaEspecial',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'ventaSobrePlano',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'riesgoOperacionCodigo'
+    		},
+    		{
+    			name:'riesgoOperacionDescripcion'
+    		},
+    		{
+    			name:'ventaCarteraCfv',
+    			type: 'boolean'
     		}
     ],
 

@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -309,6 +310,19 @@ public class Oferta implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="OFR_ID_REALIZA_ORI_LEAD")
 	private ActivoProveedor proveedorRealizadorRemOrigenLead;
+	
+	@Column(name = "OFR_OFERTA_ESPECIAL")
+    private Boolean ofertaEspecial;
+	
+	@Column(name = "OFR_VENTA_CARTERA")
+    private Boolean ventaCartera;
+    
+	@Column(name = "OFR_VENTA_SOBRE_PLANO")
+    private Boolean ventaSobrePlano;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_ROP_ID")
+    private DDRiesgoOperacion riesgoOperacion;
 	
 	@Column(name = "ID_OFERTA_ORIGEN")
     private Long idOfertaOrigen;
@@ -948,6 +962,14 @@ public class Oferta implements Serializable, Auditable {
 		this.proveedorRealizadorRemOrigenLead = proveedorRealizadorRemOrigenLead;
 	}
 	
+	public Boolean getOfertaEspecial() {
+		return ofertaEspecial;
+	}
+
+	public void setOfertaEspecial(Boolean ofertaEspecial) {
+		this.ofertaEspecial = ofertaEspecial;
+	}
+	
 	public Long getIdOfertaOrigen() {
 		return this.idOfertaOrigen;
 	}
@@ -1004,6 +1026,33 @@ public class Oferta implements Serializable, Auditable {
 		this.ofrDocRespPrescriptor = ofrDocRespPrescriptor;
 	}
 
+	public Boolean getVentaCartera() {
+		return ventaCartera;
+	}
+
+	public void setVentaCartera(Boolean ventaCartera) {
+		this.ventaCartera = ventaCartera;
+	}
+
+	public DDRiesgoOperacion getRiesgoOperacion() {
+		return riesgoOperacion;
+	}
+
+	public void setRiesgoOperacion(DDRiesgoOperacion riesgoOperacion) {
+		this.riesgoOperacion = riesgoOperacion;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public Boolean getVentaSobrePlano() {
+		return ventaSobrePlano;
+	}
+
+	public void setVentaSobrePlano(Boolean ventaSobrePlano) {
+		this.ventaSobrePlano = ventaSobrePlano;
+	}
 	public DDResponsableDocumentacionCliente getRespDocCliente() {
 		return respDocCliente;
 	}

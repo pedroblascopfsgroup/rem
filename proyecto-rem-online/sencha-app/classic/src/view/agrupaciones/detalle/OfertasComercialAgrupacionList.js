@@ -297,7 +297,9 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 					   buttons: Ext.MessageBox.YESNO,
 					   fn: function(buttonId) {
 					        if (buttonId == 'yes') {
-					        	me.saveFn(editor, me, context);
+					        	me.up('agrupacionesdetallemain').lookupController().mostrarCrearOfertaTramitada(editor, me, context);
+					        	
+					        	//me.saveFn(editor, me, context);
 							}
 					    	else{
 					    		me.getStore().load();	

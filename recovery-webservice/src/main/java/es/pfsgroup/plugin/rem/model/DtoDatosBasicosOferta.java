@@ -132,6 +132,16 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String tipoResponsableCodigo;
 	
 	private Date fechaOfertaPendiente;
+	
+	private Boolean ofertaEspecial;
+	
+	private Boolean ventaSobrePlano;
+	
+	private String riesgoOperacionCodigo;
+	
+	private String riesgoOperacionDescripcion;
+	
+	private Boolean ventaCarteraCfv;
 
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
@@ -597,6 +607,46 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setFechaOfertaPendiente(Date fechaOfertaPendiente) {
 		this.fechaOfertaPendiente = fechaOfertaPendiente;
+	}
+	
+	public Boolean getOfertaEspecial() {
+		return ofertaEspecial;
+	}
+
+	public void setOfertaEspecial(Boolean ofertaEspecial) {
+		this.ofertaEspecial = ofertaEspecial;
+	}
+	
+	public Boolean getVentaSobrePlano() {
+		return ventaSobrePlano;
+	}
+
+	public void setVentaSobrePlano(Boolean ventaSobrePlano) {
+		this.ventaSobrePlano = ventaSobrePlano;
+	}
+	
+	public String getRiesgoOperacionCodigo() {
+		return riesgoOperacionCodigo;
+	}
+
+	public void setRiesgoOperacionCodigo(String riesgoOperacionCodigo) {
+		this.riesgoOperacionCodigo = riesgoOperacionCodigo;
+	}
+	
+	public String getRiesgoOperacionDescripcion() {
+		return riesgoOperacionDescripcion;
+	}
+
+	public void setRiesgoOperacionDescripcion(String riesgoOperacionDescripcion) {
+		this.riesgoOperacionDescripcion = riesgoOperacionDescripcion;
+	}
+	
+	public Boolean getVentaCarteraCfv() {
+		return ventaCarteraCfv;
+	}
+
+	public void setVentaCarteraCfv(Boolean ventaCarteraCfv) {
+		this.ventaCarteraCfv = ventaCarteraCfv;
 	}
 	
 }

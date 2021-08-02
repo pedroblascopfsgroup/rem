@@ -145,6 +145,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -654,6 +655,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Visita visitaOferta = oferta.getVisita();
 		Oferta ofertaPrincipal = null;
 		DDClaseOferta claseOferta = null;
+		DDRiesgoOperacion riesgoOperacion = null;
 		Usuario usuarioModificador = genericAdapter.getUsuarioLogado();
 		if(!Checks.esNulo(dto.getClaseOfertaCodigo())) {
 			Filter f = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
@@ -669,6 +671,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if(ofertaPrincipal != null) {
 			compruebaEstadoAnyadirDependiente(ofertaPrincipal);
+		}
+		
+		if(!Checks.esNulo(dto.getVentaCarteraCfv())) {
+			oferta.setVentaCartera(dto.getVentaCarteraCfv());
+		}
+		
+		if(!Checks.esNulo(dto.getOfertaEspecial())) {
+			oferta.setOfertaEspecial(dto.getOfertaEspecial());
+		}
+		
+		if(!Checks.esNulo(dto.getVentaSobrePlano())) {
+			oferta.setVentaSobrePlano(dto.getVentaSobrePlano());
+		}
+		
+		if(!Checks.esNulo(dto.getRiesgoOperacionCodigo())) {
+			Filter r = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getRiesgoOperacionCodigo());
+			riesgoOperacion = genericDao.get(DDRiesgoOperacion.class, r);
+			
+			if(riesgoOperacion != null) {
+				oferta.setRiesgoOperacion(riesgoOperacion);
+			}
 		}
 
 		if (!Checks.esNulo(dto.getEstadoCodigo())) {
@@ -1887,6 +1910,26 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (oferta.getVentaDirecta() != null) {
 			dto.setVentaCartera(oferta.getVentaDirecta() ? "Si" : "No");
+		}
+		
+		if(oferta.getOfertaEspecial() != null) {
+			dto.setOfertaEspecial(oferta.getOfertaEspecial());
+		}
+		
+		if(oferta.getVentaSobrePlano() != null) {
+			dto.setVentaSobrePlano(oferta.getVentaSobrePlano());
+		}
+		
+		if(oferta.getVentaCartera() != null) {
+			dto.setVentaCarteraCfv(oferta.getVentaCartera());
+		}
+		
+		if(oferta.getRiesgoOperacion() != null) {
+			dto.setRiesgoOperacionCodigo(oferta.getRiesgoOperacion().getCodigo());
+		}
+		
+		if(oferta.getRiesgoOperacion() != null) {
+			dto.setRiesgoOperacionDescripcion(oferta.getRiesgoOperacion().getDescripcion());
 		}
 
 		// HREOS-4360
@@ -8083,207 +8126,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return true;
 	}
 
-	@Override
-	@Transactional(readOnly = false)
-	public String validaBloqueoExpediente(Long idExpediente) {
-		String codigoError = "";
-
-		ExpedienteComercial expediente = this.findOne(idExpediente);
-
-		// Validamos condiciones jurídicas.
-		if (expediente.getEstadoPbc() == null || expediente.getEstadoPbc().equals(0)
-				|| expediente.getRiesgoReputacional() == null
-				|| expediente.getRiesgoReputacional().equals(Integer.valueOf(1))
-				|| expediente.getConflictoIntereses() == null || expediente.getConflictoIntereses().equals(1)) {
-			codigoError = "imposible.bloquear.responsabilidad.corporativa";
-
-		} else if (DDCartera.CODIGO_CARTERA_BANKIA
-				.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())
-				&& hayDiscrepanciasClientesURSUS(idExpediente)) {
-			// Si es Bankia, validamos las discrepancias de los compradores, si las hay, no
-			// se puede bloquear
-			codigoError = "no.bloqueo.validar.compradores";
-		} else {
-			// Validamos los bloqueos
-			List<ActivoOferta> activosExpediente = expediente.getOferta().getActivosOferta();
-			boolean bloqueoVigente = false;
-
-			for (ActivoOferta activoOferta : activosExpediente) {
-				Activo activo = activoOferta.getPrimaryKey().getActivo();
-				DtoInformeJuridico dtoInfoJuridico = this.getFechaEmisionInfJuridico(idExpediente, activo.getId());
-
-				if (dtoInfoJuridico != null && dtoInfoJuridico.getResultadoBloqueo() != null
-						&& dtoInfoJuridico.getResultadoBloqueo().equals(InformeJuridico.RESULTADO_DESFAVORABLE)) {
-					bloqueoVigente = true;
-					break;
-				}
-			}
-			if (bloqueoVigente) {
-				codigoError = "imposible.bloquear.bloqueo.vigente";
-			} else {
-				// validamos fecha posicionamiento
-				if (expediente.getPosicionamientos() == null || expediente.getPosicionamientos().size() < 1) {
-					codigoError = "imposible.bloquear.fecha.posicionamiento";
-				} else {
-					// el usuario logado tiene que ser gestoria
-					Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-
-					if (DDCartera.CODIGO_CARTERA_CAJAMAR
-							.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
-						if (!genericAdapter.tienePerfil(PERFIL_GESTOR_MINUTAS, usuarioLogado)
-								&& !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_MINUTAS, usuarioLogado)
-								&& !genericAdapter.isSuper(usuarioLogado)
-								&& !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)
-								&& !genericAdapter.tienePerfil(PERFIL_GESTORIA_FORMALIZACION, usuarioLogado)) {
-							codigoError = "imposible.bloquear.expediente.cajamar";
-
-						} else {
-							// la financiación tiene que estar informada
-							DtoFormalizacionFinanciacion financiacion = new DtoFormalizacionFinanciacion();
-							financiacion.setId(String.valueOf(idExpediente));
-							financiacion = this.getFormalizacionFinanciacion(financiacion);
-							if (Checks.esNulo(financiacion.getSolicitaFinanciacion())) {
-								codigoError = "imposible.bloquear.financiacion.no.informada";
-							} else {
-								if (financiacion.getSolicitaFinanciacion() == 1
-										&& Checks.esNulo(financiacion.getEntidadFinancieraCodigo())) {
-									codigoError = "imposible.bloquear.entidad.financiera.no.informada";
-								}
-							}
-						}
-
-					} else {
-						if (!genericAdapter.isGestoria(usuarioLogado) && !genericAdapter.isSuper(usuarioLogado)
-								&& !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)
-								&& !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_FORMALIZACION, usuarioLogado)) {
-							codigoError = "imposible.bloquear.no.es.gestoria";
-
-						} else {
-							// la financiación tiene que estar informada
-							DtoFormalizacionFinanciacion financiacion = new DtoFormalizacionFinanciacion();
-							financiacion.setId(String.valueOf(idExpediente));
-							financiacion = this.getFormalizacionFinanciacion(financiacion);
-							if (Checks.esNulo(financiacion.getSolicitaFinanciacion())) {
-								codigoError = "imposible.bloquear.financiacion.no.informada";
-							} else {
-								if (financiacion.getSolicitaFinanciacion() == 1
-										&& Checks.esNulo(financiacion.getEntidadFinancieraCodigo())) {
-									codigoError = "imposible.bloquear.entidad.financiera.no.informada";
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return codigoError;
-	}
-
-	@Override
-	@Transactional(readOnly = false)
-	public void bloquearExpediente(Long idExpediente) {
-		ExpedienteComercial expediente = this.findOne(idExpediente);
-		expediente.setBloqueado(1);
-
-		genericDao.update(ExpedienteComercial.class, expediente);
-
-		try {
-			// notificamos por correo a los interesados
-			Posicionamiento posicionamiento = expediente.getUltimoPosicionamiento();
-			ArrayList<String> mailsPara = this.obtnerEmailsBloqueoExpediente(expediente);
-			String asunto = "Bloqueo del expediente comercial ".concat(String.valueOf(expediente.getNumExpediente()));
-			String cuerpo = "El expediente ".concat(String.valueOf(expediente.getNumExpediente()))
-					+ " con el Nº de Oferta ".concat(String.valueOf(expediente.getOferta().getNumOferta()))
-					+ " y el Nº de Activo "
-							.concat(String.valueOf(expediente.getOferta().getActivoPrincipal().getNumActivo()))
-					+ " se ha posicionado correctamente para su firma el" + " día #Fecha_posicionamiento a las "
-					+ "#Hora_posicionamiento en la notaría #Notaria";
-
-			if (posicionamiento != null) {
-				DateFormat dfDia = new SimpleDateFormat("dd/MM/yyyy");
-				DateFormat dfHora = new SimpleDateFormat("HH:mm");
-
-				if (posicionamiento.getFechaPosicionamiento() != null) {
-					String fechaPos = dfDia.format(posicionamiento.getFechaPosicionamiento());
-					cuerpo = cuerpo.replace("#Fecha_posicionamiento", fechaPos);
-					String horaPos = dfHora.format(posicionamiento.getFechaPosicionamiento());
-					cuerpo = cuerpo.replace("#Hora_posicionamiento", horaPos);
-				}
-
-				if (posicionamiento.getNotario() != null) {
-					cuerpo = cuerpo.replace("#Notaria", posicionamiento.getNotario().getNombre());
-
-					if (posicionamiento.getNotario().getDireccion() != null) {
-						cuerpo = cuerpo.concat(", situado en ").concat(posicionamiento.getNotario().getDireccion());
-					}
-				}
-			}
-
-			genericAdapter.sendMail(mailsPara, new ArrayList<String>(), asunto, cuerpo);
-
-		} catch (Exception e) {
-			logger.error("No se ha podido notificar por correo el bloqueo del expediente", e);
-		}
-	}
-
-	@Override
-	public String validaDesbloqueoExpediente(Long idExpediente) {
-		String codigoError = "";
-		ExpedienteComercial expediente = this.findOne(idExpediente);
-
-		if (expediente.getEstado() != null
-				&& expediente.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.VENDIDO)) {
-			codigoError = "imposible.desbloquear.vendido";
-		}
-
-		return codigoError;
-	}
-
-	@Override
-	@Transactional(readOnly = false)
-	public void desbloquearExpediente(Long idExpediente, String motivoCodigo, String motivoDescLibre) {
-		ExpedienteComercial expediente = this.findOne(idExpediente);
-		DDMotivosDesbloqueo motivoDesbloqueo = null;
-
-		if (!Checks.esNulo(expediente)) {
-			expediente.setBloqueado(0);
-
-			if (!Checks.esNulo(motivoCodigo)) {
-				motivoDesbloqueo = genericDao.get(DDMotivosDesbloqueo.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", motivoCodigo));
-
-				if (!Checks.esNulo(motivoDesbloqueo)) {
-					expediente.setMotivoDesbloqueo(motivoDesbloqueo);
-				}
-			}
-
-			expediente.setMotivoDesbloqueoDescLibre(motivoDescLibre);
-			genericDao.update(ExpedienteComercial.class, expediente);
-
-			try {
-				if ((motivoDescLibre == null || motivoDescLibre.isEmpty()) && motivoDesbloqueo != null) {
-					motivoDescLibre = motivoDesbloqueo.getDescripcionLarga();
-				}
-
-				// notificamos por correo a los interesados
-				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-				ArrayList<String> mailsPara = this.obtnerEmailsBloqueoExpediente(expediente);
-				String asunto = "Desbloqueo del expediente comercial "
-						.concat(String.valueOf(expediente.getNumExpediente()));
-				String cuerpo = "El expediente ".concat(String.valueOf(expediente.getNumExpediente()))
-						+ " se ha desbloqueado por el usuario #Usuario_logado por motivo: #Motivo";
-
-				cuerpo = cuerpo.replace("#Usuario_logado", usuarioLogado.getApellidoNombre());
-				cuerpo = cuerpo.replace("#Motivo", motivoDescLibre);
-				genericAdapter.sendMail(mailsPara, new ArrayList<String>(), asunto, cuerpo);
-
-			} catch (Exception e) {
-				logger.error("No se ha podido notificar por correo el desbloqueo del expediente", e);
-			}
-		}
-	}
-
 	/**
 	 * Este método obtiene la dirección de email de diferentes figuras del
 	 * expediente.
@@ -8343,23 +8185,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return mailsParaEnviarComercializadora;
 
-	}
-
-	@Override
-	public boolean checkExpedienteBloqueado(Long idTramite) {
-		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
-
-		if (!Checks.esNulo(activoTramite)) {
-			Trabajo trabajo = activoTramite.getTrabajo();
-
-			if (!Checks.esNulo(trabajo)) {
-				ExpedienteComercial expediente = expedienteComercialDao
-						.getExpedienteComercialByIdTrabajo(trabajo.getId());
-				return (new Integer(1).equals(expediente.getBloqueado()));
-			}
-		}
-
-		return false;
 	}
 
 	@Override

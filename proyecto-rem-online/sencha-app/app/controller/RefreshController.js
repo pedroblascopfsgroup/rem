@@ -102,6 +102,15 @@ Ext.define('HreRem.controller.RefreshController', {
    				});
    			
    				break;
+   			case CONST.ENTITY_TYPES['AGRUPACION']:
+   				var entities =  Ext.ComponentQuery.query('agrupacionesdetallemain');
+   				Ext.Array.each(entities, function(entity, index ) {
+   					if(entity.getViewModel().get("agrupacion.id") == idEntity) {   						
+   						entity.lookupController().onClickBotonRefrescar();
+   					}   				 
+   				});
+   			
+   				break;
 			default: Ext.raise("ENTITY TYPE NOT EXIST");
    		}	
    	}

@@ -99,6 +99,13 @@ public class ComunicacionGencat implements Serializable, Auditable {
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
 	@Where(clause=Auditoria.UNDELETED_RESTICTION)
     private List<ComunicacionGencatAdjunto> adjuntos;
+	
+	@OneToMany(mappedBy = "comunicacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "CMG_ID")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+	@Where(clause=Auditoria.UNDELETED_RESTICTION)
+    private List<AdecuacionGencat> adecuaciones;
+	
 
 	public Long getId() {
 		return id;
@@ -234,6 +241,14 @@ public class ComunicacionGencat implements Serializable, Auditable {
 
 	public void setAdjuntos(List<ComunicacionGencatAdjunto> adjuntos) {
 		this.adjuntos = adjuntos;
+	}
+
+	public List<AdecuacionGencat> getAdecuaciones() {
+		return adecuaciones;
+	}
+
+	public void setAdecuaciones(List<AdecuacionGencat> adecuaciones) {
+		this.adecuaciones = adecuaciones;
 	}
 	
 	/**

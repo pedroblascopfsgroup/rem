@@ -476,14 +476,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			    		
 			    	} else if (data.success == "false" && data.error == "false") {
 			    		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
-			    		activeTab.funcionRecargar();
 			    	} else if (data.success == "false" && data.error == "true") {
 			    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.oferta.inexistente"));
 					 	me.getView().unmask();		    		
 			    	}
 			    	} else {
 				        me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
-				        activeTab.funcionRecargar();
 				    }
 	            },
 	            
@@ -2807,105 +2805,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 						 */
 					}
 				});
-	},
-
-	onClickBloquearExpediente : function(btn) {
-
-		var me = this;
-		var idExpediente = me.getViewModel().get(
-				"expediente.id");
-		var url = $AC
-				.getRemoteUrl('expedientecomercial/bloqueoExpediente');
-		var parametros = {
-			idExpediente : idExpediente
-		};
-		me.getView().mask();
-		Ext.Ajax
-				.request({
-
-					url : url,
-					params : parametros,
-
-					success : function(response, opts) {
-						if (Ext.decode(response.responseText).success == "false") {
-							me
-									.fireEvent(
-											"errorToast",
-											HreRem
-													.i18n(Ext
-															.decode(response.responseText).errorCode));
-							me.getView().unmask();
-						} else if (Ext
-								.decode(response.responseText).success == "true") {
-							me.getView().unmask();
-							me.fireEvent("infoToast", HreRem
-									.i18n("msg.operacion.ok"));
-							me.refrescarExpediente(true);
-						}
-					}
-				});
-	},
-	sendDesbloquearExpediente : function(btn) {
-		var me = this;
-		var window = btn.up().up();
-		var form = window.down("formBase").getForm();
-		var idExpediente = btn.up('desbloquearwindow').idExpediente;
-		var url = $AC
-				.getRemoteUrl('expedientecomercial/desbloqueoExpediente');
-		if (me.validarActivarForm(form)) {
-			var parametros = {
-				idExpediente : idExpediente,
-				motivoCodigo : form.findField("motivo")
-						.getValue(),
-				motivoDescLibre : form.findField(
-						"motivoDescLibre").getValue()
-			};
-			me.getView().mask();
-			Ext.Ajax
-					.request({
-
-						url : url,
-						params : parametros,
-
-						success : function(response, opts) {
-							if (Ext
-									.decode(response.responseText).success == "false") {
-								me
-										.fireEvent(
-												"errorToast",
-												HreRem
-														.i18n(Ext
-																.decode(response.responseText).errorCode));
-								me.getView().unmask();
-							} else if (Ext
-									.decode(response.responseText).success == "true") {
-								me.getView().unmask();
-								me
-										.fireEvent(
-												"infoToast",
-												HreRem
-														.i18n("msg.operacion.ok"));
-								window.parent
-										.funcionReloadExp();
-								window.hide();
-
-							}
-						}
-					});
-		} else {
-			me.fireEvent("errorToast", HreRem
-					.i18n("msg.form.invalido"));
-		}
-	},
-	onClickDesbloquearExpediente : function(btn) {
-		var me = this;
-		var idExpediente = me.getViewModel().get(
-				"expediente.id");
-		var ventanaFormalizacion = btn.up().up();
-		Ext.create('HreRem.view.expedientes.Desbloquear', {
-			idExpediente : idExpediente,
-			parent : ventanaFormalizacion
-		}).show();
 	},
 	validarActivarForm : function(form) {
 		var motivoCodigo = form.findField("motivo").getValue();

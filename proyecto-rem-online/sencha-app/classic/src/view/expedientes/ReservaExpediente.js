@@ -185,6 +185,61 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 						{
 							xtype:'fieldsettable',
 							defaultType: 'displayfieldbase',				
+							title: HreRem.i18n('fieldlabel.condiciones.arras'),
+							colspan:3,
+							bind:{
+								hidden:'{!esCarteraBankia}'
+							},
+							items :[
+								{		                
+			                		xtype: 'checkboxfieldbase',
+			                		fieldLabel:  HreRem.i18n('fieldlabel.inscripcion.titulo.arras'),
+			                		//readOnly: true,
+			                		bind:		'{reserva.inscripcionTitulo}'		                
+		                		},
+		                		{		                
+			                		xtype: 'checkboxfieldbase',
+			                		fieldLabel:  HreRem.i18n('fieldlabel.cargas.arras'),
+			                		//readOnly: true,
+			                		bind:		'{reserva.cargas}'		                
+		                		},
+		                		{		                
+			                		xtype: 'checkboxfieldbase',
+			                		fieldLabel:  HreRem.i18n('fieldlabel.posesion.arras'),
+			                		//readOnly: true,
+			                		bind:		'{reserva.posesion}'		                
+		                		},
+		                		{		                
+			                		xtype: 'checkboxfieldbase',
+			                		fieldLabel:  HreRem.i18n('fieldlabel.tanteo.dl.arras'),
+			                		//readOnly: true,
+			                		bind:		'{reserva.tanteoDL}'		                
+		                		},
+
+		                		{		                
+			                		xtype: 'checkboxfieldbase',
+			                		fieldLabel:  HreRem.i18n('fieldlabel.temas.tecnicos'),
+			                		//readOnly: true,
+			                		bind:		'{reserva.temasTecnicos}'		                
+		                		},
+
+		                		{		                
+			                		xtype: 'checkboxfieldbase',
+			                		fieldLabel:  HreRem.i18n('fieldlabel.temas.catastrales'),
+			                		//readOnly: true,
+			                		bind:		'{reserva.temasCatastrales}'		                
+		                		},
+		                		{		                
+			                		xtype: 'checkboxfieldbase',
+			                		fieldLabel:  HreRem.i18n('fieldlabel.autorizacion.vpo'),
+			                		//readOnly: true,
+			                		bind:		'{reserva.autorizacionVpo}'		                
+		                		}		                				                				                								
+							]
+						},
+						{
+							xtype:'fieldsettable',
+							defaultType: 'displayfieldbase',				
 							title: HreRem.i18n('fieldlabel.prorroga.arras'),
 							colspan:3,
 							bind:{

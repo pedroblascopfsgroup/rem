@@ -28,6 +28,8 @@ public class StockDto implements WebcomRESTDto{
 	@WebcomRequired
 	private LongDataType idActivoRem;
 	
+	private StringDataType idActivoBc;
+	
 	private StringDataType codTipoVia;
 	
 	private StringDataType nombreCalle;
@@ -173,9 +175,19 @@ public class StockDto implements WebcomRESTDto{
 	
 	//HREOS-1479
 	@WebcomRequired
-	private LongDataType idLoteRem;
+	private LongDataType codigoAgrupacionRestringidaVenta;
 	@WebcomRequired
-	private BooleanDataType esActivoPrincipal;
+	private BooleanDataType esActivoPrincipalRestringidaVenta;
+	
+	@WebcomRequired
+	private LongDataType codigoAgrupacionRestringidaAlquiler;
+	@WebcomRequired
+	private BooleanDataType esActivoPrincipalRestringidaAlquiler;
+	
+	@WebcomRequired
+	private LongDataType codigoAgrupacionRestringidaObRem;
+	@WebcomRequired
+	private BooleanDataType esActivoPrincipalRestringidaObRem;
 	
 	@WebcomRequired
 	@DecimalDataTypeFormat(decimals=2)
@@ -350,6 +362,12 @@ public class StockDto implements WebcomRESTDto{
 	
 	@WebcomRequired
 	private DateDataType fechaFinCampanyaAlquiler;
+	
+	private StringDataType codigoPortalPublicacion;
+	
+	private StringDataType codigoCanalDistVenta;
+	
+	private StringDataType codigoCanalDistAlquiler;
 	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
@@ -796,18 +814,6 @@ public class StockDto implements WebcomRESTDto{
 	public void setExistePiscina(BooleanDataType existePiscina) {
 		this.existePiscina = existePiscina;
 	}
-	public LongDataType getIdLoteRem() {
-		return idLoteRem;
-	}
-	public void setIdLoteRem(LongDataType idLoteRem) {
-		this.idLoteRem = idLoteRem;
-	}
-	public BooleanDataType getEsActivoPrincipal() {
-		return esActivoPrincipal;
-	}
-	public void setEsActivoPrincipal(BooleanDataType esActivoPrincipal) {
-		this.esActivoPrincipal = esActivoPrincipal;
-	}
 	public DoubleDataType getActualImporteDescuentoWeb() {
 		return actualImporteDescuentoWeb;
 	}
@@ -1146,5 +1152,65 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setFechaFinCampanyaAlquiler(DateDataType fechaFinCampanyaAlquiler) {
 		this.fechaFinCampanyaAlquiler = fechaFinCampanyaAlquiler;
+	}
+	public LongDataType getCodigoAgrupacionRestringidaVenta() {
+		return codigoAgrupacionRestringidaVenta;
+	}
+	public void setCodigoAgrupacionRestringidaVenta(LongDataType codigoAgrupacionRestringidaVenta) {
+		this.codigoAgrupacionRestringidaVenta = codigoAgrupacionRestringidaVenta;
+	}
+	public BooleanDataType getEsActivoPrincipalRestringidaVenta() {
+		return esActivoPrincipalRestringidaVenta;
+	}
+	public void setEsActivoPrincipalRestringidaVenta(BooleanDataType esActivoPrincipalRestringidaVenta) {
+		this.esActivoPrincipalRestringidaVenta = esActivoPrincipalRestringidaVenta;
+	}
+	public LongDataType getCodigoAgrupacionRestringidaAlquiler() {
+		return codigoAgrupacionRestringidaAlquiler;
+	}
+	public void setCodigoAgrupacionRestringidaAlquiler(LongDataType codigoAgrupacionRestringidaAlquiler) {
+		this.codigoAgrupacionRestringidaAlquiler = codigoAgrupacionRestringidaAlquiler;
+	}
+	public BooleanDataType getEsActivoPrincipalRestringidaAlquiler() {
+		return esActivoPrincipalRestringidaAlquiler;
+	}
+	public void setEsActivoPrincipalRestringidaAlquiler(BooleanDataType esActivoPrincipalRestringidaAlquiler) {
+		this.esActivoPrincipalRestringidaAlquiler = esActivoPrincipalRestringidaAlquiler;
+	}
+	public LongDataType getCodigoAgrupacionRestringidaObRem() {
+		return codigoAgrupacionRestringidaObRem;
+	}
+	public void setCodigoAgrupacionRestringidaObRem(LongDataType codigoAgrupacionRestringidaObRem) {
+		this.codigoAgrupacionRestringidaObRem = codigoAgrupacionRestringidaObRem;
+	}
+	public BooleanDataType getEsActivoPrincipalRestringidaObRem() {
+		return esActivoPrincipalRestringidaObRem;
+	}
+	public void setEsActivoPrincipalRestringidaObRem(BooleanDataType esActivoPrincipalRestringidaObRem) {
+		this.esActivoPrincipalRestringidaObRem = esActivoPrincipalRestringidaObRem;
+	}
+	public StringDataType getIdActivoBc() {
+		return idActivoBc;
+	}
+	public void setIdActivoBc(StringDataType idActivoBc) {
+		this.idActivoBc = idActivoBc;
+	}
+	public StringDataType getCodigoPortalPublicacion() {
+		return codigoPortalPublicacion;
+	}
+	public void setCodigoPortalPublicacion(StringDataType codigoPortalPublicacion) {
+		this.codigoPortalPublicacion = codigoPortalPublicacion;
+	}
+	public StringDataType getCodigoCanalDistVenta() {
+		return codigoCanalDistVenta;
+	}
+	public void setCodigoCanalDistVenta(StringDataType codigoCanalDistVenta) {
+		this.codigoCanalDistVenta = codigoCanalDistVenta;
+	}
+	public StringDataType getCodigoCanalDistAlquiler() {
+		return codigoCanalDistAlquiler;
+	}
+	public void setCodigoCanalDistAlquiler(StringDataType codigoCanalDistAlquiler) {
+		this.codigoCanalDistAlquiler = codigoCanalDistAlquiler;
 	}
 }

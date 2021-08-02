@@ -389,6 +389,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private Boolean esActivoPrincipalAgrupacionRestringida;
 	
+	private String unidadEconomicaCaixa;
+	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
 	}
@@ -2916,6 +2918,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setDescuentoPublicadoAlquiler(String descuentoPublicadoAlquiler) {
 		this.descuentoPublicadoAlquiler = descuentoPublicadoAlquiler;
+	}
+
+	public String getUnidadEconomicaCaixa() {
+		return unidadEconomicaCaixa;
+	}
+
+	public void setUnidadEconomicaCaixa(String unidadEconomicaCaixa) {
+		this.unidadEconomicaCaixa = unidadEconomicaCaixa;
 	}
 	
 }

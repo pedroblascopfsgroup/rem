@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -63,8 +64,8 @@ import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DtoMetadatosEspecificos;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
-import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
@@ -74,8 +75,8 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioContratoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
-import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -85,6 +86,7 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PresupuestoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
@@ -113,6 +115,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
@@ -136,7 +139,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
-import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -171,9 +173,6 @@ public class ActivoAdapter {
 	
 	@Autowired
 	private ActivoPatrimonioContratoDao actPatrimonioDao;
-
-	@Autowired
-	private coreextensionApi coreextensionApi;
 
 	@Autowired
 	private UpdaterStateApi updaterState;
@@ -260,7 +259,7 @@ public class ActivoAdapter {
 	private TrabajoDao trabajoDao;
 
 	@Autowired
-	private ActivoPatrimonioDaoImpl activoPatrimonio;
+	private ActivoPatrimonioDao activoPatrimonio;
 
 	@Autowired
 	private GestorExpedienteComercialDao gestorExpedienteComercialDao;
@@ -276,12 +275,12 @@ public class ActivoAdapter {
 
 	@Autowired
 	private PresupuestoApi presupuestoManager;
-
-	@Autowired
-	private RecoveryComunicacionManager recoveryComunicacionManager;
 	
 	@Autowired
 	private ComisionamientoApi comisionamientoApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -2630,6 +2629,7 @@ public class ActivoAdapter {
 			} catch (Exception e) {
 				throw new RemUserException("user.exception.tipodoc.incorrecto", messageServices);
 			}
+			activoAdmisionDocumento.setNoValidado(true);
 			activoAdmisionDocumento.setConfigDocumento(tipodoc);
 
 			rellenaCheckingDocumentoAdmision(activoAdmisionDocumento, dtoAdmisionDocumento);
@@ -2747,7 +2747,7 @@ public class ActivoAdapter {
 		return listaAdjuntos;
 	}
 
-	public String uploadDocumento(WebFileItem webFileItem, Activo activoEntrada, String matricula) throws Exception {
+	public String uploadDocumento(WebFileItem webFileItem, Activo activoEntrada, String matricula, DtoMetadatosEspecificos dtoMetadatos) throws Exception {
 		if(webFileItem == null) return null; //No seguimos
 		
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
@@ -2768,8 +2768,7 @@ public class ActivoAdapter {
 		tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);
 		
 		if(tipoDocumento != null && gestorDocumentalActivado)
-			idDocRestClient = gestorDocumentalAdapterApi.upload(activoEntrada, webFileItem,
-					username, tipoDocumento.getMatricula());
+			idDocRestClient = gestorDocumentalAdapterApi.upload(activoEntrada, webFileItem, username, tipoDocumento.getMatricula(), dtoMetadatos);
 		
 		if (gestorDocumentalActivado) {
 			activoApi.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
@@ -2780,15 +2779,15 @@ public class ActivoAdapter {
 			DtoActivoSituacionPosesoria dto = new DtoActivoSituacionPosesoria();
 			BeanUtils.copyProperties(dto, activoEntrada.getSituacionPosesoria());
 			if (activoEntrada.getSituacionPosesoria().getConTitulo() != null)
-				dto.setConTitulo(activoEntrada.getSituacionPosesoria().getConTitulo().getCodigo());
+				dto.setConTituloCodigo(activoEntrada.getSituacionPosesoria().getConTitulo().getCodigo());
 			if(tipoDocumento.getCodigo().equals(DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION))
 				activoApi.compruebaParaEnviarEmailAvisoOcupacion(dto, activoEntrada.getId());
 		}
 		return null;
 	}
 
-	public String upload(WebFileItem webFileItem) throws Exception {
-		return uploadDocumento(webFileItem, null, null);
+	public String upload(WebFileItem webFileItem, DtoMetadatosEspecificos dto) throws Exception {
+		return uploadDocumento(webFileItem, null, null, dto);
 	}
 	
 	public void uploadFactura(WebFileItem webFileItem) throws Exception {
@@ -2807,7 +2806,7 @@ public class ActivoAdapter {
 		tipoDocGastoAsociado = genericDao.get(DDTipoDocumentoGastoAsociado.class, filtro);
 		if(tipoDocGastoAsociado != null) {
 			if(gestorDocumentalActivado) {
-				idDocRestClient = gestorDocumentalAdapterApi.upload(gas.getActivo(), webFileItem, username, tipoDocGastoAsociado.getMatricula());
+				idDocRestClient = gestorDocumentalAdapterApi.upload(gas.getActivo(), webFileItem, username, tipoDocGastoAsociado.getMatricula(), null);
 				activoApi.uploadFactura(webFileItem, idDocRestClient, gas, tipoDocGastoAsociado);
 			}else {
 				activoApi.uploadFactura(webFileItem, null, gas, tipoDocGastoAsociado);
@@ -3158,7 +3157,13 @@ public class ActivoAdapter {
 					}
 				} else {
 					this.updateGestoresTabActivoTransactional(dto, id);
-					this.actualizarEstadoPublicacionActivo(id);
+					if(!Checks.esNulo(dtofichacabecera.getCheckGestorComercial()) || !Checks.esNulo(dtofichacabecera.getExcluirValidacionesBool())){
+						ArrayList<Long> listaActivo = new ArrayList<Long>();
+						listaActivo.add(id);
+						this.actualizarEstadoPublicacionActivoPerimetro(listaActivo, new ArrayList<Long>());
+					}else {
+						this.actualizarEstadoPublicacionActivo(id);
+					}
 				}
 			}
 
@@ -3168,7 +3173,7 @@ public class ActivoAdapter {
 	
 	@Transactional(readOnly = false)
 	public boolean actualizarEstadoPublicacionActivo(Long idActivo) {
-		return actualizarEstadoPublicacionActivo(idActivo, true);
+		return actualizarEstadoPublicacionActivo(idActivo, false);
 	}
 	
 	@Transactional(readOnly = false)
@@ -3188,7 +3193,10 @@ public class ActivoAdapter {
 			resultado = true;
 		}else{
 			if(listaIdActivo != null && !listaIdActivo.isEmpty()){
-				return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(listaIdActivo,true);
+				boolean isOk = activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(listaIdActivo,true);
+				if(isOk) {
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivo);
+				}
 			}
 		}
 		return resultado;
@@ -3624,7 +3632,7 @@ public class ActivoAdapter {
 	 */
 	private void cambiarTrabajosActivosAGestorActivo(Activo activo, String tipoGestorCodigo) {
 		if(GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES.equals(tipoGestorCodigo)) {
-			for(ActivoTrabajo activoTrabajo : activo.getActivoTrabajos()) {
+			for(ActivoTrabajo activoTrabajo : activoApi.getActivoTrabajos(activo.getId())) {
 				Usuario  usuGestor = activoTrabajo.getTrabajo().getUsuarioResponsableTrabajo();
 				String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
 
@@ -3644,7 +3652,7 @@ public class ActivoAdapter {
 				}
 			}
 		}else if(GestorActivoApi.CODIGO_GESTOR_SUELOS.equals(tipoGestorCodigo)) {
-			for(ActivoTrabajo activoTrabajo : activo.getActivoTrabajos()) {
+			for(ActivoTrabajo activoTrabajo : activoApi.getActivoTrabajos(activo.getId())) {
 				Usuario  usuGestor = activoTrabajo.getTrabajo().getUsuarioResponsableTrabajo();
 				String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
 
@@ -3664,7 +3672,7 @@ public class ActivoAdapter {
 				}
 			}
 		}else if(GestorActivoApi.CODIGO_GESTOR_ALQUILERES.equals(tipoGestorCodigo)) {
-			for(ActivoTrabajo activoTrabajo : activo.getActivoTrabajos()) {
+			for(ActivoTrabajo activoTrabajo : activoApi.getActivoTrabajos(activo.getId())) {
 				Usuario  usuGestor = activoTrabajo.getTrabajo().getUsuarioResponsableTrabajo();
 				String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
 
@@ -3694,8 +3702,9 @@ public class ActivoAdapter {
 	@Transactional(readOnly = false)
 	public void cambiarResponsableTrabajosActivos(Activo activo) {
 		if (!Checks.esNulo(activo)) {
-			List<ActivoTrabajo> listaTrabajos = activo.getActivoTrabajos();					
-			Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());		
+			Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());	
+			Filter trabajoFilter = genericDao.createFilter(FilterType.EQUALS, "trabajo.auditoria.borrado", false);
+			List<ActivoTrabajo> listaTrabajos = genericDao.getList(ActivoTrabajo.class, activoFilter, trabajoFilter);
 			ActivoPublicacion actPublicacion = genericDao.get(ActivoPublicacion.class, activoFilter);			
 			if (DDTipoComercializacion.CODIGO_VENTA.equals(actPublicacion.getTipoComercializacion().getCodigo())) {
 				if (!Checks.estaVacio(listaTrabajos)) {
@@ -3979,6 +3988,21 @@ public class ActivoAdapter {
 				oferta.setOfrDocRespPrescriptor(true);
 			} else {
 				oferta.setOfrDocRespPrescriptor(dto.getOfrDocRespPrescriptor());
+			}
+			
+			String codigo = null;
+			
+			if(!oferta.getOfrDocRespPrescriptor()) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL;
+			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
+				codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
+			}
+			
+			if (codigo != null) {
+				DDResponsableDocumentacionCliente respCodCliente = genericDao.get(DDResponsableDocumentacionCliente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo));
+				oferta.setRespDocCliente(respCodCliente);
 			}
 			
 			ofertaCreada = genericDao.save(Oferta.class, oferta);
@@ -4604,9 +4628,9 @@ public class ActivoAdapter {
 	 */
 	private Boolean informeComercialAprobado(Activo activo) {
 		Boolean check = true;
-		VCondicionantesDisponibilidad vCondicionante = activoApi.getCondicionantesDisponibilidad(activo.getId());
-		if(!Checks.esNulo(vCondicionante)) {
-			if(vCondicionante.getSinInformeAprobadoREM()) {
+		VSinInformeAprobadoRem vSinInforme = activoApi.getSinInformeAprobadoREM(activo.getId());
+		if(!Checks.esNulo(vSinInforme)) {
+			if(vSinInforme.getSinInformeAprobadoREM()) {
 				check = false;
 			}
 		}
@@ -4884,4 +4908,51 @@ public class ActivoAdapter {
 		return genericDao.getListOrdered(VPreciosVigentes.class, order, filtro, filtroFecha);
 
 	}
+	
+	@Transactional(readOnly = false)
+	public boolean actualizarEstadoPublicacionActivoPerimetro(ArrayList<Long> listaIdActivo, ArrayList<Long> listaIdActivoSinVisibilidad){
+
+		activoDao.hibernateFlush();
+		Thread hilo = new Thread(new EjecutarSPPublicacionAsincrono(genericAdapter.getUsuarioLogado().getUsername(), listaIdActivo, listaIdActivoSinVisibilidad));
+		hilo.start();
+		
+		return true;
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean actualizarEstadoPublicacionSincronoPerimetro(ArrayList<Long> listaIdActivo, ArrayList<Long> listaIdActivoSinVisibilidad){
+		boolean resultado = true;
+		Set<Long> activosSinRepetidos =  new HashSet<Long>(listaIdActivoSinVisibilidad); 
+		if(listaIdActivo != null && !listaIdActivo.isEmpty()){
+			resultado = activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(listaIdActivo,true);
+		}
+		if(listaIdActivoSinVisibilidad != null && !listaIdActivoSinVisibilidad.isEmpty() && resultado) {
+			Set<Long> activosAdicionalesSinRepetidos = this.getActivosAdicionales(activosSinRepetidos); 
+			activosSinRepetidos.addAll(activosAdicionalesSinRepetidos);
+			List<Long> listaIdActivoSinVisibilidadSinRepetidos = new ArrayList<Long>(activosSinRepetidos);
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivoSinVisibilidadSinRepetidos);
+		}
+		
+		return resultado;
+	}
+	
+	private Set<Long> getActivosAdicionales(Set<Long> activosSinRepetidos){
+		Set<Long> activosAdicionalesSinRepetidos =  new HashSet<Long>();
+		for (Long activoId : activosSinRepetidos) {
+			Activo activo = activoDao.getActivoById(activoId);
+			if(activo != null) {
+				ActivoAgrupacionActivo aga = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());
+				if(aga != null && aga.getAgrupacion() != null) {
+					List<Activo> activos = activoApi.getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(aga.getAgrupacion().getId(),activo.getId());
+					for (Activo activoAgr : activos) {
+						activosAdicionalesSinRepetidos.add(activoAgr.getId());
+					}
+				}
+			}
+		}
+		
+		return activosAdicionalesSinRepetidos;
+	}
 }
+
+

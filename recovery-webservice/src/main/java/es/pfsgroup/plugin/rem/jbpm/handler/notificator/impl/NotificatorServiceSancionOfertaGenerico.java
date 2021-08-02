@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -1292,22 +1293,18 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		if (adjuntaInstrucciones) {
 			// ADJUNTOS SI ES CAJAMAR
 			if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
-				if (propietario != null && (ActivoPropietario.CODIGO_FONDOS_TITULIZACION.equals(propietario.getCodigo())
-						|| ActivoPropietario.CODIGO_GIVP.equals(propietario.getCodigo())
-						|| ActivoPropietario.CODIGO_GIVP_II.equals(propietario.getCodigo()))) {
-					if (oferta.getOfertaExpress()) {
-						f1 = FileItemUtils.fromResource("docs/20181001_Instrucciones_Reserva_CAJAMAR.pdf");
-					} else {
-						f1 = FileItemUtils.fromResource("docs/Instrucciones_Reserva_Formalizacion_estandar_072018.pdf");
-					}
+
+				if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getPrescriptor()) && DDTipoProveedor.COD_OFICINA_CAJAMAR.equals(oferta.getPrescriptor().getTipoProveedor().getCodigo())) {
+				
+					f1 = FileItemUtils.fromResource("docs/Instrucciones_Reserva_Formalizacion_Cajamar_Oficinas.docx");
 				} else {
-					f1 = FileItemUtils.fromResource("docs/20181001_Instrucciones_Reserva_CAJAMAR.pdf");
+					f1 = FileItemUtils.fromResource("docs/Instrucciones_Reserva_Formalizacion_Cajamar_Apis.docx");
 				}
 
 				f2 = FileItemUtils.fromResource("docs/ficha_cliente.xlsx");
 				f3 = FileItemUtils.fromResource("docs/manif_titular_real.doc");
 				if (f1 != null) {
-					adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.pdf"));
+					adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.docx"));
 				}
 				if (f2 != null) {
 					adjuntos.add(createAdjunto(f2, "Ficha_cliente.xlsx"));
@@ -1319,7 +1316,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			}
 			// ADJUNTOS SI ES SAREB
 			else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) {
-				f1 = FileItemUtils.fromResource("docs/Instrucciones_de_reserva_v3.docx");
+				f1 = FileItemUtils.fromResource("docs/Instrucciones_de_reserva_v4.docx");
 				if (f1 != null) {
 					adjuntos.add(createAdjunto(f1, "Instrucciones_de_reserva.docx"));
 				}
@@ -1327,7 +1324,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			}
 			// ADJUNTOS SI ES BANKIA
 			else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)) {
-				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_CaixaBank_v10.docx");
+				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_CaixaBank_v11.docx");
 				if (f1 != null) {
 					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_CaixaBank.docx"));
 				}
@@ -1352,14 +1349,14 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			 */
 			// ADJUNTOS SI ES LIBERBANK
 			else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
-				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_Liberbank_v2.docx");
+				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_Unicaja_v3.docx");
 				if (f1 != null) {
-					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_y_formalizacion_Liberbank.docx"));
+					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_y_formalizacion_Unicaja.docx"));
 				}
 				// ADJUNTOS SI ES CERBERUS APPLE
 			} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS)
 					&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
-				f2 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_APPLE_v2.docx");
+				f2 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_APPLE_v3.docx");
 				if ( f2 != null ) {
 					adjuntos.add(createAdjunto(f2, "instrucciones_reserva_y_formalizacion_APPLE.docx"));
 				}

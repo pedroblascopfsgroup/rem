@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
@@ -84,7 +85,9 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.VEsCondicionado;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.VSinInformeAprobadoRem;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
@@ -326,7 +329,7 @@ public interface ActivoApi {
 	 * @param idActivo: ID del activo a filtrar los datos.
 	 * @return Devuelve un objeto con los datos obtenidos.
 	 */
-	VCondicionantesDisponibilidad getCondicionantesDisponibilidad(Long idActivo);
+	VEsCondicionado getCondicionantesDisponibilidad(Long idActivo);
 
 	/**
 	 * Este método obtiene una lista de condiciones específicas por el ID del activo.
@@ -1451,6 +1454,11 @@ public interface ActivoApi {
 	List<DtoHistoricoOcupadoTitulo> getListHistoricoOcupadoTitulo(Long idActivo);
 	public void updateHonorarios (Activo activo, List<ActivoOferta> listaActivoOfertas);
 	
-
 	public Page getPublicacionGrid(DtoPublicacionGridFilter dto);
+
+	public VSinInformeAprobadoRem getSinInformeAprobadoREM(Long idActivo);
+	
+	public List<ActivoTrabajo> getActivoTrabajos(Long idActivo);
+
+	List<Activo> getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(Long idAgrupacion, Long idActivoPrincipal);
 }

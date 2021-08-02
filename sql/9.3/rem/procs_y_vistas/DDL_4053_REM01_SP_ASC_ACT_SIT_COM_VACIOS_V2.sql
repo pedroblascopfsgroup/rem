@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Carles Molins Pascual
---## FECHA_CREACION=20200228
+--## FECHA_CREACION=20210607
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4243
+--## INCIDENCIA_LINK=REMVIP-9845
 --## PRODUCTO=NO
 --## Finalidad: Stored Procedure que actualiza la situacion comercial VACIA de los activos en REM.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial - Carles Molins
+--##		0.2 Juan Bautista Alfonso [REMVIP-9845] Modificacion para nuevas vistas V_COND_DISPONIBILIDAD
 --##########################################
 --*/
 
@@ -194,7 +195,7 @@ BEGIN
 								   ,SCM.DD_SCM_ID
 								   ,8 ORDEN
 										FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
-										JOIN '||V_ESQUEMA||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = ACT.ACT_ID
+										JOIN '||V_ESQUEMA||'.V_ES_CONDICIONADO V ON V.ACT_ID = ACT.ACT_ID
 										LEFT JOIN '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_CODIGO = '''||SITCOM_CONDICIONADO||''' AND SCM.BORRADO = 0 /*Disponible condicionado*/
 										WHERE V.ES_CONDICIONADO = 1
 										AND ACT.BORRADO = 0

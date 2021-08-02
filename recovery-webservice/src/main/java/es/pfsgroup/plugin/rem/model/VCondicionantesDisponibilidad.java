@@ -68,8 +68,6 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 	@Column(name = "DIVHORIZONTAL_NOINSCRITA")
 	private Boolean divHorizontalNoInscrita;
 
-	@Column(name = "ES_CONDICIONADO")
-	private Boolean isCondicionado;
 
 	@Column(name = "EST_DISP_COM_CODIGO")
 	private String estadoCondicionadoCodigo;
@@ -77,9 +75,6 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 	@Column(name = "SIN_INFORME_APROBADO")
 	private Boolean sinInformeAprobado;
 	
-	@Column(name = "SIN_INFORME_APROBADO_REM")
-	private Boolean sinInformeAprobadoREM;
-
 	@Column(name = "CON_CARGAS")
 	private Boolean conCargas;
 
@@ -202,13 +197,6 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 		this.portalesExternos = portalesExternos;
 	}
 	
-	public Boolean getIsCondicionado() {
-		return isCondicionado;
-	}
-	
-	public void setIsCondicionado(Boolean isCondicionado) {
-		this.isCondicionado = isCondicionado;
-	}
 
 	public String getEstadoCondicionadoCodigo() {
 		return estadoCondicionadoCodigo;
@@ -226,13 +214,6 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 		this.sinInformeAprobado = sinInformeAprobado;
 	}
 	
-	public Boolean getSinInformeAprobadoREM() {
-		return sinInformeAprobadoREM;
-	}
-
-	public void setSinInformeAprobadoREM(Boolean sinInformeAprobadoREM) {
-		this.sinInformeAprobadoREM = sinInformeAprobadoREM;
-	}
 
 	public Boolean getConCargas() {
 		return conCargas;

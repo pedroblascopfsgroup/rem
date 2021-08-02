@@ -24,6 +24,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -54,6 +55,9 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
     
     @Autowired
 	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
     
     @Autowired
     private ApiProxyFactory proxyFactory;
@@ -159,7 +163,8 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 	
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expedienteComercial.setEstado(estado);
-						
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estado);
+
 						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 						
 						//Rechazamos el resto de ofertas
@@ -177,6 +182,8 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 	
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expedienteComercial.setEstado(estado);
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estado);
+
 						expedienteComercial.setFechaVenta(null);
 						
 						//Finaliza el trámite

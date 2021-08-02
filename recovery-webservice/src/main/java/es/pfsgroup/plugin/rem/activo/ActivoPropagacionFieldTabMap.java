@@ -70,7 +70,7 @@ public class ActivoPropagacionFieldTabMap {
 	    			"aplicaGestion",
 	    			"aplicaPublicar",
 	    			"aplicaFormalizar",
-	    			"aplicaComercializar",
+    			
 
 	    			// comercializacion
     				"tipoComercializarCodigo",
@@ -104,7 +104,8 @@ public class ActivoPropagacionFieldTabMap {
 			    	"fechaRevisionEstado",
 			    	"ocupado",
 			    	"riesgoOcupacion",
-			    	"conTitulo",
+			    	"conTituloCodigo",
+			    	"conTituloDescripcion",
 			    	"accesoTapiado",
 			    	"fechaAccesoTapiado",
 			    	"accesoAntiocupa",

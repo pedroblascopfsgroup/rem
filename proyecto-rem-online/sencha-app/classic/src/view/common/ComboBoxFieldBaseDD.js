@@ -111,8 +111,10 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 						me.getStore().loadSource = true;
 						me.getStore().updateSource(me.getStore().getSource(), null);
 					}else{							
-						if(me.getStore().isLoaded() && me.getStore().getCount()<1 && !me.getStore().isLoading()) me.getStore().load();
-						if (me.triggerAction === 'all') {
+						if((!me.getStore().isLoaded() || me.getStore().getCount()<1) && !me.getStore().isLoading()){
+							me.getStore().load();
+							me.expand();
+						}else if (me.triggerAction === 'all') {
 		                    me.doQuery(me.allQuery, true);
 		                } else if (me.triggerAction === 'last') {
 		                    me.doQuery(me.lastQuery, true);

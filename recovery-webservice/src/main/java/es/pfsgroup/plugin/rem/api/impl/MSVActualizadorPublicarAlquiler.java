@@ -8,6 +8,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
@@ -32,6 +33,9 @@ public class MSVActualizadorPublicarAlquiler extends AbstractMSVActualizador imp
 	
 	@Autowired
 	ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	@Override
 	public String getValidOperation() {
@@ -53,7 +57,7 @@ public class MSVActualizadorPublicarAlquiler extends AbstractMSVActualizador imp
 		if (!Checks.esNulo(exc.dameCelda(fila, COL_PUBLICAR_SIN_PRECIO))) {
 			dto.setPublicarSinPrecioAlquiler(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_PUBLICAR_SIN_PRECIO)));
 		}
-
+	
 		if (activoApi.isActivoIntegradoAgrupacionRestringida(activo.getId())) {
 			if (activoApi.isActivoPrincipalAgrupacionRestringida(activo.getId())) {
 				ActivoAgrupacionActivo aga = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());
@@ -65,6 +69,8 @@ public class MSVActualizadorPublicarAlquiler extends AbstractMSVActualizador imp
 		} else {
 			activoEstadoPublicacionApi.setDatosPublicacionActivo(dto);
 		}
+		
+		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false);
 
 		return new ResultadoProcesarFila();
 	}

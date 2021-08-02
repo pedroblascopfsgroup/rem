@@ -318,6 +318,9 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     			name:'tipoViviendaCodigo'
     		},
     		{
+    			name:'tipoViviendaDescripcion'
+    		},
+    		{
     			name:'tipoOrientacionCodigo'
     		},
     		{

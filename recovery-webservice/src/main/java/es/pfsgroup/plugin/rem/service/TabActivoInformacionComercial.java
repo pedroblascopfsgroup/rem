@@ -117,6 +117,7 @@ public class TabActivoInformacionComercial implements TabActivoService {
 
 					if (!Checks.esNulo(vivTemp.getTipoVivienda())) {
 						BeanUtils.copyProperty(activoDto, "tipoViviendaCodigo", vivTemp.getTipoVivienda().getCodigo());
+						BeanUtils.copyProperty(activoDto, "tipoViviendaDescripcion", vivTemp.getTipoVivienda().getDescripcion());
 					}
 					
 					if (!Checks.esNulo(vivTemp.getTipoOrientacion())) {

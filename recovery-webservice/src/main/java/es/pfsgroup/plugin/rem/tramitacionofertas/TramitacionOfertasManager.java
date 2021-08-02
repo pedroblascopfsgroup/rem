@@ -18,6 +18,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -44,10 +45,12 @@ import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
@@ -99,10 +102,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
@@ -110,6 +115,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.oferta.OfertaManager;
@@ -213,6 +219,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	
 	@Autowired
 	private OfertasAgrupadasLbkDao ofertasAgrupadasLbkDao;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+
+	@Autowired
+	private BoardingComunicacionApi boardingComunicacionApi;
 
 	@Override
 	@Transactional(readOnly = false)
@@ -231,16 +243,45 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			activo = activoAdapter.getActivoById(dto.getIdActivo());
 		}
 
-		return saveOferta(dto, activo, esAgrupacion, agrupacion, asincrono);
+		Oferta oferta = saveOferta(dto, activo, esAgrupacion, agrupacion, asincrono);
+		
+		if(oferta != null) 
+			return true;
+		else 
+			return false;
 	}
 
+	@Override
 	@Transactional(readOnly = false)
-	public boolean saveOferta(DtoOfertaActivo dto, Activo activo, Boolean esAgrupacion, ActivoAgrupacion agrupacion,
+	public boolean doTramitacionOferta(Long idOferta, Long idActivo, Long idAgrupacion) throws JsonViewerException, Exception, Error {
+		Activo activo = null;
+		ActivoAgrupacion agrupacion = null;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idOferta);
+		Oferta oferta = genericDao.get(Oferta.class, filtro);
+		if (idAgrupacion != null) {
+			agrupacion = genericDao.get(ActivoAgrupacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion));
+			activo = agrupacion.getActivoPrincipal() != null ? agrupacion.getActivoPrincipal()
+					: agrupacion.getActivos().get(0).getActivo();
+		} else {
+			activo = activoAdapter.getActivoById(idActivo);
+		}
+		
+		if(oferta != null) {
+			return expedienteComercialApi.doTramitacionAsincrona(activo, oferta);			
+		}
+		return false;		
+	}
+	
+	@Transactional(readOnly = false)
+	public Oferta saveOferta(DtoOfertaActivo dto, Activo activo, Boolean esAgrupacion, ActivoAgrupacion agrupacion,
 			Boolean asincrono) throws JsonViewerException, Exception {
 		boolean resultado = true;
-		Trabajo trabajo = null;
+		ExpedienteComercial expediente = null;
 		Boolean esAcepta = false;
 
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
 		Boolean esAlquiler = DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo());
@@ -256,8 +297,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		// expediente comercial
 
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
-			trabajo = doAceptaOferta(oferta, activo);
-			esAcepta = trabajo != null;
+			oferta = anyadirCamposOferta(oferta, dto);
+			expediente = doAceptaOferta(oferta, activo);
+			esAcepta = expediente != null;
+			oferta.setExpedienteComercial(expediente);
 		}
 
 		// si la oferta ha sido rechazada guarda los motivos de rechazo y
@@ -267,24 +310,17 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 
 		if (!resultado) {
-			resultado = this.persistOferta(oferta);
+			resultado = ofertaApi.persistOferta(oferta);
+			
 		}
-		if (esAcepta) {
-			String usuarioLogado = genericAdapter.getUsuarioLogado().getUsername();
-			ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class,
-					genericDao.createFilter(FilterType.EQUALS, "oferta", oferta));
-			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
-			if (asincrono) {
-				Thread creacionAsincrona = new Thread(new TramitacionOfertasAsync(activo.getId(), esAcepta,
-						trabajo.getId(), oferta.getId(), expedienteComercial.getId(), usuarioLogado));
-
-				creacionAsincrona.start();
-			} else {
-				doTramitacion(activo, oferta, trabajo.getId(), expedienteComercial);
+		if(!asincrono && esAcepta) {
+			ActivoTramite tramite = doTramitacion(activo, expediente.getOferta(), expediente.getTrabajo().getId(), expediente);
+			if(tramite != null) {
+				return oferta;
 			}
 		}
-
-		return resultado;
+		transactionManager.commit(transaction);
+		return oferta;
 	}
 
 	private void validateSaveOferta(DtoOfertaActivo dto, Oferta oferta, DDEstadoOferta estadoOferta, Activo activo,
@@ -381,7 +417,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			ActivoValoraciones precio = null;
 			Filter filtroTof = null;
 			Filter filtroMin = null;
-			Filter fechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
 			String msg;
 
 			if (esAlquiler) {
@@ -400,14 +435,17 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
 			}
 
-			precios = genericDao.getList(ActivoValoraciones.class, filtroActivo, filtroTof, fechaFin);
+			precios = genericDao.getList(ActivoValoraciones.class, filtroActivo, filtroTof);
 			
 			if (precios != null && !precios.isEmpty())
 				precio = precios.get(0);
 
 			if (activo.getCartera() != null
 					&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {
-				if (Checks.esNulo(precio) || (!Checks.esNulo(precio) && Checks.esNulo(precio.getImporte()))) {
+				Date fechaHoy = new Date();
+				
+				if (Checks.esNulo(precio) || (!Checks.esNulo(precio) && (Checks.esNulo(precio.getImporte())
+						|| (!Checks.esNulo(precio.getFechaFin()) && precio.getFechaFin().before(fechaHoy))))) {
 					if (numActivo != null) {
 						msg = "Activo " + numActivo + " sin precio";
 					} else {
@@ -439,7 +477,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 	}
 
-	private Trabajo doAceptaOferta(Oferta oferta, Activo activo) throws Exception {
+	private ExpedienteComercial doAceptaOferta(Oferta oferta, Activo activo) throws Exception {
 		List<Activo> listaActivos = new ArrayList<Activo>();
 		for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 			listaActivos.add(activoOferta.getPrimaryKey().getActivo());
@@ -447,8 +485,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, getSubtipoTrabajoByOferta(oferta));
 		Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
-		crearExpediente(oferta, trabajo, null, activo);
-		return trabajo;
+		ExpedienteComercial expediente = crearExpediente(oferta, trabajo, null, activo);
+		return expediente;
 	}
 
 	private boolean doRechazaOferta(DtoOfertaActivo dto, Oferta oferta) {
@@ -481,24 +519,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 
 		notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
-		return resultado;
-	}
-
-	@Transactional(readOnly = false)
-	public boolean persistOferta(Oferta oferta) {
-		TransactionStatus transaction = null;
-		boolean resultado = false;
-		try {
-			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
-			genericDao.update(Oferta.class, oferta);
-			transactionManager.commit(transaction);
-			resultado = true;
-		} catch (Exception e) {
-			// logger.error("Error en tramitacionOfertasManager", e);
-			transactionManager.rollback(transaction);
-
-		}
 		return resultado;
 	}
 
@@ -577,6 +597,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class,
 						DDEstadosExpedienteComercial.EN_TRAMITACION);
 		nuevoExpediente.setEstado(estadoExpediente);
+		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(nuevoExpediente.getOferta(), estadoExpediente);
+
 		nuevoExpediente.setNumExpediente(activoDao.getNextNumExpedienteComercial());
 		nuevoExpediente.setTrabajo(trabajo);
 		
@@ -1371,7 +1393,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL,
 					usuarioGestorComercial.getUsername(), dto);
 
-		if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+		if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
 			if (!Checks.esNulo(usuarioGestorReserva))
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_RESERVA_CAJAMAR,
 						usuarioGestorReserva.getUsername(), dto);
@@ -1387,6 +1409,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (!Checks.esNulo(usuarioSupervisorFormalizacion))
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION,
 						usuarioSupervisorFormalizacion.getUsername(), dto);
+			if (DDTipoTituloActivo.tipoTituloNoJudicial.equals(activo.getTipoTitulo().getCodigo()) && 
+					(DDSubtipoTituloActivo.subtipoNotarialCompra.equals(activo.getSubtipoTitulo().getCodigo()) ||
+					 DDSubtipoTituloActivo.subtipoNotarialDacion.equals(activo.getSubtipoTitulo().getCodigo()))) {				
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTORIA_ADMISION, 
+						"diagonal01", dto);
+			}
 		}
 		
 		if(activo != null) {
@@ -1951,6 +1979,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		expedienteComercial.setFormalizacion(this.crearFormalizacion(expedienteComercial));
 		
 		activoManager.actualizarOfertasTrabajosVivos(activo.getId());
+		
+		if(oferta != null && oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial() && ofertaManager.esOfertaValidaCFVByCarteraSubcartera(oferta)  && boardingComunicacionApi.modoRestClientBoardingActivado()) {
+			boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_1_MINUTO);
+		}
+		
+		ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 		return activoTramite;
 	}
 
@@ -1966,13 +2000,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		Activo activo = activoManager.get(idActivo);
 		Oferta oferta = ofertaApi.getOfertaById(idOferta);
-		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(idExpedienteComercial);
+		ExpedienteComercial expedienteComercial = oferta.getExpedienteComercial();
 
 		try {
-			trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
-			transactionManager.commit(transaction);
-			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
+			if(expedienteComercial == null) {
+				expedienteComercial = expedienteComercialApi.findOne(idExpedienteComercial);
+			}
 			expedienteComercial = this.crearCondicionanteYTanteo(activo, oferta, expedienteComercial);
 			expedienteComercial = this.crearExpedienteReserva(expedienteComercial);
 			expedienteComercialApi.crearCondicionesActivoExpediente(activo, expedienteComercial);
@@ -1991,12 +2024,22 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		
 			// Se debe establecer setFormalizacion al final del método. La vista comprobará que ha terminado el proceso mediante el registro creado de formalizacion
 			expedienteComercial.setFormalizacion(this.crearFormalizacion(expedienteComercial));
+			
+			//Creacion del tramite
+			trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 			transactionManager.commit(transaction);
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 			if (idActivo != null) {
 				activoManager.actualizarOfertasTrabajosVivos(idActivo);
 			}
+			
+			if(oferta != null && ofertaManager.esOfertaValidaCFVByCarteraSubcartera(oferta) && oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial() && boardingComunicacionApi.modoRestClientBoardingActivado()) {
+				boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_1_MINUTO);
+			}
 		
+			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
+			transactionManager.commit(transaction);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			transactionManager.rollback(transaction);
@@ -2070,6 +2113,24 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 		
 		genericDao.save(ActivosAlquilados.class, activoAlquilado);
+	}
+	
+
+
+	private Oferta anyadirCamposOferta(Oferta oferta, DtoOfertaActivo dto) {
+		
+		oferta.setOfertaEspecial(dto.getOfertaEspecial());
+		oferta.setVentaCartera(dto.getVentaCartera());
+		oferta.setVentaSobrePlano(dto.getVentaSobrePlano());
+		
+		if(dto.getCodRiesgoOperacion() != null){
+			DDRiesgoOperacion riesgoOperacion = genericDao.get(DDRiesgoOperacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodRiesgoOperacion()));
+			if(riesgoOperacion != null) {
+				oferta.setRiesgoOperacion(riesgoOperacion);
+			}
+		}
+		
+		return oferta;
 	}
 
 }

@@ -420,4 +420,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public Page getBusquedaPublicacionGrid(DtoPublicacionGridFilter dto);
 
 	List<AuxiliarCierreOficinasBankiaMul> getListAprAuxCierreBnK();
+
+	List<Activo> getActivosNoPrincipalesAgrupacion(Long idAgr, Long idActivoPrincipal);
 }

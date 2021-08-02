@@ -1,0 +1,108 @@
+--/*
+--#########################################
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20200102
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-10078
+--## PRODUCTO=NO
+--## 
+--## Finalidad: MODIFICAR TRABAJOS
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+	V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-10078';
+	V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#';-- '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	ERR_NUM NUMBER;-- Numero de errores
+	ERR_MSG VARCHAR2(2048);-- Mensaje de error
+	V_SQL VARCHAR2(4000 CHAR);
+
+	V_GPV_ID VARCHAR(50 CHAR); -- Vble. que almacena el id del gasto.
+	V_EXISTE_TRABAJO NUMBER(16); -- Vble. para almacenar el resultado de la busqueda.
+
+    TYPE T_TRABAJO IS TABLE OF VARCHAR2(1000);
+
+    TYPE T_ARRAY_TRABAJOS IS TABLE OF T_TRABAJO;
+    V_TRABAJOS T_ARRAY_TRABAJOS := T_ARRAY_TRABAJOS(
+		 
+               --NUMERO TRABAJO
+		T_TRABAJO('924567849093'),
+		T_TRABAJO('924567849246'),
+		T_TRABAJO('924567878602'),
+		T_TRABAJO('924567879484'),
+		T_TRABAJO('924567879485'),
+		T_TRABAJO('924567879664'),
+		T_TRABAJO('924567879678'),
+		T_TRABAJO('924567879717'),
+		T_TRABAJO('924567879735'),
+		T_TRABAJO('924567879771'),
+		T_TRABAJO('924567879774'),
+		T_TRABAJO('924567879778'),
+		T_TRABAJO('924567880716')
+
+   ); 
+    V_TMP_TRABAJO T_TRABAJO;
+
+
+BEGIN
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO]');
+
+		FOR I IN V_TRABAJOS.FIRST .. V_TRABAJOS.LAST
+		LOOP
+			V_TMP_TRABAJO := V_TRABAJOS(I);
+
+			DBMS_OUTPUT.PUT_LINE('[INFO] Comprobando que existe el TRABAJO '||TRIM(V_TMP_TRABAJO(1))||'.');
+
+			V_SQL := 'SELECT COUNT(1)
+					  FROM '||V_ESQUEMA||'.ACT_TBJ_TRABAJO 
+					  WHERE TBJ_NUM_TRABAJO = '||TRIM(V_TMP_TRABAJO(1));
+
+			EXECUTE IMMEDIATE V_SQL INTO V_EXISTE_TRABAJO;
+
+			IF V_EXISTE_TRABAJO > 0 THEN
+
+				DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el trabajo '||TRIM(V_TMP_TRABAJO(1)) );
+
+				V_SQL := 'UPDATE '||V_ESQUEMA||'.ACT_TBJ_TRABAJO
+				  			SET DD_TTR_ID = 41,
+							DD_STR_ID = 211,
+				      		USUARIOMODIFICAR = ''' || V_USUARIO || ''',
+				      		FECHAMODIFICAR = SYSDATE
+				  			WHERE TBJ_NUM_TRABAJO = '||TRIM(V_TMP_TRABAJO(1))||'';
+
+				EXECUTE IMMEDIATE V_SQL;
+
+				DBMS_OUTPUT.PUT_LINE('[INFO] El trabajo '||TRIM(V_TMP_TRABAJO(1))||' ha sido ACTUALIZADO.');
+
+			ELSE 
+				DBMS_OUTPUT.PUT_LINE('[INFO] No se ha encontrado el trabajo '||TRIM(V_TMP_TRABAJO(1)));
+			END IF;
+
+		DBMS_OUTPUT.PUT_LINE('***********************************');
+
+		END LOOP;
+
+	COMMIT;
+
+EXCEPTION
+    WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
+      DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------');
+      DBMS_OUTPUT.PUT_LINE(SQLERRM);
+      DBMS_OUTPUT.PUT_LINE(V_SQL);
+      ROLLBACK;
+      RAISE;
+END;
+/
+EXIT;

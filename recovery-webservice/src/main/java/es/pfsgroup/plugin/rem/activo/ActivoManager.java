@@ -105,6 +105,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
@@ -164,6 +165,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgendaSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
@@ -371,8 +373,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private GestorActivoManager gestorActivoManager;
 
 	@Autowired
-	UsuarioManager usuarioManager;
-
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+    private UsuarioManager usuarioManager;
+	
 	@Autowired
 	private EXTGrupoUsuariosDao extGrupoUsuariosDao;
 
@@ -669,7 +674,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		historicoValoracion.setTipoPrecio(activoValoracion.getTipoPrecio());
 		historicoValoracion.setImporte(activoValoracion.getImporte());
 		historicoValoracion.setFechaInicio(activoValoracion.getFechaInicio());
-		historicoValoracion.setFechaFin(activoValoracion.getFechaFin());
+		historicoValoracion.setFechaFin(
+				(!Checks.esNulo(activoValoracion.getFechaFin()) ? activoValoracion.getFechaFin() : new Date()));
 		historicoValoracion.setFechaAprobacion(activoValoracion.getFechaAprobacion());
 		historicoValoracion.setFechaCarga(
 				(!Checks.esNulo(activoValoracion.getFechaCarga()) ? activoValoracion.getFechaCarga() : new Date()));
@@ -1275,10 +1281,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	public VCondicionantesDisponibilidad getCondicionantesDisponibilidad(Long idActivo) {
+	public VEsCondicionado getCondicionantesDisponibilidad(Long idActivo) {
 		Filter idActivoFilter = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
-		return genericDao.get(VCondicionantesDisponibilidad.class, idActivoFilter);
+		return genericDao.get(VEsCondicionado.class, idActivoFilter);
 	}
+	
+	@Override
+	public VSinInformeAprobadoRem getSinInformeAprobadoREM(Long idActivo) {
+		Filter idActivoFilter = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
+		return genericDao.get(VSinInformeAprobadoRem.class, idActivoFilter);
+	}
+
 
 	@Override
 	@Transactional(readOnly = false)
@@ -1634,8 +1647,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							historico.getMediadorInforme().getTelefono1());
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "email",
 							historico.getMediadorInforme().getEmail());
-					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "rol",
+					if(historico.getTipoRolMediador() != null) {
+						beanUtilNotNull.copyProperty(dtoHistoricoMediador, "rol",
 							historico.getTipoRolMediador().getDescripcion());
+					}
 				}
 				if (historico.getAuditoria() != null) {
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "responsableCambio",
@@ -4050,6 +4065,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			}
 			
+			if(dto.getFechaVenta() != null) {
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false);
+			}
 			if (activo.getNumActivo() != null) {
 				ActivoSareb activoSareb = genericDao.get(ActivoSareb.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activo.getNumActivo()));
 				if(activoSareb != null) {
@@ -4086,8 +4104,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					actualizarHonorarios = true;					
 				}
 				activo.setObraNuevaAEfectosComercializacionFecha(new Date());
-				
+
 			}
+			
+			if(dto.getFechaVenta() != null) {
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false);
+			}
+		
 			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -5563,9 +5586,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public List<Long> getIdAgrupacionesActivo(Long idActivo) {
 		if (Checks.esNulo(idActivo))
 			return null;
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("idActivo", idActivo.toString());
+		
+		rawDao.addParams(params);
 
-		List<Object> listaObj = rawDao.getExecuteSQLList("SELECT AGR_ID FROM ACT_AGA_AGRUPACION_ACTIVO WHERE ACT_ID = "
-				+ idActivo.toString() + "AND BORRADO = 0");
+		List<Object> listaObj = rawDao.getExecuteSQLList("SELECT AGR_ID FROM ACT_AGA_AGRUPACION_ACTIVO WHERE ACT_ID = :idActivo AND BORRADO = 0");
 
 		List<Long> listaAgr = new ArrayList<Long>();
 
@@ -5704,8 +5731,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		ActivoSituacionPosesoria posesoria = activo.getSituacionPosesoria();
 		Integer ocupado;
 		String conTitulo = "";
-		if (activoDto.getConTitulo() != null) {
-			conTitulo = activoDto.getConTitulo();
+		DDTipoTituloActivoTPA tituloActivoTPA = null;
+		
+		if(activoDto.getConTituloCodigo() != null) {
+			Filter tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", activoDto.getConTituloCodigo());
+			tituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
+		}
+		
+		if (tituloActivoTPA != null) {
+			conTitulo = tituloActivoTPA.getCodigo();
+		}else {
+			conTitulo = posesoria.getConTitulo().getCodigo();
 		}
 		if (activoDto.getOcupado() != null) {
 			ocupado = activoDto.getOcupado();
@@ -6197,12 +6233,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	public List<ActivoTrabajo> getActivoTrabajos(Long idActivo){
+		List<ActivoTrabajo> trabajosDelActivo = null;
+		trabajosDelActivo = genericDao.getList(ActivoTrabajo.class, 
+				genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo),
+				genericDao.createFilter(FilterType.EQUALS, "trabajo.auditoria.borrado", false));
+		if(trabajosDelActivo == null)
+			trabajosDelActivo = new ArrayList<ActivoTrabajo>();
+		return trabajosDelActivo;
+	}
+	
+	@Override
 	@Transactional(readOnly = false)
 	public void actualizarOfertasTrabajosVivos(Activo activo) {
 		Boolean tieneOfertasVivas = false;
 		Boolean tieneTrabajosVivos = false;
-		List<ActivoTrabajo> trabajosDelActivo = activo.getActivoTrabajos();
-
+		List<ActivoTrabajo> trabajosDelActivo = this.getActivoTrabajos(activo.getId());
 		tieneOfertasVivas = particularValidator
 				.existeActivoConOfertaVivaEstadoExpediente(Long.toString(activo.getNumActivo()));
 
@@ -6284,7 +6330,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						activoDao.getActivoById(activoDao.getIdActivoMatriz(agrupacionPa.getId())).getNumActivo()));
 			}
 			if (!tieneTrabajosVivos) {
-				List<ActivoTrabajo> trabajosDelActivoAM = activo.getActivoTrabajos();
+				List<ActivoTrabajo> trabajosDelActivoAM = this.getActivoTrabajos(activo.getId());
 				for (ActivoTrabajo activoTrabajoAM : trabajosDelActivoAM) {
 					if (!DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA
 							.equals(activoTrabajoAM.getTrabajo().getSubtipoTrabajo().getCodigo())
@@ -7058,8 +7104,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 				}
 				if (DDEstadoPresentacion.INSCRITO.equals(estadoPresentacion.getCodigo())
-						&& !Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
-					activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
+						&& (!Checks.esNulo(tramitacionDto.getFechaInscripcion()) || !Checks.esNulo(htt.getFechaInscripcion()))) {
+					if(!Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
+						activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
+					} else if (!Checks.esNulo(htt.getFechaInscripcion())){
+						activoTitulo.setFechaInscripcionReg(htt.getFechaInscripcion());
+					}
 					estadoTitulo = DDEstadoTitulo.ESTADO_INSCRITO;
 					htt.setFechaCalificacion(null);
 				}
@@ -7074,7 +7124,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 			if (!Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
 				beanUtilNotNull.copyProperty(htt, "fechaInscripcion", tramitacionDto.getFechaInscripcion());
-				activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 			}
 			if (!Checks.esNulo(tramitacionDto.getObservaciones())) {
 				beanUtilNotNull.copyProperty(htt, "observaciones", tramitacionDto.getObservaciones());
@@ -9177,7 +9226,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	}
 
-
 	
+	@Override
+	public List<Activo> getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(Long idAgrupacion, Long idActivoPrincipal){
+
+		List<Activo> activos = activoDao.getActivosNoPrincipalesAgrupacion(idAgrupacion, idActivoPrincipal);
+		
+		return activos;
+	}
+
 }
 

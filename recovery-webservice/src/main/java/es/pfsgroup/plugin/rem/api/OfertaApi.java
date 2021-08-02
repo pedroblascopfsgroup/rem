@@ -778,6 +778,7 @@ public interface OfertaApi {
 	
 	public Long saveOferta(Oferta oferta);
 
+	public boolean persistOferta(Oferta oferta);
 	/*
 	 * Este método comprueba si están todos los valores necesarios para los cálculos de liberbank.
 	 * Los valores necesarios para el calculo de comite Liberbank son:
@@ -811,5 +812,13 @@ public interface OfertaApi {
 	public DtoExcelFichaComercial getListOfertasFilter(Long idExpediente) throws UserException;
 	
 	public Page getBusquedaOfertasGridUsuario(DtoOfertaGridFilter dto);
+
+	List<Oferta> getListOtrasOfertasTramitadasActivo(Long idActivo);
+	
+	public ExpedienteComercial tareaExternaToExpediente(TareaExterna tareaExterna);
+
+	public String actualizarOfertaBoarding(TareaExterna tareaExterna);
+
+	boolean esOfertaValidaCFVByCarteraSubcartera(Oferta oferta);
 
 }

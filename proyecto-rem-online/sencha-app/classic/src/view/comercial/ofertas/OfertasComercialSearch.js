@@ -310,7 +310,7 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 	    						valueField: 'id',
 					        	bind: {
 				            		store: '{comboUsuariosGestoria}',
-				            		readOnly: !$AU.userIsRol("HAYASUPER")
+				            		readOnly: $AU.userTipoGestor()=="GIAFORM"
 				            	},
 								name: 'gestoria'
 							},

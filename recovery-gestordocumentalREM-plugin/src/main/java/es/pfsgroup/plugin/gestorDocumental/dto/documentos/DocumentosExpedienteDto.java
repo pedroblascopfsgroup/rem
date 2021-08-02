@@ -39,6 +39,8 @@ public class DocumentosExpedienteDto {
 	
 	private String blacklistmatriculas;
 	
+	private Boolean metadatatdn1;
+	
 
 	public String getUsuario() {
 		return usuario;
@@ -94,6 +96,14 @@ public class DocumentosExpedienteDto {
 
 	public void setBlacklistmatriculas(String blacklistmatriculas) {
 		this.blacklistmatriculas = blacklistmatriculas;
+	}
+
+	public Boolean getMetadatatdn1() {
+		return metadatatdn1;
+	}
+
+	public void setMetadatatdn1(Boolean metadatatdn1) {
+		this.metadatatdn1 = metadatatdn1;
 	}
 	
 }

@@ -11,6 +11,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.springframework.stereotype.Repository;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -82,14 +83,16 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		// y de los de tipo proveedor, unicamente a si mismos.
 		if(esGestoria || esProveedor ){			
 			hb.appendWhere(" pve.tipoProveedorCodigo in ('"+DDEntidadProveedor.TIPO_ENTIDAD_CODIGO+"','"+DDEntidadProveedor.TIPO_ADMINISTRACION_CODIGO+"') "					
-							+ "or (pve.tipoProveedorCodigo = '" + DDEntidadProveedor.TIPO_PROVEEDOR_CODIGO + "' and pve.idUser = "+usuarioLogado.getId()+") ");
+							+ "or (pve.tipoProveedorCodigo = '" + DDEntidadProveedor.TIPO_PROVEEDOR_CODIGO + "' and pve.idUser = :usuarioLogadoId) ");
+			hb.getParameters().put("usuarioLogadoId", usuarioLogado.getId());
 		}
 		
 		// Si es externo pero no es gestoria ni proveedor, es fsv, capa control o consulta, y hay que carterizar en función del tipo de proveedor
 		if(esExterno && !esGestoria && !esProveedor) {
 			
-			hb.appendWhere(" (pve.tipoProveedorCodigo in ('"+DDEntidadProveedor.TIPO_ENTIDAD_CODIGO+"','"+DDEntidadProveedor.TIPO_PROVEEDOR_CODIGO+"') and pve.cartera = '"+dto.getCartera()+"' )"					
+			hb.appendWhere(" (pve.tipoProveedorCodigo in ('"+DDEntidadProveedor.TIPO_ENTIDAD_CODIGO+"','"+DDEntidadProveedor.TIPO_PROVEEDOR_CODIGO+"') and pve.cartera = :cartera )"					
 					+ "or (pve.tipoProveedorCodigo = '" + DDEntidadProveedor.TIPO_ADMINISTRACION_CODIGO + "')");
+			hb.getParameters().put("cartera", dto.getCartera());
 		} else {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.cartera", dto.getCartera());
 		}
@@ -179,8 +182,9 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		}
 		hb.appendWhere("proveedor.tipoProveedor.codigo = " + DDTipoProveedor.COD_MEDIADOR);
 		hb.appendWhere(
-				"territorial.provincia.codigo in (select loc.provincia.codigo from Localidad loc where loc.codigo = '"
-						+ activo.getMunicipio() + "')");
+				"territorial.provincia.codigo in (select loc.provincia.codigo from Localidad loc where loc.codigo = :activoMunicipio)");
+		hb.getParameters().put("activoMunicipio",activo.getMunicipio());
+		
 		hb.appendWhere("proveedor.homologado = 1");
 
 		return HibernateQueryUtils.list(this, hb);
@@ -191,15 +195,21 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	public List<VProveedores> getProveedoresFilteredByTiposTrabajo(String codigosTipoProveedores, String codCartera) {
 		HQLBuilder hb = new HQLBuilder(" from VProveedores v");
 
-		hb.appendWhere("v.codigoCartera = '" + codCartera + "'");
+		HQLBuilder.addFiltroIgualQue(hb, "v.codigoCartera", codCartera);
 		hb.appendWhere("v.baja = 0");
 
 		if (!Checks.esNulo(codigosTipoProveedores))
-			hb.appendWhere("v.codigoTipoProveedor in (" + codigosTipoProveedores + ")");
+			hb.appendWhere("v.codigoTipoProveedor in ( :codigosTipoProveedores )");
 
 		hb.orderBy("v.nombreComercial", HQLBuilder.ORDER_ASC);
-
-		return (List<VProveedores>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		
+		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+		
+		if(codigosTipoProveedores != null) {
+			q.setParameterList("codigosTipoProveedores", Arrays.asList(codigosTipoProveedores.split(",")));
+		}
+		
+		return (List<VProveedores>) q.list();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -209,10 +219,10 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		HQLBuilder hb = new HQLBuilder("select pve.nombre from ActivoProveedor pve, ActivoProveedorContacto pvc ");
 
 		hb.appendWhere("pve.id = pvc.proveedor.id");
-		hb.appendWhere("pvc.usuario.id = " + idUsuario);
+		hb.appendWhere("pvc.usuario.id = :usuarioId");
 
 		List<String> listaProveedores = (List<String>) this.getSessionFactory().getCurrentSession()
-				.createQuery(hb.toString()).list();
+				.createQuery(hb.toString()).setParameter("usuarioId", idUsuario).list();
 		List<String> listaNombres = new ArrayList<String>();
 		for (String proveedor : listaProveedores) {
 			listaNombres.add("'" + proveedor + "'");
@@ -227,22 +237,29 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 
 		HQLBuilder hb = new HQLBuilder("select pvc from ActivoProveedorContacto pvc, ActivoProveedor pve, EntidadProveedor ep ");
 
+		
 		hb.appendWhere("pve.id = pvc.proveedor.id ");
 		hb.appendWhere("pve.id = ep.proveedor.id ");
 
-		StringBuilder builder = new StringBuilder();
+	/*	StringBuilder builder = new StringBuilder();
 		for(Long id : idUsuarios) {
 			builder.append(String.valueOf(id));
 			builder.append(",");
 		}
 
-		if(builder.length() > 0) {
-			hb.appendWhere("pvc.usuario.id in (" + builder.toString().substring(0, builder.length()-1) + ")");
+	 */
+		if(idUsuarios.size() > 0) {
+			hb.appendWhere("pvc.usuario.id in ( :usuarioIds )");
 		}
-		hb.appendWhere("ep.cartera.id = " + idCartera);
+		hb.appendWhere("ep.cartera.id = :idCartera");
+				
+		if(idUsuarios.size() > 0) {
+			hb.appendWhere("pvc.usuario.id in ( :usuarioIds )");
+		}
+		
 
 		List<ActivoProveedorContacto> listaProveedoresContacto = (List<ActivoProveedorContacto>) this.getSessionFactory().getCurrentSession()
-				.createQuery(hb.toString()).list();
+				.createQuery(hb.toString()).setParameterList("usuarioIds", idUsuarios).setParameter("idCartera", idCartera).list();
 
 		return listaProveedoresContacto;
 	}
@@ -253,12 +270,12 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 
 		HQLBuilder hb = new HQLBuilder("select pvc from ActivoProveedorContacto pvc, ActivoProveedor pve ");
 		hb.appendWhere("pve.id = pvc.proveedor.id ");
-		hb.appendWhere("pvc.usuario.id = " + idUsuario);
+		hb.appendWhere("pvc.usuario.id = :idUsuario");
 		hb.appendWhere("pve.fechaBaja IS NULL ");
 		hb.appendWhere("pvc.fechaBaja IS NULL ");
 		hb.appendWhere("pvc.auditoria.borrado = 0 ");
 		
-		List<ActivoProveedorContacto> listaProveedoresContacto = (List<ActivoProveedorContacto>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		List<ActivoProveedorContacto> listaProveedoresContacto = (List<ActivoProveedorContacto>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("idUsuario", idUsuario).list();
 		
 		if(!listaProveedoresContacto.isEmpty()){
 			return listaProveedoresContacto.get(0);
@@ -271,11 +288,11 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	public ActivoProveedorContacto getActivoProveedorContactoPorUsernameUsuario(String username) {
 
 		HQLBuilder hb = new HQLBuilder("from ActivoProveedorContacto pvc");
-		hb.appendWhere("pvc.usuario.username = '" + username +"'");
+		hb.appendWhere("pvc.usuario.username = :userName");
 		hb.appendWhere("pvc.fechaBaja IS NULL");
 		hb.appendWhere("pvc.auditoria.borrado = 0");
 		
-		List<ActivoProveedorContacto> listaProveedoresContacto = (List<ActivoProveedorContacto>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		List<ActivoProveedorContacto> listaProveedoresContacto = (List<ActivoProveedorContacto>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("userName", username).list();
 		
 		if(!listaProveedoresContacto.isEmpty()){
 			return listaProveedoresContacto.get(0);
@@ -290,9 +307,9 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		HQLBuilder hb = new HQLBuilder("select pve.id from ActivoProveedor pve, ActivoProveedorContacto pvc ");
 
 		hb.appendWhere("pve.id = pvc.proveedor.id");
-		hb.appendWhere("pvc.usuario.id = " + idUsuario);
+		hb.appendWhere("pvc.usuario.id = :idUsuario");
 
-		return (List<Long>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		return (List<Long>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("idUsuario", idUsuario).list();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -316,8 +333,10 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 			hb.appendWhere("ico.activo.id = pac.activo.id");
 			hb.appendWhere("ico.activo.situacionComercial.codigo not in ('05','06')");
 			hb.appendWhere("pac.incluidoEnPerimetro = 1");
-			hb.appendWhere("ico.mediadorInforme.id = "+idProveedor);
-			return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
+			hb.appendWhere("ico.mediadorInforme.id = :idProveedor");
+			
+			
+			return (Long) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("idProveedor", idProveedor).uniqueResult();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -337,11 +356,12 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
                 + " INNER JOIN GLD_ENT ENT ON ENT.GLD_ID = TBJ.GLD_ID "               
                 + " INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = ENT.ENT_ID AND ACT.BORRADO = 0 " 
 				+ " INNER JOIN DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID AND SCM.DD_SCM_CODIGO NOT IN ('05', '06') "
-				+ " WHERE PVE.PVE_ID = "+idProveedor
+				+ " WHERE PVE.PVE_ID = :idProveedor"
 				+ " AND ENT.DD_ENT_ID = (SELECT DD_ENT_ID FROM DD_ENT_ENTIDAD_GASTO WHERE DD_ENT_CODIGO ='ACT')";
 		
 		SQLQuery sqlQuery = getHibernateTemplate().getSessionFactory()
 				.getCurrentSession().createSQLQuery(queryString);
+		sqlQuery.setParameter("idProveedor", idProveedor);
 		
 		final Object obj = sqlQuery.uniqueResult();
         if (obj != null) {
@@ -359,10 +379,10 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		HQLBuilder hb = new HQLBuilder("select pve.id from ActivoProveedor pve, ActivoProveedorContacto pvc ");
 
 		hb.appendWhere("pve.id = pvc.proveedor.id");
-		hb.appendWhere("pvc.usuario.id = " + idUsuario);
+		hb.appendWhere("pvc.usuario.id = :idUsuario");
 
 		List<Long> listaProveedores = (List<Long>) this.getSessionFactory().getCurrentSession()
-				.createQuery(hb.toString()).list();
+				.createQuery(hb.toString()).setParameter("idUsuario", idUsuario).list();
 		return listaProveedores;
 	}
 	
@@ -396,11 +416,11 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	public List<VProveedores> getProveedoresCarterizados(String codCartera) {
 		HQLBuilder hb = new HQLBuilder(" from VProveedores v");
 
-		hb.appendWhere("v.codigoCartera = '" + codCartera + "'");
+		hb.appendWhere("v.codigoCartera = :codCartera");
 		hb.appendWhere("v.baja = 0");
 
 		hb.orderBy("v.nombreComercial", HQLBuilder.ORDER_ASC);
 
-		return (List<VProveedores>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		return (List<VProveedores>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("codCartera", codCartera).list();
 	}
 }

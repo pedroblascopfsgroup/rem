@@ -122,6 +122,12 @@ public class VExportTrabajosAlbaranes implements Serializable{
 	
 	@Column(name = "DD_IRE_DESCRIPCION")
 	private String areaPeticionariaDescripcion;
+	
+	@Column(name = "DD_CRA_CODIGO")
+	private String carteraPropietarioCodigo;
+	
+	@Column(name = "DD_CRA_DESCRIPCION")
+	private String carteraPropietarioDescripcion;
 
 	public Long getId() {
 		return id;
@@ -409,6 +415,22 @@ public class VExportTrabajosAlbaranes implements Serializable{
 
 	public void setAreaPeticionariaDescripcion(String areaPeticionariaDescripcion) {
 		this.areaPeticionariaDescripcion = areaPeticionariaDescripcion;
+	}
+
+	public String getCarteraPropietarioCodigo() {
+		return carteraPropietarioCodigo;
+	}
+
+	public void setCarteraPropietarioCodigo(String subcarteraActivoCodigo) {
+		this.carteraPropietarioCodigo = subcarteraActivoCodigo;
+	}
+
+	public String getCarteraPropietarioDescripcion() {
+		return carteraPropietarioDescripcion;
+	}
+
+	public void setCarteraPropietarioDescripcion(String carteraActivoDescripcion) {
+		this.carteraPropietarioDescripcion = carteraActivoDescripcion;
 	}
 
 }

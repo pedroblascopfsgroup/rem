@@ -1,0 +1,728 @@
+--/*
+--######################################### 
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20210618
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-9992
+--## PRODUCTO=NO
+--##            
+--## INSTRUCCIONES:  Actualizar titulo de activos
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    V_NUM_TABLAS_2 NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USUARIO VARCHAR2(100 CHAR):='REMVIP-9992'; --Vble. auxiliar para almacenar el usuario
+
+    V_TABLA VARCHAR2(100 CHAR) :='ACT_TIT_TITULO'; --Vble. auxiliar para almacenar la tabla a insertar
+    V_TABLA_ESTADO VARCHAR2(100 CHAR):='DD_ETI_ESTADO_TITULO'; --Vble. auxiliar para almacenar la tabla de los estados
+    V_TABLA_ACTIVO VARCHAR2(100 CHAR):='ACT_ACTIVO'; --Vble. para almacenar la tabla de los activos
+    V_TABLA_HIST VARCHAR2(100 CHAR):='ACT_AHT_HIST_TRAM_TITULO'; --Vble para alamacenar la tabla del historico de tramitacion
+    V_TABLA_DD_ESTADO VARCHAR2(100 CHAR):='DD_ESP_ESTADO_PRESENTACION'; --Vble para almacenar la tabla del diccionario del estado de presentacion
+	
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_ENTIDAD_ID NUMBER(16);
+    V_ID NUMBER(16);
+    V_FECHA_PRESENTACION VARCHAR2(100 CHAR):='01/01/1900';
+    V_CODIGO_ESTADO_PRESENTACION NUMBER(16):='03';
+
+    V_COUNT NUMBER(16):=0;
+    V_COUNT2 NUMBER(16):=0;
+    
+    
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA
+    (
+    	-- ##NUMERO ACTIVO##  ##FECHA INSCRIPCION##
+       T_TIPO_DATA('7461032','19/04/2021'),
+        T_TIPO_DATA('7461033','19/04/2021'),
+        T_TIPO_DATA('7461034','19/04/2021'),
+        T_TIPO_DATA('7461035','19/04/2021'),
+        T_TIPO_DATA('7461037','19/04/2021'),
+        T_TIPO_DATA('7461038','19/04/2021'),
+        T_TIPO_DATA('7461039','19/04/2021'),
+        T_TIPO_DATA('7461040','19/04/2021'),
+        T_TIPO_DATA('7461041','19/04/2021'),
+        T_TIPO_DATA('7461042','19/04/2021'),
+        T_TIPO_DATA('7461043','19/04/2021'),
+        T_TIPO_DATA('7461044','19/04/2021'),
+        T_TIPO_DATA('7461045','19/04/2021'),
+        T_TIPO_DATA('7461046','19/04/2021'),
+        T_TIPO_DATA('7461047','19/04/2021'),
+        T_TIPO_DATA('7461048','19/04/2021'),
+        T_TIPO_DATA('7461049','19/04/2021'),
+        T_TIPO_DATA('7461051','19/04/2021'),
+        T_TIPO_DATA('7461052','19/04/2021'),
+        T_TIPO_DATA('7461053','19/04/2021'),
+        T_TIPO_DATA('7461054','19/04/2021'),
+        T_TIPO_DATA('7461055','19/04/2021'),
+        T_TIPO_DATA('7461056','19/04/2021'),
+        T_TIPO_DATA('7461057','19/04/2021'),
+        T_TIPO_DATA('7461058','19/04/2021'),
+        T_TIPO_DATA('7461059','19/04/2021'),
+        T_TIPO_DATA('7461060','19/04/2021'),
+        T_TIPO_DATA('7461061','19/04/2021'),
+        T_TIPO_DATA('7461062','19/04/2021'),
+        T_TIPO_DATA('7461064','19/04/2021'),
+        T_TIPO_DATA('7461065','19/04/2021'),
+        T_TIPO_DATA('7461066','19/04/2021'),
+        T_TIPO_DATA('7461067','19/04/2021'),
+        T_TIPO_DATA('7461068','19/04/2021'),
+        T_TIPO_DATA('7461069','19/04/2021'),
+        T_TIPO_DATA('7461070','19/04/2021'),
+        T_TIPO_DATA('7461071','19/04/2021'),
+        T_TIPO_DATA('7461072','19/04/2021'),
+        T_TIPO_DATA('7461073','19/04/2021'),
+        T_TIPO_DATA('7461074','19/04/2021'),
+        T_TIPO_DATA('7461075','19/04/2021'),
+        T_TIPO_DATA('7461077','19/04/2021'),
+        T_TIPO_DATA('7461080','19/04/2021'),
+        T_TIPO_DATA('7461081','19/04/2021'),
+        T_TIPO_DATA('7461082','19/04/2021'),
+        T_TIPO_DATA('7461083','19/04/2021'),
+        T_TIPO_DATA('7461084','19/04/2021'),
+        T_TIPO_DATA('7461085','19/04/2021'),
+        T_TIPO_DATA('7461086','19/04/2021'),
+        T_TIPO_DATA('7461087','19/04/2021'),
+        T_TIPO_DATA('7461088','19/04/2021'),
+        T_TIPO_DATA('7461089','19/04/2021'),
+        T_TIPO_DATA('7461090','19/04/2021'),
+        T_TIPO_DATA('7461091','19/04/2021'),
+        T_TIPO_DATA('7461092','19/04/2021'),
+        T_TIPO_DATA('7461093','19/04/2021'),
+        T_TIPO_DATA('7461094','19/04/2021'),
+        T_TIPO_DATA('7461095','19/04/2021'),
+        T_TIPO_DATA('7461096','19/04/2021'),
+        T_TIPO_DATA('7461097','19/04/2021'),
+        T_TIPO_DATA('7461098','19/04/2021'),
+        T_TIPO_DATA('7461099','19/04/2021'),
+        T_TIPO_DATA('7461100','19/04/2021'),
+        T_TIPO_DATA('7461101','19/04/2021'),
+        T_TIPO_DATA('7461102','19/04/2021'),
+        T_TIPO_DATA('7461103','19/04/2021'),
+        T_TIPO_DATA('7461104','19/04/2021'),
+        T_TIPO_DATA('7461106','19/04/2021'),
+        T_TIPO_DATA('7461107','19/04/2021'),
+        T_TIPO_DATA('7461108','19/04/2021'),
+        T_TIPO_DATA('7461109','19/04/2021'),
+        T_TIPO_DATA('7461110','19/04/2021'),
+        T_TIPO_DATA('7461111','19/04/2021'),
+        T_TIPO_DATA('7461112','19/04/2021'),
+        T_TIPO_DATA('7461113','19/04/2021'),
+        T_TIPO_DATA('7461114','19/04/2021'),
+        T_TIPO_DATA('7461116','19/04/2021'),
+        T_TIPO_DATA('7461117','19/04/2021'),
+        T_TIPO_DATA('7461118','19/04/2021'),
+        T_TIPO_DATA('7461119','19/04/2021'),
+        T_TIPO_DATA('7461120','19/04/2021'),
+        T_TIPO_DATA('7461121','19/04/2021'),
+        T_TIPO_DATA('7461122','19/04/2021'),
+        T_TIPO_DATA('7461124','19/04/2021'),
+        T_TIPO_DATA('7461125','19/04/2021'),
+        T_TIPO_DATA('7461126','19/04/2021'),
+        T_TIPO_DATA('7461127','19/04/2021'),
+        T_TIPO_DATA('7461128','19/04/2021'),
+        T_TIPO_DATA('7461129','19/04/2021'),
+        T_TIPO_DATA('7461131','19/04/2021'),
+        T_TIPO_DATA('7461132','19/04/2021'),
+        T_TIPO_DATA('7461133','19/04/2021'),
+        T_TIPO_DATA('7461134','19/04/2021'),
+        T_TIPO_DATA('7461135','19/04/2021'),
+        T_TIPO_DATA('7461136','19/04/2021'),
+        T_TIPO_DATA('7461137','19/04/2021'),
+        T_TIPO_DATA('7461138','19/04/2021'),
+        T_TIPO_DATA('7461139','19/04/2021'),
+        T_TIPO_DATA('7461140','19/04/2021'),
+        T_TIPO_DATA('7461141','19/04/2021'),
+        T_TIPO_DATA('7461142','19/04/2021'),
+        T_TIPO_DATA('7461143','19/04/2021'),
+        T_TIPO_DATA('7461144','19/04/2021'),
+        T_TIPO_DATA('7461145','19/04/2021'),
+        T_TIPO_DATA('7461146','19/04/2021'),
+        T_TIPO_DATA('7461147','19/04/2021'),
+        T_TIPO_DATA('7461149','19/04/2021'),
+        T_TIPO_DATA('7461150','19/04/2021'),
+        T_TIPO_DATA('7461151','19/04/2021'),
+        T_TIPO_DATA('7461152','19/04/2021'),
+        T_TIPO_DATA('7461154','19/04/2021'),
+        T_TIPO_DATA('7461155','19/04/2021'),
+        T_TIPO_DATA('7461156','19/04/2021'),
+        T_TIPO_DATA('7461157','19/04/2021'),
+        T_TIPO_DATA('7461158','19/04/2021'),
+        T_TIPO_DATA('7461159','19/04/2021'),
+        T_TIPO_DATA('7461161','19/04/2021'),
+        T_TIPO_DATA('7461162','19/04/2021'),
+        T_TIPO_DATA('7461163','19/04/2021'),
+        T_TIPO_DATA('7461164','19/04/2021'),
+        T_TIPO_DATA('7461165','19/04/2021'),
+        T_TIPO_DATA('7461166','19/04/2021'),
+        T_TIPO_DATA('7461167','19/04/2021'),
+        T_TIPO_DATA('7461168','19/04/2021'),
+        T_TIPO_DATA('7461169','19/04/2021'),
+        T_TIPO_DATA('7461170','19/04/2021'),
+        T_TIPO_DATA('7461171','19/04/2021'),
+        T_TIPO_DATA('7461172','19/04/2021'),
+        T_TIPO_DATA('7461173','19/04/2021'),
+        T_TIPO_DATA('7461174','19/04/2021'),
+        T_TIPO_DATA('7461175','19/04/2021'),
+        T_TIPO_DATA('7461176','19/04/2021'),
+        T_TIPO_DATA('7461177','19/04/2021'),
+        T_TIPO_DATA('7461178','19/04/2021'),
+        T_TIPO_DATA('7461179','19/04/2021'),
+        T_TIPO_DATA('7461180','19/04/2021'),
+        T_TIPO_DATA('7461181','19/04/2021'),
+        T_TIPO_DATA('7461182','19/04/2021'),
+        T_TIPO_DATA('7461183','19/04/2021'),
+        T_TIPO_DATA('7461184','19/04/2021'),
+        T_TIPO_DATA('7461185','19/04/2021'),
+        T_TIPO_DATA('7461186','19/04/2021'),
+        T_TIPO_DATA('7461187','19/04/2021'),
+        T_TIPO_DATA('7461188','19/04/2021'),
+        T_TIPO_DATA('7461189','19/04/2021'),
+        T_TIPO_DATA('7461190','19/04/2021'),
+        T_TIPO_DATA('7461191','19/04/2021'),
+        T_TIPO_DATA('7461193','19/04/2021'),
+        T_TIPO_DATA('7461194','19/04/2021'),
+        T_TIPO_DATA('7461195','19/04/2021'),
+        T_TIPO_DATA('7461197','19/04/2021'),
+        T_TIPO_DATA('7461198','19/04/2021'),
+        T_TIPO_DATA('7461199','19/04/2021'),
+        T_TIPO_DATA('7461200','19/04/2021'),
+        T_TIPO_DATA('7461201','19/04/2021'),
+        T_TIPO_DATA('7461202','19/04/2021'),
+        T_TIPO_DATA('7461203','19/04/2021'),
+        T_TIPO_DATA('7461204','19/04/2021'),
+        T_TIPO_DATA('7461205','19/04/2021'),
+        T_TIPO_DATA('7461206','19/04/2021'),
+        T_TIPO_DATA('7461207','19/04/2021'),
+        T_TIPO_DATA('7461208','19/04/2021'),
+        T_TIPO_DATA('7461209','19/04/2021'),
+        T_TIPO_DATA('7461210','19/04/2021'),
+        T_TIPO_DATA('7461212','19/04/2021'),
+        T_TIPO_DATA('7461213','19/04/2021'),
+        T_TIPO_DATA('7461214','19/04/2021'),
+        T_TIPO_DATA('7461215','19/04/2021'),
+        T_TIPO_DATA('7461216','19/04/2021'),
+        T_TIPO_DATA('7461217','19/04/2021'),
+        T_TIPO_DATA('7461218','19/04/2021'),
+        T_TIPO_DATA('7461221','19/04/2021'),
+        T_TIPO_DATA('7461222','19/04/2021'),
+        T_TIPO_DATA('7461223','19/04/2021'),
+        T_TIPO_DATA('7461224','19/04/2021'),
+        T_TIPO_DATA('7461225','19/04/2021'),
+        T_TIPO_DATA('7461226','19/04/2021'),
+        T_TIPO_DATA('7461227','19/04/2021'),
+        T_TIPO_DATA('7461228','19/04/2021'),
+        T_TIPO_DATA('7461229','19/04/2021'),
+        T_TIPO_DATA('7461230','19/04/2021'),
+        T_TIPO_DATA('7461231','19/04/2021'),
+        T_TIPO_DATA('7461232','19/04/2021'),
+        T_TIPO_DATA('7461234','19/04/2021'),
+        T_TIPO_DATA('7461235','19/04/2021'),
+        T_TIPO_DATA('7461236','19/04/2021'),
+        T_TIPO_DATA('7461237','19/04/2021'),
+        T_TIPO_DATA('7461238','19/04/2021'),
+        T_TIPO_DATA('7461239','19/04/2021'),
+        T_TIPO_DATA('7461240','19/04/2021'),
+        T_TIPO_DATA('7461241','19/04/2021'),
+        T_TIPO_DATA('7461242','19/04/2021'),
+        T_TIPO_DATA('7461243','19/04/2021'),
+        T_TIPO_DATA('7461244','19/04/2021'),
+        T_TIPO_DATA('7461245','19/04/2021'),
+        T_TIPO_DATA('7461246','19/04/2021'),
+        T_TIPO_DATA('7461247','19/04/2021'),
+        T_TIPO_DATA('7465361','30/03/2021'),
+        T_TIPO_DATA('7465362','30/03/2021'),
+        T_TIPO_DATA('7465363','30/03/2021'),
+        T_TIPO_DATA('7465364','30/03/2021'),
+        T_TIPO_DATA('7465365','30/03/2021'),
+        T_TIPO_DATA('7465366','30/03/2021'),
+        T_TIPO_DATA('7465367','30/03/2021'),
+        T_TIPO_DATA('7465368','30/03/2021'),
+        T_TIPO_DATA('7465369','30/03/2021'),
+        T_TIPO_DATA('7465370','30/03/2021'),
+        T_TIPO_DATA('7465371','30/03/2021'),
+        T_TIPO_DATA('7465372','30/03/2021'),
+        T_TIPO_DATA('7465373','30/03/2021'),
+        T_TIPO_DATA('7465374','30/03/2021'),
+        T_TIPO_DATA('7465375','30/03/2021'),
+        T_TIPO_DATA('7465376','30/03/2021'),
+        T_TIPO_DATA('7465377','30/03/2021'),
+        T_TIPO_DATA('7465378','30/03/2021'),
+        T_TIPO_DATA('7465379','30/03/2021'),
+        T_TIPO_DATA('7465380','30/03/2021'),
+        T_TIPO_DATA('7465381','30/03/2021'),
+        T_TIPO_DATA('7465382','30/03/2021'),
+        T_TIPO_DATA('7465383','30/03/2021'),
+        T_TIPO_DATA('7465384','30/03/2021'),
+        T_TIPO_DATA('7465385','30/03/2021'),
+        T_TIPO_DATA('7465386','30/03/2021'),
+        T_TIPO_DATA('7465387','30/03/2021'),
+        T_TIPO_DATA('7465388','30/03/2021'),
+        T_TIPO_DATA('7465389','30/03/2021'),
+        T_TIPO_DATA('7465390','30/03/2021'),
+        T_TIPO_DATA('7465391','30/03/2021'),
+        T_TIPO_DATA('7465392','30/03/2021'),
+        T_TIPO_DATA('7465393','30/03/2021'),
+        T_TIPO_DATA('7465394','30/03/2021'),
+        T_TIPO_DATA('7465395','30/03/2021'),
+        T_TIPO_DATA('7465396','30/03/2021'),
+        T_TIPO_DATA('7465397','30/03/2021'),
+        T_TIPO_DATA('7465398','30/03/2021'),
+        T_TIPO_DATA('7465399','30/03/2021'),
+        T_TIPO_DATA('7465400','30/03/2021'),
+        T_TIPO_DATA('7465401','30/03/2021'),
+        T_TIPO_DATA('7465402','30/03/2021'),
+        T_TIPO_DATA('7465403','30/03/2021'),
+        T_TIPO_DATA('7465404','30/03/2021'),
+        T_TIPO_DATA('7465405','30/03/2021'),
+        T_TIPO_DATA('7465406','30/03/2021'),
+        T_TIPO_DATA('7465407','30/03/2021'),
+        T_TIPO_DATA('7465408','30/03/2021'),
+        T_TIPO_DATA('7465409','30/03/2021'),
+        T_TIPO_DATA('7465410','30/03/2021'),
+        T_TIPO_DATA('7465411','30/03/2021'),
+        T_TIPO_DATA('7465412','30/03/2021'),
+        T_TIPO_DATA('7465413','30/03/2021'),
+        T_TIPO_DATA('7465414','30/03/2021'),
+        T_TIPO_DATA('7465415','30/03/2021'),
+        T_TIPO_DATA('7465416','30/03/2021'),
+        T_TIPO_DATA('7465417','30/03/2021'),
+        T_TIPO_DATA('7465418','30/03/2021'),
+        T_TIPO_DATA('7465419','30/03/2021'),
+        T_TIPO_DATA('7465420','30/03/2021'),
+        T_TIPO_DATA('7465421','30/03/2021'),
+        T_TIPO_DATA('7465422','30/03/2021'),
+        T_TIPO_DATA('7465423','30/03/2021'),
+        T_TIPO_DATA('7465424','30/03/2021'),
+        T_TIPO_DATA('7465425','30/03/2021'),
+        T_TIPO_DATA('7465426','30/03/2021'),
+        T_TIPO_DATA('7465428','30/03/2021'),
+        T_TIPO_DATA('7465429','30/03/2021'),
+        T_TIPO_DATA('7465430','30/03/2021'),
+        T_TIPO_DATA('7465431','30/03/2021'),
+        T_TIPO_DATA('7465432','30/03/2021'),
+        T_TIPO_DATA('7465433','30/03/2021'),
+        T_TIPO_DATA('7465434','30/03/2021'),
+        T_TIPO_DATA('7465435','30/03/2021'),
+        T_TIPO_DATA('7465436','30/03/2021'),
+        T_TIPO_DATA('7465437','30/03/2021'),
+        T_TIPO_DATA('7465438','30/03/2021'),
+        T_TIPO_DATA('7465439','30/03/2021'),
+        T_TIPO_DATA('7465440','30/03/2021'),
+        T_TIPO_DATA('7465441','30/03/2021'),
+        T_TIPO_DATA('7465442','30/03/2021'),
+        T_TIPO_DATA('7465443','30/03/2021'),
+        T_TIPO_DATA('7465444','30/03/2021'),
+        T_TIPO_DATA('7465445','30/03/2021'),
+        T_TIPO_DATA('7465446','30/03/2021'),
+        T_TIPO_DATA('7465447','30/03/2021'),
+        T_TIPO_DATA('7465449','30/03/2021'),
+        T_TIPO_DATA('7465450','30/03/2021'),
+        T_TIPO_DATA('7465451','30/03/2021'),
+        T_TIPO_DATA('7465452','30/03/2021'),
+        T_TIPO_DATA('7465453','30/03/2021'),
+        T_TIPO_DATA('7465454','30/03/2021'),
+        T_TIPO_DATA('7465455','30/03/2021'),
+        T_TIPO_DATA('7465456','30/03/2021'),
+        T_TIPO_DATA('7465457','30/03/2021'),
+        T_TIPO_DATA('7465458','30/03/2021'),
+        T_TIPO_DATA('7465459','30/03/2021'),
+        T_TIPO_DATA('7465460','30/03/2021'),
+        T_TIPO_DATA('7465461','30/03/2021'),
+        T_TIPO_DATA('7465462','30/03/2021'),
+        T_TIPO_DATA('7465463','30/03/2021'),
+        T_TIPO_DATA('7465464','30/03/2021'),
+        T_TIPO_DATA('7465465','30/03/2021'),
+        T_TIPO_DATA('7465466','30/03/2021'),
+        T_TIPO_DATA('7465467','30/03/2021'),
+        T_TIPO_DATA('7465468','30/03/2021'),
+        T_TIPO_DATA('7465469','30/03/2021'),
+        T_TIPO_DATA('7465470','30/03/2021'),
+        T_TIPO_DATA('7465471','30/03/2021'),
+        T_TIPO_DATA('7465472','30/03/2021'),
+        T_TIPO_DATA('7465473','30/03/2021'),
+        T_TIPO_DATA('7465474','30/03/2021'),
+        T_TIPO_DATA('7465475','30/03/2021'),
+        T_TIPO_DATA('7465476','30/03/2021'),
+        T_TIPO_DATA('7465477','30/03/2021'),
+        T_TIPO_DATA('7465478','30/03/2021'),
+        T_TIPO_DATA('7465479','30/03/2021'),
+        T_TIPO_DATA('7465480','30/03/2021'),
+        T_TIPO_DATA('7465481','30/03/2021'),
+        T_TIPO_DATA('7465482','30/03/2021'),
+        T_TIPO_DATA('7465483','30/03/2021'),
+        T_TIPO_DATA('7465484','30/03/2021'),
+        T_TIPO_DATA('7465485','30/03/2021'),
+        T_TIPO_DATA('7465487','30/03/2021'),
+        T_TIPO_DATA('7465488','30/03/2021'),
+        T_TIPO_DATA('7465489','30/03/2021'),
+        T_TIPO_DATA('7465490','30/03/2021'),
+        T_TIPO_DATA('7465491','30/03/2021'),
+        T_TIPO_DATA('7465492','30/03/2021'),
+        T_TIPO_DATA('7465493','30/03/2021'),
+        T_TIPO_DATA('7465494','30/03/2021'),
+        T_TIPO_DATA('7465495','30/03/2021'),
+        T_TIPO_DATA('7465496','30/03/2021'),
+        T_TIPO_DATA('7465497','30/03/2021'),
+        T_TIPO_DATA('7465499','30/03/2021'),
+        T_TIPO_DATA('7465500','30/03/2021'),
+        T_TIPO_DATA('7465501','30/03/2021'),
+        T_TIPO_DATA('7465502','30/03/2021'),
+        T_TIPO_DATA('7465503','30/03/2021'),
+        T_TIPO_DATA('7465504','30/03/2021'),
+        T_TIPO_DATA('7465505','30/03/2021'),
+        T_TIPO_DATA('7465506','30/03/2021'),
+        T_TIPO_DATA('7465507','30/03/2021'),
+        T_TIPO_DATA('7465508','30/03/2021'),
+        T_TIPO_DATA('7465509','30/03/2021'),
+        T_TIPO_DATA('7465510','30/03/2021'),
+        T_TIPO_DATA('7465511','30/03/2021'),
+        T_TIPO_DATA('7465512','30/03/2021'),
+        T_TIPO_DATA('7465513','30/03/2021'),
+        T_TIPO_DATA('7465514','30/03/2021'),
+        T_TIPO_DATA('7465515','30/03/2021'),
+        T_TIPO_DATA('7465516','30/03/2021'),
+        T_TIPO_DATA('7465517','30/03/2021'),
+        T_TIPO_DATA('7465518','30/03/2021'),
+        T_TIPO_DATA('7465519','30/03/2021'),
+        T_TIPO_DATA('7465520','30/03/2021'),
+        T_TIPO_DATA('7465521','30/03/2021'),
+        T_TIPO_DATA('7465522','30/03/2021'),
+        T_TIPO_DATA('7465523','30/03/2021'),
+        T_TIPO_DATA('7465524','30/03/2021'),
+        T_TIPO_DATA('7465525','30/03/2021'),
+        T_TIPO_DATA('7465526','30/03/2021'),
+        T_TIPO_DATA('7465527','30/03/2021'),
+        T_TIPO_DATA('7465528','30/03/2021'),
+        T_TIPO_DATA('7465529','30/03/2021'),
+        T_TIPO_DATA('7465530','30/03/2021'),
+        T_TIPO_DATA('7465531','30/03/2021'),
+        T_TIPO_DATA('7465532','30/03/2021'),
+        T_TIPO_DATA('7465533','30/03/2021'),
+        T_TIPO_DATA('7465534','30/03/2021'),
+        T_TIPO_DATA('7465535','30/03/2021'),
+        T_TIPO_DATA('7465536','30/03/2021'),
+        T_TIPO_DATA('7465537','30/03/2021'),
+        T_TIPO_DATA('7465538','30/03/2021'),
+        T_TIPO_DATA('7465539','30/03/2021'),
+        T_TIPO_DATA('7465540','30/03/2021'),
+        T_TIPO_DATA('7465541','30/03/2021'),
+        T_TIPO_DATA('7465542','30/03/2021'),
+        T_TIPO_DATA('7465543','30/03/2021'),
+        T_TIPO_DATA('7465544','30/03/2021'),
+        T_TIPO_DATA('7465545','30/03/2021'),
+        T_TIPO_DATA('7465546','30/03/2021'),
+        T_TIPO_DATA('7465547','30/03/2021'),
+        T_TIPO_DATA('7465548','30/03/2021'),
+        T_TIPO_DATA('7465549','30/03/2021'),
+        T_TIPO_DATA('7465550','30/03/2021'),
+        T_TIPO_DATA('7465551','30/03/2021'),
+        T_TIPO_DATA('7465552','30/03/2021'),
+        T_TIPO_DATA('7465553','30/03/2021'),
+        T_TIPO_DATA('7465554','30/03/2021'),
+        T_TIPO_DATA('7465555','30/03/2021'),
+        T_TIPO_DATA('7465556','30/03/2021'),
+        T_TIPO_DATA('7465557','30/03/2021'),
+        T_TIPO_DATA('7465558','30/03/2021'),
+        T_TIPO_DATA('7465559','30/03/2021'),
+        T_TIPO_DATA('7465560','30/03/2021'),
+        T_TIPO_DATA('7465561','30/03/2021'),
+        T_TIPO_DATA('7465562','30/03/2021'),
+        T_TIPO_DATA('7465564','30/03/2021'),
+        T_TIPO_DATA('7465565','30/03/2021'),
+        T_TIPO_DATA('7465566','30/03/2021'),
+        T_TIPO_DATA('7465567','30/03/2021'),
+        T_TIPO_DATA('7465568','30/03/2021'),
+        T_TIPO_DATA('7465569','30/03/2021'),
+        T_TIPO_DATA('7465570','30/03/2021'),
+        T_TIPO_DATA('7465571','30/03/2021'),
+        T_TIPO_DATA('7465572','30/03/2021'),
+        T_TIPO_DATA('7465573','30/03/2021'),
+        T_TIPO_DATA('7465574','30/03/2021'),
+        T_TIPO_DATA('7465575','30/03/2021'),
+        T_TIPO_DATA('7465576','30/03/2021'),
+        T_TIPO_DATA('7465577','30/03/2021'),
+        T_TIPO_DATA('7465578','30/03/2021'),
+        T_TIPO_DATA('7465579','30/03/2021'),
+        T_TIPO_DATA('7465580','30/03/2021'),
+        T_TIPO_DATA('7465581','30/03/2021'),
+        T_TIPO_DATA('7465583','30/03/2021'),
+        T_TIPO_DATA('7465584','30/03/2021'),
+        T_TIPO_DATA('7465585','30/03/2021'),
+        T_TIPO_DATA('7465586','30/03/2021'),
+        T_TIPO_DATA('7465587','30/03/2021'),
+        T_TIPO_DATA('7465588','30/03/2021'),
+        T_TIPO_DATA('7465589','30/03/2021'),
+        T_TIPO_DATA('7465590','30/03/2021'),
+        T_TIPO_DATA('7465591','30/03/2021'),
+        T_TIPO_DATA('7465592','30/03/2021'),
+        T_TIPO_DATA('7465593','30/03/2021'),
+        T_TIPO_DATA('7465594','30/03/2021'),
+        T_TIPO_DATA('7465595','30/03/2021'),
+        T_TIPO_DATA('7465596','30/03/2021'),
+        T_TIPO_DATA('7465597','30/03/2021'),
+        T_TIPO_DATA('7465598','30/03/2021'),
+        T_TIPO_DATA('7465599','30/03/2021'),
+        T_TIPO_DATA('7465600','30/03/2021'),
+        T_TIPO_DATA('7465601','30/03/2021'),
+        T_TIPO_DATA('7465602','30/03/2021'),
+        T_TIPO_DATA('7465603','30/03/2021'),
+        T_TIPO_DATA('7465604','30/03/2021'),
+        T_TIPO_DATA('7465605','30/03/2021'),
+        T_TIPO_DATA('7465606','30/03/2021'),
+        T_TIPO_DATA('7465607','30/03/2021'),
+        T_TIPO_DATA('7465608','30/03/2021'),
+        T_TIPO_DATA('7465609','30/03/2021'),
+        T_TIPO_DATA('7465610','30/03/2021'),
+        T_TIPO_DATA('7465612','30/03/2021'),
+        T_TIPO_DATA('7465613','30/03/2021'),
+        T_TIPO_DATA('7465614','30/03/2021'),
+        T_TIPO_DATA('7465615','30/03/2021'),
+        T_TIPO_DATA('7465616','30/03/2021'),
+        T_TIPO_DATA('7465617','30/03/2021'),
+        T_TIPO_DATA('7465618','30/03/2021'),
+        T_TIPO_DATA('7465619','30/03/2021'),
+        T_TIPO_DATA('7465620','30/03/2021'),
+        T_TIPO_DATA('7465621','30/03/2021'),
+        T_TIPO_DATA('7465622','30/03/2021'),
+        T_TIPO_DATA('7465623','30/03/2021'),
+        T_TIPO_DATA('7465624','30/03/2021'),
+        T_TIPO_DATA('7465625','30/03/2021'),
+        T_TIPO_DATA('7465626','30/03/2021'),
+        T_TIPO_DATA('7465627','30/03/2021'),
+        T_TIPO_DATA('7465628','30/03/2021'),
+        T_TIPO_DATA('7465629','30/03/2021'),
+        T_TIPO_DATA('7465630','30/03/2021'),
+        T_TIPO_DATA('7465631','30/03/2021'),
+        T_TIPO_DATA('7465632','30/03/2021'),
+        T_TIPO_DATA('7465633','30/03/2021'),
+        T_TIPO_DATA('7465634','30/03/2021'),
+        T_TIPO_DATA('7465635','30/03/2021'),
+        T_TIPO_DATA('7465636','30/03/2021'),
+        T_TIPO_DATA('7465637','30/03/2021'),
+        T_TIPO_DATA('7465638','30/03/2021'),
+        T_TIPO_DATA('7465639','30/03/2021'),
+        T_TIPO_DATA('7465640','30/03/2021'),
+        T_TIPO_DATA('7465641','30/03/2021'),
+        T_TIPO_DATA('7465642','30/03/2021'),
+        T_TIPO_DATA('7465643','30/03/2021'),
+        T_TIPO_DATA('7465644','30/03/2021'),
+        T_TIPO_DATA('7465645','30/03/2021'),
+        T_TIPO_DATA('7465646','30/03/2021'),
+        T_TIPO_DATA('7465648','30/03/2021'),
+        T_TIPO_DATA('7465649','30/03/2021'),
+        T_TIPO_DATA('7465650','30/03/2021'),
+        T_TIPO_DATA('7465651','30/03/2021'),
+        T_TIPO_DATA('7465652','30/03/2021'),
+        T_TIPO_DATA('7465653','30/03/2021'),
+        T_TIPO_DATA('7465654','30/03/2021'),
+        T_TIPO_DATA('7465655','30/03/2021'),
+        T_TIPO_DATA('7465656','30/03/2021'),
+        T_TIPO_DATA('7465657','30/03/2021'),
+        T_TIPO_DATA('7465658','30/03/2021'),
+        T_TIPO_DATA('7465659','30/03/2021'),
+        T_TIPO_DATA('7465660','30/03/2021'),
+        T_TIPO_DATA('7465661','30/03/2021'),
+        T_TIPO_DATA('7465662','30/03/2021'),
+        T_TIPO_DATA('7465663','30/03/2021'),
+        T_TIPO_DATA('7465664','30/03/2021'),
+        T_TIPO_DATA('7465665','30/03/2021'),
+        T_TIPO_DATA('7465667','30/03/2021'),
+        T_TIPO_DATA('7465668','30/03/2021'),
+        T_TIPO_DATA('7465669','30/03/2021'),
+        T_TIPO_DATA('7465670','30/03/2021'),
+        T_TIPO_DATA('7465671','30/03/2021'),
+        T_TIPO_DATA('7465672','30/03/2021'),
+        T_TIPO_DATA('7465673','30/03/2021'),
+        T_TIPO_DATA('7465674','30/03/2021'),
+        T_TIPO_DATA('7465675','30/03/2021'),
+        T_TIPO_DATA('7465676','30/03/2021'),
+        T_TIPO_DATA('7465677','30/03/2021'),
+        T_TIPO_DATA('7465678','30/03/2021'),
+        T_TIPO_DATA('7465679','30/03/2021'),
+        T_TIPO_DATA('7465680','30/03/2021'),
+        T_TIPO_DATA('7465681','30/03/2021'),
+        T_TIPO_DATA('7465682','30/03/2021'),
+        T_TIPO_DATA('7465683','30/03/2021'),
+        T_TIPO_DATA('7465684','30/03/2021'),
+        T_TIPO_DATA('7465685','30/03/2021'),
+        T_TIPO_DATA('7465686','30/03/2021'),
+        T_TIPO_DATA('7465687','30/03/2021'),
+        T_TIPO_DATA('7465688','30/03/2021'),
+        T_TIPO_DATA('7465689','30/03/2021'),
+        T_TIPO_DATA('7465690','30/03/2021'),
+        T_TIPO_DATA('7465691','30/03/2021'),
+        T_TIPO_DATA('7465692','30/03/2021'),
+        T_TIPO_DATA('7465693','30/03/2021'),
+        T_TIPO_DATA('7465694','30/03/2021'),
+        T_TIPO_DATA('7465695','30/03/2021'),
+        T_TIPO_DATA('7465696','30/03/2021'),
+        T_TIPO_DATA('7465697','30/03/2021'),
+        T_TIPO_DATA('7465698','30/03/2021'),
+        T_TIPO_DATA('7465699','30/03/2021'),
+        T_TIPO_DATA('7465700','30/03/2021'),
+        T_TIPO_DATA('7465701','30/03/2021'),
+        T_TIPO_DATA('7465702','30/03/2021'),
+        T_TIPO_DATA('7465703','30/03/2021'),
+        T_TIPO_DATA('7465704','30/03/2021'),
+        T_TIPO_DATA('7465705','30/03/2021'),
+        T_TIPO_DATA('7465706','30/03/2021'),
+        T_TIPO_DATA('7465707','30/03/2021'),
+        T_TIPO_DATA('7465708','30/03/2021'),
+        T_TIPO_DATA('7465709','30/03/2021'),
+        T_TIPO_DATA('7465710','30/03/2021'),
+        T_TIPO_DATA('7465711','30/03/2021'),
+        T_TIPO_DATA('7465712','30/03/2021'),
+        T_TIPO_DATA('7465713','30/03/2021'),
+        T_TIPO_DATA('7465714','30/03/2021'),
+        T_TIPO_DATA('7465715','30/03/2021'),
+        T_TIPO_DATA('7465716','30/03/2021'),
+        T_TIPO_DATA('7465717','30/03/2021'),
+        T_TIPO_DATA('7465718','30/03/2021'),
+        T_TIPO_DATA('7465719','30/03/2021'),
+        T_TIPO_DATA('7465720','30/03/2021'),
+        T_TIPO_DATA('7465721','30/03/2021'),
+        T_TIPO_DATA('7465722','30/03/2021'),
+        T_TIPO_DATA('7465723','30/03/2021'),
+        T_TIPO_DATA('7465724','30/03/2021'),
+        T_TIPO_DATA('7465725','30/03/2021'),
+        T_TIPO_DATA('7465726','30/03/2021'),
+        T_TIPO_DATA('7465727','30/03/2021'),
+        T_TIPO_DATA('7465728','30/03/2021')
+
+    ); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+    
+BEGIN	
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+ 
+    -- LOOP para insertar los valores en OFR_OFERTAS
+    DBMS_OUTPUT.PUT_LINE('[INFO]: ACTUALIZACION EN ACT_TIT_TITULO ');
+        
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+      
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+    
+        --Comprobamos si existe el activo
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_ACTIVO||' WHERE ACT_NUM_ACTIVO = '||TRIM(V_TMP_TIPO_DATA(1))||'';
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        
+        --Si existe activo
+        IF V_NUM_TABLAS > 0 THEN	
+
+               --Comprobamos si existe el titulo
+          V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO='||TRIM(V_TMP_TIPO_DATA(1))||') ';
+          EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+          --Si existe el titulo, se actualiza
+          IF V_NUM_TABLAS > 0 then
+                DBMS_OUTPUT.PUT_LINE('[INFO]: ACTUALIZAMOS EL TITULO DEL ACTIVO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+                
+                V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET                         
+                        DD_ETI_ID = (SELECT DD_ETI_ID FROM '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO WHERE DD_ETI_CODIGO=''02''),
+                        USUARIOMODIFICAR = '''||V_USUARIO||''', 
+                        FECHAMODIFICAR = SYSDATE
+                        WHERE ACT_ID=(SELECT ACT_ID FROM '||V_ESQUEMA||'.'||V_TABLA_ACTIVO||' WHERE ACT_NUM_ACTIVO='''||TRIM(V_TMP_TIPO_DATA(1))||''')';
+
+                EXECUTE IMMEDIATE V_SQL;
+                DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO ACTUALIZADO CORRECTAMENTE');
+
+                
+
+                V_SQL:='SELECT TIT_ID FROM '||V_ESQUEMA||'.'||V_TABLA||' TIT
+                JOIN '||V_ESQUEMA||'.'||V_TABLA_ACTIVO||' ACT ON ACT.ACT_ID=TIT.ACT_ID
+                WHERE ACT.ACT_NUM_ACTIVO='||TRIM(V_TMP_TIPO_DATA(1))||'';
+                EXECUTE IMMEDIATE V_SQL INTO V_ENTIDAD_ID;
+
+                V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_HIST||' WHERE TIT_ID ='||V_ENTIDAD_ID||' ';
+                EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+                --Si no existe lo insertamos
+                if V_NUM_TABLAS < 1 THEN
+                    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS REGISTRO  EN TABLA HISTORICA');
+
+                    V_SQL := 'SELECT '|| V_ESQUEMA ||'.S_'||V_TABLA_HIST||'.NEXTVAL FROM DUAL';
+                    EXECUTE IMMEDIATE V_SQL INTO V_ID;
+
+                    V_SQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TABLA_HIST||' (' ||
+                      	'AHT_ID, TIT_ID, AHT_FECHA_PRES_REGISTRO, AHT_FECHA_INSCRIPCION, DD_ESP_ID, USUARIOCREAR, FECHACREAR) VALUES (
+                      	'|| V_ID ||',
+                          '||V_ENTIDAD_ID||',
+                          TO_DATE('''||V_FECHA_PRESENTACION||''', ''DD/MM/YYYY''),
+                          TO_DATE('''||TRIM(V_TMP_TIPO_DATA(2))||''', ''DD/MM/YYYY''),
+                          (SELECT DD_ESP_ID FROM '||V_ESQUEMA||'.'||V_TABLA_DD_ESTADO||' WHERE DD_ESP_CODIGO='||V_CODIGO_ESTADO_PRESENTACION||'),
+						'''||V_USUARIO||''',
+                        SYSDATE)';
+
+                   
+                    EXECUTE IMMEDIATE V_SQL;
+
+                     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTADO EN TABLA HISTORICA CORRECTAMENTE');
+                     V_COUNT:=V_COUNT+1;
+                  
+                ELSE
+                  DBMS_OUTPUT.PUT_LINE('[INFO]: ### YA EXISTE EL REGISTRO EN LA HISTORICA PARA EL NUMERO ACTIVO '||TRIM(V_TMP_TIPO_DATA(1))||'');
+                END IF;
+                ELSE
+                    DBMS_OUTPUT.PUT_LINE('[INFO]: ### NO EXISTE TITULO PARA EL NUMERO DE ACTIVO '||TRIM(V_TMP_TIPO_DATA(1))||'');
+                END IF;
+
+            ELSE
+            --Si no existe el codigo del diccionario no se hace nada
+                 DBMS_OUTPUT.PUT_LINE('[INFO]: ### NO EXISTE EL ACTIVO CON EL CODIGO: '''||TRIM(V_TMP_TIPO_DATA(1))||''' ');
+            END IF;
+            V_COUNT2:=V_COUNT2+1;
+      END LOOP;
+      DBMS_OUTPUT.PUT_LINE('################## ');
+      DBMS_OUTPUT.PUT_LINE('[INFO] INSERTADOS: '|| V_COUNT ||' REGISTROS CORRECTAMENTE ');
+      DBMS_OUTPUT.PUT_LINE('################## ');
+      V_COUNT:=V_COUNT2-V_COUNT;
+
+      if V_COUNT>0 then
+        DBMS_OUTPUT.PUT_LINE('################## ');
+        DBMS_OUTPUT.PUT_LINE('[INFO] ### INSERTADOS: '|| V_COUNT ||' REGISTROS INCORRECTAMENTE ');  
+        DBMS_OUTPUT.PUT_LINE('################## ');
+      end if;
+      
+
+    COMMIT;
+    
+    DBMS_OUTPUT.PUT_LINE('[FIN]');
+    
+    
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+/
+EXIT

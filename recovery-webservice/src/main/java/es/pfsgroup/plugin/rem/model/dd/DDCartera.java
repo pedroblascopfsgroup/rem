@@ -46,6 +46,8 @@ public class DDCartera implements Auditable, Dictionary {
 	public static final String CODIGO_CARTERA_JAIPUR = "09";
 	public static final String CODIGO_CARTERA_EGEO = "13";
 	public static final String CODIGO_CARTERA_BBVA = "16";
+	public static final String CODIGO_CARTERA_SIN_DEFINIR = "05";
+	public static final String CODIGO_CARTERA_OTRAS_CARTERAS = "04";
 		/**
 	 * 
 	 */
@@ -135,6 +137,47 @@ public class DDCartera implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+	
+	public static boolean isCarteraBk(DDCartera cartera) {
+		boolean isCarteraBk = false;
+		if(cartera != null && (CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()))) {
+			isCarteraBk = true;
+		}
+		
+		return isCarteraBk;
+	}
+	
+	public static boolean isCarteraSareb(DDCartera cartera) {
+		boolean isCarteraSareb = false;
+		if(cartera != null && ( CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()))) {
+			isCarteraSareb = true;
+		}
+		return isCarteraSareb;
+	}
+	
+	public static boolean isCarteraCajamar(DDCartera cartera) {
+		boolean isCarteraCajamar = false;
+		if(cartera != null && ( CODIGO_CARTERA_CAJAMAR.equals(cartera.getCodigo()))) {
+			isCarteraCajamar = true;
+		}
+		return isCarteraCajamar;
+	}
+	
+	public static boolean isCarteraBBVA(DDCartera cartera) {
+		boolean isCarteraBBVA = false;
+		if(cartera != null && (CODIGO_CARTERA_BBVA.equals(cartera.getCodigo()))) {
+			isCarteraBBVA = true;
+		}
+		return isCarteraBBVA;
+	}
+	
+	public static boolean isCarteraCerberus (DDCartera cartera) {
+		boolean isCarteraCerberus = false;
+		if(cartera != null && (CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo()))) {
+			isCarteraCerberus = true;
+		}
+		return isCarteraCerberus;
 	}
 
 }

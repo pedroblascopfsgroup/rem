@@ -38,8 +38,8 @@ public class ClienteComercialDaoImpl extends AbstractEntityDao<ClienteComercial,
     @Override
     public void deleteTmpClienteByDocumento(String documento) {
 		
-    	StringBuilder sb = new StringBuilder("delete from TmpClienteGDPR gdpr where gdpr.numDocumento='"+documento+"'");
-		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+    	String q = "delete from TmpClienteGDPR gdpr where gdpr.numDocumento= :documento";
+		this.getSessionFactory().getCurrentSession().createQuery(q).setParameter("documento", documento).executeUpdate();
 		
 	}
 	

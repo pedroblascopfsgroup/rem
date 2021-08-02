@@ -46,6 +46,7 @@ public class TrabajosPrefacturaExcelReport extends AbstractExcelReport implement
 		listaCabeceras.add("Importe Total Trabajo");
 		listaCabeceras.add("Importe Total Cliente Trabajo");
 		listaCabeceras.add("Área peticionaria");
+		listaCabeceras.add("Cartera de Propietario");
 				
 		return listaCabeceras;
 	}
@@ -180,6 +181,11 @@ public class TrabajosPrefacturaExcelReport extends AbstractExcelReport implement
 			}
 			if(!Checks.esNulo(trabajoAlbaranPrefactura.getAreaPeticionariaDescripcion())) {
 				fila.add(trabajoAlbaranPrefactura.getAreaPeticionariaDescripcion());
+			} else {
+				fila.add("");
+			}
+			if(!Checks.esNulo(trabajoAlbaranPrefactura.getCarteraPropietarioDescripcion())) {
+				fila.add(trabajoAlbaranPrefactura.getCarteraPropietarioDescripcion());
 			} else {
 				fila.add("");
 			}

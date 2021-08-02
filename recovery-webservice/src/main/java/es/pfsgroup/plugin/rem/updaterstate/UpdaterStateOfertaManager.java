@@ -15,6 +15,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaResolucionExpediente;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -35,6 +36,7 @@ public class UpdaterStateOfertaManager implements UpdaterStateOfertaApi{
     private OfertaApi ofertaApi;
 	
 	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
     private ActivoApi activoApi;
 	
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionExpediente.class);
@@ -68,6 +70,8 @@ public class UpdaterStateOfertaManager implements UpdaterStateOfertaApi{
 
 			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 			expediente.setEstado(estado);
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 			genericDao.save(ExpedienteComercial.class, expediente);
 
 			Reserva reserva = expediente.getReserva();
@@ -86,6 +90,8 @@ public class UpdaterStateOfertaManager implements UpdaterStateOfertaApi{
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.EN_DEVOLUCION);
 			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 			expediente.setEstado(estado);
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 			genericDao.save(ExpedienteComercial.class, expediente);
 			
 			Reserva reserva = expediente.getReserva();

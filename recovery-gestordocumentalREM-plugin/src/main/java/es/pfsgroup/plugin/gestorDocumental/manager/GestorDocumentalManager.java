@@ -66,6 +66,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	private static final String ID_ACTIVO_PATH = "id_activo=";
 	private static final String OPERACION_PATH = "operacion=";
 	private static final String BLACK_LIST_MATRICULAS_PATH = "blacklistmatriculas=";
+	private static final String METADATA_TDN_1_PATH = "tdn1metadata=";
 	
 	private static final String DOCUMENTO = "documento";
 	private static final String USUARIO = "usuario";
@@ -73,10 +74,12 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	private static final String USUARIO_OPERACIONAL = "usuarioOperacional";
 	private static final String DESCRIPCION_DOCUMENTO = "descripcionDocumento";
 	private static final String METADATA = "metadata";
+	private static final String METADATATDN1 = "metadatatdn1";
 	
 	private static final String URL_REST_CLIENT_GESTOR_DOCUMENTAL_DOCUMENTOS = "rest.client.gestor.documental.documentos";
 	public static final String ERROR_SERVER_NOT_RESPONDING="El servidor de gestor documental no responde.";
 	private static final Map<String, String> contents;
+	private static final String ENTIDAD_ACTIVO = "activo";
 	
 	static {
 		contents = new HashMap<String, String>();
@@ -154,6 +157,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 			docExpDto.setBlacklistmatriculas("");
 		}
 		sb.append("&").append(BLACK_LIST_MATRICULAS_PATH).append(docExpDto.getBlacklistmatriculas());
+		sb.append("&").append(METADATA_TDN_1_PATH).append(true);
 		return sb.toString();
 	}
 	
@@ -187,13 +191,18 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	@SuppressWarnings("resource")
 	private MultiPart getMultipartCrearDocumento(CrearDocumentoDto crearDoc){
 		final FileDataBodyPart filePart = new FileDataBodyPart(DOCUMENTO,  crearDoc.getDocumento());
-		final MultiPart multipart = new FormDataMultiPart()
+		MultiPart multipart  = null;
+		if(crearDoc.getMetadatatdn1() != null) {
+			 multipart = createMultipartDocumento(crearDoc);
+		}else {
+			multipart = new FormDataMultiPart()
 				.field(USUARIO, crearDoc.getUsuario())
 				.field(PASSWORD,  crearDoc.getPassword())
 				.field(USUARIO_OPERACIONAL, crearDoc.getUsuarioOperacional())
 				.field(METADATA, crearDoc.getGeneralDocumento())
 				.field(DESCRIPCION_DOCUMENTO, crearDoc.getDescripcionDocumento())
 				.bodyPart(filePart);
+		}
 		return multipart;
 	}
 	
@@ -539,6 +548,22 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		
 		return restClientApi.modoRestClientActivado();
 		
+	}
+	
+	@SuppressWarnings("resource")
+	private MultiPart createMultipartDocumento(CrearDocumentoDto crearDoc){
+		final FileDataBodyPart filePart = new FileDataBodyPart(DOCUMENTO,  crearDoc.getDocumento());
+		final MultiPart multipart = new FormDataMultiPart()
+				.field(USUARIO, crearDoc.getUsuario())
+				.field(PASSWORD,  crearDoc.getPassword())
+				.field(USUARIO_OPERACIONAL, crearDoc.getUsuarioOperacional())
+				.field(METADATA, crearDoc.getGeneralDocumento())
+				.field(METADATATDN1, crearDoc.getMetadatatdn1())
+				.field(DESCRIPCION_DOCUMENTO, crearDoc.getDescripcionDocumento())
+				.bodyPart(filePart);
+
+		
+		return multipart;
 	}
 
 }

@@ -285,9 +285,6 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		
 		nmbInfRegistralBien = genericDao.save(NMBInformacionRegistralBien.class, nmbInfRegistralBien);
 		
-		
-		
-		
 		ActivoInfoRegistral activoInforRegistral = new ActivoInfoRegistral();
 		activoInforRegistral.setInfoRegistralBien(nmbInfRegistralBien);
 		activoInforRegistral.setActivo(activo);
@@ -300,12 +297,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 			beanUtilNotNull.copyProperty(activoInforRegistral, "divHorInscrito", dtoAATP.getEsIntegradoDivHorizontalRegistro().equalsIgnoreCase("si") ? 1 : 0);
 		}
 		
-//Para Esparta
-//		DDSinSiNo ddsino = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDSinSiNo.CODIGO_NO));
-//		activoInforRegistral.setTieneAnejosRegistrales(ddsino);
+		DDSinSiNo noTiene = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDSinSiNo.CODIGO_NO));
+		activoInforRegistral.setTieneAnejosRegistrales(noTiene);
 		genericDao.save(ActivoInfoRegistral.class, activoInforRegistral);
-		
-		
 		
 		//ActivoPropietarioActivo
 		ActivoPropietario activoPropietario = genericDao.get(ActivoPropietario.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo",dtoAATP.getNifPropietario()));
@@ -348,6 +342,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		//ActivoAdmisionDocumento
 		ActivoAdmisionDocumento admisionDocumento = new ActivoAdmisionDocumento();
 		admisionDocumento.setActivo(activo);
+		admisionDocumento.setNoValidado(true);
 		admisionDocumento.setConfigDocumento(configDocumento);
 		beanUtilNotNull.copyProperty(admisionDocumento, "tipoCalificacionEnergetica", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalificacionEnergetica.class, dtoAATP.getCalificacionCeeCodigo()));
 		genericDao.save(ActivoAdmisionDocumento.class, admisionDocumento);

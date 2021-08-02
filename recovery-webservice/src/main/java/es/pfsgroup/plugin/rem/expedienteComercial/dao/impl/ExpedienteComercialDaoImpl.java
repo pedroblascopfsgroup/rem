@@ -27,8 +27,10 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 	@Override
 	public Page getCompradoresByExpediente(Long idExpediente, WebDto webDto, boolean activoBankia) {
 		if(activoBankia) {
-			HQLBuilder hql = new HQLBuilder("Select bce, bdc from VBusquedaCompradoresExpediente bce, VBusquedaDatosCompradorExpediente bdc where bce.idExpediente=bdc.idExpedienteComercial and "
-					+ "bce.idExpediente=" + idExpediente.toString() + " and bce.id = bdc.id");
+			HQLBuilder hql = new HQLBuilder("Select bce, bdc from VBusquedaCompradoresExpediente bce, VBusquedaDatosCompradorExpediente bdc");
+			hql.appendWhere("bce.idExpediente = bdc.idExpedienteComercial");
+			HQLBuilder.addFiltroIgualQue(hql, "bce.idExpediente", idExpediente.toString());
+			hql.appendWhere("bce.id = bdc.id");
 			hql.orderBy("borrado", HQLBuilder.ORDER_ASC);
 			return HibernateQueryUtils.page(this, hql, webDto);
 		}else {
@@ -42,21 +44,20 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 	
 	@Override
 	public Float getPorcentajeCompra(Long idExpediente) {
-		Float resultadoTotal = 0f;
-		
-		HQLBuilder hb = new HQLBuilder(" from VBusquedaCompradoresExpediente where idExpediente = " + idExpediente);
+		int sumatorio = 0;
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaCompradoresExpediente where idExpediente = :idExpediente");
 
-		List<VBusquedaCompradoresExpediente> lista = this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		List<VBusquedaCompradoresExpediente> lista = this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("idExpediente", idExpediente.toString()).list();
 		
-		if (!Checks.esNulo(lista) && !lista.isEmpty()) {
+		if (lista != null && !lista.isEmpty()) {
 			for (VBusquedaCompradoresExpediente item : lista) {
-				if (!Checks.esNulo(item.getPorcentajeCompra()) && (!"0.00".equals(item.getPorcentajeCompra()) && !"0".equals(item.getPorcentajeCompra()))) {
-					resultadoTotal += Float.parseFloat(item.getPorcentajeCompra());
+				if (item.getPorcentajeCompra() != null) {
+					sumatorio += Float.parseFloat(item.getPorcentajeCompra())*100;
 				}
 			}
 		}
 		
-		return resultadoTotal;
+		return sumatorio/100f;
 	}
 
 	@Override
@@ -94,9 +95,9 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 		if(usuarioBorrar == null)
 			usuarioBorrar = "DEFAULT";
 		StringBuilder sb = new StringBuilder("update CompradorExpediente ce set ce.auditoria.borrado = 1, ce.porcionCompra= 0, ce.fechaBaja= SYSDATE,"
-				+ " ce.auditoria.usuarioBorrar = '"+ usuarioBorrar + "', ce.auditoria.fechaBorrar = SYSDATE"
-				+ " where ce.primaryKey.comprador = " + idComprador + " and ce.primaryKey.expediente= " + idExpediente);
-		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+				+ " ce.auditoria.usuarioBorrar = :usuarioBorrar, ce.auditoria.fechaBorrar = SYSDATE"
+				+ " where ce.primaryKey.comprador.id = :idComprador and ce.primaryKey.expediente.id = :idExpediente");
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).setParameter("usuarioBorrar", usuarioBorrar).setParameter("idComprador", idComprador).setParameter("idExpediente", idExpediente).executeUpdate();
 	}
 	
 	@Override
@@ -150,9 +151,17 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 	@Override
 	public Long hayDocumentoSubtipo(Long idExp, Long idTipo, Long idSubtipo) {
 		try {
-			HQLBuilder hb = new HQLBuilder("select count(*) from AdjuntoExpedienteComercial adj where adj.expediente.id = "
-					+ idExp + " and adj.tipoDocumentoExpediente.id = " + idTipo + " and adj.subtipoDocumentoExpediente.id = " + idSubtipo);
-			return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
+			HQLBuilder hb = new HQLBuilder("select count(*) from AdjuntoExpedienteComercial adj where adj.expediente.id = :idExp "
+							+ " and adj.tipoDocumentoExpediente.id = :idTipo" 
+							+ " and adj.subtipoDocumentoExpediente.id = :idSubtipo");
+			
+			return (Long) this.getSessionFactory().getCurrentSession()
+			.createQuery(hb.toString())
+			.setParameter("idExp", idExp)
+			.setParameter("idTipo", idTipo)
+			.setParameter("idSubtipo", idSubtipo)
+			.uniqueResult();
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -165,9 +174,11 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 	public List<VListadoOfertasAgrupadasLbk> getListActivosOfertaPrincipal(Long numOferta) {
 
 		HQLBuilder hb = new HQLBuilder(
-				" from VListadoOfertasAgrupadasLbk where numOfertaPrincipal = " + numOferta);
+				" from VListadoOfertasAgrupadasLbk where numOfertaPrincipal = :numOferta");
 
-		return (List<VListadoOfertasAgrupadasLbk>)  this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		return (List<VListadoOfertasAgrupadasLbk>)  this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).setParameter("numOferta", numOferta)
+				.list();
 
 	}
 	

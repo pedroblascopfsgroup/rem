@@ -59,22 +59,22 @@ public class VListaActivosAgrupacionVSCondicionantes implements Serializable {
 	@Column(name = "VAL_IMPORTE_APROBADO_VENTA")
 	private Double importeAprobadoVenta;
 	
-	@Column(name = "VAL_NETO_CONTABLE")
-	private Double importeNetoContable;	
+//	@Column(name = "VAL_NETO_CONTABLE")
+//	private Double importeNetoContable;	
 	
 	@Column(name = "VAL_IMPORTE_DESCUENTO_PUBLICO")
 	private Double importeDescuentoPublicado;
 	
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "propietario")
-	private ActivoPropietario propietario;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "propietario")
+//	private ActivoPropietario propietario;
     
     //@OneToOne(fetch = FetchType.LAZY)
     @Column(name = "SDV_NOMBRE")
 	private String subdivision;
 	
-	@Column(name = "numeropropietarios")
-	private Long numeroPropietarios;
+//	@Column(name = "numeropropietarios")
+//	private Long numeroPropietarios;
 	
 	@Column(name = "principal")
    	private Integer activoPrincipal;
@@ -82,11 +82,11 @@ public class VListaActivosAgrupacionVSCondicionantes implements Serializable {
 	@Column(name = "SITUACION_COMERCIAL")
 	private String situacionComercial;
 	
-	@Column(name = "SPS_OCUPADO")
-	private Integer situacionPosesoriaOcupado;
+//	@Column(name = "SPS_OCUPADO")
+//	private Integer situacionPosesoriaOcupado;
 	
-	@Column(name = "SPS_CON_TITULO")
-	private Integer situacionPosesoriaTitulo;
+//	@Column(name = "SPS_CON_TITULO")
+//	private Integer situacionPosesoriaTitulo;
 	
 	@Column(name = "direccion")
 	private String direccion;
@@ -239,13 +239,13 @@ public class VListaActivosAgrupacionVSCondicionantes implements Serializable {
 		this.importeAprobadoVenta = importeAprobadoVenta;
 	}
 
-	public Double getImporteNetoContable() {
-		return importeNetoContable;
-	}
-
-	public void setImporteNetoContable(Double importeNetoContable) {
-		this.importeNetoContable = importeNetoContable;
-	}
+//	public Double getImporteNetoContable() {
+//		return importeNetoContable;
+//	}
+//
+//	public void setImporteNetoContable(Double importeNetoContable) {
+//		this.importeNetoContable = importeNetoContable;
+//	}
 
 	public Double getImporteDescuentoPublicado() {
 		return importeDescuentoPublicado;
@@ -255,13 +255,13 @@ public class VListaActivosAgrupacionVSCondicionantes implements Serializable {
 		this.importeDescuentoPublicado = importeDescuentoPublicado;
 	}
 
-	public ActivoPropietario getPropietario() {
-		return propietario;
-	}
-
-	public void setPropietario(ActivoPropietario propietario) {
-		this.propietario = propietario;
-	}
+//	public ActivoPropietario getPropietario() {
+//		return propietario;
+//	}
+//
+//	public void setPropietario(ActivoPropietario propietario) {
+//		this.propietario = propietario;
+//	}
 
 	public String getSubdivision() {
 		return subdivision;
@@ -271,13 +271,13 @@ public class VListaActivosAgrupacionVSCondicionantes implements Serializable {
 		this.subdivision = subdivision;
 	}
 
-	public Long getNumeroPropietarios() {
-		return numeroPropietarios;
-	}
-
-	public void setNumeroPropietarios(Long numeroPropietarios) {
-		this.numeroPropietarios = numeroPropietarios;
-	}
+//	public Long getNumeroPropietarios() {
+//		return numeroPropietarios;
+//	}
+//
+//	public void setNumeroPropietarios(Long numeroPropietarios) {
+//		this.numeroPropietarios = numeroPropietarios;
+//	}
 
 	public Integer getActivoPrincipal() {
 		return activoPrincipal;
@@ -295,21 +295,21 @@ public class VListaActivosAgrupacionVSCondicionantes implements Serializable {
 		this.situacionComercial = situacionComercial;
 	}
 
-	public Integer getSituacionPosesoriaOcupado() {
-		return situacionPosesoriaOcupado;
-	}
-
-	public void setSituacionPosesoriaOcupado(Integer situacionPosesoriaOcupado) {
-		this.situacionPosesoriaOcupado = situacionPosesoriaOcupado;
-	}
-
-	public Integer getSituacionPosesoriaTitulo() {
-		return situacionPosesoriaTitulo;
-	}
-
-	public void setSituacionPosesoriaTitulo(Integer situacionPosesoriaTitulo) {
-		this.situacionPosesoriaTitulo = situacionPosesoriaTitulo;
-	}
+//	public Integer getSituacionPosesoriaOcupado() {
+//		return situacionPosesoriaOcupado;
+//	}
+//
+//	public void setSituacionPosesoriaOcupado(Integer situacionPosesoriaOcupado) {
+//		this.situacionPosesoriaOcupado = situacionPosesoriaOcupado;
+//	}
+//
+//	public Integer getSituacionPosesoriaTitulo() {
+//		return situacionPosesoriaTitulo;
+//	}
+//
+//	public void setSituacionPosesoriaTitulo(Integer situacionPosesoriaTitulo) {
+//		this.situacionPosesoriaTitulo = situacionPosesoriaTitulo;
+//	}
 
 	public String getDireccion() {
 		return direccion;

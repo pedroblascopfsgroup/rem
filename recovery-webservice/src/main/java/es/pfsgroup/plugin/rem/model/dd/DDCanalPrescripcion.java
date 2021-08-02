@@ -30,6 +30,14 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDCanalPrescripcion implements Auditable, Dictionary {
 	
+	public static final String COD_OFICINA_CAJAMAR ="01";
+	public static final String COD_OFICINA_BANKIA ="02";
+	public static final String COD_WEB_HAYA ="03";
+	public static final String COD_WEB_EXTERNAS ="04";
+	public static final String COD_API ="05";
+	public static final String COD_FUERZA_DE_VENTA ="06";
+	public static final String COD_UVEM ="07";
+	public static final String COD_REM ="08";
 
 	private static final long serialVersionUID = 1L;
 

@@ -17,6 +17,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
@@ -34,6 +35,9 @@ public class MSVActualizadorPublicarVenta extends AbstractMSVActualizador implem
 	@Autowired
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_PUBLICAR_ACTIVOS_VENTA;
@@ -66,6 +70,8 @@ public class MSVActualizadorPublicarVenta extends AbstractMSVActualizador implem
 		} else {
 			activoEstadoPublicacionApi.setDatosPublicacionActivo(dto);
 		}
+		
+		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false);
 
 		return new ResultadoProcesarFila();
 	}

@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
@@ -73,6 +74,11 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 		
 	@Autowired
 	private TareaActivoDao tareaActivoDao;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+
+
 	
 	@Override
 	public String getValidOperation() {
@@ -152,6 +158,7 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 		
 		if(!exc.dameCelda(fila, VPO).isEmpty()) {
 			activo.setVpo(traducirSiNo(exc.dameCelda(fila, VPO)));
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false);
 		}
 		if(!exc.dameCelda(fila, CON_CARGAS).isEmpty()) {
 

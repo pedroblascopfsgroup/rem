@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -59,6 +60,9 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
     @Autowired
 	private ActivoAdapter activoAdapter;
 	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresCierreContrato.class);
     
 	private static final String DOCUMENTO_OK = "docOK";
@@ -82,6 +86,8 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 			if(DOCUMENTO_OK.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.FIRMADO));
 				expedienteComercial.setEstado(estadoExpedienteComercial);
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
+
 				expedienteComercial.setDocumentacionOk(true);
 			}
 			
@@ -117,7 +123,6 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 		if (!Checks.esNulo(expedienteComercial.getSeguroRentasAlquiler())) {
 			expedienteComercialApi.enviarCorreoAsegurador(expedienteComercial.getId());
 		}
-		expedienteComercialApi.bloquearExpediente(expedienteComercial.getId());
 		
 		Activo activo = tramite.getActivo();
 		if(!Checks.esNulo(activo)) {

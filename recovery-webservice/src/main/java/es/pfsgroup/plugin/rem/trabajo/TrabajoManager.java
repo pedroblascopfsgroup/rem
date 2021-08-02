@@ -71,6 +71,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.http.client.HttpSimpleGetRequest;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -151,6 +152,7 @@ import es.pfsgroup.plugin.rem.model.Prefactura;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.TipoDocumentoSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
@@ -365,6 +367,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private TareaAdapter tareaAdapter;
+	
+	@Autowired
+	private MSVRawSQLDao rawDao;
 	
 	@Autowired
 	private ActivoTrabajoDao activoTrabajoDao;
@@ -621,6 +626,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				if(DDEstadoTrabajo.CODIGO_ESTADO_RECHAZADO.equals(trabajo.getEstado().getCodigo()) || DDEstadoTrabajo.ESTADO_RECHAZADO.equals(trabajo.getEstado().getCodigo())) {
 					EnviarCorreoTrabajos(trabajo, EMAIL_RECHAZADO);
 				}else if (DDEstadoTrabajo.ESTADO_VALIDADO.equals(trabajo.getEstado().getCodigo())) {
+					gestorDocumentalAdapterApi.actualizarAdmisionValidado(trabajo);
 					
 					if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {					
 						if(DDSubtipoTrabajo.CODIGO_VIGILANCIA_SEGURIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo())) {	
@@ -6067,6 +6073,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return false;
 	}
+	
+	@Override
+	public Long getIdByNumTrabajo(Long numTrabajo) {
+		Long idTrabajo = null;
+
+		try {
+		idTrabajo = Long.parseLong(rawDao.getExecuteSQL("SELECT TBJ_ID FROM ACT_TBJ_TRABAJO WHERE TBJ_NUM_TRABAJO = " + numTrabajo + " AND BORRADO = 0"));
+		} catch (Exception e) {
+			return null;
+		}
+		return idTrabajo;
+	}
 
 	public Boolean activoEnTramite(Long idActivo) {
 		Activo activo;
@@ -6918,6 +6936,24 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return importeSuplidos;
 	}
 	
+
+	@Override
+	public boolean activoTieneTrabajoValidadoByTipoDocumento(Long idActivo , String tipoDocumento){
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", tipoDocumento);
+		TipoDocumentoSubtipoTrabajo tipoDocumentoSubtipoTrabajo = genericDao.get(TipoDocumentoSubtipoTrabajo.class, filtro);
+		if(tipoDocumentoSubtipoTrabajo != null && idActivo != null) {
+			Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "trabajo.subtipoTrabajo.id", tipoDocumentoSubtipoTrabajo.getSubtipoTrabajo().getId());
+			Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+			List<ActivoTrabajo> activoTrabajoList = genericDao.getList(ActivoTrabajo.class, filtro4,filtro3);
+			for (ActivoTrabajo activoTrabajo : activoTrabajoList) {
+				if(activoTrabajo.getTrabajo() != null && activoTrabajo.getTrabajo().getEstado() != null && 
+						!DDEstadoTrabajo.ESTADO_VALIDADO.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	
 
 }

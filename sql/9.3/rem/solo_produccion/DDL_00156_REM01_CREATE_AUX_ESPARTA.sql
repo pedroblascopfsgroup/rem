@@ -1,0 +1,95 @@
+--/*
+--##########################################
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210520
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-13988
+--## PRODUCTO=NO
+--##
+--## Finalidad: Crear Backup lanzamiento nueva convivencia Sareb
+--## INSTRUCCIONES: 
+--## VERSIONES:
+--##        0.1 Version inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+		T_TIPO_DATA('ACT_ACTIVO'),
+		T_TIPO_DATA('ACT_EDI_EDIFICIO'),
+		T_TIPO_DATA('ACT_VAL_VALORACIONES'),
+		T_TIPO_DATA('ACT_AHT_HIST_TRAM_TITULO'),
+		T_TIPO_DATA('ACT_PTA_PATRIMONIO_ACTIVO'),
+		T_TIPO_DATA('BIE_CAR_CARGAS'),
+		T_TIPO_DATA('BIE_LOCALIZACION'),
+		T_TIPO_DATA('BIE_VALORACIONES'),
+		T_TIPO_DATA('RES_RESERVAS'),
+		T_TIPO_DATA('ACT_ABA_ACTIVO_BANCARIO'),
+		T_TIPO_DATA('ACT_APU_ACTIVO_PUBLICACION'),
+		T_TIPO_DATA('ACT_CAT_CATASTRO'),
+		T_TIPO_DATA('ACT_REG_INFO_REGISTRAL'),
+		T_TIPO_DATA('ACT_SAREB_ACTIVOS'),
+		T_TIPO_DATA('ACT_AGR_AGRUPACION'),
+		T_TIPO_DATA('ACT_AJD_ADJJUDICIAL'),
+		T_TIPO_DATA('ACT_SPS_SIT_POSESORIA'),
+		T_TIPO_DATA('ECO_EXPEDIENTE_COMERCIAL'),
+		T_TIPO_DATA('ACT_LOC_LOCALIZACION'),
+		T_TIPO_DATA('ACT_PAC_PROPIETARIO_ACTIVO'),
+		T_TIPO_DATA('ACT_TAS_TASACION'),
+		T_TIPO_DATA('ACT_TIT_TITULO'),
+		T_TIPO_DATA('BIE_DATOS_REGISTRALES'),
+		T_TIPO_DATA('ACT_CAN_CALIFICACION_NEG'),
+		T_TIPO_DATA('ACT_PAC_PERIMETRO_ACTIVO'),
+		T_TIPO_DATA('ACT_ADN_ADJNOJUDICIAL'),
+		T_TIPO_DATA('ACT_ADO_ADMISION_DOCUMENTO'),
+		T_TIPO_DATA('ACT_CRG_CARGAS'),
+		T_TIPO_DATA('BIE_ADJ_ADJUDICACION')
+    ); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+BEGIN
+DBMS_OUTPUT.PUT_LINE('[INICIO]');
+
+    -- LOOP para insertar los valores --
+    DBMS_OUTPUT.PUT_LINE('[INFO]: BACKUPS ESPARTA');
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+
+            V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.ESPARTA_'||TRIM(V_TMP_TIPO_DATA(1))||' AS (SELECT * FROM '||V_ESQUEMA||'.'||TRIM(V_TMP_TIPO_DATA(1))||')';
+            EXECUTE IMMEDIATE V_MSQL;
+            DBMS_OUTPUT.PUT_LINE('[INFO]: BACKUP DE LA TABLA '||TRIM(V_TMP_TIPO_DATA(1)));     
+
+      END LOOP;
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('[FIN]: TERMINADO EL BACKUP DE TABLAS ESPARTA');
+
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

@@ -124,6 +124,9 @@ Ext.define('HreRem.model.Gasto', {
 		},
 		{
 			name: 'numTrabajo'
+		},
+		{
+			name: 'solicitudPagoUrgente'
 		}
     ],
 

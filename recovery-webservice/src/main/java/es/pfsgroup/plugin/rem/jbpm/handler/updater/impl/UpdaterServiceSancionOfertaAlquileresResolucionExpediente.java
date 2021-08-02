@@ -20,6 +20,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -47,6 +48,9 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
     
     @Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
         
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresResolucionExpediente.class);
 			
@@ -73,6 +77,7 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
 				if(DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_PBC));
 					expedienteComercial.setEstado(estadoExpedienteComercial);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
 
 					estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_ACEPTADA);
 					oferta.setEstadoOferta(estadoOferta);
@@ -90,6 +95,7 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
 				}else if(DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
 					expedienteComercial.setEstado(estadoExpedienteComercial);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
 
 					estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA);
 					oferta.setEstadoOferta(estadoOferta);
@@ -97,6 +103,8 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
 				}else if(DDResolucionComite.CODIGO_CONTRAOFERTA.equals(valor.getValor())) {
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.CONTRAOFERTADO));
 					expedienteComercial.setEstado(estadoExpedienteComercial);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
+
 				}
 			}
 			

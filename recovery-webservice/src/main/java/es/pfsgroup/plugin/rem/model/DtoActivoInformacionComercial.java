@@ -271,7 +271,8 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
     private String estadoConservacionEdificioDescripcion;
     private String tipoFachadaCodigo; 
     private String tipoFachadaDescripcion;
-    private String tipoViviendaCodigo; 
+    private String tipoViviendaCodigo;
+    private String tipoViviendaDescripcion;
     private String tipoOrientacionCodigo; 
     private String tipoRentaCodigo; 
     private String tipoCalidadCodigo;
@@ -471,6 +472,12 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	}
 	public void setTipoViviendaCodigo(String tipoViviendaCodigo) {
 		this.tipoViviendaCodigo = tipoViviendaCodigo;
+	}
+	public String getTipoViviendaDescripcion() {
+		return tipoViviendaDescripcion;
+	}
+	public void setTipoViviendaDescripcion(String tipoViviendaDescripcion) {
+		this.tipoViviendaDescripcion = tipoViviendaDescripcion;
 	}
 	public String getTipoOrientacionCodigo() {
 		return tipoOrientacionCodigo;

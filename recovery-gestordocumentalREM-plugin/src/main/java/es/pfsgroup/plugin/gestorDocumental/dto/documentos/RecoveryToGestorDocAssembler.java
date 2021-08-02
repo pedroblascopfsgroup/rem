@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.gestorDocumental.dto.documentos;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 import es.capgemini.devon.files.WebFileItem;
@@ -70,6 +72,7 @@ public class RecoveryToGestorDocAssembler {
 
 	public CrearDocumentoDto getCrearDocumentoDto(WebFileItem webFileItem, String userLogin, String matricula) {
 		CrearDocumentoDto doc = new CrearDocumentoDto();
+
 		String[] arrayMatricula = new String[4];
 		if (matricula!=null && matricula.contains("-")) {
 			arrayMatricula = matricula.split("-");
@@ -82,7 +85,7 @@ public class RecoveryToGestorDocAssembler {
 		} else {
 			doc.setUsuarioOperacional(userLogin);
 		}
-		
+		//TODO Rellenar el dto cuando vengan los campos del formulario relleno. Si no está relleno no añadir nada.
 		doc.setDocumento(webFileItem.getFileItem().getFile());
 		doc.setNombreDocumento(webFileItem.getFileItem().getFileName());
 		doc.setDescripcionDocumento(webFileItem.getParameter("descripcion"));
@@ -289,5 +292,75 @@ public class RecoveryToGestorDocAssembler {
 			sb.append("}");
 		sb.append("}");
 		return sb.toString();
+	}
+	
+	private String rellenarMetadatosEspecificos (DtoMetadatosEspecificos dto) {
+		StringBuilder sb = new StringBuilder();
+		String eliminarComas = "";
+		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+		SimpleDateFormat fromUser = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			
+			sb.append("{");
+			if(dto.getAplica() != null) {
+				sb.append(GestorDocumentalConstants.metadataEspecifica[0]).append("\""+dto.getAplica()+"\"").append(",");
+			}
+			if(dto.getFechaEmision() != null) {
+				String fechaEmision = format.format(fromUser.parse(dto.getFechaEmision()));
+				sb.append(GestorDocumentalConstants.metadataEspecifica[1]).append("\""+fechaEmision+"\"").append(",");
+			}
+			if(dto.getFechaCaducidad()!= null) {
+				String fechaCaducidad = format.format(fromUser.parse(dto.getFechaCaducidad()));
+				sb.append(GestorDocumentalConstants.metadataEspecifica[2]).append("\""+fechaCaducidad+"\"").append(",");
+			}
+			if(dto.getFechaObtencion()!= null) {
+				String fechaObtencion = format.format(fromUser.parse(dto.getFechaObtencion()));
+				sb.append(GestorDocumentalConstants.metadataEspecifica[3]).append("\""+fechaObtencion+"\"").append(",");
+			}
+			if(dto.getFechaEtiqueta()!= null) {
+				String fechaEtiqueta = format.format(fromUser.parse(dto.getFechaEtiqueta()));
+				sb.append(GestorDocumentalConstants.metadataEspecifica[4]).append("\""+fechaEtiqueta+"\"").append(",");
+			}
+			if(dto.getRegistro()!= null) {
+				sb.append(GestorDocumentalConstants.metadataEspecifica[5]).append("\""+dto.getRegistro()+"\"");
+			}
+
+			eliminarComas = sb.toString();
+			if(",".equals(eliminarComas.substring(eliminarComas.length() - 1))){
+				sb.deleteCharAt(eliminarComas.length()-1);
+			}
+			sb.append("}");
+			
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		return sb.toString();
+	}
+	
+	public CrearDocumentoDto getCrearDocumentoDtoConFormulario(WebFileItem webFileItem, String userLogin, String matricula, DtoMetadatosEspecificos dto) {
+		CrearDocumentoDto doc = new CrearDocumentoDto();
+
+		String[] arrayMatricula = new String[4];
+		if (matricula!=null && matricula.contains("-")) {
+			arrayMatricula = matricula.split("-");
+		}
+		doc.setUsuario(USUARIO);
+		doc.setPassword(PASSWORD);
+		
+		if(!Checks.esNulo(userLogin) && userLogin.equals("REST-USER") ) {
+			doc.setUsuarioOperacional(OPWS);
+		} else {
+			doc.setUsuarioOperacional(userLogin);
+		}
+		//TODO Rellenar el dto cuando vengan los campos del formulario relleno. Si no está relleno no añadir nada.
+		doc.setDocumento(webFileItem.getFileItem().getFile());
+		doc.setNombreDocumento(webFileItem.getFileItem().getFileName());
+		doc.setDescripcionDocumento(webFileItem.getParameter("descripcion"));
+		doc.setGeneralDocumento(rellenarGeneralDocumento(arrayMatricula[1], arrayMatricula[2], arrayMatricula[3]));
+		doc.setMetadatatdn1(rellenarMetadatosEspecificos(dto));
+		doc.setArchivoFisico("{}");
+		
+		return doc;
 	}
 }

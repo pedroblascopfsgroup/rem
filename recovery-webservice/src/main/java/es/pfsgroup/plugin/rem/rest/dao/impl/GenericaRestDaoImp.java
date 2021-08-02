@@ -69,19 +69,22 @@ public class GenericaRestDaoImp extends AbstractEntityDao<Serializable, Serializ
 			//query.setParameter("ID", informeComerical);
 			//query.executeUpdate();
 			
-			query = this.getSessionFactory().getCurrentSession().createSQLQuery("delete from act_viv_vivienda where ico_id=(select ico_id from act_ico_info_comercial where act_id = (select act_id from act_activo where act_num_activo = "+informeComerical.getIdActivoHaya()+"))");
+			query = this.getSessionFactory().getCurrentSession().createSQLQuery("delete from act_viv_vivienda where ico_id=(select ico_id from act_ico_info_comercial where act_id = (select act_id from act_activo where act_num_activo = :idActivoHaya))");
+			query.setParameter("idActivoHaya", informeComerical.getIdActivoHaya());
 			query.executeUpdate();
 		}
 		
 		if(Checks.esNulo(informeComerical.getCodTipoActivo()) 
 				|| !DDTipoActivo.COD_COMERCIAL.equals(informeComerical.getCodTipoActivo()) ) {
-			query = this.getSessionFactory().getCurrentSession().createSQLQuery("delete from act_lco_local_comercial where ico_id=(select ico_id from act_ico_info_comercial where act_id = (select act_id from act_activo where act_num_activo = "+informeComerical.getIdActivoHaya()+"))");
+			query = this.getSessionFactory().getCurrentSession().createSQLQuery("delete from act_lco_local_comercial where ico_id=(select ico_id from act_ico_info_comercial where act_id = (select act_id from act_activo where act_num_activo = :idActivoHaya))");
+			query.setParameter("idActivoHaya", informeComerical.getIdActivoHaya());
 			query.executeUpdate();
 		}
 		
 		if(Checks.esNulo(informeComerical.getCodTipoActivo()) 
 				|| !DDTipoActivo.COD_OTROS.equals(informeComerical.getCodTipoActivo()) ) {
-			query = this.getSessionFactory().getCurrentSession().createSQLQuery("delete from act_apr_plaza_aparcamiento where ico_id=(select ico_id from act_ico_info_comercial where act_id = (select act_id from act_activo where act_num_activo = "+informeComerical.getIdActivoHaya()+"))");
+			query = this.getSessionFactory().getCurrentSession().createSQLQuery("delete from act_apr_plaza_aparcamiento where ico_id=(select ico_id from act_ico_info_comercial where act_id = (select act_id from act_activo where act_num_activo = :idActivoHaya))");
+			query.setParameter("idActivoHaya", informeComerical.getIdActivoHaya());
 			query.executeUpdate();
 		}
 		

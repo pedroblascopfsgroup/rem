@@ -754,6 +754,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		
 		usuarioEditarAgrupaciones: function(get){
 			return $AU.userHasFunction("EDITAR_LIST_AGRUPACIONES");
+		},
+		esEditableExcluirValidaciones: function(get){
+			var perfiles = $AU.userHasFunction('EDITAR_EXCLUIR_VALIDACIONES');
+			return !perfiles;
 		}
     },
 				
@@ -1152,7 +1156,25 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
          	 },
          	 groupField: 'descripcionTipo',
 		     remoteSort: true,
-         	 autoLoad: false
+         	 autoLoad: true
+		},
+		comboMotivoDeExcluido: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoGestionComercial'}
+			},
+			autoLoad: true
+		},
+		comboRiesgoOperacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoRiesgoOperacion'}
+			},
+			autoLoad: false
 		}
     }
 });

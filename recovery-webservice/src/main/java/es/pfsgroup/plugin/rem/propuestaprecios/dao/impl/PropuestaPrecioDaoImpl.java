@@ -104,9 +104,9 @@ public class PropuestaPrecioDaoImpl extends AbstractEntityDao<PropuestaPrecio, L
     @Override
 	public boolean existePropuestaEnTrabajo(Long idTrabajo) {
     	
-    	String sql = "select count(1) from PRP_PROPUESTAS_PRECIOS prp where prp.TBJ_ID = " + idTrabajo;
+    	String sql = "select count(1) from PRP_PROPUESTAS_PRECIOS prp where prp.TBJ_ID = :idTrabajo";
 
-    	return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue() == 1;
+    	return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).setParameter("idTrabajo", idTrabajo).uniqueResult()).longValue() == 1;
 
 	}
     
@@ -116,9 +116,9 @@ public class PropuestaPrecioDaoImpl extends AbstractEntityDao<PropuestaPrecio, L
     	String sql = "select prp.act_id from V_BUSQUEDA_ACTIVOS_TRABAJO prp ";
     	sql += " join V_BUSQUEDA_ACTIVOS_PRECIOS act on prp.ACT_ID = act.ACT_ID ";
     	sql += " where act.IN_PRP_TRAMITACION = 0 ";
-    	sql += " and prp.TBJ_ID = " + idTrabajo;
+    	sql += " and prp.TBJ_ID = :idTrabajo";
     	
-    	return (List<BigDecimal>) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).list();
+    	return (List<BigDecimal>) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).setParameter("idTrabajo", idTrabajo).list();
     }
 	
 }

@@ -1,10 +1,10 @@
   --/*
 --##########################################
---## AUTOR=JUAN RUIZ
---## FECHA_CREACION=20180522
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20210630
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4107
+--## INCIDENCIA_LINK=REMVIP-9781
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -12,6 +12,8 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --## HREOS-4107 Se añade el campo ACT_COD_PROMOCION_PRINEX para el cod.Promo al crear trabajos con activos liberbank.
+--##	    0.3 REMVIP-9781 Juan Bautista Alfonso Añadido campo ACT_EN_TRAMITE para bankia
+--##
 --##########################################
 --*/
 
@@ -71,7 +73,8 @@ BEGIN
 		WHERE epp.DD_EPP_CODIGO NOT IN (''03'',''04'',''05'')
 			AND acp.ACT_ID = act.ACT_ID ) AS IN_PRP_TRAMITACION,
 	  ACT.ACT_COD_PROMOCION_PRINEX,
-	  CRA.DD_CRA_CODIGO AS CODIGO_CARTERA
+	  CRA.DD_CRA_CODIGO AS CODIGO_CARTERA,
+	ACT.ACT_EN_TRAMITE
     
     FROM ' ||V_ESQUEMA|| '.ACT_ACTIVO ACT
       LEFT JOIN ' ||V_ESQUEMA|| '.DD_SAC_SUBTIPO_ACTIVO STA ON STA.DD_SAC_ID = ACT.DD_SAC_ID

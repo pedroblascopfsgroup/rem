@@ -328,7 +328,7 @@ public class MSVActualizadorAltaTrabajosProcesar extends AbstractMSVActualizador
 			activoTrabajo.setActivo(activo);
 			activoTrabajo.setTrabajo(trabajo);
 			activoTrabajo.setPrimaryKey(new ActivoTrabajoPk(activo.getId(),trabajo.getId()));
-			activoTrabajo.setParticipacion(0F);
+			activoTrabajo.setParticipacion(100F);
 			trabajo.getActivosTrabajo().add(activoTrabajo);
 			
 			trabajoDao.saveOrUpdate(trabajo);

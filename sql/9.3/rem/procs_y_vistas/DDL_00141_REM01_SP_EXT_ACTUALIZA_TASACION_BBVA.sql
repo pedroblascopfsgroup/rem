@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20201221
+--## FECHA_CREACION=20210514
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-8566
+--## INCIDENCIA_LINK=REMVIP-9171
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##	    0.2 Juan Bautista Alfonso - REMVIP-8566 - Añadido campo TAS_ILOCALIZABLE
+--##	    0.3 Juan Bautista Alfonso - REMVIP-9171 - Modificado actualizacion para que actualice por TAS_ID en vez de por ID_EXTERNO
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -212,7 +213,7 @@ BEGIN
    		
 			V_MSQL := ' UPDATE '||V_ESQUEMA||'.ACT_TAS_TASACION TAS
                         SET
-                            TAS.TAS_ID_EXTERNO_BBVA = TRIM('''||ID_EXTERNO||''',
+                            TAS.TAS_ID_EXTERNO_BBVA = TRIM('''||ID_EXTERNO||'''),
                             TAS.USUARIOMODIFICAR = '''||V_NOMBRESP||''',
                             TAS.FECHAMODIFICAR = '''||FECHA_HOY||'''
                         WHERE TRIM(TAS.TAS_ID) = TRIM('''||ID||''')
@@ -264,7 +265,7 @@ BEGIN
 	                                                                    ELSE '||V_TMP_TIPO_DATA(1)||' END,
 	                                TAS.USUARIOMODIFICAR = '''||V_NOMBRESP||''',
 	                                TAS.FECHAMODIFICAR = '''||FECHA_HOY||'''
-	                            WHERE TRIM(TAS.TAS_ID_EXTERNO_BBVA) = TRIM('''||ID_EXTERNO||''')
+	                            WHERE TAS.TAS_ID = '||TAS_ID||'
 	                          ';
 	                EXECUTE IMMEDIATE V_MSQL;
 	                --DBMS_OUTPUT.PUT_LINE(V_MSQL);
@@ -572,7 +573,7 @@ BEGIN
    END IF;
 
    /**************************************************************************************************************************************************************
-   6.- Si no ha habido ningun error, insertamos 1 registro en la HLP.
+   6.- Si no ha habido ningun error, insertamos 0 registro en la HLP.
    ***************************************************************************************************************************************************************/
    IF COD_RETORNO = 0 AND V_NOTABLES = 0 THEN
 		V_MSQL := '

@@ -20,6 +20,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaSoloRechazo;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -51,6 +52,9 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 	
 	@Autowired
 	private NotificatorServiceSancionOfertaSoloRechazo notificatorRechazo;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	private static final String CODIGO_T017_PBC_RESERVA = "T017_PBCReserva";
 	private static final String CODIGO_T013_PBC_RESERVA = "T013_PBCReserva";
@@ -83,6 +87,8 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class,
 									filtro);
 							expediente.setEstado(estado);
+							recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 							expediente.setFechaVenta(null);
 							expediente.setEstadoPbcR(0);
 							expediente.setFechaAnulacion(new Date());
@@ -148,6 +154,8 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
 								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 								expediente.setEstado(estado);
+								recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 								Oferta oferta = expediente.getOferta();
 								List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 								for (Oferta ofertaAux : listaOfertas) {

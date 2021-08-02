@@ -105,9 +105,9 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaVisitasDetalle vvisita");
 		
 		if(!Checks.esNulo(usuarioCartera)) {
-			hb.appendWhere("vvisita.idCartera = "+usuarioCartera.getCartera().getId());
+			HQLBuilder.addFiltroIgualQue(hb, "vvisita.idCartera", usuarioCartera.getCartera().getId().toString());
 			if(!Checks.esNulo(usuarioCartera.getSubCartera())) {
-				hb.appendWhere("vvisita.idSubcartera = "+usuarioCartera.getSubCartera().getId());
+				HQLBuilder.addFiltroIgualQue(hb, "vvisita.idSubcartera", usuarioCartera.getSubCartera().getId().toString());
 			}
 		}
 

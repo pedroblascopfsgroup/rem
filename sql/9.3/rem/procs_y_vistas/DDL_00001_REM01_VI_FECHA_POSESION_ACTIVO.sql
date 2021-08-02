@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Beltrán
---## FECHA_CREACION=20210512
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20210601
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-7883
+--## INCIDENCIA_LINK=REMVIP-9856
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Crear vista para obtener la fecha de posesión de los activos
@@ -13,6 +13,7 @@
 --## VERSIONES:
 --##        0.1 [REMVIP-7883] Versión inicial (Creación de la vista)
 --##        0.2 [REMVIP-9343] Actualización de condiciones
+--##        0.3 [REMVIP-9856] Juan Bautista Alfonso - Actualizacion condiciones para sareb
 --#########################################
 --*/
 
@@ -70,7 +71,7 @@ BEGIN
                         ELSE BIE_ADJ.BIE_ADJ_F_REA_POSESION
                             END
             WHEN ''02'' THEN
-                CASE WHEN SCR.DD_SCR_CODIGO IN (''138'',''151'',''152'')
+                CASE WHEN SCR.DD_SCR_CODIGO IN (''138'',''151'',''152'') OR CRA.DD_CRA_CODIGO = ''02''
                         THEN ADN.FECHA_POSESION
                         ELSE ADN.ADN_FECHA_TITULO
                             END
@@ -84,7 +85,7 @@ BEGIN
                             END
                     WHEN ''02'' THEN 
                         CASE 
-                            WHEN ACT_MATRIZ.DD_SCR_CODIGO IN (''138'',''151'',''152'')
+                            WHEN ACT_MATRIZ.DD_SCR_CODIGO IN (''138'',''151'',''152'') OR CRA.DD_CRA_CODIGO = ''02''
                                 THEN ACT_MATRIZ.FECHA_POSESION
                             ELSE ACT_MATRIZ.ADN_FECHA_TITULO
                             END 
@@ -92,6 +93,7 @@ BEGIN
                 END AS FECHA_POSESION
             FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
             INNER JOIN '|| V_ESQUEMA ||'.DD_SCR_SUBCARTERA SCR ON ACT.DD_SCR_ID = SCR.DD_SCR_ID AND SCR.BORRADO = 0
+            JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID=CRA.DD_CRA_ID AND CRA.BORRADO = 0
             LEFT JOIN '|| V_ESQUEMA ||'.ACT_AJD_ADJJUDICIAL AJD  ON AJD.ACT_ID = ACT.ACT_ID AND AJD.BORRADO = 0
             LEFT JOIN '|| V_ESQUEMA ||'.BIE_ADJ_ADJUDICACION BIE_ADJ  ON BIE_ADJ.BIE_ADJ_ID = AJD.BIE_ADJ_ID AND BIE_ADJ.BORRADO = 0
             LEFT JOIN '|| V_ESQUEMA ||'.ACT_ADN_ADJNOJUDICIAL ADN  ON ADN.ACT_ID = ACT.ACT_ID AND ADN.BORRADO = 0

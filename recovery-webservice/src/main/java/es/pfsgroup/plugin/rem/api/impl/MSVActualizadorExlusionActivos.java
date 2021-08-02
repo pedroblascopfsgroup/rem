@@ -19,6 +19,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 
@@ -32,6 +33,9 @@ public class MSVActualizadorExlusionActivos extends AbstractMSVActualizador impl
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	@Override
 	public String getValidOperation() {
@@ -57,6 +61,7 @@ public class MSVActualizadorExlusionActivos extends AbstractMSVActualizador impl
 			Integer exluirDwh = Integer.parseInt(exc.dameCelda(fila, COL_NUM.EXCLUIR_DWH));
 
 			activo.setFechaVentaExterna(fechaVenta);
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, false,false);
 			activo.setImporteVentaExterna(importeVenta);
 
 			if (exluirDwh == 1) {

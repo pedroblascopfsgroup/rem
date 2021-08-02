@@ -72,7 +72,23 @@ Ext.define('HreRem.model.OfertaActivo', {
     		name: 'ofertaExpress'
     	},
     	{
-    		name: 'gencat'
+    		name: 'gencat',
+			type: 'boolean'
+    	},
+    	{
+    		name: 'ventaCartera',
+			type: 'boolean'
+    	},
+    	{
+    		name: 'ofertaEspecial',
+			type: 'boolean'
+    	},
+    	{
+    		name: 'ventaSobrePlano',
+			type: 'boolean'
+    	},
+    	{
+    		name: 'codRiesgoOperacion'
     	}
 
     ],
@@ -80,6 +96,7 @@ Ext.define('HreRem.model.OfertaActivo', {
     proxy: {
 		type: 'uxproxy',
 		writeAll: true,
+		timeout: 60000,
 		api: {
             update: 'tramitacionofertas/saveOferta'
         },

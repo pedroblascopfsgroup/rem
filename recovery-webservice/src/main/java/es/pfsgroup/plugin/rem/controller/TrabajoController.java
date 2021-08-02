@@ -196,6 +196,10 @@ public class TrabajoController extends ParadiseJsonController {
 	private static final String ERROR_GD_NO_EXISTE_CONTENEDOR = "No existe contenedor para este trabajo. Se creará uno nuevo.";
 	private static final String COMBO_MODIFICACION_NO = "02";
 	private static final String DOC_FINALIZACION_TRABAJO = "Para la finalizacion es necesario adjuntar: ";
+	
+	public static final String ERROR_TRABAJO_NOT_EXISTS = "No existe el trabajo que esta buscando, pruebe con otro Nº de Trabajo";
+	public static final String ERROR_TRABAJO_NO_NUMERICO = "El campo introducido es de carácter numérico";
+	public static final String ERROR_GENERICO = "La operación no se ha podido realizar";
 
 		
 	/**
@@ -2233,6 +2237,32 @@ public class TrabajoController extends ParadiseJsonController {
 		model.put(RESPONSE_DATA_KEY, trabajoApi.getComboAreaPeticionaria());
 
 		return new ModelAndView("jsonView", model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getTrabajoExists(String numTrabajo, ModelMap model) {
+
+		try {
+			Long idTrabajo = trabajoApi.getIdByNumTrabajo(Long.parseLong(numTrabajo));
+			
+			if(!Checks.esNulo(idTrabajo)) {
+				model.put("success", true);
+				model.put("data", idTrabajo);
+			}else {
+				model.put("success", false);
+				model.put("error", ERROR_TRABAJO_NOT_EXISTS);
+			}
+		} catch (NumberFormatException e) {
+			model.put("success", false);
+			model.put("error", ERROR_TRABAJO_NO_NUMERICO);
+		} catch(Exception e) {
+			logger.error("error obteniendo el activo ",e);
+			model.put("success", false);
+			model.put("error", ERROR_GENERICO);
+		}
+		
+		return createModelAndViewJson(model);
 	}
 
 }

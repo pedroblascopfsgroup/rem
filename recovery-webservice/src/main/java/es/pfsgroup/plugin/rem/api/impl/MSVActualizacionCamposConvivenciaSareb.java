@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -555,6 +556,12 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					activoPerimetro.setMotivoAplicaPublicar(descripMot);
 				}else if ("183".equals(campo)) {
 					activoPerimetro.setAplicaComercializar(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)));
+					activoPerimetro.setCheckGestorComercial(BooleanUtils.toBoolean(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)),1,0));
+					if(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)) == 1) {
+						activoPerimetro.setFechaGestionComercial(new Date());
+					}else {
+						activoPerimetro.setFechaGestionComercial(null);
+					}
 				}else if ("184".equals(campo)) {
 					if (activoPerimetro.getAplicaComercializar() == 1) {
 						DDMotivoComercializacion motivoComercializacion = genericDao.get(DDMotivoComercializacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));

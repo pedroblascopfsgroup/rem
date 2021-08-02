@@ -315,6 +315,9 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		if (!Checks.esNulo(dtoAAF.getEsIntegradoDivHorizontalRegistro())) {
 			beanUtilNotNull.copyProperty(activoInfoRegistral, "divHorInscrito", dtoAAF.getEsIntegradoDivHorizontalRegistro() ? 1 : 0);
 		}
+		
+		DDSinSiNo noTiene = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDSinSiNo.CODIGO_NO));
+		activoInfoRegistral.setTieneAnejosRegistrales(noTiene);
 		genericDao.save(ActivoInfoRegistral.class, activoInfoRegistral);
 
 		// ActivoPropietarioActivo.
@@ -370,6 +373,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		// ActivoAdmisionDocumento - Calificación energética.
 		ActivoAdmisionDocumento admisionDocumento = new ActivoAdmisionDocumento();
 		admisionDocumento.setActivo(activo);
+		admisionDocumento.setNoValidado(true);
 		admisionDocumento.setConfigDocumento(configDocumento);
 		beanUtilNotNull.copyProperty(admisionDocumento, "tipoCalificacionEnergetica",
 				utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalificacionEnergetica.class, dtoAAF.getCalificacionCeeCodigo()));

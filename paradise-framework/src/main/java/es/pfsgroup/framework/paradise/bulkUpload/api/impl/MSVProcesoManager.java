@@ -355,4 +355,25 @@ public class MSVProcesoManager implements MSVProcesoApi {
 		return genericDao.get(MSVDDOperacionMasiva.class, genericDao.createFilter(FilterType.EQUALS, "id", idTipoOperacion));
 	}
 	
+	/**
+	 * Comprueba si un usuario tiene un perfil determinado por código de perfil.
+	 * @param código de perfil.
+	 * @param u usuario
+	 * @return
+	 */
+	@Override
+	public Boolean tienePerfilPorCodigo(String pefCodigo, Usuario usuario) {
+	
+		if (usuario == null || pefCodigo == null) {
+	        return false;
+	    }
+	
+	    for (Perfil p : usuario.getPerfiles()) {
+	    	if(pefCodigo.equals(p.getCodigo()))
+	    		return true;
+	    }
+	
+	    return false;
+	}
+	
 }	

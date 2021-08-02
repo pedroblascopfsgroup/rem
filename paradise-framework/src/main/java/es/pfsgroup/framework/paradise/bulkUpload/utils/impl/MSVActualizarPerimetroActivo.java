@@ -19,7 +19,10 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
@@ -73,11 +76,42 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 
 	public static final String VALID_MOTIVO_ADMISION = "msg.error.masivo.actualizar.perimetro.activo.admision.texto.no.relleno";
 	public static final String ADMISION_ERROR = "msg.error.masivo.actualizar.perimetro.activo.admision.texto.no.valido";
+
 	public static final String ON_EFECTOS_COMERCIALIZACION_ERROR = "msg.error.masivo.actualizar.perimetro.activo.on.efectos.comercializacion.texto.no.valido";
 	public static final String ON_VALOR_INTRODUCIDO = "msg.error.masivo.actualizar.perimetro.activo.on.efectos.comercializacion.texto.ya.introducido";
 
+	
+	
+	public static final String VALID_MOTIVO_RELLENO_CHECK_VISIBLE = "msg.error.masivo.actializar.perimetro.activo.motivo.gestion.check.visible";
+	public static final String VALID_MOTIVO_CHECK_MARCADO = "msg.error.masivo.actializar.perimetro.activo.motivo.gestion.check.ya.activado";
+	public static final String VALID_SI_CHECK_MARCADO ="msg.error.masivo.actializar.perimetro.activo.motivo.gestion.check.deberia.estar.relleno";
+	public static final String VALID_FECHA_VENTA_EXTERNA ="msg.error.masivo.actializar.perimetro.activo.fecha.venta.externa";
+	public static final String VALID_MACC_CON_CARGAS ="msg.error.masivo.actializar.perimetro.activo.macc.con.cargas";
+	public static final String VALID_ESTADO_EXPEDIENTE="msg.error.masivo.actializar.perimetro.activo.estado.expediente";
 	public static final String VALID_PERIMETRO_ESTA_HAYA = "msg.error.masivo.actualizar.perimetro.activo.ya.esta.haya";
-
+	
+	
+	//Reglas comercialización
+	public static final String VALID_AGRUPACION_RESTRINGIDA = "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.activo.no.principa.restringida";
+	public static final String VALID_VALORES_EXCLUSION= "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.valid.valores.exclusion";	
+	public static final String VALID_VALORES_CAMPOS_NO_MODIFICABLE_POR_USUARIOS = "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.no.modificable.usuarios";
+	public static final String VALID_ACTIVO_VENDIDO_RESERVADO_FIRMADO = "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.estados.expedientes";
+	public static final String VALID_ACTIVO_VENTA_EXTERNA = "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.fecha.venta.externa";
+	public static final String VALID_ACTIVO_ESTADO_PUBLICACION = "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.estado.publicacion";
+	public static final String VALID_ACTIVO_NO_COMERCIALIZABLE = "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.no.comercializable";
+	public static final String VALID_ACTIVO_NO_VPO = "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.vpo";
+	public static final String VALID_ACTIVO_PROPIETARIO_SOCIEDAD = "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.propietario.sociedad";
+	public static final String VALID_ACTIVO_DESTINO_COMERCIAL = "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.destino.comercial";
+	public static final String VALID_ACTIVO_CON_CARGAS = "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.con.cargas";
+	public static final String VALID_ACTIVO_ALQUILER_SOCIAL = "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.alquiler.social";
+	public static final String VALID_ACTIVO_OFERTAS_PENDIENTES ="msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.activo.ofertas.pendientes";
+	public static final String VALID_ACTIVO_GESTION = "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.activo.gestion";
+	public static final String VALID_MOTIVO_EXCLUIDO= "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.valid.motivo.exclusion";
+	public static final String VALID_SUBFASE_PUBLICACION= "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.subfase.publicado";
+	public static final String VALID_DESMARCAR_SIN_ERRORES= "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.desmarcar.sin.errores";
+	public static final String VALID_MOTIVO_GESTION_COMERCIAL = "msg.error.masivo.actializar.perimetro.activo.motivo.gestion.comercial.no.valido";
+	public static final String VALID_MOTIVO_GESTION_COMERCIAL_RELLENO = "msg.error.masivo.actializar.perimetro.activo.motivo.gestion.comercial.relleno.no.valido";
+	public static final String VALID_FASE_PUBLICACION= "msg.error.masivo.actualizar.perimetro.activo.visibilidad.gestion.comercial.fase.publicado";
 
 	//Posición de los datos
 	private	static final int DATOS_PRIMERA_FILA = 1;
@@ -99,7 +133,12 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final int COL_NUM_PERIMETRO_MACC = 16;
 	public static final int COL_NUM_ADMISION = 17;
 	public static final int COL_NUM_TXT_MOTIVO_ADMISION = 18;
-	public static final int COL_NUM_CHECK_ON_EFECTOS_COMERCIALIZACION=19;
+	public static final int COL_NUM_CHECK_ON_EFECTOS_COMERCIALIZACION = 19;
+	public static final int COL_NUM_VISIBLE_GESTION_COMERCIAL_SN = 20;
+	public static final int COL_NUM_MOTIVO_EXCLUSION_INCLUSION_PERIMETRO_VISIBLE = 21;
+	public static final int COL_NUM_EXCLUSION_VALIDACIONES = 22;
+	public static final int COL_NUM_FECHA_CAMBIO = 23;
+
 
 	// Codigos tipo comercializacion
 	public static final String CODIGO_VENTA = "01";
@@ -116,9 +155,15 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
     
     private static final String[] listaValidos = { "S", "N", "SI", "NO" };
     private static final String[] listaValidosPositivos = { "S", "SI" };
-    private static final String[] listaValidosNegativos = {"N","NO"};
- 
+
+    private static final String [] listaValidosNegativos = {"N" ,"NO"};
+
+    private static final String EDITAR_EXCLUIR_VALIDACIONES = "EDITAR_EXCLUIR_VALIDACIONES";
+
+    private static final String[]listaCodigosNoValidosSubfasePublicacion = {"15", "14", "12"};
+
     protected final Log logger = LogFactory.getLog(getClass());
+    
     
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -134,11 +179,16 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
+		
+	@Autowired
+	private ApiProxyFactory proxyFactory;
+	
 	
 	@Resource
     MessageService messageServices;
 	
 	private Integer numFilasHoja;
+	
 	
 
 	@Override
@@ -188,8 +238,6 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(messageServices.getMessage(VALID_ACTIVO_UA), isUA(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_CESION_USO), isActivoEnCesionDeUso(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_ALQUILER_SOCIAL), isActivoEnAlquilerSocial(exc));
-				
-				
 				mapaErrores.put(messageServices.getMessage(VALID_SEGMENTO), esSegmentoValido(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_SEGMENTO_CRA_SCR), perteneceSegmentoCraScr(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_SEGMENTO_MACC), esSegmentoMacc(exc));
@@ -199,9 +247,16 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(messageServices.getMessage(VALID_ACTIVO_NO_DIVARIAN), esSubcarteraDivarian(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_SEGMENTO_PERIMETRO_MACC), esPerimetorYSegmentoMACC(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_MOTIVO_ADMISION), estaRellenoCampoAdmision(exc));
-				mapaErrores.put(messageServices.getMessage(ADMISION_ERROR), isBooleanValidator(exc, COL_NUM_ADMISION));
-				mapaErrores.put(messageServices.getMessage(ON_EFECTOS_COMERCIALIZACION_ERROR), isBooleanValidator(exc, COL_NUM_CHECK_ON_EFECTOS_COMERCIALIZACION));
 				mapaErrores.put(messageServices.getMessage(ON_VALOR_INTRODUCIDO), isActivoObraNuevaConEfectosComercializacion(exc));
+				mapaErrores.put(messageServices.getMessage(ON_EFECTOS_COMERCIALIZACION_ERROR), isBooleanValidator(exc, COL_NUM_CHECK_ON_EFECTOS_COMERCIALIZACION));
+				mapaErrores.put(messageServices.getMessage(ADMISION_ERROR), isBooleanValidator(exc, COL_NUM_ADMISION));	
+
+	
+				this.erroresComercializacion(exc,mapaErrores);
+
+				//ESTA DEBE SER LA ÚLTIMA SIEMPRE (sacarTodosLosErroresJerarquicos)
+				this.sacarTodosLosErroresJerarquicos(exc, mapaErrores);
+
 				for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
 					if (!registro.getValue().isEmpty()) {
 						dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -215,6 +270,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		
 		return dtoValidacionContenido;
 	}
+
 
 	protected ResultadoValidacion validaContenidoCelda(String nombreColumna, String contenidoCelda, MSVBusinessValidators contentValidators) {
 		ResultadoValidacion resultado = new ResultadoValidacion();
@@ -452,6 +508,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();
 					valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
 					valorConPublicar = exc.dameCelda(i, COL_NUM_CON_PUBLICAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_PUBLICAR_SN).trim().toUpperCase();
+					
 					// Valida valores correctos de los campos S/N/<nulo>
 					if(!("S".equals(valorEnPerimetro) || "N".equals(valorEnPerimetro) || "-".equals(valorEnPerimetro))
 							|| !("S".equals(valorConGestion) || "N".equals(valorConGestion) || "-".equals(valorConGestion))
@@ -608,6 +665,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		try{
 			String valorConFormalizar = "-";
 			for(int i=1; i<this.numFilasHoja;i++){
+				if(!Checks.esNulo(exc.dameCelda(i,COL_NUM_VISIBLE_GESTION_COMERCIAL_SN))) {
 				
 				try {
 					valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
@@ -622,6 +680,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					}
 				} catch (ParseException e) {
 					listaFilas.add(i);
+				}
 				}
 			}
 		} catch (Exception e) {
@@ -669,6 +728,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
+					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
+					if((!Checks.esNulo(celdaExcluirValidaciones) && Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase()))) {
 					String valorConFormalizar= exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
 					String valorEnPerimetro = exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).trim().toUpperCase();
 					String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();	
@@ -676,6 +737,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 						
 						if(particularValidator.existeActivoConExpedienteComercialVivo(exc.dameCelda(i, 0)))
 							listaFilas.add(i);
+					}
 					}
 				} catch (ParseException e) {
 					listaFilas.add(i);
@@ -872,8 +934,11 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(particularValidator.isActivoEnAlquilerSocial(exc.dameCelda(i, 0)))
+					String celdaExclusion = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
+					if(Arrays.asList(listaValidosNegativos).contains(celdaExclusion.toUpperCase())) {
+					if(particularValidator.isActivoEnPerimetroAlquilerSocial(exc.dameCelda(i, 0)))
 						listaFilas.add(i);
+					}
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
@@ -1088,48 +1153,278 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		
 		return listaFilas;
 	}
+
 	
-	private List<Integer> isActivoObraNuevaConEfectosComercializacion(MSVHojaExcel exc){
-		
-		
-	List<Integer> listaFilas = new ArrayList<Integer>();
-	
-	
-	try{
-		for(int i=1; i<this.numFilasHoja;i++){
-			try {
-				String celdaCOEfectos = exc.dameCelda(i, COL_NUM_CHECK_ON_EFECTOS_COMERCIALIZACION);
-				String celdaActivo = exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
-				if(Arrays.asList(listaValidos).contains(celdaCOEfectos.toUpperCase())
-						&& celdaCOEfectos!=null
-						&& !celdaCOEfectos.isEmpty() ){
-					if(particularValidator.existeActivoConONMarcadoSi(celdaActivo)							
-								&& Arrays.asList(listaValidosPositivos).contains(celdaCOEfectos.toUpperCase())) {
-						listaFilas.add(i);
-					}else if(!particularValidator.existeActivoConONMarcadoSi(celdaActivo)							
-							&& Arrays.asList(listaValidosNegativos).contains(celdaCOEfectos.toUpperCase())) {
-						listaFilas.add(i);
-					}
-				}
-				
-				
-			} catch (ParseException e) {
-				listaFilas.add(i);
-			}
-		}
-	} catch (IllegalArgumentException e) {
-		listaFilas.add(0);
-		e.printStackTrace();
-	} catch (IOException e) {
-		listaFilas.add(0);
-		e.printStackTrace();
-	}
-	return listaFilas;
-	
-	}
 
 	@Override
 	public Integer getNumFilasHoja() {
 		return this.numFilasHoja;
-	}		
-}
+	}
+	
+
+	
+	
+	private void modificarMapaErrores(Map<String,List<Integer>> mapaErrores, int fila, List<String> listaErrores) {
+		List<Integer> aux = new ArrayList<Integer>();
+		StringBuilder sb = new StringBuilder("");
+		aux.add(fila);
+		for (String error : listaErrores) {
+			sb.append(error);
+		}
+		String key = sb.toString();
+		if(mapaErrores.containsKey(key)) {
+			mapaErrores.get(key).add(fila);
+		}else {
+			mapaErrores.put(key, aux);
+		}
+	}
+	
+	private void sacarTodosLosErroresJerarquicos(MSVHojaExcel exc, Map<String,List<Integer>> mapaErrores) {
+		List<String> listaErroresCompleta = new ArrayList<String>(); 
+		boolean pararComprobaciones = false;	
+		Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		boolean usuHasFunction = particularValidator.userHasFunction(EDITAR_EXCLUIR_VALIDACIONES,usu.getId());
+		List<String> listaCodSubfase = new ArrayList<String>();
+		listaCodSubfase.addAll( Arrays.asList(listaCodigosNoValidosSubfasePublicacion));
+		//List<String> listaCodSubfase = Arrays.asList(listaCodigosNoValidosSubfasePublicacion);
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				listaCodSubfase.clear();
+				listaCodSubfase.addAll( Arrays.asList(listaCodigosNoValidosSubfasePublicacion));
+				try {
+					String visibleGestionComercial = exc.dameCelda(i,COL_NUM_VISIBLE_GESTION_COMERCIAL_SN);
+					String celdaExcluirValidaciones = exc.dameCelda(i, COL_NUM_EXCLUSION_VALIDACIONES);
+					String fechaCambio = exc.dameCelda(i,COL_NUM_FECHA_CAMBIO);
+					String motivoExclusionValidaciones = exc.dameCelda(i, COL_NUM_MOTIVO_EXCLUSION_INCLUSION_PERIMETRO_VISIBLE);
+					
+				
+					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
+					List<String> listaErroresParaMarcar = new ArrayList<String>();
+					
+					if(!Checks.esNulo(celdaExcluirValidaciones) || !Checks.esNulo(visibleGestionComercial) || !Checks.esNulo(fechaCambio) || !Checks.esNulo(motivoExclusionValidaciones) ) {
+						if(!usuHasFunction) {
+							listaErroresCompleta.add(messageServices.getMessage(VALID_VALORES_CAMPOS_NO_MODIFICABLE_POR_USUARIOS));
+							pararComprobaciones = true;
+						}
+						if(!pararComprobaciones) {
+							if(particularValidator.activoEnAgrupacionRestringida(Long.parseLong(activo)) && !particularValidator.activoPrincipalEnAgrupacionRestringida(activo)) {
+								listaErroresCompleta.add(messageServices.getMessage(VALID_AGRUPACION_RESTRINGIDA));
+							}
+							if(Checks.esNulo(visibleGestionComercial) && !Checks.esNulo(fechaCambio)) {
+								listaErroresCompleta.add(messageServices.getMessage(VALID_SI_CHECK_MARCADO));
+							}
+							if(!Checks.esNulo(motivoExclusionValidaciones) && !particularValidator.existeCodigoMotivoAdmision(motivoExclusionValidaciones)) {
+								listaErroresCompleta.add(messageServices.getMessage(VALID_MOTIVO_GESTION_COMERCIAL));
+							}
+							if(!Checks.esNulo(motivoExclusionValidaciones) && Checks.esNulo(celdaExcluirValidaciones)) {
+								listaErroresCompleta.add(messageServices.getMessage(VALID_MOTIVO_GESTION_COMERCIAL_RELLENO));
+							}
+						}
+					}
+					if(!Checks.esNulo(celdaExcluirValidaciones) && !pararComprobaciones) {
+						if(!Arrays.asList(listaValidos).contains(celdaExcluirValidaciones.toUpperCase())) {
+							listaErroresCompleta.add(messageServices.getMessage(VALID_VALORES_EXCLUSION));
+						}
+						if(Arrays.asList(listaValidosPositivos).contains(celdaExcluirValidaciones.toUpperCase()) && Checks.esNulo(motivoExclusionValidaciones)) {
+							listaErroresCompleta.add(messageServices.getMessage(VALID_MOTIVO_RELLENO_CHECK_VISIBLE));
+						}
+						
+					}
+					
+					if(!Checks.esNulo(visibleGestionComercial) && !pararComprobaciones) {
+						Boolean excluirValidaciones = null;
+						if(!Arrays.asList(listaValidos).contains(visibleGestionComercial.toUpperCase())) {
+							listaErroresCompleta.add(messageServices.getMessage(VALID_VALORES_EXCLUSION));
+						}
+						if(Checks.esNulo(celdaExcluirValidaciones)) {
+							excluirValidaciones= particularValidator.getExcluirValidaciones(activo);
+						}
+						if(Arrays.asList(listaValidosNegativos).contains(celdaExcluirValidaciones.toUpperCase()) || (excluirValidaciones != null && !excluirValidaciones)) {
+							if(particularValidator.isActivoSareb(activo)) {
+								String comercializar = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN);
+								if(!Checks.esNulo(comercializar)) {
+									boolean comercializarBool = false;
+									boolean visibilidadBool = false;
+									if(Arrays.asList(listaValidosPositivos).contains(comercializar)) {
+										comercializarBool = true;
+									}
+									if(Arrays.asList(listaValidosPositivos).contains(visibleGestionComercial)) {
+										visibilidadBool = true;
+									}
+									if(comercializarBool != visibilidadBool) {
+										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_NO_COMERCIALIZABLE));
+									}
+								}else if(!particularValidator.aplicaComercializar(activo)) {
+									listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_NO_COMERCIALIZABLE));
+								}
+							}else if(!particularValidator.isActivoPublicadoDependiendoSuTipoComercializacion(activo)) {
+								if(particularValidator.isActivoDestinoComercialSoloAlquiler(activo)) {
+									listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_ESTADO_PUBLICACION));
+									pararComprobaciones = true;
+								}
+								if(!pararComprobaciones) {
+									if(particularValidator.isActivoBankia(activo)) {
+										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_ESTADO_PUBLICACION));
+										pararComprobaciones = true;	
+									}else if(particularValidator.activoBBVAPerteneceSociedadParticipada(activo)) {
+										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_PROPIETARIO_SOCIEDAD));
+									}else if(particularValidator.isActivoCajamar(activo)) {
+										if(particularValidator.isCheckVisibleGestionComercial(activo)) {
+											listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_GESTION));
+										}
+										if(particularValidator.estadoPublicacionCajamarPerteneceVPOYDistintoPublicado(activo)) {
+											listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_NO_VPO));
+										}
+									}
+									
+								}
+								if(!pararComprobaciones) {
+									if(!particularValidator.tieneFechaVentaExterna(activo)){
+										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_VENTA_EXTERNA));
+									}
+									
+									if(!particularValidator.aplicaComercializar(activo)) {
+										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_NO_COMERCIALIZABLE));
+									}
+									
+									if(particularValidator.isActivoEnPerimetroAlquilerSocial(activo)) {
+										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_ALQUILER_SOCIAL));
+									}
+									
+									boolean activoCerberus = particularValidator.isActivoCerberus(activo);
+									if(activoCerberus) {
+										listaCodSubfase.add("28");
+										if(!particularValidator.validacionSubfasePublicacion(activo, listaCodSubfase)) {
+											listaErroresParaMarcar.add(messageServices.getMessage(VALID_SUBFASE_PUBLICACION));
+										}
+									}else {
+										
+										if(!particularValidator.validacionSubfasePublicacion(activo, listaCodSubfase)) {
+											listaErroresParaMarcar.add(messageServices.getMessage(VALID_SUBFASE_PUBLICACION));
+										}
+									}
+									
+									if(particularValidator.estadoExpedienteComercial(activo)) {
+										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_VENDIDO_RESERVADO_FIRMADO));
+									}
+									if(activoCerberus && particularValidator.tieneVigenteFasePublicacionIII(activo)) {
+										listaErroresParaMarcar.add(messageServices.getMessage(VALID_FASE_PUBLICACION));
+									}
+								}
+							}
+	
+							if(Arrays.asList(listaValidosNegativos).contains(visibleGestionComercial)) {  
+								if(listaErroresParaMarcar.isEmpty()) {
+									listaErroresParaMarcar.add(messageServices.getMessage(VALID_DESMARCAR_SIN_ERRORES));
+								}else {
+									listaErroresParaMarcar.clear();
+								}
+								if(!particularValidator.activoConOfertasTramitadas(activo)) {
+									listaErroresCompleta.add(messageServices.getMessage(VALID_ACTIVO_OFERTAS_PENDIENTES));
+								}
+							}
+							
+							listaErroresCompleta.addAll(listaErroresParaMarcar);
+						}	
+					}
+					
+					
+				}catch (ParseException e) {
+					listaErroresCompleta.add(e.getMessage());
+				}
+				if(!listaErroresCompleta.isEmpty()) {
+					this.modificarMapaErrores(mapaErrores, i, listaErroresCompleta);
+				}
+				
+				listaErroresCompleta.clear();
+				pararComprobaciones = false;
+			}
+
+		}catch (IllegalArgumentException e) {
+			this.sacarErroresCatchGenericos(e.getMessage(), mapaErrores);
+			e.printStackTrace();
+		} catch (IOException e) {
+			this.sacarErroresCatchGenericos(e.getMessage(), mapaErrores);
+			e.printStackTrace();
+		}
+	}
+	
+
+
+	
+	
+	private List<Integer> isActivoObraNuevaConEfectosComercializacion(MSVHojaExcel exc){
+				
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					String celdaCOEfectos = exc.dameCelda(i, COL_NUM_CHECK_ON_EFECTOS_COMERCIALIZACION);
+					String celdaActivo = exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
+					if(!Checks.esNulo(celdaCOEfectos) && Arrays.asList(listaValidos).contains(celdaCOEfectos.toUpperCase())){
+						if(particularValidator.existeActivoConONMarcadoSi(celdaActivo)							
+									&& Arrays.asList(listaValidosPositivos).contains(celdaCOEfectos.toUpperCase())) {
+							listaFilas.add(i);
+						}else if(!particularValidator.existeActivoConONMarcadoSi(celdaActivo)							
+								&& Arrays.asList(listaValidosNegativos).contains(celdaCOEfectos.toUpperCase())) {
+							listaFilas.add(i);
+						}
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+		
+
+
+	private void sacarErroresCatchGenericos(String error, Map<String,List<Integer>> mapaErrores ) {
+		List<String> errorCatch = new ArrayList<String>();
+		errorCatch.add(error);
+		this.modificarMapaErrores(mapaErrores, 0, errorCatch);
+	}
+	
+	private void erroresComercializacion(MSVHojaExcel exc, Map<String,List<Integer>> mapaErrores) {
+		List<String> listaErroresCompleta = new ArrayList<String>(); 
+		
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					String activo= exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
+					String comercializar = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN);
+					if(!Checks.esNulo(comercializar) && particularValidator.isActivoSareb(activo) && particularValidator.activoEnAgrupacionRestringida(Long.parseLong(activo)) 
+					&& !particularValidator.activoPrincipalEnAgrupacionRestringida(activo)) {
+						listaErroresCompleta.add(messageServices.getMessage(VALID_AGRUPACION_RESTRINGIDA));
+					}
+				}catch (ParseException e) {
+					listaErroresCompleta.add(e.getMessage());
+				}
+				
+				if(!listaErroresCompleta.isEmpty()) {
+					this.modificarMapaErrores(mapaErrores, i, listaErroresCompleta);
+				}
+				
+				listaErroresCompleta.clear();
+			}
+			
+		}catch (IllegalArgumentException e) {
+			this.sacarErroresCatchGenericos(e.getMessage(), mapaErrores);
+			e.printStackTrace();
+		} catch (IOException e) {
+			this.sacarErroresCatchGenericos(e.getMessage(), mapaErrores);
+			e.printStackTrace();
+		}
+	}
+	
+}		
+

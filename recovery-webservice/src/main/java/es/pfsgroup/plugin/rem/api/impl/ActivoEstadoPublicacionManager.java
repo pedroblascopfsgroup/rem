@@ -23,6 +23,7 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -33,6 +34,7 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
@@ -48,6 +50,7 @@ import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -79,6 +82,7 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VFechasPubCanales;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.VSinInformeAprobadoRem;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
@@ -187,6 +191,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	
 	@Autowired
 	private ActivoAgrupacionDao activoAgrupacionDao;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
 	@Override
 	public DtoDatosPublicacionActivo getDatosPublicacionActivo(Long idActivo) {
@@ -488,9 +498,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	// Comprobación mínima.
 	private Boolean isInformeAprobado(Long idActivo) {
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
-		VCondicionantesDisponibilidad vcd = genericDao.get(VCondicionantesDisponibilidad.class, filter);
+		VSinInformeAprobadoRem vsi = genericDao.get(VSinInformeAprobadoRem.class, filter);
 
-		return !Checks.esNulo(vcd) && !vcd.getSinInformeAprobadoREM();
+		return !Checks.esNulo(vsi) && !vsi.getSinInformeAprobadoREM();
 	}
 
 	// Comprobación mínima.
@@ -760,7 +770,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	@Transactional
 	public Boolean actualizarDatosEstadoActualPublicaciones(DtoDatosPublicacionActivo dto, List<ActivoPublicacion> activosPublicacion) { //
 		try {
+			List<Long> listaIdActivos = new ArrayList<Long>();
 			for(ActivoPublicacion activoPublicacion : activosPublicacion) {
+				listaIdActivos.add(activoPublicacion.getActivo().getId());
 				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) {
 					beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionVenta", utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivosOcultacion.class,
 							dto.getMotivoOcultacionVentaCodigo()));
@@ -856,26 +868,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					beanUtilNotNull.copyProperty(activoPublicacion, "motivoPublicacionAlquiler", dto.getMotivoPublicacionAlquiler());
 				}
 				
-				activoPublicacionDao.save(activoPublicacion);
-				
-				if(Checks.esNulo(dto.getOcultarVenta()) && !Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) {
-					ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
-					BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
-					activoPublicacionHistorico.setFechaInicioVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
-					activoPublicacionHistorico.setFechaInicioAlquiler(null);
-					activoPublicacionHistorico.setAuditoria(null);
-					activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
-				}
-				
-				if(Checks.esNulo(dto.getOcultarAlquiler()) && !Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo())) {
-					ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
-					BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
-					activoPublicacionHistorico.setFechaInicioVenta(null);
-					activoPublicacionHistorico.setFechaInicioAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
-					activoPublicacionHistorico.setAuditoria(null);
-					activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
-				}
-				
 				if(!Checks.esNulo(dto.getFechaRevisionPublicacionesVenta())) {
 					activoPublicacion.setFechaRevisionPublicacionesVenta(dto.getFechaRevisionPublicacionesVenta());
 				}
@@ -887,8 +879,57 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					DDPortal portal = genericDao.get(DDPortal.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCanalDePublicacion()));
 					activoPublicacion.setPortal(portal);
 				}
-
+				
+				DDEstadoPublicacionAlquiler estadoPublicacionAlquiler= null;
+				if(activoPublicacion.getCheckPublicarAlquiler() != null && activoPublicacion.getCheckPublicarAlquiler()) {
+					if(activoPublicacion.getCheckOcultarAlquiler() != null && activoPublicacion.getCheckOcultarAlquiler()) {
+						estadoPublicacionAlquiler = (DDEstadoPublicacionAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionAlquiler.class,  DDEstadoPublicacionAlquiler.CODIGO_OCULTO_ALQUILER);
+					} else {
+						estadoPublicacionAlquiler = (DDEstadoPublicacionAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionAlquiler.class,  DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER);
+					}				
+				}else {
+					estadoPublicacionAlquiler = (DDEstadoPublicacionAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionAlquiler.class,  DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER);
+				}
+				
+				DDEstadoPublicacionVenta estadoPublicacionVenta= null;
+				if(activoPublicacion.getCheckPublicarVenta() != null && activoPublicacion.getCheckPublicarVenta()) {
+					if(activoPublicacion.getCheckOcultarVenta() != null && activoPublicacion.getCheckOcultarVenta()) {
+						estadoPublicacionVenta = (DDEstadoPublicacionVenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionVenta.class,  DDEstadoPublicacionVenta.CODIGO_OCULTO_VENTA);
+					}else {
+						estadoPublicacionVenta = (DDEstadoPublicacionVenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionVenta.class,  DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA);
+					}
+				}else {
+					estadoPublicacionVenta = (DDEstadoPublicacionVenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionVenta.class,  DDEstadoPublicacionVenta.CODIGO_NO_PUBLICADO_VENTA);
+				}
+				
+				activoPublicacion.setEstadoPublicacionAlquiler(estadoPublicacionAlquiler);
+				activoPublicacion.setEstadoPublicacionVenta(estadoPublicacionVenta);
+				
+				activoPublicacionDao.save(activoPublicacion);
+				
+				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo())) {
+					registrarHistoricoPublicacion(activoPublicacion, dto);
+					
+					if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) {
+						ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
+						BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
+						activoPublicacionHistorico.setFechaInicioVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
+						activoPublicacionHistorico.setFechaInicioAlquiler(null);
+						activoPublicacionHistorico.setAuditoria(null);
+						activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
+					}
+					if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo())) {
+						ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
+						BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
+						activoPublicacionHistorico.setFechaInicioVenta(null);
+						activoPublicacionHistorico.setFechaInicioAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
+						activoPublicacionHistorico.setAuditoria(null);
+						activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
+					}
+				}
 			}
+			
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(listaIdActivos);
 		} catch (IllegalAccessException e) {
 			logger.error("Error al actualizar el estado actual de publicacion, error: ", e);
 			return false;
@@ -1444,13 +1485,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(readOnly = false)
 	public Boolean saveFasePublicacionActivo(DtoFasePublicacionActivo dto){
 		HistoricoFasePublicacionActivo fasePublicacionActivoVigente = activoPublicacionDao.getFasePublicacionVigentePorIdActivo(dto.getIdActivo());
 		DDFasePublicacion fasePublicacion = new DDFasePublicacion();
+		List<Long> activosPropagados = new ArrayList<Long>();
 
-
-		
+	
 		if (!Checks.esNulo(dto.getFasePublicacionCodigo()) || !Checks.esNulo(dto.getSubfasePublicacionCodigo())) {
 			ActivoTransicionesFasesPublicacion transicion = null;
 			
@@ -1503,7 +1544,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				if (!Checks.esNulo(dto.getSubfasePublicacionCodigo())) {
 					Filter filtroSubfaseNueva = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getSubfasePublicacionCodigo());
 					DDSubfasePublicacion subfasePublicacionNueva = genericDao.get(DDSubfasePublicacion.class, filtroSubfaseNueva);
-					nuevaFasePublicacionActivo.setSubFasePublicacion(subfasePublicacionNueva);
+					nuevaFasePublicacionActivo.setSubFasePublicacion(subfasePublicacionNueva);		
 				}
 				
 				if (!Checks.esNulo(dto.getComentario())) {
@@ -1511,7 +1552,28 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				}
 				
 				genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFasePublicacionActivo);
-				enviarCorreoFasePublicacion(dto);
+				
+				
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(activo, null, null, false);
+				
+				if(activoApi.isActivoPrincipalAgrupacionRestringida(dto.getIdActivo())){
+					ActivoAgrupacionActivo actAgr = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());
+					if(actAgr != null && actAgr.getAgrupacion() != null) {
+						List<ActivoAgrupacionActivo> activoAgrList = activoAgrupacionActivoDao.getListActivoAgrupacionActivoByAgrupacionID(actAgr.getAgrupacion().getId());
+						List<Activo> activos = new ArrayList<Activo>();
+						for (ActivoAgrupacionActivo activoAgr : activoAgrList) {
+							if (activoAgr.getActivo() != activo) {
+								activos.add(activoAgr.getActivo());
+							}
+						}
+						
+						String numAgr = actAgr.getAgrupacion().getNumAgrupRem().toString();
+						dto.setNumAgrupacionRestringida(numAgr);
+						activosPropagados = propagarFasesPublicacionYRecalcularPerimetroVisibilidad(nuevaFasePublicacionActivo, activos, numAgr);
+					}
+				}
+				
+				enviarCorreoFasePublicacion(dto, activosPropagados);
 			} else {
 				throw new JsonViewerException("Esta transición no está permitida");
 			}
@@ -1526,7 +1588,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		return true;
 	}
 
-	private void enviarCorreoFasePublicacion(DtoFasePublicacionActivo dto) {
+	private void enviarCorreoFasePublicacion(DtoFasePublicacionActivo dto, List<Long> activosPropagados) {
 		String fasePublicacionCod = dto.getFasePublicacionCodigo();
 		String subFasePublicacionCod = dto.getSubfasePublicacionCodigo();
 		Activo activo = activoApi.get(dto.getIdActivo());
@@ -1534,10 +1596,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		String cuerpo = "";
 		ArrayList<String> mailsPara = new ArrayList<String>();
 		ArrayList<String> mailsCC = new ArrayList<String>();
+		
 		if( !Checks.esNulo(activo)) {
 			if(DDFasePublicacion.CODIGO_FASE_0_CALIDAD_PENDIENTE.equals(fasePublicacionCod) && DDSubfasePublicacion.CODIGO_CALIDAD_PENDIENTE.equals(subFasePublicacionCod)) {
 				cuerpo = String.format("El activo "+activo.getNumActivo()+" ha entrado en la siguiente fase de publicación: Fase 0: Calidad pendiente.");
-				
 				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_PUBLICACION, mailsPara, mailsCC, false);
 				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, false);
 				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO, mailsPara, mailsCC, false);
@@ -1549,6 +1611,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				}
 			}
 			if(!Checks.estaVacio(mailsPara) || !Checks.estaVacio(mailsCC)) {
+				cuerpo = cuerpo + crearCuerpoCorreoPropagarFase(activosPropagados, dto.getNumAgrupacionRestringida());
 				notificationActivoManager.sendMailFasePublicacion(activo, asunto,cuerpo,mailsPara,mailsCC);
 			}			
 		}
@@ -3416,4 +3479,72 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		return listCalidadDatoPub;
 	}
 	
+	private List<Long> propagarFasesPublicacionYRecalcularPerimetroVisibilidad(HistoricoFasePublicacionActivo nuevaFasePublicacionActivo,  List<Activo> activos, String numAgr) {
+		
+		List<Long> numeroActivosApropagar = new ArrayList<Long>();
+		String numActivoPStr = nuevaFasePublicacionActivo.getActivo().getNumActivo().toString();
+		String comentario = this.crearComentarioPropagarFase(numActivoPStr, numAgr, nuevaFasePublicacionActivo.getComentario());
+		PerimetroActivo perimetroActivoP = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", nuevaFasePublicacionActivo.getActivo().getId()));
+		
+		for (Activo activo : activos) {
+			HistoricoFasePublicacionActivo faseActivoAgr = activoPublicacionDao.getFasePublicacionVigentePorIdActivo(activo.getId());
+			if(faseActivoAgr != null) {
+				faseActivoAgr.setFechaFin(new Date());
+				genericDao.save(HistoricoFasePublicacionActivo.class, faseActivoAgr);
+			}
+				
+			HistoricoFasePublicacionActivo nuevaFasePublicacionActivoR = new HistoricoFasePublicacionActivo();
+			
+			nuevaFasePublicacionActivoR.setActivo(activo);
+			nuevaFasePublicacionActivoR.setFechaInicio(nuevaFasePublicacionActivo.getFechaInicio());
+			nuevaFasePublicacionActivoR.setUsuario(nuevaFasePublicacionActivo.getUsuario());
+			nuevaFasePublicacionActivoR.setFasePublicacion(nuevaFasePublicacionActivo.getFasePublicacion());
+			nuevaFasePublicacionActivoR.setSubFasePublicacion(nuevaFasePublicacionActivo.getSubFasePublicacion());		
+			nuevaFasePublicacionActivoR.setComentario(comentario);
+			genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFasePublicacionActivoR);
+			
+			PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+			
+			perimetroActivo.setCheckGestorComercial( perimetroActivoP.getCheckGestorComercial());	
+			perimetroActivo.setFechaGestionComercial(perimetroActivoP.getFechaGestionComercial());
+			perimetroActivo.setExcluirValidaciones(perimetroActivoP.getExcluirValidaciones());
+			perimetroActivo.setMotivoGestionComercial(perimetroActivoP.getMotivoGestionComercial());
+			
+			genericDao.save(PerimetroActivo.class, perimetroActivo);
+			
+			numeroActivosApropagar.add(activo.getNumActivo());
+		}
+			
+		return numeroActivosApropagar;	
+	}
+	
+	private String crearComentarioPropagarFase(String numActPr, String numAgr, String comentarioP) {
+		StringBuilder sb =  new StringBuilder("Cambio realizado por la propagación de los cambios del activo ");
+		sb.append(numActPr);
+		sb.append(", activo principal de la agrupación restringida ");
+		sb.append(numAgr);
+		if(comentarioP != null && !comentarioP.isEmpty()) {
+			sb.append(": " + comentarioP);
+		}
+		
+		return sb.toString();
+	}
+	
+	private String crearCuerpoCorreoPropagarFase(List<Long> activosPropagados, String numAgrupacion) {
+		StringBuilder sb = new StringBuilder("");
+		
+		if(activosPropagados != null && !activosPropagados.isEmpty()) {
+			sb.append("Este cambio se ha propagado a los siguientes activos:");
+			for (int i = 0; i<= activosPropagados.size(); i++) {
+				sb.append(activosPropagados.get(i).toString());
+				if(i != activosPropagados.size()-1) {
+					sb.append(", ");
+				}
+			}
+			sb.append(". Pertenecientes a la agrupación: ");
+			sb.append(numAgrupacion);
+		}
+		
+		return sb.toString();
+	}
 }

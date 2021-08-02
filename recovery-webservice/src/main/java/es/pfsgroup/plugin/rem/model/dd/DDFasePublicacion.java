@@ -106,5 +106,13 @@ public class DDFasePublicacion implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
-
+	public static boolean isFaseTres(DDFasePublicacion fase) {
+		boolean esLaMisma = false;
+		
+		if(fase != null && CODIGO_FASE_III_PENDIENTE_INFORMACION.equals(fase.getCodigo())) {
+			esLaMisma = true;
+		}
+		
+		return esLaMisma;
+	}
 }

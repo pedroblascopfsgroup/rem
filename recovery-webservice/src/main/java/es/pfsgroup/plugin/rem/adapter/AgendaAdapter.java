@@ -61,6 +61,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.avanza.tareas.generic.dao.AvanzaTareasGenericDao;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
@@ -168,6 +169,9 @@ public class AgendaAdapter {
 	
 	@Autowired
 	private ActivoPatrimonioDao patrimonioDao;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	public Page getListTareas(DtoTareaFilter dtoTareaFiltro){
 		DtoTarea dto = new DtoTarea();
@@ -416,7 +420,7 @@ public class AgendaAdapter {
 		return true;
 	}
 	
-	private String validaFormatosTFI(List<GenericFormItem> campos, Map<String, String[]> valores) {
+	private String validaFormatosTFI(List<GenericFormItem> campos, Map<String, String[]> valores) throws Exception{
 		String errores = "";
 		for (GenericFormItem tfi : campos) {
 			if(!Checks.esNulo(valores.get(tfi.getNombre()))) {
@@ -429,7 +433,7 @@ public class AgendaAdapter {
 								errores= errores + "El valor del diccionario "+tfi.getNombre()+" debe ser un 01 o 02. ";
 							}
 						}else if("DDMotivoAnulacionExpediente".equals(tfi.getValuesBusinessOperation())) {
-							Filter filtroCodigo = genericDao.createFilter(FilterType.EQUALS, "codigo", tfi.getValue());
+							Filter filtroCodigo = genericDao.createFilter(FilterType.EQUALS, "codigo", valor[0]);
 							Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 							DDMotivoAnulacionExpediente diccionario = genericDao.get(DDMotivoAnulacionExpediente.class, filtroCodigo, filtroBorrado);
 							if(Checks.esNulo(diccionario)) {
@@ -446,7 +450,7 @@ public class AgendaAdapter {
 							errores= errores + "El dato "+tfi.getLabel()+" no es una fecha correcta. ";
 						}
 						dateValor = valor[0];
-						if(hoyString.compareTo(dateValor) <= 0) {
+						if(hoyString.compareTo(dateValor) < 0) {
 							errores= errores + "La fecha "+tfi.getLabel()+" es mayor que hoy. ";
 						}
 					}else if("numberfield".equals(tfi.getType())) {
@@ -833,6 +837,7 @@ public class AgendaAdapter {
 				ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()));
 				if(! Checks.esNulo(eco)) {
 					eco.setEstado(anuladoExpedienteComercial);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(eco.getOferta(), anuladoExpedienteComercial);
 					Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();					
 					eco.setPeticionarioAnulacion(usuarioLogado.getUsername());
 					eco.setFechaAnulacion(new Date());

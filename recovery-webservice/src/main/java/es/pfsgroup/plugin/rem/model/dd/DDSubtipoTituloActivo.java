@@ -39,7 +39,9 @@ public class DDSubtipoTituloActivo implements Auditable, Dictionary {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	public static final String subtipoNotarialCompra = "03";
+	public static final String subtipoNotarialDacion = "04";
+	
 	@Id
 	@Column(name = "DD_STA_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDSubtipoTituloActivoGenerator")

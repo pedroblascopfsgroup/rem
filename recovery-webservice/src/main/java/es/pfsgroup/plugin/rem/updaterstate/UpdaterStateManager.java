@@ -165,7 +165,8 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		
 		if(activoApi.isActivoVendido(activo)) {
 			codigo = DDSituacionComercial.CODIGO_VENDIDO;
-		}else if (!Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion()) && (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) 
+		}else if (!Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion()) && ((DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) ||
+				(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())))
 				&& (!activoApi.isActivoMatriz(activo.getId()) && (activoApi.isActivoAlquilado(activo) || activoApi.isOcupadoConTituloOrEstadoAlquilado(activo)) 
 				|| (activoApi.isActivoMatriz(activo.getId()) && activoApi.isAlquiladoTotalmente(activo.getId())))) {
 			codigo = DDSituacionComercial.CODIGO_ALQUILADO;

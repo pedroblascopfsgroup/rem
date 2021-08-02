@@ -11,6 +11,7 @@ import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -29,7 +30,7 @@ public interface GastoLineaDetalleApi {
 
 	Double calcularPrincipioSujetoLineasDetalle(GastoProveedor gasto);
 
-	DtoLineaDetalleGasto calcularCuentasYPartidas(GastoProveedor gasto, Long idLineaDetalleGasto, String subtipoGastoCodigo);
+	DtoLineaDetalleGasto calcularCuentasYPartidas(GastoProveedor gasto, Long idLineaDetalleGasto, String subtipoGastoCodigo, Trabajo trabajo);
 
 	HashSet<String> devolverNumeroLineas(List<GastoLineaDetalle> gastoLineaDetalleList, HashSet<String> tipoGastoImporteList);
 

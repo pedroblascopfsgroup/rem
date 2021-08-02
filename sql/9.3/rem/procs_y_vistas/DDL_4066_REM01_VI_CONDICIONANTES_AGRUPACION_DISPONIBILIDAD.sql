@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Javier Pons Ruiz
---## FECHA_CREACION=20190105
+--## FECHA_CREACION=20210607
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-2933
+--## INCIDENCIA_LINK=REMVIP-9845
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Cambio para agrupación restringida(HREOS-6318) -JSL
+--##        0.3 Juan Bautista Alfonso [REMVIP-9845] Modificacion para nuevas vistas V_COND_DISPONIBILIDAD
 --##########################################
 --*/
 
@@ -23,6 +24,8 @@ SET SERVEROUTPUT ON;
 DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
     V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
+    err_num NUMBER; -- Vble. número de errores
+    err_msg VARCHAR2(2048); -- Mensaje de error
     V_MSQL VARCHAR2(4000 CHAR);
 
     CUENTA NUMBER;
@@ -57,19 +60,21 @@ BEGIN
 		    max(case when agr_act_principal = vcond.act_id then
 		    otro
 		    end) as otro,
-		    max(sin_informe_aprobado_REM) as sin_informe_aprobado,
+		    max(SININF.sin_informe_aprobado_REM) as sin_informe_aprobado,
 		    max(revision) as revision,
 		    max(procedimiento_judicial) as procedimiento_judicial,
 		    max(con_cargas) as con_cargas,
 		    max(ocupado_sintitulo) as ocupado_sintitulo,
 		    max(estado_portal_externo) as estado_portal_externo,
-		    max(es_condicionado) as es_condicionado,
+		    max(ESCOND.es_condicionado) as es_condicionado,
 		    (case 
              	when tag.dd_tag_codigo=''02'' then min(est_disp_com_codigo)
                 else max(est_disp_com_codigo)
             end) as est_disp_com_codigo,
 		    min(vcond.borrado) borrado
 		FROM '||V_ESQUEMA||'.V_Cond_Disponibilidad vcond
+		INNER JOIN '||V_ESQUEMA||'.V_ES_CONDICIONADO ESCOND ON ESCOND.ACT_ID=VCOND.ACT_ID
+		INNER JOIN '||V_ESQUEMA||'.V_SIN_INFORME_APROBADO_REM SININF ON SININF.ACT_ID=VCOND.ACT_ID
 		INNER JOIN '||V_ESQUEMA||'.Act_Aga_Agrupacion_Activo aga on aga.act_id = vcond.act_id
 		INNER JOIN '||V_ESQUEMA||'.Act_Agr_Agrupacion agr on agr.agr_id = aga.agr_id
 		INNER JOIN '||V_ESQUEMA||'.dd_tag_tipo_agrupacion tag on tag.dd_tag_id = agr.dd_tag_id 
@@ -144,6 +149,18 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_COND_AGR_DISPONIBILIDAD...Creada OK');
+
+  COMMIT;
+
+EXCEPTION
+  WHEN OTHERS THEN
+    ERR_NUM := SQLCODE;
+    ERR_MSG := SQLERRM;
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+    DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+    DBMS_OUTPUT.put_line(ERR_MSG);
+    ROLLBACK;
+    RAISE; 
   
 END;
 /

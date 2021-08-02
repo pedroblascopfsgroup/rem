@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaSoloRechazo;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -56,6 +57,9 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 
 	@Autowired
 	private ComunicacionGencatApi comunicacionGencatApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 	
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionProManzana.class);
 
@@ -158,6 +162,8 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 				if(filtro != null) {				
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					expediente.setEstado(estado);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 				}
 				genericDao.update(ExpedienteComercial.class, expediente);
 				genericDao.update(Oferta.class, ofertaAceptada);

@@ -18,6 +18,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -35,6 +36,9 @@ public class UpdaterServiceSancionOfertaAlquilerResolucionComite implements Upda
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
         
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerResolucionComite.class);
     
@@ -82,6 +86,8 @@ public class UpdaterServiceSancionOfertaAlquilerResolucionComite implements Upda
 	
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expedienteComercial.setEstado(estado);
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estado);
+
 					}
 				} else {
 					// Actualizacion del estado de expediente comercial: DENEGADO
@@ -90,7 +96,8 @@ public class UpdaterServiceSancionOfertaAlquilerResolucionComite implements Upda
 	
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expedienteComercial.setEstado(estado);
-					
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estado);
+
 					
 						//Finaliza el trámite
 						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);

@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
@@ -98,6 +99,7 @@ import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
@@ -141,9 +143,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
-import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -185,6 +187,7 @@ import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
+import es.pfsgroup.plugin.rem.thread.TramitacionOfertasAsync;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 @Service("expedienteComercialManager")
@@ -371,6 +374,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private GestorActivoApi gestorActivoManager;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -625,6 +631,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Visita visitaOferta = oferta.getVisita();
 		Oferta ofertaPrincipal = null;
 		DDClaseOferta claseOferta = null;
+		DDRiesgoOperacion riesgoOperacion = null;
 		Usuario usuarioModificador = genericAdapter.getUsuarioLogado();
 		if(!Checks.esNulo(dto.getClaseOfertaCodigo())) {
 			Filter f = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
@@ -640,6 +647,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if(ofertaPrincipal != null) {
 			compruebaEstadoAnyadirDependiente(ofertaPrincipal);
+		}
+		
+		if(!Checks.esNulo(dto.getVentaCarteraCfv())) {
+			oferta.setVentaCartera(dto.getVentaCarteraCfv());
+		}
+		
+		if(!Checks.esNulo(dto.getOfertaEspecial())) {
+			oferta.setOfertaEspecial(dto.getOfertaEspecial());
+		}
+		
+		if(!Checks.esNulo(dto.getVentaSobrePlano())) {
+			oferta.setVentaSobrePlano(dto.getVentaSobrePlano());
+		}
+		
+		if(!Checks.esNulo(dto.getRiesgoOperacionCodigo())) {
+			Filter r = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getRiesgoOperacionCodigo());
+			riesgoOperacion = genericDao.get(DDRiesgoOperacion.class, r);
+			
+			if(riesgoOperacion != null) {
+				oferta.setRiesgoOperacion(riesgoOperacion);
+			}
 		}
 
 		if (!Checks.esNulo(dto.getEstadoCodigo())) {
@@ -1855,6 +1883,26 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (oferta.getVentaDirecta() != null) {
 			dto.setVentaCartera(oferta.getVentaDirecta() ? "Si" : "No");
 		}
+		
+		if(oferta.getOfertaEspecial() != null) {
+			dto.setOfertaEspecial(oferta.getOfertaEspecial());
+		}
+		
+		if(oferta.getVentaSobrePlano() != null) {
+			dto.setVentaSobrePlano(oferta.getVentaSobrePlano());
+		}
+		
+		if(oferta.getVentaCartera() != null) {
+			dto.setVentaCarteraCfv(oferta.getVentaCartera());
+		}
+		
+		if(oferta.getRiesgoOperacion() != null) {
+			dto.setRiesgoOperacionCodigo(oferta.getRiesgoOperacion().getCodigo());
+		}
+		
+		if(oferta.getRiesgoOperacion() != null) {
+			dto.setRiesgoOperacionDescripcion(oferta.getRiesgoOperacion().getDescripcion());
+		}
 
 		// HREOS-4360
 		if (oferta.getTipoAlquiler() != null) {
@@ -1976,20 +2024,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(oferta.getOfertaSingular() != null) {
 			dto.setOfertaSingular(oferta.getOfertaSingular() ? "Si" : "No");
 		}
-		
-		Long codigoPrescriptor = new Long(2321);
-		
-		if(!oferta.getOfrDocRespPrescriptor()) {
-			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_COMPRADORES);
+
+		if (oferta.getRespDocCliente() != null) {
+			dto.setTipoResponsableCodigo(oferta.getRespDocCliente().getCodigo());
 		}
-		
-		else if(oferta.getOfrDocRespPrescriptor() && !Checks.esNulo(oferta.getPrescriptor()) && codigoPrescriptor.equals(oferta.getPrescriptor().getCodigoProveedorRem())) {
-			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL);
-		}
-		
-		else if(oferta.getOfrDocRespPrescriptor() && !Checks.esNulo(oferta.getPrescriptor()) && !codigoPrescriptor.equals(oferta.getPrescriptor().getCodigoProveedorRem())) {
-			dto.setTipoResponsableCodigo(DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR);
-		}
+
 		
 		OfertaExclusionBulk ofertaExclusionBulk = genericDao.get(OfertaExclusionBulk.class, 
 				genericDao.createFilter(FilterType.EQUALS, "oferta", oferta),
@@ -2268,67 +2307,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			DtoActivosExpediente dtoActivo = activosToDto(activo, activoPorcentajeParti, activoPrecioAprobado,
 					activoPrecioMinimo, activoImporteParticipacion);
 
-			// calculamos los pilotos de tanteos,condiciones y bloqueos
-			DtoInformeJuridico dtoInfoJuridico = this.getFechaEmisionInfJuridico(idExpediente, dtoActivo.getIdActivo());
-			if (dtoInfoJuridico == null || dtoInfoJuridico.getFechaEmision() == null) {
-				dtoActivo.setBloqueos(2);// pendiente
-
-			} else {
-				if (dtoInfoJuridico.getResultadoBloqueo() != null
-						&& dtoInfoJuridico.getResultadoBloqueo().equals(InformeJuridico.RESULTADO_FAVORABLE)) {
-					dtoActivo.setBloqueos(1);
-				} else {
-					dtoActivo.setBloqueos(0);
-				}
-			}
-
-			DtoCondicionesActivoExpediente condiciones = this.getCondicionesActivoExpediete(idExpediente,
-					dtoActivo.getIdActivo());
-			if (condiciones.getSituacionPosesoriaCodigo() != null
-					&& condiciones.getSituacionPosesoriaCodigoInformada() != null
-					&& condiciones.getSituacionPosesoriaCodigo()
-							.equals(condiciones.getSituacionPosesoriaCodigoInformada())
-					&& condiciones.getPosesionInicial() != null && condiciones.getPosesionInicialInformada() != null
-					&& condiciones.getPosesionInicial().equals(condiciones.getPosesionInicialInformada())
-					&& condiciones.getEstadoTitulo() != null && condiciones.getEstadoTituloInformada() != null
-					&& condiciones.getEstadoTitulo().equals(condiciones.getEstadoTituloInformada())) {
-				dtoActivo.setCondiciones(1);
-			} else {
-				dtoActivo.setCondiciones(0);
-			}
-
-			CondicionanteExpediente condicionantes = expediente.getCondicionante();
-			if (condicionantes != null) {
-				if (condicionantes.getSujetoTanteoRetracto() != null && 0 == condicionantes.getSujetoTanteoRetracto()) {
-					dtoActivo.setTanteos(3);
-
-				} else {
-					dtoActivo.setTanteos(3);
-					List<TanteoActivoExpediente> tanteosExpediente = expediente.getTanteoActivoExpediente();
-					int contTanteosActivo = 0;
-					int contTanteosActivoRenunciado = 0;
-					for (TanteoActivoExpediente tanteo : tanteosExpediente) {
-						if (tanteo.getActivo().getId().equals(activo.getId())) {
-							contTanteosActivo++;
-							if (tanteo.getResultadoTanteo() != null) {
-								if (tanteo.getResultadoTanteo().getCodigo().equals(DDResultadoTanteo.CODIGO_EJERCIDO)) {
-									dtoActivo.setTanteos(2);
-									break;
-								} else if (DDResultadoTanteo.CODIGO_RENUNCIADO
-										.equals(tanteo.getResultadoTanteo().getCodigo())) {
-									contTanteosActivoRenunciado++;
-								}
-							} else {
-								dtoActivo.setTanteos(0);
-							}
-						}
-					}
-
-					if (contTanteosActivo > 0 && contTanteosActivo == contTanteosActivoRenunciado) {
-						dtoActivo.setTanteos(1);
-					}
-				}
-			}
+			this.pilotosToDto(dtoActivo, expediente);
 
 			if (!Checks.esNulo(activo.getLocalizacion().getLocalizacionBien().getPuerta())) {
 				dtoActivo.setPuerta(activo.getLocalizacion().getLocalizacionBien().getPuerta());
@@ -2361,6 +2340,31 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			activos.add(dtoActivo);
 
+		}
+
+		return new DtoPage(activos, activos.size());
+	}
+	
+	@Override
+	public DtoPage getActivosExpedienteExcel(Long idExpediente, Boolean esExcelActivos) {
+		ExpedienteComercial expediente = findOne(idExpediente);
+		List<DtoActivosExpediente> activos = new ArrayList<DtoActivosExpediente>();
+		
+		Filter oferta = genericDao.createFilter(FilterType.EQUALS, "oferta", expediente.getOferta().getId());
+		List<VActivoOfertaImporte> activosExpediente = genericDao.getList(VActivoOfertaImporte.class, oferta);
+
+		for (VActivoOfertaImporte activo : activosExpediente) {
+			DtoActivosExpediente dtoActivo = new DtoActivosExpediente();
+			dtoActivo.setIdActivo(activo.getActivo());
+			dtoActivo.setNumActivo(activo.getNumActivo());
+
+			if (esExcelActivos) {
+				this.pilotosToDto(dtoActivo, expediente);
+			} else {
+				dtoActivo.setImporteParticipacion(activo.getImporteActivoOferta());
+			}
+			
+			activos.add(dtoActivo);
 		}
 
 		return new DtoPage(activos, activos.size());
@@ -2485,6 +2489,72 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return dtoActivo;
+	}
+	
+	private DtoActivosExpediente pilotosToDto(DtoActivosExpediente dtoActivo, ExpedienteComercial expediente) {
+		DtoInformeJuridico dtoInfoJuridico = this.getFechaEmisionInfJuridico(expediente.getId(), dtoActivo.getIdActivo());
+		if (dtoInfoJuridico == null || dtoInfoJuridico.getFechaEmision() == null) {
+			dtoActivo.setBloqueos(2);// pendiente
+
+		} else {
+			if (dtoInfoJuridico.getResultadoBloqueo() != null
+					&& dtoInfoJuridico.getResultadoBloqueo().equals(InformeJuridico.RESULTADO_FAVORABLE)) {
+				dtoActivo.setBloqueos(1);
+			} else {
+				dtoActivo.setBloqueos(0);
+			}
+		}
+
+		DtoCondicionesActivoExpediente condiciones = this.getCondicionesActivoExpediete(expediente.getId(),
+				dtoActivo.getIdActivo());
+		if (condiciones.getSituacionPosesoriaCodigo() != null
+				&& condiciones.getSituacionPosesoriaCodigoInformada() != null
+				&& condiciones.getSituacionPosesoriaCodigo()
+						.equals(condiciones.getSituacionPosesoriaCodigoInformada())
+				&& condiciones.getPosesionInicial() != null && condiciones.getPosesionInicialInformada() != null
+				&& condiciones.getPosesionInicial().equals(condiciones.getPosesionInicialInformada())
+				&& condiciones.getEstadoTitulo() != null && condiciones.getEstadoTituloInformada() != null
+				&& condiciones.getEstadoTitulo().equals(condiciones.getEstadoTituloInformada())) {
+			dtoActivo.setCondiciones(1);
+		} else {
+			dtoActivo.setCondiciones(0);
+		}
+
+		CondicionanteExpediente condicionantes = expediente.getCondicionante();
+		if (condicionantes != null) {
+			if (condicionantes.getSujetoTanteoRetracto() != null && 0 == condicionantes.getSujetoTanteoRetracto()) {
+				dtoActivo.setTanteos(3);
+
+			} else {
+				dtoActivo.setTanteos(3);
+				List<TanteoActivoExpediente> tanteosExpediente = expediente.getTanteoActivoExpediente();
+				int contTanteosActivo = 0;
+				int contTanteosActivoRenunciado = 0;
+				for (TanteoActivoExpediente tanteo : tanteosExpediente) {
+					if (tanteo.getActivo().getId().equals(dtoActivo.getIdActivo())) {
+						contTanteosActivo++;
+						if (tanteo.getResultadoTanteo() != null) {
+							if (tanteo.getResultadoTanteo().getCodigo().equals(DDResultadoTanteo.CODIGO_EJERCIDO)) {
+								dtoActivo.setTanteos(2);
+								break;
+							} else if (DDResultadoTanteo.CODIGO_RENUNCIADO
+									.equals(tanteo.getResultadoTanteo().getCodigo())) {
+								contTanteosActivoRenunciado++;
+							}
+						} else {
+							dtoActivo.setTanteos(0);
+						}
+					}
+				}
+
+				if (contTanteosActivo > 0 && contTanteosActivo == contTanteosActivoRenunciado) {
+					dtoActivo.setTanteos(1);
+				}
+			}
+		}
+		
+		return dtoActivo;
+		
 	}
 
 	public FileItem getFileItemAdjunto(DtoAdjuntoExpediente dtoAdjunto) {
@@ -2635,7 +2705,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					&& !Checks.esNulo(adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula())) {
 				Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
 				activoAdapter.uploadDocumento(fileItem, activo,
-						adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula());
+						adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula(), null);
 				// HREOS-5392
 				// Se comprueba que el documento que sube es el de deposito despublicacion
 				// activo
@@ -4152,6 +4222,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			paseAVendido = DDEstadosExpedienteComercial.VENDIDO.equals(codEstadoExpedienteComercial);
 			if (!Checks.esNulo(expedienteComercial)) {
 				expedienteComercial.setEstado(estadoExpedienteComercial);
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
+
 			}
 
 		} else {
@@ -4403,9 +4475,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (!Checks.esNulo(comprador)) {
 			boolean reiniciarPBC = false;
-
-			comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
-			comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
+			
+			if(dto.getNumeroClienteUrsus() != null)
+				comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
+			
+			if(dto.getNumeroClienteUrsusBh() != null)
+				comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
 			
 			if((DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA).equals(dto.getCodTipoPersona())) {
 				comprador.setApellidos(null);
@@ -4970,8 +5045,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				beanUtilNotNull.copyProperties(expedienteComercial, dto);
 
 				if (!Checks.esNulo(dto.getCodigoEstado())) {
-					expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoEstado())));
+					DDEstadosExpedienteComercial estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoEstado()));
+					expedienteComercial.setEstado(estadoExpedienteComercial);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
+
 				}
 
 				if (!Checks.esNulo(dto.getConflictoIntereses())
@@ -5038,9 +5116,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 						if (dto.getEstadoDevolucionCodigo().equals(DDEstadoDevolucion.ESTADO_DEVUELTA)) {
 							if (Checks.esNulo(dto.getCodigoEstado())) {
-								expedienteComercial.setEstado((DDEstadosExpedienteComercial) utilDiccionarioApi
+								DDEstadosExpedienteComercial estadoExpedienteComercial = (DDEstadosExpedienteComercial) utilDiccionarioApi
 										.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class,
-												DDEstadosExpedienteComercial.ANULADO));
+												DDEstadosExpedienteComercial.ANULADO);
+								expedienteComercial.setEstado(estadoExpedienteComercial);
+								recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
+
 							}
 							expedienteComercial.setFechaVenta(null);
 							expedienteComercial.getReserva()
@@ -8017,207 +8098,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return true;
 	}
 
-	@Override
-	@Transactional(readOnly = false)
-	public String validaBloqueoExpediente(Long idExpediente) {
-		String codigoError = "";
-
-		ExpedienteComercial expediente = this.findOne(idExpediente);
-
-		// Validamos condiciones jurídicas.
-		if (expediente.getEstadoPbc() == null || expediente.getEstadoPbc().equals(0)
-				|| expediente.getRiesgoReputacional() == null
-				|| expediente.getRiesgoReputacional().equals(Integer.valueOf(1))
-				|| expediente.getConflictoIntereses() == null || expediente.getConflictoIntereses().equals(1)) {
-			codigoError = "imposible.bloquear.responsabilidad.corporativa";
-
-		} else if (DDCartera.CODIGO_CARTERA_BANKIA
-				.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())
-				&& hayDiscrepanciasClientesURSUS(idExpediente)) {
-			// Si es Bankia, validamos las discrepancias de los compradores, si las hay, no
-			// se puede bloquear
-			codigoError = "no.bloqueo.validar.compradores";
-		} else {
-			// Validamos los bloqueos
-			List<ActivoOferta> activosExpediente = expediente.getOferta().getActivosOferta();
-			boolean bloqueoVigente = false;
-
-			for (ActivoOferta activoOferta : activosExpediente) {
-				Activo activo = activoOferta.getPrimaryKey().getActivo();
-				DtoInformeJuridico dtoInfoJuridico = this.getFechaEmisionInfJuridico(idExpediente, activo.getId());
-
-				if (dtoInfoJuridico != null && dtoInfoJuridico.getResultadoBloqueo() != null
-						&& dtoInfoJuridico.getResultadoBloqueo().equals(InformeJuridico.RESULTADO_DESFAVORABLE)) {
-					bloqueoVigente = true;
-					break;
-				}
-			}
-			if (bloqueoVigente) {
-				codigoError = "imposible.bloquear.bloqueo.vigente";
-			} else {
-				// validamos fecha posicionamiento
-				if (expediente.getPosicionamientos() == null || expediente.getPosicionamientos().size() < 1) {
-					codigoError = "imposible.bloquear.fecha.posicionamiento";
-				} else {
-					// el usuario logado tiene que ser gestoria
-					Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-
-					if (DDCartera.CODIGO_CARTERA_CAJAMAR
-							.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
-						if (!genericAdapter.tienePerfil(PERFIL_GESTOR_MINUTAS, usuarioLogado)
-								&& !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_MINUTAS, usuarioLogado)
-								&& !genericAdapter.isSuper(usuarioLogado)
-								&& !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)
-								&& !genericAdapter.tienePerfil(PERFIL_GESTORIA_FORMALIZACION, usuarioLogado)) {
-							codigoError = "imposible.bloquear.expediente.cajamar";
-
-						} else {
-							// la financiación tiene que estar informada
-							DtoFormalizacionFinanciacion financiacion = new DtoFormalizacionFinanciacion();
-							financiacion.setId(String.valueOf(idExpediente));
-							financiacion = this.getFormalizacionFinanciacion(financiacion);
-							if (Checks.esNulo(financiacion.getSolicitaFinanciacion())) {
-								codigoError = "imposible.bloquear.financiacion.no.informada";
-							} else {
-								if (financiacion.getSolicitaFinanciacion() == 1
-										&& Checks.esNulo(financiacion.getEntidadFinancieraCodigo())) {
-									codigoError = "imposible.bloquear.entidad.financiera.no.informada";
-								}
-							}
-						}
-
-					} else {
-						if (!genericAdapter.isGestoria(usuarioLogado) && !genericAdapter.isSuper(usuarioLogado)
-								&& !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)
-								&& !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_FORMALIZACION, usuarioLogado)) {
-							codigoError = "imposible.bloquear.no.es.gestoria";
-
-						} else {
-							// la financiación tiene que estar informada
-							DtoFormalizacionFinanciacion financiacion = new DtoFormalizacionFinanciacion();
-							financiacion.setId(String.valueOf(idExpediente));
-							financiacion = this.getFormalizacionFinanciacion(financiacion);
-							if (Checks.esNulo(financiacion.getSolicitaFinanciacion())) {
-								codigoError = "imposible.bloquear.financiacion.no.informada";
-							} else {
-								if (financiacion.getSolicitaFinanciacion() == 1
-										&& Checks.esNulo(financiacion.getEntidadFinancieraCodigo())) {
-									codigoError = "imposible.bloquear.entidad.financiera.no.informada";
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return codigoError;
-	}
-
-	@Override
-	@Transactional(readOnly = false)
-	public void bloquearExpediente(Long idExpediente) {
-		ExpedienteComercial expediente = this.findOne(idExpediente);
-		expediente.setBloqueado(1);
-
-		genericDao.update(ExpedienteComercial.class, expediente);
-
-		try {
-			// notificamos por correo a los interesados
-			Posicionamiento posicionamiento = expediente.getUltimoPosicionamiento();
-			ArrayList<String> mailsPara = this.obtnerEmailsBloqueoExpediente(expediente);
-			String asunto = "Bloqueo del expediente comercial ".concat(String.valueOf(expediente.getNumExpediente()));
-			String cuerpo = "El expediente ".concat(String.valueOf(expediente.getNumExpediente()))
-					+ " con el Nº de Oferta ".concat(String.valueOf(expediente.getOferta().getNumOferta()))
-					+ " y el Nº de Activo "
-							.concat(String.valueOf(expediente.getOferta().getActivoPrincipal().getNumActivo()))
-					+ " se ha posicionado correctamente para su firma el" + " día #Fecha_posicionamiento a las "
-					+ "#Hora_posicionamiento en la notaría #Notaria";
-
-			if (posicionamiento != null) {
-				DateFormat dfDia = new SimpleDateFormat("dd/MM/yyyy");
-				DateFormat dfHora = new SimpleDateFormat("HH:mm");
-
-				if (posicionamiento.getFechaPosicionamiento() != null) {
-					String fechaPos = dfDia.format(posicionamiento.getFechaPosicionamiento());
-					cuerpo = cuerpo.replace("#Fecha_posicionamiento", fechaPos);
-					String horaPos = dfHora.format(posicionamiento.getFechaPosicionamiento());
-					cuerpo = cuerpo.replace("#Hora_posicionamiento", horaPos);
-				}
-
-				if (posicionamiento.getNotario() != null) {
-					cuerpo = cuerpo.replace("#Notaria", posicionamiento.getNotario().getNombre());
-
-					if (posicionamiento.getNotario().getDireccion() != null) {
-						cuerpo = cuerpo.concat(", situado en ").concat(posicionamiento.getNotario().getDireccion());
-					}
-				}
-			}
-
-			genericAdapter.sendMail(mailsPara, new ArrayList<String>(), asunto, cuerpo);
-
-		} catch (Exception e) {
-			logger.error("No se ha podido notificar por correo el bloqueo del expediente", e);
-		}
-	}
-
-	@Override
-	public String validaDesbloqueoExpediente(Long idExpediente) {
-		String codigoError = "";
-		ExpedienteComercial expediente = this.findOne(idExpediente);
-
-		if (expediente.getEstado() != null
-				&& expediente.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.VENDIDO)) {
-			codigoError = "imposible.desbloquear.vendido";
-		}
-
-		return codigoError;
-	}
-
-	@Override
-	@Transactional(readOnly = false)
-	public void desbloquearExpediente(Long idExpediente, String motivoCodigo, String motivoDescLibre) {
-		ExpedienteComercial expediente = this.findOne(idExpediente);
-		DDMotivosDesbloqueo motivoDesbloqueo = null;
-
-		if (!Checks.esNulo(expediente)) {
-			expediente.setBloqueado(0);
-
-			if (!Checks.esNulo(motivoCodigo)) {
-				motivoDesbloqueo = genericDao.get(DDMotivosDesbloqueo.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", motivoCodigo));
-
-				if (!Checks.esNulo(motivoDesbloqueo)) {
-					expediente.setMotivoDesbloqueo(motivoDesbloqueo);
-				}
-			}
-
-			expediente.setMotivoDesbloqueoDescLibre(motivoDescLibre);
-			genericDao.update(ExpedienteComercial.class, expediente);
-
-			try {
-				if ((motivoDescLibre == null || motivoDescLibre.isEmpty()) && motivoDesbloqueo != null) {
-					motivoDescLibre = motivoDesbloqueo.getDescripcionLarga();
-				}
-
-				// notificamos por correo a los interesados
-				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-				ArrayList<String> mailsPara = this.obtnerEmailsBloqueoExpediente(expediente);
-				String asunto = "Desbloqueo del expediente comercial "
-						.concat(String.valueOf(expediente.getNumExpediente()));
-				String cuerpo = "El expediente ".concat(String.valueOf(expediente.getNumExpediente()))
-						+ " se ha desbloqueado por el usuario #Usuario_logado por motivo: #Motivo";
-
-				cuerpo = cuerpo.replace("#Usuario_logado", usuarioLogado.getApellidoNombre());
-				cuerpo = cuerpo.replace("#Motivo", motivoDescLibre);
-				genericAdapter.sendMail(mailsPara, new ArrayList<String>(), asunto, cuerpo);
-
-			} catch (Exception e) {
-				logger.error("No se ha podido notificar por correo el desbloqueo del expediente", e);
-			}
-		}
-	}
-
 	/**
 	 * Este método obtiene la dirección de email de diferentes figuras del
 	 * expediente.
@@ -8277,23 +8157,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return mailsParaEnviarComercializadora;
 
-	}
-
-	@Override
-	public boolean checkExpedienteBloqueado(Long idTramite) {
-		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
-
-		if (!Checks.esNulo(activoTramite)) {
-			Trabajo trabajo = activoTramite.getTrabajo();
-
-			if (!Checks.esNulo(trabajo)) {
-				ExpedienteComercial expediente = expedienteComercialDao
-						.getExpedienteComercialByIdTrabajo(trabajo.getId());
-				return (new Integer(1).equals(expediente.getBloqueado()));
-			}
-		}
-
-		return false;
 	}
 
 	@Override
@@ -8458,6 +8321,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadosReserva.class, DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION);
 		expedienteComercial.setEstado(estadoExpedienteComercial);
+		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
 
 		if (!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getReserva())) {
 			Reserva reserva = expedienteComercial.getReserva();
@@ -8515,6 +8379,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadosReserva.class, DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO);
 		expedienteComercial.setEstado(estadoExpedienteComercial);
+		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
 
 		if (!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getReserva())) {
 			Reserva reserva = expedienteComercial.getReserva();
@@ -9471,20 +9336,29 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public Long getIdByNumExpOrNumOfr(Long numBusqueda, String campo) {
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numBusqueda", numBusqueda);
+		
+		rawDao.addParams(params);
 
 		Long idExpediente;
 
 		try {
 			if (ExpedienteComercialController.CAMPO_EXPEDIENTE.equals(campo)) {
 				idExpediente = Long.parseLong(
-						rawDao.getExecuteSQL("SELECT ECO_ID FROM ECO_EXPEDIENTE_COMERCIAL WHERE ECO_NUM_EXPEDIENTE ="
-								+ numBusqueda + " AND BORRADO = 0"));
+						rawDao.getExecuteSQL("SELECT ECO_ID FROM ECO_EXPEDIENTE_COMERCIAL WHERE ECO_NUM_EXPEDIENTE = :numBusqueda  AND BORRADO = 0"));
 			} else {
 				Long idOferta = Long.parseLong(rawDao.getExecuteSQL(
-						"SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA = " + numBusqueda + " AND BORRADO = 0"));
-
+						"SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA = :numBusqueda AND BORRADO = 0"));
+				
+				params = new HashMap<String, Object>();
+				params.put("idOferta", idOferta);
+				
+				rawDao.addParams(params);
+				
 				idExpediente = Long.parseLong(rawDao.getExecuteSQL(
-						"SELECT ECO_ID FROM ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = " + idOferta + " AND BORRADO = 0"));
+						"SELECT ECO_ID FROM ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = :idOferta AND BORRADO = 0"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -9535,7 +9409,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						activo.getSituacionPosesoria().getConTitulo().getCodigo());
 			}
 
-			if (!Checks.esNulo(activoDto) && activoDto.getConTitulo().equals("0")) {
+			if (!Checks.esNulo(activoDto) && activoDto.getConTituloCodigo().equals("0")) {
 				ocupado = false;
 			}
 
@@ -9561,12 +9435,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public Long getNumExpByNumOfr(Long numBusqueda) {
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numOferta", numBusqueda);
+		
+		rawDao.addParams(params);
+		
 		long idOferta = Long.parseLong(rawDao.getExecuteSQL(
-				"SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA = " + numBusqueda + " AND BORRADO = 0"));
+				"SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA = :numOferta AND BORRADO = 0"));
+		
+		params = new HashMap<String, Object>();
+		params.put("idOferta", idOferta);
+		
+		rawDao.addParams(params);
 
 		return Long.parseLong(
-				rawDao.getExecuteSQL("SELECT ECO_NUM_EXPEDIENTE FROM ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = "
-						+ idOferta + " AND BORRADO = 0"));
+				rawDao.getExecuteSQL("SELECT ECO_NUM_EXPEDIENTE FROM ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = :idOferta AND BORRADO = 0"));
 	}
 
 	@Override
@@ -11780,5 +11664,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			genericDao.update(EnvioCierreOficinasBankia.class, auxiliar);
 			
 		}
-	}	
+	}
+	
+	@Override
+	@Transactional
+	public boolean doTramitacionAsincrona(Activo activo, Oferta oferta) {
+		TransactionStatus transaction = null;
+		try {
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			String usuarioLogado = genericAdapter.getUsuarioLogado().getUsername();
+			ExpedienteComercial expediente = oferta.getExpedienteComercial();
+			
+			Thread creacionAsincrona = new Thread(new TramitacionOfertasAsync(activo.getId(), true,
+					expediente.getTrabajo().getId(), oferta.getId(), expediente.getId(), usuarioLogado));
+	
+			creacionAsincrona.start();
+			 		
+			transactionManager.commit(transaction);
+			return true;
+		}catch(Exception e) {
+			transactionManager.rollback(transaction);
+			return false;
+		}
+	}
 }

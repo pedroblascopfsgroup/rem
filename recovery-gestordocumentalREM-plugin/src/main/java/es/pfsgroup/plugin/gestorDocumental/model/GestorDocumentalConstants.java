@@ -48,12 +48,15 @@ public class GestorDocumentalConstants {
 	public static final String[] generalDocumento = {"Número Registro:", "Fecha Documento:", "Fecha Baja Lógica:", "Fecha Caducidad:", "Fecha Expurgo:", "Proceso Carga:", "LOPD:", "Serie Documental:", "TDN1:", "TDN2:"};
 	public static final String[] generalDocumentoModif = {"Número Registro:", "Fecha Baja Lógica:", "Fecha Caducidad:", "Fecha Expurgo:", "Proceso Carga:", "LOPD:", "Serie Documental:", "TDN1:", "TDN2:"};
 	public static final String[] archivoFisico = {"Proveedor Custodia:", "Referencia Custodia:", "Contenedor:", "Lote:", "Posición:", "Documento Original:"};
-	public static final String[] modificarMetadatos = {"\"General documento\":","\"LOPD\":", "\"Serie Documental\":", "\"TDN1\":", "\"TDN2\":", "\"Proceso Carga\":","\"Archivo físico\":","\"Contenedor\":"};
+	public static final String[] modificarMetadatos = {"\"General documento\":","\"LOPD\":", "\"Serie Documental\":", "\"TDN1\":","\"TDN2\":", "\"Proceso Carga\":","\"Archivo físico\":","\"Contenedor\":"};
 	public static final String[] metadataComunicaciones = {"\"General documento\":","\"Fecha documento\":", "\"Serie Documental\":", "\"TDN1\":", "\"TDN2\":", "\"Proceso Carga\":","\"Archivo físico\":","\"Contenedor\":"};
 	
 	public static final String[] gastoMetadatos = {"'ID':", "'ID Gasto':", "'ID Reo':", "'Fecha gasto':", "'Cliente':"};
 	public static final String[] metadataCrearContenedor = {"\"ID\":", "\"ID Externo\":", "\"ID Sistema Origen\":", "\"Cliente\":"};
 
+	public static final String[] metadataEspecifica = {"\"Aplica\":","\"Fecha emision\":", "\"Fecha caducidad\":", "\"Fecha obtencion\":", "\"Fecha etiqueta\":", "\"Registro\":"};
+
+	
 	public final static HashMap<String, String> tipoExpedientePorCodigo;
 
     static

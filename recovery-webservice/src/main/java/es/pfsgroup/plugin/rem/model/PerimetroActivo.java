@@ -21,6 +21,9 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+
 
 /**
  * Modelo que gestiona el perímetro de un activo
@@ -122,6 +125,20 @@ public class PerimetroActivo implements Serializable, Auditable {
 	
 	@Column(name = "PAC_MOTIVO_ADMISION")
 	private String motivoAplicaAdmision;
+	
+	@Column(name = "PAC_CHECK_GESTION_COMERCIAL")
+	private Boolean checkGestorComercial;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PAC_EXCLUIR_VALIDACIONES")
+	private DDSinSiNo excluirValidaciones;
+	
+	@Column(name = "PAC_FECHA_GESTION_COMERCIAL")
+	private Date fechaGestionComercial;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PAC_MOTIVO_GESTION_COMERCIAL")
+	private DDMotivoGestionComercial motivoGestionComercial;
 	
     @Version   
 	private Long version;
@@ -362,6 +379,38 @@ public class PerimetroActivo implements Serializable, Auditable {
 
 	public void setMotivoAplicaPublicar(String motivoAplicaPublicar) {
 		this.motivoAplicaPublicar = motivoAplicaPublicar;
+	}
+
+	public Boolean getCheckGestorComercial() {
+		return checkGestorComercial;
+	}
+
+	public void setCheckGestorComercial(Boolean checkGestorComercial) {
+		this.checkGestorComercial = checkGestorComercial;
+	}
+
+	public DDSinSiNo getExcluirValidaciones() {
+		return excluirValidaciones;
+	}
+
+	public void setExcluirValidaciones(DDSinSiNo excluirValidaciones) {
+		this.excluirValidaciones = excluirValidaciones;
+	}
+
+	public Date getFechaGestionComercial() {
+		return fechaGestionComercial;
+	}
+
+	public void setFechaGestionComercial(Date fechaGestionComercial) {
+		this.fechaGestionComercial = fechaGestionComercial;
+	}
+
+	public DDMotivoGestionComercial getMotivoGestionComercial() {
+		return motivoGestionComercial;
+	}
+
+	public void setMotivoGestionComercial(DDMotivoGestionComercial motivoGestionComercial) {
+		this.motivoGestionComercial = motivoGestionComercial;
 	}
 	
 

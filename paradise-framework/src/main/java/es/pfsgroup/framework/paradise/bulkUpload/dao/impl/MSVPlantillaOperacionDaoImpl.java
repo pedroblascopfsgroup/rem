@@ -22,8 +22,6 @@ public class MSVPlantillaOperacionDaoImpl extends AbstractEntityDao<MSVPlantilla
 		
 		HQLBuilder hb= new HQLBuilder("select p from MSVPlantillaOperacion p join p.tipoOperacion tipo");
 		
-		hb.appendWhere("p.auditoria.borrado=0");
-		
 		List<Long> listaidfunciones=new ArrayList<Long>();
 		
 		for (Perfil p : usu.getPerfiles()){
@@ -32,6 +30,7 @@ public class MSVPlantillaOperacionDaoImpl extends AbstractEntityDao<MSVPlantilla
 			}
 		}
 
+		HQLBuilder.addFiltroIgualQue(hb, "p.auditoria.borrado", 0);
 		HQLBuilder.addFiltroWhereInSiNotNull(hb, "tipo.funcion.id", listaidfunciones);
 		
 		
@@ -54,9 +53,10 @@ public class MSVPlantillaOperacionDaoImpl extends AbstractEntityDao<MSVPlantilla
 			return null;
 		}
 		HQLBuilder hb= new HQLBuilder("select p from MSVPlantillaOperacion p ");
+	
 		
-		hb.appendWhere("p.auditoria.borrado=0");
-		hb.appendWhere("p.tipoOperacion="+idTipoOperacion);
+		HQLBuilder.addFiltroIgualQue(hb, "p.auditoria.borrado", false);
+		HQLBuilder.addFiltroIgualQue(hb, "p.tipoOperacion.id", idTipoOperacion);
 		
 		MSVPlantillaOperacion msvPlantillaOperacion = HibernateQueryUtils.uniqueResult(this, hb);
 		

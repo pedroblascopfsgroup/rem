@@ -12,6 +12,7 @@ public class DtoFasePublicacionActivo extends DtoTabActivo{
 	private String fasePublicacionCodigo;
 	private String subfasePublicacionCodigo;
 	private String comentario;
+	private String numAgrupacionRestringida;
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -37,4 +38,11 @@ public class DtoFasePublicacionActivo extends DtoTabActivo{
 	public void setComentario(String comentario) {
 		this.comentario = comentario;
 	}
+	public String getNumAgrupacionRestringida() {
+		return numAgrupacionRestringida;
+	}
+	public void setNumAgrupacionRestringida(String numAgrupacionRestringida) {
+		this.numAgrupacionRestringida = numAgrupacionRestringida;
+	}
+	
 }

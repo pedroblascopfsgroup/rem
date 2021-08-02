@@ -14,6 +14,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -32,6 +33,9 @@ public class UpdaterServiceSancionOfertaAlquilerDefinicionOferta implements Upda
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
 	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
 	private static final String CODIGO_T014_DEFINICION_OFERTA = "T014_DefinicionOferta";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -49,6 +53,8 @@ public class UpdaterServiceSancionOfertaAlquilerDefinicionOferta implements Upda
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 				expedienteComercial.setEstado(estado);
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estado);
+
 			}
 		}
 		else {
@@ -64,6 +70,8 @@ public class UpdaterServiceSancionOfertaAlquilerDefinicionOferta implements Upda
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_SANCION);
 				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 				expedienteComercial.setEstado(estado);
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estado);
+
 			}
 		}
 

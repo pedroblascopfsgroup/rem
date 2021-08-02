@@ -124,6 +124,14 @@ public class DDTipoAlquiler implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 	
-	
+	public static boolean isAlquilerFondoSocial(DDTipoAlquiler tipoAlquiler) {
+		boolean isTipo = false;
+		
+		if(tipoAlquiler != null && CODIGO_FONDO_SOCIAL.equals(tipoAlquiler.getCodigo())) {
+			isTipo = true;
+		}
+		
+		return isTipo;
+	}
 	
 }

@@ -165,7 +165,12 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 		}
 		
 		var ocultarDatosFasePublicacion = false;
+		var datosDeActivo = me.lookupController().getViewModel().get('activo');
 
+		if(datosDeActivo.get('perteneceAgrupacionRestringidaVigente') && datosDeActivo.get('activoPrincipalRestringida') != datosDeActivo.get('numActivo')){
+			ocultarDatosFasePublicacion = true;
+		}
+		
     	var items = [];
     	if(!$AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])) {
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informecomercialactivo', ocultarBotonesEdicion: ocultarInformecomercialactivo})}, ['TAB_INFO_COMERCIAL_PUBLICACION']);

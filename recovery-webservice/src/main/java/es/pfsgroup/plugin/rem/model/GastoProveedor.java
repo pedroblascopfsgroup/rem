@@ -193,6 +193,9 @@ public class GastoProveedor implements Serializable, Auditable {
 	
 	@Column(name="GPV_NUMERO_FACTURA_PPAL")
 	private String numeroFacturaPrincipal;
+	
+	@Column(name="GPV_SOLICITUD_PAGO_URGENTE")
+	private Integer solicitudPagoUrgente;
     
 	@Version   
 	private Long version;
@@ -539,5 +542,13 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setNumeroFacturaPrincipal(String numeroFacturaPrincipal) {
 		this.numeroFacturaPrincipal = numeroFacturaPrincipal;
+	}
+	
+	public Integer getSolicitudPagoUrgente() {
+		return solicitudPagoUrgente;
+	}
+
+	public void setSolicitudPagoUrgente(Integer solicitudPagoUrgente) {
+		this.solicitudPagoUrgente = solicitudPagoUrgente;
 	}
 }

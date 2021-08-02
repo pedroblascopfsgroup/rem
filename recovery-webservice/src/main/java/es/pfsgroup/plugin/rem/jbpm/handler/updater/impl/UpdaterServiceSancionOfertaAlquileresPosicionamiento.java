@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -64,6 +65,9 @@ public class UpdaterServiceSancionOfertaAlquileresPosicionamiento implements Upd
     
     @Autowired
 	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresPosicionamiento.class);
     
@@ -85,7 +89,8 @@ public class UpdaterServiceSancionOfertaAlquileresPosicionamiento implements Upd
 		}
 		estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_FIRMA));
 		expedienteComercial.setEstado(estadoExpedienteComercial);
-		
+		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
+
 		for(TareaExternaValor valor :  valores){
 			
 			if(FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {

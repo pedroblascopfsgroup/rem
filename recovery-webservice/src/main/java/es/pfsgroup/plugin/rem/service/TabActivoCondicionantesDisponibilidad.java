@@ -22,6 +22,8 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.VEsCondicionado;
+import es.pfsgroup.plugin.rem.model.VSinInformeAprobadoRem;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -70,11 +72,18 @@ public class TabActivoCondicionantesDisponibilidad implements TabActivoService {
 		Filter idActivoFilter = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId());
 		VCondicionantesDisponibilidad condicionantesDisponibilidad = (VCondicionantesDisponibilidad) genericDao
 				.get(VCondicionantesDisponibilidad.class, idActivoFilter);
+		VEsCondicionado vEsCondicionado = genericDao.get(VEsCondicionado.class, idActivoFilter);
+		VSinInformeAprobadoRem vSinInforme = genericDao.get(VSinInformeAprobadoRem.class, idActivoFilter);
 		
 		if(!Checks.esNulo(condicionantesDisponibilidad)) {
 			BeanUtils.copyProperties(activoCondicionantesDisponibilidadDto, condicionantesDisponibilidad);
 		}
-		
+		if(!Checks.esNulo(vEsCondicionado)) {
+			BeanUtils.copyProperty(activoCondicionantesDisponibilidadDto, "isCondicionado", vEsCondicionado.getIsCondicionado());
+		}
+		if(!Checks.esNulo(vSinInforme)) {
+			BeanUtils.copyProperty(activoCondicionantesDisponibilidadDto, "sinInformeAprobadoREM", vSinInforme.getSinInformeAprobadoREM());
+		}
 		if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	
 			activoCondicionantesDisponibilidadDto.setCamposPropagablesUas(TabActivoService.TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD);
 		}else {

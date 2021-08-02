@@ -3,26 +3,32 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
-import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
-import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
 
 @Component
 public class MSVActualizadorOcultarActivosVenta extends AbstractMSVActualizador implements MSVLiberator {
@@ -34,6 +40,12 @@ public class MSVActualizadorOcultarActivosVenta extends AbstractMSVActualizador 
 
 	@Autowired
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 
 	@Override
 	public String getValidOperation() {
@@ -69,8 +81,29 @@ public class MSVActualizadorOcultarActivosVenta extends AbstractMSVActualizador 
 		} else {
 			activoEstadoPublicacionApi.setDatosPublicacionActivo(dto);
 		}
-
+		
+		
 		return new ResultadoProcesarFila();
 	}
 
+	
+	@Override
+	public void postProcesado(MSVHojaExcel exc) throws Exception {
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+		Integer numFilas = exc.getNumeroFilas();
+		List<Long> idActivos = new ArrayList<Long>();
+		try{
+			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
+				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, COL_NUM.NUM_ACTIVO_HAYA)));
+				idActivos.add(activo.getId());
+			}
+
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(idActivos);
+			transactionManager.commit(transaction);
+		}catch(Exception e){
+			transactionManager.rollback(transaction);
+			throw e;
+		}
+		
+	}
 }

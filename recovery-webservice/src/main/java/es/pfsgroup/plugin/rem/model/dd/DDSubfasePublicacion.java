@@ -19,6 +19,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 
 @Entity
 @Table(name = "DD_SFP_SUBFASE_PUBLICACION", schema = "${entity.schema}")
@@ -55,6 +56,7 @@ public class DDSubfasePublicacion implements Auditable, Dictionary {
 	public static final String CODIGO_PENDIENTE_REPARACIONES = "24";
 	public static final String CODIGO_DEVUELTO = "25";
 	public static final String CODIGO_CLASIFICADO = "26";
+	public static final String CODIGO_GESTION_APIS = "28";
 
 
 	@Id
@@ -138,5 +140,45 @@ public class DDSubfasePublicacion implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
+	public static boolean isHistoricoFasesExcPubEstrategiaCl(DDSubfasePublicacion subfasePublicacion) {
+		boolean isExclPubEstrCl = false;
+		
+		if(subfasePublicacion != null && CODIGO_EXCLUIDO_PUBLICACION_ESTRATEGICA_DEL_CLIENTE.equals(subfasePublicacion.getCodigo())) {
+			isExclPubEstrCl = true;
+		}
+		
+		return isExclPubEstrCl;
+	}
+	
+	public static boolean isHistoricoFasesReqLegAdm(DDSubfasePublicacion subfasePublicacion) {
+		boolean isReqLegAdm = false;
+		
+		if(subfasePublicacion != null && CODIGO_REQUERIMIENTO_LEGAL_O_ADMINISTRATIVO.equals(subfasePublicacion.getCodigo())) {
+			isReqLegAdm = true;
+		}
+		
+		return isReqLegAdm;
+	}
 
+	
+	public static boolean isHistoricoFasesSinValor(DDSubfasePublicacion subfasePublicacion) {
+		boolean isSinValor = false;
+		
+		if(subfasePublicacion != null && CODIGO_SIN_VALOR.equals(subfasePublicacion.getCodigo())) {
+			isSinValor = true;
+		}
+		
+		return isSinValor;
+	}
+	
+	public static boolean isHistoricoFasesGestionApi(DDSubfasePublicacion subfasePublicacion) {
+		boolean isGestionApi = false;
+		
+		if(subfasePublicacion != null && CODIGO_GESTION_APIS.equals(subfasePublicacion.getCodigo())) {
+			isGestionApi = true;
+		}
+		
+		return isGestionApi;
+	}
+	
 }

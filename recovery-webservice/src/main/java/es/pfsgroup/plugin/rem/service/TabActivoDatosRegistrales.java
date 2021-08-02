@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceDesbloqExpCambioSitJuridica;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
@@ -59,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoTramitacionTitulo;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -110,6 +112,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 	
 	@Resource
 	private MessageService messageServices;
@@ -218,6 +223,8 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				if (!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien().getLocalidad())) {
 					BeanUtils.copyProperty(activoDto, "poblacionRegistro", activo.getInfoRegistral().getInfoRegistralBien().getLocalidad().getCodigo());
 					BeanUtils.copyProperty(activoDto, "poblacionRegistroDescripcion", activo.getInfoRegistral().getInfoRegistralBien().getLocalidad().getDescripcion());
+					BeanUtils.copyProperty(activoDto, "provinciaRegistro", activo.getInfoRegistral().getInfoRegistralBien().getLocalidad().getProvincia().getCodigo());
+					BeanUtils.copyProperty(activoDto, "provinciaRegistroDescripcion", activo.getInfoRegistral().getInfoRegistralBien().getLocalidad().getProvincia().getDescripcion());
 				}
 	
 				if (!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien().getProvincia())) {
@@ -1042,10 +1049,11 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					}
 				}
 			}
-		
-			
-			activo.getAdjNoJudicial().setFechaPosesion(dto.getFechaPosesion());
-			activo.getSituacionPosesoria().setFechaTomaPosesion(dto.getFechaPosesion());
+
+			if (!Checks.esNulo(dto.getFechaPosesion())) {
+				activo.getAdjNoJudicial().setFechaPosesion(dto.getFechaPosesion());
+				activo.getSituacionPosesoria().setFechaTomaPosesion(dto.getFechaPosesion());
+			}
 			
 		} catch (JsonViewerException jvex) {
 			throw jvex;

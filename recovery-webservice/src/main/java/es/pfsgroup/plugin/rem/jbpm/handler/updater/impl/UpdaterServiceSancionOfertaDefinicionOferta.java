@@ -7,12 +7,14 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jdt.internal.core.CreateFieldOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -22,12 +24,15 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -38,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -76,6 +82,12 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	
 	@Autowired
 	private UsuarioApi usuarioApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+	private TareaActivoApi tareaActivoApi;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDefinicionOferta.class);
 
@@ -131,10 +143,16 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 					}
 				}
 				expediente.setFechaSancion(new Date());
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
-						DDEstadosExpedienteComercial.APROBADO);
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 				expediente.setEstado(estado);
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+				
+				/*if (ofertaAceptada.getOfertaExpress() != null && ofertaAceptada.getOfertaExpress()) {
+					List<TareaActivo> tareas = tareaActivoApi.getTareasActivoByIdTramite(tramite.getId());
+					if (tareas != null && !tareas.isEmpty())
+						ofertaApi.actualizarOfertaBoarding(tareas.get(0).getTareaExterna());
+				}*/
 				
 				if(expediente.getCondicionante().getSolicitaReserva()!=null 
 						&& RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {
@@ -190,6 +208,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 						estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					}
 					expediente.setEstado(estado);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 				}
 			}
 
@@ -204,6 +224,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_SANCION);
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					expediente.setEstado(estado);
+					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 				}	
 				if (FECHA_ENVIO_COMITE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) && CODIGO_CARTERA_THIRD_PARTY.equals(codCartera)) {
 					try {
@@ -238,8 +260,11 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 						if(!Checks.esNulo(comiteSuperior)) {
 							expediente.setComiteSuperior(comiteSuperior);
 							expediente.setComiteSancion(comiteSuperior);
-							expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
-									DDEstadosExpedienteComercial.PTE_SANCION)));
+							DDEstadosExpedienteComercial estado =genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
+									DDEstadosExpedienteComercial.PTE_SANCION));
+							expediente.setEstado(estado);
+							recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 						}
 						
 					}else {
@@ -257,12 +282,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				expediente.setComiteSuperior(comite);
 				expediente.setComiteSancion(comite);
 			}
-
-
-		}
-
-		
-		
+		}		
 	}
 
 	public String[] getCodigoTarea() {

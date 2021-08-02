@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model.dd;
 
+import java.util.Arrays;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -107,5 +109,37 @@ public class DDTipoComercializacion implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+	
+	public static boolean isDestinoComercialSoloAlquiler(DDTipoComercializacion comercializacion) {
+		boolean isDestinoComercialAlquiler = false;
+		
+		if(comercializacion != null && CODIGO_SOLO_ALQUILER.equals(comercializacion.getCodigo())) {
+			isDestinoComercialAlquiler = true;
+		}
+		
+		return isDestinoComercialAlquiler;
+	}
+	
+	public static boolean isDestinoComercialVenta(DDTipoComercializacion comercializacion) {
+		boolean isDestinoComercialVenta = false;
+		
+		if(comercializacion != null && CODIGO_VENTA.equals(comercializacion.getCodigo())) {
+			isDestinoComercialVenta = true;
+		}
+		
+		return isDestinoComercialVenta;
+	}
+
+	
+	public static boolean isDestinoComercialAlquilerVenta(DDTipoComercializacion comercializacion) {
+		boolean isDestinoComercialAlquilerVenta = false;
+		
+		if(comercializacion != null && CODIGO_ALQUILER_VENTA.equals(comercializacion.getCodigo())) {
+			isDestinoComercialAlquilerVenta = true;
+		}
+		
+		return isDestinoComercialAlquilerVenta;
+	}
+
 
 }

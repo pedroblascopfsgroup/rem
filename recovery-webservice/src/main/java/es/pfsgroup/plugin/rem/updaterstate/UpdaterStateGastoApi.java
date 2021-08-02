@@ -18,7 +18,7 @@ public interface UpdaterStateGastoApi {
 	 * @param gasto
 	 * @return
 	 */
-	String validarCamposMinimos(GastoProveedor gasto);
+	String validarCamposMinimos(GastoProveedor gasto , Boolean origen);
 
 	String validarAutorizacionSuplido(GastoProveedor gasto);
 

@@ -55,7 +55,7 @@ Ext.define('HreRem.view.trabajos.detalle.AgendaTrabajoGrid', {
 		        	},
 		        	
 		            flex: 1,
-		            formatter: 'date("d/m/yy")'
+		            formatter: 'date("d/m/y")'
 		        },
 		        {
 		            dataIndex: 'tipoGestion',

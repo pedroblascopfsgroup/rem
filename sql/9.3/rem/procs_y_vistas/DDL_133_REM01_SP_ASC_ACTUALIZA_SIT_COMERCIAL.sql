@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=PIER GOTTA
---## FECHA_CREACION=20190226
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20210528
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=REMVIP-3387
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-9845
 --## PRODUCTO=NO
 --## Finalidad: Stored Procedure que actualiza la situacion comercial de los activos en REM.
 --##           
@@ -14,6 +14,7 @@
 --##        0.2 Segunda version - HREOS-3523 - Vicente Martinez
 --##        0.3 Tercera version - REMVIP-3040 - Ivan Castelló
 --##	    0.4 Cuarta versión  - REMVIP-3387 - Pier Gotta
+--##	    0.5 Cuarta versión  - REMVIP-9845 - Viorel Remus Ovidiu - Cambiada vista a V_ES_CONDICIONADO en vez de V_COND_DISPONIBILIDAD
 --##########################################
 --*/
 
@@ -70,7 +71,7 @@ V_USUARIO VARCHAR2(30 CHAR) := 'SP_ASC_SCM';
 TABLA_APOYO VARCHAR2(30 CHAR) := 'TMP_ACT_SCM';
 TABLA_ACTIVO VARCHAR2(30 CHAR) := 'ACT_ACTIVO';
 TABLA_APOYO_PRECAL VARCHAR2(30 CHAR) := 'TMP_ACT_SCM_PRECAL';
-VISTA_COND VARCHAR2(30 CHAR) := 'V_COND_DISPONIBILIDAD';
+VISTA_COND VARCHAR2(30 CHAR) := 'V_ES_CONDICIONADO';
 
 --CODIGOS DICCIONARIO
 SITCOM_ALQUILER VARCHAR2(2 CHAR) := '07';

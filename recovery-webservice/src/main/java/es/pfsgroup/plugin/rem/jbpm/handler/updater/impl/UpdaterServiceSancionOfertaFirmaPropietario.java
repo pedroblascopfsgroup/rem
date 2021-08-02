@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.activo.exception.PlusvaliaActivoException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -32,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 
 @Component
@@ -50,6 +52,9 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
     
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaFirmaPropietario.class);
     
@@ -78,6 +83,8 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 						pasaAVendido = true;
 
 						if ( ofertaAceptada.getActivoPrincipal() != null ) {
@@ -112,8 +119,16 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 						
 						//Rechazamos el resto de ofertas
 						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
+						Filter filtroMotivo;
+						
 						for(Oferta oferta : listaOfertas){
 							if(DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())){
+								filtroMotivo = genericDao.createFilter(FilterType.EQUALS, "codigo",
+										DDMotivoRechazoOferta.CODIGO_ACTIVO_VENDIDO);
+								DDMotivoRechazoOferta motivo = genericDao.get(DDMotivoRechazoOferta.class,
+										filtroMotivo);
+								
+								oferta.setMotivoRechazo(motivo);
 								ofertaApi.rechazarOferta(oferta);
 							}
 						}
@@ -126,6 +141,8 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+
 						expediente.setFechaVenta(null);
 						
 						//Finaliza el trámite

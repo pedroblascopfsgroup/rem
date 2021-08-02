@@ -55,6 +55,12 @@ Ext.define('HreRem.view.trabajos.detalle.listaActivosAgrupacionGrid', {
 		        	hidden: true,
 		        	renderer: Utils.rendererBooleanToSiNo,
 		        	flex: 1
+		        },{
+		        	dataIndex: 'activoTramite',
+		        	text: HreRem.i18n("header.en.tramite"),
+		        	hidden: false,
+		        	renderer: Utils.rendererBooleanToSiNo,
+		        	flex: 1
 		        }
         ];
         

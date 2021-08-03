@@ -1,0 +1,78 @@
+--/*
+--#########################################
+--## AUTOR=PIER GOTTA
+--## FECHA_CREACION=20210727
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.11
+--## INCIDENCIA_LINK=HREOS-14680
+--## PRODUCTO=NO
+--## 
+--## Finalidad: 
+--##                    
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := 'MIG-CAIXA';
+V_TABLA VARCHAR2(40 CHAR) := 'ACT_ECO_INFORME_JURIDICO';
+V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_ACT_INFORME_JURIDICO_CAIXA';
+V_SENTENCIA VARCHAR2(2000 CHAR);
+V_NUM_TABLAS NUMBER(16);
+V_MSQL VARCHAR2(32000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+
+BEGIN 
+ 
+	--Inicio del proceso de volcado sobre COE_CONDICIONANTES_EXPEDIENTE
+
+V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';
+
+EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+
+IF V_NUM_TABLAS = 0 THEN
+DBMS_OUTPUT.PUT_LINE('La tabla/s de migración implicada está vacía. No se realiza ninguna acción');
+
+ELSE
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
+ 
+	EXECUTE IMMEDIATE '
+		INSERT INTO '||V_ESQUEMA||'MIG2_ACT_INFORME_JURIDICO_CAIXA(ECO_ID,
+		ACT_ID,
+		ACT_ECO_FECHA_EMISION)
+		SELECT MIG.ECO_ID, INF.ACT_ID, INF.ACT_ECO_FECHA_EMISION 
+		FROM '||V_ESQUEMA||'.ACT_ECO_INFORME_JURIDICO INF
+		JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.ECO_ID = INF.ECO_ID
+		JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID
+		JOIN '||V_ESQUEMA||'.MIG2_OFR_MAPEO_NUM_OFERTAS MIG ON MIG.COD_OFERTA_CAIXA = OFR.OFR_NUM_OFERTA
+	';
+  
+  DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+  
+  COMMIT;
+  
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+  EXECUTE IMMEDIATE (V_SENTENCIA);
+  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
+END IF;                          
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+END;
+/
+EXIT;

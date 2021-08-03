@@ -129,10 +129,13 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                {
 		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.contabilizacion'),
-		                	minValue: $AC.getCurrentDate(),
-							maxValue: null,
+		                	reference: 'fechacontabilizacionarrasref',
 							readOnly: true,
-		                	bind: 		'{reserva.fechaContabilizacionArras}'
+		                	bind: 		
+		                		{
+		                			value:'{reserva.fechaContabilizacionArras}',
+		                			hidden: '{!esCarteraBankia}' 
+		                		}
 		                },
 		                {
 		                	xtype:'datefieldbase',

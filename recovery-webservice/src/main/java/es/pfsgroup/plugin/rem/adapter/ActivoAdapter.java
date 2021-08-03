@@ -4385,6 +4385,9 @@ public class ActivoAdapter {
 //			codigoEstado = DDEstadoOferta.CODIGO_PDTE_DEPOSITO;
 //		}
 
+		if (DDCartera.isCarteraBk(activo.getCartera())) {
+			codigoEstado = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
+		}
 		if (activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(activo.getId())
 				|| ofertaApi.isActivoConOfertaYExpedienteBlocked(activo)) { 
 			codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;

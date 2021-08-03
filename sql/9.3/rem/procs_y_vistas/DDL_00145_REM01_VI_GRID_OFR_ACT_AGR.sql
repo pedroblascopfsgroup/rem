@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Vicente MArtinez
---## FECHA_CREACION=20210610
+--## AUTOR=Sergio Gomez
+--## FECHA_CREACION=20210803
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13272
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        HREOS-13272 - 0.1 Versión inicial
 --##        HREOS-14246 - 0.2 Se añaden nuevos estados cartera Caixa
+--##        HREOS-14789 - 0.3 Se añaden nuevos estado (08) cartera Caixa
 --##########################################
 --*/
 
@@ -86,7 +87,7 @@ BEGIN
 		INNER JOIN '|| V_ESQUEMA ||'.CLC_CLIENTE_COMERCIAL CLC 			ON CLC.CLC_ID = OFR.CLC_ID
 		LEFT JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR 				ON AGR.AGR_ID = OFR.AGR_ID and agr.borrado = 0
 		LEFT JOIN '|| V_ESQUEMA ||'.VI_ACTIVOS_AFECTOS_GENCAT GEN 		ON GEN.ACT_ID = ACT.ACT_ID
-		WHERE OFR.BORRADO  = 0 AND EOF.DD_EOF_CODIGO IN (''01'',''03'',''04'',''05'',''07'',''05'')';
+		WHERE OFR.BORRADO  = 0 AND EOF.DD_EOF_CODIGO IN (''01'',''03'',''04'',''05'',''07'',''05'',''08'')';
 
   EXECUTE IMMEDIATE	V_MSQL;
     

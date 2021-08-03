@@ -3949,6 +3949,9 @@ public class AgrupacionAdapter {
 	private String getEstadoNuevaOferta(ActivoAgrupacion agrupacion) {
 		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
 
+		if (DDCartera.isCarteraBk(agrupacion.getActivos().get(0).getActivo().getCartera())) {
+			codigoEstado = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
+		}
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 			List<Long> activosID = new ArrayList<Long>();
 			for (ActivoAgrupacionActivo activosAgrupacion : agrupacion.getActivos()) {

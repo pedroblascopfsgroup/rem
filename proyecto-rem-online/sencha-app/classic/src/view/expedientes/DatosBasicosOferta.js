@@ -710,7 +710,14 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						bind : {
 							store : '{storeTextosOferta}'
 						},
+						listeners: {
+							beforeedit: function(editor, context) {
+					            var estado = context.record.get("campoCodigo");
+					            var allowEdit = estado == '05' || estado == '06' || estado == '09';
 
+					            return !allowEdit;
+							}
+						},
 						columns : [{
 									text : HreRem.i18n('header.campo'),
 									dataIndex : 'campoDescripcion',

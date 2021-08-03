@@ -1025,7 +1025,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			dto = new DtoTextosOferta();
 			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())) {
 				dto.setCampoCodigo("05");
-				dto.setCampoDescripcion("Recomendación RC");
 				dto.setTexto(ofertaDto.getRecomendacionRc());
 				dto.setFecha(ofertaDto.getFechaRecomendacionRc().toString());
 				
@@ -1034,7 +1033,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())) {
 				dto.setCampoCodigo("06");
-				dto.setCampoDescripcion("Recomendación DC");
 				dto.setTexto(ofertaDto.getRecomendacionDc());
 				dto.setFecha(ofertaDto.getFechaRecomendacionDc().toString());
 				
@@ -1043,7 +1041,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if (!Checks.esNulo(ofertaDto.getPorcentajeDescuento())) {
 				dto.setCampoCodigo("07");
-				dto.setCampoDescripcion("Descuento respecto a precio publicado");
 				dto.setTexto(ofertaDto.getPorcentajeDescuento());
 				
 				saveTextoOfertaWS(dto, oferta);
@@ -1051,16 +1048,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if (!Checks.esNulo(ofertaDto.getJustificacionOferta())) {
 				dto.setCampoCodigo("08");
-				dto.setCampoDescripcion("Justificación del API");
 				dto.setTexto(ofertaDto.getJustificacionOferta());
 				
 				saveTextoOfertaWS(dto, oferta);
 			}
 			
-			if(!Checks.esNulo(ofertaDto.getObservaciones())){
+			if(!Checks.esNulo(ofertaDto.getObservacionesRCDC())){
 				dto.setCampoCodigo("09");
-				dto.setCampoDescripcion("Observaciones");
-				dto.setTexto(ofertaDto.getObservaciones());
+				dto.setTexto(ofertaDto.getObservacionesRCDC());
 				
 				saveTextoOfertaWS(dto, oferta);
 			}
@@ -1475,7 +1470,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			dto = new DtoTextosOferta();
 			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())) {
 				dto.setCampoCodigo("05");
-				dto.setCampoDescripcion("Recomendación RC");
 				dto.setTexto(ofertaDto.getRecomendacionRc());
 				dto.setFecha(ofertaDto.getFechaRecomendacionRc().toString());
 				
@@ -1485,7 +1479,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())) {
 				dto.setCampoCodigo("06");
-				dto.setCampoDescripcion("Recomendación DC");
 				dto.setTexto(ofertaDto.getRecomendacionDc());
 				dto.setFecha(ofertaDto.getFechaRecomendacionDc().toString());
 				
@@ -1495,7 +1488,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if(!Checks.esNulo(ofertaDto.getPorcentajeDescuento())) {
 				dto.setCampoCodigo("07");
-				dto.setCampoDescripcion("Descuento respecto a precio publicado");
 				dto.setTexto(ofertaDto.getPorcentajeDescuento());
 				
 				saveTextoOfertaWS(dto, oferta);
@@ -1504,17 +1496,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if(!Checks.esNulo(ofertaDto.getJustificacionOferta())){
 				dto.setCampoCodigo("08");
-				dto.setCampoDescripcion("Justificación del API");
 				dto.setTexto(ofertaDto.getJustificacionOferta());
 				
 				saveTextoOfertaWS(dto, oferta);
 				modificado = true;
 			}
 			
-			if(!Checks.esNulo(ofertaDto.getObservaciones())){
+			if(!Checks.esNulo(ofertaDto.getObservacionesRCDC())){
 				dto.setCampoCodigo("09");
-				dto.setCampoDescripcion("Observaciones");
-				dto.setTexto(ofertaDto.getObservaciones());
+				dto.setTexto(ofertaDto.getObservacionesRCDC());
 				
 				saveTextoOfertaWS(dto, oferta);
 				modificado = true;

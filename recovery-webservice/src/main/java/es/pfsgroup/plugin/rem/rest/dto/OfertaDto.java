@@ -91,6 +91,7 @@ public class OfertaDto implements Serializable {
 	private String porcentajeDescuento;
 	private String justificacionOferta;
 	private Date fechaAcepGdpr;
+	private String observacionesRCDC;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -388,6 +389,12 @@ public class OfertaDto implements Serializable {
 	}
 	public void setFechaAcepGdpr(Date fechaAcepGdpr) {
 		this.fechaAcepGdpr = fechaAcepGdpr;
+	}
+	public String getObservacionesRCDC() {
+		return observacionesRCDC;
+	}
+	public void setObservacionesRCDC(String observacionesRCDC) {
+		this.observacionesRCDC = observacionesRCDC;
 	}
 
 }

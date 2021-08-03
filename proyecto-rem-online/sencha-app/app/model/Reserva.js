@@ -107,6 +107,11 @@ Ext.define('HreRem.model.Reserva', {
 			name: 'autorizacionVpo',
 			type: 'boolean'
 			
+		},
+		{
+			name: 'fechaContabilizacionArras',
+			type : 'date',
+			dateFormat: 'c'
 		}
 		
     ],

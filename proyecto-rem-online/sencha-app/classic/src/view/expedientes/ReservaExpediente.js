@@ -119,19 +119,30 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	xtype: 'checkboxfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.reserva.con.impuesto'),
 		                	readOnly: true,
-		                	bind:		'{reserva.conImpuesto}'		                
+		                	bind:		'{reserva.conImpuesto}',
+		                	colspan: 2
+		                },
+		                {
+		                	fieldLabel:  HreRem.i18n('fieldlabel.dias.transcurridos'),
+							bind: 		'{reserva.diasFirma}'
+		                },
+		                {
+		                	xtype:'datefieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.contabilizacion'),
+		                	minValue: $AC.getCurrentDate(),
+							maxValue: null,
+							readOnly: true,
+		                	bind: 		'{reserva.fechaContabilizacionArras}'
 		                },
 		                {
 		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.vencimiento'),
 		                	minValue: $AC.getCurrentDate(),
 							maxValue: null,
-		                	bind: 		'{reserva.fechaVencimiento}'
+		                	bind: 		'{reserva.fechaVencimiento}',		                	
+							colspan: 2
 		                },
-		                {
-		                	fieldLabel:  HreRem.i18n('fieldlabel.dias.transcurridos'),
-							bind: 		'{reserva.diasFirma}'
-		                },
+
 		                {
 							xtype: 'textfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.codigo.sucursalreserva'),

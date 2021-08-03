@@ -82,6 +82,8 @@ public class DtoReserva extends WebDto {
     private Boolean temasCatastrales;
     
     private Boolean autorizacionVpo;
+    
+    private Date fechaContabilizacionArras;
 	
 
 	public Double getDepositoReserva() {
@@ -346,5 +348,13 @@ public class DtoReserva extends WebDto {
 
 	public void setAutorizacionVpo(Boolean autorizacionVpo) {
 		this.autorizacionVpo = autorizacionVpo;
+	}
+
+	public Date getFechaContabilizacionArras() {
+		return fechaContabilizacionArras;
+	}
+
+	public void setFechaContabilizacionArras(Date fechaContabilizacionArras) {
+		this.fechaContabilizacionArras = fechaContabilizacionArras;
 	}
 }

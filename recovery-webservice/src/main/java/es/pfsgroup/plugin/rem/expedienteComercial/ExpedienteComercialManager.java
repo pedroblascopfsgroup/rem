@@ -2236,8 +2236,38 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setFechaComunicacionCliente(reserva.getFechaComunicacionCliente());
 			dto.setFechaComunicacionClienteRescision(reserva.getFechaComunicacionClienteRescision());
 			dto.setFechaFirmaRescision(reserva.getFechaFirmaRescision());
+			
+			if (reserva.getFechaContArras() != null) {
+				dto.setFechaContabilizacionArras(reserva.getFechaContArras());
+			}
 		}
 
+		CondicionesReserva condiciones = genericDao.get(CondicionesReserva.class, genericDao.createFilter(FilterType.EQUALS, "reserva.id", reserva.getId()));
+		
+		if (condiciones != null) {
+			if (condiciones.getAutorizacionVpo() != null) {
+				dto.setAutorizacionVpo(condiciones.getAutorizacionVpo());
+			}
+			if (condiciones.getCargas() != null) {
+				dto.setCargas(condiciones.getCargas());
+			}
+			if (condiciones.getInscripcionTitulo() != null) {
+				dto.setInscripcionTitulo(condiciones.getInscripcionTitulo());
+			}
+			if (condiciones.getPosesion() != null) {
+				dto.setPosesion(condiciones.getPosesion());
+			}
+			if (condiciones.getTanteoDL() != null) {
+				dto.setTanteoDL(condiciones.getTanteoDL());
+			}
+			if (condiciones.getTemasCatastrales() != null) {
+				dto.setTemasCatastrales(condiciones.getTemasCatastrales());
+			}
+			if (condiciones.getTemasTecnicos() != null) {
+				dto.setTemasTecnicos(condiciones.getTemasTecnicos());
+			}
+		}
+		
 		return dto;
 	}
 
@@ -3496,6 +3526,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.PENITENCIALES);
 					reserva.setTipoArras(tipoArras);
 				}
+				CondicionesReserva condicionesReserva = new CondicionesReserva();
+				condicionesReserva.setAuditoria(Auditoria.getNewInstance());
+				condicionesReserva.setReserva(reserva);
+				genericDao.save(CondicionesReserva.class, condicionesReserva);
 			}
 		}
 
@@ -4451,6 +4485,34 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			
 			genericDao.save(Reserva.class, reserva);
+			
+			CondicionesReserva condiciones = genericDao.get(CondicionesReserva.class, genericDao.createFilter(FilterType.EQUALS, "reserva.id", reserva.getId()));
+			
+			if (condiciones != null) {
+				if (dto.getAutorizacionVpo() != null) {
+					condiciones.setAutorizacionVpo(dto.getAutorizacionVpo());
+				}
+				if (dto.getCargas() != null) {
+					condiciones.setCargas(dto.getCargas());
+				}
+				if (dto.getInscripcionTitulo() != null) {
+					condiciones.setInscripcionTitulo(dto.getInscripcionTitulo());
+				}
+				if (dto.getPosesion() != null) {
+					condiciones.setPosesion(dto.getPosesion());
+				}
+				if (dto.getTanteoDL() != null) {
+					condiciones.setTanteoDL(dto.getTanteoDL());
+				}
+				if (dto.getTemasCatastrales() != null) {
+					condiciones.setTemasCatastrales(dto.getTemasCatastrales());
+				}
+				if (dto.getTemasTecnicos() != null) {
+					condiciones.setTemasTecnicos(dto.getTemasTecnicos());
+				}
+				
+				genericDao.save(CondicionesReserva.class, condiciones);
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("error en expedienteComercialManager", e);

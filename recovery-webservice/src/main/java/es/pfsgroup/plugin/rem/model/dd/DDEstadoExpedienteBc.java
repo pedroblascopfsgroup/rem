@@ -66,6 +66,7 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 	public static final String CODIGO_PTE_ENVIO = "034";
 	public static final String CODIGO_PTE_AGENDAR_ARRAS = "035";	
 	public static final String CODIGO_FIRMA_APROBADA = "036";
+	public static final String CODIGO_EN_TRAMITE = "037";
 	
 	private static final long serialVersionUID = 1L;
 

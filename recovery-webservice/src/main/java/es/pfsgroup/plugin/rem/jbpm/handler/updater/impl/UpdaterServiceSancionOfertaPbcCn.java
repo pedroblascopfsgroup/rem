@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.itinerario.EstadoManager;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -34,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
@@ -83,26 +85,39 @@ public class UpdaterServiceSancionOfertaPbcCn implements UpdaterService {
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		ExpedienteComercial expediente = null;
+		boolean estadoBcModificado = false;
 		//Activo activo = ofertaAceptada.getActivoPrincipal();
 		
 		if(!Checks.esNulo(ofertaAceptada)) {
-			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
 			if (!Checks.esNulo(expediente)) {
 
 				for(TareaExternaValor valor :  valores){
 
 					if(COMBO_RESULTADO.equals(valor.getNombre()) || COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-						if(DDSiNo.NO.equals(valor.getValor())) {
-							expediente.setEstadoPbcCn(1);
+						if(DDSiNo.SI.equals(valor.getValor())) {
+							expediente.setEstadoPbcCn(1);							
+							DDEstadoExpedienteBc estadoBc = (DDEstadoExpedienteBc) utilDiccionarioApi
+									.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class,
+											DDEstadoExpedienteBc.CODIGO_PDTE_APROBACION_BC);
+							if (estadoBc != null) {
+								expediente.setEstadoBc(estadoBc);
+								estadoBcModificado = true;
+							}							
 							
-						} else if(DDSiNo.SI.equals(valor.getValor())) {
+						} else if(DDSiNo.NO.equals(valor.getValor())) {
 							expediente.setEstadoPbcCn(0);	
 						}
 					}
 					genericDao.save(ExpedienteComercial.class, expediente);
 				}
 			}
+		}
+		
+		if(estadoBcModificado && expediente != null) {
+			ofertaApi.replicateOfertaFlush(expediente.getOferta());
 		}
 
 	}

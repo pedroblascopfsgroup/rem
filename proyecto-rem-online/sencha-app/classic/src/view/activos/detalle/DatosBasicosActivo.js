@@ -55,7 +55,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									fieldLabel:  HreRem.i18n('fieldlabel.id.activo.uvem'),
 				                	bind:{
 				                		value: '{activo.numActivoUvem}',
-				                		hidden: '{activo.isCarteraBankia}'
+				                		hidden: '{!activo.isCarteraBankia}'
 				                	}
 				                },
 								{

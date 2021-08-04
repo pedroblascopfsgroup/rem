@@ -16,14 +16,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoImpuestoCompra;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoImpuestoCompra;
 
 @Entity
 @Table(name = "ACT_FAD_FISCALIDAD_ADQUISICION", schema = "${entity.schema}")
@@ -49,7 +48,15 @@ public class ActivoFiscalidadAdquisicion implements Serializable, Auditable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_SIC_ID")
-	private DDSubtipoImpuestoCompra subtipoImpuestoCompra;	
+	private DDSubtipoImpuestoCompra subtipoImpuestoCompra;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TII_ID")
+	private DDTipoITP tipoImpositivoITP;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TIA_ID")
+	private DDTipoIVA tipoImpositivoIVA;
 	
     @Column(name = "FAD_PORCENTAJE_IMPUESTO_COMPRA")
     private Double porcentajeImpuestoCompra;
@@ -59,6 +66,12 @@ public class ActivoFiscalidadAdquisicion implements Serializable, Auditable {
     
     @Column(name = "FAD_RENUNCIA_EXENCION")
     private Boolean renunciaExencionCompra;
+
+    @Column(name = "FAD_DEDUCIBLE")
+	private Long deducible;
+
+    @Column(name = "FAD_BONIFICADO")
+	private Long bonificado;
 	
 	@Version   
 	private Long version;
@@ -137,5 +150,36 @@ public class ActivoFiscalidadAdquisicion implements Serializable, Auditable {
 	public void setVersion(Long version) {
 		this.version = version;
 	}
-	
+
+	public DDTipoITP getTipoImpositivoITP() {
+		return tipoImpositivoITP;
+	}
+
+	public void setTipoImpositivoITP(DDTipoITP tipoImpositivoITP) {
+		this.tipoImpositivoITP = tipoImpositivoITP;
+	}
+
+	public DDTipoIVA getTipoImpositivoIVA() {
+		return tipoImpositivoIVA;
+	}
+
+	public void setTipoImpositivoIVA(DDTipoIVA tipoImpositivoIVA) {
+		this.tipoImpositivoIVA = tipoImpositivoIVA;
+	}
+
+	public Long getDeducible() {
+		return deducible;
+	}
+
+	public void setDeducible(Long deducible) {
+		this.deducible = deducible;
+	}
+
+	public Long getBonificado() {
+		return bonificado;
+	}
+
+	public void setBonificado(Long bonificado) {
+		this.bonificado = bonificado;
+	}
 }

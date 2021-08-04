@@ -98,6 +98,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoContrasteListas;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -612,6 +613,14 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		crearCompradores(oferta, nuevoExpediente);
 
 		nuevoExpediente.setTipoAlquiler(oferta.getActivoPrincipal().getTipoAlquiler());
+		if (DDCartera.isCarteraBk(activo.getCartera())) {
+			DDEstadoExpedienteBc estadoBc = (DDEstadoExpedienteBc) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class,
+							DDEstadoExpedienteBc.CODIGO_EN_TRAMITE);
+			if (estadoBc != null) {
+				nuevoExpediente.setEstadoBc(estadoBc);
+			}
+		}
 
 		nuevoExpediente = genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 

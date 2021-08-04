@@ -8752,6 +8752,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return mailsParaEnviarComercializadora;
 
 	}
+	
+	@Override
+	public boolean checkExpedienteBloqueado(Long idTramite) {
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		
+		if (!Checks.esNulo(activoTramite)) {
+			Trabajo trabajo = activoTramite.getTrabajo();
+
+			if (!Checks.esNulo(trabajo)) {
+				ExpedienteComercial expediente = expedienteComercialDao
+						.getExpedienteComercialByIdTrabajo(trabajo.getId());
+				return (new Integer(1).equals(expediente.getBloqueado()));
+			}
+		}
+
+		return false;
+	}
 
 	@Override
 	public boolean checkExpedienteFechaChequeLiberbank(Long idTramite) {

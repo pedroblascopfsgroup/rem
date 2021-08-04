@@ -38,8 +38,8 @@ public class CaixaBcRestClient {
     public static final String ID_PROVEEDOR = "idProveedor";
 
 
-    public Boolean callReplicateClient(Long numOferta,String dataSourceCode){
-            Boolean resp = false;
+    public ReplicacionClientesResponse callReplicateClient(Long numOferta,String dataSourceCode){
+             ReplicacionClientesResponse resp = null;
 
             try {
                 if (this.isActive() && particularValidatorApi.esOfertaCaixa(numOferta != null ? numOferta.toString() : null)){
@@ -49,24 +49,18 @@ public class CaixaBcRestClient {
                         params.put("numOferta", numOferta.toString());
                         params.put("dataSourceCode", dataSourceCode);
                         HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
-                        resp = request.post(Boolean.class);
-                    } else {
-                        return false;
+                        resp = request.post(ReplicacionClientesResponse.class);
+                        printReplicateClientResponse(resp);
                     }
-                }else{
-                    return true;
                 }
-
             } catch (Exception e) {
                 logger.error("Error en " + this.getClass().toString(), e);
             }
-
-            return resp != null ? resp : true;
-
+            return resp;
     }
 
-    public Boolean callReplicateClientUpdate(Long id,String tipoID){
-        Boolean resp = false;
+    public ReplicacionClientesResponse callReplicateClientUpdate(Long id,String tipoID){
+        ReplicacionClientesResponse resp = null;
 
         try {
             if (this.isActive()){
@@ -79,47 +73,38 @@ public class CaixaBcRestClient {
                         params.put(ID_PROVEEDOR, id);
                     params.put("dataSourceCode", KEY_FASE_UPDATE);
                     HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
-                    resp = request.post(Boolean.class);
-                } else {
-                    return false;
+                    resp = request.post(ReplicacionClientesResponse.class);
+                    printReplicateClientResponse(resp);
                 }
-            }else{
-                return true;
             }
-
         } catch (Exception e) {
             logger.error("Error en " + this.getClass().toString(), e);
         }
-
-        return resp != null ? resp : true;
+        return resp;
 
     }
 
-    public Boolean callReplicateClientUpdateComprador(Long id,Long numOferta){
-        Boolean resp = false;
+    public ReplicacionClientesResponse callReplicateClientUpdateComprador(Long id,Long numOferta){
+        ReplicacionClientesResponse resp = null;
 
         try {
             if (this.isActive()){
                 String endpoint = getRem3Endpoint(REM3_URL,REPLICACION_CLIENTES_ENDPOINT);
                 if (endpoint != null) {
                     Map<String, Object> params = new HashMap<String, Object>();
-                        params.put(ID_COMPRADOR, id);
-                        params.put("numOferta", numOferta.toString());
+                    params.put(ID_COMPRADOR, id);
+                    params.put("numOferta", numOferta.toString());
+                    params.put("dataSourceCode", KEY_FASE_UPDATE);
                     params.put("dataSourceCode", KEY_FASE_UPDATE);
                     HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
-                    resp = request.post(Boolean.class);
-                } else {
-                    return false;
+                    resp = request.post(ReplicacionClientesResponse.class);
+                    printReplicateClientResponse(resp);
                 }
-            }else{
-                return true;
             }
-
         } catch (Exception e) {
             logger.error("Error en " + this.getClass().toString(), e);
         }
-
-        return resp != null ? resp : true;
+        return resp;
 
     }
 
@@ -174,5 +159,22 @@ public class CaixaBcRestClient {
         return activado;
     }
 
+    private void printReplicateClientResponse(ReplicacionClientesResponse response){
+        if (response != null){
+            System.out.println("------ Respuesta Replicar Clientes ------");
+            if (response.getSuccess() != null)
+                System.out.println("Success : "+response.getSuccess());
+            if (response.getErrorDesc() != null)
+                System.out.println("Errores :"+response.getErrorDesc());
+            if (response.getMissingFields() != null)
+                System.out.println("Campos requeridos incompletos :"+response.getMissingFields());
+        }
+    }
+
+    public ReplicacionClientesResponse simulateOkCall(){
+        return new ReplicacionClientesResponse(){{
+           setSuccess(true);
+        }};
+    }
 
 }

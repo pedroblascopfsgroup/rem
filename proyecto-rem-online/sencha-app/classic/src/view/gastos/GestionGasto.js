@@ -293,9 +293,55 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 							reference : 'gestionRechazoPropGridRef'
 						}
 					]
-			}			
-
-           
+			},
+			{
+			   
+				xtype:'fieldsettable',
+				title: HreRem.i18n('title.gasto.gestion.repercutibles'),
+				listeners:{
+					afterrender: function(get){
+						var me =this;
+						var cartera = me.up().lookupController().getViewModel().getData().gasto.getData().cartera;
+						
+						if (cartera != CONST.CARTERA['BANKIA']) {
+							me.setHidden(true);
+						}else{
+							me.setHidden(false);
+						}												
+					}
+				},
+				items :
+					[
+						{ 
+							xtype:'comboboxfieldbase',
+							reference: 'gestionNecesarioAutorizacion',
+							fieldLabel:  HreRem.i18n('fieldlabel.repercutido.inquilino'),
+							readOnly: true,
+						    bind: {
+					        	store: '{comboSiNoGastoBoolean}',
+					            value: '{gestion.gestionGastoRepercutido}'
+					        }
+						},
+						{
+			        		xtype:'datefieldbase',
+							formatter: 'date("d/m/Y")',
+				        	fieldLabel: HreRem.i18n('fieldlabel.fecha.repercusion'),
+				        	bind: '{gestion.fechaGestionGastoRepercusion}',
+				        	readOnly: true,
+				        	maxValue: null
+				        },
+						{
+							xtype: 'textfieldbase',
+							reference: 'gestionMotivoRechazoPropietario',
+							fieldLabel: HreRem.i18n('fieldlabel.motivo.rechazo'),
+							readOnly: true,
+							bind:		{
+								value: '{gestion.motivoRechazoGestionGasto}'
+							}
+							
+						}
+					]
+			}
     	];
     
 	    me.addPlugin({ptype: 'lazyitems', items: items });

@@ -2297,6 +2297,22 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if (!Checks.esNulo(gastoGestion.getMotivoRetencionPago())) {
 					dtoGestion.setComboMotivoRetenerPago(gastoGestion.getMotivoRetencionPago().getCodigo());
 				}
+
+				if (gastoGestion.getGestionGastoRepercutido() != null) {
+					if (DDSinSiNo.CODIGO_SI.equals(gastoGestion.getGestionGastoRepercutido().getCodigo())) {
+						dtoGestion.setGestionGastoRepercutido(true);
+					} else if (DDSinSiNo.CODIGO_NO.equals(gastoGestion.getGestionGastoRepercutido().getCodigo())) {
+						dtoGestion.setGestionGastoRepercutido(false);
+					}
+				}
+				
+				if (gastoGestion.getFechaGestionGastoRepercusion() != null) {
+					dtoGestion.setFechaGestionGastoRepercusion(gastoGestion.getFechaGestionGastoRepercusion());
+				}
+
+				if (gastoGestion.getMotivoRechazoGestionGasto() != null) {
+					dtoGestion.setMotivoRechazoGestionGasto(gastoGestion.getMotivoRechazoGestionGasto());
+				}	
 			}
 		}
 

@@ -5063,6 +5063,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(comprador.getInfoAdicionalPersona() != null) {
 				comprador.getInfoAdicionalPersona().setVinculoCaixa(vinculoCaixa);
 			}
+			if (vinculoCaixa != null) {
+				compradorExpediente.setVinculoCaixa(vinculoCaixa);
+			}
 			if (esNuevo) {
 				
 				Oferta oferta = expedienteComercial.getOferta();
@@ -13096,15 +13099,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (expediente != null) {
 			List<CompradorExpediente> listaCompradores = expediente.getCompradores();
 			for (CompradorExpediente compradorExpediente : listaCompradores) {
-				Comprador comprador = genericDao.get(Comprador.class, genericDao.createFilter(FilterType.EQUALS, "id" ,compradorExpediente.getComprador()));
-				if (comprador != null) {
-					InfoAdicionalPersona informacionAdicional = comprador.getInfoAdicionalPersona();
-					if (informacionAdicional != null) {
-						if (informacionAdicional.getVinculoCaixa() != null) {
-							isEmpleadoCaixa = true;
-							break;
-						}
-					}
+				if (compradorExpediente.getVinculoCaixa() != null) {
+					isEmpleadoCaixa = true;
+					break;
 				}
 			}
 		}

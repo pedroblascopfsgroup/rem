@@ -1030,6 +1030,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						iap.setEstadoComunicacionC4C(estadoComunicacionC4C);
 					}									
 					compradorExpedienteNuevo.setInfoAdicionalRepresentante(iap);
+					
+					if (iap.getVinculoCaixa() != null) {
+						compradorExpedienteNuevo.setVinculoCaixa(iap.getVinculoCaixa());
+					}
 				}
 			}
 

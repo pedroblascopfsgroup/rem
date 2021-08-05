@@ -234,6 +234,10 @@ public class CompradorExpediente implements Serializable, Auditable {
 	
 	@Column(name = "CEX_SOCIEDAD")
 	private String sociedad;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_VIC_ID")
+	private DDVinculoCaixa vinculoCaixa;
  
 	@Version   
 	private Long version;
@@ -778,6 +782,14 @@ public class CompradorExpediente implements Serializable, Auditable {
 
 	public void setSociedad(String sociedad) {
 		this.sociedad = sociedad;
+	}
+
+	public DDVinculoCaixa getVinculoCaixa() {
+		return vinculoCaixa;
+	}
+
+	public void setVinculoCaixa(DDVinculoCaixa vinculoCaixa) {
+		this.vinculoCaixa = vinculoCaixa;
 	}
    
 }

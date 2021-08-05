@@ -19,7 +19,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.ui.ModelMap;
-
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
@@ -84,6 +83,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Formalizacion;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
+import es.pfsgroup.plugin.rem.model.InfoAdicionalPersona;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -114,6 +114,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -1007,6 +1008,29 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			
 			if(oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
 				this.setInterlocutorOferta(compradorExpedienteNuevo, true, oferta);
+			}
+			if (DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
+				//InfoAdicionalPersona iap = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", cliente.getIdPersonaHaya()));
+				InfoAdicionalPersona iap = cliente.getInfoAdicionalPersona();
+				
+				if (iap != null) {					
+					if (compradorExpedienteNuevo != null) {
+						if (iap.getAntiguoDeudor() != null) {
+							compradorExpedienteNuevo.setAntiguoDeudor(iap.getAntiguoDeudor() ? 1 : 0);
+						}else {
+							compradorExpedienteNuevo.setAntiguoDeudor(0);
+						}
+						if (iap.getSociedad() != null) {
+							compradorExpedienteNuevo.setSociedad(iap.getSociedad());
+						}
+					}
+					if (iap.getEstadoComunicacionC4C() == null) {
+						Filter filtroEstadoC4C = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO);
+						DDEstadoComunicacionC4C estadoComunicacionC4C = genericDao.get(DDEstadoComunicacionC4C.class, filtroEstadoC4C);
+						iap.setEstadoComunicacionC4C(estadoComunicacionC4C);
+					}									
+					compradorExpedienteNuevo.setInfoAdicionalRepresentante(iap);
+				}
 			}
 
 			List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,

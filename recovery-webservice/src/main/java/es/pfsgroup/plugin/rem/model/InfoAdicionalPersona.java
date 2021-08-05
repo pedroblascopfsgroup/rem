@@ -74,6 +74,12 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "DD_VIC_ID")
 	private DDVinculoCaixa vinculoCaixa;
+	
+	@Column(name = "IAP_ANTIGUO_DEUDOR")
+	private Boolean antiguoDeudor; 
+	
+	@Column(name = "IAP_SOCIEDAD")
+	private String sociedad;
 
 
 	@Embedded
@@ -195,6 +201,22 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
 
 	public void setVinculoCaixa(DDVinculoCaixa vinculoCaixa) {
 		this.vinculoCaixa = vinculoCaixa;
+	}
+
+	public Boolean getAntiguoDeudor() {
+		return antiguoDeudor;
+	}
+
+	public void setAntiguoDeudor(Boolean antiguoDeudor) {
+		this.antiguoDeudor = antiguoDeudor;
+	}
+
+	public String getSociedad() {
+		return sociedad;
+	}
+
+	public void setSociedad(String sociedad) {
+		this.sociedad = sociedad;
 	}
 
 }

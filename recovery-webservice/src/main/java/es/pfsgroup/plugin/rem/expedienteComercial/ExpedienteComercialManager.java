@@ -6052,20 +6052,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					DDPaises pais = genericDao.get(DDPaises.class, filtroPais);
 					compradorExpediente.setPaisNacimientoRepresentante(pais);
 				}
+
+				InfoAdicionalPersona iap = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null));
+
+				if(iap == null) {
+					iap = new InfoAdicionalPersona();
+					iap.setAuditoria(Auditoria.getNewInstance());
+					iap.setIdPersonaHaya(comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null);
+					iap.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
+				}
 					
-				InfoAdicionalPersona iap = new InfoAdicionalPersona();
-				
-				iap.setAuditoria(Auditoria.getNewInstance());
-				iap.setIdPersonaHaya(comprador.getIdPersonaHaya().toString());
+				//InfoAdicionalPersona iap = new InfoAdicionalPersona();
 				
 				if(!Checks.esNulo(dto.getVinculoCaixaCodigo())) {
 					iap.setVinculoCaixa(genericDao.get(DDVinculoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getVinculoCaixaCodigo())));
 				}
-				
-			
-				Filter filtroEstadoC4C = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO);
-				DDEstadoComunicacionC4C estadoComunicacionC4C = genericDao.get(DDEstadoComunicacionC4C.class, filtroEstadoC4C);
-				iap.setEstadoComunicacionC4C(estadoComunicacionC4C);
+
 					
 				comprador.setInfoAdicionalPersona(iap);
 				

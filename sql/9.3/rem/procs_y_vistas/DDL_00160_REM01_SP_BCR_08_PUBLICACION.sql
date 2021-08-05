@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210729
+--## FECHA_CREACION=20210804
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14686
+--## INCIDENCIA_LINK=HREOS-14837
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial - HREOS-14241
 --##	    0.2 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - HREOS-14545
 --##	    0.3 Cambios para el lanzamiento del SP de publicaciones y situación comercial - HREOS-14686
+--##	    0.4 Se añade el FLAG EN REM en la insercción de la TMP_AGR_DESTINO_COMERCIAL - HREOS-14837
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -649,7 +650,8 @@ BEGIN
                 JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 AND TAG.DD_TAG_CODIGO IN (''02'',''17'',''18'')
                 WHERE (TRUNC(PAC.FECHACREAR) = TRUNC(SYSDATE) AND PAC.USUARIOCREAR = ''STOCK_BC''
                 OR TRUNC(PAC.FECHAMODIFICAR) = TRUNC(SYSDATE) AND PAC.USUARIOMODIFICAR = ''STOCK_BC'')
-                AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_AGR_DESTINO_COMERCIAL TMP WHERE TMP.AGR_ID = AGR.AGR_ID)';
+                AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_AGR_DESTINO_COMERCIAL TMP WHERE TMP.AGR_ID = AGR.AGR_ID)
+                AND AUX.FLAG_EN_REM = '||FLAG_EN_REM||'';
 
     EXECUTE IMMEDIATE V_MSQL;
 
@@ -675,6 +677,107 @@ BEGIN
     V_NUM_FILAS := sql%rowcount;
 
     SALIDA := SALIDA || '[INFO] SE HAN INSERTADO ' || V_NUM_FILAS ||' REGISTROS EN TMP_ACT_SCM [INFO]'|| CHR(10);
+
+    IF 0 = FLAG_EN_REM THEN
+    
+        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_ACT_SCM (
+                        ACT_ID
+                        , FECHA_CALCULO
+                    )
+                    SELECT ACT.ACT_ID, SYSDATE
+                    FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
+                    JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
+                    WHERE NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_ACT_SCM SCM WHERE SCM.ACT_ID = ACT.ACT_ID)
+                    AND AUX.FLAG_EN_REM = 0';
+    
+        EXECUTE IMMEDIATE V_MSQL;
+    
+        V_NUM_FILAS := sql%rowcount;
+    
+        SALIDA := SALIDA || '[INFO] SE HAN INSERTADO ' || V_NUM_FILAS ||' REGISTROS EN TMP_ACT_SCM PARA LOS ACTIVOS DE NUEVA CREACIÓN [INFO]'|| CHR(10);
+        
+        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION (
+                        APU_ID
+                        , ACT_ID
+                        , DD_TPU_ID
+                        , DD_EPV_ID
+                        , DD_EPA_ID
+                        , DD_TCO_ID
+                        , APU_FECHA_INI_VENTA
+                        , APU_FECHA_INI_ALQUILER
+                        , USUARIOCREAR
+                        , FECHACREAR
+                        , DD_TPU_V_ID
+                        , DD_TPU_A_ID
+                    )
+                        SELECT
+                            '||V_ESQUEMA||'.S_ACT_APU_ACTIVO_PUBLICACION.NEXTVAL           
+                            , ACT.ACT_ID
+                            , ACT.DD_TPU_ID
+                            , (SELECT DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA WHERE DD_EPV_CODIGO = ''01'')
+                            , (SELECT DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER WHERE DD_EPA_CODIGO = ''01'')
+                            , TCO_NUEVO.DD_TCO_ID
+                            ,  CASE WHEN TCO_NUEVO.DD_TCO_CODIGO = ''01'' OR TCO_NUEVO.DD_TCO_CODIGO = ''02''
+                               THEN SYSDATE
+                               ELSE NULL END
+                            ,  CASE WHEN TCO_NUEVO.DD_TCO_CODIGO = ''02'' OR TCO_NUEVO.DD_TCO_CODIGO = ''03''
+                               THEN SYSDATE
+                               ELSE NULL END
+                            , ''STOCK_BC''
+                            , SYSDATE
+                            , ACT.DD_TPU_ID
+                            , ACT.DD_TPU_ID
+                        FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
+                        JOIN '||V_ESQUEMA||'.DD_EQV_CAIXA_REM EQV ON EQV.DD_NOMBRE_CAIXA=''DESTINO_COMERCIAL'' AND EQV.DD_CODIGO_CAIXA = AUX.DESTINO_COMERCIAL AND EQV.BORRADO=0
+                        JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO_NUEVO ON TCO_NUEVO.DD_TCO_CODIGO = EQV.DD_CODIGO_REM
+                        JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO AND ACT.BORRADO=0
+                        WHERE AUX.FLAG_EN_REM = 0';
+    
+        EXECUTE IMMEDIATE V_MSQL;
+    
+        V_NUM_FILAS := sql%rowcount;
+    
+        SALIDA := SALIDA || '[INFO] SE HAN INSERTADO ' || V_NUM_FILAS ||' REGISTROS EN ACT_APU_ACTIVO_PUBLICACION PARA LOS ACTIVOS DE NUEVA CREACIÓN [INFO]'|| CHR(10);
+
+        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION (
+                        AHP_ID
+                        , ACT_ID
+                        , DD_TPU_ID
+                        , DD_EPV_ID
+                        , DD_EPA_ID
+                        , DD_TCO_ID
+                        , AHP_FECHA_INI_VENTA
+                        , AHP_FECHA_INI_ALQUILER
+                        , USUARIOCREAR
+                        , FECHACREAR
+                        , DD_TPU_V_ID
+                        , DD_TPU_A_ID
+                    )
+                        SELECT
+                            '||V_ESQUEMA||'.S_ACT_AHP_HIST_PUBLICACION.NEXTVAL           
+                            , APU.ACT_ID
+                            , APU.DD_TPU_ID
+                            , APU.DD_EPV_ID
+                            , APU.DD_EPA_ID
+                            , APU.DD_TCO_ID
+                            , APU.APU_FECHA_INI_VENTA
+                            , APU.APU_FECHA_INI_ALQUILER
+                            , ''STOCK_BC''
+                            , SYSDATE
+                            , APU.DD_TPU_V_ID
+                            , APU.DD_TPU_A_ID
+                        FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
+                        JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO AND ACT.BORRADO=0
+                        JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID AND APU.BORRADO = 0
+                        WHERE AUX.FLAG_EN_REM = 0';
+    
+        EXECUTE IMMEDIATE V_MSQL;
+    
+        V_NUM_FILAS := sql%rowcount;
+    
+        SALIDA := SALIDA || '[INFO] SE HAN INSERTADO ' || V_NUM_FILAS ||' REGISTROS EN ACT_AHP_HIST_PUBLICACION PARA LOS ACTIVOS DE NUEVA CREACIÓN [INFO]'|| CHR(10);
+    
+    END IF;
 
 --9º Llamar al SP para cada activo guardado en la tabla temporal
 --Ejecutamos el Sp por cada activo de la tabla temporal
@@ -714,6 +817,12 @@ BEGIN
     SP_ASC_ACTUALIZA_SIT_COMERCIAL(0,1,1);
 
     SALIDA := SALIDA || '##FIN: SP_ASC_ACTUALIZA_SIT_COMERCIAL '|| CHR(10);
+
+    SALIDA := SALIDA || '##INICIO: SP_ASC_ACT_SIT_COM_VACIOS '|| CHR(10);
+
+    SP_ASC_ACT_SIT_COM_VACIOS(0,1);
+
+    SALIDA := SALIDA || '##FIN: SP_ASC_ACT_SIT_COM_VACIOS '|| CHR(10);
 
 COMMIT;
 

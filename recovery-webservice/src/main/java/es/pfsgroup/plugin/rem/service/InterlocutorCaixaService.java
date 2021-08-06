@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.service;
 
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
@@ -25,8 +26,8 @@ public class InterlocutorCaixaService {
     @Autowired
     private ParticularValidatorApi particularValidatorApi;
 
-
-
+    @Autowired
+    private HibernateUtils hibernateUtils;
 
     public boolean hasChangestoBC(DtoInterlocutorBC oldValues, DtoInterlocutorBC newValues, String idPersonaHaya){
 
@@ -69,6 +70,7 @@ public class InterlocutorCaixaService {
 
     public void callReplicateClientAsync(final DtoInterlocutorBC oldData, final DtoInterlocutorBC newData, final Comprador comprador, final Oferta oferta){
         if (hasChangestoBC(oldData,newData,comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null)){
+            hibernateUtils.flushSession();
             Thread thread = new Thread(new Runnable() {
                 public void run() {
                     caixaBcRestClient.callReplicateClientUpdateComprador(comprador.getId(),oferta.getNumOferta());
@@ -81,6 +83,7 @@ public class InterlocutorCaixaService {
     public void callReplicateClientAsync(final DtoInterlocutorBC oldData, final DtoInterlocutorBC newData, final ActivoProveedor proveedor){
 
         if (hasChangestoBC(oldData,newData,proveedor.getIdPersonaHaya())){
+           hibernateUtils.flushSession();
             Thread thread = new Thread(new Runnable() {
                 public void run() {
                     caixaBcRestClient.callReplicateClientUpdate(proveedor.getId(),CaixaBcRestClient.ID_PROVEEDOR);
@@ -93,6 +96,7 @@ public class InterlocutorCaixaService {
 
     public void callReplicateClientAsync(final DtoInterlocutorBC oldData, final DtoInterlocutorBC newData, final ClienteComercial clienteComercial){
         if (hasChangestoBC(oldData,newData,clienteComercial.getIdPersonaHaya())){
+            hibernateUtils.flushSession();
             Thread thread = new Thread(new Runnable() {
                 public void run() {
                     caixaBcRestClient.callReplicateClientUpdate(clienteComercial.getId(),CaixaBcRestClient.ID_CLIENTE);

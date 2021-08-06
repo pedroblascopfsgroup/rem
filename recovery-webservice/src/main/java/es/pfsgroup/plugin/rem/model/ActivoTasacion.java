@@ -2,19 +2,9 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Version;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -132,8 +122,12 @@ public class ActivoTasacion implements Serializable, Auditable {
 	
 	@Column(name = "TAS_ILOCALIZABLE")
 	private Boolean ilocalizable;
-	
-	
+
+	@OneToOne(mappedBy = "tasacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "TAS_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private GastoTasacionActivo gastoTasacionActivo;
+
 	@Version   
 	private Long version;
 
@@ -411,4 +405,11 @@ public class ActivoTasacion implements Serializable, Auditable {
 		this.ilocalizable = ilocalizable;
 	}
 
+	public GastoTasacionActivo getGastoTasacionActivo() {
+		return gastoTasacionActivo;
+	}
+
+	public void setGastoTasacionActivo(GastoTasacionActivo gastoTasacionActivo) {
+		this.gastoTasacionActivo = gastoTasacionActivo;
+	}
 }

@@ -199,7 +199,12 @@ public class GastoProveedor implements Serializable, Auditable {
 	
 	@Column(name="GPV_SOLICITUD_PAGO_URGENTE")
 	private Integer solicitudPagoUrgente;
-    
+
+	@OneToMany(mappedBy = "gastoProveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "GPV_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private List<GastoTasacionActivo> gastoTasacionActivo;
+
 	@Version   
 	private Long version;
 
@@ -561,5 +566,13 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setSolicitudPagoUrgente(Integer solicitudPagoUrgente) {
 		this.solicitudPagoUrgente = solicitudPagoUrgente;
+	}
+
+	public List<GastoTasacionActivo> getGastoTasacionActivo() {
+		return gastoTasacionActivo;
+	}
+
+	public void setGastoTasacionActivo(List<GastoTasacionActivo> gastoTasacionActivo) {
+		this.gastoTasacionActivo = gastoTasacionActivo;
 	}
 }

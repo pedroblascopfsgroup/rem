@@ -8544,6 +8544,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if (grid.getStore() != null) {
 			grid.getStore().load();
 		}
-		
-    }
+    },
+    onChangeCodPostal: function(type,newValue,oldValue){
+    	var me = this;
+    	var distritoCaixaValue = me.lookupReference('distritoCaixaRef');
+    	distritoCaixaValue.value = "";
+    	var distritoCaixa = me.getViewModel().getData().comboDistritoCodPostal;
+    	
+    	if (distritoCaixa != null || distritoCaixa != undefined) {
+    		distritoCaixa.getProxy().setExtraParams({'codPostal':newValue});
+    		distritoCaixa.load();
+    	}
+    },
+
+	onClickAbrirGastoTasacion : function(grid, rowIndex, colIndex) {
+		var me = this, record = grid.getStore().getAt(rowIndex);
+		me.getView().fireEvent('abrirDetalleGastoTasacion', record);
+
+	}/*,
+    onChangePublicarCaixa: function(get){
+    	var me = this;    	
+    	var carteraCaixa;
+    }*/
 });

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210713
+--## FECHA_CREACION=20210804
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14545
+--## INCIDENCIA_LINK=HREOS-14837
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##        0.2 Añadimos provincia de registro - HREOS-14533
 --##        0.3 Añadimos nombre y número de registro de la propiedad - HREOS-14545
+--##	      0.4 Se cambia el mapeo de INSCRIPCION al campo BIE_DREG_NUM_REGISTRO - HREOS-14837
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -54,7 +55,7 @@ BEGIN
                   , APR.LIBRO BIE_DREG_LIBRO
                   , APR.TOMO BIE_DREG_TOMO
                   , APR.FOLIO BIE_DREG_FOLIO
-                  , APR.INSCRIPCION BIE_DREG_INSCRIPCION
+                  , APR.INSCRIPCION BIE_DREG_NUM_REGISTRO
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_BIEN BIE ON ACT.BIE_ID = BIE.BIE_ID AND BIE.BORRADO = 0
@@ -68,7 +69,7 @@ BEGIN
                   , BDR.BIE_DREG_LIBRO = AUX.BIE_DREG_LIBRO
                   , BDR.BIE_DREG_TOMO = AUX.BIE_DREG_TOMO
                   , BDR.BIE_DREG_FOLIO = AUX.BIE_DREG_FOLIO
-                  , BDR.BIE_DREG_INSCRIPCION = AUX.BIE_DREG_INSCRIPCION
+                  , BDR.BIE_DREG_NUM_REGISTRO = AUX.BIE_DREG_NUM_REGISTRO
                   , BDR.USUARIOMODIFICAR = ''STOCK_BC''
                   , BDR.FECHAMODIFICAR = SYSDATE
                   WHEN NOT MATCHED THEN
@@ -79,7 +80,7 @@ BEGIN
                   , BIE_DREG_LIBRO
                   , BIE_DREG_TOMO
                   , BIE_DREG_FOLIO
-                  , BIE_DREG_INSCRIPCION
+                  , BIE_DREG_NUM_REGISTRO
                   , USUARIOCREAR
                   , FECHACREAR)
                   VALUES 
@@ -89,7 +90,7 @@ BEGIN
                   , AUX.BIE_DREG_LIBRO
                   , AUX.BIE_DREG_TOMO
                   , AUX.BIE_DREG_FOLIO
-                  , AUX.BIE_DREG_INSCRIPCION
+                  , AUX.BIE_DREG_NUM_REGISTRO
                   , ''STOCK_BC''
                   , SYSDATE)';
    
@@ -203,13 +204,13 @@ BEGIN
                   ON (BIE_LOC.BIE_LOC_ID = AUX.BIE_LOC_ID AND BIE_LOC.BORRADO = 0)
                   WHEN MATCHED THEN
                   UPDATE SET 
-                  BIE_LOC.DD_TVI_ID = AUX.DD_TVI_ID
-                  , BIE_LOC.BIE_LOC_NOMBRE_VIA = AUX.BIE_LOC_NOMBRE_VIA
-                  , BIE_LOC.BIE_LOC_NUMERO_DOMICILIO = AUX.BIE_LOC_NUMERO_DOMICILIO
-                  , BIE_LOC.BIE_LOC_COD_POST = AUX.BIE_LOC_COD_POST
-                  , BIE_LOC.DD_LOC_ID = AUX.DD_LOC_ID
-                  , BIE_LOC.DD_PRV_ID = AUX.DD_PRV_ID
-                  , BIE_LOC.DD_CIC_ID = AUX.DD_CIC_ID
+                  BIE_LOC.DD_TVI_ID = NVL(AUX.DD_TVI_ID, BIE_LOC.DD_TVI_ID)
+                  , BIE_LOC.BIE_LOC_NOMBRE_VIA = NVL(AUX.BIE_LOC_NOMBRE_VIA, BIE_LOC.BIE_LOC_NOMBRE_VIA)
+                  , BIE_LOC.BIE_LOC_NUMERO_DOMICILIO = NVL(AUX.BIE_LOC_NUMERO_DOMICILIO,BIE_LOC.BIE_LOC_NUMERO_DOMICILIO)
+                  , BIE_LOC.BIE_LOC_COD_POST = NVL(AUX.BIE_LOC_COD_POST, BIE_LOC.BIE_LOC_COD_POST)
+                  , BIE_LOC.DD_LOC_ID = NVL(AUX.DD_LOC_ID,BIE_LOC.DD_LOC_ID)
+                  , BIE_LOC.DD_PRV_ID = NVL(AUX.DD_PRV_ID,BIE_LOC.DD_PRV_ID)
+                  , BIE_LOC.DD_CIC_ID = NVL(AUX.DD_CIC_ID,BIE_LOC.DD_CIC_ID)
                   , BIE_LOC.USUARIOMODIFICAR = ''STOCK_BC''
                   , BIE_LOC.FECHAMODIFICAR = SYSDATE
                   WHEN NOT MATCHED THEN
@@ -273,13 +274,13 @@ BEGIN
                   ON (ACT_LOC.LOC_ID = AUX.LOC_ID)
                   WHEN MATCHED THEN
                   UPDATE SET 
-                  ACT_LOC.LOC_DIRECCION_DOS = AUX.LOC_DIRECCION_DOS
-                  , ACT_LOC.DD_DIC_ID = AUX.DD_DIC_ID
-                  , ACT_LOC.DD_ESE_ID = AUX.DD_ESE_ID
-                  , ACT_LOC.DD_PLN_ID = AUX.DD_PLN_ID
-                  , ACT_LOC.LOC_LONGITUD = AUX.LOC_LONGITUD
-                  , ACT_LOC.LOC_LATITUD = AUX.LOC_LATITUD
-                  , ACT_LOC.LOC_BLOQUE = AUX.LOC_BLOQUE
+                  ACT_LOC.LOC_DIRECCION_DOS = NVL(AUX.LOC_DIRECCION_DOS,ACT_LOC.LOC_DIRECCION_DOS)
+                  , ACT_LOC.DD_DIC_ID = NVL(AUX.DD_DIC_ID,ACT_LOC.DD_DIC_ID)
+                  , ACT_LOC.DD_ESE_ID = NVL(AUX.DD_ESE_ID,ACT_LOC.DD_ESE_ID)
+                  , ACT_LOC.DD_PLN_ID = NVL(AUX.DD_PLN_ID,ACT_LOC.DD_PLN_ID)
+                  , ACT_LOC.LOC_LONGITUD = NVL(AUX.LOC_LONGITUD,ACT_LOC.LOC_LONGITUD)
+                  , ACT_LOC.LOC_LATITUD = NVL(AUX.LOC_LATITUD,ACT_LOC.LOC_LATITUD)
+                  , ACT_LOC.LOC_BLOQUE = NVL(AUX.LOC_BLOQUE,ACT_LOC.LOC_BLOQUE)
                   , ACT_LOC.USUARIOMODIFICAR = ''STOCK_BC''
                   , ACT_LOC.FECHAMODIFICAR = SYSDATE
                   WHEN NOT MATCHED THEN

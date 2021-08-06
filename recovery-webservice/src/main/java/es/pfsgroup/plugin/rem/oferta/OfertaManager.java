@@ -185,6 +185,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
+import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -719,8 +720,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (alta) {
 				errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
 			} else {
-				if (ofertaDto.getCodTarea().equals("01") && Checks.esNulo(ofertaDto.getAceptacionContraoferta())) {
-					errorsList.put("aceptacionContraoferta", RestApi.REST_MSG_MISSING_REQUIRED);
+				if (ofertaDto.getCodTarea().equals("01")) {
+					if (Checks.esNulo(ofertaDto.getAceptacionContraoferta())) {
+						errorsList.put("aceptacionContraoferta", RestApi.REST_MSG_MISSING_REQUIRED);
+					} else if (Checks.esNulo(ofertaDto.getImporteContraoferta()) && ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_CONTRAOFERTA)) {
+						errorsList.put("importeContraoferta", RestApi.REST_MSG_MISSING_REQUIRED);						
+					}
 				} else if (ofertaDto.getCodTarea().equals("02")) {
 					if(Checks.esNulo(ofertaDto.getFechaPrevistaFirma())) {
 						errorsList.put("fechaPrevistaFirma", RestApi.REST_MSG_MISSING_REQUIRED);
@@ -1417,6 +1422,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ExpedienteComercial expedienteComercial = expedienteComercialApi
 						.expedienteComercialPorOferta(oferta.getId());
 				if (!Checks.esNulo(expedienteComercial)) {
+					// Actualizamos la participación de los activos en la oferta;
+					expedienteComercialApi.updateParticipacionActivosOferta(oferta);
+					expedienteComercialApi.actualizarImporteReservaPorExpediente(expedienteComercial);
+					
 					expedienteComercialApi.actualizarHonorariosPorExpediente(expedienteComercial.getId());
 				}
 			}
@@ -1535,6 +1544,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ExpedienteComercial expedienteComercial = expedienteComercialApi
 						.expedienteComercialPorOferta(oferta.getId());
 				if (!Checks.esNulo(expedienteComercial)) {
+					// Actualizamos la participación de los activos en la oferta;
+					expedienteComercialApi.updateParticipacionActivosOferta(oferta);
+					expedienteComercialApi.actualizarImporteReservaPorExpediente(expedienteComercial);
+					
 					expedienteComercialApi.actualizarHonorariosPorExpediente(expedienteComercial.getId());
 				}
 			}
@@ -4029,42 +4042,47 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	private HashMap<String, String> avanzaTarea(Oferta oferta, OfertaDto ofertaDto, HashMap<String, String> errorsList) {
-		Map<String, String[]> valoresTarea = new HashMap<String, String[]>();
-		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
-		List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expedienteComercial.getTrabajo().getId());
-		List<TareaExterna> tareasTramite = activoTareaExternaApi.getActivasByIdTramiteTodas(listaTramites.get(0).getId());
-		DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-		boolean avanzar = true;
-
-		if (ofertaDto.getCodTarea().equals("01")  && DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo())) {
-			if (ofertaDto.getAceptacionContraoferta()) {
-				valoresTarea.put("aceptacionContraoferta", new String[] { DDSiNo.SI });
-			} else if (!ofertaDto.getAceptacionContraoferta()) {
-				valoresTarea.put("aceptacionContraoferta", new String[] { DDSiNo.NO });
+		try {
+			Map<String, String[]> valoresTarea = new HashMap<String, String[]>();
+			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
+			List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expedienteComercial.getTrabajo().getId());
+			List<TareaExterna> tareasTramite = activoTareaExternaApi.getActivasByIdTramiteTodas(listaTramites.get(0).getId());
+			//GenericForm genericForm = actGenericFormManager.get(tareasTramite.get(0).getTareaPadre().getId());
+			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+			boolean avanzar = true;
+	
+			if (ofertaDto.getCodTarea().equals("01")  && DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo())) {
+				if (ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_ACEPTA)) {
+					valoresTarea.put("aceptacionContraoferta", new String[] { DDRespuestaOfertante.CODIGO_ACEPTA });
+				} else if (ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_RECHAZA)) {
+					valoresTarea.put("aceptacionContraoferta", new String[] { DDRespuestaOfertante.CODIGO_RECHAZA });
+				} else if (ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_CONTRAOFERTA)) {
+					valoresTarea.put("aceptacionContraoferta", new String[] { DDRespuestaOfertante.CODIGO_CONTRAOFERTA });
+					valoresTarea.put("importeContraoferta", new String[] { ofertaDto.getImporteContraoferta().toString() });
+				} else {
+					avanzar = false;
+				}
+			} else if (ofertaDto.getCodTarea().equals("02") && DDEstadosExpedienteComercial.PTE_POSICIONAMIENTO.equals(expedienteComercial.getEstado().getCodigo())) {
+				valoresTarea.put("fechaFirmaContrato", new String[] { format.format(ofertaDto.getFechaPrevistaFirma()) });
+				valoresTarea.put("lugarFirma", new String[] { ofertaDto.getLugarFirma() });
+			} else if (ofertaDto.getCodTarea().equals("03") && DDEstadosExpedienteComercial.PTE_FIRMA.equals(expedienteComercial.getEstado().getCodigo())) {
+				valoresTarea.put("fechaFirma", new String[] { format.format(ofertaDto.getFechaFirma()) });
 			} else {
 				avanzar = false;
 			}
-		} else if (ofertaDto.getCodTarea().equals("02") && DDEstadosExpedienteComercial.PTE_POSICIONAMIENTO.equals(expedienteComercial.getEstado().getCodigo())) {
-			valoresTarea.put("fechaFirmaContrato", new String[] { format.format(ofertaDto.getFechaPrevistaFirma()) });
-			valoresTarea.put("lugarFirma", new String[] { ofertaDto.getLugarFirma() });
-		} else if (ofertaDto.getCodTarea().equals("03") && DDEstadosExpedienteComercial.PTE_FIRMA.equals(expedienteComercial.getEstado().getCodigo())) {
-			valoresTarea.put("fechaFirma", new String[] { format.format(ofertaDto.getFechaFirma()) });
-		} else {
-			avanzar = false;
-		}
-
-		valoresTarea.put("idTarea", new String[] { tareasTramite.get(0).getTareaPadre().getId().toString() });
-
-		if (avanzar) {
-			try {
+	
+			valoresTarea.put("idTarea", new String[] { tareasTramite.get(0).getTareaPadre().getId().toString() });
+	
+			if (avanzar) {
 				adapter.save(valoresTarea);
-			} catch (Exception e) {
+			} else {
 				errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
-				logger.error("error en OfertasManager", e);
 			}
-		} else {
+		} catch (Exception e) {
 			errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
+			logger.error("error en OfertasManager", e);
 		}
+		
 		return errorsList;
 	}
 

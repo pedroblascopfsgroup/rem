@@ -524,7 +524,7 @@ public class AgendaAdapter {
 		DtoGenericForm dto = new DtoGenericForm();
 		dto.setForm(genericForm);
 		String[] valores = new String[genericForm.getItems().size()];
-
+		
 		for (int i = 0; i < genericForm.getItems().size(); i++) {
 			GenericFormItem gfi = genericForm.getItems().get(i);
 			String nombreCampo = gfi.getNombre();
@@ -547,6 +547,22 @@ public class AgendaAdapter {
 					}
 					valores[i] = valorCampo;
 					break;
+				} else if (((Map.Entry) stringStringEntry).getKey().equals("aceptacionContraoferta") && !Checks.esNulo(gfi.getValuesBusinessOperation())
+						&& (gfi.getValuesBusinessOperation().equals("DDResolucionComite") || gfi.getValuesBusinessOperation().equals("DDRespuestaOfertante"))){
+					//cuando indiquen las tareas que deben poderse poner la resolucion, se tendra que comprobar si es la tarea 	 -- eliminar comentario					
+					if (tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("")){ //faltan comprobar tareas -- eliminar comentario	
+						String valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
+						valores[i] = valorCampo;
+						break;
+					}			
+				} else if (((Map.Entry) stringStringEntry).getKey().equals("importeContraoferta")) {
+					//cuando indiquen las tareas que deben poderse avanzar, se tendra que comprobar si es la tarea 	-- eliminar comentario				
+					if (tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("") //faltan comprobar tareas -- eliminar comentario	
+							&& gfi.getNombre().equals("")){  //falta comprobar nombre campo de la TFI para poner el importe contraoferta de la tarea de arriba filtrada -- eliminar comentario	
+						String valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
+						valores[i] = valorCampo;
+						break;
+					}
 				}
 			}
 		}

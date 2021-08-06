@@ -2078,7 +2078,11 @@ public class ActivoAdapter {
 						BeanUtils.copyProperty(tasacionDto, "externoBbva", activo.getTasacion().get(i).getIdExternoBbva());
 					}
 
-					
+					if(activo.getTasacion().get(i).getGastoTasacionActivo() != null &&
+							activo.getTasacion().get(i).getGastoTasacionActivo().getGastoProveedor() != null){
+						tasacionDto.setIdGasto(activo.getTasacion().get(i).getGastoTasacionActivo().getGastoProveedor().getId());
+						tasacionDto.setNumGastoHaya(activo.getTasacion().get(i).getGastoTasacionActivo().getGastoProveedor().getNumGastoHaya());
+					}
 
 				} catch (IllegalAccessException e) {
 					logger.error("Error en ActivoAdapter", e);

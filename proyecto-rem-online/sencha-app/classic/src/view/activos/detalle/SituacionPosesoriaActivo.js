@@ -346,15 +346,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		                	style:'margin-left:10px'
 		                },
 		                {
-
-							xtype: 'checkboxfieldbase',
-							fieldLabel: HreRem.i18n('filedlabel.tiene.ok.tecnico'),
-							bind: {
-								value: '{situacionPosesoria.tieneOkTecnico}',
-								readOnly: '{noEditableSareb}'
-							}
-						},
-		                {
 				        	xtype: 'comboboxfieldbase',
 				        	allowBlank: true,
 				        	reference: 'comboOcupadoRef',
@@ -430,11 +421,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 
 							]
 						},
-				        
-				        
-				        
-				        
-
 				        {
 							xtype: 'textfieldbase',
 							reference: 'disponibilidadJuridicaRef',
@@ -456,7 +442,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            		hidden: '{!activo.isCarteraBankia}'
 				        	}
 						},
-		                {
+						{
 							xtype: 'checkboxfieldbase',
 							reference: 'okTecnicoRef',
 							fieldLabel: HreRem.i18n('filedlabel.tiene.ok.tecnico'),

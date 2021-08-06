@@ -8585,7 +8585,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
  	
  	editarComboEstadoTecnico: function(get){
  		var me = this;
- 		
  		var tieneOkTencnicoCheckeado = me.lookupReference('okTecnicoRef');
  		var estadoTecnico = me.lookupReference('comboEstadoTecnicoRef');
  		
@@ -8593,7 +8592,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    	estadoTecnico.setDisabled(false);
 	    	estadoTecnico.disabled = false;
 	    }else {
-	    	estadoTecnico.setValue('');
+	    	estadoTecnico.setValue(null);
 	    	estadoTecnico.setDisabled(true);
 	    	estadoTecnico.disabled = true;
 	    }
@@ -8627,7 +8626,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		preciosVigentesCaixa.setHidden(true);
     		preciosVigentes.setHidden(false);
     	}
-    }/*,
+    },
+
+	onClickAbrirGastoTasacion : function(grid, rowIndex, colIndex) {
+		var me = this, record = grid.getStore().getAt(rowIndex);
+		me.getView().fireEvent('abrirDetalleGastoTasacion', record);
+
+	}/*,
     onChangePublicarCaixa: function(get){
     	var me = this;    	
     	var carteraCaixa;

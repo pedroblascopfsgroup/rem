@@ -3946,6 +3946,8 @@ public class ActivoAdapter {
 			if(iap == null) {
 				iap = new InfoAdicionalPersona();
 				iap.setAuditoria(Auditoria.getNewInstance());
+				iap.setIdPersonaHaya(clienteComercial.getIdPersonaHaya());
+				iap.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
 				clienteComercial.setInfoAdicionalPersona(iap);
 			}
 			

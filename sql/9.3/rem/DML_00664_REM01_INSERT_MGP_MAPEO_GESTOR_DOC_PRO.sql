@@ -37,11 +37,12 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(1500);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('B84921758', 'Liberbank',''),
-	  T_FUNCION('A15011489', 'Liberbank',''),
-	  T_FUNCION('A86201993', 'Liberbank',''),
-	  T_FUNCION('A86486461', 'Liberbank',''),
-	  T_FUNCION('A78485752', 'Liberbank','')
+	  T_FUNCION('B84921758', 'Unicaja',''),
+	  T_FUNCION('A15011489', 'Unicaja',''),
+	  T_FUNCION('A86201993', 'Unicaja',''),
+	  T_FUNCION('A86486461', 'Unicaja',''),
+	  T_FUNCION('A78485752', 'Unicaja',''),
+      T_FUNCION('A93139053', 'Unicaja','')
 
     );          
     V_TMP_FUNCION T_FUNCION;

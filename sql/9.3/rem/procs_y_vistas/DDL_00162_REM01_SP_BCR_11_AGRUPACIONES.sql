@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210804
+--## FECHA_CREACION=20210806
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14837
@@ -663,6 +663,7 @@ BEGIN
                   , DD_TAG_ID
                   , AGR_NOMBRE
                   , AGR_NUM_AGRUP_REM
+                  , AGR_NUM_AGRUP_UVEM
                   , AGR_FECHA_ALTA
                   , AGR_ACT_PRINCIPAL
                   , AGR_SEG_VISITAS
@@ -675,6 +676,7 @@ BEGIN
                   , (SELECT DD_TAG_ID FROM '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = AUX.TIPO) DD_TAG_ID
                   , BIE_LOC.BIE_LOC_NOMBRE_VIA || '' '' || BIE_LOC.BIE_LOC_PORTAL AGR_NOMBRE
                   , '|| V_ESQUEMA ||'.S_AGR_NUM_AGRUP_REM.NEXTVAL AGR_NUM_AGRUP_REM
+                  , AUX.COD_AGRUPACION AGR_NUM_AGRUP_UVEM
                   , SYSDATE AGR_FECHA_ALTA
                   , CASE WHEN AUX.TIPO IN (''02'',''17'',''18'') THEN ACT.ACT_ID ELSE NULL END AGR_ACT_PRINCIPAL
                   , 0 AGR_SEG_VISITAS

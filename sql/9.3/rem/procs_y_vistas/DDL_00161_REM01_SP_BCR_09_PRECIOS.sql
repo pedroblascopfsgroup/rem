@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210714
+--## FECHA_CREACION=20210806
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14545
+--## INCIDENCIA_LINK=HREOS-14837
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - HREOS-14270
 --##	      0.2 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - HREOS-14545
+--##	      0.2 Formato de importes - HREOS-14837
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -50,7 +51,7 @@ BEGIN
              SELECT 
              act1.VAL_ID,
             act2.act_id as ACT_ID,
-            IMP_PRECIO_VENTA as VAL_IMPORTE,
+            IMP_PRECIO_VENTA/100 as VAL_IMPORTE,
             FEC_INICIO_PRECIO_VENTA  as VAL_FECHA_INICIO,
             FEC_FIN_PRECIO_VENTA as VAL_FECHA_FIN
             FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
@@ -63,7 +64,7 @@ BEGIN
             SELECT 
             act1.VAL_ID,
             act2.act_id as ACT_ID,
-            IMP_PRECIO_ALQUI as VAL_IMPORTE,
+            IMP_PRECIO_ALQUI/100 as VAL_IMPORTE,
             FEC_INICIO_PRECIO_ALQUI  as VAL_FECHA_INICIO,
             FEC_FIN_PRECIO_ALQUI as VAL_FECHA_FIN
             FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
@@ -76,7 +77,7 @@ BEGIN
             SELECT 
             act1.VAL_ID,
             act2.act_id as ACT_ID,
-            IMP_PRECIO_CAMP_VENTA as VAL_IMPORTE,
+            IMP_PRECIO_CAMP_VENTA/100 as VAL_IMPORTE,
             FEC_INICIO_PRECIO_CAMP_VENTA  as VAL_FECHA_INICIO,
             FEC_FIN_PRECIO_CAMP_VENTA as VAL_FECHA_FIN
             FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
@@ -89,7 +90,7 @@ BEGIN
             SELECT 
             act1.VAL_ID,
             act2.act_id as ACT_ID,
-            IMP_PRECIO_CAMP_ALQUI as VAL_IMPORTE,
+            IMP_PRECIO_CAMP_ALQUI/100 as VAL_IMPORTE,
             FEC_INICIO_PRECIO_CAMP_ALQUI  as VAL_FECHA_INICIO,
             FEC_FIN_PRECIO_CAMP_ALQUI as VAL_FECHA_FIN
             FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
@@ -138,7 +139,7 @@ BEGIN
                      aux.NUM_IDENTIFICATIVO,
                      act2.act_id,
                      (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''02'') as DD_TPC_ID,
-                     IMP_PRECIO_VENTA as VAL_IMPORTE,
+                     IMP_PRECIO_VENTA/100 as VAL_IMPORTE,
                      NVL(TO_DATE(FEC_INICIO_PRECIO_VENTA,''YYYYMMDD''),TO_CHAR(SYSDATE,''DD/MM/YYYY'') )  as VAL_FECHA_INICIO,
                      TO_DATE(FEC_FIN_PRECIO_VENTA,''YYYYMMDD'') as VAL_FECHA_FIN,
                      ''STOCK_BC'' as USUARIOCREAR,
@@ -146,7 +147,7 @@ BEGIN
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
                      JOIN '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES act1 ON act1.ACT_ID = act2.ACT_ID AND act1.BORRADO=0 
-                     WHERE (aux.IMP_PRECIO_VENTA <> act1.VAL_IMPORTE OR TO_DATE(aux.FEC_INICIO_PRECIO_VENTA,''YYYYMMDD'') <> act1.VAL_FECHA_INICIO)
+                     WHERE (aux.IMP_PRECIO_VENTA/100 <> act1.VAL_IMPORTE OR TO_DATE(aux.FEC_INICIO_PRECIO_VENTA,''YYYYMMDD'') <> act1.VAL_FECHA_INICIO)
                            AND act1.DD_TPC_ID =(SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''02'')
                            AND aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                            AND act1.FECHACREAR = (SELECT MAX(act1.FECHACREAR) FROM '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES act1 WHERE act1.ACT_ID =act2.act_id AND act1.DD_TPC_ID =(SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''02'')  )                        
@@ -158,7 +159,7 @@ BEGIN
                      aux.NUM_IDENTIFICATIVO,
                      act2.act_id,
                      (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''03'') as DD_TPC_ID,
-                     IMP_PRECIO_ALQUI as VAL_IMPORTE,
+                     IMP_PRECIO_ALQUI/100 as VAL_IMPORTE,
                      NVL(TO_DATE(FEC_INICIO_PRECIO_ALQUI,''YYYYMMDD''),TO_CHAR(SYSDATE,''DD/MM/YYYY'') )  as VAL_FECHA_INICIO,
                      TO_DATE(FEC_FIN_PRECIO_ALQUI,''YYYYMMDD'') as VAL_FECHA_FIN,
                      ''STOCK_BC'' as USUARIOCREAR,
@@ -166,7 +167,7 @@ BEGIN
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
                      JOIN '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES act1 ON act1.ACT_ID = act2.ACT_ID AND act1.BORRADO=0
-                     WHERE (aux.IMP_PRECIO_ALQUI <> act1.VAL_IMPORTE OR TO_DATE(aux.FEC_INICIO_PRECIO_ALQUI,''YYYYMMDD'') <> act1.VAL_FECHA_INICIO)
+                     WHERE (aux.IMP_PRECIO_ALQUI/100 <> act1.VAL_IMPORTE OR TO_DATE(aux.FEC_INICIO_PRECIO_ALQUI,''YYYYMMDD'') <> act1.VAL_FECHA_INICIO)
                            AND act1.DD_TPC_ID =(SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''03'')
                            AND aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                            AND act1.FECHACREAR = (SELECT MAX(act1.FECHACREAR) FROM '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES act1 WHERE act1.ACT_ID =act2.act_id AND act1.DD_TPC_ID =(SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''03'')  ) 
@@ -177,7 +178,7 @@ BEGIN
                      aux.NUM_IDENTIFICATIVO,
                      act2.act_id,
                      (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''07'') as DD_TPC_ID,
-                     IMP_PRECIO_CAMP_VENTA as VAL_IMPORTE,
+                     IMP_PRECIO_CAMP_VENTA/100 as VAL_IMPORTE,
                      NVL(TO_DATE(FEC_INICIO_PRECIO_CAMP_VENTA,''YYYYMMDD''),TO_CHAR(SYSDATE,''DD/MM/YYYY'') )  as VAL_FECHA_INICIO,
                      TO_DATE(FEC_FIN_PRECIO_CAMP_VENTA,''YYYYMMDD'') as VAL_FECHA_FIN,
                      ''STOCK_BC'' as USUARIOCREAR,
@@ -185,7 +186,7 @@ BEGIN
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
                      JOIN '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES act1 ON act1.ACT_ID = act2.ACT_ID AND act1.BORRADO=0
-                     WHERE (aux.IMP_PRECIO_CAMP_VENTA <> act1.VAL_IMPORTE OR TO_DATE(aux.FEC_INICIO_PRECIO_CAMP_VENTA,''YYYYMMDD'') <> act1.VAL_FECHA_INICIO)
+                     WHERE (aux.IMP_PRECIO_CAMP_VENTA/100 <> act1.VAL_IMPORTE OR TO_DATE(aux.FEC_INICIO_PRECIO_CAMP_VENTA,''YYYYMMDD'') <> act1.VAL_FECHA_INICIO)
                            AND act1.DD_TPC_ID =(SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''07'')
                            AND aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                            AND act1.FECHACREAR = (SELECT MAX(act1.FECHACREAR) FROM '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES act1 WHERE act1.ACT_ID =act2.act_id AND act1.DD_TPC_ID =(SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''07'')  ) 
@@ -196,7 +197,7 @@ BEGIN
                      aux.NUM_IDENTIFICATIVO,
                      act2.act_id,
                      (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''DAA'') as DD_TPC_ID,
-                     IMP_PRECIO_CAMP_ALQUI as VAL_IMPORTE,
+                     IMP_PRECIO_CAMP_ALQUI/100 as VAL_IMPORTE,
                      NVL(TO_DATE(FEC_INICIO_PRECIO_CAMP_ALQUI,''YYYYMMDD''),TO_CHAR(SYSDATE,''DD/MM/YYYY'') )  as VAL_FECHA_INICIO,
                      TO_DATE(FEC_FIN_PRECIO_CAMP_ALQUI,''YYYYMMDD'') as VAL_FECHA_FIN,
                      ''STOCK_BC'' as USUARIOCREAR,
@@ -204,7 +205,7 @@ BEGIN
                      FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
                      JOIN '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES act1 ON act1.ACT_ID = act2.ACT_ID AND act1.BORRADO=0
-                     WHERE (aux.IMP_PRECIO_CAMP_ALQUI <> act1.VAL_IMPORTE OR TO_DATE(aux.FEC_INICIO_PRECIO_CAMP_ALQUI,''YYYYMMDD'') <> act1.VAL_FECHA_INICIO)
+                     WHERE (aux.IMP_PRECIO_CAMP_ALQUI/100 <> act1.VAL_IMPORTE OR TO_DATE(aux.FEC_INICIO_PRECIO_CAMP_ALQUI,''YYYYMMDD'') <> act1.VAL_FECHA_INICIO)
                            AND act1.DD_TPC_ID =(SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''DAA'')
                            AND aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                            AND act1.FECHACREAR = (SELECT MAX(act1.FECHACREAR) FROM '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES act1 WHERE act1.ACT_ID =act2.act_id AND act1.DD_TPC_ID =(SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''DAA'')  ) 
@@ -238,7 +239,7 @@ BEGIN
                      aux.NUM_IDENTIFICATIVO,
                      act2.act_id,
                      (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''02'') as DD_TPC_ID,
-                     IMP_PRECIO_VENTA as VAL_IMPORTE,
+                     IMP_PRECIO_VENTA/100 as VAL_IMPORTE,
                      NVL(TO_DATE(FEC_INICIO_PRECIO_VENTA,''YYYYMMDD''),TO_CHAR(SYSDATE,''DD/MM/YYYY'') )  as VAL_FECHA_INICIO,
                      TO_DATE(FEC_FIN_PRECIO_VENTA,''YYYYMMDD'') as VAL_FECHA_FIN,
                      ''STOCK_BC'' as USUARIOCREAR,
@@ -256,7 +257,7 @@ BEGIN
                      aux.NUM_IDENTIFICATIVO,
                      act2.act_id,
                      (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''03'') as DD_TPC_ID,
-                     IMP_PRECIO_ALQUI as VAL_IMPORTE,
+                     IMP_PRECIO_ALQUI/100 as VAL_IMPORTE,
                      NVL(TO_DATE(FEC_INICIO_PRECIO_ALQUI,''YYYYMMDD''),TO_CHAR(SYSDATE,''DD/MM/YYYY'') )  as VAL_FECHA_INICIO,
                      TO_DATE(FEC_FIN_PRECIO_ALQUI,''YYYYMMDD'') as VAL_FECHA_FIN,
                      ''STOCK_BC'' as USUARIOCREAR,
@@ -274,7 +275,7 @@ BEGIN
                      aux.NUM_IDENTIFICATIVO,
                      act2.act_id,
                      (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''DAA'') as DD_TPC_ID,
-                     IMP_PRECIO_CAMP_ALQUI as VAL_IMPORTE,
+                     IMP_PRECIO_CAMP_ALQUI/100 as VAL_IMPORTE,
                      NVL(TO_DATE(FEC_INICIO_PRECIO_CAMP_ALQUI,''YYYYMMDD''),TO_CHAR(SYSDATE,''DD/MM/YYYY'') )  as VAL_FECHA_INICIO,
                      TO_DATE(FEC_FIN_PRECIO_CAMP_ALQUI,''YYYYMMDD'') as VAL_FECHA_FIN,
                      ''STOCK_BC'' as USUARIOCREAR,
@@ -292,7 +293,7 @@ BEGIN
                      aux.NUM_IDENTIFICATIVO,
                      act2.act_id,
                      (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO=''07'') as DD_TPC_ID,
-                     IMP_PRECIO_CAMP_VENTA as VAL_IMPORTE,
+                     IMP_PRECIO_CAMP_VENTA/100 as VAL_IMPORTE,
                      NVL(TO_DATE(FEC_INICIO_PRECIO_CAMP_VENTA,''YYYYMMDD''),TO_CHAR(SYSDATE,''DD/MM/YYYY'') )  as VAL_FECHA_INICIO,
                      TO_DATE(FEC_FIN_PRECIO_CAMP_VENTA,''YYYYMMDD'') as VAL_FECHA_FIN,
                      ''STOCK_BC'' as USUARIOCREAR,

@@ -31,6 +31,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
     initComponent: function () {
 
         var me = this;
+        var tipoGasto = me.lookupController().getViewModel().get('gasto').get('tipoGastoCodigo');
         
         var storeEmisoresGasto = new Ext.data.Store({  
     		model: 'HreRem.model.Proveedor',
@@ -507,7 +508,21 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								    ]
 								}
 							]
-			           }
+			           },
+			           {
+                           xtype:'fieldsettable',
+                           title: HreRem.i18n('title.gasto.tasaciones.incluidas.factura'),
+                           defaultType: 'textfieldbase',
+                           colspan: 3,
+                           items :
+                               [
+                                   {
+                                       xtype: 'tasacionesgastogrid',
+                                       reference: 'tasacionesgastogrid',
+                                       tipoGasto: tipoGasto
+                                   }
+                               ]
+                       }
     	];
 
 	    me.callParent(); 

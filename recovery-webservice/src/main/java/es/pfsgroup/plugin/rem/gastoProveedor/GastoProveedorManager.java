@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -4311,6 +4312,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			idGasto = gastoProv.getId();
 		}					
 		return idGasto;
+	}
+
+	@Override
+	public List<VTasacionesGastos> getListTasacionesGasto(Long idGasto) {
+		return idGasto != null ?
+				genericDao.getList(VTasacionesGastos.class, genericDao.createFilter(FilterType.EQUALS, "idGasto", idGasto)) : null;
 	}
 	
 	@Override

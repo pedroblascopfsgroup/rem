@@ -12,6 +12,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1700,5 +1701,24 @@ public class GastosProveedorController extends ParadiseJsonController {
 		}
 		return createModelAndViewJson(model);
 	}
-	
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListTasacionesGasto(@RequestParam Long idGasto, ModelMap model, HttpServletRequest request) {
+
+		try {
+
+			List<VTasacionesGastos> lista = gastoProveedorApi.getListTasacionesGasto(idGasto);
+
+			model.put("data", lista);
+			model.put("success", true);
+			trustMe.registrarSuceso(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "trabajos", ACCION_CODIGO.CODIGO_VER);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+			trustMe.registrarError(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "trabajos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
 }

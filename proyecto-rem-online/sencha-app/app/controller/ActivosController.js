@@ -42,6 +42,10 @@ Ext.define('HreRem.controller.ActivosController', {
 				{
 					ref: 'configuracionMain',
 					selector: 'configuracionmain'
+				},
+				{
+				    ref: 'gastodetallemain',
+				    selector: 'gastodetallemain'
 				}
 					
 	],
@@ -230,7 +234,8 @@ Ext.define('HreRem.controller.ActivosController', {
     	'gastodetallemain': {
     		abrirDetalleActivo: 'abrirDetalleActivoGastosActivos',
     		abrirDetalleTrabajo: 'abrirDetalleTrabajo',
-    		refrescarGasto: 'refrescarDetalleGasto'
+    		refrescarGasto: 'refrescarDetalleGasto',
+    		abrirDetalleActivoPreciosTasacion: 'abrirDetalleActivoPreciosTasacion'
     	},
     	
     	'gencatcomercialactivo':{
@@ -1332,6 +1337,14 @@ Ext.define('HreRem.controller.ActivosController', {
 	       	}
 		});
 
+    },
+
+    abrirDetalleActivoPreciosTasacion: function(record) {
+    	var me = this,
+    	titulo = "Activo " + record.get("numActivo"),
+    	id = record.get("idActivo");
+		me.redirectTo('activos', true);
+		me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['PRECIOS_TASACION']);
     }
     
 });

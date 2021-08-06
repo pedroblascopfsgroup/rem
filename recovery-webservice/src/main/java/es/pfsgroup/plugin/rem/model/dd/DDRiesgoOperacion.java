@@ -33,6 +33,12 @@ public class DDRiesgoOperacion implements Auditable, Dictionary {
 	public static final String CODIGO_ROP_ALTO = "01";
 	public static final String CODIGO_ROP_MEDIO = "02";
 	public static final String CODIGO_ROP_BAJO = "03";
+	public static final String CODIGO_ROP_ALTO_C4C = "HIGH";
+	public static final String CODIGO_ROP_MEDIO_C4C = "MEDIUM";
+	public static final String CODIGO_ROP_BAJO_C4C = "LOW";
+	public static final String CODIGO_ROP_ALTO_PBC = "A";
+	public static final String CODIGO_ROP_MEDIO_PBC = "M";
+	public static final String CODIGO_ROP_BAJO_PBC = "B";
 
 	private static final long serialVersionUID = 1L;
 
@@ -44,6 +50,12 @@ public class DDRiesgoOperacion implements Auditable, Dictionary {
 
 	@Column(name = "DD_ROP_CODIGO")
 	private String codigo;
+
+	@Column(name = "DD_ROP_CODIGO_C4C")
+	private String codigoC4C;
+
+	@Column(name = "DD_ROP_CODIGO_PBC")
+	private String codigoPbc;
 
 	@Column(name = "DD_ROP_DESCRIPCION")
 	private String descripcion;
@@ -103,6 +115,22 @@ public class DDRiesgoOperacion implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getCodigoC4C() {
+		return codigoC4C;
+	}
+
+	public void setCodigoC4C(String codigoC4C) {
+		this.codigoC4C = codigoC4C;
+	}
+
+	public String getCodigoPbc() {
+		return codigoPbc;
+	}
+
+	public void setCodigoPbc(String codigoPbc) {
+		this.codigoPbc = codigoPbc;
 	}
 
 }

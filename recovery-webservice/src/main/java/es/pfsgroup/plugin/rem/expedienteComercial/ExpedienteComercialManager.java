@@ -2268,6 +2268,34 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		
+		MotivoRescinsionArras rescinsionArras = genericDao.get(MotivoRescinsionArras.class, genericDao.createFilter(FilterType.EQUALS, "reserva.id", reserva.getId()));
+		
+		
+		
+		if (rescinsionArras != null) {
+			if (rescinsionArras.getAutorizacionVpo() != null) {
+				dto.setAutorizacionVpoMotivo(rescinsionArras.getAutorizacionVpo());
+			}
+			if (rescinsionArras.getCargas() != null) {
+				dto.setCargasMotivo(rescinsionArras.getCargas());
+			}
+			if (rescinsionArras.getInscripcionTitulo() != null) {
+				dto.setInscripcionTituloMotivo(rescinsionArras.getInscripcionTitulo());
+			}
+			if (rescinsionArras.getPosesion() != null) {
+				dto.setPosesion(rescinsionArras.getPosesion());
+			}
+			if (rescinsionArras.getTanteoDL() != null) {
+				dto.setTanteoDLMotivo(rescinsionArras.getTanteoDL());
+			}
+			if (rescinsionArras.getTemasCatastrales() != null) {
+				dto.setTemasCatastralesMotivo(rescinsionArras.getTemasCatastrales());
+			}
+			if (rescinsionArras.getTemasTecnicos() != null) {
+				dto.setTemasTecnicos(rescinsionArras.getTemasTecnicos());
+			}
+		}
+		
 		return dto;
 	}
 
@@ -3526,10 +3554,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.PENITENCIALES);
 					reserva.setTipoArras(tipoArras);
 				}
-				CondicionesReserva condicionesReserva = new CondicionesReserva();
-				condicionesReserva.setAuditoria(Auditoria.getNewInstance());
-				condicionesReserva.setReserva(reserva);
-				genericDao.save(CondicionesReserva.class, condicionesReserva);
+				if (DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())) {
+					CondicionesReserva condicionesReserva = new CondicionesReserva();
+					condicionesReserva.setAuditoria(Auditoria.getNewInstance());
+					condicionesReserva.setReserva(reserva);
+					genericDao.save(CondicionesReserva.class, condicionesReserva);
+					
+					MotivoRescinsionArras rescinsionArras = new MotivoRescinsionArras();
+					rescinsionArras.setAuditoria(Auditoria.getNewInstance());
+					rescinsionArras.setReserva(reserva);
+					genericDao.save(MotivoRescinsionArras.class, rescinsionArras);
+				}
+				
 			}
 		}
 
@@ -4488,6 +4524,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			CondicionesReserva condiciones = genericDao.get(CondicionesReserva.class, genericDao.createFilter(FilterType.EQUALS, "reserva.id", reserva.getId()));
 			
+			if (condiciones == null && DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())) {
+				condiciones = new CondicionesReserva();
+				condiciones.setAuditoria(Auditoria.getNewInstance());
+				condiciones.setReserva(reserva);
+			}
+			
 			if (condiciones != null) {
 				if (dto.getAutorizacionVpo() != null) {
 					condiciones.setAutorizacionVpo(dto.getAutorizacionVpo());
@@ -4512,6 +4554,39 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 				
 				genericDao.save(CondicionesReserva.class, condiciones);
+			}
+			MotivoRescinsionArras rescinsionArras = genericDao.get(MotivoRescinsionArras.class, genericDao.createFilter(FilterType.EQUALS, "reserva.id", reserva.getId()));
+			
+			if (rescinsionArras == null && DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())) {
+				rescinsionArras = new MotivoRescinsionArras();
+				rescinsionArras.setAuditoria(Auditoria.getNewInstance());
+				rescinsionArras.setReserva(reserva);
+			}
+			
+			if (rescinsionArras != null) {
+				if (dto.getAutorizacionVpoMotivo() != null) {
+					rescinsionArras.setAutorizacionVpo(dto.getAutorizacionVpoMotivo());
+				}
+				if (dto.getCargasMotivo() != null) {
+					rescinsionArras.setCargas(dto.getCargasMotivo());
+				}
+				if (dto.getInscripcionTituloMotivo() != null) {
+					rescinsionArras.setInscripcionTitulo(dto.getInscripcionTituloMotivo());
+				}
+				if (dto.getPosesionMotivo() != null) {
+					rescinsionArras.setPosesion(dto.getPosesionMotivo());
+				}
+				if (dto.getTanteoDLMotivo() != null) {
+					rescinsionArras.setTanteoDL(dto.getTanteoDLMotivo());
+				}
+				if (dto.getTemasCatastralesMotivo() != null) {
+					rescinsionArras.setTemasCatastrales(dto.getTemasCatastralesMotivo());
+				}
+				if (dto.getTemasTecnicosMotivo() != null) {
+					rescinsionArras.setTemasTecnicos(dto.getTemasTecnicosMotivo());
+				}
+				
+				genericDao.save(MotivoRescinsionArras.class, rescinsionArras);
 			}
 
 		} catch (IllegalAccessException e) {

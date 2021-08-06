@@ -105,6 +105,9 @@ public class OfertaCaixa implements Serializable, Auditable {
     
 	@Column(name="OFR_DETECCION_INDICIO")
 	private Boolean deteccionIndicio;
+    
+	@Column(name="OFR_CHECK_SUBASTA")
+	private Boolean checkSubasta;
 	
     @Version
     private Integer version;
@@ -280,6 +283,14 @@ public class OfertaCaixa implements Serializable, Auditable {
 
 	public void setDeteccionIndicio(Boolean deteccionIndicio) {
 		this.deteccionIndicio = deteccionIndicio;
+	}
+
+	public Boolean getCheckSubasta() {
+		return checkSubasta;
+	}
+
+	public void setCheckSubasta(Boolean checkSubasta) {
+		this.checkSubasta = checkSubasta;
 	}
 
 

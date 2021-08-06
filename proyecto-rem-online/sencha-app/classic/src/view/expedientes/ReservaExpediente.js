@@ -328,11 +328,96 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 							    },
 							    {
 							        xtype: 'comboboxfieldbase',
-							        fieldLabel:  HreRem.i18n('fieldlabel.rescision.arras.motivo'),					        
+							        fieldLabel:  HreRem.i18n('fieldlabel.rescision.arras.motivo'),
+							        //multiSelect: true,
 							        bind: {
 							        	store: '{comboMotivoRescisionArras}'
-									}											                	
-							    }
+									}
+							    },
+	    						{
+									xtype:'fieldsettable',
+									defaultType: 'displayfieldbase',				
+									title: HreRem.i18n('fieldlabel.arras.motivo'),
+									colspan:3,
+									bind:{
+										hidden:'{!esCarteraBankia}'
+									},
+									items :[
+										{		                
+					                		xtype: 'checkboxfieldbase',
+					                		fieldLabel:  HreRem.i18n('fieldlabel.inscripcion.titulo.arras'),
+					                		reference: 'inscripcionTituloMotivoRef',
+					                		//readOnly: true,
+					                		bind:	
+					                			{
+					                				value:'{reserva.inscripcionTituloMotivo}'					                		
+					                			}
+				                		},
+				                		{		                
+					                		xtype: 'checkboxfieldbase',
+					                		fieldLabel:  HreRem.i18n('fieldlabel.cargas.arras'),
+					                		reference: 'cargasArrasMotivoRef',
+					                		//readOnly: true,
+					                		bind:	
+					                			{
+					                				value:'{reserva.cargasMotivo}'					                		
+					                			}
+				                		},
+				                		{		                
+					                		xtype: 'checkboxfieldbase',
+					                		fieldLabel:  HreRem.i18n('fieldlabel.posesion.arras'),
+					                		reference: 'posesionArrasMotivoRef',
+					                		//readOnly: true,
+					                		bind:		
+						                		{
+						                			value: '{reserva.posesionMotivo}'		                
+						                		}
+				                		},
+				                		{		                
+					                		xtype: 'checkboxfieldbase',
+					                		fieldLabel:  HreRem.i18n('fieldlabel.tanteo.dl.arras'),
+					                		reference: 'tanteoDlMotivoRef',
+					                		//readOnly: true,
+					                		bind:		
+					                			{
+					                				value:'{reserva.tanteoDLMotivo}'
+					                			}
+				                		},
+		
+				                		{		                
+					                		xtype: 'checkboxfieldbase',
+					                		fieldLabel:  HreRem.i18n('fieldlabel.temas.tecnicos'),
+					                		reference: 'temasTecnicosMotivoRef',
+					                		//readOnly: true,
+					                		bind:		
+						                		{
+						                			value:'{reserva.temasTecnicosMotivo}'
+						                		}				                					               
+				                		},
+		
+				                		{		                
+					                		xtype: 'checkboxfieldbase',
+					                		fieldLabel:  HreRem.i18n('fieldlabel.temas.catastrales'),
+					                		reference: 'temasCatastralesMotivoRef',
+					                		//readOnly: true, 
+					                		bind:
+					                			{
+					                				value:'{reserva.temasCatastralesMotivo}'
+					                			}
+					                				                
+				                		},
+				                		{		                
+					                		xtype: 'checkboxfieldbase',
+					                		fieldLabel:  HreRem.i18n('fieldlabel.autorizacion.vpo'),
+					                		reference: 'autoVpoMotivoRef',
+					                		//readOnly: true,
+					                		bind:		
+					                			{
+					                				value: '{reserva.autorizacionVpoMotivo}'
+					                			}
+				                		}		                				                				                								
+									]
+								}
 							    
 							]
 						}

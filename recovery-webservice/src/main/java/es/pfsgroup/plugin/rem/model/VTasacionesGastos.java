@@ -28,6 +28,12 @@ public class VTasacionesGastos implements Serializable {
 	
 	@Column(name = "ACT_ID")
 	private Long idActivo;
+
+	@Column(name = "GPV_NUM_GASTO_HAYA")
+	private Long numGastoHaya;
+
+	@Column(name = "ACT_NUM_ACTIVO")
+	private Long numActivo;
 	
 	@Column(name = "TAS_ID_EXTERNO")
 	private Long idTasacionExt;
@@ -68,6 +74,22 @@ public class VTasacionesGastos implements Serializable {
 
 	public void setIdActivo(Long idActivo) {
 		this.idActivo = idActivo;
+	}
+
+	public Long getNumGastoHaya() {
+		return numGastoHaya;
+	}
+
+	public void setNumGastoHaya(Long numGastoHaya) {
+		this.numGastoHaya = numGastoHaya;
+	}
+
+	public Long getNumActivo() {
+		return numActivo;
+	}
+
+	public void setNumActivo(Long numActivo) {
+		this.numActivo = numActivo;
 	}
 
 	public Long getIdTasacionExt() {

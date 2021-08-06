@@ -84,7 +84,8 @@ Ext.define('HreRem.controller.ActivosController', {
         	abrirDetalleProveedor: 'abrirDetalleProveedor',
         	abrirDetalleExpedienteById: 'abrirDetalleExpedienteById',
         	abrirDetallePlusvalia: 'abrirDetallePlusvalia',
-        	abrirDetalleGasto: 'abrirDetalleGasto'
+        	abrirDetalleGasto: 'abrirDetalleGasto',
+        	abrirDetalleGastoTasacion: 'abrirDetalleGastoTasacion'
     	},
 
     	'tareagenerica' : {
@@ -1191,6 +1192,17 @@ Ext.define('HreRem.controller.ActivosController', {
 		me.redirectTo('activos', true);    	
     	me.abrirDetalleGastoById(id, titulo);    	
     	    	
+    },
+
+    abrirDetalleGastoTasacion: function(record, refLinks) {
+       var me = this,
+       numGasto = record.get("numGastoHaya"),
+       id = record.get("idGasto"),
+       titulo = Ext.isEmpty(numGasto)? null : 'Gasto ' + numGasto;
+
+       me.redirectTo('activos', true);
+       me.abrirDetalleGastoById(id, titulo, refLinks);
+
     },
     
     abrirDetallePlusvalia: function(record) {

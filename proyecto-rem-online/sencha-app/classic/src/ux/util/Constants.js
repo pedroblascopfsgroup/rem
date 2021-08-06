@@ -145,7 +145,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		GENCAT:			'comercialactivo.gencatactivo',
 		OFERTASAGRU:	'comercialagrupacion.ofertascomercialagrupacion',
 		PROPUESTAS:		'preciosactivo.propuestaspreciosactivo',
-		PLUSVALIA:		'plusvaliaactivo'
+		PLUSVALIA:		'plusvaliaactivo',
+		PRECIOS_TASACION: 'preciosactivo.tasacionesactivo'
 //		INVISIBLE:		Si creamos un registro-enlace-activo en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
 	},
 
@@ -932,5 +933,9 @@ Ext.define('HreRem.ux.util.Constants', {
 	},
 	SUBFASES_PUBLICACION: {
 		COD_EXCLUIDO_CLIENTE : '14'
+	},
+
+	TIPO_GASTO: {
+	    SERVICIOS_PROFESIONALES_INDEPE: '11'
 	}
 });

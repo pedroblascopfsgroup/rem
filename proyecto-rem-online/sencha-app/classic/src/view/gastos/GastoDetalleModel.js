@@ -817,6 +817,18 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				}
 			},
 			autoLoad: true
-		}
+		},
+
+        storeTasacionesGasto : {
+            pageSize : $AC.getDefaultPageSize(),
+            model : 'HreRem.model.TasacionesGasto',
+            proxy : {
+                type : 'uxproxy',
+                remoteUrl : 'gastosproveedor/getListTasacionesGasto',
+                extraParams : {
+                    idGasto : '{gasto.id}'
+                }
+            }
+        }
 	}
 });

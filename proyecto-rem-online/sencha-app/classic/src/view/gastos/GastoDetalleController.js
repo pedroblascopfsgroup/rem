@@ -2887,5 +2887,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	}
     	
     	return cuotaTotal;
+    },
+
+    onTasacionesDobleClick : function(grid, record) {
+        var me = this;
+        me.getView().fireEvent('abrirDetalleActivoPreciosTasacion', record);
+
     }
 });

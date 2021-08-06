@@ -112,6 +112,41 @@ Ext.define('HreRem.model.Reserva', {
 			name: 'fechaContabilizacionArras',
 			type : 'date',
 			dateFormat: 'c'
+		},
+		{
+			name: 'inscripcionTituloMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'tanteoDLMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'selloCalidadMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'temasTecnicosMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'posesionMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'temasCatastralesMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'autorizacionVpoMotivo',
+			type: 'boolean'
+			
 		}
 		
     ],

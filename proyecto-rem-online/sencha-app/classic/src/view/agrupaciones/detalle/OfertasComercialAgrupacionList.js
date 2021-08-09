@@ -296,12 +296,13 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 					   msg: msg,
 					   buttons: Ext.MessageBox.YESNO,
 					   fn: function(buttonId) {
-					        if (buttonId == 'yes') {
+					        if (buttonId == 'yes' && context.record.get("descripcionTipoOferta") == CONST.TIPO_COMERCIALIZACION_ACTIVO['VENTA']) {
 					        	me.up('agrupacionesdetallemain').lookupController().mostrarCrearOfertaTramitada(editor, me, context);
 					        	
 					        	//me.saveFn(editor, me, context);
-							}
-					    	else{
+							} else if (buttonId == 'yes') {
+								me.saveFn(editor, me, context);
+							} else{
 					    		me.getStore().load();	
 					    	}
 						}

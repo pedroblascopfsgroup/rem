@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -35,7 +36,7 @@ public class UpdaterServiceObtencionDocumentalAnalisisPeticion implements Update
 	private ActivoDao activoDao;
 
 	@Override
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		Trabajo trabajo = tramite.getTrabajo();
 
 		boolean tramitar = true;

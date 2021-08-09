@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -33,7 +34,7 @@ public class UpdaterServiceTasacionEmisionTasacion implements
 
 	
 	@Transactional
-	public void saveValues(ActivoTramite tramite,
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, 
 			List<TareaExternaValor> valores) {
 
 		Trabajo trabajo = tramite.getTrabajo();

@@ -6,18 +6,20 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
@@ -47,6 +49,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -64,17 +67,13 @@ import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
-import es.pfsgroup.plugin.rem.model.ActivoPropietario;
-import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
-import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoPrinexActivos;
 import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
-import es.pfsgroup.plugin.rem.model.DtoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
@@ -89,6 +88,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDDisponibleAdministracion;
+import es.pfsgroup.plugin.rem.model.dd.DDDisponibleTecnico;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -96,21 +97,17 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdecucionSareb;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
-import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoTecnico;
 import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
-import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
@@ -130,10 +127,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.ui.ModelMap;
 
 @Component
 public class TabActivoDatosBasicos implements TabActivoService {
@@ -1204,6 +1197,27 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		activoDto.setEsActivoPrincipalAgrupacionRestringida(estaEnRestringida);
 		
+		Filter filterPrinex = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoPrinexActivos activoPrinexActivos = genericDao.get(ActivoPrinexActivos.class, filterPrinex);
+		
+		if(activoPrinexActivos != null) {
+			if(activoPrinexActivos.getDisponibleAdministracion() != null) {
+				activoDto.setDisponibleAdministrativoCodigo(activoPrinexActivos.getDisponibleAdministracion().getCodigo());
+				activoDto.setDisponibleAdministrativoDescripcion(activoPrinexActivos.getDisponibleAdministracion().getDescripcion());
+			}
+			
+			if(activoPrinexActivos.getDisponibleTecnico() != null) {
+				activoDto.setDisponibleTecnicoCodigo(activoPrinexActivos.getDisponibleTecnico().getCodigo());
+				activoDto.setDisponibleTecnicoDescripcion(activoPrinexActivos.getDisponibleTecnico().getDescripcion());
+			}
+			
+			if(activoPrinexActivos.getMotivoTecnico() != null) {
+				activoDto.setMotivoTecnicoCodigo(activoPrinexActivos.getMotivoTecnico().getCodigo());
+				activoDto.setMotivoTecnicoDescripcion(activoPrinexActivos.getMotivoTecnico().getDescripcion());
+			}
+			
+		}
+		
 		return activoDto;
 	}
 	
@@ -2102,6 +2116,49 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if(activo != null){
 				Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
 				llamadaAsincrona.start();
+			}
+
+			Filter filterPrinex = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoPrinexActivos activoPrinexActivos = genericDao.get(ActivoPrinexActivos.class, filterPrinex);
+			
+			if(activoPrinexActivos != null) {
+				if(dto.getDisponibleAdministrativoCodigo() != null) {
+					Filter filtroDispAdm = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getDisponibleAdministrativoCodigo());
+					DDDisponibleAdministracion disponibleAdministracion = genericDao.get(DDDisponibleAdministracion.class, filtroDispAdm);
+					activoPrinexActivos.setDisponibleAdministracion(disponibleAdministracion);
+				}
+				
+				if(dto.getDisponibleTecnicoCodigo() != null) {
+					Filter filtroDispTec = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getDisponibleTecnicoCodigo());
+					DDDisponibleTecnico disponibleTecnico = genericDao.get(DDDisponibleTecnico.class, filtroDispTec);
+					activoPrinexActivos.setDisponibleTecnico(disponibleTecnico);
+				}
+				
+				if(dto.getMotivoTecnicoCodigo() != null) {
+					Filter filtroMotTec = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getMotivoTecnicoCodigo());
+					DDMotivoTecnico motivoTecnico = genericDao.get(DDMotivoTecnico.class, filtroMotTec);
+					activoPrinexActivos.setMotivoTecnico(motivoTecnico);
+				}
+				
+			}else {
+				activoPrinexActivos = new ActivoPrinexActivos();
+				if (!Checks.esNulo(dto.getDisponibleAdministrativoCodigo())){
+					DDDisponibleAdministracion disponibleAdministracion = (DDDisponibleAdministracion) diccionarioApi.dameValorDiccionarioByCod(DDDisponibleAdministracion.class,  dto.getDisponibleAdministrativoCodigo());
+					activoPrinexActivos.setDisponibleAdministracion(disponibleAdministracion);
+				}
+				if (!Checks.esNulo(dto.getDisponibleTecnicoCodigo())){
+					DDDisponibleTecnico disponibleTecnico = (DDDisponibleTecnico) diccionarioApi.dameValorDiccionarioByCod(DDDisponibleTecnico.class,  dto.getDisponibleTecnicoCodigo());
+					activoPrinexActivos.setDisponibleTecnico(disponibleTecnico);
+				}
+				if (!Checks.esNulo(dto.getMotivoTecnicoCodigo())){
+					DDMotivoTecnico motivoTecnico = (DDMotivoTecnico) diccionarioApi.dameValorDiccionarioByCod(DDMotivoTecnico.class,  dto.getMotivoTecnicoCodigo());
+					activoPrinexActivos.setMotivoTecnico(motivoTecnico);
+				}
+				activoPrinexActivos.setActivo(activo);
+				genericDao.save(ActivoPrinexActivos.class, activoPrinexActivos);
 			}
 
 		} catch(JsonViewerException jve) {

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -100,7 +101,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 

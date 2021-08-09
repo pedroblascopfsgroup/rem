@@ -246,7 +246,7 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		if(!Checks.estaVacio(valores) || 
 				(activo != null && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())
 				&& oferta != null && oferta.getOfertaExpress())){
-			dataUpdater.saveValues(tramite, valores);
+			dataUpdater.saveValues(tramite, tareaExterna, valores);
 			enviaNotificacionFinTareaConValores(tareaExterna.getId(),valores);
 		}
 			

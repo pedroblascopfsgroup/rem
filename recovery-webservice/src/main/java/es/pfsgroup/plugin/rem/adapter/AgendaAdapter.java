@@ -444,13 +444,14 @@ public class AgendaAdapter {
 						Date hoy = new Date();
 						String hoyString = ft.format(hoy);
 						String dateValor = "";
+						Date fecha = null;
 						try {
-							Date fecha = ft.parse(valor[0]);
+							fecha = ft.parse(valor[0]);
 						} catch (ParseException e) {
 							errores= errores + "El dato "+tfi.getLabel()+" no es una fecha correcta. ";
 						}
 						dateValor = valor[0];
-						if(hoyString.compareTo(dateValor) < 0) {
+						if(hoy.before(fecha)) {
 							errores= errores + "La fecha "+tfi.getLabel()+" es mayor que hoy. ";
 						}
 					}else if("numberfield".equals(tfi.getType())) {

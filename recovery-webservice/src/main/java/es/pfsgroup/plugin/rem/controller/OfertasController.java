@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.PathParam;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.http.client.HttpSimplePostRequest;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
@@ -76,9 +78,13 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaVivaRespuestaDto;
+import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorRequest;
+import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorResponse;
 import es.pfsgroup.plugin.rem.rest.dto.TareaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
+import es.pfsgroup.plugin.rem.thread.EnviarCorreoFichaComercialExcel;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 import net.sf.json.JSONObject;
 
@@ -134,13 +140,16 @@ public class OfertasController {
 	
 	@Resource
 	private Properties appProperties;
-			
+	
 	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_DATA_KEY = "data";
 	private static final String RESPONSE_TOTALCOUNT_KEY = "totalCount";
 	private static final String RESPONSE_ERROR_KEY = "error";
+	
+	private static final String CONSTANTE_GENERAR_EXCEL_REM_API_URL = "rest.client.generate.excel.url.base";
+	private static final String CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT = "rest.client.generate.excel.endpoint";
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -948,35 +957,35 @@ public class OfertasController {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView generarFichaComercial(ModelMap model, Long idOferta, Long idExpediente, HttpServletRequest request) {
-
-		try {
-
-			Oferta oferta = ofertaApi.getOfertaById(idOferta);
-			DtoExcelFichaComercial dtoExcelFichaComercial = ofertaApi.getListOfertasFilter(idExpediente);
-			String nameFile = excelReportGeneratorApi.generateBbvaReportGetName(dtoExcelFichaComercial,request);
-			String errorCode = notificationOferta.enviarMailFichaComercial(oferta, nameFile,request);
-
-			if(errorCode == null || errorCode.isEmpty()){
-				model.put("success", true);
-			}
-			else{
-				model.put("success", false);
-				model.put("errorCode", errorCode);
-			}
-
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			model.put("success", false);
-			model.put("errorCode", e.getMessage());
-		}
-
-		return createModelAndViewJson(model);
-
-	}
+//	@SuppressWarnings("unchecked")
+//	@RequestMapping(method = RequestMethod.POST)
+//	public ModelAndView generarFichaComercial(ModelMap model, Long idOferta, Long idExpediente, HttpServletRequest request) {
+//
+//		try {
+//
+//			Oferta oferta = ofertaApi.getOfertaById(idOferta);
+//			DtoExcelFichaComercial dtoExcelFichaComercial = ofertaApi.getListOfertasFilter(idExpediente);
+//			String nameFile = excelReportGeneratorApi.generateBbvaReportGetName(dtoExcelFichaComercial,request);
+//			String errorCode = notificationOferta.enviarMailFichaComercial(oferta, nameFile,request);
+//
+//			if(errorCode == null || errorCode.isEmpty()){
+//				model.put("success", true);
+//			}
+//			else{
+//				model.put("success", false);
+//				model.put("errorCode", errorCode);
+//			}
+//
+//		}
+//		catch (Exception e) {
+//			e.printStackTrace();
+//			model.put("success", false);
+//			model.put("errorCode", e.getMessage());
+//		}
+//
+//		return createModelAndViewJson(model);
+//
+//	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -994,5 +1003,32 @@ public class OfertasController {
 		}
 		return createModelAndViewJson(model);
 	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateReport(ReportGeneratorRequest request, HttpServletResponse response) throws IOException {
+		String urlBaseGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_URL);
+		String urlEndpointGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT);
+		ReportGeneratorResponse report = excelReportGeneratorApi.requestExcel(request, urlBaseGenerateExcel.concat(urlEndpointGenerateExcel));
+	 	if(report != null)
+	 		excelReportGeneratorApi.downloadExcel(report, response);
+	 	
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	@Transactional(readOnly = false)
+	public ModelAndView enviarCorreoFichaComercialThread(ReportGeneratorRequest reportGenerator,  HttpServletRequest request, HttpServletResponse response, ModelMap model) throws IOException {
+		Thread llamadaAsincrona = new Thread(new EnviarCorreoFichaComercialExcel(reportGenerator.getListId(), reportGenerator.getReportCode(), request.getScheme(), request.getServerName(), usuarioManager.getUsuarioLogado().getUsername()));
+		
+		llamadaAsincrona.start();
+		
+		model.put(RESPONSE_SUCCESS_KEY, true);
+		return createModelAndViewJson(model);
+	}
+	
+	
+	
+	
+	
 	
 }

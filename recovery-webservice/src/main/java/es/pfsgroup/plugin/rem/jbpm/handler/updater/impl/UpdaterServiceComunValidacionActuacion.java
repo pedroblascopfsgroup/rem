@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -50,7 +51,7 @@ public class UpdaterServiceComunValidacionActuacion implements UpdaterService {
 	
 	
 	@Transactional
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		if (!valores.isEmpty() && CODIGO_T002_SOLICITUD_VALIDACION_ACTUACION.equals(valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo())) {
 			updateFechaObtencionDocumento(tramite, new Date());

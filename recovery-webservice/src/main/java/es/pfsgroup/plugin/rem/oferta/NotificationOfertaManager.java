@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.Properties;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -59,6 +58,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	private static final String BUZON_BOARDING = "buzonboarding";
 	private static final String BUZON_OFR_APPLE = "buzonofrapple";
 	private static final String STR_MISSING_VALUE = "---";
+	private static final String HTTP = "http";
+	private static final String HTTPS = "https";
+	private static final String GENERATE_EXCEL_HTTPS_DOWNLOAD = "generate.excel.https.download";
 	public static final String[] DESTINATARIOS_CORREO_APROBACION = {"GESTCOMALQ", "SUPCOMALQ", "SCOM", "GCOM"};
 		
 	private List<String> mailsPara 	= new ArrayList<String>();
@@ -626,10 +628,11 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	}
 	
 	
-	public String enviarMailFichaComercial(Oferta oferta, String nameFile, HttpServletRequest request ) {
-		StringBuffer url = request.getRequestURL();
-		String uri = request.getRequestURI();
-		String base = url.substring(0, url.length() - uri.length());
+	public String enviarMailFichaComercial(Oferta oferta, String nameFile, String scheme, String serverName) {
+		String base = scheme.concat("://").concat(serverName);
+		if (useHttps() && HTTP.equals(scheme)) {
+			base = HTTPS.concat("://").concat(serverName);
+		}
 		limpiarMails();
 		String errorCode = "";
 		Activo activo = oferta.getActivoPrincipal();
@@ -848,6 +851,14 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		}
+	}
+
+	public boolean useHttps() {
+		Boolean useHttps = Boolean.valueOf(appProperties.getProperty(GENERATE_EXCEL_HTTPS_DOWNLOAD));
+		if (useHttps == null) {
+			return false;
+		}
+		return useHttps;
 	}
 	
 	

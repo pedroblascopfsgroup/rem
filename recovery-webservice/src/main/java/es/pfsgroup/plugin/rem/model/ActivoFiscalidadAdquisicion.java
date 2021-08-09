@@ -45,10 +45,6 @@ public class ActivoFiscalidadAdquisicion implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TIC_ID")
 	private DDTipoImpuestoCompra tipoImpuestoCompra;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_SIC_ID")
-	private DDSubtipoImpuestoCompra subtipoImpuestoCompra;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_TII_ID")
@@ -109,14 +105,6 @@ public class ActivoFiscalidadAdquisicion implements Serializable, Auditable {
 
 	public void setTipoImpuestoCompra(DDTipoImpuestoCompra tipoImpuestoCompra) {
 		this.tipoImpuestoCompra = tipoImpuestoCompra;
-	}
-
-	public DDSubtipoImpuestoCompra getSubtipoImpuestoCompra() {
-		return subtipoImpuestoCompra;
-	}
-
-	public void setSubtipoImpuestoCompra(DDSubtipoImpuestoCompra subtipoImpuestoCompra) {
-		this.subtipoImpuestoCompra = subtipoImpuestoCompra;
 	}
 
 	public Double getPorcentajeImpuestoCompra() {

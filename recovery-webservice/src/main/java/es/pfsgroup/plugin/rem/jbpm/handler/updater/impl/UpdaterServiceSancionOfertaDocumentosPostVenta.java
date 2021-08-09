@@ -16,9 +16,11 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceContabilidadBbva;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -48,6 +50,9 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 	
+	@Autowired
+	private NotificatorServiceContabilidadBbva notificatorServiceContabilidadBbva;
+
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 	
@@ -141,6 +146,14 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 					
 					oferta.setMotivoRechazo(motivo);
 					ofertaApi.rechazarOferta(oferta);
+				}
+			}
+			if (expediente.getOferta() != null &&
+					DDCartera.CODIGO_CARTERA_BBVA.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
+				try {
+					notificatorServiceContabilidadBbva.notificatorFinTareaConValores(expediente,false);
+				} catch (GestorDocumentalException e) {
+					e.printStackTrace();
 				}
 			}
 

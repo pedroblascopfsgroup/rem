@@ -55,17 +55,17 @@ public class OfertaGridExcelReport extends AbstractExcelReport implements ExcelR
 		for(VGridBusquedaOfertas oferta: listaOfertas){
 			List<String> fila = new ArrayList<String>();
 			
-			fila.add(oferta.getNumOferta().toString());
-			fila.add(oferta.getNumActivoAgrupacion().toString());
+			fila.add(oferta.getNumOferta() != null ? oferta.getNumOferta().toString() : "");
+			fila.add(oferta.getNumActivoAgrupacion() != null ? oferta.getNumActivoAgrupacion().toString() : "");
 			fila.add(oferta.getDescripcionEstadoOferta());
 			fila.add(oferta.getDescripcionTipoOferta());
 			fila.add(this.getDateStringValue(oferta.getFechaCreacion()));
 			fila.add(oferta.getNumExpediente() != null ? oferta.getNumExpediente().toString() : "");
 			fila.add(oferta.getDescripcionEstadoExpediente());
-			fila.add(oferta.getImporteOferta().toString());
+			fila.add(oferta.getImporteOferta() != null ? oferta.getImporteOferta().toString() : "");
 			fila.add(oferta.getOfertante());
 			fila.add(oferta.getNombreCanal());
-			fila.add(oferta.getCanalDescripcion());			
+			fila.add(oferta.getCanalDescripcion());	
 			if(esCarteraLBK){				
 				fila.add(this.getComiteInternoSancionador(sancionadores.get(oferta.getId())));				
 				fila.add(this.getFechaReunionComite(fechasReunionComite.get(oferta.getId())));

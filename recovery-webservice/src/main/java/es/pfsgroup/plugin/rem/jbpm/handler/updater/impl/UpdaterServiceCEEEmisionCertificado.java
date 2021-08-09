@@ -8,6 +8,7 @@ import java.util.List;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,7 @@ public class UpdaterServiceCEEEmisionCertificado implements UpdaterService {
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@Transactional(readOnly = false)
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		Activo activo = tramite.getActivo();
 		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "configDocumento.tipoDocumentoActivo.codigo", DDTipoDocumentoActivo.CODIGO_CEE_TRABAJO);
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", activo);

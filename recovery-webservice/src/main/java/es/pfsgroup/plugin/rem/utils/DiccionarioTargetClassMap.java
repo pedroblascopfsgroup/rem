@@ -316,6 +316,9 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoCuotaComunidad", DDTipoCuotaComunidad.class);
 		mapa.put("segmentacionSareb", DDSegmentoSareb.class);
 		mapa.put("estadoContraste", DDEstadoContrasteListas.class);
+		mapa.put("disponibleAdministrativo", DDDisponibleAdministracion.class);
+		mapa.put("disponibleTecnico", DDDisponibleTecnico.class);
+		mapa.put("motivoTecnico", DDMotivoTecnico.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

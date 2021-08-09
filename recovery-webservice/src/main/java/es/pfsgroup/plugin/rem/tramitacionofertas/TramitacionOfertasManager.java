@@ -1961,7 +1961,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		return nuevaFormalizacion;
 	}
 
-	@Transactional
+	@Transactional(readOnly = false)
 	public ActivoTramite doTramitacion(Activo activo, Oferta oferta, Long idTrabajo, ExpedienteComercial expedienteComercial) 
 			throws IllegalAccessException, InvocationTargetException {
 		ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);

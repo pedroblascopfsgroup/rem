@@ -185,8 +185,8 @@ public class GenericAdapter {
 	 * @param adjuntos Archivos adjuntos a manar por correo
 	 */
 	@Deprecated
-	public void sendMailSinc(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos) {
-		remCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
+	public void sendMailSinc(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos ,List<String> mailsBCC) {
+		remCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos, mailsBCC);
 		
 	}
 	
@@ -618,5 +618,25 @@ public class GenericAdapter {
 	  Filter f2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 	  return genericDao.get(clase, f1, f2);
 	 }
+	 
+	 public void sendMailCopiaOculta(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo,List<String> mailsBCC) {
+			this.sendMailCopiaOculta(mailsPara, mailsCC, asunto, cuerpo, null,mailsBCC);
+		}
+	 
+	 public void sendMailCopiaOculta(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo,
+				List<DtoAdjuntoMail> adjuntos, List<String> mailsBCC) {
+			String usuarioLogado = RestApi.REST_LOGGED_USER_USERNAME;
+			if(this.getUsuarioLogado() != null){
+				try{
+					usuarioLogado = this.getUsuarioLogado().getUsername();
+				}catch(Exception e){
+					logger.info("No se puede obtner usuariologado, usamos rest",e);
+				}
+			}
+			Thread hiloCorreo = new Thread(
+					new EnvioCorreoAsync(mailsPara, mailsCC, asunto, cuerpo, adjuntos, usuarioLogado,mailsBCC));
+
+			hiloCorreo.start();
+		}
 
 }

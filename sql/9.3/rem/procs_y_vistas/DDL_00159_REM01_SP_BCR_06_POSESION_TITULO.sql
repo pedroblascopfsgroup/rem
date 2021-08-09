@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210804
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210809
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14837
+--## INCIDENCIA_LINK=HREOS-14824
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -21,6 +21,7 @@
 --##        0.9 Se inserta si un activo pasa a tener Fecha de inscripción de título o al contrario - [HREOS-14686] - Daniel Algaba
 --##        0.10 Campos Estado posesorio, Estado titularidad y Situación V.P.O.- [HREOS-14712] - Alejandra García
 --##        0.11 Correciones Ocupado y Sin título, se añade el FLAG EN REM [HREOS-14837] -Daniel Algaba
+--##        0.12 Correción Estado posesorio (Vertical)- [HREOS-14824] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -891,11 +892,8 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                   SELECT 
                       SPS.ACT_ID AS ACT_ID
                      ,CASE
-                        WHEN AUX.ESTADO_POSESORIO=''P01'' THEN NULL
-                        WHEN AUX.ESTADO_POSESORIO=''P02'' THEN (SELECT DD_EAL_ID FROM '|| V_ESQUEMA ||'.DD_EAL_ESTADO_ALQUILER WHERE DD_EAL_CODIGO=''02'')
-                        WHEN AUX.ESTADO_POSESORIO=''P03'' THEN NULL
-                        WHEN AUX.ESTADO_POSESORIO=''P04'' THEN (SELECT DD_EAL_ID FROM '|| V_ESQUEMA ||'.DD_EAL_ESTADO_ALQUILER WHERE DD_EAL_CODIGO=''02'')
-                        WHEN AUX.ESTADO_POSESORIO=''P06'' THEN NULL
+                        WHEN AUX.ESTADO_POSESORIO IN (''P01'',''P03'',''P05'',''P06'') THEN NULL
+                        WHEN AUX.ESTADO_POSESORIO IN (''P02'',''P04'') THEN (SELECT DD_EAL_ID FROM '|| V_ESQUEMA ||'.DD_EAL_ESTADO_ALQUILER WHERE DD_EAL_CODIGO=''02'')
                       END AS DD_EAL_ID
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0

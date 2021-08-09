@@ -335,6 +335,10 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoImpositivoItp", DDTipoITP.class);
 		mapa.put("tipoImpositivoIva", DDTipoIVA.class);
 		mapa.put("impuestoAdquisicion", DDTipoImpuestoCompra.class);
+		mapa.put("motivoRescisionArras", DDMotivoRescisionArras.class);		
+		mapa.put("disponibleAdministrativo", DDDisponibleAdministracion.class);
+		mapa.put("disponibleTecnico", DDDisponibleTecnico.class);
+		mapa.put("motivoTecnico", DDMotivoTecnico.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

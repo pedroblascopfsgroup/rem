@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -77,7 +77,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
  	private static final Integer RESERVA_SI = 1;
  	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
  
- 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {	
+ 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {	
 	 	try {
 	 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 	 		ExpedienteComercial expediente = expedienteComercialApi

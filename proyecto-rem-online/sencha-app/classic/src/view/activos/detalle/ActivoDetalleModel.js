@@ -3866,9 +3866,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			},
 			autoLoad: true   
 	   },
-				
-	   comboVinculoCaixa: {
+	   comboDisponibleAdministrativo: {
 			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'disponibleAdministrativo'}
+			},
+			autoLoad: true   
+	   },	   
+	   comboVinculoCaixa: {
+		   	model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
@@ -3962,12 +3970,29 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    		{"codigo":"false", "descripcion":"No"}
 	    		]  
 	    },
+
 		comboRiesgoOperacion: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoRiesgoOperacion'}
+			}
+		},
+		comboDisponibleTecnico: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'disponibleTecnico'}
+			}
+		},
+		comboMotivoTecnico: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoTecnico'}
 			}
 		}
 	 }

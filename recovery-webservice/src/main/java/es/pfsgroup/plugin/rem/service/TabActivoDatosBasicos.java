@@ -64,6 +64,10 @@ import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
+import es.pfsgroup.plugin.rem.model.ActivoPrinexActivos;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -85,6 +89,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDDistritoCaixa;
+import es.pfsgroup.plugin.rem.model.dd.DDDisponibleAdministracion;
+import es.pfsgroup.plugin.rem.model.dd.DDDisponibleTecnico;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEscaleraEdificio;
@@ -99,6 +105,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDPlantaEdificio;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoTecnico;
 import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -1251,6 +1258,25 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if (activoCaixa != null && activoCaixa.getUnidadEconomicaCaixa() != null) {
 			activoDto.setUnidadEconomicaCaixa(activoCaixa.getUnidadEconomicaCaixa());
 		}
+		Filter filterPrinex = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoPrinexActivos activoPrinexActivos = genericDao.get(ActivoPrinexActivos.class, filterPrinex);
+		
+		if(activoPrinexActivos != null) {
+			if(activoPrinexActivos.getDisponibleAdministracion() != null) {
+				activoDto.setDisponibleAdministrativoCodigo(activoPrinexActivos.getDisponibleAdministracion().getCodigo());
+				activoDto.setDisponibleAdministrativoDescripcion(activoPrinexActivos.getDisponibleAdministracion().getDescripcion());
+			}
+			
+			if(activoPrinexActivos.getDisponibleTecnico() != null) {
+				activoDto.setDisponibleTecnicoCodigo(activoPrinexActivos.getDisponibleTecnico().getCodigo());
+				activoDto.setDisponibleTecnicoDescripcion(activoPrinexActivos.getDisponibleTecnico().getDescripcion());
+			}
+			
+			if(activoPrinexActivos.getMotivoTecnico() != null) {
+				activoDto.setMotivoTecnicoCodigo(activoPrinexActivos.getMotivoTecnico().getCodigo());
+				activoDto.setMotivoTecnicoDescripcion(activoPrinexActivos.getMotivoTecnico().getDescripcion());
+			}			
+		}
 		
 		return activoDto;
 	}
@@ -2195,6 +2221,48 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				modificarCheckVisibleGestionComercialRestringida(activo,dto);
 			}
 			
+			Filter filterPrinex = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoPrinexActivos activoPrinexActivos = genericDao.get(ActivoPrinexActivos.class, filterPrinex);
+			
+			if(activoPrinexActivos != null) {
+				if(dto.getDisponibleAdministrativoCodigo() != null) {
+					Filter filtroDispAdm = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getDisponibleAdministrativoCodigo());
+					DDDisponibleAdministracion disponibleAdministracion = genericDao.get(DDDisponibleAdministracion.class, filtroDispAdm);
+					activoPrinexActivos.setDisponibleAdministracion(disponibleAdministracion);
+				}
+				
+				if(dto.getDisponibleTecnicoCodigo() != null) {
+					Filter filtroDispTec = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getDisponibleTecnicoCodigo());
+					DDDisponibleTecnico disponibleTecnico = genericDao.get(DDDisponibleTecnico.class, filtroDispTec);
+					activoPrinexActivos.setDisponibleTecnico(disponibleTecnico);
+				}
+				
+				if(dto.getMotivoTecnicoCodigo() != null) {
+					Filter filtroMotTec = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getMotivoTecnicoCodigo());
+					DDMotivoTecnico motivoTecnico = genericDao.get(DDMotivoTecnico.class, filtroMotTec);
+					activoPrinexActivos.setMotivoTecnico(motivoTecnico);
+				}
+				
+			}else {
+				activoPrinexActivos = new ActivoPrinexActivos();
+				if (!Checks.esNulo(dto.getDisponibleAdministrativoCodigo())){
+					DDDisponibleAdministracion disponibleAdministracion = (DDDisponibleAdministracion) diccionarioApi.dameValorDiccionarioByCod(DDDisponibleAdministracion.class,  dto.getDisponibleAdministrativoCodigo());
+					activoPrinexActivos.setDisponibleAdministracion(disponibleAdministracion);
+				}
+				if (!Checks.esNulo(dto.getDisponibleTecnicoCodigo())){
+					DDDisponibleTecnico disponibleTecnico = (DDDisponibleTecnico) diccionarioApi.dameValorDiccionarioByCod(DDDisponibleTecnico.class,  dto.getDisponibleTecnicoCodigo());
+					activoPrinexActivos.setDisponibleTecnico(disponibleTecnico);
+				}
+				if (!Checks.esNulo(dto.getMotivoTecnicoCodigo())){
+					DDMotivoTecnico motivoTecnico = (DDMotivoTecnico) diccionarioApi.dameValorDiccionarioByCod(DDMotivoTecnico.class,  dto.getMotivoTecnicoCodigo());
+					activoPrinexActivos.setMotivoTecnico(motivoTecnico);
+				}
+				activoPrinexActivos.setActivo(activo);
+				genericDao.save(ActivoPrinexActivos.class, activoPrinexActivos);
+			}
 		} catch(JsonViewerException jve) {
 			throw jve;
 		} catch (IllegalAccessException e) {

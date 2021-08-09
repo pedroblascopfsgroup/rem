@@ -50,7 +50,7 @@ public class ActivoGenericSaveActionHandler extends ActivoGenericLeaveActionHand
 				
 		UpdaterService dataUpdater = updaterServiceFactory.getService(tareaProcedimiento.getCodigo());
 		
-		dataUpdater.saveValues(tramite, valores);
+		dataUpdater.saveValues(tramite, tareaExterna, valores);
 			
 		logger.debug("\tGuardamos los datos de la tarea: " + getNombreNodo(executionContext));
 	}

@@ -382,6 +382,9 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name = "DD_CAL_ID")
 	private DDClasificacionContratoAlquiler clasificacion;  
 	
+	@Column(name = "OFR_CHECK_DOCUMENTACION")
+    private Boolean checkDocumentacion;
+	
 
     @OneToOne(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -1191,6 +1194,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setClasificacion(DDClasificacionContratoAlquiler clasificacion) {
 		this.clasificacion = clasificacion;
+	}
+
+	public Boolean getCheckDocumentacion() {
+		return checkDocumentacion;
+	}
+
+	public void setCheckDocumentacion(Boolean checkDocumentacion) {
+		this.checkDocumentacion = checkDocumentacion;
 	}
 	
 }

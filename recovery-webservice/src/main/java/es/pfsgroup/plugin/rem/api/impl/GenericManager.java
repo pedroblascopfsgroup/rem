@@ -1,8 +1,15 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,9 +26,12 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.crypto.spec.SecretKeySpec;
+import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.utils.MessageUtils;
@@ -53,9 +64,13 @@ import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
@@ -67,6 +82,7 @@ import es.pfsgroup.plugin.rem.api.PerfilApi;
 import es.pfsgroup.plugin.rem.controller.GenericController;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -123,6 +139,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
@@ -130,13 +147,17 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.propietario.dao.ActivoPropietarioDao;
+import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
+import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
 import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.thread.EjecutarEnviarHonorariosUvemAsincrono;
+
 import es.pfsgroup.plugin.rem.trabajo.dao.DDSubtipoTrabajoDao;
+import es.pfsgroup.plugin.rem.utils.ImagenWebDto;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -175,6 +196,18 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private ActivoAgrupacionApi activoAgrupacionApi;
+	
+	@Autowired
+	private ActivoDao activoDao;
+	
+	@Autowired
+	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
 	@Autowired
 	private ActivoPatrimonioDaoImpl activoPatrimonio;
@@ -219,9 +252,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 	@Autowired
 	private RestApi restApi;
-	
-	@Autowired 
-	private ActivoDao activoDao;
 
 
 
@@ -1623,6 +1653,83 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		return listaResultado;
 	}
 	
+	public List<ImagenWebDto> getFichaComercialFotosActivo(Long id, String urlBase) {		
+		
+	return downloadFotos(activoAdapter.getListFotosActivoById(id),urlBase);
+		
+	}
+	
+	public List<ImagenWebDto> getFichaComercialFotosAgrupacion(Long id, String urlBase) {		
+		
+	return downloadFotos(activoAgrupacionApi.getFotosAgrupacionById(id),urlBase);
+	
+	}
+	
+	public List<ImagenWebDto> downloadFotos(List<ActivoFoto> fotos,String urlBase) {
+		
+		if (fotos != null && fotos.size() > 0) {
+			
+			InputStream in = null;
+			ByteArrayOutputStream out = null;
+			ImagenWebDto image;
+			
+			List<ImagenWebDto> imagenes = new ArrayList<ImagenWebDto>();
+			ActivoFoto fotoPrincipal = null;
+			
+			for (ActivoFoto activoFoto : fotos) {
+				if (activoFoto.getPrincipal() != null && activoFoto.getPrincipal() && activoFoto.getTipoFoto() != null && DDTipoFoto.COD_WEB.equals(activoFoto.getTipoFoto().getCodigo())) {
+					fotoPrincipal = new ActivoFoto();
+					fotoPrincipal = activoFoto;
+					break;
+				}
+					
+			}
+			
+			if (fotoPrincipal != null) {
+				fotos.remove(fotoPrincipal);
+				fotos.add(0,fotoPrincipal);
+			}	
+			
+			for (int i = 0 ; i < fotos.size() && i < 6; i++) {
+				
+				try {
+					ActivoFoto foto = fotos.get(i);	
+					image = new ImagenWebDto();
+					URL url = new URL(foto.getUrlThumbnail());
+					in = new BufferedInputStream(url.openStream());    
+					out = new ByteArrayOutputStream();
+					byte[] buf = new byte[1024];
+					int n = 0;
+					while (-1!=(n=in.read(buf)))
+					{
+					   out.write(buf, 0, n);
+					}
+					image.setImage(out.toByteArray());
+					image.setImageName(foto.getNombre());
+					imagenes.add(image);
+					
+				} catch (Exception e) {
+					logger.info(e.getMessage());	
+				}finally {
+					try {
+						if (in != null) {
+							in.close();
+						}
+						if (out != null) {
+							out.close();
+						}
+							
+					} catch (IOException e) {
+						logger.info(e.getMessage());
+					}
+	
+				}
+			}
+			return imagenes;
+		}
+		return null;
+		}
+
 	@Override
 	public List<DDTipoDocumentoActivoDto> getDiccionarioTiposDocumentoBySubtipoTrabajo(String subtipoTrabajo , String entidad) {
 		Filter filtroSubtipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.codigo", subtipoTrabajo);

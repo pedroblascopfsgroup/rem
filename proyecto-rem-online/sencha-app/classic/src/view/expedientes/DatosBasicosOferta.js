@@ -635,12 +635,12 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							handler : 'onClickGeneraOfertarHojaExcel',
 							margin : '10 10 10 10'
 						},
-						//Pruebas del excel
+						//TODO: Pruebas del excel
 						/*{
 							xtype : 'button',
-							reference : 'btnGenerarFichaComercial',
+							reference : 'btnGenerarFichaComercial', 
 							rowspan : 2,
-							text : HreRem.i18n('btn.propuesta.generar.ficha.comercial'),
+							text : 'superboton',
 							handler : 'onClickGeneraFichaComercialHojaExcel',
 							margin : '10 10 10 10'
 						},*/
@@ -669,7 +669,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							xtype : 'button',
 							reference : 'btngenerarfichacomercial',
 							bind : {
-								hidden : '{!esBbva}',
+								hidden : '{esTipoAlquiler}',
 								disabled : '{!habilitarBotonGenerarFicha}'
 							},
 							text : HreRem.i18n('btn.generar.ficha.comercial'),

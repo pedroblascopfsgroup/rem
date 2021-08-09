@@ -4900,9 +4900,11 @@ comprobarFormatoModificar: function() {
 	onClickGeneraFichaComercialHojaExcel: function(btn) {
 				var me = this, config = {};
 		
-				config.params = {};
-				config.params.idExpediente = me.getViewModel().get("expediente.id");
-				config.url= $AC.getRemoteUrl("ofertas/generateExcelBBVA");
+				config.params = {
+						"id" : [ me.getViewModel().get("expediente.numExpediente") ],
+						"reportCode" : 'FichaComercial'
+				};
+				config.url= $AC.getRemoteUrl("ofertas/generateReport");
 				
 				me.fireEvent("downloadFile", config);
 			},
@@ -4919,15 +4921,16 @@ comprobarFormatoModificar: function() {
 		    icon: Ext.Msg.INFO,
 		    fn: function(btn) {
 		        if (btn === 'ok') {
-					var url = $AC.getRemoteUrl("ofertas/generarFichaComercial");
+					var url = $AC.getRemoteUrl("ofertas/enviarCorreoFichaComercialThread");
 					var parametros = {
-							idOferta: me.getViewModel().get("datosbasicosoferta.idOferta"),
-							idExpediente : me.getViewModel().data.expediente.id
+							id : [ me.getViewModel().get("expediente.numExpediente") ],
+							reportCode : 'FichaComercial'
 					};
 					
 					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 					Ext.Ajax.request({
 			    	     url: url,
+			    	     method: 'POST',
 			    	     params: parametros,
 			    	     success: function(response, opts) {
 			    	    	 if(Ext.decode(response.responseText).success == "false") {
@@ -4938,6 +4941,10 @@ comprobarFormatoModificar: function() {
 			    	        	me.getView().unmask();
 			    	        	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 							 }
+			    	     },
+			    	     failure: function (a, operation) {
+			    	    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    	    	 me.getView().unmask();
 			    	     }
 			    	 });
 		        }

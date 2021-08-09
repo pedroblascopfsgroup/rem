@@ -57,7 +57,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Oferta oferta = expedienteComercial.getOferta();

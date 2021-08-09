@@ -200,6 +200,7 @@ func-rem-mejorasRendimiento-BuscadorAgrupaciones|func-rem-mejorasRendimiento
 rem_mirror|func-rem-mejorasRendimiento-F2
 rem_mirror|func-rem-mejorasRendimiento-F3
 rem_mirror|func-rem-comisionamiento-F3
+rem_mirror|func-rem-fichaClientes
 rem_mirror|func-rem-interfazPrinex
 rem_mirror|func-rem-mejorasRendimiento-F4
 func-rem-espartaConvivencia-F2-HREOS-13438-P|func-rem-espartaConvivencia-F2
@@ -211,6 +212,9 @@ rem_mirror|func-rem-cierreOficinas
 func-rem-cierreOficinas|R-Ambersweet
 func-rem-reglasComercialización|R-Ambersweet
 rem_mirror|func-rem-modeloHydra
+rem_mirror|func-rem-cuadreContableBBVA
+func-rem-cuadreContableBBVA|R-Chislett
+func-rem-fichaClientes|R-Chislett
 rem_mirror|func-rem-mejorasRendimiento-F5
 rem_mirror|func-rem-boardingOfertasCFV
 rem_mirror|func-rem-unicajaLBK

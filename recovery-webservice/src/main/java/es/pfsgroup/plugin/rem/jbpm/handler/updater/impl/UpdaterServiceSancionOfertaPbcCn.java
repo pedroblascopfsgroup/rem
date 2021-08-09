@@ -130,4 +130,10 @@ public class UpdaterServiceSancionOfertaPbcCn implements UpdaterService {
 		return this.getCodigoTarea();
 	}
 
+	@Override
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

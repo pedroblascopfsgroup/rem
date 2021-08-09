@@ -112,7 +112,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		boolean estadoBcModificado = false;
 		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();

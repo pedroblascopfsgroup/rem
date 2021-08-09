@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -72,6 +73,12 @@ public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
 
 	public String[] getKeys() {
 		return this.getCodigoTarea();
+	}
+
+	@Override
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

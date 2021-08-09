@@ -17,6 +17,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
@@ -31,6 +33,9 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.exception.UserException;
@@ -57,6 +62,7 @@ import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
+import es.pfsgroup.framework.paradise.http.client.HttpSimplePostRequest;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -229,6 +235,8 @@ import es.pfsgroup.plugin.rem.rest.dto.ComunicacionBoardingResponse;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
+import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorRequest;
+import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorResponse;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
@@ -269,6 +277,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
 
 
+	private static final String CONSTANTE_GENERAR_EXCEL_REM_API_URL = "rest.client.generate.excel.url.base";
+	private static final String CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT = "rest.client.generate.excel.endpoint";
+	
+	private static final String RESPONSE_SUCCESS_KEY = "success";	
+	private static final String RESPONSE_ERROR_KEY = "error";
+	
 	@Resource
 	MessageService messageServices;
 
@@ -491,6 +505,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		return oferta;
+	}
+	
+	private ModelAndView createModelAndViewJson(ModelMap model) {
+
+		return new ModelAndView("jsonView", model);
 	}
 
 	@Override
@@ -1644,7 +1663,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
 				ExpedienteComercial expedienteComercial = tramitacionOfertasManager.crearExpediente(oferta, trabajo, null, oferta.getActivoPrincipal());
 				ActivoTramite activoTramite = tramitacionOfertasManager.doTramitacion(oferta.getActivoPrincipal(), oferta, trabajo.getId(), expedienteComercial);
-
+				ofertaDao.flush();
+				
 				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
 
 				// Se copiará el valor del campo necesita financiación al campo
@@ -5773,8 +5793,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						gastosPendientes = getGastosPendientes(act);
 						activosFichaComercial.setGastosPendientes(gastosPendientes);
 						gastosPendientesTotal += gastosPendientes;
-						costesLegales = getGastosLegalesByTipo(importeOfertaParticipacion, act);
-						activosFichaComercial.setCostesLegales(costesLegales);
 						costesLegalesTotal += costesLegales;
 						comisionHaya = getComisionHayaByTipo(importeOfertaParticipacion, act);
 						activosFichaComercial.setComisionHaya(comisionHaya);
@@ -6088,7 +6106,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					gastosPendientes = getGastosPendientes(oferta.getActivoPrincipal());
 					activosFichaComercial.setGastosPendientes(gastosPendientes);
 					gastosPendientesTotal += gastosPendientes;
-					costesLegales = getGastosLegalesByTipo(importeOfertaNeta, oferta.getActivoPrincipal());
 					activosFichaComercial.setCostesLegales(costesLegales);
 					costesLegalesTotal += costesLegales;
 					comisionHaya = getComisionHayaByTipo(importeOfertaNeta, oferta.getActivoPrincipal());
@@ -6634,26 +6651,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return meses;
 	}
 
-	private Double getGastosLegalesByTipo (Double importe, Activo act) {
-		
-		DDTipoCostes tipoCostes;
-		Double gastosLegales = 0.0;
-		Filter filterSubActivoTipo = genericDao.createFilter(FilterType.EQUALS, "subtipoActivo.id", act.getSubtipoActivo().getId());
-		
-		ConfiguracionComisionCostesActivo cfgComisionCostes = genericDao.get(ConfiguracionComisionCostesActivo.class, filterSubActivoTipo);
-		
-		if (cfgComisionCostes != null  &&  importe > 0.0) {
-			
-			tipoCostes = cfgComisionCostes.getTipoCostes();
-			
-			if (tipoCostes != null ) {
-				gastosLegales = (importe * tipoCostes.getPorcentaje()) / 100;
-			}
-			
-		}
-		
-		return gastosLegales;
-	}
 	private Double getComisionHayaByTipo(Double importe, Activo act) {
 		
 		DDTipoComision tipoComision;
@@ -7212,6 +7209,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public void enviarCorreoFichaComercial(List<Long> ids, String reportCode, String scheme, String serverName) throws IOException {
+		try {
+			String urlBaseGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_URL);
+			String urlEndpointGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT);
+			Map<String, Object> params = new HashMap<String, Object>();
+		 	params.put("id", ids);
+		 	params.put("reportCode", reportCode);
+		 	HttpSimplePostRequest httpPostClient = new HttpSimplePostRequest(urlBaseGenerateExcel.concat(urlEndpointGenerateExcel), params);
+			ReportGeneratorResponse report = httpPostClient.post(ReportGeneratorResponse.class);
+			String errorCode = excelReportGeneratorApi.sendExcelFichaComercial(ids.get(0), report, scheme, serverName);
+
+		} catch (Exception e) {			
+			logger.error("Error en ofertasController", e);
+		}
+	}
+
 	@Override
 	public boolean esOfertaValidaCFVByCarteraSubcartera(Oferta oferta) {
 		

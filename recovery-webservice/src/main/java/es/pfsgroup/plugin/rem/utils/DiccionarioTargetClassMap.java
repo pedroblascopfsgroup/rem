@@ -318,8 +318,10 @@ public class DiccionarioTargetClassMap{
 		mapa.put("segmentacionSareb", DDSegmentoSareb.class);
 		mapa.put("estadoContraste", DDEstadoContrasteListas.class);
 		mapa.put("vinculoCaixa", DDVinculoCaixa.class);
-		mapa.put("motivoRescisionArras", DDMotivoRescisionArras.class);
-		
+		mapa.put("motivoRescisionArras", DDMotivoRescisionArras.class);		
+		mapa.put("disponibleAdministrativo", DDDisponibleAdministracion.class);
+		mapa.put("disponibleTecnico", DDDisponibleTecnico.class);
+		mapa.put("motivoTecnico", DDMotivoTecnico.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

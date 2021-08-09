@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
@@ -40,7 +39,6 @@ import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -52,17 +50,27 @@ import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.http.client.HttpSimplePostRequest;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.DtoActivosFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoExcelFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoHcoComercialFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoListFichaAutorizacion;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
+import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorRequest;
+import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorResponse;
 
 
 
@@ -87,6 +95,14 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	
 	private static final String CONSTANTE_RUTA_EXCEL = "email.attachment.folder.src";
 	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private NotificationOfertaManager notificationOferta;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 	
 	@Resource
 	Properties appProperties;
@@ -7388,4 +7404,34 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 		
 	}
 	
+	@Override
+	public ReportGeneratorResponse requestExcel(ReportGeneratorRequest request, String url) throws IOException {
+		Map<String, Object> params = new HashMap<String, Object>();
+	 	params.put("id", request.getListId());
+	 	params.put("reportCode", request.getReportCode());
+	 	HttpSimplePostRequest httpPostClient = new HttpSimplePostRequest(url, params);
+	 	return httpPostClient.post(ReportGeneratorResponse.class);
+	}
+	
+	@Override
+	public void downloadExcel(ReportGeneratorResponse report, HttpServletResponse response) throws IOException {
+		File file = getExcelFileByArrayByte(report.getResponse(), report.getNombre());
+	 	this.sendReport(file, response);
+	}
+
+	@Override
+	@Transactional
+	public String sendExcelFichaComercial(Long numExpediente, ReportGeneratorResponse report, String scheme, String serverName) throws IOException {
+		File file = getExcelFileByArrayByte(report.getResponse(), report.getNombre());
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "numExpediente", numExpediente));
+		return notificationOferta.enviarMailFichaComercial(expediente.getOferta(), file.getName(), scheme, serverName);
+	}
+	
+	private File getExcelFileByArrayByte(byte[] bytes, String fileName) throws IOException {
+		String route = appProperties.getProperty(CONSTANTE_RUTA_EXCEL) + "/" + fileName;
+	 	File file = new File(route);
+	 	org.apache.commons.io.FileUtils.writeByteArrayToFile(file, bytes);
+	 	return file;
+	}
+
 }

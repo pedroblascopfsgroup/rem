@@ -122,6 +122,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
@@ -1960,4 +1961,23 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		return listaDDEstadoOferta;
 	}
 
+	@Override
+	public List<DDEstadosCiviles> comboEstadoCivilCustom(String codCartera) {
+		
+		List<DDEstadosCiviles> estadosCiviles = genericDao.getList(DDEstadosCiviles.class);
+		List<DDEstadosCiviles> listaRetorno = new ArrayList<DDEstadosCiviles>();
+		
+		DDCartera cartera = genericDao.get(DDCartera.class, genericDao.createFilter(FilterType.EQUALS,"codigo", codCartera));
+		
+		for (DDEstadosCiviles ddEstadosCiviles : estadosCiviles) {
+			listaRetorno.add(ddEstadosCiviles);
+			if (!DDCartera.isCarteraBk(cartera) && 
+					(DDEstadosCiviles.COD_SEPARADO_C4C.equals(ddEstadosCiviles.getCodigoC4C()) 
+							|| DDEstadosCiviles.COD_PAREJA_HECHO_C4C.equals(ddEstadosCiviles.getCodigoC4C()))) {
+				listaRetorno.remove(ddEstadosCiviles);
+			}
+		}						
+		return listaRetorno;
+		
+	}
 }

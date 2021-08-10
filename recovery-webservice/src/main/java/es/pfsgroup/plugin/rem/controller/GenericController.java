@@ -877,5 +877,10 @@ public class GenericController extends ParadiseJsonController{
 
 		restApi.sendResponse(response, modelMap, request);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView comboEstadoCivilCustom(String codCartera){
+		return createModelAndViewJson(new ModelMap("data", genericApi.comboEstadoCivilCustom(codCartera)));
+	}
  }
 

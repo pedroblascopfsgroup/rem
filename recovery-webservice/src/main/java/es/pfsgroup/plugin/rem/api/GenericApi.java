@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
@@ -386,5 +387,7 @@ public interface GenericApi {
 			throws Exception;
 
 	List<DDEstadoOferta> getDiccionarioEstadosOfertas(String cartera, String equipoGestion);
+
+	public List<DDEstadosCiviles> comboEstadoCivilCustom(String codCartera);
 
 }

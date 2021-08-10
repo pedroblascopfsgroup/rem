@@ -30,7 +30,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 
 	initComponent: function() {
 		var me = this;
-	
 		me.buttons = [{
 				text: HreRem.i18n('btn.cancelBtnText'),
 				handler: 'onClickCancelar'
@@ -487,8 +486,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						reference: 'estadoCivil',
 						padding: '5px',
 						bind: {
-							store: '{comboEstadoCivil}'
-						},
+							store: '{comboEstadoCivilCustom}'
+						},						
 						autoLoadOnValue: true,
 						listeners: {
 							change: 'comprobarObligatoriedadCamposNexos'

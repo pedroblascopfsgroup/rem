@@ -10,7 +10,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			idExpediente = wizard.expediente.get('id'),
 			form = me.getView().getForm(),
 			visualizar = wizard.visualizar;
-
 		wizard.mask(HreRem.i18n('msg.mask.loading'));
 
 		model.setId(idComprador);

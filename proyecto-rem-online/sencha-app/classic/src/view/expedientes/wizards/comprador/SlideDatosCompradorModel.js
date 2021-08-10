@@ -1,7 +1,6 @@
 Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel', {
 	extend: 'HreRem.view.common.DDViewModel',
 	alias: 'viewmodel.slidedatoscomprador',
-
 	data: {},
 	stores: {		
 		comboTipoGradoPropiedad: {
@@ -113,6 +112,16 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 				extraParams: {diccionario: 'vinculoCaixa'}
 			},
 			autoLoad: true   	
+	    },
+	    comboEstadoCivilCustom: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/comboEstadoCivilCustom',
+				extraParams: {codCartera: '{comprador.entidadPropietariaCodigo}'}
+			},
+			//session: true,
+			autoLoad: true
 	    }
 	}
 });

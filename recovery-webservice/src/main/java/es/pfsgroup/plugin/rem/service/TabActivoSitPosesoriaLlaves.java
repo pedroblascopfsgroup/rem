@@ -287,6 +287,11 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				activoDto.setFechaEstadoTecnico(activoCaixa.getFechaEstadoTecnico());
 			}
 		}
+		
+		ActivoSituacionPosesoria activoSitPosesoria = genericDao.get(ActivoSituacionPosesoria.class, filtroCaixa);
+		if (activoSitPosesoria != null) {
+				activoDto.setVertical(activoSitPosesoria.getVertical());			
+		}
 	
 		return activoDto;
 		

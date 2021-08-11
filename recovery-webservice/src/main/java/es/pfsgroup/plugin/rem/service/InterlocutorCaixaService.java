@@ -69,7 +69,6 @@ public class InterlocutorCaixaService {
     }
 
     public void callReplicateClientAsync(final DtoInterlocutorBC oldData, final DtoInterlocutorBC newData, final Comprador comprador, final Oferta oferta){
-        if (hasChangestoBC(oldData,newData,comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null)){
             hibernateUtils.flushSession();
             Thread thread = new Thread(new Runnable() {
                 public void run() {
@@ -77,7 +76,6 @@ public class InterlocutorCaixaService {
                 }
             });
             thread.start();
-        }
     }
 
     public void callReplicateClientAsync(final DtoInterlocutorBC oldData, final DtoInterlocutorBC newData, final ActivoProveedor proveedor){

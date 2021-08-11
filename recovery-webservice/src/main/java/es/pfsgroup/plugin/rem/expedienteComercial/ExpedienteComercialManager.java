@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
@@ -403,6 +404,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Autowired
 	private AgendaAdapter agendaAdapter;
+
+	@Autowired
+	private HibernateUtils hibernateUtils;
 	
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -4729,6 +4733,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Comprador comprador = genericDao.get(Comprador.class, filtro);
 		DtoInterlocutorBC oldDataComprador = new DtoInterlocutorBC();
 		DtoInterlocutorBC newDataComprador = new DtoInterlocutorBC();
+		DtoInterlocutorBC oldDataRepresentante = new DtoInterlocutorBC();
+		DtoInterlocutorBC newDataRepresentante = new DtoInterlocutorBC();
 
 		if (!Checks.esNulo(comprador)) {
 
@@ -4918,6 +4924,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			oldDataComprador.cexToDto(compradorExpediente);
+			oldDataRepresentante.representanteToDto(compradorExpediente);
 
 			if (!Checks.esNulo(dto.getPorcentajeCompra())) {
 				compradorExpediente.setPorcionCompra(dto.getPorcentajeCompra());
@@ -5168,6 +5175,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (particularValidatorApi.esOfertaCaixa(expedienteComercial.getOferta().getNumOferta().toString())){
 				newDataComprador.compradorToDto(comprador);
 				newDataComprador.cexToDto(compradorExpediente);
+				newDataRepresentante.representanteToDto(compradorExpediente);
+				boolean compradorOrepresentanteModificado = interlocutorCaixaService.hasChangestoBC(oldDataComprador,newDataComprador,comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null)
+				|| interlocutorCaixaService.hasChangestoBC(oldDataRepresentante,newDataRepresentante,compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null);
+				if (compradorOrepresentanteModificado)
 				interlocutorCaixaService.callReplicateClientAsync(oldDataComprador,newDataComprador,comprador,expedienteComercial.getOferta());
 			}
 
@@ -6136,9 +6147,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					iap.setIdPersonaHaya(comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null);
 					iap.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
 				}
-					
+
 				//InfoAdicionalPersona iap = new InfoAdicionalPersona();
-				
+
 				if(!Checks.esNulo(dto.getVinculoCaixaCodigo())) {
 					iap.setVinculoCaixa(genericDao.get(DDVinculoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getVinculoCaixaCodigo())));
 				}
@@ -6153,7 +6164,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				
 				
 				genericDao.save(InfoAdicionalPersona.class, iap);
-				
+
 				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
 
 				genericDao.save(Comprador.class, comprador);
@@ -6163,6 +6174,38 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				genericDao.save(ExpedienteComercial.class, expediente);
 				
 				ofertaApi.resetPBC(expediente, true);
+
+				if (compradorExpediente.getDocumentoRepresentante() != null){
+
+					if (compradorExpediente.getIdPersonaHayaRepresentante() == null)
+						ofertaApi.llamadaMaestroPersonasRepresentante(expediente.getId(),getNombreCarteraExpediente(expediente.getId()));
+
+					hibernateUtils.getSessionFactory().getCurrentSession().refresh(compradorExpediente);
+
+					if (compradorExpediente.getIdPersonaHayaRepresentante() != null){
+
+						InfoAdicionalPersona iapRepresentante = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null));
+
+						if(iapRepresentante == null){
+							iapRepresentante = new InfoAdicionalPersona();
+							iapRepresentante.setAuditoria(Auditoria.getNewInstance());
+							iapRepresentante.setIdPersonaHaya(compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null);
+							iapRepresentante.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
+							genericDao.save(InfoAdicionalPersona.class, iapRepresentante);
+						}
+
+						compradorExpediente.setInfoAdicionalRepresentante(iapRepresentante);
+
+						if (hibernateUtils.getSessionFactory().getCurrentSession().contains(compradorExpediente)){
+							hibernateUtils.getSessionFactory().getCurrentSession().merge(compradorExpediente);
+						}else {
+							genericDao.update(CompradorExpediente.class,compradorExpediente);
+						}
+
+					}else {
+						System.out.println("No se ha podido obtener idPersonaHaya para el representante con el documento "+compradorExpediente.getDocumentoRepresentante());
+					}
+				}
 
 				if(!Checks.estaVacio(tmpClienteGDPR))
 					clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.get(0).getNumDocumento());
@@ -9301,6 +9344,28 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(expediente))
 				cartera = expediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera()
 						.getCodigo();
+		}
+
+		return cartera;
+	}
+
+
+	private String getNombreCarteraExpediente(Long idExpediente) {
+		String cartera = null;
+		ExpedienteComercial expediente = null;
+		if (!Checks.esNulo(idExpediente)) {
+			expediente = findOne(idExpediente);
+//			DtoPage dto = this.getActivosExpediente(idExpediente);
+//			List<DtoActivosExpediente> dtosActivos = (List<DtoActivosExpediente>) dto.getResults();
+//			if (!Checks.estaVacio(dtosActivos)) {
+//				Activo primerActivo = activoApi.get(dtosActivos.get(0).getIdActivo());
+//				if (!Checks.esNulo(primerActivo)) {
+//					cartera = primerActivo.getCartera().getCodigo();
+//				}
+//			}
+			if (!Checks.esNulo(expediente))
+				cartera = expediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera()
+						.getDescripcion();
 		}
 
 		return cartera;

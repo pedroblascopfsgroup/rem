@@ -833,5 +833,7 @@ public interface OfertaApi {
 
 	boolean esOfertaValidaCFVByCarteraSubcartera(Oferta oferta);
 
+	public void llamadaMaestroPersonasRepresentante(Long idExpediente, String cartera);
+
 
 }

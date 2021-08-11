@@ -304,10 +304,46 @@ public class DtoInterlocutorBC {
         this.city=comprador.getLocalidad() != null ? comprador.getLocalidad().getCodigo() : null;
         this.regioID=comprador.getProvincia() != null ? comprador.getProvincia().getCodigo() : null;
         this.telefono=comprador.getTelefono1();
-        this.tlf_movil=comprador.getTelefono2() != null && comprador.getTelefono2().length() > 0 ? comprador.getTelefono2() : null;
+        this.tlf_movil=comprador.getTelefono2();
         this.email=comprador.getEmail();
         this.taxNumberCategoryCode=comprador.getTipoDocumento() != null ? comprador.getTipoDocumento().getCodigo() : null;
         this.partyTaxID=comprador.getDocumento();
+        if (infoAdicionalPersona != null){
+            this.internalID=infoAdicionalPersona.getIdC4C();
+            this.companyLegalFormCode=infoAdicionalPersona.getFormaJuridica() != null ? infoAdicionalPersona.getFormaJuridica().getCodigo() : null;
+            this.prp_kyc=infoAdicionalPersona.getPrp();
+            this.cnae=infoAdicionalPersona.getCnae() != null ? infoAdicionalPersona.getCnae().getCodigo() : null;
+            this.cno=infoAdicionalPersona.getCnOcupacional() != null ? infoAdicionalPersona.getCnOcupacional().getCodigo() : null;
+            this.roleCode=infoAdicionalPersona.getRolInterlocutor() != null ? infoAdicionalPersona.getRolInterlocutor().getCodigo() : null;
+            this.zztipoSocio =infoAdicionalPersona.getTipoSocioComercial() != null ? infoAdicionalPersona.getTipoSocioComercial().getCodigo() : null;
+        }
+    }
+
+    public void representanteToDto(CompradorExpediente cex){
+        if (cex == null)
+            return;
+
+        InfoAdicionalPersona infoAdicionalPersona = cex.getInfoAdicionalRepresentante();
+
+        this.receiverInternalID= cex.getIdPersonaHayaRepresentante() != null ? cex.getIdPersonaHayaRepresentante().toString() : null;
+        this.zznombreBp = cex.getNombreRepresentante();
+        this.zzapellidosBp =cex.getApellidosRepresentante();
+        this.naturalPersonIndicator=null;
+        this.zzbirthDate =dateToString(cex.getFechaNacimientoRepresentante());
+        this.pais_nacimiento=cex.getPaisNacimientoRepresentante() != null ? cex.getPaisNacimientoRepresentante().getCodigo() : null;
+        this.municipio_nac=cex.getLocalidadNacimientoRepresentante() != null ? cex.getLocalidadNacimientoRepresentante().getCodigo() : null;
+        this.nacionalidad=cex.getPaisNacimientoRepresentante() != null ? cex.getPaisNacimientoRepresentante().getCodigo() : null;
+        this.sexo=null;
+        this.via=cex.getDireccionRepresentante();
+        this.street=cex.getDireccionRepresentante();
+        this.cod_post=cex.getCodigoPostalRepresentante();
+        this.city=null;
+        this.regioID=cex.getLocalidadRepresentante() != null ? cex.getLocalidadRepresentante().getCodigo() : null;
+        this.telefono=cex.getTelefono1Representante();
+        this.tlf_movil=cex.getTelefono2Representante();
+        this.email=cex.getEmailRepresentante();
+        this.taxNumberCategoryCode=null;
+        this.partyTaxID=cex.getDocumentoRepresentante();
         if (infoAdicionalPersona != null){
             this.internalID=infoAdicionalPersona.getIdC4C();
             this.companyLegalFormCode=infoAdicionalPersona.getFormaJuridica() != null ? infoAdicionalPersona.getFormaJuridica().getCodigo() : null;
@@ -449,6 +485,10 @@ public class DtoInterlocutorBC {
     }
 
     private boolean equals(Object comparable1,Object comparable2){
+        if (comparable1 != null && comparable1 instanceof String && !(((String) comparable1).length() > 0))
+            comparable1 = null;
+        if (comparable2 != null && comparable2 instanceof String && !(((String) comparable2).length() > 0))
+            comparable2 = null;
         return  comparable1 == null && comparable2 == null ? true : (comparable1 != null && comparable1.equals(comparable2));
     }
 

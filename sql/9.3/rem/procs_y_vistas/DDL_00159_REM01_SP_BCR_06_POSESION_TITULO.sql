@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20210809
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210810
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14824
+--## INCIDENCIA_LINK=HREOS-14649
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -22,6 +22,7 @@
 --##        0.10 Campos Estado posesorio, Estado titularidad y Situación V.P.O.- [HREOS-14712] - Alejandra García
 --##        0.11 Correciones Ocupado y Sin título, se añade el FLAG EN REM [HREOS-14837] -Daniel Algaba
 --##        0.12 Correción Estado posesorio y rellenar campo SPS_VERTICAL- [HREOS-14824] - Alejandra García
+--##        0.13 Se añade por defecto como Tipo Grado Propiedad Plen Dominio con el 100% - [HREOS-14649] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -370,8 +371,8 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                 )VALUES(
                      '|| V_ESQUEMA ||'.S_ACT_PAC_PROPIETARIO_ACTIVO.NEXTVAL
                     ,US.PRO_ID
-                    ,US.PAC_PORC_PROPIEDAD
-                    ,US.DD_TGP_ID
+                    ,NVL(US.PAC_PORC_PROPIEDAD, 100)
+                    ,NVL(US.DD_TGP_ID, (SELECT DD_TGP_ID FROM '|| V_ESQUEMA ||'.DD_TGP_TIPO_GRADO_PROPIEDAD WHERE DD_TGP_CODIGO = ''01''))
                     ,US.ACT_ID
                     ,''STOCK_BC''
                     ,SYSDATE

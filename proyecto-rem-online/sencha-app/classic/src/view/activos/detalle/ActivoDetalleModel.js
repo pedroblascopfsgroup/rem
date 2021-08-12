@@ -3811,7 +3811,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'motivoNecesidadArras'}
 			}
-	   },
+	  },	   
+
+	   comboDisponibleAdministrativo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'disponibleAdministrativo'}
+			}
+		},
 	   
 	   comboRiesgoOperacion: {
 			model: 'HreRem.model.ComboBase',
@@ -3866,6 +3875,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'sociedadOrigenCaixa'}
 			}
 		},
+
+		comboDisponibleTecnico: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'disponibleTecnico'}
+			}
+		},
 		
 		comboBancoOrigenCaixa: {
 			model: 'HreRem.model.ComboBase',
@@ -3891,6 +3909,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tributacionPropVenta'}
 			}
-	   }
+	   },
+
+		comboMotivoTecnico: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoTecnico'}
+			}
+		}
+
 	 }
 });

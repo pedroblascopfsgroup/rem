@@ -159,7 +159,6 @@ import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VGridBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VGridBusquedaPublicaciones;
 import es.pfsgroup.plugin.rem.model.VGridDescuentoColectivos;
-import es.pfsgroup.plugin.rem.model.VPreciosVigentesCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;

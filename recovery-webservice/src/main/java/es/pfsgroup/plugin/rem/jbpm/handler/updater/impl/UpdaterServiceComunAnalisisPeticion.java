@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -42,7 +43,7 @@ public class UpdaterServiceComunAnalisisPeticion implements UpdaterService {
 	private static final String COMBO_TRAMITAR = "comboTramitar";
 	private static final String MOTIVO_DENEGACION = "motivoDenegacion";
 	
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		Trabajo trabajo = tramite.getTrabajo();
 		Filter filter;

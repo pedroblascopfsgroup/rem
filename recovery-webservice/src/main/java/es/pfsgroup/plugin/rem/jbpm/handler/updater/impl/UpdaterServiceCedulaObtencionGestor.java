@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -40,7 +41,7 @@ public class UpdaterServiceCedulaObtencionGestor implements UpdaterService {
 	@Autowired
 	private DiccionarioTargetClassMap diccionarioTargetClassMap;
 	
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		
 		Trabajo trabajo = tramite.getTrabajo();
 		Date fechaVencimiento = null;

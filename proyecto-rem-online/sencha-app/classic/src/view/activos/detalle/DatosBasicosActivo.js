@@ -511,6 +511,55 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 	                bind:{
 	                	hidden: '{!activo.isCarteraBbva}'
 	                	}
+	                },
+	                {    
+		                //DATOS PRINEX
+						xtype:'fieldsettable',
+						defaultType: 'textfieldbase',
+						title: HreRem.i18n('title.datos.prinex'),
+						border: true,
+						colspan: 3,
+						bind:{hidden: '{!activo.isCarterasCajamarLiberbank}'},
+						items :
+							[
+							{
+			                	xtype: 'comboboxfieldbasedd',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.disponible.administrativo'),
+			                	name: 'comboDisponibleAdministrativo',
+			                	reference: 'comboDisponibleAdministrativoRef',
+			                	bind: {
+			                		store: '{comboDisponibleAdministrativo}',
+			                		value: '{activo.disponibleAdministrativoCodigo}',
+									rawValue: '{activo.disponibleAdministrativoDescripcion}'
+			                	}
+			                },
+			                {
+			                	xtype: 'comboboxfieldbasedd',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.disponible.tecnico'),
+			                	name: 'comboDisponibleTecnico',
+			                	reference: 'comboDisponibleTecnicoRef',
+			                	bind: {
+			                		store: '{comboDisponibleTecnico}',
+			                		value: '{activo.disponibleTecnicoCodigo}',
+									rawValue: '{activo.disponibleTecnicoDescripcion}'
+			                	}
+			                },
+			                {
+			                	xtype: 'comboboxfieldbasedd',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.motivo.tecnico'),
+			                	name: 'comboMotivoTecnico',
+			                	reference: 'comboMotivoTecnicoRef',
+			                	bind: {
+			                		store: '{comboMotivoTecnico}',
+			                		value: '{activo.motivoTecnicoCodigo}',
+									rawValue: '{activo.motivoTecnicoDescripcion}'
+			                	}
+			                }
+			 			                
+					],
+	                bind:{
+	                	hidden: '{!activo.isCarterasCajamarLiberbank}'
+	                	}
 	                }
 				]
             },

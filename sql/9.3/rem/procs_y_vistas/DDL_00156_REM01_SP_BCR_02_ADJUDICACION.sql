@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210730
+--## FECHA_CREACION=20210804
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14686
+--## INCIDENCIA_LINK=HREOS-14837
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -14,6 +14,7 @@
 --##        0.2  Revisión - [HREOS-14344] - Alejandra García
 --##        0.3 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - [HREOS-14545] - Daniel Algaba
 --##        0.4 Se añade el truncado de la tabla TMP_ACT_SCM y se inserta si un activo pasa a tener Fecha de posesión o al contrario - [HREOS-14686] - Daniel Algaba
+--##	      0.5 Se añade el FLAG EN REM en la insercción de la TMP_ACT_SCM - [HREOS-14837] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -58,7 +59,8 @@ BEGIN
                   JOIN '|| V_ESQUEMA ||'.BIE_ADJ_ADJUDICACION ADJ ON ACT.BIE_ID = ADJ.BIE_ID AND ADJ.BORRADO = 0
                   WHERE APR.FEC_POSESION IS NULL AND ADJ.BIE_ADJ_F_REA_POSESION IS NOT NULL
                   OR APR.FEC_POSESION IS NOT NULL AND ADJ.BIE_ADJ_F_REA_POSESION IS NULL 
-                  OR TO_DATE(APR.FEC_POSESION,''yyyymmdd'') <> ADJ.BIE_ADJ_F_REA_POSESION';
+                  OR TO_DATE(APR.FEC_POSESION,''yyyymmdd'') <> ADJ.BIE_ADJ_F_REA_POSESION
+                  AND APR.FLAG_EN_REM = '||FLAG_EN_REM||'';
 
       EXECUTE IMMEDIATE V_MSQL;
 

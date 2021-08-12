@@ -17,4 +17,6 @@ public interface Downloader {
 
 	FileItem getFileItemFactura(Long id, String nombreDocumento);
 
+	FileItem getFileItemExpediente(Long id, String nombreDocumento);
+
 }

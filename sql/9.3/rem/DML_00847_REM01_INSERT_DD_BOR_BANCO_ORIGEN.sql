@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210615
+--## FECHA_CREACION=20210716
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14344
+--## INCIDENCIA_LINK=HREOS-14555
 --## PRODUCTO=NO
---##
---## Finalidad: Script que inserta en DD_BOR_BANCO_ORIGEN
---## INSTRUCCIONES:
+--## Finalidad: Creación diccionario DD_BOR_BANCO_ORIGEN
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión
+--##        0.1 Versión inicial - [HREOS-14344] - Alejandra García
+--##        0.2 Cambio de todos los valores - [HREOS-14555] - Alejandra García
 --##########################################
 --*/
 
@@ -39,43 +40,15 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
                   --DD_BOR_CODIGO        	--DD_BOR_DESCRIPCION y DD_BOR_DESCRIPCION_LARGA
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('001','Banco Valencia'),
-        T_TIPO_DATA('002','Vip_1'),
-        T_TIPO_DATA('004','Fondos banco Valencia'),
-        T_TIPO_DATA('005','Soinmob'),
-        T_TIPO_DATA('006','Abanca'),
-        T_TIPO_DATA('007','Barclays'),
-        T_TIPO_DATA('008','Liberbank'),
-        T_TIPO_DATA('009','Banco de valencia'),
-        T_TIPO_DATA('010','real equility s.l.'),
-        T_TIPO_DATA('011','Vip viviendas y locales, s.l.u.'),
-        T_TIPO_DATA('012','Vipactivos, s.l.u.'),
-        T_TIPO_DATA('013','Vip gestión de inmuebles, s.l.u.'),
-        T_TIPO_DATA('014','Hip.2'),
-        T_TIPO_DATA('015','Vip promo. Inm. Sur, s.l.u.'),
-        T_TIPO_DATA('016','Banco de valencia, s.a.'),
-        T_TIPO_DATA('017','Bv'),
-        T_TIPO_DATA('018','Hip.5'),
-        T_TIPO_DATA('019','Hip.4'),
-        T_TIPO_DATA('020','Hip.3'),
-        T_TIPO_DATA('021','Pyme1'),
-        T_TIPO_DATA('022','Hip.1'),
-        T_TIPO_DATA('023','Ensanche urbano s.a.'),
-        T_TIPO_DATA('024','Pyme 2'),
-        T_TIPO_DATA('025','Vip promociones inmobiliarias sur, s.lu.'),
-        T_TIPO_DATA('026','Vip gestión de inmuebles, s.l.u.'),
-        T_TIPO_DATA('027','Vip viviendas y locales, s.l.u.'),
-        T_TIPO_DATA('028','Hábitat dos mil dieciocho, s.l.'),
-        T_TIPO_DATA('029','Vipcartera, s.l.'),
-        T_TIPO_DATA('030','BANKIA'),
-        T_TIPO_DATA('032','BFA'),
-        T_TIPO_DATA('033','CAJA RIOJA'),
-        T_TIPO_DATA('034','CAIXA LAIETANA'),
-        T_TIPO_DATA('035','CAJA INSULAR'),
-        T_TIPO_DATA('036','CAJA SEGOVIA'),
-        T_TIPO_DATA('037','BANCAJA'),
-        T_TIPO_DATA('038','CAJA AVILA'),
-        T_TIPO_DATA('039','SAREB')
+        T_TIPO_DATA('2038','BANKIA'),
+        T_TIPO_DATA('0990','BFA'),
+        T_TIPO_DATA('2037','CAJA RIOJA'),
+        T_TIPO_DATA('2042','CAIXA LAIETANA'),
+        T_TIPO_DATA('2052','CAJA INSULAR'),
+        T_TIPO_DATA('2069','CAJA SEGOVIA'),
+        T_TIPO_DATA('2077','BANCAJA'),
+        T_TIPO_DATA('2094','CAJA AVILA'),
+        T_TIPO_DATA('5074','SAREB')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

@@ -367,6 +367,13 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private Boolean esActivoPrincipalAgrupacionRestringida;
 	
+	private String disponibleAdministrativoCodigo;
+	private String disponibleAdministrativoDescripcion;
+	private String disponibleTecnicoCodigo;
+	private String disponibleTecnicoDescripcion;
+	private String motivoTecnicoCodigo;
+	private String motivoTecnicoDescripcion;
+	
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -2778,5 +2785,53 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setEstadoFisicoActivoDNDDescripcion(String estadoFisicoActivoDNDDescripcion) {
 		this.estadoFisicoActivoDNDDescripcion = estadoFisicoActivoDNDDescripcion;
 	}	
+	
+	public String getDisponibleAdministrativoCodigo() {
+		return disponibleAdministrativoCodigo;
+	}
+
+	public void setDisponibleAdministrativoCodigo(String disponibleAdministrativoCodigo) {
+		this.disponibleAdministrativoCodigo = disponibleAdministrativoCodigo;
+	}
+	
+	public String getDisponibleAdministrativoDescripcion() {
+		return disponibleAdministrativoDescripcion;
+	}
+
+	public void setDisponibleAdministrativoDescripcion(String disponibleAdministrativoDescripcion) {
+		this.disponibleAdministrativoDescripcion = disponibleAdministrativoDescripcion;
+	}
+	
+	public String getDisponibleTecnicoCodigo() {
+		return disponibleTecnicoCodigo;
+	}
+
+	public void setDisponibleTecnicoCodigo(String disponibleTecnicoCodigo) {
+		this.disponibleTecnicoCodigo = disponibleTecnicoCodigo;
+	}
+	
+	public String getDisponibleTecnicoDescripcion() {
+		return disponibleTecnicoDescripcion;
+	}
+
+	public void setDisponibleTecnicoDescripcion(String disponibleTecnicoDescripcion) {
+		this.disponibleTecnicoDescripcion = disponibleTecnicoDescripcion;
+	}
+	
+	public String getMotivoTecnicoCodigo() {
+		return motivoTecnicoCodigo;
+	}
+
+	public void setMotivoTecnicoCodigo(String motivoTecnicoCodigo) {
+		this.motivoTecnicoCodigo = motivoTecnicoCodigo;
+	}
+	
+	public String getMotivoTecnicoDescripcion() {
+		return motivoTecnicoDescripcion;
+	}
+
+	public void setMotivoTecnicoDescripcion(String motivoTecnicoDescripcion) {
+		this.motivoTecnicoDescripcion = motivoTecnicoDescripcion;
+	}
 
 }

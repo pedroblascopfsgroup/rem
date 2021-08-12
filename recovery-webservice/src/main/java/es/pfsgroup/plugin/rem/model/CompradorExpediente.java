@@ -223,6 +223,13 @@ public class CompradorExpediente implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "DD_FIO_REPR_ID")
 	private DDInterlocutorOferta interlocutorOfertaRepresentante;
+	
+	@Column(name = "CEX_SOCIEDAD")
+	private String sociedad;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_VIC_ID")
+	private DDVinculoCaixa vinculoCaixa;
  
 	@Version   
 	private Long version;
@@ -744,6 +751,22 @@ public class CompradorExpediente implements Serializable, Auditable {
 
 	public void setInterlocutorOfertaRepresentante(DDInterlocutorOferta interlocutorOfertaRepresentante) {
 		this.interlocutorOfertaRepresentante = interlocutorOfertaRepresentante;
+	}
+
+	public String getSociedad() {
+		return sociedad;
+	}
+
+	public void setSociedad(String sociedad) {
+		this.sociedad = sociedad;
+	}
+
+	public DDVinculoCaixa getVinculoCaixa() {
+		return vinculoCaixa;
+	}
+
+	public void setVinculoCaixa(DDVinculoCaixa vinculoCaixa) {
+		this.vinculoCaixa = vinculoCaixa;
 	}
    
 }

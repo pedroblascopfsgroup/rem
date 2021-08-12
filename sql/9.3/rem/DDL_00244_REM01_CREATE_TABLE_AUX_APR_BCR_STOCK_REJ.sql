@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20210514
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210811
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13942
+--## INCIDENCIA_LINK=HREOS-14649
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -61,7 +61,8 @@ BEGIN
            
         ERRORCODE                   VARCHAR2(255 CHAR),
         ERRORMESSAGE                VARCHAR2(512 CHAR),
-        ROWREJECTED                 VARCHAR2(2048 CHAR)
+        ROWREJECTED                 CLOB,
+        NUM_IDENTIFICATIVO          VARCHAR2(8 CHAR)
         
 
 

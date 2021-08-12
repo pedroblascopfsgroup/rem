@@ -3667,12 +3667,36 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {id: '{activo.id}'}
 		   }
 	   },
+	   comboDisponibleAdministrativo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'disponibleAdministrativo'}
+			}
+		},
 		comboRiesgoOperacion: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoRiesgoOperacion'}
+			}
+		},
+		comboDisponibleTecnico: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'disponibleTecnico'}
+			}
+		},
+		comboMotivoTecnico: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoTecnico'}
 			}
 		}
 	 }

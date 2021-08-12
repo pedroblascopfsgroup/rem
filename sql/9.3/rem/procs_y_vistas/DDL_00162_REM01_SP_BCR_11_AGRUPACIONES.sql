@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210726
+--## FECHA_CREACION=20210806
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14686
+--## INCIDENCIA_LINK=HREOS-14837
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##	      0.2 Se añade el FLAG EN REM en la insercción de la AUX_BC_AGRUPACIONES - HREOS-14837
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -56,7 +57,8 @@ BEGIN
                   , APR.PROMO_CONJUNTA_VENTA
                   , APR.PROMO_CONJUNTA_ALQUILER
                   , APR.PROMO_COMERCIAL
-                  FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR';
+                  FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
+                  WHERE APR.FLAG_EN_REM = '||FLAG_EN_REM||'';
    
       EXECUTE IMMEDIATE V_MSQL;
 
@@ -238,7 +240,7 @@ BEGIN
                   FROM '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES AUX
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON AUX.PROMO_CONJUNTA_OB_REM = ACT.ACT_NUM_ACTIVO_CAIXA AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID AND APU.BORRADO = 0
-                  LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCILIZACION TCO ON TCO.DD_TCO_ID = APU.DD_TCO_ID AND TCO.BORRADO = 0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = APU.DD_TCO_ID AND TCO.BORRADO = 0
                   WHERE AUX.PROMO_CONJUNTA_OB_REM IS NOT NULL
                   )
                   SELECT 
@@ -251,7 +253,7 @@ BEGIN
                   FROM '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES AUX
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON AUX.NUM_IDENTIFICATIVO = ACT.ACT_NUM_ACTIVO_CAIXA AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID AND APU.BORRADO = 0
-                  LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCILIZACION TCO ON TCO.DD_TCO_ID = APU.DD_TCO_ID AND TCO.BORRADO = 0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = APU.DD_TCO_ID AND TCO.BORRADO = 0
                   JOIN PRINCIPAL PRI ON PRI.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO
                   WHERE AUX.PROMO_CONJUNTA_OB_REM IS NOT NULL
                   AND APU.DD_TCO_ID <> PRI.DD_TCO_ID';
@@ -661,6 +663,7 @@ BEGIN
                   , DD_TAG_ID
                   , AGR_NOMBRE
                   , AGR_NUM_AGRUP_REM
+                  , AGR_NUM_AGRUP_UVEM
                   , AGR_FECHA_ALTA
                   , AGR_ACT_PRINCIPAL
                   , AGR_SEG_VISITAS
@@ -673,6 +676,7 @@ BEGIN
                   , (SELECT DD_TAG_ID FROM '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = AUX.TIPO) DD_TAG_ID
                   , BIE_LOC.BIE_LOC_NOMBRE_VIA || '' '' || BIE_LOC.BIE_LOC_PORTAL AGR_NOMBRE
                   , '|| V_ESQUEMA ||'.S_AGR_NUM_AGRUP_REM.NEXTVAL AGR_NUM_AGRUP_REM
+                  , AUX.COD_AGRUPACION AGR_NUM_AGRUP_UVEM
                   , SYSDATE AGR_FECHA_ALTA
                   , CASE WHEN AUX.TIPO IN (''02'',''17'',''18'') THEN ACT.ACT_ID ELSE NULL END AGR_ACT_PRINCIPAL
                   , 0 AGR_SEG_VISITAS

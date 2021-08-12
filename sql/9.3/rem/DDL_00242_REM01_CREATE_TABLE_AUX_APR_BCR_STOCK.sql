@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210719
+--## FECHA_CREACION=20210811
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14648
+--## INCIDENCIA_LINK=HREOS-14838
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -21,6 +21,7 @@
 --##        0.8  HREOS-14545 -  Daniel Algaba - Se hace un repaso completo, se añaden campos y se cambian algunas longitudes
 --##        0.9  HREOS-14545 -  Daniel Algaba - Se cambia la longitud de BANCO_ORIGEN A 4
 --##        0.10  HREOS-14648 -  Daniel Algaba - Se cambia la longitud de CARTERA_VENTA_ACTIVOS y CARTERA_VENTA_CREDITOS A 4
+--##        0.11  HREOS-14838 -  Daniel Algaba - Nuevos campos ORIGEN_REGULATORIO, TXT_COMERCIAL_CAS y TXT_COMERCIAL_ENG
 --##########################################
 --*/
 
@@ -114,6 +115,7 @@ BEGIN
         FOLIO                       VARCHAR2(4 CHAR),
         INSCRIPCION                 VARCHAR2(4 CHAR),
         NUM_CARTILLA                VARCHAR2(40 CHAR),
+        ORIGEN_REGULATORIO          VARCHAR2(2 CHAR),
 
         VIVIENDA_HABITUAL           VARCHAR2(1 CHAR),
         FEC_PRESENTACION_REGISTRO   VARCHAR2(8 CHAR),
@@ -192,6 +194,10 @@ BEGIN
         TRIBUT_PROPUESTA_CLI_EXT_IVA  VARCHAR2(2 CHAR),
         CANAL_DISTRIBUCION_ALQ VARCHAR2(2 CHAR),
         PROMO_COMERCIAL             VARCHAR2(8 CHAR),
+        TXT_COMERCIAL_CAS_1         VARCHAR2(3000 CHAR),
+        TXT_COMERCIAL_CAS_2         VARCHAR2(3000 CHAR),
+        TXT_COMERCIAL_ENG_1         VARCHAR2(3000 CHAR),
+        TXT_COMERCIAL_ENG_2         VARCHAR2(3000 CHAR),
 
         ANYO_CONCESION              VARCHAR2(4 CHAR),
         FEC_FIN_CONCESION           VARCHAR2(8 CHAR),
@@ -313,6 +319,7 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FOLIO IS '' FOLIO''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.INSCRIPCION IS '' INSCRIPCION''';  
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUM_CARTILLA IS '' Número de cartilla evaluatoria que tiene el flag Activa''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ORIGEN_REGULATORIO IS '' Origen regulatorio''';
    
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.VIVIENDA_HABITUAL IS '' Marca de si es residencia habitual en la concesión del prestamos''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_PRESENTACION_REGISTRO IS '' Fecha presentación en el registro''';
@@ -391,6 +398,10 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TRIBUT_PROPUESTA_CLI_EXT_IVA IS '' Tirbutación a la que se propone vender en caso de cliente exstenos de IVA''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CANAL_DISTRIBUCION_ALQ IS '' Canal distribución alquiler''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PROMO_COMERCIAL IS '' Promoción comercial''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TXT_COMERCIAL_CAS_1 IS '' Texto comercial castellano''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TXT_COMERCIAL_CAS_2 IS '' Texto comercial castellano''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TXT_COMERCIAL_ENG_1 IS '' Texto comercial inglés''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TXT_COMERCIAL_ENG_2 IS '' Texto comercial inglés''';
 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ANYO_CONCESION IS '' Año de concesión''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_FIN_CONCESION IS '' Fecha fin de conceción''';

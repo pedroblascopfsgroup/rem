@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20210728
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210811
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14745
+--## INCIDENCIA_LINK=HREOS-14838
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -18,6 +18,8 @@
 --##        0.6 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - [HREOS-14545] - Daniel Algaba
 --##        0.7 Gestores de gestoría de admisión y administración - [HREOS-14545] - Daniel Algaba
 --##	    0.8 Campos IND_ENTREGA_VOL_POSESI - HREOS-14745 - Alejandra García
+--##	      0.9 Se añade comprobación para no machacar tipo y subtipo de activo si no viene - HREOS-14837
+--##	      0.10 Nuevo campos Origen Regulatorio - HREOS-14838
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -90,8 +92,8 @@ BEGIN
                   CASE WHEN aux.SUBTIPO_VIVIENDA IS NOT NULL THEN sac_viv.DD_SAC_ID
                   WHEN aux.SUBTIPO_SUELO IS NOT NULL THEN sac_suelo.DD_SAC_ID
                   ELSE sac_uso.DD_SAC_ID END DD_SAC_ID,
-                  STA.DD_TTA_ID AS DD_TTA_ID,
-                  STA.DD_STA_ID AS DD_STA_ID,
+                  COALESCE(STA_OR.DD_TTA_ID, STA.DD_TTA_ID) AS DD_TTA_ID,
+                  COALESCE(STA_OR.DD_STA_ID, STA.DD_STA_ID) AS DD_STA_ID,
                   prp.DD_PRP_ID as DD_PRP_ID,
                   tud.DD_TUD_ID as DD_TUD_ID,
                   tcr.DD_TCR_ID as DD_TCR_ID,
@@ -106,6 +108,8 @@ BEGIN
                   LEFT JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = bie.BIE_NUMERO_ACTIVO AND ACT.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''PRODUCTO''  AND eqv1.DD_CODIGO_CAIXA = aux.PRODUCTO AND EQV1.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_STA_SUBTIPO_TITULO_ACTIVO STA ON STA.DD_STA_CODIGO = eqv1.DD_CODIGO_REM
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv10 ON eqv10.DD_NOMBRE_CAIXA = ''ORIGEN_REGULATORIO''  AND eqv10.DD_CODIGO_CAIXA = aux.ORIGEN_REGULATORIO AND eqv10.BORRADO=0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_STA_SUBTIPO_TITULO_ACTIVO STA_OR ON STA_OR.DD_STA_CODIGO = eqv10.DD_CODIGO_REM
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv2 ON eqv2.DD_NOMBRE_CAIXA = ''SOCIEDAD_PATRIMONIAL''  AND eqv2.DD_CODIGO_CAIXA = aux.SOCIEDAD_PATRIMONIAL 
                                                             AND EQV2.DD_NOMBRE_REM=''DD_SCR_SUBCARTERA'' and eqv2.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_SCR_SUBCARTERA scr ON scr.DD_SCR_CODIGO = eqv2.DD_CODIGO_REM
@@ -127,16 +131,16 @@ BEGIN
                                        
                                  ) us ON (us.act_id = act.act_id)
                                  when matched then update set
-                                    act.DD_TPA_ID = us.DD_TPA_ID
-                                    ,act.DD_SAC_ID = us.DD_SAC_ID 
-                                    ,act.DD_TTA_ID = us.DD_TTA_ID  
-                                    ,act.DD_STA_ID = us.DD_STA_ID
+                                    act.DD_TPA_ID = NVL(us.DD_TPA_ID,act.DD_TPA_ID)
+                                    ,act.DD_SAC_ID = NVL(us.DD_SAC_ID,act.DD_SAC_ID)
+                                    ,act.DD_TTA_ID = NVL(us.DD_TTA_ID,act.DD_TTA_ID)
+                                    ,act.DD_STA_ID = NVL(us.DD_STA_ID,act.DD_STA_ID)
                                     ,act.DD_PRP_ID = us.DD_PRP_ID
-                                    ,act.DD_TUD_ID = us.DD_TUD_ID
+                                    ,act.DD_TUD_ID = NVL(us.DD_TUD_ID,act.DD_TUD_ID)
                                     ,act.DD_TCR_ID = us.DD_TCR_ID
                                     ,act.ACT_PORCENTAJE_CONSTRUCCION = us.ACT_PORCENTAJE_CONSTRUCCION           
-                                    ,act.DD_SCR_ID = us.DD_SCR_ID
-                                    ,act.DD_CRA_ID = us.DD_CRA_ID
+                                    ,act.DD_SCR_ID = NVL(us.DD_SCR_ID,act.DD_SCR_ID)
+                                    ,act.DD_CRA_ID = NVL(us.DD_CRA_ID,act.DD_CRA_ID)
                                     ,act.DD_SPG_ID = us.DD_SPG_ID
                                     ,act.USUARIOMODIFICAR = ''STOCK_BC''
                                     ,act.FECHAMODIFICAR = sysdate
@@ -211,8 +215,8 @@ BEGIN
                TO_DATE(aux.FEC_INICIO_CONCURENCIA,''yyyymmdd'') as CBX_FEC_INI_CONCU,
                TO_DATE(aux.FEC_FIN_CONCURENCIA,''yyyymmdd'') as CBX_FEC_FIN_CONCU,
                CASE
-                  WHEN aux.NECESIDAD_ARRAS IN (''S'',''1'') THEN 1
-                  WHEN aux.NECESIDAD_ARRAS IN (''N'',''0'') THEN 0
+                  WHEN aux.NECESIDAD_ARRAS IN (''S'',''1'',''01'') THEN 1
+                  WHEN aux.NECESIDAD_ARRAS IN (''N'',''0'',''02'') THEN 0
                END as CBX_NECESIDAD_ARRAS,
                mna.DD_MNA_ID as DD_MNA_ID,
                CASE
@@ -238,6 +242,9 @@ BEGIN
                CASE
                   WHEN aux.FLAG_EN_REM=0 THEN (SELECT DD_EAT_ID FROM '|| V_ESQUEMA ||'.DD_EAT_EST_TECNICO WHERE DD_EAT_CODIGO=''E01'')
                END AS DD_EAT_ID,
+               CASE
+                  WHEN aux.FLAG_EN_REM=0 THEN SYSDATE
+               END AS FECHA_EAT_EST_TECNICO,
                tcr1.DD_TCR_ID as CBX_CANAL_DIST_VENTA,
                tcr2.DD_TCR_ID as CBX_CANAL_DIST_ALQUILER,
                ctc.DD_CTC_ID as DD_CTC_ID,
@@ -278,6 +285,7 @@ BEGIN
                               ,act1.CBX_CAMP_PRECIO_VENT_NEGO = us.CBX_CAMP_PRECIO_VENT_NEGO 
                               ,act1.CBX_NEC_FUERZA_PUBL = us.CBX_NEC_FUERZA_PUBL
                               ,act1.DD_EAT_ID=us.DD_EAT_ID
+                              ,act1.FECHA_EAT_EST_TECNICO=us.FECHA_EAT_EST_TECNICO
                               ,act1.CBX_CANAL_DIST_VENTA= us.CBX_CANAL_DIST_VENTA
                               ,act1.CBX_CANAL_DIST_ALQUILER= us.CBX_CANAL_DIST_ALQUILER
                               ,act1.DD_CTC_ID = us.DD_CTC_ID                                                                                                                         
@@ -304,6 +312,7 @@ BEGIN
                                           CBX_CAMP_PRECIO_VENT_NEGO,
                                           CBX_NEC_FUERZA_PUBL,    
                                           DD_EAT_ID,  
+                                          FECHA_EAT_EST_TECNICO,
                                           CBX_CANAL_DIST_VENTA,
                                           CBX_CANAL_DIST_ALQUILER,
                                           DD_CTC_ID,                                                                        
@@ -329,6 +338,7 @@ BEGIN
                                           us.CBX_CAMP_PRECIO_VENT_NEGO,
                                           us.CBX_NEC_FUERZA_PUBL,
                                           us.DD_EAT_ID, 
+                                          us.FECHA_EAT_EST_TECNICO,
                                           us.CBX_CANAL_DIST_VENTA,
                                           us.CBX_CANAL_DIST_ALQUILER,
                                           us.DD_CTC_ID,

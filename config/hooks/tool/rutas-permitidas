@@ -194,6 +194,7 @@ func-rem-desvincularFechaPosesion|func-rem-espartaConvivencia
 func-rem-dnd-tutelas|R-Arrufatina
 func-rem-mejorasRendimiento-BuscadorAgrupaciones|func-rem-mejorasRendimiento
 rem_mirror|func-rem-mejorasRendimiento-F2
+rem_mirror|func-rem-fichaClientes
 rem_mirror|func-rem-interfazPrinex
 rem_mirror|func-rem-mejorasRendimiento-F4
 func-rem-espartaConvivencia-F2-HREOS-13438-P|func-rem-espartaConvivencia-F2
@@ -213,6 +214,9 @@ func-rem-modeloHydra|func-rem-facturacionHydra
 func-rem-facturacionHydra|R-Hydra
 func-rem-stockHydra|R-Hydra
 func-rem-comercialHydra|R-Hydra
+rem_mirror|func-rem-cuadreContableBBVA
+func-rem-cuadreContableBBVA|R-Chislett
+func-rem-fichaClientes|R-Chislett
 rem_mirror|func-rem-mejorasRendimiento-F5
 rem_mirror|func-rem-boardingOfertasCFV
 rem_mirror|func-rem-unicajaLBK

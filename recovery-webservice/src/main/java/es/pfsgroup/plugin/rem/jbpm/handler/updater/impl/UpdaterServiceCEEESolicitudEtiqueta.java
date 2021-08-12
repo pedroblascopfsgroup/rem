@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -26,7 +27,7 @@ public class UpdaterServiceCEEESolicitudEtiqueta implements UpdaterService {
 	private static final String CODIGO_T003_SOLICITUD_ETIQUETA = "T003_SolicitudEtiqueta";
 	
 	@Transactional
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		Trabajo trabajo = tramite.getTrabajo();
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo" , DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA);
 		DDEstadoTrabajo estado = genericDao.get(DDEstadoTrabajo.class, filter);

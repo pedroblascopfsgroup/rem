@@ -13,6 +13,8 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorRequest;
+import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorResponse;
 
 public interface ExcelReportGeneratorApi {
 	
@@ -39,6 +41,12 @@ public interface ExcelReportGeneratorApi {
 
 	File generateBbvaReportGetFile(DtoExcelFichaComercial dtoExcelFichaComercial, HttpServletRequest request)
 			throws IOException;
+	
+	public void downloadExcel(ReportGeneratorResponse report, HttpServletResponse response) throws IOException;
+
+	ReportGeneratorResponse requestExcel(ReportGeneratorRequest request, String url) throws IOException;
+
+	String sendExcelFichaComercial(Long numExpediente, ReportGeneratorResponse report, String scheme, String serverName) throws IOException;
 
 
 }

@@ -110,6 +110,7 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 			gd.setGestorPorDefecto(false);
 			gd.setVersion(0);
 			gd.setAuditoria(Auditoria.getNewInstance());
+			genericDao.save(GestorDespacho.class, gd);
 			logger.debug("Creando asociacion despacho " + codigoDespacho + " (por perfil " + mapeo.getCodigoPerfil() + " - usuario " + usuario.getUsername());
 			String codigoGrupo = mapeo.getCodigoGrupo();
 			if (codigoGrupo != null && !"".equals(codigoGrupo)) {

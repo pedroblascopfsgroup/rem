@@ -59,6 +59,7 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	private String estadoTecnicoCodigo;
 	private String estadoTecnicoDescripcion;
 	private Date fechaEstadoTecnico;
+	private Integer vertical;
 		
 	public String getTipoEstadoAlquiler() {
 		return tipoEstadoAlquiler;
@@ -324,6 +325,12 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	}
 	public void setFechaEstadoTecnico(Date fechaEstadoTecnico) {
 		this.fechaEstadoTecnico = fechaEstadoTecnico;
+	}
+	public Integer getVertical() {
+		return vertical;
+	}
+	public void setVertical(Integer vertical) {
+		this.vertical = vertical;
 	}
 	
 }

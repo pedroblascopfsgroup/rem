@@ -2917,6 +2917,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setDescuentoAprobadoAlquiler(String descuentoAprobadoAlquiler) {
 		this.descuentoAprobadoAlquiler = descuentoAprobadoAlquiler;
 	}
+
 	public String getDisponibleAdministrativoCodigo() {
 		return disponibleAdministrativoCodigo;
 	}

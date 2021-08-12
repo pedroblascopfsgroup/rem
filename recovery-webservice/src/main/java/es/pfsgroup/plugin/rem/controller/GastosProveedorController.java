@@ -34,10 +34,10 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -47,7 +47,6 @@ import es.pfsgroup.plugin.rem.api.GastoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
-import es.pfsgroup.plugin.rem.excel.ActivosGastoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ElementosLineasExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
@@ -76,7 +75,6 @@ import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.GastosDiariosLBK;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
@@ -84,7 +82,7 @@ import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
 import es.pfsgroup.plugin.rem.model.VGridMotivosRechazoGastoCaixa;
-import es.pfsgroup.plugin.rem.model.VParticipacionElementosLinea;
+import es.pfsgroup.plugin.rem.model.VTasacionesGastos;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -1700,5 +1698,24 @@ public class GastosProveedorController extends ParadiseJsonController {
 		}
 		return createModelAndViewJson(model);
 	}
-	
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListTasacionesGasto(@RequestParam Long idGasto, ModelMap model, HttpServletRequest request) {
+
+		try {
+
+			List<VTasacionesGastos> lista = gastoProveedorApi.getListTasacionesGasto(idGasto);
+
+			model.put("data", lista);
+			model.put("success", true);
+			trustMe.registrarSuceso(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "trabajos", ACCION_CODIGO.CODIGO_VER);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+			trustMe.registrarError(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "trabajos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
 }

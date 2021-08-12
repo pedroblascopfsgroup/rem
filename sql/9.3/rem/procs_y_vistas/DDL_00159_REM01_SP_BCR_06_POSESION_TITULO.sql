@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210804
+--## FECHA_CREACION=20210810
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14837
+--## INCIDENCIA_LINK=HREOS-14649
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -21,6 +21,8 @@
 --##        0.9 Se inserta si un activo pasa a tener Fecha de inscripción de título o al contrario - [HREOS-14686] - Daniel Algaba
 --##        0.10 Campos Estado posesorio, Estado titularidad y Situación V.P.O.- [HREOS-14712] - Alejandra García
 --##        0.11 Correciones Ocupado y Sin título, se añade el FLAG EN REM [HREOS-14837] -Daniel Algaba
+--##        0.12 Correción Estado posesorio y rellenar campo SPS_VERTICAL- [HREOS-14824] - Alejandra García
+--##        0.13 Se añade por defecto como Tipo Grado Propiedad Plen Dominio con el 100% - [HREOS-14649] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -165,6 +167,9 @@ BEGIN
                      WHEN AUX.ESTADO_POSESORIO IN (''P02'',''P04'') THEN (SELECT DD_TPA_ID FROM '|| V_ESQUEMA ||'.DD_TPA_TIPO_TITULO_ACT WHERE DD_TPA_CODIGO=''01'')
                      WHEN AUX.ESTADO_POSESORIO=''P03'' THEN (SELECT DD_TPA_ID FROM '|| V_ESQUEMA ||'.DD_TPA_TIPO_TITULO_ACT WHERE DD_TPA_CODIGO=''02'')
                    ELSE NULL END AS DD_TPA_ID
+                  ,CASE
+                     WHEN AUX.ESTADO_POSESORIO=''P05'' THEN 1
+                   ELSE 0 END AS SPS_VERTICAL
                   ,ACT2.ACT_ID AS ACT_ID
                FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
                JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT2.BORRADO=0
@@ -175,6 +180,7 @@ BEGIN
                   ,ACT.SPS_FECHA_REVISION_ESTADO=US.SPS_FECHA_REVISION_ESTADO
                   ,ACT.SPS_OCUPADO=US.SPS_OCUPADO
                   ,ACT.DD_TPA_ID=US.DD_TPA_ID
+                  ,ACT.SPS_VERTICAL=US.SPS_VERTICAL
                   ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
                   ,ACT.FECHAMODIFICAR = SYSDATE
                WHEN NOT MATCHED THEN INSERT (
@@ -184,6 +190,7 @@ BEGIN
                   ,ACT_ID
                   ,SPS_OCUPADO
                   ,DD_TPA_ID
+                  ,SPS_VERTICAL
                   ,USUARIOCREAR  
                   ,FECHACREAR             
                   )VALUES(
@@ -193,6 +200,7 @@ BEGIN
                      ,US.ACT_ID
                      ,US.SPS_OCUPADO
                      ,US.DD_TPA_ID
+                     ,US.SPS_VERTICAL
                      ,''STOCK_BC''
                      ,SYSDATE
                   )
@@ -363,8 +371,8 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                 )VALUES(
                      '|| V_ESQUEMA ||'.S_ACT_PAC_PROPIETARIO_ACTIVO.NEXTVAL
                     ,US.PRO_ID
-                    ,US.PAC_PORC_PROPIEDAD
-                    ,US.DD_TGP_ID
+                    ,NVL(US.PAC_PORC_PROPIEDAD, 100)
+                    ,NVL(US.DD_TGP_ID, (SELECT DD_TGP_ID FROM '|| V_ESQUEMA ||'.DD_TGP_TIPO_GRADO_PROPIEDAD WHERE DD_TGP_CODIGO = ''01''))
                     ,US.ACT_ID
                     ,''STOCK_BC''
                     ,SYSDATE
@@ -891,11 +899,8 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                   SELECT 
                       SPS.ACT_ID AS ACT_ID
                      ,CASE
-                        WHEN AUX.ESTADO_POSESORIO=''P01'' THEN NULL
-                        WHEN AUX.ESTADO_POSESORIO=''P02'' THEN (SELECT DD_EAL_ID FROM '|| V_ESQUEMA ||'.DD_EAL_ESTADO_ALQUILER WHERE DD_EAL_CODIGO=''02'')
-                        WHEN AUX.ESTADO_POSESORIO=''P03'' THEN NULL
-                        WHEN AUX.ESTADO_POSESORIO=''P04'' THEN (SELECT DD_EAL_ID FROM '|| V_ESQUEMA ||'.DD_EAL_ESTADO_ALQUILER WHERE DD_EAL_CODIGO=''02'')
-                        WHEN AUX.ESTADO_POSESORIO=''P06'' THEN NULL
+                        WHEN AUX.ESTADO_POSESORIO IN (''P01'',''P03'',''P05'',''P06'') THEN NULL
+                        WHEN AUX.ESTADO_POSESORIO IN (''P02'',''P04'') THEN (SELECT DD_EAL_ID FROM '|| V_ESQUEMA ||'.DD_EAL_ESTADO_ALQUILER WHERE DD_EAL_CODIGO=''02'')
                       END AS DD_EAL_ID
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0

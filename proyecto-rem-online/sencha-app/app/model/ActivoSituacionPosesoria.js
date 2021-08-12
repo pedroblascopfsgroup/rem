@@ -160,6 +160,9 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
         	name: 'fechaEstadoTecnico',
             type:'date',
             dateFormat: 'c'
+        },
+        {
+        	name: 'vertical'
         }
     ],
 

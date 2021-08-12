@@ -145,7 +145,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		GENCAT:			'comercialactivo.gencatactivo',
 		OFERTASAGRU:	'comercialagrupacion.ofertascomercialagrupacion',
 		PROPUESTAS:		'preciosactivo.propuestaspreciosactivo',
-		PLUSVALIA:		'plusvaliaactivo'
+		PLUSVALIA:		'plusvaliaactivo',
+		PRECIOS_TASACION: 'preciosactivo.tasacionesactivo'
 //		INVISIBLE:		Si creamos un registro-enlace-activo en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
 	},
 
@@ -950,6 +951,7 @@ Ext.define('HreRem.ux.util.Constants', {
 	SUBFASES_PUBLICACION: {
 		COD_EXCLUIDO_CLIENTE : '14'
 	},
+
 	 ESTADOS_EXPEDIENTE_BC: {
 	    	PT_SCORING: '007',
 	    	CONTRAOFERTADO: '030'
@@ -994,5 +996,9 @@ Ext.define('HreRem.ux.util.Constants', {
 	 	COD_DISCREPANCIAS_REGISTRALES: '007',
 	 	COD_ALQUILER: '008',
 	 	COD_OTROS: '009'
-	 }
+	 },
+
+	TIPO_GASTO: {
+	    SERVICIOS_PROFESIONALES_INDEPE: '11'
+	}
 });

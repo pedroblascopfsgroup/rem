@@ -71,7 +71,6 @@ import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoGenerico;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoRechazoGasto;
 import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
@@ -118,6 +117,7 @@ import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
 import es.pfsgroup.plugin.rem.model.VGridMotivosRechazoGastoCaixa;
 import es.pfsgroup.plugin.rem.model.VImporteBrutoGastoLBK;
+import es.pfsgroup.plugin.rem.model.VTasacionesGastos;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
@@ -4311,6 +4311,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			idGasto = gastoProv.getId();
 		}					
 		return idGasto;
+	}
+
+	@Override
+	public List<VTasacionesGastos> getListTasacionesGasto(Long idGasto) {
+		return idGasto != null ?
+				genericDao.getList(VTasacionesGastos.class, genericDao.createFilter(FilterType.EQUALS, "idGasto", idGasto)) : null;
 	}
 	
 	@Override

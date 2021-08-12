@@ -9342,5 +9342,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return activos;
 	}
 
+	@Override
+	public Page findTasaciones(DtoFiltroTasaciones dto) {
+		return activoDao.findTasaciones(dto);
+	}
+
 }
 

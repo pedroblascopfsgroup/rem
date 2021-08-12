@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
@@ -43,44 +44,6 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
-import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativaAdicional;
-import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoSuministros;
-import es.pfsgroup.plugin.rem.model.ActivoTasacion;
-import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
-import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
-import es.pfsgroup.plugin.rem.model.AuxiliarCierreOficinasBankiaMul;
-import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
-import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
-import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
-import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
-import es.pfsgroup.plugin.rem.model.DtoLlaves;
-import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
-import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
-import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
-import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
-import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
-import es.pfsgroup.plugin.rem.model.HistoricoRequisitosFaseVenta;
-import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
-import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
-import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
-import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
-import es.pfsgroup.plugin.rem.model.VPlusvalia;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -2392,5 +2355,23 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public boolean isCarteraCaixa(Activo activo) {
 		return (activo != null && activo.getCartera() != null)
 				&& DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo());
+	}
+
+	@Override
+	public Page findTasaciones(DtoFiltroTasaciones dto) {
+		HQLBuilder hb = new HQLBuilder(" from VTasacionesGastosBusqueda tas");
+
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tas.idTasacion",
+				dto.getIdTasacion());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tas.numActivo",
+				dto.getNumActivo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tas.idTasacionExt",
+				dto.getIdTasacionExt());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tas.codigoFirmaTasacion",
+				dto.getCodigoFirmaTasacion());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tas.fechaRecepcionTasacion",
+				dto.getFechaRecepcionTasacion());
+
+		return HibernateQueryUtils.page(this, hb, dto);
 	}
 }

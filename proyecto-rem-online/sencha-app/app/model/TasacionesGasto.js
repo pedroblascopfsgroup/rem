@@ -32,5 +32,13 @@ Ext.define('HreRem.model.TasacionesGasto', {
            	type: 'date',
     		dateFormat: 'c'
         }
-    ]
+    ],
+
+     	proxy: {
+     		type: 'uxproxy',
+     		localUrl: 'tasaciones.json',
+     		api: {
+                 destroy: 'gastosproveedor/deleteGastoTasacion'
+     		}
+         }
 });

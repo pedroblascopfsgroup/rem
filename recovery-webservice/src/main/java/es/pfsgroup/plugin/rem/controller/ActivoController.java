@@ -22,6 +22,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -4309,6 +4311,22 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView getPreciosVigentesCaixaById(Long id, WebDto webDto, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getPreciosVigentesCaixaById(id));
 		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "precios", ACCION_CODIGO.CODIGO_VER);
+
+		return new ModelAndView("jsonView", model);
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView findTasaciones(DtoFiltroTasaciones dto, ModelMap model) {
+		try {
+			Page page = activoApi.findTasaciones(dto);
+
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			model.put("error", e.getMessage());
+			model.put("success", false);
+		}
 
 		return new ModelAndView("jsonView", model);
 	}

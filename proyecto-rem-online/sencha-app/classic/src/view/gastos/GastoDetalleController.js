@@ -16,6 +16,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     			button.setDisabled(disabled);    			
     		}
     	},
+
+    	'selecciontasacionesgastolist' : {
+
+    		persistedsselectionchange: function (sm, record, e, grid, persistedSelection) {
+    			var me = this;
+    			var button = grid.up('window').down('button[itemId=btnGuardar]');
+    			var disabled = Ext.isEmpty(persistedSelection);
+    			button.setDisabled(disabled);
+    		}
+    	},
     	
     	'documentosgasto gridBase': {
              abrirFormulario: 'abrirFormularioAdjuntarDocumentos',
@@ -1113,12 +1123,26 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		this.lookupReference('seleccionTrabajosGastoList').getStore().loadPage(1);
         
 	},
+
+
+	onSearchClickTasaciones: function(btn) {
+		var me = this;
+		this.lookupReference('selecciontasacionesgastolist').getStore().loadPage(1);
+
+	},
 	
 		// Funcion que se ejecuta al hacer click en el botón limpiar
 	onCleanFiltersClick: function(btn) {
 
 		btn.up('panel').getForm().reset();
 			
+	},
+
+		// Funcion que se ejecuta al hacer click en el botón limpiar
+	onCleanFiltersClickTasaciones: function(btn) {
+
+		btn.up('panel').getForm().reset();
+
 	},
 	
 	paramLoading: function(store, operation, opts) {
@@ -1140,6 +1164,26 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			return true;		
 		}
 	},
+
+    paramLoadingTasaciones: function(store, operation, opts) {
+
+        var me = this;
+        var searchForm = me.lookupReference('selecciontasacionesgastosearch');
+        if (searchForm.isValid()) {
+
+            var criteria = me.getFormCriteria(searchForm);
+            if(!Ext.isEmpty(criteria) && !Ext.isEmpty(criteria.codigoSubtipo)){
+                for(var i = 0; i < criteria.codigoSubtipo.length; i++){
+                    if(Ext.isEmpty(criteria.codigoSubtipo[i])){
+                        criteria.codigoSubtipo.splice(i,1)
+                    }
+                }
+            }
+            store.getProxy().extraParams = criteria;
+
+            return true;
+        }
+    },
 	
 	getFormCriteria: function(form) {
     	
@@ -1244,6 +1288,48 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	    		     
 	    });
 	},
+
+	asignarSeleccionTasacionesGasto: function(btn) {
+
+		var me = this,
+		ventanaSeleccionTasaciones = btn.up('window'),
+		tasaciones = ventanaSeleccionTasaciones.down('selecciontasacionesgastolist').getPersistedSelection(),
+		idGasto = ventanaSeleccionTasaciones.gasto.get("id"),
+		url =  $AC.getRemoteUrl('gastosproveedor/asignarTasacionesGastos'),
+		idTasaciones = [];
+
+		// Recuperamos todos los ids de los trabajos seleccionados
+		Ext.Array.each(tasaciones, function(tasaciones, index) {
+		    idTasaciones.push(tasaciones.get("idTasacion"));
+		});
+
+		ventanaSeleccionTasaciones.mask(HreRem.i18n("msg.mask.loading"));
+			Ext.Ajax.request({
+		     url: url,
+		     params: {idGasto: idGasto, tasaciones: idTasaciones},
+
+		     success: function(response, opts) {
+			    ventanaSeleccionTasaciones.unmask();
+                ventanaSeleccionTasaciones.destroy();
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				me.refrescarGastoAlIncluirTasacion(ventanaSeleccionTasaciones.up('gastodetallemain'));
+		     },
+		     failure: function(response) {
+		     	ventanaSeleccionTasaciones.unmask();
+	     		var data = {};
+                try {
+                	data = Ext.decode(operation._response.responseText);
+                }
+                catch (e){ };
+                if (!Ext.isEmpty(data.msg)) {
+                	me.fireEvent("errorToast", data.msg);
+                } else {
+                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                }
+		     }
+
+	    });
+	},
 	
 	refrescarGastoAlIncluirTrabajo: function(view) {	
 		var me = this;
@@ -1267,8 +1353,35 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			view.fireEvent("refrescarGasto", view, callbackFn);
   		}
 	},
+
+	refrescarGastoAlIncluirTasacion: function(view) {
+		var me = this;
+		var tabPanel = view.down("tabpanel");
+
+		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
+		Ext.Array.each(view.query('component[funcionRecargar]'), function(component) {
+  			if(component.rendered) {
+  				component.recargar=true;
+  			}
+  		});
+
+  		if(!Ext.isEmpty(tabPanel)) {
+			var activeTab = tabPanel.getActiveTab();
+
+			if(activeTab.funcionRecargar) {
+  				activeTab.funcionRecargar();
+			}
+
+			var callbackFn = function() {view.down("tabpanel").evaluarBotonesEdicion(activeTab);};
+			view.fireEvent("refrescarGasto", view, callbackFn);
+  		}
+	},
 	
 	cancelarSeleccionTrabajosGasto: function(btn) {
+		btn.up('window').destroy();
+	},
+
+	cancelarSeleccionTasacionesGasto: function(btn) {
 		btn.up('window').destroy();
 	},
 	
@@ -2778,6 +2891,23 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     		searchButton.setDisabled(true);
     	}
 	},
+
+    activateBotonBuscarTasacion: function(field, value){
+        var me = this;
+        var idTasacion = me.lookupReference('idTasacion').getValue();
+        var numActivo = me.lookupReference('numActivo').getValue();
+        var idTasacionExt = me.lookupReference('idTasacionExt').getValue();
+        var codigoFirmaTasacion = me.lookupReference('codigoFirmaTasacion').getValue();
+        var fechaRecepcionTasacion = me.lookupReference('fechaRecepcionTasacion').getValue();
+        var searchButton = me.lookupReference("searchButton");
+        if(idTasacion != '' || numActivo != '' || idTasacionExt != ''
+            || codigoFirmaTasacion != '' || (fechaRecepcionTasacion != null && fechaRecepcionTasacion != '')){
+            searchButton.setDisabled(false);
+        }
+        else{
+            searchButton.setDisabled(true);
+        }
+    },
 	
     recargarVisibilidadGrids: function(form, record){
     	if(!Ext.isEmpty(record.data.lineasNoDeTrabajos) && !Ext.isEmpty(form)){

@@ -99,7 +99,7 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 	public void actualizarRolesDesdeJupiter(String username, String listaRoles) {
 
 		Assert.notNull(username, "username no puede ser null");
-		Assert.notNull(username, "listaRoles no puede ser null");
+		Assert.notNull(listaRoles, "listaRoles no puede ser null");
 		
 		Usuario usuario = usuarioDao.getByUsername(username);
 		

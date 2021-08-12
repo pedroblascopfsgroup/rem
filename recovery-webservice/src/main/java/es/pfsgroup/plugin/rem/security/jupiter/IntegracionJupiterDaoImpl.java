@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
@@ -271,6 +272,10 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 			query.executeUpdate();
 		} catch (Exception e) {
 			logger.fatal("Error al crear usuario en BD. Realizando rollback de la transacción: " + queryInsert);
+		}
+		
+		if (DbIdContextHolder.getDbId() <= 0) {
+			DbIdContextHolder.setDbId((long) 1);
 		}
 		
 		Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", username));

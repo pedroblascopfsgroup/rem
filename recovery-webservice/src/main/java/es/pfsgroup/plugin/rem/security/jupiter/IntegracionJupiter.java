@@ -126,17 +126,17 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 					List<String> codigosSubcarterasJupiter = new ArrayList<String>();
 					traducirYSeparar(listaCodigosJupiter, mapaTraductor, codigosPerfilesJupiter, codigosGruposJupiter, codigosCarterasJupiter, codigosSubcarterasJupiter);
 					
-					List<String> codigosPerfilesREM = integracionJupiterDao.getPerfilesREM(username);
-					List<String>  altasPerfiles = new ArrayList<String>();
-					List<String>  bajasPerfiles = new ArrayList<String>();
-					obtenerListaAltasBajas(codigosPerfilesJupiter, codigosPerfilesREM, altasPerfiles, bajasPerfiles );
-					integracionJupiterDao.actualizarPerfiles(usuario, altasPerfiles, bajasPerfiles);
-					
 					List<String>  altasGrupos = new ArrayList<String>();
 					List<String>  bajasGrupos = new ArrayList<String>();
 					List<String> codigosGruposREM = integracionJupiterDao.getCodigodGruposREM(usuario);
 					obtenerListaAltasBajas(codigosGruposJupiter, codigosGruposREM, altasGrupos, bajasGrupos );
 					integracionJupiterDao.actualizarGrupos(usuario, altasGrupos, bajasGrupos);
+					
+					List<String> codigosPerfilesREM = integracionJupiterDao.getPerfilesREM(username);
+					List<String>  altasPerfiles = new ArrayList<String>();
+					List<String>  bajasPerfiles = new ArrayList<String>();
+					obtenerListaAltasBajas(codigosPerfilesJupiter, codigosPerfilesREM, altasPerfiles, bajasPerfiles );
+					integracionJupiterDao.actualizarPerfiles(usuario, altasPerfiles, bajasPerfiles);
 					
 					List<String>  altasCarteras = new ArrayList<String>();
 					List<String>  bajasCarteras = new ArrayList<String>();

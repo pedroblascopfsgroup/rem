@@ -12,7 +12,6 @@ import java.io.Serializable;
 @Entity
 @Table(name = "GPV_TAS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class GastoTasacionActivo implements Serializable, Auditable{
 
 	private static final long serialVersionUID = 1L;

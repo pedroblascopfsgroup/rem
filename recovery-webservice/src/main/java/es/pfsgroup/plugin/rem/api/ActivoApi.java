@@ -90,6 +90,7 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VSinInformeAprobadoRem;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
@@ -1461,4 +1462,6 @@ public interface ActivoApi {
 	public List<ActivoTrabajo> getActivoTrabajos(Long idActivo);
 
 	List<Activo> getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(Long idAgrupacion, Long idActivoPrincipal);
+
+    Page findTasaciones(DtoFiltroTasaciones dto);
 }

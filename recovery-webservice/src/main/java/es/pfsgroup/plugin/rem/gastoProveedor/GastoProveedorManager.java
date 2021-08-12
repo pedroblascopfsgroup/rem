@@ -4329,4 +4329,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}		
 		return listaMotivosRec;
 	}
+
+	@Override
+	@Transactional
+	public boolean deleteGastoTasacion(Long id) {
+
+		GastoTasacionActivo gta = genericDao.get(GastoTasacionActivo.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+
+		Auditoria.delete(gta);
+
+		genericDao.update(GastoTasacionActivo.class, gta);
+
+		return true;
+	}
 }

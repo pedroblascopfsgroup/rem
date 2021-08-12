@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,36 +31,6 @@ import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.GastoLineaDetalleDao;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoConfiguracionCuentasContables;
-import es.pfsgroup.plugin.rem.model.ActivoConfiguracionPtdasPrep;
-import es.pfsgroup.plugin.rem.model.ActivoGenerico;
-import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
-import es.pfsgroup.plugin.rem.model.ActivoPropietario;
-import es.pfsgroup.plugin.rem.model.ActivoSareb;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
-import es.pfsgroup.plugin.rem.model.ActivoSubtipoTrabajoGastoImpuesto;
-import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
-import es.pfsgroup.plugin.rem.model.DtoComboLineasDetalle;
-import es.pfsgroup.plugin.rem.model.DtoElementosAfectadosLinea;
-import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
-import es.pfsgroup.plugin.rem.model.Ejercicio;
-import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
-import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
-import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
-import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
-import es.pfsgroup.plugin.rem.model.GastoLineaDetalleTrabajo;
-import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.GastoRefacturable;
-import es.pfsgroup.plugin.rem.model.Prefactura;
-import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.TrabajoProvisionSuplido;
-import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
-import es.pfsgroup.plugin.rem.model.VParticipacionElementosLinea;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
@@ -2413,5 +2384,40 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	
 		return activos;
 	}
-	
+
+	@Override
+	@Transactional
+	public boolean asignarTasacionesGastos(Long idGasto, Long[] tasaciones) {
+
+		if(idGasto != null && tasaciones != null){
+
+			GastoProveedor gasto = gastoProveedorApi.findOne(idGasto);
+
+			for(int i = 0; i < tasaciones.length; i++){
+				GastoTasacionActivo gta = genericDao.get(GastoTasacionActivo.class,
+						genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto),
+						genericDao.createFilter(FilterType.EQUALS, "tasacion.id", tasaciones[i]));
+
+				if (gta == null) {
+					gta = new GastoTasacionActivo();
+
+					ActivoTasacion tas = genericDao.get(ActivoTasacion.class, genericDao.createFilter(FilterType.EQUALS, "id", tasaciones[i]));
+
+					gta.setGastoProveedor(gasto);
+					gta.setTasacion(tas);
+				}else{
+					gta.getAuditoria().setBorrado(false);
+					gta.getAuditoria().setUsuarioBorrar(null);
+					gta.getAuditoria().setFechaBorrar(null);
+				}
+
+				genericDao.save(GastoTasacionActivo.class, gta);
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
 }

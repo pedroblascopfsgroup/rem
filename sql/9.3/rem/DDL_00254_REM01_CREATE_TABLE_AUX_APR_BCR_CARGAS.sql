@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20210526
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210810
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13942
+--## INCIDENCIA_LINK=HREOS-14716
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-13942] - Santi Monzó
+--##        0.2 Modificación campos - [HREOS-14716] - Alejandra García
 --##########################################
 --*/
 
@@ -58,14 +59,14 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
     V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
     (
-        COD_PARCERLA         VARCHAR2(16 CHAR),
+        COD_PARCERLA         VARCHAR2(8 CHAR),
         IDENTIF_CARGA        VARCHAR2(16 CHAR),
-        TIPO_CARGA           VARCHAR2(16 CHAR),
+        TIPO_CARGA           VARCHAR2(3 CHAR),
         INTERLOCUTOR         VARCHAR2(40 CHAR),
-        FEC_INI              VARCHAR2(8 CHAR),
-        CAPITAL_PENDIENTE    VARCHAR2(16 CHAR),
-        FEC_FIN              VARCHAR2(8 CHAR),
-        COD_ESTADO_CARGA     VARCHAR2(2 CHAR),
+        FEC_INI              DATE,
+        CAPITAL_PENDIENTE    NUMBER(15,2),
+        FEC_FIN              DATE,
+        COD_ESTADO_CARGA     VARCHAR2(3 CHAR),
         BORRADO              NUMBER(1,0) DEFAULT 0,
         BIE_CAR_ID           NUMBER(16,0),
         CRG_ID               NUMBER(16,0),

@@ -13272,4 +13272,63 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			return false;
 		}
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void createReservaAndCondicionesReagendarArras(ExpedienteComercial expediente, Double importe, Integer mesesFianza, Oferta oferta) {
+		Reserva reserva = expediente.getReserva();
+		if (reserva == null) {
+			reserva = new Reserva();
+			reserva.setExpediente(expediente);
+			reserva.setNumReserva(reservaDao.getNextNumReservaRem());
+			reserva.setAuditoria(Auditoria.getNewInstance());
+
+		}
+		if (reserva != null) {
+			DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDEstadosReserva.class, DDEstadosReserva.CODIGO_PENDIENTE_FIRMA);
+			reserva.setEstadoReserva(estadoReserva);
+
+			DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class,
+					DDTiposArras.CONFIRMATORIAS);
+			reserva.setTipoArras(tipoArras);
+		}
+		
+		CondicionanteExpediente condiciones = expediente.getCondicionante();
+		if (condiciones == null) {
+			condiciones = new CondicionanteExpediente();
+			condiciones.setExpediente(expediente);
+			condiciones.setAuditoria(Auditoria.getNewInstance());
+		}
+		if (condiciones != null) {
+			condiciones.setImporteReserva(importe);
+			condiciones.setMesesFianza(mesesFianza);
+			condiciones.setSolicitaReserva(1);
+			
+		}
+		genericDao.save(Reserva.class, reserva);
+		genericDao.save(CondicionanteExpediente.class, condiciones);
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_PBC_ARRAS);
+		DDEstadosExpedienteComercial estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+		expediente.setEstado(estadoExp);
+		
+		OfertaCaixa ofertaCaixa = genericDao.get(OfertaCaixa.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+		if (ofertaCaixa != null) {
+			if (ofertaCaixa.getRiesgoOperacion() != null) {
+				Filter filtroBc = null;
+				if (DDRiesgoOperacion.CODIGO_ROP_ALTO.equals(ofertaCaixa.getRiesgoOperacion().getCodigo())) {
+					filtroBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_ARRAS_PENDIENTES_DE_APROBACION_BC);
+				}else {
+					filtroBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PTE_AGENDAR_ARRAS);
+				}
+				DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroBc);
+				expediente.setEstadoBc(estadoBc);
+			}
+		}
+		
+		genericDao.save(ExpedienteComercial.class, expediente);
+		
+		
+	}
 }

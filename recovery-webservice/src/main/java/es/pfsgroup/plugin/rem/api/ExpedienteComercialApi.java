@@ -1404,5 +1404,7 @@ public interface ExpedienteComercialApi {
 	boolean doTramitacionAsincrona(Activo activo, Oferta oferta);
 
 	List<DDEntidadFinanciera> getListEntidadFinanciera(Long idExpediente);
+
+	public void createReservaAndCondicionesReagendarArras(ExpedienteComercial expediente, Double importe, Integer mesesFianza, Oferta oferta);
 	
 }

@@ -551,15 +551,37 @@ public class AgendaAdapter {
 				} else if (((Map.Entry) stringStringEntry).getKey().equals("aceptacionContraoferta") && !Checks.esNulo(gfi.getValuesBusinessOperation())
 						&& (gfi.getValuesBusinessOperation().equals("DDResolucionComite") || gfi.getValuesBusinessOperation().equals("DDRespuestaOfertante"))){
 					//cuando indiquen las tareas que deben poderse poner la resolucion, se tendra que comprobar si es la tarea 	 -- eliminar comentario					
-					if (tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("")){ //faltan comprobar tareas -- eliminar comentario	
+					if (tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T013_ResolucionComite") ||
+							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T013_RatificacionComite") ||
+							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T015_ResolucionExpediente") ||
+							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_AnalisisPM") ||
+							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_ResolucionCES") ||
+							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_RespuestaOfertanteCES") ||
+							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_RatificacionComiteCES") ||
+							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_ResolucionArrow")){ //faltan comprobar tareas -- eliminar comentario	
 						String valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
 						valores[i] = valorCampo;
 						break;
 					}			
 				} else if (((Map.Entry) stringStringEntry).getKey().equals("importeContraoferta")) {
 					//cuando indiquen las tareas que deben poderse avanzar, se tendra que comprobar si es la tarea 	-- eliminar comentario				
-					if (tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("") //faltan comprobar tareas -- eliminar comentario	
-							&& gfi.getNombre().equals("")){  //falta comprobar nombre campo de la TFI para poner el importe contraoferta de la tarea de arriba filtrada -- eliminar comentario	
+					if (tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T013_ResolucionComite") 
+							&& gfi.getNombre().equals("comboResolucion") ||
+							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T013_RatificacionComite") 
+							&& gfi.getNombre().equals("comboRatificacion") ||
+							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T015_ResolucionExpediente")
+							&& gfi.getNombre().equals("resolucionExpediente") ||
+							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_AnalisisPM")
+							&& gfi.getNombre().equals("comboResolucion") ||
+							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_ResolucionCES") 
+							&& gfi.getNombre().equals("comboResolucion") ||
+							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_RespuestaOfertanteCES") 
+							&& gfi.getNombre().equals("comboRespuesta") ||
+							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_RatificacionComiteCES") 
+							&& gfi.getNombre().equals("comboRatificacion") ||
+							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_ResolucionArrow")
+							&& gfi.getNombre().equals("comboResolucion")) { //faltan comprobar tareas -- eliminar comentario	
+//							&& gfi.getNombre().equals("")){  //falta comprobar nombre campo de la TFI para poner el importe contraoferta de la tarea de arriba filtrada -- eliminar comentario	
 						String valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
 						valores[i] = valorCampo;
 						break;

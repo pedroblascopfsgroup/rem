@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210810
+--## FECHA_CREACION=20210813
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14716
@@ -59,7 +59,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
     V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
     (
-        COD_PARCERLA         VARCHAR2(8 CHAR),
+        COD_PARCELA          VARCHAR2(8 CHAR),
         IDENTIF_CARGA        VARCHAR2(16 CHAR),
         TIPO_CARGA           VARCHAR2(3 CHAR),
         INTERLOCUTOR         VARCHAR2(40 CHAR),
@@ -96,7 +96,7 @@ BEGIN
     
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
 
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.COD_PARCERLA IS '' Identificador en BC del OI''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.COD_PARCELA IS '' Identificador en BC del OI''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.IDENTIF_CARGA IS '' Identificador en BC de la carga''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.TIPO_CARGA IS '' Tipo de carga''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.INTERLOCUTOR IS '' Descripción acreedor''';

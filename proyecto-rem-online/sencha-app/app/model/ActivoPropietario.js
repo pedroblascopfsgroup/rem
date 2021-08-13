@@ -94,6 +94,14 @@ Ext.define('HreRem.model.ActivoPropietario', {
     				return data.tipoPropietario == "Principal";
     			},
     			depends: 'tipoPropietario'
+    		},
+    		{
+    			name: 'anyoConcesion'
+    		},
+    		{
+    			name: 'fechaFinConcesion',
+    			type : 'date',
+    			dateFormat : 'c'
     		}
     ],
     

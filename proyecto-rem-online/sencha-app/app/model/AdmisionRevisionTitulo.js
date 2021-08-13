@@ -210,14 +210,6 @@ Ext.define('HreRem.model.AdmisionRevisionTitulo', {
 					},
 					{
 						name : 'proteccionOficialDescripcion'
-					},
-					{
-						name: 'anyoConcesion'
-					},
-					{
-						name: 'fechaFinConcesion',
-						type : 'date',
-						dateFormat : 'c'
 					}
 
 			],

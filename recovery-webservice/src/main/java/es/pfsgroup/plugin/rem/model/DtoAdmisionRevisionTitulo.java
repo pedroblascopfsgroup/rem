@@ -93,10 +93,6 @@ public class DtoAdmisionRevisionTitulo extends WebDto {
 	//
 	private String tipoTituloActivoRef;
 	private String subtipoTituloActivoRef;
-	
-	
-	private Integer anyoConcesion;	
-    private Date fechaFinConcesion;
     
 	private boolean update = false;
 	
@@ -550,19 +546,5 @@ public class DtoAdmisionRevisionTitulo extends WebDto {
 	public void setTipoTituloActivoRef(String tipoTituloActivoRef) {
 		this.tipoTituloActivoRef = tipoTituloActivoRef;
 	}
-	public Integer getAnyoConcesion() {
-		return anyoConcesion;
-	}
-	public void setAnyoConcesion(Integer anyoConcesion) {
-		this.anyoConcesion = anyoConcesion;
-	}
-	public Date getFechaFinConcesion() {
-		return fechaFinConcesion;
-	}
-	public void setFechaFinConcesion(Date fechaFinConcesion) {
-		this.fechaFinConcesion = fechaFinConcesion;
-	}
 	
-	
-
 }

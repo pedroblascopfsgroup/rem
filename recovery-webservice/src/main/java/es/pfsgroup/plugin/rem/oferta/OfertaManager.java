@@ -4976,7 +4976,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public Integer isEpaAlquilado(Long idAgrupacion) {
 		List<ActivoAgrupacionActivo>  listaAgrupacionActivos = null;
-		Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS ,"id", idAgrupacion);
+		Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS ,"agrupacion.id", idAgrupacion);
 		listaAgrupacionActivos = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion);
 		listaAgrupacionActivos.get(0).getActivo().getId();
 		if(listaAgrupacionActivos.get(0).getActivo() != null 
@@ -6841,7 +6841,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return ofertaDao.getListOtrasOfertasTramitadasActivo(idActivo);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@Override
 	public void enviarCorreoFichaComercial(List<Long> ids, String reportCode, String scheme, String serverName) throws IOException {
 		try {
 			String urlBaseGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_URL);

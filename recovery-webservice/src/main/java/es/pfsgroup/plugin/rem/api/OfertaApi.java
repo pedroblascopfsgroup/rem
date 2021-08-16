@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -820,5 +821,6 @@ public interface OfertaApi {
 	public String actualizarOfertaBoarding(TareaExterna tareaExterna);
 
 	boolean esOfertaValidaCFVByCarteraSubcartera(Oferta oferta);
-
+	
+	public void enviarCorreoFichaComercial(List<Long> ids, String reportCode, String scheme, String serverName) throws IOException;
 }

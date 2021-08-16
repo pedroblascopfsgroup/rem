@@ -1467,6 +1467,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		params['porcPropiedad'] = form.findField("porcPropiedad").getValue();
 		params['tipoGradoPropiedadCodigo'] = form
 				.findField("tipoGradoPropiedad").getValue();
+		params['anyoConcesion'] = form.findField("anyoConcesion").getValue();
+		params['fechaFinConcesion'] = form.findField("fechaFinConcesion").getValue();
 		params['tipoPersonaCodigo'] = form.findField("tipoPersona").getValue();
 		params['nombre'] = form.findField("nombre").getValue();
 		params['tipoDocIdentificativoCodigo'] = form.findField("tipoDoc")
@@ -1535,6 +1537,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		params['porcPropiedad'] = form.findField("porcPropiedad").getValue();
 		params['tipoGradoPropiedadCodigo'] = form
 				.findField("tipoGradoPropiedad").getValue();
+		params['anyoConcesion'] = form.findField("anyoConcesion").getValue();
+		params['fechaFinConcesion'] = form.findField("fechaFinConcesion").getValue();
 		params['tipoPersonaCodigo'] = form.findField("tipoPersona").getValue();
 		params['nombre'] = form.findField("nombre").getValue();
 		params['tipoDocIdentificativoCodigo'] = form.findField("tipoDoc")

@@ -1,0 +1,160 @@
+--/*
+--##########################################
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20210809
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=RREMVIP-10305
+--## PRODUCTO=NO
+--##
+--## Finalidad: Script informa area peticionaria RAM trabajos
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar.
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema.
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master.
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_TEXT_TABLA VARCHAR2(27 CHAR) := 'ACT_TBJ_TRABAJO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_USU VARCHAR2(30 CHAR) := 'REMVIP-10305'; -- Vble. auxiliar para almacenar el nombre de usuario que modifica los registros.
+	V_COUNT NUMBER(16);
+
+	TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+		-- 		TBJ_NUM_TRABAJO
+		T_TIPO_DATA('922315000001'),
+        T_TIPO_DATA('923703000001'),
+        T_TIPO_DATA('924567838280'),
+        T_TIPO_DATA('924567842786'),
+        T_TIPO_DATA('924567850776'),
+        T_TIPO_DATA('924567855533'),
+        T_TIPO_DATA('924567858700'),
+        T_TIPO_DATA('924567859428'),
+        T_TIPO_DATA('924567875733'),
+        T_TIPO_DATA('924567875752'),
+        T_TIPO_DATA('924567875772'),
+        T_TIPO_DATA('924567875778'),
+        T_TIPO_DATA('924567875793'),
+        T_TIPO_DATA('924567875801'),
+        T_TIPO_DATA('924567875812'),
+        T_TIPO_DATA('924567875832'),
+        T_TIPO_DATA('924567875844'),
+        T_TIPO_DATA('924567875851'),
+        T_TIPO_DATA('924567875857'),
+        T_TIPO_DATA('924567875865'),
+        T_TIPO_DATA('924567875870'),
+        T_TIPO_DATA('924567875881'),
+        T_TIPO_DATA('924567875900'),
+        T_TIPO_DATA('924567875909'),
+        T_TIPO_DATA('924567875916'),
+        T_TIPO_DATA('924567876016'),
+        T_TIPO_DATA('924567876025'),
+        T_TIPO_DATA('924567876025'),
+        T_TIPO_DATA('924567876025'),
+        T_TIPO_DATA('924567876516'),
+        T_TIPO_DATA('924567879163'),
+        T_TIPO_DATA('924567881636'),
+        T_TIPO_DATA('924567882878'),
+        T_TIPO_DATA('924567882914'),
+        T_TIPO_DATA('924567882917'),
+        T_TIPO_DATA('924567882940'),
+        T_TIPO_DATA('924567882946'),
+        T_TIPO_DATA('924567882952'),
+        T_TIPO_DATA('924567882969'),
+        T_TIPO_DATA('924567882990'),
+        T_TIPO_DATA('924567883008'),
+        T_TIPO_DATA('924567883013'),
+        T_TIPO_DATA('924567883017'),
+        T_TIPO_DATA('924567883030'),
+        T_TIPO_DATA('924567883040'),
+        T_TIPO_DATA('924567883045'),
+        T_TIPO_DATA('924567883063'),
+        T_TIPO_DATA('924567883074'),
+        T_TIPO_DATA('924567883082'),
+        T_TIPO_DATA('924567883090'),
+        T_TIPO_DATA('924567883107'),
+        T_TIPO_DATA('924567883114'),
+        T_TIPO_DATA('924567883120'),
+        T_TIPO_DATA('924567883123'),
+        T_TIPO_DATA('924567883127'),
+        T_TIPO_DATA('924567883128'),
+        T_TIPO_DATA('924567883130'),
+        T_TIPO_DATA('924567883132'),
+        T_TIPO_DATA('924567883133'),
+        T_TIPO_DATA('924567883135'),
+        T_TIPO_DATA('924567883137'),
+        T_TIPO_DATA('924567883140'),
+        T_TIPO_DATA('924567883466'),
+        T_TIPO_DATA('924567885737'),
+        T_TIPO_DATA('924567889913')
+
+	); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+
+    
+BEGIN		
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO]');
+	DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAR DD_IRE_ID EN '||V_TEXT_TABLA);
+	FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+    LOOP
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+
+		
+
+		V_MSQL:= 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE TBJ_NUM_TRABAJO = '||V_TMP_TIPO_DATA(1)||' AND BORRADO = 0';
+		EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
+
+		IF V_COUNT = 1 THEN
+
+			V_MSQL:= 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET
+						DD_IRE_ID = NULL ,
+						USUARIOMODIFICAR = '''||V_USU||''',
+						FECHAMODIFICAR = SYSDATE
+						WHERE TBJ_NUM_TRABAJO = '||V_TMP_TIPO_DATA(1)||' AND BORRADO = 0';
+			EXECUTE IMMEDIATE V_MSQL;
+			
+			DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS DD_IRE_ID A NULO EN TRABAJO '||V_TMP_TIPO_DATA(1)||'');
+
+		ELSE
+
+			DBMS_OUTPUT.PUT_LINE('[INFO]: TRABAJO '||V_TMP_TIPO_DATA(1)||' NO EXISTE O ESTA BORRADO');
+
+		END IF;
+
+	END LOOP;
+
+	COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+
+EXCEPTION
+		WHEN OTHERS THEN
+			err_num := SQLCODE;
+			err_msg := SQLERRM;
+
+			DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+			DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+			DBMS_OUTPUT.put_line(err_msg);
+
+			ROLLBACK;
+			RAISE;          
+
+END;
+
+/
+
+EXIT

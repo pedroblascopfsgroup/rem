@@ -2657,7 +2657,7 @@ public class ActivoAdapter {
 			} catch (Exception e) {
 				throw new RemUserException("user.exception.tipodoc.incorrecto", messageServices);
 			}
-			activoAdmisionDocumento.setNoValidado(true);
+			activoAdmisionDocumento.setNoValidado(false);
 			activoAdmisionDocumento.setConfigDocumento(tipodoc);
 
 			rellenaCheckingDocumentoAdmision(activoAdmisionDocumento, dtoAdmisionDocumento);

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210601
+--## FECHA_CREACION=20210813
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14163
@@ -39,15 +39,15 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     -- DD_MEC_CODIGO  DD_MEC_DESCRIPCION  DD_MEC_DESCRIPCION_LARGA  
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('1', 'Problemas Jurídicos'),
-        T_TIPO_DATA('2', 'Problemas Urbanísticos'),
-        T_TIPO_DATA('3', 'Problemas Físicos'),
-        T_TIPO_DATA('4', 'Retirada por estrategia comercial'),
-        T_TIPO_DATA('5', 'Segregaciones - Agregaciones'),
-        T_TIPO_DATA('6', 'Ocupaciones masivas'),
-        T_TIPO_DATA('7', 'Problemas de propiedad'),
-        T_TIPO_DATA('8', 'Problemas de localización'),
-        T_TIPO_DATA('9', 'Cartera de venta'),
+        T_TIPO_DATA('01', 'Problemas Jurídicos'),
+        T_TIPO_DATA('02', 'Problemas Urbanísticos'),
+        T_TIPO_DATA('03', 'Problemas Físicos'),
+        T_TIPO_DATA('04', 'Retirada por estrategia comercial'),
+        T_TIPO_DATA('05', 'Segregaciones - Agregaciones'),
+        T_TIPO_DATA('06', 'Ocupaciones masivas'),
+        T_TIPO_DATA('07', 'Problemas de propiedad'),
+        T_TIPO_DATA('08', 'Problemas de localización'),
+        T_TIPO_DATA('09', 'Cartera de venta'),
         T_TIPO_DATA('10', 'Cartera de crédito'),
         T_TIPO_DATA('11', 'Datos críticos erróneos'),
         T_TIPO_DATA('12', 'Reputacional'),

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210804
+--## FECHA_CREACION=20210811
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14837
+--## INCIDENCIA_LINK=HREOS-14838
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -19,6 +19,7 @@
 --##        0.7 Gestores de gestoría de admisión y administración - [HREOS-14545] - Daniel Algaba
 --##	    0.8 Campos IND_ENTREGA_VOL_POSESI - HREOS-14745 - Alejandra García
 --##	      0.9 Se añade comprobación para no machacar tipo y subtipo de activo si no viene - HREOS-14837
+--##	      0.10 Nuevo campos Origen Regulatorio - HREOS-14838
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -91,8 +92,8 @@ BEGIN
                   CASE WHEN aux.SUBTIPO_VIVIENDA IS NOT NULL THEN sac_viv.DD_SAC_ID
                   WHEN aux.SUBTIPO_SUELO IS NOT NULL THEN sac_suelo.DD_SAC_ID
                   ELSE sac_uso.DD_SAC_ID END DD_SAC_ID,
-                  STA.DD_TTA_ID AS DD_TTA_ID,
-                  STA.DD_STA_ID AS DD_STA_ID,
+                  COALESCE(STA_OR.DD_TTA_ID, STA.DD_TTA_ID) AS DD_TTA_ID,
+                  COALESCE(STA_OR.DD_STA_ID, STA.DD_STA_ID) AS DD_STA_ID,
                   prp.DD_PRP_ID as DD_PRP_ID,
                   tud.DD_TUD_ID as DD_TUD_ID,
                   tcr.DD_TCR_ID as DD_TCR_ID,
@@ -107,6 +108,8 @@ BEGIN
                   LEFT JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = bie.BIE_NUMERO_ACTIVO AND ACT.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''PRODUCTO''  AND eqv1.DD_CODIGO_CAIXA = aux.PRODUCTO AND EQV1.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_STA_SUBTIPO_TITULO_ACTIVO STA ON STA.DD_STA_CODIGO = eqv1.DD_CODIGO_REM
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv10 ON eqv10.DD_NOMBRE_CAIXA = ''ORIGEN_REGULATORIO''  AND eqv10.DD_CODIGO_CAIXA = aux.ORIGEN_REGULATORIO AND eqv10.BORRADO=0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_STA_SUBTIPO_TITULO_ACTIVO STA_OR ON STA_OR.DD_STA_CODIGO = eqv10.DD_CODIGO_REM
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv2 ON eqv2.DD_NOMBRE_CAIXA = ''SOCIEDAD_PATRIMONIAL''  AND eqv2.DD_CODIGO_CAIXA = aux.SOCIEDAD_PATRIMONIAL 
                                                             AND EQV2.DD_NOMBRE_REM=''DD_SCR_SUBCARTERA'' and eqv2.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_SCR_SUBCARTERA scr ON scr.DD_SCR_CODIGO = eqv2.DD_CODIGO_REM

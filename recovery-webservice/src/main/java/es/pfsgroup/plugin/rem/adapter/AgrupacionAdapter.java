@@ -129,6 +129,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
@@ -686,7 +688,12 @@ public class AgrupacionAdapter {
 
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo", activoPrincipal.getActivoPublicacion().getTipoComercializacion().getCodigo());
 
-						if (!Checks.esNulo(activoPrincipal.getActivoPublicacion())) {
+						if (!Checks.esNulo(agrupacion.getFechaBaja())) {
+							BeanUtils.copyProperty(dtoAgrupacion, "estadoAlquilerDescripcion", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler()) ? DDEstadoPublicacionAlquiler.DESCRIPCION_NO_PUBLICADO_ALQUILER : "");
+							BeanUtils.copyProperty(dtoAgrupacion, "estadoVentaDescripcion", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta()) ? DDEstadoPublicacionVenta.DESCRIPCION_NO_PUBLICADO_VENTA : "");
+							BeanUtils.copyProperty(dtoAgrupacion, "estadoAlquilerCodigo", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler()) ? DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER : "");
+							BeanUtils.copyProperty(dtoAgrupacion, "estadoVentaCodigo", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta()) ? DDEstadoPublicacionVenta.CODIGO_NO_PUBLICADO_VENTA : "");
+						} else if (!Checks.esNulo(activoPrincipal.getActivoPublicacion())) {
 							BeanUtils.copyProperty(dtoAgrupacion, "estadoAlquilerDescripcion", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler()) ? activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler().getDescripcion() : "");
 							BeanUtils.copyProperty(dtoAgrupacion, "estadoVentaDescripcion", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta()) ? activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta().getDescripcion() : "");
 							BeanUtils.copyProperty(dtoAgrupacion, "estadoAlquilerCodigo", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler()) ? activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo() : "");

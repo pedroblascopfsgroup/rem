@@ -1,0 +1,158 @@
+--/*
+--##########################################
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20210809
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-10298
+--## PRODUCTO=NO
+--##
+--## Finalidad: pone borrado logico a relacion activo agrupacion
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar.
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema.
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master.
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USU VARCHAR2(30 CHAR) := 'REMVIP-10298'; -- Vble. auxiliar para almacenar el nombre de usuario que modifica los registros.
+	V_COUNT NUMBER(16);
+	V_COUNT2 NUMBER(16);
+	V_ACT_ID NUMBER(16);
+	V_AGR_ID NUMBER(16);
+
+	TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+        -- ACT_NUM_ACTIVO   ACT_NUM_AGRUPACION_REM
+        T_TIPO_DATA('7323886','111896'),
+        T_TIPO_DATA('7323942','111896'),
+        T_TIPO_DATA('7323808','111896'),
+        T_TIPO_DATA('7324035','111896'),
+        T_TIPO_DATA('7323888','111896'),
+        T_TIPO_DATA('7323938','111896'),
+        T_TIPO_DATA('7323839','111896'),
+        T_TIPO_DATA('7324030','111896'),
+        T_TIPO_DATA('7323889','111896'),
+        T_TIPO_DATA('7323939','111896'),
+        T_TIPO_DATA('7323840','111896'),
+        T_TIPO_DATA('7324038','111896'),
+        T_TIPO_DATA('7323908','111896'),
+        T_TIPO_DATA('7323940','111896'),
+        T_TIPO_DATA('7323823','111896'),
+        T_TIPO_DATA('7324092','111896'),
+        T_TIPO_DATA('7323909','111896'),
+        T_TIPO_DATA('7323997','111896'),
+        T_TIPO_DATA('7323752','111896'),
+        T_TIPO_DATA('7324058','111896'),
+        T_TIPO_DATA('7323919','111896'),
+        T_TIPO_DATA('7323961','111896'),
+        T_TIPO_DATA('7323828','111896'),
+        T_TIPO_DATA('7324047','111896'),
+        T_TIPO_DATA('7323920','111896'),
+        T_TIPO_DATA('7323962','111896'),
+        T_TIPO_DATA('7323829','111896'),
+        T_TIPO_DATA('7324151','111896'),
+        T_TIPO_DATA('7323921','111896'),
+        T_TIPO_DATA('7323846','111896'),
+        T_TIPO_DATA('7323830','111896'),
+        T_TIPO_DATA('7324150','111896'),
+        T_TIPO_DATA('7323844','111896'),
+        T_TIPO_DATA('7324002','111896'),
+        T_TIPO_DATA('7323757','111896'),
+        T_TIPO_DATA('7324149','111896'),
+        T_TIPO_DATA('7323927','111896'),
+        T_TIPO_DATA('7324007','111896'),
+        T_TIPO_DATA('7323762','111896'),
+        T_TIPO_DATA('7324095','111896'),
+        T_TIPO_DATA('7323935','111896'),
+        T_TIPO_DATA('7323968','111896'),
+        T_TIPO_DATA('7323836','111896'),
+        T_TIPO_DATA('7324137','111896'),
+        T_TIPO_DATA('7323936','111896'),
+        T_TIPO_DATA('7323969','111896'),
+        T_TIPO_DATA('7323837','111896'),
+        T_TIPO_DATA('7324148','111896'),
+        T_TIPO_DATA('7323937','111896'),
+        T_TIPO_DATA('7323970','111896'),
+        T_TIPO_DATA('7323838','111896'),
+        T_TIPO_DATA('7324118','111896'),
+        T_TIPO_DATA('7323843','111896'),
+        T_TIPO_DATA('7323807','111896'),
+        T_TIPO_DATA('7324013','111896')
+
+		); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+    
+BEGIN		
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO]');
+	
+	FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+	LOOP
+	V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+
+		V_MSQL:= 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '||V_TMP_TIPO_DATA(1)||'';
+		EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
+
+		V_MSQL:= 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_AGR_AGRUPACION WHERE AGR_NUM_AGRUP_REM = '||V_TMP_TIPO_DATA(2)||'';
+		EXECUTE IMMEDIATE V_MSQL INTO V_COUNT2;
+
+		IF V_COUNT = 1 AND V_COUNT2 = 1 THEN
+
+			V_MSQL:= 'SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '||V_TMP_TIPO_DATA(1)||'';
+			EXECUTE IMMEDIATE V_MSQL INTO V_ACT_ID;
+
+			V_MSQL:= 'SELECT AGR_ID FROM '||V_ESQUEMA||'.ACT_AGR_AGRUPACION WHERE AGR_NUM_AGRUP_REM = '||V_TMP_TIPO_DATA(2)||'';
+			EXECUTE IMMEDIATE V_MSQL INTO V_AGR_ID;
+
+			V_MSQL:= 'UPDATE '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO SET
+				BORRADO = 1,
+				USUARIOBORRAR = '''||V_USU||''',
+				FECHABORRAR = SYSDATE
+				WHERE ACT_ID = '||V_ACT_ID||' AND AGR_ID = '||V_AGR_ID||'';
+			EXECUTE IMMEDIATE V_MSQL;
+
+			DBMS_OUTPUT.PUT_LINE('[INFO]: RELACIÓN BORRADA PARA ACTIVO '||V_TMP_TIPO_DATA(1)||' Y AGRUPACIÓN '||V_TMP_TIPO_DATA(2)||'');
+
+		ELSE
+
+			DBMS_OUTPUT.PUT_LINE('[INFO]: ACTIVO '||V_TMP_TIPO_DATA(1)||' O AGRUPACIÓN '||V_TMP_TIPO_DATA(2)||' NO EXISTE O ESTÁ BORRADO');
+
+		END IF;
+
+	END LOOP;
+
+	COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+
+EXCEPTION
+		WHEN OTHERS THEN
+			err_num := SQLCODE;
+			err_msg := SQLERRM;
+
+			DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+			DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+			DBMS_OUTPUT.put_line(err_msg);
+
+			ROLLBACK;
+			RAISE;          
+
+END;
+
+/
+
+EXIT

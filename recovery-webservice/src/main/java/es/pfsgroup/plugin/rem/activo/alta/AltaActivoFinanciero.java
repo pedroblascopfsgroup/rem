@@ -402,7 +402,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		// ActivoAdmisionDocumento - Calificación energética.
 		ActivoAdmisionDocumento admisionDocumento = new ActivoAdmisionDocumento();
 		admisionDocumento.setActivo(activo);
-		admisionDocumento.setNoValidado(true);
+		admisionDocumento.setNoValidado(false);
 		admisionDocumento.setConfigDocumento(configDocumento);
 		beanUtilNotNull.copyProperty(admisionDocumento, "tipoCalificacionEnergetica",
 				utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalificacionEnergetica.class, dtoAAF.getCalificacionCeeCodigo()));

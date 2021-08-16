@@ -311,7 +311,7 @@ public class InformeMediadorDto implements Serializable {
 	private Double otrasReformasNecesariasImporteAproximado;
 
 	@EntityDefinition(propertyName = "infoDistribucionInterior")
-	@Size(max=2500,groups = { Insert.class, Update.class })
+	@Size(max=3000,groups = { Insert.class, Update.class })
 	private String distribucionInterior;
 
 	@EntityDefinition(propertyName = "edificioDivisible")

@@ -365,17 +365,7 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		}
 		if(revisionTitulo.getSubtipoTitActRef() != null) {
 			beanUtilNotNull.copyProperty(dto, "subtipoTituloActivoRef", revisionTitulo.getSubtipoTitActRef().getDescripcion());	
-		}
-		
-		ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS ,"activo.id", activo.getId()));
-		if (activoCaixa != null) {
-			if (activoCaixa.getAnyoConcesion() != null) {
-				dto.setAnyoConcesion(activoCaixa.getAnyoConcesion());
-			}
-			if (activoCaixa.getFechaFinConcesion() != null) {
-				dto.setFechaFinConcesion(activoCaixa.getFechaFinConcesion());
-			}
-		}
+		}		
 		
 		return dto;
 	}

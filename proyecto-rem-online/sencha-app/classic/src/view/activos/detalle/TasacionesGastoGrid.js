@@ -1,9 +1,10 @@
 Ext.define('HreRem.view.gastos.detalle.TasacionesgastoGrid', {
-    extend		: 'HreRem.view.common.GridBase',
+    extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'tasacionesgastogrid',
 	topBar		: true,
 	targetGrid	: 'tasacionesgasto',
 	requires		: ['HreRem.model.TasacionesGasto'],
+	editOnSelect: false,
 
     bind: {
         store: '{storeTasacionesGasto}'
@@ -98,16 +99,8 @@ Ext.define('HreRem.view.gastos.detalle.TasacionesgastoGrid', {
 	onAddClick: function(btn){
 		
 		var me = this;
-		var rec = Ext.create(me.getStore().config.model);
-		me.getStore().sorters.clear();
-		me.editPosition = 0;
-		rec.setId(null);
-	    me.getStore().insert(me.editPosition, rec);
-	    me.rowEditing.isNew = true;
-	    me.rowEditing.startEdit(me.editPosition, 0);
-	    me.disableAddButton(true);
-	    me.disablePagingToolBar(true);
-	    me.disableRemoveButton(true);
+        var gasto = me.up('{viewModel}').getViewModel().get("gasto");
+        Ext.create("HreRem.view.gastos.SeleccionTasacionesGasto",{gasto: gasto, parent: btn.up('formBase')}).show();
 
    },
   

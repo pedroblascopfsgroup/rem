@@ -576,6 +576,14 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					        {   text: 'Tipo propietario', 
 					        	dataIndex: 'tipoPropietario',
 					        	flex:1 
+					        },
+					        {   text: HreRem.i18n('fieldlabel.anyo.concesion'), 
+					        	dataIndex: 'anyoConcesion',
+					        	flex:1 
+					        },
+					        {   text: HreRem.i18n('fiedlabel.fecha.fin.concesion'), 
+					        	dataIndex: 'fechaFinConcesion',
+					        	flex:1 
 					        }	               	        
 					    ],
 

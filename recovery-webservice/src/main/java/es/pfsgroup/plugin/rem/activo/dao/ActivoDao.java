@@ -10,40 +10,7 @@ import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
-import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativaAdicional;
-import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
-import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoSuministros;
-import es.pfsgroup.plugin.rem.model.ActivoTasacion;
-import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
-import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
-import es.pfsgroup.plugin.rem.model.AuxiliarCierreOficinasBankiaMul;
-import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
-import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
-import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
-import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoOcupadoTitulo;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
-import es.pfsgroup.plugin.rem.model.DtoLlaves;
-import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
-import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
-import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
-import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
-import es.pfsgroup.plugin.rem.model.HistoricoRequisitosFaseVenta;
-import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
-import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
-import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
+import es.pfsgroup.plugin.rem.model.*;
 
 public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
@@ -426,4 +393,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	boolean isCarteraCaixa(Long idActivo);
 
 	boolean isCarteraCaixa(Activo activo);
+
+    Page findTasaciones(DtoFiltroTasaciones dto);
 }

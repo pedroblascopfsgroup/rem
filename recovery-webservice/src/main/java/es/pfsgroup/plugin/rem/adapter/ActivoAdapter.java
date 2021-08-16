@@ -1855,6 +1855,13 @@ public class ActivoAdapter {
 					}
 						BeanUtils.copyProperty(propietarioDto, "tipoPropietario",
 							"Principal");
+					if (!Checks.esNulo(propietario.getAnyoConcesion())) {
+						BeanUtils.copyProperty(propietarioDto, "anyoConcesion",
+								propietario.getAnyoConcesion());
+					}if (!Checks.esNulo(propietario.getFechaFinConcesion())) {
+						BeanUtils.copyProperty(propietarioDto, "fechaFinConcesion",
+								propietario.getFechaFinConcesion());
+					}
 
 				} catch (IllegalAccessException e) {
 					logger.error("Error en ActivoAdapter", e);

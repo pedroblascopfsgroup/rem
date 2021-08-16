@@ -830,6 +830,25 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			}
 		},
 
+		seleccionTasacionesGasto : {
+			pageSize : $AC.getDefaultPageSize(),
+			model : 'HreRem.model.TasacionesGasto',
+			proxy : {
+				type : 'uxproxy',
+				localUrl : '/tasaciones.json',
+				remoteUrl : 'activo/findTasaciones',
+				actionMethods : {
+					read : 'POST'
+				}
+			},
+			remoteSort : true,
+			remoteFilter : true,
+			listeners : {
+				beforeload : 'paramLoadingTasaciones'
+
+			}
+		},
+
         storeTasacionesGasto : {
             pageSize : $AC.getDefaultPageSize(),
             model : 'HreRem.model.TasacionesGasto',

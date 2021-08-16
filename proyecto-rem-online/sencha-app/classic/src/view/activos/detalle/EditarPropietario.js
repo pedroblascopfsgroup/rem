@@ -140,7 +140,20 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 													   	value: '{propietario.tipoGradoPropiedadCodigo}',
 													   	store: '{comboGradoPropiedad}'
 													   		} 
-											}		    					        	
+											},
+											{
+												readOnly: true,
+												fieldLabel: HreRem.i18n('fieldlabel.anyo.concesion'),
+												name: 'anyoConcesion',
+												bind: '{propietario.anyoConcesion}'
+											},
+											{
+												readOnly: true,
+												fieldLabel: HreRem.i18n('fiedlabel.fecha.fin.concesion'),
+												name: 'fechaFinConcesion',
+												bind: '{propietario.fechaFinConcesion}'
+                                                
+											}			    					        	
 			    					    ]
 									},
 	    					        {

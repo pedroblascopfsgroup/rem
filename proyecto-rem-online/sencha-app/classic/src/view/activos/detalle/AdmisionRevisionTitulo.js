@@ -188,23 +188,6 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 				bind : {
 					value : '{admisionRevisionTitulo.observaciones}'
 				}
-			},
-			{
-				xtype: 'displayfieldbase',
-				fieldLabel : HreRem.i18n('fieldlabel.anyo.concesion'),
-				bind: {
-					value: '{admisionRevisionTitulo.anyoConcesion}',
-					hidden : '{!isCarteraBankia}'
-				}
-			},
-			{
-				xtype : 'datefieldbase',
-				readOnly:true,
-				fieldLabel : HreRem.i18n('fiedlabel.fecha.fin.concesion'),
-				bind : {
-					value : '{admisionRevisionTitulo.fechaFinConcesion}',
-					hidden : '{!isCarteraBankia}'
-				}
 			}
 			]
 		}, {

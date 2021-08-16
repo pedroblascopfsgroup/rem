@@ -24,6 +24,7 @@ import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicacionClientesResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.NonUniqueResultException;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -4392,6 +4393,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		Thread maestroPersona = new Thread( new MaestroDePersonas(idExpediente,usuarioLogado.getUsername(),cartera ));
 	   	maestroPersona.start();
+	}
+
+	public void llamadaMaestroPersonasRepresentante(Long idExpediente, String cartera) {
+
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		MaestroDePersonas maestroDePersonas = new MaestroDePersonas(idExpediente,usuarioLogado.getUsername(),cartera);
+		maestroDePersonas.setSession(hibernateUtils.getSessionFactory().getCurrentSession());
+		maestroDePersonas.llamadaRepresentante();
+
 	}
 
 	@Override

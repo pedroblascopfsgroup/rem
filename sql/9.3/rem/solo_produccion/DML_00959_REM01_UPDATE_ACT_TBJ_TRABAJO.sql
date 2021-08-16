@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210714
+--## FECHA_CREACION=202100810
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-10165
@@ -77,8 +77,9 @@ BEGIN
             V_MSQL:= 'SELECT TBJ_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE TBJ_NUM_TRABAJO = '||V_TMP_TIPO_DATA(1)||' AND BORRADO = 0';
             EXECUTE IMMEDIATE V_MSQL INTO V_TBJ_ID;
 
-            V_MSQL:= 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET                   
-                    TBJ_FECHA_FIN = TO_DATE('''|| TRIM(V_TMP_TIPO_DATA(2)) ||''', ''DD/MM/YYYY'') ,
+            V_MSQL:= 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET   
+                    TBJ_FECHA_FIN = NULL,
+                    TBJ_FECHA_EJECUTADO = TO_DATE('''|| TRIM(V_TMP_TIPO_DATA(2)) ||''', ''DD/MM/YYYY'') ,
                     USUARIOMODIFICAR = '''||V_USU||''',
                     FECHAMODIFICAR = SYSDATE
                     WHERE TBJ_ID = '||V_TBJ_ID||'';

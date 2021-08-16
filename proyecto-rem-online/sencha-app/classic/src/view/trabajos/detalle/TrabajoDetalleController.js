@@ -201,24 +201,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 				  }
 	      	});
 	      	
-	      	Ext.Ajax.request({
-				  url:urlComite,
-				  params:  {tipoTrabajo : codigoTrabajo, 
-					  		subtipoTrabajo : codigoSubtipoTrabajo,
-					  		cartera: codCartera,
-					  		subCartera: codSubcartera},
-				  success: function(response,opts){
-					  var decode = Ext.JSON.decode(response.responseText);
-					  var result = decode["data"];
-					  if(result == "true"){
-						  me.lookupReference('checkAplicaComite').setValue(true);
-						  me.onCheckChangeAplicaComite(null,null,false,null);
-					  }else{
-						me.lookupReference('checkAplicaComite').setValue(false);
-						me.onCheckChangeAplicaComite(null,null,true,null);
-					  }
-				  }
-	        	});
 	      	comboProveedor.setSelection(null);
 	      	me.lookupReference('proveedorContactoCombo2').setSelection(null);			
 			

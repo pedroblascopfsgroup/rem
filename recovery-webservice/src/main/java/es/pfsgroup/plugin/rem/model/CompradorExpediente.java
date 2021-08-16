@@ -238,6 +238,9 @@ public class CompradorExpediente implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "DD_VIC_ID")
 	private DDVinculoCaixa vinculoCaixa;
+
+	@Column(name = "CEX_ID_PERSONA_HAYA_REPR")
+	private Long idPersonaHayaRepresentante;
  
 	@Version   
 	private Long version;
@@ -791,5 +794,12 @@ public class CompradorExpediente implements Serializable, Auditable {
 	public void setVinculoCaixa(DDVinculoCaixa vinculoCaixa) {
 		this.vinculoCaixa = vinculoCaixa;
 	}
-   
+
+	public Long getIdPersonaHayaRepresentante() {
+		return idPersonaHayaRepresentante;
+	}
+
+	public void setIdPersonaHayaRepresentante(Long idPersonaHayaRepresentante) {
+		this.idPersonaHayaRepresentante = idPersonaHayaRepresentante;
+	}
 }

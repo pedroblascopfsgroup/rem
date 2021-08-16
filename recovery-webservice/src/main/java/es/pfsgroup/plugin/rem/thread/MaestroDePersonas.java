@@ -124,6 +124,7 @@ public class MaestroDePersonas implements Runnable {
 				}
 				if (!Checks.estaVacio(listaPersonas)) {
 					for (CompradorExpediente compradorExpediente : listaPersonas) {
+						compradorExpediente = llamadaRepresentanteAsync(compradorExpediente,sessionObj);
 						if (Checks.esNulo(compradorExpediente.getIdPersonaHaya())
 								|| idPersonaHayaNoExiste.equals(compradorExpediente.getIdPersonaHaya())) {
 							personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_ORIGEN);
@@ -178,7 +179,7 @@ public class MaestroDePersonas implements Runnable {
 									}else {
 										tmpClienteGDPR.setNumDocumento(personaDto.getIdPersonaOrigen());
 										genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
-									}									
+									}
 								} else if (ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription())) {
 									Criteria criteria = sessionObj.createCriteria(TmpClienteGDPR.class);
 									criteria.add(Restrictions.eq("numDocumento",
@@ -223,12 +224,12 @@ public class MaestroDePersonas implements Runnable {
 							}
 							if(!Checks.esNulo(compradorExpediente.getIdPersonaHaya()) && !compradorExpediente.getIdPersonaHaya().equals(compradorIdhaya)){
 								comprador.setIdPersonaHaya(Long.valueOf(compradorExpediente.getIdPersonaHaya()));
-								genericDao.update(Comprador.class, comprador);								
+								genericDao.update(Comprador.class, comprador);
 							}
 						}
 					}
 				}
-				
+
 			// LLAMADA MAESTRO PERSONAS GDPR
 			} else if (!Checks.esNulo(numDocCliente)) {
 				String documento = null, idPersonaHaya = null;
@@ -259,7 +260,7 @@ public class MaestroDePersonas implements Runnable {
 					BeanUtils.copyProperties(personaOutputDto,gestorDocumentalMaestroManager
 							.ejecutar(personaDto));
 					//PersonaOutputDto personaOutputDto = new PersonaOutputDto();
-					
+
 					logger.info("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
 					logger.info("[MAESTRO DE PERSONAS] Datos de la respuesta: ".concat(!Checks.esNulo(personaOutputDto) ? personaOutputDto.toString() : "NULL"));
 
@@ -290,7 +291,7 @@ public class MaestroDePersonas implements Runnable {
 							criteria.add(Restrictions.eq("idPersonaHaya", Long.parseLong(personaOutputDto.getIdIntervinienteHaya())));
 							criteria.add(Restrictions.eq("numDocumento", documento));
 							TmpClienteGDPR tmpClienteGDPR = HibernateUtils.castObject(TmpClienteGDPR.class, criteria.uniqueResult());
-							
+
 							if(Checks.esNulo(tmpClienteGDPR)) {
 								tmpClienteGDPR = new TmpClienteGDPR();
 								tmpClienteGDPR.setIdPersonaHaya(Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));
@@ -301,7 +302,7 @@ public class MaestroDePersonas implements Runnable {
 							Criteria criteria = sessionObj.createCriteria(TmpClienteGDPR.class);
 							criteria.add(Restrictions.eq("numDocumento", documento));
 							TmpClienteGDPR tmpClienteGDPR = HibernateUtils.castObject(TmpClienteGDPR.class, criteria.uniqueResult());
-							
+
 							if(Checks.esNulo(tmpClienteGDPR)) {
 								tmpClienteGDPR = new TmpClienteGDPR();
 								tmpClienteGDPR.setIdPersonaHaya(Long.parseLong(idPersonaSimulado.toString()));
@@ -323,7 +324,7 @@ public class MaestroDePersonas implements Runnable {
 							}
 							genericDao.update(ClienteComercial.class, clc);
 
-						}						
+						}
 					} else if(!Checks.esNulo(personaOutputDto) && !Checks.esNulo(comprador)) {
 						if(!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
 							comprador.setIdPersonaHaya(Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));
@@ -335,7 +336,7 @@ public class MaestroDePersonas implements Runnable {
 						genericDao.update(Comprador.class, comprador);
 					}
 				}
-				
+
 			// LLAMADA MAESTRO PERSONAS PROVEEDOR
 			} else if (!Checks.esNulo(codProveedorRem)) {
 				String idPersonaHaya = null;
@@ -361,7 +362,7 @@ public class MaestroDePersonas implements Runnable {
 					BeanUtils.copyProperties(personaOutputDto,gestorDocumentalMaestroManager
 							.ejecutar(personaDto));
 					//PersonaOutputDto personaOutputDto = new PersonaOutputDto();
-					
+
 					logger.info("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
 					logger.info("[MAESTRO DE PERSONAS] Datos de la respuesta: ".concat(!Checks.esNulo(personaOutputDto) ? personaOutputDto.toString() : "NULL"));
 
@@ -583,4 +584,232 @@ public class MaestroDePersonas implements Runnable {
 		this.syncSession=session;
 	}
 
+	private CompradorExpediente llamadaRepresentanteAsync(CompradorExpediente compradorExpediente,Session sessionObj){
+
+		Integer idPersonaSimulado = (int) (Math.random() * 1000000) + 1;
+
+		if (compradorExpediente.getDocumentoRepresentante() != null && (Checks.esNulo(compradorExpediente.getIdPersonaHayaRepresentante())
+				|| idPersonaHayaNoExiste.equals(compradorExpediente.getIdPersonaHayaRepresentante()))){
+			personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_ORIGEN);
+			personaDto.setIdPersonaOrigen(
+					compradorExpediente.getDocumentoRepresentante());
+			personaDto.setIdIntervinienteHaya(PersonaInputDto.ID_INTERVINIENTE_HAYA);
+			personaDto.setIdCliente(cartera);
+			logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
+			logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
+			personaOutputDto = new PersonaOutputDto();
+			BeanUtils.copyProperties(gestorDocumentalMaestroManager
+					.ejecutar(personaDto), personaOutputDto);
+
+			logger.info("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
+			logger.info("[MAESTRO DE PERSONAS] Datos de la respuesta: "
+					.concat(personaOutputDto.toString()));
+
+			if (Checks.esNulo(personaOutputDto)) {
+				logger.info("[MAESTRO DE PERSONAS] personaOutputDto ES NULO");
+			} else if (Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
+				logger.info("[MAESTRO DE PERSONAS] getIdIntervinienteHaya ES NULO");
+
+				SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+				String today = df.format(new Date());
+
+				logger.info("[MAESTRO DE PERSONAS] GENERANDO ID PERSONA");
+				personaDto.setEvent(PersonaInputDto.EVENTO_ALTA_PERSONA);
+				personaDto.setIdCliente(ID_CLIENTE_HAYA);
+				personaDto.setIdPersonaOrigen(
+						compradorExpediente.getDocumentoRepresentante());
+				personaDto.setIdMotivoOperacion(MOTIVO_OPERACION_ALTA);
+				personaDto.setIdOrigen(ID_ORIGEN_REM);
+				personaDto.setFechaOperacion(today);
+				personaDto.setIdTipoIdentificador(ID_TIPO_IDENTIFICADOR_NIF_CIF);
+				personaDto.setIdRol(ID_ROL_16);
+
+				BeanUtils.copyProperties(gestorDocumentalMaestroManager
+						.ejecutar(personaDto), personaOutputDto);
+
+				logger.info("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES "
+						+ personaOutputDto.getIdIntervinienteHaya());
+				if (!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
+					Criteria criteria = sessionObj.createCriteria(TmpClienteGDPR.class);
+					criteria.add(Restrictions.eq("idPersonaHaya", Long.valueOf(personaOutputDto.getIdIntervinienteHaya())));
+					TmpClienteGDPR tmpClienteGDPR = HibernateUtils.castObject(TmpClienteGDPR.class,
+							criteria.uniqueResult());
+					if (tmpClienteGDPR == null) {
+						tmpClienteGDPR = new TmpClienteGDPR();
+						tmpClienteGDPR.setIdPersonaHaya(Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));
+						tmpClienteGDPR.setNumDocumento(personaDto.getIdPersonaOrigen());
+						genericDao.save(TmpClienteGDPR.class, tmpClienteGDPR);
+					} else {
+						tmpClienteGDPR.setNumDocumento(personaDto.getIdPersonaOrigen());
+						genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
+					}
+				} else if (ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription())) {
+					Criteria criteria = sessionObj.createCriteria(TmpClienteGDPR.class);
+					criteria.add(Restrictions.eq("numDocumento",
+							compradorExpediente.getDocumentoRepresentante()));
+					TmpClienteGDPR tmpClienteGDPR = HibernateUtils.castObject(TmpClienteGDPR.class,
+							criteria.uniqueResult());
+
+					if (Checks.esNulo(tmpClienteGDPR)) {
+						tmpClienteGDPR = new TmpClienteGDPR();
+						tmpClienteGDPR.setIdPersonaHaya(Long.parseLong(idPersonaSimulado.toString()));
+						tmpClienteGDPR.setNumDocumento(personaDto.getIdPersonaOrigen());
+						if (sessionObj.contains(tmpClienteGDPR)) {
+							sessionObj.merge(tmpClienteGDPR);
+						} else {
+							genericDao.save(TmpClienteGDPR.class, tmpClienteGDPR);
+						}
+					}
+				}
+			} else {
+				logger.info("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES "
+						+ personaOutputDto.getIdIntervinienteHaya());
+			}
+
+			if (!Checks.esNulo(personaOutputDto)) {
+				Long personaHaya = null;
+				if (!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
+					personaHaya = Long.valueOf(personaOutputDto.getIdIntervinienteHaya());
+					compradorExpediente.setIdPersonaHayaRepresentante(personaHaya);
+				} else if (ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription())) {
+					personaHaya = Long.valueOf(idPersonaSimulado);
+					compradorExpediente.setIdPersonaHayaRepresentante(Long.valueOf(idPersonaSimulado));
+				} else {
+					personaHaya = Long.valueOf(idPersonaHayaNoExiste);
+					compradorExpediente.setIdPersonaHayaRepresentante(personaHaya);
+				}
+				compradorExpediente.setIdPersonaHayaRepresentante(Long.valueOf(personaHaya));
+
+			}
+		}
+
+		return compradorExpediente;
+
+	}
+
+	public void llamadaRepresentante(){
+
+		Session sessionObj = null;
+		List<CompradorExpediente> listaPersonas = null;
+		Integer idPersonaSimulado = (int) (Math.random() * 1000000) + 1;
+		try {
+			sessionObj = syncSession;
+			if (!Checks.esNulo(expedienteComercial)) {
+				ExpedienteComercial expedienteCom = llamadaExpedienteComercial(sessionObj);
+				if (!Checks.esNulo(expedienteCom.getCompradores())) {
+					listaPersonas = expedienteCom.getCompradores();
+				}
+				if (!Checks.estaVacio(listaPersonas)) {
+					for (CompradorExpediente compradorExpediente : listaPersonas) {
+						if (Checks.esNulo(compradorExpediente.getIdPersonaHayaRepresentante())
+								|| idPersonaHayaNoExiste.equals(compradorExpediente.getIdPersonaHayaRepresentante())) {
+
+							if (compradorExpediente.getDocumentoRepresentante() != null) {
+								personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_ORIGEN);
+								personaDto.setIdPersonaOrigen(
+										compradorExpediente.getDocumentoRepresentante());
+								personaDto.setIdIntervinienteHaya(PersonaInputDto.ID_INTERVINIENTE_HAYA);
+								personaDto.setIdCliente(cartera);
+								logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
+								logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
+								personaOutputDto = new PersonaOutputDto();
+								BeanUtils.copyProperties(gestorDocumentalMaestroManager
+										.ejecutar(personaDto), personaOutputDto);
+
+								logger.info("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
+								logger.info("[MAESTRO DE PERSONAS] Datos de la respuesta: "
+										.concat(personaOutputDto.toString()));
+
+								if (Checks.esNulo(personaOutputDto)) {
+									logger.info("[MAESTRO DE PERSONAS] personaOutputDto ES NULO");
+								} else if (Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
+									logger.info("[MAESTRO DE PERSONAS] getIdIntervinienteHaya ES NULO");
+
+									SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+									String today = df.format(new Date());
+
+									logger.info("[MAESTRO DE PERSONAS] GENERANDO ID PERSONA");
+									personaDto.setEvent(PersonaInputDto.EVENTO_ALTA_PERSONA);
+									personaDto.setIdCliente(ID_CLIENTE_HAYA);
+									personaDto.setIdPersonaOrigen(
+											compradorExpediente.getDocumentoRepresentante());
+									personaDto.setIdMotivoOperacion(MOTIVO_OPERACION_ALTA);
+									personaDto.setIdOrigen(ID_ORIGEN_REM);
+									personaDto.setFechaOperacion(today);
+									personaDto.setIdTipoIdentificador(ID_TIPO_IDENTIFICADOR_NIF_CIF);
+									personaDto.setIdRol(ID_ROL_16);
+
+									BeanUtils.copyProperties(gestorDocumentalMaestroManager
+											.ejecutar(personaDto), personaOutputDto);
+
+									logger.info("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES "
+											+ personaOutputDto.getIdIntervinienteHaya());
+									if (!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
+										Criteria criteria = sessionObj.createCriteria(TmpClienteGDPR.class);
+										criteria.add(Restrictions.eq("idPersonaHaya", Long.valueOf(personaOutputDto.getIdIntervinienteHaya())));
+										TmpClienteGDPR tmpClienteGDPR = HibernateUtils.castObject(TmpClienteGDPR.class,
+												criteria.uniqueResult());
+										if (tmpClienteGDPR == null) {
+											tmpClienteGDPR = new TmpClienteGDPR();
+											tmpClienteGDPR.setIdPersonaHaya(Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));
+											tmpClienteGDPR.setNumDocumento(personaDto.getIdPersonaOrigen());
+											genericDao.save(TmpClienteGDPR.class, tmpClienteGDPR);
+										} else {
+											tmpClienteGDPR.setNumDocumento(personaDto.getIdPersonaOrigen());
+											genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
+										}
+									} else if (ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription())) {
+										Criteria criteria = sessionObj.createCriteria(TmpClienteGDPR.class);
+										criteria.add(Restrictions.eq("numDocumento",
+												compradorExpediente.getDocumentoRepresentante()));
+										TmpClienteGDPR tmpClienteGDPR = HibernateUtils.castObject(TmpClienteGDPR.class,
+												criteria.uniqueResult());
+
+										if (Checks.esNulo(tmpClienteGDPR)) {
+											tmpClienteGDPR = new TmpClienteGDPR();
+											tmpClienteGDPR.setIdPersonaHaya(Long.parseLong(idPersonaSimulado.toString()));
+											tmpClienteGDPR.setNumDocumento(personaDto.getIdPersonaOrigen());
+											if (sessionObj.contains(tmpClienteGDPR)) {
+												sessionObj.merge(tmpClienteGDPR);
+											} else {
+												genericDao.save(TmpClienteGDPR.class, tmpClienteGDPR);
+											}
+										}
+									}
+								} else {
+									logger.info("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES "
+											+ personaOutputDto.getIdIntervinienteHaya());
+								}
+
+								if (!Checks.esNulo(personaOutputDto)) {
+									Long personaHaya = null;
+									if (!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
+										personaHaya = Long.valueOf(personaOutputDto.getIdIntervinienteHaya());
+										compradorExpediente.setIdPersonaHayaRepresentante(personaHaya);
+									} else if (ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription())) {
+										personaHaya = Long.valueOf(idPersonaSimulado);
+										compradorExpediente.setIdPersonaHayaRepresentante(Long.valueOf(idPersonaSimulado));
+									} else {
+										personaHaya = Long.valueOf(idPersonaHayaNoExiste);
+										compradorExpediente.setIdPersonaHayaRepresentante(personaHaya);
+									}
+									compradorExpediente.setIdPersonaHayaRepresentante(Long.valueOf(personaHaya));
+									if (sessionObj.contains(compradorExpediente)) {
+										sessionObj.merge(compradorExpediente);
+									} else {
+										genericDao.update(CompradorExpediente.class, compradorExpediente);
+									}
+								}
+							}
+						}
+					}
+				}
+
+				sessionObj.flush();
+				// LLAMADA MAESTRO PERSONAS GDPR
+			}
+		} catch (Exception e) {
+			logger.error("Error maestro de personas", e);
+		}
+	}
 }

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api.services.webcom.dto;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.BooleanDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DoubleDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
@@ -31,6 +32,8 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	private DateDataType fechaAlquiler;
 	private BooleanDataType necesidadIf;
 	private BooleanDataType exclusionIf;
+	private DoubleDataType importe;
+
 	
 	public LongDataType getIdUsuarioRemAccion() {
 		return idUsuarioRemAccion;
@@ -134,6 +137,12 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	public void setExclusionIf(BooleanDataType exclusionIf) {
 		this.exclusionIf = exclusionIf;
 	}
-	
+	public DoubleDataType getImporte() {
+		return importe;
+	}
+	public void setImporte(DoubleDataType importe) {
+		this.importe = importe;
+	}
+
 
 }

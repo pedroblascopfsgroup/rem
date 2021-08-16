@@ -370,6 +370,8 @@ public interface ParticularValidatorApi {
 	boolean existeGestoriaDeFormalizacionByUsername(String username);
 
 	boolean existeSubCarteraByCod(String codSubCartera);
+	
+	boolean existeCarteraByCod(String codCartera);
 
 	boolean existeTipoActivoByCod(String codTipoActivo);
 

@@ -69,7 +69,7 @@ public class MSVActualizadorActualizacionLPOCargaMasiva extends AbstractMSVActua
 			}else if (lpo.equals(NO) || lpo.equals("N")){
 				activoAdmisionDocumento.setAplica(false);
 			}
-			activoAdmisionDocumento.setNoValidado(true);
+			activoAdmisionDocumento.setNoValidado(false);
 			activoAdmisionDocumento.setEstadoDocumento(genericDao.get(DDEstadoDocumento.class, filterEstado));
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			activoAdmisionDocumento.setFechaSolicitud(format.parse(exc.dameCelda(fila, ACT_FECHA_SOLICITUD)));

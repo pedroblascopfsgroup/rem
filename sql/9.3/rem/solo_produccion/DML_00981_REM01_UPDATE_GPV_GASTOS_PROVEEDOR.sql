@@ -1,0 +1,123 @@
+--/*
+--######################################### 
+--## AUTOR=Carlos Santos Vílchez
+--## FECHA_CREACION=20210729
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-10230
+--## PRODUCTO=NO
+--##            
+--## INSTRUCCIONES:  Modificar gastos
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+DECLARE
+
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejECVtar    
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+	V_USU VARCHAR2(30 CHAR) := 'REMVIP-10230';
+	V_NUM_TABLAS NUMBER(16);
+	V_ID NUMBER(16);
+	V_COUNT NUMBER(16);
+
+	TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+		T_TIPO_DATA('13954695'),
+		T_TIPO_DATA('13954696'),
+		T_TIPO_DATA('13954697'),
+		T_TIPO_DATA('13954698'),
+		T_TIPO_DATA('13954699'),
+		T_TIPO_DATA('13954700'),
+		T_TIPO_DATA('13954701'),
+		T_TIPO_DATA('13954702'),
+		T_TIPO_DATA('13954703'),
+		T_TIPO_DATA('13954704'),
+		T_TIPO_DATA('13954705'),
+		T_TIPO_DATA('13954706'),
+		T_TIPO_DATA('13954707'),
+		T_TIPO_DATA('13954708'),
+		T_TIPO_DATA('13954709'),
+		T_TIPO_DATA('13954710'),
+		T_TIPO_DATA('13954711'),
+		T_TIPO_DATA('13954712'),
+		T_TIPO_DATA('13954713'),
+		T_TIPO_DATA('13954714'),
+		T_TIPO_DATA('13954715'),
+		T_TIPO_DATA('13954716')
+
+    ); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+    
+BEGIN
+
+	 -- LOOP para insertar los valores --
+    DBMS_OUTPUT.PUT_LINE('[INFO]: UPDATE EN GPV_GASTOS_PROVEEDOR');
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+
+    LOOP
+	V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+
+		V_MSQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = '||V_TMP_TIPO_DATA(1)||'';
+		EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
+
+		IF V_COUNT > 0 THEN	
+
+			V_MSQL := 'SELECT GPV_ID FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = '||V_TMP_TIPO_DATA(1)||'';
+			EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
+
+			V_MSQL:= 'UPDATE '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR SET 
+						DD_EGA_ID = (SELECT DD_EGA_ID FROM '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = ''01''),
+						USUARIOMODIFICAR = '''||V_USU||''',
+						FECHAMODIFICAR = SYSDATE
+						WHERE GPV_ID = '||V_ID||'';
+			EXECUTE IMMEDIATE V_MSQL;
+
+			V_MSQL:= 'UPDATE '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE SET 
+						GLD_CCC_BASE = ''6312000'',
+						GLD_CPP_BASE = ''PP054'',
+						USUARIOMODIFICAR = '''||V_USU||''',
+						FECHAMODIFICAR = SYSDATE
+						WHERE GPV_ID = '||V_ID||'';
+			EXECUTE IMMEDIATE V_MSQL;
+			
+			DBMS_OUTPUT.PUT_LINE('[INFO] GASTO '||V_TMP_TIPO_DATA(1)||' MODIFICADO');
+
+		ELSE 
+
+			DBMS_OUTPUT.PUT_LINE('[INFO] NO EXISTE EL GASTO '||V_TMP_TIPO_DATA(1)||'');
+
+		END IF;
+        
+	END LOOP;
+
+    COMMIT;
+
+EXCEPTION
+     WHEN OTHERS THEN 
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejECVción:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+
+/
+
+EXIT;

@@ -99,6 +99,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     public static final String CODIGO_FIN = "Fin";
     private static final String CODIGO_T004_SOLICITUD_EXTRAORDINARIA = "T004_SolicitudExtraordinaria";
     private static final String CODIGO_GESTOR_FORMALIZACION = "GFORM";
+    private static final String CODIGO_T011_ANALISIS_PETICION_CORRECCION = "T011_AnalisisPeticionCorreccion";
     
     
     protected final Log logger = LogFactory.getLog(getClass());
@@ -761,7 +762,14 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 				}
 			}
 			
-		} else if(!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getTareaProcedimiento()) && 
+		}else if(!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getTareaProcedimiento()) 
+				&& CODIGO_T011_ANALISIS_PETICION_CORRECCION.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+				&& cartera.getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)){
+			
+					tareaActivo.setUsuario(usuarioManager.getByUsername("rabad"));
+			
+			 
+		}else if(!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getTareaProcedimiento()) && 
 				(!tareaExterna.getTareaProcedimiento().getTipoProcedimiento().getCodigo().equals("T004") ||
 				(CODIGO_T004_RESULTADO_TARIFICADA.equals(tareaExterna.getTareaProcedimiento().getCodigo()))||
 				(CODIGO_T004_RESULTADO_NOTARIFICADA.equals(tareaExterna.getTareaProcedimiento().getCodigo()))||

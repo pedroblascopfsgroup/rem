@@ -53,7 +53,9 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	public static final String ACTIVE_EXISTS = "El activo existe.";
 	public static final String ACTIVE_IS_NULL = "El activo no puede ser nulo.";
 	public static final String CARTERA_IS_NULL = "La cartera del activo no puede estar vacío.";
+	public static final String CARTERA_NOT_EXISTS = "La cartera indicada no existe";
 	public static final String SUBCARTERA_IS_NULL = "La subcartera del activo no puede estar vacia";
+	public static final String SUBCARTERA_NOT_EXISTS = "La subcartera indicada no existe";
 	public static final String SUBCARTERA_CARTERA_INCORRECTA = "La subcartera no pertenece a la cartera indicada";
 	public static final String TIPO_TITULO_IS_NULL = "El tipo de título del activo no puede estar vacío.";
 	public static final String TIPO_TITULO_CARTERA_INCORRECTA = "No de puede dar de alta dicho tipo de activo para la cartera indicada";
@@ -362,6 +364,8 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(MUNICIPIO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_MUNICIPIO));
 			mapaErrores.put(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS,
 					isCodigoUnidadInferiorMunicipioValido(exc, COL_NUM.COD_UNIDAD_MUNICIPIO));
+			mapaErrores.put(CARTERA_NOT_EXISTS, carteraNotExistsByRows(exc, COL_NUM.COD_CARTERA));
+			mapaErrores.put(SUBCARTERA_NOT_EXISTS, subcarteraNotExistsByRows(exc, COL_NUM.COD_SUBCARTERA));
 
 			if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(ACTIVE_IS_NULL).isEmpty()
 					|| !mapaErrores.get(CARTERA_IS_NULL).isEmpty()
@@ -438,7 +442,11 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(PARCELA_REGISTRO_IS_NAN).isEmpty()
 					|| !mapaErrores.get(PORCENTAJE_IS_NAN).isEmpty() || !mapaErrores.get(CODIGO_POSTAL_IS_NAN).isEmpty()
 					|| !mapaErrores.get(PORCENTAJE_SUPERIOR).isEmpty() || !mapaErrores.get(FINCA_IS_NULL).isEmpty()
-					|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS).isEmpty()) {
+					|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(CARTERA_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(SUBCARTERA_NOT_EXISTS).isEmpty()) {
 
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -1446,6 +1454,54 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> carteraNotExistsByRows(MSVHojaExcel exc, int columnNumber){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++){
+			try{
+				if (!particularValidator.existeCarteraByCod(exc.dameCelda(i, columnNumber)))
+					listaFilas.add(i);
+			} catch (IllegalArgumentException e){
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (IOException e){
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (ParseException e){
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> subcarteraNotExistsByRows(MSVHojaExcel exc, int columnNumber){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++){
+			try{
+				if (!particularValidator.existeSubCarteraByCod(exc.dameCelda(i, columnNumber)))
+					listaFilas.add(i);
+			} catch (IllegalArgumentException e){
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (IOException e){
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (ParseException e){
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			}
 		}
 		

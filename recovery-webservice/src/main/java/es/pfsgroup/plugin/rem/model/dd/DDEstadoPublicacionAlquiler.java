@@ -33,6 +33,7 @@ public class DDEstadoPublicacionAlquiler implements Auditable, Dictionary {
 	public static final String CODIGO_PRE_PUBLICADO_ALQUILER = "02";
 	public static final String CODIGO_PUBLICADO_ALQUILER = "03";
 	public static final String CODIGO_OCULTO_ALQUILER = "04";
+	public static final String DESCRIPCION_NO_PUBLICADO_ALQUILER = "No Publicado Alquiler";
 
 	@Id
 	@Column(name = "DD_EPA_ID")

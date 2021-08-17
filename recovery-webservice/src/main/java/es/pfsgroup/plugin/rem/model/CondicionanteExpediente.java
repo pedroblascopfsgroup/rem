@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenFianzaCCAA;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -344,6 +345,50 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     
     @Column(name="COE_VENCIMIENTO_AVAL")
     private Date fechaVencimientoAval;
+    
+    @Column(name="COE_ADECUACIONES")
+    private Boolean adecuaciones;
+    
+    @Column(name="COE_CERTIFICACIONES")
+    private Boolean certificaciones;
+    
+    @Column(name="COE_DER_CESION_ARREND")
+    private Boolean derechoCesionSubarriendo;
+    
+    @Column(name="COE_FECHA_PREAVISO_VENC_CONT")
+    private Date fechaPreavisoVencimientoCnt;
+    
+    @Column(name="COE_FECHA_INGR_ARREND")
+    private Date fechaIngresoFianzaArrendatario;
+    
+    @Column(name="COE_ANT_DEUDOR_LOCALIZABLE")
+    private Boolean antiguoDeudorLocalizable;
+    
+    @Column(name="COE_CNT_SUSCR_POST_ADJ")
+    private Boolean cntSuscritoPosteridadAdj;
+    
+    @Column(name="COE_OFR_NUEVAS_CONDICIONES")
+    private Boolean ofrNuevasCondiciones;
+    
+    @Column(name="COE_ENTREGAS_CUENTA")
+    private Boolean entregasCuenta;
+    
+    @Column(name="COE_IMPORTE_ENTREGAS_CUENTA")
+    private Double importeEntregasCuenta;
+    
+    @Column(name="COE_RENTAS_CUENTA")
+    private Boolean rentasCuenta;
+    
+    @Column(name="COE_FIANZAS_CNT_SUBROGADOS")
+    private Boolean fianzaContratosSubrogados;
+    
+    @Column(name="COE_VULNERABILIDAD_DETECTADA")
+    private Boolean vulnerabilidadDetectada;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_RFC_ID")
+	private DDRegimenFianzaCCAA regimenFianzaCCAA;
+
 
 	@Version   
 	private Long version;
@@ -1084,6 +1129,118 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 
 	public void setFechaVencimientoAval(Date fechaVencimientoAval) {
 		this.fechaVencimientoAval = fechaVencimientoAval;
+	}
+
+	public Boolean getAdecuaciones() {
+		return adecuaciones;
+	}
+
+	public void setAdecuaciones(Boolean adecuaciones) {
+		this.adecuaciones = adecuaciones;
+	}
+
+	public Boolean getCertificaciones() {
+		return certificaciones;
+	}
+
+	public void setCertificaciones(Boolean certificaciones) {
+		this.certificaciones = certificaciones;
+	}
+
+	public Boolean getDerechoCesionSubarriendo() {
+		return derechoCesionSubarriendo;
+	}
+
+	public void setDerechoCesionSubarriendo(Boolean derechoCesionSubarriendo) {
+		this.derechoCesionSubarriendo = derechoCesionSubarriendo;
+	}
+
+	public Date getFechaPreavisoVencimientoCnt() {
+		return fechaPreavisoVencimientoCnt;
+	}
+
+	public void setFechaPreavisoVencimientoCnt(Date fechaPreavisoVencimientoCnt) {
+		this.fechaPreavisoVencimientoCnt = fechaPreavisoVencimientoCnt;
+	}
+
+	public Date getFechaIngresoFianzaArrendatario() {
+		return fechaIngresoFianzaArrendatario;
+	}
+
+	public void setFechaIngresoFianzaArrendatario(Date fechaIngresoFianzaArrendatario) {
+		this.fechaIngresoFianzaArrendatario = fechaIngresoFianzaArrendatario;
+	}
+
+	public Boolean getAntiguoDeudorLocalizable() {
+		return antiguoDeudorLocalizable;
+	}
+
+	public void setAntiguoDeudorLocalizable(Boolean antiguoDeudorLocalizable) {
+		this.antiguoDeudorLocalizable = antiguoDeudorLocalizable;
+	}
+
+	public Boolean getCntSuscritoPosteridadAdj() {
+		return cntSuscritoPosteridadAdj;
+	}
+
+	public void setCntSuscritoPosteridadAdj(Boolean cntSuscritoPosteridadAdj) {
+		this.cntSuscritoPosteridadAdj = cntSuscritoPosteridadAdj;
+	}
+
+	public Boolean getOfrNuevasCondiciones() {
+		return ofrNuevasCondiciones;
+	}
+
+	public void setOfrNuevasCondiciones(Boolean ofrNuevasCondiciones) {
+		this.ofrNuevasCondiciones = ofrNuevasCondiciones;
+	}
+
+	public Boolean getEntregasCuenta() {
+		return entregasCuenta;
+	}
+
+	public void setEntregasCuenta(Boolean entregasCuenta) {
+		this.entregasCuenta = entregasCuenta;
+	}
+
+	public Double getImporteEntregasCuenta() {
+		return importeEntregasCuenta;
+	}
+
+	public void setImporteEntregasCuenta(Double importeEntregasCuenta) {
+		this.importeEntregasCuenta = importeEntregasCuenta;
+	}
+
+	public Boolean getRentasCuenta() {
+		return rentasCuenta;
+	}
+
+	public void setRentasCuenta(Boolean rentasCuenta) {
+		this.rentasCuenta = rentasCuenta;
+	}
+
+	public Boolean getFianzaContratosSubrogados() {
+		return fianzaContratosSubrogados;
+	}
+
+	public void setFianzaContratosSubrogados(Boolean fianzaContratosSubrogados) {
+		this.fianzaContratosSubrogados = fianzaContratosSubrogados;
+	}
+
+	public Boolean getVulnerabilidadDetectada() {
+		return vulnerabilidadDetectada;
+	}
+
+	public void setVulnerabilidadDetectada(Boolean vulnerabilidadDetectada) {
+		this.vulnerabilidadDetectada = vulnerabilidadDetectada;
+	}
+
+	public DDRegimenFianzaCCAA getRegimenFianzaCCAA() {
+		return regimenFianzaCCAA;
+	}
+
+	public void setRegimenFianzaCCAA(DDRegimenFianzaCCAA regimenFianzaCCAA) {
+		this.regimenFianzaCCAA = regimenFianzaCCAA;
 	}
 	
 

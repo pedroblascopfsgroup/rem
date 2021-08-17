@@ -17,24 +17,17 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
@@ -203,7 +196,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComision;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoCostes;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -225,12 +217,8 @@ import es.pfsgroup.plugin.rem.rest.dto.ComunicacionBoardingResponse;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
-import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorRequest;
 import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorResponse;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
-import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
-import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
-import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
@@ -6878,7 +6866,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			 
 			 if(codCartera.equals(DDCartera.CODIGO_CARTERA_BANKIA))
 				return (codSubcartera.equals(DDSubcartera.CODIGO_BAN_BK) || codSubcartera.equals(DDSubcartera.CODIGO_BAN_BH) 
-						|| codSubcartera.equals(DDSubcartera.CODIGO_BAN_BFA) || codSubcartera.equals(DDSubcartera.CODIGO_BANKIA_SAREB) || codSubcartera.equals(DDSubcartera.CODIGO_BAN_TITULIZADA));
+						|| codSubcartera.equals(DDSubcartera.CODIGO_BANKIA_SAREB) || codSubcartera.equals(DDSubcartera.CODIGO_BAN_TITULIZADA));
 			 
 			 else if (codCartera.equals(DDCartera.CODIGO_CARTERA_CAJAMAR))
 				 return (codSubcartera.equals(DDSubcartera.CODIGO_CAJ_INMOBILIARIO));
@@ -6908,6 +6896,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_THIRD_PARTY))
 		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_THIRD_PARTIES_COMERCIAL_ING) || codSubcartera.equals(DDSubcartera.CODIGO_OMEGA));
 		    					 
+		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_BFA))
+		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_BFA_BFA));
+			 
 		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_SIN_DEFINIR))
 		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_SIN_DEFINIR_INMB));
 			 

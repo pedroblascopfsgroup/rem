@@ -26,5 +26,11 @@ public interface IntegracionJupiterApi {
 	 * @throws Exception
 	 */
 	public void actualizarRolesDesdeJupiter(String username, String listaRoles) throws Exception;
+
+	/**
+	 * Establece el contexto de BD para que las tablas del esquema de entidad sean accesibles 
+	 * 
+	 */
+	public void setDBContext();
 	
 }

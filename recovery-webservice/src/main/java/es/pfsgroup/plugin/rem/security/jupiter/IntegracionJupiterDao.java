@@ -27,5 +27,7 @@ public interface IntegracionJupiterDao {
 	public void eliminarSubcarteras(Usuario usuario);
 
 	public Usuario crearUsuario(String username, String nombre, String apellidos, String email);
+
+	public List<String> getCodigodGruposPerfilesREM(List<String> codigosPerfilesJupiter);
 	
 }

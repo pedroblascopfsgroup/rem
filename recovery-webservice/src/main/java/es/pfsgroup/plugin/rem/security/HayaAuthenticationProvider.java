@@ -162,6 +162,7 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 	            logger.debug("OAuth2: apellidos >" + apellidos + "<");
 	            logger.debug("OAuth2: email >" + email + "<");
 
+	            integracionJupiterManager.setDBContext();
 	            integracionJupiterManager.actualizarInfoPersonal(username, nombre, apellidos, email);
 
 	            String perfilesrem = claimSetAccess.getStringClaim("perfilrem");

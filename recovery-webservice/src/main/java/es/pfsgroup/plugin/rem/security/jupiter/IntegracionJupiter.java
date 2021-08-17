@@ -1,34 +1,21 @@
 package es.pfsgroup.plugin.rem.security.jupiter;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import es.capgemini.devon.beans.Service;
-import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.users.dao.UsuarioDao;
-import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.capgemini.pfs.zona.model.DDZona;
-import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 @Service("integracionJupiter")
 public class IntegracionJupiter implements IntegracionJupiterApi {
@@ -48,6 +35,14 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 	
 	@Autowired
 	private TraductorCodigosJupiter traductor;
+
+	@Override
+	public void setDBContext() {
+		if (DbIdContextHolder.getDbId() <= 0) {
+			DbIdContextHolder.setDbId((long) 1);
+		}
+		
+	}
 	
 	@Override
 	@Transactional(readOnly = false)
@@ -55,7 +50,7 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 		
 		Assert.notNull(username, "username no puede ser null");
 		Assert.notNull(nombre, "nombre no puede ser null");
-		Assert.notNull(email, "apellidos no puede ser null");
+		Assert.notNull(email, "email no puede ser null");
 		
 		if (apellidos == null) {
 			apellidos = "";
@@ -129,7 +124,9 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 					List<String>  altasGrupos = new ArrayList<String>();
 					List<String>  bajasGrupos = new ArrayList<String>();
 					List<String> codigosGruposREM = integracionJupiterDao.getCodigodGruposREM(usuario);
+					List<String> codigosGruposPerfilesREM = integracionJupiterDao.getCodigodGruposPerfilesREM(codigosPerfilesJupiter);
 					obtenerListaAltasBajas(codigosGruposJupiter, codigosGruposREM, altasGrupos, bajasGrupos );
+					excluirBajasGruposPorPerfiles(bajasGrupos, codigosGruposPerfilesREM);
 					integracionJupiterDao.actualizarGrupos(usuario, altasGrupos, bajasGrupos);
 					
 					List<String> codigosPerfilesREM = integracionJupiterDao.getPerfilesREM(username);
@@ -160,6 +157,13 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 					+ " --- " + e.getCause());
 			}
 		}
+	}
+
+	// No vamos a dar de baja los grupos que provengan de perfiles
+	private void excluirBajasGruposPorPerfiles(List<String> bajasGrupos, List<String> codigosPerfilesJupiter) {
+		
+		bajasGrupos.removeAll(codigosPerfilesJupiter);
+		
 	}
 
 	private void obtenerListaAltasBajas(List<String> codigosJupiter, List<String> codigosREM,

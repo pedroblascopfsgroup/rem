@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
@@ -275,10 +274,6 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 			logger.fatal("Error al crear usuario en BD. Realizando rollback de la transacción: " + queryInsert);
 		}
 		
-		if (DbIdContextHolder.getDbId() <= 0) {
-			DbIdContextHolder.setDbId((long) 1);
-		}
-		
 		Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", username));
 		return usuario;
 	}
@@ -359,6 +354,18 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 		return listaCodigosPerfilREM;
 	}
 
+	@Override
+	public List<String> getCodigodGruposPerfilesREM(List<String> codigosPerfilesJupiter) {
+		List<String> resultado = new ArrayList<String>();
+		for (String codigoPerfil : codigosPerfilesJupiter) {
+			MapeoPerfilDespacho mpd = obtenerMapeoPerfilDespachoAlta(codigoPerfil); 
+			if (mpd != null && mpd.getCodigoGrupo() != null) {
+				resultado.add(mpd.getCodigoGrupo());
+			}
+		}
+		return resultado;
+	}
+	
 	private Filter obtenerFiltroPerfil(String codigoPerfil) {
 		return genericDao.createFilter(FilterType.EQUALS, PERFIL_CODIGO, codigoPerfil);
 	}
@@ -410,7 +417,7 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 	private void eliminarSubcarterasFiltro(Filter filtroUsuario, String username) {
 		Filter filtroSubCarteraNotNull = genericDao.createFilter(FilterType.NOTNULL, SUB_CARTERA);
 		genericDao.delete(UsuarioCartera.class, filtroUsuario, filtroSubCarteraNotNull);
-		logger.info("Eliminamos subcartera previamente asociada al usuario " + username);
+		logger.info("Eliminamos subcarteras previamente asociadas al usuario " + username);
 	}
 
 }

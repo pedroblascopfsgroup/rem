@@ -163,7 +163,13 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		
 		if (activo.getInfoRegistral() != null && !esUA) {
 			BeanUtils.copyProperties(activoDto, activo.getInfoRegistral());
-		}	
+		}
+
+		if(activo.getInfoRegistral() != null){
+			String nomReg = activo.getInfoRegistral().getRegNombreRegistro() != null ? activo.getInfoRegistral().getRegNombreRegistro() : "";
+			String numReg = activo.getInfoRegistral().getRegNumRegistro() != null ? activo.getInfoRegistral().getRegNumRegistro() : "";
+			activoDto.setNombreRegistro(nomReg + " " + numReg);
+		}
 		
 		if(esUA && !Checks.esNulo(activoMatriz)){
 			if (!Checks.esNulo(activoMatriz.getInfoRegistral())) {

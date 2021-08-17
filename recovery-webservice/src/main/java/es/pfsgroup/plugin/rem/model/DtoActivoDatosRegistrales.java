@@ -166,6 +166,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String sociedadOrigenDescripcion;
 	private String bancoOrigenCodigo;
 	private String bancoOrigenDescripcion;
+	private String nombreRegistro;
 	/*
 
     private NMBAdjudicacionBien adjudicacionBien;
@@ -968,5 +969,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	public void setBancoOrigenDescripcion(String bancoOrigenDescripcion) {
 		this.bancoOrigenDescripcion = bancoOrigenDescripcion;
 	}
-	
+
+	public String getNombreRegistro() {
+		return nombreRegistro;
+	}
+
+	public void setNombreRegistro(String nombreRegistro) {
+		this.nombreRegistro = nombreRegistro;
+	}
 }

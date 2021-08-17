@@ -34,6 +34,15 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				title: HreRem.i18n('title.datos.inscripcion'),				
 				items :
 					[
+		                {
+							fieldLabel: HreRem.i18n('fieldlabel.nombre.registro'),
+		                	bind: {
+		                		value: '{datosRegistrales.nombreRegistro}',
+		                		hidden: '{!isCarteraBankia}',
+                                readOnly: true
+		                	},
+		                	maskRe: /^\d*$/
+		                },
 						{
 							xtype: 'comboboxfieldbasedd',
 							fieldLabel: HreRem.i18n('fieldlabel.provincia.registro'),
@@ -44,7 +53,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			            		store: '{comboProvincia}',
 			            	    value: '{datosRegistrales.provinciaRegistro}',
 			            	    readOnly: '{datosRegistrales.unidadAlquilable}',
-								rawValue: '{datosRegistrales.provinciaRegistroDescripcion}'
+								rawValue: '{datosRegistrales.provinciaRegistroDescripcion}',
+								hidden: '{isCarteraBankia}'
 			            	},
     						listeners: {
 								select: 'onChangeChainedCombo'
@@ -70,7 +80,15 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
     						listeners: {
 			                	change:  'onHanCambiadoSelect'
 			            	}
-				        }, 
+				        },
+		                { //Campo duplicado para que se vea bien al quitar los campos Caixa
+					 		fieldLabel: HreRem.i18n('fieldlabel.libro'),
+					 		bind: {
+					 			value: '{datosRegistrales.libro}',
+					 			readOnly: '{datosRegistrales.unidadAlquilable}',
+                                hidden: '{!isCarteraBankia}'
+					 		}
+						},
 						{
 							xtype: 'comboboxfieldbasedd',
 							fieldLabel: HreRem.i18n('fieldlabel.poblacion.registro'),
@@ -81,7 +99,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			            		value: '{datosRegistrales.poblacionRegistro}',
 			            		disabled: '{!datosRegistrales.provinciaRegistro}',
 			            		readOnly: '{datosRegistrales.unidadAlquilable}',
-								rawValue: '{datosRegistrales.poblacionRegistroDescripcion}'
+								rawValue: '{datosRegistrales.poblacionRegistroDescripcion}',
+		                		hidden: '{isCarteraBankia}'
 			            	}
                       },
 		                { 
@@ -148,11 +167,21 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 
 								]
 				        },
+						{ //Campo duplicado para que se vea bien al quitar los campos Caixa
+							fieldLabel: HreRem.i18n('fieldlabel.folio'),
+							colspan: 2,
+							bind: {
+								value: '{datosRegistrales.folio}',
+								readOnly: '{datosRegistrales.unidadAlquilable}',
+                                hidden: '{!isCarteraBankia}'
+							}
+		                },
 		                { 
 							fieldLabel: HreRem.i18n('fieldlabel.numero.registro'),
 		                	bind: {
 		                		value: '{datosRegistrales.numRegistro}',
-		                		readOnly: '{datosRegistrales.unidadAlquilable}'
+		                		readOnly: '{datosRegistrales.unidadAlquilable}',
+		                		hidden: '{isCarteraBankia}'
 		                	},
 		                	maskRe: /^\d*$/
 		                },
@@ -189,7 +218,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					 		colspan: 2,
 					 		bind: {
 					 			value: '{datosRegistrales.libro}',
-					 			readOnly: '{datosRegistrales.unidadAlquilable}'
+					 			readOnly: '{datosRegistrales.unidadAlquilable}',
+                                hidden: '{isCarteraBankia}'
 					 		}
 						},
 						{ 
@@ -197,7 +227,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							colspan: 2,
 							bind: {
 								value: '{datosRegistrales.folio}',
-								readOnly: '{datosRegistrales.unidadAlquilable}'
+								readOnly: '{datosRegistrales.unidadAlquilable}',
+                                hidden: '{isCarteraBankia}'
 							}
 		                }
 					]

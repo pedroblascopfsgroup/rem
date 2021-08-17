@@ -626,6 +626,9 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
 			},
 			{
     			name:'bancoOrigenDescripcion'
+			},
+			{
+			    name:'nombreRegistro'
 			}
     ],
     

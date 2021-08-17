@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=PIER GOTTA
---## FECHA_CREACION=202106016
+--## FECHA_CREACION=20210813
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-14300
@@ -44,7 +44,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 	T_TIPO_DATA('01','700','Gasto OK, pendiente de aprobación.','09','03','05'),
-	T_TIPO_DATA('02','999','Gasto KO, pero se subsana en SAPBC (periodo contable cerrado, etc) y no requiere gestión por parte de Haya.', '09','03','01'),
+	T_TIPO_DATA('02','999','Gasto KO, pero se subsana en SAPBC (periodo contable cerrado, etc) y no requiere gestión por parte de Haya.', '08','01','04'),
 	T_TIPO_DATA('03','000','Gasto contabilizado.','04','03','07'),
 	T_TIPO_DATA('04','701','Gasto rechazado, requiere gestión por parte de Haya (vendrá acompañado de algún texto que clarifique el problema).','08','01','04'),
 	T_TIPO_DATA('05','600','Gasto Ok, pero error en otro gasto de provisión.','03','03','01'),

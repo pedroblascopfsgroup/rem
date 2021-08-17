@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Ramon Llinares
---## FECHA_CREACION=20201008
+--## FECHA_CREACION=20210727
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.1.0
---## INCIDENCIA_LINK=REMVIP-8202
+--## INCIDENCIA_LINK=REMVIP-10152
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las ofertas enviadas a webcom
 --##           
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##		0.2 Modificación IMPORTE_CONTRAOFERTA
 --##		0.3 Añadir campos FECHA_VENTA, FECHA_RESERVA y FECHA_ALQUILER
+--##		0.4 Añadir campo IMPORTE - Carlos Santos Vílchez - REMVIP-10152
 --##########################################
 --*/
 
@@ -125,7 +126,8 @@ BEGIN
 			THEN CAST(TO_CHAR(ECO.ECO_FECHA_INICIO_ALQUILER ,
 				''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2(50 CHAR))
 		ELSE NULL
-		END 																				AS FECHA_ALQUILER
+		END 																				AS FECHA_ALQUILER,
+		CAST(OFR.OFR_IMPORTE AS NUMBER(16,2))												AS IMPORTE
 
 		FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
 		LEFT JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = OFR.AGR_ID
@@ -184,7 +186,8 @@ BEGIN
 			THEN CAST(TO_CHAR(ECO.ECO_FECHA_INICIO_ALQUILER ,
 				''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2(50 CHAR))
 		ELSE NULL
-		END 																				AS FECHA_ALQUILER
+		END 																				AS FECHA_ALQUILER,
+		CAST(OFR.OFR_IMPORTE AS NUMBER(16,2))												AS IMPORTE
 
 		FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
 		INNER JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = OFR.AGR_ID

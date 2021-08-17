@@ -1841,6 +1841,23 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 
+	public boolean existeCarteraByCod(String codCartera){
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codCartera", codCartera);
+		rawDao.addParams(params);
+		
+		if (Checks.esNulo(codCartera)){
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+"		FROM DD_CRA_CARTERA WHERE"
+				+"		DD_CRA_CODIGO =  :codCartera "
+				+" 		AND BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
 	public boolean existeSubCarteraByCod(String codSubCartera){
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("codSubCartera", codSubCartera);

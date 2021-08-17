@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20210817
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14943
+--## INCIDENCIA_LINK=HREOS-14940
 --## PRODUCTO=NO
 --## Finalidad: Alter COE_CONDICIONANTES_EXPEDIENTE
 --##           
@@ -33,11 +33,11 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'COE_CONDICIONANTES_EXPEDIENTE'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_TABLA_FK VARCHAR2(2400 CHAR) := 'DD_RFC_REGIMEN_FIANZA_CCAA';  
+    V_TABLA_FK VARCHAR2(2400 CHAR) := 'DD_RVR_REVISION_RENTA';  
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(256);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(											--Nombre en la tabla fk
-			T_TIPO_DATA('DD_RFC_ID', 'NUMBER(16,0)', 'Tipo de régimen de fianza con CCAA', 'DD_RFC_ID', 'COE')
+			T_TIPO_DATA('DD_RVR_ID', 'NUMBER(16,0)', 'Revisión renta', 'DD_RVR_ID', 'COE')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

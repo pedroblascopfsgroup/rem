@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenFianzaCCAA;
+import es.pfsgroup.plugin.rem.model.dd.DDRevisionRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -389,6 +390,9 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @JoinColumn(name = "DD_RFC_ID")
 	private DDRegimenFianzaCCAA regimenFianzaCCAA;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_RVR_ID")
+	private DDRevisionRenta revisionRenta;
 
 	@Version   
 	private Long version;
@@ -1241,6 +1245,14 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 
 	public void setRegimenFianzaCCAA(DDRegimenFianzaCCAA regimenFianzaCCAA) {
 		this.regimenFianzaCCAA = regimenFianzaCCAA;
+	}
+
+	public DDRevisionRenta getRevisionRenta() {
+		return revisionRenta;
+	}
+
+	public void setRevisionRenta(DDRevisionRenta revisionRenta) {
+		this.revisionRenta = revisionRenta;
 	}
 	
 

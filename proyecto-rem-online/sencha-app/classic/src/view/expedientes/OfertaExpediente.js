@@ -24,9 +24,7 @@ Ext.define('HreRem.view.expedientes.OfertaExpediente', {
 
 		beforetabchange: function (tabPanel, tabNext, tabCurrent) {
 			var me = this;
-    		if(!me.procesado){
-					me.checkProceso(tabPanel);
-			}			
+					
 			tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
         	// Comprobamos si estamos editando para confirmar el cambio de pestaña
         	if (tabCurrent != null) {
@@ -44,6 +42,7 @@ Ext.define('HreRem.view.expedientes.OfertaExpediente', {
 									if(!tabNext.ocultarBotonesEdicion) {
 					            		tabPanel.evaluarBotonesEdicion(tabNext);
 									}
+									me.checkProceso(tabPanel);
 	        			        }
 	        			   }
 	    			});
@@ -53,6 +52,7 @@ Ext.define('HreRem.view.expedientes.OfertaExpediente', {
 				if(!tabNext.ocultarBotonesEdicion) {
 	        		tabPanel.evaluarBotonesEdicion(tabNext);
 				}
+				me.checkProceso(tabPanel);
         		return true;		            	
         	}
 		}

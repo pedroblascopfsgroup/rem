@@ -130,4 +130,26 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 
 		return haPasado;
 	}
+	
+	@Override
+	public boolean isOfertaContraOfertaMayor10K(TareaExterna tareaExterna) {
+
+		boolean isMayor = false;
+		Double diezK = (double) 10000;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if(eco != null) {
+			Oferta oferta = eco.getOferta();
+			if(oferta != null) {
+				if(oferta.getImporteContraOferta() != null){
+					if( oferta.getImporteContraOferta() >= diezK){	
+						isMayor = true;
+					}
+				}else if(oferta.getImporteOferta() != null && oferta.getImporteOferta() >= diezK) {
+					isMayor = true;
+				}
+			}
+		}
+		
+		return isMayor;
+	}
 }

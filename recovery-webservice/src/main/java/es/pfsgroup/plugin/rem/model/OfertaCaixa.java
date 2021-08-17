@@ -109,6 +109,15 @@ public class OfertaCaixa implements Serializable, Auditable {
 	@Column(name="OFR_CHECK_SUBASTA")
 	private Boolean checkSubasta;
 	
+	@Column(name="OFR_CHECK_DOCUMENTAL_COMPLETO")
+	private Boolean checkListDocumentalCompleto;
+	
+	@Column(name="OFR_SAN_ROD_GRR")
+	private String sancionRODGRR;
+	
+	@Column(name="OFR_SANC_LANZAMIENTOS")
+	private String sancionComiteLanzamientos;
+	
     @Version
     private Integer version;
 
@@ -293,6 +302,30 @@ public class OfertaCaixa implements Serializable, Auditable {
 		this.checkSubasta = checkSubasta;
 	}
 
+	public Boolean getCheckListDocumentalCompleto() {
+		return checkListDocumentalCompleto;
+	}
+
+	public void setCheckListDocumentalCompleto(Boolean checkListDocumentalCompleto) {
+		this.checkListDocumentalCompleto = checkListDocumentalCompleto;
+	}
+
+	public String getSancionRODGRR() {
+		return sancionRODGRR;
+	}
+
+	public void setSancionRODGRR(String sancionRODGRR) {
+		this.sancionRODGRR = sancionRODGRR;
+	}
+
+	public String getSancionComiteLanzamientos() {
+		return sancionComiteLanzamientos;
+	}
+
+	public void setSancionComiteLanzamientos(String sancionComiteLanzamientos) {
+		this.sancionComiteLanzamientos = sancionComiteLanzamientos;
+	}
+	
 
 
 }

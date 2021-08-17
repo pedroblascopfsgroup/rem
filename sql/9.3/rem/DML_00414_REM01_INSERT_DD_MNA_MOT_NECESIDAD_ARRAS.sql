@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210518
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210813
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14037
+--## INCIDENCIA_LINK=HREOS-14854
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Script que añade los registros en la DD_MNA_MOT_NECESIDAD_ARRAS
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-14037] - Sergio Gomez
+--##        0.2 Añadir ceros a la izquiers - [HREOS-14854] - Alejandra García
 --##########################################
 --*/
 
@@ -41,12 +42,12 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     -- DD_MNA_CODIGO  DD_MNA_DESCRIPCION
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('1','Título inscrito'),
-        T_TIPO_DATA('2','Posesión'),
-        T_TIPO_DATA('3','VPO'),
-        T_TIPO_DATA('4','Cargas'),
-        T_TIPO_DATA('5','Problemas Técnicos'),
-        T_TIPO_DATA('6','DL')
+        T_TIPO_DATA('01','Título inscrito'),
+        T_TIPO_DATA('02','Posesión'),
+        T_TIPO_DATA('03','VPO'),
+        T_TIPO_DATA('04','Cargas'),
+        T_TIPO_DATA('05','Problemas Técnicos'),
+        T_TIPO_DATA('06','DL')
 
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

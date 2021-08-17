@@ -33,7 +33,8 @@ public class DDEstadoPublicacionVenta implements Auditable, Dictionary {
 	public static final String CODIGO_PRE_PUBLICADO_VENTA = "02";
 	public static final String CODIGO_PUBLICADO_VENTA = "03";
 	public static final String CODIGO_OCULTO_VENTA = "04";
-
+	public static final String DESCRIPCION_NO_PUBLICADO_VENTA = "No Publicado Venta";
+	
 	@Id
 	@Column(name = "DD_EPV_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoPublicacionVentaGenerator")

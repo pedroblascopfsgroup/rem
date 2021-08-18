@@ -708,10 +708,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     		return true;
 	     	}
 	     	return false;
-	     }
+	     },
+	     esBankiaAlquiler: function(get){
+			 var me = this;
+			 var isAlquiler = get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+			 var isBK = get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['BANKIA'];
+			
+			 return isAlquiler && isBK;
+		 }
 	 },
-	 
-
+	
 
     stores: {
     	
@@ -1566,6 +1572,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoRiesgoOperacion'}
 			}
+		},
+		storeClasificacion:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'clasificacionAlquiler'}
+	    	}	  
 		}
 
     }

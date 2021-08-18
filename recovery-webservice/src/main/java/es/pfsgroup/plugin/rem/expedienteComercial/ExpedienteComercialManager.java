@@ -127,6 +127,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDAreaBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDClasificacionContratoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
@@ -1356,6 +1357,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(ofertaExclusionBulkNew != null) {
 			genericDao.save(OfertaExclusionBulk.class, ofertaExclusionBulkNew);
 		}
+		
+		if(dto.getCheckListDocumentalCompleto() != null && oferta.getOfertaCaixa() != null) {
+			oferta.getOfertaCaixa().setCheckListDocumentalCompleto(dto.getCheckListDocumentalCompleto());
+		}
+		
+		if(dto.getClasificacionCodigo() != null) {
+			DDClasificacionContratoAlquiler clasificacion = genericDao.get(DDClasificacionContratoAlquiler.class, genericDao.createFilter(FilterType.EQUALS,"codigo",  dto.getClasificacionCodigo()));
+			oferta.setClasificacion(clasificacion);
+		}
+		
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		genericDao.save(Oferta.class, oferta);
 		// Si se ha modificado el importe de la oferta o de la contraoferta actualizamos
@@ -2148,8 +2159,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if (oferta != null) {
 			dto.setIsEmpleadoCaixa(isEmpleadoCaixa(oferta));
+			dto.setOpcionACompra(oferta.getOpcionACompra());
+			dto.setValorCompra(oferta.getValorCompra());
+			dto.setFechaVencimientoOpcionCompra(oferta.getFechaVencimientoOpcionCompra());
+			if(oferta.getClasificacion() != null) {
+				dto.setClasificacionCodigo(oferta.getClasificacion().getCodigo());
+			}
+			if(oferta.getOfertaCaixa() != null) {
+				dto.setCheckListDocumentalCompleto(oferta.getOfertaCaixa().getCheckListDocumentalCompleto());
+			}
 		}
-		
+
 		return dto;
 	}
 

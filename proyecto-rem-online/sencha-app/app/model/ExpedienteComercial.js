@@ -344,6 +344,9 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		{
     			name: 'isEmpleadoCaixa',
     			type: 'boolean'
+    		},
+    		{
+    			name:'clasificacionCodigo'
     		}
     ],
     formulas: {

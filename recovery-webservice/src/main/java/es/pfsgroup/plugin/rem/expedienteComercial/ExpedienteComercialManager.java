@@ -1829,6 +1829,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(expediente.getFechaFirmaContrato())) {
 				dto.setFechaFirmaContrato(expediente.getFechaFirmaContrato());
 			}
+			
+			if(expediente.getOferta() != null && expediente.getOferta().getClasificacion() != null) {
+				dto.setClasificacionCodigo(expediente.getOferta().getClasificacion().getCodigo());
+			}
+
 		}
 		return dto;
 	}
@@ -5603,6 +5608,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (dto.getFechaContabilizacion() != null) {
 					expedienteComercial.setFechaContabilizacion(dto.getFechaContabilizacion());
 				}
+				if(dto.getClasificacionCodigo() != null && expedienteComercial.getOferta() != null) {
+					DDClasificacionContratoAlquiler clasificacion = (DDClasificacionContratoAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDClasificacionContratoAlquiler.class, dto.getClasificacionCodigo());
+					expedienteComercial.getOferta().setClasificacion(clasificacion);
+				}
+				
 				if (expedienteComercial.getId() != null) {
 					genericDao.update(ExpedienteComercial.class, expedienteComercial);
 

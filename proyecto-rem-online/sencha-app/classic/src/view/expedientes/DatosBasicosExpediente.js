@@ -122,6 +122,16 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							},
 							
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.bc')
+		                },
+		                {
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+								store: '{storeClasificacion}',
+								value: '{expediente.clasificacionCodigo}',
+								hidden: '{!esBankiaAlquiler}'
+							},
+							
+		                	fieldLabel:  HreRem.i18n('fieldlabel.detalle.oferta.alquiler.clasificacion')
 		                }
 						
 					]
@@ -130,10 +140,6 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',				
 				title: HreRem.i18n('title.titulo.alquiler'),
-				layout: {
-					type: 'table',
-					columns: 1
-				},
 				bind: {
 					hidden: '{esOfertaVentaFicha}',
 					disabled: '{esOfertaVentaFicha}'
@@ -151,9 +157,18 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				        		xtype:'datefieldbase',
 								formatter: 'date("d/m/Y")',
 					        	fieldLabel: HreRem.i18n('fieldlabel.fecha.inicio'),
-					        	bind: '{expediente.fechaInicioAlquiler}',
+					        	bind: {
+					        		value:'{expediente.fechaInicioAlquiler}'
+					        	},
 					        	readOnly: true,
 					        	maxValue: null
+					        },
+					        {
+				        		xtype:'numberfieldbase',
+					        	fieldLabel: HreRem.i18n('fieldlabel.meses.duracion.alquiler'),
+					        	bind: {
+					        		hidden: '{!esBankiaAlquiler}'
+					        	}
 					        },
 					        {
 				        		xtype:'datefieldbase',
@@ -162,6 +177,15 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 					        	bind: '{expediente.fechaFinAlquiler}',
 					        	readOnly: true,
 					        	maxValue: null
+					        },
+					    	{ 
+					        	xtype : 'currencyfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.importe.renta.oferta'),
+								bind : {
+									value:'{expediente.importeRentaAlquiler}',
+									hidden: '{!esBankiaAlquiler}'
+									
+								}
 					        },
 							{ 
 								xtype: 'textfieldbase',

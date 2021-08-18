@@ -379,13 +379,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	var me = this;
 	     	var expediente= me.getData().expediente;
 	     	if(!Ext.isEmpty(expediente)){
-		     	var tipoOferta= expediente.get('tipoExpedienteDescripcion');
-		     	if(tipoOferta=='Venta'){
+		     	var tipoOferta= expediente.get('tipoExpedienteCodigo');
+		     	if(CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"] == tipoOferta){
 		     		return true;
 		     	}
 	     	}
 	     	//se oculta el bloque por HREOS-4775 por el tercer puntito
-	     	return true;
+	     	return false;
 	     },
 	     
 	     esAlquilerConOpcionCompra: function(get){

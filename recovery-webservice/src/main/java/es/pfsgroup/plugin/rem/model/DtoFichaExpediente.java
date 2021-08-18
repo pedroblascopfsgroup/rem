@@ -168,6 +168,8 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private Date fechaFirmaContrato;
 	
+	private String clasificacionCodigo;
+	
 	
 	public Long getId() {
 		return id;
@@ -857,6 +859,13 @@ public class DtoFichaExpediente extends WebDto {
 	public void setFechaFirmaContrato(Date fechaFirmaContrato) {
 		this.fechaFirmaContrato = fechaFirmaContrato;
 	}
-	
+
+	public String getClasificacionCodigo() {
+		return clasificacionCodigo;
+	}
+
+	public void setClasificacionCodigo(String clasificacionCodigo) {
+		this.clasificacionCodigo = clasificacionCodigo;
+	}
 	
 }

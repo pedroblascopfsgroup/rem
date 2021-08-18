@@ -27,7 +27,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 				} else {		
 	            	tabPanel.evaluarBotonesEdicion(tab);
 				}
-				tabPanel.getActiveTab().mask("...Tramitando...");
 			},
 
 			beforetabchange: function (tabPanel, tabNext, tabCurrent) {
@@ -41,7 +40,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 			    		me.lookupController().tareaDefinicionDeOferta(itemReserva);   
 			    	}
 					
-				}							
+				}
+								
+				if(!this.procesado){
+						this.checkProceso(tabPanel);
+				}			
 				
 				if(tabNext.getTitle() == HreRem.i18n('title.oferta')){
 					tabNext.down("[itemId=botoneditar]").setDisabled(!this.procesado);
@@ -64,7 +67,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 					   					if(!tabNext.ocultarBotonesEdicion) {
 						            		tabPanel.evaluarBotonesEdicion(tabNext);
 					   					}
-										this.checkProceso(tabPanel);
 	            			        }
 	            			   }
 	        			});            		
@@ -74,7 +76,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        		if(!tabNext.ocultarBotonesEdicion) {
 	        			tabPanel.evaluarBotonesEdicion(tabNext);
 	        		}
-					this.checkProceso(tabPanel);
 	        		return true;
 	        	}
 			}
@@ -111,7 +112,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 
 		initComponent: function () {
 	        var me = this;
-			
+
 	        var items = [];
 	    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosexpediente', funPermEdition: ['EDITAR_TAB_DATOS_BASICOS_EXPEDIENTES']})}, ['TAB_DATOS_BASICOS_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'ofertaexpediente', ocultarBotonesEdicion: true})}, ['TAB_OFERTA_EXPEDIENTES']);

@@ -167,6 +167,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				        		xtype:'numberfieldbase',
 					        	fieldLabel: HreRem.i18n('fieldlabel.meses.duracion.alquiler'),
 					        	bind: {
+					        		value:'{expediente.mesesDuracionCntAlquiler}',
 					        		hidden: '{!esBankiaAlquiler}'
 					        	}
 					        },
@@ -448,6 +449,25 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 		                	reference: 'comboMotivoAnulacion',
 		                	readOnly: true,
 				        	bind: '{getMotivoAnulacionOrRechazo}'
+				        },
+				        { 
+							xtype: 'comboboxfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.motivo.rechazo.antiguo.deudor'),
+		                	reference: 'comboMotivoRechazoAntiguoDeudorRef',
+				        	bind: {
+				        		store: '{storeMotivoRechazoAntiguoDeudor}',
+			            		value: '{expediente.motivoRechazoAntiguoDeudCod}',
+			            		hidden: '{!esBankiaAlquiler}'
+			            	}
+				        },
+				        { 
+							xtype: 'textareafieldbase',
+							fieldLabel:  HreRem.i18n('fieldlabel.motivo.anulacion.detalle'),
+		                	reference: 'detalleAnulacionRef',
+				        	bind: {
+				        		value: '{expediente.detalleAnulacionCntAlquiler}',
+				        		hidden: '{!esBankiaAlquiler}'
+				        	}
 				        },
 						{    
 			                xtype:'fieldsettable',

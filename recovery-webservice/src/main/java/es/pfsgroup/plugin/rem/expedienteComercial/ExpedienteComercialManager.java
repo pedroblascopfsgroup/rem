@@ -150,6 +150,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAmpliacionArras;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoBloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAntiguoDeud;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
@@ -1833,7 +1834,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(expediente.getOferta() != null && expediente.getOferta().getClasificacion() != null) {
 				dto.setClasificacionCodigo(expediente.getOferta().getClasificacion().getCodigo());
 			}
-
+			
+			dto.setMesesDuracionCntAlquiler(expediente.getMesesDuracionCntAlquiler());
+			dto.setDetalleAnulacionCntAlquiler(expediente.getDetalleAnulacionCntAlquiler());
+			if(expediente.getMotivoRechazoAntiguoDeud() != null) {
+				dto.setMotivoRechazoAntiguoDeudCod(expediente.getMotivoRechazoAntiguoDeud().getCodigo());
+			}
 		}
 		return dto;
 	}
@@ -5611,6 +5617,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if(dto.getClasificacionCodigo() != null && expedienteComercial.getOferta() != null) {
 					DDClasificacionContratoAlquiler clasificacion = (DDClasificacionContratoAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDClasificacionContratoAlquiler.class, dto.getClasificacionCodigo());
 					expedienteComercial.getOferta().setClasificacion(clasificacion);
+				}
+				
+				expedienteComercial.setMesesDuracionCntAlquiler(dto.getMesesDuracionCntAlquiler());
+				expedienteComercial.setDetalleAnulacionCntAlquiler(dto.getDetalleAnulacionCntAlquiler());
+				if(dto.getMotivoRechazoAntiguoDeudCod() != null) {
+					DDMotivoRechazoAntiguoDeud motivoRechazoAntiguoDeud = (DDMotivoRechazoAntiguoDeud) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRechazoAntiguoDeud.class, dto.getClasificacionCodigo());
+					expedienteComercial.setMotivoRechazoAntiguoDeud(motivoRechazoAntiguoDeud);
 				}
 				
 				if (expedienteComercial.getId() != null) {

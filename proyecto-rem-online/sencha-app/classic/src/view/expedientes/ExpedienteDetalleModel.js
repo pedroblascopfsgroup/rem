@@ -1580,6 +1580,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'clasificacionAlquiler'}
 	    	}	  
+		},
+		
+		storeMotivoRechazoAntiguoDeudor:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoRechazoAntiguoDeudor'}
+	    	}	  
 		}
 
     }

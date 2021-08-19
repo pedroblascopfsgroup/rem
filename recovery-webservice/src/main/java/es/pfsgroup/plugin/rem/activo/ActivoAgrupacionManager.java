@@ -8,10 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.api.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -33,11 +36,6 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -82,6 +80,9 @@ import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileSearch;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+import javax.annotation.Resource;
 
 @Service("activoAgrupacionManager")
 public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
@@ -125,6 +126,12 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
+
+	@Autowired
+	private ActivoAgrupacionActivoApi activoAgrupacionActivoApi;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -981,5 +988,103 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@Override
 	public Long getIdByNumAgrupacion(Long numAgrupacion) {
 	return activoAgrupacionDao.getIdByNumAgrupacion(numAgrupacion);
+	}
+
+	@Override
+	public boolean estaActivoEnAgrupacionRestringidaObRem(Activo activo) {
+
+		if(activo != null){
+			List<ActivoAgrupacionActivo> agaList = genericDao.getList(ActivoAgrupacionActivo.class,
+					genericDao.createFilter(FilterType.EQUALS, "activo", activo));
+
+			if(agaList != null){
+				for(ActivoAgrupacionActivo aga: agaList){
+					if(aga.getAgrupacion() != null && aga.getAgrupacion().getTipoAgrupacion() != null &&
+						DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(aga.getAgrupacion().getTipoAgrupacion().getCodigo())){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	@Transactional
+	public boolean anyadirActivoEnAgrupacionRestringidaDesdeObRem(Long idActivo, Long idAgrupacion){
+
+		ActivoAgrupacion agr = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion));
+
+		List <ActivoAgrupacionActivo> agaEnObRem = null;
+
+		if(idActivo != null) {
+			List<ActivoAgrupacionActivo> agaList = genericDao.getList(ActivoAgrupacionActivo.class,
+					genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
+
+			if(agaList != null){
+				for(ActivoAgrupacionActivo aga: agaList){
+					if(aga.getAgrupacion() != null && aga.getAgrupacion().getTipoAgrupacion() != null &&
+							DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(aga.getAgrupacion().getTipoAgrupacion().getCodigo())){
+						agaEnObRem = aga.getAgrupacion().getActivos();
+						break;
+					}
+				}
+			}
+
+			if(agaEnObRem != null){
+				for(ActivoAgrupacionActivo aga: agaEnObRem){
+					TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
+					ActivoAgrupacionActivo activoAgrupacionActivo = new ActivoAgrupacionActivo();
+					activoAgrupacionActivo.setActivo(aga.getActivo());
+					activoAgrupacionActivo.setAgrupacion(agr);
+					Date today = new Date();
+					activoAgrupacionActivo.setFechaInclusion(today);
+					activoAgrupacionActivo.setPisoPiloto(false);
+					activoAgrupacionActivoApi.save(activoAgrupacionActivo);
+
+					transactionManager.commit(transaction);
+				}
+			}
+
+			return true;
+		}
+		return false;
+	}
+
+	@Transactional
+	public boolean borrarActivoEnAgrupacionRestringidaDesdeObRem(Long idActivo, Long idAgrupacion){
+
+		ActivoAgrupacion agr = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion));
+
+		List <ActivoAgrupacionActivo> agaEnObRem = null;
+		List <ActivoAgrupacionActivo> agaAgr = null;
+
+		if(idActivo != null) {
+			List<ActivoAgrupacionActivo> agaList = genericDao.getList(ActivoAgrupacionActivo.class,
+					genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
+
+			if(agaList != null){
+				for(ActivoAgrupacionActivo aga: agaList){
+					if(aga.getAgrupacion() != null && aga.getAgrupacion().getTipoAgrupacion() != null &&
+							DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(aga.getAgrupacion().getTipoAgrupacion().getCodigo())){
+						agaEnObRem = aga.getAgrupacion().getActivos();
+						break;
+					}
+				}
+			}
+
+			if(agaEnObRem != null){
+				for(int i = (agaAgr.size() - 1); i >= 0; i--){
+
+					if(agaEnObRem.contains(agaAgr.get(i))) {
+						Auditoria.delete(agaAgr.get(i));
+						activoAgrupacionActivoApi.save(agaAgr.get(i));
+					}
+				}
+			}
+
+			return true;
+		}
+		return false;
 	}
 }

@@ -1,10 +1,10 @@
 --/*
 --######################################### 
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20210812
+--## FECHA_CREACION=20210819
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-10299
+--## INCIDENCIA_LINK=REMVIP-10261
 --## PRODUCTO=NO
 --##            
 --## INSTRUCCIONES:  Actualizar ACT_NUM_ACTIVO
@@ -27,7 +27,7 @@ DECLARE
     V_NUM_ACTIVO NUMBER(16); -- Vble. sin prefijo.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_USUARIO VARCHAR2(100 CHAR):='REMVIP-10299'; --Vble. auxiliar para almacenar el usuario
+    V_USUARIO VARCHAR2(100 CHAR):='REMVIP-10261'; --Vble. auxiliar para almacenar el usuario
     V_TABLA VARCHAR2(100 CHAR) :='ACT_ACTIVO'; --Vble. auxiliar para almacenar la tabla a insertar
     V_ID NUMBER(16);
     V_ID_2 NUMBER(16);

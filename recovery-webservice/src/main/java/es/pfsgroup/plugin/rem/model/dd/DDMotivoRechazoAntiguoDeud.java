@@ -41,9 +41,6 @@ public class DDMotivoRechazoAntiguoDeud implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_MRA_CODIGO")   
 	private String codigo;
-    
-	@Column(name = "DD_MRA_CODIGO_C4C")   
-	private String codigoC4C;
 	 
 	@Column(name = "DD_MRA_DESCRIPCION")   
 	private String descripcion;

@@ -10,6 +10,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.thread.AnyadirQuitarActivoAgrObREMAsync;
+import es.pfsgroup.plugin.rem.thread.TramitacionOfertasAsync;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -1128,7 +1130,14 @@ public class AgrupacionAdapter {
 				|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER
 						.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 			saveAgrupacionLoteComercial(activo, agrupacion);			
-		} else {
+		} else if((DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) ||
+				DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) &&
+				activoAgrupacionApi.estaActivoEnAgrupacionRestringidaObRem(activo)) {
+			Thread creacionAsincrona = new Thread(new AnyadirQuitarActivoAgrObREMAsync(activo.getId(), agrupacion.getId(),
+					true, genericAdapter.getUsuarioLogado().getUsername()));
+
+			creacionAsincrona.start();
+		}else {
 			ActivoAgrupacionActivo activoAgrupacionActivo = new ActivoAgrupacionActivo();
 			activoAgrupacionActivo.setActivo(activo);
 			activoAgrupacionActivo.setAgrupacion(agrupacion);
@@ -1158,7 +1167,8 @@ public class AgrupacionAdapter {
 			activoApi.updateActivoAsistida(activo);
 		}
 
-		if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+		if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) &&
+				!activoAgrupacionApi.estaActivoEnAgrupacionRestringidaObRem(activo)) {
 			boolean errorFlag = false;
 			Activo activoP = agrupacion.getActivoPrincipal();
 			if(activoP != null) {
@@ -1677,6 +1687,13 @@ public class AgrupacionAdapter {
 				else {
 					throw new JsonViewerException(error);
 				}
+			}else if((DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())
+					|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo()))
+				&& activoAgrupacionApi.estaActivoEnAgrupacionRestringidaObRem(activoAgrupacionActivo.getActivo())) {
+				Thread creacionAsincrona = new Thread(new AnyadirQuitarActivoAgrObREMAsync(activoAgrupacionActivo.getActivo().getId(),
+						activoAgrupacionActivo.getAgrupacion().getId(),false, genericAdapter.getUsuarioLogado().getUsername()));
+
+				creacionAsincrona.start();
 			}
 			else {
 				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);

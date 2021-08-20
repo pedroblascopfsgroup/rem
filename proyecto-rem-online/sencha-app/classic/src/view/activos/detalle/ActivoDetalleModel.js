@@ -1711,7 +1711,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				readOnly = true;
 			}	
 			return readOnly;
-		}
+		},
+		
+		isCarteraHyTOrBFA: function(get) {
+	    	var codigoCarteraHyT = get('activo.isCarteraHyT'), codigoCarteraBFA = get('activo.isCarteraBFA');	    	
+	    	return codigoCarteraHyT || codigoCarteraBFA;
+	    }
 	 },
     
 	 stores: {

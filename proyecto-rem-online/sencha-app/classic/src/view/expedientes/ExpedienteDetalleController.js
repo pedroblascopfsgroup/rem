@@ -1203,7 +1203,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
 		var url =  $AC.getRemoteUrl('expedientecomercial/getTareaDefinicionDeOferta');
 		Ext.Ajax.request({
-			 method: 'GET',
+		
 		     url: url,
 		     params: {
 		    	 idExpediente : me.getViewModel().get("expediente.id")
@@ -4846,12 +4846,7 @@ comprobarFormatoModificar: function() {
 	    			if((data.conFormalizacion != undefined || data.conFormalizacion != null) && data.conFormalizacion === "true"){
 						view.procesado = true;
 						tabPanel.down("[itemId=botoneditar]").setDisabled(false);
-						tabPanel.getActiveTab().unmask();
-	    			}else{
-						view.procesado = false;
-						tabPanel.down("[itemId=botoneditar]").setDisabled(true);
-						tabPanel.getActiveTab().mask("...Tramitando...");
-					}					
+	    			}					
 	    		}	    		
 	   	});	   	
 	},

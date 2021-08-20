@@ -2021,6 +2021,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 			// Se asigna un gestor de Formalización al crear un nuevo expediente.
 			this.asignarGestorYSupervisorFormalizacionToExpediente(expedienteComercial);
+		
+			// Se debe establecer setFormalizacion al final del método. La vista comprobará que ha terminado el proceso mediante el registro creado de formalizacion
+			expedienteComercial.setFormalizacion(this.crearFormalizacion(expedienteComercial));
 			
 			//Creacion del tramite
 			trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
@@ -2036,9 +2039,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			}
 		
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
-			
-			// Se debe establecer setFormalizacion al final del método. La vista comprobará que ha terminado el proceso mediante el registro creado de formalizacion
-			expedienteComercial.setFormalizacion(this.crearFormalizacion(expedienteComercial));
 			transactionManager.commit(transaction);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

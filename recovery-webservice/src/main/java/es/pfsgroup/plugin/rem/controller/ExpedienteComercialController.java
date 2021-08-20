@@ -744,7 +744,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getTareaDefinicionDeOferta(Long idExpediente, WebDto webDto, ModelMap model) {
 
 		try {

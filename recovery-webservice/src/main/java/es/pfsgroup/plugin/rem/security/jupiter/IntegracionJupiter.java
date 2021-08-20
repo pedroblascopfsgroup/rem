@@ -139,6 +139,9 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 					List<String>  bajasCarteras = new ArrayList<String>();
 					List<String> codigosCarterasREM = integracionJupiterDao.getCodigosCarterasREM(usuario);
 					obtenerListaAltasBajas(codigosCarterasJupiter, codigosCarterasREM, altasCarteras, bajasCarteras );
+					if (codigosCarterasREM.size()>0 && !bajasCarteras.containsAll(codigosCarterasREM)) {
+						altasCarteras = new ArrayList<String>();
+					}
 					integracionJupiterDao.actualizarCarteras(usuario, altasCarteras, bajasCarteras);
 					int numCarteras = integracionJupiterDao.getCodigosCarterasREM(usuario).size();
 					

@@ -135,7 +135,7 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 			} else {
 				genericDao.delete(GestorDespacho.class, 
 					genericDao.createFilter(FilterType.EQUALS, "usuario", usuario),
-					genericDao.createFilter(FilterType.EQUALS, "despachoExterno.despacho", mapeo.getCodigoDespacho()));
+					genericDao.createFilter(FilterType.EQUALS, "despachoExterno.despacho", codigoDespacho));
 				logger.debug("Deshaciendo asociacion grupo " + mapeo.getCodigoDespacho() + " - usuario " + usuario.getUsername());
 				String codigoGrupo = mapeo.getCodigoGrupo();
 				if (codigoGrupo != null && !"".equals(codigoGrupo)) {
@@ -179,6 +179,12 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 
 	@Override
 	public void actualizarCarteras(Usuario usuario, List<String> altasCarteras, List<String> bajasCarteras) {
+		Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
+		for (String descCartera : bajasCarteras) {
+			genericDao.delete(UsuarioCartera.class, filtroUsuario, obtenerFiltroUCADescripcionCartera(descCartera),
+					genericDao.createFilter(FilterType.NULL, SUB_CARTERA));
+			logger.debug("Eliminando asociacion cartera " + descCartera + " - usuario " + usuario.getUsername());
+		}
 		for (String codigoCartera : altasCarteras) {
 			DDCartera cartera = obtenerCartera(codigoCartera);
 			if (cartera != null) {
@@ -192,12 +198,6 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 				logger.error("No existe la cartera " + codigoCartera + " en REM: no se crea asociacion con el usuario " + usuario.getUsername());
 			}
 		}		
-		Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
-		for (String descCartera : bajasCarteras) {
-			genericDao.delete(UsuarioCartera.class, filtroUsuario, obtenerFiltroUCADescripcionCartera(descCartera),
-					genericDao.createFilter(FilterType.NULL, SUB_CARTERA));
-			logger.debug("Eliminando asociacion cartera " + descCartera + " - usuario " + usuario.getUsername());
-		}
 	}
 
 	@Override

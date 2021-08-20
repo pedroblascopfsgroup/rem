@@ -19,7 +19,9 @@ public class BusinessValidatorAgrupacionActivoDuplicado extends BusinessCommonVa
 	@Override
 	public Boolean usarValidator(String codigoTipoAgrupacion) {
 		return DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(codigoTipoAgrupacion) 
-				|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(codigoTipoAgrupacion);
+				|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(codigoTipoAgrupacion)
+				|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER .equals(codigoTipoAgrupacion)
+				|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER.equals(codigoTipoAgrupacion);
 	}
 
 	@Override

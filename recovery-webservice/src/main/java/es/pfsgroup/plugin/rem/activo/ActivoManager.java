@@ -5715,7 +5715,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (activo != null) {
 			for (ActivoAgrupacionActivo activoAgrupacionActivo : activo.getAgrupaciones()) {
 				if (activoAgrupacionActivo.getAgrupacion() != null
-						&& (isActivoAgrupacionTipo(activoAgrupacionActivo, DDTipoAgrupacion.AGRUPACION_RESTRINGIDA))) {
+						&& (isActivoAgrupacionTipo(activoAgrupacionActivo, DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
+								|| (isActivoAgrupacionTipo(activoAgrupacionActivo, DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER))
+								|| (isActivoAgrupacionTipo(activoAgrupacionActivo, DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM)))) {
 					DtoAgrupacionFilter filter = new DtoAgrupacionFilter();
 					filter.setLimit(1000);
 					filter.setStart(0);
@@ -7548,7 +7550,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		for (ActivoAgrupacionActivo agrupacion : activo.getAgrupaciones()) {
 			if (Checks.esNulo(agrupacion.getAgrupacion().getFechaBaja())) {
 				if (!Checks.esNulo(agrupacion.getAgrupacion().getTipoAgrupacion())
-						&& DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+						&& (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())
+						|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER.equals(agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())
+						|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo()))) {
 					return true;
 				}
 			}

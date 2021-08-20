@@ -101,7 +101,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{!visibilidadPestanyaDocumentos}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_DOCUMENTOS_AGRUPACION']),
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'seguimientoagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionProyecto}'}})}, ['TAB_SEGUIMIENTO_AGRUPACION']),
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'subdivisionesagrupacionmain', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_SUBDIVISIONES_AGRUPACION']),
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datospublicacionagrupacion', bind: {disabled:'{!habilitarPestanyaDatosPublicacionAgrupacion}'}, funPermEdition: ['EDITAR_TAB_DATOS_PUBLICACION']})}, ['TAB_DATOS_PUBLICACION']),
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datospublicacionagrupacion', /*bind: {disabled:'{!habilitarPestanyaDatosPublicacionAgrupacion}'},*/ funPermEdition: ['EDITAR_TAB_DATOS_PUBLICACION']})}, ['TAB_DATOS_PUBLICACION']),
 //		items.push({xtype: 'datospublicacionagrupacion', ocultarBotonesEdicion: false, bind: {disabled:'{!habilitarPestanyaDatosPublicacionAgrupacion}'}});
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'comercialagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{habilitarComercial}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_COMERCIAL_AGRUPACION'])
  
@@ -143,8 +143,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 	     	else if ((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER'])) {
 	     		agrupacionPromocionAlquiler = true;
 	     	} else if (tipoCartera == CONST.CARTERA['BANKIA'] && (tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA'] 
-	     				|| tipoAgrupacion == CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER'] 
-	     				|| tipoAgrupacion == CONST.TIPOS_AGRUPACION['COMERCIAL_VENTA'])) {
+	     				|| tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA_ALQUILER'] 
+	     				|| tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA_OBREM'])) {
 	     		agrupacionesCaixa = true;
 			}
 				// Si la pestaña recibida no tiene asignadas funciones de edicion

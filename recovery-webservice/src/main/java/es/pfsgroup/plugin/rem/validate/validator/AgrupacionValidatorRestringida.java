@@ -46,7 +46,7 @@ public class AgrupacionValidatorRestringida extends AgrupacionValidatorCommonImp
 
 	@Override
 	public String[] getCodigoTipoAgrupacion() {		
-		return new String[]{DDTipoAgrupacion.AGRUPACION_RESTRINGIDA};
+		return new String[]{DDTipoAgrupacion.AGRUPACION_RESTRINGIDA,DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER,DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM};
 	}
 
 	// TODO refactorizar este validador, creando validadores independientes hasta que se pueda eliminar 
@@ -59,7 +59,9 @@ public class AgrupacionValidatorRestringida extends AgrupacionValidatorCommonImp
 		if(!Checks.estaVacio(ofertasActivo)) {
 			for(ActivoOferta ofertaActivo : ofertasActivo) {
 				if(!Checks.esNulo(ofertaActivo)) {
-					if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
+					if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
+							|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER)
+							|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM)) {
 						incluidoAgrupacionRestringida = true;
 						Oferta oferta = ofertaActivo.getPrimaryKey().getOferta();
 						if(!Checks.esNulo(oferta.getEstadoOferta())){
@@ -82,11 +84,11 @@ public class AgrupacionValidatorRestringida extends AgrupacionValidatorCommonImp
 		ActivoRestringida restringida = (ActivoRestringida) agrupacion;
 		NMBLocalizacionesBienInfo pobl = activo.getLocalizacionActual();
 		
-		if (Checks.esNulo(restringida.getCodigoPostal())) {
+		/*if (Checks.esNulo(restringida.getCodigoPostal())) {
 			return ERROR_CP_NULL;
 		} else if (!restringida.getCodigoPostal().equals(pobl.getCodPostal())) {
 			return ERROR_CP_NOT_EQUAL;
-		}
+		}*/
 
 		if (Checks.esNulo(restringida.getProvincia())) {
 			return ERROR_PROV_NULL;

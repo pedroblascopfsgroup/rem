@@ -31,6 +31,6 @@ public class AgrupacionValidatorAltaOfertasVivas extends AgrupacionValidatorComm
 
 	@Override
 	public String[] getCodigoTipoAgrupacion() {
-		return new String[]{DDTipoAgrupacion.AGRUPACION_RESTRINGIDA};
+		return new String[]{DDTipoAgrupacion.AGRUPACION_RESTRINGIDA,DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER,DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM};
 	}
 }

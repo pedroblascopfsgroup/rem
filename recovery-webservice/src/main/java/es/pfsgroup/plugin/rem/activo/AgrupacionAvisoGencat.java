@@ -26,7 +26,9 @@ public class AgrupacionAvisoGencat implements AgrupacionAvisadorApi {
 			
 			if (activoAgrupacioApi.countActivosAfectoGENCAT(agrupacion) > 0 
 					&& (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
-					|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo()))) {
+							|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
+							|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo())
+							|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo()))) {
 				
 				dtoAviso.setDescripcion("Agrupación con activos afectos GENCAT");
 				dtoAviso.setId(String.valueOf(agrupacion.getId()));

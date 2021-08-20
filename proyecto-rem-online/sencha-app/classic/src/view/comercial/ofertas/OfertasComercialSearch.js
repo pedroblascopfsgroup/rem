@@ -310,7 +310,7 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 	    						valueField: 'id',
 					        	bind: {
 				            		store: '{comboUsuariosGestoria}',
-				            		readOnly: $AU.userTipoGestor()!="GIAFORM"
+				            		disabled: $AU.userTipoGestor()!="GIAFORM"
 				            	},
 								name: 'gestoria',
 								emptyText: 'Introduzca un usuario de gestoría formalización',

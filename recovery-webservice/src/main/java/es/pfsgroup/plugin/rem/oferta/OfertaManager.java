@@ -6541,8 +6541,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
 			} else if ((CODIGO_T017_RESOLUCION_CES.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
-					|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(tareaExterna.getTareaProcedimiento().getCodigo())) 
-					&& DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())) {
+					|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(tareaExterna.getTareaProcedimiento().getCodigo()))) {
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
@@ -6560,13 +6559,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					|| CODIGO_T017_PBC_VENTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()))
 					&& DDSubcartera.CODIGO_OMEGA.equals(codSubCartera)) {
 				
-				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
-				
-			} else if (CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
-					&& !obtencionReservaFinalizada) {
-				
-				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
-				
+				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);			
 			}
 		}
 		

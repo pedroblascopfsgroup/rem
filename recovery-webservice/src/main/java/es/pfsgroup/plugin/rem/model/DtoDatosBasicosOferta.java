@@ -152,6 +152,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String clasificacionCodigo;
 
 	private Boolean checkListDocumentalCompleto;
+
+	private Boolean tieneInterlocutoresNoEnviados;
 	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
@@ -698,5 +700,12 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setCheckListDocumentalCompleto(Boolean checkListDocumentalCompleto) {
 		this.checkListDocumentalCompleto = checkListDocumentalCompleto;
 	}
-	
+
+	public Boolean getTieneInterlocutoresNoEnviados() {
+		return tieneInterlocutoresNoEnviados;
+	}
+
+	public void setTieneInterlocutoresNoEnviados(Boolean tieneInterlocutoresNoEnviados) {
+		this.tieneInterlocutoresNoEnviados = tieneInterlocutoresNoEnviados;
+	}
 }

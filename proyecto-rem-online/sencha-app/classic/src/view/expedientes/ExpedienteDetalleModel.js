@@ -446,6 +446,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				 return false;
 			 }
 		 },
+
+		 	mostrarBotonLanzarPBC: function(get){
+
+             var tieneInterlocutoresNoEnviados = get('datosbasicosoferta.tieneInterlocutoresNoEnviados');
+
+         	return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) && tieneInterlocutoresNoEnviados ;
+
+         	},
+
 		 esOfertaTramitada: function(get){
 			 var tipoOfertaDesc = get('datosbasicosoferta.estadoDescripcion');
 			 

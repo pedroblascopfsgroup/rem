@@ -742,6 +742,17 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							handler : 'onClickGeneraOfertarHojaExcel',
 							margin : '10 10 10 10'
 						},
+						{
+                        	xtype : 'button',
+                        	reference : 'btnSendInterlocutores',
+                        	bind : {
+                        	        hidden: '{!mostrarBotonLanzarPBC}'
+                        	       },
+                        	rowspan : 2,
+                        	text : HreRem.i18n('btn.enviar.bc'),
+                        	handler : 'lanzarDatosPbc',
+                        	margin : '10 10 10 10'
+                        },
 						//TODO: Pruebas del excel
 						/*{
 							xtype : 'button',

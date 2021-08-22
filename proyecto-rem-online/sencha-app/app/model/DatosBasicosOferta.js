@@ -227,6 +227,10 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     			type: 'boolean'
     		},
     		{
+                name: 'tieneInterlocutoresNoEnviados',
+                type: 'boolean'
+            },
+    		{
     			name:'ofertaEspecial',
     			type: 'boolean'
     		},

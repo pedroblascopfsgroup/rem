@@ -319,6 +319,10 @@ public class ExpedienteComercial implements Serializable, Auditable {
       
     @Column(name="ECO_DETALLE_ANUL_ALQ")
   	private String detalleAnulacionCntAlquiler;
+
+	@OneToMany(mappedBy = "expedienteComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ECO_ID")
+	private List<InterlocutorExpediente> interlocutoresExpediente;
     
     @Version   
 	private Long version;
@@ -988,6 +992,12 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	public void setDetalleAnulacionCntAlquiler(String detalleAnulacionCntAlquiler) {
 		this.detalleAnulacionCntAlquiler = detalleAnulacionCntAlquiler;
 	}
-	
 
+	public List<InterlocutorExpediente> getInterlocutoresExpediente() {
+		return interlocutoresExpediente;
+	}
+
+	public void setInterlocutoresExpediente(List<InterlocutorExpediente> interlocutoresExpediente) {
+		this.interlocutoresExpediente = interlocutoresExpediente;
+	}
 }

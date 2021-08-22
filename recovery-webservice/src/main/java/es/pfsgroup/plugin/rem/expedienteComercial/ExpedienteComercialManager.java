@@ -23,8 +23,10 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.capgemini.pfs.persona.model.DDTipoGestorEntidad;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import org.apache.commons.beanutils.BeanUtils;
@@ -120,73 +122,6 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionSer
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.BulkOferta.BulkOfertaPk;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
-import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
-import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
-import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
-import es.pfsgroup.plugin.rem.model.dd.DDAreaBloqueo;
-import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDClasificacionContratoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
-import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
-import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
-import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
-import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoContrasteListas;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosCivilesURSUS;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoAmpliacionArras;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoBloqueo;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAntiguoDeud;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
-import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
-import es.pfsgroup.plugin.rem.model.dd.DDPaises;
-import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
-import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoRiesgoClase;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTratamiento;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposDocumentos;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.plusvalia.NotificationPlusvaliaManager;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
@@ -1862,6 +1797,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				&& DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
 			isCarteraLbkVenta = true;
 		}
+
+		dto.setTieneInterlocutoresNoEnviados(tieneInterlocutoresNoEnviados(expediente));
 
 		dto.setIsCarteraLbkVenta(isCarteraLbkVenta);
 		Boolean isLbkOfertaComercialPrincipal = false;
@@ -13315,4 +13252,63 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			return false;
 		}
 	}
+
+	private boolean tieneInterlocutoresNoEnviados(ExpedienteComercial eco){
+
+		List<InfoAdicionalPersona> infoAdicionalPersonas = new ArrayList<InfoAdicionalPersona>();
+
+		final String CODIGO_NOTARIA = "NOTARI";
+		final String CODIGO_GESTORIA_FORMALIZACION = "GIAFORM";
+
+
+		addIapToList(infoAdicionalPersonas,eco.getOferta().getCliente().getInfoAdicionalPersona());
+
+		if (eco.getOferta().getPrescriptor() != null){
+			addIapToList(infoAdicionalPersonas,eco.getOferta().getPrescriptor().getInfoAdicionalPersona());
+		}
+
+		if (eco.getOferta().getCustodio() != null){
+			addIapToList(infoAdicionalPersonas,eco.getOferta().getCustodio().getInfoAdicionalPersona());
+		}
+
+		for (GestorExpedienteComercial gec: genericDao.getList(GestorExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"expedienteComercial.id",eco.getId()))) {
+			if ((gec.getTipoGestor()!= null && CODIGO_NOTARIA.equals(gec.getTipoGestor().getCodigo())) || (gec.getTipoGestor()!= null && CODIGO_GESTORIA_FORMALIZACION.equals(gec.getTipoGestor().getCodigo())) && gec.getUsuario() != null){
+				ActivoProveedorContacto activoProveedorContacto = genericDao.get(ActivoProveedorContacto.class,genericDao.createFilter(FilterType.EQUALS,"usuario.id",gec.getUsuario().getId()),
+						genericDao.createFilter(FilterType.EQUALS,"proveedor.estadoProveedor.codigo", DDEstadoProveedor.ESTADO_BIGENTE),genericDao.createFilter(FilterType.NOTNULL,"proveedor.fechaBaja"));
+				if (activoProveedorContacto != null && activoProveedorContacto.getProveedor() != null){
+					addIapToList(infoAdicionalPersonas,activoProveedorContacto.getProveedor().getInfoAdicionalPersona());
+				}
+			}
+		}
+
+		for (CompradorExpediente cex:eco.getCompradores()) {
+			addIapToList(infoAdicionalPersonas,cex.getPrimaryKey().getComprador().getInfoAdicionalPersona());
+			addIapToList(infoAdicionalPersonas,cex.getInfoAdicionalRepresentante());
+		}
+
+		for (TitularesAdicionalesOferta tia:eco.getOferta().getTitularesAdicionales()) {
+			addIapToList(infoAdicionalPersonas,tia.getInfoAdicionalPersona());
+		}
+
+		for (InterlocutorExpediente iex:eco.getInterlocutoresExpediente()) {
+			if(iex.getInterlocutorPBCCaixa() != null){
+				addIapToList(infoAdicionalPersonas,iex.getInterlocutorPBCCaixa().getInfoAdicionalPersona());
+			}
+		}
+
+		for (InfoAdicionalPersona iap:infoAdicionalPersonas) {
+			if (iap.getEstadoComunicacionC4C() != null && (DDEstadoComunicacionC4C.C4C_NO_ENVIADO.equals(iap.getEstadoComunicacionC4C().getCodigo()) || DDEstadoComunicacionC4C.C4C_PTE_VALIDACION.equals(iap.getEstadoComunicacionC4C().getCodigo()))){
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private void addIapToList(List<InfoAdicionalPersona> iaps, InfoAdicionalPersona iap){
+		if (iap != null){
+			iaps.add(iap);
+		}
+	}
+
 }

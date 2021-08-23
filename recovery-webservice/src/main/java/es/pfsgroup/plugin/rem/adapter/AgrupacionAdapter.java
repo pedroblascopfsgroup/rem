@@ -92,6 +92,8 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProyecto;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
+import es.pfsgroup.plugin.rem.model.ActivoRestringidaAlquiler;
+import es.pfsgroup.plugin.rem.model.ActivoRestringidaObrem;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
@@ -521,11 +523,131 @@ public class AgrupacionAdapter {
 						}
 					}
 					dtoAgrupacion.setEsGestorComercialEnActivo(esGestorComercial(agrupacion));
-					// SI ES TIPO RESTRINGIDA
-				} else if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+					// SI ES TIPO RESTRINGIDA VENTA
+				} else if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 					ActivoRestringida agrupacionTemp = (ActivoRestringida) agrupacion;
+
+					BeanUtils.copyProperties(dtoAgrupacion, agrupacionTemp);
+
+					if (agrupacionTemp.getLocalidad() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "municipioDescripcion",
+								agrupacionTemp.getLocalidad().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "municipioCodigo",
+								agrupacionTemp.getLocalidad().getCodigo());
+					}
+
+					if (agrupacionTemp.getProvincia() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "provinciaDescripcion",
+								agrupacionTemp.getProvincia().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo",
+								agrupacionTemp.getProvincia().getCodigo());
+					}
+
+					
+					BeanUtils.copyProperty(dtoAgrupacion, "activosGencat", activoAgrupacionApi.countActivosAfectoGENCAT(agrupacion));
+
+					if (!Checks.esNulo(agrupacion.getActivoPrincipal())) {
+						BeanUtils.copyProperty(dtoAgrupacion, "idNumActivoPrincipal",
+								agrupacion.getActivoPrincipal().getNumActivo());
+					}
+					Activo act = agrupacion.getActivoPrincipal();
+					if(act!=null){
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", act.getId());
+						PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtro);
+						if (perimetroActivo != null) {
+							if (perimetroActivo.getCheckGestorComercial() != null) {
+								BeanUtils.copyProperty(dtoAgrupacion, "visibleGestionComercial",
+										Boolean.TRUE.equals(perimetroActivo.getCheckGestorComercial()));
+							}
+							if (perimetroActivo.getExcluirValidaciones() != null) {
+								BeanUtils.copyProperty(dtoAgrupacion, "marcaDeExcluido", DDSinSiNo.CODIGO_SI.equals(perimetroActivo.getExcluirValidaciones().getCodigo()) ? true : false);
+							}
+							if (perimetroActivo.getMotivoGestionComercial() != null) {
+								BeanUtils.copyProperty(dtoAgrupacion, "motivoDeExcluidoCodigo",
+										perimetroActivo.getMotivoGestionComercial().getCodigo());
+							}
+						}
+					}
+									
+					Activo activoPrincipal = agrupacion.getActivoPrincipal();
+					if(!Checks.esNulo(activoPrincipal)) {
+						dtoAgrupacion.setTipoComercializacionCodigo(activoPrincipal.getActivoPublicacion().getTipoComercializacion().getCodigo());
+						
+						//Cálculo color de los indicadores para activo principal.
+						if(DDTipoComercializacion.CODIGO_VENTA.equals(dtoAgrupacion.getTipoComercializacionCodigo())){
+							dtoAgrupacion.setEstadoVenta(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionVenta(activoPrincipal));
+						}else if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(dtoAgrupacion.getTipoComercializacionCodigo())){	
+							dtoAgrupacion.setEstadoAlquiler(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionAlquiler(activoPrincipal));
+						}else if(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(dtoAgrupacion.getTipoComercializacionCodigo())){
+							dtoAgrupacion.setEstadoVenta(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionVenta(activoPrincipal));
+							dtoAgrupacion.setEstadoAlquiler(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionAlquiler(activoPrincipal));
+						}
+					}
+
+					// SI ES TIPO RESTRINGIDA ALQUILER
+				} else if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+					ActivoRestringidaAlquiler agrupacionTemp = (ActivoRestringidaAlquiler) agrupacion;
+
+					BeanUtils.copyProperties(dtoAgrupacion, agrupacionTemp);
+
+					if (agrupacionTemp.getLocalidad() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "municipioDescripcion",
+								agrupacionTemp.getLocalidad().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "municipioCodigo",
+								agrupacionTemp.getLocalidad().getCodigo());
+					}
+
+					if (agrupacionTemp.getProvincia() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "provinciaDescripcion",
+								agrupacionTemp.getProvincia().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo",
+								agrupacionTemp.getProvincia().getCodigo());
+					}
+
+					
+					BeanUtils.copyProperty(dtoAgrupacion, "activosGencat", activoAgrupacionApi.countActivosAfectoGENCAT(agrupacion));
+
+					if (!Checks.esNulo(agrupacion.getActivoPrincipal())) {
+						BeanUtils.copyProperty(dtoAgrupacion, "idNumActivoPrincipal",
+								agrupacion.getActivoPrincipal().getNumActivo());
+					}
+					Activo act = agrupacion.getActivoPrincipal();
+					if(act!=null){
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", act.getId());
+						PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtro);
+						if (perimetroActivo != null) {
+							if (perimetroActivo.getCheckGestorComercial() != null) {
+								BeanUtils.copyProperty(dtoAgrupacion, "visibleGestionComercial",
+										Boolean.TRUE.equals(perimetroActivo.getCheckGestorComercial()));
+							}
+							if (perimetroActivo.getExcluirValidaciones() != null) {
+								BeanUtils.copyProperty(dtoAgrupacion, "marcaDeExcluido", DDSinSiNo.CODIGO_SI.equals(perimetroActivo.getExcluirValidaciones().getCodigo()) ? true : false);
+							}
+							if (perimetroActivo.getMotivoGestionComercial() != null) {
+								BeanUtils.copyProperty(dtoAgrupacion, "motivoDeExcluidoCodigo",
+										perimetroActivo.getMotivoGestionComercial().getCodigo());
+							}
+						}
+					}
+									
+					Activo activoPrincipal = agrupacion.getActivoPrincipal();
+					if(!Checks.esNulo(activoPrincipal)) {
+						dtoAgrupacion.setTipoComercializacionCodigo(activoPrincipal.getActivoPublicacion().getTipoComercializacion().getCodigo());
+						
+						//Cálculo color de los indicadores para activo principal.
+						if(DDTipoComercializacion.CODIGO_VENTA.equals(dtoAgrupacion.getTipoComercializacionCodigo())){
+							dtoAgrupacion.setEstadoVenta(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionVenta(activoPrincipal));
+						}else if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(dtoAgrupacion.getTipoComercializacionCodigo())){	
+							dtoAgrupacion.setEstadoAlquiler(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionAlquiler(activoPrincipal));
+						}else if(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(dtoAgrupacion.getTipoComercializacionCodigo())){
+							dtoAgrupacion.setEstadoVenta(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionVenta(activoPrincipal));
+							dtoAgrupacion.setEstadoAlquiler(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionAlquiler(activoPrincipal));
+						}
+					}
+
+					// SI ES TIPO RESTRINGIDA OBREM
+				} else if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+					ActivoRestringidaObrem agrupacionTemp = (ActivoRestringidaObrem) agrupacion;
 
 					BeanUtils.copyProperties(dtoAgrupacion, agrupacionTemp);
 
@@ -1554,9 +1676,7 @@ public class AgrupacionAdapter {
 			obraNueva.setCodigoPostal(pobl.getCodPostal());
 			return obraNueva;
 
-		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-					|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER)
-					|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM)) {
+		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 			ActivoRestringida restringida = (ActivoRestringida) agrupacion;
 			restringida.setLocalidad(pobl.getLocalidad());
 			restringida.setProvincia(pobl.getProvincia());
@@ -1564,6 +1684,22 @@ public class AgrupacionAdapter {
 			restringida.setActivoPrincipal(activo);
 			return restringida;
 
+		} else if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER)) {
+			ActivoRestringidaAlquiler restringidaAlquiler = (ActivoRestringidaAlquiler) agrupacion;
+			restringidaAlquiler.setLocalidad(pobl.getLocalidad());
+			restringidaAlquiler.setProvincia(pobl.getProvincia());
+			restringidaAlquiler.setCodigoPostal(pobl.getCodPostal());
+			restringidaAlquiler.setActivoPrincipal(activo);
+			return restringidaAlquiler;
+			
+		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM)) {
+			ActivoRestringidaObrem restringidaObrem = (ActivoRestringidaObrem) agrupacion;
+			restringidaObrem.setLocalidad(pobl.getLocalidad());
+			restringidaObrem.setProvincia(pobl.getProvincia());
+			restringidaObrem.setCodigoPostal(pobl.getCodPostal());
+			restringidaObrem.setActivoPrincipal(activo);
+			return restringidaObrem;
+			
 		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
 			ActivoProyecto proyecto = (ActivoProyecto) agrupacion;
 			proyecto.setLocalidad(pobl.getLocalidad());
@@ -1601,16 +1737,25 @@ public class AgrupacionAdapter {
 		try {
 
 			// Si es RESTRINGIDA
-			if (agrupacion.getTipoAgrupacion() != null
-					&& (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-							|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER)
-							|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM))) {
-
-				ActivoRestringida restringida = (ActivoRestringida) agrupacion;
-				restringida.setActivoPrincipal(activo);
-
-				activoAgrupacionApi.saveOrUpdate(restringida);
-
+			if (agrupacion.getTipoAgrupacion() != null ) {
+				if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
+					ActivoRestringida restringida = (ActivoRestringida) agrupacion;
+					restringida.setActivoPrincipal(activo);
+	
+					activoAgrupacionApi.saveOrUpdate(restringida);
+	
+				} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER)) {
+					ActivoRestringidaAlquiler restringidaAlquiler = (ActivoRestringidaAlquiler) agrupacion;
+					restringidaAlquiler.setActivoPrincipal(activo);
+	
+					activoAgrupacionApi.saveOrUpdate(restringidaAlquiler);
+					
+				} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM)) {
+					ActivoRestringidaObrem restringidaObrem = (ActivoRestringidaObrem) agrupacion;
+					restringidaObrem.setActivoPrincipal(activo);
+	
+					activoAgrupacionApi.saveOrUpdate(restringidaObrem);
+				}
 			}
 
 		} catch (Exception e) {
@@ -2099,6 +2244,46 @@ public class AgrupacionAdapter {
 
 			dtoAgrupacion.setId(restringida.getId().toString());
 
+			// Si es RESTRINGIDA ALQUIILER
+		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER)) {
+
+			ActivoRestringidaAlquiler restringidaAlquiler = new ActivoRestringidaAlquiler();
+
+			restringidaAlquiler.setDescripcion(dtoAgrupacion.getDescripcion());
+			restringidaAlquiler.setNombre(dtoAgrupacion.getNombre());
+			restringidaAlquiler.setTipoAgrupacion(tipoAgrupacion);
+			restringidaAlquiler.setFechaAlta(new Date());
+			restringidaAlquiler.setNumAgrupRem(numAgrupacionRem);
+			restringidaAlquiler.setDireccion(dtoAgrupacion.getDireccion());
+			
+			restringidaAlquiler.setComercializableConsPlano(false);
+			restringidaAlquiler.setExistePiloto(false);
+			restringidaAlquiler.setEsVisitable(false);
+			
+			genericDao.save(ActivoRestringidaAlquiler.class, restringidaAlquiler);
+
+			dtoAgrupacion.setId(restringidaAlquiler.getId().toString());
+
+			// Si es RESTRINGIDA OBREM
+		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM)) {
+
+			ActivoRestringidaObrem restringidaObrem = new ActivoRestringidaObrem();
+
+			restringidaObrem.setDescripcion(dtoAgrupacion.getDescripcion());
+			restringidaObrem.setNombre(dtoAgrupacion.getNombre());
+			restringidaObrem.setTipoAgrupacion(tipoAgrupacion);
+			restringidaObrem.setFechaAlta(new Date());
+			restringidaObrem.setNumAgrupRem(numAgrupacionRem);
+			restringidaObrem.setDireccion(dtoAgrupacion.getDireccion());
+			
+			restringidaObrem.setComercializableConsPlano(false);
+			restringidaObrem.setExistePiloto(false);
+			restringidaObrem.setEsVisitable(false);
+			
+			genericDao.save(ActivoRestringidaObrem.class, restringidaObrem);
+
+			dtoAgrupacion.setId(restringidaObrem.getId().toString());
+
 			// Si es PROYECTO
 		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
 
@@ -2206,11 +2391,17 @@ public class AgrupacionAdapter {
 
 				genericDao.deleteById(ActivoObraNueva.class, Long.valueOf(dtoAgrupacion.getId()));
 
-			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER)
-						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM)) {
+			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 
 				genericDao.deleteById(ActivoRestringida.class, Long.valueOf(dtoAgrupacion.getId()));
+
+			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER)) {
+
+			genericDao.deleteById(ActivoRestringidaAlquiler.class, Long.valueOf(dtoAgrupacion.getId()));
+
+			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM)) {
+
+			genericDao.deleteById(ActivoRestringidaObrem.class, Long.valueOf(dtoAgrupacion.getId()));
 
 			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
 
@@ -3445,9 +3636,7 @@ public class AgrupacionAdapter {
 		}
 
 		// Si es de tipo 'Restringida'.
-		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM)) {
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 
 			ActivoRestringida restringida = (ActivoRestringida) agrupacion;
 
@@ -3555,6 +3744,508 @@ public class AgrupacionAdapter {
 					
 					if(!ofertaViva) {
 						List<ActivoAgrupacionActivo> listaActivos = restringida.getActivos();
+
+						if(!Checks.estaVacio(listaActivos)) {
+							for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivos) {
+								ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activoAgrupacionActivo.getActivo().getId());
+								ActivoPublicacion activoPublicacion = activoAgrupacionActivo.getActivo().getActivoPublicacion();
+								Activo activo = activoPublicacion.getActivo();
+
+								if(!ofertaVivaAlquiler || !ofertaVivaVenta) {
+									ActivoHistoricoPatrimonio newActiHistPatrimonio = new ActivoHistoricoPatrimonio();
+									if(!Checks.esNulo(activoPatrimonio)) {
+										newActiHistPatrimonio.setActivo(activoPatrimonio.getActivo());
+										newActiHistPatrimonio.setAdecuacionAlquiler(activoPatrimonio.getAdecuacionAlquiler());
+										newActiHistPatrimonio.setCheckHPM(activoPatrimonio.getCheckHPM());
+										newActiHistPatrimonio.setFechaFinAdecuacionAlquiler(new Date());
+										newActiHistPatrimonio.setFechaFinHPM(new Date());
+										newActiHistPatrimonio.setFechaInicioAdecuacionAlquiler(new Date());
+										newActiHistPatrimonio.setFechaInicioHPM(new Date());
+									}else {
+										newActiHistPatrimonio.setCheckHPM(false);
+										newActiHistPatrimonio.setFechaInicioHPM(new Date());
+										newActiHistPatrimonio.setFechaFinAdecuacionAlquiler(new Date());
+										newActiHistPatrimonio.setFechaFinHPM(new Date());
+										newActiHistPatrimonio.setFechaInicioAdecuacionAlquiler(new Date());
+										newActiHistPatrimonio.setActivo(activoAgrupacionActivo.getActivo());
+									}
+									activoHistoricoPatrimonioDao.saveOrUpdate(newActiHistPatrimonio);
+								}
+
+								if(Checks.esNulo(activoPatrimonio)) {
+									activoPatrimonio = new ActivoPatrimonio();
+									activoPatrimonio.setActivo(activoAgrupacionActivo.getActivo());
+								}
+								if(Checks.esNulo(activoPublicacion)) {
+									activoPublicacion = new ActivoPublicacion();
+									activoPublicacion.setActivo(activoAgrupacionActivo.getActivo());
+								}
+
+								if(dto.getTipoComercializacionCodigo() != null) {
+									activoEstadoPublicacionApi.actualizarPublicacionActivoCambioTipoComercializacion(activo, dto.getTipoComercializacionCodigo());
+								}
+								
+								if(!ofertaVivaAlquiler && DDTipoComercializacion.CODIGO_VENTA.equals(dto.getTipoComercializacionCodigo())) {
+									activoPatrimonio.setCheckHPM(false);
+								}
+
+								if(!ofertaVivaVenta && DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(dto.getTipoComercializacionCodigo())) {
+									activoPatrimonio.setCheckHPM(true);
+
+								}
+
+								if(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(dto.getTipoComercializacionCodigo())) {
+									activoPatrimonio.setCheckHPM(true);
+								}
+
+
+								if (!Checks.esNulo(activoPublicacion.getTipoComercializacion())) {
+									switch(Integer.parseInt(activoPublicacion.getTipoComercializacion().getCodigo())) {
+										case 1:
+											codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA;
+											break;
+										case 2:
+											codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_ALQUILER;
+											break;
+										case 3:
+											codigo = DDSituacionComercial.CODIGO_DISPONIBLE_ALQUILER;
+											break;
+										default:
+											break;
+									}
+								}
+
+
+								String codigoSituacion = codigo;
+
+								if(!Checks.esNulo(codigoSituacion)) {
+									activo.setSituacionComercial((DDSituacionComercial)utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class,codigoSituacion));
+								}
+								activoPatrimonioDao.saveOrUpdate(activoPatrimonio);
+								activoPublicacionDao.saveOrUpdate(activoPublicacion);
+								
+								//HREOS-5090 Punto 93
+								//Asignar Gestores al cambiar el destino comercial de la agrupación si pasamos de 'alquiler y venta' a 'alquiler'
+								//Se descartan los cambios por que es lo que me han indicado desde producto, pero no lo borro por si en un futuro se utiliza
+								/*if(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(destino_comercial) && DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion.getCodigo())) {
+
+									Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "activo", activoAgrupacionActivo.getActivo());
+									List<GestorActivo> gestores_activo  = (List<GestorActivo>) genericDao.getList(GestorActivo.class, filtro2);
+									for(GestorActivo gest : gestores_activo) {
+										if(TIPO_GESTOR_COMERCIAL_VENTA.equals(gest.getTipoGestor().getCodigo())) {
+											//borramos el gestor del activo
+											gestorActivoDao.delete(gest);
+											//y agregamos el gestor al historico del activo
+											Filter filt= genericDao.createFilter(FilterType.EQUALS, "activo", activoAgrupacionActivo.getActivo());
+											Filter filt1 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.codigo", TIPO_GESTOR_COMERCIAL_VENTA);
+											Filter filt3 = genericDao.createFilter(FilterType.NULL, "fechaHasta");
+											GestorActivoHistorico gah_g=genericDao.get(GestorActivoHistorico.class,filt,filt1,filt3);
+											if(!Checks.esNulo(gah_g)) {
+													gah_g.setFechaHasta(new Date());
+													genericDao.update(GestorActivoHistorico.class, gah_g);
+											}
+
+										}else if(TIPO_SUPERVISOR_COMERCIAL_VENTA.equals(gest.getTipoGestor().getCodigo())) {
+											//borramos el gestor del activo
+											gestorActivoDao.delete(gest);
+											//y agregamos el gestor al historico del activo
+											Filter filt= genericDao.createFilter(FilterType.EQUALS, "activo", activoAgrupacionActivo.getActivo());
+											Filter filt2 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.codigo", TIPO_SUPERVISOR_COMERCIAL_VENTA);
+											Filter filt3 = genericDao.createFilter(FilterType.NULL, "fechaHasta");
+
+											GestorActivoHistorico gah_s=genericDao.get(GestorActivoHistorico.class,filt,filt2,filt3);
+											if(!Checks.esNulo(gah_s)) {
+													gah_s.setFechaHasta(new Date());
+													genericDao.update(GestorActivoHistorico.class, gah_s);
+											}
+										}
+
+
+									}
+
+								}*/
+
+
+							}
+						}
+					} else {
+						if(tipoComercializacion  == null) {
+							throw new JsonViewerException(TIPO_COMERCIALIZACION_NO_VALIDO);
+						}else if (ofertaVivaAlquiler && DDTipoComercializacion.CODIGO_VENTA.equals(tipoComercializacion.getCodigo())) {
+							throw new JsonViewerException(AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS);
+						} else if ( ofertaVivaVenta && DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion.getCodigo())) {
+							throw new JsonViewerException(AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS);
+						}
+					}
+				}
+			} catch (JsonViewerException jve) {
+				return "false"+SPLIT_VALUE+jve.getMessage();
+			} catch (Exception e) {
+				logger.error("error en agrupacionAdapter", e);
+				return null;
+			}
+		}
+		
+		// Si es de tipo 'Restringida Alquiler'.
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER)) {
+
+			ActivoRestringidaAlquiler restringidaAlquiler = (ActivoRestringidaAlquiler) agrupacion;
+
+			try
+			{
+				// Si el destino comercial = Alquiler y venta, no permitirá cambiar el destino comercial = venta
+				Activo activoPrincipal = agrupacion.getActivoPrincipal();
+				String codigoDestinoComercial = "";
+				if(activoPrincipal != null && activoPrincipal.getActivoPublicacion() != null && activoPrincipal.getActivoPublicacion().getTipoComercializacion() != null){
+					codigoDestinoComercial = activoPrincipal.getActivoPublicacion().getTipoComercializacion().getCodigo();
+				}
+
+				if (DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(codigoDestinoComercial)
+						&& DDTipoComercializacion.CODIGO_VENTA.equals(dto.getTipoComercializacionCodigo())) {
+					List<ActivoAgrupacionActivo> listaActivos = restringidaAlquiler.getActivos();
+
+					if(!Checks.estaVacio(listaActivos)) {
+						ActivoPatrimonio activoPatrimonio;
+						for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivos) {
+							activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activoAgrupacionActivo.getActivo().getId());
+							if (!Checks.esNulo(activoPatrimonio) && !Checks.esNulo(activoPatrimonio.getTipoEstadoAlquiler()) && DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO.equals(activoPatrimonio.getTipoEstadoAlquiler().getCodigo())) {
+								return "false"+SPLIT_VALUE+AGRUPACION_CAMBIO_DEST_COMERCIAL_A_VENTA_CON_ALQUILADOS;
+							}
+						}
+					}
+				}
+
+				if(!permiteCambiarDestinoComercial(restringidaAlquiler))
+				{
+					return "false"+SPLIT_VALUE+OFERTA_INCOMPATIBLE_AGR_MSG;
+				}
+				else
+				{
+					beanUtilNotNull.copyProperties(restringidaAlquiler, dto);
+
+					if(dto.getMunicipioCodigo() != null)
+					{
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
+						Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
+						restringidaAlquiler.setLocalidad(municipioNuevo);
+					}
+					if(dto.getProvinciaCodigo() != null)
+					{
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaCodigo());
+						DDProvincia provinciaNueva = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
+						restringidaAlquiler.setProvincia(provinciaNueva);
+					}
+
+					activoAgrupacionApi.saveOrUpdate(restringidaAlquiler);
+
+					List <Oferta> ofertasAgr = restringidaAlquiler.getOfertas();
+
+					Boolean ofertaViva = false;
+					Boolean ofertaVivaVenta = false;
+					Boolean ofertaVivaAlquiler = false;
+					String codigo = null;
+
+					DDTipoComercializacion tipoComercializacion = null;
+					
+					if(dto.getTipoComercializacionCodigo() != null) {
+						tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, dto.getTipoComercializacionCodigo());
+					}else {
+						Activo activoParaRestringida = null;
+						if(restringidaAlquiler.getActivoPrincipal() != null) {
+							activoParaRestringida = restringidaAlquiler.getActivoPrincipal();
+						}else if(restringidaAlquiler.getActivos() != null && !restringidaAlquiler.getActivos().isEmpty()){
+							activoParaRestringida = restringidaAlquiler.getActivos().get(0).getActivo();
+						}	
+						if(activoParaRestringida != null && activoParaRestringida.getActivoPublicacion() != null && activoParaRestringida.getActivoPublicacion().getTipoComercializacion() != null) {
+							String tipoComercializacionString = activoParaRestringida.getActivoPublicacion().getTipoComercializacion().getCodigo();
+							tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, tipoComercializacionString);
+						}
+					}
+
+
+					if(!Checks.estaVacio(ofertasAgr)) {
+						for(Oferta oferta : ofertasAgr) {
+							if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+								ofertaViva = true;
+								if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
+									ofertaVivaVenta = true;
+								}
+
+								if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+									ofertaVivaAlquiler = true;
+								}
+								break;
+							}
+						}
+					}
+					//HREOS-12346
+					
+					if(dto.getMarcaDeExcluido() != null || dto.getVisibleGestionComercial() != null) {
+						Boolean excluirValidaciones = dto.getMarcaDeExcluido();
+						Boolean checkGestorComercial = dto.getVisibleGestionComercial();
+						for (ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
+							Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(aga.getActivo(), checkGestorComercial, excluirValidaciones ,true);
+							recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
+							
+						}
+					}
+				
+					saveActivosVisiblesGestionComercial(dto,id);
+
+					
+					if(!ofertaViva) {
+						List<ActivoAgrupacionActivo> listaActivos = restringidaAlquiler.getActivos();
+
+						if(!Checks.estaVacio(listaActivos)) {
+							for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivos) {
+								ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activoAgrupacionActivo.getActivo().getId());
+								ActivoPublicacion activoPublicacion = activoAgrupacionActivo.getActivo().getActivoPublicacion();
+								Activo activo = activoPublicacion.getActivo();
+
+								if(!ofertaVivaAlquiler || !ofertaVivaVenta) {
+									ActivoHistoricoPatrimonio newActiHistPatrimonio = new ActivoHistoricoPatrimonio();
+									if(!Checks.esNulo(activoPatrimonio)) {
+										newActiHistPatrimonio.setActivo(activoPatrimonio.getActivo());
+										newActiHistPatrimonio.setAdecuacionAlquiler(activoPatrimonio.getAdecuacionAlquiler());
+										newActiHistPatrimonio.setCheckHPM(activoPatrimonio.getCheckHPM());
+										newActiHistPatrimonio.setFechaFinAdecuacionAlquiler(new Date());
+										newActiHistPatrimonio.setFechaFinHPM(new Date());
+										newActiHistPatrimonio.setFechaInicioAdecuacionAlquiler(new Date());
+										newActiHistPatrimonio.setFechaInicioHPM(new Date());
+									}else {
+										newActiHistPatrimonio.setCheckHPM(false);
+										newActiHistPatrimonio.setFechaInicioHPM(new Date());
+										newActiHistPatrimonio.setFechaFinAdecuacionAlquiler(new Date());
+										newActiHistPatrimonio.setFechaFinHPM(new Date());
+										newActiHistPatrimonio.setFechaInicioAdecuacionAlquiler(new Date());
+										newActiHistPatrimonio.setActivo(activoAgrupacionActivo.getActivo());
+									}
+									activoHistoricoPatrimonioDao.saveOrUpdate(newActiHistPatrimonio);
+								}
+
+								if(Checks.esNulo(activoPatrimonio)) {
+									activoPatrimonio = new ActivoPatrimonio();
+									activoPatrimonio.setActivo(activoAgrupacionActivo.getActivo());
+								}
+								if(Checks.esNulo(activoPublicacion)) {
+									activoPublicacion = new ActivoPublicacion();
+									activoPublicacion.setActivo(activoAgrupacionActivo.getActivo());
+								}
+
+								if(dto.getTipoComercializacionCodigo() != null) {
+									activoEstadoPublicacionApi.actualizarPublicacionActivoCambioTipoComercializacion(activo, dto.getTipoComercializacionCodigo());
+								}
+								
+								if(!ofertaVivaAlquiler && DDTipoComercializacion.CODIGO_VENTA.equals(dto.getTipoComercializacionCodigo())) {
+									activoPatrimonio.setCheckHPM(false);
+								}
+
+								if(!ofertaVivaVenta && DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(dto.getTipoComercializacionCodigo())) {
+									activoPatrimonio.setCheckHPM(true);
+
+								}
+
+								if(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(dto.getTipoComercializacionCodigo())) {
+									activoPatrimonio.setCheckHPM(true);
+								}
+
+
+								if (!Checks.esNulo(activoPublicacion.getTipoComercializacion())) {
+									switch(Integer.parseInt(activoPublicacion.getTipoComercializacion().getCodigo())) {
+										case 1:
+											codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA;
+											break;
+										case 2:
+											codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_ALQUILER;
+											break;
+										case 3:
+											codigo = DDSituacionComercial.CODIGO_DISPONIBLE_ALQUILER;
+											break;
+										default:
+											break;
+									}
+								}
+
+
+								String codigoSituacion = codigo;
+
+								if(!Checks.esNulo(codigoSituacion)) {
+									activo.setSituacionComercial((DDSituacionComercial)utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class,codigoSituacion));
+								}
+								activoPatrimonioDao.saveOrUpdate(activoPatrimonio);
+								activoPublicacionDao.saveOrUpdate(activoPublicacion);
+								
+								//HREOS-5090 Punto 93
+								//Asignar Gestores al cambiar el destino comercial de la agrupación si pasamos de 'alquiler y venta' a 'alquiler'
+								//Se descartan los cambios por que es lo que me han indicado desde producto, pero no lo borro por si en un futuro se utiliza
+								/*if(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(destino_comercial) && DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion.getCodigo())) {
+
+									Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "activo", activoAgrupacionActivo.getActivo());
+									List<GestorActivo> gestores_activo  = (List<GestorActivo>) genericDao.getList(GestorActivo.class, filtro2);
+									for(GestorActivo gest : gestores_activo) {
+										if(TIPO_GESTOR_COMERCIAL_VENTA.equals(gest.getTipoGestor().getCodigo())) {
+											//borramos el gestor del activo
+											gestorActivoDao.delete(gest);
+											//y agregamos el gestor al historico del activo
+											Filter filt= genericDao.createFilter(FilterType.EQUALS, "activo", activoAgrupacionActivo.getActivo());
+											Filter filt1 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.codigo", TIPO_GESTOR_COMERCIAL_VENTA);
+											Filter filt3 = genericDao.createFilter(FilterType.NULL, "fechaHasta");
+											GestorActivoHistorico gah_g=genericDao.get(GestorActivoHistorico.class,filt,filt1,filt3);
+											if(!Checks.esNulo(gah_g)) {
+													gah_g.setFechaHasta(new Date());
+													genericDao.update(GestorActivoHistorico.class, gah_g);
+											}
+
+										}else if(TIPO_SUPERVISOR_COMERCIAL_VENTA.equals(gest.getTipoGestor().getCodigo())) {
+											//borramos el gestor del activo
+											gestorActivoDao.delete(gest);
+											//y agregamos el gestor al historico del activo
+											Filter filt= genericDao.createFilter(FilterType.EQUALS, "activo", activoAgrupacionActivo.getActivo());
+											Filter filt2 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.codigo", TIPO_SUPERVISOR_COMERCIAL_VENTA);
+											Filter filt3 = genericDao.createFilter(FilterType.NULL, "fechaHasta");
+
+											GestorActivoHistorico gah_s=genericDao.get(GestorActivoHistorico.class,filt,filt2,filt3);
+											if(!Checks.esNulo(gah_s)) {
+													gah_s.setFechaHasta(new Date());
+													genericDao.update(GestorActivoHistorico.class, gah_s);
+											}
+										}
+
+
+									}
+
+								}*/
+
+
+							}
+						}
+					} else {
+						if(tipoComercializacion  == null) {
+							throw new JsonViewerException(TIPO_COMERCIALIZACION_NO_VALIDO);
+						}else if (ofertaVivaAlquiler && DDTipoComercializacion.CODIGO_VENTA.equals(tipoComercializacion.getCodigo())) {
+							throw new JsonViewerException(AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS);
+						} else if ( ofertaVivaVenta && DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion.getCodigo())) {
+							throw new JsonViewerException(AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS);
+						}
+					}
+				}
+			} catch (JsonViewerException jve) {
+				return "false"+SPLIT_VALUE+jve.getMessage();
+			} catch (Exception e) {
+				logger.error("error en agrupacionAdapter", e);
+				return null;
+			}
+		}
+		
+		// Si es de tipo 'Restringida OBREM'.
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM)) {
+
+			ActivoRestringidaObrem restringidaObrem = (ActivoRestringidaObrem) agrupacion;
+
+			try
+			{
+				// Si el destino comercial = Alquiler y venta, no permitirá cambiar el destino comercial = venta
+				Activo activoPrincipal = agrupacion.getActivoPrincipal();
+				String codigoDestinoComercial = "";
+				if(activoPrincipal != null && activoPrincipal.getActivoPublicacion() != null && activoPrincipal.getActivoPublicacion().getTipoComercializacion() != null){
+					codigoDestinoComercial = activoPrincipal.getActivoPublicacion().getTipoComercializacion().getCodigo();
+				}
+
+				if (DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(codigoDestinoComercial)
+						&& DDTipoComercializacion.CODIGO_VENTA.equals(dto.getTipoComercializacionCodigo())) {
+					List<ActivoAgrupacionActivo> listaActivos = restringidaObrem.getActivos();
+
+					if(!Checks.estaVacio(listaActivos)) {
+						ActivoPatrimonio activoPatrimonio;
+						for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivos) {
+							activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activoAgrupacionActivo.getActivo().getId());
+							if (!Checks.esNulo(activoPatrimonio) && !Checks.esNulo(activoPatrimonio.getTipoEstadoAlquiler()) && DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO.equals(activoPatrimonio.getTipoEstadoAlquiler().getCodigo())) {
+								return "false"+SPLIT_VALUE+AGRUPACION_CAMBIO_DEST_COMERCIAL_A_VENTA_CON_ALQUILADOS;
+							}
+						}
+					}
+				}
+
+				if(!permiteCambiarDestinoComercial(restringidaObrem))
+				{
+					return "false"+SPLIT_VALUE+OFERTA_INCOMPATIBLE_AGR_MSG;
+				}
+				else
+				{
+					beanUtilNotNull.copyProperties(restringidaObrem, dto);
+
+					if(dto.getMunicipioCodigo() != null)
+					{
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
+						Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
+						restringidaObrem.setLocalidad(municipioNuevo);
+					}
+					if(dto.getProvinciaCodigo() != null)
+					{
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaCodigo());
+						DDProvincia provinciaNueva = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
+						restringidaObrem.setProvincia(provinciaNueva);
+					}
+
+					activoAgrupacionApi.saveOrUpdate(restringidaObrem);
+
+					List <Oferta> ofertasAgr = restringidaObrem.getOfertas();
+
+					Boolean ofertaViva = false;
+					Boolean ofertaVivaVenta = false;
+					Boolean ofertaVivaAlquiler = false;
+					String codigo = null;
+
+					DDTipoComercializacion tipoComercializacion = null;
+					
+					if(dto.getTipoComercializacionCodigo() != null) {
+						tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, dto.getTipoComercializacionCodigo());
+					}else {
+						Activo activoParaRestringida = null;
+						if(restringidaObrem.getActivoPrincipal() != null) {
+							activoParaRestringida = restringidaObrem.getActivoPrincipal();
+						}else if(restringidaObrem.getActivos() != null && !restringidaObrem.getActivos().isEmpty()){
+							activoParaRestringida = restringidaObrem.getActivos().get(0).getActivo();
+						}	
+						if(activoParaRestringida != null && activoParaRestringida.getActivoPublicacion() != null && activoParaRestringida.getActivoPublicacion().getTipoComercializacion() != null) {
+							String tipoComercializacionString = activoParaRestringida.getActivoPublicacion().getTipoComercializacion().getCodigo();
+							tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, tipoComercializacionString);
+						}
+					}
+
+
+					if(!Checks.estaVacio(ofertasAgr)) {
+						for(Oferta oferta : ofertasAgr) {
+							if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+								ofertaViva = true;
+								if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
+									ofertaVivaVenta = true;
+								}
+
+								if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+									ofertaVivaAlquiler = true;
+								}
+								break;
+							}
+						}
+					}
+					//HREOS-12346
+					
+					if(dto.getMarcaDeExcluido() != null || dto.getVisibleGestionComercial() != null) {
+						Boolean excluirValidaciones = dto.getMarcaDeExcluido();
+						Boolean checkGestorComercial = dto.getVisibleGestionComercial();
+						for (ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
+							Map <Long,List<String>> map = recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(aga.getActivo(), checkGestorComercial, excluirValidaciones ,true);
+							recalculoVisibilidadComercialApi.lanzarPrimerErrorSiTiene(map);
+							
+						}
+					}
+				
+					saveActivosVisiblesGestionComercial(dto,id);
+
+					
+					if(!ofertaViva) {
+						List<ActivoAgrupacionActivo> listaActivos = restringidaObrem.getActivos();
 
 						if(!Checks.estaVacio(listaActivos)) {
 							for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivos) {
@@ -4418,10 +5109,12 @@ public class AgrupacionAdapter {
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
 		if (DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 			genericDao.deleteById(ActivoObraNueva.class, id);
-		} else if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
-					|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
-					|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+		} else if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 			genericDao.deleteById(ActivoRestringida.class, id);
+		} else if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+			genericDao.deleteById(ActivoRestringidaAlquiler.class, id);
+		} else if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+			genericDao.deleteById(ActivoRestringidaObrem.class, id);
 		} else if (DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 			genericDao.deleteById(ActivoProyecto.class, id);
 		} else if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {

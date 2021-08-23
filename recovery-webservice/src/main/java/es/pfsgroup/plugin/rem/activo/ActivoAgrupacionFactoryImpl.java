@@ -12,6 +12,8 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoObraNueva;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
+import es.pfsgroup.plugin.rem.model.ActivoRestringidaAlquiler;
+import es.pfsgroup.plugin.rem.model.ActivoRestringidaObrem;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
@@ -56,6 +58,10 @@ public class ActivoAgrupacionFactoryImpl implements ActivoAgrupacionFactoryApi {
 			return new ActivoObraNueva();
 		}else if (tipoAgrupacion.getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 			return new ActivoRestringida();
+		}else if (tipoAgrupacion.getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER)) {
+			return new ActivoRestringidaAlquiler();
+		}else if (tipoAgrupacion.getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM)) {
+			return new ActivoRestringidaObrem();
 		}else{
 			return null;
 		}

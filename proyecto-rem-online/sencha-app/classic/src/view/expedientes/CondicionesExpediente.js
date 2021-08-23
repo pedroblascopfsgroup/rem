@@ -16,6 +16,14 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 	initComponent : function() {
 		var me = this;
 		me.setTitle(HreRem.i18n('title.condiciones'));
+		var isBK = me.lookupController().getViewModel().get('expediente.esBankia');
+		var isAlquiler = me.lookupController().getViewModel().get('expediente.tipoExpedienteCodigo') == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+		var tamanyo1 = 100;
+		
+		if(isBK && isAlquiler){
+			 tamanyo1 = 130;
+		}		
+
 		var items = [
 			{
 				xtype : 'fieldset',
@@ -529,6 +537,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				]
        		},
 			{
+
 				xtype : 'fieldset',
 				collapsible : true,
 				defaultType : 'displayfieldbase',
@@ -542,7 +551,41 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				},
 				items : [
 					{
-						xtype : 'fieldsettable',
+						xtype : 'fieldset',
+						collapsible : false,
+						layout : {
+							type : 'table',
+							columns : 2
+						},
+						bind:{
+							hidden: '{!esBankiaAlquiler}'
+						},
+						margin: '0 0 0 10',
+						colspan: 3,
+						border : false,
+						defaultType : 'displayfieldbase',
+						items : [
+							{
+								xtype : 'checkboxfieldbase',
+								reference : 'renunciaTanteoRetracto',
+								fieldLabel : HreRem.i18n('fieldlabel.renuncia.tanteo.retracto'),
+								bind : {
+									value : '{condiciones.renunciaTanteo}'
+								}
+							},
+							{
+								xtype : 'checkboxfieldbase',
+								reference : 'chekboxReservaConImpuesto',
+								fieldLabel : HreRem.i18n('fieldlabel.derecho.cesion.subarriendo'),
+								bind : {
+									value : '{condiciones.derechoCesionSubarriendo}'
+								},
+								readOnly : false
+							}
+						]
+					},
+					{
+						xtype : 'fieldset',
 						collapsible : false,
 						layout : {
 							type : 'table',
@@ -554,7 +597,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 
 							{
 								xtype : 'fieldset',
-								height : 100,
+								height : tamanyo1,
 								layout : {
 									type : 'table',
 									columns : 2
@@ -585,6 +628,24 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										symbol : HreRem.i18n('symbol.euro'),
 										bind : '{condiciones.importeFianza}',
 										readOnly : false
+									},
+									{
+										xtype : 'checkboxfieldbase',
+										reference : 'fianzaExoneradaRef',
+										fieldLabel : HreRem.i18n('fieldlabel.fianza.exonerada'),
+										bind : {
+											value : '{condiciones.fianzaExonerada}',
+											hidden: '{!esBankiaAlquiler}'
+										}
+									},
+									{
+										xtype : 'datefieldbase',
+										reference : 'fechaIngresoFianzaArrendatarioRef',
+										fieldLabel : HreRem.i18n('fieldlabel.fecha.ingreso'),
+										bind : {
+											value : '{condiciones.fechaIngresoFianzaArrendatario}',
+											hidden: '{!esBankiaAlquiler}'
+										}
 									}
 								]
 							},
@@ -628,12 +689,15 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						]
 					},
 					{
-						xtype : 'fieldsettable',
+						xtype : 'fieldset',
 						collapsible : false,
 						border : false,
 						layout : {
 							type : 'table',
 							columns : 1
+						},
+						bind:{
+							hidden: '{esBankiaAlquiler}'
 						},
 						defaultType : 'displayfieldbase',
 						items : [
@@ -696,6 +760,450 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								]
 							} 
 						]
+					},
+					{
+						xtype : 'fieldset',
+						collapsible : false,
+						border : false,
+						layout : {
+							type : 'table',
+							columns : 1
+						},
+						bind:{
+							hidden: '{!esBankiaAlquiler}'
+						},
+						defaultType : 'displayfieldbase',
+						items : [
+
+							{
+								xtype : 'fieldset',
+								height : 130,
+								layout : {
+									type : 'table',
+									columns : 2
+								},
+								defaultType : 'textfieldbase',
+								title : HreRem.i18n("fieldlabel.duracion"),
+								items : [
+									{
+										xtype : 'datefieldbase',
+										fieldLabel : HreRem.i18n('header.fecha.inicio'),
+										bind : {
+											value : '{condiciones.fechaInicioCnt}'
+										}
+									},
+									{
+										xtype : 'numberfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.meses.duracion'),
+										bind : {
+											//value : '{condiciones.mesesDeposito}'
+										}
+									},
+									{
+										xtype : 'datefieldbase',
+										fieldLabel : HreRem.i18n('header.fecha.fin'),
+										bind : {
+											value : '{condiciones.fechaFinCnt}'
+										}
+									},
+									{
+										xtype : 'numberfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.anyos.obligado.cump'),
+										bind : {
+											value : '{condiciones.obligadoCumplimiento}'
+										}
+									},
+									{
+										xtype : 'datefieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.fecha.preaviso.vencimiento.cnt'),
+										bind : {
+											value : '{condiciones.fechaPreavisoVencimientoCnt}'
+										}
+									}
+								]
+							},
+							{
+								xtype : 'fieldset',
+								height : 100,
+								layout : {
+									type : 'table',
+									columns : 2
+								},
+								defaultType : 'textfieldbase',
+								title : HreRem.i18n("fieldlabel.fiscalidad"),
+								items : [
+									{
+										xtype : 'comboboxfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.tipo.impuesto'),
+										bind : {
+											store : '{comboTiposImpuesto}',
+											value : '{condiciones.tipoImpuestoCodigo}'
+										},
+										displayField : 'descripcion',
+										valueField : 'codigo'
+									},
+									{
+										xtype : 'numberfieldbase',
+										reference : 'tipoAplicable2',
+										symbol : HreRem.i18n("symbol.porcentaje"),
+										fieldLabel : HreRem.i18n('fieldlabel.tipo.aplicable'),
+										bind : {
+											value : '{condiciones.tipoAplicable}'
+										}
+									}
+								]
+							}
+						]
+					},
+					{
+						xtype : 'fieldset',
+						layout : {
+							type : 'table',
+							columns : 4
+						},
+						colspan: 4,
+						margin : '0 0 20 10',
+						height : 130,
+						defaultType : 'textfieldbase',
+						title : HreRem.i18n("fieldlabel.no.comercial"),
+						bind:{
+							hidden : '{!esBankiaAlquiler}'
+						},
+						items : [
+							{
+								xtype : 'comboboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.vulnerabilidad'),
+								bind : {
+									store : '{comboSiNoBoolean}',
+									value : '{condiciones.vulnerabilidadDetectada}'
+								},
+								displayField : 'descripcion',
+								valueField : 'codigo'
+							},
+							{
+								xtype : 'comboboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.regimen.fianza.ccaa'),
+								bind : {
+									store : '{storeRegimenFianzaCCAA}',
+									value : '{condiciones.regimenFianzaCCAACodigo}'
+								},
+								displayField : 'descripcion',
+								valueField : 'codigo'
+							},
+							{
+								xtype : 'comboboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.certificaciones'),
+								bind : {
+									store : '{comboSiNoBoolean}',
+									value : '{condiciones.certificaciones}'
+								},
+								displayField : 'descripcion',
+								valueField : 'codigo'
+							},
+							{
+								xtype : 'comboboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.ofr.nuevas.condiciones'),
+								bind : {
+									store : '{comboSiNoBoolean}',
+									value : '{condiciones.ofrNuevasCondiciones}'
+								},
+								displayField : 'descripcion',
+								valueField : 'codigo'
+							},
+							{
+								xtype : 'comboboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.fianza.contratos.subrogados'),
+								bind : {
+									store : '{comboSiNoBoolean}',
+									value : '{condiciones.fianzaContratosSubrogados}'
+								},
+								displayField : 'descripcion',
+								valueField : 'codigo'
+							},
+							{
+								xtype : 'comboboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.adecuaciones'),
+								bind : {
+									store : '{comboSiNoBoolean}',
+									value : '{condiciones.adecuaciones}'
+								},
+								displayField : 'descripcion',
+								valueField : 'codigo'
+							},
+							{
+								xtype : 'comboboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.cnt.suscrito.post.adj'),
+								bind : {
+									store : '{comboSiNoBoolean}',
+									value : '{condiciones.cntSuscritoPosteridadAdj}'
+								},
+								displayField : 'descripcion',
+								valueField : 'codigo'
+							},
+							{
+								xtype : 'comboboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.ant.deudor.iloc'),
+								bind : {
+									store : '{comboSiNoBoolean}',
+									value : '{condiciones.antiguoDeudorLocalizable}'
+								},
+								displayField : 'descripcion',
+								valueField : 'codigo'
+							}
+						]
+					}
+				]
+			},
+			{
+				xtype : 'fieldset',
+				layout : {
+					type : 'table',
+					columns : 2
+				},
+				defaultType : 'textfieldbase',
+				title : HreRem.i18n("fieldlabel.renta.contrato"),
+				bind:{
+					hidden : '{!esBankiaAlquiler}'
+				},
+				items : [
+					{
+						xtype : 'fieldset',
+						height : 80,
+						margin : '10 10 20 10',
+						layout : {
+							type : 'table',
+							columns : 2
+						},
+						items : [
+							{
+								xtype : 'checkboxfieldbase',
+								reference : 'carenciasBk',
+								margin : '5 0 0 0',
+								fieldLabel : HreRem.i18n('fieldlabel.carencia'),
+								colspan: 2,
+								bind : {
+									value : '{condiciones.carencia}'
+								},
+								listeners : {
+									change : 'onChangeCarencia'
+								}
+							},
+							{
+								xtype : 'numberfieldbase',
+								reference : 'mesesCarenciaBk',
+								name : 'mesesCarencia',
+								margin : '5 0 0 0',
+								fieldLabel : HreRem.i18n('fieldlabel.meses'),
+								bind : {
+									value : '{condiciones.mesesCarencia}',
+									disabled : '{!condiciones.siCarencia}'
+								}
+							},
+							{
+								xtype : 'numberfieldbase',
+								reference : 'importeCarenciaBk',
+								name : 'importeCarencia',
+								margin : '5 0 0 0',
+								fieldLabel : HreRem.i18n('fieldlabel.importe'),
+								symbol : HreRem
+										.i18n('symbol.euro'),
+								bind : {
+									value : '{condiciones.importeCarencia}',
+									disabled : '{!condiciones.siCarencia}'
+								}
+							} 
+						]
+					},
+					{
+						xtype : 'fieldset',
+						height : 80,
+						margin : '10 10 20 10',
+						layout : {
+							type : 'table',
+							columns : 2
+						},
+						items : [
+							{
+								xtype : 'checkboxfieldbase',
+								reference : 'bonificacionBk',
+								margin : '5 0 0 0',
+								fieldLabel : HreRem.i18n('fieldlabel.bonificacion'),
+								colspan: 2,
+								bind : {
+									value : '{condiciones.bonificacion}'
+								},
+								listeners : {
+									change : 'onChangeBonificacion'
+								}
+							},
+							{
+								xtype : 'numberfieldbase',
+								reference : 'mesesBonificacionBk',
+								name : 'mesesBonificacion',
+								margin : '5 0 0 0',
+								fieldLabel : HreRem.i18n('fieldlabel.duracion.meses'),
+								bind : {
+									value : '{condiciones.mesesBonificacion}',
+									disabled : '{!condiciones.bonificacion}'
+								}
+							},
+							{
+								xtype : 'numberfieldbase',
+								reference : 'importeBonificacionBk',
+								name : 'importeBonificacion',
+								margin : '5 0 0 0',
+								fieldLabel : HreRem.i18n('fieldlabel.importe'),
+								symbol : HreRem.i18n('symbol.euro'),
+								bind : {
+									value : '{condiciones.importeBonificacion}',
+									disabled : '{!condiciones.bonificacion}'
+								}
+							} 
+						]
+					},
+					{
+						xtype : 'fieldset',
+						height : 350,
+						margin : '0 10 20 10',
+						layout : {
+							type : 'table',
+							columns : 2
+						},
+						title : HreRem.i18n("fieldlabel.actualizacion.renta"),
+						colspan: 2,
+						items : [
+							{
+								xtype : 'fieldset',
+								margin : '0 10 0 0',
+								layout : {
+									type : 'table',
+									columns : 2
+								},
+								border: false,
+								height : 320,
+								items : [
+									{
+										xtype : 'comboboxfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.metodo.actualizacion'),
+										colspan: 2,
+										bind : {
+											//store : '{comboTiposImpuesto}',
+											//value : '{condiciones.tipoImpuestoCodigo}'
+										},
+										displayField : 'descripcion',
+										valueField : 'codigo'
+									},
+									{
+										xtype : 'datefieldbase',
+										fieldLabel : HreRem.i18n('header.fecha')	
+									},
+									{
+										xtype : 'numberfieldbase',
+										reference : 'periodicidadBk',
+										name : 'periodicidadBk',
+										margin : '5 0 0 0',
+										fieldLabel : HreRem.i18n('fieldlabel.periodicidad.meses'),
+										bind : {
+											//value : '{condiciones.importeBonificacion}'
+										}
+									},
+									{
+										xtype : 'checkboxfieldbase',
+										reference : 'checkboxIPC',
+										fieldLabel : HreRem.i18n('fieldlabel.ipc'),
+										bind : {
+											value : '{condiciones.checkIPC}'
+										}
+									},		
+									{
+										xtype : 'checkboxfieldbase',
+										reference : 'checkboxIPC',
+										fieldLabel : HreRem.i18n('fieldlabel.igc'),
+										bind : {
+											//value : '{condiciones.checkIPC}'
+										}
+									}
+								]
+							},
+							{
+								xtype : 'fieldset',
+								layout : {
+									type : 'table',
+									columns : 1
+								},
+								border: false,
+								height : 320,
+								items : [
+									{
+										xtype:'actualizacionRentaGrid',
+										 width: 700
+									}
+								]
+							}
+						]
+					},
+					{
+						xtype : 'fieldset',
+						height : 70,
+						margin : '0 10 20 10',
+						layout : {
+							type : 'table',
+							columns : 3
+						},
+						title : HreRem.i18n("fieldlabel.adelantos"),
+						colspan: 2,
+						items : [
+							{
+								xtype : 'comboboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.rentas.a.cuenta'),
+								bind : {
+									store : '{comboSiNoBoolean}',
+									value : '{condiciones.rentasCuenta}'
+								},
+								displayField : 'descripcion',
+								valueField : 'codigo'
+							},
+							{
+								xtype : 'comboboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.entregas.a.cuenta'),
+								bind : {
+									store : '{comboSiNoBoolean}',
+									value : '{condiciones.entregasCuenta}'
+								},
+								displayField : 'descripcion',
+								valueField : 'codigo'
+							},
+							{
+								xtype : 'numberfieldbase',
+								reference : 'importeEntregasACuentaBk',
+								name : 'importeEntregasACuentaBk',
+								margin : '5 0 0 0',
+								fieldLabel : HreRem.i18n('fieldlabel.importe.a.cuenta'),
+								symbol : HreRem.i18n('symbol.euro'),
+								bind : {
+									value : '{condiciones.importeEntregasCuenta}'
+								}
+							} 
+						]
+					}
+				]
+			},
+			{
+				xtype : 'fieldset',
+				layout : {
+					type : 'table',
+					columns : 3
+				},
+				bind: {
+					hidden : '{!esBankiaAlquiler}'
+				},
+			
+				defaultType : 'textfieldbase',
+				title : HreRem.i18n("fieldlabel.gastos.repercutidos"),
+				items : [
+					{
+						xtype:'gastosRepercutidosGrid',
+						width: 700
 					}
 				]
 			},
@@ -705,7 +1213,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				defaultType : 'displayfieldbase',
 				title : HreRem.i18n('fieldlabel.fiscales'),
 				bind : {
-					hidden : '{esOfertaVenta}'
+					hidden : '{!esAlquilerNoBk}'
 				},
 				items : [
 					{
@@ -770,6 +1278,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									{
 										xtype : 'numberfieldbase',
 										reference : 'mesesCarencia',
+										name : 'mesesCarencia',
 										fieldLabel : HreRem.i18n('fieldlabel.meses'),
 										bind : {
 											value : '{condiciones.mesesCarencia}',
@@ -779,6 +1288,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									{
 										xtype : 'numberfieldbase',
 										reference : 'importeCarencia',
+										name : 'importeCarencia',
 										fieldLabel : HreRem.i18n('fieldlabel.importe'),
 										symbol : HreRem
 												.i18n('symbol.euro'),
@@ -812,6 +1322,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									{
 										xtype : 'numberfieldbase',
 										reference : 'mesesBonificacion',
+										name : 'mesesBonificacion',
 										fieldLabel : HreRem.i18n('fieldlabel.duracion.meses'),
 										bind : {
 											value : '{condiciones.mesesBonificacion}'
@@ -820,6 +1331,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									{
 										xtype : 'numberfieldbase',
 										reference : 'importeBonificacion',
+										name : 'importeBonificacion',
 										fieldLabel : HreRem.i18n('fieldlabel.importe'),
 										symbol : HreRem.i18n('symbol.euro'),
 										bind : {

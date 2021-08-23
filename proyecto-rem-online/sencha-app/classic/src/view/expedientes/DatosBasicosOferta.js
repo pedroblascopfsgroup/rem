@@ -100,17 +100,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							},
 							readOnly : !$AU.userIsRol("HAYASUPER"),
 							fieldLabel : HreRem.i18n('fieldlabel.estado')
-						}, 
-						{
-							xtype: 'comboboxfieldbase',
-							fieldLabel:  HreRem.i18n('fieldlabel.detalle.oferta.alquiler.clasificacion'),
-							reference: 'comboClasificacionRef',
-							bind:{
-								store:'{storeClasificacion}',
-								value:'{datosbasicosoferta.clasificacionCodigo}',
-								hidden: '{!esBankiaAlquiler}'
-							}
-						},
+						}, 	
 						{
 							xtype : 'textfieldbase',
 							fieldLabel : HreRem.i18n('fieldlabel.prescriptor'),
@@ -143,6 +133,16 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								value : '{datosbasicosoferta.ventaCartera}',
 								readOnly : 'true',
 								hidden : '{esTipoAlquiler}'
+							}
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel:  HreRem.i18n('fieldlabel.detalle.oferta.alquiler.clasificacion'),
+							reference: 'comboClasificacionRef',
+							bind:{
+								store:'{storeClasificacion}',
+								value:'{datosbasicosoferta.clasificacionCodigo}',
+								hidden: '{!esBankiaAlquiler}'
 							}
 						},
 						{
@@ -796,7 +796,20 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						}]
 
 					}]
-		}, {
+		},
+		{
+			xtype : 'fieldset',
+			title : HreRem.i18n('fieldlabel.sanciones'),
+			colspan : 3,
+			bind:{
+				hidden: '{!esBankia}'
+			},
+			items : [{
+				xtype:'sancionesBkGrid'
+			}]
+			
+		},
+		{
 
 			xtype : 'fieldset',
 			title : HreRem.i18n('title.textos'),

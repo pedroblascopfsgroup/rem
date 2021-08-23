@@ -3353,8 +3353,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     onChangeCarencia: function(checkbox, newValue, oldValue, eOpts) {
 		if(!Ext.isEmpty(oldValue)){
 			var me = this,
-			meses = me.lookupReference('mesesCarencia'),
-			importe = me.lookupReference('importeCarencia');
+			meses = checkbox.up('[xtype=fieldset]').down('[name=mesesCarencia]');
+			importe = checkbox.up('[xtype=fieldset]').down('[name=importeCarencia]');
 	
 			if(newValue == true) {
 				meses.setDisabled(false);
@@ -3855,9 +3855,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	onChangeBonificacion: function(checkbox, newValue, oldValue, eOpts) {
 			var me = this,
-			meses = me.lookupReference('mesesBonificacion'),
-			importe = me.lookupReference('importeBonificacion');
+
+			meses = checkbox.up('[xtype=fieldset]').down('[name=mesesBonificacion]');
+			importe = checkbox.up('[xtype=fieldset]').down('[name=importeBonificacion]');
 	
+			
+			
 			if(newValue == true) {
 				meses.setDisabled(false);
 				importe.setDisabled(false);

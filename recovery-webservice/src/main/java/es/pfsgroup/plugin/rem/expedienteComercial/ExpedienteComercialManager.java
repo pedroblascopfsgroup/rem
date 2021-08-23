@@ -3335,6 +3335,36 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 		}
+		
+		dto.setFianzaExonerada(condiciones.getFianzaExonerada());
+		dto.setFechaIngresoFianzaArrendatario(condiciones.getFechaIngresoFianzaArrendatario());
+		dto.setDerechoCesionSubarriendo(condiciones.getDerechoCesionSubarriendo());
+		
+		
+		dto.setVulnerabilidadDetectada(condiciones.getVulnerabilidadDetectada());
+		if(condiciones.getRegimenFianzaCCAA() != null) {
+			dto.setRegimenFianzaCCAACodigo(condiciones.getRegimenFianzaCCAA().getCodigo());
+		}
+		dto.setCertificaciones(condiciones.getCertificaciones());
+		dto.setOfrNuevasCondiciones(condiciones.getOfrNuevasCondiciones());
+		dto.setFianzaContratosSubrogados(condiciones.getFianzaContratosSubrogados());
+		dto.setAdecuaciones(condiciones.getAdecuaciones());
+		dto.setCntSuscritoPosteridadAdj(condiciones.getCntSuscritoPosteridadAdj());
+		dto.setAntiguoDeudorLocalizable(condiciones.getAntiguoDeudorLocalizable());
+		
+		dto.setRentasCuenta(condiciones.getRentasCuenta());
+		dto.setEntregasCuenta(condiciones.getEntregasCuenta());
+		dto.setImporteEntregasCuenta(condiciones.getImporteEntregasCuenta());
+		
+		dto.setObligadoCumplimiento(condiciones.getObligadoCumplimiento());
+		dto.setFechaPreavisoVencimientoCnt(condiciones.getFechaPreavisoVencimientoCnt());
+		
+		Oferta oferta = expediente.getOferta();
+		if(oferta != null) {
+			dto.setFechaInicioCnt(oferta.getFechaInicioContrato());
+			dto.setFechaFinCnt(oferta.getFechaFinContrato());
+		}
+		
 
 		return dto;
 	}
@@ -3559,6 +3589,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	 * @return Devuelve una entidad CondicionanteExpediente rellena con los datos
 	 *         del dto.
 	 */
+	@Transactional(readOnly = false)
 	private CondicionanteExpediente dtoCondicionantestoCondicionante(CondicionanteExpediente condiciones,
 			DtoCondiciones dto) {
 		try {
@@ -3816,7 +3847,73 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(dto.getRenunciaTanteo())) {
 				condiciones.setRenunciaTanteo(dto.getRenunciaTanteo());
 			}
+			if(dto.getDerechoCesionSubarriendo() != null) {
+				condiciones.setDerechoCesionSubarriendo(dto.getDerechoCesionSubarriendo());
+			}
+			if(dto.getFianzaExonerada() != null) {
+				condiciones.setFianzaExonerada(dto.getFianzaExonerada());
+			}
+			
+			if(!Checks.isFechaNula(dto.getFechaIngresoFianzaArrendatario())) {
+				condiciones.setFechaIngresoFianzaArrendatario(dto.getFechaIngresoFianzaArrendatario());
+			}
+			
+			
+			
+			if(dto.getVulnerabilidadDetectada() != null) {
+				condiciones.setVulnerabilidadDetectada(dto.getVulnerabilidadDetectada());
+			}
+			if(dto.getRegimenFianzaCCAACodigo() != null) {
+				DDRegimenFianzaCCAA regimenFianzaCCAA = (DDRegimenFianzaCCAA) utilDiccionarioApi.dameValorDiccionarioByCod(DDRegimenFianzaCCAA.class, dto.getRegimenFianzaCCAACodigo());
+				condiciones.setRegimenFianzaCCAA(regimenFianzaCCAA);
+			}
+			if(dto.getCertificaciones() !=null) {
+				condiciones.setCertificaciones(dto.getCertificaciones());
+			}
+			if(dto.getOfrNuevasCondiciones() !=null) {
+				condiciones.setOfrNuevasCondiciones(dto.getOfrNuevasCondiciones());
+			}
+			if(dto.getFianzaContratosSubrogados() !=null) {
+				condiciones.setFianzaContratosSubrogados(dto.getFianzaContratosSubrogados());
+			}
+			if(dto.getAdecuaciones() !=null) {
+				condiciones.setAdecuaciones(dto.getAdecuaciones());
+			}
+			if(dto.getCntSuscritoPosteridadAdj() !=null) {
+				condiciones.setCntSuscritoPosteridadAdj(dto.getCntSuscritoPosteridadAdj());
+			}
+			if(dto.getAntiguoDeudorLocalizable() !=null) {
+				condiciones.setAntiguoDeudorLocalizable(dto.getAntiguoDeudorLocalizable());
+			}
 
+			if(dto.getRentasCuenta() != null) {
+				condiciones.setRentasCuenta(dto.getRentasCuenta());
+			}
+			if(dto.getEntregasCuenta() != null) {
+				condiciones.setEntregasCuenta(dto.getEntregasCuenta());
+			}
+			if(dto.getImporteEntregasCuenta() != null) {
+				condiciones.setImporteEntregasCuenta(dto.getImporteEntregasCuenta());
+			}
+			
+			dto.setObligadoCumplimiento(condiciones.getObligadoCumplimiento());
+			dto.setFechaPreavisoVencimientoCnt(condiciones.getFechaPreavisoVencimientoCnt());
+			
+			ExpedienteComercial expediente = condiciones.getExpediente();
+			if(expediente != null) {
+				Oferta oferta = expediente.getOferta();
+				if(oferta != null) {
+					if(!Checks.isFechaNula(dto.getFechaInicioCnt())) {
+						oferta.setFechaInicioContrato(dto.getFechaInicioCnt());
+					}
+					if(!Checks.isFechaNula(dto.getFechaFinCnt())) {
+						oferta.setFechaFinContrato(dto.getFechaFinCnt());
+					}
+					
+					genericDao.save(Oferta.class, oferta);
+				}
+			}
+			
 		} catch (Exception ex) {
 			logger.error("error en expedienteComercialManager", ex);
 			return condiciones;

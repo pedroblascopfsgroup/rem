@@ -379,13 +379,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	var me = this;
 	     	var expediente= me.getData().expediente;
 	     	if(!Ext.isEmpty(expediente)){
-		     	var tipoOferta= expediente.get('tipoExpedienteDescripcion');
-		     	if(tipoOferta=='Venta'){
+		     	var tipoOferta= expediente.get('tipoExpedienteCodigo');
+		     	if(CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"] == tipoOferta){
 		     		return true;
 		     	}
 	     	}
 	     	//se oculta el bloque por HREOS-4775 por el tercer puntito
-	     	return true;
+	     	return false;
 	     },
 	     
 	     esAlquilerConOpcionCompra: function(get){
@@ -446,6 +446,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				 return false;
 			 }
 		 },
+
+		 	mostrarBotonLanzarPBC: function(get){
+
+             var tieneInterlocutoresNoEnviados = get('datosbasicosoferta.tieneInterlocutoresNoEnviados');
+
+         	return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) && tieneInterlocutoresNoEnviados ;
+
+         	},
+
 		 esOfertaTramitada: function(get){
 			 var tipoOfertaDesc = get('datosbasicosoferta.estadoDescripcion');
 			 
@@ -708,10 +717,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     		return true;
 	     	}
 	     	return false;
-	     }
+	     },
+	     esBankiaAlquiler: function(get){
+			 var me = this;
+			 var isAlquiler = get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+			 var isBK = get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['BANKIA'];
+			
+			 return isAlquiler && isBK;
+		 }
 	 },
-	 
-
+	
 
     stores: {
     	
@@ -1566,6 +1581,23 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoRiesgoOperacion'}
 			}
+		},
+		storeClasificacion:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'clasificacionAlquiler'}
+	    	}	  
+		},
+		
+		storeMotivoRechazoAntiguoDeudor:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoRechazoAntiguoDeudor'}
+	    	}	  
 		}
 
     }

@@ -168,6 +168,14 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private Date fechaFirmaContrato;
 	
+	private String clasificacionCodigo;
+	
+	private Long mesesDuracionCntAlquiler;
+	
+	private String motivoRechazoAntiguoDeudCod; 
+	
+	private String detalleAnulacionCntAlquiler;
+	
 	
 	public Long getId() {
 		return id;
@@ -857,6 +865,37 @@ public class DtoFichaExpediente extends WebDto {
 	public void setFechaFirmaContrato(Date fechaFirmaContrato) {
 		this.fechaFirmaContrato = fechaFirmaContrato;
 	}
-	
+
+	public String getClasificacionCodigo() {
+		return clasificacionCodigo;
+	}
+
+	public void setClasificacionCodigo(String clasificacionCodigo) {
+		this.clasificacionCodigo = clasificacionCodigo;
+	}
+
+	public Long getMesesDuracionCntAlquiler() {
+		return mesesDuracionCntAlquiler;
+	}
+
+	public void setMesesDuracionCntAlquiler(Long mesesDuracionCntAlquiler) {
+		this.mesesDuracionCntAlquiler = mesesDuracionCntAlquiler;
+	}
+
+	public String getMotivoRechazoAntiguoDeudCod() {
+		return motivoRechazoAntiguoDeudCod;
+	}
+
+	public void setMotivoRechazoAntiguoDeudCod(String motivoRechazoAntiguoDeudCod) {
+		this.motivoRechazoAntiguoDeudCod = motivoRechazoAntiguoDeudCod;
+	}
+
+	public String getDetalleAnulacionCntAlquiler() {
+		return detalleAnulacionCntAlquiler;
+	}
+
+	public void setDetalleAnulacionCntAlquiler(String detalleAnulacionCntAlquiler) {
+		this.detalleAnulacionCntAlquiler = detalleAnulacionCntAlquiler;
+	}
 	
 }

@@ -2412,6 +2412,32 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView lanzarDatosPbc(ModelMap model,@RequestParam Long numOferta) {
+		try {
+			String endpoint = expedienteAdapter.getlanzarDatosPbcREM3Endpoint();
+			if (!TareaAdapter.DEV.equals(endpoint) && endpoint != null) {
+				Map<String, Object> params = new HashMap<String, Object>();
+				params.put("codigoOferta", numOferta);
+				HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
+				JSONObject resp = request.post(JSONObject.class);
+				model.put(RESPONSE_DATA_KEY, resp);
+			} else {
+				JSONObject resp = new JSONObject() {{
+					put("success", false);
+					put("descripcion", RESPONSE_ERROR_CONNECT);
+				}};
+				model.put(RESPONSE_DATA_KEY, resp);
+			}
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController::lanzarDatosPbc", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView recalcularHonorarios(ModelMap model, Long idExpediente) {
 		try {
 			expedienteComercialApi.recalcularHonorarios(idExpediente);

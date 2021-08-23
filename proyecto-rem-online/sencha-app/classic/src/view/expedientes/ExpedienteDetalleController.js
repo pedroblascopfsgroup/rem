@@ -5154,7 +5154,49 @@ comprobarFormatoModificar: function() {
 			}
 		});
 	},
-	
+		lanzarDatosPbc: function(btn){
+    		//TODO
+    		var me= this;
+    		var url =  $AC.getRemoteUrl('expedientecomercial/lanzarDatosPbc');
+    		var numOferta = me.getViewModel().data.datosbasicosoferta.getData().numOferta;
+    		me.getView().mask(HreRem.i18n("msg.mask.espere"));
+
+    		Ext.Ajax.request({
+    			     url: url,
+    			     params:  {numOferta : numOferta},
+    			     success: function(response, opts) {
+    			    	 data = Ext.decode(response.responseText);
+    			    	 if ( data.data )
+    			    		 data = data.data;
+
+    			    	 statusMessage = {
+    			    			 "status" : null,
+    			    			 "message": null
+    			    	 };
+
+    			    	 if ("true" == data.success) {
+    			    		 statusMessage.status = "infoToast";
+    			    		 statusMessage.message = HreRem.i18n("msg.operacion.ok");
+    			    	 } else {
+    			    		 statusMessage.status = "errorToast";
+    			    		 statusMessage.message = data.descripcion
+    			    		 							&& data.descripcion.length > 0 ?
+    			    		 									data.descripcion : HreRem.i18n("msg.operacion.ko");
+    			    	 }
+
+    			    	 me.fireEvent(statusMessage.status ,statusMessage.message);
+    			     },
+    	        failure: function(response, opts) {
+    					me.fireEvent("errorToast",data.msg);
+    			},
+    			callback : function() {
+    				me.getView().unmask();
+    				me.refrescarExpediente(true);
+    			}
+
+    		});
+    	},
+
 	recalcularHonorarios : function(btn) {
 		var form = btn.up('formBase');
 		var me = this;

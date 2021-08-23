@@ -94,7 +94,10 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 	public void actualizarRolesDesdeJupiter(String username, String listaRoles) {
 
 		Assert.notNull(username, "username no puede ser null");
-		Assert.notNull(listaRoles, "listaRoles no puede ser null");
+		
+		if (listaRoles == null) {
+			listaRoles = "";
+		}
 		
 		Usuario usuario = usuarioDao.getByUsername(username);
 		
@@ -145,15 +148,14 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 					integracionJupiterDao.actualizarCarteras(usuario, altasCarteras, bajasCarteras);
 					int numCarteras = integracionJupiterDao.getCodigosCarterasREM(usuario).size();
 					
-					if (numCarteras > 0) {
-						integracionJupiterDao.eliminarSubcarteras(usuario);
-					} else {
-						List<String> altasSubcarteras = new ArrayList<String>();
-						List<String> bajasSubcarteras = new ArrayList<String>();
-						List<String> codigosSubcarterasREM = integracionJupiterDao.getCodigosSubcarterasREM(usuario);
-						obtenerListaAltasBajas(codigosSubcarterasJupiter, codigosSubcarterasREM, altasSubcarteras, bajasSubcarteras);
-						integracionJupiterDao.actualizarSubcarteras(usuario, altasSubcarteras, bajasSubcarteras);
+					List<String> altasSubcarteras = new ArrayList<String>();
+					List<String> bajasSubcarteras = new ArrayList<String>();
+					List<String> codigosSubcarterasREM = integracionJupiterDao.getCodigosSubcarterasREM(usuario);
+					obtenerListaAltasBajas(codigosSubcarterasJupiter, codigosSubcarterasREM, altasSubcarteras, bajasSubcarteras);
+					if (numCarteras > 0 && codigosSubcarterasJupiter.size()>0) {
+						integracionJupiterDao.eliminarCarteras(usuario);
 					}
+					integracionJupiterDao.actualizarSubcarteras(usuario, altasSubcarteras, bajasSubcarteras);
 				}
 			} catch (Exception e) {
 				logger.error("IntegracionJupiter: problema al actualizar los datos de perfiles del usuario en REM desde Jupiter: " + e.getMessage() 
@@ -209,22 +211,24 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 		
 		for (String codigoJupiter : listaCodigosJupiter) {
 			String codigoJupiterCorregido = corregirCodigoJupiter(codigoJupiter);
-			MapeoJupiterREM traduccion = mapaTraductor.get(codigoJupiterCorregido);
-			if (traduccion == null) {
-				logger.error("IntegracionJupiter: Error al traducir el codigo desde Jupiter: " + codigoJupiter + " no existe en el maestro de traduccion.");
-			} else {
-				String tipoPerfil = traduccion.getTipoPerfil();
-				if (PERFIL_ROL.equals(tipoPerfil)) {
-  					codigosPerfiles.add(traduccion.getCodigoREM());
-				} else if (GRUPO.equals(tipoPerfil)) {
-					codigosGrupos.add(traduccion.getCodigoREM());
-				} else if (CARTERA.equals(tipoPerfil)) {
-					codigosCarteras.add(traduccion.getCodigoREM());
-				} else if (SUBCARTERA.equals(tipoPerfil)) {
-					//El código de subcartera viene con el código de cartera por delante más un separador <espacio>/<espacio>. Hay que extraerlo.
-					codigosSubcarteras.add(extraerCodigoSubcartera(traduccion.getCodigoREM()));
+			if (!"".contentEquals(codigoJupiterCorregido.trim()) & !"999".contentEquals(codigoJupiterCorregido)) {
+				MapeoJupiterREM traduccion = mapaTraductor.get(codigoJupiterCorregido);
+				if (traduccion == null) {
+					logger.error("IntegracionJupiter: Error al traducir el codigo desde Jupiter: " + codigoJupiter + " no existe en el maestro de traduccion.");
 				} else {
-					logger.error("IntegracionJupiter: Error al traducir el codigo desde Jupiter: " + codigoJupiter + " tiene un tipo de perfil no soportado " + traduccion.getTipoPerfil());
+					String tipoPerfil = traduccion.getTipoPerfil();
+					if (PERFIL_ROL.equals(tipoPerfil)) {
+	  					codigosPerfiles.add(traduccion.getCodigoREM());
+					} else if (GRUPO.equals(tipoPerfil)) {
+						codigosGrupos.add(traduccion.getCodigoREM());
+					} else if (CARTERA.equals(tipoPerfil)) {
+						codigosCarteras.add(traduccion.getCodigoREM());
+					} else if (SUBCARTERA.equals(tipoPerfil)) {
+						//El código de subcartera viene con el código de cartera por delante más un separador <espacio>/<espacio>. Hay que extraerlo.
+						codigosSubcarteras.add(extraerCodigoSubcartera(traduccion.getCodigoREM()));
+					} else {
+						logger.error("IntegracionJupiter: Error al traducir el codigo desde Jupiter: " + codigoJupiter + " tiene un tipo de perfil no soportado " + traduccion.getTipoPerfil());
+					}
 				}
 			}
 		}

@@ -224,9 +224,9 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 	}
 
 	@Override
-	public void eliminarSubcarteras(Usuario usuario) {
+	public void eliminarCarteras(Usuario usuario) {
 		Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
-		eliminarSubcarterasFiltro(filtroUsuario, usuario.getUsername());
+		eliminarCarterasFiltro(filtroUsuario, usuario.getUsername());
 	}
 	
 	@Transactional(readOnly = false)
@@ -414,10 +414,10 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 		return genericDao.createFilter(FilterType.EQUALS, UCA_DESCRIPCION_SUB, descSubcartera);
 	}
 	
-	private void eliminarSubcarterasFiltro(Filter filtroUsuario, String username) {
-		Filter filtroSubCarteraNotNull = genericDao.createFilter(FilterType.NOTNULL, SUB_CARTERA);
-		genericDao.delete(UsuarioCartera.class, filtroUsuario, filtroSubCarteraNotNull);
-		logger.info("Eliminamos subcarteras previamente asociadas al usuario " + username);
+	private void eliminarCarterasFiltro(Filter filtroUsuario, String username) {
+		Filter filtroCarteraNotNull = genericDao.createFilter(FilterType.NULL, SUB_CARTERA);
+		genericDao.delete(UsuarioCartera.class, filtroUsuario, filtroCarteraNotNull);
+		logger.info("Eliminamos carteras previamente asociadas al usuario " + username + " dado que tiene subcarteras asociadas.");
 	}
 
 }

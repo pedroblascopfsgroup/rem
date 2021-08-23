@@ -6493,14 +6493,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Override
 	public String actualizarOfertaBoarding(TareaExterna tareaExterna) {
-		
-		
-		
+		Oferta oferta = tareaExternaToOferta(tareaExterna);
+		return this.actualizarOfertaBoarding(oferta, tareaExterna.getTareaProcedimiento().getCodigo());
+	}
+	
+	@Override
+	public String actualizarOfertaBoarding(Oferta oferta, String codigo) {
+
 		if(!boardingComunicacionApi.modoRestClientBoardingActivado()) {
 			return null;
 		}
 		
-		Oferta oferta = tareaExternaToOferta(tareaExterna);
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 		Activo activo = oferta.getActivoPrincipal();
 		Reserva reserva = expedienteComercial.getReserva();
@@ -6529,34 +6532,34 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		if (oferta != null && expedienteComercial != null && esOfertaValidaCFVByCarteraSubcartera(oferta) && (oferta.getOfertaEspecial() == null || !oferta.getOfertaEspecial())) {
 			
-			if (CODIGO_T013_DEFINICION_OFERTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+			if (CODIGO_T013_DEFINICION_OFERTA.equals(codigo) 
 					&& ((checkAtribuciones(oferta) && perimetro.getAplicaFormalizar() == 1) 
 							|| (oferta.getOfertaExpress() != null && oferta.getOfertaExpress()))) {
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
-			} else if (CODIGO_T013_RESOLUCION_COMITE.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
-					|| CODIGO_T013_RATIFICACION_COMITE.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+			} else if (CODIGO_T013_RESOLUCION_COMITE.equals(codigo) 
+					|| CODIGO_T013_RATIFICACION_COMITE.equals(codigo)) {
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
-			} else if ((CODIGO_T017_RESOLUCION_CES.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
-					|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(tareaExterna.getTareaProcedimiento().getCodigo()))) {
+			} else if ((CODIGO_T017_RESOLUCION_CES.equals(codigo) 
+					|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(codigo))) {
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
-			} else if (CODIGO_T013_RESOLUCION_TANTEO.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+			} else if (CODIGO_T013_RESOLUCION_TANTEO.equals(codigo) 
 					&& ((!Checks.esNulo(reserva) && !DDEstadosReserva.CODIGO_FIRMADA.equals(reserva.getEstadoReserva().getCodigo())) || Checks.esNulo(reserva))) {
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
-			} else if (CODIGO_T013_RESPUESTA_OFERTANTE.equals(tareaExterna.getTareaProcedimiento().getCodigo())
+			} else if (CODIGO_T013_RESPUESTA_OFERTANTE.equals(codigo)
 					&& !trabajoApi.checkBankia(expedienteComercial.getTrabajo())) {
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
-			} else if ((CODIGO_T013_RESULTADO_PBC.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
-					|| CODIGO_T017_PBC_VENTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()))
+			} else if ((CODIGO_T013_RESULTADO_PBC.equals(codigo) 
+					|| CODIGO_T017_PBC_VENTA.equals(codigo))
 					&& DDSubcartera.CODIGO_OMEGA.equals(codSubCartera)) {
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);			

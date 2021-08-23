@@ -678,7 +678,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				if(agrupacionLoteCom != null) {
 					dtoSendNotificator.setNumAgrupacion(agrupacionLoteCom.getNumAgrupRem());
 					dtoSendNotificator.setDireccion(agrupacionLoteCom.getDireccion());
-				} else if(oferta.getAgrupacion().getTipoAgrupacion() != null && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+				} else if(oferta.getAgrupacion().getTipoAgrupacion() != null && (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())
+						|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())
+						|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo()))) {
 					ActivoRestringida agrupacionRest = genericDao.get(ActivoRestringida.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
 					if (agrupacionRest != null) {
 						dtoSendNotificator.setNumAgrupacion(agrupacionRest.getNumAgrupRem());

@@ -550,7 +550,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
     	var ua = false;
     	
     	
-    	if((tipoAgrupacion != CONST.TIPOS_AGRUPACION['RESTRINGIDA'])){
+    	if((tipoAgrupacion != CONST.TIPOS_AGRUPACION['RESTRINGIDA'])
+    			|| (tipoAgrupacion != CONST.TIPOS_AGRUPACION['RESTRINGIDA_ALQUILER'])
+    			|| (tipoAgrupacion != CONST.TIPOS_AGRUPACION['RESTRINGIDA_OBREM'])){
     		sePuedeBorrar = true;
     	}else if(me.selection.data.activoPrincipal != 1){
     		sePuedeBorrar = true;

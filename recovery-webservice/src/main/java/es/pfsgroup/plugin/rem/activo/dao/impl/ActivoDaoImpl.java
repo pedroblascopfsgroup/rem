@@ -74,7 +74,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	private static final String EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS ="activo.matriz.con.unidades.alquilables.ofertas.vivas";
 	private static final String EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS ="activo.unidad.alquilable.con.activo.matriz.ofertas.vivas";
 	private static final String isIntegradoQueryString ="select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = :actId and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion";
+	private static final String isIntegradoQueryStringIn ="select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = :actId and act.agrupacion.tipoAgrupacion.codigo in (:codAgrupacion)";
 	private static final String isPrincipalQueryString ="select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.agrupacion.activoPrincipal.id = :actId and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion";
+	private static final String isPrincipalQueryStringIn ="select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.agrupacion.activoPrincipal.id = :actId and act.agrupacion.tipoAgrupacion.codigo in (:codAgrupacion)";
 	private static final String activoAgrupacionQueryString ="select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = :actId and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion";
 
 	@Override
@@ -396,11 +398,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public Integer isIntegradoAgrupacionRestringida(Long id, Usuario usuLogado) {
-		HQLBuilder hb = new HQLBuilder(isIntegradoQueryString);
+		HQLBuilder hb = new HQLBuilder(isIntegradoQueryStringIn);
 
+		 String agrupaciones = DDTipoAgrupacion.AGRUPACION_RESTRINGIDA + "," + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER + "," + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM;
 		 Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		 q.setParameter("actId", id);
-		 q.setParameter("codAgrupacion", DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+		 q.setParameter("codAgrupacion", agrupaciones);
 		
 		return ((Long) q.uniqueResult()).intValue();
 	}
@@ -418,11 +421,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public Integer isActivoPrincipalAgrupacionRestringida(Long id) {
-		HQLBuilder hb = new HQLBuilder(isPrincipalQueryString);
+		HQLBuilder hb = new HQLBuilder(isPrincipalQueryStringIn);
 
+		 String agrupaciones = DDTipoAgrupacion.AGRUPACION_RESTRINGIDA + "," + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER + "," + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM;
 		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		 q.setParameter("actId", id);
-		 q.setParameter("codAgrupacion", DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+		 q.setParameter("codAgrupacion", agrupaciones);
 		return ((Long) q.uniqueResult()).intValue();
 	}
 
@@ -430,8 +434,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoAgrRestringidaPorActivoID(Long id) {
 		HQLBuilder hb = new HQLBuilder(
 				"select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = "
-						+ id + " and act.agrupacion.tipoAgrupacion.codigo = "
-						+ DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+						+ id + " and (act.agrupacion.tipoAgrupacion.codigo = "
+						+ DDTipoAgrupacion.AGRUPACION_RESTRINGIDA 
+						+ " or act.agrupacion.tipoAgrupacion.codigo = "
+						+ DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER
+						+ " or act.agrupacion.tipoAgrupacion.codigo = "
+						+ DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM + ")");
 		List <ActivoAgrupacionActivo> activoAgrupacionlist = (List<ActivoAgrupacionActivo>) getHibernateTemplate().find(hb.toString());
 		
 		if (activoAgrupacionlist != null && !activoAgrupacionlist.isEmpty()) {

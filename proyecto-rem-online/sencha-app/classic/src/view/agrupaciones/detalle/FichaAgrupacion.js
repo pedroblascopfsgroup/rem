@@ -229,7 +229,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 								value: '{agrupacionficha.codigoPostal}',
 								readOnly: '{isCampoReadOnly}'
 							},
-							allowBlank	:	'{esAgrupacionLoteComercial}',
+//							allowBlank	:	'{esAgrupacionLoteComercial}',
+							allowBlank	:	'{esAgrupacionLoteComercialOrRestringida}',
 							maskRe		: /^\d*$/,
 							vtype		: 'codigoPostal'
 						},

@@ -6,11 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -20,44 +17,43 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
-import es.pfsgroup.commons.utils.Checks;
 
 /**
- * Modelo que gestiona el diccionario de subcarteras.
+ * Modelo que gestiona el diccionario de Tipos de riesgo de operacion.
  * 
- * @author Lara Pablo
+ * @author Cristian Montoya
  *
  */
 @Entity
-@Table(name = "DD_RFC_REGIMEN_FIANZA_CCAA", schema = "${entity.schema}")
+@Table(name = "DD_MRA_MOT_RECH_ANTIGUO_DEUDOR", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDRegimenFianzaCCAA implements Auditable, Dictionary {
+public class DDMotivoRechazoAntiguoDeud implements Auditable, Dictionary {
+		
 
 	private static final long serialVersionUID = 1L;
-	public static final String ENTIDAD_FINANCIERA_BANKIA = "01";
 
 	@Id
-	@Column(name = "DD_RFC_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDRegimenFianzaCCAAGenerator")
-	@SequenceGenerator(name = "DDRegimenFianzaCCAAGenerator", sequenceName = "S_DD_RFC_REGIMEN_FIANZA_CCAA")
+	@Column(name = "DD_MRA_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivoRechazoAntiguoDeudGenerator")
+	@SequenceGenerator(name = "DDMotivoRechazoAntiguoDeudGenerator", sequenceName = "S_DD_MRA_MOT_RECH_ANTIGUO_DEUDOR")
 	private Long id;
-	
-	@Column(name = "DD_RFC_CODIGO")   
+	    
+	@Column(name = "DD_MRA_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_RFC_DESCRIPCION")   
+	@Column(name = "DD_MRA_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_RFC_DESCRIPCION_LARGA")   
-	private String descripcionLarga;	
-	    
+	@Column(name = "DD_MRA_DESCRIPCION_LARGA")   
+	private String descripcionLarga;
+
 	@Version   
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -105,5 +101,4 @@ public class DDRegimenFianzaCCAA implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-	
 }

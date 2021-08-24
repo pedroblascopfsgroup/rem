@@ -459,10 +459,11 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							bind: {
 								value: '{situacionPosesoria.tieneOkTecnico}',
 								readOnly: '{!activo.aplicaGestion}'
-							},
+							}
+							/*,
     						listeners: {
 			                	change: 'editarComboEstadoTecnico'
-			            	}
+			            	}*/
 						},
 						{
 					        xtype: 'comboboxfieldbasedd',
@@ -470,7 +471,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.estado.tecnico'),
 					        bind: {        
 					        	store : '{comboEstadoTecnico}',
-					        	disabled: '{!situacionPosesoria.tieneOkTecnico}',
+					        	/*disabled: '{!situacionPosesoria.tieneOkTecnico}',*/
 					        	hidden: '{!activo.isCarteraBankia}',
 				            	value: '{situacionPosesoria.estadoTecnicoCodigo}',
 								rawValue: '{situacionPosesoria.estadoTecnicoDescripcion}'

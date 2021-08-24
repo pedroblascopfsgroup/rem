@@ -520,6 +520,8 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				} else {
 					activoCaixa.setFechaEstadoTecnico(null);
 				}
+			} else if(activoCaixa.getEstadoTecnico().getDescripcion() != null) {
+				activoCaixa.getFechaEstadoTecnico();
 			} else {
 				activoCaixa.setFechaEstadoTecnico(null);
 			}

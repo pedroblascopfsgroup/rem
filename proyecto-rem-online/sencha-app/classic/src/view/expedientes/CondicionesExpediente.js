@@ -1069,6 +1069,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							type : 'table',
 							columns : 2
 						},
+						reference:'fieldsetActualizacionRenta',
 						title : HreRem.i18n("fieldlabel.actualizacion.renta"),
 						colspan: 2,
 						items : [
@@ -1085,17 +1086,23 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									{
 										xtype : 'comboboxfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.metodo.actualizacion'),
+										reference:'comboMetodoActualizacionRentaRef', 
 										colspan: 2,
 										bind : {
-											//store : '{comboTiposImpuesto}',
-											//value : '{condiciones.tipoImpuestoCodigo}'
+											store : '{storeMetodoActualizacionRenta}',
+											value : '{condiciones.metodoActualizacionRentaCod}'
 										},
 										displayField : 'descripcion',
-										valueField : 'codigo'
+										valueField : 'codigo',
+										listeners : {
+											change : 'onChangeMetodoActualizacion'
+										}
 									},
 									{
 										xtype : 'datefieldbase',
-										fieldLabel : HreRem.i18n('header.fecha')	
+										reference : 'fechaActualizacionRenta',
+										fieldLabel : HreRem.i18n('header.fecha'),
+										disabled: true
 									},
 									{
 										xtype : 'numberfieldbase',
@@ -1103,24 +1110,27 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										name : 'periodicidadBk',
 										margin : '5 0 0 0',
 										fieldLabel : HreRem.i18n('fieldlabel.periodicidad.meses'),
+										disabled: true,
 										bind : {
-											//value : '{condiciones.importeBonificacion}'
+											value : '{condiciones.periodicidadMeses}'
 										}
 									},
 									{
 										xtype : 'checkboxfieldbase',
 										reference : 'checkboxIPC',
 										fieldLabel : HreRem.i18n('fieldlabel.ipc'),
+										disabled: true,
 										bind : {
 											value : '{condiciones.checkIPC}'
 										}
 									},		
 									{
 										xtype : 'checkboxfieldbase',
-										reference : 'checkboxIPC',
+										reference : 'checkIGC',
 										fieldLabel : HreRem.i18n('fieldlabel.igc'),
+										disabled: true,
 										bind : {
-											//value : '{condiciones.checkIPC}'
+											value : '{condiciones.checkIGC}'
 										}
 									}
 								]
@@ -1136,7 +1146,9 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								items : [
 									{
 										xtype:'actualizacionRentaGrid',
-										 width: 700
+										reference: 'actualizacionRentaGridRef',
+										disabled: true,
+										width: 700
 									}
 								]
 							}
@@ -1203,6 +1215,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				items : [
 					{
 						xtype:'gastosRepercutidosGrid',
+						reference:'gastosRepercutidosGridRef',
 						width: 700
 					}
 				]
@@ -1579,7 +1592,11 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 
 	funcionRecargar : function() {
 		var me = this;
+
 		me.recargar = false;
 		me.lookupController().cargarTabData(me);
+		me.down('[reference=actualizacionRentaGridRef]').getStore().load();
+		me.down('[reference=gastosRepercutidosGridRef]').getStore().load();
+
 	}
 });

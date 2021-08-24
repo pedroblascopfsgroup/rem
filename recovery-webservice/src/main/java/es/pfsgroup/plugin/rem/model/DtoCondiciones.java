@@ -144,6 +144,10 @@ public class DtoCondiciones extends WebDto {
 	private Date fechaInicioCnt;
 	private Date fechaFinCnt;
 	
+	private String metodoActualizacionRentaCod;
+	private Boolean checkIGC;
+	private Long periodicidadMeses;
+	
 	public Integer getMesesFianza() {
 		return mesesFianza;
 	}
@@ -1026,6 +1030,30 @@ public class DtoCondiciones extends WebDto {
 
 	public void setFechaFinCnt(Date fechaFinCnt) {
 		this.fechaFinCnt = fechaFinCnt;
+	}
+
+	public String getMetodoActualizacionRentaCod() {
+		return metodoActualizacionRentaCod;
+	}
+
+	public void setMetodoActualizacionRentaCod(String metodoActualizacionRentaCod) {
+		this.metodoActualizacionRentaCod = metodoActualizacionRentaCod;
+	}
+
+	public Boolean getCheckIGC() {
+		return checkIGC;
+	}
+
+	public void setCheckIGC(Boolean checkIGC) {
+		this.checkIGC = checkIGC;
+	}
+
+	public Long getPeriodicidadMeses() {
+		return periodicidadMeses;
+	}
+
+	public void setPeriodicidadMeses(Long periodicidadMeses) {
+		this.periodicidadMeses = periodicidadMeses;
 	}	
 	
 }

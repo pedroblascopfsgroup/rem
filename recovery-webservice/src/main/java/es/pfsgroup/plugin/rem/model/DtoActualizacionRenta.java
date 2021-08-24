@@ -5,9 +5,9 @@ import java.util.Date;
 public class DtoActualizacionRenta {
 
 	private Long id;
-	private Date fechaAplicacion;
+	private Date fechaActualizacion;
 	private String tipoActualizacionCodigo;
-	private Double incrementoRenta;
+	private Double importeActualizacion;
 	
 	
 	public Long getId() {
@@ -16,11 +16,11 @@ public class DtoActualizacionRenta {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Date getFechaAplicacion() {
-		return fechaAplicacion;
+	public Date getFechaActualizacion() {
+		return fechaActualizacion;
 	}
-	public void setFechaAplicacion(Date fechaAplicacion) {
-		this.fechaAplicacion = fechaAplicacion;
+	public void setFechaActualizacion(Date fechaActualizacion) {
+		this.fechaActualizacion = fechaActualizacion;
 	}
 	public String getTipoActualizacionCodigo() {
 		return tipoActualizacionCodigo;
@@ -28,11 +28,13 @@ public class DtoActualizacionRenta {
 	public void setTipoActualizacionCodigo(String tipoActualizacionCodigo) {
 		this.tipoActualizacionCodigo = tipoActualizacionCodigo;
 	}
-	public Double getIncrementoRenta() {
-		return incrementoRenta;
+	public Double getImporteActualizacion() {
+		return importeActualizacion;
 	}
-	public void setIncrementoRenta(Double incrementoRenta) {
-		this.incrementoRenta = incrementoRenta;
+	public void setImporteActualizacion(Double importeActualizacion) {
+		this.importeActualizacion = importeActualizacion;
 	}
-
+	
+	
+	
 }

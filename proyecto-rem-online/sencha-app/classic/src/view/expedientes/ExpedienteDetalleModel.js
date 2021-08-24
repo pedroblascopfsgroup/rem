@@ -1621,7 +1621,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        type: 'uxproxy',
 		        remoteUrl: 'expedientecomercial/getActualizacionRenta',
 				extraParams: {idExpediente: '{expediente.id}'}
-	    	}	  
+	    	},
+	    	autoLoad: true
 		},
 		storeSancionesBk:{
 			model: 'HreRem.model.SancionesModel',
@@ -1638,6 +1639,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'regimenFianzaCCAA'}
 	    	}	  
+		},
+		storeMetodoActualizacionRenta:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'metodoActualizacionRenta'}
+	    	},
+	    	autoLoad: true	  
 		}
 
     }

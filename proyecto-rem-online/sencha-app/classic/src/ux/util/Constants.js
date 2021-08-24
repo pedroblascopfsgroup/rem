@@ -994,5 +994,13 @@ Ext.define('HreRem.ux.util.Constants', {
 	 	COD_DISCREPANCIAS_REGISTRALES: '007',
 	 	COD_ALQUILER: '008',
 	 	COD_OTROS: '009'
+	 },
+	 
+	 METODO_ATUALIZACION_RENTA:{
+	 	COD_LIBRE: 'LIB',
+	 	COD_PORCENTUAL: 'POR',
+	 	COD_MERCADO: 'MER',
+	 	COD_IPCMERCADO: 'IPM',
+	 	COD_NINGUNO: 'NIN'
 	 }
 });

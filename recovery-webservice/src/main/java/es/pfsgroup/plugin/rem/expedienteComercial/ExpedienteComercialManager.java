@@ -53,6 +53,7 @@ import es.capgemini.devon.pagination.PageImpl;
 import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -3359,6 +3360,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		dto.setObligadoCumplimiento(condiciones.getObligadoCumplimiento());
 		dto.setFechaPreavisoVencimientoCnt(condiciones.getFechaPreavisoVencimientoCnt());
 		
+		if(condiciones.getMetodoActualizacionRenta() != null) {
+			dto.setMetodoActualizacionRentaCod(condiciones.getMetodoActualizacionRenta().getCodigo());
+		}
+		
+		dto.setCheckIGC(condiciones.getCheckIGC());
+		dto.setPeriodicidadMeses(condiciones.getPeriodicidadMeses());
+		
 		Oferta oferta = expediente.getOferta();
 		if(oferta != null) {
 			dto.setFechaInicioCnt(oferta.getFechaInicioContrato());
@@ -3898,6 +3906,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			dto.setObligadoCumplimiento(condiciones.getObligadoCumplimiento());
 			dto.setFechaPreavisoVencimientoCnt(condiciones.getFechaPreavisoVencimientoCnt());
+			
+			if(dto.getMetodoActualizacionRentaCod() != null) {
+				DDMetodoActualizacionRenta metodoActualizacionRenta = (DDMetodoActualizacionRenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDMetodoActualizacionRenta.class, dto.getMetodoActualizacionRentaCod());
+				condiciones.setMetodoActualizacionRenta(metodoActualizacionRenta);
+			}
+			
+			if(dto.getCheckIGC() != null) {
+				condiciones.setCheckIGC(dto.getCheckIGC());
+			}
+			if(dto.getPeriodicidadMeses() != null) {
+				condiciones.setPeriodicidadMeses(dto.getPeriodicidadMeses());
+			}
 			
 			ExpedienteComercial expediente = condiciones.getExpediente();
 			if(expediente != null) {
@@ -13408,4 +13428,86 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 	}
 
+	@Override
+	public List<DtoActualizacionRenta> getActualizacionRenta (Long idExpediente) throws IllegalAccessException, InvocationTargetException {
+		List<DtoActualizacionRenta> listActualizacionesRentaLibre = new ArrayList<DtoActualizacionRenta>();
+		ExpedienteComercial eco = this.findOne(idExpediente);
+		if(eco != null) {
+			CondicionanteExpediente coe = eco.getCondicionante();
+			if(coe != null) {
+				Filter filtroCoe = genericDao.createFilter(FilterType.EQUALS, "condicionanteExpediente.id", coe.getId());
+				Order order = new Order(GenericABMDao.OrderType.DESC, "fechaActualizacion");
+
+				List<ActualizacionRentaLibre> arlList = genericDao.getListOrdered(ActualizacionRentaLibre.class, order, filtroCoe);
+				if(arlList != null && !arlList.isEmpty()) {
+					for (ActualizacionRentaLibre actualizacionRentaLibre : arlList) {
+						DtoActualizacionRenta dto = new DtoActualizacionRenta();
+						beanUtilNotNull.copyProperties(dto, actualizacionRentaLibre);
+						if(actualizacionRentaLibre.getMetodoActualizacionRenta() != null) {
+							dto.setTipoActualizacionCodigo(actualizacionRentaLibre.getMetodoActualizacionRenta().getCodigo());
+						}
+						
+						listActualizacionesRentaLibre.add(dto);
+					}
+				}
+			}
+		}
+		
+		return listActualizacionesRentaLibre;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void deleteActualizacionRenta(Long id){
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", id);
+		ActualizacionRentaLibre arl = genericDao.get(ActualizacionRentaLibre.class, filter);
+		
+		if(arl != null) {
+			Auditoria.delete(arl);
+			genericDao.save(ActualizacionRentaLibre.class, arl);
+		}		
+	}
+	
+	private ActualizacionRentaLibre dtoToActualizacionRentaLibre (ActualizacionRentaLibre arl, DtoActualizacionRenta dto ) throws IllegalAccessException, InvocationTargetException {
+		beanUtilNotNull.copyProperties(arl, dto);
+		if(dto.getTipoActualizacionCodigo() != null) {
+			DDMetodoActualizacionRenta metodoActualizacionRenta = (DDMetodoActualizacionRenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDMetodoActualizacionRenta.class, dto.getTipoActualizacionCodigo());
+			arl.setMetodoActualizacionRenta(metodoActualizacionRenta);
+		}
+		return arl;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void addActualizacionRenta(Long idExpediente, DtoActualizacionRenta dto ) throws IllegalAccessException, InvocationTargetException{
+		ExpedienteComercial eco = this.findOne(idExpediente);
+		if(eco != null) {
+			CondicionanteExpediente coe = eco.getCondicionante();
+			if(coe != null) {
+				ActualizacionRentaLibre arl = new ActualizacionRentaLibre();
+				arl.setCondicionanteExpediente(coe);
+				arl = this.dtoToActualizacionRentaLibre(arl, dto);
+				arl.setAuditoria(Auditoria.getNewInstance());
+				genericDao.save(ActualizacionRentaLibre.class, arl);				
+			}
+		}
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void updateActualizacionRenta(Long id, DtoActualizacionRenta dto ) throws IllegalAccessException, InvocationTargetException{
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", id);
+		ActualizacionRentaLibre arl = genericDao.get(ActualizacionRentaLibre.class, filter);
+		
+		if(arl != null) {
+			arl = this.dtoToActualizacionRentaLibre(arl, dto);
+			Auditoria.save(arl);
+			genericDao.save(ActualizacionRentaLibre.class, arl);	
+		}
+			
+		
+	}
+	
+	
+	
 }

@@ -429,6 +429,19 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 			name:'fechaFinCnt',
 			type:'date',
     		dateFormat: 'c'
+		},
+		{
+			name:'metodoActualizacionRentaCod'
+		},
+		{
+			name:'checkIGC',
+			type: 'boolean'
+		},
+		{
+			name:'obligadoCumplimiento'
+		},
+		{
+			name:'periodicidadMeses'
 		}
 	    
     ],

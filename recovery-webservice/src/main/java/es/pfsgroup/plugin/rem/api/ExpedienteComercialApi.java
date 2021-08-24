@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.BulkOferta;
 import es.pfsgroup.plugin.rem.model.CondicionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoActivosAlquiladosGrid;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
+import es.pfsgroup.plugin.rem.model.DtoActualizacionRenta;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAuditoriaDesbloqueo;
@@ -1404,5 +1405,13 @@ public interface ExpedienteComercialApi {
 	boolean doTramitacionAsincrona(Activo activo, Oferta oferta);
 
 	List<DDEntidadFinanciera> getListEntidadFinanciera(Long idExpediente);
+
+	List<DtoActualizacionRenta> getActualizacionRenta(Long idExpediente)throws IllegalAccessException, InvocationTargetException;
+
+	void deleteActualizacionRenta(Long id);
+
+	void addActualizacionRenta(Long idExpediente, DtoActualizacionRenta dto)throws IllegalAccessException, InvocationTargetException;
+
+	void updateActualizacionRenta(Long id, DtoActualizacionRenta dto) throws IllegalAccessException, InvocationTargetException;
 	
 }

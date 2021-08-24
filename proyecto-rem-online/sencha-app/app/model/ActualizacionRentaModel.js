@@ -7,7 +7,7 @@ Ext.define('HreRem.model.ActualizacionRentaModel', {
     			name:'id'
     		},
     		{
-    			name:'fechaAplicacion',
+    			name:'fechaActualizacion',
     			type:'date',
         		dateFormat: 'c'
     		},
@@ -15,7 +15,7 @@ Ext.define('HreRem.model.ActualizacionRentaModel', {
     			name:'tipoActualizacionCodigo'
     		},
     		{
-    			name:'incrementoRenta'
+    			name:'importeActualizacion'
     		}
     ],
 	proxy: {

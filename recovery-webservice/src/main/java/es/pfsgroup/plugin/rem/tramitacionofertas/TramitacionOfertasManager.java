@@ -618,13 +618,14 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		return nuevoExpediente;
 	}
 
-	private CondicionanteExpediente calculoCondicionantes(Activo activo, Double importeOferta) {
+	private CondicionanteExpediente calculoCondicionantes(Activo activo, Oferta oferta) {
 
 		CondicionanteExpediente condicionante = new CondicionanteExpediente();
 		condicionante.setAuditoria(Auditoria.getNewInstance());
 
 		DDCartera cartera = activo.getCartera();
 		DDSubcartera subcartera = activo.getSubcartera();
+		Double importeOferta = oferta.getImporteOferta();
 
 		if (cartera != null && importeOferta != null) {
 			// HREOS-2799
@@ -733,6 +734,16 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				condicionante.setSituacionPosesoria(situacionPosesoriaOcupadoSinTitulo);
 			}
 		}
+		
+		if (!Checks.esNulo(oferta.getNecesitaFinanciar())) {
+			condicionante.setSolicitaFinanciacion(oferta.getNecesitaFinanciar());
+		}
+		if (!Checks.esNulo(oferta.getEntidadFinanciera())) {
+			condicionante.setEntidadFinanciera(oferta.getEntidadFinanciera());
+		}
+		if (!Checks.esNulo(oferta.getTipologiaFinanciacion())) {
+			condicionante.setTipoFinanciacion(oferta.getTipologiaFinanciacion());
+		}
 
 		return condicionante;
 	}
@@ -747,7 +758,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		if (!Checks.esNulo(activo)) {
 			if (condicionanteExpediente == null) {
-				condicionanteExpediente = calculoCondicionantes(activo, oferta.getImporteOferta());
+				condicionanteExpediente = calculoCondicionantes(activo, oferta);
 				condicionanteExpediente.setExpediente(expedienteComercial);
 			}
 

@@ -81,7 +81,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						fieldLabel : HreRem
 								.i18n('fieldlabel.solicita.financiacion'),
 						bind : {
-							store : '{comboSiNoRem}',
+							store : '{comboDDSNS}',
 							value : '{financiacion.solicitaFinanciacion}'
 						},
 						displayField : 'descripcion',
@@ -300,6 +300,21 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						}
 						// hidden: true
 					}, 
+					
+					{
+						xtype : 'comboboxfieldbase',
+						fieldLabel : HreRem
+								.i18n('fieldlabel.financiacion.totalparcial'),
+						bind : {
+							store : '{comboTipoFinanciacionTP}',
+							value : '{financiacion.financiacionTPCodigo}'
+						},
+						reference : 'comboFinanciacionTP',
+						displayField : 'descripcion',
+						valueField : 'codigo',
+						allowblank: false,
+						disabled : true
+					},
 
 					{
 						xtype : 'comboboxfieldbase',

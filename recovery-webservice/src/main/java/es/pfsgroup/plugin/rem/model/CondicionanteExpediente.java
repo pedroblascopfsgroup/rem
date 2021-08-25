@@ -33,6 +33,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
+import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
@@ -64,8 +66,9 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @JoinColumn(name = "ECO_ID")
     private ExpedienteComercial expediente;
 	
-	@Column(name="COE_SOLICITA_FINANCIACION")
-	private Integer solicitaFinanciacion;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="COE_SOLICITA_FINANCIACION")
+	private DDSnsSiNoNosabe solicitaFinanciacion;
 	
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_ESF_ID")
@@ -332,6 +335,10 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @JoinColumn(name = "COE_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<HistoricoCondicionanteExpediente> listHistoricoCondiciones;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TFN_ID")
+	private DDTfnTipoFinanciacion tipoFinanciacion;
 
 	@Version   
 	private Long version;
@@ -363,11 +370,11 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.expediente = expediente;
 	}
 
-	public Integer getSolicitaFinanciacion() {
+	public DDSnsSiNoNosabe getSolicitaFinanciacion() {
 		return solicitaFinanciacion;
 	}
 
-	public void setSolicitaFinanciacion(Integer solicitaFinanciacion) {
+	public void setSolicitaFinanciacion(DDSnsSiNoNosabe solicitaFinanciacion) {
 		this.solicitaFinanciacion = solicitaFinanciacion;
 	}
 
@@ -1040,6 +1047,14 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 
 	public void setTributosSobrePropiedad(Boolean tributosSobrePropiedad) {
 		this.tributosSobrePropiedad = tributosSobrePropiedad;
+	}
+
+	public DDTfnTipoFinanciacion getTipoFinanciacion() {
+		return tipoFinanciacion;
+	}
+
+	public void setTipoFinanciacion(DDTfnTipoFinanciacion tipoFinanciacion) {
+		this.tipoFinanciacion = tipoFinanciacion;
 	}
 
 }

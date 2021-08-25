@@ -12,6 +12,9 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Dicci
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.IsNumber;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Lista;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
+import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
+import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -57,7 +60,10 @@ public class OfertaDto implements Serializable {
 	@Size(max=1000)
 	private String observaciones;
 	@NotNull(groups = {Insert.class})
-	private Boolean financiacion;
+	@Diccionary(clase = DDSnsSiNoNosabe.class, message = "El codigo no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String financiacion;
 	@NotNull(groups = {Insert.class})
 	private Boolean isExpress;
 	private String codTarea;
@@ -92,6 +98,14 @@ public class OfertaDto implements Serializable {
 	private String justificacionOferta;
 	private Date fechaAcepGdpr;
 	private String observacionesRCDC;
+	@Diccionary(clase = DDTfnTipoFinanciacion.class, message = "El codigo no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String tipoFinanciacion;
+	@Diccionary(clase = DDEntidadFinanciera.class, message = "El codigo no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String entidadFinanciacion;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -202,10 +216,10 @@ public class OfertaDto implements Serializable {
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
-	public Boolean getFinanciacion() {
+	public String getFinanciacion() {
 		return financiacion;
 	}
-	public void setFinanciacion(Boolean financiacion) {
+	public void setFinanciacion(String financiacion) {
 		this.financiacion = financiacion;
 	}
 	public Boolean getIsExpress() {
@@ -395,6 +409,18 @@ public class OfertaDto implements Serializable {
 	}
 	public void setObservacionesRCDC(String observacionesRCDC) {
 		this.observacionesRCDC = observacionesRCDC;
+	}
+	public String getTipoFinanciacion() {
+		return tipoFinanciacion;
+	}
+	public void setTipoFinanciacion(String tipoFinanciacion) {
+		this.tipoFinanciacion = tipoFinanciacion;
+	}
+	public String getEntidadFinanciacion() {
+		return entidadFinanciacion;
+	}
+	public void setEntidadFinanciacion(String entidadFinanciacion) {
+		this.entidadFinanciacion = entidadFinanciacion;
 	}
 
 }

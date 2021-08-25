@@ -149,8 +149,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
@@ -1337,7 +1339,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		
 		if (!Checks.esNulo(dto.getNecesitaFinanciacion())) {
-			oferta.setNecesitaFinanciacion(dto.getNecesitaFinanciacion().equals("01") ? true : false);
+			DDSnsSiNoNosabe sns = genericDao.get(DDSnsSiNoNosabe.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getNecesitaFinanciacion()));
+			oferta.setNecesitaFinanciar(sns);
 		}
 
 		expedienteComercial.setOferta(oferta);
@@ -1902,8 +1906,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setOfertaExpress(oferta.getOfertaExpress() ? "Si" : "No");
 		}
 
-		if (oferta.getNecesitaFinanciacion() != null) {
-			dto.setNecesitaFinanciacion(oferta.getNecesitaFinanciacion() ? DDSiNo.SI : "0");
+		if (oferta.getNecesitaFinanciar() != null) {
+			dto.setNecesitaFinanciacion(oferta.getNecesitaFinanciar().getCodigo());
 		}
 
 		dto.setObservaciones(oferta.getObservaciones());
@@ -2996,7 +3000,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (!Checks.esNulo(condiciones)) {
 			// Económicas-Financiación
-			dto.setSolicitaFinanciacion(condiciones.getSolicitaFinanciacion());
+			Integer solFinanciacion = null;
+			if (!Checks.esNulo(condiciones.getSolicitaFinanciacion())){
+				solFinanciacion = condiciones.getSolicitaFinanciacion().getCodigo().equals("01") ? 1 : 0;
+			}
+			dto.setSolicitaFinanciacion(solFinanciacion);
 			if (!Checks.esNulo(condiciones.getEstadoFinanciacion())) {
 				dto.setEstadosFinanciacion(condiciones.getEstadoFinanciacion().getCodigo());
 			}
@@ -5741,8 +5749,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		short tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_SIN_IMPUESTO;
 
 		if (!Checks.esNulo(expediente.getCondicionante())
-				&& !Checks.esNulo(expediente.getCondicionante().getSolicitaFinanciacion())) {
-			solicitaFinanciacion = BooleanUtils.toBoolean(expediente.getCondicionante().getSolicitaFinanciacion());
+				&& !Checks.esNulo(expediente.getCondicionante().getSolicitaFinanciacion())
+				&& expediente.getCondicionante().getSolicitaFinanciacion().getCodigo().equals("01")) {
+			solicitaFinanciacion = true;
 		}
 
 		Integer numActivoEspecial = Checks.esNulo(activo.getNumActivoUvem()) ? 0 : activo.getNumActivoUvem().intValue();
@@ -5878,8 +5887,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		// SolicitaFinaciacion
 		if (!Checks.esNulo(expediente.getCondicionante())
-				&& !Checks.esNulo(expediente.getCondicionante().getSolicitaFinanciacion())) {
-			solicitaFinanciacion = BooleanUtils.toBoolean(expediente.getCondicionante().getSolicitaFinanciacion());
+				&& !Checks.esNulo(expediente.getCondicionante().getSolicitaFinanciacion())
+				&& expediente.getCondicionante().getSolicitaFinanciacion().getCodigo().equals("01")) {
+			solicitaFinanciacion = true;
 		}
 
 		instancia.setFinanciacionCliente(solicitaFinanciacion);
@@ -7049,20 +7059,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			if (!Checks.esNulo(condiciones)) {
 
-				Integer solicitaFinanciacion = condiciones.getSolicitaFinanciacion();
-				dto.setSolicitaFinanciacion(solicitaFinanciacion);
+				DDSnsSiNoNosabe solicitaFinanciacion = condiciones.getSolicitaFinanciacion();
+				dto.setSolicitaFinanciacion(!Checks.esNulo(solicitaFinanciacion) ? solicitaFinanciacion.getCodigo() : null);
 
 				if (!Checks.esNulo(solicitaFinanciacion)) {
-					if (solicitaFinanciacion == 1) {
+					if (solicitaFinanciacion.getCodigo().equals("01")) {
 						if (!Checks.esNulo(condiciones.getEntidadFinanciera())) {
 							dto.setEntidadFinancieraCodigo(condiciones.getEntidadFinanciera().getCodigo());
 						}
-					} else if (solicitaFinanciacion == 0) {
+						if (!Checks.esNulo(condiciones.getTipoFinanciacion())) {
+							dto.setFinanciacionTPCodigo(condiciones.getTipoFinanciacion().getCodigo());
+						}
+					} else {
 						dto.setEntidadFinancieraCodigo(null);
+						dto.setFinanciacionTPCodigo(null);
 					}
 				}
 
-				if (!Checks.esNulo(dto.getSolicitaFinanciacion()) && dto.getSolicitaFinanciacion() > 0
+				if (!Checks.esNulo(dto.getSolicitaFinanciacion()) && dto.getSolicitaFinanciacion().equals("01")
 						&& Checks.esNulo(dto.getCapitalConcedido())) {
 					dto.setCapitalConcedido(expediente.getCompradores().get(0).getImporteFinanciado());
 				}
@@ -7103,23 +7117,28 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			if (!Checks.esNulo(condiciones)) {
 
-				Integer solicitaFinanciacion = null;
+				String solicitaFinanciacion = null;
 
 				if (!Checks.esNulo(dto.getSolicitaFinanciacion())) {
 					solicitaFinanciacion = dto.getSolicitaFinanciacion();
 				} else if (!Checks.esNulo(condiciones.getSolicitaFinanciacion())) {
-					solicitaFinanciacion = condiciones.getSolicitaFinanciacion();
+					solicitaFinanciacion = condiciones.getSolicitaFinanciacion().getCodigo();
 				}
 
 				if (!Checks.esNulo(solicitaFinanciacion)) {
-					condiciones.setSolicitaFinanciacion(solicitaFinanciacion);
+					DDSnsSiNoNosabe sns = genericDao.get(DDSnsSiNoNosabe.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", solicitaFinanciacion));
+					condiciones.setSolicitaFinanciacion(sns);
 				}
 
-				if (!Checks.esNulo(solicitaFinanciacion) && solicitaFinanciacion == 1) {
+				if (!Checks.esNulo(solicitaFinanciacion) && solicitaFinanciacion.equals("01")) {
 					if (!Checks.esNulo(dto.getEntidadFinancieraCodigo())){
 						DDEntidadFinanciera entidadFinanciera = (DDEntidadFinanciera) utilDiccionarioApi
 								.dameValorDiccionarioByCod(DDEntidadFinanciera.class, dto.getEntidadFinancieraCodigo());
 						condiciones.setEntidadFinanciera(entidadFinanciera);
+						DDTfnTipoFinanciacion tfn = genericDao.get(DDTfnTipoFinanciacion.class,
+								genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getFinanciacionTPCodigo()));
+						condiciones.setTipoFinanciacion(tfn);
 						if(!Checks.esNulo(formalizacion))
 						{
 							if(Checks.esNulo(dto.getNumExpedienteRiesgo())) {
@@ -7130,8 +7149,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							}
 						}
 					}
-				} else if (!Checks.esNulo(solicitaFinanciacion) && solicitaFinanciacion == 0) {
+				} else if (!Checks.esNulo(solicitaFinanciacion) && solicitaFinanciacion != "01") {
 					condiciones.setEntidadFinanciera(null);
+					condiciones.setTipoFinanciacion(null);
 					if(!Checks.esNulo(formalizacion))
 					{
 						formalizacion.setNumExpediente(null);
@@ -7201,7 +7221,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					formalizacion.setCapitalConcedido(dto.getCapitalConcedido());
 				}
 
-				if (!Checks.esNulo(dto.getSolicitaFinanciacion()) && dto.getSolicitaFinanciacion() == 0) {
+				if (!Checks.esNulo(dto.getSolicitaFinanciacion()) && dto.getSolicitaFinanciacion() != "01") {
 
 					formalizacion.setCapitalConcedido(null);
 

@@ -179,6 +179,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -195,9 +196,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -765,6 +768,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList.put("origenLeadProveedor", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
+		
+		if (!Checks.esNulo(ofertaDto.getFinanciacion())) {
+			if (ofertaDto.getFinanciacion().equals("01")) {
+				if (Checks.esNulo(ofertaDto.getTipoFinanciacion())) {
+					errorsList.put("tipoFinanciacion", RestApi.REST_MSG_MISSING_REQUIRED);
+				} else if (Checks.esNulo(ofertaDto.getEntidadFinanciacion())) {
+					errorsList.put("entidadFinanciacion", RestApi.REST_MSG_MISSING_REQUIRED);						
+				}
+			} else if (!Checks.esNulo(ofertaDto.getTipoFinanciacion())) {
+				if (Checks.esNulo(ofertaDto.getFinanciacion())) {
+					errorsList.put("financiacion", RestApi.REST_MSG_UNKNOWN_KEY);
+				}
+			} else if (!Checks.esNulo(ofertaDto.getEntidadFinanciacion())) {
+				if (Checks.esNulo(ofertaDto.getFinanciacion())) {
+					errorsList.put("financiacion", RestApi.REST_MSG_UNKNOWN_KEY);
+				}			
+			}
+		}
 
 		return errorsList;
 	}
@@ -969,10 +990,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setObservaciones(ofertaDto.getObservaciones());
 			}
 
-			if (!Checks.esNulo(ofertaDto.getFinanciacion())) {
-				oferta.setNecesitaFinanciacion(ofertaDto.getFinanciacion());
-			}
-
 			if (!Checks.esNulo(ofertaDto.getIsExpress())) {
 				oferta.setOfertaExpress(ofertaDto.getIsExpress());
 			}
@@ -1083,6 +1100,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				saveTextoOfertaWS(dto, oferta);
 			}
+			
+			setValuesFinanciacion(ofertaDto, oferta);
 
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoOferta());
 			
@@ -1377,12 +1396,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				modificado = true;
 			}
 
-			if (!Checks.esNulo(ofertaDto.getFinanciacion())
-					&& !ofertaDto.getFinanciacion().equals(oferta.getNecesitaFinanciacion())) {
-				oferta.setNecesitaFinanciacion(ofertaDto.getFinanciacion());
-				modificado = true;
-			}
-
 			if (!Checks.esNulo(ofertaDto.getIsExpress())
 					&& !ofertaDto.getIsExpress().equals(oferta.getOfertaExpress())) {
 				oferta.setOfertaExpress(ofertaDto.getIsExpress());
@@ -1557,6 +1570,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (modificado) {
 				ofertaDao.saveOrUpdate(oferta);
 			}
+			
+			setValuesFinanciacion(ofertaDto, oferta);
 
 			if (((JSONObject) jsonFields).containsKey("importeContraoferta")) {
 				// Actualizar honorarios para el nuevo importe de contraoferta.
@@ -1586,6 +1601,39 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		return errorsList;
+	}
+
+	private void setValuesFinanciacion(OfertaDto ofertaDto, Oferta oferta) {
+		CondicionanteExpediente coe = null;
+		Boolean existeCoe = false;
+		if (!Checks.esNulo(oferta.getExpedienteComercial())) {
+				coe = oferta.getExpedienteComercial().getCondicionante();
+				existeCoe = true;
+		}
+
+
+		if (!Checks.esNulo(ofertaDto.getFinanciacion())){
+			DDSnsSiNoNosabe sns = genericDao.get(DDSnsSiNoNosabe.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getFinanciacion()));
+			if (existeCoe) coe.setSolicitaFinanciacion(sns);
+			oferta.setNecesitaFinanciar(sns);
+		}
+		if (!Checks.esNulo(ofertaDto.getTipoFinanciacion())){
+			DDTfnTipoFinanciacion tfn = genericDao.get(DDTfnTipoFinanciacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getTipoFinanciacion()));
+			if (existeCoe) coe.setTipoFinanciacion(tfn);
+			oferta.setTipologiaFinanciacion(tfn);
+		}
+		if (!Checks.esNulo(ofertaDto.getEntidadFinanciacion())){
+			DDEntidadFinanciera enf = genericDao.get(DDEntidadFinanciera.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getEntidadFinanciacion()));
+			if (existeCoe) coe.setEntidadFinanciera(enf);
+			oferta.setEntidadFinanciera(enf);
+		}
+		
+		genericDao.save(Oferta.class, oferta);
+		if (existeCoe) genericDao.save(CondicionanteExpediente.class, coe);
+		
 	}
 
 	@Transactional(readOnly = false)
@@ -1678,13 +1726,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ofertaDao.flush();
 				
 				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
-
-				// Se copiará el valor del campo necesita financiación al campo
-				// asociado del expediente comercial
-				CondicionanteExpediente coe = expedienteComercial.getCondicionante();
-				if (!Checks.esNulo(coe)) {
-					coe.setSolicitaFinanciacion(oferta.getNecesitaFinanciacion() ? 1 : 0);
-				}
+				
 				DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi
 						.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.APROBADO);
 				expedienteComercial.setEstado(estadoExpCom);
@@ -2924,8 +2966,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (!Checks.esNulo(oferta.getOfertaExpress())) {
 					dtoResponse.setOfertaExpress(oferta.getOfertaExpress() ? "Si" : "No");
 				}
-				if (!Checks.esNulo(oferta.getNecesitaFinanciacion())) {
-					dtoResponse.setNecesitaFinanciacion(oferta.getNecesitaFinanciacion() ? "Si" : "No");
+				if (!Checks.esNulo(oferta.getNecesitaFinanciar())) {
+					dtoResponse.setNecesitaFinanciacion(oferta.getNecesitaFinanciar().getCodigo().equals("01") ? "Si" : "No");
 				}
 				dtoResponse.setObservaciones(oferta.getObservaciones());
 				

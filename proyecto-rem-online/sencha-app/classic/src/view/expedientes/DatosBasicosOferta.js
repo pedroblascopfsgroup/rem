@@ -617,7 +617,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 		    			}, {
 							xtype : 'comboboxfieldbase',
 							bind : {
-								store : '{comboSiNo}',
+								store : '{comboDDSNS}',
 								value : '{datosbasicosoferta.necesitaFinanciacion}'
 							},
 							fieldLabel : HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.necesitaFinanciacion')

@@ -879,10 +879,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	onHaCambiadoSolicitaFinanciacion: function(combo, value){
 		var me = this;
-    	var disabled = value == 0;
+    	var disabled = value != "01";
     	var esBankia = me.getViewModel().get("expediente.esBankia");
     	
 		comboEntidadFinancieraCodigo = me.lookupReference('comboEntidadFinancieraCodigo');
+		comboFinanciacionTP = me.lookupReference('comboFinanciacionTP');
 		labelCapitalConcedido = me.lookupReference('capitalCondedidoRef');
 		labelNumeroExpediente = me.lookupReference('numeroExpedienteRef');
 		comboTipoFinanciacion = me.lookupReference('tipoFinanciacionRef');
@@ -890,9 +891,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	    	
     	comboEntidadFinancieraCodigo.setDisabled(disabled);
     	comboEntidadFinancieraCodigo.allowBlank = disabled; 	
+		comboFinanciacionTP.setDisabled(disabled);
+    	comboFinanciacionTP.allowBlank = disabled; 
 
     	if(disabled) {
     		comboEntidadFinancieraCodigo.setValue("");
+			comboFinanciacionTP.setValue("");
     		labelCapitalConcedido.setValue("");
     		labelNumeroExpediente.setValue("");
     		comboTipoFinanciacion.reset();

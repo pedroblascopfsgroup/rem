@@ -33,6 +33,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -40,6 +41,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
+import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -232,8 +235,9 @@ public class Oferta implements Serializable, Auditable {
     @Column(name="OFR_OFERTA_EXPRESS")
 	private Boolean ofertaExpress;
 
-    @Column(name="OFR_NECESITA_FINANCIACION")
-	private Boolean necesitaFinanciacion;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="OFR_NECESITA_FINANCIACION")
+	private DDSnsSiNoNosabe necesitaFinanciar;
 
     @Column(name="OFR_OBSERVACIONES")
 	private String observaciones;
@@ -351,6 +355,14 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name="OFR_FECHA_OFERTA_PENDIENTE")
 	private Date fechaOfertaPendiente;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="DD_TFN_ID")
+	private DDTfnTipoFinanciacion tipologiaFinanciacion;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="DD_ETF_ID")
+	private DDEntidadFinanciera entidadFinanciera;
 
 
 	public Date getFechaAlta() {
@@ -741,12 +753,12 @@ public class Oferta implements Serializable, Auditable {
 		this.ofertaExpress = ofertaExpress;
 	}
 
-	public Boolean getNecesitaFinanciacion() {
-		return necesitaFinanciacion;
+	public DDSnsSiNoNosabe getNecesitaFinanciar() {
+		return necesitaFinanciar;
 	}
 
-	public void setNecesitaFinanciacion(Boolean necesitaFinanciacion) {
-		this.necesitaFinanciacion = necesitaFinanciacion;
+	public void setNecesitaFinanciar(DDSnsSiNoNosabe necesitaFinanciacion) {
+		this.necesitaFinanciar = necesitaFinanciacion;
 	}
 
 	public String getObservaciones() {
@@ -1075,6 +1087,22 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setExpedienteComercial(ExpedienteComercial expedienteComercial) {
 		this.expedienteComercial = expedienteComercial;
+	}
+
+	public DDTfnTipoFinanciacion getTipologiaFinanciacion() {
+		return tipologiaFinanciacion;
+	}
+
+	public void setTipologiaFinanciacion(DDTfnTipoFinanciacion tipoFinanciacion) {
+		this.tipologiaFinanciacion = tipoFinanciacion;
+	}
+
+	public DDEntidadFinanciera getEntidadFinanciera() {
+		return entidadFinanciera;
+	}
+
+	public void setEntidadFinanciera(DDEntidadFinanciera entidadFinanciera) {
+		this.entidadFinanciera = entidadFinanciera;
 	}
 	
 }

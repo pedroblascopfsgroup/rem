@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Lara Pablo
---## FECHA_CREACION=20210823
+--## FECHA_CREACION=20210825
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14942
@@ -44,7 +44,8 @@ DECLARE
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION           
     	T_ALTER(  'COE_CHECK_IGC',	 			'NUMBER(1,0)',			'IGC'),
-    	T_ALTER(  'COE_PERIODICIDAD',	 		'NUMBER(16,0)',			'Periodicidad')
+    	T_ALTER(  'COE_PERIODICIDAD',	 		'NUMBER(16,0)',			'Periodicidad'),
+    	T_ALTER(  'COE_FECHA_ACTU',	 			'Date',					'Fecha actualización')
 	);
     V_T_ALTER T_ALTER;
 

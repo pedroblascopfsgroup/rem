@@ -1102,7 +1102,10 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										xtype : 'datefieldbase',
 										reference : 'fechaActualizacionRenta',
 										fieldLabel : HreRem.i18n('header.fecha'),
-										disabled: true
+										disabled: true,
+										bind:{
+											value:'{condiciones.fechaActualizacion}'
+										}
 									},
 									{
 										xtype : 'numberfieldbase',

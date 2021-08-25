@@ -3363,8 +3363,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(condiciones.getMetodoActualizacionRenta() != null) {
 			dto.setMetodoActualizacionRentaCod(condiciones.getMetodoActualizacionRenta().getCodigo());
 		}
-		
-		dto.setCheckIGC(condiciones.getCheckIGC());
+		dto.setFechaActualizacion(condiciones.getFechaActualizacion());
 		dto.setPeriodicidadMeses(condiciones.getPeriodicidadMeses());
 		
 		Oferta oferta = expediente.getOferta();
@@ -3918,6 +3917,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(dto.getPeriodicidadMeses() != null) {
 				condiciones.setPeriodicidadMeses(dto.getPeriodicidadMeses());
 			}
+			if(!Checks.isFechaNula(dto.getFechaActualizacion())) {
+				condiciones.setFechaActualizacion(dto.getFechaActualizacion());
+			}
+			
 			
 			ExpedienteComercial expediente = condiciones.getExpediente();
 			if(expediente != null) {

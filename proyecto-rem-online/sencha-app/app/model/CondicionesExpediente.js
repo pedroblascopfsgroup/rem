@@ -442,6 +442,11 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 		},
 		{
 			name:'periodicidadMeses'
+		},
+		{
+			name:'fechaActualizacion',
+			type:'date',
+    		dateFormat: 'c'
 		}
 	    
     ],

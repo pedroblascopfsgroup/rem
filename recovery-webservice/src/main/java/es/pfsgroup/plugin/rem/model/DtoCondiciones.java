@@ -147,6 +147,7 @@ public class DtoCondiciones extends WebDto {
 	private String metodoActualizacionRentaCod;
 	private Boolean checkIGC;
 	private Long periodicidadMeses;
+	private Date fechaActualizacion;
 	
 	public Integer getMesesFianza() {
 		return mesesFianza;
@@ -1054,6 +1055,14 @@ public class DtoCondiciones extends WebDto {
 
 	public void setPeriodicidadMeses(Long periodicidadMeses) {
 		this.periodicidadMeses = periodicidadMeses;
+	}
+
+	public Date getFechaActualizacion() {
+		return fechaActualizacion;
+	}
+
+	public void setFechaActualizacion(Date fechaActualizacion) {
+		this.fechaActualizacion = fechaActualizacion;
 	}	
 	
 }

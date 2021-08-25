@@ -5338,26 +5338,34 @@ comprobarFormatoModificar: function() {
 		actualizacionRentaGridRef.setDisabled(true);
 		checkboxIPC.setReadOnly(false);
 		
-		periodicidad.setValue("");
-		checkboxIPC.setValue("");
-		checkIGC.setValue("");
-		fechaActualizacionRenta.setValue("");
+		
 
 		
 		if(value == CONST.METODO_ATUALIZACION_RENTA['COD_LIBRE']){
 			actualizacionRentaGridRef.setDisabled(false);
+			periodicidad.setValue("");
+			checkboxIPC.setValue("");
+			checkIGC.setValue("");
+			fechaActualizacionRenta.setValue("");
 		}else if(value == CONST.METODO_ATUALIZACION_RENTA['COD_PORCENTUAL']){
 			checkboxIPC.setDisabled(false);
 			checkIGC.setDisabled(false);
+			periodicidad.setValue("");
+			fechaActualizacionRenta.setValue("");
+			
 		}else if(value == CONST.METODO_ATUALIZACION_RENTA['COD_MERCADO']){
 			periodicidad.setDisabled(false);
 			fechaActualizacionRenta.setDisabled(false);
+			checkboxIPC.setValue("");
+			checkIGC.setValue("");
 		}else if(value == CONST.METODO_ATUALIZACION_RENTA['COD_IPCMERCADO']){
 			periodicidad.setDisabled(false);
 			fechaActualizacionRenta.setDisabled(false);
 			checkboxIPC.setDisabled(false);
 			checkboxIPC.setValue(true);
 			checkboxIPC.setReadOnly(true);
+
+			checkIGC.setValue("");
 		}
 
 	},

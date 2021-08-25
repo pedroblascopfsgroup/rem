@@ -8682,7 +8682,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			rawDao.addParams(params);
 			resultado = rawDao.getExecuteSQL("SELECT count(1) FROM act_activo act "  
 				+ "join BIE_DATOS_REGISTRALES bie on act.bie_id = bie.bie_id and bie.BIE_DREG_TOMO =  :tomo  "
-				+ "and bie.BIE_DREG_LIBRO =  :libro  and bie.BIE_DREG_FOLIO =  :folio  and bie.BIE_DREG_NUM_FINCA =  :finca  and bie.bie_dreg_num_registro = :numRegistro"  
+				+ "and bie.BIE_DREG_LIBRO =  :libro  and bie.BIE_DREG_FOLIO =  :folio  and bie.BIE_DREG_NUM_FINCA =  :finca  and bie.bie_dreg_num_registro = :numRegistro "  
 				+ "join ACT_CAT_CATASTRO cat on act.act_id = cat.act_id and cat.cat_ref_catastral =  :refCatastral "  
 				+ "join ${master.schema}.dd_loc_localidad loc on loc.dd_loc_id = bie.dd_loc_id and loc.dd_loc_codigo = :codigoLocalidad");
 		
@@ -8914,7 +8914,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT (1) FROM ACT_ACTIVO ACT " + 
 				" INNER JOIN ACT_APU_ACTIVO_PUBLICACION APU on act.act_id = apu.act_id " + 
-				" INNER JOIN DD_EPA_ESTADO_PUB_ALQUILER  est on est.dd_epa_id = apu.dd_epa_id " + 
+				" INNER JOIN DD_EPA_ESTADO_PUB_ALQUILER  est on est.dd_epa_id = apu.dd_efuncionpa_id " + 
 				" INNER JOIN dd_cra_cartera car on car.dd_cra_id = act.dd_cra_id " +
 				" INNER JOIN dd_tco_tipo_comercializacion tpo on tpo.dd_tco_id = apu.dd_tco_id" +
 				" WHERE act.act_num_activo = :numActivo" + 

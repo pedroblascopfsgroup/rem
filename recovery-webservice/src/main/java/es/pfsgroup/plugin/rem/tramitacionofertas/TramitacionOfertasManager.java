@@ -1980,7 +1980,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		
 		activoManager.actualizarOfertasTrabajosVivos(activo.getId());
 		
-		if(oferta != null && oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial() && ofertaManager.esOfertaValidaCFVByCarteraSubcartera(oferta)  && boardingComunicacionApi.modoRestClientBoardingActivado()) {
+		if(oferta != null && ((oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial()) || (oferta.getOfertaExpress() != null && oferta.getOfertaExpress()))
+				&& ofertaManager.esOfertaValidaCFVByCarteraSubcartera(oferta)  && boardingComunicacionApi.modoRestClientBoardingActivado()) {
 			boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_1_MINUTO);
 		}
 		

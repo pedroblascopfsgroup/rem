@@ -12,7 +12,7 @@ recordName: "datosbasicosoferta",
 recordClass: "HreRem.model.DatosBasicosOferta",
     
     requires: ['HreRem.model.DatosBasicosOferta','HreRem.view.activos.detalle.ActivoDetalleModel',
-    'HreRem.model.OfertasAgrupadasModel', 'HreRem.view.expedientes.OfertasAgrupadasTabPanel'],
+    'HreRem.model.OfertasAgrupadasModel', 'HreRem.view.expedientes.OfertasAgrupadasTabPanel','HreRem.view.expedientes.SancionesGrid'],
     
     listeners: {
 		boxready:'cargarTabData',

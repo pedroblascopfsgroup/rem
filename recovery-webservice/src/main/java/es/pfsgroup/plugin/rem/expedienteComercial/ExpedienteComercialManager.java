@@ -13511,6 +13511,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 	}
 	
+	@Override
+	public List<DtoRespuestaBCGenerica> getSancionesBk(Long idExpediente) {
+		List<DtoRespuestaBCGenerica> listDtos = new ArrayList<DtoRespuestaBCGenerica>();
+		
+		DtoRespuestaBCGenerica dto = this.getUltimaResolucionComiteBC(idExpediente);
+		dto.setComite(RespuestaComiteBC.COMITE_COMERCIAL);
+		listDtos.add(dto);
+		
+//		ExpedienteComercial eco = this.findOne(idExpediente);
+//		if(eco != null && eco.getTrabajo() != null) {
+//			ActivoTramite tra = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", eco.getTrabajo().getId()));
+//			//TODO añadir la sanción Comité lanzamiento/ROD para cuando esté el trámite de alquiler no comercial
+//		}
+		
+		
+		return listDtos;
+	}
+	
 	
 	
 }

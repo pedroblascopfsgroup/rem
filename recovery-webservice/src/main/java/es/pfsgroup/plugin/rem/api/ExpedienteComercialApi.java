@@ -1413,5 +1413,7 @@ public interface ExpedienteComercialApi {
 	void addActualizacionRenta(Long idExpediente, DtoActualizacionRenta dto)throws IllegalAccessException, InvocationTargetException;
 
 	void updateActualizacionRenta(Long id, DtoActualizacionRenta dto) throws IllegalAccessException, InvocationTargetException;
+
+	List<DtoRespuestaBCGenerica> getSancionesBk(Long idExpediente);
 	
 }

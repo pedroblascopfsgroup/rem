@@ -1648,6 +1648,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				extraParams: {diccionario: 'metodoActualizacionRenta'}
 	    	},
 	    	autoLoad: true	  
+		},
+		comboResolucionComite:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'resolucionComite'}
+	    	},
+	    	autoLoad: true	  
 		}
 
     }

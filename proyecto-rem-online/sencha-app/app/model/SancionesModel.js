@@ -3,17 +3,20 @@ Ext.define('HreRem.model.SancionesModel', {
     idProperty: 'id',
 
     fields: [
-    		{
-    			name:'id'
-    		},
+    
     		{
     			name:'comite'
     		},
     		{
-    			name:'fecha'
+    			name:'fechaRespuestaBC',
+    			type:'date',
+        		dateFormat: 'c'
     		},
     		{
-    			name:'observaciones'
+    			name:'respuestaBC'
+    		},
+    		{
+    			name:'observacionesBC'
     		}
     ],
 	proxy: {

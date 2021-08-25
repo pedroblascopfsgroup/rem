@@ -2687,10 +2687,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getGastosRepercutidosList(ModelMap model, WebDto webDto, Long idExpediente) {
+	public ModelAndView getSancionesBk(ModelMap model, WebDto webDto, Long idExpediente) {
 		try {
-			//List<DDEntidadFinanciera> lista = expedienteComercialApi.getListEntidadFinanciera(idExpediente);
-			//model.put(RESPONSE_DATA_KEY, lista);
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getSancionesBk(idExpediente));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {

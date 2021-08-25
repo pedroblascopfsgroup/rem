@@ -57,8 +57,7 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 			error = response.getErrorDesc();
 			replicateClientSuccess = response.getSuccess();
 		}
-		resultado = replicateClientSuccess
-					&& caixaBcRestClient.callReplicateOferta(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta());
+		resultado = replicateClientSuccess;
 				
 		if(!resultado){
 			return error != null ? error :CaixaBcRestClient.ERROR_REPLICACION_BC;
@@ -130,8 +129,7 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 			replicateClientSuccess = response.getSuccess();
 		}
 
-		if(!replicateClientSuccess
-				&& !caixaBcRestClient.callReplicateOferta(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta())){
+		if(!replicateClientSuccess){
 			return error != null ? error : CaixaBcRestClient.ERROR_REPLICACION_BC ;
 		}
 		return activoTramiteApi.existeAdjuntoUGValidacion(tareaExterna, DDSubtipoDocumentoExpediente.CODIGO_APROBACION,"E");

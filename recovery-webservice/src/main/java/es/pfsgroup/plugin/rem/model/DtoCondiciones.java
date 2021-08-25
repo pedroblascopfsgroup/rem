@@ -123,6 +123,32 @@ public class DtoCondiciones extends WebDto {
 
 	private Boolean insertarHistorico;
 	
+	private Boolean fianzaExonerada;
+	private Date fechaIngresoFianzaArrendatario;
+	private Boolean derechoCesionSubarriendo;
+	private Boolean vulnerabilidadDetectada;
+	private String regimenFianzaCCAACodigo;
+	private Boolean certificaciones;
+	private Boolean ofrNuevasCondiciones;
+	private Boolean fianzaContratosSubrogados;
+	private Boolean adecuaciones;
+	private Boolean cntSuscritoPosteridadAdj;
+	private Boolean antiguoDeudorLocalizable;
+	
+	private Boolean entregasCuenta;
+	private Boolean rentasCuenta;
+	private Double importeEntregasCuenta;
+	
+	private Double obligadoCumplimiento; //años
+	private Date fechaPreavisoVencimientoCnt;
+	private Date fechaInicioCnt;
+	private Date fechaFinCnt;
+	
+	private String metodoActualizacionRentaCod;
+	private Boolean checkIGC;
+	private Long periodicidadMeses;
+	private Date fechaActualizacion;
+	
 	public Integer getMesesFianza() {
 		return mesesFianza;
 	}
@@ -863,6 +889,180 @@ public class DtoCondiciones extends WebDto {
 		this.necesidadIf = necesidadIf;
 	}
 
-	
+	public Boolean getFianzaExonerada() {
+		return fianzaExonerada;
+	}
+
+	public void setFianzaExonerada(Boolean fianzaExonerada) {
+		this.fianzaExonerada = fianzaExonerada;
+	}
+
+	public Date getFechaIngresoFianzaArrendatario() {
+		return fechaIngresoFianzaArrendatario;
+	}
+
+	public void setFechaIngresoFianzaArrendatario(Date fechaIngresoFianzaArrendatario) {
+		this.fechaIngresoFianzaArrendatario = fechaIngresoFianzaArrendatario;
+	}
+
+	public Boolean getDerechoCesionSubarriendo() {
+		return derechoCesionSubarriendo;
+	}
+
+	public void setDerechoCesionSubarriendo(Boolean derechoCesionSubarriendo) {
+		this.derechoCesionSubarriendo = derechoCesionSubarriendo;
+	}
+
+	public Boolean getVulnerabilidadDetectada() {
+		return vulnerabilidadDetectada;
+	}
+
+	public void setVulnerabilidadDetectada(Boolean vulnerabilidadDetectada) {
+		this.vulnerabilidadDetectada = vulnerabilidadDetectada;
+	}
+
+	public String getRegimenFianzaCCAACodigo() {
+		return regimenFianzaCCAACodigo;
+	}
+
+	public void setRegimenFianzaCCAACodigo(String regimenFianzaCCAACodigo) {
+		this.regimenFianzaCCAACodigo = regimenFianzaCCAACodigo;
+	}
+
+	public Boolean getCertificaciones() {
+		return certificaciones;
+	}
+
+	public void setCertificaciones(Boolean certificaciones) {
+		this.certificaciones = certificaciones;
+	}
+
+	public Boolean getOfrNuevasCondiciones() {
+		return ofrNuevasCondiciones;
+	}
+
+	public void setOfrNuevasCondiciones(Boolean ofrNuevasCondiciones) {
+		this.ofrNuevasCondiciones = ofrNuevasCondiciones;
+	}
+
+	public Boolean getFianzaContratosSubrogados() {
+		return fianzaContratosSubrogados;
+	}
+
+	public void setFianzaContratosSubrogados(Boolean fianzaContratosSubrogados) {
+		this.fianzaContratosSubrogados = fianzaContratosSubrogados;
+	}
+
+	public Boolean getAdecuaciones() {
+		return adecuaciones;
+	}
+
+	public void setAdecuaciones(Boolean adecuaciones) {
+		this.adecuaciones = adecuaciones;
+	}
+
+	public Boolean getCntSuscritoPosteridadAdj() {
+		return cntSuscritoPosteridadAdj;
+	}
+
+	public void setCntSuscritoPosteridadAdj(Boolean cntSuscritoPosteridadAdj) {
+		this.cntSuscritoPosteridadAdj = cntSuscritoPosteridadAdj;
+	}
+
+	public Boolean getAntiguoDeudorLocalizable() {
+		return antiguoDeudorLocalizable;
+	}
+
+	public void setAntiguoDeudorLocalizable(Boolean antiguoDeudorLocalizable) {
+		this.antiguoDeudorLocalizable = antiguoDeudorLocalizable;
+	}
+
+	public Boolean getEntregasCuenta() {
+		return entregasCuenta;
+	}
+
+	public void setEntregasCuenta(Boolean entregasCuenta) {
+		this.entregasCuenta = entregasCuenta;
+	}
+
+	public Boolean getRentasCuenta() {
+		return rentasCuenta;
+	}
+
+	public void setRentasCuenta(Boolean rentasCuenta) {
+		this.rentasCuenta = rentasCuenta;
+	}
+
+	public Double getImporteEntregasCuenta() {
+		return importeEntregasCuenta;
+	}
+
+	public void setImporteEntregasCuenta(Double importeEntregasCuenta) {
+		this.importeEntregasCuenta = importeEntregasCuenta;
+	}
+
+	public Double getObligadoCumplimiento() {
+		return obligadoCumplimiento;
+	}
+
+	public void setObligadoCumplimiento(Double obligadoCumplimiento) {
+		this.obligadoCumplimiento = obligadoCumplimiento;
+	}
+
+	public Date getFechaPreavisoVencimientoCnt() {
+		return fechaPreavisoVencimientoCnt;
+	}
+
+	public void setFechaPreavisoVencimientoCnt(Date fechaPreavisoVencimientoCnt) {
+		this.fechaPreavisoVencimientoCnt = fechaPreavisoVencimientoCnt;
+	}
+
+	public Date getFechaInicioCnt() {
+		return fechaInicioCnt;
+	}
+
+	public void setFechaInicioCnt(Date fechaInicioCnt) {
+		this.fechaInicioCnt = fechaInicioCnt;
+	}
+
+	public Date getFechaFinCnt() {
+		return fechaFinCnt;
+	}
+
+	public void setFechaFinCnt(Date fechaFinCnt) {
+		this.fechaFinCnt = fechaFinCnt;
+	}
+
+	public String getMetodoActualizacionRentaCod() {
+		return metodoActualizacionRentaCod;
+	}
+
+	public void setMetodoActualizacionRentaCod(String metodoActualizacionRentaCod) {
+		this.metodoActualizacionRentaCod = metodoActualizacionRentaCod;
+	}
+
+	public Boolean getCheckIGC() {
+		return checkIGC;
+	}
+
+	public void setCheckIGC(Boolean checkIGC) {
+		this.checkIGC = checkIGC;
+	}
+
+	public Long getPeriodicidadMeses() {
+		return periodicidadMeses;
+	}
+
+	public void setPeriodicidadMeses(Long periodicidadMeses) {
+		this.periodicidadMeses = periodicidadMeses;
+	}
+
+	public Date getFechaActualizacion() {
+		return fechaActualizacion;
+	}
+
+	public void setFechaActualizacion(Date fechaActualizacion) {
+		this.fechaActualizacion = fechaActualizacion;
+	}	
 	
 }

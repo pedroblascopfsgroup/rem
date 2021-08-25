@@ -1002,5 +1002,13 @@ Ext.define('HreRem.ux.util.Constants', {
 
 	TIPO_GASTO: {
 	    SERVICIOS_PROFESIONALES_INDEPE: '11'
-	}
+	},
+	 
+	 METODO_ATUALIZACION_RENTA:{
+	 	COD_LIBRE: 'LIB',
+	 	COD_PORCENTUAL: 'POR',
+	 	COD_MERCADO: 'MER',
+	 	COD_IPCMERCADO: 'IPM',
+	 	COD_NINGUNO: 'NIN'
+	 }
 });

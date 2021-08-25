@@ -466,7 +466,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 		                	reference: 'detalleAnulacionRef',
 				        	bind: {
 				        		value: '{expediente.detalleAnulacionCntAlquiler}',
-				        		hidden: '{!esBankiaAlquiler}'
+				        		hidden: '{!esBankia}'
 				        	}
 				        },
 						{    

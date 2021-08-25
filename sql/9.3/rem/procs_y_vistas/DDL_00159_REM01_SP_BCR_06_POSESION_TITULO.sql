@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210812
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210823
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14820
+--## INCIDENCIA_LINK=HREOS-14899
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -23,7 +23,8 @@
 --##        0.11 Correciones Ocupado y Sin título, se añade el FLAG EN REM [HREOS-14837] -Daniel Algaba
 --##        0.12 Correción Estado posesorio y rellenar campo SPS_VERTICAL- [HREOS-14824] - Alejandra García
 --##        0.13 Se añade por defecto como Tipo Grado Propiedad Plen Dominio con el 100% - [HREOS-14649] - Daniel Algaba
---##	      0.14 Correcciones - HREOS-14820
+--##	      0.14 Correcciones - HREOS-14820 - Daniel Algaba
+--##        0.15 Correciones para el plan de pruebas- [HREOS-14899] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -741,11 +742,11 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                   SELECT 
                       ACT.ACT_ID AS ACT_ID
                      ,CASE
-                        WHEN AUX.SITUACION_VPO IN (''00001'') THEN 0
-                        WHEN AUX.SITUACION_VPO IN (''00002'') THEN 1
-                        WHEN AUX.SITUACION_VPO IN (''00003'') THEN 1
-                        WHEN AUX.SITUACION_VPO IN (''00004'') THEN 1
-                        WHEN AUX.SITUACION_VPO IN (''00005'') THEN 1
+                        WHEN AUX.SITUACION_VPO IN (''0001'') THEN 0
+                        WHEN AUX.SITUACION_VPO IN (''0002'') THEN 1
+                        WHEN AUX.SITUACION_VPO IN (''0003'') THEN 1
+                        WHEN AUX.SITUACION_VPO IN (''0004'') THEN 1
+                        WHEN AUX.SITUACION_VPO IN (''0005'') THEN 1
                       END AS ACT_VPO
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
@@ -768,16 +769,16 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                   SELECT 
                       ACT.ACT_ID AS ACT_ID
                      ,CASE
-                        WHEN AUX.SITUACION_VPO=''00003'' THEN 0
-                        WHEN AUX.SITUACION_VPO=''00004'' THEN 1
+                        WHEN AUX.SITUACION_VPO IN (''0001'',''0003'',''0002'',''0005'') THEN 2
+                        WHEN AUX.SITUACION_VPO=''0004'' THEN 1
                       END AS ADM_ACTUALIZA_PRECIO_MAX
                      ,CASE
-                        WHEN AUX.SITUACION_VPO=''00002'' THEN 1
-                        WHEN AUX.SITUACION_VPO IN (''00003'',''00004'',''00005'') THEN 0
+                        WHEN AUX.SITUACION_VPO=''0002'' THEN 1
+                        WHEN AUX.SITUACION_VPO IN (''0001'',''0003'',''0004'',''0005'') THEN 0
                       END AS ADM_DESCALIFICADO
                      ,CASE
-                        WHEN AUX.SITUACION_VPO=''00005'' THEN 0
-                        WHEN AUX.SITUACION_VPO IN (''00003'',''00004'',''00002'') THEN 1
+                        WHEN AUX.SITUACION_VPO=''0005'' THEN 0
+                        WHEN AUX.SITUACION_VPO IN (''0001'',''0003'',''0004'',''0002'') THEN 1
                       END AS ADM_LIBERTAD_CESION
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
@@ -878,7 +879,7 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                         JOIN '|| V_ESQUEMA ||'.DD_ETI_ESTADO_TITULO ETI ON ETI.DD_ETI_ID=TIT.DD_ETI_ID
                         LEFT JOIN ACT_RECIENTE REC ON REC.TIT_ID=TIT.TIT_ID
                         JOIN '|| V_ESQUEMA ||'.ACT_AHT_HIST_TRAM_TITULO AHT ON TIT.TIT_ID=AHT.TIT_ID
-                        WHERE AUX.FLAG_EN_REM='|| FLAG_EN_REM ||' 
+                        WHERE ETI.DD_ETI_CODIGO NOT IN (''04'') AND AUX.FLAG_EN_REM='|| FLAG_EN_REM ||' 
                     ) T2 ON (T1.AHT_ID = T2.AHT_ID)
                     WHEN MATCHED THEN UPDATE SET
                           T1.DD_ESP_ID=(SELECT DD_ESP_ID FROM '|| V_ESQUEMA ||'.DD_ESP_ESTADO_PRESENTACION WHERE DD_ESP_CODIGO=T2.DD_ESP_CODIGO)
@@ -949,7 +950,8 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                   AND NOT EXISTS (SELECT 1 FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR 
                   JOIN '|| V_ESQUEMA ||'.ACT_OFR ACTO ON OFR.OFR_ID = ACTO.OFR_ID 
                   JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID AND EOF.BORRADO = 0 
-                  WHERE OFR.BORRADO = 0 AND EOF.DD_EOF_CODIGO = ''01'' AND ACTO.ACT_ID = ACT2.ACT_ID)';
+                  WHERE OFR.BORRADO = 0 AND EOF.DD_EOF_CODIGO = ''01'' AND ACTO.ACT_ID = ACT2.ACT_ID)
+                  AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_ACT_SCM SCM WHERE SCM.ACT_ID = ACT2.ACT_ID)';
 
    EXECUTE IMMEDIATE V_MSQL;
 

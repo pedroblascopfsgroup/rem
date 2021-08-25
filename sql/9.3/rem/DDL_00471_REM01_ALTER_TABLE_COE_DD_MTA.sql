@@ -1,18 +1,19 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20210817
+--## FECHA_CREACION=20210823
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14940
+--## INCIDENCIA_LINK=HREOS-14714
 --## PRODUCTO=NO
---## Finalidad: Alter COE_CONDICIONANTES_EXPEDIENTE
+--## Finalidad: Crear fk de la coe a la mta
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
 --*/
+
 
 
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -33,11 +34,11 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'COE_CONDICIONANTES_EXPEDIENTE'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_TABLA_FK VARCHAR2(2400 CHAR) := 'DD_RVR_REVISION_RENTA';  
+    V_TABLA_FK VARCHAR2(2400 CHAR) := 'DD_MTA_METODO_ACTUALIZACION';  
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(256);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(											--Nombre en la tabla fk
-			T_TIPO_DATA('DD_RVR_ID', 'NUMBER(16,0)', 'Revisión renta', 'DD_RVR_ID', 'COE')
+			T_TIPO_DATA('DD_MTA_ID', 'NUMBER(16,0)', 'Método actualización de renta libre', 'DD_MTA_ID', 'COE')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -66,7 +67,7 @@ BEGIN
               EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
               
               IF V_NUM_TABLAS = 0 THEN
- 				 V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_'||V_TMP_TIPO_DATA(4)||'_'||TRIM(V_TMP_TIPO_DATA(1))||' FOREIGN KEY ('||TRIM(V_TMP_TIPO_DATA(1))||') REFERENCES '||V_ESQUEMA||'.'||V_TABLA_FK||' ('||TRIM(V_TMP_TIPO_DATA(4))||') ON DELETE SET NULL)';
+ 				 V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_'||V_TMP_TIPO_DATA(5)||'_'||TRIM(V_TMP_TIPO_DATA(1))||' FOREIGN KEY ('||TRIM(V_TMP_TIPO_DATA(1))||') REFERENCES '||V_ESQUEMA||'.'||V_TABLA_FK||' ('||TRIM(V_TMP_TIPO_DATA(4))||') ON DELETE SET NULL)';
 	              EXECUTE IMMEDIATE V_MSQL;
 	              DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... FK Modificada');
 	          END IF;

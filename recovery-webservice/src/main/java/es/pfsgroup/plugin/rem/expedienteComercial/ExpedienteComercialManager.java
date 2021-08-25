@@ -53,6 +53,7 @@ import es.capgemini.devon.pagination.PageImpl;
 import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -3335,6 +3336,42 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 		}
+		
+		dto.setFianzaExonerada(condiciones.getFianzaExonerada());
+		dto.setFechaIngresoFianzaArrendatario(condiciones.getFechaIngresoFianzaArrendatario());
+		dto.setDerechoCesionSubarriendo(condiciones.getDerechoCesionSubarriendo());
+		
+		
+		dto.setVulnerabilidadDetectada(condiciones.getVulnerabilidadDetectada());
+		if(condiciones.getRegimenFianzaCCAA() != null) {
+			dto.setRegimenFianzaCCAACodigo(condiciones.getRegimenFianzaCCAA().getCodigo());
+		}
+		dto.setCertificaciones(condiciones.getCertificaciones());
+		dto.setOfrNuevasCondiciones(condiciones.getOfrNuevasCondiciones());
+		dto.setFianzaContratosSubrogados(condiciones.getFianzaContratosSubrogados());
+		dto.setAdecuaciones(condiciones.getAdecuaciones());
+		dto.setCntSuscritoPosteridadAdj(condiciones.getCntSuscritoPosteridadAdj());
+		dto.setAntiguoDeudorLocalizable(condiciones.getAntiguoDeudorLocalizable());
+		
+		dto.setRentasCuenta(condiciones.getRentasCuenta());
+		dto.setEntregasCuenta(condiciones.getEntregasCuenta());
+		dto.setImporteEntregasCuenta(condiciones.getImporteEntregasCuenta());
+		
+		dto.setObligadoCumplimiento(condiciones.getObligadoCumplimiento());
+		dto.setFechaPreavisoVencimientoCnt(condiciones.getFechaPreavisoVencimientoCnt());
+		
+		if(condiciones.getMetodoActualizacionRenta() != null) {
+			dto.setMetodoActualizacionRentaCod(condiciones.getMetodoActualizacionRenta().getCodigo());
+		}
+		dto.setFechaActualizacion(condiciones.getFechaActualizacion());
+		dto.setPeriodicidadMeses(condiciones.getPeriodicidadMeses());
+		
+		Oferta oferta = expediente.getOferta();
+		if(oferta != null) {
+			dto.setFechaInicioCnt(oferta.getFechaInicioContrato());
+			dto.setFechaFinCnt(oferta.getFechaFinContrato());
+		}
+		
 
 		return dto;
 	}
@@ -3559,6 +3596,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	 * @return Devuelve una entidad CondicionanteExpediente rellena con los datos
 	 *         del dto.
 	 */
+	@Transactional(readOnly = false)
 	private CondicionanteExpediente dtoCondicionantestoCondicionante(CondicionanteExpediente condiciones,
 			DtoCondiciones dto) {
 		try {
@@ -3816,7 +3854,89 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(dto.getRenunciaTanteo())) {
 				condiciones.setRenunciaTanteo(dto.getRenunciaTanteo());
 			}
+			if(dto.getDerechoCesionSubarriendo() != null) {
+				condiciones.setDerechoCesionSubarriendo(dto.getDerechoCesionSubarriendo());
+			}
+			if(dto.getFianzaExonerada() != null) {
+				condiciones.setFianzaExonerada(dto.getFianzaExonerada());
+			}
+			
+			if(!Checks.isFechaNula(dto.getFechaIngresoFianzaArrendatario())) {
+				condiciones.setFechaIngresoFianzaArrendatario(dto.getFechaIngresoFianzaArrendatario());
+			}
+			
+			
+			
+			if(dto.getVulnerabilidadDetectada() != null) {
+				condiciones.setVulnerabilidadDetectada(dto.getVulnerabilidadDetectada());
+			}
+			if(dto.getRegimenFianzaCCAACodigo() != null) {
+				DDRegimenFianzaCCAA regimenFianzaCCAA = (DDRegimenFianzaCCAA) utilDiccionarioApi.dameValorDiccionarioByCod(DDRegimenFianzaCCAA.class, dto.getRegimenFianzaCCAACodigo());
+				condiciones.setRegimenFianzaCCAA(regimenFianzaCCAA);
+			}
+			if(dto.getCertificaciones() !=null) {
+				condiciones.setCertificaciones(dto.getCertificaciones());
+			}
+			if(dto.getOfrNuevasCondiciones() !=null) {
+				condiciones.setOfrNuevasCondiciones(dto.getOfrNuevasCondiciones());
+			}
+			if(dto.getFianzaContratosSubrogados() !=null) {
+				condiciones.setFianzaContratosSubrogados(dto.getFianzaContratosSubrogados());
+			}
+			if(dto.getAdecuaciones() !=null) {
+				condiciones.setAdecuaciones(dto.getAdecuaciones());
+			}
+			if(dto.getCntSuscritoPosteridadAdj() !=null) {
+				condiciones.setCntSuscritoPosteridadAdj(dto.getCntSuscritoPosteridadAdj());
+			}
+			if(dto.getAntiguoDeudorLocalizable() !=null) {
+				condiciones.setAntiguoDeudorLocalizable(dto.getAntiguoDeudorLocalizable());
+			}
 
+			if(dto.getRentasCuenta() != null) {
+				condiciones.setRentasCuenta(dto.getRentasCuenta());
+			}
+			if(dto.getEntregasCuenta() != null) {
+				condiciones.setEntregasCuenta(dto.getEntregasCuenta());
+			}
+			if(dto.getImporteEntregasCuenta() != null) {
+				condiciones.setImporteEntregasCuenta(dto.getImporteEntregasCuenta());
+			}
+			
+			dto.setObligadoCumplimiento(condiciones.getObligadoCumplimiento());
+			dto.setFechaPreavisoVencimientoCnt(condiciones.getFechaPreavisoVencimientoCnt());
+			
+			if(dto.getMetodoActualizacionRentaCod() != null) {
+				DDMetodoActualizacionRenta metodoActualizacionRenta = (DDMetodoActualizacionRenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDMetodoActualizacionRenta.class, dto.getMetodoActualizacionRentaCod());
+				condiciones.setMetodoActualizacionRenta(metodoActualizacionRenta);
+			}
+			
+			if(dto.getCheckIGC() != null) {
+				condiciones.setCheckIGC(dto.getCheckIGC());
+			}
+			if(dto.getPeriodicidadMeses() != null) {
+				condiciones.setPeriodicidadMeses(dto.getPeriodicidadMeses());
+			}
+			if(!Checks.isFechaNula(dto.getFechaActualizacion())) {
+				condiciones.setFechaActualizacion(dto.getFechaActualizacion());
+			}
+			
+			
+			ExpedienteComercial expediente = condiciones.getExpediente();
+			if(expediente != null) {
+				Oferta oferta = expediente.getOferta();
+				if(oferta != null) {
+					if(!Checks.isFechaNula(dto.getFechaInicioCnt())) {
+						oferta.setFechaInicioContrato(dto.getFechaInicioCnt());
+					}
+					if(!Checks.isFechaNula(dto.getFechaFinCnt())) {
+						oferta.setFechaFinContrato(dto.getFechaFinCnt());
+					}
+					
+					genericDao.save(Oferta.class, oferta);
+				}
+			}
+			
 		} catch (Exception ex) {
 			logger.error("error en expedienteComercialManager", ex);
 			return condiciones;
@@ -13311,4 +13431,104 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 	}
 
+	@Override
+	public List<DtoActualizacionRenta> getActualizacionRenta (Long idExpediente) throws IllegalAccessException, InvocationTargetException {
+		List<DtoActualizacionRenta> listActualizacionesRentaLibre = new ArrayList<DtoActualizacionRenta>();
+		ExpedienteComercial eco = this.findOne(idExpediente);
+		if(eco != null) {
+			CondicionanteExpediente coe = eco.getCondicionante();
+			if(coe != null) {
+				Filter filtroCoe = genericDao.createFilter(FilterType.EQUALS, "condicionanteExpediente.id", coe.getId());
+				Order order = new Order(GenericABMDao.OrderType.DESC, "fechaActualizacion");
+
+				List<ActualizacionRentaLibre> arlList = genericDao.getListOrdered(ActualizacionRentaLibre.class, order, filtroCoe);
+				if(arlList != null && !arlList.isEmpty()) {
+					for (ActualizacionRentaLibre actualizacionRentaLibre : arlList) {
+						DtoActualizacionRenta dto = new DtoActualizacionRenta();
+						beanUtilNotNull.copyProperties(dto, actualizacionRentaLibre);
+						if(actualizacionRentaLibre.getMetodoActualizacionRenta() != null) {
+							dto.setTipoActualizacionCodigo(actualizacionRentaLibre.getMetodoActualizacionRenta().getCodigo());
+						}
+						
+						listActualizacionesRentaLibre.add(dto);
+					}
+				}
+			}
+		}
+		
+		return listActualizacionesRentaLibre;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void deleteActualizacionRenta(Long id){
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", id);
+		ActualizacionRentaLibre arl = genericDao.get(ActualizacionRentaLibre.class, filter);
+		
+		if(arl != null) {
+			Auditoria.delete(arl);
+			genericDao.save(ActualizacionRentaLibre.class, arl);
+		}		
+	}
+	
+	private ActualizacionRentaLibre dtoToActualizacionRentaLibre (ActualizacionRentaLibre arl, DtoActualizacionRenta dto ) throws IllegalAccessException, InvocationTargetException {
+		beanUtilNotNull.copyProperties(arl, dto);
+		if(dto.getTipoActualizacionCodigo() != null) {
+			DDMetodoActualizacionRenta metodoActualizacionRenta = (DDMetodoActualizacionRenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDMetodoActualizacionRenta.class, dto.getTipoActualizacionCodigo());
+			arl.setMetodoActualizacionRenta(metodoActualizacionRenta);
+		}
+		return arl;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void addActualizacionRenta(Long idExpediente, DtoActualizacionRenta dto ) throws IllegalAccessException, InvocationTargetException{
+		ExpedienteComercial eco = this.findOne(idExpediente);
+		if(eco != null) {
+			CondicionanteExpediente coe = eco.getCondicionante();
+			if(coe != null) {
+				ActualizacionRentaLibre arl = new ActualizacionRentaLibre();
+				arl.setCondicionanteExpediente(coe);
+				arl = this.dtoToActualizacionRentaLibre(arl, dto);
+				arl.setAuditoria(Auditoria.getNewInstance());
+				genericDao.save(ActualizacionRentaLibre.class, arl);				
+			}
+		}
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void updateActualizacionRenta(Long id, DtoActualizacionRenta dto ) throws IllegalAccessException, InvocationTargetException{
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", id);
+		ActualizacionRentaLibre arl = genericDao.get(ActualizacionRentaLibre.class, filter);
+		
+		if(arl != null) {
+			arl = this.dtoToActualizacionRentaLibre(arl, dto);
+			Auditoria.save(arl);
+			genericDao.save(ActualizacionRentaLibre.class, arl);	
+		}
+			
+		
+	}
+	
+	@Override
+	public List<DtoRespuestaBCGenerica> getSancionesBk(Long idExpediente) {
+		List<DtoRespuestaBCGenerica> listDtos = new ArrayList<DtoRespuestaBCGenerica>();
+		
+		DtoRespuestaBCGenerica dto = this.getUltimaResolucionComiteBC(idExpediente);
+		dto.setComite(RespuestaComiteBC.COMITE_COMERCIAL);
+		listDtos.add(dto);
+		
+//		ExpedienteComercial eco = this.findOne(idExpediente);
+//		if(eco != null && eco.getTrabajo() != null) {
+//			ActivoTramite tra = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", eco.getTrabajo().getId()));
+//			//TODO añadir la sanción Comité lanzamiento/ROD para cuando esté el trámite de alquiler no comercial
+//		}
+		
+		
+		return listDtos;
+	}
+	
+	
+	
 }

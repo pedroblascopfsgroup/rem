@@ -34,6 +34,9 @@ public class RespuestaComiteBC implements Serializable, Auditable {
     /**
 	 * 
 	 */
+	public static final String COMITE_COMERCIAL = "Comercial";
+	
+	
 	private static final long serialVersionUID = 1L;
 
 	@Id

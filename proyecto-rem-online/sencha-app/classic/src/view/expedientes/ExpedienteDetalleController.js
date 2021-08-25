@@ -219,9 +219,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
 		var tipoBulkAdvisoryNote = me.getViewModel().data.datosbasicosoferta.data.tipoBulkAdvisoryNote;
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
-		
+
 		if(form.isFormValid() || form.disableValidation) {
-			
+			var cumplenCondicionesCampos = this.hacerCamposObligatorios(form);
+			if(!cumplenCondicionesCampos){
+				me.getView().unmask();
+				return;
+			}
 
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
@@ -3353,8 +3357,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     onChangeCarencia: function(checkbox, newValue, oldValue, eOpts) {
 		if(!Ext.isEmpty(oldValue)){
 			var me = this,
-			meses = me.lookupReference('mesesCarencia'),
-			importe = me.lookupReference('importeCarencia');
+			meses = checkbox.up('[xtype=fieldset]').down('[name=mesesCarencia]');
+			importe = checkbox.up('[xtype=fieldset]').down('[name=importeCarencia]');
 	
 			if(newValue == true) {
 				meses.setDisabled(false);
@@ -3855,9 +3859,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	onChangeBonificacion: function(checkbox, newValue, oldValue, eOpts) {
 			var me = this,
-			meses = me.lookupReference('mesesBonificacion'),
-			importe = me.lookupReference('importeBonificacion');
+
+			meses = checkbox.up('[xtype=fieldset]').down('[name=mesesBonificacion]');
+			importe = checkbox.up('[xtype=fieldset]').down('[name=importeBonificacion]');
 	
+			
+			
 			if(newValue == true) {
 				meses.setDisabled(false);
 				importe.setDisabled(false);
@@ -5313,5 +5320,72 @@ comprobarFormatoModificar: function() {
 			}
 		}
 		
+	},
+	
+	onChangeMetodoActualizacion: function (combo, value){
+		var me = this;
+		
+		var periodicidad = combo.up('[reference=fieldsetActualizacionRenta]').down('[reference=periodicidadBk]');
+		var checkboxIPC = combo.up('[reference=fieldsetActualizacionRenta]').down('[reference=checkboxIPC]');
+		var checkIGC = combo.up('[reference=fieldsetActualizacionRenta]').down('[reference=checkIGC]');
+		var fechaActualizacionRenta = combo.up('[reference=fieldsetActualizacionRenta]').down('[reference=fechaActualizacionRenta]');
+		var actualizacionRentaGridRef = combo.up('[reference=fieldsetActualizacionRenta]').down('[reference=actualizacionRentaGridRef]');
+		
+		periodicidad.setDisabled(true);
+		checkboxIPC.setDisabled(true);
+		checkIGC.setDisabled(true);
+		fechaActualizacionRenta.setDisabled(true);
+		actualizacionRentaGridRef.setDisabled(true);
+		checkboxIPC.setReadOnly(false);
+		
+		
+
+		
+		if(value == CONST.METODO_ATUALIZACION_RENTA['COD_LIBRE']){
+			actualizacionRentaGridRef.setDisabled(false);
+			periodicidad.setValue("");
+			checkboxIPC.setValue("");
+			checkIGC.setValue("");
+			fechaActualizacionRenta.setValue("");
+		}else if(value == CONST.METODO_ATUALIZACION_RENTA['COD_PORCENTUAL']){
+			checkboxIPC.setDisabled(false);
+			checkIGC.setDisabled(false);
+			periodicidad.setValue("");
+			fechaActualizacionRenta.setValue("");
+			
+		}else if(value == CONST.METODO_ATUALIZACION_RENTA['COD_MERCADO']){
+			periodicidad.setDisabled(false);
+			fechaActualizacionRenta.setDisabled(false);
+			checkboxIPC.setValue("");
+			checkIGC.setValue("");
+		}else if(value == CONST.METODO_ATUALIZACION_RENTA['COD_IPCMERCADO']){
+			periodicidad.setDisabled(false);
+			fechaActualizacionRenta.setDisabled(false);
+			checkboxIPC.setDisabled(false);
+			checkboxIPC.setValue(true);
+			checkboxIPC.setReadOnly(true);
+
+			checkIGC.setValue("");
+		}
+
+	},
+	
+	hacerCamposObligatorios: function (form){
+		var me = this;
+		var view = me.getView();
+		var isOk = true;
+		if(form.xtype == "condicionesexpediente"){
+			var valorMetodoActualizacion = view.down('[reference=comboMetodoActualizacionRentaRef]').value;
+			if(valorMetodoActualizacion == CONST.METODO_ATUALIZACION_RENTA['COD_PORCENTUAL']){
+				var checkboxIPC = view.down('[reference=checkboxIPC]').getValue();
+				var checkIGC = view.down('[reference=checkIGC]').getValue();
+				if(checkboxIPC =="" && checkIGC ==""){
+					isOk = false;
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.ipc.o.igp.marcado"));
+				}
+			}
+		} 
+		
+		return isOk;
 	}
 });

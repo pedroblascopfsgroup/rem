@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=20210726
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210824
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-XXXXX
+--## INCIDENCIA_LINK=HREOS-14974
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -16,6 +16,7 @@
 --##        0.4 Cambio de cálculos - [HREOS-14368] - Daniel Algaba
 --##        0.5 Metemos NUM_IDENTFICATIVO como campos de cruce - [HREOS-14368] - Daniel Algaba
 --##        0.6 Añadimos Certificado sustitutivo y miramos vigencia de documentos
+--##        0.7 Revisión lógica equivalencia Calificación Energética- [HREOS-14974] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -65,12 +66,14 @@ BEGIN
                         , ADO.LETRA_CONSUMO
                         , ADO.CONSUMO
                         , NVL2(EDC.DD_EDC_CODIGO, ''S'', ''N'') REGISTRO
+                        , CFD.CFD_OBLIGATORIO
+                        , EDC.DD_EDC_CODIGO
                         , ROW_NUMBER() OVER (PARTITION BY ADO.ACT_ID, ADO.CFD_ID, CFD.DD_TPA_ID, CFD.DD_SAC_ID ORDER BY ADO.DD_EDC_ID NULLS LAST, ADO.ADO_ID DESC) RN
                      FROM '||V_ESQUEMA||'.ACT_ADO_ADMISION_DOCUMENTO ADO
                      JOIN '||V_ESQUEMA||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON ADO.CFD_ID = CFD.CFD_ID AND CFD.BORRADO = 0
                      JOIN '||V_ESQUEMA||'.DD_TPD_TIPO_DOCUMENTO TPD ON TPD.DD_TPD_ID = CFD.DD_TPD_ID AND TPD.BORRADO = 0
                      LEFT JOIN '||V_ESQUEMA||'.DD_EDC_ESTADO_DOCUMENTO EDC ON ADO.DD_EDC_ID = EDC.DD_EDC_ID AND EDC.BORRADO = 0
-                        AND EDC.DD_EDC_CODIGO = ''01''
+                        --AND EDC.DD_EDC_CODIGO = ''01''
                      LEFT JOIN '||V_ESQUEMA||'.DD_TCE_TIPO_CALIF_ENERGETICA TCE ON ADO.DD_TCE_ID = TCE.DD_TCE_ID AND TCE.BORRADO = 0
                      LEFT JOIN '||V_ESQUEMA||'.DD_LEM_LISTA_EMISIONES LEM ON ADO.DD_LEM_ID = LEM.DD_LEM_ID AND LEM.BORRADO = 0
                      WHERE ADO.BORRADO = 0
@@ -131,7 +134,11 @@ BEGIN
                   SELECT DISTINCT 
                      ACT.ACT_NUM_ACTIVO_CAIXA NUM_IDENTIFICATIVO
                      , ACT.ACT_NUM_ACTIVO NUM_INMUEBLE
-                     , EQV_TCE.DD_CODIGO_CAIXA CALIFICACION_ENERGETICA
+                     , CASE 
+                           WHEN CEE.DD_EDC_CODIGO = ''02'' THEN ''X''
+                           WHEN CEE.CFD_OBLIGATORIO = 0 THEN ''Y'' 
+                           ELSE EQV_TCE.DD_CODIGO_CAIXA 
+                       END AS CALIFICACION_ENERGETICA
                      , NVL(CEE.REGISTRO, ''N'') CERTIFICADO_REGISTRADO
                      , TO_CHAR(CEE.ADO_FECHA_SOLICITUD,''YYYYMMDD'') FEC_SOLICITUD
                      , TO_CHAR(CEE.ADO_FECHA_CADUCIDAD,''YYYYMMDD'') FEC_FIN_VIGENCIA

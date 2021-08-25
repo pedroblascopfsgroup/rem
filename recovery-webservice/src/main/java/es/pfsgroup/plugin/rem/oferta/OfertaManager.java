@@ -1583,6 +1583,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		//Boolean inLoteComercial = false;
 		Boolean incompatible = false;
 		Oferta oferta = this.getOfertaById(idOferta);
+		DDEstadoOferta previousState = oferta.getEstadoOferta();
 
 		List<ActivoOferta> listaActivoOferta = oferta.getActivosOferta();
 
@@ -1698,12 +1699,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			}else{
 				if (estadoOferta != null) {
-					ReplicacionClientesResponse response = caixaBcRestClient.callReplicateClient(oferta.getNumOferta(),CaixaBcRestClient.CLIENTE_TITULARES_DATA);
-					boolean replicateCLientResult = response != null ? response.getSuccess() : true;
+
 
 						if (oferta.getEstadoOferta() == null && (DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta)
-								|| (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta)
-								&& replicateCLientResult))) {
+								|| (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta)))) {
 							oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
 							
 							if (DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta)) {
@@ -1721,8 +1720,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							
 						}else if(oferta.getEstadoOferta() != null) {
 							//Cuando codigo es Pendiente Consentimiento
-							if (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta) && DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(oferta.getEstadoOferta().getCodigo())
-									&& replicateCLientResult) {
+							if (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta) && DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(oferta.getEstadoOferta().getCodigo())) {
 								if(DDCartera.CODIGO_CAIXA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) &&
 										DDEquipoGestion.CODIGO_MINORISTA.equals(oferta.getActivoPrincipal().getEquipoGestion().getCodigo())){
 									oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
@@ -1733,8 +1731,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								oferta.setFechaAlta(new Date());
 							} else if((DDEstadoOferta.CODIGO_CADUCADA.equals(estadoOferta) 
 										|| DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta))
-									&& ((DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())
-											&& replicateCLientResult)
+									&& ((DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()))
 										|| DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(oferta.getEstadoOferta().getCodigo()))) {
 										oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
 							} 							
@@ -1775,7 +1772,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_RECHAZADA)) {
 			oferta.setFechaRechazoOferta(fechaAccion);
 		}
+
 		ofertaDao.saveOrUpdate(oferta);
+
+		if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()) && previousState != oferta.getEstadoOferta()){
+			caixaBcRestClient.callReplicateClient(oferta.getNumOferta(),CaixaBcRestClient.CLIENTE_TITULARES_DATA);
+			replicateOfertaFlush(oferta);
+		}
+
 		return oferta;
 	}
 
@@ -7149,6 +7153,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if(oferta != null && codigoEstado != null){
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstado)));
 			ofertaDao.saveOrUpdate(oferta);
+
+			if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())){
+				caixaBcRestClient.callReplicateClient(oferta.getNumOferta(),CaixaBcRestClient.CLIENTE_TITULARES_DATA);
+				replicateOfertaFlush(oferta);
+			}
 
 			return true;
 		}

@@ -825,9 +825,6 @@ public class AgrupacionController extends ParadiseJsonController {
 		try {
 			Oferta oferta = adapter.createOfertaAgrupacion(dtoOferta);
 			boolean success = oferta != null;
-			if (oferta.getEstadoOferta()!= null && DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())) {
-				caixaBcRestClient.callReplicateClient(oferta.getNumOferta(), CaixaBcRestClient.CLIENTE_TITULARES_DATA);	
-			}
 
 			model.put("success", success);
 		} catch (JsonViewerException jvex) {

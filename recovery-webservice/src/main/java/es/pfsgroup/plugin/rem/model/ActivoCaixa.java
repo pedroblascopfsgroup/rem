@@ -160,12 +160,6 @@ public class ActivoCaixa implements Serializable, Auditable {
 	@Column(name = "CBX_FEC_FIN_CONCU")
     private Date fechaFinConcurrencia;
 	
-	@Column(name = "CBX_ANYO_CONCES")
-	private Integer anyoConcesion;
-	
-	@Column(name = "CBX_FEC_FIN_CONCES")
-    private Date fechaFinConcesion;
-	
 	@Column(name = "CBX_EMPL_FAML")
 	private Boolean empleadoFamiliarCaixa;
 	
@@ -470,22 +464,6 @@ public class ActivoCaixa implements Serializable, Auditable {
 
 	public void setFechaFinConcurrencia(Date fechaFinConcurrencia) {
 		this.fechaFinConcurrencia = fechaFinConcurrencia;
-	}
-
-	public Integer getAnyoConcesion() {
-		return anyoConcesion;
-	}
-
-	public void setAnyoConcesion(Integer anyoConcesion) {
-		this.anyoConcesion = anyoConcesion;
-	}
-
-	public Date getFechaFinConcesion() {
-		return fechaFinConcesion;
-	}
-
-	public void setFechaFinConcesion(Date fechaFinConcesion) {
-		this.fechaFinConcesion = fechaFinConcesion;
 	}
 
 	public Boolean getEmpleadoFamiliarCaixa() {

@@ -2,9 +2,7 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -16,7 +14,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -28,17 +25,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
-import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDMetodoActualizacionRenta;
-import es.pfsgroup.plugin.rem.model.dd.DDRegimenFianzaCCAA;
-import es.pfsgroup.plugin.rem.model.dd.DDRevisionRenta;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 
 
 /**

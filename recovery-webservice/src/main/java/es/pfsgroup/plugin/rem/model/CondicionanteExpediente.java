@@ -34,7 +34,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDMetodoActualizacionRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenFianzaCCAA;
-import es.pfsgroup.plugin.rem.model.dd.DDRevisionRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -390,10 +389,6 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_RFC_ID")
 	private DDRegimenFianzaCCAA regimenFianzaCCAA;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_RVR_ID")
-	private DDRevisionRenta revisionRenta;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_MTA_ID")
@@ -404,6 +399,9 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     
     @Column(name="COE_PERIODICIDAD")
     private Long periodicidadMeses;
+    
+    @Column(name="COE_FECHA_ACTU")
+    private Date fechaActualizacion;
     
 	@Version   
 	private Long version;
@@ -1258,14 +1256,6 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.regimenFianzaCCAA = regimenFianzaCCAA;
 	}
 
-	public DDRevisionRenta getRevisionRenta() {
-		return revisionRenta;
-	}
-
-	public void setRevisionRenta(DDRevisionRenta revisionRenta) {
-		this.revisionRenta = revisionRenta;
-	}
-
 	public DDMetodoActualizacionRenta getMetodoActualizacionRenta() {
 		return metodoActualizacionRenta;
 	}
@@ -1290,5 +1280,12 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.periodicidadMeses = periodicidadMeses;
 	}
 
+	public Date getFechaActualizacion() {
+		return fechaActualizacion;
+	}
+
+	public void setFechaActualizacion(Date fechaActualizacion) {
+		this.fechaActualizacion = fechaActualizacion;
+	}
 
 }

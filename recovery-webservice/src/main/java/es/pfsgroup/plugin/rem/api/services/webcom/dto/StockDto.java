@@ -342,6 +342,15 @@ public class StockDto implements WebcomRESTDto{
 	@WebcomRequired
 	private StringDataType codDirComercial;
 	
+	@WebcomRequired
+	private DoubleDataType testigoOblPorcentajeDesc;
+	
+	@WebcomRequired
+	private DoubleDataType testigoOblImporteMin;
+	
+	@WebcomRequired
+	private BooleanDataType requiereTestigo;
+	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -1118,4 +1127,23 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodDirComercial(StringDataType codDirComercial) {
 		this.codDirComercial = codDirComercial;
 	}
+	public DoubleDataType getTestigoOblPorcentajeDesc() {
+		return testigoOblPorcentajeDesc;
+	}
+	public void setTestigoOblPorcentajeDesc(DoubleDataType testigoOblPorcentajeDesc) {
+		this.testigoOblPorcentajeDesc = testigoOblPorcentajeDesc;
+	}
+	public DoubleDataType getTestigoOblImporteMin() {
+		return testigoOblImporteMin;
+	}
+	public void setTestigoOblImporteMin(DoubleDataType testigoOblImporteMin) {
+		this.testigoOblImporteMin = testigoOblImporteMin;
+	}
+	public BooleanDataType getRequiereTestigo() {
+		return requiereTestigo;
+	}
+	public void setRequiereTestigo(BooleanDataType requiereTestigo) {
+		this.requiereTestigo = requiereTestigo;
+	}
+	
 }

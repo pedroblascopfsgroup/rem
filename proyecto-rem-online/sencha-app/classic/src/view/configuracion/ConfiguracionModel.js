@@ -59,6 +59,19 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
 	            beforeload : 'paramLoadingPerfiles'
 	        }
    		},
+   		configuraciontestigosobligatorios: {    
+   		 	pageSize: $AC.getDefaultPageSize(),
+   		 	model: 'HreRem.model.Testigo',
+       		proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'testigos/getTestigosObligatorios',
+		        actionMethods: {create: 'POST', read: 'GET', update: 'POST', destroy: 'POST'}
+	    	},
+			autoLoad: true,
+	    	session: true,
+	    	remoteSort: true,
+	    	remoteFilter: true
+   		},
 		comboEstadoProveedor: {
 			model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -117,15 +130,21 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
 //					extraParams: {diccionario: 'propietario'}
 //				}
 //		},
-// No localizo las subcarteras
-//		comboSubcartera: {
-//			model: 'HreRem.model.ComboBase',
-//				proxy: {
-//					type: 'uxproxy',
-//					remoteUrl: 'generic/getDiccionario',
-//					extraParams: {diccionario: 'subcartera'}
-//				}
-//		},
+		comboSubcartera: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'subentidadesPropietarias'}
+				}
+		},
+		comboSubcarteraFiltered: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboSubcartera'
+				}
+		},
 		comboProvincia: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -149,7 +168,7 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'calificacionProveedor'}
     			}
-		}
+		},
 		
 // No es un diccionario, son todos los nombres de los contactos del provedor seleccionado
 //		comboContacto: {
@@ -160,5 +179,30 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
 //				extraParams: {diccionario: 'contacto'}
 //			}
 //		}
+		
+		comboTiposComercializacion: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposComercializacionActivo'}
+    			}
+		},
+		comboEquipoGestion: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposEquipoGestion'}
+    			}
+		},
+		comboSinSino: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'DDSiNo'}
+			}
+		}
     }
 });

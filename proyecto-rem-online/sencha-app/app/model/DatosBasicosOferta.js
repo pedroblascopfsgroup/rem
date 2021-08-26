@@ -266,6 +266,10 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		{
     			name:'checkListDocumentalCompleto',
     			type: 'boolean'
+    		},
+    		{
+    			name:'checkSubasta',
+    			type: 'boolean'
     		}
     		
     ],

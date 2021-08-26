@@ -701,7 +701,6 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								{
 									xtype : "comboboxfieldbase",
 									fieldLabel : HreRem.i18n('fieldlabel.detalle.oferta.opcionCompra'),
-									colspan: 2,
 									bind : {
 										store : '{comboSiNoBoolean}',
 										value : '{datosbasicosoferta.opcionACompra}'
@@ -713,14 +712,22 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 										value: '{datosbasicosoferta.valorCompra}'
 									}
 				    			},
-				    			 {
+				    			{
 				    				xtype : 'datefieldbase',
 									formatter : 'date("d/m/Y")',
 									fieldLabel: HreRem.i18n('fieldlabel.detalle.oferta.fecha.vencimiento.opcionCompra'),
 									bind: {
 										value: '{datosbasicosoferta.fechaVencimientoOpcionCompra}'
 									}
-				    			}
+				    			},
+				    			{
+									xtype : "comboboxfieldbase",
+									fieldLabel : HreRem.i18n('fieldlabel.oferta.subasta'),
+									bind : {
+										store : '{comboSiNoBoolean}',
+										value : '{datosbasicosoferta.checkSubasta}'
+									}
+								}
 							]
 						}
 

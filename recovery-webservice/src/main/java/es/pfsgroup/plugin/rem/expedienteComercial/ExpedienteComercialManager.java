@@ -5230,6 +5230,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					vinculoCaixa = genericDao.get(DDVinculoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getVinculoCaixaCodigo()));
 				
 			}
+
+			assignIAPCompradorRepresentante(compradorExpediente,expedienteComercial.getId(),comprador);
+
 			if(comprador.getInfoAdicionalPersona() != null) {
 				comprador.getInfoAdicionalPersona().setVinculoCaixa(vinculoCaixa);
 			}
@@ -5901,7 +5904,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				DDPaises pais = genericDao.get(DDPaises.class, filtroPais);
 				compradorExpediente.setPaisNacimientoRepresentante(pais);
 			}
-			
+
+			assignIAPCompradorRepresentante(compradorExpediente,expediente.getId(),compradorBusqueda);
+
+			genericDao.save(Comprador.class,compradorBusqueda);
+
 			if(compradorBusqueda.getInfoAdicionalPersona() != null) {
 				Filter filtroEstadoC4C = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO);
 				DDEstadoComunicacionC4C estadoComunicacionC4C = genericDao.get(DDEstadoComunicacionC4C.class, filtroEstadoC4C);
@@ -6239,16 +6246,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					compradorExpediente.setPaisNacimientoRepresentante(pais);
 				}
 
-				InfoAdicionalPersona iap = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null));
+				assignIAPCompradorRepresentante(compradorExpediente,expediente.getId(),comprador);
 
-				if(iap == null) {
-					iap = new InfoAdicionalPersona();
-					iap.setAuditoria(Auditoria.getNewInstance());
-					iap.setIdPersonaHaya(comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null);
-					iap.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
-				}
 
-				//InfoAdicionalPersona iap = new InfoAdicionalPersona();
+				InfoAdicionalPersona iap = comprador.getInfoAdicionalPersona();
 
 				if(!Checks.esNulo(dto.getVinculoCaixaCodigo())) {
 					iap.setVinculoCaixa(genericDao.get(DDVinculoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getVinculoCaixaCodigo())));
@@ -6275,37 +6276,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				
 				ofertaApi.resetPBC(expediente, true);
 
-				if (compradorExpediente.getDocumentoRepresentante() != null){
-
-					if (compradorExpediente.getIdPersonaHayaRepresentante() == null)
-						ofertaApi.llamadaMaestroPersonasRepresentante(expediente.getId(),getNombreCarteraExpediente(expediente.getId()));
-
-					hibernateUtils.getSessionFactory().getCurrentSession().refresh(compradorExpediente);
-
-					if (compradorExpediente.getIdPersonaHayaRepresentante() != null){
-
-						InfoAdicionalPersona iapRepresentante = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null));
-
-						if(iapRepresentante == null){
-							iapRepresentante = new InfoAdicionalPersona();
-							iapRepresentante.setAuditoria(Auditoria.getNewInstance());
-							iapRepresentante.setIdPersonaHaya(compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null);
-							iapRepresentante.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
-							genericDao.save(InfoAdicionalPersona.class, iapRepresentante);
-						}
-
-						compradorExpediente.setInfoAdicionalRepresentante(iapRepresentante);
-
-						if (hibernateUtils.getSessionFactory().getCurrentSession().contains(compradorExpediente)){
-							hibernateUtils.getSessionFactory().getCurrentSession().merge(compradorExpediente);
-						}else {
-							genericDao.update(CompradorExpediente.class,compradorExpediente);
-						}
-
-					}else {
-						System.out.println("No se ha podido obtener idPersonaHaya para el representante con el documento "+compradorExpediente.getDocumentoRepresentante());
-					}
-				}
 
 				if(!Checks.estaVacio(tmpClienteGDPR))
 					clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.get(0).getNumDocumento());
@@ -13528,7 +13498,51 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		return listDtos;
 	}
-	
-	
-	
+
+
+
+	@Transactional
+	private void assignIAPCompradorRepresentante(CompradorExpediente compradorExpediente, Long expedienteID, Comprador comprador){
+
+		InfoAdicionalPersona iap = comprador.getInfoAdicionalPersona() == null && comprador.getIdPersonaHaya() != null ? genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null)) : comprador.getInfoAdicionalPersona();
+
+
+		if(iap == null && comprador.getIdPersonaHaya() != null) {
+			iap = new InfoAdicionalPersona();
+			iap.setAuditoria(Auditoria.getNewInstance());
+			iap.setIdPersonaHaya(comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null);
+			iap.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
+			genericDao.save(InfoAdicionalPersona.class, iap);
+			comprador.setInfoAdicionalPersona(iap);
+		}
+
+
+		if (compradorExpediente.getDocumentoRepresentante() != null){
+
+			if (compradorExpediente.getIdPersonaHayaRepresentante() == null){
+				String idPersonaHaya = ofertaApi.getIdPersonaHayaByDocumento(expedienteID,getNombreCarteraExpediente(expedienteID),compradorExpediente.getDocumentoRepresentante());
+				compradorExpediente.setIdPersonaHayaRepresentante(StringUtils.isNumeric(idPersonaHaya) ? Long.parseLong(idPersonaHaya) : null);
+			}
+
+			if (compradorExpediente.getIdPersonaHayaRepresentante() != null){
+
+				InfoAdicionalPersona iapRepresentante = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null));
+
+				if(iapRepresentante == null){
+					iapRepresentante = new InfoAdicionalPersona();
+					iapRepresentante.setAuditoria(Auditoria.getNewInstance());
+					iapRepresentante.setIdPersonaHaya(compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null);
+					iapRepresentante.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
+					genericDao.save(InfoAdicionalPersona.class, iapRepresentante);
+				}
+
+				compradorExpediente.setInfoAdicionalRepresentante(iapRepresentante);
+
+
+			}else {
+				System.out.println("No se ha podido obtener idPersonaHaya para el representante con el documento "+compradorExpediente.getDocumentoRepresentante());
+			}
+		}
+	}
+
 }

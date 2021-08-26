@@ -4402,12 +4402,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	   	maestroPersona.start();
 	}
 
-	public void llamadaMaestroPersonasRepresentante(Long idExpediente, String cartera) {
+	public String getIdPersonaHayaByDocumento(Long idExpediente, String cartera,String documento) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		MaestroDePersonas maestroDePersonas = new MaestroDePersonas(idExpediente,usuarioLogado.getUsername(),cartera);
 		maestroDePersonas.setSession(hibernateUtils.getSessionFactory().getCurrentSession());
-		maestroDePersonas.llamadaRepresentante();
+		return maestroDePersonas.getIdPersonaHayaByDocumento(documento);
 
 	}
 

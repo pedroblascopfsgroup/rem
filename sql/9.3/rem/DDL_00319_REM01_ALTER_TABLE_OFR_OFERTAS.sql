@@ -30,7 +30,6 @@ DECLARE
     V_COL_OLD VARCHAR2(50 CHAR) := 'OFR_NECESITA_FINANCIACION';
     V_COL_TFN VARCHAR2(50 CHAR) := 'DD_TFN_ID';
     V_COL_ETF VARCHAR2(50 CHAR) := 'DD_ETF_ID';
-    V_DDSNS_ID NUMBER(16):= 0; --Variable para data default a NO del diccionario
     
     
     
@@ -50,12 +49,9 @@ DECLARE
             V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA||''' AND COLUMN_NAME = '''||V_COL_OLD||'''
                         AND DATA_PRECISION = 16';
             EXECUTE IMMEDIATE V_SQL INTO V_COUNT; 
-
-            V_SQL := 'SELECT DD_SNS_ID FROM '||V_ESQUEMA||'.DD_SNS_SINONOSABE WHERE DD_SNS_CODIGO = ''02''';
-            EXECUTE IMMEDIATE V_SQL INTO V_DDSNS_ID;
         
-            IF V_COUNT = 0 AND V_DDSNS_ID != 0 THEN
-                V_SQL := 'ALTER TABLE ' || V_ESQUEMA || '.'||V_TABLA||' MODIFY '||V_COL_OLD||' NUMBER (16,0) DEFAULT '||V_DDSNS_ID||'';
+            IF V_COUNT = 0 THEN
+                V_SQL := 'ALTER TABLE ' || V_ESQUEMA || '.'||V_TABLA||' MODIFY '||V_COL_OLD||' NUMBER (16,0)';
                 EXECUTE IMMEDIATE V_SQL;
 
                 DBMS_OUTPUT.PUT_LINE('[INFO] Modificado el tipo de datos de '||V_COL_OLD||'');

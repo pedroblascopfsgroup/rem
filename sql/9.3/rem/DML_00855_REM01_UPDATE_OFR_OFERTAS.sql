@@ -29,6 +29,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	V_USU VARCHAR2(30 CHAR) := 'HREOS-14968';
     V_COL_OLD VARCHAR2(50 CHAR) := 'OFR_NECESITA_FINANCIACION';
+    V_DDSNS_ID NUMBER(16):= 0; --Variable para data default a NO del diccionario
     
 BEGIN
 
@@ -57,7 +58,16 @@ BEGIN
                 REFERENCES '||V_ESQUEMA||'.DD_SNS_SINONOSABE (DD_SNS_ID) ON DELETE SET NULL';
     EXECUTE IMMEDIATE V_MSQL;
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] Añadida FK '||V_COL_OLD||' sobre DD_SNS_SINONOSABE');
+    V_SQL := 'SELECT DD_SNS_ID FROM '||V_ESQUEMA||'.DD_SNS_SINONOSABE WHERE DD_SNS_CODIGO = ''02''';
+    EXECUTE IMMEDIATE V_SQL INTO V_DDSNS_ID;
+
+    IF V_DDSNS_ID != 0 THEN
+        V_SQL := 'ALTER TABLE ' || V_ESQUEMA || '.'||V_TABLA||' MODIFY '||V_COL_OLD||' DEFAULT '||V_DDSNS_ID||'';
+        EXECUTE IMMEDIATE V_SQL;
+
+        DBMS_OUTPUT.PUT_LINE('[INFO] Modificado data default '||V_COL_OLD||'');
+
+    END IF;
         
     COMMIT;
 

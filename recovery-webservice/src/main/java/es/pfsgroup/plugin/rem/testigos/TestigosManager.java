@@ -144,7 +144,7 @@ public class TestigosManager extends BusinessOperationOverrider<TestigosApi> imp
 		
 		TestigosObligatorios testigoObligatorio = new TestigosObligatorios();
 		
-		if(dtoTestigoObligatorio != null && dtoTestigoObligatorio.getId() != null && !dtoTestigoObligatorio.getId().contains("Testigo")) {
+		if(dtoTestigoObligatorio != null && dtoTestigoObligatorio.getId() != null && !dtoTestigoObligatorio.getId().contains("Testigo") && !dtoTestigoObligatorio.getId().isEmpty()) {
 			testigoObligatorio = genericDao.get(TestigosObligatorios.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoTestigoObligatorio.getId())));
 		}
 		

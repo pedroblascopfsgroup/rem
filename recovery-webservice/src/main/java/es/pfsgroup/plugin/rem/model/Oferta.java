@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
@@ -363,6 +364,10 @@ public class Oferta implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="DD_ETF_ID")
 	private DDEntidadFinanciera entidadFinanciera;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MJO_ID")
+	private DDMotivoJustificacionOferta motivoJustificacionOferta;
 
 
 	public Date getFechaAlta() {
@@ -1103,6 +1108,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setEntidadFinanciera(DDEntidadFinanciera entidadFinanciera) {
 		this.entidadFinanciera = entidadFinanciera;
+	}
+	
+	public DDMotivoJustificacionOferta getMotivoJustificacionOferta() {
+		return motivoJustificacionOferta;
+	}
+
+	public void setMotivoJustificacionOferta(DDMotivoJustificacionOferta motivoJustificacionOferta) {
+		this.motivoJustificacionOferta = motivoJustificacionOferta;
 	}
 	
 }

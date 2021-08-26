@@ -106,6 +106,7 @@ public class OfertaDto implements Serializable {
 			Update.class },foreingField="codigo")
 	@Size(max=20,groups = { Insert.class, Update.class })
 	private String entidadFinanciacion;
+	private String codMotivoJustificacionOferta;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -421,6 +422,13 @@ public class OfertaDto implements Serializable {
 	}
 	public void setEntidadFinanciacion(String entidadFinanciacion) {
 		this.entidadFinanciacion = entidadFinanciacion;
+	}
+	
+	public String getCodMotivoJustificacionOferta() {
+		return codMotivoJustificacionOferta;
+	}
+	public void setCodMotivoJustificacionOferta(String codMotivoJustificacionOferta) {
+		this.codMotivoJustificacionOferta = codMotivoJustificacionOferta;
 	}
 
 }

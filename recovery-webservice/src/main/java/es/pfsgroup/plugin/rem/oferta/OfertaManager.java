@@ -188,6 +188,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
@@ -1087,13 +1088,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				saveTextoOfertaWS(dto, oferta);
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getJustificacionOferta())) {
-				dto.setCampoCodigo("08");
-				dto.setTexto(ofertaDto.getJustificacionOferta());
-				
-				saveTextoOfertaWS(dto, oferta);
-			}
-			
 			if(!Checks.esNulo(ofertaDto.getObservacionesRCDC())){
 				dto.setCampoCodigo("09");
 				dto.setTexto(ofertaDto.getObservacionesRCDC());
@@ -1103,6 +1097,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			setValuesFinanciacion(ofertaDto, oferta);
 
+			if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
+				DDMotivoJustificacionOferta motivoJustificacionOferta = genericDao.get(DDMotivoJustificacionOferta.class, genericDao.createFilter(FilterType.EQUALS,
+						"codigo", ofertaDto.getCodMotivoJustificacionOferta()));
+				if (!Checks.esNulo(motivoJustificacionOferta)) {
+					oferta.setMotivoJustificacionOferta(motivoJustificacionOferta);
+					
+					dto.setCampoCodigo("08");
+					String texto = motivoJustificacionOferta.getDescripcion() + (motivoJustificacionOferta.getCodigo().contentEquals(DDMotivoJustificacionOferta.CODIGO_OTRO) ? ": " + ofertaDto.getJustificacionOferta() : "");
+					dto.setTexto(texto);
+					
+					saveTextoOfertaWS(dto, oferta);
+				}
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
+				DDMotivoJustificacionOferta motivoJustificacionOferta = genericDao.get(DDMotivoJustificacionOferta.class, genericDao.createFilter(FilterType.EQUALS,
+						"codigo", ofertaDto.getCodMotivoJustificacionOferta()));
+				if (!Checks.esNulo(motivoJustificacionOferta)) {
+					oferta.setMotivoJustificacionOferta(motivoJustificacionOferta);
+				}
+			}
+			
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoOferta());
 			
 			if(activo != null && activo.getSubcartera() != null &&
@@ -1535,12 +1551,26 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				modificado = true;
 			}
 			
-			if(!Checks.esNulo(ofertaDto.getJustificacionOferta())){
-				dto.setCampoCodigo("08");
-				dto.setTexto(ofertaDto.getJustificacionOferta());
-				
-				saveTextoOfertaWS(dto, oferta);
-				modificado = true;
+			if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
+				DDMotivoJustificacionOferta motivoJustificacionOferta = genericDao.get(DDMotivoJustificacionOferta.class, genericDao.createFilter(FilterType.EQUALS,
+						"codigo", ofertaDto.getCodMotivoJustificacionOferta()));
+				if (!Checks.esNulo(motivoJustificacionOferta)) {
+					oferta.setMotivoJustificacionOferta(motivoJustificacionOferta);
+					
+					dto.setCampoCodigo("08");
+					String texto = motivoJustificacionOferta.getDescripcion() + (motivoJustificacionOferta.getCodigo().contentEquals(DDMotivoJustificacionOferta.CODIGO_OTRO) ? ": " + ofertaDto.getJustificacionOferta() : "");
+					dto.setTexto(texto);
+					
+					saveTextoOfertaWS(dto, oferta);
+				}
+			}
+
+			if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
+				DDMotivoJustificacionOferta motivoJustificacionOferta = genericDao.get(DDMotivoJustificacionOferta.class, genericDao.createFilter(FilterType.EQUALS,
+						"codigo", ofertaDto.getCodMotivoJustificacionOferta()));
+				if (!Checks.esNulo(motivoJustificacionOferta)) {
+					oferta.setMotivoJustificacionOferta(motivoJustificacionOferta);
+				}
 			}
 			
 			if(!Checks.esNulo(ofertaDto.getObservacionesRCDC())){

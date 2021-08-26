@@ -45,7 +45,7 @@ Ext.define('HreRem.view.expedientes.SancionesGrid', {
 		        			descripcion = foundedRecord.getData().descripcion;
 		        		}
 		            	return descripcion;
-		        	},
+		        	}
 		        },
 		        {
 		            dataIndex: 'observacionesBC',

@@ -179,6 +179,8 @@ public class TestigosManager extends BusinessOperationOverrider<TestigosApi> imp
 			
 			if(dtoTestigoObligatorio.getRequiereTestigos() != null && (DDSinSiNo.CODIGO_SI.equals(dtoTestigoObligatorio.getRequiereTestigos()) || "true".equals(dtoTestigoObligatorio.getRequiereTestigos()))) {
 				beanUtilNotNull.copyProperty(testigoObligatorio, "requiereTestigos", true);
+			} else if(dtoTestigoObligatorio.getRequiereTestigos() == null && testigoObligatorio != null && testigoObligatorio.getRequiereTestigos() != null && testigoObligatorio.getRequiereTestigos()){
+				beanUtilNotNull.copyProperty(testigoObligatorio, "requiereTestigos", true);
 			} else {
 				beanUtilNotNull.copyProperty(testigoObligatorio, "requiereTestigos", false);
 			}

@@ -834,7 +834,7 @@ public interface OfertaApi {
 
 	boolean esOfertaValidaCFVByCarteraSubcartera(Oferta oferta);
 
-	public void llamadaMaestroPersonasRepresentante(Long idExpediente, String cartera);
+	 String getIdPersonaHayaByDocumento(Long idExpediente, String cartera,String documento);
 
 	public void enviarCorreoFichaComercial(List<Long> ids, String reportCode, String scheme, String serverName) throws IOException;
 }

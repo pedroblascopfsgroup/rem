@@ -1659,8 +1659,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 			var tieneFuncion = $AU.userHasFunction('EDITAR_EXCLUIR_VALIDACIONES');
 			var perteneceAgrupacionRestringida = get('activo.pertenceAgrupacionRestringida');
+			var isBankia = ('isCarteraBankia');
 			
-			if (perteneceAgrupacionRestringida || !tieneFuncion){
+			if (perteneceAgrupacionRestringida || !tieneFuncion || isBankia){
 				return true;
 			}			
 			
@@ -1796,7 +1797,53 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			} else {
 		    	return true;
 			}
-	    }
+	    },
+	    
+	    isCarteraBankiayUnidadAlquilable: function(get){
+			var me = this;
+
+			var isBankia = get('activo.isCarteraBankia');
+	    	var unidadAlquilable = get('activo.unidadAlquilable');
+
+			if(isBankia || unidadAlquilable){
+				return true;
+			}
+
+			return false;
+		 },
+		    
+	    isCarteraBankiaYesSituacionJudicial: function(get){
+			var me = this;
+
+			var isBankia = get('activo.isCarteraBankia');
+
+			if(get('esSituacionJudicial') || isBankia){
+				return true;
+	    	 } else {
+	    		 return false;
+	    	 }
+		 },
+		    
+	    esUAyIsCarteraBankia: function(get){
+			var me = this;
+			
+			if(get('esUA') == true || get('isCarteraBankia')) {
+				return true;
+			} else {
+				return false;
+			}
+		 },
+		    
+		 esEditableDestinoComercialOresBankia: function(get){
+			var me = this;
+			
+			var destinoComercial = get('!activo.esEditableDestinoComercial');
+			if(destinoComercial == true || get('isCarteraBankia')) {
+				return true;
+			} else {
+				return false;
+			}
+		 } 
 	 },
     
 	 stores: {

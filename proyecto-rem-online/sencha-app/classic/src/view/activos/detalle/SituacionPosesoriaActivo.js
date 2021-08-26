@@ -340,7 +340,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.obtencion.posesion'),
 		                	bind:	{
 		                		value: '{situacionPosesoria.fechaTomaPosesion}',
-		                		readOnly: '{esSituacionJudicial}'
+		                		readOnly: '{isCarteraBankiaYesSituacionJudicial}'
 		                	},
 		                	style:'margin-left:10px'
 		                },

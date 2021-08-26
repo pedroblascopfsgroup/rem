@@ -263,7 +263,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 							        		{
 					            			store: '{comboTipoTituloInfoRegistral}', //DD_TTA_TIPO_TITULO_ADICIONAL
 						            		value: '{saneamiento.tipoTituloAdicional}',
-						            		rawValue: '{saneamiento.tipoTituloAdicionalDescripcion}'					            		
+						            		rawValue: '{saneamiento.tipoTituloAdicionalDescripcion}'
             								}	            			
                         			},
 									{ 
@@ -286,7 +286,8 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 										reference:'fechaInscripcionRegistroAdicional',
 										readOnly: true,
 								 		bind: {
-								 			value: '{saneamiento.fechaInscriptionRegistroAdicional}'
+								 			value: '{saneamiento.fechaInscriptionRegistroAdicional}',
+								 			readOnly: '{isCarteraBankia}'
 								 			//readOnly: '{datosRegistrales.unidadAlquilable}'
 								 			}
 			                      	},

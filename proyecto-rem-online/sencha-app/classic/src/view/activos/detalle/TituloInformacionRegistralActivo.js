@@ -65,7 +65,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		                	fieldLabel: HreRem.i18n('fieldlabel.finca'),
 		                	bind: {
 		                		value: '{datosRegistrales.numFinca}',
-		                		readOnly: '{datosRegistrales.unidadAlquilable}'
+		                		readOnly: '{isCarteraBankiayUnidadAlquilable}'
 		                	}
 		                },	
 		                { 
@@ -85,7 +85,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					 		fieldLabel: HreRem.i18n('fieldlabel.libro'),
 					 		bind: {
 					 			value: '{datosRegistrales.libro}',
-					 			readOnly: '{datosRegistrales.unidadAlquilable}',
+					 			readOnly: '{isCarteraBankiayUnidadAlquilable}',
                                 hidden: '{!isCarteraBankia}'
 					 		}
 						},
@@ -172,7 +172,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							colspan: 2,
 							bind: {
 								value: '{datosRegistrales.folio}',
-								readOnly: '{datosRegistrales.unidadAlquilable}',
+								readOnly: '{isCarteraBankiayUnidadAlquilable}',
                                 hidden: '{!isCarteraBankia}'
 							}
 		                },
@@ -180,7 +180,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.numero.registro'),
 		                	bind: {
 		                		value: '{datosRegistrales.numRegistro}',
-		                		readOnly: '{datosRegistrales.unidadAlquilable}',
+		                		readOnly: '{isCarteraBankiayUnidadAlquilable}',
 		                		hidden: '{isCarteraBankia}'
 		                	},
 		                	maskRe: /^\d*$/
@@ -197,7 +197,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		                	fieldLabel: HreRem.i18n('fieldlabel.tomo'),
 		                	bind: {
 		                		value: '{datosRegistrales.tomo}',
-		                		readOnly: '{datosRegistrales.unidadAlquilable}'
+		                		readOnly: '{isCarteraBankiayUnidadAlquilable}'
 		                	}
                         },
 		                { 
@@ -417,7 +417,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		            	bind: {
 		            		store: '{storeTituloOrigenActivo}',
 		            		value: '{datosRegistrales.tipoTituloCodigo}',
-		            		readOnly: '{datosRegistrales.unidadAlquilable}',
+//		            		readOnly: '{datosRegistrales.unidadAlquilable}',
+		            		readOnly: '{isCarteraBankiayUnidadAlquilable}',
 							rawValue: '{datosRegistrales.tipoTituloDescripcion}'
 		            	},
 		            	listeners: {
@@ -431,7 +432,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		            	bind: {
 		            		store: '{comboSubtipoTitulo}',
 		            		value: '{datosRegistrales.subtipoTituloCodigo}',
-		            		readOnly: '{datosRegistrales.unidadAlquilable}',
+//		            		readOnly: '{datosRegistrales.unidadAlquilable}',
+		            		readOnly: '{isCarteraBankiayUnidadAlquilable}',
 							rawValue: '{datosRegistrales.subtipoTituloDescripcion}'
 		            	},
 		            	listeners:{
@@ -813,7 +815,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.auto.adjudicacion'),
 								bind: {
 									value: '{datosRegistrales.fechaAdjudicacion}',
-									readOnly: '{datosRegistrales.unidadAlquilable}'
+									readOnly: '{datosRegistrales.unidadAlquilable}',
+									readOnly: '{isCarteraBankia}'
 								}
                                  
 			                },
@@ -823,7 +826,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.firmeza.auto.adjudicacion'),			                	
 								bind: {
 									value: '{datosRegistrales.fechaDecretoFirme}',
-									readOnly: '{datosRegistrales.unidadAlquilable}'
+									readOnly: '{datosRegistrales.unidadAlquilable}',
+									readOnly: '{isCarteraBankia}'
 								}
                                  
 			                },
@@ -948,7 +952,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.numero.autos'),
 			                	bind: {
 			                		value: '{datosRegistrales.numAuto}',
-			                		readOnly: '{datosRegistrales.unidadAlquilable}'
+			                		readOnly: '{isCarteraBankiayUnidadAlquilable}'
+//			                		readOnly: '{datosRegistrales.unidadAlquilable}'
 			                	}
 			                },
 			                { 
@@ -1022,7 +1027,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						 		reference: 'fechaTitulo',
 						 		bind: {
 						 			value: '{datosRegistrales.fechaTitulo}',
-						 			readOnly: '{datosRegistrales.unidadAlquilable}'
+//						 			readOnly: '{datosRegistrales.unidadAlquilable}'
+						 			readOnly: '{isCarteraBankiayUnidadAlquilable}'
 						 		}
 							},
 							{
@@ -1039,7 +1045,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						 		fieldLabel: HreRem.i18n('fieldlabel.valor.adquisicion'),
 						 		bind: {
 						 			value: '{datosRegistrales.valorAdquisicion}',
-						 			readOnly: '{datosRegistrales.unidadAlquilable}'
+						 			readOnly: '{isCarteraBankiayUnidadAlquilable}'
+//						 			readOnly: '{datosRegistrales.unidadAlquilable}'
 						 		}
 							},
 			                { 

@@ -322,7 +322,8 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 									   reference: 'checkNecesidadArrasRef',
 									   allowBlank: true,
 									   bind : {
-								     		value: '{comercial.necesidadArras}'
+								     		value: '{comercial.necesidadArras}',
+								     		readOnly: '{isCarteraBankia}'
 									   }						   
 									},
 									{ 
@@ -350,7 +351,8 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 										bind: {								
 											store: '{comboMotivoNecesidadArras}',
 											value: '{comercial.motivoNecesidadArrasCod}',
-											disabled: '{!comercial.necesidadArras}'
+											disabled: '{!comercial.necesidadArras}',
+											readOnly: '{isCarteraBankia}'
 										}
 									},
 									{

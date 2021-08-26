@@ -846,7 +846,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.realizacion.posesion'),
 								bind: {
 									value: '{datosRegistrales.fechaRealizacionPosesion}',
-									readOnly: '{isReadOnlyFechaRealizacionPosesion}',
+									readOnly: '{isCarteraBankiaeIsReadOnlyFechaRealizacionPosesion}',
 									disabled: '{isCarteraLiberbank}'
 								}
 			                },
@@ -867,7 +867,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.senyalamiento.lanzamiento'),			                	
 								bind: {
 									value: '{datosRegistrales.fechaSenalamientoLanzamiento}',
-									readOnly: '{datosRegistrales.unidadAlquilable}'
+									readOnly: '{isCarteraBankiayUnidadAlquilable}'
 								}
 			                },
 			                {
@@ -876,7 +876,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.lanzamiento.efectuado'),			                	
 								bind: {
 									value: '{datosRegistrales.fechaRealizacionLanzamiento}',
-									readOnly: '{datosRegistrales.unidadAlquilable}'
+									readOnly: '{isCarteraBankiayUnidadAlquilable}'
 								}
 			                },
 			                {
@@ -904,7 +904,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.resolucion.moratoria'),			                	
 								bind: {
 									value: '{datosRegistrales.fechaResolucionMoratoria}',
-									readOnly: '{datosRegistrales.unidadAlquilable}'
+									readOnly: '{isCarteraBankiayUnidadAlquilable}'
 								},
 								maxValue:null
 								

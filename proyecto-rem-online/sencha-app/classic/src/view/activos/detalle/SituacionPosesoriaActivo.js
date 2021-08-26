@@ -327,7 +327,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	bind: {				        		
 						        		store: '{comboSiNoPosesionNegociada}',
 					            		value: '{situacionPosesoria.posesionNegociada}',
-					            		readOnly: '{!tienePosesion}'
+					            		readOnly: '{isCarteraBankiayTienePosesion}'
 					            	},
 					            	displayField: 'descripcion',
 					            	valueField: 'codigo'

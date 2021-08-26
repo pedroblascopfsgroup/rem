@@ -1843,7 +1843,40 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			} else {
 				return false;
 			}
-		 } 
+		 },
+		 
+	    isCarteraBankiayTienePosesion:function(get){
+	    	var me = this;
+	    	var isBankia = get('isCarteraBankia');	    	
+	    	var tienePosesion = get('tienePosesion');
+	    	
+	    	if (isBankia || tienePosesion){
+	    		return true;
+	    	}
+	    	return false;
+		},
+		
+	    isCarteraBankiaeIsReadOnlyFechaRealizacionPosesion:function(get){
+	    	var me = this;
+	    	var isBankia = get('isCarteraBankia');	    	
+	    	var isReadOnlyFechaRealizacionPosesion = get('isReadOnlyFechaRealizacionPosesion');
+	    	
+	    	if (isBankia || isReadOnlyFechaRealizacionPosesion){
+	    		return true;
+	    	}
+	    	return false;
+		},
+		
+	    isCarteraBankiayEditarPorcentajeConstruccion:function(get){
+	    	var me = this;
+	    	var isBankia = get('isCarteraBankia');	    	
+	    	var editarPorcentajeConstruccion = get('editarPorcentajeConstruccion');
+	    	
+	    	if (isBankia || editarPorcentajeConstruccion){
+	    		return true;
+	    	}
+	    	return false;
+		}
 	 },
     
 	 stores: {

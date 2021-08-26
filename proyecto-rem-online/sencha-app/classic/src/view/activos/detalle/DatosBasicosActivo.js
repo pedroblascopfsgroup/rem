@@ -348,7 +348,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						                	reference: 'porcentajeConstruccion',
 						                	maskRe: /[0-9.]/,
 						                	bind: {
-						                		readOnly: '{!editarPorcentajeConstruccion}',
+						                		readOnly: '{isCarteraBankiayEditarPorcentajeConstruccion}',
 						                		value: '{activo.porcentajeConstruccion}'
 						                	},
 						                	validator: function(v) {

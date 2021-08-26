@@ -51,11 +51,11 @@ DECLARE
                         AND DATA_PRECISION = 16';
             EXECUTE IMMEDIATE V_SQL INTO V_COUNT; 
 
-            V_SQL := 'SELECT DD_SNS_ID FROM '||V_ESQUEMA||'.DD_SNS_SINONOSABE WHERE DD_SNS_CODIGO = ''02'')';
+            V_SQL := 'SELECT DD_SNS_ID FROM '||V_ESQUEMA||'.DD_SNS_SINONOSABE WHERE DD_SNS_CODIGO = ''02''';
             EXECUTE IMMEDIATE V_SQL INTO V_DDSNS_ID;
         
             IF V_COUNT = 0 AND V_DDSNS_ID != 0 THEN
-                V_SQL := 'ALTER TABLE ' || V_ESQUEMA || '.'||V_TABLA||' MODIFY '||V_COL_OLD||' NUMBER (16,0) DEFAULT '||V_DDSNS_ID';
+                V_SQL := 'ALTER TABLE ' || V_ESQUEMA || '.'||V_TABLA||' MODIFY '||V_COL_OLD||' NUMBER (16,0) DEFAULT '||V_DDSNS_ID||'';
                 EXECUTE IMMEDIATE V_SQL;
 
                 DBMS_OUTPUT.PUT_LINE('[INFO] Modificado el tipo de datos de '||V_COL_OLD||'');

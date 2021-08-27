@@ -1102,7 +1102,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			setValuesFinanciacion(ofertaDto, oferta);
 			
 			saveTestigosOferta(ofertaDto, oferta, false);
-
+			
+			dto = new DtoTextosOferta();
 			if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
 				DDMotivoJustificacionOferta motivoJustificacionOferta = genericDao.get(DDMotivoJustificacionOferta.class, genericDao.createFilter(FilterType.EQUALS,
 						"codigo", ofertaDto.getCodMotivoJustificacionOferta()));
@@ -1110,18 +1111,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					oferta.setMotivoJustificacionOferta(motivoJustificacionOferta);
 					
 					dto.setCampoCodigo("08");
-					String texto = motivoJustificacionOferta.getDescripcion() + (motivoJustificacionOferta.getCodigo().contentEquals(DDMotivoJustificacionOferta.CODIGO_OTRO) ? ": " + ofertaDto.getJustificacionOferta() : "");
+					String texto = motivoJustificacionOferta.getDescripcion();
+					if(ofertaDto.getJustificacionOferta() != null) {
+						if(DDMotivoJustificacionOferta.CODIGO_OTRO.equals(motivoJustificacionOferta.getCodigo())) {
+							texto += ": " + ofertaDto.getJustificacionOferta();						
+						}else {
+							errorsList.put("Justificación de oferta no puede tener valor si el motivo justificación oferta es 'Otros'.", RestApi.CODE_ERROR);
+						}
+					}else {
+						if(DDMotivoJustificacionOferta.CODIGO_OTRO.equals(motivoJustificacionOferta.getCodigo())) {
+							errorsList.put("Justificación de oferta es obligatorio si el motivo justificación oferta es 'Otros'.", RestApi.CODE_ERROR);
+						}
+					}
+					
 					dto.setTexto(texto);
 					
 					saveTextoOfertaWS(dto, oferta);
-				}
-			}
-			
-			if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
-				DDMotivoJustificacionOferta motivoJustificacionOferta = genericDao.get(DDMotivoJustificacionOferta.class, genericDao.createFilter(FilterType.EQUALS,
-						"codigo", ofertaDto.getCodMotivoJustificacionOferta()));
-				if (!Checks.esNulo(motivoJustificacionOferta)) {
-					oferta.setMotivoJustificacionOferta(motivoJustificacionOferta);
+				}else {
+					errorsList.put("Motivo justificación oferta con código: '" + ofertaDto.getCodMotivoJustificacionOferta() +"' no encontrado.", RestApi.CODE_ERROR);
 				}
 			}
 			
@@ -1602,6 +1609,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				modificado = true;
 			}
 			
+			dto = new DtoTextosOferta();
 			if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
 				DDMotivoJustificacionOferta motivoJustificacionOferta = genericDao.get(DDMotivoJustificacionOferta.class, genericDao.createFilter(FilterType.EQUALS,
 						"codigo", ofertaDto.getCodMotivoJustificacionOferta()));
@@ -1609,18 +1617,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					oferta.setMotivoJustificacionOferta(motivoJustificacionOferta);
 					
 					dto.setCampoCodigo("08");
-					String texto = motivoJustificacionOferta.getDescripcion() + (motivoJustificacionOferta.getCodigo().contentEquals(DDMotivoJustificacionOferta.CODIGO_OTRO) ? ": " + ofertaDto.getJustificacionOferta() : "");
+					String texto = motivoJustificacionOferta.getDescripcion();
+					if(ofertaDto.getJustificacionOferta() != null) {
+						if(DDMotivoJustificacionOferta.CODIGO_OTRO.equals(motivoJustificacionOferta.getCodigo())) {
+							texto += ": " + ofertaDto.getJustificacionOferta();						
+						}else {
+							errorsList.put("Justificación de oferta no puede tener valor si el motivo justificación oferta es 'Otros'.", RestApi.CODE_ERROR);
+						}
+					}else {
+						if(DDMotivoJustificacionOferta.CODIGO_OTRO.equals(motivoJustificacionOferta.getCodigo())) {
+							errorsList.put("Justificación de oferta es obligatorio si el motivo justificación oferta es 'Otros'.", RestApi.CODE_ERROR);
+						}
+					}
+					
 					dto.setTexto(texto);
 					
 					saveTextoOfertaWS(dto, oferta);
-				}
-			}
-
-			if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
-				DDMotivoJustificacionOferta motivoJustificacionOferta = genericDao.get(DDMotivoJustificacionOferta.class, genericDao.createFilter(FilterType.EQUALS,
-						"codigo", ofertaDto.getCodMotivoJustificacionOferta()));
-				if (!Checks.esNulo(motivoJustificacionOferta)) {
-					oferta.setMotivoJustificacionOferta(motivoJustificacionOferta);
+				}else {
+					errorsList.put("Motivo justificación oferta con código: '" + ofertaDto.getCodMotivoJustificacionOferta() +"' no encontrado.", RestApi.CODE_ERROR);
 				}
 			}
 			

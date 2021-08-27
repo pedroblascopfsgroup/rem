@@ -52,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
+import es.pfsgroup.plugin.rem.model.DtoTestigos;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
@@ -1332,4 +1333,10 @@ public interface ExpedienteComercialApi {
 	void recalcularHonorarios(Long idExpediente) throws Exception;
 	
 	boolean doTramitacionAsincrona(Activo activo, Oferta oferta);
+
+	List<DtoTestigos> getTestigos(Long id);
+
+	boolean saveTestigos(DtoTestigos dto, Long id);
+
+	boolean deleteTestigos(DtoTestigos dto);
 }

@@ -12,7 +12,7 @@ recordName: "datosbasicosoferta",
 recordClass: "HreRem.model.DatosBasicosOferta",
     
     requires: ['HreRem.model.DatosBasicosOferta','HreRem.view.activos.detalle.ActivoDetalleModel',
-    'HreRem.model.OfertasAgrupadasModel', 'HreRem.view.expedientes.OfertasAgrupadasTabPanel'],
+    'HreRem.model.OfertasAgrupadasModel', 'HreRem.view.expedientes.OfertasAgrupadasTabPanel', 'HreRem.view.activos.detalle.TestigosOfertaGrid'],
     
     listeners: {
 		boxready:'cargarTabData',
@@ -696,7 +696,18 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						}]
 
 					}]
-		}, {
+		}, 		
+		//Testigos Opcionales
+		{
+			xtype:'fieldsettable',
+			title:HreRem.i18n('title.testigos'),
+			defaultType: 'textfieldbase',
+			items :
+				[
+					{xtype: "testigosofertagrid", reference: "testigosofertagrid"}
+				]
+		},
+		{
 
 			xtype : 'fieldset',
 			title : HreRem.i18n('title.textos'),

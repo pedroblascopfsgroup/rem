@@ -149,6 +149,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPrescriptoresComision;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoTestigos;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.DtoVariablesCalculoComiteLBK;
@@ -158,6 +159,7 @@ import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
+import es.pfsgroup.plugin.rem.model.OfertaTestigos;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.ProveedorGestorCajamar;
@@ -188,6 +190,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
+import es.pfsgroup.plugin.rem.model.dd.DDFuenteTestigos;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
@@ -235,6 +238,7 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorRequest;
 import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorResponse;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.rest.dto.TestigosOfertaDto;
 import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
@@ -1096,6 +1100,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 			setValuesFinanciacion(ofertaDto, oferta);
+			
+			saveTestigosOferta(ofertaDto, oferta, false);
 
 			if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
 				DDMotivoJustificacionOferta motivoJustificacionOferta = genericDao.get(DDMotivoJustificacionOferta.class, genericDao.createFilter(FilterType.EQUALS,
@@ -1158,6 +1164,51 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		return errorsList;
+	}
+
+	@Transactional(readOnly = false)
+	private void saveTestigosOferta(OfertaDto dto, Oferta oferta, boolean update) {
+		if(!Checks.esNulo(dto) && !Checks.esNulo(dto.getTestigos()) && !Checks.esNulo(oferta)) {
+			if (update) {
+				Filter idOferta = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+				List<OfertaTestigos> testigos = genericDao.getList(OfertaTestigos.class, idOferta);
+				
+				if (!Checks.esNulo(testigos)) {
+					for (OfertaTestigos lista : testigos) {
+						genericDao.deleteById(OfertaTestigos.class, lista.getId());
+					}
+				}
+			}
+			
+			try {
+				for (TestigosOfertaDto testigo : dto.getTestigos()) {
+					OfertaTestigos testigoOfr = new OfertaTestigos();
+					testigoOfr.setOferta(oferta);
+
+					beanUtilNotNull.copyProperties(testigoOfr, testigo);
+					
+					if (!Checks.esNulo(testigo.getCodFuente())) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", testigo.getCodFuente());
+						DDFuenteTestigos fte = genericDao.get(DDFuenteTestigos.class, filtro);
+						beanUtilNotNull.copyProperty(testigoOfr, "fuenteTestigos",fte);
+					}
+					if (!Checks.esNulo(testigo.getCodTipoActivo())) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", testigo.getCodTipoActivo());
+						DDTipoActivo tpa = genericDao.get(DDTipoActivo.class, filtro);
+						beanUtilNotNull.copyProperty(testigoOfr, "tipoActivo",tpa);
+					}
+					if (!Checks.esNulo(testigo.getEurosPorMetro())) {
+						beanUtilNotNull.copyProperty(testigoOfr, "eurosMetro",testigo.getEurosPorMetro());
+					}				
+				
+					genericDao.save(OfertaTestigos.class, testigoOfr);
+				}
+			} catch (IllegalAccessException e) {
+				logger.error("Error en ofertaManager (copyProperties) ", e);
+			} catch (InvocationTargetException e) {
+				logger.error("Error en ofertaManager (copyProperties) ", e);
+			}
+		}
 	}
 
 	@Transactional(readOnly = false)
@@ -1602,6 +1653,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 			setValuesFinanciacion(ofertaDto, oferta);
+			
+			saveTestigosOferta(ofertaDto, oferta, true);
 
 			if (((JSONObject) jsonFields).containsKey("importeContraoferta")) {
 				// Actualizar honorarios para el nuevo importe de contraoferta.

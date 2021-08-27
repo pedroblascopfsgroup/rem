@@ -29,6 +29,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.binding.mapping.results.Success;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -136,6 +137,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosCivilesURSUS;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDFuenteTestigos;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAmpliacionArras;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
@@ -153,6 +155,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
@@ -186,6 +189,7 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.rest.dto.TestigosOfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
@@ -11735,4 +11739,96 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			return false;
 		}
 	}
+	
+	@Override
+	public List<DtoTestigos> getTestigos(Long idOferta) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idOferta);
+		Oferta oferta = genericDao.get(Oferta.class, filtro);
+		List<DtoTestigos> listaDtoTestigos = new ArrayList<DtoTestigos>();
+		
+		if (!Checks.esNulo(oferta)) {
+			filtro = genericDao.createFilter(FilterType.EQUALS, "oferta", oferta);
+			List<OfertaTestigos> listaTestigos = genericDao.getList(OfertaTestigos.class, filtro);
+
+			for (OfertaTestigos lista : listaTestigos) {
+				DtoTestigos dtoTestigosOpc = new DtoTestigos();
+				try {
+					beanUtilNotNull.copyProperties(dtoTestigosOpc, lista);
+					if (!Checks.esNulo(lista.getFuenteTestigos())) {
+						beanUtilNotNull.copyProperty(dtoTestigosOpc, "fuenteTestigosDesc",
+								lista.getFuenteTestigos().getDescripcion());
+					}
+					if (!Checks.esNulo(lista.getTipoActivo())) {
+						beanUtilNotNull.copyProperty(dtoTestigosOpc, "tipoActivoDesc",
+								lista.getTipoActivo().getDescripcion());
+					}	
+				} catch (IllegalAccessException e) {
+					logger.error("Error en expedienteComercialManager (copyProperties) ", e);	
+				} catch (InvocationTargetException e) {
+					logger.error("Error en expedienteComercialManager (copyProperties) ", e);
+				}
+	
+				listaDtoTestigos.add(dtoTestigosOpc);
+			}
+		}
+	
+		return listaDtoTestigos;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveTestigos(DtoTestigos dto, Long id) {
+		boolean success = false;
+		ExpedienteComercial expedienteComercial = findOne(id);
+		Oferta oferta = expedienteComercial.getOferta();
+		OfertaTestigos testigo = null;
+		if(dto != null && dto.getId() != null && !dto.getId().contains("Testigo")) {
+			Filter idTestigo = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getId()));
+			testigo = genericDao.get(OfertaTestigos.class, idTestigo);
+		}
+		
+		try {
+			if (Checks.esNulo(testigo) && !Checks.esNulo(oferta)) {
+				success = true;
+				testigo = new OfertaTestigos();
+				testigo.setOferta(oferta);
+			} else if (!Checks.esNulo(testigo)) {
+				success = true;
+			} else {
+				throw new JsonViewerException("Error con la oferta. No ha sido posible realizar la operación.");
+			}
+			if (success) {
+				beanUtilNotNull.copyProperties(testigo, dto);
+				if (!Checks.esNulo(dto.getFuenteTestigosDesc())) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getFuenteTestigosDesc());
+					DDFuenteTestigos fte = genericDao.get(DDFuenteTestigos.class, filtro);
+					beanUtilNotNull.copyProperty(testigo, "fuenteTestigos",fte);
+				}
+				if (!Checks.esNulo(dto.getTipoActivoDesc())) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoActivoDesc());
+					DDTipoActivo tpa = genericDao.get(DDTipoActivo.class, filtro);
+					beanUtilNotNull.copyProperty(testigo, "tipoActivo",tpa);
+				}
+			}
+		} catch (IllegalAccessException e) {
+			logger.error("Error en expedienteComercialManager (copyProperties) ", e);
+		} catch (InvocationTargetException e) {
+			logger.error("Error en expedienteComercialManager (copyProperties) ", e);
+		}
+		if (success) {
+			genericDao.save(OfertaTestigos.class, testigo);
+			return success;
+		}
+		
+		return success;
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deleteTestigos(DtoTestigos dto) {
+		genericDao.deleteById(OfertaTestigos.class, Long.parseLong(dto.getId()));
+		return true;
+	}
+
 }

@@ -320,6 +320,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("motivoTecnico", DDMotivoTecnico.class);
 		mapa.put("tipoFinanciacion", DDTfnTipoFinanciacion.class);
 		mapa.put("siNoNosabe", DDSnsSiNoNosabe.class);
+		mapa.put("fuenteTestigos", DDFuenteTestigos.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

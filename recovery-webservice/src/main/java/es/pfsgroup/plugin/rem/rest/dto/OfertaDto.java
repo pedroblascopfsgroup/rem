@@ -107,6 +107,7 @@ public class OfertaDto implements Serializable {
 	@Size(max=20,groups = { Insert.class, Update.class })
 	private String entidadFinanciacion;
 	private String codMotivoJustificacionOferta;
+	private List<TestigosOfertaDto> testigos;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -423,12 +424,17 @@ public class OfertaDto implements Serializable {
 	public void setEntidadFinanciacion(String entidadFinanciacion) {
 		this.entidadFinanciacion = entidadFinanciacion;
 	}
-	
 	public String getCodMotivoJustificacionOferta() {
 		return codMotivoJustificacionOferta;
 	}
 	public void setCodMotivoJustificacionOferta(String codMotivoJustificacionOferta) {
 		this.codMotivoJustificacionOferta = codMotivoJustificacionOferta;
+	}
+	public List<TestigosOfertaDto> getTestigos() {
+		return testigos;
+	}
+	public void setTestigos(List<TestigosOfertaDto> testigos) {
+		this.testigos = testigos;
 	}
 
 }

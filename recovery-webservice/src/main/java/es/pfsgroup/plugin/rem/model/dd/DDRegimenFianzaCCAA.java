@@ -51,9 +51,6 @@ public class DDRegimenFianzaCCAA implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_RFC_DESCRIPCION_LARGA")   
 	private String descripcionLarga;	
-	
-	@Column(name = "DD_RFC_CODIGO_CAIXA")   
-	private String codigoCaixa;	
 	    
 	@Version   
 	private Long version;
@@ -107,14 +104,6 @@ public class DDRegimenFianzaCCAA implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}
-
-	public String getCodigoCaixa() {
-		return codigoCaixa;
-	}
-
-	public void setCodigoCaixa(String codigoCaixa) {
-		this.codigoCaixa = codigoCaixa;
 	}
 	
 }

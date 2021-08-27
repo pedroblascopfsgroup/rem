@@ -67,19 +67,13 @@ public class ActivoPropietarioActivo implements Serializable, Auditable {
 	
 	 @Column(name = "PAC_FEC_FIN_CONCES")
      private Date fechaFinConcesion;
-	 
 
-
-		
 	 @Version   
 	 private Long version;
 
 	 @Embedded
 	 private Auditoria auditoria;
 	 
-	 
-	 
-
 	public Long getId() {
 		return id;
 	}
@@ -152,6 +146,5 @@ public class ActivoPropietarioActivo implements Serializable, Auditable {
 		this.fechaFinConcesion = fechaFinConcesion;
 	}
 
-	 
 }
 

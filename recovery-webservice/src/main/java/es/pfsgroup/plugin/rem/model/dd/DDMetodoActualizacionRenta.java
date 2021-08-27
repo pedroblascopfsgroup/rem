@@ -28,32 +28,28 @@ import es.pfsgroup.commons.utils.Checks;
  *
  */
 @Entity
-@Table(name = "DD_RVR_REVISION_RENTA", schema = "${entity.schema}")
+@Table(name = "DD_MTA_METODO_ACTUALIZACION", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDRevisionRenta implements Auditable, Dictionary {
+public class DDMetodoActualizacionRenta implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
-	public static final String ENTIDAD_FINANCIERA_BANKIA = "01";
 
 	@Id
-	@Column(name = "DD_RVR_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDRevisionRentaGenerator")
-	@SequenceGenerator(name = "DDRevisionRentaGenerator", sequenceName = "S_DD_RVR_REVISION_RENTA")
+	@Column(name = "DD_MTA_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMetodoActualizacionRentaGenerator")
+	@SequenceGenerator(name = "DDMetodoActualizacionRentaGenerator", sequenceName = "S_DD_MTA_METODO_ACTUALIZACION")
 	private Long id;
 	
-	@Column(name = "DD_RVR_CODIGO")   
+	@Column(name = "DD_MTA_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_RVR_DESCRIPCION")   
+	@Column(name = "DD_MTA_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_RVR_DESCRIPCION_LARGA")   
+	@Column(name = "DD_MTA_DESCRIPCION_LARGA")   
 	private String descripcionLarga;	
-	
-	@Column(name = "DD_RVR_CODIGO_CAIXA")   
-	private String codigoCaixa;	
-	    
+		    
 	@Version   
 	private Long version;
 
@@ -108,12 +104,4 @@ public class DDRevisionRenta implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
-	public String getCodigoCaixa() {
-		return codigoCaixa;
-	}
-
-	public void setCodigoCaixa(String codigoCaixa) {
-		this.codigoCaixa = codigoCaixa;
-	}
-	
 }

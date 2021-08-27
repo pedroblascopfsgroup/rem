@@ -1,19 +1,18 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20210817
+--## FECHA_CREACION=20210728
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14940
+--## INCIDENCIA_LINK=HREOS-14714
 --## PRODUCTO=NO
---## Finalidad: Creación diccionario DD_RVR_REVISION_RENTA
+--## Finalidad: Creación diccionario DD_MTA_METODO_ACTUALIZACION
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
 --*/
-
 
 --Para permitir la visualización de texto  en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
@@ -34,7 +33,8 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TABLA VARCHAR2(2400 CHAR) := 'DD_RVR_REVISION_RENTA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TABLA VARCHAR2(2400 CHAR) := 'DD_MTA_METODO_ACTUALIZACION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_LETRAS_TABLA VARCHAR2(2400 CHAR) := 'MTA';
 
 BEGIN
 
@@ -48,10 +48,10 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TABLA||'...');
 		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TABLA||'
 		(
-			DD_RVR_ID           			NUMBER(16, 0) NOT NULL,
-            DD_RVR_CODIGO               	VARCHAR2(20 CHAR),
-            DD_RVR_DESCRIPCION          	VARCHAR2(100 CHAR),
-            DD_RVR_DESCRIPCION_LARGA        VARCHAR2(100 CHAR),
+			DD_'||V_LETRAS_TABLA||'_ID           			NUMBER(16, 0) NOT NULL,
+            DD_'||V_LETRAS_TABLA||'_CODIGO               	VARCHAR2(20 CHAR),
+            DD_'||V_LETRAS_TABLA||'_DESCRIPCION          	VARCHAR2(100 CHAR),
+            DD_'||V_LETRAS_TABLA||'_DESCRIPCION_LARGA        VARCHAR2(100 CHAR),
 			VERSION 						NUMBER(38,0) DEFAULT 0 NOT NULL ENABLE, 
 			USUARIOCREAR 					VARCHAR2(50 CHAR) NOT NULL ENABLE, 
 			FECHACREAR 						TIMESTAMP (6) NOT NULL ENABLE, 
@@ -65,7 +65,7 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... Tabla creada.');
 
 		-- Creamos primary key
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (DD_RVR_ID))';
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (DD_'||V_LETRAS_TABLA||'_ID))';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'_PK... PK creada.');
 
@@ -82,21 +82,21 @@ BEGIN
 		END IF;
 		
 		-- Creamos el comentario de las columnas
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_RVR_ID IS ''Código identificador único''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_'||V_LETRAS_TABLA||'_ID IS ''Código identificador único''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_RVR_ID creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_'||V_LETRAS_TABLA||'_ID creado.');
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_RVR_CODIGO IS ''Código''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_'||V_LETRAS_TABLA||'_CODIGO IS ''Código''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_RVR_CODIGO creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_'||V_LETRAS_TABLA||'_CODIGO creado.');
 
-        V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_RVR_DESCRIPCION IS ''Descripción ''';
+       	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_'||V_LETRAS_TABLA||'_DESCRIPCION IS ''Descripción ''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_RVR_DESCRIPCION creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_'||V_LETRAS_TABLA||'_DESCRIPCION creado.');
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_RVR_DESCRIPCION_LARGA IS ''Descripción larga''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_'||V_LETRAS_TABLA||'_DESCRIPCION_LARGA IS ''Descripción larga''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_RVR_DESCRIPCION_LARGA creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_'||V_LETRAS_TABLA||'_DESCRIPCION_LARGA creado.');
 
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.VERSION IS ''Indica la versión del registro.''';
 		EXECUTE IMMEDIATE V_MSQL;

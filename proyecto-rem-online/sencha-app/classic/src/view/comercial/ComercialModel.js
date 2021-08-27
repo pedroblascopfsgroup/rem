@@ -42,6 +42,9 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 			type: 'uxproxy',
+			autoLoad: false,
+			remoteFilter: false,
+			remoteSort: false,
 			remoteUrl: 'activo/getComboUsuariosGestoria'
 			}
 		}, 

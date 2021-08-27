@@ -6530,11 +6530,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		
-		if (oferta != null && expedienteComercial != null && esOfertaValidaCFVByCarteraSubcartera(oferta) && (oferta.getOfertaEspecial() == null || !oferta.getOfertaEspecial())) {
+		if (oferta != null && expedienteComercial != null && esOfertaValidaCFVByCarteraSubcartera(oferta) && (oferta.getOfertaEspecial() == null || !oferta.getOfertaEspecial()) && (oferta.getOfertaExpress() == null || !oferta.getOfertaExpress())) {
 			
 			if (CODIGO_T013_DEFINICION_OFERTA.equals(codigo) 
-					&& ((checkAtribuciones(oferta) && perimetro.getAplicaFormalizar() == 1) 
-							|| (oferta.getOfertaExpress() != null && oferta.getOfertaExpress()))) {
+					&& ((checkAtribuciones(oferta) && perimetro.getAplicaFormalizar() == 1))) {
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				

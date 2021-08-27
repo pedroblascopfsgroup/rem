@@ -4156,6 +4156,9 @@ public class ActivoAdapter {
 				notificationOfertaManager.sendNotification(oferta);
 			}
 
+			if (particularValidatorApi.esOfertaCaixa(ofertaCreada != null ? ofertaCreada.getNumOferta().toString() : null))
+				createOfertaCaixa(ofertaCreada);
+
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
 			return ofertaCreada;

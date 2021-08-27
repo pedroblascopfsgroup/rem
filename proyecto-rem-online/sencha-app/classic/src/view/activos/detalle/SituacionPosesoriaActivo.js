@@ -328,7 +328,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	bind: {				        		
 						        		store: '{comboSiNoPosesionNegociada}',
 					            		value: '{situacionPosesoria.posesionNegociada}',
-					            		readOnly: '{!tienePosesion}'
+					            		readOnly: '{isCarteraBankiayTienePosesion}'
 					            	},
 					            	displayField: 'descripcion',
 					            	valueField: 'codigo'
@@ -341,7 +341,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.obtencion.posesion'),
 		                	bind:	{
 		                		value: '{situacionPosesoria.fechaTomaPosesion}',
-		                		readOnly: '{esSituacionJudicial}'
+		                		readOnly: '{isCarteraBankiaYesSituacionJudicial}'
 		                	},
 		                	style:'margin-left:10px'
 		                },
@@ -460,10 +460,11 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							bind: {
 								value: '{situacionPosesoria.tieneOkTecnico}',
 								readOnly: '{!activo.aplicaGestion}'
-							},
+							}
+							/*,
     						listeners: {
 			                	change: 'editarComboEstadoTecnico'
-			            	}
+			            	}*/
 						},
 						{
 					        xtype: 'comboboxfieldbasedd',
@@ -471,7 +472,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.estado.tecnico'),
 					        bind: {        
 					        	store : '{comboEstadoTecnico}',
-					        	disabled: '{!situacionPosesoria.tieneOkTecnico}',
+					        	/*disabled: '{!situacionPosesoria.tieneOkTecnico}',*/
 					        	hidden: '{!activo.isCarteraBankia}',
 				            	value: '{situacionPosesoria.estadoTecnicoCodigo}',
 								rawValue: '{situacionPosesoria.estadoTecnicoDescripcion}'

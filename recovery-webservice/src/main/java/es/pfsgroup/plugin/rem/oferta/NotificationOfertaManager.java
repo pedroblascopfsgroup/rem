@@ -30,6 +30,8 @@ import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
+import es.pfsgroup.plugin.rem.model.ActivoRestringidaAlquiler;
+import es.pfsgroup.plugin.rem.model.ActivoRestringidaObrem;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -678,13 +680,25 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				if(agrupacionLoteCom != null) {
 					dtoSendNotificator.setNumAgrupacion(agrupacionLoteCom.getNumAgrupRem());
 					dtoSendNotificator.setDireccion(agrupacionLoteCom.getDireccion());
-				} else if(oferta.getAgrupacion().getTipoAgrupacion() != null && (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo()))) {
-					ActivoRestringida agrupacionRest = genericDao.get(ActivoRestringida.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
-					if (agrupacionRest != null) {
-						dtoSendNotificator.setNumAgrupacion(agrupacionRest.getNumAgrupRem());
-						dtoSendNotificator.setDireccion(agrupacionRest.getDireccion());
+				} else if(oferta.getAgrupacion().getTipoAgrupacion() != null) {
+					if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+						ActivoRestringida agrupacionRest = genericDao.get(ActivoRestringida.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
+						if (agrupacionRest != null) {
+							dtoSendNotificator.setNumAgrupacion(agrupacionRest.getNumAgrupRem());
+							dtoSendNotificator.setDireccion(agrupacionRest.getDireccion());
+						}
+					} else if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+						ActivoRestringidaAlquiler agrupacionRestAlquiler = genericDao.get(ActivoRestringidaAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
+						if (agrupacionRestAlquiler != null) {
+							dtoSendNotificator.setNumAgrupacion(agrupacionRestAlquiler.getNumAgrupRem());
+							dtoSendNotificator.setDireccion(agrupacionRestAlquiler.getDireccion());
+						}
+					} else if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+						ActivoRestringidaObrem agrupacionRestObrem = genericDao.get(ActivoRestringidaObrem.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
+						if (agrupacionRestObrem != null) {
+							dtoSendNotificator.setNumAgrupacion(agrupacionRestObrem.getNumAgrupRem());
+							dtoSendNotificator.setDireccion(agrupacionRestObrem.getDireccion());
+						}
 					}
 				}
 			} else {

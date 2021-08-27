@@ -205,7 +205,8 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 											 		fieldLabel: HreRem.i18n('fieldlabel.necesaria.autorizacion.venta'),		// Necesitar�a autorizaci�n						 		
 											 		bind: {
 			            									store: '{comboSiNoRem}',
-			            									value: '{infoAdministrativa.obligatorioAutAdmVenta}'
+			            									value: '{infoAdministrativa.obligatorioAutAdmVenta}',
+			            									readOnly: '{isCarteraBankia}'
 			            								  }
 												},
 												{ 
@@ -263,7 +264,8 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 											 		fieldLabel: HreRem.i18n('fieldlabel.renuncia.tanteo.retracto'), // Renuncia a tanteo y retracto (NUEVO CAMPO)
 											 		bind: {
 			            									store: '{comboSiNoRem}',
-			            									value: '{infoAdministrativa.renunciaTanteoRetrac}'
+			            									value: '{infoAdministrativa.renunciaTanteoRetrac}',
+			            									readOnly: '{isCarteraBankia}'
 			            								  }
 												},
 								                { 

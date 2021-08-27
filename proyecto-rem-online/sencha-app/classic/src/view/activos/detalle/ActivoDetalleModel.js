@@ -1668,8 +1668,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 			var tieneFuncion = $AU.userHasFunction('EDITAR_EXCLUIR_VALIDACIONES');
 			var perteneceAgrupacionRestringida = get('activo.pertenceAgrupacionRestringida');
+			var isBankia = ('isCarteraBankia');
 			
-			if (perteneceAgrupacionRestringida || !tieneFuncion){
+			if (perteneceAgrupacionRestringida || !tieneFuncion || isBankia){
 				return true;
 			}			
 			
@@ -1833,7 +1834,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 	    },
 
-		
 		esBankia: function(get) {
 			var carteraCodigo = get('activo.entidadPropietariaCodigo');
 	     	
@@ -1842,6 +1842,85 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	}else{
 	     		return false;
 	     	}
+		},
+	    
+	    isCarteraBankiayUnidadAlquilable: function(get){
+			var me = this;
+
+			var isBankia = get('activo.isCarteraBankia');
+	    	var unidadAlquilable = get('activo.unidadAlquilable');
+
+			if(isBankia || unidadAlquilable){
+				return true;
+			}
+
+			return false;
+		 },
+		    
+	    isCarteraBankiaYesSituacionJudicial: function(get){
+			var me = this;
+
+			var isBankia = get('activo.isCarteraBankia');
+
+			if(get('esSituacionJudicial') || isBankia){
+				return true;
+	    	 } else {
+	    		 return false;
+	    	 }
+		 },
+		    
+	    esUAyIsCarteraBankia: function(get){
+			var me = this;
+			
+			if(get('esUA') == true || get('isCarteraBankia')) {
+				return true;
+			} else {
+				return false;
+			}
+		 },
+		    
+		 esEditableDestinoComercialOresBankia: function(get){
+			var me = this;
+			
+			var destinoComercial = get('!activo.esEditableDestinoComercial');
+			if(destinoComercial == true || get('isCarteraBankia')) {
+				return true;
+			} else {
+				return false;
+			}
+		 },
+		 
+	    isCarteraBankiayTienePosesion:function(get){
+	    	var me = this;
+	    	var isBankia = get('isCarteraBankia');	    	
+	    	var tienePosesion = get('tienePosesion');
+	    	
+	    	if (isBankia || tienePosesion){
+	    		return true;
+	    	}
+	    	return false;
+		},
+		
+	    isCarteraBankiaeIsReadOnlyFechaRealizacionPosesion:function(get){
+	    	var me = this;
+	    	var isBankia = get('isCarteraBankia');	    	
+	    	var isReadOnlyFechaRealizacionPosesion = get('isReadOnlyFechaRealizacionPosesion');
+	    	
+	    	if (isBankia || isReadOnlyFechaRealizacionPosesion){
+	    		return true;
+	    	}
+	    	return false;
+		},
+		
+	    isCarteraBankiayEditarPorcentajeConstruccion:function(get){
+	    	var me = this;
+	    	var isBankia = get('isCarteraBankia');	    	
+	    	var editarPorcentajeConstruccion = get('editarPorcentajeConstruccion');
+	    	
+	    	if (isBankia || editarPorcentajeConstruccion){
+	    		return true;
+	    	}
+	    	return false;
 		}
 	 },
     

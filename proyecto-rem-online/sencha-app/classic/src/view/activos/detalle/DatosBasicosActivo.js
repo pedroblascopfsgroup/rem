@@ -189,6 +189,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					            		store: '{comboSubtipoActivo}',
 					            		value: '{activo.subtipoActivoCodigo}',
 					            		disabled: '{!activo.tipoActivoCodigo}',
+					            		readOnly: '{isCarteraBankia}',
 										rawValue: '{activo.subtipoActivoDescripcion}'
 					            	},
 		    						allowBlank: false
@@ -251,7 +252,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						        	fieldLabel:  HreRem.i18n('fieldlabel.uso.dominante'),
 						        	name: 'tipoUsoDestinoCodigo',
 				                	bind: {
-				                		readOnly : '{esUA}',
+				                		readOnly : '{esUAyIsCarteraBankia}',
 					            		store: '{comboTipoUsoDestino}',
 					            		value: '{activo.tipoUsoDestinoCodigo}',
 										rawValue: '{activo.tipoUsoDestinoDescripcion}'
@@ -347,7 +348,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						                	reference: 'porcentajeConstruccion',
 						                	maskRe: /[0-9.]/,
 						                	bind: {
-						                		readOnly: '{!editarPorcentajeConstruccion}',
+						                		readOnly: '{isCarteraBankiayEditarPorcentajeConstruccion}',
 						                		value: '{activo.porcentajeConstruccion}'
 						                	},
 						                	validator: function(v) {
@@ -1049,7 +1050,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype: 'textfieldbase',
 								reference: 'textFieldPerimetroAdmision',
 								bind:{
-									value: '{activo.motivoPerimetroAdmision}'
+									value: '{activo.motivoPerimetroAdmision}',
+									readOnly: '{activo.isCarteraBankia}'
 								}
 							},
 							
@@ -1075,7 +1077,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype: 'textfieldbase',
 								reference: 'textFieldPerimetroGestion',
 								bind:{
-									value: '{activo.motivoAplicaGestion}'
+									value: '{activo.motivoAplicaGestion}',
+									readOnly: '{activo.isCarteraBankia}'
 								}		
 							},
 							
@@ -1129,7 +1132,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype: 'textfieldbase',
 								reference: 'textFieldPerimetroPublicar',
 								bind: {
-									value: '{activo.motivoAplicaPublicar}'
+									value: '{activo.motivoAplicaPublicar}',
+									readOnly: '{activo.isCarteraBankia}'
 								}
 							},
 
@@ -1169,7 +1173,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								maxLength: '256',
 								bind: {
 									value: '{activo.motivoNoAplicaComercializar}',
-									visible: '{!activo.aplicaComercializar}'
+									visible: '{!activo.aplicaComercializar}',
+									readOnly: '{activo.isCarteraBankia}'
 								}
 							},
 
@@ -1197,7 +1202,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype: 'textfieldbase',
 								reference: 'textFieldPerimetroFormalizar',
 								bind: {
-									value: '{activo.motivoAplicaFormalizar}'
+									value: '{activo.motivoAplicaFormalizar}',
+									readOnly: '{activo.isCarteraBankia}'
 								}
 							},
 							//Fila Condiciones de inclusión en perímetro Haya						
@@ -1277,7 +1283,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
 										bind: {
-											readOnly : '{!activo.esEditableDestinoComercial}',
+//											readOnly : '{!activo.esEditableDestinoComercial}',
+											readOnly : '{esEditableDestinoComercialOresBankia}',
 											disabled: '{activo.isPANoDadaDeBaja}',
 											store: '{comboTipoDestinoComercialCreaFiltered}',
 											value: '{activo.tipoComercializacionCodigo}',

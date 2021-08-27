@@ -32,8 +32,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDMetodoActualizacionRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenFianzaCCAA;
-import es.pfsgroup.plugin.rem.model.dd.DDRevisionRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -389,11 +389,20 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_RFC_ID")
 	private DDRegimenFianzaCCAA regimenFianzaCCAA;
-
+    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_RVR_ID")
-	private DDRevisionRenta revisionRenta;
-
+    @JoinColumn(name = "DD_MTA_ID")
+	private DDMetodoActualizacionRenta metodoActualizacionRenta;
+    
+    @Column(name="COE_CHECK_IGC")
+    private Boolean checkIGC;
+    
+    @Column(name="COE_PERIODICIDAD")
+    private Long periodicidadMeses;
+    
+    @Column(name="COE_FECHA_ACTU")
+    private Date fechaActualizacion;
+    
 	@Version   
 	private Long version;
 
@@ -1247,13 +1256,36 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.regimenFianzaCCAA = regimenFianzaCCAA;
 	}
 
-	public DDRevisionRenta getRevisionRenta() {
-		return revisionRenta;
+	public DDMetodoActualizacionRenta getMetodoActualizacionRenta() {
+		return metodoActualizacionRenta;
 	}
 
-	public void setRevisionRenta(DDRevisionRenta revisionRenta) {
-		this.revisionRenta = revisionRenta;
+	public void setMetodoActualizacionRenta(DDMetodoActualizacionRenta metodoActualizacionRenta) {
+		this.metodoActualizacionRenta = metodoActualizacionRenta;
 	}
-	
+
+	public Boolean getCheckIGC() {
+		return checkIGC;
+	}
+
+	public void setCheckIGC(Boolean checkIGC) {
+		this.checkIGC = checkIGC;
+	}
+
+	public Long getPeriodicidadMeses() {
+		return periodicidadMeses;
+	}
+
+	public void setPeriodicidadMeses(Long periodicidadMeses) {
+		this.periodicidadMeses = periodicidadMeses;
+	}
+
+	public Date getFechaActualizacion() {
+		return fechaActualizacion;
+	}
+
+	public void setFechaActualizacion(Date fechaActualizacion) {
+		this.fechaActualizacion = fechaActualizacion;
+	}
 
 }

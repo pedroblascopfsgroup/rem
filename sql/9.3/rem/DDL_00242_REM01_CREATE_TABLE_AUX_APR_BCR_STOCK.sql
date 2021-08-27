@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210811
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210825
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14838
+--## INCIDENCIA_LINK=HREOS-XXXXX
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -22,6 +22,7 @@
 --##        0.9  HREOS-14545 -  Daniel Algaba - Se cambia la longitud de BANCO_ORIGEN A 4
 --##        0.10  HREOS-14648 -  Daniel Algaba - Se cambia la longitud de CARTERA_VENTA_ACTIVOS y CARTERA_VENTA_CREDITOS A 4
 --##        0.11  HREOS-14838 -  Daniel Algaba - Nuevos campos ORIGEN_REGULATORIO, TXT_COMERCIAL_CAS y TXT_COMERCIAL_ENG
+--##        0.12  HREOS-XXXXX -  Alejandra García - Cambiar longitud al campo MOT_NECESIDAD_ARRAS
 --##########################################
 --*/
 
@@ -185,7 +186,7 @@ BEGIN
         PUBLICABLE_PORT_API_VENTA   VARCHAR2(1 CHAR),
         PUBLICABLE_PORT_API_ALQUI   VARCHAR2(1 CHAR),
         NECESIDAD_ARRAS             VARCHAR2(2 CHAR),
-        MOT_NECESIDAD_ARRAS         VARCHAR2(2 CHAR),
+        MOT_NECESIDAD_ARRAS         VARCHAR2(40 CHAR),
         RENUNCIA_EXENSION           VARCHAR2(1 CHAR),
         CARTERA_VENTA_ACTIVOS       VARCHAR2(4 CHAR),
         CARTERA_VENTA_CREDITOS      VARCHAR2(4 CHAR),       

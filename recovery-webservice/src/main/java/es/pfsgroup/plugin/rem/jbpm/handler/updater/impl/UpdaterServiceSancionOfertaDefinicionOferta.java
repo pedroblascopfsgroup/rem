@@ -121,7 +121,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				.expedienteComercialPorOferta(ofertaAceptada.getId());
 		
 		Activo activo = ofertaAceptada.getActivoPrincipal();
-		GestorEntidadDto ge = new GestorEntidadDto();	
+		GestorEntidadDto ge = new GestorEntidadDto();
 		String tipoTramite = tramite.getTipoTramite().getCodigo();
 
 		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(expediente)) {	
@@ -151,8 +151,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				expediente.setEstado(estado);
 				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 				
-				if (ofertaAceptada.getOfertaExpress() != null && ofertaAceptada.getOfertaExpress() && tareaExternaActual != null) 
-					ofertaApi.actualizarOfertaBoarding(tareaExternaActual);
+				if (ofertaAceptada.getOfertaExpress() != null && ofertaAceptada.getOfertaExpress())
+					ofertaApi.actualizarOfertaBoarding(ofertaAceptada, CODIGO_T013_DEFINICION_OFERTA);
 				
 				
 				if(expediente.getCondicionante().getSolicitaReserva()!=null 

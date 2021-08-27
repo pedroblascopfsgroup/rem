@@ -1,0 +1,144 @@
+--/*
+--######################################### 
+--## AUTOR=Carlos Santos Vílchez
+--## FECHA_CREACION=20210823
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-10345
+--## PRODUCTO=NO
+--##            
+--## INSTRUCCIONES:  Cambiar tipo y subtipo de activo en la ICO
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+DECLARE
+
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejECVtar    
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+	V_USU VARCHAR2(30 CHAR) := 'REMVIP-10345';
+	V_NUM_TABLAS NUMBER(16);
+	V_ID NUMBER(16);
+	V_COUNT NUMBER(16);
+
+	TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(	
+		T_TIPO_DATA('7477591'),
+		T_TIPO_DATA('7477193'),
+		T_TIPO_DATA('7476584'),
+		T_TIPO_DATA('7476559'),
+		T_TIPO_DATA('7476896'),
+		T_TIPO_DATA('7477665'),
+		T_TIPO_DATA('7477194'),
+		T_TIPO_DATA('7476472'),
+		T_TIPO_DATA('7477505'),
+		T_TIPO_DATA('7476841'),
+		T_TIPO_DATA('7476620'),
+		T_TIPO_DATA('7477666'),
+		T_TIPO_DATA('7476378'),
+		T_TIPO_DATA('7476798'),
+		T_TIPO_DATA('7477590'),
+		T_TIPO_DATA('7477664'),
+		T_TIPO_DATA('7477303'),
+		T_TIPO_DATA('7476765'),
+		T_TIPO_DATA('7477258'),
+		T_TIPO_DATA('7476767'),
+		T_TIPO_DATA('7476621'),
+		T_TIPO_DATA('7477196'),
+		T_TIPO_DATA('7477450'),
+		T_TIPO_DATA('7477663'),
+		T_TIPO_DATA('7476379'),
+		T_TIPO_DATA('7477555'),
+		T_TIPO_DATA('7476263'),
+		T_TIPO_DATA('7477451'),
+		T_TIPO_DATA('7476270'),
+		T_TIPO_DATA('7476766'),
+		T_TIPO_DATA('7476972'),
+		T_TIPO_DATA('7477449'),
+		T_TIPO_DATA('7476888'),
+		T_TIPO_DATA('7476973'),
+		T_TIPO_DATA('7477677'),
+		T_TIPO_DATA('7477504'),
+		T_TIPO_DATA('7476326'),
+		T_TIPO_DATA('7477304'),
+		T_TIPO_DATA('7476931'),
+		T_TIPO_DATA('7476840'),
+		T_TIPO_DATA('7476891'),
+		T_TIPO_DATA('7473710'),
+		T_TIPO_DATA('7473481'),
+		T_TIPO_DATA('7473803'),
+		T_TIPO_DATA('7473902'),
+		T_TIPO_DATA('7473396'),
+		T_TIPO_DATA('7473955'),
+		T_TIPO_DATA('7473912'),
+		T_TIPO_DATA('7473361'),
+		T_TIPO_DATA('7473604'),
+		T_TIPO_DATA('7473500')
+
+    ); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+    
+BEGIN
+
+    DBMS_OUTPUT.PUT_LINE('[INFO]: UPDATE EN ACT_ICO_INFO_COMERCIAL');
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+
+    LOOP
+	V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+
+		V_MSQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '||V_TMP_TIPO_DATA(1)||'';
+		EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
+
+		IF V_COUNT > 0 THEN	
+
+			V_MSQL := 'SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '||V_TMP_TIPO_DATA(1)||'';
+			EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
+
+			V_MSQL:= 'UPDATE '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL SET 
+						DD_TPA_ID = (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_ID = '||V_ID||'),
+						DD_SAC_ID = (SELECT DD_SAC_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_ID = '||V_ID||'),
+						USUARIOMODIFICAR = '''||V_USU||''',
+						FECHAMODIFICAR = SYSDATE
+						WHERE ACT_ID = '||V_ID||'';
+			EXECUTE IMMEDIATE V_MSQL;
+			
+			DBMS_OUTPUT.PUT_LINE('[INFO] ICO DEL ACTIVO '||V_TMP_TIPO_DATA(1)||' MODIFICADO');
+
+		ELSE 
+
+			DBMS_OUTPUT.PUT_LINE('[INFO] NO EXISTE EL ACTIVO '||V_TMP_TIPO_DATA(1)||'');
+
+		END IF;
+        
+	END LOOP;
+
+    COMMIT;
+
+EXCEPTION
+     WHEN OTHERS THEN 
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejECVción:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+
+/
+
+EXIT;

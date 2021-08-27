@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210811
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210824
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14838
+--## INCIDENCIA_LINK=HREOS-14974
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -17,9 +17,10 @@
 --##        0.5 Inclusión de cambios en modelo Fase 1 - [HREOS-14344] - Alejandra García
 --##        0.6 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - [HREOS-14545] - Daniel Algaba
 --##        0.7 Gestores de gestoría de admisión y administración - [HREOS-14545] - Daniel Algaba
---##	    0.8 Campos IND_ENTREGA_VOL_POSESI - HREOS-14745 - Alejandra García
+--##	      0.8 Campos IND_ENTREGA_VOL_POSESI - HREOS-14745 - Alejandra García
 --##	      0.9 Se añade comprobación para no machacar tipo y subtipo de activo si no viene - HREOS-14837
---##	      0.10 Nuevo campos Origen Regulatorio - HREOS-14838
+--##	      0.10 Nuevo campos Origen Regulatorio - HREOS-14838 - Daniel Algaba
+--##	      0.11 Uso dominante - [HREOS-14974] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -86,16 +87,24 @@ BEGIN
                   SELECT       
                   aux.NUM_INMUEBLE as ACT_NUM_ACTIVO,
                   aux.NUM_IDENTIFICATIVO as ACT_NUM_ACTIVO_CAIXA,
-                  CASE WHEN aux.SUBTIPO_VIVIENDA IS NOT NULL THEN sac_viv.DD_TPA_ID
-                  WHEN aux.SUBTIPO_SUELO IS NOT NULL THEN sac_suelo.DD_TPA_ID
-                  ELSE sac_uso.DD_TPA_ID END DD_TPA_ID,
-                  CASE WHEN aux.SUBTIPO_VIVIENDA IS NOT NULL THEN sac_viv.DD_SAC_ID
-                  WHEN aux.SUBTIPO_SUELO IS NOT NULL THEN sac_suelo.DD_SAC_ID
-                  ELSE sac_uso.DD_SAC_ID END DD_SAC_ID,
+                  CASE
+                     WHEN aux.SUBTIPO_VIVIENDA IS NOT NULL THEN sac_viv.DD_TPA_ID
+                     WHEN aux.SUBTIPO_SUELO IS NOT NULL THEN sac_suelo.DD_TPA_ID
+                     ELSE sac_uso.DD_TPA_ID
+                  END DD_TPA_ID,
+                  CASE 
+                     WHEN aux.SUBTIPO_VIVIENDA IS NOT NULL THEN sac_viv.DD_SAC_ID
+                     WHEN aux.SUBTIPO_SUELO IS NOT NULL THEN sac_suelo.DD_SAC_ID
+                     ELSE sac_uso.DD_SAC_ID
+                  END DD_SAC_ID,
                   COALESCE(STA_OR.DD_TTA_ID, STA.DD_TTA_ID) AS DD_TTA_ID,
                   COALESCE(STA_OR.DD_STA_ID, STA.DD_STA_ID) AS DD_STA_ID,
                   prp.DD_PRP_ID as DD_PRP_ID,
-                  tud.DD_TUD_ID as DD_TUD_ID,
+                  CASE
+                     WHEN AUX.CLASE_USO=''0001'' AND AUX.VIVIENDA_HABITUAL=''S'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''01'')
+                     WHEN AUX.CLASE_USO=''0001'' AND AUX.VIVIENDA_HABITUAL=''N'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''06'')
+                     ELSE NULL
+                  END AS DD_TUD_ID,
                   tcr.DD_TCR_ID as DD_TCR_ID,
                   aux.PORC_OBRA_EJECUTADA/100 as ACT_PORCENTAJE_CONSTRUCCION,
                   SCR.DD_SCR_ID AS DD_SCR_ID, 
@@ -122,9 +131,7 @@ BEGIN
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv9 ON eqv9.DD_NOMBRE_CAIXA = ''SUBTIPO_SUELO''  AND eqv9.DD_CODIGO_CAIXA = aux.SUBTIPO_SUELO AND EQV9.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO sac_suelo ON sac_suelo.DD_SAC_CODIGO = eqv9.DD_CODIGO_REM
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv5 ON eqv5.DD_NOMBRE_CAIXA = ''PROCEDENCIA_PRODUCTO''  AND eqv5.DD_CODIGO_CAIXA = aux.PROCEDENCIA_PRODUCTO AND EQV5.BORRADO=0
-                  LEFT JOIN '|| V_ESQUEMA ||'.DD_PRP_PROCEDENCIA_PRODUCTO prp ON prp.DD_PRP_CODIGO = eqv5.DD_CODIGO_REM   
-                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv6 ON eqv6.DD_NOMBRE_CAIXA = ''VIVIENDA_HABITUAL''  AND eqv6.DD_CODIGO_CAIXA = aux.VIVIENDA_HABITUAL AND EQV6.BORRADO=0
-                  LEFT JOIN '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO tud ON tud.DD_TUD_CODIGO = eqv6.DD_CODIGO_REM         
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_PRP_PROCEDENCIA_PRODUCTO prp ON prp.DD_PRP_CODIGO = eqv5.DD_CODIGO_REM     
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv7 ON eqv7.DD_NOMBRE_CAIXA = ''CANAL_DISTRIBUCION_VENTA''  AND eqv7.DD_CODIGO_CAIXA = aux.CANAL_DISTRIBUCION_VENTA AND EQV7.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR tcr ON tcr.DD_TCR_CODIGO = eqv7.DD_CODIGO_REM
                   WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
@@ -186,7 +193,30 @@ BEGIN
 
    EXECUTE IMMEDIATE V_MSQL;
 
-   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);   
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);  
+
+   SALIDA := SALIDA || '   [INFO] 2.1 - INSERTAR/ACTUALIZAR EN ACT_ACTIVO'|| CHR(10);
+
+       V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO act
+				       using (	
+                      SELECT
+                         TUD.DD_TUD_ID AS DD_TUD_ID
+                        ,ACT.ACT_ID
+                      FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+                      LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID=ACT.DD_SAC_ID
+                      LEFT JOIN '|| V_ESQUEMA ||'.EQV_CAIXA_TUD EQVTUD ON EQVTUD.SUBTIPO=SAC.DD_SAC_CODIGO
+                      LEFT JOIN '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO TUD ON TUD.DD_TUD_CODIGO=EQVTUD.USO_DOMINANTE
+                  ) us ON (us.act_id = act.act_id)
+                  when matched then update set
+                      act.DD_TUD_ID = NVL(act.DD_TUD_ID,us.DD_TUD_ID)
+                     ,act.USUARIOMODIFICAR = ''STOCK_BC''
+                     ,act.FECHAMODIFICAR = sysdate   
+                  ';
+
+   EXECUTE IMMEDIATE V_MSQL;
+
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10); 
+
 
    SALIDA := SALIDA || '   [INFO] 3 - INSERTAR/ACTUALIZAR EN ACT_ACTIVO_CAIXA'|| CHR(10);
 

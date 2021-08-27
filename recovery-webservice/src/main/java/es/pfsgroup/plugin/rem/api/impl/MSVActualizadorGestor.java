@@ -135,7 +135,8 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 					Filter codTRLFilter = genericDao.createFilter(FilterType.EQUALS, "tipoRolMediador.codigo", DDTipoRolMediador.CODIGO_TIPO_PRIMARIO);
 					Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 					Filter fechaFilter = genericDao.createFilter(FilterType.NULL, "fechaHasta");
-					ActivoInformeComercialHistoricoMediador historicoMediadorPrimario = genericDao.get(ActivoInformeComercialHistoricoMediador.class, codTRLFilter, activoFilter, fechaFilter);
+					Filter borradoFilter = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+					ActivoInformeComercialHistoricoMediador historicoMediadorPrimario = genericDao.get(ActivoInformeComercialHistoricoMediador.class, codTRLFilter, activoFilter, fechaFilter, borradoFilter);
 
 					if (!Checks.esNulo(historicoMediadorPrimario)) {
 						historicoMediadorPrimario.setFechaHasta(new Date());
@@ -169,7 +170,8 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 					Filter codTRLFilter = genericDao.createFilter(FilterType.EQUALS, "tipoRolMediador.codigo", DDTipoRolMediador.CODIGO_TIPO_PRIMARIO);
 					Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 					Filter fechaFilter = genericDao.createFilter(FilterType.NULL, "fechaHasta");
-					ActivoInformeComercialHistoricoMediador historicoMediadorPrimario = genericDao.get(ActivoInformeComercialHistoricoMediador.class, codTRLFilter, activoFilter, fechaFilter);
+					Filter borradoFilter = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+					ActivoInformeComercialHistoricoMediador historicoMediadorPrimario = genericDao.get(ActivoInformeComercialHistoricoMediador.class, codTRLFilter, activoFilter, fechaFilter, borradoFilter);
 
 					if (!Checks.esNulo(historicoMediadorPrimario)) {
 						historicoMediadorPrimario.setFechaHasta(new Date());
@@ -198,7 +200,8 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 					Filter codTRLFilter = genericDao.createFilter(FilterType.EQUALS, "tipoRolMediador.codigo", DDTipoRolMediador.CODIGO_TIPO_ESPEJO);
 					Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 					Filter fechaFilter = genericDao.createFilter(FilterType.NULL, "fechaHasta");
-					ActivoInformeComercialHistoricoMediador historicoMediadorPrimario = genericDao.get(ActivoInformeComercialHistoricoMediador.class, codTRLFilter, activoFilter, fechaFilter);
+					Filter borradoFilter = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+					ActivoInformeComercialHistoricoMediador historicoMediadorPrimario = genericDao.get(ActivoInformeComercialHistoricoMediador.class, codTRLFilter, activoFilter, fechaFilter, borradoFilter);
 
 					if (!Checks.esNulo(historicoMediadorPrimario)) {
 						historicoMediadorPrimario.setFechaHasta(new Date());
@@ -232,7 +235,8 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 					Filter codTRLFilter = genericDao.createFilter(FilterType.EQUALS, "tipoRolMediador.codigo", DDTipoRolMediador.CODIGO_TIPO_ESPEJO);
 					Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 					Filter fechaFilter = genericDao.createFilter(FilterType.NULL, "fechaHasta");
-					ActivoInformeComercialHistoricoMediador historicoMediadorPrimario = genericDao.get(ActivoInformeComercialHistoricoMediador.class, codTRLFilter, activoFilter, fechaFilter);
+					Filter borradoFilter = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+					ActivoInformeComercialHistoricoMediador historicoMediadorPrimario = genericDao.get(ActivoInformeComercialHistoricoMediador.class, codTRLFilter, activoFilter, fechaFilter, borradoFilter);
 
 					if (!Checks.esNulo(historicoMediadorPrimario)) {
 						historicoMediadorPrimario.setFechaHasta(new Date());

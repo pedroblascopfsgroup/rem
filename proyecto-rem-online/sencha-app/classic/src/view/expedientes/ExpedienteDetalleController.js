@@ -89,7 +89,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	       	}
 		});	
 		var panelTanteo = tabPanel.down('activoexpedientetanteo');
-		if(!Ext.isEmtpy(panelTanteo)){
+		if(!Ext.isEmpty(panelTanteo)){
 			var grid = panelTanteo.down('gridBaseEditableRow');
 			if(grid != undefined){
 				var store = grid.getStore();
@@ -4866,6 +4866,7 @@ comprobarFormatoModificar: function() {
 	
 	comprobarProcesoAsincrono: function(tabPanel, view) {			
 		var me= this;
+		view.mask("Cargando...");
 		var url = $AC.getRemoteUrl('tramitacionofertas/checkProceso');						
 		var idExpediente = me.getViewModel().getData().expediente.id;	
 		Ext.Ajax.request({
@@ -4873,11 +4874,23 @@ comprobarFormatoModificar: function() {
 	    		params: {idExpediente: idExpediente},
 	    		success: function(response, opts){
 	    			var data = Ext.decode(response.responseText);
+					Ext.suspendLayouts();
+					if(tabPanel.getActiveTab().xtype == 'ofertaexpediente'){
+						tabPanel = tabPanel.getActiveTab();
+					}
 	    			if((data.conFormalizacion != undefined || data.conFormalizacion != null) && data.conFormalizacion === "true"){
 						view.procesado = true;
-						tabPanel.down("[itemId=botoneditar]").setDisabled(false);
-	    			}					
-	    		}	    		
+						tabPanel.down("[itemId=botoneditar]").enable();	
+						tabPanel.getActiveTab().unmask();				
+						
+	    			}else{
+						view.procesado = false;	
+						tabPanel.down("[itemId=botoneditar]").disable();
+						tabPanel.getActiveTab().mask("...Tramitando...");
+					}
+					Ext.resumeLayouts();
+					view.unmask();
+	    		}
 	   	});	   	
 	},
 	

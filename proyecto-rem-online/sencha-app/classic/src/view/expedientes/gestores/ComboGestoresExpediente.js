@@ -1,4 +1,4 @@
-Ext.define('HreRem.view.expedientes.gestores.ComboGestores', {
+Ext.define('HreRem.view.expedientes.gestores.ComboGestoresExpediente', {
     extend: 'HreRem.view.common.FormBase',
     xtype: 'combogestoresexpediente',
     isSearchForm: false,
@@ -74,7 +74,10 @@ Ext.define('HreRem.view.expedientes.gestores.ComboGestores', {
     	            ];
 	    me.buttons = [
 	    	{ 
-	    		text: 'Agregar', handler: 'onAgregarGestoresClick', bind: { disabled: '{!usuarioGestor.selection}'} 
+	    		itemId: 'botonAgregarGestorExpediente',
+				text: 'Agregar', 
+				handler: 'onAgregarGestoresClick', 
+				bind: { disabled: '{!usuarioGestor.selection}'} 
 	    	}
 	    ];
 

@@ -830,6 +830,8 @@ public interface OfertaApi {
 	public void replicateOfertaFlush(Oferta oferta);
 
 	public String actualizarOfertaBoarding(TareaExterna tareaExterna);
+	
+	public String actualizarOfertaBoarding(Oferta oferta, String codigo);
 
 	boolean esOfertaValidaCFVByCarteraSubcartera(Oferta oferta);
 

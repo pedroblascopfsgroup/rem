@@ -368,49 +368,46 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	   
 	   private List<Integer> bankiaMasDeUnaLinea(MSVHojaExcel exc){
            List<Integer> listaFilas = new ArrayList<Integer>();
-
+	   	   Float participacionTotal = 0f;
+	   	   String participacionLinea = null;
+	   	   String idLineaActual = null;
+	   	   String idLineaAnterior = null;
+	   	   boolean lineaBorrada = false; 
+	   	   
             try{
                 for(int i=1; i<this.numFilasHoja;i++){
                     try {
                     	boolean tieneBorrar = false;
-                    	boolean addError = false;
-                    	String tipoAccion = exc.dameCelda(i, COL_ACCION_LINEA_DETALLE);
-                        if(!Checks.esNulo(exc.dameCelda(i, COL_ID_GASTO)) && Boolean.TRUE.equals(particularValidator.perteneceGastoBankia(exc.dameCelda(i, COL_ID_GASTO)))) {
-                        	if(!Checks.esNulo(tipoAccion) && Arrays.asList(listaCampoAccionAnyadir).contains(tipoAccion.toUpperCase())) {
-	                        	for(int x = 1; x<i;x++) {
-	                        		if(!(exc.dameCelda(x, COL_ID_GASTO).equals(exc.dameCelda(i, COL_ID_GASTO)) && 
-	                        		Arrays.asList(listaCampoAccionAnyadir).contains(exc.dameCelda(x, COL_ACCION_LINEA_DETALLE).toUpperCase()) &&
-	                        		exc.dameCelda(x, COL_SUBTIPO_GASTO).equals(exc.dameCelda(i, COL_SUBTIPO_GASTO)) &&
-	                        		exc.dameCelda(x, COL_TIPO_IMPUESTO).equals(exc.dameCelda(i, COL_TIPO_IMPUESTO)) &&
-	                        		exc.dameCelda(x, COL_TIPO_IMPOSITIVO).equals(exc.dameCelda(i, COL_TIPO_IMPOSITIVO)) &&
-	                        		exc.dameCelda(x, COL_TIPO_ELEMENTO).equals(exc.dameCelda(i, COL_TIPO_ELEMENTO)))
-	                        		) {
-	                        			listaFilas.add(i);
-	                        			addError = true;
-	                        			break;
-	                        		}
-	                        	}
-                        	if(Boolean.TRUE.equals(particularValidator.gastoTieneLineaDetalle(exc.dameCelda(i, COL_ID_GASTO))) && !addError) {
-                        		for(int x = 1; x<i;x++) {
-                            		if(!(exc.dameCelda(x, COL_ID_GASTO).equals(exc.dameCelda(i, COL_ID_GASTO)) && 
-	                        		Arrays.asList(listaCampoAccionAnyadir).contains(exc.dameCelda(x, COL_ACCION_LINEA_DETALLE).toUpperCase()) &&
-	                        		exc.dameCelda(x, COL_SUBTIPO_GASTO).equals(exc.dameCelda(i, COL_SUBTIPO_GASTO)) &&
-	                        		exc.dameCelda(x, COL_TIPO_IMPUESTO).equals(exc.dameCelda(i, COL_TIPO_IMPUESTO)) &&
-	                        		exc.dameCelda(x, COL_TIPO_IMPOSITIVO).equals(exc.dameCelda(i, COL_TIPO_IMPOSITIVO)) &&
-	                        		exc.dameCelda(x, COL_TIPO_ELEMENTO).equals(exc.dameCelda(i, COL_TIPO_ELEMENTO))) 
-                            		) {
-                            			tieneBorrar = true;
-                            			break;
-                            		}
-                            	}
-                        		if(!tieneBorrar) {
+                        if(!Checks.esNulo(exc.dameCelda(i, COL_ID_GASTO)) && Boolean.TRUE.equals(particularValidator.perteneceGastoBankia(exc.dameCelda(i, COL_ID_GASTO)))
+                        		&& Boolean.TRUE.equals(particularValidator.gastoTieneLineaDetalle(exc.dameCelda(i, COL_ID_GASTO)))) {
+                        	if (!Checks.esNulo(exc.dameCelda(i, COL_ID_LINEA))) {
+    	                		idLineaActual = exc.dameCelda(i, COL_ID_LINEA);
+    	                		
+    	                		if (!Checks.esNulo(idLineaAnterior) && !idLineaActual.equals(idLineaAnterior)) {
+        	                		lineaBorrada = false;
+        		                	
+        		                	if (participacionTotal != 0) {
+        		                		participacionTotal = 0f;
+        		                	}
+    	                		}
+    	                	}
+    	                	
+    	                	if (Arrays.asList(listaCampoAccionBorrar).contains(exc.dameCelda(i, COL_ACCION_LINEA_DETALLE))) {
+    	      
+    	                		if (!Checks.esNulo(exc.dameCelda(i, COL_ID_LINEA))) {
+    	                			idLineaAnterior = exc.dameCelda(i, COL_ID_LINEA);
+    	                		}
+    	                		
+    	                		participacionLinea = exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE);
+    	                		participacionTotal += Float.parseFloat(participacionLinea);
+    	                		
+    	                		if (participacionTotal == 100f) {
+    	                			lineaBorrada = true;
+    	                		}
+    	                	} else if (Arrays.asList(listaCampoAccionAnyadir).contains(exc.dameCelda(i, COL_ACCION_LINEA_DETALLE)) && !lineaBorrada) {   	               
                         			listaFilas.add(i);
-                        		}
+    	                		}
                         	}
-                          }
-                        }
-                        	
-                            
                     } catch (ParseException e) {
                         listaFilas.add(i);
                     }
@@ -451,14 +448,42 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	   private List<Integer> existeUnsubtipoGastoIgual(MSVHojaExcel exc){
 	       List<Integer> listaFilas = new ArrayList<Integer>();
 	   	   List<String> cadenaInformacion =  new ArrayList <String>();
-	      
-
+	   	   Float participacionTotal = 0f;
+	   	   String participacionLinea = null;
+	   	   String idLineaActual = null;
+	   	   String idLineaAnterior = null;
+	   	   boolean lineaBorrada = false; 
+	       
 	        try{
-	        	
 	            for(int i=1; i<this.numFilasHoja;i++){
 	            	
-	                try {
-		                if (!Arrays.asList(listaCampoAccionBorrar).contains(exc.dameCelda(i, COL_ACCION_LINEA_DETALLE))) {
+	                try {          
+	                	if (!Checks.esNulo(exc.dameCelda(i, COL_ID_LINEA))) {
+	                		idLineaActual = exc.dameCelda(i, COL_ID_LINEA);
+	                		
+	                		if (!Checks.esNulo(idLineaAnterior) && !idLineaActual.equals(idLineaAnterior)) {
+    	                		lineaBorrada = false;
+    		                	
+    		                	if (participacionTotal != 0) {
+    		                		participacionTotal = 0f;
+    		                	}
+	                		}
+	                	}
+	                	
+	                	if (Arrays.asList(listaCampoAccionBorrar).contains(exc.dameCelda(i, COL_ACCION_LINEA_DETALLE))) {
+	      
+	                		if (!Checks.esNulo(exc.dameCelda(i, COL_ID_LINEA))) {
+	                			idLineaAnterior = exc.dameCelda(i, COL_ID_LINEA);
+	                		}
+	                		
+	                		participacionLinea = exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE);
+	                		participacionTotal += Float.parseFloat(participacionLinea);
+	                		
+	                		if (participacionTotal == 100f) {
+	                			lineaBorrada = true;
+	                		}
+	                		
+	                	} else if (!Arrays.asList(listaCampoAccionBorrar).contains(exc.dameCelda(i, COL_ACCION_LINEA_DETALLE)) && !lineaBorrada) {
 		                	String result = devolverCadenaInformacionCompleta
 		                			(exc.dameCelda(i, COL_ACCION_LINEA_DETALLE), exc.dameCelda(i, COL_SUBTIPO_GASTO)
 		                					,exc.dameCelda(i, COL_TIPO_IMPOSITIVO),exc.dameCelda(i, COL_TIPO_IMPUESTO)
@@ -467,7 +492,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 		                	String[] gastoSubtipoImpuestoActual = result.split(",");
 		                	boolean existenBorradosAnteriores = false;
 		                	boolean existeMatchAnterior = false;
-		                	boolean filaErrorAnyadida = false;
+		                	boolean filaErrorAnyadida = false;																	                      	
 			                if(!Checks.estaVacio(cadenaInformacion)) {
 		                		for (String cadena : cadenaInformacion) {
 		                			String[] gastoSubtipoImpuesto = cadena.split(",");
@@ -1352,7 +1377,6 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
            listaFilas.add(0);
            e.printStackTrace();
        }
-
         return listaFilas;   
    }
 

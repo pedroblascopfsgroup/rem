@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -116,10 +117,9 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 				Double importeTotal = 0.0;
 				GastoLineaDetalle gastoLineaDetalle = new GastoLineaDetalle();
 				
-				
 				Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.parseLong(exc.dameCelda(fila, ID_GASTO)));
 				GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filtroGasto);
-				
+				GastoDetalleEconomico gastoDetalleEconomico = gastoProveedor.getGastoDetalleEconomico();
 				
 				Filter tipoImpuestoFilter;
 				Filter tipoImpositivoFilter;
@@ -249,8 +249,9 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 					
 					importeTotal =  importeTotal+ gastoLineaDetalle.getImporteIndirectoCuota();
 					gastoLineaDetalle.setImporteTotal(importeTotal);
+					gastoDetalleEconomico.setImporteTotal(importeTotal);
 					
-				
+					genericDao.update(GastoDetalleEconomico.class, gastoDetalleEconomico);
 					genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
 					
 					nuevasLineasList.add(gastoLineaDetalle);
@@ -325,10 +326,13 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 				Double importeTotal = 0.0;
 				Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.parseLong(exc.dameCelda(fila, ID_GASTO)));
 				GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filtroGasto);
+				GastoLineaDetalle gastoLineaDetalle = null;
 				
-				Filter filtroLinea = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(exc.dameCelda(fila, ID_LINEA)));
-				GastoLineaDetalle gastoLineaDetalle = genericDao.get(GastoLineaDetalle.class,filtroLinea);
-				
+				if (!Checks.esNulo(exc.dameCelda(fila, ID_LINEA))) {
+					Filter filtroLinea = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(exc.dameCelda(fila, ID_LINEA)));
+					gastoLineaDetalle = genericDao.get(GastoLineaDetalle.class,filtroLinea);
+				}
+
 				if(gastoLineaDetalle != null) {
 					List<GastoLineaDetalleEntidad> gastoLineaDetalleEntidadList = gastoLineaDetalle.getGastoLineaEntidadList();
 					

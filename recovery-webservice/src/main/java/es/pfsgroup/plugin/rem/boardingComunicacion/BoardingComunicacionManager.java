@@ -167,6 +167,10 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
 				e1.printStackTrace();
 				ex = e1.getMessage();
 				resultadoOK = false;
+			}catch (Exception e) {
+				logger.error("Error al procesar petición para comunicación CFV", e);
+				logger.error(e.getMessage());
+				resultadoOK = false;
 			}
 			
 			if (resultadoOK == true) {

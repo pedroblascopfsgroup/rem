@@ -1294,9 +1294,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(ofertaExclusionBulkNew != null) {
 			genericDao.save(OfertaExclusionBulk.class, ofertaExclusionBulkNew);
 		}
-		
-		if(dto.getCheckListDocumentalCompleto() != null && oferta.getOfertaCaixa() != null) {
-			oferta.getOfertaCaixa().setCheckListDocumentalCompleto(dto.getCheckListDocumentalCompleto());
+		OfertaCaixa ofrCx = oferta.getOfertaCaixa();
+		if(ofrCx != null) {
+			if(dto.getCheckListDocumentalCompleto() != null) {
+				ofrCx.setCheckListDocumentalCompleto(dto.getCheckListDocumentalCompleto());
+			}
+			if(dto.getCheckSubasta() != null) {
+				ofrCx.setCheckSubasta(dto.getCheckSubasta());
+			}
 		}
 		
 		if(dto.getClasificacionCodigo() != null) {
@@ -2116,6 +2121,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			if(oferta.getOfertaCaixa() != null) {
 				dto.setCheckListDocumentalCompleto(oferta.getOfertaCaixa().getCheckListDocumentalCompleto());
+				dto.setCheckSubasta(oferta.getOfertaCaixa().getCheckSubasta());
 			}
 		}
 

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20210830
+--## FECHA_CREACION=20210829
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-10382
@@ -104,7 +104,7 @@ BEGIN
                 EXECUTE IMMEDIATE V_MSQL INTO V_PRECIO;
 
                 V_MSQL:= 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET
-                            TBJ_IMPORTE_TOTAL = '||V_PRECIO||' ,
+                            TBJ_IMPORTE_TOTAL = TO_NUMBER('''||V_PRECIO||''') ,
                             USUARIOMODIFICAR = '''||V_USU||''',
                             FECHAMODIFICAR = SYSDATE
                             WHERE TBJ_NUM_TRABAJO = '||V_TMP_TIPO_DATA(1)||' AND BORRADO = 0';
@@ -116,7 +116,7 @@ BEGIN
                 EXECUTE IMMEDIATE V_MSQL INTO V_ID;
 
                 V_MSQL:= 'UPDATE '||V_ESQUEMA||'.ACT_PRT_PRESUPUESTO_TRABAJO SET
-						PRT_IMPORTE_CLIENTE = '||V_PRECIO||' ,
+						PRT_IMPORTE_CLIENTE = TO_NUMBER('''||V_PRECIO||''') ,
 						USUARIOMODIFICAR = '''||V_USU||''',
 						FECHAMODIFICAR = SYSDATE
 						WHERE PRT_ID = '||V_ID||' AND BORRADO = 0';

@@ -16,16 +16,15 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTabPanel', {
      	     	
      	boxready: function (tabPanel) {   
      		var me = this;
-    		if(!me.procesado){
-					me.checkProceso(tabPanel);
-			}
+    		
+			me.checkProceso(tabPanel);
+			
     	},
     	     	
     	beforetabchange: function (tabPanel, tabNext, tabCurrent) {
     		var me = this;
-    		if(!me.procesado){
-					me.checkProceso(tabPanel);
-			}
+    		
+			me.checkProceso(tabPanel);
     	}
     	
     },

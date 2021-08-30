@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20210827
+--## FECHA_CREACION=20210830
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14938
@@ -31,7 +31,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(3500);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-		    T_TIPO_DATA('T015_DefinicionOferta'	, 'checkInquilinos()  ? (checkBankia() == true && isMetodoActualizacionRelleno() == true)  ? null :''''El campo "Metodo de actualizacion" debe estar relleno''''  : ''''Falta completar algunos datos obligatorios del inquilino'''' ')
+		    T_TIPO_DATA('T015_DefinicionOferta'	, 'checkInquilinos()  ? (checkBankia() == true && isMetodoActualizacionRelleno() == false)  ? ''''El campo "Metodo de actualizacion" debe estar relleno'''' : null : ''''Falta completar algunos datos obligatorios del inquilino'''' ')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN	

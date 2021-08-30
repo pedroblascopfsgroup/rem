@@ -1593,11 +1593,92 @@ public class ActivoAdapter {
 		return listaUsuariosDto;
 	}
 	
-
-	public List<DtoUsuario> getComboUsuariosGestoria() {
+	public List<DtoUsuario> getComboGruposUsuarioGestoria(Usuario usuario, EXTDDTipoGestor tipoGestor){
+		if(usuario == null || tipoGestor == null) return null;
 		
-		EXTDDTipoGestor tipoGestorGestoria = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION));
-		return getComboUsuarios(tipoGestorGestoria.getId());
+		List<DtoUsuario> listaGruposDto = new ArrayList<DtoUsuario>();
+		List<DespachoExterno> listDespachoExterno = null;
+		List<GrupoUsuario> grupos = genericDao.getList(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "usuario", usuario));
+		EXTTipoGestorPropiedad tipoGestorPropiedad = genericDao.get(EXTTipoGestorPropiedad.class, 
+				genericDao.createFilter(FilterType.EQUALS, "clave", EXTTipoGestorPropiedad.TGP_CLAVE_DESPACHOS_VALIDOS),
+				genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor));
+		
+		if(tipoGestorPropiedad != null) {
+			String[] listaTiposDespachos = null;
+			listaTiposDespachos = tipoGestorPropiedad.getValor().split(",");
+			if(listaTiposDespachos != null && listaTiposDespachos.length > 0) {
+				for(String tipoDespacho : listaTiposDespachos){
+					DDTipoDespachoExterno ddTiposDespacho = genericDao.get(DDTipoDespachoExterno.class, 
+							genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDespacho),
+							genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+					
+					if(ddTiposDespacho != null){
+						Order orden = new Order(OrderType.ASC, "id");
+						listDespachoExterno = genericDao.getListOrdered(DespachoExterno.class, orden, 
+								genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho),
+								genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+					}
+				}
+				
+				if (listDespachoExterno != null && !listDespachoExterno.isEmpty()) {
+					for (DespachoExterno despachoExterno : listDespachoExterno) {
+						List<Usuario> listaUsuarios = null;
+						List<GestorDespacho> listaGestorDespacho = null;
+						
+						for(GrupoUsuario grupo : grupos) {
+							listaGestorDespacho = genericDao.getList(GestorDespacho.class, 
+									genericDao.createFilter(FilterType.EQUALS, "despachoExterno", despachoExterno),
+									genericDao.createFilter(FilterType.EQUALS, "usuario", grupo.getGrupo()));
+							
+							if(listaGestorDespacho != null && !listaGestorDespacho.isEmpty()) {
+								listaUsuarios = new ArrayList<Usuario>();
+								for(GestorDespacho gestorDespacho : listaGestorDespacho) {
+									if(gestorDespacho.getUsuario() != null)
+										listaUsuarios.add(gestorDespacho.getUsuario());
+									
+								}
+							}						
+						
+							if (listaUsuarios != null && !listaUsuarios.isEmpty()) {
+								for (Usuario user : listaUsuarios) {
+									
+									boolean existe = false;
+									for(DtoUsuario dto : listaGruposDto) {
+										if(dto.getId().equals(user.getId()))
+											existe = true;
+									}
+									
+									if(!existe) {
+										try {
+											
+											DtoUsuario dtoUsuario = new DtoUsuario();
+											BeanUtils.copyProperties(dtoUsuario, user);									
+											listaGruposDto.add(dtoUsuario);
+											
+										} catch (IllegalAccessException e) {
+											logger.error("Error en ActivoAdapter", e);
+										} catch (InvocationTargetException e) {
+											logger.error("Error en ActivoAdapter", e);
+										}
+									}
+									
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return listaGruposDto;
+	}
+	
+	public List<DtoUsuario> getComboUsuariosGestoria() {
+		Usuario usuario = genericAdapter.getUsuarioLogado();
+		EXTDDTipoGestor tipoGestorGestoria = genericDao.get(EXTDDTipoGestor.class, 
+				genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION));
+		
+		return getComboGruposUsuarioGestoria(usuario, tipoGestorGestoria);
 	}
 	
 	public List<DtoListadoGestores> getGestoresActivos(Long idActivo) {

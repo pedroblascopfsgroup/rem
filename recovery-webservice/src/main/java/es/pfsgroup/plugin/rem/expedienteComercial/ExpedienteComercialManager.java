@@ -3372,6 +3372,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		dto.setFechaActualizacion(condiciones.getFechaActualizacion());
 		dto.setPeriodicidadMeses(condiciones.getPeriodicidadMeses());
 		
+		dto.setCheckIGC(condiciones.getCheckIGC());
+		
+		
 		Oferta oferta = expediente.getOferta();
 		if(oferta != null) {
 			dto.setFechaInicioCnt(oferta.getFechaInicioContrato());

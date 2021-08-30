@@ -24,7 +24,11 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 			me.forceSelection = false,
 			me.editable = true,
 			me.minChars = 0,
-			me.enableKeyEvents = true;
+			me.enableKeyEvents = true,
+			me.mode = 'local',
+			me.queryMode = 'local',
+			me.triggerAction = 'query',
+			me.anyMatch = true;	
 			me.addListener({
 				'keyup': function() {
 					if(me.getStore().isLoaded()){
@@ -110,17 +114,19 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 					if(me.getStore().source != null){
 						me.getStore().loadSource = true;
 						me.getStore().updateSource(me.getStore().getSource(), null);
-					}else{							
+					}else{
 						if((!me.getStore().isLoaded() || me.getStore().getCount()<1) && !me.getStore().isLoading()){
 							me.getStore().load();
-							me.expand();
-						}else if (me.triggerAction === 'all') {
+							me.expand();me.collapse();me.expand();
+						}else if (me.triggerAction === 'all' && !me.getStore().isLoading() && !me.filtradoEspecial2) {
 		                    me.doQuery(me.allQuery, true);
-		                } else if (me.triggerAction === 'last') {
+		                } else if (me.triggerAction === 'last' && !me.getStore().isLoading()&& !me.filtradoEspecial2) {
 		                    me.doQuery(me.lastQuery, true);
-		                } else {
+		                } else if(!me.getStore().isLoading() && !me.filtradoEspecial2){
 		                    me.doQuery(me.getRawValue(), false, true);
-		                }
+		                }else{
+							me.expand();
+						}
 					}		                
                 }
                 else
@@ -146,8 +152,8 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 		setRawValue: function (value) {
 			var me = this;
 			if(value == null) value = '';
-			me.setValorMostrado(value);
 			me.callParent([value]);
+			me.setValorMostrado(value);
         },
 
 		setValorMostrado: function(value){
@@ -170,6 +176,45 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 			me.value = null;
 			me.setRawValue('');
 		},
+		getValue: function() {
+	        // If the user has not changed the raw field value since a value was selected from the list,
+	        // then return the structured value from the selection. If the raw field value is different
+	        // than what would be displayed due to selection, return that raw value.
+	        var me = this,
+	            store = me.getStore(),
+	            picker = me.picker,
+	            rawValue = me.getRawValue(), //current value of text field
+	            value = me.value; //stored value from last selection or setValue() call
+
+	        // getValue may be called from initValue before a valid store is bound - may still be the default empty one.
+	        // Also, may be called before the store has been loaded.
+	        // In these cases, just return the value.
+	        // In other cases, check that the rawValue matches the selected records.
+	        if (!Ext.isEmpty(store) && !store.isEmptyStore && me.getDisplayValue() !== rawValue) {
+	            me.displayTplData = undefined;
+	            if (picker) {
+	                // We do not need to hear about this clearing out of the value collection,
+	                // so suspend events.
+	                me.valueCollection.suspendEvents();
+	                picker.getSelectionModel().deselectAll();
+	                me.valueCollection.resumeEvents();
+	                me.lastSelection = null;
+	            }
+	            // If the raw input value gets out of sync in a multiple ComboBox, then we have to give up.
+	            // Multiple is not designed for typing *and* displaying the comma separated result of selection.
+	            // Same in the case of forceSelection.
+	            // Unless the store is not yet loaded, which case will be handled in onLoad
+	            if (store.isLoaded() && (me.multiSelect || me.forceSelection)) {
+	                value = me.value = undefined;
+	            } else {
+	                value = me.value;
+	            }
+	        }
+	
+	        // Return null if value is undefined/null, not falsy.
+	        me.value = value == null ? null : value;
+	        return me.value;
+	    },
 		/**
 	     * Sets the specified value(s) into the field. For each value, if a record is found in the {@link #store} that
 	     * matches based on the {@link #valueField}, then that record's {@link #displayField} will be displayed in the
@@ -220,7 +265,7 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 	            lastSelection = me.lastSelection,
 	            i, len, record, dataObj,
 	            valueChanged, key;
-	
+			
 	        //<debug>
 	        if (add && !me.multiSelect) {
 	            Ext.raise('Cannot add values to non multiSelect ComboBox');
@@ -351,7 +396,7 @@ Ext.define('HreRem.view.common.ComboBoxFieldBaseDD', {
 	        } else {
 	            me.updateValue();
 	        }
-	
+			
 	        return me;
 	    }
     }	

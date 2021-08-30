@@ -142,7 +142,21 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String riesgoOperacionDescripcion;
 	
 	private Boolean ventaCarteraCfv;
+	
+	private Boolean opcionACompra;
+	
+	private Double valorCompra;
+	
+	private Date fechaVencimientoOpcionCompra;
+	
+	private String clasificacionCodigo;
 
+	private Boolean checkListDocumentalCompleto;
+
+	private Boolean tieneInterlocutoresNoEnviados;
+	
+	private Boolean checkSubasta;
+	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
 	}
@@ -647,6 +661,62 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setVentaCarteraCfv(Boolean ventaCarteraCfv) {
 		this.ventaCarteraCfv = ventaCarteraCfv;
+	}
+
+	public Boolean getOpcionACompra() {
+		return opcionACompra;
+	}
+
+	public void setOpcionACompra(Boolean opcionACompra) {
+		this.opcionACompra = opcionACompra;
+	}
+
+	public Double getValorCompra() {
+		return valorCompra;
+	}
+
+	public void setValorCompra(Double valorCompra) {
+		this.valorCompra = valorCompra;
+	}
+
+	public Date getFechaVencimientoOpcionCompra() {
+		return fechaVencimientoOpcionCompra;
+	}
+
+	public void setFechaVencimientoOpcionCompra(Date fechaVencimientoOpcionCompra) {
+		this.fechaVencimientoOpcionCompra = fechaVencimientoOpcionCompra;
+	}
+
+	public String getClasificacionCodigo() {
+		return clasificacionCodigo;
+	}
+
+	public void setClasificacionCodigo(String clasificacionCodigo) {
+		this.clasificacionCodigo = clasificacionCodigo;
+	}
+
+	public Boolean getCheckListDocumentalCompleto() {
+		return checkListDocumentalCompleto;
+	}
+
+	public void setCheckListDocumentalCompleto(Boolean checkListDocumentalCompleto) {
+		this.checkListDocumentalCompleto = checkListDocumentalCompleto;
+	}
+
+	public Boolean getTieneInterlocutoresNoEnviados() {
+		return tieneInterlocutoresNoEnviados;
+	}
+
+	public void setTieneInterlocutoresNoEnviados(Boolean tieneInterlocutoresNoEnviados) {
+		this.tieneInterlocutoresNoEnviados = tieneInterlocutoresNoEnviados;
+	}
+
+	public Boolean getCheckSubasta() {
+		return checkSubasta;
+	}
+
+	public void setCheckSubasta(Boolean checkSubasta) {
+		this.checkSubasta = checkSubasta;
 	}
 	
 }

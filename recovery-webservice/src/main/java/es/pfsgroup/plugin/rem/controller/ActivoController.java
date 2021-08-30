@@ -2193,9 +2193,6 @@ public class ActivoController extends ParadiseJsonController {
 			dtoOferta.setVentaDirecta(false);
 			Oferta oferta = adapter.createOfertaActivo(dtoOferta);
 			boolean success = oferta != null;
-			if (oferta.getEstadoOferta()!= null && DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())) {
-				caixaBcRestClient.callReplicateClient(oferta.getNumOferta(),CaixaBcRestClient.CLIENTE_TITULARES_DATA);
-			}
 
 			model.put(RESPONSE_SUCCESS_KEY, success);
 

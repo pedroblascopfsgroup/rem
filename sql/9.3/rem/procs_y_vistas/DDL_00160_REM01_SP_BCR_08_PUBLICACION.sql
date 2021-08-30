@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210804
+--## FECHA_CREACION=20210810
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14837
+--## INCIDENCIA_LINK=HREOS-14649
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -14,6 +14,7 @@
 --##	    0.2 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - HREOS-14545
 --##	    0.3 Cambios para el lanzamiento del SP de publicaciones y situación comercial - HREOS-14686
 --##	    0.4 Se añade el FLAG EN REM en la insercción de la TMP_AGR_DESTINO_COMERCIAL - HREOS-14837
+--##	    0.4 Se añade que cuando no viene DESTINO_COMERCIAL sea VR o su destino actual - HREOS-14649
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -358,7 +359,7 @@ BEGIN
                 )SELECT
                     '||V_ESQUEMA||'.S_HDC_HIST_DESTINO_COMERCIAL.NEXTVAL AS HDC_ID 
                     ,TMP.ACT_ID AS ACT_ID
-                    ,TCO.DD_TCO_ID AS DD_TCO_ID
+                    , NVL(TCO.DD_TCO_ID, APU.DD_TCO_ID)  AS DD_TCO_ID
                     ,SYSDATE AS HDC_FECHA_INICIO
                     ,NULL AS HDC_FECHA_FIN
                     ,''STOCK_BC'' AS HDC_GESTOR_ACTUALIZACION
@@ -366,6 +367,7 @@ BEGIN
                     ,SYSDATE AS FECHACREAR    
                 FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
                 JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID=TMP.ACT_ID AND ACT.BORRADO=0
+                JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID AND APU.BORRADO = 0
                 JOIN '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO
                 LEFT JOIN '||V_ESQUEMA||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''DESTINO_COMERCIAL''  AND eqv1.DD_CODIGO_CAIXA = AUX.DESTINO_COMERCIAL AND EQV1.BORRADO=0
                 LEFT JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_CODIGO = eqv1.DD_CODIGO_REM
@@ -388,7 +390,7 @@ BEGIN
                     LEFT JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_CODIGO = eqv1.DD_CODIGO_REM
                 ) US ON (US.ACT_ID = ACT.ACT_ID AND ACT.BORRADO=0)
                 WHEN MATCHED THEN UPDATE SET
-                     ACT.DD_TCO_ID=US.DD_TCO_ID  
+                    ACT.DD_TCO_ID = NVL(US.DD_TCO_ID, ACT.DD_TCO_ID)  
                     ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
                     ,ACT.FECHAMODIFICAR = SYSDATE
    ';
@@ -716,20 +718,21 @@ BEGIN
                             , ACT.DD_TPU_ID
                             , (SELECT DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA WHERE DD_EPV_CODIGO = ''01'')
                             , (SELECT DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER WHERE DD_EPA_CODIGO = ''01'')
-                            , TCO_NUEVO.DD_TCO_ID
-                            ,  CASE WHEN TCO_NUEVO.DD_TCO_CODIGO = ''01'' OR TCO_NUEVO.DD_TCO_CODIGO = ''02''
-                               THEN SYSDATE
+                            , CASE WHEN TCO_NUEVO.DD_TCO_ID IS NULL THEN (SELECT DD_TCO_ID FROM '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION WHERE DD_TCO_CODIGO = ''02'')
+                                    WHEN TCO_NUEVO.DD_TCO_ID IS NOT NULL THEN TCO_NUEVO.DD_TCO_ID END
+                            ,  CASE WHEN TCO_NUEVO.DD_TCO_ID IS NULL THEN SYSDATE
+                                WHEN TCO_NUEVO.DD_TCO_CODIGO = ''01'' OR TCO_NUEVO.DD_TCO_CODIGO = ''02'' THEN SYSDATE
                                ELSE NULL END
-                            ,  CASE WHEN TCO_NUEVO.DD_TCO_CODIGO = ''02'' OR TCO_NUEVO.DD_TCO_CODIGO = ''03''
-                               THEN SYSDATE
+                            ,  CASE WHEN TCO_NUEVO.DD_TCO_ID IS NULL THEN SYSDATE
+                                WHEN TCO_NUEVO.DD_TCO_CODIGO = ''02'' OR TCO_NUEVO.DD_TCO_CODIGO = ''03'' THEN SYSDATE
                                ELSE NULL END
                             , ''STOCK_BC''
                             , SYSDATE
                             , ACT.DD_TPU_ID
                             , ACT.DD_TPU_ID
                         FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
-                        JOIN '||V_ESQUEMA||'.DD_EQV_CAIXA_REM EQV ON EQV.DD_NOMBRE_CAIXA=''DESTINO_COMERCIAL'' AND EQV.DD_CODIGO_CAIXA = AUX.DESTINO_COMERCIAL AND EQV.BORRADO=0
-                        JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO_NUEVO ON TCO_NUEVO.DD_TCO_CODIGO = EQV.DD_CODIGO_REM
+                        LEFT JOIN '||V_ESQUEMA||'.DD_EQV_CAIXA_REM EQV ON EQV.DD_NOMBRE_CAIXA=''DESTINO_COMERCIAL'' AND EQV.DD_CODIGO_CAIXA = AUX.DESTINO_COMERCIAL AND EQV.BORRADO=0
+                        LEFT JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO_NUEVO ON TCO_NUEVO.DD_TCO_CODIGO = EQV.DD_CODIGO_REM
                         JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO AND ACT.BORRADO=0
                         WHERE AUX.FLAG_EN_REM = 0';
     

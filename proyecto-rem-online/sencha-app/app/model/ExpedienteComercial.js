@@ -344,7 +344,20 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		{
     			name: 'isEmpleadoCaixa',
     			type: 'boolean'
+    		},
+    		{
+    			name:'clasificacionCodigo'
+    		},
+    		{
+    			name:'mesesDuracionCntAlquiler'
+    		},
+    		{
+    			name:'motivoRechazoAntiguoDeudCod'
+    		},
+    		{
+    			name:'detalleAnulacionCntAlquiler'
     		}
+    		
     ],
     formulas: {
     	esExpedienteBloqueado: function(get) {

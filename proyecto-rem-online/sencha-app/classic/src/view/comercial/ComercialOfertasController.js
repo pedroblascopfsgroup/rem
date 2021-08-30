@@ -6,10 +6,8 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
 	onSearchClick: function(btn) {
 		var initialData = {};
 		var searchForm = btn.up('formBase');
-		
 		if (searchForm.isValid()) {
 			var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
-			
 			Ext.Object.each(criteria, function(key, val) {
 				if (Ext.isEmpty(val)) {
 					delete criteria[key];

@@ -227,6 +227,10 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     			type: 'boolean'
     		},
     		{
+                name: 'tieneInterlocutoresNoEnviados',
+                type: 'boolean'
+            },
+    		{
     			name:'ofertaEspecial',
     			type: 'boolean'
     		},
@@ -243,7 +247,31 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		{
     			name:'ventaCarteraCfv',
     			type: 'boolean'
+    		},
+    		{
+    			name:'opcionACompra',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'valorCompra'
+    		},
+    		{
+    			name:'fechaVencimientoOpcionCompra',
+    			type:'date',
+        		dateFormat: 'c'
+    		},
+    		{
+    			name:'clasificacionCodigo'
+    		},
+    		{
+    			name:'checkListDocumentalCompleto',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'checkSubasta',
+    			type: 'boolean'
     		}
+    		
     ],
 
 	proxy: {

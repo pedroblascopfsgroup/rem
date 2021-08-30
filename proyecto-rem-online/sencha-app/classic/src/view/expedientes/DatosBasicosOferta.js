@@ -12,7 +12,7 @@ recordName: "datosbasicosoferta",
 recordClass: "HreRem.model.DatosBasicosOferta",
     
     requires: ['HreRem.model.DatosBasicosOferta','HreRem.view.activos.detalle.ActivoDetalleModel',
-    'HreRem.model.OfertasAgrupadasModel', 'HreRem.view.expedientes.OfertasAgrupadasTabPanel'],
+    'HreRem.model.OfertasAgrupadasModel', 'HreRem.view.expedientes.OfertasAgrupadasTabPanel','HreRem.view.expedientes.SancionesGrid'],
     
     listeners: {
 		boxready:'cargarTabData',
@@ -100,14 +100,16 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							},
 							readOnly : !$AU.userIsRol("HAYASUPER"),
 							fieldLabel : HreRem.i18n('fieldlabel.estado')
-						}, {
+						}, 	
+						{
 							xtype : 'textfieldbase',
 							fieldLabel : HreRem.i18n('fieldlabel.prescriptor'),
 							bind : {
 								value : '{datosbasicosoferta.prescriptor}'
 							},
 							readOnly : true
-						}, {
+						},
+						{
 							xtype : 'textfieldbase',
 							fieldLabel : HreRem.i18n('fieldlabel.canal.prescripcion'),
 							bind : '{datosbasicosoferta.canalPrescripcionDescripcion}',
@@ -134,17 +136,36 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							}
 						},
 						{
-						xtype : 'comboboxfieldbase',
-						fieldLabel : HreRem.i18n('fieldlabel.empleado.caixa'),
-						reference: 'empleadoCaixaRef',
-						colspan: 3,
-						bind : {
-							store : '{comboEmpleadoCaixa}',
-							value : '{datosbasicosoferta.isEmpleadoCaixa}',
-							hidden: '{!esBankia}',
-							readOnly: true
-						}
-					},
+							xtype: 'comboboxfieldbase',
+							fieldLabel:  HreRem.i18n('fieldlabel.detalle.oferta.alquiler.clasificacion'),
+							reference: 'comboClasificacionRef',
+							bind:{
+								store:'{storeClasificacion}',
+								value:'{datosbasicosoferta.clasificacionCodigo}',
+								hidden: '{!esBankiaAlquiler}'
+							}
+						},
+						{
+							xtype : 'comboboxfieldbase',
+							fieldLabel : HreRem.i18n('fieldlabel.empleado.caixa'),
+							reference: 'empleadoCaixaRef',
+							bind : {
+								store : '{comboEmpleadoCaixa}',
+								value : '{datosbasicosoferta.isEmpleadoCaixa}',
+								hidden: '{!esBankia}',
+								readOnly: true
+							}
+						},
+						{
+							xtype : 'comboboxfieldbase',
+							fieldLabel : HreRem.i18n('fieldlabel.detalle.oferta.alquiler.documentacion.completa'),
+							reference: 'checkDocumentacionCompletaRef',
+							bind : {
+								store : '{comboSiNoBoolean}',
+								value : '{datosbasicosoferta.checkListDocumentalCompleto}',
+								hidden: '{!esBankiaAlquiler}'
+							}
+						},
 					{
 						bind : {hidden : '{!esTipoAlquiler}'}
 					}
@@ -220,7 +241,8 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									value : '{datosbasicosoferta.refCircuitoCliente}',
 									hidden : '{!esTipoAlquiler}'
 								}
-							}, {
+							},			
+							{
 								xtype: 'comboboxfieldbase',
 								readOnly: !$AU.userIsRol("HAYASUPER"),
 								fieldLabel:  HreRem.i18n('fieldlabel.gestor.comercial.prescriptor'),
@@ -351,6 +373,9 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									}
 					        }
 						},
+						bind : {
+							hidden : '{esTipoAlquiler}' 
+						},
 						items : [
 							{
 								xtype : 'checkboxfieldbase',
@@ -396,9 +421,6 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						border: false,
 						width: '33%',
 						margin: '0 10 10 0',
-						bind : { title : '{expediente.tituloCarteraLiberbankVenta}',
-								 hidden: '{expediente.esBankia}'
-							},
 						layout: {
 					        type: 'table',
 					        columns: 1,
@@ -416,7 +438,9 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						xtype : 'fieldsettable',
 						colspan: 1,
 						collapsible: false,
-						bind : { title : '{expediente.tituloCarteraLiberbankVenta}'},
+						bind : { title : '{expediente.tituloCarteraLiberbankVenta}',
+							hidden: '{expediente.esBankia}'
+						},
 						layout: {
 					        type: 'table',
 					        columns: 1,
@@ -588,7 +612,8 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								reference : 'numVistaFromOfertaRef',
 								bind : {
 									value : '{datosbasicosoferta.numVisita}'
-								}
+								},
+								margin : '0 0 12 0'
 
 							}]
 						}]
@@ -606,45 +631,104 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					        },
 					        tableAttrs: {
 					            style: {
-					                width: '100%'
-									}
+					            	width: '100%'
+								}
 					        }
 						},
 						
-						items : [{
-							xtype : "textfieldbase",
-							fieldLabel : HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.ofertaExpress'),
-							bind : {
-								value : '{datosbasicosoferta.ofertaExpress}',
-								hidden : '{esTipoAlquiler}'
-							},
-							readOnly : true
-						}, {
-							xtype: "textfieldbase",
-							fieldLabel: HreRem.i18n('fieldlabel.detalle.oferta.singular'),
-							bind: {
-								value: '{datosbasicosoferta.ofertaSingular}'
-							},
-		    				readOnly: true
-		    			}, {
-							xtype : 'comboboxfieldbase',
-							bind : {
-								store : '{comboSiNo}',
-								value : '{datosbasicosoferta.necesitaFinanciacion}'
-							},
-							fieldLabel : HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.necesitaFinanciacion')
-						}, 						
+						items : [
 						{
-							xtype : "textareafieldbase",
-							fieldLabel : HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.observaciones'),
-							labelAlign: 'top',
-							grow: true,
-							anchor: '100%',
+							xtype : "fieldsettable",
+							collapsible: false,
+							border: false,
+							layout: {
+						        type: 'table',
+						        columns: 2
+						    },
 							bind : {
-								value : '{datosbasicosoferta.observaciones}'
+								hidden: '{esBankiaAlquiler}'
 							},
-							width: '100%',
-							rowspan: 4
+							items : [
+								{
+									xtype : "textfieldbase",
+									fieldLabel : HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.ofertaExpress'),
+									bind : {
+										value : '{datosbasicosoferta.ofertaExpress}',
+										hidden : '{esTipoAlquiler}'
+									},
+									readOnly : true
+								}, {
+									xtype: "textfieldbase",
+									fieldLabel: HreRem.i18n('fieldlabel.detalle.oferta.singular'),
+									bind: {
+										value: '{datosbasicosoferta.ofertaSingular}'
+									},
+				    				readOnly: true
+				    			}, {
+									xtype : 'comboboxfieldbase',
+									bind : {
+										store : '{comboSiNo}',
+										value : '{datosbasicosoferta.necesitaFinanciacion}'
+									},
+									fieldLabel : HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.necesitaFinanciacion')
+								}, 						
+								{
+									xtype : "textareafieldbase",
+									fieldLabel : HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.observaciones'),
+									labelAlign: 'top',
+									grow: true,
+									anchor: '100%',
+									bind : {
+										value : '{datosbasicosoferta.observaciones}'
+									},
+									width: '100%',
+									rowspan: 4
+								}
+							]
+						},
+						{
+							xtype : "fieldsettable",
+							collapsible: false,
+							border: false,
+							layout: {
+						        type: 'table',
+						        columns: 2
+						    },
+							bind : {
+								hidden: '{!esBankiaAlquiler}'
+							},
+							items : [
+								{
+									xtype : "comboboxfieldbase",
+									fieldLabel : HreRem.i18n('fieldlabel.detalle.oferta.opcionCompra'),
+									bind : {
+										store : '{comboSiNoBoolean}',
+										value : '{datosbasicosoferta.opcionACompra}'
+									}
+								}, {
+									xtype: "numberfieldbase",
+									fieldLabel: HreRem.i18n('fieldlabel.detalle.oferta.valor.opcionCompra'),
+									bind: {
+										value: '{datosbasicosoferta.valorCompra}'
+									}
+				    			},
+				    			{
+				    				xtype : 'datefieldbase',
+									formatter : 'date("d/m/Y")',
+									fieldLabel: HreRem.i18n('fieldlabel.detalle.oferta.fecha.vencimiento.opcionCompra'),
+									bind: {
+										value: '{datosbasicosoferta.fechaVencimientoOpcionCompra}'
+									}
+				    			},
+				    			{
+									xtype : "comboboxfieldbase",
+									fieldLabel : HreRem.i18n('fieldlabel.oferta.subasta'),
+									bind : {
+										store : '{comboSiNoBoolean}',
+										value : '{datosbasicosoferta.checkSubasta}'
+									}
+								}
+							]
 						}
 
 						]
@@ -665,6 +749,17 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							handler : 'onClickGeneraOfertarHojaExcel',
 							margin : '10 10 10 10'
 						},
+						{
+                        	xtype : 'button',
+                        	reference : 'btnSendInterlocutores',
+                        	bind : {
+                        	        hidden: '{!mostrarBotonLanzarPBC}'
+                        	       },
+                        	rowspan : 2,
+                        	text : HreRem.i18n('btn.enviar.bc'),
+                        	handler : 'lanzarDatosPbc',
+                        	margin : '10 10 10 10'
+                        },
 						//TODO: Pruebas del excel
 						/*{
 							xtype : 'button',
@@ -708,7 +803,20 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						}]
 
 					}]
-		}, {
+		},
+		{
+			xtype : 'fieldset',
+			title : HreRem.i18n('fieldlabel.sanciones'),
+			colspan : 3,
+			bind:{
+				hidden: '{!esBankia}'
+			},
+			items : [{
+				xtype:'sancionesBkGrid'
+			}]
+			
+		},
+		{
 
 			xtype : 'fieldset',
 			title : HreRem.i18n('title.textos'),

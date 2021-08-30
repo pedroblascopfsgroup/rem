@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAntiguoDeud;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -308,8 +309,21 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @Column(name="ECO_NUM_PROTOCOLO")
     private String numeroProtocolo;
-    
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MRA_ID")
+	private DDMotivoRechazoAntiguoDeud motivoRechazoAntiguoDeud;
+    
+    @Column(name="ECO_MESES_DURACION_CNT_ALQ")
+  	private Long mesesDuracionCntAlquiler;
+      
+    @Column(name="ECO_DETALLE_ANUL_ALQ")
+  	private String detalleAnulacionCntAlquiler;
+
+	@OneToMany(mappedBy = "expedienteComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ECO_ID")
+	private List<InterlocutorExpediente> interlocutoresExpediente;
+    
     @Version   
 	private Long version;
 
@@ -955,6 +969,35 @@ public class ExpedienteComercial implements Serializable, Auditable {
 		this.numeroProtocolo = numeroProtocolo;
 	}
 	
-	
+	public DDMotivoRechazoAntiguoDeud getMotivoRechazoAntiguoDeud() {
+		return motivoRechazoAntiguoDeud;
+	}
 
+	public void setMotivoRechazoAntiguoDeud(DDMotivoRechazoAntiguoDeud motivoRechazoAntiguoDeud) {
+		this.motivoRechazoAntiguoDeud = motivoRechazoAntiguoDeud;
+	}
+
+	public Long getMesesDuracionCntAlquiler() {
+		return mesesDuracionCntAlquiler;
+	}
+
+	public void setMesesDuracionCntAlquiler(Long mesesDuracionCntAlquiler) {
+		this.mesesDuracionCntAlquiler = mesesDuracionCntAlquiler;
+	}
+
+	public String getDetalleAnulacionCntAlquiler() {
+		return detalleAnulacionCntAlquiler;
+	}
+
+	public void setDetalleAnulacionCntAlquiler(String detalleAnulacionCntAlquiler) {
+		this.detalleAnulacionCntAlquiler = detalleAnulacionCntAlquiler;
+	}
+
+	public List<InterlocutorExpediente> getInterlocutoresExpediente() {
+		return interlocutoresExpediente;
+	}
+
+	public void setInterlocutoresExpediente(List<InterlocutorExpediente> interlocutoresExpediente) {
+		this.interlocutoresExpediente = interlocutoresExpediente;
+	}
 }

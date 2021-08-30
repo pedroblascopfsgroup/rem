@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210726
+--## FECHA_CREACION=20210816
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14024
+--## INCIDENCIA_LINK=HREOS-14947
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -16,7 +16,8 @@
 --##        0.4 Cortamos cadenas - [HREOS-14368] - Daniel Algaba
 --##        0.5 Metemos NUM_IDENTFICATIVO como campos de cruce - [HREOS-14368] - Daniel Algaba
 --##        0.6 Se corrige error encontrado en la EQV por varios tipos de vía apuntando a diferentes tipos de caixa - [HREOS-14648] -  Daniel Algaba
---##        0.6 Se añade un leftpad al código postal, por si tuviese menos dígitos de los esperados - [HREOS-14024] -  Daniel Algaba
+--##        0.7 Se añade un leftpad al código postal, por si tuviese menos dígitos de los esperados - [HREOS-14024] -  Daniel Algaba
+--##        0.8 Se Corrige los campos de Latitud y Longitud - [HREOS-14947] -  Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -66,8 +67,8 @@ BEGIN
                   , EQV_ESE.DD_CODIGO_CAIXA ALA_EDIFICIO
                   , EQV_PLN.DD_CODIGO_CAIXA PLANTA
                   , SUBSTR(BIE_LOC.BIE_LOC_PUERTA, 0, 5) NUM_UBICACION
-                  , REPLACE(ACT_LOC.LOC_LONGITUD, '','',''.'') X_GOOGLE
-                  , REPLACE(ACT_LOC.LOC_LATITUD, '','',''.'') Y_GOOGLE
+                  , CASE WHEN ACT_LOC.LOC_LONGITUD != 0 THEN ACT_LOC.LOC_LONGITUD ELSE NULL END X_GOOGLE
+                  , CASE WHEN ACT_LOC.LOC_LATITUD != 0 THEN ACT_LOC.LOC_LATITUD ELSE NULL END Y_GOOGLE
                   , ACT_LOC.LOC_BLOQUE SIGLA_EDIFICIO
                   FROM '|| V_ESQUEMA ||'.BIE_LOCALIZACION BIE_LOC
                   JOIN '|| V_ESQUEMA ||'.ACT_LOC_LOCALIZACION ACT_LOC ON BIE_LOC.BIE_LOC_ID = ACT_LOC.BIE_LOC_ID AND ACT_LOC.BORRADO = 0
@@ -153,6 +154,30 @@ BEGIN
       EXECUTE IMMEDIATE V_MSQL;
 
       SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
+      SALIDA := SALIDA || '   [INFO] 1.1 - CORRECCIÓN DE CAMPOS X_GOOGLE Y Y_GOOGLE'||CHR(10);
+      
+      V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.AUX_APR_RBC_STOCK APR SET 
+                    APR.X_GOOGLE = CASE WHEN INSTR(APR.X_GOOGLE,''-,'') = 1 THEN REPLACE(APR.X_GOOGLE,''-,'',''-0,'')
+                        WHEN INSTR(APR.X_GOOGLE,'','') = 1 THEN ''0'' || APR.X_GOOGLE
+                        ELSE APR.X_GOOGLE END
+                    ,  APR.Y_GOOGLE = CASE WHEN INSTR(APR.Y_GOOGLE,''-,'') = 1 THEN REPLACE(APR.Y_GOOGLE,''-,'',''-0,'')
+                        WHEN INSTR(APR.Y_GOOGLE,'','') = 1 THEN ''0'' || APR.Y_GOOGLE
+                        ELSE APR.Y_GOOGLE END';
+
+      EXECUTE IMMEDIATE V_MSQL;
+      
+      V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.AUX_APR_RBC_STOCK APR SET 
+                    APR.X_GOOGLE = CASE WHEN INSTR(APR.X_GOOGLE,''-'') = 1 THEN ''-'' || LPAD(REPLACE(TRIM(SUBSTR(X_GOOGLE,INSTR(X_GOOGLE,''-''),INSTR(X_GOOGLE,'','')-1)),''-'',''''),6,''0'') || '','' || RPAD(TRIM(SUBSTR(APR.X_GOOGLE,INSTR(APR.X_GOOGLE,'','')+1)),15,''0'')
+                    WHEN X_GOOGLE IS NOT NULL THEN LPAD(REPLACE(TRIM(SUBSTR(X_GOOGLE,INSTR(X_GOOGLE,''-''),INSTR(X_GOOGLE,'','')-1)),''-'',''''),6,''0'') || '','' || RPAD(TRIM(SUBSTR(APR.X_GOOGLE,INSTR(APR.X_GOOGLE,'','')+1)),15,''0'')
+                    ELSE NULL END
+                    ,APR.Y_GOOGLE = CASE WHEN INSTR(APR.Y_GOOGLE,''-'') = 1 THEN ''-'' || LPAD(REPLACE(TRIM(SUBSTR(Y_GOOGLE,INSTR(Y_GOOGLE,''-''),INSTR(Y_GOOGLE,'','')-1)),''-'',''''),6,''0'') || '','' || RPAD(TRIM(SUBSTR(APR.Y_GOOGLE,INSTR(APR.Y_GOOGLE,'','')+1)),15,''0'')
+                     WHEN Y_GOOGLE IS NOT NULL THEN LPAD(REPLACE(TRIM(SUBSTR(Y_GOOGLE,INSTR(Y_GOOGLE,''-''),INSTR(Y_GOOGLE,'','')-1)),''-'',''''),6,''0'') || '','' || RPAD(TRIM(SUBSTR(APR.Y_GOOGLE,INSTR(APR.Y_GOOGLE,'','')+1)),15,''0'') 
+                    ELSE NULL END';
+
+      EXECUTE IMMEDIATE V_MSQL;
+      
+      SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| ' PARA CORREGIR EL FORMATO' || CHR(10);
 
       SALIDA := SALIDA || '   [INFO] 2 - EXTRACCIÓN A AUX_APR_RBC_STOCK DE LA BIE_DATOS_REGISTRALES Y ACT_REG_INFO_REGISTRAL'||CHR(10);
 

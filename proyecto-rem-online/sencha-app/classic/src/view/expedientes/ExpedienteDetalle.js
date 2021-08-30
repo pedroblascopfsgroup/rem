@@ -26,7 +26,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 					tabPanel.down("[itemId=botoneditar]").setVisible(false);
 				} else {		
 	            	tabPanel.evaluarBotonesEdicion(tab);
-				}
+				}				
+				this.checkProceso(tabPanel);
 			},
 
 			beforetabchange: function (tabPanel, tabNext, tabCurrent) {
@@ -41,10 +42,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 			    	}
 					
 				}
-								
-				if(!this.procesado){
-						this.checkProceso(tabPanel);
-				}			
+				
+				this.checkProceso(tabPanel);
 				
 				if(tabNext.getTitle() == HreRem.i18n('title.oferta')){
 					tabNext.down("[itemId=botoneditar]").setDisabled(!this.procesado);
@@ -67,6 +66,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 					   					if(!tabNext.ocultarBotonesEdicion) {
 						            		tabPanel.evaluarBotonesEdicion(tabNext);
 					   					}
+										this.checkProceso(tabPanel);
 	            			        }
 	            			   }
 	        			});            		

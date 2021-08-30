@@ -14,6 +14,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTratamiento;
@@ -130,4 +131,41 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 
 		return haPasado;
 	}
+	
+	@Override
+	public boolean isOfertaContraOfertaMayor10K(TareaExterna tareaExterna) {
+
+		boolean isMayor = false;
+		Double diezK = (double) 10000;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if(eco != null) {
+			Oferta oferta = eco.getOferta();
+			if(oferta != null) {
+				if(oferta.getImporteContraOferta() != null){
+					if( oferta.getImporteContraOferta() >= diezK){	
+						isMayor = true;
+					}
+				}else if(oferta.getImporteOferta() != null && oferta.getImporteOferta() >= diezK) {
+					isMayor = true;
+				}
+			}
+		}
+		
+		return isMayor;
+	}
+	
+	@Override
+	public boolean isMetodoActualizacionRelleno(TareaExterna tareaExterna) {
+		boolean isRelleno = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if(eco != null) {
+			CondicionanteExpediente coe = eco.getCondicionante();
+			if(coe != null && coe.getMetodoActualizacionRenta() != null) {
+				isRelleno = true;
+			}
+		}
+		
+		return isRelleno;
+	}
+	
 }

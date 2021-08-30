@@ -2025,6 +2025,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	@Transactional
 	public PerimetroActivo getPerimetroByIdActivo(Long idActivo) {
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroActivo);
@@ -5745,9 +5746,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		if (tituloActivoTPA != null) {
 			conTitulo = tituloActivoTPA.getCodigo();
-		}else {
+		} else if (!Checks.esNulo(posesoria.getConTitulo())) {
 			conTitulo = posesoria.getConTitulo().getCodigo();
 		}
+		
 		if (activoDto.getOcupado() != null) {
 			ocupado = activoDto.getOcupado();
 		} else

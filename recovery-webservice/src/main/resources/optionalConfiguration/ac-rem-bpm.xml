@@ -731,6 +731,15 @@
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.actualizarOfertaBoarding(tareaExterna);
 			}
+			def isOfertaContraOfertaMayor10K = {
+				def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+				return tramiteAlquilerManager.isOfertaContraOfertaMayor10K(tareaExterna);
+			}
+			def isMetodoActualizacionRelleno = {
+				def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+				return tramiteAlquilerManager.isMetodoActualizacionRelleno(tareaExterna);
+			}
+			
   			 ]]></value>
   		</list>
   	</property>

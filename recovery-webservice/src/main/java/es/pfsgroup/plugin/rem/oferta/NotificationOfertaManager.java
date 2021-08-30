@@ -656,8 +656,6 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
 		if(!Checks.esNulo(usuarioBackOffice)){	
 			mailsPara.add(usuarioBackOffice.getEmail());
-		}
-		else {
 			mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(usuarioBackOffice);
 			mailsPara.addAll(mailsSustituto);
 		}

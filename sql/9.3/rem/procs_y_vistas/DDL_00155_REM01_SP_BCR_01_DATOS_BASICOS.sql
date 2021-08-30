@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210824
+--## FECHA_CREACION=20210830
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14974
@@ -206,6 +206,8 @@ BEGIN
                       LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID=ACT.DD_SAC_ID
                       LEFT JOIN '|| V_ESQUEMA ||'.EQV_CAIXA_TUD EQVTUD ON EQVTUD.SUBTIPO=SAC.DD_SAC_CODIGO
                       LEFT JOIN '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO TUD ON TUD.DD_TUD_CODIGO=EQVTUD.USO_DOMINANTE
+                      JOIN '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO
+                      WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                   ) us ON (us.act_id = act.act_id)
                   when matched then update set
                       act.DD_TUD_ID = NVL(act.DD_TUD_ID,us.DD_TUD_ID)

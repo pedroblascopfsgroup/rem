@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.expedientes.GestoresExpediente', {
     extend: 'Ext.panel.Panel',
     xtype: 'gestoresexpediente',
-    requires: ['HreRem.view.expedientes.gestores.ComboGestores','HreRem.view.expedientes.gestores.GestoresList','Ext.plugin.LazyItems'],
+    requires: ['HreRem.view.expedientes.gestores.ComboGestoresExpediente','HreRem.view.expedientes.gestores.GestoresList','Ext.plugin.LazyItems'],
     layout: 'fit',
 
     initComponent: function () {

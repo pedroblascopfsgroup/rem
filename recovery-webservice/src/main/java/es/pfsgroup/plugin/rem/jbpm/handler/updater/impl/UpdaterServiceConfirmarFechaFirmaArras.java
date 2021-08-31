@@ -54,7 +54,8 @@ public class UpdaterServiceConfirmarFechaFirmaArras implements UpdaterService {
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceConfirmarFechaFirmaArras.class);
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	@Override
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		Usuario usuarioLogeado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
@@ -112,10 +113,5 @@ public class UpdaterServiceConfirmarFechaFirmaArras implements UpdaterService {
 		return this.getCodigoTarea();
 	}
 
-	@Override
-	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

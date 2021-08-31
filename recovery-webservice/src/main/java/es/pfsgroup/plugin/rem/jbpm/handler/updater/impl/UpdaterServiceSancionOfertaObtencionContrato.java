@@ -104,7 +104,8 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaObtencionContrato.class);
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	@Override
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		Usuario usuarioLogeado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
@@ -358,11 +359,6 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		return this.getCodigoTarea();
 	}
 
-	@Override
-	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 
 }

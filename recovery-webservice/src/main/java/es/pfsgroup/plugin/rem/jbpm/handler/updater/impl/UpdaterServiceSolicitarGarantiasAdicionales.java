@@ -46,7 +46,8 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSolicitarGarantiasAdicionales.class);
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	@Override
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
@@ -105,10 +106,5 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 		return this.getCodigoTarea();
 	}
 
-	@Override
-	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

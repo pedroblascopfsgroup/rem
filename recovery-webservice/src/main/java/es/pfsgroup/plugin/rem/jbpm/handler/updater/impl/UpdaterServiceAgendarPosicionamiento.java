@@ -42,7 +42,7 @@ public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceAgendarPosicionamiento.class);
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		DtoPosicionamiento dtoPosicionamiento = new DtoPosicionamiento();
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		try {
@@ -73,12 +73,6 @@ public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
 
 	public String[] getKeys() {
 		return this.getCodigoTarea();
-	}
-
-	@Override
-	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

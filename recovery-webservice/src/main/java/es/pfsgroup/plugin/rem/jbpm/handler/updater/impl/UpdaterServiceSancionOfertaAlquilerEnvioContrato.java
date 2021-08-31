@@ -57,7 +57,7 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		boolean estadoBcModificado = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
@@ -96,10 +96,5 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 		return this.getCodigoTarea();
 	}
 
-	@Override
-	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

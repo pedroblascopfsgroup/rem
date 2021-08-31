@@ -94,7 +94,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		Activo activo = ofertaAceptada.getActivoPrincipal();
@@ -279,11 +279,4 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 	public String[] getKeys() {
 		return this.getCodigoTarea();
 	}
-
-	@Override
-	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

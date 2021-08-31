@@ -94,6 +94,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
+	@Override
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
@@ -279,4 +280,5 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 	public String[] getKeys() {
 		return this.getCodigoTarea();
 	}
+
 }

@@ -1406,6 +1406,8 @@ public interface ExpedienteComercialApi {
 
 	List<DDEntidadFinanciera> getListEntidadFinanciera(Long idExpediente);
 
+	public void createReservaAndCondicionesReagendarArras(ExpedienteComercial expediente, Double importe, Integer mesesFianza, Oferta oferta);
+	
 	List<DtoActualizacionRenta> getActualizacionRenta(Long idExpediente)throws IllegalAccessException, InvocationTargetException;
 
 	void deleteActualizacionRenta(Long id);

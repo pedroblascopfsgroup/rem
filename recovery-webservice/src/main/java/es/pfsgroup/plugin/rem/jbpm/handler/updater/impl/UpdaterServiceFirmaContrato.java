@@ -49,14 +49,22 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 	private static final String COMBO_NUMERO_PROTOCOLO = "numeroProtocolo";
 	private static final String COMBO_RESULTADO = "comboResultado";
 	private static final String COMBO_MOTIVO_APLAZAMIENTO = "motivoAplazamiento";
+    private static final String COMBO_ARRAS = "comboArras";
+    private static final String MESES_FIANZA = "mesesFianza";
+    private static final String IMPORTE_FIANZA = "importeFianza";
+    private static final String MOTIVO_APLAZAMIENTO = "Firma forzada de arras";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceFirmaContrato.class);
 
+	@Override
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		boolean vuelveArras = false;
+		Double importe = null;
+		Integer mesesFianza = null;
 		try {
 			if (ofertaAceptada != null) {
 				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -91,6 +99,39 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 								pos.setMotivoAplazamiento(valor.getValor());
 							}
 							genericDao.save(Posicionamiento.class, pos);
+						}
+						if (COMBO_ARRAS.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+							if(DDSiNo.SI.equals(valor.getValor())) {
+								vuelveArras = true;
+							}
+						}
+						if (MESES_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+							mesesFianza = Integer.valueOf(valor.getValor());
+						}
+						if (IMPORTE_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+							if (valor.getValor().contains(",")) {
+								String valorCambiado = valor.getValor().replaceAll(",", ".");
+								importe = Double.valueOf(valorCambiado).doubleValue();
+							}else {
+								importe = Double.valueOf(valor.getValor());
+							}
+							
+						}
+					}
+					if (vuelveArras) {											
+						if(expediente != null) {
+							expedienteComercialApi.createReservaAndCondicionesReagendarArras(expediente, importe, mesesFianza, ofertaAceptada);
+							pos = expedienteComercialApi.getUltimoPosicionamiento(expediente.getId(), null, false);
+							if(pos != null) {
+								if (DDMotivosEstadoBC.isAprobado(pos.getValidacionBCPos())) {
+									DDMotivosEstadoBC estado = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS,"codigo", DDMotivosEstadoBC.CODIGO_ANULADA));
+									pos.setValidacionBCPos(estado);
+								}else if(DDMotivosEstadoBC.isRechazado(pos.getValidacionBCPos())) {
+									pos.setMotivoAplazamiento(MOTIVO_APLAZAMIENTO);
+								}
+								pos.setFechaFinPosicionamiento(new Date());
+								genericDao.save(Posicionamiento.class, pos);
+							}
 						}
 					}
 					genericDao.save(ExpedienteComercial.class, expediente);

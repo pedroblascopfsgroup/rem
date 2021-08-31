@@ -59,7 +59,7 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceAgendarFechaArras.class);
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		DtoGridFechaArras dtoArras = new DtoGridFechaArras();
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		Usuario usuarioLogeado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
@@ -133,11 +133,4 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 	public String[] getKeys() {
 		return this.getCodigoTarea();
 	}
-
-	@Override
-	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

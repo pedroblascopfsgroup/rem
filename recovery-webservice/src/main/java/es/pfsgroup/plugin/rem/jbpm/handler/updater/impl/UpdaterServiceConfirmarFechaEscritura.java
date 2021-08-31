@@ -36,7 +36,7 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceConfirmarFechaEscritura.class);
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		String codigoValidacionBC = null;
 
 		for(TareaExternaValor valor :  valores){
@@ -64,12 +64,6 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 
 	public String[] getKeys() {
 		return this.getCodigoTarea();
-	}
-
-	@Override
-	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

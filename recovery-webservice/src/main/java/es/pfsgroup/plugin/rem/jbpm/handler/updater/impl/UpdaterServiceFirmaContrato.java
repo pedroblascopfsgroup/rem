@@ -54,7 +54,7 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceFirmaContrato.class);
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		try {
@@ -108,11 +108,4 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 	public String[] getKeys() {
 		return this.getCodigoTarea();
 	}
-
-	@Override
-	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

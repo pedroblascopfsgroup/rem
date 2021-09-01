@@ -507,6 +507,28 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 		    	callback: function(options, success, response){
 				}  		     
 			});	 
+		},
+		onChangeComboProvincia: function(combo) {
+			var me = this,
+				form = me.getView(),
+				chainedCombo = form.lookupReference(combo.chainedReference);
+			
+			if (Ext.isEmpty(combo.getValue())) {
+				chainedCombo.clearValue();
+			}
+
+			chainedCombo.getStore().load({
+				params: {
+					codigoProvincia: combo.getValue()
+				},
+				callback: function(records, operation, success) {
+					if (!Ext.isEmpty(records) && records.length > 0) {
+						chainedCombo.setDisabled(false);
+					} else {
+						chainedCombo.setDisabled(true);
+					}
+				}
+			});
 		}
 
 });

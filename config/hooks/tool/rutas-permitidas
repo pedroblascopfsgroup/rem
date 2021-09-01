@@ -224,3 +224,5 @@ func-rem-comercialHydra-HREOS-14553|func-rem-comercialHydra
 rem_mirror|func-rem-boardingOfertasCFV
 rem_mirror|func-rem-unicajaLBK
 func-rem-unicajaLBK|func-rem-boardingOfertasCFV
+func-rem-modeloHydra|func-rem-preparacionHYDRA
+func-rem-preparacionHYDRA|func-rem-comercialHydra

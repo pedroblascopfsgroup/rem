@@ -512,8 +512,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 			var me = this,
 				form = me.getView(),
 				chainedCombo = form.lookupReference(combo.chainedReference);
-	
-
+			
 			if (Ext.isEmpty(combo.getValue())) {
 				chainedCombo.clearValue();
 			}

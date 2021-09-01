@@ -492,6 +492,9 @@ public class GenericAdapter {
 				clienteNuevo.setProvincia(clienteOfertaOrigen.getProvincia());
 				clienteNuevo.setMunicipio(clienteOfertaOrigen.getMunicipio());
 				clienteNuevo.setDireccion(clienteOfertaOrigen.getDireccion());
+				clienteNuevo.setDireccion(clienteOfertaOrigen.getDireccion());
+				clienteNuevo.setInfoAdicionalPersona(clienteOfertaOrigen.getInfoAdicionalPersona());
+
 				
 				genericDao.update(ClienteComercial.class, clienteNuevo);
 				

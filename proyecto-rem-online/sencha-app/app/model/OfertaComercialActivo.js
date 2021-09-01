@@ -85,9 +85,7 @@ Ext.define('HreRem.model.OfertaComercialActivo', {
             	name: 'numOferPrincipal'
             },
             {
-            	name: 'fechaNacimientoConstitucion',
-            	type:'date',
-    			dateFormat: 'c'
+            	name: 'fechaNacimientoConstitucion'
             },
             {
             	name:'paisNacimientoCompradorCodigo'

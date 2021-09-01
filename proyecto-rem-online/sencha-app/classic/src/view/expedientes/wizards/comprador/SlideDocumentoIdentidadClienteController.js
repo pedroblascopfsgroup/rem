@@ -131,17 +131,18 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		            				slideDatos.getForm().findField('email').setReadOnly(true);
 		            			}
 		            			
-		            			
+	
 		            			if(!Ext.isEmpty(comprador.codigoPais)){
 		            				slideDatos.getForm().findField('codigoPais').setValue(comprador.codigoPais);
 		            			}
 		            		
 		            			if(!Ext.isEmpty(comprador.fechaNacimientoConstitucion)){
-		            				slideDatos.getForm().findField('fechaNacimientoConstitucion').setValue(comprador.fechaNacimientoConstitucion);
+		            				var date = comprador.fechaNacimientoConstitucion.slice(0, 10);
+		            				slideDatos.getForm().findField('fechaNacimientoConstitucion').setValue(date);
 		            			}
 		            			
 		            			if(!Ext.isEmpty(comprador.localidadNacimientoCompradorCodigo)){
-		            				slideDatos.getForm().findField('localidadNacimientoCompradorCodigo').setValue(comprador.localidadNacimientoCompradorDescripcion);
+		            				slideDatos.getForm().findField('localidadNacimientoCompradorCodigo').setValue(comprador.localidadNacimientoCompradorCodigo);
 		            			}
 		            			
 		            			if(!Ext.isEmpty(comprador.municipioCodigo)){

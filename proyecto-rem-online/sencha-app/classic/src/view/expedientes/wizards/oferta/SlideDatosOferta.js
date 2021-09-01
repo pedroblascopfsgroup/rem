@@ -435,7 +435,6 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 					        	fieldLabel:  HreRem.i18n('fieldlabel.fechaNacimientoConstitucion'),
 					        	name: 'fechaNacimientoConstitucion',
 					        	reference: 'fechaNacimientoConstitucion',
-					        	maxValue: null,
 					        	allowBlank: !isBk,
 								hidden: !isBk,
 								bind: {
@@ -452,10 +451,12 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								bind: {
 									store: '{comboPaises}',
 									value: '{oferta.paisNacimientoCompradorCodigo}'
-								}
+								},
+								displayField: 'descripcion',
+								valueField: 'codigo'
 							},
 							{
-								xtype: 'comboboxfieldbasedd',
+								xtype: 'comboboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.municipio.nacimiento'),
 								reference: 'localidadNacimientoCompradorCodigo',
 								name: 'localidadNacimientoCompradorCodigo',
@@ -463,9 +464,11 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								hidden: !isBk,
 								bind: {
 									store: '{comboMunicipioSinFiltro}',
-									value: '{oferta.localidadNacimientoCompradorCodigo}',
-									rawValue: '{oferta.localidadNacimientoCompradorDescripcion}'
-								}
+									value: '{oferta.localidadNacimientoCompradorCodigo}'
+								},
+								displayField: 'descripcion',
+								valueField: 'codigo'
+								
 							},
 							{
 								xtype: 'comboboxfieldbase',
@@ -476,7 +479,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								bind: {
 									store: '{comboPaises}',
 									value: '{oferta.codigoPais}'
-								}
+								},
+								displayField: 'descripcion',
+								valueField: 'codigo'
 							},
 							{
 								xtype: 'comboboxfieldbase',
@@ -506,7 +511,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 									store: '{comboMunicipioOfr}',
 									disabled: '{!oferta.provinciaCodigo}',
 									value: '{oferta.municipioCodigo}'
-								}
+								},
+								displayField: 'descripcion',
+								valueField: 'codigo'
 							},
 							{
 								fieldLabel: HreRem.i18n('fieldlabel.direccion'),
@@ -515,13 +522,14 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								allowBlank: false
 							},
 							{
-								xtype: 'textfieldbase',
+								xtype: 'comboboxfieldbase',
 								fieldLabel:  HreRem.i18n('fieldlabel.prp'),
 								name: 		'prp',								
 								allowBlank: !isBk,
 								hidden: !isBk,
 								bind: {
-									value: '{oferta.numOferPrincipal}'
+									store: '{comboSiNoBoolean}',
+									value: '{oferta.prp}'
 								},								
 					        	colspan: 1
 							}

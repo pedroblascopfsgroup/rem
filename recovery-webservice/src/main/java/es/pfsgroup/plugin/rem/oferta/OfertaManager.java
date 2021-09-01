@@ -4162,6 +4162,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						clienteComercialDto.setMunicipioCodigo(clienteCom.getMunicipio().getCodigo());
 					}
 					clienteComercialDto.setDireccion(clienteCom.getDireccion());
+					
+					if(clienteCom.getInfoAdicionalPersona() != null) {
+						clienteComercialDto.setPrp(clienteCom.getInfoAdicionalPersona().getPrp());
+					}
 				}
 
 

@@ -94,14 +94,14 @@ public class DtoOfertasFilter extends WebDto {
 	
 	
 	
-	private Date fechaNacimientoConstitucion;
+	private String fechaNacimientoConstitucion;
 	private String paisNacimientoCompradorCodigo;
     private String localidadNacimientoCompradorCodigo;
     private String codigoPais;
     private String provinciaCodigo;
     private String municipioCodigo;
     private String direccion;
-    private String prp;
+    private Boolean prp;
     private String localidadNacimientoCompradorDescripcion;
 		
 	public Long getNumOferta() {
@@ -534,10 +534,10 @@ public class DtoOfertasFilter extends WebDto {
 	public void setOfrDocRespPrescriptor(Boolean ofrDocRespPrescriptor) {
 		this.ofrDocRespPrescriptor = ofrDocRespPrescriptor;
 	}
-	public Date getFechaNacimientoConstitucion() {
+	public String getFechaNacimientoConstitucion() {
 		return fechaNacimientoConstitucion;
 	}
-	public void setFechaNacimientoConstitucion(Date fechaNacimientoConstitucion) {
+	public void setFechaNacimientoConstitucion(String fechaNacimientoConstitucion) {
 		this.fechaNacimientoConstitucion = fechaNacimientoConstitucion;
 	}
 	public String getPaisNacimientoCompradorCodigo() {
@@ -576,10 +576,10 @@ public class DtoOfertasFilter extends WebDto {
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
 	}
-	public String getPrp() {
+	public Boolean getPrp() {
 		return prp;
 	}
-	public void setPrp(String prp) {
+	public void setPrp(Boolean prp) {
 		this.prp = prp;
 	}
 	public String getLocalidadNacimientoCompradorDescripcion() {

@@ -305,6 +305,9 @@ public class ActivoAdapter {
 	
 	private static final String T017_TRAMITE_BBVA_DESCRIPCION = "Trámite comercial de venta BBVA";
     private static final String CODIGO_TRAMITE_T017 = "T017";
+    
+	SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yy");
+
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -3908,8 +3911,22 @@ public class ActivoAdapter {
 				clienteComercial.setIdPersonaHaya(clientes.get(0).getIdPersonaHaya());
 			}
 			
+			InfoAdicionalPersona iap = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", clienteComercial.getIdPersonaHaya()));
+			
+			if(iap == null) {
+				iap = new InfoAdicionalPersona();
+				iap.setAuditoria(Auditoria.getNewInstance());
+				iap.setIdPersonaHaya(clienteComercial.getIdPersonaHaya());
+				clienteComercial.setInfoAdicionalPersona(iap);
+			}else if(clienteComercial.getInfoAdicionalPersona() == null) {
+				clienteComercial.setInfoAdicionalPersona(iap);
+			}
+				
 			Filter filtroNuevosCamposClc = null;
-			clienteComercial.setFechaNacimiento(dto.getFechaNacimientoConstitucion());
+			
+			if(dto.getFechaNacimientoConstitucion() != null) {
+				clienteComercial.setFechaNacimiento(ft.parse(dto.getFechaNacimientoConstitucion()));
+			}
 			
 			if(dto.getPaisNacimientoCompradorCodigo() != null) {
 				filtroNuevosCamposClc = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getPaisNacimientoCompradorCodigo());
@@ -3942,7 +3959,12 @@ public class ActivoAdapter {
 			
 			clienteComercial.setDireccion(dto.getDireccion());
 			
+			if(clienteComercial.getInfoAdicionalPersona() != null){
+				clienteComercial.getInfoAdicionalPersona().setPrp(dto.getPrp());
+			}
 			
+			
+			genericDao.save(InfoAdicionalPersona.class, iap);
 			
 			clienteComercial = genericDao.save(ClienteComercial.class, clienteComercial);
 			

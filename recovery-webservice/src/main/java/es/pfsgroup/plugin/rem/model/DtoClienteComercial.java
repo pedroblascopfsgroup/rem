@@ -42,7 +42,7 @@ public class DtoClienteComercial {
     private String localidadNacimientoCompradorCodigo;
     private String codigoPais;
     private String municipioCodigo;
-    private String prp;
+    private Boolean prp;
     private String localidadNacimientoCompradorDescripcion;
 		
     
@@ -269,10 +269,10 @@ public class DtoClienteComercial {
 	public void setMunicipioCodigo(String municipioCodigo) {
 		this.municipioCodigo = municipioCodigo;
 	}
-	public String getPrp() {
+	public Boolean getPrp() {
 		return prp;
 	}
-	public void setPrp(String prp) {
+	public void setPrp(Boolean prp) {
 		this.prp = prp;
 	}
 	public String getLocalidadNacimientoCompradorDescripcion() {

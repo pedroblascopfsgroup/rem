@@ -95,7 +95,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboMunicipio',
-				extraParams: {codigoProvincia: ''} 
+				extraParams: {codigoProvincia: '{oferta.provinciaCodigo}'} 
 			},
 			autoLoad: true
 		}

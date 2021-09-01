@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -24,6 +25,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -110,6 +112,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
+import es.pfsgroup.plugin.rem.model.InfoAdicionalPersona;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
@@ -321,6 +324,9 @@ public class AgrupacionAdapter {
 	private static final String TIPO_COMERCIALIZACION_NO_VALIDO = "El tipo de comercialización no es válido.";
 
 	public static final String SPLIT_VALUE = ";s;";
+	
+	SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yy");
+
 
 	public DtoAgrupaciones getAgrupacionById(Long id) {
 
@@ -2411,8 +2417,22 @@ public class AgrupacionAdapter {
 				}
 			}
 			
+			InfoAdicionalPersona iap = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", clienteComercial.getIdPersonaHaya()));
+
+			
+			if(iap == null) {
+				iap = new InfoAdicionalPersona();
+				iap.setAuditoria(Auditoria.getNewInstance());
+				iap.setIdPersonaHaya(clienteComercial.getIdPersonaHaya());
+				clienteComercial.setInfoAdicionalPersona(iap);
+			}else if(clienteComercial.getInfoAdicionalPersona() == null) {
+				clienteComercial.setInfoAdicionalPersona(iap);
+			}
+			
 			Filter filtro = null;
-			clienteComercial.setFechaNacimiento(dto.getFechaNacimientoConstitucion());
+			if(dto.getFechaNacimientoConstitucion() != null) {
+				clienteComercial.setFechaNacimiento(ft.parse(dto.getFechaNacimientoConstitucion()));
+			}
 			
 			if(dto.getPaisNacimientoCompradorCodigo() != null) {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getPaisNacimientoCompradorCodigo());
@@ -2444,7 +2464,12 @@ public class AgrupacionAdapter {
 			}
 			
 			clienteComercial.setDireccion(dto.getDireccion());
+			if(clienteComercial.getInfoAdicionalPersona() != null) {
+				clienteComercial.getInfoAdicionalPersona().setPrp(dto.getPrp());
+			}
 			
+			genericDao.save(InfoAdicionalPersona.class, iap);
+
 			
 			genericDao.save(ClienteComercial.class, clienteComercial);
 

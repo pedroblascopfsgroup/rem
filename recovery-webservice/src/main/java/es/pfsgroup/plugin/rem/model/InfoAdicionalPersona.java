@@ -80,6 +80,9 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
 	
 	@Column(name = "IAP_SOCIEDAD")
 	private String sociedad;
+	
+	@Column(name = "IAP_OFICINA_TRABAJO")
+	private String oficinaTrabajo;
 
 
 	@Embedded
@@ -217,6 +220,14 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
 
 	public void setSociedad(String sociedad) {
 		this.sociedad = sociedad;
+	}
+
+	public String getOficinaTrabajo() {
+		return oficinaTrabajo;
+	}
+
+	public void setOficinaTrabajo(String oficinaTrabajo) {
+		this.oficinaTrabajo = oficinaTrabajo;
 	}
 
 }

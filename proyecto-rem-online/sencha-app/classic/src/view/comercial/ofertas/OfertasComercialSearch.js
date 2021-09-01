@@ -303,16 +303,18 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 						 		}
 							},
 							{
-					        	xtype: 'comboboxfieldbase',
+					        	xtype: 'comboboxfieldbasedd',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.gestoria'),
 					        	emptyText: HreRem.i18n('txt.seleccione.gestoria'),
 					        	displayField: 'apellidoNombre',
 	    						valueField: 'id',
 					        	bind: {
 				            		store: '{comboUsuariosGestoria}',
-				            		readOnly: $AU.userTipoGestor()=="GIAFORM"
+				            		disabled: $AU.userTipoGestor()!="GIAFORM"
 				            	},
-								name: 'gestoria'
+								name: 'gestoria',
+								emptyText: 'Introduzca un usuario de gestoría formalización',
+								filtradoEspecial2: true
 							},
 							{
 								fieldLabel:  HreRem.i18n('fieldlabel.email'),

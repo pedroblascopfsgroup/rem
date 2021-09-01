@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210824
+--## FECHA_CREACION=20210830
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14974
@@ -37,8 +37,33 @@ DECLARE
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
-                  --TIPO(TPA)  --SUBTIPO()  --USO_DOMINANTE(TUD)
+                  --TIPO(TPA)  --SUBTIPO(SAC)  --USO_DOMINANTE(TUD)
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+        T_TIPO_DATA('03','15','02'),
+        T_TIPO_DATA('03','29','05'),
+        T_TIPO_DATA('03','16','02'),
+        T_TIPO_DATA('03','13','02'),
+        T_TIPO_DATA('03','14','02'),
+        T_TIPO_DATA('03','28','05'),
+        --T_TIPO_DATA('09','','05'),
+        --T_TIPO_DATA('08','','04'),
+        T_TIPO_DATA('05','19','02'),
+        T_TIPO_DATA('05','22','07'),
+        T_TIPO_DATA('05','24','02'),
+        T_TIPO_DATA('05','20','02'),
+        T_TIPO_DATA('05','21','02'),
+        --T_TIPO_DATA('06','','05'),
+        T_TIPO_DATA('04','18','03'),
+        T_TIPO_DATA('04','17','03'),
+        T_TIPO_DATA('04','37','03'),
+        T_TIPO_DATA('07','24','02'),
+        T_TIPO_DATA('07','35','04'),
+        T_TIPO_DATA('07','26','05'),
+        T_TIPO_DATA('07','38','05'),
+        T_TIPO_DATA('07','36','04'),
+        T_TIPO_DATA('07','25','02'),
+        T_TIPO_DATA('01','27','03'),
+        T_TIPO_DATA('01','01','08'),
         T_TIPO_DATA('01','02','05'),
         T_TIPO_DATA('01','03','05'),
         T_TIPO_DATA('01','04','05')
@@ -58,18 +83,17 @@ BEGIN
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     
         --Comprobamos el dato a insertar
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.EQV_CAIXA_TUD WHERE SUBTIPO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.EQV_CAIXA_TUD WHERE TIPO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND SUBTIPO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
         --Si existe lo modificamos
         IF V_NUM_TABLAS > 0 THEN				
           
-          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(2)) ||'''');
+          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO TIPO: '''||TRIM(V_TMP_TIPO_DATA(1))||''', SUBTIPO: '''|| TRIM(V_TMP_TIPO_DATA(2)) ||'''');
 
        	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.EQV_CAIXA_TUD '||
-                    'SET   TIPO = '''||TRIM(V_TMP_TIPO_DATA(1))||''''|| 
-                        ', USO_DOMINANTE = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
-                    'WHERE SUBTIPO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
+                    'SET   USO_DOMINANTE = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
+                    'WHERE TIPO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND SUBTIPO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
           

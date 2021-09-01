@@ -30,6 +30,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	initComponent: function() {
 		var me = this;
 		var isBk = me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('isCarteraBankia');
+
 		me.buttons = [ { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickCancelar'},
 			{itemId: 'btnGuardar',
     		text: 'Crear',
@@ -359,7 +360,8 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 		            	    	name:		'intencionfinanciar',
 		            	    	allowBlank:	false,
 		            	    	bind:		'{oferta.intencionFinanciar}',
-					        	inputValue: true
+					        	inputValue: true,
+					        	colspan:2
 					        },
 					        {
 								xtype: 'comboboxfieldbase',
@@ -431,7 +433,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 						        		if (e.getKey() === e.ENTER) {
 						        			field.lookupController().buscarOferta(field);											        			
 						        		}
-						        	}
+						        	} 
 						        }
 		                	},
 							{
@@ -444,6 +446,109 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 									value: '{oferta.numOferPrincipal}'
 								},								
 					        	colspan: 2
+							},
+							{ 
+					        	xtype:'datefieldbase',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.fechaNacimientoConstitucion'),
+					        	name: 'fechaNacimientoConstitucion',
+					        	reference: 'fechaNacimientoConstitucion',
+					        	allowBlank: !isBk,
+								hidden: !isBk,
+								bind: {
+									value: '{oferta.fechaNacimientoConstitucion}'
+								}
+					        },
+					        {
+								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.pais.nacimiento'),
+								name: 'paisNacimientoCompradorCodigo',
+								reference: 'paisNacimientoCompradorCodigoRef',
+								allowBlank: !isBk,
+								hidden: !isBk,
+								bind: {
+									store: '{comboPaises}',
+									value: '{oferta.paisNacimientoCompradorCodigo}'
+								},
+								displayField: 'descripcion',
+								valueField: 'codigo'
+							},
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.municipio.nacimiento'),
+								reference: 'localidadNacimientoCompradorCodigo',
+								name: 'localidadNacimientoCompradorCodigo',
+								allowBlank: !isBk,
+								hidden: !isBk,
+								bind: {
+									store: '{comboMunicipioSinFiltro}',
+									value: '{oferta.localidadNacimientoCompradorCodigo}'
+								},
+								displayField: 'descripcion',
+								valueField: 'codigo'
+								
+							},
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.pais'),
+								name: 'codigoPais',
+								reference: 'pais',
+								allowBlank: false,
+								bind: {
+									store: '{comboPaises}',
+									value: '{oferta.codigoPais}'
+								},
+								displayField: 'descripcion',
+								valueField: 'codigo'
+							},
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.provincia'),
+								reference: 'provinciaCombo',
+								name: 'provinciaCodigo',
+								allowBlank: false,
+								chainedStore: 'comboMunicipioOfr',
+								chainedReference: 'municipioCombo',
+								bind: {
+									store: '{comboProvincia}',
+									value: '{oferta.provinciaCodigo}'
+								}, 
+								displayField: 'descripcion',
+								valueField: 'codigo',
+								listeners: {
+									select: 'onChangeComboProvincia'
+								}
+							},
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.municipio'),
+								reference: 'municipioCombo',
+								name: 'municipioCodigo',
+								allowBlank: false,
+								bind: {
+									store: '{comboMunicipioOfr}',
+									disabled: '{!oferta.provinciaCodigo}',
+									value: '{oferta.municipioCodigo}'
+								},
+								displayField: 'descripcion',
+								valueField: 'codigo'
+							},
+							{
+								fieldLabel: HreRem.i18n('fieldlabel.direccion'),
+								name: 'direccionTodos',
+								reference: 'direccionTodos',
+								allowBlank: false
+							},
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.prp'),
+								name: 		'prp',								
+								allowBlank: !isBk,
+								hidden: !isBk,
+								bind: {
+									store: '{comboSiNoBoolean}',
+									value: '{oferta.prp}'
+								},								
+					        	colspan: 1
 							}
 							
 						]

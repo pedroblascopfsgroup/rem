@@ -55,6 +55,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
+	@Override
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		boolean estadoBcModificado = false;
@@ -93,5 +94,4 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 	public String[] getKeys() {
 		return this.getCodigoTarea();
 	}
-
 }

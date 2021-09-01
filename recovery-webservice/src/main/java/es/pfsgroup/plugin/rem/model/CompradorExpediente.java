@@ -808,7 +808,7 @@ public class CompradorExpediente implements Serializable, Auditable {
 	public void setIdPersonaHayaRepresentante(Long idPersonaHayaRepresentante) {
 		this.idPersonaHayaRepresentante = idPersonaHayaRepresentante;
 	}
-	
+
 	public Boolean getPrp() {
 		return prp;
 	}
@@ -824,5 +824,5 @@ public class CompradorExpediente implements Serializable, Auditable {
 	public void setOficinaTrabajo(String oficinaTrabajo) {
 		this.oficinaTrabajo = oficinaTrabajo;
 	}
-	
+
 }

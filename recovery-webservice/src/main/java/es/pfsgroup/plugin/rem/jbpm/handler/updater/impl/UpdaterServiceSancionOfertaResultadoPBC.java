@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -28,15 +30,20 @@ import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 
 @Component
 public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
@@ -64,6 +71,9 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+	private ReservaDao reservaDao;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResultadoPBC.class);
 
@@ -75,16 +85,25 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
     private static final String CODIGO_ANULACION_IRREGULARIDADES = "601";
     private static final String CODIGO_SUBCARTERA_OMEGA = "65";
     public static final String CODIGO_T017 = "T017";
-
+    
+    private static final String COMBO_ARRAS = "comboArras";
+    private static final String MESES_FIANZA = "mesesFianza";
+    private static final String IMPORTE_FIANZA = "importeFianza";
+    
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		Activo activo = ofertaAceptada.getActivoPrincipal();
+		ExpedienteComercial expediente = null;
+		boolean vuelveArras = false;
+		Double importe = null;
+		Integer mesesFianza = null;
+		DecimalFormat num = new DecimalFormat("###.##");
 		
 		if(!Checks.esNulo(ofertaAceptada)) {
-			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
 			if (!Checks.esNulo(expediente)) {
 
@@ -209,6 +228,28 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 							}
 						}
 					}
+					
+					if (COMBO_ARRAS.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						if(DDSiNo.SI.equals(valor.getValor())) {
+							vuelveArras = true;
+						}
+					}
+					if (MESES_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						mesesFianza = Integer.valueOf(valor.getValor());
+					}
+					if (IMPORTE_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						if (valor.getValor().contains(",")) {
+							String valorCambiado = valor.getValor().replaceAll(",", ".");
+							importe = Double.valueOf(valorCambiado).doubleValue();
+						}else {
+							importe = Double.valueOf(valor.getValor());
+						}
+						
+					}
+				}
+				
+				if (vuelveArras) {					
+					expedienteComercialApi.createReservaAndCondicionesReagendarArras(expediente, importe, mesesFianza, ofertaAceptada);
 				}
 			}
 		}

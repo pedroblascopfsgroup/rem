@@ -56,6 +56,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
+	@Override
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		boolean estadoBcModificado = false;
@@ -112,5 +113,4 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 	public String[] getKeys() {
 		return this.getCodigoTarea();
 	}
-
 }

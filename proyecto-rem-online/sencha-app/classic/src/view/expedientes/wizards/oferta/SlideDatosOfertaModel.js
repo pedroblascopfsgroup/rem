@@ -81,6 +81,23 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaModel', {
 					diccionario: 'claseOferta'
 				}
 			}
+		},
+		comboMunicipioSinFiltro: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipioSinFiltro'
+			}
+		}, 
+		
+		comboMunicipioOfr: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: ''} 
+			},
+			autoLoad: true
 		}
 	}
 });

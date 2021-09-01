@@ -83,6 +83,36 @@ Ext.define('HreRem.model.OfertaComercialActivo', {
             },
     		{
             	name: 'numOferPrincipal'
+            },
+            {
+            	name: 'fechaNacimientoConstitucion',
+            	type:'date',
+    			dateFormat: 'c'
+            },
+            {
+            	name:'paisNacimientoCompradorCodigo'
+            },
+            {
+            	name:'localidadNacimientoCompradorCodigo'
+            },
+            {
+            	name:'codigoPais'
+            },
+            {
+            	name:'provinciaCodigo'
+            },
+            {
+            	name:'municipioCodigo'
+            },
+            {
+            	name:'direccion'
+            },
+            {
+            	name:'prp',
+            	type : 'boolean'
+            },
+            {
+            	name:'localidadNacimientoCompradorDescripcion'
             }
     ],
     

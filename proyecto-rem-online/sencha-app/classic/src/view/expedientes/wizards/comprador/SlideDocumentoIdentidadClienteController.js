@@ -130,6 +130,39 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		            				slideDatos.getForm().findField('email').setValue(comprador.email);
 		            				slideDatos.getForm().findField('email').setReadOnly(true);
 		            			}
+		            			
+		            			
+		            			if(!Ext.isEmpty(comprador.codigoPais)){
+		            				slideDatos.getForm().findField('codigoPais').setValue(comprador.codigoPais);
+		            			}
+		            		
+		            			if(!Ext.isEmpty(comprador.fechaNacimientoConstitucion)){
+		            				slideDatos.getForm().findField('fechaNacimientoConstitucion').setValue(comprador.fechaNacimientoConstitucion);
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.localidadNacimientoCompradorCodigo)){
+		            				slideDatos.getForm().findField('localidadNacimientoCompradorCodigo').setValue(comprador.localidadNacimientoCompradorDescripcion);
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.municipioCodigo)){
+		            				slideDatos.getForm().findField('municipioCodigo').setValue(comprador.municipioCodigo);
+		            			}	
+		            			
+		            			if(!Ext.isEmpty(comprador.paisNacimientoCompradorCodigo)){
+		            				slideDatos.getForm().findField('paisNacimientoCompradorCodigo').setValue(comprador.paisNacimientoCompradorCodigo);
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.provinciaCodigo)){
+		            				slideDatos.getForm().findField('provinciaCodigo').setValue(comprador.provinciaCodigo);
+		            			}
+		            			if(!Ext.isEmpty(comprador.direccion)){
+		            				slideDatos.getForm().findField('direccionTodos').setValue(comprador.direccion);
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.prp)){
+		            				slideDatos.getForm().findField('prp').setValue(comprador.prp);
+		            			}
+		            			
 	
 		        			}
 		        			wizard.width= Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5;

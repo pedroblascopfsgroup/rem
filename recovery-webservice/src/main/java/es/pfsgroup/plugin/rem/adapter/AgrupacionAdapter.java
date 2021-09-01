@@ -80,6 +80,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoAsistida;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
@@ -324,6 +325,10 @@ public class AgrupacionAdapter {
 	private static final String ACTIVO_NO_YUBAI = "El activo no es de Yubai";
 	private static final String ACTIVO_NO_OBRA_NUEVA = "El activo no es de obra nueva";
 	private static final String TIPO_COMERCIALIZACION_NO_VALIDO = "El tipo de comercialización no es válido.";
+	private static final String SI = "Si";
+	private static final String NO = "No";
+	private static final String MAYORISTA = "Mayorista";
+	private static final String MINORISTA = "Minorista";
 
 	public static final String SPLIT_VALUE = ";s;";
 
@@ -5036,6 +5041,11 @@ public class AgrupacionAdapter {
 		DtoComercialAgrupaciones dtoAgrupacion = new DtoComercialAgrupaciones();
 
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
+		boolean necesidadArras = false;
+		boolean canalMayoristaVenta = false;
+		boolean canalMayoristaAlquiler = false;
+		String canalVenta = "";
+		String canalAlquiler = "";
 		try {
 			if (!Checks.esNulo(agrupacion.getActivoAutorizacionTramitacionOfertas())) {
 			
@@ -5050,6 +5060,75 @@ public class AgrupacionAdapter {
 		} catch (InvocationTargetException e) {
 			logger.error("error en agrupacionAdapter", e);
 		}
+		
+		if (DDCartera.isCarteraBk(agrupacion.getActivoPrincipal().getCartera()) && 
+				(DDTipoAgrupacion.isRestringida(agrupacion.getTipoAgrupacion()) || DDTipoAgrupacion.isRestringidaAlquiler(agrupacion.getTipoAgrupacion())
+				|| DDTipoAgrupacion.isRestringidaObrem(agrupacion.getTipoAgrupacion()))) {
+			
+			List<ActivoAgrupacionActivo> agaList = agrupacion.getActivos();
+			
+			if (agaList != null && agaList.size() > 0) {
+				for (ActivoAgrupacionActivo activoAgrupacionActivo : agaList) {
+					Activo aux = activoAgrupacionActivo.getActivo();
+					ActivoCaixa auxActCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", aux.getId()));
+					if (auxActCaixa != null) {
+						if (auxActCaixa.getNecesidadArras() != null && Boolean.TRUE.equals(auxActCaixa.getNecesidadArras())) {
+							necesidadArras = true;
+						}
+						//CANAL VENTA
+						//Minorista
+						if (auxActCaixa.getCanalDistribucionVenta() != null 
+								&& DDTipoComercializar.CODIGO_RETAIL.equals(auxActCaixa.getCanalDistribucionVenta().getCodigo())) {
+							canalVenta = MINORISTA;
+						}else if (auxActCaixa.getCanalDistribucionVenta() != null 
+								&& DDTipoComercializar.CODIGO_SINGULAR.equals(auxActCaixa.getCanalDistribucionVenta().getCodigo())) {
+							canalVenta = MAYORISTA;
+							canalMayoristaVenta = true;
+						}
+						//CANAL Alquiler
+						//Minorista
+						if (auxActCaixa.getCanalDistribucionAlquiler() != null 
+								&& DDTipoComercializar.CODIGO_RETAIL.equals(auxActCaixa.getCanalDistribucionAlquiler().getCodigo())) {
+							canalAlquiler = MINORISTA;
+						}else if (auxActCaixa.getCanalDistribucionAlquiler() != null 
+								&& DDTipoComercializar.CODIGO_SINGULAR.equals(auxActCaixa.getCanalDistribucionAlquiler().getCodigo())) {
+							canalAlquiler = MAYORISTA;
+							canalMayoristaAlquiler = true;
+						}
+						
+						/*if ((necesidadArras && canalMayoristaVenta) || (necesidadArras && canalMayoristaAlquiler)) {
+							 break;
+						}*/
+					}
+				}
+			}
+			
+			if (necesidadArras) {
+				dtoAgrupacion.setNecesidadArras(SI);
+			}else {
+				dtoAgrupacion.setNecesidadArras(NO);
+			}
+			if (canalMayoristaVenta) {
+				canalVenta = MAYORISTA;
+			}
+			if (canalMayoristaAlquiler) {
+				canalAlquiler = MAYORISTA;
+			}
+			
+			dtoAgrupacion.setCanalVentaBc(canalVenta);
+			dtoAgrupacion.setCanalAlquilerBc(canalAlquiler);
+			
+			if (agrupacion.getActivoPrincipal() != null && agrupacion.getActivoPrincipal().getCartera() != null) {
+				dtoAgrupacion.setCodCartera(agrupacion.getActivoPrincipal().getCartera().getCodigo());
+			}
+			
+			if (agrupacion.getTipoAgrupacion() != null) {
+				dtoAgrupacion.setCodAgrupacion(agrupacion.getTipoAgrupacion().getCodigo());
+			}
+			
+		}
+			
+
 
 		return dtoAgrupacion;
 	}

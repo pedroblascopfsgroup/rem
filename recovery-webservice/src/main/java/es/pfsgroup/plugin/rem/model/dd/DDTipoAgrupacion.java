@@ -120,4 +120,29 @@ public class DDTipoAgrupacion implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 	
+	public static boolean isRestringidaObrem(DDTipoAgrupacion agrupacion) {
+		boolean isRestringidaObrem = false;
+		if(agrupacion != null && (AGRUPACION_RESTRINGIDA_OB_REM.equals(agrupacion.getCodigo()))) {
+			isRestringidaObrem = true;
+		}		
+		return isRestringidaObrem;
+	}
+	
+	public static boolean isRestringidaAlquiler(DDTipoAgrupacion agrupacion) {
+		boolean isRestringidaAlquiler = false;
+		if(agrupacion != null && (AGRUPACION_RESTRINGIDA_ALQUILER.equals(agrupacion.getCodigo()))) {
+			isRestringidaAlquiler = true;
+		}		
+		return isRestringidaAlquiler;
+	}
+	
+	public static boolean isRestringida(DDTipoAgrupacion agrupacion) {
+		boolean isRestringida = false;
+		if(agrupacion != null && (AGRUPACION_RESTRINGIDA.equals(agrupacion.getCodigo()))) {
+			isRestringida = true;
+		}		
+		return isRestringida;
+	}
+	
+	
 }

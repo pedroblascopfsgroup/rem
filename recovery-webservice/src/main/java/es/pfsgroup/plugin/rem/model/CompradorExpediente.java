@@ -230,6 +230,12 @@ public class CompradorExpediente implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "DD_VIC_ID")
 	private DDVinculoCaixa vinculoCaixa;
+	
+	@Column(name = "CEX_PRP")
+	private Boolean prp;
+	
+	@Column(name = "CEX_OFICINA_TRABAJO")
+	private String oficinaTrabajo;
  
 	@Version   
 	private Long version;
@@ -767,6 +773,22 @@ public class CompradorExpediente implements Serializable, Auditable {
 
 	public void setVinculoCaixa(DDVinculoCaixa vinculoCaixa) {
 		this.vinculoCaixa = vinculoCaixa;
+	}
+
+	public Boolean getPrp() {
+		return prp;
+	}
+
+	public void setPrp(Boolean prp) {
+		this.prp = prp;
+	}
+
+	public String getOficinaTrabajo() {
+		return oficinaTrabajo;
+	}
+
+	public void setOficinaTrabajo(String oficinaTrabajo) {
+		this.oficinaTrabajo = oficinaTrabajo;
 	}
    
 }

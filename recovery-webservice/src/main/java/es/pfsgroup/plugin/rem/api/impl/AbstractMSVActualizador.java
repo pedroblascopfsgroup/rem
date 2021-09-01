@@ -54,6 +54,7 @@ public abstract  class AbstractMSVActualizador implements MSVLiberator {
 	private final Log logger = LogFactory.getLog(getClass());
 
 	private static final int EXCEL_FILA_DEFECTO = 1;
+	private static final String CONFIG_EXISTENTE = "Ya existe una configuración";
 
 	public abstract String getValidOperation();
 
@@ -131,20 +132,29 @@ public abstract  class AbstractMSVActualizador implements MSVLiberator {
 
 				} catch (Exception e) {
 					logger.error("error procesando fila " + fila + " del proceso " + file.getProcesoMasivo().getId(), e);
-					if (!file.getProcesoMasivo().getTipoOperacion().getCodigo().equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA)) {
-						try {
-							transactionManager.rollback(transaction);
-						} catch (Exception ex) {
-							logger.error("error rollback proceso masivo");
+					if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CONFIGURACION_RECOMENDACION.equals(file.getProcesoMasivo().getTipoOperacion().getCodigo())) {
+						resultProcesaFila = new ResultadoProcesarFila();
+						resultProcesaFila.setCorrecto(false);
+						resultProcesaFila.setFila(fila);
+						resultProcesaFila.setErrorDesc(CONFIG_EXISTENTE);
+						resultados.add(resultProcesaFila);
+						processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);
+					} else {
+						if (!file.getProcesoMasivo().getTipoOperacion().getCodigo().equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA)) {
+							try {
+								transactionManager.rollback(transaction);
+							} catch (Exception ex) {
+								logger.error("error rollback proceso masivo");
+							}
 						}
+						resultProcesaFila = new ResultadoProcesarFila();
+						resultProcesaFila.setCorrecto(false);
+						resultProcesaFila.setFila(fila);
+						resultProcesaFila.setErrorDesc(e.getMessage());
+						resultados.add(resultProcesaFila);
+						processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);
 					}
-					resultProcesaFila = new ResultadoProcesarFila();
-					resultProcesaFila.setCorrecto(false);
-					resultProcesaFila.setFila(fila);
-					resultProcesaFila.setErrorDesc(e.getMessage());
-					resultados.add(resultProcesaFila);
-					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);
-				}
+				} 
 			}
 
 			MSVDocumentoMasivo archivo = ficheroDao.findByIdProceso(file.getProcesoMasivo().getId());

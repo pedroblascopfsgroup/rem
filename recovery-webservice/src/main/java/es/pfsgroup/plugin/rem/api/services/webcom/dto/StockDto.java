@@ -351,6 +351,17 @@ public class StockDto implements WebcomRESTDto{
 	@WebcomRequired
 	private BooleanDataType requiereTestigo;
 	
+	@WebcomRequired
+	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType recomendacionPorcenDescuentoVenta;
+	
+	@WebcomRequired
+	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType recomendacionPrecioMinimoVenta;
+	
+	@WebcomRequired
+	private StringDataType recomendacionInternaRequerida;
+	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -1144,6 +1155,24 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setRequiereTestigo(BooleanDataType requiereTestigo) {
 		this.requiereTestigo = requiereTestigo;
+	}
+	public DoubleDataType getRecomendacionPorcenDescuentoVenta() {
+		return recomendacionPorcenDescuentoVenta;
+	}
+	public void setRecomendacionPorcenDescuentoVenta(DoubleDataType recomendacionPorcenDescuentoVenta) {
+		this.recomendacionPorcenDescuentoVenta = recomendacionPorcenDescuentoVenta;
+	}
+	public DoubleDataType getRecomendacionPrecioMinimoVenta() {
+		return recomendacionPrecioMinimoVenta;
+	}
+	public void setRecomendacionPrecioMinimoVenta(DoubleDataType recomendacionPrecioMinimoVenta) {
+		this.recomendacionPrecioMinimoVenta = recomendacionPrecioMinimoVenta;
+	}
+	public StringDataType getRecomendacionInternaRequerida() {
+		return recomendacionInternaRequerida;
+	}
+	public void setRecomendacionInternaRequerida(StringDataType recomendacionInternaRequerida) {
+		this.recomendacionInternaRequerida = recomendacionInternaRequerida;
 	}
 	
 }

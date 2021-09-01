@@ -1493,4 +1493,6 @@ public interface ParticularValidatorApi {
 	Boolean tieneVigenteFasePublicacionIII(String activo);
 
 	Boolean validacionSubfasePublicacion(String activo, List<String> codigos);
+
+	Boolean existeRecomendacionByCod(String recomendacion);
 }

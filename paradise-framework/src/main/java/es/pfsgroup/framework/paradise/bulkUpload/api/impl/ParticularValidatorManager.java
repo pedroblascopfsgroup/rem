@@ -9261,5 +9261,23 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"				WHERE sp.DD_FSP_CODIGO = '05'");
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+    public Boolean existeRecomendacionByCod(String recomendacion) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("recomendacion", recomendacion);
+		rawDao.addParams(params);
+		
+		if(Checks.esNulo(recomendacion)) {
+				return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+						+ "              FROM DD_REC_RECOMENDACION_RCDC WHERE"
+						+ "              DD_REC_CODIGO = :recomendacion"
+						+ "      AND BORRADO = 0"
+						);
+		return !"0".equals(resultado);
+    }
 }
 

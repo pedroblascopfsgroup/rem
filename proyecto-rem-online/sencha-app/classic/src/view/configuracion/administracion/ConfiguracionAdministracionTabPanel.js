@@ -21,6 +21,7 @@ Ext.define('HreRem.view.configuracion.administracion.ConfiguracionAdministracion
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'configuracionproveedores', reference: 'configuracionProveedores'})}, ['TAB_PROVEEDORES']);
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'configuraciongestoressustitutos', reference: 'configuracionGestoresSustitutos'})}, ['TAB_GESTORES_SUSTITUTOS']);
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'configuraciontestigosobligatorios', reference: 'configuracionTestigosObligatorios'})}, ['TAB_TESTIGOS_OBLIGATORIOS']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'configuracionrecomendacion', reference: 'configuracionrecomendacion'})}, ['TAB_CONFIG_RECOMENDACION']);
         //$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'configuracionperfiles', reference: 'configuracionPerfiles'})}, ['TAB_ADMINISTRACION_CONFIGURACION']);
 
         me.addPlugin({ptype: 'lazyitems', items: items});

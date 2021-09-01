@@ -321,6 +321,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoFinanciacion", DDTfnTipoFinanciacion.class);
 		mapa.put("siNoNosabe", DDSnsSiNoNosabe.class);
 		mapa.put("fuenteTestigos", DDFuenteTestigos.class);
+		mapa.put("recomendacionRCDC", DDRecomendacionRCDC.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

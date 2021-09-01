@@ -4539,6 +4539,25 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean isActivoLiberbank(String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
+		if(Checks.esNulo(numActivo))
+			return false;
+
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM ACT_ACTIVO ACT "
+					+"		WHERE ACT.DD_CRA_ID IN (SELECT DD_CRA_ID FROM DD_CRA_CARTERA "
+					+"								WHERE DD_CRA_CODIGO IN ('08')"
+					+"								AND BORRADO = 0) "
+					+"		AND ACT.ACT_NUM_ACTIVO = :numActivo ");
+
+		return !"0".equals(resultado);
+	}
 
 	public Boolean validadorTipoOferta(Long numExpediente) {
 		Map<String, Object> params = new HashMap<String, Object>();

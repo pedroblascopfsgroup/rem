@@ -1255,6 +1255,8 @@ public interface ParticularValidatorApi {
 	Boolean mismaCarteraLineaDetalleGasto(String numGasto, String tipoElemento);
 
 	Boolean isActivoBankia(String numActivo);
+	
+	Boolean isActivoLiberbank(String numActivo);
 
 	Boolean tipoDeElemento(String tipoElemento);
 

@@ -1276,51 +1276,7 @@ public class AgrupacionAdapter {
 
 		try {
 			// Validaciones
-			if (Checks.esNulo(agrupacion)) {
-				throw new JsonViewerException("La agrupación no existe");
-			}
-			
 			int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
-
-			if (Checks.esNulo(activo)) {
-				throw new JsonViewerException("El activo no existe");
-			}
-			
-			if (!Checks.esNulo(numActivo)){
-				if(!particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo se encuetra fuera del perímetro HAYA");
-				}
-			}
-			
-			if (!Checks.esNulo(numActivo)){
-				if(particularValidator.isActivoNoComercializable(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo no es comercializable");
-				}
-			}
-			
-			if (!Checks.esNulo(numActivo)){
-				if(particularValidator.existeActivoConOfertaViva(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo tiene ofertas individuales vivas");
-				}
-			}
-			
-			if (!Checks.esNulo(numActivo)){
-				if(particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
-				}
-			}
-
-			//Si el activo es de Liberbank, además debe ser de la misma subcartera
-			if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo()) && !Checks.estaVacio(agrupacion.getActivos())) {
-				if(!Checks.esNulo(activo.getSubcartera())) {
-					if(!agrupacion.getActivos().get(0).getActivo().getSubcartera().equals(activo.getSubcartera())) {
-						throw new JsonViewerException("El activo añadido tiene que tener la misma subcartera que los ya existentes");
-					}
-				}else{
-					throw new JsonViewerException("El activo no se puede añadir por que no tiene subcartera");
-
-				}
-			}
 
 			// Si es el primer activo, validamos si tenemos los datos necesarios
 			// del activo, y modificamos la agrupación con esos datos

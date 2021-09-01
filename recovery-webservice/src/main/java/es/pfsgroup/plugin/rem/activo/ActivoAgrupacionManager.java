@@ -80,6 +80,8 @@ import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileSearch;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import javassist.expr.NewArray;
+
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.Resource;
@@ -1057,8 +1059,6 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		ActivoAgrupacion agr = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion));
 
 		List <ActivoAgrupacionActivo> agaEnObRem = null;
-		List <ActivoAgrupacionActivo> agaAgr = null;
-
 		if(idActivo != null) {
 			List<ActivoAgrupacionActivo> agaList = genericDao.getList(ActivoAgrupacionActivo.class,
 					genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
@@ -1074,12 +1074,13 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			}
 
 			if(agaEnObRem != null){
-				for(int i = (agaAgr.size() - 1); i >= 0; i--){
-
-					if(agaEnObRem.contains(agaAgr.get(i))) {
-						Auditoria.delete(agaAgr.get(i));
-						activoAgrupacionActivoApi.save(agaAgr.get(i));
-					}
+				for (ActivoAgrupacionActivo obRem : agaEnObRem) {
+					ActivoAgrupacionActivo obRemBorrar = genericDao.get(ActivoAgrupacionActivo.class, 
+							genericDao.createFilter(FilterType.EQUALS, "activo", obRem.getActivo()), 
+							genericDao.createFilter(FilterType.EQUALS, "agrupacion", agr));
+					
+					Auditoria.delete(obRemBorrar);
+					activoAgrupacionActivoApi.save(obRemBorrar);
 				}
 			}
 

@@ -132,7 +132,8 @@ public abstract  class AbstractMSVActualizador implements MSVLiberator {
 
 				} catch (Exception e) {
 					logger.error("error procesando fila " + fila + " del proceso " + file.getProcesoMasivo().getId(), e);
-					if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CONFIGURACION_RECOMENDACION.equals(file.getProcesoMasivo().getTipoOperacion().getCodigo())) {
+					if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CONFIGURACION_RECOMENDACION.equals(file.getProcesoMasivo().getTipoOperacion().getCodigo())
+							&& e.getMessage().contains("ConstraintViolationException")) {
 						resultProcesaFila = new ResultadoProcesarFila();
 						resultProcesaFila.setCorrecto(false);
 						resultProcesaFila.setFila(fila);

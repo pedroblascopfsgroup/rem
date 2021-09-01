@@ -73,7 +73,7 @@ public class MSVConfiguracionRecomendacionProcessor extends AbstractMSVActualiza
 		} 
 		if(!importeMinimo.isEmpty() || importeMinimo != null || importeMinimo != "") {	
 			Double importe = stringToDouble(importeMinimo);
-			dtoConfiguracionRecomendacion.setPorcentajeDescuento(importe);
+			dtoConfiguracionRecomendacion.setImporteMinimo(importe);
 		} 
 		if(!recomendacion.isEmpty() || recomendacion != null || recomendacion != "") {	
 			dtoConfiguracionRecomendacion.setRecomendacionRCDC(recomendacion);

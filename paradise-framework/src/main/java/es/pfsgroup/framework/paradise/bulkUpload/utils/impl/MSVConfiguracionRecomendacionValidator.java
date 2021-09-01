@@ -250,8 +250,8 @@ public class MSVConfiguracionRecomendacionValidator extends MSVExcelValidatorAbs
 		
 		Double number = !Checks.esNulo(numero) ? Double.parseDouble(numero) : null;
 
-		if ((!Checks.esNulo(number) && !number.isNaN() 
-				&& number.compareTo(0.0D) > 0)) return true;
+		if ((!Checks.esNulo(number) && number.isNaN() 
+				&& number.compareTo(0.0D) <= 0)) return true;
 		return false;
 	}
 

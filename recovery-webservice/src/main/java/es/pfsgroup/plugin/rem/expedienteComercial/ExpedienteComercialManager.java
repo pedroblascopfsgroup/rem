@@ -3918,6 +3918,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(dto.getMetodoActualizacionRentaCod() != null) {
 				DDMetodoActualizacionRenta metodoActualizacionRenta = (DDMetodoActualizacionRenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDMetodoActualizacionRenta.class, dto.getMetodoActualizacionRentaCod());
 				condiciones.setMetodoActualizacionRenta(metodoActualizacionRenta);
+				condiciones.setCheckIGC(null);
+				condiciones.setCheckIPC(null);
+				condiciones.setPeriodicidadMeses(null);
+				condiciones.setFechaActualizacion(null);
 			}
 			
 			if(dto.getCheckIGC() != null) {
@@ -3928,6 +3932,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			if(!Checks.isFechaNula(dto.getFechaActualizacion())) {
 				condiciones.setFechaActualizacion(dto.getFechaActualizacion());
+			}
+			if (dto.getCheckIPC() != null) {
+				condiciones.setCheckIPC(dto.getCheckIPC());
 			}
 			
 			
@@ -5691,7 +5698,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				expedienteComercial.setMesesDuracionCntAlquiler(dto.getMesesDuracionCntAlquiler());
 				expedienteComercial.setDetalleAnulacionCntAlquiler(dto.getDetalleAnulacionCntAlquiler());
 				if(dto.getMotivoRechazoAntiguoDeudCod() != null) {
-					DDMotivoRechazoAntiguoDeud motivoRechazoAntiguoDeud = (DDMotivoRechazoAntiguoDeud) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRechazoAntiguoDeud.class, dto.getClasificacionCodigo());
+					DDMotivoRechazoAntiguoDeud motivoRechazoAntiguoDeud = (DDMotivoRechazoAntiguoDeud) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRechazoAntiguoDeud.class, dto.getMotivoRechazoAntiguoDeudCod());
 					expedienteComercial.setMotivoRechazoAntiguoDeud(motivoRechazoAntiguoDeud);
 				}
 				

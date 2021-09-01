@@ -1086,11 +1086,24 @@ public class AgrupacionAdapter {
 
 		Filter filterAga = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
 		List <ActivoAgrupacionActivo> activoAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filterAga);
-
-		for (ActivoAgrupacionActivo activoAgrupacionActivo : activoAgrupacion) {
-			if (activoAgrupacionActivo != null) {
-				if (activoAgrupacionActivo.getActivo().getNumActivo().equals(activo.getNumActivo())) {
-					throw new JsonViewerException("El activo se encuentra en la agrupacion");
+		
+		if (activoAgrupacion != null) {
+			for (ActivoAgrupacionActivo activoAgrupacionActivo : activoAgrupacion) {
+				if (activoAgrupacionActivo != null) {
+					if (activoAgrupacionActivo.getActivo().getNumActivo().equals(activo.getNumActivo())) {
+						throw new JsonViewerException("El activo se encuentra en la agrupacion");
+					}
+				}
+			}
+		}
+		
+		if (activo != null && activo.getNumActivo() != null) {
+			if (agrupacion != null && 
+					(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
+							|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
+							|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo()))) {
+				if (activo.getCartera().getCodigo() != null && DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
+					throw new JsonViewerException("No se puede añadir un activo de la cartera Caixa a una agrupación de tipo restringida");
 				}
 			}
 		}

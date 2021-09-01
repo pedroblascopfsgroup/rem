@@ -1099,7 +1099,7 @@ public class AgrupacionAdapter {
 							|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
 							|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo()))) {
 				if (activo.getCartera().getCodigo() != null && DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
-					throw new JsonViewerException("No se puede añadir un activo de la cartera Caixa a una agrupación de tipo restringida");
+					throw new JsonViewerException(BusinessValidators.ERROR_ACTIVO_CARTERA_BANKIA_TO_AGR_RESTRINGIDAS);
 				}
 			}
 		}

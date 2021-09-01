@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDMetodoActualizacionRenta;
+import es.pfsgroup.plugin.rem.model.dd.DDRangoImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenFianzaCCAA;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
@@ -402,6 +403,10 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     
     @Column(name="COE_FECHA_ACTU")
     private Date fechaActualizacion;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_RGI_ID")
+	private DDRangoImpuesto rangoImpuesto;
     
 	@Version   
 	private Long version;
@@ -1286,6 +1291,14 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 
 	public void setFechaActualizacion(Date fechaActualizacion) {
 		this.fechaActualizacion = fechaActualizacion;
+	}
+
+	public DDRangoImpuesto getRangoImpuesto() {
+		return rangoImpuesto;
+	}
+
+	public void setRangoImpuesto(DDRangoImpuesto rangoImpuesto) {
+		this.rangoImpuesto = rangoImpuesto;
 	}
 
 }

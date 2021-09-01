@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.util.Date;
+
 public class DtoClienteComercial {
 
 	private Long id;
@@ -34,6 +36,15 @@ public class DtoClienteComercial {
     private String tipoDocumentoRteCodigo;
     private String tipoDocumentoRteDescripcion;
     private String idPersonaHaya;
+    
+	private Date fechaNacimientoConstitucion;
+	private String paisNacimientoCompradorCodigo;
+    private String localidadNacimientoCompradorCodigo;
+    private String codigoPais;
+    private String municipioCodigo;
+    private Boolean prp;
+    private String localidadNacimientoCompradorDescripcion;
+		
     
 	public Long getId() {
 		return id;
@@ -228,4 +239,48 @@ public class DtoClienteComercial {
 	public void setIdPersonaHaya(String idPersonaHaya) {
 		this.idPersonaHaya = idPersonaHaya;
 	}
+	public Date getFechaNacimientoConstitucion() {
+		return fechaNacimientoConstitucion;
+	}
+	public void setFechaNacimientoConstitucion(Date fechaNacimientoConstitucion) {
+		this.fechaNacimientoConstitucion = fechaNacimientoConstitucion;
+	}
+	public String getPaisNacimientoCompradorCodigo() {
+		return paisNacimientoCompradorCodigo;
+	}
+	public void setPaisNacimientoCompradorCodigo(String paisNacimientoCompradorCodigo) {
+		this.paisNacimientoCompradorCodigo = paisNacimientoCompradorCodigo;
+	}
+	public String getLocalidadNacimientoCompradorCodigo() {
+		return localidadNacimientoCompradorCodigo;
+	}
+	public void setLocalidadNacimientoCompradorCodigo(String localidadNacimientoCompradorCodigo) {
+		this.localidadNacimientoCompradorCodigo = localidadNacimientoCompradorCodigo;
+	}
+	public String getCodigoPais() {
+		return codigoPais;
+	}
+	public void setCodigoPais(String codigoPais) {
+		this.codigoPais = codigoPais;
+	}
+	public String getMunicipioCodigo() {
+		return municipioCodigo;
+	}
+	public void setMunicipioCodigo(String municipioCodigo) {
+		this.municipioCodigo = municipioCodigo;
+	}
+	public Boolean getPrp() {
+		return prp;
+	}
+	public void setPrp(Boolean prp) {
+		this.prp = prp;
+	}
+	public String getLocalidadNacimientoCompradorDescripcion() {
+		return localidadNacimientoCompradorDescripcion;
+	}
+	public void setLocalidadNacimientoCompradorDescripcion(String localidadNacimientoCompradorDescripcion) {
+		this.localidadNacimientoCompradorDescripcion = localidadNacimientoCompradorDescripcion;
+	}
+	
+	
 }

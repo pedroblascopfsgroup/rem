@@ -735,7 +735,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		model = null,
 		data = window.oferta.data,
 		ventanaDetalle = window.down('slidedatosoferta');
-
 		bindRecord = ventanaDetalle.getForm().getValues();
 		if(Ext.isDefined(data.idActivo)){
 			model = Ext.create('HreRem.model.OfertaComercialActivo', {
@@ -759,7 +758,17 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				deDerechoTanteo: bindRecord.dederechotanteo,
 				claseOferta: bindRecord.claseOferta,
 				numOferPrincipal: bindRecord.numOferPrincipal,
-				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal
+				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal,
+				fechaNacimientoConstitucion:bindRecord.fechaNacimientoConstitucion,
+	            paisNacimientoCompradorCodigo:bindRecord.paisNacimientoCompradorCodigo,
+	            localidadNacimientoCompradorCodigo:bindRecord.localidadNacimientoCompradorCodigo,
+	            codigoPais:bindRecord.codigoPais,
+	            provinciaCodigo:bindRecord.provinciaCodigo,
+	            municipioCodigo:bindRecord.municipioCodigo,
+	            direccion:bindRecord.direccionTodos,
+	            prp:bindRecord.prp,
+	            localidadNacimientoCompradorDescripcion:bindRecord.localidadNacimientoCompradorDescripcion
+	            
 			});
 		}else{
 			model = Ext.create('HreRem.model.OfertaComercial', {
@@ -783,7 +792,16 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				deDerechoTanteo: bindRecord.dederechotanteo,
 				claseOferta: bindRecord.claseOferta,
 				numOferPrincipal: bindRecord.numOferPrincipal,
-				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal
+				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal,
+				fechaNacimientoConstitucion:bindRecord.fechaNacimientoConstitucion,
+	            paisNacimientoCompradorCodigo:bindRecord.paisNacimientoCompradorCodigo,
+	            localidadNacimientoCompradorCodigo:bindRecord.localidadNacimientoCompradorCodigo,
+	            codigoPais:bindRecord.codigoPais,
+	            provinciaCodigo:bindRecord.provinciaCodigo,
+	            municipioCodigo:bindRecord.municipioCodigo,
+	            direccion:bindRecord.direccionTodos,
+	            prp:bindRecord.prp,
+	            localidadNacimientoCompradorDescripcion:bindRecord.localidadNacimientoCompradorDescripcion
 			});
 		}
 

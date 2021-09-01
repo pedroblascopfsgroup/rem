@@ -4143,6 +4143,29 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if(!Checks.esNulo(clienteCom.getDocumento())) {
 						clienteComercialDto.setDocumento(clienteCom.getDocumento());
 					}
+					
+					clienteComercialDto.setFechaNacimientoConstitucion(clienteCom.getFechaNacimiento());
+					if(clienteCom.getPaisNacimiento() != null) {
+						clienteComercialDto.setPaisNacimientoCompradorCodigo(clienteCom.getPaisNacimiento().getCodigo());
+					}
+					if(clienteCom.getLocalidadNacimiento() != null) {
+						clienteComercialDto.setLocalidadNacimientoCompradorCodigo(clienteCom.getLocalidadNacimiento().getCodigo());
+						clienteComercialDto.setLocalidadNacimientoCompradorDescripcion(clienteCom.getLocalidadNacimiento().getDescripcion());
+					}
+					if(clienteCom.getPais() != null) {
+						clienteComercialDto.setCodigoPais(clienteCom.getPais().getCodigo());
+					}
+					if(clienteCom.getProvincia() != null) {
+						clienteComercialDto.setProvinciaCodigo(clienteCom.getProvincia().getCodigo());
+					}
+					if(clienteCom.getMunicipio() != null) {
+						clienteComercialDto.setMunicipioCodigo(clienteCom.getMunicipio().getCodigo());
+					}
+					clienteComercialDto.setDireccion(clienteCom.getDireccion());
+					
+					if(clienteCom.getInfoAdicionalPersona() != null) {
+						clienteComercialDto.setPrp(clienteCom.getInfoAdicionalPersona().getPrp());
+					}
 				}
 
 

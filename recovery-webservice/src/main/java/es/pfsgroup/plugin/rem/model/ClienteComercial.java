@@ -242,6 +242,20 @@ public class ClienteComercial implements Serializable, Auditable {
 	@JoinColumn(name = "DD_LOC_NAC_ID")
 	private Localidad localidadNacimiento;
 
+    @Column(name = "CLC_FECHA_NACIMIENTO_REP")
+    private Date fechaNacimientoRep;
+    
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_LOC_NAC_ID_REP")
+	private Localidad localidadNacimientoRep;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_NAC_ID_REP")
+    private DDPaises paisNacimientoRep;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "IAP_ID_REP")
+	private InfoAdicionalPersona infoAdicionalPersonaRep;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_REL_ID")
@@ -713,4 +727,37 @@ public class ClienteComercial implements Serializable, Auditable {
 	public void setLocalidadNacimiento(Localidad localidadNacimiento) {
 		this.localidadNacimiento = localidadNacimiento;
 	}
+
+	public Date getFechaNacimientoRep() {
+		return fechaNacimientoRep;
+	}
+
+	public void setFechaNacimientoRep(Date fechaNacimientoRep) {
+		this.fechaNacimientoRep = fechaNacimientoRep;
+	}
+
+	public Localidad getLocalidadNacimientoRep() {
+		return localidadNacimientoRep;
+	}
+
+	public void setLocalidadNacimientoRep(Localidad localidadNacimientoRep) {
+		this.localidadNacimientoRep = localidadNacimientoRep;
+	}
+
+	public DDPaises getPaisNacimientoRep() {
+		return paisNacimientoRep;
+	}
+
+	public void setPaisNacimientoRep(DDPaises paisNacimientoRep) {
+		this.paisNacimientoRep = paisNacimientoRep;
+	}
+
+	public InfoAdicionalPersona getInfoAdicionalPersonaRep() {
+		return infoAdicionalPersonaRep;
+	}
+
+	public void setInfoAdicionalPersonaRep(InfoAdicionalPersona infoAdicionalPersonaRep) {
+		this.infoAdicionalPersonaRep = infoAdicionalPersonaRep;
+	}
+	
 }

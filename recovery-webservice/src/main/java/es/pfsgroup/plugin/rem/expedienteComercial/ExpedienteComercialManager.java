@@ -6297,6 +6297,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				if(!Checks.estaVacio(tmpClienteGDPR))
 					clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.get(0).getNumDocumento());
+
+				if (comprador.getInfoAdicionalPersona() != null && comprador.getInfoAdicionalPersona().getEstadoComunicacionC4C() != null && DDEstadoComunicacionC4C.C4C_NO_ENVIADO.equals(comprador.getInfoAdicionalPersona().getEstadoComunicacionC4C().getCodigo()))
+					interlocutorCaixaService.callReplicateClientAsync(comprador,expediente.getOferta());
+
 				return true;
 
 			} catch (Exception e) {

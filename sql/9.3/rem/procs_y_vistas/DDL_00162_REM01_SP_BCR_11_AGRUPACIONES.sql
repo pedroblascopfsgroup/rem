@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210821
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210901
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14893
+--## INCIDENCIA_LINK=HREOS-15059
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -13,7 +13,8 @@
 --##        0.1 Versión inicial
 --##	      0.2 Se añade el FLAG EN REM en la insercción de la AUX_BC_AGRUPACIONES - HREOS-14837
 --##	      0.3 Correcciones - HREOS-14820
---##	      0.4 Validación OBREM para comprobar que todos sus activos no están parcialmente dentro de agrupaciones restringidas venta o alquiler - HREOS-14893
+--##	      0.4 Validación OBREM para comprobar que todos sus activos no están parcialmente dentro de agrupaciones restringidas venta o alquiler - HREOS-14893 - Daniel Algaba
+--##	      0.5 Modificaión validación OB-REM al incluirse en conjunta venta/alquiler - HREOS-15059 - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -153,17 +154,39 @@ BEGIN
       SALIDA := SALIDA || '   [INFO]      RESTRINGIDAS VENTA, RECHAZADOS POR TIPO DE COMERCIALIZACIÓN DIFERENTE A VENTA '|| SQL%ROWCOUNT|| CHR(10);
 
       V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.AUX_BC_AGR_OBREM_PARCIALES
-                WITH OBREM AS (SELECT AUX.PROMO_CONJUNTA_OB_REM
-                FROM '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES AUX
-                WHERE AUX.PROMO_CONJUNTA_OB_REM IS NOT NULL
-                GROUP BY AUX.PROMO_CONJUNTA_OB_REM)
-                SELECT
-                DISTINCT AUX.PROMO_CONJUNTA_OB_REM
-                , 1 PROMO_CONJUNTA_VENTA
-                , 0 PROMO_CONJUNTA_ALQUILER
-                FROM '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES AUX
-                LEFT JOIN OBREM OBREM_V ON AUX.PROMO_CONJUNTA_VENTA = OBREM_V.PROMO_CONJUNTA_OB_REM
-                WHERE OBREM_V.PROMO_CONJUNTA_OB_REM IS NULL';
+                  WITH ACTIVOS AS( 
+                     SELECT DISTINCT
+                        AUX.NUM_IDENTIFICATIVO
+                        ,AUX.PROMO_CONJUNTA_OB_REM 
+                        ,AUX.PROMO_CONJUNTA_VENTA 
+                     FROM '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES AUX
+                     WHERE AUX.PROMO_CONJUNTA_OB_REM IS NOT NULL AND AUX.PROMO_CONJUNTA_VENTA IS NOT NULL 
+                  ), OB_REM_PRINCIPAL AS ( 
+                     SELECT
+                        ACT.PROMO_CONJUNTA_OB_REM 
+                     FROM ACTIVOS ACT
+                     WHERE ACT.PROMO_CONJUNTA_OB_REM IS NOT NULL 
+                     GROUP BY ACT.PROMO_CONJUNTA_OB_REM
+                  ), TOT_ACT_OB_REM AS ( 
+                     SELECT
+                        AUX.NUM_IDENTIFICATIVO
+                        ,AUX.PROMO_CONJUNTA_OB_REM
+                     FROM '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES AUX
+                     JOIN OB_REM_PRINCIPAL OB_REM ON OB_REM.PROMO_CONJUNTA_OB_REM=AUX.PROMO_CONJUNTA_OB_REM
+                  ), ACT_NO_COINCIDE AS( 
+                     SELECT DISTINCT 
+                           TOT.PROMO_CONJUNTA_OB_REM
+                        ,ACT.PROMO_CONJUNTA_VENTA 
+                     FROM TOT_ACT_OB_REM TOT
+                     LEFT JOIN ACTIVOS ACT ON ACT.NUM_IDENTIFICATIVO = TOT.NUM_IDENTIFICATIVO
+                     WHERE ACT.PROMO_CONJUNTA_VENTA IS NULL
+                  )
+                  SELECT DISTINCT 
+                     NOC.PROMO_CONJUNTA_OB_REM
+                     ,1 PROMO_CONJUNTA_VENTA
+                     ,0 PROMO_CONJUNTA_ALQUILER
+                  FROM ACT_NO_COINCIDE NOC
+                  JOIN TOT_ACT_OB_REM TOT ON TOT.PROMO_CONJUNTA_OB_REM=NOC.PROMO_CONJUNTA_OB_REM';
 
       EXECUTE IMMEDIATE V_MSQL;
 
@@ -269,17 +292,39 @@ BEGIN
       SALIDA := SALIDA || '   [INFO]      RESTRINGIDAS ALQUILER, RECHAZADOS POR TIPO DE COMERCIALIZACIÓN DIFERENTE A ALQUILER '|| SQL%ROWCOUNT|| CHR(10);
 
       V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.AUX_BC_AGR_OBREM_PARCIALES AUX
-                USING (
-                WITH OBREM AS (SELECT AUX.PROMO_CONJUNTA_OB_REM
-                FROM '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES AUX
-                WHERE AUX.PROMO_CONJUNTA_OB_REM IS NOT NULL
-                GROUP BY AUX.PROMO_CONJUNTA_OB_REM)
-                SELECT
-                DISTINCT AUX.PROMO_CONJUNTA_OB_REM
-                , 1 PROMO_CONJUNTA_ALQUILER
-                FROM '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES AUX
-                LEFT JOIN OBREM OBREM_A ON AUX.PROMO_CONJUNTA_ALQUILER = OBREM_A.PROMO_CONJUNTA_OB_REM
-                WHERE OBREM_A.PROMO_CONJUNTA_OB_REM IS NULL
+               USING (
+               WITH ACTIVOS AS( 
+                  SELECT DISTINCT
+                      AUX.NUM_IDENTIFICATIVO
+                     ,AUX.PROMO_CONJUNTA_OB_REM 
+                     ,AUX.PROMO_CONJUNTA_ALQUILER 
+                  FROM '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES AUX
+                  WHERE AUX.PROMO_CONJUNTA_OB_REM IS NOT NULL AND AUX.PROMO_CONJUNTA_ALQUILER IS NOT NULL 
+               ), OB_REM_PRINCIPAL AS ( 
+                  SELECT
+                     ACT.PROMO_CONJUNTA_OB_REM 
+                  FROM ACTIVOS ACT
+                  WHERE ACT.PROMO_CONJUNTA_OB_REM IS NOT NULL --AND ACT.PROMO_CONJUNTA_OB_REM=ACT.NUM_IDENTIFICATIVO
+                  GROUP BY ACT.PROMO_CONJUNTA_OB_REM
+               ), TOT_ACT_OB_REM AS ( 
+                  SELECT
+                      AUX.NUM_IDENTIFICATIVO
+                     ,AUX.PROMO_CONJUNTA_OB_REM
+                  FROM '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES AUX
+                  JOIN OB_REM_PRINCIPAL OB_REM ON OB_REM.PROMO_CONJUNTA_OB_REM=AUX.PROMO_CONJUNTA_OB_REM
+               ), ACT_NO_COINCIDE AS( 
+                  SELECT DISTINCT 
+                      TOT.PROMO_CONJUNTA_OB_REM
+                     ,ACT.PROMO_CONJUNTA_ALQUILER 
+                  FROM TOT_ACT_OB_REM TOT
+                  LEFT JOIN ACTIVOS ACT ON ACT.NUM_IDENTIFICATIVO = TOT.NUM_IDENTIFICATIVO
+                  WHERE ACT.PROMO_CONJUNTA_ALQUILER IS NULL
+               )
+               SELECT DISTINCT 
+                  NOC.PROMO_CONJUNTA_OB_REM
+                  ,1 PROMO_CONJUNTA_ALQUILER
+               FROM ACT_NO_COINCIDE NOC
+               JOIN TOT_ACT_OB_REM TOT ON TOT.PROMO_CONJUNTA_OB_REM=NOC.PROMO_CONJUNTA_OB_REM
                 ) AUX_A ON (AUX.PROMO_CONJUNTA_OB_REM = AUX_A.PROMO_CONJUNTA_OB_REM)
                  WHEN MATCHED THEN
                      UPDATE SET
@@ -308,7 +353,8 @@ BEGIN
 
       SALIDA := SALIDA || '   [INFO]      RESTRINGIDAS ALQUILER, RECHAZADOS POR NO TENER TODOS LOS ACTIVOS DE SU OBREM '|| SQL%ROWCOUNT|| CHR(10);
 
-      V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES_REJECTS
+   /*   --Se han metido como validaciones F67, F68 y F69
+         V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES_REJECTS
                   WITH PRINCIPAL AS (
                   SELECT 
                   AUX.NUM_IDENTIFICATIVO
@@ -403,7 +449,7 @@ BEGIN
       EXECUTE IMMEDIATE V_MSQL;
 
       SALIDA := SALIDA || '   [INFO]      RESTRINGIDAS OBREM, RECHAZADOS POR PERÍMETRO DIFERENTE AL PRINCIPAL '|| SQL%ROWCOUNT|| CHR(10);
-
+   */
       V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES_REJECTS
                   SELECT 
                   AUX.NUM_IDENTIFICATIVO
@@ -443,7 +489,7 @@ BEGIN
                   JOIN '|| V_ESQUEMA ||'.ACT_OFR ACO ON OFR.OFR_ID = ACO.OFR_ID
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO AUX_ACT ON AUX_ACT.ACT_ID = ACO.ACT_ID AND AUX_ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID AND EOF.DD_EOF_CODIGO = ''01''
-                  WHERE OFR.BORRADO = 0 AND AUX_ACT.ACT_NUM_ACTIVO = AGR.AGR_UVEM_COAGIW)';
+                  WHERE OFR.BORRADO = 0 AND AUX_ACT.ACT_NUM_ACTIVO_CAIXA = AGR.AGR_UVEM_COAGIW)';
    
       EXECUTE IMMEDIATE V_MSQL;
 
@@ -463,7 +509,7 @@ BEGIN
                   JOIN '|| V_ESQUEMA ||'.ACT_OFR ACO ON OFR.OFR_ID = ACO.OFR_ID
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO AUX_ACT ON AUX_ACT.ACT_ID = ACO.ACT_ID AND AUX_ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID AND EOF.DD_EOF_CODIGO = ''01''
-                  WHERE OFR.BORRADO = 0 AND AUX_ACT.ACT_NUM_ACTIVO = AGR.AGR_UVEM_COAGIW)';
+                  WHERE OFR.BORRADO = 0 AND AUX_ACT.ACT_NUM_ACTIVO_CAIXA = AGR.AGR_UVEM_COAGIW)';
    
       EXECUTE IMMEDIATE V_MSQL;
 
@@ -483,7 +529,7 @@ BEGIN
                   JOIN '|| V_ESQUEMA ||'.ACT_OFR ACO ON OFR.OFR_ID = ACO.OFR_ID
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO AUX_ACT ON AUX_ACT.ACT_ID = ACO.ACT_ID AND AUX_ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID AND EOF.DD_EOF_CODIGO = ''01''
-                  WHERE OFR.BORRADO = 0 AND AUX_ACT.ACT_NUM_ACTIVO = AGR.AGR_UVEM_COAGIW)';
+                  WHERE OFR.BORRADO = 0 AND AUX_ACT.ACT_NUM_ACTIVO_CAIXA = AGR.AGR_UVEM_COAGIW)';
    
       EXECUTE IMMEDIATE V_MSQL;
 
@@ -573,7 +619,7 @@ BEGIN
                   AND REJ.PROMO_CONJUNTA_ALQUILER = APR.PROMO_CONJUNTA_ALQUILER)';
    
       EXECUTE IMMEDIATE V_MSQL;
-
+   /*
       V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES_ANYADIR AUX
                   SELECT 
                   APR.PROMO_CONJUNTA_OB_REM COD_AGRUPACION
@@ -593,7 +639,7 @@ BEGIN
                   AND REJ.PROMO_CONJUNTA_OB_REM = APR.PROMO_CONJUNTA_OB_REM)';
    
       EXECUTE IMMEDIATE V_MSQL;
-
+   */
       V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES_ANYADIR AUX
                   SELECT 
                   APR.PROMO_COMERCIAL COD_AGRUPACION
@@ -729,16 +775,7 @@ BEGIN
                   WHERE AGR.BORRADO = 0 
                   AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = ''01'')
                   AND (AGR.AGR_FECHA_BAJA IS NULL OR AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
-                  AND AGR.AGR_UVEM_COAGIW = APR.PROMO_COMERCIAL)
-                  AND NOT EXISTS (SELECT 1 
-                  FROM '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES_REJECTS REJ
-                  WHERE REJ.PROMO_COMERCIAL IS NOT NULL
-                  AND REJ.NUM_IDENTIFICATIVO = APR.NUM_IDENTIFICATIVO
-                  AND REJ.PROMO_COMERCIAL = APR.PROMO_COMERCIAL)
-                  AND NOT EXISTS (SELECT 1 
-                  FROM '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES_REJECTS REJ
-                  WHERE REJ.PROMO_COMERCIAL IS NOT NULL
-                  AND REJ.NUM_IDENTIFICATIVO = APR.PROMO_COMERCIAL)';
+                  AND AGR.AGR_UVEM_COAGIW = APR.PROMO_COMERCIAL)';
    
       EXECUTE IMMEDIATE V_MSQL;
 

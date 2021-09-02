@@ -152,11 +152,19 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 						DDEstadosExpedienteComercial.APROBADO);
 				if(T017.equals(tipoTramite) && DDCartera.isCarteraBk(activo.getCartera())) {
-					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadosExpedienteComercial.PTE_SANCION);
-					Filter filtroEstadoBC = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PDTE_APROBACION_BC);
+					Filter filtroEstadoBC = null;
+					if(ofertaApi.esMayorista(tareaExternaActual)) {
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadosExpedienteComercial.PTE_PBC_CN);
+						filtroEstadoBC = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_EN_TRAMITE);
+					}else {
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadosExpedienteComercial.PTE_SANCION);
+						filtroEstadoBC = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PDTE_APROBACION_BC);
+						estadoBcModificado = true;
+					}
+
 					DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroEstadoBC);
 					expediente.setEstadoBc(estadoBc);
-					estadoBcModificado = true;
+
 				}
 				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 				expediente.setEstado(estado);

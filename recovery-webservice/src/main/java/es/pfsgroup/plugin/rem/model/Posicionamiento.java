@@ -25,6 +25,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionBC;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 
 /**
@@ -90,6 +91,10 @@ public class Posicionamiento implements Serializable, Auditable, Comparable<Posi
 	
 	@Column(name = "POS_OBSERVACIONES_REM")
 	private String observacionesRem;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MAB_ID")
+    private DDMotivoAnulacionBC motivoAnulacionBc;
 	
 	@Version
 	private Long version;
@@ -228,6 +233,14 @@ public class Posicionamiento implements Serializable, Auditable, Comparable<Posi
 
 	public void setObservacionesRem(String observacionesRem) {
 		this.observacionesRem = observacionesRem;
+	}
+
+	public DDMotivoAnulacionBC getMotivoAnulacionBc() {
+		return motivoAnulacionBc;
+	}
+
+	public void setMotivoAnulacionBc(DDMotivoAnulacionBC motivoAnulacionBc) {
+		this.motivoAnulacionBc = motivoAnulacionBc;
 	}
 	
 }

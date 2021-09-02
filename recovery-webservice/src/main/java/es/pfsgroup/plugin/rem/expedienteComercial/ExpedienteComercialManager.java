@@ -5286,7 +5286,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				boolean compradorOrepresentanteModificado = interlocutorCaixaService.hasChangestoBC(oldDataComprador,newDataComprador,comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null)
 				|| interlocutorCaixaService.hasChangestoBC(oldDataRepresentante,newDataRepresentante,compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null);
 				if (compradorOrepresentanteModificado)
-				interlocutorCaixaService.callReplicateClientAsync(oldDataComprador,newDataComprador,comprador,expedienteComercial.getOferta());
+				interlocutorCaixaService.callReplicateClientAsync(comprador,expedienteComercial.getOferta());
 			}
 
 		}
@@ -5946,6 +5946,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(!Checks.estaVacio(tmpClienteGDPR))
 				clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.get(0).getNumDocumento());
 
+			if (compradorBusqueda.getInfoAdicionalPersona() != null && compradorBusqueda.getInfoAdicionalPersona().getEstadoComunicacionC4C() != null && DDEstadoComunicacionC4C.C4C_NO_ENVIADO.equals(compradorBusqueda.getInfoAdicionalPersona().getEstadoComunicacionC4C().getCodigo()))
+				interlocutorCaixaService.callReplicateClientAsync(compradorBusqueda,expediente.getOferta());
 			return true;
 		} else {
 

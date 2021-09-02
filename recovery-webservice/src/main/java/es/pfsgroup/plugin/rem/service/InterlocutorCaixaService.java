@@ -68,7 +68,7 @@ public class InterlocutorCaixaService {
     return particularValidatorApi.esClienteEnOfertaCaixa(clienteComercial.getId().toString());
     }
 
-    public void callReplicateClientAsync(final DtoInterlocutorBC oldData, final DtoInterlocutorBC newData, final Comprador comprador, final Oferta oferta){
+    public void callReplicateClientAsync(final Comprador comprador, final Oferta oferta){
             hibernateUtils.flushSession();
             Thread thread = new Thread(new Runnable() {
                 public void run() {

@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.Resource;
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -24,6 +28,7 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -947,6 +952,58 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 			if (!Checks.esNulo(cliente.getTipoPersona())) {
 				compradorBusqueda.setTipoPersona(cliente.getTipoPersona());
+			}
+			
+			if (!Checks.esNulo(cliente.getTipoOcupacion())) {
+				compradorBusqueda.setTipoOcupacion(cliente.getTipoOcupacion());
+			}
+			
+			if (!Checks.esNulo(cliente.getNombreRepresentante())) {
+				compradorBusqueda.setNombreRepresentante(cliente.getNombreRepresentante());
+			}
+			
+			if (!Checks.esNulo(cliente.getApellidosRepresentante())) {
+				compradorBusqueda.setApellidosRepresentante(cliente.getApellidosRepresentante());
+			}
+		   
+			if (!Checks.esNulo(cliente.getTelefonoRepresentante())) {
+				compradorBusqueda.setTelefonoRepresentante(cliente.getTelefonoRepresentante());
+			}
+		    
+			if (!Checks.esNulo(cliente.getEmailRepresentante())) {
+				compradorBusqueda.setEmailRepresentante(cliente.getEmailRepresentante());
+			}
+
+			if (!Checks.esNulo(cliente.getNombreContacto())) {
+				compradorBusqueda.setNombreContacto(cliente.getNombreContacto());
+			}
+			
+			if (!Checks.esNulo(cliente.getApellidosContacto())) {
+				compradorBusqueda.setApellidosContacto(cliente.getApellidosContacto());
+			}
+		    
+			if (!Checks.esNulo(cliente.getTipoDocumentoContacto())) {
+				compradorBusqueda.setTipoDocumentoContacto(cliente.getTipoDocumentoContacto());
+			}
+
+			if (!Checks.esNulo(cliente.getDocumentoContacto())) {
+				compradorBusqueda.setDocumentoContacto(cliente.getDocumentoContacto());
+			}
+		    
+			if (!Checks.esNulo(cliente.getTelefonoContacto())) {
+				compradorBusqueda.setTelefonoContacto(cliente.getTelefonoContacto());
+			}
+
+			if (!Checks.esNulo(cliente.getEmailContacto())) {
+				compradorBusqueda.setEmailContacto(cliente.getEmailContacto());
+			}
+
+			if (!Checks.esNulo(cliente.getIdClienteRemRepresentante())) {
+				compradorBusqueda.setIdClienteRemRepresentante(cliente.getIdClienteRemRepresentante());
+			}
+			
+			if (!Checks.esNulo(cliente.getIdClienteContacto())) {
+				compradorBusqueda.setIdClienteContacto(cliente.getIdClienteContacto());
 			}
 
 			// CHECKS GDPR

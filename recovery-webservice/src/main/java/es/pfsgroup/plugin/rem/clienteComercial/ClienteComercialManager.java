@@ -1,9 +1,18 @@
 package es.pfsgroup.plugin.rem.clienteComercial;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,6 +24,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
@@ -23,6 +33,10 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.IsNumber;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Lista;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.UniqueKey;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
@@ -31,10 +45,13 @@ import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteDto;
+import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
+import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 import net.sf.json.JSONObject;
 
 @Service("clienteComercialManager")
@@ -347,6 +364,67 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		if (!Checks.esNulo(clienteDto.getCodigoPostalRepresentante())) {
 			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
 		}
+		
+		if (!Checks.esNulo(clienteDto.getCodTipoOcupacion()) && cliente.getTipoPersona() != null 
+				&& DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(cliente.getTipoPersona().getCodigo())) {
+			DDTipoOcupacion tipoOcupacion = (DDTipoOcupacion) genericDao.get(DDTipoOcupacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoOcupacion()));
+			if (!Checks.esNulo(tipoOcupacion)) {
+				cliente.setTipoOcupacion(tipoOcupacion);
+			}
+		}
+		
+		if (!Checks.esNulo(clienteDto.getNombreRepresentante())) {
+			cliente.setNombreRepresentante(clienteDto.getNombreRepresentante());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getApellidosRepresentante())) {
+			cliente.setApellidosRepresentante(clienteDto.getApellidosRepresentante());
+		}
+	   
+		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante())) {
+			cliente.setTelefonoRepresentante(clienteDto.getTelefonoRepresentante());
+		}
+	    
+		if (!Checks.esNulo(clienteDto.getEmailRepresentante())) {
+			cliente.setEmailRepresentante(clienteDto.getEmailRepresentante());
+		}
+
+		if (!Checks.esNulo(clienteDto.getNombreContacto())) {
+			cliente.setNombreContacto(clienteDto.getNombreContacto());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getApellidosContacto())) {
+			cliente.setApellidosContacto(clienteDto.getApellidosContacto());
+		}
+	    
+		if (!Checks.esNulo(clienteDto.getCodTipoDocumentoContacto())) {
+			DDTipoDocumento tipoDocumentoContacto = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class, 
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoDocumentoContacto()));
+			if (!Checks.esNulo(tipoDocumentoContacto)) {
+				cliente.setTipoDocumentoContacto(tipoDocumentoContacto);
+			}
+		}
+
+		if (!Checks.esNulo(clienteDto.getDocumentoContacto())) {
+			cliente.setDocumentoContacto(clienteDto.getDocumentoContacto());
+		}
+	    
+		if (!Checks.esNulo(clienteDto.getTelefonoContacto())) {
+			cliente.setTelefonoContacto(clienteDto.getTelefonoContacto());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailContacto())) {
+			cliente.setEmailContacto(clienteDto.getEmailContacto());
+		}
+
+		if (!Checks.esNulo(clienteDto.getIdClienteRemRepresentante())) {
+			cliente.setIdClienteRemRepresentante(clienteDto.getIdClienteRemRepresentante());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getIdClienteContacto())) {
+			cliente.setIdClienteContacto(clienteDto.getIdClienteContacto());
+		}
 
 		clienteComercialDao.save(cliente);
 		
@@ -617,6 +695,67 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
 		}
 		
+		if (!Checks.esNulo(clienteDto.getCodTipoOcupacion()) && cliente.getTipoPersona() != null 
+				&& DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(cliente.getTipoPersona().getCodigo())) {
+			DDTipoOcupacion tipoOcupacion = (DDTipoOcupacion) genericDao.get(DDTipoOcupacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoOcupacion()));
+			if (!Checks.esNulo(tipoOcupacion)) {
+				cliente.setTipoOcupacion(tipoOcupacion);
+			}
+		}
+		
+		if (!Checks.esNulo(clienteDto.getNombreRepresentante())) {
+			cliente.setNombreRepresentante(clienteDto.getNombreRepresentante());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getApellidosRepresentante())) {
+			cliente.setApellidosRepresentante(clienteDto.getApellidosRepresentante());
+		}
+	   
+		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante())) {
+			cliente.setTelefonoRepresentante(clienteDto.getTelefonoRepresentante());
+		}
+	    
+		if (!Checks.esNulo(clienteDto.getEmailRepresentante())) {
+			cliente.setEmailRepresentante(clienteDto.getEmailRepresentante());
+		}
+
+		if (!Checks.esNulo(clienteDto.getNombreContacto())) {
+			cliente.setNombreContacto(clienteDto.getNombreContacto());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getApellidosContacto())) {
+			cliente.setApellidosContacto(clienteDto.getApellidosContacto());
+		}
+	    
+		if (!Checks.esNulo(clienteDto.getCodTipoDocumentoContacto())) {
+			DDTipoDocumento tipoDocumentoContacto = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoDocumentoContacto()));
+			if (!Checks.esNulo(tipoDocumentoContacto)) {
+				cliente.setTipoDocumentoContacto(tipoDocumentoContacto);
+			}
+		}
+
+		if (!Checks.esNulo(clienteDto.getDocumentoContacto())) {
+			cliente.setDocumentoContacto(clienteDto.getDocumentoContacto());
+		}
+	    
+		if (!Checks.esNulo(clienteDto.getTelefonoContacto())) {
+			cliente.setTelefonoContacto(clienteDto.getTelefonoContacto());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailContacto())) {
+			cliente.setEmailContacto(clienteDto.getEmailContacto());
+		}
+
+		if (!Checks.esNulo(clienteDto.getIdClienteRemRepresentante())) {
+			cliente.setIdClienteRemRepresentante(clienteDto.getIdClienteRemRepresentante());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getIdClienteContacto())) {
+			cliente.setIdClienteContacto(clienteDto.getIdClienteContacto());
+		}
+		
 		clienteComercialDao.saveOrUpdate(cliente);
 		
 		// HREOS-4937
@@ -766,6 +905,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			ClienteComercial cliente = this.getClienteComercialByIdClienteWebcom(clienteDto.getIdClienteWebcom());
 			if (Checks.esNulo(cliente)) {
 				errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.INSERT);
+				errorsList = validatePersonaFisicaOJuridica(clienteDto);
 				if (errorsList.size() == 0) {
 					this.saveClienteComercial(clienteDto);
 				}
@@ -821,6 +961,26 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		}
 		return listaRespuesta;
+	}
+	
+	private HashMap<String, String> validatePersonaFisicaOJuridica(ClienteDto clienteDto) {
+		
+		HashMap<String, String> error = new HashMap<String, String>();
+		
+		if (clienteDto.getCodTipoPersona() != null && DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(clienteDto.getCodTipoPersona())) {
+			if(clienteDto.getNombre() == null || clienteDto.getNombre().isEmpty())
+				error.put("nombre", RestApi.REST_MSG_MISSING_REQUIRED);
+			
+			if(clienteDto.getApellidos() == null || clienteDto.getApellidos().isEmpty())
+				error.put("apellidos", RestApi.REST_MSG_MISSING_REQUIRED);
+			
+		} else if (clienteDto.getCodTipoPersona() != null && DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(clienteDto.getCodTipoPersona()) 
+				&& (clienteDto.getRazonSocial() == null || clienteDto.getRazonSocial().isEmpty())) {
+			error.put("razonSocial", RestApi.REST_MSG_MISSING_REQUIRED);
+		}
+		
+		return error;
+		
 	}
 
 }

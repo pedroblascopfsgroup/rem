@@ -18,6 +18,9 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposDocumentos;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
@@ -35,16 +38,16 @@ public class ClienteDto implements Serializable{
 	private Long idClienteRem;
 	@Size(max=250,groups = { Insert.class, Update.class })
 	private String razonSocial;
-	@NotNull(groups = { Insert.class})
 	@Size(max=250,groups = { Insert.class, Update.class })
 	private String nombre;
-	@NotNull(groups = { Insert.class})
 	@Size(max=250,groups = { Insert.class, Update.class })
 	private String apellidos;
+	@NotNull(groups = { Insert.class })
 	@Size(max=20,groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDTipoDocumento.class, message = "El codTipoDocumento no existe", groups = { Insert.class,
 			Update.class })
 	private String codTipoDocumento;
+	@NotNull(groups = { Insert.class })
 	@Size(max=14)
 	private String documento;
 	@Size(max=20,groups = { Insert.class, Update.class })
@@ -108,8 +111,7 @@ public class ClienteDto implements Serializable{
 	@Size(max=14,groups = { Insert.class, Update.class })
 	private String telefonoContactoVisitas;
 	
-	//HREOS-2804
-	//@NotNull(groups = { Insert.class})
+	@NotNull(groups = { Insert.class})
 	@Diccionary(clase = DDTiposPersona.class, message = "El tipoPersona no existe", groups = { Insert.class,
 			Update.class })
 	private String codTipoPersona;
@@ -162,6 +164,47 @@ public class ClienteDto implements Serializable{
 	@Size(max=5,groups = { Insert.class, Update.class })
 	@IsNumber(groups = { Insert.class, Update.class }, message="El cp no es valido")
 	private String codigoPostalRepresentante;
+	
+	@Size(max=5,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDTipoOcupacion.class, message = "El codTipoOcupacion no existe", groups = { Insert.class,
+			Update.class })
+	private String codTipoOcupacion;
+	
+	@Size(max=250,groups = { Insert.class, Update.class })
+	private String nombreRepresentante;
+	
+	@Size(max=250,groups = { Insert.class, Update.class })
+	private String apellidosRepresentante;
+	
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String telefonoRepresentante;
+	
+	@Size(max=50,groups = { Insert.class, Update.class })
+	private String emailRepresentante;
+	
+	@Size(max=250,groups = { Insert.class, Update.class })
+	private String nombreContacto;
+	
+	@Size(max=250,groups = { Insert.class, Update.class })
+	private String apellidosContacto;
+	
+	@Size(max=5,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDTipoDeDocumento.class, message = "El codTipoDocumentoContacto no existe", groups = { Insert.class,
+			Update.class })
+	private String codTipoDocumentoContacto;
+	
+	@Size(max=14,groups = { Insert.class, Update.class })
+	private String documentoContacto;
+	
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String telefonoContacto;
+	
+	@Size(max=50,groups = { Insert.class, Update.class })
+	private String emailContacto;
+	
+	private Long idClienteRemRepresentante;
+	
+	private Long idClienteContacto;
 	
 	
 	public String getCodTipoPersona() {
@@ -428,5 +471,83 @@ public class ClienteDto implements Serializable{
 	}
 	public void setCodigoPostalRepresentante(String codigoPostalRepresentante) {
 		this.codigoPostalRepresentante = codigoPostalRepresentante;
+	}
+	public String getCodTipoOcupacion() {
+		return codTipoOcupacion;
+	}
+	public void setCodTipoOcupacion(String codTipoOcupacion) {
+		this.codTipoOcupacion = codTipoOcupacion;
+	}
+	public String getNombreRepresentante() {
+		return nombreRepresentante;
+	}
+	public void setNombreRepresentante(String nombreRepresentante) {
+		this.nombreRepresentante = nombreRepresentante;
+	}
+	public String getApellidosRepresentante() {
+		return apellidosRepresentante;
+	}
+	public void setApellidosRepresentante(String apellidosRepresentante) {
+		this.apellidosRepresentante = apellidosRepresentante;
+	}
+	public String getTelefonoRepresentante() {
+		return telefonoRepresentante;
+	}
+	public void setTelefonoRepresentante(String telefonoRepresentante) {
+		this.telefonoRepresentante = telefonoRepresentante;
+	}
+	public String getEmailRepresentante() {
+		return emailRepresentante;
+	}
+	public void setEmailRepresentante(String emailRepresentante) {
+		this.emailRepresentante = emailRepresentante;
+	}
+	public String getNombreContacto() {
+		return nombreContacto;
+	}
+	public void setNombreContacto(String nombreContacto) {
+		this.nombreContacto = nombreContacto;
+	}
+	public String getApellidosContacto() {
+		return apellidosContacto;
+	}
+	public void setApellidosContacto(String apellidosContacto) {
+		this.apellidosContacto = apellidosContacto;
+	}
+	public String getCodTipoDocumentoContacto() {
+		return codTipoDocumentoContacto;
+	}
+	public void setCodTipoDocumentoContacto(String codTipoDocumentoContacto) {
+		this.codTipoDocumentoContacto = codTipoDocumentoContacto;
+	}
+	public String getDocumentoContacto() {
+		return documentoContacto;
+	}
+	public void setDocumentoContacto(String documentoContacto) {
+		this.documentoContacto = documentoContacto;
+	}
+	public String getTelefonoContacto() {
+		return telefonoContacto;
+	}
+	public void setTelefonoContacto(String telefonoContacto) {
+		this.telefonoContacto = telefonoContacto;
+	}
+	public String getEmailContacto() {
+		return emailContacto;
+	}
+	public void setEmailContacto(String emailContacto) {
+		this.emailContacto = emailContacto;
+	}
+	public Long getIdClienteRemRepresentante() {
+		return idClienteRemRepresentante;
+	}
+	public void setIdClienteRemRepresentante(Long idClienteRemRepresentante) {
+		this.idClienteRemRepresentante = idClienteRemRepresentante;
+	}
+	public Long getIdClienteContacto() {
+		return idClienteContacto;
+	}
+	public void setIdClienteContacto(Long idClienteContacto) {
+		this.idClienteContacto = idClienteContacto;
 	}
 }

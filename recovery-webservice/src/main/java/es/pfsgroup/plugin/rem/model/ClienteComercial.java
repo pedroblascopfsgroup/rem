@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
@@ -221,6 +222,47 @@ public class ClienteComercial implements Serializable, Auditable {
     
     @Column(name = "CLC_CODIGO_POSTAL_RTE")
     private String codigoPostalRepresentante;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TOC_ID")
+    private DDTipoOcupacion tipoOcupacion;
+    
+    @Column(name = "CLC_NOMBRE_REPRESENTANTE")
+    private String nombreRepresentante;
+   
+    @Column(name = "CLC_APELLIDOS_REPRESENTANTE")
+    private String apellidosRepresentante;
+    
+    @Column(name = "CLC_TELEFONO_REPRESENTANTE")
+    private String telefonoRepresentante;
+    
+    @Column(name = "CLC_EMAIL_REPRESENTANTE")
+    private String emailRepresentante;
+    
+    @Column(name = "CLC_NOMBRE_CONTACTO")
+    private String nombreContacto;
+    
+    @Column(name = "CLC_APELLIDOS_CONTACTO")
+    private String apellidosContacto;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TDI_ID_CONTACTO")
+	private DDTipoDocumento tipoDocumentoContacto;
+    
+    @Column(name = "CLC_DOCUMENTO_CONTACTO")
+    private String documentoContacto;
+
+    @Column(name = "CLC_TELEFONO_CONTACTO")
+    private String telefonoContacto;
+    
+    @Column(name = "CLC_EMAIL_CONTACTO")
+    private String emailContacto;
+    
+    @Column(name = "ID_CLIENTE_REM_REPRESENTANTE")
+    private Long idClienteRemRepresentante;
+    
+    @Column(name = "ID_CLIENTE_CONTACTO")
+    private Long idClienteContacto;
     
 	@Version   
 	private Long version;
@@ -639,5 +681,110 @@ public class ClienteComercial implements Serializable, Auditable {
 
 	public void setDocumentoConyuge(String documentoConyuge) {
 		this.documentoConyuge = documentoConyuge;
-	}   
+	}
+
+	public DDTipoOcupacion getTipoOcupacion() {
+		return tipoOcupacion;
+	}
+
+	public void setTipoOcupacion(DDTipoOcupacion tipoOcupacion) {
+		this.tipoOcupacion = tipoOcupacion;
+	}
+
+	public String getNombreRepresentante() {
+		return nombreRepresentante;
+	}
+
+	public void setNombreRepresentante(String nombreRepresentante) {
+		this.nombreRepresentante = nombreRepresentante;
+	}
+
+	public String getApellidosRepresentante() {
+		return apellidosRepresentante;
+	}
+
+	public void setApellidosRepresentante(String apellidosRepresentante) {
+		this.apellidosRepresentante = apellidosRepresentante;
+	}
+
+	public String getTelefonoRepresentante() {
+		return telefonoRepresentante;
+	}
+
+	public void setTelefonoRepresentante(String telefonoRepresentante) {
+		this.telefonoRepresentante = telefonoRepresentante;
+	}
+
+	public String getEmailRepresentante() {
+		return emailRepresentante;
+	}
+
+	public void setEmailRepresentante(String emailRepresentante) {
+		this.emailRepresentante = emailRepresentante;
+	}
+
+	public String getNombreContacto() {
+		return nombreContacto;
+	}
+
+	public void setNombreContacto(String nombreContacto) {
+		this.nombreContacto = nombreContacto;
+	}
+
+	public String getApellidosContacto() {
+		return apellidosContacto;
+	}
+
+	public void setApellidosContacto(String apellidosContacto) {
+		this.apellidosContacto = apellidosContacto;
+	}
+
+	public DDTipoDocumento getTipoDocumentoContacto() {
+		return tipoDocumentoContacto;
+	}
+
+	public void setTipoDocumentoContacto(DDTipoDocumento tipoDocumentoContacto) {
+		this.tipoDocumentoContacto = tipoDocumentoContacto;
+	}
+
+	public String getDocumentoContacto() {
+		return documentoContacto;
+	}
+
+	public void setDocumentoContacto(String documentoContacto) {
+		this.documentoContacto = documentoContacto;
+	}
+
+	public String getTelefonoContacto() {
+		return telefonoContacto;
+	}
+
+	public void setTelefonoContacto(String telefonoContacto) {
+		this.telefonoContacto = telefonoContacto;
+	}
+
+	public String getEmailContacto() {
+		return emailContacto;
+	}
+
+	public void setEmailContacto(String emailContacto) {
+		this.emailContacto = emailContacto;
+	}
+
+	public Long getIdClienteRemRepresentante() {
+		return idClienteRemRepresentante;
+	}
+
+	public void setIdClienteRemRepresentante(Long idClienteRemRepresentante) {
+		this.idClienteRemRepresentante = idClienteRemRepresentante;
+	}
+
+	public Long getIdClienteContacto() {
+		return idClienteContacto;
+	}
+
+	public void setIdClienteContacto(Long idClienteContacto) {
+		this.idClienteContacto = idClienteContacto;
+	}
+	
 }

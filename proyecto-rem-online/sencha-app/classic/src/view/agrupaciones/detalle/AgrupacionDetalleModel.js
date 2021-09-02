@@ -790,6 +790,18 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     
 	     esAgrupacionCaixaOrPromocionAlquiler: function(get) {
 				return get('esAgrupacionCaixa') || get('esAgrupacionPromocionAlquiler'); 
+	     },
+	     esAgrupacionCaixaComercial: function(get){
+	     	var me = this;
+	    	var tipoCartera = me.getData().agrupacionficha.getData().codigoCartera;
+	    	var tipoAgrupacion = me.getData().agrupacionficha.getData().tipoAgrupacionCodigo;	    	
+    		if(tipoCartera == CONST.CARTERA['BANKIA']
+    			&& (tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA'] 
+    			|| tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA_ALQUILER'] 
+    			|| tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA_OBREM'])) {
+		    		return true;
+	    	}
+	    	return false;
 	     }
     },
 				

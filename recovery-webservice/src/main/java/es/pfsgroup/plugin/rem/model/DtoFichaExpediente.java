@@ -155,6 +155,9 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private Boolean finalizadoCierreEconomico;
 	
+	private Boolean esActivoHayaHome;
+	private Boolean tieneTramiteComercialVivo;
+	
 	public Long getId() {
 		return id;
 	}
@@ -786,6 +789,22 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setFinalizadoCierreEconomico(Boolean finalizadoCierreEconomico) {
 		this.finalizadoCierreEconomico = finalizadoCierreEconomico;
+	}
+
+	public Boolean getEsActivoHayaHome() {
+		return esActivoHayaHome;
+	}
+
+	public void setEsActivoHayaHome(Boolean esActivoHayaHome) {
+		this.esActivoHayaHome = esActivoHayaHome;
+	}
+
+	public Boolean getTieneTramiteComercialVivo() {
+		return tieneTramiteComercialVivo;
+	}
+
+	public void setTieneTramiteComercialVivo(Boolean tieneTramiteComercialVivo) {
+		this.tieneTramiteComercialVivo = tieneTramiteComercialVivo;
 	}
 	
 	

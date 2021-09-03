@@ -1461,4 +1461,10 @@ public interface ActivoApi {
 	public List<ActivoTrabajo> getActivoTrabajos(Long idActivo);
 
 	List<Activo> getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(Long idAgrupacion, Long idActivoPrincipal);
+
+	boolean esActivoHayaHome(Long idActivo);
+
+	boolean esActivoAlquiler(Long idActivo);
+
+	Activo activoByIdAgrupacion(Long idAgrupacion);
 }

@@ -2084,7 +2084,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			expedienteComercial.setFormalizacion(this.crearFormalizacion(expedienteComercial));
 			
 			//Creacion del tramite
-			trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
+			if(!activoManager.esActivoHayaHome(activo.getId()))
+				trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 			transactionManager.commit(transaction);
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 

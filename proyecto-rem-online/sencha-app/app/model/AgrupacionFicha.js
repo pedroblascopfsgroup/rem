@@ -333,6 +333,10 @@ Ext.define('HreRem.model.AgrupacionFicha', {
                 },
     			{
                 	name: 'sumatorio'
+                },
+    			{
+                	name: 'perimetroMacc',
+    	 			type: 'boolean'
                 }
     ],
     

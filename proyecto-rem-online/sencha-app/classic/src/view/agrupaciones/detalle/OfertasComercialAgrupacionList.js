@@ -16,6 +16,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
     	boxready: function(){
     		me = this;    		
 			me.calcularMostrarBotonClonarExpediente();
+			me.evaluarEdicion();
     	}
     },
     
@@ -531,7 +532,19 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 											|| me.lookupController().getViewModel().data.agrupacionficha.data.codSubcartera === CONST.SUBCARTERA['DIVARIAN'])*/
 										);
 		me.mostrarBotonClonarExpediente(mostrarCloneButtonExpediente);
-	}
+	},
+	
+	evaluarEdicion: function() {
+
+		var me = this;
+		var agr = me.lookupController().getViewModel().get('agrupacionficha');
+
+		if(agr.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && agr.get('perimetroMacc')){
+			me.setTopBar(false);
+			me.rowEditing.clearListeners();
+		}
+		
+   }
    	
 });
 

@@ -9236,6 +9236,49 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return activos;
 	}
+	
+	@Override
+	public boolean esActivoHayaHome(Long idActivo) {
+		boolean esMacc = false;
+		boolean esActivoAlquiler = false;
+		Activo activo = get(idActivo);
+		
+		if (!Checks.esNulo(activo)) {
+			esMacc = !Checks.esNulo(activo.getPerimetroMacc()) && activo.getPerimetroMacc() == 1;
+			esActivoAlquiler = esActivoAlquiler(idActivo);
+		}
+		
+		boolean esActivoHayaHome = esActivoAlquiler && esMacc ? true : false; 
+
+		return esActivoHayaHome;
+	}
+	
+	@Override
+	public boolean esActivoAlquiler(Long idActivo) {
+		boolean esActivoAlquiler = false;
+		Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);	
+		ActivoPublicacion actPublicacion = genericDao.get(ActivoPublicacion.class, activoFilter);	
+		
+		if (!Checks.esNulo(actPublicacion) && !Checks.esNulo(actPublicacion.getTipoComercializacion()) && 
+				(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(actPublicacion.getTipoComercializacion().getCodigo())
+				|| DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(actPublicacion.getTipoComercializacion().getCodigo()))) {
+			esActivoAlquiler = true;
+		}
+		
+		return esActivoAlquiler;
+	}
+	
+	@Override
+	public Activo activoByIdAgrupacion(Long idAgrupacion) {
+		ActivoAgrupacion agr = activoAgrupacionApi.get(idAgrupacion);
+		Activo activo = null;
+		if(!Checks.esNulo(agr.getActivoPrincipal())) {
+			activo = agr.getActivoPrincipal();
+		} else if (!Checks.esNulo(agr.getActivos()) && agr.getActivos().size() > 0){
+			activo = agr.getActivos().get(0).getActivo();
+		}
+		return activo;
+	}
 
 }
 

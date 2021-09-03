@@ -319,6 +319,14 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		{
     			name:'finalizadoCierreEconomico',
     			type: 'boolean'
+			},
+			{
+				name: 'esActivoHayaHome',
+				type: 'boolean'
+			},
+			{
+				name: 'tieneTramiteComercialVivo',
+				type: 'boolean'
 			}
     ],
     formulas: {

@@ -204,6 +204,9 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 							return error;
 						}
 					}
+				}else if (DDCartera.CODIGO_CARTERA_BFA.equals(codigoCartera)) {
+					//BFA no necesita CCC ni CPP para poderse autorizar
+					return error;
 				}else{
 					for(GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 						if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase().isEmpty()) {

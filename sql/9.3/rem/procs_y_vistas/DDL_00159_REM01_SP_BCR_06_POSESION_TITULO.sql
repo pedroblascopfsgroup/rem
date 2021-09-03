@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210823
+--## FECHA_CREACION=20210902
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14899
+--## INCIDENCIA_LINK=HREOS-15059
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -25,6 +25,7 @@
 --##        0.13 Se añade por defecto como Tipo Grado Propiedad Plen Dominio con el 100% - [HREOS-14649] - Daniel Algaba
 --##	      0.14 Correcciones - HREOS-14820 - Daniel Algaba
 --##        0.15 Correciones para el plan de pruebas- [HREOS-14899] - Alejandra García
+--##        0.16 Correción merge ACT_AHT_HIST_TRAM_TITULO- [HREOS-15059] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -878,7 +879,7 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                         JOIN '|| V_ESQUEMA ||'.ACT_TIT_TITULO TIT ON ACT.ACT_ID=TIT.ACT_ID AND TIT.BORRADO=0
                         JOIN '|| V_ESQUEMA ||'.DD_ETI_ESTADO_TITULO ETI ON ETI.DD_ETI_ID=TIT.DD_ETI_ID
                         LEFT JOIN ACT_RECIENTE REC ON REC.TIT_ID=TIT.TIT_ID
-                        JOIN '|| V_ESQUEMA ||'.ACT_AHT_HIST_TRAM_TITULO AHT ON TIT.TIT_ID=AHT.TIT_ID
+                        JOIN '|| V_ESQUEMA ||'.ACT_AHT_HIST_TRAM_TITULO AHT ON REC.AHT_ID=AHT.AHT_ID
                         WHERE ETI.DD_ETI_CODIGO NOT IN (''04'') AND AUX.FLAG_EN_REM='|| FLAG_EN_REM ||' 
                     ) T2 ON (T1.AHT_ID = T2.AHT_ID)
                     WHEN MATCHED THEN UPDATE SET

@@ -5828,6 +5828,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
 		CompradorExpediente compradorExpediente = new CompradorExpediente();
 		DDEstadoContrasteListas estadoNoSolicitado = genericDao.get(DDEstadoContrasteListas.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoContrasteListas.NO_SOLICITADO));
+		boolean esOfertaCaixa = expediente != null && expediente.getOferta() != null ? particularValidatorApi.esOfertaCaixa(expediente.getOferta().getNumOferta().toString()) : false;
 		//compradorExpediente.setBorrado(false);
 
 		if (!Checks.esNulo(compradorBusqueda)) {
@@ -5956,7 +5957,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(!Checks.estaVacio(tmpClienteGDPR))
 				clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.get(0).getNumDocumento());
 
-			if (compradorBusqueda.getInfoAdicionalPersona() != null && compradorBusqueda.getInfoAdicionalPersona().getEstadoComunicacionC4C() != null && DDEstadoComunicacionC4C.C4C_NO_ENVIADO.equals(compradorBusqueda.getInfoAdicionalPersona().getEstadoComunicacionC4C().getCodigo()))
+			if (esOfertaCaixa && compradorBusqueda.getInfoAdicionalPersona() != null && compradorBusqueda.getInfoAdicionalPersona().getEstadoComunicacionC4C() != null && DDEstadoComunicacionC4C.C4C_NO_ENVIADO.equals(compradorBusqueda.getInfoAdicionalPersona().getEstadoComunicacionC4C().getCodigo()))
 				interlocutorCaixaService.callReplicateClientAsync(compradorBusqueda,expediente.getOferta());
 			return true;
 		} else {
@@ -6308,7 +6309,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if(!Checks.estaVacio(tmpClienteGDPR))
 					clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.get(0).getNumDocumento());
 
-				if (comprador.getInfoAdicionalPersona() != null && comprador.getInfoAdicionalPersona().getEstadoComunicacionC4C() != null && DDEstadoComunicacionC4C.C4C_NO_ENVIADO.equals(comprador.getInfoAdicionalPersona().getEstadoComunicacionC4C().getCodigo()))
+				if (esOfertaCaixa && comprador.getInfoAdicionalPersona() != null && comprador.getInfoAdicionalPersona().getEstadoComunicacionC4C() != null && DDEstadoComunicacionC4C.C4C_NO_ENVIADO.equals(comprador.getInfoAdicionalPersona().getEstadoComunicacionC4C().getCodigo()))
 					interlocutorCaixaService.callReplicateClientAsync(comprador,expediente.getOferta());
 
 				return true;

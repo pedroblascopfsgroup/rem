@@ -601,7 +601,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codCarteraActivo) || DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codCarteraActivo) ||
 				DDCartera.CODIGO_CARTERA_SAREB.equals(codCarteraActivo) || (DDCartera.CODIGO_CARTERA_CERBERUS.equals(codCarteraActivo) && 
 				(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcarteraActivo) || DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(codSubcarteraActivo) 
-						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(codSubcarteraActivo))); 
+						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(codSubcarteraActivo))) || DDCartera.CODIGO_CARTERA_BFA.equals(codCarteraActivo); 
 	}
 	
 	private boolean isActivoBFA(TareaActivo tareaActivo) {

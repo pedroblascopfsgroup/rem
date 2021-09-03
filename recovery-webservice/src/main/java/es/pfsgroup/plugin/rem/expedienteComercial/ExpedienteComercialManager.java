@@ -4026,6 +4026,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				beanUtilNotNull.copyProperty(posicionamientoDto, "fechaValidacionBCPos", posicionamiento.getFechaValidacionBCPos());
 				beanUtilNotNull.copyProperty(posicionamientoDto, "observacionesBcPo", posicionamiento.getObservacionesBcPos());
 				
+				if (posicionamiento.getMotivoAnulacionBc() != null) {
+					posicionamientoDto.setMotivoAnulacionBc(posicionamiento.getMotivoAnulacionBc().getDescripcion());
+				}
 				
 			} catch (IllegalAccessException e) {
 				logger.error("error en expedienteComercialManager", e);
@@ -4082,6 +4085,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		posicionamiento.setMotivoAplazamiento(dto.getMotivoAplazamiento());
+		
+		if (dto.getMotivoAnulacionBc() != null) {
+			DDMotivoAnulacionBC motAnulacionBc = genericDao.get(DDMotivoAnulacionBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoAnulacionBc()));
+			if (motAnulacionBc != null) {
+				posicionamiento.setMotivoAnulacionBc(motAnulacionBc);
+			}
+		}
 
 		return posicionamiento;
 	}

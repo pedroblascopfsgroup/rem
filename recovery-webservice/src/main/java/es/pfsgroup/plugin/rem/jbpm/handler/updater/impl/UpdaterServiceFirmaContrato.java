@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionBC;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 
 @Component
@@ -127,7 +128,9 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 									DDMotivosEstadoBC estado = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS,"codigo", DDMotivosEstadoBC.CODIGO_ANULADA));
 									pos.setValidacionBCPos(estado);
 								}else if(DDMotivosEstadoBC.isRechazado(pos.getValidacionBCPos())) {
-									pos.setMotivoAplazamiento(MOTIVO_APLAZAMIENTO);
+									//pos.setMotivoAplazamiento(MOTIVO_APLAZAMIENTO);
+									DDMotivoAnulacionBC motivo = genericDao.get(DDMotivoAnulacionBC.class, genericDao.createFilter(FilterType.EQUALS,"codigo", DDMotivoAnulacionBC.CODIGO_FIRMA_FORZADA_ARRAS));
+									pos.setMotivoAnulacionBc(motivo);
 								}
 								pos.setFechaFinPosicionamiento(new Date());
 								genericDao.save(Posicionamiento.class, pos);

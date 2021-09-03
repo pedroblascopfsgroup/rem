@@ -5400,5 +5400,16 @@ comprobarFormatoModificar: function() {
 		} 
 		
 		return isOk;
+	},
+	evaluarLabelCaixa: function (form){
+		var me = this;
+		var labelAlquiler = me.lookupReference('tituloAlquilerRef');
+		var labelVenta = me.lookupReference('tituloVentaRef');
+		
+		var viewModel = me.getViewModel();
+		if(viewModel.get('esCarteraBankia')){
+			labelAlquiler.setTitle(HreRem.i18n('title.generales'));
+			labelVenta.setTitle(HreRem.i18n('title.generales'));
+		}
 	}
 });

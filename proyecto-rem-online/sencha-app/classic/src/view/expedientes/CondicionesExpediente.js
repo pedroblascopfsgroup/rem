@@ -11,7 +11,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 	requires : [ 'HreRem.model.CondicionesExpediente','HreRem.view.common.GridBaseEditableRow'],
 	refreshAfterSave: true, 
 	listeners : {
-		boxready : 'cargarTabData'
+		boxready : 'cargarTabData',
+		afterrender: 'evaluarLabelCaixa'
 	},
 	initComponent : function() {
 		var me = this;
@@ -30,6 +31,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				collapsible : true,
 				defaultType : 'displayfieldbase',
 				title : HreRem.i18n('title.economicas'),
+				reference: 'tituloVentaRef',
 				bind : {
 					hidden : '{!esOfertaVenta}'
 				},
@@ -542,6 +544,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				collapsible : true,
 				defaultType : 'displayfieldbase',
 				title : HreRem.i18n('title.economicas'),
+				reference: 'tituloAlquilerRef',
 				bind : {
 					hidden : '{esOfertaVenta}'
 				},

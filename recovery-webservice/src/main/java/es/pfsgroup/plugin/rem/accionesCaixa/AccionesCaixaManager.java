@@ -419,4 +419,10 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         genericDao.save(Reserva.class, res);
         genericDao.save(ExpedienteComercial.class, expediente);
     }
+
+    @Override
+    @Transactional
+    public void accionContraoferta(DtoAccionAprobacionCaixa dto) throws Exception {
+        adapter.save(createRequestAccionAprobacion(dto));
+    }
 }

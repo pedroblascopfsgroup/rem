@@ -55,4 +55,6 @@ public interface AccionesCaixaApi {
     void accionFirmaContratoRechazada(DtoFirmaContratoCaixa dto) throws Exception;
 
     void accionArrasContabilizadas(DtoExpedienteFechaYOfertaCaixa dto) throws ParseException;
+
+    void accionContraoferta(DtoAccionAprobacionCaixa dto) throws Exception;
 }

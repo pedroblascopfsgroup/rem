@@ -4289,8 +4289,19 @@ public class ActivoAdapter {
 				notificationOfertaManager.sendNotification(oferta);
 			}
 
+			OfertaCaixa ofertaCaixa = null;
+
 			if (particularValidatorApi.esOfertaCaixa(ofertaCreada != null ? ofertaCreada.getNumOferta().toString() : null))
-				createOfertaCaixa(ofertaCreada);
+				ofertaCaixa = createOfertaCaixa(ofertaCreada);
+
+
+			if(DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(codigoEstado) && ofertaCaixa != null){
+				LlamadaPbcDto dtoPbc = new LlamadaPbcDto();
+				dtoPbc.setFechaReal(oferta.getFechaAlta().toString());
+				dtoPbc.setNumOferta(ofertaCaixa.getNumOfertaCaixa());
+				dtoPbc.setCodAccion("997");
+				ofertaApi.pbcFlush(dtoPbc);
+			}
 
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
@@ -4302,15 +4313,15 @@ public class ActivoAdapter {
 
 
 	@Transactional(readOnly = false)
-	public void createOfertaCaixa(final Oferta oferta) {
+	public OfertaCaixa createOfertaCaixa(final Oferta oferta) {
 
 			if(genericDao.get(OfertaCaixa.class,genericDao.createFilter(FilterType.EQUALS,"oferta.numOferta",oferta.getNumOferta())) != null){
-				return;
+				return null;
 			}else {
 				OfertaCaixa ofertaCaixa = new OfertaCaixa();
 				ofertaCaixa.setOferta(oferta);
 				oferta.setOfertaCaixa(ofertaCaixa);
-				genericDao.save(OfertaCaixa.class,ofertaCaixa);
+				return genericDao.save(OfertaCaixa.class,ofertaCaixa);
 			}
 	}
 

@@ -7,10 +7,7 @@ import java.util.List;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
-import es.pfsgroup.plugin.rem.model.DtoOfertaGridFilter;
-import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
-import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
-import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 
 
@@ -110,5 +107,6 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	public Page getBusquedaOfertasGrid(DtoOfertaGridFilter dto);
 
 	List<Oferta> getListOtrasOfertasTramitadasActivo(Long idActivo);
-	
+
+    Boolean pbcFlush(LlamadaPbcDto dto);
 }

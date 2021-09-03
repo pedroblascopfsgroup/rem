@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=PIER GOTTA
---## FECHA_CREACION=20210901
+--## FECHA_CREACION=20210903
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-15077
@@ -43,7 +43,7 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	  T_ALTER(  'NUM_CONT_ALQ',		  'VARCHAR2(13 CHAR) ',		'Número contrato alquiler'	)
+    	  T_ALTER(  'NUM_CONT_ALQ',		  'VARCHAR2(15 CHAR) ',		'Número contrato alquiler'	)
 	);
 	V_T_ALTER T_ALTER;
 	

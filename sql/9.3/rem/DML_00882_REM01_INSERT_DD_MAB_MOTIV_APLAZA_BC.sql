@@ -53,7 +53,8 @@ DECLARE
         T_TIPO_DATA('14',	'Fusión'),
         T_TIPO_DATA('15',	'DL 1/15'),
         T_TIPO_DATA('16',	'CEE'),
-        T_TIPO_DATA('17',	'Pendiente PBC')
+        T_TIPO_DATA('17',	'Pendiente PBC'),
+        T_TIPO_DATA('18',	'Firma forzada de arras')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

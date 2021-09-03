@@ -42,6 +42,7 @@ public class DDMotivoAnulacionBC implements Auditable, Dictionary {
 	public static final String CODIGO_DL_115= "15";
 	public static final String CODIGO_CEE= "16";
 	public static final String CODIGO_PENDIENTE_PBC= "17";
+	public static final String CODIGO_FIRMA_FORZADA_ARRAS= "18";
 	
 	private static final long serialVersionUID = 1L;
 

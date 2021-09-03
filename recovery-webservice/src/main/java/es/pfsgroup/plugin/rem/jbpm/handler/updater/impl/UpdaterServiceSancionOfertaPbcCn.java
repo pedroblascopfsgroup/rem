@@ -13,6 +13,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -21,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
 @Component
 public class UpdaterServiceSancionOfertaPbcCn implements UpdaterService {
@@ -68,9 +70,9 @@ public class UpdaterServiceSancionOfertaPbcCn implements UpdaterService {
 					if(COMBO_RESULTADO.equals(valor.getNombre()) || COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						if(DDSiNo.SI.equals(valor.getValor())) {
 							expediente.setEstadoPbcCn(1);							
-							DDEstadoExpedienteBc estadoBc = (DDEstadoExpedienteBc) utilDiccionarioApi
-									.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class,
-											DDEstadoExpedienteBc.CODIGO_PDTE_APROBACION_BC);
+							DDEstadoExpedienteBc estadoBc = (DDEstadoExpedienteBc) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class,DDEstadoExpedienteBc.CODIGO_PDTE_APROBACION_BC);
+							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadosExpedienteComercial.PTE_SANCION));
+							expediente.setEstado(estado);
 							if (estadoBc != null) {
 								expediente.setEstadoBc(estadoBc);
 								estadoBcModificado = true;

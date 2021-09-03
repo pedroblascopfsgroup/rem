@@ -85,6 +85,9 @@ Ext.define('HreRem.model.Posicionamiento', {
             },
     		{
     			name: 'validacionBCPosiDesc'
+    		},
+    		{
+    			name: 'motivoAnulacionBc'
     		}
     ],
     

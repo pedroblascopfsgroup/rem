@@ -519,11 +519,40 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									flex : 1,
 									editor : {
 										xtype : 'textarea',
-										reference : 'motivoAplazamientoRef'
+										reference : 'motivoAplazamientoRef'										
 										//allowBlank : false
 									},
+									bind:{
+										hidden: '{esBankia}'
+									},
 									renderer : coloredRender
-								}, {
+								},
+								{
+									text : HreRem.i18n('fieldlabel.motivo.aplazamiento'),
+									dataIndex : 'motivoAnulacionBc',
+									flex : 1,
+						        	editor: {
+										xtype: 'combobox',
+										
+										store: new Ext.data.Store({
+											model: 'HreRem.model.ComboBase',
+											proxy: {
+												type: 'uxproxy',
+												remoteUrl: 'generic/getDiccionario',
+												extraParams: {diccionario: 'motivoAnulacionBc'} 
+											},
+											autoLoad: true
+										}),
+										allowBlank:false,
+										displayField: 'descripcion',
+				    					valueField: 'codigo'
+									},
+									bind:{
+										hidden: '{!esBankia}'
+									},
+									renderer : coloredRender
+								},
+								{
 									dataIndex : 'fechaHoraPosicionamiento',
 									formatter : 'date("d/m/Y H:i")',
 									hidden : true,

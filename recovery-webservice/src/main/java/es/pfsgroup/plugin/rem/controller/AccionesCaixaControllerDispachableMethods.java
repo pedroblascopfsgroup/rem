@@ -607,6 +607,26 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
+        dispachableMethods.put(AccionesCaixaController.ACCION_COM_CONTRAOFERTA, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionAprobacionCaixa>() {
+            @Override
+            public Class<DtoAccionAprobacionCaixa> getArgumentType() {
+                return DtoAccionAprobacionCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoAccionAprobacionCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionContraoferta(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }  return true;
+                }
+
+                return false;
+            }
+        });
+
     }
 
     private AccionesCaixaController controller;

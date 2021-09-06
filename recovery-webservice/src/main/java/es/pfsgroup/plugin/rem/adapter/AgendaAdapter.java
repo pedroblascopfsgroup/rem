@@ -87,11 +87,13 @@ import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TareaConfigPeticion;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
@@ -521,17 +523,21 @@ public class AgendaAdapter {
 	public DtoGenericForm rellenaDTO(Long idTarea, Map<String,String> camposFormulario) throws Exception {
 		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(idTarea);
 		GenericForm genericForm = actGenericFormManager.get(tar.getTareaExterna().getId());
+		
+		TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tar.getTareaExterna().getId());
+    	boolean isBankia = DDCartera.CODIGO_CARTERA_BANKIA.equals(tareaActivo.getActivo().getCartera().getCodigo()) ? true : false;
 
 		DtoGenericForm dto = new DtoGenericForm();
 		dto.setForm(genericForm);
 		String[] valores = new String[genericForm.getItems().size()];
 		
 		for (int i = 0; i < genericForm.getItems().size(); i++) {
+			String valorCampo = null;
 			GenericFormItem gfi = genericForm.getItems().get(i);
 			String nombreCampo = gfi.getNombre();
 			for (Map.Entry<String, String> stringStringEntry : camposFormulario.entrySet()) {
 				if (nombreCampo.equals(((Map.Entry) stringStringEntry).getKey())) {
-					String valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
+					valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
 					if (valorCampo != null && !valorCampo.isEmpty() && nombreCampo.toUpperCase().contains("FECHA")) {
 						
 						String[] valoresFecha = valorCampo.replace("/", "-").split("-");
@@ -549,40 +555,22 @@ public class AgendaAdapter {
 					valores[i] = valorCampo;
 					break;
 				} else if (((Map.Entry) stringStringEntry).getKey().equals("aceptacionContraoferta") && !Checks.esNulo(gfi.getValuesBusinessOperation())
-						&& (gfi.getValuesBusinessOperation().equals("DDResolucionComite") || gfi.getValuesBusinessOperation().equals("DDRespuestaOfertante"))){
-					//cuando indiquen las tareas que deben poderse poner la resolucion, se tendra que comprobar si es la tarea 	 -- eliminar comentario					
-					if (tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T013_ResolucionComite") ||
-							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T013_RatificacionComite") ||
-							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T015_ResolucionExpediente") ||
-							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_AnalisisPM") ||
-							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_ResolucionCES") ||
-							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_RespuestaOfertanteCES") ||
-							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_RatificacionComiteCES") ||
-							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_ResolucionArrow")){ //faltan comprobar tareas -- eliminar comentario	
-						String valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
+						&& ("DDResolucionComite".equals(gfi.getValuesBusinessOperation()) || "DDRespuestaOfertante".equals(gfi.getValuesBusinessOperation()))){
+					valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
+					if (DDRespuestaOfertante.CODIGO_CONTRAOFERTA.equals(valorCampo)) {
+						if (("T013_RespuestaOfertante".equals(tar.getTareaExterna().getTareaProcedimiento().getCodigo()) && isBankia) ||
+							"T017_RespuestaOfertanteCES".equals(tar.getTareaExterna().getTareaProcedimiento().getCodigo())){ 
+							valores[i] = valorCampo;
+							break;
+						}	
+					} else {
 						valores[i] = valorCampo;
 						break;
 					}			
 				} else if (((Map.Entry) stringStringEntry).getKey().equals("importeContraoferta")) {
-					//cuando indiquen las tareas que deben poderse avanzar, se tendra que comprobar si es la tarea 	-- eliminar comentario				
-					if (tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T013_ResolucionComite") 
-							&& gfi.getNombre().equals("comboResolucion") ||
-							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T013_RatificacionComite") 
-							&& gfi.getNombre().equals("comboRatificacion") ||
-							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T015_ResolucionExpediente")
-							&& gfi.getNombre().equals("resolucionExpediente") ||
-							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_AnalisisPM")
-							&& gfi.getNombre().equals("comboResolucion") ||
-							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_ResolucionCES") 
-							&& gfi.getNombre().equals("comboResolucion") ||
-							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_RespuestaOfertanteCES") 
-							&& gfi.getNombre().equals("comboRespuesta") ||
-							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_RatificacionComiteCES") 
-							&& gfi.getNombre().equals("comboRatificacion") ||
-							tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_ResolucionArrow")
-							&& gfi.getNombre().equals("comboResolucion")) { //faltan comprobar tareas -- eliminar comentario	
-//							&& gfi.getNombre().equals("")){  //falta comprobar nombre campo de la TFI para poner el importe contraoferta de la tarea de arriba filtrada -- eliminar comentario	
-						String valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
+					valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
+					if (((tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T013_RespuestaOfertante") && isBankia && gfi.getNombre().equals("importeContraofertaOfertante")) ||
+						(tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_RespuestaOfertanteCES") && gfi.getNombre().equals("importeContraoferta")))) {	
 						valores[i] = valorCampo;
 						break;
 					}

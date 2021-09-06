@@ -4239,7 +4239,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		} catch (Exception e) {
 			errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
-			logger.error("error en OfertasManager", e);
+			logger.error("error en OfertasManager.avanzaTarea()", e);
 		}
 		
 		return errorsList;

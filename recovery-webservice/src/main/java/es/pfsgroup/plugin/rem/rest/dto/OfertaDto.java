@@ -13,6 +13,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.IsNum
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Lista;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
+import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
 import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
@@ -67,6 +68,8 @@ public class OfertaDto implements Serializable {
 	@NotNull(groups = {Insert.class})
 	private Boolean isExpress;
 	private String codTarea;
+	@Diccionary(clase = DDResolucionComite.class, message = "El codigo DDResolucionComite no existe", groups = { Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Update.class })
 	private String aceptacionContraoferta;
 	private Date fechaPrevistaFirma;
 	private String lugarFirma;
@@ -98,11 +101,11 @@ public class OfertaDto implements Serializable {
 	private String justificacionOferta;
 	private Date fechaAcepGdpr;
 	private String observacionesRCDC;
-	@Diccionary(clase = DDTfnTipoFinanciacion.class, message = "El codigo no existe", groups = { Insert.class,
+	@Diccionary(clase = DDTfnTipoFinanciacion.class, message = "El codigo DDTfnTipoFinanciacion no existe", groups = { Insert.class,
 			Update.class },foreingField="codigo")
 	@Size(max=20,groups = { Insert.class, Update.class })
 	private String tipoFinanciacion;
-	@Diccionary(clase = DDEntidadFinanciera.class, message = "El codigo no existe", groups = { Insert.class,
+	@Diccionary(clase = DDEntidadFinanciera.class, message = "El codigo DDEntidadFinanciera no existe", groups = { Insert.class,
 			Update.class },foreingField="codigo")
 	@Size(max=20,groups = { Insert.class, Update.class })
 	private String entidadFinanciacion;

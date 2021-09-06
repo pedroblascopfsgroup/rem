@@ -65,177 +65,20 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
     @Transactional(readOnly = false)
     public void datosCliente(Long idActivo, ModelMap model) {
 
-        String urlEnvio = null;
-        String json = null;
+    	String urlEnvio = null;
         JSONObject llamada = null;
         Filter activoIdFilter = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
 		Activo activo = genericDao.get(Activo.class, activoIdFilter);
-        ActivoTitulo actTitulo = genericDao.get(ActivoTitulo.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"activo.id", activo.getId()));
-        ExpedienteComercial expediente = expedienteComercialManager.getExpedientePorActivo(activo);
-        ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "activo.id", activo.getId()));
-        ActivoMaestroActivos activoMaestroActivos = genericDao.get(ActivoMaestroActivos.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "activo.id", activo.getId()));
-        ActivoBbvaActivos activoBbvaActivos = genericDao.get(ActivoBbvaActivos.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"activo.id", activo.getId()));
+		Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Content-Type", "application/json");
 
-        ArrayList<Map<String, Object>> listaTasaciones = new ArrayList<Map<String, Object>>();
-        ArrayList<Map<String, Object>> listaValoraciones = new ArrayList<Map<String, Object>>();
-        ArrayList<Map<String, Object>> listaCargas = new ArrayList<Map<String, Object>>();
+        ArrayList<Map<String, Object>> listaBien = new ArrayList<Map<String, Object>>();
 
+        String json = null;
+        
         try {
-
-            Map<String, String> headers = new HashMap<String, String>();
-            headers.put("Content-Type", "application/json");
-
-            listaCargas = this.cargasInfo(activo);
-            listaTasaciones = this.tasacionesInfo(activo);
-            listaValoraciones = this.valoracionesInfo(activo);
-
-            model.put("cartera", "");
-            model.put("idMaestroActivo", activoMaestroActivos.getId());
-            model.put("expediente", "");
-            model.put("idHaya", activo.getNumActivo());
-            if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR) || activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)){
-                model.put("idOrigen", activo.getIdProp());
-            }
-            if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
-                model.put("idOrigen", activo.getNumActivoUvem());
-            }
-            if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)){
-                model.put("idOrigen", activo.getIdSareb());
-            }
-            if((activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS))
-            && (activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB) || activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB))){
-                model.put("idOrigen", activo.getNumActivoDivarian());
-            }
-            if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
-                model.put("idOrigen", activoBbvaActivos.getNumActivoBbva());
-            }
-            if(expediente != null){
-                model.put("numExpediente", expediente.getNumExpediente());
-            }else{
-                model.put("numExpediente", null);
-            }
-            model.put("numActivo", activo.getNumActivo());
-            model.put("carteraRem", activo.getCartera().getCodigo());
-            model.put("subcarteraRem", activo.getSubcartera().getCodigo());
-            if(activo.getSubtipoActivo() != null){
-                model.put("subtipoActivo", activo.getSubtipoActivo().getCodigo());
-            }else{
-                model.put("subtipoActivo", null);
-            }
-            model.put("estadoBien", "1");
-            model.put("referenciaCatastral", activoCatastro.getRefCatastral());
-            if(activo.getBien() != null && activo.getBien().getDatosRegistralesActivo() != null){
-                model.put("finca", activo.getBien().getDatosRegistralesActivo().getNumFinca());
-            }else{
-                model.put("finca", null);
-            }
-            if(activo.getInfoComercial() != null && activo.getInfoComercial().getLocalidadRegistro() != null){
-                model.put("localidadRegistro", activo.getInfoComercial().getLocalidadRegistro().getCodigo());
-            }else{
-                model.put("localidadRegistro", null);
-            }
-            if(activo.getBien() != null && activo.getBien().getBienEntidad() != null){
-                model.put("tomo", activo.getBien().getBienEntidad().getTomo());
-                model.put("libro", activo.getBien().getBienEntidad().getLibro());
-                model.put("folio", activo.getBien().getBienEntidad().getFolio());
-            }else{
-                model.put("tomo", null);
-                model.put("libro", null);
-                model.put("folio", null);
-            }
-            model.put("fechaInscripcionReg", actTitulo.getFechaInscripcionReg());
-            if(activo.getInfoComercial() != null){
-                model.put("longitud", activo.getInfoComercial().getLongitud());
-                model.put("latitud", activo.getInfoComercial().getLatitud());
-            }else{
-                model.put("longitud", null);
-                model.put("latitud", null);
-            }
-            if(activo.getInfoRegistral() != null){
-                model.put("idufir", activo.getInfoRegistral().getIdufir());
-                model.put("superficieUtil", activo.getInfoRegistral().getSuperficieUtil());
-            }else{
-                model.put("idufir", null);
-                model.put("superficieUtil", null);
-            }
-            model.put("tasaciones", listaTasaciones);
-            model.put("valoraciones", listaValoraciones);
-            if(activo.getInfoComercial() != null && activo.getInfoComercial().getTipoVia() != null){
-                model.put("tipoVia", activo.getInfoComercial().getTipoVia().getCodigo());
-            }else{
-                model.put("tipoVia", null);
-            }
-            model.put("nombreVia", activo.getNombreVia());
-            model.put("numeroDomicilio", activo.getNumeroDomicilio());
-            model.put("portal", activo.getPortal());
-            if(activo.getLocalizacion().getLocalizacionBien() != null){
-                model.put("bloque", activo.getLocalizacion().getLocalizacionBien().getBloque());
-            }else{
-                model.put("bloque", null);
-            }
-            model.put("escalera", activo.getEscalera());
-            model.put("piso", activo.getPiso());
-            model.put("puerta", activo.getPuerta());
-            model.put("municipio", activo.getMunicipio());
-            if(activo.getLocalidad() != null){
-                model.put("localidad", activo.getLocalidad().getCodigo());
-            }else{
-                model.put("localidad", null);
-            }
-            model.put("provincia", activo.getProvincia());
-            model.put("comentarioDireccion", "");
-            model.put("pais", activo.getPais());
-            model.put("codigoPostal", activo.getCodPostal());
-            if(activo.getTipoActivo() != null){
-                model.put("tipoBienCatalogo", activo.getTipoActivo().getCodigo());
-            }else{
-                model.put("tipoBienCatalogo", null);
-            }
-            if(activo.getTipoBien() != null){
-                model.put("tipoBien", activo.getTipoBien().getCodigo());
-            }else{
-                model.put("tipoBien", null);
-            }
-            if(activo.getSubtipoActivo() != null){
-                model.put("subtipoBien", activo.getSubtipoActivo().getCodigo());
-            }else{
-                model.put("subtipoBien", null);
-            }
-            if(activo.getSituacionPosesoria().getOcupado() == 1 && activo.getSituacionPosesoria().getConTitulo().getCodigo().equals("01")){
-                model.put("estadoOcupacion", "02");
-            }else if(activo.getSituacionPosesoria().getOcupado() == 1 && (activo.getSituacionPosesoria().getConTitulo().getCodigo().equals("02") || activo.getSituacionPosesoria().getConTitulo().getCodigo().equals("03"))){
-                model.put("estadoOcupacion", "01");
-            }else if(activo.getSituacionPosesoria().getOcupado() == 0){
-                model.put("estadoOcupacion", "03");
-            }else{
-                model.put("estadoOcupacion", "");
-            }
-            if(activo.getTipoUsoDestino() != null){
-                model.put("usoActivo", activo.getTipoUsoDestino().getCodigo());
-            }else{
-                model.put("usoActivo", null);
-            }
-            if(activo.getInfoComercial() != null){
-                model.put("anyoConstruccion", activo.getInfoComercial().getAnyoConstruccion());
-            }else{
-                model.put("anyoConstruccion", null);
-            }
-            if(activo.getBien().getBienEntidad() != null){
-                model.put("superficieBien", activo.getBien().getBienEntidad().getSuperficie());
-                model.put("superficieConstruida", activo.getBien().getBienEntidad().getSuperficieConstruida());
-                model.put("numRegistro", activo.getBien().getBienEntidad().getNumRegistro());
-            }else{
-                model.put("superficieBien", null);
-                model.put("superficieConstruida", null);
-                model.put("numRegistro", null);
-            }
-            model.put("cargas", listaCargas);
-            model.put("anejoGaraje", "");
-            model.put("anejoTrastero", "");
-            model.put("anejoOtros", "");
-            model.put("notas1", "");
-            model.put("notas2", "");
-
+           
+            model.put("bienes", listaBien);
 
             json = mapper.writeValueAsString(model);
             System.out.println("ResultingJSONstring = " + json);
@@ -257,6 +100,180 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
 
     private JSONObject procesarPeticion(HttpClientFacade httpClientFacade, String serviceUrl, String sendMethod, Map<String, String> headers, String jsonString, int responseTimeOut, String charSet) throws HttpClientException {
         return httpClientFacade.processRequest(serviceUrl, sendMethod, headers, jsonString, responseTimeOut, charSet);
+    }
+    
+    private ArrayList<Map<String, Object>> bienInfo(Activo idActivo) {
+
+        Filter activoIdFilter = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, activoIdFilter);
+        ActivoTitulo actTitulo = genericDao.get(ActivoTitulo.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"activo.id", activo.getId()));
+        ExpedienteComercial expediente = expedienteComercialManager.getExpedientePorActivo(activo);
+        ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "activo.id", activo.getId()));
+        ActivoMaestroActivos activoMaestroActivos = genericDao.get(ActivoMaestroActivos.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "activo.id", activo.getId()));
+        ActivoBbvaActivos activoBbvaActivos = genericDao.get(ActivoBbvaActivos.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"activo.id", activo.getId()));
+
+        ArrayList<Map<String, Object>> listaTasaciones = new ArrayList<Map<String, Object>>();
+        ArrayList<Map<String, Object>> listaValoraciones = new ArrayList<Map<String, Object>>();
+        ArrayList<Map<String, Object>> listaCargas = new ArrayList<Map<String, Object>>();
+        ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+
+        Map<String, Object> map = null;
+
+        listaCargas = this.cargasInfo(activo);
+        listaTasaciones = this.tasacionesInfo(activo);
+        listaValoraciones = this.valoracionesInfo(activo);
+
+        map.put("cartera", "");
+        if(activoMaestroActivos != null) {
+        	map.put("idMaestroActivo", activoMaestroActivos.getId());
+        }
+        map.put("expediente", "");
+        map.put("idHaya", activo.getNumActivo());
+        if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR) || activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)){
+        	map.put("idOrigen", activo.getIdProp());
+        }
+        if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
+        	map.put("idOrigen", activo.getNumActivoUvem());
+        }
+        if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)){
+        	map.put("idOrigen", activo.getIdSareb());
+        }
+        if((activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS))
+        && (activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB) || activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB))){
+        	map.put("idOrigen", activo.getNumActivoDivarian());
+        }
+        if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
+        	map.put("idOrigen", activoBbvaActivos.getNumActivoBbva());
+        }
+        if(expediente != null){
+        	map.put("numExpediente", expediente.getNumExpediente());
+        }else{
+        	map.put("numExpediente", null);
+        }
+        map.put("numActivo", activo.getNumActivo());
+        map.put("carteraRem", activo.getCartera().getCodigo());
+        map.put("subcarteraRem", activo.getSubcartera().getCodigo());
+        if(activo.getSubtipoActivo() != null){
+        	map.put("subtipoActivo", activo.getSubtipoActivo().getCodigo());
+        }else{
+        	map.put("subtipoActivo", null);
+        }
+        map.put("estadoBien", "1");
+        map.put("referenciaCatastral", activoCatastro.getRefCatastral());
+        if(activo.getBien() != null && activo.getBien().getDatosRegistralesActivo() != null){
+        	map.put("finca", activo.getBien().getDatosRegistralesActivo().getNumFinca());
+        }else{
+        	map.put("finca", null);
+        }
+        if(activo.getInfoComercial() != null && activo.getInfoComercial().getLocalidadRegistro() != null){
+        	map.put("localidadRegistro", activo.getInfoComercial().getLocalidadRegistro().getCodigo());
+        }else{
+        	map.put("localidadRegistro", null);
+        }
+        if(activo.getBien() != null && activo.getBien().getBienEntidad() != null){
+        	map.put("tomo", activo.getBien().getBienEntidad().getTomo());
+        	map.put("libro", activo.getBien().getBienEntidad().getLibro());
+        	map.put("folio", activo.getBien().getBienEntidad().getFolio());
+        }else{
+        	map.put("tomo", null);
+        	map.put("libro", null);
+        	map.put("folio", null);
+        }
+        map.put("fechaInscripcionReg", actTitulo.getFechaInscripcionReg());
+        if(activo.getInfoComercial() != null){
+        	map.put("longitud", activo.getInfoComercial().getLongitud());
+        	map.put("latitud", activo.getInfoComercial().getLatitud());
+        }else{
+        	map.put("longitud", null);
+            map.put("latitud", null);
+        }
+        if(activo.getInfoRegistral() != null){
+        	map.put("idufir", activo.getInfoRegistral().getIdufir());
+        	map.put("superficieUtil", activo.getInfoRegistral().getSuperficieUtil());
+        }else{
+        	map.put("idufir", null);
+        	map.put("superficieUtil", null);
+        }
+        map.put("tasaciones", listaTasaciones);
+        map.put("valoraciones", listaValoraciones);
+        if(activo.getInfoComercial() != null && activo.getInfoComercial().getTipoVia() != null){
+        	map.put("tipoVia", activo.getInfoComercial().getTipoVia().getCodigo());
+        }else{
+        	map.put("tipoVia", null);
+        }
+        map.put("nombreVia", activo.getNombreVia());
+        map.put("numeroDomicilio", activo.getNumeroDomicilio());
+        map.put("portal", activo.getPortal());
+        if(activo.getLocalizacion().getLocalizacionBien() != null){
+        	map.put("bloque", activo.getLocalizacion().getLocalizacionBien().getBloque());
+        }else{
+        	map.put("bloque", null);
+        }
+        map.put("escalera", activo.getEscalera());
+        map.put("piso", activo.getPiso());
+        map.put("puerta", activo.getPuerta());
+        map.put("municipio", activo.getMunicipio());
+        if(activo.getLocalidad() != null){
+        	map.put("localidad", activo.getLocalidad().getCodigo());
+        }else{
+        	map.put("localidad", null);
+        }
+        map.put("provincia", activo.getProvincia());
+        map.put("comentarioDireccion", "");
+        map.put("pais", activo.getPais());
+        map.put("codigoPostal", activo.getCodPostal());
+        if(activo.getTipoActivo() != null){
+        	map.put("tipoBienCatalogo", activo.getTipoActivo().getCodigo());
+        }else{
+        	map.put("tipoBienCatalogo", null);
+        }
+        if(activo.getTipoBien() != null){
+        	map.put("tipoBien", activo.getTipoBien().getCodigo());
+        }else{
+        	map.put("tipoBien", null);
+        }
+        if(activo.getSubtipoActivo() != null){
+        	map.put("subtipoBien", activo.getSubtipoActivo().getCodigo());
+        }else{
+        	map.put("subtipoBien", null);
+        }
+        if(activo.getSituacionPosesoria().getOcupado() == 1 && activo.getSituacionPosesoria().getConTitulo().getCodigo().equals("01")){
+        	map.put("estadoOcupacion", "02");
+        }else if(activo.getSituacionPosesoria().getOcupado() == 1 && (activo.getSituacionPosesoria().getConTitulo().getCodigo().equals("02") || activo.getSituacionPosesoria().getConTitulo().getCodigo().equals("03"))){
+        	map.put("estadoOcupacion", "01");
+        }else if(activo.getSituacionPosesoria().getOcupado() == 0){
+        	map.put("estadoOcupacion", "03");
+        }else{
+        	map.put("estadoOcupacion", "");
+        }
+        if(activo.getTipoUsoDestino() != null){
+        	map.put("usoActivo", activo.getTipoUsoDestino().getCodigo());
+        }else{
+        	map.put("usoActivo", null);
+        }
+        if(activo.getInfoComercial() != null){
+        	map.put("anyoConstruccion", activo.getInfoComercial().getAnyoConstruccion());
+        }else{
+        	map.put("anyoConstruccion", null);
+        }
+        if(activo.getBien().getBienEntidad() != null){
+        	map.put("superficieBien", activo.getBien().getBienEntidad().getSuperficie());
+        	map.put("superficieConstruida", activo.getBien().getBienEntidad().getSuperficieConstruida());
+        	map.put("numRegistro", activo.getBien().getBienEntidad().getNumRegistro());
+        }else{
+        	map.put("superficieBien", null);
+        	map.put("superficieConstruida", null);
+        	map.put("numRegistro", null);
+        }
+        map.put("cargas", listaCargas);
+        map.put("anejoGaraje", "");
+        map.put("anejoTrastero", "");
+        map.put("anejoOtros", "");
+        map.put("notas1", "");
+        map.put("notas2", "");
+
+        return listaRespuesta;
+
     }
 
     private ArrayList<Map<String, Object>> tasacionesInfo(Activo activo) {

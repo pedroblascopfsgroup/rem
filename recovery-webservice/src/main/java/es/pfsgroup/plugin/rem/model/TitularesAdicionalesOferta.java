@@ -203,6 +203,10 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
     @JoinColumn(name = "IAP_ID_REP")
 	private InfoAdicionalPersona infoAdicionalPersonaRep;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_NAC_ID")
+	private DDProvincia provinciaNacimiento;
+    
     @Version   
 	private Long version;
 
@@ -579,6 +583,14 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 
 	public void setInfoAdicionalPersonaRep(InfoAdicionalPersona infoAdicionalPersonaRep) {
 		this.infoAdicionalPersonaRep = infoAdicionalPersonaRep;
+	}
+
+	public DDProvincia getProvinciaNacimiento() {
+		return provinciaNacimiento;
+	}
+
+	public void setProvinciaNacimiento(DDProvincia provinciaNacimiento) {
+		this.provinciaNacimiento = provinciaNacimiento;
 	}
 	
 }

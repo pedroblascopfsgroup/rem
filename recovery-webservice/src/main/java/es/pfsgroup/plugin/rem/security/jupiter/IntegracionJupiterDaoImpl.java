@@ -208,15 +208,29 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 			genericDao.delete(UsuarioCartera.class, filtroUsuario, obtenerFiltroUCADescripcionSubcartera(descSubcartera));
 			logger.debug("Eliminando asociacion subcartera " + descSubcartera + " - usuario " + username);
 		}
+		String codigoCarteraParaSubcarterasPreexistentes = "";
+		List<UsuarioCartera> subcarterasPreexistentes = genericDao.getList(UsuarioCartera.class, filtroUsuario, 
+				genericDao.createFilter(FilterType.NOTNULL, SUB_CARTERA));
+		if (subcarterasPreexistentes != null && subcarterasPreexistentes.size()>0) {
+			codigoCarteraParaSubcarterasPreexistentes = subcarterasPreexistentes.get(0).getCartera().getCodigo();
+		}
 		for (String descSubcartera : altasSubcarteras) {
 			DDSubcartera subcartera = genericDao.get(DDSubcartera.class, obtenerFiltroCodigoSubcartera(descSubcartera));
 			if (subcartera != null) {
-				UsuarioCartera usuarioSubcarteraNuevo = new UsuarioCartera();
-				usuarioSubcarteraNuevo.setUsuario(usuario);
-				usuarioSubcarteraNuevo.setCartera(subcartera.getCartera());
-				usuarioSubcarteraNuevo.setSubCartera(subcartera);
-				genericDao.save(UsuarioCartera.class, usuarioSubcarteraNuevo);
-				logger.debug("Creando asociacion subcartera " + descSubcartera + " - usuario " + username);
+				if ("".contentEquals(codigoCarteraParaSubcarterasPreexistentes)) {
+					codigoCarteraParaSubcarterasPreexistentes = subcartera.getCarteraCodigo();
+				}
+				if (codigoCarteraParaSubcarterasPreexistentes.contentEquals(subcartera.getCarteraCodigo())) {
+					UsuarioCartera usuarioSubcarteraNuevo = new UsuarioCartera();
+					usuarioSubcarteraNuevo.setUsuario(usuario);
+					usuarioSubcarteraNuevo.setCartera(subcartera.getCartera());
+					usuarioSubcarteraNuevo.setSubCartera(subcartera);
+					genericDao.save(UsuarioCartera.class, usuarioSubcarteraNuevo);
+					logger.debug("Creando asociacion subcartera " + descSubcartera + " - usuario " + username);
+				} else {
+					logger.debug("No creamos asociacion subcartera " + descSubcartera + " - usuario " + username 
+							+ " porque pertenece a otra cartera diferente que la/s subcartera/s preexistente/s ");
+				}
 			} else {
 				logger.error("No existe la subcartera " + descSubcartera + " en REM: no se crea asociacion con el usuario " + username);
 			}

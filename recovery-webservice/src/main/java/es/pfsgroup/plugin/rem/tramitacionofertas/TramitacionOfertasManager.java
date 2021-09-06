@@ -2017,7 +2017,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	@Transactional(readOnly = false)
 	public ActivoTramite doTramitacion(Activo activo, Oferta oferta, Long idTrabajo, ExpedienteComercial expedienteComercial) 
 			throws IllegalAccessException, InvocationTargetException {
-		ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
+		ActivoTramite activoTramite = null;
+		if(!activoManager.esActivoHayaHome(activo.getId()))
+			activoTramite = trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 		expedienteComercial = this.crearExpedienteReserva(expedienteComercial);
 		expedienteComercialApi.crearCondicionesActivoExpediente(activo, expedienteComercial);
 		DDComiteSancion comite = this.devuelveComiteByCartera(activo.getCartera().getCodigo(), oferta, expedienteComercial);

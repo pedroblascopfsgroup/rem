@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210830
+--## FECHA_CREACION=20210903
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14974
@@ -49,7 +49,6 @@ DECLARE
         --T_TIPO_DATA('08','','04'),
         T_TIPO_DATA('05','19','02'),
         T_TIPO_DATA('05','22','07'),
-        T_TIPO_DATA('05','24','02'),
         T_TIPO_DATA('05','20','02'),
         T_TIPO_DATA('05','21','02'),
         --T_TIPO_DATA('06','','05'),

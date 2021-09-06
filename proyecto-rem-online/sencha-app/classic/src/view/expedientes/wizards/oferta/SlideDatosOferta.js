@@ -29,7 +29,16 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 
 	initComponent: function() {
 		var me = this;
-		var isBk = me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('isCarteraBankia');
+		var datosCartera = ('[reference="activosdetalle"]');
+		var isBk = false;
+		var activosDetalle = me.up('[reference="activosdetalle"]');
+		
+		if(Ext.isEmpty(activosDetalle)){
+			isBk = this.up("agrupacionesdetalle").lookupController().getViewModel().get("esAgrupacionCaixa");
+		}else{
+			isBk = me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('isCarteraBankia');
+		}
+		
 
 		me.buttons = [ { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickCancelar'},
 			{itemId: 'btnGuardar',

@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.oferta;
 
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -36,11 +38,13 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
+import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
@@ -857,6 +861,149 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			return false;
 		}
 		return useHttps;
+	}
+	
+	public void notificationSancionContraoferta(Oferta oferta, OfertaDto dtoOferta) {
+
+		Date date = new Date();  
+	    SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");  
+	    String fecha = dateFormatter.format(date);  
+		
+		Usuario gcom = null;
+		Activo activo = oferta.getActivoPrincipal();
+		Usuario gboinm = null;
+		Usuario supervisor= null;
+		String emailPrescriptor = null;
+		Usuario buzonOfertaApple = null;
+		limpiarMails();
+
+		if (!Checks.esNulo(oferta.getAgrupacion()) 
+		        && !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion())
+		        && DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+
+			ActivoLoteComercial activoLoteComercial = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
+			gcom = activoLoteComercial.getUsuarioGestorComercial();
+			if(!Checks.estaVacio(oferta.getAgrupacion().getActivos())){
+				supervisor= gestorActivoManager.getGestorByActivoYTipo(oferta.getAgrupacion().getActivos().get(0).getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+			}
+
+		}  else if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())){
+			// por activo
+			gcom = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+			emailPrescriptor = oferta.getPrescriptor().getEmail();
+			buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
+		} else {
+			if(!Checks.esNulo(activo)) {
+				gcom = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+				supervisor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+				if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getPrescriptor()) && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+					emailPrescriptor = oferta.getPrescriptor().getEmail();
+				}
+			}
+		}
+
+		if (activo != null && (gcom != null || supervisor != null)) {
+			
+			String titulo = "Notificación de sanción de contraoferta para la oferta: " + oferta.getNumOferta();
+			
+			DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
+
+			dtoSendNotificator.setNumActivo(activo.getNumActivo());
+			dtoSendNotificator.setDireccion(generateDireccion(activo));
+			dtoSendNotificator.setTitulo(titulo);
+
+			if(!Checks.esNulo(oferta.getAgrupacion())) {
+				dtoSendNotificator.setNumAgrupacion(oferta.getAgrupacion().getNumAgrupRem());	
+			}
+
+			List<String> mailsPara 		= new ArrayList<String>();
+			List<String> mailsCC 		= new ArrayList<String>();	
+
+			if(activo != null){
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+						|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+					gboinm = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+					if(!Checks.esNulo(gboinm)){						
+						if(Checks.estaVacio(mailsSustituto)){
+							mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gboinm);
+						}else {
+							mailsSustituto.clear();
+							mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gboinm);	
+						}						
+						if (!Checks.estaVacio(mailsSustituto)){
+							mailsPara.addAll(mailsSustituto);
+							mailsCC.add(gboinm.getEmail());
+						}else{
+							mailsPara.add(gboinm.getEmail());
+						}
+					}	
+				}
+			}
+			
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+					|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+					|| (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, mailsPara, mailsCC, false);
+			}
+			
+			if(!Checks.esNulo(gcom)){		
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, false);
+				if(!Checks.esNulo(activo.getSubcartera()) && !DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+					usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, true);
+				}
+			}
+			
+			if(!Checks.esNulo(supervisor)){
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL, mailsPara, mailsCC, false);
+			}
+			
+			if(!Checks.esNulo(emailPrescriptor)) {
+				mailsPara.add(emailPrescriptor);
+			}
+			
+			if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())){
+				usuarioRemApiImpl.rellenaListaCorreosPorDefecto(GestorActivoApi.USUARIO_FICTICIO_OFERTA_CAJAMAR, mailsPara);
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_RESERVA_CAJAMAR, mailsPara, mailsCC, false);
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_SUPERVISOR_RESERVA_CAJAMAR, mailsPara, mailsCC, false);
+			}					
+				
+			Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
+			Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
+
+			if (!Checks.esNulo(buzonRem)) {
+				mailsPara.add(buzonRem.getEmail());
+			}
+			if (!Checks.esNulo(buzonPfs)) {
+				mailsPara.add(buzonPfs.getEmail());
+			}
+			if(buzonOfertaApple != null && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+				mailsPara.add(buzonOfertaApple.getEmail());
+			}
+
+			mailsCC.add(this.getCorreoFrom());			
+			
+			String contenido = String.format("<p>Se notifica la sanción de contraoferta para la oferta con número identificador %s.</p>", 
+							oferta.getNumOferta().toString());
+						
+			contenido += "<br><br><p>Fecha de contraoferta del API: " + fecha + "</p>";
+			
+			Filter filtroContraoferta = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoOferta.getAceptacionContraoferta());
+			DDRespuestaOfertante respuestaContraoferta = genericDao.get(DDRespuestaOfertante.class, filtroContraoferta);
+			if (!Checks.esNulo(respuestaContraoferta)) {
+				contenido += "<br><br><p>Sanción de la contraoferta: " + respuestaContraoferta.getDescripcion() + "</p>";
+						
+				if (DDRespuestaOfertante.CODIGO_CONTRAOFERTA.equals(respuestaContraoferta.getCodigo())) 
+					contenido += "<br><br><p>Importe de la contraoferta: " + dtoOferta.getImporteContraoferta() + "</p>";
+			}
+			
+			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+		}
 	}
 	
 	

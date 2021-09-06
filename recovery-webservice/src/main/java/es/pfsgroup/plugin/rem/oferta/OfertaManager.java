@@ -1161,6 +1161,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
 			}
 			
+			if (!Checks.esNulo(errorsList)) {
+				return errorsList;
+			}
+			
 			if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE_TITULARES)){
 				notificationOfertaManager.notificationOfrPdteTitSec(oferta);
 			} else if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
@@ -1691,8 +1695,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
 			}
 			
+			if (!Checks.esNulo(errorsList)) {
+				return errorsList;
+			}
+			
 			if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE_TITULARES)){
 				notificationOfertaManager.notificationOfrPdteTitSec(oferta);
+			} else if ("01".equals(ofertaDto.getCodTarea())) {
+				notificationOfertaManager.notificationSancionContraoferta(oferta, ofertaDto);
 			}
 
 		}

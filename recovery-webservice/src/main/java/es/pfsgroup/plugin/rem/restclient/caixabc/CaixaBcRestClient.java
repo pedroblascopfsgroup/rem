@@ -5,6 +5,8 @@ import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.http.client.HttpSimplePostRequest;
 import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
 import es.pfsgroup.plugin.rem.controller.ExpedienteComercialController;
+import es.pfsgroup.plugin.rem.model.LlamadaPbcDto;
+import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ public class CaixaBcRestClient {
     private static final String REM3_URL = "rem3.base.url";
     private static final String REPLICACION_CLIENTES_ENDPOINT = "rem3.endpoint.hydra.replicacion.clientes";
     private static final String REPLICACION_OFERTAS_ENDPOINT = "rem3.endpoint.hydra.replicacion.ofertas";
+    private static final String PBC_ENDPOINT = "rem3.endpoint.hydra.pbc.ofertas";
     public static final String CLIENTE_TITULARES_DATA ="01";
     public static final String COMPRADORES_DATA ="02";
     public static final String KEY_FASE_UPDATE = "UPDATE";
@@ -134,6 +137,33 @@ public class CaixaBcRestClient {
         return resp;
 
 }
+
+
+    public Boolean callPbc(LlamadaPbcDto dto){
+        Boolean resp = false;
+
+        try {
+            if (this.isActive() && particularValidatorApi.esOfertaCaixa(dto  != null ? dto.getNumOferta().toString() : null)){
+                String endpoint = getRem3Endpoint(REM3_URL,PBC_ENDPOINT);
+                if (endpoint != null) {
+                    Map<String, Object> params = new HashMap<String, Object>();
+                    params.put("dto", JSONObject.fromObject(dto));
+                    HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
+                    resp = request.post(Boolean.class);
+                } else {
+                    return false;
+                }
+            }else{
+                return true;
+            }
+
+        } catch (Exception e) {
+            logger.error("Error en " + this.getClass().toString(), e);
+        }
+
+        return resp;
+
+    }
 
     public Object callReplicateOffer(){
         return null;

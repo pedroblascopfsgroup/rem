@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicacionClientesResponse;
 import org.apache.commons.logging.Log;
@@ -104,18 +105,6 @@ import es.pfsgroup.plugin.rem.excel.ListaOfertasCESExcelReport;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
-import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoBancario;
-import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
-import es.pfsgroup.plugin.rem.model.ActivoCaixa;
-import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
-import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -1129,7 +1118,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
-			}			
+			}
+
+			OfertaCaixa ofertaCaixa = genericDao.get(OfertaCaixa.class, genericDao.createFilter(FilterType.EQUALS, "oferta", oferta));
+
+			if(DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo()) && ofertaCaixa != null){
+				LlamadaPbcDto dtoPbc = new LlamadaPbcDto();
+				dtoPbc.setFechaReal(oferta.getFechaAlta().toString());
+				dtoPbc.setNumOferta(ofertaCaixa.getNumOfertaCaixa());
+				dtoPbc.setCodAccion("997");
+				pbcFlush(dtoPbc);
+			}
+
 		}
 
 		return errorsList;
@@ -1574,6 +1574,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
 				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
+			}
+
+			OfertaCaixa ofertaCaixa = genericDao.get(OfertaCaixa.class, genericDao.createFilter(FilterType.EQUALS, "oferta", oferta));
+
+			if(DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo()) && ofertaCaixa != null){
+				LlamadaPbcDto dtoPbc = new LlamadaPbcDto();
+				dtoPbc.setFechaReal(oferta.getFechaAlta().toString());
+				dtoPbc.setNumOferta(ofertaCaixa.getNumOfertaCaixa());
+				dtoPbc.setCodAccion("997");
+				pbcFlush(dtoPbc);
 			}
 
 		}
@@ -7255,6 +7265,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			genericDao.save(OfertaCaixa.class, ofertaCaixa);
 		}
+	}
+
+	@Override
+	public void pbcFlush(LlamadaPbcDto dto){
+		ofertaDao.pbcFlush(dto);
 	}
 	
 

@@ -7181,11 +7181,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public void replicateOfertaFlush(Oferta oferta) {
 		OfertaCaixa ofertaCaixa = oferta.getOfertaCaixa();
 		if(ofertaCaixa != null) {
-			try {
-				hibernateUtils.getSessionFactory().getCurrentSession().beginTransaction().commit();
-			}catch (Exception e){
-				e.printStackTrace();
-			}
 			expedienteComercialDao.flush();
 			ofertaCaixa.setEstadoComunicacionC4C((DDEstadoComunicacionC4C)utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoComunicacionC4C.class, DDEstadoComunicacionC4C.C4C_NO_ENVIADO));
 			

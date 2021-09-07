@@ -1690,12 +1690,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta = updateEstadoOferta(oferta.getId(), ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoOferta());
 			}
 			this.updateStateDispComercialActivosByOferta(oferta);
-
-			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
-				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
-			}
 			
-			if (!Checks.esNulo(errorsList)) {
+			if (errorsList.isEmpty()) {
 				return errorsList;
 			}
 			
@@ -4224,7 +4220,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 			if (ofertaDto.getCodTarea().equals("01")  && 
 					((DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo()) && isBankia) ||
-					DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES.equals(expedienteComercial.getEstado().getCodigo()))) {
+					DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES.equals(expedienteComercial.getEstado().getCodigo()) ||
+					DDEstadosExpedienteComercial.CONTRAOFERTADO_CES.equals(expedienteComercial.getEstado().getCodigo()))) {
 				if (!ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_ACEPTA)
 						&& !ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_RECHAZA)
 						&& !ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_CONTRAOFERTA)) {

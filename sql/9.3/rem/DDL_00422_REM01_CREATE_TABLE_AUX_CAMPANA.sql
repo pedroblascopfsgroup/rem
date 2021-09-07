@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=PIER GOTTA
---## FECHA_CREACION=20210702
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210907
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14503
+--## INCIDENCIA_LINK=HREOS-15082
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-14503] - PIER GOTTA
+--##        0.2 Modificar longitud PORTAL - [HREOS-15082] - Alejandra García
 --##########################################
 --*/
 
@@ -62,10 +63,10 @@ BEGIN
         ID_AGRUPADOR              VARCHAR2(8 CHAR),
         ID_CAMPANYA               VARCHAR2(8 CHAR),
         NOMBRE                    VARCHAR2(100 CHAR),
-        PORTAL		   	   VARCHAR2(8 CHAR),
-        ID_TEXTO		   VARCHAR2(11 CHAR),
-        TEXTO	 		   VARCHAR2(100 CHAR),
-        FECHA_FIN_REAL		   DATE
+        PORTAL		   	          VARCHAR2(500 CHAR),
+        ID_TEXTO		          VARCHAR2(11 CHAR),
+        TEXTO	 		          VARCHAR2(100 CHAR),
+        FECHA_FIN_REAL		      DATE
         
 
 

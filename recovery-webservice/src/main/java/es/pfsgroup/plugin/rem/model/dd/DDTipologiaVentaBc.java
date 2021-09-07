@@ -20,45 +20,38 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 
 
 @Entity
-@Table(name = "DD_MAB_MOTIV_APLAZA_BC", schema = "${entity.schema}")
+@Table(name = "DD_TVB_TIPOLOGIA_VENTA_BC", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDMotivoAnulacionBC implements Auditable, Dictionary {
+public class DDTipologiaVentaBc implements Auditable, Dictionary {
 	
-	public static final String CODIGO_FINANCIACION_EN_CURSO= "01";
-	public static final String CODIGO_COMUNICACION_API_PENDIENTE= "02";
-	public static final String CODIGO_PROBLEMAS_JURIDICOS= "03";
-	public static final String CODIGO_PROBLEMAS_TECNICOS_DOC_PDTE= "04";
-	public static final String CODIGO_CAMBIOS_CONTRATO= "05";
-	public static final String CODIGO_TRAMITACION_VPO= "06";
-	public static final String CODIGO_MOTIVOS_PERSONALES_COMPRADOR= "07";
-	public static final String CODIGO_CEDULA_HABITALIDAD= "08";
-	public static final String CODIGO_ANULACION_VENTA_CURSO= "09";
-	public static final String CODIGO_FECHA_FIRMA_CURSO= "10";
-	public static final String CODIGO_CARGAS= "11";
-	public static final String CODIGO_LINDEROS= "12";
-	public static final String CODIGO_CATASTRO= "13";
-	public static final String CODIGO_FUSION= "14";
-	public static final String CODIGO_DL_115= "15";
-	public static final String CODIGO_CEE= "16";
-	public static final String CODIGO_PENDIENTE_PBC= "17";
-	public static final String CODIGO_FIRMA_FORZADA_ARRAS= "18";
-	
+
 	private static final long serialVersionUID = 1L;
+	
+	public static final String CODIGO_VENTA_INQUILINO_REACTIVA = "01";
+	public static final String CODIGO_VENTA_INQUILINO_PROACTIVA = "02";
+	public static final String CODIGO_VENTA_SIN_POSESION = "03";
+	public static final String CODIGO_VENTA_SIN_POSESION_ALQ_VENCIDO = "04";
+	
+	public static final String CODIGO_VENTA_SIN_POSESION_ALQ_MOROSIDAD = "05";
+	public static final String CODIGO_VENTA_RENTABILIDAD = "06";
+	public static final String CODIGO_VENTA_RENTABILIDAD_LOTE = "07";
+	public static final String CODIGO_VENTA_CARTERA = "08";
+
 
 	@Id
-	@Column(name = "DD_MAB_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotAnulacionBcGenerator")
-	@SequenceGenerator(name = "DDMotAnulacionBcGenerator", sequenceName = "S_DD_MAB_MOTIV_APLAZA_BC")
+	@Column(name = "DD_TVB_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipologiaVentaBcGenerator")
+	@SequenceGenerator(name = "DDTipologiaVentaBcGenerator", sequenceName = "S_DD_TVB_TIPOLOGIA_VENTA_BC")
 	private Long id;
 	    
-	@Column(name = "DD_MAB_CODIGO")   
+	@Column(name = "DD_TVB_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_MAB_DESCRIPCION")   
+	@Column(name = "DD_TVB_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_MAB_DESCRIPCION_LARGA")   
+	@Column(name = "DD_TVB_DESCRIPCION_LARGA")   
 	private String descripcionLarga;	    
 
 	@Version   

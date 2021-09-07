@@ -2,13 +2,12 @@
 -/*
 --##########################################
 --## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210902
+--## FECHA_CREACION=20210906
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14944
+--## INCIDENCIA_LINK=HREOS-15058
 --## PRODUCTO=NO
---##
---## Finalidad: Insertar en la tabla DD_MAB_MOTIV_APLAZA_BC
+--## Finalidad: Insertar en la tabla DD_TVB_TIPOLOGIA_VENTA_BC
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -27,7 +26,7 @@ DECLARE
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
     V_NUM_REGISTROS NUMBER(16); -- Vble. para validar la existencia de un registro.
-    V_TEXT_TABLA VARCHAR2(30):= 'DD_MAB_MOTIV_APLAZA_BC'; -- Vble. del nombre de la tabla
+    V_TEXT_TABLA VARCHAR2(30):= 'DD_TVB_TIPOLOGIA_VENTA_BC'; -- Vble. del nombre de la tabla
     V_ID NUMBER(16); -- Vble.auxiliar para sacar un ID.
     V_ID2 NUMBER(16); -- Vble.auxiliar para sacar un ID.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
@@ -37,24 +36,14 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
                 --CODIGO    DESCRIPCION
-	    T_TIPO_DATA('01',	'Financiación en curso'),
-        T_TIPO_DATA('02',	'Comunicación API pendiente'),
-        T_TIPO_DATA('03',	'Problemas jurídicos'),
-        T_TIPO_DATA('04',	'Problemas técnicos y/o doc. Pendiente'),
-        T_TIPO_DATA('05',	'Cambios en el contrato'),
-        T_TIPO_DATA('06',	'Tramitación VPO'),
-        T_TIPO_DATA('07',	'Motivos personales comprador'),
-        T_TIPO_DATA('08',	'Cédula de habitabilidad'),
-        T_TIPO_DATA('09',	'Anulación venta en curso'),
-        T_TIPO_DATA('10',	'Fecha firma en curso'),
-        T_TIPO_DATA('11',	'Cargas'),        
-        T_TIPO_DATA('12',	'Linderos'),
-        T_TIPO_DATA('13',	'Catastro'),
-        T_TIPO_DATA('14',	'Fusión'),
-        T_TIPO_DATA('15',	'DL 1/15'),
-        T_TIPO_DATA('16',	'CEE'),
-        T_TIPO_DATA('17',	'Pendiente PBC'),
-        T_TIPO_DATA('18',	'Firma forzada de arras')
+	      T_TIPO_DATA('01',	'Venta al inquilino reactiva'),
+        T_TIPO_DATA('02',	'Venta al inquilino proactiva'),
+        T_TIPO_DATA('03',	'Venta sin posesión'),
+        T_TIPO_DATA('04',	'Venta sin posesión alquiler vencido'),
+        T_TIPO_DATA('05',	'Venta sin posesión alquiler morosidad'),
+        T_TIPO_DATA('06',	'Venta en rentabilidad'),
+        T_TIPO_DATA('07',	'Venta en rentabilidad lote'),
+        T_TIPO_DATA('08',	'Venta cartera')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 
@@ -68,7 +57,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
         --Comprobar el dato a insertar.
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
-					WHERE DD_MAB_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
+					WHERE DD_TVB_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         IF V_NUM_TABLAS = 1 THEN
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe');
@@ -77,10 +66,10 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' no existe');
 
             V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
-              DD_MAB_ID,
-              DD_MAB_CODIGO,
-              DD_MAB_DESCRIPCION,
-              DD_MAB_DESCRIPCION_LARGA,
+              DD_TVB_ID,
+              DD_TVB_CODIGO,
+              DD_TVB_DESCRIPCION,
+              DD_TVB_DESCRIPCION_LARGA,
               VERSION,
               USUARIOCREAR,
               FECHACREAR,
@@ -91,7 +80,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               0,
-              ''HREOS-14944'',
+              ''HREOS-15058'',
               SYSDATE,
               0)';
             EXECUTE IMMEDIATE V_MSQL;

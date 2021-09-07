@@ -1,65 +1,51 @@
 --/*
--/*
 --##########################################
---## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210902
+--## AUTOR= Lara Pablo Flores
+--## FECHA_CREACION=20210906
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14944
+--## INCIDENCIA_LINK=HREOS-14346
 --## PRODUCTO=NO
---##
---## Finalidad: Insertar en la tabla DD_MAB_MOTIV_APLAZA_BC
---## INSTRUCCIONES:
+--## Finalidad: Inserción diccionario DD_CAL_CLASIFICACION_ALQUILER
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
 --*/
 
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
+
 DECLARE
-	V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
-    V_NUM_REGISTROS NUMBER(16); -- Vble. para validar la existencia de un registro.
-    V_TEXT_TABLA VARCHAR2(30):= 'DD_MAB_MOTIV_APLAZA_BC'; -- Vble. del nombre de la tabla
-    V_ID NUMBER(16); -- Vble.auxiliar para sacar un ID.
-    V_ID2 NUMBER(16); -- Vble.auxiliar para sacar un ID.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-
-    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_EDP_EST_DEPOSITO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+	V_LETRAS_TABLA VARCHAR2(2400 CHAR) := 'EDP';
+	V_TIQUET VARCHAR2(2400 CHAR) := 'HREOS-14346';
+    
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-                --CODIGO    DESCRIPCION
-	    T_TIPO_DATA('01',	'Financiación en curso'),
-        T_TIPO_DATA('02',	'Comunicación API pendiente'),
-        T_TIPO_DATA('03',	'Problemas jurídicos'),
-        T_TIPO_DATA('04',	'Problemas técnicos y/o doc. Pendiente'),
-        T_TIPO_DATA('05',	'Cambios en el contrato'),
-        T_TIPO_DATA('06',	'Tramitación VPO'),
-        T_TIPO_DATA('07',	'Motivos personales comprador'),
-        T_TIPO_DATA('08',	'Cédula de habitabilidad'),
-        T_TIPO_DATA('09',	'Anulación venta en curso'),
-        T_TIPO_DATA('10',	'Fecha firma en curso'),
-        T_TIPO_DATA('11',	'Cargas'),        
-        T_TIPO_DATA('12',	'Linderos'),
-        T_TIPO_DATA('13',	'Catastro'),
-        T_TIPO_DATA('14',	'Fusión'),
-        T_TIPO_DATA('15',	'DL 1/15'),
-        T_TIPO_DATA('16',	'CEE'),
-        T_TIPO_DATA('17',	'Pendiente PBC'),
-        T_TIPO_DATA('18',	'Firma forzada de arras')
+      	T_TIPO_DATA('PDT','Pendiente'),
+		T_TIPO_DATA('ING','Ingresado'),
+		T_TIPO_DATA('DEV','Devuelto'),
+		T_TIPO_DATA('INC','Incautado')
+		
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
-
 BEGIN
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
+
 
     -- LOOP para insertar los valores --
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TEXT_TABLA);
@@ -68,7 +54,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
         --Comprobar el dato a insertar.
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
-					WHERE DD_MAB_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
+					WHERE DD_'||V_LETRAS_TABLA||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         IF V_NUM_TABLAS = 1 THEN
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe');
@@ -77,10 +63,10 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' no existe');
 
             V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
-              DD_MAB_ID,
-              DD_MAB_CODIGO,
-              DD_MAB_DESCRIPCION,
-              DD_MAB_DESCRIPCION_LARGA,
+              DD_'||V_LETRAS_TABLA||'_ID,
+              DD_'||V_LETRAS_TABLA||'_CODIGO,
+              DD_'||V_LETRAS_TABLA||'_DESCRIPCION,
+              DD_'||V_LETRAS_TABLA||'_DESCRIPCION_LARGA,
               VERSION,
               USUARIOCREAR,
               FECHACREAR,
@@ -91,9 +77,8 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               0,
-              ''HREOS-14944'',
-              SYSDATE,
-              0)';
+              '''||V_TIQUET||''',
+              SYSDATE, 0)';
             EXECUTE IMMEDIATE V_MSQL;
             DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha insertado el valor '''||TRIM(V_TMP_TIPO_DATA(1))||'''');
 

@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR=PIER GOTTA
---## FECHA_CREACION=20210903
+--## AUTOR=Sergio Gomez
+--## FECHA_CREACION=20210906
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-15077
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-15058
 --## PRODUCTO=NO
---## Finalidad: Anyadir columnas FAC_ORIGEN y PORCENTAJE_DEDUCIBILIDAD en APR_AUX_I_RU_FACT_SIN_PROV
+--## Finalidad: Alter table ofr_ofertas_caixa
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -26,39 +26,26 @@ DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
-    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
-    V_NUM_SEQ NUMBER(16); -- Vble. para validar la existencia de una secuencia.  
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una columna.  
+    V_NUM NUMBER(16); -- Vble. para validar la existencia de una secuencia.  
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
-    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'APR_AUX_I_RU_FACT_SIN_PROV'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-
-    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(256);
-    
-    
-    /* -- ARRAY CON NUEVAS COLUMNAS */
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'OFR_OFERTAS_CAIXA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_PREF_TABLA VARCHAR2(2400 CHAR) := 'OFR'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.  
+   
     TYPE T_ALTER IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
-    			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	  T_ALTER(  'NUM_CONT_ALQ',		  'VARCHAR2(15 CHAR) ',		'Número contrato alquiler'	)
-	);
-	V_T_ALTER T_ALTER;
-	
-
+    			--   NOMBRE CAMPO						TIPO CAMPO			DESCRIPCION
+    	T_ALTER('OFR_CUENTA_BANC_VIRTUAL', 'VARCHAR2(150 CHAR)', 'Cuenta bancaria virtual'),
+        T_ALTER('OFR_CUENTA_BANC_CLIENTE', 'VARCHAR2(150 CHAR)', 'Cuenta bancaria cliente')    	    	    	    	
+		);
+    V_T_ALTER T_ALTER;            
     
 BEGIN
-
-
-	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas *************************************************');
-
-	
-	
-	-- Bucle que CREA las nuevas columnas 
-	FOR I IN V_ALTER.FIRST .. V_ALTER.LAST
+    
+    FOR I IN V_ALTER.FIRST .. V_ALTER.LAST
 	LOOP
 
 		V_T_ALTER := V_ALTER(I);
@@ -70,8 +57,7 @@ BEGIN
 			--No existe la columna y la creamos
 			DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] -------------------------------------------');
 			V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' 
-					   ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||' )
-			';
+					   ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||' )';
 
 			EXECUTE IMMEDIATE V_MSQL;
 			--DBMS_OUTPUT.PUT_LINE('[1] '||V_MSQL);
@@ -85,7 +71,6 @@ BEGIN
 		END IF;
 
 	END LOOP;
-	
 	
 EXCEPTION
      WHEN OTHERS THEN
@@ -104,4 +89,4 @@ END;
 
 /
 
-EXIT;
+EXIT

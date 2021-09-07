@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 
 
@@ -285,6 +286,10 @@ public class ExpedienteComercial implements Serializable, Auditable {
  	
  	@Column(name="ECO_FECHA_GRAB_VENTA")
  	private Date fechaGrabacionVenta;
+ 	
+ 	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SEC_ID")
+	private DDSubestadosExpedienteComercial subestadoExpediente;  
 
     @Version   
 	private Long version;
@@ -873,5 +878,13 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setFechaGrabacionVenta(Date fechaGrabacionVenta) {
 		this.fechaGrabacionVenta = fechaGrabacionVenta;
+	}
+
+	public DDSubestadosExpedienteComercial getSubestadoExpediente() {
+		return subestadoExpediente;
+	}
+
+	public void setSubestadoExpediente(DDSubestadosExpedienteComercial subestadoExpediente) {
+		this.subestadoExpediente = subestadoExpediente;
 	}
 }

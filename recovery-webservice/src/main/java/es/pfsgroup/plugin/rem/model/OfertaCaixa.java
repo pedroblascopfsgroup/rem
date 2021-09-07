@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMedioPago;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDProcedenciaFondosPropios;
 import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipologiaVentaBc;
 
 @Entity
 @Table(name = "OFR_OFERTAS_CAIXA", schema = "${entity.schema}")
@@ -123,6 +124,10 @@ public class OfertaCaixa implements Serializable, Auditable {
 	
 	@Column(name="OFR_CUENTA_BANC_CLIENTE")
 	private String cuentaBancariaCliente;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TVB_ID")
+	private DDTipologiaVentaBc tipologiaVentaBc;
 	
     @Version
     private Integer version;
@@ -346,6 +351,14 @@ public class OfertaCaixa implements Serializable, Auditable {
 
 	public void setCuentaBancariaCliente(String cuentaBancariaCliente) {
 		this.cuentaBancariaCliente = cuentaBancariaCliente;
+	}
+
+	public DDTipologiaVentaBc getTipologiaVentaBc() {
+		return tipologiaVentaBc;
+	}
+
+	public void setTipologiaVentaBc(DDTipologiaVentaBc tipologiaVentaBc) {
+		this.tipologiaVentaBc = tipologiaVentaBc;
 	}
 	
 

@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210730
+--## FECHA_CREACION=20210907
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14674
+--## INCIDENCIA_LINK=HREOS-15082
 --## PRODUCTO=NO
 --## Finalidad: DDL          
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Cambio lógica merge, tener en cuenta el tiempo de cosecha - [HREOS-14674] - Alejandra García
+--##        0.2 Cambio lógica merge - [HREOS-15082] - Alejandra García
 --##########################################
 --*/
 
@@ -57,13 +58,14 @@ BEGIN
                       WITH FECHA_FIN_MINIMA AS(
                           SELECT
                                ACT_ID 
+                              ,TIPOLOGIA
                               ,MIN(FECHA_FIN_FASE + TIEMPO_COSECHA) FECHA_FIN_COSECHA
                           FROM '|| V_ESQUEMA ||'.HCC_HIST_CAMPANYA_CAIXA
                           WHERE SYSDATE BETWEEN FECHA_INICIO_FASE AND FECHA_FIN_FASE + TIEMPO_COSECHA
                           AND BORRADO=0
-                          GROUP BY ACT_ID
+                          GROUP BY ACT_ID, TIPOLOGIA
                       ),CAMPANYAS AS (
-                          SELECT 
+                          SELECT DISTINCT
                                MINIM.ACT_ID
                               ,HCC.ID_CAMPANYA
                               ,HCC.TIPOLOGIA

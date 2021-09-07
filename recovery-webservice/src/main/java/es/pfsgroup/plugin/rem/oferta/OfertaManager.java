@@ -869,7 +869,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				Filter webcomIdNotNull = genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom");
 				ClienteComercial cliente = genericDao.get(ClienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "idClienteRem", ofertaDto.getIdClienteRem()),webcomIdNotNull);
 				if (!Checks.esNulo(cliente)) {
-					//llamadaMaestroPersonasRestSync(cliente.getDocumento(),OfertaApi.ORIGEN_REM);
+					
 					InfoAdicionalPersona iap = cliente.getInfoAdicionalPersona();
 					if(iap == null) {
 						String idPersonaHaya = cliente.getIdPersonaHaya();
@@ -904,6 +904,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						cliente.setInfoAdicionalPersona(iap);	
 						genericDao.save(InfoAdicionalPersona.class, iap);
 					}
+					
+					llamadaMaestroPersonasRestSync(cliente.getDocumento(),OfertaApi.ORIGEN_REM);
 					oferta.setCliente(cliente);
 					genericDao.save(ClienteComercial.class, cliente);
 				}

@@ -169,6 +169,10 @@ public class Comprador implements Serializable, Auditable {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IAP_ID")
 	private InfoAdicionalPersona infoAdicionalPersona;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_NAC_ID")
+	private DDProvincia provinciaNacimiento;
 
 
 	public Long getId() {

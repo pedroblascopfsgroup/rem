@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.rest.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.validation.constraints.Size;
 
@@ -9,9 +10,12 @@ import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.IsNumber;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoSocioComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -125,6 +129,35 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	private String codPaisRepresentante;
 	@Size(max=5,groups = { Insert.class, Update.class })
 	private String codigoPostalRepresentante;
+	
+
+	@Diccionary(clase = DDPaises.class, message = "El codPaisNacimiento no existe")
+	private String codPaisNacimiento;
+	@Diccionary(clase = Localidad.class, message = "El codMunicipioNacimiento no existe")
+	private String codMunicipioNacimiento;
+	@Size(max=5,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDPaises.class, message = "El codPaisNacimientoRepresentante no existe")
+	private String codPaisNacimientoRepresentante;
+	@Diccionary(clase = Localidad.class, message = "El codMunicipioNacimientoRepresentante no existe")
+	private String codMunicipioNacimientoRepresentante;
+	private Date fechaNacimiento;
+	private Date fechaNacimientoRepresentante;	
+	private Boolean prp;
+	private Boolean prpRepresentante;
+	
+	@Diccionary(clase = DDVinculoCaixa.class, message = "El vinculoCaixa no existe")
+	private String vinculoCaixa;	
+	@Diccionary(clase = DDTipoSocioComercial.class, message = "El sociedadEmpleadoGrupoCaixa no existe")
+	private String sociedadEmpleadoGrupoCaixa;
+	@IsNumber(message = "Debe ser un número")
+	private Integer oficinaEmpleadoCaixa;
+	private Boolean esAntiguoDeudor;
+	@Diccionary(clase = DDProvincia.class, message = "El codProvinciaNacimiento no existe")
+	private String codProvinciaNacimiento;
+	@Diccionary(clase = DDProvincia.class, message = "El codProvinciaNacimientoRepresentante no existe")
+	private String codProvinciaNacimientoRepresentante;
+	
+	
 	public String getCodTipoDocumento() {
 		return codTipoDocumento;
 	}
@@ -358,6 +391,90 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	}
 	public void setCodigoPostalRepresentante(String codigoPostalRepresentante) {
 		this.codigoPostalRepresentante = codigoPostalRepresentante;
+	}
+	public String getCodPaisNacimiento() {
+		return codPaisNacimiento;
+	}
+	public void setCodPaisNacimiento(String codPaisNacimiento) {
+		this.codPaisNacimiento = codPaisNacimiento;
+	}
+	public String getCodMunicipioNacimiento() {
+		return codMunicipioNacimiento;
+	}
+	public void setCodMunicipioNacimiento(String codMunicipioNacimiento) {
+		this.codMunicipioNacimiento = codMunicipioNacimiento;
+	}
+	public String getCodPaisNacimientoRepresentante() {
+		return codPaisNacimientoRepresentante;
+	}
+	public void setCodPaisNacimientoRepresentante(String codPaisNacimientoRepresentante) {
+		this.codPaisNacimientoRepresentante = codPaisNacimientoRepresentante;
+	}
+	public String getCodMunicipioNacimientoRepresentante() {
+		return codMunicipioNacimientoRepresentante;
+	}
+	public void setCodMunicipioNacimientoRepresentante(String codMunicipioNacimientoRepresentante) {
+		this.codMunicipioNacimientoRepresentante = codMunicipioNacimientoRepresentante;
+	}
+	public Date getFechaNacimiento() {
+		return fechaNacimiento;
+	}
+	public void setFechaNacimiento(Date fechaNacimiento) {
+		this.fechaNacimiento = fechaNacimiento;
+	}
+	public Date getFechaNacimientoRepresentante() {
+		return fechaNacimientoRepresentante;
+	}
+	public void setFechaNacimientoRepresentante(Date fechaNacimientoRepresentante) {
+		this.fechaNacimientoRepresentante = fechaNacimientoRepresentante;
+	}
+	public Boolean getPrp() {
+		return prp;
+	}
+	public void setPrp(Boolean prp) {
+		this.prp = prp;
+	}
+	public Boolean getPrpRepresentante() {
+		return prpRepresentante;
+	}
+	public void setPrpRepresentante(Boolean prpRepresentante) {
+		this.prpRepresentante = prpRepresentante;
+	}
+	public String getVinculoCaixa() {
+		return vinculoCaixa;
+	}
+	public void setVinculoCaixa(String vinculoCaixa) {
+		this.vinculoCaixa = vinculoCaixa;
+	}
+	public String getSociedadEmpleadoGrupoCaixa() {
+		return sociedadEmpleadoGrupoCaixa;
+	}
+	public void setSociedadEmpleadoGrupoCaixa(String sociedadEmpleadoGrupoCaixa) {
+		this.sociedadEmpleadoGrupoCaixa = sociedadEmpleadoGrupoCaixa;
+	}
+	public Integer getOficinaEmpleadoCaixa() {
+		return oficinaEmpleadoCaixa;
+	}
+	public void setOficinaEmpleadoCaixa(Integer oficinaEmpleadoCaixa) {
+		this.oficinaEmpleadoCaixa = oficinaEmpleadoCaixa;
+	}
+	public Boolean getEsAntiguoDeudor() {
+		return esAntiguoDeudor;
+	}
+	public void setEsAntiguoDeudor(Boolean esAntiguoDeudor) {
+		this.esAntiguoDeudor = esAntiguoDeudor;
+	}
+	public String getCodProvinciaNacimiento() {
+		return codProvinciaNacimiento;
+	}
+	public void setCodProvinciaNacimiento(String codProvinciaNacimiento) {
+		this.codProvinciaNacimiento = codProvinciaNacimiento;
+	}
+	public String getCodProvinciaNacimientoRepresentante() {
+		return codProvinciaNacimientoRepresentante;
+	}
+	public void setCodProvinciaNacimientoRepresentante(String codProvinciaNacimientoRepresentante) {
+		this.codProvinciaNacimientoRepresentante = codProvinciaNacimientoRepresentante;
 	}
 	
 	

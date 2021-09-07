@@ -2007,6 +2007,22 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+	
+	public boolean esGestoriaDeFormalizacionCorrecta(String username){
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("username", username);
+		rawDao.addParams(params);
+		
+		if(Checks.esNulo(username)) return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "			FROM USD_USUARIOS_DESPACHOS USD"
+				+ "			JOIN DES_DESPACHO_EXTERNO DES ON USD.DES_ID = DES.DES_ID"
+				+ "			JOIN ${master.schema}.USU_USUARIOS USU ON USD.USU_ID = USU.USU_ID"
+				+ "			WHERE USU.USU_USERNAME = :username AND DES.DES_DESPACHO = 'GESTORIAFORM' AND USD.BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
 
 	@Override
 	public Boolean existeProvinciaByCodigo(String codigoProvincia) {

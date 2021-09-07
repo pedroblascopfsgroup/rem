@@ -957,54 +957,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (!Checks.esNulo(cliente.getTipoOcupacion())) {
 				compradorBusqueda.setTipoOcupacion(cliente.getTipoOcupacion());
 			}
-			
-			if (!Checks.esNulo(cliente.getNombreRepresentante())) {
-				compradorBusqueda.setNombreRepresentante(cliente.getNombreRepresentante());
-			}
-			
-			if (!Checks.esNulo(cliente.getApellidosRepresentante())) {
-				compradorBusqueda.setApellidosRepresentante(cliente.getApellidosRepresentante());
-			}
-		   
-			if (!Checks.esNulo(cliente.getTelefonoRepresentante())) {
-				compradorBusqueda.setTelefonoRepresentante(cliente.getTelefonoRepresentante());
-			}
-		    
-			if (!Checks.esNulo(cliente.getEmailRepresentante())) {
-				compradorBusqueda.setEmailRepresentante(cliente.getEmailRepresentante());
-			}
-
-			if (!Checks.esNulo(cliente.getNombreContacto())) {
-				compradorBusqueda.setNombreContacto(cliente.getNombreContacto());
-			}
-			
-			if (!Checks.esNulo(cliente.getApellidosContacto())) {
-				compradorBusqueda.setApellidosContacto(cliente.getApellidosContacto());
-			}
-		    
-			if (!Checks.esNulo(cliente.getTipoDocumentoContacto())) {
-				compradorBusqueda.setTipoDocumentoContacto(cliente.getTipoDocumentoContacto());
-			}
-
-			if (!Checks.esNulo(cliente.getDocumentoContacto())) {
-				compradorBusqueda.setDocumentoContacto(cliente.getDocumentoContacto());
-			}
-		    
-			if (!Checks.esNulo(cliente.getTelefonoContacto())) {
-				compradorBusqueda.setTelefonoContacto(cliente.getTelefonoContacto());
-			}
-
-			if (!Checks.esNulo(cliente.getEmailContacto())) {
-				compradorBusqueda.setEmailContacto(cliente.getEmailContacto());
-			}
-
-			if (!Checks.esNulo(cliente.getIdClienteRemRepresentante())) {
-				compradorBusqueda.setIdClienteRemRepresentante(cliente.getIdClienteRemRepresentante());
-			}
-			
-			if (!Checks.esNulo(cliente.getIdClienteContacto())) {
-				compradorBusqueda.setIdClienteContacto(cliente.getIdClienteContacto());
-			}
 
 			// CHECKS GDPR
 			if (!Checks.esNulo(cliente.getCesionDatos())) {
@@ -1046,6 +998,19 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			compradorExpedienteNuevo.setLocalidadRepresentante(cliente.getMunicipioRepresentante());
 			compradorExpedienteNuevo.setPaisRte(cliente.getPaisRepresentante());
 			compradorExpedienteNuevo.setCodigoPostalRepresentante(cliente.getCodigoPostalRepresentante());
+			compradorExpedienteNuevo.setNombreRepresentante(cliente.getNombreRepresentante());
+			compradorExpedienteNuevo.setApellidosRepresentante(cliente.getApellidosRepresentante());
+			compradorExpedienteNuevo.setTelefono1Representante(cliente.getTelefonoRepresentante());
+			compradorExpedienteNuevo.setEmailRepresentante(cliente.getEmailRepresentante());
+			compradorExpedienteNuevo.setTipoDocumentoRepresentante(cliente.getTipoDocumentoRepresentante());
+			compradorExpedienteNuevo.setNombreContacto(cliente.getNombreContacto());
+			compradorExpedienteNuevo.setApellidosContacto(cliente.getApellidosContacto());
+			compradorExpedienteNuevo.setTipoDocumentoContacto(cliente.getTipoDocumentoContacto());
+			compradorExpedienteNuevo.setDocumentoContacto(cliente.getDocumentoContacto());
+			compradorExpedienteNuevo.setTelefonoContacto(cliente.getTelefonoContacto());
+			compradorExpedienteNuevo.setEmailContacto(cliente.getEmailContacto());
+			compradorExpedienteNuevo.setIdClienteRemRepresentante(cliente.getIdClienteRemRepresentante());
+			compradorExpedienteNuevo.setIdClienteContacto(cliente.getIdClienteContacto());
 
 			List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
 					genericDao.createFilter(FilterType.EQUALS, "numDocumento", cliente.getDocumento()),

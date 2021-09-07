@@ -29,8 +29,6 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
-import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
@@ -155,42 +153,6 @@ public class Comprador implements Serializable, Auditable {
     @JoinColumn(name = "DD_TOC_ID")
     private DDTipoOcupacion tipoOcupacion;
     
-    @Column(name = "COM_NOMBRE_REPRESENTANTE")
-    private String nombreRepresentante;
-   
-    @Column(name = "COM_APELLIDOS_REPRESENTANTE")
-    private String apellidosRepresentante;
-    
-    @Column(name = "COM_TELEFONO_REPRESENTANTE")
-    private String telefonoRepresentante;
-    
-    @Column(name = "COM_EMAIL_REPRESENTANTE")
-    private String emailRepresentante;
-    
-    @Column(name = "COM_NOMBRE_CONTACTO")
-    private String nombreContacto;
-    
-    @Column(name = "COM_APELLIDOS_CONTACTO")
-    private String apellidosContacto;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_TDI_ID_CONTACTO")
-	private DDTipoDocumento tipoDocumentoContacto;
-    
-    @Column(name = "COM_DOCUMENTO_CONTACTO")
-    private String documentoContacto;
-
-    @Column(name = "COM_TELEFONO_CONTACTO")
-    private String telefonoContacto;
-    
-    @Column(name = "COM_EMAIL_CONTACTO")
-    private String emailContacto;
-    
-    @Column(name = "ID_CLIENTE_REM_REPRESENTANTE")
-    private Long idClienteRemRepresentante;
-    
-    @Column(name = "ID_CLIENTE_CONTACTO")
-    private Long idClienteContacto;
 
 	public Long getId() {
 		return id;
@@ -445,101 +407,5 @@ public class Comprador implements Serializable, Auditable {
 	public void setTipoOcupacion(DDTipoOcupacion tipoOcupacion) {
 		this.tipoOcupacion = tipoOcupacion;
 	}
-
-	public String getNombreRepresentante() {
-		return nombreRepresentante;
-	}
-
-	public void setNombreRepresentante(String nombreRepresentante) {
-		this.nombreRepresentante = nombreRepresentante;
-	}
-
-	public String getApellidosRepresentante() {
-		return apellidosRepresentante;
-	}
-
-	public void setApellidosRepresentante(String apellidosRepresentante) {
-		this.apellidosRepresentante = apellidosRepresentante;
-	}
-
-	public String getTelefonoRepresentante() {
-		return telefonoRepresentante;
-	}
-
-	public void setTelefonoRepresentante(String telefonoRepresentante) {
-		this.telefonoRepresentante = telefonoRepresentante;
-	}
-
-	public String getEmailRepresentante() {
-		return emailRepresentante;
-	}
-
-	public void setEmailRepresentante(String emailRepresentante) {
-		this.emailRepresentante = emailRepresentante;
-	}
-
-	public String getNombreContacto() {
-		return nombreContacto;
-	}
-
-	public void setNombreContacto(String nombreContacto) {
-		this.nombreContacto = nombreContacto;
-	}
-
-	public String getApellidosContacto() {
-		return apellidosContacto;
-	}
-
-	public void setApellidosContacto(String apellidosContacto) {
-		this.apellidosContacto = apellidosContacto;
-	}
-
-	public DDTipoDocumento getTipoDocumentoContacto() {
-		return tipoDocumentoContacto;
-	}
-
-	public void setTipoDocumentoContacto(DDTipoDocumento tipoDocumentoContacto) {
-		this.tipoDocumentoContacto = tipoDocumentoContacto;
-	}
-
-	public String getDocumentoContacto() {
-		return documentoContacto;
-	}
-
-	public void setDocumentoContacto(String documentoContacto) {
-		this.documentoContacto = documentoContacto;
-	}
-
-	public String getTelefonoContacto() {
-		return telefonoContacto;
-	}
-
-	public void setTelefonoContacto(String telefonoContacto) {
-		this.telefonoContacto = telefonoContacto;
-	}
-
-	public String getEmailContacto() {
-		return emailContacto;
-	}
-
-	public void setEmailContacto(String emailContacto) {
-		this.emailContacto = emailContacto;
-	}
-
-	public Long getIdClienteRemRepresentante() {
-		return idClienteRemRepresentante;
-	}
-
-	public void setIdClienteRemRepresentante(Long idClienteRemRepresentante) {
-		this.idClienteRemRepresentante = idClienteRemRepresentante;
-	}
-
-	public Long getIdClienteContacto() {
-		return idClienteContacto;
-	}
-
-	public void setIdClienteContacto(Long idClienteContacto) {
-		this.idClienteContacto = idClienteContacto;
-	}	
 	
 }

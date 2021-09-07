@@ -1,13 +1,13 @@
 --/*
 --######################################### 
 --## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20210831
+--## FECHA_CREACION=20210907
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14861
 --## PRODUCTO=NO
 --## 
---## Finalidad: Añadir columnas y FK a tabla CLC_CLIENTE_COMERCIAL y COM_COMPRADOR
+--## Finalidad: Añadir columnas y FK a tabla CLC_CLIENTE_COMERCIAL, COM_COMPRADOR y CEX_COMPRADOR_EXPEDIENTE
 --##            
 --## INSTRUCCIONES:  
 --## VERSIONES:
@@ -53,19 +53,15 @@ DECLARE
     T_COL('CREATE_COLUMN', 'CLC_CLIENTE_COMERCIAL', 'ID_CLIENTE_CONTACTO', 'NUMBER(16,0)', 'Identificador único del Contacto del Cliente'),
     T_COL('CREATE_COLUMN', 'COM_COMPRADOR', 'DD_TOC_ID', 'NUMBER(16,0)', 'Identificador único del diccionario de Ocupación'),
     T_COL('ADD_CONSTRAINT', 'COM_COMPRADOR', 'FK_DD_TOC_ID_COM', 'DD_TOC_ID', 'DD_TOC_TIPO_OCUPACION', 'DD_TOC_ID'),
-    T_COL('CREATE_COLUMN', 'COM_COMPRADOR', 'COM_NOMBRE_REPRESENTANTE', 'VARCHAR2(250 CHAR)', 'Nombre del Representante/Administrador'),
-    T_COL('CREATE_COLUMN', 'COM_COMPRADOR', 'COM_APELLIDOS_REPRESENTANTE', 'VARCHAR2(250 CHAR)', 'Apellidos del Representante/Administrador'),
-    T_COL('CREATE_COLUMN', 'COM_COMPRADOR', 'COM_TELEFONO_REPRESENTANTE', 'VARCHAR2(20 CHAR)', 'Telefono del Representante/Administrador'),
-    T_COL('CREATE_COLUMN', 'COM_COMPRADOR', 'COM_EMAIL_REPRESENTANTE', 'VARCHAR2(50 CHAR)', 'Email del Representante/Administrador'),
-    T_COL('CREATE_COLUMN', 'COM_COMPRADOR', 'COM_NOMBRE_CONTACTO', 'VARCHAR2(250 CHAR)', 'Nombre del Contacto'),
-    T_COL('CREATE_COLUMN', 'COM_COMPRADOR', 'COM_APELLIDOS_CONTACTO', 'VARCHAR2(250 CHAR)', 'Apellidos del Contacto'),
-    T_COL('CREATE_COLUMN', 'COM_COMPRADOR', 'DD_TDI_ID_CONTACTO', 'NUMBER(16,0)', 'Identificador único del diccionario de Documento de Identificación referente al Contacto'),
-    T_COL('ADD_CONSTRAINT', 'COM_COMPRADOR', 'FK_TIPO_IDENTIF_CONT_COM', 'DD_TDI_ID_CONTACTO', 'DD_TDI_TIPO_DOCUMENTO_ID', 'DD_TDI_ID'),
-    T_COL('CREATE_COLUMN', 'COM_COMPRADOR', 'COM_DOCUMENTO_CONTACTO', 'VARCHAR2(14 CHAR)', 'Documento identificador del Contacto'),
-    T_COL('CREATE_COLUMN', 'COM_COMPRADOR', 'COM_TELEFONO_CONTACTO', 'VARCHAR2(20 CHAR)', 'Telefono del Contacto'),
-    T_COL('CREATE_COLUMN', 'COM_COMPRADOR', 'COM_EMAIL_CONTACTO', 'VARCHAR2(50 CHAR)', 'Email del Contacto'),
-    T_COL('CREATE_COLUMN', 'COM_COMPRADOR', 'ID_CLIENTE_REM_REPRESENTANTE', 'NUMBER(16,0)', 'Identificador único del Representante del Cliente REM'),
-    T_COL('CREATE_COLUMN', 'COM_COMPRADOR', 'ID_CLIENTE_CONTACTO', 'NUMBER(16,0)', 'Identificador único del Contacto del Cliente')
+    T_COL('CREATE_COLUMN', 'CEX_COMPRADOR_EXPEDIENTE', 'CEX_NOMBRE_CONTACTO', 'VARCHAR2(250 CHAR)', 'Nombre del Contacto'),
+    T_COL('CREATE_COLUMN', 'CEX_COMPRADOR_EXPEDIENTE', 'CEX_APELLIDOS_CONTACTO', 'VARCHAR2(250 CHAR)', 'Apellidos del Contacto'),
+    T_COL('CREATE_COLUMN', 'CEX_COMPRADOR_EXPEDIENTE', 'DD_TDI_ID_CONTACTO', 'NUMBER(16,0)', 'Identificador único del diccionario de Documento de Identificación referente al Contacto'),
+    T_COL('ADD_CONSTRAINT', 'CEX_COMPRADOR_EXPEDIENTE', 'FK_TIPO_IDENTIF_CONT_COM', 'DD_TDI_ID_CONTACTO', 'DD_TDI_TIPO_DOCUMENTO_ID', 'DD_TDI_ID'),
+    T_COL('CREATE_COLUMN', 'CEX_COMPRADOR_EXPEDIENTE', 'CEX_DOCUMENTO_CONTACTO', 'VARCHAR2(14 CHAR)', 'Documento identificador del Contacto'),
+    T_COL('CREATE_COLUMN', 'CEX_COMPRADOR_EXPEDIENTE', 'CEX_TELEFONO_CONTACTO', 'VARCHAR2(20 CHAR)', 'Telefono del Contacto'),
+    T_COL('CREATE_COLUMN', 'CEX_COMPRADOR_EXPEDIENTE', 'CEX_EMAIL_CONTACTO', 'VARCHAR2(50 CHAR)', 'Email del Contacto'),
+    T_COL('CREATE_COLUMN', 'CEX_COMPRADOR_EXPEDIENTE', 'ID_CLIENTE_REM_REPRESENTANTE', 'NUMBER(16,0)', 'Identificador único del Representante del Cliente REM'),
+    T_COL('CREATE_COLUMN', 'CEX_COMPRADOR_EXPEDIENTE', 'ID_CLIENTE_CONTACTO', 'NUMBER(16,0)', 'Identificador único del Contacto del Cliente')
   );  
   V_TMP_COL T_COL;
 

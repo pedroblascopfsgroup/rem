@@ -12,6 +12,8 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Dicci
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.IsNumber;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Lista;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoSocioComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -91,6 +93,14 @@ public class OfertaDto implements Serializable {
 	private String porcentajeDescuento;
 	private String justificacionOferta;
 	private Date fechaAcepGdpr;
+	@Diccionary(clase = DDVinculoCaixa.class, message = "El vinculoCaixa no existe")
+	private String vinculoCaixa;	
+	@Diccionary(clase = DDTipoSocioComercial.class, message = "El sociedadEmpleadoGrupoCaixa no existe")
+	private String sociedadEmpleadoGrupoCaixa;
+	@IsNumber(message = "Debe ser un número")
+	private Integer oficinaEmpleadoCaixa;
+	private Boolean esAntiguoDeudor;
+	private Date fechaAltaWC;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -388,6 +398,36 @@ public class OfertaDto implements Serializable {
 	}
 	public void setFechaAcepGdpr(Date fechaAcepGdpr) {
 		this.fechaAcepGdpr = fechaAcepGdpr;
+	}
+	public String getVinculoCaixa() {
+		return vinculoCaixa;
+	}
+	public void setVinculoCaixa(String vinculoCaixa) {
+		this.vinculoCaixa = vinculoCaixa;
+	}
+	public String getSociedadEmpleadoGrupoCaixa() {
+		return sociedadEmpleadoGrupoCaixa;
+	}
+	public void setSociedadEmpleadoGrupoCaixa(String sociedadEmpleadoGrupoCaixa) {
+		this.sociedadEmpleadoGrupoCaixa = sociedadEmpleadoGrupoCaixa;
+	}
+	public Integer getOficinaEmpleadoCaixa() {
+		return oficinaEmpleadoCaixa;
+	}
+	public void setOficinaEmpleadoCaixa(Integer oficinaEmpleadoCaixa) {
+		this.oficinaEmpleadoCaixa = oficinaEmpleadoCaixa;
+	}
+	public Boolean getEsAntiguoDeudor() {
+		return esAntiguoDeudor;
+	}
+	public void setEsAntiguoDeudor(Boolean esAntiguoDeudor) {
+		this.esAntiguoDeudor = esAntiguoDeudor;
+	}
+	public Date getFechaAltaWC() {
+		return fechaAltaWC;
+	}
+	public void setFechaAltaWC(Date fechaAltaWC) {
+		this.fechaAltaWC = fechaAltaWC;
 	}
 
 }

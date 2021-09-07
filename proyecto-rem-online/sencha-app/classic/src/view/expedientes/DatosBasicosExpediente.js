@@ -464,12 +464,14 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							xtype: 'textareafieldbase',
 							fieldLabel:  HreRem.i18n('fieldlabel.motivo.anulacion.detalle'),
 		                	reference: 'detalleAnulacionRef',
+		                	colspan: 3,
 				        	bind: {
 				        		value: '{expediente.detalleAnulacionCntAlquiler}',
 				        		hidden: '{!esBankia}'
 				        	}
 				        },
 						{    
+				        	title: HreRem.i18n('title.arras'),
 			                xtype:'fieldsettable',
 			                fieldLabel:  HreRem.i18n('fieldlabel.motivo.anulacion'),
 							defaultType: 'displayfield',

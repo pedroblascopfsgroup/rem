@@ -643,7 +643,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							border: false,
 							layout: {
 						        type: 'table',
-						        columns: 2
+						        columns: 3
 						    },
 							bind : {
 								hidden: '{esBankiaAlquiler}'
@@ -683,6 +683,15 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									},
 									width: '100%',
 									rowspan: 4
+								},
+				    			{
+									xtype : "comboboxfieldbase",
+									fieldLabel : HreRem.i18n('fieldlabel.oferta.subasta'),
+									bind : {
+										store : '{comboSiNoBoolean}',
+										value : '{datosbasicosoferta.checkSubasta}',
+										hidden: '{!esBankia}'
+									}
 								}
 							]
 						},
@@ -701,6 +710,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								{
 									xtype : "comboboxfieldbase",
 									fieldLabel : HreRem.i18n('fieldlabel.detalle.oferta.opcionCompra'),
+									colspan: 2,
 									bind : {
 										store : '{comboSiNoBoolean}',
 										value : '{datosbasicosoferta.opcionACompra}'
@@ -719,15 +729,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									bind: {
 										value: '{datosbasicosoferta.fechaVencimientoOpcionCompra}'
 									}
-				    			},
-				    			{
-									xtype : "comboboxfieldbase",
-									fieldLabel : HreRem.i18n('fieldlabel.oferta.subasta'),
-									bind : {
-										store : '{comboSiNoBoolean}',
-										value : '{datosbasicosoferta.checkSubasta}'
-									}
-								}
+				    			}
 							]
 						}
 

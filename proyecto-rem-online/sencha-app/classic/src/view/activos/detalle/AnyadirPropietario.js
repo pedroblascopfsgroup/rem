@@ -119,12 +119,12 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.anyo.concesion'),
 												name: 'anyoConcesion',
-                                                readOnly: true
+                                                readOnly: false
 											},
 											{
 												fieldLabel: HreRem.i18n('fiedlabel.fecha.fin.concesion'),
 												name: 'fechaFinConcesion',
-                                                readOnly: true
+                                                readOnly: false
 											}			    					        	
 			    					    ]
 									},

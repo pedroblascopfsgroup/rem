@@ -114,6 +114,11 @@ public class Formalizacion implements Serializable, Auditable {
     @Column(name = "FOR_CAPITALCONCEDIDO")
     private Double capitalConcedido;	
 	
+    @Column(name="FOR_VENTA_PLAZOS")
+	private Boolean ventaPlazos;
+    
+    @Column(name="FOR_VENTA_COND_SUPENSIVA")
+	private Boolean ventaCondicionSupensiva;
     @Version   
 	private Long version;
 
@@ -303,6 +308,22 @@ public class Formalizacion implements Serializable, Auditable {
 
 	public void setCapitalConcedido(Double capitalConcedido) {
 		this.capitalConcedido = capitalConcedido;
+	}
+
+	public Boolean getVentaPlazos() {
+		return ventaPlazos;
+	}
+
+	public void setVentaPlazos(Boolean ventaPlazos) {
+		this.ventaPlazos = ventaPlazos;
+	}
+
+	public Boolean getVentaCondicionSupensiva() {
+		return ventaCondicionSupensiva;
+	}
+
+	public void setVentaCondicionSupensiva(Boolean ventaCondicionSupensiva) {
+		this.ventaCondicionSupensiva = ventaCondicionSupensiva;
 	}
     
     

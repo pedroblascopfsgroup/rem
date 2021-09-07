@@ -4219,20 +4219,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			//GenericForm genericForm = actGenericFormManager.get(tareasTramite.get(0).getTareaPadre().getId());
 			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			boolean avanzar = true;
+			
+			boolean isBankia = DDCartera.CODIGO_CARTERA_BANKIA.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo()) ? true : false;
 	
 			if (ofertaDto.getCodTarea().equals("01")  && 
-					(DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo()) ||
+					((DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo()) && isBankia) ||
 					DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES.equals(expedienteComercial.getEstado().getCodigo()))) {
-				if (ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_ACEPTA)) {
-					valoresTarea.put("aceptacionContraoferta", new String[] { DDRespuestaOfertante.CODIGO_ACEPTA });
-				} else if (ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_RECHAZA)) {
-					valoresTarea.put("aceptacionContraoferta", new String[] { DDRespuestaOfertante.CODIGO_RECHAZA });
-				} else if (ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_CONTRAOFERTA)) {
-					valoresTarea.put("aceptacionContraoferta", new String[] { DDRespuestaOfertante.CODIGO_CONTRAOFERTA });
-					valoresTarea.put("importeContraoferta", new String[] { ofertaDto.getImporteContraoferta().toString() });
-				} else {
+				if (!ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_ACEPTA)
+						&& !ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_RECHAZA)
+						&& !ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_CONTRAOFERTA)) {
 					avanzar = false;
+				} else if (ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_CONTRAOFERTA)) {
+					valoresTarea.put("importeContraoferta", new String[] { ofertaDto.getImporteContraoferta().toString() });
 				}
+				valoresTarea.put("aceptacionContraoferta", new String[] { ofertaDto.getAceptacionContraoferta() });
+				valoresTarea.put("fechaRespuesta", new String[] { format.format(new Date()) });
 			} else if (ofertaDto.getCodTarea().equals("02") && DDEstadosExpedienteComercial.PTE_POSICIONAMIENTO.equals(expedienteComercial.getEstado().getCodigo())) {
 				valoresTarea.put("fechaFirmaContrato", new String[] { format.format(ofertaDto.getFechaPrevistaFirma()) });
 				valoresTarea.put("lugarFirma", new String[] { ofertaDto.getLugarFirma() });

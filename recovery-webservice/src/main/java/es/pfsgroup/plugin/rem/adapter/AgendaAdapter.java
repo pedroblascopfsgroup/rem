@@ -562,15 +562,17 @@ public class AgendaAdapter {
 							"T017_RespuestaOfertanteCES".equals(tar.getTareaExterna().getTareaProcedimiento().getCodigo())){ 
 							valores[i] = valorCampo;
 							break;
-						}	
+						} else {
+							throw new Exception("La tarea no permite contraoferta");
+						}
 					} else {
 						valores[i] = valorCampo;
 						break;
 					}			
 				} else if (((Map.Entry) stringStringEntry).getKey().equals("importeContraoferta")) {
 					valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
-					if (((tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T013_RespuestaOfertante") && isBankia && gfi.getNombre().equals("importeContraofertaOfertante")) ||
-						(tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_RespuestaOfertanteCES") && gfi.getNombre().equals("importeContraoferta")))) {	
+					if (((tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T013_RespuestaOfertante") && isBankia && gfi.getNombre().equals("importeOfertante")) ||
+						(tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_RespuestaOfertanteCES") && gfi.getNombre().equals("importeContraofertaOfertante")))) {	
 						valores[i] = valorCampo;
 						break;
 					}

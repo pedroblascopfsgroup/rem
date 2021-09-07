@@ -4220,7 +4220,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			boolean avanzar = true;
 	
-			if (ofertaDto.getCodTarea().equals("01")  && DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo())) {
+			if (ofertaDto.getCodTarea().equals("01")  && 
+					(DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo()) ||
+					DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES.equals(expedienteComercial.getEstado().getCodigo()))) {
 				if (ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_ACEPTA)) {
 					valoresTarea.put("aceptacionContraoferta", new String[] { DDRespuestaOfertante.CODIGO_ACEPTA });
 				} else if (ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_RECHAZA)) {

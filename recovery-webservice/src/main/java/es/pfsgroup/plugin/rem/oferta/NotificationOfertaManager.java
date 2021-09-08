@@ -991,15 +991,15 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			String contenido = String.format("<p>Se notifica la sanción de contraoferta para la oferta con número identificador %s.</p>", 
 							oferta.getNumOferta().toString());
 						
-			contenido += "<br><br><p>Fecha de contraoferta del API: " + fecha + "</p>";
+			contenido += "<br><p>Fecha de contraoferta del API: " + fecha + "</p>";
 			
 			Filter filtroContraoferta = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoOferta.getAceptacionContraoferta());
 			DDRespuestaOfertante respuestaContraoferta = genericDao.get(DDRespuestaOfertante.class, filtroContraoferta);
 			if (!Checks.esNulo(respuestaContraoferta)) {
-				contenido += "<br><p>Sanción de la contraoferta: " + respuestaContraoferta.getDescripcion() + "</p>";
+				contenido += "<p>Sanción de la contraoferta: " + respuestaContraoferta.getDescripcion() + "</p>";
 						
 				if (DDRespuestaOfertante.CODIGO_CONTRAOFERTA.equals(respuestaContraoferta.getCodigo())) 
-					contenido += "<br><p>Importe de la contraoferta: " + dtoOferta.getImporteContraoferta() + "</p>";
+					contenido += "<p>Importe de la contraoferta: " + dtoOferta.getImporteContraoferta() + "</p>";
 			}
 			
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));

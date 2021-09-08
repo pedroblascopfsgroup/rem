@@ -1691,7 +1691,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			this.updateStateDispComercialActivosByOferta(oferta);
 			
-			if (errorsList.isEmpty()) {
+			if (!errorsList.isEmpty()) {
 				return errorsList;
 			}
 			

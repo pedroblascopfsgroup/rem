@@ -384,6 +384,10 @@ public class Oferta implements Serializable, Auditable {
 	@Column(name = "OFR_CHECK_DOCUMENTACION")
     private Boolean checkDocumentacion;
 	
+	@Column(name = "OFR_FECHA_ALTA_WEBCOM")
+	private Date fechaAltaWebcom;
+	
+	
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -1181,6 +1185,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setCheckDocumentacion(Boolean checkDocumentacion) {
 		this.checkDocumentacion = checkDocumentacion;
+	}
+
+	public Date getFechaAltaWebcom() {
+		return fechaAltaWebcom;
+	}
+
+	public void setFechaAltaWebcom(Date fechaAltaWebcom) {
+		this.fechaAltaWebcom = fechaAltaWebcom;
 	}
 	
 }

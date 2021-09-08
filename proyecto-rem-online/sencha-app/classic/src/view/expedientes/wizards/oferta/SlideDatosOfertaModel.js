@@ -98,6 +98,18 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaModel', {
 				extraParams: {codigoProvincia: '{oferta.provinciaCodigo}'} 
 			},
 			autoLoad: true
+		},
+				
+		comboTipologiaVentaBcOfr: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {
+					diccionario: 'tipologiaVentaBc'
+				}
+			},
+			autoLoad: true
 		}
 	}
 });

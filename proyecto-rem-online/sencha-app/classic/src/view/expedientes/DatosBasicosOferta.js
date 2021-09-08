@@ -616,7 +616,18 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								margin : '0 0 12 0'
 
 							}]
-						}]
+						},
+							{
+								xtype : 'numberfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.numero.contacto'),
+								reference : 'numContactoFromOfertaRef',
+								bind : {
+									value : '{datosbasicosoferta.numeroContacto}',
+									hidden: '{!esBankia}'
+								}/*,
+								margin : '0 0 12 0'*/
+
+							}]
 
 					}]
 					},  {

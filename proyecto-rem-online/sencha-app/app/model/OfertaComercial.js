@@ -87,6 +87,9 @@ Ext.define('HreRem.model.OfertaComercial', {
             },
             {
             	name:'vinculoCaixaCodigo'
+            },
+            {
+            	name: 'tipologivaVentaCod'
             }
             
     ],

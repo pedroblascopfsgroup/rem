@@ -192,6 +192,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloComplemento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;

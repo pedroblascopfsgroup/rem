@@ -768,7 +768,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	            municipioCodigo:bindRecord.municipioCodigo,
 	            direccion:bindRecord.direccionTodos,
 	            prp:bindRecord.prp,
-	            localidadNacimientoCompradorDescripcion:bindRecord.localidadNacimientoCompradorDescripcion
+	            tipologivaVentaCod:bindRecord.tipologivaVentaCod
 			});
 		}else{
 			model = Ext.create('HreRem.model.OfertaComercial', {
@@ -802,7 +802,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	            municipioCodigo:bindRecord.municipioCodigo,
 	            direccion:bindRecord.direccionTodos,
 	            prp:bindRecord.prp,
-	            localidadNacimientoCompradorDescripcion:bindRecord.localidadNacimientoCompradorDescripcion
+	            localidadNacimientoCompradorDescripcion:bindRecord.localidadNacimientoCompradorDescripcion,
+	            tipologivaVentaCod:bindRecord.tipologivaVentaCod
 			});
 		}
  

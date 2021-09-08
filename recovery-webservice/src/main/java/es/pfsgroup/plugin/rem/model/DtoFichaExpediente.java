@@ -156,7 +156,7 @@ public class DtoFichaExpediente extends WebDto {
 	private Boolean finalizadoCierreEconomico;
 	
 	private Boolean esActivoHayaHome;
-	private Boolean tieneTramiteComercialVivo;
+	private Boolean tieneTramiteComercial;
 	
 	private String subestadoExpediente;
 	private String codigoSubestado;
@@ -802,12 +802,12 @@ public class DtoFichaExpediente extends WebDto {
 		this.esActivoHayaHome = esActivoHayaHome;
 	}
 
-	public Boolean getTieneTramiteComercialVivo() {
-		return tieneTramiteComercialVivo;
+	public Boolean getTieneTramiteComercial() {
+		return tieneTramiteComercial;
 	}
 
-	public void setTieneTramiteComercialVivo(Boolean tieneTramiteComercialVivo) {
-		this.tieneTramiteComercialVivo = tieneTramiteComercialVivo;
+	public void setTieneTramiteComercial(Boolean tieneTramiteComercial) {
+		this.tieneTramiteComercial = tieneTramiteComercial;
 	}
 
 	public String getSubestadoExpediente() {

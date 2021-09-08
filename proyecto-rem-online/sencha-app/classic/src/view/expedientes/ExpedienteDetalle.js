@@ -133,7 +133,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'compradoresexpediente', ocultarBotonesEdicion: true})}, ['TAB_COMPRADORES_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'diariogestionesexpediente', ocultarBotonesEdicion: true})}, ['TAB_DIARIO_GESTIONES_EXPEDIENTES']);
 	        if(!(me.lookupController().getViewModel().get('expediente.esActivoHayaHome') && me.lookupController().getViewModel().get('expediente.tipoExpedienteCodigo') == CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER']
-					&& !me.lookupController().getViewModel().get('expediente.tieneTramiteComercialVivo'))){
+					&& !me.lookupController().getViewModel().get('expediente.tieneTramiteComercial'))){
 				$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tramitestareasexpediente', ocultarBotonesEdicion: true})}, ['TAB_TRÁMITES_EXPEDIENTES']);
 			}
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestoresexpediente', ocultarBotonesEdicion: true})}, ['TAB_GESTORES_EXPEDIENTES']);//Poner permiso especifico?

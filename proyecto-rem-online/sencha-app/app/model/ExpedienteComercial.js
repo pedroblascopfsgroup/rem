@@ -325,7 +325,7 @@ Ext.define('HreRem.model.ExpedienteComercial', {
 				type: 'boolean'
 			},
 			{
-				name: 'tieneTramiteComercialVivo',
+				name: 'tieneTramiteComercial',
 				type: 'boolean'
 			},
 			{

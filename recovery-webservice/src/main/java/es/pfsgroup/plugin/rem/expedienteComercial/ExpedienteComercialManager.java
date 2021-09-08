@@ -1766,12 +1766,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setFinalizadoCierreEconomico(finalizadoCierreEconomico(expediente));
 				dto.setEsActivoHayaHome(activoManager.esActivoHayaHome(activo.getId()));
 				
-				if (activoTramiteApi.tieneTramiteVigenteByActivoYProcedimiento(activo.getId(), ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER)
-						|| activoTramiteApi.tieneTramiteVigenteByActivoYProcedimiento(activo.getId(), ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA) 
-						|| activoTramiteApi.tieneTramiteVigenteByActivoYProcedimiento(activo.getId(), ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE)) {
-					dto.setTieneTramiteComercialVivo(true);
+				
+				List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
+				if (!Checks.esNulo(tramitesActivo) && !tramitesActivo.isEmpty()) {
+					dto.setTieneTramiteComercial(true);
 				} else {
-					dto.setTieneTramiteComercialVivo(false);
+					dto.setTieneTramiteComercial(false);
 				}
 			}
 		}

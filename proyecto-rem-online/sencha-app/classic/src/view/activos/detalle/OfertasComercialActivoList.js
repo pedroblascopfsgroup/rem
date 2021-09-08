@@ -555,7 +555,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar') || activo.get('pertenceAgrupacionRestringida')
 			|| activo.get('isVendido') || !$AU.userHasFunction('EDITAR_LIST_OFERTAS_ACTIVO')  || activo.get('isActivoEnTramite') 
 			|| (activo.get('situacionComercialCodigo') == CONST.SITUACION_COMERCIAL['ALQUILADO_PARCIALMENTE'] && activo.get('tipoComercializacionCodigo') !=  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])
-			|| (activo.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && activo.get('perimetroMacc')=="true")) {
+			|| (activo.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && activo.get('perimetroMacc')=="1")) {
 			me.setTopBar(false);
 			me.rowEditing.clearListeners();
 		}

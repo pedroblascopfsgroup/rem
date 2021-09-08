@@ -1,9 +1,9 @@
 Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'ofertascomercialagrupacionlist',
+	topBar: true,
     bind: {
         store: '{storeOfertasAgrupacion}',
-        topBar: '{agrupacionficha.esEditable}',
 		editOnSelect: '{agrupacionficha.esEditable}'
     },
     requires: ['HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaAgrupacion', 'HreRem.view.activos.detalle.MotivoRechazoOfertaForm'],
@@ -539,7 +539,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		var me = this;
 		var agr = me.lookupController().getViewModel().get('agrupacionficha');
 
-		if(agr.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && agr.get('perimetroMacc')){
+		if(!agr.get('esEditable') || (agr.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && agr.get('perimetroMacc'))){
 			me.setTopBar(false);
 			me.rowEditing.clearListeners();
 		}

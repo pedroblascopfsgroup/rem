@@ -113,7 +113,7 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 		}
 		
 		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlush(expedienteComercial.getOferta());
+			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
 		}
 	}
 

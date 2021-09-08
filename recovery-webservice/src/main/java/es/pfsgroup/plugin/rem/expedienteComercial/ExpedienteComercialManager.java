@@ -28,6 +28,7 @@ import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
+import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -13663,4 +13664,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return true;
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public ReplicarOfertaDto buildReplicarOfertaDtoFromExpediente(final ExpedienteComercial eco){
+		return new ReplicarOfertaDto(){{
+			setNumeroOferta(eco.getOferta().getNumOferta());
+			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc().getCodigoC4C());
+		}};
+	}
+
 }

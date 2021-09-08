@@ -83,7 +83,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 
 		expedienteComercialApi.update(expedienteComercial,false);
 		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlush(expedienteComercial.getOferta());
+			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
 		}
 	}
 

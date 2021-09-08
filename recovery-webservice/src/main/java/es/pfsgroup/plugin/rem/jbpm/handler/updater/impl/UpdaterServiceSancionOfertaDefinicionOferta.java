@@ -307,7 +307,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 		}	
 		
 		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlush(expediente.getOferta());
+			ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 		}
 	}
 

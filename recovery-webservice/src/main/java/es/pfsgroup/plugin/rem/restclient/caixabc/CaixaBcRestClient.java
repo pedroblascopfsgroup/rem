@@ -138,6 +138,61 @@ public class CaixaBcRestClient {
 
 }
 
+    public Boolean callReplicateOfertaWithDto(ReplicarOfertaDto dto){
+        Boolean resp = false;
+        Long numOferta = dto.getNumeroOferta();
+        try {
+            if (this.isActive() && particularValidatorApi.esOfertaCaixa(numOferta != null ? numOferta.toString() : null)){
+                String endpoint = getRem3Endpoint(REM3_URL,REPLICACION_OFERTAS_ENDPOINT);
+                if (endpoint != null) {
+                    Map<String, Object> params = new HashMap<String, Object>();
+                    params.put("numeroOferta", numOferta.toString());
+                    if (dto.getEstadoExpedienteBcCodigoBC()!= null){
+                        params.put("estadoExpedienteBcCodigoBC", dto.getEstadoExpedienteBcCodigoBC());
+                    }
+                    HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
+                    resp = request.post(Boolean.class);
+                } else {
+                    return false;
+                }
+            }else{
+                return true;
+            }
+
+        } catch (Exception e) {
+            logger.error("Error en " + this.getClass().toString(), e);
+        }
+
+        return resp;
+
+    }
+
+    public Boolean callReplicateOfertaWithAditionalData(Long numOferta){
+        Boolean resp = false;
+
+        try {
+            if (this.isActive() && particularValidatorApi.esOfertaCaixa(numOferta != null ? numOferta.toString() : null)){
+                String endpoint = getRem3Endpoint(REM3_URL,REPLICACION_OFERTAS_ENDPOINT);
+                if (endpoint != null) {
+                    Map<String, Object> params = new HashMap<String, Object>();
+                    params.put("numeroOferta", numOferta.toString());
+                    HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
+                    resp = request.post(Boolean.class);
+                } else {
+                    return false;
+                }
+            }else{
+                return true;
+            }
+
+        } catch (Exception e) {
+            logger.error("Error en " + this.getClass().toString(), e);
+        }
+
+        return resp;
+
+    }
+
 
     public Boolean callPbc(LlamadaPbcDto dto){
         Boolean resp = false;

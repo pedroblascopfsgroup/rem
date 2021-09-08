@@ -171,7 +171,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 		}
 		
 		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlush(eco.getOferta());
+			ofertaApi.replicateOfertaFlushDto(eco.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
 		}
 	}
 

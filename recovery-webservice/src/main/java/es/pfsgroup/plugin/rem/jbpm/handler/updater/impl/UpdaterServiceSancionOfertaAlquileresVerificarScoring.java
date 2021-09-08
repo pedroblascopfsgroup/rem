@@ -219,7 +219,7 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
 		genericDao.save(HistoricoScoringAlquiler.class, histScoringAlquiler);
 		
 		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlush(expedienteComercial.getOferta());
+			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
 		}
 	}
 

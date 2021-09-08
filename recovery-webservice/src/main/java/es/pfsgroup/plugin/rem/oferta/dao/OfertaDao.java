@@ -9,6 +9,7 @@ import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
+import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 
 
 public interface OfertaDao extends AbstractDao<Oferta, Long>{
@@ -108,5 +109,7 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 
 	List<Oferta> getListOtrasOfertasTramitadasActivo(Long idActivo);
 
-    Boolean pbcFlush(LlamadaPbcDto dto);
+	Boolean replicateOfertaFlushWithDto(ReplicarOfertaDto dto);
+
+	Boolean pbcFlush(LlamadaPbcDto dto);
 }

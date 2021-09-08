@@ -346,7 +346,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				}
 			}
 			if(estadoBcModificado) {
-				ofertaApi.replicateOfertaFlush(expediente.getOferta());
+				ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 			}
 		}
 	}

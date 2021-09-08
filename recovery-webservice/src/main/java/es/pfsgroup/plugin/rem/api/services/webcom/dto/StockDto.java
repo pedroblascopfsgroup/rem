@@ -353,13 +353,16 @@ public class StockDto implements WebcomRESTDto{
 	
 	@WebcomRequired
 	@DecimalDataTypeFormat(decimals=2)
+	@MappedColumn("RECOMENDACION_PORCENTAJE_DESC")
 	private DoubleDataType recomendacionPorcenDescuentoVenta;
 	
 	@WebcomRequired
 	@DecimalDataTypeFormat(decimals=2)
+	@MappedColumn("RECOMENDACION_IMPORTE_MIN")
 	private DoubleDataType recomendacionPrecioMinimoVenta;
 	
 	@WebcomRequired
+	@MappedColumn("RECOMENDACION_REQUERIDA")
 	private StringDataType recomendacionInternaRequerida;
 	
 	public LongDataType getIdActivoHaya() {

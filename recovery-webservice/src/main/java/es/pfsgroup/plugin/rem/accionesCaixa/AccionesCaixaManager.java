@@ -85,7 +85,14 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Transactional
     @Override
     public void accionRechazo(DtoAccionRechazoCaixa dto) throws Exception {
-        agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+        Oferta ofr =  genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "numOferta", dto.getNumOferta()));
+        if (DDTipoOferta.isTipoAlquiler(ofr.getTipoOferta())) {
+            ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente()));
+            ActivoTramite acTra = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", eco.getTrabajo().getId()));
+            adapter.anularTramiteAlquiler(acTra.getId(), "905");
+        }else {
+            agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+        }
     }
 
     @Override

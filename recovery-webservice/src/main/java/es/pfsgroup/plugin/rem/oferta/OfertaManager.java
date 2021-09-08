@@ -1161,7 +1161,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
 			}
 			
-			if (!Checks.esNulo(errorsList)) {
+			if (!errorsList.isEmpty()) {
 				return errorsList;
 			}
 			

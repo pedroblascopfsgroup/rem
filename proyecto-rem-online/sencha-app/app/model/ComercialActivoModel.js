@@ -170,6 +170,12 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 		},
 		{
 			name:'campanyaAlquiler'
+		},
+		{
+			name: 'tipoTransmisionCodigo'
+		},
+		{
+			name: 'tipoTransmisionDescripcion'
 		}
     ],
     

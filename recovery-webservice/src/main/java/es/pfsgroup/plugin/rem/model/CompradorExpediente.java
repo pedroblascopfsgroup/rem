@@ -250,8 +250,8 @@ public class CompradorExpediente implements Serializable, Auditable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_PRV_NAC_ID_REP")
-	private DDProvincia provinciaRep;
-
+	private DDProvincia provinciaNacimientoRep;
+ 
 	@Version   
 	private Long version;
 	
@@ -829,13 +829,11 @@ public class CompradorExpediente implements Serializable, Auditable {
 		this.oficinaTrabajo = oficinaTrabajo;
 	}
 
-	public DDProvincia getProvinciaRep() {
-		return provinciaRep;
+	public DDProvincia getProvinciaNacimientoRep() {
+		return provinciaNacimientoRep;
 	}
 
-	public void setProvinciaRep(DDProvincia provinciaRep) {
-		this.provinciaRep = provinciaRep;
+	public void setProvinciaNacimientoRep(DDProvincia provinciaNacimientoRep) {
+		this.provinciaNacimientoRep = provinciaNacimientoRep;
 	}
-
-
 }

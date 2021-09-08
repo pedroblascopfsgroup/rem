@@ -146,6 +146,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
+import es.pfsgroup.plugin.rem.model.dd.DDTipologiaVentaBc;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -4311,7 +4312,7 @@ public class ActivoAdapter {
 			OfertaCaixa ofertaCaixa = null;
 
 			if (particularValidatorApi.esOfertaCaixa(ofertaCreada != null ? ofertaCreada.getNumOferta().toString() : null))
-				ofertaCaixa = createOfertaCaixa(ofertaCreada);
+				ofertaCaixa = createOfertaCaixa(ofertaCreada, dto);
 
 
 			if(DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(codigoEstado) && ofertaCaixa != null){
@@ -4332,14 +4333,21 @@ public class ActivoAdapter {
 
 
 	@Transactional(readOnly = false)
-	public OfertaCaixa createOfertaCaixa(final Oferta oferta) {
+	public OfertaCaixa createOfertaCaixa(final Oferta oferta,DtoOfertasFilter dto) {
 
 			if(genericDao.get(OfertaCaixa.class,genericDao.createFilter(FilterType.EQUALS,"oferta.numOferta",oferta.getNumOferta())) != null){
 				return null;
 			}else {
 				OfertaCaixa ofertaCaixa = new OfertaCaixa();
 				ofertaCaixa.setOferta(oferta);
-				oferta.setOfertaCaixa(ofertaCaixa);
+				if (dto.getTipologivaVentaCod() != null) {
+					Filter codigo = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipologivaVentaCod());
+					DDTipologiaVentaBc tipologia = genericDao.get(DDTipologiaVentaBc.class, codigo);
+					if (tipologia != null) {
+						ofertaCaixa.setTipologiaVentaBc(tipologia);
+					}
+				}				
+				oferta.setOfertaCaixa(ofertaCaixa);				
 				return genericDao.save(OfertaCaixa.class,ofertaCaixa);
 			}
 	}

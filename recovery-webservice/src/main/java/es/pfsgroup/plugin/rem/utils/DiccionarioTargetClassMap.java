@@ -345,6 +345,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("metodoActualizacionRenta",  DDMetodoActualizacionRenta.class);
 		mapa.put("resolucionComite",  DDResolucionComite.class);
 		mapa.put("motivoAnulacionBc",  DDMotivoAnulacionBC.class);
+		mapa.put("tipologiaVentaBc",  DDTipologiaVentaBc.class);
 		
 		
 		return Collections.unmodifiableMap(mapa);

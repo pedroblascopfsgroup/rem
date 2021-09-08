@@ -21,6 +21,7 @@ public class DtoFormalizacionResolucion extends WebDto {
 	private static final long serialVersionUID = 3574353502838449106L;
 	
 
+	private String id;
 	private Long idFormalizacion;
 	private Long idExpediente;
 	private String nombreNotario;
@@ -41,6 +42,9 @@ public class DtoFormalizacionResolucion extends WebDto {
 	
 	private Date fechaFirmaContrato;
 	private String numeroProtocoloCaixa;
+	
+	private Boolean ventaPlazos;
+	private Boolean ventaCondicionSupensiva;
 	
 	
 	public Long getIdFormalizacion() {
@@ -156,6 +160,24 @@ public class DtoFormalizacionResolucion extends WebDto {
 	}
 	public void setNumeroProtocoloCaixa(String numeroProtocoloCaixa) {
 		this.numeroProtocoloCaixa = numeroProtocoloCaixa;
+	}
+	public Boolean getVentaPlazos() {
+		return ventaPlazos;
+	}
+	public void setVentaPlazos(Boolean ventaPlazos) {
+		this.ventaPlazos = ventaPlazos;
+	}
+	public Boolean getVentaCondicionSupensiva() {
+		return ventaCondicionSupensiva;
+	}
+	public void setVentaCondicionSupensiva(Boolean ventaCondicionSupensiva) {
+		this.ventaCondicionSupensiva = ventaCondicionSupensiva;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 	
 }

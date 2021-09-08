@@ -1136,6 +1136,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expedienteComercial.getId());
 			List<GastosExpediente> lista = genericDao.getList(GastosExpediente.class, filtro);
 
+			if (dto.getNumeroContacto() != null) {
+				visita.setNumeroContacto(dto.getNumeroContacto());
+			}
 			if (!Checks.esNulo(visita)) {
 				oferta.setVisita(visita);
 
@@ -1867,6 +1870,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (oferta.getEstadoVisitaOferta() != null) {
 			dto.setEstadoVisitaOfertaCodigo(oferta.getEstadoVisitaOferta().getCodigo());
 			dto.setEstadoVisitaOfertaDescripcion(oferta.getEstadoVisitaOferta().getDescripcion());
+		}
+		if (oferta.getVisita() != null && oferta.getVisita().getNumeroContacto() != null) {
+			dto.setNumeroContacto(oferta.getVisita().getNumeroContacto());
 		}
 
 		// antiguo canal prescriptor
@@ -4380,6 +4386,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		resolucionDto.setFechaResolucion(formalizacion.getFechaResolucion());
 		resolucionDto.setImporte(formalizacion.getImporte());
 		resolucionDto.setFechaPago(formalizacion.getFechaPago());
+		resolucionDto.setVentaCondicionSupensiva(formalizacion.getVentaCondicionSupensiva());
+		resolucionDto.setVentaPlazos(formalizacion.getVentaPlazos());
 		this.rellenarDatosVentaFormalizacion(formalizacion, resolucionDto);
 
 		return resolucionDto;
@@ -13635,5 +13643,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				System.out.println("No se ha podido obtener idPersonaHaya para el representante con el documento "+compradorExpediente.getDocumentoRepresentante());
 			}
 		}
+	}
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveFormalizacionResolucion(DtoFormalizacionResolucion dto) {
+
+		if (dto.getId() == null) {
+			return false;
+		}
+		ExpedienteComercial expediente = this.findOne(Long.parseLong(dto.getId()));
+		if (!Checks.esNulo(expediente)) {			
+			Formalizacion formalizacion = expediente.getFormalizacion();
+			
+			if (dto.getVentaPlazos() != null) {
+				formalizacion.setVentaPlazos(dto.getVentaPlazos());
+			}
+			genericDao.save(Formalizacion.class, formalizacion);
+
+		}
+		return true;
 	}
 }

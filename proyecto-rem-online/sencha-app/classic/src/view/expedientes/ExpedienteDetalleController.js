@@ -2067,12 +2067,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	numVisitaIsEditable: function() {
 		var me = this,
 		campoNumVisita = me.lookupReference('numVistaFromOfertaRef');
+		campoNumContacto = me.lookupReference('numContactoFromOfertaRef');
 		// Si el estado de la visita no es REALIZADA, no debe haber numVisita relacionada
-		if(me.lookupReference('comboEstadosVisita').getValue() == "03" )
+		if(me.lookupReference('comboEstadosVisita').getValue() == "03" ){
 			campoNumVisita.setDisabled(false);
-		else {
+			campoNumContacto.setDisabled(false);
+		}else {
 			campoNumVisita.setValue();
 			campoNumVisita.setDisabled(true);
+			campoNumContacto.setValue();
+			campoNumContacto.setDisabled(true);
 		}
 	},
 	comprobarObligatoriedadRte: function(){

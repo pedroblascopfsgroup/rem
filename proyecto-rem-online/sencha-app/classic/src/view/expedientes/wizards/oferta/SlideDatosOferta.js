@@ -558,6 +558,20 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 									value: '{oferta.prp}'
 								},								
 					        	colspan: 1
+							},
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.tipologia.venta'),
+								name: 		'tipologivaVentaCod',								
+								allowBlank: !isBk,
+								hidden: !isBk,
+								bind: {
+									store: '{comboTipologiaVentaBcOfr}',
+									value: '{oferta.tipologivaVentaCod}'
+								},
+								displayField: 'descripcion',
+								valueField: 'codigo',
+					        	colspan: 1
 							}
 							
 						]

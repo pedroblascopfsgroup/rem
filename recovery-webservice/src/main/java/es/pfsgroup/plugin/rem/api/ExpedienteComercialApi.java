@@ -37,6 +37,7 @@ import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
+import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
@@ -1417,5 +1418,7 @@ public interface ExpedienteComercialApi {
 	void updateActualizacionRenta(Long id, DtoActualizacionRenta dto) throws IllegalAccessException, InvocationTargetException;
 
 	List<DtoRespuestaBCGenerica> getSancionesBk(Long idExpediente);
+	
+	boolean saveFormalizacionResolucion(DtoFormalizacionResolucion dto);
 	
 }

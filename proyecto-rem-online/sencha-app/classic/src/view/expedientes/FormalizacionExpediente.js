@@ -858,6 +858,25 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							},
 							formatter: 'date("d/m/Y")',
 							readOnly: true
+						},
+						{
+						   xtype: 'checkboxfieldbase',
+						   fieldLabel: HreRem.i18n('fieldlabel.venta.plazos'),
+						   reference: 'ventaplazosref',
+						   bind : {
+					     		value: '{resolucion.ventaPlazos}',
+					     		hidden: '{!esBankia}'
+						   }
+						},
+						{
+						   xtype: 'checkboxfieldbase',
+						   fieldLabel: HreRem.i18n('fieldlabel.venta.condicion.supensiva'),
+						   reference: 'ventansupensivaref',
+						   bind : {
+					     		value: '{resolucion.ventaCondicionSupensiva}',
+					     		hidden: '{!esBankia}',
+					     		readOnly: true
+						   }
 						}]
 					}]
 				}, {

@@ -104,6 +104,7 @@ public class DtoOfertasFilter extends WebDto {
     private String direccion;
     private Boolean prp;
     private String localidadNacimientoCompradorDescripcion;
+    private String tipologivaVentaCod;
 		
 	public Long getNumOferta() {
 		return numOferta;
@@ -594,6 +595,12 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setVinculoCaixaCodigo(String vinculoCaixaCodigo) {
 		this.vinculoCaixaCodigo = vinculoCaixaCodigo;
+	}
+	public String getTipologivaVentaCod() {
+		return tipologivaVentaCod;
+	}
+	public void setTipologivaVentaCod(String tipologivaVentaCod) {
+		this.tipologivaVentaCod = tipologivaVentaCod;
 	}
 	
 	

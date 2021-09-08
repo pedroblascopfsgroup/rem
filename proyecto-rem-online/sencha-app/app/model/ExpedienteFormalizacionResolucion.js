@@ -3,6 +3,7 @@
  */
 Ext.define('HreRem.model.ExpedienteFormalizacionResolucion', {
     extend: 'HreRem.model.Base',
+    idProperty: 'id',
 
     fields: [    
 
@@ -82,14 +83,23 @@ Ext.define('HreRem.model.ExpedienteFormalizacionResolucion', {
     		},
     		{
     			name:'numeroProtocoloCaixa'
-    		}
+    		},
+    	    {
+    	    	name: 'ventaPlazos',
+    	    	type: 'boolean'
+    	    },
+    	    {
+    	    	name: 'ventaCondicionSupensiva',
+    	    	type: 'boolean'
+    	    }
     ],
     
 	proxy: {
 		type: 'uxproxy',
 		localUrl: 'expedienteformalizacionresolucion.json',
 		api: {
-            read: 'expedientecomercial/getTabExpediente'
+            read: 'expedientecomercial/getTabExpediente',
+            update: 'expedientecomercial/saveFormalizacionResolucion'
         },
 		 extraParams: {tab: 'formalizacion'}
     }

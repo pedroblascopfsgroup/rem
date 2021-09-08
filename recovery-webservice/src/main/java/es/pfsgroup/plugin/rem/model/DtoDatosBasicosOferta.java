@@ -157,6 +157,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private Boolean checkSubasta;
 	
+	private Long numeroContacto;
+	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
 	}
@@ -717,6 +719,14 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setCheckSubasta(Boolean checkSubasta) {
 		this.checkSubasta = checkSubasta;
+	}
+
+	public Long getNumeroContacto() {
+		return numeroContacto;
+	}
+
+	public void setNumeroContacto(Long numeroContacto) {
+		this.numeroContacto = numeroContacto;
 	}
 	
 }

@@ -192,6 +192,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloComplemento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDTributacionPropuestaClienteExentoIva;
@@ -4065,6 +4066,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			}
 		}
+		
+		if (activo.getTipoTransmision() != null) {
+			dto.setTipoTransmisionCodigo(activo.getTipoTransmision().getCodigo());
+			dto.setTipoTransmisionDescripcion(activo.getTipoTransmision().getDescripcion());
+		}
+		
 		return dto;
 	}
 
@@ -4190,6 +4197,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				genericDao.update(ActivoCaixa.class, activoCaixa);
 			}
 		
+			if (dto.getTipoTransmisionCodigo() != null) {
+				DDTipoTransmision transmision = (DDTipoTransmision) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTransmision.class, dto.getTipoTransmisionCodigo());
+				activo.setTipoTransmision(transmision);
+			}
 			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);

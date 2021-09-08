@@ -330,7 +330,8 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 										xtype: 'comboboxfieldbase',
 										fieldLabel:	HreRem.i18n('fieldlabel.canal.venta.bc'),
 										reference: 'canalVentaBC',
-										bind: {								
+										bind: {
+											readOnly: '{!esSuperUsuario}',
 											store: '{comboTipoComercializarActivo}',
 											value: '{comercial.canalPublicacionVentaCodigo}'
 										}
@@ -339,7 +340,8 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 										xtype: 'comboboxfieldbase',
 										fieldLabel:	HreRem.i18n('fieldlabel.canal.alquiler.bc'),
 										reference: 'canalAlquilerBC',
-										bind: {								
+										bind: {
+											readOnly: '{!esSuperUsuario}',
 											store: '{comboTipoComercializarActivo}',
 											value: '{comercial.canalPublicacionAlquilerCodigo}'
 										}
@@ -422,6 +424,15 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 							        		readOnly: true,
 							        		value: '{comercial.fechaFinConcurrencia}'
 							        	}
+									},
+									{
+										xtype:'comboboxfieldbasedd',
+										fieldLabel: HreRem.i18n('fieldlabel.activobbva.tipoTransmision'),
+										bind: {											
+											store: '{comboTipoTransmision}',
+											value: '{comercial.tipoTransmisionCodigo}',
+											rawValue: '{comercial.tipoTransmisionDescripcion}'
+										}
 									}
 									
 								]

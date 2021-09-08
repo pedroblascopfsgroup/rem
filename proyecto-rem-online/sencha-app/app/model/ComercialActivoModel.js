@@ -160,6 +160,12 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 			name: 'fechaFinConcurrencia',
 			type:'date',
 			dateFormat: 'c'
+		},
+		{
+			name: 'tipoTransmisionCodigo'
+		},
+		{
+			name: 'tipoTransmisionDescripcion'
 		}
     ],
     

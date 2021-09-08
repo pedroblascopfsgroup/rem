@@ -51,7 +51,9 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private Boolean activoAAMM;
 	private Boolean activoPromocionesEstrategicas;
     private Date fechaInicioConcurrencia;
-    private Date fechaFinConcurrencia;		
+    private Date fechaFinConcurrencia;    
+    private String tipoTransmisionDescripcion;
+    private String tipoTransmisionCodigo;
 
 	public String getId() {
 		return id;
@@ -413,5 +415,21 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	public void setFechaFinConcurrencia(Date fechaFinConcurrencia) {
 		this.fechaFinConcurrencia = fechaFinConcurrencia;
+	}
+
+	public String getTipoTransmisionDescripcion() {
+		return tipoTransmisionDescripcion;
+	}
+
+	public void setTipoTransmisionDescripcion(String tipoTransmisionDescripcion) {
+		this.tipoTransmisionDescripcion = tipoTransmisionDescripcion;
+	}
+
+	public String getTipoTransmisionCodigo() {
+		return tipoTransmisionCodigo;
+	}
+
+	public void setTipoTransmisionCodigo(String tipoTransmisionCodigo) {
+		this.tipoTransmisionCodigo = tipoTransmisionCodigo;
 	}	
 }

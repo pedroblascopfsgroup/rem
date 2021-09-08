@@ -421,7 +421,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				ofertaApi.calculoComiteLBK(agrupada.getOfertaPrincipal().getId(), null);
 			}
 			if(estadoBcModificado) {
-				ofertaApi.replicateOfertaFlush(expediente.getOferta());
+				ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 			}
 		}
 	}

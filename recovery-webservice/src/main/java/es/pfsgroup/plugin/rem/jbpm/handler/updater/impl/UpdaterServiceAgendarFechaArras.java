@@ -119,8 +119,8 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 				
 				expediente.setEstadoBc(estadoBc);
 				genericDao.save(ExpedienteComercial.class, expediente);
-				ofertaApi.replicateOfertaFlush(expediente.getOferta());
-				
+				ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
+
 			}
 		}catch(ParseException e) {
 			e.printStackTrace();

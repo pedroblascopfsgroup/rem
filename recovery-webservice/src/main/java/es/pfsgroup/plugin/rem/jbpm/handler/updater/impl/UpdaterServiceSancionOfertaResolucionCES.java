@@ -266,7 +266,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 				genericDao.save(Oferta.class, ofertaAceptada);
 				genericDao.save(ExpedienteComercial.class, expediente);
 				if(estadoBcModificado) {
-					ofertaApi.replicateOfertaFlush(expediente.getOferta());
+					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 				}
 			}
 		}

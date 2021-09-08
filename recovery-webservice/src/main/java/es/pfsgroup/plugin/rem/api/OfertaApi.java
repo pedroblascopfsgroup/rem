@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
+import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import net.sf.json.JSONObject;
 
 public interface OfertaApi {
@@ -815,6 +816,8 @@ public interface OfertaApi {
 	boolean esOfertaValidaCFVByCarteraSubcartera(Oferta oferta);
 
 	 String getIdPersonaHayaByDocumento(Long idExpediente, String cartera,String documento);
+
+    void replicateOfertaFlushDto(Oferta oferta, ReplicarOfertaDto dto);
 
     void pbcFlush(LlamadaPbcDto dto);
 

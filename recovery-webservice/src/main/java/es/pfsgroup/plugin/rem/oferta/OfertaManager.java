@@ -18,6 +18,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7350,6 +7351,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ofertaCaixa.setEstadoComunicacionC4C((DDEstadoComunicacionC4C)utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoComunicacionC4C.class, DDEstadoComunicacionC4C.C4C_NO_ENVIADO));
 			
 			if(ofertaDao.replicateOfertaFlush(oferta.getNumOferta())) {
+				ofertaCaixa.setEstadoComunicacionC4C((DDEstadoComunicacionC4C)utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoComunicacionC4C.class, DDEstadoComunicacionC4C.C4C_PTE_VALIDACION));
+			}
+
+			genericDao.save(OfertaCaixa.class, ofertaCaixa);
+		}
+	}
+
+	@Override
+	public void replicateOfertaFlushDto(Oferta oferta, ReplicarOfertaDto dto) {
+		OfertaCaixa ofertaCaixa = oferta.getOfertaCaixa();
+		if(ofertaCaixa != null) {
+			expedienteComercialDao.flush();
+			ofertaCaixa.setEstadoComunicacionC4C((DDEstadoComunicacionC4C)utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoComunicacionC4C.class, DDEstadoComunicacionC4C.C4C_NO_ENVIADO));
+
+			if(ofertaDao.replicateOfertaFlushWithDto(dto)) {
 				ofertaCaixa.setEstadoComunicacionC4C((DDEstadoComunicacionC4C)utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoComunicacionC4C.class, DDEstadoComunicacionC4C.C4C_PTE_VALIDACION));
 			}
 

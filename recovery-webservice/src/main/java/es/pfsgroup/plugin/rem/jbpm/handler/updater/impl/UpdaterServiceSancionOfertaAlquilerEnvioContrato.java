@@ -85,7 +85,7 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 		expedienteComercialApi.update(expedienteComercial, false);
 		
 		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlush(expedienteComercial.getOferta());
+			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
 		}
 	}
 

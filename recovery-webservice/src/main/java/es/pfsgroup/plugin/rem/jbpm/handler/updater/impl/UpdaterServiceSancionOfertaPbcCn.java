@@ -88,7 +88,7 @@ public class UpdaterServiceSancionOfertaPbcCn implements UpdaterService {
 		}
 		
 		if(estadoBcModificado && expediente != null) {
-			ofertaApi.replicateOfertaFlush(expediente.getOferta());
+			ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 		}
 
 	}

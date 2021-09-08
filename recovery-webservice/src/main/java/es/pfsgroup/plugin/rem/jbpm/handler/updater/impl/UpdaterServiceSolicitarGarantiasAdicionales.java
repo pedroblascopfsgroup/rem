@@ -91,7 +91,7 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);
 				if(estadoBcModificado) {
-					ofertaApi.replicateOfertaFlush(expediente.getOferta());
+					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 				}
 			}
 

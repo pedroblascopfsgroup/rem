@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -503,6 +504,13 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		flush();
 		return caixaBcRestClient.callReplicateOferta(numOferta);
 		
+	}
+
+	@Override
+	public Boolean replicateOfertaFlushWithDto(ReplicarOfertaDto dto) {
+		flush();
+		return caixaBcRestClient.callReplicateOfertaWithDto(dto);
+
 	}
 
 	@Override

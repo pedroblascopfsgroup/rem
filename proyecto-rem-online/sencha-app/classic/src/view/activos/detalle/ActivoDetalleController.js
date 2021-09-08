@@ -1308,11 +1308,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onClickBotonEditar : function(btn) {
 		var me = this;
 		if (btn.up('tabpanel').getActiveTab().xtype === 'comercialactivo') {
-			Ext.Array.each(btn.up('tabpanel').getActiveTab()
-							.query(' > container > component[isReadOnlyEdit]'),
-					function(field, index) {
-						field.fireEvent('edit');
-					});
+			var activeTab = btn.up('tabpanel').getActiveTab();
+			var arrayContainerHijos = activeTab.down('[reference=activoComercialBloqueRef]').query('fieldsettable > component[isReadOnlyEdit]');
+			var arrayContainer = activeTab.query(' > container > component[isReadOnlyEdit]');
+			var array = arrayContainer.concat(arrayContainerHijos);
+			
+			Ext.Array.each(array,
+				function(field, index) {
+					field.fireEvent('edit');
+				}
+			);
 		} else {
 			Ext.Array.each(btn.up('tabpanel').getActiveTab()
 							.query('component[isReadOnlyEdit]'), function(

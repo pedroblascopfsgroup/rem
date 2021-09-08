@@ -604,7 +604,5 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 	public void setProvinciaNacimientoRep(DDProvincia provinciaNacimientoRep) {
 		this.provinciaNacimientoRep = provinciaNacimientoRep;
 	}
-
-	
 	
 }

@@ -327,7 +327,13 @@ Ext.define('HreRem.model.ExpedienteComercial', {
 			{
 				name: 'tieneTramiteComercialVivo',
 				type: 'boolean'
-			}
+			},
+			{
+    			name: 'subestadoExpediente'
+    		},
+			{
+    			name: 'codigoSubestado'
+    		}
     ],
     formulas: {
     	esExpedienteBloqueado: function(get) {

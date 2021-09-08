@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Adrián Molina
---## FECHA_CREACION=20210803
+--## FECHA_CREACION=20210907
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14748
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 HREOS-14964 - Añadimos subestado 'Enviado' relacionado al estado 'En tramitacion'
 --##########################################
 --*/
 
@@ -64,7 +65,8 @@ DECLARE
 	T_TIPO_DATA('26','50','Pendiente elaboración contrato','Pendiente elaboración contrato'),
 	T_TIPO_DATA('27','50','Pendiente validación api','Pendiente validación api'),
 	T_TIPO_DATA('28','51','Pendiente firma de inquilino (contrato de alquiler)','Pendiente firma de inquilino (contrato de alquiler)'),
-	T_TIPO_DATA('29','51','Pendiente firma apoderado hre (contrato de alquiler)','Pendiente firma apoderado hre (contrato de alquiler)')
+	T_TIPO_DATA('29','51','Pendiente firma apoderado hre (contrato de alquiler)','Pendiente firma apoderado hre (contrato de alquiler)'),
+  T_TIPO_DATA('30','01','Enviado','Enviado')
 
     ); 
 

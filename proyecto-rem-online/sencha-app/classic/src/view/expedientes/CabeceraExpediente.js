@@ -175,6 +175,14 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 															cls: 'cabecera-info-field',
 										                	bind:		'{expediente.estado}'
 										                },
+														{ 
+															fieldLabel: HreRem.i18n('fieldlabel.subestado'),
+															cls: 'cabecera-info-field',
+										                	bind :{ 
+																value: '{expediente.subestadoExpediente}',
+																hidden: '{!expediente.esActivoHayaHome}'
+															}
+										                },
 										                { 
 										                	xtype:'datefieldbase',
 															formatter: 'date("d/m/Y")',

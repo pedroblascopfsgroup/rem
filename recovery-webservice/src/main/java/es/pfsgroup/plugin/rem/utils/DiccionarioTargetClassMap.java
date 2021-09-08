@@ -318,6 +318,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("disponibleAdministrativo", DDDisponibleAdministracion.class);
 		mapa.put("disponibleTecnico", DDDisponibleTecnico.class);
 		mapa.put("motivoTecnico", DDMotivoTecnico.class);
+		mapa.put("subestadosExpediente", DDSubestadosExpedienteComercial.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

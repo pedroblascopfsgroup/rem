@@ -150,6 +150,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -1504,6 +1505,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(expediente.getEstado())) {
 					dto.setEstado(expediente.getEstado().getDescripcion());
 					dto.setCodigoEstado(expediente.getEstado().getCodigo());
+				}
+				
+				if (!Checks.esNulo(expediente.getSubestadoExpediente())) {
+					dto.setSubestadoExpediente(expediente.getSubestadoExpediente().getDescripcion());
+					dto.setCodigoSubestado(expediente.getSubestadoExpediente().getCodigo());
 				}
 
 				dto.setFechaAlta(expediente.getFechaAlta());
@@ -5059,6 +5065,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					expedienteComercial.setEstado(estadoExpedienteComercial);
 					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
 
+				}
+				
+				if (!Checks.esNulo(dto.getCodigoSubestado())) {
+					DDSubestadosExpedienteComercial subestadoExpedienteComercial = genericDao.get(DDSubestadosExpedienteComercial.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoSubestado()));
+					expedienteComercial.setSubestadoExpediente(subestadoExpedienteComercial);
 				}
 
 				if (!Checks.esNulo(dto.getConflictoIntereses())

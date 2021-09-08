@@ -64,6 +64,7 @@ public class DDSubestadosExpedienteComercial implements Auditable, Dictionary {
 	public static final String PDTE_VALIDACION_API = "27";
 	public static final String PDTE_INQUILINO_ALQUILER = "28";
 	public static final String PDTE_APODERADO_HRE_ALQUILER = "29";
+	public static final String ENVIADO = "30";
 	
 	@Id
 	@Column(name = "DD_SEC_ID")

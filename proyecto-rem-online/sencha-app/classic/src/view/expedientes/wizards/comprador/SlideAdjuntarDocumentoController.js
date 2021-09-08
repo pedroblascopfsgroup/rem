@@ -767,7 +767,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	            municipioCodigo:bindRecord.municipioCodigo,
 	            direccion:bindRecord.direccionTodos,
 	            prp:bindRecord.prp,
-	            localidadNacimientoCompradorDescripcion:bindRecord.localidadNacimientoCompradorDescripcion
+	            localidadNacimientoCompradorDescripcion:bindRecord.localidadNacimientoCompradorDescripcion,
+	            provinciaNacimiento:bindRecord.provinciaNacimiento,
+	            provinciaNacimientoDescripcion:bindRecord.provinciaNacimientoDescripcion
 	            
 			});
 		}else{
@@ -801,7 +803,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	            municipioCodigo:bindRecord.municipioCodigo,
 	            direccion:bindRecord.direccionTodos,
 	            prp:bindRecord.prp,
-	            localidadNacimientoCompradorDescripcion:bindRecord.localidadNacimientoCompradorDescripcion
+	            localidadNacimientoCompradorDescripcion:bindRecord.localidadNacimientoCompradorDescripcion,
+	            provinciaNacimiento:bindRecord.provinciaNacimiento,
+	            provinciaNacimientoDescripcion:bindRecord.provinciaNacimientoDescripcion
 			});
 		}
 

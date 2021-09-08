@@ -4014,6 +4014,13 @@ public class ActivoAdapter {
 				DDPaises pais = (DDPaises) genericDao.get(DDPaises.class, filtroNuevosCamposClc);
 				clienteComercial.setPaisNacimiento(pais);
 			}
+			
+			if (dto.getProvinciaNacimiento() != null) {
+				filtroNuevosCamposClc = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaNacimiento());
+				DDProvincia provinciaNueva = (DDProvincia) genericDao.get(DDProvincia.class, filtroNuevosCamposClc);
+				clienteComercial.setProvinciaNacimiento(provinciaNueva);
+			}
+			
 			if(dto.getLocalidadNacimientoCompradorCodigo() != null) {
 				filtroNuevosCamposClc = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getLocalidadNacimientoCompradorCodigo());
 				Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtroNuevosCamposClc);

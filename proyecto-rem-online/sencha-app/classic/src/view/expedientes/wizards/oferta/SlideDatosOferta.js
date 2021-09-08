@@ -457,13 +457,33 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 							},
 							{
 								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.provincia.nacimiento'),
+								reference: 'provinciaNacimientoCompradorComboRef',
+								name: 'provinciaNacimiento',
+								allowBlank: false,
+								chainedStore: 'comboMunicipioOfr',
+								chainedReference: 'localidadNacimientoCompradorCodigoRef',
+								hidden: !isBk,
+								bind: {
+									store: '{comboProvincia}',
+									value: '{oferta.provinciaNacimiento}'
+								}, 
+								displayField: 'descripcion',
+								valueField: 'codigo',
+								listeners: {
+									select: 'onChangeComboProvincia'
+								}
+							},
+							{
+								xtype: 'comboboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.municipio.nacimiento'),
-								reference: 'localidadNacimientoCompradorCodigo',
+								reference: 'localidadNacimientoCompradorCodigoRef',
 								name: 'localidadNacimientoCompradorCodigo',
 								allowBlank: !isBk,
 								hidden: !isBk,
 								bind: {
-									store: '{comboMunicipioSinFiltro}',
+									store: '{comboMunicipioNacimientoOfr}',
+									disabled: '{!oferta.provinciaNacimiento}',
 									value: '{oferta.localidadNacimientoCompradorCodigo}'
 								},
 								displayField: 'descripcion',

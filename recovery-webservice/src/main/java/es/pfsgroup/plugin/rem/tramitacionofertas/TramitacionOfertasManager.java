@@ -929,9 +929,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			compradorBusqueda.setPaisNacimientoComprador(cliente.getPaisNacimiento());
 			compradorBusqueda.setLocalidadNacimientoComprador(cliente.getLocalidadNacimiento());
 			compradorBusqueda.setInfoAdicionalPersona(cliente.getInfoAdicionalPersona());
-			
-		
-			
+			compradorBusqueda.setProvinciaNacimiento(cliente.getProvinciaNacimiento());
 
 			String dir = "";
 			if (!Checks.esNulo(cliente.getTipoVia()))

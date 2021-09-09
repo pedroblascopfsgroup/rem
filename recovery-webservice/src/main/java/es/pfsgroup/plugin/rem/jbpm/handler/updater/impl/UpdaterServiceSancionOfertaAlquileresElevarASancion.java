@@ -141,7 +141,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 	
 		
 		if(DDRespuestaOfertante.CODIGO_ACEPTA.equals(resolucion)) {
-			codigoEstadoExpediente =  DDEstadosExpedienteComercial.PTE_SANCION_COMITE;
+			codigoEstadoExpediente =  DDEstadosExpedienteComercial.PTE_SCORING;
 		
 			DDEstadosExpedienteComercial estadoExpComercial =  (DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.PTE_SANCION_COMITE);
 			eco.setEstado(estadoExpComercial);

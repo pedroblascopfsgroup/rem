@@ -284,10 +284,10 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
     private String localidadNacimientoCompradorDescripcion;
 	
 	@Column(name="COM_PRP")
-    private Integer compradorPrp;
+    private Boolean compradorPrp;
 	
 	@Column(name="CEX_PRP")
-    private Integer representantePrp;
+    private Boolean representantePrp;
 
 	@Column(name="DD_VIC_CODIGO")
     private String vinculoCaixaCodigo;
@@ -968,11 +968,11 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 		this.usufructuario = usufructuario;
 	}
 
-	public Integer getCompradorPrp() {
+	public Boolean getCompradorPrp() {
 		return compradorPrp;
 	}
 
-	public void setCompradorPrp(Integer compradorPrp) {
+	public void setCompradorPrp(Boolean compradorPrp) {
 		this.compradorPrp = compradorPrp;
 	}
 
@@ -1032,11 +1032,11 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 		this.vinculoCaixaCodigo = vinculoCaixaCodigo;
 	}
 
-	public Integer getRepresentantePrp() {
+	public Boolean getRepresentantePrp() {
 		return representantePrp;
 	}
 
-	public void setRepresentantePrp(Integer representantePrp) {
+	public void setRepresentantePrp(Boolean representantePrp) {
 		this.representantePrp = representantePrp;
 	}
 

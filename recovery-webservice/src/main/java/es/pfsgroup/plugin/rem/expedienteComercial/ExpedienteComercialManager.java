@@ -5225,16 +5225,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setLocalidadNacimientoRepresentante(null);
 			}
 			
-			if (dto.getCompradorPrp() != null && "0".equals(dto.getCompradorPrp().toString())) {
-				comprador.setCompradorPrp(false);
-			} else if (dto.getCompradorPrp() != null && "1".equals(dto.getCompradorPrp().toString())) {
-				comprador.setCompradorPrp(true);
+			if (dto.getCompradorPrp() != null) {
+				comprador.setCompradorPrp(dto.getCompradorPrp());
 			}
 			
-			if (dto.getRepresentantePrp() != null && "0".equals(dto.getRepresentantePrp().toString())) {
-				compradorExpediente.setPrp(false);
-			} else if (dto.getRepresentantePrp() != null && "1".equals(dto.getRepresentantePrp().toString())) {
-				compradorExpediente.setPrp(true);
+			if (dto.getRepresentantePrp() != null) {
+				compradorExpediente.setPrp(dto.getRepresentantePrp());
+			
 			}
 			
 			if (dto.getFechaNacimientoConstitucion() != null) {
@@ -5274,10 +5271,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			
 			
-			if (dto.getCompradorPrp() != null && "0".equals(dto.getCompradorPrp().toString())) {
-				comprador.setCompradorPrp(false);
-			} else if (dto.getCompradorPrp() != null && "1".equals(dto.getCompradorPrp().toString())) {
-				comprador.setCompradorPrp(true);
+			if (dto.getCompradorPrp() != null) {
+				comprador.setCompradorPrp(dto.getCompradorPrp());
+	
 			}
 			
 			if(!Checks.esNulo(dto.getPaisNacimientoCompradorCodigo())) {
@@ -6315,11 +6311,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					comprador.setFechaNacimientoConstitucion(dto.getFechaNacimientoConstitucion());
 				}
 				if(!Checks.esNulo(dto.getCompradorPrp())) {
-					if(dto.getCompradorPrp() == 1) {
-						comprador.setCompradorPrp(true);
-					}else {
-						comprador.setCompradorPrp(false);
-					}
+					comprador.setCompradorPrp(dto.getCompradorPrp());
 				}
 				
 				if(!Checks.esNulo(dto.getLocalidadNacimientoRepresentanteCodigo())) {

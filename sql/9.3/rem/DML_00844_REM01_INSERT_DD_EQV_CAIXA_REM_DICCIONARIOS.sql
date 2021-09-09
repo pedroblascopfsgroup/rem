@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20210907
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210909
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14838
+--## INCIDENCIA_LINK=HREOS-15133
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_EQV_CAIXA_REM los datos añadidos en T_ARRAY_DATA para todos los diccionarios
@@ -32,7 +32,7 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-14838';
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-15133';
     
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
@@ -1008,7 +1008,11 @@ DECLARE
         T_TIPO_DATA('TIPO_IMPUESTO_COMPRA','ZY','Prueba IVA Consolidado 20% 1%','DD_TIC_TIPO_IMPUESTO_COMPRA','IVA'),
         T_TIPO_DATA('TIPO_IMPUESTO_COMPRA','ZY','Prueba IVA Consolidado 20% 1% ','DD_POI_PORCENTAJE_IMPUESTO','21'),
         T_TIPO_DATA('TIPO_IMPUESTO_COMPRA','ZZ','Prueba IVA Consolidado 20% 1%','DD_TIC_TIPO_IMPUESTO_COMPRA','IVA'),
-        T_TIPO_DATA('TIPO_IMPUESTO_COMPRA','ZZ','Prueba IVA Consolidado 20% 1% ','DD_POI_PORCENTAJE_IMPUESTO','21')
+        T_TIPO_DATA('TIPO_IMPUESTO_COMPRA','ZZ','Prueba IVA Consolidado 20% 1% ','DD_POI_PORCENTAJE_IMPUESTO','21'),
+        --- Tipo de activo
+        T_TIPO_DATA('TIPO_ACTIVO','0001','Vivienda','DD_TPA_TIPO_ACTIVO','02'),
+        T_TIPO_DATA('TIPO_ACTIVO','0007','Suelo urbano','DD_TPA_TIPO_ACTIVO','01'),
+        T_TIPO_DATA('TIPO_ACTIVO','0008','Suelo urbanizable','DD_TPA_TIPO_ACTIVO','01')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

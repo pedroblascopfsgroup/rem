@@ -236,6 +236,10 @@ public class CompradorExpediente implements Serializable, Auditable {
 	
 	@Column(name = "CEX_OFICINA_TRABAJO")
 	private String oficinaTrabajo;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_NAC_ID_REP")
+	private DDProvincia provinciaNacimientoRep;
  
 	@Version   
 	private Long version;
@@ -790,5 +794,15 @@ public class CompradorExpediente implements Serializable, Auditable {
 	public void setOficinaTrabajo(String oficinaTrabajo) {
 		this.oficinaTrabajo = oficinaTrabajo;
 	}
+
+	public DDProvincia getProvinciaNacimientoRep() {
+		return provinciaNacimientoRep;
+	}
+
+	public void setProvinciaNacimientoRep(DDProvincia provinciaNacimientoRep) {
+		this.provinciaNacimientoRep = provinciaNacimientoRep;
+	}
+
+
    
 }

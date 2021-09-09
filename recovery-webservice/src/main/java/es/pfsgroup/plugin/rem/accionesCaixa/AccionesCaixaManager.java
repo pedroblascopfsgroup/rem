@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.accionesCaixa;
 
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
@@ -78,6 +79,9 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         map.put("idTarea", idTarea);
         map.put("observacionesBc", observacionesBc);
         map.put("comboResolucion", comboResolucion);
+        map.put("resolucionOferta", comboResolucion);
+        map.put("fechaElevacion", fechaRespuesta);
+
 
         return map;
     }
@@ -122,7 +126,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     public void accionResultadoRiesgo(DtoAccionResultadoRiesgoCaixa dto){
         ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
         OfertaCaixa ofrCaixa = genericDao.get(OfertaCaixa.class, genericDao.createFilter(FilterType.EQUALS, "oferta.numOferta", dto.getNumOferta()));
-        DDRiesgoOperacion rop = genericDao.get(DDRiesgoOperacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getRiesgoOperacion()));
+        DDRiesgoOperacion rop = genericDao.get(DDRiesgoOperacion.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", dto.getRiesgoOperacion()));
 
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PTE_CALCULO_RIESGO));

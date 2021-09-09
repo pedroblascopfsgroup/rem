@@ -33,6 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -127,11 +128,13 @@ import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ConfiguracionComisionCostesActivo;
 import es.pfsgroup.plugin.rem.model.DatosInformeFiscal;
+import es.pfsgroup.plugin.rem.model.Deposito;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivosFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoClienteComercial;
+import es.pfsgroup.plugin.rem.model.DtoDeposito;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoExcelFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
@@ -181,6 +184,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDeposito;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
@@ -3057,6 +3061,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				
 				dtoResponse.setEmpleadoCaixa(isEmpleadoCaixaCliTit(oferta));
+				
+				if(oferta.getOfertaCaixa() != null) {
+					Filter filterOfertaCaixaID = genericDao.createFilter(FilterType.EQUALS, "ofertaCaixa.id", oferta.getOfertaCaixa().getId());
+					Deposito deposito = genericDao.get(Deposito.class, filterOfertaCaixaID);
+					dtoResponse.setDtoDeposito(this.depositoToDto(deposito));	
+				}
 			}
 		}
 
@@ -7562,6 +7572,76 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		
 		return tit;
+	}
+	
+	private DtoDeposito depositoToDto(Deposito deposito) {
+		if(deposito == null) {
+			return null;
+		}
+		DtoDeposito dtoDeposito = new DtoDeposito();
+		dtoDeposito.setId(deposito.getId());
+		dtoDeposito.setEstadoCodigo(deposito.getEstadoDeposito().getCodigo());
+		dtoDeposito.setImporteDeposito(deposito.getImporte());
+		
+		if(deposito.getFechaIngreso() != null) {
+			dtoDeposito.setFechaIngresoDeposito(groovyft.format(deposito.getFechaIngreso()));
+		}
+		if(deposito.getFechaDevolucion() != null) {
+			dtoDeposito.setFechaDevolucionDeposito(groovyft.format(deposito.getFechaDevolucion()));
+		}
+		dtoDeposito.setIbanDevolucionDeposito(deposito.getIbanDevolucion());
+
+		return dtoDeposito;
+	}
+	
+	private Deposito dtoToDeposito(Deposito deposito, DtoDeposito dto) throws ParseException {
+
+		if(dto.getEstadoCodigo() != null) {
+			DDEstadoDeposito estadoDeposito = genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoCodigo()));
+			deposito.setEstadoDeposito(estadoDeposito);
+		}
+		if(dto.getImporteDeposito() != null) {
+			deposito.setImporte(dto.getImporteDeposito());
+		}
+		if(!Checks.esNulo(dto.getFechaIngresoDeposito())){
+			deposito.setFechaIngreso(groovyft.parse(dto.getFechaIngresoDeposito()));
+		}
+		if(!Checks.esNulo(dto.getFechaDevolucionDeposito())) {
+			deposito.setFechaDevolucion(groovyft.parse(dto.getFechaDevolucionDeposito()));
+		}
+		if(dto.getIbanDevolucionDeposito() != null) {
+			deposito.setIbanDevolucion(dto.getIbanDevolucionDeposito());
+		}
+
+		return deposito;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateDepositoOferta(Long idOferta, DtoDeposito dto) throws ParseException {
+	
+		Oferta oferta = this.getOfertaById(idOferta);
+		if(oferta == null || oferta.getOfertaCaixa() == null) {
+			return false;
+		}
+		
+		Deposito deposito = null;
+		
+		if(dto.getId() == null) {
+			deposito = new Deposito();
+			OfertaCaixa ocb = oferta.getOfertaCaixa();
+			deposito.setAuditoria(Auditoria.getNewInstance());
+			deposito.setOfertaCaixa(ocb);
+		}else {
+			deposito = genericDao.get(Deposito.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getId()));
+			Auditoria.save(deposito);
+		}
+		
+		this.dtoToDeposito(deposito, dto);
+		genericDao.save(Deposito.class, deposito);
+		
+		return true;
+		
 	}
 		
 }

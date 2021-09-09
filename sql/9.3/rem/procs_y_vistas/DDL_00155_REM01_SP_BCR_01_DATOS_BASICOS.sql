@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20210830
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210909
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14974
+--## INCIDENCIA_LINK=HREOS-15133
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -21,6 +21,7 @@
 --##	      0.9 Se añade comprobación para no machacar tipo y subtipo de activo si no viene - HREOS-14837
 --##	      0.10 Nuevo campos Origen Regulatorio - HREOS-14838 - Daniel Algaba
 --##	      0.11 Uso dominante - [HREOS-14974] - Alejandra García
+--##	      0.12 Tipo de activo - [HREOS-15133] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -90,7 +91,8 @@ BEGIN
                   CASE
                      WHEN aux.SUBTIPO_VIVIENDA IS NOT NULL THEN sac_viv.DD_TPA_ID
                      WHEN aux.SUBTIPO_SUELO IS NOT NULL THEN sac_suelo.DD_TPA_ID
-                     ELSE sac_uso.DD_TPA_ID
+                     WHEN sac_uso.DD_TPA_ID IS NOT NULL THEN sac_uso.DD_TPA_ID
+                     ELSE TPA.DD_TPA_ID
                   END DD_TPA_ID,
                   CASE 
                      WHEN aux.SUBTIPO_VIVIENDA IS NOT NULL THEN sac_viv.DD_SAC_ID
@@ -134,6 +136,8 @@ BEGIN
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_PRP_PROCEDENCIA_PRODUCTO prp ON prp.DD_PRP_CODIGO = eqv5.DD_CODIGO_REM     
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv7 ON eqv7.DD_NOMBRE_CAIXA = ''CANAL_DISTRIBUCION_VENTA''  AND eqv7.DD_CODIGO_CAIXA = aux.CANAL_DISTRIBUCION_VENTA AND EQV7.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR tcr ON tcr.DD_TCR_CODIGO = eqv7.DD_CODIGO_REM
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv11 ON eqv11.DD_NOMBRE_CAIXA = ''TIPO_ACTIVO'' AND eqv11.DD_CODIGO_CAIXA = aux.CLASE_USO AND eqv11.BORRADO = 0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_CODIGO = eqv11.DD_CODIGO_REM
                   WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                                        
                                  ) us ON (us.act_id = act.act_id)

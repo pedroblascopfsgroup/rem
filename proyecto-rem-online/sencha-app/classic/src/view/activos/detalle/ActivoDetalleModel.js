@@ -4101,6 +4101,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'motivoTecnico'}
 			}
+		},
+		comboEstadoDeposito: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadoDeposito'}
+			},
+			autoLoad: true
 		}
 
 	 }

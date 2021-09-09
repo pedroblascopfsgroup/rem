@@ -47,6 +47,25 @@ Ext.define('HreRem.model.DetalleOfertaModel', {
 		{
 			name: 'empleadoCaixa',
 			type: 'boolean'
+		},
+		{
+			name:'importeDeposito'
+		},
+		{
+			name:'fechaIngresoDeposito',
+			type:'date',
+    		dateFormat: 'c'
+		},
+		{
+			name: 'estadoCodigo'
+		},
+		{
+			name:'fechaDevolucionDeposito',
+			type:'date',
+    		dateFormat: 'c'
+		},
+		{
+			name: 'ibanDevolucionDeposito'
 		}
     ],
 

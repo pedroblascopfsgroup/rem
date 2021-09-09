@@ -107,7 +107,16 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {
 					diccionario: 'tipologiaVentaBc'
-				}
+				},
+			autoLoad: true
+			}
+		},
+		comboMunicipioNacimientoOfr: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: '{oferta.provinciaNacimiento}'} 
 			},
 			autoLoad: true
 		}

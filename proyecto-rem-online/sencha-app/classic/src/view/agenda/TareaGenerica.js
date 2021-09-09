@@ -1987,7 +1987,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	var storeScoring = scoring.getStore();
     			storeScoring.addListener('load', function(store, records, successful, operation, eOpts){
     			var dataScoring = store.getData().items; 
-    			if(CONST.CARTERA['BANKIA'] != codigoCartera || (CONST.ESTADOS_EXPEDIENTE_BC['PT_SCORING'] != codigoEstadoBC && CONST.ESTADOS_EXPEDIENTE_BC['CONTRAOFERTADO'] != codigoEstadoBC)){
+    			if(CONST.CARTERA['BANKIA'] != codigoCartera){
     				var indexConDudas;
     				for( var i = 0 ; i < dataScoring.length; i++) { 
     					if(dataScoring[i].getData().codigo == '03'){  
@@ -3306,46 +3306,16 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		
 		comboRespuestaComprador.setDisabled(true);
 
-		var url =  $AC.getRemoteUrl('expedientecomercial/haPasadoSeguroRentas');
-		Ext.Ajax.request({
-			url: url,
-			params: {idTarea : idTramite},
-		    success: function(response, opts) {
-				comboRespuesta.addListener('change', function() {
-					var data = Ext.decode(response.responseText);
-					haPasadoSeguroRentas = data.data;
-					if(CONST.COMBO_SIN_SINO['SI'] == comboRespuesta.getValue()){
-						comboRespuestaComprador.setDisabled(false);
-						if(haPasadoSeguroRentas === "true"){
-							comboRespuestaComprador.setValue(CONST.RESPUESTA_COMPRADOR['CODIGO_SEGURO_RENTAS']);
-							me.bloquearCampo(comboRespuestaComprador);
-						}else{
-							me.desbloquearCampo(comboRespuestaComprador);
-							me.campoObligatorio(comboRespuestaComprador);
-							
-							var comboRespuestaCompradorStore = comboRespuestaComprador.getStore();
-							var itemsStore = comboRespuestaCompradorStore.getData().items; 
-							var indexEliminar;
-							for( var i = 0 ; i < itemsStore.length; i++) { 
-								if(itemsStore[i].getData().codigo == CONST.RESPUESTA_COMPRADOR['CODIGO_SEGURO_RENTAS']){  
-									indexEliminar = i; 
-									break;
-								}
-							}
-							if(!Ext.isEmpty(indexEliminar)){
-								comboRespuestaCompradorStore.splice(indexEliminar, 1);
-							}
-							
-						}
-					}else if(CONST.COMBO_SIN_SINO['NO'] == comboRespuesta.getValue()){
-						comboRespuestaComprador.clearValue();
-						comboRespuestaComprador.setDisabled(true);
-						me.campoNoObligatorio(comboRespuestaComprador);
-						comboRespuestaComprador.validate();
-					}		
-				});	
-		    }
-		});	 		
+		if(CONST.COMBO_SIN_SINO['SI'] == comboRespuesta.getValue()){
+			me.desbloquearCampo(comboRespuestaComprador);
+			me.campoObligatorio(comboRespuestaComprador);
+
+		}else if(CONST.COMBO_SIN_SINO['NO'] == comboRespuesta.getValue()){
+			comboRespuestaComprador.clearValue();
+			comboRespuestaComprador.setDisabled(true);
+			me.campoNoObligatorio(comboRespuestaComprador);
+			comboRespuestaComprador.validate();
+		}		
 	},
 	T017_InstruccionesReservaValidacion: function() {		
 		var me = this;

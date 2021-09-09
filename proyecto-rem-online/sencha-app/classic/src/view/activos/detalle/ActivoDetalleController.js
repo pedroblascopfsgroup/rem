@@ -8641,10 +8641,79 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this, record = grid.getStore().getAt(rowIndex);
 		me.getView().fireEvent('abrirDetalleGastoTasacion', record);
 
-	}/*,
+	},/*,
     onChangePublicarCaixa: function(get){
     	var me = this;    	
     	var carteraCaixa;
+    }
     }*/
+
+    onClickModificarDeposito: function(btn){
+    	var me = this; 
+    	var activo = me.getViewModel().get('activo');
+    	var deposito = me.getViewModel().get('detalleOfertaModel').get('dtoDeposito');
+    	var parent = btn.up('ofertascomercialactivo');
+		var ventana = Ext.create("HreRem.view.activos.comercial.ofertas.datosGenerales.EditarDeposito", {	
+			deposito: deposito, activo: activo, parent: parent
+		});
+    	
+		 ventana.show();
+    },
+    
+	onClickCancelarModificarDeposito : function(btn) {
+		var window = btn.up('window');
+		window.destroy();
+	},
+	
+	onClickSaveModificarDeposito : function(btn) {
+		var me = this;
+		var window = btn.up('window');
+		var array = window.query('container > component[editable]');
+		var params={idOferta:idOferta, id:window.deposito.id};
+		for(i = 0; i < array.length;i++){ 
+			params[array[i].reference] =array[i].value;
+		}
+		if(!window.down('form').isFormValid()){
+			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.anyadir.gasto.linea.detalle.campos"));
+			return;
+		}
+
+		url = $AC.getRemoteUrl('ofertas/updateDepositoOferta');
+		Ext.Ajax.request({
+			url : url,
+			method : 'POST',
+			params : params,
+			success : function(response, opts) {
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			},
+			failure : function(record, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			},
+			callback : function(record, operation) {
+				var model = me.getViewModel().get('detalleOfertaModel');
+				model.setId(idOferta);
+				model.load({
+					success : function(idOferta) {}
+				});
+				window.destroy();
+			}
+		});
+	},
+	
+	onSelectEstadoDeposito: function(combo, value){
+		var me = this;
+		var window = combo.up('window');
+		var devuelto = false;
+		var ingresado = false;
+		if(CONST.ESTADO_DEPOSITO['COD_DEVUELTO'] == combo.getValue()){
+			devuelto = true;
+		}
+		if(CONST.ESTADO_DEPOSITO['COD_INGRESADO'] == combo.getValue()){
+			ingresado = true;
+		} 
+		window.down('[reference=fechaIngresoDeposito]').allowBlank=!ingresado;
+		window.down('[reference=fechaDevolucionDeposito]').allowBlank=!devuelto;
+		window.down('[reference=ibanDevolucionDeposito]').allowBlank=!devuelto;
+	}
 });
 

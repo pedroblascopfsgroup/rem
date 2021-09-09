@@ -133,7 +133,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
 	    								var checkBuscadorOferta = form.down('field[name=buscadorNumOferPrincipal]');
 	    								var viewModelSlide = this.up("slidedatosoferta").viewModel;
-	    								
+	    								var tipologivaVenta = form.down('field[name=tipologivaVentaCod]');
 	    								if((viewModelSlide.data.esAgrupacionLiberbank || viewModelSlide.data.isCarteraLiberbank)
 	    										&& CONST.TIPOS_OFERTA['VENTA'] == value ) {	    										
 	    										    											    										
@@ -150,7 +150,16 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									lockClaseOferta.setDisabled(true);
 	    									checkNumOferPrin.setDisabled(true);
 	    									checkBuscadorOferta.setDisabled(true);
-	    								}	    									    								
+	    								}
+	    								
+	    								if (viewModelSlide.data.esBankia && CONST.TIPOS_OFERTA['VENTA'] == value) {
+	    									tipologivaVenta.setDisabled(false);
+	    									tipologivaVenta.setAllowBlank(false);
+
+	    								}else{
+	    									tipologivaVenta.setDisabled(true);
+	    									tipologivaVenta.setAllowBlank(true);
+	    								}
 	    							}
 	    						},
 			    				colspan: 2
@@ -390,6 +399,22 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 							},
 							{
 								xtype: 'comboboxfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.tipologia.venta'),
+								name: 		'tipologivaVentaCod',
+								reference: 		'tipologivaVentaCodRef',
+								allowBlank: !isBk,
+								hidden: !isBk,
+								disabled: true,
+								bind: {
+									store: '{comboTipologiaVentaBcOfr}',
+									value: '{oferta.tipologivaVentaCod}'
+								},
+								displayField: 'descripcion',
+								valueField: 'codigo',
+					        	colspan: 1
+							},
+							{
+								xtype: 'comboboxfieldbase',
 								fieldLabel:  HreRem.i18n('fieldlabel.claseOferta'),
 								itemId: 'comboClaseOferta',
 								name: 'claseOferta',								
@@ -483,13 +508,33 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 							},
 							{
 								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.provincia.nacimiento'),
+								reference: 'provinciaNacimientoCompradorComboRef',
+								name: 'provinciaNacimiento',
+								allowBlank: false,
+								chainedStore: 'comboMunicipioNacimientoOfr',
+								chainedReference: 'localidadNacimientoCompradorCodigoRef',
+								hidden: !isBk,
+								bind: {
+									store: '{comboProvincia}',
+									value: '{oferta.provinciaNacimiento}'
+								}, 
+								displayField: 'descripcion',
+								valueField: 'codigo',
+								listeners: {
+									select: 'onChangeComboProvincia'
+								}
+							},
+							{
+								xtype: 'comboboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.municipio.nacimiento'),
-								reference: 'localidadNacimientoCompradorCodigo',
+								reference: 'localidadNacimientoCompradorCodigoRef',
 								name: 'localidadNacimientoCompradorCodigo',
 								allowBlank: !isBk,
 								hidden: !isBk,
 								bind: {
-									store: '{comboMunicipioSinFiltro}',
+									store: '{comboMunicipioNacimientoOfr}',
+									disabled: '{!oferta.provinciaNacimiento}',
 									value: '{oferta.localidadNacimientoCompradorCodigo}'
 								},
 								displayField: 'descripcion',
@@ -557,20 +602,6 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 									store: '{comboSiNoBoolean}',
 									value: '{oferta.prp}'
 								},								
-					        	colspan: 1
-							},
-							{
-								xtype: 'comboboxfieldbase',
-								fieldLabel:  HreRem.i18n('fieldlabel.tipologia.venta'),
-								name: 		'tipologivaVentaCod',								
-								allowBlank: !isBk,
-								hidden: !isBk,
-								bind: {
-									store: '{comboTipologiaVentaBcOfr}',
-									value: '{oferta.tipologivaVentaCod}'
-								},
-								displayField: 'descripcion',
-								valueField: 'codigo',
 					        	colspan: 1
 							}
 							

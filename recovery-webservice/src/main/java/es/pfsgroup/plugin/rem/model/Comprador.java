@@ -469,5 +469,13 @@ public class Comprador implements Serializable, Auditable {
 	public void setInfoAdicionalPersona(InfoAdicionalPersona infoAdicionalPersona) {
 		this.infoAdicionalPersona = infoAdicionalPersona;
 	}
+
+	public DDProvincia getProvinciaNacimiento() {
+		return provinciaNacimiento;
+	}
+
+	public void setProvinciaNacimiento(DDProvincia provinciaNacimiento) {
+		this.provinciaNacimiento = provinciaNacimiento;
+	}
 	
 }

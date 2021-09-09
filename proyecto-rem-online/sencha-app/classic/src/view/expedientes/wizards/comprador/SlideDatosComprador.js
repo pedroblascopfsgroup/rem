@@ -219,16 +219,17 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						padding: '5px',
 						allowBlank: false
 					},
-			        { 
+					{ 
 			        	xtype:'datefieldbase',
-			        	fieldLabel:  HreRem.i18n('fieldlabel.fechaNacimientoConstitucion'),
+			        	fieldLabel:  HreRem.i18n('fieldlabel.fecha.nacimiento.constitucion'),
 			        	name: 'fechaNacimientoConstitucion',
 			        	reference: 'fechaNacimientoConstitucion',
 			        	padding: '5px',
 			        	maxValue: null,
 			        	bind: {
 			        		hidden: '{!comprador.esCarteraBankia}',
-			        		allowBlank: '{!comprador.esCarteraBankia}'
+			        		allowBlank: '{!comprador.esCarteraBankia}',
+			        		hidden: '{!comprador.esCarteraBankia}'
 			        	}
 			        },
 					{
@@ -286,16 +287,35 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						padding: '5px'
 					},
 					{
-						xtype: 'comboboxfieldbasedd',
+
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.provincia.nacimiento'),
+						reference: 'provinciaNacimientoCompradorCodigo',
+						name: 'provinciaNacimientoCompradorCodigo',
+						padding: '5px',
+						allowBlank: false,
+						chainedStore: 'comboMunicipioComprador',
+						chainedReference: 'localidadNacimientoCompradorCodigo',
+						bind: {
+							store: '{comboProvincia}',
+							hidden: '{!comprador.esCarteraBankia}'
+						},
+						displayField: 'descripcion',
+						valueField: 'codigo',
+						listeners: {
+							change: 'onChangeComboProvincia'
+						}
+					},
+					{
+						xtype: 'comboboxfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.municipio.nacimiento'),
 						reference: 'localidadNacimientoCompradorCodigo',
 						name: 'localidadNacimientoCompradorCodigo',
 						padding: '5px',
 						bind: {
-							store: '{comboMunicipioSinFiltro}',
+							store: '{comboMunicipioComprador}',
 							hidden: '{!comprador.esCarteraBankia}',
-							value: '{comprador.localidadNacimientoCompradorCodigo}',
-							rawValue: '{comprador.localidadNacimientoCompradorDescripcion}'
+							disabled: '{!comprador.provinciaNacimientoCompradorCodigo}'
 						}
 					},
 					{
@@ -331,7 +351,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						xtype: 'comboboxfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.pais.nacimiento'),
 						name: 'paisNacimientoCompradorCodigo',
-						reference: 'paisNacimientoCompradorCodigoRef',
+						reference: 'paisNacimientoCompradorCodigo',
 						padding: '5px',
 						allowBlank: false,
 						bind: {
@@ -457,6 +477,17 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 							readOnly: true
 						},
 						editable: true
+					},
+					{
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.prp'),
+						reference: 'compradorPrp',
+						name: 'compradorPrp',
+						padding: '5px',
+						bind: {
+							store: '{comboSiNoBoolean}',
+							hidden: '{!comprador.esCarteraBankia}'
+						}
 					}
 				]
 			},
@@ -735,7 +766,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 			        	xtype:'datefieldbase',
 			        	fieldLabel:  HreRem.i18n('fieldlabel.fechaNacimientoRepresentante'),
 			        	name: 'fechaNacimientoRepresentante',
-			        	reference: 'fechaNacimientoCompradorRef',
+			        	reference: 'fechaNacimientoRepresentante',
 			        	padding: '5px',
 			        	maxValue: null,
 			        	bind: {
@@ -787,16 +818,34 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						padding: '5px'
 					},
 					{
-						xtype: 'comboboxfieldbasedd',
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.provincia.nacimiento'),
+						reference: 'provinciaNacimientoRepresentanteCodigo',
+						name: 'provinciaNacimientoRepresentanteCodigo',
+						padding: '5px',
+						allowBlank: false,
+						chainedStore: 'comboMunicipioRepresentante',
+						chainedReference: 'localidadNacimientoRepresentanteCodigo',
+						bind: {
+							store: '{comboProvincia}',
+							hidden: '{!comprador.esCarteraBankia}'
+						},
+						displayField: 'descripcion',
+						valueField: 'codigo',
+						listeners: {
+							change: 'onChangeComboProvincia'
+						}
+					},
+					{
+						xtype: 'comboboxfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.municipio.nacimiento'),
 						reference: 'localidadNacimientoRepresentanteCodigo',
 						name: 'localidadNacimientoRepresentanteCodigo',
 						padding: '5px',
 						bind: {
-							store: '{comboMunicipioSinFiltro}',
+							store: '{comboMunicipioRepresentante}',
 							hidden: '{!comprador.esCarteraBankia}',
-							value: '{comprador.localidadNacimientoRepresentanteCodigo}',
-							rawValue: '{comprador.localidadNacimientoRepresentanteDescripcion}'
+							disabled: '{!comprador.provinciaNacimientoRepresentanteCodigo}'
 						}
 					},
 					{
@@ -831,9 +880,21 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						fieldLabel: HreRem.i18n('fieldlabel.pais.nacimiento'),
 						reference: 'paisNacimientoRepresentanteCodigo',
 						name: 'paisNacimientoRepresentanteCodigo',
+						allowBlank: false,
 						padding: '5px',
 						bind: {
 							store: '{comboPaises}',
+							hidden: '{!comprador.esCarteraBankia}'
+						}
+					},
+					{
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.prp'),
+						reference: 'representantePrp',
+						name: 'representantePrp',
+						padding: '5px',
+						bind: {
+							store: '{comboSiNoBoolean}',
 							hidden: '{!comprador.esCarteraBankia}'
 						}
 					}

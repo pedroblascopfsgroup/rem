@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
@@ -56,6 +57,7 @@ import es.pfsgroup.plugin.rem.excel.OfertaGridExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
+import es.pfsgroup.plugin.rem.model.DtoDeposito;
 import es.pfsgroup.plugin.rem.model.DtoExcelFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertaGridFilter;
@@ -1038,6 +1040,20 @@ public class OfertasController {
 		llamadaAsincrona.start();
 		
 		model.put(RESPONSE_SUCCESS_KEY, true);
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateDepositoOferta(Long idOferta, DtoDeposito dto, ModelMap model) {
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, ofertaApi.updateDepositoOferta(idOferta, dto));
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			logger.error("Error en ofertasController", e);
+		}
 		return createModelAndViewJson(model);
 	}
 

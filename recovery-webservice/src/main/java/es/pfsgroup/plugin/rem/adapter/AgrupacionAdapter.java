@@ -2463,7 +2463,10 @@ public class AgrupacionAdapter {
 			oferta.setActivosOferta(listaActOfr);
 			oferta.setCliente(clienteComercial);
 			oferta.setPrescriptor((ActivoProveedor) proveedoresApi.searchProveedorCodigo(dto.getCodigoPrescriptor()));
-			oferta.setOrigen("REM");
+			DDSistemaOrigen sistemaOrigen = genericDao.get(DDSistemaOrigen.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSistemaOrigen.CODIGO_REM));
+			if (sistemaOrigen != null)
+				oferta.setOrigen(sistemaOrigen);
+			
 			oferta.setOfertaExpress(false);
 			if (Checks.esNulo(dto.getVentaDirecta())){
 				oferta.setVentaDirecta(false);

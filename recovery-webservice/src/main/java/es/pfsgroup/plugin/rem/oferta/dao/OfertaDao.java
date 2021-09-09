@@ -108,5 +108,7 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	public Page getBusquedaOfertasGrid(DtoOfertaGridFilter dto);
 
 	List<Oferta> getListOtrasOfertasTramitadasActivo(Long idActivo);
+
+	public Oferta getOfertaByIdOfertaHayaHomeOrNumOfertaRem(Long idOfertaHayaHome, Long numOfertaRem);
 	
 }

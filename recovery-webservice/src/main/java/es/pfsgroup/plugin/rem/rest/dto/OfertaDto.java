@@ -89,7 +89,7 @@ public class OfertaDto implements Serializable {
 	private String porcentajeDescuento;
 	private String justificacionOferta;
 	private String origenOferta;
-	private String mesesCarencia;
+	private Double mesesCarencia;
 	private Boolean contratoReserva;
 	private String motivoCongelacion;
 	private Boolean ibi;
@@ -102,7 +102,7 @@ public class OfertaDto implements Serializable {
 	private Double porcentaje2anyo;
 	private Double porcentaje3anyo;
 	private Double porcentaje4anyo;
-	private String mesesCarenciaContraoferta;
+	private Double mesesCarenciaContraoferta;
 	private Double porcentaje1anyoContraoferta;
 	private Double porcentaje2anyoContraoferta;
 	private Double porcentaje3anyoContraoferta;
@@ -405,10 +405,10 @@ public class OfertaDto implements Serializable {
 	public void setOrigenOferta(String origenOferta) {
 		this.origenOferta = origenOferta;
 	}
-	public String getMesesCarencia() {
+	public Double getMesesCarencia() {
 		return mesesCarencia;
 	}
-	public void setMesesCarencia(String mesesCarencia) {
+	public void setMesesCarencia(Double mesesCarencia) {
 		this.mesesCarencia = mesesCarencia;
 	}
 	public Boolean getContratoReserva() {
@@ -483,10 +483,10 @@ public class OfertaDto implements Serializable {
 	public void setPorcentaje4anyo(Double porcentaje4anyo) {
 		this.porcentaje4anyo = porcentaje4anyo;
 	}
-	public String getMesesCarenciaContraoferta() {
+	public Double getMesesCarenciaContraoferta() {
 		return mesesCarenciaContraoferta;
 	}
-	public void setMesesCarenciaContraoferta(String mesesCarenciaContraoferta) {
+	public void setMesesCarenciaContraoferta(Double mesesCarenciaContraoferta) {
 		this.mesesCarenciaContraoferta = mesesCarenciaContraoferta;
 	}
 	public Double getPorcentaje1anyoContraoferta() {

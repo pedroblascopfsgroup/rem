@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDGrupoImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDMetodoActualizacionRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDRangoImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenFianzaCCAA;
@@ -407,6 +408,10 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_RGI_ID")
 	private DDRangoImpuesto rangoImpuesto;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_GRI_ID")
+	private DDGrupoImpuesto tipoGrupoImpuesto;
     
 	@Version   
 	private Long version;
@@ -1299,6 +1304,14 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 
 	public void setRangoImpuesto(DDRangoImpuesto rangoImpuesto) {
 		this.rangoImpuesto = rangoImpuesto;
+	}
+
+	public DDGrupoImpuesto getTipoGrupoImpuesto() {
+		return tipoGrupoImpuesto;
+	}
+
+	public void setTipoGrupoImpuesto(DDGrupoImpuesto tipoGrupoImpuesto) {
+		this.tipoGrupoImpuesto = tipoGrupoImpuesto;
 	}
 
 }
